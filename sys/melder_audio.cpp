@@ -120,7 +120,7 @@ void MelderAudio_setOutputSilenceAfter (double silenceAfter) {
 }
 double MelderAudio_getOutputSilenceAfter () { return preferences. silenceAfter; }
 
-long MelderAudio_getOutputBestSampleRate (long fsamp) {
+integer MelderAudio_getOutputBestSampleRate (integer fsamp) {
 	#if defined (macintosh)
 		return fsamp == 44100 || fsamp == 96000 ? fsamp : 44100;
 	#elif defined (_WIN32)
@@ -173,12 +173,12 @@ typedef struct pulseAudio {
 
 static struct MelderPlay {
 	int16_t *buffer;
-	long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
+	integer sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
 	kMelder_asynchronicityLevel asynchronicity;
 	int numberOfChannels;
 	bool explicitStop, fakeMono;
 	volatile int volatile_interrupted;
-	bool (*callback) (void *closure, long samplesPlayed);
+	bool (*callback) (void *closure, integer samplesPlayed);
 	void *closure;
 	#if gtk
 		gint workProcId_gtk = 0;
@@ -203,7 +203,7 @@ static struct MelderPlay {
 	#endif
 } thePlay;
 
-long MelderAudio_getSamplesPlayed () {
+integer MelderAudio_getSamplesPlayed () {
 	return thePlay. samplesPlayed;
 }
 
@@ -404,13 +404,13 @@ bool MelderAudio_stopPlaying (bool explicitStop) {
 
 static bool workProc (void *closure) {
 	struct MelderPlay *me = & thePlay;
-//static long n = 0;
+//static integer n = 0;
 //n ++;
 //Melder_casual (U"workProc ", n);
 	if (my usePortAudio) {
 		#if defined (linux)
 			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-			long samplesPlayed = timeElapsed * my sampleRate;
+			integer samplesPlayed = timeElapsed * my sampleRate;
 			if (my callback && ! my callback (my closure, samplesPlayed)) {
 				my volatile_interrupted = 1;
 				return flush ();
@@ -436,7 +436,7 @@ static bool workProc (void *closure) {
 			 */
 		#else
 			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-			my samplesPlayed = (long) floor (timeElapsed * my sampleRate);
+			my samplesPlayed = (integer) floor (timeElapsed * my sampleRate);
 			if (my supports_paComplete && Pa_IsStreamActive (my stream)) {
 				if (my callback && ! my callback (my closure, my samplesPlayed)) {
 					Pa_AbortStream (my stream);
@@ -458,7 +458,7 @@ static bool workProc (void *closure) {
 	} else if (my usePulseAudio) {
 		if (my pulseAudio.mainloop) {
 			pa_threaded_mainloop_lock (my pulseAudio.mainloop);
-			long samplesPlayed = 0;
+			integer samplesPlayed = 0;
 			pa_usec_t diff_usec = 0;
 			if (my pulseAudio.startTime.tv_usec != 0) {
 				diff_usec = pa_timeval_age (& my pulseAudio.startTime);
@@ -500,8 +500,8 @@ static bool workProc (void *closure) {
 			my samplesPlayed = my numberOfSamples;
 			return flush ();
   		} else {
-  			static long previousTime = 0;
-  			unsigned long currentTime = clock ();
+  			static integer previousTime = 0;
+  			uinteger currentTime = clock ();
   			if (Melder_debug == 1) {
 				my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
   			} else {
@@ -563,7 +563,7 @@ static int thePaStreamCallback (const void *input, void *output,
 		if (Melder_debug == 20) Melder_casual (U"output overflow");
 	}
 	if (my samplesLeft > 0) {
-		long dsamples = my samplesLeft > (long) frameCount ? (long) frameCount : my samplesLeft;
+		integer dsamples = my samplesLeft > (integer) frameCount ? (integer) frameCount : my samplesLeft;
 		if (Melder_debug == 20) Melder_casual (U"play ", dsamples, U" ", Pa_GetStreamCpuLoad (my stream));
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
 		Melder_assert (my buffer);
@@ -651,7 +651,7 @@ void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info,
 		MelderInfo_writeLine (U"Default source name: ", Melder_peek8to32 (info -> default_source_name));
 		const pa_channel_map *cm = &(info -> channel_map);
 		MelderInfo_writeLine (U"Channel specification: ");
-		for (long channel = 1; channel <= cm -> channels; channel++) {
+		for (integer channel = 1; channel <= cm -> channels; channel++) {
 			const char *channel_text = pa_channel_position_to_pretty_string (cm -> map[channel - 1]); // 0-..
 			MelderInfo_writeLine (U"\t Channel ", channel, U": ", Melder_peek8to32 (channel_text));
 		}
@@ -755,7 +755,7 @@ void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata) {
 	struct MelderPlay *me = (struct MelderPlay *) userdata;
 	if (stream == my pulseAudio.stream) {
 		//length = my pulseAudio.latency; // overrule length given by server
-		long writeSize_samples = length / (2 * my numberOfChannels);
+		integer writeSize_samples = length / (2 * my numberOfChannels);
 		my samplesLeft = my numberOfSamples - my samplesSent;
 		trace (U"length = ", length, U" left = ", my samplesLeft);
 		MelderAudio_isPlaying = true;
@@ -772,7 +772,7 @@ void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata) {
 				if (pa_stream_write (stream, my buffer + my samplesSent * my numberOfChannels, 2 * writeSize_samples * my numberOfChannels, free_cb, 0, PA_SEEK_RELATIVE) < 0) {
 					 Melder_throw (U"pa_stream_write() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
 				}
-				long samplesSent = writeSize_samples;
+				integer samplesSent = writeSize_samples;
 				my samplesSent += samplesSent;
 				my samplesPlayed = my samplesSent; // not true: use timer info
 				trace (U"written ", samplesSent, U" (samples), total ", my samplesSent);
@@ -836,10 +836,10 @@ void stream_write_cb (pa_stream *stream, size_t length, void *userdata) {
 					 Melder_throw (U"pa_stream_write() failed: ", Melder_peek8to32 (pa_strerror (pa_context_errno (my pulseAudio.context))));
 				}
 				Melder_assert (nbytes % (my numberOfChannels * 2) == 0);
-				long samplesSent = nbytes / (my numberOfChannels * 2);
+				integer samplesSent = nbytes / (my numberOfChannels * 2);
 				my samplesSent += samplesSent;
 				my samplesPlayed = my samplesSent; // not true: use timer info
-				trace (U"written ", samplesSent, U" (samples), total ", my samplesSent, U", address = ", (long) pa_buffer);
+				trace (U"written ", samplesSent, U" (samples), total ", my samplesSent, U", address = ", (integer) pa_buffer);
 				if (my samplesSent == my numberOfSamples) {
 					// my samplesLeft = 0; not here because still playing
 					trace (U"nothing left 1");
@@ -997,8 +997,8 @@ void context_state_cb (pa_context *context, void *userdata) {
 }
 #endif
 
-void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
-	bool (*playCallback) (void *playClosure, long numberOfSamplesPlayed), void *playClosure)
+void MelderAudio_play16 (int16_t *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
+	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed), void *playClosure)
 {
 	struct MelderPlay *me = & thePlay;
 	#ifdef _WIN32
@@ -1063,20 +1063,20 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			 */
 			if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
 				int16_t *in = & my buffer [0], *out = & my buffer [0];
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					long in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					integer in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
 					*out ++ = (in1 + in2) / 2;
 					*out ++ = (in3 + in4) / 2;
 				}
 			} else {
 				int16_t *in = & my buffer [0], *out = & my buffer [0];
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long iout = 1; iout <= my numberOfChannels; iout ++) {
-						long outValue = 0;
-						long numberOfIn = numberOfChannels / my numberOfChannels;
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer iout = 1; iout <= my numberOfChannels; iout ++) {
+						integer outValue = 0;
+						integer numberOfIn = numberOfChannels / my numberOfChannels;
 						if (iout == my numberOfChannels)
 							numberOfIn += numberOfChannels % my numberOfChannels;
-						for (long iin = 1; iin <= numberOfIn; iin ++)
+						for (integer iin = 1; iin <= numberOfIn; iin ++)
 							outValue += *in ++;
 						outValue /= numberOfIn;
 						*out ++ = outValue;
@@ -1110,7 +1110,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 					 * A version that doesn't trust that the stream callback will complete.
 					 */
 					double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-					long samplesPlayed = (long) floor (timeElapsed * my sampleRate);
+					integer samplesPlayed = (integer) floor (timeElapsed * my sampleRate);
 					if (samplesPlayed >= my numberOfSamples + my sampleRate / 20) {
 						my samplesPlayed = my numberOfSamples;
 						break;
@@ -1197,20 +1197,20 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 			 */
 			if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
 				int16_t *in = & my buffer [0], *out = & my buffer [0];
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					long in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					integer in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
 					*out ++ = (in1 + in2) / 2;
 					*out ++ = (in3 + in4) / 2;
 				}
 			} else {
 				int16_t *in = & my buffer [0], *out = & my buffer [0];
-				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-					for (long iout = 1; iout <= my numberOfChannels; iout ++) {
-						long outValue = 0;
-						long numberOfIn = numberOfChannels / my numberOfChannels;
+				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (integer iout = 1; iout <= my numberOfChannels; iout ++) {
+						integer outValue = 0;
+						integer numberOfIn = numberOfChannels / my numberOfChannels;
 						if (iout == my numberOfChannels)
 							numberOfIn += numberOfChannels % my numberOfChannels;
-						for (long iin = 1; iin <= numberOfIn; iin ++)
+						for (integer iin = 1; iin <= numberOfIn; iin ++)
 							outValue += *in ++;
 						outValue /= numberOfIn;
 						*out ++ = outValue;
@@ -1291,7 +1291,7 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 					if (my numberOfChannels == 1 && my val == 2) {
 						my fakeMono = true;
 						int16_t *newBuffer = NUMvector <int16_t> (0, 2 * numberOfSamples - 1);
-						for (long isamp = 0; isamp < numberOfSamples; isamp ++) {
+						for (integer isamp = 0; isamp < numberOfSamples; isamp ++) {
 							newBuffer [isamp + isamp] = newBuffer [isamp + isamp + 1] = buffer [isamp];
 						}
 						my buffer = newBuffer;
@@ -1394,20 +1394,20 @@ void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples,
 					 */
 					if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
 						int16_t *in = & my buffer [0], *out = & my buffer [0];
-						for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-							long in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
+						for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							integer in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
 							*out ++ = (in1 + in2) / 2;
 							*out ++ = (in3 + in4) / 2;
 						}
 					} else {
 						int16_t *in = & my buffer [0], *out = & my buffer [0];
-						for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
-							for (long iout = 1; iout <= my numberOfChannels; iout ++) {
-								long outValue = 0;
-								long numberOfIn = numberOfChannels / my numberOfChannels;
+						for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
+							for (integer iout = 1; iout <= my numberOfChannels; iout ++) {
+								integer outValue = 0;
+								integer numberOfIn = numberOfChannels / my numberOfChannels;
 								if (iout == my numberOfChannels)
 									numberOfIn += numberOfChannels % my numberOfChannels;
-								for (long iin = 1; iin <= numberOfIn; iin ++)
+								for (integer iin = 1; iin <= numberOfIn; iin ++)
 									outValue += *in ++;
 								outValue /= numberOfIn;
 								*out ++ = outValue;

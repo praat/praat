@@ -43,6 +43,7 @@ typedef int16_t int16;
 typedef int32_t int32;
 typedef int64_t int64;
 typedef intptr_t integer;   // the default size of an integer (a "long" is only 32 bits on 64-bit Windows)
+typedef long long_not_integer;   // for cases where we explicitly need the type "long", such as when printfing to %ld
 typedef uintptr_t uinteger;
 typedef uint8_t uint8;
 typedef uint16_t uint16;
@@ -397,7 +398,7 @@ kMelder_textOutputEncoding Melder_getOutputEncoding ();
  * these constants should stay separate from the above encoding constants
  * because they occur in the same fields of struct MelderFile.
  */
-const uint32 kMelder_textInputEncoding_FLAC = 0x464C4143;
+//const uint32 kMelder_textInputEncoding_FLAC = 0x464C4143;
 const uint32 kMelder_textOutputEncoding_ASCII = 0x41534349;
 const uint32 kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C415401;
 const uint32 kMelder_textOutputEncoding_FLAC = 0x464C4143;
@@ -420,9 +421,9 @@ size_t str32len_utf8  (const char32 *string, bool nativizeNewlines);
 size_t str32len_utf16 (const char32 *string, bool nativizeNewlines);
 
 extern "C" char32 * Melder_peek8to32 (const char *string);
-void Melder_8to32_inline (const char *source, char32 *target, int inputEncoding);
+void Melder_8to32_inline (const char *source, char32 *target, kMelder_textInputEncoding inputEncoding);
 	// errors: Text is not valid UTF-8.
-char32 * Melder_8to32 (const char *string, int inputEncoding);
+char32 * Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding);
 	// errors: Out of memory; Text is not valid UTF-8.
 char32 * Melder_8to32 (const char *string);
 	// errors: Out of memory; Text is not valid UTF-8.
@@ -481,7 +482,7 @@ struct structMelderFile {
 	char32 path [kMelder_MAXPATH+1];
 	enum class Format { none = 0, binary = 1, text = 2 } format;
 	bool openForReading, openForWriting, verbose, requiresCRLF;
-	unsigned long outputEncoding;
+	uint32 outputEncoding;
 	int indent;
 	struct FLAC__StreamEncoder *flacEncoder;
 };
@@ -540,7 +541,7 @@ const char32 * MelderFile_messageName (MelderFile file);   // calls Melder_peekE
 struct structMelderReadText {
 	char32 *string32, *readPointer32;
 	char *string8, *readPointer8;
-	unsigned long input8Encoding;
+	kMelder_textInputEncoding input8Encoding;
 };
 typedef struct structMelderReadText *MelderReadText;
 
@@ -789,7 +790,7 @@ double NUMbessel_i1_f (double x);
 double NUMbesselK (integer n, double x);   // preconditions: n >= 0 && x > 0.0
 double NUMbessel_k0_f (double x);
 double NUMbessel_k1_f (double x);
-double NUMbesselK_f (long n, double x);
+double NUMbesselK_f (integer n, double x);
 double NUMsigmoid (double x);   // correct also for large positive or negative x
 double NUMinvSigmoid (double x);
 double NUMerfcc (double x);
@@ -799,7 +800,7 @@ double NUMincompleteGammaP (double a, double x);
 double NUMincompleteGammaQ (double a, double x);
 double NUMchiSquareP (double chiSquare, double degreesOfFreedom);
 double NUMchiSquareQ (double chiSquare, double degreesOfFreedom);
-double NUMcombinations (long n, long k);
+double NUMcombinations (integer n, integer k);
 double NUMincompleteBeta (double a, double b, double x);   // incomplete beta function Ix(a,b). Preconditions: a, b > 0; 0 <= x <= 1
 double NUMbinomialP (double p, double k, double n);
 double NUMbinomialQ (double p, double k, double n);
@@ -825,12 +826,11 @@ double NUMerbToHertz (double erb);
 
 void NUMsort_d (integer n, double ra []);   // heap sort
 void NUMsort_i (integer n, int ra []);
-void NUMsort_l (integer n, long ra []);
 void NUMsort_integer (integer n, integer ra []);
 void NUMsort_str (integer n, char32 *a []);
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
 
-double NUMquantile (long n, double a [], double factor);
+double NUMquantile (integer n, double a [], double factor);
 /*
 	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
 	from which the set 'a [1..n]' is a sorted array of random samples.
@@ -848,7 +848,7 @@ double NUMquantile (long n, double a [], double factor);
 // Higher values than 2 yield a true sinc interpolation. Here are some examples:
 #define NUM_VALUE_INTERPOLATE_SINC70  70
 #define NUM_VALUE_INTERPOLATE_SINC700  700
-double NUM_interpolate_sinc (double y [], long nx, double x, long interpolationDepth);
+double NUM_interpolate_sinc (double y [], integer nx, double x, integer interpolationDepth);
 
 #define NUM_PEAK_INTERPOLATE_NONE  0
 #define NUM_PEAK_INTERPOLATE_PARABOLIC  1
@@ -856,9 +856,9 @@ double NUM_interpolate_sinc (double y [], long nx, double x, long interpolationD
 #define NUM_PEAK_INTERPOLATE_SINC70  3
 #define NUM_PEAK_INTERPOLATE_SINC700  4
 
-double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum);
-double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
-double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real);
+double NUMimproveExtremum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real, int isMaximum);
+double NUMimproveMaximum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real);
+double NUMimproveMinimum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real);
 
 void NUM_viterbi (
 	integer numberOfFrames, integer maxnCandidates,
@@ -878,7 +878,7 @@ void NUM_viterbi_multi (
 /********** Metrics (NUM.cpp) **********/
 
 int NUMrotationsPointInPolygon
-	(double x0, double y0, long n, double x [], double y []);
+	(double x0, double y0, integer n, double x [], double y []);
 /*
 	Returns the number of times that the closed polygon
 	(x [1], y [1]), (x [2], y [2]),..., (x [n], y [n]), (x [1], y [1]) encloses the point (x0, y0).
@@ -910,14 +910,14 @@ double NUMrandomPoisson (double mean);
 uint32 NUMhashString (const char32 *string);
 
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2);
-void NUMfilterSecondOrderSection_a (double x [], long n, double a1, double a2);
-void NUMfilterSecondOrderSection_fb (double x [], long n, double dt, double formant, double bandwidth);
+void NUMfilterSecondOrderSection_a (double x [], integer n, double a1, double a2);
+void NUMfilterSecondOrderSection_fb (double x [], integer n, double dt, double formant, double bandwidth);
 double NUMftopreemphasis (double f, double dt);
-void NUMpreemphasize_a (double x [], long n, double preemphasis);
-void NUMdeemphasize_a (double x [], long n, double preemphasis);
-void NUMpreemphasize_f (double x [], long n, double dt, double frequency);
-void NUMdeemphasize_f (double x [], long n, double dt, double frequency);
-void NUMautoscale (double x [], long n, double scale);
+void NUMpreemphasize_a (double x [], integer n, double preemphasis);
+void NUMdeemphasize_a (double x [], integer n, double preemphasis);
+void NUMpreemphasize_f (double x [], integer n, double dt, double frequency);
+void NUMdeemphasize_f (double x [], integer n, double dt, double frequency);
+void NUMautoscale (double x [], integer n, double scale);
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
 #define FUNCTION(type,storage)  \
@@ -984,7 +984,7 @@ void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound
 void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound);
 void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient);
 void NUMlinprog_run (NUMlinprog me);
-double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
+double NUMlinprog_getPrimalValue (NUMlinprog me, integer ivar);
 
 template <class T>
 T* NUMvector (integer from, integer to) {
@@ -1617,7 +1617,7 @@ void Melder_trace (const char *fileName, int lineNumber, const char *functionNam
 MelderFile MelderFile_open (MelderFile file);
 MelderFile MelderFile_append (MelderFile file);
 MelderFile MelderFile_create (MelderFile file);
-void * MelderFile_read (MelderFile file, long nbytes);
+void * MelderFile_read (MelderFile file, integer nbytes);
 char * MelderFile_readLine (MelderFile file);
 void MelderFile_writeCharacter (MelderFile file, wchar_t kar);
 void MelderFile_writeCharacter (MelderFile file, char32 kar);
@@ -1781,12 +1781,12 @@ bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, c
 		}
 */
 
-long Melder_countTokens (const char32 *string);
+integer Melder_countTokens (const char32 *string);
 char32 *Melder_firstToken (const char32 *string);
 char32 *Melder_nextToken ();
-char32 ** Melder_getTokens (const char32 *string, long *n);
+char32 ** Melder_getTokens (const char32 *string, integer *n);
 void Melder_freeTokens (char32 ***tokens);
-long Melder_searchToken (const char32 *string, char32 **tokens, long n);
+integer Melder_searchToken (const char32 *string, char32 **tokens, integer n);
 
 /********** MESSAGING ROUTINES **********/
 
@@ -2221,16 +2221,16 @@ void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker);   // for HP-UX
 bool MelderAudio_getUseInternalSpeaker ();
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity);
 enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity ();
-long MelderAudio_getOutputBestSampleRate (long fsamp);
+integer MelderAudio_getOutputBestSampleRate (integer fsamp);
 
 extern bool MelderAudio_isPlaying;
-void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
-	bool (*playCallback) (void *playClosure, long numberOfSamplesPlayed),   // return true to continue, false to stop
+void MelderAudio_play16 (int16_t *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
+	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed),   // return true to continue, false to stop
 	void *playClosure);
 bool MelderAudio_stopPlaying (bool isExplicit);   // returns true if sound was playing
 #define MelderAudio_IMPLICIT  false
 #define MelderAudio_EXPLICIT  true
-long MelderAudio_getSamplesPlayed ();
+integer MelderAudio_getSamplesPlayed ();
 bool MelderAudio_stopWasExplicit ();
 
 void Melder_audio_prefs ();   // in init file
@@ -2269,26 +2269,26 @@ const char32 * Melder_audioFileTypeString (int audioFileType);   // "AIFF", "AIF
 #define Melder_MPEG_COMPRESSION_24 19
 #define Melder_MPEG_COMPRESSION_32 20
 int Melder_defaultAudioFileEncoding (int audioFileType, int numberOfBitsPerSamplePoint);   /* BIG_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN */
-void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
-void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
-void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
+void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
+void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
+void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, integer *numberOfSamples);
+	double *sampleRate, integer *startOfData, integer *numberOfSamples);
 /* Returns information about a just opened audio file.
  * The return value is the audio file type, or 0 if it is not a sound file or in case of error.
  * The data start at 'startOfData' bytes from the start of the file.
  */
 int Melder_bytesPerSamplePoint (int encoding);
-void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double **buffer, long numberOfSamples);
+void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double **buffer, integer numberOfSamples);
 /* Reads channels into buffer [ichannel], which are base-1.
  */
-void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short *buffer, long numberOfSamples);
+void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short *buffer, integer numberOfSamples);
 /* If stereo, buffer will contain alternating left and right values.
  * Buffer is base-0.
  */
-void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, long numberOfSamples, int warnIfClipped);
-void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples);
+void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped);
+void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, integer numberOfSamples);
 
 /********** QUANTITY **********/
 
@@ -2440,7 +2440,7 @@ public:
 
 class autoMelderTokens {
 	char32 **tokens;
-	long numberOfTokens;
+	integer numberOfTokens;
 public:
 	autoMelderTokens () {
 		tokens = nullptr;
@@ -2450,23 +2450,23 @@ public:
 	}
 	~autoMelderTokens () {
 		if (tokens) {
-			for (long itoken = 1; itoken <= numberOfTokens; itoken ++)
+			for (integer itoken = 1; itoken <= numberOfTokens; itoken ++)
 				Melder_free (tokens [itoken]);
 			Melder_freeTokens (& tokens);
 		}
 	}
-	char32*& operator[] (long i) {
+	char32*& operator[] (integer i) {
 		return tokens [i];
 	}
 	char32 ** peek () const {
 		return tokens;
 	}
-	long count () const {
+	integer count () const {
 		return numberOfTokens;
 	}
 	void reset (const char32 *string) {
 		if (tokens) {
-			for (long itoken = 1; itoken <= numberOfTokens; itoken ++)
+			for (integer itoken = 1; itoken <= numberOfTokens; itoken ++)
 				Melder_free (tokens [itoken]);
 			Melder_freeTokens (& tokens);
 		}

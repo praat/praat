@@ -64,7 +64,7 @@
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (! our x != ! thy x) return false; \
 	if (our x) { \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			if (! Melder_equ (our x [i], thy x [i])) return false; \
 	}
 
@@ -82,15 +82,15 @@
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (! our x != ! thy x) return false; \
 	if (our x) { \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			if (! our x [i]. equal (& thy x [i])) return false; \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (! our x != ! thy x) return false; \
 	if (our x) { \
-		for (long i = row1; i <= row2; i ++) \
-			for (long j = col1; j <= col2; j ++) \
+		for (integer i = row1; i <= row2; i ++) \
+			for (integer j = col1; j <= col2; j ++) \
 				if (! our x [i] [j]. equal (& thy x [i] [j])) return false; \
 	}
 
@@ -98,7 +98,7 @@
 	if (! our x != ! thy x || (our x && ! Data_equal (our x.get(), thy x.get()))) return false;
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	for (long i = 1; i <= our x.size; i ++) { \
+	for (integer i = 1; i <= our x.size; i ++) { \
 		if (! our x.at [i] != ! thy x.at [i] || (our x.at [i] && ! Data_equal (our x.at [i], thy x.at [i]))) return false; \
 	}
 

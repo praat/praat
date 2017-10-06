@@ -2,7 +2,7 @@
 #define _ManPages_h_
 /* ManPages.h
  *
- * Copyright (C) 1996-2011,2015 Paul Boersma
+ * Copyright (C) 1996-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,20 +35,20 @@ Thing_define (ManPages, Daata) {
 
 autoManPages ManPages_create ();
 
-void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, long date,
+void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, integer date,
 	struct structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
 	and not change after adding them to the ManPages.
 */
 
-long ManPages_lookUp (ManPages me, const char32 *title);
+integer ManPages_lookUp (ManPages me, const char32 *title);
 
-void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
+void ManPages_writeOneToHtmlFile (ManPages me, integer ipage, MelderFile file);
 void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath);
 
-long ManPages_uniqueLinksHither (ManPages me, long ipage);
-const char32 **ManPages_getTitles (ManPages me, long *numberOfTitles);
+integer ManPages_uniqueLinksHither (ManPages me, integer ipage);
+const char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles);
 
 /* End of file ManPages.h */
 #endif

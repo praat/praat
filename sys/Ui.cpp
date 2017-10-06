@@ -277,14 +277,14 @@ static void UiField_widgetToValue (UiField me) {
 			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
-			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
+			integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
 			if (! selected) {
 				Melder_warning (U"No items selected.");
 				my integerValue = 1;
 			} else {
 				if (numberOfSelected > 1) Melder_warning (U"More than one item selected.");
 				my integerValue = selected [1];
-				NUMvector_free <long> (selected, 1);
+				NUMvector_free <integer> (selected, 1);
 			}
 			if (my integerVariable) *my integerVariable = my integerValue;
 			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
@@ -704,7 +704,7 @@ UiField UiForm_addChannel (UiForm me, integer *variable, const char32 *variableN
 static MelderString theFinishBuffer { };
 
 static void appendColon () {
-	long length = theFinishBuffer.length;
+	integer length = theFinishBuffer.length;
 	if (length < 1) return;
 	char32 lastCharacter = theFinishBuffer.string [length - 1];
 	if (lastCharacter == U':' || lastCharacter == U'?' || lastCharacter == U'.') return;
@@ -725,7 +725,7 @@ void UiForm_finish (UiForm me) {
 	/*
 		Compute height. Cannot leave this to the default geometry management system.
 	*/
-	for (long ifield = 1; ifield <= my numberOfFields; ifield ++ ) {
+	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++ ) {
 		UiField thee = my field [ifield], previous = my field [ifield - 1];
 		dialogHeight +=
 			ifield == 1 ? Gui_TOP_DIALOG_SPACING :
@@ -754,7 +754,7 @@ void UiForm_finish (UiForm me) {
 
 	form = my d_dialogForm;
 
-	for (long ifield = 1; ifield <= size; ifield ++) {
+	for (integer ifield = 1; ifield <= size; ifield ++) {
 		UiField field = my field [ifield];
 		y = field -> y;
 		switch (field -> type) {
@@ -816,7 +816,7 @@ void UiForm_finish (UiForm me) {
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				GuiRadioGroup_begin ();
-				for (long ibutton = 1; ibutton <= field -> options.size; ibutton ++) {
+				for (integer ibutton = 1; ibutton <= field -> options.size; ibutton ++) {
 					UiOption button = field -> options.at [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					button -> radioButton = GuiRadioButton_createShown (form,
@@ -838,7 +838,7 @@ void UiForm_finish (UiForm me) {
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				field -> optionMenu = GuiOptionMenu_createShown (form, fieldX, fieldX + fieldWidth, y, y + Gui_OPTIONMENU_HEIGHT, 0);
-				for (long ibutton = 1; ibutton <= field -> options.size; ibutton ++) {
+				for (integer ibutton = 1; ibutton <= field -> options.size; ibutton ++) {
 					UiOption button = field -> options.at [ibutton];
 					MelderString_copy (& theFinishBuffer, button -> name);
 					GuiOptionMenu_addOption (field -> optionMenu, theFinishBuffer.string);
@@ -861,14 +861,14 @@ void UiForm_finish (UiForm me) {
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				field -> list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
-				for (long i = 1; i <= field -> numberOfStrings; i ++) {
+				for (integer i = 1; i <= field -> numberOfStrings; i ++) {
 					GuiList_insertItem (field -> list, field -> strings [i], 0);
 				}
 				GuiThing_show (field -> list);
 			} break;
 		}
 	}
-	for (long ifield = 1; ifield <= my numberOfFields; ifield ++)
+	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++)
 		UiField_setDefault (my field [ifield]);
 	/*separator = XmCreateSeparatorGadget (column, "separator", nullptr, 0);*/
 	y = dialogHeight - Gui_BOTTOM_DIALOG_SPACING - Gui_PUSHBUTTON_HEIGHT;
@@ -877,7 +877,7 @@ void UiForm_finish (UiForm me) {
 			U"Help", gui_button_cb_help, me, 0);
 	}
 	bool commentsOnly = true;
-	for (long ifield = 1; ifield <= my numberOfFields; ifield ++) {
+	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		if (my field [ifield] -> type != UI_LABEL) {
 			commentsOnly = false;
 			break;
@@ -1212,7 +1212,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		} break; case UI_LIST: {
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"List argument \"", my name, U"\" should be a string, not ", Stackel_whichText(arg), U".");
-			long i = 1;
+			integer i = 1;
 			for (; i <= my numberOfStrings; i ++)
 				if (str32equ (arg -> string, my strings [i])) break;
 			if (i > my numberOfStrings)
@@ -1328,7 +1328,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
-			long i = 1;
+			integer i = 1;
 			for (; i <= my numberOfStrings; i ++)
 				if (str32equ (string, my strings [i])) break;
 			if (i > my numberOfStrings)
@@ -1515,8 +1515,8 @@ void UiForm_setIntegerAsString (UiForm me, integer *p_variable, const char32 *st
 				case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 					GuiText_setString (field -> text, stringValue);
 				} break; case UI_LIST: {
-					long i;
-					for (i = 1; i <= field -> numberOfStrings; i ++)
+					integer i = 1;
+					for (; i <= field -> numberOfStrings; i ++)
 						if (str32equ (stringValue, field -> strings [i])) break;
 					if (i > field -> numberOfStrings) i = 1;   // guard against incorrect prefs file
 					GuiList_selectItem (field -> list, i);
@@ -1670,7 +1670,7 @@ double UiForm_getReal_check (UiForm me, const char32 *fieldName) {
 	return 0.0;
 }
 
-long UiForm_getInteger (UiForm me, const char32 *fieldName) {
+integer UiForm_getInteger (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
 	if (! field) Melder_fatal (U"(UiForm_getInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
 	switch (field -> type) {
@@ -1685,7 +1685,7 @@ long UiForm_getInteger (UiForm me, const char32 *fieldName) {
 	return 0L;
 }
 
-long UiForm_getInteger_check (UiForm me, const char32 *fieldName) {
+integer UiForm_getInteger_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: case UI_RADIO:

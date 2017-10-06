@@ -24,7 +24,7 @@
 	#include "ManPages.h"
 #endif
 
-#define MAN_BEGIN(t,a,d)  { const char32 *title = t, *author = a; long date = d; \
+#define MAN_BEGIN(t,a,d)  { const char32 *title = t, *author = a; integer date = d; \
 	static struct structManPage_Paragraph page [] = {
 #define INTRO(text)  { kManPage_type::INTRO, text, 0.0, 0.0, nullptr },
 #define ENTRY(text)  { kManPage_type::ENTRY, text, 0.0, 0.0, nullptr },

@@ -64,13 +64,13 @@ void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *
 	*a2 = exp (- 2 * NUMpi * bandwidth * dt);
 }
 
-void NUMfilterSecondOrderSection_a (double x [], long n, double a1, double a2) {
+void NUMfilterSecondOrderSection_a (double x [], integer n, double a1, double a2) {
 	x [2] += a1 * x [1];
-	for (long i = 3; i <= n; i ++)
+	for (integer i = 3; i <= n; i ++)
 		x [i] += a1 * x [i - 1] - a2 * x [i - 2];
 }
 
-void NUMfilterSecondOrderSection_fb (double x [], long n, double dt, double formant, double bandwidth) {
+void NUMfilterSecondOrderSection_fb (double x [], integer n, double dt, double formant, double bandwidth) {
 	double a1, a2;
 	NUMfbtoa (formant, bandwidth, dt, & a1, & a2);
 	NUMfilterSecondOrderSection_a (x, n, a1, a2);
@@ -80,32 +80,31 @@ double NUMftopreemphasis (double f, double dt) {
 	return exp (- 2.0 * NUMpi * f * dt);
 }
 
-void NUMpreemphasize_a (double x [], long n, double preemphasis) {
-	for (long i = n; i >= 2; i --)
+void NUMpreemphasize_a (double x [], integer n, double preemphasis) {
+	for (integer i = n; i >= 2; i --)
 		x [i] -= preemphasis * x [i - 1];
 }
 
-void NUMdeemphasize_a (double x [], long n, double preemphasis) {
-	long i;
-	for (i = 2; i <= n; i ++)
+void NUMdeemphasize_a (double x [], integer n, double preemphasis) {
+	for (integer i = 2; i <= n; i ++)
 		x [i] += preemphasis * x [i - 1];
 }
 
-void NUMpreemphasize_f (double x [], long n, double dt, double frequency) {
+void NUMpreemphasize_f (double x [], integer n, double dt, double frequency) {
 	NUMpreemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
 }
 
-void NUMdeemphasize_f (double x [], long n, double dt, double frequency) {
+void NUMdeemphasize_f (double x [], integer n, double dt, double frequency) {
 	NUMdeemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
 }
 
-void NUMautoscale (double x [], long n, double scale) {
+void NUMautoscale (double x [], integer n, double scale) {
 	double maximum = 0.0;
-	for (long i = 1; i <= n; i ++)
+	for (integer i = 1; i <= n; i ++)
 		if (fabs (x [i]) > maximum) maximum = fabs (x [i]);
 	if (maximum > 0.0) {
 		double factor = scale / maximum;
-		for (long i = 1; i <= n; i ++)
+		for (integer i = 1; i <= n; i ++)
 			x [i] *= factor;
 	}
 }
@@ -266,7 +265,7 @@ double NUMbessel_k1_f (double x) {
 			 + t * (0.00325614 + t * (-0.00068245)))))));
 }
 
-double NUMbesselK_f (long n, double x) {
+double NUMbesselK_f (integer n, double x) {
 	double besselK = undefined;
 	Melder_assert (n >= 0 && x > 0);
 	double besselK_min2 = NUMbessel_k0_f (x);
@@ -278,7 +277,7 @@ double NUMbesselK_f (long n, double x) {
 	/*
 		Recursion formula.
 	*/
-	for (long i = 1; i < n; i ++) {
+	for (integer i = 1; i < n; i ++) {
 		besselK = besselK_min2 + twoByX * i * besselK_min1;
 		besselK_min2 = besselK_min1;
 		besselK_min1 = besselK;
@@ -289,7 +288,7 @@ double NUMbesselK_f (long n, double x) {
 
 double NUMbesselK (integer n, double x) {
 	gsl_sf_result result;
-	int status = gsl_sf_bessel_Kn_e (n, x, & result);
+	int status = gsl_sf_bessel_Kn_e ((int) n, x, & result);
 	return ( status == GSL_SUCCESS ? result. val : undefined );
 }
 
@@ -335,13 +334,12 @@ double NUMchiSquareQ (double chiSquare, double degreesOfFreedom) {
 	return NUMincompleteGammaQ (0.5 * degreesOfFreedom, 0.5 * chiSquare);
 }
 
-double NUMcombinations (long n, long k) {
-	double result = 1.0;
-	long i;
+double NUMcombinations (integer n, integer k) {
+	real80 result = 1.0;
 	if (k > n / 2) k = n - k;
-	for (i = 1; i <= k; i ++) result *= n - i + 1;
-	for (i = 2; i <= k; i ++) result /= i;
-	return result;
+	for (integer i = 1; i <= k; i ++) result *= n - i + 1;
+	for (integer i = 2; i <= k; i ++) result /= i;
+	return (real) result;
 }
 
 #define NUM_interpolate_simple_cases \
@@ -352,7 +350,7 @@ double NUMcombinations (long n, long k) {
 	/* 1 < x < nx && x not integer: interpolate. */ \
 	if (maxDepth > midright - 1) maxDepth = midright - 1; \
 	if (maxDepth > nx - midleft) maxDepth = nx - midleft; \
-	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST) return y [(long) floor (x + 0.5)]; \
+	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST) return y [(integer) floor (x + 0.5)]; \
 	if (maxDepth == NUM_VALUE_INTERPOLATE_LINEAR) return y [midleft] + (x - midleft) * (y [midright] - y [midleft]); \
 	if (maxDepth == NUM_VALUE_INTERPOLATE_CUBIC) { \
 		double yl = y [midleft], yr = y [midright]; \
@@ -362,8 +360,8 @@ double NUMcombinations (long n, long k) {
 	}
 
 #if defined (__POWERPC__)
-double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
-	long ix, midleft = floor (x), midright = midleft + 1, left, right;
+double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth) {
+	integer ix, midleft = floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa, cosaa, sinaa, cosdaa, sindaa;
 	NUM_interpolate_simple_cases
 	left = midright - maxDepth, right = midleft + maxDepth;
@@ -396,8 +394,8 @@ double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
 	return result;
 }
 #else
-double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
-	long ix, midleft = (long) floor (x), midright = midleft + 1, left, right;
+double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth) {
+	integer ix, midleft = (integer) floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa;
 	NUM_interpolate_simple_cases
 	left = midright - maxDepth, right = midleft + maxDepth;
@@ -433,7 +431,7 @@ double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
 struct improve_params {
 	int depth;
 	double *y;
-	long ixmax;
+	integer ixmax;
 	int isMaximum;
 };
 
@@ -443,7 +441,7 @@ static double improve_evaluate (double x, void *closure) {
 	return my isMaximum ? - y : y;
 }
 
-double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum) {
+double NUMimproveExtremum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real, int isMaximum) {
 	struct improve_params params;
 	double result;
 	if (ixmid <= 1) { *ixmid_real = 1; return y [1]; }
@@ -467,9 +465,9 @@ double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, do
 	return isMaximum ? - result : result;
 }
 
-double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real)
+double NUMimproveMaximum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real)
 	{ return NUMimproveExtremum (y, nx, ixmid, interpolation, ixmid_real, 1); }
-double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real)
+double NUMimproveMinimum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real)
 	{ return NUMimproveExtremum (y, nx, ixmid, interpolation, ixmid_real, 0); }
 
 /********** Viterbi **********/
@@ -619,11 +617,11 @@ void NUM_viterbi_multi (
 	NUM_viterbi (nframe, ncomb, getNumberOfCandidates_n, getLocalCost_n, getTransitionCost_n, putResult_n, & parm);
 }
 
-int NUMrotationsPointInPolygon (double x0, double y0, long n, double x [], double y []) {
-	long nup = 0, i;
+int NUMrotationsPointInPolygon (double x0, double y0, integer n, double x [], double y []) {
+	integer nup = 0, i;
 	int upold = y [n] > y0, upnew;
 	for (i = 1; i <= n; i ++) if ((upnew = y [i] > y0) != upold) {
-		long j = i == 1 ? n : i - 1;
+		integer j = i == 1 ? n : i - 1;
 		if (x0 < x [i] + (x [j] - x [i]) * (y0 - y [i]) / (y [j] - y [i])) {
 			if (upnew) nup ++; else nup --;
 		}

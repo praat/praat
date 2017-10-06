@@ -111,9 +111,9 @@ Thing_define (GraphicsScreen, Graphics) {
 
 	void v_destroy () noexcept
 		override;
-	void v_polyline (long numberOfPoints, double *xyDC, bool close)
+	void v_polyline (integer numberOfPoints, double *xyDC, bool close)
 		override;
-	void v_fillArea (long numberOfPoints, double *xyDC)
+	void v_fillArea (integer numberOfPoints, double *xyDC)
 		override;
 	void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC)
 		override;
@@ -161,9 +161,9 @@ Thing_define (GraphicsPostscript, Graphics) {
 
 	void v_destroy () noexcept
 		override;
-	void v_polyline (long numberOfPoints, double *xyDC, bool close)
+	void v_polyline (integer numberOfPoints, double *xyDC, bool close)
 		override;
-	void v_fillArea (long numberOfPoints, double *xyDC)
+	void v_fillArea (integer numberOfPoints, double *xyDC)
 		override;
 	void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC)
 		override;
@@ -185,10 +185,10 @@ Thing_define (GraphicsPostscript, Graphics) {
 
 /* Opcodes for recording. */
 
-double * _Graphics_check (Graphics me, long number);
+double * _Graphics_check (Graphics me, integer number);
 #define put(f)  * ++ p = (double) (f)
 #define op(opcode,number)  double *p = _Graphics_check (me, number); if (! p) return; put (opcode); put (number)
-#define mput(n,a)  { double *f = a; for (long l = 0; l < n; l ++) put (f [l]); }
+#define mput(n,a)  { double *f = a; for (integer l = 0; l < n; l ++) put (f [l]); }
 #define sput(s,l)  { put (l); strcpy ((char *) (p + 1), s); p += l; }
 
 /* When adding opcodes in the following list, add them at the end. */
@@ -214,7 +214,7 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 };
 
 void _GraphicsScreen_text_init (GraphicsScreen me);
-void _Graphics_fillRectangle (Graphics me, long x1DC, long x2DC, long y1DC, long y2DC);
+void _Graphics_fillRectangle (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);
 void _Graphics_setColour (Graphics me, Graphics_Colour colour);
 void _Graphics_setGrey (Graphics me, double grey);
 void _Graphics_colour_init (Graphics me);

@@ -489,7 +489,7 @@ static struct SoundPlay {
 	int16 *buffer;
 } thePlayingSound;
 
-static bool melderPlayCallback (void *closure, long samplesPlayed) {
+static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 	struct SoundPlay *me = (struct SoundPlay *) closure;
 	int phase = 2;
 	double t = samplesPlayed <= my silenceBefore ? my tmin :

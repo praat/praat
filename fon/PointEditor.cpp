@@ -179,7 +179,7 @@ void structPointEditor :: v_draw () {
 	}
 	Graphics_setColour (our graphics.get(), Graphics_BLUE);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, -1.0, +1.0);
-	for (long i = 1; i <= point -> nt; i ++) {
+	for (integer i = 1; i <= point -> nt; i ++) {
 		double t = point -> t [i];
 		if (t >= our startWindow && t <= our endWindow)
 			Graphics_line (our graphics.get(), t, -0.9, t, +0.9);

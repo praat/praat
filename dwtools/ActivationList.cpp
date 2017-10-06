@@ -1,6 +1,6 @@
 /* ActivationList.cpp
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012,2015 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20020315 GPL header
- djmw 20041203 Added _Activation_checkElements.
- djmw 20080122 float -> double
- djmw 20110304 Thing_new
- */
-
 #include "ActivationList.h"
 
 Thing_implement (ActivationList, Matrix, 2);
 
 int _ActivationList_checkElements (ActivationList me) {
-	for (long i = 1; i <= my ny; i++) {
-		for (long j = 1; j <= my nx; j++) {
-			if (my z[i][j] < 0.0 || my z[i][j] > 1) {
+	for (integer i = 1; i <= my ny; i ++) {
+		for (integer j = 1; j <= my nx; j ++) {
+			if (my z[i][j] < 0.0 || my z [i] [j] > 1.0) {
 				return 0;
 			}
 		}
@@ -38,11 +31,11 @@ int _ActivationList_checkElements (ActivationList me) {
 	return 1;
 }
 
-void ActivationList_init (ActivationList me, long ny, long nx) {
+void ActivationList_init (ActivationList me, integer ny, integer nx) {
 	Matrix_init (me, 1.0, nx, nx, 1.0, 1.0, 1.0, ny, ny, 1.0, 1.0);
 }
 
-autoActivationList ActivationList_create (long ny, long nx) {
+autoActivationList ActivationList_create (integer ny, integer nx) {
 	try {
 		autoActivationList me = Thing_new (ActivationList);
 		ActivationList_init (me.get(), ny, nx);

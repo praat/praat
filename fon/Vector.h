@@ -2,7 +2,7 @@
 #define _Vector_h_
 /* Vector.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,17 +26,17 @@
 Thing_define (Vector, Matrix) {
 	bool v_hasGetVector ()
 		override { return true; }
-	double v_getVector (long irow, long icol)
+	double v_getVector (integer irow, integer icol)
 		override;
 	bool v_hasGetFunction1 ()
 		override { return true; }
-	double v_getFunction1 (long irow, double x)
+	double v_getFunction1 (integer irow, double x)
 		override;
 	bool v_hasGetMatrix ()
 		override { return false; }
 	bool v_hasGetFunction2 ()
 		override { return false; }
-	double v_getValueAtSample (long isamp, long ilevel, int unit)
+	double v_getValueAtSample (integer isamp, integer ilevel, int unit)
 		override;
 };
 

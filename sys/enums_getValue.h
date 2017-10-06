@@ -29,7 +29,7 @@
 #define enums_alt(kType,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return kType::which;
 #define enums_end(kType,maximum,def) \
 	if (str32equ (testText, U"\t")) return kType::DEFAULT; \
-	if (str32equ (testText, U"\n")) return (kType) maximum; \
-	return (kType) -1; }
+	if (str32equ (testText, U"\n")) return kType::MAX; \
+	return kType::UNDEFINED; }
 
 /* End of file enums_getValue.h */

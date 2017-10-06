@@ -25,7 +25,7 @@ void structDelta :: v_destroy () noexcept {
 	Delta_Parent :: v_destroy ();
 }
 
-void Delta_init (Delta me, int numberOfTubes) {
+void Delta_init (Delta me, integer numberOfTubes) {
 	Melder_assert (numberOfTubes >= 1);
 	my numberOfTubes = numberOfTubes;
 	my tube = NUMvector <struct structDelta_Tube> (1, numberOfTubes);
@@ -35,7 +35,7 @@ void Delta_init (Delta me, int numberOfTubes) {
 	}
 }
 
-autoDelta Delta_create (int numberOfTubes) {
+autoDelta Delta_create (integer numberOfTubes) {
 	autoDelta me = Thing_new (Delta);
 	Delta_init (me.get(), numberOfTubes);
 	return me;

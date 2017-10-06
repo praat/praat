@@ -1,6 +1,6 @@
 /* ERP.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@
 
 Thing_implement (ERP, Sound, 2);
 
-long ERP_getChannelNumber (ERP me, const char32 *channelName) {
-	for (long ichan = 1; ichan <= my ny; ichan ++) {
+integer ERP_getChannelNumber (ERP me, const char32 *channelName) {
+	for (integer ichan = 1; ichan <= my ny; ichan ++) {
 		if (Melder_equ (my channelNames [ichan], channelName)) {
 			return ichan;
 		}
@@ -50,7 +50,7 @@ long ERP_getChannelNumber (ERP me, const char32 *channelName) {
 	return 0;
 }
 
-void ERP_drawChannel_number (ERP me, Graphics graphics, long channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish) {
+void ERP_drawChannel_number (ERP me, Graphics graphics, integer channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish) {
 	if (channelNumber < 1 || channelNumber > my ny) return;
 	/*
 	 * Automatic domain.
@@ -112,17 +112,17 @@ autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int
 	}
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeSampleNumbers + includeTime + my ny);
-		long icol = 0;
+		integer icol = 0;
 		if (includeSampleNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"sample");
 		if (includeTime) Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
-		for (long ichan = 1; ichan <= my ny; ichan ++) {
+		for (integer ichan = 1; ichan <= my ny; ichan ++) {
 			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (my channelNames [ichan], unitText));
 		}
-		for (long isamp = 1; isamp <= my nx; isamp ++) {
+		for (integer isamp = 1; isamp <= my nx; isamp ++) {
 			icol = 0;
 			if (includeSampleNumbers) Table_setNumericValue (thee.get(), isamp, ++ icol, isamp);
 			if (includeTime) Table_setStringValue (thee.get(), isamp, ++ icol, Melder_fixed (my x1 + (isamp - 1) * my dx, timeDecimals));
-			for (long ichan = 1; ichan <= my ny; ichan ++) {
+			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				Table_setStringValue (thee.get(), isamp, ++ icol, Melder_fixed (voltageScaling * my z [ichan] [isamp], voltageDecimals));
 			}
 		}

@@ -420,7 +420,7 @@ int64 Data_Description_integer (void *address, Data_Description description) {
 		case ubytewa:          return * (unsigned char *)    ((char *) address + description -> offset);
 		case uintwa:           return * (unsigned int *)     ((char *) address + description -> offset);
 		case uintegerwa:       return (int64) * (uinteger *) ((char *) address + description -> offset);   // ignore numbers above 2^63 - 1
-		case boolwa:           return * (bool *)             ((char *) address + description -> offset);
+		case questionwa:       return * (bool *)             ((char *) address + description -> offset);
 		case objectwa:         return (* (Collection *)      ((char *) address + description -> offset))->size;
 		case autoobjectwa:     return (* (Collection *)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
 		case collectionofwa:   return (  (Collection)        ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
@@ -430,7 +430,7 @@ int64 Data_Description_integer (void *address, Data_Description description) {
 }
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const char32 *formula, long *result)
+	const char32 *formula, integer *result)
 {
 	if (! formula) {   // this was a VECTOR_FROM array
 		*result = 1;

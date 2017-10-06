@@ -74,7 +74,7 @@ void Preferences_addUinteger (const char32 *string, uinteger *value, uinteger de
 	{ *value = defaultValue; Preferences_add (string, uintegerwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addBool (const char32 *string, bool *value, bool defaultValue)
-	{ *value = defaultValue; Preferences_add (string, boolwa, value, 0, 0, nullptr, nullptr); }
+	{ *value = defaultValue; Preferences_add (string, questionwa, value, 0, 0, nullptr, nullptr); }
 
 void Preferences_addDouble (const char32 *string, double *value, double defaultValue)
 	{ *value = defaultValue; Preferences_add (string, doublewa, value, 0, 0, nullptr, nullptr); }
@@ -130,10 +130,6 @@ void Preferences_read (MelderFile file) {
 					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
 				case uintegerwa: * (uinteger *) pref -> value =
 					strtoul (Melder_peek32to8 (value), nullptr, 10); break;
-				case boolwa: * (bool *) pref -> value =
-					str32nequ (value, U"yes", 3) ? true :
-					str32nequ (value, U"no", 2) ? false :
-					strtol (Melder_peek32to8 (value), nullptr, 10) != 0; break;
 				case doublewa: * (double *) pref -> value =
 					Melder_a8tof (Melder_peek32to8 (value)); break;
 				case stringwa: {
@@ -146,6 +142,10 @@ void Preferences_read (MelderFile file) {
 						intValue = pref -> getValue (U"\t");   // look for the default
 					* (int *) pref -> value = intValue; break;
 				}
+				case questionwa: * (bool *) pref -> value =
+					str32nequ (value, U"yes", 3) ? true :
+					str32nequ (value, U"no", 2) ? false :
+					strtol (Melder_peek32to8 (value), nullptr, 10) != 0; break;
 			}
 		}
 	} catch (MelderError) {
@@ -167,10 +167,10 @@ void Preferences_write (MelderFile file) {
 			case ubytewa:    MelderString_append (& buffer, (int) (* (unsigned char *)  pref -> value)); break;
 			case uintwa:     MelderString_append (& buffer,       (* (unsigned int *)   pref -> value)); break;
 			case uintegerwa: MelderString_append (& buffer,       (* (uinteger *)       pref -> value)); break;
-			case boolwa:     MelderString_append (& buffer,       (* (bool *)           pref -> value)); break;
 			case doublewa:   MelderString_append (& buffer,       (* (double *)         pref -> value)); break;
 			case stringwa:   MelderString_append (& buffer,         ((const char32 *)   pref -> value)); break;
 			case enumwa:     MelderString_append (& buffer,  pref -> getText (* (int *) pref -> value)); break;
+			case questionwa: MelderString_append (& buffer,       (* (bool *)           pref -> value)); break;
 		}
 		MelderString_appendCharacter (& buffer, U'\n');
 	}

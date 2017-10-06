@@ -53,7 +53,7 @@
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (our x) { \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			Melder_free (our x [i]); \
 		NUMvector_free <char32*> (our x, min); \
 	}
@@ -71,15 +71,15 @@
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (our x) { \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			our x [i]. destroy (); \
 		NUMvector_free <struct##Type> (our x, min); \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (our x) { \
-		for (long i = row1; i <= row2; i ++) \
-			for (long j = col1; j <= col2; j ++) \
+		for (integer i = row1; i <= row2; i ++) \
+			for (integer j = col1; j <= col2; j ++) \
 				our x [i] [j]. destroy (); \
 		NUMmatrix_free <struct##Type> (our x, row1, col1); \
 	}

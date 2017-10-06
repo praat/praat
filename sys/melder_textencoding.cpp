@@ -193,7 +193,7 @@ char32 * Melder_peek8to32 (const char *textA) {
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
-	unsigned long n = strlen (textA), i, j;
+	uinteger n = strlen (textA), i, j;
 	for (i = 0, j = 0; i <= n; i ++) {
 		char8 kar1 = (char8) textA [i];   // convert sign
 		if (kar1 <= 0x7F) {
@@ -328,43 +328,43 @@ char32 Melder_decodeWindowsLatin1 [256] = {
 	220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
-void Melder_8to32_inline (const char *string8, char32 *string32, int inputEncoding) {
+void Melder_8to32_inline (const char *string8, char32 *string32, kMelder_textInputEncoding inputEncoding) {
 	char32 *q = & string32 [0];
-	if (inputEncoding == 0) {
-		inputEncoding = (int) preferences. inputEncoding;
+	if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
+		inputEncoding = preferences. inputEncoding;
 		/*
 		 * In case the preferences weren't initialized yet, use the platform defaults:
 		 */
-		if (inputEncoding == 0) {
+		if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
 			#if defined (macintosh)
-				inputEncoding = (int) kMelder_textInputEncoding::UTF8_THEN_MACROMAN;
+				inputEncoding = kMelder_textInputEncoding::UTF8_THEN_MACROMAN;
 			#elif defined (_WIN32)
-				inputEncoding = (int) kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1;
+				inputEncoding = kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1;
 			#else
-				inputEncoding = (int) kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1;
+				inputEncoding = kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1;
 			#endif
 		}
 	}
-	if (inputEncoding == (int) kMelder_textInputEncoding::UTF8 ||
-		inputEncoding == (int) kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1 ||
-		inputEncoding == (int) kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1 ||
-		inputEncoding == (int) kMelder_textInputEncoding::UTF8_THEN_MACROMAN)
+	if (inputEncoding == kMelder_textInputEncoding::UTF8 ||
+		inputEncoding == kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1 ||
+		inputEncoding == kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1 ||
+		inputEncoding == kMelder_textInputEncoding::UTF8_THEN_MACROMAN)
 	{
 		if (Melder_str8IsValidUtf8 (string8)) {
-			inputEncoding = (int) kMelder_textInputEncoding::UTF8;
-		} else if (inputEncoding == (int) kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1) {
-			inputEncoding = (int) kMelder_textInputEncoding::ISO_LATIN1;
-		} else if (inputEncoding == (int) kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1) {
-			inputEncoding = (int) kMelder_textInputEncoding::WINDOWS_LATIN1;
-		} else if (inputEncoding == (int) kMelder_textInputEncoding::UTF8_THEN_MACROMAN) {
-			inputEncoding = (int) kMelder_textInputEncoding::MACROMAN;
+			inputEncoding = kMelder_textInputEncoding::UTF8;
+		} else if (inputEncoding == kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1) {
+			inputEncoding = kMelder_textInputEncoding::ISO_LATIN1;
+		} else if (inputEncoding == kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1) {
+			inputEncoding = kMelder_textInputEncoding::WINDOWS_LATIN1;
+		} else if (inputEncoding == kMelder_textInputEncoding::UTF8_THEN_MACROMAN) {
+			inputEncoding = kMelder_textInputEncoding::MACROMAN;
 		} else {
-			Melder_assert (inputEncoding == (int) kMelder_textInputEncoding::UTF8);
+			Melder_assert (inputEncoding == kMelder_textInputEncoding::UTF8);
 			Melder_throw (U"Text is not valid UTF-8; please try a different text input encoding.");
 		}
 	}
 	const char8 *p = (const char8 *) & string8 [0];
-	if (inputEncoding == (int) kMelder_textInputEncoding::UTF8) {
+	if (inputEncoding == kMelder_textInputEncoding::UTF8) {
 		while (*p != '\0') {
 			char32 kar1 = * p ++;   // convert up without sign extension
 			if (kar1 <= 0x00007F) {
@@ -381,26 +381,26 @@ void Melder_8to32_inline (const char *string8, char32 *string32, int inputEncodi
 				* q ++ = kar;
 			}
 		}
-	} else if (inputEncoding == (int) kMelder_textInputEncoding::ISO_LATIN1) {
+	} else if (inputEncoding == kMelder_textInputEncoding::ISO_LATIN1) {
 		while (*p != '\0') {
 			* q ++ = * p ++;
 		}
-	} else if (inputEncoding == (int) kMelder_textInputEncoding::WINDOWS_LATIN1) {
+	} else if (inputEncoding == kMelder_textInputEncoding::WINDOWS_LATIN1) {
 		while (*p != '\0') {
 			* q ++ = Melder_decodeWindowsLatin1 [* p ++];
 		}
-	} else if (inputEncoding == (int) kMelder_textInputEncoding::MACROMAN) {
+	} else if (inputEncoding == kMelder_textInputEncoding::MACROMAN) {
 		while (*p != '\0') {
 			* q ++ = Melder_decodeMacRoman [* p ++];
 		}
-	} else if (inputEncoding != (int) kMelder_textInputEncoding::UTF8) {
-		Melder_fatal (U"Unknown text input encoding ", inputEncoding, U".");
+	} else if (inputEncoding != kMelder_textInputEncoding::UTF8) {
+		Melder_fatal (U"Unknown text input encoding ", (int) inputEncoding, U".");
 	}
 	* q = U'\0';   // closing null character
 	(void) Melder_killReturns_inlineCHAR <char32> (string32);
 }
 
-char32 * Melder_8to32 (const char *string, int inputEncoding) {
+char32 * Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding) {
 	if (! string) return nullptr;
 	autostring32 result = Melder_malloc (char32, (int64) strlen (string) + 1);
 	Melder_8to32_inline (string, result.peek(), inputEncoding);
@@ -410,7 +410,7 @@ char32 * Melder_8to32 (const char *string, int inputEncoding) {
 char32 * Melder_8to32 (const char *string) {
 	if (! string) return nullptr;
 	autostring32 result = Melder_malloc (char32, (int64) strlen (string) + 1);
-	Melder_8to32_inline (string, result.peek(), (int) kMelder_textInputEncoding::UTF8);
+	Melder_8to32_inline (string, result.peek(), kMelder_textInputEncoding::UTF8);
 	return result.transfer();
 }
 

@@ -180,7 +180,7 @@ static void _LongSound_MP3_convertShorts (LongSound me, const MP3F_SAMPLE *chann
 	my compressedShorts += numberOfSamples * my numberOfChannels;
 }
 
-static void _LongSound_MP3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long numberOfSamples, void *void_me) {
+static void _LongSound_MP3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], integer numberOfSamples, void *void_me) {
 	iam (LongSound);
 	if (numberOfSamples > my compressedSamplesLeft)
 		numberOfSamples = my compressedSamplesLeft;
@@ -508,14 +508,14 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int cha
 }
 
 static struct LongSoundPlay {
-	long numberOfSamples, i1, i2, silenceBefore, silenceAfter;
+	integer numberOfSamples, i1, i2, silenceBefore, silenceAfter;
 	double tmin, tmax, dt, t1;
 	int16 *resampledBuffer;
 	Sound_PlayCallback callback;
 	Thing boss;
 } thePlayingLongSound;
 
-static bool melderPlayCallback (void *closure, long samplesPlayed) {
+static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 	struct LongSoundPlay *me = (struct LongSoundPlay *) closure;
 	int phase = 2;
 	double t = samplesPlayed <= my silenceBefore ? my tmin :
@@ -537,7 +537,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	Melder_free (thy resampledBuffer);   // just in case, and after playing has stopped
 	try {
-		int fits = LongSound_haveWindow (me, tmin, tmax);
+		bool fits = LongSound_haveWindow (me, tmin, tmax);
 		integer bestSampleRate = MelderAudio_getOutputBestSampleRate (my sampleRate), n, i1, i2;
 		if (! fits)
 			Melder_throw (U"Sound too long (", tmax - tmin, U" seconds).");
@@ -569,10 +569,10 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 				   thy numberOfSamples, my numberOfChannels, melderPlayCallback, thee);
 			}
 		} else {
-			long newSampleRate = bestSampleRate;
-			long newN = ((double) n * newSampleRate) / my sampleRate - 1;
-			long silenceBefore = (long) (newSampleRate * MelderAudio_getOutputSilenceBefore ());
-			long silenceAfter = (long) (newSampleRate * MelderAudio_getOutputSilenceAfter ());
+			integer newSampleRate = bestSampleRate;
+			integer newN = ((double) n * newSampleRate) / my sampleRate - 1;
+			integer silenceBefore = (long) (newSampleRate * MelderAudio_getOutputSilenceBefore ());
+			integer silenceAfter = (long) (newSampleRate * MelderAudio_getOutputSilenceAfter ());
 			int16 *resampledBuffer = Melder_calloc (int16, (silenceBefore + newN + silenceAfter) * my numberOfChannels);
 			int16 *from = my buffer + (i1 - my imin) * my numberOfChannels;   // guaranteed: from [0 .. (my imax - my imin + 1) * nchan]
 			double t1 = my x1, dt = 1.0 / newSampleRate;
@@ -585,7 +585,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			thy silenceAfter = silenceAfter;
 			thy resampledBuffer = resampledBuffer;
 			if (my numberOfChannels == 1) {
-				for (long i = 0; i < newN; i ++) {
+				for (integer i = 0; i < newN; i ++) {
 					double t = t1 + i * dt;   // from t1 to t1 + (newN-1) * dt
 					double index = (t - t1) * my sampleRate;   // from 0
 					long flore = index;   // DANGEROUS: Implicitly rounding down...
@@ -593,7 +593,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 					resampledBuffer [i + silenceBefore] = (1.0 - fraction) * from [flore] + fraction * from [flore + 1];
 				}
 			} else if (my numberOfChannels == 2) {
-				for (long i = 0; i < newN; i ++) {
+				for (integer i = 0; i < newN; i ++) {
 					double t = t1 + i * dt;
 					double index = (t - t1) * my sampleRate;
 					long flore = index;
@@ -603,13 +603,13 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 					resampledBuffer [ii + ii + 1] = (1.0 - fraction) * from [flore + flore + 1] + fraction * from [flore + flore + 3];
 				}
 			} else {
-				for (long i = 0; i < newN; i ++) {
+				for (integer i = 0; i < newN; i ++) {
 					double t = t1 + i * dt;
 					double index = (t - t1) * my sampleRate;
-					long flore = index;
+					integer flore = index;
 					double fraction = index - flore;
-					long ii = (i + silenceBefore) * my numberOfChannels;
-					for (long chan = 0; chan < my numberOfChannels; chan ++) {
+					integer ii = (i + silenceBefore) * my numberOfChannels;
+					for (integer chan = 0; chan < my numberOfChannels; chan ++) {
 						resampledBuffer [ii + chan] =
 							(1.0 - fraction) * from [flore * my numberOfChannels + chan] +
 							fraction * from [(flore + 1) * my numberOfChannels + chan];

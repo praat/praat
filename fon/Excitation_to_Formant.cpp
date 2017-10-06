@@ -20,27 +20,26 @@
 
 autoFormant Excitation_to_Formant (Excitation me, integer maximumNumberOfFormants) {
 	try {
-		long nfreq = my nx, nform = 0;
+		integer numberOfFrequencies = my nx, nform = 0;
 		double *p = my z [1];
 
-		autoFormant thee = Formant_create (0, 1, 1, 1, 0.5, maximumNumberOfFormants);
+		autoFormant thee = Formant_create (0.0, 1.0, 1, 1.0, 0.5, maximumNumberOfFormants);
 		thy d_frames [1]. formant = NUMvector <structFormant_Formant> (1, maximumNumberOfFormants);
-		for (long i = 2; i < nfreq; i ++)
+		for (integer i = 2; i < numberOfFrequencies; i ++)
 			if (p [i] > p [i - 1] && p [i] >= p [i + 1]) {
-				double min3phon, left, right;
 				double firstDerivative = p [i+1] - p [i-1], secondDerivative = 2 * p [i] - p [i-1] - p [i+1];
-				long j;
+				integer j;
 				Formant_Formant formant = & thy d_frames [1]. formant [++ nform];
 				formant -> frequency = Excitation_barkToHertz (
 					my x1 + my dx * (i - 1 + 0.5 * firstDerivative / secondDerivative));
-				min3phon = p [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative - 3.0;
+				double min3phon = p [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative - 3.0;
 				/* Search left. */
 				j = i - 1; while (p [j] > min3phon && j > 1) j --;
-				left = Excitation_barkToHertz (
+				double left = Excitation_barkToHertz (
 					p [j] > min3phon ? my xmin : my x1 + my dx * (j - 1 + (min3phon - p [j]) / (p [j + 1] - p [j])));
 				 /* Search right. */
-				j = i + 1; while (p [j] > min3phon && j < nfreq) j ++;
-				right = Excitation_barkToHertz (
+				j = i + 1; while (p [j] > min3phon && j < numberOfFrequencies) j ++;
+				double right = Excitation_barkToHertz (
 					p [j] > min3phon ? my xmax : my x1 + my dx * (j - 1 - (min3phon - p [j]) / (p [j - 1] - p [j])));
 				formant -> bandwidth = right - left;
 				if (nform == thy maxnFormants) break;

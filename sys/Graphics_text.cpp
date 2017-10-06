@@ -823,12 +823,12 @@ static void exitText (void *void_me) {
 
 #define MAX_LINK_LENGTH  300
 
-static long bufferSize;
+static integer bufferSize;
 static _Graphics_widechar *theWidechar;
 static char32 *charCodes;
 static int initBuffer (const char32 *txt) {
 	try {
-		long sizeNeeded = str32len (txt) + 1;
+		integer sizeNeeded = str32len (txt) + 1;
 		if (sizeNeeded > bufferSize) {
 			sizeNeeded += sizeNeeded / 2 + 100;
 			Melder_free (theWidechar);
@@ -1447,8 +1447,8 @@ double Graphics_textWidth (Graphics me, const char32 *txt) {
 void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, const char32 *txt) {
 	_Graphics_widechar *plc, *startOfLine;
 	double width = 0.0, lineHeight = (1.1 / 72) * my fontSize * my resolution;
-	long x1DC = x1 * my scaleX + my deltaX + 2, x2DC = x2 * my scaleX + my deltaX - 2;
-	long y1DC = y1 * my scaleY + my deltaY, y2DC = y2 * my scaleY + my deltaY;
+	integer x1DC = x1 * my scaleX + my deltaX + 2, x2DC = x2 * my scaleX + my deltaX - 2;
+	integer y1DC = y1 * my scaleY + my deltaY, y2DC = y2 * my scaleY + my deltaY;
 	int availableHeight = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC, availableWidth = x2DC - x1DC;
 	int linesAvailable = availableHeight / lineHeight, linesNeeded = 1, lines, iline;
 	if (linesAvailable <= 0) linesAvailable = 1;
@@ -1505,7 +1505,7 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 static void _Graphics_text (Graphics me, double xWC, double yWC, const char32 *txt) {
 	if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {
 		double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
-		long numberOfLines = 1;
+		integer numberOfLines = 1;
 		for (const char32 *p = & txt [0]; *p != U'\0'; p ++) {
 			if (*p == U'\n') {
 				numberOfLines ++;

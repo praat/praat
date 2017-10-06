@@ -57,7 +57,7 @@ oo_DEFINE_CLASS (SampledXY, Sampled)
 			override { return dy; }
 		bool v_hasGetY ()
 			override { return true; }
-		double v_getY (long iy)
+		double v_getY (integer iy)
 			override { return y1 + (iy - 1) * dy; }
 	#endif
 

@@ -146,10 +146,10 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 static void updateVerticalScrollBar (HyperPage me);
 
 void HyperPage_any (HyperPage me, const char32 *text, kGraphics_font font, int size, int style, double minFooterDistance,
-	double x, double secondIndent, double topSpacing, double bottomSpacing, unsigned long method)
+	double x, double secondIndent, double topSpacing, double bottomSpacing, uint32 method)
 {
 	if (my rightMargin == 0) return;   // no infinite heights please
-	double heightGuess = size * (1.2/72) * ((long) size * str32len (text) / (int) (my rightMargin * 150));
+	double heightGuess = size * (1.2/72) * ((integer) size * str32len (text) / (int) (my rightMargin * 150));
 
 if (! my printing) {
 	Graphics_Link *paragraphLinks;
@@ -394,7 +394,7 @@ if (! my printing) {
 		Graphics_setFontSize (my graphics.get(), size);
 		my d_x = true_width_inches > my rightMargin ? 0.0 : 0.5 * (my rightMargin - true_width_inches);
 		Graphics_setWrapWidth (my graphics.get(), 0.0);
-		long x1DCold, x2DCold, y1DCold, y2DCold;
+		integer x1DCold, x2DCold, y1DCold, y2DCold;
 		Graphics_inqWsViewport (my graphics.get(), & x1DCold, & x2DCold, & y1DCold, & y2DCold);
 		double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
 		Graphics_inqWsWindow (my graphics.get(), & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
@@ -422,7 +422,7 @@ if (! my printing) {
 
 			Graphics_setViewport (my graphics.get(), theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 			Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
-			long x1DC, y1DC, x2DC, y2DC;
+			integer x1DC, y1DC, x2DC, y2DC;
 			Graphics_WCtoDC (my graphics.get(), 0.0, 0.0, & x1DC, & y2DC);
 			Graphics_WCtoDC (my graphics.get(), 1.0, 1.0, & x2DC, & y1DC);
 			Graphics_resetWsViewport (my graphics.get(), x1DC, x2DC, y1DC, y2DC);
@@ -457,8 +457,8 @@ if (! my printing) {
 			Graphics_setSpeckleSize (my graphics.get(), 1.0);
 			Graphics_setColour (my graphics.get(), Graphics_BLACK);
 			/*Graphics_Link *paragraphLinks;
-			long numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
-			if (my links) for (long ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
+			integer numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
+			if (my links) for (integer ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
 				autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
 					paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
 					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
@@ -491,7 +491,7 @@ if (! my printing) {
 	my d_x = 3.7 - 0.5 * true_width_inches;
 	if (my d_x < 0) my d_x = 0;
 	Graphics_setWrapWidth (my ps, 0);
-	long x1DCold, x2DCold, y1DCold, y2DCold;
+	integer x1DCold, x2DCold, y1DCold, y2DCold;
 	Graphics_inqWsViewport (my ps, & x1DCold, & x2DCold, & y1DCold, & y2DCold);
 	double x1NDCold, x2NDCold, y1NDCold, y2NDCold;
 	Graphics_inqWsWindow (my ps, & x1NDCold, & x2NDCold, & y1NDCold, & y2NDCold);
@@ -519,10 +519,10 @@ if (! my printing) {
 
 		Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setWindow (my ps, 0.0, 1.0, 0.0, 1.0);
-		long x1DC, y1DC, x2DC, y2DC;
+		integer x1DC, y1DC, x2DC, y2DC;
 		Graphics_WCtoDC (my ps, 0.0, 0.0, & x1DC, & y2DC);
 		Graphics_WCtoDC (my ps, 1.0, 1.0, & x2DC, & y1DC);
-		long shift = (long) (Graphics_getResolution (my ps) * true_height_inches) + (y1DCold - y2DCold);
+		integer shift = (integer) (Graphics_getResolution (my ps) * true_height_inches) + (y1DCold - y2DCold);
 		#if cocoa
 			shift = 0;   // this is a FIX
 		#endif
@@ -614,7 +614,7 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 
 static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent event) {
 	if (! my graphics) return;   // could be the case in the very beginning
-	for (long ilink = 1; ilink <= my links.size; ilink ++) {
+	for (integer ilink = 1; ilink <= my links.size; ilink ++) {
 		HyperLink link = my links.at [ilink];
 		if (! link)
 			Melder_fatal (U"gui_drawingarea_cb_click: empty link ", ilink, U"/", my links.size, U".");
@@ -877,7 +877,7 @@ static void gui_button_cb_previousPage (HyperPage me, GuiButtonEvent /* event */
 }
 
 static void gui_button_cb_nextPage (HyperPage me, GuiButtonEvent /* event */) {
-	long currentPageNumber = my v_getCurrentPageNumber ();
+	integer currentPageNumber = my v_getCurrentPageNumber ();
 	HyperPage_goToPage_i (me, currentPageNumber < my v_getNumberOfPages () ? currentPageNumber + 1 : 1);
 }
 
@@ -962,7 +962,7 @@ int HyperPage_goToPage (HyperPage me, const char32 *title) {
 	return 1;	
 }
 
-void HyperPage_goToPage_i (HyperPage me, long i) {
+void HyperPage_goToPage_i (HyperPage me, integer i) {
 	my v_goToPage_i (i);   // catch -> HyperPage_clear (me); ?
 	my top = 0;
 	HyperPage_clear (me);

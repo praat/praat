@@ -694,14 +694,14 @@ struct SortedSetOfIntOf : SortedSetOf <T> {
 };
 
 
-#pragma mark - class SortedSetOfLong
+#pragma mark - class SortedSetOfInteger
 
-template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleLong)>
-struct SortedSetOfLongOf : SortedSetOf <T> {
-	SortedSetOfLongOf () {
+template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleInteger)>
+struct SortedSetOfIntegerOf : SortedSetOf <T> {
+	SortedSetOfIntegerOf () {
 	}
-	SortedSetOfLongOf<T>&& move () noexcept { return static_cast <SortedSetOfLongOf<T>&&> (*this); }
-	static int s_compareHook (SimpleLong me, SimpleLong thee) noexcept {
+	SortedSetOfIntegerOf<T>&& move () noexcept { return static_cast <SortedSetOfIntegerOf<T>&&> (*this); }
+	static int s_compareHook (SimpleInteger me, SimpleInteger thee) noexcept {
 		if (my number < thy number) return -1;
 		if (my number > thy number) return +1;
 		return 0;

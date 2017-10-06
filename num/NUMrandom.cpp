@@ -366,7 +366,7 @@ double NUMrandomPoisson (double mean) {
 	if (mean < 8.0) {
 		static double expMean;
 		double product = 1.0;
-		long result = -1;
+		integer result = -1;
 		if (mean != previousMean) {
 			previousMean = mean;
 			expMean = exp (- mean);

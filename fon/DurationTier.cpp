@@ -1,6 +1,6 @@
 /* DurationTier.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
 autoDurationTier PointProcess_upto_DurationTier (PointProcess me) {
 	try {
 		autoDurationTier thee = DurationTier_create (my xmin, my xmax);
-		for (long i = 1; i <= my nt; i ++) {
+		for (integer i = 1; i <= my nt; i ++) {
 			RealTier_addPoint (thee.get(), my t [i], 1.0);
 		}
 		return thee;

@@ -79,7 +79,16 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	oo_DOUBLE (d_pitchRange)
 	// 1/2: output phonemes in espeak/IPA notation
 	oo_INT (d_outputPhonemeCoding)
-	oo_BOOL (d_estimateWordsPerMinute)
+
+	#if oo_READING_TEXT
+		if (formatVersion < 1) {
+			oo_INT (d_estimateWordsPerMinute)   // this used to be oo_BOOL, which was written in text as 0 or 1, which is inappropriate for boolean text
+		} else {
+			oo_QUESTION (d_estimateWordsPerMinute)
+		}
+	#else
+		oo_QUESTION (d_estimateWordsPerMinute)
+	#endif
 
 	#if !oo_READING && !oo_WRITING
 		// Filled by the call back

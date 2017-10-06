@@ -64,7 +64,7 @@ oo_DEFINE_CLASS (Formant, Sampled)
 			override;
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
-		double v_getValueAtSample (long iframe, long which, int units)
+		double v_getValueAtSample (integer iframe, integer which, int units)
 			override;
 	#endif
 

@@ -108,7 +108,7 @@ static GuiList praatList_objects;
 
 /***** selection *****/
 
-long praat_idOfSelected (ClassInfo klas, int inplace) {
+integer praat_idOfSelected (ClassInfo klas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
@@ -154,7 +154,7 @@ char32 * praat_nameOfSelected (ClassInfo klas, int inplace) {
 
 int praat_numberOfSelected (ClassInfo klas) {
 	if (! klas) return theCurrentPraatObjects -> totalSelection;
-	long readableClassId = klas -> sequentialUniqueIdOfReadableClass;
+	integer readableClassId = klas -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", klas -> className, U".");
 	return theCurrentPraatObjects -> numberOfSelected [readableClassId];
 }
@@ -163,7 +163,7 @@ void praat_deselect (int IOBJECT) {
 	if (! SELECTED) return;
 	SELECTED = false;
 	theCurrentPraatObjects -> totalSelection -= 1;
-	long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
+	integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	Melder_assert (readableClassId != 0);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
@@ -181,7 +181,7 @@ void praat_select (int IOBJECT) {
 	theCurrentPraatObjects -> totalSelection += 1;
 	Thing object = theCurrentPraatObjects -> list [IOBJECT]. object;
 	Melder_assert (object);
-	long readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
+	integer readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", object -> classInfo -> className, U".");
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] += 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
@@ -307,7 +307,7 @@ void praat_cleanUpName (char32 *name) {
 /***** objects + commands *****/
 
 static void praat_new_unpackCollection (autoCollection me, const char32* myName) {
-	for (long idata = 1; idata <= my size; idata ++) {
+	for (integer idata = 1; idata <= my size; idata ++) {
 		autoDaata object = autoDaata ((Daata) my at [idata]);
 		my at [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
 		const char32 *name = object -> name ? object -> name : myName;
@@ -429,18 +429,18 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 	bool first = true;
 	WHERE (SELECTED) {
 		SELECTED = false;
-		long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
+		integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 		theCurrentPraatObjects -> numberOfSelected [readableClassId] --;
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
 	theCurrentPraatObjects -> totalSelection = 0;
-	long numberOfSelected;
-	long *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
+	integer numberOfSelected;
+	integer *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
 	if (selected) {
-		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
+		for (integer iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
 			SELECTED = true;
-			long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
+			integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
 			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
 			UiHistory_write (first ? U"\nselectObject: \"" : U"\nplusObject: \"");
@@ -449,7 +449,7 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 			first = false;
 			theCurrentPraatObjects -> totalSelection += 1;
 		}
-		NUMvector_free <long> (selected, 1);
+		NUMvector_free (selected, 1);
 	}
 	praat_show ();
 }
@@ -525,7 +525,7 @@ static void praat_exit (int exit_code) {
 					 * which owns the pid (this means sendpraat can only send to the latest Praat if more than one are open).
 					 */
 					autofile f = Melder_fopen (& pidFile, "r");
-					long pid;
+					long_not_integer pid;
 					if (fscanf (f, "%ld", & pid) < 1) throw MelderError ();
 					f.close (& pidFile);
 					if (pid == getpid ()) {   // is the pid in the pid file equal to our pid?
@@ -683,9 +683,9 @@ int praat_installEditorN (Editor editor, DaataList objects) {
 	 * First check whether all objects in the Ordered are also in the List of Objects (Praat crashes if not),
 	 * and check whether there is room to add an editor for each.
 	 */
-	for (long iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
+	for (integer iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
 		Daata object = objects->at [iOrderedObject];
-		long iPraatObject = 1;
+		integer iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
 				int ieditor = 0;
@@ -706,9 +706,9 @@ int praat_installEditorN (Editor editor, DaataList objects) {
 	/*
 	 * There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
 	 */
-	for (long iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
+	for (integer iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
 		Daata object = objects->at [iOrderedObject];
-		long iPraatObject = 1;
+		integer iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
 				int ieditor = 0;
@@ -843,7 +843,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 				Melder_clearError ();
 				return true;   // OK
 			}
-			long pid = 0;
+			long_not_integer pid = 0;
 			int narg = fscanf (f, "#%ld", & pid);
 			f.close (& messageFile);
 			{// scope
@@ -1259,7 +1259,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 			 */
 			try {
 				autofile f = Melder_fopen (& pidFile, "w");
-				fprintf (f, "%ld", (long) getpid ());
+				fprintf (f, "%ld", (long_not_integer) getpid ());
 				f.close (& pidFile);
 			} catch (MelderError) {
 				Melder_clearError ();
@@ -1366,9 +1366,9 @@ void praat_init (const char32 *title, int argc, char **argv)
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
 				#if ALLOW_GDK_DRAWING
-					fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window)));
+					fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window)));
 				#else
-					fprintf (f, " %ld", (long) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
+					fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
 				#endif
 				f.close (& pidFile);
 			} catch (MelderError) {
@@ -1507,7 +1507,7 @@ void praat_run () {
 		try {
 			autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
 			if (directoryNames -> numberOfStrings > 0) {
-				for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
+				for (integer i = 1; i <= directoryNames -> numberOfStrings; i ++) {
 					structMelderDir pluginDir { };
 					structMelderFile plugin { };
 					MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);

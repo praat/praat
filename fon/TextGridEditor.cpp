@@ -562,7 +562,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			/*
 			 * Divide up the label text into left, mid and right, depending on where the text selection is.
 			 */
-			long left, right;
+			integer left, right;
 			char32 *text = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 			bool wholeTextIsSelected = right - left == str32len (text);
 			rightNewInterval = TextInterval_create (t2, interval -> xmax, text + right);
@@ -871,7 +871,7 @@ static void findInTier (TextGridEditor me) {
 
 static void do_find (TextGridEditor me) {
 	if (my findString) {
-		long left, right;
+		integer left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		char32 *position = str32str (label.peek() + right, my findString);   // CRLF BUG?
 		if (position) {
@@ -947,7 +947,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 
 static void menu_cb_CheckSpelling (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my spellingChecker) {
-		long left, right;
+		integer left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		integer position = right;
 		char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.peek(), & position);
@@ -961,7 +961,7 @@ static void menu_cb_CheckSpelling (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_CheckSpellingInInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (my spellingChecker) {
-		long left, right;
+		integer left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		integer position = right;
 		char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.peek(), & position);
@@ -1318,7 +1318,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	#else
 		bool platformUsesAntiAliasing = false;
 	#endif
-	long x1DC, x2DC, yDC;
+	integer x1DC, x2DC, yDC;
 	int selectedInterval = itier == my selectedTier ? getSelectedInterval (me) : 0, iinterval, ninterval = tier -> intervals.size;
 	Graphics_WCtoDC (my graphics.get(), my startWindow, 0.0, & x1DC, & yDC);
 	Graphics_WCtoDC (my graphics.get(), my endWindow, 0.0, & x2DC, & yDC);
@@ -2059,7 +2059,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	const char32 *character = characters [rowNumber-1] [columnNumber-1];
 	character += str32len (character) - 1;
 	if (our text) {
-		long first = 0, last = 0;
+		integer first = 0, last = 0;
 		char32 *oldText = GuiText_getStringAndSelectionPosition (our text, & first, & last);
 		static MelderString newText { };
 		MelderString_empty (& newText);

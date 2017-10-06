@@ -56,7 +56,7 @@ void structFormant :: v_info () {
 	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
-double structFormant :: v_getValueAtSample (long iframe, long which, int units) {
+double structFormant :: v_getValueAtSample (integer iframe, integer which, int units) {
 	Formant_Frame frame = & d_frames [iframe];
 	long iformant = which >> 1;
 	if (iformant < 1 || iformant > frame -> nFormants) return undefined;

@@ -668,7 +668,7 @@ static void Formula_lexan () {
 					U_RIGHT_GUILLEMET U" in formula "
 					U"(variables start with lower case; object names contain an underscore).");
 			} else if (str32nequ (token.string, U"Object_", 7)) {
-				long uniqueID = Melder_atoi (token.string + 7);
+				integer uniqueID = Melder_atoi (token.string + 7);
 				int i = theCurrentPraatObjects -> n;
 				while (i > 0 && uniqueID != theCurrentPraatObjects -> list [i]. id)
 					i --;
@@ -2459,7 +2459,7 @@ inline static void nummat_multiplyByScalar (nummat x, real factor) {
 }
 inline static autonumvec add_numvec (numvec x, real addend) {
 	autonumvec result (x.size, false);
-	for (long i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] + addend;
 	}
 	return result;
@@ -2548,7 +2548,7 @@ static void do_add () {
 				i.e.
 				result# [i] = x# [i] + y# [i]
 			*/
-			long nx = x->numericVector.size, ny = y->numericVector.size;
+			integer nx = x->numericVector.size, ny = y->numericVector.size;
 			if (nx != ny) {
 				/*@praat
 					#
@@ -2627,8 +2627,8 @@ static void do_add () {
 				i.e.
 				result## [i, j] = x## [i, j] + y## [i, j]
 			*/
-			long xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
-			long ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
+			integer xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
+			integer ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
 			if (xnrow != ynrow)
 				Melder_throw (U"When adding matrices, their numbers of rows should be equal, instead of ", xnrow, U" and ", ynrow, U".");
 			if (xncol != yncol)
@@ -2668,7 +2668,7 @@ static void do_add () {
 		/*
 			result$ = x$ + y$
 		*/
-		long length1 = str32len (x->string), length2 = str32len (y->string);
+		integer length1 = str32len (x->string), length2 = str32len (y->string);
 		char32 *result = Melder_malloc (char32, length1 + length2 + 1);
 		str32cpy (result, x->string);
 		str32cpy (result + length1, y->string);
@@ -2809,7 +2809,7 @@ static void do_sub () {
 				i.e.
 				result# [i] = x# [i] - y# [i]
 			*/
-			long nx = x->numericVector.size, ny = y->numericVector.size;
+			integer nx = x->numericVector.size, ny = y->numericVector.size;
 			if (nx != ny)
 				Melder_throw (U"When subtracting vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
 			if (x -> owned) {
@@ -2843,8 +2843,8 @@ static void do_sub () {
 	}
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		if (y->which == Stackel_NUMERIC_MATRIX) {
-			long xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
-			long ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
+			integer xnrow = x->numericMatrix.nrow, xncol = x->numericMatrix.ncol;
+			integer ynrow = y->numericMatrix.nrow, yncol = y->numericMatrix.ncol;
 			if (xnrow != ynrow)
 				Melder_throw (U"When subtracting matrices, their numbers of rows should be equal, instead of ", xnrow, U" and ", ynrow, U".");
 			if (xncol != yncol)
@@ -2915,9 +2915,9 @@ static void do_mul () {
 				moveNumericVector (y, x);
 				w ++;
 			} else {
-				long ny = y->numericVector.size;
+				integer ny = y->numericVector.size;
 				autonumvec result { ny, false };
-				for (long i = 1; i <= ny; i ++) {
+				for (integer i = 1; i <= ny; i ++) {
 					double yvalue = y->numericVector [i];
 					result [i] = xvalue * yvalue;
 				}
@@ -2935,10 +2935,10 @@ static void do_mul () {
 				moveNumericMatrix (y, x);
 				w ++;
 			} else {
-				long nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
+				integer nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
 				autonummat result (nrow, ncol, false);
-				for (long irow = 1; irow <= nrow; irow ++) {
-					for (long icol = 1; icol <= ncol; icol ++) {
+				for (integer irow = 1; irow <= nrow; irow ++) {
+					for (integer icol = 1; icol <= ncol; icol ++) {
 						double yvalue = y->numericMatrix [irow] [icol];
 						result [irow] [icol] = xvalue * yvalue;
 					}
@@ -2952,11 +2952,11 @@ static void do_mul () {
 		/*
 			result# = x# * y#
 		*/
-		long nx = x->numericVector.size, ny = y->numericVector.size;
+		integer nx = x->numericVector.size, ny = y->numericVector.size;
 		if (nx != ny)
 			Melder_throw (U"When multiplying vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
 		autonumvec result { nx, false };
-		for (long i = 1; i <= nx; i ++) {
+		for (integer i = 1; i <= nx; i ++) {
 			double xvalue = x->numericVector [i];
 			double yvalue = y->numericVector [i];
 			result [i] = xvalue * yvalue;
@@ -2974,11 +2974,11 @@ static void do_rdiv () {
 	}
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		if (y->which == Stackel_NUMERIC_VECTOR) {
-			long nelem1 = x->numericVector.size, nelem2 = y->numericVector.size;
+			integer nelem1 = x->numericVector.size, nelem2 = y->numericVector.size;
 			if (nelem1 != nelem2)
 				Melder_throw (U"When dividing vectors, their numbers of elements should be equal, instead of ", nelem1, U" and ", nelem2, U".");
 			autonumvec result { nelem1, false };
-			for (long ielem = 1; ielem <= nelem1; ielem ++)
+			for (integer ielem = 1; ielem <= nelem1; ielem ++)
 				result [ielem] = x->numericVector [ielem] / y->numericVector [ielem];
 			pushNumericVector (result.move());
 			return;
@@ -2987,13 +2987,13 @@ static void do_rdiv () {
 			/*
 				result# = x# / y
 			*/
-			long xn = x->numericVector.size;
+			integer xn = x->numericVector.size;
 			autonumvec result { xn, false };
 			double yvalue = y->number;
 			if (yvalue == 0.0) {
 				Melder_throw (U"Cannot divide (/) ", Stackel_whichText (x), U" by zero.");
 			} else {
-				for (long i = 1; i <= xn; i ++) {
+				for (integer i = 1; i <= xn; i ++) {
 					double xvalue = x->numericVector [i];
 					result [i] = xvalue / yvalue;
 				}
@@ -3082,23 +3082,23 @@ static void do_softmax () {
 			x->numericVector = copy_numvec (x->numericVector). releaseToAmbiguousOwner();   // TODO: no need to copy
 			x->owned = true;
 		}
-		long nelm = x->numericVector.size;
+		integer nelm = x->numericVector.size;
 		double maximum = -1e308;
-		for (long i = 1; i <= nelm; i ++) {
+		for (integer i = 1; i <= nelm; i ++) {
 			if (x->numericVector [i] > maximum) {
 				maximum = x->numericVector [i];
 			}
 		}
-		for (long i = 1; i <= nelm; i ++) {
+		for (integer i = 1; i <= nelm; i ++) {
 			x->numericVector [i] -= maximum;
 		}
-		double sum = 0.0;
-		for (long i = 1; i <= nelm; i ++) {
+		real80 sum = 0.0;
+		for (integer i = 1; i <= nelm; i ++) {
 			x->numericVector [i] = exp (x->numericVector [i]);
 			sum += x->numericVector [i];
 		}
-		for (long i = 1; i <= nelm; i ++) {
-			x->numericVector [i] /= sum;
+		for (integer i = 1; i <= nelm; i ++) {
+			x->numericVector [i] /= (real) sum;
 		}
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -3148,9 +3148,9 @@ static void do_rectify () {
 static void do_rectify_numvec () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long nelm = x->numericVector.size;
+		integer nelm = x->numericVector.size;
 		autonumvec result { nelm, false };
-		for (long i = 1; i <= nelm; i ++) {
+		for (integer i = 1; i <= nelm; i ++) {
 			double xvalue = x->numericVector [i];
 			result [i] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
 		}
@@ -3229,9 +3229,9 @@ static void do_exp () {
 static void do_exp_numvec () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		long nelm = x->numericVector.size;
+		integer nelm = x->numericVector.size;
 		autonumvec result (nelm, false);
-		for (long i = 1; i <= nelm; i ++) {
+		for (integer i = 1; i <= nelm; i ++) {
 			result [i] = exp (x->numericVector [i]);
 		}
 		pushNumericVector (result.move());
@@ -3242,10 +3242,10 @@ static void do_exp_numvec () {
 static void do_exp_nummat () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
-		long nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
+		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
 		autonummat result (nrow, ncol, false);
-		for (long irow = 1; irow <= nrow; irow ++) {
-			for (long icol = 1; icol <= ncol; icol ++) {
+		for (integer irow = 1; irow <= nrow; irow ++) {
+			for (integer icol = 1; icol <= ncol; icol ++) {
 				result [irow] [icol] = exp (x->numericMatrix [irow] [icol]);
 			}
 		}
@@ -3354,9 +3354,9 @@ static void do_function_dd_d_numvec (double (*f) (double, double)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_VECTOR && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long numberOfElements = a->numericVector.size;
+		integer numberOfElements = a->numericVector.size;
 		autonumvec newData (numberOfElements, false);
-		for (long ielem = 1; ielem <= numberOfElements; ielem ++) {
+		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (x->number, y->number);
 		}
 		pushNumericVector (newData.move());
@@ -3373,11 +3373,11 @@ static void do_function_dd_d_nummat (double (*f) (double, double)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long numberOfRows = a->numericMatrix.nrow;
-		long numberOfColumns = a->numericMatrix.ncol;
+		integer numberOfRows = a->numericMatrix.nrow;
+		integer numberOfColumns = a->numericMatrix.ncol;
 		autonummat newData (numberOfRows, numberOfColumns, false);
-		for (long irow = 1; irow <= numberOfRows; irow ++) {
-			for (long icol = 1; icol <= numberOfColumns; icol ++) {
+		for (integer irow = 1; irow <= numberOfRows; irow ++) {
+			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 				newData [irow] [icol] = f (x->number, y->number);
 			}
 		}
@@ -3395,9 +3395,9 @@ static void do_function_ll_l_numvec (integer (*f) (integer, integer)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_VECTOR && x->which == Stackel_NUMBER) {
-		long numberOfElements = a->numericVector.size;
+		integer numberOfElements = a->numericVector.size;
 		autonumvec newData (numberOfElements, false);
-		for (long ielem = 1; ielem <= numberOfElements; ielem ++) {
+		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (lround (x->number), lround (y->number));
 		}
 		pushNumericVector (newData.move());
@@ -3414,11 +3414,11 @@ static void do_function_ll_l_nummat (integer (*f) (integer, integer)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long numberOfRows = a->numericMatrix.nrow;
-		long numberOfColumns = a->numericMatrix.ncol;
+		integer numberOfRows = a->numericMatrix.nrow;
+		integer numberOfColumns = a->numericMatrix.ncol;
 		autonummat newData (numberOfRows, numberOfColumns, false);
-		for (long irow = 1; irow <= numberOfRows; irow ++) {
-			for (long icol = 1; icol <= numberOfColumns; icol ++) {
+		for (integer irow = 1; irow <= numberOfRows; irow ++) {
+			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 				newData [irow] [icol] = f (lround (x->number), lround (y->number));
 			}
 		}
@@ -3639,17 +3639,17 @@ static void shared_do_writeInfo (int numberOfArguments) {
 		} else if (arg->which == Stackel_STRING) {
 			MelderInfo_write (arg->string);
 		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
-			long numberOfElements = arg->numericVector.size;
+			integer numberOfElements = arg->numericVector.size;
 			double *data = arg->numericVector.at;
-			for (long i = 1; i <= numberOfElements; i ++) {
+			for (integer i = 1; i <= numberOfElements; i ++) {
 				MelderInfo_write (data [i], i == numberOfElements ? U"" : U" ");
 			}
 		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
-			long numberOfRows = arg->numericMatrix.nrow;
-			long numberOfColumns = arg->numericMatrix.ncol;
+			integer numberOfRows = arg->numericMatrix.nrow;
+			integer numberOfColumns = arg->numericMatrix.ncol;
 			double **data = arg->numericMatrix.at;
-			for (long irow = 1; irow <= numberOfRows; irow ++) {
-				for (long icol = 1; icol <= numberOfRows; icol ++) {
+			for (integer irow = 1; irow <= numberOfRows; irow ++) {
+				for (integer icol = 1; icol <= numberOfRows; icol ++) {
 					MelderInfo_write (data [irow] [icol], icol == numberOfColumns ? U"" : U" ");
 				}
 				MelderInfo_write (irow == numberOfRows ? U"" : U"\n");
@@ -4009,10 +4009,10 @@ static void do_imax () {
 	} else if (last->which == Stackel_NUMERIC_VECTOR) {
 		if (n->number != 1)
 			Melder_throw (U"The function \"imax\" requires exactly one vector argument.");
-		long numberOfElements = last->numericVector.size;
-		long result = 1;
+		integer numberOfElements = last->numericVector.size;
+		integer result = 1;
 		double maximum = last->numericVector [1];
-		for (long i = 2; i <= numberOfElements; i ++) {
+		for (integer i = 2; i <= numberOfElements; i ++) {
 			if (last->numericVector [i] > maximum) {
 				result = i;
 				maximum = last->numericVector [i];
@@ -4120,11 +4120,11 @@ static void do_linearNumvec () {
 		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) has to be a number, not ", Stackel_whichText (stack_numberOfSteps), U".");
 	if (isundef (stack_numberOfSteps -> number))
 		Melder_throw (U"Undefined number of steps in the function \"linear#\" (third argument).");
-	long numberOfSteps = lround (stack_numberOfSteps -> number);
+	integer numberOfSteps = lround (stack_numberOfSteps -> number);
 	if (numberOfSteps <= 0)
 		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) has to be positive, not ", numberOfSteps, U".");
 	autonumvec result { numberOfSteps, false };
-	for (long ielem = 1; ielem <= numberOfSteps; ielem ++) {
+	for (integer ielem = 1; ielem <= numberOfSteps; ielem ++) {
 		result [ielem] = excludeEdges ?
 			minimum + (ielem - 0.5) * (maximum - minimum) / numberOfSteps :
 			minimum + (ielem - 1) * (maximum - minimum) / (numberOfSteps - 1);
@@ -4235,7 +4235,7 @@ static void do_hash () {
 
 static void do_numericVectorElement () {
 	InterpreterVariable vector = parse [programPointer]. content.variable;
-	long element = 1;   // default
+	integer element = 1;   // default
 	Stackel r = pop;
 	if (r -> which != Stackel_NUMBER)
 		Melder_throw (U"In vector indexing, the index has to be a number, not ", Stackel_whichText (r), U".");
@@ -4250,7 +4250,7 @@ static void do_numericVectorElement () {
 }
 static void do_numericMatrixElement () {
 	InterpreterVariable matrix = parse [programPointer]. content.variable;
-	long row = 1, column = 1;   // default
+	integer row = 1, column = 1;   // default
 	Stackel c = pop;
 	if (c -> which != Stackel_NUMBER)
 		Melder_throw (U"In matrix indexing, the column index has to be a number, not ", Stackel_whichText (c), U".");
@@ -4370,8 +4370,8 @@ static void do_leftStr () {
 	if (narg->number == 1 || narg->number == 2) {
 		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
 		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
-			long newlength = x ? lround (x->number) : 1;
-			long length = str32len (s->string);
+			integer newlength = x ? lround (x->number) : 1;
+			integer length = str32len (s->string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
 			#if 0
@@ -4396,8 +4396,8 @@ static void do_rightStr () {
 	if (narg->number == 1 || narg->number == 2) {
 		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
 		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
-			long newlength = x ? lround (x->number) : 1;
-			long length = str32len (s->string);
+			integer newlength = x ? lround (x->number) : 1;
+			integer length = str32len (s->string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
 			pushString (Melder_dup (s->string + length - newlength));
@@ -4413,9 +4413,9 @@ static void do_midStr () {
 	if (narg->number == 2 || narg->number == 3) {
 		Stackel y = ( narg->number == 3 ? pop : nullptr ), x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == nullptr || y->which == Stackel_NUMBER)) {
-			long newlength = y ? lround (y->number) : 1;
-			long start = lround (x->number);
-			long length = str32len (s->string), finish = start + newlength - 1;
+			integer newlength = y ? lround (y->number) : 1;
+			integer start = lround (x->number);
+			integer length = str32len (s->string), finish = start + newlength - 1;
 			autostring32 result;
 			if (start < 1) start = 1;
 			if (finish > length) finish = length;
@@ -4438,7 +4438,7 @@ static void do_midStr () {
 static void do_unicodeToBackslashTrigraphsStr () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		long length = str32len (s->string);
+		integer length = str32len (s->string);
 		autostring32 trigraphs = Melder_calloc (char32, 3 * length + 1);
 		Longchar_genericize32 (s->string, trigraphs.peek());
 		pushString (trigraphs.transfer());
@@ -4449,7 +4449,7 @@ static void do_unicodeToBackslashTrigraphsStr () {
 static void do_backslashTrigraphsToUnicodeStr () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		long length = str32len (s->string);
+		integer length = str32len (s->string);
 		//autostring32 unicode = Melder_calloc (char32, length + 1);
 		//Longchar_nativize32 (s->string, unicode.peek(), false);
 		//pushString (unicode.transfer());
@@ -4475,7 +4475,7 @@ static void do_index () {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		char32 *substring = str32str (s->string, t->string);
-		long result = substring ? substring - s->string + 1 : 0;
+		integer result = substring ? substring - s->string + 1 : 0;
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"index\" requires two strings, not ",
@@ -4487,7 +4487,7 @@ static void do_rindex () {
 	if (whole->which == Stackel_STRING && part->which == Stackel_STRING) {
 		char32 *lastSubstring = str32str (whole->string, part->string);
 		if (part->string [0] == '\0') {
-			long result = str32len (whole->string);
+			integer result = str32len (whole->string);
 			pushNumber (result);
 		} else if (lastSubstring) {
 			for (;;) {
@@ -4616,7 +4616,7 @@ static void do_extractTextStr (bool singleWord) {
 		if (! substring) {
 			result.reset (Melder_dup (U""));
 		} else {
-			long length;
+			integer length;
 			/* Skip the prompt. */
 			substring += str32len (t->string);
 			if (singleWord) {
@@ -4644,7 +4644,7 @@ static void do_extractTextStr (bool singleWord) {
 }
 static void do_selected () {
 	Stackel n = pop;
-	long result = 0;
+	integer result = 0;
 	if (n->number == 0) {
 		result = praat_idOfSelected (nullptr, 0);
 	} else if (n->number == 1) {
@@ -4731,7 +4731,7 @@ static void do_selectedStr () {
 #endif
 static void do_numberOfSelected () {
 	Stackel n = pop;
-	long result = 0;
+	integer result = 0;
 	if (n->number == 0) {
 		result = praat_numberOfSelected (nullptr);
 	} else if (n->number == 1) {
@@ -5079,7 +5079,7 @@ static void do_object_rowstr () {
 		Daata data = OBJECT;
 		if (data -> v_hasGetRowStr ()) {
 			if (index -> which == Stackel_NUMBER) {
-				long number = lround (index->number);
+				integer number = lround (index->number);
 				autostring32 result = Melder_dup (data -> v_getRowStr (number));
 				if (! result.peek())
 					Melder_throw (U"Row index out of bounds.");
@@ -5094,7 +5094,7 @@ static void do_object_rowstr () {
 		Daata data = object -> object;
 		if (data -> v_hasGetRowStr ()) {
 			if (index -> which == Stackel_NUMBER) {
-				long number = lround (index->number);
+				integer number = lround (index->number);
 				autostring32 result = Melder_dup (data -> v_getRowStr (number));
 				if (! result.peek())
 					Melder_throw (U"Row index out of bounds.");
@@ -5118,7 +5118,7 @@ static void do_object_colstr () {
 		Daata data = OBJECT;
 		if (data -> v_hasGetColStr ()) {
 			if (index -> which == Stackel_NUMBER) {
-				long number = lround (index->number);
+				integer number = lround (index->number);
 				autostring32 result = Melder_dup (data -> v_getColStr (number));
 				if (! result.peek())
 					Melder_throw (U"Column index out of bounds.");
@@ -5133,7 +5133,7 @@ static void do_object_colstr () {
 		Daata data = object -> object;
 		if (data -> v_hasGetColStr ()) {
 			if (index -> which == Stackel_NUMBER) {
-				long number = lround (index->number);
+				integer number = lround (index->number);
 				autostring32 result = Melder_dup (data -> v_getColStr (number));
 				if (! result.peek())
 					Melder_throw (U"Column index out of bounds.");
@@ -5248,10 +5248,10 @@ static void do_readFileStr () {
 static void do_numericVectorLiteral () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
-	long numberOfElements = lround (n->number);
+	integer numberOfElements = lround (n->number);
 	Melder_assert (numberOfElements > 0);
 	autonumvec result { numberOfElements, false };
-	for (long ielement = numberOfElements; ielement > 0; ielement --) {
+	for (integer ielement = numberOfElements; ielement > 0; ielement --) {
 		Stackel e = pop;
 		if (e->which != Stackel_NUMBER)
 			Melder_throw (U"Vector element has to be a number, not ", Stackel_whichText (e));
@@ -5301,7 +5301,7 @@ static void do_mulNumvec () {
 		/*
 			result# = mul# (x##, y#)
 		*/
-		long xNcol = x->numericMatrix.ncol, ySize = y->numericVector.size;
+		integer xNcol = x->numericMatrix.ncol, ySize = y->numericVector.size;
 		if (ySize != xNcol)
 			Melder_throw (U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
 				"not ", xNcol, U" and ", ySize);
@@ -5314,11 +5314,11 @@ static void do_mulNumvec () {
 static void do_repeatNumvec () {
 	Stackel n = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && n->which == Stackel_NUMBER) {
-		long n_old = x->numericVector.size;
-		long times = lround (n->number);
+		integer n_old = x->numericVector.size;
+		integer times = lround (n->number);
 		autonumvec result { n_old * times, false };
-		for (long i = 1; i <= times; i ++) {
-			for (long j = 1; j <= n_old; j ++) {
+		for (integer i = 1; i <= times; i ++) {
+			for (integer j = 1; j <= n_old; j ++) {
 				result [(i - 1) * n_old + j] = x->numericVector [j];
 			}
 		}
@@ -5815,8 +5815,8 @@ static void do_demoExtraControlKeyPressed () {
 	bool result = Demo_extraControlKeyPressed ();
 	pushNumber (result);
 }
-static long Stackel_getRowNumber (Stackel row, Daata thee) {
-	long result = 0;
+static integer Stackel_getRowNumber (Stackel row, Daata thee) {
+	integer result = 0;
 	if (row->which == Stackel_NUMBER) {
 		result = lround (row->number);
 	} else if (row->which == Stackel_STRING) {
@@ -5830,8 +5830,8 @@ static long Stackel_getRowNumber (Stackel row, Daata thee) {
 	}
 	return result;
 }
-static long Stackel_getColumnNumber (Stackel column, Daata thee) {
-	long result = 0;
+static integer Stackel_getColumnNumber (Stackel column, Daata thee) {
+	integer result = 0;
 	if (column->which == Stackel_NUMBER) {
 		result = lround (column->number);
 	} else if (column->which == Stackel_STRING) {
@@ -5845,7 +5845,7 @@ static long Stackel_getColumnNumber (Stackel column, Daata thee) {
 	}
 	return result;
 }
-static void do_self0 (long irow, long icol) {
+static void do_self0 (integer irow, integer icol) {
 	Daata me = theSource;
 	if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
 	if (my v_hasGetCell ()) {
@@ -5877,7 +5877,7 @@ static void do_self0 (long irow, long icol) {
 		Melder_throw (Thing_className (me), U" objects (like self) accept no [] indexing.");
 	}
 }
-static void do_selfStr0 (long irow, long icol) {
+static void do_selfStr0 (integer irow, integer icol) {
 	Daata me = theSource;
 	if (! me) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
 	if (my v_hasGetCellStr ()) {
@@ -5936,7 +5936,7 @@ static void do_toObject () {
 	}
 	pushObject (thee);
 }
-static void do_objectCell0 (long irow, long icol) {
+static void do_objectCell0 (integer irow, integer icol) {
 	Stackel object = pop;
 	Daata thee = object->object;
 	if (thy v_hasGetCell ()) {
@@ -5967,7 +5967,7 @@ static void do_objectCell0 (long irow, long icol) {
 		Melder_throw (Thing_className (thee), U" objects accept no [] indexing.");
 	}
 }
-static void do_matriks0 (long irow, long icol) {
+static void do_matriks0 (integer irow, integer icol) {
 	Daata thee = parse [programPointer]. content.object;
 	if (thy v_hasGetCell ()) {
 		pushNumber (thy v_getCell ());
@@ -5997,11 +5997,11 @@ static void do_matriks0 (long irow, long icol) {
 		Melder_throw (Thing_className (thee), U" objects accept no [] indexing.");
 	}
 }
-static void do_selfMatriks1 (long irow) {
+static void do_selfMatriks1 (integer irow) {
 	Daata me = theSource;
 	Stackel column = pop;
 	if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
-	long icol = Stackel_getColumnNumber (column, me);
+	integer icol = Stackel_getColumnNumber (column, me);
 	if (my v_hasGetVector ()) {
 		pushNumber (my v_getVector (irow, icol));
 	} else if (my v_hasGetMatrix ()) {
@@ -6016,11 +6016,11 @@ static void do_selfMatriks1 (long irow) {
 		Melder_throw (Thing_className (me), U" objects (like self) accept no [column] indexes.");
 	}
 }
-static void do_selfMatriksStr1 (long irow) {
+static void do_selfMatriksStr1 (integer irow) {
 	Daata me = theSource;
 	Stackel column = pop;
 	if (! me) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
-	long icol = Stackel_getColumnNumber (column, me);
+	integer icol = Stackel_getColumnNumber (column, me);
 	if (my v_hasGetVectorStr ()) {
 		autostring32 result = Melder_dup (my v_getVectorStr (icol));
 		pushString (result.transfer());
@@ -6037,10 +6037,10 @@ static void do_selfMatriksStr1 (long irow) {
 		Melder_throw (Thing_className (me), U" objects (like self) accept no [column] indexes.");
 	}
 }
-static void do_objectCell1 (long irow) {
+static void do_objectCell1 (integer irow) {
 	Stackel column = pop, object = pop;
 	Daata thee = object->object;
-	long icol = Stackel_getColumnNumber (column, thee);
+	integer icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVector ()) {
 		pushNumber (thy v_getVector (irow, icol));
 	} else if (thy v_hasGetMatrix ()) {
@@ -6055,10 +6055,10 @@ static void do_objectCell1 (long irow) {
 		Melder_throw (Thing_className (thee), U" objects accept no [column] indexes.");
 	}
 }
-static void do_matriks1 (long irow) {
+static void do_matriks1 (integer irow) {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop;
-	long icol = Stackel_getColumnNumber (column, thee);
+	integer icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVector ()) {
 		pushNumber (thy v_getVector (irow, icol));
 	} else if (thy v_hasGetMatrix ()) {
@@ -6073,10 +6073,10 @@ static void do_matriks1 (long irow) {
 		Melder_throw (Thing_className (thee), U" objects accept no [column] indexes.");
 	}
 }
-static void do_objectCellStr1 (long irow) {
+static void do_objectCellStr1 (integer irow) {
 	Stackel column = pop, object = pop;
 	Daata thee = object->object;
-	long icol = Stackel_getColumnNumber (column, thee);
+	integer icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVectorStr ()) {
 		autostring32 result = Melder_dup (thy v_getVectorStr (icol));
 		pushString (result.transfer());
@@ -6093,10 +6093,10 @@ static void do_objectCellStr1 (long irow) {
 		Melder_throw (Thing_className (thee), U" objects accept no [column] indexes for string cells.");
 	}
 }
-static void do_matrixStr1 (long irow) {
+static void do_matrixStr1 (integer irow) {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop;
-	long icol = Stackel_getColumnNumber (column, thee);
+	integer icol = Stackel_getColumnNumber (column, thee);
 	if (thy v_hasGetVectorStr ()) {
 		autostring32 result = Melder_dup (thy v_getVectorStr (icol));
 		pushString (result.transfer());
@@ -6117,8 +6117,8 @@ static void do_selfMatriks2 () {
 	Daata me = theSource;
 	Stackel column = pop, row = pop;
 	if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
-	long irow = Stackel_getRowNumber (row, me);
-	long icol = Stackel_getColumnNumber (column, me);
+	integer irow = Stackel_getRowNumber (row, me);
+	integer icol = Stackel_getColumnNumber (column, me);
 	if (! my v_hasGetMatrix ())
 		Melder_throw (Thing_className (me), U" objects like \"self\" accept no [row, column] indexing.");
 	pushNumber (my v_getMatrix (irow, icol));
@@ -6127,8 +6127,8 @@ static void do_selfMatriksStr2 () {
 	Daata me = theSource;
 	Stackel column = pop, row = pop;
 	if (! me) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
-	long irow = Stackel_getRowNumber (row, me);
-	long icol = Stackel_getColumnNumber (column, me);
+	integer irow = Stackel_getRowNumber (row, me);
+	integer icol = Stackel_getColumnNumber (column, me);
 	if (! my v_hasGetMatrixStr ())
 		Melder_throw (Thing_className (me), U" objects like \"self$\" accept no [row, column] indexing for string cells.");
 	autostring32 result = Melder_dup (my v_getMatrixStr (irow, icol));
@@ -6137,8 +6137,8 @@ static void do_selfMatriksStr2 () {
 static void do_objectCell2 () {
 	Stackel column = pop, row = pop, object = pop;
 	Daata thee = object->object;
-	long irow = Stackel_getRowNumber (row, thee);
-	long icol = Stackel_getColumnNumber (column, thee);
+	integer irow = Stackel_getRowNumber (row, thee);
+	integer icol = Stackel_getColumnNumber (column, thee);
 	if (! thy v_hasGetMatrix ())
 		Melder_throw (Thing_className (thee), U" objects accept no [id, row, column] indexing.");
 	pushNumber (thy v_getMatrix (irow, icol));
@@ -6146,8 +6146,8 @@ static void do_objectCell2 () {
 static void do_matriks2 () {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
-	long irow = Stackel_getRowNumber (row, thee);
-	long icol = Stackel_getColumnNumber (column, thee);
+	integer irow = Stackel_getRowNumber (row, thee);
+	integer icol = Stackel_getColumnNumber (column, thee);
 	if (! thy v_hasGetMatrix ())
 		Melder_throw (Thing_className (thee), U" objects accept no [row, column] indexing.");
 	pushNumber (thy v_getMatrix (irow, icol));
@@ -6155,8 +6155,8 @@ static void do_matriks2 () {
 static void do_objectCellStr2 () {
 	Stackel column = pop, row = pop, object = pop;
 	Daata thee = object->object;
-	long irow = Stackel_getRowNumber (row, thee);
-	long icol = Stackel_getColumnNumber (column, thee);
+	integer irow = Stackel_getRowNumber (row, thee);
+	integer icol = Stackel_getColumnNumber (column, thee);
 	if (! thy v_hasGetMatrixStr ())
 		Melder_throw (Thing_className (thee), U" objects accept no [id, row, column] indexing for string cells.");
 	autostring32 result = Melder_dup (thy v_getMatrixStr (irow, icol));
@@ -6165,14 +6165,14 @@ static void do_objectCellStr2 () {
 static void do_matriksStr2 () {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
-	long irow = Stackel_getRowNumber (row, thee);
-	long icol = Stackel_getColumnNumber (column, thee);
+	integer irow = Stackel_getRowNumber (row, thee);
+	integer icol = Stackel_getColumnNumber (column, thee);
 	if (! thy v_hasGetMatrixStr ())
 		Melder_throw (Thing_className (thee), U" objects accept no [row, column] indexing for string cells.");
 	autostring32 result = Melder_dup (thy v_getMatrixStr (irow, icol));
 	pushString (result.transfer());
 }
-static void do_objectLocation0 (long irow, long icol) {
+static void do_objectLocation0 (integer irow, integer icol) {
 	Stackel object = pop;
 	Daata thee = object->object;
 	if (thy v_hasGetFunction0 ()) {
@@ -6211,7 +6211,7 @@ static void do_objectLocation0 (long irow, long icol) {
 		Melder_throw (Thing_className (thee), U" objects accept no () values.");
 	}
 }
-static void do_funktie0 (long irow, long icol) {
+static void do_funktie0 (integer irow, integer icol) {
 	Daata thee = parse [programPointer]. content.object;
 	if (thy v_hasGetFunction0 ()) {
 		pushNumber (thy v_getFunction0 ());
@@ -6249,7 +6249,7 @@ static void do_funktie0 (long irow, long icol) {
 		Melder_throw (Thing_className (thee), U" objects accept no () values.");
 	}
 }
-static void do_selfFunktie1 (long irow) {
+static void do_selfFunktie1 (integer irow) {
 	Daata me = theSource;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
@@ -6269,7 +6269,7 @@ static void do_selfFunktie1 (long irow) {
 		Melder_throw (Thing_className (me), U" objects like \"self\" accept only numeric x values.");
 	}
 }
-static void do_objectLocation1 (long irow) {
+static void do_objectLocation1 (integer irow) {
 	Stackel x = pop, object = pop;
 	Daata thee = object->object;
 	if (x->which == Stackel_NUMBER) {
@@ -6294,7 +6294,7 @@ static void do_objectLocation1 (long irow) {
 		Melder_throw (Thing_className (thee), U" objects accept only numeric x values.");
 	}
 }
-static void do_funktie1 (long irow) {
+static void do_funktie1 (integer irow) {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
@@ -6356,7 +6356,7 @@ static void do_funktie2 () {
 static void do_rowStr () {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel row = pop;
-	long irow = Stackel_getRowNumber (row, thee);
+	integer irow = Stackel_getRowNumber (row, thee);
 	autostring32 result = Melder_dup (thy v_getRowStr (irow));
 	if (! result.peek())
 		Melder_throw (U"Row index out of bounds.");
@@ -6365,7 +6365,7 @@ static void do_rowStr () {
 static void do_colStr () {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel col = pop;
-	long icol = Stackel_getColumnNumber (col, thee);
+	integer icol = Stackel_getColumnNumber (col, thee);
 	autostring32 result = Melder_dup (thy v_getColStr (icol));
 	if (! result.peek())
 		Melder_throw (U"Column index out of bounds.");
@@ -6385,7 +6385,7 @@ static double NUMerf (double x) {
 	return 1.0 - NUMerfcc (x);
 }
 
-void Formula_run (long row, long col, Formula_Result *result) {
+void Formula_run (integer row, integer col, Formula_Result *result) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   // first symbol of the program
 	if (! theStack) theStack = Melder_calloc_f (struct structStackel, 10000);

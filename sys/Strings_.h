@@ -2,7 +2,7 @@
 #define _Strings_h_
 /* Strings.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ void Strings_genericize (Strings me);
 void Strings_nativize (Strings me);
 void Strings_sort (Strings me);
 
-void Strings_remove (Strings me, long position);
-void Strings_replace (Strings me, long position, const char32 *text);
-void Strings_insert (Strings me, long position, const char32 *text);
+void Strings_remove (Strings me, integer position);
+void Strings_replace (Strings me, integer position, const char32 *text);
+void Strings_insert (Strings me, integer position, const char32 *text);
 
 /* End of file Strings.h */
 #endif

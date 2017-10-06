@@ -63,7 +63,7 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 static void drawNow (RunnerMFC me) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
-	long iresponse;
+	integer iresponse;
 	if (! my data) return;
 	Graphics_setGrey (my graphics.get(), 0.8);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -340,7 +340,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 				do_oops (me);
 			}
 		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
-			for (long iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
+			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 				ResponseMFC response = & experiment -> response [iresponse];
 				if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
 					experiment -> responses [experiment -> trial] = iresponse;
@@ -357,7 +357,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 				}
 			}
 			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
-				for (long iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+				for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
@@ -368,7 +368,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			}
 		} else if (experiment -> responses [experiment -> trial] != 0) {
 			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
-			for (long iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+			for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 				GoodnessMFC cat = & experiment -> goodness [iresponse];
 				if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 					experiment -> goodnesses [experiment -> trial] = iresponse;
@@ -418,7 +418,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 				do_oops (me);
 			}
 		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
-			for (long iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
+			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 				ResponseMFC response = & experiment -> response [iresponse];
 				if (response -> key && response -> key [0] == event -> key) {
 					experiment -> responses [experiment -> trial] = iresponse;
@@ -435,7 +435,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 				}
 			}
 			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
-				for (long iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+				for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (cat -> key && cat -> key [0] == event -> key) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
@@ -446,7 +446,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 			}
 		} else if (experiment -> responses [experiment -> trial] != 0) {
 			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
-			for (long iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+			for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 				GoodnessMFC cat = & experiment -> goodness [iresponse];
 				if (cat -> key && cat -> key [0] == event -> key) {
 					experiment -> goodnesses [experiment -> trial] = iresponse;

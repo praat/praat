@@ -19,6 +19,7 @@
  */
 
 #include <wchar.h>
+#include "melder.h"
 
 /********** NON-ASCII CHARACTERS **********/
 
@@ -79,7 +80,7 @@ typedef struct structLongchar_Info {
 	unsigned short winEncoding;   /* The one-byte encoding for Windows (ISO8859-1 for Roman; SILDoulosIPA 1993). */
 	unsigned short macEncoding;   /* The one-byte encoding for Macintosh (Mac for Roman; SILDoulosIPA 1993). */
 	unsigned short psEncoding;   /* The one-byte encoding for PostScript (Mac-Praat, TeX-xipa-Praat). */
-	unsigned long unicode;   /* The four-byte encoding for Unicode. */
+	char32 unicode;   /* The four-byte encoding for Unicode. */
 	unsigned short unicodeDecomposition [6];   /* Diacritics decoupled from the base character. */
 }
 	*Longchar_Info;

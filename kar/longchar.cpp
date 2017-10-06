@@ -637,7 +637,7 @@ static void init () {
 }
 
 char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes) {
-	long nquote = 0;
+	integer nquote = 0;
 	char32_t kar, kar1, kar2;
 	if (! inited) init ();
 	while ((kar = *generic++) != U'\0') {
@@ -654,7 +654,7 @@ char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int e
 			}
 		}
 		if (kar == U'\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
-			long location = where [kar1 - 32] [kar2 - 32];
+			integer location = where [kar1 - 32] [kar2 - 32];
 			if (location == 0) {
 				*native++ = kar;
 				*native++ = kar1;   /* Even if this is a backslash itself... */

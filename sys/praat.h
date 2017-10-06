@@ -68,13 +68,13 @@ extern "C" void praatlib_init ();   // for use in an application that uses Praat
 #define praat_addAction4(c1,n1,c2,n2,c3,n3,c4,n4,t,a,f,c)  praat_addAction4_ (c1, n1, c2, n2, c3, n3, c4, n4, t, a, f, c, U"" #c)
 
 void praat_addAction1_ (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
 void praat_addAction2_ (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
 void praat_addAction3_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
 void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
 /*
 	'title' is the name that will appear in the dynamic menu,
 		and also the command that is used in command files;
@@ -144,7 +144,7 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 
 #define praat_addMenuCommand(w,m,t,a,f,c)  praat_addMenuCommand_ (w, m, t, a, f, c, U"" #c)
 GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback);
+	const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be null. */
 
 #define praat_MAXNUM_EDITORS 5
@@ -154,7 +154,7 @@ typedef struct {
 	Daata object;   // the instance
 	char32 *name;   // the name of the object as it appears in the List
 	structMelderFile file;   // is this Object associated with a file?
-	long id;   // the unique number of the object
+	integer id;   // the unique number of the object
 	bool isSelected;   // is the name of the object inverted in the list?
 	Editor editors [praat_MAXNUM_EDITORS];   // are there editors open with this Object in it?
 	bool isBeingCreated;
@@ -173,7 +173,7 @@ typedef struct {   /* Readonly */
 	int totalSelection;   /* The total number of selected objects, <= n. */
 	int numberOfSelected [1 + 1000];   /* For each (readable) class. */
 	int totalBeingCreated;
-	long uniqueId;
+	integer uniqueId;
 } structPraatObjects, *PraatObjects;
 typedef struct {   // readonly
 	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */

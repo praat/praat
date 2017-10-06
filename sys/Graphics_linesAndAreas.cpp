@@ -28,13 +28,13 @@
 static void psPrepareLine (GraphicsPostscript me) {
 	double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 	if (my lineType == Graphics_DOTTED)
-		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long) (my resolution / 100), (long) (my resolution / 75 + lineWidth_pixels));
+		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long_not_integer) (my resolution / 100), (long) (my resolution / 75 + lineWidth_pixels));
 	else if (my lineType == Graphics_DASHED)
-		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long) (my resolution / 25), (long) (my resolution / 50 + lineWidth_pixels));
+		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long_not_integer) (my resolution / 25), (long) (my resolution / 50 + lineWidth_pixels));
 	else if (my lineType == Graphics_DASHED_DOTTED)
 		my d_printf (my d_file, "[%ld %ld %ld %ld] 0 setdash\n",
-			(long) (my resolution / 100), (long) (my resolution / 60 + lineWidth_pixels),
-			(long) (my resolution / 25), (long) (my resolution / 60 + lineWidth_pixels));
+			(long_not_integer) (my resolution / 100), (long_not_integer) (my resolution / 60 + lineWidth_pixels),
+			(long_not_integer) (my resolution / 25), (long_not_integer) (my resolution / 60 + lineWidth_pixels));
 	if (my lineWidth != 1.0)
 		my d_printf (my d_file, "%g setlinewidth\n", lineWidth_pixels);
 }
@@ -159,12 +159,12 @@ static void psRevertLine (GraphicsPostscript me) {
 
 /* First level. */
 
-void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool close) {
+void structGraphicsScreen :: v_polyline (integer numberOfPoints, double *xyDC, bool close) {
 	#if cairo
 		if (duringXor) {
 			#if ALLOW_GDK_DRAWING
 				gdkPrepareLine (this);
-				for (long i = 0; i < numberOfPoints - 1; i ++) {
+				for (integer i = 0; i < numberOfPoints - 1; i ++) {
 					gdk_draw_line (our d_window, our d_gdkGraphicsContext,
 						xyDC [i + i], xyDC [i + i + 1], xyDC [i + i + 2], xyDC [i + i + 3]);
 				}
@@ -176,7 +176,7 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 			cairoPrepareLine (this);
 			// cairo_new_path (d_cairoGraphicsContext); // move_to() automatically creates a new path
 			cairo_move_to (our d_cairoGraphicsContext, xyDC [0], xyDC [1]);
-			for (long i = 1; i < numberOfPoints; i ++) {
+			for (integer i = 1; i < numberOfPoints; i ++) {
 				cairo_line_to (our d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 			}
 			if (close) cairo_close_path (our d_cairoGraphicsContext);
@@ -188,7 +188,7 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 			Gdiplus::Graphics dcplus (our d_gdiGraphicsContext);
 			Gdiplus::Point *points = Melder_malloc (Gdiplus::Point, numberOfPoints + close);
 			if (points) {
-				for (long i = 0; i < numberOfPoints; i ++) {
+				for (integer i = 0; i < numberOfPoints; i ++) {
 					points [i]. X = *xyDC, xyDC ++;
 					points [i]. Y = *xyDC, xyDC ++;
 				}
@@ -217,7 +217,7 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 			winPrepareLine (this);
 			POINT *points = Melder_malloc (POINT, numberOfPoints + close);
 			if (points) {
-				for (long i = 0; i < numberOfPoints; i ++) {
+				for (integer i = 0; i < numberOfPoints; i ++) {
 					points [i]. x = *xyDC, xyDC ++;
 					points [i]. y = *xyDC, xyDC ++;
 				}
@@ -225,12 +225,12 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 					points [numberOfPoints] = points [0];
 				Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
 				if (our d_fatNonSolid) {
-					for (long i = 0; i < numberOfPoints; i ++)
+					for (integer i = 0; i < numberOfPoints; i ++)
 						points [i]. x -= 1;
 					if (close)
 						points [numberOfPoints] = points [0];
 					Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
-					for (long i = 0; i < numberOfPoints; i ++) {
+					for (integer i = 0; i < numberOfPoints; i ++) {
 						points [i]. x += 1;
 						points [i]. y -= 1;
 					}
@@ -248,7 +248,7 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 		CGContextBeginPath (our d_macGraphicsContext);
 		trace (U"starting point ", xyDC [0], U" ", xyDC [1]);
 		CGContextMoveToPoint (our d_macGraphicsContext, xyDC [0], xyDC [1]);   // starts a new subpath
-		for (long i = 1; i < numberOfPoints; i ++) {
+		for (integer i = 1; i < numberOfPoints; i ++) {
 			CGContextAddLineToPoint (our d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		}
 		if (close)
@@ -259,11 +259,11 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 	#endif
 }
 
-void structGraphicsPostscript :: v_polyline (long numberOfPoints, double *xyDC, bool close) {
-	long nn = 2 * numberOfPoints;
+void structGraphicsPostscript :: v_polyline (integer numberOfPoints, double *xyDC, bool close) {
+	integer nn = 2 * numberOfPoints;
 	psPrepareLine (this);
 	our d_printf (our d_file, "N %.7g %.7g moveto\n", xyDC [0], xyDC [1]);
-	for (long i = 2; i < nn; i += 2) {
+	for (integer i = 2; i < nn; i += 2) {
 		double dx = xyDC [i] - xyDC [i - 2], dy = xyDC [i + 1] - xyDC [i - 1];
 		our d_printf (our d_file, "%.7g %.7g L\n", dx, dy);
 	}
@@ -273,12 +273,12 @@ void structGraphicsPostscript :: v_polyline (long numberOfPoints, double *xyDC, 
 	psRevertLine (this);
 }
 
-void structGraphicsScreen :: v_fillArea (long numberOfPoints, double *xyDC) {
+void structGraphicsScreen :: v_fillArea (integer numberOfPoints, double *xyDC) {
 	#if cairo
 		if (our d_cairoGraphicsContext == nullptr) return;
 		// cairo_new_path (our d_cairoGraphicsContext); // move_to() automatically creates a new path
 		cairo_move_to (our d_cairoGraphicsContext, xyDC [0], xyDC [1]);
-		for (long i = 1; i < numberOfPoints; i ++)
+		for (integer i = 1; i < numberOfPoints; i ++)
 			cairo_line_to (our d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		cairo_close_path (our d_cairoGraphicsContext);
 		cairo_fill (our d_cairoGraphicsContext);
@@ -286,7 +286,7 @@ void structGraphicsScreen :: v_fillArea (long numberOfPoints, double *xyDC) {
 		MY_BRUSH
 		BeginPath (our d_gdiGraphicsContext);
 		MoveToEx (our d_gdiGraphicsContext, xyDC [0], xyDC [1], nullptr);
-		for (long i = 1; i < numberOfPoints; i ++)
+		for (integer i = 1; i < numberOfPoints; i ++)
 			LineTo (our d_gdiGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		EndPath (our d_gdiGraphicsContext);
 		FillPath (our d_gdiGraphicsContext);
@@ -296,7 +296,7 @@ void structGraphicsScreen :: v_fillArea (long numberOfPoints, double *xyDC) {
 		quartzPrepareFill (this);
 		CGContextBeginPath (our d_macGraphicsContext);
 		CGContextMoveToPoint (our d_macGraphicsContext, xyDC [0], xyDC [1]);
-		for (long i = 1; i < numberOfPoints; i ++) {
+		for (integer i = 1; i < numberOfPoints; i ++) {
 			CGContextAddLineToPoint (our d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		}
 		CGContextFillPath (our d_macGraphicsContext);
@@ -304,10 +304,10 @@ void structGraphicsScreen :: v_fillArea (long numberOfPoints, double *xyDC) {
 	#endif
 }
 
-void structGraphicsPostscript :: v_fillArea (long numberOfPoints, double *xyDC) {
-	long nn = numberOfPoints + numberOfPoints;
+void structGraphicsPostscript :: v_fillArea (integer numberOfPoints, double *xyDC) {
+	integer nn = numberOfPoints + numberOfPoints;
 	d_printf (d_file, "N %.7g %.7g M\n", xyDC [0], xyDC [1]);
-	for (long i = 2; i < nn; i += 2) {
+	for (integer i = 2; i < nn; i += 2) {
 		d_printf (d_file, "%.7g %.7g L\n", xyDC [i] - xyDC [i - 2], xyDC [i + 1] - xyDC [i - 1]);
 	}
 	d_printf (d_file, "closepath fill\n");
@@ -423,7 +423,7 @@ void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 
 void structGraphicsPostscript :: v_circle (double xDC, double yDC, double rDC) {
 	psPrepareLine (this);
-	d_printf (d_file, "N %ld %ld %ld C\n", (long) xDC, (long) yDC, (long) rDC);
+	d_printf (d_file, "N %ld %ld %ld C\n", (long_not_integer) xDC, (long_not_integer) yDC, (long_not_integer) rDC);
 	psRevertLine (this);
 }
 
@@ -749,7 +749,7 @@ void structGraphics :: v_fillRoundedRectangle (double x1DC, double x2DC, double 
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void Graphics_polyline (Graphics me, long numberOfPoints, double *xWC, double *yWC) {   // base 0
+void Graphics_polyline (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {   // base 0
 	if (numberOfPoints == 0) return;
 	double *xyDC;
 	try {
@@ -761,7 +761,7 @@ void Graphics_polyline (Graphics me, long numberOfPoints, double *xWC, double *y
 		Melder_clearError ();
 		return;
 	}
-	for (long i = 0; i < numberOfPoints; i ++) {
+	for (integer i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
 	}
@@ -775,7 +775,7 @@ void Graphics_polyline (Graphics me, long numberOfPoints, double *xWC, double *y
 	}
 }
 
-void Graphics_polyline_closed (Graphics me, long numberOfPoints, double *xWC, double *yWC) {   // base 0
+void Graphics_polyline_closed (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {   // base 0
 	if (numberOfPoints == 0) return;
 	double *xyDC;
 	try {
@@ -787,7 +787,7 @@ void Graphics_polyline_closed (Graphics me, long numberOfPoints, double *xWC, do
 		Melder_clearError ();
 		return;
 	}
-	for (long i = 0; i < numberOfPoints; i ++) {
+	for (integer i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
 	}
@@ -812,7 +812,7 @@ void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y
 	if (my recording) { op (LINE, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
 }
 
-void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *yWC) {
+void Graphics_fillArea (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
@@ -823,7 +823,7 @@ void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *y
 		Melder_clearError ();
 		return;
 	}
-	for (long i = 0; i < numberOfPoints; i ++) {
+	for (integer i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
 	}
@@ -838,10 +838,10 @@ void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *y
 }
 
 #define MACRO_Graphics_function(TYPE) \
-	long x1DC, x2DC; \
-	long clipy1 = wdy (my d_y1WC), clipy2 = wdy (my d_y2WC); \
+	integer x1DC, x2DC; \
+	integer clipy1 = wdy (my d_y1WC), clipy2 = wdy (my d_y2WC); \
 	double dx, offsetX, translation, scale; \
-	long n = ix2 - ix1 + 1; \
+	integer n = ix2 - ix1 + 1; \
  \
 	if (ix2 <= ix1 || my scaleX == 0.0) return; \
  \
@@ -853,16 +853,16 @@ void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *y
 	x1DC = translation + ix1 * scale; \
 	x2DC = translation + ix2 * scale; \
 	if (n > (x2DC - x1DC + 1) * 2) {  /* Optimize: draw one vertical line for each device x coordinate. */ \
-		long numberOfPixels = x2DC - x1DC + 1, k = 0; \
-		long numberOfPointsActuallyDrawn = numberOfPixels * 2; \
+		integer numberOfPixels = x2DC - x1DC + 1, k = 0; \
+		integer numberOfPointsActuallyDrawn = numberOfPixels * 2; \
 		double *xyDC; \
 		TYPE lastMini; \
 		if (numberOfPointsActuallyDrawn < 1) return; \
 		xyDC = Melder_malloc_f (double, 2 * numberOfPointsActuallyDrawn); \
-		for (long i = 0; i < numberOfPixels; i ++) { \
-			long j, jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale; \
+		for (integer i = 0; i < numberOfPixels; i ++) { \
+			integer j, jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale; \
 			TYPE mini, maxi; \
-			long minDC, maxDC; \
+			integer minDC, maxDC; \
 			if (jmin > ix2) jmin = ix2; \
 			if (jmax > ix2) jmax = ix2; \
 			mini = yWC [STAGGER (jmin)], maxi = mini; \
@@ -919,9 +919,9 @@ void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *y
 		Melder_free (xyDC); \
 	} else {  /* Normal. */  \
 		double *xyDC = Melder_malloc_f (double, 2 * n); \
-		for (long i = 0; i < n; i ++) { \
-			long ix = ix1 + i; \
-			long value = wdy (yWC [STAGGER (ix)]); \
+		for (integer i = 0; i < n; i ++) { \
+			integer ix = ix1 + i; \
+			integer value = wdy (yWC [STAGGER (ix)]); \
 			xyDC [i + i] = translation + ix * scale; \
 			if (my yIsZeroAtTheTop) { \
 				if (FUNCTIONS_ARE_CLIPPED && value > clipy1) value = clipy1; \
@@ -936,14 +936,14 @@ void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *y
 		Melder_free (xyDC); \
 	}
 
-void Graphics_function (Graphics me, double yWC [], long ix1, long ix2, double x1WC, double x2WC) {
+void Graphics_function (Graphics me, double yWC [], integer ix1, integer ix2, double x1WC, double x2WC) {
 	#define STAGGER(i)  (i)
 	MACRO_Graphics_function (double)
 	#undef STAGGER
 	if (my recording) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
 }
 
-void Graphics_function16 (Graphics me, int16_t yWC [], int stagger, long ix1, long ix2, double x1WC, double x2WC) {
+void Graphics_function16 (Graphics me, int16_t yWC [], int stagger, integer ix1, integer ix2, double x1WC, double x2WC) {
 	if (stagger == 1) {
 		#define STAGGER(i)  ((i) + (i))
 		MACRO_Graphics_function (int16_t)
@@ -1016,9 +1016,9 @@ void Graphics_speckle (Graphics me, double xWC, double yWC) {
 }
 
 void Graphics_rectangle_mm (Graphics me, double xWC, double yWC, double horSide, double vertSide) {
-	long xDC = wdx (xWC), yDC = wdy (yWC);
-	long halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
-	long halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
+	integer xDC = wdx (xWC), yDC = wdy (yWC);
+	integer halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
+	integer halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
 	if (my yIsZeroAtTheTop) {
 		my v_rectangle (xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
 	} else {
@@ -1028,9 +1028,9 @@ void Graphics_rectangle_mm (Graphics me, double xWC, double yWC, double horSide,
 }
 
 void Graphics_fillRectangle_mm (Graphics me, double xWC, double yWC, double horSide, double vertSide) {
-	long xDC = wdx (xWC), yDC = wdy (yWC);
-	long halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
-	long halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
+	integer xDC = wdx (xWC), yDC = wdy (yWC);
+	integer halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
+	integer halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
 	if (my yIsZeroAtTheTop) {
 		my v_fillRectangle (xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
 	} else {

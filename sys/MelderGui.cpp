@@ -238,7 +238,7 @@ static void * gui_monitor (double progress, const char32 *message) {
 	static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 		static char16 message16 [4000];
 		int messageLength = str32len (message32);
-		unsigned long j = 0;
+		uinteger j = 0;
 		for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
 			char32 kar = message32 [i];
 			if (kar <= 0x00FFFF) {
@@ -269,7 +269,7 @@ static void * gui_monitor (double progress, const char32 *message) {
 				}
 			}
 		}
-		unsigned long lengthOfFirstSentence = (unsigned long) (lineBreak - message16);
+		uinteger lengthOfFirstSentence = (uinteger) (lineBreak - message16);
 		/*
 		 * Create an alert dialog with an icon that is appropriate for the level.
 		 */

@@ -87,19 +87,19 @@ oo_DEFINE_CLASS (Pitch, Sampled)
 			override;
 		int v_domainQuantity ()
 			override { return MelderQuantity_TIME_SECONDS; }
-		int v_getMinimumUnit (long ilevel)
+		int v_getMinimumUnit (integer level)
 			override;
-		int v_getMaximumUnit (long ilevel)
+		int v_getMaximumUnit (integer level)
 			override;
-		const char32 * v_getUnitText (long ilevel, int unit, unsigned long flags)
+		const char32 * v_getUnitText (integer level, int unit, uint32 flags)
 			override;
-		bool v_isUnitLogarithmic (long ilevel, int unit)
+		bool v_isUnitLogarithmic (integer level, int unit)
 			override;
-		double v_convertStandardToSpecialUnit (double value, long ilevel, int unit)
+		double v_convertStandardToSpecialUnit (double value, integer level, int unit)
 			override;
-		double v_convertSpecialToStandardUnit (double value, long ilevel, int unit)
+		double v_convertSpecialToStandardUnit (double value, integer level, int unit)
 			override;
-		double v_getValueAtSample (long isamp, long ilevel, int unit)
+		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
 			override;
 	#endif
 

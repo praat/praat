@@ -1,6 +1,6 @@
 /* Simple.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,10 +45,10 @@ autoSimpleInt SimpleInt_create (int number) {
 	return me;
 }
 
-Thing_implement (SimpleLong, Daata, 0);
+Thing_implement (SimpleInteger, Daata, 0);
 
-autoSimpleLong SimpleLong_create (long number) {
-	autoSimpleLong me = Thing_new (SimpleLong);
+autoSimpleInteger SimpleInteger_create (long number) {
+	autoSimpleInteger me = Thing_new (SimpleInteger);
 	my number = number;
 	return me;
 }

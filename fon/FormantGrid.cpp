@@ -41,12 +41,12 @@
 
 Thing_implement (FormantGrid, Function, 0);
 
-double structFormantGrid :: v_getVector (long irow, long icol) {
+double structFormantGrid :: v_getVector (integer irow, integer icol) {
 	RealTier tier = our formants.at [irow];
 	return RealTier_getValueAtIndex (tier, icol);
 }
 
-double structFormantGrid :: v_getFunction1 (long irow, double x) {
+double structFormantGrid :: v_getFunction1 (integer irow, double x) {
 	RealTier tier = our formants.at [irow];
 	return RealTier_getValueAtTime (tier, x);
 }

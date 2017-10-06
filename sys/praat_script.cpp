@@ -60,7 +60,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			 */
 			double value;
 			Interpreter_numericExpression (interpreter, string, & value);
-			long id = (long) value;
+			integer id = (integer) value;
 			WHERE (ID == id)
 				return IOBJECT;
 			Melder_throw (U"No object with number ", id, U".");
@@ -98,7 +98,7 @@ Editor praat_findEditorFromString (const char32 *string) {
 	Melder_throw (U"Editor \"", string, U"\" does not exist.");
 }
 
-Editor praat_findEditorById (long id) {
+Editor praat_findEditorById (integer id) {
 	int IOBJECT;
 	WHERE (1) {
 		if (ID == id) {

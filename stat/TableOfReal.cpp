@@ -93,15 +93,15 @@ void structTableOfReal :: v_info () {
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
 }
 
-const char32 * structTableOfReal :: v_getRowStr (long irow) {
+const char32 * structTableOfReal :: v_getRowStr (integer irow) {
 	if (irow < 1 || irow > numberOfRows) return nullptr;
 	return rowLabels [irow] ? rowLabels [irow] : U"";
 }
-const char32 * structTableOfReal :: v_getColStr (long icol) {
+const char32 * structTableOfReal :: v_getColStr (integer icol) {
 	if (icol < 1 || icol > numberOfColumns) return nullptr;
 	return columnLabels [icol] ? columnLabels [icol] : U"";
 }
-double structTableOfReal :: v_getMatrix (long irow, long icol) {
+double structTableOfReal :: v_getMatrix (integer irow, integer icol) {
 	if (irow < 1 || irow > numberOfRows) return undefined;
 	if (icol < 1 || icol > numberOfColumns) return undefined;
 	return data [irow] [icol];
