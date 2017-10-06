@@ -154,7 +154,7 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer
 		FileInMemory fim = my at [ifile];
 		MelderString_copy (& one_fim, name, ifile);
 		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
-		MelderInfo_writeLine (U"\t\tCollection_addItem_move (me.get(), ", one_fim.string, U".move());\n");
+		MelderInfo_writeLine (U"\t\tme -> addItem_move (", one_fim.string, U".move());\n");
 	}
 	MelderInfo_writeLine (U"\t\treturn me;");
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");
