@@ -49,6 +49,7 @@
 #include <espeak-ng/encoding.h>
 
 #include "speech.h"
+
 #include "synthesize.h"
 #include "translate.h"
 #include "espeak_command.h"
@@ -610,7 +611,6 @@ ESPEAK_API void espeak_SetUriCallback(int (*UriCallback)(int, const char *, cons
 	uri_callback = UriCallback;
 }
 
-ESPEAK_API void espeak_SetPhonemeCallback(int (*PhonemeCallback)(const char *));
 ESPEAK_API void espeak_SetPhonemeCallback(int (*PhonemeCallback)(const char *))
 {
 	phoneme_callback = PhonemeCallback;
