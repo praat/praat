@@ -28,7 +28,7 @@
 #include <string.h>
 
 #include "espeak_ng.h"
-
+#include "encoding.h"
 #include "speech.h"
 #include "synthesize.h"
 #include "translate.h"
