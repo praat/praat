@@ -33,6 +33,7 @@
 
 #include "espeak_ng.h"
 #include "speak_lib.h"
+#include "encoding.h"
 
 #include "error.h"
 #include "speech.h"
@@ -336,7 +337,7 @@ static espeak_ng_STATUS ReadPhondataManifest(espeak_ng_ERROR_CONTEXT *context)
 
 	sprintf(buf, "%s%c%s", path_home, PATHSEP, "phondata-manifest");
 	if ((f = fopen(buf, "r")) == NULL)
-		return create_file_error_context(context, errno, buf);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), buf);
 
 	while (fgets(buf, sizeof(buf), f) != NULL)
 		n_lines++;
@@ -357,7 +358,7 @@ static espeak_ng_STATUS ReadPhondataManifest(espeak_ng_ERROR_CONTEXT *context)
 	if (new_manifest == NULL) {
 		fclose(f);
 		free(manifest);
-		return ENOMEM;
+		return static_cast<espeak_ng_STATUS> (ENOMEM);
 	} else
 		manifest = new_manifest;
 
@@ -1022,7 +1023,7 @@ static espeak_ng_STATUS LoadSpect(const char *path, int control, int *addr)
 	// create SpectSeq and import data
 	spectseq = SpectSeqCreate();
 	if (spectseq == NULL)
-		return ENOMEM;
+		return static_cast<espeak_ng_STATUS> (ENOMEM);
 
 	snprintf(filename, sizeof(filename), "%s/%s", phsrc, path);
 	espeak_ng_STATUS status = LoadSpectSeq(spectseq, filename);
@@ -1208,12 +1209,12 @@ static int LoadWavefile(FILE *f, const char *fname)
 	fseek(f, 40, SEEK_SET);
 
 	if ((sr1 != samplerate_native) || (sr2 != sr1*2)) {
-		int fd_temp;
 		char command[sizeof(path_home)+250];
 
 		failed = 0;
 
 #ifdef HAVE_MKSTEMP
+		int fd_temp;
 		strcpy(fname_temp, "/tmp/espeakXXXXXX");
 		if ((fd_temp = mkstemp(fname_temp)) >= 0)
 			close(fd_temp);
@@ -1341,10 +1342,10 @@ static espeak_ng_STATUS LoadEnvelope(FILE *f, const char *fname, int *displ)
 		*displ = ftell(f_phdata);
 
 	if (fseek(f, 12, SEEK_SET) == -1)
-		return errno;
+		return static_cast<espeak_ng_STATUS> (errno);
 
 	if (fread(buf, 128, 1, f) != 128)
-		return errno;
+		return static_cast<espeak_ng_STATUS> (errno);
 	fwrite(buf, 128, 1, f_phdata);
 
 	if (n_envelopes < N_ENVELOPES) {
@@ -1388,7 +1389,7 @@ static int LoadEnvelope2(FILE *f, const char *fname)
 	unsigned char env[ENV_LEN];
 
 	n_points = 0;
-	fgets(line_buf, sizeof(line_buf), f); // skip first line
+	(void) fgets(line_buf, sizeof(line_buf), f); // skip first line
 	while (!feof(f)) {
 		if (fgets(line_buf, sizeof(line_buf), f) == NULL)
 			break;
@@ -1476,7 +1477,7 @@ static espeak_ng_STATUS LoadDataFile(const char *path, int control, int *addr)
 			sprintf(buf, "%s/%s.wav", phsrc, path);
 			if ((f = fopen(buf, "rb")) == NULL) {
 				error("Can't read file: %s", path);
-				return errno;
+				return static_cast<espeak_ng_STATUS> (errno);
 			}
 		}
 
@@ -1515,7 +1516,7 @@ static espeak_ng_STATUS LoadDataFile(const char *path, int control, int *addr)
 		p = ref_hash_tab[hash];
 		p2 = (REF_HASH_TAB *)malloc(sizeof(REF_HASH_TAB)+strlen(path)+1);
 		if (p2 == NULL)
-			return ENOMEM;
+			return static_cast<espeak_ng_STATUS> (ENOMEM);
 		p2->value = *addr;
 		p2->ph_mnemonic = phoneme_out->mnemonic; // phoneme which uses this file
 		p2->ph_table = n_phoneme_tabs-1;
@@ -2549,14 +2550,14 @@ espeak_ng_CompilePhonemeDataPath(long rate,
 	fprintf(log, "Compiling phoneme data: %s\n", fname);
 	f_in = fopen(fname, "rb");
 	if (f_in == NULL)
-		return create_file_error_context(context, errno, fname);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), fname);
 
 	sprintf(fname, "%s/%s", phsrc, "compile_report");
 	f_report = fopen(fname, "w");
 	if (f_report == NULL) {
 		int error = errno;
 		fclose(f_in);
-		return create_file_error_context(context, error, fname);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
 	}
 
 	sprintf(fname, "%s/%s", phdst, "phondata-manifest");
@@ -2584,7 +2585,7 @@ espeak_ng_CompilePhonemeDataPath(long rate,
 		fclose(f_in);
 		fclose(f_report);
 		fclose(f_phcontents);
-		return create_file_error_context(context, error, fname);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
 	}
 
 	sprintf(fname, "%s/%s", phdst, "phonindex");
@@ -2595,7 +2596,7 @@ espeak_ng_CompilePhonemeDataPath(long rate,
 		fclose(f_report);
 		fclose(f_phcontents);
 		fclose(f_phdata);
-		return create_file_error_context(context, error, fname);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
 	}
 
 	sprintf(fname, "%s/%s", phdst, "phontab");
@@ -2607,7 +2608,7 @@ espeak_ng_CompilePhonemeDataPath(long rate,
 		fclose(f_phcontents);
 		fclose(f_phdata);
 		fclose(f_phindex);
-		return create_file_error_context(context, error, fname);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
 	}
 
 	sprintf(fname, "%s/compile_prog_log", phsrc);
@@ -2716,7 +2717,7 @@ espeak_ng_STATUS espeak_ng_CompileIntonation(FILE *log, espeak_ng_ERROR_CONTEXT 
 	int done_onset = 0;
 	int done_last = 0;
 	int n_preset_tunes = 0;
-	int found;
+	int found = 0;
 	int tune_number = 0;
 	FILE *f_out;
 	TUNE *tune_data;
@@ -2735,7 +2736,7 @@ espeak_ng_STATUS espeak_ng_CompileIntonation(FILE *log, espeak_ng_ERROR_CONTEXT 
 		if ((f_in = fopen(buf, "r")) == NULL) {
 			int error = errno;
 			fclose(f_errors);
-			return create_file_error_context(context, error, buf);
+			return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), buf);
 		}
 	}
 
@@ -2781,7 +2782,7 @@ espeak_ng_STATUS espeak_ng_CompileIntonation(FILE *log, espeak_ng_ERROR_CONTEXT 
 	if (tune_data == NULL) {
 		fclose(f_in);
 		fclose(f_errors);
-		return ENOMEM;
+		return static_cast<espeak_ng_STATUS> (ENOMEM);
 	}
 
 	sprintf(buf, "%s/intonations", path_home);
@@ -2791,7 +2792,7 @@ espeak_ng_STATUS espeak_ng_CompileIntonation(FILE *log, espeak_ng_ERROR_CONTEXT 
 		fclose(f_in);
 		fclose(f_errors);
 		free(tune_data);
-		return create_file_error_context(context, error, buf);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), buf);
 	}
 
 	while (!feof(f_in)) {
