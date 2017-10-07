@@ -31,9 +31,8 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <espeak-ng/espeak_ng.h>
-#include <espeak-ng/speak_lib.h>
-#include <espeak-ng/encoding.h>
+#include "espeak_ng.h"
+#include "speak_lib.h"
 
 #include "error.h"
 #include "speech.h"
@@ -51,7 +50,7 @@ int n_manifest;
 char phsrc[sizeof(path_home)+40]; // Source: path to the 'phonemes' source file.
 
 extern ESPEAK_NG_API int utf8_in(int *c, const char *buf);
-//extern int utf8_out(unsigned int c, char *buf);
+
 
 typedef struct {
 	const char *mnem;
