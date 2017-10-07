@@ -34,9 +34,7 @@
 #include <dirent.h>
 #endif
 
-#include <espeak-ng/espeak_ng.h>
-#include <espeak-ng/speak_lib.h>
-#include <espeak-ng/encoding.h>
+#include "espeak_ng.h"
 
 #include "speech.h"
 #include "synthesize.h"
