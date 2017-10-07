@@ -49,7 +49,7 @@ extern "C"
 #define __cdecl
 
 #endif
-	
+
 // used in synthesize.h and voice.h	
 #define N_PEAKS   9
 #define N_PEAKS2  9 // plus Notch and Fill (not yet implemented)
