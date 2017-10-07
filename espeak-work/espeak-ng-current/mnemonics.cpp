@@ -21,7 +21,7 @@
 
 #include <string.h>
 
-#include <espeak-ng/espeak_ng.h>
+#include "espeak_ng.h"
 
 #include "speech.h"
 
