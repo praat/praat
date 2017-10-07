@@ -22,7 +22,7 @@
  * the Unicode Character database by the ucd-tools/tools/categories.py script.
  */
 
-#include "ucd/ucd.h"
+#include "ucd.h"
 
 #include <stddef.h>
 
