@@ -28,6 +28,7 @@
 #include <string.h>
 
 #include "espeak_ng.h"
+#include "encoding.h"
 
 #include "error.h"
 #include "speech.h"
