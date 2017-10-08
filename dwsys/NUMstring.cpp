@@ -510,15 +510,9 @@ static void NUMlvector_getUniqueNumbers (integer *numbers, integer *p_numberOfEl
 	}
 }
 
-<<<<<<< HEAD
-long *NUMstring_getElementsOfRanges (const char32 *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
-	autoNUMvector<long> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
-	if (sortedUniques && *numberOfElements > 0) {
-=======
 integer *NUMstring_getElementsOfRanges (const char32 *ranges, integer maximumElement, integer *numberOfElements, integer *numberOfMultiples, const char32 *elementType, bool sortedUniques) {
 	autoNUMvector <integer> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
 	if (sortedUniques) {
->>>>>>> 38e913ace0bd7bdd056361dd997967a5b7279fc1
 		NUMlvector_getUniqueNumbers (elements.peek(), numberOfElements, numberOfMultiples);
 	}
 	return elements.transfer();
