@@ -52,7 +52,7 @@ clean:
 	$(MAKE) -C external/mp3 clean
 	$(MAKE) -C external/flac clean
 	$(MAKE) -C external/portaudio clean
-	$(MAKE) -C external/espeak clean
+	$(MAKE) -C espeak-work/espeak-ng-current clean
 	$(MAKE) -C kar clean
 	$(MAKE) -C num clean
 	$(MAKE) -C sys clean
