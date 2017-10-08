@@ -9,7 +9,7 @@ OBJECTS = compiledata.o compiledict.o dictionary.o encoding.o intonation.o klatt
 	synthdata.o synthesize.o  \
 	synth_mbrola.o tr_languages.o translate.o voices.o wavegen.o \
 	espeakdata_phons.o espeakdata_dicts.o espeakdata_voices.o \
-	espeakdata_FileInMemory.o
+	espeakdata_FileInMemory.o espeak_api.o
 
 REMOVED = sonic.o speak_lib.o 
 	

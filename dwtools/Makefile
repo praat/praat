@@ -67,5 +67,5 @@ libdwtools.a: $(OBJECTS)
 	$(AR) cq libdwtools.a $(OBJECTS)
 	$(RANLIB) libdwtools.a
 
-$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../espeak-work/espeak-ng-current/*.h
 
