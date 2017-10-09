@@ -4,11 +4,11 @@ include ../../makefile.defs
 
 CPPFLAGS = -I ../../kar -I ../../sys -I ../../dwsys -I ../../stat
 
-OBJECTS = compiledata.o compiledict.o dictionary.o encoding.o intonation.o klatt.o  \
-	numbers.o phonemelist.o readclause.o setlengths.o  \
+OBJECTS = categories.o compiledata.o compiledict.o dictionary.o encoding.o error.o intonation.o klatt.o  \
+	numbers.o phonemelist.o proplist.o readclause.o setlengths.o speech.o \
 	synthdata.o synthesize.o  \
-	synth_mbrola.o tr_languages.o translate.o voices.o wavegen.o \
-	espeakdata_phons.o espeakdata_dicts.o espeakdata_voices.o \
+	synth_mbrola.o tr_languages.o mnemonics.o translate.o voices.o wavegen.o \
+	espeakdata_languages.o espeakdata_phons.o espeakdata_dicts.o espeakdata_voices.o \
 	espeakdata_FileInMemory.o espeak_api.o
 
 REMOVED = sonic.o speak_lib.o 

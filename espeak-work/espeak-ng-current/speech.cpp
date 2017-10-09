@@ -44,9 +44,9 @@
 #include <winreg.h>
 #endif
 
-#include <espeak-ng/espeak_ng.h>
-#include <espeak-ng/speak_lib.h>
-#include <espeak-ng/encoding.h>
+#include "espeak_ng.h"
+#include "speak_lib.h"
+#include "encoding.h"
 
 #include "speech.h"
 
@@ -91,7 +91,7 @@ void cancel_audio(void)
 #endif
 }
 
-static int dispatch_audio(short *outbuf, int length, espeak_EVENT *event)
+static int dispatch_audio(short *outbuffer, int length, espeak_EVENT *event)
 {
 	int a_wave_can_be_played = 1;
 #ifdef USE_ASYNC
@@ -138,8 +138,8 @@ static int dispatch_audio(short *outbuf, int length, espeak_EVENT *event)
 		}
 
 #ifdef HAVE_PCAUDIOLIB_AUDIO_H
-		if (outbuf && length && a_wave_can_be_played) {
-			int error = audio_object_write(my_audio, (char *)outbuf, 2*length);
+		if (outbuffer && length && a_wave_can_be_played) {
+			int error = audio_object_write(my_audio, (char *)outbuffer, 2*length);
 			if (error != 0)
 				fprintf(stderr, "error: %s\n", audio_object_strerror(my_audio, error));
 		}
@@ -168,14 +168,14 @@ static int dispatch_audio(short *outbuf, int length, espeak_EVENT *event)
 		break;
 	case 0:
 		if (synth_callback)
-			synth_callback(outbuf, length, event);
+			synth_callback(outbuffer, length, event);
 		break;
 	}
 
 	return a_wave_can_be_played == 0; // 1 = stop synthesis, -1 = error
 }
 
-static int create_events(short *outbuf, int length, espeak_EVENT *event_list)
+static int create_events(short *outbuffer, int length, espeak_EVENT *eventlist)
 {
 	int finished;
 	int i = 0;
@@ -191,8 +191,8 @@ static int create_events(short *outbuf, int length, espeak_EVENT *event_list)
 		if (event_list_ix == 0)
 			event = NULL;
 		else
-			event = event_list + i;
-		finished = dispatch_audio((short *)outbuf, length, event);
+			event = eventlist + i;
+		finished = dispatch_audio((short *)outbuffer, length, event);
 		length = 0; // the wave data are played once.
 		i++;
 	} while ((i < event_list_ix) && !finished);
@@ -263,7 +263,7 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_InitializeOutput(espeak_ng_OUTPUT_MODE 
 	outbuf_size = (buffer_length * samplerate)/500;
 	out_start = (unsigned char *)realloc(outbuf, outbuf_size);
 	if (out_start == NULL)
-		return ENOMEM;
+		return static_cast<espeak_ng_STATUS> (ENOMEM);
 	else
 		outbuf = out_start;
 
@@ -272,7 +272,7 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_InitializeOutput(espeak_ng_OUTPUT_MODE 
 	n_event_list = (buffer_length*200)/1000 + 20;
 	espeak_EVENT *new_event_list = (espeak_EVENT *)realloc(event_list, sizeof(espeak_EVENT) * n_event_list);
 	if (new_event_list == NULL)
-		return ENOMEM;
+		return static_cast<espeak_ng_STATUS> (ENOMEM);
 	event_list = new_event_list;
 
 	return ENS_OK;
@@ -464,7 +464,7 @@ static espeak_ng_STATUS Synthesize(unsigned int unique_identifier, const void *t
 	}
 }
 
-void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *out_ptr)
+void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *outptr)
 {
 	// type: 1=word, 2=sentence, 3=named mark, 4=play audio, 5=end, 7=phoneme
 	espeak_EVENT *ep;
@@ -480,9 +480,9 @@ void MarkerEvent(int type, unsigned int char_position, int value, int value2, un
 	ep->text_position = char_position & 0xffffff;
 	ep->length = char_position >> 24;
 
-	time = ((double)(count_samples + mbrola_delay + (out_ptr - out_start)/2)*1000.0)/samplerate;
+	time = ((double)(count_samples + mbrola_delay + (outptr - out_start)/2)*1000.0)/samplerate;
 	ep->audio_position = (int)time;
-	ep->sample = (count_samples + mbrola_delay + (out_ptr - out_start)/2);
+	ep->sample = (count_samples + mbrola_delay + (outptr - out_start)/2);
 
 	if ((type == espeakEVENT_MARK) || (type == espeakEVENT_PLAY))
 		ep->id.name = &namedata[value];

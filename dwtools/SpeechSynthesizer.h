@@ -2,7 +2,7 @@
 #define _SpeechSynthesizer_h_
 /* SpeechSynthesizer.h
  *
- * Copyright (C) 2011-2013, 2015-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2011-2013, 2015-2017 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,10 @@
 
 #include "Sound.h"
 #include "TextGrid.h"
-#include "../external/espeak/speech.h"
-#include "../external/espeak/speak_lib.h"
-#include "../external/espeak/phoneme.h"
-#include "../external/espeak/synthesize.h"
-#include "../external/espeak/voice.h"
+#include "espeak_ng.h"
+#include "speech.h"
+#include "synthesize.h"
+#include "espeakdata_FileInMemory.h"
 
 #define SpeechSynthesizer_PHONEMECODINGS_IPA 2
 #define SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM 1
@@ -47,11 +46,11 @@ void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voic
 
 void SpeechSynthesizer_initEspeak ();
 
-autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName);
+autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName);
 
-const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer me, const char32 *voiceLanguageName);
+const char32 *SpeechSynthesizer_getLanguageCodeFromName (SpeechSynthesizer me, const char32 *languageName);
 
-const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer me, const char32 *voiceVariantName);
+const char32 *SpeechSynthesizer_getVoiceCodeFromName (SpeechSynthesizer me, const char32 *voiceName);
 
 void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me);
 

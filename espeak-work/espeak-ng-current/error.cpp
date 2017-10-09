@@ -39,9 +39,9 @@ create_file_error_context(espeak_ng_ERROR_CONTEXT *context,
 		if (*context) {
 			free((*context)->name);
 		} else {
-			*context = malloc(sizeof(espeak_ng_ERROR_CONTEXT_));
+			*context = (espeak_ng_ERROR_CONTEXT) malloc(sizeof(espeak_ng_ERROR_CONTEXT_));
 			if (!*context)
-				return ENOMEM;
+				return static_cast<espeak_ng_STATUS> (ENOMEM);
 		}
 		(*context)->type = ERROR_CONTEXT_FILE;
 		(*context)->name = strdup(filename);
@@ -53,7 +53,7 @@ create_file_error_context(espeak_ng_ERROR_CONTEXT *context,
 
 espeak_ng_STATUS
 create_version_mismatch_error_context(espeak_ng_ERROR_CONTEXT *context,
-                                      const char *path_home,
+                                      const char *pathhome,
                                       int version,
                                       int expected_version)
 {
@@ -61,12 +61,12 @@ create_version_mismatch_error_context(espeak_ng_ERROR_CONTEXT *context,
 		if (*context) {
 			free((*context)->name);
 		} else {
-			*context = malloc(sizeof(espeak_ng_ERROR_CONTEXT_));
+			*context = (espeak_ng_ERROR_CONTEXT) malloc(sizeof(espeak_ng_ERROR_CONTEXT_));
 			if (!*context)
-				return ENOMEM;
+				return static_cast<espeak_ng_STATUS> (ENOMEM);
 		}
 		(*context)->type = ERROR_CONTEXT_VERSION;
-		(*context)->name = strdup(path_home);
+		(*context)->name = strdup(pathhome);
 		(*context)->version = version;
 		(*context)->expected_version = expected_version;
 	}

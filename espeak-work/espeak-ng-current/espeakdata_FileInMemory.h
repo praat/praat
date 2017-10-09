@@ -2,7 +2,7 @@
 #define _espeakdata_FileInMemory_h_
 
 /* espeakdata_FileInMemory.h
- * Copyright (C) David Weenink 2012
+ * Copyright (C) David Weenink 2012-2017
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,39 +22,34 @@
 #include "FileInMemory.h"
 #include "Table.h"
 
-extern autoFileInMemorySet espeakdata_phons;
 
-extern autoFileInMemorySet espeakdata_dicts;
-
-extern autoFileInMemorySet espeakdata_voices;
-
-extern autoFileInMemorySet espeakdata_variants;
-
+autoFileInMemorySet create_espeakdata_languages ();
+autoFileInMemorySet create_espeakdata_dicts ();
+autoFileInMemorySet create_espeakdata_voices ();
 autoFileInMemorySet create_espeakdata_phons ();
 
-autoFileInMemorySet create_espeakdata_dicts ();
-
-autoFileInMemorySet create_espeakdata_voices ();
-
-autoFileInMemorySet create_espeakdata_variants ();
-
+extern autoFileInMemorySet espeakdata_languages;
+extern autoFileInMemorySet espeakdata_dicts;
+extern autoFileInMemorySet espeakdata_voices;
+extern autoFileInMemorySet espeakdata_phons;
+extern autoStrings espeakdata_languages_names;
 extern autoStrings espeakdata_voices_names;
 
-extern autoStrings espeakdata_variants_names;
-
 void espeakdata_praat_init ();
+/*
+	Creates the FileInMemorySets espeakdata_languages, espeakdata_dicts, espeakdata_voices & espeakdata_phons;
+	Creates Strings espeakdata_languages_names & espeakdata_voices_names
+*/
 
 const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, long nbuf, long *index);
 
-autoTable espeakdata_voices_to_Table (FileInMemorySet me);
+autoTable espeakdata_to_Table (FileInMemorySet me);
 
-autoStrings espeakdata_voices_getNames (Table me, long column);
+autoStrings espeakdata_getNames (Table me, long column);
 
 // mask the char / char32
 char * espeakdata_get_dict_data (const char *name, unsigned int *size);
 
 const char * espeakdata_get_voice (const char *vname, long *numberOfBytes);
-
-const char * espeakdata_get_voiceVariant (const char *vname, long *numberOfBytes);
 
 #endif

@@ -132,6 +132,7 @@ void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, Clas
 #define praat_DEPRECATED_2014  (0x0E200000 | praat_HIDDEN)
 #define praat_DEPRECATED_2015  (0x0F200000 | praat_HIDDEN)
 #define praat_DEPRECATED_2016  (0x10200000 | praat_HIDDEN)
+#define praat_DEPRECATED_2017  (0x11200000 | praat_HIDDEN)
 /*
 	The following three can also be used, but not for deprecated commands.
 */

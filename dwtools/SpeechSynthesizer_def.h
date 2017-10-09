@@ -44,7 +44,7 @@ oo_DEFINE_CLASS (SpeechSynthesizerVoice, Daata)
 	oo_INT_VECTOR_FROM (d_klattv, 0, 7)
 
 	// parameters used by Wavegen
-	oo_INTEGER (d_numberOfFormants)
+	oo_INTEGER (d_numberOfFormants) // < 8
 	oo_INT_VECTOR_FROM (d_freq, 0, d_numberOfFormants)		// 100% = 256
 	oo_INT_VECTOR_FROM (d_height, 0, d_numberOfFormants)	// 100% = 256
 	oo_INT_VECTOR_FROM (d_width, 0, d_numberOfFormants)		// 100% = 256
@@ -64,9 +64,17 @@ oo_END_CLASS (SpeechSynthesizerVoice)
 
 #define ooSTRUCT SpeechSynthesizer
 oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
+	#if oo_READING
+		#if formatVersion > 0
+			oo_STRING (d_synthesizerVersion)
+		#endif
+	#else
+		oo_STRING (d_synthesizerVersion)
+	#endif
+		
 	// sythesizers language /voice
-	oo_STRING (d_voiceLanguageName)
-	oo_STRING (d_voiceVariantName)
+	oo_STRING (d_languageName)
+	oo_STRING (d_voiceName) // not used in espeak-ng
 	oo_INTEGER (d_wordsPerMinute)
 	// text-only, phonemes-only, mixed
 	oo_INT (d_inputTextFormat)
@@ -94,8 +102,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		SpeechSynthesizer_changeLanguageNameToCurrent (this);
 	#endif
 	#if oo_DECLARING
-		void v_info ()
-			override;
+		void v_info () override;
 	#endif
 
 oo_END_CLASS (SpeechSynthesizer)

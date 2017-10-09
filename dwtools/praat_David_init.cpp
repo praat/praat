@@ -2450,8 +2450,8 @@ DO
 
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (name, U"Name", U"list")
-	TEXTFIELD (directory, U"Directory:", U"/home/david/praat/src/espeak-work/espeak-1.46.13/espeak-data")
-	WORD (fileGlobber, U"Only files that match pattern", U"*.txt")
+	TEXTFIELD (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
+	WORD (fileGlobber, U"Only files that match pattern", U"*")
 	OK
 DO
 	CREATE_ONE
@@ -2463,10 +2463,10 @@ FORM (NEW_FileInMemorySet_createCopyFromFileInMemorySet, U"", nullptr) {
 	OPTIONMENU (whichFile, U"Espeakdata", 5)
 		OPTION (U"phons")
 		OPTION (U"dicts")
+		OPTION (U"languages")
 		OPTION (U"voices")
-		OPTION (U"variants")
+		OPTION (U"languages_names")
 		OPTION (U"voices_names")
-		OPTION (U"variants_names")
 	OK
 DO
 	CREATE_ONE
@@ -2481,20 +2481,20 @@ DO
 			name = U"espeakdata_dicts";
 		}
 		else if (whichFile == 3) {
+			result = Data_copy (espeakdata_languages.get());
+			name = U"espeakdata_languages";
+		}
+		else if (whichFile == 4) {
 			result = Data_copy (espeakdata_voices.get());
 			name = U"espeakdata_voices";
 		}
-		else if (whichFile == 4) {
-			result = Data_copy (espeakdata_variants.get());
-			name = U"espeakdata_variants";
-		}
 		else if (whichFile == 5) {
-			result = Data_copy (espeakdata_voices_names.get());
-			name = U"espeakdata_voices_names";
+			result = Data_copy (espeakdata_languages_names.get());
+			name = U"espeakdata_languages_names";
 		}
 		else if (whichFile == 6) {
-			result = Data_copy (espeakdata_variants_names.get());
-			name =  U"espeakdata_variants_names";
+			result = Data_copy (espeakdata_voices_names.get());
+			name =  U"espeakdata_voices_names";
 		} else {
 			name = U"";
 		}
@@ -5642,20 +5642,19 @@ FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create Speec
 	 * In the speech synthesis world a language variant is called a "voice", we use the same terminology 
 	 * in our coding. However for the user interface we use "language" instead of "voice".
 	 */
-	static long prefLanguage = Strings_findString (espeakdata_voices_names.get(), U"English");
+	static long prefLanguage = Strings_findString (espeakdata_languages_names.get(), U"English");
 	if (prefLanguage == 0) {
 		prefLanguage = 1;
 	}
 	// LIST does not scroll to the line with "prefLanguage"
-	LIST (languageIndex, U"Language", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefLanguage)
-	static long prefVoiceVariant = Strings_findString (espeakdata_variants_names.get(), U"default");
-	LIST (voiceVariantIndex, U"Voice variant", espeakdata_variants_names -> numberOfStrings,
-		(const char32 **) espeakdata_variants_names -> strings, prefVoiceVariant)
+	LIST (languageIndex, U"Language", espeakdata_languages_names -> numberOfStrings, (const char32 **) espeakdata_languages_names -> strings, prefLanguage)
+	static long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"default");
+	LIST (voiceIndex, U"Voice variant", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefVoice)
 	OK
 DO
 	CREATE_ONE
-		autoSpeechSynthesizer result = SpeechSynthesizer_create (espeakdata_voices_names -> strings[languageIndex], espeakdata_variants_names -> strings[voiceVariantIndex]);
-    CREATE_ONE_END (espeakdata_voices_names -> strings[languageIndex], U"_", espeakdata_variants_names -> strings[voiceVariantIndex])
+		autoSpeechSynthesizer result = SpeechSynthesizer_create (espeakdata_languages_names -> strings[languageIndex], espeakdata_voices_names -> strings[voiceIndex]);
+    CREATE_ONE_END (espeakdata_languages_names -> strings[languageIndex], U"_", espeakdata_voices_names -> strings[voiceIndex])
 }
 
 FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
@@ -5686,15 +5685,15 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
-DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
+DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_voiceLanguageName;
+		const char32 *result = my d_languageName;
 	STRING_ONE_END
 }
 
-DIRECT (INFO_SpeechSynthesizer_getVoiceVariant) {
+DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_voiceVariantName;
+		const char32 *result = my d_voiceName;
 	STRING_ONE_END
 }
 
@@ -8039,8 +8038,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSpeechSynthesizer, 0, U"Play text...", nullptr, 0, PLAY_SpeechSynthesizer_playText);
 	praat_addAction1 (classSpeechSynthesizer, 0, U"To Sound...", nullptr, 0, NEWMANY_SpeechSynthesizer_to_Sound);
 	praat_addAction1 (classSpeechSynthesizer, 0, QUERY_BUTTON, nullptr, 0, 0);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get language name", nullptr, 1, INFO_SpeechSynthesizer_getLanguageName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1, INFO_SpeechSynthesizer_getVoiceName);
-		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, 1, INFO_SpeechSynthesizer_getVoiceVariant);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, praat_DEPRECATED_2017, INFO_SpeechSynthesizer_getVoiceName);
 	praat_addAction1 (classSpeechSynthesizer, 0, MODIFY_BUTTON, nullptr, 0, 0);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setTextInputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);

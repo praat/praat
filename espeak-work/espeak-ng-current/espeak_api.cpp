@@ -66,13 +66,13 @@ ESPEAK_API int espeak_Initialize(espeak_AUDIO_OUTPUT output_type, int buf_length
 		espeak_ng_InitializeOutput(ENOUTPUT_MODE_SPEAK_AUDIO, buf_length, NULL);
 		break;
 	case AUDIO_OUTPUT_RETRIEVAL:
-		espeak_ng_InitializeOutput(0, buf_length, NULL);
+		espeak_ng_InitializeOutput(static_cast<espeak_ng_OUTPUT_MODE>(0), buf_length, NULL);
 		break;
 	case AUDIO_OUTPUT_SYNCHRONOUS:
 		espeak_ng_InitializeOutput(ENOUTPUT_MODE_SYNCHRONOUS, buf_length, NULL);
 		break;
 	case AUDIO_OUTPUT_SYNCH_PLAYBACK:
-		espeak_ng_InitializeOutput(ENOUTPUT_MODE_SYNCHRONOUS | ENOUTPUT_MODE_SPEAK_AUDIO, buf_length, NULL);
+		espeak_ng_InitializeOutput(static_cast<espeak_ng_OUTPUT_MODE>(ENOUTPUT_MODE_SYNCHRONOUS | ENOUTPUT_MODE_SPEAK_AUDIO), buf_length, NULL);
 		break;
 	}
 

@@ -26,8 +26,8 @@
 #include <string.h>
 #include <wchar.h>
 #include <wctype.h>
-#include "ucd.h"
 
+#include "ucd.h"
 #include "espeak_ng.h"
 #include "encoding.h"
 #include "speech.h"
@@ -1787,13 +1787,13 @@ static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, 
 		// don't convert the case of the second character unless the next letter is also upper case
 		c2 = new_c >> 16;
 		if (upper_case && iswupper(next_in))
-			c2 = ucd_toupper(c2);
+			c2 = toupper(c2);
 		*insert = c2;
 		new_c &= 0xffff;
 	}
 
 	if (upper_case)
-		new_c = ucd_toupper(new_c);
+		new_c = toupper(new_c);
 
 	*wordflags |= FLAG_CHAR_REPLACED;
 	return new_c;
