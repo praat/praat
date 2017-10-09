@@ -135,6 +135,10 @@ const char32 * Melder_boolean (bool value) noexcept {
 	return value ? U"yes" : U"no";
 }
 
+/*@praat
+	assert string$ (1000000000000) = "1000000000000"
+	assert string$ (undefined) = "--undefined--"
+@*/
 const char * Melder8_double (double value) noexcept {
 	if (isundef (value)) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;

@@ -114,10 +114,10 @@ DO
 		KNN_modelSearch (me, fws.get(), & kmax, & dist, evaluationMethod, learningRate, numberOfSeeds);
 		switch (dist) {
 			case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-				Melder_information (kmax, U" (vote weighting: inversed squared distance)");
+				Melder_information (kmax, U" (vote weighting: inverse squared distance)");
 				break;
 			case kOla_DISTANCE_WEIGHTED_VOTING:
-				Melder_information (kmax, U" (vote weighting: inversed distance)");
+				Melder_information (kmax, U" (vote weighting: inverse distance)");
 				break;
 			case kOla_FLAT_VOTING:
 				Melder_information (kmax, U" (vote weighting: flat)");
@@ -618,8 +618,8 @@ FORM (NEW1_KNN_PatternList_Categories_to_FeatureWeights_wrapperExt, U"Feature we
 		RADIOBUTTON (U"Single feature")
 	NATURAL (kNeighbours, U"k neighbours", U"1")
 	RADIOx (voteWeighting, U"Vote weighting", 3, 1)
-		RADIOBUTTON (U"Inversed squared distance")
-		RADIOBUTTON (U"Inversed distance")
+		RADIOBUTTON (U"Inverse squared distance")
+		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
 	OK
 DO
@@ -658,8 +658,8 @@ FORM (NEW_KNN_to_FeatureWeights_wrapperInt, U"Feature weights", U"KNN: To Featur
 		RADIOBUTTON (U"10-fold cross-validation")
 	NATURAL (kNeighbours, U"k neighbours", U"1")
 	RADIOx (voteWeighting, U"Vote weighting", 3, 1)
-		RADIOBUTTON (U"Inversed squared distance")
-		RADIOBUTTON (U"Inversed distance")
+		RADIOBUTTON (U"Inverse squared distance")
+		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
 	OK
 DO
