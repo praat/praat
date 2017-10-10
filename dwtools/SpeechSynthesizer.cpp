@@ -662,7 +662,20 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		espeak_SetParameter (espeakRANGE, my d_pitchRange, 0);
 		const char32 *languageCode = SpeechSynthesizer_getLanguageCode (me);
 		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
-		espeakdata_SetVoiceByName ((const char *) Melder_peek32to8 (languageCode), (const char *) Melder_peek32to8 (voiceCode));
+		espeak_VOICE voice_spec = { 0 };
+		voice_spec.name = "female";
+		voice_spec.languages = Melder_peek32to8(languageCode);
+		espeak_ERROR status = espeak_SetVoiceByProperties(& voice_spec);
+		status = espeak_SetVoiceByName(Melder_peek32to8(voiceCode));
+		if (status == EE_OK) {
+			// ok
+		} else if (status == EE_INTERNAL_ERROR) {
+			Melder_throw (U"Internal espeak-ng error.");
+		} else if (status == EE_BUFFER_FULL) {
+			Melder_throw (U"The espeak-ng buffer is full.");
+		} else if (status == EE_NOT_FOUND) {
+			Melder_throw (U"Cannot find voice \"", voiceCode, U"\".");
+		}
 
 		espeak_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
 		espeak_SetParameter (espeakCAPITALS, 0, 0);
