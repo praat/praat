@@ -2467,6 +2467,7 @@ FORM (NEW_FileInMemorySet_createCopyFromFileInMemorySet, U"", nullptr) {
 		OPTION (U"voices")
 		OPTION (U"languages_names")
 		OPTION (U"voices_names")
+		OPTION (U"id_names")
 	OK
 DO
 	CREATE_ONE
@@ -2475,26 +2476,24 @@ DO
 		if (whichFile == 1) {
 			result = Data_copy (espeakdata_phons.get());
 			name = U"espeakdata_phons";
-		}
-		else if (whichFile == 2) {
+		} else if (whichFile == 2) {
 			result = Data_copy (espeakdata_dicts.get());
 			name = U"espeakdata_dicts";
-		}
-		else if (whichFile == 3) {
+		} else if (whichFile == 3) {
 			result = Data_copy (espeakdata_languages.get());
 			name = U"espeakdata_languages";
-		}
-		else if (whichFile == 4) {
+		} else if (whichFile == 4) {
 			result = Data_copy (espeakdata_voices.get());
 			name = U"espeakdata_voices";
-		}
-		else if (whichFile == 5) {
+		} else if (whichFile == 5) {
 			result = Data_copy (espeakdata_languages_names.get());
 			name = U"espeakdata_languages_names";
-		}
-		else if (whichFile == 6) {
+		} else if (whichFile == 6) {
 			result = Data_copy (espeakdata_voices_names.get());
 			name =  U"espeakdata_voices_names";
+		} else if (whichFile == 7) {
+			result = Data_copy (espeakdata_languages_idAndNameTable.get());
+			name =  U"espeakdata_id_name";
 		} else {
 			name = U"";
 		}

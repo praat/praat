@@ -34,12 +34,14 @@ extern autoFileInMemorySet espeakdata_voices;
 extern autoFileInMemorySet espeakdata_phons;
 extern autoStrings espeakdata_languages_names;
 extern autoStrings espeakdata_voices_names;
-
+extern autoTable espeakdata_languages_idAndNameTable;
 void espeakdata_praat_init ();
 /*
 	Creates the FileInMemorySets espeakdata_languages, espeakdata_dicts, espeakdata_voices & espeakdata_phons;
 	Creates Strings espeakdata_languages_names & espeakdata_voices_names
 */
+
+integer Table_findStringInColumn (Table me, const char32 *string, integer icol);
 
 const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, long nbuf, long *index);
 

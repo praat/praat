@@ -48,9 +48,9 @@ void SpeechSynthesizer_initEspeak ();
 
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName);
 
-const char32 *SpeechSynthesizer_getLanguageCodeFromName (SpeechSynthesizer me, const char32 *languageName);
+const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me);
 
-const char32 *SpeechSynthesizer_getVoiceCodeFromName (SpeechSynthesizer me, const char32 *voiceName);
+const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me);
 
 void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me);
 

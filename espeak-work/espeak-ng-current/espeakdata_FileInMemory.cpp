@@ -25,17 +25,22 @@
 
 #include "espeakdata_FileInMemory.h"
 
+autoTable Table_createAsEspeakLanguagesIdAndNamePairs ();
+autoStrings Table_column_to_Strings (Table me, integer column);
+
+
 autoFileInMemorySet espeakdata_languages;
 autoFileInMemorySet espeakdata_dicts;
 autoFileInMemorySet espeakdata_phons;
 autoFileInMemorySet espeakdata_voices;
+autoTable espeakdata_languages_idAndNameTable;
 autoStrings espeakdata_voices_names;
 autoStrings espeakdata_languages_names;
 
 static void FileInMemorySet_and_Strings_changeIds (FileInMemorySet me, Strings thee) {
 	try {
 		if (my size != thy numberOfStrings) return; // do nothing
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			FileInMemory_setId (my at [i], thy strings [i]);
 		}
 	} catch (MelderError) {
@@ -43,42 +48,17 @@ static void FileInMemorySet_and_Strings_changeIds (FileInMemorySet me, Strings t
 	}
 }
 
-static autoStrings espeak_languages_sort () {
-	try {
-		autoTable languageNames = espeakdata_to_Table (espeakdata_languages.get());
-		autoStrings fullnames = espeakdata_getNames (languageNames.get(), 2);
-		FileInMemorySet_and_Strings_changeIds (espeakdata_voices.get(), fullnames.get());
-		espeakdata_voices -> d_sortKey = 1;   // sort id's
-		espeakdata_voices -> sort ();
-		Table_sortRows_string (languageNames.get(), U"name"); //They hopefully sort the same way
-		autoStrings neworder = espeakdata_getNames (languageNames.get(), 2);
-		autoStrings names_short = espeakdata_getNames (languageNames.get(), 1);
-		FileInMemorySet_and_Strings_changeIds (espeakdata_languages.get(), names_short.get());
-		return neworder;
-	} catch (MelderError) {
-		Melder_throw (U"Espeak languages not sorted.");
-	}
-}
-
-static autoStrings Strings_insertAndExpand (Strings me, long position, const char32 *newstring) {
-	try {
-		if (position == 0) position = my numberOfStrings + 1;
-		Melder_assert (position >= 1);
-		Melder_assert (position <= my numberOfStrings + 1);
-		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<char32 *> (1, my numberOfStrings + 1);
-		for (long i = 1, from = 1; i <= my numberOfStrings + 1; i++, from++) {
-			const char32 *to_copy = my strings[from];
-			if (i == position) {
-				to_copy = newstring; from--;
+integer Table_findStringInColumn (Table me, const char32 *string, integer icol) {
+	integer row = 0;
+	if (icol > 0 && icol <= my numberOfColumns) {
+		for (integer irow = 1; irow <= my rows.size; irow ++) {
+			TableRow myRow = my rows.at [irow];
+			if (Melder_equ (myRow -> cells [icol]. string, string)) {
+				return irow;
 			}
-			thy strings[i] = Melder_dup (to_copy);
 		}
-		thy numberOfStrings = my numberOfStrings + 1;
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U" not expanded.");
 	}
+	return row;
 }
 
 void espeakdata_praat_init () {
@@ -87,9 +67,11 @@ void espeakdata_praat_init () {
 		espeakdata_languages = create_espeakdata_languages ();
 		espeakdata_voices = create_espeakdata_voices ();
 		espeakdata_phons = create_espeakdata_phons ();
-		espeakdata_languages_names = espeak_languages_sort ();
+		espeakdata_languages_idAndNameTable = Table_createAsEspeakLanguagesIdAndNamePairs ();
+		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_idAndNameTable.get(), 2);
+		Strings_sort (espeakdata_languages_names.get());
+		//espeakdata_languages_names = espeakdata_languages_sortById ();
 		espeakdata_voices_names = FileInMemorySet_to_Strings_id (espeakdata_voices.get());
-		autoTable names_table = espeakdata_to_Table (espeakdata_languages.get());
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata initialization not performed.");
 	}
@@ -98,17 +80,17 @@ void espeakdata_praat_init () {
 #define ESPEAK_ISSPACE(c) (c == ' ' || c == '\t' || c == '\r' || c == '\n')
 
 // imitates fgets_strip for file in memory
-const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, long nbuf, long *index) {
+const char * espeakdata_get_voicedata (const char *data, integer ndata, char *buf, integer nbuf, integer *index) {
 	if (ndata <= 0 || nbuf <= 0 || *index >= ndata) {
 		return 0;
 	}
-	long i = 0;
+	integer i = 0;
 	while (i < nbuf && *index < ndata && ((buf [i] = data [i]) != '\n')) {
 		i ++;
 		(*index) ++;
 	}
 	(*index) ++;   // ppgb 20151020 fix
-	long idata = i + 1;
+	integer idata = i + 1;
 	buf[i] = '\0';
 	while (--i >= 0 && ESPEAK_ISSPACE (buf[i])) {
 		buf[i] = 0;
@@ -120,39 +102,43 @@ const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, 
 	return & data[idata];
 }
 
-autoTable espeakdata_to_Table (FileInMemorySet me) {
+autoTable Table_createAsEspeakLanguagesIdAndNamePairs () {
 	try {
+		FileInMemorySet me = espeakdata_languages.get();
 		autoTable thee = Table_createWithColumnNames (my size, U"id name");
-		for (long ifile = 1; ifile <= my size; ifile ++) {
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = my at [ifile];
 			Table_setStringValue (thee.get(), ifile, 1, fim -> d_id);
 			const char *p = strstr (fim -> d_data, "name");
-			if (! p) continue;
+			if (p) {
 			// copy the name part to the following new line
-			char buf [40], *bufp = buf;
-			long len = 0;
-			while ((*bufp ++ = *p ++) != '\n' && len < 39) { len ++; }
+			char buf [100], *bufp = buf;
+			integer len = 0;
+			while ((*bufp ++ = *p ++) != '\n' && len < 99) { len ++; }
 			// remove trailing white space
 			*bufp = 0;
 			while (ESPEAK_ISSPACE (buf[len]) && len > 0) {
 				buf [len] = 0;
 				len --;
 			}
-			// skip leading white space
+			// skip leading white space after "name"
 			bufp = & buf[4];
 			while (ESPEAK_ISSPACE (*bufp)) { bufp ++; }
+			
 			Table_setStringValue (thee.get(), ifile, 2, Melder_peek8to32 (bufp));
 			TableRow row = thy rows.at [ifile];
-			wint_t c0 = row -> cells [2]. string [0];
-			row -> cells [2]. string [0] = towupper (c0);
+			} else {
+				// probably an error.
+				Table_setStringValue (thee.get(), ifile, 2, fim -> d_id);
+			}
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Espeakdata: voice table not initialized.");
+		Melder_throw (U"Espeakdata-languages: language table not initialized.");
 	}
 }
 
-autoStrings espeakdata_getNames (Table me, long column) {
+autoStrings Table_column_to_Strings (Table me, integer column) {
 	try {
 		if (column < 0 || column > 2) {
 			Melder_throw (U"Illegal columnn.");
@@ -160,7 +146,7 @@ autoStrings espeakdata_getNames (Table me, long column) {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <char32 *> (1, my rows.size);
 		thy numberOfStrings = 0;
-		for (long irow = 1; irow <= my rows.size; irow ++) {
+		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
 			thy numberOfStrings ++;
 		}
@@ -171,18 +157,18 @@ autoStrings espeakdata_getNames (Table me, long column) {
 }
 
 char * espeakdata_get_dict_data (const char *name, unsigned int *size) {
-	long lsize;
+	integer lsize;
 	char *data = FileInMemorySet_getCopyOfData (espeakdata_dicts.get(), Melder_peek8to32 (name), &lsize);
 	*size = (unsigned int) lsize;
 	return data;
 }
 
 
-const char * espeakdata_get_languageData (const char *languageName, long *numberOfBytes) { // TODO
+const char * espeakdata_get_languageData (const char *languageName, integer *numberOfBytes) { // TODO
 	return FileInMemorySet_getData (espeakdata_languages.get(), Melder_peek8to32 (languageName), numberOfBytes);
 }
 
-const char * espeakdata_get_voiceData (const char *voiceName, long *numberOfBytes) { //TODO 
+const char * espeakdata_get_voiceData (const char *voiceName, integer *numberOfBytes) { //TODO 
 	char *plus = strstr ((char *) voiceName, "+"); // prototype says: strstr (const char *, const char *)
 	const char *name = ( plus ? ++ plus : voiceName );
 	return FileInMemorySet_getData (espeakdata_voices.get(), Melder_peek8to32 (name), numberOfBytes);;
