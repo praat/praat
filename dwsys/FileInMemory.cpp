@@ -217,11 +217,12 @@ char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, long
 		return nullptr;
 	}
 	FileInMemory fim = my at [index];
-	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes);
+	char *data = (char *) _Melder_malloc (fim -> d_numberOfBytes + 1);
 	if (! data || ! memcpy (data, fim -> d_data, fim -> d_numberOfBytes)) {
 		//Melder_appendError (U"No memory for dictionary.");
 		return nullptr;
 	}
+	data [fim -> d_numberOfBytes] = '\0';
 	*numberOfBytes = fim -> d_numberOfBytes;
 	return data;
 }
