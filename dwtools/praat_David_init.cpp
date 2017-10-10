@@ -5642,13 +5642,13 @@ FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create Speec
 	 * In the speech synthesis world a language variant is called a "voice", we use the same terminology 
 	 * in our coding. However for the user interface we use "language" instead of "voice".
 	 */
-	static long prefLanguage = Strings_findString (espeakdata_languages_names.get(), U"English");
+	static long prefLanguage = Strings_findString (espeakdata_languages_names.get(), U"English (Great Brittain)");
 	if (prefLanguage == 0) {
 		prefLanguage = 1;
 	}
 	// LIST does not scroll to the line with "prefLanguage"
 	LIST (languageIndex, U"Language", espeakdata_languages_names -> numberOfStrings, (const char32 **) espeakdata_languages_names -> strings, prefLanguage)
-	static long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"default");
+	static long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"f1");
 	LIST (voiceIndex, U"Voice variant", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefVoice)
 	OK
 DO

@@ -24,7 +24,7 @@
 Thing_define (FileInMemory, Daata) {
 	char32 *d_path;
 	char32 *d_id;
-	long d_numberOfBytes;
+	integer d_numberOfBytes;
 	char *d_data;
 	bool ownData;
 
