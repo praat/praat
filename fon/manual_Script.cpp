@@ -664,14 +664,20 @@ NORMAL (U"In formulas you can use the numerical and logical operators that are d
 NORMAL (U"The operators with the highest precedence are #negation (-) and #exponentation (\\^ ):")
 CODE (U"--6 \\-> 6")
 CODE (U"2\\^ 6 \\-> 64")
+/*@praat
+	# Tests for the manual page "Operators".
+
+	assert --6 = 6
+	assert 2^6 = 64
+@*/
 NORMAL (U"Sequences of negation and exponentiation are evaluated from right to left:")
-CODE (U"2\\^ -6 \\-> 0.015625")
-CODE (U"-(1+1)\\^ 6 \\-> -64")
-CODE (U"4\\^ 3\\^ 2 \\-> 4\\^ 9 \\-> 262144")
+CODE (U"2\\^ -6 \\-> 0.015625")                       //@praat assert 2^-6 = 0.015625
+CODE (U"-(1+1)\\^ 6 \\-> -64")                        //@praat assert -(1+1)^6 = -64
+CODE (U"4\\^ 3\\^ 2 \\-> 4\\^ 9 \\-> 262144")         //@praat assert 4^3^2 = 262144
 NORMAL (U"Note that changing the spacing does not change the meaning:")
-CODE (U"4\\^ 3 \\^  2 \\-> 262144")
+CODE (U"4\\^ 3 \\^  2 \\-> 262144")                   //@praat assert 4^3 ^ 2 = 262144
 NORMAL (U"To change the order of evaluation, you have to use parentheses:")
-CODE (U"(4 \\^  3) \\^  2 \\-> 4096")
+CODE (U"(4 \\^  3) \\^  2 \\-> 4096")                 //@praat assert (4 ^ 3) ^ 2 = 4096
 NORMAL (U"The following construction is not allowed because of an ambiguity between a negative number "
 	"and negation of a positive number:")
 CODE (U"-2\\^ 6 \\-> ?")
@@ -684,27 +690,37 @@ NORMAL (U"The operators with the next highest precedence are #multiplication (*)
 CODE (U"1/4*5 \\-> 1.25        (from left to right)")
 CODE (U"1 / 4*5 \\-> 1.25      (spacing does not help)")
 CODE (U"1 / (4*5) \\-> 0.05    (use parentheses to change the order)")
+/*@praat
+	assert 1/4*5 = 1.25
+	assert 1 / 4*5 = 1.25
+	assert 1 / (4*5) = 0.05
+@*/
 CODE (U"3 * 2 \\^  4 \\-> 48      (exponentiation before multiplication)")
 CODE (U"3*2 \\^  4 \\-> 48        (this spacing does not matter and is misleading)")
 CODE (U"(3 * 2) \\^  4 \\-> 1296  (use parentheses to change the order)")
+/*@praat
+	assert 3 * 2 ^ 4 = 48
+	assert 3*2 ^ 4 = 48
+	assert (3 * 2) ^ 4 = 1296
+@*/
 NORMAL (U"##Integer division# operators (#div and #mod) have the same precedence as * and /, "
 	"and are likewise evaluated from left to right:")
-CODE (U"54 div 5 \\-> 10       (division rounded down)")
-CODE (U"54 mod 5 \\-> 4        (the remainder)")
-CODE (U"54.3 div 5.1 \\-> 10   (works for real numbers as well)")
-CODE (U"54.3 mod 5.1 \\-> 3.3  (the remainder)")
-CODE (U"-54 div 5 \\-> -11     (division rounded down; negation before division)")
-CODE (U"-54 mod 5 \\-> 1       (the remainder)")
-CODE (U"-(54 div 5) \\-> -10   (use parentheses to change the order)")
-CODE (U"-(54 mod 5) \\-> -4")
-CODE (U"3 * 18 div 5 \\-> 10   (from left to right)")
-CODE (U"3 * (18 div 5) \\-> 9")
-CODE (U"3 * 18 mod 5 \\-> 4")
-CODE (U"3 * (18 mod 5) \\-> 9")
-CODE (U"54 div 5 * 3 \\-> 30   (from left to right)")
-CODE (U"54 div (5 * 3) \\-> 3")
-CODE (U"54 mod 5 * 3 \\-> 12")
-CODE (U"54 mod (5 * 3) \\-> 9")
+CODE (U"54 div 5 \\-> 10       (division rounded down)")                             //@praat assert 54 div 5 = 10
+CODE (U"54 mod 5 \\-> 4        (the remainder)")                                     //@praat assert 54 mod 5 = 4
+CODE (U"54.3 div 5.1 \\-> 10   (works for real numbers as well)")                    //@praat assert 54.3 div 5.1 = 10
+CODE (U"54.3 mod 5.1 \\-> 3.3  (the remainder)")                                     //@praat assert 54.3 mod 5.1 = 3.3
+CODE (U"-54 div 5 \\-> -11     (division rounded down; negation before division)")   //@praat assert -54 div 5 = -11
+CODE (U"-54 mod 5 \\-> 1       (the remainder)")                                     //@praat assert -54 mod 5 = 1
+CODE (U"-(54 div 5) \\-> -10   (use parentheses to change the order)")               //@praat assert -(54 div 5) = -10
+CODE (U"-(54 mod 5) \\-> -4")                                                        //@praat assert -(54 mod 5) = -4
+CODE (U"3 * 18 div 5 \\-> 10   (from left to right)")                                //@praat assert 3 * 18 div 5 = 10
+CODE (U"3 * (18 div 5) \\-> 9")                                                      //@praat assert 3 * (18 div 5) = 9
+CODE (U"3 * 18 mod 5 \\-> 4")                                                        //@praat assert 3 * 18 mod 5 = 4
+CODE (U"3 * (18 mod 5) \\-> 9")                                                      //@praat assert 3 * (18 mod 5) = 9
+CODE (U"54 div 5 * 3 \\-> 30   (from left to right)")                                //@praat assert 54 div 5 * 3 = 30
+CODE (U"54 div (5 * 3) \\-> 3")                                                      //@praat assert 54 div (5 * 3) = 3
+CODE (U"54 mod 5 * 3 \\-> 12")                                                       //@praat assert 54 mod 5 * 3 = 12
+CODE (U"54 mod (5 * 3) \\-> 9")                                                      //@praat assert 54 mod (5 * 3) = 9
 NORMAL (U"The operators with the next highest precedence are #addition (+) and #subtraction (-), "
 	"evaluated from left to right:")
 CODE (U"3 - 8 + 7 \\-> 2       (from left to right)")
@@ -2356,28 +2372,50 @@ CODE (U"root = sqrt (x)")
 CODE (U"#writeInfoLine: \"The square root of \", x, \" is \", root, \".\"")
 NORMAL (U"This will write the following text to the Info window:")
 CODE (U"The square root of 2 is 1.4142135623730951.")
+/*@praat
+	assert string$ (sqrt (2)) = "1.4142135623730951"
+@*/
 NORMAL (U"You can fix the number of digits after the decimal point by use of the ##fixed\\$ # function:")
 CODE (U"x = 2.0")
 CODE (U"root = sqrt (x)")
 CODE (U"writeInfoLine: \"The square root of \", ##fixed\\$ # (x, 3), \" is approximately \", ##fixed\\$ # (root, 3), \".\"")
 NORMAL (U"This will write the following text to the Info window:")
 CODE (U"The square root of 2.000 is approximately 1.414.")
+/*@praat
+	assert fixed$ (sqrt (2), 3) = "1.414"
+@*/
 NORMAL (U"By using 0 decimal digits, you round to whole values:")
 CODE (U"root = sqrt (2)")
 CODE (U"writeInfoLine: \"The square root of 2 is very approximately \", ##fixed\\$ # (root, #0), \".\"")
 NORMAL (U"This will write the following text to the Info window:")
 CODE (U"The square root of 2 is very approximately 1.")
+/*@praat
+	assert fixed$ (sqrt (2), 0) = "1"
+@*/
 NORMAL (U"By using the ##percent\\$ # function, you give the result in a percent format:")
 CODE (U"jitter = 0.0156789")
 CODE (U"writeInfoLine: \"The jitter is \", ##percent\\$ # (jitter, 3), \".\"")
 NORMAL (U"This will write the following text to the Info window:")
 CODE (U"The jitter is 1.568\\% .")
+/*@praat
+	jitter = 0.0156789
+	assert percent$ (jitter, 3) = "1.568%"
+	jitter = -0.0156789
+	assert percent$ (jitter, 3) = "-1.568%"
+@*/
 NORMAL (U"The number 0, however, will always be written as 0, and for small numbers the number of "
 	"significant digits will never be less than 1:")
 CODE (U"jitter = 0.000000156789")
 CODE (U"writeInfoLine: \"The jitter is \", percent\\$  (jitter, 3), \".\"")
 NORMAL (U"This will write the following text to the Info window:")
 CODE (U"The jitter is 0.00002\\% .")
+/*@praat
+	assert percent$ (0, 3) = "0"
+	jitter = 0.000000156789
+	assert percent$ (jitter, 3) = "0.00002%"
+	jitter *= -1
+	assert percent$ (jitter, 3) = "-0.00002%"
+@*/
 ENTRY (U"Predefined variables")
 NORMAL (U"All of the variables you saw earlier in this tutorial were defined at the first moment a value was assigned to them. "
 	"Some variables, however, are already defined implicitly at the start of your script.")
@@ -2398,6 +2436,11 @@ NORMAL (U"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, a
 ENTRY (U"Functions that handle variables")
 NORMAL (U"To check whether a variable exists, you can use the function")
 CODE (U"%variableExists (%%variableName\\$ %)")
+/*@praat
+	fgh = 567
+	assert variableExists ("fgh")
+	assert not variableExists ("jhfwbfejfgcds")
+@*/
 MAN_END
 /*
 form Convert from WAV to AIFF

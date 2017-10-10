@@ -48,26 +48,26 @@ Thing_define (Vector, Matrix) {
 #define Vector_VALUE_INTERPOLATION_CUBIC  2
 #define Vector_VALUE_INTERPOLATION_SINC70  3
 #define Vector_VALUE_INTERPOLATION_SINC700  4
-double Vector_getValueAtX (Vector me, double x, long channel, int interpolation);
+double Vector_getValueAtX (Vector me, double x, integer channel, int interpolation);
 
-void Vector_getMinimumAndX (Vector me, double xmin, double xmax, long channel, int interpolation,
+void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel, int interpolation,
 	double *return_minimum, double *return_xOfMinimum);
 void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
-	double *return_minimum, double *return_xOfMinimum, long *return_channelOfMinimum);
-void Vector_getMaximumAndX (Vector me, double xmin, double xmax, long channel, int interpolation,
+	double *return_minimum, double *return_xOfMinimum, integer *return_channelOfMinimum);
+void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel, int interpolation,
 	double *return_maximum, double *return_xOfMaximum);
 void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
-	double *return_maximum, double *return_xOfMaximum, long *return_channelOfMaximum);
+	double *return_maximum, double *return_xOfMaximum, integer *return_channelOfMaximum);
 double Vector_getMinimum (Vector me, double xmin, double xmax, int interpolation);
 double Vector_getMaximum (Vector me, double xmin, double xmax, int interpolation);
 double Vector_getAbsoluteExtremum (Vector me, double xmin, double xmax, int interpolation);
 double Vector_getXOfMinimum (Vector me, double xmin, double xmax, int interpolation);
 double Vector_getXOfMaximum (Vector me, double xmin, double xmax, int interpolation);
-long Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, int interpolation);
-long Vector_getChannelOfMaximum (Vector me, double xmin, double xmax, int interpolation);
+integer Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, int interpolation);
+integer Vector_getChannelOfMaximum (Vector me, double xmin, double xmax, int interpolation);
 
-double Vector_getMean (Vector me, double xmin, double xmax, long channel);
-double Vector_getStandardDeviation (Vector me, double xmin, double xmax, long channel);
+double Vector_getMean (Vector me, double xmin, double xmax, integer channel);
+double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer channel);
 
 void Vector_addScalar (Vector me, double scalar);
 void Vector_subtractMean (Vector me);

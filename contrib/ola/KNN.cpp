@@ -770,7 +770,7 @@ double KNN_modelSearch
 		double drange = 1.0;
 		double drate = rate / range;
 
-		soil best = {0, lround(dpivot), lround(dpivot)};
+		soil best = { 0, (integer) lround (dpivot), (integer) lround (dpivot) };
 		autoNUMvector <soil> field ((integer) 0, nseeds - 1);
 
 		while (range > 0)
@@ -783,10 +783,10 @@ double KNN_modelSearch
 			}
 
 			integer maxindex = 0;
-			for (integer n = 1; n < nseeds; n++)
-				if (field[n].performance > field[maxindex].performance) maxindex = n;
+			for (integer n = 1; n < nseeds; n ++)
+				if (field [n]. performance > field [maxindex]. performance) maxindex = n;
 
-			if (field[maxindex].performance > best.performance)
+			if (field [maxindex]. performance > best. performance)
 			{
 				pivot = field[maxindex].k;
 				dpivot = field[maxindex].dist;

@@ -37,7 +37,7 @@ typedef struct {
 	char32 kar;
 	Longchar_Info karInfo;
 	double width;
-	union { integer integer; const char *string; void *pointer; } font;
+	union { integer integer_; const char *string; void *pointer; } font;
 	int cell, line, run;
 } _Graphics_widechar;
 

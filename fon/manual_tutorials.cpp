@@ -22,10 +22,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20170926)
+MAN_BEGIN (U"What's new?", U"ppgb", 20171010)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.34# (10 October 2017)")
+LIST_ITEM (U"• Scripting: arrays in menu commands in scripts.")
+LIST_ITEM (U"• #Inspect: made a button visible that had disappeared in 6.0.33.")
 NORMAL (U"##6.0.33# (26 September 2017)")
 LIST_ITEM (U"• #Pitch: Subtract linear fit...#: correct a bug that prevented computation in the ERB domain.")
 LIST_ITEM (U"• Scripting: made object[xx].xmin work again.")
