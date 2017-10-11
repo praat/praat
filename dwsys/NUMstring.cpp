@@ -129,7 +129,7 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 }
 
 char32 *strstr_regexp (const char32 *string, const char32 *search_regexp) {
-	char32 *charp = 0;
+	char32 *charp = nullptr;
 	regexp *compiled_regexp = CompileRE_throwable (search_regexp, 0);
 
 	if (ExecRE (compiled_regexp, NULL, string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
