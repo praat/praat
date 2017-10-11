@@ -662,7 +662,7 @@ static int ApplyBreath(void)
 	return value;
 }
 
-int Wavegen()
+static int Wavegen()
 {
 	if (wvoice == NULL)
 		return 0;
@@ -1114,7 +1114,7 @@ void SetPitch2(voice_t *v, int pitch1, int pitch2, int *pitch_base, int *pitch_r
 	*pitch_range = base + (pitch2 * range)/2 - *pitch_base;
 }
 
-void SetPitch(int length, unsigned char *env, int pitch1, int pitch2)
+static void SetPitch(int length, unsigned char *env, int pitch1, int pitch2)
 {
 	if (wvoice == NULL)
 		return;

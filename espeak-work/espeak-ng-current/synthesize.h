@@ -462,10 +462,9 @@ void WavegenInit(int rate, int wavemult_fact);
 float polint(float xa[], float ya[], int n, float x);
 int WavegenFill(void);
 void MarkerEvent(int type, unsigned int char_position, int value, int value2, unsigned char *out_ptr);
-int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control);
-int Wavegen(void);
+int GetAmplitude(void);
 void SetPitch2(voice_t *voice, int pitch1, int pitch2, int *pitch_base, int *pitch_range);
-void SetPitch(int length, unsigned char *env, int pitch1, int pitch2); 
+int PeaksToHarmspect(wavegen_peaks_t *peaks, int pitch, int *htab, int control);
 
 extern unsigned char *wavefile_data;
 extern int samplerate;
@@ -490,6 +489,7 @@ extern char mbrola_name[20];
 // from synthdata file
 unsigned int LookupSound(PHONEME_TAB *ph1, PHONEME_TAB *ph2, int which, int *match_level, int control);
 frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,  int *n_frames, PHONEME_LIST *plist);
+void FreePhData(void);
 
 unsigned char *LookupEnvelope(int ix);
 espeak_ng_STATUS LoadPhData(int *srate, espeak_ng_ERROR_CONTEXT *context);
