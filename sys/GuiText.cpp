@@ -163,9 +163,9 @@ static integer NativeText_getLength (GuiObject widget) {
  */
 
 static int NativeText_getSelectionRange (GuiObject widget, integer *out_left, integer *out_right) {
-	uinteger left, right;
 	Melder_assert (MEMBER (widget, Text));
-	SendMessage (widget -> window, EM_GETSEL, (WPARAM) & left, (LPARAM) & right);   // 32-bit (R&N: 579)
+	DWORD left, right;
+	SendMessage (widget -> window, EM_GETSEL, (WPARAM) & left, (LPARAM) & right);
 	if (out_left) *out_left = left;
 	if (out_right) *out_right = right;
 	return right > left;

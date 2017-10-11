@@ -1,6 +1,6 @@
 /* Network_enums.h
  *
- * Copyright (C) 2012,2015,2017 Paul Boersma
+ * Copyright (C) 2012,2015-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
