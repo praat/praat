@@ -125,7 +125,7 @@ FORM (INTEGER_TableOfReal_getColumnIndex, U"Get column index", nullptr) {
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
-		long result = TableOfReal_columnLabelToIndex (me, columnLabel);
+		integer result = TableOfReal_columnLabelToIndex (me, columnLabel);
 	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
 }
 	
@@ -156,7 +156,7 @@ FORM (REAL_TableOfReal_getColumnMean_label, U"Get column mean", nullptr) {
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
-		long columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
+		integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
 		if (columnNumber == 0) Melder_throw (me, U": your column label does not exist.");
 		double result = TableOfReal_getColumnMean (me, columnNumber);
 	NUMBER_ONE_END (U" (mean of column ", columnLabel, U")")
@@ -178,7 +178,7 @@ FORM (REAL_TableOfReal_getColumnStdev_label, U"Get column standard deviation", n
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
-		long columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
+		integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
 		if (columnNumber == 0) Melder_throw (me, U": column label does not exist.");
 		double result = TableOfReal_getColumnStdev (me, columnNumber);
 	NUMBER_ONE_END (U" (standard deviation of column ", columnLabel, U")")
@@ -186,13 +186,13 @@ DO
 
 DIRECT (INTEGER_TableOfReal_getNumberOfColumns) {
 	NUMBER_ONE (TableOfReal)
-		long result = my numberOfColumns;
+		integer result = my numberOfColumns;
 	NUMBER_ONE_END (U" columns")
 }
 
 DIRECT (INTEGER_TableOfReal_getNumberOfRows) {
 	NUMBER_ONE (TableOfReal)
-		long result = my numberOfRows;
+		integer result = my numberOfRows;
 	NUMBER_ONE_END (U" rows")
 }
 
@@ -201,7 +201,7 @@ FORM (INTEGER_TableOfReal_getRowIndex, U"Get row index", nullptr) {
 	OK
 DO
 	NUMBER_ONE (TableOfReal)
-		long result = TableOfReal_rowLabelToIndex (me, rowLabel);
+		integer result = TableOfReal_rowLabelToIndex (me, rowLabel);
 	NUMBER_ONE_END (U" (index of row ", rowLabel, U")")
 }
 
@@ -294,7 +294,7 @@ FORM (MODIFY_TableOfReal_setColumnLabel_label, U"Set column label", nullptr) {
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
-		long columnNumber = TableOfReal_columnLabelToIndex (me, oldLabel);
+		integer columnNumber = TableOfReal_columnLabelToIndex (me, oldLabel);
 		TableOfReal_setColumnLabel (me, columnNumber, newLabel);
 	MODIFY_EACH_END
 }
@@ -330,7 +330,7 @@ FORM (MODIFY_TableOfReal_setRowLabel_label, U"Set row label", nullptr) {
 	OK
 DO
 	MODIFY_EACH (TableOfReal)
-		long rowNumber = TableOfReal_rowLabelToIndex (me, oldLabel);
+		integer rowNumber = TableOfReal_rowLabelToIndex (me, oldLabel);
 		TableOfReal_setRowLabel (me, rowNumber, newLabel);
 	MODIFY_EACH_END
 }

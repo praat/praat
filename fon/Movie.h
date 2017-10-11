@@ -2,7 +2,7 @@
 #define _Movie_h_
 /* Movie.h
  *
- * Copyright (C) 2011,2014,2015 Paul Boersma
+ * Copyright (C) 2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +29,9 @@ autoMovie Movie_openFromSoundFile (MelderFile file);
 
 void Movie_init (Movie me, autoSound sound, const char32 *folderName, autoStrings fileNames);
 
-void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax);
+void Movie_paintOneImageInside (Movie me, Graphics graphics, integer frameNumber, double xmin, double xmax, double ymin, double ymax);
 
-void Movie_paintOneImage (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax);
+void Movie_paintOneImage (Movie me, Graphics graphics, integer frameNumber, double xmin, double xmax, double ymin, double ymax);
 
 void Movie_play (Movie me, Graphics graphics, double tmin, double tmax, Sound_PlayCallback callback, Thing boss);
 

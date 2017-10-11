@@ -85,7 +85,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 	double maximumFrequency, double bandWidth,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
-	long maximumHarmonic,
+	integer maximumHarmonic,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 
 /* Shortcuts. */

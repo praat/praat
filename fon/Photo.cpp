@@ -1,6 +1,6 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,8 +65,8 @@ void structPhoto :: v_info () {
 }
 
 void Photo_init (Photo me,
-	double xmin, double xmax, long nx, double dx, double x1,
-	double ymin, double ymax, long ny, double dy, double y1)
+	double xmin, double xmax, integer nx, double dx, double x1,
+	double ymin, double ymax, integer ny, double dy, double y1)
 {
 	SampledXY_init (me, xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 	my d_red =          Matrix_create (xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
@@ -76,8 +76,8 @@ void Photo_init (Photo me,
 }
 
 autoPhoto Photo_create
-	(double xmin, double xmax, long nx, double dx, double x1,
-	 double ymin, double ymax, long ny, double dy, double y1)
+	(double xmin, double xmax, integer nx, double dx, double x1,
+	 double ymin, double ymax, integer ny, double dy, double y1)
 {
 	try {
 		autoPhoto me = Thing_new (Photo);
@@ -88,7 +88,7 @@ autoPhoto Photo_create
 	}
 }
 
-autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns) {
+autoPhoto Photo_createSimple (integer numberOfRows, integer numberOfColumns) {
 	try {
 		autoPhoto me = Thing_new (Photo);
 		Photo_init (me.get(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
@@ -105,20 +105,20 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			cairo_surface_t *surface = cairo_image_surface_create_from_png (Melder_peek32to8 (file -> path));
 			//if (cairo_surface_status)
 			//	Melder_throw (U"Error opening PNG file.");
-			long width = cairo_image_surface_get_width (surface);
-			long height = cairo_image_surface_get_height (surface);
+			integer width = cairo_image_surface_get_width (surface);
+			integer height = cairo_image_surface_get_height (surface);
 			if (width == 0 || height == 0) {
 				cairo_surface_destroy (surface);
 				Melder_throw (U"Error reading PNG file.");
 			}
 			unsigned char *imageData = cairo_image_surface_get_data (surface);
-			long bytesPerRow = cairo_image_surface_get_stride (surface);
+			integer bytesPerRow = cairo_image_surface_get_stride (surface);
 			cairo_format_t format = cairo_image_surface_get_format (surface);
 			autoPhoto me = Photo_createSimple (height, width);
 			if (format == CAIRO_FORMAT_ARGB32) {
-				for (long irow = 1; irow <= height; irow ++) {
+				for (integer irow = 1; irow <= height; irow ++) {
 					uint8_t *rowAddress = imageData + bytesPerRow * (height - irow);
-					for (long icol = 1; icol <= width; icol ++) {
+					for (integer icol = 1; icol <= width; icol ++) {
 						my d_blue  -> z [irow] [icol] = (* rowAddress ++) / 255.0;
 						my d_green -> z [irow] [icol] = (* rowAddress ++) / 255.0;
 						my d_red   -> z [irow] [icol] = (* rowAddress ++) / 255.0;
@@ -126,9 +126,9 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 					}
 				}
 			} else if (format == CAIRO_FORMAT_RGB24) {
-				for (long irow = 1; irow <= height; irow ++) {
+				for (integer irow = 1; irow <= height; irow ++) {
 					uint8_t *rowAddress = imageData + bytesPerRow * (height - irow);
-					for (long icol = 1; icol <= width; icol ++) {
+					for (integer icol = 1; icol <= width; icol ++) {
 						my d_blue  -> z [irow] [icol] = (* rowAddress ++) / 255.0;
 						my d_green -> z [irow] [icol] = (* rowAddress ++) / 255.0;
 						my d_red   -> z [irow] [icol] = (* rowAddress ++) / 255.0;
@@ -143,13 +143,13 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			return me;
 		#elif defined (_WIN32)
 			Gdiplus::Bitmap gdiplusBitmap (Melder_peek32toW (file -> path));
-			long width = gdiplusBitmap. GetWidth ();
-			long height = gdiplusBitmap. GetHeight ();
+			integer width = gdiplusBitmap. GetWidth ();
+			integer height = gdiplusBitmap. GetHeight ();
 			if (width == 0 || height == 0)
 				Melder_throw (U"Error reading PNG file.");
 			autoPhoto me = Photo_createSimple (height, width);
-			for (long irow = 1; irow <= height; irow ++) {
-				for (long icol = 1; icol <= width; icol ++) {
+			for (integer irow = 1; irow <= height; irow ++) {
+				for (integer icol = 1; icol <= width; icol ++) {
 					Gdiplus::Color gdiplusColour;
 					gdiplusBitmap. GetPixel (icol - 1, height - irow, & gdiplusColour);
 					my d_red -> z [irow] [icol] = (gdiplusColour. GetRed ()) / 255.0;
@@ -173,12 +173,12 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, nullptr);
 			CFRelease (imageSource);
 			if (image) {
-				long width = CGImageGetWidth (image);
-				long height = CGImageGetHeight (image);
+				integer width = CGImageGetWidth (image);
+				integer height = CGImageGetHeight (image);
 				me = Photo_createSimple (height, width);
-				long bitsPerPixel = CGImageGetBitsPerPixel (image);
-				long bitsPerComponent = CGImageGetBitsPerComponent (image);
-				long bytesPerRow = CGImageGetBytesPerRow (image);
+				integer bitsPerPixel = CGImageGetBitsPerPixel (image);
+				integer bitsPerComponent = CGImageGetBitsPerComponent (image);
+				integer bytesPerRow = CGImageGetBytesPerRow (image);
 				trace (
 					bitsPerPixel, U" bits per pixel, ",
 					bitsPerComponent, U" bits per component, ",
@@ -192,9 +192,9 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 				CGDataProviderRef dataProvider = CGImageGetDataProvider (image);   // not retained, so don't release
 				CFDataRef data = CGDataProviderCopyData (dataProvider);
 				uint8_t *pixelData = (uint8_t *) CFDataGetBytePtr (data);
-				for (long irow = 1; irow <= height; irow ++) {
+				for (integer irow = 1; irow <= height; irow ++) {
 					uint8_t *rowAddress = pixelData + bytesPerRow * (height - irow);
-					for (long icol = 1; icol <= width; icol ++) {
+					for (integer icol = 1; icol <= width; icol ++) {
 						my d_red   -> z [irow] [icol] = (*rowAddress ++) / 255.0;
 						my d_green -> z [irow] [icol] = (*rowAddress ++) / 255.0;
 						my d_blue  -> z [irow] [icol] = (*rowAddress ++) / 255.0;
@@ -224,12 +224,12 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 #if defined (linux) && ! defined (NO_GRAPHICS)
 	static void _lin_saveAsImageFile (Photo me, MelderFile file, const char32 *which) {
 		cairo_format_t format = CAIRO_FORMAT_ARGB32;
-		long bytesPerRow = cairo_format_stride_for_width (format, my nx);   // likely to be my nx * 4
-		long numberOfRows = my ny;
+		integer bytesPerRow = cairo_format_stride_for_width (format, my nx);   // likely to be my nx * 4
+		integer numberOfRows = my ny;
 		uint8 *imageData = Melder_malloc_f (uint8, bytesPerRow * numberOfRows);
-		for (long irow = 1; irow <= my ny; irow ++) {
+		for (integer irow = 1; irow <= my ny; irow ++) {
 			uint8 *rowAddress = imageData + bytesPerRow * (my ny - irow);
-			for (long icol = 1; icol <= my nx; icol ++) {
+			for (integer icol = 1; icol <= my nx; icol ++) {
 				* rowAddress ++ = round (my d_blue         -> z [irow] [icol] * 255.0);
 				* rowAddress ++ = round (my d_green        -> z [irow] [icol] * 255.0);
 				* rowAddress ++ = round (my d_red          -> z [irow] [icol] * 255.0);
@@ -246,8 +246,8 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 #ifdef _WIN32
 	static void _win_saveAsImageFile (Photo me, MelderFile file, const char32 *mimeType) {
 		Gdiplus::Bitmap gdiplusBitmap (my nx, my ny, PixelFormat32bppARGB);
-		for (long irow = 1; irow <= my ny; irow ++) {
-			for (long icol = 1; icol <= my nx; icol ++) {
+		for (integer irow = 1; irow <= my ny; irow ++) {
+			for (integer icol = 1; icol <= my nx; icol ++) {
 				Gdiplus::Color gdiplusColour (
 					255 - round (my d_transparency -> z [irow] [icol] * 255.0),
 					round (my d_red   -> z [irow] [icol] * 255.0),
@@ -291,12 +291,12 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 
 #ifdef macintosh
 	static void _mac_saveAsImageFile (Photo me, MelderFile file, const void *which) {
-		long bytesPerRow = my nx * 4;
-		long numberOfRows = my ny;
+		integer bytesPerRow = my nx * 4;
+		integer numberOfRows = my ny;
 		unsigned char *imageData = Melder_malloc_f (unsigned char, bytesPerRow * numberOfRows);
-		for (long irow = 1; irow <= my ny; irow ++) {
+		for (integer irow = 1; irow <= my ny; irow ++) {
 			uint8_t *rowAddress = imageData + bytesPerRow * (my ny - irow);
-			for (long icol = 1; icol <= my nx; icol ++) {
+			for (integer icol = 1; icol <= my nx; icol ++) {
 				* rowAddress ++ = (uint8) lround (my d_red          -> z [irow] [icol] * 255.0);   // BUG: should be tested for speed
 				* rowAddress ++ = (uint8) lround (my d_green        -> z [irow] [icol] * 255.0);
 				* rowAddress ++ = (uint8) lround (my d_blue         -> z [irow] [icol] * 255.0);

@@ -75,13 +75,13 @@ autoOTGrammar OTGrammar_create_tongueRoot_grammar (
 			my constraints [9]. name = Melder_dup (U"*[atr / hi]");
 		}
 		if (equal_random_infant_Wolof == kOTGrammar_createTongueRootGrammar_ranking::EQUAL) {
-			for (long icons = 1; icons <= ncons; icons ++)
+			for (integer icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = 100.0;
 		} else if (equal_random_infant_Wolof == kOTGrammar_createTongueRootGrammar_ranking::RANDOM) {
-			for (long icons = 1; icons <= ncons; icons ++)
+			for (integer icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = NUMrandomGauss (100.0, 10.0);
 		} else if (equal_random_infant_Wolof == kOTGrammar_createTongueRootGrammar_ranking::INFANT) {
-			for (long icons = 1; icons <= ncons; icons ++)
+			for (integer icons = 1; icons <= ncons; icons ++)
 				my constraints [icons]. ranking = 100.0;   // structural constraints
 			my constraints [3]. ranking = 50.0;   // faithfulness constraints
 			my constraints [4]. ranking = 50.0;
@@ -144,7 +144,7 @@ autoOTGrammar OTGrammar_create_tongueRoot_grammar (
 		}
 		OTGrammar_checkIndex (me.get());
 		OTGrammar_newDisharmonies (me.get(), 0.0);
-		for (long icons = 1; icons <= my numberOfConstraints; icons ++)
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 			my constraints [icons]. plasticity = 1.0;
 		return me;
 	} catch (MelderError) {

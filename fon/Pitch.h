@@ -25,7 +25,7 @@ Thing_declare (Interpreter);
 #include "Pitch_enums.h"
 #include "Pitch_def.h"
 
-autoPitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
+autoPitch Pitch_create (double tmin, double tmax, integer nt, double dt, double t1,
 	double ceiling, int maxnCandidates);
 /*
 	Function:
@@ -62,7 +62,7 @@ void Pitch_Frame_init (Pitch_Frame me, int nCandidates);
 		my intensity == 0.0; // silent
 */
 
-bool Pitch_isVoiced_i (Pitch me, long index);
+bool Pitch_isVoiced_i (Pitch me, integer index);
 /*
 	Is the frame 'index' voiced?
 	A frame is considered voiced if the frequency of its first candidate
@@ -92,7 +92,7 @@ bool Pitch_isVoiced_t (Pitch me, double t);
 double Pitch_getValueAtTime (Pitch me, double time, kPitch_unit unit, bool interpolate);
 double Pitch_getStrengthAtTime (Pitch me, double time, kPitch_unit unit, bool interpolate);
 
-long Pitch_countVoicedFrames (Pitch me);
+integer Pitch_countVoicedFrames (Pitch me);
 
 double Pitch_getMean (Pitch me, double tmin, double tmax, kPitch_unit unit);
 double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int strengthUnit);
@@ -137,11 +137,11 @@ void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, do
 void Pitch_difference (Pitch me, Pitch thee);
 /* give information about frames that are different in me and thee. */
 
-long Pitch_getMeanAbsSlope_hertz (Pitch me, double *slope);
-long Pitch_getMeanAbsSlope_mel (Pitch me, double *slope);
-long Pitch_getMeanAbsSlope_semitones (Pitch me, double *slope);
-long Pitch_getMeanAbsSlope_erb (Pitch me, double *slope);
-long Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope);
+integer Pitch_getMeanAbsSlope_hertz (Pitch me, double *slope);
+integer Pitch_getMeanAbsSlope_mel (Pitch me, double *slope);
+integer Pitch_getMeanAbsSlope_semitones (Pitch me, double *slope);
+integer Pitch_getMeanAbsSlope_erb (Pitch me, double *slope);
+integer Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope);
 /*
    The value returned is the number of voiced frames (nVoiced);
    this signals if the values are valid:

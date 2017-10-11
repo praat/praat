@@ -1,6 +1,6 @@
 /* PitchTier_to_Sound.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "Sound.h"
 
 autoSound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
-	 double adaptFactor, double adaptTime, long interpolationDepth,
+	 double adaptFactor, double adaptTime, integer interpolationDepth,
 	 bool hum);
 autoSound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 	 double adaptFactor, double maximumPeriod,

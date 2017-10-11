@@ -20,7 +20,7 @@
 
 static void Pitch_getExtrema (Pitch me, double *minimum, double *maximum) {
 	*minimum = 1e308, *maximum = -1e308;
-	for (long i = 1; i <= my nx; i ++) {
+	for (integer i = 1; i <= my nx; i ++) {
 		double frequency = my frame [i]. candidate [1]. frequency;
 		if (frequency == 0.0) continue;   // voiceless
 		if (frequency < *minimum) *minimum = frequency;
@@ -42,8 +42,8 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	Graphics_setInner (g);
 	double previousX = undefined;
 	double previousY = undefined;
-	long previousI = 0;
-	for (long i = 1; i <= pitch -> nx; i ++) {
+	integer previousI = 0;
+	for (integer i = 1; i <= pitch -> nx; i ++) {
 		double t = Sampled_indexToX (pitch, i);
 		double x = pitch -> frame [i]. candidate [1]. frequency;
 		double y = Sampled_getValueAtX (intensity, t, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ, true);
@@ -73,9 +73,9 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 }
 
 double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
-	long numberOfValidLocalMeasurements = 0;
+	integer numberOfValidLocalMeasurements = 0;
 	double sumOfLocalValues = 0.0;
-	for (long iframe = 1; iframe <= my nx; iframe ++) {
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		double t = Sampled_indexToX (me, iframe);
 		bool localMeasurentIsValid = Pitch_isVoiced_t (thee, t);
 		if (localMeasurentIsValid) {
@@ -88,9 +88,9 @@ double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
 }
 
 double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
-	long numberOfValidLocalMeasurements = 0;
+	integer numberOfValidLocalMeasurements = 0;
 	double sumOfLocalAbsoluteSlopes = 0.0;
-	for (long iframe = 1; iframe < my nx; iframe ++) {
+	for (integer iframe = 1; iframe < my nx; iframe ++) {
 		double t1 = Sampled_indexToX (me, iframe);
 		double t2 = t1 + my dx;
 		bool localMeasurentIsValid = ( Pitch_isVoiced_t (thee, t1) && Pitch_isVoiced_t (thee, t2) );

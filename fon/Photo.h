@@ -23,12 +23,12 @@
 #include "Photo_def.h"
 
 void Photo_init (Photo me,
-	double xmin, double xmax, long nx, double dx, double x1,
-	double ymin, double ymax, long ny, double dy, double y1);
+	double xmin, double xmax, integer nx, double dx, double x1,
+	double ymin, double ymax, integer ny, double dy, double y1);
 
 autoPhoto Photo_create
-	(double xmin, double xmax, long nx, double dx, double x1,
-	 double ymin, double ymax, long ny, double dy, double y1);
+	(double xmin, double xmax, integer nx, double dx, double x1,
+	 double ymin, double ymax, integer ny, double dy, double y1);
 /*
 	Function:
 		return a new opaque black Photo.
@@ -53,7 +53,7 @@ autoPhoto Photo_create
 		result -> d_transparency -> z [1..ny] [1..nx] == 0.0;
 */
 
-autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns);
+autoPhoto Photo_createSimple (integer numberOfRows, integer numberOfColumns);
 /*
 	Function:
 		return a new opaque black Photo.
