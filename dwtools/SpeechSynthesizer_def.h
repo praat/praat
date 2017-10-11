@@ -74,7 +74,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		
 	// sythesizers language /voice
 	oo_STRING (d_languageName)
-	oo_STRING (d_voiceName) // not used in espeak-ng
+	oo_STRING (d_voiceName)
 	oo_INTEGER (d_wordsPerMinute)
 	// text-only, phonemes-only, mixed
 	oo_INT (d_inputTextFormat)
@@ -99,7 +99,6 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	#endif
 	#if oo_READING
 		SpeechSynthesizer_initEspeak ();
-		SpeechSynthesizer_changeLanguageNameToCurrent (this);
 	#endif
 	#if oo_DECLARING
 		void v_info () override;
