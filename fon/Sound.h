@@ -54,7 +54,7 @@ Thing_define (Sound, Vector) {
 	z may be replaced (e.g., in pasting).
 */
 
-autoSound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1);
+autoSound Sound_create (integer numberOfChannels, double xmin, double xmax, integer nx, double dx, double x1);
 /*
 	Function:
 		return a new silent Sound.
@@ -76,7 +76,7 @@ autoSound Sound_create (long numberOfChannels, double xmin, double xmax, long nx
 		thy z [i] [1..nx] == 0.0;
 */
 
-autoSound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency);
+autoSound Sound_createSimple (integer numberOfChannels, double duration, double samplingFrequency);
 /*
 	Function:
 		return a new silent Sound.
@@ -99,7 +99,7 @@ autoSound Sound_createSimple (long numberOfChannels, double duration, double sam
 
 autoSound Sound_convertToMono (Sound me);
 autoSound Sound_convertToStereo (Sound me);
-autoSound Sound_extractChannel (Sound me, long ichannel);
+autoSound Sound_extractChannel (Sound me, integer ichannel);
 autoSound Sounds_combineToStereo (OrderedOf<structSound>* me);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */
@@ -109,7 +109,7 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me);
 
 autoSound Sound_upsample (Sound me);   /* By a factor 2. */
 
-autoSound Sound_resample (Sound me, double samplingFrequency, long precision);
+autoSound Sound_resample (Sound me, double samplingFrequency, integer precision);
 /*
 	Method:
 		precision <= 1: linear interpolation.
@@ -161,14 +161,14 @@ double Sound_getEnergyInAir (Sound me);
 double Sound_getPowerInAir (Sound me);
 double Sound_getIntensity_dB (Sound me);
 
-double Sound_getNearestZeroCrossing (Sound me, double position, long ichannel);
+double Sound_getNearestZeroCrossing (Sound me, double position, integer ichannel);
 void Sound_setZero (Sound me, double tmin, double tmax, bool roundTimesToNearestZeroCrossing);
 
-autoSound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
+autoSound Sound_createAsPureTone (integer numberOfChannels, double startingTime, double endTime,
 	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration);
 autoSound Sound_createAsToneComplex (double startingTime, double endTime,
 	double sampleRate, int phase, double frequencyStep,
-	double firstFrequency, double ceiling, long numberOfComponents);
+	double firstFrequency, double ceiling, integer numberOfComponents);
 /* Values for `phase' parameter: */
 #define Sound_TONE_COMPLEX_SINE  0
 #define Sound_TONE_COMPLEX_COSINE  1
@@ -200,7 +200,7 @@ autoMatrix Sound_to_Matrix (Sound me);
 
 autoSound Matrix_to_Sound (Matrix me);
 
-autoSound Matrix_to_Sound_mono (Matrix me, long row);
+autoSound Matrix_to_Sound_mono (Matrix me, integer row);
 /*
 	Function:
 		create a Sound from one row of a Matrix.

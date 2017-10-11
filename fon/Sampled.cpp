@@ -54,8 +54,8 @@ void structSampled :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 integer Sampled_getWindowSamples (Sampled me, double xmin, double xmax, integer *ixmin, integer *ixmax) {
 	double rixmin = 1.0 + ceil ((xmin - my x1) / my dx);
 	double rixmax = 1.0 + floor ((xmax - my x1) / my dx);   // could be above 32-bit LONG_MAX
-	*ixmin = rixmin < 1.0 ? 1 : (long) rixmin;
-	*ixmax = rixmax > (double) my nx ? my nx : (long) rixmax;
+	*ixmin = rixmin < 1.0 ? 1 : (integer) rixmin;
+	*ixmax = rixmax > (double) my nx ? my nx : (integer) rixmax;
 	if (*ixmin > *ixmax) return 0;
 	return *ixmax - *ixmin + 1;
 }
@@ -81,16 +81,16 @@ void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeSt
 	*firstTime = ourMidTime - 0.5 * thyDuration + 0.5 * timeStep;
 }
 
-double Sampled_getValueAtSample (Sampled me, long isamp, long ilevel, int unit) {
+double Sampled_getValueAtSample (Sampled me, integer isamp, integer ilevel, int unit) {
 	if (isamp < 1 || isamp > my nx) return undefined;
 	return my v_getValueAtSample (isamp, ilevel, unit);
 }
 
-double Sampled_getValueAtX (Sampled me, double x, long ilevel, int unit, bool interpolate) {
+double Sampled_getValueAtX (Sampled me, double x, integer ilevel, int unit, bool interpolate) {
 	if (x < my xmin || x > my xmax) return undefined;
 	if (interpolate) {
 		double ireal = Sampled_xToIndex (me, x);
-		long ileft = (long) floor (ireal), inear, ifar;
+		integer ileft = (integer) floor (ireal), inear, ifar;
 		double phase = ireal - ileft;
 		if (phase < 0.5) {
 			inear = ileft, ifar = ileft + 1;
@@ -109,9 +109,9 @@ double Sampled_getValueAtX (Sampled me, double x, long ilevel, int unit, bool in
 	return Sampled_getValueAtSample (me, Sampled_xToNearestIndex (me, x), ilevel, unit);
 }
 
-long Sampled_countDefinedSamples (Sampled me, long ilevel, int unit) {
-	long numberOfDefinedSamples = 0;
-	for (long isamp = 1; isamp <= my nx; isamp ++) {
+integer Sampled_countDefinedSamples (Sampled me, integer ilevel, int unit) {
+	integer numberOfDefinedSamples = 0;
+	for (integer isamp = 1; isamp <= my nx; isamp ++) {
 		double value = my v_getValueAtSample (isamp, ilevel, unit);
 		if (isundef (value)) continue;
 		numberOfDefinedSamples += 1;
@@ -119,8 +119,8 @@ long Sampled_countDefinedSamples (Sampled me, long ilevel, int unit) {
 	return numberOfDefinedSamples;
 }
 
-double * Sampled_getSortedValues (Sampled me, long ilevel, int unit, long *return_numberOfValues) {
-	long isamp, numberOfDefinedSamples = 0;
+double * Sampled_getSortedValues (Sampled me, integer ilevel, int unit, integer *return_numberOfValues) {
+	integer isamp, numberOfDefinedSamples = 0;
 	autoNUMvector <double> values (1, my nx);
 	for (isamp = 1; isamp <= my nx; isamp ++) {
 		double value = my v_getValueAtSample (isamp, ilevel, unit);
@@ -132,7 +132,7 @@ double * Sampled_getSortedValues (Sampled me, long ilevel, int unit, long *retur
 	return values.transfer();
 }
 
-double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantile, long ilevel, int unit) {
+double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantile, integer ilevel, int unit) {
 	try {
 		autoNUMvector <double> values (1, my nx);
 		Function_unidirectionalAutowindow (me, & xmin, & xmax);
@@ -157,7 +157,7 @@ double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantil
 }
 
 static void Sampled_getSumAndDefinitionRange
-	(Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate, double *return_sum, double *return_definitionRange)
+	(Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate, double *return_sum, double *return_definitionRange)
 {
 	/*
 		This function computes the area under the linearly interpolated curve between xmin and xmax.
@@ -291,28 +291,28 @@ static void Sampled_getSumAndDefinitionRange
 	if (return_definitionRange) *return_definitionRange = (real) definitionRange;
 }
 
-double Sampled_getMean (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
+double Sampled_getMean (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {
 	double sum, definitionRange;
 	Sampled_getSumAndDefinitionRange (me, xmin, xmax, ilevel, unit, interpolate, & sum, & definitionRange);
 	return definitionRange <= 0.0 ? undefined : sum / definitionRange;
 }
 
-double Sampled_getMean_standardUnit (Sampled me, double xmin, double xmax, long ilevel, int averagingUnit, bool interpolate) {
+double Sampled_getMean_standardUnit (Sampled me, double xmin, double xmax, integer ilevel, int averagingUnit, bool interpolate) {
 	return Function_convertSpecialToStandardUnit (me, Sampled_getMean (me, xmin, xmax, ilevel, averagingUnit, interpolate), ilevel, averagingUnit);
 }
 
-double Sampled_getIntegral (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
+double Sampled_getIntegral (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {
 	double sum, definitionRange;
 	Sampled_getSumAndDefinitionRange (me, xmin, xmax, ilevel, unit, interpolate, & sum, & definitionRange);
 	return sum * my dx;
 }
 
-double Sampled_getIntegral_standardUnit (Sampled me, double xmin, double xmax, long ilevel, int averagingUnit, bool interpolate) {
+double Sampled_getIntegral_standardUnit (Sampled me, double xmin, double xmax, integer ilevel, int averagingUnit, bool interpolate) {
 	return Function_convertSpecialToStandardUnit (me, Sampled_getIntegral (me, xmin, xmax, ilevel, averagingUnit, interpolate), ilevel, averagingUnit);
 }
 
 static void Sampled_getSum2AndDefinitionRange
-	(Sampled me, double xmin, double xmax, long ilevel, int unit, double mean, bool interpolate, double *return_sum2, double *return_definitionRange)
+	(Sampled me, double xmin, double xmax, integer ilevel, int unit, double mean, bool interpolate, double *return_sum2, double *return_definitionRange)
 {
 	/*
 		This function computes the area under the linearly interpolated squared difference curve between xmin and xmax.
@@ -326,7 +326,7 @@ static void Sampled_getSum2AndDefinitionRange
 			integer imin, imax;
 			if (Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
 				double leftEdge = my x1 - 0.5 * my dx, rightEdge = leftEdge + my nx * my dx;
-				for (long isamp = imin; isamp <= imax; isamp ++) {
+				for (integer isamp = imin; isamp <= imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);   // a fast way to integrate a linearly interpolated curve; works everywhere except at the edges
 					if (isdefined (value)) {
 						value -= mean;
@@ -474,7 +474,7 @@ static void Sampled_getSum2AndDefinitionRange
 	if (return_definitionRange) *return_definitionRange = (real) definitionRange;
 }
 
-double Sampled_getStandardDeviation (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
+double Sampled_getStandardDeviation (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {
 	double sum, sum2, definitionRange;
 	Sampled_getSumAndDefinitionRange (me, xmin, xmax, ilevel, unit, interpolate, & sum, & definitionRange);
 	if (definitionRange < 2.0) return undefined;
@@ -482,11 +482,11 @@ double Sampled_getStandardDeviation (Sampled me, double xmin, double xmax, long 
 	return sqrt (sum2 / (definitionRange - 1.0));
 }
 
-double Sampled_getStandardDeviation_standardUnit (Sampled me, double xmin, double xmax, long ilevel, int averagingUnit, bool interpolate) {
+double Sampled_getStandardDeviation_standardUnit (Sampled me, double xmin, double xmax, integer ilevel, int averagingUnit, bool interpolate) {
 	return Function_convertSpecialToStandardUnit (me, Sampled_getStandardDeviation (me, xmin, xmax, ilevel, averagingUnit, interpolate), ilevel, averagingUnit);
 }
 
-void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate,
+void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate,
 	double *return_minimum, double *return_xOfMinimum)
 {
 	double minimum = 1e301, xOfMinimum = 0.0;
@@ -510,7 +510,7 @@ void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, 
 		if (isdefined (fleft) && fleft < minimum) minimum = fleft, xOfMinimum = xmin;
 		if (isdefined (fright) && fright < minimum) minimum = fright, xOfMinimum = xmax;
 	} else {
-		for (long i = imin; i <= imax; i ++) {
+		for (integer i = imin; i <= imax; i ++) {
 			double fmid = my v_getValueAtSample (i, ilevel, unit);
 			if (isundef (fmid)) continue;
 			if (! interpolate) {
@@ -549,19 +549,19 @@ end:
 	if (return_xOfMinimum) *return_xOfMinimum = xOfMinimum;
 }
 
-double Sampled_getMinimum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
+double Sampled_getMinimum (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {
 	double minimum;
 	Sampled_getMinimumAndX (me, xmin, xmax, ilevel, unit, interpolate, & minimum, nullptr);
 	return minimum;
 }
 
-double Sampled_getXOfMinimum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
+double Sampled_getXOfMinimum (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {
 	double time;
 	Sampled_getMinimumAndX (me, xmin, xmax, ilevel, unit, interpolate, nullptr, & time);
 	return time;
 }
 
-void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate,
+void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate,
 	double *return_maximum, double *return_xOfMaximum)
 {
 	double maximum = -1e301, xOfMaximum = 0.0;
@@ -626,20 +626,20 @@ end:
 	if (return_xOfMaximum) *return_xOfMaximum = xOfMaximum;
 }
 
-double Sampled_getMaximum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
+double Sampled_getMaximum (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {
 	double maximum;
 	Sampled_getMaximumAndX (me, xmin, xmax, ilevel, unit, interpolate, & maximum, nullptr);
 	return maximum;
 }
 
-double Sampled_getXOfMaximum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate) {
+double Sampled_getXOfMaximum (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {
 	double time;
 	Sampled_getMaximumAndX (me, xmin, xmax, ilevel, unit, interpolate, nullptr, & time);
 	return time;
 }
 
 static void Sampled_speckleInside (Sampled me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	long ilevel, int unit)
+	integer ilevel, int unit)
 {
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer ixmin, ixmax;
@@ -662,7 +662,7 @@ static void Sampled_speckleInside (Sampled me, Graphics g, double xmin, double x
 }
 
 void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, double ymin, double ymax,
-	bool speckle, long ilevel, int unit)
+	bool speckle, integer ilevel, int unit)
 {
 	try {
 		if (speckle) {

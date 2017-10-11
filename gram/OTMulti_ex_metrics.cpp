@@ -1,6 +1,6 @@
 /* OTMulti_ex_metrics.cpp
  *
- * Copyright (C) 2014,2015,2016 Paul Boersma
+ * Copyright (C) 2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ static const char32 *constraintNames [1+NUMBER_OF_CONSTRAINTS] { 0,
 	U"WSP", U"FtNonfinal", U"Iambic", U"Parse", U"FootBin", U"WFL", U"WFR", U"Main-L", U"Main-R", U"AFL", U"AFR", U"Nonfinal",
 	U"Trochaic", U"FtBimor", U"FtBisyl", U"Peripheral", U"MainNonfinal", U"HeadNonfinal", U"*Clash", U"*Lapse", U"WeightByPosition", U"*C\\mu" };
 
-static void addCandidate (OTMulti me, const char32 *underlyingForm, long numberOfSyllables, int stress [],
+static void addCandidate (OTMulti me, const char32 *underlyingForm, integer numberOfSyllables, int stress [],
 	bool footedToTheLeft [], bool footedToTheRight [], int surfaceWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
@@ -58,14 +58,14 @@ static void addCandidate (OTMulti me, const char32 *underlyingForm, long numberO
 	char32 string [150];
 	str32cpy (string, underlyingForm);
 	str32cpy (string + str32len (string), U" /");
-	for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		if (isyll > 1) str32cpy (string + str32len (string), U" ");
 		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0)) str32cpy (string + str32len (string), U"(");
 		str32cpy (string + str32len (string), syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
 		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0)) str32cpy (string + str32len (string), U")");
 	}
 	str32cpy (string + str32len (string), U"/ [");
-	for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		if (isyll > 1) str32cpy (string + str32len (string), U" ");
 		str32cpy (string + str32len (string), ( overtFormsHaveSecondaryStress ? syllable : syllableWithoutSecondaryStress )
 				[stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
@@ -74,13 +74,13 @@ static void addCandidate (OTMulti me, const char32 *underlyingForm, long numberO
 	my candidates [++ my numberOfCandidates]. string = Melder_dup (string);
 }
 
-static void fillSurfaceWeightPattern (OTMulti me, const char32 *underlyingForm, long numberOfSyllables, int stress [],
+static void fillSurfaceWeightPattern (OTMulti me, const char32 *underlyingForm, integer numberOfSyllables, int stress [],
 	bool footedToTheLeft [], bool footedToTheRight [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
 	int surfaceWeightPattern [1+7], minSurfaceWeight [1+7], maxSurfaceWeight [1+7];
 	int weight1, weight2, weight3, weight4, weight5;
-	for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		if (underlyingWeightPattern [isyll] < 3) {
 			minSurfaceWeight [isyll] = maxSurfaceWeight [isyll] = underlyingWeightPattern [isyll];   // L -> L; H -> H
 		} else {
@@ -112,12 +112,12 @@ static void fillSurfaceWeightPattern (OTMulti me, const char32 *underlyingForm, 
 	}
 }
 
-static void path (OTMulti me, const char32 *underlyingForm, long numberOfSyllables, int stress [],
+static void path (OTMulti me, const char32 *underlyingForm, integer numberOfSyllables, int stress [],
 	int startingSyllable, bool footedToTheLeft_in [], bool footedToTheRight_in [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
 	bool footedToTheLeft [10], footedToTheRight [10];
-	long isyll;
+	integer isyll;
 	/* Localize all arguments. */
 	for (isyll = 1; isyll <= startingSyllable; isyll ++) {
 		footedToTheLeft [isyll] = footedToTheLeft_in [isyll];
@@ -149,7 +149,7 @@ static void path (OTMulti me, const char32 *underlyingForm, long numberOfSyllabl
 	}
 }
 
-static void fillOvertStressPattern (OTMulti me, const char32 *underlyingForm, long numberOfSyllables, int stress [], int underlyingWeightPattern [],
+static void fillOvertStressPattern (OTMulti me, const char32 *underlyingForm, integer numberOfSyllables, int stress [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
 	bool footedToTheLeft [10], footedToTheRight [10];
@@ -161,17 +161,17 @@ static void fillOvertStressPattern (OTMulti me, const char32 *underlyingForm, lo
 static int numberOfCandidates_noCodas [1+7] { 0, 1, 6, 24, 88, 300, 984, 3136 };
 static int numberOfCandidates_codas [1+7] { 0, 1, 24, 192, 1408, 9600, 984, 3136 };
 
-static void fillTableau (OTMulti me, long numberOfSyllables, int underlyingWeightPattern [], int overtFormsHaveSecondaryStress, int includeCodas) {
+static void fillTableau (OTMulti me, integer numberOfSyllables, int underlyingWeightPattern [], int overtFormsHaveSecondaryStress, int includeCodas) {
 	char32 underlyingForm [100];
 	str32cpy (underlyingForm, U"|");
-	for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		static const char32 *syllable_noCodas [] = { U"", U"L", U"H" };
 		static const char32 *syllable_codas [] = { U"", U"cv", U"cv:", U"cvc" };
 		if (isyll > 1) str32cpy (underlyingForm + str32len (underlyingForm), includeCodas ? U"." : U" ");
 		str32cpy (underlyingForm + str32len (underlyingForm), ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
 	}
 	str32cpy (underlyingForm + str32len (underlyingForm), U"|");
-	for (long mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {
+	for (integer mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {
 		int stress [10];
 		stress [mainStressed] = 1;
 		for (int secondary1 = false; secondary1 <= true; secondary1 ++) {
@@ -429,7 +429,7 @@ autoOTMulti OTMulti_create_metrics (
 		int underlyingWeightPattern [1+7], maximumUnderlyingWeight = includeCodas ? 3 : 2;
 		autoOTMulti me = Thing_new (OTMulti);
 		my constraints = NUMvector <structOTConstraint> (1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
-		for (long icons = 1; icons <= NUMBER_OF_CONSTRAINTS; icons ++) {
+		for (integer icons = 1; icons <= NUMBER_OF_CONSTRAINTS; icons ++) {
 			OTConstraint constraint = & my constraints [icons];
 			constraint -> name = Melder_dup (constraintNames [icons]);
 			constraint -> ranking = 100.0;
@@ -445,25 +445,25 @@ autoOTMulti OTMulti_create_metrics (
 			/* Quantity sensitivity high, foot form constraints in the second stratum. */
 			my constraints [WSP]. ranking = 102.0;
 		}
-		long numberOfCandidates = 0;
+		integer numberOfCandidates = 0;
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-			long numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
+			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
 			numberOfCandidates += ( includeCodas ? numberOfCandidates_codas : numberOfCandidates_noCodas ) [numberOfSyllables] * numberOfUnderlyingWeightPatterns;
 		}
 		my candidates = NUMvector <structOTCandidate> (1, numberOfCandidates);
 		my numberOfCandidates = 0;
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-			long numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
-			for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
+			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 				underlyingWeightPattern [isyll] = 1;   /* L or cv */
 			}
-			for (long iweightPattern = 1; iweightPattern <= numberOfUnderlyingWeightPatterns; iweightPattern ++) {
+			for (integer iweightPattern = 1; iweightPattern <= numberOfUnderlyingWeightPatterns; iweightPattern ++) {
 				fillTableau (me.get(), numberOfSyllables, underlyingWeightPattern, overtFormsHaveSecondaryStress, includeCodas);
 				/*
 				 * Cycle to next underlying weight pattern.
 				 */
 				underlyingWeightPattern [numberOfSyllables] += 1;
-				for (long isyll = numberOfSyllables; isyll >= 2; isyll --) {
+				for (integer isyll = numberOfSyllables; isyll >= 2; isyll --) {
 					if (underlyingWeightPattern [isyll] > maximumUnderlyingWeight) {
 						underlyingWeightPattern [isyll] = 1;
 						underlyingWeightPattern [isyll - 1] += 1;
@@ -473,7 +473,7 @@ autoOTMulti OTMulti_create_metrics (
 		}
 		Melder_assert (my numberOfCandidates == numberOfCandidates);
 		/* Compute violation marks. */
-		for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
+		for (integer icand = 1; icand <= my numberOfCandidates; icand ++) {
 			computeViolationMarks (& my candidates [icand]);
 		}
 		OTMulti_checkIndex (me.get());
@@ -505,7 +505,7 @@ autoOTMulti OTMulti_create_metrics (
 			OTMulti_removeConstraint (me.get(), U"*C\\mu");
 		}
 		if (includeCodas) {
-			for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
+			for (integer icand = 1; icand <= my numberOfCandidates; icand ++) {
 				replaceOutput (& my candidates [icand]);
 			}
 		}

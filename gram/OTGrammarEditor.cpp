@@ -202,7 +202,7 @@ void structOTGrammarEditor :: v_draw () {
 	} else {
 		HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	}
-	for (long icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
+	for (integer icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [icons]];
 		if (ot -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_HG ||
 			ot -> decisionStrategy == kOTGrammar_decisionStrategy::EXPONENTIAL_MAXIMUM_ENTROPY)
@@ -227,7 +227,7 @@ void structOTGrammarEditor :: v_draw () {
 		HyperPage_listItem (this, text);
 	}
 	Graphics_setAtSignIsLink (graphics.get(), false);
-	for (long itab = 1; itab <= ot -> numberOfTableaus; itab ++) {
+	for (integer itab = 1; itab <= ot -> numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & ot -> tableaus [itab];
 		double rowHeight = 0.25;
 		double tableauHeight = rowHeight * (tableau -> numberOfCandidates + 2);

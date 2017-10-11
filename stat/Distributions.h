@@ -2,7 +2,7 @@
 #define _Distributions_h_
 /* Distributions.h
  *
- * Copyright (C) 1997-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,17 +26,17 @@ Thing_define (Distributions, TableOfReal) {
 		override;
 };
 
-autoDistributions Distributions_create (long numberOfRows, long numberOfColumns);
+autoDistributions Distributions_create (integer numberOfRows, integer numberOfColumns);
 
-void Distributions_peek (Distributions me, long column, char32 **string, long *row);
+void Distributions_peek (Distributions me, integer column, char32 **string, integer *row);
 
-double Distributions_getProbability (Distributions me, const char32 *string, long column);
-double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, long column);
+double Distributions_getProbability (Distributions me, const char32 *string, integer column);
+double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, integer column);
 
 autoDistributions Distributions_addTwo (Distributions me, Distributions thee);
 autoDistributions Distributions_addMany (OrderedOf<structDistributions>* me);
 
-void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long columnNumber);
+void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, integer columnNumber);
 
 /* End of file Distributions.h */
 #endif

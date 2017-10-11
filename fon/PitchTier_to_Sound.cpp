@@ -1,6 +1,6 @@
 /* PitchTier_to_Sound.cpp
  *
- * Copyright (C) 1992-2011,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "PointProcess_and_Sound.h"
 
 autoSound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
-	 double adaptFactor, double adaptTime, long interpolationDepth, bool hum)
+	 double adaptFactor, double adaptTime, integer interpolationDepth, bool hum)
 {
 	static double formant [1 + 6] = { 0.0, 600.0, 1400.0, 2400.0, 3400.0, 4500.0, 5500.0 };
 	static double bandwidth [1 + 6] = { 0.0, 50.0, 100.0, 200.0, 300.0, 400.0, 500.0 };
@@ -75,13 +75,13 @@ void PitchTier_hum (PitchTier me) {
 autoSound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency) {
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
-		long numberOfSamples = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		integer numberOfSamples = 1 + (integer) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double samplingPeriod = 1.0 / samplingFrequency;
 		double tmid = (tmin + tmax) / 2.0;
 		double t1 = tmid - 0.5 * (numberOfSamples - 1) * samplingPeriod;
 		autoSound thee = Sound_create (1, tmin, tmax, numberOfSamples, samplingPeriod, t1);
 		double phase = 0.0;
-		for (long isamp = 2; isamp <= numberOfSamples; isamp ++) {
+		for (integer isamp = 2; isamp <= numberOfSamples; isamp ++) {
 			double tleft = t1 + (isamp - 1.5) * samplingPeriod;
 			double fleft = RealTier_getValueAtTime (me, tleft);
 			phase += fleft * thy dx;

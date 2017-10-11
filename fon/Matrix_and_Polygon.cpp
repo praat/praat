@@ -1,6 +1,6 @@
 /* Matrix_and_Polygon.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 			NUMvector_copyElements (my z [2], thy y, 1, my nx);
 		} else {
 			thee = Polygon_create (my ny);
-			for (long i = 1; i <= my ny; i ++) {
+			for (integer i = 1; i <= my ny; i ++) {
 				thy x [i] = my z [i] [1];
 				thy y [i] = my z [i] [2];
 			}

@@ -441,7 +441,7 @@ DO
 
 DIRECT (INTEGER_OTGrammar_getNumberOfConstraints) {
 	INTEGER_ONE (OTGrammar)
-		long result = my numberOfConstraints;
+		integer result = my numberOfConstraints;
 	INTEGER_ONE_END (U" constraints")
 }
 
@@ -480,7 +480,7 @@ DO
 
 DIRECT (INTEGER_OTGrammar_getNumberOfTableaus) {
 	INTEGER_ONE (OTGrammar)
-		long result = my numberOfTableaus;
+		integer result = my numberOfTableaus;
 	INTEGER_ONE_END (U" tableaus")
 }
 
@@ -502,7 +502,7 @@ DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = my tableaus [tableauNumber]. numberOfCandidates;
+		integer result = my tableaus [tableauNumber]. numberOfCandidates;
 	NUMBER_ONE_END (U" candidates in tableau ", tableauNumber)
 }
 
@@ -534,7 +534,7 @@ DO
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
-		long result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
+		integer result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
 	NUMBER_ONE_END (U" violations")
 }
 
@@ -547,7 +547,7 @@ DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = OTGrammar_getWinner (me, tableauNumber);
+		integer result = OTGrammar_getWinner (me, tableauNumber);
 	NUMBER_ONE_END (U" (winner in tableau ", tableauNumber, U")")
 }
 
@@ -567,7 +567,7 @@ DO
 			Melder_throw (U"The specified tableau (number 2) should not exceed the number of tableaus.");
 		if (candidateNumber2 > my tableaus [tableauNumber2]. numberOfCandidates)
 			Melder_throw (U"The specified candidate (number 2) should not exceed the number of candidates for this tableau.");
-		long result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
+		integer result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
 	NUMBER_ONE_END (result == -1 ? U" (candidate 1 is better)" :
 					result == +1 ? U" (candidate 2 is better)" : U" (candidates are equally good)")
 }
@@ -579,7 +579,7 @@ DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
+		integer result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
 	NUMBER_ONE_END (U" optimal candidates in tableau ", tableauNumber)
 }
 
@@ -593,7 +593,7 @@ DO
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		long result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
+		integer result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
 	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
@@ -607,7 +607,7 @@ DO
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		long result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
+		integer result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
 	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
@@ -616,7 +616,7 @@ FORM (STRING_OTGrammar_getInterpretiveParse, U"OTGrammar: Interpretive parse", n
 	OK
 DO
 	FIND_ONE (OTGrammar)
-		long bestInput, bestOutput;
+		integer bestInput, bestOutput;
 		OTGrammar_getInterpretiveParse (me, partialOutput, & bestInput, & bestOutput);
 		Melder_information (U"Best input = ", bestInput, U": ", my tableaus [bestInput]. input,
 			U"\nBest output = ", bestOutput, U": ", my tableaus [bestInput]. candidates [bestOutput]. output);
@@ -628,7 +628,7 @@ FORM (BOOLEAN_OTGrammar_isPartialOutputGrammatical, U"Is partial output grammati
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		long result = OTGrammar_isPartialOutputGrammatical (me, partialOutput);
+		integer result = OTGrammar_isPartialOutputGrammatical (me, partialOutput);
 	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
@@ -637,7 +637,7 @@ FORM (BOOLEAN_OTGrammar_isPartialOutputSinglyGrammatical, U"Is partial output si
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		long result = OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput);
+		integer result = OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput);
 	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
@@ -887,13 +887,13 @@ DO
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsGrammatical) {
 	NUMBER_TWO (OTGrammar, Strings)
-		long result = OTGrammar_areAllPartialOutputsGrammatical (me, you);
+		integer result = OTGrammar_areAllPartialOutputsGrammatical (me, you);
 	NUMBER_TWO_END (result ? U" (all grammatical)" : U" (not all grammatical)")
 }
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
 	NUMBER_TWO (OTGrammar, Strings)
-		long result = OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you);
+		integer result = OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you);
 	NUMBER_TWO_END (result ? U" (all singly grammatical)" : U" (not all singly grammatical)")
 }
 
@@ -1119,7 +1119,7 @@ FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGra
 	OK
 DO
 	FIND_TWO (OTGrammar, PairDistribution)
-		long result;
+		integer result;
 		try {
 			result = OTGrammar_PairDistribution_getMinimumNumberCorrect (me, you,
 				evaluationNoise, replicationsPerInput);
@@ -1225,7 +1225,7 @@ DIRECT (WINDOW_OTMulti_viewAndEdit) {
 
 DIRECT (INTEGER_OTMulti_getNumberOfConstraints) {
 	NUMBER_ONE (OTMulti)
-		long result = my numberOfConstraints;
+		integer result = my numberOfConstraints;
 	NUMBER_ONE_END (U" constraints")
 }
 
@@ -1245,7 +1245,7 @@ FORM (INTEGER_OTMulti_getConstraintIndexFromName, U"OTMulti: Get constraint numb
 	OK
 DO
 	NUMBER_ONE (OTMulti)
-		long result = OTMulti_getConstraintIndexFromName (me, constraintName);
+		integer result = OTMulti_getConstraintIndexFromName (me, constraintName);
 	NUMBER_ONE_END (U" (index of constraint ", constraintName, U")")
 }
 
@@ -1273,7 +1273,7 @@ DO
 
 DIRECT (INTEGER_OTMulti_getNumberOfCandidates) {
 	NUMBER_ONE (OTMulti)
-		long result = my numberOfCandidates;
+		integer result = my numberOfCandidates;
 	NUMBER_ONE_END (U" candidates")
 }
 
@@ -1298,7 +1298,7 @@ DO
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
-		long result = my candidates [candidateNumber]. marks [constraintNumber];
+		integer result = my candidates [candidateNumber]. marks [constraintNumber];
 	NUMBER_ONE_END (U" violations")
 }
 
@@ -1308,7 +1308,7 @@ FORM (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
 	OK
 DO
 	NUMBER_ONE (OTMulti)
-		long result = OTMulti_getWinner (me, partialForm1, partialForm2);
+		integer result = OTMulti_getWinner (me, partialForm1, partialForm2);
 	NUMBER_ONE_END (U" (winner)")
 }
 

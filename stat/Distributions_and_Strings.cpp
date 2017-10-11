@@ -1,6 +1,6 @@
 /* Distributions_and_Strings.cpp
  *
- * Copyright (C) 1997-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,12 @@
 
 #include "Distributions_and_Strings.h"
 
-autoStrings Distributions_to_Strings (Distributions me, long column, long numberOfStrings) {
+autoStrings Distributions_to_Strings (Distributions me, integer column, integer numberOfStrings) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = numberOfStrings;
 		thy strings = NUMvector <char32*> (1, numberOfStrings);
-		for (long istring = 1; istring <= numberOfStrings; istring ++) {
+		for (integer istring = 1; istring <= numberOfStrings; istring ++) {
 			char32 *string;
 			Distributions_peek (me, column, & string, nullptr);
 			thy strings [istring] = Melder_dup (string);
@@ -34,15 +34,15 @@ autoStrings Distributions_to_Strings (Distributions me, long column, long number
 	}
 }
 
-autoStrings Distributions_to_Strings_exact (Distributions me, long column) {
+autoStrings Distributions_to_Strings_exact (Distributions me, integer column) {
 	try {
-		long total = 0;
-		long istring = 0;
+		integer total = 0;
+		integer istring = 0;
 		if (column > my numberOfColumns)
 			Melder_throw (U"No column ", column, U".");
 		if (my numberOfRows < 1)
 			Melder_throw (U"No candidates.");
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			double value = my data [irow] [column];
 			if (value != floor (value))
 				Melder_throw (U"Non-integer value ", value, U" in row ", irow, U".");
@@ -55,12 +55,12 @@ autoStrings Distributions_to_Strings_exact (Distributions me, long column) {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = total;
 		thy strings = NUMvector <char32*> (1, total);
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			long number = my data [irow] [column];
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+			integer number = my data [irow] [column];
 			char32 *string = my rowLabels [irow];
 			if (! string)
 				Melder_throw (U"No string in row ", irow, U".");
-			for (long i = 1; i <= number; i ++) {
+			for (integer i = 1; i <= number; i ++) {
 				thy strings [++ istring] = Melder_dup (string);
 			}
 		}
@@ -74,11 +74,11 @@ autoStrings Distributions_to_Strings_exact (Distributions me, long column) {
 autoDistributions Strings_to_Distributions (Strings me) {
 	try {
 		autoDistributions thee = Distributions_create (my numberOfStrings, 1);
-		long idist = 0;
-		for (long i = 1; i <= my numberOfStrings; i ++) {
+		integer idist = 0;
+		for (integer i = 1; i <= my numberOfStrings; i ++) {
 			char32 *string = my strings [i];
-			long where = 0;
-			long j = 1;
+			integer where = 0;
+			integer j = 1;
 			for (; j <= idist; j ++)
 				if (str32equ (thy rowLabels [j], string))
 					{ where = j; break; }

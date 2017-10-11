@@ -1,6 +1,6 @@
 /* RBM.cpp
  *
- * Copyright (C) 2016 Paul Boersma
+ * Copyright (C) 2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ void structRBM :: v_info ()
 
 Thing_implement (RBM, Daata, 0);
 
-void RBM_init (RBM me, long numberOfInputNodes, long numberOfOutputNodes, bool inputsAreBinary) {
+void RBM_init (RBM me, integer numberOfInputNodes, integer numberOfOutputNodes, bool inputsAreBinary) {
 	my numberOfInputNodes = numberOfInputNodes;
 	my inputBiases = NUMvector <double> (1, numberOfInputNodes);
 	my inputActivities = NUMvector<double> (1, numberOfInputNodes);
@@ -60,7 +60,7 @@ void RBM_init (RBM me, long numberOfInputNodes, long numberOfOutputNodes, bool i
 	my inputsAreBinary = inputsAreBinary;
 }
 
-autoRBM RBM_create (long numberOfInputNodes, long numberOfOutputNodes, bool inputsAreBinary) {
+autoRBM RBM_create (integer numberOfInputNodes, integer numberOfOutputNodes, bool inputsAreBinary) {
 	try {
 		autoRBM me = Thing_new (RBM);
 		RBM_init (me.get(), numberOfInputNodes, numberOfOutputNodes, inputsAreBinary);
@@ -75,17 +75,17 @@ inline static double logistic (double excitation) {
 }
 
 void RBM_spreadUp (RBM me) {
-	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-		double excitation = my outputBiases [jnode];
-		for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
+	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+		real80 excitation = my outputBiases [jnode];
+		for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
 			excitation += my inputActivities [inode] * my weights [inode] [jnode];
 		}
-		my outputActivities [jnode] = logistic (excitation);
+		my outputActivities [jnode] = logistic ((real) excitation);
 	}
 }
 
 void RBM_sampleInput (RBM me) {
-	for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
+	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
 		if (my inputsAreBinary) {
 			double probability = my inputActivities [inode];
 			my inputActivities [inode] = (double) NUMrandomBernoulli (probability);
@@ -97,57 +97,57 @@ void RBM_sampleInput (RBM me) {
 }
 
 void RBM_sampleOutput (RBM me) {
-	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 		double probability = my outputActivities [jnode];
 		my outputActivities [jnode] = (double) NUMrandomBernoulli (probability);
 	}
 }
 
 void RBM_spreadDown (RBM me) {
-	for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		double excitation = my inputBiases [inode];
-		for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
+		real80 excitation = my inputBiases [inode];
+		for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 			excitation += my weights [inode] [jnode] * my outputActivities [jnode];
 		}
 		if (my inputsAreBinary) {
-			my inputActivities [inode] = logistic (excitation);
+			my inputActivities [inode] = logistic ((real) excitation);
 		} else {   // linear
-			my inputActivities [inode] = excitation;
+			my inputActivities [inode] = (real) excitation;
 		}
 	}
 }
 
 void RBM_spreadDown_reconstruction (RBM me) {
-	for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		double excitation = my inputBiases [inode];
-		for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
+		real80 excitation = my inputBiases [inode];
+		for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 			excitation += my weights [inode] [jnode] * my outputActivities [jnode];
 		}
 		if (my inputsAreBinary) {
-			my inputReconstruction [inode] = logistic (excitation);
+			my inputReconstruction [inode] = logistic ((real) excitation);
 		} else {   // linear
-			my inputReconstruction [inode] = excitation;
+			my inputReconstruction [inode] = (real) excitation;
 		}
 	}
 }
 
 void RBM_spreadUp_reconstruction (RBM me) {
-	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-		double excitation = my outputBiases [jnode];
-		for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
+	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+		real80 excitation = my outputBiases [jnode];
+		for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
 			excitation += my inputReconstruction [inode] * my weights [inode] [jnode];
 		}
-		my outputReconstruction [jnode] = logistic (excitation);
+		my outputReconstruction [jnode] = logistic ((real) excitation);
 	}
 }
 
 void RBM_update (RBM me, double learningRate) {
-	for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 		my outputBiases [jnode] += learningRate * (my outputActivities [jnode] - my outputReconstruction [jnode]);
 	}
-	for (long inode = 1; inode <= my numberOfInputNodes; inode ++) {
+	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
 		my inputBiases [inode] += learningRate * (my inputActivities [inode] - my inputReconstruction [inode]);
-		for (long jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
+		for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 			my weights [inode] [jnode] += learningRate *
 				(my inputActivities [inode] * my outputActivities [jnode] -
 				 my inputReconstruction [inode] * my outputReconstruction [jnode]);
@@ -155,22 +155,22 @@ void RBM_update (RBM me, double learningRate) {
 	}
 }
 
-void RBM_PatternList_applyToInput (RBM me, PatternList thee, long rowNumber) {
+void RBM_PatternList_applyToInput (RBM me, PatternList thee, integer rowNumber) {
 	Melder_assert (my numberOfInputNodes == thy nx);
-	for (long ifeature = 1; ifeature <= my numberOfInputNodes; ifeature ++) {
+	for (integer ifeature = 1; ifeature <= my numberOfInputNodes; ifeature ++) {
 		my inputActivities [ifeature] = thy z [rowNumber] [ifeature];
 	}
 }
 
-void RBM_PatternList_applyToOutput (RBM me, PatternList thee, long rowNumber) {
+void RBM_PatternList_applyToOutput (RBM me, PatternList thee, integer rowNumber) {
 	Melder_assert (my numberOfOutputNodes == thy nx);
-	for (long icat = 1; icat <= my numberOfOutputNodes; icat ++) {
+	for (integer icat = 1; icat <= my numberOfOutputNodes; icat ++) {
 		my outputActivities [icat] = thy z [rowNumber] [icat];
 	}
 }
 
 void RBM_PatternList_learn (RBM me, PatternList thee, double learningRate) {
-	for (long ipattern = 1; ipattern <= thy ny; ipattern ++) {
+	for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
 		RBM_PatternList_applyToInput (me, thee, ipattern);
 		RBM_spreadUp (me);
 		RBM_sampleOutput (me);

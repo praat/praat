@@ -2879,7 +2879,7 @@ static void do_sub () {
 		if (newlength >= 0 && str32nequ (x->string + newlength, y->string, length2)) {
 			result = Melder_malloc (char32, newlength + 1);
 			str32ncpy (result, x->string, newlength);
-			result [newlength] = '\0';
+			result [newlength] = U'\0';
 		} else {
 			result = Melder_dup (x->string);
 		}
@@ -4381,7 +4381,7 @@ static void do_leftStr () {
 			#endif
 			autostring32 result = Melder_malloc (char32, newlength + 1);
 			str32ncpy (result.peek(), s->string, newlength);
-			result [newlength] = '\0';
+			result [newlength] = U'\0';
 			pushString (result.transfer());
 		} else {
 			Melder_throw (U"The function \"left$\" requires a string, or a string and a number.");

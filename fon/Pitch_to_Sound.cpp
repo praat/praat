@@ -1,6 +1,6 @@
 /* Pitch_to_Sound.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ autoSound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double sampli
 	try {
 		autoPitchTier tier = Pitch_to_PitchTier (me);
 		autoSound sound = PitchTier_to_Sound_sine (tier.get(), tmin, tmax, samplingFrequency);
-		long iframe = 1;
+		integer iframe = 1;
 		double unvoicedMin = my xmin;
 		double unvoicedMax = my x1 + (iframe - 1.5) * my dx;
 		for (;;) {
