@@ -2468,6 +2468,7 @@ FORM (NEW_FileInMemorySet_createCopyFromFileInMemorySet, U"", nullptr) {
 		OPTION (U"languages_names")
 		OPTION (U"voices_names")
 		OPTION (U"id_names")
+		OPTION (U"voices-properties")
 	OK
 DO
 	CREATE_ONE
@@ -2494,6 +2495,9 @@ DO
 		} else if (whichFile == 7) {
 			result = Data_copy (espeakdata_languages_idAndNameTable.get());
 			name =  U"espeakdata_id_name";
+		} else if (whichFile == 8) {
+			result = Data_copy (espeakdata_voices_propertiesTable.get());
+			name =  U"espeakdata_voices_properties";
 		} else {
 			name = U"";
 		}

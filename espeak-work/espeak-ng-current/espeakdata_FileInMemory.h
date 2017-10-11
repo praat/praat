@@ -35,6 +35,7 @@ extern autoFileInMemorySet espeakdata_phons;
 extern autoStrings espeakdata_languages_names;
 extern autoStrings espeakdata_voices_names;
 extern autoTable espeakdata_languages_idAndNameTable;
+extern autoTable espeakdata_voices_propertiesTable;
 void espeakdata_praat_init ();
 /*
 	Creates the FileInMemorySets espeakdata_languages, espeakdata_dicts, espeakdata_voices & espeakdata_phons;

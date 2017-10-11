@@ -45,8 +45,8 @@ form espeakdata to code
 	boolean Make_all_espeak_data_files 0
 endform
 
-todir$ = "espeak-ng-work"
 fromdir$ = "/home/david/projects/espeak-ng"
+todir$ = "espeak-ng-work"
 
 gpltext$ =  " * Copyright (C) David Weenink 2012-2017" + newline$ +
 	... " *" + newline$ +

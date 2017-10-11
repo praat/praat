@@ -124,7 +124,7 @@ Thing_implement (SpeechSynthesizer, Daata, 1);
 
 void structSpeechSynthesizer :: v_info () {
 	SpeechSynthesizer_Parent :: v_info ();
-	MelderInfo_writeLine (U"Synthesizer version: ", d_synthesizerVersion);
+	MelderInfo_writeLine (U"Synthesizer version: espeak-ng ", d_synthesizerVersion);
 	MelderInfo_writeLine (U"Language: ", d_languageName);
 	MelderInfo_writeLine (U"Voice: ", d_voiceName);
 	MelderInfo_writeLine (U"Input text format: ", (d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? U"text only" :
@@ -241,12 +241,11 @@ const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
 		static const char32 * defaultVoiceCode = U"default";
-		// Strings espeakdata_variants_names is one longer than the actual list of variants
 		long voiceIndex = Strings_findString (espeakdata_voices_names.get(), my d_voiceName);
 		if (voiceIndex == 0) {
 			Melder_throw (U"Cannot find voice variant \"", my d_voiceName, U"\".");
 		}
-		// ... we have to decrease the index
+		/* ... we have to decrease the index
 		if (voiceIndex != 1) { // 1 is default, i.e. no variant
 			voiceIndex --; // !!!
 			FileInMemory vfim = espeakdata_voices->at [voiceIndex];
@@ -254,6 +253,9 @@ const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 		} else {
 			return defaultVoiceCode; // TODO what is the default?
 		}
+		*/
+		FileInMemory vfim = espeakdata_voices->at [voiceIndex];
+		return vfim -> d_id;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find voice code.");
 	}
@@ -272,9 +274,9 @@ autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, cons
 #include "espeak_ng_version.h"
 		my d_synthesizerVersion = Melder_dup(ESPEAK_NG_VERSION);
 		my d_languageName = Melder_dup (languageName);
-		(void) SpeechSynthesizer_getLanguageCode (me.get());  // existance checks
+		(void) SpeechSynthesizer_getLanguageCode (me.get());  // existence check
 		my d_voiceName = Melder_dup (voiceName);
-		(void) SpeechSynthesizer_getVoiceCode (me.get());
+		(void) SpeechSynthesizer_getVoiceCode (me.get());  // existence check
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
 		SpeechSynthesizer_initEspeak ();
@@ -582,59 +584,17 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 	}
 }
 
-static void espeakdata_SetVoiceByName (const char *languageName, const char *voiceName)
+static void espeakdata_SetVoiceByName (const char32 *languageName, const char32 *voiceName)
 {
 	espeak_VOICE voice_selector;
 
 	memset (& voice_selector, 0, sizeof voice_selector);
-	voice_selector.name = Melder_peek32to8 (Melder_cat (Melder_peek8to32 (languageName), U"+", Melder_peek8to32 (voiceName)));  // include variant name in voice stack ??
+	voice_selector.name = Melder_peek32to8 (Melder_cat (languageName, U"+", voiceName));  // include variant name in voice stack ??
 
-	if (LoadVoice (languageName, 1)) {
-		LoadVoice (voiceName, 2);
+	if (LoadVoice (Melder_peek32to8 (languageName), 1)) {
+		LoadVoice (Melder_peek32to8 (voiceName), 2);
 		DoVoiceChange (voice);
-		SetVoiceStack (& voice_selector, voiceName);
-	}
-}
-
-void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) { // TODO fix to current state
-	try {
-		struct espeakLanguagestruct { const char32 *oldName, *currentName; } names[] = {
-			{ U"Akan-test", nullptr}, 
-			{ U"Bulgarian-test", U"Bulgarian"}, 
-			{ U"Dari-test", nullptr}, 
-			{ U"Divehi-test", nullptr}, { U"Dutch-test", U"Dutch"}, 
-			{ U"French (Belgium)", U"French-Belgium"},
-			{ U"Georgian-test", U"Georgian"}, 
-			{ U"Haitian", nullptr},
-			{ U"Icelandic-test", U"Icelandic"}, { U"Indonesian-test", U"Indonesian"},
-			{ U"Irish-test", U"Irish-gaeilge"}, 
-			{ U"Kazakh", nullptr}, { U"Kinyarwanda-test", nullptr}, { U"Korean", U"Korean-test"}, 
-			{ U"Lancashire", nullptr},
-			{ U"Macedonian-test", U"Macedonian"}, { U"Maltese-test", nullptr},
-			{ U"Nahuatl - classical", U"Nahuatl-classical"}, { U"Nepali-test", U"Nepali"}, { U"Northern-sotho", nullptr},
-			{ U"Punjabi-test", U"Punjabi"},
-			{ U"Russian_test", U"Russian"}, // yes, underscore
-			{ U"Setswana-test", nullptr}, { U"Sinhala", U"Sinhala-test"},
-			{ U"Spanish-latin-american", U"Spanish-latin-am"}, { U"Tatar-test", nullptr},
-			{ U"Telugu", U"Telugu-test"}, 
-			{ U"Welsh-test", U"Welsh"}, { U"Wolof-test", nullptr},
-			{nullptr,nullptr}};
-		long index = 0;
-		while (const char32 *oldName = names [index]. oldName) {
-			if (Melder_equ (oldName, my d_languageName)) {
-				if (names [index]. currentName) {
-					autostring32 newLabel = Melder_dup (names [index]. currentName);
-					Melder_free (my d_languageName);
-					my d_languageName = newLabel.transfer();
-					break;
-				} else {
-					Melder_throw (U"Language ", oldName, U" is not available any longer.");
-				}
-			}
-			++ index;
-		}
-	} catch (MelderError) {
-		Melder_throw (U"Cannot change language name.");
+		SetVoiceStack (& voice_selector, Melder_peek32to8 (voiceName));
 	}
 }
 
@@ -662,21 +622,10 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		espeak_SetParameter (espeakRANGE, my d_pitchRange, 0);
 		const char32 *languageCode = SpeechSynthesizer_getLanguageCode (me);
 		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
-		espeak_VOICE voice_spec = { 0 };
-		voice_spec.name = "female";
-		voice_spec.languages = Melder_peek32to8(languageCode);
-		espeak_ERROR status = espeak_SetVoiceByProperties(& voice_spec);
-		status = espeak_SetVoiceByName(Melder_peek32to8(voiceCode));
-		if (status == EE_OK) {
-			// ok
-		} else if (status == EE_INTERNAL_ERROR) {
-			Melder_throw (U"Internal espeak-ng error.");
-		} else if (status == EE_BUFFER_FULL) {
-			Melder_throw (U"The espeak-ng buffer is full.");
-		} else if (status == EE_NOT_FOUND) {
-			Melder_throw (U"Cannot find voice \"", voiceCode, U"\".");
-		}
-
+		
+		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", my d_voiceName)));
+		
+		//espeakdata_SetVoiceByName (languageCode, voiceCode);
 		espeak_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
 		espeak_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);

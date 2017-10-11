@@ -19,6 +19,7 @@
 
 // The glue between Praat and espeak
 
+#include "NUM2.h"
 #include "espeak_ng.h"
 #include "speech.h"
 #include <wctype.h>
@@ -26,6 +27,7 @@
 #include "espeakdata_FileInMemory.h"
 
 autoTable Table_createAsEspeakLanguagesIdAndNamePairs ();
+autoTable Table_createAsEspeakVoicesProperties ();
 autoStrings Table_column_to_Strings (Table me, integer column);
 
 
@@ -34,6 +36,7 @@ autoFileInMemorySet espeakdata_dicts;
 autoFileInMemorySet espeakdata_phons;
 autoFileInMemorySet espeakdata_voices;
 autoTable espeakdata_languages_idAndNameTable;
+autoTable espeakdata_voices_propertiesTable;
 autoStrings espeakdata_voices_names;
 autoStrings espeakdata_languages_names;
 
@@ -68,6 +71,7 @@ void espeakdata_praat_init () {
 		espeakdata_voices = create_espeakdata_voices ();
 		espeakdata_phons = create_espeakdata_phons ();
 		espeakdata_languages_idAndNameTable = Table_createAsEspeakLanguagesIdAndNamePairs ();
+		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_idAndNameTable.get(), 2);
 		Strings_sort (espeakdata_languages_names.get());
 		//espeakdata_languages_names = espeakdata_languages_sortById ();
@@ -102,6 +106,52 @@ const char * espeakdata_get_voicedata (const char *data, integer ndata, char *bu
 	return & data[idata];
 }
 
+static const char32 * get_wordAfterPrecursor (const char32 *text, const char32 *precursor) {
+	static char32 word [100];
+	/*
+		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
+		2. Get the word after 'precursor' (skip leading and trailing whitespace).
+	*/
+	autoMelderString regex;
+	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
+	char32 *p = nullptr;
+	const char32 *pmatch = strstr_regexp (text, regex.string);
+	if (pmatch) {
+		while (*pmatch == U' ' || *pmatch ++ == U'\t'); // skip whitespace before 'precursor'
+		pmatch += str32len (precursor); // skip 'precursor'
+		while (*pmatch == U' ' || *pmatch ++ == U'\t'); // skip whitespace after 'precursor'
+		pmatch --;
+		p = word;
+		char32 *p_end = p + 99;
+		while ((*p = *pmatch ++) && *p != U' ' && *p != U'\t' && *p != U'\n' && p < p_end) { p ++; };
+		*p = 0;
+		p = word;
+	}
+	return p;
+}
+
+autoTable Table_createAsEspeakVoicesProperties () {
+	try {
+		FileInMemorySet me = espeakdata_voices.get();
+		autoTable thee = Table_createWithColumnNames (my size, U"id name gender age variant");
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
+			FileInMemory fim = my at [ifile];
+			Table_setStringValue (thee.get(), ifile, 1, fim -> d_id);
+			const char32 *word = get_wordAfterPrecursor (Melder_peek8to32 (fim -> d_data), U"name");
+			Table_setStringValue (thee.get(), ifile, 2, (word ?word : fim -> d_id));
+			word = get_wordAfterPrecursor (Melder_peek8to32 (fim -> d_data), U"gender");
+			Table_setStringValue (thee.get(), ifile, 3, (word ? word : U"0"));
+			word = get_wordAfterPrecursor (Melder_peek8to32 (fim -> d_data), U"age");
+			Table_setStringValue (thee.get(), ifile, 4, (word ? word : U"0"));
+			word = get_wordAfterPrecursor (Melder_peek8to32 (fim -> d_data), U"variant");
+			Table_setStringValue (thee.get(), ifile, 5, (word ? word : U"0"));
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"Table with espeak-ng voice properties not created.");
+	}
+}
+
 autoTable Table_createAsEspeakLanguagesIdAndNamePairs () {
 	try {
 		FileInMemorySet me = espeakdata_languages.get();
@@ -109,32 +159,12 @@ autoTable Table_createAsEspeakLanguagesIdAndNamePairs () {
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = my at [ifile];
 			Table_setStringValue (thee.get(), ifile, 1, fim -> d_id);
-			const char *p = strstr (fim -> d_data, "name");
-			if (p) {
-			// copy the name part to the following new line
-			char buf [100], *bufp = buf;
-			integer len = 0;
-			while ((*bufp ++ = *p ++) != '\n' && len < 99) { len ++; }
-			// remove trailing white space
-			*bufp = 0;
-			while (ESPEAK_ISSPACE (buf[len]) && len > 0) {
-				buf [len] = 0;
-				len --;
-			}
-			// skip leading white space after "name"
-			bufp = & buf[4];
-			while (ESPEAK_ISSPACE (*bufp)) { bufp ++; }
-			
-			Table_setStringValue (thee.get(), ifile, 2, Melder_peek8to32 (bufp));
-			TableRow row = thy rows.at [ifile];
-			} else {
-				// probably an error.
-				Table_setStringValue (thee.get(), ifile, 2, fim -> d_id);
-			}
+			const char32 *word = get_wordAfterPrecursor (Melder_peek8to32 (fim -> d_data), U"name");
+			Table_setStringValue (thee.get(), ifile, 2, (word ? word : fim -> d_id));
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (U"Espeakdata-languages: language table not initialized.");
+		Melder_throw (U"Table with espeak-ng languages not created.");
 	}
 }
 
