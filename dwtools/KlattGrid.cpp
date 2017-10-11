@@ -2884,8 +2884,8 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 	try {
 		Table kt = (Table) me;
 
-		long nrows = my rows.size;
-		double tmin = 0, tmax = nrows * frameDuration;
+		long numberOfRows = my rows.size;
+		double tmin = 0, tmax = numberOfRows * frameDuration;
 		double dBNul = -300;
 		double dB_offset = -20.0 * log10 (2.0e-5) - 87.0; // in KlattTable maximum in DB_to_LIN is at 87 dB : 32767
 		double dB_offset_voicing = 20.0 * log10 (320000 / 32767); // V'[n] in range (-320000,32000)
@@ -2903,7 +2903,7 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 		autoKlattGrid thee = KlattGrid_create (tmin, tmax, numberOfFormants, numberOfNasalFormants,
 		                                       numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants,
 		                                       numberOfFricationFormants, numberOfDeltaFormants);
-		for (long irow = 1; irow <= nrows; irow++) {
+		for (long irow = 1; irow <= numberOfRows; irow++) {
 			double t = (irow - 1) * frameDuration;
 
 			long icol = 1;

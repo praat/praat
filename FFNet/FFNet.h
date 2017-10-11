@@ -59,8 +59,8 @@
  *    *error		    : array[1..nNodes] the error at node
  *    *dw		    	: array[1..nWeights] total derivative for weights
  *    *dwi		   		: array[1..nWeights] derivative per pattern
- * long dimension		: dimension of minimizer space (<= my nWeights)
- * long nPatterns	    : the #patterns to be learned
+ *  long dimension		: dimension of minimizer space (<= my nWeights)
+ *  long nPatterns	    : the #patterns to be learned
  * double **inputPattern: matrix[1..nPatterns][1..nInputs]
  * double **targetActivation: matrix[1..nPatterns][1..nOutputs]
  * double accumulatedCost : accumulated costs of testing/training with patterns
