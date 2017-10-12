@@ -51,7 +51,7 @@ static autoIntensity Sound_to_Intensity_ (Sound me, double minimumPitch, double 
 		const double windowDuration = 6.4 / minimumPitch;
 		Melder_assert (windowDuration > 0.0);
 		const double halfWindowDuration = 0.5 * windowDuration;
-		const long halfWindowSamples = (long) floor (halfWindowDuration / my dx);
+		const integer halfWindowSamples = Melder_iroundDown (halfWindowDuration / my dx);
 		autoNUMvector <double> amplitude (- halfWindowSamples, halfWindowSamples);
 		autoNUMvector <double> window (- halfWindowSamples, halfWindowSamples);
 

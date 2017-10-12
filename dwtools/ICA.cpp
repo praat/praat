@@ -474,7 +474,7 @@ autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double start
 			startTime = my xmin;
 			endTime = my xmax;
 		}
-		long lag = (long) floor (lagStep / my dx);   // ppgb: voor al dit soort dingen geldt: waarom afronden naar beneden?
+		integer lag = Melder_iroundDown (lagStep / my dx);   // ppgb: voor al dit soort dingen geldt: waarom afronden naar beneden?
 		long i1 = Sampled_xToNearestIndex (me, startTime);
 		if (i1 < 1) {
 			i1 = 1;
@@ -513,7 +513,7 @@ autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, So
 			relativeStartTime = my xmin;
 			relativeEndTime = my xmax;
 		}
-		long ndelta = (long) floor (lagStep / my dx), nchannels = my ny + thy ny;
+		integer ndelta = Melder_iroundDown (lagStep / my dx), nchannels = my ny + thy ny;
 		long i1 = Sampled_xToNearestIndex (me, relativeStartTime);
 		if (i1 < 1) {
 			i1 = 1;

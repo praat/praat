@@ -187,7 +187,7 @@ autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double
 			Melder_throw (U"The pitch ceiling must be larger than the pitch floor.");
 		}
 		double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2.0;
-		long nt = (long) floor ((tmax - tmin - t1) / dt);
+		integer nt = Melder_iroundDown ((tmax - tmin - t1) / dt);
 		if (t1 + nt * dt < tmax) {
 			nt ++;
 		}

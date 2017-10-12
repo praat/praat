@@ -1223,7 +1223,7 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 				Melder_throw (U"Programming error. Argument ", info, U" in NUMlapack_dhseqr has illegal value.");
 			}
 		}
-		lwork = (integer) floor (wt[0]);
+		lwork = Melder_iroundDown (wt[0]);
 		autoNUMvector <double> work (1, lwork);
 
 		// Find eigenvalues.

@@ -5582,7 +5582,7 @@ FORM (NEW_Spectrum_shiftFrequencies, U"Spectrum: Shift frequencies", U"Spectrum:
 DO
 	CONVERT_EACH (Spectrum)
 		autoSpectrum result = Spectrum_shiftFrequencies (me, frequencyShift, maximumFrequency, interpolationDepth);
-	CONVERT_EACH_END (my name, (frequencyShift < 0 ? U"_m" : U"_"), (long) floor (frequencyShift))
+	CONVERT_EACH_END (my name, (frequencyShift < 0 ? U"_m" : U"_"), Melder_iroundDown (frequencyShift))
 }
 
 DIRECT (NEW_Spectra_multiply) {
@@ -5610,7 +5610,7 @@ FORM (NEW_Spectrum_compressFrequencyDomain, U"Spectrum: Compress frequency domai
 DO
 	CONVERT_EACH (Spectrum)
 		autoSpectrum result = Spectrum_compressFrequencyDomain (me, maximumFrequency, interpolationDepth, scale, 1);
-	CONVERT_EACH_END (my name, U"_", (long) floor (maximumFrequency))
+	CONVERT_EACH_END (my name, U"_", Melder_iroundDown (maximumFrequency))
 }
 
 DIRECT (NEW_Spectrum_unwrap) {
@@ -5900,7 +5900,7 @@ DIRECT (INTEGER_SSCP_getDegreesOfFreedom) {
 
 DIRECT (INTEGER_SSCP_getNumberOfObservations) {
 	INTEGER_ONE (SSCP)
-		long result = (long) floor (my numberOfObservations);   // ppgb: blijf ik raar vinden
+		integer result = Melder_iroundDown (my numberOfObservations);   // ppgb: blijf ik raar vinden
 	INTEGER_ONE_END (U" (number of observations)")
 }
 

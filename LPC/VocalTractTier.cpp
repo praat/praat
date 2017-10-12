@@ -141,7 +141,7 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 		if (my d_vocalTracts.size == 0) {
 			Melder_throw (U"Empty VocalTractTier");
 		}
-		long numberOfFrames = (long) floor ((my xmax - my xmin) / timeStep);
+		integer numberOfFrames = Melder_iroundDown ((my xmax - my xmin) / timeStep);
 		VocalTractPoint vtp = my d_vocalTracts.at [1];
 		long numberOfSections = vtp -> d_vocalTract -> nx;
 		double samplingPeriod = 1.0 / (1000.0 * numberOfSections);

@@ -183,7 +183,7 @@ static int NativeButton_preferredHeight (GuiObject me) {
 
 GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32 *name) {
 	GuiObject me = Melder_calloc_f (struct structGuiObject, 1);
-	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%p\t%ld\t%ld\n", me, 1L, (integer) sizeof (struct structGuiObject));
+	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%p\t%ld\t%ld\n", me, 1L, (long_not_integer) sizeof (struct structGuiObject));
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
 	my widgetClass = widgetClass;
@@ -2125,13 +2125,16 @@ void XtNextEvent (XEvent *xevent) {
 }
 
 static void processWorkProcsAndTimeOuts () {
-	integer i;
-	if (theNumberOfWorkProcs) for (i = 9; i >= 1; i --)
-		if (theWorkProcs [i])
-			if (theWorkProcs [i] (theWorkProcClosures [i])) XtRemoveWorkProc (i);
+	if (theNumberOfWorkProcs) {
+		for (integer i = 9; i >= 1; i --) {
+			if (theWorkProcs [i]) {
+				if (theWorkProcs [i] (theWorkProcClosures [i])) XtRemoveWorkProc (i);
+			}
+		}
+	}
 	if (theNumberOfTimeOuts) {
 		clock_t now = clock ();
-		for (i = 1; i < 10; i ++) if (theTimeOutProcs [i]) {
+		for (integer i = 1; i < 10; i ++) if (theTimeOutProcs [i]) {
 			static volatile clock_t timeElapsed;   // careful: use 32-bit integers circularly; prevent optimization
 			timeElapsed = now - theTimeOutStarts [i];
 			if (timeElapsed > theTimeOutIntervals [i]) {
@@ -2232,7 +2235,7 @@ modifiers & _motif_COMMAND_MASK ? " control" : "",
 modifiers & _motif_OPTION_MASK ? " alt" : "",
 modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN ? "keydown" : "syskeydown", kar);*/
 		if (me && my shell) {
-			uinteger acc = my shell -> motiff.shell.lowAccelerators [modifiers];
+			uint32 acc = my shell -> motiff.shell.lowAccelerators [modifiers];
 			//if (kar != VK_CONTROL) Melder_casual ("%d %d", acc, kar);
 			if (kar < 48) {
 				if (kar == VK_BACK) {   // shortcut or text

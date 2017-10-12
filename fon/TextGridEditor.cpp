@@ -72,7 +72,7 @@ static int _TextGridEditor_yWCtoTier (TextGridEditor me, double yWC) {
 	TextGrid grid = (TextGrid) my data;
 	int ntier = grid -> tiers->size;
 	double soundY = _TextGridEditor_computeSoundY (me);
-	int itier = ntier - (int) floor (yWC / soundY * (double) ntier);
+	int itier = ntier - Melder_iroundDown (yWC / soundY * (double) ntier);
 	if (itier < 1) itier = 1; if (itier > ntier) itier = ntier;
 	return itier;
 }

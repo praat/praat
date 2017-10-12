@@ -344,7 +344,7 @@ double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double pmin, double pmax,
 
 autoSound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, integer interpolationDepth) {
 	try {
-		integer sound_nt = 1 + (integer) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		integer sound_nt = 1 + Melder_iroundDown ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
 		double tmid = (my xmin + my xmax) / 2;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;

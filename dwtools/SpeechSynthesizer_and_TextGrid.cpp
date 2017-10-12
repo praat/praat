@@ -488,7 +488,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 			double wordsPerMinute_rawTokens = 60.0 * numberOfTokens / s_thee_duration;
 			// compensation for long words: 5 characters / word
 			double wordsPerMinute_rawText = 60.0 * (str32len (his text) / 5.0) / s_thee_duration;
-			my d_wordsPerMinute =  (long) floor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
+			my d_wordsPerMinute = Melder_iroundDown (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
 		autoTextGrid tg2;
 		autoSound synth = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, & tg2);

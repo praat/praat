@@ -223,7 +223,7 @@ void structPitchEditor :: v_draw () {
 			Graphics_setColour (our graphics.get(), Graphics_BLACK);
 			Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 			for (int icand = 1; icand <= frame -> nCandidates; icand ++) {
-				int strength = (int) floor (10 * frame -> candidate [icand]. strength + 0.5);
+				int strength = Melder_iround_tieUp (10 * frame -> candidate [icand]. strength);
 				f = frame -> candidate [icand]. frequency;
 				if (strength > 9) strength = 9;
 				if (f > 0 && f <= pitch -> ceiling) Graphics_text (our graphics.get(), t, f, strength);

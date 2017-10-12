@@ -270,8 +270,8 @@ static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numb
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double duration = my nx * my dx, t1;
 	double dt_window = 2.0 * halfdt_window;
-	long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
-	long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
+	integer nFrames = 1 + Melder_iroundDown ((duration - dt_window) / dt);
+	integer nsamp_window = Melder_iroundDown (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
 
 	if (nsamp_window < numberOfPoles + 1)
 		Melder_throw (U"Window too short.");

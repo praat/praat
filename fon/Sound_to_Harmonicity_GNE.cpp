@@ -53,7 +53,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 {
 	try {
 		autoSound envelope [1+100];
-		long nenvelopes = (long) floor ((fmax - fmin) / step);
+		integer nenvelopes = Melder_iroundDown ((fmax - fmin) / step);
 		for (long ienvelope = 1; ienvelope <= 100; ienvelope ++)
 			Melder_assert (! envelope [ienvelope].get());
 

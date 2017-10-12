@@ -107,7 +107,7 @@ double structSound :: v_getMatrix (integer irow, integer icol) {
 }
 
 double structSound :: v_getFunction2 (double x, double y) {
-	integer channel = (integer) floor (y);
+	integer channel = Melder_iroundDown (y);
 	if (channel < 0 || channel > ny || y != (double) channel) return 0.0;
 	return v_getFunction1 (channel, x);
 }
@@ -199,10 +199,10 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 		double sumOfFirstTimes = 0.0;
 		for (integer isound = 1; isound <= my size; isound ++) {
 			Sound sound = my at [isound];
-			numberOfInitialZeroes [isound] = floor ((sound -> xmin - sharedMinimumTime) / sharedSamplingPeriod);
+			numberOfInitialZeroes [isound] = Melder_roundDown ((sound -> xmin - sharedMinimumTime) / sharedSamplingPeriod);
 			double newFirstTime = sound -> x1 - sound -> dx * numberOfInitialZeroes [isound];
 			sumOfFirstTimes += newFirstTime;
-			integer newNumberOfSamplesThroughLastNonzero = sound -> nx + (integer) floor (numberOfInitialZeroes [isound]);
+			integer newNumberOfSamplesThroughLastNonzero = sound -> nx + Melder_iroundDown (numberOfInitialZeroes [isound]);
 			if (newNumberOfSamplesThroughLastNonzero > sharedNumberOfSamples) sharedNumberOfSamples = newNumberOfSamplesThroughLastNonzero;
 		}
 		double sharedTimeOfFirstSample = sumOfFirstTimes / my size;   // this is an approximation
@@ -211,7 +211,7 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 		integer channelNumber = 0;
 		for (integer isound = 1; isound <= my size; isound ++) {
 			Sound sound = my at [isound];
-			integer offset = (integer) floor (numberOfInitialZeroes [isound]);
+			integer offset = Melder_iroundDown (numberOfInitialZeroes [isound]);
 			for (integer ichan = 1; ichan <= sound -> ny; ichan ++) {
 				channelNumber ++;
 				for (integer isamp = 1; isamp <= sound -> nx; isamp ++) {
@@ -370,7 +370,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 				}
 				NUMvector_copyElements (my z [channel], & data [antiTurnAround], 1, my nx);
 				NUMrealft (data.peek(), nfft, 1);   // go to the frequency domain
-				for (integer i = (integer) floor (upfactor * nfft); i <= nfft; i ++) {
+				for (integer i = Melder_iroundDown (upfactor * nfft); i <= nfft; i ++) {
 					data [i] = 0.0;   // filter away high frequencies
 				}
 				data [2] = 0.0;
@@ -392,7 +392,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 				for (integer i = 1; i <= numberOfSamples; i ++) {
 					double x = Sampled_indexToX (thee.get(), i);
 					double index = Sampled_xToIndex (me, x);
-					integer leftSample = (integer) floor (index);
+					integer leftSample = Melder_iroundDown (index);
 					double fraction = index - leftSample;
 					to [i] = leftSample < 1 || leftSample >= my nx ? 0.0 :
 						(1 - fraction) * from [leftSample] + fraction * from [leftSample + 1];
@@ -925,7 +925,7 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 		/*
 		 * Translate number of components.
 		 */
-		integer maximumNumberOfComponents = (integer) floor ((ceiling - firstFrequency) / frequencyStep) + 1;
+		integer maximumNumberOfComponents = Melder_iroundDown ((ceiling - firstFrequency) / frequencyStep) + 1;
 		if (numberOfComponents <= 0 || numberOfComponents > maximumNumberOfComponents)
 			numberOfComponents = maximumNumberOfComponents;
 		if (numberOfComponents < 1)
@@ -1052,7 +1052,7 @@ autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape 
 		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
 		 */
 		integer ix1 = 1 + (integer) ceil ((t1 - my x1) / my dx);
-		integer ix2 = 1 + (integer) floor ((t2 - my x1) / my dx);
+		integer ix2 = 1 + Melder_iroundDown ((t2 - my x1) / my dx);
 		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
 		/*
 		 * Create sound, optionally shifted to [0..t2-t1].
@@ -1091,7 +1091,7 @@ autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double ov
 		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
 		 */
 		integer ix1 = 1 + (integer) ceil ((t1 - my x1) / my dx);
-		integer ix2 = 1 + (integer) floor ((t2 - my x1) / my dx);
+		integer ix2 = 1 + Melder_iroundDown ((t2 - my x1) / my dx);
 		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
 		/*
 		 * Create sound.
@@ -1197,9 +1197,9 @@ autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double
 			Melder_throw (U"Numbers of channels are not equal.");
 		double dt = my dx;
 		double dphase = (thy x1 - my x1) / dt;
-		dphase -= floor (dphase);   // a number between 0 and 1
+		dphase -= Melder_roundDown (dphase);   // a number between 0 and 1
 		integer i1 = (integer) ceil (tmin / dt - dphase);   // index of first sample if sample at dphase has index 0
-		integer i2 = (integer) floor (tmax / dt - dphase);   // index of last sample if sample at dphase has index 0
+		integer i2 = Melder_iroundDown (tmax / dt - dphase);   // index of last sample if sample at dphase has index 0
 		integer nt = i2 - i1 + 1;
 		if (nt < 1)
 			Melder_throw (U"Window too small.");

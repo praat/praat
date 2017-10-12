@@ -261,7 +261,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#if defined (macintosh) || defined (_WIN32)
 				/* Taken from Audio Control Panel. */
 			#elif defined (linux) && ! defined (NO_AUDIO)
-				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : floor (gain * 100 + 0.5));  
+				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : Melder_iround_tieUp (gain * 100));  
 				balance = balance <= 0 ? 0 : balance >= 1 ? 1 : balance;
 				if (balance >= 0.5) {
 					val = (int)(((int)(val*balance/(1-balance)) << 8) | val);

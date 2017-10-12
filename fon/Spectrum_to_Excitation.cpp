@@ -20,7 +20,7 @@
 
 autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 	try {
-		long nbark = (int) floor (25.6 / dbark + 0.5);
+		integer nbark = Melder_iround_tieUp (25.6 / dbark);
 		double *re = my z [1], *im = my z [2]; 
 
 		autoNUMvector <double> auditoryFilter (1, nbark);

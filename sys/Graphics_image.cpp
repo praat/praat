@@ -272,14 +272,14 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 				autoNUMvector <double> leftWeight (clipx1, clipx2);
 				for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 					double ix_real = ix1 - 0.5 + ((double) nx * (xDC - x1DC)) / (x2DC - x1DC);
-					ileft [xDC] = floor (ix_real), iright [xDC] = ileft [xDC] + 1;
+					ileft [xDC] = (integer) floor (ix_real), iright [xDC] = ileft [xDC] + 1;
 					rightWeight [xDC] = ix_real - ileft [xDC], leftWeight [xDC] = 1.0 - rightWeight [xDC];
 					if (ileft [xDC] < ix1) ileft [xDC] = ix1;
 					if (iright [xDC] > ix2) iright [xDC] = ix2;
 				}
 				for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
 					double iy_real = iy2 + 0.5 - ((double) ny * (yDC - y2DC)) / (y1DC - y2DC);
-					integer itop = ceil (iy_real), ibottom = itop - 1;
+					integer itop = (integer) ceil (iy_real), ibottom = itop - 1;
 					double bottomWeight = itop - iy_real, topWeight = 1.0 - bottomWeight;
 					unsigned char *pixelAddress = ROW_START_ADDRESS;
 					if (itop > iy2) itop = iy2;
