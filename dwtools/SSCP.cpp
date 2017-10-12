@@ -108,7 +108,7 @@ void structSSCP :: v_info () {
 	be multiplied to obtain the length of an ellipse axis.
 */
 double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence) {
-	long n = (long) floor (SSCP_getNumberOfObservations (me));
+	integer n = Melder_iroundDown (SSCP_getNumberOfObservations (me));
 
 	if (confidence) {
 		long p = my numberOfColumns;
@@ -496,7 +496,7 @@ void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec,
 autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long numberOfData) {
 	try {
 		if (numberOfData <= 0) {
-			numberOfData = (long) floor (my numberOfObservations);
+			numberOfData = Melder_iroundDown (my numberOfObservations);
 		}
 		autoPCA pca = SSCP_to_PCA (me);
 		autoTableOfReal thee = TableOfReal_create (numberOfData, my numberOfColumns);
@@ -765,7 +765,7 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		NUMstrings_copyElements (my columnLabels, thy labels, 1, my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.get(), data, my numberOfColumns);
 		NUMvector_copyElements (my centroid, thy centroid, 1, my numberOfColumns);
-		PCA_setNumberOfObservations (thee.get(), (long) floor (my numberOfObservations));
+		PCA_setNumberOfObservations (thee.get(), Melder_iroundDown (my numberOfObservations));
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
@@ -929,7 +929,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		NUMnormalizeRows (thy y -> eigenvectors, thy y -> numberOfEigenvalues, thy y -> numberOfEigenvalues, 1);
 
 		thy numberOfCoefficients = thy y -> numberOfEigenvalues;
-		thy numberOfObservations = (long) floor (my numberOfObservations);
+		thy numberOfObservations = Melder_iroundDown (my numberOfObservations);
 
 		// x = Sxx**-1 * Syx' * y
 
@@ -1469,9 +1469,9 @@ void Covariance_getMarginalDensityParameters (Covariance me, double v[], double 
 }
 
 double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *p_prob, double *p_fisher, double *p_df1, double *p_df2) {
-	long p = my numberOfRows, N = (long) floor (my numberOfObservations + thy numberOfObservations);
-	long N1 = (long) floor (my numberOfObservations), n1 = N1 - 1;
-	long N2 = (long) floor (thy numberOfObservations), n2 = N2 - 1;
+	integer p = my numberOfRows, N = Melder_iroundDown (my numberOfObservations + thy numberOfObservations);
+	integer N1 = Melder_iroundDown (my numberOfObservations), n1 = N1 - 1;
+	integer N2 = Melder_iroundDown (thy numberOfObservations), n2 = N2 - 1;
 
 	double dif = undefined, fisher = undefined;
 	double df1 = p, df2 = N - p - 1;
@@ -1652,7 +1652,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 
 void Covariance_difference (Covariance me, Covariance thee, double *p_prob, double *p_chisq, double *p_df) {
 	long p = my numberOfRows;
-	long numberOfObservations = (long) floor (my numberOfObservations);
+	integer numberOfObservations = Melder_iroundDown (my numberOfObservations);
 	double  ln_me, ln_thee;
 	double chisq = undefined, df = undefined;
 	
@@ -1660,7 +1660,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 		Melder_throw (U"Matrices must have equal dimensions.");
 	}
 	if (my numberOfObservations != thy numberOfObservations) {
-		numberOfObservations = (long) floor (my numberOfObservations > thy numberOfObservations ?
+		numberOfObservations = Melder_iroundDown (my numberOfObservations > thy numberOfObservations ?
 		                        thy numberOfObservations : my numberOfObservations) - 1;
 		Melder_warning (U"Covariance_difference: number of observations of matrices do not agree.\n"
 		                U" The minimum  size (", numberOfObservations, U") of the two is used.");
@@ -1745,7 +1745,7 @@ void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu, 
 }
 
 void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, long index2, double mu, int paired, int equalVariances, double *p_prob, double *p_t, double *p_df) {
-	long n = (long) floor (my numberOfObservations);
+	integer n = Melder_iroundDown (my numberOfObservations);
 
 	double prob = undefined, t = undefined;
 	double df = 2.0 * (n - 1);

@@ -102,7 +102,7 @@ double structMatrix :: v_getMatrix (integer irow, integer icol) {
 double structMatrix :: v_getFunction2 (double x, double y) {
 	double rrow = (y - our y1) / our dy + 1.0;
 	double rcol = (x - our x1) / our dx + 1.0;
-	integer irow = (integer) floor (rrow), icol = (integer) floor (rcol);
+	integer irow = Melder_iroundDown (rrow), icol = Melder_iroundDown (rcol);
 	double drow = rrow - irow, dcol = rcol - icol;
 	double z1 = irow < 1 || irow >  our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow]     [icol];
 	double z2 = irow < 0 || irow >= our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow + 1] [icol];
@@ -154,23 +154,23 @@ double Matrix_rowToY (Matrix me, double row) { return my y1 + (row - 1.0) * my d
 
 double Matrix_xToColumn (Matrix me, double x) { return (x - my x1) / my dx + 1.0; }
 
-integer Matrix_xToLowColumn (Matrix me, double x) { return (integer) floor (Matrix_xToColumn (me, x)); }
+integer Matrix_xToLowColumn (Matrix me, double x) { return Melder_iroundDown (Matrix_xToColumn (me, x)); }
 
 integer Matrix_xToHighColumn (Matrix me, double x) { return (integer) ceil (Matrix_xToColumn (me, x)); }
 
-integer Matrix_xToNearestColumn (Matrix me, double x) { return (integer) floor (Matrix_xToColumn (me, x) + 0.5); }
+integer Matrix_xToNearestColumn (Matrix me, double x) { return Melder_iround_tieUp (Matrix_xToColumn (me, x)); }
 
 double Matrix_yToRow (Matrix me, double y) { return (y - my y1) / my dy + 1.0; }
 
-integer Matrix_yToLowRow (Matrix me, double y) { return (integer) floor (Matrix_yToRow (me, y)); }
+integer Matrix_yToLowRow (Matrix me, double y) { return Melder_iroundDown (Matrix_yToRow (me, y)); }
 
 integer Matrix_yToHighRow (Matrix me, double y) { return (integer) ceil (Matrix_yToRow (me, y)); }
 
-integer Matrix_yToNearestRow (Matrix me, double y) { return (integer) floor (Matrix_yToRow (me, y) + 0.5); }
+integer Matrix_yToNearestRow (Matrix me, double y) { return Melder_iround_tieUp (Matrix_yToRow (me, y)); }
 
 integer Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, integer *ixmin, integer *ixmax) {
 	*ixmin = 1 + (integer) ceil  ((xmin - my x1) / my dx);
-	*ixmax = 1 + (integer) floor ((xmax - my x1) / my dx);
+	*ixmax = 1 + Melder_iroundDown ((xmax - my x1) / my dx);
 	if (*ixmin < 1) *ixmin = 1;
 	if (*ixmax > my nx) *ixmax = my nx;
 	if (*ixmin > *ixmax) return 0;
@@ -179,7 +179,7 @@ integer Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, integer *
 
 integer Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, integer *iymin, integer *iymax) {
 	*iymin = 1 + (integer) ceil  ((ymin - my y1) / my dy);
-	*iymax = 1 + (integer) floor ((ymax - my y1) / my dy);
+	*iymax = 1 + Melder_iroundDown ((ymax - my y1) / my dy);
 	if (*iymin < 1) *iymin = 1;
 	if (*iymax > my ny) *iymax = my ny;
 	if (*iymin > *iymax) return 0;
@@ -216,9 +216,9 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	/*
 	 * Determine the four nearest (xi, yi) points.
 	 */
-	integer bottomRow = (integer) floor (row_real);   // 0 <= bottomRow <= my ny
+	integer bottomRow = Melder_iroundDown (row_real);   // 0 <= bottomRow <= my ny
 	integer topRow = bottomRow + 1;         // 1 <= topRow <= my ny + 1
-	integer leftCol = (integer) floor (col_real);     // 0 <= leftCol <= my nx
+	integer leftCol = Melder_iroundDown (col_real);     // 0 <= leftCol <= my nx
 	integer rightCol = leftCol + 1;         // 1 <= rightCol <= my nx + 1
 	real drow = row_real - bottomRow;    // 0.0 <= drow < 1.0
 	real dcol = col_real - leftCol;      // 0.0 <= dcol < 1.0

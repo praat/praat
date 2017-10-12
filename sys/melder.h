@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,8 @@ typedef uint64_t uint64;
 #ifndef UINT24_MAX
 	#define UINT24_MAX   16777216
 #endif
+#define INTEGER_MAX  ( sizeof (integer) == 4 ? INT32_MAX : INT64_MAX )
+#define INTEGER_MIN  ( sizeof (integer) == 4 ? INT32_MIN : INT64_MIN )
 /*
 	The bounds of the contiguous set of integers that in a "double" can represent only themselves.
 */
@@ -326,7 +328,7 @@ const char32 * Melder_truncate (const char32 *string, int64 width);   // will cu
 const char32 * Melder_padOrTruncate (int64 width, const char32 *string);   // will cut away, or append spaces to, the left of 'string' until 'width' is reached
 const char32 * Melder_padOrTruncate (const char32 *string, int64 width);   // will cut away, or append spaces to, the right of 'string' until 'width' is reached
 
-/********** CONSOLE **********/
+#pragma mark - CONSOLE
 
 void Melder_writeToConsole (const char32 *message, bool useStderr);
 
@@ -2132,7 +2134,96 @@ public:
 	Graphics graphics () { return _graphics; }
 };
 
-/********** RECORD AND PLAY ROUTINES **********/
+#pragma mark - REAL TO INTEGER CONVERSION
+
+inline static double Melder_roundDown (double x) {
+	return floor (x);
+}
+
+inline static integer Melder_iroundDown (double x) {
+	double xround = Melder_roundDown (x);
+	if (xround < (double) INTEGER_MIN || xround > (double) INTEGER_MAX)
+		Melder_throw (U"When rounding down the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_roundUp (double x) {
+	return ceil (x);
+}
+
+inline static integer Melder_iroundUp (double x) {
+	double xround = Melder_roundUp (x);
+	if (xround < (double) INTEGER_MIN || xround > (double) INTEGER_MAX)
+		Melder_throw (U"When rounding up the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_roundTowardsZero (double x) {
+	return x >= 0.0 ? Melder_roundDown (x) : Melder_roundUp (x);
+}
+
+inline static integer Melder_iroundTowardsZero (double x) {
+	if (x < (double) INTEGER_MIN || x > (double) INTEGER_MAX)
+		Melder_throw (U"When rounding the real value ", x, U" towards zero, the result cannot be represented in an integer.");
+	return (integer) x;
+}
+
+inline static double Melder_roundAwayFromZero (double x) {
+	return x >= 0.0 ? Melder_roundUp (x) : Melder_roundDown (x);
+}
+
+inline static integer Melder_iroundAwayFromZero (double x) {
+	double xround = Melder_roundAwayFromZero (x);
+	if (xround < (double) INTEGER_MIN || xround > (double) INTEGER_MAX)
+		Melder_throw (U"When rounding the real value ", x, U" away from zero, the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_round_tieUp (double x) {
+	return Melder_roundDown (x + 0.5);
+}
+
+inline static integer Melder_iround_tieUp (double x) {
+	double xround = Melder_round_tieUp (x);
+	if (xround < (double) INTEGER_MIN || xround > (double) INTEGER_MAX)
+		Melder_throw (U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_round_tieDown (double x) {
+	return Melder_roundUp (x - 0.5);
+}
+
+inline static integer Melder_iround_tieDown (double x) {
+	double xround = Melder_round_tieDown (x);
+	if (xround < (double) INTEGER_MIN || xround > (double) INTEGER_MAX)
+		Melder_throw (U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_round_tieTowardsZero (double x) {
+	return x >= 0.0 ? Melder_round_tieDown (x) : Melder_round_tieUp (x);
+}
+
+inline static integer Melder_iround_tieTowardsZero (double x) {
+	double xround = Melder_round_tieTowardsZero (x);
+	if (xround < (double) INTEGER_MIN || xround > (double) INTEGER_MAX)
+		Melder_throw (U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_round_tieAwayFromZero (double x) {
+	return x >= 0.0 ? Melder_round_tieUp (x) : Melder_round_tieDown (x);
+}
+
+inline static integer Melder_iround_tieAwayFromZero (double x) {
+	double xround = Melder_round_tieAwayFromZero (x);
+	if (xround < (double) INTEGER_MIN || xround > (double) INTEGER_MAX)
+		Melder_throw (U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+#pragma mark - RECORD AND PLAY FUNCTIONS
 
 int Melder_record (double duration);
 int Melder_recordFromFile (MelderFile file);

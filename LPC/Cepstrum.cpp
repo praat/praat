@@ -317,7 +317,7 @@ autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit
 
 void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
 	try {
-		long numberOfQuefrencyBins = (long) floor (quefrencyAveragingWindow / my dx);
+		integer numberOfQuefrencyBins = Melder_iroundDown (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
 			autoNUMvector<double> qin (1, my nx);
 			autoNUMvector<double> qout (1, my nx);

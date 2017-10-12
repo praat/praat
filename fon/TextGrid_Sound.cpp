@@ -499,19 +499,19 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, lo
 static void autoMarks (Graphics g, double ymin, double ymax, bool haveDottedLines) {
 	double dy = ymax - ymin;
 	if (dy < 26.0) {
-		long imin = (long) ceil ((ymin + 2.0) / 5.0), imax = (long) floor ((ymax - 2.0) / 5.0);
+		integer imin = (long) ceil ((ymin + 2.0) / 5.0), imax = Melder_iroundDown ((ymax - 2.0) / 5.0);
 		for (long i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 5.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 110.0) {
-		long imin = (long) ceil ((ymin + 8.0) / 20.0), imax = (long) floor ((ymax - 8.0) / 20.0);
+		integer imin = (long) ceil ((ymin + 8.0) / 20.0), imax = Melder_iroundDown ((ymax - 8.0) / 20.0);
 		for (long i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 20.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 260.0) {
-		long imin = (long) ceil ((ymin + 20.0) / 50.0), imax = (long) floor ((ymax - 20.0) / 50.0);
+		integer imin = (long) ceil ((ymin + 20.0) / 50.0), imax = Melder_iroundDown ((ymax - 20.0) / 50.0);
 		for (long i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 50.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 510.0) {
-		long imin = (long) ceil ((ymin + 40.0) / 100.0), imax = (long) floor ((ymax - 40.0) / 100.0);
+		integer imin = (long) ceil ((ymin + 40.0) / 100.0), imax = Melder_iroundDown ((ymax - 40.0) / 100.0);
 		for (long i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 100.0, true, true, haveDottedLines, nullptr);
 	}
@@ -559,19 +559,19 @@ static void autoMarks_logarithmic (Graphics g, double ymin, double ymax, bool ha
 static void autoMarks_semitones (Graphics g, double ymin, double ymax, bool haveDottedLines) {
 	double dy = ymax - ymin;
 	if (dy < 16) {
-		long imin = (long) ceil ((ymin + 1.2) / 3.0), imax = (long) floor ((ymax - 1.2) / 3.0);
+		long imin = (long) ceil ((ymin + 1.2) / 3.0), imax = Melder_iroundDown ((ymax - 1.2) / 3.0);
 		for (long i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 3.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 32) {
-		long imin = (long) ceil ((ymin + 2.4) / 6.0), imax = (long) floor ((ymax - 2.4) / 6.0);
+		long imin = (long) ceil ((ymin + 2.4) / 6.0), imax = Melder_iroundDown ((ymax - 2.4) / 6.0);
 		for (long i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 6.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 64) {
-		long imin = (long) ceil ((ymin + 4.8) / 12.0), imax = (long) floor ((ymax - 4.8) / 12.0);
+		long imin = (long) ceil ((ymin + 4.8) / 12.0), imax = Melder_iroundDown ((ymax - 4.8) / 12.0);
 		for (long i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 12.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 128) {
-		long imin = (long) ceil ((ymin + 9.6) / 24.0), imax = (long) floor ((ymax - 9.6) / 24.0);
+		long imin = (long) ceil ((ymin + 9.6) / 24.0), imax = Melder_iroundDown ((ymax - 9.6) / 24.0);
 		for (long i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 24.0, true, true, haveDottedLines, nullptr);
 	}

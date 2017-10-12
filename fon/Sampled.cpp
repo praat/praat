@@ -53,7 +53,7 @@ void structSampled :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 
 integer Sampled_getWindowSamples (Sampled me, double xmin, double xmax, integer *ixmin, integer *ixmax) {
 	double rixmin = 1.0 + ceil ((xmin - my x1) / my dx);
-	double rixmax = 1.0 + floor ((xmax - my x1) / my dx);   // could be above 32-bit LONG_MAX
+	double rixmax = 1.0 + Melder_roundDown ((xmax - my x1) / my dx);   // could be above 32-bit LONG_MAX
 	*ixmin = rixmin < 1.0 ? 1 : (integer) rixmin;
 	*ixmax = rixmax > (double) my nx ? my nx : (integer) rixmax;
 	if (*ixmin > *ixmax) return 0;
@@ -90,7 +90,7 @@ double Sampled_getValueAtX (Sampled me, double x, integer ilevel, int unit, bool
 	if (x < my xmin || x > my xmax) return undefined;
 	if (interpolate) {
 		double ireal = Sampled_xToIndex (me, x);
-		integer ileft = (integer) floor (ireal), inear, ifar;
+		integer ileft = Melder_iroundDown (ireal), inear, ifar;
 		double phase = ireal - ileft;
 		if (phase < 0.5) {
 			inear = ileft, ifar = ileft + 1;
@@ -250,8 +250,8 @@ static void Sampled_getSumAndDefinitionRange
 		} else {   // no interpolation
 			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
-				integer imin = rimin < 0.5 ? 0 : (integer) floor (rimin + 0.5);
-				integer imax = rimax >= my nx + 0.5 ? my nx + 1 : (integer) floor (rimax + 0.5);
+				integer imin = rimin < 0.5 ? 0 : Melder_iround_tieUp (rimin);
+				integer imax = rimax >= my nx + 0.5 ? my nx + 1 : Melder_iround_tieUp (rimax);
 				for (integer isamp = imin + 1; isamp < imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);
 					if (isdefined (value)) {

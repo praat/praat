@@ -1,6 +1,6 @@
 /* melder_atof.cpp
  *
- * Copyright (C) 2003-2011,2015,2017 Paul Boersma
+ * Copyright (C) 2003-2008,2011,2015-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

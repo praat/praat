@@ -89,7 +89,7 @@ static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, 
 		dtick = 0.5;
 	}
 	dtick *= scale;
-	tick = dtick * floor (min / dtick);
+	tick = dtick * Melder_roundDown (min / dtick);
 	if (tick < min) {
 		tick += dtick;
 	}
@@ -239,7 +239,7 @@ void Eigen_initFromSymmetricMatrix (Eigen me, double **a, integer n) {
 		Melder_throw (U"dsyev initialization fails");
 	}
 
-	lwork = (integer) floor (wt[0]);
+	lwork = Melder_iroundDown (wt [0]);
 	autoNUMvector <double> work ((integer) 0, lwork);
 
 	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n, &my eigenvalues[1], work.peek(), & lwork, & info);

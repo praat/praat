@@ -225,11 +225,12 @@ void Matrix_drawDistribution (Matrix me, Graphics g, double xmin, double xmax, d
 	autoNUMvector<long> freq (1, nBins);
 	double binWidth = (maximum - minimum) / nBins;
 	long nxy = 0;
-	for (long i = iymin; i <= iymax; i++) {
-		for (long j = ixmin; j <= ixmax; j++) {
-			long bin = 1 + (long) floor ( (my z[i][j] - minimum) / binWidth);
+	for (long i = iymin; i <= iymax; i ++) {
+		for (long j = ixmin; j <= ixmax; j ++) {
+			integer bin = 1 + Melder_iroundDown ((my z [i] [j] - minimum) / binWidth);
 			if (bin <= nBins && bin > 0) {
-				freq[bin]++; nxy ++;
+				freq [bin] ++;
+				nxy ++;
 			}
 		}
 	}

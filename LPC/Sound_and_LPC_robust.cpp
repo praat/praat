@@ -197,7 +197,7 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, d
 		if (my dx != thy samplingPeriod) {
 			Melder_throw (U"Sampling intervals differ.");
 		}
-		if (floor (windowDuration / my dx) < p + 1) {
+		if (Melder_roundDown (windowDuration / my dx) < p + 1) {
 			Melder_throw (U"Analysis window too short.");
 		}
 		Sampled_shortTermAnalysis (me, windowDuration, thy dx, & numberOfFrames, & t1);
@@ -259,7 +259,7 @@ autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfForm
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double nyquist = 0.5 / my dx;
-	int predictionOrder = (long) floor (2 * numberOfFormants);
+	integer predictionOrder = Melder_iroundDown (2 * numberOfFormants);
 	try {
 		autoSound sound;
 		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1.0) < 1.0e-12) {

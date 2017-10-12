@@ -102,7 +102,7 @@ static void computeDistanceTable (Polygon me, int **table) {
 		for (integer j = i + 1; j <= my numberOfPoints; j ++) {
 			double dx = my x [i] - my x [j], dy = my y [i] - my y [j];
 			table [i] [j] = table [j] [i] =
-				(int) floor (sqrt (dx * dx + dy * dy));   // round to zero
+				Melder_iroundDown (sqrt (dx * dx + dy * dy));   // round to zero
 		}
 }
 
@@ -115,7 +115,7 @@ static integer computeTotalDistance (int **distance, int path [], int numberOfCi
 
 static void shuffle (int path [], int numberOfCities) {
 	for (integer i = 1; i <= numberOfCities; i ++) {
-		int j = NUMrandomInteger (i, numberOfCities);
+		integer j = NUMrandomInteger (i, numberOfCities);
 		int help = path [i];
 		path [i] = path [j];
 		path [j] = help;
@@ -222,7 +222,7 @@ void Polygon_salesperson (Polygon me, integer numberOfIterations) {
 		autoNUMmatrix <int> distance (1, numberOfCities, 1, numberOfCities);
 		computeDistanceTable (me, distance.peek());
 		autoNUMvector <int> path ((integer) 0, numberOfCities);
-		for (int i = 1; i <= numberOfCities; i ++)
+		for (integer i = 1; i <= numberOfCities; i ++)
 			path [i] = i;
 		path [0] = numberOfCities;   // close path
 		autoNUMvector <int> shortestPath (NUMvector_copy (path.peek(), 0, numberOfCities), 0);

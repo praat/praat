@@ -97,7 +97,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			The number of points on the octave scale.
 		*/
 		double fminl2 = NUMlog2 (minimumPitch), fmaxl2 = NUMlog2 (maximumFrequency);
-		long nFrequencyPoints = (long) floor ((fmaxl2 - fminl2) * nPointsPerOctave);
+		integer nFrequencyPoints = Melder_iroundDown ((fmaxl2 - fminl2) * nPointsPerOctave);
 		double dfl2 = (fmaxl2 - fminl2) / (nFrequencyPoints - 1);
 
 		autoSound sound = Sound_resample (me, newSamplingFrequency, 50);
@@ -200,7 +200,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			pitchFrame -> nCandidates = 0; /* !!!!! */
 
 			for (long m = 1; m <= maxnSubharmonics + 1; m++) {
-				long kb = 1 + (long) floor (nPointsPerOctave * NUMlog2 (m));
+				integer kb = 1 + Melder_iroundDown (nPointsPerOctave * NUMlog2 (m));
 				for (long k = kb; k <= nFrequencyPoints; k++) {
 					sumspec[k - kb + 1] += al2[k] * hm;
 				}

@@ -361,7 +361,7 @@ double NUMcombinations (integer n, integer k) {
 
 #if defined (__POWERPC__)
 double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth) {
-	integer ix, midleft = floor (x), midright = midleft + 1, left, right;
+	integer ix, midleft = (integer) floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa, cosaa, sinaa, cosdaa, sindaa;
 	NUM_interpolate_simple_cases
 	left = midright - maxDepth, right = midleft + maxDepth;

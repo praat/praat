@@ -2965,7 +2965,7 @@ integer NUMrandomBinomial (double p, integer n) {
 		/* Note: magic numbers 2.195, 4.6, 0.134, 20.5, 15.3 */
 		/* These magic numbers are not adjustable...at least not easily! */
 
-		double p1 = floor (2.195 * sqrt (npq) - 4.6 * q) + 0.5;
+		double p1 = Melder_roundDown (2.195 * sqrt (npq) - 4.6 * q) + 0.5;
 
 		/* xl, xr: left and right edges of triangle */
 		double xl = xm - p1;

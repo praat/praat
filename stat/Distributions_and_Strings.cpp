@@ -44,7 +44,7 @@ autoStrings Distributions_to_Strings_exact (Distributions me, integer column) {
 			Melder_throw (U"No candidates.");
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			double value = my data [irow] [column];
-			if (value != floor (value))
+			if (value != Melder_roundDown (value))
 				Melder_throw (U"Non-integer value ", value, U" in row ", irow, U".");
 			if (value < 0.0)
 				Melder_throw (U"Found a negative value ", value, U" in row ", irow, U".");
