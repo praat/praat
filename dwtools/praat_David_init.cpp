@@ -3968,14 +3968,17 @@ DO
 }
 
 FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
-	LABEL (U"        y := 1; for row := 1 to nrow do { x := 1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + 1 } "
-		"y := y + 1 }}")
-	TEXTFIELD (formula, U"Formula:", U"self")
+	LABEL (U"# `col` is the node number, `row` is the pattern number")
+	LABEL (U"for row from 1 to nrow   ; for all patterns")
+	LABEL (U"   for col from 1 to ncol   ; for all nodes")
+	LABEL (U"      self [row, col] =")
+	TEXTFIELD (formula, nullptr, U"5 * exp (-0.5 * ((col - 10 - row/100) / 1.5) ^ 2) - 0.5   ; sliding peak")
+	LABEL (U"   endfor")
+	LABEL (U"endfor")
 	OK
 DO
 	MODIFY_EACH (PatternList)
-		Matrix_formula (reinterpret_cast <Matrix> (me), formula, interpreter, nullptr);
+		Matrix_formula (me, formula, interpreter, nullptr);
 	MODIFY_EACH_END
 }
 
@@ -4008,9 +4011,7 @@ DIRECT (HELP_PCA_help) {
 DIRECT (HINT_hint_PCA_and_TableOfReal_to_Configuration) {
 	Melder_information (U"You can get principal components by selecting a PCA and a TableOfReal\n"
 		"together and choosing \"To Configuration...\".");
-	END 
-
-}
+END }
 
 DIRECT (HINT_hint_PCA_and_Covariance_Project) {
 	Melder_information (U"You can get a new Covariance object rotated to the directions of the direction vectors\n"

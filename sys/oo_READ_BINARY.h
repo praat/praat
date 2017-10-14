@@ -125,8 +125,8 @@
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
 	{ \
-		int32 n = bingeti32 (f); \
-		for (int32 i = 1; i <= n; i ++) { \
+		integer n = bingetinteger (f); \
+		for (integer i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \
 			item -> v_readBinary (f, formatVersion); \
 			our x.addItem_move (item.move()); \
@@ -135,9 +135,9 @@
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
-		int32 n = bingeti32 (f); \
+		integer n = bingetinteger (f); \
 		our x = Class##_create (); \
-		for (int32 i = 1; i <= n; i ++) { \
+		for (integer i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \
 			item -> v_readBinary (f, formatVersion); \
 			our x -> addItem_move (item.move()); \
