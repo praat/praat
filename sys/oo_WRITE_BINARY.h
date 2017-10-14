@@ -93,14 +93,14 @@
 		Data_writeBinary (our x.get(), f);
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	binputi32 (our x.size, f); \
+	binputinteger (our x.size, f); \
 	for (integer i = 1; i <= our x.size; i ++) { \
 		ItemClass data = our x.at [i]; \
 		data -> struct##ItemClass :: v_writeBinary (f); \
 	}
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
-	binputi32 (our x ? our x->size : 0, f); \
+	binputinteger (our x ? our x->size : 0, f); \
 	if (our x) { \
 		for (integer i = 1; i <= our x->size; i ++) { \
 			ItemClass data = our x->at [i]; \
