@@ -3978,7 +3978,7 @@ FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
 	OK
 DO
 	MODIFY_EACH (PatternList)
-		Matrix_formula (reinterpret_cast <Matrix> (me), formula, interpreter, nullptr);
+		Matrix_formula (me, formula, interpreter, nullptr);
 	MODIFY_EACH_END
 }
 
