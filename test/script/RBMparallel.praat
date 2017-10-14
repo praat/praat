@@ -36,48 +36,25 @@ for idatum to numberOfPatterns
 	#
 	output1# = sigmoid# (outbias1# + mul# (input1#, weight1##))
 	output1# = randomBernoulli# (output1#)
+	input2# = output1#
+	output2# = sigmoid# (outbias2# + mul# (input2#, weight2##))
+	output2# = randomBernoulli# (output2#)
 	#
 	# Spread down.
 	#
 	inrec1# = inbias1# + mul# (weight1##, output1#)   ; Gaussian
+	inrec2# = sigmoid# (inbias2# + mul# (weight2##, output2#))
 	#
 	# Spread up.
 	#
 	outrec1# = sigmoid# (outbias1# + mul# (inrec1#, weight1##))
+	outrec2# = sigmoid# (outbias2# + mul# (inrec2#, weight2##))
 	#
 	# Update.
 	#
 	inbias1# += learningRate * (input1# - inrec1#)
 	outbias1# += learningRate * (output1# - outrec1#)
 	weight1## += learningRate * (outer## (input1#, output1#) - outer## (inrec1#, outrec1#))
-	#
-	# Copy output of first layer to input of second layer.
-	#
-	input2# = output1#
-	#
-	# Spread up through second layer, with Bernoulli sampling.
-	#
-	output2# = sigmoid# (outbias2# + mul# (input2#, weight2##))
-	output2# = randomBernoulli# (output2#)
-	#
-	# Spread down.
-	#
-	inrec2# = sigmoid# (inbias2# + mul# (weight2##, output2#))
-	; inrec2# owned and target TODO
-	; inbias2# by reference OK
-	; weight2## by reference OK
-	; output2# by reference OK
-	; mul# ref and ref into target (size matches, and inrec# does not occur further on) TODO
-	; + ref into target TODO
-	; sigmoid# into target TODO
-
-	#
-	# Spread up.
-	#
-	outrec2# = sigmoid# (outbias2# + mul# (inrec2#, weight2##))
-	#
-	# Update.
-	#
 	inbias2# += learningRate * (input2# - inrec2#)
 	outbias2# += learningRate * (output2# - outrec2#)
 	weight2## += learningRate * (outer## (input2#, output2#) - outer## (inrec2#, outrec2#))

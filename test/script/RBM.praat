@@ -7,8 +7,8 @@ numberOfOutputNodes = 20
 numberOfVowels = 3
 mean# = { 8, 16, 23 }
 sigma = 1.8
-numberOfPatterns = 100000
-learningRate = 0.0001
+numberOfPatterns = 10000
+learningRate = 0.001
 
 #
 # Train first layer.

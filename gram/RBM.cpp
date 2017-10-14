@@ -18,6 +18,7 @@
 
 //#include <OpenCL/OpenCL.h>
 #include "RBM.h"
+#include "PAIRWISE_SUM.h"
 
 #include "oo_DESTROY.h"
 #include "RBM_def.h"
@@ -38,8 +39,7 @@
 #include "oo_DESCRIPTION.h"
 #include "RBM_def.h"
 
-void structRBM :: v_info ()
-{
+void structRBM :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of input nodes: ", our numberOfInputNodes);
 	MelderInfo_writeLine (U"Number of output nodes: ", our numberOfOutputNodes);
@@ -50,13 +50,13 @@ Thing_implement (RBM, Daata, 0);
 void RBM_init (RBM me, integer numberOfInputNodes, integer numberOfOutputNodes, bool inputsAreBinary) {
 	my numberOfInputNodes = numberOfInputNodes;
 	my inputBiases = NUMvector <double> (1, numberOfInputNodes);
-	my inputActivities = NUMvector<double> (1, numberOfInputNodes);
-	my inputReconstruction = NUMvector<double> (1, numberOfInputNodes);
+	my inputActivities = NUMvector <double> (1, numberOfInputNodes);
+	my inputReconstruction = NUMvector <double> (1, numberOfInputNodes);
 	my numberOfOutputNodes = numberOfOutputNodes;
 	my outputBiases = NUMvector <double> (1, numberOfOutputNodes);
-	my outputActivities = NUMvector<double> (1, numberOfOutputNodes);
-	my outputReconstruction = NUMvector<double> (1, numberOfOutputNodes);
-	my weights = NUMmatrix<double> (1, numberOfInputNodes, 1, numberOfOutputNodes);
+	my outputActivities = NUMvector <double> (1, numberOfOutputNodes);
+	my outputReconstruction = NUMvector <double> (1, numberOfOutputNodes);
+	my weights = NUMmatrix <double> (1, numberOfInputNodes, 1, numberOfOutputNodes);
 	my inputsAreBinary = inputsAreBinary;
 }
 
@@ -75,11 +75,15 @@ inline static double logistic (double excitation) {
 }
 
 void RBM_spreadUp (RBM me) {
-	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-		real80 excitation = my outputBiases [jnode];
-		for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-			excitation += my inputActivities [inode] * my weights [inode] [jnode];
-		}
+	integer numberOfOutputNodes = my numberOfOutputNodes;
+	for (integer jnode = 1; jnode <= numberOfOutputNodes; jnode ++) {
+		PAIRWISE_SUM (real80, excitation, integer, my numberOfInputNodes,
+ 			double *p_inputActivity = & my inputActivities [0];
+ 			double *p_weight = & my weights [1] [jnode] - numberOfOutputNodes,
+ 			( p_inputActivity += 1, p_weight += numberOfOutputNodes ),
+ 			(real80) *p_inputActivity * (real80) *p_weight
+		);
+		excitation += my outputBiases [jnode];
 		my outputActivities [jnode] = logistic ((real) excitation);
 	}
 }
