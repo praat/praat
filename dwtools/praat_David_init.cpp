@@ -3968,10 +3968,13 @@ DO
 }
 
 FORM (MODIFY_PatternList_formula, U"PatternList: Formula", nullptr) {
-	LABEL (U"        y := 1; for row := 1 to nrow do { x := 1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + 1 } "
-		"y := y + 1 }}")
-	TEXTFIELD (formula, U"Formula:", U"self")
+	LABEL (U"# `col` is the node number, `row` is the pattern number")
+	LABEL (U"for row = 1 to nrow   ; for all patterns")
+	LABEL (U"   for col = 1 to ncol   ; for all nodes")
+	LABEL (U"      self [row, col] =")
+	TEXTFIELD (formula, nullptr, U"5 * exp (-0.5 * ((col - 10) / 1.5) ^ 2) - 0.5   ; one peak")
+	LABEL (U"   endfor")
+	LABEL (U"endfor")
 	OK
 DO
 	MODIFY_EACH (PatternList)
