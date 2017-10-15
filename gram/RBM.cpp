@@ -109,10 +109,13 @@ void RBM_sampleOutput (RBM me) {
 
 void RBM_spreadDown (RBM me) {
 	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		real80 excitation = my inputBiases [inode];
-		for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-			excitation += my weights [inode] [jnode] * my outputActivities [jnode];
-		}
+		PAIRWISE_SUM (real80, excitation, integer, my numberOfOutputNodes,
+ 			double *p_weight = & my weights [inode] [0];
+ 			double *p_outputActivity = & my outputActivities [0],
+ 			( p_weight += 1, p_outputActivity += 1 ),
+ 			(real80) *p_weight * (real80) *p_outputActivity
+		);
+		excitation += my inputBiases [inode];
 		if (my inputsAreBinary) {
 			my inputActivities [inode] = logistic ((real) excitation);
 		} else {   // linear
@@ -123,10 +126,13 @@ void RBM_spreadDown (RBM me) {
 
 void RBM_spreadDown_reconstruction (RBM me) {
 	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		real80 excitation = my inputBiases [inode];
-		for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-			excitation += my weights [inode] [jnode] * my outputActivities [jnode];
-		}
+		PAIRWISE_SUM (real80, excitation, integer, my numberOfOutputNodes,
+ 			double *p_weight = & my weights [inode] [0];
+ 			double *p_outputActivity = & my outputActivities [0],
+ 			( p_weight += 1, p_outputActivity += 1 ),
+ 			(real80) *p_weight * (real80) *p_outputActivity
+		);
+		excitation += my inputBiases [inode];
 		if (my inputsAreBinary) {
 			my inputReconstruction [inode] = logistic ((real) excitation);
 		} else {   // linear
@@ -136,11 +142,15 @@ void RBM_spreadDown_reconstruction (RBM me) {
 }
 
 void RBM_spreadUp_reconstruction (RBM me) {
+	integer numberOfOutputNodes = my numberOfOutputNodes;
 	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-		real80 excitation = my outputBiases [jnode];
-		for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-			excitation += my inputReconstruction [inode] * my weights [inode] [jnode];
-		}
+		PAIRWISE_SUM (real80, excitation, integer, my numberOfInputNodes,
+ 			double *p_inputActivity = & my inputReconstruction [0];
+ 			double *p_weight = & my weights [1] [jnode] - numberOfOutputNodes,
+ 			( p_inputActivity += 1, p_weight += numberOfOutputNodes ),
+ 			(real80) *p_inputActivity * (real80) *p_weight
+		);
+		excitation += my outputBiases [jnode];
 		my outputReconstruction [jnode] = logistic ((real) excitation);
 	}
 }

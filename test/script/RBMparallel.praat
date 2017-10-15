@@ -61,6 +61,7 @@ for idatum to numberOfPatterns
 endfor
 
 appendInfoLine: "Trained in ", stopwatch, " seconds"
+appendInfoLine: weight1##, newline$, newline$, weight2##
 
 numberOfTestPatterns = 15
 Erase all
@@ -107,6 +108,7 @@ for itest to numberOfTestPatterns
 	#
 	Select outer viewport: 3, 6, (itest - 1) * 0.6, (itest - 1) * 0.6 + 1.0
 	Create simple Matrix: "reflection", 1, numberOfInputNodes, "inrec1# [col]"
+	appendInfoLine: "   Energy in reflection: ", stdev (inrec1#)
 	Draw rows: 0, 0, 0, 0, -5, 5
 	Remove
 endfor

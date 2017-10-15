@@ -3649,7 +3649,7 @@ static void shared_do_writeInfo (int numberOfArguments) {
 			integer numberOfColumns = arg->numericMatrix.ncol;
 			double **data = arg->numericMatrix.at;
 			for (integer irow = 1; irow <= numberOfRows; irow ++) {
-				for (integer icol = 1; icol <= numberOfRows; icol ++) {
+				for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 					MelderInfo_write (data [irow] [icol], icol == numberOfColumns ? U"" : U" ");
 				}
 				MelderInfo_write (irow == numberOfRows ? U"" : U"\n");

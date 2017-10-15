@@ -18,6 +18,7 @@
 
 //#include <OpenCL/OpenCL.h>
 #include "DeepBeliefNetwork.h"
+#include "tensor.h"
 
 #include "oo_DESTROY.h"
 #include "DeepBeliefNetwork_def.h"
@@ -105,9 +106,9 @@ static void copyInputsToOutputs (RBM me, RBM you) {
 void DeepBeliefNetwork_spreadDown (DeepBeliefNetwork me, kDeepBeliefNetwork_activationType activationType) {
 	for (integer ilayer = my layers.size; ilayer > 0; ilayer --) {
 		RBM layer = my layers.at [ilayer];
-		RBM_spreadDown (layer);
 		if (ilayer < my layers.size)
 			copyInputsToOutputs (my layers.at [ilayer + 1], layer);
+		RBM_spreadDown (layer);
 		if (activationType == kDeepBeliefNetwork_activationType::STOCHASTIC)
 			RBM_sampleInput (layer);
 	}
@@ -152,6 +153,25 @@ void DeepBeliefNetwork_PatternList_learn (DeepBeliefNetwork me, PatternList thee
 	}
 }
 
+void DeepBeliefNetwork_PatternList_learnByLayer (DeepBeliefNetwork me, PatternList thee, double learningRate) {
+	for (integer ilayer = 1; ilayer <= my layers.size; ilayer ++) {
+		RBM layer = my layers.at [ilayer];
+		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
+			RBM_PatternList_applyToInput (my layers.at [1], thee, ipattern);
+			RBM_spreadUp (my layers.at [1]);
+			RBM_sampleOutput (my layers.at [1]);
+			for (integer jlayer = 2; jlayer <= ilayer; jlayer ++) {
+				copyOutputsToInputs (my layers.at [jlayer - 1], my layers.at [jlayer]);
+				RBM_spreadUp (my layers.at [jlayer]);
+				RBM_sampleOutput (my layers.at [jlayer]);
+			}
+			RBM_spreadDown_reconstruction (layer);
+			RBM_spreadUp_reconstruction (layer);
+			RBM_update (layer, learningRate);
+		}
+	}
+}
+
 autoMatrix DeepBeliefNetwork_extractInputActivities (DeepBeliefNetwork me) {
 	return RBM_extractInputActivities (my layers.at [1]);
 }
@@ -178,6 +198,11 @@ autoMatrix DeepBeliefNetwork_extractOutputBiases (DeepBeliefNetwork me, integer 
 
 autoMatrix DeepBeliefNetwork_extractWeights (DeepBeliefNetwork me, integer layerNumber) {
 	return RBM_extractWeights (my layers.at [layerNumber]);
+}
+
+autonummat DeepBeliefNetwork_getWeights_nummat (DeepBeliefNetwork me, integer layerNumber) {
+	RBM layer = my layers.at [layerNumber];
+	return copy_nummat ({ layer -> weights, layer -> numberOfInputNodes, layer -> numberOfOutputNodes });
 }
 
 /* End of file DeepBeliefNetwork.cpp */
