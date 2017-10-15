@@ -525,8 +525,8 @@ DO
 			Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
 		if (maximumNumberOfReseeds < 0)
 			Melder_throw (U"The maximum number of reseeds should not be negative.");
-		REQUIRE (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
-			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).")
+		Melder_require (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
+			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).");
 		autoFeatureWeights fws = FeatureWeights_create (my nx);
 		autoCategories result = PatternList_to_Categories_cluster (me, fws.get(), kClusters, clusterSizeRatioConstraint, maximumNumberOfReseeds);
 	CONVERT_EACH_END (U"Output")
@@ -545,10 +545,10 @@ DO
 			Melder_throw (U"The number of features and the number of feature weights should be equal.");
 		if (kClusters < 1 || kClusters > my ny)
 			Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
-		REQUIRE (maximumNumberOfReseeds >= 0,
-			U"The maximum number of reseeds should be 0 or positive.")
-		REQUIRE (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
-			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).")
+		Melder_require (maximumNumberOfReseeds >= 0,
+			U"The maximum number of reseeds should be 0 or positive.");
+		Melder_require (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
+			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).");
 		autoCategories result = PatternList_to_Categories_cluster (me, you, kClusters, clusterSizeRatioConstraint, maximumNumberOfReseeds);
 	CONVERT_TWO_END (U"Output")
 }

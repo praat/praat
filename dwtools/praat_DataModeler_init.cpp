@@ -75,7 +75,7 @@ FORM (GRAPHICS_DataModeler_drawEstimatedTrack, U"DataModeler: Draw estimated tra
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	REQUIRE (order >= 0, U"The order must be greater than or equal to zero.")
+	Melder_require (order >= 0, U"The order should be at least zero.");
 	GRAPHICS_EACH (DataModeler)
 		DataModeler_drawTrack (me, GRAPHICS, xmin, xmax, ymin, ymax, 1, order + 1, xOffset, garnish);
 	GRAPHICS_EACH_END
@@ -377,7 +377,7 @@ FORM (NEW_Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
 		OPTION (U"Sqrt bandwidth")
 	OK
 DO
-	REQUIRE (order >= 0, U"The order must be greater than or equal to zero.")
+	Melder_require (order >= 0, U"The order should be at least zero.");
 	CONVERT_EACH (Formant)
 		autoFormantModeler result = Formant_to_FormantModeler (me, fromTime, toTime, numberOfFormants, order + 1, weighDataType);
 	CONVERT_EACH_END (my name, U"_o", order);
@@ -474,7 +474,7 @@ FORM (GRAPHICS_FormantModeler_drawEstimatedTracks, U"FormantModeler: Draw estima
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	REQUIRE (order >= 0, U"The order must be greater than or equal to zero.")
+	Melder_require (order >= 0, U"The order should be at least zero.");
 	GRAPHICS_EACH (FormantModeler)
 		FormantModeler_drawTracks (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 1, order + 1, xOffset_mm, garnish);
 	GRAPHICS_EACH_END

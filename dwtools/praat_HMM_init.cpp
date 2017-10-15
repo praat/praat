@@ -255,7 +255,7 @@ FORM (NEW1_HMM_createContinuousModel, U"HMM: Create continuous model", nullptr) 
 		OPTION (U"Diagonal")
 	OK
 DO
-	REQUIRE (matricesType >= 0 && matricesType <= componentDimension, U"Not a valid covariance matrix type")
+	Melder_require (matricesType >= 0 && matricesType <= componentDimension, U"Not a valid covariance matrix type");
 	CREATE_ONE
 		autoHMM result = HMM_createContinuousModel (leftToRightModel, numberOfStates, numberOfSymbols, numberOfComponents, componentDimension, matricesType - 1);
 	CREATE_ONE_END (name)
@@ -312,7 +312,7 @@ FORM (REAL_HMM_getTransitionProbability, U"HMM: Get transition probability", U"H
 	OK
 DO
 	NUMBER_ONE (HMM)
-		REQUIRE (fromState <= my numberOfStates && toState <= my numberOfStates, U"State number(s) too high.")
+		Melder_require (fromState <= my numberOfStates && toState <= my numberOfStates, U"State number(s) too high.");
 		double result = my transitionProbs [fromState] [toState];
 	NUMBER_ONE_END (U" : [ ", fromState, U", ", toState, U" ]")
 }
@@ -323,8 +323,8 @@ FORM (REAL_HMM_getEmissionProbability, U"HMM: Get emission probability", U"HMM: 
 	OK
 DO
 	NUMBER_ONE (HMM)
-		REQUIRE (fromState <= my numberOfStates, U"State number too high.")
-		REQUIRE (toState <= my numberOfObservationSymbols, U"Symbol number too high.")
+		Melder_require (fromState <= my numberOfStates, U"State number too high.");
+		Melder_require (toState <= my numberOfObservationSymbols, U"Symbol number too high.");
 		double result = my emissionProbs[fromState][toState];
 	NUMBER_ONE_END (U" : [ ", fromState, U", ", toState, U" ]")
 }
@@ -334,7 +334,7 @@ FORM (REAL_HMM_getStartProbability, U"HMM: Get start probability", U"HMM: Get st
 	OK
 DO
 	NUMBER_ONE (HMM)
-		REQUIRE (stateNumber <= my numberOfStates, U"State number too high.")
+		Melder_require (stateNumber <= my numberOfStates, U"State number too high.");
 		double result = my transitionProbs[0][stateNumber];
 	NUMBER_ONE_END (U" : [ ", stateNumber, U" ]")
 }
@@ -386,7 +386,7 @@ FORM (INFO_HMM_getSymbolLabel, U"HMM: Get symbol label", nullptr) {
 	OK
 DO
 	STRING_ONE (HMM)
-		REQUIRE (symbolNumber <= my numberOfObservationSymbols, U"Symbol number too high.")
+		Melder_require (symbolNumber <= my numberOfObservationSymbols, U"Symbol number too high.");
 		HMMObservation s = my observationSymbols->at [symbolNumber];
 		const char32 *result = s -> label;
 	STRING_ONE_END
@@ -397,7 +397,7 @@ FORM (INFO_HMM_getStateLabel, U"HMM: Get state label", nullptr) {
 	OK
 DO
 	STRING_ONE (HMM)
-		REQUIRE (stateNumber <= my numberOfStates, U"State number too high.")
+		Melder_require (stateNumber <= my numberOfStates, U"State number too high.");
 		HMMState state = my states->at [stateNumber];
 		const char32 *result = state -> label;
 	STRING_ONE_END
@@ -465,7 +465,7 @@ FORM (MODIFY_HMM_and_HMMObservationSequence_learn, U"HMM & HMMObservationSequenc
 	BOOLEAN (showProgress, U"Learning history in Info window", false)
 	OK
 DO
-	REQUIRE (minimumProbability >= 0 && minimumProbability < 1, U"A probabilty must be >= 0 and < 1!")
+	Melder_require (minimumProbability >= 0.0 && minimumProbability < 1.0, U"The minimum probabilty should be in [0, 1).");
 	MODIFY_FIRST_OF_ONE_AND_LIST(HMM, HMMObservationSequence)
 		HMM_and_HMMObservationSequenceBag_learn (me, (HMMObservationSequenceBag) &list, relativePrecision_log, minimumProbability, showProgress);
 	MODIFY_FIRST_OF_ONE_AND_LIST_END
@@ -588,7 +588,7 @@ FORM (NEW_TableOfReal_to_GaussianMixture, U"TableOfReal: To GaussianMixture (no 
 	GaussianMixture_OPTION_MENU_CRITERIA
 	OK
 DO
-	REQUIRE (lambda >= 0.0 && lambda < 1.0, U"Lambda must be in interval [0,1).")
+	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
 	CONVERT_EACH (TableOfReal)
 		autoGaussianMixture result = TableOfReal_to_GaussianMixture (me, numberOfComponents, tolerance, maximumNumberOfIterations, lambda, matricesType - 1, criterion - 1);
 	CONVERT_EACH_END (my name)
@@ -601,10 +601,10 @@ FORM (MODIFY_GaussianMixture_and_TableOfReal_improveLikelihood, U"GaussianMixtur
 	GaussianMixture_OPTION_MENU_CRITERIA
 	OK
 DO
-	REQUIRE (lambda >= 0.0 && lambda < 1.0, U"Lambda must be in interval [0,1).")
+	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
 	MODIFY_FIRST_OF_TWO (GaussianMixture, TableOfReal)
-		REQUIRE (your numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
-		REQUIRE (my numberOfComponents < you -> numberOfRows / 2, U"Not enough data points.")
+		Melder_require (your numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
+		Melder_require (my numberOfComponents < your numberOfRows / 2, U"Not enough data points.");
 		GaussianMixture_and_TableOfReal_improveLikelihood (me, you, tolerance, maximumNumberOfIterations, lambda, criterion - 1);
 	MODIFY_FIRST_OF_TWO_END
 }
@@ -617,10 +617,10 @@ FORM (NEW1_GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM, U"GaussianMi
 	GaussianMixture_OPTION_MENU_CRITERIA
 	OK
 DO
-	REQUIRE (lambda >= 0.0 && lambda < 1.0, U"Lambda must be in interval [0,1).")
+	Melder_require (lambda >= 0.0 && lambda < 1.0, U"Lambda should be in the interval [0, 1).");
 	CONVERT_TWO (GaussianMixture, TableOfReal)
-		REQUIRE (your numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
-		REQUIRE (my numberOfComponents < you -> numberOfRows / 2, U"Not enough data points.")
+		Melder_require (your numberOfColumns == my dimension, U"The number of columns and the dimension of the model do not agree.");
+		Melder_require (my numberOfComponents < your numberOfRows / 2, U"Not enough data points.");
 		autoGaussianMixture result = GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (me, you, minimumNumberOfComponents, tolerance, maximumNumberOfIterations, lambda, criterion - 1);
 	CONVERT_TWO_END (my name)
 }

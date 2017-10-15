@@ -527,7 +527,6 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				}
 
 #define GET_FILE(name)  UiForm_getFile (dia, name)
-#define REQUIRE(c,t)  if (! (c)) Melder_throw (t);
 
 #endif // _EditorM_h_
 
