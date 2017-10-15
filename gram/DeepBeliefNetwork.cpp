@@ -105,9 +105,9 @@ static void copyInputsToOutputs (RBM me, RBM you) {
 void DeepBeliefNetwork_spreadDown (DeepBeliefNetwork me, kDeepBeliefNetwork_activationType activationType) {
 	for (integer ilayer = my layers.size; ilayer > 0; ilayer --) {
 		RBM layer = my layers.at [ilayer];
-		RBM_spreadDown (layer);
 		if (ilayer < my layers.size)
 			copyInputsToOutputs (my layers.at [ilayer + 1], layer);
+		RBM_spreadDown (layer);
 		if (activationType == kDeepBeliefNetwork_activationType::STOCHASTIC)
 			RBM_sampleInput (layer);
 	}
@@ -178,6 +178,11 @@ autoMatrix DeepBeliefNetwork_extractOutputBiases (DeepBeliefNetwork me, integer 
 
 autoMatrix DeepBeliefNetwork_extractWeights (DeepBeliefNetwork me, integer layerNumber) {
 	return RBM_extractWeights (my layers.at [layerNumber]);
+}
+
+autonummat DeepBeliefNetwork_getWeights_nummat (DeepBeliefNetwork me, integer layerNumber) {
+	RBM layer = my layers.at [layerNumber];
+	return copy_nummat ({ layer -> weights, layer -> numberOfInputNodes, layer -> numberOfOutputNodes });
 }
 
 /* End of file DeepBeliefNetwork.cpp */
