@@ -164,11 +164,11 @@ FORM (NEW1_KlattGrid_create, U"Create KlattGrid", U"Create KlattGrid...") {
 	INTEGER (numberOfDeltaFormants, U"Number of delta formants", U"1")
 	OK
 DO
-	REQUIRE (fromTime < toTime, U"The start time must lie before the end time.")
-	REQUIRE (numberOfOralFormants >= 0 && numberOfNasalFormants >= 0 && numberOfNasalAntiFormants >= 0
+	Melder_require (fromTime < toTime, U"The start time must lie before the end time.");
+	Melder_require (numberOfOralFormants >= 0 && numberOfNasalFormants >= 0 && numberOfNasalAntiFormants >= 0
 		&& numberOfTrachealFormants >= 0 && numberOfTrachealAntiFormants >= 0
 		&& numberOfFricationFormants >= 0 && numberOfDeltaFormants >= 0,
-		U"The number of (..) formants cannot be negative!")
+		U"No number of formants should be negative.");
 	CREATE_ONE
 		autoKlattGrid result = KlattGrid_create (fromTime, toTime, numberOfOralFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfFricationFormants, numberOfDeltaFormants);
 	CREATE_ONE_END (name)
@@ -262,7 +262,7 @@ FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", null
 	REAL (value, U"Value" unit, default) \
 	OK \
 DO \
-	REQUIRE (require, requiremessage) \
+	Melder_require (require, requiremessage); \
 	MODIFY_EACH (KlattGrid); \
 		KlattGrid_add##Name##Point (me, time, value); \
 	MODIFY_EACH_END \
@@ -336,7 +336,7 @@ FORM (MODIFY_KlattGrid_add##Name##Formant##FBA##Point, U"KlattGrid: Add " #namef
 	REAL (value, U"Value " #unit, default) \
 	OK \
 DO \
-	REQUIRE (require, requiremessage) \
+	Melder_require (require, requiremessage); \
 	MODIFY_EACH (KlattGrid); \
 		KlattGrid_add##Form##Point (me, formantType, formantNumber, time, value); \
 	MODIFY_EACH_END \
@@ -630,7 +630,7 @@ FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", null
 	REAL (value, U"Value" unit, default) \
 	OK \
 DO \
-	REQUIRE (require, requiremessage) \
+	Melder_require (require, requiremessage); \
 	LOOP { iam (KlattGrid); \
 		KlattGrid_add##Name##Point (me, formantType, formantNumber, time, value); \
 		praat_dataChanged (me); \
@@ -642,7 +642,7 @@ FORM (MODIFY_KlattGrid_addDelta##Name##Point, U"KlattGrid: Add delta " #name " p
 	REAL (value, U"Value" unit, default) \
 	OK \
 DO \
-	REQUIRE (require, requiremessage) \
+	Melder_require (require, requiremessage); \
 	LOOP { iam (KlattGrid); \
 		KlattGrid_addDelta##Name##Point (me, formantNumber, time, value); \
 		praat_dataChanged (me); \
@@ -880,7 +880,7 @@ FORM (NEW_KlattGrid_to_oralFormantGrid_openPhases, U"KlattGrid: Extract oral for
 	REAL (fadeFraction, U"Fade fraction (0..0.5)", U"0.1")
 	OK
 DO
-	REQUIRE (fadeFraction < 0.5, U"Fade fraction has to be smaller than 0.5.")
+	Melder_require (fadeFraction < 0.5, U"The fade fraction has to be less than 0.5.");
 	CONVERT_EACH (KlattGrid)
 		autoFormantGrid result = KlattGrid_to_oralFormantGrid_openPhases (me, fadeFraction);
 	CONVERT_EACH_END (U"corrected")

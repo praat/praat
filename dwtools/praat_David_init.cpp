@@ -633,7 +633,7 @@ FORM (NEW1_ChebyshevSeries_create, U"Create ChebyshevSeries", U"Create Chebyshev
 	SENTENCE (coefficients_string, U"Coefficients (c[k])", U"0 0 1.0")
 	OK
 DO
-	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
+	Melder_require (xmin < xmax, U"Xmin should be smaller than Xmax.");
 	CREATE_ONE
 		autoChebyshevSeries result = ChebyshevSeries_createFromString (xmin, xmax, coefficients_string);
 	CREATE_ONE_END (name)
@@ -850,7 +850,7 @@ FORM (GRAPHICS_Confusion_Matrix_draw, U"Confusion & Matrix: Draw confusions with
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	REQUIRE (categoryPosition >= 0, U"Category position must be >= 0")
+	Melder_require (categoryPosition >= 0, U"Your category position should be at least 0.");
 	GRAPHICS_TWO (Confusion, Matrix)
 		Confusion_Matrix_draw (me, you, GRAPHICS, categoryPosition, lowerLevel, xmin, xmax, ymin, ymax, garnish);
 	GRAPHICS_TWO_END
@@ -1137,7 +1137,7 @@ FORM (NEW1_Discriminant_and_TableOfReal_to_Configuration, U"Discriminant & Table
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"0")
 	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.")
+	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
 	CONVERT_TWO (Discriminant, TableOfReal)
 		autoConfiguration result = Discriminant_and_TableOfReal_to_Configuration (me, you, numberOfDimensions);
 	CONVERT_TWO_END (my name, U"_", your name)
@@ -1164,7 +1164,7 @@ FORM (NEW1_Discriminant_and_TableOfReal_mahalanobis, U"Discriminant & TableOfRea
 DO
 	CONVERT_TWO (Discriminant, TableOfReal)
 		long group = Discriminant_groupLabelToIndex (me, groupLabel);
-		REQUIRE (group > 0, U"Group label does not exist.")
+		Melder_require (group > 0, U"Your group label \"", groupLabel, U"\" does not exist.");
 		autoTableOfReal result = Discriminant_and_TableOfReal_mahalanobis (me, you, group, poolCovariances);
 	CONVERT_TWO_END (U"mahalanobis")
 }
@@ -1215,10 +1215,9 @@ DO
 
 FORM (REAL_Discriminant_getWilksLambda, U"Discriminant: Get Wilks' lambda", U"Discriminant: Get Wilks' lambda...") {
 	LABEL (U"Product (i=from..numberOfEigenvalues, 1 / (1 + eigenvalue[i]))")
-	INTEGER (from, U"From", U"1") //TODO better name
+	NATURAL (from, U"From", U"1") //TODO better name
 	OK
 DO
-	REQUIRE (from >= 1, U"Number must be greater than or equal to one.")
 	NUMBER_ONE (Discriminant)
 		double result = Discriminant_getWilksLambda (me, from);
 	NUMBER_ONE_END (U" (wilks lambda)")
@@ -1239,7 +1238,7 @@ FORM (REAL_Discriminant_getPartialDiscriminationProbability, U"Discriminant: Get
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"1")
 	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater than or equal to zero.")
+	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
 	NUMBER_ONE (Discriminant)
 		double result, chisq, df;
 		Discriminant_getPartialDiscriminationProbability (me, numberOfDimensions, & result, & chisq, & df);
@@ -1284,7 +1283,7 @@ FORM (REAL_Discriminant_getConcentrationEllipseArea, U"Discriminant: Get concent
 DO
 	NUMBER_ONE (Discriminant)
 		long group = Discriminant_groupLabelToIndex (me, groupLabel);
-		REQUIRE (group > 0, U"Group label does not exist.")
+		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		double result = Discriminant_getConcentrationEllipseArea (me, group, numberOfSigmas, false, discriminatPlane, xDimension, yDimension);
 	NUMBER_ONE_END (U" (concentration ellipse area)")
 }
@@ -1299,7 +1298,7 @@ FORM (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence
 DO
 	NUMBER_ONE (Discriminant)
 		long group = Discriminant_groupLabelToIndex (me, groupLabel);
-		REQUIRE (group > 0, U"Group label does not exist.")
+		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		double result = Discriminant_getConcentrationEllipseArea (me, group, confidenceLevel, true, discriminatPlane, xDimension, yDimension);
 	NUMBER_ONE_END (U" (confidence ellipse area)")
 }
@@ -1310,7 +1309,7 @@ FORM (REAL_Discriminant_getLnDeterminant_group, U"Discriminant: Get determinant 
 DO
 	NUMBER_ONE (Discriminant)
 		long group = Discriminant_groupLabelToIndex (me, groupLabel);
-		REQUIRE (group > 0, U"Group label does not exist.")
+		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		double result = Discriminant_getLnDeterminant_group (me, group);
 	NUMBER_ONE_END (U" (ln(determinant) group")
 }
@@ -3298,7 +3297,7 @@ FORM (NEW1_LegendreSeries_create, U"Create LegendreSeries", U"Create LegendreSer
 	SENTENCE (coefficients_string, U"Coefficients", U"0 0 1.0")
 	OK
 DO
-	REQUIRE  (xmin < xmax, U"Xmin must be smaller than Xmax.") 
+	Melder_require (xmin < xmax, U"Xmin should be smaller than Xmax.");
 	CREATE_ONE
 		autoLegendreSeries result = LegendreSeries_createFromString (xmin, xmax, coefficients_string);
 	CREATE_ONE_END (name)
@@ -3913,7 +3912,7 @@ FORM (NEW_MSpline_create, U"Create MSpline", U"Create MSpline...") {
 	SENTENCE (knots_string, U"Interior knots" , U"0.3 0.5 0.6")
 	OK
 DO
-	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
+	Melder_require (xmin < xmax, U"Xmin should be smaller than Xmax.");
 	CREATE_ONE
 		autoMSpline result = MSpline_createFromStrings (xmin, xmax, degree, coefficients_string, knots_string);
 	CREATE_ONE_END (name)
@@ -3989,8 +3988,8 @@ FORM (MODIFY_PatternList_setValue, U"PatternList: Set value", U"PatternList: Set
 	OK
 DO
 	MODIFY_EACH (PatternList)
-		REQUIRE (rowNumber <= my ny, U"Row number must not be greater than number of rows.")
-		REQUIRE (columnNumber <= my nx, U"Column number must not be greater than number of columns.")
+		Melder_require (rowNumber <= my ny, U"The row number should not be greater than the number of rows.");
+		Melder_require (columnNumber <= my nx, U"The column number should not be greater than the number of columns.");
 		my z [rowNumber] [columnNumber] = newValue;
 	MODIFY_EACH_END
 }
@@ -4040,12 +4039,12 @@ DIRECT (NEW_PCA_and_Configuration_to_TableOfReal_reconstruct) {
 }
 
 FORM (NEW1_PCA_and_TableOfReal_to_TableOfReal_projectRows, U"PCA & TableOfReal: To TableOfReal (project rows)", U"PCA & TableOfReal: To Configuration...") {
-	INTEGER (numberOfDimensions, U"Number of dimensions to keep", U"0 (= all)")
+	INTEGER (numberOfDimensionsToKeep, U"Number of dimensions to keep", U"0 (= all)")
 	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
+	Melder_require (numberOfDimensionsToKeep >= 0, U"The number of dimensions to keep should be at least zero.");
 	CONVERT_ONE_AND_GENERIC (PCA, TableOfReal)
-		autoTableOfReal result = PCA_and_TableOfReal_to_TableOfReal_projectRows (me, you, numberOfDimensions);
+		autoTableOfReal result = PCA_and_TableOfReal_to_TableOfReal_projectRows (me, you, numberOfDimensionsToKeep);
 	CONVERT_ONE_AND_GENERIC_END (my name, U"_", your name)
 }
 
@@ -4053,7 +4052,7 @@ FORM (NEW1_PCA_and_TableOfReal_to_Configuration, U"PCA & TableOfReal: To Configu
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
+	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
 	CONVERT_ONE_AND_GENERIC (PCA, TableOfReal)
 		autoConfiguration result = PCA_and_TableOfReal_to_Configuration (me, you, numberOfDimensions);
 	CONVERT_ONE_AND_GENERIC_END (my name, U"_", your name)
@@ -4063,7 +4062,7 @@ FORM (NEW1_PCA_and_TableOfReal_to_TableOfReal_zscores, U"PCA & TableOfReal: To T
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
+	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
 	CONVERT_ONE_AND_GENERIC (PCA, TableOfReal)
 		autoTableOfReal result = PCA_and_TableOfReal_to_TableOfReal_zscores (me, you, numberOfDimensions);
 	CONVERT_ONE_AND_GENERIC_END (my name, U"_", your name, U"_zscores")
@@ -4073,7 +4072,7 @@ FORM (NEW1_PCA_and_Matrix_to_Matrix_projectRows, U"PCA & Matrix: To Matrix (proj
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
+	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
 	CONVERT_TWO (PCA, Matrix)
 		autoMatrix result = Eigen_and_Matrix_to_Matrix_projectRows (me, you, numberOfDimensions);
 	CONVERT_TWO_END (my name, U"_", your name)
@@ -4083,7 +4082,7 @@ FORM (NEW1_PCA_and_Matrix_to_Matrix_projectColumns, U"PCA & Matrix: To Matrix (p
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
+	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
 	CONVERT_ONE_AND_GENERIC (PCA, Matrix)
 		autoMatrix result = Eigen_and_Matrix_to_Matrix_projectColumns (me, you, numberOfDimensions);
 	CONVERT_ONE_AND_GENERIC_END (my name, U"_", your name)
@@ -4094,7 +4093,7 @@ FORM (REAL_PCA_getCentroidElement, U"PCA: Get centroid element...", nullptr) {
 	OK
 DO
 	NUMBER_ONE (PCA)
-		REQUIRE (number <= my dimension, Melder_cat (U"Number may not be larger than ", my dimension, U"."))
+		Melder_require (number <= my dimension, U"Number should not be greater than ", my dimension, U".");
 		double result = my centroid [number];
 	NUMBER_ONE_END (U" (element ", number, U")")
 }
@@ -4116,7 +4115,7 @@ FORM (INTEGER_PCA_getNumberOfComponentsVAF, U"PCA: Get number of components (VAF
 	POSITIVE (varianceFraction, U"Variance fraction (0-1)", U"0.95")
 	OK
 DO
-	REQUIRE (varianceFraction >= 0.0 && varianceFraction <= 1.0, U"The variance fraction must be in interval (0-1).")
+	Melder_require (varianceFraction >= 0.0 && varianceFraction <= 1.0, U"The variance fraction must be in interval [0-1].");
 	NUMBER_ONE (PCA)
 		double result = Eigen_getDimensionOfFraction (me, varianceFraction);
 	NUMBER_ONE_END (U" (variance fraction)")
@@ -4127,7 +4126,7 @@ FORM (REAL_PCA_getFractionVAF, U"PCA: Get fraction variance accounted for", U"PC
 	NATURAL (toPrincipalComponent, U"right Principal component range", U"1")
 	OK
 DO
-	REQUIRE (fromPrincipalComponent <= toPrincipalComponent, U"The second component must be greater than or equal to the first component.")
+	Melder_require (fromPrincipalComponent <= toPrincipalComponent, U"The second component should be greater than or equal to the first component.");
 	NUMBER_ONE (PCA)
 		double result = Eigen_getCumulativeContributionOfComponents (me, fromPrincipalComponent, toPrincipalComponent);
 	NUMBER_ONE_END (U"")
@@ -4149,8 +4148,8 @@ FORM (NEW_PCA_extractEigenvector, U"PCA: Extract eigenvector", U"Eigen: Extract 
 	INTEGER (numberOfColumns, U"Number of columns", U"0")
 	OK
 DO
-	REQUIRE (numberOfRows >= 0, U"Number of rows must be >= 0.")
-	REQUIRE (numberOfColumns >= 0, U"Number of columns must be >= 0.")
+	Melder_require (numberOfRows >= 0, U"The number of rows should beat least 0.");
+	Melder_require (numberOfColumns >= 0, U"The number of columns should be at least 0.");
 	CONVERT_EACH (PCA);
 		autoMatrix result = Eigen_extractEigenvector (me, eigenvectorNumber, numberOfRows, numberOfColumns);
 	CONVERT_EACH_END (my name, U"_ev", eigenvectorNumber)
@@ -4508,7 +4507,7 @@ FORM (INFO_Polygon_getLocationOfPoint, U"Get location of point", U"Polygon: Get 
 	REAL (eps, U"Precision", U"1.64e-15")
 	OK
 DO
-	REQUIRE (eps >= 0, U"The precision cannot be negative.")
+	Melder_require (eps >= 0.0, U"The precision cannot be negative.");
 	STRING_ONE (Polygon)
 		int loc = Polygon_getLocationOfPoint (me, x, y, eps);
 		const char32 * result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
@@ -4617,7 +4616,7 @@ FORM (NEW1_Polynomial_create, U"Create Polynomial from coefficients", U"Create P
 	SENTENCE (coefficients_string, U"Coefficients", U"2.0 -1.0 -2.0 1.0")
 	OK
 DO
-	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
+	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
 	CREATE_ONE
 		autoPolynomial result = Polynomial_createFromString (xmin, xmax, coefficients_string);
 	CREATE_ONE_END (name)
@@ -4632,7 +4631,7 @@ FORM (NEW1_Polynomial_createFromProducts, U"Create Polynomial from second order 
 	SENTENCE (coefficients_string, U"The a's", U"1.0 2.0")
 	OK
 DO
-	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
+	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
 	CREATE_ONE
 		autoPolynomial result = Polynomial_createFromProductOfSecondOrderTermsString (xmin, xmax, coefficients_string);
 	CREATE_ONE_END (name)
@@ -4647,7 +4646,7 @@ FORM (NEW1_Polynomial_createFromZeros, U"Create Polynomial from first order prod
 	SENTENCE (zeros_string, U"The zero's", U"1.0 2.0")
 	OK
 DO
-	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
+	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
 	CREATE_ONE
 		autoPolynomial result = Polynomial_createFromRealRootsString (xmin, xmax, zeros_string);
 	CREATE_ONE_END (name)
@@ -4734,7 +4733,7 @@ FORM (NEW_Polynomial_scaleX, U"Polynomial: Scale x", U"Polynomial: Scale x...") 
 	REAL (xmax, U"Xmax", U"1.0")
 	OK
 DO
-	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
+	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
 	CONVERT_EACH (Polynomial)
 		autoPolynomial result = Polynomial_scaleX (me, xmin, xmax);
 	CONVERT_EACH_END (my name, U"_scaleX")
@@ -4792,7 +4791,7 @@ DO
 		Polynomial p1 = nullptr, p2 = nullptr, pq, pr;
 	*/
 
-	REQUIRE (wantQuotient || wantRemainder, U"Either \'Want quotient\' or \'Want remainder\' should be chosen")
+	Melder_require (wantQuotient || wantRemainder, U"You should select \"Want quotient\", \"Want remainder\", or both.");
 	FIND_COUPLE (Polynomial)
 		autoPolynomial aq, ar;
 		Polynomials_divide (me, you, wantQuotient ? & aq : nullptr, wantRemainder ? & ar : nullptr);
@@ -4932,7 +4931,7 @@ FORM (REAL_Praat_getInvTukeyQ, U"Get invTukeyQ", nullptr) {
 	NATURAL (numberOfRows, U"Number of rows", U"1")
 	OK
 DO
-	REQUIRE (probability >= 0.0 && probability <= 1.0, U"The probability should be in the interval [0, 1].")
+	Melder_require (probability >= 0.0 && probability <= 1.0, U"The probability should be in the interval [0, 1].");
 	double result = NUMinvTukeyQ (probability, numberOfMeans, degreesOfFreedon, numberOfRows);
 	Melder_information (result, U" (inv tukeyQ)");
 END }
@@ -5065,8 +5064,9 @@ FORM (NEW1_Sound_createAsGammaTone, U"Create a gammatone", U"Create Sound as gam
 DO
 	CREATE_ONE
 		Sound_create_checkCommonFields (startTime, endTime, samplingFrequency);
-		REQUIRE (frequency < samplingFrequency / 2, Melder_cat (U"Frequency cannot be larger than half the sampling frequency.\nPlease use a frequency smaller than ", 	samplingFrequency / 2, U"."))
-		REQUIRE (gamma >= 0, U"Gamma cannot be negative.\nPlease use a positive or zero gamma.")
+		Melder_require (frequency < 0.5 * samplingFrequency,
+			U"Your frequency should not be greater than half the sampling frequency. Use a frequency less than ", 0.5 * samplingFrequency, U".");
+		Melder_require (gamma >= 0, U"Gamma should not be negative. Use a positive or zero gamma.");
 		autoSound result = Sound_createGammaTone (startTime, endTime, samplingFrequency, gamma, frequency, bandwidth, initialPhase, additionFactor, scaleAmplitudes);
 	CREATE_ONE_END (name)
 }
@@ -5319,8 +5319,8 @@ FORM (NEW_Sound_to_Pitch_shs, U"Sound: To Pitch (shs)", U"Sound: To Pitch (shs).
 	NATURAL (numberOfPointsPerOctave, U"Number of points per octave", U"48");
 	OK
 DO
-	REQUIRE (pitchFloor < pitchCeiling, U"Minimum pitch should be smaller than ceiling.")
-	REQUIRE (pitchCeiling < maximumFrequency, U"Maximum frequency must be greater than or equal to ceiling.")
+	Melder_require (pitchFloor < pitchCeiling, U"The minimum pitch should be less than the ceiling.");
+	Melder_require (pitchCeiling < maximumFrequency, U"The maximum frequency should be greater than or equal to the ceiling.");
 	CONVERT_EACH (Sound)
 		autoPitch result = Sound_to_Pitch_shs (me, timeStep, pitchFloor, maximumFrequency, pitchCeiling, maximumNumberOfSubharmonics, maximumNumberOfCandidates, compressionFactor, numberOfPointsPerOctave);
 	CONVERT_EACH_END (my name)
@@ -5381,7 +5381,7 @@ FORM (NEW_Sound_to_Pitch_SPINET, U"Sound: To SPINET", U"Sound: To SPINET...") {
 	NATURAL (maximumNumberOfCandidates, U"Max. number of candidates", U"15")
 	OK
 DO
-	REQUIRE (minimumFrequency < maximumFrequency, U"Maximum frequency must be larger than minimum frequency.")
+	Melder_require (minimumFrequency < maximumFrequency, U"The maximum frequency should be greater than the minimum frequency.");
 	CONVERT_EACH (Sound)
 		autoPitch result = Sound_to_Pitch_SPINET (me, timeStep, windowLength, minimumFrequency, maximumFrequency, numberOfFilters, pitchCeiling, maximumNumberOfCandidates);
 	CONVERT_EACH_END (my name)
@@ -5451,7 +5451,7 @@ FORM (NEW_Sound_changeSpeaker, U"Sound: Change speaker", U"Sound: Change speaker
 	POSITIVE (durationMultiplicationFactor, U"Multiply duration by", U"1.0")
 	OK
 DO
-	REQUIRE (pitchFloor < pitchCeiling, U"Maximum pitch should be greater than minimum pitch.")
+	Melder_require (pitchFloor < pitchCeiling, U"The maximum pitch should be greater than the minimum pitch.");
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_changeSpeaker (me, pitchFloor, pitchCeiling, formantMultiplicationFactor, pitchMultiplicationFactor, pitchRangeMultiplicationFactor, durationMultiplicationFactor);
 	CONVERT_EACH_END (my name, U"_changeSpeaker")
@@ -5468,7 +5468,7 @@ FORM (NEW_Sound_changeGender, U"Sound: Change gender", U"Sound: Change gender...
 	POSITIVE (durationMultiplicationFactor, U"Duration factor", U"1.0")
 	OK
 DO
-	REQUIRE (pitchFloor < pitchCeiling, U"Maximum pitch should be greater than minimum pitch.")
+	Melder_require (pitchFloor < pitchCeiling, U"The maximum pitch should be greater than the minimum pitch.");
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_changeGender_old (me, pitchFloor, pitchCeiling, formantShiftRatio, pitchMedian, pitchRangeMultiplicationFactor, durationMultiplicationFactor);
 	CONVERT_EACH_END (my name, U"_changeGender");
@@ -5553,7 +5553,7 @@ FORM (MODIFY_Spectrum_setRealValueInBin, U"Spectrum: Set real value in bin", nul
 	OK
 DO
 	MODIFY_EACH (Spectrum)
-		REQUIRE (binNumber <= my nx, U"Bin number must not exceed number of bins.")
+		Melder_require (binNumber <= my nx, U"Your bin number should not exceed the number of bins (", my nx, U").");
 		my z[1][binNumber]= value;
 	MODIFY_EACH_END
 }
@@ -5564,7 +5564,7 @@ FORM (MODIFY_Spectrum_setImaginaryValueInBin, U"Spectrum: Set imaginary value in
 	OK
 DO
 	MODIFY_EACH (Spectrum)
-		REQUIRE (binNumber <= my nx, U"Bin number must not exceed number of bins.")
+		Melder_require (binNumber <= my nx, U"Your bin number should not exceed the number of bins (", my nx, U").");
 		my z[2][binNumber]= value;
 	MODIFY_EACH_END
 }
@@ -5810,7 +5810,7 @@ FORM (NEW_Spline_scaleX, U"Spline: Scale x", U"Spline: Scale x...") {
 	REAL (xmax, U"Xmax", U"1.0")
 	OK
 DO
-	REQUIRE (xmin < xmax, U"Xmin must be smaller than Xmax.")
+	Melder_require (xmin < xmax, U"Xmin should be less than Xmax.");
 	CONVERT_EACH (Spline)
 		autoSpline result = Spline_scaleX (me, xmin, xmax);
 	CONVERT_EACH_END (my name, U"_scaleX")
@@ -6791,7 +6791,7 @@ FORM (NEW_TableOfReal_to_Configuration_lda, U"TableOfReal: To Configuration (lda
 	INTEGER (numberOfDimensions, U"Number of dimensions", U"0 (= all)")
 	OK
 DO
-	REQUIRE (numberOfDimensions >= 0, U"Number of dimensions must be greater equal zero.")
+	Melder_require (numberOfDimensions >= 0, U"The number of dimensions should be at least zero.");
 	CONVERT_EACH (TableOfReal)
 		autoConfiguration result = TableOfReal_to_Configuration_lda (me, numberOfDimensions);
 	CONVERT_EACH_END (my name, U"_lda")
