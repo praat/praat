@@ -1762,6 +1762,15 @@ DO
 	CONVERT_EACH_END (my name, U"_weights")
 }
 
+FORM (NUMMAT_DeepBeliefNetwork_getWeights, U"DeepBeliefNetwork: Get weigths", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	NUMMAT_ONE (DeepBeliefNetwork)
+		autonummat result = DeepBeliefNetwork_getWeights_nummat (me, layerNumber);
+	NUMMAT_ONE_END
+}
+
 // MARK: - RBM & PATTERN
 
 FORM (MODIFY_DeepBeliefNetwork_PatternList_applyToInput, U"DeepBeliefNetwork & PatternList: Apply to input", nullptr) {
@@ -1788,6 +1797,15 @@ FORM (MODIFY_DeepBeliefNetwork_PatternList_learn, U"DeepBeliefNetwork & PatternL
 DO
 	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
 		DeepBeliefNetwork_PatternList_learn (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_learnByLayer, U"DeepBeliefNetwork & PatternList: Learn by layer", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_learnByLayer (me, you, learningRate);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -1972,6 +1990,8 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_RBM_PatternList_applyToOutput);
 	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_RBM_PatternList_learn);
 
+	praat_addAction1 (classDeepBeliefNetwork, 0, U"Query", nullptr, 0, nullptr);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Get weights...", nullptr, 0, NUMMAT_DeepBeliefNetwork_getWeights);
 	praat_addAction1 (classDeepBeliefNetwork, 0, U"Modify", nullptr, 0, nullptr);
 		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread up...", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadUp);
 		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread down...", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadDown);
@@ -1992,6 +2012,7 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_applyToInput);
 	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_applyToOutput);
 	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_learn);
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Learn by layer...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_learnByLayer);
 }
 
 /* End of file praat_gram.cpp */

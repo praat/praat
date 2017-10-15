@@ -42,6 +42,7 @@ void DeepBeliefNetwork_update (DeepBeliefNetwork me, double learningRate);
 void DeepBeliefNetwork_PatternList_applyToInput (DeepBeliefNetwork me, PatternList thee, integer rowNumber);
 void DeepBeliefNetwork_PatternList_applyToOutput (DeepBeliefNetwork me, PatternList thee, integer rowNumber);
 void DeepBeliefNetwork_PatternList_learn (DeepBeliefNetwork me, PatternList thee, double learningRate);
+void DeepBeliefNetwork_PatternList_learnByLayer (DeepBeliefNetwork me, PatternList thee, double learningRate);
 
 autoMatrix DeepBeliefNetwork_extractInputActivities (DeepBeliefNetwork me);
 autoMatrix DeepBeliefNetwork_extractOutputActivities (DeepBeliefNetwork me);
@@ -51,6 +52,8 @@ autoMatrix DeepBeliefNetwork_extractOutputReconstruction (DeepBeliefNetwork me);
 autoMatrix DeepBeliefNetwork_extractInputBiases (DeepBeliefNetwork me, integer layerNumber);
 autoMatrix DeepBeliefNetwork_extractOutputBiases (DeepBeliefNetwork me, integer layerNumber);
 autoMatrix DeepBeliefNetwork_extractWeights (DeepBeliefNetwork me, integer layerNumber);
+
+autonummat DeepBeliefNetwork_getWeights_nummat (DeepBeliefNetwork me, integer layerNumber);
 
 /* End of file DeepBeliefNetwork.h */
 #endif

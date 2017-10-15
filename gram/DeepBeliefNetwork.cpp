@@ -18,6 +18,7 @@
 
 //#include <OpenCL/OpenCL.h>
 #include "DeepBeliefNetwork.h"
+#include "tensor.h"
 
 #include "oo_DESTROY.h"
 #include "DeepBeliefNetwork_def.h"
@@ -145,6 +146,25 @@ void DeepBeliefNetwork_PatternList_learn (DeepBeliefNetwork me, PatternList thee
 		DeepBeliefNetwork_spreadUp (me, kDeepBeliefNetwork_activationType::STOCHASTIC);
 		for (integer ilayer = 1; ilayer <= my layers.size; ilayer ++) {
 			RBM layer = my layers.at [ilayer];
+			RBM_spreadDown_reconstruction (layer);
+			RBM_spreadUp_reconstruction (layer);
+			RBM_update (layer, learningRate);
+		}
+	}
+}
+
+void DeepBeliefNetwork_PatternList_learnByLayer (DeepBeliefNetwork me, PatternList thee, double learningRate) {
+	for (integer ilayer = 1; ilayer <= my layers.size; ilayer ++) {
+		RBM layer = my layers.at [ilayer];
+		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
+			RBM_PatternList_applyToInput (my layers.at [1], thee, ipattern);
+			RBM_spreadUp (my layers.at [1]);
+			RBM_sampleOutput (my layers.at [1]);
+			for (integer jlayer = 2; jlayer <= ilayer; jlayer ++) {
+				copyOutputsToInputs (my layers.at [jlayer - 1], my layers.at [jlayer]);
+				RBM_spreadUp (my layers.at [jlayer]);
+				RBM_sampleOutput (my layers.at [jlayer]);
+			}
 			RBM_spreadDown_reconstruction (layer);
 			RBM_spreadUp_reconstruction (layer);
 			RBM_update (layer, learningRate);
