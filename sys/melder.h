@@ -1239,6 +1239,8 @@ typedef autodatavector <char *> autostring8vector;
 
 class autonumvec;   // forward declaration, needed in the declaration of numvec
 
+enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
+
 class numvec {
 public:
 	double *at;
@@ -1246,8 +1248,8 @@ public:
 public:
 	numvec () = default;   // for use in a union
 	numvec (double *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
-	numvec (integer givenSize, bool zero) {
-		our _initAt (givenSize, zero);
+	numvec (integer givenSize, kTensorInitializationType initializationType) {
+		our _initAt (givenSize, initializationType);
 		our size = givenSize;
 	}
 	numvec (const numvec& other) = default;
@@ -1265,7 +1267,7 @@ public:
 		our size = 0;
 	}
 protected:
-	void _initAt (integer givenSize, bool zero);
+	void _initAt (integer givenSize, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
 };
 
@@ -1281,7 +1283,7 @@ protected:
 class autonumvec : public numvec {
 public:
 	autonumvec (): numvec (nullptr, 0) { }   // come into existence without a payload
-	autonumvec (integer givenSize, bool zero): numvec (givenSize, zero) { }   // come into existence and manufacture a payload
+	autonumvec (integer givenSize, kTensorInitializationType initializationType): numvec (givenSize, initializationType) { }   // come into existence and manufacture a payload
 	autonumvec (double *givenAt, integer givenSize): numvec (givenAt, givenSize) { }   // come into existence and buy a payload from a non-autonumvec
 	explicit autonumvec (numvec x): numvec (x.at, x.size) { }   // come into existence and buy a payload from a non-autonumvec (disable implicit conversion)
 	~autonumvec () {   // destroy the payload (if any)
@@ -1296,9 +1298,9 @@ public:
 	void reset () {   // destroy the current payload (if any) and have no new payload
 		our numvec :: reset ();
 	}
-	void reset (integer newSize, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
+	void reset (integer newSize, kTensorInitializationType initializationType) {   // destroy the current payload (if any) and manufacture a new payload
 		our numvec :: reset ();   // exception guarantee: leave *this in a reasonable state...
-		our _initAt (newSize, zero);   // ...in case this line throws an exception
+		our _initAt (newSize, initializationType);   // ...in case this line throws an exception
 		our size = newSize;
 	}
 	void reset (double *newAt, integer newSize) {   // destroy the current payload (if any) and buy a new payload
@@ -1345,8 +1347,8 @@ public:
 public:
 	nummat () = default;   // for use in a union
 	nummat (double **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	nummat (integer givenNrow, integer givenNcol, bool zero) {
-		our _initAt (givenNrow, givenNcol, zero);
+	nummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {
+		our _initAt (givenNrow, givenNcol, initializationType);
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
@@ -1366,7 +1368,7 @@ public:
 		our ncol = 0;
 	}
 protected:
-	void _initAt (integer givenNrow, integer givenNcol, bool zero);
+	void _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
 };
 
@@ -1382,7 +1384,7 @@ protected:
 class autonummat : public nummat {
 public:
 	autonummat (): nummat { nullptr, 0, 0 } { }   // come into existence without a payload
-	autonummat (integer givenNrow, integer givenNcol, bool zero): nummat { givenNrow, givenNcol, zero } { }   // come into existence and manufacture a payload
+	autonummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType): nummat { givenNrow, givenNcol, initializationType } { }   // come into existence and manufacture a payload
 	autonummat (double **givenAt, integer givenNrow, integer givenNcol): nummat (givenAt, givenNrow, givenNcol) { }   // come into existence and buy a payload from a non-autonummat
 	explicit autonummat (nummat x): nummat (x.at, x.nrow, x.ncol) { }   // come into existence and buy a payload from a non-autonummat (disable implicit conversion)
 	~autonummat () {   // destroy the payload (if any)
@@ -1397,9 +1399,9 @@ public:
 	void reset () {   // destroy the current payload (if any) and have no new payload
 		our nummat :: reset ();
 	}
-	void reset (integer newNrow, integer newNcol, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
+	void reset (integer newNrow, integer newNcol, kTensorInitializationType initializationType) {   // destroy the current payload (if any) and manufacture a new payload
 		our nummat :: reset ();   // exception guarantee: leave *this in a reasonable state...
-		our _initAt (newNrow, newNcol, zero);   // ...in case this line throws an exception
+		our _initAt (newNrow, newNcol, initializationType);   // ...in case this line throws an exception
 		our nrow = newNrow;
 		our ncol = newNcol;
 	}

@@ -20,10 +20,10 @@
 #include "NUM2.h"   /* for NUMsort2 */
 #include "PAIRWISE_SUM.h"
 
-void numvec :: _initAt (integer givenSize, bool zero) {
+void numvec :: _initAt (integer givenSize, kTensorInitializationType initializationType) {
 	Melder_assert (givenSize >= 0);
 	try {
-		our at = ( givenSize == 0 ? nullptr : NUMvector <double> (1, givenSize, zero) );
+		our at = ( givenSize == 0 ? nullptr : NUMvector <double> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
 	} catch (MelderError) {
 		Melder_throw (U"Numeric vector not created.");
 	}
@@ -33,11 +33,11 @@ void numvec :: _freeAt () noexcept {
 	if (our at) NUMvector_free (our at, 1);
 }
 
-void nummat :: _initAt (integer givenNrow, integer givenNcol, bool zero) {
+void nummat :: _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {
 	Melder_assert (givenNrow >= 0);
 	Melder_assert (givenNcol >= 0);
 	try {
-		our at = ( givenNrow > 0 && givenNcol > 0 ? NUMmatrix <double> (1, givenNrow, 1, givenNcol, zero) : nullptr );
+		our at = ( givenNrow > 0 && givenNcol > 0 ? NUMmatrix <double> (1, givenNrow, 1, givenNcol, initializationType == kTensorInitializationType::ZERO) : nullptr );
 	} catch (MelderError) {
 		Melder_throw (U"Numeric matrix not created.");
 	}
@@ -265,7 +265,7 @@ real norm_scalar (numvec x, real power) noexcept {
 }
 
 autonumvec copy_numvec (numvec x) {
-	autonumvec result (x.size, false);
+	autonumvec result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i];
 	}
@@ -273,7 +273,7 @@ autonumvec copy_numvec (numvec x) {
 }
 
 autonummat copy_nummat (nummat x) {
-	autonummat result (x.nrow, x.ncol, false);
+	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
 			result [irow] [icol] = x [irow] [icol];
@@ -283,7 +283,7 @@ autonummat copy_nummat (nummat x) {
 }
 
 autonummat outer_nummat (numvec x, numvec y) {
-	autonummat result (x.size, y.size, false);
+	autonummat result (x.size, y.size, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.size; irow ++) {
 		for (integer icol = 1; icol <= y.size; icol ++) {
 			result [irow] [icol] = x [irow] * y [icol];
@@ -306,7 +306,7 @@ autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sort
 		if (x [1] > x [2]) numberOfPeaks ++;
 		if (x [x.size] > x [x.size - 1]) numberOfPeaks ++;
 	}
-	autonummat result (2, numberOfPeaks, false);
+	autonummat result (2, numberOfPeaks, kTensorInitializationType::RAW);
 	integer peakNumber = 0;
 	if (includeEdges && x [1] > x [2]) {
 		result [1] [++ peakNumber] = 1;
@@ -396,14 +396,14 @@ inline static void mul_inline (numvec target, nummat mat, numvec vec) {
 
 autonumvec mul_numvec (numvec vec, nummat mat) {
 	if (mat.nrow != vec.size) return autonumvec { nullptr, 0 };
-	autonumvec result { mat.ncol, false };
+	autonumvec result { mat.ncol, kTensorInitializationType::RAW };
 	mul_inline (result.get(), vec, mat);
 	return result;
 }
 
 autonumvec mul_numvec (nummat mat, numvec vec) {
 	if (vec.size != mat.ncol) return autonumvec { nullptr, 0 };
-	autonumvec result { mat.nrow, false };
+	autonumvec result { mat.nrow, kTensorInitializationType::RAW };
 	mul_inline (result.get(), mat, vec);
 	return result;
 }

@@ -1216,10 +1216,10 @@ DO
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", tierNumber, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
-		if (tierNumber > intervalTier -> intervals.size)
+		if (intervalNumber > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
 				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
-		if (tierNumber == intervalTier -> intervals.size)
+		if (intervalNumber == intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove the right boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
 				U", because this is at the right edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, intervalNumber + 1);
