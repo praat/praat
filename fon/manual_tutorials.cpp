@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20171010)
+MAN_BEGIN (U"What's new?", U"ppgb", 20171016)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.35# (16 October 2017)")
+LIST_ITEM (U"• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would sometimes incorrectly refuse.")
 NORMAL (U"##6.0.34# (10 October 2017)")
 LIST_ITEM (U"• Scripting: arrays in menu commands in scripts.")
 LIST_ITEM (U"• #Inspect: made a button visible that had disappeared in 6.0.33.")
@@ -64,7 +66,7 @@ NORMAL (U"##6.0.25# (11 February 2017)")
 LIST_ITEM (U"• Mac: made $$demoShow()$ and $$blankWhilePlaying$ compatible with MacOS 10.12 Sierra.")
 LIST_ITEM (U"• Mac SoundRecorder: more sampling frequencies, on behalf of external USB microphones.")
 NORMAL (U"##6.0.24# (23 January 2017)")
-LIST_ITEM (U"• Fixed a bug by which ##Remove right boundary# would choose the wrong tier.")
+LIST_ITEM (U"• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would choose the wrong tier.")
 LIST_ITEM (U"• TextGrid window: click to insert a phonetic symbol from an IPA chart.")
 NORMAL (U"##6.0.23# (12 December 2016)")
 LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.")
