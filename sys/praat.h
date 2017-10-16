@@ -574,7 +574,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	if (me && you && him) break; }
 
 #define FIND_ONE_AND_COUPLE(klas1,klas2)  \
-	klas1 me; klas2 you = nullptr, him = nullptr; \
+	klas1 me = nullptr; klas2 you = nullptr, him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) (you ? him : you) = (klas2) OBJECT; \
 	if (me && you && him) break; }
 
