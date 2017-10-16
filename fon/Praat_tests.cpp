@@ -296,7 +296,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 		} break;
 		case kPraatTests::TIME_INNER: {
 			int size = Melder_atoi (arg2);
-			autonumvec x { size, false }, y { size, false };
+			autonumvec x { size, kTensorInitializationType::RAW }, y { size, kTensorInitializationType::RAW };
 			for (int64 i = 1; i <= size; i ++) {
 				x [i] = NUMrandomGauss (0.0, 1.0);
 				y [i] = NUMrandomGauss (0.0, 1.0);
@@ -349,7 +349,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 		} break;
 		case kPraatTests::TIME_SUM: {
 			integer size = Melder_atoi (arg2);
-			autonumvec x { size, false };
+			autonumvec x { size, kTensorInitializationType::RAW };
 			for (integer i = 1; i <= size; i ++)
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
@@ -362,7 +362,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 		} break;
 		case kPraatTests::TIME_MEAN: {
 			integer size = Melder_atoi (arg2);
-			autonumvec x { size, false };
+			autonumvec x { size, kTensorInitializationType::RAW };
 			for (integer i = 1; i <= size; i ++)
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
@@ -375,7 +375,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 		} break;
 		case kPraatTests::TIME_STDEV: {
 			integer size = 10000;
-			autonumvec x { size, false };
+			autonumvec x { size, kTensorInitializationType::RAW };
 			for (integer i = 1; i <= size; i ++)
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
@@ -389,20 +389,20 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 		case kPraatTests::TIME_ALLOC: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				autonumvec result (size, false);
+				autonumvec result (size, kTensorInitializationType::RAW);
 			}
 			t = Melder_stopwatch () / size;
 		} break;
 		case kPraatTests::TIME_ALLOC0: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				autonumvec result (size, true);
+				autonumvec result (size, kTensorInitializationType::RAW);
 			}
 			t = Melder_stopwatch () / size;
 		} break;
 		case kPraatTests::TIME_ZERO: {
 			integer size = Melder_atoi (arg2);
-			autonumvec result { size, false };
+			autonumvec result { size, kTensorInitializationType::RAW };
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				for (long i = 1; i <= size; i ++) {
@@ -526,7 +526,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				const autonumvec d { };
 				double *e;
 				const autonumvec f { e, 10 };
-				const autonumvec g { 100, true };
+				const autonumvec g { 100, kTensorInitializationType::ZERO };
 				//return f;   // call to deleted constructor
 				numvec h;
 				autonumvec j;

@@ -82,7 +82,7 @@ void structSound :: v_info () {
 	}
 	if (nx > 1) {
 		for (integer channel = 1; channel <= ny; channel ++) {
-			double stdev = stdev_scalar ({ our nx, z [channel] });
+			double stdev = stdev_scalar ({ z [channel], our nx });
 			MelderInfo_writeLine (U"Standard deviation in channel ", channel, U": ", Melder_single (stdev), U" Pascal");
 		}
 	}
