@@ -530,9 +530,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 #endif // _EditorM_h_
 
+#define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
 #define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (condition)
 #define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraatObjects -> n; IOBJECT > 0; IOBJECT --) if (condition)
 #define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. isSelected)
+#define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 #define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraatPicture -> graphics
@@ -821,9 +823,6 @@ void praat_updateSelection ();
 	/* If you require the correct selection immediately after calling praat_new. */
 
 void praat_addCommandsToEditor (Editor me);
-
-#define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
-#define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 
 autoCollection praat_getSelectedObjects ();
 
