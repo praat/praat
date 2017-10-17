@@ -2547,10 +2547,9 @@ DIRECT (MODIFY_FileInMemorySet_addItems) {
 }
 
 DIRECT (NEW1_FileInMemorySets_merge) {
-	CONVERT_COUPLE (FileInMemorySet)
-		autoFileInMemorySet result = Data_copy (me);
-		result -> merge (you);
-	CONVERT_COUPLE_END (my name, U"_", your name);
+	CONVERT_LIST (FileInMemorySet)
+		autoFileInMemorySet result = FileInMemorySets_merge (list);
+	CONVERT_LIST_END (U"merge");
 }
 
 DIRECT (NEW_FileInMemorySet_to_Strings_id) {
@@ -5656,8 +5655,25 @@ FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create Speec
 	OK
 DO
 	CREATE_ONE
-		autoSpeechSynthesizer result = SpeechSynthesizer_create (espeakdata_languages_names -> strings[languageIndex], espeakdata_voices_names -> strings[voiceIndex]);
-    CREATE_ONE_END (espeakdata_languages_names -> strings[languageIndex], U"_", espeakdata_voices_names -> strings[voiceIndex])
+		autoSpeechSynthesizer result = SpeechSynthesizer_create (espeakdata_languages_names -> strings [languageIndex], espeakdata_voices_names -> strings [voiceIndex]);
+    CREATE_ONE_END (espeakdata_languages_names -> strings [languageIndex], U"_", espeakdata_voices_names -> strings [voiceIndex])
+}
+
+FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
+	static long prefPhonemeSet = Strings_findString (espeakdata_languages_names.get(), U"English (Great Brittain)");
+	if (prefPhonemeSet == 0) {
+		prefPhonemeSet = 1;
+	}
+	LIST (phonemeIndex, U"Phoneme set", espeakdata_languages_names -> numberOfStrings, (const char32 **) espeakdata_languages_names -> strings, prefPhonemeSet)
+	OK
+	//FIND_ONE (SpeechSynthesizer)
+	//	static long phonemeIndexCurrent = Strings_findString (espeakdata_languages_names.get(), my d_phonemeSet);
+	//	SET_LIST (phonemeIndex, phonemeIndexCurrent)
+DO
+	MODIFY_EACH (SpeechSynthesizer)
+		Melder_free (my d_phonemeSet);
+		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phonemeIndex]);
+	MODIFY_EACH_END
 }
 
 FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
@@ -7743,7 +7759,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, INFO_FileInMemorySet_showAsCode);
 	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, INFO_FileInMemorySet_showOneFileAsCode);
-	praat_addAction1 (classFileInMemorySet, 2, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
+	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
 	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, NEW_FileInMemorySet_to_Strings_id);
 
 	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to Collection", nullptr, 0, MODIFY_FileInMemorySet_addItems);
@@ -8045,6 +8061,7 @@ void praat_uvafon_David_init () {
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1, INFO_SpeechSynthesizer_getVoiceName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, praat_DEPRECATED_2017, INFO_SpeechSynthesizer_getVoiceName);
 	praat_addAction1 (classSpeechSynthesizer, 0, MODIFY_BUTTON, nullptr, 0, 0);
+	praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, 1, MODIFY_SpeechSynthesizer_modifyPhonemeSet);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setTextInputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
 	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0, NEW1_SpeechSynthesizer_and_TextGrid_to_Sound);
