@@ -64,17 +64,22 @@ oo_END_CLASS (SpeechSynthesizerVoice)
 
 #define ooSTRUCT SpeechSynthesizer
 oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
-	#if oo_READING
-		#if formatVersion > 0
-			oo_STRING (d_synthesizerVersion)
-		#endif
-	#else
+	oo_FROM (1)
 		oo_STRING (d_synthesizerVersion)
-	#endif
-		
+	oo_ENDFROM
+
 	// sythesizers language /voice
 	oo_STRING (d_languageName)
 	oo_STRING (d_voiceName)
+	oo_FROM (1)
+		oo_STRING (d_phonemeSet)
+	oo_ENDFROM
+	#if oo_READING
+		if (formatVersion < 1) {
+			d_phonemeSet = Melder_dup (d_languageName);
+			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
+		}
+	#endif
 	oo_INTEGER (d_wordsPerMinute)
 	// text-only, phonemes-only, mixed
 	oo_INT (d_inputTextFormat)

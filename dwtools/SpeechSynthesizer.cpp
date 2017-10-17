@@ -20,6 +20,7 @@
 /*
 	djmw 20111214
 */
+#include "espeak_ng_version.h"
 
 #include "SpeechSynthesizer.h"
 #include "Strings_extensions.h"
@@ -127,6 +128,7 @@ void structSpeechSynthesizer :: v_info () {
 	MelderInfo_writeLine (U"Synthesizer version: espeak-ng ", d_synthesizerVersion);
 	MelderInfo_writeLine (U"Language: ", d_languageName);
 	MelderInfo_writeLine (U"Voice: ", d_voiceName);
+	MelderInfo_writeLine (U"Phoneme set: ", d_phonemeSet);
 	MelderInfo_writeLine (U"Input text format: ", (d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? U"text only" :
 		d_inputTextFormat == SpeechSynthesizer_INPUT_PHONEMESONLY ? U"phonemes only" : U"tagged text"));
 	MelderInfo_writeLine (U"Input phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : U"???"));
@@ -136,7 +138,6 @@ void structSpeechSynthesizer :: v_info () {
 	MelderInfo_writeLine (U"Speeking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateWordsPerMinute ? U" (but estimated from data if possible)" : U" (fixed)"));
 
 	MelderInfo_writeLine (U"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? U"IPA" : U"???"));
-	MelderInfo_writeLine (U"Text to speech synthesis with eSpeak version 1.48.04");
 }
 
 static void NUMvector_extendNumberOfElements (integer elementSize, void **v, integer lo, integer *hi, integer extraDemand)
@@ -271,12 +272,12 @@ void SpeechSynthesizer_initEspeak () {
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
-#include "espeak_ng_version.h"
 		my d_synthesizerVersion = Melder_dup(ESPEAK_NG_VERSION);
 		my d_languageName = Melder_dup (languageName);
 		(void) SpeechSynthesizer_getLanguageCode (me.get());  // existence check
 		my d_voiceName = Melder_dup (voiceName);
 		(void) SpeechSynthesizer_getVoiceCode (me.get());  // existence check
+		my d_phonemeSet = Melder_dup (languageName);
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
 		SpeechSynthesizer_initEspeak ();
@@ -285,6 +286,7 @@ autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, cons
 		Melder_throw (U"SpeechSynthesizer not created.");
 	}
 }
+
 
 void SpeechSynthesizer_setTextInputSettings (SpeechSynthesizer me, int inputTextFormat, int inputPhonemeCoding) {
 	my d_inputTextFormat = inputTextFormat;
@@ -629,7 +631,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		espeak_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
 		espeak_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
-
+		// voice->phoneme_tab_ix
 		espeak_SetSynthCallback (synthCallback);
 
 		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
