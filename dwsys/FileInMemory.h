@@ -21,6 +21,20 @@
 #include "Collection.h"
 #include "Strings_.h"
 
+Thing_define (FileStatus, Daata) {
+	integer d_index; // in the autoFileInMemorySet
+	integer d_fileSizeInBytes;
+	integer d_position; // where are we after a read operaton
+	const char * d_data; // 
+};
+
+Collection_define (OpenFilesSet, SortedSetOf, FileStatus) {
+	static int index_compare (FileStatus data1, FileStatus data2);
+	CompareHook v_getCompareHook ()
+		override { return index_compare; }
+
+};
+
 Thing_define (FileInMemory, Daata) {
 	char32 *d_path;
 	char32 *d_id;
@@ -38,17 +52,17 @@ Thing_define (FileInMemory, Daata) {
 
 autoFileInMemory FileInMemory_create (MelderFile file);
 
-autoFileInMemory FileInMemory_createWithData (long numberOfBytes, const char *data, const char32 *path, const char32 *id);
+autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, const char32 *path, const char32 *id);
 
 void FileInMemory_dontOwnData (FileInMemory me);
 
 void FileInMemory_setId (FileInMemory me, const char32 *newId);
 
-void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOfBytesPerLine);
+void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numberOfBytesPerLine);
 
 Collection_define (FileInMemorySet, SortedSetOf, FileInMemory) {
 	int d_sortKey;
-
+	OpenFilesSet openFilesSet;
 	static int s_compare_name (FileInMemory data1, FileInMemory data2);
 	static int s_compare_id (FileInMemory data1, FileInMemory data2);
 	CompareHook v_getCompareHook ()
@@ -57,16 +71,39 @@ Collection_define (FileInMemorySet, SortedSetOf, FileInMemory) {
 
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
 
-void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long numberOfBytesPerLine);
+autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list);
 
-void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, long index, const char32 *name, long numberOfBytesPerLine);
+void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer numberOfBytesPerLine);
 
-long FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id);
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const char32 *name, integer numberOfBytesPerLine);
+
+integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id);
+integer FileInMemorySet_getIndexFromPathName (FileInMemorySet me, const char32 *path);
 
 autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me);
 
-char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, long *numberOfBytes);
+char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, integer *numberOfBytes);
 
-const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, long *numberOfBytes);
+const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, integer *numberOfBytes);
+
+/*
+	File open and read emulations. The FILE * is internally used as an pointer to the index of the file in the Set.
+	List of open files has to contain per file: index, position, length (bytes), pointer to data
+*/
+
+
+FILE *FileInMemorySet_fopen (FileInMemorySet me, const char *filename, const char *mode);
+
+int FileInMemorySet_fclose (FileInMemorySet me, FILE *stream);
+
+int FileInMemorySet_feof (FileInMemorySet me, FILE *stream);
+
+int FileInMemorySet_fseek (FileInMemorySet me, FILE *stream, integer offset, int origin);
+
+char *FileInMemorySet_fgets (FileInMemorySet me, char *str, int num, FILE *stream);
+
+int FileInMemorySet_fgetc (FileInMemorySet me, FILE *stream);
+
+int FileInMemorySet_GetFileLength (FileInMemorySet me, const char *filename);
 
 #endif // _FileInMemory_h_
