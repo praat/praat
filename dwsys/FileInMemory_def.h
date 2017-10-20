@@ -1,8 +1,6 @@
-#ifndef _FileInMemory_h_
-#define _FileInMemory_h_
-/* FileInMemory.h
+/* FileInMemory_def.h
  *
- * Copyright (C) 2011-2012,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +16,22 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Collection.h"
-#include "Strings_.h"
+#define ooSTRUCT FileInMemory
+oo_DEFINE_CLASS (FileInMemory, Daata)
 
-#include "FileInMemory_def.h"
+	oo_LSTRING (d_path)
+	oo_LSTRING (d_id)
+	oo_INTEGER (d_numberOfBytes)
+	oo_INTEGER (d_position)
+	oo_INTEGER (d_errno)
+	oo_UBYTE_VECTOR_FROM (d_data, 0, d_numberOfBytes) // final null byte possible
+	oo_BOOL (ownData)
+	
+	#if oo_DECLARING
+		void v_info () override; 
+	#endif
+	
+oo_END_CLASS (FileInMemory)
+#undef ooSTRUCT
 
-autoFileInMemory FileInMemory_create (MelderFile file);
-
-autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, const char32 *path, const char32 *id);
-
-void FileInMemory_dontOwnData (FileInMemory me);
-
-void FileInMemory_setId (FileInMemory me, const char32 *newId);
-
-void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numberOfBytesPerLine);
-
-#endif // _FileInMemory_h_
+/* End of file FileInMemory_def.h */

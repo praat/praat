@@ -1,8 +1,6 @@
-#ifndef _FileInMemory_h_
-#define _FileInMemory_h_
-/* FileInMemory.h
+/* FileInMemorySet_def.h
  *
- * Copyright (C) 2011-2012,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +16,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "Collection.h"
-#include "Strings_.h"
+#define ooSTRUCT FileInMemorySet
+oo_DEFINE_CLASS (FileInMemorySet, SortedSet)
 
-#include "FileInMemory_def.h"
+	#if oo_DECLARING
+		
+		void v_info () override {}; 
+	#endif
+	
+oo_END_CLASS (FileInMemorySet)
+#undef ooSTRUCT
 
-autoFileInMemory FileInMemory_create (MelderFile file);
-
-autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, const char32 *path, const char32 *id);
-
-void FileInMemory_dontOwnData (FileInMemory me);
-
-void FileInMemory_setId (FileInMemory me, const char32 *newId);
-
-void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numberOfBytesPerLine);
-
-#endif // _FileInMemory_h_
+/* End of file FileInMemorySet_def.h */
