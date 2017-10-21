@@ -107,8 +107,9 @@ void Table_drawEllipse_e (Table me, Graphics g, integer xcolumn, integer ycolumn
 void Table_list (Table me, bool includeRowNumbers);
 void Table_writeToTabSeparatedFile (Table me, MelderFile file);
 void Table_writeToCommaSeparatedFile (Table me, MelderFile file);
+void Table_writeToSemicolonSeparatedFile (Table me, MelderFile file);
 autoTable Table_readFromTableFile (MelderFile file);
-autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separator);
+autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 separator, bool interpretQuotes);
 
 autoTable Table_extractRowsWhereColumn_number (Table me, integer column, kMelder_number which, double criterion);
 autoTable Table_extractRowsWhereColumn_string (Table me, integer column, kMelder_string which, const char32 *criterion);

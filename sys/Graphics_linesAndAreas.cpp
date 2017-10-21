@@ -28,9 +28,9 @@
 static void psPrepareLine (GraphicsPostscript me) {
 	double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 	if (my lineType == Graphics_DOTTED)
-		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long_not_integer) (my resolution / 100), (long) (my resolution / 75 + lineWidth_pixels));
+		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long_not_integer) (my resolution / 100), (long_not_integer) (my resolution / 75 + lineWidth_pixels));
 	else if (my lineType == Graphics_DASHED)
-		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long_not_integer) (my resolution / 25), (long) (my resolution / 50 + lineWidth_pixels));
+		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long_not_integer) (my resolution / 25), (long_not_integer) (my resolution / 50 + lineWidth_pixels));
 	else if (my lineType == Graphics_DASHED_DOTTED)
 		my d_printf (my d_file, "[%ld %ld %ld %ld] 0 setdash\n",
 			(long_not_integer) (my resolution / 100), (long_not_integer) (my resolution / 60 + lineWidth_pixels),

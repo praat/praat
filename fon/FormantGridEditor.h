@@ -2,7 +2,7 @@
 #define _FormantGridEditor_h_
 /* FormantGridEditor.h
  *
- * Copyright (C) 2008-2011,2012,2013,2015 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2012,2013,2015,2017 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 Thing_define (FormantGridEditor, FunctionEditor) {
 	bool editingBandwidths;
 	GuiMenuItem d_bandwidthsToggle;
-	long selectedFormant;
+	integer selectedFormant;
 	double ycursor;
 
 	void v_createMenus ()

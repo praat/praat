@@ -58,7 +58,7 @@ void structFormant :: v_info () {
 
 double structFormant :: v_getValueAtSample (integer iframe, integer which, int units) {
 	Formant_Frame frame = & d_frames [iframe];
-	long iformant = which >> 1;
+	integer iformant = which >> 1;
 	if (iformant < 1 || iformant > frame -> nFormants) return undefined;
 	double frequency = frame -> formant [iformant]. frequency;
 	if ((which & 1) == 0) {
@@ -91,16 +91,16 @@ autoFormant Formant_create (double tmin, double tmax, integer nt, double dt, dou
 }
 
 integer Formant_getMinNumFormants (Formant me) {
-	long minNumFormants = 100000000;
-	for (long iframe = 1; iframe <= my nx; iframe ++)
+	integer minNumFormants = 100000000;
+	for (integer iframe = 1; iframe <= my nx; iframe ++)
 		if (my d_frames [iframe]. nFormants < minNumFormants)
 			minNumFormants = my d_frames [iframe]. nFormants;
 	return minNumFormants;
 }
 
 integer Formant_getMaxNumFormants (Formant me) {
-	long maxNumFormants = 0;
-	for (long iframe = 1; iframe <= my nx; iframe ++)
+	integer maxNumFormants = 0;
+	for (integer iframe = 1; iframe <= my nx; iframe ++)
 		if (my d_frames [iframe]. nFormants > maxNumFormants)
 			maxNumFormants = my d_frames [iframe]. nFormants;
 	return maxNumFormants;
@@ -141,7 +141,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 
-	for (long iframe = itmin; iframe <= itmax; iframe ++) {
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
 		if (frame -> intensity > maximumIntensity)
 			maximumIntensity = frame -> intensity;
@@ -151,11 +151,11 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 	else
 		minimumIntensity = maximumIntensity / pow (10.0, suppress_dB / 10.0);
 
-	for (long iframe = itmin; iframe <= itmax; iframe ++) {
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
 		double x = Sampled_indexToX (me, iframe);
 		if (frame -> intensity < minimumIntensity) continue;
-		for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
+		for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 			double frequency = frame -> formant [iformant]. frequency;
 			if (frequency >= fmin && frequency <= fmax)
 				Graphics_speckle (g, x, frequency);
@@ -180,19 +180,19 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 
 void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter interpreter) {
 	try {
-		long nrow = Formant_getMaxNumFormants (me);
+		integer nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
 			Melder_throw (U"No formants available.");
 		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1.0, 1.0);
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
-			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
+			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. bandwidth;
 		}
 		Matrix_formula (mat.get(), formula, interpreter, nullptr);
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
-			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
+			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				frame -> formant [iformant]. bandwidth = mat -> z [iformant] [iframe];
 		}
 	} catch (MelderError) {
@@ -202,19 +202,19 @@ void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter 
 
 void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter interpreter) {
 	try {
-		long nrow = Formant_getMaxNumFormants (me);
+		integer nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
 			Melder_throw (U"No formants available.");
 		autoMatrix mat = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, nrow + 0.5, nrow, 1.0, 1.0);
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
-			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
+			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. frequency;
 		}
 		Matrix_formula (mat.get(), formula, interpreter, nullptr);
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
-			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
+			for (integer iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				frame -> formant [iformant]. frequency = mat -> z [iformant] [iframe];
 		}
 	} catch (MelderError) {
@@ -334,7 +334,7 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	if (fmax2 == fmin2) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, fmin1, fmax1, fmin2, fmax2);
-	for (long iframe = itmin; iframe <= itmax; iframe ++) {
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
 		if (iformant1 > frame -> nFormants || iformant2 > frame -> nFormants) continue;
 		double x = frame -> formant [iformant1]. frequency;
@@ -355,7 +355,7 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 autoMatrix Formant_to_Matrix (Formant me, integer iformant) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			thy z [1] [iframe] = iformant <= frame -> nFormants ?
 				frame -> formant [iformant]. frequency : 0.0;
@@ -369,7 +369,7 @@ autoMatrix Formant_to_Matrix (Formant me, integer iformant) {
 autoMatrix Formant_to_Matrix_bandwidths (Formant me, integer iformant) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			thy z [1] [iframe] = iformant <= frame -> nFormants ?
 				frame -> formant [iformant]. bandwidth : 0.0;
@@ -424,11 +424,11 @@ autoFormant Formant_tracker (Formant me, integer ntrack,
 	double bfCost, double octaveJumpCost)
 {
 	try {
-		long nformmin = Formant_getMinNumFormants (me);
+		integer nformmin = Formant_getMinNumFormants (me);
 		struct fparm parm;
 		if (ntrack > nformmin) Melder_throw (U"Number of tracks (", ntrack, U") should not exceed minimum number of formants (", nformmin, U").");
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, ntrack);
-		for (long iframe = 1; iframe <= thy nx; iframe ++) {
+		for (integer iframe = 1; iframe <= thy nx; iframe ++) {
 			thy d_frames [iframe]. formant = NUMvector <structFormant_Formant> (1, ntrack);
 			thy d_frames [iframe]. nFormants = ntrack;
 			thy d_frames [iframe]. intensity = my d_frames [iframe]. intensity;

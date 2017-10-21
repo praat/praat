@@ -1199,7 +1199,7 @@ FORM (INTEGER_PointProcess_getLowIndex, U"PointProcess: Get low index", U"PointP
 	OK
 DO
 	NUMBER_ONE (PointProcess)
-		long result = PointProcess_getLowIndex (me, time);
+		integer result = PointProcess_getLowIndex (me, time);
 	NUMBER_ONE_END (U" (low index)")
 }
 
@@ -1208,7 +1208,7 @@ FORM (INTEGER_PointProcess_getHighIndex, U"PointProcess: Get high index", U"Poin
 	OK
 DO
 	NUMBER_ONE (PointProcess)
-		long result = PointProcess_getHighIndex (me, time);
+		integer result = PointProcess_getHighIndex (me, time);
 	NUMBER_ONE_END (U" (high index)")
 }
 
@@ -1217,13 +1217,13 @@ FORM (INTEGER_PointProcess_getNearestIndex, U"PointProcess: Get nearest index", 
 	OK
 DO
 	NUMBER_ONE (PointProcess)
-		long result = PointProcess_getNearestIndex (me, time);
+		integer result = PointProcess_getNearestIndex (me, time);
 	NUMBER_ONE_END (U" (nearest index)")
 }
 
 DIRECT (INTEGER_PointProcess_getNumberOfPoints) {
 	NUMBER_ONE (PointProcess)
-		long result = my nt;
+		integer result = my nt;
 	NUMBER_ONE_END (U" points")
 }
 
@@ -1232,8 +1232,8 @@ FORM (INTEGER_PointProcess_getNumberOfPeriods, U"PointProcess: Get number of per
 	OK
 DO
 	NUMBER_ONE (PointProcess)
-		long result = PointProcess_getNumberOfPeriods (me, fromTime, toTime,
-		shortestPeriod, longestPeriod, maximumPeriodFactor);
+		integer result = PointProcess_getNumberOfPeriods (me, fromTime, toTime,
+			shortestPeriod, longestPeriod, maximumPeriodFactor);
 	NUMBER_ONE_END (U" periods")
 }
 

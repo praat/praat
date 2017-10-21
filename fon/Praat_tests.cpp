@@ -405,7 +405,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			autonumvec result { size, kTensorInitializationType::RAW };
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				for (long i = 1; i <= size; i ++) {
+				for (integer i = 1; i <= size; i ++) {
 					result [i] = (real) i;
 				}
 				z += result [size - 1];
@@ -418,7 +418,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) malloc (sizeof (double) * (size_t) size);
-				for (long i = 0; i < size; i ++) {
+				for (integer i = 0; i < size; i ++) {
 					result [i] = (real) i;
 				}
 				z += result [size - 1];
@@ -432,7 +432,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) calloc (sizeof (double), (size_t) size);
-				for (long i = 0; i < size; i ++) {
+				for (integer i = 0; i < size; i ++) {
 					result [i] = (real) i;
 				}
 				z += result [size - 1];

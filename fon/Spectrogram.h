@@ -2,7 +2,7 @@
 #define _Spectrogram_h_
 /* Spectrogram.h
  *
- * Copyright (C) 1992-2011,2015 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 David Weenink & Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ Thing_define (Spectrogram, Matrix) {
 	z [iy] [ix]		// Power spectrum density.
 */
 
-autoSpectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
-					double fmin, double fmax, long nf, double df, double f1);
+autoSpectrogram Spectrogram_create (double tmin, double tmax, integer nt, double dt, double t1,
+					double fmin, double fmax, integer nf, double df, double f1);
 /*
 	Function:
 		Create the spectrogram data structure.

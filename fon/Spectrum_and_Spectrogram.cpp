@@ -1,6 +1,6 @@
 /* Spectrum_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2017 David Weenink & Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +32,10 @@ autoSpectrum Spectrogram_to_Spectrum (Spectrogram me, double tim) {
 		thy xmax = my ymax;
 		thy x1 = my y1;   // centre of first band, instead of 0 (makes it unFFTable)
 		thy dx = my dy;   // frequency step
-		long itime = Sampled_xToNearestIndex (me, tim);
+		integer itime = Sampled_xToNearestIndex (me, tim);
 		if (itime < 1 ) itime = 1;
 		if (itime > my nx) itime = my nx;
-		for (long ifreq = 1; ifreq <= my ny; ifreq ++) {
+		for (integer ifreq = 1; ifreq <= my ny; ifreq ++) {
 			double value = my z [ifreq] [itime];
 			if (value < 0.0)
 				Melder_throw (U"Negative values in spectrogram.");
@@ -51,7 +51,7 @@ autoSpectrum Spectrogram_to_Spectrum (Spectrogram me, double tim) {
 autoSpectrogram Spectrum_to_Spectrogram (Spectrum me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (0, 1, 1, 1, 0.5, my xmin, my xmax, my nx, my dx, my x1);
-		for (long i = 1; i <= my nx; i ++)
+		for (integer i = 1; i <= my nx; i ++)
 			thy z [i] [1] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
 		return thee;
 	} catch (MelderError) {

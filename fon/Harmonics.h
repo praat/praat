@@ -2,7 +2,7 @@
 #define _Harmonics_h_
 /* Harmonics.h
  *
- * Copyright (C) 2011,2015 Paul Boersma
+ * Copyright (C) 2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 #include "Harmonics_def.h"
 
-autoHarmonics Harmonics_create (long numberOfHarmonics);
+autoHarmonics Harmonics_create (integer numberOfHarmonics);
 
 void Harmonics_draw (Harmonics me, Graphics g, double fmin, double fmax,
 	double minimum, double maximum, int garnish, const char32 *method);
@@ -34,7 +34,7 @@ autoHarmonics Matrix_to_Harmonics (Matrix me);
 /* Direct computation. */
 
 autoHarmonics PointProcess_Sound_to_Harmonics (PointProcess pulses, Sound sound,
-	long maximumHarmonic,
+	integer maximumHarmonic,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor);
 
 /* Shortcut. */

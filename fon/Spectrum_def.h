@@ -22,7 +22,7 @@ oo_DEFINE_CLASS (Spectrum, Matrix)
 
 	#if oo_READING
 		if (formatVersion < 1) {
-			for (long i = 1; i <= nx; i ++)
+			for (integer i = 1; i <= nx; i ++)
 				z [2] [i] = - z [2] [i];
 		}
 	#endif

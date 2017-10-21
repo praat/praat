@@ -85,7 +85,7 @@ double structSpectrum :: v_getValueAtSample (integer isamp, integer which, int u
 	return undefined;
 }
 
-autoSpectrum Spectrum_create (double fmax, long nf) {
+autoSpectrum Spectrum_create (double fmax, integer nf) {
 	try {
 		autoSpectrum me = Thing_new (Spectrum);
 		Matrix_init (me.get(), 0.0, fmax, nf, fmax / (nf - 1), 0.0, 1.0, 2.0, 2, 1.0, 1.0);
@@ -97,7 +97,7 @@ autoSpectrum Spectrum_create (double fmax, long nf) {
 
 int Spectrum_getPowerDensityRange (Spectrum me, double *minimum, double *maximum) {
 	*minimum = 1e308, *maximum = 0.0;
-	for (long ifreq = 1; ifreq <= my nx; ifreq ++) {
+	for (integer ifreq = 1; ifreq <= my nx; ifreq ++) {
 		double oneSidedPowerSpectralDensity =   // Pa2 Hz-2 s-1
 			2.0 * (my z [1] [ifreq] * my z [1] [ifreq] + my z [2] [ifreq] * my z [2] [ifreq]) * my dx;
 		if (oneSidedPowerSpectralDensity < *minimum) *minimum = oneSidedPowerSpectralDensity;
@@ -122,7 +122,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	 * First pass: compute power density.
 	 */
 	if (autoscaling) maximum = -1e308;
-	for (long ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		double y = my v_getValueAtSample (ifreq, 0, 2);
 		if (autoscaling && y > maximum) maximum = y;
 		yWC [ifreq] = y;
@@ -141,7 +141,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	/*
 	 * Second pass: clip.
 	 */
-	for (long ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		if (yWC [ifreq] < minimum) yWC [ifreq] = minimum;
 		else if (yWC [ifreq] > maximum) yWC [ifreq] = maximum;
 	}
@@ -176,7 +176,7 @@ if(ifmin==1)ifmin=2;  /* BUG */
 	 * First pass: compute power density.
 	 */
 	if (autoscaling) maximum = -1e6;
-	for (long ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		xWC [ifreq] = log10 (my x1 + (ifreq - 1) * my dx);
 		yWC [ifreq] = my v_getValueAtSample (ifreq, 0, 2);
 		if (autoscaling && yWC [ifreq] > maximum) maximum = yWC [ifreq];
@@ -186,7 +186,7 @@ if(ifmin==1)ifmin=2;  /* BUG */
 	/*
 	 * Second pass: clip.
 	 */
-	for (long ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
+	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		if (yWC [ifreq] < minimum) yWC [ifreq] = minimum;
 		else if (yWC [ifreq] > maximum) yWC [ifreq] = maximum;
 	}
@@ -210,14 +210,14 @@ autoTable Spectrum_downto_Table (Spectrum me, bool includeBinNumbers, bool inclu
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my nx,
 			includeBinNumbers + includeFrequency + includeRealPart + includeImaginaryPart + includeEnergyDensity + includePowerDensity);
-		long icol = 0;
+		integer icol = 0;
 		if (includeBinNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"bin");
 		if (includeFrequency) Table_setColumnLabel (thee.get(), ++ icol, U"freq(Hz)");
 		if (includeRealPart) Table_setColumnLabel (thee.get(), ++ icol, U"re(Pa/Hz)");
 		if (includeImaginaryPart) Table_setColumnLabel (thee.get(), ++ icol, U"im(Pa/Hz)");
 		if (includeEnergyDensity) Table_setColumnLabel (thee.get(), ++ icol, U"energy(Pa^2/Hz^2)");
 		if (includePowerDensity) Table_setColumnLabel (thee.get(), ++ icol, U"pow(dB/Hz)");
-		for (long ibin = 1; ibin <= my nx; ibin ++) {
+		for (integer ibin = 1; ibin <= my nx; ibin ++) {
 			icol = 0;
 			if (includeBinNumbers) Table_setNumericValue (thee.get(), ibin, ++ icol, ibin);
 			if (includeFrequency) Table_setNumericValue (thee.get(), ibin, ++ icol, my x1 + (ibin - 1) * my dx);
@@ -273,7 +273,7 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		 */
 		autoSpectrum dBspectrum = Data_copy (me);
 		double *re = dBspectrum -> z [1], *im = dBspectrum -> z [2];
-		for (long i = 1; i <= dBspectrum -> nx; i ++) {
+		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
 			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-308);
 			im [i] = 0.0;
 		}
@@ -287,7 +287,7 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		 * Multiply cepstrum by a Gaussian.
 		 */
 		double factor = - bandWidth * bandWidth;
-		for (long i = 1; i <= cepstrum -> nx; i ++) {
+		for (integer i = 1; i <= cepstrum -> nx; i ++) {
 			double t = (i - 1) * cepstrum -> dx;
 			cepstrum -> z [1] [i] *= exp (factor * t * t) * ( i == 1 ? 1.0 : 2.0 );
 		}
@@ -301,7 +301,7 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		 * Convert power spectrum back into a "complex" spectrum without phase information.
 		 */
 		re = thy z [1], im = thy z [2];
-		for (long i = 1; i <= thy nx; i ++) {
+		for (integer i = 1; i <= thy nx; i ++) {
 			re [i] = exp (0.5 * re [i]);   // i.e., sqrt (exp (re [i]))
 			im [i] = 0.0;
 		}
@@ -316,7 +316,7 @@ void Spectrum_passHannBand (Spectrum me, double fmin, double fmax0, double smoot
 	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
 	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0;
 	double *re = my z [1], *im = my z [2];
-	for (long i = 1; i <= my nx; i ++) {
+	for (integer i = 1; i <= my nx; i ++) {
 		double frequency = my x1 + (i - 1) * my dx;
 		if (frequency < f1 || frequency > f4) re [i] = im [i] = 0.0;
 		if (frequency < f2 && fmin > 0.0) {
@@ -336,7 +336,7 @@ void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax0, double smoot
 	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
 	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0;
 	double *re = my z [1], *im = my z [2];
-	for (long i = 1; i <= my nx; i ++) {
+	for (integer i = 1; i <= my nx; i ++) {
 		double frequency = my x1 + (i - 1) * my dx;
 		if (frequency < f1 || frequency > f4) continue;
 		if (frequency < f2 && fmin > 0.0) {
@@ -400,8 +400,8 @@ double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double 
 
 double Spectrum_getCentreOfGravity (Spectrum me, double power) {
 	double halfpower = 0.5 * power;
-	long double sumenergy = 0.0, sumfenergy = 0.0;
-	for (long i = 1; i <= my nx; i ++) {
+	real80 sumenergy = 0.0, sumfenergy = 0.0;
+	for (integer i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
 		if (halfpower != 1.0) energy = pow (energy, halfpower);
@@ -415,8 +415,8 @@ double Spectrum_getCentralMoment (Spectrum me, double moment, double power) {
 	double fmean = Spectrum_getCentreOfGravity (me, power);
 	if (isundef (fmean)) return undefined;
 	double halfpower = 0.5 * power;
-	long double sumenergy = 0.0, sumfenergy = 0.0;
-	for (long i = 1; i <= my nx; i ++) {
+	real80 sumenergy = 0.0, sumfenergy = 0.0;
+	for (integer i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
 		if (halfpower != 1.0) energy = pow (energy, halfpower);

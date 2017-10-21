@@ -233,7 +233,7 @@ autoLtas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 		 * Compute slope.
 		 */
 		real80 numerator = 0.0, denominator = 0.0;
-		for (long i = imin; i <= imax; i ++) {
+		for (integer i = imin; i <= imax; i ++) {
 			double da = thy z [1] [i] - amean, df = thy x1 + (i - 1) * thy dx - fmean;
 			numerator += da * df;
 			denominator += df * df;

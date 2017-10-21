@@ -257,27 +257,39 @@ FORM_READ (READ1_Table_readFromTableFile, U"Read Table from table file", nullptr
 
 FORM_READ (READ1_Table_readFromCommaSeparatedFile, U"Read Table from comma-separated file", nullptr, true) {
 	READ_ONE
-		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U',');
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U',', true);
+	READ_ONE_END
+}
+
+FORM_READ (READ1_Table_readFromSemicolonSeparatedFile, U"Read Table from semicolon-separated file", nullptr, true) {
+	READ_ONE
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U';', true);
 	READ_ONE_END
 }
 
 FORM_READ (READ1_Table_readFromTabSeparatedFile, U"Read Table from tab-separated file", nullptr, true) {
 	READ_ONE
-		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U'\t');
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U'\t', false);
 	READ_ONE_END
 }
 
 // MARK: Save
 
-FORM_SAVE (SAVE_Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", 0, U"Table") {
+FORM_SAVE (SAVE_Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", nullptr, U"Table") {
+	SAVE_ONE (Table)
+		Table_writeToTabSeparatedFile (me, file);
+	SAVE_ONE_END
+}
+
+FORM_SAVE (SAVE_Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", nullptr, U"Table") {
 	SAVE_ONE (Table)
 		Table_writeToCommaSeparatedFile (me, file);
 	SAVE_ONE_END
 }
 
-FORM_SAVE (SAVE_Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", 0, U"Table") {
+FORM_SAVE (SAVE_Table_writeToSemicolonSeparatedFile, U"Save Table as semicolon-separated file", nullptr, U"Table") {
 	SAVE_ONE (Table)
-		Table_writeToTabSeparatedFile (me, file);
+		Table_writeToSemicolonSeparatedFile (me, file);
 	SAVE_ONE_END
 }
 
@@ -1038,7 +1050,7 @@ static autoDaata tabSeparatedFileRecognizer (integer nread, const char *header, 
 		uheader [0] == 0xff && uheader [1] == 0xef ? isTabSeparated_utf16le (nread, header) :
 		isTabSeparated_8bit (nread, header);
 	if (! isTabSeparated) return autoDaata ();
-	return Table_readFromCharacterSeparatedTextFile (file, '\t');
+	return Table_readFromCharacterSeparatedTextFile (file, U'\t', false);
 }
 
 void praat_uvafon_stat_init ();
@@ -1060,6 +1072,7 @@ void praat_uvafon_stat_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, READ1_Table_readFromTabSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, READ1_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from semicolon-separated file...", nullptr, 0, READ1_Table_readFromSemicolonSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, READ1_Table_readFromTableFile);
 	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", praat_DEPRECATED_2011, READ1_Table_readFromTableFile);
 
@@ -1096,6 +1109,7 @@ void praat_uvafon_stat_init () {
 	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, SAVE_Table_writeToCommaSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as semicolon-separated file...", nullptr, 0, SAVE_Table_writeToSemicolonSeparatedFile);
 	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, WINDOW_Table_viewAndEdit);
 	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, WINDOW_Table_viewAndEdit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);

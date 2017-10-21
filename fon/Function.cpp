@@ -61,38 +61,38 @@ void Function_init (Function me, double xmin_, double xmax_) {
 	my xmax = xmax_;
 }
 
-int Function_getMinimumUnit (Function me, long ilevel) {
-	return my v_getMinimumUnit (ilevel);
+int Function_getMinimumUnit (Function me, integer level) {
+	return my v_getMinimumUnit (level);
 }
 
-int Function_getMaximumUnit (Function me, long ilevel) {
-	return my v_getMaximumUnit (ilevel);
+int Function_getMaximumUnit (Function me, integer level) {
+	return my v_getMaximumUnit (level);
 }
 
 int Function_getDomainQuantity (Function me) {
 	return my v_domainQuantity ();
 }
 
-const char32 * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags) {
-	Melder_assert (unit >= my v_getMinimumUnit (ilevel) && unit <= my v_getMaximumUnit (ilevel));
-	return my v_getUnitText (ilevel, unit, flags);
+const char32 * Function_getUnitText (Function me, integer level, int unit, uint32 flags) {
+	Melder_assert (unit >= my v_getMinimumUnit (level) && unit <= my v_getMaximumUnit (level));
+	return my v_getUnitText (level, unit, flags);
 }
 
-bool Function_isUnitLogarithmic (Function me, long ilevel, int unit) {
-	Melder_assert (unit >= my v_getMinimumUnit (ilevel) && unit <= my v_getMaximumUnit (ilevel));
-	return my v_isUnitLogarithmic (ilevel, unit);
+bool Function_isUnitLogarithmic (Function me, integer level, int unit) {
+	Melder_assert (unit >= my v_getMinimumUnit (level) && unit <= my v_getMaximumUnit (level));
+	return my v_isUnitLogarithmic (level, unit);
 }
 
-double Function_convertStandardToSpecialUnit (Function me, double value, long ilevel, int unit) {
-	return isdefined (value) ? my v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
+double Function_convertStandardToSpecialUnit (Function me, double value, integer level, int unit) {
+	return isdefined (value) ? my v_convertStandardToSpecialUnit (value, level, unit) : undefined;
 }
 
-double Function_convertSpecialToStandardUnit (Function me, double value, long ilevel, int unit) {
-	return isdefined (value) ? my v_convertSpecialToStandardUnit (value, ilevel, unit) : undefined;
+double Function_convertSpecialToStandardUnit (Function me, double value, integer level, int unit) {
+	return isdefined (value) ? my v_convertSpecialToStandardUnit (value, level, unit) : undefined;
 }
 
-double Function_convertToNonlogarithmic (Function me, double value, long ilevel, int unit) {
-	return isdefined (value) && my v_isUnitLogarithmic (ilevel, unit) ? pow (10.0, value) : value;
+double Function_convertToNonlogarithmic (Function me, double value, integer level, int unit) {
+	return isdefined (value) && my v_isUnitLogarithmic (level, unit) ? pow (10.0, value) : value;
 }
 
 void Function_shiftXBy (Function me, double shift) {
