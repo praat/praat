@@ -1,6 +1,6 @@
 /* Spectrogram.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,8 @@ void structSpectrogram :: v_info () {
 	MelderInfo_writeLine (U"   First frequency band around (bin centre at): ", y1, U" Hz");
 }
 
-autoSpectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
-	double fmin, double fmax, long nf, double df, double f1)
+autoSpectrogram Spectrogram_create (double tmin, double tmax, integer nt, double dt, double t1,
+	double fmin, double fmax, integer nf, double df, double f1)
 {
 	try {
 		autoSpectrogram me = Thing_new (Spectrogram);

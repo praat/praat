@@ -92,7 +92,7 @@ DO
 
 DIRECT (INTEGER_LongSound_getNumberOfSamples) {
 	NUMBER_ONE (LongSound)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" samples")
 }
 
@@ -349,7 +349,7 @@ DO
 DIRECT (NEW1_Sounds_combineToStereo) {
 	CONVERT_LIST (Sound)
 		autoSound result = Sounds_combineToStereo (& list);
-		long numberOfChannels = result -> ny;   // dereference before transferring
+		integer numberOfChannels = result -> ny;   // dereference before transferring
 	CONVERT_LIST_END (U"combined_", numberOfChannels)
 }
 
@@ -369,7 +369,7 @@ DO
 }
 
 DIRECT (NEW2_Sounds_concatenateRecoverably) {
-	long numberOfChannels = 0, nx = 0, iinterval = 0;
+	integer numberOfChannels = 0, nx = 0, iinterval = 0;
 	double dx = 0.0, tmin = 0.0;
 	LOOP {
 		iam (Sound);
@@ -392,7 +392,7 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 	LOOP {
 		iam (Sound);
 		double tmax = tmin + my nx * dx;
-		for (long channel = 1; channel <= numberOfChannels; channel ++) {
+		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 			NUMvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
 		}
 		iinterval ++;
@@ -439,7 +439,7 @@ DO
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
-static void common_Sound_create (const char32 *name, long numberOfChannels, double startTime, double endTime,
+static void common_Sound_create (const char32 *name, integer numberOfChannels, double startTime, double endTime,
 	double samplingFrequency, const char32 *formula, Interpreter interpreter)
 {
 	double numberOfSamples_real = round ((endTime - startTime) * samplingFrequency);
@@ -602,7 +602,7 @@ DO
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_deepenBandModulation (me, enhancement, fromFrequency, toFrequency,
 			slowModulation, fastModulation, bandSmoothing);
-	CONVERT_EACH_END (my name, U"_", (long) enhancement)   // truncate number toward zero for visual effect
+	CONVERT_EACH_END (my name, U"_", Melder_roundTowardsZero (enhancement))
 }
 
 FORM (GRAPHICS_old_Sound_draw, U"Sound: Draw", nullptr) {
@@ -671,7 +671,7 @@ DIRECT (WINDOW_Sound_viewAndEdit) {
 DIRECT (NEWMANY_Sound_extractAllChannels) {
 	LOOP {
 		iam (Sound);
-		for (long channel = 1; channel <= my ny; channel ++) {
+		for (integer channel = 1; channel <= my ny; channel ++) {
 			autoSound thee = Sound_extractChannel (me, channel);
 			praat_new (thee.move(), my name, U"_ch", channel);
 		}
@@ -949,13 +949,13 @@ DO_ALTERNATIVE (REAL_old_Sound_getNearestZeroCrossing)
 
 DIRECT (INTEGER_Sound_getNumberOfChannels) {
 	NUMBER_ONE (Sound)
-		long result = my ny;
+		integer result = my ny;
 	NUMBER_ONE_END (result == 1 ? U" channel (mono)" : result == 2 ? U" channels (stereo)" : U" channels")
 }
 
 DIRECT (INTEGER_Sound_getNumberOfSamples) {
 	NUMBER_ONE (Sound)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" samples")
 }
 
@@ -1201,7 +1201,7 @@ FORM_READ (READMANY_Sound_readSeparateChannelsFromSoundFile, U"Read separate cha
 	if (lastPeriod) {
 		*lastPeriod = U'\0';
 	}
-	for (long ichan = 1; ichan <= sound -> ny; ichan ++) {
+	for (integer ichan = 1; ichan <= sound -> ny; ichan ++) {
 		autoSound thee = Sound_extractChannel (sound.get(), ichan);
 		praat_new (thee.move(), name, U"_ch", ichan);
 	}
@@ -1372,7 +1372,7 @@ DO
 	MODIFY_EACH (Sound)
 		if (sampleNumber > my nx)
 			Melder_throw (U"The sample number should not exceed the number of samples, which is ", my nx, U".");
-		for (long channel = 1; channel <= my ny; channel ++)
+		for (integer channel = 1; channel <= my ny; channel ++)
 			my z [channel] [sampleNumber] = newValue;
 	MODIFY_EACH_END
 }

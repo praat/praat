@@ -1,6 +1,6 @@
 /* IntensityTier.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ autoIntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me,
 	try {
 		if (my points.size == 0) Melder_throw (U"No intensity points.");
 		autoIntensityTier thee = IntensityTier_create (pp -> xmin, pp -> xmax);
-		for (long i = 1; i <= pp -> nt; i ++) {
+		for (integer i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
 			double value = RealTier_getValueAtTime (me, time);
 			RealTier_addPoint (thee.get(), time, value);
@@ -103,10 +103,10 @@ autoTableOfReal IntensityTier_downto_TableOfReal (IntensityTier me) {
 
 void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
 	if (intensity -> points.size == 0) return;
-	for (long isamp = 1; isamp <= my nx; isamp ++) {
+	for (integer isamp = 1; isamp <= my nx; isamp ++) {
 		double t = my x1 + (isamp - 1) * my dx;
 		double factor = pow (10, RealTier_getValueAtTime (intensity, t) / 20);
-		for (long channel = 1; channel <= my ny; channel ++) {
+		for (integer channel = 1; channel <= my ny; channel ++) {
 			my z [channel] [isamp] *= factor;
 		}
 	}

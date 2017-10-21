@@ -22,7 +22,7 @@
 
 DIRECT (INTEGER_TimeFrameSampled_getNumberOfFrames) {
 	NUMBER_ONE (Sampled)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" frames");
 }
 

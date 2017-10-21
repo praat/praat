@@ -5034,7 +5034,7 @@ FORM (NEW1_Sound_and_Pitch_changeSpeaker, U"Sound & Pitch: Change speaker", U"So
 	POSITIVE (formantFrequencyMultiplicationFactor, U"Multiply formants by", U"1.1 (male->female)")
 	POSITIVE (pitchMultiplicationFactor, U"Multiply pitch by", U"1.8 (male->female")
 	REAL (pitchRangeMultiplicationFactor, U"Multiply pitch range by", U"1.0 (= no change)")
-	POSITIVE (durationMultiplicationFactor, U"Multiply duration", U"1.0")
+	POSITIVE (durationMultiplicationFactor, U"Multiply duration by", U"1.0")
 	OK
 DO
 	CONVERT_TWO (Sound, Pitch)

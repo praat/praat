@@ -47,7 +47,7 @@ autoSimpleInt SimpleInt_create (int number) {
 
 Thing_implement (SimpleInteger, Daata, 0);
 
-autoSimpleInteger SimpleInteger_create (long number) {
+autoSimpleInteger SimpleInteger_create (integer number) {
 	autoSimpleInteger me = Thing_new (SimpleInteger);
 	my number = number;
 	return me;

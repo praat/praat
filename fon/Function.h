@@ -2,7 +2,7 @@
 #define _Function_h_
 /* Function.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,19 +48,19 @@ int Function_getDomainQuantity (Function me);   // as input for MelderQuantity_g
  * 'unit' is enumerated type that has to be defined in the header files of the descendant class,
  * starting from 0, which should be the default unit; e.g. for pitch: 0 = Hz, 1 = logHz, 2 = semitones, 3 = mel.
  */
-int Function_getMinimumUnit (Function me, long ilevel);
-int Function_getMaximumUnit (Function me, long ilevel);
+int Function_getMinimumUnit (Function me, integer ilevel);
+int Function_getMaximumUnit (Function me, integer ilevel);
 
 #define Function_UNIT_TEXT_SHORT            0x00000001
 #define Function_UNIT_TEXT_GRAPHICAL        0x00000002
 #define Function_UNIT_TEXT_MENU             0x00000004
-const char32 * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags);
+const char32 * Function_getUnitText (Function me, integer level, int unit, uint32 flags);
 
-bool Function_isUnitLogarithmic (Function me, long ilevel, int unit);
+bool Function_isUnitLogarithmic (Function me, integer level, int unit);
 
-double Function_convertStandardToSpecialUnit (Function me, double value, long ilevel, int unit);
-double Function_convertSpecialToStandardUnit (Function me, double value, long ilevel, int unit);
-double Function_convertToNonlogarithmic (Function me, double value, long ilevel, int unit);
+double Function_convertStandardToSpecialUnit (Function me, double value, integer level, int unit);
+double Function_convertSpecialToStandardUnit (Function me, double value, integer level, int unit);
+double Function_convertToNonlogarithmic (Function me, double value, integer level, int unit);
 
 /* The domain of a function can be changed by windowing. */
 /* Here follow some window functions. */

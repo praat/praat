@@ -1309,7 +1309,7 @@ static void menu_cb_voiceReport (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT)
 }
 
 static void menu_cb_pulseListing (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT) {
-	long i, i1, i2;
+	integer i, i1, i2;
 	double tmin, tmax;
 	makeQueriable (me, false, & tmin, & tmax);
 	if (! my p_pulses_show)
@@ -1715,7 +1715,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
 			defaultTimeStep;
 		int undersampled = timeStep > greatestNonUndersamplingTimeStep;
-		long numberOfVisiblePitchPoints = (long) ((my endWindow - my startWindow) / timeStep);
+		integer numberOfVisiblePitchPoints = (integer) ((my endWindow - my startWindow) / timeStep);
 		Graphics_setColour (my graphics.get(), Graphics_CYAN);
 		Graphics_setLineWidth (my graphics.get(), 3.0);
 		if ((my p_pitch_drawingMethod == kTimeSoundAnalysisEditor_pitch_drawingMethod::AUTOMATIC && (undersampled || numberOfVisiblePitchPoints < 101)) ||
@@ -1891,7 +1891,7 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {
 		PointProcess point = our d_pulses.get();
 		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, -1.0, 1.0);
 		Graphics_setColour (our graphics.get(), Graphics_BLUE);
-		if (point -> nt < 2000) for (long i = 1; i <= point -> nt; i ++) {
+		if (point -> nt < 2000) for (integer i = 1; i <= point -> nt; i ++) {
 			double t = point -> t [i];
 			if (t >= our startWindow && t <= our endWindow)
 				Graphics_line (our graphics.get(), t, -0.9, t, 0.9);

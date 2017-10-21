@@ -1,6 +1,6 @@
 /* Sound_to_Harmonicity.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ autoHarmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitc
 			silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 			pitch -> dx, pitch -> x1);
-		for (long i = 1; i <= thy nx; i ++) {
+		for (integer i = 1; i <= thy nx; i ++) {
 			if (pitch -> frame [i]. candidate [1]. frequency == 0.0) {
 				thy z [1] [i] = -200.0;
 			} else {
@@ -49,7 +49,7 @@ autoHarmonicity Sound_to_Harmonicity_cc (Sound me, double dt, double minimumPitc
 			silenceThreshold, 0.0, 0.0, 0.0, 0.0, 0.5 / my dx);
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, pitch -> nx,
 			pitch -> dx, pitch -> x1);
-		for (long i = 1; i <= thy nx; i ++) {
+		for (integer i = 1; i <= thy nx; i ++) {
 			if (pitch -> frame [i]. candidate [1]. frequency == 0.0) {
 				thy z [1] [i] = -200.0;
 			} else {

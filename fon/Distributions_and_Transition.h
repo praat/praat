@@ -1,6 +1,6 @@
 /* Distributions_and_Transition.h
  *
- * Copyright (C) 1997-2011,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include "Transition.h"
 
 autoTransition Distributions_to_Transition (Distributions underlying, Distributions surface,
-	long environment, Transition adjacency, bool greedy);
+	integer environment, Transition adjacency, bool greedy);
 
 autoDistributions Distributions_Transition_map (Distributions me, Transition map);
 

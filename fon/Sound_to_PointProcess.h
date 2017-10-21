@@ -1,6 +1,6 @@
 /* Sound_to_PointProcess.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,12 @@
 #include "Sound.h"
 #include "PointProcess.h"
 
-autoPointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpolation, bool includeMaxima, bool includeMinima);
-autoPointProcess Sound_to_PointProcess_maxima (Sound me, long channel, int interpolation);
-autoPointProcess Sound_to_PointProcess_minima (Sound me, long channel, int interpolation);
-autoPointProcess Sound_to_PointProcess_allExtrema (Sound me, long channel, int interpolation);
+autoPointProcess Sound_to_PointProcess_extrema (Sound me, integer channel, int interpolation, bool includeMaxima, bool includeMinima);
+autoPointProcess Sound_to_PointProcess_maxima (Sound me, integer channel, int interpolation);
+autoPointProcess Sound_to_PointProcess_minima (Sound me, integer channel, int interpolation);
+autoPointProcess Sound_to_PointProcess_allExtrema (Sound me, integer channel, int interpolation);
 
-autoPointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeRaisers, bool includeFallers);
+autoPointProcess Sound_to_PointProcess_zeroes (Sound me, integer channel, bool includeRaisers, bool includeFallers);
 
 autoPointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax);
 

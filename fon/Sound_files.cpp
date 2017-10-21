@@ -43,14 +43,14 @@
 /*
 static void Sound_ulawDecode (Sound me) {
 	double mu = 100, lnu1 = log (1 + mu);
-	for (long i = 1; i <= my nx; i ++) {
+	for (integer i = 1; i <= my nx; i ++) {
 		double zabs = (exp (fabs (my z [1] [i]) * lnu1) - 1.0) / mu;
 		my z [1] [i] = my z [1] [i] < 0 ? -zabs : zabs;
 	} 
 }
 static void Sound_alawDecode (Sound me) {
 	double a = 87.6, lna1 = 1.0 + log (a);
-	for (long i = 1; i <= my nx; i ++) {
+	for (integer i = 1; i <= my nx; i ++) {
 		double zabs = fabs (my z [1] [i]);
 		if (zabs <= 1.0 / lna1) {
 			my z [1] [i] *= lna1 / a;
@@ -68,9 +68,9 @@ static void Sound_alawDecode (Sound me) {
 autoSound Sound_readFromSoundFile (MelderFile file) {
 	try {
 		autoMelderFile mfile = MelderFile_open (file);
-		int numberOfChannels, encoding;
+		int encoding;
 		double sampleRate;
-		integer startOfData, numberOfSamples;
+		integer startOfData, numberOfSamples, numberOfChannels;
 		int fileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate, & startOfData, & numberOfSamples);
 		if (fileType == 0)
 			Melder_throw (U"Not an audio file.");
@@ -93,7 +93,7 @@ autoSound Sound_readFromSesamFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		int32_t header [1 + 128];
-		for (long i = 1; i <= 128; i ++)
+		for (integer i = 1; i <= 128; i ++)
 			header [i] = bingeti32LE (f);
 		/*
 		 * Try SESAM header.
@@ -136,8 +136,8 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 		char *endOfTag = strchr (tag + 4, '\n');
 		if (! endOfTag)
 			Melder_throw (U"Second line missing or too long.");
-		unsigned long tagLength = (endOfTag - tag) + 1;   // probably 12
-		unsigned long headerLength = atol (tag + 4);
+		integer tagLength = (endOfTag - tag) + 1;   // probably 12
+		int64 headerLength = atol (tag + 4);
 		if (headerLength <= 0)
 			Melder_throw (U"Wrong header-length info.");
 
@@ -146,9 +146,9 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 		 * Use defaults if necessary.
 		 */
 		autostring8 lines = Melder_calloc (char, headerLength + 1);
-		if (fread (lines.peek(), 1, headerLength, f) < headerLength)
+		if ((int64) fread (lines.peek(), 1, (size_t) headerLength, f) < headerLength)
 			Melder_throw (U"Header too short.");
-		unsigned long numberOfSamples = 0;
+		integer numberOfSamples = 0;
 		char *psamples = & lines [-1];
 		while (!! (psamples = strstr (psamples + 1, "samples ")))   // take last occurrence
 			numberOfSamples = atol (psamples + 8);
@@ -175,7 +175,7 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 		 * Read samples.
 		 */
 		fseek (f, tagLength + headerLength, SEEK_SET);
-		for (unsigned long i = 1; i <= numberOfSamples; i ++)
+		for (integer i = 1; i <= numberOfSamples; i ++)
 			my z [1] [i] = (double) bingeti16 (f) * (1.0 / 32768);   // 16-bits big-endian
 
 		f.close (file);
@@ -267,7 +267,7 @@ autoSound Sound_readFromRawAlawFile (MelderFile file) {
 void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file);
-		MelderFile_writeAudioFileHeader (file, audioFileType, lround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_iround_tieDown (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
 		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my z, my nx, true);
 		MelderFile_writeAudioFileTrailer (file, audioFileType, lround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
 		mfile.close ();
@@ -279,26 +279,26 @@ void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int nu
 void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
-		long header [1 + 128], tail;
-		for (long i = 1; i <= 128; i ++) header [i] = 0;
+		integer header [1 + 128], tail;
+		for (integer i = 1; i <= 128; i ++) header [i] = 0;
 		/* ILS header. */
 			header [6] = ((my nx - 1) >> 8) + 1;   // number of disk blocks
 			header [64] = 32149;   // ILS magic
 		/* LVS header. */
-			header [62] = lround (1 / my dx);   // sampling frequency, rounded to n Hz
+			header [62] = Melder_iround_tieDown (1.0 / my dx);   // sampling frequency, rounded to n Hz
 			header [63] = -32000;   // magic: "sampled signal"
 			header [66] = INT12_MAX;   // maximum absolute value: 12 bits
 			header [67] = 2047;   // LVS magic
 			header [68] = my nx % 256;   // number of samples in last block
 			header [69] = 1;   // ?
 		/* Sesam header. */
-			header [126] = lround (1 / my dx);   // sampling frequency, rounded to n Hz
+			header [126] = Melder_iround_tieDown (1.0 / my dx);   // sampling frequency, rounded to n Hz
 			header [127] = my nx;   // number of samples
-		for (long i = 1; i <= 128; i ++) binputi32LE (header [i], f);
-		for (long i = 1; i <= my nx; i ++) binputi16LE (lround (my z [1] [i] * 2048), f);
+		for (integer i = 1; i <= 128; i ++) binputi32LE (header [i], f);
+		for (integer i = 1; i <= my nx; i ++) binputi16LE (Melder_iround_tieDown (my z [1] [i] * 2048.0), f);
 		tail = 256 - my nx % 256;
 		if (tail == 256) tail = 0;
-		for (long i = 1; i <= tail; i ++) binputi16LE (0, f);   // pad last block with zeroes
+		for (integer i = 1; i <= tail; i ++) binputi16LE (0, f);   // pad last block with zeroes
 		f.close (file);
 	} catch (MelderError) {
 		Melder_throw (me, U": not written to Sesam file ", file, U".");
@@ -320,11 +320,11 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 		strcpy (date, ctime (& today));	
 		fwrite (date+4, 1, 20, file -> filePointer);   // skip weekday
 
-		binputi32LE (lround (1 / my dx), file -> filePointer);   // sampling frequency
+		binputi32LE (Melder_iround_tieDown (1.0 / my dx), file -> filePointer);   // sampling frequency
 		binputi32LE (my nx, file -> filePointer);   // number of samples
 		int maximumA = 0;
-		for (long i = 1; i <= my nx; i ++) {
-			long value = lround (my z [1] [i] * 32768);
+		for (integer i = 1; i <= my nx; i ++) {
+			integer value = Melder_iround_tieDown (my z [1] [i] * 32768.0);
 			if (value < - maximumA) maximumA = - value;
 			if (value > maximumA) maximumA = value;
 		}
@@ -333,8 +333,8 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 			binputi16LE (-1, file -> filePointer);
 		} else {
 			int maximumB = 0;
-			for (long i = 1; i <= my nx; i ++) {
-				long value = lround (my z [2] [i] * 32768);
+			for (integer i = 1; i <= my nx; i ++) {
+				integer value = Melder_iround_tieDown (my z [2] [i] * 32768.0);
 				if (value < - maximumB) maximumB = - value;
 				if (value > maximumB) maximumB = value;
 			}

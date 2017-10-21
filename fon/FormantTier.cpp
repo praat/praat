@@ -74,7 +74,7 @@ autoFormantTier FormantTier_create (double tmin, double tmax) {
 }
 
 double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
-	long n = my points.size;
+	integer n = my points.size;
 	if (n == 0 || iformant < 1) return undefined;
 	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
@@ -87,7 +87,7 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 		return pointLeft -> formant [iformant-1];   // constant extrapolation
 	}
 	Melder_assert (n >= 2);
-	long ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
+	integer ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
 	pointLeft = my points.at [ileft];
 	pointRight = my points.at [iright];
@@ -103,7 +103,7 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 }
 
 double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
-	long n = my points.size;
+	integer n = my points.size;
 	if (n == 0) return 0.0;
 	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
@@ -116,7 +116,7 @@ double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 		return pointLeft -> bandwidth [iformant-1];   // constant extrapolation
 	}
 	Melder_assert (n >= 2);
-	long ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
+	integer ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
 	Melder_assert (ileft >= 1 && iright <= n);
 	pointLeft = my points.at [ileft];
 	pointRight = my points.at [iright];
@@ -135,12 +135,12 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	Graphics_setWindow (g, tmin, tmax, 0.0, fmax);
 	Graphics_setInner (g);
-	long imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
-	long imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
-	if (imin > 0) for (long i = imin; i <= imax; i ++) {
+	integer imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
+	integer imax = AnyTier_timeToLowIndex (me->asAnyTier(), tmax);
+	if (imin > 0) for (integer i = imin; i <= imax; i ++) {
 		FormantPoint point = my points.at [i];
 		double t = point -> number;
-		for (long j = 1; j <= point -> numberOfFormants; j ++) {
+		for (integer j = 1; j <= point -> numberOfFormants; j ++) {
 			double f = point -> formant [j-1];
 			if (f <= fmax) Graphics_speckle (g, t, f);
 		}
@@ -158,11 +158,11 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 autoFormantTier Formant_downto_FormantTier (Formant me) {
 	try {
 		autoFormantTier thee = FormantTier_create (my xmin, my xmax);
-		for (long i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++) {
 			Formant_Frame frame = & my d_frames [i];
 			autoFormantPoint point = FormantPoint_create (Sampled_indexToX (me, i));
 			point -> numberOfFormants = frame -> nFormants > 10 ? 10 : frame -> nFormants;
-			for (long j = 1; j <= point -> numberOfFormants; j ++) {
+			for (integer j = 1; j <= point -> numberOfFormants; j ++) {
 				Formant_Formant pair = & frame -> formant [j];
 				point -> formant [j-1] = pair -> frequency;
 				point -> bandwidth [j-1] = pair -> bandwidth;
@@ -179,10 +179,10 @@ autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp
 	try {
 		autoFormantTier temp = Formant_downto_FormantTier (me);
 		autoFormantTier thee = FormantTier_create (pp -> xmin, pp -> xmax);
-		for (long ipoint = 1; ipoint <= pp -> nt; ipoint ++) {
+		for (integer ipoint = 1; ipoint <= pp -> nt; ipoint ++) {
 			double time = pp -> t [ipoint];
 			autoFormantPoint point = FormantPoint_create (time);
-			long iformant = 1;
+			integer iformant = 1;
 			for (; iformant <= 10; iformant ++) {
 				double value = FormantTier_getValueAtTime (temp.get(), iformant, time);
 				if (isundef (value)) break;
@@ -202,7 +202,7 @@ autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp
 
 int FormantTier_getMinNumFormants (FormantTier me) {
 	int minNumFormants = 10;
-	for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
+	for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
 		FormantPoint point = my points.at [ipoint];
 		if (point -> numberOfFormants < minNumFormants)
 			minNumFormants = point -> numberOfFormants;
@@ -212,7 +212,7 @@ int FormantTier_getMinNumFormants (FormantTier me) {
 
 int FormantTier_getMaxNumFormants (FormantTier me) {
 	int maxNumFormants = 0;
-	for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
+	for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
 		FormantPoint point = my points.at [ipoint];
 		if (point -> numberOfFormants > maxNumFormants)
 			maxNumFormants = point -> numberOfFormants;
@@ -227,7 +227,7 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 			( includeFormants ? maximumNumberOfFormants : 0 ) +
 			( includeBandwidths ? maximumNumberOfFormants : 0 ));
 		TableOfReal_setColumnLabel (thee.get(), 1, U"Time");
-		for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
+		for (integer icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
 			char32 label [4];
 			if (includeFormants) {
 				Melder_sprint (label,4, U"F", iformant);
@@ -238,10 +238,10 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 				TableOfReal_setColumnLabel (thee.get(), ++ icol, label);
 			}
 		}
-		for (long ipoint = 1; ipoint <= my points.size; ipoint ++) {
+		for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
 			FormantPoint point = my points.at [ipoint];
 			thy data [ipoint] [1] = point -> number;
-			for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
+			for (integer icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
 				if (includeFormants) thy data [ipoint] [++ icol] = point -> formant [iformant-1];
 				if (includeBandwidths) thy data [ipoint] [++ icol] = point -> bandwidth [iformant-1];
 			}
@@ -254,8 +254,8 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 	double dt = my dx;
-	if (formantTier -> points.size) for (long iformant = 1; iformant <= 10; iformant ++) {
-		for (long isamp = 1; isamp <= my nx; isamp ++) {
+	if (formantTier -> points.size) for (integer iformant = 1; iformant <= 10; iformant ++) {
+		for (integer isamp = 1; isamp <= my nx; isamp ++) {
 			double t = my x1 + (isamp - 1) * my dx;
 			/*
 			 * Compute LP coefficients.
@@ -269,14 +269,14 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
 				if (fabs (cosomdt) > 0.999999) {   // allow for round-off errors
 					/* single pole: D(z) = 1 - r z^-1 */
-					for (long channel = 1; channel <= my ny; channel ++) {
+					for (integer channel = 1; channel <= my ny; channel ++) {
 						if (isamp > 1) my z [channel] [isamp] += r * my z [channel] [isamp - 1];
 					}
 				} else {
 					/* double pole: D(z) = 1 + p z^-1 + q z^-2 */
 					double p = - 2 * r * cosomdt;
 					double q = r * r;
-					for (long channel = 1; channel <= my ny; channel ++) {
+					for (integer channel = 1; channel <= my ny; channel ++) {
 						if (isamp > 1) my z [channel] [isamp] -= p * my z [channel] [isamp - 1];
 						if (isamp > 2) my z [channel] [isamp] -= q * my z [channel] [isamp - 2];
 					}

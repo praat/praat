@@ -39,37 +39,31 @@ DIRECT (MODIFY_Categories_sort) {
 // MARK: - EXPERIMENT_MFC
 
 DIRECT (WINDOW_ExperimentMFC_run) {
-		if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
-		autoRunnerMFC runner;
-		{// scope
-			/*
-				This `scope` comment refers to the idea that an autoThing (here, `experiments`)
-				is created in the beginning of the scope and invalidated at the end of the scope (by `move`).
-			*/
-			autoExperimentMFCList experiments = ExperimentMFCList_create ();
-			WHERE (SELECTED) {
-				iam_LOOP (ExperimentMFC);
-				Melder_assert (my classInfo == classExperimentMFC);
-				experiments -> addItem_ref (me);
-			}
-			Melder_assert (experiments->size >= 1);
-			Melder_assert (experiments->at [1] -> classInfo == classExperimentMFC);
-			Melder_assert (experiments->at [experiments->size] -> classInfo == classExperimentMFC);
-			runner = RunnerMFC_create (U"listening experiments", experiments.move());
-			/*
-				Now that `experiments` has been moved, it has become invalid.
-				We help the compiler notice this by ending the scope here:
-			*/
-		}
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot run experiments from the command line.");
+	autoRunnerMFC runner;
+	{// scope
 		/*
-			As a result of the scope braces above, the compiler will now protest
-			if we refer to `experiments` in the next line. So instead we refer to the `runner`-internal experiments,
-			which are still in scope and haven't been invalidated:
+			This `scope` comment refers to the idea that an autoThing (here, `list`)
+			is created in the beginning of the scope and invalidated at the end of the scope (by `move`).
 		*/
-		praat_installEditorN (runner.get(), runner -> experiments->asDaataList());   // refer to the moved version!
-		runner.releaseToUser();
-	END
-}
+		FIND_TYPED_LIST (ExperimentMFC, ExperimentMFCList)
+		Melder_assert (list->size >= 1);
+		Melder_assert (list->at [1] -> classInfo == classExperimentMFC);
+		Melder_assert (list->at [list->size] -> classInfo == classExperimentMFC);
+		runner = RunnerMFC_create (U"listening experiments", list.move());
+		/*
+			Now that `list` has been moved, it has become invalid.
+			We help the compiler notice this by ending the scope here:
+		*/
+	}
+	/*
+		As a result of the scope braces above, the compiler will now protest
+		if we refer to `list` in the next line. So instead we refer to the `runner`-internal experiments,
+		which are still in scope and haven't been invalidated:
+	*/
+	praat_installEditorN (runner.get(), runner -> experiments->asDaataList());   // refer to the moved version!
+	runner.releaseToUser();
+END }
 
 DIRECT (NEW_ExperimentMFC_extractResults) {
 	CONVERT_EACH (ExperimentMFC)

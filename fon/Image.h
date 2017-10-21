@@ -2,7 +2,7 @@
 #define _Image_h_
 /* Image.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,12 @@
 */
 
 //int Image_init
-//	(Image me, double xmin, double xmax, long nx, double dx, double x1,
-//		       double ymin, double ymax, long ny, double dy, double y1);
+//	(Image me, double xmin, double xmax, integer nx, double dx, double x1,
+//		       double ymin, double ymax, integer ny, double dy, double y1);
 
 //Image Image_create
-//	(double xmin, double xmax, long nx, double dx, double x1,
-//	 double ymin, double ymax, long ny, double dy, double y1);
+//	(double xmin, double xmax, integer nx, double dx, double x1,
+//	 double ymin, double ymax, integer ny, double dy, double y1);
 /*
 	Function:
 		return a new empty Image.
@@ -60,10 +60,10 @@
 		result -> z [1..ny] [1..nx] == 0;
 */
 
-//long Image_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
+//integer Image_getWindowExtrema (Image me, integer ixmin, integer ixmax, integer iymin, integer iymax,
 //	unsigned char *minimum, unsigned char *maximum);
 
-//void Image_paint (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+//void Image_paint (Image me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 //	unsigned char minimum, unsigned char maximum);
 /*
 	Every sample is drawn as a grey rectangle.

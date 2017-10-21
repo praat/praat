@@ -24,7 +24,7 @@ double * _Graphics_check (Graphics me, integer number) {
 	static bool messageHasAlreadyBeenShownOnce = false;
 	double *result = nullptr;
 	double *record = my record;
-	long nrecord = my nrecord;
+	integer nrecord = my nrecord;
 	if (nrecord == 0) {
 		nrecord = 1000;
 		try {

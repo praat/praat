@@ -2,7 +2,7 @@
 #define _Label_h_
 /* Label.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ Collection_define (Tier, SortedOf, Autosegment) {
 	@post
 		result == 0 || my item [i] -> xmin <= result < my item [i] -> xmax;
 */
-long Tier_timeToIndex (Tier me, double t);
+integer Tier_timeToIndex (Tier me, double t);
 
 
 #pragma mark - class Label

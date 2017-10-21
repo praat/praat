@@ -31,7 +31,8 @@ struct _MP3_FILE;
 Thing_define (LongSound, Sampled) {
 	structMelderFile file;
 	FILE *f;
-	int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
+	int audioFileType, encoding, numberOfBytesPerSamplePoint;
+	integer numberOfChannels;
 	double sampleRate;
 	integer startOfData;
 	double bufferLength;
@@ -73,8 +74,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
 void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
 
-void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples);
-void LongSound_readAudioToShort (LongSound me, int16 *buffer, long firstSample, long numberOfSamples);
+void LongSound_readAudioToFloat (LongSound me, double **buffer, integer firstSample, integer numberOfSamples);
+void LongSound_readAudioToShort (LongSound me, int16 *buffer, integer firstSample, integer numberOfSamples);
 
 Collection_define (SoundAndLongSoundList, OrderedOf, Sampled) {
 };
@@ -82,8 +83,8 @@ Collection_define (SoundAndLongSoundList, OrderedOf, Sampled) {
 void LongSound_concatenate (SoundAndLongSoundList collection, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
 
 void LongSound_preferences ();
-long LongSound_getBufferSizePref_seconds ();
-void LongSound_setBufferSizePref_seconds (long size);
+integer LongSound_getBufferSizePref_seconds ();
+void LongSound_setBufferSizePref_seconds (integer size);
 
 /* End of file LongSound.h */
 #endif

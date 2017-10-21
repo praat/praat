@@ -49,20 +49,20 @@ void structTransition :: v_writeText (MelderFile file) {
 	MelderFile_write (file, U"\nstateLabels []: ");
 	if (numberOfStates < 1) MelderFile_write (file, U"(empty)");
 	MelderFile_write (file, U"\n");
-	for (long i = 1; i <= numberOfStates; i ++) {
+	for (integer i = 1; i <= numberOfStates; i ++) {
 		MelderFile_write (file, U"\"");
 		if (stateLabels [i]) MelderFile_write (file, stateLabels [i]);
 		MelderFile_write (file, U"\"\t");
 	}
-	for (long i = 1; i <= numberOfStates; i ++) {
+	for (integer i = 1; i <= numberOfStates; i ++) {
 		MelderFile_write (file, U"\nstate [", i, U"]:");
-		for (long j = 1; j <= numberOfStates; j ++) {
+		for (integer j = 1; j <= numberOfStates; j ++) {
 			MelderFile_write (file, U"\t", data [i] [j]);
 		}
 	}
 }
 
-void Transition_init (Transition me, long numberOfStates) {
+void Transition_init (Transition me, integer numberOfStates) {
 	if (numberOfStates < 1)
 		Melder_throw (U"Cannot create empty matrix.");
 	my numberOfStates = numberOfStates;
@@ -70,7 +70,7 @@ void Transition_init (Transition me, long numberOfStates) {
 	my data = NUMmatrix <double> (1, my numberOfStates, 1, my numberOfStates);
 }
 
-autoTransition Transition_create (long numberOfStates) {
+autoTransition Transition_create (integer numberOfStates) {
 	try {
 		autoTransition me = Thing_new (Transition);
 		Transition_init (me.get(), numberOfStates);
@@ -80,13 +80,13 @@ autoTransition Transition_create (long numberOfStates) {
 	}
 }
 
-static void NUMrationalize (double x, long *numerator, long *denominator) {
+static void NUMrationalize (double x, integer *numerator, integer *denominator) {
 	double epsilon = 1e-6;
 	*numerator = 1;
 	for (*denominator = 1; *denominator <= 100000; (*denominator) ++) {
 		double numerator_d = x * *denominator, rounded = round (numerator_d);
 		if (fabs (rounded - numerator_d) < epsilon) {
-			*numerator = (long) rounded;
+			*numerator = (integer) rounded;
 			return;
 		}
 	}
@@ -96,7 +96,7 @@ static void NUMrationalize (double x, long *numerator, long *denominator) {
 static void print4 (char *buffer, double value, int iformat, int width, int precision) {
 	char formatString [40];
 	if (iformat == 4) {
-		long numerator, denominator;
+		integer numerator, denominator;
 		NUMrationalize (value, & numerator, & denominator);
 		if (numerator == 0)
 			snprintf (buffer, 40, "0");
@@ -117,13 +117,13 @@ void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int preci
 	double leftMargin = Graphics_dxMMtoWC (g, 1);
 	double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-	for (long col = 1; col <= my numberOfStates; col ++) {
+	for (integer col = 1; col <= my numberOfStates; col ++) {
 		if (my stateLabels && my stateLabels [col] && my stateLabels [col] [0]) {
 			Graphics_text (g, col, 1, my stateLabels [col]);
 			if (maxTextHeight == 0.0) maxTextHeight = lineSpacing;
 		}
 	}
-	for (long row = 1; row <= my numberOfStates; row ++) {
+	for (integer row = 1; row <= my numberOfStates; row ++) {
 		double y = 1 - lineSpacing * (row - 1 + 0.7);
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		if (my stateLabels && my stateLabels [row]) {
@@ -132,7 +132,7 @@ void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int preci
 			Graphics_text (g, 0.5 - leftMargin, y, my stateLabels [row]);
 		}
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-		for (long col = 1; col <= my numberOfStates; col ++) {
+		for (integer col = 1; col <= my numberOfStates; col ++) {
 			char text [40];
 			print4 (text, my data [row] [col], iformat, 0, precision);
 			Graphics_text (g, col, y, Melder_peek8to32 (text));
@@ -146,8 +146,8 @@ void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int preci
 }
 
 static void Transition_transpose (Transition me) {
-	for (long i = 1; i < my numberOfStates; i ++) {
-		for (long j = i + 1; j <= my numberOfStates; j ++) {
+	for (integer i = 1; i < my numberOfStates; i ++) {
+		for (integer j = i + 1; j <= my numberOfStates; j ++) {
 			double temp = my data [i] [j];
 			my data [i] [j] = my data [j] [i];
 			my data [j] [i] = temp;
@@ -165,9 +165,9 @@ void Transition_eigen (Transition me, autoMatrix *out_eigenvectors, autoMatrix *
 		transposed = true;
 		autoMatrix eigenvectors = Matrix_createSimple (my numberOfStates, my numberOfStates);
 		autoMatrix eigenvalues = Matrix_createSimple (my numberOfStates, 1);
-		for (long i = 1; i <= my numberOfStates; i ++) {
+		for (integer i = 1; i <= my numberOfStates; i ++) {
 			eigenvalues -> z [i] [1] = eigen -> eigenvalues [i];
-			for (long j = 1; j <= my numberOfStates; j ++)
+			for (integer j = 1; j <= my numberOfStates; j ++)
 				eigenvectors -> z [i] [j] = eigen -> eigenvectors [j] [i];
 		}
 		*out_eigenvectors = eigenvectors.move();
@@ -179,16 +179,16 @@ void Transition_eigen (Transition me, autoMatrix *out_eigenvectors, autoMatrix *
 	}
 }
 
-autoTransition Transition_power (Transition me, long power) {
+autoTransition Transition_power (Transition me, integer power) {
 	try {
 		autoTransition thee = Data_copy (me);
 		autoTransition him = Data_copy (me);
-		for (long ipow = 2; ipow <= power; ipow ++) {
+		for (integer ipow = 2; ipow <= power; ipow ++) {
 			double **tmp = his data; his data = thy data; thy data = tmp;   // OPTIMIZE
-			for (long irow = 1; irow <= my numberOfStates; irow ++) {
-				for (long icol = 1; icol <= my numberOfStates; icol ++) {
+			for (integer irow = 1; irow <= my numberOfStates; irow ++) {
+				for (integer icol = 1; icol <= my numberOfStates; icol ++) {
 					thy data [irow] [icol] = 0.0;
-					for (long i = 1; i <= my numberOfStates; i ++) {
+					for (integer i = 1; i <= my numberOfStates; i ++) {
 						thy data [irow] [icol] += his data [irow] [i] * my data [i] [icol];
 					}
 				}
@@ -203,8 +203,8 @@ autoTransition Transition_power (Transition me, long power) {
 autoMatrix Transition_to_Matrix (Transition me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my numberOfStates, my numberOfStates);
-		for (long i = 1; i <= my numberOfStates; i ++)
-			for (long j = 1; j <= my numberOfStates; j ++)
+		for (integer i = 1; i <= my numberOfStates; i ++)
+			for (integer j = 1; j <= my numberOfStates; j ++)
 				thy z [i] [j] = my data [i] [j];
 		return thee;
 	} catch (MelderError) {
@@ -217,8 +217,8 @@ autoTransition Matrix_to_Transition (Matrix me) {
 		if (my nx != my ny)
 			Melder_throw (U"Matrix should be square.");
 		autoTransition thee = Transition_create (my nx);
-		for (long i = 1; i <= my nx; i ++)
-			for (long j = 1; j <= my nx; j ++)
+		for (integer i = 1; i <= my nx; i ++)
+			for (integer j = 1; j <= my nx; j ++)
 				thy data [i] [j] = my z [i] [j];
 		return thee;
 	} catch (MelderError) {
