@@ -62,7 +62,7 @@ autoFileInMemoryManager FileInMemoryManager_create (FileInMemorySet files) {
 	}
 }
 
-integer SortedSetOfLong_hasLong (SortedSetOfLong me, integer number) {
+integer SortedSetOfLong_Lookup (SortedSetOfLong me, integer number) {
 	if (my size == 0) return 0;   // empty set 
 	integer where = number - my at [my size] -> number;   // compare with last item
 	if (where > 0) return 0;   // not at end
@@ -168,7 +168,7 @@ FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, c
 
 int FileInMemoryManager_fclose (FileInMemoryManager me, FILE *stream) {
 	integer *filePtr = reinterpret_cast<integer *> (stream);
-	integer index = SortedSetOfLong_hasLong (my openFiles.get(), *filePtr);
+	integer index = SortedSetOfLong_Lookup (my openFiles.get(), *filePtr);
 	
 	if (index > 0) {
 		FileInMemory fim = (FileInMemory) my files -> at [*filePtr];
@@ -180,7 +180,7 @@ int FileInMemoryManager_fclose (FileInMemoryManager me, FILE *stream) {
 
 int FileInMemoryManager_feof (FileInMemoryManager me, FILE *stream) {
 	integer *filePtr = reinterpret_cast<integer *> (stream);
-	integer index = SortedSetOfLong_hasLong (my openFiles.get(), *filePtr);
+	integer index = SortedSetOfLong_Lookup (my openFiles.get(), *filePtr);
 	int eof = 0;
 	if (index > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my files -> at [*filePtr]);
@@ -193,7 +193,7 @@ int FileInMemoryManager_feof (FileInMemoryManager me, FILE *stream) {
 
 int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer offset, int origin) {
 	integer *filePtr = reinterpret_cast<integer *> (stream);
-	integer index = SortedSetOfLong_hasLong (my openFiles.get(), *filePtr);
+	integer index = SortedSetOfLong_Lookup (my openFiles.get(), *filePtr);
 	int errval = EBADF;
 	if (index > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my files -> at [*filePtr]);
@@ -218,7 +218,7 @@ int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer off
 
 char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FILE *stream) {
 	integer *filePtr = reinterpret_cast<integer *> (stream);
-	integer index = SortedSetOfLong_hasLong (my openFiles.get(), *filePtr);
+	integer index = SortedSetOfLong_Lookup (my openFiles.get(), *filePtr);
 	if (index > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my files -> at [*filePtr]);
 		integer i = 0, startOffset = fim -> d_position;
@@ -247,7 +247,7 @@ int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream) {
 
 size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t nmemb, FILE *stream) {
 	integer *filePtr = reinterpret_cast<integer *> (stream);
-	integer index = SortedSetOfLong_hasLong (my openFiles.get(), *filePtr);
+	integer index = SortedSetOfLong_Lookup (my openFiles.get(), *filePtr);
 	if (index > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my files -> at [*filePtr]);
 		integer i = 0, startOffset = fim -> d_position;
@@ -273,7 +273,7 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 /* No pushback buffer */
 int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * stream) {
 	integer *filePtr = reinterpret_cast<integer *> (stream);
-	integer index = SortedSetOfLong_hasLong (my openFiles.get(), *filePtr);
+	integer index = SortedSetOfLong_Lookup (my openFiles.get(), *filePtr);
 	if (index > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my files -> at [*filePtr]);
 		-- fim -> d_position;
@@ -295,13 +295,10 @@ int FileInMemoryManager_GetFileLength (FileInMemoryManager me, const char *filen
 		return -1;
 }
 
-
 /* long int ftell ( FILE * stream ); 
  * int fgetpos ( FILE * stream, fpos_t * pos );
  * int fsetpos ( FILE * stream, const fpos_t * pos );
  * void rewind ( FILE * stream );
- * int ungetc ( int character, FILE * stream );
- * int fgetc ( FILE * stream );
  */
 
 /* End of file FileInMemoryManager.cpp */

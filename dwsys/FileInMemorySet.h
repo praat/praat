@@ -25,31 +25,7 @@
 
 #include "FileInMemorySet_def.h"
 
-template <typename T   Melder_ENABLE_IF_ISA (T, structFileInMemory)>
-struct SortedSetOfFileInMemoryOf : SortedSetOf <T> {
-	SortedSetOfFileInMemoryOf () {
-	}
-	SortedSetOfFileInMemoryOf<T>&& move () noexcept { return static_cast <SortedSetOfFileInMemoryOf<T>&&> (*this); }
-	static int s_compareHook (FileInMemory me, FileInMemory thee) noexcept {
-		return Melder_cmp (my d_path, thy d_path);
-	}
-	typename SortedOf<T>::CompareHook v_getCompareHook ()
-		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
-};
-		
 autoFileInMemorySet FileInMemorySet_create (); 
-
-/*
-Collection_define (FileInMemorySet, SortedSetOf, FileInMemory) {
-	static int s_compare_name (FileInMemory f1, FileInMemory f2) {
-		return Melder_cmp (f1 -> d_path, f2 -> d_path);
-	}
-	CompareHook v_getCompareHook ()	override { 
-		return s_compare_name;
-	}
-};*/
-
-//autoFileInMemorySet FileInMemorySet_create ();
 
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
 
