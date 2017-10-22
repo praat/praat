@@ -29,6 +29,8 @@ autoFileInMemorySet FileInMemorySet_create ();
 
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
 
+autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemory>& list);
+
 autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list);
 
 void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer numberOfBytesPerLine);

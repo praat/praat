@@ -2640,15 +2640,11 @@ DO
 	INFO_ONE_END
 }
 
-DIRECT (NEW1_FileInMemory_to_FileInMemorySet) {
-	autoFileInMemorySet thee = FileInMemorySet_create ();
-	LOOP {
-		iam (FileInMemory);
-		autoFileInMemory him = Data_copy (me);
-		thy addItem_move (him.move());
-	}
-	praat_new (thee.move(), U"files");
-END }
+DIRECT (NEW1_FilesInMemory_to_FileInMemorySet) {
+	CONVERT_LIST (FileInMemory)
+		autoFileInMemorySet result = FilesInMemory_to_FileInMemorySet (list);
+	CONVERT_LIST_END (U"merged");
+}
 
 DIRECT (MODIFY_FileInMemorySet_addItems) {
 	MODIFY_FIRST_OF_TWO (FileInMemorySet, FileInMemory)
@@ -7864,8 +7860,8 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0, INFO_FileInMemory_showAsCode);
 	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0, MODIFY_FileInMemory_setId);
-	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, NEW1_FileInMemory_to_FileInMemorySet);
-	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_DEPRECATED_2015, NEW1_FileInMemory_to_FileInMemorySet);
+	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, NEW1_FilesInMemory_to_FileInMemorySet);
+	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_DEPRECATED_2015, NEW1_FilesInMemory_to_FileInMemorySet);
 
 	praat_addAction1 (classFileInMemorySet, 1, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1, INFO_FileInMemorySet_getNumberOfFiles);

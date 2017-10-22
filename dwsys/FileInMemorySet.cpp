@@ -82,6 +82,20 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 	}
 }
 
+autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemory>& list) {
+	try {
+		autoFileInMemorySet thee = FileInMemorySet_create ();
+		for (integer ifile = 1; ifile <= list.size; ifile ++) {
+			autoFileInMemory fim = Data_copy (list.at [ifile]);
+			thy addItem_move (fim.move());
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"FilesInMemory not collected in FileInMemorySet.");
+	}
+	
+}
+
 void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer numberOfBytesPerLine) {
 	autoMelderString one_fim;
 	MelderInfo_writeLine (U"#include \"FileInMemorySet.h\"");
