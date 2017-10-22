@@ -232,7 +232,7 @@ const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 			Melder_throw (U"Cannot find language \"", my d_languageName, U"\".");
 		}
 		
-		FileInMemory fim = espeakdata_languages->at [languagesIndex];
+		FileInMemory fim = (FileInMemory) espeakdata_languages->at [languagesIndex];
 		return fim -> d_id;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find language code.");
@@ -255,7 +255,7 @@ const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 			return defaultVoiceCode; // TODO what is the default?
 		}
 		*/
-		FileInMemory vfim = espeakdata_voices->at [voiceIndex];
+		FileInMemory vfim = (FileInMemory) espeakdata_voices->at [voiceIndex];
 		return vfim -> d_id;
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find voice code.");
