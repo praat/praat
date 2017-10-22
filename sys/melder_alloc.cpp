@@ -62,7 +62,8 @@ void * _Melder_malloc (int64 size) {
 	void *result = malloc ((size_t) size);   // guarded cast
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room for another ", Melder_bigInteger (size), U" bytes.");
-	if (Melder_debug == 34) { Melder_casual (U"Melder_malloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_malloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1");
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size;
 	return result;
@@ -90,7 +91,8 @@ void * _Melder_malloc_f (int64 size) {
 
 void _Melder_free (void **ptr) noexcept {
 	if (! *ptr) return;
-	if (Melder_debug == 34) { Melder_casual (U"Melder_free\t", Melder_pointer (*ptr), U"\t?\t?"); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_free\t", Melder_pointer (*ptr), U"\t?\t?");
 	free (*ptr);
 	*ptr = nullptr;
 	totalNumberOfDeallocations += 1;
@@ -105,7 +107,8 @@ void * Melder_realloc (void *ptr, int64 size) {
 	if (result == nullptr)
 		Melder_throw (U"Out of memory. Could not extend room to ", Melder_bigInteger (size), U" bytes.");
 	if (! ptr) {   // is it like malloc?
-		if (Melder_debug == 34) { Melder_casual (U"Melder_realloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
+		if (Melder_debug == 34)
+			Melder_casual (U"Melder_realloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1");
 		totalNumberOfAllocations += 1;
 		totalAllocationSize += size;
 	} else if (result != ptr) {   // did realloc do a malloc-and-free?
@@ -159,7 +162,8 @@ void * _Melder_calloc (int64 nelem, int64 elsize) {
 	void *result = calloc ((size_t) nelem, (size_t) elsize);
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room for ", Melder_bigInteger (nelem), U" more elements whose sizes are ", elsize, U" bytes each.");
-	if (Melder_debug == 34) { Melder_casual (U"Melder_calloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (nelem), U"\t", Melder_bigInteger (elsize)); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_calloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (nelem), U"\t", Melder_bigInteger (elsize));
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += nelem * elsize;
 	return result;
@@ -197,7 +201,8 @@ char * Melder_strdup (const char *string) {
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 	strcpy (result, string);
-	if (Melder_debug == 34) { Melder_casual (U"Melder_strdup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_strdup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t", sizeof (char));
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size;
 	return result;
@@ -233,7 +238,8 @@ char32 * Melder_dup (const char32 *string /* cattable */) {
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 	str32cpy (result, string);
-	if (Melder_debug == 34) { Melder_casual (U"Melder_dup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t4"); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_dup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t", sizeof (char32));
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size * (int64) sizeof (char32);
 	return result;

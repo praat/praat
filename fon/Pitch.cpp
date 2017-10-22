@@ -509,8 +509,9 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 						}
 					}
 					value = prevDelta [icand1] - transitionCost + curDelta [icand2];
-					//if (Melder_debug == 33) Melder_casual ("Frame %ld, current candidate %ld (delta %g), previous candidate %ld (delta %g), "
-					//	"transition cost %g, value %g, maximum %g", iframe, icand2, curDelta [icand2], icand1, prevDelta [icand1], transitionCost, value, maximum);
+					//if (Melder_debug == 33) Melder_casual (U"Frame ", iframe, U", current candidate ", icand2,
+					//  U" (delta ", curDelta [icand2], U"), previous candidate ", icand1, U" (delta ", prevDelta [icand1], U"), ",
+					//	U"transition cost ", transitionCost, U", value ", value, U", maximum ", maximum);
 					if (value > maximum) {
 						maximum = value;
 						place = icand1;

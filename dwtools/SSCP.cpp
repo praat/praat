@@ -43,7 +43,6 @@
  djmw 20060503 Covariance_getSignificanceOfMeansDifference: set probability = 0 if
  	var_pooled = 0 and paired.
  djmw 20060811 Removed bug in SSCP_and_TableOfReal_to_MahalanobisDistances that caused column labels always to be copied.
- djmw 20061021 printf expects %ld for 'long int'
  djmw 20061214 Corrected possible integer overflow in ellipseScalefactor.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071016 To Melder_error<n>

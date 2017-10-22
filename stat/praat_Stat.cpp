@@ -26,13 +26,6 @@
 
 #include "praat_TableOfReal.h"
 
-static const char32 * Table_messageColumn (Table me, integer column) {
-	if (my columnHeaders [column]. label && my columnHeaders [column]. label [0] != U'\0')
-		return Melder_cat (U"\"", my columnHeaders [column]. label, U"\"");
-	else
-		return Melder_integer (column);
-}
-
 // MARK: - DISTRIBUTIONS
 
 // MARK: Help

@@ -21,7 +21,6 @@
  djmw 20030619 Added SVD_compute before SVD_solve
  djmw 20060510 Polynomial_to_Roots: changed behaviour. All roots found are now saved.
  	In previous version a nullptr pointer was returned. New error messages.
- djmw 20061021 printf expects %ld for 'long int'
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20080122 float -> double

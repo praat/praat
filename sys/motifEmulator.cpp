@@ -183,7 +183,8 @@ static int NativeButton_preferredHeight (GuiObject me) {
 
 GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32 *name) {
 	GuiObject me = Melder_calloc_f (struct structGuiObject, 1);
-	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%p\t%ld\t%ld\n", me, 1L, (long_not_integer) sizeof (struct structGuiObject));
+	if (Melder_debug == 34)
+		Melder_casual (U"from _Gui_initializeWidget\t", Melder_pointer (me), U"\t1\t", sizeof (struct structGuiObject));
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
 	my widgetClass = widgetClass;

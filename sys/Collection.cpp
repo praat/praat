@@ -95,13 +95,13 @@ void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
 
 void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text, int formatVersion) {
 	if (formatVersion < 0) {
-		integer l_size;
+		long_not_integer l_size;
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
 		if (! line.peek() || ! sscanf (line.peek(), "%ld", & l_size) || l_size < 0)
 			Melder_throw (U"Collection::readText: cannot read size.");
 		my _grow (l_size);
 		for (integer i = 1; i <= l_size; i ++) {
-			integer itemNumberRead;
+			long_not_integer itemNumberRead;
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
 			do {

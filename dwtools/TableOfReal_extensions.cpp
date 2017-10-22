@@ -34,7 +34,6 @@
  djmw 20051116 TableOfReal_drawScatterPlot draw reverse permited by choosing xmin > xmax and/or ymin>ymax
  djmw 20060301 TableOfReal_meansByRowLabels extra medianize
  djmw 20060626 Extra NULL argument for ExecRE.
- djmw 20061021 printf expects %ld for 'long int'
  djmw 20070822 wchar
  djmw 20070902 Better error messages (object type and name feedback)
  djmw 20070614 updated to version 1.30 of regular expressions.

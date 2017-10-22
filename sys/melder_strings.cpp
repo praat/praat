@@ -25,7 +25,8 @@ static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, total
 void MelderString16_free (MelderString16 *me) {
 	if (! my string) return;
 	Melder_free (my string);
-	if (Melder_debug == 34) fprintf (stderr, "from MelderString16_free\t%p\t%lld\t%d\n", my string, (long long) my bufferSize, 2);
+	if (Melder_debug == 34)
+		Melder_casual (U"from MelderString16_free\t", Melder_pointer (my string), U"\t", my bufferSize, U"\t", sizeof (char16));
 	totalNumberOfDeallocations += 1;
 	totalDeallocationSize += my bufferSize * (int64) sizeof (char16_t);
 	my bufferSize = 0;
@@ -35,7 +36,8 @@ void MelderString16_free (MelderString16 *me) {
 void MelderString_free (MelderString *me) {
 	if (! my string) return;
 	Melder_free (my string);
-	if (Melder_debug == 34) fprintf (stderr, "from MelderString32_free\t%p\t%lld\t%d\n", my string, (long long) my bufferSize, 2);
+	if (Melder_debug == 34)
+		Melder_casual (U"from MelderString32_free\t", Melder_pointer (my string), U"\t", my bufferSize, U"\t", sizeof (char32));
 	totalNumberOfDeallocations += 1;
 	totalDeallocationSize += my bufferSize * (int64) sizeof (char32);
 	my bufferSize = 0;
@@ -54,7 +56,8 @@ void MelderString_expand (MelderString *me, int64 sizeNeeded) {
 	int64 bytesNeeded = sizeNeeded * (int64) sizeof (char32);
 	Melder_assert (bytesNeeded > 0);
 	try {
-		if (Melder_debug == 34) fprintf (stderr, "from MelderString:expandIfNecessary\t%p\t%lld\t%d\n", my string, (long long) sizeNeeded, (int) sizeof (char32));
+		if (Melder_debug == 34)
+			Melder_casual (U"from MelderString:expandIfNecessary\t", Melder_pointer (my string), U"\t", sizeNeeded, U"\t", sizeof (char32));
 		my string = (char32 *) Melder_realloc (my string, bytesNeeded);
 	} catch (MelderError) {
 		my bufferSize = 0;
@@ -79,7 +82,8 @@ void MelderString_expand (MelderString *me, int64 sizeNeeded) {
 		int64 bytesNeeded = sizeNeeded * (int64) sizeof (type); \
 		Melder_assert (bytesNeeded > 0); \
 		try { \
-			if (Melder_debug == 34) fprintf (stderr, "from MelderString:expandIfNecessary\t%p\t%lld\t%d\n", my string, (long long) sizeNeeded, (int) sizeof (type)); \
+			if (Melder_debug == 34) \
+				Melder_casual (U"from MelderString:expandIfNecessary\t", Melder_pointer (my string), U"\t", sizeNeeded, U"\t", sizeof (type)); \
 			my string = (type *) Melder_realloc (my string, bytesNeeded); \
 		} catch (MelderError) { \
 			my bufferSize = 0; \
