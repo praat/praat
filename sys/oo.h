@@ -103,7 +103,7 @@
 #define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
 #define oo_LONG_VECTOR_FROM(x,min,max)  oo_VECTOR (long, i32, x, min, max)
 #define oo_INTEGER_VECTOR_FROM(x,min,max)  oo_VECTOR (integer, integer, x, min, max)
-//#define oo_UBYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
+#define oo_UBYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
 //#define oo_UINT_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned int, u16, x, min, max)
 //#define oo_ULONG_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned long, u32, x, min, max)
 //#define oo_BOOL_VECTOR_FROM(x,min,max)  oo_VECTOR (unsigned char, u8, x, min, max)
