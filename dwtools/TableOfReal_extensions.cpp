@@ -1730,10 +1730,10 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 		if (my numberOfColumns < 3 || my numberOfRows < 3) {
 			Melder_throw (U"Therehave to be at least three colums and rows present.");
 		}
-		autonumvec x (my numberOfRows, false);
-		autonumvec y (my numberOfRows, false);
-		autonumvec z (my numberOfRows, false);
-		autonumvec weights (my numberOfRows, false);
+		autonumvec x (my numberOfRows, kTensorInitializationType :: RAW);
+		autonumvec y (my numberOfRows, kTensorInitializationType :: RAW);
+		autonumvec z (my numberOfRows, kTensorInitializationType :: RAW);
+		autonumvec weights (my numberOfRows, kTensorInitializationType :: RAW);
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			x [irow] = my data [irow][1];
 			y [irow] = my data [irow][2];
