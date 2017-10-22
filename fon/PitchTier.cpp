@@ -83,7 +83,7 @@ static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, boo
 	autofile f = Melder_fopen (file, "w");
 	if (hasHeader)
 		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%s %s %s\n",
-			Melder_double (my xmin), Melder_double (my xmax), Melder_integer (my points.size));
+			Melder8_double (my xmin), Melder8_double (my xmax), Melder8_integer (my points.size));
 	for (integer i = 1; i <= my points.size; i ++) {
 		RealPoint point = my points.at [i];
 		fprintf (f, "%.17g\t%.17g\n", point -> number, point -> value);
