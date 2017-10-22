@@ -458,9 +458,10 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 	double offset = 255.1f + minimum * scale;
 	int minimalGrey = my photocopyable ? 55 : 0;
 	my d_printf (my d_file, "gsave N %ld %ld M %ld %ld L %ld %ld L %ld %ld L closepath clip\n",
-		clipx1, clipy1, clipx2 - clipx1, 0L, 0L, clipy2 - clipy1, clipx1 - clipx2, 0L);
+		(long_not_integer) clipx1, (long_not_integer) clipy1, (long_not_integer) clipx2 - clipx1,
+		0L, 0L, (long_not_integer) (clipy2 - clipy1), (long_not_integer) (clipx1 - clipx2), 0L);
 	my d_printf (my d_file, "%ld %ld translate %ld %ld scale\n",
-		x1DC, y1DC, x2DC - x1DC, y2DC - y1DC);
+		(long_not_integer) x1DC, (long_not_integer) y1DC, (long_not_integer) (x2DC - x1DC), (long_not_integer) (y2DC - y1DC));
 	if (interpolate) {
 		/* The smallest image resolution is 300 dpi. If a sample takes up more than 25.4/300 mm, the 300 dpi resolution is achieved by interpolation. */
 		const double smallestImageResolution = 300.0;
@@ -476,18 +477,21 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 		/* Do not interpolate. */
 		my d_printf (my d_file, "/picstr %ld string def %ld %ld 8 [%ld 0 0 %ld 0 0]\n"
 			"{ currentfile picstr readhexstring pop } image\n",
-			nx, nx, ny, nx, ny);
+			(long_not_integer) nx, (long_not_integer) nx, (long_not_integer) ny, (long_not_integer) nx, (long_not_integer) ny);
 	} else if (interpolateX > 1 && interpolateY > 1) {
 		/* Interpolate both horizontally and vertically. */
 		integer nx_new = nx * interpolateX;
 		integer ny_new = ny * interpolateY;
 		/* Interpolation between rows requires us to remember two original rows: */
-		my d_printf (my d_file, "/lorow %ld string def /hirow %ld string def\n", nx, nx);
+		my d_printf (my d_file, "/lorow %ld string def /hirow %ld string def\n",
+			(long_not_integer) nx, (long_not_integer) nx);
 		/* New rows (scanlines) are longer: */
-		my d_printf (my d_file, "/scanline %ld string def\n", nx_new);
+		my d_printf (my d_file, "/scanline %ld string def\n",
+			(long_not_integer) nx_new);
 		/* The first four arguments to the 'image' command, */
 		/* namely the new number of columns, the new number of rows, the bit depth, and the matrix: */
-		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx_new, ny_new, nx_new, ny_new);
+		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n",
+			(long_not_integer) nx_new, (long_not_integer) ny_new, (long_not_integer) nx_new, (long_not_integer) ny_new);
 		/* Since our imageproc is going to output only one scanline at a time, */
 		/* the outer loop variable (scanline number) has to be initialized outside the imageproc: */
 		my d_printf (my d_file, "/irow 0 def\n");
@@ -502,21 +506,24 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 			/*    (2) read a new one unless we just passed the last original row: */
 			"irow %ld mod %ld eq { hirow lorow copy pop\n"
 			"irow %ld ne { currentfile hirow readhexstring pop pop } if } if\n",
-			interpolateY, interpolateY / 2, ny_new - interpolateY + interpolateY / 2);
+			(long_not_integer) interpolateY, (long_not_integer) (interpolateY / 2),
+			(long_not_integer) (ny_new - interpolateY + interpolateY / 2));
 		/* Where are we between those two rows? */
 		my d_printf (my d_file, "/rowphase irow %ld add %ld mod %ld div def\n",
-			interpolateY - interpolateY / 2, interpolateY, interpolateY);
+			(long_not_integer) (interpolateY - interpolateY / 2), (long_not_integer) interpolateY, (long_not_integer) interpolateY);
 		/* Inner loop starts here. It cycles through all new columns: */
-		my d_printf (my d_file, "0 1 %ld {\n", nx_new - 1);
+		my d_printf (my d_file, "0 1 %ld {\n", (long_not_integer) (nx_new - 1));
 		/* Get the inner loop variable: */
 		my d_printf (my d_file, "   /icol exch def\n");
 		/* Where are the two original columns? */
-		my d_printf (my d_file, "   /locol icol %ld sub %ld idiv def\n", interpolateX / 2, interpolateX);
+		my d_printf (my d_file, "   /locol icol %ld sub %ld idiv def\n",
+			(long_not_integer) (interpolateX / 2), (long_not_integer) interpolateX);
 		my d_printf (my d_file, "   /hicol icol %ld ge { %ld } { icol %ld add %ld idiv } ifelse def\n",
-			nx_new - interpolateX / 2, nx - 1, interpolateX / 2, interpolateX);
+			(long_not_integer) (nx_new - interpolateX / 2), (long_not_integer) (nx - 1),
+			(long_not_integer) (interpolateX / 2), (long_not_integer) interpolateX);
 		/* Where are we between those two columns? */
 		my d_printf (my d_file, "   /colphase icol %ld add %ld mod %ld div def\n",
-			interpolateX - interpolateX / 2, interpolateX, interpolateX);
+			(long_not_integer) (interpolateX - interpolateX / 2), (long_not_integer) interpolateX, (long_not_integer) interpolateX);
 		/* Four-point interpolation: */
 		my d_printf (my d_file,
 			"   /plow lorow locol get def\n"
@@ -534,26 +541,29 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 		/* Interpolate horizontally only. */
 		integer nx_new = nx * interpolateX;
 		/* Remember one original row: */
-		my d_printf (my d_file, "/row %ld string def\n", nx, nx);
+		my d_printf (my d_file, "/row %ld string def\n", (long_not_integer) nx);
 		/* New rows (scanlines) are longer: */
-		my d_printf (my d_file, "/scanline %ld string def\n", nx_new);
+		my d_printf (my d_file, "/scanline %ld string def\n", (long_not_integer) nx_new);
 		/* The first four arguments to the 'image' command, */
 		/* namely the new number of columns, the number of rows, the bit depth, and the matrix: */
-		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx_new, ny, nx_new, ny);
+		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n",
+			(long_not_integer) nx_new, (long_not_integer) ny, (long_not_integer) nx_new, (long_not_integer) ny);
 		/* The imageproc starts here. We fill one original row. */
 		my d_printf (my d_file, "{\n"
 			"currentfile row readhexstring pop pop\n");
 		/* Loop starts here. It cycles through all new columns: */
-		my d_printf (my d_file, "0 1 %ld {\n", nx_new - 1);
+		my d_printf (my d_file, "0 1 %ld {\n", (long_not_integer) (nx_new - 1));
 		/* Get the loop variable: */
 		my d_printf (my d_file, "   /icol exch def\n");
 		/* Where are the two original columns? */
-		my d_printf (my d_file, "   /locol icol %ld sub %ld idiv def\n", interpolateX / 2, interpolateX);
+		my d_printf (my d_file, "   /locol icol %ld sub %ld idiv def\n",
+			(long_not_integer) (interpolateX / 2), (long_not_integer) interpolateX);
 		my d_printf (my d_file, "   /hicol icol %ld ge { %ld } { icol %ld add %ld idiv } ifelse def\n",
-			nx_new - interpolateX / 2, nx - 1, interpolateX / 2, interpolateX);
+			(long_not_integer) (nx_new - interpolateX / 2), (long_not_integer) (nx - 1),
+			(long_not_integer) (interpolateX / 2), (long_not_integer) interpolateX);
 		/* Where are we between those two columns? */
 		my d_printf (my d_file, "   /colphase icol %ld add %ld mod %ld div def\n",
-			interpolateX - interpolateX / 2, interpolateX, interpolateX);
+			(long_not_integer) (interpolateX - interpolateX / 2), (long_not_integer) interpolateX, (long_not_integer) interpolateX);
 		/* Two-point interpolation: */
 		my d_printf (my d_file,
 			"   /plow row locol get def\n"
@@ -566,12 +576,13 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 		/* Interpolate vertically only. */
 		integer ny_new = ny * interpolateY;
 		/* Interpolation between rows requires us to remember two original rows: */
-		my d_printf (my d_file, "/lorow %ld string def /hirow %ld string def\n", nx, nx);
+		my d_printf (my d_file, "/lorow %ld string def /hirow %ld string def\n", (long_not_integer) nx, (long_not_integer) nx);
 		/* New rows (scanlines) are equally long: */
-		my d_printf (my d_file, "/scanline %ld string def\n", nx);
+		my d_printf (my d_file, "/scanline %ld string def\n", (long_not_integer) nx);
 		/* The first four arguments to the 'image' command, */
 		/* namely the number of columns, the new number of rows, the bit depth, and the matrix: */
-		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx, ny_new, nx, ny_new);
+		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n",
+			(long_not_integer) nx, (long_not_integer) ny_new, (long_not_integer) nx, (long_not_integer) ny_new);
 		/* Since our imageproc is going to output only one scanline at a time, */
 		/* the outer loop variable (scanline number) has to be initialized outside the imageproc: */
 		my d_printf (my d_file, "/irow 0 def\n");
@@ -586,12 +597,14 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 			/*    (2) read a new one unless we just passed the last original row: */
 			"irow %ld mod %ld eq { hirow lorow copy pop\n"
 			"irow %ld ne { currentfile hirow readhexstring pop pop } if } if\n",
-			interpolateY, interpolateY / 2, ny_new - interpolateY + interpolateY / 2);
+			(long_not_integer) interpolateY, (long_not_integer) (interpolateY / 2),
+			(long_not_integer) (ny_new - interpolateY + interpolateY / 2));
 		/* Where are we between those two rows? */
 		my d_printf (my d_file, "/rowphase irow %ld add %ld mod %ld div def\n",
-			interpolateY - interpolateY / 2, interpolateY, interpolateY);
+			(long_not_integer) (interpolateY - interpolateY / 2),
+			(long_not_integer) interpolateY, (long_not_integer) interpolateY);
 		/* Inner loop starts here. It cycles through all columns: */
-		my d_printf (my d_file, "0 1 %ld {\n", nx - 1);
+		my d_printf (my d_file, "0 1 %ld {\n", (long_not_integer) (nx - 1));
 		/* Get the inner loop variable: */
 		my d_printf (my d_file, "   /icol exch def\n");
 		/* Two-point interpolation: */
