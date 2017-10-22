@@ -2,7 +2,7 @@
 #define _RealTier_h_
 /* RealTier.h
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas)
 		result -> points.size == 0;
 */
 
-double RealTier_getValueAtIndex (RealTier me, long point);
+double RealTier_getValueAtIndex (RealTier me, integer point);
 /* No points or 'point' out of range: undefined. */
 
 double RealTier_getValueAtTime (RealTier me, double t);
@@ -68,12 +68,12 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, int garnish, const char32 *method, const char32 *quantity);
 autoTableOfReal RealTier_downto_TableOfReal (RealTier me, const char32 *timeLabel, const char32 *valueLabel);
 
-void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParabola, int logarithmically);
+void RealTier_interpolateQuadratically (RealTier me, integer numberOfPointsPerParabola, int logarithmically);
 
 autoTable RealTier_downto_Table (RealTier me, const char32 *indexText, const char32 *timeText, const char32 *valueText);
-autoRealTier Vector_to_RealTier (Vector me, long channel, ClassInfo klas);
-autoRealTier Vector_to_RealTier_peaks (Vector me, long channel, ClassInfo klas);
-autoRealTier Vector_to_RealTier_valleys (Vector me, long channel, ClassInfo klas);
+autoRealTier Vector_to_RealTier (Vector me, integer channel, ClassInfo klas);
+autoRealTier Vector_to_RealTier_peaks (Vector me, integer channel, ClassInfo klas);
+autoRealTier Vector_to_RealTier_valleys (Vector me, integer channel, ClassInfo klas);
 autoRealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo klas);
 
 void RealTier_formula (RealTier me, const char32 *expression, Interpreter interpreter, RealTier thee);

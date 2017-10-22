@@ -2,7 +2,7 @@
 #define _FormantGrid_h_
 /* FormantGrid.h
  *
- * Copyright (C) 2008-2011,2014,2015 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2014,2015,2017 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,20 +26,20 @@ Thing_declare (Interpreter);
 
 #include "FormantGrid_def.h"
 
-void FormantGrid_init (FormantGrid me, double tmin, double tmax, long numberOfFormants);
-autoFormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants);
+void FormantGrid_init (FormantGrid me, double tmin, double tmax, integer numberOfFormants);
+autoFormantGrid FormantGrid_createEmpty (double tmin, double tmax, integer numberOfFormants);
 
-autoFormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
+autoFormantGrid FormantGrid_create (double tmin, double tmax, integer numberOfFormants,
 	double initialFirstFormant, double initialFormantSpacing,
 	double initialFirstBandwidth, double initialBandwidthSpacing);
 
-double FormantGrid_getFormantAtTime (FormantGrid me, long formantNumber, double time);
-double FormantGrid_getBandwidthAtTime (FormantGrid me, long formantNumber, double time);
+double FormantGrid_getFormantAtTime (FormantGrid me, integer formantNumber, double time);
+double FormantGrid_getBandwidthAtTime (FormantGrid me, integer formantNumber, double time);
 
-void FormantGrid_addFormantPoint (FormantGrid me, long formantNumber, double time, double value);
-void FormantGrid_addBandwidthPoint (FormantGrid me, long formantNumber, double time, double value);
-void FormantGrid_removeFormantPointsBetween (FormantGrid me, long formantNumber, double tmin, double tmax);
-void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, long formantNumber, double tmin, double tmax);
+void FormantGrid_addFormantPoint (FormantGrid me, integer formantNumber, double time, double value);
+void FormantGrid_addBandwidthPoint (FormantGrid me, integer formantNumber, double time, double value);
+void FormantGrid_removeFormantPointsBetween (FormantGrid me, integer formantNumber, double tmin, double tmax);
+void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, integer formantNumber, double tmin, double tmax);
 
 void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid);
 autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid);

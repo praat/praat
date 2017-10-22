@@ -34,7 +34,6 @@
  djmw 20051116 TableOfReal_drawScatterPlot draw reverse permited by choosing xmin > xmax and/or ymin>ymax
  djmw 20060301 TableOfReal_meansByRowLabels extra medianize
  djmw 20060626 Extra NULL argument for ExecRE.
- djmw 20061021 printf expects %ld for 'long int'
  djmw 20070822 wchar
  djmw 20070902 Better error messages (object type and name feedback)
  djmw 20070614 updated to version 1.30 of regular expressions.
@@ -327,7 +326,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 	integer nrows;
 	autoNUMvector <real> irows (NUMstring_to_numbers (rows, & nrows), 1);
 	for (integer i = 1; i <= nrows; i ++) {
-		integer irow = (long) floor (irows [i]);
+		integer irow = Melder_iroundDown (irows [i]);
 		if (irow < 0 || irow > my numberOfRows) {
 			Melder_throw (U"Invalid row (", irow, U").");
 		}
@@ -358,7 +357,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 	double dx = (interbarsFraction + nrows + (nrows - 1) * interbarFraction) * bar_width;
 
 	for (long i = 1; i <= nrows; i++) {
-		long irow = (long) floor (irows[i]);
+		integer irow = Melder_iroundDown (irows[i]);
 		double xb = xoffsetFraction * bar_width + (i - 1) * (1.0 + interbarFraction) * bar_width;
 
 		double x1 = xb;
@@ -867,10 +866,10 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 		rowb = 1;
 	}
 	if (rowe > m) {
-		rowe = (long) floor (m);
+		rowe = Melder_iroundDown (m);
 	}
 	if (rowe <= rowb) {
-		rowb = 1; rowe = (long) floor (m);
+		rowb = 1; rowe = Melder_iroundDown (m);
 	}
 
 	if (xmax == xmin) {

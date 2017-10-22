@@ -36,18 +36,18 @@
 
 autoSpectrum Sound_to_Spectrum (Sound me, int fast) {
 	try {
-		long numberOfSamples = my nx;
-		const long numberOfChannels = my ny;
+		integer numberOfSamples = my nx;
+		const integer numberOfChannels = my ny;
 		if (fast) {
 			numberOfSamples = 2;
 			while (numberOfSamples < my nx) numberOfSamples *= 2;
 		}
-		long numberOfFrequencies = numberOfSamples / 2 + 1;   // 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2
+		integer numberOfFrequencies = numberOfSamples / 2 + 1;   // 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2
 
 		autoNUMvector <double> data (1, numberOfSamples);
 		if (numberOfChannels == 1) {
 			const double *channel = my z [1];
-			for (long i = 1; i <= my nx; i ++) {
+			for (integer i = 1; i <= my nx; i ++) {
 				data [i] = channel [i];
 			}
 			/*
@@ -56,13 +56,13 @@ autoSpectrum Sound_to_Spectrum (Sound me, int fast) {
 			*/
 			// so do nothing
 		} else {
-			for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+			for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 				const double *channel = my z [ichan];
-				for (long i = 1; i <= my nx; i ++) {
+				for (integer i = 1; i <= my nx; i ++) {
 					data [i] += channel [i];
 				}
 			}
-			for (long i = 1; i <= my nx; i ++) {
+			for (integer i = 1; i <= my nx; i ++) {
 				data [i] /= numberOfChannels;
 			}
 		}
@@ -78,7 +78,7 @@ autoSpectrum Sound_to_Spectrum (Sound me, int fast) {
 		double scaling = my dx;
 		re [1] = data [1] * scaling;
 		im [1] = 0.0;
-		for (long i = 2; i < numberOfFrequencies; i ++) {
+		for (integer i = 2; i < numberOfFrequencies; i ++) {
 			re [i] = data [i + i - 2] * scaling;   // data [2], data [4], ...
 			im [i] = data [i + i - 1] * scaling;   // data [3], data [5], ...
 		}
@@ -104,12 +104,12 @@ autoSound Spectrum_to_Sound (Spectrum me) {
 		bool originalNumberOfSamplesProbablyOdd = ( im [my nx] != 0.0 || my xmax - lastFrequency > 0.25 * my dx );
 		if (my x1 != 0.0)
 			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
-		long numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
+		integer numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
 		autoSound thee = Sound_createSimple (1, 1.0 / my dx, numberOfSamples * my dx);
 		double *amp = thy z [1];
 		double scaling = my dx;
 		amp [1] = re [1] * scaling;
-		for (long i = 2; i < my nx; i ++) {
+		for (integer i = 2; i < my nx; i ++) {
 			amp [i + i - 1] = re [i] * scaling;
 			amp [i + i] = im [i] * scaling;
 		}
@@ -173,7 +173,7 @@ autoSound Sound_filter_formula (Sound me, const char32 *formula, Interpreter int
 			autoSound him = Spectrum_to_Sound (spec.get());
 			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
-			for (long ichan = 1; ichan <= my ny; ichan ++) {
+			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
 				autoSpectrum spec = Sound_to_Spectrum (channel.get(), true);
 				Matrix_formula (spec.get(), formula, interpreter, nullptr);
@@ -196,7 +196,7 @@ autoSound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double 
 			autoSound him = Spectrum_to_Sound (spec.get());
 			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
-			for (long ichan = 1; ichan <= my ny; ichan ++) {
+			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
 				autoSpectrum spec = Sound_to_Spectrum (channel.get(), true);
 				Spectrum_passHannBand (spec.get(), fmin, fmax, smooth);
@@ -219,7 +219,7 @@ autoSound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double 
 			autoSound him = Spectrum_to_Sound (spec.get());
 			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
-			for (long ichan = 1; ichan <= my ny; ichan ++) {
+			for (integer ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
 				autoSpectrum spec = Sound_to_Spectrum (channel.get(), true);
 				Spectrum_stopHannBand (spec.get(), fmin, fmax, smooth);

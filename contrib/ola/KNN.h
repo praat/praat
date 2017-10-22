@@ -2,7 +2,7 @@
 #define _KNN_h_
 /* KNN.h
  *
- * Copyright (C) 2007-2008 Ola Söder
+ * Copyright (C) 2007-2008 Ola Söder, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,10 +54,6 @@
 
 #define kOla_TEN_FOLD_CROSS_VALIDATION 1
 #define kOla_LEAVE_ONE_OUT 2
-
-#define kOla_TO_TABLEOFREAL 1
-#define kOla_TO_TABLEOFREAL_ALL 2
-#define kOla_TO_CATEGORIES 4
 
 #define kOla_SQUARED_DISTANCE_WEIGHTED_VOTING 8
 #define kOla_DISTANCE_WEIGHTED_VOTING 16

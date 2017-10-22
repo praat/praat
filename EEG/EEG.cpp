@@ -286,9 +286,9 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 			thee = TextGrid_create (0, duration,
 				numberOfStatusBits == 8 ? U"S1 S2 S3 S4 S5 S6 S7 S8" : U"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", U"");
 			for (int bit = 1; bit <= numberOfStatusBits; bit ++) {
-				unsigned long bitValue = 1 << (bit - 1);
+				uint32 bitValue = 1 << (bit - 1);
 				IntervalTier tier = (IntervalTier) thy tiers->at [bit];
-				for (long i = 1; i <= my nx; i ++) {
+				for (integer i = 1; i <= my nx; i ++) {
 					uint32 previousValue = i == 1 ? 0 : (uint32) (int32) my z [numberOfChannels] [i - 1];
 					uint32 thisValue = (uint32) (int32) my z [numberOfChannels] [i];
 					if ((thisValue & bitValue) != (previousValue & bitValue)) {

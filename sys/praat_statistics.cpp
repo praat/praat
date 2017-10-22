@@ -58,7 +58,7 @@ void praat_statistics_exit () {
 	assert sizeOfInteger = sizeOfPointer
 	sizeOfFileOffset = extractNumber (report$, "A file offset is ")
 	assert sizeOfFileOffset = 64
-*/
+@*/
 void praat_reportIntegerProperties () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Integer properties of this edition of Praat on this computer:\n");

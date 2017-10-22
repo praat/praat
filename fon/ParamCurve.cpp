@@ -1,6 +1,6 @@
 /* ParamCurve.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +33,12 @@ Thing_implement (ParamCurve, Function, 2);
 
 void structParamCurve :: v_info () {
 	double xvalmin = 1e308, xvalmax = -1e308, yvalmin = 1e308, yvalmax = -1e308;
-	for (long i = 1; i <= our x -> nx; i ++) {
+	for (integer i = 1; i <= our x -> nx; i ++) {
 		double value = our x -> z [1] [i];
 		if (value < xvalmin) xvalmin = value;
 		if (value > xvalmax) xvalmax = value;
 	}
-	for (long i = 1; i <= y -> nx; i ++) {
+	for (integer i = 1; i <= y -> nx; i ++) {
 		double value = our y -> z [1] [i];
 		if (value < yvalmin) yvalmin = value;
 		if (value > yvalmax) yvalmax = value;
@@ -127,11 +127,11 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 	if (y1 == y2) { y1 -= 1.0; y2 += 1.0; }
 	if (dt <= 0.0)
 		dt = my x -> dx < my y -> dx ? my x -> dx : my y -> dx;
-	long numberOfPoints = (long) ceil ((t2 - t1) / dt) + 1;
+	integer numberOfPoints = (integer) ceil ((t2 - t1) / dt) + 1;
 	if (numberOfPoints > 0) {
 		autoNUMvector <double> x (1, numberOfPoints);
 		autoNUMvector <double> y (1, numberOfPoints);
-		for (long i = 1; i <= numberOfPoints; i ++) {
+		for (integer i = 1; i <= numberOfPoints; i ++) {
 			double t = i == numberOfPoints ? t2 : t1 + (i - 1) * dt;
 			double index = Sampled_xToIndex (my x.get(), t);
 			x [i] = NUM_interpolate_sinc (my x -> z [1], my x -> nx, index, 50);

@@ -32,7 +32,7 @@ static void bandFilter (Spectrum me, double fmid, double bandwidth) {
 	double *re = my z [1], *im = my z [2];
 	double fmin = fmid - bandwidth / 2.0, fmax = fmid + bandwidth / 2.0;
 	double twopibybandwidth = 2.0 * NUMpi / bandwidth;
-	for (long col = 1; col <= my nx; col ++) {
+	for (integer col = 1; col <= my nx; col ++) {
 		double x = my x1 + (col - 1) * my dx;
 		if (x < fmin || x > fmax) {
 			re [col] = 0.0;
@@ -53,8 +53,8 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 {
 	try {
 		autoSound envelope [1+100];
-		long nenvelopes = (long) floor ((fmax - fmin) / step);
-		for (long ienvelope = 1; ienvelope <= 100; ienvelope ++)
+		integer nenvelopes = Melder_iroundDown ((fmax - fmin) / step);
+		for (integer ienvelope = 1; ienvelope <= 100; ienvelope ++)
 			Melder_assert (! envelope [ienvelope].get());
 
 		/*
@@ -82,12 +82,12 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		autoSound flat = LPC_and_Sound_filterInverse (lpc.get(), original10k.get());
 		autoSpectrum flatSpectrum = Sound_to_Spectrum (flat.get(), true);
 		autoSpectrum hilbertSpectrum = Data_copy (flatSpectrum.get());
-		for (long col = 1; col <= hilbertSpectrum -> nx; col ++) {
+		for (integer col = 1; col <= hilbertSpectrum -> nx; col ++) {
 			hilbertSpectrum -> z [1] [col] = flatSpectrum -> z [2] [col];
 			hilbertSpectrum -> z [2] [col] = - flatSpectrum -> z [1] [col];
 		}
 		double fmid = fmin;
-		long ienvelope = 1;
+		integer ienvelope = 1;
 		autoMelderMonitor monitor (U"Computing Hilbert envelopes...");
 		while (fmid <= fmax) {
 			/*
@@ -115,7 +115,7 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 			/*
 			 * 3c: Compute the Hilbert envelope of the band-passed flat signal.
 			 */
-			for (long col = 1; col <= envelope [ienvelope] -> nx; col ++) {
+			for (integer col = 1; col <= envelope [ienvelope] -> nx; col ++) {
 				double self = envelope [ienvelope] -> z [1] [col], other = hilbertBand -> z [1] [col];
 				envelope [ienvelope] -> z [1] [col] = sqrt (self * self + other * other);
 			}
@@ -132,8 +132,8 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		 */
 		nenvelopes = ienvelope - 1;
 		autoMatrix cc = Matrix_createSimple (nenvelopes, nenvelopes);
-		for (long row = 2; row <= nenvelopes; row ++) {
-			for (long col = 1; col <= row - 1; col ++) {
+		for (integer row = 2; row <= nenvelopes; row ++) {
+			for (integer col = 1; col <= row - 1; col ++) {
 				autoSound crossCorrelation = Sounds_crossCorrelate_short (envelope [row].get(), envelope [col].get(), -3.1e-4, 3.1e-4, true);
 				/*
 				 * Step 5: the maximum of each correlation function
@@ -146,8 +146,8 @@ autoMatrix Sound_to_Harmonicity_GNE (Sound me,
 		/*
 		 * Step 6: maximum of the maxima, ignoring those too close to the diagonal.
 		 */	
-		for (long row = 2; row <= nenvelopes; row ++) {
-			for (long col = 1; col <= row - 1; col ++) {
+		for (integer row = 2; row <= nenvelopes; row ++) {
+			for (integer col = 1; col <= row - 1; col ++) {
 				if (labs (row - col) < bandwidth / 2.0 / step) {
 					cc -> z [row] [col] = 0.0;
 				}

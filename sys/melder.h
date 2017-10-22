@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,8 @@ typedef uint64_t uint64;
 #ifndef UINT24_MAX
 	#define UINT24_MAX   16777216
 #endif
+#define INTEGER_MAX  ( sizeof (integer) == 4 ? INT32_MAX : INT64_MAX )
+#define INTEGER_MIN  ( sizeof (integer) == 4 ? INT32_MIN : INT64_MIN )
 /*
 	The bounds of the contiguous set of integers that in a "double" can represent only themselves.
 */
@@ -326,7 +328,7 @@ const char32 * Melder_truncate (const char32 *string, int64 width);   // will cu
 const char32 * Melder_padOrTruncate (int64 width, const char32 *string);   // will cut away, or append spaces to, the left of 'string' until 'width' is reached
 const char32 * Melder_padOrTruncate (const char32 *string, int64 width);   // will cut away, or append spaces to, the right of 'string' until 'width' is reached
 
-/********** CONSOLE **********/
+#pragma mark - CONSOLE
 
 void Melder_writeToConsole (const char32 *message, bool useStderr);
 
@@ -656,35 +658,17 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 // Instead we use the 40 digits computed by Johann von Soldner in 1809.
 #define NUM_euler  0.5772156649015328606065120900824024310422
 
-/*
-	Ideally, `undefined` should be #defined as NAN (or 0.0/0.0),
-	because that would make sure that
-		1.0 / undefined
-	evaluates as undefined.
-	However, we cannot do that as long as Praat contains any instances of
-		if (x == undefined) { ... }
-	because that condition would evaluate as false even if x were undefined
-	(because NAN is unequal to NAN).
-	Therefore, we must define, for the moment, `undefined` as positive infinity,
-	because positive infinity can be compared to itself
-	(i.e. Inf is equal to Inf). The drawback is that
-		1.0 / undefined
-	will evaluate as 0.0, i.e. this version of `undefined` does not propagate properly.
-*/
-#define undefined  (0.0/0.0)
-//#define undefined  NAN   /* a future definition? */
-//#define undefined  (0.0/0.0)   /* an alternative future definition */
+#define undefined  (0.0/0.0)   /* NaN */
 
 /*
-	Ideally, isdefined() should capture not only `undefined`, but all infinities and nans.
+	isdefined() shall capture not only `undefined`, but all infinities and NaNs.
 	This can be done with a single test for the set bits in 0x7FF0000000000000,
 	at least for 64-bit IEEE implementations. The correctness of this assumption is checked in sys/praat.cpp.
-	The portable version of isdefined() would involve both isinf() and isnan(),
+	The portable version of isdefined() involves both isinf() and isnan(), or perhaps just isfinite(),
 	but that would be slower (as tested in fon/Praat_tests.cpp)
 	and it would also get into problems on some platforms whenever both <cmath> and <math.h> are included,
 	as in dwsys/NUMcomplex.cpp.
 */
-//#define isdefined(x)  ((x) != NUMundefined)   /* an old definition, not good at capturing nans */
 //inline static bool isdefined (double x) { return ! isinf (x) && ! isnan (x); }   /* portable */
 inline static bool isdefined (double x) { return ((* (uint64_t *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000; }
 inline static bool isundef (double x) { return ((* (uint64_t *) & x) & 0x7FF0000000000000) == 0x7FF0000000000000; }
@@ -1255,6 +1239,8 @@ typedef autodatavector <char *> autostring8vector;
 
 class autonumvec;   // forward declaration, needed in the declaration of numvec
 
+enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
+
 class numvec {
 public:
 	double *at;
@@ -1262,8 +1248,8 @@ public:
 public:
 	numvec () = default;   // for use in a union
 	numvec (double *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
-	numvec (integer givenSize, bool zero) {
-		our _initAt (givenSize, zero);
+	numvec (integer givenSize, kTensorInitializationType initializationType) {
+		our _initAt (givenSize, initializationType);
 		our size = givenSize;
 	}
 	numvec (const numvec& other) = default;
@@ -1281,7 +1267,7 @@ public:
 		our size = 0;
 	}
 protected:
-	void _initAt (integer givenSize, bool zero);
+	void _initAt (integer givenSize, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
 };
 
@@ -1297,7 +1283,7 @@ protected:
 class autonumvec : public numvec {
 public:
 	autonumvec (): numvec (nullptr, 0) { }   // come into existence without a payload
-	autonumvec (integer givenSize, bool zero): numvec (givenSize, zero) { }   // come into existence and manufacture a payload
+	autonumvec (integer givenSize, kTensorInitializationType initializationType): numvec (givenSize, initializationType) { }   // come into existence and manufacture a payload
 	autonumvec (double *givenAt, integer givenSize): numvec (givenAt, givenSize) { }   // come into existence and buy a payload from a non-autonumvec
 	explicit autonumvec (numvec x): numvec (x.at, x.size) { }   // come into existence and buy a payload from a non-autonumvec (disable implicit conversion)
 	~autonumvec () {   // destroy the payload (if any)
@@ -1312,9 +1298,9 @@ public:
 	void reset () {   // destroy the current payload (if any) and have no new payload
 		our numvec :: reset ();
 	}
-	void reset (integer newSize, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
+	void reset (integer newSize, kTensorInitializationType initializationType) {   // destroy the current payload (if any) and manufacture a new payload
 		our numvec :: reset ();   // exception guarantee: leave *this in a reasonable state...
-		our _initAt (newSize, zero);   // ...in case this line throws an exception
+		our _initAt (newSize, initializationType);   // ...in case this line throws an exception
 		our size = newSize;
 	}
 	void reset (double *newAt, integer newSize) {   // destroy the current payload (if any) and buy a new payload
@@ -1361,8 +1347,8 @@ public:
 public:
 	nummat () = default;   // for use in a union
 	nummat (double **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	nummat (integer givenNrow, integer givenNcol, bool zero) {
-		our _initAt (givenNrow, givenNcol, zero);
+	nummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {
+		our _initAt (givenNrow, givenNcol, initializationType);
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
@@ -1382,7 +1368,7 @@ public:
 		our ncol = 0;
 	}
 protected:
-	void _initAt (integer givenNrow, integer givenNcol, bool zero);
+	void _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
 };
 
@@ -1398,7 +1384,7 @@ protected:
 class autonummat : public nummat {
 public:
 	autonummat (): nummat { nullptr, 0, 0 } { }   // come into existence without a payload
-	autonummat (integer givenNrow, integer givenNcol, bool zero): nummat { givenNrow, givenNcol, zero } { }   // come into existence and manufacture a payload
+	autonummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType): nummat { givenNrow, givenNcol, initializationType } { }   // come into existence and manufacture a payload
 	autonummat (double **givenAt, integer givenNrow, integer givenNcol): nummat (givenAt, givenNrow, givenNcol) { }   // come into existence and buy a payload from a non-autonummat
 	explicit autonummat (nummat x): nummat (x.at, x.nrow, x.ncol) { }   // come into existence and buy a payload from a non-autonummat (disable implicit conversion)
 	~autonummat () {   // destroy the payload (if any)
@@ -1413,9 +1399,9 @@ public:
 	void reset () {   // destroy the current payload (if any) and have no new payload
 		our nummat :: reset ();
 	}
-	void reset (integer newNrow, integer newNcol, bool zero) {   // destroy the current payload (if any) and manufacture a new payload
+	void reset (integer newNrow, integer newNcol, kTensorInitializationType initializationType) {   // destroy the current payload (if any) and manufacture a new payload
 		our nummat :: reset ();   // exception guarantee: leave *this in a reasonable state...
-		our _initAt (newNrow, newNcol, zero);   // ...in case this line throws an exception
+		our _initAt (newNrow, newNcol, initializationType);   // ...in case this line throws an exception
 		our nrow = newNrow;
 		our ncol = newNcol;
 	}
@@ -1925,6 +1911,7 @@ void Melder_appendError (Melder_12_OR_13_ARGS);
 void Melder_appendError (Melder_14_OR_15_ARGS);
 void Melder_appendError (Melder_16_TO_19_ARGS);
 #define Melder_throw(...)  do { Melder_appendError (__VA_ARGS__); throw MelderError (); } while (false)
+#define Melder_require(condition, ...)  do { if (! (condition)) Melder_throw (__VA_ARGS__); } while (false)
 
 void Melder_flushError ();
 void Melder_flushError (Melder_1_ARG);
@@ -2132,7 +2119,96 @@ public:
 	Graphics graphics () { return _graphics; }
 };
 
-/********** RECORD AND PLAY ROUTINES **********/
+#pragma mark - REAL TO INTEGER CONVERSION
+
+inline static double Melder_roundDown (double x) {
+	return floor (x);
+}
+
+inline static integer Melder_iroundDown (double x) {
+	double xround = Melder_roundDown (x);
+	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,   // this formulation handles NaN correctly
+		U"When rounding down the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_roundUp (double x) {
+	return ceil (x);
+}
+
+inline static integer Melder_iroundUp (double x) {
+	double xround = Melder_roundUp (x);
+	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
+		U"When rounding up the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_roundTowardsZero (double x) {
+	return x >= 0.0 ? Melder_roundDown (x) : Melder_roundUp (x);
+}
+
+inline static integer Melder_iroundTowardsZero (double x) {
+	Melder_require (x >= (double) INTEGER_MIN && x <= (double) INTEGER_MAX,
+		U"When rounding the real value ", x, U" towards zero, the result cannot be represented in an integer.");
+	return (integer) x;
+}
+
+inline static double Melder_roundAwayFromZero (double x) {
+	return x >= 0.0 ? Melder_roundUp (x) : Melder_roundDown (x);
+}
+
+inline static integer Melder_iroundAwayFromZero (double x) {
+	double xround = Melder_roundAwayFromZero (x);
+	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
+		U"When rounding the real value ", x, U" away from zero, the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_round_tieUp (double x) {
+	return Melder_roundDown (x + 0.5);
+}
+
+inline static integer Melder_iround_tieUp (double x) {
+	double xround = Melder_round_tieUp (x);
+	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
+		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_round_tieDown (double x) {
+	return Melder_roundUp (x - 0.5);
+}
+
+inline static integer Melder_iround_tieDown (double x) {
+	double xround = Melder_round_tieDown (x);
+	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
+		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_round_tieTowardsZero (double x) {
+	return x >= 0.0 ? Melder_round_tieDown (x) : Melder_round_tieUp (x);
+}
+
+inline static integer Melder_iround_tieTowardsZero (double x) {
+	double xround = Melder_round_tieTowardsZero (x);
+	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
+		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+inline static double Melder_round_tieAwayFromZero (double x) {
+	return x >= 0.0 ? Melder_round_tieUp (x) : Melder_round_tieDown (x);
+}
+
+inline static integer Melder_iround_tieAwayFromZero (double x) {
+	double xround = Melder_round_tieAwayFromZero (x);
+	Melder_require (xround >= (double) INTEGER_MIN && xround <= (double) INTEGER_MAX,
+		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
+	return (integer) xround;
+}
+
+#pragma mark - RECORD AND PLAY FUNCTIONS
 
 int Melder_record (double duration);
 int Melder_recordFromFile (MelderFile file);
@@ -2273,22 +2349,22 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, intege
 void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
 void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
 
-int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
+int MelderFile_checkSoundFile (MelderFile file, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples);
 /* Returns information about a just opened audio file.
  * The return value is the audio file type, or 0 if it is not a sound file or in case of error.
  * The data start at 'startOfData' bytes from the start of the file.
  */
 int Melder_bytesPerSamplePoint (int encoding);
-void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double **buffer, integer numberOfSamples);
+void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, double **buffer, integer numberOfSamples);
 /* Reads channels into buffer [ichannel], which are base-1.
  */
-void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short *buffer, integer numberOfSamples);
+void Melder_readAudioToShort (FILE *f, integer numberOfChannels, int encoding, short *buffer, integer numberOfSamples);
 /* If stereo, buffer will contain alternating left and right values.
  * Buffer is base-0.
  */
-void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped);
-void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, integer numberOfSamples);
+void MelderFile_writeFloatToAudio (MelderFile file, integer numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped);
+void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, int encoding, const short *buffer, integer numberOfSamples);
 
 /********** QUANTITY **********/
 

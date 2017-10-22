@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1997-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "OTMulti.h"
 #include "OTGrammarEditor.h"
 #include "OTMultiEditor.h"
-#include "RBM.h"
+#include "DeepBeliefNetwork.h"
 
 #include "praat_TableOfReal.h"
 
@@ -441,7 +441,7 @@ DO
 
 DIRECT (INTEGER_OTGrammar_getNumberOfConstraints) {
 	INTEGER_ONE (OTGrammar)
-		long result = my numberOfConstraints;
+		integer result = my numberOfConstraints;
 	INTEGER_ONE_END (U" constraints")
 }
 
@@ -480,7 +480,7 @@ DO
 
 DIRECT (INTEGER_OTGrammar_getNumberOfTableaus) {
 	INTEGER_ONE (OTGrammar)
-		long result = my numberOfTableaus;
+		integer result = my numberOfTableaus;
 	INTEGER_ONE_END (U" tableaus")
 }
 
@@ -502,7 +502,7 @@ DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = my tableaus [tableauNumber]. numberOfCandidates;
+		integer result = my tableaus [tableauNumber]. numberOfCandidates;
 	NUMBER_ONE_END (U" candidates in tableau ", tableauNumber)
 }
 
@@ -534,7 +534,7 @@ DO
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
-		long result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
+		integer result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
 	NUMBER_ONE_END (U" violations")
 }
 
@@ -547,7 +547,7 @@ DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = OTGrammar_getWinner (me, tableauNumber);
+		integer result = OTGrammar_getWinner (me, tableauNumber);
 	NUMBER_ONE_END (U" (winner in tableau ", tableauNumber, U")")
 }
 
@@ -567,7 +567,7 @@ DO
 			Melder_throw (U"The specified tableau (number 2) should not exceed the number of tableaus.");
 		if (candidateNumber2 > my tableaus [tableauNumber2]. numberOfCandidates)
 			Melder_throw (U"The specified candidate (number 2) should not exceed the number of candidates for this tableau.");
-		long result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
+		integer result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
 	NUMBER_ONE_END (result == -1 ? U" (candidate 1 is better)" :
 					result == +1 ? U" (candidate 2 is better)" : U" (candidates are equally good)")
 }
@@ -579,7 +579,7 @@ DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
+		integer result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
 	NUMBER_ONE_END (U" optimal candidates in tableau ", tableauNumber)
 }
 
@@ -593,7 +593,7 @@ DO
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		long result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
+		integer result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
 	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
@@ -607,7 +607,7 @@ DO
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		long result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
+		integer result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
 	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
@@ -616,7 +616,7 @@ FORM (STRING_OTGrammar_getInterpretiveParse, U"OTGrammar: Interpretive parse", n
 	OK
 DO
 	FIND_ONE (OTGrammar)
-		long bestInput, bestOutput;
+		integer bestInput, bestOutput;
 		OTGrammar_getInterpretiveParse (me, partialOutput, & bestInput, & bestOutput);
 		Melder_information (U"Best input = ", bestInput, U": ", my tableaus [bestInput]. input,
 			U"\nBest output = ", bestOutput, U": ", my tableaus [bestInput]. candidates [bestOutput]. output);
@@ -628,7 +628,7 @@ FORM (BOOLEAN_OTGrammar_isPartialOutputGrammatical, U"Is partial output grammati
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		long result = OTGrammar_isPartialOutputGrammatical (me, partialOutput);
+		integer result = OTGrammar_isPartialOutputGrammatical (me, partialOutput);
 	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
@@ -637,7 +637,7 @@ FORM (BOOLEAN_OTGrammar_isPartialOutputSinglyGrammatical, U"Is partial output si
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		long result = OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput);
+		integer result = OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput);
 	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
@@ -887,13 +887,13 @@ DO
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsGrammatical) {
 	NUMBER_TWO (OTGrammar, Strings)
-		long result = OTGrammar_areAllPartialOutputsGrammatical (me, you);
+		integer result = OTGrammar_areAllPartialOutputsGrammatical (me, you);
 	NUMBER_TWO_END (result ? U" (all grammatical)" : U" (not all grammatical)")
 }
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
 	NUMBER_TWO (OTGrammar, Strings)
-		long result = OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you);
+		integer result = OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you);
 	NUMBER_TWO_END (result ? U" (all singly grammatical)" : U" (not all singly grammatical)")
 }
 
@@ -1119,7 +1119,7 @@ FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGra
 	OK
 DO
 	FIND_TWO (OTGrammar, PairDistribution)
-		long result;
+		integer result;
 		try {
 			result = OTGrammar_PairDistribution_getMinimumNumberCorrect (me, you,
 				evaluationNoise, replicationsPerInput);
@@ -1225,7 +1225,7 @@ DIRECT (WINDOW_OTMulti_viewAndEdit) {
 
 DIRECT (INTEGER_OTMulti_getNumberOfConstraints) {
 	NUMBER_ONE (OTMulti)
-		long result = my numberOfConstraints;
+		integer result = my numberOfConstraints;
 	NUMBER_ONE_END (U" constraints")
 }
 
@@ -1245,7 +1245,7 @@ FORM (INTEGER_OTMulti_getConstraintIndexFromName, U"OTMulti: Get constraint numb
 	OK
 DO
 	NUMBER_ONE (OTMulti)
-		long result = OTMulti_getConstraintIndexFromName (me, constraintName);
+		integer result = OTMulti_getConstraintIndexFromName (me, constraintName);
 	NUMBER_ONE_END (U" (index of constraint ", constraintName, U")")
 }
 
@@ -1273,7 +1273,7 @@ DO
 
 DIRECT (INTEGER_OTMulti_getNumberOfCandidates) {
 	NUMBER_ONE (OTMulti)
-		long result = my numberOfCandidates;
+		integer result = my numberOfCandidates;
 	NUMBER_ONE_END (U" candidates")
 }
 
@@ -1298,7 +1298,7 @@ DO
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
-		long result = my candidates [candidateNumber]. marks [constraintNumber];
+		integer result = my candidates [candidateNumber]. marks [constraintNumber];
 	NUMBER_ONE_END (U" violations")
 }
 
@@ -1308,7 +1308,7 @@ FORM (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
 	OK
 DO
 	NUMBER_ONE (OTMulti)
-		long result = OTMulti_getWinner (me, partialForm1, partialForm2);
+		integer result = OTMulti_getWinner (me, partialForm1, partialForm2);
 	NUMBER_ONE_END (U" (winner)")
 }
 
@@ -1641,13 +1641,181 @@ DO
 	MODIFY_FIRST_OF_TWO_END
 }
 
+// MARK: - DEEP BELIEF NETWORK
+
+// MARK: New
+
+FORM (NEW1_Create_DeepBeliefNetwork, U"Create DeepBeliefNetwork", nullptr) {
+	WORD (name, U"Name", U"network")
+	NUMVEC (numbersOfNodes, U"Numbers of nodes", U"{ 30, 50, 20 }")
+	BOOLEAN (inputsAreBinary, U"Inputs are binary", false)
+	OK
+DO
+	CREATE_ONE
+		autoDeepBeliefNetwork result = DeepBeliefNetwork_create (numbersOfNodes, inputsAreBinary);
+	CREATE_ONE_END (name)
+}
+
+// MARK: Modify
+
+FORM (MODIFY_DeepBeliefNetwork_spreadUp, U"DeepBeliefNetwork: Spread up", nullptr) {
+	RADIO_ENUM (activationType, U"Activation type", kDeepBeliefNetwork_activationType, STOCHASTIC)
+	OK
+DO
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_spreadUp (me, activationType);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_spreadDown, U"DeepBeliefNetwork: Spread down", nullptr) {
+	RADIO_ENUM (activationType, U"Activation type", kDeepBeliefNetwork_activationType, DETERMINISTIC)
+	OK
+DO
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_spreadDown (me, activationType);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_DeepBeliefNetwork_spreadUp_reconstruction) {
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_spreadUp_reconstruction (me);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_DeepBeliefNetwork_spreadDown_reconstruction) {
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_spreadDown_reconstruction (me);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_DeepBeliefNetwork_sampleInput) {
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_sampleInput (me);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_DeepBeliefNetwork_sampleOutput) {
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_sampleOutput (me);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_update, U"DeepBeliefNetwork: Update", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_update (me, learningRate);
+	MODIFY_EACH_END
+}
+
+// MARK: Extract
+
+DIRECT (NEW_DeepBeliefNetwork_extractInputActivities) {
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractInputActivities (me);
+	CONVERT_EACH_END (my name, U"_inputActivities")
+}
+
+DIRECT (NEW_DeepBeliefNetwork_extractOutputActivities) {
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractOutputActivities (me);
+	CONVERT_EACH_END (my name, U"_outputActivities")
+}
+
+DIRECT (NEW_DeepBeliefNetwork_extractInputReconstruction) {
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractInputReconstruction (me);
+	CONVERT_EACH_END (my name, U"_inputReconstruction")
+}
+
+DIRECT (NEW_DeepBeliefNetwork_extractOutputReconstruction) {
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractOutputReconstruction (me);
+	CONVERT_EACH_END (my name, U"_outputReconstruction")
+}
+
+FORM (NEW_DeepBeliefNetwork_extractInputBiases, U"DeepBeliefNetwork: Extract input biases", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractInputBiases (me, layerNumber);
+	CONVERT_EACH_END (my name, U"_inputBiases")
+}
+
+FORM (NEW_DeepBeliefNetwork_extractOutputBiases, U"DeepBeliefNetwork: Extract output biases", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractOutputBiases (me, layerNumber);
+	CONVERT_EACH_END (my name, U"_outputBiases")
+}
+
+FORM (NEW_DeepBeliefNetwork_extractWeights, U"DeepBeliefNetwork: Extract weights", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractWeights (me, layerNumber);
+	CONVERT_EACH_END (my name, U"_weights")
+}
+
+FORM (NUMMAT_DeepBeliefNetwork_getWeights, U"DeepBeliefNetwork: Get weigths", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	NUMMAT_ONE (DeepBeliefNetwork)
+		autonummat result = DeepBeliefNetwork_getWeights_nummat (me, layerNumber);
+	NUMMAT_ONE_END
+}
+
+// MARK: - RBM & PATTERN
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_applyToInput, U"DeepBeliefNetwork & PatternList: Apply to input", nullptr) {
+	NATURAL (rowNumber, U"Row number", U"1")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_applyToInput (me, you, rowNumber);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_applyToOutput, U"DeepBeliefNetwork & PatternList: Apply to output", nullptr) {
+	NATURAL (rowNumber, U"Row number", U"1")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_applyToOutput (me, you, rowNumber);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_learn, U"DeepBeliefNetwork & PatternList: Learn", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_learn (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_learnByLayer, U"DeepBeliefNetwork & PatternList: Learn by layer", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_learnByLayer (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO_END
+}
+
 // MARK: - buttons
 
 void praat_uvafon_gram_init ();
 void praat_uvafon_gram_init () {
 	Thing_recognizeClassesByName (classNetwork,
 		classOTGrammar, classOTHistory, classOTMulti,
-		classRBM,
+		classRBM, classDeepBeliefNetwork,
 		nullptr);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
@@ -1772,6 +1940,7 @@ void praat_uvafon_gram_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create rectangular Network...", nullptr, 1, NEW1_Create_rectangular_Network);
 		praat_addMenuCommand (U"Objects", U"New", U"Create rectangular Network (vertical)...", nullptr, 1, NEW1_Create_rectangular_Network_vertical);
 		praat_addMenuCommand (U"Objects", U"New", U"Create RBM...", nullptr, 1, NEW1_Create_RBM);
+		praat_addMenuCommand (U"Objects", U"New", U"Create DeepBeliefNetwork...", nullptr, 1, NEW1_Create_DeepBeliefNetwork);
 
 	praat_addAction1 (classNetwork, 0, U"Draw...", nullptr, 0, GRAPHICS_Network_draw);
 	praat_addAction1 (classNetwork, 1, U"Tabulate -", nullptr, 0, nullptr);
@@ -1820,6 +1989,30 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, MODIFY_RBM_PatternList_applyToInput);
 	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_RBM_PatternList_applyToOutput);
 	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_RBM_PatternList_learn);
+
+	praat_addAction1 (classDeepBeliefNetwork, 0, U"Query", nullptr, 0, nullptr);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Get weights...", nullptr, 0, NUMMAT_DeepBeliefNetwork_getWeights);
+	praat_addAction1 (classDeepBeliefNetwork, 0, U"Modify", nullptr, 0, nullptr);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread up...", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadUp);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread down...", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadDown);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread up (reconstruction)", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadUp_reconstruction);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread down (reconstruction)", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadDown_reconstruction);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Sample input", nullptr, 0, MODIFY_DeepBeliefNetwork_sampleInput);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Sample output", nullptr, 0, MODIFY_DeepBeliefNetwork_sampleOutput);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Update...", nullptr, 0, MODIFY_DeepBeliefNetwork_update);
+	praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract", nullptr, 0, nullptr);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input activities", nullptr, 0, NEW_DeepBeliefNetwork_extractInputActivities);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output activities", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputActivities);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input reconstruction", nullptr, 0, NEW_DeepBeliefNetwork_extractInputReconstruction);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output reconstruction", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputReconstruction);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input biases...", nullptr, 0, NEW_DeepBeliefNetwork_extractInputBiases);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output biases...", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputBiases);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract weights...", nullptr, 0, NEW_DeepBeliefNetwork_extractWeights);
+
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_applyToInput);
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_applyToOutput);
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_learn);
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Learn by layer...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_learnByLayer);
 }
 
 /* End of file praat_gram.cpp */

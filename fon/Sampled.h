@@ -31,12 +31,12 @@
 
 template <typename T> static inline double Sampled_indexToX (Sampled me, T index) { return my x1 + (index - (T) 1) * my dx; }
 static inline double Sampled_xToIndex (Sampled me, double        x) { return (x - my x1) / my dx + 1.0; }
-static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return (integer) floor ((x - my x1) / my dx + 1.0); }
+static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return Melder_iroundDown ((x - my x1) / my dx + 1.0); }
 static inline integer Sampled_xToHighIndex    (Sampled me, double x) { return (integer) ceil  ((x - my x1) / my dx + 1.0); }
 static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return (integer) round ((x - my x1) / my dx + 1.0); }
 
 static inline autonumvec Sampled_getX_numvec (Sampled me) {
-	autonumvec result (my nx, false);
+	autonumvec result (my nx, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= my nx; i ++)
 		result [i] = my x1 + (i - 1) * my dx;
 	return result;
@@ -78,37 +78,37 @@ void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeSt
 			result -> x1 == firstTime;
 */
 
-double Sampled_getValueAtSample (Sampled me, long isamp, long ilevel, int unit);
-double Sampled_getValueAtX (Sampled me, double x, long ilevel, int unit, bool interpolate);
-long Sampled_countDefinedSamples (Sampled me, long ilevel, int unit);
-double * Sampled_getSortedValues (Sampled me, long ilevel, int unit, long *numberOfValues);
+double Sampled_getValueAtSample (Sampled me, integer sampleNumber, integer level, int unit);
+double Sampled_getValueAtX (Sampled me, double x, integer level, int unit, bool interpolate);
+integer Sampled_countDefinedSamples (Sampled me, integer level, int unit);
+double * Sampled_getSortedValues (Sampled me, integer level, int unit, integer *numberOfValues);
 
 double Sampled_getQuantile
-	(Sampled me, double xmin, double xmax, double quantile, long ilevel, int unit);
+	(Sampled me, double xmin, double xmax, double quantile, integer level, int unit);
 double Sampled_getMean
-	(Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate);
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
 double Sampled_getMean_standardUnit
-	(Sampled me, double xmin, double xmax, long ilevel, int averagingUnit, bool interpolate);
+	(Sampled me, double xmin, double xmax, integer level, int averagingUnit, bool interpolate);
 double Sampled_getIntegral
-	(Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate);
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
 double Sampled_getIntegral_standardUnit
-	(Sampled me, double xmin, double xmax, long ilevel, int averagingUnit, bool interpolate);
+	(Sampled me, double xmin, double xmax, integer level, int averagingUnit, bool interpolate);
 double Sampled_getStandardDeviation
-	(Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate);
+	(Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
 double Sampled_getStandardDeviation_standardUnit
-	(Sampled me, double xmin, double xmax, long ilevel, int averagingUnit, bool interpolate);
+	(Sampled me, double xmin, double xmax, integer level, int averagingUnit, bool interpolate);
 
-void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate,
+void Sampled_getMinimumAndX (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate,
 	double *return_minimum, double *return_xOfMinimum);
-double Sampled_getMinimum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate);
-double Sampled_getXOfMinimum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate);
-void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate,
+double Sampled_getMinimum (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
+double Sampled_getXOfMinimum (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
+void Sampled_getMaximumAndX (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate,
 	double *return_maximum, double *return_xOfMaximum);
-double Sampled_getMaximum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate);
-double Sampled_getXOfMaximum (Sampled me, double xmin, double xmax, long ilevel, int unit, bool interpolate);
+double Sampled_getMaximum (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
+double Sampled_getXOfMaximum (Sampled me, double xmin, double xmax, integer level, int unit, bool interpolate);
 
 void Sampled_drawInside
-	(Sampled me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool speckle, long ilevel, int unit);
+	(Sampled me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool speckle, integer level, int unit);
 
 /* End of file Sampled.h */
 #endif

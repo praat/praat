@@ -598,7 +598,7 @@ FORM (NEW_LFCC_to_LPC, U"LFCC: To LPC", U"LFCC: To LPC...") {
 	INTEGER (numberOfCoefficients, U"Number of coefficients", U"0")
 	OK
 DO
-	REQUIRE (numberOfCoefficients >= 0, U"Number of coefficients must be greater or equal zero.")
+	Melder_require (numberOfCoefficients >= 0, U"Number of coefficients must be greater or equal zero.");
 	CONVERT_EACH (LFCC)
 		autoLPC result = LFCC_to_LPC (me, numberOfCoefficients);
 	CONVERT_EACH_END (my name);
@@ -657,7 +657,8 @@ FORM (INTEGER_LPC_getNumberOfCoefficients, U"LPC: Get number of coefficients", U
 	OK
 DO
 	INTEGER_ONE (LPC)
-		REQUIRE (frameNumber <= my nx, Melder_cat (U"Frame number is too large.\n\nPlease choose a number between 1 and ", my nx))
+		Melder_require (frameNumber <= my nx,
+			U"Your frame number (", frameNumber, U") is too large. It should be between 1 and ", my nx, U".");
 		long result = my d_frames[frameNumber].nCoefficients;
 	INTEGER_ONE_END (U" coefficients")
 }
@@ -688,7 +689,7 @@ FORM (NEW_LPC_to_LFCC, U"LPC: To LFCC", U"LPC: To LFCC...") {
 	INTEGER (numberOfCoefficients, U"Number of coefficients", U"0")
 	OK
 DO
-	REQUIRE (numberOfCoefficients >= 0, U"The number of coefficients should be greater than or equal to zero.")
+	Melder_require (numberOfCoefficients >= 0, U"The number of coefficients should be greater than or equal to zero.");
 	CONVERT_EACH (LPC)
 		autoLFCC result = LPC_to_LFCC (me, numberOfCoefficients);
 	CONVERT_EACH_END (my name)
@@ -891,7 +892,7 @@ FORM (NEW_Sound_to_MFCC, U"Sound: To MFCC", U"Sound: To MFCC...") {
 	REAL (maximumFrequency, U"Maximum frequency (mel)", U"0.0");
 	OK
 DO
-	REQUIRE (numberOfCoefficients < 25, U"The number of coefficients should be less than 25.")
+	Melder_require (numberOfCoefficients < 25, U"The number of coefficients should be less than 25.");
 	CONVERT_EACH (Sound)
 		autoMFCC result = Sound_to_MFCC (me, numberOfCoefficients, windowLength, timeStep, firstFilterFrequency, maximumFrequency, distancBetweenFilters);
 	CONVERT_EACH_END (my name)
@@ -929,8 +930,8 @@ FORM (NEW_VocalTract_to_VocalTractTier, U"VocalTract: To VocalTractTier", nullpt
 	REAL (time, U"Insert at time (s)", U"0.5")
 	OK
 DO
-	REQUIRE (fromTime < toTime, U"The start time must be before the end time.")
-	REQUIRE (time >= fromTime && time <= toTime, U"The insert time must be between start and end time.")
+	Melder_require (fromTime < toTime, U"Your start time should be before your end time.");
+	Melder_require (time >= fromTime && time <= toTime, U"Your insert time should be between your start and end times.");
 	CONVERT_EACH (VocalTract)
 		autoVocalTractTier result = VocalTract_to_VocalTractTier (me, fromTime, toTime, time);
 	CONVERT_EACH_END (my name)

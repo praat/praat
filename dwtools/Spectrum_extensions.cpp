@@ -96,7 +96,7 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad, dou
 
 static int phase_check (double pv, double *phase, double thlcon) {
 	double a0 = (*phase - pv) / NUM2pi;
-	long k = (long) floor (a0);   // ppgb: instead of truncation toward zero
+	integer k = Melder_iroundDown (a0);   // ppgb: instead of truncation toward zero
 	double a1 = pv + k * NUM2pi;
 	double a2 = a1 + SIGN (NUM2pi, a0);
 	double a3 = fabs (a1 - *phase);
@@ -214,7 +214,7 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 		tbs.thlcon = THLCON;
 		tbs.x = x -> z[1];
 		tbs.nx = x -> nx;
-		tbs.l = (long) floor (pow (2, EXP2) + 0.1);
+		tbs.l = Melder_iroundDown (pow (2, EXP2) + 0.1);
 		tbs.ddf = NUM2pi / ( (tbs.l) * nfft);
 		tbs.reverse_sign = my z[1][1] < 0;
 		tbs.count = 0;
@@ -250,7 +250,7 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 			                   U" unwrapped phases from ", my nx, U".");
 		}
 
-		long iphase = (long) floor (phase / NUMpi + 0.1);   // ppgb: better than truncation toward zero
+		integer iphase = Melder_iroundDown (phase / NUMpi + 0.1);   // ppgb: better than truncation toward zero
 
 		if (remove_linear_part) {
 			phase /= my nx - 1;
@@ -351,9 +351,9 @@ static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, boo
 autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth) {
 	try {
 		double xmax = my xmax;
-		long numberOfFrequencies = my nx;
-		if (newMaximumFrequency != 0) {
-			numberOfFrequencies = (long) floor (newMaximumFrequency / my dx) + 1;
+		integer numberOfFrequencies = my nx;
+		if (newMaximumFrequency != 0.0) {
+			numberOfFrequencies = Melder_iroundDown (newMaximumFrequency / my dx) + 1;
 			xmax = newMaximumFrequency;
 		}
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
@@ -384,7 +384,7 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long in
 		double fdomain = my xmax - my xmin, factor = fdomain / fmax ;
 		//long numberOfFrequencies = 1.0 + fmax / my dx; // keep dx the same, otherwise the "duration" changes
 		double xmax = my xmax / factor;
-		long numberOfFrequencies = (long) floor (my nx / factor); // keep dx the same, otherwise the "duration" changes
+		integer numberOfFrequencies = Melder_iroundDown (my nx / factor); // keep dx the same, otherwise the "duration" changes
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
 		thy z[1][1] = my z[1][1]; thy z[2][1] = my z[2][1];
 		double df = freqscale == 1 ? factor * my dx : log10 (fdomain) / (numberOfFrequencies - 1);

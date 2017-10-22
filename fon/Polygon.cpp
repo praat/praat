@@ -43,7 +43,7 @@ void structPolygon :: v_info () {
   
 void structPolygon :: v_writeText (MelderFile file) {
 	texputi32 (file, our numberOfPoints, U"numberOfPoints", 0,0,0,0,0);
-	for (long i = 1; i <= our numberOfPoints; i ++) {
+	for (integer i = 1; i <= our numberOfPoints; i ++) {
 		texputr64 (file, our x [i], U"x [", Melder_integer (i), U"]", 0,0,0);
 		texputr64 (file, our y [i], U"y [", Melder_integer (i), U"]", 0,0,0);
 	}
@@ -55,13 +55,13 @@ void structPolygon :: v_readText (MelderReadText text, int /*formatVersion*/) {
 		Melder_throw (U"Cannot read a Polygon with only ", our numberOfPoints, U" points.");
 	our x = NUMvector <double> (1, our numberOfPoints);
 	our y = NUMvector <double> (1, our numberOfPoints);
-	for (long i = 1; i <= our numberOfPoints; i ++) {
+	for (integer i = 1; i <= our numberOfPoints; i ++) {
 		our x [i] = texgetr64 (text);
 		our y [i] = texgetr64 (text);
 	}
 }
 
-autoPolygon Polygon_create (long numberOfPoints) {
+autoPolygon Polygon_create (integer numberOfPoints) {
 	try {
 		autoPolygon me = Thing_new (Polygon);
 		my numberOfPoints = numberOfPoints;
@@ -74,8 +74,8 @@ autoPolygon Polygon_create (long numberOfPoints) {
 }
 
 void Polygon_randomize (Polygon me) {
-	for (long i = 1; i <= my numberOfPoints; i ++) {
-		long j = NUMrandomInteger (i, my numberOfPoints);
+	for (integer i = 1; i <= my numberOfPoints; i ++) {
+		integer j = NUMrandomInteger (i, my numberOfPoints);
 		double xdum = my x [i];
 		double ydum = my y [i];
 		my x [i] = my x [j];
@@ -89,7 +89,7 @@ double Polygon_perimeter (Polygon me) {
 	if (my numberOfPoints < 1) return 0.0;
 	double dx = my x [1] - my x [my numberOfPoints], dy = my y [1] - my y [my numberOfPoints];
 	double result = sqrt (dx * dx + dy * dy);
-	for (long i = 1; i <= my numberOfPoints - 1; i ++) {
+	for (integer i = 1; i <= my numberOfPoints - 1; i ++) {
 		dx = my x [i] - my x [i + 1];
 		dy = my y [i] - my y [i + 1];
 		result += sqrt (dx * dx + dy * dy);
@@ -98,24 +98,24 @@ double Polygon_perimeter (Polygon me) {
 }
 
 static void computeDistanceTable (Polygon me, int **table) {
-	for (long i = 1; i <= my numberOfPoints - 1; i ++)
-		for (long j = i + 1; j <= my numberOfPoints; j ++) {
+	for (integer i = 1; i <= my numberOfPoints - 1; i ++)
+		for (integer j = i + 1; j <= my numberOfPoints; j ++) {
 			double dx = my x [i] - my x [j], dy = my y [i] - my y [j];
 			table [i] [j] = table [j] [i] =
-				(int) floor (sqrt (dx * dx + dy * dy));   // round to zero
+				Melder_iroundDown (sqrt (dx * dx + dy * dy));   // round to zero
 		}
 }
 
-static long computeTotalDistance (int **distance, int path [], int numberOfCities) {
-	long result = 0;
-	for (long i = 1; i <= numberOfCities; i ++)
+static integer computeTotalDistance (int **distance, int path [], int numberOfCities) {
+	integer result = 0;
+	for (integer i = 1; i <= numberOfCities; i ++)
 		result += distance [path [i - 1]] [path [i]];
 	return result;
 }
 
 static void shuffle (int path [], int numberOfCities) {
-	for (long i = 1; i <= numberOfCities; i ++) {
-		int j = NUMrandomInteger (i, numberOfCities);
+	for (integer i = 1; i <= numberOfCities; i ++) {
+		integer j = NUMrandomInteger (i, numberOfCities);
 		int help = path [i];
 		path [i] = path [j];
 		path [j] = help;
@@ -123,7 +123,7 @@ static void shuffle (int path [], int numberOfCities) {
 	path [0] = path [numberOfCities];
 }
   
-static int tryExchange (int **distance, int *path, int numberOfCities, long *totalDistance) {
+static int tryExchange (int **distance, int *path, int numberOfCities, integer *totalDistance) {
 	int result = 0;
 	int b1 = path [0];
 	int b2nr = 1;
@@ -154,7 +154,7 @@ static int tryExchange (int **distance, int *path, int numberOfCities, long *tot
 	return result;
 }
 
-static int tryAdoption (int **distance, int *path, int numberOfCities, long *totalDistance)
+static int tryAdoption (int **distance, int *path, int numberOfCities, integer *totalDistance)
 {
 	int *help = NUMvector <int> (0, numberOfCities);
 	int i, maximumGainLeft, result = 0;
@@ -212,9 +212,9 @@ static int tryAdoption (int **distance, int *path, int numberOfCities, long *tot
 	return result;
 }
 
-void Polygon_salesperson (Polygon me, long numberOfIterations) {
+void Polygon_salesperson (Polygon me, integer numberOfIterations) {
 	try {
-		long numberOfShortest = 1, totalDistance, shortestDistance = 0;
+		integer numberOfShortest = 1, totalDistance, shortestDistance = 0;
 
 		int numberOfCities = my numberOfPoints;
 		if (numberOfCities < 1)
@@ -222,11 +222,11 @@ void Polygon_salesperson (Polygon me, long numberOfIterations) {
 		autoNUMmatrix <int> distance (1, numberOfCities, 1, numberOfCities);
 		computeDistanceTable (me, distance.peek());
 		autoNUMvector <int> path ((integer) 0, numberOfCities);
-		for (int i = 1; i <= numberOfCities; i ++)
+		for (integer i = 1; i <= numberOfCities; i ++)
 			path [i] = i;
 		path [0] = numberOfCities;   // close path
 		autoNUMvector <int> shortestPath (NUMvector_copy (path.peek(), 0, numberOfCities), 0);
-		for (long iteration = 1; iteration <= numberOfIterations; iteration ++) {
+		for (integer iteration = 1; iteration <= numberOfIterations; iteration ++) {
 			if (iteration > 1) shuffle (path.peek(), numberOfCities);
 			totalDistance = computeTotalDistance (distance.peek(), path.peek(), numberOfCities);
 			if (iteration == 1) shortestDistance = totalDistance;
@@ -250,7 +250,7 @@ void Polygon_salesperson (Polygon me, long numberOfIterations) {
 		/* Change me: I will follow the shortest path found. */
 
 		autoPolygon help = Data_copy (me);
-		for (long i = 1; i <= numberOfCities; i ++) {
+		for (integer i = 1; i <= numberOfCities; i ++) {
 			my x [i] = help -> x [shortestPath [i]];
 			my y [i] = help -> y [shortestPath [i]];
 		}
@@ -265,7 +265,7 @@ static void setWindow (Polygon me, Graphics graphics,
 	Melder_assert (me);
 	if (xmax == xmin) {   // autoscaling along x axis
 		xmax = xmin = my x [1];
-		for (long i = 2; i <= my numberOfPoints; i ++) {
+		for (integer i = 2; i <= my numberOfPoints; i ++) {
 			if (my x [i] < xmin)
 				xmin = my x [i];
 			if (my x [i] > xmax)
@@ -278,7 +278,7 @@ static void setWindow (Polygon me, Graphics graphics,
 	}
 	if (ymax == ymin) {   // autoscaling along y axis
 		ymax = ymin = my y [1];
-		for (long i = 2; i <= my numberOfPoints; i ++) {
+		for (integer i = 2; i <= my numberOfPoints; i ++) {
 			if (my y [i] < ymin)
 				ymin = my y [i];
 			if (my y [i] > ymax)
@@ -319,7 +319,7 @@ void Polygon_drawCircles (Polygon me, Graphics g,
 {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	for (long i = 1; i <= my numberOfPoints; i ++)
+	for (integer i = 1; i <= my numberOfPoints; i ++)
 		Graphics_circle_mm (g, my x [i], my y [i], diameter_mm);
 	Graphics_unsetInner (g);
 }
@@ -329,7 +329,7 @@ void Polygon_paintCircles (Polygon me, Graphics g,
 {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	for (long i = 1; i <= my numberOfPoints; i ++)
+	for (integer i = 1; i <= my numberOfPoints; i ++)
 		Graphics_fillCircle_mm (g, my x [i], my y [i], diameter);
 	Graphics_unsetInner (g);
 }
@@ -338,11 +338,11 @@ void Polygons_drawConnection (Polygon me, Polygon thee, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, int hasArrow, double relativeLength)
 {
 	double w2 = 0.5 * (1 - relativeLength), w1 = 1 - w2;
-	long n = my numberOfPoints;
+	integer n = my numberOfPoints;
 	if (thy numberOfPoints < n) n = thy numberOfPoints;
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
-	for (long i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= n; i ++) {
 		double x1 = my x [i], x2 = thy x [i], y1 = my y [i], y2 = thy y [i];
 		double dummy = w1 * x1 + w2 * x2;
 		x2 = w1 * x2 + w2 * x1;

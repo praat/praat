@@ -1,6 +1,6 @@
 /* OTGrammar_ex_metrics.cpp
  *
- * Copyright (C) 2001-2011,2014,2015 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011,2012,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ static const char32 *constraintNames [1+NUMBER_OF_CONSTRAINTS] = { 0,
 	U"WSP", U"FtNonfinal", U"Iambic", U"Parse", U"FootBin", U"WFL", U"WFR", U"Main-L", U"Main-R", U"AFL", U"AFR", U"Nonfinal",
 	U"Trochaic", U"FtBimor", U"FtBisyl", U"Peripheral", U"MainNonfinal", U"HeadNonfinal", U"*Clash", U"*Lapse", U"WeightByPosition", U"*C\\mu" };
 
-static void addCandidate (OTGrammarTableau me, long numberOfSyllables, int stress [],
+static void addCandidate (OTGrammarTableau me, integer numberOfSyllables, int stress [],
 	bool footedToTheLeft [], bool footedToTheRight [], int surfaceWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
@@ -73,13 +73,13 @@ static void addCandidate (OTGrammarTableau me, long numberOfSyllables, int stres
 	static const char32 *syllableWithoutSecondaryStress [] = { U"L", U"L1", U"L", U"H", U"H1", U"H", U"K", U"K1", U"K", U"J", U"J1", U"J" };
 	char32 output [100];
 	str32cpy (output, U"[");
-	for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		if (isyll > 1) str32cpy (output + str32len (output), U" ");
 		str32cpy (output + str32len (output), ( overtFormsHaveSecondaryStress ? syllable : syllableWithoutSecondaryStress )
 				[stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
 	}
 	str32cpy (output + str32len (output), U"] \\-> /");
-	for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		if (isyll > 1) str32cpy (output + str32len (output), U" ");
 		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0)) str32cpy (output + str32len (output), U"(");
 		str32cpy (output + str32len (output), syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
@@ -89,13 +89,13 @@ static void addCandidate (OTGrammarTableau me, long numberOfSyllables, int stres
 	my candidates [++ my numberOfCandidates]. output = Melder_dup (output);
 }
 
-static void fillSurfaceWeightPattern (OTGrammarTableau me, long numberOfSyllables, int stress [],
+static void fillSurfaceWeightPattern (OTGrammarTableau me, integer numberOfSyllables, int stress [],
 	bool footedToTheLeft [], bool footedToTheRight [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
 	int surfaceWeightPattern [1+7], minSurfaceWeight [1+7], maxSurfaceWeight [1+7];
 	int weight1, weight2, weight3, weight4, weight5;
-	for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		if (underlyingWeightPattern [isyll] < 3) {
 			minSurfaceWeight [isyll] = maxSurfaceWeight [isyll] = underlyingWeightPattern [isyll];   // L -> L; H -> H
 		} else {
@@ -127,17 +127,17 @@ static void fillSurfaceWeightPattern (OTGrammarTableau me, long numberOfSyllable
 	}
 }
 
-static void path (OTGrammarTableau me, long numberOfSyllables, int stress [],
+static void path (OTGrammarTableau me, integer numberOfSyllables, int stress [],
 	int startingSyllable, bool footedToTheLeft_in [], bool footedToTheRight_in [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
 	bool footedToTheLeft [10], footedToTheRight [10];
 	/* Localize all arguments. */
-	for (long isyll = 1; isyll <= startingSyllable; isyll ++) {
+	for (integer isyll = 1; isyll <= startingSyllable; isyll ++) {
 		footedToTheLeft [isyll] = footedToTheLeft_in [isyll];
 		footedToTheRight [isyll] = footedToTheRight_in [isyll];
 	}
-	for (long isyll = startingSyllable + 1; isyll <= numberOfSyllables; isyll ++)
+	for (integer isyll = startingSyllable + 1; isyll <= numberOfSyllables; isyll ++)
 		footedToTheLeft [isyll] = footedToTheRight [isyll] = 0;
 	if (startingSyllable > numberOfSyllables) {
 		fillSurfaceWeightPattern (me, numberOfSyllables, stress, footedToTheLeft, footedToTheRight, underlyingWeightPattern, overtFormsHaveSecondaryStress);
@@ -163,7 +163,7 @@ static void path (OTGrammarTableau me, long numberOfSyllables, int stress [],
 	}
 }
 
-static void fillOvertStressPattern (OTGrammarTableau me, long numberOfSyllables, int stress [], int underlyingWeightPattern [],
+static void fillOvertStressPattern (OTGrammarTableau me, integer numberOfSyllables, int stress [], int underlyingWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
 	bool footedToTheLeft [10], footedToTheRight [10];
@@ -172,12 +172,12 @@ static void fillOvertStressPattern (OTGrammarTableau me, long numberOfSyllables,
 	path (me, numberOfSyllables, stress, 1, footedToTheLeft, footedToTheRight, underlyingWeightPattern, overtFormsHaveSecondaryStress);
 }
 
-static void fillTableau (OTGrammarTableau me, long numberOfSyllables, int underlyingWeightPattern [], int overtFormsHaveSecondaryStress, int includeCodas) {
+static void fillTableau (OTGrammarTableau me, integer numberOfSyllables, int underlyingWeightPattern [], int overtFormsHaveSecondaryStress, int includeCodas) {
 	char32 input [100];
 	static int numberOfCandidates_noCodas [1+7] = { 0, 1, 6, 24, 88, 300, 984, 3136 };
 	static int numberOfCandidates_codas [1+7] = { 0, 1, 24, 192, 1408, 9600, 984, 3136 };
 	str32cpy (input, U"|");
-	for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		static const char32 *syllable_noCodas [] = { U"", U"L", U"H" };
 		static const char32 *syllable_codas [] = { U"", U"cv", U"cv:", U"cvc" };
 		if (isyll > 1) str32cpy (input + str32len (input), includeCodas ? U"." : U" ");
@@ -186,7 +186,7 @@ static void fillTableau (OTGrammarTableau me, long numberOfSyllables, int underl
 	str32cpy (input + str32len (input), U"|");
 	my input = Melder_dup (input);
 	my candidates = NUMvector <structOTGrammarCandidate> (1, ( includeCodas ? numberOfCandidates_codas : numberOfCandidates_noCodas ) [numberOfSyllables]);
-	for (long mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {
+	for (integer mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {
 		int stress [10];
 		stress [mainStressed] = 1;
 		for (int secondary1 = false; secondary1 <= true; secondary1 ++) {
@@ -442,10 +442,10 @@ autoOTGrammar OTGrammar_create_metrics (
 {
 	try {
 		int underlyingWeightPattern [1+7], maximumUnderlyingWeight = includeCodas ? 3 : 2;
-		long numberOfTableaus = includeCodas ? 9 + 27 + 81 + 243 + 2 : 62;
+		integer numberOfTableaus = includeCodas ? 9 + 27 + 81 + 243 + 2 : 62;
 		autoOTGrammar me = Thing_new (OTGrammar);
 		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
-		for (long icons = 1; icons <= NUMBER_OF_CONSTRAINTS; icons ++) {
+		for (integer icons = 1; icons <= NUMBER_OF_CONSTRAINTS; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [icons];
 			constraint -> name = Melder_dup (constraintNames [icons]);
 			constraint -> ranking = 100.0;
@@ -463,17 +463,17 @@ autoOTGrammar OTGrammar_create_metrics (
 		}
 		my tableaus = NUMvector <structOTGrammarTableau> (1, numberOfTableaus);
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-			long numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
-			for (long isyll = 1; isyll <= numberOfSyllables; isyll ++) {
+			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
+			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 				underlyingWeightPattern [isyll] = 1;   /* L or cv */
 			}
-			for (long iweightPattern = 1; iweightPattern <= numberOfUnderlyingWeightPatterns; iweightPattern ++) {
+			for (integer iweightPattern = 1; iweightPattern <= numberOfUnderlyingWeightPatterns; iweightPattern ++) {
 				fillTableau (& my tableaus [++ my numberOfTableaus], numberOfSyllables, underlyingWeightPattern, overtFormsHaveSecondaryStress, includeCodas);
 				/*
 				 * Cycle to next underlying weight pattern.
 				 */
 				underlyingWeightPattern [numberOfSyllables] += 1;
-				for (long isyll = numberOfSyllables; isyll >= 2; isyll --) {
+				for (integer isyll = numberOfSyllables; isyll >= 2; isyll --) {
 					if (underlyingWeightPattern [isyll] > maximumUnderlyingWeight) {
 						underlyingWeightPattern [isyll] = 1;
 						underlyingWeightPattern [isyll - 1] += 1;
@@ -482,9 +482,9 @@ autoOTGrammar OTGrammar_create_metrics (
 			}
 		}
 		/* Compute violation marks. */
-		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				computeViolationMarks (& tableau -> candidates [icand]);
 			}
 		}
@@ -517,9 +517,9 @@ autoOTGrammar OTGrammar_create_metrics (
 			OTGrammar_removeConstraint (me.get(), U"*C\\mu");
 		}
 		if (includeCodas) {
-			for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+			for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 				OTGrammarTableau tableau = & my tableaus [itab];
-				for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+				for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 					replaceOutput (& tableau -> candidates [icand]);
 				}
 			}

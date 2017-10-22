@@ -42,7 +42,6 @@
  djmw 20060517 Added NUMregexp_compile
  djmw 20060518 Treat NULL string as empty string in strs_replace_regexp/literal. Don't accept empty search in str_replace_regexp
  djmw 20060626 Extra NULL argument for ExecRE.
- djmw 20061021 printf expects %ld for 'long int' for 64-bit systems
  djmw 20070302 NUMclipLineWithinRectangle
  djmw 20070614 updated to version 1.30 of regular expressions.
  djmw 20071022 Removed function NUMfvector_moment2.
@@ -2971,7 +2970,7 @@ integer NUMrandomBinomial (double p, integer n) {
 		/* Note: magic numbers 2.195, 4.6, 0.134, 20.5, 15.3 */
 		/* These magic numbers are not adjustable...at least not easily! */
 
-		double p1 = floor (2.195 * sqrt (npq) - 4.6 * q) + 0.5;
+		double p1 = Melder_roundDown (2.195 * sqrt (npq) - 4.6 * q) + 0.5;
 
 		/* xl, xr: left and right edges of triangle */
 		double xl = xm - p1;

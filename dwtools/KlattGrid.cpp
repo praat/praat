@@ -1106,7 +1106,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 			// Fill in the samples to the left of the current point.
 
 			long midSample = Sampled_xToLowIndex (him.get(), t), beginSample;
-			beginSample = midSample - (long) floor (te / his dx);
+			beginSample = midSample - Melder_iroundDown (te / his dx);
 			if (beginSample < 1) {
 				beginSample = 0;
 			}
@@ -1147,7 +1147,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 				double ta = collisionPhase * (period * openPhase);
 				double factorPerSample = exp (- his dx / ta);
 				double value = flow * exp (- (his x1 + midSample * his dx - t) / ta);
-				long endSample = midSample + (long) floor (20.0 * ta / his dx);
+				integer endSample = midSample + Melder_iroundDown (20.0 * ta / his dx);
 				if (endSample > his nx) {
 					endSample = his nx;
 				}
@@ -2884,8 +2884,8 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 	try {
 		Table kt = (Table) me;
 
-		long nrows = my rows.size;
-		double tmin = 0, tmax = nrows * frameDuration;
+		long numberOfRows = my rows.size;
+		double tmin = 0, tmax = numberOfRows * frameDuration;
 		double dBNul = -300;
 		double dB_offset = -20.0 * log10 (2.0e-5) - 87.0; // in KlattTable maximum in DB_to_LIN is at 87 dB : 32767
 		double dB_offset_voicing = 20.0 * log10 (320000 / 32767); // V'[n] in range (-320000,32000)
@@ -2903,7 +2903,7 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 		autoKlattGrid thee = KlattGrid_create (tmin, tmax, numberOfFormants, numberOfNasalFormants,
 		                                       numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants,
 		                                       numberOfFricationFormants, numberOfDeltaFormants);
-		for (long irow = 1; irow <= nrows; irow++) {
+		for (long irow = 1; irow <= numberOfRows; irow++) {
 			double t = (irow - 1) * frameDuration;
 
 			long icol = 1;

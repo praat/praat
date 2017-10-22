@@ -112,12 +112,12 @@ static void TUBE_transfer (double area [], int numberOfSections, double sectionL
 }
 
 autoSpectrum VocalTract_to_Spectrum
-	(VocalTract me, long numberOfFrequencies, double maximumFrequency,
+	(VocalTract me, integer numberOfFrequencies, double maximumFrequency,
 	 double glottalDamping, int hasRadiationDamping, int hasInternalDamping)
 {
 	try {
 		autoSpectrum thee = Spectrum_create (maximumFrequency, numberOfFrequencies);
-		for (long ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
+		for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
 			TUBE_transfer (my z [1], my nx, my dx,
 				(ifreq - 0.9999) * maximumFrequency / (numberOfFrequencies - 1),
 				& thy z [1] [ifreq], & thy z [2] [ifreq],

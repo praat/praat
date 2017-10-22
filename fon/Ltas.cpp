@@ -126,10 +126,10 @@ autoLtas Ltases_merge (LtasBag ltases) {
 		/*
 		 * Convert to energy.
 		 */
-		for (long iband = 1; iband <= thy nx; iband ++) {
+		for (integer iband = 1; iband <= thy nx; iband ++) {
 			thy z [1] [iband] = pow (10.0, thy z [1] [iband] / 10.0);
 		}
-		for (long ispec = 2; ispec <= ltases->size; ispec ++) {
+		for (integer ispec = 2; ispec <= ltases->size; ispec ++) {
 			Ltas him = ltases->at [ispec];
 			if (his xmin != thy xmin || his xmax != thy xmax)
 				Melder_throw (U"Frequency domains do not match.");
@@ -140,14 +140,14 @@ autoLtas Ltases_merge (LtasBag ltases) {
 			/*
 			 * Add band energies.
 			 */
-			for (long iband = 1; iband <= thy nx; iband ++) {
+			for (integer iband = 1; iband <= thy nx; iband ++) {
 				thy z [1] [iband] += pow (10.0, his z [1] [iband] / 10.0);
 			}
 		}
 		/*
 		 * Convert back to dB.
 		 */
-		for (long iband = 1; iband <= thy nx; iband ++) {
+		for (integer iband = 1; iband <= thy nx; iband ++) {
 			thy z [1] [iband] = 10.0 * log10 (thy z [1] [iband]);
 		}
 		return thee;
@@ -162,7 +162,7 @@ autoLtas Ltases_average (LtasBag ltases) {
 	try {
 		double factor = -10.0 * log10 (ltases->size);
 		autoLtas thee = Ltases_merge (ltases);
-		for (long iband = 1; iband <= thy nx; iband ++) {
+		for (integer iband = 1; iband <= thy nx; iband ++) {
 			thy z [1] [iband] += factor;
 		}	
 		return thee;
@@ -223,32 +223,33 @@ autoLtas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 		/*
 		 * Compute average amplitude and frequency.
 		 */
-		double sum = 0.0, amean, fmean, numerator = 0.0, denominator = 0.0, slope;
-		for (long i = imin; i <= imax; i ++) {
+		real80 sum = 0.0;
+		for (integer i = imin; i <= imax; i ++) {
 			sum += thy z [1] [i];
 		}
-		amean = sum / n;
-		fmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
+		real amean = (real) sum / n;
+		real fmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
 		/*
 		 * Compute slope.
 		 */
-		for (long i = imin; i <= imax; i ++) {
+		real80 numerator = 0.0, denominator = 0.0;
+		for (integer i = imin; i <= imax; i ++) {
 			double da = thy z [1] [i] - amean, df = thy x1 + (i - 1) * thy dx - fmean;
 			numerator += da * df;
 			denominator += df * df;
 		}
-		slope = numerator / denominator;
+		real slope = (real) (numerator / denominator);
 		/*
 		 * Modify bins.
 		 */
-		for (long i = 1; i < imin; i ++) {
+		for (integer i = 1; i < imin; i ++) {
 			thy z [1] [i] = 0.0;
 		}
-		for (long i = imin; i <= imax; i ++) {
+		for (integer i = imin; i <= imax; i ++) {
 			double df = thy x1 + (i - 1) * thy dx - fmean;
 			thy z [1] [i] -= amean + slope * df;
 		}
-		for (long i = imax + 1; i <= thy nx; i ++) {
+		for (integer i = imax + 1; i <= thy nx; i ++) {
 			thy z [1] [i] = 0.0;
 		}
 		return thee;
@@ -264,7 +265,7 @@ autoLtas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 			Melder_throw (U"Bandwidth must be greater than ", my dx, U".");
 		autoLtas thee = Thing_new (Ltas);
 		Matrix_init (thee.get(), my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1.0, 1.0, 1, 1.0, 1.0);
-		for (long iband = 1; iband <= numberOfBands; iband ++) {
+		for (integer iband = 1; iband <= numberOfBands; iband ++) {
 			double fmin = thy xmin + (iband - 1) * bandWidth;
 			double meanEnergyDensity = Sampled_getMean (me, fmin, fmin + bandWidth, 0, 1, false);
 			double meanPowerDensity = meanEnergyDensity * my dx;   // as an approximation for a division by the original duration
@@ -280,7 +281,7 @@ autoLtas Spectrum_to_Ltas_1to1 (Spectrum me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
 		Matrix_init (thee.get(), my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
-		for (long iband = 1; iband <= my nx; iband ++) {
+		for (integer iband = 1; iband <= my nx; iband ++) {
 			thy z [1] [iband] = Sampled_getValueAtSample (me, iband, 0, 2);
 		}
 		return thee;
@@ -294,7 +295,7 @@ autoLtas Sound_to_Ltas (Sound me, double bandwidth) {
 		autoSpectrum thee = Sound_to_Spectrum (me, true);
 		autoLtas him = Spectrum_to_Ltas (thee.get(), bandwidth);
 		double correction = -10.0 * log10 (thy dx * my nx * my dx);
-		for (long iband = 1; iband <= his nx; iband ++) {
+		for (integer iband = 1; iband <= his nx; iband ++) {
 			his z [1] [iband] += correction;
 		}
 		return him;
@@ -308,14 +309,14 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
 {
 	try {
-		long numberOfPeriods = pulses -> nt - 2, totalNumberOfEnergies = 0;
-		autoLtas ltas = Ltas_create ((integer) floor (maximumFrequency / bandWidth), bandWidth);
+		integer numberOfPeriods = pulses -> nt - 2, totalNumberOfEnergies = 0;
+		autoLtas ltas = Ltas_create (Melder_iroundDown (maximumFrequency / bandWidth), bandWidth);
 		ltas -> xmax = maximumFrequency;
 		autoLtas numbers = Data_copy (ltas.get());
 		if (numberOfPeriods < 1)
 			Melder_throw (U"Cannot compute an Ltas if there are no periods in the point process.");
 		autoMelderProgress progress (U"Ltas analysis...");
-		for (long ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
+		for (integer ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
 			double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
 			double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
 			double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
@@ -331,7 +332,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
 					kSound_windowShape::RECTANGULAR, 1.0, false);
 				autoSpectrum spectrum = Sound_to_Spectrum (period.get(), false);
-				for (long ifreq = 1; ifreq <= spectrum -> nx; ifreq ++) {
+				for (integer ifreq = 1; ifreq <= spectrum -> nx; ifreq ++) {
 					double frequency = spectrum -> xmin + (ifreq - 1) * spectrum -> dx;
 					double realPart = spectrum -> z [1] [ifreq];
 					double imaginaryPart = spectrum -> z [2] [ifreq];
@@ -376,9 +377,9 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 				}
 			}
 		}
-		for (long iband = 1; iband <= ltas -> nx; iband ++) {
+		for (integer iband = 1; iband <= ltas -> nx; iband ++) {
 			if (isundef (ltas -> z [1] [iband])) {
-				long ibandleft = iband - 1, ibandright = iband + 1;
+				integer ibandleft = iband - 1, ibandright = iband + 1;
 				while (ibandleft >= 1 && isundef (ltas -> z [1] [ibandleft])) ibandleft --;
 				while (ibandright <= ltas -> nx && isundef (ltas -> z [1] [ibandright])) ibandright ++;
 				if (ibandleft < 1 && ibandright > ltas -> nx)
@@ -417,17 +418,17 @@ autoLtas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double 
 }
 
 autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
-	long maximumHarmonic,
+	integer maximumHarmonic,
 	double shortestPeriod, double longestPeriod, double maximumPeriodFactor)
 {
 	try {
-		long numberOfPeriods = pulses -> nt - 2;
+		integer numberOfPeriods = pulses -> nt - 2;
 		autoLtas ltas = Ltas_create (maximumHarmonic, 1.0);
 		ltas -> xmax = maximumHarmonic;
 		if (numberOfPeriods < 1)
 			Melder_throw (U"There are no periods in the point process.");
 		autoMelderProgress progress (U"LTAS (harmonics) analysis...");
-		for (long ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
+		for (integer ipulse = 2; ipulse < pulses -> nt; ipulse ++) {
 			double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
 			double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
 			double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
@@ -439,13 +440,13 @@ autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 				/*
 				 * We have a period! Compute the spectrum.
 				 */
-				long localMaximumHarmonic;
+				integer localMaximumHarmonic;
 				autoSound period = Sound_extractPart (sound,
 					pulses -> t [ipulse] - 0.5 * leftInterval, pulses -> t [ipulse] + 0.5 * rightInterval,
 					kSound_windowShape::RECTANGULAR, 1.0, false);
 				autoSpectrum spectrum = Sound_to_Spectrum (period.get(), false);
 				localMaximumHarmonic = maximumHarmonic < spectrum -> nx ? maximumHarmonic : spectrum -> nx;
-				for (long iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {
+				for (integer iharm = 1; iharm <= localMaximumHarmonic; iharm ++) {
 					double realPart = spectrum -> z [1] [iharm];
 					double imaginaryPart = spectrum -> z [2] [iharm];
 					double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * 2.0 * spectrum -> dx;
@@ -457,7 +458,7 @@ autoLtas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 		}
 		if (numberOfPeriods < 1)
 			Melder_throw (U"There are no periods in the point process.");
-		for (long iharm = 1; iharm <= ltas -> nx; iharm ++) {
+		for (integer iharm = 1; iharm <= ltas -> nx; iharm ++) {
 			if (ltas -> z [1] [iharm] == 0.0) {
 				ltas -> z [1] [iharm] = -300.0;
 			} else {

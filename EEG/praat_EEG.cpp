@@ -80,7 +80,7 @@ FORM (INTEGER_EEG_getChannelNumber, U"Get channel number", nullptr) {
 	OK
 DO
 	NUMBER_ONE (EEG)
-		long result = EEG_getChannelNumber (me, channelName);
+		integer result = EEG_getChannelNumber (me, channelName);
 	NUMBER_ONE_END (U"")
 }
 
@@ -104,7 +104,7 @@ FORM (MODIFY_EEG_editExternalElectrodeNames, U"Edit external electrode names", n
 OK
 	FIND_ONE (EEG)
 		if (EEG_getNumberOfExternalElectrodes (me) == 8) {
-			const long offsetExternalElectrode = EEG_getNumberOfCapElectrodes (me);
+			const integer offsetExternalElectrode = EEG_getNumberOfCapElectrodes (me);
 			SET_STRING (externalElectrode1, my channelNames [offsetExternalElectrode + 1])
 			SET_STRING (externalElectrode2, my channelNames [offsetExternalElectrode + 2])
 			SET_STRING (externalElectrode3, my channelNames [offsetExternalElectrode + 3])
@@ -427,7 +427,7 @@ FORM (INTEGER_ERP_getChannelNumber, U"Get channel number", nullptr) {
 	OK
 DO
 	NUMBER_ONE (ERP)
-		long result = ERP_getChannelNumber (me, channelName);
+		integer result = ERP_getChannelNumber (me, channelName);
 	NUMBER_ONE_END (U" (number of channel ", channelName, U")")
 }
 
@@ -444,7 +444,7 @@ FORM (REAL_ERP_getMinimum, U"ERP: Get minimum", U"Sound: Get minimum...") {
 	OK
 DO
 	NUMBER_ONE (ERP)
-		long channelNumber = ERP_getChannelNumber (me, channelName);
+		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
 		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, interpolation, & result, nullptr);
@@ -464,7 +464,7 @@ FORM (REAL_ERP_getTimeOfMinimum, U"ERP: Get time of minimum", U"Sound: Get time 
 	OK
 DO
 	NUMBER_ONE (ERP)
-		long channelNumber = ERP_getChannelNumber (me, channelName);
+		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
 		Vector_getMinimumAndX (me, fromTime, toTime, channelNumber, interpolation, nullptr, & result);
@@ -484,7 +484,7 @@ FORM (REAL_ERP_getMaximum, U"ERP: Get maximum", U"Sound: Get maximum...") {
 	OK
 DO
 	NUMBER_ONE (ERP)
-		long channelNumber = ERP_getChannelNumber (me, channelName);
+		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
 		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, interpolation, & result, nullptr);
@@ -504,7 +504,7 @@ FORM (REAL_ERP_getTimeOfMaximum, U"ERP: Get time of maximum", U"Sound: Get time 
 	OK
 DO
 	NUMBER_ONE (ERP)
-		long channelNumber = ERP_getChannelNumber (me, channelName);
+		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result;
 		Vector_getMaximumAndX (me, fromTime, toTime, channelNumber, interpolation, nullptr, & result);
@@ -518,7 +518,7 @@ FORM (REAL_ERP_getMean, U"ERP: Get mean", U"ERP: Get mean...") {
 	OK
 DO
 	NUMBER_ONE (ERP)
-		long channelNumber = ERP_getChannelNumber (me, channelName);
+		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		double result = Vector_getMean (me, fromTime, toTime, channelNumber);
 	NUMBER_ONE_END (U" Volt")
@@ -562,7 +562,7 @@ FORM (NEW_ERP_extractOneChannelAsSound, U"ERP: Extract one channel as Sound", nu
 	OK
 DO
 	CONVERT_EACH (ERP)
-		long channelNumber = ERP_getChannelNumber (me, channelName);
+		integer channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, U": no channel named \"", channelName, U"\".");
 		autoSound result = Sound_extractChannel (me, channelNumber);
 	CONVERT_EACH_END (my name, U"_", channelName)
@@ -602,7 +602,7 @@ FORM (INTEGER_ERPTier_getChannelNumber, U"Get channel number", nullptr) {
 	OK
 DO
 	NUMBER_ONE (ERPTier)
-		long result = ERPTier_getChannelNumber (me, channelName);
+		integer result = ERPTier_getChannelNumber (me, channelName);
 	NUMBER_ONE_END (U" (number of channel ", channelName, U")")
 }
 
@@ -675,7 +675,7 @@ FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where
 	OK
 DO
 	CONVERT_TWO (ERPTier, Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
 		autoERPTier result = ERPTier_extractEventsWhereColumn_number (me, you, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_TWO_END (my name)
 }
@@ -687,7 +687,7 @@ FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where c
 	OK
 DO
 	CONVERT_TWO (ERPTier, Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
 		autoERPTier result = ERPTier_extractEventsWhereColumn_string (me, you, columnNumber, (kMelder_string) ___, ___theText);
 	CONVERT_TWO_END (my name)
 }

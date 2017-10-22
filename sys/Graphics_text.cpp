@@ -194,7 +194,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 		
 		Exception: if the character is a slash, its font has already been converted to Courier.
 	*/
-	int font = lc -> font.integer;
+	int font = lc -> font.integer_;
 	Longchar_Info info = lc -> karInfo;
 	int alphabet = info -> alphabet;
 
@@ -268,7 +268,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 				kGraphics_font_IPAPALATINO :
 				(int) kGraphics_font::PALATINO
 			) :
-		(int) my font;   // why not lc -> font.integer?
+		(int) my font;   // why not lc -> font.integer_?
 	Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
 	return font;
 }
@@ -288,7 +288,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			lc -> baseline *= my fontSize * 0.01;
 			lc -> code = lc -> kar;
 			lc -> font.string = nullptr;
-			lc -> font.integer = 0;
+			lc -> font.integer_ = 0;
 			lc -> size = size;
 		#elif gdi
 			Longchar_Info info = lc -> karInfo;
@@ -298,7 +298,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			int smallSize = (3 * normalSize + 2) / 4;
 			font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 			       info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
-			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
+			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer_;
 			if ((unsigned int) lc -> kar >= 0x2E80 && (unsigned int) lc -> kar <= 0x9FFF)
 				font = ( theGraphicsCjkFontStyle == kGraphics_cjkFontStyle::CHINESE ? kGraphics_font_CHINESE : kGraphics_font_JAPANESE );
 			size = lc -> size < 100 ? smallSize : normalSize;
@@ -349,7 +349,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 			lc -> width = extent. cx;
 			lc -> baseline *= my fontSize * 0.01 * my resolution / 72.0;
 			lc -> font.string = nullptr;
-			lc -> font.integer = font;   // kGraphics_font_HELVETICA .. kGraphics_font_DINGBATS
+			lc -> font.integer_ = font;   // kGraphics_font_HELVETICA .. kGraphics_font_DINGBATS
 			lc -> size = size;   // 0..4 instead of 10..24
 			lc -> style = style;   // without Graphics_CODE
 		#elif quartz
@@ -360,7 +360,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 		Longchar_Info info = lc -> karInfo;
 		int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 				info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
-				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
+				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer_;
 		int style = lc -> style == Graphics_ITALIC ? Graphics_ITALIC :
 			lc -> style == Graphics_BOLD || lc -> link ? Graphics_BOLD :
 			lc -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC : 0;
@@ -447,7 +447,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 				}
 			}
 		}
-		lc -> font.integer = 0;
+		lc -> font.integer_ = 0;
 		lc -> font.string = my fontInfos [font] [style];
 
 		/*
@@ -579,7 +579,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			if (! my d_cairoGraphicsContext) return;
 			// TODO!
 			if (lc -> link) _Graphics_setColour (me, Graphics_BLUE);
-			int font = lc -> font.integer;
+			int font = lc -> font.integer_;
 			cairo_save (my d_cairoGraphicsContext);
 			cairo_translate (my d_cairoGraphicsContext, xDC, yDC);
 			//cairo_scale (my d_cairoGraphicsContext, 1, -1);
@@ -598,7 +598,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			if (lc -> link) _Graphics_setColour (me, my colour);
 			return;
 		#elif gdi
-			int font = lc -> font.integer;
+			int font = lc -> font.integer_;
 			WCHAR *codesW = Melder_peek32toW (codes);
 			if (my duringXor) {
 				int descent = (1.0/216) * my fontSize * my resolution;
@@ -649,7 +649,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			/*
 			 * Determine the font family.
 			 */
-			int font = lc -> font.integer;   // the font of the first character
+			int font = lc -> font.integer_;   // the font of the first character
 
 			/*
 			 * Determine the style.
@@ -869,7 +869,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			Longchar_Info info = lc -> karInfo;
 			Melder_assert (info);
 			int font = chooseFont (me, lc);
-			lc -> font.string = nullptr;   // this erases font.integer!
+			lc -> font.string = nullptr;   // this erases font.integer_!
 
 			/*
 			 * Determine the style.
@@ -917,7 +917,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			lc -> size = size;
 			lc -> baseline *= 0.01 * normalSize;
 			lc -> code = lc -> kar;
-			lc -> font.integer = font;
+			lc -> font.integer_ = font;
 			if (Longchar_Info_isDiacritic (info)) {
 				numberOfDiacritics ++;
 			}
@@ -930,7 +930,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 			if (measureEachCharacterSeparately ||
 				next->kar <= U' ' || next->style != lc->style ||
 				next->baseline != lc->baseline || next->size != lc->size || next->link != lc->link ||
-				next->font.integer != lc->font.integer || next->font.string != lc->font.string ||
+				next->font.integer_ != lc->font.integer_ || next->font.string != lc->font.string ||
 				next->rightToLeft != lc->rightToLeft ||
 				(my textRotation != 0.0 && my screen && my resolution > 150))
 			{
@@ -938,7 +938,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 				#if cairo
 					const char *codes8 = Melder_peek32to8 (charCodes);
 					int length = strlen (codes8);
-					PangoFontDescription *fontDescription = PangoFontDescription_create (lc -> font.integer, lc);
+					PangoFontDescription *fontDescription = PangoFontDescription_create (lc -> font.integer_, lc);
 
 					/*
 						Measuring the width of a text with a homogeneous Praat font
@@ -975,7 +975,7 @@ static void charSizes (Graphics me, _Graphics_widechar string [], bool measureEa
 					CFMutableAttributedStringRef cfstring =
 						CFAttributedStringCreateMutable (kCFAllocatorDefault, (CFIndex) [s length]);
 					CFAttributedStringReplaceString (cfstring, CFRangeMake (0, 0), (CFStringRef) s);
-					CFAttributedStringSetAttribute (cfstring, textRange, kCTFontAttributeName, theScreenFonts [lc -> font.integer] [100] [lc -> style]);
+					CFAttributedStringSetAttribute (cfstring, textRange, kCTFontAttributeName, theScreenFonts [lc -> font.integer_] [100] [lc -> style]);
 
 					/*
 					 * Measure.
@@ -1095,7 +1095,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 			 */
 			if (next->kar < U' ' || next->style != plc->style ||
 				next->baseline != plc->baseline || next->size != plc->size ||
-				next->font.integer != plc->font.integer || next->font.string != plc->font.string ||
+				next->font.integer_ != plc->font.integer_ || next->font.string != plc->font.string ||
 				next->rightToLeft != plc->rightToLeft ||
 				(my screen && my resolution > 150))
 			{
@@ -1138,7 +1138,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 							_Graphics_widechar *next = plc + 1;
 							if (next->style != plc->style ||
 								next->baseline != plc->baseline || next->size != plc->size || next->link != plc->link ||
-								next->font.integer != plc->font.integer || next->font.string != plc->font.string ||
+								next->font.integer_ != plc->font.integer_ || next->font.string != plc->font.string ||
 								next->rightToLeft != plc->rightToLeft)
 							{
 								// nothing
@@ -1174,7 +1174,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 				x += plc -> width;
 				if (next->kar < U' ' || next->style != plc->style ||
 					next->baseline != plc->baseline || next->size != plc->size || next->link != plc->link ||
-					next->font.integer != plc->font.integer || next->font.string != plc->font.string ||
+					next->font.integer_ != plc->font.integer_ || next->font.string != plc->font.string ||
 					next->rightToLeft != plc->rightToLeft)
 				{
 					charCodes [nchars] = U'\0';   // ...and flush
@@ -1406,7 +1406,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 			((my fontStyle & Graphics_ITALIC) | charItalic | wordItalic | globalItalic ? Graphics_ITALIC : 0) +
 			((my fontStyle & Graphics_BOLD) | charBold | wordBold | globalBold ? Graphics_BOLD : 0);
 		out -> font.string = nullptr;
-		out -> font.integer = my fontStyle == Graphics_CODE || wordCode || globalCode ||
+		out -> font.integer_ = my fontStyle == Graphics_CODE || wordCode || globalCode ||
 			kar == U'/' || kar == U'|' ? (int) kGraphics_font::COURIER : (int) my font;
 		out -> link = wordLink | globalLink;
 		out -> baseline = charSuperscript | globalSuperscript ? 34 : charSubscript | globalSubscript ? -25 : 0;
@@ -1414,7 +1414,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 		if (kar == U'/') {
 			out -> baseline -= out -> size / 12;
 			out -> size += out -> size / 10;
-			if (my screen) out -> font.integer = (int) kGraphics_font::PALATINO;
+			if (my screen) out -> font.integer_ = (int) kGraphics_font::PALATINO;
 		}
 		out -> code = U'?';   // does this have any meaning?
 		Melder_assert (kar != U'\0');
@@ -1614,7 +1614,7 @@ static double psTextWidth (_Graphics_widechar string [], bool useSilipaPS) {
 		Longchar_Info info = character -> karInfo;
 		int font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 				info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
-				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : character -> font.integer;
+				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : character -> font.integer_;
 		int style = character -> style == Graphics_ITALIC ? Graphics_ITALIC :
 			character -> style == Graphics_BOLD || character -> link ? Graphics_BOLD :
 			character -> style == Graphics_BOLD_ITALIC ? Graphics_BOLD_ITALIC : 0;

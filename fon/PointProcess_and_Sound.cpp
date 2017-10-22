@@ -20,29 +20,29 @@
 
 autoSound PointProcess_to_Sound_pulseTrain
 	(PointProcess me, double samplingFrequency,
-	 double adaptFactor, double adaptTime, long interpolationDepth)
+	 double adaptFactor, double adaptTime, integer interpolationDepth)
 {
 	try {
-		long sound_nt = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		integer sound_nt = 1 + Melder_iroundDown ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
 		double tmid = (my xmin + my xmax) / 2;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
 		autoSound thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 		double *sound = thy z [1];
-		for (long it = 1; it <= my nt; it ++) {
+		for (integer it = 1; it <= my nt; it ++) {
 			double t = my t [it], amplitude = 0.9, angle, halfampsinangle;
-			long mid = Sampled_xToNearestIndex (thee.get(), t);
+			integer mid = Sampled_xToNearestIndex (thee.get(), t);
 			if (it <= 2 || my t [it - 2] < my t [it] - adaptTime) {
 				amplitude *= adaptFactor;
 				if (it == 1 || my t [it - 1] < my t [it] - adaptTime)
 					amplitude *= adaptFactor;
 			}
-			long begin = mid - interpolationDepth, end = mid + interpolationDepth;
+			integer begin = mid - interpolationDepth, end = mid + interpolationDepth;
 			if (begin < 1) begin = 1;
 			if (end > thy nx) end = thy nx;
 			angle = NUMpi * (Sampled_indexToX (thee.get(), begin) - t) / thy dx;
 			halfampsinangle = 0.5 * amplitude * sin (angle);
-			for (long j = begin; j <= end; j ++) {
+			for (integer j = begin; j <= end; j ++) {
 				if (fabs (angle) < 1e-6)
 					sound [j] += amplitude;
 				else if (angle < 0.0)
@@ -66,7 +66,7 @@ autoSound PointProcess_to_Sound_phonation
 	 double openPhase, double collisionPhase, double power1, double power2)
 {
 	try {
-		long sound_nt = 1 + (long) floor ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		integer sound_nt = 1 + Melder_iroundDown ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
 		double tmid = (my xmin + my xmax) / 2.0;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
@@ -99,10 +99,10 @@ autoSound PointProcess_to_Sound_phonation
 		 * Cycle through the points. Each will become a period.
 		 */
 		double *sound = thy z [1];
-		for (long it = 1; it <= my nt; it ++) {
+		for (integer it = 1; it <= my nt; it ++) {
 			double t = my t [it], amplitude = a;
 			double period = undefined, te, phase, flow;
-			long midSample = Sampled_xToNearestIndex (thee.get(), t);
+			integer midSample = Sampled_xToNearestIndex (thee.get(), t);
 			/*
 			 * Determine the period: first look left (because that's where the open phase is),
 			 * then right.
@@ -138,11 +138,11 @@ autoSound PointProcess_to_Sound_phonation
 			 * Fill in the samples to the left of the current point.
 			 */
 			{// scope
-				long beginSample = midSample - (long) floor (te / thy dx);
+				integer beginSample = midSample - Melder_iroundDown (te / thy dx);
 				if (beginSample < 1) beginSample = 1;
-				long endSample = midSample;
+				integer endSample = midSample;
 				if (endSample > thy nx) endSample = thy nx;
-				for (long isamp = beginSample; isamp <= endSample; isamp ++) {
+				for (integer isamp = beginSample; isamp <= endSample; isamp ++) {
 					double tsamp = thy x1 + (isamp - 1) * thy dx;
 					phase = (tsamp - (t - te)) / (period * openPhase);
 					if (phase > 0.0)
@@ -162,11 +162,11 @@ autoSound PointProcess_to_Sound_phonation
 				double ta = - flow / flowDerivative;
 				double factorPerSample = exp (- thy dx / ta);
 				double value = flowDerivative * factorPerSample;
-				long beginSample = midSample + 1;
+				integer beginSample = midSample + 1;
 				if (beginSample < 1) beginSample = 1;
-				long endSample = midSample + (long) floor (20.0 * ta / thy dx);
+				integer endSample = midSample + Melder_iroundDown (20.0 * ta / thy dx);
 				if (endSample > thy nx) endSample = thy nx;
-				for (long isamp = beginSample; isamp <= endSample; isamp ++) {
+				for (integer isamp = beginSample; isamp <= endSample; isamp ++) {
 					sound [isamp] += value;
 					value *= factorPerSample;
 				}

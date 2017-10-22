@@ -1,6 +1,6 @@
 /* melder_audiofiles.cpp
  *
- * Copyright (C) 1992-2011,2013,2015,2016,2017 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2008,2010-2017 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,15 +170,17 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, intege
 					char header [1024];
 					memset (header, 0, 1024);
 					sprintf (header, "NIST_1A\n   1024\n"
-						"channel_count -i %d\n"
-						"sample_count -i %ld\n"
-						"sample_n_bytes -i %d\n"
+						"channel_count -i %s\n"
+						"sample_count -i %s\n"
+						"sample_n_bytes -i %s\n"
 						"sample_byte_format -s2 01\n" /* 01=LE 10=BE */
 						"sample_coding -s3 pcm\n"
-						"sample_rate -i %ld\n"
+						"sample_rate -i %s\n"
 						"sample_min -i -32768\n"
 						"sample_max -i 32767\n"
-						"end_head\n", numberOfChannels, numberOfSamples, numberOfBytesPerSamplePoint, sampleRate);
+						"end_head\n",
+						Melder8_integer (numberOfChannels), Melder8_integer (numberOfSamples),
+						Melder8_integer (numberOfBytesPerSamplePoint), Melder8_integer (sampleRate));
 					if (fwrite (header, 1, 1024, f) != 1024) Melder_throw (U"Error in file while trying to write the NIST header.");
 				} catch (MelderError) {
 					Melder_throw (U"NIST header not written.");
@@ -343,7 +345,7 @@ static short alaw2linear[] =
      944,    912,   1008,    976,    816,    784,    880,    848
 };
 
-static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
+static void Melder_checkAiffFile (FILE *f, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char data [8], chunkID [4];
@@ -430,7 +432,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 	if (! dataChunkPresent) Melder_throw (U"Found no Data Chunk.");
 }
 
-static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
+static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char data [14], chunkID [4];
@@ -569,7 +571,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 	*numberOfSamples = dataChunkSize / *numberOfChannels / ((numberOfBitsPerSamplePoint + 7) / 8);
 }
 
-static void Melder_checkNextSunFile (FILE *f, int *numberOfChannels, int *encoding,
+static void Melder_checkNextSunFile (FILE *f, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char tag [4];
@@ -615,7 +617,7 @@ static int nistGetValue (const char *header, const char *object, double *rval, c
 	else if (strncmp (type, "-s", 2)) return 0;
 	return 1;
 }
-static void Melder_checkNistFile (FILE *f, int *numberOfChannels, int *encoding,
+static void Melder_checkNistFile (FILE *f, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char header [1024], sval [100];
@@ -655,7 +657,7 @@ static void Melder_checkNistFile (FILE *f, int *numberOfChannels, int *encoding,
 	}
 }
 
-static void Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *encoding,
+static void Melder_checkFlacFile (MelderFile file, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	FLAC__StreamMetadata metadata;
@@ -672,7 +674,7 @@ static void Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *e
 		Melder_throw (U"FLAC file too long.");
 }
 
-static void Melder_checkMp3File (FILE *f, int *numberOfChannels, int *encoding,
+static void Melder_checkMp3File (FILE *f, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	MP3_FILE mp3f = mp3f_new ();
@@ -691,7 +693,7 @@ static void Melder_checkMp3File (FILE *f, int *numberOfChannels, int *encoding,
 	mp3f_delete (mp3f);
 }
 
-int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
+int MelderFile_checkSoundFile (MelderFile file, integer *numberOfChannels, int *encoding,
 	double *sampleRate, integer *startOfData, integer *numberOfSamples)
 {
 	char data [16];
@@ -807,7 +809,7 @@ static void Melder_DecodeFlac_error (const FLAC__StreamDecoder *decoder, FLAC__S
 	Melder_warning (U"FLAC decoder error: ", Melder_peek8to32 (FLAC__StreamDecoderErrorStatusString [status]));
 }
 
-static void Melder_readFlacFile (FILE *f, int numberOfChannels, double **buffer, integer numberOfSamples) {
+static void Melder_readFlacFile (FILE *f, integer numberOfChannels, double **buffer, integer numberOfSamples) {
 	FLAC__StreamDecoder *decoder;
 	MelderDecodeFlacContext c;
 	int result = 0;
@@ -835,7 +837,7 @@ end:
 		Melder_throw (U"Error decoding FLAC file.");
 }
 
-static void Melder_readMp3File (FILE *f, int numberOfChannels, double **buffer, integer numberOfSamples) {
+static void Melder_readMp3File (FILE *f, integer numberOfChannels, double **buffer, integer numberOfSamples) {
 	MelderDecodeMp3Context c;
 	int result = 0;
 	c.numberOfChannels = numberOfChannels;
@@ -852,7 +854,7 @@ static void Melder_readMp3File (FILE *f, int numberOfChannels, double **buffer, 
 		Melder_throw (U"Error decoding MP3 file.");
 }
 
-void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, double **buffer, integer numberOfSamples) {
+void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, double **buffer, integer numberOfSamples) {
 	try {
 		switch (encoding) {
 			case Melder_LINEAR_8_SIGNED: {
@@ -1218,7 +1220,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 	}
 }
 
-void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short *buffer, integer numberOfSamples) {
+void Melder_readAudioToShort (FILE *f, integer numberOfChannels, int encoding, short *buffer, integer numberOfSamples) {
 	try {
 		integer n = numberOfSamples * numberOfChannels, i;
 		static const unsigned short byteSwapTest = 3 * 256 + 1;
@@ -1302,7 +1304,7 @@ void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short
 	}
 }
 
-void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, integer numberOfSamples) {
+void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, int encoding, const short *buffer, integer numberOfSamples) {
 	try {
 		FILE *f = file -> filePointer;
 		if (! f) Melder_throw (U"File not open.");
@@ -1367,7 +1369,7 @@ void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int en
 	}
 }
 
-void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped) {
+void MelderFile_writeFloatToAudio (MelderFile file, integer numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped) {
 	try {
 		FILE *f = file -> filePointer;
 		if (! f) Melder_throw (U"File not open.");

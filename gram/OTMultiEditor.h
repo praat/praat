@@ -2,7 +2,7 @@
 #define _OTMultiEditor_h_
 /* OTMultiEditor.h
  *
- * Copyright (C) 2005-2011,2012,2015 Paul Boersma
+ * Copyright (C) 2005,2007,2009-2012,2015-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 Thing_define (OTMultiEditor, HyperPage) {
 	const char32 *form1, *form2;
 	GuiText form1Text, form2Text;
-	long selectedConstraint;
+	integer selectedConstraint;
 	bool d_constraintsAreDrawnVertically;
 
 	bool v_editable ()

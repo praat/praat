@@ -146,7 +146,7 @@
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
 	{ \
-		integer n = texgeti32 (a_text); \
+		integer n = texgetinteger (a_text); \
 		for (integer i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \
 			item -> v_readText (a_text, formatVersion); \
@@ -156,7 +156,7 @@
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
-		integer n = texgeti32 (a_text); \
+		integer n = texgetinteger (a_text); \
 		our x = Class##_create (); \
 		for (integer i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \

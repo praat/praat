@@ -373,7 +373,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	double windowDuration = 2 * analysisWidth; /* gaussian window */
 	integer numberOfFrames, frameErrorCount = 0;
 
-	if (floor (windowDuration / my dx) < predictionOrder + 1) {
+	if (Melder_roundDown (windowDuration / my dx) < predictionOrder + 1) {
 		Melder_throw (U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
 			U" the analysis window duration has to be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
 	}
@@ -544,7 +544,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 			for (long i = ifirst; i <= ilast; i++) {
 				double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
 				double riFrame = (t - my x1) / my dx + 1; /* Sampled_xToIndex (me, t); */
-				long iFrame = (long) floor (riFrame);
+				integer iFrame = Melder_iroundDown (riFrame);
 				double phase = riFrame - iFrame;
 				if (iFrame < 0 || iFrame > my nx) {
 					x[i] = 0.0;

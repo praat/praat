@@ -271,13 +271,13 @@ DIRECT (REAL_Matrix_getHighestY) {
 
 DIRECT (INTEGER_Matrix_getNumberOfRows) {
 	NUMBER_ONE (Matrix)
-		long result = my ny;
+		integer result = my ny;
 	NUMBER_ONE_END (U" rows")
 }
 
 DIRECT (INTEGER_Matrix_getNumberOfColumns) {
 	NUMBER_ONE (Matrix)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" columns")
 }
 

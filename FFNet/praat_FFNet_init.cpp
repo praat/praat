@@ -106,7 +106,7 @@ DO
 		autoPatternList result = PatternList_create (numberOfPatterns, patternDimension);
 	CREATE_ONE_END (name);
 }
-	
+
 /**************** New Categories ***************************/
 	
 FORM (NEW1_Categories_create, U"Create Categories", nullptr) {
@@ -564,7 +564,7 @@ DIRECT (NEW1_RBM_PatternList_to_ActivationList) {
 }
 
 void praat_uvafon_FFNet_init () {
-	Thing_recognizeClassesByName (classFFNet, NULL);
+	Thing_recognizeClassesByName (classFFNet, nullptr);
 
 	praat_addMenuCommand (U"Objects", U"New", U"Feedforward neural networks", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FFNet...", nullptr, 1, NEW1_FFNet_create);

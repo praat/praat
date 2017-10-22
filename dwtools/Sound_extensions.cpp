@@ -237,7 +237,7 @@ static void u4write (Sound me, FILE *f, int littleEndian, long *nClip) {
 	void (*put) (uint32_t, FILE *) = littleEndian ? binputu32LE : binputu32;
 	*nClip = 0;
 	for (long i = 1; i <= my nx; i++) {
-		double sample = floor (s[i] * 4294967295.0 + 0.5);
+		double sample = Melder_round_tieUp (s[i] * 4294967295.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -614,7 +614,7 @@ static autoSound Sound_createToneComplex (double minimumTime, double maximumTime
 autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, long numberOfComponents, double frequencyDistance, int scaleAmplitudes) {
 	if (firstFrequency + (numberOfComponents - 1) * frequencyDistance > samplingFrequency / 2) {
 		Melder_warning (U"Sound_createSimpleToneComplex: frequency of (some) components too high.");
-		numberOfComponents = (long) floor (1.0 + (samplingFrequency / 2 - firstFrequency) / frequencyDistance);
+		numberOfComponents = Melder_iroundDown (1.0 + (0.5 * samplingFrequency - firstFrequency) / frequencyDistance);
 	}
 	return Sound_createToneComplex (minimumTime, maximumTime, samplingFrequency,
 	                                firstFrequency, numberOfComponents, frequencyDistance, 0, 0, scaleAmplitudes);
@@ -623,7 +623,7 @@ autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime,
 autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, long numberOfComponents, long mistunedComponent, double mistuningFraction, int scaleAmplitudes) {
 	if (firstFrequency + (numberOfComponents - 1) * firstFrequency > samplingFrequency / 2) {
 		Melder_warning (U"Sound_createMistunedHarmonicComplex: frequency of (some) components too high.");
-		numberOfComponents = (long) floor (1.0 + (samplingFrequency / 2 - firstFrequency) / firstFrequency);
+		numberOfComponents = Melder_iroundDown (1.0 + (0.5 * samplingFrequency - firstFrequency) / firstFrequency);
 	}
 	if (mistunedComponent > numberOfComponents) {
 		Melder_warning (U"Sound_createMistunedHarmonicComplex: mistuned component too high.");
@@ -1075,7 +1075,7 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	long nby = Sampled_xToNearestIndex (me, ty);
 	long ney = Sampled_xToNearestIndex (me, ty + duration);
 
-	long increment = 0, decrement = 0;
+	integer increment = 0, decrement = 0;
 	if (nbx < 1) {
 		increment = 1 - nbx;
 	}
@@ -1083,25 +1083,28 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 		decrement = ney - my nx;
 	}
 
-	long ns = (long) floor (duration / my dx) - increment - decrement;
+	integer ns = Melder_iroundDown (duration / my dx) - increment - decrement;
 	if (ns < 1) {
-		return 0;
+		return 0.0;
 	}
 
-	double *x = & my z[1][nbx + increment - 1];
-	double *y = & my z[1][nby + increment - 1];
-	double xm = 0, ym = 0, sxx = 0, syy = 0, sxy = 0;
-	for (long i = 1; i <= ns; i++) {
-		xm += x[i];
-		ym += y[i];
+	double *x = & my z [1] [nbx + increment - 1];
+	double *y = & my z [1] [nby + increment - 1];
+	double xm = 0.0, ym = 0.0, sxx = 0.0, syy = 0.0, sxy = 0.0;
+	for (long i = 1; i <= ns; i ++) {
+		xm += x [i];
+		ym += y [i];
 	}
-	xm /= ns; ym /= ns;
+	xm /= ns;
+	ym /= ns;
 	for (long i = 1; i <= ns; i++) {
 		double xt = x[i] - xm, yt = y[i] - ym;
-		sxx += xt * xt; syy += yt * yt; sxy += xt * yt;
+		sxx += xt * xt;
+		syy += yt * yt;
+		sxy += xt * yt;
 	}
 	double denum = sxx * syy;
-	double rxy = denum > 0 ? sxy / sqrt (denum) : 0;
+	double rxy = denum > 0.0 ? sxy / sqrt (denum) : 0.0;
 	return rxy;
 }
 
@@ -1250,7 +1253,7 @@ void Sound_filter_part_formula (Sound me, double t1, double t2, const char32 *fo
 autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt) {
 	try {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		long i = 1, dtn = (long) floor (dt / my dx);
+		integer i = 1, dtn = Melder_iroundDown (dt / my dx);
 		if (dtn < 1) {
 			dtn = 1;
 		}
@@ -1661,7 +1664,7 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 }
 
 void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, int fadeGlobal) {
-	long numberOfSamples = (long) floor (fabs (fadeTime) / my dx);
+	integer numberOfSamples = Melder_iroundDown (fabs (fadeTime) / my dx);
 	double t1 = t, t2 = t1 + fadeTime;
 	const char32 *fade_inout = inout > 0 ? U"out" : U"in";
 	if (channel < 0 || channel > my ny) {

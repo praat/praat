@@ -35,9 +35,9 @@
 autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_window, double forwardMaskingTime) {
 	try {
 		double duration = my nx * my dx;
-		long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
-		long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2 - 1;
-		long nf = lround (25.6 / df);
+		integer nFrames = 1 + Melder_iroundDown ((duration - dt_window) / dt);
+		integer nsamp_window = Melder_iroundDown (dt_window / my dx), halfnsamp_window = nsamp_window / 2 - 1;
+		integer nf = Melder_iround_tieDown (25.6 / df);
 		double dampingFactor = forwardMaskingTime > 0.0 ? exp (- dt / forwardMaskingTime) : 0.0;   // default 30 ms
 		double integrationCorrection = 1.0 - dampingFactor;
 
@@ -46,12 +46,12 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 		double t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt);   // centre of first frame
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, nFrames, dt, t1, df, nf);
 		autoSound window = Sound_createSimple (1, nsamp_window * my dx, 1.0 / my dx);
-		for (long iframe = 1; iframe <= nFrames; iframe ++) {
+		for (integer iframe = 1; iframe <= nFrames; iframe ++) {
 			double t = Sampled_indexToX (thee.get(), iframe);
-			long leftSample = Sampled_xToLowIndex (me, t);
-			long rightSample = leftSample + 1;
-			long startSample = rightSample - halfnsamp_window;
-			long endSample = rightSample + halfnsamp_window;
+			integer leftSample = Sampled_xToLowIndex (me, t);
+			integer rightSample = leftSample + 1;
+			integer startSample = rightSample - halfnsamp_window;
+			integer endSample = rightSample + halfnsamp_window;
 			if (startSample < 1) {
 				Melder_casual (U"Start sample too small: ", startSample,
 					U" instead of 1.");
@@ -65,17 +65,17 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 			}
 
 			/* Copy a window to a frame. */
-			for (long i = 1; i <= nsamp_window; i ++)
+			for (integer i = 1; i <= nsamp_window; i ++)
 				window -> z [1] [i] =
 					( my ny == 1 ? my z[1][i+startSample-1] : 0.5 * (my z[1][i+startSample-1] + my z[2][i+startSample-1]) ) *
 					(0.5 - 0.5 * cos (2.0 * NUMpi * i / (nsamp_window + 1)));
 			autoSpectrum spec = Sound_to_Spectrum (window.get(), true);
 			autoExcitation excitation = Spectrum_to_Excitation (spec.get(), df);
-			for (long ifreq = 1; ifreq <= nf; ifreq ++)
+			for (integer ifreq = 1; ifreq <= nf; ifreq ++)
 				thy z [ifreq] [iframe] = excitation -> z [1] [ifreq] + ( iframe > 1 ? dampingFactor * thy z [ifreq] [iframe - 1] : 0 );
 		}
-		for (long iframe = 1; iframe <= nFrames; iframe ++)
-			for (long ifreq = 1; ifreq <= nf; ifreq ++)
+		for (integer iframe = 1; iframe <= nFrames; iframe ++)
+			for (integer ifreq = 1; ifreq <= nf; ifreq ++)
 				thy z [ifreq] [iframe] *= integrationCorrection;
 		return thee;
 	} catch (MelderError) {
@@ -85,7 +85,7 @@ autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_
 
 static autoSound createGammatone (double midFrequency_Hertz, double samplingFrequency) {
 	double lengthOfGammatone_seconds = 50.0 / midFrequency_Hertz;   // 50 periods
-	long lengthOfGammatone_samples;
+	integer lengthOfGammatone_samples;
 	/* EdB's alfa1: */
 	double latency = 1.95e-3 * pow (midFrequency_Hertz / 1000, -0.725) + 0.6e-3;
 	/* EdB's beta: */
@@ -94,7 +94,7 @@ static autoSound createGammatone (double midFrequency_Hertz, double samplingFreq
 	double midFrequency_radPerSecond = 2 * NUMpi * midFrequency_Hertz;
 	autoSound gammatone = Sound_createSimple (1, lengthOfGammatone_seconds, samplingFrequency);
 	lengthOfGammatone_samples = gammatone -> nx;
-	for (long itime = 1; itime <= lengthOfGammatone_samples; itime ++) {
+	for (integer itime = 1; itime <= lengthOfGammatone_samples; itime ++) {
 		double time_seconds = (itime - 0.5) / samplingFrequency;
 		double timeAfterLatency = time_seconds - latency;
 		double x = timeAfterLatency / decayTime;
@@ -170,11 +170,11 @@ autoCochleagram Sound_to_Cochleagram_edb
 				for (integer itime = 1; itime <= ntime; itime ++)
 					response [itime] = basil -> z [1] [itime];
 			} else {
-				double d = dtime / basil -> dx / 2;
+				double d = dtime / basil -> dx / 2.0;
 				double factor = -6 / d / d;
 				double area = d * sqrt (NUMpi / 6);
 				double expmin6 = exp (-6), onebyoneminexpmin6 = 1 / (1 - expmin6);
-				for (long itime = 1; itime <= ntime; itime ++) {
+				for (integer itime = 1; itime <= ntime; itime ++) {
 					double t1 = (itime - 1) * dtime;
 					double t2 = t1 + dtime;
 					double mean = 0.0;
@@ -186,8 +186,7 @@ autoCochleagram Sound_to_Cochleagram_edb
 							mean += basil -> z [1] [isamp];
 						mean /= n;
 					} else {
-						double mu = floor ((i1 + i2) / 2.0);
-						integer muint = (long) mu, dint = (long) d;
+						integer muint = Melder_iroundDown ((i1 + i2) / 2.0), dint = Melder_iroundDown (d);
 						for (integer isamp = muint - dint; isamp <= muint + dint; isamp ++) {
 							double y = 0;
 							if (isamp < 1 || isamp > basil -> nx)

@@ -435,7 +435,7 @@ FORM (NEW_Sound_to_Sound_whiteChannels, U"Sound: To Sound (white channels)", U"S
     OK
 DO
     if (varianceFraction > 1.0) varianceFraction = 1.0;
-    long permille = (long) floor (varianceFraction * 1000.0);
+    integer permille = Melder_iroundDown (varianceFraction * 1000.0);
     CONVERT_EACH (Sound)
 		autoSound result = Sound_whitenChannels (me, varianceFraction);
     CONVERT_EACH_END (my name, U"_", permille);

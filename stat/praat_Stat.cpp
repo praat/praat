@@ -26,13 +26,6 @@
 
 #include "praat_TableOfReal.h"
 
-static const char32 * Table_messageColumn (Table me, long column) {
-	if (my columnHeaders [column]. label && my columnHeaders [column]. label [0] != U'\0')
-		return Melder_cat (U"\"", my columnHeaders [column]. label, U"\"");
-	else
-		return Melder_integer (column);
-}
-
 // MARK: - DISTRIBUTIONS
 
 // MARK: Help
@@ -110,8 +103,8 @@ FORM (GRAPHICS_LogisticRegression_drawBoundary, U"LogisticRegression: Draw bound
 	OK
 DO
 	GRAPHICS_EACH (LogisticRegression)
-		long xfactor = Regression_getFactorIndexFromFactorName_e (me, horizontalFactor);
-		long yfactor = Regression_getFactorIndexFromFactorName_e (me, verticalFactor);
+		integer xfactor = Regression_getFactorIndexFromFactorName_e (me, horizontalFactor);
+		integer yfactor = Regression_getFactorIndexFromFactorName_e (me, verticalFactor);
 		LogisticRegression_drawBoundary (me, GRAPHICS,
 			xfactor, fromHorizontal, toHorizontal,
 			yfactor, fromVertical, toVertical,
@@ -143,7 +136,7 @@ DIRECT (REAL_PairDistribution_getFractionCorrect_probabilityMatching) {
 
 DIRECT (INTEGER_PairDistribution_getNumberOfPairs) {
 	NUMBER_ONE (PairDistribution)
-		long result = my pairs.size;
+		integer result = my pairs.size;
 	NUMBER_ONE_END (U" pairs")
 }
 
@@ -257,27 +250,39 @@ FORM_READ (READ1_Table_readFromTableFile, U"Read Table from table file", nullptr
 
 FORM_READ (READ1_Table_readFromCommaSeparatedFile, U"Read Table from comma-separated file", nullptr, true) {
 	READ_ONE
-		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U',');
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U',', true);
+	READ_ONE_END
+}
+
+FORM_READ (READ1_Table_readFromSemicolonSeparatedFile, U"Read Table from semicolon-separated file", nullptr, true) {
+	READ_ONE
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U';', true);
 	READ_ONE_END
 }
 
 FORM_READ (READ1_Table_readFromTabSeparatedFile, U"Read Table from tab-separated file", nullptr, true) {
 	READ_ONE
-		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U'\t');
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U'\t', false);
 	READ_ONE_END
 }
 
 // MARK: Save
 
-FORM_SAVE (SAVE_Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", 0, U"Table") {
+FORM_SAVE (SAVE_Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", nullptr, U"Table") {
+	SAVE_ONE (Table)
+		Table_writeToTabSeparatedFile (me, file);
+	SAVE_ONE_END
+}
+
+FORM_SAVE (SAVE_Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", nullptr, U"Table") {
 	SAVE_ONE (Table)
 		Table_writeToCommaSeparatedFile (me, file);
 	SAVE_ONE_END
 }
 
-FORM_SAVE (SAVE_Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", 0, U"Table") {
+FORM_SAVE (SAVE_Table_writeToSemicolonSeparatedFile, U"Save Table as semicolon-separated file", nullptr, U"Table") {
 	SAVE_ONE (Table)
-		Table_writeToTabSeparatedFile (me, file);
+		Table_writeToSemicolonSeparatedFile (me, file);
 	SAVE_ONE_END
 }
 
@@ -324,9 +329,9 @@ FORM (GRAPHICS_Table_scatterPlot, U"Scatter plot", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
-		long markColumn = Table_getColumnIndexFromColumnLabel (me, columnWithMarks);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		integer markColumn = Table_getColumnIndexFromColumnLabel (me, columnWithMarks);
 		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
 			fromHorizontal, toHorizontal, fromVertical, toVertical, markColumn, fontSize, garnish);
 	GRAPHICS_EACH_END
@@ -345,8 +350,8 @@ FORM (GRAPHICS_Table_scatterPlot_mark, U"Scatter plot (marks)", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
 		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
 			fromHorizontal, toHorizontal, fromVertical, toVertical,
 			markSize, markString, garnish);
@@ -365,8 +370,8 @@ FORM (GRAPHICS_Table_drawEllipse, U"Draw ellipse (standard deviation)", nullptr)
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
 		Table_drawEllipse_e (me, GRAPHICS, xcolumn, ycolumn,
 			fromHorizontal, toHorizontal, fromVertical, toVertical, numberOfSigmas, garnish);
 	GRAPHICS_EACH_END
@@ -379,8 +384,8 @@ FORM (INTEGER_Table_drawRowFromDistribution, U"Table: Draw row from distribution
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
-		long result = Table_drawRowFromDistribution (me, columnNumber);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
+		integer result = Table_drawRowFromDistribution (me, columnNumber);
 	NUMBER_ONE_END (U" (random row number)")
 }
 
@@ -389,7 +394,7 @@ FORM (INTEGER_Table_getColumnIndex, U"Table: Get column index", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		long result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
+		integer result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
 	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
 }
 
@@ -411,8 +416,8 @@ FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		long column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
+		integer column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
 		double result = Table_getGroupMean (me, column, groupColumn, group);
 	NUMBER_ONE_END (U" (mean of ", columnLabel, U" in group ", group, U")")
 }
@@ -422,7 +427,7 @@ FORM (REAL_Table_getMaximum, U"Table: Get maximum", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getMaximum (me, columnNumber);
 	NUMBER_ONE_END (U" (maximum of ", columnLabel, U")")
 }
@@ -432,7 +437,7 @@ FORM (REAL_Table_getMean, U"Table: Get mean", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getMean (me, columnNumber);
 	NUMBER_ONE_END (U" (mean of ", columnLabel, U")")
 }
@@ -442,7 +447,7 @@ FORM (REAL_Table_getMinimum, U"Table: Get minimum", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getMinimum (me, columnNumber);
 	NUMBER_ONE_END (U" (minimum of ", columnLabel, U")")
 }
@@ -453,7 +458,7 @@ FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getQuantile (me, columnNumber, quantile);
 	NUMBER_ONE_END (U" (", quantile, U" quantile of ", columnLabel, U")")
 }
@@ -463,20 +468,20 @@ FORM (REAL_Table_getStandardDeviation, U"Table: Get standard deviation", nullptr
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getStdev (me, columnNumber);
 	NUMBER_ONE_END (U" (standard deviation of ", columnLabel, U")")
 }
 
 DIRECT (INTEGER_Table_getNumberOfColumns) {
 	NUMBER_ONE (Table)
-		long result = my numberOfColumns;
+		integer result = my numberOfColumns;
 	NUMBER_ONE_END (U" columns")
 }
 
 DIRECT (INTEGER_Table_getNumberOfRows) {
 	NUMBER_ONE (Table)
-		long result = my rows.size;
+		integer result = my rows.size;
 	NUMBER_ONE_END (U" rows")
 }
 
@@ -487,7 +492,7 @@ FORM (STRING_Table_getValue, U"Table: Get value", nullptr) {
 DO
 	STRING_ONE (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const char32 *result = my rows.at [rowNumber] -> cells [columnNumber]. string;
 	STRING_ONE_END
 }
@@ -498,8 +503,8 @@ FORM (INTEGER_Table_searchColumn, U"Table: Search column", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		long result = Table_searchColumn (me, columnNumber, value);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer result = Table_searchColumn (me, columnNumber, value);
 	NUMBER_ONE_END (U" (first row in which ", columnLabel, U" is ", value)
 }
 	
@@ -512,8 +517,8 @@ FORM (INFO_Table_reportCorrelation_kendallTau, U"Report correlation (Kendall tau
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double correlation, significance, lowerLimit, upperLimit;
 		correlation = Table_getCorrelation_kendallTau (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& significance, & lowerLimit, & upperLimit);
@@ -538,8 +543,8 @@ FORM (INFO_Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", 
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double correlation, significance, lowerLimit, upperLimit;
 		correlation = Table_getCorrelation_pearsonR (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& significance, & lowerLimit, & upperLimit);
@@ -565,8 +570,8 @@ FORM (INFO_Table_reportDifference_studentT, U"Report difference (Student t)", nu
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
 		difference = Table_getDifference_studentT (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
@@ -595,8 +600,8 @@ FORM (INFO_Table_reportGroupDifference_studentT, U"Report group difference (Stud
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getGroupDifference_studentT (me, columnNumber, groupColumnNumber, group1, group2, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -624,8 +629,8 @@ FORM (INFO_Table_reportGroupDifference_wilcoxonRankSum, U"Report group differenc
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double areaUnderCurve, rankSum, significanceFromZero;
 		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, columnNumber, groupColumnNumber, group1, group2,
 			& rankSum, & significanceFromZero);
@@ -648,8 +653,8 @@ FORM (INFO_Table_reportGroupMean_studentT, U"Report group mean (Student t)", nul
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getGroupMean_studentT (me, columnNumber, groupColumnNumber, group, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -675,7 +680,7 @@ FORM (INFO_Table_reportMean_studentT, U"Report mean (Student t)", nullptr) {
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getMean_studentT (me, columnNumber, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -712,8 +717,8 @@ FORM (MODIFY_Table_appendDifferenceColumn, U"Table: Append difference column", n
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendDifferenceColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -725,8 +730,8 @@ FORM (MODIFY_Table_appendProductColumn, U"Table: Append product column", nullptr
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendProductColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -738,8 +743,8 @@ FORM (MODIFY_Table_appendQuotientColumn, U"Table: Append quotient column", nullp
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendQuotientColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -751,8 +756,8 @@ FORM (MODIFY_Table_appendSumColumn, U"Table: Append sum column", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendSumColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -769,7 +774,7 @@ FORM (MODIFY_Table_formula, U"Table: Formula", U"Table: Formula...") {
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_formula (me, columnNumber, formula, interpreter);
 	MODIFY_EACH_WEAK_END
 }
@@ -781,8 +786,8 @@ FORM (MODIFY_Table_formula_columnRange, U"Table: Formula (column range)", U"Tabl
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, fromColumn);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, toColumn);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, fromColumn);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, toColumn);
 		Table_formula_columnRange (me, columnNumber1, columnNumber2, formula, interpreter);
 	MODIFY_EACH_WEAK_END
 }
@@ -811,7 +816,7 @@ FORM (MODIFY_Table_removeColumn, U"Table: Remove column", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_removeColumn (me, columnNumber);
 	MODIFY_EACH_END
 }
@@ -841,7 +846,7 @@ FORM (MODIFY_Table_setColumnLabel_label, U"Set column label", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, oldLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, oldLabel);
 		Table_setColumnLabel (me, columnNumber, newLabel);
 	MODIFY_EACH_END
 }
@@ -853,7 +858,7 @@ FORM (MODIFY_Table_setNumericValue, U"Table: Set numeric value", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_setNumericValue (me, rowNumber, columnNumber, numericValue);
 	MODIFY_EACH_END
 }
@@ -865,7 +870,7 @@ FORM (MODIFY_Table_setStringValue, U"Table: Set string value", nullptr) {
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_setStringValue (me, rowNumber, columnNumber, stringValue);
 	MODIFY_EACH_END
 }
@@ -922,7 +927,7 @@ FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where colum
 	OK
 DO
 	CONVERT_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_EACH_END (my name, U"_", Table_messageColumn (me, columnNumber), U"_",
 		isdefined (___theNumber) ? Melder_integer (lround (___theNumber)) : U"undefined")
@@ -935,7 +940,7 @@ FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column 
 	OK
 DO
 	CONVERT_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, (kMelder_string) ___, ___theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
@@ -954,7 +959,7 @@ FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
 	OK
 DO
 	CONVERT_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
 		autoTable result = Table_rowsToColumns (me, factors, columnNumber, columnsToExpand);
 	CONVERT_EACH_END (my name, U"_nested")
 }
@@ -981,7 +986,7 @@ FORM (NEW_Table_to_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
 	OK
 DO
 	CONVERT_EACH (Table)
-		long columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
+		integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
 		autoTableOfReal result = Table_to_TableOfReal (me, columnNumber);
 	CONVERT_EACH_END (my name)
 }
@@ -1004,7 +1009,7 @@ FORM_READ (READ1_TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfRe
 }
 
 static bool isTabSeparated_8bit (integer nread, const char *header) {
-	for (long i = 0; i < nread; i ++) {
+	for (integer i = 0; i < nread; i ++) {
 		if (header [i] == '\t') return true;
 		if (header [i] == '\n' || header [i] == '\r') return false;
 	}
@@ -1012,7 +1017,7 @@ static bool isTabSeparated_8bit (integer nread, const char *header) {
 }
 
 static bool isTabSeparated_utf16be (integer nread, const char *header) {
-	for (long i = 2; i < nread; i += 2) {
+	for (integer i = 2; i < nread; i += 2) {
 		if (header [i] == '\0' && header [i + 1] == '\t') return true;
 		if (header [i] == '\0' && (header [i + 1] == '\n' || header [i + 1] == '\r')) return false;
 	}
@@ -1020,7 +1025,7 @@ static bool isTabSeparated_utf16be (integer nread, const char *header) {
 }
 
 static bool isTabSeparated_utf16le (integer nread, const char *header) {
-	for (long i = 2; i < nread; i += 2) {
+	for (integer i = 2; i < nread; i += 2) {
 		if (header [i + 1] == '\0' && header [i] == '\t') return true;
 		if (header [i + 1] == '\0' && (header [i] == '\n' || header [i] == '\r')) return false;
 	}
@@ -1038,7 +1043,7 @@ static autoDaata tabSeparatedFileRecognizer (integer nread, const char *header, 
 		uheader [0] == 0xff && uheader [1] == 0xef ? isTabSeparated_utf16le (nread, header) :
 		isTabSeparated_8bit (nread, header);
 	if (! isTabSeparated) return autoDaata ();
-	return Table_readFromCharacterSeparatedTextFile (file, '\t');
+	return Table_readFromCharacterSeparatedTextFile (file, U'\t', false);
 }
 
 void praat_uvafon_stat_init ();
@@ -1060,6 +1065,7 @@ void praat_uvafon_stat_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, READ1_Table_readFromTabSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, READ1_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from semicolon-separated file...", nullptr, 0, READ1_Table_readFromSemicolonSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, READ1_Table_readFromTableFile);
 	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", praat_DEPRECATED_2011, READ1_Table_readFromTableFile);
 
@@ -1096,6 +1102,7 @@ void praat_uvafon_stat_init () {
 	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, SAVE_Table_writeToCommaSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as semicolon-separated file...", nullptr, 0, SAVE_Table_writeToSemicolonSeparatedFile);
 	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, WINDOW_Table_viewAndEdit);
 	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, WINDOW_Table_viewAndEdit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);

@@ -2,7 +2,7 @@
 #define _OTGrammarEditor_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2011,2012,2015 Paul Boersma
+ * Copyright (C) 1997-2005,2007,2009-2012,2015-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "OTGrammar.h"
 
 Thing_define (OTGrammarEditor, HyperPage) {
-	long selected;
+	integer selected;
 	bool d_constraintsAreDrawnVertically;
 
 	bool v_editable ()

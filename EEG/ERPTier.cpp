@@ -78,7 +78,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 		integer numberOfEvents = events -> nt;
 		double soundDuration = toTime - fromTime;
 		double samplingPeriod = my sound -> dx;
-		integer numberOfSamples = (integer) floor (soundDuration / samplingPeriod) + 1;
+		integer numberOfSamples = Melder_iroundDown (soundDuration / samplingPeriod) + 1;
 		if (numberOfSamples < 1)
 			Melder_throw (U"Time window too short.");
 		double midTime = 0.5 * (fromTime + toTime);

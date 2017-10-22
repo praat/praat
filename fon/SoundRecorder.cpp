@@ -306,14 +306,14 @@ static void showMeter (SoundRecorder me, short *buffer, integer nsamp) {
 			}
 		}
 		if (my lastLeftMaximum > 30000) {
-			int leak = my lastLeftMaximum - (int) floor (2000000 / theControlPanel. sampleRate);
+			int leak = my lastLeftMaximum - Melder_iroundDown (2000000.0 / theControlPanel. sampleRate);
 			if (leftMaximum < leak) leftMaximum = leak;
 		}
 		showMaximum (me, 1, leftMaximum);
 		my lastLeftMaximum = leftMaximum;
 		if (my numberOfChannels == 2) {
 			if (my lastRightMaximum > 30000) {
-				int leak = my lastRightMaximum - (int) floor (2000000 / theControlPanel. sampleRate);
+				int leak = my lastRightMaximum - Melder_iroundDown (2000000.0 / theControlPanel. sampleRate);
 				if (rightMaximum < leak) rightMaximum = leak;
 			}
 			showMaximum (me, 2, rightMaximum);
@@ -847,7 +847,7 @@ void structSoundRecorder :: v_createChildren ()
 			y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
 			our fsamps [i]. button = GuiRadioButton_createShown (our windowForm,
 				-150, -10, y, y + Gui_RADIOBUTTON_HEIGHT,
-				Melder_cat (fsamp == floor (fsamp) ? Melder_integer ((integer) fsamp) : Melder_fixed (fsamp, 5), U" Hz"),
+				Melder_cat (fsamp == Melder_roundDown (fsamp) ? Melder_integer ((integer) fsamp) : Melder_fixed (fsamp, 5), U" Hz"),
 				gui_radiobutton_cb_fsamp, this, fsamp == theControlPanel. sampleRate ? GuiRadioButton_SET : 0);
 		}
 	}

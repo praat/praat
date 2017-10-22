@@ -2,7 +2,7 @@
 #define _MelderThread_h_
 /* MelderThread.h
  *
- * Copyright (C) 2014,2016,2017 Paul Boersma
+ * Copyright (C) 2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

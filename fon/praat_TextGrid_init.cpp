@@ -41,7 +41,7 @@ static const char32 *STRING_POINT_NUMBER = U"Point number";
 DIRECT (NEW1_AnyTier_into_TextGrid) {
 	CONVERT_LIST (Function)
 		autoTextGrid result = TextGrid_createWithoutTiers (1e30, -1e30);
-		for (long i = 1; i <= list.size; i ++) {
+		for (integer i = 1; i <= list.size; i ++) {
 			TextGrid_addTier_copy (result.get(), list.at [i]);
 		}
 	CONVERT_LIST_END (U"grid")
@@ -624,7 +624,7 @@ FORM (BOOLEAN_SpellingChecker_isWordAllowed, U"Is word allowed?", U"SpellingChec
 	OK
 DO
 	NUMBER_ONE (SpellingChecker)
-		long result = SpellingChecker_isWordAllowed (me, word);
+		integer result = SpellingChecker_isWordAllowed (me, word);
 	NUMBER_ONE_END (result ? U" (allowed)" : U" (not allowed)")
 }
 
@@ -839,17 +839,17 @@ DO
 
 DIRECT (INTEGER_TextGrid_getNumberOfTiers) {
 	NUMBER_ONE (TextGrid)
-		long result = my tiers->size;
+		integer result = my tiers->size;
 	NUMBER_ONE_END (U" tiers")
 }
 
-inline static void pr_TextGrid_checkTierNumber (TextGrid me, long tierNumber) {
+inline static void pr_TextGrid_checkTierNumber (TextGrid me, integer tierNumber) {
 	if (tierNumber > my tiers->size)
 		Melder_throw (U"Your tier number (", tierNumber,
 			U") should not be greater than the number of tiers (", my tiers->size, U").");
 }
 
-inline static Function pr_TextGrid_peekTier (TextGrid me, long tierNumber) {
+inline static Function pr_TextGrid_peekTier (TextGrid me, integer tierNumber) {
 	pr_TextGrid_checkTierNumber (me, tierNumber);
 	return my tiers->at [tierNumber];
 }
@@ -870,12 +870,12 @@ FORM (BOOLEAN_TextGrid_isIntervalTier, U"TextGrid: Is interval tier?", nullptr) 
 DO
 	NUMBER_ONE (TextGrid)
 		Function tier = pr_TextGrid_peekTier (me, tierNumber);
-		long result = ( tier -> classInfo == classIntervalTier );
+		integer result = ( tier -> classInfo == classIntervalTier );
 	NUMBER_ONE_END (result ? U" (yes, tier " : U" (no, tier ", tierNumber,
 		result ? U" is an interval tier)" : U" is a point tier)")
 }
 
-static IntervalTier pr_TextGrid_peekIntervalTier (TextGrid me, long tierNumber) {
+static IntervalTier pr_TextGrid_peekIntervalTier (TextGrid me, integer tierNumber) {
 	Function tier = pr_TextGrid_peekTier (me, tierNumber);
 	if (tier -> classInfo != classIntervalTier)
 		Melder_throw (U"Your tier should be an interval tier.");
@@ -888,11 +888,11 @@ FORM (INTEGER_TextGrid_getNumberOfIntervals, U"TextGrid: Get number of intervals
 DO
 	NUMBER_ONE (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
-		long result = intervalTier -> intervals.size;
+		integer result = intervalTier -> intervals.size;
 	NUMBER_ONE_END (U" intervals")
 }
 
-static TextInterval pr_TextGrid_peekInterval (TextGrid me, long tierNumber, long intervalNumber) {
+static TextInterval pr_TextGrid_peekInterval (TextGrid me, integer tierNumber, integer intervalNumber) {
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
 	if (intervalNumber > intervalTier -> intervals.size) Melder_throw (U"Interval number too large.");
 	return intervalTier -> intervals.at [intervalNumber];
@@ -938,7 +938,7 @@ FORM (INTEGER_TextGrid_getIntervalAtTime, U"TextGrid: Get interval at time", nul
 DO
 	NUMBER_ONE (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
-		long result = IntervalTier_timeToIndex (intervalTier, time);
+		integer result = IntervalTier_timeToIndex (intervalTier, time);
 	NUMBER_ONE_END (U" (interval number)")
 }
 
@@ -949,7 +949,7 @@ FORM (INTEGER_TextGrid_getLowIntervalAtTime, U"TextGrid: Get low interval at tim
 DO
 	NUMBER_ONE (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
-		long result = IntervalTier_timeToHighIndex (intervalTier, time);
+		integer result = IntervalTier_timeToHighIndex (intervalTier, time);
 	NUMBER_ONE_END (U" (low interval)")
 }
 
@@ -960,7 +960,7 @@ FORM (INTEGER_TextGrid_getHighIntervalAtTime, U"TextGrid: Get high interval at t
 DO
 	NUMBER_ONE (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
-		long result = IntervalTier_timeToLowIndex (intervalTier, time);
+		integer result = IntervalTier_timeToLowIndex (intervalTier, time);
 	NUMBER_ONE_END (U" (high interval)")
 }
 
@@ -971,7 +971,7 @@ FORM (INTEGER_TextGrid_getIntervalEdgeFromTime, U"TextGrid: Get interval edge fr
 DO
 	NUMBER_ONE (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
-		long result = IntervalTier_hasTime (intervalTier, time);
+		integer result = IntervalTier_hasTime (intervalTier, time);
 	NUMBER_ONE_END (U" (interval edge)")
 }
 
@@ -982,7 +982,7 @@ FORM (INTEGER_TextGrid_getIntervalBoundaryFromTime, U"TextGrid: Get interval bou
 DO
 	NUMBER_ONE (TextGrid)
 		IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (me, tierNumber);
-		long result = IntervalTier_hasBoundary (intervalTier, time);
+		integer result = IntervalTier_hasBoundary (intervalTier, time);
 	NUMBER_ONE_END (U" (interval boundary)")
 }
 
@@ -993,11 +993,11 @@ FORM (INTEGER_TextGrid_countIntervalsWhere, U"Count intervals", U"TextGrid: Coun
 	OK
 DO
 	NUMBER_ONE (TextGrid)
-		long result = TextGrid_countIntervalsWhere (me, tierNumber, (kMelder_string) countIntervalsWhoseLabel___, ___theText);
+		integer result = TextGrid_countIntervalsWhere (me, tierNumber, (kMelder_string) countIntervalsWhoseLabel___, ___theText);
 	NUMBER_ONE_END (U" intervals containing ", ___theText);
 }
 
-static TextTier pr_TextGrid_peekTextTier (TextGrid me, long tierNumber) {
+static TextTier pr_TextGrid_peekTextTier (TextGrid me, integer tierNumber) {
 	Function tier = pr_TextGrid_peekTier (me, tierNumber);
 	if (! tier) return nullptr;
 	if (tier -> classInfo != classTextTier) Melder_throw (U"Your tier should be a point tier (TextTier).");
@@ -1010,11 +1010,11 @@ FORM (INTEGER_TextGrid_getNumberOfPoints, U"TextGrid: Get number of points", nul
 DO
 	NUMBER_ONE (TextGrid)
 		TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
-		long result = textTier -> points.size;
+		integer result = textTier -> points.size;
 	NUMBER_ONE_END (U" (points")
 }
 
-static TextPoint pr_TextGrid_peekPoint (TextGrid me, long tierNumber, long pointNumber) {
+static TextPoint pr_TextGrid_peekPoint (TextGrid me, integer tierNumber, integer pointNumber) {
 	TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
 	if (pointNumber > textTier -> points.size) Melder_throw (U"Point number too large.");
 	return textTier -> points.at [pointNumber];
@@ -1049,7 +1049,7 @@ FORM (INTEGER_TextGrid_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low
 DO
 	NUMBER_ONE (TextGrid)
 		TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
-		long result = AnyTier_timeToLowIndex (textTier->asAnyTier(), time);
+		integer result = AnyTier_timeToLowIndex (textTier->asAnyTier(), time);
 	NUMBER_ONE_END (U" (low index)")
 }
 
@@ -1060,7 +1060,7 @@ FORM (INTEGER_TextGrid_getHighIndexFromTime, U"Get high index", U"AnyTier: Get h
 DO
 	NUMBER_ONE (TextGrid)
 		TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
-		long result = AnyTier_timeToHighIndex (textTier->asAnyTier(), time);
+		integer result = AnyTier_timeToHighIndex (textTier->asAnyTier(), time);
 	NUMBER_ONE_END (U" (high index)")
 }
 
@@ -1071,7 +1071,7 @@ FORM (INTEGER_TextGrid_getNearestIndexFromTime, U"Get nearest index", U"AnyTier:
 DO
 	NUMBER_ONE (TextGrid)
 		TextTier textTier = pr_TextGrid_peekTextTier (me, tierNumber);
-		long result = AnyTier_timeToNearestIndex (textTier->asAnyTier(), time);
+		integer result = AnyTier_timeToNearestIndex (textTier->asAnyTier(), time);
 	NUMBER_ONE_END (U" (nearest index)")
 }
 
@@ -1082,7 +1082,7 @@ FORM (INTEGER_TextGrid_countPointsWhere, U"Count points", U"TextGrid: Count poin
 	OK
 DO
 	NUMBER_ONE (TextGrid)
-		long result = TextGrid_countPointsWhere (me, tierNumber, (kMelder_string) countPointsWhoseLabel___, ___theText);
+		integer result = TextGrid_countPointsWhere (me, tierNumber, (kMelder_string) countPointsWhoseLabel___, ___theText);
 	NUMBER_ONE_END (U" points containing ", ___theText);
 }
 
@@ -1092,7 +1092,7 @@ FORM (INTEGER_TextGrid_countLabels, U"Count labels", U"TextGrid: Count labels...
 	OK
 DO
 	NUMBER_ONE (TextGrid)
-		long result = TextGrid_countLabels (me, tierNumber, labelText);
+		integer result = TextGrid_countLabels (me, tierNumber, labelText);
 	NUMBER_ONE_END (U" labels ", labelText)
 }
 
@@ -1216,10 +1216,10 @@ DO
 		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw (U"You cannot remove a boundary from tier ", tierNumber, U" of ", me,
 				U", because that tier is a point tier instead of an interval tier.");
-		if (tierNumber > intervalTier -> intervals.size)
+		if (intervalNumber > intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove a boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
 				U", because that tier has only ", intervalTier -> intervals.size, U" intervals.");
-		if (tierNumber == intervalTier -> intervals.size)
+		if (intervalNumber == intervalTier -> intervals.size)
 			Melder_throw (U"You cannot remove the right boundary from interval ", intervalNumber, U" of tier ", tierNumber, U" of ", me,
 				U", because this is at the right edge of the tier.");
 		IntervalTier_removeLeftBoundary (intervalTier, intervalNumber + 1);
@@ -1509,7 +1509,7 @@ FORM (BOOLEAN_WordList_hasWord, U"Does word occur in list?", U"WordList") {
 	OK
 DO
 	NUMBER_ONE (WordList)
-		long result = WordList_hasWord (me, word);
+		integer result = WordList_hasWord (me, word);
 	NUMBER_ONE_END (result ? U" (present)" : U" (absent)")
 }
 

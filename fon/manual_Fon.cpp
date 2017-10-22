@@ -1,6 +1,6 @@
 /* manual_Fon.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -435,7 +435,7 @@ MAN_END
 double Excitation_soundPressureToPhon (double soundPressure, double bark);
 Uses auditory filter (width apx. 1 Bark) for masking.
 
-Excitation Excitation_create (double df, long nf);
+Excitation Excitation_create (double df, integer nf);
 	Function:
 		return a new instance of Excitation.
 	Preconditions:

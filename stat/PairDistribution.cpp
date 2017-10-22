@@ -1,6 +1,6 @@
 /* PairDistribution.cpp
  *
- * Copyright (C) 1997-2012,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2012,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,14 +67,14 @@ int PairProbability_compare (PairProbability me, PairProbability thee) noexcept 
 	return str32cmp (my string1, thy string1);
 }
 
-static void PairDistribution_checkSpecifiedPairNumber (PairDistribution me, long pairNumber) {
+static void PairDistribution_checkSpecifiedPairNumber (PairDistribution me, integer pairNumber) {
 	if (pairNumber < 1)
 		Melder_throw (me, U": the specified pair number is ", pairNumber, U", but should be at least 1.");
 	if (pairNumber > my pairs.size)
 		Melder_throw (me, U": the specified pair number is ", pairNumber, U", but should be at most my number of pairs (", my pairs.size, U").");
 }
 
-const char32 * PairDistribution_getString1 (PairDistribution me, long pairNumber) {
+const char32 * PairDistribution_getString1 (PairDistribution me, integer pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = my pairs.at [pairNumber];
@@ -84,7 +84,7 @@ const char32 * PairDistribution_getString1 (PairDistribution me, long pairNumber
 	}
 }
 
-const char32 * PairDistribution_getString2 (PairDistribution me, long pairNumber) {
+const char32 * PairDistribution_getString2 (PairDistribution me, integer pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = my pairs.at [pairNumber];
@@ -94,7 +94,7 @@ const char32 * PairDistribution_getString2 (PairDistribution me, long pairNumber
 	}
 }
 
-double PairDistribution_getWeight (PairDistribution me, long pairNumber) {
+double PairDistribution_getWeight (PairDistribution me, integer pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = my pairs.at [pairNumber];
@@ -110,7 +110,7 @@ void PairDistribution_add (PairDistribution me, const char32 *string1, const cha
 }
 
 void PairDistribution_removeZeroWeights (PairDistribution me) {
-	for (long ipair = my pairs.size; ipair > 0; ipair --) {
+	for (integer ipair = my pairs.size; ipair > 0; ipair --) {
 		PairProbability prob = my pairs.at [ipair];
 		if (prob -> weight <= 0.0) {
 			my pairs.removeItem (ipair);
@@ -119,7 +119,7 @@ void PairDistribution_removeZeroWeights (PairDistribution me) {
 }
 
 void PairDistribution_swapInputsAndOutputs (PairDistribution me) {
-	for (long ipair = my pairs.size; ipair > 0; ipair --) {
+	for (integer ipair = my pairs.size; ipair > 0; ipair --) {
 		PairProbability prob = my pairs.at [ipair];
 		char32 *tmp = prob -> string1;
 		prob -> string1 = prob -> string2;
@@ -128,20 +128,20 @@ void PairDistribution_swapInputsAndOutputs (PairDistribution me) {
 }
 
 static double PairDistributions_getTotalWeight_checkPositive (PairDistribution me) throw (MelderError) {
-	double totalWeight = 0.0;
-	for (long ipair = 1; ipair <= my pairs.size; ipair ++) {
+	real80 totalWeight = 0.0;
+	for (integer ipair = 1; ipair <= my pairs.size; ipair ++) {
 		PairProbability prob = my pairs.at [ipair];
 		totalWeight += prob -> weight;
 	}
 	if (totalWeight <= 0.0) {
 		Melder_throw (me, U": the total probability weight is ", Melder_half (totalWeight), U" but should be greater than zero for this operation.");
 	}
-	return totalWeight;
+	return (real) totalWeight;
 }
 
-void PairDistribution_to_Stringses (PairDistribution me, long nout, autoStrings *strings1_out, autoStrings *strings2_out) {
+void PairDistribution_to_Stringses (PairDistribution me, integer nout, autoStrings *strings1_out, autoStrings *strings2_out) {
 	try {
-		long nin = my pairs.size, iin;
+		integer nin = my pairs.size, iin;
 		if (nin < 1)
 			Melder_throw (U"No candidates.");
 		if (nout < 1)
@@ -153,7 +153,7 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, autoStrings 
 		autoStrings strings2 = Thing_new (Strings);
 		strings2 -> numberOfStrings = nout;
 		strings2 -> strings = NUMvector <char32 *> (1, nout);
-		for (long iout = 1; iout <= nout; iout ++) {
+		for (integer iout = 1; iout <= nout; iout ++) {
 			do {
 				double rand = NUMrandomUniform (0, total), sum = 0.0;
 				for (iin = 1; iin <= nin; iin ++) {
@@ -179,7 +179,7 @@ void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **
 	try {
 		*string1 = *string2 = nullptr;
 		double total = 0.0;
-		long nin = my pairs.size, iin;
+		integer nin = my pairs.size, iin;
 		PairProbability prob;
 		if (nin < 1) Melder_throw (U"No candidates.");
 		for (iin = 1; iin <= nin; iin ++) {
@@ -206,12 +206,12 @@ void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **
 static double PairDistribution_getFractionCorrect (PairDistribution me, int which) {
 	try {
 		double correct = 0.0;
-		long pairmin = 1, ipair;
+		integer pairmin = 1, ipair;
 		autoPairDistribution thee = Data_copy (me);
 		thy pairs.sort (PairProbability_compare);
 		double total = PairDistributions_getTotalWeight_checkPositive (thee.get());
 		do {
-			long pairmax = pairmin;
+			integer pairmax = pairmin;
 			char32 *firstInput = thy pairs.at [pairmin] -> string1;
 			for (ipair = pairmin + 1; ipair <= thy pairs.size; ipair ++) {
 				PairProbability prob = thy pairs.at [ipair];
@@ -255,17 +255,17 @@ double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution
 	return PairDistribution_getFractionCorrect (me, 1);
 }
 
-double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions dist, long column) {
+double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions dist, integer column) {
 	try {
 		double correct = 0.0;
-		long pairmin = 1;
+		integer pairmin = 1;
 		char32 string [1000];
 		Distributions_checkSpecifiedColumnNumberWithinRange (dist, column);
 		autoPairDistribution thee = Data_copy (me);
 		thy pairs.sort (PairProbability_compare);
 		double total = PairDistributions_getTotalWeight_checkPositive (thee.get());
 		do {
-			long pairmax = pairmin, length, ipair;
+			integer pairmax = pairmin, length, ipair;
 			double sum = 0.0, sumDist = 0.0;
 			char32 *firstInput = thy pairs.at [pairmin] -> string1;
 			for (ipair = pairmin + 1; ipair <= thy pairs.size; ipair ++) {
@@ -280,7 +280,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 				PairProbability prob = thy pairs.at [ipair];
 				double p = prob -> weight / total, pout = 0.0;
 				Melder_sprint (string, 1000, prob -> string1, U" \\-> ", prob -> string2);
-				for (long idist = 1; idist <= dist -> numberOfRows; idist ++) {
+				for (integer idist = 1; idist <= dist -> numberOfRows; idist ++) {
 					if (str32equ (string, dist -> rowLabels [idist])) {
 						pout = dist -> data [idist] [column];
 						break;
@@ -290,7 +290,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 			}
 			Melder_sprint (string, 1000, firstInput, U" \\-> ");
 			length = str32len (string);
-			for (long idist = 1; idist <= dist -> numberOfRows; idist ++) {
+			for (integer idist = 1; idist <= dist -> numberOfRows; idist ++) {
 				if (str32nequ (string, dist -> rowLabels [idist], length)) {
 					sumDist += dist -> data [idist] [column];
 				}
@@ -307,7 +307,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 autoTable PairDistribution_to_Table (PairDistribution me) {
 	try {
 		autoTable thee = Table_createWithColumnNames (my pairs.size, U"string1 string2 weight");
-		for (long ipair = 1; ipair <= my pairs.size; ipair ++) {
+		for (integer ipair = 1; ipair <= my pairs.size; ipair ++) {
 			PairProbability prob = my pairs.at [ipair];
 			Table_setStringValue (thee.get(), ipair, 1, prob -> string1);
 			Table_setStringValue (thee.get(), ipair, 2, prob -> string2);

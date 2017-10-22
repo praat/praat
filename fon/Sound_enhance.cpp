@@ -1,6 +1,6 @@
 /* Sound_enhance.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 		double maximumFactor = pow (10.0, enhancement_dB / 20.0), alpha = sqrt (log (2.0));
 		double alphaslow = alpha / slowModulation, alphafast = alpha / fastModulation;
 
-		for (long channel = 1; channel <= my ny; channel ++) {
+		for (integer channel = 1; channel <= my ny; channel ++) {
 			autoSound channelSound = Sound_extractChannel (me, channel);
 			autoSpectrum orgspec = Sound_to_Spectrum (channelSound.get(), true);
 
@@ -67,9 +67,9 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 			autoSpectrum spec = Data_copy (orgspec.get());
 			Spectrum_stopHannBand (spec.get(), flow, fhigh, bandSmoothing);
 			autoSound filtered = Spectrum_to_Sound (spec.get());
-			long n = thy nx;
+			integer n = thy nx;
 			double *amp = thy z [channel];
-			for (long i = 1; i <= n; i ++) {
+			for (integer i = 1; i <= n; i ++) {
 				amp [i] = filtered -> z [1] [i];
 			}
 
@@ -92,12 +92,12 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				autoSound intensity = Data_copy (band.get());
 				n = intensity -> nx;
 				amp = intensity -> z [1];
-				for (long i = 1; i <= n; i ++) {
+				for (integer i = 1; i <= n; i ++) {
 					amp [i] = 10.0 * log10 (amp [i] * amp [i] + 1e-6);
 				}
 				autoSpectrum intensityFilter = Sound_to_Spectrum (intensity.get(), true);
 				n = intensityFilter -> nx;
-				for (long i = 1; i <= n; i ++) {
+				for (integer i = 1; i <= n; i ++) {
 					double frequency = intensityFilter -> x1 + (i - 1) * intensityFilter -> dx;
 					double slow = alphaslow * frequency, fast = alphafast * frequency;
 					double factor = exp (- fast * fast) - exp (- slow * slow);
@@ -107,20 +107,20 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				intensity = Spectrum_to_Sound (intensityFilter.get());
 				n = intensity -> nx;
 				amp = intensity -> z [1];
-				for (long i = 1; i <= n; i ++) {
+				for (integer i = 1; i <= n; i ++) {
 					amp [i] = pow (10.0, amp [i] / 2.0);
 				}
 				/*
 				 * Clip to maximum enhancement.
 				 */
 				ceiling = 1 + (maximumFactor - 1.0) * (0.5 - 0.5 * cos (NUMpi * fmid_bark / 13.0));
-				for (long i = 1; i <= n; i ++) {
+				for (integer i = 1; i <= n; i ++) {
 					amp [i] = 1.0 / (1.0 / amp [i] + 1.0 / ceiling);
 				}
 
 				n = thy nx;
 				amp = thy z [channel];
-				for (long i = 1; i <= n; i ++) amp [i] += band -> z [1] [i] * intensity -> z [1] [i];
+				for (integer i = 1; i <= n; i ++) amp [i] += band -> z [1] [i] * intensity -> z [1] [i];
 
 				fmin = fmax;
 			}

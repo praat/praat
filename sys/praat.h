@@ -527,13 +527,14 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				}
 
 #define GET_FILE(name)  UiForm_getFile (dia, name)
-#define REQUIRE(c,t)  if (! (c)) Melder_throw (t);
 
 #endif // _EditorM_h_
 
+#define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
 #define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (condition)
 #define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraatObjects -> n; IOBJECT > 0; IOBJECT --) if (condition)
 #define SELECTED  (theCurrentPraatObjects -> list [IOBJECT]. isSelected)
+#define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 #define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraatPicture -> graphics
@@ -575,7 +576,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	if (me && you && him) break; }
 
 #define FIND_ONE_AND_COUPLE(klas1,klas2)  \
-	klas1 me; klas2 you = nullptr, him = nullptr; \
+	klas1 me = nullptr; klas2 you = nullptr, him = nullptr; \
 	LOOP { if (CLASS == class##klas1) me = (klas1) OBJECT; else if (CLASS == class##klas2) (you ? him : you) = (klas2) OBJECT; \
 	if (me && you && him) break; }
 
@@ -822,9 +823,6 @@ void praat_updateSelection ();
 	/* If you require the correct selection immediately after calling praat_new. */
 
 void praat_addCommandsToEditor (Editor me);
-
-#define iam_LOOP(klas)  klas me = static_cast<klas> (OBJECT)
-#define LOOP  for (IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 
 autoCollection praat_getSelectedObjects ();
 

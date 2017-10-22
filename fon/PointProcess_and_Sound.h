@@ -20,7 +20,7 @@
 #include "Sound.h"
 
 autoSound PointProcess_to_Sound_pulseTrain (PointProcess me, double samplingFrequency,
-	double adaptFactor, double adaptTime, long interpolationDepth);
+	double adaptFactor, double adaptTime, integer interpolationDepth);
 /*
 	Function:
 		create a time signal out of a point process.

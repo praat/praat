@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2005-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,7 +191,7 @@ void structOTMultiEditor :: v_draw () {
 	double rowHeight = 0.25, tableauHeight = 2 * rowHeight;
 	Graphics_clearWs (graphics.get());
 	HyperPage_listItem (this, U"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
-	for (long icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
+	for (integer icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
 		MelderString_copy (& buffer, U"\t", ( icons == selectedConstraint ? U"♠︎ " : U"   " ), U"@@", icons,
 			U"|", constraint -> name, U"@\t      ", Melder_fixed (constraint -> ranking, 3),
@@ -202,7 +202,7 @@ void structOTMultiEditor :: v_draw () {
 	}
 	Graphics_setAtSignIsLink (graphics.get(), false);
 	drawTableau_grammar = grammar;
-	for (long icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
+	for (integer icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
 		if (OTMulti_candidateMatches (grammar, icand, form1, form2)) {
 			tableauHeight += rowHeight;
 		}

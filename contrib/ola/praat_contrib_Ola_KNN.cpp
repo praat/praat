@@ -114,10 +114,10 @@ DO
 		KNN_modelSearch (me, fws.get(), & kmax, & dist, evaluationMethod, learningRate, numberOfSeeds);
 		switch (dist) {
 			case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-				Melder_information (kmax, U" (vote weighting: inversed squared distance)");
+				Melder_information (kmax, U" (vote weighting: inverse squared distance)");
 				break;
 			case kOla_DISTANCE_WEIGHTED_VOTING:
-				Melder_information (kmax, U" (vote weighting: inversed distance)");
+				Melder_information (kmax, U" (vote weighting: inverse distance)");
 				break;
 			case kOla_FLAT_VOTING:
 				Melder_information (kmax, U" (vote weighting: flat)");
@@ -525,8 +525,8 @@ DO
 			Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
 		if (maximumNumberOfReseeds < 0)
 			Melder_throw (U"The maximum number of reseeds should not be negative.");
-		REQUIRE (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
-			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).")
+		Melder_require (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
+			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).");
 		autoFeatureWeights fws = FeatureWeights_create (my nx);
 		autoCategories result = PatternList_to_Categories_cluster (me, fws.get(), kClusters, clusterSizeRatioConstraint, maximumNumberOfReseeds);
 	CONVERT_EACH_END (U"Output")
@@ -545,10 +545,10 @@ DO
 			Melder_throw (U"The number of features and the number of feature weights should be equal.");
 		if (kClusters < 1 || kClusters > my ny)
 			Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
-		REQUIRE (maximumNumberOfReseeds >= 0,
-			U"The maximum number of reseeds should be 0 or positive.")
-		REQUIRE (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
-			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).")
+		Melder_require (maximumNumberOfReseeds >= 0,
+			U"The maximum number of reseeds should be 0 or positive.");
+		Melder_require (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
+			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).");
 		autoCategories result = PatternList_to_Categories_cluster (me, you, kClusters, clusterSizeRatioConstraint, maximumNumberOfReseeds);
 	CONVERT_TWO_END (U"Output")
 }
@@ -618,8 +618,8 @@ FORM (NEW1_KNN_PatternList_Categories_to_FeatureWeights_wrapperExt, U"Feature we
 		RADIOBUTTON (U"Single feature")
 	NATURAL (kNeighbours, U"k neighbours", U"1")
 	RADIOx (voteWeighting, U"Vote weighting", 3, 1)
-		RADIOBUTTON (U"Inversed squared distance")
-		RADIOBUTTON (U"Inversed distance")
+		RADIOBUTTON (U"Inverse squared distance")
+		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
 	OK
 DO
@@ -658,8 +658,8 @@ FORM (NEW_KNN_to_FeatureWeights_wrapperInt, U"Feature weights", U"KNN: To Featur
 		RADIOBUTTON (U"10-fold cross-validation")
 	NATURAL (kNeighbours, U"k neighbours", U"1")
 	RADIOx (voteWeighting, U"Vote weighting", 3, 1)
-		RADIOBUTTON (U"Inversed squared distance")
-		RADIOBUTTON (U"Inversed distance")
+		RADIOBUTTON (U"Inverse squared distance")
+		RADIOBUTTON (U"Inverse distance")
 		RADIOBUTTON (U"Flat")
 	OK
 DO

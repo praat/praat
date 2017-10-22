@@ -1,6 +1,6 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "LongSound.h"
 
 static bool IntervalTier_check (IntervalTier me) {
-	for (long iinterval = 1; iinterval <= my intervals.size; iinterval ++) {
+	for (integer iinterval = 1; iinterval <= my intervals.size; iinterval ++) {
 		TextInterval interval = my intervals.at [iinterval];
 		if (interval -> xmin >= interval -> xmax) {
 			Melder_casual (U"Interval ", iinterval, U" starts at ", interval -> xmin,
@@ -31,7 +31,7 @@ static bool IntervalTier_check (IntervalTier me) {
 		}
 	}
 	if (my intervals.size < 2) return true;
-	for (long iinterval = 1; iinterval < my intervals.size; iinterval ++) {
+	for (integer iinterval = 1; iinterval < my intervals.size; iinterval ++) {
 		TextInterval thisInterval = my intervals.at [iinterval];
 		TextInterval nextInterval = my intervals.at [iinterval + 1];
 		if (thisInterval -> xmax != nextInterval -> xmin) {
@@ -50,9 +50,9 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 	/*
 	 * Make sure that the tier has boundaries at the edges of the interval.
 	 */
-	long firstIntervalNumber = IntervalTier_hasTime (me, tmin);
+	integer firstIntervalNumber = IntervalTier_hasTime (me, tmin);
 	if (! firstIntervalNumber) {
-		long intervalNumber = IntervalTier_timeToIndex (me, tmin);
+		integer intervalNumber = IntervalTier_timeToIndex (me, tmin);
 		if (intervalNumber == 0)
 			Melder_throw (U"Cannot add a boundary at ", Melder_fixed (tmin, 6), U" seconds, because this is outside the time domain of the intervals.");
 		TextInterval interval = my intervals.at [intervalNumber];
@@ -65,9 +65,9 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 		firstIntervalNumber = IntervalTier_hasTime (me, interval -> xmin);
 	}
 	Melder_assert (firstIntervalNumber >= 1 && firstIntervalNumber <= my intervals.size);
-	long lastIntervalNumber = IntervalTier_hasTime (me, tmax);
+	integer lastIntervalNumber = IntervalTier_hasTime (me, tmax);
 	if (! lastIntervalNumber) {
-		long intervalNumber = IntervalTier_timeToIndex (me, tmax);
+		integer intervalNumber = IntervalTier_timeToIndex (me, tmax);
 		if (intervalNumber == 0)
 			Melder_throw (U"Cannot add a boundary at ", Melder_fixed (tmin, 6), U" seconds, because this is outside the time domain of the intervals.");
 		TextInterval interval = my intervals.at [intervalNumber];
@@ -84,7 +84,7 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 	 * Empty the interval in the word tier.
 	 */
 	trace (U"Empty interval ", lastIntervalNumber, U" down to ", U".", firstIntervalNumber);
-	for (long iinterval = lastIntervalNumber; iinterval >= firstIntervalNumber; iinterval --) {
+	for (integer iinterval = lastIntervalNumber; iinterval >= firstIntervalNumber; iinterval --) {
 		TextInterval interval = my intervals.at [iinterval];
 		if (interval -> xmin > tmin && interval -> xmin < tmax) {
 			Melder_assert (iinterval > 1);
@@ -100,7 +100,7 @@ static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tm
 }
 
 static double IntervalTier_boundaryTimeClosestTo (IntervalTier me, double tmin, double tmax) {
-	long intervalNumber = IntervalTier_timeToLowIndex (me, tmax);
+	integer intervalNumber = IntervalTier_timeToLowIndex (me, tmax);
 	if (intervalNumber != 0) {
 		TextInterval interval = my intervals.at [intervalNumber];
 		if (interval -> xmin > tmin && interval -> xmin < tmax) {
@@ -123,7 +123,7 @@ static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier bos
 		IntervalTier_removeLeftBoundary (me, my intervals.size);
 	}
 	if (my intervals.size < 3) return;
-	for (long iinterval = my intervals.size - 1; iinterval >= 2; iinterval --) {
+	for (integer iinterval = my intervals.size - 1; iinterval >= 2; iinterval --) {
 		TextInterval interval = my intervals.at [iinterval];
 		if (Melder_equ (interval -> text, U"")) {
 			/*
@@ -142,7 +142,7 @@ static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier bos
 	}
 }
 
-void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierNumber, long intervalNumber, const char32 *languageName, bool includeWords, bool includePhonemes) {
+void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer tierNumber, integer intervalNumber, const char32 *languageName, bool includeWords, bool includePhonemes) {
 	try {
 		IntervalTier headTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		if (intervalNumber < 1 || intervalNumber > headTier -> intervals.size)
@@ -214,7 +214,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			if (! IntervalTier_check (analysisPhonemeTier))
 				Melder_throw (U"Analysis phoneme tier out of order (2).");
 		}
-		long wordTierNumber = 0, phonemeTierNumber = 0;
+		integer wordTierNumber = 0, phonemeTierNumber = 0;
 		IntervalTier wordTier = nullptr, phonemeTier = nullptr;
 		/*
 		 * Include a word tier.
@@ -225,7 +225,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			 */
 			autoMelderString newWordTierName;
 			MelderString_copy (& newWordTierName, headTier -> name, U"/word");
-			for (long itier = 1; itier <= my tiers->size; itier ++) {
+			for (integer itier = 1; itier <= my tiers->size; itier ++) {
 				Function tier = my tiers->at [itier];
 				if (Melder_equ (newWordTierName.string, tier -> name)) {
 					if (tier -> classInfo != classIntervalTier)
@@ -249,7 +249,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			/*
 			 * Copy the contents of the word analysis into the interval in the word tier.
 			 */
-			long wordIntervalNumber = IntervalTier_hasTime (wordTier, interval -> xmin);
+			integer wordIntervalNumber = IntervalTier_hasTime (wordTier, interval -> xmin);
 			Melder_assert (wordIntervalNumber != 0);
 			if (analysis) {
 				IntervalTier analysisWordTier = analysis -> intervalTier_cast (3);
@@ -257,7 +257,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 					Melder_throw (U"Analysis word tier out of order (3).");
 				if (! IntervalTier_check (wordTier))
 					Melder_throw (U"Word tier out of order (3).");
-				for (long ianalysisInterval = 1; ianalysisInterval <= analysisWordTier -> intervals.size; ianalysisInterval ++) {
+				for (integer ianalysisInterval = 1; ianalysisInterval <= analysisWordTier -> intervals.size; ianalysisInterval ++) {
 					TextInterval analysisInterval = analysisWordTier -> intervals.at [ianalysisInterval];
 					TextInterval wordInterval = nullptr;
 					double tmin = analysisInterval -> xmin, tmax = analysisInterval -> xmax;
@@ -287,7 +287,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			 */
 			autoMelderString newPhonemeTierName;
 			MelderString_copy (& newPhonemeTierName, headTier -> name, U"/phon");
-			for (long itier = 1; itier <= my tiers->size; itier ++) {
+			for (integer itier = 1; itier <= my tiers->size; itier ++) {
 				Function tier = my tiers->at [itier];
 				if (Melder_equ (newPhonemeTierName.string, tier -> name)) {
 					if (tier -> classInfo != classIntervalTier)
@@ -312,11 +312,11 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			/*
 			 * Copy the contents of the phoneme analysis into the interval in the phoneme tier.
 			 */
-			long phonemeIntervalNumber = IntervalTier_hasTime (phonemeTier, interval -> xmin);
+			integer phonemeIntervalNumber = IntervalTier_hasTime (phonemeTier, interval -> xmin);
 			Melder_assert (phonemeIntervalNumber != 0);
 			if (analysis.get()) {
 				IntervalTier analysisPhonemeTier = analysis -> intervalTier_cast (4);
-				for (long ianalysisInterval = 1; ianalysisInterval <= analysisPhonemeTier -> intervals.size; ianalysisInterval ++) {
+				for (integer ianalysisInterval = 1; ianalysisInterval <= analysisPhonemeTier -> intervals.size; ianalysisInterval ++) {
 					TextInterval analysisInterval = analysisPhonemeTier -> intervals.at [ianalysisInterval];
 					TextInterval phonemeInterval = nullptr;
 					double tmin = analysisInterval -> xmin, tmax = analysisInterval -> xmax;
@@ -336,7 +336,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 				/*
 				 * Synchronize the boundaries between the word tier and the phoneme tier.
 				 */
-				//for (long iinterval = 1; iinterval <=
+				//for (integer iinterval = 1; iinterval <=
 			}
 		}
 	} catch (MelderError) {
@@ -347,7 +347,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
 	bool showBoundaries, bool useTextStyles, bool garnish)   // STEREO BUG
 {
-	long numberOfTiers = my tiers->size;
+	integer numberOfTiers = my tiers->size;
 
 	/*
 	 * Automatic windowing:
@@ -377,14 +377,14 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	Graphics_setNumberSignIsBold (g, useTextStyles);
 	Graphics_setCircumflexIsSuperscript (g, useTextStyles);
 	Graphics_setUnderscoreIsSubscript (g, useTextStyles);
-	for (long itier = 1; itier <= numberOfTiers; itier ++) {
+	for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 		Function anyTier = my tiers->at [itier];
 		double ymin = -1.0 - 0.5 * itier, ymax = ymin + 0.5;
 		Graphics_rectangle (g, tmin, tmax, ymin, ymax);
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
-			long ninterval = tier -> intervals.size;
-			for (long iinterval = 1; iinterval <= ninterval; iinterval ++) {
+			integer ninterval = tier -> intervals.size;
+			for (integer iinterval = 1; iinterval <= ninterval; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
 				double intmin = interval -> xmin, intmax = interval -> xmax;
 				if (intmin < tmin) intmin = tmin;
@@ -406,8 +406,8 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 			}
 		} else {
 			TextTier tier = static_cast <TextTier> (anyTier);
-			long numberOfPoints = tier -> points.size;
-			for (long ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
+			integer numberOfPoints = tier -> points.size;
+			for (integer ipoint = 1; ipoint <= numberOfPoints; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
 				double t = point -> number;
 				if (t > tmin && t < tmax) {
@@ -436,11 +436,11 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	}
 }
 
-autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long tierNumber, bool preserveTimes) {
+autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, integer tierNumber, bool preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoSoundList list = SoundList_create ();
-		for (long iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
+		for (integer iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
 			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 			Thing_setName (interval.get(), segment -> text ? segment -> text : U"untitled");
@@ -454,11 +454,11 @@ autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long
 
 Thing_implement (SoundList, Ordered, 0);
 
-autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long tierNumber, bool preserveTimes) {
+autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, integer tierNumber, bool preserveTimes) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoSoundList list = SoundList_create ();
-		for (long iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
+		for (integer iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
 			if (segment -> text && segment -> text [0] != U'\0') {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
@@ -473,14 +473,14 @@ autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound,
 	}
 }
 
-autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long tierNumber,
+autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, integer tierNumber,
 	kMelder_string which, const char32 *text, bool preserveTimes)
 {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoSoundList list = SoundList_create ();
-		long count = 0;
-		for (long iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
+		integer count = 0;
+		for (integer iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
 			if (Melder_stringMatchesCriterion (segment -> text, which, text)) {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
@@ -499,20 +499,20 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, lo
 static void autoMarks (Graphics g, double ymin, double ymax, bool haveDottedLines) {
 	double dy = ymax - ymin;
 	if (dy < 26.0) {
-		long imin = (long) ceil ((ymin + 2.0) / 5.0), imax = (long) floor ((ymax - 2.0) / 5.0);
-		for (long i = imin; i <= imax; i ++)
+		integer imin = Melder_iroundUp ((ymin + 2.0) / 5.0), imax = Melder_iroundDown ((ymax - 2.0) / 5.0);
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 5.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 110.0) {
-		long imin = (long) ceil ((ymin + 8.0) / 20.0), imax = (long) floor ((ymax - 8.0) / 20.0);
-		for (long i = imin; i <= imax; i ++)
+		integer imin = Melder_iroundUp ((ymin + 8.0) / 20.0), imax = Melder_iroundDown ((ymax - 8.0) / 20.0);
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 20.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 260.0) {
-		long imin = (long) ceil ((ymin + 20.0) / 50.0), imax = (long) floor ((ymax - 20.0) / 50.0);
-		for (long i = imin; i <= imax; i ++)
+		integer imin = Melder_iroundUp ((ymin + 20.0) / 50.0), imax = Melder_iroundDown ((ymax - 20.0) / 50.0);
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 50.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 510.0) {
-		long imin = (long) ceil ((ymin + 40.0) / 100.0), imax = (long) floor ((ymax - 40.0) / 100.0);
-		for (long i = imin; i <= imax; i ++)
+		integer imin = Melder_iroundUp ((ymin + 40.0) / 100.0), imax = Melder_iroundDown ((ymax - 40.0) / 100.0);
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 100.0, true, true, haveDottedLines, nullptr);
 	}
 }
@@ -559,20 +559,20 @@ static void autoMarks_logarithmic (Graphics g, double ymin, double ymax, bool ha
 static void autoMarks_semitones (Graphics g, double ymin, double ymax, bool haveDottedLines) {
 	double dy = ymax - ymin;
 	if (dy < 16) {
-		long imin = (long) ceil ((ymin + 1.2) / 3.0), imax = (long) floor ((ymax - 1.2) / 3.0);
-		for (long i = imin; i <= imax; i ++)
+		integer imin = Melder_iroundUp ((ymin + 1.2) / 3.0), imax = Melder_iroundDown ((ymax - 1.2) / 3.0);
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 3.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 32) {
-		long imin = (long) ceil ((ymin + 2.4) / 6.0), imax = (long) floor ((ymax - 2.4) / 6.0);
-		for (long i = imin; i <= imax; i ++)
+		integer imin = Melder_iroundUp ((ymin + 2.4) / 6.0), imax = Melder_iroundDown ((ymax - 2.4) / 6.0);
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 6.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 64) {
-		long imin = (long) ceil ((ymin + 4.8) / 12.0), imax = (long) floor ((ymax - 4.8) / 12.0);
-		for (long i = imin; i <= imax; i ++)
+		integer imin = Melder_iroundUp ((ymin + 4.8) / 12.0), imax = Melder_iroundDown ((ymax - 4.8) / 12.0);
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 12.0, true, true, haveDottedLines, nullptr);
 	} else if (dy < 128) {
-		long imin = (long) ceil ((ymin + 9.6) / 24.0), imax = (long) floor ((ymax - 9.6) / 24.0);
-		for (long i = imin; i <= imax; i ++)
+		integer imin = Melder_iroundUp ((ymin + 9.6) / 24.0), imax = Melder_iroundDown ((ymax - 9.6) / 24.0);
+		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 24.0, true, true, haveDottedLines, nullptr);
 	}
 }
@@ -619,7 +619,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 }
 
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
-	long tierNumber, double tmin, double tmax, double fmin, double fmax,
+	integer tierNumber, double tmin, double tmax, double fmin, double fmax,
 	double fontSize, bool useTextStyles, int horizontalAlignment, bool garnish, bool speckle, kPitch_unit unit)
 {
 	try {
@@ -641,7 +641,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Graphics_setUnderscoreIsSubscript (g, useTextStyles);
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
-			for (long i = 1; i <= tier -> intervals.size; i ++) {
+			for (integer i = 1; i <= tier -> intervals.size; i ++) {
 				TextInterval interval = tier -> intervals.at [i];
 				double tleft = interval -> xmin, tright = interval -> xmax, tmid, f0;
 				if (! interval -> text || ! interval -> text [0]) continue;
@@ -657,7 +657,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 			}
 		} else {
 			TextTier tier = static_cast <TextTier> (anyTier);
-			for (long i = 1; i <= tier -> points.size; i ++) {
+			for (integer i = 1; i <= tier -> points.size; i ++) {
 				TextPoint point = tier -> points.at [i];
 				double t = point -> number;
 				if (! point -> mark || ! point -> mark [0]) continue;

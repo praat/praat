@@ -1,6 +1,6 @@
 /* melder_debug.cpp
  *
- * Copyright (C) 2000-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2000-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

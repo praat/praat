@@ -18,7 +18,7 @@
 
 #include "Distributions_and_Transition.h"
 
-autoTransition Distributions_to_Transition (Distributions underlying, Distributions surface, long environment,
+autoTransition Distributions_to_Transition (Distributions underlying, Distributions surface, integer environment,
 	Transition adjacency, bool greedy)
 {
 	try {
@@ -48,7 +48,7 @@ autoTransition Distributions_to_Transition (Distributions underlying, Distributi
 		/*
 		 * Copy labels and set name.
 		 */
-		for (long i = 1; i <= thy numberOfStates; i ++) {
+		for (integer i = 1; i <= thy numberOfStates; i ++) {
 			thy stateLabels [i] = Melder_dup (underlying -> columnLabels [i]);
 		}
 		Thing_setName (thee.get(), underlying -> columnLabels [environment]);
@@ -56,15 +56,15 @@ autoTransition Distributions_to_Transition (Distributions underlying, Distributi
 		/*
 		 * Compute the off-diagonal elements of the transition matrix in environment 'environment'.
 		 */
-		for (long i = 1; i <= thy numberOfStates; i ++) {
+		for (integer i = 1; i <= thy numberOfStates; i ++) {
 
 			/*
 			 * How many states are available for the learner to step to (excluding current state)?
 			 */
-			long numberOfAdjacentStates;
+			integer numberOfAdjacentStates;
 			if (adjacency) {
 				numberOfAdjacentStates = 0;
-				for (long j = 1; j <= thy numberOfStates; j ++)
+				for (integer j = 1; j <= thy numberOfStates; j ++)
 					if (i != j && adjacency -> data [i] [j] != 0.0)
 						numberOfAdjacentStates ++;
 			} else {
@@ -74,7 +74,7 @@ autoTransition Distributions_to_Transition (Distributions underlying, Distributi
 			/*
 			 * Try all possible steps to adjacent states.
 			 */
-			for (long j = 1; j <= thy numberOfStates; j ++) if (i != j) {
+			for (integer j = 1; j <= thy numberOfStates; j ++) if (i != j) {
 
 				/*
 				 * Local: grammar step only possible to adjacent grammar.
@@ -84,7 +84,7 @@ autoTransition Distributions_to_Transition (Distributions underlying, Distributi
 				/*
 				 * Compute element (i, j): sum over all possible data.
 				 */
-				for (long m = 1; m <= underlying -> numberOfRows; m ++) {
+				for (integer m = 1; m <= underlying -> numberOfRows; m ++) {
 
 					/*
 					 * Error-driven: grammar step only triggered by positive evidence.
@@ -108,11 +108,11 @@ autoTransition Distributions_to_Transition (Distributions underlying, Distributi
 		/*
 		 * Compute the elements on the diagonal, so that the sum of each row is unity.
 		 */
-		for (long i = 1; i <= thy numberOfStates; i ++) {
-			double sum = 0.0;
-			for (long j = 1; j <= thy numberOfStates; j ++) if (j != i)
+		for (integer i = 1; i <= thy numberOfStates; i ++) {
+			real80 sum = 0.0;
+			for (integer j = 1; j <= thy numberOfStates; j ++) if (j != i)
 				sum += thy data [i] [j];
-			thy data [i] [i] = sum > 1.0 ? 0.0 : 1.0 - sum;   // guard against rounding errors
+			thy data [i] [i] = sum > 1.0 ? 0.0 : 1.0 - (real) sum;   // guard against rounding errors
 		}
 
 		return thee;
@@ -138,10 +138,10 @@ autoDistributions Distributions_Transition_map (Distributions me, Transition map
 		/*
 		 * Compute the elements of the surface distributions.
 		 */
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				thy data [irow] [icol] = 0.0;
-				for (long istate = 1; istate <= map -> numberOfStates; istate ++) {
+				for (integer istate = 1; istate <= map -> numberOfStates; istate ++) {
 					thy data [irow] [icol] += my data [istate] [icol] * map -> data [istate] [irow];
 				}
 			}
@@ -160,15 +160,15 @@ autoDistributions Transition_to_Distributions_conflate (Transition me) {
 		/*
 		 * Copy labels.
 		 */
-		for (long i = 1; i <= my numberOfStates; i ++) {
+		for (integer i = 1; i <= my numberOfStates; i ++) {
 			thy rowLabels [i] = Melder_dup (my stateLabels [i]);
 		}
 
 		/*
 		 * Average rows.
 		 */
-		for (long i = 1; i <= my numberOfStates; i ++) {
-			for (long j = 1; j <= my numberOfStates; j ++)
+		for (integer i = 1; i <= my numberOfStates; i ++) {
+			for (integer j = 1; j <= my numberOfStates; j ++)
 				thy data [i] [1] += my data [j] [i];
 			thy data [i] [1] /= my numberOfStates;
 		}

@@ -1,6 +1,6 @@
 /* manual_exampleSound.cpp
  *
- * Copyright (C) 2004-2011 Paul Boersma
+ * Copyright (C) 2004,2005,2011,2015-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2582,9 +2582,9 @@ static const char *data [] = {
 Sound manual_exampleSound () {
 	static autoSound me;
 	if (! me) {
-		long istring = 0, ichar = 24;
+		integer istring = 0, ichar = 24;
 		me = Sound_create (1, 0.0, 20457.0/44100, 20457, 1.0/44100, 0.5/44100);
-		for (long isamp = 1; isamp <= 20457; isamp ++) {
+		for (integer isamp = 1; isamp <= 20457; isamp ++) {
 			uint16 part1 = data [istring] [ichar] - '0';
 			uint16 part2 = data [istring] [++ ichar] - '0';
 			uint16 part3 = data [istring] [++ ichar] - '0';

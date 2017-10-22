@@ -32,7 +32,7 @@
 #include "NUM2.h"
 #include "Polynomial.h"
 
-static void burg (double sample [], long nsamp_window, double cof [], int nPoles,
+static void burg (double sample [], integer nsamp_window, double cof [], int nPoles,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
 {
 	double a0;
@@ -88,7 +88,7 @@ static void burg (double sample [], long nsamp_window, double cof [], int nPoles
 
 static int findOneZero (int ijt, double vcx [], double a, double b, double *zero) {
 	double x = 0.5 * (a + b), fa = 0.0, fb = 0.0, fx = 0.0;
-	long k;
+	integer k;
 	for (k = ijt; k >= 0; k --) {
 		fa = vcx [k] + a * fa;
 		fb = vcx [k] + b * fb;
@@ -154,7 +154,7 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 }
 
 static int splitLevinson (
-	double xw [], long nx,   // the windowed signal xw [1..nx]
+	double xw [], integer nx,   // the windowed signal xw [1..nx]
 	int ncof,   // the coefficients cof [1..ncof]
 	Formant_Frame frame, double nyquistFrequency)   // put the results here
 {
@@ -235,20 +235,20 @@ loopEnd:
 
 static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	double preEmphasis = exp (-2.0 * NUMpi * preEmphasisFrequency * my dx);
-	for (long channel = 1; channel <= my ny; channel ++) {
+	for (integer channel = 1; channel <= my ny; channel ++) {
 		double *s = my z [channel]; 
-		for (long i = my nx; i >= 2; i --) s [i] -= preEmphasis * s [i - 1];
+		for (integer i = my nx; i >= 2; i --) s [i] -= preEmphasis * s [i - 1];
 	}
 }
 
 void Formant_sort (Formant me) {
-	for (long iframe = 1; iframe <= my nx; iframe ++) {
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
-		long n = frame -> nFormants;
-		for (long i = 1; i < n; i ++) {
+		integer n = frame -> nFormants;
+		for (integer i = 1; i < n; i ++) {
 			double min = frame -> formant [i]. frequency;
-			long imin = i;
-			for (long j = i + 1; j <= n; j ++)
+			integer imin = i;
+			for (integer j = i + 1; j <= n; j ++)
 				if (frame -> formant [j]. frequency < min) {
 					min = frame -> formant [j]. frequency;
 					imin = j;
@@ -270,8 +270,8 @@ static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numb
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double duration = my nx * my dx, t1;
 	double dt_window = 2.0 * halfdt_window;
-	long nFrames = 1 + (long) floor ((duration - dt_window) / dt);
-	long nsamp_window = (long) floor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
+	integer nFrames = 1 + Melder_iroundDown ((duration - dt_window) / dt);
+	integer nsamp_window = Melder_iroundDown (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
 
 	if (nsamp_window < numberOfPoles + 1)
 		Melder_throw (U"Window too short.");
@@ -293,21 +293,21 @@ static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numb
 	Sound_preEmphasis (me, preemphasisFrequency);
 
 	/* Gaussian window. */
-	for (long i = 1; i <= nsamp_window; i ++) {
+	for (integer i = 1; i <= nsamp_window; i ++) {
 		double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
 		window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1.0 - edge);
 	}
 
-	for (long iframe = 1; iframe <= nFrames; iframe ++) {
+	for (integer iframe = 1; iframe <= nFrames; iframe ++) {
 		double t = Sampled_indexToX (thee.get(), iframe);
-		long leftSample = Sampled_xToLowIndex (me, t);
-		long rightSample = leftSample + 1;
-		long startSample = rightSample - halfnsamp_window;
-		long endSample = leftSample + halfnsamp_window;
+		integer leftSample = Sampled_xToLowIndex (me, t);
+		integer rightSample = leftSample + 1;
+		integer startSample = rightSample - halfnsamp_window;
+		integer endSample = leftSample + halfnsamp_window;
 		double maximumIntensity = 0.0;
 		if (startSample < 1) startSample = 1;
 		if (endSample > my nx) endSample = my nx;
-		for (long i = startSample; i <= endSample; i ++) {
+		for (integer i = startSample; i <= endSample; i ++) {
 			double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
 			if (value * value > maximumIntensity) {
 				maximumIntensity = value * value;
@@ -319,7 +319,7 @@ static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numb
 		if (maximumIntensity == 0.0) continue;   // Burg cannot stand all zeroes
 
 		/* Copy a pre-emphasized window to a frame. */
-		for (long j = 1, i = startSample; j <= nsamp_window; j ++)
+		for (integer j = 1, i = startSample; j <= nsamp_window; j ++)
 			frame [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
 
 		if (which == 1) {

@@ -1,6 +1,6 @@
 /* Manipulation.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,10 +158,10 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 			if (! my sound)
 				Melder_throw (U"Cannot synthesize overlap-add without a sound.");
 			autoSound part = Data_copy (my sound.get());
-			long imin = Sampled_xToLowIndex (part.get(), tmin), imax = Sampled_xToHighIndex (part.get(), tmax);
+			integer imin = Sampled_xToLowIndex (part.get(), tmin), imax = Sampled_xToHighIndex (part.get(), tmax);
 			double *amp = part -> z [1];
-			for (long i = 1; i <= imin; i ++) amp [i] = 0.0;
-			for (long i = imax; i <= part -> nx; i ++) amp [i] = 0.0;
+			for (integer i = 1; i <= imin; i ++) amp [i] = 0.0;
+			for (integer i = imax; i <= part -> nx; i ++) amp [i] = 0.0;
 			autoSound saved = my sound.move();
 			my sound = part.move();
 			try {
@@ -197,38 +197,38 @@ int Manipulation_play (Manipulation me, int method) {
 	}
 }
 
-static long PointProcess_getFirstVoicedPoint (PointProcess me, double maxT) {
-	for (long i = 1; i < my nt; i ++) if (my t [i + 1] - my t [i] <= maxT) return i;
+static integer PointProcess_getFirstVoicedPoint (PointProcess me, double maxT) {
+	for (integer i = 1; i < my nt; i ++) if (my t [i + 1] - my t [i] <= maxT) return i;
 	return 0;
 }
 
 static void copyRise (Sound me, double tmin, double tmax, Sound thee, double tmaxTarget) {
-	long imin = Sampled_xToHighIndex (me, tmin);
+	integer imin = Sampled_xToHighIndex (me, tmin);
 	if (imin < 1) imin = 1;
-	long imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
+	integer imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
 	if (imax > my nx) imax = my nx;
 	if (imax < imin) return;
-	long imaxTarget = Sampled_xToHighIndex (thee, tmaxTarget) - 1;
-	long distance = imaxTarget - imax;
+	integer imaxTarget = Sampled_xToHighIndex (thee, tmaxTarget) - 1;
+	integer distance = imaxTarget - imax;
 	double dphase = NUMpi / (imax - imin + 1);
-	for (long i = imin; i <= imax; i ++) {
-		long iTarget = i + distance;
+	for (integer i = imin; i <= imax; i ++) {
+		integer iTarget = i + distance;
 		if (iTarget >= 1 && iTarget <= thy nx)
 			thy z [1] [iTarget] += my z [1] [i] * 0.5 * (1.0 - cos (dphase * (i - imin + 0.5)));
 	}
 }
 
 static void copyFall (Sound me, double tmin, double tmax, Sound thee, double tminTarget) {
-	long imin = Sampled_xToHighIndex (me, tmin);
+	integer imin = Sampled_xToHighIndex (me, tmin);
 	if (imin < 1) imin = 1;
-	long imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
+	integer imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
 	if (imax > my nx) imax = my nx;
 	if (imax < imin) return;
-	long iminTarget = Sampled_xToHighIndex (thee, tminTarget);
-	long distance = iminTarget - imin;
+	integer iminTarget = Sampled_xToHighIndex (thee, tminTarget);
+	integer distance = iminTarget - imin;
 	double dphase = NUMpi / (imax - imin + 1);
-	for (long i = imin; i <= imax; i ++) {
-		long iTarget = i + distance;
+	for (integer i = imin; i <= imax; i ++) {
+		integer iTarget = i + distance;
 		if (iTarget >= 1 && iTarget <= thy nx)
 			thy z [1] [iTarget] += my z [1] [i] * 0.5 * (1.0 + cos (dphase * (i - imin + 0.5)));
 	}
@@ -239,7 +239,7 @@ static void copyBell (Sound me, double tmid, double leftWidth, double rightWidth
 	copyFall (me, tmid, tmid + rightWidth, thee, tmidTarget);
 }
 
-static void copyBell2 (Sound me, PointProcess source, long isource, double leftWidth, double rightWidth,
+static void copyBell2 (Sound me, PointProcess source, integer isource, double leftWidth, double rightWidth,
 	Sound thee, double tmidTarget, double maxT)
 {
 	/*
@@ -259,12 +259,12 @@ static void copyBell2 (Sound me, PointProcess source, long isource, double leftW
 }
 
 static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tminTarget) {
-	long imin = Sampled_xToHighIndex (me, tmin);
+	integer imin = Sampled_xToHighIndex (me, tmin);
 	if (imin < 1) imin = 1;
-	long imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
+	integer imax = Sampled_xToHighIndex (me, tmax) - 1;   // not xToLowIndex: ensure separation of subsequent calls
 	if (imax > my nx) imax = my nx;
 	if (imax < imin) return;
-	long iminTarget = Sampled_xToHighIndex (thee, tminTarget);
+	integer iminTarget = Sampled_xToHighIndex (thee, tminTarget);
 	if (iminTarget < 1) iminTarget = 1;
 	trace (tmin, U" ", tmax, U" ", tminTarget, U" ", imin, U" ", imax, U" ", iminTarget);
 	Melder_assert (iminTarget + imax - imin <= thy nx);
@@ -278,14 +278,14 @@ autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProces
 			NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
 			return thee;
 		}
-		for (long i = 1; i <= target -> nt; i ++) {
+		for (integer i = 1; i <= target -> nt; i ++) {
 			double tmid = target -> t [i];
 			double tleft = i > 1 ? target -> t [i - 1] : my xmin;
 			double tright = i < target -> nt ? target -> t [i + 1] : my xmax;
 			double leftWidth = tmid - tleft, rightWidth = tright - tmid;
 			int leftVoiced = i > 1 && leftWidth <= maxT;
 			int rightVoiced = i < target -> nt && rightWidth <= maxT;
-			long isource = PointProcess_getNearestIndex (source, tmid);
+			integer isource = PointProcess_getNearestIndex (source, tmid);
 			if (! leftVoiced) leftWidth = rightWidth;   // symmetric bell
 			if (! rightVoiced) rightWidth = leftWidth;   // symmetric bell
 			if (leftVoiced || rightVoiced) {
@@ -317,7 +317,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 	PitchTier pitch, DurationTier duration, double maxT)
 {
 	try {
-		long ipointleft, ipointright;
+		integer ipointleft, ipointright;
 		double deltat = 0, handledTime = my xmin;
 		double startOfSourceNoise, endOfSourceNoise, startOfTargetNoise, endOfTargetNoise;
 		double durationOfSourceNoise, durationOfTargetNoise;
@@ -404,7 +404,7 @@ autoSound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 			ttarget = startOfTargetVoice + 0.5 * startingPeriod;
 			while (ttarget < endOfTargetVoice) {
 				double tsource, period;
-				long isourcepulse;
+				integer isourcepulse;
 				double tleft = startOfSourceVoice, tright = endOfSourceVoice;
 				int i;
 				for (i = 1; i <= 15; i ++) {
@@ -569,10 +569,10 @@ static Sound synthesize_pulses_formant (Manipulation me, int useIntensity) {
 */
 
 static void Sound_PointProcess_fillVoiceless (Sound me, PointProcess pulses) {
-	long ipointleft, ipointright;
+	integer ipointleft, ipointright;
 	double beginVoiceless = my xmin, endVoiceless;
 	for (ipointleft = 1; ipointleft <= pulses -> nt; ipointleft = ipointright + 1) {
-		long i1, i2, i;
+		integer i1, i2, i;
 		endVoiceless = pulses -> t [ipointleft] - 0.005;
 		i1 = Sampled_xToHighIndex (me, beginVoiceless);
 		if (i1 < 1) i1 = 1; if (i1 > my nx) i1 = my nx;
@@ -588,7 +588,7 @@ static void Sound_PointProcess_fillVoiceless (Sound me, PointProcess pulses) {
 	}
 	endVoiceless = my xmax;
 	{
-		long i1, i2, i;
+		integer i1, i2, i;
 		i1 = Sampled_xToHighIndex (me, beginVoiceless);
 		if (i1 < 1) i1 = 1; if (i1 > my nx) i1 = my nx;
 		i2 = Sampled_xToLowIndex (me, endVoiceless);

@@ -58,9 +58,9 @@ autoPitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 
 void PitchTier_stylize (PitchTier me, double frequencyResolution, bool useSemitones) {
 	for (;;) {
-		long imin = 0;
+		integer imin = 0;
 		double dfmin = 1e308;
-		for (long i = 2; i <= my points.size - 1; i ++) {
+		for (integer i = 2; i <= my points.size - 1; i ++) {
 			RealPoint pm = my points.at [i];
 			RealPoint pl = my points.at [i - 1];
 			RealPoint pr = my points.at [i + 1];
@@ -82,8 +82,9 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, bool useSemito
 static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, bool hasHeader) {
 	autofile f = Melder_fopen (file, "w");
 	if (hasHeader)
-		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%.17g %.17g %ld\n", my xmin, my xmax, (long) my points.size);
-	for (long i = 1; i <= my points.size; i ++) {
+		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%s %s %s\n",
+			Melder8_double (my xmin), Melder8_double (my xmax), Melder8_integer (my points.size));
+	for (integer i = 1; i <= my points.size; i ++) {
 		RealPoint point = my points.at [i];
 		fprintf (f, "%.17g\t%.17g\n", point -> number, point -> value);
 	}
@@ -108,7 +109,7 @@ void PitchTier_writeToHeaderlessSpreadsheetFile (PitchTier me, MelderFile file) 
 
 void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double shift, kPitch_unit unit) {
 	try {
-		for (long i = 1; i <= my points.size; i ++) {
+		for (integer i = 1; i <= my points.size; i ++) {
 			RealPoint point = my points.at [i];
 			double frequency = point -> value;
 			if (point -> number < tmin || point -> number > tmax) continue;
@@ -142,7 +143,7 @@ void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double 
 
 void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, double factor) {
 	Melder_assert (factor > 0.0);
-	for (long i = 1; i <= my points.size; i ++) {
+	for (integer i = 1; i <= my points.size; i ++) {
 		RealPoint point = my points.at [i];
 		if (point -> number < tmin || point -> number > tmax) continue;
 		point -> value *= factor;

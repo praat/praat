@@ -24,7 +24,7 @@
 
 DIRECT (INTEGER_TimeTier_getNumberOfPoints) {
 	NUMBER_ONE (AnyTier)
-		long result = my points.size;
+		integer result = my points.size;
 	NUMBER_ONE_END (U" points")
 }
 

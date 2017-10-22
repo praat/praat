@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,6 +135,10 @@ const char32 * Melder_boolean (bool value) noexcept {
 	return value ? U"yes" : U"no";
 }
 
+/*@praat
+	assert string$ (1000000000000) = "1000000000000"
+	assert string$ (undefined) = "--undefined--"
+@*/
 const char * Melder8_double (double value) noexcept {
 	if (isundef (value)) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;

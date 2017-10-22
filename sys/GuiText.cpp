@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,10 +162,10 @@ static integer NativeText_getLength (GuiObject widget) {
  * SELECTION
  */
 
-static int NativeText_getSelectionRange (GuiObject widget, integer *out_left, integer *out_right) {
-	uinteger left, right;
+static bool NativeText_getSelectionRange (GuiObject widget, integer *out_left, integer *out_right) {
 	Melder_assert (MEMBER (widget, Text));
-	SendMessage (widget -> window, EM_GETSEL, (WPARAM) & left, (LPARAM) & right);   // 32-bit (R&N: 579)
+	DWORD left, right;
+	SendMessage (widget -> window, EM_GETSEL, (WPARAM) & left, (LPARAM) & right);
 	if (out_left) *out_left = left;
 	if (out_right) *out_right = right;
 	return right > left;
@@ -195,11 +195,11 @@ void _GuiText_exit () {
 			} else {
 				GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 				GtkTextIter from_it, to_it;
-				gtk_text_buffer_get_iter_at_offset (buffer, &from_it, from_pos);
-				gtk_text_buffer_get_iter_at_offset (buffer, &to_it, to_pos);
-				gtk_text_buffer_delete_interactive (buffer, &from_it, &to_it,
+				gtk_text_buffer_get_iter_at_offset (buffer, & from_it, from_pos);
+				gtk_text_buffer_get_iter_at_offset (buffer, & to_it, to_pos);
+				gtk_text_buffer_delete_interactive (buffer, & from_it, & to_it,
 					gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
-				gtk_text_buffer_place_cursor (buffer, &to_it);
+				gtk_text_buffer_place_cursor (buffer, & to_it);
 			}
 		#elif motif
 		#endif
@@ -209,15 +209,15 @@ void _GuiText_exit () {
 		#if gtk
 			if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
 				gint from_pos_gint = from_pos;
-				gtk_editable_insert_text (GTK_EDITABLE (widget), text, to_pos - from_pos, &from_pos_gint);
+				gtk_editable_insert_text (GTK_EDITABLE (widget), text, to_pos - from_pos, & from_pos_gint);
 			} else {
 				GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 				GtkTextIter it;
-				gtk_text_buffer_get_iter_at_offset (buffer, &it, from_pos);
-				gtk_text_buffer_insert_interactive (buffer, &it, text, to_pos - from_pos,
-					gtk_text_view_get_editable (GTK_TEXT_VIEW(widget)));
-				gtk_text_buffer_get_iter_at_offset (buffer, &it, to_pos);
-				gtk_text_buffer_place_cursor (buffer, &it);
+				gtk_text_buffer_get_iter_at_offset (buffer, & it, from_pos);
+				gtk_text_buffer_insert_interactive (buffer, & it, text, to_pos - from_pos,
+					gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
+				gtk_text_buffer_get_iter_at_offset (buffer, & it, to_pos);
+				gtk_text_buffer_place_cursor (buffer, & it);
 			}
 		#elif motif
 		#endif
@@ -241,8 +241,8 @@ void _GuiText_exit () {
 			if (my d_prev->first == last) {
 				// most common for backspace key presses
 				he = my d_prev;
-				text_new = (char *) realloc (text_new, sizeof(*text_new) * (he->last - first + 1));
-				memcpy (text_new + last - first, he->text, sizeof(*text_new) * (he->last - he->first + 1));
+				text_new = (char *) realloc (text_new, sizeof (*text_new) * (he->last - first + 1));
+				memcpy (text_new + last - first, he->text, sizeof (*text_new) * (he->last - he->first + 1));
 				free (he->text);
 				he->text = text_new;
 				he->first = first;
@@ -250,16 +250,16 @@ void _GuiText_exit () {
 			} else if (my d_prev->last == first) {
 				// most common for ordinary text insertion
 				he = my d_prev;
-				he->text = (char *) realloc (he->text, sizeof(*he->text) * (last - he->first + 1));
-				memcpy (he->text + he->last - he->first, text_new, sizeof(*he->text) * (last - first + 1));
+				he->text = (char *) realloc (he->text, sizeof (*he->text) * (last - he->first + 1));
+				memcpy (he->text + he->last - he->first, text_new, sizeof (*he->text) * (last - first + 1));
 				free (text_new);
 				he->last = last;
 				
 			} else if (deleted && my d_prev->first == first) {
 				// most common for delete key presses
 				he = my d_prev;
-				he->text = (char *) realloc (he->text, sizeof(*he->text) * (last - first + he->last - he->first + 1));
-				memcpy (he->text + he->last - he->first, text_new, sizeof(*he->text) * (last - first + 1));
+				he->text = (char *) realloc (he->text, sizeof (*he->text) * (last - first + he->last - he->first + 1));
+				memcpy (he->text + he->last - he->first, text_new, sizeof (*he->text) * (last - first + 1));
 				free (text_new);
 				he->last = last + he->last - he->first;
 			}
@@ -731,7 +731,7 @@ char32 * GuiText_getSelection (GuiText me) {
 		}
 	#elif motif
 		integer startW, endW;
-		NativeText_getSelectionRange (my d_widget, & startW, & endW);
+		(void) NativeText_getSelectionRange (my d_widget, & startW, & endW);
 		if (endW > startW) {   // at least one character selected?
 			/*
 			 * Get all text.
@@ -796,7 +796,7 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, integer *first, inte
 		WCHAR *bufferW = Melder_malloc_f (WCHAR, lengthW + 1);
 		GetWindowTextW (my d_widget -> window, bufferW, lengthW + 1);
 		integer firstW, lastW;
-		NativeText_getSelectionRange (my d_widget, & firstW, & lastW);
+		(void) NativeText_getSelectionRange (my d_widget, & firstW, & lastW);
 
 		integer differenceFirst = 0;
 		for (integer i = 0; i < firstW; i ++) {

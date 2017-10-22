@@ -82,7 +82,7 @@ autoMovie Movie_openFromSoundFile (MelderFile file)
 	}
 }
 
-void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax)
+void Movie_paintOneImageInside (Movie me, Graphics graphics, integer frameNumber, double xmin, double xmax, double ymin, double ymax)
 {
 	try {
 		if (frameNumber < 1) Melder_throw (U"Specified frame number is ", frameNumber, U" but should be at least 1.");
@@ -99,7 +99,7 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, d
 	}
 }
 
-void Movie_paintOneImage (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax) {
+void Movie_paintOneImage (Movie me, Graphics graphics, integer frameNumber, double xmin, double xmax, double ymin, double ymax) {
 	try {
 		Graphics_setInner (graphics);
 		Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);

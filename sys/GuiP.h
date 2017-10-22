@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2011,2012,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1993-2013,2015-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

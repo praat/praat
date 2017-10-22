@@ -2,7 +2,7 @@
 #define _TableEditor_h_
 /* TableEditor.h
  *
- * Copyright (C) 2006-2011,2012,2015,2016 Paul Boersma
+ * Copyright (C) 2006-2011,2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #define kTableEditor_MAXNUM_VISIBLE_COLUMNS  100
 
 Thing_define (TableEditor, Editor) {
-	long topRow, leftColumn, selectedRow, selectedColumn;
+	integer topRow, leftColumn, selectedRow, selectedColumn;
 	GuiText text;
 	GuiDrawingArea drawingArea;
 	GuiScrollBar horizontalScrollBar, verticalScrollBar;

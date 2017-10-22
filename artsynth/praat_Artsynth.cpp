@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

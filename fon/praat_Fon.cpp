@@ -465,7 +465,7 @@ DO
 
 DIRECT (INTEGER_Formant_getMaximumNumberOfFormants) {
 	NUMBER_ONE (Formant)
-		long result = Formant_getMaxNumFormants (me);
+		integer result = Formant_getMaxNumFormants (me);
 	NUMBER_ONE_END (U" (there are at most this many formants in every frame)")
 }
 
@@ -482,7 +482,7 @@ DO
 
 DIRECT (INTEGER_Formant_getMinimumNumberOfFormants) {
 	NUMBER_ONE (Formant)
-		long result = Formant_getMinNumFormants (me);
+		integer result = Formant_getMinNumFormants (me);
 	NUMBER_ONE_END (U" (there are at least this many formants in every frame)");
 }
 
@@ -493,7 +493,7 @@ DO
 	NUMBER_ONE (Formant)
 		if (frameNumber > my nx)
 			Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
-		long result = my d_frames [frameNumber]. nFormants;
+		integer result = my d_frames [frameNumber]. nFormants;
 	NUMBER_ONE_END (U" formants")
 }
 
@@ -1151,7 +1151,7 @@ DO
 
 DIRECT (INTEGER_Ltas_getNumberOfBins) {
 	NUMBER_ONE (Ltas)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" bins")
 }
 
@@ -1420,7 +1420,7 @@ DIRECT (HELP_ParamCurve_help) {
 
 DIRECT (INTEGER_Pitch_getNumberOfVoicedFrames) {
 	NUMBER_ONE (Pitch)
-		long result = Pitch_countVoicedFrames (me);
+		integer result = Pitch_countVoicedFrames (me);
 	NUMBER_ONE_END (U" voiced frames")
 }
 
@@ -1594,7 +1594,7 @@ FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
 DO
 	FIND_ONE (Pitch)
 		double slope;
-		long nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
+		integer nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 			(me, & slope);
 		if (nVoiced < 2) {
 			Melder_information (U"--undefined--");
@@ -2411,7 +2411,7 @@ DO
 
 DIRECT (INTEGER_Spectrum_getNumberOfBins) {
 	NUMBER_ONE (Spectrum)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" bins")
 }
 
@@ -2640,13 +2640,13 @@ DIRECT (WINDOW_Strings_viewAndEdit) {
 
 DIRECT (BOOLEAN_Strings_equal) {
 	NUMBER_COUPLE (Strings)
-		long result = (long) Data_equal (me, you);   // cast bool to 0 or 1
+		integer result = (integer) Data_equal (me, you);   // cast bool to 0 or 1
 	NUMBER_COUPLE_END (result ? U" (equal)" : U" (unequal)")
 }
 
 DIRECT (INTEGER_Strings_getNumberOfStrings) {
 	NUMBER_ONE (Strings)
-		long result = my numberOfStrings;
+		integer result = my numberOfStrings;
 	NUMBER_ONE_END (U" strings")
 }
 
