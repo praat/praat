@@ -3205,14 +3205,14 @@ void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, i
 	}
 }
 
-void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, long n, double *w) {
-	autonummat g (n, n, false);
+void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer n, double *w) {
+	autonummat g (n, n, kTensorInitializationType :: RAW);
 	/*
 		1. Calculate the Green matrix G = |point[i]-point[j]|^2 (ln (|point[i]-point[j]|) - 1.0)
 		2. Solve z = G.w for w
 	*/
-	for (long i = 1; i <= n; i ++) {
-		for (long j = i + 1; j <= n; j ++) {
+	for (integer i = 1; i <= n; i ++) {
+		for (integer j = i + 1; j <= n; j ++) {
 			double dx = x [i] - x [j], dy = y [i] - y [j];
 			double distanceSquared = dx * dx + dy * dy;
 			g [i] [j] = g [j] [i] = distanceSquared * (0.5 * log (distanceSquared) - 1.0); // Green's function
@@ -3222,9 +3222,9 @@ void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double
 	NUMsolveEquation (g.at, n, n, z, 0.0, w);
 }
 
-double NUMbiharmonic2DSplineInterpolation (double *x, double *y, long n, double *w, double xp, double yp) {
+double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer n, double *w, double xp, double yp) {
 	real80 result = 0.0;
-	for (long i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= n; i ++) {
 		double dx = xp - x [i], dy = yp - y [i];
 		double d = dx * dx + dy * dy;
 		result += w [i] * d * (0.5 * log (d) - 1.0);

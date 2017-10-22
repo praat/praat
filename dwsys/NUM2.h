@@ -1069,13 +1069,13 @@ void NUMsplint (double xa[], double ya[], double y2a[], integer n, double x, dou
 	D. Sandwell (1987), Biharmonic spline interpolation of GEOS-3 and SEASAT altimetr data, Geophysical Research Letters 14, 139--142
 	X. Deng & Z. Tang (2011), Moving surface spline interpolation based on Green's function, Math. Geosci 43: 663--680
 */
-void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, long numberOfPoints, double *weights);
+void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer numberOfPoints, double *weights);
 
 /*
 	Input: x[1..numberOfPoints], y[1..numberOfPoints], (xp,yp)
 	Output: interpolated result
 */
-double NUMbiharmonic2DSplineInterpolation (double *x, double *y, long numberOfPoints, double *weights, double xp, double yp);
+double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer numberOfPoints, double *weights, double xp, double yp);
 
 
 double NUMsincpi (const double x);

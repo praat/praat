@@ -304,9 +304,9 @@ long SVD_getMinimumNumberOfComponents (SVD me, double fractionOfSumOfEigenvalues
 
 void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfEigenvalues) {
 	try {
-		long mn_min = MIN (my numberOfRows, my numberOfColumns);
-		long numberOfComponents = SVD_getMinimumNumberOfComponents (me, fractionOfSumOfEigenvalues);
-		autonumvec t (mn_min, false);
+		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
+		integer numberOfComponents = SVD_getMinimumNumberOfComponents (me, fractionOfSumOfEigenvalues);
+		autonumvec t (mn_min, kTensorInitializationType:: RAW);
 
 		/*  Solve UDV' x = b.
 			Solution: x = V D^-1 U' b 
