@@ -104,7 +104,9 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 		my d_id = Melder_dup (id);
 		my d_numberOfBytes = numberOfBytes;
 		my ownData = false;
-		my d_data = reinterpret_cast<unsigned char *> (const_cast<char *> (data)); // copy pointer to data only
+		//my d_data = reinterpret_cast<unsigned char *> (const_cast<char *> (data)); // copy pointer to data only
+		my d_data =  NUMvector <unsigned char> (0L, numberOfBytes);
+		NUMvector_copyElements <unsigned char> (reinterpret_cast<unsigned char *> (const_cast<char *> (data)), my d_data, 0L, numberOfBytes);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FileInMemory not create from data.");
