@@ -148,7 +148,7 @@ static int isTimitWord (const char label[]) {
 autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, MelderFile file) {
 	char hkruis[3] = "h#", label1[512], label2[512];
 	int length, phnFile = 0;
-	long it[5]; 
+	long_not_integer it[5];
 	if (nread < 12 || sscanf (header, "%ld%ld%511s%n\n", &it[1], &it[2], label1, &length) != 3 ||
 		it[1] < 0 || it[2] <= it[1] || sscanf (&header[length], "%ld%ld%511s\n", &it[3], &it[4], label2) != 3 || it[4] <= it[3]) {
 		// 20120512 djmw removed the extra "it[3] < it[2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
@@ -212,7 +212,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile) {
 		long linesRead = 0;
 		char line[200], label[200];
 		while (fgets (line, 199, f)) {
-			long it1, it2;
+			long_not_integer it1, it2;
 			linesRead++;
 			if (sscanf (line, "%ld%ld%199s", &it1, &it2, label) != 3) {
 				Melder_throw (U"Incorrect number of items.");

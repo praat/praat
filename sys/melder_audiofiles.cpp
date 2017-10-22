@@ -170,15 +170,17 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, intege
 					char header [1024];
 					memset (header, 0, 1024);
 					sprintf (header, "NIST_1A\n   1024\n"
-						"channel_count -i %d\n"
+						"channel_count -i %ld\n"
 						"sample_count -i %ld\n"
-						"sample_n_bytes -i %d\n"
+						"sample_n_bytes -i %ld\n"
 						"sample_byte_format -s2 01\n" /* 01=LE 10=BE */
 						"sample_coding -s3 pcm\n"
 						"sample_rate -i %ld\n"
 						"sample_min -i -32768\n"
 						"sample_max -i 32767\n"
-						"end_head\n", numberOfChannels, numberOfSamples, numberOfBytesPerSamplePoint, sampleRate);
+						"end_head\n",
+						(long_not_integer) numberOfChannels, (long_not_integer) numberOfSamples,
+						(long_not_integer) numberOfBytesPerSamplePoint, (long_not_integer) sampleRate);
 					if (fwrite (header, 1, 1024, f) != 1024) Melder_throw (U"Error in file while trying to write the NIST header.");
 				} catch (MelderError) {
 					Melder_throw (U"NIST header not written.");
