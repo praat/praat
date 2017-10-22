@@ -1,5 +1,5 @@
 # makefile for library "dwsys".
-# David Weenink 20170531
+# David Weenink 20171019
 # Paul Boersma 2017-08-08
 
 include ../makefile.defs
@@ -9,7 +9,9 @@ CPPFLAGS =  -I ../stat -I ../sys -I ../external/gsl -I ../kar
 all: libdwsys.a
 
 OBJECTS = Collection_extensions.o Command.o \
-	DoublyLinkedList.o Eigen.o FileInMemory.o Graphics_extensions.o Index.o \
+	DoublyLinkedList.o Eigen.o \
+	FileInMemory.o FileInMemorySet.o FileInMemoryManager.o\
+	Graphics_extensions.o Index.o \
 	NUM2.o NUMhuber.o NUMlapack.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMcomplex.o NUMfft_d.o NUMsort2.o \
 	NUMmathlib.o NUMstring.o \

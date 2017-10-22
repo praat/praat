@@ -84,7 +84,7 @@
 #include "Eigen_and_TableOfReal.h"
 #include "Excitations.h"
 #include "espeakdata_FileInMemory.h"
-#include "FileInMemory.h"
+#include "FileInMemoryManager.h"
 #include "FilterBank.h"
 #include "Formula.h"
 #include "FormantGridEditor.h"
@@ -2447,6 +2447,117 @@ DO
 }
 
 /************************* FileInMemorySet ***********************************/
+
+DIRECT (INFO_FileInMemorySet_getNumberOfFiles) {
+	NUMBER_ONE (FileInMemorySet)
+		integer result = my size;
+	NUMBER_ONE_END (U" (number of files)")
+}
+
+FORM (INFO_FileInMemorySet_hasDirectory, U"FileInMemorySet: Has directory?", nullptr) {
+	WORD (name, U"Name", U"aav")
+	OK
+DO
+	NUMBER_ONE (FileInMemorySet)
+		bool result = FileInMemorySet_hasDirectory (me, name);
+	NUMBER_ONE_END (U" (has directory?)")
+}
+
+
+
+/************************* FileInMemoryManager ***********************************/
+
+DIRECT (NEW1_FileInMemoryManager_create) {
+	CREATE_ONE
+		autoFileInMemoryManager result = FileInMemoryManager_create (espeak_ng_data_allFilesInMemory.get());
+	CREATE_ONE_END (U"filesInMemory")
+}
+
+DIRECT (INFO_FileInMemoryManager_getNumberOfFiles) {
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = my files -> size;
+	NUMBER_ONE_END (U" (number of files)")
+}
+DIRECT (INFO_FileInMemoryManager_getNumberOfOpenFiles) {
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = my openFiles -> size;
+	NUMBER_ONE_END (U" (number of open files)")
+}
+
+FORM (INFO_FileInMemoryManager_hasDirectory, U"FileInMemoryManager: Has directory?", nullptr) {
+	WORD (name, U"Name", U"aav")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		bool result = FileInMemoryManager_hasDirectory (me, name);
+	NUMBER_ONE_END (U" (has directory?)")
+}
+
+FORM (NEW1_FileInMemoryManager_extractFiles, U"FileInMemoryManager: Extract files", nullptr) {
+	LABEL (U"Extract all files where the file name ")
+	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
+	SENTENCE (criterion, U"...the text", U"/voices/")
+	OK
+DO
+	CONVERT_EACH (FileInMemoryManager)
+		autoFileInMemorySet result = FileInMemoryManager_extractFiles (me, which, criterion);
+	CONVERT_EACH_END (my name)
+}
+
+FORM (NEW1_FileInMemoryManager_downto_Table, U"FileInMemoryManager: Down to Table", nullptr) {
+	BOOLEAN (openFilesOnly, U"Open files only?", false)
+	OK
+DO
+	CONVERT_EACH (FileInMemoryManager)
+		autoTable result = FileInMemoryManager_downto_Table (me, openFilesOnly);
+	CONVERT_EACH_END (my name)
+}
+
+FORM (INFO_FileInMemoryManager_fopen, U"FileInMemoryManager: Open file in memory", nullptr) {
+	SENTENCE (fileName, U"File name", U"/home/david/projects/espeak-ng/espeak-ng-data/lang/aav/vi")
+	WORD (mode, U"Mode", U"r")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		FILE *stream = FileInMemoryManager_fopen (me, Melder_peek32to8 (fileName), Melder_peek32to8 (mode));
+		integer result = stream ? *(reinterpret_cast<integer *> (stream)) : 0;
+	NUMBER_ONE_END (U" (index in set)")
+}
+
+FORM (INFO_FileInMemoryManager_fclose, U"FileInMemoryManager: Close file in memory", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = FileInMemoryManager_fclose (me, (reinterpret_cast<FILE *> (& index)));
+	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_FileInMemoryManager_fgets, U"", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	NATURAL (numberOfCharacters, U"Number of charaters to read", U"10")
+	OK
+DO
+	STRING_ONE (FileInMemoryManager)
+		autoNUMvector<char> str (0L, numberOfCharacters);  
+		char *str2 = FileInMemoryManager_fgets (me, & str [0], numberOfCharacters, reinterpret_cast<FILE *> (& index));
+		char32 *result = Melder_peek8to32 (& str2 [0]);
+	STRING_ONE_END
+}
+
+FORM (INFO_FileInMemoryManager_fseek, U"", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	INTEGER (offset, U"Offset (bytes)", U"1")
+	OPTIONMENU (origin, U"Reference position", 1)
+		OPTION (U"Start")
+		OPTION (U"Current")
+		OPTION (U"End")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = FileInMemoryManager_fseek (me, (reinterpret_cast<FILE *> (& index)), offset, origin == 1 ? SEEK_SET : origin == 2 ? SEEK_CUR : SEEK_END);
+	NUMBER_ONE_END (U"")
+}
 
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (name, U"Name", U"list")
@@ -7347,7 +7458,7 @@ void praat_uvafon_David_init () {
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
-		classFileInMemory, classFileInMemorySet, classFormantFilter,
+		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
 		classIndex, classKlattTable,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
@@ -7404,11 +7515,10 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_DEPRECATED_2016, NEW1_Polygon_createFromRandomPoints);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random points)...", nullptr, praat_HIDDEN, NEW1_Polygon_createFromRandomPoints);
-	praat_addMenuCommand (U"Objects", U"New", U"FileInMemory", nullptr, praat_HIDDEN, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, READ1_FileInMemory_create);
-		//praat_addMenuCommand (U"Objects", U"New", U"Create copy from FilesInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFileInMemorySet);
-		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FileInMemorySet...", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW_FileInMemorySet_createCopyFromFileInMemorySet);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW_FileInMemorySet_createFromDirectoryContents);
+	praat_addMenuCommand (U"Objects", U"New", U"FileInMemoryManager -", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemoryManager", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_FileInMemoryManager_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_HIDDEN + praat_DEPTH_1, READ1_FileInMemory_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_FileInMemorySet_createFromDirectoryContents);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, READ1_Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, READ1_Sound_readFromRawFileBE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, READ1_KlattTable_readFromRawTextFile);
@@ -7757,13 +7867,34 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, NEW1_FileInMemory_to_FileInMemorySet);
 	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_DEPRECATED_2015, NEW1_FileInMemory_to_FileInMemorySet);
 
+	praat_addAction1 (classFileInMemorySet, 1, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1, INFO_FileInMemorySet_getNumberOfFiles);
+	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1, INFO_FileInMemorySet_hasDirectory);
+	
 	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, INFO_FileInMemorySet_showAsCode);
 	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, INFO_FileInMemorySet_showOneFileAsCode);
 	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
 	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, NEW_FileInMemorySet_to_Strings_id);
 
-	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to Collection", nullptr, 0, MODIFY_FileInMemorySet_addItems);
+	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0, MODIFY_FileInMemorySet_addItems);
 
+	
+	praat_addAction1 (classFileInMemoryManager, 1, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfFiles);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfOpenFiles);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get characters (fgets)...", nullptr, 1, INFO_FileInMemoryManager_fgets);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Has directory?", nullptr, 1, INFO_FileInMemoryManager_hasDirectory);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Modify -", nullptr, 0, nullptr);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Open file (fopen)...", nullptr, 1, INFO_FileInMemoryManager_fopen);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Close file (fclose)...", nullptr, 1, INFO_FileInMemoryManager_fclose);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Reposition (fseek)...", nullptr, 1, INFO_FileInMemoryManager_fseek);
+
+	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemoryManager_extractFiles);
+	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0, NEW1_FileInMemoryManager_downto_Table);
+	
+	
+	
+	
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, praat_DEPRECATED_2015, HELP_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
 	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawSpectrum);
