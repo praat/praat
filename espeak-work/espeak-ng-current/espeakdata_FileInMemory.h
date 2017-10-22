@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "FileInMemory.h"
+#include "FileInMemorySet.h"
 #include "Table.h"
 
 
@@ -27,11 +27,14 @@ autoFileInMemorySet create_espeakdata_languages ();
 autoFileInMemorySet create_espeakdata_dicts ();
 autoFileInMemorySet create_espeakdata_voices ();
 autoFileInMemorySet create_espeakdata_phons ();
+autoFileInMemorySet create_espeak_ng_data_allFilesInMemory ();
+
 
 extern autoFileInMemorySet espeakdata_languages;
 extern autoFileInMemorySet espeakdata_dicts;
 extern autoFileInMemorySet espeakdata_voices;
 extern autoFileInMemorySet espeakdata_phons;
+extern autoFileInMemorySet espeak_ng_data_allFilesInMemory;
 extern autoStrings espeakdata_languages_names;
 extern autoStrings espeakdata_voices_names;
 extern autoTable espeakdata_languages_idAndNameTable;

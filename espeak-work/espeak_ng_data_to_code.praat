@@ -124,7 +124,6 @@ if process_dict_files
 	if write_dict_files
 		writeFile: file_out$, cpp$
 	endif
-
 endif
 
 if process_voice_files
