@@ -59,6 +59,19 @@ extern "C"
    #define PATH_ESPEAK_DATA  "/usr/share/espeak-ng-data"
 #endif
 
+#ifdef DATA_FROM_SOURCECODE_FILES
+	#include "FileInMemory.h"
+	#define ESPEAK_FILEINMEMORYSET espeak-ng-data-allFilesInMemory
+	#define PATH_ESPEAK_DATA "/home/david/projects/espeak-ng/espeak-ng-data"
+	#define fopen(filename,mode) FileInMemoryManager_fopen (ESPEAK_FILEINMEMORYSET, filename, mode)
+	#define fclose(stream) FileInMemoryManager_fclose (ESPEAK_FILEINMEMORYSET, stream)
+	#define feof(stream) FileInMemoryManager_feof (ESPEAK_FILEINMEMORYSET, stream)	
+	#define fseek(stream,offset,origin) FileInMemoryManager_fseek (ESPEAK_FILEINMEMORYSET, stream, offset, origin)
+	#define fgets(str,num,stream) FileInMemoryManager_fgets (ESPEAK_FILEINMEMORYSET, str, num, stream)
+	#define fgetc(stream) FileInMemoryManager_fgetc (ESPEAK_FILEINMEMORYSET, stream);
+	#define GetFileLength(filename) FileInMemoryManager_GetFileLength (ESPEAK_FILEINMEMORYSET, filename)	
+#endif
+	
 typedef unsigned short USHORT;
 typedef unsigned char UCHAR;
 typedef double DOUBLEX;
