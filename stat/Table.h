@@ -124,5 +124,7 @@ void Table_checkSpecifiedColumnNumberWithinRange (Table me, integer columnNumber
 bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer columnNumber);
 bool Table_isColumnNumeric_ErrorFalse (Table me, integer columnNumber);
 
+const char32 * Table_messageColumn (Table me, integer column);
+
 /* End of file Table.h */
 #endif

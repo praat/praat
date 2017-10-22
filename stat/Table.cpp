@@ -101,6 +101,13 @@ autoTable Table_createWithoutColumnNames (integer numberOfRows, integer numberOf
 	}
 }
 
+const char32 * Table_messageColumn (Table me, integer column) {
+	if (column >= 1 && column <= my numberOfColumns && my columnHeaders [column]. label && my columnHeaders [column]. label [0] != U'\0')
+		return Melder_cat (U"\"", my columnHeaders [column]. label, U"\"");
+	else
+		return Melder_integer (column);
+}
+
 void Table_initWithColumnNames (Table me, integer numberOfRows, const char32 *columnNames) {
 	Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames));
 	integer icol = 0;
@@ -184,7 +191,7 @@ void Table_removeColumn (Table me, integer columnNumber) {
 		}
 		my numberOfColumns --;
 	} catch (MelderError) {
-		Melder_throw (me, U": column ", columnNumber, U" not removed.");
+		Melder_throw (me, U": column ", Table_messageColumn (me, columnNumber), U" not removed.");
 	}
 }
 
@@ -623,7 +630,7 @@ integer Table_drawRowFromDistribution (Table me, integer columnNumber) {
 		} while (irow > my rows.size);   // guard against rounding errors
 		return irow;
 	} catch (MelderError) {
-		Melder_throw (me, U": cannot draw a row from the distribution of column ", columnNumber, U".");
+		Melder_throw (me, U": cannot draw a row from the distribution of column ", Table_messageColumn (me, columnNumber), U".");
 	}
 }
 

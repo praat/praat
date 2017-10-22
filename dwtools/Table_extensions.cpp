@@ -3379,8 +3379,7 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
 			TableRow row = my rows.at [irow];
 			data[irow] = row -> cells[columnNumber].number;
 			if (isundef (data [irow])) {
-				Melder_throw (me, U": the cell in row ", irow, U" of column \"",
-					my columnHeaders[columnNumber].label ? my columnHeaders[columnNumber].label : Melder_integer (columnNumber), U"\" is undefined.");
+				Melder_throw (me, U": the cell in row ", irow, U" of column ", Table_messageColumn (me, columnNumber), U" is undefined.");
 			}
 		}
 		double mad, location;
@@ -4278,7 +4277,7 @@ integer *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Inter
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);   // again?
 		autoNUMvector <integer> selectedRows (1, numberOfMatches);
 		long n = 0;
-		for (long irow =1; irow <= my rows.size; irow ++) {
+		for (long irow = 1; irow <= my rows.size; irow ++) {
 			Formula_Result result;
 			Formula_run (irow, 1, & result);
 			if (result. numericResult != 0.0) {
@@ -4698,7 +4697,7 @@ void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, 
 			SSCP sscpi = his at [i];
 			double scalei = SSCP_getEllipseScalefactor (sscpi, numberOfSigmas, confidence);
 			if (scalei > 0) {
-				SSCP_drawTwoDimensionalEllipse_inside  (sscpi, g, scalei, Thing_getName (sscpi), labelSize);
+				SSCP_drawTwoDimensionalEllipse_inside (sscpi, g, scalei, Thing_getName (sscpi), labelSize);
 			}
 		}
 		Graphics_unsetInner (g);
