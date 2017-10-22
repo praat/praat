@@ -25,7 +25,6 @@
  djmw 20040513 Info changes.
  djmw 20040526 Adapted FFNet_drawCostHistory.
  djmw 20050131 Reversed sign of derivative in minimumCrossEntropy.
- djmw 20060811 Changed %d to %ld in sprintf for longs.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20070902 FFNet_createNameFromTopology to wchar
  djmw 20071014 Melder_error<n>

@@ -584,10 +584,10 @@ DIRECT (GRAPHICS_Erase_all) {
 		Graphics_Colour colour = GRAPHICS -> colour;
 		Graphics_setColour (GRAPHICS, Graphics_WHITE);
 		double x1, y1, x2, y2;
-		//printf ("%ld %ld %ld %ld\n", GRAPHICS -> d_x1DC, GRAPHICS -> d_y1DC, GRAPHICS -> d_x2DC, GRAPHICS -> d_y2DC);
+		//Melder_casual (GRAPHICS -> d_x1DC, U" ", GRAPHICS -> d_y1DC, U" ", GRAPHICS -> d_x2DC, U" ", GRAPHICS -> d_y2DC);
 		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x1DC, GRAPHICS -> d_y1DC, & x1, & y1);
 		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x2DC, GRAPHICS -> d_y2DC, & x2, & y2);
-		//printf ("%f %f %f %f\n", x1, y1, x2, y2);
+		//Melder_casual (x1, U" ", y1, U" ", x2, U" ", y2);
 		Graphics_fillRectangle (GRAPHICS, x1, x2, y1, y2);
 		Graphics_setColour (GRAPHICS, colour);
 		#endif

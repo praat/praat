@@ -26,7 +26,6 @@
  djmw 20020502 modified call Eigen_and_TableOfReal_project_into
  djmw 20030801 Discriminant_drawConcentrationEllipses extra argument
  djmw 20050405 Modified column label: eigenvector->Eigenvector
- djmw 20061021 printf expects %ld for 'long int'
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071009 wchar
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h

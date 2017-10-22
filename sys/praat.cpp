@@ -1259,7 +1259,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 			 */
 			try {
 				autofile f = Melder_fopen (& pidFile, "w");
-				fprintf (f, "%ld", (long_not_integer) getpid ());
+				fprintf (f, "%s", Melder_integer (getpid ()));
 				f.close (& pidFile);
 			} catch (MelderError) {
 				Melder_clearError ();

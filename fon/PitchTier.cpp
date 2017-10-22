@@ -82,7 +82,8 @@ void PitchTier_stylize (PitchTier me, double frequencyResolution, bool useSemito
 static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, bool hasHeader) {
 	autofile f = Melder_fopen (file, "w");
 	if (hasHeader)
-		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%.17g %.17g %ld\n", my xmin, my xmax, (long_not_integer) my points.size);
+		fprintf (f, "\"ooTextFile\"\n\"PitchTier\"\n%s %s %s\n",
+			Melder_double (my xmin), Melder_double (my xmax), Melder_integer (my points.size));
 	for (integer i = 1; i <= my points.size; i ++) {
 		RealPoint point = my points.at [i];
 		fprintf (f, "%.17g\t%.17g\n", point -> number, point -> value);
