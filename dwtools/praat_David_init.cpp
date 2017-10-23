@@ -2520,7 +2520,7 @@ FORM (INFO_FileInMemoryManager_fopen, U"FileInMemoryManager: Open file in memory
 DO
 	NUMBER_ONE (FileInMemoryManager)
 		FILE *stream = FileInMemoryManager_fopen (me, Melder_peek32to8 (fileName), Melder_peek32to8 (mode));
-		integer result = stream ? *(reinterpret_cast<integer *> (stream)) : 0;
+		integer result = stream ? reinterpret_cast<integer> (stream) : 0;
 	NUMBER_ONE_END (U" (index in set)")
 }
 
@@ -2529,23 +2529,57 @@ FORM (INFO_FileInMemoryManager_fclose, U"FileInMemoryManager: Close file in memo
 	OK
 DO
 	NUMBER_ONE (FileInMemoryManager)
-		integer result = FileInMemoryManager_fclose (me, (reinterpret_cast<FILE *> (& index)));
+		integer result = FileInMemoryManager_fclose (me, (reinterpret_cast<FILE *> (index)));
 	NUMBER_ONE_END (U"")
 }
 
-FORM (INFO_FileInMemoryManager_fgets, U"", nullptr) {
+FORM (INFO_FileInMemoryManager_fgets, U"FileInMemoryManager: fgets", nullptr) {
 	NATURAL (index, U"Index", U"1")
-	NATURAL (numberOfCharacters, U"Number of charaters to read", U"10")
+	NATURAL (numberOfCharacters, U"Number of characters", U"10")
 	OK
 DO
 	STRING_ONE (FileInMemoryManager)
 		autoNUMvector<char> str (0L, numberOfCharacters);  
-		char *str2 = FileInMemoryManager_fgets (me, & str [0], numberOfCharacters, reinterpret_cast<FILE *> (& index));
+		char *str2 = FileInMemoryManager_fgets (me, & str [0], numberOfCharacters, reinterpret_cast<FILE *> (index));
 		char32 *result = Melder_peek8to32 (& str2 [0]);
 	STRING_ONE_END
 }
 
-FORM (INFO_FileInMemoryManager_fseek, U"", nullptr) {
+FORM (INFO_FileInMemoryManager_fgetc, U"FileInMemoryManager: fgetc", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = FileInMemoryManager_fgetc (me, reinterpret_cast<FILE *> (index));
+	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_FileInMemoryManager_ungetc, U"FileInMemoryManager: ungetc", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	INTEGER (character, U"Character (int)", U"40")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = FileInMemoryManager_ungetc (me, character, reinterpret_cast<FILE *> (index));
+	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_FileInMemoryManager_fread, U"FileInMemoryManager: fread", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	NATURAL (elementSize, U"Element size (bytes)", U"1")
+	NATURAL (numberOfElements, U"Number of elements", U"1")
+	OK
+DO
+	STRING_ONE (FileInMemoryManager)
+		integer numberOfBytes = elementSize * numberOfElements;
+		autoNUMvector<char> str (0L, numberOfBytes);  
+		size_t numberRead = FileInMemoryManager_fread (me, & str [0], elementSize, numberOfElements, reinterpret_cast<FILE *> (index));
+		str [numberRead * elementSize] ='\0';
+		char32 *result = Melder_peek8to32 (& str [0]);
+	STRING_ONE_END
+}
+
+FORM (INFO_FileInMemoryManager_fseek, U"FileInMemoryManager: fseek", nullptr) {
 	NATURAL (index, U"Index", U"1")
 	INTEGER (offset, U"Offset (bytes)", U"1")
 	OPTIONMENU (origin, U"Reference position", 1)
@@ -2555,8 +2589,17 @@ FORM (INFO_FileInMemoryManager_fseek, U"", nullptr) {
 	OK
 DO
 	NUMBER_ONE (FileInMemoryManager)
-		integer result = FileInMemoryManager_fseek (me, (reinterpret_cast<FILE *> (& index)), offset, origin == 1 ? SEEK_SET : origin == 2 ? SEEK_CUR : SEEK_END);
+		integer result = FileInMemoryManager_fseek (me, (reinterpret_cast<FILE *> (index)), offset, origin == 1 ? SEEK_SET : origin == 2 ? SEEK_CUR : SEEK_END);
 	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_FileInMemoryManager_rewind, U"FileInMemoryManager_rewind", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	OK
+DO
+	MODIFY_EACH (FileInMemoryManager)
+		FileInMemoryManager_rewind (me, reinterpret_cast<FILE *> (index));
+	MODIFY_EACH_END 	
 }
 
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
@@ -7879,11 +7922,15 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfFiles);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfOpenFiles);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get characters (fgets)...", nullptr, 1, INFO_FileInMemoryManager_fgets);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get character (fgetc)...", nullptr, 1, INFO_FileInMemoryManager_fgetc);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get elements (fread)...", nullptr, 1, INFO_FileInMemoryManager_fread);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Has directory?", nullptr, 1, INFO_FileInMemoryManager_hasDirectory);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Modify -", nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Open file (fopen)...", nullptr, 1, INFO_FileInMemoryManager_fopen);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Close file (fclose)...", nullptr, 1, INFO_FileInMemoryManager_fclose);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Reposition (fseek)...", nullptr, 1, INFO_FileInMemoryManager_fseek);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Rewind file (rewind)...", nullptr, 1, INFO_FileInMemoryManager_rewind);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Push back character (ungetc)...", nullptr, 1, INFO_FileInMemoryManager_ungetc);
 
 	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemoryManager_extractFiles);
 	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0, NEW1_FileInMemoryManager_downto_Table);
