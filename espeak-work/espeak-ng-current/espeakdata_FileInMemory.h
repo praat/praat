@@ -19,10 +19,15 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "FileInMemorySet.h"
+#include "FileInMemoryManager.h"
 #include "Table.h"
 
+autoFileInMemorySet create_espeak_ng_FileInMemorySet ();
 
+autoFileInMemoryManager create_espeak_ng_FileInMemoryManager ();
+extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
+
+// TODO remove
 autoFileInMemorySet create_espeakdata_languages ();
 autoFileInMemorySet create_espeakdata_dicts ();
 autoFileInMemorySet create_espeakdata_voices ();
@@ -39,9 +44,10 @@ extern autoStrings espeakdata_languages_names;
 extern autoStrings espeakdata_voices_names;
 extern autoTable espeakdata_languages_idAndNameTable;
 extern autoTable espeakdata_voices_propertiesTable;
+
 void espeakdata_praat_init ();
 /*
-	Creates the FileInMemorySets espeakdata_languages, espeakdata_dicts, espeakdata_voices & espeakdata_phons;
+	Creates the FileInMemoryManager espeak_ng_FileInMemoryManager ;
 	Creates Strings espeakdata_languages_names & espeakdata_voices_names
 */
 

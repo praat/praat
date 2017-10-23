@@ -36,7 +36,7 @@ extern "C"
 #if defined(_WIN32) || defined(_WIN64) // Windows
 
 #define PLATFORM_WINDOWS
-#define PATHSEP '\\'
+#define PATHSEP '/'
 #define N_PATH_HOME  230
 #define NO_VARIADIC_MACROS
 
@@ -60,7 +60,7 @@ extern "C"
 #endif
 
 #ifdef DATA_FROM_SOURCECODE_FILES
-	#include "FileInMemory.h"
+	#include "FileInMemoryManager.h"
 	#define ESPEAK_FILEINMEMORYSET espeak-ng-data-allFilesInMemory
 	#define PATH_ESPEAK_DATA "/home/david/projects/espeak-ng/espeak-ng-data"
 	#define fopen(filename,mode) FileInMemoryManager_fopen (ESPEAK_FILEINMEMORYSET, filename, mode)

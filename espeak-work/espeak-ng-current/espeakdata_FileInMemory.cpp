@@ -30,6 +30,7 @@ autoTable Table_createAsEspeakLanguagesIdAndNamePairs ();
 autoTable Table_createAsEspeakVoicesProperties ();
 autoStrings Table_column_to_Strings (Table me, integer column);
 
+autoFileInMemoryManager espeak_ng_FileInMemoryManager;
 
 autoFileInMemorySet espeakdata_languages;
 autoFileInMemorySet espeakdata_dicts;
@@ -67,6 +68,7 @@ integer Table_findStringInColumn (Table me, const char32 *string, integer icol) 
 
 void espeakdata_praat_init () {
 	try {
+		espeak_ng_FileInMemoryManager = create_espeak_ng_FileInMemoryManager ();
 		espeak_ng_data_allFilesInMemory = create_espeak_ng_data_allFilesInMemory ();
 		espeakdata_dicts = create_espeakdata_dicts ();
 		espeakdata_languages = create_espeakdata_languages ();
@@ -108,30 +110,8 @@ const char * espeakdata_get_voicedata (const char *data, integer ndata, char *bu
 	return & data[idata];
 }
 
-static const char32 * get_wordAfterPrecursor (const char32 *text, const char32 *precursor) {
-	static char32 word [100];
-	/*
-		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
-		2. Get the word after 'precursor' (skip leading and trailing whitespace).
-	*/
-	autoMelderString regex;
-	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
-	char32 *p = nullptr;
-	const char32 *pmatch = strstr_regexp (text, regex.string);
-	if (pmatch) {
-		while (*pmatch == U' ' || *pmatch ++ == U'\t'); // skip whitespace before 'precursor'
-		pmatch += str32len (precursor); // skip 'precursor'
-		while (*pmatch == U' ' || *pmatch ++ == U'\t'); // skip whitespace after 'precursor'
-		pmatch --;
-		p = word;
-		char32 *p_end = p + 99;
-		while ((*p = *pmatch ++) && *p != U' ' && *p != U'\t' && *p != U'\n' && p < p_end) { p ++; };
-		*p = 0;
-		p = word;
-	}
-	return p;
-}
-static const char32 * get_word8AfterPrecursor (const unsigned char *text8, const char32 *precursor) {
+
+static const char32 * get_wordAfterPrecursor_u8 (const unsigned char *text8, const char32 *precursor) {
 	static char32 word [100];
 	/*
 		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
@@ -163,13 +143,13 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
 			Table_setStringValue (thee.get(), ifile, 1, fim -> d_id);
-			const char32 *word = get_word8AfterPrecursor (fim -> d_data, U"name");
+			const char32 *word = get_wordAfterPrecursor_u8 (fim -> d_data, U"name");
 			Table_setStringValue (thee.get(), ifile, 2, (word ?word : fim -> d_id));
-			word = get_word8AfterPrecursor (fim -> d_data, U"gender");
+			word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
 			Table_setStringValue (thee.get(), ifile, 3, (word ? word : U"0"));
-			word = get_word8AfterPrecursor (fim -> d_data, U"age");
+			word = get_wordAfterPrecursor_u8 (fim -> d_data, U"age");
 			Table_setStringValue (thee.get(), ifile, 4, (word ? word : U"0"));
-			word = get_word8AfterPrecursor (fim -> d_data, U"variant");
+			word = get_wordAfterPrecursor_u8 (fim -> d_data, U"variant");
 			Table_setStringValue (thee.get(), ifile, 5, (word ? word : U"0"));
 
 		}
@@ -181,14 +161,22 @@ autoTable Table_createAsEspeakVoicesProperties () {
 
 autoTable Table_createAsEspeakLanguagesIdAndNamePairs () {
 	try {
-		FileInMemorySet me = espeakdata_languages.get();
-		autoTable thee = Table_createWithColumnNames (my size, U"id name");
+		char32 *criterion = U"/lang/";
+		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
+		integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
+		
+		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name");
+		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
-			Table_setStringValue (thee.get(), ifile, 1, fim -> d_id);
-			const char32 *word = get_word8AfterPrecursor (fim -> d_data, U"name");
-			Table_setStringValue (thee.get(), ifile, 2, (word ? word : fim -> d_id));
+			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion)) {
+				irow ++;
+				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
+				const char32 *word = get_wordAfterPrecursor_u8 (fim -> d_data, U"name");
+				Table_setStringValue (thee.get(), irow, 2, (word ? word : fim -> d_id));
+			}
 		}
+		Melder_assert (numberOfMatches == irow);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng languages not created.");

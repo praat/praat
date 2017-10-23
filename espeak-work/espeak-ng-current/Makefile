@@ -8,6 +8,7 @@ OBJECTS = categories.o compiledata.o compiledict.o dictionary.o encoding.o error
 	numbers.o phonemelist.o proplist.o readclause.o setlengths.o speech.o \
 	synthdata.o synthesize.o  \
 	synth_mbrola.o tr_languages.o mnemonics.o translate.o voices.o wavegen.o \
+	create_espeak_ng_FileInMemoryManager.o create_espeak_ng_FileInMemorySet.o \
 	espeak_ng_data_allFilesInMemory.o \
 	espeakdata_languages.o espeakdata_phons.o espeakdata_dicts.o espeakdata_voices.o \
 	espeakdata_FileInMemory.o espeak_api.o
