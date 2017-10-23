@@ -20,7 +20,7 @@
 oo_DEFINE_CLASS (FileInMemoryManager, Daata)
 
 	oo_AUTO_OBJECT (FileInMemorySet, 0, files)
-	oo_AUTO_OBJECT (SortedSetOfLong, 0, openFiles)
+	oo_AUTO_OBJECT (FileInMemorySet, 0, openFiles)
 	oo_INTEGER (errorNumber)
 	
 oo_END_CLASS (FileInMemoryManager)
