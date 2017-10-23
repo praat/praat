@@ -706,7 +706,7 @@ void Graphics_image_colour (Graphics me, double_rgbt **z, integer ix1, integer i
 { cellArrayOrImage (me, nullptr, z, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
 
 void Graphics_image8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
+	integer iy1, integer iy2, double y1WC, double y2WC, uint8 minimum, uint8 maximum)
 { cellArrayOrImage (me, nullptr, nullptr, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
 
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *relativeFileName, double x1, double x2, double y1, double y2) {
