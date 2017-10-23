@@ -40,9 +40,11 @@ void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const
 char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, integer *numberOfBytes);
 const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, integer *numberOfBytes);
 
+integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, const char32 *criterion);
+
 integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id);
 
-integer FileInMemorySet_getIndexFromPathName (FileInMemorySet me, const char32 *path);
+integer FileInMemorySet_lookUp (FileInMemorySet me, const char32 *path);
 
 bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name);
 

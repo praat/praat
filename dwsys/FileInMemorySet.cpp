@@ -64,7 +64,7 @@ autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& li
 autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *fileGlobber) {
 	try {
 		structMelderDir parent { };
-		Melder_pathToDir (dirpath, &parent);
+		Melder_pathToDir (dirpath, & parent);
 		autoStrings thee = Strings_createAsFileList (Melder_cat (dirpath, U"/", fileGlobber));
 		if (thy numberOfStrings < 1) {
 			Melder_throw (U"No files found.");
@@ -147,7 +147,7 @@ integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id) {
 	return index;
 }
 
-integer FileInMemorySet_getIndexFromPathName (FileInMemorySet me, const char32 *path) {
+integer FileInMemorySet_lookUp (FileInMemorySet me, const char32 *path) {
 	integer index = 0;
 	for (integer i = 1; i <= my size; i ++) {
 		FileInMemory fim = (FileInMemory) my at [i];
@@ -157,6 +157,17 @@ integer FileInMemorySet_getIndexFromPathName (FileInMemorySet me, const char32 *
 		}
 	}
 	return index;
+}
+
+integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
+	integer numberOfMatches = 0;
+	for (long ifile = 1; ifile <= my size; ifile ++) {
+		FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
+		if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
+			numberOfMatches ++;
+		}
+	}
+	return numberOfMatches;
 }
 
 bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name) {
