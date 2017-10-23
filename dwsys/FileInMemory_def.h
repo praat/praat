@@ -24,6 +24,7 @@ oo_DEFINE_CLASS (FileInMemory, Daata)
 	oo_INTEGER (d_numberOfBytes)
 	oo_INTEGER (d_position)
 	oo_INTEGER (d_errno)
+	oo_INT32 (ungetBuffer)
 	oo_UBYTE_VECTOR_FROM (d_data, 0, d_numberOfBytes) // final null byte possible
 	oo_BOOL (ownData)
 	

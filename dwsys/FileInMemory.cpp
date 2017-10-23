@@ -104,7 +104,6 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 		my d_id = Melder_dup (id);
 		my d_numberOfBytes = numberOfBytes;
 		my ownData = false;
-		//my d_data = reinterpret_cast<unsigned char *> (const_cast<char *> (data)); // copy pointer to data only
 		my d_data =  NUMvector <unsigned char> (0L, numberOfBytes);
 		NUMvector_copyElements <unsigned char> (reinterpret_cast<unsigned char *> (const_cast<char *> (data)), my d_data, 0L, numberOfBytes);
 		return me;
@@ -123,7 +122,6 @@ void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numbe
 	if (numberOfBytesPerLine <= 0) {
 		numberOfBytesPerLine = 20;
 	}
-	// autoNUMvector<unsigned char> data (0, my d_numberOfBytes); ????
 	MelderInfo_writeLine (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
 	for (integer i = 0; i < my d_numberOfBytes; i++) {
 		unsigned char number = my d_data[i];
@@ -134,6 +132,5 @@ void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numbe
 	MelderInfo_write (U"\t\tautoFileInMemory ", name, U" = FileInMemory_createWithData (");
 	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (&", name, U"_data), \n\t\t\tU\"", my d_path, U"\", \n\t\t\tU\"", my d_id, U"\");");
 }
-
 
 /* End of file FileInMemory.cpp */
