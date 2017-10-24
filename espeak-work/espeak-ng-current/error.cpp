@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include <espeak-ng/espeak_ng.h>
-
 #include "error.h"
 #include "speech.h"
 #include "synthesize.h"
