@@ -149,22 +149,22 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';   // physical dimension of channels
 		}
-		autoNUMvector <double> physicalMinimum (1, numberOfChannels);
+		autonumvec physicalMinimum (numberOfChannels, kTensorInitializationType::RAW);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';
 			physicalMinimum [ichannel] = atof (buffer);
 		}
-		autoNUMvector <double> physicalMaximum (1, numberOfChannels);
+		autonumvec physicalMaximum (numberOfChannels, kTensorInitializationType::RAW);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';
 			physicalMaximum [ichannel] = atof (buffer);
 		}
-		autoNUMvector <double> digitalMinimum (1, numberOfChannels);
+		autonumvec digitalMinimum (numberOfChannels, kTensorInitializationType::RAW);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';
 			digitalMinimum [ichannel] = atof (buffer);
 		}
-		autoNUMvector <double> digitalMaximum (1, numberOfChannels);
+		autonumvec digitalMaximum (numberOfChannels, kTensorInitializationType::RAW);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';
 			digitalMaximum [ichannel] = atof (buffer);

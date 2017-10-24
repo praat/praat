@@ -44,7 +44,7 @@ double * _Graphics_check (Graphics me, integer number) {
 	if (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) {
 		while (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) nrecord *= 2;
 		try {
-			record = (double *) Melder_realloc (record, (1 + nrecord) * sizeof (double));
+			record = (double *) Melder_realloc (record, (1 + nrecord) * (integer) sizeof (double));
 		} catch (MelderError) {
 			if (messageHasAlreadyBeenShownOnce) {
 				Melder_clearError ();
@@ -91,77 +91,87 @@ void Graphics_play (Graphics me, Graphics thee) {
 	my recording = false;   // temporarily, in case me == thee
 	while (p < endp) {
 		#define get  (* ++ p)
+		#define iget  (integer) (* ++ p)
 		#define mget(n)  (p += n, p - n)
 		#define sget(n)  ((char *) (p += n, p - n + 1))
 		int opcode = (int) get;
 		(void) (integer) get;   // ignore number of arguments
 		switch (opcode) {
-			case SET_VIEWPORT:
-			{  double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
+			case SET_VIEWPORT: {
+				double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
 				Graphics_setViewport (thee, x1NDC, x2NDC, y1NDC, y2NDC);
-			}  break;
-			case SET_INNER: Graphics_setInner (thee); break;
-			case UNSET_INNER: Graphics_unsetInner (thee); break;
-			case SET_WINDOW:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+			} break;
+			case SET_INNER: {
+				Graphics_setInner (thee);
+			} break;
+			case UNSET_INNER: {
+				Graphics_unsetInner (thee);
+			} break;
+			case SET_WINDOW: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_setWindow (thee, x1, x2, y1, y2);
-			}  break;
-			case TEXT:
-			{  double x = get, y = get; integer length = get; char *text_utf8 = sget (length);
+			} break;
+			case TEXT: {
+				double x = get, y = get;
+				integer length = iget;
+				char *text_utf8 = sget (length);
 				Graphics_text (thee, x, y, Melder_peek8to32 (text_utf8));
-			}  break;
-			case POLYLINE:
-			{  integer n = get; double *x = mget (n), *y = mget (n);
+			} break;
+			case POLYLINE: {
+				integer n = iget;
+				double *x = mget (n), *y = mget (n);
 				Graphics_polyline (thee, n, & x [1], & y [1]);
 			} break;
-			case LINE:
-			{  double x1 = get, y1 = get, x2 = get, y2 = get;
+			case LINE: {
+				double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_line (thee, x1, y1, x2, y2);
-			}  break;
-			case ARROW:
-			{  double x1 = get, y1 = get, x2 = get, y2 = get;
+			} break;
+			case ARROW: {
+				double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_arrow (thee, x1, y1, x2, y2);
-			}  break;
-			case FILL_AREA:
-			{  integer n = get; double *x = mget (n), *y = mget (n);
+			} break;
+			case FILL_AREA: {
+				integer n = iget;
+				double *x = mget (n), *y = mget (n);
 				Graphics_fillArea (thee, n, & x [1], & y [1]);
-			}  break;
-			case FUNCTION:
-			{  integer n = get; double x1 = get, x2 = get, *y = mget (n);
+			} break;
+			case FUNCTION: {
+				integer n = iget;
+				double x1 = get, x2 = get, *y = mget (n);
 				Graphics_function (thee, y, 1, n, x1, x2);
-			}  break;
-			case RECTANGLE:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+			} break;
+			case RECTANGLE: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_rectangle (thee, x1, x2, y1, y2);
-			}  break;
-			case FILL_RECTANGLE:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+			} break;
+			case FILL_RECTANGLE: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_fillRectangle (thee, x1, x2, y1, y2);
-			}  break;
-			case CIRCLE:
-			{  double x = get, y = get, r = get;
+			} break;
+			case CIRCLE: {
+				double x = get, y = get, r = get;
 				Graphics_circle (thee, x, y, r);
-			}  break;
-			case FILL_CIRCLE:
-			{  double x = get, y = get, r = get;
+			} break;
+			case FILL_CIRCLE: {
+				double x = get, y = get, r = get;
 				Graphics_fillCircle (thee, x, y, r);
-			}  break;
-			case ARC:
-			{  double x = get, y = get, r = get, fromAngle = get, toAngle = get;
+			} break;
+			case ARC: {
+				double x = get, y = get, r = get, fromAngle = get, toAngle = get;
 				Graphics_arc (thee, x, y, r, fromAngle, toAngle);
-			}  break;
-			case ARC_ARROW:
-			{  double x = get, y = get, r = get, fromAngle = get, toAngle = get;
-				int arrowAtStart = get, arrowAtEnd = get;
+			} break;
+			case ARC_ARROW: {
+				double x = get, y = get, r = get, fromAngle = get, toAngle = get;
+				int arrowAtStart = (int) iget, arrowAtEnd = (int) iget;
 				Graphics_arcArrow (thee, x, y, r, fromAngle, toAngle, arrowAtStart, arrowAtEnd);
-			}  break;
-			case HIGHLIGHT:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+			} break;
+			case HIGHLIGHT: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_highlight (thee, x1, x2, y1, y2);
-			}  break;
-			case CELL_ARRAY:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = get, ncol = get;
+			} break;
+			case CELL_ARRAY: {
+				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				integer nrow = iget, ncol = iget;
 				/*
 				 * We don't copy all the data into a new matrix.
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
@@ -175,18 +185,31 @@ void Graphics_play (Graphics me, Graphics thee) {
 								0, nrow - 1, y1, y2, minimum, maximum);
 				Melder_free (z);
 			}  break;
-			case SET_FONT: Graphics_setFont (thee, (enum kGraphics_font) get); break;
-			case SET_FONT_SIZE: Graphics_setFontSize (thee, (int) get); break;
-			case SET_FONT_STYLE: Graphics_setFontStyle (thee, (int) get); break;
-			case SET_TEXT_ALIGNMENT:
-			{  int hor = get, vert = get;
-				Graphics_setTextAlignment (thee, (kGraphics_horizontalAlignment) hor, vert);
+			case SET_FONT: {
+				Graphics_setFont (thee, (enum kGraphics_font) get);
+			} break;
+			case SET_FONT_SIZE: {
+				Graphics_setFontSize (thee, (int) get);
+			} break;
+			case SET_FONT_STYLE: {
+				Graphics_setFontStyle (thee, (int) get);
+			} break;
+			case SET_TEXT_ALIGNMENT: {
+				kGraphics_horizontalAlignment hor = (kGraphics_horizontalAlignment) iget;
+				int vert = (int) iget;
+				Graphics_setTextAlignment (thee, hor, vert);
 			}  break;
-			case SET_TEXT_ROTATION: Graphics_setTextRotation (thee, get); break;
-			case SET_LINE_TYPE: Graphics_setLineType (thee, (int) get); break;
-			case SET_LINE_WIDTH: Graphics_setLineWidth (thee, get); break;
-			case SET_STANDARD_COLOUR:   // only used in old Praat picture files
-			{  int standardColour = (int) get;
+			case SET_TEXT_ROTATION: {
+				Graphics_setTextRotation (thee, get);
+			} break;
+			case SET_LINE_TYPE: {
+				Graphics_setLineType (thee, (int) get);
+			} break;
+			case SET_LINE_WIDTH: {
+				Graphics_setLineWidth (thee, get);
+			} break;
+			case SET_STANDARD_COLOUR: {   // only used in old Praat picture files
+				int standardColour = (int) get;
 				Graphics_Colour colour =
 					standardColour == 0 ? Graphics_BLACK :
 					standardColour == 1 ? Graphics_WHITE :
@@ -207,8 +230,12 @@ void Graphics_play (Graphics me, Graphics thee) {
 					Graphics_GREY;
 				Graphics_setColour (thee, colour);
 			} break;
-			case SET_GREY: Graphics_setGrey (thee, get); break;
-			case MARK_GROUP: Graphics_markGroup (thee); break;
+			case SET_GREY: {
+				Graphics_setGrey (thee, get);
+			} break;
+			case MARK_GROUP: {
+				Graphics_markGroup (thee);
+			} break;
 			case ELLIPSE: {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_ellipse (thee, x1, x2, y1, y2);
@@ -217,88 +244,108 @@ void Graphics_play (Graphics me, Graphics thee) {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_fillEllipse (thee, x1, x2, y1, y2);
 			} break;
-			case CIRCLE_MM:
-			{  double x = get, y = get, d = get;
+			case CIRCLE_MM: {
+				double x = get, y = get, d = get;
 				Graphics_circle_mm (thee, x, y, d);
-			}  break;
-			case FILL_CIRCLE_MM:
-			{  double x = get, y = get, d = get;
+			} break;
+			case FILL_CIRCLE_MM: {
+				double x = get, y = get, d = get;
 				Graphics_fillCircle_mm (thee, x, y, d);
-			}  break;
-			case IMAGE8:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = get, ncol = get;
-				unsigned char **z = NUMmatrix <unsigned char> (1, nrow, 1, ncol);   // BUG memory
+			} break;
+			case IMAGE8: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
+				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
+				integer nrow = iget, ncol = iget;
+				uint8 **z = NUMmatrix <uint8> (1, nrow, 1, ncol);   // BUG memory
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
-						z [irow] [icol] = get;
+						z [irow] [icol] = (uint8) iget;
 				Graphics_image8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
 				NUMmatrix_free (z, 1, 1);
-			}  break;
-			case UNHIGHLIGHT:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+			} break;
+			case UNHIGHLIGHT: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_unhighlight (thee, x1, x2, y1, y2);
-			}  break;
+			} break;
 #if motif
-			case XOR_ON:
-			{  Graphics_Colour colour; colour. red = get, colour. green = get, colour. blue = get;
+			case XOR_ON: {
+				Graphics_Colour colour; colour. red = get, colour. green = get, colour. blue = get;
 				Graphics_xorOn (thee, colour);
-			}  break;
-			case XOR_OFF: Graphics_xorOff (thee); break;
+			} break;
+			case XOR_OFF: {
+				Graphics_xorOff (thee);
+			} break;
 #endif
-			case RECTANGLE_MM:
-			{  double x = get, y = get, horSide = get, vertSide = get;
+			case RECTANGLE_MM: {
+				double x = get, y = get, horSide = get, vertSide = get;
 				Graphics_rectangle_mm (thee, x, y, horSide, vertSide);
-			}  break;
-			case FILL_RECTANGLE_MM:
-			{  double x = get, y = get, horSide = get, vertSide = get;
+			} break;
+			case FILL_RECTANGLE_MM: {
+				double x = get, y = get, horSide = get, vertSide = get;
 				Graphics_fillRectangle_mm (thee, x, y, horSide, vertSide);
-			}  break;
-			case SET_WS_WINDOW:
-			{  double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
+			} break;
+			case SET_WS_WINDOW: {
+				double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
 				Graphics_setWsWindow (thee, x1NDC, x2NDC, y1NDC, y2NDC);
-			}  break;
-			case SET_WRAP_WIDTH: Graphics_setWrapWidth (thee, get); break;
-			case SET_SECOND_INDENT: Graphics_setSecondIndent (thee, get); break;
-			case SET_PERCENT_SIGN_IS_ITALIC: Graphics_setPercentSignIsItalic (thee, (bool) get); break;
-			case SET_NUMBER_SIGN_IS_BOLD: Graphics_setNumberSignIsBold (thee, (bool) get); break;
-			case SET_CIRCUMFLEX_IS_SUPERSCRIPT: Graphics_setCircumflexIsSuperscript (thee, (bool) get); break;
-			case SET_UNDERSCORE_IS_SUBSCRIPT: Graphics_setUnderscoreIsSubscript (thee, (bool) get); break;
-			case SET_DOLLAR_SIGN_IS_CODE: Graphics_setDollarSignIsCode (thee, (bool) get); break;
-			case SET_AT_SIGN_IS_LINK: Graphics_setAtSignIsLink (thee, (bool) get); break;
-			case BUTTON:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+			} break;
+			case SET_WRAP_WIDTH: {
+				Graphics_setWrapWidth (thee, get);
+			} break;
+			case SET_SECOND_INDENT: {
+				Graphics_setSecondIndent (thee, get);
+			} break;
+			case SET_PERCENT_SIGN_IS_ITALIC: {
+				Graphics_setPercentSignIsItalic (thee, (bool) get);
+			} break;
+			case SET_NUMBER_SIGN_IS_BOLD: {
+				Graphics_setNumberSignIsBold (thee, (bool) get);
+			} break;
+			case SET_CIRCUMFLEX_IS_SUPERSCRIPT: {
+				Graphics_setCircumflexIsSuperscript (thee, (bool) get);
+			} break;
+			case SET_UNDERSCORE_IS_SUBSCRIPT: {
+				Graphics_setUnderscoreIsSubscript (thee, (bool) get);
+			} break;
+			case SET_DOLLAR_SIGN_IS_CODE: {
+				Graphics_setDollarSignIsCode (thee, (bool) get);
+			} break;
+			case SET_AT_SIGN_IS_LINK: {
+				Graphics_setAtSignIsLink (thee, (bool) get);
+			} break;
+			case BUTTON: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_button (thee, x1, x2, y1, y2);
-			}  break;
-			case ROUNDED_RECTANGLE:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
+			} break;
+			case ROUNDED_RECTANGLE: {
+				double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
 				Graphics_roundedRectangle (thee, x1, x2, y1, y2, r);
-			}  break;
-			case FILL_ROUNDED_RECTANGLE:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
+			} break;
+			case FILL_ROUNDED_RECTANGLE: {
+				double x1 = get, x2 = get, y1 = get, y2 = get, r = get;
 				Graphics_fillRoundedRectangle (thee, x1, x2, y1, y2, r);
-			}  break;
-			case FILL_ARC:
-			{  double x = get, y = get, r = get, fromAngle = get, toAngle = get;
+			} break;
+			case FILL_ARC: {
+				double x = get, y = get, r = get, fromAngle = get, toAngle = get;
 				Graphics_fillArc (thee, x, y, r, fromAngle, toAngle);
-			}  break;
-			case INNER_RECTANGLE:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get;
+			} break;
+			case INNER_RECTANGLE: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
 				Graphics_innerRectangle (thee, x1, x2, y1, y2);
-			}  break;
-			case CELL_ARRAY8:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = get, ncol = get;
-				unsigned char **z = NUMmatrix <unsigned char> (1, nrow, 1, ncol);   // BUG memory
+			} break;
+			case CELL_ARRAY8: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
+				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
+				integer nrow = iget, ncol = iget;
+				uint8 **z = NUMmatrix <uint8> (1, nrow, 1, ncol);   // BUG memory
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
-						z [irow] [icol] = get;
+						z [irow] [icol] = (uint8) iget;
 				Graphics_cellArray8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
 				NUMmatrix_free (z, 1, 1);
 			}  break;
-			case IMAGE:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = get, ncol = get;
+			case IMAGE: {
+				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				integer nrow = iget, ncol = iget;
 				/*
 				 * We don't copy all the data into a new matrix.
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
@@ -312,34 +359,40 @@ void Graphics_play (Graphics me, Graphics thee) {
 								0, nrow - 1, y1, y2, minimum, maximum);
 				Melder_free (z);
 			}  break;
-			case HIGHLIGHT2:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
+			case HIGHLIGHT2: {
+				double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
 				Graphics_highlight2 (thee, x1, x2, y1, y2, innerX1, innerX2, innerY1, innerY2);
 			}  break;
-			case UNHIGHLIGHT2:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
+			case UNHIGHLIGHT2: {
+				double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
 				Graphics_unhighlight2 (thee, x1, x2, y1, y2, innerX1, innerX2, innerY1, innerY2);
 			}  break;
-			case SET_ARROW_SIZE: Graphics_setArrowSize (thee, get); break;
-			case DOUBLE_ARROW:
-			{  double x1 = get, y1 = get, x2 = get, y2 = get;
+			case SET_ARROW_SIZE: {
+				Graphics_setArrowSize (thee, get);
+			} break;
+			case DOUBLE_ARROW: {
+				double x1 = get, y1 = get, x2 = get, y2 = get;
 				Graphics_doubleArrow (thee, x1, y1, x2, y2);
 			}  break;
-			case SET_RGB_COLOUR:
-			{  Graphics_Colour colour; colour. red = get, colour. green = get, colour. blue = get;
+			case SET_RGB_COLOUR: {
+				Graphics_Colour colour;
+				colour. red = get, colour. green = get, colour. blue = get;
 				Graphics_setColour (thee, colour);
 			} break;
-			case IMAGE_FROM_FILE:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get; integer length = get; char *text_utf8 = sget (length);
+			case IMAGE_FROM_FILE: {
+				double x1 = get, x2 = get, y1 = get, y2 = get;
+				integer length = iget;
+				char *text_utf8 = sget (length);
 				Graphics_imageFromFile (thee, Melder_peek8to32 (text_utf8), x1, x2, y1, y2);
 			}  break;
-			case POLYLINE_CLOSED:
-			{  integer n = get; double *x = mget (n), *y = mget (n);
+			case POLYLINE_CLOSED: {
+				integer n = iget;
+				double *x = mget (n), *y = mget (n);
 				Graphics_polyline_closed (thee, n, & x [1], & y [1]);
 			} break;
-			case CELL_ARRAY_COLOUR:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = get, ncol = get;
+			case CELL_ARRAY_COLOUR: {
+				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				integer nrow = iget, ncol = iget;
 				/*
 				 * We don't copy all the data into a new matrix.
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
@@ -353,9 +406,9 @@ void Graphics_play (Graphics me, Graphics thee) {
 								0, nrow - 1, y1, y2, minimum, maximum);
 				Melder_free (z);
 			}  break;
-			case IMAGE_COLOUR:
-			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
-				integer nrow = get, ncol = get;
+			case IMAGE_COLOUR: {
+				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				integer nrow = iget, ncol = iget;
 				/*
 				 * We don't copy all the data into a new matrix.
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
@@ -369,10 +422,14 @@ void Graphics_play (Graphics me, Graphics thee) {
 								0, nrow - 1, y1, y2, minimum, maximum);
 				Melder_free (z);
 			}  break;
-			case SET_COLOUR_SCALE: Graphics_setColourScale (thee, (enum kGraphics_colourScale) get); break;
-			case SET_SPECKLE_SIZE: Graphics_setSpeckleSize (thee, get); break;
-			case SPECKLE:
-			{  double x = get, y = get;
+			case SET_COLOUR_SCALE: {
+				Graphics_setColourScale (thee, (enum kGraphics_colourScale) get);
+			} break;
+			case SET_SPECKLE_SIZE: {
+				Graphics_setSpeckleSize (thee, get);
+			} break;
+			case SPECKLE: {
+				double x = get, y = get;
 				Graphics_speckle (thee, x, y);
 			}  break;
 			default:
