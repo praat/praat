@@ -219,6 +219,17 @@ int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer off
 	return my errorNumber = errval;
 }
 
+integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream) {
+	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	int errval = EBADF;
+	integer currentPosition = -1L;
+	if (openFilesIndex > 0) {
+		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+		currentPosition = fim -> d_position;
+	}
+	return currentPosition;
+}
+
 char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	if (openFilesIndex > 0) {
@@ -258,21 +269,21 @@ int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream) {
 }
 
 /* size_t fread ( void * ptr, size_t size, size_t count, FILE * stream );*/
-size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t nmemb, FILE *stream) {
+size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t count, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		integer startPos = fim -> d_position;
 		if (startPos < fim -> d_numberOfBytes) {
-			integer i = 0, numberOfBytes = nmemb * size; // 
+			integer i = 0, numberOfBytes = count * size; // 
 			integer endPos = startPos + numberOfBytes;
 			
 			if (endPos >= fim -> d_numberOfBytes) {
-				nmemb = (endPos - startPos) / size;
-				endPos = startPos + nmemb * size;
+				count = (endPos - startPos) / size;
+				endPos = startPos + count * size;
 				fim -> d_errno = EOF;
 			}
-			numberOfBytes = nmemb * size;
+			numberOfBytes = count * size;
 			const unsigned char * p = fim -> d_data + fim -> d_position;
 			char * str = static_cast<char *> (ptr);
 			while (i < numberOfBytes) {
@@ -280,7 +291,7 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 			}
 			fim -> d_position = endPos;
 		}
-		return nmemb;
+		return count;
 	} else {
 		Melder_throw (me, U": File is not open.");
 	}
@@ -317,7 +328,6 @@ int FileInMemoryManager_GetFileLength (FileInMemoryManager me, const char *filen
 /* long int ftell ( FILE * stream ); 
  * int fgetpos ( FILE * stream, fpos_t * pos );
  * int fsetpos ( FILE * stream, const fpos_t * pos );
- * void rewind ( FILE * stream );
  */
 
 /* End of file FileInMemoryManager.cpp */

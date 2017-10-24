@@ -59,11 +59,13 @@ int FileInMemoryManager_fclose (FileInMemoryManager me, FILE *stream);
 
 int FileInMemoryManager_feof (FileInMemoryManager me, FILE *stream);
 
+integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream);
+
 int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer offset, int origin);
 
 char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FILE *stream);
 
-size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t nmemb, FILE *stream);
+size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t count, FILE *stream);
 
 int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream);
 
