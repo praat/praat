@@ -255,20 +255,6 @@ void NUMstandardizeRows (double **a, integer rb, integer re, integer cb, integer
 void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce);
 /* a[i][j] = average[j]) */
 
-void NUMcolumn_avevar (double **a, integer nr, integer nc, integer icol, double *average, double *variance);
-/*
-	Get mean and variance of a column.
-	When average and/or variance are NULL, the corresponding output is
-	NOT given.
- */
-
-void NUMcolumn2_avevar (double **a, integer nr, integer nc, integer icol1, integer icol2, double *average1, double *variance1, double *average2, double *variance2, double *covariance);
-/*
-	Get mean and variance of two columns.
-	When average and/or variance are NULL, the corresponding output is
-	NOT given.
- */
-
 void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout);
 
 void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer ncols, integer ndf, double **covar);
