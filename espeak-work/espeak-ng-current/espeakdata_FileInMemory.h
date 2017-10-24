@@ -27,22 +27,9 @@ autoFileInMemorySet create_espeak_ng_FileInMemorySet ();
 autoFileInMemoryManager create_espeak_ng_FileInMemoryManager ();
 extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
 
-// TODO remove
-autoFileInMemorySet create_espeakdata_languages ();
-autoFileInMemorySet create_espeakdata_dicts ();
-autoFileInMemorySet create_espeakdata_voices ();
-autoFileInMemorySet create_espeakdata_phons ();
-autoFileInMemorySet create_espeak_ng_data_allFilesInMemory ();
-
-
-extern autoFileInMemorySet espeakdata_languages;
-extern autoFileInMemorySet espeakdata_dicts;
-extern autoFileInMemorySet espeakdata_voices;
-extern autoFileInMemorySet espeakdata_phons;
-extern autoFileInMemorySet espeak_ng_data_allFilesInMemory;
 extern autoStrings espeakdata_languages_names;
 extern autoStrings espeakdata_voices_names;
-extern autoTable espeakdata_languages_idAndNameTable;
+extern autoTable espeakdata_languages_propertiesTable;
 extern autoTable espeakdata_voices_propertiesTable;
 
 void espeakdata_praat_init ();
@@ -50,6 +37,9 @@ void espeakdata_praat_init ();
 	Creates the FileInMemoryManager espeak_ng_FileInMemoryManager ;
 	Creates Strings espeakdata_languages_names & espeakdata_voices_names
 */
+
+autoTable Table_createAsEspeakLanguagesProperties ();
+autoTable Table_createAsEspeakVoicesProperties ();
 
 integer Table_findStringInColumn (Table me, const char32 *string, integer icol);
 
