@@ -2613,51 +2613,6 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (NEW_FileInMemorySet_createCopyFromFileInMemorySet, U"", nullptr) {
-	OPTIONMENU (whichFile, U"Espeakdata", 5)
-		OPTION (U"phons")
-		OPTION (U"dicts")
-		OPTION (U"languages")
-		OPTION (U"voices")
-		OPTION (U"languages_names")
-		OPTION (U"voices_names")
-		OPTION (U"id_names")
-		OPTION (U"voices-properties")
-	OK
-DO
-	CREATE_ONE
-		autoDaata result;
-		const char32 *name;
-		if (whichFile == 1) {
-			result = Data_copy (espeakdata_phons.get());
-			name = U"espeakdata_phons";
-		} else if (whichFile == 2) {
-			result = Data_copy (espeakdata_dicts.get());
-			name = U"espeakdata_dicts";
-		} else if (whichFile == 3) {
-			result = Data_copy (espeakdata_languages.get());
-			name = U"espeakdata_languages";
-		} else if (whichFile == 4) {
-			result = Data_copy (espeakdata_voices.get());
-			name = U"espeakdata_voices";
-		} else if (whichFile == 5) {
-			result = Data_copy (espeakdata_languages_names.get());
-			name = U"espeakdata_languages_names";
-		} else if (whichFile == 6) {
-			result = Data_copy (espeakdata_voices_names.get());
-			name =  U"espeakdata_voices_names";
-		} else if (whichFile == 7) {
-			result = Data_copy (espeakdata_languages_idAndNameTable.get());
-			name =  U"espeakdata_id_name";
-		} else if (whichFile == 8) {
-			result = Data_copy (espeakdata_voices_propertiesTable.get());
-			name =  U"espeakdata_voices_properties";
-		} else {
-			name = U"";
-		}
-	CREATE_ONE_END (name)
-}
-
 FORM (INFO_FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
 	WORD (name, U"Name", U"example")
 	INTEGER (numberOfBytesPerLine, U"Number of bytes per line", U"20")
