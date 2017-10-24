@@ -255,8 +255,6 @@ void NUMstandardizeRows (double **a, integer rb, integer re, integer cb, integer
 void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce);
 /* a[i][j] = average[j]) */
 
-void NUMvector_avevar (double *a, integer n, double *average, double *variance);
-
 void NUMcolumn_avevar (double **a, integer nr, integer nc, integer icol, double *average, double *variance);
 /*
 	Get mean and variance of a column.

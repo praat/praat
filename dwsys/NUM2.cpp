@@ -59,7 +59,6 @@
  djmw 20101209 removed NUMwcscmp is Melder_wcscmp now
  djmw 20110304 Thing_new
  djmw 20111110 use autostringvector
- djmw 20140318 NUMvector_avevar now returns variance instead of sigma^2
 */
 
 #include "SVD.h"
@@ -305,36 +304,6 @@ void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer 
 		}
 	}
 
-}
-
-void NUMvector_avevar (double *a, integer n, double *p_mean, double *p_var) {
-
-	double mean = 0.0;
-	for (integer i = 1; i <= n; i++) {
-		mean += a[i];
-	}
-
-	mean /= n;
-
-	if (p_mean) {
-		*p_mean = mean;
-	}
-
-	if (p_var) {
-		double eps = 0.0, var = 0.0;
-		if (n > 1) {
-			for (integer i = 1; i <= n; i++) {
-				double s = a[i] - mean;
-				eps += s;
-				var += s * s;
-			}
-
-			var = (var - eps * eps / n);
-		} else {
-			var = undefined;
-		}
-		*p_var = var;
-	}
 }
 
 void NUMcolumn_avevar (double **a, integer nr, integer nc, integer icol, double *p_mean, double *p_var) {
