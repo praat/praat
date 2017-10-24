@@ -2469,7 +2469,7 @@ DO
 
 DIRECT (NEW1_FileInMemoryManager_create) {
 	CREATE_ONE
-		autoFileInMemoryManager result = FileInMemoryManager_create (espeak_ng_data_allFilesInMemory.get());
+		autoFileInMemoryManager result = Data_copy (espeak_ng_FileInMemoryManager.get());
 	CREATE_ONE_END (U"filesInMemory")
 }
 
@@ -5750,12 +5750,11 @@ FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create Speec
 	 * in our coding. However for the user interface we use "language" instead of "voice".
 	 */
 	static long prefLanguage = Strings_findString (espeakdata_languages_names.get(), U"English (Great Brittain)");
-	if (prefLanguage == 0) {
-		prefLanguage = 1;
-	}
+	prefLanguage = prefLanguage == 0 ? 1 : prefLanguage;
 	// LIST does not scroll to the line with "prefLanguage"
 	LIST (languageIndex, U"Language", espeakdata_languages_names -> numberOfStrings, (const char32 **) espeakdata_languages_names -> strings, prefLanguage)
 	static long prefVoice = Strings_findString (espeakdata_voices_names.get(), U"f1");
+	prefVoice = prefVoice == 0 ? 1 : prefVoice;
 	LIST (voiceIndex, U"Voice variant", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefVoice)
 	OK
 DO

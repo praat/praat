@@ -1,4 +1,3 @@
-#include <espeakdata_FileInMemory.h>
 /* SpeechSynthesizer.cpp
  *
 //  * Copyright (C) 2011-2013, 2015-2016 David Weenink
@@ -18,9 +17,13 @@
  */
 
 /*
+
+#include "espeakdata_FileInMemory.h"
 	djmw 20111214
 */
 #include "espeak_ng_version.h"
+#include "../espeak-work/espeak-ng-current/espeakdata_FileInMemory.h"
+
 
 #include "SpeechSynthesizer.h"
 #include "Strings_extensions.h"
@@ -46,7 +49,6 @@
 #include "SpeechSynthesizer_def.h"
 #include "oo_DESCRIPTION.h"
 #include "SpeechSynthesizer_def.h"
-
 
 #define espeak_SAMPLINGFREQUENCY 22050
 
@@ -227,13 +229,11 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 
 const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	try {
-		integer languagesIndex = Table_findStringInColumn (espeakdata_languages_idAndNameTable.get(), my d_languageName, 2);
-		if (languagesIndex == 0) {
+		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_languageName);
+		if (irow == 0) {
 			Melder_throw (U"Cannot find language \"", my d_languageName, U"\".");
 		}
-		
-		FileInMemory fim = (FileInMemory) espeakdata_languages->at [languagesIndex];
-		return fim -> d_id;
+		return Table_getStringValue_Assert (espeakdata_languages_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find language code.");
 	}
@@ -241,22 +241,11 @@ const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 
 const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
-		static const char32 * defaultVoiceCode = U"default";
-		long voiceIndex = Strings_findString (espeakdata_voices_names.get(), my d_voiceName);
-		if (voiceIndex == 0) {
+		integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName);
+		if (irow == 0) {
 			Melder_throw (U"Cannot find voice variant \"", my d_voiceName, U"\".");
 		}
-		/* ... we have to decrease the index
-		if (voiceIndex != 1) { // 1 is default, i.e. no variant
-			voiceIndex --; // !!!
-			FileInMemory vfim = espeakdata_voices->at [voiceIndex];
-			return vfim -> d_id;
-		} else {
-			return defaultVoiceCode; // TODO what is the default?
-		}
-		*/
-		FileInMemory vfim = (FileInMemory) espeakdata_voices->at [voiceIndex];
-		return vfim -> d_id;
+		return Table_getStringValue_Assert (espeakdata_voices_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
 		Melder_throw (U"Cannot find voice code.");
 	}
