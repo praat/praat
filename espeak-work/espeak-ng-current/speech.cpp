@@ -278,6 +278,7 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_InitializeOutput(espeak_ng_OUTPUT_MODE 
 	return ENS_OK;
 }
 
+#ifndef DATA_FROM_SOURCECODE_FILES
 int GetFileLength(const char *filename)
 {
 	struct stat statbuf;
@@ -290,6 +291,7 @@ int GetFileLength(const char *filename)
 
 	return statbuf.st_size;
 }
+#endif
 
 ESPEAK_NG_API void espeak_ng_InitializePath(const char *path)
 {

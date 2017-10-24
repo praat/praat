@@ -21,8 +21,8 @@
 #define SPEECH_H
 
 #ifdef __cplusplus
-extern "C"
-{
+//extern "C"
+//{
 #endif
 
 #if defined(BYTE_ORDER) && BYTE_ORDER == BIG_ENDIAN
@@ -54,22 +54,11 @@ extern "C"
 #define N_PEAKS   9
 #define N_PEAKS2  9 // plus Notch and Fill (not yet implemented)
 
-// will look for espeak_data directory here, and also in user's home directory
-#ifndef PATH_ESPEAK_DATA
-   #define PATH_ESPEAK_DATA  "/usr/share/espeak-ng-data"
-#endif
-
 #ifdef DATA_FROM_SOURCECODE_FILES
-	#include "FileInMemoryManager.h"
-	#define ESPEAK_FILEINMEMORYSET espeak-ng-data-allFilesInMemory
-	#define PATH_ESPEAK_DATA "/home/david/projects/espeak-ng/espeak-ng-data"
-	#define fopen(filename,mode) FileInMemoryManager_fopen (ESPEAK_FILEINMEMORYSET, filename, mode)
-	#define fclose(stream) FileInMemoryManager_fclose (ESPEAK_FILEINMEMORYSET, stream)
-	#define feof(stream) FileInMemoryManager_feof (ESPEAK_FILEINMEMORYSET, stream)	
-	#define fseek(stream,offset,origin) FileInMemoryManager_fseek (ESPEAK_FILEINMEMORYSET, stream, offset, origin)
-	#define fgets(str,num,stream) FileInMemoryManager_fgets (ESPEAK_FILEINMEMORYSET, str, num, stream)
-	#define fgetc(stream) FileInMemoryManager_fgetc (ESPEAK_FILEINMEMORYSET, stream);
-	#define GetFileLength(filename) FileInMemoryManager_GetFileLength (ESPEAK_FILEINMEMORYSET, filename)	
+	#include "espeak_io.h"
+#else
+	#define PATH_ESPEAK_DATA  "/usr/share/espeak-ng-data"
+	extern ESPEAK_NG_API int GetFileLength(const char *filename);
 #endif
 	
 typedef unsigned short USHORT;
@@ -88,10 +77,9 @@ void cancel_audio(void);
 extern char path_home[N_PATH_HOME];    // this is the espeak-ng-data directory
 
 extern ESPEAK_NG_API void strncpy0(char *to, const char *from, int size);
-extern ESPEAK_NG_API int  GetFileLength(const char *filename);
 
 #ifdef __cplusplus
-}
+//}
 #endif
 
 #endif // SPEECH_H
