@@ -27,6 +27,7 @@
 #include "Strings_extensions.h"
 #include "Sound_and_LPC_robust.h"
 #include "Table_extensions.h"
+#include "tensor.h"
 
 #include "oo_DESTROY.h"
 #include "DataModeler_def.h"
@@ -1015,16 +1016,14 @@ void DataModeler_reportChiSquared (DataModeler me, int weighDataType) {
 double DataModeler_estimateSigmaY (DataModeler me) {
 	try {
 		long numberOfDataPoints = 0;
-		autoNUMvector<double> y (1, my numberOfDataPoints);
-		for (long i = 1; i <= my numberOfDataPoints; i++) {
-			if (my dataPointStatus[i] != DataModeler_DATA_INVALID) {
-				y[++numberOfDataPoints] = my y[i];
+		autonumvec y (my numberOfDataPoints, kTensorInitializationType::RAW);
+		for (long i = 1; i <= my numberOfDataPoints; i ++) {
+			if (my dataPointStatus [i] != DataModeler_DATA_INVALID) {
+				y [++ numberOfDataPoints] = my y [i];
 			}
 		}
-		double variance;
-		NUMvector_avevar (y.peek(), numberOfDataPoints, nullptr, &variance);
-		double sigma = ( isdefined (variance) ? sqrt (variance / (numberOfDataPoints - 1)) : undefined );
-		return sigma;
+		y.size = numberOfDataPoints;   // fake shrink
+		return stdev_scalar (y.get());
 	} catch (MelderError) {
 		Melder_throw (U"Cannot estimate sigma.");
 	}

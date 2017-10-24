@@ -208,7 +208,7 @@ void Graphics_image (Graphics me, double **z, integer ix1, integer ix2, double x
 void Graphics_image_colour (Graphics me, double_rgbt **z, integer ix1, integer ix2, double x1, double x2,
 	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
 void Graphics_image8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
+	integer iy1, integer iy2, double y1, double y2, uint8 minimum, uint8 maximum);
 void Graphics_imageFromFile (Graphics me, const char32 *relativeFileName, double x1, double x2, double y1, double y2);
 void Graphics_line (Graphics me, double x1, double y1, double x2, double y2);
 void Graphics_rectangle (Graphics me, double x1, double x2, double y1, double y2);

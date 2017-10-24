@@ -3923,20 +3923,20 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 		if (column < 1 || column > my numberOfColumns) return;
 		Table_numericize_Assert (me, column);
 		long numberOfData = my rows.size;
-		autoNUMvector<double> data (1, numberOfData);
+		autonumvec data (numberOfData, kTensorInitializationType::RAW);
 		for (long irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
-		double mean, var;
-		NUMvector_avevar (data.peek(), numberOfData, & mean, & var);
-		double xmin = 100, xmax = -xmin, ymin = 1e308, ymax = -ymin, stdev = sqrt (var / (numberOfData - 1));
+		double mean, stdev;
+		sum_mean_sumsq_variance_stdev_scalar (data.get(), nullptr, & mean, nullptr, nullptr, & stdev);
+		double xmin = 100, xmax = -xmin, ymin = 1e308, ymax = -ymin;
 		if (numberOfSigmas != 0) {
 			xmin = -numberOfSigmas; 
 			xmax =  numberOfSigmas;
 			ymin = mean - numberOfSigmas * stdev;
 			ymax = mean + numberOfSigmas * stdev;
 		}
-		NUMsort_d (numberOfData, data.peek());
+		NUMsort_d (numberOfData, data.at);
 		numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
 		autoTableOfReal thee = TableOfReal_create (numberOfQuantiles, 2);
 		TableOfReal_setColumnLabel (thee.get(), 1, U"Normal distribution quantiles");
@@ -3944,7 +3944,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 		double un = pow (0.5, 1.0 / numberOfQuantiles);
 		for (long irow = 1; irow <= numberOfQuantiles; irow ++) {
 			double ui = irow == 1 ? 1.0 - un : (irow == numberOfQuantiles ? un : (irow - 0.3175) / (numberOfQuantiles + 0.365));
-			double q = NUMquantile (numberOfData, data.peek(), ui);
+			double q = NUMquantile (numberOfData, data.at, ui);
 			double zq = - NUMinvGaussQ (ui);
 			thy data[irow][1] = zq; // along x
 			thy data[irow][2] = q;  // along y

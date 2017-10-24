@@ -1539,6 +1539,13 @@ void praat_run () {
 		Melder_assert ((double) (signed char) dummy == -56.0);
 		Melder_assert ((double) (unsigned char) dummy == 200.0);
 	}
+	{ int64 dummy = 200;
+		Melder_assert ((int) (signed char) dummy == -56);
+		Melder_assert ((int) (unsigned char) dummy == 200);
+		Melder_assert ((double) dummy == 200.0);
+		Melder_assert ((double) (signed char) dummy == -56.0);
+		Melder_assert ((double) (unsigned char) dummy == 200.0);
+	}
 	{ uint16 dummy = 40000;
 		Melder_assert ((int) (int16_t) dummy == -25536);   // bingeti16 relies on this
 		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete16 relies on this

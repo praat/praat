@@ -21,6 +21,11 @@ enums_begin (kGraphics_font, 0)
 	enums_add (kGraphics_font, 1, TIMES, U"Times")
 	enums_add (kGraphics_font, 2, COURIER, U"Courier")
 	enums_add (kGraphics_font, 3, PALATINO, U"Palatino")
+	/*
+		This enum can occur as a binary integer in picture files,
+		so the numeric representations are fixed,
+		and new values should only be added to the end.
+	*/
 enums_end (kGraphics_font, 3, TIMES)
 
 enums_begin (kGraphics_horizontalAlignment, 0)
@@ -28,6 +33,11 @@ enums_begin (kGraphics_horizontalAlignment, 0)
 	enums_add (kGraphics_horizontalAlignment, 1, CENTRE, U"centre")
 	enums_alt (kGraphics_horizontalAlignment,    CENTRE, U"center")
 	enums_add (kGraphics_horizontalAlignment, 2, RIGHT, U"right")
+	/*
+		This enum can occur as a binary integer in picture files,
+		so the numeric representations are fixed,
+		and new values should only be added to the end.
+	*/
 enums_end (kGraphics_horizontalAlignment, 2, CENTRE)
 
 enums_begin (kGraphics_resolution, 0)
@@ -46,6 +56,11 @@ enums_end (kGraphics_resolution, 9, DPI_100)
 enums_begin (kGraphics_colourScale, 0)
 	enums_add (kGraphics_colourScale, 0, GREY, U"grey")
 	enums_add (kGraphics_colourScale, 1, BLUE_TO_RED, U"blue to red")
+	/*
+		This enum can occur as a binary integer in picture files,
+		so the numeric representations are fixed,
+		and new values should only be added to the end.
+	*/
 enums_end (kGraphics_colourScale, 1, GREY)
 
 enums_begin (kGraphicsPostscript_spots, 0)
