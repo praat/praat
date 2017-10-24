@@ -151,14 +151,14 @@ static BiosemiLocationData biosemiCapCoordinates32 [1+32] =
 
 void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kGraphics_colourScale colourScale) {
 	integer n = 201;
-	autoNUMmatrix <double> legend (1, n, 1, 2);
+	autonummat legend (n, 2, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= n; irow ++) {
 		for (integer icol = 1; icol <= 2; icol ++) {
 			legend [irow] [icol] = (irow - 1) / (n - 1.0);
 		}
 	}
 	Graphics_setColourScale (graphics, colourScale);
-	Graphics_image (graphics, legend.peek(), 1, 2, 0.85, 0.98, 1, n, -0.8, +0.8, 0.0, 1.0);
+	Graphics_image (graphics, legend.at, 1, 2, 0.85, 0.98, 1, n, -0.8, +0.8, 0.0, 1.0);
 	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
 	Graphics_rectangle (graphics, 0.85, 0.98, -0.8, +0.8);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_TOP);
@@ -189,19 +189,20 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	}
 	integer n = 201;
 	double d = 2.0 / (n - 1);
-	autoNUMvector <double> mean (1, numberOfDrawableChannels);
+	autonumvec mean (numberOfDrawableChannels, kTensorInitializationType::RAW);
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		mean [ichan] = tmin == tmax ?
 				Sampled_getValueAtX (me, tmin, ichan, 0, true) :
 				Vector_getMean (me, tmin, tmax, ichan);
 	}
-	autoNUMmatrix <double> image (1, n, 1, n);
+	autonummat image (n, n, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= n; irow ++) {
 		double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y <= 1.0) {
-				double value = undefined, sum = 0.0, weight = 0.0;
+				double value = undefined;
+				real80 sum = 0.0, weight = 0.0;
 				for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 					double dx = x - biosemiLocationData [ichan]. topX;
 					double dy = y - biosemiLocationData [ichan]. topY;
@@ -215,7 +216,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 					weight += 1.0 / distance;
 				}
 				if (isundef (value))
-					value = ( sum == 0.0 ? 0.0 : sum / weight );
+					value = ( sum == 0.0 ? 0.0 : real (sum / weight) );
 				image [irow] [icol] = value;
 			}
 		}
@@ -231,7 +232,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 			}
 		}
 	}
-	Graphics_image (graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, vmin, vmax);
+	Graphics_image (graphics, image.at, 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, vmin, vmax);
 	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (graphics, 2.0);
 	/*
@@ -291,20 +292,21 @@ void structERPWindow :: v_drawSelectionViewer () {
 	}
 	integer n = 201;
 	double d = 2.0 / (n - 1);
-	autoNUMvector <double> means (1, numberOfDrawableChannels);
+	autonumvec means (numberOfDrawableChannels, kTensorInitializationType::RAW);
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		means [ichan] =
 			our startSelection == our endSelection ?
 				Sampled_getValueAtX (erp, our startSelection, ichan, 0, true) :
 				Vector_getMean (erp, our startSelection, our endSelection, ichan);
 	}
-	autoNUMmatrix <double> image (1, n, 1, n);
+	autonummat image (n, n, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= n; irow ++) {
 		double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y <= 1.0) {
-				double value = undefined, sum = 0.0, weight = 0.0;
+				double value = undefined;
+				real80 sum = 0.0, weight = 0.0;
 				for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 					double dx = x - biosemiLocationData [ichan]. topX;
 					double dy = y - biosemiLocationData [ichan]. topY;
@@ -318,7 +320,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 					weight += 1.0 / distance;
 				}
 				if (isundef (value))
-					value = ( sum == 0.0 ? 0.0 : sum / weight );
+					value = ( sum == 0.0 ? 0.0 : real (sum / weight) );
 				image [irow] [icol] = value;
 			}
 		}
@@ -355,7 +357,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	Graphics_setColourScale (our graphics.get(), our p_scalp_colourScale);
-	Graphics_image (our graphics.get(), image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
+	Graphics_image (our graphics.get(), image.at, 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
 	Graphics_setColourScale (our graphics.get(), kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	/*
