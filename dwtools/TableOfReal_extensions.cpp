@@ -997,6 +997,29 @@ double TableOfReal_getColumnQuantile (TableOfReal me, long col, double quantile)
 	}
 }
 
+autoTableOfReal TableOfReal_create_sandwell1987 () {
+	try {
+		/*
+			The following numbers are the 21 (approximate) data points in Fig, 2 in Sandwell (1987).
+			They were measured by djmw from a printed picture blown up by 800%.
+			The following numbers are in cm measured from the left (x) and the bottom (y) of the figure.
+			Vertical scale: 8.25 cm in the picture is 12 units, y [1] is at y = 0.0.
+			Horizontal scale: 17.75 cm is 10 units, x [1] is at x = 0.0.
+		*/
+		double x [22] = { 0.0, 0.9, 2.15, 3.5, 4.75, 5.3, 6.15, 7.15, 7.95, 8.85, 9.95, 10.15, 10.3, 11.5, 12.4, 13.3, 14.2, 15.15, 16.0, 16.85, 17.25, 18.15 };
+		double y [22] = { 0.0, 4.2, 3.5, 4.2, 5.65, 10.1, 8.5, 7.8, 7.1, 6.4, 5.65, 0.6, 5.65, 4.2, 5.65, 7.1, 6.75, 6.35, 4.2,  2.05, 4.95, 4.25 };
+		long numberOfSamples = 21;
+		autoTableOfReal thee = TableOfReal_create (numberOfSamples, 2);
+		for (long isample = 1; isample <= numberOfSamples; isample ++) {
+			thy data [isample] [1] = (x [isample] - x [1]) * 10.0 / 17.75;
+			thy data [isample] [2] = (y [isample] - y [1]) * 12.0 / 8.25;
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"Sandwell (1987) table not created.");
+	}
+}
+
 static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool include_levels) {
 	try {
 		autoTable table = Table_create_polsVanNierop1973 ();
@@ -1699,6 +1722,37 @@ autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, 
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal with column correlations not created.");
+	}
+}
+
+autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, double xmin, double xmax, double nx, double ymin, double ymax, long ny, int /* method */) {
+	try {
+		if (my numberOfColumns < 3 || my numberOfRows < 3) {
+			Melder_throw (U"Therehave to be at least three colums and rows present.");
+		}
+		autonumvec x (my numberOfRows, kTensorInitializationType :: RAW);
+		autonumvec y (my numberOfRows, kTensorInitializationType :: RAW);
+		autonumvec z (my numberOfRows, kTensorInitializationType :: RAW);
+		autonumvec weights (my numberOfRows, kTensorInitializationType :: RAW);
+		for (long irow = 1; irow <= my numberOfRows; irow ++) {
+			x [irow] = my data [irow][1];
+			y [irow] = my data [irow][2];
+			z [irow] = my data [irow][3];
+		}
+		NUMbiharmonic2DSplineInterpolation_getWeights (x.at, y.at, z.at, my numberOfRows, weights.at);
+		double dx = (xmax - xmin) / nx, dy = (ymax - ymin) / ny; 
+		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx,
+			ymin, ymax, ny, dy, ymin + 0.5 * dy);
+		for (long irow = 1; irow <= ny; irow ++) {
+			double yp = thy y1 + (irow - 1) * dy;
+			for (long icol = 1; icol <= nx; icol ++) {
+				double xp = thy x1 + (icol - 1) * dx;
+				thy z [irow] [icol] = NUMbiharmonic2DSplineInterpolation (x.at, y.at, my numberOfRows, weights.at, xp, yp);
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": interpolation not finished.");
 	}
 }
 

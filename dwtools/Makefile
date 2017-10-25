@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 8 August 2017
+# 21 September 2017
 
 include ../makefile.defs
 

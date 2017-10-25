@@ -6631,6 +6631,12 @@ DO
 	CREATE_ONE_END ((speakerGroup == 1 ? U"m10" : speakerGroup == 2 ? U"w10" : U"c10"));
 }
 
+DIRECT (NEW_Table_create_sandwell1987) {
+	CREATE_ONE
+		autoTableOfReal result = TableOfReal_create_sandwell1987 ();
+	CREATE_ONE_END (U"Sandwell1987");
+}
+
 FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalable squares", 0)
 	REAL (zmin, U"left Value range", U"0.0");
 	REAL (zmax, U"right Value range", U"0.0");
@@ -7292,7 +7298,6 @@ void praat_SSCP_as_TableOfReal_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, U"Set centroid...", U"Formula...", 1, MODIFY_SSCP_setCentroid);
 	praat_addAction1 (klas, 1, U"Set value...", U"Formula...", 1, MODIFY_SSCP_setValue);
 	praat_addAction1 (klas, 0, U"To TableOfReal", U"To Matrix", 1, NEW_TableOfReal_to_TableOfReal);
-
 }
 
 void praat_TableOfReal_init2 (ClassInfo klas) {
@@ -7369,7 +7374,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Pols 1973)...", U"Create TableOfReal...", 1, NEW1_TableOfReal_create_pols1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Van Nierop 1973)...", U"Create TableOfReal (Pols 1973)...", 1, NEW_TableOfReal_create_vanNierop1973);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Weenink 1985)...", U"Create TableOfReal (Van Nierop 1973)...", 1, NEW_TableOfReal_create_weenink1983);
-	praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"Create TableOfReal (Weenink 1985)...", 1, NEW1_Confusion_createSimple);
+	praat_addMenuCommand (U"Objects", U"New", U"Create TableOfReal (Sandwell 1987)", U"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1+ praat_HIDDEN, NEW_Table_create_sandwell1987);
+		praat_addMenuCommand (U"Objects", U"New", U"Create simple Confusion...", U"Create TableOfReal (Weenink 1985)...", 1, NEW1_Confusion_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Covariance...", U"Create simple Confusion...", 1, NEW1_Covariance_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Correlation...", U"Create simple Covariance...", 1, NEW1_Correlation_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create empty EditCostsTable...", U"Create simple Covariance...", 1, NEW_EditCostsTable_createEmpty);
@@ -8137,7 +8143,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"To Eigen (gsvd)", nullptr, praat_HIDDEN, NEW1_TablesOfReal_to_Eigen_gsvd);
 
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, praat_HIDDEN, NEW_TableOfReal_choleskyDecomposition);
-
 	
 	praat_addAction1 (classTableOfReal, 0, U"Draw as scalable squares...", U"Draw as squares...", 1, GRAPHICS_TableOfReal_drawAsScalableSquares);
 	praat_addAction1 (classTableOfReal, 0, U"-- scatter plots --", U"Draw top and bottom lines...", 1, 0);

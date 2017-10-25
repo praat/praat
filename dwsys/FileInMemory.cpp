@@ -1,6 +1,6 @@
 /* FileInMemory.cpp
  *
- * Copyright (C) 2012-2013, 2015-2016 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 2012-2013, 2015-2017 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		my ownData = true;
 		my d_data = NUMvector <char> (0, my d_numberOfBytes);   // includes room for a final null byte in case the file happens to contain text
 		MelderFile_open (file);
-		for (long i = 0; i < my d_numberOfBytes; i++) {
+		for (integer i = 0; i < my d_numberOfBytes; i++) {
 			unsigned int number = bingetu8 (file -> filePointer);
 			my d_data[i] = number;
 		}
@@ -75,7 +75,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 	}
 }
 
-autoFileInMemory FileInMemory_createWithData (long numberOfBytes, const char *data, const char32 *path, const char32 *id) {
+autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, const char32 *path, const char32 *id) {
 	try {
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my d_path = Melder_dup (path);
@@ -85,7 +85,7 @@ autoFileInMemory FileInMemory_createWithData (long numberOfBytes, const char *da
 		my d_data = const_cast<char *> (data); // copy pointer to data only
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"FileInMemory not create from data.");
+		Melder_throw (U"FileInMemory not created from data.");
 	}
 }
 
@@ -94,14 +94,14 @@ void FileInMemory_setId (FileInMemory me, const char32 *newId) {
 	my d_id = Melder_dup (newId);
 }
 
-void FileInMemory_showAsCode (FileInMemory me, const char32 *name, long numberOfBytesPerLine)
+void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numberOfBytesPerLine)
 {
 	if (numberOfBytesPerLine <= 0) {
 		numberOfBytesPerLine = 20;
 	}
 	// autoNUMvector<unsigned char> data (0, my d_numberOfBytes); ????
 	MelderInfo_writeLine (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
-	for (long i = 0; i < my d_numberOfBytes; i++) {
+	for (integer i = 0; i < my d_numberOfBytes; i++) {
 		unsigned char number = my d_data[i];
 		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? U"\t\t\t" : U""), number, U",",
 			((i % numberOfBytesPerLine == (numberOfBytesPerLine - 1)) ? U"\n" : U" "));
@@ -130,7 +130,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 			Melder_throw (U"No files found.");
 		}
 		autoFileInMemorySet me = FileInMemorySet_create ();
-		for (long i = 1; i <= thy numberOfStrings; i ++) {
+		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			structMelderFile file { };
 			MelderDir_getFile (& parent, thy strings [i], & file);
 			autoFileInMemory fim = FileInMemory_create (& file);
@@ -142,7 +142,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 	}
 }
 
-void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long numberOfBytesPerLine) {
+void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer numberOfBytesPerLine) {
 	autoMelderString one_fim;
 	MelderInfo_writeLine (U"#include \"Collection.h\"");
 	MelderInfo_writeLine (U"#include \"FileInMemory.h\"");
@@ -150,11 +150,11 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long nu
 	MelderInfo_writeLine (U"autoFileInMemorySet create_", name, U" () {");
 	MelderInfo_writeLine (U"\ttry {");
 	MelderInfo_writeLine (U"\t\tautoFileInMemorySet me = FileInMemorySet_create ();");
-	for (long ifile = 1; ifile <= my size; ifile ++) {
+	for (integer ifile = 1; ifile <= my size; ifile ++) {
 		FileInMemory fim = my at [ifile];
 		MelderString_copy (& one_fim, name, ifile);
 		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
-		MelderInfo_writeLine (U"\t\tCollection_addItem_move (me.get(), ", one_fim.string, U".move());\n");
+		MelderInfo_writeLine (U"\t\tme -> addItem_move (", one_fim.string, U".move());\n");
 	}
 	MelderInfo_writeLine (U"\t\treturn me;");
 	MelderInfo_writeLine (U"\t} catch (MelderError) {");
@@ -163,7 +163,7 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, long nu
 	MelderInfo_writeLine (U"}\n\n");
 }
 
-void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, long index, const char32 *name, long numberOfBytesPerLine)
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const char32 *name, integer numberOfBytesPerLine)
 {
 	if (index < 1 || index > my size) return;
 	MelderInfo_writeLine (U"#include \"FileInMemory.h\"");
@@ -182,9 +182,9 @@ void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, long index, const ch
 	MelderInfo_writeLine (U"autoFileInMemory ", name, U" = create_new_object ();");
 }
 
-long FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id) {
-	long index = 0;
-	for (long i = 1; i <= my size; i ++) {
+integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id) {
+	integer index = 0;
+	for (integer i = 1; i <= my size; i ++) {
 		FileInMemory fim = my at [i];
 		if (Melder_equ (id, fim -> d_id)) {
 			index = i;
@@ -199,7 +199,7 @@ autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <char32 *> (1, my size);
 		thy numberOfStrings = 0;
-		for (long ifile = 1; ifile <= my size; ifile ++) {
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = my at [ifile];
 			thy strings [ifile] = Melder_dup_f (fim -> d_id);
 			thy numberOfStrings ++;
@@ -210,9 +210,9 @@ autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
 	}
 }
 
-char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, long *numberOfBytes) {
+char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, integer *numberOfBytes) {
 	*numberOfBytes = 0;
-	long index = FileInMemorySet_getIndexFromId (me, id);
+	integer index = FileInMemorySet_getIndexFromId (me, id);
 	if (index == 0) {
 		return nullptr;
 	}
@@ -226,9 +226,9 @@ char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, long
 	return data;
 }
 
-const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, long *numberOfBytes) {
+const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, integer *numberOfBytes) {
 	*numberOfBytes = 0;
-	long index = FileInMemorySet_getIndexFromId (me, id);
+	integer index = FileInMemorySet_getIndexFromId (me, id);
 	if (index == 0) {
 		return nullptr;
 	}

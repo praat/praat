@@ -1,6 +1,6 @@
 /* Distance.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,18 @@ autoDistance Distance_create (long numberOfPoints) {
 	} catch (MelderError) {
 		Melder_throw (U"Distance not created.");
 	}
+}
+
+double Distance_getMaximumDistance (Distance me) {
+	double dmax = 0.0;
+	for (long i = 1; i <= my numberOfRows; i ++) { // symmetric matrix
+		for (long j = i + 1; j <= my numberOfColumns; j ++) {
+			if (my data [i] [j] > dmax) {
+				dmax = my data [i] [j];
+			}
+		}
+	}
+	return dmax;
 }
 
 void Distance_drawDendogram (Distance me, Graphics g, int method) {

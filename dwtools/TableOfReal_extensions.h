@@ -52,6 +52,9 @@ autoTableOfReal TableOfReal_create_vanNierop1973 (bool include_levels);
 
 autoTableOfReal TableOfReal_create_weenink1983 (int option); /* M W C */
 
+/* The data for Fig. 2 in Sandwell (1987) */
+autoTableOfReal TableOfReal_create_sandwell1987 ();
+
 void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double *max);
 
 long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber);
@@ -204,5 +207,6 @@ bool TableOfRealList_haveIdenticalDimensions (TableOfRealList me);
 
 autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me);
 
+autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, double xmin, double xmax, double nx, double ymin, double ymax, long ny, int /* method */);
 
 #endif /* _TableOfReal_extensions_h_ */

@@ -118,7 +118,7 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, const char3
 	MelderInfo_close ();
 }
 
-void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
+void NUMcentreRows_old (double **a, integer rb, integer re, integer cb, integer ce) {
 	for (integer i = rb; i <= re; i++) {
 		double rowmean = 0.0;
 		for (integer j = cb; j <= ce; j++) {
@@ -131,15 +131,39 @@ void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) 
 	}
 }
 
+
+void numvec_centre_inplace (numvec x, real *p_mean) {
+	real xmean;
+	sum_mean_scalar (x, nullptr, & xmean);
+	for (integer i = 1; i <= x.size; i ++) {
+		x [i] -= xmean;
+	}
+	if (p_mean) {
+		*p_mean = xmean;
+	}
+}
+
+void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
+	numvec rowvec;
+	rowvec. size = ce - cb + 1;
+	for (integer i = rb; i <= re; i++) {
+		rowvec.at = a[i];
+		numvec_centre_inplace (rowvec, nullptr);
+		rowvec.at = nullptr;
+	}
+	rowvec. size = 0;
+}
+
 void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres) {
+	numvec colvec (re - rb + 1, kTensorInitializationType :: RAW);
 	for (integer j = cb; j <= ce; j++) {
-		double colmean = 0.0;
 		for (integer i = rb; i <= re; i++) {
-			colmean += a[i][j];
+			colvec [i - rb + 1] = a [i] [j];
 		}
-		colmean /= (re - rb + 1);
+		real colmean;
+		numvec_centre_inplace (colvec, & colmean);
 		for (integer i = rb; i <= re; i++) {
-			a[i][j] -= colmean;
+			a [i] [j] = colvec [i - rb + 1];
 		}
 		if (centres) {
 			centres[j - cb + 1] = colmean;
@@ -783,9 +807,9 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 		for (integer j = 1; j <= numberOfComponents; j++) {
 			real80 sum = 0.0;
 			for (integer k = 1; k <= ncols; k++) {
-				sum += svd -> v[k][j] * m[i][k];
+				sum += svd -> v [k] [j] * m [i] [k];
 			}
-			pc[i][j] = (real) sum;
+			pc [i] [j] = (real) sum;
 		}
 	}
 }
@@ -821,6 +845,12 @@ void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tol
 	autoSVD me = SVD_create_d (a, nr, nc);
 	SVD_zeroSmallSingularValues (me.get(), tol);
 	SVD_solve (me.get(), b, result);
+}
+
+void NUMsolveEquation2 (double **a, long nr, long nc, double *b, double fractionOfSumOfEigenvalues, double *result) {
+
+	autoSVD me = SVD_create_d (a, nr, nc);
+	SVD_solve2 (me.get(), b, result, fractionOfSumOfEigenvalues);
 }
 
 
@@ -3078,6 +3108,33 @@ void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, i
 	if (numberOfInvalids == 0) {
 		MelderInfo_writeLine (U"All cells have valid data.");
 	}
+}
+
+void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer n, double *w) {
+	autonummat g (n, n, kTensorInitializationType :: RAW);
+	/*
+		1. Calculate the Green matrix G = |point[i]-point[j]|^2 (ln (|point[i]-point[j]|) - 1.0)
+		2. Solve z = G.w for w
+	*/
+	for (integer i = 1; i <= n; i ++) {
+		for (integer j = i + 1; j <= n; j ++) {
+			double dx = x [i] - x [j], dy = y [i] - y [j];
+			double distanceSquared = dx * dx + dy * dy;
+			g [i] [j] = g [j] [i] = distanceSquared * (0.5 * log (distanceSquared) - 1.0); // Green's function
+		}
+		g [i] [i] = 0.0;
+	}
+	NUMsolveEquation (g.at, n, n, z, 0.0, w);
+}
+
+double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer n, double *w, double xp, double yp) {
+	real80 result = 0.0;
+	for (integer i = 1; i <= n; i ++) {
+		double dx = xp - x [i], dy = yp - y [i];
+		double d = dx * dx + dy * dy;
+		result += w [i] * d * (0.5 * log (d) - 1.0);
+	}
+	return (double) result;
 }
 
 /* End of file NUM2.cpp */
