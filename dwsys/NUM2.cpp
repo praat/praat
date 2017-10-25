@@ -118,7 +118,7 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, const char3
 	MelderInfo_close ();
 }
 
-void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
+void NUMcentreRows_old (double **a, integer rb, integer re, integer cb, integer ce) {
 	for (integer i = rb; i <= re; i++) {
 		double rowmean = 0.0;
 		for (integer j = cb; j <= ce; j++) {
@@ -131,15 +131,39 @@ void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) 
 	}
 }
 
+
+void numvec_centre_inplace (numvec x, real *p_mean) {
+	real xmean;
+	sum_mean_scalar (x, nullptr, & xmean);
+	for (integer i = 1; i <= x.size; i ++) {
+		x [i] -= xmean;
+	}
+	if (p_mean) {
+		*p_mean = xmean;
+	}
+}
+
+void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
+	numvec rowvec;
+	rowvec. size = ce - cb + 1;
+	for (integer i = rb; i <= re; i++) {
+		rowvec.at = a[i];
+		numvec_centre_inplace (rowvec, nullptr);
+		rowvec.at = nullptr;
+	}
+	rowvec. size = 0;
+}
+
 void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres) {
+	numvec colvec (re - rb + 1, kTensorInitializationType :: RAW);
 	for (integer j = cb; j <= ce; j++) {
-		double colmean = 0.0;
 		for (integer i = rb; i <= re; i++) {
-			colmean += a[i][j];
+			colvec [i - rb + 1] = a [i] [j];
 		}
-		colmean /= (re - rb + 1);
+		real colmean;
+		numvec_centre_inplace (colvec, & colmean);
 		for (integer i = rb; i <= re; i++) {
-			a[i][j] -= colmean;
+			a [i] [j] = colvec [i - rb + 1];
 		}
 		if (centres) {
 			centres[j - cb + 1] = colmean;
@@ -783,9 +807,9 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 		for (integer j = 1; j <= numberOfComponents; j++) {
 			real80 sum = 0.0;
 			for (integer k = 1; k <= ncols; k++) {
-				sum += svd -> v[k][j] * m[i][k];
+				sum += svd -> v [k] [j] * m [i] [k];
 			}
-			pc[i][j] = (real) sum;
+			pc [i] [j] = (real) sum;
 		}
 	}
 }
