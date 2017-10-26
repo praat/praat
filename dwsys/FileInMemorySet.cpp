@@ -96,6 +96,37 @@ autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemo
 	
 }
 
+autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
+	try {
+		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
+		for (long ifile = 1; ifile <= my size; ifile ++) {
+			FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
+			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
+				autoFileInMemory item = Data_copy (fim);
+				thy addItem_move (item.move());
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot extract files.");
+	}
+}
+
+autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
+	try {
+		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
+		for (long ifile = 1; ifile <= my size; ifile ++) {
+			FileInMemory fim = static_cast<FileInMemory> (my at [ifile]);
+			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
+				thy addItem_ref (fim);
+			}
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": cannot extract files.");
+	}
+}
+
 void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer numberOfBytesPerLine) {
 	autoMelderString one_fim;
 	MelderInfo_writeLine (U"#include \"FileInMemorySet.h\"");
