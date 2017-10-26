@@ -742,7 +742,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 					if (info -> unicode < 127) {
 						MelderString_appendCharacter (buffer, info -> unicode ? info -> unicode : U'?');
 					} else {
-						MelderString_append (buffer, U"&#", info -> unicode, U";");
+						MelderString_append (buffer, U"&#", (int) info -> unicode, U";");
 					}
 					p ++;
 				} else {
