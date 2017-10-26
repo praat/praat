@@ -2613,6 +2613,17 @@ DO
 	CREATE_ONE_END (name)
 }
 
+FORM (NEW1_FileInMemorySet_extractFiles, U"FileInMemorySet: Extract files", nullptr) {
+	LABEL (U"Extract all files where the file name ")
+	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
+	SENTENCE (criterion, U"...the text", U"/voices/")	
+	OK
+DO
+	CONVERT_EACH (FileInMemorySet)
+		autoFileInMemorySet result = FileInMemorySet_extractFiles (me, which, criterion);
+	CONVERT_EACH_END (my name)
+}
+
 FORM (INFO_FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
 	WORD (name, U"Name", U"example")
 	INTEGER (numberOfBytesPerLine, U"Number of bytes per line", U"20")
@@ -5744,6 +5755,24 @@ DIRECT (HELP_SpeechSynthesizer_help) {
 	HELP (U"SpeechSynthesizer")
 }
 
+FORM (NEW1_ExtractEspeakData, U"SpeechSynthesizer: Extract espeak data", nullptr) {
+	OPTIONMENU (which, U"Data", 1)
+		OPTION (U"Language properties")
+		OPTION (U"Voices properties")
+	OK
+DO
+	CREATE_ONE
+		autoTable result;
+		const char32 *name = U"languages";
+		if (which == 1) {
+			result = Data_copy (espeakdata_languages_propertiesTable.get());
+		} else if (which == 2) {
+			result = Data_copy (espeakdata_voices_propertiesTable.get());
+			name = U"voices";
+		}
+	CREATE_ONE_END (name)
+}
+
 FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
 	/* 
 	 * In the speech synthesis world a language variant is called a "voice", we use the same terminology 
@@ -7512,6 +7541,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemoryManager", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_FileInMemoryManager_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_HIDDEN + praat_DEPTH_1, READ1_FileInMemory_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_FileInMemorySet_createFromDirectoryContents);
+	praat_addMenuCommand (U"Objects", U"New", U"Extract espeak data...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_ExtractEspeakData);	
+
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, READ1_Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, READ1_Sound_readFromRawFileBE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, READ1_KlattTable_readFromRawTextFile);
@@ -7868,7 +7899,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, INFO_FileInMemorySet_showOneFileAsCode);
 	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
 	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, NEW_FileInMemorySet_to_Strings_id);
-
+	praat_addAction1 (classFileInMemorySet, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemorySet_extractFiles);
 	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0, MODIFY_FileInMemorySet_addItems);
 
 	
@@ -8192,7 +8223,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, 1, MODIFY_SpeechSynthesizer_modifyPhonemeSet);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setTextInputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
+		
 	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0, NEW1_SpeechSynthesizer_and_TextGrid_to_Sound);
+	
 
 	praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align)...", nullptr, 0, NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align);
     praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align,trim)...", nullptr, 0, NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align2);
