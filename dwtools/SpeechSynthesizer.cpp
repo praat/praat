@@ -591,10 +591,10 @@ static void espeakdata_SetVoiceByName (const char32 *languageName, const char32 
 
 autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, autoTextGrid *tg, autoTable *events) {
 	try {
-		int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, // 5000ms
-			espeakINITIALIZE_PHONEME_EVENTS|espeakINITIALIZE_PHONEME_IPA);
-		if (fsamp == -1) {
-			Melder_throw (U"Internal espeak error.");
+		espeak_ng_ERROR_CONTEXT context;
+		espeak_ng_STATUS status = espeak_ng_Initialize(& context);
+		if (status != ENS_OK) {
+			Melder_throw (U"Internal espeak error.", status);
 		}
 		int synth_flags = espeakCHARS_WCHAR;
 		if (my d_inputTextFormat == SpeechSynthesizer_INPUT_TAGGEDTEXT) {
