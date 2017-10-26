@@ -23,6 +23,7 @@
 #include "espeak_ng.h"
 #include "FileInMemoryManager.h"
 #include "speech.h"
+#include "voice.h"
 #include <wctype.h>
 
 #include "espeakdata_FileInMemory.h"
@@ -55,7 +56,7 @@ void espeakdata_praat_init () {
 		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
 		Strings_sort (espeakdata_languages_names.get());
-		espeakdata_voices_names = Table_column_to_Strings (espeakdata_voices_propertiesTable.get(), 1);
+		espeakdata_voices_names = Table_column_to_Strings (espeakdata_voices_propertiesTable.get(), 2);
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata initialization not performed.");
 	}
@@ -91,7 +92,7 @@ static const char32 * get_wordAfterPrecursor_u8 (const unsigned char *text8, con
 	static char32 word [100];
 	/*
 		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
-		2. Get the word after 'precursor' (skip leading and trailing whitespace).
+		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;
 	const char32 *text = Melder_peek8to32 (reinterpret_cast<const char *> (text8));
@@ -99,14 +100,37 @@ static const char32 * get_wordAfterPrecursor_u8 (const unsigned char *text8, con
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
 	if (pmatch) {
-		while (*pmatch == U' ' || *pmatch ++ == U'\t'); // skip whitespace before 'precursor'
 		pmatch += str32len (precursor); // skip 'precursor'
-		while (*pmatch == U' ' || *pmatch ++ == U'\t'); // skip whitespace after 'precursor'
-		pmatch --;
+		while (*pmatch == U' ' || *pmatch == U'\t') { pmatch ++; } // skip whitespace after 'precursor'
 		p = word;
 		char32 *p_end = p + 99;
 		while ((*p = *pmatch ++) && *p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\r' && p < p_end) { p ++; };
 		*p = 0;
+		p = word;
+	}
+	return p;
+}
+
+static const char32 * get_stringAfterPrecursor_u8 (const unsigned char *text8, const char32 *precursor) {
+	static char32 word [100];
+	/*
+		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
+		2. Get the words after 'precursor' (skip leading and trailing whitespace).
+	*/
+	autoMelderString regex;
+	const char32 *text = Melder_peek8to32 (reinterpret_cast<const char *> (text8));
+	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
+	char32 *p = nullptr;
+	const char32 *pmatch = strstr_regexp (text, regex.string);
+	if (pmatch) {
+		pmatch += str32len (precursor); // skip 'precursor'
+		while (*pmatch == U' ' || *pmatch == U'\t') { pmatch ++; }; // skip whitespace after 'precursor'
+		//pmatch --;
+		p = word;
+		char32 *p_end = p + 99;
+		while ((*p = *pmatch ++) && *p != U'\n' && *p != U'\r' && p < p_end) { p ++; }; // copy to end of line
+		while (*p == U' ' || *p == U'\t' || *p == U'\n' || *p == U'\r') { p --; }; // remove trailing white space
+		*(++ p) = 0;
 		p = word;
 	}
 	return p;
@@ -125,14 +149,14 @@ autoTable Table_createAsEspeakVoicesProperties () {
 			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion)) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
-				const char32 *word = get_wordAfterPrecursor_u8 (fim -> d_data, U"name");
+				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
 				Table_setStringValue (thee.get(), irow, 2, (word ?word : fim -> d_id));
 				Table_setNumericValue (thee.get(), irow, 3, ifile); 
 				word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
 				Table_setStringValue (thee.get(), irow, 4, (word ? word : U"0"));
 				word = get_wordAfterPrecursor_u8 (fim -> d_data, U"age");
 				Table_setStringValue (thee.get(), irow, 5, (word ? word : U"0"));
-				word = get_wordAfterPrecursor_u8 (fim -> d_data, U"variant");
+				word = get_stringAfterPrecursor_u8 (fim -> d_data, U"variant");
 				Table_setStringValue (thee.get(), irow, 6, (word ? word : U"0"));
 			}
 		}
@@ -156,7 +180,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion)) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
-				const char32 *word = get_wordAfterPrecursor_u8 (fim -> d_data, U"name");
+				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
 				Table_setStringValue (thee.get(), irow, 2, (word ? word : fim -> d_id));
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
 			}
@@ -183,6 +207,42 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata: voices not initialized.");
+	}
+}
+
+/* This mimics GetFileLength of espeak-ng */
+int FileInMemoryManager_GetFileLength (FileInMemoryManager me, const char *filename) {
+		integer index = FileInMemorySet_lookUp (my files.get(), Melder_peek8to32(filename));
+		if (index > 0) {
+			FileInMemory fim = static_cast<FileInMemory> (my files -> at [index]);
+			return fim -> d_numberOfBytes;
+		}
+		// Directory ??
+		if (FileInMemorySet_hasDirectory (my files.get(), Melder_peek8to32(filename))) {
+			return -EISDIR;
+		}
+		return -1;
+}
+
+/* This mimics GetVoices of espeak-ng
+	If is_languange_file == 0 then /voices/ else /lang/ 
+	We know our voices are in /voices/ and our languages in /lang/
+*/
+void FileInMemoryManager_GetVoices (FileInMemoryManager me, const char *path, int len_path_voices, int is_language_file) {
+	(void) path;
+	/*
+		if is_languange_file == 0 then /voices/ else /lang/ 
+		We know our voices are in /voices/!v/ and our languages in /lang/
+	*/
+	const char32 *criterion = is_language_file ? U"/lang/" : U"/voices/";
+	autoFileInMemorySet fileList = FileInMemorySet_listFiles (my files.get(), kMelder_string :: CONTAINS, criterion);
+	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
+		FileInMemory fim = static_cast<FileInMemory> (fileList -> at [ifile]);
+		FILE *f_voice = FileInMemoryManager_fopen (me, Melder_peek32to8 (fim -> d_path), "r");
+		char *fname = Melder_peek32to8 (fim -> d_path);
+		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
+		FileInMemoryManager_fclose (me, f_voice);
+		voices_list [n_voices_list ++] = voice_data;
 	}
 }
 
