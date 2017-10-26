@@ -120,19 +120,14 @@ autoFileInMemory FileInMemoryManager_createFile (FileInMemoryManager me, MelderF
 }
 
 autoFileInMemorySet FileInMemoryManager_extractFiles (FileInMemoryManager me, kMelder_string which, const char32 *criterion) {
-	try {
-		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
-		for (long ifile = 1; ifile <= my files -> size; ifile ++) {
-			FileInMemory fim = static_cast <FileInMemory> (my files -> at [ifile]);
-			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
-				autoFileInMemory item = Data_copy (fim);
-				thy addItem_move (item.move());
-			}
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": cannot extract files.");
-	}
+	return FileInMemorySet_extractFiles (my files.get(), which, criterion);
+}
+
+static integer _FileInMemoryManager_getIndexInOpenFiles (FileInMemoryManager me, FILE *stream) {
+	integer filesIndex = reinterpret_cast<integer> (stream);
+	FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
+	integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path);
+	return openFilesIndex;
 }
 
 FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, const char *mode) {
@@ -155,13 +150,6 @@ FILE *FileInMemoryManager_fopen (FileInMemoryManager me, const char *filename, c
 	} catch (MelderError) {
 		Melder_throw (U"File ", Melder_peek8to32(filename), U" cannot be opended.");
 	}
-}
-
-static integer _FileInMemoryManager_getIndexInOpenFiles (FileInMemoryManager me, FILE *stream) {
-	integer filesIndex = reinterpret_cast<integer> (stream);
-	FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
-	integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path);
-	return openFilesIndex;
 }
 
 void FileInMemoryManager_rewind (FileInMemoryManager me, FILE *stream) {
@@ -311,21 +299,7 @@ int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * st
 	}
 }
 
-/* This mimics GetFileLength of espeak-ng */
-int FileInMemoryManager_GetFileLength (FileInMemoryManager me, const char *filename) {
-		integer index = FileInMemorySet_lookUp (my files.get(), Melder_peek8to32(filename));
-		if (index > 0) {
-			FileInMemory fim = static_cast<FileInMemory> (my files -> at [index]);
-			return fim -> d_numberOfBytes;
-		}
-		// Directory ??
-		if (FileInMemorySet_hasDirectory (my files.get(), Melder_peek8to32(filename))) {
-			return -EISDIR;
-		}
-		return -1;
-}
-
-/* long int ftell ( FILE * stream ); 
+/* 
  * int fgetpos ( FILE * stream, fpos_t * pos );
  * int fsetpos ( FILE * stream, const fpos_t * pos );
  */

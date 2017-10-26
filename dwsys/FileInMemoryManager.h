@@ -42,6 +42,8 @@ autoFileInMemory FileInMemoryManager_createFile (FileInMemoryManager me, MelderF
 
 autoFileInMemorySet FileInMemoryManager_extractFiles (FileInMemoryManager me, kMelder_string which, const char32 *criterion);
 
+autoFileInMemorySet FileInMemoryManager_listFiles (FileInMemoryManager me, kMelder_string which, const char32 *criterion);
+
 autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly);
 
 /*
@@ -71,6 +73,5 @@ int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream);
 
 int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * stream);
 
-int FileInMemoryManager_GetFileLength (FileInMemoryManager me, const char *filename);
 
 #endif // _FileInMemoryManager_h_
