@@ -33,6 +33,7 @@
 #define fgetc(stream) espeak_io_fgetc (stream)
 #define ungetc(character,stream) espeak_io_ungetc (character, stream)
 #define GetFileLength(filename) espeak_io_GetFileLength (filename)
+#define GetVoices(path,len_path_voices,is_language_file) espeak_io_GetVoices (path, len_path_voices, is_language_file)
 
 FILE *espeak_io_fopen (const char *filename, const char *mode);
 
@@ -56,5 +57,6 @@ int espeak_io_ungetc (int character, FILE * stream);
 
 int espeak_io_GetFileLength (const char *filename);
 
+void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language_file);
 
 #endif

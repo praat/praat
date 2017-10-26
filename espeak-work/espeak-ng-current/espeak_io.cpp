@@ -21,7 +21,7 @@
 */
 
 #include "espeak_io.h"
-#include "FileInMemoryManager.h"
+#include "espeakdata_FileInMemory.h"
 
 extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
 #define ESPEAK_FILEINMEMORYMANAGER espeak_ng_FileInMemoryManager.get()
@@ -68,6 +68,10 @@ int espeak_io_ungetc (int character, FILE * stream) {
 
 int espeak_io_GetFileLength (const char *filename) {
 	return FileInMemoryManager_GetFileLength (ESPEAK_FILEINMEMORYMANAGER, filename);
+}
+
+void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language_file) {
+	FileInMemoryManager_GetVoices (ESPEAK_FILEINMEMORYMANAGER, path, len_path_voices, is_language_file);
 }
 
 /* End of file espeak_io.cpp */
