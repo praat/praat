@@ -18,8 +18,8 @@
  */
 
 #ifdef __cplusplus
-extern "C"
-{
+//extern "C"
+//{
 #endif
 
 typedef struct {
@@ -72,6 +72,9 @@ typedef struct {
 
 // percentages shown to user, ix=N_PEAKS means ALL peaks
 extern USHORT voice_pcnt[N_PEAKS+1][3];
+#define N_VOICES_LIST  250
+extern int n_voices_list;
+extern espeak_VOICE *voices_list [N_VOICES_LIST];
 
 extern espeak_VOICE current_voice_selected;
 
@@ -83,11 +86,12 @@ espeak_VOICE *SelectVoiceByName(espeak_VOICE **voices, const char *name);
 voice_t *LoadVoice(const char *voice_name, int control);
 voice_t *LoadVoiceVariant(const char *voice_name, int variant);
 espeak_ng_STATUS DoVoiceChange(voice_t *v);
+espeak_VOICE *ReadVoiceFile(FILE *f_in, const char *fname, int is_language_file);
 void WavegenSetVoice(voice_t *v);
 void ReadTonePoints(char *string, int *tone_pts);
 void VoiceReset(int control);
 void FreeVoiceList(void);
 
 #ifdef __cplusplus
-}
+//}
 #endif
