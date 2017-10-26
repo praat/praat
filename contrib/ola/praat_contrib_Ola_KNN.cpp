@@ -369,8 +369,8 @@ DO
 				voteWeighting = kOla_FLAT_VOTING;
 				break;
 		}
-		if (your ny != his size)
-			Melder_throw (U"The number of Categories should be equal to the number of rows in PatternList.");
+		Melder_require (your ny == his size,
+			U"Your number of Categories (", your ny, U") should be equal to the number of rows in PatternList (", his size, U").");
 		if (your nx != my input -> nx)
 			Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
 		if (your nx != her fweights -> numberOfColumns)
