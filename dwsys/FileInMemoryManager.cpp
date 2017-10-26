@@ -220,12 +220,12 @@ integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream) {
 
 char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	char *p_str = nullptr;
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		integer startPos = fim -> d_position;
 		if (startPos < fim -> d_numberOfBytes) {
-			integer i = 0;
-			integer endPos = startPos + num;
+			integer i = 0, endPos = startPos + num;
 			endPos = endPos < fim -> d_numberOfBytes ? endPos : fim -> d_numberOfBytes;
 			const unsigned char * p = fim -> d_data + startPos;
 			if (fim -> ungetBuffer > 0) {
@@ -240,11 +240,12 @@ char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FIL
 				}
 			}
 			str [i] = '\0';
-			fim -> d_position = endPos;
+			fim -> d_position += i;
+			p_str = str;
 		} else {
 			fim -> d_errno = EOF;
 		}
-		return str;
+		return p_str;
 	} else {
 		Melder_throw (me, U": File is not open.");
 	}
@@ -297,6 +298,7 @@ int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * st
 		fim -> ungetBuffer = character;
 		return character;
 	}
+	return 0;
 }
 
 /* 
