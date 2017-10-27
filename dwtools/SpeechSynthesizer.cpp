@@ -22,7 +22,8 @@
 	djmw 20111214
 */
 #include "espeak_ng_version.h"
-#include "../espeak-work/espeak-ng-current/espeakdata_FileInMemory.h"
+#include "espeak_ng.h"
+#include "espeakdata_FileInMemory.h"
 
 
 #include "SpeechSynthesizer.h"
@@ -218,7 +219,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 		events++;
 	}
 	if (me) {
-		NUMvector_supplyStorage<int> (&my d_wav, 1, &my d_wavCapacity, my d_numberOfSamples, numsamples);
+		NUMvector_supplyStorage<int> (& my d_wav, 1, & my d_wavCapacity, my d_numberOfSamples, numsamples);
 		for (long i = 1; i <= numsamples; i++) {
 			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
 		}
@@ -251,13 +252,6 @@ const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	}
 }
 
-void SpeechSynthesizer_initEspeak () {
-	int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, espeakINITIALIZE_PHONEME_EVENTS); // 4000 ms
-	if (fsamp == -1) {
-		Melder_throw (U"Internal espeak error.");
-	}
-}
-
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
@@ -269,7 +263,6 @@ autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, cons
 		my d_phonemeSet = Melder_dup (languageName);
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
-		SpeechSynthesizer_initEspeak ();
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizer not created.");
@@ -591,8 +584,9 @@ static void espeakdata_SetVoiceByName (const char32 *languageName, const char32 
 
 autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, autoTextGrid *tg, autoTable *events) {
 	try {
-		espeak_ng_ERROR_CONTEXT context;
-		espeak_ng_STATUS status = espeak_ng_Initialize(& context);
+		espeak_ng_InitializePath (nullptr); // PATH_ESPEAK_DATA
+		espeak_ng_ERROR_CONTEXT context = { 0 };
+		espeak_ng_STATUS status = espeak_ng_Initialize (& context);
 		if (status != ENS_OK) {
 			Melder_throw (U"Internal espeak error.", status);
 		}
@@ -608,18 +602,18 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 			option_phoneme_events |= espeakINITIALIZE_PHONEME_IPA;
 		}
 
-		espeak_SetParameter (espeakRATE, my d_wordsPerMinute, 0);
-		espeak_SetParameter (espeakPITCH, my d_pitchAdjustment, 0);
-		espeak_SetParameter (espeakRANGE, my d_pitchRange, 0);
+		espeak_ng_SetParameter (espeakRATE, my d_wordsPerMinute, 0);
+		espeak_ng_SetParameter (espeakPITCH, my d_pitchAdjustment, 0);
+		espeak_ng_SetParameter (espeakRANGE, my d_pitchRange, 0);
 		const char32 *languageCode = SpeechSynthesizer_getLanguageCode (me);
 		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
 		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", my d_voiceName)));
 		
 		//espeakdata_SetVoiceByName (languageCode, voiceCode);
-		espeak_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
-		espeak_SetParameter (espeakCAPITALS, 0, 0);
-		espeak_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
+		espeak_ng_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
+		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
+		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
 		// voice->phoneme_tab_ix
 		espeak_SetSynthCallback (synthCallback);
 
@@ -627,18 +621,20 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 
 		#ifdef _WIN32
                 wchar_t *textW = Melder_peek32toW (text);
-                espeak_Synth (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
+                espeak_ng_Synthesize (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#else
-                espeak_Synth (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
+                espeak_ng_Synthesize (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#endif
 				
-		espeak_Terminate ();
-		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
+		espeak_ng_Terminate ();
+		autoSound thee = Sound_createSimple (1, 1.0, 44100.0);
+	/*	autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency) {
 			thee = Sound_resample (thee.get(), my d_samplingFrequency, 50);
 		}
 		my d_numberOfSamples = 0; // re-use the wav-buffer
+		*/
 		if (tg) {
 			double xmin = Table_getNumericValue_Assert (my d_events.get(), 1, 1);
 			if (xmin > thy xmin) {
