@@ -156,7 +156,7 @@ void FileInMemoryManager_rewind (FileInMemoryManager me, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
-		fim -> d_position = 0; fim -> d_errno = 0;  fim -> ungetBuffer = -1;
+		fim -> d_position = 0; fim -> d_errno = 0;  fim -> ungetChar = -1;
 	}
 }
 
@@ -164,7 +164,7 @@ int FileInMemoryManager_fclose (FileInMemoryManager me, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
-		fim -> d_position = 0; fim -> d_errno = 0;  fim -> ungetBuffer = -1;
+		fim -> d_position = 0; fim -> d_errno = 0;  fim -> ungetChar = -1;
 		my openFiles -> removeItem (openFilesIndex);
 	}
 	return my errorNumber = 0; // always ok
@@ -201,7 +201,7 @@ int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer off
 			newPosition = 0;
 		}
 		fim -> d_position = newPosition;
-		fim -> ungetBuffer = -1;
+		fim -> ungetChar = -1;
 		errval = 0;
 	}
 	return my errorNumber = errval;
@@ -209,7 +209,7 @@ int FileInMemoryManager_fseek (FileInMemoryManager me, FILE *stream, integer off
 
 integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
-	int errval = EBADF;
+	/* int errval = EBADF; */
 	integer currentPosition = -1L;
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
@@ -220,7 +220,7 @@ integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream) {
 
 char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
-	char *p_str = nullptr;
+	char *result = nullptr;
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		integer startPos = fim -> d_position;
@@ -228,10 +228,10 @@ char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FIL
 			integer i = 0, endPos = startPos + num;
 			endPos = endPos < fim -> d_numberOfBytes ? endPos : fim -> d_numberOfBytes;
 			const unsigned char * p = fim -> d_data + startPos;
-			if (fim -> ungetBuffer > 0) {
-				str [i ++] = fim -> ungetBuffer;
+			if (fim -> ungetChar > 0) {
+				str [i ++] = fim -> ungetChar;
 				p ++;
-				fim -> ungetBuffer = -1;
+				fim -> ungetChar = -1;
 			}
 			while (i < num) {
 				str [i ++] = *p;
@@ -241,38 +241,38 @@ char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FIL
 			}
 			str [i] = '\0';
 			fim -> d_position += i;
-			p_str = str;
+			result = str; // everything ok, return the str pointer
 		} else {
 			fim -> d_errno = EOF;
 		}
-		return p_str;
 	} else {
 		Melder_throw (me, U": File is not open.");
 	}
+	return result;
 }
 
 int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream) {
 	char str[4];
-	FileInMemoryManager_fgets (me, str, 1, stream);
+	(void) FileInMemoryManager_fgets (me, str, 1, stream);
 	return FileInMemoryManager_feof (me, stream) ? EOF : static_cast<int> (*str);
 }
 
 /* size_t fread ( void * ptr, size_t size, size_t count, FILE * stream );*/
 size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t count, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
-	if (openFilesIndex > 0) {
+	size_t result = 0;
+	if (openFilesIndex > 0 && size > 0 && count > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		integer startPos = fim -> d_position;
 		if (startPos < fim -> d_numberOfBytes) {
-			integer i = 0, numberOfBytes = count * size; // 
-			integer endPos = startPos + numberOfBytes;
+			integer i = 0, endPos = startPos + count * size;
 			
 			if (endPos >= fim -> d_numberOfBytes) {
-				count = (endPos - startPos) / size;
+				count = (endPos - startPos + 1) / size;
 				endPos = startPos + count * size;
 				fim -> d_errno = EOF;
 			}
-			numberOfBytes = count * size;
+			integer numberOfBytes = count * size;
 			const unsigned char * p = fim -> d_data + fim -> d_position;
 			char * str = static_cast<char *> (ptr);
 			while (i < numberOfBytes) {
@@ -280,10 +280,11 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 			}
 			fim -> d_position = endPos;
 		}
-		return count;
+		result = count;
 	} else {
 		Melder_throw (me, U": File is not open.");
 	}
+	return result;
 }
 
 /* No pushback buffer */
@@ -295,7 +296,7 @@ int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * st
 	if (openFilesIndex > 0) {
 		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 		-- (fim -> d_position);
-		fim -> ungetBuffer = character;
+		fim -> ungetChar = character;
 		return character;
 	}
 	return 0;
