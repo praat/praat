@@ -41,27 +41,6 @@
 
 Thing_implement (FileInMemory, Daata, 0);
 
-/*
-void structFileInMemory :: v_copy (Daata thee_Daata) {
-	FileInMemory thee = static_cast <FileInMemory> (thee_Daata);
-	our FileInMemory_Parent :: v_copy (thee);
-	thy d_path = Melder_dup (our d_path);
-	thy d_id = Melder_dup (our d_id);
-	thy d_numberOfBytes = our d_numberOfBytes;
-	thy ownData = our ownData;
-	thy d_data = NUMvector<char> (0, our d_numberOfBytes);
-	memcpy (thy d_data, our d_data, our d_numberOfBytes + 1);
-}
-
-void structFileInMemory :: v_destroy () noexcept {
-	Melder_free (our d_path);
-	Melder_free (our d_id);
-	if (our ownData)
-		NUMvector_free <char> (our d_data, 0);
-	our FileInMemory_Parent :: v_destroy ();
-}
-*/
-
 void structFileInMemory :: v_info () {
 	our structDaata :: v_info ();
 	MelderInfo_writeLine (U"File name: ", our d_path);
