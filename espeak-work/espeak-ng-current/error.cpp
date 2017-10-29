@@ -28,6 +28,7 @@
 #include "error.h"
 #include "speech.h"
 #include "synthesize.h"
+#include "melder.h"
 
 espeak_ng_STATUS
 create_file_error_context(espeak_ng_ERROR_CONTEXT *context,
@@ -156,15 +157,17 @@ espeak_ng_PrintStatusCodeMessage(espeak_ng_STATUS status,
 		switch (context->type)
 		{
 		case ERROR_CONTEXT_FILE:
-			fprintf(out, "Error processing file '%s': %s.\n", context->name, error);
+			//fprintf(out, "Error processing file '%s': %s.\n", context->name, error);
+			Melder_throw (U"Error processing file \"", Melder_peek8to32 (context->name), U"\":", Melder_peek8to32  (error));
 			break;
 		case ERROR_CONTEXT_VERSION:
-			fprintf(out, "Error: %s at '%s' (expected 0x%x, got 0x%x).\n",
-			        error, context->name, context->expected_version, context->version);
+			//fprintf(out, "Error: %s at '%s' (expected 0x%x, got 0x%x).\n", error, context->name, context->expected_version, context->version);
+			Melder_throw (U"Error: ", Melder_peek8to32  (error), U" at \"", Melder_peek8to32 (context->name), U"\" (expected ", context->expected_version, U", got ", context->version);
 			break;
 		}
 	} else
-		fprintf(out, "Error: %s.\n", error);
+		//fprintf(out, "Error: %s.\n", error);
+		Melder_throw (U"Error: ", Melder_peek8to32  (error));
 }
 
 #pragma GCC visibility pop

@@ -184,7 +184,6 @@ static char *fgets_strip(char *buf, int size, FILE *f_in)
 
 	if (fgets(buf, size, f_in) == NULL)
 		return NULL;
-
 	if (buf[0] == '#') {
 		buf[0] = 0;
 		return buf;
