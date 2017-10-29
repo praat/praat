@@ -3,20 +3,20 @@
 
 appendInfoLine: "SpeechSynthesizer test..."
 
-voiceslist = Create copy from FileInMemorySet: "voices_names"
-numberOfVoices = Get number of strings
+voiceslist = Extract espeak data: "Voices properties"
+numberOfVoices = Get number of rows
 
-languageslist = Create copy from FileInMemorySet: "languages_names"
-numberOfLanguages = Get number of strings
+languageslist = Extract espeak data: "Language properties"
+numberOfLanguages = Get number of rows
 
 numberOfSounds = 0
 for ilang to numberOfLanguages
 	selectObject: languageslist
-	language$ = Get string: ilang
+	language$ = Get value: ilang, "name"
 	appendInfo: tab$, language$, ":"
-	for ivoice to numberOfVoices
+	for ivoice to 3
 		selectObject: voiceslist
-		voice$ = Get string: ivoice
+		voice$ = Get value: randomInteger (1, numberOfVoices), "name"
 		appendInfo:  " ", voice$
 		# some voices have spaces!
 		ss = Create SpeechSynthesizer: language$, voice$
