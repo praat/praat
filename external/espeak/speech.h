@@ -20,11 +20,6 @@
 #ifndef SPEECH_H
 #define SPEECH_H
 
-#ifdef __cplusplus
-//extern "C"
-//{
-#endif
-
 #if defined(BYTE_ORDER) && BYTE_ORDER == BIG_ENDIAN
 #define ARCH_BIG
 #endif
@@ -33,22 +28,14 @@
 #define NO_VARIADIC_MACROS
 #endif
 
-#if defined(_WIN32) || defined(_WIN64) // Windows
-
-#define PLATFORM_WINDOWS
-#define PATHSEP '/'
-#define N_PATH_HOME  230
-#define NO_VARIADIC_MACROS
-
-#else
-
-#define PLATFORM_POSIX
-#define PATHSEP  '/'
-#define N_PATH_HOME  160
-#define USE_NANOSLEEP
+#undef INCLUDE_MBROLA
+#undef PLATFORM_POSIX
+#undef PLATFORM_WINDOWS
+#undef USE_NANOSLEEP
 #define __cdecl
 
-#endif
+#define PATHSEP '/'
+#define N_PATH_HOME  230
 
 // used in synthesize.h and voice.h	
 #define N_PEAKS   9
@@ -77,9 +64,5 @@ void cancel_audio(void);
 extern char path_home[N_PATH_HOME];    // this is the espeak-ng-data directory
 
 extern ESPEAK_NG_API void strncpy0(char *to, const char *from, int size);
-
-#ifdef __cplusplus
-//}
-#endif
 
 #endif // SPEECH_H
