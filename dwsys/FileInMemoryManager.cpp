@@ -691,7 +691,7 @@ int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const ch
 	if (stream == stderr) {
 		va_start (args, format);
 		bufferSize = 3;
-		/*autoNUMvector<char> buf (0L, bufferSize);
+		autoNUMvector<char> buf (0L, bufferSize);
 		int sizeNeeded = vsnprintf (buf.peek(), bufferSize, format, args); // find the size of the needed buffer
 		va_end (args);
 		if (sizeNeeded > bufferSize) {
@@ -702,7 +702,7 @@ int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const ch
 		}
 		bufferSize = sizeNeeded;
 		// append the buffer 
-		MelderInfo_writeLine (Melder_peek8to32 (buf.peek()));*/
+		//MelderInfo_writeLine (Melder_peek8to32 (buf.peek()));
 
 	} else {
 		//integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream); // 

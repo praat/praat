@@ -2564,6 +2564,21 @@ DO
 	NUMBER_ONE_END (U"")
 }
 
+FORM (INFO_FileInMemoryManager_fprintf, U"FileInMemoryManager: fprintf (stderr, ...)", nullptr) {
+	INTEGER (number, U"Integer", U"10")
+	SENTENCE (string, U"String", U"a bcd")
+	OK
+DO
+	INFO_ONE (FileInMemoryManager)
+		MelderInfo_open();
+		const char *format1 ="number and string: \"%ld %s\"";
+		FileInMemoryManager_fprintf (me, stderr, format1, number, Melder_peek32to8 (string));
+		const char *format2 ="number: \"%ld\"";
+		FileInMemoryManager_fprintf (me, stderr, format2, number);
+		MelderInfo_close();
+	INFO_ONE_END
+}
+
 FORM (INFO_FileInMemoryManager_fread, U"FileInMemoryManager: fread", nullptr) {
 	NATURAL (index, U"Index", U"1")
 	NATURAL (elementSize, U"Element size (bytes)", U"1")
@@ -7916,6 +7931,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemoryManager, 1, U"Reposition (fseek)...", nullptr, 1, INFO_FileInMemoryManager_fseek);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Rewind file (rewind)...", nullptr, 1, INFO_FileInMemoryManager_rewind);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Push back character (ungetc)...", nullptr, 1, INFO_FileInMemoryManager_ungetc);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Write to file stderr (fprintf)...", nullptr, 1, INFO_FileInMemoryManager_fprintf);
 
 	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemoryManager_extractFiles);
 	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0, NEW1_FileInMemoryManager_downto_Table);
