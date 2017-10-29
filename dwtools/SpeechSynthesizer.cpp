@@ -236,7 +236,7 @@ const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 		}
 		return Table_getStringValue_Assert (espeakdata_languages_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
-		Melder_throw (U"Cannot find language code.");
+		Melder_throw (me, U": Cannot find language code.");
 	}
 }
 
@@ -244,11 +244,11 @@ const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
 		integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName);
 		if (irow == 0) {
-			Melder_throw (U"Cannot find voice variant \"", my d_voiceName, U"\".");
+			Melder_throw (U": Cannot find voice variant \"", my d_voiceName, U"\".");
 		}
 		return Table_getStringValue_Assert (espeakdata_voices_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
-		Melder_throw (U"Cannot find voice code.");
+		Melder_throw (me, U": Cannot find voice code.");
 	}
 }
 
@@ -608,13 +608,13 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		const char32 *languageCode = SpeechSynthesizer_getLanguageCode (me);
 		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
-		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", my d_voiceName)));
+		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
 		
 		//espeakdata_SetVoiceByName (languageCode, voiceCode);
 		espeak_ng_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
-		// voice->phoneme_tab_ix
+		status =  espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
 
 		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
@@ -627,14 +627,12 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		#endif
 				
 		espeak_ng_Terminate ();
-		autoSound thee = Sound_createSimple (1, 1.0, 44100.0);
-	/*	autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
+		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency) {
 			thee = Sound_resample (thee.get(), my d_samplingFrequency, 50);
 		}
 		my d_numberOfSamples = 0; // re-use the wav-buffer
-		*/
 		if (tg) {
 			double xmin = Table_getNumericValue_Assert (my d_events.get(), 1, 1);
 			if (xmin > thy xmin) {
