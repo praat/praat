@@ -554,9 +554,6 @@ int GetAmplitude(void);
 void InitBreath(void);
 
 
-#if HAVE_SONIC_H
-	void DoSonicSpeed(int value);
-#endif
 
 #ifdef __cplusplus
 }

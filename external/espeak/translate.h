@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2005 to 2014 by Jonathan Duddington
  * email: jonsd@users.sourceforge.net
- * Copyright (C) 2015 Reece H. Dunn
+ * Copyright (C) 2015-2017 Reece H. Dunn
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -706,6 +706,10 @@ extern void SetLengthMods(Translator *tr, int value);
 
 void LoadConfig(void);
 int TransposeAlphabet(Translator *tr, char *text);
+
+#define LEADING_2_BITS 0xC0 // 0b11000000
+#define UTF8_TAIL_BITS 0x80 // 0b10000000
+
 ESPEAK_NG_API int utf8_in(int *c, const char *buf);
 int utf8_in2(int *c, const char *buf, int backwards);
 int utf8_out(unsigned int c, char *buf);

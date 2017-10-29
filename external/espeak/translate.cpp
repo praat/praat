@@ -262,6 +262,16 @@ static int IsSpace(unsigned int c)
 	return iswspace(c);
 }
 
+int isspace2(unsigned int c)
+{
+	// can't use isspace() because on Windows, isspace(0xe1) gives TRUE !
+	int c2;
+
+	if (((c2 = (c & 0xff)) == 0) || (c > ' '))
+		return 0;
+	return 1;
+}
+
 void DeleteTranslator(Translator *tr)
 {
 	if (tr->data_dictlist != NULL)
@@ -385,6 +395,40 @@ int utf8_in(int *c, const char *buf)
 }
 #pragma GCC visibility pop
 
+int utf8_out(unsigned int c, char *buf)
+{
+	// write a unicode character into a buffer as utf8
+	// returns the number of bytes written
+
+	int n_bytes;
+	int j;
+	int shift;
+	static char unsigned code[4] = { 0, 0xc0, 0xe0, 0xf0 };
+
+	if (c < 0x80) {
+		buf[0] = c;
+		return 1;
+	}
+	if (c >= 0x110000) {
+		buf[0] = ' '; // out of range character code
+		return 1;
+	}
+	if (c < 0x0800)
+		n_bytes = 1;
+	else if (c < 0x10000)
+		n_bytes = 2;
+	else
+		n_bytes = 3;
+
+	shift = 6*n_bytes;
+	buf[0] = code[n_bytes] | (c >> shift);
+	for (j = 0; j < n_bytes; j++) {
+		shift -= 6;
+		buf[j+1] = 0x80 + ((c >> shift) & 0x3f);
+	}
+	return n_bytes+1;
+}
+
 char *strchr_w(const char *s, int c)
 {
 	// return NULL for any non-ascii character
@@ -392,18 +436,6 @@ char *strchr_w(const char *s, int c)
 		return NULL;
 	return strchr((char *)s, c); // (char *) is needed for Borland compiler
 }
-
-static int IsAllUpper(const char *word)
-{
-	int c;
-	while ((*word != 0) && !isspace2(*word)) {
-		word += utf8_in(&c, word);
-		if (!iswupper(c))
-			return 0;
-	}
-	return 1;
-}
-
 static char *SpeakIndividualLetters(Translator *tr, char *word, char *phonemes, int spell_word)
 {
 	int posn = 0;
