@@ -27,6 +27,7 @@ oo_DEFINE_CLASS (FileInMemory, Daata)
 	oo_INT32 (ungetChar)
 	oo_UBYTE_VECTOR_FROM (d_data, 0, d_numberOfBytes) // final null byte possible
 	oo_BOOL (ownData)
+	oo_BOOL (writable)
 	
 	#if oo_DECLARING
 		void v_info () override; 

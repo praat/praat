@@ -71,6 +71,8 @@ size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size
 
 int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream);
 
+int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const char * format, ... );
+
 int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * stream);
 
 
