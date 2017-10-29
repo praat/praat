@@ -128,7 +128,8 @@ static const char32 * get_stringAfterPrecursor_u8 (const unsigned char *text8, c
 		//pmatch --;
 		p = word;
 		char32 *p_end = p + 99;
-		while ((*p = *pmatch ++) && *p != U'\n' && *p != U'\r' && p < p_end) { p ++; }; // copy to end of line
+		// also discard text after comment '//'
+		while ((*p = *pmatch ++) && *p != U'\n' && *p != U'\r' && *p != U'/' && *(p+1) != U'/' && p < p_end) { p ++; }; // copy to end of line
 		while (*p == U' ' || *p == U'\t' || *p == U'\n' || *p == U'\r') { p --; }; // remove trailing white space
 		*(++ p) = 0;
 		p = word;
@@ -149,10 +150,18 @@ autoTable Table_createAsEspeakVoicesProperties () {
 			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion)) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
-				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
-				Table_setStringValue (thee.get(), irow, 2, (word ?word : fim -> d_id));
+				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
+				// The first character of name must be upper case
+				if (name) { 
+					autoMelderString capitalFirst;
+					MelderString_copy (& capitalFirst, name); // we cannot modify original
+					char32 capital = toupper32 (*name);  *(capitalFirst . string) = capital;
+					Table_setStringValue (thee.get(), irow, 2, capitalFirst . string);
+				} else {
+					Table_setStringValue (thee.get(), irow, 2, fim -> d_id);
+				}
 				Table_setNumericValue (thee.get(), irow, 3, ifile); 
-				word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
+				const char32 *word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
 				Table_setStringValue (thee.get(), irow, 4, (word ? word : U"0"));
 				word = get_wordAfterPrecursor_u8 (fim -> d_data, U"age");
 				Table_setStringValue (thee.get(), irow, 5, (word ? word : U"0"));
@@ -161,6 +170,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 			}
 		}
 		Melder_assert (irow == numberOfMatches);
+		Table_sortRows_string (thee.get(), U"name");
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng voice properties not created.");
@@ -186,6 +196,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 			}
 		}
 		Melder_assert (irow == numberOfMatches);
+		Table_sortRows_string (thee.get(), U"name");
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng languages not created.");
@@ -207,42 +218,6 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata: voices not initialized.");
-	}
-}
-
-/* This mimics GetFileLength of espeak-ng */
-int FileInMemoryManager_GetFileLength (FileInMemoryManager me, const char *filename) {
-		integer index = FileInMemorySet_lookUp (my files.get(), Melder_peek8to32(filename));
-		if (index > 0) {
-			FileInMemory fim = static_cast<FileInMemory> (my files -> at [index]);
-			return fim -> d_numberOfBytes;
-		}
-		// Directory ??
-		if (FileInMemorySet_hasDirectory (my files.get(), Melder_peek8to32(filename))) {
-			return -EISDIR;
-		}
-		return -1;
-}
-
-/* This mimics GetVoices of espeak-ng
-	If is_languange_file == 0 then /voices/ else /lang/ 
-	We know our voices are in /voices/ and our languages in /lang/
-*/
-void FileInMemoryManager_GetVoices (FileInMemoryManager me, const char *path, int len_path_voices, int is_language_file) {
-	(void) path;
-	/*
-		if is_languange_file == 0 then /voices/ else /lang/ 
-		We know our voices are in /voices/!v/ and our languages in /lang/
-	*/
-	const char32 *criterion = is_language_file ? U"/lang/" : U"/voices/";
-	autoFileInMemorySet fileList = FileInMemorySet_listFiles (my files.get(), kMelder_string :: CONTAINS, criterion);
-	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
-		FileInMemory fim = static_cast<FileInMemory> (fileList -> at [ifile]);
-		FILE *f_voice = FileInMemoryManager_fopen (me, Melder_peek32to8 (fim -> d_path), "r");
-		char *fname = Melder_peek32to8 (fim -> d_path);
-		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
-		FileInMemoryManager_fclose (me, f_voice);
-		voices_list [n_voices_list ++] = voice_data;
 	}
 }
 

@@ -54,8 +54,4 @@ char * espeakdata_get_dict_data (const char *name, unsigned int *size);
 
 const char * espeakdata_get_voice (const char *vname, long *numberOfBytes);
 
-int FileInMemoryManager_GetFileLength (FileInMemoryManager me, const char *filename);
-
-void FileInMemoryManager_GetVoices (FileInMemoryManager me, const char *path, int len_path_voices, int is_language_file);
-
 #endif
