@@ -28,13 +28,7 @@
 #include <stdio.h>
 #include <stddef.h>
 
-#ifdef __WIN32__
-#define ESPEAK_API __declspec(dllexport)
-#else
-#define ESPEAK_API
-#endif
-
-#define ESPEAK_API_REVISION  9
+#define ESPEAK_API_REVISION  12
 /*
 Revision 2
    Added parameter "options" to eSpeakInitialize()
@@ -60,6 +54,15 @@ Revision 8  26.Apr.2013
 
 Revision 9  30.May.2013
   Changed function espeak_TextToPhonemes().
+
+Revision 10 29.Aug.2014
+  Changed phonememode parameter to espeak_TextToPhonemes() and espeak_SetPhonemeTrace
+
+Revision 11 (espeak-ng)
+  Made ESPEAK_API import/export symbols correctly on Windows.
+
+Revision 12 (espeak-ng)
+  Exposed espeak_SetPhonemeCallback. This is available in eSpeak, but was not exposed in this header.
 
 */
          /********************/
@@ -187,10 +190,10 @@ ESPEAK_API int espeak_Initialize(espeak_AUDIO_OUTPUT output, int buflength, cons
    output: the audio data can either be played by eSpeak or passed back by the SynthCallback function.
 
    buflength:  The length in mS of sound buffers passed to the SynthCallback function.
-            Value=0 gives a default of 200mS.
+            Value=0 gives a default of 60mS.
             This paramater is only used for AUDIO_OUTPUT_RETRIEVAL and AUDIO_OUTPUT_SYNCHRONOUS modes.
 
-   path: The directory which contains the espeak-data directory, or NULL for the default location.
+   path: The directory which contains the espeak-ng-data directory, or NULL for the default location.
 
    options: bit 0:  1=allow espeakEVENT_PHONEME events.
             bit 1:  1= espeakEVENT_PHONEME events give IPA phoneme names, not eSpeak phoneme names
@@ -252,6 +255,11 @@ int UriCallback(int type, const char *uri, const char *base);
            0=place a PLAY event in the event list at the point where the <audio> element
              occurs.  The calling program can then play the sound at that point.
 */
+
+#ifdef __cplusplus
+extern "C"
+#endif
+ESPEAK_API void espeak_SetPhonemeCallback(int (*PhonemeCallback)(const char *));
 
 
          /********************/
@@ -473,15 +481,25 @@ ESPEAK_API espeak_ERROR espeak_SetPunctuationList(const wchar_t *punctlist);
 	   EE_INTERNAL_ERROR.
 */
 
+#define espeakPHONEMES_SHOW    0x01
+#define espeakPHONEMES_IPA     0x02
+#define espeakPHONEMES_TRACE   0x08
+#define espeakPHONEMES_MBROLA  0x10
+#define espeakPHONEMES_TIE     0x80
+
 #ifdef __cplusplus
 extern "C"
 #endif
-ESPEAK_API void espeak_SetPhonemeTrace(int value, FILE *stream);
-/* Controls the output of phoneme symbols for the text
-   value=0  No phoneme output (default)
-   value=1  Output the translated phoneme symbols for the text
-   value=2  as (1), but also output a trace of how the translation was done (matching rules and list entries)
-   value=3  as (1), but produces IPA rather than ascii phoneme names
+ESPEAK_API void espeak_SetPhonemeTrace(int phonememode, FILE *stream);
+/* phonememode:  Controls the output of phoneme symbols for the text
+      bits 0-2:
+         value=0  No phoneme output (default)
+         value=1  Output the translated phoneme symbols for the text
+         value=2  as (1), but produces IPA phoneme names rather than ascii
+      bit 3:   output a trace of how the translation was done (showing the matching rules and list entries)
+      bit 4:   produce pho data for mbrola
+      bit 7:   use (bits 8-23) as a tie within multi-letter phonemes names
+      bits 8-23:  separator character, between phoneme names
 
    stream   output stream for the phoneme symbols (and trace).  If stream=NULL then it uses stdout.
 */
@@ -506,15 +524,11 @@ ESPEAK_API const char *espeak_TextToPhonemes(const void **textptr, int textmode,
          espeakCHARS_WCHAR    Wide characters (wchar_t)
          espeakCHARS_16BIT    16 bit characters.
 
-   phonememode: bits0-3:
-      0= just phonemes.
-      1= include ties (U+361) for phoneme names of more than one letter.
-      2= include zero-width-joiner for phoneme names of more than one letter.
-      3= separate phonemes with underscore characters.
+   phoneme_mode
+	    bit 1:   0=eSpeak's ascii phoneme names, 1= International Phonetic Alphabet (as UTF-8 characters).
+        bit 7:   use (bits 8-23) as a tie within multi-letter phonemes names
+        bits 8-23:  separator character, between phoneme names
 
-	 bits 4-7:
-      0= eSpeak's ascii phoneme names.
-      1= International Phonetic Alphabet (as UTF-8 characters).
 */
 
 #ifdef __cplusplus
@@ -540,7 +554,7 @@ ESPEAK_API void espeak_CompileDictionary(const char *path, FILE *log, int flags)
 typedef struct {
 	const char *name;      // a given name for this voice. UTF8 string.
 	const char *languages;       // list of pairs of (byte) priority + (string) language (and dialect qualifier)
-	const char *identifier;      // the filename for this voice within espeak-data/voices
+	const char *identifier;      // the filename for this voice within espeak-ng-data/voices
 	unsigned char gender;  // 0=none 1=male, 2=female,
 	unsigned char age;     // 0=not specified, or age in years
 	unsigned char variant; // only used when passed as a parameter to espeak_SetVoiceByProperties
@@ -574,7 +588,7 @@ typedef struct {
 extern "C"
 #endif
 ESPEAK_API const espeak_VOICE **espeak_ListVoices(espeak_VOICE *voice_spec);
-/* Reads the voice files from espeak-data/voices and creates an array of espeak_VOICE pointers.
+/* Reads the voice files from espeak-ng-data/voices and creates an array of espeak_VOICE pointers.
    The list is terminated by a NULL pointer
 
    If voice_spec is NULL then all voices are listed.
