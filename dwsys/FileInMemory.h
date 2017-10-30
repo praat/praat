@@ -21,20 +21,8 @@
 #include "Collection.h"
 #include "Strings_.h"
 
-Thing_define (FileInMemory, Daata) {
-	char32 *d_path;
-	char32 *d_id;
-	integer d_numberOfBytes;
-	char *d_data;
-	bool ownData;
 
-	void v_copy (Daata data_to)
-		override;
-	void v_destroy () noexcept
-		override;
-	void v_info ()
-		override;
-};
+#include "FileInMemory_def.h"
 
 autoFileInMemory FileInMemory_create (MelderFile file);
 
@@ -46,27 +34,5 @@ void FileInMemory_setId (FileInMemory me, const char32 *newId);
 
 void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numberOfBytesPerLine);
 
-Collection_define (FileInMemorySet, SortedSetOf, FileInMemory) {
-	int d_sortKey;
-
-	static int s_compare_name (FileInMemory data1, FileInMemory data2);
-	static int s_compare_id (FileInMemory data1, FileInMemory data2);
-	CompareHook v_getCompareHook ()
-		override { return d_sortKey == 0 ? s_compare_name : s_compare_id; }
-};
-
-autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
-
-void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer numberOfBytesPerLine);
-
-void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const char32 *name, integer numberOfBytesPerLine);
-
-integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id);
-
-autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me);
-
-char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, integer *numberOfBytes);
-
-const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, integer *numberOfBytes);
 
 #endif // _FileInMemory_h_

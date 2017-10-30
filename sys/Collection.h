@@ -674,7 +674,7 @@ struct SortedSetOf : SortedOf <T> {
 	Collections_merge (SortedSet) yields a SortedSet that is the union of the two sources.
 */
 
-//_Collection_declare (SortedSet, SortedOf, Daata);
+_Collection_declare (SortedSet, SortedSetOf, Daata);
 
 
 #pragma mark - class SortedSetOfInt

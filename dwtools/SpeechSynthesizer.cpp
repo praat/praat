@@ -17,11 +17,19 @@
  */
 
 /*
+
+#include "espeakdata_FileInMemory.h"
 	djmw 20111214
 */
+#include "espeak_ng_version.h"
+#include "espeak_ng.h"
+#include "espeakdata_FileInMemory.h"
+
 
 #include "SpeechSynthesizer.h"
 #include "Strings_extensions.h"
+#include "speak_lib.h"
+#include "encoding.h"
 #include "translate.h"
 
 #include "oo_DESTROY.h"
@@ -42,7 +50,6 @@
 #include "SpeechSynthesizer_def.h"
 #include "oo_DESCRIPTION.h"
 #include "SpeechSynthesizer_def.h"
-
 
 #define espeak_SAMPLINGFREQUENCY 22050
 
@@ -121,8 +128,10 @@ Thing_implement (SpeechSynthesizer, Daata, 1);
 
 void structSpeechSynthesizer :: v_info () {
 	SpeechSynthesizer_Parent :: v_info ();
-	MelderInfo_writeLine (U"Voice language: ", d_voiceLanguageName);
-	MelderInfo_writeLine (U"Voice variant: ", d_voiceVariantName);
+	MelderInfo_writeLine (U"Synthesizer version: espeak-ng ", d_synthesizerVersion);
+	MelderInfo_writeLine (U"Language: ", d_languageName);
+	MelderInfo_writeLine (U"Voice: ", d_voiceName);
+	MelderInfo_writeLine (U"Phoneme set: ", d_phonemeSet);
 	MelderInfo_writeLine (U"Input text format: ", (d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? U"text only" :
 		d_inputTextFormat == SpeechSynthesizer_INPUT_PHONEMESONLY ? U"phonemes only" : U"tagged text"));
 	MelderInfo_writeLine (U"Input phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : U"???"));
@@ -132,7 +141,6 @@ void structSpeechSynthesizer :: v_info () {
 	MelderInfo_writeLine (U"Speaking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateWordsPerMinute ? U" (but estimated from data if possible)" : U" (fixed)"));
 
 	MelderInfo_writeLine (U"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? U"IPA" : U"???"));
-	MelderInfo_writeLine (U"Text to speech synthesis with eSpeak version 1.48.04");
 }
 
 static void NUMvector_extendNumberOfElements (integer elementSize, void **v, integer lo, integer *hi, integer extraDemand)
@@ -211,7 +219,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 		events++;
 	}
 	if (me) {
-		NUMvector_supplyStorage<int> (&my d_wav, 1, &my d_wavCapacity, my d_numberOfSamples, numsamples);
+		NUMvector_supplyStorage<int> (& my d_wav, 1, & my d_wavCapacity, my d_numberOfSamples, numsamples);
 		for (long i = 1; i <= numsamples; i++) {
 			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
 		}
@@ -220,62 +228,47 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	return 0;
 }
 
-const char32 *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer /* me */, const char32 *voiceLanguageName) {
+const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	try {
-		long voiceLanguageNameIndex = Strings_findString (espeakdata_voices_names.get(), voiceLanguageName);
-		if (voiceLanguageNameIndex == 0) {
-			Melder_throw (U"Cannot find language \"", voiceLanguageName, U"\".");
+		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_languageName);
+		if (irow == 0) {
+			Melder_throw (U"Cannot find language \"", my d_languageName, U"\".");
 		}
-		FileInMemory fim = espeakdata_voices->at [voiceLanguageNameIndex];
-		return fim -> d_id;
+		return Table_getStringValue_Assert (espeakdata_languages_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
-		Melder_throw (U"Cannot find language code.");
+		Melder_throw (me, U": Cannot find language code.");
 	}
 }
 
-const char32 *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer /* me */, const char32 *voiceVariantName) {
+const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
-		static const char32 * defaultVariantCode = U"default";
-		// Strings espeakdata_variants_names is one longer than the actual list of variants
-		long voiceVariantIndex = Strings_findString (espeakdata_variants_names.get(), voiceVariantName);
-		if (voiceVariantIndex == 0) {
-			Melder_throw (U"Cannot find voice variant \"", voiceVariantName, U"\".");
+		integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName);
+		if (irow == 0) {
+			Melder_throw (U": Cannot find voice variant \"", my d_voiceName, U"\".");
 		}
-		// ... we have to decrease the index
-		if (voiceVariantIndex != 1) { // 1 is default, i.e. no variant
-			voiceVariantIndex --; // !!!
-			FileInMemory vfim = espeakdata_variants->at [voiceVariantIndex];
-			return vfim -> d_id;
-		} else {
-			return defaultVariantCode; // TODO what is the default?
-		}
+		return Table_getStringValue_Assert (espeakdata_voices_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
-		Melder_throw (U"Cannot find voice variant code.");
+		Melder_throw (me, U": Cannot find voice code.");
 	}
 }
 
-void SpeechSynthesizer_initEspeak () {
-	int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, espeakINITIALIZE_PHONEME_EVENTS); // 4000 ms
-	if (fsamp == -1) {
-		Melder_throw (U"Internal espeak error.");
-	}
-}
-
-autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *voiceLanguageName, const char32 *voiceVariantName) {
+autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
-		(void) SpeechSynthesizer_getVoiceLanguageCodeFromName (me.get(), voiceLanguageName);
-		(void) SpeechSynthesizer_getVoiceVariantCodeFromName (me.get(), voiceVariantName);
-		my d_voiceLanguageName = Melder_dup (voiceLanguageName);
-		my d_voiceVariantName = Melder_dup (voiceVariantName);
+		my d_synthesizerVersion = Melder_dup(ESPEAK_NG_VERSION);
+		my d_languageName = Melder_dup (languageName);
+		(void) SpeechSynthesizer_getLanguageCode (me.get());  // existence check
+		my d_voiceName = Melder_dup (voiceName);
+		(void) SpeechSynthesizer_getVoiceCode (me.get());  // existence check
+		my d_phonemeSet = Melder_dup (languageName);
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
 		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
-		SpeechSynthesizer_initEspeak ();
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizer not created.");
 	}
 }
+
 
 void SpeechSynthesizer_setTextInputSettings (SpeechSynthesizer me, int inputTextFormat, int inputPhonemeCoding) {
 	my d_inputTextFormat = inputTextFormat;
@@ -575,68 +568,27 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 	}
 }
 
-static void espeakdata_SetVoiceByName (const char *name, const char *variantName)
+static void espeakdata_SetVoiceByName (const char32 *languageName, const char32 *voiceName)
 {
 	espeak_VOICE voice_selector;
 
 	memset (& voice_selector, 0, sizeof voice_selector);
-	voice_selector.name = Melder_peek32to8 (Melder_cat (Melder_peek8to32 (name), U"+", Melder_peek8to32 (variantName)));  // include variant name in voice stack ??
+	voice_selector.name = Melder_peek32to8 (Melder_cat (languageName, U"+", voiceName));  // include variant name in voice stack ??
 
-	if (LoadVoice (name, 1)) {
-		LoadVoice (variantName, 2);
+	if (LoadVoice (Melder_peek32to8 (languageName), 1)) {
+		LoadVoice (Melder_peek32to8 (voiceName), 2);
 		DoVoiceChange (voice);
-		SetVoiceStack (& voice_selector, variantName);
-	}
-}
-
-void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me) {
-	try {
-		struct espeakLanguagestruct { const char32 *oldName, *currentName; } names[] = {
-			{ U"Akan-test", nullptr}, 
-			{ U"Bulgarian-test", U"Bulgarian"}, 
-			{ U"Dari-test", nullptr}, 
-			{ U"Divehi-test", nullptr}, { U"Dutch-test", U"Dutch"}, 
-			{ U"French (Belgium)", U"French-Belgium"},
-			{ U"Georgian-test", U"Georgian"}, 
-			{ U"Haitian", nullptr},
-			{ U"Icelandic-test", U"Icelandic"}, { U"Indonesian-test", U"Indonesian"},
-			{ U"Irish-test", U"Irish-gaeilge"}, 
-			{ U"Kazakh", nullptr}, { U"Kinyarwanda-test", nullptr}, { U"Korean", U"Korean-test"}, 
-			{ U"Lancashire", nullptr},
-			{ U"Macedonian-test", U"Macedonian"}, { U"Maltese-test", nullptr},
-			{ U"Nahuatl - classical", U"Nahuatl-classical"}, { U"Nepali-test", U"Nepali"}, { U"Northern-sotho", nullptr},
-			{ U"Punjabi-test", U"Punjabi"},
-			{ U"Russian_test", U"Russian"}, // yes, underscore
-			{ U"Setswana-test", nullptr}, { U"Sinhala", U"Sinhala-test"},
-			{ U"Spanish-latin-american", U"Spanish-latin-am"}, { U"Tatar-test", nullptr},
-			{ U"Telugu", U"Telugu-test"}, 
-			{ U"Welsh-test", U"Welsh"}, { U"Wolof-test", nullptr},
-			{nullptr,nullptr}};
-		long index = 0;
-		while (const char32 *oldName = names [index]. oldName) {
-			if (Melder_equ (oldName, my d_voiceLanguageName)) {
-				if (names [index]. currentName) {
-					autostring32 newLabel = Melder_dup (names [index]. currentName);
-					Melder_free (my d_voiceLanguageName);
-					my d_voiceLanguageName = newLabel.transfer();
-					break;
-				} else {
-					Melder_throw (U"Language ", oldName, U" is not available any longer.");
-				}
-			}
-			++ index;
-		}
-	} catch (MelderError) {
-		Melder_throw (U"Cannot change language name.");
+		SetVoiceStack (& voice_selector, Melder_peek32to8 (voiceName));
 	}
 }
 
 autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, autoTextGrid *tg, autoTable *events) {
 	try {
-		int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, nullptr, // 5000ms
-			espeakINITIALIZE_PHONEME_EVENTS|espeakINITIALIZE_PHONEME_IPA);
-		if (fsamp == -1) {
-			Melder_throw (U"Internal espeak error.");
+		espeak_ng_InitializePath (nullptr); // PATH_ESPEAK_DATA
+		espeak_ng_ERROR_CONTEXT context = { 0 };
+		espeak_ng_STATUS status = espeak_ng_Initialize (& context);
+		if (status != ENS_OK) {
+			Melder_throw (U"Internal espeak error.", status);
 		}
 		int synth_flags = espeakCHARS_WCHAR;
 		if (my d_inputTextFormat == SpeechSynthesizer_INPUT_TAGGEDTEXT) {
@@ -650,30 +602,31 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 			option_phoneme_events |= espeakINITIALIZE_PHONEME_IPA;
 		}
 
-		espeak_SetParameter (espeakRATE, my d_wordsPerMinute, 0);
-		espeak_SetParameter (espeakPITCH, my d_pitchAdjustment, 0);
-		espeak_SetParameter (espeakRANGE, my d_pitchRange, 0);
-		const char32 *voiceLanguageCode = SpeechSynthesizer_getVoiceLanguageCodeFromName (me, my d_voiceLanguageName);
-		const char32 *voiceVariantCode = SpeechSynthesizer_getVoiceVariantCodeFromName (me, my d_voiceVariantName);
-		espeakdata_SetVoiceByName ((const char *) Melder_peek32to8 (voiceLanguageCode), 
-			(const char *) Melder_peek32to8 (voiceVariantCode));
-
-		espeak_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
-		espeak_SetParameter (espeakCAPITALS, 0, 0);
-		espeak_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
-
+		espeak_ng_SetParameter (espeakRATE, my d_wordsPerMinute, 0);
+		espeak_ng_SetParameter (espeakPITCH, my d_pitchAdjustment, 0);
+		espeak_ng_SetParameter (espeakRANGE, my d_pitchRange, 0);
+		const char32 *languageCode = SpeechSynthesizer_getLanguageCode (me);
+		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
+		
+		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
+		
+		//espeakdata_SetVoiceByName (languageCode, voiceCode);
+		espeak_ng_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
+		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
+		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
+		status =  espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
 
 		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
 
 		#ifdef _WIN32
                 wchar_t *textW = Melder_peek32toW (text);
-                espeak_Synth (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
+                espeak_ng_Synthesize (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#else
-                espeak_Synth (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
+                espeak_ng_Synthesize (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#endif
 				
-		espeak_Terminate ();
+		espeak_ng_Terminate ();
 		autoSound thee = buffer_to_Sound (my d_wav, my d_numberOfSamples, my d_internalSamplingFrequency);
 
 		if (my d_samplingFrequency != my d_internalSamplingFrequency) {

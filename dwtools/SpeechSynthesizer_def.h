@@ -44,7 +44,7 @@ oo_DEFINE_CLASS (SpeechSynthesizerVoice, Daata)
 	oo_INT_VECTOR_FROM (d_klattv, 0, 7)
 
 	// parameters used by Wavegen
-	oo_INTEGER (d_numberOfFormants)
+	oo_INTEGER (d_numberOfFormants) // < 8
 	oo_INT_VECTOR_FROM (d_freq, 0, d_numberOfFormants)		// 100% = 256
 	oo_INT_VECTOR_FROM (d_height, 0, d_numberOfFormants)	// 100% = 256
 	oo_INT_VECTOR_FROM (d_width, 0, d_numberOfFormants)		// 100% = 256
@@ -64,9 +64,22 @@ oo_END_CLASS (SpeechSynthesizerVoice)
 
 #define ooSTRUCT SpeechSynthesizer
 oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
+	oo_FROM (1)
+		oo_STRING (d_synthesizerVersion)
+	oo_ENDFROM
+
 	// sythesizers language /voice
-	oo_STRING (d_voiceLanguageName)
-	oo_STRING (d_voiceVariantName)
+	oo_STRING (d_languageName)
+	oo_STRING (d_voiceName)
+	oo_FROM (1)
+		oo_STRING (d_phonemeSet)
+	oo_ENDFROM
+	#if oo_READING
+		if (formatVersion < 1) {
+			d_phonemeSet = Melder_dup (d_languageName);
+			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
+		}
+	#endif
 	oo_INTEGER (d_wordsPerMinute)
 	// text-only, phonemes-only, mixed
 	oo_INT (d_inputTextFormat)
@@ -98,13 +111,8 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_INTEGER (d_wavCapacity)
 		oo_INT_VECTOR (d_wav, d_wavCapacity)
 	#endif
-	#if oo_READING
-		SpeechSynthesizer_initEspeak ();
-		SpeechSynthesizer_changeLanguageNameToCurrent (this);
-	#endif
 	#if oo_DECLARING
-		void v_info ()
-			override;
+		void v_info () override;
 	#endif
 
 oo_END_CLASS (SpeechSynthesizer)

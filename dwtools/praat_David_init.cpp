@@ -84,7 +84,7 @@
 #include "Eigen_and_TableOfReal.h"
 #include "Excitations.h"
 #include "espeakdata_FileInMemory.h"
-#include "FileInMemory.h"
+#include "FileInMemoryManager.h"
 #include "FilterBank.h"
 #include "Formula.h"
 #include "FormantGridEditor.h"
@@ -2447,10 +2447,179 @@ DO
 
 /************************* FileInMemorySet ***********************************/
 
+DIRECT (INFO_FileInMemorySet_getNumberOfFiles) {
+	NUMBER_ONE (FileInMemorySet)
+		integer result = my size;
+	NUMBER_ONE_END (U" (number of files)")
+}
+
+FORM (INFO_FileInMemorySet_hasDirectory, U"FileInMemorySet: Has directory?", nullptr) {
+	WORD (name, U"Name", U"aav")
+	OK
+DO
+	NUMBER_ONE (FileInMemorySet)
+		bool result = FileInMemorySet_hasDirectory (me, name);
+	NUMBER_ONE_END (U" (has directory?)")
+}
+
+
+
+/************************* FileInMemoryManager ***********************************/
+
+DIRECT (NEW1_FileInMemoryManager_create) {
+	CREATE_ONE
+		autoFileInMemoryManager result = Data_copy (espeak_ng_FileInMemoryManager.get());
+	CREATE_ONE_END (U"filesInMemory")
+}
+
+DIRECT (INFO_FileInMemoryManager_getNumberOfFiles) {
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = my files -> size;
+	NUMBER_ONE_END (U" (number of files)")
+}
+DIRECT (INFO_FileInMemoryManager_getNumberOfOpenFiles) {
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = my openFiles -> size;
+	NUMBER_ONE_END (U" (number of open files)")
+}
+
+FORM (INFO_FileInMemoryManager_hasDirectory, U"FileInMemoryManager: Has directory?", nullptr) {
+	WORD (name, U"Name", U"aav")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		bool result = FileInMemoryManager_hasDirectory (me, name);
+	NUMBER_ONE_END (U" (has directory?)")
+}
+
+FORM (NEW1_FileInMemoryManager_extractFiles, U"FileInMemoryManager: Extract files", nullptr) {
+	LABEL (U"Extract all files where the file name ")
+	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
+	SENTENCE (criterion, U"...the text", U"/voices/")
+	OK
+DO
+	CONVERT_EACH (FileInMemoryManager)
+		autoFileInMemorySet result = FileInMemoryManager_extractFiles (me, which, criterion);
+	CONVERT_EACH_END (my name)
+}
+
+FORM (NEW1_FileInMemoryManager_downto_Table, U"FileInMemoryManager: Down to Table", nullptr) {
+	BOOLEAN (openFilesOnly, U"Open files only?", false)
+	OK
+DO
+	CONVERT_EACH (FileInMemoryManager)
+		autoTable result = FileInMemoryManager_downto_Table (me, openFilesOnly);
+	CONVERT_EACH_END (my name)
+}
+
+FORM (INFO_FileInMemoryManager_fopen, U"FileInMemoryManager: Open file in memory", nullptr) {
+	SENTENCE (fileName, U"File name", U"/home/david/projects/espeak-ng/espeak-ng-data/lang/aav/vi")
+	WORD (mode, U"Mode", U"r")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		FILE *stream = FileInMemoryManager_fopen (me, Melder_peek32to8 (fileName), Melder_peek32to8 (mode));
+		integer result = stream ? reinterpret_cast<integer> (stream) : 0;
+	NUMBER_ONE_END (U" (index in set)")
+}
+
+FORM (INFO_FileInMemoryManager_fclose, U"FileInMemoryManager: Close file in memory", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = FileInMemoryManager_fclose (me, (reinterpret_cast<FILE *> (index)));
+	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_FileInMemoryManager_fgets, U"FileInMemoryManager: fgets", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	NATURAL (numberOfCharacters, U"Number of characters", U"10")
+	OK
+DO
+	STRING_ONE (FileInMemoryManager)
+		autoNUMvector<char> str (0L, numberOfCharacters);  
+		char *str2 = FileInMemoryManager_fgets (me, & str [0], numberOfCharacters, reinterpret_cast<FILE *> (index));
+		char32 *result = Melder_peek8to32 (& str2 [0]);
+	STRING_ONE_END
+}
+
+FORM (INFO_FileInMemoryManager_fgetc, U"FileInMemoryManager: fgetc", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = FileInMemoryManager_fgetc (me, reinterpret_cast<FILE *> (index));
+	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_FileInMemoryManager_ungetc, U"FileInMemoryManager: ungetc", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	INTEGER (character, U"Character (int)", U"40")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = FileInMemoryManager_ungetc (me, character, reinterpret_cast<FILE *> (index));
+	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_FileInMemoryManager_fprintf, U"FileInMemoryManager: fprintf (stderr, ...)", nullptr) {
+	INTEGER (number, U"Integer", U"10")
+	SENTENCE (string, U"String", U"a bcd")
+	OK
+DO
+	INFO_ONE (FileInMemoryManager)
+		MelderInfo_open();
+		const char *format1 ="number and string: \"%ld %s\"";
+		FileInMemoryManager_fprintf (me, stderr, format1, number, Melder_peek32to8 (string));
+		const char *format2 ="number: \"%ld\"";
+		FileInMemoryManager_fprintf (me, stderr, format2, number);
+		MelderInfo_close();
+	INFO_ONE_END
+}
+
+FORM (INFO_FileInMemoryManager_fread, U"FileInMemoryManager: fread", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	NATURAL (elementSize, U"Element size (bytes)", U"1")
+	NATURAL (numberOfElements, U"Number of elements", U"1")
+	OK
+DO
+	STRING_ONE (FileInMemoryManager)
+		integer numberOfBytes = elementSize * numberOfElements;
+		autoNUMvector<char> str (0L, numberOfBytes);  
+		size_t numberRead = FileInMemoryManager_fread (me, & str [0], elementSize, numberOfElements, reinterpret_cast<FILE *> (index));
+		str [numberRead * elementSize] ='\0';
+		char32 *result = Melder_peek8to32 (& str [0]);
+	STRING_ONE_END
+}
+
+FORM (INFO_FileInMemoryManager_fseek, U"FileInMemoryManager: fseek", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	INTEGER (offset, U"Offset (bytes)", U"1")
+	OPTIONMENU (origin, U"Reference position", 1)
+		OPTION (U"Start")
+		OPTION (U"Current")
+		OPTION (U"End")
+	OK
+DO
+	NUMBER_ONE (FileInMemoryManager)
+		integer result = FileInMemoryManager_fseek (me, (reinterpret_cast<FILE *> (index)), offset, origin == 1 ? SEEK_SET : origin == 2 ? SEEK_CUR : SEEK_END);
+	NUMBER_ONE_END (U"")
+}
+
+FORM (INFO_FileInMemoryManager_rewind, U"FileInMemoryManager_rewind", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	OK
+DO
+	MODIFY_EACH (FileInMemoryManager)
+		FileInMemoryManager_rewind (me, reinterpret_cast<FILE *> (index));
+	MODIFY_EACH_END 	
+}
+
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (name, U"Name", U"list")
-	TEXTFIELD (directory, U"Directory:", U"/home/david/praat/src/espeak-work/espeak-1.46.13/espeak-data")
-	WORD (fileGlobber, U"Only files that match pattern", U"*.txt")
+	TEXTFIELD (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
+	WORD (fileGlobber, U"Only files that match pattern", U"*")
 	OK
 DO
 	CREATE_ONE
@@ -2458,46 +2627,15 @@ DO
 	CREATE_ONE_END (name)
 }
 
-FORM (NEW_FileInMemorySet_createCopyFromFileInMemorySet, U"", nullptr) {
-	OPTIONMENU (whichFile, U"Espeakdata", 5)
-		OPTION (U"phons")
-		OPTION (U"dicts")
-		OPTION (U"voices")
-		OPTION (U"variants")
-		OPTION (U"voices_names")
-		OPTION (U"variants_names")
+FORM (NEW1_FileInMemorySet_extractFiles, U"FileInMemorySet: Extract files", nullptr) {
+	LABEL (U"Extract all files where the file name ")
+	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
+	SENTENCE (criterion, U"...the text", U"/voices/")	
 	OK
 DO
-	CREATE_ONE
-		autoDaata result;
-		const char32 *name;
-		if (whichFile == 1) {
-			result = Data_copy (espeakdata_phons.get());
-			name = U"espeakdata_phons";
-		}
-		else if (whichFile == 2) {
-			result = Data_copy (espeakdata_dicts.get());
-			name = U"espeakdata_dicts";
-		}
-		else if (whichFile == 3) {
-			result = Data_copy (espeakdata_voices.get());
-			name = U"espeakdata_voices";
-		}
-		else if (whichFile == 4) {
-			result = Data_copy (espeakdata_variants.get());
-			name = U"espeakdata_variants";
-		}
-		else if (whichFile == 5) {
-			result = Data_copy (espeakdata_voices_names.get());
-			name = U"espeakdata_voices_names";
-		}
-		else if (whichFile == 6) {
-			result = Data_copy (espeakdata_variants_names.get());
-			name =  U"espeakdata_variants_names";
-		} else {
-			name = U"";
-		}
-	CREATE_ONE_END (name)
+	CONVERT_EACH (FileInMemorySet)
+		autoFileInMemorySet result = FileInMemorySet_extractFiles (me, which, criterion);
+	CONVERT_EACH_END (my name)
 }
 
 FORM (INFO_FileInMemorySet_showAsCode, U"FileInMemorySet: Show as code", nullptr) {
@@ -2525,15 +2663,11 @@ DO
 	INFO_ONE_END
 }
 
-DIRECT (NEW1_FileInMemory_to_FileInMemorySet) {
-	autoFileInMemorySet thee = FileInMemorySet_create ();
-	LOOP {
-		iam (FileInMemory);
-		autoFileInMemory him = Data_copy (me);
-		thy addItem_move (him.move());
-	}
-	praat_new (thee.move(), U"files");
-END }
+DIRECT (NEW1_FilesInMemory_to_FileInMemorySet) {
+	CONVERT_LIST (FileInMemory)
+		autoFileInMemorySet result = FilesInMemory_to_FileInMemorySet (list);
+	CONVERT_LIST_END (U"merged");
+}
 
 DIRECT (MODIFY_FileInMemorySet_addItems) {
 	MODIFY_FIRST_OF_TWO (FileInMemorySet, FileInMemory)
@@ -2543,10 +2677,9 @@ DIRECT (MODIFY_FileInMemorySet_addItems) {
 }
 
 DIRECT (NEW1_FileInMemorySets_merge) {
-	CONVERT_COUPLE (FileInMemorySet)
-		autoFileInMemorySet result = Data_copy (me);
-		result -> merge (you);
-	CONVERT_COUPLE_END (my name, U"_", your name);
+	CONVERT_LIST (FileInMemorySet)
+		autoFileInMemorySet result = FileInMemorySets_merge (list);
+	CONVERT_LIST_END (U"merge");
 }
 
 DIRECT (NEW_FileInMemorySet_to_Strings_id) {
@@ -5638,25 +5771,55 @@ DIRECT (HELP_SpeechSynthesizer_help) {
 	HELP (U"SpeechSynthesizer")
 }
 
-FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	/* 
-	 * In the speech synthesis world a language variant is called a "voice", we use the same terminology 
-	 * in our coding. However for the user interface we use "language" instead of "voice".
-	 */
-	static long prefLanguage = Strings_findString (espeakdata_voices_names.get(), U"English");
-	if (prefLanguage == 0) {
-		prefLanguage = 1;
-	}
-	// LIST does not scroll to the line with "prefLanguage"
-	LIST (languageIndex, U"Language", espeakdata_voices_names -> numberOfStrings, (const char32 **) espeakdata_voices_names -> strings, prefLanguage)
-	static long prefVoiceVariant = Strings_findString (espeakdata_variants_names.get(), U"default");
-	LIST (voiceVariantIndex, U"Voice variant", espeakdata_variants_names -> numberOfStrings,
-		(const char32 **) espeakdata_variants_names -> strings, prefVoiceVariant)
+FORM (NEW1_ExtractEspeakData, U"SpeechSynthesizer: Extract espeak data", nullptr) {
+	OPTIONMENU (which, U"Data", 1)
+		OPTION (U"Language properties")
+		OPTION (U"Voices properties")
 	OK
 DO
 	CREATE_ONE
-		autoSpeechSynthesizer result = SpeechSynthesizer_create (espeakdata_voices_names -> strings[languageIndex], espeakdata_variants_names -> strings[voiceVariantIndex]);
-    CREATE_ONE_END (espeakdata_voices_names -> strings[languageIndex], U"_", espeakdata_variants_names -> strings[voiceVariantIndex])
+		autoTable result;
+		const char32 *name = U"languages";
+		if (which == 1) {
+			result = Data_copy (espeakdata_languages_propertiesTable.get());
+		} else if (which == 2) {
+			result = Data_copy (espeakdata_voices_propertiesTable.get());
+			name = U"voices";
+		}
+	CREATE_ONE_END (name)
+}
+
+FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
+	OPTIONMENU (languageIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+	for (long i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
+			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
+	}
+	OPTIONMENU (voiceIndex, U"Voice variant", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
+	for (long i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
+		OPTION ((const char32 *) espeakdata_voices_names -> strings [i]);
+	}
+	OK
+DO
+	CREATE_ONE
+		autoSpeechSynthesizer result = SpeechSynthesizer_create (espeakdata_languages_names -> strings [languageIndex], espeakdata_voices_names -> strings [voiceIndex]);
+    CREATE_ONE_END (espeakdata_languages_names -> strings [languageIndex], U"_", espeakdata_voices_names -> strings [voiceIndex])
+}
+
+FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
+	static long prefPhonemeSet = Strings_findString (espeakdata_languages_names.get(), U"English (Great Brittain)");
+	if (prefPhonemeSet == 0) {
+		prefPhonemeSet = 1;
+	}
+	LIST (phonemeIndex, U"Phoneme set", espeakdata_languages_names -> numberOfStrings, (const char32 **) espeakdata_languages_names -> strings, prefPhonemeSet)
+	OK
+	//FIND_ONE (SpeechSynthesizer)
+	//	static long phonemeIndexCurrent = Strings_findString (espeakdata_languages_names.get(), my d_phonemeSet);
+	//	SET_LIST (phonemeIndex, phonemeIndexCurrent)
+DO
+	MODIFY_EACH (SpeechSynthesizer)
+		Melder_free (my d_phonemeSet);
+		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phonemeIndex]);
+	MODIFY_EACH_END
 }
 
 FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"SpeechSynthesizer: Play text...") {
@@ -5687,15 +5850,15 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
-DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
+DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_voiceLanguageName;
+		const char32 *result = my d_languageName;
 	STRING_ONE_END
 }
 
-DIRECT (INFO_SpeechSynthesizer_getVoiceVariant) {
+DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_voiceVariantName;
+		const char32 *result = my d_voiceName;
 	STRING_ONE_END
 }
 
@@ -7330,7 +7493,7 @@ void praat_uvafon_David_init () {
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
 		classEigen, classExcitationList, classEditCostsTable, classEditDistanceTable,
-		classFileInMemory, classFileInMemorySet, classFormantFilter,
+		classFileInMemory, classFileInMemorySet, classFileInMemoryManager, classFormantFilter,
 		classIndex, classKlattTable,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMelSpectrogram, classMSpline, classPatternList, classPCA, classPolynomial, classRoots,
@@ -7387,11 +7550,12 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_DEPRECATED_2016, NEW1_Polygon_createFromRandomPoints);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random points)...", nullptr, praat_HIDDEN, NEW1_Polygon_createFromRandomPoints);
-	praat_addMenuCommand (U"Objects", U"New", U"FileInMemory", nullptr, praat_HIDDEN, nullptr);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, READ1_FileInMemory_create);
-		//praat_addMenuCommand (U"Objects", U"New", U"Create copy from FilesInMemory...", nullptr, praat_DEPTH_1 + praat_HIDDEN, DO_FileInMemorySet_createCopyFromFileInMemorySet);
-		praat_addMenuCommand (U"Objects", U"New", U"Create copy from FileInMemorySet...", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW_FileInMemorySet_createCopyFromFileInMemorySet);
-		praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_DEPTH_1 + praat_HIDDEN, NEW_FileInMemorySet_createFromDirectoryContents);
+	praat_addMenuCommand (U"Objects", U"New", U"FileInMemoryManager -", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemoryManager", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_FileInMemoryManager_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_HIDDEN + praat_DEPTH_1, READ1_FileInMemory_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_FileInMemorySet_createFromDirectoryContents);
+	praat_addMenuCommand (U"Objects", U"New", U"Extract espeak data...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_ExtractEspeakData);	
+
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, READ1_Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, READ1_Sound_readFromRawFileBE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read KlattTable from raw text file...", U"Read Matrix from raw text file...", praat_HIDDEN, READ1_KlattTable_readFromRawTextFile);
@@ -7737,16 +7901,42 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFileInMemory, 1, U"Show as code...", nullptr, 0, INFO_FileInMemory_showAsCode);
 	praat_addAction1 (classFileInMemory, 1, U"Set id...", nullptr, 0, MODIFY_FileInMemory_setId);
-	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, NEW1_FileInMemory_to_FileInMemorySet);
-	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_DEPRECATED_2015, NEW1_FileInMemory_to_FileInMemorySet);
+	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, NEW1_FilesInMemory_to_FileInMemorySet);
+	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_DEPRECATED_2015, NEW1_FilesInMemory_to_FileInMemorySet);
 
+	praat_addAction1 (classFileInMemorySet, 1, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1, INFO_FileInMemorySet_getNumberOfFiles);
+	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1, INFO_FileInMemorySet_hasDirectory);
+	
 	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, INFO_FileInMemorySet_showAsCode);
 	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, INFO_FileInMemorySet_showOneFileAsCode);
-	praat_addAction1 (classFileInMemorySet, 2, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
+	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
 	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, NEW_FileInMemorySet_to_Strings_id);
+	praat_addAction1 (classFileInMemorySet, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemorySet_extractFiles);
+	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0, MODIFY_FileInMemorySet_addItems);
 
-	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to Collection", nullptr, 0, MODIFY_FileInMemorySet_addItems);
+	
+	praat_addAction1 (classFileInMemoryManager, 1, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfFiles);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfOpenFiles);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get characters (fgets)...", nullptr, 1, INFO_FileInMemoryManager_fgets);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get character (fgetc)...", nullptr, 1, INFO_FileInMemoryManager_fgetc);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Get elements (fread)...", nullptr, 1, INFO_FileInMemoryManager_fread);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Has directory?", nullptr, 1, INFO_FileInMemoryManager_hasDirectory);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Modify -", nullptr, 0, nullptr);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Open file (fopen)...", nullptr, 1, INFO_FileInMemoryManager_fopen);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Close file (fclose)...", nullptr, 1, INFO_FileInMemoryManager_fclose);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Reposition (fseek)...", nullptr, 1, INFO_FileInMemoryManager_fseek);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Rewind file (rewind)...", nullptr, 1, INFO_FileInMemoryManager_rewind);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Push back character (ungetc)...", nullptr, 1, INFO_FileInMemoryManager_ungetc);
+	praat_addAction1 (classFileInMemoryManager, 1, U"Write to file stderr (fprintf)...", nullptr, 1, INFO_FileInMemoryManager_fprintf);
 
+	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemoryManager_extractFiles);
+	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0, NEW1_FileInMemoryManager_downto_Table);
+	
+	
+	
+	
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, praat_DEPRECATED_2015, HELP_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
 	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawSpectrum);
@@ -8040,12 +8230,16 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSpeechSynthesizer, 0, U"Play text...", nullptr, 0, PLAY_SpeechSynthesizer_playText);
 	praat_addAction1 (classSpeechSynthesizer, 0, U"To Sound...", nullptr, 0, NEWMANY_SpeechSynthesizer_to_Sound);
 	praat_addAction1 (classSpeechSynthesizer, 0, QUERY_BUTTON, nullptr, 0, 0);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get language name", nullptr, 1, INFO_SpeechSynthesizer_getLanguageName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1, INFO_SpeechSynthesizer_getVoiceName);
-		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, 1, INFO_SpeechSynthesizer_getVoiceVariant);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, praat_DEPRECATED_2017, INFO_SpeechSynthesizer_getVoiceName);
 	praat_addAction1 (classSpeechSynthesizer, 0, MODIFY_BUTTON, nullptr, 0, 0);
+	praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, 1, MODIFY_SpeechSynthesizer_modifyPhonemeSet);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setTextInputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
+		
 	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0, NEW1_SpeechSynthesizer_and_TextGrid_to_Sound);
+	
 
 	praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align)...", nullptr, 0, NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align);
     praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align,trim)...", nullptr, 0, NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align2);

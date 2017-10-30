@@ -1,23 +1,127 @@
-/***************************************************************************
- *   Copyright (C) 2005 to 2010 by Jonathan Duddington                     *
- *   email: jonsd@users.sourceforge.net                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, see:                                 *
- *               <http://www.gnu.org/licenses/>.                           *
- ***************************************************************************/
+/*
+ * Copyright (C) 2005 to 2010 by Jonathan Duddington
+ * email: jonsd@users.sourceforge.net
+ * Copyright (C) 2015-2017 Reece H. Dunn
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see: <http://www.gnu.org/licenses/>.
+ */
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
+// See docs/phonemes.md for the list of supported features.
+typedef enum {
+#	define FEATURE_T(a, b, c) ((a << 16) | (b << 8) | (c))
+	// invalid phoneme feature name
+	inv = 0,
+	// manner of articulation
+	nas = FEATURE_T('n', 'a', 's'),
+	stp = FEATURE_T('s', 't', 'p'),
+	afr = FEATURE_T('a', 'f', 'r'),
+	frc = FEATURE_T('f', 'r', 'c'),
+	flp = FEATURE_T('f', 'l', 'p'),
+	trl = FEATURE_T('t', 'r', 'l'),
+	apr = FEATURE_T('a', 'p', 'r'),
+	clk = FEATURE_T('c', 'l', 'k'),
+	ejc = FEATURE_T('e', 'j', 'c'),
+	imp = FEATURE_T('i', 'm', 'p'),
+	vwl = FEATURE_T('v', 'w', 'l'),
+	lat = FEATURE_T('l', 'a', 't'),
+	sib = FEATURE_T('s', 'i', 'b'),
+	// place of articulation
+	blb = FEATURE_T('b', 'l', 'b'),
+	lbd = FEATURE_T('l', 'b', 'd'),
+	bld = FEATURE_T('b', 'l', 'd'),
+	dnt = FEATURE_T('d', 'n', 't'),
+	alv = FEATURE_T('a', 'l', 'v'),
+	pla = FEATURE_T('p', 'l', 'a'),
+	rfx = FEATURE_T('r', 'f', 'x'),
+	alp = FEATURE_T('a', 'l', 'p'),
+	pal = FEATURE_T('p', 'a', 'l'),
+	vel = FEATURE_T('v', 'e', 'l'),
+	lbv = FEATURE_T('l', 'b', 'v'),
+	uvl = FEATURE_T('u', 'v', 'l'),
+	phr = FEATURE_T('p', 'h', 'r'),
+	glt = FEATURE_T('g', 'l', 't'),
+	// voice
+	vcd = FEATURE_T('v', 'c', 'd'),
+	vls = FEATURE_T('v', 'l', 's'),
+	// vowel height
+	hgh = FEATURE_T('h', 'g', 'h'),
+	smh = FEATURE_T('s', 'm', 'h'),
+	umd = FEATURE_T('u', 'm', 'd'),
+	mid = FEATURE_T('m', 'i', 'd'),
+	lmd = FEATURE_T('l', 'm', 'd'),
+	sml = FEATURE_T('s', 'm', 'l'),
+	low = FEATURE_T('l', 'o', 'w'),
+	// vowel backness
+	fnt = FEATURE_T('f', 'n', 't'),
+	cnt = FEATURE_T('c', 'n', 't'),
+	bck = FEATURE_T('b', 'c', 'k'),
+	// rounding
+	unr = FEATURE_T('u', 'n', 'r'),
+	rnd = FEATURE_T('r', 'n', 'd'),
+	// articulation
+	lgl = FEATURE_T('l', 'g', 'l'),
+	idt = FEATURE_T('i', 'd', 't'),
+	apc = FEATURE_T('a', 'p', 'c'),
+	lmn = FEATURE_T('l', 'm', 'n'),
+	// air flow
+	egs = FEATURE_T('e', 'g', 's'),
+	igs = FEATURE_T('i', 'g', 's'),
+	// phonation
+	brv = FEATURE_T('b', 'r', 'v'),
+	slv = FEATURE_T('s', 'l', 'v'),
+	stv = FEATURE_T('s', 't', 'v'),
+	crv = FEATURE_T('c', 'r', 'v'),
+	glc = FEATURE_T('g', 'l', 'c'),
+	// rounding and labialization
+	ptr = FEATURE_T('p', 't', 'r'),
+	cmp = FEATURE_T('c', 'm', 'p'),
+	mrd = FEATURE_T('m', 'r', 'd'),
+	lrd = FEATURE_T('l', 'r', 'd'),
+	// syllabicity
+	syl = FEATURE_T('s', 'y', 'l'),
+	nsy = FEATURE_T('n', 's', 'y'),
+	// consonant release
+	asp = FEATURE_T('a', 's', 'p'),
+	nrs = FEATURE_T('n', 'r', 's'),
+	lrs = FEATURE_T('l', 'r', 's'),
+	unx = FEATURE_T('u', 'n', 'x'),
+	// coarticulation
+	pzd = FEATURE_T('p', 'z', 'd'),
+	vzd = FEATURE_T('v', 'z', 'd'),
+	fzd = FEATURE_T('f', 'z', 'd'),
+	nzd = FEATURE_T('n', 'z', 'd'),
+	rzd = FEATURE_T('r', 'z', 'd'),
+	// tongue root
+	atr = FEATURE_T('a', 't', 'r'),
+	rtr = FEATURE_T('r', 't', 'r'),
+	// fortis and lenis
+	fts = FEATURE_T('f', 't', 's'),
+	lns = FEATURE_T('l', 'n', 's'),
+	// length
+	est = FEATURE_T('e', 's', 't'),
+	hlg = FEATURE_T('h', 'l', 'g'),
+	lng = FEATURE_T('l', 'n', 'g'),
+	elg = FEATURE_T('e', 'l', 'g'),
+#	undef FEATURE_T
+} phoneme_feature_t;
+
+phoneme_feature_t phoneme_feature_from_string(const char *feature);
 
 // phoneme types
 #define phPAUSE   0
@@ -33,33 +137,58 @@
 #define phDELETED 14
 #define phINVALID 15
 
+// places of articulation (phARTICULATION)
+#define phPLACE_BILABIAL 1
+#define phPLACE_LABIODENTAL 2
+#define phPLACE_DENTAL 3
+#define phPLACE_ALVEOLAR 4
+#define phPLACE_RETROFLEX 5
+#define phPLACE_PALATO_ALVEOLAR 6
+#define phPLACE_PALATAL 7
+#define phPLACE_VELAR 8
+#define phPLACE_LABIO_VELAR 9
+#define phPLACE_UVULAR 10
+#define phPLACE_PHARYNGEAL 11
+#define phPLACE_GLOTTAL 12
+
+// phflags
+#define phFLAGBIT_UNSTRESSED 1
+#define phFLAGBIT_VOICELESS 3
+#define phFLAGBIT_VOICED 4
+#define phFLAGBIT_SIBILANT 5
+#define phFLAGBIT_NOLINK 6
+#define phFLAGBIT_TRILL 7
+#define phFLAGBIT_PALATAL 9
+#define phFLAGBIT_BRKAFTER 14 // [*] add a post-pause
+#define phARTICULATION 0xf0000 // bits 16-19
+#define phFLAGBIT_NONSYLLABIC 20 // don't count this vowel as a syllable when finding the stress position
+#define phFLAGBIT_LONG 21
+#define phFLAGBIT_LENGTHENSTOP 22 // make the pre-pause slightly longer
+#define phFLAGBIT_RHOTIC 23
+#define phFLAGBIT_NOPAUSE 24
+#define phFLAGBIT_PREVOICE 25 // for voiced stops
+#define phFLAGBIT_FLAG1 28
+#define phFLAGBIT_FLAG2 29
+#define phFLAGBIT_LOCAL 31 // used during compilation
 
 // phoneme properties
-//   bits 16-19 give place of articulation
-#define phARTICULATION 0xf0000
-#define phWAVE     0x01
-#define phUNSTRESSED 0x02
-#define phFORTIS   0x08
-#define phVOICED   0x10
-#define phSIBILANT 0x20
-#define phNOLINK   0x40
-#define phTRILL    0x80
-#define phVOWEL2   0x100   // liquid that is considered a vowel
-#define phPALATAL  0x200
-#define phSINGLE_INSTN  0x1000    // this phoneme has a single instruction program, with an implicit Return
-#define phBRKAFTER 0x4000  // [*] add a post-pause
-
-#define phNONSYLLABIC  0x100000   // don't count this vowel as a syllable when finding the stress position
-#define phLONG         0x200000
-#define phLENGTHENSTOP 0x400000  // make the pre-pause slightly longer
-#define phRHOTIC       0x800000  // bit 23
-#define phNOPAUSE     0x1000000
-#define phPREVOICE    0x2000000  // for voiced stops
-
-#define phFLAG1      0x10000000
-#define phFLAG2      0x20000000
-#define phFLAG3      0x40000000
-#define phLOCAL      0x80000000  // used during compilation
+#define phUNSTRESSED   (1 << phFLAGBIT_UNSTRESSED)
+#define phVOICELESS    (1 << phFLAGBIT_VOICELESS)
+#define phVOICED       (1 << phFLAGBIT_VOICED)
+#define phSIBILANT     (1 << phFLAGBIT_SIBILANT)
+#define phNOLINK       (1 << phFLAGBIT_NOLINK)
+#define phTRILL        (1 << phFLAGBIT_TRILL)
+#define phPALATAL      (1 << phFLAGBIT_PALATAL)
+#define phBRKAFTER     (1 << phFLAGBIT_BRKAFTER)
+#define phNONSYLLABIC  (1 << phFLAGBIT_NONSYLLABIC)
+#define phLONG         (1 << phFLAGBIT_LONG)
+#define phLENGTHENSTOP (1 << phFLAGBIT_LENGTHENSTOP)
+#define phRHOTIC       (1 << phFLAGBIT_RHOTIC)
+#define phNOPAUSE      (1 << phFLAGBIT_NOPAUSE)
+#define phPREVOICE     (1 << phFLAGBIT_PREVOICE)
+#define phFLAG1        (1 << phFLAGBIT_FLAG1)
+#define phFLAG2        (1 << phFLAGBIT_FLAG2)
+#define phLOCAL        (1 << phFLAGBIT_LOCAL)
 
 // fixed phoneme code numbers, these can be used from the program code
 #define phonCONTROL     1
@@ -92,31 +221,27 @@
 
 extern const unsigned char pause_phonemes[8];  // 0, vshort, short, pause, long, glottalstop
 
-// place of articulation
-#define phPLACE        0xf0000
-#define phPLACE_blb    0x10000
-#define phPLACE_pla    0x60000
-
-#define N_PHONEME_TABS     100     // number of phoneme tables
+#define N_PHONEME_TABS     150     // number of phoneme tables
 #define N_PHONEME_TAB      256     // max phonemes in a phoneme table
 #define N_PHONEME_TAB_NAME  32     // must be multiple of 4
 
 // main table of phonemes, index by phoneme number (1-254)
 
 typedef struct {
-	unsigned int  mnemonic;      // Up to 4 characters.  The first char is in the l.s.byte
-	unsigned int  phflags;       // bits 16-19 place of articulation
+	unsigned int mnemonic;       // Up to 4 characters.  The first char is in the l.s.byte
+	unsigned int phflags;        // bits 16-19 place of articulation
 	unsigned short program;      // index into phondata file
-	unsigned char  code;         // the phoneme number
-	unsigned char  type;         // phVOWEL, phPAUSE, phSTOP etc
-	unsigned char  start_type;
-	unsigned char  end_type;
-	unsigned char  std_length;   // for vowels, in mS/2;  for phSTRESS phonemes, this is the stress/tone type
-	unsigned char  length_mod;   // a length_mod group number, used to access length_mod_tab
-
+	unsigned char code;          // the phoneme number
+	unsigned char type;          // phVOWEL, phPAUSE, phSTOP etc
+	unsigned char start_type;
+	unsigned char end_type;      // vowels: endtype; consonant: voicing switch
+	unsigned char std_length;    // for vowels, in mS/2;  for phSTRESS phonemes, this is the stress/tone type
+	unsigned char length_mod;    // a length_mod group number, used to access length_mod_tab
 } PHONEME_TAB;
 
-
+espeak_ng_STATUS
+phoneme_add_feature(PHONEME_TAB *phoneme,
+                    phoneme_feature_t feature);
 
 // Several phoneme tables may be loaded into memory. phoneme_tab points to
 // one for the current voice
@@ -130,10 +255,7 @@ typedef struct {
 	PHONEME_TAB *phoneme_tab_ptr;
 	int n_phonemes;
 	int includes;            // also include the phonemes from this other phoneme table
-	int equivalence_tables;   // lists of equivalent phonemes to match other languages, byte index into phondata
 } PHONEME_TAB_LIST;
-
-
 
 // table of phonemes to be replaced with different phonemes, for the current voice
 #define N_REPLACE_PHONEMES   60
@@ -146,18 +268,15 @@ typedef struct {
 extern int n_replace_phonemes;
 extern REPLACE_PHONEMES replace_phonemes[N_REPLACE_PHONEMES];
 
-
 // Table of phoneme programs and lengths.  Used by MakeVowelLists
 typedef struct {
 	unsigned int addr;
 	unsigned int length;
 } PHONEME_PROG_LOG;
 
-
-
-#define PH(c1,c2)  (c2<<8)+c1          // combine two characters into an integer for phoneme name
-#define PH3(c1,c2,c3) (c3<<16)+(c2<<8)+c1
-#define PhonemeCode2(c1,c2)  PhonemeCode((c2<<8)+c1)
+#define PH(c1, c2) (c2<<8)+c1          // combine two characters into an integer for phoneme name
+#define PH3(c1, c2, c3) (c3<<16)+(c2<<8)+c1
+#define PhonemeCode2(c1, c2) PhonemeCode((c2<<8)+c1)
 int LookupPhonemeString(const char *string);
 int PhonemeCode(unsigned int mnem);
 
@@ -168,3 +287,7 @@ extern const char *WordToString(unsigned int word);
 
 extern PHONEME_TAB_LIST phoneme_tab_list[N_PHONEME_TABS];
 extern int phoneme_tab_number;
+
+#ifdef __cplusplus
+}
+#endif
