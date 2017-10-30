@@ -679,7 +679,7 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Alignment settings", nullptr)
-		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English"))
+		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 		for (long i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
 			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
 		}
@@ -688,7 +688,7 @@ static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 		BOOLEAN (allowSilences,   U"Allow silences",   my default_align_allowSilences ())
 	EDITOR_OK
 		int prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), my p_align_language);
-		if (prefVoice == 0) prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English");
+		if (prefVoice == 0) prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
 		SET_OPTION (language, prefVoice)
 		SET_BOOLEAN (includeWords, my p_align_includeWords)
 		SET_BOOLEAN (includePhonemes, my p_align_includePhonemes)
