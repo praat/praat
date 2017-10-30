@@ -5790,7 +5790,7 @@ DO
 }
 
 FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	OPTIONMENU (languageIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Brittain)"))
+	OPTIONMENU (languageIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 	for (long i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
 			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
 	}
