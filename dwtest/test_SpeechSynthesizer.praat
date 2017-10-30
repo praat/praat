@@ -27,7 +27,7 @@ for ilang to numberOfLanguages
 	endfor
 	appendInfo: newline$
 endfor
-appendInfoLine: tab$, numberOfLanguages, " voices, ", numberOfSounds, " sounds created/removed"
+appendInfoLine: tab$, numberOfLanguages, " languages, ", numberOfSounds, " sounds created/removed"
 appendInfoLine: tab$, "Writing and reading..."
 ss = Create SpeechSynthesizer: language$, voice$
 Save as text file: "kanweg.SpeechSynthesizer"
