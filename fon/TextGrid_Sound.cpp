@@ -156,7 +156,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 			anySound -> classInfo == classLongSound ? 
 				LongSound_extractPart (static_cast <LongSound> (anySound), interval -> xmin, interval -> xmax, true) :
 				Sound_extractPart (static_cast <Sound> (anySound), interval -> xmin, interval -> xmax, kSound_windowShape::RECTANGULAR, 1.0, true);
-		autoSpeechSynthesizer synthesizer = SpeechSynthesizer_create (languageName, U"default");
+		autoSpeechSynthesizer synthesizer = SpeechSynthesizer_create (languageName, U"Female1");
 		synthesizer -> d_samplingFrequency = round (
 			anySound -> classInfo == classLongSound ?
 				static_cast <LongSound> (anySound) -> sampleRate :
