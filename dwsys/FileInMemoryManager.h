@@ -23,32 +23,19 @@
 #include "Strings_.h"
 #include "Table.h"
 
-/*
-Collection_define (SortedSetOfLong, SortedSetOf, SimpleLong) {
-	static int s_compareHook (SimpleLong me, SimpleLong thee) {
-		if (my number < thy number) return -1;
-		if (my number > thy number) return +1;
-		return 0;
-	}
-	CompareHook v_getCompareHook ()
-		override { return s_compareHook; }
-};*/
-
 #include "FileInMemoryManager_def.h"
 
 autoFileInMemoryManager FileInMemoryManager_create (FileInMemorySet files);
 
 autoFileInMemory FileInMemoryManager_createFile (FileInMemoryManager me, MelderFile file);
 
+/* Generates the set with ownership */
 autoFileInMemorySet FileInMemoryManager_extractFiles (FileInMemoryManager me, kMelder_string which, const char32 *criterion);
-
-autoFileInMemorySet FileInMemoryManager_listFiles (FileInMemoryManager me, kMelder_string which, const char32 *criterion);
 
 autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly);
 
 /*
-	File open and read emulations. The FILE * is internally used as an pointer to the index of the file in the Set.
-	List of open files has to contain per file: index, position, length (bytes), pointer to data
+	File open and read emulations. The FILE * is internally used as an index of the file in the Set.
 */
 
 bool FileInMemoryManager_hasDirectory (FileInMemoryManager me, const char32 *name);
