@@ -5806,19 +5806,21 @@ DO
 }
 
 FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
-	static long prefPhonemeSet = Strings_findString (espeakdata_languages_names.get(), U"English (Great Brittain)");
-	if (prefPhonemeSet == 0) {
-		prefPhonemeSet = 1;
+	OPTIONMENU (phoneneSetIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+	for (long i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
+			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
 	}
-	LIST (phonemeIndex, U"Phoneme set", espeakdata_languages_names -> numberOfStrings, (const char32 **) espeakdata_languages_names -> strings, prefPhonemeSet)
 	OK
-	//FIND_ONE (SpeechSynthesizer)
-	//	static long phonemeIndexCurrent = Strings_findString (espeakdata_languages_names.get(), my d_phonemeSet);
-	//	SET_LIST (phonemeIndex, phonemeIndexCurrent)
+/*	Does not work because me is not defined here.
+	int prefPhonemeSet = (int) Strings_findString (espeakdata_languages_names.get(), my d_phonemeSet);
+	if (prefPhonemeSet == 0) {
+		prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+	}
+	SET_OPTION (phoneneSetIndex, prefPhonemeSet)*/
 DO
 	MODIFY_EACH (SpeechSynthesizer)
 		Melder_free (my d_phonemeSet);
-		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phonemeIndex]);
+		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phoneneSetIndex]);
 	MODIFY_EACH_END
 }
 
@@ -5826,10 +5828,13 @@ FORM (PLAY_SpeechSynthesizer_playText, U"SpeechSynthesizer: Play text", U"Speech
 	TEXTFIELD (text, U"Text:", U"This is some text.")
 	OK
 DO
+	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::INTERRUPTABLE);
 	LOOP {
 		iam (SpeechSynthesizer);
 		SpeechSynthesizer_playText (me, text);
 	}
+	MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::ASYNCHRONOUS);
+
 END }
 
 FORM (NEWMANY_SpeechSynthesizer_to_Sound, U"SpeechSynthesizer: To Sound", U"SpeechSynthesizer: To Sound...") {
@@ -5859,6 +5864,12 @@ DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
 DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
 	STRING_ONE (SpeechSynthesizer)
 		const char32 *result = my d_voiceName;
+	STRING_ONE_END
+}
+
+DIRECT (INFO_SpeechSynthesizer_getPhonemeSetName) {
+	STRING_ONE (SpeechSynthesizer)
+		const char32 *result = my d_phonemeSet;
 	STRING_ONE_END
 }
 
@@ -8232,9 +8243,10 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSpeechSynthesizer, 0, QUERY_BUTTON, nullptr, 0, 0);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get language name", nullptr, 1, INFO_SpeechSynthesizer_getLanguageName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice name", nullptr, 1, INFO_SpeechSynthesizer_getVoiceName);
+		praat_addAction1 (classSpeechSynthesizer, 1, U"Get phoneme set name", nullptr, 1, INFO_SpeechSynthesizer_getPhonemeSetName);
 		praat_addAction1 (classSpeechSynthesizer, 1, U"Get voice variant", nullptr, praat_DEPRECATED_2017, INFO_SpeechSynthesizer_getVoiceName);
 	praat_addAction1 (classSpeechSynthesizer, 0, MODIFY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, 1, MODIFY_SpeechSynthesizer_modifyPhonemeSet);
+	praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, praat_DEPTH_1, MODIFY_SpeechSynthesizer_modifyPhonemeSet);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setTextInputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
 		
