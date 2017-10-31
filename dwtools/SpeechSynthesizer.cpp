@@ -240,6 +240,18 @@ const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	}
 }
 
+const char32 *SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
+	try {
+		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_phonemeSet);
+		if (irow == 0) {
+			Melder_throw (U"Cannot find phoneme set \"", my d_phonemeSet, U"\".");
+		}
+		return Table_getStringValue_Assert (espeakdata_languages_propertiesTable.get(), irow, 1);
+	} catch (MelderError) {
+		Melder_throw (me, U": Cannot find phoneme code.");
+	}
+}
+
 const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
 		integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName);
@@ -251,6 +263,8 @@ const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 		Melder_throw (me, U": Cannot find voice code.");
 	}
 }
+
+
 
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName) {
 	try {
@@ -291,7 +305,7 @@ void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double sam
 
 void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text) {
 	autoSound thee = SpeechSynthesizer_to_Sound (me, text, nullptr, nullptr);
-	Sound_playPart (thee.get(), thy xmin, thy xmax, nullptr, nullptr);
+	Sound_play (thee.get(), nullptr, nullptr);
 }
 
 static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFrequency)
@@ -609,13 +623,19 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
 		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
-		
-		//espeakdata_SetVoiceByName (languageCode, voiceCode);
 		espeak_ng_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
 		status =  espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
+		if (! Melder_equ (my d_phonemeSet, my d_languageName)) {
+			const char32 *phonemeCode = SpeechSynthesizer_getPhonemeCode (me);
+			int index_phon_table_list = LookupPhonemeTable (Melder_32to8 (phonemeCode));
+			if (index_phon_table_list > 0) {
+				voice -> phoneme_tab_ix = index_phon_table_list;
+				DoVoiceChange(voice);
+			}
+		}
 
 		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
 
