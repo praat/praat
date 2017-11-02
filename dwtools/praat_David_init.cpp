@@ -5888,10 +5888,38 @@ DO
 	MODIFY_EACH_END
 }
 
+FORM (MODIFY_SpeechSynthesizer_estimateSpeechRateFromSpeech, U"SpeechSynthesizer: Estimate speech rate from speech", U"SpeechSynthesizer: Estimate speech rate from speech...") {
+	BOOLEAN (estimate, U"Estimate speech rate from speech", true);
+	OK
+DO
+	MODIFY_EACH (SpeechSynthesizer)
+		SpeechSynthesizer_setEstimateSpeechRateFromSpeech (me, estimate);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_SpeechSynthesizer_speechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Set speech output settings...") {
+	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	REAL (wordGap, U"Gap between words (s)", U"0.01")
+	POSITIVE (pitchAdjustment, U"Pitch multiplier (0.5-2.0)", U"1.0")
+	REAL (pitchRange, U"Pitch range multiplier (0-2.0)", U"1.0");
+	POSITIVE (wordsPerMinute, U"Words per minute (80-450)", U"175.0");
+	OPTIONMENU (outputPhonemeCodes, U"Output phoneme codes are", 2)
+		OPTION (U"Kirshenbaum_espeak")
+		OPTION (U"IPA")
+	OK
+DO
+	if (wordGap < 0.0) wordGap = 0.0;
+	Melder_require (pitchAdjustment >= 0.5 && pitchAdjustment <= 2.0, U"The pitch adjustment must be between 0.5 and 2.0.");
+	Melder_require (pitchRange >= 0.0 && pitchRange <= 2.0, U"The pitch range multiplier must be between 0.0 and 2.0.");
+	MODIFY_EACH (SpeechSynthesizer)
+		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes);
+	MODIFY_EACH_END
+}
+
 FORM (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set speech output settings", U"SpeechSynthesizer: Set speech output settings...") {
 	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	REAL (wordGap, U"Gap between words (s)", U"0.01")
-	INTEGER (pitchAdjustment, U"Pitch adjustment (0-99)", U"50")
+	INTEGER (pitchAdjustment_0_99, U"Pitch adjustment (0-99)", U"50")
 	INTEGER (pitchRange_0_99, U"Pitch range (0-99)", U"50");
 	NATURAL (wordsPerMinute, U"Words per minute (80-450)", U"175");
 	BOOLEAN (estimateWordsPerMinute, U"Estimate rate from data", true);
@@ -5901,12 +5929,15 @@ FORM (MODIFY_SpeechSynthesizer_setSpeechOutputSettings, U"SpeechSynthesizer: Set
 	OK
 DO
 	if (wordGap < 0) wordGap = 0;
-	if (pitchAdjustment < 0) pitchAdjustment = 0;
-	if (pitchAdjustment > 99) pitchAdjustment = 99;
+	if (pitchAdjustment_0_99 < 0) pitchAdjustment_0_99 = 0;
+	if (pitchAdjustment_0_99 > 99) pitchAdjustment_0_99 = 99;
 	if (pitchRange_0_99 < 0) pitchRange_0_99 = 0;
 	if (pitchRange_0_99 > 99) pitchRange_0_99 = 99;
+	double pitchAdjustment = (1.5/99.0 * pitchAdjustment_0_99 + 0.5);
+	double pitchRange = (pitchRange_0_99 / 49.5);
 	MODIFY_EACH (SpeechSynthesizer)
-		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange_0_99, wordsPerMinute, estimateWordsPerMinute, outputPhonemeCodes);
+		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute,  outputPhonemeCodes);
+		SpeechSynthesizer_setEstimateSpeechRateFromSpeech (me, estimateWordsPerMinute);
 	MODIFY_EACH_END
 }
 
@@ -8248,7 +8279,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSpeechSynthesizer, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classSpeechSynthesizer, 0, U"Modify phoneme set...", nullptr, praat_DEPTH_1, MODIFY_SpeechSynthesizer_modifyPhonemeSet);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set text input settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setTextInputSettings);
-		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
+		praat_addAction1 (classSpeechSynthesizer, 0, U"Speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_speechOutputSettings);
+		praat_addAction1 (classSpeechSynthesizer, 0, U"Estimate speech rate from speech...", nullptr, 1, MODIFY_SpeechSynthesizer_estimateSpeechRateFromSpeech);
+		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, praat_DEPTH_1 |praat_DEPRECATED_2017, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
 		
 	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0, NEW1_SpeechSynthesizer_and_TextGrid_to_Sound);
 	

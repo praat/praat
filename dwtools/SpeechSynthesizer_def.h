@@ -78,9 +78,13 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		if (formatVersion < 1) {
 			d_phonemeSet = Melder_dup (d_languageName);
 			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
+			oo_INTEGER (d_wordsPerMinute)
+		} else {
+			oo_DOUBLE (d_wordsPerMinute)
 		}
+	#else
+		oo_DOUBLE (d_wordsPerMinute)
 	#endif
-	oo_INTEGER (d_wordsPerMinute)
 	// text-only, phonemes-only, mixed
 	oo_INT (d_inputTextFormat)
 	// 1/: output phonemes in espeak/ notation
@@ -95,12 +99,12 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 
 	#if oo_READING_TEXT
 		if (formatVersion < 1) {
-			oo_INT (d_estimateWordsPerMinute)   // this used to be oo_BOOL, which was written in text as 0 or 1, which is inappropriate for boolean text
+			oo_INT (d_estimateSpeechRate)   // this used to be oo_BOOL, which was written in text as 0 or 1, which is inappropriate for boolean text
 		} else {
-			oo_QUESTION (d_estimateWordsPerMinute)
+			oo_QUESTION (d_estimateSpeechRate)
 		}
 	#else
-		oo_QUESTION (d_estimateWordsPerMinute)
+		oo_QUESTION (d_estimateSpeechRate)
 	#endif
 
 	#if !oo_READING && !oo_WRITING
