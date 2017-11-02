@@ -139,7 +139,7 @@ void structSpeechSynthesizer :: v_info () {
 	MelderInfo_writeLine (U"Word gap: ", d_wordgap, U" s");
 	MelderInfo_writeLine (U"Pitch multiplier: ", d_pitchAdjustment, U" (0.5-2.0)");
 	MelderInfo_writeLine (U"Pitch range multiplier: ", d_pitchRange, U" (0.0-2.0)");
-	MelderInfo_writeLine (U"Speaking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateSpeechRate ? U" (but estimated from data if possible)" : U" (fixed)"));
+	MelderInfo_writeLine (U"Speaking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateSpeechRate ? U" (but estimated from speech if possible)" : U" (fixed)"));
 
 	MelderInfo_writeLine (U"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? U"IPA" : U"???"));
 }
@@ -264,8 +264,6 @@ const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 		Melder_throw (me, U": Cannot find voice code.");
 	}
 }
-
-
 
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName) {
 	try {
