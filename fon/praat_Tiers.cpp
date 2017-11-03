@@ -1056,7 +1056,7 @@ DO
 	if (endTime < startTime)
 		Melder_throw (U"Your end time (", endTime, U") should not be less than your start time (", startTime, U").");
 	CREATE_ONE
-		autoPointProcess result = PointProcess_create (startTime, endTime, 0L);
+		autoPointProcess result = PointProcess_create (startTime, endTime, 0);
 	CREATE_ONE_END (name)
 }
 
