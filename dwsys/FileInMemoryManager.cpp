@@ -38,6 +38,8 @@
 #include "oo_DESCRIPTION.h"
 #include "FileInMemoryManager_def.h"
 
+#include <errno.h>
+
 /*
 	File open and read emulations. The FILE * is internally used as a pointer to the index of the file in the Set.
 	List of open files has to contain per file: index, position, length (bytes), pointer to data

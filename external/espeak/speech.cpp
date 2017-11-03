@@ -54,7 +54,6 @@
 #include "translate.h"
 #include "espeak_command.h"
 #include "fifo.h"
-#include "event.h"
 
 unsigned char *outbuf = NULL;
 int outbuf_size = 0;
@@ -278,7 +277,7 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_InitializeOutput(espeak_ng_OUTPUT_MODE 
 	return ENS_OK;
 }
 
-#ifndef DATA_FROM_SOURCECODE_FILES
+#if ! DATA_FROM_SOURCECODE_FILES
 int GetFileLength(const char *filename)
 {
 	struct stat statbuf;

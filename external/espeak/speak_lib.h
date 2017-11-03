@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <stddef.h>
 
+#define ESPEAK_API
+
 #define ESPEAK_API_REVISION  12
 /*
 Revision 2

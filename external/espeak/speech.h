@@ -41,7 +41,10 @@
 #define N_PEAKS   9
 #define N_PEAKS2  9 // plus Notch and Fill (not yet implemented)
 
-#ifdef DATA_FROM_SOURCECODE_FILES
+#ifndef DATA_FROM_SOURCECODE_FILES
+	#define DATA_FROM_SOURCECODE_FILES  1
+#endif
+#if DATA_FROM_SOURCECODE_FILES
 	#include "espeak_io.h"
 #else
 	#define PATH_ESPEAK_DATA  "/usr/share/espeak-ng-data"

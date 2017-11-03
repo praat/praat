@@ -11,8 +11,6 @@ OBJECTS = categories.o compiledata.o compiledict.o dictionary.o encoding.o error
 	create_espeak_ng_FileInMemoryManager.o create_espeak_ng_FileInMemorySet.o \
 	espeakdata_FileInMemory.o espeak_api.o espeak_io.o
 
-REMOVED = sonic.o speak_lib.o espeak_ng_data_allFilesInMemory.o espeakdata_languages.o espeakdata_phons.o espeakdata_dicts.o espeakdata_voices.o \
-	
 .PHONY: all clean
 
 all: libespeak.a
