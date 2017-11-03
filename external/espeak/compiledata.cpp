@@ -997,7 +997,191 @@ static int CompileVowelTransition(int which)
 
 	return 0;
 }
+#if ! DATA_FROM_SOURCECODE_FILES
+static espeak_ng_STATUS LoadSpect(const char *path, int control, int *addr)
+{
+	SpectSeq *spectseq;
+	int peak;
+	int frame;
+	int n_frames;
+	int ix;
+	int x, x2;
+	int rms;
+	float total;
+	float pkheight;
+	int marker1_set = 0;
+	int frame_vowelbreak = 0;
+	int klatt_flag = 0;
+	SpectFrame *fr;
+	frame_t *fr_out;
+	char filename[sizeof(path_home)+20];
 
+	SPECT_SEQ seq_out;
+	SPECT_SEQK seqk_out;
+
+	// create SpectSeq and import data
+	spectseq = SpectSeqCreate();
+	if (spectseq == NULL)
+		return static_cast<espeak_ng_STATUS> (ENOMEM);
+
+	snprintf(filename, sizeof(filename), "%s/%s", phsrc, path);
+	espeak_ng_STATUS status = LoadSpectSeq(spectseq, filename);
+	if (status != ENS_OK) {
+		error("Bad vowel file: '%s'", path);
+		SpectSeqDestroy(spectseq);
+		return status;
+	}
+
+	// do we need additional klatt data ?
+	for (frame = 0; frame < spectseq->numframes; frame++) {
+		for (ix = 5; ix < N_KLATTP2; ix++) {
+			if (spectseq->frames[frame]->klatt_param[ix] != 0)
+				klatt_flag = FRFLAG_KLATT;
+		}
+	}
+
+	*addr = ftell(f_phdata);
+
+	seq_out.n_frames = 0;
+	seq_out.sqflags = 0;
+	seq_out.length_total = 0;
+
+	total = 0;
+	for (frame = 0; frame < spectseq->numframes; frame++) {
+		if (spectseq->frames[frame]->keyframe) {
+			if (seq_out.n_frames == 1)
+				frame_vowelbreak = frame;
+			if (spectseq->frames[frame]->markers & 0x2) {
+				// marker 1 is set
+				marker1_set = 1;
+			}
+
+			seq_out.n_frames++;
+			if (frame > 0)
+				total += spectseq->frames[frame-1]->length;
+		}
+	}
+	seq_out.length_total = (int)total;
+
+	if ((control & 1) && (marker1_set == 0)) {
+		// This is a vowel, but no Vowel Break marker is set
+		// set a marker flag for the second frame of a vowel
+		spectseq->frames[frame_vowelbreak]->markers |= FRFLAG_VOWEL_CENTRE;
+	}
+
+	n_frames = 0;
+	for (frame = 0; frame < spectseq->numframes; frame++) {
+		fr = spectseq->frames[frame];
+
+		if (fr->keyframe) {
+			if (klatt_flag)
+				fr_out = &seqk_out.frame[n_frames];
+			else
+				fr_out = (frame_t *)&seq_out.frame[n_frames];
+
+			x = (int)(fr->length + 0.5); // round to nearest mS
+			if (x > 255) x = 255;
+			fr_out->length = x;
+
+			fr_out->frflags = fr->markers | klatt_flag;
+
+			rms = (int)GetFrameRms(fr, spectseq->amplitude);
+			if (rms > 255) rms = 255;
+			fr_out->rms = rms;
+
+			if (n_frames == (seq_out.n_frames-1))
+				fr_out->length = 0; // give last frame zero length
+
+			// write: peak data
+			count_frames++;
+			for (peak = 0; peak < 8; peak++) {
+				if (peak < 7)
+					fr_out->ffreq[peak] = fr->peaks[peak].pkfreq;
+
+				pkheight = spectseq->amplitude * fr->amp_adjust * fr->peaks[peak].pkheight;
+				pkheight = pkheight/640000;
+				if (pkheight > 255) pkheight = 255;
+				fr_out->fheight[peak] = (int)pkheight;
+
+				if (peak < 6) {
+					x =  fr->peaks[peak].pkwidth/4;
+					if (x > 255) x = 255;
+					fr_out->fwidth[peak] = x;
+
+					if (peak < 3) {
+						x2 =  fr->peaks[peak].pkright/4;
+						if (x2 > 255) x2 = 255;
+						fr_out->fright[peak] = x2;
+					}
+				}
+
+				if (peak < 4) {
+					x = fr->peaks[peak].klt_bw / 2;
+					if (x > 255) x = 255;
+					fr_out->bw[peak] = x;
+				}
+			}
+
+			for (ix = 0; ix < 5; ix++) {
+				fr_out->klattp[ix] = fr->klatt_param[ix];
+
+				fr_out->klattp[KLATT_FNZ] = fr->klatt_param[KLATT_FNZ] / 2;
+			}
+
+			if (klatt_flag) {
+				// additional klatt parameters
+				for (ix = 0; ix < 5; ix++)
+					fr_out->klattp2[ix] = fr->klatt_param[ix+5];
+
+				for (peak = 0; peak < 7; peak++) {
+					fr_out->klatt_ap[peak] = fr->peaks[peak].klt_ap;
+
+					x = fr->peaks[peak].klt_bp / 2;
+					if (x > 255) x = 255;
+					fr_out->klatt_bp[peak] = x;
+				}
+				fr_out->spare = 0;
+			}
+
+			if (fr_out->bw[1] == 0) {
+				fr_out->bw[0] = 89 / 2;
+				fr_out->bw[1] = 90 / 2;
+				fr_out->bw[2] = 140 / 2;
+				fr_out->bw[3] = 260 / 2;
+			}
+
+			n_frames++;
+		}
+	}
+
+	if (klatt_flag) {
+		seqk_out.n_frames = seq_out.n_frames;
+		seqk_out.sqflags = seq_out.sqflags;
+		seqk_out.length_total = seq_out.length_total;
+
+		ix = (char *)(&seqk_out.frame[seqk_out.n_frames]) - (char *)(&seqk_out);
+		fwrite(&seqk_out, ix, 1, f_phdata);
+		while (ix & 3)
+		{
+			// round up to multiple of 4 bytes
+			fputc(0, f_phdata);
+			ix++;
+		}
+	} else {
+		ix = (char *)(&seq_out.frame[seq_out.n_frames]) - (char *)(&seq_out);
+		fwrite(&seq_out, ix, 1, f_phdata);
+		while (ix & 3)
+		{
+			// round up to multiple of 4 bytes
+			fputc(0, f_phdata);
+			ix++;
+		}
+	}
+
+	SpectSeqDestroy(spectseq);
+	return ENS_OK;
+}
+#endif
 static int LoadWavefile(FILE *f, const char *fname)
 {
 	int displ;
@@ -1252,7 +1436,172 @@ static int LoadEnvelope2(FILE *f, const char *fname)
 
 	return displ;
 }
+#if ! DATA_FROM_SOURCECODE_FILES
+static espeak_ng_STATUS LoadDataFile(const char *path, int control, int *addr)
+{
+	// load spectrum sequence or sample data from a file.
+	// return index into spect or sample data area. bit 23=1 if a sample
 
+	FILE *f;
+	int id;
+	int hash;
+	int type_code = ' ';
+	REF_HASH_TAB *p, *p2;
+	char buf[sizeof(path_home)+150];
+
+	if (strcmp(path, "NULL") == 0)
+		return ENS_OK;
+	if (strcmp(path, "DFT") == 0) {
+		*addr = 1;
+		return ENS_OK;
+	}
+
+	count_references++;
+
+	hash = Hash8(path);
+	p = ref_hash_tab[hash];
+	while (p != NULL) {
+		if (strcmp(path, p->string) == 0) {
+			duplicate_references++;
+			*addr = p->value; // already loaded this data
+			break;
+		}
+		p = (REF_HASH_TAB *)p->link;
+	}
+
+	if (*addr == 0) {
+		sprintf(buf, "%s/%s", phsrc, path);
+
+		if ((f = fopen(buf, "rb")) == NULL) {
+			sprintf(buf, "%s/%s.wav", phsrc, path);
+			if ((f = fopen(buf, "rb")) == NULL) {
+				error("Can't read file: %s", path);
+				return static_cast<espeak_ng_STATUS> (errno);
+			}
+		}
+
+		id = Read4Bytes(f);
+		rewind(f);
+
+		espeak_ng_STATUS status = ENS_OK;
+		if (id == 0x43455053) {
+			status = LoadSpect(path, control, addr);
+			type_code = 'S';
+		} else if (id == 0x46464952) {
+			*addr = LoadWavefile(f, path);
+			type_code = 'W';
+		} else if (id == 0x43544950) {
+			status = LoadEnvelope(f, path, addr);
+			type_code = 'E';
+		} else if (id == 0x45564E45) {
+			*addr = LoadEnvelope2(f, path);
+			type_code = 'E';
+		} else {
+			error("File not SPEC or RIFF: %s", path);
+			*addr = -1;
+			status = ENS_UNSUPPORTED_PHON_FORMAT;
+		}
+		fclose(f);
+
+		if (status != ENS_OK)
+			return status;
+
+		if (*addr > 0)
+			fprintf(f_phcontents, "%c  0x%.5x  %s\n", type_code, *addr & 0x7fffff, path);
+	}
+
+	// add this item to the hash table
+	if (*addr > 0) {
+		p = ref_hash_tab[hash];
+		p2 = (REF_HASH_TAB *)malloc(sizeof(REF_HASH_TAB)+strlen(path)+1);
+		if (p2 == NULL)
+			return static_cast<espeak_ng_STATUS> (ENOMEM);
+		p2->value = *addr;
+		p2->ph_mnemonic = phoneme_out->mnemonic; // phoneme which uses this file
+		p2->ph_table = n_phoneme_tabs-1;
+		strcpy(p2->string, path);
+		p2->link = (char *)p;
+		ref_hash_tab[hash] = p2;
+	}
+
+	return ENS_OK;
+}
+
+static void CompileToneSpec(void)
+{
+	int pitch1 = 0;
+	int pitch2 = 0;
+	int pitch_env = 0;
+	int amp_env = 0;
+
+	pitch1 = NextItemBrackets(tNUMBER, 2);
+	pitch2 = NextItemBrackets(tNUMBER, 3);
+
+	if (item_terminator == ',') {
+		NextItemBrackets(tSTRING, 3);
+		LoadDataFile(item_string, 0, &pitch_env);
+	}
+
+	if (item_terminator == ',') {
+		NextItemBrackets(tSTRING, 1);
+		LoadDataFile(item_string, 0, &amp_env);
+	}
+
+	if (pitch1 < pitch2) {
+		phoneme_out->start_type = pitch1;
+		phoneme_out->end_type = pitch2;
+	} else {
+		phoneme_out->start_type = pitch2;
+		phoneme_out->end_type = pitch1;
+	}
+
+	if (pitch_env != 0) {
+		*prog_out++ = i_PITCHENV + ((pitch_env >> 16) & 0xf);
+		*prog_out++ = pitch_env;
+	}
+	if (amp_env != 0) {
+		*prog_out++ = i_AMPENV + ((amp_env >> 16) & 0xf);
+		*prog_out++ = amp_env;
+	}
+}
+
+
+
+static void CompileSound(int keyword, int isvowel)
+{
+	int addr = 0;
+	int value = 0;
+	char path[N_ITEM_STRING];
+	static int sound_instns[] = { i_FMT, i_WAV, i_VWLSTART, i_VWLENDING, i_WAVADD };
+
+	NextItemBrackets(tSTRING, 2);
+	strcpy(path, item_string);
+	if (item_terminator == ',') {
+		if ((keyword == kVOWELSTART) || (keyword == kVOWELENDING)) {
+			value = NextItemBrackets(tSIGNEDNUMBER, 1);
+			if (value > 127) {
+				value = 127;
+				error("Parameter > 127");
+			}
+			if (value < -128) {
+				value = -128;
+				error("Parameter < -128");
+			}
+		} else {
+			value = NextItemBrackets(tNUMBER, 1);
+			if (value > 255) {
+				value = 255;
+				error("Parameter > 255");
+			}
+		}
+	}
+	LoadDataFile(path, isvowel, &addr);
+	addr = addr / 4; // addr is words not bytes
+
+	*prog_out++ = sound_instns[keyword-kFMT] + ((value & 0xff) << 4) + ((addr >> 16) & 0xf);
+	*prog_out++ = addr & 0xffff;
+}
+#endif
 /*
    Condition
    bits 14,15   1
@@ -1602,6 +1951,357 @@ static void DecThenCount()
 	if (then_count > 0)
 		then_count--;
 }
+#if ! DATA_FROM_SOURCECODE_FILES
+static int CompilePhoneme(int compile_phoneme)
+{
+	int endphoneme = 0;
+	int keyword;
+	int value;
+	int phcode = 0;
+	int flags;
+	int ix;
+	int start;
+	int count;
+	int c;
+	char *p;
+	int vowel_length_factor = 100; // for testing
+	char number_buf[12];
+	char ipa_buf[N_ITEM_STRING+1];
+	PHONEME_TAB phoneme_out2;
+	PHONEME_PROG_LOG phoneme_prog_log;
+
+	prog_out = prog_buf;
+	prog_out_max = &prog_buf[MAX_PROG_BUF-1];
+	if_level = 0;
+	if_stack[0].returned = 0;
+	after_if = 0;
+	int phoneme_flags = 0;
+
+	NextItem(tSTRING);
+	if (compile_phoneme) {
+		phcode = LookupPhoneme(item_string, 1); // declare phoneme if not already there
+		if (phcode == -1) return 0;
+		phoneme_out = &phoneme_tab2[phcode];
+	} else {
+		// declare a procedure
+		if (n_procs >= N_PROCS) {
+			error("Too many procedures");
+			return 0;
+		}
+		strcpy(proc_names[n_procs], item_string);
+		phoneme_out = &phoneme_out2;
+		sprintf(number_buf, "%.3dP", n_procs);
+		phoneme_out->mnemonic = StringToWord(number_buf);
+	}
+
+	phoneme_out->code = phcode;
+	phoneme_out->program = 0;
+	phoneme_out->type = phINVALID;
+	phoneme_out->std_length = 0;
+	phoneme_out->start_type = 0;
+	phoneme_out->end_type = 0;
+	phoneme_out->length_mod = 0;
+	phoneme_out->phflags = 0;
+
+	while (!endphoneme && !feof(f_in)) {
+		if ((keyword = NextItem(tKEYWORD)) < 0) {
+			if (keyword == -2) {
+				error("Missing 'endphoneme' before end-of-file"); // end of file
+				break;
+			}
+
+			phoneme_feature_t feature = phoneme_feature_from_string(item_string);
+			espeak_ng_STATUS status = phoneme_add_feature(phoneme_out, feature);
+			if (status == ENS_OK)
+				continue;
+			error_from_status(status, item_string);
+			continue;
+		}
+
+		switch (item_type)
+		{
+		case tPHONEME_TYPE:
+			if (phoneme_out->type != phINVALID) {
+				if (phoneme_out->type == phFRICATIVE && keyword == phLIQUID)
+					; // apr liquid => ok
+				else
+					error("More than one phoneme type: %s", item_string);
+			}
+			phoneme_out->type = keyword;
+			break;
+		case tPHONEME_FLAG:
+			phoneme_flags |= keyword;
+			break;
+		case tINSTRN1:
+			// instruction group 0, with 8 bit operands which set data in PHONEME_DATA
+			switch (keyword)
+			{
+			case i_CHANGE_PHONEME:
+			case i_APPEND_PHONEME:
+			case i_APPEND_IFNEXTVOWEL:
+			case i_INSERT_PHONEME:
+			case i_REPLACE_NEXT_PHONEME:
+			case i_VOICING_SWITCH:
+			case i_CHANGE_IF | isDiminished:
+			case i_CHANGE_IF | isUnstressed:
+			case i_CHANGE_IF | isNotStressed:
+			case i_CHANGE_IF | isStressed:
+				value = NextItemBrackets(tPHONEMEMNEM, 0);
+				*prog_out++ = (keyword << 8) + value;
+				DecThenCount();
+				break;
+			case i_PAUSE_BEFORE:
+				value = NextItemMax(255);
+				*prog_out++ = (i_PAUSE_BEFORE << 8) + value;
+				DecThenCount();
+				break;
+			case i_PAUSE_AFTER:
+				value = NextItemMax(255);
+				*prog_out++ = (i_PAUSE_AFTER << 8) + value;
+				DecThenCount();
+				break;
+			case i_SET_LENGTH:
+				value = NextItemMax(511);
+				if (phoneme_out->type == phVOWEL)
+					value = (value * vowel_length_factor)/100;
+
+				if (after_if == 0)
+					phoneme_out->std_length = value/2;
+				else {
+					*prog_out++ = (i_SET_LENGTH << 8) + value/2;
+					DecThenCount();
+				}
+				break;
+			case i_ADD_LENGTH:
+				value = NextItem(tSIGNEDNUMBER) / 2;
+				*prog_out++ = (i_ADD_LENGTH << 8) + (value & 0xff);
+				DecThenCount();
+				break;
+			case i_LENGTH_MOD:
+				value = NextItem(tNUMBER);
+				phoneme_out->length_mod = value;
+				break;
+			case i_IPA_NAME:
+				NextItem(tSTRING);
+
+				if (strcmp(item_string, "NULL") == 0)
+					strcpy(item_string, " ");
+
+				// copy the string, recognize characters in the form U+9999
+				flags = 0;
+				count = 0;
+				ix = 1;
+
+				for (p = item_string; *p != 0;) {
+					p += utf8_in(&c, p);
+
+					if ((c == '|') && (count > 0)) {
+						// '|' means don't allow a tie or joiner before this letter
+						flags |= (1 << (count -1));
+					} else if ((c == 'U') && (p[0] == '+')) {
+						int j;
+						// U+9999
+						p++;
+						memcpy(number_buf, p, 4); // U+ should be followed by 4 hex digits
+						number_buf[4] = 0;
+						c = '#';
+						sscanf(number_buf, "%x", (unsigned int *)&c);
+
+						// move past the 4 hexdecimal digits
+						for (j = 0; j < 4; j++) {
+							if (!isalnum(*p))
+								break;
+							p++;
+						}
+						ix += utf8_out(c, &ipa_buf[ix]);
+						count++;
+					} else {
+						ix += utf8_out(c, &ipa_buf[ix]);
+						count++;
+					}
+				}
+				ipa_buf[0] = flags;
+				ipa_buf[ix] = 0;
+
+				start = 1;
+				if (flags != 0)
+					start = 0; // only include the flags byte if bits are set
+				value = strlen(&ipa_buf[start]); // number of UTF-8 bytes
+
+				*prog_out++ = (i_IPA_NAME << 8) + value;
+				for (ix = 0; ix < value; ix += 2)
+					*prog_out++ = (ipa_buf[ix+start] << 8) + (ipa_buf[ix+start+1] & 0xff);
+				DecThenCount();
+				break;
+			}
+			break;
+		case tSTATEMENT:
+			switch (keyword)
+			{
+			case kIMPORT_PH:
+				ImportPhoneme();
+				phoneme_flags = phoneme_out->phflags;
+				break;
+			case kSTARTTYPE:
+				phcode = NextItem(tPHONEMEMNEM);
+				if (phcode == -1)
+					phcode = LookupPhoneme(item_string, 1);
+				phoneme_out->start_type = phcode;
+				if (phoneme_out->type == phINVALID)
+					error("a phoneme type or manner of articulation must be specified before starttype");
+				break;
+			case kENDTYPE:
+				phcode = NextItem(tPHONEMEMNEM);
+				if (phcode == -1)
+					phcode = LookupPhoneme(item_string, 1);
+				if (phoneme_out->type == phINVALID)
+					error("a phoneme type or manner of articulation must be specified before endtype");
+				else if (phoneme_out->type == phVOWEL)
+					phoneme_out->end_type = phcode;
+				else if (phcode != phoneme_out->start_type)
+					error("endtype must equal starttype for consonants");
+				break;
+			case kVOICINGSWITCH:
+				phcode = NextItem(tPHONEMEMNEM);
+				if (phcode == -1)
+					phcode = LookupPhoneme(item_string, 1);
+				if (phoneme_out->type == phVOWEL)
+					error("voicingswitch cannot be used on vowels");
+				else
+					phoneme_out->end_type = phcode; // use end_type field for consonants as voicing_switch
+				break;
+			case kSTRESSTYPE:
+				value = NextItem(tNUMBER);
+				phoneme_out->std_length = value;
+				if (prog_out > prog_buf) {
+					error("stress phonemes can't contain program instructions");
+					prog_out = prog_buf;
+				}
+				break;
+			case kIF:
+				endphoneme = CompileIf(0);
+				break;
+			case kELSE:
+				endphoneme = CompileElse();
+				break;
+			case kELIF:
+				endphoneme = CompileElif();
+				break;
+			case kENDIF:
+				endphoneme = CompileEndif();
+				break;
+			case kENDSWITCH:
+				break;
+			case kSWITCH_PREVVOWEL:
+				endphoneme = CompileSwitch(1);
+				break;
+			case kSWITCH_NEXTVOWEL:
+				endphoneme = CompileSwitch(2);
+				break;
+			case kCALLPH:
+				CallPhoneme();
+				DecThenCount();
+				break;
+			case kFMT:
+				if_stack[if_level].returned = 1;
+				DecThenCount();
+				if (phoneme_out->type == phVOWEL)
+					CompileSound(keyword, 1);
+				else
+					CompileSound(keyword, 0);
+				break;
+			case kWAV:
+				if_stack[if_level].returned = 1;
+				// fallthrough:
+			case kVOWELSTART:
+			case kVOWELENDING:
+			case kANDWAV:
+				DecThenCount();
+				CompileSound(keyword, 0);
+				break;
+			case kVOWELIN:
+				DecThenCount();
+				endphoneme = CompileVowelTransition(1);
+				break;
+			case kVOWELOUT:
+				DecThenCount();
+				endphoneme = CompileVowelTransition(2);
+				break;
+			case kTONESPEC:
+				DecThenCount();
+				CompileToneSpec();
+				break;
+			case kCONTINUE:
+				*prog_out++ = OPCODE_CONTINUE;
+				DecThenCount();
+				break;
+			case kRETURN:
+				*prog_out++ = OPCODE_RETURN;
+				DecThenCount();
+				break;
+			case kINCLUDE:
+			case kPHONEMETABLE:
+				error("Missing 'endphoneme' before '%s'", item_string);  // drop through to endphoneme
+				// fallthrough:
+			case kENDPHONEME:
+			case kENDPROCEDURE:
+				endphoneme = 1;
+				if (if_level > 0)
+					error("Missing ENDIF");
+				if ((prog_out > prog_buf) && (if_stack[0].returned == 0))
+					*prog_out++ = OPCODE_RETURN;
+				break;
+			}
+			break;
+		}
+	}
+
+	if (endphoneme != 1)
+		error("'endphoneme' not expected here");
+
+	if (compile_phoneme) {
+		if (phoneme_out->type == phINVALID) {
+			error("Phoneme type is missing");
+			phoneme_out->type = 0;
+		}
+		phoneme_out->phflags |= phoneme_flags;
+
+		if (phoneme_out->phflags & phVOICED) {
+			if (phoneme_out->type == phSTOP)
+				phoneme_out->type = phVSTOP;
+			else if (phoneme_out->type == phFRICATIVE)
+				phoneme_out->type = phVFRICATIVE;
+		}
+
+		if (phoneme_out->std_length == 0) {
+			if (phoneme_out->type == phVOWEL)
+				phoneme_out->std_length = 180/2; // default length for vowel
+		}
+
+		phoneme_out->phflags |= phLOCAL; // declared in this phoneme table
+
+		if (phoneme_out->type == phDELETED)
+			phoneme_out->mnemonic = 0x01; // will not be recognised
+	}
+
+	if (prog_out > prog_buf) {
+		// write out the program for this phoneme
+		fflush(f_phindex);
+		phoneme_out->program = ftell(f_phindex) / sizeof(USHORT);
+
+		if (f_prog_log != NULL) {
+			phoneme_prog_log.addr = phoneme_out->program;
+			phoneme_prog_log.length = prog_out - prog_buf;
+			fwrite(&phoneme_prog_log, 1, sizeof(phoneme_prog_log), f_prog_log);
+		}
+
+		if (compile_phoneme == 0)
+			proc_addr[n_procs++] =  ftell(f_phindex) / sizeof(USHORT);
+		fwrite(prog_buf, sizeof(USHORT), prog_out - prog_buf, f_phindex);
+	}
+
+	return 0;
+}
 
 static void WritePhonemeTables()
 {
@@ -1723,8 +2423,243 @@ static void StartPhonemeTable(const char *name)
 	n_phoneme_tabs++;
 }
 
-#pragma GCC visibility push(default)
+static void CompilePhonemeFiles()
+{
+	int item;
+	FILE *f;
+	char buf[sizeof(path_home)+120];
 
+	linenum = 1;
+
+	count_references = 0;
+	duplicate_references = 0;
+	count_frames = 0;
+	n_procs = 0;
+
+	for (;;) {
+		if (feof(f_in)) {
+			// end of file, go back to previous from, from which this was included
+
+			if (stack_ix == 0)
+				break; // end of top level, finished
+			fclose(f_in);
+			f_in = stack[--stack_ix].file;
+			strcpy(current_fname, stack[stack_ix].fname);
+			linenum = stack[stack_ix].linenum;
+		}
+
+		item = NextItem(tKEYWORD);
+
+		switch (item)
+		{
+		case kUTF8_BOM:
+			break; // ignore bytes 0xef 0xbb 0xbf
+		case kINCLUDE:
+			NextItem(tSTRING);
+			sprintf(buf, "%s/%s", phsrc, item_string);
+
+			if ((stack_ix < N_STACK) && (f = fopen(buf, "rb")) != NULL) {
+				stack[stack_ix].linenum = linenum;
+				strcpy(stack[stack_ix].fname, current_fname);
+				stack[stack_ix++].file = f_in;
+
+				f_in = f;
+				strncpy0(current_fname, item_string, sizeof(current_fname));
+				linenum = 1;
+			} else
+				error("Missing file: %s", item_string);
+			break;
+		case kPHONEMETABLE:
+			EndPhonemeTable();
+			NextItem(tSTRING); // name of the new phoneme table
+			StartPhonemeTable(item_string);
+			break;
+		case kPHONEMESTART:
+			if (n_phoneme_tabs == 0) {
+				error("phonemetable is missing");
+				return;
+			}
+			CompilePhoneme(1);
+			break;
+		case kPROCEDURE:
+			CompilePhoneme(0);
+			break;
+		default:
+			if (!feof(f_in))
+				error("Keyword 'phoneme' expected");
+			break;
+		}
+	}
+	memset(&phoneme_tab2[n_phcodes+1], 0, sizeof(phoneme_tab2[n_phcodes+1]));
+	phoneme_tab2[n_phcodes+1].mnemonic = 0; // terminator
+}
+
+#pragma GCC visibility push(default)
+#if ! DATA_FROM_SOURCECODE_FILES
+espeak_ng_STATUS
+espeak_ng_CompilePhonemeData(long rate,
+                             FILE *log,
+                             espeak_ng_ERROR_CONTEXT *context)
+{
+	return espeak_ng_CompilePhonemeDataPath(rate, NULL, NULL, log, context);
+}
+
+espeak_ng_STATUS
+espeak_ng_CompilePhonemeDataPath(long rate,
+                                 const char *source_path,
+                                 const char *destination_path,
+                                 FILE *log,
+                                 espeak_ng_ERROR_CONTEXT *context)
+{
+	if (!log) log = stderr;
+
+	char fname[sizeof(path_home)+40];
+	char phdst[sizeof(path_home)+40]; // Destination: path to the phondata/phontab/phonindex output files.
+
+	if (source_path) {
+		sprintf(phsrc, "%s", source_path);
+	} else {
+		sprintf(phsrc, "%s/../phsource", path_home);
+	}
+
+	if (destination_path) {
+		sprintf(phdst, "%s", destination_path);
+	} else {
+		sprintf(phdst, "%s", path_home);
+	}
+
+	samplerate_native = samplerate = rate;
+	LoadPhData(NULL, NULL);
+	if (LoadVoice("", 0) == NULL)
+		return ENS_VOICE_NOT_FOUND;
+
+	WavegenInit(rate, 0);
+	WavegenSetVoice(voice);
+
+	n_envelopes = 0;
+	error_count = 0;
+	resample_count = 0;
+	memset(markers_used, 0, sizeof(markers_used));
+
+	f_errors = log;
+
+	strncpy0(current_fname, "phonemes", sizeof(current_fname));
+
+	sprintf(fname, "%s/phonemes", phsrc);
+	fprintf(log, "Compiling phoneme data: %s\n", fname);
+	f_in = fopen(fname, "rb");
+	if (f_in == NULL)
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), fname);
+
+	sprintf(fname, "%s/%s", phsrc, "compile_report");
+	f_report = fopen(fname, "w");
+	if (f_report == NULL) {
+		int error = errno;
+		fclose(f_in);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
+	}
+
+	sprintf(fname, "%s/%s", phdst, "phondata-manifest");
+	if ((f_phcontents = fopen(fname, "w")) == NULL)
+		f_phcontents = stderr;
+
+	fprintf(f_phcontents,
+	        "# This file lists the type of data that has been compiled into the\n"
+	        "# phondata file\n"
+	        "#\n"
+	        "# The first character of a line indicates the type of data:\n"
+	        "#   S - A SPECT_SEQ structure\n"
+	        "#   W - A wavefile segment\n"
+	        "#   E - An envelope\n"
+	        "#\n"
+	        "# Address is the displacement within phondata of this item\n"
+	        "#\n"
+	        "#  Address  Data file\n"
+	        "#  -------  ---------\n");
+
+	sprintf(fname, "%s/%s", phdst, "phondata");
+	f_phdata = fopen(fname, "wb");
+	if (f_phdata == NULL) {
+		int error = errno;
+		fclose(f_in);
+		fclose(f_report);
+		fclose(f_phcontents);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
+	}
+
+	sprintf(fname, "%s/%s", phdst, "phonindex");
+	f_phindex = fopen(fname, "wb");
+	if (f_phindex == NULL) {
+		int error = errno;
+		fclose(f_in);
+		fclose(f_report);
+		fclose(f_phcontents);
+		fclose(f_phdata);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
+	}
+
+	sprintf(fname, "%s/%s", phdst, "phontab");
+	f_phtab = fopen(fname, "wb");
+	if (f_phtab == NULL) {
+		int error = errno;
+		fclose(f_in);
+		fclose(f_report);
+		fclose(f_phcontents);
+		fclose(f_phdata);
+		fclose(f_phindex);
+		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (error), fname);
+	}
+
+	sprintf(fname, "%s/compile_prog_log", phsrc);
+	f_prog_log = fopen(fname, "wb");
+
+	// write a word so that further data doesn't start at displ=0
+	Write4Bytes(f_phdata, version_phdata);
+	Write4Bytes(f_phdata, samplerate_native);
+	Write4Bytes(f_phindex, version_phdata);
+
+	memset(ref_hash_tab, 0, sizeof(ref_hash_tab));
+
+	n_phoneme_tabs = 0;
+	stack_ix = 0;
+	StartPhonemeTable("base");
+	CompilePhonemeFiles();
+
+	EndPhonemeTable();
+	WritePhonemeTables();
+
+	fprintf(f_errors, "\nRefs %d,  Reused %d\n", count_references, duplicate_references);
+
+	fclose(f_in);
+	fclose(f_phcontents);
+	fclose(f_phdata);
+	fclose(f_phindex);
+	fclose(f_phtab);
+	if (f_prog_log != NULL)
+		fclose(f_prog_log);
+
+	LoadPhData(NULL, NULL);
+
+	CompileReport();
+
+	fclose(f_report);
+
+	if (resample_count > 0) {
+		fprintf(f_errors, "\n%d WAV files resampled to %d Hz\n", resample_count, samplerate_native);
+		fprintf(log, "Compiled phonemes: %d errors, %d files resampled to %d Hz.\n", error_count, resample_count, samplerate_native);
+	} else
+		fprintf(log, "Compiled phonemes: %d errors.\n", error_count);
+
+	if (f_errors != stderr && f_errors != stdout)
+		fclose(f_errors);
+
+	espeak_ng_STATUS status = ReadPhondataManifest(context);
+	if (status != ENS_OK)
+		return status;
+
+	return error_count > 0 ? ENS_COMPILE_ERROR : ENS_OK;
+}
+#if ! DATA_FROM_SOURCECODE_FILES
 #pragma GCC visibility pop
 
 static const char *preset_tune_names[] = {
@@ -2017,5 +2952,5 @@ espeak_ng_STATUS espeak_ng_CompileIntonation(FILE *log, espeak_ng_ERROR_CONTEXT 
 
 	return error_count > 0 ? ENS_COMPILE_ERROR : ENS_OK;
 }
-
+#endif
 #pragma GCC visibility pop

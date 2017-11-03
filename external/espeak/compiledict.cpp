@@ -1161,7 +1161,7 @@ static char *compile_rule(char *input)
 	return prule;
 }
 
-static int string_sorter(char **a, char **b)
+static int __cdecl string_sorter(char **a, char **b)
 {
 	char *pa, *pb;
 	int ix;
@@ -1173,7 +1173,7 @@ static int string_sorter(char **a, char **b)
 	return strcmp(pa, pb);
 }
 
-static int rgroup_sorter(RGROUP *a, RGROUP *b)
+static int __cdecl rgroup_sorter(RGROUP *a, RGROUP *b)
 {
 	// Sort long names before short names
 	int ix;
@@ -1201,7 +1201,7 @@ static void output_rule_group(FILE *f_out, int n_rules, char **rules, char *name
 
 	// sort the rules in this group by their phoneme string
 	common = "";
-	qsort((void *)rules, n_rules, sizeof(char *), (int(*)(const void *, const void *))string_sorter);
+	qsort((void *)rules, n_rules, sizeof(char *), (int(__cdecl *)(const void *, const void *))string_sorter);
 
 	if (strcmp(name, "9") == 0)
 		len_name = 0; //  don't remove characters from numeric match strings
@@ -1470,7 +1470,7 @@ static espeak_ng_STATUS compile_dictrules(FILE *f_in, FILE *f_out, char *fname_t
 	}
 	fclose(f_temp);
 
-	qsort((void *)rgroup, n_rgroups, sizeof(rgroup[0]), (int(*)(const void *, const void *))rgroup_sorter);
+	qsort((void *)rgroup, n_rgroups, sizeof(rgroup[0]), (int(__cdecl *)(const void *, const void *))rgroup_sorter);
 
 	if ((f_temp = fopen(fname_temp, "rb")) == NULL)
 		return create_file_error_context(context, static_cast<espeak_ng_STATUS> (errno), fname_temp);

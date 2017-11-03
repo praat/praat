@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# File: makefile
-=======
 # File: Makefile
->>>>>>> 9c81063c5d3c52e3fa2f685b138a356f2856c73c
 
 # Makefile for Praat.
 # Paul Boersma, 22 October 2016
@@ -43,12 +39,8 @@ all:
 		LPC/libLPC.a dwtools/libdwtools.a \
 		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
 		sys/libsys.a num/libnum.a kar/libkar.a \
-<<<<<<< HEAD
 		external/espeak/libespeak.a \
 		external/portaudio/libportaudio.a \
-=======
-		external/espeak/libespeak.a external/portaudio/libportaudio.a \
->>>>>>> 9c81063c5d3c52e3fa2f685b138a356f2856c73c
 		external/flac/libflac.a external/mp3/libmp3.a \
 		external/glpk/libglpk.a external/gsl/libgsl.a \
 		$(LIBS)

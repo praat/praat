@@ -10,11 +10,7 @@ OBJECTS = categories.o compiledata.o compiledict.o dictionary.o encoding.o error
 	synth_mbrola.o tr_languages.o mnemonics.o translate.o voices.o wavegen.o \
 	create_espeak_ng_FileInMemoryManager.o create_espeak_ng_FileInMemorySet.o \
 	espeakdata_FileInMemory.o espeak_api.o espeak_io.o
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> 9c81063c5d3c52e3fa2f685b138a356f2856c73c
 .PHONY: all clean
 
 all: libespeak.a
