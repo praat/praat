@@ -2538,7 +2538,7 @@ FORM (INFO_FileInMemoryManager_fgets, U"FileInMemoryManager: fgets", nullptr) {
 	OK
 DO
 	STRING_ONE (FileInMemoryManager)
-		autoNUMvector<char> str (0L, numberOfCharacters);  
+		autoNUMvector<char> str ((integer) 0, numberOfCharacters);
 		char *str2 = FileInMemoryManager_fgets (me, & str [0], numberOfCharacters, reinterpret_cast<FILE *> (index));
 		char32 *result = Melder_peek8to32 (& str2 [0]);
 	STRING_ONE_END
@@ -2586,7 +2586,7 @@ FORM (INFO_FileInMemoryManager_fread, U"FileInMemoryManager: fread", nullptr) {
 DO
 	STRING_ONE (FileInMemoryManager)
 		integer numberOfBytes = elementSize * numberOfElements;
-		autoNUMvector<char> str (0L, numberOfBytes);  
+		autoNUMvector<char> str ((integer) 0, numberOfBytes);  
 		size_t numberRead = FileInMemoryManager_fread (me, & str [0], elementSize, numberOfElements, reinterpret_cast<FILE *> (index));
 		str [numberRead * elementSize] ='\0';
 		char32 *result = Melder_peek8to32 (& str [0]);

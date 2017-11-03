@@ -1682,7 +1682,7 @@ integer UiForm_getInteger (UiForm me, const char32 *fieldName) {
 			fatalField (me);
 		}
 	}
-	return 0L;
+	return 0;
 }
 
 integer UiForm_getInteger_check (UiForm me, const char32 *fieldName) {
@@ -1698,7 +1698,7 @@ integer UiForm_getInteger_check (UiForm me, const char32 *fieldName) {
 				U"Please click Cancel in the form and try again.");
 		}
 	}
-	return 0L;
+	return 0;
 }
 
 char32 * UiForm_getString (UiForm me, const char32 *fieldName) {
