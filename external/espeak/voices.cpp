@@ -982,7 +982,7 @@ voice_t *LoadVoiceVariant(const char *vname, int variant_num)
 	return v;
 }
 
-static int __cdecl VoiceNameSorter(const void *p1, const void *p2)
+static int VoiceNameSorter(const void *p1, const void *p2)
 {
 	int ix;
 	espeak_VOICE *v1 = *(espeak_VOICE **)p1;
@@ -995,7 +995,7 @@ static int __cdecl VoiceNameSorter(const void *p1, const void *p2)
 	return strcmp(v1->name, v2->name);
 }
 
-static int __cdecl VoiceScoreSorter(const void *p1, const void *p2)
+static int VoiceScoreSorter(const void *p1, const void *p2)
 {
 	int ix;
 	espeak_VOICE *v1 = *(espeak_VOICE **)p1;
@@ -1185,7 +1185,7 @@ static int SetVoiceScores(espeak_VOICE *voice_select, espeak_VOICE **voices, int
 		return 0;
 
 	// sort the selected voices by their score
-	qsort(voices, nv, sizeof(espeak_VOICE *), (int(__cdecl *)(const void *, const void *))VoiceScoreSorter);
+	qsort(voices, nv, sizeof(espeak_VOICE *), (int(*)(const void *, const void *))VoiceScoreSorter);
 
 	return nv;
 }
@@ -1373,7 +1373,7 @@ char const *SelectVoice(espeak_VOICE *voice_select, int *found)
 	return vp->identifier;
 }
 
-#ifndef DATA_FROM_SOURCECODE_FILES
+#if ! DATA_FROM_SOURCECODE_FILES
 void GetVoices(const char *path, int len_path_voices, int is_language_file)
 {
 	FILE *f_voice;
@@ -1566,7 +1566,7 @@ ESPEAK_API const espeak_VOICE **espeak_ListVoices(espeak_VOICE *voice_spec)
 
 	// sort the voices list
 	qsort(voices_list, n_voices_list, sizeof(espeak_VOICE *),
-	      (int(__cdecl *)(const void *, const void *))VoiceNameSorter);
+	      (int(*)(const void *, const void *))VoiceNameSorter);
 
 	if (voice_spec) {
 		// select the voices which match the voice_spec, and sort them by preference

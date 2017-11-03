@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <espeak-ng/espeak_ng.h>
+#include "espeak_ng.h"
 #include "error.h"
 #include "speech.h"
 #include "synthesize.h"
@@ -139,7 +139,7 @@ espeak_ng_GetStatusCodeMessage(espeak_ng_STATUS status,
 		break;
 	default:
 		if ((status & ENS_GROUP_MASK) == ENS_GROUP_ERRNO)
-			strerror_r(status, buffer, length);
+			strncpy0 (buffer, strerror (status), length);
 		else
 			snprintf(buffer, length, "Unspecified error 0x%x", status);
 		break;

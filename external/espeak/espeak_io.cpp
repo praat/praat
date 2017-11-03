@@ -25,6 +25,7 @@
 #include "espeak_ng.h"
 #include "speech.h"
 #include "voice.h"
+#include <errno.h>
 
 extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
 #define ESPEAK_FILEINMEMORYMANAGER espeak_ng_FileInMemoryManager.get()
@@ -45,11 +46,11 @@ int espeak_io_feof (FILE *stream) {
 	return FileInMemoryManager_feof (ESPEAK_FILEINMEMORYMANAGER, stream);
 }
 
-integer espeak_io_ftell (FILE *stream) {
+long espeak_io_ftell (FILE *stream) {
 	return FileInMemoryManager_ftell (ESPEAK_FILEINMEMORYMANAGER, stream);
 }
 
-int espeak_io_fseek (FILE *stream, integer offset, int origin) {
+int espeak_io_fseek (FILE *stream, long offset, int origin) {
 	return FileInMemoryManager_fseek (ESPEAK_FILEINMEMORYMANAGER, stream, offset, origin);
 }
 

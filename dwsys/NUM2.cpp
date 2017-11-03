@@ -144,29 +144,24 @@ void numvec_centre_inplace (numvec x, real *p_mean) {
 }
 
 void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
-	numvec rowvec;
-	rowvec. size = ce - cb + 1;
-	for (integer i = rb; i <= re; i++) {
-		rowvec.at = a[i];
-		numvec_centre_inplace (rowvec, nullptr);
-		rowvec.at = nullptr;
+	for (integer i = rb; i <= re; i ++) {
+		numvec_centre_inplace ({ a [i], ce - cb + 1 }, nullptr);
 	}
-	rowvec. size = 0;
 }
 
 void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres) {
-	numvec colvec (re - rb + 1, kTensorInitializationType :: RAW);
-	for (integer j = cb; j <= ce; j++) {
-		for (integer i = rb; i <= re; i++) {
+	autonumvec colvec (re - rb + 1, kTensorInitializationType :: RAW);
+	for (integer j = cb; j <= ce; j ++) {
+		for (integer i = rb; i <= re; i ++) {
 			colvec [i - rb + 1] = a [i] [j];
 		}
 		real colmean;
-		numvec_centre_inplace (colvec, & colmean);
+		numvec_centre_inplace (colvec.get(), & colmean);
 		for (integer i = rb; i <= re; i++) {
 			a [i] [j] = colvec [i - rb + 1];
 		}
 		if (centres) {
-			centres[j - cb + 1] = colmean;
+			centres [j - cb + 1] = colmean;
 		}
 	}
 }

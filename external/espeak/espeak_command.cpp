@@ -23,7 +23,7 @@
 #include <string.h>
 #include <wchar.h>
 
-#include <espeak-ng/espeak_ng.h>
+#include "espeak_ng.h"
 
 #include "speech.h"
 #include "espeak_command.h"

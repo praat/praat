@@ -32,7 +32,6 @@
 #undef PLATFORM_POSIX
 #undef PLATFORM_WINDOWS
 #undef USE_NANOSLEEP
-#define __cdecl
 
 #define PATHSEP '/'
 #define N_PATH_HOME  230
@@ -41,7 +40,10 @@
 #define N_PEAKS   9
 #define N_PEAKS2  9 // plus Notch and Fill (not yet implemented)
 
-#ifdef DATA_FROM_SOURCECODE_FILES
+#ifndef DATA_FROM_SOURCECODE_FILES
+	#define DATA_FROM_SOURCECODE_FILES  1
+#endif
+#if DATA_FROM_SOURCECODE_FILES
 	#include "espeak_io.h"
 #else
 	#define PATH_ESPEAK_DATA  "/usr/share/espeak-ng-data"
