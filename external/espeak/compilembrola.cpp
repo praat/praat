@@ -26,7 +26,6 @@
 #include <string.h>
 
 #include "espeak_ng.h"
-#include "speak_lib.h>
 
 #include "error.h"
 #include "speech.h"
@@ -84,7 +83,7 @@ espeak_ng_STATUS espeak_ng_CompileMbrolaVoice(const char *filepath, FILE *log, e
 
 	strcpy(buf, filepath);
 	if ((f_in = fopen(buf, "r")) == NULL)
-		return create_file_error_context(context, errno, buf);
+		return create_file_error_context(context, (espeak_ng_STATUS) errno, buf);
 
 	while (fgets(buf, sizeof(phoneme), f_in) != NULL) {
 		buf[sizeof(phoneme)-1] = 0;
@@ -123,7 +122,7 @@ espeak_ng_STATUS espeak_ng_CompileMbrolaVoice(const char *filepath, FILE *log, e
 	strcpy(mbrola_voice, basename(filepath));
 	sprintf(buf, "%s/mbrola_ph/%s_phtrans", path_home, mbrola_voice);
 	if ((f_out = fopen(buf, "wb")) == NULL)
-		return create_file_error_context(context, errno, buf);
+		return create_file_error_context(context, (espeak_ng_STATUS) errno, buf);
 
 	memset(&data[count], 0, sizeof(data[count]));
 	data[count].name = 0; // list terminator

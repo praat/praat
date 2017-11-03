@@ -19,22 +19,14 @@
 #ifndef ESPEAK_NG_H
 #define ESPEAK_NG_H
 
-#include <espeak-ng/speak_lib.h>
+#include "speak_lib.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-#if defined(_WIN32) || defined(_WIN64)
-#ifdef LIBESPEAK_NG_EXPORT
-#define ESPEAK_NG_API __declspec(dllexport)
-#else
-#define ESPEAK_NG_API __declspec(dllimport)
-#endif
-#else
 #define ESPEAK_NG_API
-#endif
 
 #define ESPEAKNG_DEFAULT_VOICE "en"
 

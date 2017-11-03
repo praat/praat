@@ -1373,7 +1373,7 @@ char const *SelectVoice(espeak_VOICE *voice_select, int *found)
 	return vp->identifier;
 }
 
-#ifndef DATA_FROM_SOURCECODE_FILES
+#if ! DATA_FROM_SOURCECODE_FILES
 void GetVoices(const char *path, int len_path_voices, int is_language_file)
 {
 	FILE *f_voice;
