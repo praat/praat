@@ -46,11 +46,11 @@ int espeak_io_feof (FILE *stream) {
 	return FileInMemoryManager_feof (ESPEAK_FILEINMEMORYMANAGER, stream);
 }
 
-integer espeak_io_ftell (FILE *stream) {
+long espeak_io_ftell (FILE *stream) {
 	return FileInMemoryManager_ftell (ESPEAK_FILEINMEMORYMANAGER, stream);
 }
 
-int espeak_io_fseek (FILE *stream, integer offset, int origin) {
+int espeak_io_fseek (FILE *stream, long offset, int origin) {
 	return FileInMemoryManager_fseek (ESPEAK_FILEINMEMORYMANAGER, stream, offset, origin);
 }
 
