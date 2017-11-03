@@ -21,6 +21,7 @@
  djmw 20130620 Latest modification
 */
 
+#include "espeak_ng_version.h"
 #include "ManPagesM.h"
 #include "Sound_extensions.h"
 #include "TableOfReal_extensions.h"
@@ -4113,7 +4114,7 @@ DEFINITION (U"the number of neighbouring frequency points that are used in the c
 MAN_END
 
 MAN_BEGIN (U"SpeechSynthesizer", U"djmw", 20120413)
-INTRO (U"The SpeechSynthesizer is one of the @@types of objects@ in Praat. It creates a speech sound from text. The actual text-to-speech synthesis is performed by the @@Espeak@ speech synthsizer and therefore our SpeechSynthsizer is merely an interface to Espeak.")
+INTRO (U"The SpeechSynthesizer is one of the @@types of objects@ in Praat. It creates a speech sound from text. The actual text-to-speech synthesis is performed by the @@Espeak|eSpeak NG@ speech synthsizer and therefore our SpeechSynthsizer is merely an interface to Espeak.")
 ENTRY (U"Commands")
 NORMAL (U"Creation:")
 LIST_ITEM (U"\\bu @@Create SpeechSynthesizer...@")
@@ -4125,8 +4126,8 @@ LIST_ITEM (U"\\bu @@SpeechSynthesizer: Set text input settings...|Set text input
 LIST_ITEM (U"\\bu @@SpeechSynthesizer: Set speech output settings...|Set speech output settings...@")
 MAN_END
 
-MAN_BEGIN (U"Create SpeechSynthesizer...", U"djmw", 20120221)
-INTRO (U"Creates the @@Espeak@ speech synthesizer.")
+MAN_BEGIN (U"Create SpeechSynthesizer...", U"djmw", 20171101)
+INTRO (U"Creates the @@Espeak|eSpeak NG@ speech synthesizer.")
 ENTRY (U"Settings")
 TAG (U"##Language#")
 DEFINITION (U"determines the language of the synthesizer.")
@@ -4134,47 +4135,53 @@ TAG (U"##Voice variant#")
 DEFINITION (U"determines which voice type the synthesizer uses (male, female or whispered voices).")
 MAN_END
 
-MAN_BEGIN (U"SpeechSynthesizer: Play text...", U"djmw", 20120413)
-INTRO (U"The selected @@SpeechSynthesizer@ plays a text")
+MAN_BEGIN (U"SpeechSynthesizer: Play text...", U"djmw", 20171101)
+INTRO (U"The selected @@SpeechSynthesizer@ plays a text.")
 ENTRY (U"Settings")
 TAG (U"##Text#")
 DEFINITION (U"is the text to be played. Text within [[ ]] is treated as phonemes codes in @@Kirshenbaum phonetic encoding@. For example, besides a text like \"This is text\", you might also input \"This [[Iz]] text\".")
 MAN_END
 
-MAN_BEGIN (U"SpeechSynthesizer: To Sound...", U"djmw", 20120414)
+MAN_BEGIN (U"SpeechSynthesizer: To Sound...", U"djmw", 20171101)
 INTRO (U"The selected @@SpeechSynthesizer@ converts a text to the corresponding speech sound.")
 ENTRY (U"Settings")
 TAG (U"##Text#")
 DEFINITION (U"is the text to be played. Text within [[ ]] is treated as phonemes codes in @@Kirshenbaum phonetic encoding@. For example, besides a text like \"This is text\", you might also input \"This [[Iz]] text\".")
 TAG (U"##Create TextGrid with annotations#")
-DEFINITION (U"determines whether, besides the sound, a TextGrid with multiple-tier annotations will appear.")
+DEFINITION (U"determines whether, besides the sound, a @@TextGrid@ with multiple-tier annotations will appear.")
 MAN_END
 
-MAN_BEGIN (U"SpeechSynthesizer: Set text input settings...", U"djmw", 20120414)
+MAN_BEGIN (U"SpeechSynthesizer: Set text input settings...", U"djmw", 20171101)
 INTRO (U"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
 ENTRY (U"Settings")
 TAG (U"##Input text format is#")
 DEFINITION (U"determines how the input text will be synthesized.")
 TAG (U"##Input phoneme codes are#")
-DEFINITION (U"")
+DEFINITION (U"currently only @@Kirshenbaum phonetic encoding@ is available.")
 MAN_END
 
-MAN_BEGIN (U"SpeechSynthesizer: Set speech output settings...", U"djmw", 20120414)
+MAN_BEGIN (U"SpeechSynthesizer: Set speech output settings...", U"djmw", 20171102)
 INTRO (U"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
 ENTRY (U"Settings")
 TAG (U"##Sampling frequency#")
 DEFINITION (U"determines how the sampling frequency of the sound.")
 TAG (U"##Gap between words#")
 DEFINITION (U"determines the amount of silence between words.")
-TAG (U"##Pitch adjustment#")
-DEFINITION (U"")
-TAG (U"##Pitch range#")
-DEFINITION (U"")
+TAG (U"##Pitch multiplier (0.5-2.0)#")
+DEFINITION (U"determines how much the pitch will be changed. The extremes 0.5 and 2.0 represent, respectively, one octave "
+	"below and one octave above the default pitch. ")
+TAG (U"##Pitch range multiplier (0.0-2.0)#")
+DEFINITION (U"determines how much the pitch range will be scaled. A value of 0.0 means monotonous pitch while a value of 2.0 means twice the default range.")
 TAG (U"##Words per minute#")
 DEFINITION (U"determines the speaking rate in words per minute.")
-TAG (U"##estimate words per minute from data#")
-DEFINITION (U"")
 TAG (U"##Output phoneme codes are#")
+MAN_END
+
+MAN_BEGIN (U"SpeechSynthesizer: Set speech rate from speech...", U"djmw", 20171102)
+INTRO (U"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
+ENTRY (U"Settings")
+TAG (U"##Estimate speech rate from speech#")
+DEFINITION (U"determines how speech rate is chosen. This is only used for the alignment of speech with text. If on, the speech rate is estimated from the part of speech that has to be aligned. ")
 MAN_END
 
 MAN_BEGIN (U"SSCP", U"djmw", 19981103)
@@ -5350,8 +5357,13 @@ NORMAL (U"B. Efron & R.J. Tibshirani (1993): %%An introduction "
 	"to the bootstrap%. Chapman & Hall.")
 MAN_END
 
-MAN_BEGIN (U"Espeak", U"djmw", 20111217)
-NORMAL (U"Jonathan Duddington's Espeak speech synthesizer, available via http://espeak.sourceforge.net/")
+#define xstr(s) str(s)
+#define str(s) #s
+MAN_BEGIN (U"Espeak", U"djmw", 20171101)
+NORMAL (U"Espeak is a free text to speech synthesizer. It was developed by Jonathan Duddington and its development has stopped in 2015. "
+	"In 2015 Reece Dunn has taken a copy of espeak and together with a group of developers they maintain and actualize their version of espeak which they call \"eSpeak NG\". eSpeak NG uses formant synthesis. "
+	"Currently it supports 100 languages with varying quality of the voices. The current version of eSpeakNG incorporated in Praat is " xstr(ESPEAK_NG_VERSIONX) ".")
+NORMAL (U"The wikipedia page https://en.wikipedia.org/wiki/ESpeakNG gives more details.")
 MAN_END
 
 MAN_BEGIN (U"Flanagan (1960)", U"djmw", 19980713)

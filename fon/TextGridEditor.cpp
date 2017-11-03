@@ -679,22 +679,22 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Alignment settings", nullptr)
-		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_voices_names.get(), U"English"))
-		for (integer i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
-			OPTION ((const char32 *) espeakdata_voices_names -> strings [i]);
+		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+		for (long i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
+			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
 		}
 		BOOLEAN (includeWords,    U"Include words",    my default_align_includeWords ())
 		BOOLEAN (includePhonemes, U"Include phonemes", my default_align_includePhonemes ())
 		BOOLEAN (allowSilences,   U"Allow silences",   my default_align_allowSilences ())
 	EDITOR_OK
-		int prefVoice = (int) Strings_findString (espeakdata_voices_names.get(), my p_align_language);
-		if (prefVoice == 0) prefVoice = (int) Strings_findString (espeakdata_voices_names.get(), U"English");
+		int prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), my p_align_language);
+		if (prefVoice == 0) prefVoice = (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
 		SET_OPTION (language, prefVoice)
 		SET_BOOLEAN (includeWords, my p_align_includeWords)
 		SET_BOOLEAN (includePhonemes, my p_align_includePhonemes)
 		SET_BOOLEAN (allowSilences, my p_align_allowSilences)
 	EDITOR_DO
-		pref_str32cpy2 (my pref_align_language (), my p_align_language, espeakdata_voices_names -> strings [language]);
+		pref_str32cpy2 (my pref_align_language (), my p_align_language, espeakdata_languages_names -> strings [language]);
 		my pref_align_includeWords    () = my p_align_includeWords    = includeWords;
 		my pref_align_includePhonemes () = my p_align_includePhonemes = includePhonemes;
 		my pref_align_allowSilences   () = my p_align_allowSilences   = allowSilences;
