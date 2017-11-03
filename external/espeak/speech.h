@@ -32,7 +32,6 @@
 #undef PLATFORM_POSIX
 #undef PLATFORM_WINDOWS
 #undef USE_NANOSLEEP
-#define __cdecl
 
 #define PATHSEP '/'
 #define N_PATH_HOME  230
