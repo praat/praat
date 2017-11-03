@@ -693,11 +693,11 @@ int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const ch
 	if (stream == stderr) {
 		va_start (args, format);
 		bufferSize = 3;
-		autoNUMvector<char> buf (0L, bufferSize);
+		autoNUMvector<char> buf ((integer) 0, bufferSize);
 		int sizeNeeded = vsnprintf (buf.peek(), bufferSize, format, args); // find the size of the needed buffer
 		va_end (args);
 		if (sizeNeeded > bufferSize) {
-			buf.reset (0L, sizeNeeded);
+			buf.reset ((integer) 0, sizeNeeded);
 			va_start (args, format);
 			(void) vsnprintf (buf.peek(), sizeNeeded, format, args);
 			va_end (args);

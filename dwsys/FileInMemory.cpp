@@ -87,8 +87,8 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 			my d_data = reinterpret_cast<unsigned char *> (const_cast<char *> (data)); // ... just a link
 		} else {
 			my _dontOwnData = false;
-			my d_data =  NUMvector <unsigned char> (0L, numberOfBytes);
-			NUMvector_copyElements <unsigned char> (reinterpret_cast<unsigned char *> (const_cast<char *> (data)), my d_data, 0L, numberOfBytes);
+			my d_data =  NUMvector <unsigned char> ((integer) 0, numberOfBytes);
+			NUMvector_copyElements <unsigned char> (reinterpret_cast<unsigned char *> (const_cast<char *> (data)), my d_data, 0, numberOfBytes);
 		} 
 		return me;
 	} catch (MelderError) {
