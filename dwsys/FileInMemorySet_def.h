@@ -27,7 +27,7 @@ oo_DEFINE_CLASS (FileInMemorySet, SortedSet)
 		}
 		
 		CompareHook v_getCompareHook () override { return s_compareHook; }
-		void v_info () override {};
+		void v_info () override;
 		
 	#endif
 	

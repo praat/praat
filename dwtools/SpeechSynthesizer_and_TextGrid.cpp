@@ -483,7 +483,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 		double s_thee_duration = s_thee -> xmax - s_thee -> xmin;
 		bool hasSilence_thee = fabs (t1_thee - thy xmin) > precision || fabs (t2_thee - thy xmax) > precision;
 
-		if (my d_estimateWordsPerMinute) {
+		if (my d_estimateSpeechRate) {
 			// estimate speaking rate with the number of words per minute from the text
 			double wordsPerMinute_rawTokens = 60.0 * numberOfTokens / s_thee_duration;
 			// compensation for long words: 5 characters / word

@@ -61,7 +61,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		my d_path = Melder_dup (file -> path);
 		my d_id = Melder_dup (MelderFile_name (file));
 		my d_numberOfBytes = length;
-		my ownData = true;
+		my _dontOwnData = false;
 		my d_data = NUMvector <unsigned char> (0, my d_numberOfBytes);   // includes room for a final null byte in case the file happens to contain text
 		MelderFile_open (file);
 		for (integer i = 0; i < my d_numberOfBytes; i++) {
@@ -76,15 +76,20 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 	}
 }
 
-autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, const char32 *path, const char32 *id) {
+autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, const char32 *path, const char32 *id) {
 	try {
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my d_path = Melder_dup (path);
 		my d_id = Melder_dup (id);
 		my d_numberOfBytes = numberOfBytes;
-		my ownData = false;
-		my d_data =  NUMvector <unsigned char> (0L, numberOfBytes);
-		NUMvector_copyElements <unsigned char> (reinterpret_cast<unsigned char *> (const_cast<char *> (data)), my d_data, 0L, numberOfBytes);
+		if (isStaticData) {
+			my _dontOwnData = true; // we cannot dispose of the data!
+			my d_data = reinterpret_cast<unsigned char *> (const_cast<char *> (data)); // ... just a link
+		} else {
+			my _dontOwnData = false;
+			my d_data =  NUMvector <unsigned char> (0L, numberOfBytes);
+			NUMvector_copyElements <unsigned char> (reinterpret_cast<unsigned char *> (const_cast<char *> (data)), my d_data, 0L, numberOfBytes);
+		} 
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"FileInMemory not created from data.");
@@ -109,7 +114,7 @@ void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numbe
 	}
 	MelderInfo_writeLine ((my d_numberOfBytes - 1) % numberOfBytesPerLine == (numberOfBytesPerLine - 1) ? U"\t\t\t0};" : U"0};");
 	MelderInfo_write (U"\t\tautoFileInMemory ", name, U" = FileInMemory_createWithData (");
-	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (&", name, U"_data), \n\t\t\tU\"", my d_path, U"\", \n\t\t\tU\"", my d_id, U"\");");
+	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (&", name, U"_data), true, \n\t\t\tU\"", my d_path, U"\", \n\t\t\tU\"", my d_id, U"\");");
 }
 
 /* End of file FileInMemory.cpp */

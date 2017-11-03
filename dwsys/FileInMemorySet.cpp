@@ -40,6 +40,11 @@
 
 Thing_implement (FileInMemorySet, SortedSet, 0);
 
+void structFileInMemorySet :: v_info () {
+	FileInMemorySet_Parent :: v_info ();
+	MelderInfo_writeLine (U"Number of files: ", size);
+}
+
 autoFileInMemorySet FileInMemorySet_create () {
 	try {
 		autoFileInMemorySet me = Thing_new (FileInMemorySet);

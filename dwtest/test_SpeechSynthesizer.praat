@@ -1,5 +1,5 @@
 # test_SpeechSynthesizer.praat
-# djmw 20120130, 20120522, 20160524
+# djmw 20120130, 20120522, 20160524, 20171103
 
 appendInfoLine: "SpeechSynthesizer test..."
 

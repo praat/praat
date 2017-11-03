@@ -137,8 +137,9 @@ void structSpeechSynthesizer :: v_info () {
 	MelderInfo_writeLine (U"Input phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : U"???"));
 	MelderInfo_writeLine (U"Sampling frequency: ", d_samplingFrequency, U" Hz");
 	MelderInfo_writeLine (U"Word gap: ", d_wordgap, U" s");
-	MelderInfo_writeLine (U"Pitch adjustment value: ", d_pitchAdjustment, U" (0-100)");
-	MelderInfo_writeLine (U"Speaking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateWordsPerMinute ? U" (but estimated from data if possible)" : U" (fixed)"));
+	MelderInfo_writeLine (U"Pitch multiplier: ", d_pitchAdjustment, U" (0.5-2.0)");
+	MelderInfo_writeLine (U"Pitch range multiplier: ", d_pitchRange, U" (0.0-2.0)");
+	MelderInfo_writeLine (U"Speaking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateSpeechRate ? U" (but estimated from speech if possible)" : U" (fixed)"));
 
 	MelderInfo_writeLine (U"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? U"IPA" : U"???"));
 }
@@ -264,8 +265,6 @@ const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	}
 }
 
-
-
 autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
@@ -276,7 +275,8 @@ autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, cons
 		(void) SpeechSynthesizer_getVoiceCode (me.get());  // existence check
 		my d_phonemeSet = Melder_dup (languageName);
 		SpeechSynthesizer_setTextInputSettings (me.get(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
-		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
+		SpeechSynthesizer_setSpeechOutputSettings (me.get(), 44100.0, 0.01, 1.0, 1.0, 175, SpeechSynthesizer_PHONEMECODINGS_IPA);
+		SpeechSynthesizer_setEstimateSpeechRateFromSpeech (me.get(), true);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"SpeechSynthesizer not created.");
@@ -289,17 +289,22 @@ void SpeechSynthesizer_setTextInputSettings (SpeechSynthesizer me, int inputText
 	my d_inputPhonemeCoding = inputPhonemeCoding;
 }
 
-void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double samplingFrequency, double wordgap, long pitchAdjustment, long pitchRange, long wordsPerMinute, bool estimateWordsPerMinute, int outputPhonemeCoding) {
+void SpeechSynthesizer_setEstimateSpeechRateFromSpeech (SpeechSynthesizer me, bool estimate) {
+	my d_estimateSpeechRate = estimate;
+}
+
+void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double samplingFrequency, double wordgap, double pitchAdjustment, double pitchRange, double wordsPerMinute, int outputPhonemeCoding) {
 	my d_samplingFrequency = samplingFrequency;
 	my d_wordgap = wordgap;
+	pitchAdjustment = pitchAdjustment < 0.5 ? 0.5 : (pitchAdjustment > 2.0 ? 2.0 : pitchAdjustment);
 	my d_pitchAdjustment = pitchAdjustment;
+	pitchRange = pitchRange < 0.0 ? 0.0 : (pitchRange > 2.0 ? 2.0 : pitchRange);
 	my d_pitchRange = pitchRange;
 
-	if (wordsPerMinute <= 0) wordsPerMinute = 175;
-	if (wordsPerMinute > 450) wordsPerMinute = 450;
-	if (wordsPerMinute < 80) wordsPerMinute = 80;
+	if (wordsPerMinute <= 0.0) wordsPerMinute = 175.0;
+	if (wordsPerMinute > 450.0) wordsPerMinute = 450.0;
+	if (wordsPerMinute < 80.0) wordsPerMinute = 80.0;
 	my d_wordsPerMinute = wordsPerMinute;
-	my d_estimateWordsPerMinute = estimateWordsPerMinute;
 	my d_outputPhonemeCoding = outputPhonemeCoding;
 }
 
@@ -617,13 +622,22 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		}
 
 		espeak_ng_SetParameter (espeakRATE, my d_wordsPerMinute, 0);
-		espeak_ng_SetParameter (espeakPITCH, my d_pitchAdjustment, 0);
-		espeak_ng_SetParameter (espeakRANGE, my d_pitchRange, 0);
+		/*
+			pitchAdjustment_0_99 = a * log10 (my d_pitchAdjustment) + b,
+			where 0.5 <= my d_pitchAdjustment <= 2
+			pitchRange_0_99 = my d_pitchRange * 49.5,
+			where 0 <= my d_pitchRange <= 2
+		*/
+		int pitchAdjustment_0_99 = (int) ((49.5 / log10(2.0)) * log10 (my d_pitchAdjustment) + 49.5);
+		espeak_ng_SetParameter (espeakPITCH, pitchAdjustment_0_99, 0);
+		int pitchRange_0_99 = (int) (my d_pitchRange * 49.5);
+		espeak_ng_SetParameter (espeakRANGE, pitchRange_0_99, 0);
 		const char32 *languageCode = SpeechSynthesizer_getLanguageCode (me);
 		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
 		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
-		espeak_ng_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
+		int wordgap_10ms = my d_wordgap * 100; // espeak wordgap is in units of 10 ms
+		espeak_ng_SetParameter (espeakWORDGAP, wordgap_10ms, 0);
 		espeak_ng_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_ng_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
 		status =  espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
