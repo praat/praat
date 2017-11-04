@@ -488,13 +488,13 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 
 		if (paragraph -> type == kManPage_type::PICTURE) {
 			numberOfPictures ++;
-            structMelderFile pdfFile;
-            MelderFile_copy (file, & pdfFile);
-            pdfFile. path [str32len (pdfFile. path) - 5] = U'\0';   // delete extension ".html"
-            str32cpy (pdfFile. path + str32len (pdfFile. path),
-                Melder_cat (U"_", numberOfPictures, U".pdf"));
+			structMelderFile pngFile;
+			MelderFile_copy (file, & pngFile);
+			pngFile. path [str32len (pngFile. path) - 5] = U'\0';   // delete extension ".html"
+			str32cpy (pngFile. path + str32len (pngFile. path),
+				Melder_cat (U"_", numberOfPictures, U".png"));
 			{// scope
-                autoGraphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
+				autoGraphics graphics = Graphics_create_pngfile (& pngFile, 300, 0.0, paragraph -> width, 0.0, paragraph -> height);
 				Graphics_setFont (graphics.get(), kGraphics_font::TIMES);
 				Graphics_setFontStyle (graphics.get(), 0);
 				Graphics_setFontSize (graphics.get(), 12);
@@ -505,17 +505,8 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				Graphics_setWindow (graphics.get(), 0, 1, 0, 1);
 				Graphics_setTextAlignment (graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 			}
-            structMelderFile tiffFile;
-            MelderFile_copy (file, & tiffFile);
-            tiffFile. path [str32len (tiffFile. path) - 5] = U'\0';   // delete extension ".html"
-            str32cpy (tiffFile. path + str32len (tiffFile. path),
-                Melder_cat (U"_", numberOfPictures, U".png"));
-            system (Melder_peek32to8 (Melder_cat (U"/usr/local/bin/gs -q -dNOPAUSE "
-                U"-r200x200 -sDEVICE=png16m -sOutputFile=", tiffFile.path,
-                U" ", pdfFile. path, U" quit.ps")));
-            MelderFile_delete (& pdfFile);
 			MelderString_append (buffer, Melder_cat (U"<p align=middle><img height=", paragraph -> height * 100,
-                U" width=", paragraph -> width * 100, U" src=", MelderFile_name (& tiffFile), U"></p>"));
+				U" width=", paragraph -> width * 100, U" src=", MelderFile_name (& pngFile), U"></p>"));
 			continue;
 		}
 		if (paragraph -> type == kManPage_type::SCRIPT) {
