@@ -3,7 +3,7 @@
 
 # show memory leaks of espeak 
 
-Create SpeechSynthesizer: "English", "default"
+Create SpeechSynthesizer: "English (Great Britain)", "Female1"
 numberOfTries = 500
 table = Create Table with column names: "m", numberOfTries, "run bytes"
 for i to numberOfTries

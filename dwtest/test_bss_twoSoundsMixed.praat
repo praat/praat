@@ -4,7 +4,7 @@
 
 Erase all
 
-synth = Create SpeechSynthesizer: "English", "default"
+synth = Create SpeechSynthesizer: "English (Great Britain)", "Female1"
 s1 = To Sound: "This is some text.", "no"
 selectObject: synth
 selectObject: "SpeechSynthesizer English_default"
