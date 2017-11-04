@@ -488,13 +488,13 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 
 		if (paragraph -> type == kManPage_type::PICTURE) {
 			numberOfPictures ++;
-			structMelderFile pdfFile;
-			MelderFile_copy (file, & pdfFile);
-			pdfFile. path [str32len (pdfFile. path) - 5] = U'\0';   // delete extension ".html"
-			str32cpy (pdfFile. path + str32len (pdfFile. path),
-				Melder_cat (U"_", numberOfPictures, U".pdf"));
+            structMelderFile pdfFile;
+            MelderFile_copy (file, & pdfFile);
+            pdfFile. path [str32len (pdfFile. path) - 5] = U'\0';   // delete extension ".html"
+            str32cpy (pdfFile. path + str32len (pdfFile. path),
+                Melder_cat (U"_", numberOfPictures, U".pdf"));
 			{// scope
-				autoGraphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
+                autoGraphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
 				Graphics_setFont (graphics.get(), kGraphics_font::TIMES);
 				Graphics_setFontStyle (graphics.get(), 0);
 				Graphics_setFontSize (graphics.get(), 12);
@@ -505,17 +505,17 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				Graphics_setWindow (graphics.get(), 0, 1, 0, 1);
 				Graphics_setTextAlignment (graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
 			}
-			structMelderFile tiffFile;
-			MelderFile_copy (file, & tiffFile);
-			tiffFile. path [str32len (tiffFile. path) - 5] = U'\0';   // delete extension ".html"
-			str32cpy (tiffFile. path + str32len (tiffFile. path),
-				Melder_cat (U"_", numberOfPictures, U".png"));
-			system (Melder_peek32to8 (Melder_cat (U"/usr/local/bin/gs -q -dNOPAUSE "
-				U"-r200x200 -sDEVICE=png16m -sOutputFile=", tiffFile.path,
-				U" ", pdfFile. path, U" quit.ps")));
-			MelderFile_delete (& pdfFile);
+            structMelderFile tiffFile;
+            MelderFile_copy (file, & tiffFile);
+            tiffFile. path [str32len (tiffFile. path) - 5] = U'\0';   // delete extension ".html"
+            str32cpy (tiffFile. path + str32len (tiffFile. path),
+                Melder_cat (U"_", numberOfPictures, U".png"));
+            system (Melder_peek32to8 (Melder_cat (U"/usr/local/bin/gs -q -dNOPAUSE "
+                U"-r200x200 -sDEVICE=png16m -sOutputFile=", tiffFile.path,
+                U" ", pdfFile. path, U" quit.ps")));
+            MelderFile_delete (& pdfFile);
 			MelderString_append (buffer, Melder_cat (U"<p align=middle><img height=", paragraph -> height * 100,
-				U" width=", paragraph -> width * 100, U" src=", MelderFile_name (& tiffFile), U"></p>"));
+                U" width=", paragraph -> width * 100, U" src=", MelderFile_name (& tiffFile), U"></p>"));
 			continue;
 		}
 		if (paragraph -> type == kManPage_type::SCRIPT) {
@@ -635,25 +635,56 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				if (wordBold && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</b>"); wordBold = false; }
 				if (wordCode && ! isSingleWordCharacter (*p)) { MelderString_append (buffer, U"</code>"); wordCode = false; }
 			if (*p == U'@') {
-				char32 link [301], linkText [301], *q = link;
+				static MelderString link, linkText;
+				MelderString_empty (& link);
+				MelderString_empty (& linkText);
 				if (p [1] == U'@') {
 					p += 2;
-					while (*p != U'@' && *p != U'|' && *p != U'\0') *q++ = *p++;
-					*q = U'\0';   // close link
+					while (*p != U'@' && *p != U'|' && *p != U'\0') MelderString_append (& link, *p++);
 					if (*p == U'|') {
 						p ++;   // skip '|'
-						q = linkText;
-						while (*p != U'@' && *p != U'\0') *q++ = *p++;
-						*q = U'\0';   // close link text
+						while (*p != U'@' && *p != U'\0') {
+							if (*p == U'^') {
+								if (inSuper) {
+									MelderString_append (& linkText, U"</sup>"); inSuper = false; p ++;
+								} else if (p [1] == U'^') {
+									MelderString_append (& linkText, U"<sup>"); inSuper = true; p += 2;
+								} else {
+									MelderString_append (& linkText, U"<sup>"); letterSuper = true; p ++;
+								}
+							} else {
+								if (*p == U'\\') {
+									char32 kar1 = *++p, kar2 = *++p;
+									Longchar_Info info = Longchar_getInfo (kar1, kar2);
+									if (info -> unicode < 127) {
+										MelderString_appendCharacter (& linkText, info -> unicode ? info -> unicode : U'?');
+									} else {
+										MelderString_append (& linkText, U"&#", (int) info -> unicode, U";");
+									}
+									p ++;
+								} else {
+									if (*p < 127) {
+										MelderString_appendCharacter (& linkText, *p);
+									} else {
+										MelderString_append (& linkText, U"&#", (int) *p, U";");
+									}
+									p ++;
+								}
+								if (letterSuper) {
+									//if (wordItalic) { MelderString_append (buffer, U"</i>"); wordItalic = false; }
+									//if (wordBold) { MelderString_append (buffer, U"</b>"); wordBold = false; }
+									MelderString_append (& linkText, U"</sup>"); letterSuper = false;
+								}
+							}
+						}
 					} else {
-						Melder_sprint (linkText,301, link);
+						MelderString_copy (& linkText, link.string);
 					}
 					if (*p) p ++;
 				} else {
 					p ++;
-					while (isSingleWordCharacter (*p) && *p != U'\0') *q++ = *p++;
-					*q = U'\0';   // close link
-					Melder_sprint (linkText,301, link);
+					while (isSingleWordCharacter (*p) && *p != U'\0') MelderString_append (& link, *p++);
+					MelderString_copy (& linkText, link.string);
 				}
 				/*
 				 * We write the link in the following format:
@@ -664,23 +695,23 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				 * The file name will have no more than 30 or 60 characters, and no less than 1.
 				 */
 				MelderString_append (buffer, U"<a href=\"");
-				if (str32nequ (link, U"\\FI", 3)) {
-					MelderString_append (buffer, link + 3);   // file link
+				if (str32nequ (link.string, U"\\FI", 3)) {
+					MelderString_append (buffer, link.string + 3);   // file link
 				} else {
-					q = link;
-					if (! ManPages_lookUp_caseSensitive (me, link)) {
-						MelderString_appendCharacter (buffer, toupper32 (link [0]));
+					char32 *q = link.string;
+					if (! ManPages_lookUp_caseSensitive (me, link.string)) {
+						MelderString_appendCharacter (buffer, toupper32 (link.string [0]));
 						if (*q) q ++;   // first letter already written
 					}
-					while (*q && q - link < LONGEST_FILE_NAME) {
+					while (*q && q - link.string < LONGEST_FILE_NAME) {
 						if (! isAllowedFileNameCharacter (*q)) MelderString_appendCharacter (buffer, U'_');
 						else MelderString_appendCharacter (buffer, *q);
 						q ++;
 					}
-					if (link [0] == U'\0') MelderString_appendCharacter (buffer, U'_');   /* Otherwise Mac problems or Unix invisibility. */
+					if (link.string [0] == U'\0') MelderString_appendCharacter (buffer, U'_');   /* Otherwise Mac problems or Unix invisibility. */
 					MelderString_append (buffer, U".html");
 				}
-				MelderString_append (buffer, U"\">", linkText, U"</a>");
+				MelderString_append (buffer, U"\">", linkText.string, U"</a>");
 			} else if (*p == U'%') {
 				if (inItalic) { MelderString_append (buffer, U"</i>"); inItalic = false; p ++; }
 				else if (p [1] == U'%') { MelderString_append (buffer, U"<i>"); inItalic = true; p += 2; }
