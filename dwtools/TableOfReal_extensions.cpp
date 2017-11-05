@@ -715,12 +715,13 @@ void TableOfReal_normalizeRows (TableOfReal me, double norm) {
 }
 
 void TableOfReal_standardizeColumns (TableOfReal me) {
-	if (my numberOfRows == 1) {
+	if (my numberOfRows <= 1) {
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				my data [irow] [icol] = 0.0;
 			}
 		}
+		return;
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		nummat mat { my data, my numberOfRows, my numberOfColumns };
@@ -733,12 +734,13 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 }
 
 void TableOfReal_standardizeRows (TableOfReal me) {
-	if (my numberOfColumns == 1) {
+	if (my numberOfColumns <= 1) {
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				my data [irow] [icol] = 0.0;
 			}
 		}
+		return;
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		numvec vec { my data [irow], my numberOfColumns };
