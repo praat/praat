@@ -246,9 +246,6 @@ void NUMnormalize (double **a, integer nr, integer nc, double norm);
 	(sqrt(Sum( a[i][j]^2, i=1..nr, j=1..nc)) becomes equal to norm.
 */
 
-void NUMstandardizeRows (double **a, integer rb, integer re, integer cb, integer ce);
-/* a[i][j] = (a[i][j] - average[i]) / sigma[i] */
-
 void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce);
 /* a[i][j] = average[j]) */
 
