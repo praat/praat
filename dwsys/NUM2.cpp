@@ -1373,7 +1373,7 @@ double NUMfactln (int n) {
 
 void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root) {
 	double df, fx, fh, fl, tmp, xh, xl, tol;
-	integer itermax = 60;
+	integer itermax = 1000;
 
 	(*f) (xmin, &fl, &df, closure);
 	if (fl == 0.0) {
