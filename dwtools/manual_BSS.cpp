@@ -234,7 +234,7 @@ NORMAL (U"Unfortunately the convergence criteria of these two algorithms cannot 
 	"change in the eigenvectors norm during an iteration.")
 ENTRY (U"Example")
 NORMAL (U"We start by creating a speech synthesizer that need to create two sounds. We will mix the two sounds and finally our blind source separation software will try to undo our mixing by extracting the two original sounds as well as possible from the two mixtures.")
-CODE(U"synth = Create SpeechSynthesizer: \"English\", \"default\"")
+CODE(U"synth = Create SpeechSynthesizer: \"English (Great Britain)\", \"Female1\"")
 CODE(U"s1 = To Sound: \"This is some text\", \"no\"")
 NORMAL (U"The first speech sound was created from the text \"This is some text\" at a speed of 175 words per minute.")
 CODE(U"selectObject: synth")
@@ -257,7 +257,7 @@ NORMAL (U"The two channels in the new sound that results from this command conta
 NORMAL (U"In the top panel the two speech sounds \"This is some text\" and \"abracadabra, abra\". "
     "The middle panel shows the two mixed sounds while the lower panel shows the two sounds after unmixing.")
 SCRIPT (6, 6, U" "
-	"syn = Create SpeechSynthesizer: \"English\", \"default\"\n"
+	"syn = Create SpeechSynthesizer: \"English (Great Britain)\", \"Female1\"\n"
 	"s1 = To Sound: \"This is some text\", \"no\"\n"
     "selectObject: syn\n"
 	"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"\n"
@@ -284,7 +284,7 @@ NORMAL (U"The first two panels will not change between different sessions of pra
     "we have to determine for the blind source separation. Therefore the iteration sequence will never be the same and the final outcomes might differ. In the second place, as was explained in the @@blind source separation@ manual, the unmixing is only "
     "unique up to a scale factor and a permutation. Therefore the channels in the unmixed sound do not necessarily correspond to the corresponding channel in our \"original\" stereo sound.")
 NORMAL (U"The complete script:")
-CODE (U"syn = Create SpeechSynthesizer: \"English\", \"default\"")
+CODE (U"syn = Create SpeechSynthesizer: \"English (Great Britain)\", \"Female1\"")
 CODE (U"s1 = To Sound: \"This is some text\", \"no\"")
 CODE (U"selectObject: syn")
 CODE (U"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"")

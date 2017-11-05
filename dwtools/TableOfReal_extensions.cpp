@@ -715,7 +715,21 @@ void TableOfReal_normalizeRows (TableOfReal me, double norm) {
 }
 
 void TableOfReal_standardizeColumns (TableOfReal me) {
-	NUMstandardizeColumns (my data, 1, my numberOfRows, 1, my numberOfColumns);
+	if (my numberOfRows == 1) {
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+				my data [irow] [icol] = 0.0;
+			}
+		}
+	}
+	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+		nummat mat (my data, my numberOfRows, my numberOfColumns);
+		real mean, stdev;
+		sum_mean_sumsq_variance_stdev_scalar (mat, icol, nullptr, & mean, nullptr, nullptr, & stdev);
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
+		}
+	}
 }
 
 void TableOfReal_standardizeRows (TableOfReal me) {

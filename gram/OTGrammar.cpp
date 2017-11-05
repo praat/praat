@@ -118,15 +118,15 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 		OTGrammarConstraint constraint = & constraints [icons];
 		MelderFile_write (file, U"\nconstraint [", icons, U"]: \"");
 		for (const char32 *p = & constraint -> name [0]; *p; p ++) {
-			if (*p == '\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
+			if (*p == U'\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
 		MelderFile_write (file, U"\" ", constraint -> ranking,
 			U" ", constraint -> disharmony, U" ", constraint -> plasticity, U" ! ");
 		for (const char32 *p = & constraint -> name [0]; *p; p ++) {
-			if (*p == '\n') MelderFile_writeCharacter (file, U' ');
-			else if (*p == '\\' && p [1] == 's' && p [2] == '{') p += 2;
-			else if (*p == '}') { }
+			if (*p == U'\n') MelderFile_writeCharacter (file, U' ');
+			else if (*p == U'\\' && p [1] == U's' && p [2] == U'{') p += 2;
+			else if (*p == U'}') { }
 			else MelderFile_writeCharacter (file, *p);
 		}
 	}
@@ -140,7 +140,7 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 		OTGrammarTableau tableau = & tableaus [itab];
 		MelderFile_write (file, U"\ninput [", itab, U"]: \"");
 		for (const char32 *p = & tableau -> input [0]; *p; p ++) {
-			if (*p == '\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
+			if (*p == U'\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
 		MelderFile_write (file, U"\" ", tableau -> numberOfCandidates);
@@ -148,7 +148,7 @@ void structOTGrammar :: v_writeText (MelderFile file) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
 			MelderFile_write (file, U"\n   candidate [", icand, U"]: \"");
 			for (const char32 *p = & candidate -> output [0]; *p; p ++) {
-				if (*p =='\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
+				if (*p == U'\"') MelderFile_writeCharacter (file, U'\"');   // Double any quotes within quotes.
 				MelderFile_writeCharacter (file, *p);
 			}
 			MelderFile_writeCharacter (file, U'\"');
@@ -256,13 +256,14 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 		} catch (MelderError) {
 			Melder_throw (U"Trying to read number of candidates of tableau ", itab, U".");
 		}
-		if (tableau -> numberOfCandidates < 1) Melder_throw
-			(U"No candidates in tableau ", itab,
-			 U" (input: ", tableau -> input, U")"
-			 U" in line ", MelderReadText_getLineNumber (text),
-			 itab == 1 ? U"." : U", or perhaps wrong number of candidates for input " U_LEFT_GUILLEMET,
-			 itab == 1 ? nullptr : tableaus [itab - 1]. input,
-			 itab == 1 ? nullptr : U_RIGHT_GUILLEMET U".");
+		Melder_require (tableau -> numberOfCandidates > 0,
+			U"No candidates in tableau ", itab,
+			U" (input: ", tableau -> input, U")"
+			U" in line ", MelderReadText_getLineNumber (text),
+			itab == 1 ? U"." : U", or perhaps wrong number of candidates for input " U_LEFT_GUILLEMET,
+			itab == 1 ? nullptr : tableaus [itab - 1]. input,
+			itab == 1 ? nullptr : U_RIGHT_GUILLEMET U"."
+		);
 		tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates);
 		for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
@@ -694,8 +695,7 @@ bool OTGrammar_areAllPartialOutputsSinglyGrammatical (OTGrammar me, Strings thee
 	return true;
 }
 
-static int OTGrammar_crucialCell (OTGrammar me, integer itab, integer icand, integer iwinner, integer numberOfOptimalCandidates) {
-	int icons;
+static integer OTGrammar_crucialCell (OTGrammar me, integer itab, integer icand, integer iwinner, integer numberOfOptimalCandidates) {
 	OTGrammarTableau tableau = & my tableaus [itab];
 	if (tableau -> numberOfCandidates < 2) return 0;   // if there is only one candidate, all cells can be greyed
 	if (my decisionStrategy != kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) return my numberOfConstraints;   // nothing grey
@@ -703,13 +703,13 @@ static int OTGrammar_crucialCell (OTGrammar me, integer itab, integer icand, int
 		if (numberOfOptimalCandidates > 1) {
 			/* All cells are important. */
 		} else {
-			integer jcand, secondBest = 0;
-			for (jcand = 1; jcand <= tableau -> numberOfCandidates; jcand ++) {
+			integer secondBest = 0;
+			for (integer jcand = 1; jcand <= tableau -> numberOfCandidates; jcand ++) {
 				if (OTGrammar_compareCandidates (me, itab, jcand, itab, iwinner) != 0) {   // a non-optimal candidate?
 					if (secondBest == 0) {
-						secondBest = jcand;   /* First guess. */
+						secondBest = jcand;   // first guess
 					} else if (OTGrammar_compareCandidates (me, itab, jcand, itab, secondBest) < 0) {
-						secondBest = jcand;   /* Better guess. */
+						secondBest = jcand;   // better guess
 					}
 				}
 			}
@@ -719,7 +719,7 @@ static int OTGrammar_crucialCell (OTGrammar me, integer itab, integer icand, int
 	} else {
 		int *candidateMarks = tableau -> candidates [icand]. marks;
 		int *winnerMarks = tableau -> candidates [iwinner]. marks;
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int numberOfCandidateMarks = candidateMarks [my index [icons]];
 			int numberOfWinnerMarks = winnerMarks [my index [icons]];
 			while (my constraints [my index [icons]]. tiedToTheRight)
@@ -738,7 +738,7 @@ static int OTGrammar_crucialCell (OTGrammar me, integer itab, integer icand, int
 static double OTGrammar_constraintWidth (Graphics g, const char32 *name) {
 	char32 text [100], *newLine;
 	str32cpy (text, name);
-	newLine = str32chr (text, '\n');
+	newLine = str32chr (text, U'\n');
 	if (newLine) {
 		double firstWidth, secondWidth;
 		*newLine = '\0';
@@ -893,7 +893,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const char3
 			x = candWidth + 2 * doubleLineDx;
 			Graphics_setGrey (g, 0.9);
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int index = my index [icons];
+				integer index = my index [icons];
 				OTGrammarConstraint constraint = & my constraints [index];
 				double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
 				if (icons > crucialCell)
@@ -907,7 +907,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const char3
 			x = candWidth + 2 * doubleLineDx;
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int index = my index [icons];
+				integer index = my index [icons];
 				OTGrammarConstraint constraint = & my constraints [index];
 				double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
 				static MelderString markString;
@@ -1066,7 +1066,7 @@ autoDistributions OTGrammar_to_Distribution (OTGrammar me, integer trialsPerInpu
 		/*
 		 * Create the distribution. One row for every output form.
 		 */
-		autoDistributions thee = Distributions_create (totalNumberOfOutputs, 1); 
+		autoDistributions thee = Distributions_create (totalNumberOfOutputs, 1);
 		/*
 		 * Measure every input form.
 		 */
@@ -1101,12 +1101,7 @@ autoDistributions OTGrammar_to_Distribution (OTGrammar me, integer trialsPerInpu
 
 autoPairDistribution OTGrammar_to_PairDistribution (OTGrammar me, integer trialsPerInput, double noise) {
 	try {
-		integer totalNumberOfOutputs = 0, nout = 0;
-		/*
-		 * Count the total number of outputs.
-		 */
-		for (integer itab = 1; itab <= my numberOfTableaus; itab ++)
-			totalNumberOfOutputs += my tableaus [itab]. numberOfCandidates;
+		integer nout = 0;
 		/*
 		 * Create the distribution. One row for every output form.
 		 */
@@ -1898,8 +1893,8 @@ void OTGrammar_resetToRandomTotalRanking (OTGrammar me, double maximumRanking, d
 
 void OTGrammar_setRanking (OTGrammar me, integer constraint, double ranking, double disharmony) {
 	try {
-		if (constraint < 1 || constraint > my numberOfConstraints)
-			Melder_throw (U"There is no constraint with number ", constraint, U".");
+		Melder_require (constraint > 0 && constraint <= my numberOfConstraints,
+			U"There is no constraint with number ", constraint, U".");
 		my constraints [constraint]. ranking = ranking;
 		my constraints [constraint]. disharmony = disharmony;
 		OTGrammar_sort (me);
@@ -1910,8 +1905,8 @@ void OTGrammar_setRanking (OTGrammar me, integer constraint, double ranking, dou
 
 void OTGrammar_setConstraintPlasticity (OTGrammar me, integer constraint, double plasticity) {
 	try {
-		if (constraint < 1 || constraint > my numberOfConstraints)
-			Melder_throw (U"There is no constraint with number ", constraint, U".");
+		Melder_require (constraint > 0 && constraint <= my numberOfConstraints,
+			U"There is no constraint with number ", constraint, U".");
 		my constraints [constraint]. plasticity = plasticity;
 	} catch (MelderError) {
 		Melder_throw (me, U": plasticity of constraint ", constraint, U" not set.");
@@ -2075,16 +2070,16 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, const char32 
 
 static autoOTHistory OTGrammar_createHistory (OTGrammar me, integer storeHistoryEvery, integer numberOfData) {
 	try {
-		integer numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   // e.g. 0, 20, 40, ...
+		integer numberOfSamplingPoints = numberOfData / storeHistoryEvery;   // e.g. 0, 20, 40, ...
 		autoOTHistory thee = Thing_new (OTHistory);
 		TableOfReal_init (thee.get(), 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints);
 		TableOfReal_setColumnLabel (thee.get(), 1, U"Datum");
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 			TableOfReal_setColumnLabel (thee.get(), icons + 1, my constraints [icons]. name);
 		}
 		TableOfReal_setRowLabel (thee.get(), 1, U"Initial state");
-		thy data [1] [1] = 0;
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
+		thy data [1] [1] = 0.0;
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 			thy data [1] [icons + 1] = my constraints [icons]. ranking;
 		}
 		return thee;
@@ -2093,16 +2088,16 @@ static autoOTHistory OTGrammar_createHistory (OTGrammar me, integer storeHistory
 	}
 }
 
-static void OTGrammar_updateHistory (OTGrammar me, OTHistory thee, integer storeHistoryEvery, integer idatum, const char32 *input) {
+static void OTGrammar_updateHistory (OTGrammar me, OTHistory thee, integer storeHistoryEvery, integer datumNumber, const char32 *input) {
 	try {
-		if (idatum % storeHistoryEvery == 0) {
-			integer irow = 2 * idatum / storeHistoryEvery;
-			TableOfReal_setRowLabel (thee, irow, input);
-			thy data [irow] [1] = idatum;
-			thy data [irow + 1] [1] = idatum;
+		if (datumNumber % storeHistoryEvery == 0) {
+			integer rowNumber = 2 * datumNumber / storeHistoryEvery;
+			TableOfReal_setRowLabel (thee, rowNumber, input);
+			thy data [rowNumber] [1] = datumNumber;
+			thy data [rowNumber + 1] [1] = datumNumber;
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				thy data [irow] [icons + 1] = my constraints [icons]. disharmony;
-				thy data [irow + 1] [icons + 1] = my constraints [icons]. ranking;
+				thy data [rowNumber] [icons + 1] = my constraints [icons]. disharmony;
+				thy data [rowNumber + 1] [icons + 1] = my constraints [icons]. ranking;
 			}
 		}
 	} catch (MelderError) {
@@ -2110,10 +2105,10 @@ static void OTGrammar_updateHistory (OTGrammar me, OTHistory thee, integer store
 	}
 }
 
-static void OTGrammar_finalizeHistory (OTGrammar me, OTHistory thee, integer idatum) {
+static void OTGrammar_finalizeHistory (OTGrammar me, OTHistory thee, integer datumNumber) {
 	try {
 		TableOfReal_setRowLabel (thee, thy numberOfRows, U"Final state");
-		thy data [thy numberOfRows] [1] = idatum;
+		thy data [thy numberOfRows] [1] = datumNumber;
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 			thy data [thy numberOfRows] [icons + 1] = my constraints [icons]. ranking;
 		}
@@ -2361,8 +2356,7 @@ void OTGrammar_removeConstraint (OTGrammar me, const char32 *constraintName) {
 	try {
 		integer removed = 0;
 
-		if (my numberOfConstraints <= 1)
-			Melder_throw (U"Cannot remove last remaining constraint.");
+		Melder_require (my numberOfConstraints > 1, U"Cannot remove last remaining constraint.");
 
 		/*
 		 * Look for the constraint to be removed.
@@ -2539,7 +2533,6 @@ void OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, bool singly) {
 
 Thing_define (OTGrammar_List4, Daata) {
 	// new data:
-	public:
 		integer hi1, lo1, hi2, lo2;
 };
 
@@ -2901,7 +2894,7 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 					U"\t",
 					candidate -> output);
 				for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-					int index = my index [icons];
+					integer index = my index [icons];
 					OTGrammarConstraint constraint = & my constraints [index];
 					static MelderString markString;
 					MelderString_empty (& markString);
