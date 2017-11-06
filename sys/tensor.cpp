@@ -348,6 +348,33 @@ autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sort
 	return result;
 }
 
+void sum_mean_sumsq_variance_stdev_scalar (nummat x, integer columnNumber, real *p_sum, real *p_mean, real *p_sumsq, real *p_variance, real *p_stdev) noexcept {
+	if (x.nrow < 2) {
+		if (x.nrow <= 0) {
+			if (p_sum) *p_sum = 0.0;
+			if (p_mean) *p_mean = undefined;
+			if (p_sumsq) *p_sumsq = undefined;
+		} else {
+			if (p_sum) *p_sum = x [1] [columnNumber];
+			if (p_mean) *p_mean = x [1] [columnNumber];
+			if (p_sumsq) *p_sumsq = 0.0;
+		}
+		if (p_variance) *p_variance = undefined;
+		if (p_stdev) *p_stdev = undefined;
+		return;
+	}
+	PAIRWISE_SUM (real80, sum, integer, x.nrow, real *xx = & x.at [1] [columnNumber] - x.ncol, xx += x.ncol, (real80) *xx)
+	real mean = real (sum / x.nrow);   // rounded to real64, because this guarantees that x[i] - mean will be zero for constant x[1..size]
+	if (p_sum) *p_sum = (real) sum;
+	if (p_mean) *p_mean = (real) mean;
+	if (! p_sumsq && ! p_variance && ! p_stdev) return;
+	PAIRWISE_SUM (real80, sumsq, integer, x.nrow, real *xx = & x.at [1] [columnNumber] - x.ncol, xx += x.ncol, real80 (*xx - mean) * real80 (*xx - mean))
+	real80 variance = sumsq / (x.nrow - 1);
+	if (p_sumsq) *p_sumsq = (real) sumsq;
+	if (p_variance) *p_variance = (real) variance;
+	if (p_stdev) *p_stdev = sqrt ((real) variance);
+}
+
 real _inner_scalar (numvec x, numvec y) {
 	if (x.size != y.size) return undefined;
 	PAIRWISE_SUM (real80, sum, integer, x.size,

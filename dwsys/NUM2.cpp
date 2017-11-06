@@ -224,89 +224,6 @@ void NUMnormalize (double **a, integer nr, integer nc, double norm) {
 	}
 }
 
-/*
- * Standard deviations calculated by the corrected two-pass algorithm as decribed in
- * Chan, Golub & LeVeque (1983), Algorithms for computing the sample variance: Analysis and recommendations, 
- * The American Statistician 37: 242 - 247.
- */
-void NUMstandardizeColumns (double **a, integer rb, integer re, integer cb, integer ce) {   // BUG: wrong algorithm, use sum_mean_sumsq_variance_stdev_scalar instead
-	integer n = re - rb + 1;
-	if (n < 2) {
-		return;
-	}
-	for (integer j = cb; j <= ce; j++) {
-		double ep = 0.0, s = 0.0, sdev, var = 0.0;
-		for (integer i = rb; i <= re; i++) {
-			s += a[i][j];
-		}
-		double ave = s / n;
-		for (integer i = rb; i <= re; i++) {
-			s = a[i][j] - ave;
-			ep += s;
-			var += s * s;
-		}
-		if (ave != 0.0) {
-			for (integer i = rb; i <= re; i++) {
-				a[i][j] -= ave;
-			}
-		}
-		if (var > 0.0) {
-			var = (var - ep * ep / n) / (n - 1);
-			sdev = sqrt (var);
-			for (integer i = rb; i <= re; i++) {
-				a[i][j] /= sdev;
-			}
-		}
-	}
-}
-
-void NUMmatrix_standardizeRows (double **a, integer rb, integer re, integer cb, integer ce) {
-	integer n = ce - cb + 1;
-	if (n < 1) {
-		return;
-	}
-	for (integer i = rb; i <= re; i ++) {
-		double mean, stdev = undefined;
-		numvec x {& a [i][cb] - 1, n};
-		sum_mean_sumsq_variance_stdev_scalar (x, nullptr, & mean, nullptr, nullptr, & stdev);
-		stdev = isdefined (stdev) ? stdev : 1.0;
-		for (integer j = cb; j <= ce; j ++) {
-			a [i][j] = (a [i][j] - mean) / stdev;
-		}
-	}
-}
-
-void NUMstandardizeRows (double **a, integer rb, integer re, integer cb, integer ce) {
-	integer n = ce - cb + 1;
-	if (n < 2) {
-		return;
-	}
-	for (integer i = rb; i <= re; i++) {
-		double ep = 0.0, s = 0.0, sdev, var = 0.0;
-		for (integer j = cb; j <= ce; j++) {
-			s += a[i][j];
-		}
-		double ave = s / n;
-		for (integer j = cb; j <= ce; j++) {
-			s = a[i][j] - ave;
-			ep += s;
-			var += s * s;
-		}
-		if (ave != 0.0) {
-			for (integer j = cb; j <= ce; j++) {
-				a[i][j] -= ave;
-			}
-		}
-		if (var > 0.0) {
-			var = (var - ep * ep / n) / (n - 1);
-			sdev = sqrt (var);
-			for (integer j = cb; j <= ce; j++) {
-				a[i][j] /= sdev;
-			}
-		}
-	}
-}
-
 void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce) {
 	integer n = re - rb + 1;
 	if (n < 2) {
@@ -322,7 +239,6 @@ void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer 
 			a[i][j] = ave;
 		}
 	}
-
 }
 
 void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout) {
@@ -1409,7 +1325,7 @@ double NUMfactln (int n) {
 
 void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root) {
 	double df, fx, fh, fl, tmp, xh, xl, tol;
-	integer itermax = 60;
+	integer itermax = 1000;   // 80 or so could be enough; 60 is too small
 
 	(*f) (xmin, &fl, &df, closure);
 	if (fl == 0.0) {

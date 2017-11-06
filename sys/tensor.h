@@ -29,6 +29,7 @@ inline static double sqrt_scalar (double x) {
 
 void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept;
 void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, real *p_sumsq, real *p_variance, real *p_stdev) noexcept;
+void sum_mean_sumsq_variance_stdev_scalar (nummat x, integer columnNumber, real *p_sum, real *p_mean, real *p_sumsq, real *p_variance, real *p_stdev) noexcept;
 
 inline static real sum_scalar (numvec x) noexcept {
 	integer n = x.size;

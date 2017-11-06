@@ -995,7 +995,7 @@ static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, bool
 	str32cpy (text, constraint -> name);
 	newLine = str32chr (text, U'\n');
 	if (newLine) {
-		*newLine = '\0';
+		*newLine = U'\0';
 		firstWidth = Graphics_textWidth_ps (g, text, true);
 		if (firstWidth > maximumWidth) maximumWidth = firstWidth;
 		secondWidth = Graphics_textWidth_ps (g, newLine + 1, true);
@@ -1206,7 +1206,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const cha
 			x = candWidth + 2 * doubleLineDx;
 			Graphics_setGrey (g, 0.9);
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int index = my index [icons];
+				integer index = my index [icons];
 				OTConstraint constraint = & my constraints [index];
 				double width = vertical ? rowHeight / worldAspectRatio : OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 				if (icons > crucialCell)
@@ -1221,7 +1221,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const cha
 		x = candWidth + 2 * doubleLineDx;
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int index = my index [icons];
+			integer index = my index [icons];
 			OTConstraint constraint = & my constraints [index];
 			double width = vertical ? rowHeight / worldAspectRatio : OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 			char32 markString [40];
