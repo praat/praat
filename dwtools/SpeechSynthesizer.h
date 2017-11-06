@@ -38,11 +38,11 @@
 
 #include "SpeechSynthesizer_def.h"
 
-autoSpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants);
+autoEspeakVoice EspeakVoice_create (long numberOfFormants);
 
-void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me);
+void EspeakVoice_setDefaults (EspeakVoice me);
 
-void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *voice);
+void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice);
 
 
 void SpeechSynthesizer_initEspeak ();
@@ -64,7 +64,6 @@ void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double sam
 autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, autoTextGrid *tg, autoTable *events);
 
 void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text);
-
 
 /* End of file SpeechSynthesizer.h */
 #endif
