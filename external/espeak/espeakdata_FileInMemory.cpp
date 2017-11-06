@@ -26,6 +26,8 @@
 #include "voice.h"
 #include <wctype.h>
 
+#include "Strings_extensions.h"
+
 #include "espeakdata_FileInMemory.h"
 
 autoStrings Table_column_to_Strings (Table me, integer column);
@@ -55,7 +57,6 @@ void espeakdata_praat_init () {
 		espeakdata_languages_propertiesTable = Table_createAsEspeakLanguagesProperties ();
 		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
-		Strings_sort (espeakdata_languages_names.get());
 		espeakdata_voices_names = Table_column_to_Strings (espeakdata_voices_propertiesTable.get(), 2);
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata initialization not performed.");
@@ -142,8 +143,8 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		const char32 *criterion = U"/voices/!v/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
-		
-		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index gender age variant");
+		integer numberOfRows = numberOfMatches + 2;
+		autoTable thee = Table_createWithColumnNames (numberOfRows, U"id name index gender age variant");
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
@@ -170,7 +171,25 @@ autoTable Table_createAsEspeakVoicesProperties () {
 			}
 		}
 		Melder_assert (irow == numberOfMatches);
+		/*
+			For compatibility with the past we need also "default" and "f1" as voices.
+			Both will refer to the "Female1"
+		*/
+		integer index[3];
+		index [1] = Table_searchColumn (thee.get(), 2, U"Female1");
+		index [2] = Table_searchColumn (thee.get(), 2, U"Male1");
+		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"zzz1"); // last 2 in sorting
+		Table_setStringValue (thee.get(), numberOfRows, 2, U"zzz2");
 		Table_sortRows_string (thee.get(), U"name");
+		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"default"); // last 2 in sorting
+		Table_setStringValue (thee.get(), numberOfRows, 2, U"f1");
+		for (integer irow = numberOfRows - 1, j = 1; irow <= numberOfRows; irow ++, j ++) {
+			Table_setStringValue (thee.get(), irow, 1, Table_getStringValue_Assert (thee.get(), index [j], 1));
+			Table_setNumericValue (thee.get(), irow, 3, Table_getNumericValue_Assert (thee.get(), index [j], 3)); 
+			Table_setStringValue (thee.get(), irow, 4, Table_getStringValue_Assert (thee.get(), index [j], 4));
+			Table_setStringValue (thee.get(), irow, 5, Table_getStringValue_Assert (thee.get(), index [j], 5));
+			Table_setStringValue (thee.get(), irow, 6, Table_getStringValue_Assert (thee.get(), index [j], 6));
+		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng voice properties not created.");
@@ -182,8 +201,8 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		const char32 *criterion = U"/lang/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
-		
-		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index");
+		integer numberOfRows = numberOfMatches + 2;
+		autoTable thee = Table_createWithColumnNames (numberOfRows, U"id name index"); // old: Default English
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
@@ -196,7 +215,21 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 			}
 		}
 		Melder_assert (irow == numberOfMatches);
+		/*
+			For compatibility with the past we need also "Default" and "English" as languages.
+			Both will refer to the "English (Great Britain)"
+		*/
+		integer index = Table_searchColumn (thee.get(), 2, U"English (Great Britain)");
+		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"zzz1"); // last 2 in sorting
+		Table_setStringValue (thee.get(), numberOfRows, 2, U"zzz2");
 		Table_sortRows_string (thee.get(), U"name");
+		Table_setStringValue (thee.get(), numberOfRows - 1, 1, Table_getStringValue_Assert (thee.get(), index, 1));
+		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"Default");
+		Table_setNumericValue (thee.get(), numberOfRows - 1, 3, Table_getNumericValue_Assert (thee.get(), index, 3));
+		Table_setStringValue (thee.get(), numberOfRows, 1, Table_getStringValue_Assert (thee.get(), index, 1));
+		Table_setStringValue (thee.get(), numberOfRows, 2, U"English");
+		Table_setNumericValue (thee.get(), numberOfRows, 3, Table_getNumericValue_Assert (thee.get(), index, 3));
+
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng languages not created.");
@@ -218,6 +251,31 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata: voices not initialized.");
+	}
+}
+void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *p_languageIndex, int *p_voiceIndex) {
+	if (p_languageIndex) {
+		integer languageIndex = Strings_findString (espeakdata_languages_names.get(), language_string);
+		if (Melder_equ (language_string, U"Default") || Melder_equ (language_string, U"English")) {
+			languageIndex = Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+			Melder_casual (U"Language \"", language_string, U"\" is deprecated. Please use \"", espeakdata_languages_names -> strings [languageIndex], U"\".");
+		}
+		*p_languageIndex = languageIndex;
+	}
+	if (p_voiceIndex) {
+		integer voiceIndex = Strings_findString (espeakdata_voices_names.get(), voice_string);
+		*p_voiceIndex = voiceIndex;
+		if (Melder_equ (voice_string, U"default")) {
+			voiceIndex = Strings_findString (espeakdata_voices_names.get(), U"Male1");
+		} else if (Melder_equ (voice_string, U"f1")) {
+			voiceIndex = Strings_findString (espeakdata_voices_names.get(), U"Female1");
+		}
+		if (voiceIndex != *p_voiceIndex) {
+			*p_voiceIndex = voiceIndex;
+			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. Please use \"", espeakdata_voices_names -> strings [*p_voiceIndex], U"\".");
+		} else {
+			// unknown voice, handled by interface
+		}
 	}
 }
 
