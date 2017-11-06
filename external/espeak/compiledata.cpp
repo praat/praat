@@ -1951,6 +1951,7 @@ static void DecThenCount()
 	if (then_count > 0)
 		then_count--;
 }
+
 #if ! DATA_FROM_SOURCECODE_FILES
 static int CompilePhoneme(int compile_phoneme)
 {
@@ -2495,7 +2496,7 @@ static void CompilePhonemeFiles()
 }
 
 #pragma GCC visibility push(default)
-#if ! DATA_FROM_SOURCECODE_FILES
+
 espeak_ng_STATUS
 espeak_ng_CompilePhonemeData(long rate,
                              FILE *log,
@@ -2659,7 +2660,7 @@ espeak_ng_CompilePhonemeDataPath(long rate,
 
 	return error_count > 0 ? ENS_COMPILE_ERROR : ENS_OK;
 }
-#if ! DATA_FROM_SOURCECODE_FILES
+
 #pragma GCC visibility pop
 
 static const char *preset_tune_names[] = {
@@ -2952,5 +2953,5 @@ espeak_ng_STATUS espeak_ng_CompileIntonation(FILE *log, espeak_ng_ERROR_CONTEXT 
 
 	return error_count > 0 ? ENS_COMPILE_ERROR : ENS_OK;
 }
-#endif
 #pragma GCC visibility pop
+#endif
