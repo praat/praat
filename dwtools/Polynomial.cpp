@@ -1711,10 +1711,10 @@ static double NUMmspline2 (double points[], long numberOfPoints, long order, lon
 
 	// Calculate M[i](x|1,t) according to eq.2.
 
-	for (long k = 1; k <= order; k++) {
+	for (long k = 1; k <= order; k ++) {
 		long k1 = index - order + k, k2 = k1 + 1;
-		m[k] = 0;
-		if (k1 > 0 && k2 <= numberOfPoints && x >= points[k1] && x < points[k2]) {
+		m [k] = 0;
+		if (k1 > 0 && k2 <= numberOfPoints && x >= points[k1] && x < points [k2]) {
 			m[k] = 1 / (points[k2] - points[k1]);
 		}
 	}

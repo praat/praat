@@ -30,6 +30,7 @@
 #include "Strings_extensions.h"
 #include "speak_lib.h"
 #include "encoding.h"
+#include "string.h"
 #include "translate.h"
 
 #include "oo_DESTROY.h"
@@ -56,71 +57,127 @@
 extern structMelderDir praatDir;
 extern int option_phoneme_events;
 
-Thing_implement (SpeechSynthesizerVoice, Daata, 0);
+Thing_implement (EspeakVoice, Daata, 0);
 
-autoSpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants) {
+autoEspeakVoice EspeakVoice_create () {
 	try {
-		autoSpeechSynthesizerVoice me = Thing_new (SpeechSynthesizerVoice);
-		my d_numberOfFormants = numberOfFormants;
-		my d_freq = NUMvector<int> (0, numberOfFormants);
-		my d_height = NUMvector<int> (0, my d_numberOfFormants);	// 100% = 256
-		my d_width = NUMvector<int> (0, my d_numberOfFormants);		// 100% = 256
-		my d_freqadd = NUMvector<int> (0, my d_numberOfFormants);	// Hz
+		autoEspeakVoice me = Thing_new (EspeakVoice);
+		my numberOfFormants = 9; // equals N_PEAKS 
+		my numberOfKlattParameters = 8;
+		my klattv = NUMvector<int32> (1, my numberOfKlattParameters);
+		my freq = NUMvector<int32> (1, my numberOfFormants);
+		my height = NUMvector<int32> (1, my numberOfFormants);	// 100% = 256
+		my width = NUMvector<int32> (0, my numberOfFormants);		// 100% = 256
+		my freqadd = NUMvector<int32> (0, my numberOfFormants);	// Hz
 
 		// copies without temporary adjustments from embedded commands
-		my d_freq2 = NUMvector<int> (0, my d_numberOfFormants);		// 100% = 256
-		my d_height2 = NUMvector<int> (0, my d_numberOfFormants);	// 100% = 256
-		my d_width2 = NUMvector<int> (0, my d_numberOfFormants);	// 100% = 256
+		my freq2 = NUMvector<int32> (0, my numberOfFormants);		// 100% = 256
+		my height2 = NUMvector<int32> (0, my numberOfFormants);	// 100% = 256
+		my width2 = NUMvector<int32> (0, my numberOfFormants);	// 100% = 256
 
-		my d_breath = NUMvector<int> (0, my d_numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
-		my d_breathw = NUMvector<int> (0, my d_numberOfFormants);	// width of each breath formant
-		SpeechSynthesizerVoice_setDefaults (me.get());
+		my breath = NUMvector<int32> (0, my numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
+		my breathw = NUMvector<int32> (0, my numberOfFormants);	// width of each breath formant
+		my numberOfToneAdjusts = 1000; // equals N_TONE_ADJUST in voice.h
+		my tone_adjust = NUMvector<unsigned char> (1, my numberOfToneAdjusts);
+		EspeakVoice_setDefaults (me.get());
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"SpeechSynthesizerVoice not created.");
+		Melder_throw (U"EspeakVoice not created.");
 	}
 }
 
-void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me) {
+void EspeakVoice_setDefaults (EspeakVoice me) {
 	(void) me;
 }
 
-void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *evoice) {
-	my d_v_name = Melder_dup (Melder_peek8to32 (evoice -> v_name));
+void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice) {
+	my v_name = Melder_dup (Melder_peek8to32 (voice -> v_name));
 
-	my d_phoneme_tab_ix = evoice -> phoneme_tab_ix;
-	my d_pitch_base = evoice -> pitch_base;
-	my d_pitch_range = evoice -> pitch_range;
+	my phoneme_tab_ix = voice -> phoneme_tab_ix;
+	my pitch_base = voice -> pitch_base;
+	my pitch_range = voice -> pitch_range;
 
-	my d_speedf1 = evoice -> speedf1;
-	my d_speedf2 = evoice -> speedf2;
-	my d_speedf3 = evoice -> speedf3;
+	my speedf1 = voice -> speedf1;
+	my speedf2 = voice -> speedf2;
+	my speedf3 = voice -> speedf3;
 
-	my d_speed_percent = evoice -> speed_percent;
-	my d_flutter = evoice -> flutter;
-	my d_roughness = evoice -> roughness;
-	my d_echo_delay = evoice -> echo_delay;
-	my d_echo_amp = evoice -> echo_amp;
-	my d_n_harmonic_peaks = evoice -> n_harmonic_peaks;
-	my d_peak_shape = evoice -> peak_shape;
-	my d_voicing = evoice -> voicing;
-	my d_formant_factor = evoice -> formant_factor;
-	my d_consonant_amp = evoice -> consonant_amp;
-	my d_consonant_ampv = evoice -> consonant_ampv;
-	my d_samplingFrequency = evoice -> samplerate;
-	for (long i = 0; i < 7; i++) {
-		my d_klattv[i] = evoice -> klattv[i];
+	my speed_percent = voice -> speed_percent;
+	my flutter = voice -> flutter;
+	my roughness = voice -> roughness;
+	my echo_delay = voice -> echo_delay;
+	my echo_amp = voice -> echo_amp;
+	my n_harmonic_peaks = voice -> n_harmonic_peaks;
+	my peak_shape = voice -> peak_shape;
+	my voicing = voice -> voicing;
+	my formant_factor = voice -> formant_factor;
+	my consonant_amp = voice -> consonant_amp;
+	my consonant_ampv = voice -> consonant_ampv;
+	my samplerate = voice -> samplerate;
+	my numberOfKlattParameters = 8;
+	for (long i = 1; i <= my numberOfKlattParameters; i ++) {
+		my klattv [i] = voice -> klattv [i - 1];
 	}
-	for (long i = 0; i <= my d_numberOfFormants; i++) {
-		my d_freq[i] = evoice -> freq[i];
-		my d_height[i] = evoice -> height[i];
-		my d_width[i] = evoice -> width[i];
-		my d_freqadd[i] = evoice -> freqadd[i];
-		my d_freq2[i] = evoice -> freq2[i];
-		my d_height2[i] = evoice -> height2[i];
-		my d_width2[i] = evoice -> width2[i];
-		my d_breath[i] = evoice -> breath[i];
-		my d_breathw[i] = evoice -> breathw[i];
+	for (long i = 1; i <= my numberOfFormants; i ++) {
+		my freq [i] = voice -> freq [i - 1];
+		my height [i] = voice -> height [i - 1];
+		my width [i] = voice -> width [i - 1];
+		my freqadd [i] = voice -> freqadd [i - 1];
+		my freq2 [i] = voice -> freq2 [i - 1];
+		my height2 [i] = voice -> height2 [i - 1];
+		my width2 [i] = voice -> width2 [i - 1];
+		my breath [i] = voice -> breath [i - 1];
+		my breathw [i] = voice -> breathw [i - 1];
+	}
+	my numberOfToneAdjusts = 1000;
+	for (long i = 1; i <= my numberOfToneAdjusts; i ++) {
+		my tone_adjust [i] = voice -> tone_adjust [i - 1];
+	}
+}
+
+void EspeakVoice_into_voice (EspeakVoice me, voice_t *voice) {
+
+	if (my v_name) {
+		strncpy (voice -> v_name, Melder_peek32to8 (my v_name), 40);
+	}
+	if (my language_name) {
+		strncpy (voice -> language_name, Melder_peek32to8 (my language_name), 20);
+	}
+	voice -> phoneme_tab_ix = my phoneme_tab_ix;
+	voice -> pitch_base = my pitch_base;
+	voice -> pitch_range = my pitch_range;
+
+	voice -> speedf1 = my speedf1;
+	voice -> speedf2 = my speedf2;
+	voice -> speedf3 = my speedf3;
+
+	voice -> speed_percent = my speed_percent;
+	voice -> flutter = my flutter;
+	voice -> roughness = my roughness;
+	voice -> echo_delay = my echo_delay;
+	voice -> echo_amp = my echo_amp;
+	voice -> n_harmonic_peaks = my n_harmonic_peaks;
+	voice -> peak_shape = my peak_shape;
+	voice -> voicing = my voicing;
+	voice -> formant_factor = my formant_factor;
+	voice -> consonant_amp = my consonant_amp;
+	voice -> consonant_ampv = my consonant_ampv;
+	voice -> samplerate = my samplerate;
+	for (long i = 1; i <= my numberOfKlattParameters; i ++) {
+		voice -> klattv [i - 1] = my klattv [i];
+	}
+	for (long i = 1; i <= my numberOfFormants; i ++) {
+		voice -> freq [i - 1] = my freq [i];
+		voice -> height [i - 1] = my height [i];
+		voice -> width [i - 1] = my width [i];
+		voice -> freqadd [i - 1] = my freqadd [i];
+		voice -> freq2 [i - 1] = my freq2 [i];
+		voice -> height2 [i - 1] = my height2 [i];
+		voice -> width2 [i - 1] = my width2 [i];
+		voice -> breath [i - 1] = my breath [i];
+		voice -> breathw [i - 1] = my breathw [i];
+	}
+	for (long i = 1; i <= my numberOfToneAdjusts; i ++) {
+		voice -> tone_adjust [i - 1] = voice -> tone_adjust [i];
 	}
 }
 

@@ -30,13 +30,6 @@
 /* machine precision */
 #define NUMeps 2.2e-16
 
-int NUMstrcmp (const char *s1, const char *s2);
-/*
-	Compares strings, accepts NUL-strings (NULL < 'a')
-	return s1 == NULL ? (s2 == NULL ? 0 : - 1) :
-		(s2 == NULL ? 1 : strcmp (s1, s2));
-*/
-
 int NUMstring_containsPrintableCharacter (const char32 *s);
 
 void NUMstring_chopWhiteSpaceAtExtremes_inline (char32 *string);
@@ -408,14 +401,6 @@ void NUMrank (integer n, T *a) {
 
 void NUMrankColumns (double **m, integer rb, integer re, integer cb, integer ce);
 
-void NUMlocate (double *xx, integer n, double x, integer *index);
-/*
-	Given an array xx[1..n], and given a value x, returns a value index
-	such that xx[index] < x <=  xx[index+1].
-	Preconditions: xx must be monotonic
-	Error: index = 0 or index = n (out of range)
-*/
-
 int NUMjacobi (float **a, integer n, float d[], float **v, integer *nrot);
 /*
 	This version deviates from the NR version.
@@ -502,7 +487,7 @@ void NUMcholeskySolve (double **a, integer n, double d[], double b[], double x[]
 	Solves A.x=b for x. A[][] and d[] are output from NUMcholeskyDecomposition.
 */
 
-void NUMlowerCholeskyInverse (double **a, integer n, double *lnd);
+void NUMlowerCholeskyInverse (double **a, integer n, double *p_lnd);
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
 	and ln(determinant). L^-1 in lower, leave upper part intact.
@@ -514,7 +499,7 @@ double **NUMinverseFromLowerCholesky (double **m, integer n);
 	Input is the lower Cholesky decomposition of the inverse as calculated by NUMlowerCholeskyInverse.
 */
 
-void NUMdeterminant_cholesky (double **a, integer n, double *lnd);
+double NUMdeterminant_cholesky (double **a, integer n);
 /*
 	ln(determinant) of a symmetric p.s.d. matrix
 */
@@ -719,8 +704,7 @@ double NUMridders (double (*f) (double x, void *closure), double xmin, double xm
 		root not bracketed.
 */
 
-void NUMmspline (double knot[], integer nKnots, integer order, integer i, double x,
-	double *y);
+double NUMmspline (double knot[], integer nKnots, integer order, integer i, double x);
 /*
 	Calculates an M-spline for a knot sequence.
 	After Ramsay (1988), Monotone splines in action, Statistical Science 4.
@@ -732,8 +716,7 @@ void NUMmspline (double knot[], integer nKnots, integer order, integer i, double
 	Error condition: no memory.
 */
 
-void NUMispline (double aknot[], integer nKnots, integer order, integer i, double x,
-	double *y);
+double NUMispline (double aknot[], integer nKnots, integer order, integer i, double x);
 /*
 	Calculates an I-spline for simple knot sequences: only one knot at each
 	interior boundary.
@@ -1012,7 +995,7 @@ double **NUMcosinesTable (integer first, integer last, integer npoints);
 
 /******  Interpolation ****/
 
-void NUMspline (double x[], double y[], integer n, double yp1, double ypn, double y2[]);
+void NUMcubicSplineInterpolation (double x[], double y[], integer n, double yp1, double ypn, double y2[]);
 /*
 	Given arrays a[1..n] and y[1..n] containing a tabulated function, i.e.,
 	y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given values yp1 and
@@ -1020,16 +1003,16 @@ void NUMspline (double x[], double y[], integer n, double yp1, double ypn, doubl
 	1 and n, respectively, this routine returns an array y2[1..n] that
 	contains the second derivative of the interpolating function at the
 	tabulated point x.
-	If yp1 and/or ypn are greaterequal 10^30, the routine is signaled to
-	set the corresponding boundary condition for a natuarl spline, with
+	If yp1 and/or ypn are >= 10^30, the routine is signaled to
+	set the corresponding boundary condition for a natural spline, with
 	zero second derivative on that boundary.
 */
 
-void NUMsplint (double xa[], double ya[], double y2a[], integer n, double x, double *y);
+double NUMsplint (double xa[], double ya[], double y2a[], integer n, double x);
 /*
 	Given arrays xa[1..n] and ya[1..n] containing a tabulated function,
 	i.e., y[i] = f(x[i]), with x[1] < x[2] < ... < x[n], and given the
-	array y2a[1..n] which is the output of NUMspline above, and given
+	array y2a[1..n] which is the output of NUMcubicSplineInterpolation above, and given
 	a value of x, this routine returns an interpolated value y.
 */
 

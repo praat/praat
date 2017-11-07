@@ -39,7 +39,8 @@ all:
 		LPC/libLPC.a dwtools/libdwtools.a \
 		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
 		sys/libsys.a num/libnum.a kar/libkar.a \
-		external/espeak/libespeak.a external/portaudio/libportaudio.a \
+		external/espeak/libespeak.a \
+		external/portaudio/libportaudio.a \
 		external/flac/libflac.a external/mp3/libmp3.a \
 		external/glpk/libglpk.a external/gsl/libgsl.a \
 		$(LIBS)

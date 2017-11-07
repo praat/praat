@@ -26,6 +26,8 @@
 #include "voice.h"
 #include <wctype.h>
 
+#include "Strings_extensions.h"
+
 #include "espeakdata_FileInMemory.h"
 
 autoStrings Table_column_to_Strings (Table me, integer column);
@@ -55,7 +57,6 @@ void espeakdata_praat_init () {
 		espeakdata_languages_propertiesTable = Table_createAsEspeakLanguagesProperties ();
 		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
-		Strings_sort (espeakdata_languages_names.get());
 		espeakdata_voices_names = Table_column_to_Strings (espeakdata_voices_propertiesTable.get(), 2);
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata initialization not performed.");
@@ -142,7 +143,6 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		const char32 *criterion = U"/voices/!v/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
-		
 		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index gender age variant");
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
@@ -182,8 +182,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		const char32 *criterion = U"/lang/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
-		
-		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index");
+		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index"); // old: Default English
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
@@ -218,6 +217,47 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata: voices not initialized.");
+	}
+}
+
+void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *p_languageIndex, int *p_voiceIndex) {
+	if (p_languageIndex) {
+		integer languageIndex = Strings_findString (espeakdata_languages_names.get(), language_string);
+		if (languageIndex == 0) {
+			if (Melder_equ (language_string, U"Default") || Melder_equ (language_string, U"English")) {
+				languageIndex = Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
+				Melder_casual (U"Language \"", language_string, U"\" is deprecated. Please use \"", espeakdata_languages_names -> strings [languageIndex], U"\".");
+			} else {
+				languageIndex = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 1, language_string);
+				if (languageIndex == 0) {
+					Melder_throw (U"Language \"",language_string, U" is not a valid option.");
+				}
+			}
+		}
+		*p_languageIndex = languageIndex;
+	}
+	if (p_voiceIndex) {
+		integer voiceIndex = Strings_findString (espeakdata_voices_names.get(), voice_string);
+		*p_voiceIndex = voiceIndex;
+		if (voiceIndex == 0) {
+			if (Melder_equ (voice_string, U"default")) {
+				voiceIndex = Strings_findString (espeakdata_voices_names.get(), U"Male1");
+			} else if (Melder_equ (voice_string, U"f1")) {
+				voiceIndex = Strings_findString (espeakdata_voices_names.get(), U"Female1");
+			} else {
+				// Try the bare file names
+				voiceIndex = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 1, voice_string);
+				if (voiceIndex == 0) {
+					Melder_throw (U"Voice ",voice_string, U" is not a valid option.");
+				}
+			}
+		}
+		if (voiceIndex != *p_voiceIndex) {
+			*p_voiceIndex = voiceIndex;
+			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. Please use \"", espeakdata_voices_names -> strings [*p_voiceIndex], U"\".");
+		} else {
+			// unknown voice, handled by interface
+		}
 	}
 }
 

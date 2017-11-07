@@ -5790,24 +5790,26 @@ DO
 }
 
 FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
-	OPTIONMENU (languageIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-	for (long i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
+	OPTIONMENUSTR (language_string, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
+	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
+		OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
 	}
-	OPTIONMENU (voiceIndex, U"Voice variant", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
-	for (long i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
+	OPTIONMENUSTR (voice_string, U"Voice variant", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
+	for (integer i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
 		OPTION ((const char32 *) espeakdata_voices_names -> strings [i]);
 	}
 	OK
 DO
 	CREATE_ONE
+		int languageIndex, voiceIndex;
+		espeakdata_getIndices (language_string, voice_string, & languageIndex, & voiceIndex);
 		autoSpeechSynthesizer result = SpeechSynthesizer_create (espeakdata_languages_names -> strings [languageIndex], espeakdata_voices_names -> strings [voiceIndex]);
     CREATE_ONE_END (espeakdata_languages_names -> strings [languageIndex], U"_", espeakdata_voices_names -> strings [voiceIndex])
 }
 
 FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
 	OPTIONMENU (phoneneSetIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-	for (long i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
+	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
 			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
 	}
 	OK
@@ -7592,7 +7594,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_DEPRECATED_2016, NEW1_Polygon_createFromRandomPoints);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random points)...", nullptr, praat_HIDDEN, NEW1_Polygon_createFromRandomPoints);
-	praat_addMenuCommand (U"Objects", U"New", U"FileInMemoryManager -", nullptr, 0, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"FileInMemoryManager", nullptr, praat_HIDDEN, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemoryManager", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_FileInMemoryManager_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_HIDDEN + praat_DEPTH_1, READ1_FileInMemory_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_FileInMemorySet_createFromDirectoryContents);
