@@ -598,10 +598,7 @@ END }
 
 FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 	REAL (horizontalPosition, U"Horizontal position", U"0.0")
-	OPTIONMENUx (horizontalAlignment, U"Horizontal alignment", 2, 0)
-		OPTION (U"Left")
-		OPTION (U"Centre")
-		OPTION (U"Right")
+	OPTIONMENU_ENUM (horizontalAlignment, U"Horizontal alignment", kGraphics_horizontalAlignment, LEFT)
 	REAL (verticalPosition, U"Vertical position", U"0.0")
 	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
 		OPTION (U"Bottom")
@@ -611,7 +608,7 @@ FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 	OK
 DO
 	GRAPHICS_NONE
-		Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
+		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
 		Graphics_setInner (GRAPHICS);
 		Graphics_text (GRAPHICS, horizontalPosition, verticalPosition, text);
 		Graphics_unsetInner (GRAPHICS);

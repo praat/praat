@@ -1205,7 +1205,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				}
 			}
 			if (my integerValue == 0) {
-				Melder_throw (U"Option argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
+				if (my intVariable)
+					Melder_throw (U"Option argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
+				if (my stringVariable) {
+					*my stringVariable = arg -> string;
+				}
 			}
 			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
