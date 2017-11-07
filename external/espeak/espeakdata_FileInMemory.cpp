@@ -172,13 +172,13 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		}
 		Melder_assert (irow == numberOfMatches);
 		/*
-			For compatibility with the past we need also "default" and "f1" as voices.
-			Both will refer to the "Female1"
+			Minimum repair: compatibility with espeak 1.48 needs "default" and "f1" as voices.
+			They will refer to the "Male1" and "Female1", respectively.
 		*/
 		integer index[3];
 		index [1] = Table_searchColumn (thee.get(), 2, U"Female1");
 		index [2] = Table_searchColumn (thee.get(), 2, U"Male1");
-		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"zzz1"); // last 2 in sorting
+		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"zzz1"); // have to end up last in sorting
 		Table_setStringValue (thee.get(), numberOfRows, 2, U"zzz2");
 		Table_sortRows_string (thee.get(), U"name");
 		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"default"); // last 2 in sorting
@@ -216,11 +216,11 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		}
 		Melder_assert (irow == numberOfMatches);
 		/*
-			For compatibility with the past we need also "Default" and "English" as languages.
-			Both will refer to the "English (Great Britain)"
+			Minimum repair: compatibility with espeak 1.48 needs also "Default" and "English" as languages.
+			Both will refer to "English (Great Britain)"
 		*/
 		integer index = Table_searchColumn (thee.get(), 2, U"English (Great Britain)");
-		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"zzz1"); // last 2 in sorting
+		Table_setStringValue (thee.get(), numberOfRows - 1, 2, U"zzz1"); // have to end up last in sorting
 		Table_setStringValue (thee.get(), numberOfRows, 2, U"zzz2");
 		Table_sortRows_string (thee.get(), U"name");
 		Table_setStringValue (thee.get(), numberOfRows - 1, 1, Table_getStringValue_Assert (thee.get(), index, 1));
@@ -253,6 +253,7 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 		Melder_throw (U"Espeakdata: voices not initialized.");
 	}
 }
+
 void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *p_languageIndex, int *p_voiceIndex) {
 	if (p_languageIndex) {
 		integer languageIndex = Strings_findString (espeakdata_languages_names.get(), language_string);
