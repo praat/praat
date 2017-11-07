@@ -84,24 +84,24 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			Pitch_Frame pitchFrame = &thy frame[j];
 
 			pitchFrame -> intensity = power[j] / maxPower;
-			for (long i = 1; i <= my ny; i++) {
-				y[i] = my s[i][j];
+			for (long i = 1; i <= my ny; i ++) {
+				y [i] = my s[i][j];
 			}
-			NUMspline (fl2.peek(), y.peek(), my ny, 1e30, 1e30, yv2.peek());
-			for (long k = 1; k <= nFrequencyPoints; k++) {
+			NUMcubicSplineInterpolation (fl2.peek(), y.peek(), my ny, 1e30, 1e30, yv2.peek());
+			for (long k = 1; k <= nFrequencyPoints; k ++) {
 				double f = fminl2 + (k - 1) * dfl2;
-				NUMsplint (fl2.peek(), y.peek(), yv2.peek(), my ny, f, & pitch[k]);
-				sumspec[k] = 0.0;
+				pitch [k] = NUMsplint (fl2.peek(), y.peek(), yv2.peek(), my ny, f);
+				sumspec [k] = 0.0;
 			}
 
 			// Formula (8): weighted harmonic summation.
 
-			for (long m = 1; m <= maxHarmonic; m++) {
+			for (long m = 1; m <= maxHarmonic; m ++) {
 				double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
 				integer kb = 1 + Melder_iroundDown (nPointsPerOctave * NUMlog2 (m));
-				for (long k = kb; k <= nFrequencyPoints; k++) {
-					if (pitch[k] > 0.0) {
-						sumspec[k - kb + 1] += pitch[k] * hm;
+				for (long k = kb; k <= nFrequencyPoints; k ++) {
+					if (pitch [k] > 0.0) {
+						sumspec [k - kb + 1] += pitch [k] * hm;
 					}
 				}
 			}

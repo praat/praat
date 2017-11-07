@@ -1055,7 +1055,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 	for (long i = 1; i <= g; i ++) {
 		SSCP t = my at [i];
 		double ni = t -> numberOfObservations - 1.0;
-		NUMdeterminant_cholesky (t -> data, p, & ln_determinant);
+		ln_determinant = NUMdeterminant_cholesky (t -> data, p);
 
 		// Box-test is for covariance matrices -> scale determinant.
 
@@ -1065,7 +1065,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 		chisq -= ni * ln_determinant;
 	}
 
-	NUMdeterminant_cholesky (pooled -> data, p, & ln_determinant);
+	ln_determinant = NUMdeterminant_cholesky (pooled -> data, p);
 	ln_determinant -= p * log (pooled -> numberOfObservations - g);
 	chisq += sum * ln_determinant;
 
@@ -1363,9 +1363,7 @@ autoCorrelation SSCP_to_Correlation (SSCP me) {
 
 double SSCP_getLnDeterminant (SSCP me) {
 	try {
-		double ln_d;
-		NUMdeterminant_cholesky (my data, my numberOfRows, & ln_d);
-		return ln_d;
+		return NUMdeterminant_cholesky (my data, my numberOfRows);
 	} catch (MelderError) {
 		return undefined;
 	}
@@ -1585,7 +1583,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			 */
 			double lnd;
 			try {
-				NUMdeterminant_cholesky (pool -> data, p, & lnd);
+				lnd = NUMdeterminant_cholesky (pool -> data, p);
 			} catch (MelderError) {
 				Melder_throw (U"Pooled covariance matrix is singular.");
 			}
@@ -1595,7 +1593,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			for (long i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				try {
-					NUMdeterminant_cholesky (ci -> data, p, & lnd);
+					lnd = NUMdeterminant_cholesky (ci -> data, p);
 				} catch (MelderError) {
 					Melder_throw (U"Covariance matrix ", i, U" is singular.");
 				}
@@ -1670,7 +1668,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 
 	autoNUMmatrix<double> linv (NUMmatrix_copy (thy data, 1, p, 1, p), 1, 1);
 	NUMlowerCholeskyInverse (linv.peek(), p, & ln_thee);
-	NUMdeterminant_cholesky (my data, p, & ln_me);
+	ln_me = NUMdeterminant_cholesky (my data, p);
 
 	/*
 		We need trace (A B^-1). We have A and the inverse L^(-1) of the
@@ -1954,8 +1952,7 @@ void Correlation_testDiagonality_bartlett (Correlation me, long numberOfContrain
 		return;
 	}
 	if (my numberOfObservations >= numberOfContraints) {
-		double ln_determinant;
-		NUMdeterminant_cholesky (my data, p, & ln_determinant);
+		double ln_determinant = NUMdeterminant_cholesky (my data, p);
 		chisq = - ln_determinant * (my numberOfObservations - numberOfContraints - (2.0 * p + 5.0) / 6.0);
 		if (p_prob) {
 			prob = NUMchiSquareQ (chisq, df);
