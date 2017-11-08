@@ -3,11 +3,11 @@
 
 # show memory leaks of espeak 
 
-Create SpeechSynthesizer: "English (Great Britain)", "Female1"
+synth = Create SpeechSynthesizer: "English (Great Britain)", "Female1"
 numberOfTries = 500
 table = Create Table with column names: "m", numberOfTries, "run bytes"
 for i to numberOfTries
-	selectObject: "SpeechSynthesizer English_default"
+	selectObject: synth
 	s = To Sound: "This is some text.", "no"
 	removeObject: s
 	@get_memoryTotalCreated

@@ -2,7 +2,7 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../kar -I ../../sys -I ../../dwsys -I ../../stat
+CPPFLAGS = -I ../../kar -I ../../dwtools -I ../../sys -I ../../dwsys -I ../../stat
 
 OBJECTS = categories.o compiledata.o compiledict.o dictionary.o encoding.o error.o intonation.o klatt.o  \
 	numbers.o phonemelist.o proplist.o readclause.o setlengths.o speech.o \

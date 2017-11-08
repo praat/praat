@@ -33,6 +33,11 @@ ss = Create SpeechSynthesizer: language$, voice$
 Save as text file: "kanweg.SpeechSynthesizer"
 ss2 = Read from file: "kanweg.SpeechSynthesizer"
 
-removeObject: voiceslist, languageslist, ss, ss2
+appendInfoLine: tab$, "Compatibility:"
+
+ss3 = Create SpeechSynthesizer: "Default", "default"
+ss4 = Create SpeechSynthesizer: "English", "f1"
+
+removeObject: voiceslist, languageslist, ss, ss2,  ss3, ss4
 
 appendInfoLine: "SpeechSynthesizer test OK"

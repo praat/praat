@@ -376,11 +376,11 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 		m[i][1] = 1.0;
 		for (integer j = 2; j <= numberOfParameters; j++) {
 			try {
-				NUMispline (knot, nKnots, order, j - 1, x, & y);
+				y = NUMispline (knot, nKnots, order, j - 1, x);
 			} catch (MelderError) {
 				Melder_throw (U"I-spline[", j - 1, U"], data[", i, U"d] = ", x);
 			}
-			m[i][j] = y;
+			m [i] [j] = y;
 		}
 	}
 
@@ -2921,14 +2921,14 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 
 	Graphics_setWindow (g, low, high, ymin, ymax);
 	Graphics_setInner (g);
+	double dx = (high - low) / (n - 1);
 	for (integer i = 1; i <= nSplines; i ++) {
-		double x, yx, dx = (high - low) / (n - 1);
 		for (integer j = 1; j <= n; j++) {
-			x = low + dx * (j - 1);
+			double yx, x = low + dx * (j - 1);
 			if (splineType == MDS_MSPLINE) {
-				(void) NUMmspline (knot, numberOfKnots, order, i, x, &yx);
+				yx = NUMmspline (knot, numberOfKnots, order, i, x);
 			} else {
-				(void) NUMispline (knot, numberOfKnots, order, i, x, &yx);
+				yx = NUMispline (knot, numberOfKnots, order, i, x);
 			}
 			y[j] = yx < ymin ? ymin : yx > ymax ? ymax : yx;
 		}
