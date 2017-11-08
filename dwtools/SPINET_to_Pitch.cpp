@@ -87,10 +87,10 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			for (long i = 1; i <= my ny; i ++) {
 				y [i] = my s[i][j];
 			}
-			NUMcubicSplineInterpolation (fl2.peek(), y.peek(), my ny, 1e30, 1e30, yv2.peek());
+			NUMcubicSplineInterpolation_getSecondDerivatives (fl2.peek(), y.peek(), my ny, 1e30, 1e30, yv2.peek());
 			for (long k = 1; k <= nFrequencyPoints; k ++) {
 				double f = fminl2 + (k - 1) * dfl2;
-				pitch [k] = NUMsplint (fl2.peek(), y.peek(), yv2.peek(), my ny, f);
+				pitch [k] = NUMcubicSplineInterpolation (fl2.peek(), y.peek(), yv2.peek(), my ny, f);
 				sumspec [k] = 0.0;
 			}
 
