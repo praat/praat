@@ -1209,10 +1209,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 					Melder_throw (U"Option argument \"", my name, U"\" cannot have the value \"", arg -> string, U"\".");
 				if (my stringVariable) {
 					*my stringVariable = arg -> string;
+					return;
 				}
 			}
 			if (my intVariable) *my intVariable = my integerValue - my subtract;
-			if (my stringVariable) *my stringVariable = arg -> string;
+			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
 		} break; case UI_LIST: {
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"List argument \"", my name, U"\" should be a string, not ", Stackel_whichText(arg), U".");

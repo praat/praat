@@ -105,7 +105,7 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, const char3
 	for (integer i = 1; i <= nr; i ++) {
 		for (integer j = 1; j <= n.quot; j ++) {
 			for (integer k = 1; k <= npc; k ++) {
-				MelderInfo_write (m [i] [ (j - 1) * npc + k], (k < npc ? U", " : U""));
+				MelderInfo_write (m [i] [(j - 1) * npc + k], (k < npc ? U", " : U""));
 			}
 			MelderInfo_write (j < n.quot ? U",\n" : U"");
 		}
