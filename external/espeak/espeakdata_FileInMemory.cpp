@@ -248,7 +248,7 @@ void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *
 				// Try the bare file names
 				voiceIndex = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 1, voice_string);
 				if (voiceIndex == 0) {
-					Melder_throw (U"Voice ",voice_string, U" is not a valid option.");
+					Melder_throw (U"Voice variant ", voice_string, U" is not a valid option.");
 				}
 			}
 		}

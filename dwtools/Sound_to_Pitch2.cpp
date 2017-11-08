@@ -182,10 +182,10 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			// Go to a logarithmic scale and perform cubic spline interpolation to get
 			// spectral values for the increased number of frequency points.
 
-			NUMcubicSplineInterpolation (fl2.peek(), specAmp.peek(), nfft2, 1e30, 1e30, yv2.peek());
+			NUMcubicSplineInterpolation_getSecondDerivatives (fl2.peek(), specAmp.peek(), nfft2, 1e30, 1e30, yv2.peek());
 			for (long j = 1; j <= nFrequencyPoints; j ++) {
 				double f = fminl2 + (j - 1) * dfl2;
-				al2 [j] = NUMsplint (fl2.peek(), specAmp.peek(), yv2.peek(), nfft2, f);
+				al2 [j] = NUMcubicSplineInterpolation (fl2.peek(), specAmp.peek(), yv2.peek(), nfft2, f);
 			}
 
 			// Multiply by frequency selectivity of the auditory system.

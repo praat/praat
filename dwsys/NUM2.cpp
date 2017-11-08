@@ -9,7 +9,7 @@
  *
  * This code is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -27,7 +27,7 @@
  djmw 20030703 Replaced NUMincompleteBeta with gsl_sf_beta_inc.
  djmw 20030710 NUMminimize_brent now also returns the minimum function value.
  djmw 20030731 NUMridders: better approximation for small d.
- 			   NUMinvFisherQ better approximation for p < 0.5
+			   NUMinvFisherQ better approximation for p < 0.5
  djmw 20030813 Added NUMmad and NUMstatistics_huber.
  djmw 20030825 Replaced gsl_sf_beta_inc with NUMincompleteBeta
  pb   20030828 Improvements for invFisherQ, ridders, studentP, studentQ,
@@ -341,7 +341,7 @@ void eigenSort (double d [], double **v, integer n, int sort) {
 	Regression is ascending
 */
 void NUMmonotoneRegression (const double x [], integer n, double xs []) {
-	double xt = undefined;   // only to stop gcc from complaining "may be used uninitialized"
+	double xt = undefined; // only to stop gcc from complaining "may be used uninitialized"
 
 	for (integer i = 1; i <= n; i ++) {
 		xs [i] = x [i];
@@ -574,7 +574,7 @@ void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambd
 			}
 		}
 
-		for (integer k = 1; k <= n; k ++)  {
+		for (integer k = 1; k <= n; k ++) {
 			znorm2 += z [k] * z [k];
 		}
 		znorm2 = sqrt (znorm2);
@@ -827,7 +827,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 	autoNUMvector<double> chi (1, n3);
 	autoNUMvector<double> diag (1, n3);
 
-	// Construct O'.O    [1..3] [1..3].
+	// Construct O'.O	[1..3] [1..3].
 
 	for (integer i = 1; i <= n3; i ++) {
 		for (integer j = 1; j <= n3; j ++) {
@@ -873,7 +873,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 
 	NUMsort_d (3, delta.peek()); /* ascending */
 
-	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)    (page 632)
+	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)	(page 632)
 	// Get P'F^-1 from the transpose of (F')^-1 . P
 
 	for (integer i = 1; i <= 3; i ++) {
@@ -990,7 +990,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 	autoSVD svd = SVD_create_d (f, n, m);
 
 	if (alpha == 0.0) {
-		SVD_solve (svd.get(), phi, t);    // standard least squares
+		SVD_solve (svd.get(), phi, t);	// standard least squares
 	}
 
 
@@ -1107,7 +1107,7 @@ void NUMProcrustes (double **x, double **y, integer nPoints, integer nDimensions
 		}
 	}
 
-	// 2. Decompose C by SVD:  C = PDQ' (SVD attribute is Q instead of Q'!)
+	// 2. Decompose C by SVD: C = PDQ' (SVD attribute is Q instead of Q'!)
 
 	autoSVD svd = SVD_create_d (c.peek(), nDimensions, nDimensions);
 	double trace = 0.0;
@@ -1277,13 +1277,12 @@ double NUMfactln (int n) {
 	if (n <= 1) {
 		return 0.0;
 	}
-	return n > 100 ? NUMlnGamma (n + 1.0) : table [n] != 0.0 ? table [n] :
-	       (table [n] = NUMlnGamma (n + 1.0));
+	return n > 100 ? NUMlnGamma (n + 1.0) : table [n] != 0.0 ? table [n] : (table [n] = NUMlnGamma (n + 1.0));
 }
 
 void NUMnrbis (void (*f) (double x, double *fx, double *dfx, void *closure), double xmin, double xmax, void *closure, double *root) {
 	double df, fx, fh, fl, tmp, xh, xl, tol;
-	integer itermax = 1000;   // 80 or so could be enough; 60 is too small
+	integer itermax = 1000; // 80 or so could be enough; 60 is too small
 
 	(*f) (xmin, &fl, &df, closure);
 	if (fl == 0.0) {
@@ -1404,18 +1403,18 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 			if (f1 > 0.0) { 
 				// falling curve: f1 > 0, f2 < 0 
 				if (f3 > 0.0) {
-					x1 = x3; f1 = f3;   // retain invariant: f1 > 0, f2 < 0
+					x1 = x3; f1 = f3; // retain invariant: f1 > 0, f2 < 0
 				} else {
 					// f3 <= 0.0
-					x2 = x3; f2 = f3;   // retain invariant: f1 > 0, f2 < 0
+					x2 = x3; f2 = f3; // retain invariant: f1 > 0, f2 < 0
 				}
 			} else {
 				// rising curve: f1 < 0, f2 > 0 
 				if (f3 > 0.0) {
-					x2 = x3; f2 = f3;   // retain invariant: f1 < 0, f2 > 0
+					x2 = x3; f2 = f3; // retain invariant: f1 < 0, f2 > 0
 				} else {
 					// f3 < 0.0
-					x1 = x3; f1 = f3;   // retain invariant: f1 < 0, f2 > 0
+					x1 = x3; f1 = f3; // retain invariant: f1 < 0, f2 > 0
 				}
 			}
 		} else {
@@ -1433,18 +1432,18 @@ double NUMridders (double (*f) (double x, void *closure), double x1, double x2, 
 				if (f1 > 0.0) {
 					// falling curve: f1 > 0, f2 < 0
 					if (f3 > 0.0) {
-						x1 = x3; f1 = f3;   // retain invariant: f1 > 0, f2 < 0
+						x1 = x3; f1 = f3; // retain invariant: f1 > 0, f2 < 0
 					} else {
 						// f3 <= 0.0
-						x2 = x3; f2 = f3;   // retain invariant: f1 > 0, f2 < 0
+						x2 = x3; f2 = f3; // retain invariant: f1 > 0, f2 < 0
 					}
 				} else {
 					// rising curve: f1 < 0, f2 > 0
 					if (f3 > 0.0) {
-						x2 = x3; f2 = f3;   // retain invariant: f1 < 0, f2 > 0
+						x2 = x3; f2 = f3; // retain invariant: f1 < 0, f2 > 0
 					} else {
 						// f3 < 0.0
-						x1 = x3; f1 = f3;   // retain invariant: f1 < 0, f2 > 0 */
+						x1 = x3; f1 = f3; // retain invariant: f1 < 0, f2 > 0 */
 					}
 				}
 			} else {
@@ -1560,7 +1559,7 @@ double NUMinvGaussQ (double p) {
 	}
 	double t = sqrt (- 2.0 * log (pc));
 	t -= (2.515517 + (0.802853 + 0.010328 * t) * t) /
-	     (1.0 + (1.432788 + (0.189269 + 0.001308 * t) * t) * t);
+		 (1.0 + (1.432788 + (0.189269 + 0.001308 * t) * t) * t);
 	return p > 0.5 ? -t : t;
 }
 
@@ -1740,8 +1739,8 @@ double NUMnormalityTest_HenzeZirkler (double **data, integer n, integer p, doubl
 
 	double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
 	double var = 2.0 * pow (1.0 + 4.0 * beta2, -p2)
-	     + 2.0 * pow (gamma,  -p) * (1.0 + 2.0 * p * beta4 / gamma2  + 3.0 * p * (p + 2) * beta8 / (4.0 * gamma4))
-	     - 4.0 * pow (delta, -p2) * (1.0 + 3.0 * p * beta4 / (2.0 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
+		 + 2.0 * pow (gamma,  -p) * (1.0 + 2.0 * p * beta4 / gamma2  + 3.0 * p * (p + 2) * beta8 / (4.0 * gamma4))
+		 - 4.0 * pow (delta, -p2) * (1.0 + 3.0 * p * beta4 / (2.0 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
 	double mu2 = mu * mu;
 	*lnmu = log (sqrt (mu2 * mu2 / (mu2 + var)));
 	*lnvar = sqrt (log ( (mu2 + var) / mu2));
@@ -1879,7 +1878,7 @@ int NUMburg (double x [], integer n, double a [], int m, double *xms) {
 
 	*xms = p / n;
 	if (*xms <= 0.0) {
-		return 0;    // warning empty
+		return 0;	// warning empty
 	}
 
 	// (9)
@@ -1900,7 +1899,7 @@ int NUMburg (double x [], integer n, double a [], int m, double *xms) {
 		}
 
 		if (denum <= 0.0) {
-			return 0;    // warning ill-conditioned
+			return 0;	// warning ill-conditioned
 		}
 
 		a [i] = 2.0 * num / denum;
@@ -1917,7 +1916,7 @@ int NUMburg (double x [], integer n, double a [], int m, double *xms) {
 
 		if (i < m) {
 
-			// (8)  Watch out: i -> i+1
+			// (8) Watch out: i -> i+1
 
 			for (integer j = 1; j <= i; j ++) {
 				aa [j] = a [j];
@@ -1978,7 +1977,7 @@ double **NUMcosinesTable (integer first, integer last, integer npoints) {
 	return m.transfer();
 }
 
-void NUMcubicSplineInterpolation (double x [], double y [], integer n, double yp1, double ypn, double y2 []) {
+void NUMcubicSplineInterpolation_getSecondDerivatives (double x [], double y [], integer n, double yp1, double ypn, double y2 []) {
 	autoNUMvector<double> u (1, n - 1);
 
 	if (yp1 > 0.99e30) {
@@ -2010,7 +2009,7 @@ void NUMcubicSplineInterpolation (double x [], double y [], integer n, double yp
 	}
 }
 
-double NUMsplint (double xa [], double ya [], double y2a [], integer n, double x) {
+double NUMcubicSplineInterpolation (double xa [], double ya [], double y2a [], integer n, double x) {
 	integer klo = 1, khi = n;
 	while (khi - klo > 1) {
 		integer k = (khi + klo) >> 1;
@@ -2022,7 +2021,7 @@ double NUMsplint (double xa [], double ya [], double y2a [], integer n, double x
 	}
 	double h = xa [khi] - xa [klo];
 	if (h == 0.0) {
-		Melder_throw (U"NUMsplint: bad input value.");
+		Melder_throw (U"NUMcubicSplineInterpolation: bad input value.");
 	}
 	double a = (xa [khi] - x) / h;
 	double b = (x - xa [klo]) / h;
@@ -2071,7 +2070,7 @@ int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, doubl
 	return orientation;
 }
 
-int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2,  double xmin, double ymin, double xmax, double ymax, double *xi, double *yi) {
+int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2, double xmin, double ymin, double xmax, double ymax, double *xi, double *yi) {
 	double x [6], y [6];
 	integer ni = 0;
 
@@ -2151,13 +2150,13 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	// This test first because we expect the majority of the tested segments to be
 	// within the rectangle
 	if (xl1 >= xr1 && xl1 <= xr2 && yl1 >= yr1 && yl1 <= yr2 &&
-	        xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2) {
+			xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2) {
 		return true;
 	}
 
 	// All lines that are completely outside the rectangle
 	if ( (xl1 <= xr1 && xl2 <= xr1) || (xl1 >= xr2 && xl2 >= xr2) ||
-	        (yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2)) {
+			(yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2)) {
 		return false;
 	}
 
@@ -2259,8 +2258,8 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 		// if start and endpoint of line are outside rectangle and ncrossings == 1,
 		// than the line only touches.
 		if (ncrossings == 1 &&
-		        (xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
-		        (xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2)) {
+				(xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
+				(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2)) {
 			return true;
 		}
 
@@ -2315,8 +2314,8 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 
 	v = a + golden * (b - a);
 	fv = (*f) (v, closure);
-	x = v;  w = v;
-	*fx = fv;  fw = fv;
+	x = v; w = v;
+	*fx = fv; fw = fv;
 
 	for (integer iter = 1; iter <= itermax; iter ++) {
 		double range = b - a;
@@ -2359,8 +2358,8 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 			*/
 
 			if (fabs (p) < fabs (new_step * q) &&
-			        p > q * (a - x + 2.0 * tol_act) &&
-			        p < q * (b - x - 2.0 * tol_act)) {
+					p > q * (a - x + 2.0 * tol_act) &&
+					p < q * (b - x - 2.0 * tol_act)) {
 				new_step = p / q;
 			}
 		}
@@ -2390,8 +2389,8 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 					a = x;
 				}
 
-				v = w;  w = x;  x = t;
-				fv = fw;  fw = *fx;  *fx = ft;
+				v = w; w = x; x = t;
+				fv = fw; fw = *fx; *fx = ft;
 			} else {
 				if (t < x) {
 					a = t;
@@ -2641,7 +2640,7 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
 
 #define FAR_FROM_MEAN 20
 /* If ix-n*p is larger than this, then use the "squeeze" algorithm.
- * Ranlib used 20, and this seems to be the best choice on my  (Brian Gough) machine as well.
+ * Ranlib used 20, and this seems to be the best choice on my (Brian Gough) machine as well.
  */
 
 #define LNFACT(x) gsl_sf_lnfact(x)
@@ -2659,14 +2658,14 @@ integer NUMrandomBinomial (double p, integer n) {
 	if (p < 0.0 || p > 1.0 || n < 0) {
 		return -100000000;
 	}
-	integer ix;                       /* return value */
+	integer ix;			// return value
 	int flipped = 0;
 
 	if (n == 0) {
 		return 0;
 	}
 	if (p > 0.5) {
-		p = 1.0 - p;              /* work with small p */
+		p = 1.0 - p;	// work with small p
 		flipped = 1;
 	}
 
@@ -2674,81 +2673,92 @@ integer NUMrandomBinomial (double p, integer n) {
 	double s = p / q;
 	double np = n * p;
 
-	/* Inverse cdf logic for small mean (BINV in K+S) */
+	/* 
+		Inverse cdf logic for small mean (BINV in K+S)
+	*/
 
 	if (np < SMALL_MEAN) {
-		double f0 = pow (q, n); // djmw gsl_pow_int (q, n);   /* f(x), starting with x=0 */
+		double f0 = pow (q, n); // djmw gsl_pow_int (q, n); f(x), starting with x=0
 
 		while (1) {
-			/* This while(1) loop will almost certainly only loop once; but
-			* if u=1 to within a few epsilons of machine precision, then it
-			* is possible for roundoff to prevent the main loop over ix to
-			* achieve its proper value.  following the ranlib implementation,
-			* we introduce a check for that situation, and when it occurs,
-			* we just try again.
+			/* 
+				This while(1) loop will almost certainly only loop once; but
+				if u=1 to within a few epsilons of machine precision, then it
+				is possible for roundoff to prevent the main loop over ix to
+				achieve its proper value. Following the ranlib implementation,
+				we introduce a check for that situation, and when it occurs,
+				we just try again.
 			*/
 
 			double f = f0;
-			double u = NUMrandomUniform (0.0, 1.0); //djmw gsl_rng_uniform (rng);
+			double u = NUMrandomUniform (0.0, 1.0); // djmw gsl_rng_uniform (rng);
 
 			for (ix = 0; ix <= BINV_CUTOFF; ++ ix) {
 				if (u < f) {
 					goto Finish;
 				}
 				u -= f;
-				/* Use recursion f(x+1) = f(x)* [(n-x)/(x+1)]* [p/(1-p)] */
+				// Use recursion f(x+1) = f(x)* [(n-x)/(x+1)]* [p/(1-p)]
 				f *= s * (n - ix) / (ix + 1.0);
 			}
 
-			/* It should be the case that the 'goto Finish' was encountered
-			* before this point was ever reached.  But if we have reached
-			* this point, then roundoff has prevented u from decreasing
-			* all the way to zero.  This can happen only if the initial u
-			* was very nearly equal to 1, which is a rare situation.  In
-			* that rare situation, we just try again.
-			*
-			* Note, following the ranlib implementation, we loop ix only to
-			* a hardcoded value of SMALL_MEAN_LARGE_N=110; we could have
-			* looped to n, and 99.99...% of the time it won't matter.  This
-			* choice, I think is a little more robust against the rare
-			* roundoff error.  If n>LARGE_N, then it is technically
-			* possible for ix>LARGE_N, but it is astronomically rare, and
-			* if ix is that large, it is more likely due to roundoff than
-			* probability, so better to nip it at LARGE_N than to take a
-			* chance that roundoff will somehow conspire to produce an even
-			* larger (and more improbable) ix.  If n<LARGE_N, then once
-			* ix=n, f=0, and the loop will continue until ix=LARGE_N.
+			/* 
+				It should be the case that the 'goto Finish' was encountered
+				before this point was ever reached. But if we have reached
+				this point, then roundoff has prevented u from decreasing
+				all the way to zero. This can happen only if the initial u
+				was very nearly equal to 1, which is a rare situation. In
+				that rare situation, we just try again.
+
+				Note, following the ranlib implementation, we loop ix only to
+				a hardcoded value of SMALL_MEAN_LARGE_N=110; we could have
+				looped to n, and 99.99...% of the time it won't matter. This
+				choice, I think is a little more robust against the rare
+				roundoff error. If n>LARGE_N, then it is technically
+				possible for ix>LARGE_N, but it is astronomically rare, and
+				if ix is that large, it is more likely due to roundoff than
+				probability, so better to nip it at LARGE_N than to take a
+				chance that roundoff will somehow conspire to produce an even
+				larger (and more improbable) ix. If n<LARGE_N, then once
+				ix=n, f=0, and the loop will continue until ix=LARGE_N.
 			*/
 		}
 	} else {
-		/* For n >= SMALL_MEAN, we invoke the BTPE algorithm */
+		
+		/* 
+			For n >= SMALL_MEAN, we invoke the BTPE algorithm
+		*/
 
-		double ffm = np + p;      /* ffm = n*p+p             */
-		integer m = (integer) ffm;        /* m = int floor [n*p+p]    */
-		double fm = m;            /* fm = double m;          */
-		double xm = fm + 0.5;     /* xm = half integer mean (tip of triangle)  */
-		double npq = np * q;      /* npq = n*p*q            */
+		double ffm = np + p;		// ffm = n*p+p
+		integer m = (integer) ffm;	// m = int floor [n*p+p]
+		double fm = m;				// fm = double m
+		double xm = fm + 0.5;	 	// xm = half integer mean (tip of triangle)
+		double npq = np * q;		// npq = n*p*q
 
-		/* Compute cumulative area of tri, para, exp tails */
+		/* 
+			Compute cumulative area of tri, para, exp tails
 
-		/* p1: radius of triangle region; since height=1, also: area of region */
-		/* p2: p1 + area of parallelogram region */
-		/* p3: p2 + area of left tail */
-		/* p4: p3 + area of right tail */
-		/* pi/p4: probability of i'th area (i=1,2,3,4) */
+			p1: radius of triangle region; since height=1, also: area of region
+			p2: p1 + area of parallelogram region
+			p3: p2 + area of left tail
+			p4: p3 + area of right tail
+			pi/p4: probability of i'th area (i=1,2,3,4)
 
-		/* Note: magic numbers 2.195, 4.6, 0.134, 20.5, 15.3 */
-		/* These magic numbers are not adjustable...at least not easily! */
-
+			Note: magic numbers 2.195, 4.6, 0.134, 20.5, 15.3
+			These magic numbers are not adjustable...at least not easily!
+		*/
+		
 		double p1 = Melder_roundDown (2.195 * sqrt (npq) - 4.6 * q) + 0.5;
 
-		/* xl, xr: left and right edges of triangle */
+		// xl, xr: left and right edges of triangle
 		double xl = xm - p1;
 		double xr = xm + p1;
 
-		/* Parameter of exponential tails */
-		/* Left tail:  t(x) = c*exp(-lambda_l* [xl - (x+0.5)]) */
-		/* Right tail: t(x) = c*exp(-lambda_r* [(x+0.5) - xr]) */
+		/* 
+			Parameter of exponential tails
+			Left tail:  t(x) = c*exp(-lambda_l* [xl - (x+0.5)])
+			Right tail: t(x) = c*exp(-lambda_r* [(x+0.5) - xr])
+		*/
 
 		double c = 0.134 + 20.5 / (15.3 + fm);
 		double p2 = p1 * (1.0 + c + c);
@@ -2764,16 +2774,19 @@ integer NUMrandomBinomial (double p, integer n) {
 
 TryAgain:
 
-		/* generate random variates, u specifies which region: Tri, Par, Tail */
+		/*
+			Generate random variates, u specifies which region: Tri, Par, Tail
+		*/
+		
 		u = p4 * NUMrandomUniform (0.0, 1.0); // djmw gsl_rng_uniform (rng) * p4;
 		v = NUMrandomUniform (0.0, 1.0); // djmw gsl_rng_uniform (rng);
 
 		if (u <= p1) {
-			/* Triangular region */
+			// Triangular region
 			ix = (integer) (xm - p1 * v + u);
 			goto Finish;
 		} else if (u <= p2) {
-			/* Parallelogram region */
+			// Parallelogram region
 			double x = xl + (u - p1) / c;
 			v = v * c + 1.0 - fabs (x - xm) / p1;
 			if (v > 1.0 || v <= 0.0) {
@@ -2781,14 +2794,14 @@ TryAgain:
 			}
 			ix = (integer) x;
 		} else if (u <= p3) {
-			/* Left tail */
+			// Left tail
 			ix = (integer) (xl + log (v) / lambda_l);
 			if (ix < 0) {
 				goto TryAgain;
 			}
 			v *= ((u - p2) * lambda_l);
 		} else {
-			/* Right tail */
+			// Right tail
 			ix = (integer) (xr - log (v) / lambda_r);
 			if (ix > (double) n) {
 				goto TryAgain;
@@ -2796,32 +2809,33 @@ TryAgain:
 			v *= ((u - p3) * lambda_r);
 		}
 
-		/* At this point, the goal is to test whether v <= f(x)/f(m)
-		*
-		*  v <= f(x)/f(m) = (m!(n-m)! / (x!(n-x)!)) * (p/q)^{x-m}
-		*
-		*/
+		/* 
+			At this point, the goal is to test whether v <= f(x)/f(m)
+			v <= f(x)/f(m) = (m!(n-m)! / (x!(n-x)!)) * (p/q)^{x-m}
 
-		/* Here is a direct test using logarithms.  It is a little
-		* slower than the various "squeezing" computations below, but
-		* if things are working, it should give exactly the same answer
-		* (given the same random number seed).  */
+			Here is a direct test using logarithms. It is a little
+			slower than the various "squeezing" computations below, but
+			if things are working, it should give exactly the same answer
+			(given the same random number seed).
+		*/
 
 		#ifdef DIRECT
 		var = log (v);
 
 		accept = LNFACT (m) + LNFACT (n - m) - LNFACT (ix) - LNFACT (n - ix) + (ix - m) * log (p / q);
 
-		#else /* SQUEEZE METHOD */
+		#else // SQUEEZE METHOD
 
-		/* More efficient determination of whether v < f(x)/f(M) */
+		/* 
+			More efficient determination of whether v < f(x)/f(M)
+		 */
 
 		integer k = labs (ix - m);
 
 		if (k <= FAR_FROM_MEAN) {
 			/*
-			* If ix near m (ie, |ix-m|<FAR_FROM_MEAN), then do
-			* explicit evaluation using recursion relation for f(x)
+				If ix near m (ie, |ix-m|<FAR_FROM_MEAN), then do
+				explicit evaluation using recursion relation for f(x)
 			*/
 			double g = (n + 1) * s;
 			double f = 1.0;
@@ -2840,14 +2854,16 @@ TryAgain:
 
 			accept = f;
 		} else {
-			/* If ix is far from the mean m: k=ABS(ix-m) large */
+			// If ix is far from the mean m: k=ABS(ix-m) large
 
 			var = log (v);
 
 			if (k < npq / 2 - 1) {
-				/* "Squeeze" using upper and lower bounds on
-				* log(f(x)) The squeeze condition was derived
-				* under the condition k < npq/2-1 */
+				/* 
+					"Squeeze" using upper and lower bounds on
+					log(f(x)) The squeeze condition was derived
+					under the condition k < npq/2-1
+				*/
 				double amaxp = k / npq * ((k * (k / 3.0 + 0.625) + (1.0 / 6.0)) / npq + 0.5);
 				double ynorm = -(k * k / (2.0 * npq));
 				if (var < ynorm - amaxp) {
@@ -2858,34 +2874,40 @@ TryAgain:
 				}
 			}
 
-			/* Now, again: do the test log(v) vs. log f(x)/f(M) */
+			/* 
+				Now, again: do the test log(v) vs. log f(x)/f(M)
+			*/
 
 			#if USE_EXACT
-			/* This is equivalent to the above, but is a little (~20%) slower */
-			/* There are five log's vs three above, maybe that's it? */
+			/* 
+				This is equivalent to the above, but is a little (~20%) slower
+				There are five log's vs three above, maybe that's it?
+			*/
 
 			accept = LNFACT (m) + LNFACT (n - m) - LNFACT (ix) - LNFACT (n - ix) + (ix - m) * log (p / q);
 
-			#else /* USE STIRLING */
-			/* The "#define Stirling" above corresponds to the first five
-			* terms in asymptotic formula for
-			* log Gamma (y) - (y-0.5)log(y) + y - 0.5 log(2*pi);
-			* See Abramowitz and Stegun, eq 6.1.40
-			*/
+			#else 
+			/* USE STIRLING:
+				The "#define Stirling" above corresponds to the first five
+				terms in asymptotic formula for
+				log Gamma (y) - (y-0.5)log(y) + y - 0.5 log(2*pi);
+				See Abramowitz and Stegun, eq 6.1.40
 
-			/* Note below: two Stirling's are added, and two are
-			* subtracted.  In both K+S, and in the ranlib
-			* implementation, all four are added.  I (jt) believe that
-			* is a mistake -- this has been confirmed by personal
-			* correspondence w/ Dr. Kachitvichyanukul.  Note, however,
-			* the corrections are so small, that I couldn't find an
-			* example where it made a difference that could be
-			* observed, let alone tested.  In fact, define'ing Stirling
-			* to be zero gave identical results!!  In practice, alv is
-			* O(1), ranging 0 to -10 or so, while the Stirling
-			* correction is typically O(10^{-5}) ...setting the
-			* correction to zero gives about a 2% performance boost;
-			* might as well keep it just to be pedantic.  */
+
+				Note below: two Stirling's are added, and two are
+				subtracted. In both K+S, and in the ranlib
+				implementation, all four are added. I (jt) believe that
+				is a mistake -- this has been confirmed by personal
+				correspondence w/ Dr. Kachitvichyanukul. Note, however,
+				the corrections are so small, that I couldn't find an
+				example where it made a difference that could be
+				observed, let alone tested. In fact, define'ing Stirling
+				to be zero gave identical results!! In practice, alv is
+				O(1), ranging 0 to -10 or so, while the Stirling
+				correction is typically O(10^{-5}) ...setting the
+				correction to zero gives about a 2% performance boost;
+				might as well keep it just to be pedantic.
+			*/
 
 			{
 				double x1 = ix + 1.0;
@@ -2910,7 +2932,7 @@ TryAgain:
 
 Finish:
 
-  	return (flipped) ? (n - ix) : ix;
+	return (flipped) ? (n - ix) : ix;
 }
 
 double NUMrandomBinomial_real (double p, integer n) {
