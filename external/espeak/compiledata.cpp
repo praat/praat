@@ -2955,3 +2955,4 @@ espeak_ng_STATUS espeak_ng_CompileIntonation(FILE *log, espeak_ng_ERROR_CONTEXT 
 }
 #pragma GCC visibility pop
 #endif
+
