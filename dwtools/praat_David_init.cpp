@@ -174,7 +174,7 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 #define CONVERT_ONE_AND_GENERIC(klas1,klas2) FIND_ONE_AND_GENERIC(klas1,klas2)
 #define CONVERT_ONE_AND_GENERIC_END(...)  praat_new (result.move(), __VA_ARGS__); END
 
-	
+
 /********************** Activation *******************************************/
 
 FORM (MODIFY_ActivationList_formula, U"ActivationList: Formula", nullptr) {
@@ -1076,7 +1076,7 @@ DIRECT (INFO_Covariances_reportEquality) {
 	MelderInfo_writeLine (U"Significance of difference (bartlett) = ", p);
 	MelderInfo_writeLine (U"Chi-squared (bartlett) = ", chisq);
 	MelderInfo_writeLine (U"Degrees of freedom (bartlett) = ", df);
-	
+
 	Covariances_equality (covariances.get(), 2, &p, &chisq, &df);
 	MelderInfo_writeLine (U"Significance of difference (wald) = ", p);
 	MelderInfo_writeLine (U"Chi-squared (wald) = ", chisq);
@@ -1679,7 +1679,7 @@ DIRECT (REAL_DTW_getTotalDurationY) {
 
 DIRECT (INTEGER_DTW_getNumberOfFramesX) {
 	INTEGER_ONE (DTW)
-		long result = my nx; 
+		long result = my nx;
 	INTEGER_ONE_END (U" (= number of frames along x)")
 }
 
@@ -2165,7 +2165,7 @@ DIRECT (GRAPHICS_Eigen_drawEigenvalues_scree) {
 	Melder_warning (U"The command \"Draw eigenvalues (scree)...\" has been "
 		"removed.\n To get a scree plot use \"Draw eigenvalues...\" with the "
 		"arguments\n 'Fraction of eigenvalues summed' and 'Cumulative' unchecked.");
-	END 	
+	END
 }
 
 FORM (GRAPHICS_Eigen_drawEigenvalues, U"Eigen: Draw eigenvalues", U"Eigen: Draw eigenvalues...") {
@@ -2586,9 +2586,9 @@ FORM (INFO_FileInMemoryManager_fread, U"FileInMemoryManager: fread", nullptr) {
 DO
 	STRING_ONE (FileInMemoryManager)
 		integer numberOfBytes = elementSize * numberOfElements;
-		autoNUMvector<char> str ((integer) 0, numberOfBytes);  
+		autoNUMvector<char> str ((integer) 0, numberOfBytes);
 		size_t numberRead = FileInMemoryManager_fread (me, & str [0], elementSize, numberOfElements, reinterpret_cast<FILE *> (index));
-		str [numberRead * elementSize] ='\0';
+		str [numberRead * elementSize] = '\0';
 		char32 *result = Melder_peek8to32 (& str [0]);
 	STRING_ONE_END
 }
@@ -2613,7 +2613,7 @@ FORM (INFO_FileInMemoryManager_rewind, U"FileInMemoryManager_rewind", nullptr) {
 DO
 	MODIFY_EACH (FileInMemoryManager)
 		FileInMemoryManager_rewind (me, reinterpret_cast<FILE *> (index));
-	MODIFY_EACH_END 	
+	MODIFY_EACH_END
 }
 
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
@@ -2630,7 +2630,7 @@ DO
 FORM (NEW1_FileInMemorySet_extractFiles, U"FileInMemorySet: Extract files", nullptr) {
 	LABEL (U"Extract all files where the file name ")
 	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
-	SENTENCE (criterion, U"...the text", U"/voices/")	
+	SENTENCE (criterion, U"...the text", U"/voices/")
 	OK
 DO
 	CONVERT_EACH (FileInMemorySet)
@@ -4894,7 +4894,7 @@ DO
 		dcomplex result = Polynomial_evaluate_z (me, z);
 		MelderInfo_open ();
 		MelderInfo_writeLine (result);
-		MelderInfo_close ();	
+		MelderInfo_close ();
 	INFO_ONE_END
 }
 
@@ -6473,7 +6473,6 @@ FORM (GRAPHICS_Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) 
 	INTEGER (fontSize, U"Font size", U"12 (0 = no label)")
 	BOOLEAN (garnish, U"Garnish", true)
 	TEXTFIELD (formula, U"Use only data in rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
-	
 	OK
 DO
 	GRAPHICS_EACH (Table)
@@ -7133,7 +7132,7 @@ FORM (NEWMANY_TableOfReal_to_PatternList_and_Categories, U"TableOfReal: To Patte
 	OK
 DO
 	CONVERT_EACH (TableOfReal)
-		autoPatternList ap; 
+		autoPatternList ap;
 		autoCategories result;
 		TableOfReal_to_PatternList_and_Categories (me, fromRow, toRow, fromColumn, toColumn, & ap, & result);
 		praat_new (ap.move(), my name);
@@ -7387,7 +7386,7 @@ static void praat_FilterBank_query_init (ClassInfo klas) {
 
 static void praat_FilterBank_modify_init (ClassInfo klas);
 static void praat_FilterBank_modify_init (ClassInfo klas) {
-	// praat_addAction1 (klas, 0, MODIFY_BUTTON, nullptr, 0, 0); 
+	// praat_addAction1 (klas, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (klas, 0, U"Equalize intensities...", nullptr, praat_DEPRECATED_2014 | praat_DEPTH_1, MODIFY_FilterBank_equalizeIntensities);
 }
 
@@ -7531,7 +7530,7 @@ void praat_uvafon_David_init ();
 void praat_uvafon_David_init () {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
-	
+
 	Thing_recognizeClassesByName (classActivationList, classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries, classClassificationTable, classComplexSpectrogram, classConfusion,
@@ -7594,11 +7593,11 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (U"Objects", U"New", U"Create simple Polygon...", nullptr, praat_HIDDEN, NEW1_Polygon_createSimple);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random vertices)...", nullptr, praat_DEPRECATED_2016, NEW1_Polygon_createFromRandomPoints);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Polygon (random points)...", nullptr, praat_HIDDEN, NEW1_Polygon_createFromRandomPoints);
-	praat_addMenuCommand (U"Objects", U"New", U"FileInMemoryManager -", nullptr, praat_HIDDEN, nullptr);
+	praat_addMenuCommand (U"Objects", U"New", U"FileInMemoryManager", nullptr, praat_HIDDEN, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemoryManager", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_FileInMemoryManager_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemory...", nullptr, praat_HIDDEN + praat_DEPTH_1, READ1_FileInMemory_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Create FileInMemorySet from directory contents...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW_FileInMemorySet_createFromDirectoryContents);
-	praat_addMenuCommand (U"Objects", U"New", U"Extract espeak data...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_ExtractEspeakData);	
+	praat_addMenuCommand (U"Objects", U"New", U"Extract espeak data...", nullptr, praat_HIDDEN + praat_DEPTH_1, NEW1_ExtractEspeakData);
 
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Little Endian file...", U"Read from special sound file", 1, READ1_Sound_readFromRawFileLE);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Sound from raw 16-bit Big Endian file...", U"Read Sound from raw 16-bit Little Endian file...", 1, READ1_Sound_readFromRawFileBE);
@@ -7631,8 +7630,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classBarkSpectrogram, 0, U"To Matrix...", nullptr, 0, NEW_BandFilterSpectrogram_to_Matrix);
 	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", nullptr, 0, NEW1_BandFilterSpectrograms_crossCorrelate);
 	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0, NEW1_BandFilterSpectrograms_convolve);
-	
-	
+
+
 	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, praat_NO_API, WINDOW_Categories_edit);
 	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015 | praat_NO_API, WINDOW_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
@@ -7670,8 +7669,8 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"To TableOfReal (loadings)", nullptr, 0, NEW1_CCA_and_Correlation_factorLoadings);
 	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get variance fraction...", nullptr, 0, REAL_CCA_and_Correlation_getVarianceFraction);
 	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get redundancy (sl)...", nullptr, 0, REAL_CCA_and_Correlation_getRedundancy_sl);
-	
-	
+
+
 	praat_addAction1 (classComplexSpectrogram, 0, U"ComplexSpectrogram help", nullptr, 0, HELP_ComplexSpectrogram_help);
 	praat_addAction1 (classComplexSpectrogram, 0, DRAW_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classComplexSpectrogram, 0, U"To Sound...", nullptr, 0, NEW_ComplexSpectrogram_to_Sound);
@@ -7701,7 +7700,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classConfusion, 0, U"Group stimuli...", nullptr, 0, NEW_Confusion_groupStimuli);
 	praat_addAction1 (classConfusion, 0, U"Group responses...", nullptr, 0, NEW_Confusion_groupResponses);
 	praat_addAction1 (classConfusion, 2, U"To difference matrix", nullptr, 0, NEW1_Confusion_difference);
-	
+
 	praat_addAction2 (classConfusion, 1, classClassificationTable, 1, U"Increase confusion count", nullptr, 0, MODIFY_Confusion_and_ClassificationTable_increase);
 
 	praat_addAction2 (classConfusion, 1, classMatrix, 1, U"Draw", nullptr, 0, nullptr);
@@ -7726,7 +7725,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, NEW_Covariance_to_Correlation);
 	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, NEW_Covariance_to_PCA);
-	
+
 	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, NEW1_Covariances_pool);
 
 	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Covariance_and_TableOfReal_mahalanobis);
@@ -7806,7 +7805,7 @@ void praat_uvafon_David_init () {
 	praat_Eigen_Spectrogram_project (classDiscriminant, classSpectrogram);
 	praat_Eigen_Spectrogram_project (classDiscriminant, classBarkSpectrogram);
 	praat_Eigen_Spectrogram_project (classDiscriminant, classMelSpectrogram);
-	
+
 	praat_Eigen_Matrix_project (classDiscriminant, classFormantFilter); // deprecated 2014
 	praat_Eigen_Matrix_project (classDiscriminant, classBarkFilter); // deprecated 2014
 	praat_Eigen_Matrix_project (classDiscriminant, classMelFilter); // deprecated 2014
@@ -7951,7 +7950,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemorySet, 1, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1, INFO_FileInMemorySet_getNumberOfFiles);
 	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1, INFO_FileInMemorySet_hasDirectory);
-	
+
 	praat_addAction1 (classFileInMemorySet, 1, U"Show as code...", nullptr, 0, INFO_FileInMemorySet_showAsCode);
 	praat_addAction1 (classFileInMemorySet, 1, U"Show one file as code...", nullptr, 0, INFO_FileInMemorySet_showOneFileAsCode);
 	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
@@ -7959,7 +7958,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemorySet, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemorySet_extractFiles);
 	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0, MODIFY_FileInMemorySet_addItems);
 
-	
 	praat_addAction1 (classFileInMemoryManager, 1, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfFiles);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfOpenFiles);
@@ -7977,10 +7975,10 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemoryManager_extractFiles);
 	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0, NEW1_FileInMemoryManager_downto_Table);
-	
-	
-	
-	
+
+
+
+
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, praat_DEPRECATED_2015, HELP_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
 	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawSpectrum);
@@ -8054,15 +8052,15 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMelSpectrogram, 0, U"To Matrix...", nullptr, 0, NEW_BandFilterSpectrogram_to_Matrix);
 	praat_addAction1 (classMelSpectrogram, 2, U"Cross-correlate...", nullptr, 0, NEW1_BandFilterSpectrograms_crossCorrelate);
 	praat_addAction1 (classMelSpectrogram, 2, U"Convolve...", nullptr, 0, NEW1_BandFilterSpectrograms_convolve);
-	
+
 	praat_addAction1 (classMelFilter, 0, U"MelFilter help", U"*MelSpectrogram help", 0, HELP_MelFilter_help);
 	praat_FilterBank_all_init (classMelFilter); // deprecated 2014
-	praat_addAction1 (classMelFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_MelFilter_drawSpectrum); 
+	praat_addAction1 (classMelFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_MelFilter_drawSpectrum);
 	praat_addAction1 (classMelFilter, 0, U"Draw filter functions...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_MelFilter_drawFilterFunctions);
 	praat_addAction1 (classMelFilter, 0, U"Paint...", U"Draw filter functions...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_MelFilter_paint);
 	praat_addAction1 (classMelFilter, 0, U"To MFCC...", nullptr, praat_DEPRECATED_2014, NEW_MelFilter_to_MFCC); // deprecated 2014
 	praat_addAction1 (classMelFilter, 0, U"To MelSpectrogram", nullptr, 0, NEW_MelFilter_to_MelSpectrogram);
-	
+
 	praat_addAction1 (classMFCC, 0, U"MFCC help", nullptr, 0, HELP_MFCC_help);
 	praat_CC_init (classMFCC);
 	praat_addAction1 (classMFCC, 0, U"To MelFilter...", nullptr, praat_DEPRECATED_2014, NEW_MFCC_to_MelFilter);
@@ -8106,7 +8104,7 @@ void praat_uvafon_David_init () {
 		praat_addAction1 (classPCA, 0, U"Extract Eigen", nullptr, 1, NEW_PCA_extractEigen);
 	praat_addAction1 (classPCA, 2, U"To Procrustes...", nullptr, 0, NEW1_PCAs_to_Procrustes);
 	praat_addAction1 (classPCA, 0, U"To TableOfReal (reconstruct 1)...", nullptr, 0, NEW_PCA_to_TableOfReal_reconstruct1);
-	
+
 	praat_addAction1 (classPCA, 0, U"& TableOfReal: To Configuration?", nullptr, praat_NO_API, HINT_hint_PCA_and_TableOfReal_to_Configuration);
 	praat_addAction1 (classPCA, 0, U"& Configuration (reconstruct)?", nullptr, praat_NO_API, HINT_hint_PCA_and_Configuration_to_TableOfReal_reconstruct);
 	praat_addAction1 (classPCA, 0, U"& Covariance: Project?", nullptr, praat_NO_API, HINT_hint_PCA_and_Covariance_Project);
@@ -8145,7 +8143,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPermutation, 0, U"-- sequential permutations --", nullptr, 1, 0);
 	praat_addAction1 (classPermutation, 0, U"Next", nullptr, 1, MODIFY_Permutations_next);
 	praat_addAction1 (classPermutation, 0, U"Previous", nullptr, 1, MODIFY_Permutations_previous);
-	
 	praat_addAction1 (classPermutation, 1, U"Permute randomly...", nullptr, 0, NEW_Permutation_permuteRandomly);
 	praat_addAction1 (classPermutation, 1, U"Permute randomly (blocks)...", nullptr, 0, NEW_Permutation_permuteBlocksRandomly);
 	praat_addAction1 (classPermutation, 1, U"Interleave...", nullptr, 0, NEW_Permutation_interleave);
@@ -8157,8 +8154,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPitch, 2, U"To DTW...", U"To PointProcess", praat_HIDDEN, NEW1_Pitches_to_DTW);
 
 	praat_addAction1 (classPitchTier, 0, U"To Pitch...", U"To Sound (sine)...", 1, NEW_PitchTier_to_Pitch);
-	praat_addAction1 (classPitchTier, 0, U"Modify interval...", U"Add point...", 1, MODIFY_PitchTier_modifyInterval); 
-	praat_addAction1 (classPitchTier, 0, U"Modify interval (tone levels)...", U"Modify interval...", 1, MODIFY_PitchTier_modifyInterval_toneLevels); 
+	praat_addAction1 (classPitchTier, 0, U"Modify interval...", U"Add point...", 1, MODIFY_PitchTier_modifyInterval);
+	praat_addAction1 (classPitchTier, 0, U"Modify interval (tone levels)...", U"Modify interval...", 1, MODIFY_PitchTier_modifyInterval_toneLevels);
 	praat_addAction1 (classPolygon, 0, QUERY_BUTTON, U"Paint circles...", 0, 0);
 	praat_addAction1 (classPolygon, 0, U"Get number of points", QUERY_BUTTON, 1, INTEGER_Polygon_getNumberOfPoints);
 	praat_addAction1 (classPolygon, 0, U"Get point (x)...", U"Get number of points", 1, REAL_Polygon_getPointX);
@@ -8166,7 +8163,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPolygon, 0, U"-- other queries --",  U"Get point (y)...", 1, 0);
 	praat_addAction1 (classPolygon, 0, U"Get location of point...", U"-- other queries --", 1, INFO_Polygon_getLocationOfPoint);
 	praat_addAction1 (classPolygon, 0, U"Get area of convex hull...", U"Get location of point...", praat_DEPTH_1 + praat_HIDDEN, REAL_Polygon_getAreaOfConvexHull);
-	
+
 	praat_addAction1 (classPolygon, 0, U"Translate...", MODIFY_BUTTON, 1, MODIFY_Polygon_translate);
 	praat_addAction1 (classPolygon, 0, U"Rotate...", U"Translate...", 1, MODIFY_Polygon_rotate);
 	praat_addAction1 (classPolygon, 0, U"Scale...", U"Rotate...", 1, MODIFY_Polygon_scale);
@@ -8187,7 +8184,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPolynomial, 0, U"-- monic --", U"Set coefficient...", 1, 0);
 	praat_addAction1 (classPolynomial, 0, U"Scale coefficients (monic)", U"-- monic --", 1, MODIFY_Polynomial_scaleCoefficients_monic);
 	praat_addAction1 (classPolynomial, 1, U"Divide (second order factor)...", U"Scale coefficients (monic)", 1, MODIFY_Polynomial_divide_secondOrderFactor);
-	
+
 	praat_addAction1 (classPolynomial, 1, U"Get value (complex)...", U"Get value...", 1, INFO_Polynomial_evaluate_z);
 	praat_addAction1 (classPolynomial, 1, U"Get derivatives at X...", U"Get value (complex)...", 1, INFO_Polynomial_getDerivativesAtX);
 	praat_addAction1 (classPolynomial, 1, U"Get one real root...", U"Get derivatives at X...", 1, REAL_Polynomial_getOneRealRoot);
@@ -8284,10 +8281,8 @@ void praat_uvafon_David_init () {
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Speech output settings...", nullptr, 1, MODIFY_SpeechSynthesizer_speechOutputSettings);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Estimate speech rate from speech...", nullptr, 1, MODIFY_SpeechSynthesizer_estimateSpeechRateFromSpeech);
 		praat_addAction1 (classSpeechSynthesizer, 0, U"Set speech output settings...", nullptr, praat_DEPTH_1 |praat_DEPRECATED_2017, MODIFY_SpeechSynthesizer_setSpeechOutputSettings);
-		
-	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0, NEW1_SpeechSynthesizer_and_TextGrid_to_Sound);
-	
 
+	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, U"To Sound...", nullptr, 0, NEW1_SpeechSynthesizer_and_TextGrid_to_Sound);
 	praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align)...", nullptr, 0, NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align);
     praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, U"To TextGrid (align,trim)...", nullptr, 0, NEW1_SpeechSynthesizer_and_Sound_and_TextGrid_align2);
 
@@ -8332,7 +8327,6 @@ void praat_uvafon_David_init () {
 			praat_addAction1 (classTable, 0, U"Scatter plot where (mark)...", U"Scatter plot where...", 2, GRAPHICS_Table_scatterPlotMarkWhere);
 			praat_addAction1 (classTable, 0, U"Horizontal error bars plot where...", U"Scatter plot where (mark)...", praat_DEPTH_2, GRAPHICS_Table_horizontalErrorBarsPlotWhere);
 			praat_addAction1 (classTable, 0, U"Vertical error bars plot where...", U"Scatter plot where (mark)...", praat_DEPTH_2, GRAPHICS_Table_verticalErrorBarsPlotWhere);
-			
 			praat_addAction1 (classTable, 0, U"Distribution plot where...", U"Scatter plot where (mark)...", 2, GRAPHICS_Table_distributionPlotWhere);
 			praat_addAction1 (classTable, 0, U"Draw ellipse where (standard deviation)...", U"Distribution plot where...", 2, GRAPHICS_Table_drawEllipseWhere);
 			praat_addAction1 (classTable, 0, U"Box plots where...", U"Draw ellipse where (standard deviation)...", 2, GRAPHICS_Table_boxPlotsWhere);
@@ -8384,7 +8378,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 2, U"To Eigen (gsvd)", nullptr, praat_HIDDEN, NEW1_TablesOfReal_to_Eigen_gsvd);
 
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (cholesky)...", nullptr, praat_HIDDEN, NEW_TableOfReal_choleskyDecomposition);
-	
+
 	praat_addAction1 (classTableOfReal, 0, U"Draw as scalable squares...", U"Draw as squares...", 1, GRAPHICS_TableOfReal_drawAsScalableSquares);
 	praat_addAction1 (classTableOfReal, 0, U"-- scatter plots --", U"Draw top and bottom lines...", 1, 0);
 	praat_addAction1 (classTableOfReal, 0, U"Draw scatter plot...", U"-- scatter plots --", 1, GRAPHICS_TableOfReal_drawScatterPlot);
@@ -8405,7 +8399,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);
 	praat_addAction1 (classTextGrid, 0, U"Replace point text...", U"Set point text...", 2, MODIFY_TextGrid_replacePointTexts);
 	praat_addAction1 (classTextGrid, 2, U"To Table (text alignment)...", U"Extract part...", 0, NEW1_TextGrids_to_Table_textAlignmentment);
-	
 	praat_addAction1 (classTextGrid, 0, U"To DurationTier...", U"Concatenate", 0, NEW_TextGrid_to_DurationTier);
 	praat_addAction2 (classTextGrid, 1, classDurationTier, 1, U"To TextGrid (scale times)", nullptr, 0, NEW_TextGrid_and_DurationTier_to_TextGrid);
 	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, U"To Table (text alignment)...", nullptr, 0, NEW1_TextGrids_and_EditCostsTable_to_Table_textAlignmentment);
@@ -8419,4 +8412,4 @@ void praat_uvafon_David_init () {
 	INCLUDE_LIBRARY (praat_BSS_init)
 }
 
-/* End of file praat_David.cpp 9790*/
+/* End of file praat_David.cpp */
