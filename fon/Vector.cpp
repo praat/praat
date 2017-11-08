@@ -314,12 +314,12 @@ double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer
 				// Corollary: a two-channel mono sound will have the same stdev as the corresponding one-channel sound.
 	}
 	double mean = Vector_getMean (me, xmin, xmax, ilevel);
-	double sum2 = 0.0;
+	real80 sum2 = 0.0;
 	for (integer i = imin; i <= imax; i ++) {
 		double diff = my z [ilevel] [i] - mean;
 		sum2 += diff * diff;
 	}
-	return sqrt (sum2 / (n - 1));
+	return sqrt (real (sum2 / (n - 1)));
 }
 
 /***** Modify. *****/
