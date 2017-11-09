@@ -755,7 +755,7 @@ int NumInstnWords(USHORT *prog)
 			// This instruction is followed by addWav(), 2 more words
 			return 4;
 		}
-		if (instn2 == OPCODE_CONTINUE)
+		if (instn2 == INSTN_CONTINUE)
 			return 3;
 		return 2;
 	}
@@ -812,10 +812,10 @@ void InterpretPhoneme(Translator *tr, int control, PHONEME_LIST *plist, PHONEME_
 				// instructions with no operand
 				switch (data)
 				{
-				case OPCODE_RETURN:
+				case INSTN_RETURN:
 					end_flag = 1;
 					break;
-				case OPCODE_CONTINUE:
+				case INSTN_CONTINUE:
 					break;
 				default:
 					InvalidInstn(ph, instn);
@@ -953,7 +953,7 @@ void InterpretPhoneme(Translator *tr, int control, PHONEME_LIST *plist, PHONEME_
 			param_sc = phdata->sound_param[instn2] = (instn >> 4) & 0xff;
 			prog++;
 
-			if (prog[1] != OPCODE_CONTINUE) {
+			if (prog[1] != INSTN_CONTINUE) {
 				if (instn2 < 2) {
 					// FMT() and WAV() imply Return
 					end_flag = 1;
