@@ -1015,7 +1015,13 @@ double NUMcubicSplineInterpolation (double xa[], double ya[], double y2a[], inte
 	array y2a[1..n] which is the output of NUMcubicSplineInterpolation_getSecondDerivatives above, and given
 	a value of x, this routine returns an interpolated value y.
 */
+void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer numberOfPoints, double *weights);
+/*
+	Input: x[1..numberOfPoints], y[1..numberOfPoints], (xp,yp)
+	Output: interpolated result
+*/
 
+double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer numberOfPoints, double *weights, double xp, double yp);
 /* Biharmonic spline interpolation based on Green's function.
 	. Given z[i] values at points (x[i],y[i]) for i=1..n, 
 	Get value at new point (px,py).
@@ -1030,13 +1036,6 @@ double NUMcubicSplineInterpolation (double xa[], double ya[], double y2a[], inte
 	D. Sandwell (1987), Biharmonic spline interpolation of GEOS-3 and SEASAT altimetr data, Geophysical Research Letters 14, 139--142
 	X. Deng & Z. Tang (2011), Moving surface spline interpolation based on Green's function, Math. Geosci 43: 663--680
 */
-void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer numberOfPoints, double *weights);
-
-/*
-	Input: x[1..numberOfPoints], y[1..numberOfPoints], (xp,yp)
-	Output: interpolated result
-*/
-double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer numberOfPoints, double *weights, double xp, double yp);
 
 
 double NUMsincpi (const double x);
