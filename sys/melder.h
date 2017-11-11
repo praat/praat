@@ -2131,6 +2131,7 @@ inline static integer Melder_iroundDown (double x) {
 		U"When rounding down the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
 }
+#define Melder_ifloor  Melder_iroundDown
 
 inline static double Melder_roundUp (double x) {
 	return ceil (x);
@@ -2142,6 +2143,7 @@ inline static integer Melder_iroundUp (double x) {
 		U"When rounding up the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
 }
+#define Melder_iceiling  Melder_iroundUp
 
 inline static double Melder_roundTowardsZero (double x) {
 	return x >= 0.0 ? Melder_roundDown (x) : Melder_roundUp (x);

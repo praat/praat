@@ -239,7 +239,7 @@ void Eigen_initFromSymmetricMatrix (Eigen me, double **a, integer n) {
 		Melder_throw (U"dsyev initialization fails");
 	}
 
-	lwork = Melder_iroundDown (wt [0]);
+	lwork = Melder_ifloor (wt [0]);
 	autoNUMvector <double> work ((integer) 0, lwork);
 
 	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n, &my eigenvalues[1], work.peek(), & lwork, & info);

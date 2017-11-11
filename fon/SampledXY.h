@@ -27,7 +27,7 @@ void SampledXY_init (SampledXY me, double xmin, double xmax, integer nx, double 
 
 template <typename T> static inline double SampledXY_indexToY (SampledXY me, T index) { return my y1 + (index - (T) 1) * my dy; }
 static inline double SampledXY_yToIndex (SampledXY me, double y) { return (y - my y1) / my dy + 1.0; }
-static inline integer SampledXY_yToLowIndex     (SampledXY me, double y) { return Melder_iroundDown ((y - my y1) / my dy + 1.0); }
+static inline integer SampledXY_yToLowIndex     (SampledXY me, double y) { return Melder_ifloor ((y - my y1) / my dy + 1.0); }
 static inline integer SampledXY_yToHighIndex    (SampledXY me, double y) { return (integer) ceil  ((y - my y1) / my dy + 1.0); }
 static inline integer SampledXY_yToNearestIndex (SampledXY me, double y) { return (integer) round ((y - my y1) / my dy + 1.0); }
 

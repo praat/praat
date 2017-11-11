@@ -306,14 +306,14 @@ static void showMeter (SoundRecorder me, short *buffer, integer nsamp) {
 			}
 		}
 		if (my lastLeftMaximum > 30000) {
-			int leak = my lastLeftMaximum - Melder_iroundDown (2000000.0 / theControlPanel. sampleRate);
+			int leak = my lastLeftMaximum - Melder_ifloor (2000000.0 / theControlPanel. sampleRate);
 			if (leftMaximum < leak) leftMaximum = leak;
 		}
 		showMaximum (me, 1, leftMaximum);
 		my lastLeftMaximum = leftMaximum;
 		if (my numberOfChannels == 2) {
 			if (my lastRightMaximum > 30000) {
-				int leak = my lastRightMaximum - Melder_iroundDown (2000000.0 / theControlPanel. sampleRate);
+				int leak = my lastRightMaximum - Melder_ifloor (2000000.0 / theControlPanel. sampleRate);
 				if (rightMaximum < leak) rightMaximum = leak;
 			}
 			showMaximum (me, 2, rightMaximum);

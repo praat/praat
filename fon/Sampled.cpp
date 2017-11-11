@@ -90,7 +90,7 @@ double Sampled_getValueAtX (Sampled me, double x, integer ilevel, int unit, bool
 	if (x < my xmin || x > my xmax) return undefined;
 	if (interpolate) {
 		double ireal = Sampled_xToIndex (me, x);
-		integer ileft = Melder_iroundDown (ireal), inear, ifar;
+		integer ileft = Melder_ifloor (ireal), inear, ifar;
 		double phase = ireal - ileft;
 		if (phase < 0.5) {
 			inear = ileft, ifar = ileft + 1;

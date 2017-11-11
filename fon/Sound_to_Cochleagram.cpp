@@ -35,8 +35,8 @@
 autoCochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_window, double forwardMaskingTime) {
 	try {
 		double duration = my nx * my dx;
-		integer nFrames = 1 + Melder_iroundDown ((duration - dt_window) / dt);
-		integer nsamp_window = Melder_iroundDown (dt_window / my dx), halfnsamp_window = nsamp_window / 2 - 1;
+		integer nFrames = 1 + Melder_ifloor ((duration - dt_window) / dt);
+		integer nsamp_window = Melder_ifloor (dt_window / my dx), halfnsamp_window = nsamp_window / 2 - 1;
 		integer nf = Melder_iround_tieDown (25.6 / df);
 		double dampingFactor = forwardMaskingTime > 0.0 ? exp (- dt / forwardMaskingTime) : 0.0;   // default 30 ms
 		double integrationCorrection = 1.0 - dampingFactor;
@@ -186,7 +186,7 @@ autoCochleagram Sound_to_Cochleagram_edb
 							mean += basil -> z [1] [isamp];
 						mean /= n;
 					} else {
-						integer muint = Melder_iroundDown ((i1 + i2) / 2.0), dint = Melder_iroundDown (d);
+						integer muint = Melder_ifloor ((i1 + i2) / 2.0), dint = Melder_ifloor (d);
 						for (integer isamp = muint - dint; isamp <= muint + dint; isamp ++) {
 							double y = 0;
 							if (isamp < 1 || isamp > basil -> nx)

@@ -419,9 +419,9 @@ static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
 	 */
 	imin -= MARGIN * n;
 	if (imin < 1) imin = 1;
-	imax = imin + Melder_iroundDown ((1.0 + 2.0 * MARGIN) * n);
+	imax = imin + Melder_ifloor ((1.0 + 2.0 * MARGIN) * n);
 	if (imax > my nx) imax = my nx;
-	imin = imax - Melder_iroundDown ((1.0 + 2.0 * MARGIN) * n);
+	imin = imax - Melder_ifloor ((1.0 + 2.0 * MARGIN) * n);
 	if (imin < 1) imin = 1;
 	Melder_assert (imax - imin + 1 <= my nmax);
 	/*

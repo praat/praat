@@ -256,7 +256,7 @@ void Confusion_getFractionCorrect (Confusion me, double *p_fraction, long *p_num
 	if (p_fraction) {
 		*p_fraction = fraction;
 	}
-	numberOfCorrect = Melder_iroundDown (c);
+	numberOfCorrect = Melder_ifloor (c);
 	if (p_numberOfCorrect) {
 		*p_numberOfCorrect = numberOfCorrect;
 	}
@@ -408,7 +408,7 @@ long Confusion_getNumberOfEntries (Confusion me) {
 			total += my data[i][j];
 		}
 	}
-	return Melder_iroundDown (total);
+	return Melder_ifloor (total);
 }
 
 static void create_index (char32 **s, long sb, long se, char32 **ref, long rb, long re, long *index) {

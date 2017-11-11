@@ -310,7 +310,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 {
 	try {
 		integer numberOfPeriods = pulses -> nt - 2, totalNumberOfEnergies = 0;
-		autoLtas ltas = Ltas_create (Melder_iroundDown (maximumFrequency / bandWidth), bandWidth);
+		autoLtas ltas = Ltas_create (Melder_ifloor (maximumFrequency / bandWidth), bandWidth);
 		ltas -> xmax = maximumFrequency;
 		autoLtas numbers = Data_copy (ltas.get());
 		if (numberOfPeriods < 1)

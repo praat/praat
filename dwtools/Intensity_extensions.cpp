@@ -131,7 +131,7 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceT
 
 autoIntensity IntensityTier_to_Intensity (IntensityTier me, double dt) {
 	try {
-		integer nt = Melder_iroundDown ((my xmax - my xmin) / dt);
+		integer nt = Melder_ifloor ((my xmax - my xmin) / dt);
 		double t1 = 0.5 * dt;
 		autoIntensity thee = Intensity_create (my xmin, my xmax, nt, dt, t1);
 		for (long i = 1; i <= nt; i ++) {

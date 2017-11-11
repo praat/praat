@@ -31,7 +31,7 @@
 
 template <typename T> static inline double Sampled_indexToX (Sampled me, T index) { return my x1 + (index - (T) 1) * my dx; }
 static inline double Sampled_xToIndex (Sampled me, double        x) { return (x - my x1) / my dx + 1.0; }
-static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return Melder_iroundDown ((x - my x1) / my dx + 1.0); }
+static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return Melder_ifloor ((x - my x1) / my dx + 1.0); }
 static inline integer Sampled_xToHighIndex    (Sampled me, double x) { return (integer) ceil  ((x - my x1) / my dx + 1.0); }
 static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return (integer) round ((x - my x1) / my dx + 1.0); }
 

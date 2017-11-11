@@ -520,7 +520,7 @@ integer *NUMstring_getElementsOfRanges (const char32 *ranges, integer maximumEle
 
 char32 * NUMstring_timeNoDot (double time) {
 	static char32 string[100];
-	integer seconds = Melder_iroundDown (time);
+	integer seconds = Melder_ifloor (time);
 	long ms = lround ((time - seconds) * 1000.0);
 	Melder_sprint (string,100, U"_", seconds, U"_", ms);
 	return string;

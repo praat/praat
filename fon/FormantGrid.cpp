@@ -309,7 +309,7 @@ autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity)
 	try {
 		Melder_assert (dt > 0.0);
 		Melder_assert (intensity >= 0.0);
-		integer nt = Melder_iroundDown ((my xmax - my xmin) / dt) + 1;
+		integer nt = Melder_ifloor ((my xmax - my xmin) / dt) + 1;
 		double t1 = 0.5 * (my xmin + my xmax - (nt - 1) * dt);
 		autoFormant thee = Formant_create (my xmin, my xmax, nt, dt, t1, my formants.size);
 		for (integer iframe = 1; iframe <= nt; iframe ++) {

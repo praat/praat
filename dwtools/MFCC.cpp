@@ -158,7 +158,7 @@ static double CC_Frames_distance (CC_Frame me, CC_Frame thee, bool includeEnergy
  */
 autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy) {
 	try {
-		integer nw = Melder_iroundDown (windowLength / my dx / 2.0);
+		integer nw = Melder_ifloor (windowLength / my dx / 2.0);
 		autoMelSpectrogram him = MFCC_to_MelSpectrogram (me, 0, 0, 1);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 4, 4, 1, 1);
 		thy z[1][1] = thy z[1][my nx] = 0;  // first & last frame

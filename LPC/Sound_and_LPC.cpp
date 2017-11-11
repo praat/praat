@@ -544,7 +544,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 			for (long i = ifirst; i <= ilast; i++) {
 				double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
 				double riFrame = (t - my x1) / my dx + 1; /* Sampled_xToIndex (me, t); */
-				integer iFrame = Melder_iroundDown (riFrame);
+				integer iFrame = Melder_ifloor (riFrame);
 				double phase = riFrame - iFrame;
 				if (iFrame < 0 || iFrame > my nx) {
 					x[i] = 0.0;

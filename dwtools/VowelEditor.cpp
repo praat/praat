@@ -351,7 +351,7 @@ static double VowelEditor_updateDurationInfo (VowelEditor me) {
 }
 
 static void Sound_fadeIn (Sound me, double duration, bool fromFirstNonZeroSample) {
-	integer istart = 1, numberOfSamples = Melder_iroundDown (duration / my dx);   // ppgb: waarom afronden naar beneden?
+	integer istart = 1, numberOfSamples = Melder_ifloor (duration / my dx);   // ppgb: waarom afronden naar beneden?
 
 	if (numberOfSamples < 2) {
 		return;
@@ -381,7 +381,7 @@ static void Sound_fadeIn (Sound me, double duration, bool fromFirstNonZeroSample
 }
 
 static void Sound_fadeOut (Sound me, double duration) {
-	integer istart, numberOfSamples = Melder_iroundDown (duration / my dx);
+	integer istart, numberOfSamples = Melder_ifloor (duration / my dx);
 
 	if (numberOfSamples < 2) {
 		return;
@@ -780,7 +780,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 				VowelEditor_getXYFromF1F2 (me, f1, f2, &x1, &y1);
 				int size = prefs.marksFontSize;
 				if (col_fs != 0) {
-					size = Melder_iroundDown (Table_getNumericValue_Assert (my marks.get(), i, col_fs));
+					size = Melder_ifloor (Table_getNumericValue_Assert (my marks.get(), i, col_fs));
 				}
 				Graphics_setFontSize (g, size);
 				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);

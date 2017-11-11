@@ -23,7 +23,7 @@ autoSound PointProcess_to_Sound_pulseTrain
 	 double adaptFactor, double adaptTime, integer interpolationDepth)
 {
 	try {
-		integer sound_nt = 1 + Melder_iroundDown ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		integer sound_nt = 1 + Melder_ifloor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
 		double tmid = (my xmin + my xmax) / 2;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
@@ -66,7 +66,7 @@ autoSound PointProcess_to_Sound_phonation
 	 double openPhase, double collisionPhase, double power1, double power2)
 {
 	try {
-		integer sound_nt = 1 + Melder_iroundDown ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		integer sound_nt = 1 + Melder_ifloor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double dt = 1.0 / samplingFrequency;
 		double tmid = (my xmin + my xmax) / 2.0;
 		double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
@@ -138,7 +138,7 @@ autoSound PointProcess_to_Sound_phonation
 			 * Fill in the samples to the left of the current point.
 			 */
 			{// scope
-				integer beginSample = midSample - Melder_iroundDown (te / thy dx);
+				integer beginSample = midSample - Melder_ifloor (te / thy dx);
 				if (beginSample < 1) beginSample = 1;
 				integer endSample = midSample;
 				if (endSample > thy nx) endSample = thy nx;
@@ -164,7 +164,7 @@ autoSound PointProcess_to_Sound_phonation
 				double value = flowDerivative * factorPerSample;
 				integer beginSample = midSample + 1;
 				if (beginSample < 1) beginSample = 1;
-				integer endSample = midSample + Melder_iroundDown (20.0 * ta / thy dx);
+				integer endSample = midSample + Melder_ifloor (20.0 * ta / thy dx);
 				if (endSample > thy nx) endSample = thy nx;
 				for (integer isamp = beginSample; isamp <= endSample; isamp ++) {
 					sound [isamp] += value;
