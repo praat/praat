@@ -56,6 +56,6 @@ Replace duration tier
 selectObject: manipulation
 sound2 = Get resynthesis (overlap-add)
 
-;removeObject: sound, sound2, textgrid, textgrid2, manipulation, durationTier
+removeObject: sound, sound2, textgrid, textgrid2, manipulation, durationTier
 
 appendInfoLine: "test_TextGrid_and_DurationTier.praat OK"
