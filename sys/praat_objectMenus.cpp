@@ -480,9 +480,10 @@ END }
 FORM (PRAAT_ManPages_saveToHtmlDirectory, U"Save all pages as HTML files", nullptr) {
 	TEXTFIELD (directory, U"Directory:", U"")
 OK
-	structMelderDir currentDirectory { };
-	Melder_getDefaultDir (& currentDirectory);
-	SET_STRING (directory, Melder_dirToPath (& currentDirectory))
+	LOOP {
+		iam (ManPages);
+		SET_STRING (directory, Melder_dirToPath (& my rootDirectory))
+	}
 DO
 	LOOP {
 		iam (ManPages);
