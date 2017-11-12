@@ -54,9 +54,7 @@ static void menu_cb_writeAllToHtmlDir (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Save all pages as HTML files", nullptr)
 		TEXTFIELD (directory, U"Directory:", U"")
 	EDITOR_OK
-		structMelderDir currentDirectory { };
-		Melder_getDefaultDir (& currentDirectory);
-		SET_STRING (directory, Melder_dirToPath (& currentDirectory))
+		SET_STRING (directory, Melder_dirToPath (& my rootDirectory))
 	EDITOR_DO
 		ManPages_writeAllToHtmlDir ((ManPages) my data, directory);
 	EDITOR_END
@@ -506,19 +504,17 @@ int structManual :: v_goToPage (const char32 *title) {
 
 void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	ManPages manPages = (ManPages) data;
-	char32 windowTitle [101];
 	integer i;
-	ManPage page;
-	ManPage_Paragraph par;
-	if (! (i = ManPages_lookUp (manPages, title)))
+	if ((i = ManPages_lookUp (manPages, title)) == 0)
 		Melder_throw (U"Page \"", title, U"\" not found.");
 	my path = i;
-	page = manPages -> pages.at [i];
+	ManPage page = manPages -> pages.at [i];
 	my paragraphs = page -> paragraphs;
 	my numberOfParagraphs = 0;
-	par = my paragraphs;
+	ManPage_Paragraph par = my paragraphs;
 	while ((int) (par ++) -> type != 0) my numberOfParagraphs ++;
 
+	char32 windowTitle [101];
 	if (manPages -> pages.at [1] -> title [0] == U'-') {
 		Melder_sprint (windowTitle,101, & manPages -> pages.at [1] -> title [1]);
 		if (windowTitle [str32len (windowTitle) - 1] == U'-') windowTitle [str32len (windowTitle) - 1] = U'\0';
