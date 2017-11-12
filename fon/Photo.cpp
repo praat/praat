@@ -230,10 +230,10 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			uint8 *rowAddress = imageData + bytesPerRow * (my ny - irow);
 			for (integer icol = 1; icol <= my nx; icol ++) {
-				* rowAddress ++ = round (my d_blue         -> z [irow] [icol] * 255.0);
-				* rowAddress ++ = round (my d_green        -> z [irow] [icol] * 255.0);
-				* rowAddress ++ = round (my d_red          -> z [irow] [icol] * 255.0);
-				* rowAddress ++ = 255 - round (my d_transparency -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = Melder_iround (my d_blue         -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = Melder_iround (my d_green        -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = Melder_iround (my d_red          -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = 255 - Melder_iround (my d_transparency -> z [irow] [icol] * 255.0);
 			}
 		}
 		cairo_surface_t *surface = cairo_image_surface_create_for_data (imageData,
@@ -249,10 +249,10 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			for (integer icol = 1; icol <= my nx; icol ++) {
 				Gdiplus::Color gdiplusColour (
-					255 - round (my d_transparency -> z [irow] [icol] * 255.0),
-					round (my d_red   -> z [irow] [icol] * 255.0),
-					round (my d_green -> z [irow] [icol] * 255.0),
-					round (my d_blue  -> z [irow] [icol] * 255.0));
+					255 - Melder_iround (my d_transparency -> z [irow] [icol] * 255.0),
+					Melder_iround (my d_red   -> z [irow] [icol] * 255.0),
+					Melder_iround (my d_green -> z [irow] [icol] * 255.0),
+					Melder_iround (my d_blue  -> z [irow] [icol] * 255.0));
 				gdiplusBitmap. SetPixel (icol - 1, my ny - irow, gdiplusColour);
 			}
 		}
@@ -297,10 +297,10 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			uint8_t *rowAddress = imageData + bytesPerRow * (my ny - irow);
 			for (integer icol = 1; icol <= my nx; icol ++) {
-				* rowAddress ++ = (uint8) lround (my d_red          -> z [irow] [icol] * 255.0);   // BUG: should be tested for speed
-				* rowAddress ++ = (uint8) lround (my d_green        -> z [irow] [icol] * 255.0);
-				* rowAddress ++ = (uint8) lround (my d_blue         -> z [irow] [icol] * 255.0);
-				* rowAddress ++ = 255 - (uint8) lround (my d_transparency -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = (uint8) Melder_iround (my d_red          -> z [irow] [icol] * 255.0);   // BUG: should be tested for speed
+				* rowAddress ++ = (uint8) Melder_iround (my d_green        -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = (uint8) Melder_iround (my d_blue         -> z [irow] [icol] * 255.0);
+				* rowAddress ++ = 255 - (uint8) Melder_iround (my d_transparency -> z [irow] [icol] * 255.0);
 			}
 		}
 		static CGColorSpaceRef colourSpace = nullptr;

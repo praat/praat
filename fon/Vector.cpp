@@ -41,7 +41,7 @@ double structVector :: v_getVector (integer irow, integer icol) {
 //
 double structVector :: v_getFunction1 (integer irow, double x) {
 	double rcol = (x - x1) / dx + 1.0;
-	integer icol = Melder_iroundDown (rcol);
+	integer icol = Melder_ifloor (rcol);
 	double dcol = rcol - icol;
 	double z1;
 	if (icol < 1 || icol > nx) {

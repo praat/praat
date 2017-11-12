@@ -223,7 +223,7 @@ void structPitchEditor :: v_draw () {
 			Graphics_setColour (our graphics.get(), Graphics_BLACK);
 			Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 			for (int icand = 1; icand <= frame -> nCandidates; icand ++) {
-				int strength = Melder_iround_tieUp (10 * frame -> candidate [icand]. strength);
+				int strength = Melder_iround (10 * frame -> candidate [icand]. strength);
 				f = frame -> candidate [icand]. frequency;
 				if (strength > 9) strength = 9;
 				if (f > 0 && f <= pitch -> ceiling) Graphics_text (our graphics.get(), t, f, strength);
@@ -247,7 +247,7 @@ void structPitchEditor :: v_draw () {
 		for (integer it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
-			integer strength = lround (10.0 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
+			integer strength = Melder_iround (10.0 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
 			if (strength > 9) strength = 9;
 			Graphics_text (our graphics.get(), t, 0.5,   strength);
 		}

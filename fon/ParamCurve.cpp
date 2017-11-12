@@ -127,7 +127,7 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 	if (y1 == y2) { y1 -= 1.0; y2 += 1.0; }
 	if (dt <= 0.0)
 		dt = my x -> dx < my y -> dx ? my x -> dx : my y -> dx;
-	integer numberOfPoints = (integer) ceil ((t2 - t1) / dt) + 1;
+	integer numberOfPoints = Melder_iceiling ((t2 - t1) / dt) + 1;
 	if (numberOfPoints > 0) {
 		autoNUMvector <double> x (1, numberOfPoints);
 		autoNUMvector <double> y (1, numberOfPoints);

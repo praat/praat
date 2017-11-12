@@ -102,7 +102,7 @@ static void computeDistanceTable (Polygon me, int **table) {
 		for (integer j = i + 1; j <= my numberOfPoints; j ++) {
 			double dx = my x [i] - my x [j], dy = my y [i] - my y [j];
 			table [i] [j] = table [j] [i] =
-				Melder_iroundDown (sqrt (dx * dx + dy * dy));   // round to zero
+				Melder_ifloor (sqrt (dx * dx + dy * dy));   // round to zero
 		}
 }
 

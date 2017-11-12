@@ -693,7 +693,7 @@ static void NUMrationalize (double x, integer *numerator, integer *denominator) 
 	*numerator = 1;
 	for (*denominator = 1; *denominator <= 100000; (*denominator) ++) {
 		double numerator_d = x * *denominator;
-		integer rounded = lround (numerator_d);
+		integer rounded = Melder_iround (numerator_d);
 		if (fabs (rounded - numerator_d) < epsilon) {
 			*numerator = rounded;
 			return;

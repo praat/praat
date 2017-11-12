@@ -109,10 +109,10 @@ long Discriminant_getNumberOfGroups (Discriminant me) {
 
 long Discriminant_getNumberOfObservations (Discriminant me, long group) {
 	if (group == 0) {
-		return Melder_iroundDown (my total -> numberOfObservations);
+		return Melder_ifloor (my total -> numberOfObservations);
 	} else if (group >= 1 && group <= my numberOfGroups) {
 		SSCP sscp = my groups->at [group];
-		return Melder_iroundDown (sscp -> numberOfObservations);
+		return Melder_ifloor (sscp -> numberOfObservations);
 	} else {
 		return -1;
 	}
@@ -189,7 +189,7 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 		for (long i = 1; i <= m; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
-			integer numberOfObservationsm1 = Melder_iroundDown (sscp -> numberOfObservations) - 1;
+			integer numberOfObservationsm1 = Melder_ifloor (sscp -> numberOfObservations) - 1;
 			for (long j = 1; j <= n; j ++) {
 				thy data [i] [j] = ( numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
@@ -591,7 +591,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 			long npool = 0;
 			for (long j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
-				integer no = Melder_iroundDown (SSCP_getNumberOfObservations (t));
+				integer no = Melder_ifloor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i ++) {
 					for (long k = i; k <= p; k ++) {
 						t -> data [k] [i] = t -> data [i] [k] /= no - 1;
@@ -716,7 +716,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 			long npool = 0;
 			for (long j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
-				integer no = Melder_iroundDown (SSCP_getNumberOfObservations (t));
+				integer no = Melder_ifloor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i ++) {
 					for (long k = i; k <= p; k ++) {
 						t -> data [k] [i] = t -> data [i] [k] /= no - 1;

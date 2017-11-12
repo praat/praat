@@ -970,12 +970,12 @@ void Graphics_fillRectangle (Graphics me, double x1WC, double x2WC, double y1WC,
 }
 
 void Graphics_roundedRectangle (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC, double r_mm) {
-	my v_roundedRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), ceil (r_mm * my resolution / 25.4));
+	my v_roundedRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), Melder_iceiling (r_mm * my resolution / 25.4));
 	if (my recording) { op (ROUNDED_RECTANGLE, 5); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (r_mm); }
 }
 
 void Graphics_fillRoundedRectangle (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC, double r_mm) {
-	my v_fillRoundedRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), ceil (r_mm * my resolution / 25.4));
+	my v_fillRoundedRectangle (wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), Melder_iceiling (r_mm * my resolution / 25.4));
 	if (my recording) { op (FILL_ROUNDED_RECTANGLE, 5); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (r_mm); }
 }
 
@@ -1001,24 +1001,24 @@ void Graphics_circle_mm (Graphics me, double xWC, double yWC, double diameter) {
 }
 
 void Graphics_fillCircle (Graphics me, double xWC, double yWC, double rWC) {
-	my v_fillCircle (wdx (xWC), wdy (yWC), ceil (my scaleX * rWC));
+	my v_fillCircle (wdx (xWC), wdy (yWC), Melder_iceiling (my scaleX * rWC));
 	if (my recording) { op (FILL_CIRCLE, 3); put (xWC); put (yWC); put (rWC); }
 }
 
 void Graphics_fillCircle_mm (Graphics me, double xWC, double yWC, double diameter) {
-	my v_fillCircle (wdx (xWC), wdy (yWC), ceil (0.5 * diameter * my resolution / 25.4));
+	my v_fillCircle (wdx (xWC), wdy (yWC), Melder_iceiling (0.5 * diameter * my resolution / 25.4));
 	if (my recording) { op (FILL_CIRCLE_MM, 3); put (xWC); put (yWC); put (diameter); }
 }
 
 void Graphics_speckle (Graphics me, double xWC, double yWC) {
-	my v_fillCircle (wdx (xWC), wdy (yWC), ceil (0.5 * my speckleSize * my resolution / 25.4));
+	my v_fillCircle (wdx (xWC), wdy (yWC), Melder_iceiling (0.5 * my speckleSize * my resolution / 25.4));
 	if (my recording) { op (SPECKLE, 2); put (xWC); put (yWC); }
 }
 
 void Graphics_rectangle_mm (Graphics me, double xWC, double yWC, double horSide, double vertSide) {
 	integer xDC = wdx (xWC), yDC = wdy (yWC);
-	integer halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
-	integer halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
+	integer halfHorSide = Melder_iceiling (0.5 * horSide * my resolution / 25.4);
+	integer halfVertSide = Melder_iceiling (0.5 * vertSide * my resolution / 25.4);
 	if (my yIsZeroAtTheTop) {
 		my v_rectangle (xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
 	} else {
@@ -1029,8 +1029,8 @@ void Graphics_rectangle_mm (Graphics me, double xWC, double yWC, double horSide,
 
 void Graphics_fillRectangle_mm (Graphics me, double xWC, double yWC, double horSide, double vertSide) {
 	integer xDC = wdx (xWC), yDC = wdy (yWC);
-	integer halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
-	integer halfVertSide = ceil (0.5 * vertSide * my resolution / 25.4);
+	integer halfHorSide = Melder_iceiling (0.5 * horSide * my resolution / 25.4);
+	integer halfVertSide = Melder_iceiling (0.5 * vertSide * my resolution / 25.4);
 	if (my yIsZeroAtTheTop) {
 		my v_fillRectangle (xDC - halfHorSide, xDC + halfHorSide, yDC + halfVertSide, yDC - halfVertSide);
 	} else {

@@ -133,7 +133,7 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 		}
 
 		fmax_bark = MIN (fmax_bark, zmax);
-		long numberOfFilters = lround ( (fmax_bark - f1_bark) / df_bark);
+		integer numberOfFilters = Melder_iround ( (fmax_bark - f1_bark) / df_bark);
 		if (numberOfFilters <= 0) {
 			Melder_throw (U"The combination of filter parameters is not valid.");
 		}
@@ -214,7 +214,7 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 
 		// Determine the number of filters.
 
-		integer numberOfFilters = lround ((fmax_mel - f1_mel) / df_mel);
+		integer numberOfFilters = Melder_iround ((fmax_mel - f1_mel) / df_mel);
 		fmax_mel = f1_mel + numberOfFilters * df_mel;
 
 		integer numberOfFrames;
@@ -300,8 +300,8 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 		double nyquist = 0.5 / my dx, samplingFrequency = 2.0 * nyquist, fmin_hz = 0.0;
 		integer numberOfFrames, numberOfUndefinedPitchFrames = 0;
 
-		if (my xmin > thy xmin || my xmax > thy xmax) Melder_throw
-			(U"The domain of the Sound is not included in the domain of the Pitch.");
+		Melder_require (my xmin >= thy xmin && my xmax <= thy xmax,
+			U"The domain of the Sound is not included in the domain of the Pitch.");
 
 		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit::HERTZ);
 
@@ -324,7 +324,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 		}
 
 		fmax_hz = MIN (fmax_hz, nyquist);
-		long numberOfFilters = lround ( (fmax_hz - f1_hz) / df_hz);
+		integer numberOfFilters = Melder_iround ( (fmax_hz - f1_hz) / df_hz);
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & numberOfFrames, & t1);
 		autoSpectrogram him = Spectrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, fmin_hz, fmax_hz, numberOfFilters, df_hz, f1_hz);
@@ -334,7 +334,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");
-		for (long iframe = 1; iframe <= numberOfFrames; iframe++) {
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe++) {
 			double t = Sampled_indexToX (him.get(), iframe);
 			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit::HERTZ, 0);
 

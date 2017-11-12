@@ -163,7 +163,7 @@ DO
 		}
 		autoFeatureWeights fws = FeatureWeights_create (my input -> nx);
 		double result = KNN_evaluate (me, fws.get(), kNeighbours, voteWeighting, evaluationMethod);
-		if (lround (result) == kOla_FWEIGHTS_MISMATCH)
+		if (Melder_iround (result) == kOla_FWEIGHTS_MISMATCH)
 			Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 		Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: use Melder_percent
 	END
@@ -205,7 +205,7 @@ DO
 				break;
 		}
 		double result = KNN_evaluate (me, you, kNeighbours, voteWeighting, evaluationMethod);
-		if (lround (result) == kOla_FWEIGHTS_MISMATCH)
+		if (Melder_iround (result) == kOla_FWEIGHTS_MISMATCH)
 			Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 		Melder_information (100 * result, U" percent of the instances correctly classified.");   // BUG: never report a percentage; always report a fraction
 	END

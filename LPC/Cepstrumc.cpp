@@ -107,7 +107,7 @@ static void regression (Cepstrumc me, long frame, double r[], long nr) {
 
 autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint) {
 	try {
-		integer nr = Melder_iroundDown (dtr / my dx);
+		integer nr = Melder_ifloor (dtr / my dx);
 
 		if (my maxnCoefficients != thy maxnCoefficients) {
 			Melder_throw (U"Cepstrumc orders must be equal.");

@@ -286,7 +286,7 @@ static void check_formants (integer numberOfFormants, integer *ifb, integer *ife
 }
 
 static autoSound Sound_createEmptyMono (double xmin, double xmax, double samplingFrequency) {
-	long nt = (long) ceil ( (xmax - xmin) * samplingFrequency);
+	integer nt = Melder_iceiling ((xmax - xmin) * samplingFrequency);
 	double dt = 1.0 / samplingFrequency;
 	double tmid = (xmin + xmax) / 2.0;
 	double t1 = tmid - 0.5 * (nt - 1) * dt;
@@ -1106,7 +1106,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 			// Fill in the samples to the left of the current point.
 
 			long midSample = Sampled_xToLowIndex (him.get(), t), beginSample;
-			beginSample = midSample - Melder_iroundDown (te / his dx);
+			beginSample = midSample - Melder_ifloor (te / his dx);
 			if (beginSample < 1) {
 				beginSample = 0;
 			}
@@ -1147,7 +1147,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 				double ta = collisionPhase * (period * openPhase);
 				double factorPerSample = exp (- his dx / ta);
 				double value = flow * exp (- (his x1 + midSample * his dx - t) / ta);
-				integer endSample = midSample + Melder_iroundDown (20.0 * ta / his dx);
+				integer endSample = midSample + Melder_ifloor (20.0 * ta / his dx);
 				if (endSample > his nx) {
 					endSample = his nx;
 				}

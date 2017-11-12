@@ -470,19 +470,19 @@ autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee) {
 		}
 		autoSound him = Data_copy (thee);
 
-		double *e = his z[1], *x = thy z[1];
-		for (long i = 1; i <= his nx; i++) {
-			double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
-			long iFrame = lround ( (t - my x1) / my dx + 1.0); /* Sampled_xToNearestIndex (me, t) */
+		double *e = his z [1], *x = thy z [1];
+		for (integer i = 1; i <= his nx; i ++) {
+			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
+			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
 			double *a;
 			if (iFrame < 1 || iFrame > my nx) {
-				e[i] = 0.0;
+				e [i] = 0.0;
 				continue;
 			}
-			a = my d_frames[iFrame].a;
-			long m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i - 1;
-			for (long j = 1; j <= m; j++) {
-				e[i] += a[j] * x[i - j];
+			a = my d_frames [iFrame]. a;
+			integer m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i - 1;
+			for (integer j = 1; j <= m; j ++) {
+				e [i] += a [j] * x [i - j];
 			}
 		}
 		return him;
@@ -515,9 +515,9 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 		double *x = his z[1];
 		long ifirst = Sampled_xToHighIndex (thee, xmin);
 		long ilast = Sampled_xToLowIndex (thee, xmax);
-		for (long i = ifirst; i <= ilast; i++) {
-			double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
-			long iFrame = lround ( (t - my x1) / my dx + 1.0); /* Sampled_xToNearestIndex (me, t) */
+		for (integer i = ifirst; i <= ilast; i ++) {
+			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
+			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
 			if (iFrame < 1) {
 				continue;
 			}
@@ -525,7 +525,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 				break;
 			}
 			double *a = my d_frames[iFrame].a;
-			long m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i - 1;
+			integer m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i - 1;
 			for (long j = 1; j <= m; j++) {
 				x[i] -= a[j] * x[i - j];
 			}
@@ -544,7 +544,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 			for (long i = ifirst; i <= ilast; i++) {
 				double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
 				double riFrame = (t - my x1) / my dx + 1; /* Sampled_xToIndex (me, t); */
-				integer iFrame = Melder_iroundDown (riFrame);
+				integer iFrame = Melder_ifloor (riFrame);
 				double phase = riFrame - iFrame;
 				if (iFrame < 0 || iFrame > my nx) {
 					x[i] = 0.0;

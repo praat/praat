@@ -38,8 +38,8 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		double fminl2 = NUMlog2 (fmin), fmaxl2 = NUMlog2 (fmax);
 		double points = (fmaxl2 - fminl2) * nPointsPerOctave;
 		double dfl2 = (fmaxl2 - fminl2) / (points - 1);
-		integer nFrequencyPoints = Melder_iroundDown (points);
-		integer maxHarmonic = Melder_iroundDown (fmax / fmin);
+		integer nFrequencyPoints = Melder_ifloor (points);
+		integer maxHarmonic = Melder_ifloor (fmax / fmin);
 		double maxStrength = 0.0, unvoicedCriterium = 0.45, maxPower = 0.0;
 
 		if (nFrequencyPoints < 2) {
@@ -98,7 +98,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 
 			for (long m = 1; m <= maxHarmonic; m ++) {
 				double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
-				integer kb = 1 + Melder_iroundDown (nPointsPerOctave * NUMlog2 (m));
+				integer kb = 1 + Melder_ifloor (nPointsPerOctave * NUMlog2 (m));
 				for (long k = kb; k <= nFrequencyPoints; k ++) {
 					if (pitch [k] > 0.0) {
 						sumspec [k - kb + 1] += pitch [k] * hm;

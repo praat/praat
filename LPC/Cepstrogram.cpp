@@ -194,7 +194,7 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 	try {
 		autoPowerCepstrogram thee = Data_copy (me);
 		// 1. average across time
-		integer numberOfFrames = Melder_iroundDown (timeAveragingWindow / my dx);
+		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
 		if (numberOfFrames > 1) {
 			autoNUMvector<double> qin (1, my nx);
 			autoNUMvector<double> qout (1, my nx);
@@ -211,7 +211,7 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 			}
 		}
 		// 2. average across quefrencies
-		integer numberOfQuefrencyBins = Melder_iroundDown (quefrencyAveragingWindow / my dy);
+		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
 		if (numberOfQuefrencyBins > 1) {
 			autoNUMvector<double> qin (1, thy ny);
 			autoNUMvector<double> qout (1, thy ny);

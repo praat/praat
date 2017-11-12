@@ -269,7 +269,7 @@ void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int nu
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_iround_tieDown (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
 		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my z, my nx, true);
-		MelderFile_writeAudioFileTrailer (file, audioFileType, lround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileTrailer (file, audioFileType, Melder_iround (1.0 / my dx), my nx, my ny, numberOfBitsPerSamplePoint);
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw (me, U": not written to 16-bit sound file ", file, U".");

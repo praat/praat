@@ -212,7 +212,7 @@ static void UiField_widgetToValue (UiField me) {
 			} else {
 				double realValue;
 				Interpreter_numericExpression (nullptr, dirty.peek(), & realValue);
-				my integerValue = lround (realValue);
+				my integerValue = Melder_iround (realValue);
 			}
 			#if EVALUATE_WIDGET_REPRESENTATIONS
 				if (my integerValue == Melder_atoi (my stringDefaultValue)) {
@@ -1136,7 +1136,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 					Melder_throw (U"Argument \"", my name, U"\" should be a number, not ", Stackel_whichText (arg), U".");
 				}
 			} else if (arg -> which == Stackel_NUMBER) {
-				my integerValue = lround (arg -> number);
+				my integerValue = Melder_iround (arg -> number);
 				if (my type == UI_NATURAL && my integerValue < 1)
 					Melder_throw (U"Argument \"", my name, U"\" must be a positive whole number.");
 			} else {
@@ -1291,7 +1291,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			} else {
 				double realValue;
 				Interpreter_numericExpression (interpreter, string, & realValue);
-				my integerValue = lround (realValue);
+				my integerValue = Melder_iround (realValue);
 			}
 			if (my type == UI_NATURAL && my integerValue < 1)
 				Melder_throw (U"\"", my name, U"\" must be a positive whole number.");

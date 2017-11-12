@@ -343,7 +343,7 @@ autoPointProcess PointProcesses_difference (PointProcess me, PointProcess thee) 
 void PointProcess_fill (PointProcess me, double tmin, double tmax, double period) {
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
-		integer n = Melder_iroundDown ((tmax - tmin) / period);
+		integer n = Melder_ifloor ((tmax - tmin) / period);
 		double t = 0.5 * (tmin + tmax - n * period);
 		for (integer i = 1; i <= n; i ++, t += period) {
 			PointProcess_addPoint (me, t);

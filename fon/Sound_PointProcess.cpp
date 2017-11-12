@@ -29,7 +29,7 @@ autoSound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess 
 			Melder_throw (U"Sound has to be mono.");
 		integer numberOfPoints = thy nt;
 		double hisDuration = toLag - fromLag;
-		integer numberOfSamples = Melder_iroundDown (hisDuration / my dx) + 1;
+		integer numberOfSamples = Melder_ifloor (hisDuration / my dx) + 1;
 		if (numberOfSamples < 1)
 			Melder_throw (U"Time window too short.");
 		double midTime = 0.5 * (fromLag + toLag);

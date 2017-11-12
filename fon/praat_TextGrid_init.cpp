@@ -109,7 +109,7 @@ FORM (NEW1_IntervalTier_PointProcess_startToCentre, U"From start to centre", U"I
 DO
 	CONVERT_TWO (IntervalTier, PointProcess)
 		autoPointProcess result = IntervalTier_PointProcess_startToCentre (me, you, phase);
-	CONVERT_TWO_END (my name, U"_", your name, U"_", lround (100.0 * phase));
+	CONVERT_TWO_END (my name, U"_", your name, U"_", Melder_iround (100.0 * phase));
 }
 
 FORM (NEW1_IntervalTier_PointProcess_endToCentre, U"From end to centre", U"IntervalTier & PointProcess: End to centre...") {
@@ -118,7 +118,7 @@ FORM (NEW1_IntervalTier_PointProcess_endToCentre, U"From end to centre", U"Inter
 DO
 	CONVERT_TWO (IntervalTier, PointProcess)
 		autoPointProcess result = IntervalTier_PointProcess_endToCentre (me, you, phase);
-	CONVERT_TWO_END (my name, U"_", your name, U"_", lround (100.0 * phase));
+	CONVERT_TWO_END (my name, U"_", your name, U"_", Melder_iround (100.0 * phase));
 }
 
 // MARK: - LABEL (obsolete)
