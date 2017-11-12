@@ -111,9 +111,9 @@ autoCochleagram Sound_to_Cochleagram_edb
 	try {
 		double duration_seconds = my xmax;
 		if (dtime < my dx) dtime = my dx;
-		integer ntime = lround (duration_seconds / dtime);
+		integer ntime = Melder_iround (duration_seconds / dtime);
 		if (ntime < 2) return autoCochleagram ();
-		integer nfreq = lround (25.6 / dfreq);   // 25.6 Bark = highest frequency
+		integer nfreq = Melder_iround (25.6 / dfreq);   // 25.6 Bark = highest frequency
 
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, ntime, dtime, 0.5 * dtime, dfreq, nfreq);
 

@@ -261,7 +261,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#if defined (macintosh) || defined (_WIN32)
 				/* Taken from Audio Control Panel. */
 			#elif defined (linux) && ! defined (NO_AUDIO)
-				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : Melder_iround_tieUp (gain * 100));  
+				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : Melder_iround (gain * 100));  
 				balance = balance <= 0 ? 0 : balance >= 1 ? 1 : balance;
 				if (balance >= 0.5) {
 					val = (int)(((int)(val*balance/(1-balance)) << 8) | val);
@@ -337,7 +337,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 
 		/* Create a buffer for recording, and the resulting sound. */
 
-		numberOfSamples = lround (sampleRate * duration);
+		numberOfSamples = Melder_iround (sampleRate * duration);
 		if (numberOfSamples < 1)
 			Melder_throw (U"Duration too short.");
 		autoNUMvector <short> buffer (1, numberOfSamples * (fakeMonoByStereo ? 2 : 1));
@@ -507,7 +507,7 @@ static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback callback, Thing boss)
 {
 	try {
-		integer ifsamp = lround (1.0 / my dx), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
+		integer ifsamp = Melder_iround (1.0 / my dx), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
 		if (ifsamp == bestSampleRate) {
 			struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
 			double *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : nullptr;

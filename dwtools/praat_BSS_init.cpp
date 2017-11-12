@@ -40,7 +40,7 @@ FORM (NEW_EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG:
 DO
 	CONVERT_EACH (EEG)
 		autoCrossCorrelationTable result = EEG_to_CrossCorrelationTable (me, fromTime, toTime, lagTime, channels);
-	CONVERT_EACH_END (my name, U"_", round (lagTime * 1000.0))
+	CONVERT_EACH_END (my name, U"_", Melder_iround (lagTime * 1000.0))
 }
 
 FORM (NEW_EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {

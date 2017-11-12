@@ -401,7 +401,7 @@ FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", null
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhereRow (me, extractAllColumnsWhereRow, (kMelder_number) ___is___, ___theValue);
-	CONVERT_EACH_END (my name, U"_", extractAllColumnsWhereRow, U"_", lround (___theValue))
+	CONVERT_EACH_END (my name, U"_", extractAllColumnsWhereRow, U"_", Melder_iround (___theValue))
 }
 
 DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
@@ -437,7 +437,7 @@ FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", null
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhereColumn (me, extractAllRowsWhereColumn, (kMelder_number) ___is___, ___theValue);
-	CONVERT_EACH_END (my name, U"_", extractAllRowsWhereColumn, U"_", lround (___theValue))
+	CONVERT_EACH_END (my name, U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {

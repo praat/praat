@@ -29,7 +29,7 @@ template <typename T> static inline double SampledXY_indexToY (SampledXY me, T i
 static inline double SampledXY_yToIndex (SampledXY me, double y) { return (y - my y1) / my dy + 1.0; }
 static inline integer SampledXY_yToLowIndex     (SampledXY me, double y) { return Melder_ifloor   ((y - my y1) / my dy + 1.0); }
 static inline integer SampledXY_yToHighIndex    (SampledXY me, double y) { return Melder_iceiling ((y - my y1) / my dy + 1.0); }
-static inline integer SampledXY_yToNearestIndex (SampledXY me, double y) { return (integer) round ((y - my y1) / my dy + 1.0); }
+static inline integer SampledXY_yToNearestIndex (SampledXY me, double y) { return Melder_iround   ((y - my y1) / my dy + 1.0); }
 
 integer SampledXY_getWindowSamplesY (SampledXY me, double ymin, double ymax, integer *iymin, integer *iymax);
 

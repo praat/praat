@@ -2176,6 +2176,7 @@ inline static integer Melder_iround_tieUp (double x) {
 		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
 }
+#define Melder_iround  Melder_iround_tieUp
 
 inline static double Melder_round_tieDown (double x) {
 	return Melder_roundUp (x - 0.5);

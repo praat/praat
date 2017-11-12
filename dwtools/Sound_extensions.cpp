@@ -566,7 +566,7 @@ autoSound Sound_createHamming (double windowDuration, double samplingFrequency) 
 }
 
 static autoSound Sound_create2 (double minimumTime, double maximumTime, double samplingFrequency) {
-	return Sound_create (1, minimumTime, maximumTime, lround ( (maximumTime - minimumTime) * samplingFrequency),
+	return Sound_create (1, minimumTime, maximumTime, Melder_iround ( (maximumTime - minimumTime) * samplingFrequency),
 		1.0 / samplingFrequency, minimumTime + 0.5 / samplingFrequency);
 }
 

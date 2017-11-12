@@ -1640,7 +1640,7 @@ void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
 				my p_timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy::VIEW_DEPENDENT ? (my endWindow - my startWindow) / my p_numberOfTimeStepsPerView :
 				0.0;   // the default: determined by analysis window length
 			my d_formant = Sound_to_Formant_any (sound.get(), formantTimeStep,
-				lround (my p_formant_numberOfFormants * 2), my p_formant_maximumFormant,
+				Melder_iround (my p_formant_numberOfFormants * 2), my p_formant_maximumFormant,
 				my p_formant_windowLength, (int) my p_formant_method, my p_formant_preemphasisFrom, 50.0);
 			my d_formant -> xmin = my startWindow;
 			my d_formant -> xmax = my endWindow;

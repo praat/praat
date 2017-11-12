@@ -158,7 +158,7 @@ integer Matrix_xToLowColumn (Matrix me, double x) { return Melder_ifloor (Matrix
 
 integer Matrix_xToHighColumn (Matrix me, double x) { return Melder_iceiling (Matrix_xToColumn (me, x)); }
 
-integer Matrix_xToNearestColumn (Matrix me, double x) { return Melder_iround_tieUp (Matrix_xToColumn (me, x)); }
+integer Matrix_xToNearestColumn (Matrix me, double x) { return Melder_iround (Matrix_xToColumn (me, x)); }
 
 double Matrix_yToRow (Matrix me, double y) { return (y - my y1) / my dy + 1.0; }
 
@@ -166,7 +166,7 @@ integer Matrix_yToLowRow (Matrix me, double y) { return Melder_ifloor (Matrix_yT
 
 integer Matrix_yToHighRow (Matrix me, double y) { return Melder_iceiling (Matrix_yToRow (me, y)); }
 
-integer Matrix_yToNearestRow (Matrix me, double y) { return Melder_iround_tieUp (Matrix_yToRow (me, y)); }
+integer Matrix_yToNearestRow (Matrix me, double y) { return Melder_iround (Matrix_yToRow (me, y)); }
 
 integer Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, integer *ixmin, integer *ixmax) {
 	*ixmin = 1 + Melder_iceiling ((xmin - my x1) / my dx);

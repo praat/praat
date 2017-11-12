@@ -250,8 +250,8 @@ static void Sampled_getSumAndDefinitionRange
 		} else {   // no interpolation
 			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
-				integer imin = rimin < 0.5 ? 0 : Melder_iround_tieUp (rimin);
-				integer imax = rimax >= my nx + 0.5 ? my nx + 1 : Melder_iround_tieUp (rimax);
+				integer imin = rimin < 0.5 ? 0 : Melder_iround (rimin);
+				integer imax = rimax >= my nx + 0.5 ? my nx + 1 : Melder_iround (rimax);
 				for (integer isamp = imin + 1; isamp < imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);
 					if (isdefined (value)) {
@@ -425,8 +425,8 @@ static void Sampled_getSum2AndDefinitionRange
 		} else {   // no interpolation
 			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
-				integer imin = rimin < 0.5 ? 0 : lround (rimin);
-				integer imax = rimax >= my nx + 0.5 ? my nx + 1 : lround (rimax);
+				integer imin = rimin < 0.5 ? 0 : Melder_iround (rimin);
+				integer imax = rimax >= my nx + 0.5 ? my nx + 1 : Melder_iround (rimax);
 				for (integer isamp = imin + 1; isamp < imax; isamp ++) {
 					double value = my v_getValueAtSample (isamp, ilevel, unit);
 					if (isdefined (value)) {

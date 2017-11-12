@@ -1972,7 +1972,7 @@ static void Formula_evaluateConstants () {
 						{ gain = 2; parse [i]. content.number /= parse [i + 1]. content.number; }
 				} else if (parse [i + 1]. symbol == TO_OBJECT_) {
 					parse [i]. symbol = OBJECT_;
-					int IOBJECT = praat_findObjectById (lround (parse [i]. content.number));
+					int IOBJECT = praat_findObjectById (Melder_iround (parse [i]. content.number));
 					parse [i]. content.object = OBJECT;
 					gain = 1;
 				}
@@ -3398,7 +3398,7 @@ static void do_function_ll_l_numvec (integer (*f) (integer, integer)) {
 		integer numberOfElements = a->numericVector.size;
 		autonumvec newData (numberOfElements, kTensorInitializationType::RAW);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
-			newData [ielem] = f (lround (x->number), lround (y->number));
+			newData [ielem] = f (Melder_iround (x->number), Melder_iround (y->number));
 		}
 		pushNumericVector (newData.move());
 	} else {
@@ -3419,7 +3419,7 @@ static void do_function_ll_l_nummat (integer (*f) (integer, integer)) {
 		autonummat newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-				newData [irow] [icol] = f (lround (x->number), lround (y->number));
+				newData [irow] [icol] = f (Melder_iround (x->number), Melder_iround (y->number));
 			}
 		}
 		pushNumericMatrix (newData.move());
@@ -3433,7 +3433,7 @@ static void do_function_dl_d (double (*f) (double, integer)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) || isundef (y->number) ? undefined :
-			f (x->number, lround (y->number)));
+			f (x->number, Melder_iround (y->number)));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires two numeric arguments, not ",
@@ -3444,7 +3444,7 @@ static void do_function_ld_d (double (*f) (integer, double)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) || isundef (y->number) ? undefined :
-			f (lround (x->number), y->number));
+			f (Melder_iround (x->number), y->number));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires two numeric arguments, not ",
@@ -3455,7 +3455,7 @@ static void do_function_ll_l (integer (*f) (integer, integer)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (isundef (x->number) || isundef (y->number) ? undefined :
-			f (lround (x->number), lround (y->number)));
+			f (Melder_iround (x->number), Melder_iround (y->number)));
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires two numeric arguments, not ",
@@ -3465,8 +3465,8 @@ static void do_function_ll_l (integer (*f) (integer, integer)) {
 static void do_objects_are_identical () {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		int id1 = lround (x->number), id2 = lround (y->number);
-		int i = theCurrentPraatObjects -> n;
+		integer id1 = Melder_iround (x->number), id2 = Melder_iround (y->number);
+		integer i = theCurrentPraatObjects -> n;
 		while (i > 0 && id1 != theCurrentPraatObjects -> list [i]. id) i --;
 		if (i == 0) Melder_throw (U"Object #", id1, U" does not exist in function objectsAreIdentical.");
 		Daata object1 = (Daata) theCurrentPraatObjects -> list [i]. object;
@@ -3496,7 +3496,7 @@ static void do_do () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	if (narg->number < 1)
 		Melder_throw (U"The function \"do\" requires at least one argument, namely a menu command.");
-	int numberOfArguments = lround (narg->number) - 1;
+	integer numberOfArguments = Melder_iround (narg->number) - 1;
 	#define MAXNUM_FIELDS  40
 	structStackel stack [1+MAXNUM_FIELDS];
 	for (int iarg = numberOfArguments; iarg >= 0; iarg --) {
@@ -3592,7 +3592,7 @@ static void do_doStr () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	if (narg->number < 1)
 		Melder_throw (U"The function \"do$\" requires at least one argument, namely a menu command.");
-	int numberOfArguments = lround (narg->number) - 1;
+	integer numberOfArguments = Melder_iround (narg->number) - 1;
 	#define MAXNUM_FIELDS  40
 	structStackel stack [1+MAXNUM_FIELDS];
 	for (int iarg = numberOfArguments; iarg >= 0; iarg --) {
@@ -3660,7 +3660,7 @@ static void shared_do_writeInfo (int numberOfArguments) {
 static void do_writeInfo () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	MelderInfo_open ();
 	shared_do_writeInfo (numberOfArguments);
@@ -3670,7 +3670,7 @@ static void do_writeInfo () {
 static void do_writeInfoLine () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	MelderInfo_open ();
 	shared_do_writeInfo (numberOfArguments);
@@ -3681,7 +3681,7 @@ static void do_writeInfoLine () {
 static void do_appendInfo () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	shared_do_writeInfo (numberOfArguments);
 	MelderInfo_drain ();
@@ -3690,7 +3690,7 @@ static void do_appendInfo () {
 static void do_appendInfoLine () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	shared_do_writeInfo (numberOfArguments);
 	MelderInfo_write (U"\n");
@@ -3702,7 +3702,7 @@ static void do_writeFile () {
 		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
@@ -3726,7 +3726,7 @@ static void do_writeFileLine () {
 		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
@@ -3751,7 +3751,7 @@ static void do_appendFile () {
 		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
@@ -3775,7 +3775,7 @@ static void do_appendFileLine () {
 		Melder_throw (U"The function \"writeFile\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
@@ -3801,7 +3801,7 @@ static void do_pauseScript () {
 	if (theCurrentPraatApplication -> batch) return;   // in batch we ignore pause statements
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	autoMelderString buffer;
 	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
@@ -3819,7 +3819,7 @@ static void do_pauseScript () {
 static void do_exitScript () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
 		Stackel arg = & theStack [w + iarg];
@@ -3834,7 +3834,7 @@ static void do_exitScript () {
 static void do_runScript () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	if (numberOfArguments < 1)
 		Melder_throw (U"The function \"runScript\" requires at least one argument, namely the file name.");
 	w -= numberOfArguments;
@@ -3856,7 +3856,7 @@ static void do_runSystem () {
 		Melder_throw (U"The function \"runSystem\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	autoMelderString text;
 	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
@@ -3879,7 +3879,7 @@ static void do_runSystem_nocheck () {
 		Melder_throw (U"The function \"runSystem\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	autoMelderString text;
 	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
@@ -3901,7 +3901,7 @@ static void do_runSubprocess () {
 		Melder_throw (U"The function \"runSubprocess\" is not available inside manuals.");
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
-	int numberOfArguments = lround (narg->number);
+	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	Stackel commandFile = & theStack [w + 1];
 	if (commandFile->which != Stackel_STRING)
@@ -3931,7 +3931,7 @@ static void do_min () {
 	if (last->which != Stackel_NUMBER)
 		Melder_throw (U"The function \"min\" can only have numeric arguments, not ", Stackel_whichText (last), U".");
 	result = last->number;
-	for (int j = lround (n->number) - 1; j > 0; j --) {
+	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw (U"The function \"min\" can only have numeric arguments, not ", Stackel_whichText (previous), U".");
@@ -3950,7 +3950,7 @@ static void do_max () {
 	if (last->which != Stackel_NUMBER)
 		Melder_throw (U"The function \"max\" can only have numeric arguments, not ", Stackel_whichText (last), U".");
 	result = last->number;
-	for (int j = lround (n->number) - 1; j > 0; j --) {
+	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw (U"The function \"max\" can only have numeric arguments, not ", Stackel_whichText (previous), U".");
@@ -3970,7 +3970,7 @@ static void do_imin () {
 		Melder_throw (U"The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (last), U".");
 	minimum = last->number;
 	result = n->number;
-	for (int j = lround (n->number) - 1; j > 0; j --) {
+	for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw (U"The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (previous), U".");
@@ -3993,7 +3993,7 @@ static void do_imax () {
 	if (last->which == Stackel_NUMBER) {
 		double maximum = last->number;
 		double result = n->number;
-		for (int j = lround (n->number) - 1; j > 0; j --) {
+		for (integer j = Melder_iround (n->number) - 1; j > 0; j --) {
 			Stackel previous = pop;
 			if (previous->which != Stackel_NUMBER)
 				Melder_throw (U"The function \"imax\" cannot mix a numeric argument with ", Stackel_whichText (previous), U".");
@@ -4048,7 +4048,7 @@ static void do_norm () {
 static void do_zeroNumvec () {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	int rank = lround (n -> number);
+	integer rank = Melder_iround (n -> number);
 	if (rank < 1)
 		Melder_throw (U"The function \"zero#\" requires an argument.");
 	if (rank > 1) {
@@ -4062,13 +4062,13 @@ static void do_zeroNumvec () {
 		Melder_throw (U"In the function \"zero#\", the number of elements is undefined.");
 	if (numberOfElements < 0.0)
 		Melder_throw (U"In the function \"zero#\", the number of elements should not be negative.");
-	autonumvec result (lround (numberOfElements), kTensorInitializationType::ZERO);
+	autonumvec result (Melder_iround (numberOfElements), kTensorInitializationType::ZERO);
 	pushNumericVector (result.move());
 }
 static void do_zeroNummat () {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	int rank = lround (n -> number);
+	integer rank = Melder_iround (n -> number);
 	if (rank != 2)
 		Melder_throw (U"The function \"zero##\" requires two arguments.");
 	Stackel ncol = pop;
@@ -4087,13 +4087,13 @@ static void do_zeroNummat () {
 		Melder_throw (U"In the function \"zero##\", the number of rows should not be negative.");
 	if (numberOfColumns < 0.0)
 		Melder_throw (U"In the function \"zero##\", the number of columns should not be negative.");
-	autonummat result (lround (numberOfRows), lround (numberOfColumns), kTensorInitializationType::ZERO);
+	autonummat result (Melder_iround (numberOfRows), Melder_iround (numberOfColumns), kTensorInitializationType::ZERO);
 	pushNumericMatrix (result.move());
 }
 static void do_linearNumvec () {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	int narg = lround (stackel_narg -> number);
+	integer narg = Melder_iround (stackel_narg -> number);
 	if (narg < 3 || narg > 4)
 		Melder_throw (U"The function \"linear#\" requires three or four arguments.");
 	bool excludeEdges = false;   // default
@@ -4101,7 +4101,7 @@ static void do_linearNumvec () {
 		Stackel stack_excludeEdges = pop;
 		if (stack_excludeEdges -> which != Stackel_NUMBER)
 			Melder_throw (U"In the function \"linear#\", the edge exclusion flag (fourth argument) has to be a number, not ", Stackel_whichText (stack_excludeEdges), U".");
-		excludeEdges = lround (stack_excludeEdges -> number);
+		excludeEdges = Melder_iround (stack_excludeEdges -> number);
 	}
 	Stackel stack_numberOfSteps = pop, stack_maximum = pop, stack_minimum = pop;
 	if (stack_minimum -> which != Stackel_NUMBER)
@@ -4120,7 +4120,7 @@ static void do_linearNumvec () {
 		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) has to be a number, not ", Stackel_whichText (stack_numberOfSteps), U".");
 	if (isundef (stack_numberOfSteps -> number))
 		Melder_throw (U"Undefined number of steps in the function \"linear#\" (third argument).");
-	integer numberOfSteps = lround (stack_numberOfSteps -> number);
+	integer numberOfSteps = Melder_iround (stack_numberOfSteps -> number);
 	if (numberOfSteps <= 0)
 		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) has to be positive, not ", numberOfSteps, U".");
 	autonumvec result { numberOfSteps, kTensorInitializationType::RAW };
@@ -4144,7 +4144,7 @@ static void do_peaksNummat () {
 	Stackel i = pop;
 	if (i->which != Stackel_NUMBER)
 		Melder_throw (U"The third argument to peaks## has to be a number, not ", Stackel_whichText (i), U".");
-	int interpolation = lround (i->number);
+	integer interpolation = Melder_iround (i->number);
 	Stackel e = pop;
 	if (e->which != Stackel_NUMBER)
 		Melder_throw (U"The second argument to peaks## has to be a number, not ", Stackel_whichText (e), U".");
@@ -4207,7 +4207,7 @@ static void do_editor () {
 		if (editor->which == Stackel_STRING) {
 			praatP. editor = praat_findEditorFromString (editor->string);
 		} else if (editor->which == Stackel_NUMBER) {
-			praatP. editor = praat_findEditorById (lround (editor->number));
+			praatP. editor = praat_findEditorById (Melder_iround (editor->number));
 		} else {
 			Melder_throw (U"The function \"editor\" requires a numeric or string argument, not ", Stackel_whichText (editor), U".");
 		}
@@ -4241,7 +4241,7 @@ static void do_numericVectorElement () {
 		Melder_throw (U"In vector indexing, the index has to be a number, not ", Stackel_whichText (r), U".");
 	if (isundef (r -> number))
 		Melder_throw (U"The element index is undefined.");
-	element = lround (r -> number);
+	element = Melder_iround (r -> number);
 	if (element <= 0)
 		Melder_throw (U"In vector indexing, the element index has to be positive.");
 	if (element > vector -> numericVectorValue.size)
@@ -4256,7 +4256,7 @@ static void do_numericMatrixElement () {
 		Melder_throw (U"In matrix indexing, the column index has to be a number, not ", Stackel_whichText (c), U".");
 	if (isundef (c -> number))
 		Melder_throw (U"The column index is undefined.");
-	column = lround (c -> number);
+	column = Melder_iround (c -> number);
 	if (column <= 0)
 		Melder_throw (U"In matrix indexing, the column index has to be positive.");
 	if (column > matrix -> numericMatrixValue. ncol)
@@ -4266,7 +4266,7 @@ static void do_numericMatrixElement () {
 		Melder_throw (U"In matrix indexing, the row index has to be a number, not ", Stackel_whichText (r), U".");
 	if (isundef (r -> number))
 		Melder_throw (U"The row index is undefined.");
-	row = lround (r -> number);
+	row = Melder_iround (r -> number);
 	if (row <= 0)
 		Melder_throw (U"In matrix indexing, the row index has to be positive.");
 	if (row > matrix -> numericMatrixValue. nrow)
@@ -4276,7 +4276,7 @@ static void do_numericMatrixElement () {
 static void do_indexedNumericVariable () {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	int nindex = lround (n -> number);
+	integer nindex = Melder_iround (n -> number);
 	if (nindex < 1)
 		Melder_throw (U"Indexed variables require at least one index.");
 	char32 *indexedVariableName = parse [programPointer]. content.string;
@@ -4301,7 +4301,7 @@ static void do_indexedNumericVariable () {
 static void do_indexedStringVariable () {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	int nindex = lround (n -> number);
+	integer nindex = Melder_iround (n -> number);
 	if (nindex < 1)
 		Melder_throw (U"Indexed variables require at least one index.");
 	char32 *indexedVariableName = parse [programPointer]. content.string;
@@ -4370,7 +4370,7 @@ static void do_leftStr () {
 	if (narg->number == 1 || narg->number == 2) {
 		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
 		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
-			integer newlength = x ? lround (x->number) : 1;
+			integer newlength = x ? Melder_iround (x->number) : 1;
 			integer length = str32len (s->string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
@@ -4396,7 +4396,7 @@ static void do_rightStr () {
 	if (narg->number == 1 || narg->number == 2) {
 		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
 		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
-			integer newlength = x ? lround (x->number) : 1;
+			integer newlength = x ? Melder_iround (x->number) : 1;
 			integer length = str32len (s->string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
@@ -4413,8 +4413,8 @@ static void do_midStr () {
 	if (narg->number == 2 || narg->number == 3) {
 		Stackel y = ( narg->number == 3 ? pop : nullptr ), x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == nullptr || y->which == Stackel_NUMBER)) {
-			integer newlength = y ? lround (y->number) : 1;
-			integer start = lround (x->number);
+			integer newlength = y ? Melder_iround (y->number) : 1;
+			integer start = Melder_iround (x->number);
 			integer length = str32len (s->string), finish = start + newlength - 1;
 			autostring32 result;
 			if (start < 1) start = 1;
@@ -4539,9 +4539,9 @@ static void do_replaceStr () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		integer numberOfMatches;
-		//autostring32 result = str_replace_literal (s->string, t->string, u->string, lround (x->number), & numberOfMatches);
+		//autostring32 result = str_replace_literal (s->string, t->string, u->string, Melder_iround (x->number), & numberOfMatches);
 		//pushString (result.transfer());
-		char32 *result = str_replace_literal (s->string, t->string, u->string, lround (x->number), & numberOfMatches);
+		char32 *result = str_replace_literal (s->string, t->string, u->string, Melder_iround (x->number), & numberOfMatches);
 		pushString (result);
 	} else {
 		Melder_throw (U"The function \"replace$\" requires three strings and a number.");
@@ -4556,9 +4556,9 @@ static void do_replace_regexStr () {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
 			integer numberOfMatches;
-			//autostring32 result = str_replace_regexp (s->string, compiled_regexp, u->string, lround (x->number), & numberOfMatches);
+			//autostring32 result = str_replace_regexp (s->string, compiled_regexp, u->string, Melder_iround (x->number), & numberOfMatches);
 			//pushString (result.transfer());
-			char32 *result = str_replace_regexp (s->string, compiled_regexp, u->string, lround (x->number), & numberOfMatches);
+			char32 *result = str_replace_regexp (s->string, compiled_regexp, u->string, Melder_iround (x->number), & numberOfMatches);
 			pushString (result);
 		}
 	} else {
@@ -4653,7 +4653,7 @@ static void do_selected () {
 			ClassInfo klas = Thing_classFromClassName (a->string, nullptr);
 			result = praat_idOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
-			result = praat_idOfSelected (nullptr, lround (a->number));
+			result = praat_idOfSelected (nullptr, Melder_iround (a->number));
 		} else {
 			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
@@ -4661,7 +4661,7 @@ static void do_selected () {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 			ClassInfo klas = Thing_classFromClassName (s->string, nullptr);
-			result = praat_idOfSelected (klas, lround (x->number));
+			result = praat_idOfSelected (klas, Melder_iround (x->number));
 		} else {
 			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
@@ -4682,7 +4682,7 @@ static void do_selectedStr () {
 			ClassInfo klas = Thing_classFromClassName (a->string, nullptr);
 			result.reset (Melder_dup (praat_nameOfSelected (klas, 0)));
 		} else if (a->which == Stackel_NUMBER) {
-			result.reset (Melder_dup (praat_nameOfSelected (nullptr, lround (a->number))));
+			result.reset (Melder_dup (praat_nameOfSelected (nullptr, Melder_iround (a->number))));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and/or a number.");
 		}
@@ -4690,7 +4690,7 @@ static void do_selectedStr () {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 			ClassInfo klas = Thing_classFromClassName (s->string, nullptr);
-			result.reset (Melder_dup (praat_nameOfSelected (klas, lround (x->number))));
+			result.reset (Melder_dup (praat_nameOfSelected (klas, Melder_iround (x->number))));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and a number.");
 		}
@@ -4711,7 +4711,7 @@ static void do_selectedStr () {
 			ClassInfo klas = Thing_classFromClassName (a->string, nullptr);
 			resultSource = praat_nameOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
-			resultSource = praat_nameOfSelected (nullptr, lround (a->number));
+			resultSource = praat_nameOfSelected (nullptr, Melder_iround (a->number));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and/or a number.");
 		}
@@ -4719,7 +4719,7 @@ static void do_selectedStr () {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 			ClassInfo klas = Thing_classFromClassName (s->string, nullptr);
-			resultSource = praat_nameOfSelected (klas, lround (x->number));
+			resultSource = praat_nameOfSelected (klas, Melder_iround (x->number));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and a number.");
 		}
@@ -4753,7 +4753,7 @@ static void do_selectObject () {
 	for (int iobject = 1; iobject <= n -> number; iobject ++) {
 		Stackel object = pop;
 		if (object -> which == Stackel_NUMBER) {
-			int IOBJECT = praat_findObjectById (lround (object -> number));
+			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
 			int IOBJECT = praat_findObjectFromString (object -> string);
@@ -4761,7 +4761,7 @@ static void do_selectObject () {
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
 			for (int ielm = 1; ielm <= vec.size; ielm ++) {
-				int IOBJECT = praat_findObjectById (lround (vec [ielm]));
+				int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_select (IOBJECT);
 			}
 		} else {
@@ -4776,7 +4776,7 @@ static void do_plusObject () {
 	for (int iobject = 1; iobject <= n -> number; iobject ++) {
 		Stackel object = pop;
 		if (object -> which == Stackel_NUMBER) {
-			int IOBJECT = praat_findObjectById (lround (object -> number));
+			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
 			int IOBJECT = praat_findObjectFromString (object -> string);
@@ -4784,7 +4784,7 @@ static void do_plusObject () {
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
 			for (int ielm = 1; ielm <= vec.size; ielm ++) {
-				int IOBJECT = praat_findObjectById (lround (vec [ielm]));
+				int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_select (IOBJECT);
 			}
 		} else {
@@ -4799,7 +4799,7 @@ static void do_minusObject () {
 	for (int iobject = 1; iobject <= n -> number; iobject ++) {
 		Stackel object = pop;
 		if (object -> which == Stackel_NUMBER) {
-			int IOBJECT = praat_findObjectById (lround (object -> number));
+			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_deselect (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
 			int IOBJECT = praat_findObjectFromString (object -> string);
@@ -4807,7 +4807,7 @@ static void do_minusObject () {
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
 			for (int ielm = 1; ielm <= vec.size; ielm ++) {
-				int IOBJECT = praat_findObjectById (lround (vec [ielm]));
+				int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_deselect (IOBJECT);
 			}
 		} else {
@@ -4822,7 +4822,7 @@ static void do_removeObject () {
 	for (int iobject = 1; iobject <= n -> number; iobject ++) {
 		Stackel object = pop;
 		if (object -> which == Stackel_NUMBER) {
-			int IOBJECT = praat_findObjectById (lround (object -> number));
+			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_removeObject (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
 			int IOBJECT = praat_findObjectFromString (object -> string);
@@ -4830,7 +4830,7 @@ static void do_removeObject () {
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
 			for (int ielm = 1; ielm <= vec.size; ielm ++) {
-				int IOBJECT = praat_findObjectById (lround (vec [ielm]));
+				int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_removeObject (IOBJECT);
 			}
 		} else {
@@ -4844,7 +4844,7 @@ static void do_object_xmin () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetXmin ()) {
@@ -4867,7 +4867,7 @@ static void do_object_xmax () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetXmax ()) {
@@ -4890,7 +4890,7 @@ static void do_object_ymin () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetYmin ()) {
@@ -4913,7 +4913,7 @@ static void do_object_ymax () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetYmax ()) {
@@ -4936,7 +4936,7 @@ static void do_object_nx () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetNx ()) {
@@ -4959,7 +4959,7 @@ static void do_object_ny () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetNy ()) {
@@ -4982,7 +4982,7 @@ static void do_object_dx () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetDx ()) {
@@ -5005,7 +5005,7 @@ static void do_object_dy () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetDy ()) {
@@ -5028,7 +5028,7 @@ static void do_object_nrow () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetNrow ()) {
@@ -5051,7 +5051,7 @@ static void do_object_ncol () {
 	Stackel object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetNcol ()) {
@@ -5074,12 +5074,12 @@ static void do_object_rowstr () {
 	Stackel index = pop, object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetRowStr ()) {
 			if (index -> which == Stackel_NUMBER) {
-				integer number = lround (index->number);
+				integer number = Melder_iround (index->number);
 				autostring32 result = Melder_dup (data -> v_getRowStr (number));
 				if (! result.peek())
 					Melder_throw (U"Row index out of bounds.");
@@ -5094,7 +5094,7 @@ static void do_object_rowstr () {
 		Daata data = object -> object;
 		if (data -> v_hasGetRowStr ()) {
 			if (index -> which == Stackel_NUMBER) {
-				integer number = lround (index->number);
+				integer number = Melder_iround (index->number);
 				autostring32 result = Melder_dup (data -> v_getRowStr (number));
 				if (! result.peek())
 					Melder_throw (U"Row index out of bounds.");
@@ -5113,12 +5113,12 @@ static void do_object_colstr () {
 	Stackel index = pop, object = pop;
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (lround (object -> number)) :
+			praat_findObjectById (Melder_iround (object -> number)) :
 			praat_findObjectFromString (object -> string);
 		Daata data = OBJECT;
 		if (data -> v_hasGetColStr ()) {
 			if (index -> which == Stackel_NUMBER) {
-				integer number = lround (index->number);
+				integer number = Melder_iround (index->number);
 				autostring32 result = Melder_dup (data -> v_getColStr (number));
 				if (! result.peek())
 					Melder_throw (U"Column index out of bounds.");
@@ -5133,7 +5133,7 @@ static void do_object_colstr () {
 		Daata data = object -> object;
 		if (data -> v_hasGetColStr ()) {
 			if (index -> which == Stackel_NUMBER) {
-				integer number = lround (index->number);
+				integer number = Melder_iround (index->number);
 				autostring32 result = Melder_dup (data -> v_getColStr (number));
 				if (! result.peek())
 					Melder_throw (U"Column index out of bounds.");
@@ -5169,8 +5169,8 @@ static void do_sleep () {
 static void do_fixedStr () {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		//autostring32 result = Melder_dup (Melder_fixed (value->number, lround (precision->number)));
-		pushString (Melder_dup (Melder_fixed (value->number, lround (precision->number))));
+		//autostring32 result = Melder_dup (Melder_fixed (value->number, Melder_iround (precision->number)));
+		pushString (Melder_dup (Melder_fixed (value->number, Melder_iround (precision->number))));
 	} else {
 		Melder_throw (U"The function \"fixed$\" requires two numbers (value and precision), not ", Stackel_whichText (value), U" and ", Stackel_whichText (precision), U".");
 	}
@@ -5178,7 +5178,7 @@ static void do_fixedStr () {
 static void do_percentStr () {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		autostring32 result = Melder_dup (Melder_percent (value->number, lround (precision->number)));
+		autostring32 result = Melder_dup (Melder_percent (value->number, Melder_iround (precision->number)));
 		pushString (result.transfer());
 	} else {
 		Melder_throw (U"The function \"percent$\" requires two numbers (value and precision), not ", Stackel_whichText (value), U" and ", Stackel_whichText (precision), U".");
@@ -5248,7 +5248,7 @@ static void do_readFileStr () {
 static void do_numericVectorLiteral () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
-	integer numberOfElements = lround (n->number);
+	integer numberOfElements = Melder_iround (n->number);
 	Melder_assert (numberOfElements > 0);
 	autonumvec result { numberOfElements, kTensorInitializationType::RAW };
 	for (integer ielement = numberOfElements; ielement > 0; ielement --) {
@@ -5315,7 +5315,7 @@ static void do_repeatNumvec () {
 	Stackel n = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && n->which == Stackel_NUMBER) {
 		integer n_old = x->numericVector.size;
-		integer times = lround (n->number);
+		integer times = Melder_iround (n->number);
 		autonumvec result { n_old * times, kTensorInitializationType::RAW };
 		for (integer i = 1; i <= times; i ++) {
 			for (integer j = 1; j <= n_old; j ++) {
@@ -5514,7 +5514,7 @@ static void do_pauseFormAddBoolean () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_boolean (label->string, lround (defaultValue->number));
+			UiPause_boolean (label->string, Melder_iround (defaultValue->number));
 		} else {
 			Melder_throw (U"The first argument of \"boolean\" (the label) must be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5534,7 +5534,7 @@ static void do_pauseFormAddChoice () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_choice (label->string, lround (defaultValue->number));
+			UiPause_choice (label->string, Melder_iround (defaultValue->number));
 		} else {
 			Melder_throw (U"The first argument of \"choice\" (the label) must be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5554,7 +5554,7 @@ static void do_pauseFormAddOptionMenu () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_optionMenu (label->string, lround (defaultValue->number));
+			UiPause_optionMenu (label->string, Melder_iround (defaultValue->number));
 		} else {
 			Melder_throw (U"The first argument of \"optionMenu\" (the label) must be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5604,12 +5604,12 @@ static void do_endPauseForm () {
 	Stackel d = pop;
 	if (d->which != Stackel_NUMBER)
 		Melder_throw (U"The last argument of \"endPause\" has to be a number (the default or cancel continue button), not ", Stackel_whichText (d), U".");
-	int numberOfContinueButtons = lround (n->number) - 1;
-	int cancelContinueButton = 0, defaultContinueButton = lround (d->number);
+	integer numberOfContinueButtons = Melder_iround (n->number) - 1;
+	integer cancelContinueButton = 0, defaultContinueButton = Melder_iround (d->number);
 	Stackel ca = pop;
 	if (ca->which == Stackel_NUMBER) {
 		cancelContinueButton = defaultContinueButton;
-		defaultContinueButton = lround (ca->number);
+		defaultContinueButton = Melder_iround (ca->number);
 		numberOfContinueButtons --;
 		if (cancelContinueButton < 1 || cancelContinueButton > numberOfContinueButtons)
 			Melder_throw (U"Your last argument of \"endPause\" is the number of the cancel button; it cannot be ", cancelContinueButton,
@@ -5818,11 +5818,11 @@ static void do_demoExtraControlKeyPressed () {
 static integer Stackel_getRowNumber (Stackel row, Daata thee) {
 	integer result = 0;
 	if (row->which == Stackel_NUMBER) {
-		result = lround (row->number);
+		result = Melder_iround (row->number);
 	} else if (row->which == Stackel_STRING) {
 		if (! thy v_hasGetRowIndex ())
 			Melder_throw (U"Objects of type ", Thing_className (thee), U" do not have row labels, so row indexes have to be numbers.");
-		result = lround (thy v_getRowIndex (row->string));
+		result = Melder_iround (thy v_getRowIndex (row->string));
 		if (result == 0)
 			Melder_throw (U"Object \"", thy name, U"\" has no row labelled \"", row->string, U"\".");
 	} else {
@@ -5833,11 +5833,11 @@ static integer Stackel_getRowNumber (Stackel row, Daata thee) {
 static integer Stackel_getColumnNumber (Stackel column, Daata thee) {
 	integer result = 0;
 	if (column->which == Stackel_NUMBER) {
-		result = lround (column->number);
+		result = Melder_iround (column->number);
 	} else if (column->which == Stackel_STRING) {
 		if (! thy v_hasGetColIndex ())
 			Melder_throw (U"Objects of type ", Thing_className (thee), U" do not have column labels, so column indexes have to be numbers.");
-		result = lround (thy v_getColIndex (column->string));
+		result = Melder_iround (thy v_getColIndex (column->string));
 		if (result == 0)
 			Melder_throw (U"Object ", thee, U" has no column labelled \"", column->string, U"\".");
 	} else {

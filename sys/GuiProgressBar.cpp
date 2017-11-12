@@ -101,7 +101,7 @@ void GuiProgressBar_setValue (GuiProgressBar me, double value) {
 	#if gtk
 		gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (my d_widget), value);
 	#elif motif
-		XmScaleSetValue (my d_widget, round (value * 10000));
+		XmScaleSetValue (my d_widget, Melder_iround (value * 10000));
 	#elif cocoa
 		[my d_cocoaProgressBar   setDoubleValue: value];
 	#endif

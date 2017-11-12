@@ -33,7 +33,7 @@ template <typename T> static inline double Sampled_indexToX (Sampled me, T index
 static inline double Sampled_xToIndex (Sampled me, double        x) { return (x - my x1) / my dx + 1.0; }
 static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return Melder_ifloor   ((x - my x1) / my dx + 1.0); }
 static inline integer Sampled_xToHighIndex    (Sampled me, double x) { return Melder_iceiling ((x - my x1) / my dx + 1.0); }
-static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return (integer) round ((x - my x1) / my dx + 1.0); }
+static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return Melder_iround   ((x - my x1) / my dx + 1.0); }
 
 static inline autonumvec Sampled_getX_numvec (Sampled me) {
 	autonumvec result (my nx, kTensorInitializationType::RAW);

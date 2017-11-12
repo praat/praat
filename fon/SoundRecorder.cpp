@@ -888,7 +888,7 @@ void structSoundRecorder :: v_createChildren ()
 static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileType) {
 	integer nsamp = my nsamp / 2;
 	autoMelderFile mfile = MelderFile_create (file);
-	MelderFile_writeAudioFileHeader (file, audioFileType, lround (theControlPanel. sampleRate), nsamp, 1, 16);
+	MelderFile_writeAudioFileHeader (file, audioFileType, Melder_iround (theControlPanel. sampleRate), nsamp, 1, 16);
 	if (Melder_defaultAudioFileEncoding (audioFileType, 16) == Melder_LINEAR_16_BIG_ENDIAN) {
 		for (integer i = 0; i < nsamp; i ++)
 			binputi16 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
@@ -896,7 +896,7 @@ static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileT
 		for (integer i = 0; i < nsamp; i ++)
 			binputi16LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 	}
-	MelderFile_writeAudioFileTrailer (file, audioFileType, lround (theControlPanel. sampleRate), nsamp, 1, 16);
+	MelderFile_writeAudioFileTrailer (file, audioFileType, Melder_iround (theControlPanel. sampleRate), nsamp, 1, 16);
 	mfile.close ();
 }
 
@@ -905,7 +905,7 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 		if (my fakeMono) {
 			writeFakeMonoFile (me, file, audioFileType);
 		} else {
-			MelderFile_writeAudioFile (file, audioFileType, my buffer, lround (theControlPanel. sampleRate), my nsamp, my numberOfChannels, 16);
+			MelderFile_writeAudioFile (file, audioFileType, my buffer, Melder_iround (theControlPanel. sampleRate), my nsamp, my numberOfChannels, 16);
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Audio file not written.");

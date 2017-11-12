@@ -1182,7 +1182,7 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 	Formula_Result result;
 	Interpreter_anyExpression (me, index.string, & result);
 	if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
-		indexValue = lround (result. numericResult);
+		indexValue = Melder_iround (result. numericResult);
 	} else {
 		Melder_throw (U"Element index should be numeric.");
 	}
@@ -1260,7 +1260,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 	Formula_Result result;
 	Interpreter_anyExpression (me, rowFormula.string, & result);
 	if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
-		rowNumber = lround (result. numericResult);
+		rowNumber = Melder_iround (result. numericResult);
 	} else {
 		Melder_throw (U"Row number should be numeric.");
 	}
@@ -1286,7 +1286,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 		Melder_throw (U"Missing closing bracket (]) in matrix indexing.");
 	Interpreter_anyExpression (me, columnFormula.string, & result);
 	if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
-		columnNumber = lround (result. numericResult);
+		columnNumber = Melder_iround (result. numericResult);
 	} else {
 		Melder_throw (U"Column number should be numeric.");
 	}

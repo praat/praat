@@ -355,7 +355,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 	if (fabs (upfactor - 2) < 1e-6) return Sound_upsample (me);
 	if (fabs (upfactor - 1) < 1e-6) return Data_copy (me);
 	try {
-		integer numberOfSamples = lround ((my xmax - my xmin) * samplingFrequency);
+		integer numberOfSamples = Melder_iround ((my xmax - my xmin) * samplingFrequency);
 		if (numberOfSamples < 1)
 			Melder_throw (U"The resampled Sound would have no samples.");
 		autoSound filtered;
@@ -413,7 +413,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 
 autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	try {
-		integer nx_silence = lround (silenceDuration / my dx), nx = my nx + nx_silence + thy nx;
+		integer nx_silence = Melder_iround (silenceDuration / my dx), nx = my nx + nx_silence + thy nx;
 		if (my ny != thy ny)
 			Melder_throw (U"The numbers of channels are not equal (e.g. one is mono, the other stereo).");
 		if (my dx != thy dx)
@@ -448,7 +448,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 			}
 			nx += sound -> nx;
 		}
-		numberOfSmoothingSamples = lround (overlapTime / dx);
+		numberOfSmoothingSamples = Melder_iround (overlapTime / dx);
 		autoSound thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx);
 		autonumvec smoother;
 		if (numberOfSmoothingSamples > 0) {
@@ -934,7 +934,7 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 		 * Generate the Sound.
 		 */
 		double factor = 0.99 / numberOfComponents;
-		autoSound me = Sound_create (1, startTime, endTime, lround ((endTime - startTime) * samplingFrequency),
+		autoSound me = Sound_create (1, startTime, endTime, Melder_iround ((endTime - startTime) * samplingFrequency),
 			1.0 / samplingFrequency, startTime + 0.5 / samplingFrequency);
 		double *amplitude = my z [1];
 		for (integer isamp = 1; isamp <= my nx; isamp ++) {

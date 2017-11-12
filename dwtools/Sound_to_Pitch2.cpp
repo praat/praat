@@ -80,7 +80,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			Number of speech samples in the downsampled signal in each frame:
 			100 for windowDuration == 0.04 and newSamplingFrequency == 2500
 		*/
-		long nx = lround (windowDuration * newSamplingFrequency);
+		integer nx = Melder_iround (windowDuration * newSamplingFrequency);
 
 		/*
 			The minimum number of points for the FFT is 256.

@@ -301,8 +301,8 @@ DO
 	if (a + b <= 0 || c + d <= 0) Melder_throw (U"The row totals should be positive.");
 	if (a + c <= 0 || b + d <= 0) Melder_throw (U"The column totals should be positive.");
 	MelderInfo_open ();
-	MelderInfo_writeLine (U"Observed row 1 =    ", lround (a), U"    ", lround (b));
-	MelderInfo_writeLine (U"Observed row 2 =    ", lround (c), U"    ", lround (d));
+	MelderInfo_writeLine (U"Observed row 1 =    ", Melder_iround (a), U"    ", Melder_iround (b));
+	MelderInfo_writeLine (U"Observed row 2 =    ", Melder_iround (c), U"    ", Melder_iround (d));
 	aexp = (a + b) * (a + c) / n;
 	bexp = (a + b) * (b + d) / n;
 	cexp = (a + c) * (c + d) / n;

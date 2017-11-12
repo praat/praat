@@ -1055,7 +1055,7 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, integer c
 				for (integer jrow = rowmin; jrow <= rowmax; jrow ++) {
 					TableRow myRow = my rows.at [jrow];
 					double value = myRow -> cells [columnsToExpand [iexpand]]. number;
-					integer level = lround (myRow -> cells [columnToTranspose]. number);
+					integer level = Melder_iround (myRow -> cells [columnToTranspose]. number);
 					integer thyColumn = numberOfFactors + (iexpand - 1) * numberOfLevels + level;
 					if (thyRow -> cells [thyColumn]. string && ! warned) {
 						Melder_warning (U"Some information from the original table has not been included in the new table. "

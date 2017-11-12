@@ -36,7 +36,7 @@ int Gui_getResolution (GuiObject widget) {
 			(void) widget;
 			CGDirectDisplayID display = CGMainDisplayID ();
 			CGSize size = CGDisplayScreenSize (display);
-			resolution = lround (25.4 * (double) CGDisplayPixelsWide (display) / size.width);
+			resolution = Melder_iround (25.4 * (double) CGDisplayPixelsWide (display) / size.width);
 			//resolution = 72;
 		#else
 			Melder_fatal (U"Gui_getResolution: unknown platform.");

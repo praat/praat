@@ -570,7 +570,7 @@ void NUM_viterbi_multi (
 
 	if (ntrack > ncand) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Number of tracks (", ntrack, U") should not exceed number of candidates (", ncand, U").");
-	integer ncomb = lround (NUMcombinations (ncand, ntrack));
+	integer ncomb = Melder_iround (NUMcombinations (ncand, ntrack));
 	if (ncomb > 10000000) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Unrealistically high number of combinations (", ncomb, U").");
 	parm. ntrack = ntrack;

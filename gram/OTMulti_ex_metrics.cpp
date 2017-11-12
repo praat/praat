@@ -448,13 +448,13 @@ autoOTMulti OTMulti_create_metrics (
 		}
 		integer numberOfCandidates = 0;
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
+			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables));
 			numberOfCandidates += ( includeCodas ? numberOfCandidates_codas : numberOfCandidates_noCodas ) [numberOfSyllables] * numberOfUnderlyingWeightPatterns;
 		}
 		my candidates = NUMvector <structOTCandidate> (1, numberOfCandidates);
 		my numberOfCandidates = 0;
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
+			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables));
 			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 				underlyingWeightPattern [isyll] = 1;   /* L or cv */
 			}

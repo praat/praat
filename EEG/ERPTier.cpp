@@ -92,7 +92,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 			double erpEventTime = 0.0;
 			double eegSample = 1 + (eegEventTime - my sound -> x1) / samplingPeriod;
 			double erpSample = 1 + (erpEventTime - firstTime) / samplingPeriod;
-			integer sampleDifference = lround (eegSample - erpSample);
+			integer sampleDifference = Melder_iround (eegSample - erpSample);
 			for (integer ichannel = 1; ichannel <= thy numberOfChannels; ichannel ++) {
 				for (integer isample = 1; isample <= numberOfSamples; isample ++) {
 					integer jsample = isample + sampleDifference;

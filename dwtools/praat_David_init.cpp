@@ -1704,16 +1704,14 @@ FORM (INTEGER_DTW_getFrameNumberFromTimeX, U"DTW: Get frame number from time (x)
 	OK
 DO
 	INTEGER_ONE (DTW)
-		if (xTime < my xmin || xTime > my xmax) {
-			Melder_throw (me, U"Time outside x domain.");
-		}
-		long result = lround (Matrix_xToColumn (me, xTime));
+		Melder_require (xTime >= my xmin && xTime <= my xmax, U"Time outside x domain.");
+		integer result = Melder_iround (Matrix_xToColumn (me, xTime));
 	INTEGER_ONE_END (U" (= x frame at y time ", xTime, U")")
 }
 
 DIRECT (INTEGER_DTW_getNumberOfFramesY) {
 	INTEGER_ONE (DTW)
-		long result = my ny;
+		integer result = my ny;
 	INTEGER_ONE_END (U" (= number of frames along y)")
 }
 
@@ -1738,10 +1736,8 @@ FORM (INTEGER_DTW_getFrameNumberFromTimeY, U"DTW: Get frame number from time (y)
 	OK
 DO
 	INTEGER_ONE (DTW)
-		if (yTime < my ymin || yTime > my ymax) {
-			Melder_throw (me, U"Time outside y domain.");
-		}
-		long result = lround (Matrix_yToRow (me, yTime));
+		Melder_require (yTime >= my ymin && yTime <= my ymax, U"Time outside y domain.");
+		integer result = Melder_iround (Matrix_yToRow (me, yTime));
 	INTEGER_ONE_END (U" (= y frame at x time ", yTime, U")")
 }
 

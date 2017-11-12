@@ -1325,7 +1325,7 @@ FORM (NEW_Sound_resample, U"Sound: Resample", U"Sound: Resample...") {
 DO
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_resample (me, newSamplingFrequency, precision);
-	CONVERT_EACH_END (my name, U"_", lround (newSamplingFrequency));
+	CONVERT_EACH_END (my name, U"_", Melder_iround (newSamplingFrequency));
 }
 
 DIRECT (MODIFY_Sound_reverse) {

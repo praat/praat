@@ -213,7 +213,7 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
-				sampleRatesMatch = Melder_iround_tieUp (1.0 / sound -> dx) == sampleRate;
+				sampleRatesMatch = Melder_iround (1.0 / sound -> dx) == sampleRate;
 				numbersOfChannelsMatch = sound -> ny == numberOfChannels;
 				numberOfSamples += sound -> nx;
 			} else {

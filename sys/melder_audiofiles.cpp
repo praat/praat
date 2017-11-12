@@ -630,13 +630,13 @@ static void Melder_checkNistFile (FILE *f, integer *numberOfChannels, int *encod
 	*startOfData = atol (header + 9);
 	if (! nistGetValue (header, "sample_count", & rval, sval) || rval < 1.0)
 		Melder_throw (U"Incorrect number of samples in NIST file.");
-	*numberOfSamples = lround (rval);
+	*numberOfSamples = Melder_iround (rval);
 	if (! nistGetValue (header, "sample_n_bytes", & rval, sval) || rval < 1.0 || rval > 2.0)
 		Melder_throw (U"Incorrect number of bytes per sample (should be 1 or 2).");
-	numberOfBytesPerSamplePoint = lround (rval);
+	numberOfBytesPerSamplePoint = Melder_iround (rval);
 	if (! nistGetValue (header, "channel_count", & rval, sval) || rval < 1.0)
 		Melder_throw (U"Incorrect number of channels.");
-	*numberOfChannels = lround (rval);
+	*numberOfChannels = Melder_iround (rval);
 	if (! nistGetValue (header, "sample_rate", sampleRate, sval) || *sampleRate < 1)
 		Melder_throw (U"Incorrect sampling frequency ", *sampleRate, U" Hz.");
 	*encoding = Melder_LINEAR_16_BIG_ENDIAN;
