@@ -3124,7 +3124,7 @@ static void do_round () {
 static void do_floor () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : floor (x->number));
+		pushNumber (isundef (x->number) ? undefined : Melder_roundDown (x->number));
 	} else {
 		Melder_throw (U"Cannot round down (floor) ", Stackel_whichText (x), U".");
 	}
@@ -3132,7 +3132,7 @@ static void do_floor () {
 static void do_ceiling () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (isundef (x->number) ? undefined : ceil (x->number));
+		pushNumber (isundef (x->number) ? undefined : Melder_roundUp (x->number));
 	} else {
 		Melder_throw (U"Cannot round up (ceiling) ", Stackel_whichText (x), U".");
 	}

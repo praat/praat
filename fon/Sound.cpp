@@ -1051,8 +1051,8 @@ autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape 
 		/*
 		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
 		 */
-		integer ix1 = 1 + (integer) ceil ((t1 - my x1) / my dx);
-		integer ix2 = 1 + Melder_ifloor ((t2 - my x1) / my dx);
+		integer ix1 = 1 + Melder_iceiling ((t1 - my x1) / my dx);
+		integer ix2 = 1 + Melder_ifloor   ((t2 - my x1) / my dx);
 		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
 		/*
 		 * Create sound, optionally shifted to [0..t2-t1].
@@ -1090,8 +1090,8 @@ autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double ov
 		/*
 		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
 		 */
-		integer ix1 = 1 + (integer) ceil ((t1 - my x1) / my dx);
-		integer ix2 = 1 + Melder_ifloor ((t2 - my x1) / my dx);
+		integer ix1 = 1 + Melder_iceiling ((t1 - my x1) / my dx);
+		integer ix2 = 1 + Melder_ifloor   ((t2 - my x1) / my dx);
 		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
 		/*
 		 * Create sound.
@@ -1198,8 +1198,8 @@ autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double
 		double dt = my dx;
 		double dphase = (thy x1 - my x1) / dt;
 		dphase -= Melder_roundDown (dphase);   // a number between 0 and 1
-		integer i1 = (integer) ceil (tmin / dt - dphase);   // index of first sample if sample at dphase has index 0
-		integer i2 = Melder_ifloor (tmax / dt - dphase);   // index of last sample if sample at dphase has index 0
+		integer i1 = Melder_iceiling (tmin / dt - dphase);   // index of first sample if sample at dphase has index 0
+		integer i2 = Melder_ifloor   (tmax / dt - dphase);   // index of last sample if sample at dphase has index 0
 		integer nt = i2 - i1 + 1;
 		if (nt < 1)
 			Melder_throw (U"Window too small.");

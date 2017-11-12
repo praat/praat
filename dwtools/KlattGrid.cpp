@@ -286,7 +286,7 @@ static void check_formants (integer numberOfFormants, integer *ifb, integer *ife
 }
 
 static autoSound Sound_createEmptyMono (double xmin, double xmax, double samplingFrequency) {
-	long nt = (long) ceil ( (xmax - xmin) * samplingFrequency);
+	integer nt = Melder_iceiling ((xmax - xmin) * samplingFrequency);
 	double dt = 1.0 / samplingFrequency;
 	double tmid = (xmin + xmax) / 2.0;
 	double t1 = tmid - 0.5 * (nt - 1) * dt;

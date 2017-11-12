@@ -52,7 +52,7 @@ void structSampled :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 }
 
 integer Sampled_getWindowSamples (Sampled me, double xmin, double xmax, integer *ixmin, integer *ixmax) {
-	double rixmin = 1.0 + ceil ((xmin - my x1) / my dx);
+	double rixmin = 1.0 + Melder_roundUp   ((xmin - my x1) / my dx);
 	double rixmax = 1.0 + Melder_roundDown ((xmax - my x1) / my dx);   // could be above 32-bit LONG_MAX
 	*ixmin = rixmin < 1.0 ? 1 : (integer) rixmin;
 	*ixmax = rixmax > (double) my nx ? my nx : (integer) rixmax;

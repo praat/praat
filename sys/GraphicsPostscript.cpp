@@ -194,7 +194,7 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 {
 	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
-	int left, right, top, bottom;
+	integer left, right, top, bottom;
 	my postScript = true, my languageLevel = 2;
 	my job = false, my eps = true, my printer = false;
 	#if defined (macintosh)
@@ -222,10 +222,10 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 	 * We will honour version 3.0 of the DSC for Encapsulated PostScript files,
 	 * which includes supplying the bounding box information.
 	 */
-	left = (int) floor (x1inches * 72);
-	right = (int) ceil (x2inches * 72);
-	top = (int) ceil ((y2inches - my d_y1wNDC) * 72);
-	bottom = (int) floor ((y1inches - my d_y1wNDC) * 72);
+	left  = Melder_ifloor   (x1inches * 72);
+	right = Melder_iceiling (x2inches * 72);
+	top    = Melder_iceiling ((y2inches - my d_y1wNDC) * 72);
+	bottom = Melder_ifloor   ((y1inches - my d_y1wNDC) * 72);
 	my d_printf (my d_file, "%%!PS-Adobe-3.0 EPSF-3.0\n");
 	my d_printf (my d_file, "%%%%BoundingBox: %d %d %d %d\n", left, bottom, right, top);
 	my d_printf (my d_file, "%%%%Creator: Praat Shell 5.1\n");

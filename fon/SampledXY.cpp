@@ -66,7 +66,7 @@ void SampledXY_init (SampledXY me,
 }
 
 integer SampledXY_getWindowSamplesY (SampledXY me, double fromY, double toY, integer *iymin, integer *iymax) {
-	double riymin = 1.0 + ceil ((fromY - my y1) / my dy);
+	double riymin = 1.0 + Melder_roundUp   ((fromY - my y1) / my dy);
 	double riymax = 1.0 + Melder_roundDown ((toY - my y1) / my dy);   // could be above 32-bit LONG_MAX
 	*iymin = riymin < 1.0 ? 1 : (integer) riymin;
 	*iymax = riymax > (double) my ny ? my ny : (integer) riymax;
