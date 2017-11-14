@@ -711,4 +711,124 @@ int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const ch
 	}
 	return bufferSize;
 }
+
+void test_FileInMemoryManager_io (void) {
+	const char32 *path1 = U"~/kanweg1.txt";
+	const char32 *path2 = U"~/kanweg2.txt";
+	const char32 *lines1 [3] = { U"abcd\n", U"ef\n",  U"ghijk\n" };
+	const char32 *lines2 [3] = { U"lmno\n", U"pqr\n",  U"stuvwxyz\n" };
+
+	/*
+		Create a test FileInMemorySet with two (text) files in it.
+	*/
+	MelderInfo_writeLine (U"test_FileInMemoryManager_io:");
+	MelderInfo_writeLine (U"\tCreating two files: ", path1, U" and ", path2);
+	structMelderFile s_file1 = {} , s_file2 = {};
+	MelderFile file1 = & s_file1, file2 = & s_file2;
+	Melder_relativePathToFile (path1, file1);
+	Melder_relativePathToFile (path2, file2);
+	autoFileInMemorySet fims = FileInMemorySet_create ();
+
+	FILE *f = fopen (Melder_peek32to8 (file1 -> path), "w");
+	for (integer j = 0; j <= 2; j ++) {
+		fputs (Melder_peek32to8 (lines1 [j]), f);
+	}	
+	fclose (f);
+
+	f = fopen (Melder_peek32to8 (file2 -> path), "w");
+	for (integer j = 0; j <= 2; j ++) {
+		fputs (Melder_peek32to8 (lines2 [j]), f);
+	}	
+	fclose (f);
+	
+	MelderInfo_writeLine (U"\tCreating FileInMemorySet from two files...");
+	
+	autoFileInMemory fim1 = FileInMemory_create (file1);
+	fims -> addItem_move (fim1.move());
+	autoFileInMemory fim2 = FileInMemory_create (file2);
+	fims -> addItem_move (fim2.move());
+	
+	/*
+		Create the FileInMemoryManager and test
+	*/
+
+	autoFileInMemoryManager me = FileInMemoryManager_create (fims.get());
+	
+	// fopen test
+	MelderInfo_writeLine (U"\tOpen file ", file1 -> path);
+	FILE * f1 = FileInMemoryManager_fopen (me.get(), Melder_peek32to8 (file1 -> path), "r");
+	integer openFilesIndex1 = _FileInMemoryManager_getIndexInOpenFiles (me.get(), f1);
+	Melder_assert (openFilesIndex1 == 1);
+	MelderInfo_writeLine (U"\t\t ...opened");
+	
+	MelderInfo_writeLine (U"\tOpen file ", file2 -> path);
+	FILE * f2 = FileInMemoryManager_fopen (me.get(), Melder_peek32to8 (file2 -> path), "r");
+	integer openFilesIndex2 = _FileInMemoryManager_getIndexInOpenFiles (me.get(), f2);
+	Melder_assert (openFilesIndex2 == 2);
+	MelderInfo_writeLine (U"\t\t ...opened");
+	
+	FileInMemoryManager_fclose (me.get(), f2);
+	Melder_assert (my openFiles -> size == 1);
+	MelderInfo_writeLine (U"\tClosed file ", file2 -> path);
+	
+	// read from open text file
+	
+	MelderInfo_writeLine (U"\tRead as text file in memory: ", file1 -> path);
+	char buf0 [200], buf1 [200];
+	long nbuf = 200;
+	
+	FileInMemory fim = (FileInMemory) my files -> at [openFilesIndex1];
+	FILE *file0 = fopen (Melder_peek32to8 (file1 -> path), "r");
+	for (integer i = 0; i <= 2; i ++) {
+		char *p0 = fgets (buf0, nbuf, file0);
+		integer pos0 = ftell (file0);
+		char *p1 = FileInMemoryManager_fgets (me.get(), buf1, nbuf, f1);
+		integer pos1 = FileInMemoryManager_ftell (me.get(), f1);
+		Melder_assert (Melder_equ (Melder_peek8to32 (buf0), Melder_peek8to32 (buf1)));
+		Melder_assert (pos0 == pos1);
+		Melder_assert (p0 == buf0 && p1 == buf1);
+		MelderInfo_writeLine (U"\t\tRead 1 line. Positions: ", pos0, U" and ", pos1);
+	}
+
+	MelderInfo_writeLine (U"\t\tRead while at EOF, returns nullptr");	
+	char *shouldbenull = FileInMemoryManager_fgets (me.get(), buf1, nbuf, f1);
+	Melder_assert (shouldbenull == nullptr);
+	
+	MelderInfo_writeLine (U"\tFinished reading... rewind ");
+	
+	// read as binary file
+	
+	rewind (file0);
+	FileInMemoryManager_rewind (me.get(), f1);
+	
+	MelderInfo_writeLine (U"\tRead as binary file in memory: ", file1 -> path);
+	
+	Melder_assert (fim -> d_position == 0);
+	integer count = 8;
+	size_t nread0 = fread (buf0, 1, count, file0);
+	size_t nread1 =  FileInMemoryManager_fread (me.get(), buf1, 1, count, f1);
+	MelderInfo_writeLine (U"\t\tRead ", nread0, U" and ", nread1, U" bytes");
+	
+	Melder_assert (nread0 == nread0);
+	Melder_assert (fim -> d_position == count);
+	
+	nread0 = fread (buf0, 1, count, file0);
+	nread1 = FileInMemoryManager_fread (me.get(), buf1, 1, count, f1);
+	MelderInfo_writeLine (U"\t\tRead ", nread0, U" and ", nread1, U" bytes");
+	Melder_assert (nread0 == nread1);
+	
+	int eof0 = feof (file0);
+	int eof1 = FileInMemoryManager_feof (me.get(), f1);
+	MelderInfo_writeLine (U"\tEOF ? ", eof0, U" and ", eof1);
+	
+	Melder_assert (eof0 != 0 && eof1 != 0);
+	
+	//  clean up
+	
+	MelderFile_delete (file1);
+	MelderFile_delete (file2);
+	
+	MelderInfo_writeLine (U"test_FileInMemoryManager_io: OK");
+}
+
 /* End of file FileInMemoryManager.cpp */
