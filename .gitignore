@@ -23,3 +23,11 @@ makefile.defs
 praat
 Praat
 Praat.exe
+
+\.autotools
+
+\.project
+
+\.cproject
+
+\.settings/
