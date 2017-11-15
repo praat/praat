@@ -25,59 +25,52 @@
 
 #include "Preferences.h"
 
-struct feature{
-	char32* label;
-	char32* value;
-	feature* nxtPtr;
-	feature()
+struct Feature{
+	autoMelderString label;
+	autoMelderString value;
+	Feature* nxtPtr;
+	Feature()
 	{
-		label=nullptr;
-		value=nullptr;
 		nxtPtr=nullptr;
 	}
-	~feature(){
-		delete label;
-		delete value;
+	~Feature(){
 	}
 };
 
-struct tierFeatures{
-	char32* text;
-	feature* firstFeature;
-	feature* currentFeature;
-	tierFeatures()
+struct TierFeatures{
+	autoMelderString headText;
+	Feature* firstFeature;
+	Feature* currentFeature;
+	TierFeatures()
 	{
-		text=nullptr;
 		firstFeature=nullptr;
 		currentFeature=nullptr;
 	}
-	~tierFeatures(){
-		delete text;
-		feature* tmp = firstFeature;
+	~TierFeatures(){
+		Feature* tmp = firstFeature;
 		while(tmp != nullptr){
-			feature* toDelete = tmp;
+			Feature* toDelete = tmp;
 			tmp = tmp->nxtPtr;
 			delete toDelete;
 		}
 	}
 };
 
-/*---char32 UTILITIES---*/
-char32* trim(const char32 *text);
-bool str32IsEmpty(const char32 *text);
-char32* str32cat(char32 *source1, const char32 *source2);
 
-/*---Features treatment---*/
-char32* addBackslashes(const char32* text);
-char32* removeBackslashes(const char32* text);
-tierFeatures* extractTierFeatures(const char32* text);
-char32* addFeatureToText(const char32* text, const char32* label, const char32* value);
-feature* getCurrentFeature(tierFeatures* data);
-feature* getNextFeature(tierFeatures* data);
-feature* getExistentFeature(const tierFeatures* data, const char32* label);
-void deleteFeatureFromTierFeatures(tierFeatures* data, const char32* label);
-char32* generateTextFromTierFeatures(tierFeatures* data);
-void replaceTierFeaturesText(tierFeatures* data, const char32* text);
+void Feature_encodeText(MelderString *me);
+void Feature_decodeText(MelderString *me);
+void Feature_addFeatureToText(const char32* text, MelderString* label, MelderString* value, MelderString* result);
+void Feature_deleteFeatureFromText(const char32* text, MelderString* label, MelderString* result);
+
+TierFeatures* TierFeatures_extractFromText(const char32* text);
+Feature* TierFeatures_getCurrentFeature(TierFeatures* data);
+Feature* TierFeatures_getNextFeature(TierFeatures* data);
+Feature* TierFeatures_getExistentFeature(const TierFeatures* data, const char32* label);
+void TierFeatures_generateText(TierFeatures* data, MelderString * result);
+void TierFeatures_replaceHeadText(TierFeatures* data, const char32* text);
+Feature* TierFeatures_getFeature(TierFeatures* data, int position);
+int TierFeatures_getNumberOfFeatures(TierFeatures* data);
+void TierFeatures_getFeaturesString(TierFeatures* data, MelderString* result);
 
 /* End of file Feature.h */
 #endif

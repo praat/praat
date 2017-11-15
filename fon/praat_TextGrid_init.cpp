@@ -1065,16 +1065,19 @@ FORM (MODIFY_TextGrid_insertFeatureToInterval, U"TextGrid: Insert feature to int
 DO
 	MODIFY_EACH (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
-		if(str32IsEmpty(labelText) || str32IsEmpty(valueText)){
+
+		MelderString label { 0 };
+		MelderString value { 0 };
+		MelderString_copy(&label, labelText);
+		MelderString_copy(&value, valueText);
+
+		if(MelderString_isEmptyAfterTrim(&label) || MelderString_isEmptyAfterTrim(&value)){
 			Melder_throw (U"Neither label nor value can be empty. Please fill the fields.");
 		}
-		char32* tL = trim(labelText);
-		char32* tV = trim(valueText);
-		char32* result = addFeatureToText(interval->text, tL, tV);
-		delete tL;
-		delete tV;
-		TextInterval_setText(interval, result);
-		delete result;
+
+		autoMelderString newText;
+		Feature_addFeatureToText(interval->text, &label, &value, &newText);
+		TextInterval_setText(interval, newText.string);
 	MODIFY_EACH_END
 }
 
@@ -1087,17 +1090,15 @@ DO
 	MODIFY_EACH (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
 
-		if(str32IsEmpty(labelText)){
+		MelderString label { 0 };
+		MelderString_copy(&label, labelText);
+
+		if(MelderString_isEmptyAfterTrim(&label)){
 			Melder_throw (U"Label cannot be empty. Please fill the field.");
 		}
-		char32* tL = trim(labelText);
-		tierFeatures* tierData = extractTierFeatures(interval->text);
-		deleteFeatureFromTierFeatures(tierData, tL);
-		char32 * newText = generateTextFromTierFeatures(tierData);
-		TextInterval_setText (interval, newText);
-		delete tierData;
-		delete newText;
-		delete tL;
+		autoMelderString newText;
+		Feature_deleteFeatureFromText(interval->text, &label, &newText);
+		TextInterval_setText (interval, newText.string);
 	MODIFY_EACH_END
 }
 
@@ -1110,31 +1111,25 @@ DO
 	STRING_ONE (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
 
-		if(str32IsEmpty(labelText)){
+		MelderString label { 0 };
+		MelderString_copy(&label, labelText);
+
+		if(MelderString_isEmptyAfterTrim(&label)){
 			Melder_throw (U"Label cannot be empty. Please fill the field.");
 		}
-		tierFeatures* features = extractTierFeatures(interval->text);
-		char32* tL = trim(labelText);
-		char32* fLabel = addBackslashes(tL);
-		feature* ann = getExistentFeature(features, fLabel);
-		char32* text = nullptr;
+
+		Feature_encodeText(&label);
+
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		Feature* ann = TierFeatures_getExistentFeature(features, label.string);
+
+		autoMelderString value;
 		if(ann != nullptr){
-			text = removeBackslashes(ann->value);
+			MelderString_copy(&value, ann->value.string);
+			Feature_decodeText(&value);
 		}
+		const char32* result = value.string;
 
-		static char32* result;
-		if (result != nullptr){
-			delete(result);
-			result = nullptr;
-		}
-		if(text != nullptr){
-			result = (char32*) malloc ((size_t) (str32len(text)+1) * sizeof (char32));
-			str32cpy(result, text);
-			delete text;
-		}
-
-		delete tL;
-		delete fLabel;
 		delete features;
 	STRING_ONE_END
 }
@@ -1146,39 +1141,10 @@ FORM (STRING_TextGrid_showFeaturesInInterval, U"TextGrid: Show features in inter
 DO
 	STRING_ONE (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
-		tierFeatures* features = extractTierFeatures(interval->text);
-		feature* tmp = features->firstFeature;
-		static char32* result;
-		if (result != nullptr) {
-			delete(result);
-			result = nullptr;
-		}
-
-		while(tmp != nullptr){
-			char32* nLabel = removeBackslashes(tmp->label);
-			char32* nValue = removeBackslashes(tmp->value);
-			char32* cat = str32cat(nLabel, U": ");
-			char32* semiline = str32cat(cat, nValue);
-			char32* line = str32cat(semiline, U"\n");
-
-			if(result != nullptr){
-				char32* full = str32cat(result, line);
-				delete(result);
-				result = (char32*) malloc ((size_t) (str32len(full)+1) * sizeof (char32));
-				str32cpy(result, full);
-				delete full;
-			}else{
-				result = (char32*) malloc ((size_t) (str32len(line)+1) * sizeof (char32));
-				str32cpy(result, line);
-			}
-
-			delete line;
-			delete semiline;
-			delete cat;
-			delete nValue;
-			delete nLabel;
-			tmp = tmp->nxtPtr;
-		}
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		autoMelderString output;
+		TierFeatures_getFeaturesString(features, &output);
+		const char32* result = output.string;
 		delete features;
 	STRING_ONE_END
 }
@@ -1190,13 +1156,8 @@ FORM (INTEGER_TextGrid_numberFeaturesInInterval, U"TextGrid: Get number of featu
 DO
 	INTEGER_ONE(TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
-		tierFeatures* features = extractTierFeatures(interval->text);
-		feature* tmp = features->firstFeature;
-		int result = 0;
-		while(tmp != nullptr){
-			result ++;
-			tmp = tmp->nxtPtr;
-		}
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		int result = TierFeatures_getNumberOfFeatures(features);
 		delete features;
 	INTEGER_ONE_END(U"")
 }
@@ -1209,22 +1170,13 @@ FORM (STRING_TextGrid_labelFeaturesInInterval, U"TextGrid: Get label of feature 
 DO
 	STRING_ONE(TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
-		tierFeatures* features = extractTierFeatures(interval->text);
-		feature* tmp = features->firstFeature;
-		int count = 0;
-		while(tmp != nullptr && count < featureNumber -1){
-			count ++;
-			tmp = tmp->nxtPtr;
-		}
-		if(tmp == nullptr){
-			Melder_throw (U"Feature does not exist.");
-		}
-		char32* text = removeBackslashes(tmp->label);
-		static char32* result;
-		if (result != nullptr) delete(result);
-		result = (char32*) malloc ((size_t) (str32len(text)+1) * sizeof (char32));
-		str32cpy(result, text);
-		delete text;
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		Feature* feature = TierFeatures_getFeature(features, featureNumber);
+		autoMelderString label;
+		MelderString_copy(&label, feature->label.string);
+		Feature_decodeText(&label);
+		const char32* result = label.string;
+
 		delete features;
 	STRING_ONE_END
 }
@@ -1236,11 +1188,10 @@ FORM (STRING_TextGrid_headOfInterval, U"TextGrid: Get head of interval", nullptr
 DO
 	STRING_ONE(TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
-		tierFeatures* features = extractTierFeatures(interval->text);
-		static char32* result;
-		if (result != nullptr) delete(result);
-		result = (char32*) malloc ((size_t) (str32len(features->text)+1) * sizeof (char32));
-		str32cpy(result, features->text);
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		autoMelderString head;
+		MelderString_copy(&head, features->headText.string);
+		const char32* result = head.string;
 		delete features;
 	STRING_ONE_END
 }
@@ -1278,12 +1229,12 @@ FORM (STRING_TextGrid_headOfPoint, U"TextGrid: Get head of point", nullptr) {
 DO
 	STRING_ONE(TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
-		tierFeatures* features = extractTierFeatures(point->mark);
-		static char32* result;
-		if (result != nullptr) delete(result);
-		result = (char32*) malloc ((size_t) (str32len(features->text)+1) * sizeof (char32));
-		str32cpy(result, features->text);
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		autoMelderString head;
+		MelderString_copy(&head, features->headText.string);
+		const char32* result = head.string;
 		delete features;
+
 	STRING_ONE_END
 }
 
@@ -1294,13 +1245,8 @@ FORM (INTEGER_TextGrid_numberFeaturesInPoint, U"TextGrid: Get number of features
 DO
 	INTEGER_ONE(TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
-		tierFeatures* features = extractTierFeatures(point->mark);
-		feature* tmp = features->firstFeature;
-		int result = 0;
-		while(tmp != nullptr){
-			result ++;
-			tmp = tmp->nxtPtr;
-		}
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		int result = TierFeatures_getNumberOfFeatures(features);
 		delete features;
 	INTEGER_ONE_END(U"")
 }
@@ -1313,24 +1259,12 @@ FORM (STRING_TextGrid_labelFeaturesInPoint, U"TextGrid: Get label of feature in 
 DO
 	STRING_ONE(TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
-		tierFeatures* features = extractTierFeatures(point->mark);
-		feature* tmp = features->firstFeature;
-		int count = 0;
-		while(tmp != nullptr && count < featureNumber -1){
-			count ++;
-			tmp = tmp->nxtPtr;
-		}
-		if(tmp == nullptr){
-			Melder_throw (U"Feature does not exist.");
-		}
-		Melder_clearInfo ();
-
-		char32* text = removeBackslashes(tmp->label);
-		static char32* result;
-		if (result != nullptr) delete(result);
-		result = (char32*) malloc ((size_t) (str32len(text)+1) * sizeof (char32));
-		str32cpy(result, text);
-		delete text;
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		Feature* feature = TierFeatures_getFeature(features, featureNumber);
+		autoMelderString label;
+		MelderString_copy(&label, feature->label.string);
+		Feature_decodeText(&label);
+		const char32* result = label.string;
 
 		delete features;
 	STRING_ONE_END
@@ -1344,17 +1278,18 @@ FORM (MODIFY_TextGrid_insertFeatureToPoint, U"TextGrid: Insert feature to point"
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
-		if(str32IsEmpty(labelText) || str32IsEmpty(valueText)){
+	TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
+		MelderString label { 0 };
+		MelderString value { 0 };
+		MelderString_copy(&label, labelText);
+		MelderString_copy(&value, valueText);
+
+		if(MelderString_isEmptyAfterTrim(&label) || MelderString_isEmptyAfterTrim(&value)){
 			Melder_throw (U"Neither label nor value can be empty. Please fill the fields.");
 		}
-		char32* tL = trim(labelText);
-		char32* tV = trim(valueText);
-		char32* result = addFeatureToText(point -> mark, tL, tV);
-		delete tL;
-		delete tV;
-		TextPoint_setText(point, result);
-		delete result;
+		autoMelderString newText;
+		Feature_addFeatureToText(point->mark, &label, &value, &newText);
+		TextPoint_setText(point, newText.string);
 	MODIFY_EACH_END
 }
 
@@ -1366,18 +1301,15 @@ FORM (MODIFY_TextGrid_deleteFeatureFromPoint, U"TextGrid: Remove feature from po
 DO
 	MODIFY_EACH (TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
+		MelderString label { 0 };
+		MelderString_copy(&label, labelText);
 
-		if(str32IsEmpty(labelText)){
+		if(MelderString_isEmptyAfterTrim(&label)){
 			Melder_throw (U"Label cannot be empty. Please fill the field.");
 		}
-		char32* tL = trim(labelText);
-		tierFeatures* tierData = extractTierFeatures(point->mark);
-		deleteFeatureFromTierFeatures(tierData, tL);
-		char32 * newText = generateTextFromTierFeatures(tierData);
-		TextPoint_setText (point, newText);
-		delete tierData;
-		delete newText;
-		delete tL;
+		autoMelderString newText;
+		Feature_deleteFeatureFromText(point->mark, &label, &newText);
+		TextPoint_setText (point, newText.string);
 	MODIFY_EACH_END
 }
 
@@ -1389,32 +1321,24 @@ FORM (STRING_TextGrid_getFeatureFromPoint, U"TextGrid: Get feature from point", 
 DO
 	STRING_ONE(TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
+		MelderString label { 0 };
+		MelderString_copy(&label, labelText);
 
-		if(str32IsEmpty(labelText)){
+		if(MelderString_isEmptyAfterTrim(&label)){
 			Melder_throw (U"Label cannot be empty. Please fill the field.");
 		}
-		tierFeatures* features = extractTierFeatures(point->mark);
-		char32* tL = trim(labelText);
-		char32* fLabel = addBackslashes(tL);
-		feature* ann = getExistentFeature(features, fLabel);
-		char32* text = nullptr;
+		Feature_encodeText(&label);
+
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		Feature* ann = TierFeatures_getExistentFeature(features, label.string);
+
+		autoMelderString value;
 		if(ann != nullptr){
-			text = removeBackslashes(ann->value);
+			MelderString_copy(&value, ann->value.string);
+			Feature_decodeText(&value);
 		}
+		const char32* result = value.string;
 
-		static char32* result;
-		if (result != nullptr){
-			delete(result);
-			result = nullptr;
-		}
-		if(text != nullptr){
-			result = (char32*) malloc ((size_t) (str32len(text)+1) * sizeof (char32));
-			str32cpy(result, text);
-			delete text;
-		}
-
-		delete tL;
-		delete fLabel;
 		delete features;
 	STRING_ONE_END
 }
@@ -1426,38 +1350,10 @@ FORM (STRING_TextGrid_showFeaturesInPoint, U"TextGrid: Show features in point", 
 DO
 	STRING_ONE(TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
-		tierFeatures* features = extractTierFeatures(point->mark);
-		feature* tmp = features->firstFeature;
-		static char32* result;
-		if (result != nullptr){
-			delete(result);
-			result = nullptr;
-		}
-		while(tmp != nullptr){
-			char32* nLabel = removeBackslashes(tmp->label);
-			char32* nValue = removeBackslashes(tmp->value);
-			char32* cat = str32cat(nLabel, U": ");
-			char32* semiline = str32cat(cat, nValue);
-			char32* line = str32cat(semiline, U"\n");
-
-			if(result != nullptr){
-				char32* full = str32cat(result, line);
-				delete(result);
-				result = (char32*) malloc ((size_t) (str32len(full)+1) * sizeof (char32));
-				str32cpy(result, full);
-				delete full;
-			}else{
-				result = (char32*) malloc ((size_t) (str32len(line)+1) * sizeof (char32));
-				str32cpy(result, line);
-			}
-
-			delete line;
-			delete semiline;
-			delete cat;
-			delete nValue;
-			delete nLabel;
-			tmp = tmp->nxtPtr;
-		}
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		autoMelderString output;
+		TierFeatures_getFeaturesString(features, &output);
+		const char32* result = output.string;
 		delete features;
 	STRING_ONE_END
 }

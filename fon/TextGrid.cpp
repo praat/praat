@@ -1223,12 +1223,12 @@ void TextGrid_setIntervalHeadText (TextGrid me, int tierNumber, long intervalNum
 		if (intervalNumber < 1 || intervalNumber > intervalTier -> intervals.size)
 			Melder_throw (U"Interval ", intervalNumber, U" does not exist on tier ", tierNumber, U".");
 		TextInterval interval = intervalTier -> intervals.at [intervalNumber];
-		tierFeatures* result = extractTierFeatures(interval->text);
-		replaceTierFeaturesText(result, text);
-		char32* finalText = generateTextFromTierFeatures(result);
-		TextInterval_setText (interval, finalText);
-		delete result;
-		delete finalText;
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		TierFeatures_replaceHeadText(features, text);
+		autoMelderString result;
+		TierFeatures_generateText(features, &result);
+		TextInterval_setText (interval, result.string);
+		delete features;
 	} catch (MelderError) {
 		Melder_throw (me, U": interval head text not set.");
 	}
@@ -1284,12 +1284,12 @@ void TextGrid_setPointHeadText (TextGrid me, int tierNumber, long pointNumber, c
 		if (pointNumber < 1 || pointNumber > textTier -> points.size)
 			Melder_throw (U"Point ", pointNumber, U" does not exist on tier ", tierNumber, U".");
 		TextPoint point = textTier -> points.at [pointNumber];
-		tierFeatures* result = extractTierFeatures(point->mark);
-		replaceTierFeaturesText(result, text);
-		char32* finalText = generateTextFromTierFeatures(result);
-		TextPoint_setText (point, finalText);
-		delete result;
-		delete finalText;
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		TierFeatures_replaceHeadText(features, text);
+		autoMelderString result;
+		TierFeatures_generateText(features, &result);
+		TextPoint_setText (point, result.string);
+		delete features;
 	} catch (MelderError) {
 		Melder_throw (me, U": point head text not set.");
 	}

@@ -723,6 +723,9 @@ void MelderString_copy (MelderString *me, Melder_14_OR_15_ARGS);
 void MelderString_copy (MelderString *me, Melder_16_TO_19_ARGS);
 void MelderString_ncopy (MelderString *me, const char32 *source, int64 n);
 
+void MelderString_trim(MelderString *me);
+bool MelderString_isEmptyAfterTrim(MelderString *me);
+
 inline static void MelderString_append (MelderString *me, Melder_1_ARG) {
 	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
 	int64 sizeNeeded = me -> length + length1 + 1;

@@ -428,6 +428,30 @@ void MelderString_ncopy (MelderString *me, const char32 *source, int64 n) {
 	my length = length;
 }
 
+void MelderString_trim(MelderString *me){
+	if(my bufferSize == 0) return;
+	const char32 * forwardPtr = my string;
+	int initialBlanks = 0;
+	while(*forwardPtr != U'\0' && *forwardPtr == U' '){
+		initialBlanks++;
+		forwardPtr++;
+	}
+
+	MelderString_copy(me, forwardPtr);
+	//Melder_free(forwardPtr);
+
+	char32 * backwardPtr = my string + my length -1;
+	while(backwardPtr+1 != my string && *backwardPtr == U' '){
+		*backwardPtr-- = U'\0';
+	}
+	//Melder_free(backwardPtr);
+}
+
+bool MelderString_isEmptyAfterTrim(MelderString *me){
+	MelderString_trim(me);
+	return my length == 0;
+}
+
 /*void MelderString_append (MelderString *me, Melder_1_ARG) {
 	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = _str32len (s1);
 	int64 sizeNeeded = my length + length1 + 1;

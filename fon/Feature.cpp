@@ -23,91 +23,15 @@
 
 #include "Feature.h"
 
-/********** char32 UTILITIES **********/
-
-/**
- * Allocates memory for a char32_t string of length "size", and initializes all its positions to '\0'.
- * It returns a pointer to its first position.
- */
-inline static char32* allocChar32(int size){
-	char32* string = (char32*) malloc ((size_t) size * sizeof (char32));
-	char32* currentPos = string;
-	for(int i=0;i<size;i++)
-		*currentPos ++= U'\0';
-	return string;
-}
-
-/**
- * It appends the source char32_t string to the "pos" position of the target string.
- * It returns a pointer to the first position of the target string.
- *
- * WARNING: We assume that the target can hold the new content in its allocated memory, otherwise a memory fault will occur.
- */
-inline static char32 * str32append (char32 *target, const char32 *source, int64 pos) {
-	char32 *p = target;
-	for(;pos > 0;p++, pos--);
-	while (* source != U'\0') * p ++ = * source ++;
-	*p = U'\0';
-	return target;
-}
-
-/**
- * Concatenates the contents of both source strings in a new one.
- * It returns a pointer to the first position of the new string.
- */
-char32* str32cat(char32 *source1, const char32 *source2){
-	if(source1 == nullptr || source2 == nullptr) return nullptr;
-	char32 * result = allocChar32(str32len(source1) + str32len(source2) + 1);
-	str32cpy(result, source1);
-	str32append(result, source2, str32len(result));
-	return result;
-}
-
-/**
- * Returns a new string with the trimmed version of the source text
- */
-char32* trim(const char32 *text) {
-	if(str32len(text) == 0) return nullptr;
-	const char32 * forwardPtr = text;
-	int initialBlanks = 0;
-	while(*forwardPtr != U'\0' && *forwardPtr == U' '){
-		initialBlanks++;
-		forwardPtr++;
-	}
-
-	char32 * result = allocChar32(str32len(text) - initialBlanks + 1);
-	str32cpy(result, forwardPtr);
-
-	char32 * backwardPtr = result + str32len(result)-1;
-	while(backwardPtr+1 != result && *backwardPtr == U' '){
-		*backwardPtr-- = U'\0';
-	}
-
-	return result;
-}
-
-/**
- * Returns whether or not the string is empty or null.
- */
-bool str32IsEmpty(const char32 *text){
-	if(text == nullptr) return true;
-	bool result = false;
-	char32* trimmed = trim(text);
-	if(trimmed == nullptr || str32len(trimmed) == 0)
-		result = true;
-	delete trimmed;
-	return result;
-}
-
-/*---------------------------------------------------*/
+#define my  me ->
 
 /**
  * Given a tierFeatures it returns a pointer to the current feature.
  * If there is no feature created then it creates the first and returns it.
  */
-feature* getCurrentFeature(tierFeatures* data){
+Feature* TierFeatures_getCurrentFeature(TierFeatures* data){
 	if(data->currentFeature == nullptr){
-		data->firstFeature = new feature();
+		data->firstFeature = new Feature();
 		data->currentFeature = data->firstFeature;
 	}
 	return data->currentFeature;
@@ -117,13 +41,13 @@ feature* getCurrentFeature(tierFeatures* data){
  * Given a tierFeatures it returns a pointer to the next feature after the current.
  * If there is no feature after the current one, then it creates and returns it.
  */
-feature* getNextFeature(tierFeatures* data){
+Feature* TierFeatures_getNextFeature(TierFeatures* data){
 	if(data->currentFeature == nullptr){
-		data->firstFeature = new feature();
+		data->firstFeature = new Feature();
 		data->currentFeature = data->firstFeature;
 	}else{
 		if(data->currentFeature->nxtPtr == nullptr){
-			data->currentFeature->nxtPtr = new feature();
+			data->currentFeature->nxtPtr = new Feature();
 			data->currentFeature = data->currentFeature->nxtPtr;
 		}
 	}
@@ -144,13 +68,13 @@ feature* getNextFeature(tierFeatures* data){
  * State 7: Ended correctly
  * State 8: Error the whole string will be considered interval or point text.
  */
-tierFeatures* extractTierFeatures(const char32* text){
-	if(text == nullptr) return new tierFeatures();
+TierFeatures* TierFeatures_extractFromText(const char32* text){
+	if(text == nullptr) return new TierFeatures();
 	int state = 0;
 	int64 pos = 0;
 	const char32* currentPos = text;
 	const char32* lastCheckPoint = text;
-	tierFeatures* data = new tierFeatures();
+	TierFeatures* data = new TierFeatures();
 	const char32* temp;
 	do{
 		char32 currentChar = *currentPos++;
@@ -163,8 +87,7 @@ tierFeatures* extractTierFeatures(const char32* text){
 			temp = currentPos;
 			if(*temp++ == U'{' && *temp++ == U'@'){
 				currentPos = temp;
-				data->text = allocChar32(pos);
-				str32ncpy(data->text, lastCheckPoint, pos-1);
+				MelderString_ncopy(&data->headText, lastCheckPoint, pos-1);
 				lastCheckPoint = currentPos;
 				pos = 0;
 				state = 1;
@@ -200,8 +123,7 @@ tierFeatures* extractTierFeatures(const char32* text){
 				break;
 			}
 			if(currentChar != U'"') break;
-			getNextFeature(data)->label = allocChar32(pos);
-			str32ncpy(getCurrentFeature(data)->label, lastCheckPoint, pos-1);
+			MelderString_ncopy(&TierFeatures_getNextFeature(data)->label, lastCheckPoint, pos-1);
 			lastCheckPoint = currentPos;
 			pos = 0;
 			state = 3;
@@ -228,8 +150,7 @@ tierFeatures* extractTierFeatures(const char32* text){
 				break;
 			}
 			if(currentChar != U'"') break;
-			getCurrentFeature(data)->value = allocChar32(pos);
-			str32ncpy(getCurrentFeature(data)->value, lastCheckPoint, pos-1);
+			MelderString_ncopy(&TierFeatures_getCurrentFeature(data)->value, lastCheckPoint, pos-1);
 			lastCheckPoint = currentPos;
 			pos = 0;
 			state = 6;
@@ -261,61 +182,59 @@ tierFeatures* extractTierFeatures(const char32* text){
 
 	if(state != 7){
 		delete data;
-		data = new tierFeatures();
-		data->text = allocChar32(str32len(text)+1);
-		str32ncpy(data->text, text, str32len(text));
+		data = new TierFeatures();
+		MelderString_copy(&data->headText, text);
 	}
 
 	return data;
 }
 
 /**
- * It returns a new char32_t string with the content of text but with backslashes before \ and "
+ * It encodes a Feature text by adding backslash before special characters so it can be stores inside Tierfeatures text
  */
-char32* addBackslashes(const char32* text){
-	int neededSpace = 0;
-	const char32* tmp = text;
-	for(;*tmp != U'\0';tmp++){
-		neededSpace++;
-		if(*tmp == U'"' || *tmp == U'\\')
-			neededSpace++;
+void Feature_encodeText(MelderString* me){
+	int sizeNeeded = my length;
+	for(int i = 0;i < my length; i++){
+		if(my string [i] == U'"' || my string [i] == U'\\')
+			sizeNeeded++;
 	}
 
-	char32* result = allocChar32(neededSpace+1);
-	tmp = text;
-	char32* aux = result;
-	for(;*tmp != U'\0';){
-		if(*tmp == U'"' || *tmp == U'\\')
-			*aux++ = U'\\';
-		*aux++ = *tmp++;
+	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
+
+	for(int newSize = sizeNeeded, oldSize = my length; newSize >= 0 && oldSize >= 0; newSize--, oldSize--){
+		my string [newSize] = my string [oldSize];
+		if(my string [newSize] == U'"' || my string [newSize] == U'\\'){
+			newSize --;
+			my string [newSize] = U'\\';
+		}
 	}
-	return result;
+	my length = sizeNeeded;
 }
 
 /**
- * It returns a new char32_t string with the content of text but without initial backslashes of special characters
+ * It decodes a Feature text coming from TierFeatures text by deleting backslash preceding special characters
  */
-char32* removeBackslashes(const char32* text){
-	char32* result = allocChar32(str32len(text)+1);
-	const char32* tmp = text;
-	char32* aux = result;
-	for(;*tmp != U'\0';){
-		if(*tmp == U'\\' && str32len(tmp) > 1)
-			tmp++;
-		*aux++ = *tmp++;
+void Feature_decodeText(MelderString* me){
+	int newLenght = my length;
+	for(int newPos = 0, oldPos = 0; newPos <= my length && oldPos <= my length; newPos++, oldPos++){
+		if(my string [oldPos] == U'\\'){
+			oldPos ++;
+			newLenght --;
+		}
+		my string [newPos] = my string [oldPos];
 	}
-	return result;
+	my length = newLenght;
 }
 
 /**
- * Given a tierFeatures and a label, returns the feature (feature) with the same label. Null if the feature does not exist.
+ * Given a tierFeatures and a label, returns the Feature with the same label. Null if the feature does not exist.
  */
-feature* getExistentFeature(const tierFeatures* data, const char32* label){
+Feature* TierFeatures_getExistentFeature(const TierFeatures* data, const char32* label){
 	if(data == nullptr) return nullptr;
 
-	feature* current = data->firstFeature;
+	Feature* current = data->firstFeature;
 	while(current != nullptr){
-		if(str32equ(current->label, label))
+		if(str32equ(current->label.string, label))
 			return current;
 		current = current->nxtPtr;
 	}
@@ -323,42 +242,35 @@ feature* getExistentFeature(const tierFeatures* data, const char32* label){
 }
 
 /**
- * Adds a new feature with label and value to the given tierFeatures.
+ * Adds a new feature with label and value to the given TierFeatures.
  * If the feature already exists overwrites its value.
  */
-void addFeatureToTierFeatures(tierFeatures* data, const char32* label, const char32* value){
+void Feature_addFeatureToTierFeatures(TierFeatures* data, MelderString* label, MelderString* value){
 	if(data == nullptr) return;
-	char32* fLabel = addBackslashes(label);
-	char32* fValue = addBackslashes(value);
+	Feature_encodeText(label);
+	Feature_encodeText(value);
 
-	feature* ftr = getExistentFeature(data, fLabel);
+	Feature* ftr = TierFeatures_getExistentFeature(data, label->string);
 	if(ftr != nullptr){
-		delete ftr->value;
-		ftr->value = allocChar32(str32len(fValue)+1);
-		str32ncpy(ftr->value, fValue, str32len(fValue));
+		MelderString_copy(&ftr->value, value->string);
 	}else{
-		getNextFeature(data)->label = allocChar32(str32len(fLabel)+1);
-		str32ncpy(getCurrentFeature(data)->label, fLabel, str32len(fLabel));
-		getCurrentFeature(data)->value = allocChar32(str32len(fValue)+1);
-		str32ncpy(getCurrentFeature(data)->value, fValue, str32len(fValue));
+		MelderString_copy(&TierFeatures_getNextFeature(data)->label, label->string);
+		MelderString_copy(&TierFeatures_getCurrentFeature(data)->value, value->string);
 	}
 
-	delete fLabel;
-	delete fValue;
 }
 
 /**
- * Deletes the given feature from the tierFeatures.
+ * Deletes the Feature with given label from the TierFeatures.
  */
-void deleteFeatureFromTierFeatures(tierFeatures* data, const char32* label){
+void Feature_deleteFeatureFromTierFeatures(TierFeatures* data, MelderString* label){
 	if(data == nullptr) return;
-	char32* fLabel = addBackslashes(label);
-	feature* ftr = getExistentFeature(data, fLabel);
-	delete fLabel;
+	Feature_encodeText(label);
+	Feature* ftr = TierFeatures_getExistentFeature(data, label->string);
 	if(ftr == nullptr){
 		return;
 	}
-	feature* tmp = data->firstFeature;
+	Feature* tmp = data->firstFeature;
 	if(tmp->nxtPtr == nullptr){
 		data->firstFeature = nullptr;
 		data->currentFeature = nullptr;
@@ -380,22 +292,20 @@ void deleteFeatureFromTierFeatures(tierFeatures* data, const char32* label){
 }
 
 /**
- * Returns an integer representing the total length of the string representation of the whole tierFeatures.
+ * Returns an integer representing the total length of the text of the TierFeatures.
  */
-int countTierFeaturesLength(tierFeatures* data){
+int countTierFeaturesLength(TierFeatures* data){
 	if(data == nullptr) return 0;
 	int totalLenght = 0;
-	if(data->text != nullptr)
-		totalLenght += str32len(data->text);
+	//if(data->text != nullptr)
+	totalLenght += data->headText.length;
 	totalLenght += 4;
-	feature* tempPtr = data->firstFeature;
+	Feature* tempPtr = data->firstFeature;
 	while(tempPtr != nullptr){
 		totalLenght += 1;
-		if(tempPtr->label != nullptr)
-			totalLenght += str32len(tempPtr->label);
+		totalLenght += tempPtr->label.length;
 		totalLenght += 5;
-		if(tempPtr->value != nullptr)
-			totalLenght += str32len(tempPtr->value);
+		totalLenght += tempPtr->value.length;
 		totalLenght += 1;
 		tempPtr = tempPtr->nxtPtr;
 		if(tempPtr != nullptr)
@@ -406,53 +316,102 @@ int countTierFeaturesLength(tierFeatures* data){
 }
 
 /**
- * Return a new char32_t string representing the data held in the given tierFeatures.
+ * It sets in a result MelderString the text of the TierFeatures.
  */
-char32* generateTextFromTierFeatures(tierFeatures* data){
-	if(data == nullptr) return nullptr;
+void TierFeatures_generateText(TierFeatures* data, MelderString * result){
+	if(data == nullptr) return;
 	int totalLenght = countTierFeaturesLength(data);
-	if(totalLenght <= 0) return nullptr;
+	if(totalLenght <= 0) return;
 
-	char32* result = allocChar32(totalLenght);
-	if(data->text != nullptr)
-		str32append(result, data->text, str32len(result));
+	if(data->headText.bufferSize > 0)
+		MelderString_append(result, data->headText.string);
 	if(data->firstFeature != nullptr){
-		str32append(result, U"@{@ ", str32len(result));
-		feature* tempPtr = data->firstFeature;
+		MelderString_append(result, U"@{@ ");
+		Feature* tempPtr = data->firstFeature;
 		while(tempPtr != nullptr){
-			str32append(result, U"\"", str32len(result));
-			if(tempPtr->label != nullptr)
-				str32append(result, tempPtr->label, str32len(result));
-			str32append(result, U"\" = \"", str32len(result));
-			if(tempPtr->value != nullptr)
-				str32append(result, tempPtr->value, str32len(result));
-			str32append(result, U"\"", str32len(result));
+			MelderString_append(result, U"\"");
+			if(tempPtr->label.bufferSize > 0)
+				MelderString_append(result, tempPtr->label.string);
+			MelderString_append(result, U"\" = \"");
+			if(tempPtr->value.bufferSize > 0)
+				MelderString_append(result, tempPtr->value.string);
+			MelderString_append(result, U"\"");
 			tempPtr = tempPtr->nxtPtr;
 			if(tempPtr != nullptr)
-				str32append(result, U", ", str32len(result));
+				MelderString_append(result, U", ");
 		}
-		str32append(result, U" @}@", str32len(result));
+		MelderString_append(result, U" @}@");
 	}
-	str32append(result, U"\0", str32len(result));
+	MelderString_append(result, U"\0");
+}
+
+/**
+ * Sets in result MelderString the given text plus a new feature with the given label and value.
+ * If feature already exists it is overwritten with given value.
+ */
+void Feature_addFeatureToText(const char32* text, MelderString* label, MelderString* value, MelderString* result){
+	TierFeatures* features = TierFeatures_extractFromText(text);
+	Feature_addFeatureToTierFeatures(features, label, value);
+	TierFeatures_generateText(features, result);
+}
+
+/**
+ * Sets in result MelderString the given text without the feature with the given label.
+ */
+void Feature_deleteFeatureFromText(const char32* text, MelderString* label, MelderString* result){
+	TierFeatures* features = TierFeatures_extractFromText(text);
+	Feature_deleteFeatureFromTierFeatures(features, label);
+	TierFeatures_generateText(features, result);
+}
+
+/**
+ * Changes the content of headText in the TierFeatures for a copy of the given one.
+ */
+void TierFeatures_replaceHeadText(TierFeatures* data, const char32* text){
+	if(data == nullptr) return;
+	MelderString_ncopy(&data->headText, text, str32len(text));
+}
+
+/**
+ * Returns a pointer to the Feature in the given position. Melder error if feature does not exist.
+ */
+Feature* TierFeatures_getFeature(TierFeatures* data, int position){
+	Feature* tmp = data->firstFeature;
+	int count = 0;
+	while(tmp != nullptr && count < position -1){
+		count ++;
+		tmp = tmp->nxtPtr;
+	}
+	if(tmp == nullptr){
+		Melder_throw (U"Feature does not exist.");
+	}
+}
+
+/**
+ * Return the number of Features in a TierFeature.
+ */
+int TierFeatures_getNumberOfFeatures(TierFeatures* data){
+	Feature* tmp = data->firstFeature;
+	int result = 0;
+	while(tmp != nullptr){
+		result ++;
+		tmp = tmp->nxtPtr;
+	}
 	return result;
 }
 
 /**
- * Returns a new char32_t string consisting of the content within given text plus a new feature with the given label and value.
- * If feature already exists it is overwritten with given value.
+ * Sets in result MelderString a readable representation of the features in the TierFeatures.
  */
-char32* addFeatureToText(const char32* text, const char32* label, const char32* value){
-	tierFeatures* res = extractTierFeatures(text);
-	addFeatureToTierFeatures(res, label, value);
-	return generateTextFromTierFeatures(res);
+void TierFeatures_getFeaturesString(TierFeatures* data, MelderString* result){
+	Feature* tmp = data->firstFeature;
+	while(tmp != nullptr){
+		Feature_decodeText(&tmp->label);
+		Feature_decodeText(&tmp->value);
+		MelderString_append(result, tmp->label.string, U": ", tmp->value.string, U"\n");
+
+		tmp = tmp->nxtPtr;
+	}
 }
 
-/**
- * Changes the content in the text of TierFeatures for a copy of the given one.
- */
-void replaceTierFeaturesText(tierFeatures* data, const char32* text){
-	if(data == nullptr) return;
-	delete data->text;
-	data->text = allocChar32(str32len(text)+1);
-	str32ncpy(data->text, text, str32len(text));
-}
+
