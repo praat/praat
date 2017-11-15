@@ -675,10 +675,10 @@ static void menu_cb_InsertFeature (TextGridEditor me, EDITOR_ARGS_FORM) {
 			_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
 			Editor_save (me, LABEL_INSERT_DATA);
 
-			MelderString label { 0 };
-			MelderString value { 0 };
-			MelderString_copy(&label, GET_STRING (U"Label"));
-			MelderString_copy(&value, GET_STRING (U"Value"));
+			autoMelderString label;
+			autoMelderString value;
+			MelderString_copy(&label, labelVar);
+			MelderString_copy(&value, valueVar);
 
 			if(MelderString_isEmptyAfterTrim(&label) || MelderString_isEmptyAfterTrim(&value)){
 				Melder_throw (U"Neither label nor value can be empty. Please fill the fields.");
@@ -728,7 +728,6 @@ static void menu_cb_ShowFeatures (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TextTier textTier;
 		_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
 		if(intervalTier != nullptr){
-			//Editor_save (me, LABEL_INSERT_DATA);
 			long selectedInterval = getSelectedInterval (me);
 			if (selectedInterval) {
 				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
@@ -775,8 +774,8 @@ static void menu_cb_DeleteFeature (TextGridEditor me, EDITOR_ARGS_FORM) {
 		_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
 		Editor_save (me, LABEL_DELETE_DATA);
 
-		MelderString label { 0 };
-		MelderString_copy(&label, GET_STRING (U"Label"));
+		autoMelderString label;
+		MelderString_copy(&label, labelVar);
 		if(MelderString_isEmptyAfterTrim(&label)){
 			Melder_throw (U"Label cannot be empty. Please fill the field.");
 		}
@@ -824,8 +823,8 @@ static void menu_cb_GetFeature (TextGridEditor me, EDITOR_ARGS_FORM) {
 			TextTier textTier;
 			_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
 
-			MelderString label { 0 };
-			MelderString_copy(&label, GET_STRING (U"Label"));
+			autoMelderString label;
+			MelderString_copy(&label, labelVar);
 			MelderString_trim(&label);
 			Feature_encodeText(&label);
 
