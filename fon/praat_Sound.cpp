@@ -580,7 +580,7 @@ DO_ALTERNATIVE (NEW1_old_Sounds_crossCorrelate)
 	CONVERT_COUPLE_END (U"cc_", my name, U"_", your name)
 }
 
-FORM (MODIFY_Sound_deemphasizeInline, U"Sound: De-emphasize (in-line)", U"Sound: De-emphasize (in-line)...") {
+FORM (MODIFY_Sound_deemphasizeInplace, U"Sound: De-emphasize (in-place)", U"Sound: De-emphasize (in-place)...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"50.0")
 	OK
 DO
@@ -754,13 +754,13 @@ DO
 	CONVERT_EACH_END (my name, U"_filt")
 }
 
-FORM (MODIFY_Sound_filterWithOneFormantInline, U"Sound: Filter with one formant (in-line)", U"Sound: Filter with one formant (in-line)...") {
+FORM (MODIFY_Sound_filterWithOneFormantInplace, U"Sound: Filter with one formant (in-place)", U"Sound: Filter with one formant (in-place)...") {
 	REAL (frequency, U"Frequency (Hz)", U"1000.0")
 	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"100.0")
 	OK
 DO
 	MODIFY_EACH (Sound)
-		Sound_filterWithOneFormantInline (me, frequency, bandwidth);
+		Sound_filterWithOneFormantInplace (me, frequency, bandwidth);
 	MODIFY_EACH_END
 }
 
@@ -1183,7 +1183,7 @@ DIRECT (PLAY_Sound_play) {
 	}
 END }
 
-FORM (MODIFY_Sound_preemphasizeInline, U"Sound: Pre-emphasize (in-line)", U"Sound: Pre-emphasize (in-line)...") {
+FORM (MODIFY_Sound_preemphasizeInplace, U"Sound: Pre-emphasize (in-place)", U"Sound: Pre-emphasize (in-place)...") {
 	REAL (fromFrequency, U"From frequency (Hz)", U"50.0")
 	OK
 DO
@@ -2301,11 +2301,14 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 0, U"-- modify hack --", nullptr, 1, nullptr);
 		praat_addAction1 (classSound, 0, U"Override sampling frequency...", nullptr, 1, MODIFY_Sound_overrideSamplingFrequency);
 		praat_addAction1 (classSound, 0,   U"Override sample rate...", U"*Override sampling frequency...", praat_DEPTH_1 | praat_DEPRECATED_2004, MODIFY_Sound_overrideSamplingFrequency);
-		praat_addAction1 (classSound, 0, U"-- in-line filters --", nullptr, 1, nullptr);
-		praat_addAction1 (classSound, 0, U"In-line filters", nullptr, 1, nullptr);
-		praat_addAction1 (classSound, 0, U"Filter with one formant (in-line)...", nullptr, 2, MODIFY_Sound_filterWithOneFormantInline);
-		praat_addAction1 (classSound, 0, U"Pre-emphasize (in-line)...", nullptr, 2, MODIFY_Sound_preemphasizeInline);
-		praat_addAction1 (classSound, 0, U"De-emphasize (in-line)...", nullptr, 2, MODIFY_Sound_deemphasizeInline);
+		praat_addAction1 (classSound, 0, U"-- in-place filters --", nullptr, 1, nullptr);
+		praat_addAction1 (classSound, 0, U"In-place filters", nullptr, 1, nullptr);
+		praat_addAction1 (classSound, 0, U"Filter with one formant (in-place)...", nullptr, 2, MODIFY_Sound_filterWithOneFormantInplace);
+		praat_addAction1 (classSound, 0, U"Filter with one formant (in-line)...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2017, MODIFY_Sound_filterWithOneFormantInplace);
+		praat_addAction1 (classSound, 0, U"Pre-emphasize (in-place)...", nullptr, 2, MODIFY_Sound_preemphasizeInplace);
+		praat_addAction1 (classSound, 0, U"Pre-emphasize (in-line)...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2017, MODIFY_Sound_preemphasizeInplace);
+		praat_addAction1 (classSound, 0, U"De-emphasize (in-place)...", nullptr, 2, MODIFY_Sound_deemphasizeInplace);
+		praat_addAction1 (classSound, 0, U"De-emphasize (in-line)...", nullptr, praat_DEPTH_2 | praat_DEPRECATED_2017, MODIFY_Sound_deemphasizeInplace);
 	praat_addAction1 (classSound, 0, U"Annotate -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"Annotation tutorial", nullptr, 1, HELP_AnnotationTutorial);
 		praat_addAction1 (classSound, 0, U"-- to text grid --", nullptr, 1, nullptr);

@@ -73,9 +73,9 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 
 /********************** Sound & FormantGrid (& IntensityTier) *************************************/
 
-void Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant);
-void Sound_FormantGrid_filterWithOneAntiFormant_inline (Sound me, FormantGrid thee, long iformant);
-void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant);
+void Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGrid thee, long iformant);
+void Sound_FormantGrid_filterWithOneAntiFormant_inplace (Sound me, FormantGrid thee, long iformant);
+void Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant);
 autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformantb, long iformante, int alternatingSign);
 
 /************************ FricationGrid *********************************************/

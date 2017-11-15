@@ -769,7 +769,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *rela
 		structMelderFile file { };
 		Melder_relativePathToFile (relativeFileName, & file);
 		char utf8 [500];
-		Melder_str32To8bitFileRepresentation_inline (file. path, utf8);
+		Melder_str32To8bitFileRepresentation_inplace (file. path, utf8);
 		CFStringRef path = CFStringCreateWithCString (nullptr, utf8, kCFStringEncodingUTF8);
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
 		CFRelease (path);

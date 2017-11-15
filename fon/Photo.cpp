@@ -162,7 +162,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 		#elif defined (macintosh)
 			autoPhoto me;
 			char utf8 [500];
-			Melder_str32To8bitFileRepresentation_inline (file -> path, utf8);
+			Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8);
 			CFStringRef path = CFStringCreateWithCString (nullptr, utf8, kCFStringEncodingUTF8);
 			CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
 			CFRelease (path);

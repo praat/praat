@@ -112,7 +112,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *titl
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
 				structMelderFile file { };
-				Melder_8bitFileRepresentationToStr32_inline ([[url path] UTF8String], file. path);   // BUG: unsafe buffer
+				Melder_8bitFileRepresentationToStr32_inplace ([[url path] UTF8String], file. path);   // BUG: unsafe buffer
 				my addString_copy (file. path);
 			}
 		}
@@ -179,7 +179,7 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 			if (outfileName_utf8 == nullptr)
 				Melder_throw (U"Don't understand where you want to save (2).");
 			structMelderFile file { };
-			Melder_8bitFileRepresentationToStr32_inline (outfileName_utf8, file. path);   // BUG: unsafe buffer
+			Melder_8bitFileRepresentationToStr32_inplace (outfileName_utf8, file. path);   // BUG: unsafe buffer
 			outfileName = Melder_dup (file. path);
 		}
 		setlocale (LC_ALL, "en_US");
@@ -238,7 +238,7 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 			for (NSURL *url in [openPanel URLs]) {
 				const char *directoryName_utf8 = [[url path] UTF8String];
 				structMelderDir dir { };
-				Melder_8bitFileRepresentationToStr32_inline (directoryName_utf8, dir. path);   // BUG: unsafe buffer
+				Melder_8bitFileRepresentationToStr32_inplace (directoryName_utf8, dir. path);   // BUG: unsafe buffer
 				directoryName = Melder_dup (dir. path);
 			}
 		}

@@ -41,7 +41,7 @@ void Permutation_checkInvariant (Permutation me);
 void Permutation_sort (Permutation me);
 /* Set p[1..n]=1,..n */
 
-void Permutation_permuteRandomly_inline (Permutation me, long from, long to);
+void Permutation_permuteRandomly_inplace (Permutation me, long from, long to);
 
 autoPermutation Permutation_permuteRandomly (Permutation me, long from, long to);
 /* Generate a new sequence by permuting the elements from..to */
@@ -77,9 +77,9 @@ autoPermutation Permutation_invert (Permutation me);
 autoPermutation Permutation_reverse (Permutation me, long from, long to);
 /* (n1,n2,...nn) to (nn,...n2,n1) */
 
-void Permutation_next_inline (Permutation me);
+void Permutation_next_inplace (Permutation me);
 
-void Permutation_previous_inline (Permutation me);
+void Permutation_previous_inplace (Permutation me);
 
 autoPermutation Permutations_multiply2 (Permutation me, Permutation thee);
 

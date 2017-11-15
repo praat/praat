@@ -4331,7 +4331,7 @@ DO
 	CREATE_ONE
 		autoPermutation result = Permutation_create (numberOfElements);
 		if (! identity) {
-			Permutation_permuteRandomly_inline (result.get(), 0, 0);
+			Permutation_permuteRandomly_inplace (result.get(), 0, 0);
 		}
 	CREATE_ONE_END (name)
 }
@@ -4483,13 +4483,13 @@ DIRECT (NEW1_Permutations_multiply) {
 
 DIRECT (MODIFY_Permutations_next) {
 	MODIFY_EACH (Permutation)
-		Permutation_next_inline (me);
+		Permutation_next_inplace (me);
 	MODIFY_EACH_END
 }
 
 DIRECT (MODIFY_Permutations_previous) {
 	MODIFY_EACH (Permutation)
-		Permutation_previous_inline (me);
+		Permutation_previous_inplace (me);
 	MODIFY_EACH_END
 }
 

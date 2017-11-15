@@ -101,7 +101,7 @@ autoTableOfReal IntensityTier_downto_TableOfReal (IntensityTier me) {
 	return RealTier_downto_TableOfReal (me, U"Time (s)", U"Intensity (dB)");
 }
 
-void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
+void Sound_IntensityTier_multiply_inplace (Sound me, IntensityTier intensity) {
 	if (intensity -> points.size == 0) return;
 	for (integer isamp = 1; isamp <= my nx; isamp ++) {
 		double t = my x1 + (isamp - 1) * my dx;
@@ -115,7 +115,7 @@ void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
 autoSound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_IntensityTier_multiply_inline (thee.get(), intensity);
+		Sound_IntensityTier_multiply_inplace (thee.get(), intensity);
 		if (scale) Vector_scale (thee.get(), 0.9);
 		return thee;
 	} catch (MelderError) {

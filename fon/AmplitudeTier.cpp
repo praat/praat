@@ -79,7 +79,7 @@ autoTableOfReal AmplitudeTier_downto_TableOfReal (AmplitudeTier me) {
 	return RealTier_downto_TableOfReal (me, U"Time (s)", U"Sound pressure (Pa)");
 }
 
-void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
+void Sound_AmplitudeTier_multiply_inplace (Sound me, AmplitudeTier amplitude) {
 	if (amplitude -> points.size == 0) return;
 	for (integer isamp = 1; isamp <= my nx; isamp ++) {
 		double t = my x1 + (isamp - 1) * my dx;
@@ -93,7 +93,7 @@ void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
 autoSound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_AmplitudeTier_multiply_inline (thee.get(), amplitude);
+		Sound_AmplitudeTier_multiply_inplace (thee.get(), amplitude);
 		Vector_scale (thee.get(), 0.9);
 		return thee;
 	} catch (MelderError) {

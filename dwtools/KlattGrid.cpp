@@ -294,7 +294,7 @@ static autoSound Sound_createEmptyMono (double xmin, double xmax, double samplin
 	return Sound_create (1, xmin, xmax, nt, dt, t1);
 }
 
-static void _Sounds_add_inline (Sound me, Sound thee) {
+static void _Sounds_add_inplace (Sound me, Sound thee) {
 	for (long i = 1; i <= my nx; i ++) {
 		my z [1] [i] += thy z [1] [i];
 	}
@@ -338,7 +338,7 @@ static autoSound _Sound_diff (Sound me, int scale) {
 	}
 }
 
-/*static void _Sounds_addDifferentiated_inline (Sound me, Sound thee)
+/*static void _Sounds_addDifferentiated_inplace (Sound me, Sound thee)
 {
 	double pval = 0, dx = my dx;
 	for (long i = 1; i <= my nx; i++)
@@ -478,7 +478,7 @@ static void draw_oneSection (Graphics g, double xmin, double xmax, double ymin, 
 
 /************************ Sound & FormantGrid *********************************************/
 
-static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant, int antiformant) {
+static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGrid thee, long iformant, int antiformant) {
 	if (iformant < 1 || iformant > thy formants.size) {
 		Melder_warning (U"Formant ", iformant, U" does not exist.");
 		return;
@@ -512,15 +512,15 @@ static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGri
 	}
 }
 
-void Sound_FormantGrid_filterWithOneAntiFormant_inline (Sound me, FormantGrid thee, long iformant) {
-	_Sound_FormantGrid_filterWithOneFormant_inline (me, thee, iformant, 1);
+void Sound_FormantGrid_filterWithOneAntiFormant_inplace (Sound me, FormantGrid thee, long iformant) {
+	_Sound_FormantGrid_filterWithOneFormant_inplace (me, thee, iformant, 1);
 }
 
-void Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant) {
-	_Sound_FormantGrid_filterWithOneFormant_inline (me, thee, iformant, 0);
+void Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGrid thee, long iformant) {
+	_Sound_FormantGrid_filterWithOneFormant_inplace (me, thee, iformant, 0);
 }
 
-void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant) {
+void Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant) {
 	try {
 		if (iformant < 1 || iformant > thy formants.size) {
 			Melder_throw (U"Formant ", iformant, U" not defined. \nThis formant will not be used.");
@@ -572,7 +572,7 @@ autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Orde
 		for (long iformant = iformantb; iformant <= iformante; iformant ++) {
 			if (FormantGrid_Intensities_isFormantDefined (thee, amplitudes, iformant)) {
 				autoSound tmp = Data_copy (me);
-				Sound_FormantGrid_Intensities_filterWithOneFormant_inline (tmp.get(), thee, amplitudes, iformant);
+				Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (tmp.get(), thee, amplitudes, iformant);
 				for (long is = 1; is <= my nx; is ++) {
 					his z [1] [is] += ( alternatingSign >= 0 ? tmp -> z [1] [is] : - tmp -> z [1] [is] );
 				}
@@ -873,7 +873,7 @@ autoSound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFr
 	}
 }
 
-static void Sound_PhonationGrid_spectralTilt_inline (Sound thee, PhonationGrid me) {
+static void Sound_PhonationGrid_spectralTilt_inplace (Sound thee, PhonationGrid me) {
 	if (my spectralTilt -> points.size > 0) {
 		/* Spectral tilt
 			Filter y[n] = a * x[n] + b * y[n-1] => H(z) = a / (1 - bz^(-1)).
@@ -1205,13 +1205,13 @@ static autoSound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, dou
 				thee = PhonationGrid_to_Sound_voiced (me, samplingFrequency);
 			}
 			if (pp -> spectralTilt) {
-				Sound_PhonationGrid_spectralTilt_inline (thee.get(), me);
+				Sound_PhonationGrid_spectralTilt_inplace (thee.get(), me);
 			}
 		}
 		if (pp -> aspiration) {
 			autoSound aspiration = PhonationGrid_to_Sound_aspiration (me, samplingFrequency);
 			if (thee) {
-				_Sounds_add_inline (thee.get(), aspiration.get());
+				_Sounds_add_inplace (thee.get(), aspiration.get());
 			} else {
 				thee = aspiration.move();
 			}
@@ -1348,7 +1348,7 @@ autoVocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberO
 	}
 }
 
-static void VocalTractGrid_CouplingGrid_drawCascade_inline (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double *yin, double *yout) {
+static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double *yin, double *yout) {
 	long numberOfOralFormants = my oral_formants -> formants.size;
 	long numberOfNasalFormants = my nasal_formants -> formants.size;
 	long numberOfNasalAntiFormants = my nasal_antiformants -> formants.size;
@@ -1412,7 +1412,7 @@ end:
 	}
 }
 
-static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout) {
+static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout) {
 	// (0: filler) (1: hor. line to split) (2: split to diff) (3: diff) (4: diff to split)
 	// (5: split to filter) (6: filters) (7: conn to summer) (8: summer)
 	double xw [9] = { 0.0, 0.3, 0.2, 1.5, 0.5, 0.5, 1.0, 0.5, 0.5 }, xws [9];
@@ -1526,8 +1526,8 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, 
 
 static void VocalTractGrid_CouplingGrid_draw_inside (VocalTractGrid me, CouplingGrid thee, Graphics g, int filterModel, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout) {
 	filterModel == KlattGrid_FILTER_CASCADE ?
-	VocalTractGrid_CouplingGrid_drawCascade_inline (me, thee, g, xmin, xmax, ymin, ymax, yin, yout) :
-	VocalTractGrid_CouplingGrid_drawParallel_inline (me, thee, g, xmin, xmax, ymin, ymax, dy, yin, yout);
+	VocalTractGrid_CouplingGrid_drawCascade_inplace (me, thee, g, xmin, xmax, ymin, ymax, yin, yout) :
+	VocalTractGrid_CouplingGrid_drawParallel_inplace (me, thee, g, xmin, xmax, ymin, ymax, dy, yin, yout);
 }
 
 static void VocalTractGrid_CouplingGrid_draw (VocalTractGrid me, CouplingGrid thee, Graphics g, int filterModel) {
@@ -1579,7 +1579,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 0;
 			for (long iformant = pv -> startNasalFormant; iformant <= pv -> endNasalFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (thy nasal_formants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), thy nasal_formants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), thy nasal_formants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Nasal formant", iformant, ": frequency and/or bandwidth missing.");
 					nasal_formant_warning++; any_warning++;
@@ -1592,7 +1592,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 1;
 			for (long iformant = pv -> startNasalAntiFormant; iformant <= pv -> endNasalAntiFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (thy nasal_antiformants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), thy nasal_antiformants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), thy nasal_antiformants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Nasal antiformant", iformant, ": frequency and/or bandwidth missing.");
 					nasal_antiformant_warning++; any_warning++;
@@ -1605,7 +1605,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 0;
 			for (long iformant = pc -> startTrachealFormant; iformant <= pc -> endTrachealFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (tracheal_formants, iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), tracheal_formants, iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), tracheal_formants, iformant, antiformants);
 				} else {
 					// Melder_warning ("Tracheal formant", iformant, ": frequency and/or bandwidth missing.");
 					tracheal_formant_warning++; any_warning++;
@@ -1618,7 +1618,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 1;
 			for (long iformant = pc -> startTrachealAntiFormant; iformant <= pc -> endTrachealAntiFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (tracheal_antiformants, iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), tracheal_antiformants, iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), tracheal_antiformants, iformant, antiformants);
 				} else {
 					// Melder_warning ("Tracheal antiformant", iformant, ": frequency and/or bandwidth missing.");
 					tracheal_antiformant_warning++; any_warning++;
@@ -1634,7 +1634,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			}
 			for (long iformant = pv -> startOralFormant; iformant <= pv -> endOralFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (formants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), formants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), formants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Oral formant", iformant, ": frequency and/or bandwidth missing.");
 					oral_formant_warning++; any_warning++;
@@ -1696,7 +1696,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			if (pv -> startOralFormant == 1) {
 				him = Data_copy (me);
 				if (oral_formants -> formants.size > 0) {
-					Sound_FormantGrid_Intensities_filterWithOneFormant_inline (him.get(), oral_formants, & thy oral_formants_amplitudes, 1);
+					Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (him.get(), oral_formants, & thy oral_formants_amplitudes, 1);
 				}
 			}
 		}
@@ -1708,7 +1708,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			if (! him) {
 				him = Data_copy (nasal.get());
 			} else {
-				_Sounds_add_inline (him.get(), nasal.get());
+				_Sounds_add_inplace (him.get(), nasal.get());
 			}
 		}
 
@@ -1729,7 +1729,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 				if (! him) {
 					him = Data_copy (vocalTract.get());
 				} else {
-					_Sounds_add_inline (him.get(), vocalTract.get());
+					_Sounds_add_inplace (him.get(), vocalTract.get());
 				}
 			}
 		}
@@ -1742,7 +1742,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			if (! him) {
 				him = Data_copy (trachea.get());
 			} else {
-				_Sounds_add_inline (him.get(), trachea.get());
+				_Sounds_add_inplace (him.get(), trachea.get());
 			}
 		}
 
@@ -2292,7 +2292,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel) {
 		xc2 = xc1 + xw [3];
 		yc2 = yout_phonation + dy / 2.0;
 		yc1 = yc2 - dy;
-		VocalTractGrid_CouplingGrid_drawCascade_inline (my vocalTract.get(), my coupling.get(), g, xc1, xc2, yc1, yc2, &yin_vocalTract_c, &yout_vocalTract_c);
+		VocalTractGrid_CouplingGrid_drawCascade_inplace (my vocalTract.get(), my coupling.get(), g, xc1, xc2, yc1, yc2, &yin_vocalTract_c, &yout_vocalTract_c);
 
 		tf -> x[1] = xc2;
 		tf -> y[1] = yout_vocalTract_c;
@@ -2345,7 +2345,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel) {
 
 		xp1 = xmin + xws [2];
 		xp2 = xp1 + xw [3];
-		VocalTractGrid_CouplingGrid_drawParallel_inline (my vocalTract.get(), my coupling.get(), g, xp1, xp2, yp1, yp2, dy_vocalTract_p, &yin_vocalTract_p, &yout_vocalTract_p);
+		VocalTractGrid_CouplingGrid_drawParallel_inplace (my vocalTract.get(), my coupling.get(), g, xp1, xp2, yp1, yp2, dy_vocalTract_p, &yin_vocalTract_p, &yout_vocalTract_p);
 
 		tf -> x[1] = xp2;
 		tf -> y[1] = yout_vocalTract_p;
@@ -2819,7 +2819,7 @@ autoSound KlattGrid_to_Sound (KlattGrid me) {
 		if (pf -> endFricationFormant > 0 || pf -> bypass) {
 			autoSound frication = FricationGrid_to_Sound (my frication.get(), samplingFrequency);
 			if (thee) {
-				_Sounds_add_inline (thee.get(), frication.get());
+				_Sounds_add_inplace (thee.get(), frication.get());
 			} else {
 				thee = frication.move();
 			}

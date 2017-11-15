@@ -771,11 +771,11 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 	 */
 	MelderThread_LOCK (theMelder_fatal_mutex);
 	static char32 fileNameBuffer [1000], conditionBuffer [1000], lineNumberBuffer [40];
-	Melder_8to32_inline (fileName, fileNameBuffer, kMelder_textInputEncoding::UTF8);
-	Melder_8to32_inline (condition, conditionBuffer, kMelder_textInputEncoding::UTF8);
+	Melder_8to32_inplace (fileName, fileNameBuffer, kMelder_textInputEncoding::UTF8);
+	Melder_8to32_inplace (condition, conditionBuffer, kMelder_textInputEncoding::UTF8);
 	static char lineNumberBuffer8 [40];
 	sprintf (lineNumberBuffer8, "%d", lineNumber);
-	Melder_8to32_inline (lineNumberBuffer8, lineNumberBuffer, kMelder_textInputEncoding::UTF8);
+	Melder_8to32_inplace (lineNumberBuffer8, lineNumberBuffer, kMelder_textInputEncoding::UTF8);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), U"Assertion failed in file \"");
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), fileNameBuffer);

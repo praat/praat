@@ -78,7 +78,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain);
 	useGain determines whether the LPC-gain is used in the synthesis.
 */
 
-void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
+void LPC_and_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, int channel, double time);
 
 autoSound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time);
 
@@ -94,6 +94,6 @@ autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee);
 
 autoSound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time);
 
-void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
+void LPC_and_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, int channel, double time);
 
 #endif /* _Sound_and_LPC_h_ */

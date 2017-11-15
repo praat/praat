@@ -182,7 +182,7 @@ autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double ov
 void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, double formant [], double bandwidth []);
 autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth);
-void Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwidth);
+void Sound_filterWithOneFormantInplace (Sound me, double frequency, double bandwidth);
 autoSound Sound_filter_preemphasis (Sound me, double frequency);
 autoSound Sound_filter_deemphasis (Sound me, double frequency);
 

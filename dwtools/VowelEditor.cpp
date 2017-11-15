@@ -214,7 +214,7 @@ static autoSound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, doub
 	try {
 		autoPointProcess pp = PitchTier_to_PointProcess (my pt.get());
 		autoSound thee = PointProcess_to_Sound_pulseTrain (pp.get(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
-		Sound_FormantTier_filter_inline (thee.get(), my ft.get());
+		Sound_FormantTier_filter_inplace (thee.get(), my ft.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Sound with pulses not created.");

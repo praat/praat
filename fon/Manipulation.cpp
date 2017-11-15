@@ -549,8 +549,8 @@ static autoSound synthesize_pulses_pitch_hum (Manipulation me) {
 
 /*
 void Sound_Formant_Intensity_filter (Sound me, FormantTier formantTier, IntensityTier intensity) {
-	Sound_FormantTier_filter_inline (me, formantTier);
-	if (intensity) Sound_IntensityTier_multiply_inline (me, intensity);
+	Sound_FormantTier_filter_inplace (me, formantTier);
+	if (intensity) Sound_IntensityTier_multiply_inplace (me, intensity);
 	NUMdeemphasize_f (my z [1], my nx, my dx, 50.0);
 	Vector_scale (me, 0.99);
 }

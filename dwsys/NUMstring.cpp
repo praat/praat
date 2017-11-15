@@ -39,7 +39,7 @@ int NUMstring_containsPrintableCharacter (const char32 *s) {
 	return 0;
 }
 
-void NUMstring_chopWhiteSpaceAtExtremes_inline (char32 *string) {
+void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string) {
 	int64 start = 0;
 	while (iswspace ((int) string[start]) != 0) {
 		start++;

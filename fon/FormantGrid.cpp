@@ -156,7 +156,7 @@ void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, integer iformant,
 	AnyTier_removePointsBetween (my bandwidths.at [iformant]->asAnyTier(), tmin, tmax);
 }
 
-void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
+void Sound_FormantGrid_filter_inplace (Sound me, FormantGrid formantGrid) {
 	double dt = my dx;
 	if (formantGrid -> formants.size > 0 && formantGrid -> bandwidths.size > 0) {
 		for (integer iformant = 1; iformant <= formantGrid -> formants.size; iformant ++) {
@@ -197,7 +197,7 @@ void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
 autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_FormantGrid_filter_inline (thee.get(), formantGrid);
+		Sound_FormantGrid_filter_inplace (thee.get(), formantGrid);
 		Vector_scale (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
@@ -208,7 +208,7 @@ autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 autoSound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_FormantGrid_filter_inline (thee.get(), formantGrid);
+		Sound_FormantGrid_filter_inplace (thee.get(), formantGrid);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantGrid, U".");
@@ -226,7 +226,7 @@ autoSound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 		RealTier_addPoint (pitch.get(), my xmax - (1.0 - tEnd) * (my xmax - my xmin), f0End);
 		autoSound thee = PitchTier_to_Sound_phonation (pitch.get(), samplingFrequency,
 			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, false);
-		Sound_FormantGrid_filter_inline (thee.get(), me);
+		Sound_FormantGrid_filter_inplace (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");

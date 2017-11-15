@@ -18,7 +18,7 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2006/07/21 made Sound_FormantTier_filter_inline () accurate for higher numbers of formants
+ * pb 2006/07/21 made Sound_FormantTier_filter_inplace () accurate for higher numbers of formants
  * pb 2007/01/27 made compatible with stereo sounds
  * pb 2007/03/17 domain quantity
  * pb 2007/10/01 can write as encoding
@@ -252,7 +252,7 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 	}
 }
 
-void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
+void Sound_FormantTier_filter_inplace (Sound me, FormantTier formantTier) {
 	double dt = my dx;
 	if (formantTier -> points.size) for (integer iformant = 1; iformant <= 10; iformant ++) {
 		for (integer isamp = 1; isamp <= my nx; isamp ++) {
@@ -289,7 +289,7 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 autoSound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_FormantTier_filter_inline (thee.get(), formantTier);
+		Sound_FormantTier_filter_inplace (thee.get(), formantTier);
 		Vector_scale (thee.get(), 0.99);
 		return thee;
 	} catch (MelderError) {
@@ -300,7 +300,7 @@ autoSound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 autoSound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_FormantTier_filter_inline (thee.get(), formantTier);
+		Sound_FormantTier_filter_inplace (thee.get(), formantTier);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered with ", formantTier, U".");
