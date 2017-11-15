@@ -498,7 +498,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				MelderFile file; \
 				int IOBJECT = 0; \
 				(void) IOBJECT; \
-				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persistent into the outer scope */ \
+				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persist into the outer scope */ \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
@@ -519,7 +519,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				MelderFile file; \
 				int IOBJECT = 0; \
 				(void) IOBJECT; \
-				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persistent into the outer scope */ \
+				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persist into the outer scope */ \
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \

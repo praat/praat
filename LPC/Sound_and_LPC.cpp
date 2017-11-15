@@ -562,7 +562,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 	}
 }
 
-void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time) {
+void LPC_and_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, int channel, double time) {
 	long frameIndex = Sampled_xToNearestIndex (me, time);
 	if (frameIndex < 1) {
 		frameIndex = 1;
@@ -588,14 +588,14 @@ void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channe
 autoSound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterWithFilterAtTime_inline (me, him.get(), channel, time);
+		LPC_and_Sound_filterWithFilterAtTime_inplace (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not filtered.");
 	}
 }
 
-void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time) {
+void LPC_and_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, int channel, double time) {
 	try {
 		long frameIndex = Sampled_xToNearestIndex (me, time);
 		if (frameIndex < 1) {
@@ -622,7 +622,7 @@ void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int
 autoSound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him.get(), channel, time);
+		LPC_and_Sound_filterInverseWithFilterAtTime_inplace (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");

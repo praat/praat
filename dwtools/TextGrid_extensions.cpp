@@ -694,7 +694,7 @@ static void IntervalTier_checkStartAndEndTime (IntervalTier me) {
 
 // Precondition: if (preserveTimes) { my xmax <= thy xmin }
 // Postcondition: my xmin preserved
-void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes) {
+void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool preserveTimes) {
 	try {
 		IntervalTier_checkStartAndEndTime (me); // start/end time of first/last interval should match with tier
 		IntervalTier_checkStartAndEndTime (thee);
@@ -732,7 +732,7 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 }
 
 // Precondition: if (preserveTimes) { my xmax <= thy xmin }
-void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
+void TextTiers_append_inplace (TextTier me, TextTier thee, bool preserveTimes) {
 	try {
 		for (long iint = 1; iint <= thy points.size; iint ++) {
 			autoTextPoint tp = Data_copy (thy points.at [iint]);
@@ -758,7 +758,7 @@ static void TextGrid_checkStartAndEndTimesOfTiers (TextGrid me) {
 	}
 }
 
-void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
+void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes)
 {
 	try {
 		if (my tiers->size != thy tiers->size) {
@@ -777,7 +777,7 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 			if (myTier -> classInfo == classIntervalTier && thyTier -> classInfo == classIntervalTier) {
 				IntervalTier  myIntervalTier = static_cast <IntervalTier>  (myTier);
 				IntervalTier thyIntervalTier = static_cast <IntervalTier> (thyTier);
-				IntervalTiers_append_inline (myIntervalTier, thyIntervalTier, preserveTimes);
+				IntervalTiers_append_inplace (myIntervalTier, thyIntervalTier, preserveTimes);
 				/*
 					Because of floating-point rounding errors, we explicitly make sure that
 					both the xmax of the tier and the xmax of the last interval equal the xmax of the grid.
@@ -789,7 +789,7 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 			} else if (myTier -> classInfo == classTextTier && thyTier -> classInfo == classTextTier) {
 				TextTier  myTextTier = static_cast <TextTier>  (myTier);
 				TextTier thyTextTier = static_cast <TextTier> (thyTier);
-				TextTiers_append_inline (myTextTier, thyTextTier, preserveTimes);
+				TextTiers_append_inplace (myTextTier, thyTextTier, preserveTimes);
                 myTextTier -> xmax = xmax;
 			} else {
 				Melder_throw (U"Tier ", itier, U" in the second TextGrid is of a different type "
@@ -807,7 +807,7 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 		Melder_assert (my size > 0);
 		autoTextGrid thee = Data_copy (my at [1]);
 		for (long igrid = 2; igrid <= my size; igrid ++) {
-			TextGrids_append_inline (thee.get(), my at [igrid], preserveTimes);
+			TextGrids_append_inplace (thee.get(), my at [igrid], preserveTimes);
 		}
 		if (! preserveTimes) {
 			Function_shiftXBy (thee.get(), -thy xmin);

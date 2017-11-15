@@ -97,9 +97,9 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod, double *qpeak);
 void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *slope, double *intercept, int lineType, int method);
 autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
-void PowerCepstrum_subtractTilt_inline (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
+void PowerCepstrum_subtractTilt_inplace (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
 
-void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
+void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
 autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
 
 autoMatrix PowerCepstrum_to_Matrix (PowerCepstrum me);

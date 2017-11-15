@@ -66,7 +66,7 @@ autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutati
 autoCollection Collection_permuteItems (Collection me) {
 	try {
 		autoPermutation p = Permutation_create (my size);
-		Permutation_permuteRandomly_inline (p.get(), 0, 0);
+		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
 		autoCollection thee = Collection_and_Permutation_permuteItems (me, p.get());
 		return thee;
 	} catch (MelderError) {

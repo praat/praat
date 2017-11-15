@@ -1131,7 +1131,7 @@ autoTableOfReal TableOfReal_create_weenink1983 (int option) {
 autoTableOfReal TableOfReal_randomizeRows (TableOfReal me) {
 	try {
 		autoPermutation p = Permutation_create (my numberOfRows);
-		Permutation_permuteRandomly_inline (p.get(), 0, 0);
+		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
 		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, p.get());
 		return thee;
 	} catch (MelderError) {

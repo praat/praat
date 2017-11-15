@@ -41,7 +41,7 @@ void FormantGrid_addBandwidthPoint (FormantGrid me, integer formantNumber, doubl
 void FormantGrid_removeFormantPointsBetween (FormantGrid me, integer formantNumber, double tmin, double tmax);
 void FormantGrid_removeBandwidthPointsBetween (FormantGrid me, integer formantNumber, double tmin, double tmax);
 
-void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid);
+void Sound_FormantGrid_filter_inplace (Sound me, FormantGrid formantGrid);
 autoSound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid);
 autoSound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid);
 

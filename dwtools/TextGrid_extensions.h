@@ -113,11 +113,11 @@ void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, co
 
 // Precondition: if (preserveTimes) { my xmax <= thy xmin }
 // Postcondition: my xmin preserved
-void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes);
+void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool preserveTimes);
 
-void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes);
+void TextTiers_append_inplace (TextTier me, TextTier thee, bool preserveTimes);
 
-void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes);
+void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes);
 
 autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* me, bool preserveTimes);
 

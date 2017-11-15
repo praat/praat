@@ -1139,14 +1139,14 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_filterWithOneFormantInline (thee.get(), frequency, bandwidth);
+		Sound_filterWithOneFormantInplace (thee.get(), frequency, bandwidth);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (one formant).");
 	}
 }
 
-void Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwidth) {
+void Sound_filterWithOneFormantInplace (Sound me, double frequency, double bandwidth) {
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		NUMfilterSecondOrderSection_fb (my z [channel], my nx, my dx, frequency, bandwidth);
 	}

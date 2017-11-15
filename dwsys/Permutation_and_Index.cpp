@@ -30,7 +30,7 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithi
 
 		autoPermutation thee = Permutation_create (my numberOfItems);
 		autoPermutation classes = Permutation_create (numberOfClasses);
-		Permutation_permuteRandomly_inline (classes.get(), 0, 0);
+		Permutation_permuteRandomly_inplace (classes.get(), 0, 0);
 		autoPermutation classesinv = Permutation_invert (classes.get());
 		autoNUMmatrix<long> indices (0, numberOfClasses, 1, 4);
 
@@ -56,7 +56,7 @@ autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithi
 				long from = indices[i][3] + 1;
 				long to = from + indices[i][2] - 1;
 				if (to > from) {
-					Permutation_permuteRandomly_inline (thee.get(), from, to);
+					Permutation_permuteRandomly_inplace (thee.get(), from, to);
 				}
 			}
 		}

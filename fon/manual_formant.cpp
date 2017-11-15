@@ -555,11 +555,11 @@ DEFINITION (U"the +3 dB point for an inverted low-pass filter with a slope of +6
 	"the pre-emphasis creates a flatter spectrum, which is better for formant analysis "
 	"because we want our formants to match the local peaks, not the global spectral slope. "
 	"See the @@source-filter synthesis@ tutorial for a technical explanation, "
-	"and @@Sound: Pre-emphasize (in-line)...@ for the algorithm.")
+	"and @@Sound: Pre-emphasize (in-place)...@ for the algorithm.")
 ENTRY (U"Algorithm")
 NORMAL (U"The sound will be resampled to a sampling frequency of twice the value of %%Maximum formant%, "
 	"with the algorithm described at @@Sound: Resample...@. "
-	"After this, pre-emphasis is applied with the algorithm described at @@Sound: Pre-emphasize (in-line)...@. "
+	"After this, pre-emphasis is applied with the algorithm described at @@Sound: Pre-emphasize (in-place)...@. "
 	"For each analysis window, Praat applies a Gaussian-like window, "
 	"and computes the LPC coefficients with the algorithm by Burg, as given by @@Childers (1978)@ "
 	"and @@Press et al. (1992)@. The number of \"poles\" that this algorithm computes is twice the %%Maximum number of formants%; "

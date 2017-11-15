@@ -117,14 +117,14 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	}
 }
 
-void PowerCepstrogram_subtractTilt_inline (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+void PowerCepstrogram_subtractTilt_inplace (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
 		for (long i = 1; i <= my nx; i++) {
 			for (long j = 1; j <= my ny; j++) {
 				thy z[1][j] = my z[j][i];
 			}
-			PowerCepstrum_subtractTilt_inline (thee.get(), qstartFit, qendFit, lineType, fitMethod);
+			PowerCepstrum_subtractTilt_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
 			for (long j = 1; j <= my ny; j++) {
 				my z[j][i] = thy z[1][j];
 			}
@@ -137,7 +137,7 @@ void PowerCepstrogram_subtractTilt_inline (PowerCepstrogram me, double qstartFit
 autoPowerCepstrogram PowerCepstrogram_subtractTilt (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod) {
 	try {
 		autoPowerCepstrogram thee = Data_copy (me);
-		PowerCepstrogram_subtractTilt_inline (thee.get(), qstartFit, qendFit, lineType, fitMethod);
+		PowerCepstrogram_subtractTilt_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no tilt subtracted.");
