@@ -1,6 +1,6 @@
 /* Collection_extensions.cpp
  *
- * Copyright (C) 1994-2011, 2015-2016 David Weenink
+ * Copyright (C) 1994-2011, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutati
 autoCollection Collection_permuteItems (Collection me) {
 	try {
 		autoPermutation p = Permutation_create (my size);
-		Permutation_permuteRandomly_inline (p.get(), 0, 0);
+		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
 		autoCollection thee = Collection_and_Permutation_permuteItems (me, p.get());
 		return thee;
 	} catch (MelderError) {
@@ -163,7 +163,7 @@ double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString
 	long numberOfDifferences = OrderedOfString_getNumberOfDifferences (me, thee);
 
 	if (numberOfDifferences < 0) {
-		return NUMundefined;
+		return undefined;
 	}
 	return my size == 0 ? 0.0 : (0.0 + numberOfDifferences) / my size;
 }
@@ -223,7 +223,7 @@ void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *
 		}
 		for (long i = 1; i <= my size; i ++) {
 			SimpleString ss = my at [i];
-			long nmatches_sub;
+			integer nmatches_sub;
 			char32 *r = use_regexp ? str_replace_regexp (ss -> string, compiled_search, replace, maximumNumberOfReplaces, &nmatches_sub) : str_replace_literal (ss -> string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
 
 			// Change without error:

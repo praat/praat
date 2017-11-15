@@ -26,7 +26,6 @@
  djmw 20020502 modified call Eigen_and_TableOfReal_project_into
  djmw 20030801 Discriminant_drawConcentrationEllipses extra argument
  djmw 20050405 Modified column label: eigenvector->Eigenvector
- djmw 20061021 printf expects %ld for 'long int'
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071009 wchar
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
@@ -94,7 +93,7 @@ autoDiscriminant Discriminant_create (long numberOfGroups, long numberOfEigenval
 }
 
 long Discriminant_groupLabelToIndex (Discriminant me, const char32 *label) {
-	char32 *name;
+	const char32 *name;
 
 	for (long i = 1; i <= my numberOfGroups; i ++) {
 		if (!! (name = Thing_getName (my groups -> at [i])) && str32equ (name, label)) {
@@ -110,10 +109,10 @@ long Discriminant_getNumberOfGroups (Discriminant me) {
 
 long Discriminant_getNumberOfObservations (Discriminant me, long group) {
 	if (group == 0) {
-		return (long) floor (my total -> numberOfObservations);
+		return Melder_ifloor (my total -> numberOfObservations);
 	} else if (group >= 1 && group <= my numberOfGroups) {
 		SSCP sscp = my groups->at [group];
-		return (long) floor (sscp -> numberOfObservations);
+		return Melder_ifloor (sscp -> numberOfObservations);
 	} else {
 		return -1;
 	}
@@ -156,7 +155,7 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 		thy strings = NUMvector<char32 *> (1, my numberOfGroups);
 		thy numberOfStrings = my numberOfGroups;
 		for (long i = 1; i <= my numberOfGroups; i ++) {
-			char32 *name = Thing_getName (my groups->at [i]);
+			const char32 *name = Thing_getName (my groups->at [i]);
 			thy strings [i] = Melder_dup (name);
 		}
 		return thee;
@@ -190,9 +189,9 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 		for (long i = 1; i <= m; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
-			long numberOfObservationsm1 = (long) floor (sscp -> numberOfObservations) - 1;
+			integer numberOfObservationsm1 = Melder_ifloor (sscp -> numberOfObservations) - 1;
 			for (long j = 1; j <= n; j ++) {
-				thy data [i] [j] = numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : NUMundefined;
+				thy data [i] [j] = ( numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
 		}
 		NUMstrings_copyElements (my groups->at [m] -> columnLabels, thy columnLabels, 1, n);
@@ -269,7 +268,7 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me, long num
 	long numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 	double degreesOfFreedom = Discriminant_getDegreesOfFreedom (me);
 
-	double prob = NUMundefined,  chisq = NUMundefined, df = NUMundefined;
+	double prob = undefined, chisq = undefined, df = undefined;
 
 	if (k < numberOfFunctions) {
 		double lambda = NUMwilksLambda (my eigen -> eigenvalues, k + 1, numberOfFunctions);
@@ -295,7 +294,7 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me, long num
 double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
         double scale, bool confidence, int discriminantDirections, long d1, long d2)
 {
-	double area = NUMundefined;
+	double area = undefined;
 
 	if (group < 1 || group > my numberOfGroups) {
 		return area;
@@ -312,7 +311,7 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, long group,
 
 double Discriminant_getLnDeterminant_group (Discriminant me, long group) {
 	if (group < 1 || group > my numberOfGroups) {
-		return NUMundefined;
+		return undefined;
 	}
 	autoCovariance c = SSCP_to_Covariance (my groups->at [group], 1);
 	double ln_d = SSCP_getLnDeterminant (c.get());
@@ -413,8 +412,8 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		autoDiscriminant thee = Thing_new (Discriminant);
 		long dimension = my numberOfColumns;
 
-		if (! NUMdmatrix_hasFiniteElements(my data, 1, my numberOfRows, 1, my numberOfColumns)) {
-			Melder_throw (U"At least one of the table's elements is not finite or undefined.");
+		if (NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns)) {
+			Melder_throw (U"At least one of the table's elements is undefined.");
 		}
 
 		if (! TableOfReal_hasRowLabels (me)) {
@@ -592,7 +591,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 			long npool = 0;
 			for (long j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
-				long no = (long) floor (SSCP_getNumberOfObservations (t));
+				integer no = Melder_ifloor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i ++) {
 					for (long k = i; k <= p; k ++) {
 						t -> data [k] [i] = t -> data [i] [k] /= no - 1;
@@ -717,7 +716,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 			long npool = 0;
 			for (long j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
-				long no = (long) floor (SSCP_getNumberOfObservations (t));
+				integer no = Melder_ifloor (SSCP_getNumberOfObservations (t));
 				for (long i = 1; i <= p; i ++) {
 					for (long k = i; k <= p; k ++) {
 						t -> data [k] [i] = t -> data [i] [k] /= no - 1;

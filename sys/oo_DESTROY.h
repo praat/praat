@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,14 +31,14 @@
 	NUMmatrix_free <type> (our x, row1, col1);
 
 
-#define oo_ENUMx(type,storage,Type,x)
+#define oo_ENUMx(kType,storage,x)
 
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)
 
-#define oo_ENUMx_SET(type,storage,Type,x,setType)
+//#define oo_ENUMx_SET(kType,storage,x,setType)
 
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	NUMvector_free <type> (our x, min);
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//	NUMvector_free <type> (our x, min);
 
 #define oo_STRINGx(storage,x)  \
 	Melder_free (our x);
@@ -48,12 +48,12 @@
 		Melder_free (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		Melder_free (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (our x) { \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			Melder_free (our x [i]); \
 		NUMvector_free <char32*> (our x, min); \
 	}
@@ -66,20 +66,20 @@
 		our x [i]. destroy ();
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		our x [i]. destroy ();
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (our x) { \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			our x [i]. destroy (); \
 		NUMvector_free <struct##Type> (our x, min); \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (our x) { \
-		for (long i = row1; i <= row2; i ++) \
-			for (long j = col1; j <= col2; j ++) \
+		for (integer i = row1; i <= row2; i ++) \
+			for (integer j = col1; j <= col2; j ++) \
 				our x [i] [j]. destroy (); \
 		NUMmatrix_free <struct##Type> (our x, row1, col1); \
 	}

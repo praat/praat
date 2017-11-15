@@ -1,6 +1,6 @@
 /* Manipulation_def.h
  *
- * Copyright (C) 1992-2008,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ oo_DEFINE_CLASS (Manipulation, Function)
 		oo_DOUBLE (dummy12)
 		oo_AUTO_OBJECT (Intensity, 0, dummyIntensityAnalysis)
 		oo_AUTO_OBJECT (Formant, 1, dummyFormantAnalysis)
-		oo_INT (dummy4)
+		oo_INT16 (dummy4)
 		oo_DOUBLE (dummy5)
 		oo_DOUBLE (dummy6)
 		oo_DOUBLE (dummy7)

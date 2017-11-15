@@ -1,6 +1,6 @@
 /* Function_def.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,16 +41,16 @@ oo_DEFINE_CLASS (Function, Daata)
 			override { return xmax; }
 
 		virtual int v_domainQuantity () { return 0; }
-		virtual int v_getMinimumUnit (long ilevel) { (void) ilevel; return 0; }
-		virtual int v_getMaximumUnit (long ilevel) { (void) ilevel; return 0; }
-		virtual const char32 * v_getUnitText (long ilevel, int unit, unsigned long flags)
-			{ (void) ilevel; (void) unit; (void) flags; return U""; }
-		virtual bool v_isUnitLogarithmic (long ilevel, int unit)
-			{ (void) ilevel; (void) unit; return false; }
-		virtual double v_convertStandardToSpecialUnit (double value, long ilevel, int unit)
-			{ (void) ilevel; (void) unit; return value; }
-		virtual double v_convertSpecialToStandardUnit (double value, long ilevel, int unit)
-			{ (void) ilevel; (void) unit; return value; }
+		virtual int v_getMinimumUnit (integer /* level */) { return 0; }
+		virtual int v_getMaximumUnit (integer /* level */) { return 0; }
+		virtual const char32 * v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
+			{ return U""; }
+		virtual bool v_isUnitLogarithmic (integer /* level */, int /* unit */)
+			{ return false; }
+		virtual double v_convertStandardToSpecialUnit (double value, integer /* level */, int /* unit */)
+			{ return value; }
+		virtual double v_convertSpecialToStandardUnit (double value, integer /* level */, int /* unit */)
+			{ return value; }
 		virtual void v_shiftX (double xfrom, double xto);
 		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
 	#endif

@@ -77,6 +77,7 @@ autoSound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double
 
 void MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, long maxNumberOfIterations, double tol, int method);
 
+void MixingMatrix_and_Sound_improveUnmixing (MixingMatrix me, Sound thee, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double tol, int method);
 /*
 	Determine the matrix that diagonalizes a series of CrossCorrelationTables as well as possible.
 */

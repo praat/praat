@@ -1,6 +1,6 @@
 /* praat_statistics.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@
 #include "praatP.h"
 
 static struct {
-	long batchSessions, interactiveSessions;
+	integer batchSessions, interactiveSessions;
 	double memory;
 	char32 dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
 } statistics;
 
 void praat_statistics_prefs () {
-	Preferences_addLong (U"PraatShell.batchSessions", & statistics.batchSessions, 0);
-	Preferences_addLong (U"PraatShell.interactiveSessions", & statistics.interactiveSessions, 0);
+	Preferences_addInteger (U"PraatShell.batchSessions", & statistics.batchSessions, 0);
+	Preferences_addInteger (U"PraatShell.interactiveSessions", & statistics.interactiveSessions, 0);
 	Preferences_addDouble (U"PraatShell.memory", & statistics.memory, 0.0);
 	Preferences_addString (U"PraatShell.dateOfFirstSession", & statistics.dateOfFirstSession [0], U"");
 }
@@ -51,13 +51,23 @@ void praat_statistics_exit () {
 	statistics.memory += Melder_allocationSize ();
 }
 
+/*@praat
+	report$ = Report integer properties
+	sizeOfInteger = extractNumber (report$, "An indexing integer is ")
+	sizeOfPointer = extractNumber (report$, "A pointer is ")
+	assert sizeOfInteger = sizeOfPointer
+	sizeOfFileOffset = extractNumber (report$, "A file offset is ")
+	assert sizeOfFileOffset = 64
+@*/
 void praat_reportIntegerProperties () {
 	MelderInfo_open ();
 	MelderInfo_writeLine (U"Integer properties of this edition of Praat on this computer:\n");
+	MelderInfo_writeLine (U"A boolean is ",                sizeof (bool)        * 8, U" bits.");
 	MelderInfo_writeLine (U"A \"short integer\" is ",      sizeof (short)       * 8, U" bits.");
 	MelderInfo_writeLine (U"An \"integer\" is ",           sizeof (int)         * 8, U" bits.");
 	MelderInfo_writeLine (U"A \"long integer\" is ",       sizeof (long)        * 8, U" bits.");
 	MelderInfo_writeLine (U"A \"long long integer\" is ",  sizeof (long long)   * 8, U" bits.");
+	MelderInfo_writeLine (U"An indexing integer is ",      sizeof (integer)     * 8, U" bits.");
 	MelderInfo_writeLine (U"A pointer is ",                sizeof (void *)      * 8, U" bits.");
 	MelderInfo_writeLine (U"A memory object size is ",     sizeof (size_t)      * 8, U" bits.");
 	MelderInfo_writeLine (U"A file offset is ",            sizeof (off_t)       * 8, U" bits.");
@@ -141,7 +151,7 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (U"   Arrays: ", NUM_getTotalNumberOfArrays ());
 	MelderInfo_writeLine (U"   Things: ", theTotalNumberOfThings,
 		U" (objects in list: ", theCurrentPraatObjects -> n, U")");
-	long numberOfMotifWidgets =
+	integer numberOfMotifWidgets =
 	#if motif
 		Gui_getNumberOfMotifWidgets ();
 		MelderInfo_writeLine (U"   Motif widgets: ", numberOfMotifWidgets);

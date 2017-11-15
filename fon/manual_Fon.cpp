@@ -1,6 +1,6 @@
 /* manual_Fon.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -435,7 +435,7 @@ MAN_END
 double Excitation_soundPressureToPhon (double soundPressure, double bark);
 Uses auditory filter (width apx. 1 Bark) for masking.
 
-Excitation Excitation_create (double df, long nf);
+Excitation Excitation_create (double df, integer nf);
 	Function:
 		return a new instance of Excitation.
 	Preconditions:
@@ -1122,47 +1122,6 @@ INTRO (U"A command to draw the contents of a @Matrix to the @@Picture window@.")
 NORMAL (U"Every cell of the matrix is drawn as a rectangle filled with a grey value between white (if the content "
 	"of the cell is small) and black (if the content is large).")
 MAN_END
-
-/*
-if x > 1 and x < 1.5 then self * 1.3 else self fi
-
-
-
-je had gewoon de manual kunnen lezen (Help klikken bij Formula...).
-
->poging 1:
->  for col:=16000 to 24000 do {self[col] := self[col] * 1.3 }
-
-geen lussen in formules. Er is een automatische lus:
-for row := 1 to nrow do for col := 1 to ncol do self := ...
-
->poging 2:
->  col:=16000; for col:=16000 to 24000 do {self[col] := self[col] * 1.3 }
-
-geen toekenningen. Als je het 1000ste element op 8 wilt zetten, kun je doen
-
-Formula... if col=1000 then 8 else self fi
-
-of sneller:
-
-Set value... 1 1000 8
-
-Wat dus wel werkt, maar ERG traag is:
-
-for col = 16000 to 24000
-   value = Get value... 1 col
-   Set value... 1 col value*1.3
-endfor
-
->toen ben ik het wilde weg gaan proberen:
->  col=16000; for col:=16000 to 24000 do {self[col] := self[col] * 1.3 }
-
-de puntkomma betekent einde formule. Deze formule zet alles op 0,
-behalve element 16000, dat op 1 gezet wordt. De expressie is namelijk booleaans:
-"is col gelijk aan 16000"?
-
-Dit staat allemaal in de on-line handleiding, dus je hoeft niet te gokken!
-*/
 
 MAN_BEGIN (U"Matrix: Set value...", U"ppgb", 19980319)
 INTRO (U"A command to change the value of one cell in each selected @Matrix object.")

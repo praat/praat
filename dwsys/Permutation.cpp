@@ -63,7 +63,7 @@ static long Permutation_checkRange (Permutation me, long *from, long *to) {
 
 void Permutation_checkInvariant (Permutation me) {
 	autoPermutation thee = Data_copy (me);
-	NUMsort_l (thy numberOfElements, thy p);
+	NUMsort_integer (thy numberOfElements, thy p);
 	for (long i = 1; i <= my numberOfElements; i++) {
 		if (thy p[i] != i) {
 			Melder_throw (me, U":not a valid permutation.");
@@ -77,17 +77,17 @@ void structPermutation :: v_info () {
 }
 
 void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/) {
-	numberOfElements = texgeti4 (text);
+	numberOfElements = texgeti32 (text);
 	if (numberOfElements < 1) {
 		Melder_throw (U"Found a negative mumber of elements during reading.");
 	}
-	p = NUMvector_readText_i4 (1, numberOfElements, text, "p");
+	p = NUMvector_readText_integer (1, numberOfElements, text, "p");
 	Permutation_checkInvariant (this);
 }
 
 void Permutation_init (Permutation me, long numberOfElements) {
 	my numberOfElements = numberOfElements;
-	my p = NUMvector<long> (1, numberOfElements);
+	my p = NUMvector<integer> (1, numberOfElements);
 	Permutation_sort (me);
 }
 
@@ -169,7 +169,7 @@ void Permutation_swapBlocks (Permutation me, long from, long to, long blocksize)
 	}
 }
 
-void Permutation_permuteRandomly_inline (Permutation me, long from, long to) {
+void Permutation_permuteRandomly_inplace (Permutation me, long from, long to) {
 	try {
 		long n = Permutation_checkRange (me, &from, &to);
 
@@ -190,7 +190,7 @@ void Permutation_permuteRandomly_inline (Permutation me, long from, long to) {
 autoPermutation Permutation_permuteRandomly (Permutation me, long from, long to) {
 	try {
 		autoPermutation thee = Data_copy (me);
-		Permutation_permuteRandomly_inline (thee.get(), from, to);
+		Permutation_permuteRandomly_inplace (thee.get(), from, to);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not permuted.");
@@ -256,7 +256,7 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, long from, lo
 		}
 		autoPermutation pblocks = Permutation_create (nblocks);
 
-		Permutation_permuteRandomly_inline (pblocks.get(), 1, nblocks);
+		Permutation_permuteRandomly_inplace (pblocks.get(), 1, nblocks);
 		long first = from;
 		for (long iblock = 1; iblock <= nblocks; iblock++, first += blocksize) {
 			/* (n1,n2,n3,...) means: move block n1 to position 1 etc... */
@@ -268,7 +268,7 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, long from, lo
 
 			if (permuteWithinBlocks) {
 				long last = first + blocksize - 1;
-				Permutation_permuteRandomly_inline (thee.get(), first, last);
+				Permutation_permuteRandomly_inplace (thee.get(), first, last);
 				if (noDoublets && iblock > 0 && (thy p[first - 1] % blocksize) == (thy p[first] % blocksize)) {
 					Permutation_swapOneFromRange (thee.get(), first + 1, last, first, 0);
 				}
@@ -369,9 +369,9 @@ autoPermutation Permutation_reverse (Permutation me, long from, long to) {
 /* Replaces p with the next permutation (in the standard lexicographical ordering.
    Adapted from the GSL library
 */
-void Permutation_next_inline (Permutation me) {
+void Permutation_next_inplace (Permutation me) {
 	long size = my numberOfElements;
-	long *p = & my p[1];
+	integer *p = & my p[1];
 
 	if (size < 2) {
 		Melder_throw (U"Only one element.");
@@ -407,9 +407,9 @@ void Permutation_next_inline (Permutation me) {
 /* Replaces p with the previous permutation (in the standard lexicographical ordering.
    Adapted from the GSL library
 */
-void Permutation_previous_inline (Permutation me) {
+void Permutation_previous_inplace (Permutation me) {
 	long size = my numberOfElements;
-	long *p = & my p[1];
+	integer *p = & my p[1];
 
 	if (size < 2) {
 		Melder_throw (U"Only one element.");

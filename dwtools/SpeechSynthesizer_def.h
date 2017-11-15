@@ -17,57 +17,78 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#define ooSTRUCT SpeechSynthesizerVoice
-oo_DEFINE_CLASS (SpeechSynthesizerVoice, Daata)
-	oo_STRING (d_v_name)
+#define ooSTRUCT EspeakVoice
+oo_DEFINE_CLASS (EspeakVoice, Daata)
+	oo_STRING (v_name) // maximum 39 characters + 1 0-byte
+	oo_STRING (language_name) // maximum 19 characters + 1 0-byte
 
-	oo_LONG (d_phoneme_tab_ix)  // phoneme table number
-	oo_LONG (d_pitch_base)    // Hz
-	oo_LONG (d_pitch_range)   // Hz
+	oo_INT32 (phoneme_tab_ix)  // phoneme table number
+	oo_INT32 (pitch_base)    // Hz
+	oo_INT32 (pitch_range)   // Hz
 
-	oo_LONG (d_speedf1)
-	oo_LONG (d_speedf2)
-	oo_LONG (d_speedf3)
+	oo_INT32 (speedf1)
+	oo_INT32 (speedf2)
+	oo_INT32 (speedf3)
 
-	oo_DOUBLE (d_speed_percent)      // adjust the WPM speed by this percentage
-	oo_DOUBLE (d_flutter)
-	oo_DOUBLE (d_roughness)
-	oo_DOUBLE (d_echo_delay)
-	oo_DOUBLE (d_echo_amp)
-	oo_LONG (d_n_harmonic_peaks)  // highest formant which is formed from adding harmonics
-	oo_INT (d_peak_shape)        // alternative shape for formant peaks (0=standard 1=squarer)
-	oo_DOUBLE (d_voicing)           // 100% = 64, level of formant-synthesized sound
-	oo_DOUBLE (d_formant_factor)      // adjust nominal formant frequencies by this  because of the voice's pitch (256ths)
-	oo_DOUBLE (d_consonant_amp)     // amplitude of unvoiced consonants
-	oo_DOUBLE (d_consonant_ampv)    // amplitude of the noise component of voiced consonants
-	oo_DOUBLE (d_samplingFrequency)
-	oo_INT_VECTOR_FROM (d_klattv, 0, 7)
+	oo_INT32 (speed_percent)      // adjust the WPM speed by this percentage
+	oo_INT32 (flutter)
+	oo_INT32 (roughness)
+	oo_INT32 (echo_delay)
+	oo_INT32 (echo_amp)
+	oo_INT32 (n_harmonic_peaks)  // highest formant which is formed from adding harmonics
+	oo_INT32 (peak_shape)        // alternative shape for formant peaks (0=standard 1=squarer)
+	oo_INT32 (voicing)           // 100% = 64, level of formant-synthesized sound
+	oo_INT32 (formant_factor)      // adjust nominal formant frequencies by this  because of the voice's pitch (256ths)
+	oo_INT32 (consonant_amp)     // amplitude of unvoiced consonants
+	oo_INT32 (consonant_ampv)    // amplitude of the noise component of voiced consonants
+	oo_INT32 (samplerate)			// sampling frequency as integer Hz
+	oo_INT32 (numberOfKlattParameters) // default 8 
+	oo_INT_VECTOR_FROM (klattv, 1, numberOfKlattParameters)
 
 	// parameters used by Wavegen
-	oo_LONG (d_numberOfFormants)
-	oo_INT_VECTOR_FROM (d_freq, 0, d_numberOfFormants)		// 100% = 256
-	oo_INT_VECTOR_FROM (d_height, 0, d_numberOfFormants)	// 100% = 256
-	oo_INT_VECTOR_FROM (d_width, 0, d_numberOfFormants)		// 100% = 256
-	oo_INT_VECTOR_FROM (d_freqadd, 0, d_numberOfFormants)	// Hz
+	oo_INT32 (numberOfFormants) // 9
+	oo_INT_VECTOR (freq, numberOfFormants)		// (short) 100% = 256
+	oo_INT_VECTOR (height, numberOfFormants)	// (short) 100% = 256
+	oo_INT_VECTOR (width, numberOfFormants)		// (short) 100% = 256
+	oo_INT_VECTOR (freqadd, numberOfFormants)	// (short) Hz
 
 	// copies without temporary adjustments from embedded commands
-	oo_INT_VECTOR_FROM (d_freq2, 0, d_numberOfFormants)		// 100% = 256
-	oo_INT_VECTOR_FROM (d_height2, 0, d_numberOfFormants)	// 100% = 256
-	oo_INT_VECTOR_FROM (d_width2, 0, d_numberOfFormants)	// 100% = 256
+	oo_INT_VECTOR (freq2, numberOfFormants)		// (short) 100% = 256
+	oo_INT_VECTOR (height2, numberOfFormants)	// (short) 100% = 256
+	oo_INT_VECTOR (width2, numberOfFormants)	// (short) 100% = 256
 
-	oo_INT_VECTOR_FROM (d_breath, 0, d_numberOfFormants)	// amount of breath for each formant. breath[0] indicates whether any are set.
-	oo_INT_VECTOR_FROM (d_breathw, 0, d_numberOfFormants)	// width of each breath formant
+	oo_INT_VECTOR (breath, numberOfFormants)	// (int64) amount of breath for each formant. breath[0] indicates whether any are set.
+	oo_INT_VECTOR (breathw, numberOfFormants)	// width of each breath formant
+	oo_INT32 (numberOfToneAdjusts)
+	oo_UBYTE_VECTOR_FROM (tone_adjust, 1, numberOfToneAdjusts)
 
-oo_END_CLASS (SpeechSynthesizerVoice)
+oo_END_CLASS (EspeakVoice)
 #undef ooSTRUCT
 
 
 #define ooSTRUCT SpeechSynthesizer
 oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
+	oo_FROM (1)
+		oo_STRING (d_synthesizerVersion)
+	oo_ENDFROM
+
 	// sythesizers language /voice
-	oo_STRING (d_voiceLanguageName)
-	oo_STRING (d_voiceVariantName)
-	oo_LONG (d_wordsPerMinute)
+	oo_STRING (d_languageName)
+	oo_STRING (d_voiceName)
+	oo_FROM (1)
+		oo_STRING (d_phonemeSet)
+	oo_ENDFROM
+	#if oo_READING
+		if (formatVersion < 1) {
+			d_phonemeSet = Melder_dup (d_languageName);
+			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
+			oo_INTEGER (d_wordsPerMinute)
+		} else {
+			oo_DOUBLE (d_wordsPerMinute)
+		}
+	#else
+		oo_DOUBLE (d_wordsPerMinute)
+	#endif
 	// text-only, phonemes-only, mixed
 	oo_INT (d_inputTextFormat)
 	// 1/: output phonemes in espeak/ notation
@@ -79,23 +100,27 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	oo_DOUBLE (d_pitchRange)
 	// 1/2: output phonemes in espeak/IPA notation
 	oo_INT (d_outputPhonemeCoding)
-	oo_BOOL (d_estimateWordsPerMinute)
+
+	#if oo_READING_TEXT
+		if (formatVersion < 1) {
+			oo_INT (d_estimateSpeechRate)   // this used to be oo_BOOL, which was written in text as 0 or 1, which is inappropriate for boolean text
+		} else {
+			oo_QUESTION (d_estimateSpeechRate)
+		}
+	#else
+		oo_QUESTION (d_estimateSpeechRate)
+	#endif
 
 	#if !oo_READING && !oo_WRITING
 		// Filled by the call back
 		oo_AUTO_OBJECT (Table, 0, d_events)
 		oo_DOUBLE (d_internalSamplingFrequency)
-		oo_LONG (d_numberOfSamples)
-		oo_LONG (d_wavCapacity)
+		oo_INTEGER (d_numberOfSamples)
+		oo_INTEGER (d_wavCapacity)
 		oo_INT_VECTOR (d_wav, d_wavCapacity)
 	#endif
-	#if oo_READING
-		SpeechSynthesizer_initEspeak ();
-		SpeechSynthesizer_changeLanguageNameToCurrent (this);
-	#endif
 	#if oo_DECLARING
-		void v_info ()
-			override;
+		void v_info () override;
 	#endif
 
 oo_END_CLASS (SpeechSynthesizer)

@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2012,2015,2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
 	frequency of 16000 Hz is assumed.
 */
 
-autoDaata TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile file);
+autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, MelderFile file);
 /*
 	There are two types of TIMIT label files. One with phonetic labels, these
 	files have '.phn' as file extension. The other contains word labels and has
@@ -78,9 +78,9 @@ void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 
 void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName);
 
-void TextTier_changeLabels (TextTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
 
-void IntervalTier_changeLabels (IntervalTier me, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const char32 *label);
 
@@ -88,7 +88,7 @@ void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label
 
 void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *label, double minimumDuration);
 
-void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const char32 *search, const char32 *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
 
 /* Set the start/end time to a smaller/larger value.
  * If mark is null, only times are changed
@@ -113,11 +113,11 @@ void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, co
 
 // Precondition: if (preserveTimes) { my xmax <= thy xmin }
 // Postcondition: my xmin preserved
-void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes);
+void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool preserveTimes);
 
-void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes);
+void TextTiers_append_inplace (TextTier me, TextTier thee, bool preserveTimes);
 
-void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes);
+void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes);
 
 autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* me, bool preserveTimes);
 

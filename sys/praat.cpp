@@ -63,7 +63,7 @@ structPraatPicture theForegroundPraatPicture;
 PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
 struct PraatP praatP;
 static char32 programName [64];
-static structMelderDir homeDir { { 0 } };
+static structMelderDir homeDir { };
 /*
  * praatDirectory: preferences file, buttons file, message files, tracing file, plugins.
  *    Unix:   /u/miep/.myProg-dir   (without slash)
@@ -72,7 +72,7 @@ static structMelderDir homeDir { { 0 } };
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
  */
 extern structMelderDir praatDir;
-structMelderDir praatDir { { 0 } };
+structMelderDir praatDir { };
 /*
  * prefsFile: preferences file.
  *    Unix:   /u/miep/.myProg-dir/prefs5
@@ -80,7 +80,7 @@ structMelderDir praatDir { { 0 } };
  *                       or:   C:\Users\Miep\MyProg\Preferences5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs5
  */
-static structMelderFile prefsFile { 0 };
+static structMelderFile prefsFile { };
 /*
  * buttonsFile: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
@@ -88,12 +88,12 @@ static structMelderFile prefsFile { 0 };
  *                    or:   C:\Users\Miep\MyProg\Buttons5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons5
  */
-static structMelderFile buttonsFile { 0 };
+static structMelderFile buttonsFile { };
 #if defined (UNIX)
-	static structMelderFile pidFile { 0 };   // like /u/miep/.myProg-dir/pid
-	static structMelderFile messageFile { 0 };   // like /u/miep/.myProg-dir/message
+	static structMelderFile pidFile { };   // like /u/miep/.myProg-dir/pid
+	static structMelderFile messageFile { };   // like /u/miep/.myProg-dir/message
 #elif defined (_WIN32)
-	static structMelderFile messageFile { 0 };   // like C:\Users\Miep\myProg\Message.txt
+	static structMelderFile messageFile { };   // like C:\Users\Miep\myProg\Message.txt
 #endif
 /*
  * tracingFile: tracing file.
@@ -102,13 +102,13 @@ static structMelderFile buttonsFile { 0 };
  *                    or:   C:\Users\Miep\MyProg\Tracing.txt
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Tracing.txt
  */
-static structMelderFile tracingFile { 0 };
+static structMelderFile tracingFile { };
 
 static GuiList praatList_objects;
 
 /***** selection *****/
 
-long praat_idOfSelected (ClassInfo klas, int inplace) {
+integer praat_idOfSelected (ClassInfo klas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
@@ -154,7 +154,7 @@ char32 * praat_nameOfSelected (ClassInfo klas, int inplace) {
 
 int praat_numberOfSelected (ClassInfo klas) {
 	if (! klas) return theCurrentPraatObjects -> totalSelection;
-	long readableClassId = klas -> sequentialUniqueIdOfReadableClass;
+	integer readableClassId = klas -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", klas -> className, U".");
 	return theCurrentPraatObjects -> numberOfSelected [readableClassId];
 }
@@ -163,7 +163,7 @@ void praat_deselect (int IOBJECT) {
 	if (! SELECTED) return;
 	SELECTED = false;
 	theCurrentPraatObjects -> totalSelection -= 1;
-	long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
+	integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	Melder_assert (readableClassId != 0);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
@@ -181,7 +181,7 @@ void praat_select (int IOBJECT) {
 	theCurrentPraatObjects -> totalSelection += 1;
 	Thing object = theCurrentPraatObjects -> list [IOBJECT]. object;
 	Melder_assert (object);
-	long readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
+	integer readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", object -> classInfo -> className, U".");
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] += 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
@@ -215,18 +215,31 @@ autoCollection praat_getSelectedObjects () {
 char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 
 void praat_write_do (UiForm dia, const char32 *extension) {
-	int IOBJECT, found = 0;
-	Daata data = nullptr;
-	static MelderString defaultFileName { 0 };
-	WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
-	if (found == 1) {
-		MelderString_copy (& defaultFileName, data -> name);
-		if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
-		MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
-	} else if (! extension) {
-		MelderString_copy (& defaultFileName, U"praat.Collection");
+	static MelderString defaultFileName { };
+	if (extension && str32chr (extension, '.')) {
+		/*
+			Apparently, the "extension" is a complete file name.
+			This should that this should be used as the default file name.
+			(This case typically occurs when saving a picture.)
+		*/
+		MelderString_copy (& defaultFileName, extension);
 	} else {
-		MelderString_copy (& defaultFileName, U"praat.", extension);
+		/*
+			Apparently, the "extension" is not a complete file name.
+			We are expected to prepend the "extension" with the name of a selected object.
+		*/
+		int IOBJECT, found = 0;
+		Daata data = nullptr;
+		WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
+		if (found == 1) {
+			MelderString_copy (& defaultFileName, data -> name);
+			if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
+			MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
+		} else if (! extension) {
+			MelderString_copy (& defaultFileName, U"praat.Collection");
+		} else {
+			MelderString_copy (& defaultFileName, U"praat.", extension);
+		}
 	}
 	UiOutfile_do (dia, defaultFileName.string);
 }
@@ -294,7 +307,7 @@ void praat_cleanUpName (char32 *name) {
 /***** objects + commands *****/
 
 static void praat_new_unpackCollection (autoCollection me, const char32* myName) {
-	for (long idata = 1; idata <= my size; idata ++) {
+	for (integer idata = 1; idata <= my size; idata ++) {
 		autoDaata object = autoDaata ((Daata) my at [idata]);
 		my at [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
 		const char32 *name = object -> name ? object -> name : myName;
@@ -357,7 +370,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 	theCurrentPraatObjects -> totalBeingCreated ++;
 }
 
-static MelderString thePraatNewName { 0 };
+static MelderString thePraatNewName { };
 void praat_new (autoDaata me) {
 	praat_newWithFile (me.move(), nullptr, U"");
 }
@@ -416,18 +429,18 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 	bool first = true;
 	WHERE (SELECTED) {
 		SELECTED = false;
-		long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
+		integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 		theCurrentPraatObjects -> numberOfSelected [readableClassId] --;
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
 	theCurrentPraatObjects -> totalSelection = 0;
-	long numberOfSelected;
-	long *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
+	integer numberOfSelected;
+	integer *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
 	if (selected) {
-		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
+		for (integer iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
 			SELECTED = true;
-			long readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
+			integer readableClassId = theCurrentPraatObjects -> list [IOBJECT]. object -> classInfo -> sequentialUniqueIdOfReadableClass;
 			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
 			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
 			UiHistory_write (first ? U"\nselectObject: \"" : U"\nplusObject: \"");
@@ -436,7 +449,7 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 			first = false;
 			theCurrentPraatObjects -> totalSelection += 1;
 		}
-		NUMvector_free <long> (selected, 1);
+		NUMvector_free (selected, 1);
 	}
 	praat_show ();
 }
@@ -512,7 +525,7 @@ static void praat_exit (int exit_code) {
 					 * which owns the pid (this means sendpraat can only send to the latest Praat if more than one are open).
 					 */
 					autofile f = Melder_fopen (& pidFile, "r");
-					long pid;
+					long_not_integer pid;
 					if (fscanf (f, "%ld", & pid) < 1) throw MelderError ();
 					f.close (& pidFile);
 					if (pid == getpid ()) {   // is the pid in the pid file equal to our pid?
@@ -538,7 +551,7 @@ static void praat_exit (int exit_code) {
 				MelderString_append (& buffer, U"# and the buttons that you hid or showed.\n\n");
 				praat_saveMenuCommands (& buffer);
 				praat_saveAddedActions (& buffer);
-				MelderFile_writeText (& buttonsFile, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
+				MelderFile_writeText (& buttonsFile, buffer.string, kMelder_textOutputEncoding::ASCII_THEN_UTF16);
 			} catch (MelderError) {
 				Melder_clearError ();
 			}
@@ -670,9 +683,9 @@ int praat_installEditorN (Editor editor, DaataList objects) {
 	 * First check whether all objects in the Ordered are also in the List of Objects (Praat crashes if not),
 	 * and check whether there is room to add an editor for each.
 	 */
-	for (long iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
+	for (integer iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
 		Daata object = objects->at [iOrderedObject];
-		long iPraatObject = 1;
+		integer iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
 				int ieditor = 0;
@@ -693,9 +706,9 @@ int praat_installEditorN (Editor editor, DaataList objects) {
 	/*
 	 * There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
 	 */
-	for (long iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
+	for (integer iOrderedObject = 1; iOrderedObject <= objects->size; iOrderedObject ++) {
 		Daata object = objects->at [iOrderedObject];
-		long iPraatObject = 1;
+		integer iPraatObject = 1;
 		for (; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
 				int ieditor = 0;
@@ -769,7 +782,7 @@ static int publishProc (autoDaata me) {
 /***** QUIT *****/
 
 FORM (DO_Quit, U"Confirm Quit", U"Quit") {
-	LABEL (U"label", U"You have objects in your list!")
+	MUTABLE_LABEL (label, U"You have objects in your list!")
 	OK
 {
 	char32 prompt [300];
@@ -778,10 +791,10 @@ FORM (DO_Quit, U"Confirm Quit", U"Quit") {
 			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", praatP.title, U"?");
 		else
 			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", praatP.title, U"?");
-		SET_STRING (U"label", prompt);
+		SET_STRING (label, prompt)
 	} else if (theCurrentPraatObjects -> n) {
 		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", praatP.title, U"?");
-		SET_STRING (U"label", prompt);
+		SET_STRING (label, prompt)
 	} else {
 		praat_exit (0);
 	}
@@ -830,7 +843,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 				Melder_clearError ();
 				return true;   // OK
 			}
-			long pid = 0;
+			long_not_integer pid = 0;
 			int narg = fscanf (f, "#%ld", & pid);
 			f.close (& messageFile);
 			{// scope
@@ -1180,7 +1193,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	 * Also create names for message and tracing files.
 	 */
 	if (MelderDir_isNull (& praatDir)) {   // not yet set by the --prefdir option?
-		structMelderDir prefParentDir { { 0 } };   // directory under which to store our preferences directory
+		structMelderDir prefParentDir { };   // directory under which to store our preferences directory
 		Melder_getPrefDir (& prefParentDir);
 
 		/*
@@ -1229,9 +1242,9 @@ void praat_init (const char32 *title, int argc, char **argv)
 		Melder_tracingToFile (& tracingFile);
 	}
 
-	#if defined (NO_GRAPHICS)
+	#if defined (NO_GUI)
 		if (! Melder_batch) {
-			fprintf (stderr, "The barren edition of Praat cannot be used interactively. "
+			fprintf (stderr, "A no-GUI edition of Praat cannot be used interactively. "
 				"Supply \"--run\" and a script file name on the command line.\n");
 			exit (1);
 		}
@@ -1246,7 +1259,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 			 */
 			try {
 				autofile f = Melder_fopen (& pidFile, "w");
-				fprintf (f, "%ld", (long) getpid ());
+				fprintf (f, "%s", Melder8_integer (getpid ()));
 				f.close (& pidFile);
 			} catch (MelderError) {
 				Melder_clearError ();
@@ -1349,13 +1362,13 @@ void praat_init (const char32 *title, int argc, char **argv)
 		trace (U"showing the Objects window");
 		GuiThing_show (raam);
 	//Melder_fatal (U"stop");
-		#if defined (UNIX) && ! defined (NO_GRAPHICS)
+		#if defined (UNIX) && ! defined (NO_GUI)
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
 				#if ALLOW_GDK_DRAWING
-					fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window)));
+					fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window)));
 				#else
-					fprintf (f, " %ld", (long) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
+					fprintf (f, " %ld", (long_not_integer) GDK_WINDOW_XID (gtk_widget_get_window (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow))));
 				#endif
 				f.close (& pidFile);
 			} catch (MelderError) {
@@ -1390,7 +1403,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 	char32 name [256];
 	Melder_sprint (name,256, fileNameHead, programName, fileNameTail);
 	if (! MelderDir_isNull (startUpDirectory)) {   // should not occur on modern systems
-		structMelderFile startUp = { 0 };
+		structMelderFile startUp { };
 		MelderDir_getFile (startUpDirectory, name, & startUp);
 		if (! MelderFile_readable (& startUp))
 			return;   // it's OK if the file doesn't exist
@@ -1472,7 +1485,7 @@ void praat_run () {
 	 * On Unix and the Mac, we try no less than three start-up file names.
 	 */
 	#if defined (UNIX) || defined (macintosh)
-		structMelderDir usrLocal = { { 0 } };
+		structMelderDir usrLocal { };
 		Melder_pathToDir (U"/usr/local", & usrLocal);
 		executeStartUpFile (& usrLocal, U"", U"-startUp");
 	#endif
@@ -1489,14 +1502,14 @@ void praat_run () {
 		/* The Praat phase should remain praat_STARTING_UP,
 		 * because any added commands must not be included in the buttons file.
 		 */
-		structMelderFile searchPattern { 0 };
+		structMelderFile searchPattern { };
 		MelderDir_getFile (& praatDir, U"plugin_*", & searchPattern);
 		try {
 			autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
 			if (directoryNames -> numberOfStrings > 0) {
-				for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
-					structMelderDir pluginDir { { 0 } };
-					structMelderFile plugin { 0 };
+				for (integer i = 1; i <= directoryNames -> numberOfStrings; i ++) {
+					structMelderDir pluginDir { };
+					structMelderFile plugin { };
 					MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
 					MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
 					if (MelderFile_readable (& plugin)) {
@@ -1516,16 +1529,26 @@ void praat_run () {
 	}
 
 	Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
+	{ unsigned char dummy = 200;
+		Melder_assert ((int) dummy == 200);
+	}
 	{ int dummy = 200;
-		Melder_assert ((int) (signed char) dummy == -56);   // bingeti1 relies on this
+		Melder_assert ((int) (signed char) dummy == -56);   // bingeti8 relies on this
+		Melder_assert ((int) (unsigned char) dummy == 200);
+		Melder_assert ((double) dummy == 200.0);
+		Melder_assert ((double) (signed char) dummy == -56.0);
+		Melder_assert ((double) (unsigned char) dummy == 200.0);
+	}
+	{ int64 dummy = 200;
+		Melder_assert ((int) (signed char) dummy == -56);
 		Melder_assert ((int) (unsigned char) dummy == 200);
 		Melder_assert ((double) dummy == 200.0);
 		Melder_assert ((double) (signed char) dummy == -56.0);
 		Melder_assert ((double) (unsigned char) dummy == 200.0);
 	}
 	{ uint16 dummy = 40000;
-		Melder_assert ((int) (int16_t) dummy == -25536);   // bingeti2 relies on this
-		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete2 relies on this
+		Melder_assert ((int) (int16_t) dummy == -25536);   // bingeti16 relies on this
+		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete16 relies on this
 		Melder_assert ((double) dummy == 40000.0);
 		Melder_assert ((double) (int16_t) dummy == -25536.0);
 	}
@@ -1555,7 +1578,61 @@ void praat_run () {
 		Melder_assert (str32str (U"hellogoodbye", U"ogo"));
 		Melder_assert (! str32str (U"hellogoodbye", U"oygo"));
 	}
-
+	Melder_assert (isundef (undefined));
+	Melder_assert (isinf (1.0 / 0.0));
+	Melder_assert (isnan (0.0 / 0.0));
+	{
+		double x = sqrt (-10.0);
+		//if (! isnan (x)) printf ("sqrt (-10.0) = %g\n", x);   // -10.0 on Windows
+		x = sqrt_scalar (-10.0);
+		Melder_assert (isundef (x));
+	}
+	Melder_assert (isdefined (0.0));
+	Melder_assert (isdefined (1e300));
+	Melder_assert (isundef ((real) 1e320L));
+	Melder_assert (isundef (pow (10.0, 330)));
+	Melder_assert (isundef (0.0 / 0.0));
+	Melder_assert (isundef (1.0 / 0.0));
+	{
+		/*
+			Assumptions made in abcio.cpp:
+			`frexp()` returns an infinity if its argument is an infinity,
+			and not-a-number if its argument is not-a-number.
+		*/
+		int exponent;
+		Melder_assert (isundef (frexp (HUGE_VAL, & exponent)));
+		Melder_assert (isundef (frexp (0.0/0.0, & exponent)));
+		Melder_assert (isundef (frexp (undefined, & exponent)));
+		/*
+			The following relies on the facts that:
+			- positive infinity is not less than 1.0 (because it is greater than 1.0)
+			- NaN is not less than 1.0 (because it is not ordered)
+			
+			Note: we cannot replace `! (... < 1.0)` with `... >= 1.0`,
+			because `! (NaN < 1.0)` is true but `NaN >= 1.0` is false.
+		*/
+		Melder_assert (! (frexp (HUGE_VAL, & exponent) < 1.0));
+		Melder_assert (! (frexp (0.0/0.0, & exponent) < 1.0));
+		Melder_assert (! (frexp (undefined, & exponent) < 1.0));
+	}
+	{
+		numvec x { };
+		Melder_assert (! x.at);
+		Melder_assert (x.size == 0);
+		nummat y { };
+		Melder_assert (! y.at);
+		Melder_assert (y.nrow == 0);
+		Melder_assert (y.ncol == 0);
+		autonummat z {y.at,y.nrow,y.ncol};   // OK
+		autonummat a;
+		a = z.move();
+		autonumvec b { x };
+		//autonumvec c = x;   // implicit construction not OK
+	}
+	Melder_assert (sizeof (real32) == 4);
+	Melder_assert (sizeof (real64) == 8);
+	Melder_assert (sizeof (real80) >= 12);
+	Melder_assert (sizeof (integer) == sizeof (void *));
 	if (sizeof (off_t) < 8)
 		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
 

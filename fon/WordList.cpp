@@ -1,6 +1,6 @@
 /* WordList.cpp
  *
- * Copyright (C) 1999-2012,2015 Paul Boersma
+ * Copyright (C) 1999-2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
 
 Thing_implement (WordList, Daata, 0);
 
-static long WordList_count (WordList me) {
-	long n = 0;
+static integer WordList_count (WordList me) {
+	integer n = 0;
 	for (char32 *p = my string; *p; p ++) {
 		if (*p == '\n') n += 1;
 	}
@@ -48,7 +48,7 @@ static long WordList_count (WordList me) {
 
 void structWordList :: v_info () {
 	structDaata :: v_info ();
-	long n = WordList_count (this);
+	integer n = WordList_count (this);
 	if (! our length) our length = str32len (our string);
 	MelderInfo_writeLine (U"Number of words: ", n);
 	MelderInfo_writeLine (U"Number of characters: ", length - n);
@@ -57,7 +57,7 @@ void structWordList :: v_info () {
 void structWordList :: v_readBinary (FILE *f, int /*formatVersion*/) {
 	char32 *current, *p;
 	int kar = 0;
-	our length = bingeti4 (f);
+	our length = bingeti32 (f);
 	if (our length < 0)
 		Melder_throw (U"Wrong length ", our length, U".");
 	string = Melder_calloc (char32, our length + 1);
@@ -98,18 +98,18 @@ void structWordList :: v_readBinary (FILE *f, int /*formatVersion*/) {
 	}
 	*p = '\0';
 	if (p - string != length)
-		Melder_throw (U"Length in header (", length, U") does not match lenth of string (", (long) (p - string), U").");
+		Melder_throw (U"Length in header (", length, U") does not match lenth of string (", (integer) (p - string), U").");
 }
 
 void structWordList :: v_writeBinary (FILE *f) {
-	long currentLength, previousLength;
+	integer currentLength, previousLength;
 	if (! length) length = str32len (string);
-	binputi4 (length, f);
+	binputi32 (length, f);
 	if (length > 0) {
 		char32 *current = string, *kar = current;
 		for (kar = current; *kar != U'\n'; kar ++) { }
 		currentLength = kar - current;
-		for (long i = 0; i < currentLength; i ++)
+		for (integer i = 0; i < currentLength; i ++)
 			fputc ((int) current [i], f);   // TODO: check
 		for (;;) {
 			char32 *previous = current, *kar1, *kar2;
@@ -126,7 +126,7 @@ void structWordList :: v_writeBinary (FILE *f) {
 			fputc (128 + numberOfSame, f);
 			while (*kar2 != U'\n') kar2 ++;
 			currentLength = kar2 - current;
-			for (long i = 0; i < currentLength - numberOfSame; i ++)
+			for (integer i = 0; i < currentLength - numberOfSame; i ++)
 				fputc ((int) current [numberOfSame + i], f);   // TODO: check
 		}
 	}
@@ -134,11 +134,11 @@ void structWordList :: v_writeBinary (FILE *f) {
 
 autoWordList Strings_to_WordList (Strings me) {
 	try {
-		long totalLength = 0;
+		integer totalLength = 0;
 		/*
 		 * Check whether the strings are generic and sorted.
 		 */
-		for (long i = 1; i <= my numberOfStrings; i ++) {
+		for (integer i = 1; i <= my numberOfStrings; i ++) {
 			char32 *string = my strings [i], *p;
 			for (p = & string [0]; *p; p ++) {
 				if (*p > 126)
@@ -156,8 +156,8 @@ autoWordList Strings_to_WordList (Strings me) {
 		 * Concatenate the strings into the word list.
 		 */
 		char32 *q = thy string;
-		for (long i = 1; i <= my numberOfStrings; i ++) {
-			long length = str32len (my strings [i]);
+		for (integer i = 1; i <= my numberOfStrings; i ++) {
+			integer length = str32len (my strings [i]);
 			str32cpy (q, my strings [i]);
 			q += length;
 			*q ++ = '\n';
@@ -178,10 +178,10 @@ autoStrings WordList_to_Strings (WordList me) {
 		if (thy numberOfStrings > 0) {
 			thy strings = NUMvector <char32 *> (1, thy numberOfStrings);
 		}
-		for (long i = 1; i <= thy numberOfStrings; i ++) {
+		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			unsigned char *kar = word;
 			for (; *kar != '\n'; kar ++) { }
-			long length = kar - word;
+			integer length = kar - word;
 			thy strings [i] = Melder_calloc (char32, length + 1);
 			str32ncpy (thy strings [i], Melder_peek8to32 ((const char *) word), length);
 			thy strings [i] [length] = U'\0';
@@ -193,20 +193,20 @@ autoStrings WordList_to_Strings (WordList me) {
 	}
 }
 
-static long gotoStart (WordList me, long p) {
+static integer gotoStart (WordList me, integer p) {
 	if (p <= 0) return 0;
 	-- p;
 	while (p >= 0 && my string [p] != U'\n') p --;
 	return p + 1;
 }
 
-static long gotoNext (WordList me, long p) {
+static integer gotoNext (WordList me, integer p) {
 	if (p >= my length - 1) return my length;
 	while (my string [p] != U'\n') p ++;
 	return p + 1;
 }
 
-static long gotoPrevious (WordList me, long p) {
+static integer gotoPrevious (WordList me, integer p) {
 	if (p <= 0) return -1;
 	if (my string [-- p] != U'\n') return -1;   // should not occur
 	if (p <= 0) return 0;   // if first word is empty
@@ -235,7 +235,7 @@ bool WordList_hasWord (WordList me, const char32 *word) {
 	if (str32len (word) > 3333) return false;
 	Longchar_genericize32 (word, buffer);
 	if (! my length) my length = str32len (my string);
-	long p = my length / 2, d = p / 2;
+	integer p = my length / 2, d = p / 2;
 	while (d > 20) {
 		p = gotoStart (me, p);
 		int cf = compare (buffer, my string + p);

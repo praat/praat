@@ -2,7 +2,7 @@
 #define _Spectrum_h_
 /* Spectrum.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@
 	dy = y1 = 1.0   // y is row number
 */
 
-autoSpectrum Spectrum_create (double fmax, long nf);
+autoSpectrum Spectrum_create (double fmax, integer nf);
 /* Preconditions:
 		fmax > 0.0;
 		nf >= 2;

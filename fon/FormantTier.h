@@ -37,7 +37,7 @@ autoFormantTier Formant_downto_FormantTier (Formant me);
 autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp);
 autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths);
 
-void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier);
+void Sound_FormantTier_filter_inplace (Sound me, FormantTier formantTier);
 autoSound Sound_FormantTier_filter (Sound me, FormantTier formantTier);
 autoSound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier);
 

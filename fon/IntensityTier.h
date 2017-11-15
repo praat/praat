@@ -40,7 +40,7 @@ autoIntensityTier Intensity_to_IntensityTier_valleys (Intensity me);
 autoIntensityTier Intensity_PointProcess_to_IntensityTier (Intensity me, PointProcess pp);
 autoIntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, PointProcess pp);
 autoTableOfReal IntensityTier_downto_TableOfReal (IntensityTier me);
-void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity);
+void Sound_IntensityTier_multiply_inplace (Sound me, IntensityTier intensity);
 autoSound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale);
 
 /* End of file IntensityTier.h */

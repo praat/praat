@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 		thy x [i] = our x [i];
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		thy x [i] = our x [i];
 
 #define oo_VECTOR(type,storage,x,min,max)  \
@@ -35,17 +35,17 @@
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
 	if (our x) thy x = NUMmatrix_copy (our x, row1, row2, col1, col2);
 
-#define oo_ENUMx(type,storage,Type,x)  \
+#define oo_ENUMx(kType,storage,x)  \
 	thy x = our x;
 
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) thy x [i] = our x [i];
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
+//	for (int i = 0; i < n; i ++) thy x [i] = our x [i];
 
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) thy x [i] = our x [i];
+//#define oo_ENUMx_SET(kType,storage,x,setType)  \
+//	for (int i = 0; i <= (int) setType::MAX; i ++) thy x [i] = our x [i];
 
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	if (our x) thy x = NUMvector_copy (our x, min, max);
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//	if (our x) thy x = NUMvector_copy (our x, min, max);
 
 #define oo_STRINGx(storage,x)  \
 	if (our x) thy x = Melder_dup (our x);
@@ -55,13 +55,13 @@
 		if (our x [i]) thy x [i] = Melder_dup (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		if (our x [i]) thy x [i] = Melder_dup (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (our x) { \
 		thy x = NUMvector <char32*> (min, max); \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			if (our x [i]) thy x [i] = Melder_dup (our x [i]); \
 	}
 
@@ -73,21 +73,21 @@
 		our x [i]. copy (& thy x [i]);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		our x [i]. copy (& thy x [i]);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (x) { \
 		thy x = NUMvector <struct##Type> (min, max); \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			our x [i]. copy (& thy x [i]); \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (our x) { \
 		thy x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
-		for (long i = row1; i <= row2; i ++) \
-			for (long j = col1; j <= col2; j ++) \
+		for (integer i = row1; i <= row2; i ++) \
+			for (integer j = col1; j <= col2; j ++) \
 				our x [i] [j]. copy (& thy x [i] [j]); \
 	}
 
@@ -103,7 +103,7 @@
 	thy x._capacity = our x._capacity; \
 	thy x._ownItems = our x._ownItems; \
 	thy x._ownershipInitialized = our x._ownershipInitialized; \
-	for (long i = 1; i <= our x.size; i ++) { \
+	for (integer i = 1; i <= our x.size; i ++) { \
 		if (our x.at [i]) thy x.at [i] = Data_copy (our x.at [i]).releaseToAmbiguousOwner(); \
 	}
 

@@ -2,7 +2,7 @@
 #define _VocalTract_h_
 /* VocalTract.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ Thing_define (VocalTract, Vector) {
 		z [1] [1..nx]		// The area, in square metres.
 */
 
-autoVocalTract VocalTract_create (long nx, double dx);
+autoVocalTract VocalTract_create (integer nx, double dx);
 /*
 	Function:
 		create a VocalTract.

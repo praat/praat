@@ -73,7 +73,7 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 	}
 }
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, long flags, EditorCommandCallback commandCallback)
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, uint32 flags, EditorCommandCallback commandCallback)
 {
 	autoEditorCommand thee = Thing_new (EditorCommand);
 	thy d_editor = my d_editor;
@@ -91,7 +91,7 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cat
 
 /*GuiObject EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
 
-EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
+EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, uint32 flags) {
 	autoEditorMenu thee = Thing_new (EditorMenu);
 	thy d_editor = me;
 	thy menuTitle = Melder_dup (menuTitle);
@@ -101,11 +101,11 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, long flags) {
 
 /*GuiObject EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
-GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags, EditorCommandCallback commandCallback)
+GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags, EditorCommandCallback commandCallback)
 {
 	try {
-		long numberOfMenus = my menus.size;
-		for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
+		integer numberOfMenus = my menus.size;
+		for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
 			EditorMenu menu = my menus.at [imenu];
 			if (str32equ (menuTitle, menu -> menuTitle))
 				return EditorMenu_addCommand (menu, itemTitle, flags, commandCallback);
@@ -122,11 +122,11 @@ static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm /* sendi
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
 }
 
-GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, long flags,
+GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags,
 	const char32 *script)
 {
-	long numberOfMenus = my menus.size;
-	for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
+	integer numberOfMenus = my menus.size;
+	for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
 			autoEditorCommand cmd = Thing_new (EditorCommand);
@@ -139,7 +139,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 			if (str32len (script) == 0) {
 				cmd -> script = Melder_dup_f (U"");
 			} else {
-				structMelderFile file = { 0 };
+				structMelderFile file { };
 				Melder_relativePathToFile (script, & file);
 				cmd -> script = Melder_dup_f (Melder_fileToPath (& file));
 			}
@@ -157,8 +157,8 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 }
 
 void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive) {
-	int numberOfMenus = my menus.size;
-	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
+	integer numberOfMenus = my menus.size;
+	for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
 			GuiThing_setSensitive (menu -> menuWidget, sensitive);
@@ -168,11 +168,11 @@ void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive)
 }
 
 EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle) {
-	int numberOfMenus = my menus.size;
+	integer numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
 		if (str32equ (menuTitle, menu -> menuTitle)) {
-			int numberOfCommands = menu -> commands.size, icommand;
+			integer numberOfCommands = menu -> commands.size, icommand;
 			for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
 				EditorCommand command = menu -> commands.at [icommand];
 				if (str32equ (itemTitle, command -> itemTitle))
@@ -184,11 +184,11 @@ EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const c
 }
 
 void Editor_doMenuCommand (Editor me, const char32 *commandTitle, int narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
-	int numberOfMenus = my menus.size;
+	integer numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
-		long numberOfCommands = menu -> commands.size;
-		for (long icommand = 1; icommand <= numberOfCommands; icommand ++) {
+		integer numberOfCommands = menu -> commands.size;
+		for (integer icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = menu -> commands.at [icommand];
 			if (str32equ (commandTitle, command -> itemTitle)) {
 				command -> commandCallback (me, command, nullptr, narg, args, arguments, interpreter);
@@ -263,7 +263,7 @@ void structEditor :: v_restoreData () {
 static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 	if (my data) {
 		extern structMelderDir praatDir;
-		structMelderFile file = { 0 };
+		structMelderFile file { };
 		MelderDir_getFile (& praatDir, U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data, & file);
 		sendsocket (my callbackSocket, Melder_peek32to8 (my data -> name));
@@ -354,27 +354,28 @@ void structEditor :: v_createMenus () {
 	}
 }
 
+BOOLEAN_VARIABLE (v_form_pictureWindow_eraseFirst)
 void structEditor :: v_form_pictureWindow (EditorCommand cmd) {
-	LABEL (U"", U"Picture window:")
-	BOOLEAN (U"Erase first", true);
+	LABEL (U"Picture window:")
+	BOOLEAN_FIELD (v_form_pictureWindow_eraseFirst, U"Erase first", true)
 }
 void structEditor :: v_ok_pictureWindow (EditorCommand cmd) {
-	SET_INTEGER (U"Erase first", pref_picture_eraseFirst ());
+	SET_BOOLEAN (v_form_pictureWindow_eraseFirst, our pref_picture_eraseFirst ())
 }
-void structEditor :: v_do_pictureWindow (EditorCommand cmd) {
-	pref_picture_eraseFirst () = GET_INTEGER (U"Erase first");
+void structEditor :: v_do_pictureWindow (EditorCommand /* cmd */) {
+	our pref_picture_eraseFirst () = v_form_pictureWindow_eraseFirst;
 }
 
+OPTIONMENU_ENUM_VARIABLE (kEditor_writeNameAtTop, v_form_pictureMargins_writeNameAtTop)
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
-	UiField radio;
-	LABEL (U"", U"Margins:")
-	OPTIONMENU_ENUM (U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop_DEFAULT);
+	LABEL (U"Margins:")
+	OPTIONMENU_ENUM_FIELD (v_form_pictureMargins_writeNameAtTop, U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop::DEFAULT)
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (U"Write name at top", kEditor_writeNameAtTop, pref_picture_writeNameAtTop ());
+	SET_ENUM (v_form_pictureMargins_writeNameAtTop, kEditor_writeNameAtTop, pref_picture_writeNameAtTop ())
 }
-void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
-	pref_picture_writeNameAtTop () = GET_ENUM (kEditor_writeNameAtTop, U"Write name at top");
+void structEditor :: v_do_pictureMargins (EditorCommand /* cmd */) {
+	pref_picture_writeNameAtTop () = v_form_pictureMargins_writeNameAtTop;
 }
 
 static void gui_window_cb_goAway (Editor me) {
@@ -424,7 +425,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const char32 *
 		/*
 		 * Zero x: randomize between the left and right edge of the screen.
 		 */
-		left = NUMrandomInteger ((int) xmin + 4, (int) xmin + (int) widthmax - width - 4);
+		left = (int) NUMrandomInteger ((int) xmin + 4, (int) xmin + (int) widthmax - width - 4);
 		right = left + width;
 	}
 	if (y > 0) {
@@ -443,7 +444,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const char32 *
 		/*
 		 * Zero y: randomize between the top and bottom of the screen.
 		 */
-		top = NUMrandomInteger ((int) ymin + 4, (int) ymin + (int) heightmax - height - 4);
+		top = (int) NUMrandomInteger ((int) ymin + 4, (int) ymin + (int) heightmax - height - 4);
 		//Melder_casual (ymin, U" ", heightmax, U" ", height, U" ", top);
 		bottom = top + height;
 	}
@@ -505,13 +506,13 @@ void Editor_openPraatPicture (Editor me) {
 	my pictureGraphics = praat_picture_editor_open (my pref_picture_eraseFirst ());
 }
 void Editor_closePraatPicture (Editor me) {
-	if (my data && my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop_NO) {
+	if (my data && my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop::NO_) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
-			my pref_picture_writeNameAtTop () == kEditor_writeNameAtTop_FAR,
+			my pref_picture_writeNameAtTop () == kEditor_writeNameAtTop::FAR_,
 			my data -> name);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, true);

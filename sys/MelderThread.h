@@ -2,7 +2,7 @@
 #define _MelderThread_h_
 /* MelderThread.h
  *
- * Copyright (C) 2014,2016 Paul Boersma
+ * Copyright (C) 2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@
 	#define MelderThread_UNLOCK(_mutex)  _mutex = 0
 #endif
 
-static int MelderThread_getNumberOfProcessors () {
+inline static int MelderThread_getNumberOfProcessors () {
 	#if USE_WINTHREADS
 		return 8;
 	#elif USE_PTHREADS
@@ -121,21 +121,21 @@ static int MelderThread_getNumberOfProcessors () {
 		if (numberOfThreads == 1) {
 			func (args [0].get());
 		} else {
-			std::vector <pthread_t> threads (numberOfThreads);
+			std::vector <pthread_t> threads ((size_t) numberOfThreads);
 			try {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
-					(void) pthread_create (& threads [ithread - 1],
+					(void) pthread_create (& threads [(size_t) ithread - 1],
 						nullptr, (void*(*)(void *)) func, (void *) args [ithread - 1].get());
 				}
 				func (args [numberOfThreads - 1].get());
 			} catch (MelderError) {
 				for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
-					pthread_join (threads [ithread - 1], nullptr);
+					pthread_join (threads [(size_t) ithread - 1], nullptr);
 				}
 				throw;
 			}
 			for (int ithread = 1; ithread < numberOfThreads; ithread ++) {
-				pthread_join (threads [ithread - 1], nullptr);
+				pthread_join (threads [(size_t) ithread - 1], nullptr);
 			}
 		}
 	}

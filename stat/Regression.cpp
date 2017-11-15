@@ -1,6 +1,6 @@
 /* Regression.cpp
  *
- * Copyright (C) 2005-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2005-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,18 +44,18 @@ void structRegression :: v_info () {
 	Regression_Parent :: v_info ();
 	MelderInfo_writeLine (U"Factors:");
 	MelderInfo_writeLine (U"   Number of factors: ", our parameters.size);
-	for (long ivar = 1; ivar <= our parameters.size; ivar ++) {
+	for (integer ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Factor ", ivar, U": ", parm -> label);
 	}
 	MelderInfo_writeLine (U"Fitted coefficients:");
 	MelderInfo_writeLine (U"   Intercept: ", intercept);
-	for (long ivar = 1; ivar <= our parameters.size; ivar ++) {
+	for (integer ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Coefficient of factor ", parm -> label, U": ", parm -> value);
 	}
 	MelderInfo_writeLine (U"Ranges of values:");
-	for (long ivar = 1; ivar <= our parameters.size; ivar ++) {
+	for (integer ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
 		MelderInfo_writeLine (U"   Range of factor ", parm -> label, U": minimum ",
 			parm -> minimum, U", maximum ", parm -> maximum);
@@ -81,12 +81,12 @@ void Regression_addParameter (Regression me, const char32 *label, double minimum
 	}
 }
 
-long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName) {
-	for (long iparm = 1; iparm <= my parameters.size; iparm ++) {
+integer Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName) {
+	for (integer iparm = 1; iparm <= my parameters.size; iparm ++) {
 		RegressionParameter parm = my parameters.at [iparm];
 		if (Melder_equ (factorName, parm -> label)) return iparm;
 	}
-	Melder_throw (Thing_messageName (me), U" has no parameter named \"", factorName, U"\".");
+	Melder_throw (me, U" has no parameter named \"", factorName, U"\".");
 }
 
 Thing_implement (LinearRegression, Regression, 0);
@@ -103,10 +103,12 @@ autoLinearRegression LinearRegression_create () {
 
 autoLinearRegression Table_to_LinearRegression (Table me) {
 	try {
-		long numberOfIndependentVariables = my numberOfColumns - 1, numberOfParameters = my numberOfColumns;
-		long numberOfCells = my rows.size, icell, ivar;
+		integer numberOfIndependentVariables = my numberOfColumns - 1, numberOfParameters = my numberOfColumns;
 		if (numberOfParameters < 1)   // includes intercept
 			Melder_throw (U"Not enough columns (has to be more than 1).");
+		integer numberOfCells = my rows.size;
+		if (numberOfCells == 0)
+			Melder_throw (U"Not enough rows (0).");
 		if (numberOfCells < numberOfParameters) {
 			Melder_warning (U"Solution is not unique (more parameters than cases).");
 		}
@@ -114,13 +116,13 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 		autoNUMvector <double> b (1, numberOfCells);
 		autoNUMvector <double> x (1, numberOfParameters);
 		autoLinearRegression thee = LinearRegression_create ();
-		for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
+		for (integer ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			double minimum = Table_getMinimum (me, ivar);
 			double maximum = Table_getMaximum (me, ivar);
 			Regression_addParameter (thee.get(), my columnHeaders [ivar]. label, minimum, maximum, 0.0);
 		}
-		for (icell = 1; icell <= numberOfCells; icell ++) {
-			for (ivar = 1; ivar < numberOfParameters; ivar ++) {
+		for (integer icell = 1; icell <= numberOfCells; icell ++) {
+			for (integer ivar = 1; ivar < numberOfParameters; ivar ++) {
 				u [icell] [ivar] = Table_getNumericValue_Assert (me, icell, ivar);
 			}
 			u [icell] [numberOfParameters] = 1.0;   // for the intercept
@@ -128,7 +130,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 		}
 		NUMsolveEquation (u.peek(), numberOfCells, numberOfParameters, b.peek(), NUMeps * numberOfCells, x.peek());
 		thy intercept = x [numberOfParameters];
-		for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
+		for (integer ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			RegressionParameter parm = thy parameters.at [ivar];
 			parm -> value = x [ivar];
 		}

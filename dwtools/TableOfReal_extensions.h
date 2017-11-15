@@ -39,9 +39,9 @@ void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee);
 
 autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me);
 
-long *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me);
+integer *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me);
 
-autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, long index[], int reverse);
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index[], int reverse);
 // thy data[reverse ? i : index[i]][j] = my data[reverse ? index[i] : i]
 
 autoTableOfReal TableOfReal_createIrisDataset ();
@@ -51,6 +51,9 @@ autoTableOfReal TableOfReal_create_pols1973 (bool include_levels);
 autoTableOfReal TableOfReal_create_vanNierop1973 (bool include_levels);
 
 autoTableOfReal TableOfReal_create_weenink1983 (int option); /* M W C */
+
+/* The data for Fig. 2 in Sandwell (1987) */
+autoTableOfReal TableOfReal_create_sandwell1987 ();
 
 void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double *max);
 
@@ -115,10 +118,10 @@ int TableOfReal_hasRowLabels (TableOfReal me);
 int TableOfReal_hasColumnLabels (TableOfReal me);
 
 void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);
+	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp);
 
 void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);
+	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp);
 /*
 	Change all row/column labels. The 'search' and 'replace' string are
 	interpreted as regular expressions when 'use_regexp' != 0.
@@ -167,7 +170,7 @@ void TableOfReal_standardizeRows (TableOfReal me);
 
 autoTableOfReal TableOfReal_rankColumns (TableOfReal me);
 
-autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, int expand, int stats);
+autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool useMedians);
 /*
 	stats == 0? averages : medians
 	For a table with n rows and m different labels (m <= n):
@@ -184,7 +187,7 @@ autoTableOfReal TableOfReal_randomizeRows (TableOfReal me);
 /* For the inheritors */
 autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me);
 
-autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, int upper, int inverse);
+autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, bool upper, bool inverse);
 
 autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee);
 
@@ -193,7 +196,7 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, long myr
 /* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, Journal of Multivariate Analysis 62, 1-23. */
 double TableOfReal_normalityTest_BHEP (TableOfReal me, double *beta /* input and output */, double *tnb, double *lnmu, double *lnvar);
 
-autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, int by_columns, int center, int normalize);
+autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, bool by_columns, bool center, bool normalize);
 
 
 #pragma mark - class TableOfRealList
@@ -204,5 +207,6 @@ bool TableOfRealList_haveIdenticalDimensions (TableOfRealList me);
 
 autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me);
 
+autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, double xmin, double xmax, double nx, double ymin, double ymax, long ny, int /* method */);
 
 #endif /* _TableOfReal_extensions_h_ */

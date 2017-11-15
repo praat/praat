@@ -1,6 +1,6 @@
 /* CCA_and_Correlation.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2011, 2015 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,8 +125,8 @@ double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_
 	double redundancy = 0.0;
 	for (long icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++) {
 		double varianceFraction = CCA_and_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
-		if (varianceFraction == NUMundefined) {
-			return NUMundefined;
+		if (isundef (varianceFraction)) {
+			return undefined;
 		}
 		redundancy += varianceFraction * my y -> eigenvalues[icv];
 	}

@@ -175,7 +175,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 	return me.releaseToAmbiguousOwner();
 }
 
-unsigned long theGuiTopLowAccelerators [8];
+uinteger theGuiTopLowAccelerators [8];
 
 void GuiWindow_addMenuBar (GuiWindow me) {
 	#if gtk

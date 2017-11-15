@@ -23,10 +23,10 @@
 
 #include "NUM2.h"
 
-void NUMmad (double *x, long n, double *location, int wantlocation, double *mad, double *work) {
+void NUMmad (double *x, integer n, double *location, bool wantlocation, double *mad, double *work) {
 	double *tmp = work;
 
-	*mad = NUMundefined;
+	*mad = undefined;
 	if (n < 1) {
 		Melder_throw (U"The dimension must be at least 1");
 	}
@@ -40,7 +40,7 @@ void NUMmad (double *x, long n, double *location, int wantlocation, double *mad,
 		tmp = atmp.peek();
 	}
 
-	for (long i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i++) {
 		tmp[i] = x[i];
 	}
 
@@ -49,7 +49,7 @@ void NUMmad (double *x, long n, double *location, int wantlocation, double *mad,
 		*location = NUMquantile (n, tmp, 0.5);
 	}
 
-	for (long i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i++) {
 		tmp[i] = fabs (tmp[i] - *location);
 	}
 
@@ -61,12 +61,12 @@ static double NUMgauss (double x) {
 	return NUM1_sqrt2pi * exp (- 0.5 * x * x);
 }
 
-void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
-                          double *scale, int wantscale, double k, double tol, double *work) {
+void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocation,
+                          double *scale, bool wantscale, double k, double tol, double *work) {
 	double *tmp = work;
 	double theta = 2.0 * NUMgaussP (k) - 1.0;
 	double beta = theta + k * k * (1.0 - theta) - 2.0 * k * NUMgauss (k);
-	long n1 = n;
+	integer n1 = n;
 
 	autoNUMvector<double> atmp;
 	if (work == 0)  {
@@ -96,7 +96,7 @@ void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 		double low  = mu0 - k * s0;
 		double high = mu0 + k * s0;
 
-		for (long i = 1; i <= n; i++) {
+		for (integer i = 1; i <= n; i++) {
 			if (x[i] < low) {
 				tmp[i] = low;
 			} else if (x[i] > high) {
@@ -107,14 +107,14 @@ void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 		}
 		if (wantlocation) {
 			mu1 = 0.0;
-			for (long i = 1; i <= n; i++) {
+			for (integer i = 1; i <= n; i++) {
 				mu1 += tmp[i];
 			}
 			mu1 /= n;
 		}
 		if (wantscale) {
 			s1 = 0.0;
-			for (long i = 1; i <= n; i++) {
+			for (integer i = 1; i <= n; i++) {
 				double dx = tmp[i] - mu1;
 				s1 += dx * dx;
 			}

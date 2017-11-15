@@ -1,6 +1,6 @@
 /* FujisakiPitch.cpp
  *
- * Copyright (C) 2002-2011,2015,2016 Paul Boersma
+ * Copyright (C) 2002-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,11 +103,11 @@ autoFujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double /* time
 		/*
 		 * Tidy up.
 		 */
-		for (long i = 1; i <= thy phraseCommands.size; i ++) {
+		for (integer i = 1; i <= thy phraseCommands.size; i ++) {
 			FujisakiCommand phraseCommand = thy phraseCommands.at [i];
 			/* ... */
 		}
-		for (long i = 1; i <= thy accentCommands.size; i ++) {
+		for (integer i = 1; i <= thy accentCommands.size; i ++) {
 			FujisakiCommand accentCommand = thy accentCommands.at [i];
 			/* ... */
 		}

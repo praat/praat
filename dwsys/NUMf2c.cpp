@@ -2,7 +2,7 @@
 
 #include <ctype.h>
 #include "NUMf2c.h"
-#include "melder.h"
+//#include "melder.h"
 
 double d_sign (double *a, double *b) {
 	double x;
@@ -10,16 +10,16 @@ double d_sign (double *a, double *b) {
 	return (*b >= 0.0 ? x : -x);
 }
 
-long int lsame_ (const char *ca, const char *cb) {
+integer lsame_ (const char *ca, const char *cb) {
 	int a = * (unsigned char *) ca;
 	int b = * (unsigned char *) cb;
 	return tolower (a) == tolower (b);
 }
 
-double pow_di (double *ap, long *bp) {
+double pow_di (double *ap, integer *bp) {
 	double pow, x;
-	long n;
-	unsigned long u;
+	integer n;
+	uinteger u;
 
 	pow = 1;
 	x = *ap;
@@ -44,12 +44,12 @@ double pow_di (double *ap, long *bp) {
 	return (pow);
 }
 
-void s_cat (char *lp, const char *rpp[], long rnp[], long *np, long ll) {
-	long i, nc;
+void s_cat (char *lp, const char *rpp[], integer rnp[], integer *np, integer ll) {
+	integer i, nc;
 	char *rp;
-	long n = *np;
+	integer n = *np;
 #ifndef NO_OVERWRITE
-	long L, m;
+	integer L, m;
 	char *lp0, *lp1;
 
 	lp0 = 0;
@@ -97,7 +97,7 @@ void s_cat (char *lp, const char *rpp[], long rnp[], long *np, long ll) {
 
 
 /* compare two strings */
-long s_cmp (const char *a0, const char *b0, long la, long lb) {
+integer s_cmp (const char *a0, const char *b0, integer la, integer lb) {
 	register unsigned char *a, *aend, *b, *bend;
 	a = (unsigned char *) a0;
 	b = (unsigned char *) b0;
@@ -139,7 +139,7 @@ long s_cmp (const char *a0, const char *b0, long la, long lb) {
 	return (0);
 }
 
-void s_copy (register char *a, register char *b, long la, long lb) {
+void s_copy (register char *a, register char *b, integer la, integer lb) {
 	register char *aend, *bend;
 
 	aend = a + la;

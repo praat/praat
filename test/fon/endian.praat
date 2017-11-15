@@ -1,9 +1,13 @@
 echo Endian...
-procedure do
+
+keepFiles = 0
+
+procedure do testCorrect
 	Read from file... test.wav
 	energyInAir = Get energy in air
 	assert "'energyInAir:11'" = "0.00008397361"
 
+if testCorrect
 	Read from file... test.Sound
 	energyInAir2 = Get energy in air
 	Remove
@@ -49,23 +53,29 @@ procedure do
 	deleteFile ("test3.sdf")
 	energyInAir3 = Get energy in air
 	assert energyInAir3 = energyInAir2
+endif
 
 	Remove
 
-	Create Sound... test 0 100 22050 0.1 * randomGauss (0, 1)
+	duration = 100
+	Create Sound: "test", 0, duration, 22050, ~ 0.1 * randomGauss (0, 1)
 	for i to 2
 		stopwatch
-		Write to WAV file... kanweg.Sound
+		Save as WAV file: "kanweg.wav"
 		t1 = stopwatch
+		keepFiles or deleteFile: "kanweg.wav"
 		stopwatch
-		Write to AIFF file... kanweg.Sound
+		Save as AIFF file: "kanweg.aiff"
 		t2 = stopwatch
+		keepFiles or deleteFile: "kanweg.aiff"
 		stopwatch
-		Write to binary file... kanweg.Sound
+		Save as binary file: "kanweg.Sound"
 		t3 = stopwatch
+		keepFiles or deleteFile: "kanweg.Sound"
 		stopwatch
-		Write to FLAC file... kanweg.Sound
+		Save as FLAC file: "kanweg.flac"
 		t4 = stopwatch
+		keepFiles or deleteFile: "kanweg.flac"
 		printline 't1:2' 't2:2' 't3:2' 't4:2'
 	endfor
 	Remove
@@ -112,10 +122,13 @@ procedure do
 endproc
 printline Optimized:
 Debug... no 0
-call do
+call do 1
 printline Portable:
 Debug... no 18
-call do
+call do 1
+printline Native:
+Debug... no 181
+call do 0
 Debug... no 0
 
 printline OK

@@ -2,7 +2,7 @@
 #define _PairDistribution_h_
 /* PairDistribution.h
  *
- * Copyright (C) 1997-2011,2015 Paul Boersma
+ * Copyright (C) 1997-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,20 +30,20 @@ int PairProbability_compare (PairProbability me, PairProbability thee) noexcept;
 
 autoPairDistribution PairDistribution_create ();
 
-const char32 * PairDistribution_getString1 (PairDistribution me, long pairNumber);
-const char32 * PairDistribution_getString2 (PairDistribution me, long pairNumber);
-double PairDistribution_getWeight (PairDistribution me, long pairNumber);
+const char32 * PairDistribution_getString1 (PairDistribution me, integer pairNumber);
+const char32 * PairDistribution_getString2 (PairDistribution me, integer pairNumber);
+double PairDistribution_getWeight (PairDistribution me, integer pairNumber);
 
 void PairDistribution_add (PairDistribution me, const char32 *string1, const char32 *string2, double weight);
 void PairDistribution_removeZeroWeights (PairDistribution me);
-void PairDistribution_to_Stringses (PairDistribution me, long nout, autoStrings *strings1, autoStrings *strings2);
+void PairDistribution_to_Stringses (PairDistribution me, integer nout, autoStrings *strings1, autoStrings *strings2);
 void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **string2);
 
 void PairDistribution_swapInputsAndOutputs (PairDistribution me);
 
 double PairDistribution_getFractionCorrect_maximumLikelihood (PairDistribution me);
 double PairDistribution_getFractionCorrect_probabilityMatching (PairDistribution me);
-double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions thee, long column);
+double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, Distributions thee, integer column);
 
 autoTable PairDistribution_to_Table (PairDistribution me);
 

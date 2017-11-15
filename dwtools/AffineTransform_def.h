@@ -20,7 +20,7 @@
 #define ooSTRUCT AffineTransform
 oo_DEFINE_CLASS (AffineTransform, Daata)
 
-	oo_LONG (n)
+	oo_INTEGER (n)
 	oo_DOUBLE_VECTOR (t, n)
 	oo_DOUBLE_MATRIX (r, n, n)
 

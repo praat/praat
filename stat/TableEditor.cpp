@@ -45,12 +45,12 @@ void structTableEditor :: v_info () {
 
 static void updateVerticalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	GuiScrollBar_set (my verticalScrollBar, NUMundefined, table -> rows.size + 1, my topRow, NUMundefined, NUMundefined, NUMundefined);
+	GuiScrollBar_set (my verticalScrollBar, undefined, table -> rows.size + 1, my topRow, undefined, undefined, undefined);
 }
 
 static void updateHorizontalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	GuiScrollBar_set (my horizontalScrollBar, NUMundefined, table -> numberOfColumns + 1, my leftColumn, NUMundefined, NUMundefined, NUMundefined);
+	GuiScrollBar_set (my horizontalScrollBar, undefined, table -> numberOfColumns + 1, my leftColumn, undefined, undefined, undefined);
 }
 
 void structTableEditor :: v_dataChanged () {
@@ -66,13 +66,13 @@ void structTableEditor :: v_dataChanged () {
 
 static void menu_cb_preferences (TableEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"TableEditor preferences", nullptr);
-		OPTIONMENU (U"The symbols %#_^ in labels", my default_useTextStyles () + 1)
+		OPTIONMENU (useTextStyles, U"The symbols %#_^ in labels", my default_useTextStyles () + 1)
 			OPTION (U"are shown as typed")
 			OPTION (U"mean italic/bold/sub/super")
 	EDITOR_OK
-		SET_INTEGER (U"The symbols %#_^ in labels", my p_useTextStyles + 1)
+		SET_OPTION (useTextStyles, my p_useTextStyles + 1)
 	EDITOR_DO
-		my pref_useTextStyles () = my p_useTextStyles = GET_INTEGER (U"The symbols %#_^ in labels") - 1;
+		my pref_useTextStyles () = my p_useTextStyles = useTextStyles - 1;
 		Graphics_updateWs (my graphics.get());
 	EDITOR_END
 }
@@ -111,8 +111,8 @@ void structTableEditor :: v_draw () {
 	/*
 	 * We fit 200 rows in 40 inches, which is 14.4 points per row.
 	 */
-	long rowmin = topRow, rowmax = rowmin + 197;
-	long colmin = leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
+	integer rowmin = topRow, rowmax = rowmin + 197;
+	integer colmin = leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
 	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
 	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
 	Graphics_clearWs (graphics.get());
@@ -127,7 +127,7 @@ void structTableEditor :: v_draw () {
 	 * Determine the width of the column with the row numbers.
 	 */
 	columnWidth = Graphics_textWidth (graphics.get(), U"row");
-	for (long irow = rowmin; irow <= rowmax; irow ++) {
+	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		cellWidth = Graphics_textWidth (graphics.get(), Melder_integer (irow));
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 	}
@@ -139,13 +139,13 @@ void structTableEditor :: v_draw () {
 	/*
 	 * Determine the width of the columns.
 	 */
-	for (long icol = colmin; icol <= colmax; icol ++) {
+	for (integer icol = colmin; icol <= colmax; icol ++) {
 		const char32 *columnLabel = table -> columnHeaders [icol]. label;
 		columnWidth = Graphics_textWidth (graphics.get(), Melder_integer (icol));
 		if (! columnLabel) columnLabel = U"";
 		cellWidth = Graphics_textWidth (graphics.get(), columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
-		for (long irow = rowmin; irow <= rowmax; irow ++) {
+		for (integer irow = rowmin; irow <= rowmax; irow ++) {
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
@@ -166,13 +166,13 @@ void structTableEditor :: v_draw () {
 	 * Show the row numbers.
 	 */
 	Graphics_text (graphics.get(), columnLeft [0] / 2, rowmin - 1, U"row");
-	for (long irow = rowmin; irow <= rowmax; irow ++) {
+	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		Graphics_text (graphics.get(), columnLeft [0] / 2, irow, irow);
 	}
 	/*
 	 * Show the column labels.
 	 */
-	for (long icol = colmin; icol <= colmax; icol ++) {
+	for (integer icol = colmin; icol <= colmax; icol ++) {
 		double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 		const char32 *columnLabel = table -> columnHeaders [icol]. label;
 		if (! columnLabel || columnLabel [0] == U'\0') columnLabel = U"?";
@@ -182,8 +182,8 @@ void structTableEditor :: v_draw () {
 	/*
 	 * Show the cell contents.
 	 */
-	for (long irow = rowmin; irow <= rowmax; irow ++) {
-		for (long icol = colmin; icol <= colmax; icol ++) {
+	for (integer irow = rowmin; irow <= rowmax; irow ++) {
+		for (integer icol = colmin; icol <= colmax; icol ++) {
 			double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
@@ -305,7 +305,7 @@ autoTableEditor TableEditor_create (const char32 *title, Table table) {
 		Graphics_setWsViewport (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
 		Graphics_setWsWindow (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
 		Graphics_setViewport (my graphics.get(), 0.0, size_pixels, 0.0, size_pixels);
-		Graphics_setFont (my graphics.get(), kGraphics_font_COURIER);
+		Graphics_setFont (my graphics.get(), kGraphics_font::COURIER);
 		Graphics_setFontSize (my graphics.get(), 12);
 		Graphics_setUnderscoreIsSubscript (my graphics.get(), false);
 		Graphics_setAtSignIsLink (my graphics.get(), true);

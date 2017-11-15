@@ -128,8 +128,8 @@ void structGraphicsScreen :: v_destroy () noexcept {
 			trace (U"copying the device-independent bits to the savable bitmap.");
 
 			/*
-			for (long irow = 1; irow <= height; irow ++) {
-				for (long icol = 1; icol <= width; icol ++) {
+			for (integer irow = 1; irow <= height; irow ++) {
+				for (integer icol = 1; icol <= width; icol ++) {
 					unsigned char blue = *bits ++, green = *bits ++, red = *bits ++, alpha = 255 - *bits ++;
 					Gdiplus::Color gdiplusColour (alpha, red, green, blue);
 					gdiplusBitmap. SetPixel (icol - 1, height - irow, gdiplusColour);
@@ -211,7 +211,7 @@ void structGraphicsScreen :: v_destroy () noexcept {
 }
 
 void structGraphicsScreen :: v_flushWs () {
-	#if cairo
+	#if cairo && gtk
 		// Ik weet niet of dit is wat het zou moeten zijn ;)
 		//gdk_window_process_updates (d_window, true);   // this "works" but is incorrect because it's not the expose events that have to be carried out
 		//gdk_window_flush (d_window);
@@ -241,7 +241,7 @@ void Graphics_flushWs (Graphics me) {
 }
 
 void structGraphicsScreen :: v_clearWs () {
-	#if cairo
+	#if cairo && gtk
 		GdkRectangle rect;
 		if (our d_x1DC < our d_x2DC) {
 			rect.x = our d_x1DC;
@@ -277,7 +277,7 @@ void structGraphicsScreen :: v_clearWs () {
 		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
 	#elif quartz
         GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
-        if (cocoaDrawingArea) {
+        if (cocoaDrawingArea && ! [cocoaDrawingArea isHiddenOrHasHiddenAncestor]) {   // can be called at destruction time
             NSRect rect;
             if (our d_x1DC < our d_x2DC) {
                 rect.origin.x = our d_x1DC;
@@ -328,57 +328,58 @@ void structGraphicsScreen :: v_updateWs () {
 	 * the idea is to generate an expose event to which the drawing area will
 	 * respond by redrawing its contents from the (changed) data.
 	 */
-	#if cairo
-		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (my drawingArea -> d_widget));
+	#if cairo && gtk
+		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (our d_drawingArea -> d_widget));
 		GdkRectangle rect;
 
-		if (this -> d_x1DC < this -> d_x2DC) {
-			rect.x = this -> d_x1DC;
-			rect.width = this -> d_x2DC - this -> d_x1DC;
+		if (our d_x1DC < our d_x2DC) {
+			rect.x = our d_x1DC;
+			rect.width = our d_x2DC - our d_x1DC;
 		} else {
-			rect.x = this -> d_x2DC;
-			rect.width = this -> d_x1DC - this -> d_x2DC;
+			rect.x = our d_x2DC;
+			rect.width = our d_x1DC - our d_x2DC;
 		}
 
-		if (this -> d_y1DC < this -> d_y2DC) {
-			rect.y = this -> d_y1DC;
-			rect.height = this -> d_y2DC - this -> d_y1DC;
+		if (our d_y1DC < our d_y2DC) {
+			rect.y = our d_y1DC;
+			rect.height = our d_y2DC - our d_y1DC;
 		} else {
-			rect.y = this -> d_y2DC;
-			rect.height = this -> d_y1DC - this -> d_y2DC;
+			rect.y = our d_y2DC;
+			rect.height = our d_y1DC - our d_y2DC;
 		}
 
-		if (d_cairoGraphicsContext && d_drawingArea) {  // update clipping rectangle to new graphics size
-			cairo_reset_clip (d_cairoGraphicsContext);
-			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
-			cairo_clip (d_cairoGraphicsContext);
+		if (our d_cairoGraphicsContext && our d_drawingArea) {  // update clipping rectangle to new graphics size
+			cairo_reset_clip (our d_cairoGraphicsContext);
+			cairo_rectangle (our d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
+			cairo_clip (our d_cairoGraphicsContext);
 		}
 		#if ALLOW_GDK_DRAWING
-			gdk_window_clear (d_window);
+			gdk_window_clear (our d_window);
 		#endif
-		gdk_window_invalidate_rect (d_window, & rect, true);
-		//gdk_window_process_updates (d_window, true);
+		gdk_window_invalidate_rect (our d_window, & rect, true);
+		//gdk_window_process_updates (our d_window, true);
 	#elif gdi
 		//clear (this); // lll
-		if (d_winWindow) InvalidateRect (d_winWindow, nullptr, true);
+		if (our d_winWindow) InvalidateRect (our d_winWindow, nullptr, true);
 	#elif quartz
-        NSView *view =  d_macView;
+        NSView *view = our d_macView;
+		Melder_assert (!! view);
         NSRect rect;
     
-        if (this -> d_x1DC < this -> d_x2DC) {
-            rect.origin.x = this -> d_x1DC;
-            rect.size.width = this -> d_x2DC - this -> d_x1DC;
+        if (our d_x1DC < our d_x2DC) {
+            rect.origin.x = our d_x1DC;
+            rect.size.width = our d_x2DC - our d_x1DC;
         } else {
-            rect.origin.x = this -> d_x2DC;
-            rect.size.width = this -> d_x1DC - this -> d_x2DC;
+            rect.origin.x = our d_x2DC;
+            rect.size.width = our d_x1DC - our d_x2DC;
         }
         
-        if (this -> d_y1DC < this -> d_y2DC) {
-            rect.origin.y = this -> d_y1DC;
-            rect.size.height = this -> d_y2DC - this -> d_y1DC;
+        if (our d_y1DC < our d_y2DC) {
+            rect.origin.y = our d_y1DC;
+            rect.size.height = our d_y2DC - our d_y1DC;
         } else {
-            rect.origin.y = this -> d_y2DC;
-            rect.size.height = this -> d_y1DC - this -> d_y2DC;
+            rect.origin.y = our d_y2DC;
+            rect.size.height = our d_y1DC - our d_y2DC;
         }
     
         //[view setNeedsDisplayInRect: rect];
@@ -424,7 +425,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 
 	/* Fill in new members. */
 
-	#if cairo
+	#if cairo && gtk
 		my d_display = (GdkDisplay *) gdk_display_get_default ();
 		_GraphicsScreen_text_init (me);
 		#if ALLOW_GDK_DRAWING
@@ -526,7 +527,7 @@ autoGraphics Graphics_create_screenPrinter (void *display, void *window) {
 autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	trace (U"begin");
 	autoGraphicsScreen me = Thing_new (GraphicsScreen);
-	#if cairo
+	#if cairo && gtk
 		GtkRequisition realsize;
 		GtkAllocation allocation;
 	#elif gdi
@@ -544,7 +545,7 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	#elif quartz
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	#if cairo
+	#if cairo && gtk
 		Graphics_init (me.get(), Gui_getResolution (my d_drawingArea -> d_widget));
 		GraphicsScreen_init (me.get(), GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget));
 	#elif gdi
@@ -555,7 +556,7 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		GraphicsScreen_init (me.get(), my d_drawingArea -> d_widget, my d_drawingArea -> d_widget);
 	#endif
 
-	#if cairo
+	#if cairo && gtk
 		// fb: is really the request meant or rather the actual size, aka allocation?
 		gtk_widget_size_request (GTK_WIDGET (my d_drawingArea -> d_widget), & realsize);
 		gtk_widget_get_allocation (GTK_WIDGET (my d_drawingArea -> d_widget), & allocation);
@@ -632,8 +633,8 @@ autoGraphics Graphics_create_pngfile (MelderFile file, int resolution,
 		SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 	#elif quartz
-		long width = (x2inches - x1inches) * resolution, height = (y2inches - y1inches) * resolution;
-		long stride = width * 4;
+		integer width = (x2inches - x1inches) * resolution, height = (y2inches - y1inches) * resolution;
+		integer stride = width * 4;
 		stride = (stride + 15) & ~15;   // CommonCode/AppDrawing.c: "a multiple of 16 bytes, for best performance"
 		my d_bits = Melder_malloc (uint8_t, stride * height);
 		static CGColorSpaceRef colourSpace = nullptr;
@@ -674,22 +675,22 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
 	Graphics_init (me.get(), resolution);
 	#if cairo
 		my d_cairoSurface = cairo_pdf_surface_create (Melder_peek32to8 (file -> path),
-			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
-			(NUMdefined (y1inches) ? y2inches - y1inches : y2inches) * 72.0);
+			( isdefined (x1inches) ? x2inches - x1inches : x2inches ) * 72.0,
+			( isdefined (y1inches) ? y2inches - y1inches : y2inches ) * 72.0);
 		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);
 		my d_x1DC = my d_x1DCmin = 0;
-		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
+		my d_x2DC = my d_x2DCmax = ( isdefined (x1inches) ?  7.5 : x2inches ) * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
-		my d_y2DC = my d_y2DCmax = (NUMdefined (y1inches) ? 11.0 : y2inches) * resolution;
+		my d_y2DC = my d_y2DCmax = ( isdefined (y1inches) ? 11.0 : y2inches ) * resolution;
 		Graphics_setWsWindow (me.get(),
-			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
-			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
+			isdefined (x1inches) ? 0.0 : 0.0, isdefined (x1inches) ?  7.5 : x2inches,
+			isdefined (y1inches) ? 1.0 : 0.0, isdefined (y1inches) ? 12.0 : y2inches);
 		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 	#elif quartz
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, (CFStringRef) Melder_peek32toCfstring (file -> path), kCFURLPOSIXPathStyle, false);
 		CGRect rect = CGRectMake (0, 0,
-			(NUMdefined (x1inches) ? x2inches - x1inches : x2inches) * 72.0,
-			(NUMdefined (y1inches) ? y2inches - y1inches : y2inches) * 72.0);   // don't tire PDF viewers with funny origins
+			( isdefined (x1inches) ? x2inches - x1inches : x2inches ) * 72.0,
+			( isdefined (y1inches) ? y2inches - y1inches : y2inches ) * 72.0);   // don't tire PDF viewers with funny origins
 		CFStringRef key = (CFStringRef) Melder_peek32toCfstring (U"Creator");
 		CFStringRef value = (CFStringRef) Melder_peek32toCfstring (U"Praat");
 		CFIndex numberOfValues = 1;
@@ -701,17 +702,17 @@ autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
     	if (! my d_macGraphicsContext)
 			Melder_throw (U"Could not create PDF file ", file, U".");
 		my d_x1DC = my d_x1DCmin = 0;
-		my d_x2DC = my d_x2DCmax = (NUMdefined (x1inches) ?  7.5 : x2inches) * resolution;
+		my d_x2DC = my d_x2DCmax = ( isdefined (x1inches) ?  7.5 : x2inches ) * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
-		my d_y2DC = my d_y2DCmax = (NUMdefined (y1inches) ? 11.0 : y2inches) * resolution;
+		my d_y2DC = my d_y2DCmax = ( isdefined (y1inches) ? 11.0 : y2inches ) * resolution;
 		Graphics_setWsWindow (me.get(),
-			NUMdefined (x1inches) ? 0.0 : 0.0, NUMdefined (x1inches) ?  7.5 : x2inches,
-			NUMdefined (y1inches) ? 1.0 : 0.0, NUMdefined (y1inches) ? 12.0 : y2inches);
+			( isdefined (x1inches) ? 0.0 : 0.0 ), ( isdefined (x1inches) ?  7.5 : x2inches ),
+			( isdefined (y1inches) ? 1.0 : 0.0 ), ( isdefined (y1inches) ? 12.0 : y2inches ));
 		CGContextBeginPage (my d_macGraphicsContext, & rect);
 		CGContextScaleCTM (my d_macGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 		CGContextTranslateCTM (my d_macGraphicsContext,
-			(NUMdefined (x1inches) ? - x1inches : 0.0) * resolution,
-			(NUMdefined (y1inches) ? (12.0 - y1inches) : y2inches) * resolution);
+			( isdefined (x1inches) ? - x1inches : 0.0 ) * resolution,
+			( isdefined (y1inches) ? (12.0 - y1inches) : y2inches ) * resolution);
 		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#endif
 	return me.move();

@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +26,6 @@
 
 #include "praat_TableOfReal.h"
 
-static const char32 * Table_messageColumn (Table me, long column) {
-	if (my columnHeaders [column]. label && my columnHeaders [column]. label [0] != U'\0')
-		return Melder_cat (U"\"", my columnHeaders [column]. label, U"\"");
-	else
-		return Melder_integer (column);
-}
-
 // MARK: - DISTRIBUTIONS
 
 // MARK: Help
@@ -48,7 +41,7 @@ DIRECT (HELP_Table_help) {
 // MARK: Query
 
 FORM (REAL_Distributionses_getMeanAbsoluteDifference, U"Get mean difference", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_COUPLE (Distributions)
@@ -57,8 +50,8 @@ DO
 }
 
 FORM (REAL_Distributions_getProbability, U"Get probability", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	SENTENCE4 (string, U"String", U"")
+	NATURAL (columnNumber, U"Column number", U"1")
+	SENTENCE (string, U"String", U"")
 	OK
 DO
 	NUMBER_ONE (Distributions)
@@ -77,8 +70,8 @@ DIRECT (NEW1_Distributionses_add) {
 // MARK: Generate
 
 FORM (NEW_Distributions_to_Strings, U"To Strings", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	NATURAL4 (numberOfStrings, U"Number of strings", U"1000")
+	NATURAL (columnNumber, U"Column number", U"1")
+	NATURAL (numberOfStrings, U"Number of strings", U"1000")
 	OK
 DO
 	CONVERT_EACH (Distributions)
@@ -87,7 +80,7 @@ DO
 }
 
 FORM (NEW_Distributions_to_Strings_exact, U"To Strings (exact)", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	CONVERT_EACH (Distributions)
@@ -100,18 +93,18 @@ DO
 // MARK: Draw
 
 FORM (GRAPHICS_LogisticRegression_drawBoundary, U"LogisticRegression: Draw boundary", nullptr) {
-	WORD4 (horizontalFactor, U"Horizontal factor", U"")
-	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
-	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	WORD4 (verticalFactor, U"Vertical factor", U"")
-	REAL4 (fromVertical, U"left Vertical range", U"0.0")
-	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	SENTENCE (horizontalFactor, U"Horizontal factor", U"")
+	REAL (fromHorizontal, U"left Horizontal range", U"0.0")
+	REAL (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
+	SENTENCE (verticalFactor, U"Vertical factor", U"")
+	REAL (fromVertical, U"left Vertical range", U"0.0")
+	REAL (toVertical, U"right Vertical range", U"0.0 (= auto)")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (LogisticRegression)
-		long xfactor = Regression_getFactorIndexFromFactorName_e (me, horizontalFactor);
-		long yfactor = Regression_getFactorIndexFromFactorName_e (me, verticalFactor);
+		integer xfactor = Regression_getFactorIndexFromFactorName_e (me, horizontalFactor);
+		integer yfactor = Regression_getFactorIndexFromFactorName_e (me, verticalFactor);
 		LogisticRegression_drawBoundary (me, GRAPHICS,
 			xfactor, fromHorizontal, toHorizontal,
 			yfactor, fromVertical, toVertical,
@@ -143,12 +136,12 @@ DIRECT (REAL_PairDistribution_getFractionCorrect_probabilityMatching) {
 
 DIRECT (INTEGER_PairDistribution_getNumberOfPairs) {
 	NUMBER_ONE (PairDistribution)
-		long result = my pairs.size;
+		integer result = my pairs.size;
 	NUMBER_ONE_END (U" pairs")
 }
 
 FORM (STRING_PairDistribution_getString1, U"Get string1", nullptr) {
-	NATURAL4 (pairNumber, U"Pair number", U"1")
+	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
 	STRING_ONE (PairDistribution)
@@ -157,7 +150,7 @@ DO
 }
 
 FORM (STRING_PairDistribution_getString2, U"Get string2", nullptr) {
-	NATURAL4 (pairNumber, U"Pair number", U"1")
+	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
 	STRING_ONE (PairDistribution)
@@ -166,7 +159,7 @@ DO
 }
 
 FORM (REAL_PairDistribution_getWeight, U"Get weight", nullptr) {
-	NATURAL4 (pairNumber, U"Pair number", U"1")
+	NATURAL (pairNumber, U"Pair number", U"1")
 	OK
 DO
 	NUMBER_ONE (PairDistribution)
@@ -191,9 +184,9 @@ DIRECT (MODIFY_PairDistribution_swapInputsAndOutputs) {
 // MARK: Generate
 
 FORM (NEW2_PairDistribution_to_Stringses, U"Generate two Strings objects", nullptr) {
-	NATURAL4 (number, U"Number", U"1000")
-	SENTENCE4 (nameOfFirstStrings, U"Name of first Strings", U"input")
-	SENTENCE4 (nameOfSecondStrings, U"Name of second Strings", U"output")
+	NATURAL (number, U"Number", U"1000")
+	SENTENCE (nameOfFirstStrings, U"Name of first Strings", U"input")
+	SENTENCE (nameOfSecondStrings, U"Name of second Strings", U"output")
 	OK
 DO
 	FIND_ONE (PairDistribution)
@@ -213,7 +206,7 @@ DIRECT (NEW_PairDistribution_to_Table) {
 // MARK: - PAIRDISTRIBUTION & DISTRIBUTIONS
 
 FORM (REAL_PairDistribution_Distributions_getFractionCorrect, U"PairDistribution & Distributions: Get fraction correct", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_TWO (PairDistribution, Distributions)
@@ -226,10 +219,9 @@ DO
 // MARK: New
 
 FORM (NEW1_Table_createWithColumnNames, U"Create Table with column names", nullptr) {
-	WORD4 (name, U"Name", U"table")
-	INTEGER4 (numberOfRows, U"Number of rows", U"10")
-	LABEL (U"", U"Column names:")
-	TEXTFIELD4 (columnNames, U"columnNames", U"speaker dialect age vowel F0 F1 F2")
+	WORD (name, U"Name", U"table")
+	INTEGER (numberOfRows, U"Number of rows", U"10")
+	TEXTFIELD (columnNames, U"Column names:", U"speaker dialect age vowel F0 F1 F2")
 	OK
 DO
 	CREATE_ONE
@@ -238,9 +230,9 @@ DO
 }
 
 FORM (NEW1_Table_createWithoutColumnNames, U"Create Table without column names", nullptr) {
-	WORD4 (name, U"Name", U"table")
-	INTEGER4 (numberOfRows, U"Number of rows", U"10")
-	NATURAL4 (numberOfColumns, U"Number of columns", U"3")
+	WORD (name, U"Name", U"table")
+	INTEGER (numberOfRows, U"Number of rows", U"10")
+	NATURAL (numberOfColumns, U"Number of columns", U"3")
 	OK
 DO
 	CREATE_ONE
@@ -258,27 +250,39 @@ FORM_READ (READ1_Table_readFromTableFile, U"Read Table from table file", nullptr
 
 FORM_READ (READ1_Table_readFromCommaSeparatedFile, U"Read Table from comma-separated file", nullptr, true) {
 	READ_ONE
-		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U',');
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U',', true);
+	READ_ONE_END
+}
+
+FORM_READ (READ1_Table_readFromSemicolonSeparatedFile, U"Read Table from semicolon-separated file", nullptr, true) {
+	READ_ONE
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U';', true);
 	READ_ONE_END
 }
 
 FORM_READ (READ1_Table_readFromTabSeparatedFile, U"Read Table from tab-separated file", nullptr, true) {
 	READ_ONE
-		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U'\t');
+		autoTable result = Table_readFromCharacterSeparatedTextFile (file, U'\t', false);
 	READ_ONE_END
 }
 
 // MARK: Save
 
-FORM_SAVE (SAVE_Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", 0, U"Table") {
+FORM_SAVE (SAVE_Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", nullptr, U"Table") {
+	SAVE_ONE (Table)
+		Table_writeToTabSeparatedFile (me, file);
+	SAVE_ONE_END
+}
+
+FORM_SAVE (SAVE_Table_writeToCommaSeparatedFile, U"Save Table as comma-separated file", nullptr, U"Table") {
 	SAVE_ONE (Table)
 		Table_writeToCommaSeparatedFile (me, file);
 	SAVE_ONE_END
 }
 
-FORM_SAVE (SAVE_Table_writeToTabSeparatedFile, U"Save Table as tab-separated file", 0, U"Table") {
+FORM_SAVE (SAVE_Table_writeToSemicolonSeparatedFile, U"Save Table as semicolon-separated file", nullptr, U"Table") {
 	SAVE_ONE (Table)
-		Table_writeToTabSeparatedFile (me, file);
+		Table_writeToSemicolonSeparatedFile (me, file);
 	SAVE_ONE_END
 }
 
@@ -292,18 +296,17 @@ DIRECT (HELP_StatisticsTutorial) {
 
 DIRECT (WINDOW_Table_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a Table from batch.");
-	LOOP {
-		iam_LOOP (Table);
+	FIND_ONE_WITH_IOBJECT (Table)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: Tabulate
 
 FORM (LIST_Table_list, U"Table: List", nullptr) {
-	BOOLEAN4 (includeRowNumbers, U"Include row numbers", true)
+	BOOLEAN (includeRowNumbers, U"Include row numbers", true)
 	OK
 DO
 	INFO_ONE (Table)
@@ -314,41 +317,41 @@ DO
 // MARK: Draw
 
 FORM (GRAPHICS_Table_scatterPlot, U"Scatter plot", nullptr) {
-	WORD4 (horizontalColumn, U"Horizontal column", U"")
-	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
-	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	WORD4 (verticalColumn, U"Vertical column", U"")
-	REAL4 (fromVertical, U"left Vertical range", U"0.0")
-	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
-	WORD4 (columnWithMarks, U"Column with marks", U"")
-	NATURAL4 (fontSize, U"Font size", U"12")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	SENTENCE (horizontalColumn, U"Horizontal column", U"")
+	REAL (fromHorizontal, U"left Horizontal range", U"0.0")
+	REAL (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
+	SENTENCE (verticalColumn, U"Vertical column", U"")
+	REAL (fromVertical, U"left Vertical range", U"0.0")
+	REAL (toVertical, U"right Vertical range", U"0.0 (= auto)")
+	SENTENCE (columnWithMarks, U"Column with marks", U"")
+	NATURAL (fontSize, U"Font size", U"12")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
-		long markColumn = Table_getColumnIndexFromColumnLabel (me, columnWithMarks);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		integer markColumn = Table_getColumnIndexFromColumnLabel (me, columnWithMarks);
 		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
 			fromHorizontal, toHorizontal, fromVertical, toVertical, markColumn, fontSize, garnish);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Table_scatterPlot_mark, U"Scatter plot (marks)", nullptr) {
-	WORD4 (horizontalColumn, U"Horizontal column", U"")
-	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
-	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	WORD4 (verticalColumn, U"Vertical column", U"")
-	REAL4 (fromVertical, U"left Vertical range", U"0.0")
-	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
-	POSITIVE4 (markSize, U"Mark size (mm)", U"1.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
-	SENTENCE4 (markString, U"Mark string (+xo.)", U"+")
+	SENTENCE (horizontalColumn, U"Horizontal column", U"")
+	REAL (fromHorizontal, U"left Horizontal range", U"0.0")
+	REAL (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
+	SENTENCE (verticalColumn, U"Vertical column", U"")
+	REAL (fromVertical, U"left Vertical range", U"0.0")
+	REAL (toVertical, U"right Vertical range", U"0.0 (= auto)")
+	POSITIVE (markSize, U"Mark size (mm)", U"1.0")
+	BOOLEAN (garnish, U"Garnish", true)
+	SENTENCE (markString, U"Mark string (+xo.)", U"+")
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
 		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
 			fromHorizontal, toHorizontal, fromVertical, toVertical,
 			markSize, markString, garnish);
@@ -356,19 +359,19 @@ DO
 }
 
 FORM (GRAPHICS_Table_drawEllipse, U"Draw ellipse (standard deviation)", nullptr) {
-	WORD4 (horizontalColumn, U"Horizontal column", U"")
-	REAL4 (fromHorizontal, U"left Horizontal range", U"0.0")
-	REAL4 (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
-	WORD4 (verticalColumn, U"Vertical column", U"")
-	REAL4 (fromVertical, U"left Vertical range", U"0.0")
-	REAL4 (toVertical, U"right Vertical range", U"0.0 (= auto)")
-	POSITIVE4 (numberOfSigmas, U"Number of sigmas", U"2.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	SENTENCE (horizontalColumn, U"Horizontal column", U"")
+	REAL (fromHorizontal, U"left Horizontal range", U"0.0")
+	REAL (toHorizontal, U"right Horizontal range", U"0.0 (= auto)")
+	SENTENCE (verticalColumn, U"Vertical column", U"")
+	REAL (fromVertical, U"left Vertical range", U"0.0")
+	REAL (toVertical, U"right Vertical range", U"0.0 (= auto)")
+	POSITIVE (numberOfSigmas, U"Number of sigmas", U"2.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, horizontalColumn);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, verticalColumn);
 		Table_drawEllipse_e (me, GRAPHICS, xcolumn, ycolumn,
 			fromHorizontal, toHorizontal, fromVertical, toVertical, numberOfSigmas, garnish);
 	GRAPHICS_EACH_END
@@ -377,26 +380,26 @@ DO
 // MARK: Query
 
 FORM (INTEGER_Table_drawRowFromDistribution, U"Table: Draw row from distribution", nullptr) {
-	WORD4 (columnWithDistribution, U"Column with distribution", U"")
+	SENTENCE (columnWithDistribution, U"Column with distribution", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
-		long result = Table_drawRowFromDistribution (me, columnNumber);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnWithDistribution);
+		integer result = Table_drawRowFromDistribution (me, columnNumber);
 	NUMBER_ONE_END (U" (random row number)")
 }
 
 FORM (INTEGER_Table_getColumnIndex, U"Table: Get column index", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
+		integer result = Table_findColumnIndexFromColumnLabel (me, columnLabel);
 	NUMBER_ONE_END (U" (index of column ", columnLabel, U")")
 }
 
 FORM (STRING_Table_getColumnLabel, U"Table: Get column label", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	STRING_ONE (Table)
@@ -407,115 +410,115 @@ DO
 }
 
 FORM (REAL_Table_getGroupMean, U"Table: Get group mean", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"salary")
-	WORD4 (groupColumnLabel, U"Group column label", U"gender")
-	SENTENCE4 (group, U"Group", U"F")
+	SENTENCE (columnLabel, U"Column label", U"salary")
+	SENTENCE (groupColumnLabel, U"Group column label", U"gender")
+	SENTENCE (group, U"Group", U"F")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
+		integer column = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer groupColumn = Table_getColumnIndexFromColumnLabel (me, groupColumnLabel);
 		double result = Table_getGroupMean (me, column, groupColumn, group);
 	NUMBER_ONE_END (U" (mean of ", columnLabel, U" in group ", group, U")")
 }
 
 FORM (REAL_Table_getMaximum, U"Table: Get maximum", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getMaximum (me, columnNumber);
 	NUMBER_ONE_END (U" (maximum of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getMean, U"Table: Get mean", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getMean (me, columnNumber);
 	NUMBER_ONE_END (U" (mean of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getMinimum, U"Table: Get minimum", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getMinimum (me, columnNumber);
 	NUMBER_ONE_END (U" (minimum of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getQuantile, U"Table: Get quantile", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
-	POSITIVE4 (quantile, U"Quantile", U"0.50 (= median)")
+	SENTENCE (columnLabel, U"Column label", U"")
+	POSITIVE (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getQuantile (me, columnNumber, quantile);
 	NUMBER_ONE_END (U" (", quantile, U" quantile of ", columnLabel, U")")
 }
 
 FORM (REAL_Table_getStandardDeviation, U"Table: Get standard deviation", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getStdev (me, columnNumber);
 	NUMBER_ONE_END (U" (standard deviation of ", columnLabel, U")")
 }
 
 DIRECT (INTEGER_Table_getNumberOfColumns) {
 	NUMBER_ONE (Table)
-		long result = my numberOfColumns;
+		integer result = my numberOfColumns;
 	NUMBER_ONE_END (U" columns")
 }
 
 DIRECT (INTEGER_Table_getNumberOfRows) {
 	NUMBER_ONE (Table)
-		long result = my rows.size;
+		integer result = my rows.size;
 	NUMBER_ONE_END (U" rows")
 }
 
 FORM (STRING_Table_getValue, U"Table: Get value", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
-	SENTENCE4 (columnLabel, U"Column label", U"")
+	NATURAL (rowNumber, U"Row number", U"1")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	STRING_ONE (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		const char32 *result = my rows.at [rowNumber] -> cells [columnNumber]. string;
 	STRING_ONE_END
 }
 
 FORM (INTEGER_Table_searchColumn, U"Table: Search column", nullptr) {
-	SENTENCE4 (columnLabel, U"Column label", U"")
-	SENTENCE4 (value, U"Value", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (value, U"Value", U"")
 	OK
 DO
 	NUMBER_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		long result = Table_searchColumn (me, columnNumber, value);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer result = Table_searchColumn (me, columnNumber, value);
 	NUMBER_ONE_END (U" (first row in which ", columnLabel, U" is ", value)
 }
 	
 // MARK: Statistics
 
 FORM (INFO_Table_reportCorrelation_kendallTau, U"Report correlation (Kendall tau)", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
+	SENTENCE (column1, U"left Columns", U"")
+	SENTENCE (column2, U"right Columns", U"")
+	POSITIVE (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double correlation, significance, lowerLimit, upperLimit;
 		correlation = Table_getCorrelation_kendallTau (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& significance, & lowerLimit, & upperLimit);
@@ -534,14 +537,14 @@ DO
 }
 
 FORM (INFO_Table_reportCorrelation_pearsonR, U"Report correlation (Pearson r)", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
+	SENTENCE (column1, U"left Columns", U"")
+	SENTENCE (column2, U"right Columns", U"")
+	POSITIVE (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double correlation, significance, lowerLimit, upperLimit;
 		correlation = Table_getCorrelation_pearsonR (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& significance, & lowerLimit, & upperLimit);
@@ -561,14 +564,14 @@ DO
 }
 
 FORM (INFO_Table_reportDifference_studentT, U"Report difference (Student t)", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
+	SENTENCE (column1, U"left Columns", U"")
+	SENTENCE (column2, U"right Columns", U"")
+	POSITIVE (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
 		difference = Table_getDifference_studentT (me, columnNumber1, columnNumber2, oneTailedUnconfidence,
 			& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
@@ -589,16 +592,16 @@ DO
 }
 
 FORM (INFO_Table_reportGroupDifference_studentT, U"Report group difference (Student t)", nullptr) {
-	WORD4 (column, U"Column", U"salary")
-	WORD4 (groupColumn, U"Group column", U"gender")
-	SENTENCE4 (group1, U"Group 1", U"F")
-	SENTENCE4 (group2, U"Group 2", U"M")
-	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
+	SENTENCE (column, U"Column", U"salary")
+	SENTENCE (groupColumn, U"Group column", U"gender")
+	SENTENCE (group1, U"Group 1", U"F")
+	SENTENCE (group2, U"Group 2", U"M")
+	POSITIVE (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getGroupDifference_studentT (me, columnNumber, groupColumnNumber, group1, group2, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -619,15 +622,15 @@ DO
 }
 
 FORM (INFO_Table_reportGroupDifference_wilcoxonRankSum, U"Report group difference (Wilcoxon rank sum)", nullptr) {
-	WORD4 (column, U"Column", U"salary")
-	WORD4 (groupColumn, U"Group column", U"gender")
-	SENTENCE4 (group1, U"Group 1", U"F")
-	SENTENCE4 (group2, U"Group 2", U"M")
+	SENTENCE (column, U"Column", U"salary")
+	SENTENCE (groupColumn, U"Group column", U"gender")
+	SENTENCE (group1, U"Group 1", U"F")
+	SENTENCE (group2, U"Group 2", U"M")
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double areaUnderCurve, rankSum, significanceFromZero;
 		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, columnNumber, groupColumnNumber, group1, group2,
 			& rankSum, & significanceFromZero);
@@ -643,15 +646,15 @@ DO
 }
 
 FORM (INFO_Table_reportGroupMean_studentT, U"Report group mean (Student t)", nullptr) {
-	WORD4 (column, U"Column", U"salary")
-	WORD4 (groupColumn, U"Group column", U"gender")
-	SENTENCE4 (group, U"Group", U"F")
-	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
+	SENTENCE (column, U"Column", U"salary")
+	SENTENCE (groupColumn, U"Group column", U"gender")
+	SENTENCE (group, U"Group", U"F")
+	POSITIVE (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
-		long groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		integer groupColumnNumber = Table_getColumnIndexFromColumnLabel (me, groupColumn);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getGroupMean_studentT (me, columnNumber, groupColumnNumber, group, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -672,12 +675,12 @@ DO
 }
 
 FORM (INFO_Table_reportMean_studentT, U"Report mean (Student t)", nullptr) {
-	WORD4 (column, U"Column", U"")
-	POSITIVE4 (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
+	SENTENCE (column, U"Column", U"")
+	POSITIVE (oneTailedUnconfidence, U"One-tailed unconfidence", U"0.025")
 	OK
 DO
 	INFO_ONE (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, column);
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getMean_studentT (me, columnNumber, oneTailedUnconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
@@ -699,7 +702,7 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Table_appendColumn, U"Table: Append column", nullptr) {
-	WORD4 (label, U"Label", U"newcolumn")
+	SENTENCE (label, U"Label", U"newcolumn")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -708,53 +711,53 @@ DO
 }
 
 FORM (MODIFY_Table_appendDifferenceColumn, U"Table: Append difference column", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	WORD4 (label, U"Label", U"diff")
+	SENTENCE (column1, U"left Columns", U"")
+	SENTENCE (column2, U"right Columns", U"")
+	SENTENCE (label, U"Label", U"diff")
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendDifferenceColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_Table_appendProductColumn, U"Table: Append product column", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	WORD4 (label, U"Label", U"prod")
+	SENTENCE (column1, U"left Columns", U"")
+	SENTENCE (column2, U"right Columns", U"")
+	SENTENCE (label, U"Label", U"prod")
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendProductColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_Table_appendQuotientColumn, U"Table: Append quotient column", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	WORD4 (label, U"Label", U"quot")
+	SENTENCE (column1, U"left Columns", U"")
+	SENTENCE (column2, U"right Columns", U"")
+	SENTENCE (label, U"Label", U"quot")
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendQuotientColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_Table_appendSumColumn, U"Table: Append sum column", nullptr) {
-	WORD4 (column1, U"left Columns", U"")
-	WORD4 (column2, U"right Columns", U"")
-	WORD4 (label, U"Label", U"sum")
+	SENTENCE (column1, U"left Columns", U"")
+	SENTENCE (column2, U"right Columns", U"")
+	SENTENCE (label, U"Label", U"sum")
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, column1);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, column2);
 		Table_appendSumColumn (me, columnNumber1, columnNumber2, label);
 	MODIFY_EACH_END
 }
@@ -766,32 +769,32 @@ DIRECT (MODIFY_Table_appendRow) {
 }
 
 FORM (MODIFY_Table_formula, U"Table: Formula", U"Table: Formula...") {
-	WORD4 (columnLabel, U"Column (label)", U"")
-	TEXTFIELD4 (formula, U"formula", U"abs (self)")
+	SENTENCE (columnLabel, U"Column (label)", U"")
+	TEXTFIELD (formula, U"Formula:", U"abs (self)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_formula (me, columnNumber, formula, interpreter);
 	MODIFY_EACH_WEAK_END
 }
 
 FORM (MODIFY_Table_formula_columnRange, U"Table: Formula (column range)", U"Table: Formula...") {
-	WORD4 (fromColumn, U"From column (label)", U"")
-	WORD4 (toColumn, U"To column (label)", U"")
-	TEXTFIELD4 (formula, U"formula", U"log10 (self)")
+	SENTENCE (fromColumn, U"From column (label)", U"")
+	SENTENCE (toColumn, U"To column (label)", U"")
+	TEXTFIELD (formula, U"Formula:", U"log10 (self)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Table)
-		long columnNumber1 = Table_getColumnIndexFromColumnLabel (me, fromColumn);
-		long columnNumber2 = Table_getColumnIndexFromColumnLabel (me, toColumn);
+		integer columnNumber1 = Table_getColumnIndexFromColumnLabel (me, fromColumn);
+		integer columnNumber2 = Table_getColumnIndexFromColumnLabel (me, toColumn);
 		Table_formula_columnRange (me, columnNumber1, columnNumber2, formula, interpreter);
 	MODIFY_EACH_WEAK_END
 }
 
 FORM (MODIFY_Table_insertColumn, U"Table: Insert column", nullptr) {
-	NATURAL4 (position, U"Position", U"1")
-	WORD4 (label, U"Label", U"newcolumn")
+	NATURAL (position, U"Position", U"1")
+	SENTENCE (label, U"Label", U"newcolumn")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -800,7 +803,7 @@ DO
 }
 
 FORM (MODIFY_Table_insertRow, U"Table: Insert row", nullptr) {
-	NATURAL4 (position, U"Position", U"1")
+	NATURAL (position, U"Position", U"1")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -809,17 +812,17 @@ DO
 }
 
 FORM (MODIFY_Table_removeColumn, U"Table: Remove column", nullptr) {
-	WORD4 (columnLabel, U"Column label", U"")
+	SENTENCE (columnLabel, U"Column label", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_removeColumn (me, columnNumber);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_Table_removeRow, U"Table: Remove row", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -828,8 +831,8 @@ DO
 }
 
 FORM (MODIFY_Table_setColumnLabel_index, U"Set column label", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	SENTENCE4 (newLabel, U"New label", U"")
+	NATURAL (columnNumber, U"Column number", U"1")
+	SENTENCE (newLabel, U"New label", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -838,36 +841,36 @@ DO
 }
 
 FORM (MODIFY_Table_setColumnLabel_label, U"Set column label", nullptr) {
-	SENTENCE4 (oldLabel, U"Old label", U"")
-	WORD4 (newLabel, U"New label", U"")
+	SENTENCE (oldLabel, U"Old label", U"")
+	SENTENCE (newLabel, U"New label", U"")
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, oldLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, oldLabel);
 		Table_setColumnLabel (me, columnNumber, newLabel);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_Table_setNumericValue, U"Table: Set numeric value", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
-	WORD4 (columnLabel, U"Column label", U"")
-	REAL_OR_UNDEFINED4 (numericValue, U"Numeric value", U"1.5")
+	NATURAL (rowNumber, U"Row number", U"1")
+	SENTENCE (columnLabel, U"Column label", U"")
+	REAL_OR_UNDEFINED (numericValue, U"Numeric value", U"1.5")
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_setNumericValue (me, rowNumber, columnNumber, numericValue);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_Table_setStringValue, U"Table: Set string value", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
-	WORD4 (columnLabel, U"Column label", U"")
-	SENTENCE4 (stringValue, U"String value", U"xx")
+	NATURAL (rowNumber, U"Row number", U"1")
+	SENTENCE (columnLabel, U"Column label", U"")
+	SENTENCE (stringValue, U"String value", U"xx")
 	OK
 DO
 	MODIFY_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		Table_setStringValue (me, rowNumber, columnNumber, stringValue);
 	MODIFY_EACH_END
 }
@@ -885,8 +888,7 @@ DIRECT (MODIFY_Table_reflectRows) {
 }
 
 FORM (MODIFY_Table_sortRows, U"Table: Sort rows", nullptr) {
-	LABEL (U"", U"One or more column labels for sorting:")
-	TEXTFIELD4 (columnLabels, U"columnLabels", U"dialect gender name")
+	TEXTFIELD (columnLabels, U"One or more column labels for sorting:", U"dialect gender name")
 	OK
 DO
 	MODIFY_EACH (Table)
@@ -897,19 +899,13 @@ DO
 // MARK: Convert
 
 FORM (NEW_Table_collapseRows, U"Table: Collapse rows", nullptr) {
-	LABEL (U"", U"Columns with factors (independent variables):")
-	TEXTFIELD4 (factors, U"factors", U"speaker dialect age vowel")
-	LABEL (U"", U"Columns to sum:")
-	TEXTFIELD4 (columnsToSum, U"columnsToSum", U"number cost")
-	LABEL (U"", U"Columns to average:")
-	TEXTFIELD4 (columnsToAverage, U"columnsToAverage", U"price")
-	LABEL (U"", U"Columns to medianize:")
-	TEXTFIELD4 (columnsToMedianize, U"columnsToMedianize", U"vot")
-	LABEL (U"", U"Columns to average logarithmically:")
-	TEXTFIELD4 (columnsToAverageLogarithmically, U"columnsToAverageLogarithmically", U"duration")
-	LABEL (U"", U"Columns to medianize logarithmically:")
-	TEXTFIELD4 (columnsToMedianizeLogarithmically, U"columnsToMedianizeLogarithmically", U"F0 F1 F2 F3")
-	LABEL (U"", U"Columns not mentioned above will be ignored.")
+	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"speaker dialect age vowel")
+	TEXTFIELD (columnsToSum, U"Columns to sum:", U"number cost")
+	TEXTFIELD (columnsToAverage, U"Columns to average:", U"price")
+	TEXTFIELD (columnsToMedianize, U"Columns to medianize:", U"vot")
+	TEXTFIELD (columnsToAverageLogarithmically, U"olumns to average logarithmically:", U"duration")
+	TEXTFIELD (columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", U"F0 F1 F2 F3")
+	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
 	CONVERT_EACH (Table)
@@ -925,27 +921,27 @@ DIRECT (NEW1_Tables_append) {
 }
 
 FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", nullptr) {
-	WORD4 (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
-	RADIO_ENUM4 (___is___, U"...is...", kMelder_number, DEFAULT)
-	REAL4 (___theNumber, U"...the number", U"0.0")
+	SENTENCE (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
+	RADIO_ENUM (___is___, U"...is...", kMelder_number, DEFAULT)
+	REAL (___theNumber, U"...the number", U"0.0")
 	OK
 DO
 	CONVERT_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
-		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, ___is___, ___theNumber);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
 	CONVERT_EACH_END (my name, U"_", Table_messageColumn (me, columnNumber), U"_",
-		NUMdefined (___theNumber) ? Melder_integer (lround (___theNumber)) : U"undefined")
+		isdefined (___theNumber) ? Melder_integer (Melder_iround (___theNumber)) : U"undefined")
 }
 
 FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column (text)", nullptr) {
-	WORD4 (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
-	OPTIONMENU_ENUM4 (___, U"...", kMelder_string, DEFAULT)
-	SENTENCE4 (___theText, U"...the text", U"hi")
+	SENTENCE (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
+	OPTIONMENU_ENUM (___, U"...", kMelder_string, DEFAULT)
+	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
-		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, ___, ___theText);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
+		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, (kMelder_string) ___, ___theText);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 
@@ -956,16 +952,14 @@ DIRECT (NEW_Table_transpose) {
 }
 
 FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
-	LABEL (U"", U"Columns with factors (independent variables):")
-	TEXTFIELD4 (factors, U"factors", U"dialect gender speaker")
-	WORD4 (columnToTranspose, U"Column to transpose", U"vowel")
-	LABEL (U"", U"Columns to expand:")
-	TEXTFIELD4 (columnsToExpand, U"columnsToExpand", U"duration F0 F1 F2 F3")
-	LABEL (U"", U"Columns not mentioned above will be ignored.")
+	TEXTFIELD (factors, U"Columns with factors (independent variables):", U"dialect gender speaker")
+	SENTENCE (columnToTranspose, U"Column to transpose", U"vowel")
+	TEXTFIELD (columnsToExpand, U"Columns to expand:", U"duration F0 F1 F2 F3")
+	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
 DO
 	CONVERT_EACH (Table)
-		long columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
+		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
 		autoTable result = Table_rowsToColumns (me, factors, columnNumber, columnsToExpand);
 	CONVERT_EACH_END (my name, U"_nested")
 }
@@ -977,10 +971,9 @@ DIRECT (NEW_Table_to_LinearRegression) {
 }
 
 FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
-	LABEL (U"", U"Factors (column names):")
-	TEXTFIELD4 (factors, U"factors", U"F0 F1 duration")
-	WORD4 (dependent1, U"Dependent 1 (column name)", U"e")
-	WORD4 (dependent2, U"Dependent 2 (column name)", U"i")
+	TEXTFIELD (factors, U"Factors (column names):", U"F0 F1 duration")
+	SENTENCE (dependent1, U"Dependent 1 (column name)", U"e")
+	SENTENCE (dependent2, U"Dependent 2 (column name)", U"i")
 	OK
 DO
 	CONVERT_EACH (Table)
@@ -989,19 +982,19 @@ DO
 }
 
 FORM (NEW_Table_to_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
-	WORD4 (columnForRowLabels, U"Column for row labels", U"")
+	SENTENCE (columnForRowLabels, U"Column for row labels", U"")
 	OK
 DO
 	CONVERT_EACH (Table)
-		long columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
+		integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
 		autoTableOfReal result = Table_to_TableOfReal (me, columnNumber);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW1_TableOfReal_create, U"Create TableOfReal", nullptr) {
-	WORD4 (name, U"Name", U"table")
-	NATURAL4 (numberOfRows, U"Number of rows", U"10")
-	NATURAL4 (numberOfColumns, U"Number of columns", U"3")
+	WORD (name, U"Name", U"table")
+	NATURAL (numberOfRows, U"Number of rows", U"10")
+	NATURAL (numberOfColumns, U"Number of columns", U"3")
 	OK
 DO
 	CREATE_ONE
@@ -1015,31 +1008,31 @@ FORM_READ (READ1_TableOfReal_readFromHeaderlessSpreadsheetFile, U"Read TableOfRe
 	READ_ONE_END
 }
 
-static bool isTabSeparated_8bit (int nread, const char *header) {
-	for (long i = 0; i < nread; i ++) {
+static bool isTabSeparated_8bit (integer nread, const char *header) {
+	for (integer i = 0; i < nread; i ++) {
 		if (header [i] == '\t') return true;
 		if (header [i] == '\n' || header [i] == '\r') return false;
 	}
 	return false;
 }
 
-static bool isTabSeparated_utf16be (int nread, const char *header) {
-	for (long i = 2; i < nread; i += 2) {
+static bool isTabSeparated_utf16be (integer nread, const char *header) {
+	for (integer i = 2; i < nread; i += 2) {
 		if (header [i] == '\0' && header [i + 1] == '\t') return true;
 		if (header [i] == '\0' && (header [i + 1] == '\n' || header [i + 1] == '\r')) return false;
 	}
 	return false;
 }
 
-static bool isTabSeparated_utf16le (int nread, const char *header) {
-	for (long i = 2; i < nread; i += 2) {
+static bool isTabSeparated_utf16le (integer nread, const char *header) {
+	for (integer i = 2; i < nread; i += 2) {
 		if (header [i + 1] == '\0' && header [i] == '\t') return true;
 		if (header [i + 1] == '\0' && (header [i] == '\n' || header [i] == '\r')) return false;
 	}
 	return false;
 }
 
-static autoDaata tabSeparatedFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata tabSeparatedFileRecognizer (integer nread, const char *header, MelderFile file) {
 	/*
 	 * A table is recognized if it has at least one tab symbol,
 	 * which must be before the first newline symbol (if any).
@@ -1050,7 +1043,7 @@ static autoDaata tabSeparatedFileRecognizer (int nread, const char *header, Meld
 		uheader [0] == 0xff && uheader [1] == 0xef ? isTabSeparated_utf16le (nread, header) :
 		isTabSeparated_8bit (nread, header);
 	if (! isTabSeparated) return autoDaata ();
-	return Table_readFromCharacterSeparatedTextFile (file, '\t');
+	return Table_readFromCharacterSeparatedTextFile (file, U'\t', false);
 }
 
 void praat_uvafon_stat_init ();
@@ -1072,6 +1065,7 @@ void praat_uvafon_stat_init () {
 	praat_addMenuCommand (U"Objects", U"Open", U"Read TableOfReal from headerless spreadsheet file...", nullptr, 0, READ1_TableOfReal_readFromHeaderlessSpreadsheetFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from tab-separated file...", nullptr, 0, READ1_Table_readFromTabSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from comma-separated file...", nullptr, 0, READ1_Table_readFromCommaSeparatedFile);
+	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from semicolon-separated file...", nullptr, 0, READ1_Table_readFromSemicolonSeparatedFile);
 	praat_addMenuCommand (U"Objects", U"Open", U"Read Table from whitespace-separated file...", nullptr, 0, READ1_Table_readFromTableFile);
 	praat_addMenuCommand (U"Objects", U"Open",   U"Read Table from table file...", U"*Read Table from whitespace-separated file...", praat_DEPRECATED_2011, READ1_Table_readFromTableFile);
 
@@ -1108,6 +1102,7 @@ void praat_uvafon_stat_init () {
 	praat_addAction1 (classTable, 1, U"Save as table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1,   U"Write to table file...", nullptr, praat_DEPRECATED_2011, SAVE_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, U"Save as comma-separated file...", nullptr, 0, SAVE_Table_writeToCommaSeparatedFile);
+	praat_addAction1 (classTable, 1, U"Save as semicolon-separated file...", nullptr, 0, SAVE_Table_writeToSemicolonSeparatedFile);
 	praat_addAction1 (classTable, 1, U"View & Edit", nullptr, praat_ATTRACTIVE | praat_NO_API, WINDOW_Table_viewAndEdit);
 	praat_addAction1 (classTable, 1,   U"Edit", U"*View & Edit", praat_DEPRECATED_2011 | praat_NO_API, WINDOW_Table_viewAndEdit);
 	praat_addAction1 (classTable, 0, U"Draw -", nullptr, 0, nullptr);

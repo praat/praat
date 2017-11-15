@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ void _GuiWinText_map (GuiObject widget) {
 	ShowWindow (widget -> window, SW_SHOW);
 }
 
-static long NativeText_getLength (GuiObject widget) {
+static integer NativeText_getLength (GuiObject widget) {
 	return Edit_GetTextLength (widget -> window);   // in UTF-16 code units
 }
 
@@ -162,10 +162,10 @@ static long NativeText_getLength (GuiObject widget) {
  * SELECTION
  */
 
-static int NativeText_getSelectionRange (GuiObject widget, long *out_left, long *out_right) {
-	unsigned long left, right;
+static bool NativeText_getSelectionRange (GuiObject widget, integer *out_left, integer *out_right) {
 	Melder_assert (MEMBER (widget, Text));
-	SendMessage (widget -> window, EM_GETSEL, (WPARAM) & left, (LPARAM) & right);   // 32-bit (R&N: 579)
+	DWORD left, right;
+	SendMessage (widget -> window, EM_GETSEL, (WPARAM) & left, (LPARAM) & right);
 	if (out_left) *out_left = left;
 	if (out_right) *out_right = right;
 	return right > left;
@@ -195,11 +195,11 @@ void _GuiText_exit () {
 			} else {
 				GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 				GtkTextIter from_it, to_it;
-				gtk_text_buffer_get_iter_at_offset (buffer, &from_it, from_pos);
-				gtk_text_buffer_get_iter_at_offset (buffer, &to_it, to_pos);
-				gtk_text_buffer_delete_interactive (buffer, &from_it, &to_it,
+				gtk_text_buffer_get_iter_at_offset (buffer, & from_it, from_pos);
+				gtk_text_buffer_get_iter_at_offset (buffer, & to_it, to_pos);
+				gtk_text_buffer_delete_interactive (buffer, & from_it, & to_it,
 					gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
-				gtk_text_buffer_place_cursor (buffer, &to_it);
+				gtk_text_buffer_place_cursor (buffer, & to_it);
 			}
 		#elif motif
 		#endif
@@ -209,15 +209,15 @@ void _GuiText_exit () {
 		#if gtk
 			if (G_OBJECT_TYPE (G_OBJECT (widget)) == GTK_TYPE_ENTRY) {
 				gint from_pos_gint = from_pos;
-				gtk_editable_insert_text (GTK_EDITABLE (widget), text, to_pos - from_pos, &from_pos_gint);
+				gtk_editable_insert_text (GTK_EDITABLE (widget), text, to_pos - from_pos, & from_pos_gint);
 			} else {
 				GtkTextBuffer *buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (widget));
 				GtkTextIter it;
-				gtk_text_buffer_get_iter_at_offset (buffer, &it, from_pos);
-				gtk_text_buffer_insert_interactive (buffer, &it, text, to_pos - from_pos,
-					gtk_text_view_get_editable (GTK_TEXT_VIEW(widget)));
-				gtk_text_buffer_get_iter_at_offset (buffer, &it, to_pos);
-				gtk_text_buffer_place_cursor (buffer, &it);
+				gtk_text_buffer_get_iter_at_offset (buffer, & it, from_pos);
+				gtk_text_buffer_insert_interactive (buffer, & it, text, to_pos - from_pos,
+					gtk_text_view_get_editable (GTK_TEXT_VIEW (widget)));
+				gtk_text_buffer_get_iter_at_offset (buffer, & it, to_pos);
+				gtk_text_buffer_place_cursor (buffer, & it);
 			}
 		#elif motif
 		#endif
@@ -230,7 +230,7 @@ void _GuiText_exit () {
 	 *  - with the current, if current also is an insert/delete event and the ranges of previous and current event match
 	 *  - with the previous delete and current insert event, in case the ranges of both event-pairs respectively match
 	 */
-	static history_entry * history_addAndMerge (GuiText me, history_data text_new, long first, long last, bool deleted) {
+	static history_entry * history_addAndMerge (GuiText me, history_data text_new, integer first, integer last, bool deleted) {
 		history_entry *he = nullptr;
 		
 		if (! my d_prev)
@@ -241,8 +241,8 @@ void _GuiText_exit () {
 			if (my d_prev->first == last) {
 				// most common for backspace key presses
 				he = my d_prev;
-				text_new = (char *) realloc (text_new, sizeof(*text_new) * (he->last - first + 1));
-				memcpy (text_new + last - first, he->text, sizeof(*text_new) * (he->last - he->first + 1));
+				text_new = (char *) realloc (text_new, sizeof (*text_new) * (he->last - first + 1));
+				memcpy (text_new + last - first, he->text, sizeof (*text_new) * (he->last - he->first + 1));
 				free (he->text);
 				he->text = text_new;
 				he->first = first;
@@ -250,16 +250,16 @@ void _GuiText_exit () {
 			} else if (my d_prev->last == first) {
 				// most common for ordinary text insertion
 				he = my d_prev;
-				he->text = (char *) realloc (he->text, sizeof(*he->text) * (last - he->first + 1));
-				memcpy (he->text + he->last - he->first, text_new, sizeof(*he->text) * (last - first + 1));
+				he->text = (char *) realloc (he->text, sizeof (*he->text) * (last - he->first + 1));
+				memcpy (he->text + he->last - he->first, text_new, sizeof (*he->text) * (last - first + 1));
 				free (text_new);
 				he->last = last;
 				
 			} else if (deleted && my d_prev->first == first) {
 				// most common for delete key presses
 				he = my d_prev;
-				he->text = (char *) realloc (he->text, sizeof(*he->text) * (last - first + he->last - he->first + 1));
-				memcpy (he->text + he->last - he->first, text_new, sizeof(*he->text) * (last - first + 1));
+				he->text = (char *) realloc (he->text, sizeof (*he->text) * (last - first + he->last - he->first + 1));
+				memcpy (he->text + he->last - he->first, text_new, sizeof (*he->text) * (last - first + 1));
 				free (text_new);
 				he->last = last + he->last - he->first;
 			}
@@ -269,9 +269,9 @@ void _GuiText_exit () {
 				history_entry *del_one = my d_prev;
 				history_entry *ins_mult = del_one->prev;
 				history_entry *del_mult = ins_mult->prev;
-				long from1 = del_mult->first, to1 = del_mult->last;
-				long from2 = ins_mult->first, to2 = ins_mult->last;
-				long from3 = del_one->first, to3 = del_one->last;
+				integer from1 = del_mult->first, to1 = del_mult->last;
+				integer from2 = ins_mult->first, to2 = ins_mult->last;
+				integer from3 = del_one->first, to3 = del_one->last;
 				if (from3 == first && to3 == last && from2 == from1 && to2 == to1 && to1 == first &&
 						! ins_mult->type_del && del_mult->type_del) {
 					// most common for overwriting text
@@ -303,7 +303,7 @@ void _GuiText_exit () {
 	 *   text_new  a newly allocated string that will be freed by a history function
 	 *             (history_add or history_clear)
 	 */
-	static void history_add (GuiText me, history_data text_new, long first, long last, bool deleted) {
+	static void history_add (GuiText me, history_data text_new, integer first, integer last, bool deleted) {
 
 		// delete all newer entries; from here on there is no 'Redo' until the next 'Undo' is performed
 		history_entry *old_hnext = my d_next, *hnext;
@@ -730,13 +730,13 @@ char32 * GuiText_getSelection (GuiText me) {
 			}
 		}
 	#elif motif
-		long startW, endW;
-		NativeText_getSelectionRange (my d_widget, & startW, & endW);
+		integer startW, endW;
+		(void) NativeText_getSelectionRange (my d_widget, & startW, & endW);
 		if (endW > startW) {   // at least one character selected?
 			/*
 			 * Get all text.
 			 */
-			long lengthW = NativeText_getLength (my d_widget);   // in UTF-16 code units
+			integer lengthW = NativeText_getLength (my d_widget);   // in UTF-16 code units
 			WCHAR *bufferW = Melder_malloc_f (WCHAR, lengthW + 1);
 			GetWindowTextW (my d_widget -> window, bufferW, lengthW + 1);
 			/*
@@ -746,18 +746,18 @@ char32 * GuiText_getSelection (GuiText me) {
 			memmove (bufferW, bufferW + startW, lengthW * sizeof (WCHAR));   // not because of realloc, but because of free!
 			bufferW [lengthW] = U'\0';
 			char32 *result = Melder_dup_f (Melder_peekWto32 (bufferW));
-			Melder_killReturns_inline (result);   // AFTER zooming!
+			(void) Melder_killReturns_inplace (result);   // AFTER zooming!
 			return result;
 		}
 	#elif cocoa
-		long start, end;
+		integer start, end;
 		autostring32 selection = GuiText_getStringAndSelectionPosition (me, & start, & end);
-		long length = end - start;
+		integer length = end - start;
 		if (length > 0) {
 			char32 *result = Melder_malloc_f (char32, length + 1);
 			memcpy (result, & selection [start], length * sizeof (char32));
 			result [length] = '\0';
-			Melder_killReturns_inline (result);
+			(void) Melder_killReturns_inplace (result);
 			return result;
 		}
 	#endif
@@ -765,11 +765,11 @@ char32 * GuiText_getSelection (GuiText me) {
 }
 
 char32 * GuiText_getString (GuiText me) {
-	long first, last;
+	integer first, last;
 	return GuiText_getStringAndSelectionPosition (me, & first, & last);
 }
 
-char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *last) {
+char32 * GuiText_getStringAndSelectionPosition (GuiText me, integer *first, integer *last) {
 	#if gtk
 		if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_ENTRY) {
 			gint first_gint, last_gint;
@@ -792,21 +792,21 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 		}
 		return nullptr;
 	#elif motif
-		long lengthW = NativeText_getLength (my d_widget);
+		integer lengthW = NativeText_getLength (my d_widget);
 		WCHAR *bufferW = Melder_malloc_f (WCHAR, lengthW + 1);
 		GetWindowTextW (my d_widget -> window, bufferW, lengthW + 1);
-		long firstW, lastW;
-		NativeText_getSelectionRange (my d_widget, & firstW, & lastW);
+		integer firstW, lastW;
+		(void) NativeText_getSelectionRange (my d_widget, & firstW, & lastW);
 
-		long differenceFirst = 0;
-		for (long i = 0; i < firstW; i ++) {
+		integer differenceFirst = 0;
+		for (integer i = 0; i < firstW; i ++) {
 			if (bufferW [i] == 13 && (bufferW [i + 1] == L'\n' || bufferW [i + 1] == 0x0085)) differenceFirst ++;
 			if (bufferW [i] >= 0xDC00 && bufferW [i] <= 0xDFFF) differenceFirst ++;
 		}
 		*first = firstW - differenceFirst;
 
-		long differenceLast = differenceFirst;
-		for (long i = firstW; i < lastW; i ++) {
+		integer differenceLast = differenceFirst;
+		for (integer i = firstW; i < lastW; i ++) {
 			if (bufferW [i] == 13 && (bufferW [i + 1] == L'\n' || bufferW [i + 1] == 0x0085)) differenceLast ++;
 			if (bufferW [i] >= 0xDC00 && bufferW [i] <= 0xDFFF) differenceLast ++;
 		}
@@ -814,7 +814,7 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 
 		char32 *result = Melder_dup_f (Melder_peekWto32 (bufferW));
 		Melder_free (bufferW);
-		Melder_killReturns_inline (result);
+		(void) Melder_killReturns_inplace (result);
 		return result;
 	#elif cocoa
 		if (my d_cocoaTextView) {
@@ -824,8 +824,8 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 			NSRange nsRange = [my d_cocoaTextView   selectedRange];
 			*first = nsRange. location;
 			*last = *first + nsRange. length;
-			for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
-			for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
+			for (integer i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
+			for (integer i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
 			return result;
 		} else {
 			NSString *nsString = [(NSTextField *) my d_widget   stringValue];
@@ -834,8 +834,8 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *l
 			NSRange nsRange = [[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] selectedRange];
 			*first = nsRange. location;
 			*last = *first + nsRange. length;
-			for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
-			for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
+			for (integer i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
+			for (integer i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
 			return result;
 		}
 	#else
@@ -894,7 +894,7 @@ void GuiText_remove (GuiText me) {
 	#endif
 }
 
-void GuiText_replace (GuiText me, long from_pos, long to_pos, const char32 *text) {
+void GuiText_replace (GuiText me, integer from_pos, integer to_pos, const char32 *text) {
 	#if gtk
 		gchar *newText = Melder_peek32to8 (text);
 		if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_ENTRY) {
@@ -931,11 +931,11 @@ void GuiText_replace (GuiText me, long from_pos, long to_pos, const char32 *text
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		if (my d_cocoaTextView) {
-			long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+			integer numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
 			{// scope
 				autostring32 oldText = GuiText_getString (me);
-				for (long i = 0; i < from_pos; i ++) if (oldText [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-				for (long i = from_pos; i < to_pos; i ++) if (oldText [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+				for (integer i = 0; i < from_pos; i ++) if (oldText [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+				for (integer i = from_pos; i < to_pos; i ++) if (oldText [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
 			}
 			from_pos += numberOfLeadingHighUnicodeValues;
 			to_pos += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
@@ -985,7 +985,7 @@ void GuiText_setFontSize (GuiText me, int size) {
 		gtk_widget_modify_style (GTK_WIDGET (my d_widget), modStyle);
 	#elif motif
 		// a trick to update the window. BUG: why doesn't UpdateWindow seem to suffice?
-		long first, last;
+		integer first, last;
 		char32 *text = GuiText_getStringAndSelectionPosition (me, & first, & last);
 		GuiText_setString (me, U"");   // erase all
 		UpdateWindow (my d_widget -> window);
@@ -1025,7 +1025,7 @@ void GuiText_setRedoItem (GuiText me, GuiMenuItem item) {
 	#endif
 }
 
-void GuiText_setSelection (GuiText me, long first, long last) {
+void GuiText_setSelection (GuiText me, integer first, integer last) {
 	if (my d_widget) {
 	#if gtk
 		if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_ENTRY) {
@@ -1041,22 +1041,22 @@ void GuiText_setSelection (GuiText me, long first, long last) {
 		char32 *text = GuiText_getString (me);
 		if (first < 0) first = 0;
 		if (last < 0) last = 0;
-		long length = str32len (text);
+		integer length = str32len (text);
 		if (first >= length) first = length;
 		if (last >= length) last = length;
 		/*
 		 * 'first' and 'last' are the positions of the selection in the text when separated by LF alone.
 		 * We have to convert this to the positions that the selection has in a text separated by CR/LF sequences.
 		 */
-		long numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
-		for (long i = 0; i < first; i ++) if (text [i] == U'\n') numberOfLeadingLineBreaks ++;
-		for (long i = first; i < last; i ++) if (text [i] == U'\n') numberOfSelectedLineBreaks ++;
+		integer numberOfLeadingLineBreaks = 0, numberOfSelectedLineBreaks = 0;
+		for (integer i = 0; i < first; i ++) if (text [i] == U'\n') numberOfLeadingLineBreaks ++;
+		for (integer i = first; i < last; i ++) if (text [i] == U'\n') numberOfSelectedLineBreaks ++;
 		/*
 		 * On Windows, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
 		 */
-		long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
-		for (long i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-		for (long i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+		integer numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+		for (integer i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+		for (integer i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
 
 		first += numberOfLeadingLineBreaks;
 		last += numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
@@ -1071,9 +1071,9 @@ void GuiText_setSelection (GuiText me, long first, long last) {
 		 * On Cocoa, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
 		 */
 		char32 *text = GuiText_getString (me);
-		long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
-		for (long i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-		for (long i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+		integer numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+		for (integer i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+		for (integer i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
 		first += numberOfLeadingHighUnicodeValues;
 		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
 		Melder_free (text);

@@ -19,6 +19,7 @@
  */
 
 #include "Thing.h"
+#include "longchar.h"
 
 #include "Graphics_enums.h"
 
@@ -32,10 +33,11 @@ typedef struct {
 	unsigned char link, rightToLeft;
 	short style, size, baseline;
 	double size_real;
-	unsigned long code;
+	uint32 code;
 	char32 kar;
+	Longchar_Info karInfo;
 	double width;
-	union { long integer; const char *string; void *pointer; } font;
+	union { integer integer_; const char *string; void *pointer; } font;
 	int cell, line, run;
 } _Graphics_widechar;
 
@@ -56,13 +58,13 @@ Thing_define (Graphics, Thing) {
 	int resolution;
 		/* Dots per inch. */
 	enum kGraphics_resolution resolutionNumber;
-	long d_x1DCmin, d_x2DCmax, d_y1DCmin, d_y2DCmax;
+	integer d_x1DCmin, d_x2DCmax, d_y1DCmin, d_y2DCmax;
 		/* Maximum dimensions of the output device. */
 		/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */
 		/* The point (x1DCmin, y1DCmin) can be either in the top left */
 		/* or in the bottom left, depending on the yIsZeroAtTheTop flag. */
 		/* Device variables. */
-	long d_x1DC, d_x2DC, d_y1DC, d_y2DC;
+	integer d_x1DC, d_x2DC, d_y1DC, d_y2DC;
 		/* Current dimensions of the output device, or: */
 		/* device coordinates of the viewport rectangle. */
 		/* x1DCmin <= x1DC < x2DC <= x2DCmax; */
@@ -98,15 +100,15 @@ Thing_define (Graphics, Thing) {
 	int lineType;
 	Graphics_Colour colour;
 	double lineWidth, arrowSize, speckleSize;
-	enum kGraphics_colourScale colourScale;
+	kGraphics_colourScale colourScale;
 	int horizontalTextAlignment, verticalTextAlignment;
 	double textRotation, wrapWidth, secondIndent, textX, textY;
-	enum kGraphics_font font;
+	kGraphics_font font;
 	int fontSize, fontStyle;
 	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
 	int dollarSignIsCode, atSignIsLink;
 	bool recording, duringXor;
-	long irecord, nrecord;
+	integer irecord, nrecord;
 	double *record;
 	Graphics_Viewport outerViewport;   // for Graphics_(un)setInner ()
 	double horTick, vertTick;   // for Graphics_mark(s)XXX ()
@@ -115,8 +117,8 @@ Thing_define (Graphics, Thing) {
 	void v_destroy () noexcept
 		override;
 
-	virtual void v_polyline (long /* numberOfPoints */, double * /* xyDC */, bool /* close */) { }
-	virtual void v_fillArea (long /* numberOfPoints */, double * /* xyDC */) { }
+	virtual void v_polyline (integer /* numberOfPoints */, double * /* xyDC */, bool /* close */) { }
+	virtual void v_fillArea (integer /* numberOfPoints */, double * /* xyDC */) { }
 	virtual void v_rectangle (double /* x1DC */, double /* x2DC */, double /* y1DC */, double /* y2DC */) { }
 	virtual void v_fillRectangle (double /* x1DC */, double /* x2DC */, double /* y1DC */, double /* y2DC */) { }
 	virtual void v_circle (double /* xDC */, double /* yDC */, double /* rDC */) { }
@@ -132,15 +134,15 @@ Thing_define (Graphics, Thing) {
 	virtual void v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
 	virtual void v_arrowHead (double xDC, double yDC, double angle);
 	virtual bool v_mouseStillDown () { return false; }
-	virtual void v_getMouseLocation (double *xWC, double *yWC) { *xWC = *yWC = NUMundefined; }
+	virtual void v_getMouseLocation (double *xWC, double *yWC) { *xWC = *yWC = undefined; }
 	virtual void v_flushWs () { }
 	virtual void v_clearWs () { }
 	virtual void v_updateWs () { }
 };
 
 autoGraphics Graphics_create (int resolution);
-autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
-	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification);
+autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, kGraphicsPostscript_spots spots,
+	kGraphicsPostscript_paperSize paperSize, kGraphicsPostscript_orientation rotation, double magnification);
 autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
 	double xmin, double xmax, double ymin, double ymax, bool includeFonts, bool useSilipaPS);
 autoGraphics Graphics_create_pdffile (MelderFile file, int resolution,
@@ -156,26 +158,26 @@ autoGraphics Graphics_create_xmdrawingarea (GuiDrawingArea drawingArea);
 
 int Graphics_getResolution (Graphics me);
 
-void Graphics_setWsViewport (Graphics me, long x1DC, long x2DC, long y1DC, long y2DC);
-void Graphics_resetWsViewport (Graphics me, long x1DC, long x2DC, long y1DC, long y2DC);
+void Graphics_setWsViewport (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);
+void Graphics_resetWsViewport (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);
 void Graphics_setWsWindow (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC);
-void Graphics_inqWsViewport (Graphics me, long *x1DC, long *x2DC, long *y1DC, long *y2DC);
+void Graphics_inqWsViewport (Graphics me, integer *x1DC, integer *x2DC, integer *y1DC, integer *y2DC);
 void Graphics_inqWsWindow (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_clearWs (Graphics me);
 void Graphics_flushWs (Graphics me);
 void Graphics_updateWs (Graphics me);
 void Graphics_beginMovieFrame (Graphics me, Graphics_Colour *colour);
 void Graphics_endMovieFrame (Graphics me, double frameDuration);
-void Graphics_DCtoWC (Graphics me, long xDC, long yDC, double *xWC, double *yWC);
-void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC);
+void Graphics_DCtoWC (Graphics me, integer xDC, integer yDC, double *xWC, double *yWC);
+void Graphics_WCtoDC (Graphics me, double xWC, double yWC, integer *xDC, integer *yDC);
 
 void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC);
 Graphics_Viewport Graphics_insetViewport (Graphics me, double x1rel, double x2rel, double y1rel, double y2rel);
 void Graphics_resetViewport (Graphics me, Graphics_Viewport viewport);
 void Graphics_setWindow (Graphics me, double x1, double x2, double y1, double y2);
 
-void Graphics_polyline (Graphics me, long numberOfPoints, double *x, double *y);
-void Graphics_polyline_closed (Graphics me, long numberOfPoints, double *x, double *y);
+void Graphics_polyline (Graphics me, integer numberOfPoints, double *x, double *y);
+void Graphics_polyline_closed (Graphics me, integer numberOfPoints, double *x, double *y);
 void Graphics_text (Graphics me, double x, double y, Melder_1_ARG);
 void Graphics_text (Graphics me, double x, double y, Melder_2_ARGS);
 void Graphics_text (Graphics me, double x, double y, Melder_3_ARGS);
@@ -194,27 +196,27 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 double Graphics_textWidth       (Graphics me, const char32 *text /* cattable */);
 double Graphics_textWidth_ps    (Graphics me, const char32 *text /* cattable */, bool useSilipaPS);
 double Graphics_textWidth_ps_mm (Graphics me, const char32 *text /* cattable */, bool useSilipaPS);
-void Graphics_fillArea (Graphics me, long numberOfPoints, double *x, double *y);
-void Graphics_cellArray (Graphics me, double **z, long ix1, long ix2, double x1, double x2,
-	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
-void Graphics_cellArray_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1, double x2,
-	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
-void Graphics_cellArray8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1, double x2,
-	long iy1, long iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
-void Graphics_image (Graphics me, double **z, long ix1, long ix2, double x1, double x2,
-	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
-void Graphics_image_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1, double x2,
-	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
-void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1, double x2,
-	long iy1, long iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
+void Graphics_fillArea (Graphics me, integer numberOfPoints, double *x, double *y);
+void Graphics_cellArray (Graphics me, double **z, integer ix1, integer ix2, double x1, double x2,
+	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
+void Graphics_cellArray_colour (Graphics me, double_rgbt **z, integer ix1, integer ix2, double x1, double x2,
+	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
+void Graphics_cellArray8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1, double x2,
+	integer iy1, integer iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
+void Graphics_image (Graphics me, double **z, integer ix1, integer ix2, double x1, double x2,
+	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
+void Graphics_image_colour (Graphics me, double_rgbt **z, integer ix1, integer ix2, double x1, double x2,
+	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
+void Graphics_image8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1, double x2,
+	integer iy1, integer iy2, double y1, double y2, uint8 minimum, uint8 maximum);
 void Graphics_imageFromFile (Graphics me, const char32 *relativeFileName, double x1, double x2, double y1, double y2);
 void Graphics_line (Graphics me, double x1, double y1, double x2, double y2);
 void Graphics_rectangle (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_fillRectangle (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_roundedRectangle (Graphics me, double x1, double x2, double y1, double y2, double r_mm);
 void Graphics_fillRoundedRectangle (Graphics me, double x1, double x2, double y1, double y2, double r_mm);
-void Graphics_function (Graphics me, double y [], long ix1, long ix2, double x1, double x2);   // y [ix1..ix2]
-void Graphics_function16 (Graphics me, int16_t y [], int stagger, long ix1, long ix2, double x1, double x2);   // y [ix1..ix2] or y [ix1*2..ix2*2]
+void Graphics_function (Graphics me, double y [], integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2]
+void Graphics_function16 (Graphics me, int16_t y [], int stagger, integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2] or y [ix1*2..ix2*2]
 void Graphics_circle (Graphics me, double x, double y, double r);
 void Graphics_fillCircle (Graphics me, double x, double y, double r);
 void Graphics_circle_mm (Graphics me, double x, double y, double d);
@@ -253,14 +255,14 @@ void Graphics_unhighlight2 (Graphics me, double x1, double x2, double y1, double
 	double innerX1, double innerX2, double innerY1, double innerY2);
 
 #define Graphics_NOCHANGE  -1
-#define Graphics_LEFT  kGraphics_horizontalAlignment_LEFT
-#define Graphics_CENTRE  kGraphics_horizontalAlignment_CENTRE
-#define Graphics_RIGHT  kGraphics_horizontalAlignment_RIGHT
+#define Graphics_LEFT  kGraphics_horizontalAlignment::LEFT
+#define Graphics_CENTRE  kGraphics_horizontalAlignment::CENTRE
+#define Graphics_RIGHT  kGraphics_horizontalAlignment::RIGHT
 #define Graphics_BOTTOM  0
 #define Graphics_HALF  1
 #define Graphics_TOP  2
 #define Graphics_BASELINE  3
-void Graphics_setTextAlignment (Graphics me, int horizontal, int vertical);
+void Graphics_setTextAlignment (Graphics me, enum kGraphics_horizontalAlignment horizontal, int vertical);
 
 void Graphics_setFont (Graphics me, enum kGraphics_font font);
 void Graphics_setFontSize (Graphics me, int height);
@@ -315,14 +317,14 @@ Graphics_Colour Graphics_inqColour (Graphics me);
 enum kGraphics_colourScale Graphics_inqColourScale (Graphics me);
 
 void Graphics_contour (Graphics me, double **z,
-	long ix1, long ix2, double x1WC, double x2WC, long iy1, long iy2, double y1WC, double y2WC, double height);
+	integer ix1, integer ix2, double x1WC, double x2WC, integer iy1, integer iy2, double y1WC, double y2WC, double height);
 void Graphics_altitude (Graphics me, double **z,
-	long ix1, long ix2, double x1, double x2, long iy1, long iy2, double y1, double y2, int numberOfBorders, double borders []);
+	integer ix1, integer ix2, double x1, double x2, integer iy1, integer iy2, double y1, double y2, int numberOfBorders, double borders []);
 void Graphics_grey (Graphics me, double **z,
-	long ix1, long ix2, double x1, double x2, long iy1, long iy2, double y1, double y2, int numberOfBorders, double borders []);
+	integer ix1, integer ix2, double x1, double x2, integer iy1, integer iy2, double y1, double y2, int numberOfBorders, double borders []);
 #define Graphics_gray Graphics_grey
-void Graphics_surface (Graphics me, double **z, long ix1, long ix2, double x1, double x2,
-	long iy1, long iy2, double y1, double y2, double minimum, double maximum, double elevation, double azimuth);
+void Graphics_surface (Graphics me, double **z, integer ix1, integer ix2, double x1, double x2,
+	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum, double elevation, double azimuth);
 
 void Graphics_setInner (Graphics me);
 void Graphics_unsetInner (Graphics me);
@@ -378,10 +380,6 @@ void Graphics_getMouseLocation (Graphics me, double *xWC, double *yWC);
 void Graphics_nextSheetOfPaper (Graphics me);
 
 void Graphics_prefs ();
-
-#if defined (UNIX)
-	#define USE_PANGO  1
-#endif
 
 /* End of file Graphics.h */
 #endif

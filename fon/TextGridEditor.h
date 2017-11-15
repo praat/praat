@@ -28,7 +28,7 @@
 
 Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	SpellingChecker spellingChecker;
-	long selectedTier;
+	integer selectedTier;
 	bool suppressRedraw;
 	char32 *findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;

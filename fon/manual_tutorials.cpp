@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,37 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20170524)
+MAN_BEGIN (U"What's new?", U"ppgb", 20171111)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.36# (11 November 2017)")
+LIST_ITEM (U"• Many more languages for SpeechSynthesizer and automatic alignment (new eSpeak).")
+NORMAL (U"##6.0.35# (16 October 2017)")
+LIST_ITEM (U"• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would sometimes incorrectly refuse.")
+NORMAL (U"##6.0.34# (10 October 2017)")
+LIST_ITEM (U"• Scripting: arrays in menu commands in scripts.")
+LIST_ITEM (U"• #Inspect: made a button visible that had disappeared in 6.0.33.")
+NORMAL (U"##6.0.33# (26 September 2017)")
+LIST_ITEM (U"• #Pitch: Subtract linear fit...#: correct a bug that prevented computation in the ERB domain.")
+LIST_ITEM (U"• Scripting: made object[xx].xmin work again.")
+LIST_ITEM (U"• Removed a bug in ##Polynomial: Evaluate...# introduced in 6.0.32.")
+NORMAL (U"##6.0.32# (16 September 2017)")
+LIST_ITEM (U"• Table: allow spaces in column names.")
+LIST_ITEM (U"• Settings windows no longer replace your visible expressions with their resulting values.")
+LIST_ITEM (U"• Scripting: formulas using the tilde.")
+LIST_ITEM (U"• Optimality Theory learning: corrected a bug introduced in 6.0.30 that could cause the editor to crash on the Mac.")
+LIST_ITEM (U"• EEG: corrected a bug that could cause an infinite loop when doing principal component analysis.")
+LIST_ITEM (U"• Scripting: faster interpreter.")
+NORMAL (U"##6.0.31# (21 August 2017)")
+LIST_ITEM (U"• Scripting: more vectors and matrices.")
+LIST_ITEM (U"• Numerics: faster and more precise sums, means, standard deviations.")
+NORMAL (U"##6.0.30# (22 July 2017)")
+LIST_ITEM (U"• Removed a bug that caused an incorrect title for a PitchTier or PointProcess window.")
+LIST_ITEM (U"• Removed a bug that caused Praat to crash when doing a linear regression on a Table with no rows.")
+LIST_ITEM (U"• Scripting: $$object[]$, @@Scripting 5.7. Vectors and matrices|vectors@.")
+LIST_ITEM (U"• Graphics: better text drawing details.")
+LIST_ITEM (U"• Linux: possibility to compile Praat without a GUI but with graphics file output.")
 NORMAL (U"##6.0.29# (24 May 2017)")
 LIST_ITEM (U"• Sound window: channel muting.")
 LIST_ITEM (U"• Linux: support for Chinese, Japanese, Korean, Indic, Arabic and Hebrew characters in TextGrids and elsewhere.")
@@ -41,7 +68,7 @@ NORMAL (U"##6.0.25# (11 February 2017)")
 LIST_ITEM (U"• Mac: made $$demoShow()$ and $$blankWhilePlaying$ compatible with MacOS 10.12 Sierra.")
 LIST_ITEM (U"• Mac SoundRecorder: more sampling frequencies, on behalf of external USB microphones.")
 NORMAL (U"##6.0.24# (23 January 2017)")
-LIST_ITEM (U"• Fixed a bug by which ##Remove right boundary# would choose the wrong tier.")
+LIST_ITEM (U"• Fixed a bug introduced in 6.0.23 by which ##Remove right boundary# would choose the wrong tier.")
 LIST_ITEM (U"• TextGrid window: click to insert a phonetic symbol from an IPA chart.")
 NORMAL (U"##6.0.23# (12 December 2016)")
 LIST_ITEM (U"• Linux: fixed a bug that caused Praat to crash when playing a sound of more than 7 channels.")
@@ -1183,7 +1210,7 @@ LIST_ITEM (U"• Scripting: regular expressions allow replacement with empty str
 NORMAL (U"##4.4.23# (1 June 2006)")
 LIST_ITEM (U"• Table: ignore more white space.")
 NORMAL (U"##4.4.22# (30 May 2006)")
-LIST_ITEM (U"• Scripting: replacing with regular expression. See @@Formulas 5. String functions@.")
+LIST_ITEM (U"• Scripting: replacing with regular expression. See @@Formulas 6. String functions@.")
 NORMAL (U"##4.4.21# (29 May 2006)")
 LIST_ITEM (U"• Made Manipulation objects readable again.")
 NORMAL (U"##4.4.20# (3 May 2006)")
@@ -1201,7 +1228,7 @@ LIST_ITEM (U"• Table: #Formula accepts string expressions as well as numeric e
 LIST_ITEM (U"• Table: #Sort can sort by any number of columns.")
 LIST_ITEM (U"• Table: ##Create with column names#.")
 LIST_ITEM (U"• Table: ##Report mean#.")
-LIST_ITEM (U"• Formulas: @@Formulas 7. Attributes of objects|row\\$  and col\\$  attributes@.")
+LIST_ITEM (U"• Formulas: @@Formulas 8. Attributes of objects|row\\$  and col\\$  attributes@.")
 LIST_ITEM (U"• Warning when trying to read data files whose format is newer than the Praat version.")
 NORMAL (U"##4.4.16# (1 April 2006)")
 LIST_ITEM (U"• Spectrum window: dynamic range setting.")
@@ -1416,7 +1443,7 @@ ENTRY (U"Praat 4.2, 4 March 2004")
 		"on non-PostScript printers, improves the looks of pictures copied to your wordprocessor when printed, "
 		"and changes the looks of pictures copied to your presentation program.")
 	NORMAL (U"OT learning:")
-	LIST_ITEM (U"• Metrics grammar supports \'impoverished overt forms\', "
+	LIST_ITEM (U"• Metrics grammar supports `impoverished overt forms', "
 		"i.e. without secondary stress even if surface structures do have secondary stress.")
 	LIST_ITEM (U"• Support for crucially tied constraints and tied candidates.")
 	LIST_ITEM (U"• Support for backtracking in EDCD.")
@@ -1476,8 +1503,8 @@ ENTRY (U"Praat 4.1, 5 June 2003")
 	LIST_ITEM (U"• Refer to any matrices and tables in formulas, e.g. Sound_hello (x) or Table_everything [row, col] "
 		"or Table_tokens [i, \"F1\"].")
 	LIST_ITEM (U"• Assignment by modification, as with += -= *= /=.")
-	LIST_ITEM (U"• New functions: date\\$ (), extractNumber, extractWord\\$ , extractLine\\$ . See @@Formulas 5. String functions@.")
-	LIST_ITEM (U"• @@Scripting 5.7. Including other scripts@.")
+	LIST_ITEM (U"• New functions: date\\$ (), extractNumber, extractWord\\$ , extractLine\\$ . See @@Formulas 6. String functions@.")
+	LIST_ITEM (U"• @@Scripting 5.8. Including other scripts@.")
 	LIST_ITEM (U"• String formulas in the calculator.")
 	LIST_ITEM (U"• Stopped support of things that had been undocumented for the last four years: "
 		"#let, #getnumber, #getstring, #ARGS, #copy, #proc, variables with capitals, and strings in numeric variables; "
@@ -1588,7 +1615,7 @@ ENTRY (U"Praat 3.9, 18 October 2000")
 	LIST_ITEM (U"• Read Sound from raw Alaw file.")
 	LIST_ITEM (U"• Artword & Speaker (& Sound) movie: real time on all platforms.")
 	NORMAL (U"Scripting:")
-	LIST_ITEM (U"• @@Formulas 4. Mathematical functions@: added statistical functions: %\\ci^2, Student T, Fisher F, binomial, "
+	LIST_ITEM (U"• @@Formulas 5. Mathematical functions@: added statistical functions: %\\ci^2, Student T, Fisher F, binomial, "
 		"and their inverse functions.")
 	LIST_ITEM (U"• Windows: program #praatcon for use as a Unix-style console application.")
 	LIST_ITEM (U"• Windows and Unix: Praat can be run with a command-line interface without quitting on errors.")
@@ -1658,7 +1685,7 @@ ENTRY (U"Praat 3.7, 24 March 1998")
 	LIST_ITEM (U"• Many new interpolations.")
 	LIST_ITEM (U"• Sound enhancements: @@Sound: Lengthen (overlap-add)...@, @@Sound: Deepen band modulation...@")
 	LIST_ITEM (U"• @@Source-filter synthesis@ tutorial, @@Sound & IntensityTier: Multiply@, "
-		"##Sound & FormantTier: Filter#, @@Formant: Formula (frequencies)...@, @@Sound: Pre-emphasize (in-line)...@.")
+		"##Sound & FormantTier: Filter#, @@Formant: Formula (frequencies)...@, @@Sound: Pre-emphasize (in-place)...@.")
 	NORMAL (U"Labelling")
 	LIST_ITEM (U"• TextGrid queries (#Get times and labels in a script).")
 	LIST_ITEM (U"• @@TextGrid: Count labels...@.")
@@ -1672,7 +1699,7 @@ ENTRY (U"Praat 3.7, 24 March 1998")
 	LIST_ITEM (U"• OT learning: new strategies: weighted symmetric plasticity (uncancelled or all).")
 	NORMAL (U"Praat shell")
 	LIST_ITEM (U"• First Linux version.")
-	LIST_ITEM (U"• Eight new functions like e.g. %hertzToBark in @@Formulas 4. Mathematical functions@.")
+	LIST_ITEM (U"• Eight new functions like e.g. %hertzToBark in @@Formulas 5. Mathematical functions@.")
 	LIST_ITEM (U"• @@Praat script@: procedure arguments; object names.")
 	NORMAL (U"Documentation:")
 	LIST_ITEM (U"• 230 more man pages (now 630).")
@@ -1870,7 +1897,7 @@ LIST_ITEM (U"GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL 3 or later
 	"contains AMD software by the same author (LGPL 2.1 or later).")
 LIST_ITEM (U"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs "
 	"(CC-BY-like license).")
-LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington (GPL 3 or later).")
+LIST_ITEM (U"Espeak: text-to-speech synthesizer by Jonathan Duddington and Reece Dunn (GPL 3 or later).")
 LIST_ITEM (U"MAD: MPEG Audio Decoder by Underbit Technologies (GPL 2 or later).")
 LIST_ITEM (U"FLAC: Free Lossless Audio Codec by Josh Coalson (BSD 3-clause license).")
 LIST_ITEM (U"fftpack: public domain Fourier transforms by Paul Swarztrauber and Christopher Montgomery.")
@@ -2137,10 +2164,10 @@ NORMAL (U"Some very fast Infinite Impulse Response (IIR) filters can be defined 
 LIST_ITEM (U"• @@Sound: Filter (one formant)...@")
 LIST_ITEM (U"• @@Sound: Filter (pre-emphasis)...@")
 LIST_ITEM (U"• @@Sound: Filter (de-emphasis)...@")
-NORMAL (U"And there are in-line versions, which modify the existing Sound objects:")
-LIST_ITEM (U"• @@Sound: Filter with one formant (in-line)...@")
-LIST_ITEM (U"• @@Sound: Pre-emphasize (in-line)...@")
-LIST_ITEM (U"• @@Sound: De-emphasize (in-line)...@")
+NORMAL (U"And there are in-place versions, which modify the existing Sound objects:")
+LIST_ITEM (U"• @@Sound: Filter with one formant (in-place)...@")
+LIST_ITEM (U"• @@Sound: Pre-emphasize (in-place)...@")
+LIST_ITEM (U"• @@Sound: De-emphasize (in-place)...@")
 ENTRY (U"Convolution")
 NORMAL (U"A Finite Impulse Response (FIR) filter can be described as a sampled sound. "
 	"Filtering with such a filter amounts to a %#convolution of the original sound and the filter:")
@@ -3570,7 +3597,7 @@ NORMAL (U"In this example, filtering was done without automatic scaling, so that
 	"between -1 and +1 Pascal.")
 MAN_END
 
-MAN_BEGIN (U"Source-filter synthesis 4. Using existing sounds", U"ppgb", 20140421)
+MAN_BEGIN (U"Source-filter synthesis 4. Using existing sounds", U"ppgb", 20170828)
 ENTRY (U"1. How to extract the %filter from an existing speech sound")
 NORMAL (U"You can separate source and filter with the help of the technique of %%linear prediction% "
 	"(see @@Sound: LPC analysis@). This technique tries to approximate a given frequency spectrum with "
@@ -3683,7 +3710,7 @@ NORMAL (U"A @Formant object can be changed in a friendlier way, with @@Formant: 
 CODE (U"#selectObject: \"Formant filter\"")
 CODE (U"Formula (frequencies): \"self * 0.9\"")
 NORMAL (U"To add 200 hertz to all values of %F__2_, you do")
-CODE (U"Formula (frequencies): \"if row = 2 then self + 200 else self fi\"")
+CODE (U"Formula (frequencies): ~ if row = 2 then self + 200 else self fi")
 NORMAL (U"A @FormantGrid object can be changed by adding or removing points:")
 LIST_ITEM (U"@@FormantGrid: Add formant point...@")
 LIST_ITEM (U"@@FormantGrid: Add bandwidth point...@")

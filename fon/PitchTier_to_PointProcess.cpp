@@ -1,6 +1,6 @@
 /* PitchTier_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,17 @@ autoPointProcess PitchTier_to_PointProcess (PitchTier me) {
 	try {
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 1000);
 		double area = 0.5;   // imagine an event half a period before the beginning
-		long size = my points.size;
+		integer size = my points.size;
 		if (size == 0) return thee;
-		for (long interval = 0; interval <= size; interval ++) {
+		for (integer interval = 0; interval <= size; interval ++) {
 			double t1 = ( interval == 0 ? my xmin : my points.at [interval] -> number );
-			Melder_assert (NUMdefined (t1));
+			Melder_assert (isdefined (t1));
 			double t2 = ( interval == size ? my xmax : my points.at [interval + 1] -> number );
-			Melder_assert (NUMdefined (t2));
+			Melder_assert (isdefined (t2));
 			double f1 = my points.at [interval == 0 ? 1 : interval] -> value;
-			Melder_assert (NUMdefined (f1));
+			Melder_assert (isdefined (f1));
 			double f2 = my points.at [interval == size ? size : interval + 1] -> value;
-			Melder_assert (NUMdefined (f2));
+			Melder_assert (isdefined (f2));
 			area += (t2 - t1) * 0.5 * (f1 + f2);
 			while (area >= 1.0) {
 				double slope = (f2 - f1) / (t2 - t1), discriminant;
@@ -56,7 +56,7 @@ autoPointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 		/*
 		 * Copy only voiced parts to result.
 		 */
-		for (long i = 1; i <= fullPoint -> nt; i ++) {
+		for (integer i = 1; i <= fullPoint -> nt; i ++) {
 			double t = fullPoint -> t [i];
 			if (Pitch_isVoiced_t (vuv, t)) {
 				PointProcess_addPoint (thee.get(), t);
@@ -69,7 +69,7 @@ autoPointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 }
 
 static int PointProcess_isVoiced_t (PointProcess me, double t, double maxT) {
-	long imid = PointProcess_getNearestIndex (me, t);
+	integer imid = PointProcess_getNearestIndex (me, t);
 	if (imid == 0) return 0;
 	double tmid = my t [imid];
 	int leftVoiced = imid > 1 && tmid - my t [imid - 1] <= maxT;
@@ -87,7 +87,7 @@ autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv
 		/*
 		 * Copy only voiced parts to result.
 		 */
-		for (long i = 1; i <= fullPoint -> nt; i ++) {
+		for (integer i = 1; i <= fullPoint -> nt; i ++) {
 			double t = fullPoint -> t [i];
 			if (PointProcess_isVoiced_t (vuv, t, maxT)) {
 				PointProcess_addPoint (thee.get(), t);
@@ -102,7 +102,7 @@ autoPointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv
 autoPitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
 	try {
 		autoPitchTier thee = PitchTier_create (my xmin, my xmax);
-		for (long i = 1; i < my nt; i ++) {
+		for (integer i = 1; i < my nt; i ++) {
 			double interval = my t [i + 1] - my t [i];
 			if (interval <= maximumInterval) {
 				RealTier_addPoint (thee.get(), my t [i] + 0.5 * interval, 1.0 / interval);
@@ -128,7 +128,7 @@ autoPitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp
 	try {
 		if (my points.size == 0) Melder_throw (U"No pitch points.");
 		autoPitchTier thee = PitchTier_create (pp -> xmin, pp -> xmax);
-		for (long i = 1; i <= pp -> nt; i ++) {
+		for (integer i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
 			double value = RealTier_getValueAtTime (me, time);
 			RealTier_addPoint (thee.get(), time, value);
@@ -143,7 +143,7 @@ autoTableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones) {
 	try {
 		autoTableOfReal thee = RealTier_downto_TableOfReal (me, U"Time", U"F0");
 		if (useSemitones)
-			for (long i = 1; i <= thy numberOfRows; i ++)
+			for (integer i = 1; i <= thy numberOfRows; i ++)
 				thy data [i] [2] = NUMhertzToSemitones (thy data [i] [2]);
 		return thee;
 	} catch (MelderError) {

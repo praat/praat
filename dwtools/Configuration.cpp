@@ -24,7 +24,6 @@
  djmw 20040303 Moved containsPrintableCharacter to NUM2.c
  djmw 20041026 Removed non-used code.
  djmw 20050314 Configuration_draw crashed when rowlabel==nullptr
- djmw 20061021 printf expects %ld for 'long int'
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071009 wchar
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h

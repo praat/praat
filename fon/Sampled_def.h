@@ -1,6 +1,6 @@
 /* Sampled_def.h
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define ooSTRUCT Sampled
 oo_DEFINE_CLASS (Sampled, Function)
 
-	oo_INT32 (nx)
+	oo_INTEGER (nx)
 	oo_DOUBLE (dx)
 	oo_DOUBLE (x1)
 
@@ -47,15 +47,15 @@ oo_DEFINE_CLASS (Sampled, Function)
 			override { return dx; }
 		bool v_hasGetX ()
 			override { return true; }
-		double v_getX (long ix)
+		double v_getX (integer ix)
 			override { return x1 + (ix - 1) * dx; }
 		void v_shiftX (double xfrom, double xto)
 			override;
 		void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto)
 			override;
 
-		virtual double v_getValueAtSample (long /* isamp */, long /* ilevel */, int /* unit */)
-			{ return NUMundefined; }
+		virtual double v_getValueAtSample (integer /* isamp */, integer /* ilevel */, int /* unit */)
+			{ return undefined; }
 	#endif
 
 oo_END_CLASS (Sampled)

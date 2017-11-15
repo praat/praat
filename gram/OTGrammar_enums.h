@@ -1,6 +1,6 @@
 /* OTGrammar_enums.h
  *
- * Copyright (C) 2006-2011,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2006-2011,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@ enums_begin (kOTGrammar_decisionStrategy, 0)
 	enums_add (kOTGrammar_decisionStrategy, 4, MAXIMUM_ENTROPY, U"MaximumEntropy")
 	enums_add (kOTGrammar_decisionStrategy, 5, POSITIVE_HG, U"PositiveHG")
 	enums_add (kOTGrammar_decisionStrategy, 6, EXPONENTIAL_MAXIMUM_ENTROPY, U"ExponentialMaximumEntropy")
+	/*
+		As this enumerated type occurs in data, you should add new decision strategies only at the end.
+	*/
 enums_end (kOTGrammar_decisionStrategy, 6, OPTIMALITY_THEORY)
 
 enums_begin (kOTGrammar_rerankingStrategy, 0)
@@ -40,5 +43,23 @@ enums_begin (kOTGrammar_rerankingStrategy, 0)
 	enums_add (kOTGrammar_rerankingStrategy, 10, WEIGHTED_ALL_UP_HIGH_DOWN, U"Weighted all up, high down")
 	enums_add (kOTGrammar_rerankingStrategy, 11, WEIGHTED_ALL_UP_HIGH_DOWN_2012, U"Weighted all up, high down (2012)")
 enums_end (kOTGrammar_rerankingStrategy, 11, SYMMETRIC_ALL)
+
+enums_begin (kOTGrammar_createTongueRootGrammar_constraintSet, 1)
+	enums_add (kOTGrammar_createTongueRootGrammar_constraintSet, 1, FIVE, U"Five")
+	enums_add (kOTGrammar_createTongueRootGrammar_constraintSet, 2, NINE, U"Nine")
+enums_end (kOTGrammar_createTongueRootGrammar_constraintSet, 2, FIVE)
+
+enums_begin (kOTGrammar_createTongueRootGrammar_ranking, 1)
+	enums_add (kOTGrammar_createTongueRootGrammar_ranking, 1, EQUAL, U"equal")
+	enums_add (kOTGrammar_createTongueRootGrammar_ranking, 2, RANDOM, U"random")
+	enums_add (kOTGrammar_createTongueRootGrammar_ranking, 3, INFANT, U"infant")
+	enums_add (kOTGrammar_createTongueRootGrammar_ranking, 4, WOLOF, U"Wolof")
+enums_end (kOTGrammar_createTongueRootGrammar_ranking, 4, INFANT)
+
+enums_begin (kOTGrammar_createMetricsGrammar_initialRanking, 1)
+	enums_add (kOTGrammar_createMetricsGrammar_initialRanking, 1, EQUAL, U"equal")
+	enums_add (kOTGrammar_createMetricsGrammar_initialRanking, 2, FOOT_FORM_HIGH, U"foot form high")
+	enums_add (kOTGrammar_createMetricsGrammar_initialRanking, 3, WSP_HIGH, U"WSP high")
+enums_end (kOTGrammar_createMetricsGrammar_initialRanking, 3, EQUAL)
 
 /* End of file OTGrammar_enums.h */

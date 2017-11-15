@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,16 @@
  */
 
 #include "melder.h"
-#include "NUM.h"
 
 /********** NUMBER TO STRING CONVERSION **********/
 
 #define NUMBER_OF_BUFFERS  32
 	/* = maximum number of arguments to a function call */
-#define MAXIMUM_NUMERIC_STRING_LENGTH  400
-	/* = sign + 324 + point + 60 + e + sign + 3 + null byte + ("·10^^" - "e") + 4 extra */
+#define MAXIMUM_NUMERIC_STRING_LENGTH  800
+	/* = sign + 324 + point + 60 + e + sign + 3 + null byte + ("·10^^" - "e"), times 2, + i, + 7 extra */
 
-static  char   buffers8  [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
-static  char32 buffers32 [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+static char   buffers8  [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
+static char32 buffers32 [NUMBER_OF_BUFFERS] [MAXIMUM_NUMERIC_STRING_LENGTH + 1];
 static int ibuffer = 0;
 
 #define CONVERT_BUFFER_TO_CHAR32 \
@@ -36,10 +35,10 @@ static int ibuffer = 0;
 	*q = U'\0'; \
 	return buffers32 [ibuffer];
 
-const char * Melder8_integer (int64 value) {
+const char * Melder8_integer (int64 value) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-	if (sizeof (long) == 8) {
-		int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%ld", (long) value);   // cast to identical type, to make compiler happy
+	if (sizeof (long_not_integer) == 8) {
+		int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%ld", (long_not_integer) value);   // cast to identical type, to make compiler happy
 		Melder_assert (n > 0);
 		Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	} else if (sizeof (long long) == 8) {
@@ -70,12 +69,12 @@ const char * Melder8_integer (int64 value) {
 	}
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_integer (int64 value) {
+const char32 * Melder_integer (int64 value) noexcept {
 	const char *p = Melder8_integer (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_bigInteger (int64 value) {
+const char * Melder8_bigInteger (int64 value) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	char *text = buffers8 [ibuffer];
 	text [0] = '\0';
@@ -124,20 +123,24 @@ const char * Melder8_bigInteger (int64 value) {
 	sprintf (text + strlen (text), firstDigitPrinted ? "%03d" : "%d", units);
 	return text;
 }
-const char32 * Melder_bigInteger (int64 value) {
+const char32 * Melder_bigInteger (int64 value) noexcept {
 	const char *p = Melder8_bigInteger (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_boolean (bool value) {
+const char * Melder8_boolean (bool value) noexcept {
 	return value ? "yes" : "no";
 }
-const char32 * Melder_boolean (bool value) {
+const char32 * Melder_boolean (bool value) noexcept {
 	return value ? U"yes" : U"no";
 }
 
-const char * Melder8_double (double value) {
-	if (value == NUMundefined) return "--undefined--";
+/*@praat
+	assert string$ (1000000000000) = "1000000000000"
+	assert string$ (undefined) = "--undefined--"
+@*/
+const char * Melder8_double (double value) noexcept {
+	if (isundef (value)) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.15g", value);
 	if (strtod (buffers8 [ibuffer], nullptr) != value) {
@@ -148,36 +151,36 @@ const char * Melder8_double (double value) {
 	}
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_double (double value) {
+const char32 * Melder_double (double value) noexcept {
 	const char *p = Melder8_double (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_single (double value) {
-	if (value == NUMundefined) return "--undefined--";
+const char * Melder8_single (double value) noexcept {
+	if (isundef (value)) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.9g", value);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_single (double value) {
+const char32 * Melder_single (double value) noexcept {
 	const char *p = Melder8_single (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_half (double value) {
-	if (value == NUMundefined) return "--undefined--";
+const char * Melder8_half (double value) noexcept {
+	if (isundef (value)) return "--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%.4g", value);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_half (double value) {
+const char32 * Melder_half (double value) noexcept {
 	const char *p = Melder8_half (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_fixed (double value, int precision) {
+const char * Melder8_fixed (double value, int precision) noexcept {
 	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
@@ -188,15 +191,15 @@ const char * Melder8_fixed (double value, int precision) {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_fixed (double value, int precision) {
+const char32 * Melder_fixed (double value, int precision) noexcept {
 	const char *p = Melder8_fixed (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_fixedExponent (double value, int exponent, int precision) {
+const char * Melder8_fixedExponent (double value, int exponent, int precision) noexcept {
 	double factor = pow (10, exponent);
 	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
@@ -208,14 +211,14 @@ const char * Melder8_fixedExponent (double value, int exponent, int precision) {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_fixedExponent (double value, int exponent, int precision) {
+const char32 * Melder_fixedExponent (double value, int exponent, int precision) noexcept {
 	const char *p = Melder8_fixedExponent (value, exponent, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_percent (double value, int precision) {
+const char * Melder8_percent (double value, int precision) noexcept {
 	int minimumPrecision;
-	if (value == NUMundefined) return "--undefined--";
+	if (isundef (value)) return "--undefined--";
 	if (value == 0.0) return "0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
@@ -227,12 +230,56 @@ const char * Melder8_percent (double value, int precision) {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_percent (double value, int precision) {
+const char32 * Melder_percent (double value, int precision) noexcept {
 	const char *p = Melder8_percent (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char32 * Melder_float (const char32 *number) {
+const char * Melder8_dcomplex (dcomplex value) noexcept {
+	if (isundef (value.re) || isundef (value.im)) return "--undefined--";
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	sprintf (buffers8 [ibuffer], "%.15g", value.re);
+	if (strtod (buffers8 [ibuffer], nullptr) != value.re) {
+		sprintf (buffers8 [ibuffer], "%.16g", value.re);
+		if (strtod (buffers8 [ibuffer], nullptr) != value.re) {
+			sprintf (buffers8 [ibuffer], "%.17g", value.re);
+		}
+	}
+	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
+	*p = value.im < 0.0 ? '-' : '+';
+	value.im = fabs (value.im);
+	++ p;
+	sprintf (p, "%.15g", value.im);
+	if (strtod (p, nullptr) != value.im) {
+		sprintf (p, "%.16g", value.im);
+		if (strtod (p, nullptr) != value.im) {
+			sprintf (p, "%.17g", value.im);
+		}
+	}
+	strcat (buffers8 [ibuffer], "i");
+	return buffers8 [ibuffer];
+}
+const char32 * Melder_dcomplex (dcomplex value) noexcept {
+	const char *p = Melder8_dcomplex (value);
+	CONVERT_BUFFER_TO_CHAR32
+}
+
+const char * Melder8_scomplex (dcomplex value) noexcept {
+	if (isundef (value.re) || isundef (value.im)) return "--undefined--";
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	sprintf (buffers8 [ibuffer], "%.9g", value.re);
+	char *p = buffers8 [ibuffer] + strlen (buffers8 [ibuffer]);
+	*p = value.im < 0.0 ? '-' : '+';
+	sprintf (++ p, "%.9g", fabs (value.im));
+	strcat (buffers8 [ibuffer], "i");
+	return buffers8 [ibuffer];
+}
+const char32 * Melder_scomplex (dcomplex value) noexcept {
+	const char *p = Melder8_scomplex (value);
+	CONVERT_BUFFER_TO_CHAR32
+}
+
+const char32 * Melder_float (const char32 *number) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (! str32chr (number, 'e')) {
 		str32cpy (buffers32 [ibuffer], number);
@@ -257,13 +304,13 @@ const char32 * Melder_float (const char32 *number) {
 	return buffers32 [ibuffer];
 }
 
-const char * Melder8_naturalLogarithm (double lnNumber) {
-	if (lnNumber == NUMundefined) return "--undefined--";
-	if (lnNumber == -INFINITY) return "0";
+const char * Melder8_naturalLogarithm (double lnNumber) noexcept {
+	//if (lnNumber == -INFINITY) return "0";   // this would have been nice, but cannot be relied upon
+	if (isundef (lnNumber)) return "--undefined--";
 	double log10Number = lnNumber * NUMlog10e;
 	if (log10Number < -41.0) {
 		if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
-		long ceiling = (long) ceil (log10Number);
+		long_not_integer ceiling = (long_not_integer) ceil (log10Number);
 		double remainder = log10Number - ceiling;
 		double remainder10 = pow (10.0, remainder);
 		while (remainder10 < 1.0) {
@@ -275,33 +322,68 @@ const char * Melder8_naturalLogarithm (double lnNumber) {
 			sprintf (buffers8 [ibuffer], "%.16g", remainder10);
 			if (strtod (buffers8 [ibuffer], nullptr) != remainder10) sprintf (buffers8 [ibuffer], "%.17g", remainder10);
 		}
-		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%ld", ceiling);
+		sprintf (buffers8 [ibuffer] + strlen (buffers8 [ibuffer]), "e-%ld", (long_not_integer) ceiling);
 	} else {
 		return Melder8_double (exp (lnNumber));
 	}
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_naturalLogarithm (double lnNumber) {
+const char32 * Melder_naturalLogarithm (double lnNumber) noexcept {
 	const char *p = Melder8_naturalLogarithm (lnNumber);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_pointer (void *pointer) {
+const char * Melder8_pointer (void *pointer) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%p", pointer);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_pointer (void *pointer) {
+const char32 * Melder_pointer (void *pointer) noexcept {
 	const char *p = Melder8_pointer (pointer);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char32 * Melder_character (char32 kar) {
+const char32 * Melder_character (char32 kar) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	buffers32 [ibuffer] [0] = kar;
 	buffers32 [ibuffer] [1] = U'\0';
 	return buffers32 [ibuffer];
 }
+
+/********** TENSOR TO STRING CONVERSION **********/
+
+#define NUMBER_OF_TENSOR_BUFFERS  3
+static MelderString theTensorBuffers [NUMBER_OF_TENSOR_BUFFERS] { };
+static int iTensorBuffer { 0 };
+
+const char32 * Melder_numvec (numvec value) {
+	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS) iTensorBuffer = 0;
+	MelderString *string = & theTensorBuffers [iTensorBuffer];
+	MelderString_empty (string);
+	if (value.at) {
+		for (integer i = 1; i <= value.size; i ++) {
+			MelderString_append (string, value [i], U'\n');
+		}
+	}
+	return string -> string;
+}
+const char32 * Melder_nummat (nummat value) {
+	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS) iTensorBuffer = 0;
+	MelderString *string = & theTensorBuffers [iTensorBuffer];
+	MelderString_empty (string);
+	if (value.at) {
+		for (integer irow = 1; irow <= value.nrow; irow ++) {
+			for (integer icol = 1; icol <= value.ncol; icol ++) {
+				MelderString_append (string, value [irow] [icol]);
+				if (icol < value.ncol) MelderString_appendCharacter (string, U' ');
+			}
+			if (irow < value.nrow) MelderString_appendCharacter (string, U'\n');
+		}
+	}
+	return string -> string;
+}
+
+/********** STRING TO STRING CONVERSION **********/
 
 static MelderString thePadBuffers [NUMBER_OF_BUFFERS];
 static int iPadBuffer { 0 };

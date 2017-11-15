@@ -1,6 +1,6 @@
 /* MelderGui.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma,
+ * Copyright (C) 1992-2017 Paul Boersma,
  *               2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -96,7 +96,7 @@ static bool waitWhileProgress (double progress, const char32 *message, GuiDialog
 		GuiThing_show (dia);   // TODO: prevent raising to the front
 		const char32 *newline = str32chr (message, U'\n');
 		if (newline) {
-			static MelderString buffer { 0 };
+			static MelderString buffer { };
 			MelderString_copy (& buffer, message);
 			buffer.string [newline - message] = U'\0';
 			GuiLabel_setText (label1, buffer.string);
@@ -238,7 +238,7 @@ static void * gui_monitor (double progress, const char32 *message) {
 	static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
 		static char16 message16 [4000];
 		int messageLength = str32len (message32);
-		unsigned long j = 0;
+		uinteger j = 0;
 		for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
 			char32 kar = message32 [i];
 			if (kar <= 0x00FFFF) {
@@ -269,7 +269,7 @@ static void * gui_monitor (double progress, const char32 *message) {
 				}
 			}
 		}
-		unsigned long lengthOfFirstSentence = (unsigned long) (lineBreak - message16);
+		uinteger lengthOfFirstSentence = (uinteger) (lineBreak - message16);
 		/*
 		 * Create an alert dialog with an icon that is appropriate for the level.
 		 */

@@ -1,6 +1,6 @@
 /* Graphics_surface.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
 #include "Graphics.h"
 
 void Graphics_surface (Graphics me, double **z,
-	long ix1, long ix2, double x1, double x2,
-	long iy1, long iy2, double y1, double y2,
+	integer ix1, integer ix2, double x1, double x2,
+	integer iy1, integer iy2, double y1, double y2,
 	double minimum, double maximum,
 	double elevation, double azimuth)
 {
@@ -31,7 +31,7 @@ void Graphics_surface (Graphics me, double **z,
 	 * The x and y indices of the front corner of the frontmost tetragon are ix1 and iy1,
 	 * so that the x and y indices of its back corner are ix1 + 1 and iy1 + 1.
 	 */
-	long maxsum = ix2 + iy2, minsum = (ix1 + 1) + (iy1 + 1), sum;
+	integer maxsum = ix2 + iy2, minsum = (ix1 + 1) + (iy1 + 1), sum;
 	(void) elevation;   /* BUG */
 	(void) azimuth;   /* BUG */
 	if (ix2 <= ix1 || iy2 <= iy1) return;
@@ -46,16 +46,16 @@ void Graphics_surface (Graphics me, double **z,
 		/* We are going to cycle over a diagonal sequence of points.
 		 * Compute the row boundaries of this sequence.
 		 */
-		long iymin = iy1 + 1, iymax = iy2, iy;
+		integer iymin = iy1 + 1, iymax = iy2, iy;
 		if (iymin < sum - ix2) iymin = sum - ix2;
 		if (iymax > sum - (ix1 + 1)) iymax = sum - (ix1 + 1);
 		for (iy = iymin; iy <= iymax; iy ++) {
 
 			/* Compute the indices of all four points.
 			 */
-			long ix = sum - iy;
-			long ixback = ix, ixfront = ix - 1, ixleft = ix - 1, ixright = ix;
-			long iyback = iy, iyfront = iy - 1, iyleft = iy, iyright = iy - 1;
+			integer ix = sum - iy;
+			integer ixback = ix, ixfront = ix - 1, ixleft = ix - 1, ixright = ix;
+			integer iyback = iy, iyfront = iy - 1, iyleft = iy, iyright = iy - 1;
 
 			/* Compute the world coordinates of all four points.
 			 */

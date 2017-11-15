@@ -2,7 +2,7 @@
 #define _Photo_h_
 /* Photo.h
  *
- * Copyright (C) 2013,2014,2015 Paul Boersma
+ * Copyright (C) 2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,12 @@
 #include "Photo_def.h"
 
 void Photo_init (Photo me,
-	double xmin, double xmax, long nx, double dx, double x1,
-	double ymin, double ymax, long ny, double dy, double y1);
+	double xmin, double xmax, integer nx, double dx, double x1,
+	double ymin, double ymax, integer ny, double dy, double y1);
 
 autoPhoto Photo_create
-	(double xmin, double xmax, long nx, double dx, double x1,
-	 double ymin, double ymax, long ny, double dy, double y1);
+	(double xmin, double xmax, integer nx, double dx, double x1,
+	 double ymin, double ymax, integer ny, double dy, double y1);
 /*
 	Function:
 		return a new opaque black Photo.
@@ -53,7 +53,7 @@ autoPhoto Photo_create
 		result -> d_transparency -> z [1..ny] [1..nx] == 0.0;
 */
 
-autoPhoto Photo_createSimple (long numberOfRows, long numberOfColumns);
+autoPhoto Photo_createSimple (integer numberOfRows, integer numberOfColumns);
 /*
 	Function:
 		return a new opaque black Photo.
@@ -82,7 +82,7 @@ double_rgbt Photo_getValueAtXY (Photo me, double x, double y);
 /*
 	Linear interpolation between matrix points,
 	constant extrapolation in cells on the edge,
-	NUMundefined outside the union of the unit squares around the points.
+	undefined outside the union of the unit squares around the points.
 */
 
 void Photo_replaceRed (Photo me, Matrix red);

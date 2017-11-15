@@ -9,7 +9,7 @@ procedure testInterface
 	for .i to 5
 		.numberOfColumns = randomInteger (3, 12)
 		.tableofreal = Create TableOfReal: "t", 100, .numberOfColumns
-		Formula: "randomGauss (0, 1)"
+		Formula: ~ randomGauss (0, 1)
 		.pca = To PCA
 		.eigen = Extract Eigen
 		.numberOfEigenvalues = Get number of eigenvalues

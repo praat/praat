@@ -1,6 +1,6 @@
 /* Art_Speaker.cpp
  *
- * Copyright (C) 1992-2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,9 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 	/* The sternohyoid muscle pulls the hyoid bone down.			*/
 	/* The sphincter muscle pulls the hyoid bone backwards.		*/
 
-	hyoid.dx = -5 * f * art [kArt_muscle_SPHINCTER];
-	hyoid.dy = 20 * f * (art [kArt_muscle_STYLOHYOID]
-		- art [kArt_muscle_STERNOHYOID]);
+	hyoid.dx = -5 * f * art [(int) kArt_muscle::SPHINCTER];
+	hyoid.dy = 20 * f * (art [(int) kArt_muscle::STYLOHYOID]
+		- art [(int) kArt_muscle::STERNOHYOID]);
 
 	/* The larynx moves up and down with the hyoid bone.			*/
 	/* Only the lowest point (Mermelstein's K)				*/
@@ -65,31 +65,31 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 	/* The lower pharynx moves up and down with the hyoid bone.			*/
 	/* The lower constrictor muscle pulls the rear pharyngeal wall forwards.	*/
 
-	extX [3] = -34 * f + art [kArt_muscle_SPHINCTER] * 5 * f;	extY [3] = extY [2];
+	extX [3] = -34 * f + art [(int) kArt_muscle::SPHINCTER] * 5 * f;	extY [3] = extY [2];
 
 	/* The upper pharynx is fixed at the height of the velum. */
 	/* The upper constrictor muscle pulls the rear pharyngeal wall forwards. */
 
-	extX [5] = -34 * f + art [kArt_muscle_SPHINCTER] * 5 * f;
+	extX [5] = -34 * f + art [(int) kArt_muscle::SPHINCTER] * 5 * f;
 	extY [5] = speaker -> velum.y;
 
 	/* The height of the middle pharynx is in between the lower and upper pharynx. */
 	/* The middle constrictor muscle pulls the rear pharyngeal wall forwards. */
 
-	extX [4] = -34 * f + art [kArt_muscle_SPHINCTER] * 5 * f;
+	extX [4] = -34 * f + art [(int) kArt_muscle::SPHINCTER] * 5 * f;
 	extY [4] = 0.5 * (extY [3] + extY [5]);
 
 	/* Tongue root. */
 
 	jaw.x = -75 * f, jaw.y = 53 * f;   /* Position of the condyle. */
-	jaw.da = art [kArt_muscle_MASSETER] * 0.15
-		- art [kArt_muscle_MYLOHYOID] * 0.20;
+	jaw.da = art [(int) kArt_muscle::MASSETER] * 0.15
+		- art [(int) kArt_muscle::MYLOHYOID] * 0.20;
 	body.x = jaw.x + 81 * f * cos (-0.60 + jaw.da)
-		- art [kArt_muscle_STYLOGLOSSUS] * 10 * f
-		+ art [kArt_muscle_GENIOGLOSSUS] * 10 * f;
+		- art [(int) kArt_muscle::STYLOGLOSSUS] * 10 * f
+		+ art [(int) kArt_muscle::GENIOGLOSSUS] * 10 * f;
 	body.y = jaw.y + 81 * f * sin (-0.60 + jaw.da)
-		- art [kArt_muscle_HYOGLOSSUS] * 10 * f
-		+ art [kArt_muscle_STYLOGLOSSUS] * 5 * f;
+		- art [(int) kArt_muscle::HYOGLOSSUS] * 10 * f
+		+ art [(int) kArt_muscle::STYLOGLOSSUS] * 5 * f;
 	*bodyX = body.x;
 	*bodyY = body.y;
 	body.r = sqrt ((jaw.x - body.x) * (jaw.x - body.x)
@@ -126,8 +126,8 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 
 	/* Tip. */
 
-	tip.a = (art [kArt_muscle_UPPER_TONGUE]
-		- art [kArt_muscle_LOWER_TONGUE]) * 1.0;
+	tip.a = (art [(int) kArt_muscle::UPPER_TONGUE]
+		- art [(int) kArt_muscle::LOWER_TONGUE]) * 1.0;
 	blade.a = teeth.a
 		+ 0.004 * (body.r - speaker -> neutralBodyDistance) + tip.a;
 	intX [8] = intX [7] + speaker -> tip.length * cos (blade.a);
@@ -147,8 +147,8 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 
 	/* Lower lip. */
 
-	lowerLip.dx = speaker -> lowerLip.dx + art [kArt_muscle_ORBICULARIS_ORIS] * 0.02 - 5e-3;
-	lowerLip.dy = speaker -> lowerLip.dy + art [kArt_muscle_ORBICULARIS_ORIS] * 0.01;
+	lowerLip.dx = speaker -> lowerLip.dx + art [(int) kArt_muscle::ORBICULARIS_ORIS] * 0.02 - 5e-3;
+	lowerLip.dy = speaker -> lowerLip.dy + art [(int) kArt_muscle::ORBICULARIS_ORIS] * 0.01;
 	intX [12] = teeth.x;
 	intY [12] = teeth.y + lowerLip.dy;
 	intX [13] = teeth.x + lowerLip.dx;
@@ -168,8 +168,8 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 
 	/* Upper lip. */
 
-	upperLip.dx = speaker -> upperLip.dx + art [kArt_muscle_ORBICULARIS_ORIS] * 0.02 - 5e-3;
-	upperLip.dy = speaker -> upperLip.dy - art [kArt_muscle_ORBICULARIS_ORIS] * 0.01;
+	upperLip.dx = speaker -> upperLip.dx + art [(int) kArt_muscle::ORBICULARIS_ORIS] * 0.02 - 5e-3;
+	upperLip.dy = speaker -> upperLip.dy - art [(int) kArt_muscle::ORBICULARIS_ORIS] * 0.01;
 	extX [9] = extX [8];
 	extY [9] = extY [8] + upperLip.dy;
 	extX [10] = extX [9] + upperLip.dx;

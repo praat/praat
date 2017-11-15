@@ -1,6 +1,6 @@
 /* melder_alloc.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +48,12 @@ void Melder_alloc_init () {
 	assert (theRainyDayFund);
 }
 
+/*
+	The following functions take int64 arguments even on 32-bit machines.
+	This is because it is easy for the user to request objects that do not fit in memory
+	on 32-bit machines, in which case an appropriate error message is required.
+*/
+
 void * _Melder_malloc (int64 size) {
 	if (size <= 0)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes.");
@@ -56,7 +62,8 @@ void * _Melder_malloc (int64 size) {
 	void *result = malloc ((size_t) size);   // guarded cast
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room for another ", Melder_bigInteger (size), U" bytes.");
-	if (Melder_debug == 34) { Melder_casual (U"Melder_malloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_malloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1");
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size;
 	return result;
@@ -82,9 +89,10 @@ void * _Melder_malloc_f (int64 size) {
 	return result;
 }
 
-void _Melder_free (void **ptr) {
+void _Melder_free (void **ptr) noexcept {
 	if (! *ptr) return;
-	if (Melder_debug == 34) { Melder_casual (U"Melder_free\t", Melder_pointer (*ptr), U"\t?\t?"); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_free\t", Melder_pointer (*ptr), U"\t?\t?");
 	free (*ptr);
 	*ptr = nullptr;
 	totalNumberOfDeallocations += 1;
@@ -99,7 +107,8 @@ void * Melder_realloc (void *ptr, int64 size) {
 	if (result == nullptr)
 		Melder_throw (U"Out of memory. Could not extend room to ", Melder_bigInteger (size), U" bytes.");
 	if (! ptr) {   // is it like malloc?
-		if (Melder_debug == 34) { Melder_casual (U"Melder_realloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
+		if (Melder_debug == 34)
+			Melder_casual (U"Melder_realloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1");
 		totalNumberOfAllocations += 1;
 		totalAllocationSize += size;
 	} else if (result != ptr) {   // did realloc do a malloc-and-free?
@@ -114,12 +123,11 @@ void * Melder_realloc (void *ptr, int64 size) {
 }
 
 void * Melder_realloc_f (void *ptr, int64 size) {
-	void *result;
 	if (size <= 0)
 		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
 	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_fatal (U"(Melder_realloc_f:) Can never allocate ", Melder_bigInteger (size), U" bytes.");
-	result = realloc (ptr, (size_t) size);   // will not show in the statistics...
+	void *result = realloc (ptr, (size_t) size);   // will not show in the statistics...
 	if (! result) {
 		if (theRainyDayFund) { free (theRainyDayFund); theRainyDayFund = nullptr; }
 		result = realloc (ptr, (size_t) size);
@@ -154,7 +162,8 @@ void * _Melder_calloc (int64 nelem, int64 elsize) {
 	void *result = calloc ((size_t) nelem, (size_t) elsize);
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room for ", Melder_bigInteger (nelem), U" more elements whose sizes are ", elsize, U" bytes each.");
-	if (Melder_debug == 34) { Melder_casual (U"Melder_calloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (nelem), U"\t", Melder_bigInteger (elsize)); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_calloc\t", Melder_pointer (result), U"\t", Melder_bigInteger (nelem), U"\t", Melder_bigInteger (elsize));
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += nelem * elsize;
 	return result;
@@ -192,7 +201,8 @@ char * Melder_strdup (const char *string) {
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 	strcpy (result, string);
-	if (Melder_debug == 34) { Melder_casual (U"Melder_strdup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t1"); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_strdup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t", sizeof (char));
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size;
 	return result;
@@ -228,7 +238,8 @@ char32 * Melder_dup (const char32 *string /* cattable */) {
 	if (! result)
 		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
 	str32cpy (result, string);
-	if (Melder_debug == 34) { Melder_casual (U"Melder_dup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t4"); }
+	if (Melder_debug == 34)
+		Melder_casual (U"Melder_dup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t", sizeof (char32));
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size * (int64) sizeof (char32);
 	return result;
@@ -281,13 +292,13 @@ int Melder_cmp (const char32 *string1, const char32 *string2) {
 	return str32cmp (string1, string2);
 }
 
-int Melder_ncmp (const char32 *string1, const char32 *string2, int64 n) {
+int Melder_ncmp (const char32 *string1, const char32 *string2, integer n) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp (string1, string2, n);
 }
 
-bool Melder_str32equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2) {
+bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	if (*string1 == U'\0') return *string2 == U'\0';

@@ -1,16 +1,19 @@
 # makefile for library "dwsys".
-# David Weenink 20130826
+# David Weenink 20171019
+# Paul Boersma 2017-08-08
 
 include ../makefile.defs
 
-CPPFLAGS =  -I ../stat -I ../num -I ../sys -I ../external/gsl -I ../kar
+CPPFLAGS =  -I ../stat -I ../sys -I ../external/gsl -I ../kar
 
 all: libdwsys.a
 
 OBJECTS = Collection_extensions.o Command.o \
-	DoublyLinkedList.o Eigen.o FileInMemory.o Graphics_extensions.o Index.o \
+	DoublyLinkedList.o Eigen.o \
+	FileInMemory.o FileInMemorySet.o FileInMemoryManager.o\
+	Graphics_extensions.o Index.o \
 	NUM2.o NUMhuber.o NUMlapack.o NUMmachar.o \
-	NUMf2c.o NUMcblas.o NUMclapack.o NUMfft_d.o NUMsort2.o \
+	NUMf2c.o NUMcblas.o NUMclapack.o NUMcomplex.o NUMfft_d.o NUMsort2.o \
 	NUMmathlib.o NUMstring.o \
 	Permutation.o Permutation_and_Index.o \
 	regularExp.o SimpleVector.o Simple_extensions.o \
@@ -30,5 +33,5 @@ libdwsys.a: $(OBJECTS) NUMmachar.o
 	$(AR) cq libdwsys.a $(OBJECTS)
 	$(RANLIB) libdwsys.a
 
-$(OBJECTS): *.h ../stat/*.h ../num/NUM.h ../sys/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
+$(OBJECTS): *.h ../stat/*.h ../sys/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
 

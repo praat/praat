@@ -1,6 +1,6 @@
 /* NUMrandom.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,8 +76,6 @@
 #endif
 #include <unistd.h>
 #include "melder.h"
-#include "NUM.h"
-#define my me ->
 
 #define NN  312
 #define MM  156
@@ -177,7 +175,7 @@ void NUMrandom_init () {
 		}
 		keys [4] = (uint64_t) (int64) getpid ();   // unique between processes that run simultaneously on the same computer
 		#ifndef _WIN32
-		keys [5] = (uint64_t) (int64) gethostid ();   // unique between computers
+		//keys [5] = (uint64_t) (int64) gethostid ();   // unique between computers; but can be SLOW because it could have to access the internet
 		#endif
 		states [threadNumber]. init_by_array64 (keys, numberOfKeys);
 	}
@@ -267,8 +265,8 @@ double NUMrandomUniform (double lowest, double highest) {
 	return lowest + (highest - lowest) * NUMrandomFraction ();
 }
 
-long NUMrandomInteger (long lowest, long highest) {
-	return lowest + (long) ((highest - lowest + 1) * NUMrandomFraction ());   // round down by truncation, because positive
+integer NUMrandomInteger (integer lowest, integer highest) {
+	return lowest + (integer) ((highest - lowest + 1) * NUMrandomFraction ());   // round down by truncation, because positive
 }
 
 bool NUMrandomBernoulli (double probability) {
@@ -368,7 +366,7 @@ double NUMrandomPoisson (double mean) {
 	if (mean < 8.0) {
 		static double expMean;
 		double product = 1.0;
-		long result = -1;
+		integer result = -1;
 		if (mean != previousMean) {
 			previousMean = mean;
 			expMean = exp (- mean);

@@ -90,23 +90,24 @@ long PCA_getNumberOfObservations (PCA me) {
 }
 
 void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *p_prob, double *p_chisq, double *p_df) {
-	double sum = 0, sumln = 0;
+	double sum = 0.0, sumln = 0.0;
 
-	double prob = NUMundefined, df = NUMundefined, chisq = NUMundefined;
+	double prob = undefined, df = undefined, chisq = undefined;
 	
 	if (from == 0 && to == 0) {
-		to = 1; from = my numberOfEigenvalues;
+		to = 1;
+		from = my numberOfEigenvalues;
 	}
 	if (from < to && from > 0 && to <= my numberOfEigenvalues) {
 		long i;
-		for (i = from; i <= to; i++) {
-			if (my eigenvalues[i] <= 0) {
+		for (i = from; i <= to; i ++) {
+			if (my eigenvalues [i] <= 0) {
 				break;
 			}
-			sum += my eigenvalues[i];
-			sumln += log (my eigenvalues[i]);
+			sum += my eigenvalues [i];
+			sumln += log (my eigenvalues [i]);
 		}
-		if (sum == 0) {
+		if (sum == 0.0) {
 			return;
 		}
 		long r = i - from;
@@ -150,8 +151,8 @@ autoEigen PCA_to_Eigen (PCA me) {
 
 static autoPCA NUMdmatrix_to_PCA (double **m, long numberOfRows, long numberOfColumns, bool byColumns) {
 	try {
-		if (! NUMdmatrix_hasFiniteElements(m, 1, numberOfRows, 1, numberOfColumns)) {
-			Melder_throw (U"At least one of the matrix elements is not finite or undefined.");
+		if (NUMdmatrix_containsUndefinedElements (m, 1, numberOfRows, 1, numberOfColumns)) {
+			Melder_throw (U"At least one of the matrix elements is undefined.");
 		}
 		if (NUMfrobeniusnorm (numberOfRows, numberOfColumns, m) == 0.0) {
 			Melder_throw (U"All values in your table are zero.");
@@ -317,10 +318,10 @@ autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, Config
 
 double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, long from, long to) {
 	try {
-		double fraction = NUMundefined;
+		double fraction = undefined;
 
 		if (from < 1 || from > to || to > thy numberOfColumns) {
-			return NUMundefined;
+			return undefined;
 		}
 
 		autoSSCP s = TableOfReal_to_SSCP (thee, 0, 0, 0, 0);
@@ -328,18 +329,18 @@ double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, long f
 		fraction = SSCP_getFractionVariation (sp.get(), from, to);
 		return fraction;
 	} catch (MelderError) {
-		return NUMundefined;
+		return undefined;
 	}
 }
 
 autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring) {
 	try {
-		long npc;
+		integer npc;
 		autoNUMvector<double> pc (NUMstring_to_numbers (numstring, & npc), 1);
 
 		autoConfiguration c = Configuration_create (1, npc);
-		for (long j = 1; j <= npc; j++) {
-			c -> data [1][j] = pc[j];
+		for (integer j = 1; j <= npc; j ++) {
+			c -> data [1] [j] = pc [j];
 		}
 		autoTableOfReal him = PCA_and_Configuration_to_TableOfReal_reconstruct (me, c.get());
 		return him;

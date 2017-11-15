@@ -1,6 +1,6 @@
 /* VocalTract_to_Spectrum.cpp
  *
- * Copyright (C) 1991-2011,2015 Paul Boersma
+ * Copyright (C) 1991-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,29 +44,26 @@ static void TUBE_transfer (double area [], int numberOfSections, double sectionL
 	int section;
 	double omega = 2 * NUMpi * frequency;
 	if (hasInternalDamping) {
-		double bareResistance = sqrt (mu * rho / 2) * sqrt (omega);
-		double bareConductance = (eta - 1) / (rho * cc * cc) *
-			sqrt (lambda / (2 * cp * rho)) * sqrt (omega);
-		dcomplex c = dcomplex_create (glottalDamping * area [1] / (rho * cc), 0.0);
-		dcomplex d = dcomplex_create (1.0, 0.0);
+		double bareResistance = sqrt (mu * rho / 2.0) * sqrt (omega);
+		double bareConductance = (eta - 1.0) / (rho * cc * cc) *
+			sqrt (lambda / (2.0 * cp * rho)) * sqrt (omega);
+		dcomplex c { glottalDamping * area [1] / (rho * cc), 0.0 };
+		dcomplex d { 1.0, 0.0 };
 		for (section = 1; section <= numberOfSections; section ++) {
-			dcomplex help, help1, sinhg, coshg;
 			double a = area [section];
-			double perimeter = shapeFactor * 2 * sqrt (NUMpi * a);
+			double perimeter = shapeFactor * 2.0 * sqrt (NUMpi * a);
 			double perimeter_by_a2 = perimeter / (a * a);
 			double inertance = rho / a;
 			double compliance = a / (rho * cc * cc);
-			dcomplex cascade = dcomplex_create (perimeter_by_a2 * bareResistance,
-				omega * inertance + perimeter_by_a2 * bareResistance);
-			dcomplex parallel = dcomplex_create (perimeter * bareConductance,
-				omega * compliance);
+			dcomplex cascade { perimeter_by_a2 * bareResistance, omega * inertance + perimeter_by_a2 * bareResistance };
+			dcomplex parallel { perimeter * bareConductance, omega * compliance };
 			dcomplex gamma = dcomplex_sqrt (dcomplex_mul (cascade, parallel));
 			dcomplex impedance = dcomplex_div (gamma, parallel);
 			gamma = dcomplex_rmul (sectionLength, gamma);
-			help = dcomplex_rmul (0.5, dcomplex_exp (gamma));
-			help1 = dcomplex_div (dcomplex_create (0.25, 0), help);
-			sinhg = dcomplex_sub (help, help1);
-			coshg = dcomplex_add (help, help1);
+			dcomplex help = dcomplex_rmul (0.5, dcomplex_exp (gamma));
+			dcomplex help1 = dcomplex_div ({ 0.25, 0.0 }, help);
+			dcomplex sinhg = dcomplex_sub (help, help1);
+			dcomplex coshg = dcomplex_add (help, help1);
 			help = dcomplex_add (dcomplex_mul (c, coshg), dcomplex_div (dcomplex_mul (d, sinhg), impedance));
 			d = dcomplex_add (dcomplex_mul (d, coshg), dcomplex_mul (dcomplex_mul (impedance, c), sinhg));
 			c = help;
@@ -74,8 +71,8 @@ static void TUBE_transfer (double area [], int numberOfSections, double sectionL
 		if (hasRadiationDamping) {
 			double ka = omega * sqrt (area [numberOfSections] / NUMpi) / cc;
 			double z = rho * cc / area [numberOfSections];
-			double radiationResistance = z * ka * ka / 2;
-			double radiationReactance = z * 8 * ka / 3 / NUMpi;
+			double radiationResistance = z * ka * ka / 2.0;
+			double radiationReactance = z * 8.0 * ka / 3.0 / NUMpi;
 			*re = d.re + c.re * radiationResistance - c.im * radiationReactance;
 			*im = d.im + c.im * radiationResistance + c.re * radiationReactance;
 		} else { *re = d.re; *im = d.im; };
@@ -102,7 +99,7 @@ static void TUBE_transfer (double area [], int numberOfSections, double sectionL
 		if (hasRadiationDamping) {
 			double ka = omega * sqrt (area [numberOfSections] / NUMpi) / cc;
 			double radiationResistance = ka * ka / 2;
-			double radiationReactance = 8 * ka / 3 / NUMpi;
+			double radiationReactance = 8.0 * ka / 3.0 / NUMpi;
 			*re += c_re * radiationResistance - c_im * radiationReactance;
 			*im += c_re * radiationReactance + c_im * radiationResistance;
 		}
@@ -115,12 +112,12 @@ static void TUBE_transfer (double area [], int numberOfSections, double sectionL
 }
 
 autoSpectrum VocalTract_to_Spectrum
-	(VocalTract me, long numberOfFrequencies, double maximumFrequency,
+	(VocalTract me, integer numberOfFrequencies, double maximumFrequency,
 	 double glottalDamping, int hasRadiationDamping, int hasInternalDamping)
 {
 	try {
 		autoSpectrum thee = Spectrum_create (maximumFrequency, numberOfFrequencies);
-		for (long ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
+		for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
 			TUBE_transfer (my z [1], my nx, my dx,
 				(ifreq - 0.9999) * maximumFrequency / (numberOfFrequencies - 1),
 				& thy z [1] [ifreq], & thy z [2] [ifreq],

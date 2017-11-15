@@ -1,6 +1,6 @@
 /* praat_Matrix.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,39 +37,23 @@
 #undef iam
 #define iam iam_LOOP
 
-int praat_Matrix_formula (UiForm dia, Interpreter interpreter) {
-	int IOBJECT;
-	LOOP {
-		iam (Matrix);
-		try {
-			Matrix_formula (me, GET_STRING (U"formula"), interpreter, nullptr);
-			praat_dataChanged (me);
-		} catch (MelderError) {
-			praat_dataChanged (me);
-			throw;
-		}
-	}
-	return 1;
-}
-
 // MARK: - MATRIX
 
 // MARK: New
 
 FORM (NEW1_Matrix_create, U"Create Matrix", U"Create Matrix...") {
-	WORD4 (name, U"Name", U"xy")
-	REAL4 (xmin, U"xmin", U"1.0")
-	REAL4 (xmax, U"xmax", U"1.0")
-	NATURAL4 (numberOfColumns, U"Number of columns", U"1")
-	POSITIVE4 (dx, U"dx", U"1.0")
-	REAL4 (x1, U"x1", U"1.0")
-	REAL4 (ymin, U"ymin", U"1.0")
-	REAL4 (ymax, U"ymax", U"1.0")
-	NATURAL4 (numberOfRows, U"Number of rows", U"1")
-	POSITIVE4 (dy, U"dy", U"1.0")
-	REAL4 (y1, U"y1", U"1.0")
-	LABEL (U"", U"Formula:")
-	TEXTFIELD4 (formula, U"formula", U"x*y")
+	WORD (name, U"Name", U"xy")
+	REAL (xmin, U"xmin", U"1.0")
+	REAL (xmax, U"xmax", U"1.0")
+	NATURAL (numberOfColumns, U"Number of columns", U"1")
+	POSITIVE (dx, U"dx", U"1.0")
+	REAL (x1, U"x1", U"1.0")
+	REAL (ymin, U"ymin", U"1.0")
+	REAL (ymax, U"ymax", U"1.0")
+	NATURAL (numberOfRows, U"Number of rows", U"1")
+	POSITIVE (dy, U"dy", U"1.0")
+	REAL (y1, U"y1", U"1.0")
+	TEXTFIELD (formula, U"Formula:", U"x*y")
 	OK
 DO
 	if (xmax < xmin) Melder_throw (U"Your xmax (", Melder_single (xmax), U") should not be less than your xmin (", Melder_single (xmin), U").");
@@ -83,11 +67,10 @@ DO
 }
 
 FORM (NEW1_Matrix_createSimple, U"Create simple Matrix", U"Create simple Matrix...") {
-	WORD4 (name, U"Name", U"xy")
-	NATURAL4 (numberOfRows, U"Number of rows", U"10")
-	NATURAL4 (numberOfColumns, U"Number of columns", U"10")
-	LABEL (U"", U"Formula:")
-	TEXTFIELD4 (formula, U"formula", U"x*y")
+	WORD (name, U"Name", U"xy")
+	NATURAL (numberOfRows, U"Number of rows", U"10")
+	NATURAL (numberOfColumns, U"Number of columns", U"10")
+	TEXTFIELD (formula, U"Formula:", U"x*y")
 	OK
 DO
 	CREATE_ONE
@@ -164,12 +147,12 @@ DIRECT (MOVIE_Matrix_movie) {
 // MARK: Draw
 
 FORM (GRAPHICS_Matrix_drawRows, U"Draw rows", nullptr) {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
-	REAL4 (minimum, U"Minimum", U"0.0")
-	REAL4 (maximum, U"Maximum", U"0.0")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -178,11 +161,11 @@ DO
 }
 
 FORM (GRAPHICS_Matrix_drawOneContour, U"Draw one altitude contour", nullptr) {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
-	REAL4 (height, U"Height", U"0.5")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
+	REAL (height, U"Height", U"0.5")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -191,12 +174,12 @@ DO
 }
 
 FORM (GRAPHICS_Matrix_drawContours, U"Draw altitude contours", nullptr) {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
-	REAL4 (minimum, U"Minimum", U"0.0")
-	REAL4 (maximum, U"Maximum", U"0.0")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -205,12 +188,12 @@ DO
 }
 
 FORM (GRAPHICS_Matrix_paintImage, U"Matrix: Paint grey image", nullptr) {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
-	REAL4 (minimum, U"Minimum", U"0.0")
-	REAL4 (maximum, U"Maximum", U"0.0")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -219,12 +202,12 @@ DO
 }
 
 FORM (GRAPHICS_Matrix_paintContours, U"Matrix: Paint altitude contours with greys", nullptr) {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
-	REAL4 (minimum, U"Minimum", U"0.0")
-	REAL4 (maximum, U"Maximum", U"0.0")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -233,12 +216,12 @@ DO
 }
 
 FORM (GRAPHICS_Matrix_paintCells, U"Matrix: Paint cells with greys", U"Matrix: Paint cells...") {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
-	REAL4 (minimum, U"Minimum", U"0.0")
-	REAL4 (maximum, U"Maximum", U"0.0")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -247,12 +230,12 @@ DO
 }
 
 FORM (GRAPHICS_Matrix_paintSurface, U"Matrix: Paint 3-D surface plot", nullptr) {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
-	REAL4 (minimum, U"Minimum", U"0.0")
-	REAL4 (maximum, U"Maximum", U"0.0")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Matrix)
@@ -288,13 +271,13 @@ DIRECT (REAL_Matrix_getHighestY) {
 
 DIRECT (INTEGER_Matrix_getNumberOfRows) {
 	NUMBER_ONE (Matrix)
-		long result = my ny;
+		integer result = my ny;
 	NUMBER_ONE_END (U" rows")
 }
 
 DIRECT (INTEGER_Matrix_getNumberOfColumns) {
 	NUMBER_ONE (Matrix)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" columns")
 }
 
@@ -311,7 +294,7 @@ DIRECT (REAL_Matrix_getColumnDistance) {
 }
 
 FORM (REAL_Matrix_getYofRow, U"Matrix: Get y of row", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	NUMBER_ONE (Matrix)
@@ -320,7 +303,7 @@ DO
 }
 
 FORM (REAL_Matrix_getXofColumn, U"Matrix: Get x of column", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (Matrix)
@@ -329,8 +312,8 @@ DO
 }
 
 FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (Matrix)
@@ -341,8 +324,8 @@ DO
 }
 
 FORM (REAL_Matrix_getValueAtXY, U"Matrix: Get value at xy", nullptr) {
-	REALVAR (x, U"X", U"0.0")
-	REALVAR (y, U"Y", U"0.0")
+	REAL (x, U"X", U"0.0")
+	REAL (y, U"Y", U"0.0")
 	OK
 DO
 	NUMBER_ONE (Matrix)
@@ -352,7 +335,7 @@ DO
 
 DIRECT (REAL_Matrix_getMinimum) {
 	NUMBER_ONE (Matrix)
-		double minimum = NUMundefined, maximum = NUMundefined;
+		double minimum = undefined, maximum = undefined;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		double result = minimum;
 	NUMBER_ONE_END (U" (minimum)");
@@ -360,7 +343,7 @@ DIRECT (REAL_Matrix_getMinimum) {
 
 DIRECT (REAL_Matrix_getMaximum) {
 	NUMBER_ONE (Matrix)
-		double minimum = NUMundefined, maximum = NUMundefined;
+		double minimum = undefined, maximum = undefined;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 		double result = maximum;
 	NUMBER_ONE_END (U" (maximum)");
@@ -375,9 +358,9 @@ DIRECT (REAL_Matrix_getSum) {
 // MARK: Modify
 
 FORM (MODIFY_Matrix_formula, U"Matrix Formula", U"Formula...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD4 (formula, U"formula", U"self")
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Matrix)
@@ -386,9 +369,9 @@ DO
 }
 
 FORM (MODIFY_Matrix_setValue, U"Matrix: Set value", U"Matrix: Set value...") {
-	NATURAL4 (rowNumber, U"Row number", U"1")
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	REAL4 (newValue, U"New value", U"0.0")
+	NATURAL (rowNumber, U"Row number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (newValue, U"New value", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Matrix)
@@ -415,7 +398,7 @@ END }
 // MARK: Synthesize
 
 FORM (NEW_Matrix_power, U"Matrix: Power...", nullptr) {
-	NATURAL4 (power, U"Power", U"2")
+	NATURAL (power, U"Power", U"2")
 	OK
 DO
 	CONVERT_EACH (Matrix)
@@ -488,8 +471,8 @@ DIRECT (NEW_Matrix_to_Sound) {
 }
 
 FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
-	INTEGER4 (rowNumber, U"Row number", U"1")
-	LABEL (U"", U"(negative values count from last row)")
+	INTEGER (rowNumber, U"Row number", U"1")
+	LABEL (U"(negative values count from last row)")
 	OK
 DO
 	CONVERT_EACH (Matrix)
@@ -539,23 +522,20 @@ DIRECT (NEW1_Matrix_to_ParamCurve) {
 // MARK: New
 
 FORM (NEW1_Photo_create, U"Create Photo", U"Create Photo...") {
-	WORD4 (name, U"Name", U"xy")
-	REAL4 (xmin, U"xmin", U"1.0")
-	REAL4 (xmax, U"xmax", U"1.0")
-	NATURAL4 (numberOfColumns, U"Number of columns", U"1")
-	POSITIVE4 (dx, U"dx", U"1.0")
-	REAL4 (x1, U"x1", U"1.0")
-	REAL4 (ymin, U"ymin", U"1.0")
-	REAL4 (ymax, U"ymax", U"1.0")
-	NATURAL4 (numberOfRows, U"Number of rows", U"1")
-	POSITIVE4 (dy, U"dy", U"1.0")
-	REAL4 (y1, U"y1", U"1.0")
-	LABEL (U"", U"Red formula:")
-	TEXTFIELD4 (redFormula, U"redFormula", U"x*y/100")
-	LABEL (U"", U"Green formula:")
-	TEXTFIELD4 (greenFormula, U"greenFormula", U"x*y/1000")
-	LABEL (U"", U"Blue formula:")
-	TEXTFIELD4 (blueFormula, U"blueFormula", U"x*y/100")
+	WORD (name, U"Name", U"xy")
+	REAL (xmin, U"xmin", U"1.0")
+	REAL (xmax, U"xmax", U"1.0")
+	NATURAL (numberOfColumns, U"Number of columns", U"1")
+	POSITIVE (dx, U"dx", U"1.0")
+	REAL (x1, U"x1", U"1.0")
+	REAL (ymin, U"ymin", U"1.0")
+	REAL (ymax, U"ymax", U"1.0")
+	NATURAL (numberOfRows, U"Number of rows", U"1")
+	POSITIVE (dy, U"dy", U"1.0")
+	REAL (y1, U"y1", U"1.0")
+	TEXTFIELD (redFormula, U"Red formula:", U"x*y/100")
+	TEXTFIELD (greenFormula, U"Green formula:", U"x*y/1000")
+	TEXTFIELD (blueFormula, U"Blue formula:", U"x*y/100")
 	OK
 DO
 	if (xmax < xmin)
@@ -573,15 +553,12 @@ DO
 }
 
 FORM (NEW1_Photo_createSimple, U"Create simple Photo", U"Create simple Photo...") {
-	WORD4 (name, U"Name", U"xy")
-	NATURAL4 (numberOfRows, U"Number of rows", U"10")
-	NATURAL4 (numberOfColumns, U"Number of columns", U"10")
-	LABEL (U"", U"Red formula:")
-	TEXTFIELD4 (redFormula, U"redFormula", U"x*y/100")
-	LABEL (U"", U"Green formula:")
-	TEXTFIELD4 (greenFormula, U"greenFormula", U"x*y/1000")
-	LABEL (U"", U"Blue formula:")
-	TEXTFIELD4 (blueFormula, U"blueFormula", U"x*y/100")
+	WORD (name, U"Name", U"xy")
+	NATURAL (numberOfRows, U"Number of rows", U"10")
+	NATURAL (numberOfColumns, U"Number of columns", U"10")
+	TEXTFIELD (redFormula, U"Red formula:", U"x*y/100")
+	TEXTFIELD (greenFormula, U"Green formula:", U"x*y/1000")
+	TEXTFIELD (blueFormula, U"Blue formula:", U"x*y/100")
 	OK
 DO
 	CREATE_ONE
@@ -617,9 +594,9 @@ DIRECT (NEW_Photo_extractTransparency) {
 }
 
 FORM (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD4 (formula, U"formula", U"self")
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Photo)
@@ -628,9 +605,9 @@ DO
 }
 
 FORM (MODIFY_Photo_formula_green, U"Photo Formula (green)", U"Formula (green)...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD4 (formula, U"formula", U"self")
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Photo)
@@ -639,9 +616,9 @@ DO
 }
 
 FORM (MODIFY_Photo_formula_blue, U"Photo Formula (blue)", U"Formula (blue)...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD4 (formula, U"formula", U"self")
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Photo)
@@ -650,9 +627,9 @@ DO
 }
 
 FORM (MODIFY_Photo_formula_transparency, U"Photo Formula (transparency)", U"Formula (transparency)...") {
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD4 (formula, U"formula", U"self")
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Photo)
@@ -661,10 +638,10 @@ DO
 }
 
 FORM (GRAPHICS_Photo_paintCells, U"Photo: Paint cells with colour", U"Photo: Paint cells...") {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Photo)
@@ -673,10 +650,10 @@ DO
 }
 
 FORM (GRAPHICS_Photo_paintImage, U"Photo: Paint colour image", nullptr) {
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"0.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"0.0")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"0.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"0.0")
 	OK
 DO
 	GRAPHICS_EACH (Photo)
@@ -767,11 +744,11 @@ FORM_READ (READ1_Movie_openFromSoundFile, U"Open movie file", nullptr, true) {
 }
 
 FORM (GRAPHICS_Movie_paintOneImage, U"Movie: Paint one image", nullptr) {
-	NATURAL4 (frameNumber, U"Frame number", U"1")
-	REAL4 (fromX, U"From x =", U"0.0")
-	REAL4 (toX, U"To x =", U"1.0")
-	REAL4 (fromY, U"From y =", U"0.0")
-	REAL4 (toY, U"To y =", U"1.0")
+	NATURAL (frameNumber, U"Frame number", U"1")
+	REAL (fromX, U"From x =", U"0.0")
+	REAL (toX, U"To x =", U"1.0")
+	REAL (fromY, U"From y =", U"0.0")
+	REAL (toY, U"To y =", U"1.0")
 	OK
 DO
 	GRAPHICS_EACH (Movie)
@@ -781,28 +758,27 @@ DO
 
 DIRECT (WINDOW_Movie_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Movie from batch.");
-	LOOP {
-		iam (Movie);
+	FIND_ONE_WITH_IOBJECT (Movie)
 		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: file recognizers
 
-static autoDaata imageFileRecognizer (int /* nread */, const char * /* header */, MelderFile file) {
+static autoDaata imageFileRecognizer (integer /* nread */, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	if (Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".jpg") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".JPG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".jpeg") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".JPEG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".png") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".PNG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".tiff") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".TIFF") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".tif") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, U".TIF"))
+	if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpg") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".JPG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpeg") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".JPEG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".png") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".PNG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tiff") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".TIFF") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tif") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".TIF"))
 	{
 		return Photo_readFromImageFile (file);
 	}

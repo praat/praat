@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,14 +52,14 @@ Thing_implement (SoundAndLongSoundList, Ordered, 0);
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
 
-static long prefs_bufferLength;
+static integer prefs_bufferLength;
 
 void LongSound_preferences () {
-	Preferences_addLong (U"LongSound.bufferLength", & prefs_bufferLength, 60);   // seconds
+	Preferences_addInteger (U"LongSound.bufferLength", & prefs_bufferLength, 60);   // seconds
 }
 
-long LongSound_getBufferSizePref_seconds () { return prefs_bufferLength; }
-void LongSound_setBufferSizePref_seconds (long size) { prefs_bufferLength = size < 10 ? 10 : size > 10000 ? 10000: size; }
+integer LongSound_getBufferSizePref_seconds () { return prefs_bufferLength; }
+void LongSound_setBufferSizePref_seconds (integer size) { prefs_bufferLength = size < 10 ? 10 : size > 10000 ? 10000: size; }
 
 void structLongSound :: v_destroy () noexcept {
 	/*
@@ -98,7 +98,7 @@ void structLongSound :: v_info () {
 	MelderInfo_writeLine (U"Start of sample data: ", startOfData, U" bytes from the start of the file");
 }
 
-static void _LongSound_FLAC_convertFloats (LongSound me, const int32 * const samples[], long bitsPerSample, long numberOfSamples) {
+static void _LongSound_FLAC_convertFloats (LongSound me, const int32 * const samples[], integer bitsPerSample, integer numberOfSamples) {
 	double multiplier;
 	switch (bitsPerSample) {
 		case 8: multiplier = (1.0 / 128.0); break;
@@ -107,21 +107,21 @@ static void _LongSound_FLAC_convertFloats (LongSound me, const int32 * const sam
 		case 32: multiplier = (1.0 / 32768.0 / 65536.0); break;
 		default: multiplier = 0.0;
 	}
-	for (long i = 0; i < 2; ++i) {
+	for (integer i = 0; i < 2; ++i) {
 		const int32 *input = samples [i];
 		double *output = my compressedFloats [i];
 		if (! output ) continue;
-		for (long j = 0; j < numberOfSamples; ++j)
+		for (integer j = 0; j < numberOfSamples; ++j)
 			output [j] = (double) input [j] * multiplier;
 		my compressedFloats [i] += numberOfSamples;
 	}
 }
 
-static void _LongSound_FLAC_convertShorts (LongSound me, const int32 * const samples[], long bitsPerSample, long numberOfSamples) {
-	for (long channel = 0; channel < my numberOfChannels; ++ channel) {
+static void _LongSound_FLAC_convertShorts (LongSound me, const int32 * const samples[], integer bitsPerSample, integer numberOfSamples) {
+	for (integer channel = 0; channel < my numberOfChannels; ++ channel) {
 		int16 *output = my compressedShorts + channel;
 		const int32 *input = samples [channel];
-		for (long j = 0; j < numberOfSamples; ++ j, output += my numberOfChannels) {
+		for (integer j = 0; j < numberOfSamples; ++ j, output += my numberOfChannels) {
 			int32 sample = * (input ++);
 			switch (bitsPerSample) {
 				case 8: sample *= 256; break;
@@ -139,8 +139,8 @@ static void _LongSound_FLAC_convertShorts (LongSound me, const int32 * const sam
 static FLAC__StreamDecoderWriteStatus _LongSound_FLAC_write (const FLAC__StreamDecoder *decoder, const FLAC__Frame *frame, const FLAC__int32 * const buffer[], void *void_me) {
 	iam (LongSound);
 	const FLAC__FrameHeader *header = & frame -> header;
-	long numberOfSamples = header -> blocksize;
-	long bitsPerSample = header -> bits_per_sample;
+	integer numberOfSamples = header -> blocksize;
+	integer bitsPerSample = header -> bits_per_sample;
 	(void) decoder;
 	if (numberOfSamples > my compressedSamplesLeft)
 		numberOfSamples = my compressedSamplesLeft;
@@ -157,22 +157,22 @@ static FLAC__StreamDecoderWriteStatus _LongSound_FLAC_write (const FLAC__StreamD
 static void _LongSound_FLAC_error (const FLAC__StreamDecoder * /* decoder */, FLAC__StreamDecoderErrorStatus /* status */, void * /* longSound */) {
 }
 
-static void _LongSound_MP3_convertFloats (LongSound me, const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long numberOfSamples) {
-	for (long i = 0; i < 2; ++i) {
+static void _LongSound_MP3_convertFloats (LongSound me, const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], integer numberOfSamples) {
+	for (integer i = 0; i < 2; ++i) {
 		const MP3F_SAMPLE *input = channels [i];
 		double *output = my compressedFloats [i];
 		if (! output ) continue;
-		for (long j = 0; j < numberOfSamples; ++j)
+		for (integer j = 0; j < numberOfSamples; ++j)
 			output [j] = mp3f_sample_to_float (input [j]);
 		my compressedFloats [i] += numberOfSamples;
 	}
 }
 
-static void _LongSound_MP3_convertShorts (LongSound me, const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long numberOfSamples) {
-	for (long i = 0; i < my numberOfChannels; ++ i) {
+static void _LongSound_MP3_convertShorts (LongSound me, const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], integer numberOfSamples) {
+	for (integer i = 0; i < my numberOfChannels; ++ i) {
 		const MP3F_SAMPLE *input = channels [i];
 		int16 *output = my compressedShorts + i;
-		for (long j = 0; j < numberOfSamples; ++j, output += my numberOfChannels) {
+		for (integer j = 0; j < numberOfSamples; ++j, output += my numberOfChannels) {
 			int sample = *input++;
 			*output = mp3f_sample_to_short (sample);
 		}
@@ -180,7 +180,7 @@ static void _LongSound_MP3_convertShorts (LongSound me, const MP3F_SAMPLE *chann
 	my compressedShorts += numberOfSamples * my numberOfChannels;
 }
 
-static void _LongSound_MP3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], long numberOfSamples, void *void_me) {
+static void _LongSound_MP3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHANNELS], integer numberOfSamples, void *void_me) {
 	iam (LongSound);
 	if (numberOfSamples > my compressedSamplesLeft)
 		numberOfSamples = my compressedSamplesLeft;
@@ -258,7 +258,7 @@ autoLongSound LongSound_open (MelderFile file) {
 	}
 }
 
-static void _LongSound_FLAC_process (LongSound me, long firstSample, long numberOfSamples) {
+static void _LongSound_FLAC_process (LongSound me, integer firstSample, integer numberOfSamples) {
 	my compressedSamplesLeft = numberOfSamples - 1;
 	if (! FLAC__stream_decoder_seek_absolute (my flacDecoder, firstSample))
 		Melder_throw (U"Cannot seek in FLAC file ", & my file, U".");
@@ -270,18 +270,18 @@ static void _LongSound_FLAC_process (LongSound me, long firstSample, long number
 	}
 }
 
-static void _LongSound_FILE_seekSample (LongSound me, long firstSample) {
+static void _LongSound_FILE_seekSample (LongSound me, integer firstSample) {
 	if (fseek (my f, my startOfData + (firstSample - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
 		Melder_throw (U"Cannot seek in file ", & my file, U".");
 }
 
-static void _LongSound_FLAC_readAudioToShort (LongSound me, int16 *buffer, long firstSample, long numberOfSamples) {
+static void _LongSound_FLAC_readAudioToShort (LongSound me, int16 *buffer, integer firstSample, integer numberOfSamples) {
 	my compressedMode = COMPRESSED_MODE_READ_SHORT;
 	my compressedShorts = buffer + 1;
 	_LongSound_FLAC_process (me, firstSample, numberOfSamples);
 }
 
-static void _LongSound_MP3_process (LongSound me, long firstSample, long numberOfSamples) {
+static void _LongSound_MP3_process (LongSound me, integer firstSample, integer numberOfSamples) {
 	if (! mp3f_seek (my mp3f, firstSample))
 		Melder_throw (U"Cannot seek in MP3 file ", & my file, U".");
 	my compressedSamplesLeft = numberOfSamples;
@@ -289,13 +289,13 @@ static void _LongSound_MP3_process (LongSound me, long firstSample, long numberO
 		Melder_throw (U"Error decoding MP3 file ", & my file, U".");
 }
 
-static void _LongSound_MP3_readAudioToShort (LongSound me, int16 *buffer, long firstSample, long numberOfSamples) {
+static void _LongSound_MP3_readAudioToShort (LongSound me, int16 *buffer, integer firstSample, integer numberOfSamples) {
 	my compressedMode = COMPRESSED_MODE_READ_SHORT;
 	my compressedShorts = buffer + 1;
 	_LongSound_MP3_process (me, firstSample, numberOfSamples - 1);
 }
 
-void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample, long numberOfSamples) {
+void LongSound_readAudioToFloat (LongSound me, double **buffer, integer firstSample, integer numberOfSamples) {
 	if (my encoding == Melder_FLAC_COMPRESSION_16) {
 		my compressedMode = COMPRESSED_MODE_READ_FLOAT;
 		for (int ichan = 1; ichan <= my numberOfChannels; ichan ++) {
@@ -314,7 +314,7 @@ void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample
 	}
 }
 
-void LongSound_readAudioToShort (LongSound me, int16 *buffer, long firstSample, long numberOfSamples) {
+void LongSound_readAudioToShort (LongSound me, int16 *buffer, integer firstSample, integer numberOfSamples) {
 	if (my encoding == Melder_FLAC_COMPRESSION_16) {
 		_LongSound_FLAC_readAudioToShort (me, buffer, firstSample, numberOfSamples);
 	} else if (my encoding == Melder_MPEG_COMPRESSION_16) {
@@ -325,13 +325,13 @@ void LongSound_readAudioToShort (LongSound me, int16 *buffer, long firstSample, 
 	}
 }
 
-autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes) {
+autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, bool preserveTimes) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		if (tmin < my xmin) tmin = my xmin;
 		if (tmax > my xmax) tmax = my xmax;
-		long imin, imax;
-		long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+		integer imin, imax;
+		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1) Melder_throw (U"Less than 1 sample in window.");
 		autoSound thee = Sound_create (my numberOfChannels, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx);
 		if (! preserveTimes) thy xmin = 0.0, thy xmax -= tmin, thy x1 -= tmin;
@@ -342,17 +342,17 @@ autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, int pre
 	}
 }
 
-static void _LongSound_readSamples (LongSound me, int16 *buffer, long imin, long imax) {
+static void _LongSound_readSamples (LongSound me, int16 *buffer, integer imin, integer imax) {
 	LongSound_readAudioToShort (me, buffer, imin, imax - imin + 1);
 }
 
-static void writePartToOpenFile (LongSound me, int audioFileType, long imin, long n, MelderFile file, int numberOfChannels_override, int numberOfBitsPerSamplePoint) {
-	long ibuffer, offset, numberOfBuffers, numberOfSamplesInLastBuffer;
+static void writePartToOpenFile (LongSound me, int audioFileType, integer imin, integer n, MelderFile file, int numberOfChannels_override, int numberOfBitsPerSamplePoint) {
+	integer ibuffer, offset, numberOfBuffers, numberOfSamplesInLastBuffer;
 	offset = imin;
 	numberOfBuffers = (n - 1) / my nmax + 1;
 	numberOfSamplesInLastBuffer = (n - 1) % my nmax + 1;
 	if (file -> filePointer) for (ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++) {
-		long numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
+		integer numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
 		LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
 		offset += numberOfSamplesToCopy;
 		MelderFile_writeShortToAudio (file, numberOfChannels_override ? numberOfChannels_override : my numberOfChannels, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer, numberOfSamplesToCopy);
@@ -369,8 +369,8 @@ void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		if (tmin < my xmin) tmin = my xmin;
 		if (tmax > my xmax) tmax = my xmax;
-		long imin, imax;
-		long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+		integer imin, imax;
+		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1) Melder_throw (U"Less than 1 sample selected.");
 		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, n, my numberOfChannels, numberOfBitsPerSamplePoint);
@@ -398,8 +398,8 @@ void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int chan
 	}
 }
 
-static void _LongSound_haveSamples (LongSound me, long imin, long imax) {
-	long n = imax - imin + 1;
+static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
+	integer n = imax - imin + 1;
 	Melder_assert (n <= my nmax);
 	/*
 	 * Included?
@@ -419,9 +419,9 @@ static void _LongSound_haveSamples (LongSound me, long imin, long imax) {
 	 */
 	imin -= MARGIN * n;
 	if (imin < 1) imin = 1;
-	imax = imin + (long) floor ((1.0 + 2.0 * MARGIN) * n);
+	imax = imin + Melder_ifloor ((1.0 + 2.0 * MARGIN) * n);
 	if (imax > my nx) imax = my nx;
-	imin = imax - (long) floor ((1.0 + 2.0 * MARGIN) * n);
+	imin = imax - Melder_ifloor ((1.0 + 2.0 * MARGIN) * n);
 	if (imin < 1) imin = 1;
 	Melder_assert (imax - imin + 1 <= my nmax);
 	/*
@@ -440,7 +440,7 @@ static void _LongSound_haveSamples (LongSound me, long imin, long imax) {
 			/*
 			 * Only left overlap (e.g. scrolling up).
 			 */
-			long nshift = (imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
+			integer nshift = (imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
 			#if USE_MEMMOVE
 				memmove (my buffer + shift, my buffer, nshift * sizeof (int16));
 			#else
@@ -452,7 +452,7 @@ static void _LongSound_haveSamples (LongSound me, long imin, long imax) {
 			/*
 			 * Left and right overlap (e.g. zooming out).
 			 */
-			long nshift = (my imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
+			integer nshift = (my imax - my imin + 1) * my numberOfChannels, shift = (my imin - imin) * my numberOfChannels;
 			#if USE_MEMMOVE
 				memmove (my buffer + shift, my buffer, nshift * sizeof (int16));
 			#else
@@ -466,7 +466,7 @@ static void _LongSound_haveSamples (LongSound me, long imin, long imax) {
 		/*
 		 * Only right overlap (e.g. scrolling down).
 		 */
-		long nshift = (my imax - imin + 1) * my numberOfChannels, shift = (imin - my imin) * my numberOfChannels;
+		integer nshift = (my imax - imin + 1) * my numberOfChannels, shift = (imin - my imin) * my numberOfChannels;
 		#if USE_MEMMOVE
 			memmove (my buffer, my buffer + shift, nshift * sizeof (int16));
 		#else
@@ -479,15 +479,15 @@ static void _LongSound_haveSamples (LongSound me, long imin, long imax) {
 }
 
 bool LongSound_haveWindow (LongSound me, double tmin, double tmax) {
-	long imin, imax;
-	long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
+	integer imin, imax;
+	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if ((1.0 + 2 * MARGIN) * n + 1 > my nmax) return false;
 	_LongSound_haveSamples (me, imin, imax);
 	return true;
 }
 
 void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int channel, double *minimum, double *maximum) {
-	long imin, imax;
+	integer imin, imax;
 	(void) Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	*minimum = 1.0;
 	*maximum = -1.0;
@@ -497,9 +497,9 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int cha
 		Melder_clearError ();
 		return;
 	}
-	long minimum_int = 32767, maximum_int = -32768;
-	for (long i = imin; i <= imax; i ++) {
-		long value = my buffer [(i - my imin) * my numberOfChannels + channel - 1];
+	integer minimum_int = 32767, maximum_int = -32768;
+	for (integer i = imin; i <= imax; i ++) {
+		integer value = my buffer [(i - my imin) * my numberOfChannels + channel - 1];
 		if (value < minimum_int) minimum_int = value;
 		if (value > maximum_int) maximum_int = value;
 	}
@@ -508,14 +508,14 @@ void LongSound_getWindowExtrema (LongSound me, double tmin, double tmax, int cha
 }
 
 static struct LongSoundPlay {
-	long numberOfSamples, i1, i2, silenceBefore, silenceAfter;
+	integer numberOfSamples, i1, i2, silenceBefore, silenceAfter;
 	double tmin, tmax, dt, t1;
 	int16 *resampledBuffer;
 	Sound_PlayCallback callback;
 	Thing boss;
 } thePlayingLongSound;
 
-static bool melderPlayCallback (void *closure, long samplesPlayed) {
+static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 	struct LongSoundPlay *me = (struct LongSoundPlay *) closure;
 	int phase = 2;
 	double t = samplesPlayed <= my silenceBefore ? my tmin :
@@ -537,8 +537,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	Melder_free (thy resampledBuffer);   // just in case, and after playing has stopped
 	try {
-		int fits = LongSound_haveWindow (me, tmin, tmax);
-		long bestSampleRate = MelderAudio_getOutputBestSampleRate (my sampleRate), n, i1, i2;
+		bool fits = LongSound_haveWindow (me, tmin, tmax);
+		integer bestSampleRate = MelderAudio_getOutputBestSampleRate (my sampleRate), n, i1, i2;
 		if (! fits)
 			Melder_throw (U"Sound too long (", tmax - tmin, U" seconds).");
 		/*
@@ -555,8 +555,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			thy t1 = my x1;
 			thy i1 = i1;
 			thy i2 = i2;
-			thy silenceBefore = (long) (my sampleRate * MelderAudio_getOutputSilenceBefore ());
-			thy silenceAfter = (long) (my sampleRate * MelderAudio_getOutputSilenceAfter ());
+			thy silenceBefore = Melder_iroundTowardsZero (my sampleRate * MelderAudio_getOutputSilenceBefore ());
+			thy silenceAfter = Melder_iroundTowardsZero (my sampleRate * MelderAudio_getOutputSilenceAfter ());
 			if (thy callback) thy callback (thy boss, 1, tmin, tmax, tmin);
 			if (thy silenceBefore > 0 || thy silenceAfter > 0 || 1) {
 				thy resampledBuffer = Melder_calloc (int16, (thy silenceBefore + thy numberOfSamples + thy silenceAfter) * my numberOfChannels);
@@ -569,10 +569,10 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 				   thy numberOfSamples, my numberOfChannels, melderPlayCallback, thee);
 			}
 		} else {
-			long newSampleRate = bestSampleRate;
-			long newN = ((double) n * newSampleRate) / my sampleRate - 1;
-			long silenceBefore = (long) (newSampleRate * MelderAudio_getOutputSilenceBefore ());
-			long silenceAfter = (long) (newSampleRate * MelderAudio_getOutputSilenceAfter ());
+			integer newSampleRate = bestSampleRate;
+			integer newN = ((double) n * newSampleRate) / my sampleRate - 1;
+			integer silenceBefore = Melder_iroundTowardsZero (newSampleRate * MelderAudio_getOutputSilenceBefore ());
+			integer silenceAfter = Melder_iroundTowardsZero (newSampleRate * MelderAudio_getOutputSilenceAfter ());
 			int16 *resampledBuffer = Melder_calloc (int16, (silenceBefore + newN + silenceAfter) * my numberOfChannels);
 			int16 *from = my buffer + (i1 - my imin) * my numberOfChannels;   // guaranteed: from [0 .. (my imax - my imin + 1) * nchan]
 			double t1 = my x1, dt = 1.0 / newSampleRate;
@@ -585,31 +585,31 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			thy silenceAfter = silenceAfter;
 			thy resampledBuffer = resampledBuffer;
 			if (my numberOfChannels == 1) {
-				for (long i = 0; i < newN; i ++) {
+				for (integer i = 0; i < newN; i ++) {
 					double t = t1 + i * dt;   // from t1 to t1 + (newN-1) * dt
 					double index = (t - t1) * my sampleRate;   // from 0
-					long flore = index;   // DANGEROUS: Implicitly rounding down...
+					integer flore = Melder_iroundTowardsZero (index);
 					double fraction = index - flore;
 					resampledBuffer [i + silenceBefore] = (1.0 - fraction) * from [flore] + fraction * from [flore + 1];
 				}
 			} else if (my numberOfChannels == 2) {
-				for (long i = 0; i < newN; i ++) {
+				for (integer i = 0; i < newN; i ++) {
 					double t = t1 + i * dt;
 					double index = (t - t1) * my sampleRate;
-					long flore = index;
+					integer flore = Melder_iroundTowardsZero (index);
 					double fraction = index - flore;
-					long ii = i + silenceBefore;
+					integer ii = i + silenceBefore;
 					resampledBuffer [ii + ii] = (1.0 - fraction) * from [flore + flore] + fraction * from [flore + flore + 2];
 					resampledBuffer [ii + ii + 1] = (1.0 - fraction) * from [flore + flore + 1] + fraction * from [flore + flore + 3];
 				}
 			} else {
-				for (long i = 0; i < newN; i ++) {
+				for (integer i = 0; i < newN; i ++) {
 					double t = t1 + i * dt;
 					double index = (t - t1) * my sampleRate;
-					long flore = index;
+					integer flore = Melder_iroundTowardsZero (index);
 					double fraction = index - flore;
-					long ii = (i + silenceBefore) * my numberOfChannels;
-					for (long chan = 0; chan < my numberOfChannels; chan ++) {
+					integer ii = (i + silenceBefore) * my numberOfChannels;
+					for (integer chan = 0; chan < my numberOfChannels; chan ++) {
 						resampledBuffer [ii + chan] =
 							(1.0 - fraction) * from [flore * my numberOfChannels + chan] +
 							fraction * from [(flore + 1) * my numberOfChannels + chan];
@@ -628,8 +628,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 
 void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
-		long sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
-		int numberOfChannels;
+		integer sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
+		integer numberOfChannels;
 		if (my size < 1) Melder_throw (U"No Sound or LongSound objects to concatenate.");
 		/*
 		 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
@@ -637,24 +637,24 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		Sampled data = my at [1];
 		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
-			sampleRate = lround (1.0 / sound -> dx);
+			sampleRate = Melder_iround (1.0 / sound -> dx);
 			numberOfChannels = sound -> ny;
 			n = sound -> nx;
 		} else {
 			LongSound longSound = (LongSound) data;
-			sampleRate = longSound -> sampleRate;
+			sampleRate = Melder_iroundTowardsZero (longSound -> sampleRate);
 			numberOfChannels = longSound -> numberOfChannels;
 			n = longSound -> nx;
 		}
 		/*
 		 * Check whether all the sampling frequencies and channels match.
 		 */
-		for (long i = 2; i <= my size; i ++) {
+		for (integer i = 2; i <= my size; i ++) {
 			int sampleRatesMatch, numbersOfChannelsMatch;
 			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
-				sampleRatesMatch = round (1.0 / sound -> dx) == sampleRate;
+				sampleRatesMatch = Melder_iround (1.0 / sound -> dx) == sampleRate;
 				numbersOfChannelsMatch = sound -> ny == numberOfChannels;
 				n += sound -> nx;
 			} else {
@@ -675,7 +675,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		if (file -> filePointer) {
 			MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, n, numberOfChannels, numberOfBitsPerSamplePoint);
 		}
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;

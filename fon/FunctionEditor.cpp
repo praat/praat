@@ -68,7 +68,7 @@ static void updateScrollBar (FunctionEditor me) {
 	if (value < 1.0) value = 1.0;
 	double increment = slider_size / SCROLL_INCREMENT_FRACTION + 1.0;
 	double page_increment = RELATIVE_PAGE_INCREMENT * slider_size + 1.0;
-	GuiScrollBar_set (my scrollBar, NUMundefined, maximumScrollBarValue, value, slider_size, increment, page_increment);
+	GuiScrollBar_set (my scrollBar, undefined, maximumScrollBarValue, value, slider_size, increment, page_increment);
 }
 
 static void updateGroup (FunctionEditor me) {
@@ -218,7 +218,7 @@ static void drawNow (FunctionEditor me) {
 		double bottom = my rect [i]. bottom, top = my rect [i]. top;
 		if (left < right) {
 			const char *format = my v_format_long ();
-			double value = NUMundefined, inverseValue = 0.0;
+			double value = undefined, inverseValue = 0.0;
 			switch (i) {
 				case 0: format = my v_format_totalDuration (), value = my tmax - my tmin; break;
 				case 1: format = my v_format_window (), value = my endWindow - my startWindow;
@@ -387,7 +387,7 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	 * Put the function viewer at the left and the selection viewer at the right.
 	 */
 	my functionViewerLeft = 0;
-	my functionViewerRight = my p_showSelectionViewer ? (short) floor (width * (2.0/3.0)) : width;
+	my functionViewerRight = my p_showSelectionViewer ? Melder_ifloor (width * (2.0/3.0)) : width;
 	my selectionViewerLeft = my functionViewerRight;
 	my selectionViewerRight = width;
 	my height = event -> height + 111;
@@ -403,23 +403,23 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 
 static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Preferences", nullptr)
-		BOOLEAN (U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll ())
-		BOOLEAN (U"Show selection viewer", my default_showSelectionViewer ())
-		POSITIVE (Melder_cat (U"Arrow scroll step (", my v_format_units (), U")"), my default_arrowScrollStep ())
+		BOOLEAN (synchronizeZoomAndScroll, U"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll ())
+		BOOLEAN (showSelectionViewer, U"Show selection viewer", my default_showSelectionViewer ())
+		POSITIVE (arrowScrollStep, Melder_cat (U"Arrow scroll step (", my v_format_units (), U")"), my default_arrowScrollStep ())
 		my v_prefs_addFields (cmd);
 	EDITOR_OK
-		SET_INTEGER (U"Synchronize zoom and scroll", my pref_synchronizedZoomAndScroll ())
-		SET_INTEGER (U"Show selection viewer", my pref_showSelectionViewer())
-		SET_REAL (U"Arrow scroll step", my p_arrowScrollStep)
+		SET_BOOLEAN (synchronizeZoomAndScroll, my pref_synchronizedZoomAndScroll ())
+		SET_BOOLEAN (showSelectionViewer, my pref_showSelectionViewer())
+		SET_REAL (arrowScrollStep, my p_arrowScrollStep)
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
 		bool oldSynchronizedZoomAndScroll = my pref_synchronizedZoomAndScroll ();
 		bool oldShowSelectionViewer = my p_showSelectionViewer;
-		my pref_synchronizedZoomAndScroll () = GET_INTEGER (U"Synchronize zoom and scroll");
-		my pref_showSelectionViewer () = my p_showSelectionViewer = GET_INTEGER (U"Show selection viewer");
-		my pref_arrowScrollStep () = my p_arrowScrollStep = GET_REAL (U"Arrow scroll step");
+		my pref_synchronizedZoomAndScroll () = synchronizeZoomAndScroll;
+		my pref_showSelectionViewer () = my p_showSelectionViewer = showSelectionViewer;
+		my pref_arrowScrollStep () = my p_arrowScrollStep = arrowScrollStep;
 		if (my p_showSelectionViewer != oldShowSelectionViewer) {
-			struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
+			struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0, 0 };
 			event. width  = GuiControl_getWidth  (my drawingArea);
 			event. height = GuiControl_getHeight (my drawingArea);
 			gui_drawingarea_cb_resize (me, & event);
@@ -431,19 +431,21 @@ static void menu_cb_preferences (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_END
 }
 
+static bool v_form_pictureSelection_drawSelectionTimes;
+static bool v_form_pictureSelection_drawSelectionHairs;
 void structFunctionEditor :: v_form_pictureSelection (EditorCommand cmd) {
-	BOOLEAN (U"Draw selection times", true);
-	BOOLEAN (U"Draw selection hairs", true);
+	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection_drawSelectionTimes, nullptr, U"Draw selection times", true);
+	UiForm_addBoolean (cmd -> d_uiform.get(), & v_form_pictureSelection_drawSelectionHairs, nullptr, U"Draw selection hairs", true);
 }
 void structFunctionEditor :: v_ok_pictureSelection (EditorCommand cmd) {
 	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
-	SET_INTEGER (U"Draw selection times", my pref_picture_drawSelectionTimes ());
-	SET_INTEGER (U"Draw selection hairs", my pref_picture_drawSelectionHairs ());
+	SET_BOOLEAN (v_form_pictureSelection_drawSelectionTimes, my pref_picture_drawSelectionTimes ())
+	SET_BOOLEAN (v_form_pictureSelection_drawSelectionHairs, my pref_picture_drawSelectionHairs ())
 }
 void structFunctionEditor :: v_do_pictureSelection (EditorCommand cmd) {
 	FunctionEditor me = (FunctionEditor) cmd -> d_editor;
-	my pref_picture_drawSelectionTimes () = GET_INTEGER (U"Draw selection times");
-	my pref_picture_drawSelectionHairs () = GET_INTEGER (U"Draw selection hairs");
+	my pref_picture_drawSelectionTimes () = v_form_pictureSelection_drawSelectionTimes;
+	my pref_picture_drawSelectionHairs () = v_form_pictureSelection_drawSelectionHairs;
 }
 
 /********** QUERY MENU **********/
@@ -465,16 +467,16 @@ static void menu_cb_getSelectionDuration (FunctionEditor me, EDITOR_ARGS_DIRECT)
 
 static void menu_cb_zoom (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Zoom", nullptr)
-		REAL (U"From", U"0.0")
-		REAL (U"To", U"1.0")
+		REAL (from, U"From", U"0.0")
+		REAL (to,   U"To",   U"1.0")
 	EDITOR_OK
-		SET_REAL (U"From", my startWindow)
-		SET_REAL (U"To", my endWindow)
+		SET_REAL (from, my startWindow)
+		SET_REAL (to,   my endWindow)
 	EDITOR_DO
-		my startWindow = GET_REAL (U"From");
+		my startWindow = from;
 		if (my startWindow < my tmin + 1e-12)
 			my startWindow = my tmin;
-		my endWindow = GET_REAL (U"To");
+		my endWindow = to;
 		if (my endWindow > my tmax - 1e-12)
 			my endWindow = my tmax;
 		my v_updateText ();
@@ -599,14 +601,14 @@ static void menu_cb_zoomBack (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_play (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Play", nullptr)
-		REAL (U"From", U"0.0")
-		REAL (U"To", U"1.0")
+		REAL (from, U"From", U"0.0")
+		REAL (to,   U"To",   U"1.0")
 	EDITOR_OK
-		SET_REAL (U"From", my startWindow)
-		SET_REAL (U"To", my endWindow)
+		SET_REAL (from, my startWindow)
+		SET_REAL (to,   my endWindow)
 	EDITOR_DO
 		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-		my v_play (GET_REAL (U"From"), GET_REAL (U"To"));
+		my v_play (from, to);
 	EDITOR_END
 }
 
@@ -639,16 +641,16 @@ static void menu_cb_interruptPlaying (FunctionEditor /* me */, EDITOR_ARGS_DIREC
 
 static void menu_cb_select (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Select", nullptr)
-		REAL (U"Start of selection", U"0.0")
-		REAL (U"End of selection", U"1.0")
+		REAL (startOfSelection, U"Start of selection", U"0.0")
+		REAL (endOfSelection,   U"End of selection", U"1.0")
 	EDITOR_OK
-		SET_REAL (U"Start of selection", my startSelection)
-		SET_REAL (U"End of selection", my endSelection)
+		SET_REAL (startOfSelection, my startSelection)
+		SET_REAL (endOfSelection,   my endSelection)
 	EDITOR_DO
-		my startSelection = GET_REAL (U"Start of selection");
+		my startSelection = startOfSelection;
 		if (my startSelection < my tmin + 1e-12)
 			my startSelection = my tmin;
-		my endSelection = GET_REAL (U"End of selection");
+		my endSelection = endOfSelection;
 		if (my endSelection > my tmax - 1e-12)
 			my endSelection = my tmax;
 		if (my startSelection > my endSelection) {
@@ -678,11 +680,10 @@ static void menu_cb_moveCursorToE (FunctionEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Move cursor to", nullptr)
-		REAL (U"Position", U"0.0")
+		REAL (position, U"Position", U"0.0")
 	EDITOR_OK
-		SET_REAL (U"Position", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (position, 0.5 * (my startSelection + my endSelection))
 	EDITOR_DO
-		double position = GET_REAL (U"Position");
 		if (position < my tmin + 1e-12) position = my tmin;
 		if (position > my tmax - 1e-12) position = my tmax;
 		my startSelection = my endSelection = position;
@@ -694,10 +695,10 @@ static void menu_cb_moveCursorTo (FunctionEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Move cursor by", nullptr)
-		REAL (U"Distance", U"0.05")
+		REAL (distance, U"Distance", U"0.05")
 	EDITOR_OK
 	EDITOR_DO
-		double position = 0.5 * (my startSelection + my endSelection) + GET_REAL (U"Distance");
+		double position = 0.5 * (my startSelection + my endSelection) + distance;
 		if (position < my tmin) position = my tmin;
 		if (position > my tmax) position = my tmax;
 		my startSelection = my endSelection = position;
@@ -709,10 +710,10 @@ static void menu_cb_moveCursorBy (FunctionEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_moveBby (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Move start of selection by", nullptr)
-		REAL (U"Distance", U"0.05")
+		REAL (distance, U"Distance", U"0.05")
 	EDITOR_OK
 	EDITOR_DO
-		double position = my startSelection + GET_REAL (U"Distance");
+		double position = my startSelection + distance;
 		if (position < my tmin) position = my tmin;
 		if (position > my tmax) position = my tmax;
 		my startSelection = position;
@@ -729,10 +730,10 @@ static void menu_cb_moveBby (FunctionEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_moveEby (FunctionEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Move end of selection by", nullptr)
-		REAL (U"Distance", U"0.05")
+		REAL (distance, U"Distance", U"0.05")
 	EDITOR_OK
 	EDITOR_DO
-		double position = my endSelection + GET_REAL (U"Distance");
+		double position = my endSelection + distance;
 		if (position < my tmin) position = my tmin;
 		if (position > my tmax) position = my tmax;
 		my endSelection = position;
@@ -1552,7 +1553,7 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 }
 
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, int verticalAlignment) {
-	static MelderString text { 0 };
+	static MelderString text { };
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string) + Graphics_dxMMtoWC (my graphics.get(), 0.5);
 	Graphics_setColour (my graphics.get(), Graphics_BLUE);
@@ -1585,7 +1586,7 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 	} else if (tooLow) {
 		textY = minimum + Graphics_dyMMtoWC (my graphics.get(), 5.0);
 	}
-	static MelderString text { 0 };
+	static MelderString text { };
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string);
 	Graphics_fillCircle_mm (my graphics.get(), my endWindow + textWidth + Graphics_dxMMtoWC (my graphics.get(), 1.5), textY, 1.5);

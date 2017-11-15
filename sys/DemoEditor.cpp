@@ -36,7 +36,7 @@ void structDemoEditor :: v_destroy () noexcept {
 void structDemoEditor :: v_info () {
 	DemoEditor_Parent :: v_info ();
 	MelderInfo_writeLine (U"Colour: ", Graphics_Colour_name (((PraatPicture) praatPicture) -> colour));
-	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
+	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) ((PraatPicture) praatPicture) -> font));
 	MelderInfo_writeLine (U"Font size: ", ((PraatPicture) praatPicture) -> fontSize);
 }
 
@@ -146,7 +146,7 @@ void Demo_open () {
 		editor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatPicture = (PraatPicture) editor -> praatPicture;
 		theCurrentPraatPicture -> graphics = editor -> graphics.get();
-		theCurrentPraatPicture -> font = kGraphics_font_HELVETICA;
+		theCurrentPraatPicture -> font = (int) kGraphics_font::HELVETICA;
 		theCurrentPraatPicture -> fontSize = 10;
 		theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 		theCurrentPraatPicture -> colour = Graphics_BLACK;
@@ -339,7 +339,7 @@ bool Demo_clicked () {
 }
 
 double Demo_x () {
-	if (! theReferenceToTheOnlyDemoEditor) return NUMundefined;
+	if (! theReferenceToTheOnlyDemoEditor) return undefined;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");
@@ -356,7 +356,7 @@ double Demo_x () {
 }
 
 double Demo_y () {
-	if (! theReferenceToTheOnlyDemoEditor) return NUMundefined;
+	if (! theReferenceToTheOnlyDemoEditor) return undefined;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "
 			U"Please click or type into the Demo window or close it.");

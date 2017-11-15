@@ -1,6 +1,6 @@
 /* Network_def.h
  *
- * Copyright (C) 2009-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2009-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ oo_END_STRUCT (NetworkNode)
 #define ooSTRUCT NetworkConnection
 oo_DEFINE_STRUCT (NetworkConnection)
 
-	oo_LONG (nodeFrom)
-	oo_LONG (nodeTo)
+	oo_INTEGER (nodeFrom)
+	oo_INTEGER (nodeTo)
 	oo_DOUBLE (weight)
 	oo_FROM (1)
 		oo_DOUBLE (plasticity)
@@ -95,9 +95,9 @@ oo_DEFINE_CLASS (Network, Daata)
 	oo_DOUBLE (xmax)
 	oo_DOUBLE (ymin)
 	oo_DOUBLE (ymax)
-	oo_LONG (numberOfNodes)
+	oo_INTEGER (numberOfNodes)
 	oo_STRUCT_VECTOR (NetworkNode, nodes, numberOfNodes)
-	oo_LONG (numberOfConnections)
+	oo_INTEGER (numberOfConnections)
 	oo_STRUCT_VECTOR (NetworkConnection, connections, numberOfConnections)
 
 	#if oo_DECLARING

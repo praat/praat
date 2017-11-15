@@ -2,7 +2,7 @@
 #define _Regression_h_
 /* Regression.h
  *
- * Copyright (C) 2005-2011,2014,2015 Paul Boersma
+ * Copyright (C) 2005-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 void Regression_init (Regression me);
 void Regression_addParameter (Regression me, const char32 *label, double minimum, double maximum, double value);
-long Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName);
+integer Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName);
 
 Thing_define (LinearRegression, Regression) {
 };

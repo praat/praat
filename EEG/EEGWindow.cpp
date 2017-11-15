@@ -39,7 +39,7 @@ void structEEGWindow :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"EEGWindow help", '?', menu_cb_EEGWindowHelp);
 }
 
-const char32 * structEEGWindow :: v_getChannelName (long channelNumber) {
+const char32 * structEEGWindow :: v_getChannelName (integer channelNumber) {
 	Melder_assert (our eeg != nullptr);
 	return our eeg -> channelNames [channelNumber];
 }

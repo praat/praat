@@ -105,12 +105,12 @@ static void menu_cb_addPointAtCursor (PointEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_addPointAt (PointEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add point", nullptr)
-		REAL (U"Position", U"0.0");
+		REAL (position, U"Position", U"0.0");
 	EDITOR_OK
-		SET_REAL (U"Position", 0.5 * (my startSelection + my endSelection));
+		SET_REAL (position, 0.5 * (my startSelection + my endSelection));
 	EDITOR_DO
 		Editor_save (me, U"Add point");
-		PointProcess_addPoint ((PointProcess) my data, GET_REAL (U"Position"));
+		PointProcess_addPoint ((PointProcess) my data, position);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -158,8 +158,8 @@ void structPointEditor :: v_draw () {
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	double minimum = -1.0, maximum = +1.0;
-	if (sound && (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW || p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL)) {
-		long first, last;
+	if (sound && (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW || p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy::BY_WINDOW_AND_CHANNEL)) {
+		integer first, last;
 		if (Sampled_getWindowSamples (sound, our startWindow, our endWindow, & first, & last) >= 1) {
 			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
 			if (minimum == maximum) minimum -= 1.0, maximum += 1.0;
@@ -168,7 +168,7 @@ void structPointEditor :: v_draw () {
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, minimum, maximum);
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 	if (sound) {
-		long first, last;
+		integer first, last;
 		if (Sampled_getWindowSamples (sound, our startWindow, our endWindow, & first, & last) > 1) {
 			Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 			Graphics_line (our graphics.get(), our startWindow, 0.0, our endWindow, 0.0);
@@ -179,7 +179,7 @@ void structPointEditor :: v_draw () {
 	}
 	Graphics_setColour (our graphics.get(), Graphics_BLUE);
 	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, -1.0, +1.0);
-	for (long i = 1; i <= point -> nt; i ++) {
+	for (integer i = 1; i <= point -> nt; i ++) {
 		double t = point -> t [i];
 		if (t >= our startWindow && t <= our endWindow)
 			Graphics_line (our graphics.get(), t, -0.9, t, +0.9);

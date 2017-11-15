@@ -1,6 +1,6 @@
 /* manual_sound.cpp
  *
- * Copyright (C) 1992-2010,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include "ManPagesM.h"
 
 #include "Sound.h"
+#include "UnicodeData.h"
 
 static void draw_SoundDeepen_filter (Graphics g) {
 	try {
@@ -108,7 +109,7 @@ Create Sound from formula... 'Naam' Mono begintijd eindtijd samplefrequentie
 */
 MAN_END
 
-MAN_BEGIN (U"Create Sound as tone complex...", U"ppgb", 20161013)
+MAN_BEGIN (U"Create Sound as tone complex...", U"ppgb", 20170828)
 INTRO (U"A command in the @@New menu@ to create a @Sound as the sum of a number of sine waves "
 	"with equidistant frequencies.")
 ENTRY (U"Settings")
@@ -173,13 +174,13 @@ CODE (U"form Add waves with decreasing amplitudes")
 CODE1 (U"natural Number_of_components 19")
 CODE (U"endform")
 CODE (U"\\#  Create a Matrix with frequency and amplitude information in each row:")
-CODE (U"Create simple Matrix: \"freqAndGain\", number_of_components, 2, \"0\"")
-CODE (U"Formula: \"if col = 1 then row * 100 + 5 else 1 / row fi\"")
+CODE (U"Create simple Matrix: \"freqAndGain\", number_of_components, 2, ~ 0")
+CODE (U"Formula: ~ if col = 1 then row * 100 + 5 else 1 / row fi")
 CODE (U"\\#  Create a large Matrix with all the component sine waves:")
-CODE (U"Create Matrix: \"components\", 0, 1, 10000, 1e-4, 0.5e-4, 1, number_of_components, number_of_components, 1, 1, \"0\"")
-CODE (U"Formula: \"Matrix_freqAndGain [2] * sin (2 * pi * Matrix_freqAndGain [1] * x)\"")
+CODE (U"Create Matrix: \"components\", 0, 1, 10000, 1e-4, 0.5e-4, 1, number_of_components, number_of_components, 1, 1, ~ 0")
+CODE (U"Formula: ~ object [\"Matrix freqAndGain\", 2] * sin (2 * pi * object [\"Matrix freqAndGain\", 1] * x)\"")
 CODE (U"\\#  Integrate:")
-CODE (U"Formula: \"self + self [row - 1, col]\"")
+CODE (U"Formula: ~ self + self [row - 1, col]")
 CODE (U"\\#  Publish last row:")
 CODE (U"To Sound (slice): number_of_components")
 CODE (U"Scale amplitudes: 0.99")
@@ -267,9 +268,9 @@ LIST_ITEM1 (U"\\bu @@Sound: Get intensity (dB)")
 NORMAL (U"Modification:")
 LIST_ITEM (U"\\bu @@Matrix: Formula...")
 LIST_ITEM (U"\\bu @@Sound: Set value at sample number...")
-LIST_ITEM (U"\\bu @@Sound: Filter with one formant (in-line)...")
-LIST_ITEM (U"\\bu @@Sound: Pre-emphasize (in-line)...")
-LIST_ITEM (U"\\bu @@Sound: De-emphasize (in-line)...")
+LIST_ITEM (U"\\bu @@Sound: Filter with one formant (in-place)...")
+LIST_ITEM (U"\\bu @@Sound: Pre-emphasize (in-place)...")
+LIST_ITEM (U"\\bu @@Sound: De-emphasize (in-place)...")
 NORMAL (U"Annotation (see @@Intro 7. Annotation@):")
 LIST_ITEM (U"\\bu @@Sound: To TextGrid...")
 NORMAL (U"Periodicity analysis:")
@@ -355,10 +356,10 @@ NORMAL (U"Since the Sound object completely resides in memory, its size is limit
 	"you could use the @LongSound object instead, which you can view in the @LongSoundEditor.")
 MAN_END
 
-MAN_BEGIN (U"Sound: De-emphasize (in-line)...", U"ppgb", 20030309)
+MAN_BEGIN (U"Sound: De-emphasize (in-place)...", U"ppgb", 20171114)
 INTRO (U"A command to change the spectral slope of every selected @Sound object.")
-NORMAL (U"The reverse of @@Sound: Pre-emphasize (in-line)...@. For an example, see @@Source-filter synthesis@.")
-NORMAL (U"This is the in-line version of @@Sound: Filter (de-emphasis)...@, "
+NORMAL (U"The reverse of @@Sound: Pre-emphasize (in-place)...@. For an example, see @@Source-filter synthesis@.")
+NORMAL (U"This is the in-place version of @@Sound: Filter (de-emphasis)...@, "
 	"i.e., it does not create a new Sound object but modifies an existing object.")
 ENTRY (U"Setting")
 TAG (U"##From frequency (Hz)")
@@ -632,12 +633,12 @@ FORMULA (U"%y__2_ := %x__2_ \\-- %p %y__1_")
 FORMULA (U"\\At%n \\>_ 3:   %y__n_ := %x__n_ \\-- %p %y__%n-1_ \\-- %q %y__%n-2_")
 NORMAL (U"After filtering, the sound %y is scaled so that its absolute extremum is 0.9.")
 NORMAL (U"For a comparative discussion of various filtering methods, see the @Filtering tutorial.")
-NORMAL (U"This filter has an in-line version: @@Sound: Filter with one formant (in-line)...@.")
+NORMAL (U"This filter has an in-place version: @@Sound: Filter with one formant (in-place)...@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Filter with one formant (in-line)...", U"ppgb", 20030309)
-INTRO (U"A command to filter every selected @Sound object in-line, with a single formant of a specified frequency and bandwidth.")
-NORMAL (U"This is the in-line version of @@Sound: Filter (one formant)...@, "
+MAN_BEGIN (U"Sound: Filter with one formant (in-place)...", U"ppgb", 20171114)
+INTRO (U"A command to filter every selected @Sound object in-place, with a single formant of a specified frequency and bandwidth.")
+NORMAL (U"This is the in-place version of @@Sound: Filter (one formant)...@, "
 	"i.e. it does not create a new Sound object but modifies the selected object.")
 MAN_END
 
@@ -943,10 +944,10 @@ NORMAL (U"where \\De%t is the sampling period of the sound. The new sound %y is 
 FORMULA (U"%y__%i_ = %x__%i_ - %\\al %x__%i-1_")
 MAN_END
 
-MAN_BEGIN (U"Sound: Pre-emphasize (in-line)...", U"ppgb", 20030309)
+MAN_BEGIN (U"Sound: Pre-emphasize (in-place)...", U"ppgb", 20171114)
 INTRO (U"A command to change the spectral slope of every selected @Sound object.")
-NORMAL (U"The reverse of @@Sound: De-emphasize (in-line)...@.")
-NORMAL (U"This is the in-line version of @@Sound: Filter (pre-emphasis)...@, "
+NORMAL (U"The reverse of @@Sound: De-emphasize (in-place)...@.")
+NORMAL (U"This is the in-place version of @@Sound: Filter (pre-emphasis)...@, "
 	"i.e., it does not create a new Sound object but modifies an existing object.")
 ENTRY (U"Algorithm")
 NORMAL (U"The pre-emphasis factor %\\al is computed as")
@@ -995,7 +996,7 @@ CODE (U"Set value at sample number: 100, 1/2")
 NORMAL (U"This sets the value of the 100th sample to 0.5.")
 MAN_END
 
-MAN_BEGIN (U"SoundEditor", U"ppgb", 20100404)
+MAN_BEGIN (U"SoundEditor", U"ppgb", 20170909)
 INTRO (U"An @@Editors|Editor@ for viewing and editing a @Sound object. "
 	"Most of the functions of this editor are described in the @Intro.")
 ENTRY (U"The markers")
@@ -1008,6 +1009,7 @@ ENTRY (U"Playing")
 NORMAL (U"To play any part of the sound, click on one of the rectangles "
 	"below or above the sound window (there can be 1 to 8 of these rectangles), "
 	"or choose a Play command from the View menu.")
+NORMAL (U"For multi-channel sounds you can mute one or more channels by a Ctrl-click on the " UNITEXT_SPEAKER " icon at the right side of the corresponding channel number. The icon will turn to " UNITEXT_SPEAKER_WITH_CANCELLATION_STROKE ". In subsequent playing actions the channel will not be played. Another Ctrl-click on a muted channel icon will activate the channel again. ")
 ENTRY (U"Publishing")
 NORMAL (U"To perform analyses on the selection, or save it to a file, "
 	"create an independent Sound as a copy of the selection, "
@@ -1091,7 +1093,7 @@ ENTRY (U"See also")
 NORMAL (U"If you want the sounds to fade into each other smoothly, choose @@Sounds: Concatenate with overlap...@ instead.")
 MAN_END
 
-MAN_BEGIN (U"Sounds: Concatenate with overlap...", U"ppgb", 20110211)
+MAN_BEGIN (U"Sounds: Concatenate with overlap...", U"ppgb", 20170904)
 INTRO (U"A command to concatenate all selected @Sound objects into a single large Sound, with smooth cross-fading between the sounds.")
 NORMAL (U"All sounds must have equal sampling frequencies and equal numbers of channels. "
 	"They are concatenated in the order in which they appear in the list of objects (not in the order in which you select them; remember: What You See Is What You Get).")
@@ -1107,12 +1109,12 @@ ENTRY (U"Procedure")
 NORMAL (U"Suppose we start with the following two sounds. They are both 0.1 seconds long. "
 	"The first sound is a sine wave with a frequency of 100 Hz, the second a sine wave with a frequency of 230 Hz:")
 SCRIPT (5.0, 3, U""
-	"Create Sound from formula... sine100 1 0 0.1 10000 0.9*sin(2*pi*100*x)\n"
-	"Draw... 0 0 -1 1 yes Curve\n"
+	"Create Sound from formula: \"sine100\", 1, 0, 0.1, 10000, ~ 0.9*sin(2*pi*100*x)\n"
+	"Draw: 0, 0, -1, 1, \"yes\", \"Curve\"\n"
 	"Remove")
 SCRIPT (5.0, 3, U""
-	"Create Sound from formula... sine230 1 0 0.1 10000 0.9*sin(2*pi*230*x)\n"
-	"Draw... 0 0 -1 1 yes Curve\n"
+	"Create Sound from formula: \"sine230\", 1, 0, 0.1, 10000, ~ 0.9*sin(2*pi*230*x)\n"
+	"Draw: 0, 0, -1, 1, \"yes\", \"Curve\"\n"
 	"Remove")
 NORMAL (U"If the overlap time is 0.01 seconds, the concatenation of these two sounds will produce a Sound with a duration of 0.19 seconds, "
 	"which is the sum of the durations of the two sounds, minus the overlap time.")
@@ -1120,38 +1122,38 @@ NORMAL (U"The concatenation works in the following way. "
 	"The last 0.01 seconds of the first sound is multiplied by a falling raised cosine (the second half of a Hann window, see the first red curve), "
 	"and the first 0.01 seconds of the second sound is multiplied by a rising raised cosine (the first half of a Hann window, see the second red curve):")
 SCRIPT (6.7, 5, U""
-	"Create Sound from formula... sine 1 0 0.1 10000 0.9\n"
-	"Formula (part)... 0.09 0.1 1 1 self*(0.5-0.5*cos(pi*(xmax-x)/0.01))\n"
-	"Select inner viewport... 0.5 3.5 0.5 2.5\n"
+	"Create Sound from formula: \"sine\", 1, 0, 0.1, 10000, ~ 0.9\n"
+	"Formula (part): 0.09, 0.1, 1, 1, ~ self*(0.5-0.5*cos(pi*(xmax-x)/0.01))\n"
+	"Select inner viewport: 0.5, 3.5, 0.5, 2.5\n"
 	"Red\n"
-	"Draw... 0 0 -1 1 no Curve\n"
-	"Formula... self*sin(2*pi*100*x)\n"
+	"Draw: 0, 0, -1, 1, \"no\", \"Curve\"\n"
+	"Formula: ~ self*sin(2*pi*100*x)\n"
 	"Black\n"
-	"Draw... 0 0 -1 1 no Curve\n"
+	"Draw: 0, 0, -1, 1, \"no\", \"Curve\"\n"
 	"Draw inner box\n"
-	"One mark top... 0 yes yes no\n"
-	"One mark top... 0.09 yes yes yes\n"
-	"One mark top... 0.1 yes yes no\n"
-	"Text top... no Time (s)\n"
-	"One mark left... -1 yes yes no\n"
-	"One mark left... 0 yes yes yes\n"
-	"One mark left... 1 yes yes no\n"
-	"Formula... 0.9\n"
-	"Formula (part)... 0 0.01 1 1 self*(0.5-0.5*cos(pi*x/0.01))\n"
-	"Select inner viewport... 3.2 6.2 2.5 4.5\n"
+	"One mark top: 0, \"yes\", \"yes\", \"no\", \"\"\n"
+	"One mark top: 0.09, \"yes\", \"yes\", \"yes\", \"\"\n"
+	"One mark top: 0.1, \"yes\", \"yes\", \"no\", \"\"\n"
+	"Text top: \"no\", \"Time (s)\"\n"
+	"One mark left: -1, \"yes\", \"yes\", \"no\", \"\"\n"
+	"One mark left: 0, \"yes\", \"yes\", \"yes\", \"\"\n"
+	"One mark left: 1, \"yes\", \"yes\", \"no\", \"\"\n"
+	"Formula: ~ 0.9\n"
+	"Formula (part): 0, 0.01, 1, 1, ~ self*(0.5-0.5*cos(pi*x/0.01))\n"
+	"Select inner viewport: 3.2, 6.2, 2.5, 4.5\n"
 	"Red\n"
-	"Draw... 0 0 -1 1 no Curve\n"
-	"Formula... self*sin(2*pi*230*x)\n"
+	"Draw: 0, 0, -1, 1, \"no\", \"Curve\"\n"
+	"Formula: ~ self*sin(2*pi*230*x)\n"
 	"Black\n"
-	"Draw... 0 0 -1 1 no Curve\n"
+	"Draw: 0, 0, -1, 1, \"no\", \"Curve\"\n"
 	"Draw inner box\n"
-	"One mark bottom... 0 yes yes no\n"
-	"One mark bottom... 0.01 yes yes yes\n"
-	"One mark bottom... 0.1 yes yes no\n"
-	"Text bottom... no Time (s)\n"
-	"One mark right... -1 yes yes no\n"
-	"One mark right... 0 yes yes yes\n"
-	"One mark right... 1 yes yes no\n"
+	"One mark bottom: 0, \"yes\", \"yes\", \"no\", \"\"\n"
+	"One mark bottom: 0.01, \"yes\", \"yes\", \"yes\", \"\"\n"
+	"One mark bottom: 0.1, \"yes\", \"yes\", \"no\", \"\"\n"
+	"Text bottom: \"no\", \"Time (s)\"\n"
+	"One mark right: -1, \"yes\", \"yes\", \"no\", \"\"\n"
+	"One mark right: 0, \"yes\", \"yes\", \"yes\", \"\"\n"
+	"One mark right: 1, \"yes\", \"yes\", \"no\", \"\"\n"
 	"Remove\n"
 )
 NORMAL (U"This figure shows how the two sounds are windowed (faded out and in), as well as how they will overlap.")

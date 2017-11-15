@@ -34,7 +34,7 @@ Thing_implement (Graphics, Thing, 0);
 enum kGraphics_cjkFontStyle theGraphicsCjkFontStyle;
 
 void Graphics_prefs () {
-	Preferences_addEnum (U"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, kGraphics_cjkFontStyle_DEFAULT);
+	Preferences_addEnum (U"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, (int) kGraphics_cjkFontStyle::DEFAULT);
 }
 
 void structGraphics :: v_destroy () noexcept {
@@ -70,23 +70,25 @@ static void computeTrafo (Graphics me) {
 void Graphics_init (Graphics me, int resolution) {
 	my resolution = resolution;
 	if (resolution == 96) {
-		my resolutionNumber = kGraphics_resolution_96;
+		my resolutionNumber = kGraphics_resolution::DPI_96;
 	} else if (resolution == 100) {
-		my resolutionNumber = kGraphics_resolution_100;
+		my resolutionNumber = kGraphics_resolution::DPI_100;
 	} else if (resolution == 180) {
-		my resolutionNumber = kGraphics_resolution_180;
+		my resolutionNumber = kGraphics_resolution::DPI_180;
 	} else if (resolution == 200) {
-		my resolutionNumber = kGraphics_resolution_200;
+		my resolutionNumber = kGraphics_resolution::DPI_200;
 	} else if (resolution == 300) {
-		my resolutionNumber = kGraphics_resolution_300;
+		my resolutionNumber = kGraphics_resolution::DPI_300;
 	} else if (resolution == 360) {
-		my resolutionNumber = kGraphics_resolution_360;
+		my resolutionNumber = kGraphics_resolution::DPI_360;
 	} else if (resolution == 600) {
-		my resolutionNumber = kGraphics_resolution_600;
+		my resolutionNumber = kGraphics_resolution::DPI_600;
 	} else if (resolution == 720) {
-		my resolutionNumber = kGraphics_resolution_720;
+		my resolutionNumber = kGraphics_resolution::DPI_720;
+	} else if (resolution == 900) {
+		my resolutionNumber = kGraphics_resolution::DPI_900;
 	} else if (resolution == 1200) {
-		my resolutionNumber = kGraphics_resolution_1200;
+		my resolutionNumber = kGraphics_resolution::DPI_1200;
 	} else {
 		Melder_fatal (U"Unsupported resolution ", resolution, U" dpi.");
 	}
@@ -100,7 +102,7 @@ void Graphics_init (Graphics me, int resolution) {
 	my lineWidth = 1.0;
 	my arrowSize = 1.0;
 	my speckleSize = 1.0;
-	my font = kGraphics_font_HELVETICA;
+	my font = kGraphics_font::HELVETICA;
 	my fontSize = 10;
 	my fontStyle = Graphics_NORMAL;
 	my record = nullptr;
@@ -124,7 +126,7 @@ int Graphics_getResolution (Graphics me) {
 }
 
 void Graphics_setWsViewport (Graphics me,
-	long x1DC, long x2DC, long y1DC, long y2DC)
+	integer x1DC, integer x2DC, integer y1DC, integer y2DC)
 {
 	if (x1DC < my d_x1DCmin || x2DC > my d_x2DCmax || y1DC < my d_y1DCmin || y2DC > my d_y2DCmax) {
 		Melder_warning (U"Graphics_setWsViewport: coordinates too large:\n",
@@ -158,7 +160,7 @@ void Graphics_setWsViewport (Graphics me,
 }
 
 void Graphics_resetWsViewport (Graphics me,
-	long x1DC, long x2DC, long y1DC, long y2DC)
+	integer x1DC, integer x2DC, integer y1DC, integer y2DC)
 {
 	my d_x1DC = x1DC;
 	my d_x2DC = x2DC;
@@ -167,7 +169,7 @@ void Graphics_resetWsViewport (Graphics me,
 	computeTrafo (me);
 }
 
-void Graphics_inqWsViewport (Graphics me, long *x1DC, long *x2DC, long *y1DC, long *y2DC) {
+void Graphics_inqWsViewport (Graphics me, integer *x1DC, integer *x2DC, integer *y1DC, integer *y2DC) {
 	*x1DC = my d_x1DC;
 	*x2DC = my d_x2DC;
 	*y1DC = my d_y1DC;
@@ -193,7 +195,7 @@ void Graphics_inqWsWindow (Graphics me, double *x1NDC, double *x2NDC, double *y1
 
 /***** CO-ORDINATE TRANFORMATIONS *****/
 
-void Graphics_DCtoWC (Graphics me, long xDC, long yDC, double *xWC, double *yWC) {
+void Graphics_DCtoWC (Graphics me, integer xDC, integer yDC, double *xWC, double *yWC) {
 	if (my yIsZeroAtTheTop) {
 		*xWC = (xDC + 0.5 - my deltaX) / my scaleX;
 		*yWC = (yDC - 0.5 - my deltaY) / my scaleY;
@@ -206,7 +208,7 @@ void Graphics_DCtoWC (Graphics me, long xDC, long yDC, double *xWC, double *yWC)
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC) {
+void Graphics_WCtoDC (Graphics me, double xWC, double yWC, integer *xDC, integer *yDC) {
 	*xDC = wdx (xWC);
 	*yDC = wdy (yWC);
 }

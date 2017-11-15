@@ -1,6 +1,6 @@
 /* manual_annotation.cpp
  *
- * Copyright (C) 1992-2011,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +281,7 @@ NORMAL (U"You can check the spelling of the intervals in your tiers by including
 	"which will search for the next word in the tier or interval that does not occur in the lexicon.")
 MAN_END
 
-MAN_BEGIN (U"WordList", U"ppgb", 20140421)
+MAN_BEGIN (U"WordList", U"ppgb", 20170913)
 INTRO (U"One of the @@types of objects@ in Praat. "
 	"An object of class WordList contains a sorted list of strings in a system-independent format. "
 	"WordList objects can be used for spelling checking after conversion to a @SpellingChecker object.")
@@ -362,7 +362,7 @@ CODE (U"cookie")
 CODE (U"cookies")
 CODE (U"cooking")
 CODE (U"cooks")
-NORMAL (U"The strings are now in the ASCII order, in which capitals come before lower-case letters, "
+NORMAL (U"The strings are now in the Unicode sorting order, in which capitals come before lower-case letters, "
 	"and backslashes come in between these two series.")
 NORMAL (U"Clicking ##To WordList# now succeeds, and a WordList object appears in the list. "
 	"If you save it to a text file (with the Save menu), you will get the following file:")

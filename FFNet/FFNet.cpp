@@ -25,7 +25,6 @@
  djmw 20040513 Info changes.
  djmw 20040526 Adapted FFNet_drawCostHistory.
  djmw 20050131 Reversed sign of derivative in minimumCrossEntropy.
- djmw 20060811 Changed %d to %ld in sprintf for longs.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20070902 FFNet_createNameFromTopology to wchar
  djmw 20071014 Melder_error<n>
@@ -86,12 +85,12 @@ static void FFNet_checkLayerNumber (FFNet me, long layer) {
 	}
 }
 
-autostring32 FFNet_createNameFromTopology (FFNet me) {
+char32 * FFNet_createNameFromTopology (FFNet me) {
 	autoMelderString name;
-	MelderString_copy (&name, my nUnitsInLayer[0]);
-	for (long i = 1; i <= my nLayers; i++) {
-		MelderString_appendCharacter (&name, U'-');
-		MelderString_append (&name, my nUnitsInLayer[i]);
+	MelderString_copy (& name, my nUnitsInLayer [0]);
+	for (long i = 1; i <= my nLayers; i ++) {
+		MelderString_appendCharacter (& name, U'-');
+		MelderString_append (& name, my nUnitsInLayer [i]);
 	}
 	autostring32 naam = Melder_dup (name.string);
 	return naam.transfer();
@@ -160,12 +159,12 @@ static void bookkeeping (FFNet me) {
 		my w = NUMvector<double> (1, my nWeights);
 	}
 	my activity = NUMvector<double> (1, my nNodes);
-	my isbias = NUMvector<long> (1, my nNodes);
-	my nodeFirst = NUMvector<long> (1, my nNodes);
-	my nodeLast = NUMvector<long> (1, my nNodes);
-	my wFirst = NUMvector<long> (1, my nNodes);
-	my wLast = NUMvector<long> (1, my nNodes);
-	my wSelected = NUMvector<long> (1, my nWeights);
+	my isbias = NUMvector<integer> (1, my nNodes);
+	my nodeFirst = NUMvector<integer> (1, my nNodes);
+	my nodeLast = NUMvector<integer> (1, my nNodes);
+	my wFirst = NUMvector<integer> (1, my nNodes);
+	my wLast = NUMvector<integer> (1, my nNodes);
+	my wSelected = NUMvector<integer> (1, my nWeights);
 	my error = NUMvector<double> (1, my nNodes);
 	my deriv = NUMvector<double> (1, my nNodes);
 	my dwi = NUMvector<double> (1, my nWeights);
@@ -226,7 +225,7 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 		numberOfLayers --;
 	}
 	my nLayers = numberOfLayers;
-	my nUnitsInLayer = NUMvector<long> (0, numberOfLayers);
+	my nUnitsInLayer = NUMvector<integer> (0, numberOfLayers);
 
 	my nUnitsInLayer [numberOfLayers --] = numberOfOutputs;
 	if (nodesInLayer2 > 0) {
@@ -288,7 +287,7 @@ double FFNet_getBias (FFNet me, long layer, long unit) {
 		long bias_unit = my wLast[node];
 		return my w[bias_unit];
 	} catch (MelderError) {
-		return NUMundefined;
+		return undefined;
 	}
 }
 
@@ -582,7 +581,7 @@ long FFNet_getNumberOfUnitsInLayer (FFNet me, int layer) {
 }
 
 double FFNet_getMinimum (FFNet me) {
-	return my minimizer ? Minimizer_getMinimum (my minimizer.get()) : NUMundefined;
+	return ( my minimizer ? Minimizer_getMinimum (my minimizer.get()) : undefined );
 }
 
 void FFNet_drawTopology (FFNet me, Graphics g) {

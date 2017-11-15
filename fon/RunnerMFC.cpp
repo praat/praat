@@ -63,7 +63,7 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 static void drawNow (RunnerMFC me) {
 	if (! my graphics) return;   // could be the case in the very beginning
 	ExperimentMFC experiment = (ExperimentMFC) my data;
-	long iresponse;
+	integer iresponse;
 	if (! my data) return;
 	Graphics_setGrey (my graphics.get(), 0.8);
 	Graphics_fillRectangle (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -86,7 +86,7 @@ static void drawNow (RunnerMFC me) {
 		const char32 *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
 		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
 		char32 *visibleText_p = visibleText_dup.peek();
-		Graphics_setFont (my graphics.get(), kGraphics_font_TIMES);
+		Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (my graphics.get(), 10);
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_TOP);
@@ -115,7 +115,7 @@ static void drawNow (RunnerMFC me) {
 				if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
 			}
 			if (str32nequ (textToDraw, U"\\FI", 3)) {
-				structMelderFile file = { 0 };
+				structMelderFile file { };
 				MelderDir_relativePathToFile (& experiment -> rootDirectory, textToDraw + 3, & file);
 				Graphics_imageFromFile (my graphics.get(), Melder_fileToPath (& file), response -> left, response -> right, response -> bottom, response -> top);
 			} else {
@@ -212,7 +212,7 @@ static void do_ok (RunnerMFC me) {
 		if (experiment -> stimuliAreSounds) {
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 			if (experiment -> blankWhilePlaying)
-				 MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+				 MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 		}
 		my blanked = false;
@@ -241,7 +241,7 @@ static void do_oops (RunnerMFC me) {
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 		if (experiment -> blankWhilePlaying)
-			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 	}
 	my blanked = false;
@@ -261,7 +261,7 @@ static void do_replay (RunnerMFC me) {
 	if (experiment -> stimuliAreSounds) {
 		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 		if (experiment -> blankWhilePlaying)
-			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 	}
 	my blanked = false;
@@ -293,7 +293,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			}
 			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 			if (experiment -> blankWhilePlaying)
-				MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+				MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);   // works only if there is at least one trial
 		}
 		my blanked = false;
@@ -315,7 +315,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			if (experiment -> stimuliAreSounds) {
 				autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
 				if (experiment -> blankWhilePlaying)
-					MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
+					MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel::SYNCHRONOUS);
 				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 			}
 			my blanked = false;
@@ -340,7 +340,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 				do_oops (me);
 			}
 		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
-			for (long iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
+			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 				ResponseMFC response = & experiment -> response [iresponse];
 				if (x > response -> left && x < response -> right && y > response -> bottom && y < response -> top && response -> name [0] != '\0') {
 					experiment -> responses [experiment -> trial] = iresponse;
@@ -357,7 +357,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 				}
 			}
 			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
-				for (long iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+				for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
@@ -368,7 +368,7 @@ static void gui_drawingarea_cb_click (RunnerMFC me, GuiDrawingArea_ClickEvent ev
 			}
 		} else if (experiment -> responses [experiment -> trial] != 0) {
 			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
-			for (long iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+			for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 				GoodnessMFC cat = & experiment -> goodness [iresponse];
 				if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 					experiment -> goodnesses [experiment -> trial] = iresponse;
@@ -418,7 +418,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 				do_oops (me);
 			}
 		} else if (experiment -> responses [experiment -> trial] == 0 || experiment -> ok_right > experiment -> ok_left) {
-			for (long iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
+			for (integer iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 				ResponseMFC response = & experiment -> response [iresponse];
 				if (response -> key && response -> key [0] == event -> key) {
 					experiment -> responses [experiment -> trial] = iresponse;
@@ -435,7 +435,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 				}
 			}
 			if (experiment -> responses [experiment -> trial] != 0 && experiment -> ok_right > experiment -> ok_left) {
-				for (long iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+				for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (cat -> key && cat -> key [0] == event -> key) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
@@ -446,7 +446,7 @@ static void gui_drawingarea_cb_key (RunnerMFC me, GuiDrawingArea_KeyEvent event)
 			}
 		} else if (experiment -> responses [experiment -> trial] != 0) {
 			Melder_assert (experiment -> ok_right <= experiment -> ok_left);
-			for (long iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
+			for (integer iresponse = 1; iresponse <= experiment -> numberOfGoodnessCategories; iresponse ++) {
 				GoodnessMFC cat = & experiment -> goodness [iresponse];
 				if (cat -> key && cat -> key [0] == event -> key) {
 					experiment -> goodnesses [experiment -> trial] = iresponse;
@@ -469,7 +469,7 @@ autoRunnerMFC RunnerMFC_create (const char32 *title, autoExperimentMFCList exper
 		my experiments = experiments.move();
 		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 
-struct structGuiDrawingArea_ResizeEvent event { my d_drawingArea, 0 };
+structGuiDrawingArea_ResizeEvent event { my d_drawingArea, 0, 0 };
 event. width  = GuiControl_getWidth  (my d_drawingArea);
 event. height = GuiControl_getHeight (my d_drawingArea);
 gui_drawingarea_cb_resize (me.get(), & event);

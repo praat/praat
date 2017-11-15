@@ -278,7 +278,7 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 	}
 }
 
-static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
+static void showMeter (SoundRecorder me, short *buffer, integer nsamp) {
 	Melder_assert (my graphics);
 	if (nsamp < 1) {
 		Graphics_setWindow (my graphics.get(), 0.0, 1.0, 0.0, 1.0);
@@ -291,45 +291,45 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 		Graphics_text (my graphics.get(), 0.5, 0.5, U"Not recording.");
 		return;
 	}
-	if (my p_meter_which == kSoundRecorder_meter_INTENSITY) {
+	if (my p_meter_which == kSoundRecorder_meter::INTENSITY) {
 		int leftMaximum = 0, rightMaximum = 0;
 		if (my numberOfChannels == 1) {
-			for (long i = 0; i < nsamp; i ++) {
+			for (integer i = 0; i < nsamp; i ++) {
 				int value = buffer [i];
 				if (abs (value) > leftMaximum) leftMaximum = abs (value);
 			}
 		} else {
-			for (long i = 0; i < nsamp; i ++) {
+			for (integer i = 0; i < nsamp; i ++) {
 				int left = buffer [i+i], right = buffer [i+i+1];
 				if (abs (left) > leftMaximum) leftMaximum = abs (left);
 				if (abs (right) > rightMaximum) rightMaximum = abs (right);
 			}
 		}
 		if (my lastLeftMaximum > 30000) {
-			int leak = my lastLeftMaximum - (int) floor (2000000 / theControlPanel. sampleRate);
+			int leak = my lastLeftMaximum - Melder_ifloor (2000000.0 / theControlPanel. sampleRate);
 			if (leftMaximum < leak) leftMaximum = leak;
 		}
 		showMaximum (me, 1, leftMaximum);
 		my lastLeftMaximum = leftMaximum;
 		if (my numberOfChannels == 2) {
 			if (my lastRightMaximum > 30000) {
-				int leak = my lastRightMaximum - (int) floor (2000000 / theControlPanel. sampleRate);
+				int leak = my lastRightMaximum - Melder_ifloor (2000000.0 / theControlPanel. sampleRate);
 				if (rightMaximum < leak) rightMaximum = leak;
 			}
 			showMaximum (me, 2, rightMaximum);
 			my lastRightMaximum = rightMaximum;
 		}
-	} else if (my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY) {
+	} else if (my p_meter_which == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY) {
 		autoSound sound = Sound_create (my numberOfChannels,
 			0.0, nsamp / theControlPanel. sampleRate,
 			nsamp, 1.0 / theControlPanel. sampleRate, 0.5 / theControlPanel. sampleRate);
 		short *p = & buffer [0];
-		for (long isamp = 1; isamp <= nsamp; isamp ++) {
-			for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
+		for (integer isamp = 1; isamp <= nsamp; isamp ++) {
+			for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 				sound -> z [ichan] [isamp] = * (p ++) / 32768.0;
 			}
 		}
-		Sound_multiplyByWindow (sound.get(), kSound_windowShape_KAISER_2);
+		Sound_multiplyByWindow (sound.get(), kSound_windowShape::KAISER_2);
 		double intensity = Sound_getIntensity_dB (sound.get());
 		autoSpectrum spectrum = Sound_to_Spectrum (sound.get(), true);
 		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.get(), 1.0);
@@ -352,8 +352,8 @@ static bool tooManySamplesInBufferToReturnToGui (SoundRecorder me) {
 	return false;
 }
 
-static long getMyNsamp (SoundRecorder me) {
-	volatile long nsamp = my nsamp;   // Prevent inlining.
+static integer getMyNsamp (SoundRecorder me) {
+	volatile integer nsamp = my nsamp;   // Prevent inlining.
 	return nsamp;
 }
 
@@ -396,18 +396,18 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 		if (my okButton)     GuiThing_setSensitive (my okButton,     ! my recording && my nsamp > 0);
 		if (my monoButton   && my numberOfChannels == 1) GuiRadioButton_set (my monoButton);
 		if (my stereoButton && my numberOfChannels == 2) GuiRadioButton_set (my stereoButton);
-		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
+		for (integer i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
 			if (my fsamps [i]. button && theControlPanel. sampleRate == my fsamps [i]. fsamp)
 				GuiRadioButton_set (my fsamps [i]. button);
 		if (my devices [theControlPanel. inputSource]. button)
 			GuiRadioButton_set (my devices [theControlPanel. inputSource]. button);
 		if (my monoButton)   GuiThing_setSensitive (my monoButton,   ! my recording);
 		if (my stereoButton) GuiThing_setSensitive (my stereoButton, ! my recording);
-		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
+		for (integer i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
 			if (my fsamps [i]. button) {
 				GuiThing_setSensitive (my fsamps [i]. button, ! my recording);
 			}
-		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
+		for (integer i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
 			if (my devices [i]. button)
 				GuiThing_setSensitive (my devices [i]. button, ! my recording);
 
@@ -455,7 +455,7 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 				 * so that the buffer may be being filled during this workproc.
 				 * So we ask for the buffer filling just once, namely here at the beginning.
 				 */
-				long lastSample = 0;
+				integer lastSample = 0;
 				if (my inputUsesPortAudio) {
 					 /*
 					  * The buffer filling is contained in my nsamp,
@@ -473,7 +473,7 @@ static WORKPROC_RETURN workProc (WORKPROC_ARGS) {
 					#elif defined (macintosh)
 					#endif
 				}
-				long firstSample = lastSample - 3000;
+				integer firstSample = lastSample - 3000;
 				if (firstSample < 0) firstSample = 0;
 				showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
 				GuiScale_setValue (my progressScale, 1000.0 * ((double) lastSample / (double) my nmax));
@@ -511,9 +511,9 @@ static int portaudioStreamCallback (
 	if (Melder_debug == 20)
 		Melder_casual (U"The PortAudio stream callback receives ", frameCount, U" frames.");
 	Melder_assert (my nsamp <= my nmax);
-	unsigned long samplesLeft = my nmax - my nsamp;
+	uinteger samplesLeft = my nmax - my nsamp;
 	if (samplesLeft > 0) {
-		unsigned long dsamples = samplesLeft > frameCount ? frameCount : samplesLeft;
+		uinteger dsamples = samplesLeft > frameCount ? frameCount : samplesLeft;
 		if (Melder_debug == 20)
 			Melder_casual (U"play ", dsamples, U" ", Pa_GetStreamCpuLoad (my portaudioStream));
 		memcpy (my buffer + my nsamp * my numberOfChannels, input, 2 * dsamples * my numberOfChannels);
@@ -535,13 +535,13 @@ static void gui_button_cb_record (SoundRecorder me, GuiButtonEvent /* event */) 
 		my lastRightMaximum = 0;
 		if (! my synchronous) {
 			if (my inputUsesPortAudio) {
-				PaStreamParameters streamParameters = { 0 };
+				PaStreamParameters streamParameters = { };
 				streamParameters. device = my deviceIndices [theControlPanel. inputSource];
 				streamParameters. channelCount = my numberOfChannels;
 				streamParameters. sampleFormat = paInt16;
 				streamParameters. suggestedLatency = my deviceInfos [theControlPanel. inputSource] -> defaultLowInputLatency;
 				#if defined (macintosh)
-					PaMacCoreStreamInfo macCoreStreamInfo = { 0 };
+					PaMacCoreStreamInfo macCoreStreamInfo = { };
 					macCoreStreamInfo. size = sizeof (PaMacCoreStreamInfo);
 					macCoreStreamInfo. hostApiType = paCoreAudio;
 					macCoreStreamInfo. version = 0x01;
@@ -596,7 +596,7 @@ static void gui_button_cb_play (SoundRecorder me, GuiButtonEvent /* event */) {
 
 static void publish (SoundRecorder me) {
 	autoSound sound;
-	long nsamp = my fakeMono ? my nsamp / 2 : my nsamp;
+	integer nsamp = my fakeMono ? my nsamp / 2 : my nsamp;
 	if (my nsamp == 0) return;
 	double fsamp = theControlPanel. sampleRate;
 	if (fsamp <= 0.0) fsamp = 44100.0;   // safe
@@ -607,13 +607,13 @@ static void publish (SoundRecorder me) {
 		return;
 	}
 	if (my fakeMono) {
-		for (long i = 1; i <= nsamp; i ++)
+		for (integer i = 1; i <= nsamp; i ++)
 			sound -> z [1] [i] = (my buffer [i + i - 2] + my buffer [i + i - 1]) * (1.0 / 65536);
 	} else if (my numberOfChannels == 1) {
-		for (long i = 1; i <= nsamp; i ++)
+		for (integer i = 1; i <= nsamp; i ++)
 			sound -> z [1] [i] = my buffer [i - 1] * (1.0 / 32768);
 	} else {
-		for (long i = 1; i <= nsamp; i ++) {
+		for (integer i = 1; i <= nsamp; i ++) {
 			sound -> z [1] [i] = my buffer [i + i - 2] * (1.0 / 32768);
 			sound -> z [2] [i] = my buffer [i + i - 1] * (1.0 / 32768);
 		}
@@ -741,11 +741,11 @@ static void gui_radiobutton_cb_input (SoundRecorder me, GuiRadioButtonEvent even
 static void gui_radiobutton_cb_fsamp (SoundRecorder me, GuiRadioButtonEvent event) {
 	if (my recording) return;
 	try {
-		double fsamp = NUMundefined;
-		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
+		double fsamp = undefined;
+		for (integer i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
 			if (event -> toggle == my fsamps [i]. button)
 				fsamp = my fsamps [i]. fsamp;
-		Melder_assert (NUMdefined (fsamp));
+		Melder_assert (isdefined (fsamp));
 		/*
 		 * If we push the 48000 button while the sampling frequency is 22050,
 		 * we first get a message that the 22050 button has changed,
@@ -753,8 +753,8 @@ static void gui_radiobutton_cb_fsamp (SoundRecorder me, GuiRadioButtonEvent even
 		 * So the following will work (it used to be different with old Motif versions on Linux):
 		 */
 		Melder_casual (U"SoundRecorder:"
-			U" setting the sample rate from ", (long) theControlPanel. sampleRate,
-			U" to ", (long) fsamp, U" Hz.");
+			U" setting the sample rate from ", (integer) theControlPanel. sampleRate,
+			U" to ", (integer) fsamp, U" Hz.");
 		if (fsamp == theControlPanel. sampleRate) return;
 		/*
 		 * Now we know, hopefully, that the message is from the button that was clicked,
@@ -796,7 +796,7 @@ void structSoundRecorder :: v_createChildren ()
 {
 	/* Channels */
 
-	long y = 20 + Machine_getMenuBarHeight ();
+	integer y = 20 + Machine_getMenuBarHeight ();
 	GuiLabel_createShown (our windowForm, 10, 160, y, y + Gui_LABEL_HEIGHT, U"Channels:", 0);
 
 	GuiRadioGroup_begin ();
@@ -818,7 +818,7 @@ void structSoundRecorder :: v_createChildren ()
 	#else
 		GuiLabel_createShown (our windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, U"Input source:", 0);
 		GuiRadioGroup_begin ();
-		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
+		for (integer i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
 			if (our devices [i]. canDo) {
 				y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
 				our devices [i]. button = GuiRadioButton_createShown (our windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
@@ -841,13 +841,13 @@ void structSoundRecorder :: v_createChildren ()
 	y = 20 + Machine_getMenuBarHeight ();
 	GuiLabel_createShown (our windowForm, -160, -10, y, y + Gui_LABEL_HEIGHT, U"Sampling frequency:", 0);
 	GuiRadioGroup_begin ();
-	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
+	for (integer i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
 		if (our fsamps [i]. canDo) {
 			double fsamp = our fsamps [i]. fsamp;
 			y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
 			our fsamps [i]. button = GuiRadioButton_createShown (our windowForm,
 				-150, -10, y, y + Gui_RADIOBUTTON_HEIGHT,
-				Melder_cat (fsamp == floor (fsamp) ? Melder_integer ((long) fsamp) : Melder_fixed (fsamp, 5), U" Hz"),
+				Melder_cat (fsamp == Melder_roundDown (fsamp) ? Melder_integer ((integer) fsamp) : Melder_fixed (fsamp, 5), U" Hz"),
 				gui_radiobutton_cb_fsamp, this, fsamp == theControlPanel. sampleRate ? GuiRadioButton_SET : 0);
 		}
 	}
@@ -886,17 +886,17 @@ void structSoundRecorder :: v_createChildren ()
 }
 
 static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileType) {
-	long nsamp = my nsamp / 2;
+	integer nsamp = my nsamp / 2;
 	autoMelderFile mfile = MelderFile_create (file);
-	MelderFile_writeAudioFileHeader (file, audioFileType, theControlPanel. sampleRate, nsamp, 1, 16);
+	MelderFile_writeAudioFileHeader (file, audioFileType, Melder_iround (theControlPanel. sampleRate), nsamp, 1, 16);
 	if (Melder_defaultAudioFileEncoding (audioFileType, 16) == Melder_LINEAR_16_BIG_ENDIAN) {
-		for (long i = 0; i < nsamp; i ++)
-			binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
+		for (integer i = 0; i < nsamp; i ++)
+			binputi16 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 	} else {
-		for (long i = 0; i < nsamp; i ++)
-			binputi2LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
+		for (integer i = 0; i < nsamp; i ++)
+			binputi16LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 	}
-	MelderFile_writeAudioFileTrailer (file, audioFileType, lround (theControlPanel. sampleRate), nsamp, 1, 16);
+	MelderFile_writeAudioFileTrailer (file, audioFileType, Melder_iround (theControlPanel. sampleRate), nsamp, 1, 16);
 	mfile.close ();
 }
 
@@ -905,7 +905,7 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 		if (my fakeMono) {
 			writeFakeMonoFile (me, file, audioFileType);
 		} else {
-			MelderFile_writeAudioFile (file, audioFileType, my buffer, lround (theControlPanel. sampleRate), my nsamp, my numberOfChannels, 16);
+			MelderFile_writeAudioFile (file, audioFileType, my buffer, Melder_iround (theControlPanel. sampleRate), my nsamp, my numberOfChannels, 16);
 		}
 	} catch (MelderError) {
 		Melder_throw (U"Audio file not written.");
@@ -954,17 +954,17 @@ static void menu_cb_writeNist (SoundRecorder me, EDITOR_ARGS_FORM) {
 
 static void updateMenus (SoundRecorder me) {
 	GuiMenuItem_check (my meterIntensityButton,
-		my p_meter_which == kSoundRecorder_meter_INTENSITY);
+		my p_meter_which == kSoundRecorder_meter::INTENSITY);
 	GuiMenuItem_check (my meterCentreOfGravityVersusIntensityButton,
-		my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
+		my p_meter_which == kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
 }
 
 static void menu_cb_intensity (SoundRecorder me, EDITOR_ARGS_DIRECT) {
-	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter_INTENSITY;
+	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter::INTENSITY;
 	updateMenus (me);
 }
 static void menu_cb_centreOfGravityVersusIntensity (SoundRecorder me, EDITOR_ARGS_DIRECT) {
-	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY;
+	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter::CENTRE_OF_GRAVITY_VERSUS_INTENSITY;
 	updateMenus (me);
 }
 
@@ -994,11 +994,11 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		autoSoundRecorder me = Thing_new (SoundRecorder);
 		my inputUsesPortAudio =
 			#if defined (_WIN32)
-				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::MME_VIA_PORTAUDIO;
 			#elif defined (macintosh)
-				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_COREAUDIO_VIA_PORTAUDIO;
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::COREAUDIO_VIA_PORTAUDIO;
 			#else
-				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_ALSA_VIA_PORTAUDIO;
+				MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::ALSA_VIA_PORTAUDIO;
 			#endif
 
 		if (my inputUsesPortAudio) {
@@ -1047,8 +1047,8 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		if (preferences.bufferSizeInMegabytes < 1) preferences.bufferSizeInMegabytes = 1;   // validate preferences
 		if (preferences.bufferSizeInMegabytes > 1000) preferences.bufferSizeInMegabytes = 1000;
 		if (! my buffer) {
-			long nmax_bytes_pref = preferences.bufferSizeInMegabytes * 1000000;
-			long nmax_bytes = my inputUsesPortAudio ? nmax_bytes_pref :
+			integer nmax_bytes_pref = preferences.bufferSizeInMegabytes * 1000000;
+			integer nmax_bytes = my inputUsesPortAudio ? nmax_bytes_pref :
 				#if defined (_WIN32)
 					66150000;   // the maximum physical buffer on Windows XP; shorter than in Windows 98, alas.
 				#else
@@ -1148,7 +1148,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 		/*
 		 * The default set of possible sampling frequencies, to be modified in the initialize () procedure.
 		 */
-		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) my fsamps [i]. canDo = true;   // optimistic: can do all, except two:
+		for (integer i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) my fsamps [i]. canDo = true;   // optimistic: can do all, except two:
 		my fsamps [SoundRecorder_IFSAMP_9800]. canDo = false;   // sgi only
 		my fsamps [SoundRecorder_IFSAMP_22254]. canDo = false;   // old Mac only
 

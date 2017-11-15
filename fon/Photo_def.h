@@ -1,6 +1,6 @@
 /* Photo_def.h
  *
- * Copyright (C) 2013,2014,2015 Paul Boersma
+ * Copyright (C) 2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ oo_DEFINE_CLASS (Photo, SampledXY)
 			override { return dy; }
 		bool v_hasGetY ()
 			override { return true; }
-		double v_getY (long iy)
+		double v_getY (integer iy)
 			override { return y1 + (iy - 1) * dy; }
 	#endif
 

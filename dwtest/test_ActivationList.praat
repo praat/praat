@@ -16,7 +16,7 @@ procedure test_with_old_type
 		for ncols to 10
 			tab = Create simple Matrix: "act", nrows, ncols, "0"
 			act = To Activation
-			Formula:  "randomUniform (0, 0.99)"
+			Formula: ~ randomUniform (0, 0.99)
 			mat = To Matrix
 			for irow to nrows
 				for icol to ncols

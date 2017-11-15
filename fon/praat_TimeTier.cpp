@@ -24,12 +24,12 @@
 
 DIRECT (INTEGER_TimeTier_getNumberOfPoints) {
 	NUMBER_ONE (AnyTier)
-		long result = my points.size;
+		integer result = my points.size;
 	NUMBER_ONE_END (U" points")
 }
 
 FORM (INTEGER_TimeTier_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...") {
-	REALVAR (time, U"Time (s)", U"0.5")
+	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
 	FIND_ONE (AnyTier)
@@ -38,25 +38,25 @@ DO
 }
 
 FORM (INTEGER_TimeTier_getHighIndexFromTime, U"Get high index", U"AnyTier: Get high index from time...") {
-	REALVAR (time, U"Time (s)", U"0.5")
+	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
 	FIND_ONE (AnyTier)
-		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, time)));
 	END
 }
 
 FORM (INTEGER_TimeTier_getNearestIndexFromTime, U"Get nearest index", U"AnyTier: Get nearest index from time...") {
-	REALVAR (time, U"Time (s)", U"0.5")
+	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
 	FIND_ONE (AnyTier)
-		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (U"Time"))));
+		Melder_information (my points.size == 0 ? U"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, time)));
 	END
 }
 
 FORM (REAL_TimeTier_getTimeFromIndex, U"Get time", nullptr /*"AnyTier: Get time from index..."*/) {
-	NATURALVAR (pointNumber, U"Point number", U"10")
+	NATURAL (pointNumber, U"Point number", U"10")
 	OK
 DO
 	FIND_ONE (AnyTier)
@@ -68,7 +68,7 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_TimeTier_removePoint, U"Remove one point", U"AnyTier: Remove point...") {
-	NATURALVAR (pointNumber, U"Point number", U"1")
+	NATURAL (pointNumber, U"Point number", U"1")
 	OK
 DO
 	MODIFY_EACH (AnyTier)
@@ -77,7 +77,7 @@ DO
 }
 
 FORM (MODIFY_TimeTier_removePointNear, U"Remove one point", U"AnyTier: Remove point near...") {
-	REALVAR (time, U"Time (s)", U"0.5")
+	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
 	MODIFY_EACH (AnyTier)
@@ -86,8 +86,8 @@ DO
 }
 
 FORM (MODIFY_TimeTier_removePointsBetween, U"Remove points", U"AnyTier: Remove points between...") {
-	REALVAR (fromTime, U"left Time range (s)", U"0.0")
-	REALVAR (toTime, U"right Time range (s)", U"1.0")
+	REAL (fromTime, U"left Time range (s)", U"0.0")
+	REAL (toTime, U"right Time range (s)", U"1.0")
 	OK
 DO
 	MODIFY_EACH (AnyTier)

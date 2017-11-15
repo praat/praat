@@ -1,6 +1,6 @@
 /* Distributions.cpp
  *
- * Copyright (C) 1997-2012,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2012,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ void structDistributions :: v_info () {
 	MelderInfo_writeLine (U"Number of values: ", numberOfRows);
 }
 
-autoDistributions Distributions_create (long numberOfRows, long numberOfColumns) {
+autoDistributions Distributions_create (integer numberOfRows, integer numberOfColumns) {
 	try {
 		autoDistributions me = Thing_new (Distributions);
 		TableOfReal_init (me.get(), numberOfRows, numberOfColumns);
@@ -36,26 +36,27 @@ autoDistributions Distributions_create (long numberOfRows, long numberOfColumns)
 	}
 }
 
-void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long columnNumber) {
+void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, integer columnNumber) {
 	if (columnNumber < 1)
 		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at least 1.");
 	if (columnNumber > my numberOfColumns)
 		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U").");
 }
 
-void Distributions_peek (Distributions me, long column, char32 **string, long *number) {
+void Distributions_peek (Distributions me, integer column, char32 **string, integer *number) {
 	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
 	if (my numberOfRows < 1)
 		Melder_throw (me, U": I have no candidates.");
-	double total = 0.0;
-	for (long irow = 1; irow <= my numberOfRows; irow ++) {
-		total += my data [irow] [column];
+	real80 total = 0.0;
+	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+		total += (real80) my data [irow] [column];
 	}
 	if (total <= 0.0)
 		Melder_throw (me, U": the total weight of column ", column, U" is not positive.");
-	long irow;
+	integer irow;
 	do {
-		double rand = NUMrandomUniform (0, total), sum = 0.0;
+		double rand = NUMrandomUniform (0, (real) total);
+		real80 sum = 0.0;
 		for (irow = 1; irow <= my numberOfRows; irow ++) {
 			sum += my data [irow] [column];
 			if (rand <= sum) break;
@@ -69,34 +70,34 @@ void Distributions_peek (Distributions me, long column, char32 **string, long *n
 		*number = irow;
 }
 
-double Distributions_getProbability (Distributions me, const char32 *string, long column) {
-	long row, rowOfString = 0;
-	double total = 0.0;
-	if (column < 1 || column > my numberOfColumns) return NUMundefined;
+double Distributions_getProbability (Distributions me, const char32 *string, integer column) {
+	integer row, rowOfString = 0;
+	real80 total = 0.0;
+	if (column < 1 || column > my numberOfColumns) return undefined;
 	for (row = 1; row <= my numberOfRows; row ++) {
 		total += my data [row] [column];
 		if (my rowLabels [row] && str32equ (my rowLabels [row], string))
 			rowOfString = row;
 	}
-	if (total <= 0.0) return NUMundefined;
+	if (total <= 0.0) return undefined;
 	if (rowOfString == 0) return 0.0;
-	return my data [rowOfString] [column] / total;
+	return my data [rowOfString] [column] / (real) total;
 }
 
-double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, long column) {
+double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, integer column) {
 	if (column < 1 || column > my numberOfColumns || column > thy numberOfColumns ||
-	    my numberOfRows != thy numberOfRows) return NUMundefined;
-	double total = 0.0;
-	for (long irow = 1; irow <= my numberOfRows; irow ++) {
-		total += fabs (my data [irow] [column] - thy data [irow] [column]);
+	    my numberOfRows != thy numberOfRows) return undefined;
+	real80 total = 0.0;
+	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+		total += (real80) fabs (my data [irow] [column] - thy data [irow] [column]);
 	}
-	return total / my numberOfRows;
+	return (real) total / my numberOfRows;
 }
 
 static void unicize (Distributions me) {
 	/* Must have been sorted beforehand. */
-	long nrow = 0, ifrom = 1;
-	for (long irow = 1; irow <= my numberOfRows; irow ++) {
+	integer nrow = 0, ifrom = 1;
+	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		if (irow == my numberOfRows || (my rowLabels [irow] == nullptr) != (my rowLabels [irow + 1] == nullptr) ||
 		    (my rowLabels [irow] != nullptr && ! str32equ (my rowLabels [irow], my rowLabels [irow + 1])))
 		{
@@ -104,7 +105,7 @@ static void unicize (Distributions me) {
 			 * Detected a change.
 			 */
 			nrow ++;
-			long ito = irow;
+			integer ito = irow;
 			/*
 			 * Move row 'ifrom' to 'nrow'. May be the same row.
 			 */
@@ -112,15 +113,15 @@ static void unicize (Distributions me) {
 				Melder_free (my rowLabels [nrow]);
 				my rowLabels [nrow] = my rowLabels [ifrom];   // surface copy
 				my rowLabels [ifrom] = nullptr;   // undangle
-				for (long icol = 1; icol <= my numberOfColumns; icol ++)
+				for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 					my data [nrow] [icol] = my data [ifrom] [icol];
 			}
 			/*
 			 * Purge rows from 'ifrom'+1 to 'ito'.
 			 */
-			for (long j = ifrom + 1; j <= ito; j ++) {
+			for (integer j = ifrom + 1; j <= ito; j ++) {
 				Melder_free (my rowLabels [j]);
-				for (long icol = 1; icol <= my numberOfColumns; icol ++)
+				for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 					my data [nrow] [icol] += my data [j] [icol];
 			}
 			ifrom = ito + 1;

@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,13 @@
  */
 
 /*
- * Determine the widget set.
+	Determine the widget set, honouring the compiler switch NO_GUI
+	and/or the compiler switch NO_GRAPHICS, which entails NO_GUI.
  */
-#if defined (NO_GRAPHICS)
+#if defined (NO_GRAPHICS) && ! defined (NO_GUI)
+	#define NO_GUI
+#endif
+#if defined (NO_GUI)
 	#define gtk 0
 	#define motif 0
 	#define cocoa 0
@@ -37,14 +41,27 @@
 	#define gtk 0
 	#define motif 0
 	#define cocoa 1
+#else
+	/*
+		Unknown platforms have no GUI.
+	*/
+	#define gtk 0
+	#define motif 0
+	#define cocoa 0
 #endif
 
 #include "Collection.h"
 
-#if gtk
-	#include <gtk/gtk.h>
-	#include <gdk/gdk.h>
-	#include <cairo/cairo.h>
+#if defined (UNIX)
+	#if gtk
+		#include <gtk/gtk.h>
+		#include <gdk/gdk.h>
+	#endif
+	#if ! defined (NO_GRAPHICS)
+		#include <cairo/cairo.h>
+		#include <pango/pango.h>
+		#include <pango/pangocairo.h>
+	#endif
 #elif defined (macintosh)
 	#include "macport_on.h"
     #include <Cocoa/Cocoa.h>
@@ -127,15 +144,15 @@
 	 */
 	typedef MSG XEvent;
 	typedef unsigned char Boolean;
-	typedef long Cardinal;
+	typedef integer Cardinal;
 	typedef unsigned int Dimension;
 	typedef int Position;
 	typedef void *Window;
 	typedef char *String;
 	typedef struct Display Display;
-	/*typedef long Time;*/
-	typedef long Atom;
-	typedef struct { int /* elsewhere: char* */ name; long value; } Arg, *ArgList;
+	/*typedef integer Time;*/
+	typedef integer Atom;
+	typedef struct { int /* elsewhere: char* */ name; integer value; } Arg, *ArgList;
 
 	/*
 	 * Declarations of X11 functions.
@@ -150,11 +167,11 @@
 	 */
 	typedef void *XtPointer;
 	typedef GuiObject *GuiObjectList;
-	typedef long XtWorkProcId, XtIntervalId;
+	typedef integer XtWorkProcId, XtIntervalId;
 	typedef void (*XtCallbackProc) (GuiObject w, XtPointer client_data, XtPointer call_data);
 	typedef bool (*XtWorkProc) (void *client_data);
 	typedef void (*XtTimerCallbackProc) (XtPointer, XtIntervalId *);
-	typedef unsigned long WidgetClass;
+	typedef uinteger WidgetClass;
 	#define False 0
 	#define True 1
 
@@ -162,7 +179,7 @@
 	 * Declarations of Xt functions.
 	 */
 	void XtAddCallback (GuiObject w, int kind, XtCallbackProc proc, XtPointer closure);
-	XtIntervalId GuiAddTimeOut (unsigned long interval,
+	XtIntervalId GuiAddTimeOut (uinteger interval,
 		XtTimerCallbackProc timerProc, XtPointer closure);
 	XtWorkProcId GuiAddWorkProc (XtWorkProc workProc, XtPointer closure);
 	void GuiMainLoop ();
@@ -191,7 +208,7 @@
 	void XtVaGetValues (GuiObject w, ...);
 	void XtVaSetValues (GuiObject w, ...);
 	Window XtWindow (GuiObject w);
-	long Gui_getNumberOfMotifWidgets ();
+	integer Gui_getNumberOfMotifWidgets ();
 
 	/*
 	 * Xm widget classes.
@@ -565,13 +582,13 @@ GuiList GuiList_create      (GuiForm parent, int left, int right, int top, int b
 GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header);
 
 void GuiList_deleteAllItems (GuiList me);
-void GuiList_deleteItem (GuiList me, long position);
+void GuiList_deleteItem (GuiList me, integer position);
 void GuiList_deselectAllItems (GuiList me);
-void GuiList_deselectItem (GuiList me, long position);
-long GuiList_getBottomPosition (GuiList me);
-long GuiList_getNumberOfItems (GuiList me);
-long * GuiList_getSelectedPositions (GuiList me, long *numberOfSelected);
-long GuiList_getTopPosition (GuiList me);
+void GuiList_deselectItem (GuiList me, integer position);
+integer GuiList_getBottomPosition (GuiList me);
+integer GuiList_getNumberOfItems (GuiList me);
+integer * GuiList_getSelectedPositions (GuiList me, integer *numberOfSelected);
+integer GuiList_getTopPosition (GuiList me);
 
 /**
 	Inserts a new item into a GuiList at a given position.
@@ -584,11 +601,11 @@ long GuiList_getTopPosition (GuiList me);
 		A value of 1 therefore puts the new item at the top of the list.
 		A value of 0 is special: the item is put at the bottom of the list.
  */
-void GuiList_insertItem  (GuiList me, const char32 *itemText /* cattable */, long position);
+void GuiList_insertItem  (GuiList me, const char32 *itemText /* cattable */, integer position);
 
-void GuiList_replaceItem (GuiList me, const char32 *itemText /* cattable */, long position);
-void GuiList_setTopPosition (GuiList me, long topPosition);
-void GuiList_selectItem (GuiList me, long position);
+void GuiList_replaceItem (GuiList me, const char32 *itemText /* cattable */, integer position);
+void GuiList_setTopPosition (GuiList me, integer topPosition);
+void GuiList_selectItem (GuiList me, integer position);
 void GuiList_setSelectionChangedCallback (GuiList me, GuiList_SelectionChangedCallback callback, Thing boss);
 void GuiList_setDoubleClickCallback (GuiList me, GuiList_DoubleClickCallback callback, Thing boss);
 void GuiList_setScrollCallback (GuiList me, GuiList_ScrollCallback callback, Thing boss);
@@ -848,7 +865,7 @@ typedef MelderCallback <void, structThing /* boss */, GuiTextEvent> GuiText_Chan
 typedef struct _history_entry_s history_entry;
 struct _history_entry_s {
 	history_entry *prev, *next;
-	long first, last;
+	integer first, last;
 	history_data text;
 	bool type_del : 1;
 };
@@ -884,16 +901,16 @@ void GuiText_copy (GuiText me);
 void GuiText_cut (GuiText me);
 char32 * GuiText_getSelection (GuiText me);
 char32 * GuiText_getString (GuiText me);
-char32 * GuiText_getStringAndSelectionPosition (GuiText me, long *first, long *last);
+char32 * GuiText_getStringAndSelectionPosition (GuiText me, integer *first, integer *last);
 void GuiText_paste (GuiText me);
 void GuiText_redo (GuiText me);
 void GuiText_remove (GuiText me);
-void GuiText_replace (GuiText me, long from_pos, long to_pos, const char32 *value);
+void GuiText_replace (GuiText me, integer from_pos, integer to_pos, const char32 *value);
 void GuiText_scrollToSelection (GuiText me);
 void GuiText_setChangedCallback (GuiText me, GuiText_ChangedCallback changedCallback, Thing changedBoss);
 void GuiText_setFontSize (GuiText me, int size);
 void GuiText_setRedoItem (GuiText me, GuiMenuItem item);
-void GuiText_setSelection (GuiText me, long first, long last);
+void GuiText_setSelection (GuiText me, integer first, integer last);
 void GuiText_setString (GuiText me, const char32 *text);
 void GuiText_setUndoItem (GuiText me, GuiMenuItem item);
 void GuiText_undo (GuiText me);
@@ -944,7 +961,7 @@ void GuiObject_destroy (GuiObject me);
 void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file));
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
 
-extern unsigned long theGuiTopLowAccelerators [8];
+extern uinteger theGuiTopLowAccelerators [8];
 
 /* End of file Gui.h */
 #endif

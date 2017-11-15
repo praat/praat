@@ -2,7 +2,7 @@
 #define _Polygon_h_
 /* Polygon.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 #include "Polygon_def.h"
 
-autoPolygon Polygon_create (long numberOfPoints);
+autoPolygon Polygon_create (integer numberOfPoints);
 /*
 	Function:
 		create a new instance of Polygon.
@@ -43,7 +43,7 @@ void Polygon_randomize (Polygon me);   /* Randomize the order of the points. */
 
 double Polygon_perimeter (Polygon me);   /* Return the length of the closed path through all points. */
 
-void Polygon_salesperson (Polygon me, long numberOfIterations);
+void Polygon_salesperson (Polygon me, integer numberOfIterations);
 /*
 	Function:
 		change the order of the points in such a way that it defines the shortest closed path.

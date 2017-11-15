@@ -1,6 +1,6 @@
 /* LPC.cpp
  *
- * Copyright (C) 1994-2016 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,16 +67,14 @@ void LPC_Frame_init (LPC_Frame me, int nCoefficients) {
 	my nCoefficients = nCoefficients;
 }
 
-void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
-               int predictionOrder, double samplingPeriod) {
+void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1, int predictionOrder, double samplingPeriod) {
 	my samplingPeriod = samplingPeriod;
 	my maxnCoefficients = predictionOrder;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my d_frames = NUMvector<structLPC_Frame> (1, nt);
 }
 
-autoLPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
-                int predictionOrder, double samplingPeriod) {
+autoLPC LPC_create (double tmin, double tmax, long nt, double dt, double t1, int predictionOrder, double samplingPeriod) {
 	try {
 		autoLPC me = Thing_new (LPC);
 		LPC_init (me.get(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
@@ -91,14 +89,14 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 		tmin = my xmin;
 		tmax = my xmax;
 	}
-	long itmin, itmax;
+	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
 		return;
 	}
 	autoNUMvector<double> gain (itmin, itmax);
 
-	for (long iframe = itmin; iframe <= itmax; iframe++) {
-		gain[iframe] = my d_frames[iframe].gain;
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
+		gain [iframe] = my d_frames [iframe]. gain;
 	}
 	if (gmax <= gmin) {
 		NUMvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
@@ -110,7 +108,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, gmin, gmax);
-	for (long iframe = itmin; iframe <= itmax; iframe++) {
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		double x = Sampled_indexToX (me, iframe);
 		Graphics_speckle (g, x, gain[iframe]);
 	}
@@ -133,10 +131,10 @@ void LPC_drawPoles (LPC me, Graphics g, double time, int garnish) {
 autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
-		for (long j = 1; j <= my nx; j++) {
-			LPC_Frame lpc = & my d_frames[j];
-			for (long i = 1; i <= lpc -> nCoefficients; i++) {
-				thy z[i][j] = lpc -> a[i];
+		for (long j = 1; j <= my nx; j ++) {
+			LPC_Frame lpc = & my d_frames [j];
+			for (long i = 1; i <= lpc -> nCoefficients; i ++) {
+				thy z [i] [j] = lpc -> a [i];
 			}
 		}
 		return thee;
@@ -149,11 +147,11 @@ autoMatrix LPC_downto_Matrix_rc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoNUMvector<double> rc (1, my maxnCoefficients);
-		for (long j = 1; j <= my nx; j++) {
-			LPC_Frame lpc = & my d_frames[j];
+		for (long j = 1; j <= my nx; j ++) {
+			LPC_Frame lpc = & my d_frames [j];
 			NUMlpc_lpc_to_rc (lpc -> a, lpc -> nCoefficients, rc.peek());
-			for (long i = 1; i <= lpc -> nCoefficients; i++) {
-				thy z[i][j] = rc[i];
+			for (long i = 1; i <= lpc -> nCoefficients; i ++) {
+				thy z [i] [j] = rc [i];
 			}
 		}
 		return thee;
@@ -167,12 +165,12 @@ autoMatrix LPC_downto_Matrix_area (LPC me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoNUMvector<double> rc (1, my maxnCoefficients);
 		autoNUMvector<double> area (1, my maxnCoefficients);
-		for (long j = 1; j <= my nx; j++) {
-			LPC_Frame lpc = & my d_frames[j];
+		for (long j = 1; j <= my nx; j ++) {
+			LPC_Frame lpc = & my d_frames [j];
 			NUMlpc_lpc_to_rc (lpc -> a, lpc -> nCoefficients, rc.peek());
 			NUMlpc_rc_to_area (rc.peek(), lpc -> nCoefficients, area.peek());
-			for (long i = 1; i <= lpc -> nCoefficients; i++) {
-				thy z[i][j] = area[i];
+			for (long i = 1; i <= lpc -> nCoefficients; i ++) {
+				thy z [i] [j] = area [i];
 			}
 		}
 		return thee;

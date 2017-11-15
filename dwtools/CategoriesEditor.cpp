@@ -52,10 +52,10 @@ static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS_DIRECT) {
 /* Preconditions: */
 /*	1 <= (position[i], newpos) <= size; */
 /*	newpos <= position[1] || newpos >= position[npos] */
-static void Ordered_moveItems (Ordered me, long position [], long npos, long newpos) {
-	long pos, min = position [1], max = position [1];
+static void Ordered_moveItems (Ordered me, integer position [], integer npos, integer newpos) {
+	integer pos, min = position [1], max = position [1];
 
-	for (long i = 2; i <= npos; i ++) {
+	for (integer i = 2; i <= npos; i ++) {
 		if (position [i] > max) {
 			max = position [i];
 		} else if (position [i] < min) {
@@ -70,7 +70,7 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 	/*
 		Move some data from `me` into `tmp`, in a different order.
 	*/
-	for (long i = 1; i <= npos; i ++) {
+	for (integer i = 1; i <= npos; i ++) {
 		tmp [i] = (Daata) my at [position [i]];   // dangle
 		my at [position [i]] = nullptr;   // undangle
 	}
@@ -79,7 +79,7 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 
 	if (newpos <= min) {
 		pos = max;
-		for (long i = max; i >= newpos; i --) {
+		for (integer i = max; i >= newpos; i --) {
 			if (my at [i]) {
 				my at [pos --] = my at [i];
 			}
@@ -87,7 +87,7 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 		pos = newpos;
 	} else {
 		pos = min;
-		for (long i = min; i <= newpos; i ++) {
+		for (integer i = min; i <= newpos; i ++) {
 			if (my at [i]) {
 				my at [pos ++] = my at [i];
 			}
@@ -97,13 +97,13 @@ static void Ordered_moveItems (Ordered me, long position [], long npos, long new
 
 	// fill the 'hole'
 
-	for (long i = 1; i <= npos; i ++) {
+	for (integer i = 1; i <= npos; i ++) {
 		my at [pos ++] = tmp [i];
 	}
 }
 
 /*
-static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data, long pos) {
+static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data, integer pos) {
 	if (pos < 1 || pos > my size) {
 		return;
 	}
@@ -112,7 +112,7 @@ static void OrderedOfString_replaceItemPos (Collection me, autoSimpleString data
 */
 
 /* Remove the item at position 'from' and insert it at position 'to'. */
-static void Ordered_moveItem (Ordered me, long from, long to) {
+static void Ordered_moveItem (Ordered me, integer from, integer to) {
 	if (from < 1 || from > my size) {
 		from = my size;
 	}
@@ -124,11 +124,11 @@ static void Ordered_moveItem (Ordered me, long from, long to) {
 	}
 	Daata tmp = my at [from];
 	if (from > to) {
-		for (long i = from; i > to; i --) {
+		for (integer i = from; i > to; i --) {
 			my at [i] = my at [i - 1];
 		}
 	} else {
-		for (long i = from; i < to; i ++) {
+		for (integer i = from; i < to; i ++) {
 			my at [i] = my at [i + 1];
 		}
 	}
@@ -139,8 +139,8 @@ static void Ordered_moveItem (Ordered me, long from, long to) {
 
 static void notifyNumberOfSelected (CategoriesEditor me) {
 	autoMelderString tmp;
-	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);  // waste
+	integer posCount;
+	autoNUMvector <integer> posList (GuiList_getSelectedPositions (my list, & posCount), 1);  // waste
 	if (posCount > 0) {
 		MelderString_append (&tmp, posCount, U" selection", (posCount > 1 ? U"s." : U"."));
 	}
@@ -176,13 +176,13 @@ static void updateUndoAndRedoMenuItems (CategoriesEditor me)
 
 static void updateWidgets (CategoriesEditor me) {   // all buttons except undo & redo
 	Categories data = (Categories) my data;
-	long size = data->size;
+	integer size = data->size;
 	bool insert = false, insertAtEnd = true, replace = false, remove = false;
 	bool moveUp = false, moveDown = false;
-	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	integer posCount;
+	autoNUMvector <integer> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posList.peek()) {
-		long firstPos = posList[1], lastPos = posList[posCount];
+		integer firstPos = posList[1], lastPos = posList[posCount];
 		bool contiguous = ( lastPos - firstPos + 1 == posCount );
 		moveUp = contiguous && firstPos > 1;
 		moveDown = contiguous && lastPos < size;
@@ -211,9 +211,9 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 	notifyNumberOfSelected (me);
 }
 
-static void update (CategoriesEditor me, long from, long to, const long *select, long nSelect) {
+static void update (CategoriesEditor me, integer from, integer to, const integer *select, integer nSelect) {
 	Categories data = (Categories) my data;
-	long size = data->size;
+	integer size = data->size;
 
 	if (size == 0) {
 		autoSimpleString str = SimpleString_create (CategoriesEditor_EMPTYLABEL);
@@ -231,32 +231,32 @@ static void update (CategoriesEditor me, long from, long to, const long *select,
 		to = size;
 	}
 	if (from > to) {
-		long ti = from; from = to; to = ti;
+		integer ti = from; from = to; to = ti;
 	}
 
 	// Begin optimization: add the items from a table instead of separately.
 	try {
 		autostring32vector table (from, to);
-		long itemCount = GuiList_getNumberOfItems (my list);
-		for (long i = from; i <= to; i++) {
+		integer itemCount = GuiList_getNumberOfItems (my list);
+		for (integer i = from; i <= to; i++) {
 			char wcindex[20];
 			snprintf (wcindex,20, "%5ld ", i);
 			table[i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), OrderedOfString_itemAtIndex_c ((OrderedOfString) my data, i)));
 		}
 		if (itemCount > size) { // some items have been removed from Categories?
-			for (long j = itemCount; j > size; j --) {
+			for (integer j = itemCount; j > size; j --) {
 				GuiList_deleteItem (my list, j);
 			}
 			itemCount = size;
 		}
 		if (to > itemCount) {
-			for (long j = 1; j <= to - itemCount; j ++) {
+			for (integer j = 1; j <= to - itemCount; j ++) {
 				GuiList_insertItem (my list, table [itemCount + j], 0);
 			}
 		}
 		if (from <= itemCount) {
-			long n = (to < itemCount ? to : itemCount);
-			for (long j = from; j <= n; j++) {
+			integer n = (to < itemCount ? to : itemCount);
+			for (integer j = from; j <= n; j++) {
 				GuiList_replaceItem (my list, table[j], j);
 			}
 		}
@@ -277,7 +277,7 @@ static void update (CategoriesEditor me, long from, long to, const long *select,
 	} else if (nSelect > 0) {
 		// Select but postpone highlighting
 
-		for (long i = 1; i <= nSelect; i++) {
+		for (integer i = 1; i <= nSelect; i++) {
 			GuiList_selectItem (my list, select[i] > size ? size : select[i]);
 		}
 	}
@@ -285,8 +285,8 @@ static void update (CategoriesEditor me, long from, long to, const long *select,
 	// VIEWPORT
 
 	{
-		long top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
-		long visible = bottom - top + 1;
+		integer top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
+		integer visible = bottom - top + 1;
 		if (nSelect == 0) {
 			top = my position - visible / 2;
 		} else if (select[nSelect] < top) {
@@ -296,7 +296,7 @@ static void update (CategoriesEditor me, long from, long to, const long *select,
 			// selection below visible area
 			top = select[nSelect] - visible + 1;
 		} else {
-			long deltaTopPos = -1, nUpdate = to - from + 1;
+			integer deltaTopPos = -1, nUpdate = to - from + 1;
 			if ( (from == select[1] && to == select[nSelect]) || // Replace
 			        (nUpdate > 2 && nSelect == 1) /* Inserts */) {
 				deltaTopPos = 0;
@@ -319,8 +319,8 @@ static void update (CategoriesEditor me, long from, long to, const long *select,
 
 Thing_define (CategoriesEditorCommand, Command) {
 	autoCategories categories;
-	long *selection;
-	long nSelected, newPos;
+	integer *selection;
+	integer nSelected, newPos;
 
 	void v_destroy () noexcept
 		override;
@@ -334,12 +334,12 @@ void structCategoriesEditorCommand :: v_destroy () noexcept {
 }
 
 static void CategoriesEditorCommand_init (CategoriesEditorCommand me, const char32 *name, Thing boss,
-        Command_Callback execute, Command_Callback undo, int /*nCategories*/, int nSelected) {
+        Command_Callback execute, Command_Callback undo, integer /*nCategories*/, integer nSelected) {
 
 	my nSelected = nSelected;
 	Command_init (me, name, boss, execute, undo);
 	my categories = Categories_create();
-	my selection = NUMvector<long> (1, nSelected);
+	my selection = NUMvector <integer> (1, nSelected);
 }
 
 #pragma mark Insert
@@ -392,7 +392,7 @@ static int CategoriesEditorRemove_execute (CategoriesEditorRemove me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = my nSelected; i >= 1; i--) {
+	for (integer i = my nSelected; i >= 1; i--) {
 		autoSimpleString item = Data_copy (categories->at [my selection [i]]);   // FIXME this copy can probably be replaced with a move
 		my categories -> addItemAtPosition_move (item.move(), 1);
 		categories -> removeItem (my selection [i]);
@@ -405,7 +405,7 @@ static int CategoriesEditorRemove_undo (CategoriesEditorRemove me) {
 	CategoriesEditor editor = (CategoriesEditor) my boss;
 	Categories categories = (Categories) editor -> data;
 
-	for (long i = 1; i <= my nSelected; i ++) {
+	for (integer i = 1; i <= my nSelected; i ++) {
 		autoSimpleString item = Data_copy (my categories->at [i]);
 		categories -> addItemAtPosition_move (item.move(), my selection [i]);
 	}
@@ -413,12 +413,12 @@ static int CategoriesEditorRemove_undo (CategoriesEditorRemove me) {
 	return 1;
 }
 
-static autoCategoriesEditorRemove CategoriesEditorRemove_create (Thing boss, long *posList, long posCount) {
+static autoCategoriesEditorRemove CategoriesEditorRemove_create (Thing boss, integer *posList, integer posCount) {
 	try {
 		autoCategoriesEditorRemove me = Thing_new (CategoriesEditorRemove);
 		CategoriesEditorCommand_init (me.get(), U"Remove", boss, CategoriesEditorRemove_execute,
 		                              CategoriesEditorRemove_undo, posCount, posCount);
-		for (long i = 1; i <= posCount; i ++) {
+		for (integer i = 1; i <= posCount; i ++) {
 			my selection [i] = posList [i];
 		}
 		return me;
@@ -438,7 +438,7 @@ static int CategoriesEditorReplace_execute (CategoriesEditorReplace me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = my nSelected; i >= 1; i --) {
+	for (integer i = my nSelected; i >= 1; i --) {
 		autoSimpleString str = Data_copy (my categories->at [1]);
 		my categories -> addItemAtPosition_move (autoSimpleString (categories->at [my selection [i]]), 2);   // YUCK
 		categories->at [my selection [i]] = str.releaseToAmbiguousOwner();
@@ -451,7 +451,7 @@ static int CategoriesEditorReplace_undo (CategoriesEditorReplace me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = 1; i <= my nSelected; i ++) {
+	for (integer i = 1; i <= my nSelected; i ++) {
 		autoSimpleString str = Data_copy (my categories->at [i + 1]);
 		categories -> replaceItem_move (str.move(), my selection [i]);
 	}
@@ -459,12 +459,12 @@ static int CategoriesEditorReplace_undo (CategoriesEditorReplace me) {
 	return 1;
 }
 
-static autoCategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, autoSimpleString str, long *posList, long posCount) {
+static autoCategoriesEditorReplace CategoriesEditorReplace_create (Thing boss, autoSimpleString str, integer *posList, integer posCount) {
 	try {
 		autoCategoriesEditorReplace me = Thing_new (CategoriesEditorReplace);
 		CategoriesEditorCommand_init (me.get(), U"Replace", boss, CategoriesEditorReplace_execute,
 		                              CategoriesEditorReplace_undo, posCount + 1, posCount);
-		for (long i = 1; i <= posCount; i ++) {
+		for (integer i = 1; i <= posCount; i ++) {
 			my selection [i] = posList [i];
 		}
 		my categories -> addItem_move (str.move());
@@ -486,8 +486,8 @@ static int CategoriesEditorMoveUp_execute (CategoriesEditorMoveUp me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	Ordered_moveItems ((Ordered) categories, my selection, my nSelected, my newPos);   // FIXME cast
-	autoNUMvector<long> selection (1, my nSelected);
-	for (long i = 1; i <= my nSelected; i ++) {
+	autoNUMvector<integer> selection (1, my nSelected);
+	for (integer i = 1; i <= my nSelected; i ++) {
 		selection[i] = my newPos + i - 1;
 	}
 	update (editor, my newPos, my selection[my nSelected], selection.peek(), my nSelected);
@@ -498,19 +498,19 @@ static int CategoriesEditorMoveUp_undo (CategoriesEditorMoveUp me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = 1; i <= my nSelected; i ++) {
+	for (integer i = 1; i <= my nSelected; i ++) {
 		Ordered_moveItem ((Ordered) categories, my newPos, my selection [my nSelected]);   // FIXME cast
 	}
 	update (editor, my newPos, my selection[my nSelected], my selection, my nSelected);
 	return 1;
 }
 
-static autoCategoriesEditorMoveUp CategoriesEditorMoveUp_create (Thing boss, long *posList, long posCount, long newPos) {
+static autoCategoriesEditorMoveUp CategoriesEditorMoveUp_create (Thing boss, integer *posList, integer posCount, integer newPos) {
 
 	try {
 		autoCategoriesEditorMoveUp me = Thing_new (CategoriesEditorMoveUp);
 		CategoriesEditorCommand_init (me.get(), U"Move up", boss, CategoriesEditorMoveUp_execute, CategoriesEditorMoveUp_undo, 0, posCount);
-		for (long i = 1; i <= posCount; i ++) {
+		for (integer i = 1; i <= posCount; i ++) {
 			my selection [i] = posList [i];
 		}
 		my newPos = newPos;
@@ -532,8 +532,8 @@ static int CategoriesEditorMoveDown_execute (CategoriesEditorMoveDown me) {
 	Categories categories = static_cast<Categories> (editor -> data);
 
 	Ordered_moveItems ((Ordered) categories, my selection, my nSelected, my newPos);   // FIXME cast
-	autoNUMvector<long> selection (1, my nSelected);
-	for (long i = 1; i <= my nSelected; i++) {
+	autoNUMvector<integer> selection (1, my nSelected);
+	for (integer i = 1; i <= my nSelected; i++) {
 		selection[i] = my newPos - my nSelected + i;
 	}
 	update (editor, my selection[1], my newPos, selection.peek(), my nSelected);
@@ -544,20 +544,20 @@ static int CategoriesEditorMoveDown_undo (CategoriesEditorMoveDown me) {
 	CategoriesEditor editor = static_cast<CategoriesEditor> (my boss);
 	Categories categories = static_cast<Categories> (editor -> data);
 
-	for (long i = 1; i <= my nSelected; i ++) {
+	for (integer i = 1; i <= my nSelected; i ++) {
 		Ordered_moveItem ((Ordered) categories, my newPos, my selection [1]); // TODO 1 or i ??     // FIXME cast
 	}
-	long from = my selection[1];
+	integer from = my selection[1];
 	update (editor, ( from > 1 ? from -- : from ), my newPos, my selection, my nSelected);
 	return 1;
 }
 
-static autoCategoriesEditorMoveDown CategoriesEditorMoveDown_create (Thing boss, long *posList,
-        long posCount, long newPos) {
+static autoCategoriesEditorMoveDown CategoriesEditorMoveDown_create (Thing boss, integer *posList,
+        integer posCount, integer newPos) {
 	try {
 		autoCategoriesEditorMoveDown me = Thing_new (CategoriesEditorMoveDown);
 		CategoriesEditorCommand_init (me.get(), U"Move down", boss, CategoriesEditorMoveDown_execute, CategoriesEditorMoveDown_undo, 0, posCount);
-		for (long i = 1; i <= posCount; i++) {
+		for (integer i = 1; i <= posCount; i++) {
 			my selection[i] = posList[i];
 		}
 		my newPos = newPos;
@@ -570,8 +570,8 @@ static autoCategoriesEditorMoveDown CategoriesEditorMoveDown_create (Thing boss,
 #pragma mark - Callbacks
 
 static void gui_button_cb_remove (CategoriesEditor me, GuiButtonEvent /* event */) {
-	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	integer posCount;
+	autoNUMvector <integer> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posList.peek()) {
 		autoCategoriesEditorRemove command = CategoriesEditorRemove_create (me, posList.peek(), posCount);
 		if (! Command_do (command.get())) {
@@ -608,8 +608,8 @@ static void gui_button_cb_insertAtEnd (CategoriesEditor me, GuiButtonEvent /* ev
 }
 
 static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event */) {
-	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	integer posCount;
+	autoNUMvector <integer> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
 		autostring32 text = GuiText_getString (my text);
 		if (str32len (text.peek()) != 0) {
@@ -626,8 +626,8 @@ static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event 
 
 /* Precondition: contiguous selection */
 static void gui_button_cb_moveUp (CategoriesEditor me, GuiButtonEvent /* event */) {
-	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	integer posCount;
+	autoNUMvector <integer> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
 		autoCategoriesEditorMoveUp command = CategoriesEditorMoveUp_create (me, posList.peek(), posCount, posList[1] - 1);
 		Command_do (command.get());
@@ -640,8 +640,8 @@ static void gui_button_cb_moveUp (CategoriesEditor me, GuiButtonEvent /* event *
 
 /* Precondition: contiguous selection */
 static void gui_button_cb_moveDown (CategoriesEditor me, GuiButtonEvent /* event */) {
-	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	integer posCount;
+	autoNUMvector <integer> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
 		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create (me, posList.peek(), posCount, posList[posCount] + 1);
 		Command_do (command.get());
@@ -661,8 +661,8 @@ static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEve
 
 	//  `my position` should just have been updated by the selectionChanged callback.
 
-	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	integer posCount;
+	autoNUMvector <integer> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount == 1   // often or even usually true when double-clicking?
 	    && posList [1] == my position)   // should be true, but we don't crash if it's false
 	{

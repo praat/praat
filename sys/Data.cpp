@@ -1,6 +1,6 @@
 /* Data.cpp
  *
- * Copyright (C) 1992-2012,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 Thing_implement (Daata, Thing, 0);
 
-structMelderDir Data_directoryBeingRead { { 0 } };
+structMelderDir Data_directoryBeingRead { };
 
 void structDaata :: v_copy (Daata /* thee */) {
 }
@@ -85,13 +85,15 @@ MelderFile Data_createTextFile (Daata me, MelderFile file, bool verbose) {
 		file -> requiresCRLF = true;
 	#endif
 	file -> verbose = verbose;
-	file -> outputEncoding = Melder_getOutputEncoding ();
-	if (file -> outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16)
-		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ASCII) ? kMelder_textOutputEncoding_ASCII : kMelder_textOutputEncoding_UTF16;
-	else if (file -> outputEncoding == kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16)
-		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ISO_LATIN1) ? kMelder_textOutputEncoding_ISO_LATIN1 : kMelder_textOutputEncoding_UTF16;
-	if (file -> outputEncoding == kMelder_textOutputEncoding_UTF16) {
-		binputu2 (0xfeff, file -> filePointer);
+	file -> outputEncoding = (int) Melder_getOutputEncoding ();
+	if (file -> outputEncoding == (int) kMelder_textOutputEncoding::ASCII_THEN_UTF16)
+		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ASCII) ?
+			kMelder_textOutputEncoding_ASCII : (int) kMelder_textOutputEncoding::UTF16;
+	else if (file -> outputEncoding == (int) kMelder_textOutputEncoding::ISO_LATIN1_THEN_UTF16)
+		file -> outputEncoding = Data_canWriteAsEncoding (me, kMelder_textOutputEncoding_ISO_LATIN1) ?
+			kMelder_textOutputEncoding_ISO_LATIN1 : (int) kMelder_textOutputEncoding::UTF16;
+	if (file -> outputEncoding == (int) kMelder_textOutputEncoding::UTF16) {
+		binputu16 (0xfeff, file -> filePointer);
 	}
 	return mfile.transfer();
 }
@@ -155,7 +157,7 @@ void Data_writeToBinaryFile (Daata me, MelderFile file) {
 		autoMelderFile mfile = MelderFile_create (file);
 		if (fprintf (file -> filePointer, "ooBinaryFile") < 0)
 			Melder_throw (U"Cannot write first bytes of file.");
-		binputw1 (
+		binputw8 (
 			my classInfo -> version > 0 ?
 				Melder_cat (my classInfo -> className, U" ", my classInfo -> version) :
 				my classInfo -> className,
@@ -186,11 +188,18 @@ autoDaata Data_readFromTextFile (MelderFile file) {
 		char32 *line = MelderReadText_readLine (text.peek());
 		if (! line)
 			Melder_throw (U"No lines.");
+		/*
+			Allow for a future version of text files (we have no plans).
+			This check was written on 2017-09-10.
+			See below at `Data_readFromBinaryFile` for a more serious proposal.
+		*/
+		if (str32str (line, U"ooText2File"))
+			Melder_throw (U"This Praat version cannot read this Praat file. Please download a newer version of Praat.");
 		char32 *end = str32str (line, U"ooTextFile");   // oo format?
 		autoDaata me;
 		int formatVersion;
 		if (end) {
-			autostring32 klas = texgetw2 (text.peek());
+			autostring32 klas = texgetw16 (text.peek());
 			me = Thing_newFromClassName (klas.peek(), & formatVersion).static_cast_move <structDaata> ();
 		} else {
 			end = str32str (line, U"TextFile");
@@ -230,13 +239,22 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char line [200];
-		int n = fread (line, 1, 199, f); line [n] = '\0';
+		size_t n = fread (line, 1, 199, f); line [n] = '\0';
+		/*
+			Allow for a future version of binary files, which can handle 64-bit integers
+			and are perhaps written in little-endian format.
+			This check was written on 2017-09-10, and should stay for at least a year;
+			ooBinary2 files can therefore be implemented from some moment after 2018-09-10.
+			Please compare with `Data_readFromTextFile` above.
+		*/
+		if (strstr (line, "ooBinary2File"))
+			Melder_throw (U"This Praat version cannot read this Praat file. Please download a newer version of Praat.");
 		char *end = strstr (line, "ooBinaryFile");
 		autoDaata me;
 		int formatVersion;
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
-			autostring8 klas = bingets1 (f);
+			autostring8 klas = bingets8 (f);
 			me = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion).static_cast_move <structDaata> ();
 		} else {
 			end = strstr (line, "BinaryFile");
@@ -247,7 +265,7 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 			me = Thing_newFromClassName (Melder_peek8to32 (line), nullptr).static_cast_move <structDaata> ();
 			formatVersion = -1;   // old version: override version number, which was set to 0 by newFromClassName
 			rewind (f);
-			fread (line, 1, end - line + strlen ("BinaryFile"), f);
+			fread (line, 1, (size_t) (end - line) + strlen ("BinaryFile"), f);
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
 		Data_readBinary (me.get(), f, formatVersion);
@@ -283,25 +301,32 @@ void Data_recognizeFileType (Data_FileTypeRecognizer recognizer) {
 }
 
 autoDaata Data_readFromFile (MelderFile file) {
-	int nread, i;
 	char header [513];
 	autofile f = Melder_fopen (file, "rb");
-	nread = fread (& header [0], 1, 512, f);
+	size_t nread_u = fread (& header [0], 1, 512, f);
+	integer nread = (integer) nread_u;   // we know it cannot be more than 512
 	f.close (file);
 	header [nread] = 0;
 
 	/***** 1. Is this file a text file as defined in Data.cpp? *****/
 
 	if (nread > 11) {
+		int numberOfBytesInFileType = 0;
 		char *p = strstr (header, "TextFile");
-		if (p && p - header < nread - 8 && p - header < 40)
+		if (p) {
+			numberOfBytesInFileType = 8;
+		} else {
+			p = strstr (header, "Text2File");   // future version?
+			numberOfBytesInFileType = 9;
+		}
+		if (p && p - header < nread - numberOfBytesInFileType && p - header < 40)
 			return Data_readFromTextFile (file);
 	}
 	if (nread > 22) {
 		char headerCopy [101];
 		memcpy (headerCopy, header, 100);
 		headerCopy [100] = '\0';
-		for (i = 0; i < 100; i ++)
+		for (int i = 0; i < 100; i ++)
 			if (headerCopy [i] == '\0') headerCopy [i] = '\001';
 		char *p = strstr (headerCopy, "T\001e\001x\001t\001F\001i\001l\001e");
 		if (p && p - headerCopy < nread - 15 && p - headerCopy < 80)
@@ -311,15 +336,22 @@ autoDaata Data_readFromFile (MelderFile file) {
 	/***** 2. Is this file a binary file as defined in Data.cpp? *****/
 
 	if (nread > 13) {
+		int numberOfBytesInFileType = 0;
 		char *p = strstr (header, "BinaryFile");
-		if (p && p - header < nread - 10 && p - header < 40)
+		if (p) {
+			numberOfBytesInFileType = 10;
+		} else {
+			p = strstr (header, "Binary2File");   // future version
+			numberOfBytesInFileType = 11;
+		}
+		if (p && p - header < nread - numberOfBytesInFileType && p - header < 40)
 			return Data_readFromBinaryFile (file);
 	}
 
 	/***** 3. Is this file of a type for which a recognizer has been installed? *****/
 
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
-	for (i = 1; i <= numFileTypeRecognizers; i ++) {
+	for (int i = 1; i <= numFileTypeRecognizers; i ++) {
 		autoDaata object = fileTypeRecognizers [i] (nread, header, file);
 		if (object) {
 			if (object -> classInfo == classDaata)   // dummy object? the recognizer could have had a side effect, such as drawing a picture
@@ -330,8 +362,9 @@ autoDaata Data_readFromFile (MelderFile file) {
 
 	/***** 4. Is this a common text file? *****/
 
-	for (i = 0; i < nread; i ++)
-		if (header [i] < 32 || header [i] > 126)   // not ASCII?
+	int i = 0;
+	for (; i < nread; i ++)
+		if (header [i] < 32 || header [i] > 126)   // not ASCII? (note: this expression happens to work correctly for both signed and unsigned char)
 			break;
 	if (i >= nread) return Data_readFromTextFile (file);
 
@@ -380,23 +413,24 @@ Data_Description Data_Description_findNumberUse (Data_Description structDescript
 
 int64 Data_Description_integer (void *address, Data_Description description) {
 	switch (description -> type) {
-		case bytewa:           return * (signed char *)    ((char *) address + description -> offset);
-		case intwa:            return * (int *)            ((char *) address + description -> offset);
-		case longwa:           return * (long *)           ((char *) address + description -> offset);
-		case ubytewa:          return * (unsigned char *)  ((char *) address + description -> offset);
-		case uintwa:           return * (unsigned int *)   ((char *) address + description -> offset);
-		case ulongwa:          return * (unsigned long *)  ((char *) address + description -> offset);
-		case boolwa:           return * (bool *)           ((char *) address + description -> offset);
-		case objectwa:         return (* (Collection *)    ((char *) address + description -> offset))->size;
-		case autoobjectwa:     return (* (Collection *)    ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
-		case collectionofwa:   return (  (Collection)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
-		case autocollectionwa: return (* (Collection *)    ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
+		case bytewa:           return * (signed char *)      ((char *) address + description -> offset);
+		case int16wa:          return * (int16 *)            ((char *) address + description -> offset);
+		case intwa:            return * (int *)              ((char *) address + description -> offset);
+		case integerwa:        return * (integer *)          ((char *) address + description -> offset);
+		case ubytewa:          return * (unsigned char *)    ((char *) address + description -> offset);
+		case uintwa:           return * (unsigned int *)     ((char *) address + description -> offset);
+		case uintegerwa:       return (int64) * (uinteger *) ((char *) address + description -> offset);   // ignore numbers above 2^63 - 1
+		case questionwa:       return * (bool *)             ((char *) address + description -> offset);
+		case objectwa:         return (* (Collection *)      ((char *) address + description -> offset))->size;
+		case autoobjectwa:     return (* (Collection *)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
+		case collectionofwa:   return (  (Collection)        ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
+		case autocollectionwa: return (* (Collection *)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
 		default: return 0;
 	}
 }
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const char32 *formula, long *result)
+	const char32 *formula, integer *result)
 {
 	if (! formula) {   // this was a VECTOR_FROM array
 		*result = 1;

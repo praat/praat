@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2011,2013,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,86 +29,324 @@
 #undef CHANNEL
 #undef BOOLEAN
 #undef LABEL
+#undef MUTABLE_LABEL
 #undef TEXTFIELD
 #undef RADIO
+#undef RADIOSTR
 #undef RADIOBUTTON
 #undef OPTIONMENU
+#undef OPTIONMENUSTR
 #undef OPTION
 #undef RADIO_ENUM
 #undef OPTIONMENU_ENUM
 #undef LIST
 #undef SET_REAL
 #undef SET_INTEGER
+#undef SET_BOOLEAN
 #undef SET_STRING
-#undef GET_REAL
-#undef GET_INTEGER
-#undef GET_STRING
+#undef SET_ENUM
 #undef GET_FILE
-
-#define REAL(label,def)		UiForm_addReal (cmd -> d_uiform.get(), label, def);
-#define REAL_OR_UNDEFINED(label,def)  UiForm_addRealOrUndefined (cmd -> d_uiform.get(), label, def);
-#define POSITIVE(label,def)	UiForm_addPositive (cmd -> d_uiform.get(), label, def);
-#define INTEGER(label,def)	UiForm_addInteger (cmd -> d_uiform.get(), label, def);
-#define NATURAL(label,def)	UiForm_addNatural (cmd -> d_uiform.get(), label, def);
-#define WORD(label,def)		UiForm_addWord (cmd -> d_uiform.get(), label, def);
-#define SENTENCE(label,def)	UiForm_addSentence (cmd -> d_uiform.get(), label, def);
-#define COLOUR(label,def)	UiForm_addColour (cmd -> d_uiform.get(), label, def);
-#define CHANNEL(label,def)	UiForm_addChannel (cmd -> d_uiform.get(), label, def);
-#define BOOLEAN(label,def)	UiForm_addBoolean (cmd -> d_uiform.get(), label, def);
-#define LABEL(name,label)	UiForm_addLabel (cmd -> d_uiform.get(), name, label);
-#define TEXTFIELD(name,def)	UiForm_addText (cmd -> d_uiform.get(), name, def);
-#define RADIO(label,def)	radio = UiForm_addRadio (cmd -> d_uiform.get(), label, def);
-#define RADIOBUTTON(label)	UiRadio_addButton (radio, label);
-#define OPTIONMENU(label,def)	radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), label, def);
-#define OPTION(label)	UiOptionMenu_addButton (radio, label);
-#define RADIO_ENUM(label,enum,def) \
-	RADIO (label, def - enum##_MIN + 1) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
-#define OPTIONMENU_ENUM(label,enum,def) \
-	OPTIONMENU (label, def - enum##_MIN + 1) \
-	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
-		OPTION (enum##_getText (ienum))
-#define LIST(label,n,str,def)	UiForm_addList (cmd -> d_uiform.get(), label, n, str, def);
-#define SET_REAL(name,value)	UiForm_setReal (cmd -> d_uiform.get(), name, value);
-#define SET_INTEGER(name,value)	UiForm_setInteger (cmd -> d_uiform.get(), name, value);
-#define SET_STRING(name,value)	UiForm_setString (cmd -> d_uiform.get(), name, value);
-#define SET_ENUM(name,enum,value)  SET_STRING (name, enum##_getText (value))
-
-#define DIALOG  cmd -> d_uiform
 
 #define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter
 #define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, int, Stackel, const char32 *, Interpreter
 #define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, int, Stackel, const char32 *, Interpreter
-#define EDITOR_FORM(title,helpTitle)  if (! cmd -> d_uiform) { UiField radio = nullptr; (void) radio; \
+
+#define EDITOR_FORM(title,helpTitle)  \
+	UiField _radio_ = nullptr; \
+	(void) _radio_; \
+	if (cmd -> d_uiform) goto _form_inited_; \
 	cmd -> d_uiform = UiForm_createE (cmd, title, cmd -> itemTitle, helpTitle);
-#define EDITOR_OK  UiForm_finish (cmd -> d_uiform.get()); } if (! sendingForm && ! args && ! sendingString) {
-#define EDITOR_DO  UiForm_do (cmd -> d_uiform.get(), false); } else if (! sendingForm) { \
-	UiForm_parseStringE (cmd, narg, args, sendingString, interpreter); } else {
-#define EDITOR_END  }
+
+#define EDITOR_OK  \
+	UiForm_finish (cmd -> d_uiform.get()); \
+_form_inited_: \
+	if (! args && ! sendingForm && ! sendingString) {
+
+#define EDITOR_DO  \
+		UiForm_do (cmd -> d_uiform.get(), false); \
+	} else if (! sendingForm) { \
+		UiForm_parseStringE (cmd, narg, args, sendingString, interpreter); \
+	} else {
+
+#define EDITOR_END  \
+	}
+
+/*
+	Functions to define the fields in a form on the basis of the label text
+	and factory default value.
+	They are to be called between EDITOR_FORM and EDITOR_OK.
+*/
+
+#define REAL_VARIABLE(realVariable) \
+	static double realVariable;
+
+#define REAL_FIELD(realVariable, labelText, defaultStringValue) \
+	UiForm_addReal (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
+
+#define REAL(realVariable, labelText, defaultStringValue) \
+	REAL_VARIABLE (realVariable) \
+	REAL_FIELD (realVariable, labelText, defaultStringValue)
+
+
+#define REAL_OR_UNDEFINED_VARIABLE(realVariable) \
+	static double realVariable;
+
+#define REAL_OR_UNDEFINED_FIELD(realVariable, labelText, defaultStringValue) \
+	UiForm_addRealOrUndefined (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
+
+#define REAL_OR_UNDEFINED(realVariable, labelText, defaultStringValue) \
+	REAL_OR_UNDEFINED_VARIABLE (realVariable) \
+	REAL_OR_UNDEFINED_FIELD (realVariable, labelText, defaultStringValue)
+
+
+#define POSITIVE_VARIABLE(realVariable) \
+	static double realVariable;
+
+#define POSITIVE_FIELD(realVariable, labelText, defaultStringValue) \
+	UiForm_addPositive (cmd -> d_uiform.get(), & realVariable, nullptr, labelText, defaultStringValue);
+
+#define POSITIVE(realVariable, labelText, defaultStringValue) \
+	POSITIVE_VARIABLE (realVariable) \
+	POSITIVE_FIELD (realVariable, labelText, defaultStringValue)
+
+
+#define INTEGER_VARIABLE(integerVariable) \
+	static integer integerVariable;
+
+#define INTEGER_FIELD(integerVariable, labelText, defaultStringValue) \
+	UiForm_addInteger (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
+
+#define INTEGER(integerVariable, labelText, defaultStringValue) \
+	INTEGER_VARIABLE (integerVariable) \
+	INTEGER_FIELD (integerVariable, labelText, defaultStringValue)
+
+
+#define NATURAL_VARIABLE(integerVariable) \
+	static integer integerVariable;
+
+#define NATURAL_FIELD(integerVariable, labelText, defaultStringValue) \
+	UiForm_addNatural (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
+
+#define NATURAL(integerVariable, labelText, defaultStringValue) \
+	NATURAL_VARIABLE (integerVariable) \
+	NATURAL_FIELD (integerVariable, labelText, defaultStringValue)
+
+
+#define WORD_VARIABLE(stringVariable) \
+	static char32 *stringVariable;
+
+#define WORD_FIELD(stringVariable, labelText, defaultStringValue) \
+	UiForm_addWord (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
+
+#define WORD(stringVariable, labelText, defaultStringValue) \
+	WORD_VARIABLE (stringVariable) \
+	WORD_FIELD (stringVariable, labelText, defaultStringValue)
+
+
+#define SENTENCE_VARIABLE(stringVariable) \
+	static char32 *stringVariable;
+
+#define SENTENCE_FIELD(stringVariable, labelText, defaultStringValue) \
+	UiForm_addSentence (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
+
+#define SENTENCE(stringVariable, labelText, defaultStringValue) \
+	SENTENCE_VARIABLE (stringVariable) \
+	SENTENCE_FIELD (stringVariable, labelText, defaultStringValue)
+
+
+#define COLOUR_VARIABLE(colourVariable) \
+	static Graphics_Colour colourVariable;
+
+#define COLOUR_FIELD(colourVariable, labelText, defaultStringValue) \
+	UiForm_addColour (cmd -> d_uiform.get(), & colourVariable, nullptr, labelText, defaultStringValue);
+
+#define COLOUR(colourVariable, labelText, defaultStringValue) \
+	COLOUR_VARIABLE (colourVariable) \
+	COLOUR_FIELD (colourVariable, labelText, defaultStringValue)
+
+
+#define CHANNEL_VARIABLE(integerVariable) \
+	static integer integerVariable;
+
+#define CHANNEL_FIELD(integerVariable, labelText, defaultStringValue) \
+	UiForm_addChannel (cmd -> d_uiform.get(), & integerVariable, nullptr, labelText, defaultStringValue);
+
+#define CHANNEL(integerVariable, labelText, defaultStringValue) \
+	CHANNEL_VARIABLE (integerVariable) \
+	CHANNEL_FIELD (integerVariable, labelText, defaultStringValue)
+
+
+#define BOOLEAN_VARIABLE(booleanVariable) \
+	static bool booleanVariable;
+
+#define BOOLEAN_FIELD(booleanVariable, labelText, defaultBooleanValue) \
+	UiForm_addBoolean (cmd -> d_uiform.get(), & booleanVariable, nullptr, labelText, defaultBooleanValue);
+
+#define BOOLEAN(booleanVariable, labelText, defaultBooleanValue) \
+	BOOLEAN_VARIABLE (booleanVariable) \
+	BOOLEAN_FIELD (booleanVariable, labelText, defaultBooleanValue)
+
+
+#define LABEL(labelText) \
+	UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText);
+
+
+#define MUTABLE_LABEL_VARIABLE(stringVariable) \
+	static char32 *stringVariable;
+
+#define MUTABLE_LABEL_FIELD(stringVariable, labelText) \
+	UiForm_addLabel (cmd -> d_uiform.get(), & stringVariable, labelText);
+
+#define MUTABLE_LABEL(stringVariable, labelText) \
+	MUTABLE_LABEL_VARIABLE (stringVariable) \
+	MUTABLE_LABEL_FIELD (stringVariable, labelText)
+
+
+#define TEXTFIELD_VARIABLE(stringVariable) \
+	static char32 *stringVariable;
+
+#define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue) \
+	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
+	UiForm_addText (cmd -> d_uiform.get(), & stringVariable, nullptr, U"", defaultValue);
+
+#define TEXTFIELD(stringVariable, labelText, defaultValue) \
+	TEXTFIELD_VARIABLE (stringVariable) \
+	TEXTFIELD_FIELD (stringVariable, labelText, defaultValue)
+
+
+#define RADIO_VARIABLE(optionVariable) \
+	static int optionVariable;
+
+#define RADIO_FIELD(optionVariable, labelText, defaultValue) \
+	_radio_ = UiForm_addRadio (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
+
+#define RADIO(optionVariable, labelText, defaultValue) \
+	RADIO_VARIABLE (optionVariable) \
+	RADIO_FIELD (optionVariable, labelText, defaultValue)
+
+
+#define RADIOSTR(stringVariable, labelText, defaultValue) \
+	static char32 *stringVariable; \
+	_radio_ = UiForm_addRadio (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
+
+
+#define RADIOBUTTON(labelText) \
+	UiRadio_addButton (_radio_, labelText);
+
+
+#define OPTIONMENU_VARIABLE(optionVariable) \
+	static int optionVariable;
+
+#define OPTIONMENU_FIELD(optionVariable, labelText, defaultValue) \
+	_radio_ = UiForm_addOptionMenu (cmd -> d_uiform.get(), & optionVariable, nullptr, nullptr, labelText, defaultValue, 1);
+
+#define OPTIONMENU(optionVariable, labelText, defaultValue) \
+	OPTIONMENU_VARIABLE (optionVariable) \
+	OPTIONMENU_FIELD(optionVariable, labelText, defaultValue)
+
+
+#define OPTIONMENUSTR(stringVariable, labelText, defaultValue) \
+	static char32 *stringVariable; \
+	_radio_ = UiForm_addOptionMenu (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
+
+
+#define OPTION(labelText) \
+	UiOptionMenu_addButton (_radio_, labelText);
+
+
+#define RADIO_ENUM_VARIABLE(EnumeratedType, enumeratedVariable) \
+	static enum EnumeratedType enumeratedVariable; \
+
+#define RADIO_ENUM_FIELD(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+	{/* type checks */ \
+		enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
+		_compilerTypeCheckDummy = enumeratedVariable; \
+	} \
+	{/* scope */ \
+		UiField _radio = UiForm_addRadio (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
+			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+		for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
+			UiRadio_addButton (_radio, EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
+	}
+
+#define RADIO_ENUM(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+	RADIO_ENUM_VARIABLE (EnumeratedType, enumeratedVariable) \
+	RADIO_ENUM_FIELD (enumeratedVariable, labelText, EnumeratedType, defaultValue)
+
+
+#define OPTIONMENU_ENUM_VARIABLE(EnumeratedType, enumeratedVariable) \
+	static enum EnumeratedType enumeratedVariable; \
+
+#define OPTIONMENU_ENUM_FIELD(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+	{/* type checks */ \
+		enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
+		_compilerTypeCheckDummy = enumeratedVariable; \
+	} \
+	{/* scope */ \
+		UiField _radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
+			(int) defaultValue - (int) EnumeratedType::MIN + 1, (int) EnumeratedType::MIN); \
+		for (int _ienum = (int) EnumeratedType::MIN; _ienum <= (int) EnumeratedType::MAX; _ienum ++) \
+			UiOptionMenu_addButton (_radio, EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
+	}
+
+#define OPTIONMENU_ENUM(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+	OPTIONMENU_ENUM_VARIABLE (EnumeratedType, enumeratedVariable) \
+	OPTIONMENU_ENUM_FIELD (enumeratedVariable, labelText, EnumeratedType, defaultValue)
+
+
+#define LIST(integerVariable, labelText, numberOfStrings, strings, defaultValue) \
+	static integer integerVariable; \
+	UiForm_addList (cmd -> d_uiform.get(), & integerVariable, nullptr, nullptr, labelText, numberOfStrings, strings, defaultValue);
+
+/*
+	Seven optional functions to change the content of a field on the basis of the current
+	editor setting rather than on the basis of the factory default.
+	They are to be called between EDITOR_OK and EDITOR_DO.
+*/
+
+#define SET_REAL(realVariable, realValue) \
+	UiForm_setReal (cmd -> d_uiform.get(), & realVariable, realValue);
+
+#define SET_INTEGER(integerVariable, integerValue)  \
+	UiForm_setInteger (cmd -> d_uiform.get(), & integerVariable, integerValue);
+
+#define SET_INTEGER_AS_STRING(integerVariable, stringValue)  \
+	UiForm_setIntegerAsString (cmd -> d_uiform.get(), & integerVariable, stringValue);
+
+#define SET_BOOLEAN(booleanVariable, booleanValue)  \
+	UiForm_setBoolean (cmd -> d_uiform.get(), & booleanVariable, booleanValue);
+
+#define SET_OPTION(optionVariable, optionValue)  \
+	UiForm_setOption (cmd -> d_uiform.get(), & optionVariable, optionValue);
+
+#define SET_STRING(stringVariable, stringValue) \
+	UiForm_setString (cmd -> d_uiform.get(), & stringVariable, stringValue);
+
+#define SET_ENUM(enumeratedVariable, EnumeratedType, enumeratedValue) \
+	enumeratedVariable = enumeratedValue /* type check */; \
+	UiForm_setOption (cmd -> d_uiform.get(), (int *) & enumeratedVariable, (int) enumeratedValue - (int) EnumeratedType::MIN + 1);
+
+
+#define DIALOG  cmd -> d_uiform
 
 #define EDITOR_FORM_SAVE(title,helpTitle) \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = autoUiForm (UiOutfile_createE (cmd, title, cmd -> itemTitle, helpTitle)); \
-		} if (! sendingForm && ! args && ! sendingString) { char32 defaultName [300]; defaultName [0] = U'\0';
+		} if (! args && ! sendingForm && ! sendingString) { char32 defaultName [300]; defaultName [0] = U'\0';
 #define EDITOR_DO_SAVE \
-	UiOutfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile file2 { 0 }; \
+	UiOutfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile file2 { }; \
 		if (! args && ! sendingString) file = UiFile_getFile (sendingForm); \
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 
 #define EDITOR_FORM_READ(title,helpTitle) \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = autoUiForm (UiInfile_createE (cmd, title, cmd -> itemTitle, helpTitle)); \
-		} if (! sendingForm && ! args && ! sendingString) {
+		} if (! args && ! sendingForm && ! sendingString) {
 #define EDITOR_DO_READ \
-	UiInfile_do (cmd -> d_uiform.get()); } else { MelderFile file; structMelderFile file2 { 0 }; \
+	UiInfile_do (cmd -> d_uiform.get()); } else { MelderFile file; structMelderFile file2 { }; \
 		if (! args && ! sendingString) file = UiFile_getFile (sendingForm); \
 		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 
-#define GET_REAL(name)  UiForm_getReal (cmd -> d_uiform.get(), name)
-#define GET_INTEGER(name)  UiForm_getInteger (cmd -> d_uiform.get(), name)
-#define GET_STRING(name)  UiForm_getString (cmd -> d_uiform.get(), name)
-#define GET_ENUM(enum,name)  (enum) enum##_getValue (GET_STRING (name))
 #define GET_FILE  UiForm_getFile (cmd -> d_uiform.get())
 
 /* End of file EditorM.h */

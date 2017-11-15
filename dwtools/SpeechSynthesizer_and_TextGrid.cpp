@@ -71,7 +71,7 @@ static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, long tierNum
 	if (intervalTier -> classInfo != classIntervalTier) {
 		Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 	}
-	double start = NUMundefined;
+	double start = undefined;
 	for (long iint = 1; iint <= intervalTier -> intervals.size; iint ++) {
 		TextInterval ti = intervalTier -> intervals.at [iint];
 		if (Melder_cmp (ti -> text, label) == 0) {
@@ -88,7 +88,7 @@ static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, long tierNumber
 	if (intervalTier -> classInfo != classIntervalTier) {
 		Melder_throw (U"Tier ", tierNumber, U" is not an interval tier.");
 	}
-	double end = NUMundefined;
+	double end = undefined;
 	for (long iint = intervalTier -> intervals.size; iint > 0; iint --) {
 		TextInterval ti = intervalTier -> intervals.at [iint];
 		if (Melder_equ (ti -> text, label)) {
@@ -279,7 +279,7 @@ autoTextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, Inter
 // The resulting IntervalTier has thy xmin as starting time and thy xmax as end time
 autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
     try {
-		autoNUMvector<double> durations (0L, my intervals.size + 1);
+		autoNUMvector <double> durations ((integer) 0, my intervals.size + 1);
 		for (long i = 1; i <= my intervals.size; i ++) {
 			TextInterval myti = my intervals.at [i];
 			durations [i] = myti -> xmax - myti -> xmin;
@@ -483,12 +483,12 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 		double s_thee_duration = s_thee -> xmax - s_thee -> xmin;
 		bool hasSilence_thee = fabs (t1_thee - thy xmin) > precision || fabs (t2_thee - thy xmax) > precision;
 
-		if (my d_estimateWordsPerMinute) {
+		if (my d_estimateSpeechRate) {
 			// estimate speaking rate with the number of words per minute from the text
 			double wordsPerMinute_rawTokens = 60.0 * numberOfTokens / s_thee_duration;
 			// compensation for long words: 5 characters / word
 			double wordsPerMinute_rawText = 60.0 * (str32len (his text) / 5.0) / s_thee_duration;
-			my d_wordsPerMinute =  (long) floor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
+			my d_wordsPerMinute = Melder_ifloor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
 		autoTextGrid tg2;
 		autoSound synth = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, & tg2);
@@ -533,7 +533,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesiz
 				for (long itier = 1; itier <= 4; itier	++) {
 					IntervalTier tier = result -> intervalTier_cast (itier);
 					tier -> xmax = thy xmax;
-					TextInterval textInterval = tier -> intervals.at [tier -> intervals . size];
+					TextInterval textInterval = tier -> intervals.at [tier -> intervals.size];
 					textInterval -> xmax = thy xmax;
 				}
 			} else {	
@@ -624,7 +624,7 @@ autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesiz
         for (long iint = istart; iint <= iend; iint ++) {
             TextInterval ti = his intervals.at [iint];
             if (ti -> text && str32len (ti -> text) > 0) {
-                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
+                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
                 autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration);
                 textgrids. addItem_move (grid.move());
             }
@@ -651,7 +651,7 @@ static autoTextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechS
         for (long iint = istart; iint <= iend; iint ++) {
             TextInterval ti = his intervals.at [iint];
             if (ti -> text && str32len (ti -> text) > 0) {
-                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape_RECTANGULAR, 1, true);
+                autoSound sound = Sound_extractPart (thee, ti -> xmin, ti -> xmax,  kSound_windowShape::RECTANGULAR, 1, true);
                 autoTextGrid grid = SpeechSynthesizer_and_Sound_and_TextInterval_align2 (me, sound.get(), ti, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
                 textgrids. addItem_move (grid.move());
             }
@@ -724,8 +724,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 		for (long i = 2; i <= pathLength; i++) {
 			structPairOfInteger p = edit -> warpingPath -> path[i];
 			structPairOfInteger p1 = edit -> warpingPath -> path[i - 1];
-			double targetStart = NUMundefined, targetEnd = NUMundefined;
-			double sourceStart = NUMundefined, sourceEnd = NUMundefined;
+			double targetStart = undefined, targetEnd = undefined;
+			double sourceStart = undefined, sourceEnd = undefined;
 			const char32 * targetText = U"", *sourceText = U"";
 			long targetInterval = p.y > 1 ? targetOrigin[p.y - 1] : 0;
 			long sourceInterval = p.x > 1 ? sourceOrigin[p.x - 1] : 0;
@@ -745,8 +745,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 			if (p.y == p1.y) { // deletion
 				Table_setNumericValue (thee.get(), irow, 1, 0);
 				Table_setStringValue  (thee.get(), irow, 2, U"");
-				Table_setNumericValue (thee.get(), irow, 3, NUMundefined);
-				Table_setNumericValue (thee.get(), irow, 4, NUMundefined);
+				Table_setNumericValue (thee.get(), irow, 3, undefined);
+				Table_setNumericValue (thee.get(), irow, 4, undefined);
 				Table_setNumericValue (thee.get(), irow, 5, sourceInterval);
 				Table_setStringValue  (thee.get(), irow, 6, sourceText);
 				Table_setNumericValue (thee.get(), irow, 7, sourceStart);
@@ -759,8 +759,8 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 				Table_setNumericValue (thee.get(), irow, 4, targetEnd);
 				Table_setNumericValue (thee.get(), irow, 5, 0);
 				Table_setStringValue  (thee.get(), irow, 6, U"");
-				Table_setNumericValue (thee.get(), irow, 7, NUMundefined);
-				Table_setNumericValue (thee.get(), irow, 8, NUMundefined);
+				Table_setNumericValue (thee.get(), irow, 7, undefined);
+				Table_setNumericValue (thee.get(), irow, 8, undefined);
 				Table_setStringValue  (thee.get(), irow, 9, U"i");
 			} else { // substitution ?
 				Table_setNumericValue (thee.get(), irow, 1, targetInterval);

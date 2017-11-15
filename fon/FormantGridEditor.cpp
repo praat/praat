@@ -1,6 +1,6 @@
 /* FormantGridEditor.cpp
  *
- * Copyright (C) 2008-2011,2012,2013,2014,2015,2016 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2012,2013,2014,2015,2016,2017 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,17 +56,17 @@ static void menu_cb_addPointAtCursor (FormantGridEditor me, EDITOR_ARGS_DIRECT) 
 
 static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Add point", nullptr)
-		REAL (U"Time (s)", U"0.0")
-		POSITIVE (U"Frequency (Hz)", U"200.0")
+		REAL (time, U"Time (s)", U"0.0")
+		POSITIVE (frequency, U"Frequency (Hz)", U"200.0")
 	EDITOR_OK
-		SET_REAL (U"Time", 0.5 * (my startSelection + my endSelection))
-		SET_REAL (U"Frequency", my ycursor)
+		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
+		SET_REAL (frequency, my ycursor)
 	EDITOR_DO
 		Editor_save (me, U"Add point");
 		FormantGrid grid = (FormantGrid) my data;
 		OrderedOf<structRealTier>* tiers = ( my editingBandwidths ? & grid -> bandwidths : & grid -> formants );
 		RealTier tier = tiers->at [my selectedFormant];
-		RealTier_addPoint (tier, GET_REAL (U"Time"), GET_REAL (U"Frequency"));
+		RealTier_addPoint (tier, time, frequency);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -74,28 +74,28 @@ static void menu_cb_addPointAt (FormantGridEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setFormantRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set formant range", nullptr)
-		REAL (U"Minimum formant (Hz)", my default_formantFloor   ())
-		REAL (U"Maximum formant (Hz)", my default_formantCeiling ())
+		REAL (minimumFormant, U"Minimum formant (Hz)", my default_formantFloor   ())
+		REAL (maximumFormant, U"Maximum formant (Hz)", my default_formantCeiling ())
 	EDITOR_OK
-		SET_REAL (U"Minimum formant", my p_formantFloor)
-		SET_REAL (U"Maximum formant", my p_formantCeiling)
+		SET_REAL (minimumFormant, my p_formantFloor)
+		SET_REAL (maximumFormant, my p_formantCeiling)
 	EDITOR_DO
-		my pref_formantFloor   () = my p_formantFloor   = GET_REAL (U"Minimum formant");
-		my pref_formantCeiling () = my p_formantCeiling = GET_REAL (U"Maximum formant");
+		my pref_formantFloor   () = my p_formantFloor   = minimumFormant;
+		my pref_formantCeiling () = my p_formantCeiling = maximumFormant;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static void menu_cb_setBandwidthRange (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set bandwidth range", nullptr)
-		REAL (U"Minimum bandwidth (Hz)", my default_bandwidthFloor   ())
-		REAL (U"Maximum bandwidth (Hz)", my default_bandwidthCeiling ())
+		REAL (minimumBandwidth, U"Minimum bandwidth (Hz)", my default_bandwidthFloor   ())
+		REAL (maximumBandwidth, U"Maximum bandwidth (Hz)", my default_bandwidthCeiling ())
 	EDITOR_OK
-		SET_REAL (U"Minimum bandwidth", my p_bandwidthFloor)
-		SET_REAL (U"Maximum bandwidth", my p_bandwidthCeiling)
+		SET_REAL (minimumBandwidth, my p_bandwidthFloor)
+		SET_REAL (maximumBandwidth, my p_bandwidthCeiling)
 	EDITOR_DO
-		my pref_bandwidthFloor   () = my p_bandwidthFloor   = GET_REAL (U"Minimum bandwidth");
-		my pref_bandwidthCeiling () = my p_bandwidthCeiling = GET_REAL (U"Maximum bandwidth");
+		my pref_bandwidthFloor   () = my p_bandwidthFloor   = minimumBandwidth;
+		my pref_bandwidthCeiling () = my p_bandwidthCeiling = maximumBandwidth;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -106,9 +106,9 @@ static void menu_cb_showBandwidths (FormantGridEditor me, EDITOR_ARGS_DIRECT) {
 	FunctionEditor_redraw (me);
 }
 
-static void selectFormantOrBandwidth (FormantGridEditor me, long iformant) {
+static void selectFormantOrBandwidth (FormantGridEditor me, integer iformant) {
 	FormantGrid grid = (FormantGrid) my data;
-	long numberOfFormants = grid -> formants.size;
+	integer numberOfFormants = grid -> formants.size;
 	if (iformant > numberOfFormants)
 		Melder_throw (U"Cannot select formant ", iformant, U", because the FormantGrid has only ", numberOfFormants, U" formants.");
 	my selectedFormant = iformant;
@@ -126,39 +126,39 @@ static void menu_cb_selectEighth  (FormantGridEditor me, EDITOR_ARGS_DIRECT) { s
 static void menu_cb_selectNinth   (FormantGridEditor me, EDITOR_ARGS_DIRECT) { selectFormantOrBandwidth (me, 9); }
 static void menu_cb_selectFormantOrBandwidth (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Select formant or bandwidth", nullptr)
-		NATURAL (U"Formant number", U"1")
+		NATURAL (formantNumber, U"Formant number", U"1")
 	EDITOR_OK
-		SET_INTEGER (U"Formant number", my selectedFormant)
+		SET_INTEGER (formantNumber, my selectedFormant)
 	EDITOR_DO
-		selectFormantOrBandwidth (me, GET_INTEGER (U"Formant number"));
+		selectFormantOrBandwidth (me, formantNumber);
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
 
 static void menu_cb_pitchSettings (FormantGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Source pitch settings", nullptr)
-		LABEL (U"", U"These settings apply to the pitch curve")
-		LABEL (U"", U"that you hear when playing the FormantGrid.")
-		REAL     (U"Starting time",       my default_source_pitch_tStart  ())
-		POSITIVE (U"Starting pitch (Hz)", my default_source_pitch_f0Start ())
-		REAL     (U"Mid time",            my default_source_pitch_tMid    ())
-		POSITIVE (U"Mid pitch (Hz)",      my default_source_pitch_f0Mid   ())
-		REAL     (U"End time",            my default_source_pitch_tEnd    ())
-		POSITIVE (U"End pitch (Hz)",      my default_source_pitch_f0End   ())
+		LABEL (U"These settings apply to the pitch curve")
+		LABEL (U"that you hear when playing the FormantGrid.")
+		REAL     (startTime,  U"Start time",       my default_source_pitch_tStart  ())
+		POSITIVE (startPitch, U"Start pitch (Hz)", my default_source_pitch_f0Start ())
+		REAL     (midTime,    U"Mid time",         my default_source_pitch_tMid    ())
+		POSITIVE (midPitch,   U"Mid pitch (Hz)",   my default_source_pitch_f0Mid   ())
+		REAL     (endTime,    U"End time",         my default_source_pitch_tEnd    ())
+		POSITIVE (endPitch,   U"End pitch (Hz)",   my default_source_pitch_f0End   ())
 	EDITOR_OK
-		SET_REAL (U"Starting time",  my p_source_pitch_tStart)
-		SET_REAL (U"Starting pitch", my p_source_pitch_f0Start)
-		SET_REAL (U"Mid time",       my p_source_pitch_tMid)
-		SET_REAL (U"Mid pitch",      my p_source_pitch_f0Mid)
-		SET_REAL (U"End time",       my p_source_pitch_tEnd)
-		SET_REAL (U"End pitch",      my p_source_pitch_f0End)
+		SET_REAL (startTime,  my p_source_pitch_tStart)
+		SET_REAL (startPitch, my p_source_pitch_f0Start)
+		SET_REAL (midTime,    my p_source_pitch_tMid)
+		SET_REAL (midPitch,   my p_source_pitch_f0Mid)
+		SET_REAL (endTime,    my p_source_pitch_tEnd)
+		SET_REAL (endPitch,   my p_source_pitch_f0End)
 	EDITOR_DO
-		my pref_source_pitch_tStart  () = my p_source_pitch_tStart  = GET_REAL (U"Starting time");
-		my pref_source_pitch_f0Start () = my p_source_pitch_f0Start = GET_REAL (U"Starting pitch");
-		my pref_source_pitch_tMid    () = my p_source_pitch_tMid    = GET_REAL (U"Mid time");
-		my pref_source_pitch_f0Mid   () = my p_source_pitch_f0Mid   = GET_REAL (U"Mid pitch");
-		my pref_source_pitch_tEnd    () = my p_source_pitch_tEnd    = GET_REAL (U"End time");
-		my pref_source_pitch_f0End   () = my p_source_pitch_f0End   = GET_REAL (U"End pitch");
+		my pref_source_pitch_tStart  () = my p_source_pitch_tStart  = startTime;
+		my pref_source_pitch_f0Start () = my p_source_pitch_f0Start = startPitch;
+		my pref_source_pitch_tMid    () = my p_source_pitch_tMid    = midTime;
+		my pref_source_pitch_f0Mid   () = my p_source_pitch_f0Mid   = midPitch;
+		my pref_source_pitch_tEnd    () = my p_source_pitch_tEnd    = endTime;
+		my pref_source_pitch_f0End   () = my p_source_pitch_f0End   = endPitch;
 	EDITOR_END
 }
 
@@ -214,17 +214,17 @@ void structFormantGridEditor :: v_draw () {
 	Graphics_text (our graphics.get(), our endWindow, ymin, Melder_float (Melder_half (ymin)), U" Hz");
 	Graphics_setLineWidth (our graphics.get(), 1.0);
 	Graphics_setColour (our graphics.get(), Graphics_GREY);
-	for (long iformant = 1; iformant <= grid -> formants.size; iformant ++) if (iformant != our selectedFormant) {
+	for (integer iformant = 1; iformant <= grid -> formants.size; iformant ++) if (iformant != our selectedFormant) {
 		RealTier tier = tiers->at [iformant];
-		long imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our startWindow);
-		long imax = AnyTier_timeToLowIndex (tier->asAnyTier(), our endWindow);
-		long n = tier -> points.size;
+		integer imin = AnyTier_timeToHighIndex (tier->asAnyTier(), our startWindow);
+		integer imax = AnyTier_timeToLowIndex (tier->asAnyTier(), our endWindow);
+		integer n = tier -> points.size;
 		if (n == 0) {
 		} else if (imax < imin) {
 			double yleft = RealTier_getValueAtTime (tier, our startWindow);
 			double yright = RealTier_getValueAtTime (tier, our endWindow);
 			Graphics_line (our graphics.get(), our startWindow, yleft, our endWindow, yright);
-		} else for (long i = imin; i <= imax; i ++) {
+		} else for (integer i = imin; i <= imax; i ++) {
 			RealPoint point = tier -> points.at [i];
 			double t = point -> number, y = point -> value;
 			Graphics_fillCircle_mm (our graphics.get(), t, y, 2.0);
@@ -243,11 +243,11 @@ void structFormantGridEditor :: v_draw () {
 		}
 	}
 	Graphics_setColour (our graphics.get(), Graphics_BLUE);
-	long ifirstSelected = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our startSelection);
-	long ilastSelected = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our endSelection);
-	long n = selectedTier -> points.size;
-	long imin = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our startWindow);
-	long imax = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our endWindow);
+	integer ifirstSelected = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our startSelection);
+	integer ilastSelected = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our endSelection);
+	integer n = selectedTier -> points.size;
+	integer imin = AnyTier_timeToHighIndex (selectedTier->asAnyTier(), our startWindow);
+	integer imax = AnyTier_timeToLowIndex (selectedTier->asAnyTier(), our endWindow);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	if (n == 0) {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -257,7 +257,7 @@ void structFormantGridEditor :: v_draw () {
 		double yleft = RealTier_getValueAtTime (selectedTier, our startWindow);
 		double yright = RealTier_getValueAtTime (selectedTier, our endWindow);
 		Graphics_line (our graphics.get(), our startWindow, yleft, our endWindow, yright);
-	} else for (long i = imin; i <= imax; i ++) {
+	} else for (integer i = imin; i <= imax; i ++) {
 		RealPoint point = selectedTier -> points.at [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
@@ -281,7 +281,7 @@ void structFormantGridEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 }
 
-static void drawWhileDragging (FormantGridEditor me, double /* xWC */, double /* yWC */, long first, long last, double dt, double dy) {
+static void drawWhileDragging (FormantGridEditor me, double /* xWC */, double /* yWC */, integer first, integer last, double dt, double dy) {
 	FormantGrid grid = (FormantGrid) my data;
 	OrderedOf<structRealTier>* tiers = my editingBandwidths ? & grid -> bandwidths : & grid -> formants;
 	RealTier tier = tiers->at [my selectedFormant];
@@ -291,7 +291,7 @@ static void drawWhileDragging (FormantGridEditor me, double /* xWC */, double /*
 	/*
 	 * Draw all selected points as magenta empty circles, if inside the window.
 	 */
-	for (long i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		RealPoint point = tier -> points.at [i];
 		double t = point -> number + dt, y = point -> value + dy;
 		if (t >= my startWindow && t <= my endWindow)
@@ -305,7 +305,7 @@ static void drawWhileDragging (FormantGridEditor me, double /* xWC */, double /*
 		RealPoint point = tier -> points.at [first];
 		double t = point -> number + dt, y = point -> value + dy;
 		Graphics_line (my graphics.get(), t, ymin, t, ymax - Graphics_dyMMtoWC (my graphics.get(), 4.0));
-		Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
+		Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 		Graphics_text (my graphics.get(), t, ymax, Melder_fixed (t, 6));
 		Graphics_line (my graphics.get(), my startWindow, y, my endWindow, y);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
@@ -319,7 +319,7 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	RealTier tier = tiers->at [selectedFormant];
 	double ymin = our editingBandwidths ? our p_bandwidthFloor   : our p_formantFloor;
 	double ymax = our editingBandwidths ? our p_bandwidthCeiling : our p_formantCeiling;
-	long inearestPoint, ifirstSelected, ilastSelected;
+	integer inearestPoint, ifirstSelected, ilastSelected;
 	RealPoint nearestPoint;
 	double dt = 0, df = 0;
 	bool draggingSelection;
@@ -395,7 +395,7 @@ bool structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	/*
 	 * Drop.
 	 */
-	for (long i = ifirstSelected; i <= ilastSelected; i ++) {
+	for (integer i = ifirstSelected; i <= ilastSelected; i ++) {
 		RealPoint point = tier -> points.at [i];
 		point -> number += dt;
 		point -> value += df;

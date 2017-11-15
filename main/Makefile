@@ -1,9 +1,9 @@
 # Makefile of the 'main' routines.
-# Paul Boersma, 10 September 2011
+# Paul Boersma, 8 August 2017
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../sys -I ../fon
+CPPFLAGS = -I ../kar -I ../sys -I ../fon
 
 .PHONY: clean
 

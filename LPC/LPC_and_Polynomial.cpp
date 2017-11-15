@@ -1,6 +1,6 @@
 /* LPC_and_Polynomial.cpp
  *
- * Copyright (C) 1994-2011, 2015-2016 David Weenink
+ * Copyright (C) 1994-2011, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
 	long degree = (long) my nCoefficients;
 	autoPolynomial thee = Polynomial_create (-1, 1, degree);
-	for (long i = 1; i <= degree; i++) {
-		thy coefficients[i] = my a[degree - i + 1];
+	for (long i = 1; i <= degree; i ++) {
+		thy coefficients [i] = my a [degree - i + 1];
 	}
 	thy coefficients[degree + 1] = 1.0;
 	return thee;
@@ -41,7 +41,7 @@ autoPolynomial LPC_to_Polynomial (LPC me, double time) {
 		if (iFrame > my nx) {
 			iFrame = my nx;
 		}
-		autoPolynomial thee = LPC_Frame_to_Polynomial (&my d_frames[iFrame]);
+		autoPolynomial thee = LPC_Frame_to_Polynomial (& my d_frames [iFrame]);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U":no Polynomial created.");

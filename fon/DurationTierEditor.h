@@ -2,7 +2,7 @@
 #define _DurationTierEditor_h_
 /* DurationTierEditor.h
  *
- * Copyright (C) 1992-2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 		override { return 0.0; }
 	const char32 * v_quantityText ()
 		override { return U"Relative duration"; }
-	const char32 * v_quantityKey ()
-		override { return U"Relative duration"; }
 	const char32 * v_rightTickUnits ()
 		override { return U""; }
 	double v_defaultYmin ()
@@ -48,10 +46,6 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 	const char32 * v_yminText ()
 		override { return U"Minimum duration"; }
 	const char32 * v_ymaxText ()
-		override { return U"Maximum duration"; }
-	const char32 * v_yminKey ()
-		override { return U"Minimum duration"; }
-	const char32 * v_ymaxKey ()
 		override { return U"Maximum duration"; }
 };
 

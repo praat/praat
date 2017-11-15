@@ -21,7 +21,6 @@
  djmw 20020315 GPL header
  djmw 20041027 Added AffineTransform_extractMatrix
  djmw 20050726 Added AffineTransform_extractTranslationVector
- djmw 20061021 printf expects %ld for 'long int'
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20110304 Thing_new
  */

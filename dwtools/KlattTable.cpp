@@ -501,7 +501,7 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency) {
 	try {
 		me = (KlattGlobal) _Melder_calloc_f (1, sizeof (struct structKlattGlobal));
 
-		my samrate = (long) floor (samplingFrequency);
+		my samrate = Melder_ifloor (samplingFrequency);
 		double dT = 1.0 / my samrate;
 
 		for (long i = 1; i <= 8; i++) {
@@ -535,7 +535,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 		-1891, -1045, -1600, -1462, -1384, -1261, -949, -730
 	};
 
-	my nspfr = (long) floor (my samrate * frameDuration); /* average number of samples per frame */
+	my nspfr = Melder_ifloor (my samrate * frameDuration); /* average number of samples per frame */
 	my synthesis_model = synthesisModel;
 	my nfcascade = numberOfFormants;
 	my glsource = glottalSource;
@@ -545,8 +545,8 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 	my outsl = outputType;
 	my f0_flutter = flutter;
 
-	my FLPhz = (long) floor (0.0950 * my samrate); // depends on samplingFrequency ????
-	my BLPhz = (long) floor (0.0630 * my samrate);
+	my FLPhz = Melder_ifloor (0.0950 * my samrate); // depends on samplingFrequency ????
+	my BLPhz = Melder_ifloor (0.0630 * my samrate);
 	Filter_setFB (my rlp.get(), my FLPhz, my BLPhz);
 }
 
@@ -561,7 +561,7 @@ static void KlattFrame_free (KlattFrame me) {
 autoKlattTable KlattTable_create (double frameDuration, double totalDuration) {
 	try {
 		autoKlattTable me = Thing_new (KlattTable);
-		long nrows = (long) floor (totalDuration / frameDuration) + 1;
+		integer nrows = Melder_ifloor (totalDuration / frameDuration) + 1;
 		Table_initWithColumnNames (me.get(), nrows, columnNames);
 		return me;
 	} catch (MelderError) {
@@ -702,7 +702,7 @@ static double KlattGlobal_sampled_source (KlattGlobal me) {   // ppgb: dit was e
 	if (my T0 != 0) {
 		double ftemp = my nper;
 		ftemp *= my num_samples / my T0;
-		long itemp = (long) floor (ftemp);
+		integer itemp = Melder_ifloor (ftemp);
 
 		double temp_diff = ftemp - itemp;
 
@@ -795,7 +795,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 		my T0 = (40 * my samrate) / my F0hz10;
 
 
-		my amp_voice = DBtoLIN ((long) floor (my AVdb));
+		my amp_voice = DBtoLIN (Melder_ifloor (my AVdb));
 
 		/* Duration of period before amplitude modulation */
 
@@ -806,7 +806,7 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 
 		/* Breathiness of voicing waveform */
 
-		my amp_breth = DBtoLIN ((long) floor (my Aturb)) * 0.1;
+		my amp_breth = DBtoLIN (Melder_ifloor (my Aturb)) * 0.1;
 
 		/* Set open phase of glottal period where  40 <= open phase <= 263 */
 
@@ -1141,10 +1141,10 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 		}
 		thee = KlattGlobal_create (samplingFrequency);
 		frame = KlattFrame_create ();
-		autoNUMvector<short> iwave (0L, MAX_SAM);
-		thy samrate = (long) floor (samplingFrequency);
+		autoNUMvector <short> iwave ((integer) 0, MAX_SAM);
+		thy samrate = Melder_ifloor (samplingFrequency);
 
-		KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, (long) floor (flutter), outputType);
+		KlattGlobal_init (thee, synthesisModel, numberOfFormants, glottalSource, frameDuration, Melder_ifloor (flutter), outputType);
 
 		autoSound him = Sound_createSimple (1, frameDuration * my rows.size, samplingFrequency);
 

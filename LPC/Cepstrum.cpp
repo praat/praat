@@ -30,26 +30,24 @@
 Thing_implement (Cepstrum, Matrix, 2);
 Thing_implement (PowerCepstrum, Cepstrum, 2); // derives from Matrix therefore also version 2
 
-double structCepstrum :: v_getValueAtSample (long isamp, long which, int units) {
-	(void) units;
+double structCepstrum :: v_getValueAtSample (integer isamp, integer which, int /* units */) {
 	if (which == 0) {
-		return z[1][isamp];
+		return z [1] [isamp];
 	} else {
 		// dB's
-		return 20.0 * log10 (fabs(z[1][isamp]) + 1e-30);
+		return 20.0 * log10 (fabs (z [1] [isamp]) + 1e-30);
 	}
-	return NUMundefined;
+	return undefined;
 }
 
-double structPowerCepstrum :: v_getValueAtSample (long isamp, long which, int units) {
-	(void) units;
+double structPowerCepstrum :: v_getValueAtSample (integer isamp, integer which, int /* units */) {
 	if (which == 0) {
-		return z[1][isamp];
+		return z [1] [isamp];
 	} else {
 		// dB's
-		return 10.0 * log10 (z[1][isamp] + 1e-30); // always positive
+		return 10.0 * log10 (z [1] [isamp] + 1e-30); // always positive
 	}
-	return NUMundefined;
+	return undefined;
 }
 
 autoCepstrum Cepstrum_create (double qmax, long nq) {
@@ -97,7 +95,7 @@ static void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, d
 		qmin = my xmin; qmax = my xmax;
 	}
 
-	long imin, imax;
+	integer imin, imax;
 	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 		return;
 	}
@@ -149,7 +147,7 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
 	}
 
 	if (dBminimum >= dBmaximum) { // autoscaling
-		long imin, imax;
+		integer imin, imax;
 		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 			return;
 		}
@@ -222,7 +220,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 			qmin = my xmin; qmax = my xmax;
 		}
 
-		long imin, imax;
+		integer imin, imax;
 		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 			return;
 		}
@@ -285,7 +283,7 @@ static void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slo
 #endif
 
 // clip with tilt line
-static void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slope, double intercept, int lineType) {
+static void PowerCepstrum_subtractTiltLine_inplace (PowerCepstrum me, double slope, double intercept, int lineType) {
 	for (long j = 1; j <= my nx; j++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
@@ -301,25 +299,25 @@ static void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slop
 }
 
 
-void PowerCepstrum_subtractTilt_inline (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+void PowerCepstrum_subtractTilt_inplace (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod) {
 	double slope, intercept;
 	PowerCepstrum_fitTiltLine (me, qstartFit, qendFit, &slope, &intercept, lineType, fitMethod);
-	PowerCepstrum_subtractTiltLine_inline (me, slope, intercept, lineType);
+	PowerCepstrum_subtractTiltLine_inplace (me, slope, intercept, lineType);
 }
 
 autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod) {
 	try {
 		autoPowerCepstrum thee = Data_copy (me);
-		PowerCepstrum_subtractTilt_inline (thee.get(), qstartFit,  qendFit, lineType, fitMethod);
+		PowerCepstrum_subtractTilt_inplace (thee.get(), qstartFit,  qendFit, lineType, fitMethod);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": couldn't subtract tilt line.");
 	}
 }
 
-void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
+void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
 	try {
-		long numberOfQuefrencyBins = (long) floor (quefrencyAveragingWindow / my dx);
+		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
 			autoNUMvector<double> qin (1, my nx);
 			autoNUMvector<double> qout (1, my nx);
@@ -343,7 +341,7 @@ void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWin
 
 autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
 	autoPowerCepstrum thee = Data_copy (me);
-	PowerCepstrum_smooth_inline (thee.get(), quefrencyAveragingWindow, numberOfIterations);
+	PowerCepstrum_smooth_inplace (thee.get(), quefrencyAveragingWindow, numberOfIterations);
 	return thee;
 }
 
@@ -386,10 +384,10 @@ static void Cepstrum_getZ (Cepstrum me, long imin, long imax, double peakdB, dou
 #endif
 
 double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth) {
-	double rnr = NUMundefined;
+	double rnr = undefined;
 	double qmin = 1.0 / pitchCeiling, qmax = 1.0 / pitchFloor, peakdB, qpeak;
 	PowerCepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, 2, &peakdB, &qpeak);
-	long imin, imax;
+	integer imin, imax;
 	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
 		return rnr;
 	}
@@ -428,7 +426,7 @@ double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pit
 	double slope, intercept, quefrency, peakdB;
 	PowerCepstrum_fitTiltLine (me, 0.001, 0, &slope, &intercept, 1, 1);
 	autoPowerCepstrum thee = Data_copy (me);
-	PowerCepstrum_subtractTiltLine_inline (thee.get(), slope, intercept, 1);
+	PowerCepstrum_subtractTiltLine_inplace (thee.get(), slope, intercept, 1);
 	PowerCepstrum_getMaximumAndQuefrency (thee.get(), pitchFloor, pitchCeiling, 0, & peakdB, & quefrency);
 	if (qpeak) {
 		*qpeak = quefrency;

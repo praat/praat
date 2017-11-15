@@ -47,7 +47,7 @@ void SSCP_init (SSCP me, long dimension, long storage);
 
 autoSSCP SSCP_create (long dimension);
 
-void SSCP_drawTwoDimensionalEllipse_inside  (SSCP me, Graphics g, double scale, char32 * label, int fontSize);
+void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, const char32 *label, int fontSize);
 
 double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence);
 
@@ -124,7 +124,7 @@ void SSCP_expandPCA (SSCP me);
 
 void SSCP_unExpandPCA (SSCP me);
 
-autoCCA SSCP_to_CCA (SSCP me, long ny);
+autoCCA SSCP_to_CCA (SSCP me, integer ny);
 
 autoCovariance Covariance_create (long dimension);
 

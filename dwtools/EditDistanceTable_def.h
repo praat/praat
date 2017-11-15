@@ -22,15 +22,15 @@
 
 #define ooSTRUCT PairOfInteger
 oo_DEFINE_STRUCT (PairOfInteger)
-	oo_LONG (x)
-	oo_LONG (y)
+	oo_INTEGER (x)
+	oo_INTEGER (y)
 oo_END_STRUCT (PairOfInteger)
 #undef ooSTRUCT
 
 #define ooSTRUCT WarpingPath
 oo_DEFINE_CLASS (WarpingPath, Daata)
-	oo_LONG (_capacity)
-	oo_LONG (pathLength)
+	oo_INTEGER (_capacity)
+	oo_INTEGER (pathLength)
 	oo_STRUCT_VECTOR (PairOfInteger, path, pathLength)
 oo_END_CLASS (WarpingPath)
 #undef ooSTRUCT

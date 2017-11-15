@@ -1,6 +1,6 @@
 /* Artword_Speaker_to_Sound.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2015-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 {
 	try {
 		autoSound result = Sound_createSimple (1, artword -> totalTime, fsamp);
-		long numberOfSamples = result -> nx;
+		integer numberOfSamples = result -> nx;
 		double minTract [1+78], maxTract [1+78];   // for drawing
 		double Dt = 1.0 / fsamp / oversampling,
 			rho0 = 1.14,
@@ -101,7 +101,7 @@ autoSound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 			totalVolume += t->V;
 		}
 		//Melder_casual (U"Starting volume: ", totalVolume * 1000, U" litres.");
-		for (long sample = 1; sample <= numberOfSamples; sample ++) {
+		for (integer sample = 1; sample <= numberOfSamples; sample ++) {
 			double time = (sample - 1) / fsamp;
 			Artword_intoArt (artword, art.get(), time);
 			Art_Speaker_intoDelta (art.get(), speaker, delta.get());

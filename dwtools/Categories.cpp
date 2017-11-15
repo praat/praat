@@ -1,6 +1,6 @@
 /* Categories.cpp
  *
- * Copyright (C) 1993-2013, 2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2013, 2015 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "Categories.h"
 
 void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
-	long l_size = texgeti4 (a_text);
+	long l_size = texgeti32 (a_text);
 	if (l_size == 0) {
 		(void) 0;
 	} else if (l_size < 0) {
@@ -40,7 +40,7 @@ void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*
 }
 
 void structCategories :: v_writeText (MelderFile file) {
-	texputi4 (file, our size, U"size", nullptr, nullptr, nullptr, nullptr, nullptr);
+	texputi32 (file, our size, U"size", nullptr, nullptr, nullptr, nullptr, nullptr);
 	for (long i = 1; i <= our size; i ++) {
 		SimpleString data = our at [i];
 		texputintro (file, U"item [", Melder_integer (i), U"]:", nullptr, nullptr, nullptr);

@@ -36,7 +36,7 @@ select dtw
 mat = To Matrix (distances)
 Remove
 select dtw
-To Matrix (cumm. distances)... 0.05 2/3 < slope < 3/2
+To Matrix (cum. distances)... 0.05 2/3 < slope < 3/2
 Remove
 select dtw
 plus s1

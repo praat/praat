@@ -1,6 +1,6 @@
 /* motifEmulator.cpp
  *
- * Copyright (C) 1993-2011,2012,2015,2016 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,8 +108,8 @@ static short theMenuItems [1+MAXIMUM_MENU_ITEM_ID];   // we can freely use and r
 static GuiObject theApplicationShell;   // for global menus
 static int theBackground = False;   // set by suspend and resume events; used by Motif-style activation methods
 static int theDialogHint = False;   // should the shell that is currently being created, have dialog or document looks?
-long numberOfWidgets = 0;
-long Gui_getNumberOfMotifWidgets () { return numberOfWidgets; }
+integer numberOfWidgets = 0;
+integer Gui_getNumberOfMotifWidgets () { return numberOfWidgets; }
 
 /* AppContext level */
 
@@ -121,7 +121,7 @@ static int theNumberOfTimeOuts;
 static XtTimerCallbackProc theTimeOutProcs [10];
 static XtPointer theTimeOutClosures [10];
 static clock_t theTimeOutStarts [10];
-static unsigned long theTimeOutIntervals [10];
+static uinteger theTimeOutIntervals [10];
 
 static void Native_move (GuiObject w, int dx, int dy);   // forward
 
@@ -183,7 +183,8 @@ static int NativeButton_preferredHeight (GuiObject me) {
 
 GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32 *name) {
 	GuiObject me = Melder_calloc_f (struct structGuiObject, 1);
-	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%p\t%ld\t%ld\n", me, 1L, (long) sizeof (struct structGuiObject));
+	if (Melder_debug == 34)
+		Melder_casual (U"from _Gui_initializeWidget\t", Melder_pointer (me), U"\t1\t", sizeof (struct structGuiObject));
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
 	my widgetClass = widgetClass;
@@ -468,7 +469,7 @@ static void NativeMenuItem_setSensitive (GuiObject me) {
 
 static void NativeMenuItem_setText (GuiObject me) {
 	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-	static MelderString title = { 0 };
+	static MelderString title { };
 	if (acc == 0) {
 		MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
 	} else {
@@ -1311,8 +1312,8 @@ void XtRemoveWorkProc (XtWorkProcId id) {
 	theNumberOfWorkProcs --;
 }
 
-XtIntervalId GuiAddTimeOut (unsigned long interval, XtTimerCallbackProc proc, XtPointer closure) {
-	long i = 1;
+XtIntervalId GuiAddTimeOut (uinteger interval, XtTimerCallbackProc proc, XtPointer closure) {
+	integer i = 1;
 	while (i < 10 && theTimeOutProcs [i]) i ++;
 	Melder_assert (i < 10);
 	theTimeOutProcs [i] = proc;
@@ -1687,10 +1688,10 @@ void GuiAppInitialize (const char *name, unsigned int argc, char **argv)
 			if (theOpenDocumentCallback) {
 				for (unsigned int iarg = 1; iarg < argc; iarg ++) {
 					if (argv [iarg] [0] != '-') {
-						structMelderDir dir { 0 };
+						structMelderDir dir { };
 						Melder_sprint (dir. path,kMelder_MAXPATH+1, Melder_getShellDirectory ());
 						Melder_setDefaultDir (& dir);
-						structMelderFile file = { 0 };
+						structMelderFile file { };
 						Melder_relativePathToFile (Melder_peek8to32 (argv [iarg]), & file);
 						theOpenDocumentCallback (& file);
 					}
@@ -2046,7 +2047,7 @@ static void _motif_update (GuiObject me, void *event) { (void) me; (void) event;
 /***** EVENT *****/
 
 static void _motif_inspectTextWidgets (GuiObject me, GuiObject text,
-	long *p_numberOfTextWidgets, long *p_textWidgetLocation)
+	integer *p_numberOfTextWidgets, integer *p_textWidgetLocation)
 {
 	for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
 		if (MEMBER (sub, Shell)) continue;
@@ -2061,7 +2062,7 @@ static void _motif_inspectTextWidgets (GuiObject me, GuiObject text,
 	}
 }
 static GuiObject _motif_getLocatedTextWidget (GuiObject me,
-	long *p_itextWidget, long textWidgetLocation)
+	integer *p_itextWidget, integer textWidgetLocation)
 {
 	for (GuiObject sub = my firstChild; sub != NULL; sub = sub -> nextSibling) {
 		if (MEMBER (sub, Shell)) continue;
@@ -2078,7 +2079,7 @@ static GuiObject _motif_getLocatedTextWidget (GuiObject me,
 	return NULL;
 }
 static GuiObject _motif_getNextTextWidget (GuiObject shell, GuiObject text, bool backward) {
-	long numberOfTextWidgets = 0, textWidgetLocation = 0;
+	integer numberOfTextWidgets = 0, textWidgetLocation = 0;
 	_motif_inspectTextWidgets (shell, text, & numberOfTextWidgets, & textWidgetLocation);
 	trace (U"Found ", numberOfTextWidgets, U" text widgets.");
 	if (numberOfTextWidgets == 0) return NULL;   // no tab navigation if there is no text widget (shouldn't normally occur)
@@ -2092,7 +2093,7 @@ static GuiObject _motif_getNextTextWidget (GuiObject shell, GuiObject text, bool
 		textWidgetLocation ++;   // tab to next text widget
 		if (textWidgetLocation > numberOfTextWidgets) textWidgetLocation = 1;   // if at end, then tab around to first text widget
 	}
-	long itextWidget = 0;
+	integer itextWidget = 0;
 	return _motif_getLocatedTextWidget (shell, & itextWidget, textWidgetLocation);
 }
 
@@ -2125,13 +2126,16 @@ void XtNextEvent (XEvent *xevent) {
 }
 
 static void processWorkProcsAndTimeOuts () {
-	long i;
-	if (theNumberOfWorkProcs) for (i = 9; i >= 1; i --)
-		if (theWorkProcs [i])
-			if (theWorkProcs [i] (theWorkProcClosures [i])) XtRemoveWorkProc (i);
+	if (theNumberOfWorkProcs) {
+		for (integer i = 9; i >= 1; i --) {
+			if (theWorkProcs [i]) {
+				if (theWorkProcs [i] (theWorkProcClosures [i])) XtRemoveWorkProc (i);
+			}
+		}
+	}
 	if (theNumberOfTimeOuts) {
 		clock_t now = clock ();
-		for (i = 1; i < 10; i ++) if (theTimeOutProcs [i]) {
+		for (integer i = 1; i < 10; i ++) if (theTimeOutProcs [i]) {
 			static volatile clock_t timeElapsed;   // careful: use 32-bit integers circularly; prevent optimization
 			timeElapsed = now - theTimeOutStarts [i];
 			if (timeElapsed > theTimeOutIntervals [i]) {
@@ -2232,7 +2236,7 @@ modifiers & _motif_COMMAND_MASK ? " control" : "",
 modifiers & _motif_OPTION_MASK ? " alt" : "",
 modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN ? "keydown" : "syskeydown", kar);*/
 		if (me && my shell) {
-			unsigned long acc = my shell -> motiff.shell.lowAccelerators [modifiers];
+			uint32 acc = my shell -> motiff.shell.lowAccelerators [modifiers];
 			//if (kar != VK_CONTROL) Melder_casual ("%d %d", acc, kar);
 			if (kar < 48) {
 				if (kar == VK_BACK) {   // shortcut or text

@@ -38,9 +38,9 @@ static void menu_cb_removePoints (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
-	if (NUMdefined (my v_minimumLegalValue ()) && my ycursor < my v_minimumLegalValue ())
+	if (isdefined (my v_minimumLegalValue ()) && my ycursor < my v_minimumLegalValue ())
 		Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
-	if (NUMdefined (my v_maximumLegalValue ()) && my ycursor > my v_maximumLegalValue ())
+	if (isdefined (my v_maximumLegalValue ()) && my ycursor > my v_maximumLegalValue ())
 		Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
 	Editor_save (me, U"Add point");
 	RealTier_addPoint ((RealTier) my data, 0.5 * (my startSelection + my endSelection), my ycursor);
@@ -50,20 +50,19 @@ static void menu_cb_addPointAtCursor (RealTierEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Add point", 0)
-		REAL (U"Time (s)", U"0.0")
-		REAL (my v_quantityText (), U"0.0")
+	EDITOR_FORM (U"Add point", nullptr)
+		REAL (time, U"Time (s)", U"0.0")
+		REAL (desiredValue, my v_quantityText (), U"0.0")
 	EDITOR_OK
-		SET_REAL (U"Time", 0.5 * (my startSelection + my endSelection))
-		SET_REAL (my v_quantityKey (), my ycursor)
+		SET_REAL (time, 0.5 * (my startSelection + my endSelection))
+		SET_REAL (desiredValue, my ycursor)
 	EDITOR_DO
-		double desiredValue = GET_REAL (my v_quantityKey ());
-		if (NUMdefined (my v_minimumLegalValue ()) && desiredValue < my v_minimumLegalValue ())
+		if (isdefined (my v_minimumLegalValue ()) && desiredValue < my v_minimumLegalValue ())
 			Melder_throw (U"Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), U".");
-		if (NUMdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
+		if (isdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
 			Melder_throw (U"Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), U".");
 		Editor_save (me, U"Add point");
-		RealTier_addPoint ((RealTier) my data, GET_REAL (U"Time"), desiredValue);
+		RealTier_addPoint ((RealTier) my data, time, desiredValue);
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
@@ -71,15 +70,15 @@ static void menu_cb_addPointAt (RealTierEditor me, EDITOR_ARGS_FORM) {
 }
 
 static void menu_cb_setRange (RealTierEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (my v_setRangeTitle (), 0)
-		REAL (my v_yminText (), my v_defaultYminText ())
-		REAL (my v_ymaxText (), my v_defaultYmaxText ())
+	EDITOR_FORM (my v_setRangeTitle (), nullptr)
+		REAL (ymin, my v_yminText (), my v_defaultYminText ())
+		REAL (ymax, my v_ymaxText (), my v_defaultYmaxText ())
 	EDITOR_OK
-		SET_REAL (my v_yminKey (), my ymin)
-		SET_REAL (my v_ymaxKey (), my ymax)
+		SET_REAL (ymin, my ymin)
+		SET_REAL (ymax, my ymax)
 	EDITOR_DO
-		my ymin = GET_REAL (my v_yminKey ());
-		my ymax = GET_REAL (my v_ymaxKey ());
+		my ymin = ymin;
+		my ymax = ymax;
 		if (my ymax <= my ymin) RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -111,23 +110,23 @@ void RealTierEditor_updateScaling (RealTierEditor me) {
 		double range = ymax - ymin;
 		if (range == 0.0) ymin -= 1.0, ymax += 1.0;
 		else ymin -= 0.2 * range, ymax += 0.2 * range;
-		if (NUMdefined (my v_minimumLegalValue()) && ymin < my v_minimumLegalValue ())
+		if (isdefined (my v_minimumLegalValue()) && ymin < my v_minimumLegalValue ())
 			ymin = my v_minimumLegalValue ();
-		if (NUMdefined (my v_maximumLegalValue ()) && ymin > my v_maximumLegalValue ())
+		if (isdefined (my v_maximumLegalValue ()) && ymin > my v_maximumLegalValue ())
 			ymin = my v_maximumLegalValue ();
-		if (NUMdefined (my v_minimumLegalValue ()) && ymax < my v_minimumLegalValue ())
+		if (isdefined (my v_minimumLegalValue ()) && ymax < my v_minimumLegalValue ())
 			ymax = my v_minimumLegalValue ();
-		if (NUMdefined (my v_maximumLegalValue ()) && ymax > my v_maximumLegalValue ())
+		if (isdefined (my v_maximumLegalValue ()) && ymax > my v_maximumLegalValue ())
 			ymax = my v_maximumLegalValue ();
 		if (ymin >= ymax) {
-			if (NUMdefined (my v_minimumLegalValue ()) && NUMdefined (my v_maximumLegalValue ())) {
+			if (isdefined (my v_minimumLegalValue ()) && isdefined (my v_maximumLegalValue ())) {
 				ymin = my v_minimumLegalValue ();
 				ymax = my v_maximumLegalValue ();
-			} else if (NUMdefined (my v_minimumLegalValue ())) {
+			} else if (isdefined (my v_minimumLegalValue ())) {
 				ymin = my v_minimumLegalValue ();
 				ymax = ymin + 1.0;
 			} else {
-				Melder_assert (NUMdefined (my v_maximumLegalValue ()));
+				Melder_assert (isdefined (my v_maximumLegalValue ()));
 				ymax = my v_maximumLegalValue ();
 				ymin = ymax - 1.0;
 			}
@@ -148,7 +147,7 @@ void structRealTierEditor :: v_dataChanged () {
 
 void structRealTierEditor :: v_draw () {
 	RealTier data = (RealTier) our data;
-	long n = data -> points.size;
+	integer n = data -> points.size;
 	trace (U"structRealTierEditor :: v_draw ", n);
 	Graphics_Viewport viewport;
 	if (our d_sound.data) {
@@ -173,12 +172,12 @@ void structRealTierEditor :: v_draw () {
 	Graphics_text (our graphics.get(), our endWindow, our ymax,   Melder_float (Melder_half (ymax)), our v_rightTickUnits ());
 	Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 	Graphics_text (our graphics.get(), our endWindow, our ymin,   Melder_float (Melder_half (our ymin)), our v_rightTickUnits ());
-	long ifirstSelected = AnyTier_timeToHighIndex (data->asAnyTier(), our startSelection);
-	long ilastSelected = AnyTier_timeToLowIndex (data->asAnyTier(), our endSelection);
+	integer ifirstSelected = AnyTier_timeToHighIndex (data->asAnyTier(), our startSelection);
+	integer ilastSelected = AnyTier_timeToLowIndex (data->asAnyTier(), our endSelection);
 	trace (U"structRealTierEditor :: v_draw: selected from ", our startSelection, U" ",
 		ifirstSelected, U" to ", our endSelection, U" ", ilastSelected);
-	long imin = AnyTier_timeToHighIndex (data->asAnyTier(), our startWindow);
-	long imax = AnyTier_timeToLowIndex (data->asAnyTier(), our endWindow);
+	integer imin = AnyTier_timeToHighIndex (data->asAnyTier(), our startWindow);
+	integer imax = AnyTier_timeToLowIndex (data->asAnyTier(), our endWindow);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	if (n == 0) {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
@@ -188,7 +187,7 @@ void structRealTierEditor :: v_draw () {
 		double yleft = RealTier_getValueAtTime (data, our startWindow);
 		double yright = RealTier_getValueAtTime (data, our endWindow);
 		Graphics_line (our graphics.get(), our startWindow, yleft, our endWindow, yright);
-	} else for (long i = imin; i <= imax; i ++) {
+	} else for (integer i = imin; i <= imax; i ++) {
 		RealPoint point = data -> points.at [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
@@ -213,13 +212,13 @@ void structRealTierEditor :: v_draw () {
 	our v_updateMenuItems_file ();
 }
 
-static void drawWhileDragging (RealTierEditor me, double /* xWC */, double /* yWC */, long first, long last, double dt, double dy) {
+static void drawWhileDragging (RealTierEditor me, double /* xWC */, double /* yWC */, integer first, integer last, double dt, double dy) {
 	RealTier data = (RealTier) my data;
 
 	/*
 	 * Draw all selected points as magenta empty circles, if inside the window.
 	 */
-	for (long i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		RealPoint point = data -> points.at [i];
 		double t = point -> number + dt, y = point -> value + dy;
 		if (t >= my startWindow && t <= my endWindow)
@@ -233,7 +232,7 @@ static void drawWhileDragging (RealTierEditor me, double /* xWC */, double /* yW
 		RealPoint point = data -> points.at [first];
 		double t = point -> number + dt, y = point -> value + dy;
 		Graphics_line (my graphics.get(), t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics.get(), 4.0));
-		Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
+		Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_TOP);
 		Graphics_text (my graphics.get(), t, my ymax, Melder_fixed (t, 6));
 		Graphics_line (my graphics.get(), my startWindow, y, my endWindow, y);
 		Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_BOTTOM);
@@ -267,7 +266,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	/*
 	 * Clicked on a point?
 	 */
-	long inearestPoint = AnyTier_timeToNearestIndex (pitch->asAnyTier(), xWC);
+	integer inearestPoint = AnyTier_timeToNearestIndex (pitch->asAnyTier(), xWC);
 	if (inearestPoint == 0) return our RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	RealPoint nearestPoint = pitch -> points.at [inearestPoint];
 	if (Graphics_distanceWCtoMM (our graphics.get(), xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
@@ -280,7 +279,7 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 	 */
 	bool draggingSelection = shiftKeyPressed &&
 		nearestPoint -> number > our startSelection && nearestPoint -> number < our endSelection;
-	long ifirstSelected, ilastSelected;
+	integer ifirstSelected, ilastSelected;
 	if (draggingSelection) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch->asAnyTier(), our startSelection);
 		ilastSelected = AnyTier_timeToLowIndex (pitch->asAnyTier(), our endSelection);
@@ -333,9 +332,9 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 		RealPoint point = pitch -> points.at [i];
 		point -> number += dt;
 		point -> value += df;
-		if (NUMdefined (v_minimumLegalValue ()) && point -> value < v_minimumLegalValue ())
+		if (isdefined (v_minimumLegalValue ()) && point -> value < v_minimumLegalValue ())
 			point -> value = v_minimumLegalValue ();
-		if (NUMdefined (v_maximumLegalValue ()) && point -> value > v_maximumLegalValue ())
+		if (isdefined (v_maximumLegalValue ()) && point -> value > v_maximumLegalValue ())
 			point -> value = v_maximumLegalValue ();
 	}
 
@@ -357,9 +356,9 @@ bool structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 		 */
 		/*our cursor += dt;*/
 		our ycursor += df;
-		if (NUMdefined (v_minimumLegalValue ()) && our ycursor < v_minimumLegalValue ())
+		if (isdefined (v_minimumLegalValue ()) && our ycursor < v_minimumLegalValue ())
 			our ycursor = v_minimumLegalValue ();
-		if (NUMdefined (v_maximumLegalValue ()) && our ycursor > v_maximumLegalValue ())
+		if (isdefined (v_maximumLegalValue ()) && our ycursor > v_maximumLegalValue ())
 			our ycursor = v_maximumLegalValue ();
 	}
 

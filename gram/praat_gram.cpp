@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1997-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 #include "OTMulti.h"
 #include "OTGrammarEditor.h"
 #include "OTMultiEditor.h"
-#include "RBM.h"
+#include "DeepBeliefNetwork.h"
 
 #include "praat_TableOfReal.h"
 
@@ -33,26 +33,26 @@
 // MARK: New
 
 #define UiForm_addNetworkFields  \
-	LABEL (U"", U"Activity spreading settings:") \
-	REAL4 (spreadingRate, U"Spreading rate", U"0.01") \
-	OPTIONMENU_ENUM4 (activityClippingRule, U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT) \
-	REAL4 (minimumActivity, U"left Activity range", U"0.0") \
-	REAL4 (maximumActivity, U"right Activity range", U"1.0") \
-	REAL4 (activityLeak, U"Activity leak", U"1.0") \
-	LABEL (U"", U"Weight update settings:") \
-	REAL4 (learningRate, U"Learning rate", U"0.1") \
-	REAL4 (minimumWeight, U"left Weight range", U"-1.0") \
-	REAL4 (maximumWeight, U"right Weight range", U"1.0") \
-	REAL4 (weightLeak, U"Weight leak", U"0.0")
+	LABEL (U"Activity spreading settings:") \
+	REAL (spreadingRate, U"Spreading rate", U"0.01") \
+	OPTIONMENU_ENUM (activityClippingRule, U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT) \
+	REAL (minimumActivity, U"left Activity range", U"0.0") \
+	REAL (maximumActivity, U"right Activity range", U"1.0") \
+	REAL (activityLeak, U"Activity leak", U"1.0") \
+	LABEL (U"Weight update settings:") \
+	REAL (learningRate, U"Learning rate", U"0.1") \
+	REAL (minimumWeight, U"left Weight range", U"-1.0") \
+	REAL (maximumWeight, U"right Weight range", U"1.0") \
+	REAL (weightLeak, U"Weight leak", U"0.0")
 
 FORM (NEW1_Create_empty_Network, U"Create empty Network", nullptr) {
-	WORD4 (name, U"Name", U"network")
+	WORD (name, U"Name", U"network")
 	UiForm_addNetworkFields
-	LABEL (U"", U"World coordinates:")
-	REAL4 (fromX, U"left x range", U"0.0")
-	REAL4 (toX, U"right x range", U"10.0")
-	REAL4 (fromY, U"left y range", U"0.0")
-	REAL4 (toY, U"right y range", U"10.0")
+	LABEL (U"World coordinates:")
+	REAL (fromX, U"left x range", U"0.0")
+	REAL (toX, U"right x range", U"10.0")
+	REAL (fromY, U"left y range", U"0.0")
+	REAL (toY, U"right y range", U"10.0")
 	OK
 DO
 	CREATE_ONE
@@ -65,13 +65,13 @@ DO
 
 FORM (NEW1_Create_rectangular_Network, U"Create rectangular Network", nullptr) {
 	UiForm_addNetworkFields
-	LABEL (U"", U"Structure settings:")
-	NATURAL4 (numberOfRows, U"Number of rows", U"10")
-	NATURAL4 (numberOfColumns, U"Number of columns", U"10")
-	BOOLEAN4 (bottomRowClamped, U"Bottom row clamped", 1)
-	LABEL (U"", U"Initial state settings:")
-	REAL4 (minimumInitialWeight, U"left Initial weight range", U"-0.1")
-	REAL4 (maximumInitialWeight, U"right Initial weight range", U"0.1")
+	LABEL (U"Structure settings:")
+	NATURAL (numberOfRows, U"Number of rows", U"10")
+	NATURAL (numberOfColumns, U"Number of columns", U"10")
+	BOOLEAN (bottomRowClamped, U"Bottom row clamped", 1)
+	LABEL (U"Initial state settings:")
+	REAL (minimumInitialWeight, U"left Initial weight range", U"-0.1")
+	REAL (maximumInitialWeight, U"right Initial weight range", U"0.1")
 	OK
 DO
 	CREATE_ONE
@@ -84,13 +84,13 @@ DO
 
 FORM (NEW1_Create_rectangular_Network_vertical, U"Create rectangular Network (vertical)", nullptr) {
 	UiForm_addNetworkFields
-	LABEL (U"", U"Structure settings:")
-	NATURAL4 (numberOfRows, U"Number of rows", U"10")
-	NATURAL4 (numberOfColumns, U"Number of columns", U"10")
-	BOOLEAN4 (bottomRowClamped, U"Bottom row clamped", 1)
-	LABEL (U"", U"Initial state settings:")
-	REAL4 (minimumInitialWeight, U"left Initial weight range", U"-0.1")
-	REAL4 (maximumInitialWeight, U"right Initial weight range", U"0.1")
+	LABEL (U"Structure settings:")
+	NATURAL (numberOfRows, U"Number of rows", U"10")
+	NATURAL (numberOfColumns, U"Number of columns", U"10")
+	BOOLEAN (bottomRowClamped, U"Bottom row clamped", 1)
+	LABEL (U"Initial state settings:")
+	REAL (minimumInitialWeight, U"left Initial weight range", U"-0.1")
+	REAL (maximumInitialWeight, U"right Initial weight range", U"0.1")
 	OK
 DO
 	CREATE_ONE
@@ -104,7 +104,7 @@ DO
 // MARK: Draw
 
 FORM (GRAPHICS_Network_draw, U"Draw Network", nullptr) {
-	BOOLEAN4 (useColour, U"Use colour", true)
+	BOOLEAN (useColour, U"Use colour", true)
 	OK
 DO
 	GRAPHICS_EACH (Network)
@@ -115,16 +115,16 @@ DO
 // MARK: Tabulate
 
 FORM (LIST_Network_listNodes, U"Network: List nodes", nullptr) {
-	INTEGER4 (fromNodeNumber, U"From node number", U"1")
-	INTEGER4 (toNodeNumber, U"To node number", U"1000")
-	BOOLEAN4 (includeNodeNumbers, U"Include node numbers", true)
-	BOOLEAN4 (includeX, U"Include x", false)
-	BOOLEAN4 (includeY, U"Include y", false)
-	INTEGER4 (positionDecimals, U"Position decimals", U"6")
-	BOOLEAN4 (includeClamped, U"Include clamped", false)
-	BOOLEAN4 (includeActivity, U"Include activity", true)
-	BOOLEAN4 (includeExcitation, U"Include excitation", false)
-	INTEGER4 (activityDecimals, U"Activity decimals", U"6")
+	INTEGER (fromNodeNumber, U"From node number", U"1")
+	INTEGER (toNodeNumber, U"To node number", U"1000")
+	BOOLEAN (includeNodeNumbers, U"Include node numbers", true)
+	BOOLEAN (includeX, U"Include x", false)
+	BOOLEAN (includeY, U"Include y", false)
+	INTEGER (positionDecimals, U"Position decimals", U"6")
+	BOOLEAN (includeClamped, U"Include clamped", false)
+	BOOLEAN (includeActivity, U"Include activity", true)
+	BOOLEAN (includeExcitation, U"Include excitation", false)
+	INTEGER (activityDecimals, U"Activity decimals", U"6")
 	OK
 DO
 	INFO_ONE (Network)
@@ -135,16 +135,16 @@ DO
 }
 
 FORM (NEW_Network_nodes_downto_Table, U"Network: Nodes down to Table", nullptr) {
-	INTEGER4 (fromNodeNumber, U"From node number", U"1")
-	INTEGER4 (toNodeNumber, U"To node number", U"1000")
-	BOOLEAN4 (includeNodeNumbers, U"Include node numbers", true)
-	BOOLEAN4 (includeX, U"Include x", false)
-	BOOLEAN4 (includeY, U"Include y", false)
-	INTEGER4 (positionDecimals, U"Position decimals", U"6")
-	BOOLEAN4 (includeClamped, U"Include clamped", false)
-	BOOLEAN4 (includeActivity, U"Include activity", true)
-	BOOLEAN4 (includeExcitation, U"Include excitation", false)
-	INTEGER4 (activityDecimals, U"Activity decimals", U"6")
+	INTEGER (fromNodeNumber, U"From node number", U"1")
+	INTEGER (toNodeNumber, U"To node number", U"1000")
+	BOOLEAN (includeNodeNumbers, U"Include node numbers", true)
+	BOOLEAN (includeX, U"Include x", false)
+	BOOLEAN (includeY, U"Include y", false)
+	INTEGER (positionDecimals, U"Position decimals", U"6")
+	BOOLEAN (includeClamped, U"Include clamped", false)
+	BOOLEAN (includeActivity, U"Include activity", true)
+	BOOLEAN (includeExcitation, U"Include excitation", false)
+	INTEGER (activityDecimals, U"Activity decimals", U"6")
 	OK
 DO
 	CONVERT_EACH (Network)
@@ -157,7 +157,7 @@ DO
 // MARK: Query
 
 FORM (REAL_Network_getActivity, U"Network: Get activity", nullptr) {
-	NATURAL4 (node, U"Node", U"1")
+	NATURAL (node, U"Node", U"1")
 	OK
 DO
 	NUMBER_ONE (Network)
@@ -166,7 +166,7 @@ DO
 }
 
 FORM (REAL_Network_getWeight, U"Network: Get weight", nullptr) {
-	NATURAL4 (connection, U"Connection", U"1")
+	NATURAL (connection, U"Connection", U"1")
 	OK
 DO
 	NUMBER_ONE (Network)
@@ -177,10 +177,10 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Network_addConnection, U"Network: Add connection", nullptr) {
-	NATURAL4 (fromNode, U"From node", U"1")
-	NATURAL4 (toNode, U"To node", U"2")
-	REAL4 (weight, U"Weight", U"0.0")
-	REAL4 (plasticity, U"Plasticity", U"1.0")
+	NATURAL (fromNode, U"From node", U"1")
+	NATURAL (toNode, U"To node", U"2")
+	REAL (weight, U"Weight", U"0.0")
+	REAL (plasticity, U"Plasticity", U"1.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -189,10 +189,10 @@ DO
 }
 
 FORM (MODIFY_Network_addNode, U"Network: Add node", nullptr) {
-	REAL4 (x, U"x", U"5.0")
-	REAL4 (y, U"y", U"5.0")
-	REAL4 (activity, U"Activity", U"0.0")
-	BOOLEAN4 (clamping, U"Clamping", false)
+	REAL (x, U"x", U"5.0")
+	REAL (y, U"y", U"5.0")
+	REAL (activity, U"Activity", U"0.0")
+	BOOLEAN (clamping, U"Clamping", false)
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -201,8 +201,8 @@ DO
 }
 
 FORM (MODIFY_Network_normalizeActivities, U"Network: Normalize activities", nullptr) {
-	INTEGER4 (fromNode, U"From node", U"1")
-	INTEGER4 (toNode, U"To node", U"0 (= all)")
+	INTEGER (fromNode, U"From node", U"1")
+	INTEGER (toNode, U"To node", U"0 (= all)")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -211,11 +211,11 @@ DO
 }
 
 FORM (MODIFY_Network_normalizeWeights, U"Network: Normalize weights", nullptr) {
-	INTEGER4 (fromNode, U"From node", U"1")
-	INTEGER4 (toNode, U"To node", U"0 (= all)")
-	INTEGER4 (fromIncomingNode, U"From incoming node", U"1")
-	INTEGER4 (toIncomingNode, U"To incoming node", U"10")
-	REAL4 (newSum, U"New sum", U"1.0")
+	INTEGER (fromNode, U"From node", U"1")
+	INTEGER (toNode, U"To node", U"0 (= all)")
+	INTEGER (fromIncomingNode, U"From incoming node", U"1")
+	INTEGER (toIncomingNode, U"To incoming node", U"10")
+	REAL (newSum, U"New sum", U"1.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -224,8 +224,8 @@ DO
 }
 
 FORM (MODIFY_Network_setActivity, U"Network: Set activity", nullptr) {
-	NATURAL4 (node, U"Node", U"1")
-	REAL4 (activity, U"Activity", U"1.0")
+	NATURAL (node, U"Node", U"1")
+	REAL (activity, U"Activity", U"1.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -234,16 +234,16 @@ DO
 }
 
 FORM (MODIFY_Network_setActivityClippingRule, U"Network: Set activity clipping rule", nullptr) {
-	RADIO_ENUM (U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
+	RADIO_ENUM (activityClippingRule, U"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
 	OK
 DO
 	MODIFY_EACH (Network)
-		Network_setActivityClippingRule (me, GET_ENUM (kNetwork_activityClippingRule, U"Activity clipping rule"));
+		Network_setActivityClippingRule (me, activityClippingRule);
 	MODIFY_EACH_END
 }
 
 FORM (MODIFY_Network_setActivityLeak, U"Network: Set activity leak", nullptr) {
-	REAL4 (activityLeak, U"Activity leak", U"1.0")
+	REAL (activityLeak, U"Activity leak", U"1.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -252,8 +252,8 @@ DO
 }
 
 FORM (MODIFY_Network_setClamping, U"Network: Set clamping", nullptr) {
-	NATURAL4 (node, U"Node", U"1")
-	BOOLEAN4 (clamping, U"Clamping", true)
+	NATURAL (node, U"Node", U"1")
+	BOOLEAN (clamping, U"Clamping", true)
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -262,7 +262,7 @@ DO
 }
 
 FORM (MODIFY_Network_setInstar, U"Network: Set instar", nullptr) {
-	REAL4 (instar, U"Instar", U"0.0")
+	REAL (instar, U"Instar", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -271,7 +271,7 @@ DO
 }
 
 FORM (MODIFY_Network_setWeightLeak, U"Network: Set weight leak", nullptr) {
-	REAL4 (weightLeak, U"Weight leak", U"0.0")
+	REAL (weightLeak, U"Weight leak", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -280,7 +280,7 @@ DO
 }
 
 FORM (MODIFY_Network_setOutstar, U"Network: Set outstar", nullptr) {
-	REAL4 (outstar, U"Outstar", U"0.0")
+	REAL (outstar, U"Outstar", U"0.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -289,7 +289,7 @@ DO
 }
 
 FORM (MODIFY_Network_setShunting, U"Network: Set shunting", nullptr) {
-	REAL4 (shunting, U"Shunting", U"1.0")
+	REAL (shunting, U"Shunting", U"1.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -298,8 +298,8 @@ DO
 }
 
 FORM (MODIFY_Network_setWeight, U"Network: Set weight", nullptr) {
-	NATURAL4 (connection, U"Connection", U"1")
-	REAL4 (weight, U"Weight", U"1.0")
+	NATURAL (connection, U"Connection", U"1")
+	REAL (weight, U"Weight", U"1.0")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -308,7 +308,7 @@ DO
 }
 
 FORM (MODIFY_Network_spreadActivities, U"Network: Spread activities", nullptr) {
-	NATURAL4 (numberOfSteps, U"Number of steps", U"20")
+	NATURAL (numberOfSteps, U"Number of steps", U"20")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -323,8 +323,8 @@ DIRECT (MODIFY_Network_updateWeights) {
 }
 
 FORM (MODIFY_Network_zeroActivities, U"Network: Zero activities", nullptr) {
-	INTEGER4 (fromNode, U"From node", U"1")
-	INTEGER4 (toNode, U"To node", U"0 (= all)")
+	INTEGER (fromNode, U"From node", U"1")
+	INTEGER (toNode, U"To node", U"0 (= all)")
 	OK
 DO
 	MODIFY_EACH (Network)
@@ -359,46 +359,37 @@ DIRECT (NEW1_Create_NPA_distribution) {
 }
 
 FORM (NEW1_Create_tongue_root_grammar, U"Create tongue-root grammar", U"Create tongue-root grammar...") {
-	RADIO4 (constraintSet, U"Constraint set", 1)
-		RADIOBUTTON (U"Five")
-		RADIOBUTTON (U"Nine")
-	RADIO4 (ranking, U"Ranking", 3)
-		RADIOBUTTON (U"Equal")
-		RADIOBUTTON (U"Random")
-		RADIOBUTTON (U"Infant")
-		RADIOBUTTON (U"Wolof")
+	RADIO_ENUM (constraintSet, U"Constraint set", kOTGrammar_createTongueRootGrammar_constraintSet, DEFAULT)
+	RADIO_ENUM (ranking, U"Ranking", kOTGrammar_createTongueRootGrammar_ranking, DEFAULT)
 	OK
 DO
 	CREATE_ONE
 		autoOTGrammar result = OTGrammar_create_tongueRoot_grammar (constraintSet, ranking);
-	CREATE_ONE_END (GET_STRING (U"Ranking"))
+	CREATE_ONE_END (kOTGrammar_createTongueRootGrammar_ranking_getText (ranking))
 }
 
 FORM (NEW1_Create_metrics_grammar, U"Create metrics grammar", nullptr) {
-	OPTIONMENU4 (initialRanking, U"Initial ranking", 1)
-		OPTION (U"Equal")
-		OPTION (U"Foot form high")
-		OPTION (U"WSP high")
-	OPTIONMENU4 (trochaicityConstraint, U"Trochaicity constraint", 1)
+	OPTIONMENU_ENUM (initialRanking, U"Initial ranking", kOTGrammar_createMetricsGrammar_initialRanking, DEFAULT)
+	OPTIONMENU (trochaicityConstraint, U"Trochaicity constraint", 1)
 		OPTION (U"FtNonfinal")
 		OPTION (U"Trochaic")
-	BOOLEAN4 (includeFootBimoraic, U"Include FootBimoraic", false)
-	BOOLEAN4 (includeFootBisyllabic, U"Include FootBisyllabic", false)
-	BOOLEAN4 (includePeripheral, U"Include Peripheral", false)
-	OPTIONMENU4 (nonfinalityConstraint, U"Nonfinality constraint", 1)
+	BOOLEAN (includeFootBimoraic, U"Include FootBimoraic", false)
+	BOOLEAN (includeFootBisyllabic, U"Include FootBisyllabic", false)
+	BOOLEAN (includePeripheral, U"Include Peripheral", false)
+	OPTIONMENU (nonfinalityConstraint, U"Nonfinality constraint", 1)
 		OPTION (U"Nonfinal")
 		OPTION (U"MainNonfinal")
 		OPTION (U"HeadNonfinal")
-	BOOLEAN4 (overtFormsHaveSecondaryStress, U"Overt forms have secondary stress", true)
-	BOOLEAN4 (includeClashAndLapse, U"Include *Clash and *Lapse", false)
-	BOOLEAN4 (includeCodas, U"Include codas", false)
+	BOOLEAN (overtFormsHaveSecondaryStress, U"Overt forms have secondary stress", true)
+	BOOLEAN (includeClashAndLapse, U"Include *Clash and *Lapse", false)
+	BOOLEAN (includeCodas, U"Include codas", false)
 	OK
 DO
 	CREATE_ONE
 		autoOTGrammar result = OTGrammar_create_metrics (initialRanking, trochaicityConstraint,
 			includeFootBimoraic, includeFootBisyllabic, includePeripheral, nonfinalityConstraint,
 			overtFormsHaveSecondaryStress, includeClashAndLapse, includeCodas);
-	CREATE_ONE_END (GET_STRING (U"Initial ranking"))
+	CREATE_ONE_END (kOTGrammar_createMetricsGrammar_initialRanking_getText (initialRanking))
 }
 
 // MARK: Save
@@ -419,18 +410,17 @@ DIRECT (HELP_OTGrammar_help) {
 
 DIRECT (WINDOW_OTGrammar_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit from batch.");
-	LOOP {
-		iam (OTGrammar);
+	FIND_ONE_WITH_IOBJECT (OTGrammar)
 		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: Draw
 
 FORM (GRAPHICS_OTGrammar_drawTableau, U"Draw tableau", U"OT learning") {
-	SENTENCE4 (inputString, U"Input string", U"")
+	SENTENCE (inputString, U"Input string", U"")
 	OK
 DO
 	GRAPHICS_EACH (OTGrammar)
@@ -439,7 +429,7 @@ DO
 }
 
 FORM (GRAPHICS_OTGrammar_drawTableau_narrowly, U"Draw tableau (narrowly)", U"OT learning") {
-	SENTENCE4 (inputString, U"Input string", U"")
+	SENTENCE (inputString, U"Input string", U"")
 	OK
 DO
 	GRAPHICS_EACH (OTGrammar)
@@ -451,12 +441,12 @@ DO
 
 DIRECT (INTEGER_OTGrammar_getNumberOfConstraints) {
 	INTEGER_ONE (OTGrammar)
-		long result = my numberOfConstraints;
+		integer result = my numberOfConstraints;
 	INTEGER_ONE_END (U" constraints")
 }
 
 FORM (STRING_OTGrammar_getConstraint, U"Get constraint name", nullptr) {
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
 	STRING_ONE (OTGrammar)
@@ -467,7 +457,7 @@ DO
 }
 
 FORM (REAL_OTGrammar_getRankingValue, U"Get ranking value", nullptr) {
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
@@ -478,7 +468,7 @@ DO
 }
 
 FORM (REAL_OTGrammar_getDisharmony, U"Get disharmony", nullptr) {
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
@@ -490,12 +480,12 @@ DO
 
 DIRECT (INTEGER_OTGrammar_getNumberOfTableaus) {
 	INTEGER_ONE (OTGrammar)
-		long result = my numberOfTableaus;
+		integer result = my numberOfTableaus;
 	INTEGER_ONE_END (U" tableaus")
 }
 
 FORM (STRING_OTGrammar_getInput, U"Get input", nullptr) {
-	NATURAL4 (tableauNumber, U"Tableau number", U"1")
+	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
 	STRING_ONE (OTGrammar)
@@ -506,19 +496,19 @@ DO
 }
 
 FORM (INTEGER_OTGrammar_getNumberOfCandidates, U"Get number of candidates", nullptr) {
-	NATURAL4 (tableauNumber, U"Tableau number", U"1")
+	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = my tableaus [tableauNumber]. numberOfCandidates;
+		integer result = my tableaus [tableauNumber]. numberOfCandidates;
 	NUMBER_ONE_END (U" candidates in tableau ", tableauNumber)
 }
 
 FORM (STRING_OTGrammar_getCandidate, U"Get candidate", nullptr) {
-	NATURAL4 (tableauNumber, U"Tableau number", U"1")
-	NATURAL4 (candidateNumber, U"Candidate number", U"1")
+	NATURAL (tableauNumber, U"Tableau number", U"1")
+	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
 	STRING_ONE (OTGrammar)
@@ -532,9 +522,9 @@ DO
 }
 
 FORM (INTEGER_OTGrammar_getNumberOfViolations, U"Get number of violations", nullptr) {
-	NATURAL4 (tableauNumber, U"Tableau number", U"1")
-	NATURAL4 (candidateNumber, U"Candidate number", U"1")
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	NATURAL (tableauNumber, U"Tableau number", U"1")
+	NATURAL (candidateNumber, U"Candidate number", U"1")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
@@ -544,28 +534,28 @@ DO
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
-		long result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
+		integer result = my tableaus [tableauNumber]. candidates [candidateNumber]. marks [constraintNumber];
 	NUMBER_ONE_END (U" violations")
 }
 
 // MARK: Query (parse)
 
 FORM (INTEGER_OTGrammar_getWinner, U"Get winner", nullptr) {
-	NATURAL4 (tableauNumber, U"Tableau number", U"1")
+	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = OTGrammar_getWinner (me, tableauNumber);
+		integer result = OTGrammar_getWinner (me, tableauNumber);
 	NUMBER_ONE_END (U" (winner in tableau ", tableauNumber, U")")
 }
 
 FORM (INTEGER_OTGrammar_compareCandidates, U"Compare candidates", nullptr) {
-	NATURAL4 (tableauNumber1, U"Tableau number 1", U"1")
-	NATURAL4 (candidateNumber1, U"Candidate number 1", U"1")
-	NATURAL4 (tableauNumber2, U"Tableau number 2", U"1")
-	NATURAL4 (candidateNumber2, U"Candidate number 2", U"2")
+	NATURAL (tableauNumber1, U"Tableau number 1", U"1")
+	NATURAL (candidateNumber1, U"Candidate number 1", U"1")
+	NATURAL (tableauNumber2, U"Tableau number 2", U"1")
+	NATURAL (candidateNumber2, U"Candidate number 2", U"2")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
@@ -577,25 +567,25 @@ DO
 			Melder_throw (U"The specified tableau (number 2) should not exceed the number of tableaus.");
 		if (candidateNumber2 > my tableaus [tableauNumber2]. numberOfCandidates)
 			Melder_throw (U"The specified candidate (number 2) should not exceed the number of candidates for this tableau.");
-		long result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
+		integer result = OTGrammar_compareCandidates (me, tableauNumber1, candidateNumber1, tableauNumber2, candidateNumber2);
 	NUMBER_ONE_END (result == -1 ? U" (candidate 1 is better)" :
 					result == +1 ? U" (candidate 2 is better)" : U" (candidates are equally good)")
 }
 
 FORM (INTEGER_OTGrammar_getNumberOfOptimalCandidates, U"Get number of optimal candidates", nullptr) {
-	NATURAL4 (tableauNumber, U"Tableau number", U"1")
+	NATURAL (tableauNumber, U"Tableau number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		long result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
+		integer result = OTGrammar_getNumberOfOptimalCandidates (me, tableauNumber);
 	NUMBER_ONE_END (U" optimal candidates in tableau ", tableauNumber)
 }
 
 FORM (BOOLEAN_OTGrammar_isCandidateGrammatical, U"Is candidate grammatical?", nullptr) {
-	NATURAL4 (tableauNumber, U"Tableau number", U"1")
-	NATURAL4 (candidateNumber, U"Candidate number", U"1")
+	NATURAL (tableauNumber, U"Tableau number", U"1")
+	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
@@ -603,13 +593,13 @@ DO
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		long result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
+		integer result = OTGrammar_isCandidateGrammatical (me, tableauNumber, candidateNumber);
 	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
 FORM (BOOLEAN_OTGrammar_isCandidateSinglyGrammatical, U"Is candidate singly grammatical?", nullptr) {
-	NATURAL4 (tableauNumber, U"Tableau number", U"1")
-	NATURAL4 (candidateNumber, U"Candidate number", U"1")
+	NATURAL (tableauNumber, U"Tableau number", U"1")
+	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
@@ -617,16 +607,16 @@ DO
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
 		if (candidateNumber > my tableaus [tableauNumber]. numberOfCandidates)
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		long result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
+		integer result = OTGrammar_isCandidateSinglyGrammatical (me, tableauNumber, candidateNumber);
 	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
 FORM (STRING_OTGrammar_getInterpretiveParse, U"OTGrammar: Interpretive parse", nullptr) {
-	SENTENCE4 (partialOutput, U"Partial output", U"")
+	SENTENCE (partialOutput, U"Partial output", U"")
 	OK
 DO
 	FIND_ONE (OTGrammar)
-		long bestInput, bestOutput;
+		integer bestInput, bestOutput;
 		OTGrammar_getInterpretiveParse (me, partialOutput, & bestInput, & bestOutput);
 		Melder_information (U"Best input = ", bestInput, U": ", my tableaus [bestInput]. input,
 			U"\nBest output = ", bestOutput, U": ", my tableaus [bestInput]. candidates [bestOutput]. output);
@@ -634,27 +624,27 @@ DO
 }
 
 FORM (BOOLEAN_OTGrammar_isPartialOutputGrammatical, U"Is partial output grammatical?", nullptr) {
-	SENTENCE4 (partialOutput, U"Partial output", U"")
+	SENTENCE (partialOutput, U"Partial output", U"")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		long result = OTGrammar_isPartialOutputGrammatical (me, partialOutput);
+		integer result = OTGrammar_isPartialOutputGrammatical (me, partialOutput);
 	NUMBER_ONE_END (result ? U" (grammatical)" : U" (ungrammatical)")
 }
 
 FORM (BOOLEAN_OTGrammar_isPartialOutputSinglyGrammatical, U"Is partial output singly grammatical?", nullptr) {
-	SENTENCE4 (partialOutput, U"Partial output", U"")
+	SENTENCE (partialOutput, U"Partial output", U"")
 	OK
 DO
 	NUMBER_ONE (OTGrammar)
-		long result = OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput);
+		integer result = OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput);
 	NUMBER_ONE_END (result ? U" (singly grammatical)" : U" (not singly grammatical)")
 }
 
 // MARK: -
 
 FORM (NEW_OTGrammar_generateInputs, U"Generate inputs", U"OTGrammar: Generate inputs...") {
-	NATURAL4 (numberOfTrials, U"Number of trials", U"1000")
+	NATURAL (numberOfTrials, U"Number of trials", U"1000")
 	OK
 DO
 	CONVERT_EACH (OTGrammar)
@@ -683,7 +673,7 @@ END }
 // MARK: Evaluate
 
 FORM (MODIFY_OTGrammar_evaluate, U"OTGrammar: Evaluate", nullptr) {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	MODIFY_EACH (OTGrammar)
@@ -692,8 +682,8 @@ DO
 }
 
 FORM (STRING_MODIFY_OTGrammar_inputToOutput, U"OTGrammar: Input to output", U"OTGrammar: Input to output...") {
-	SENTENCE4 (inputForm, U"Input form", U"")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	SENTENCE (inputForm, U"Input form", U"")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	FIND_ONE (OTGrammar)
@@ -705,9 +695,9 @@ DO
 }
 
 FORM (NEW1_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OTGrammar: Input to outputs...") {
-	NATURAL4 (trials, U"Trials", U"1000")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	SENTENCE4 (inputForm, U"Input form", U"")
+	NATURAL (trials, U"Trials", U"1000")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	SENTENCE (inputForm, U"Input form", U"")
 	OK
 DO
 	FIND_ONE (OTGrammar)
@@ -718,8 +708,8 @@ DO
 }
 
 FORM (NEW_MODIFY_OTGrammar_to_Distributions, U"OTGrammar: Compute output distributions", U"OTGrammar: To output Distributions...") {
-	NATURAL4 (trialsPerInput, U"Trials per input", U"100000")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	NATURAL (trialsPerInput, U"Trials per input", U"100000")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	LOOP {
@@ -736,8 +726,8 @@ DO
 END }
 
 FORM (NEW_MODIFY_OTGrammar_to_PairDistribution, U"OTGrammar: Compute output distributions", nullptr) {
-	NATURAL4 (trialsPerInput, U"Trials per input", U"100000")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	NATURAL (trialsPerInput, U"Trials per input", U"100000")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	LOOP try {
@@ -754,9 +744,9 @@ END }
 // MARK: Modify ranking
 
 FORM (MODIFY_OTGrammar_setRanking, U"OTGrammar: Set ranking", nullptr) {
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
-	REAL4 (ranking, U"Ranking", U"100.0")
-	REAL4 (disharmony, U"Disharmony", U"100.0")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
+	REAL (ranking, U"Ranking", U"100.0")
+	REAL (disharmony, U"Disharmony", U"100.0")
 	OK
 DO
 	MODIFY_EACH (OTGrammar)
@@ -765,7 +755,7 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_resetAllRankings, U"OTGrammar: Reset all rankings", nullptr) {
-	REAL4 (ranking, U"Ranking", U"100.0")
+	REAL (ranking, U"Ranking", U"100.0")
 	OK
 DO
 	MODIFY_EACH (OTGrammar)
@@ -774,8 +764,8 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_resetToRandomRanking, U"OTGrammar: Reset to random ranking", nullptr) {
-	REAL4 (mean, U"Mean", U"10.0")
-	POSITIVE4 (standardDeviation, U"Standard deviation", U"1e-4")
+	REAL (mean, U"Mean", U"10.0")
+	POSITIVE (standardDeviation, U"Standard deviation", U"1e-4")
 	OK
 DO
 	MODIFY_EACH (OTGrammar)
@@ -784,8 +774,8 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_resetToRandomTotalRanking, U"OTGrammar: Reset to random total ranking", nullptr) {
-	REAL4 (maximumRanking, U"Maximum ranking", U"100.0")
-	POSITIVE4 (rankingDistance, U"Ranking distance", U"1.0")
+	REAL (maximumRanking, U"Maximum ranking", U"100.0")
+	POSITIVE (rankingDistance, U"Ranking distance", U"1.0")
 	OK
 DO
 	MODIFY_EACH (OTGrammar)
@@ -794,13 +784,13 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_learnOne, U"OTGrammar: Learn one", U"OTGrammar: Learn one...") {
-	SENTENCE4 (inputString, U"Input string", U"")
-	SENTENCE4 (outputString, U"Output string", U"")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	REAL4 (plasticity, U"Plasticity", U"0.1")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", 1)
+	SENTENCE (inputString, U"Input string", U"")
+	SENTENCE (outputString, U"Output string", U"")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (plasticity, U"Plasticity", U"0.1")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
 	OK
 DO
 	MODIFY_EACH_WEAK (OTGrammar)
@@ -811,14 +801,14 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_learnOneFromPartialOutput, U"OTGrammar: Learn one from partial adult output", nullptr) {
-	LABEL (U"", U"Partial adult surface form (e.g. overt form):")
-	SENTENCE4 (partialOutput, U"Partial output", U"")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	REAL4 (plasticity, U"Plasticity", U"0.1")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", 1)
-	NATURAL4 (numberOfChews, U"Number of chews", U"1")
+	LABEL (U"Partial adult surface form (e.g. overt form):")
+	SENTENCE (partialOutput, U"Partial output", U"")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (plasticity, U"Plasticity", U"0.1")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
+	NATURAL (numberOfChews, U"Number of chews", U"1")
 	OK
 DO
 	MODIFY_EACH_WEAK (OTGrammar)
@@ -831,10 +821,10 @@ DO
 // MARK: Modify behaviour
 
 FORM (MODIFY_OTGrammar_setDecisionStrategy, U"OTGrammar: Set decision strategy", nullptr) {
-	RADIO_ENUM4 (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
+	RADIO_ENUM (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
 OK
 	FIND_ONE (OTGrammar)
-		SET_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
+		SET_ENUM (decisionStrategy, kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
 	MODIFY_EACH (OTGrammar)
 		my decisionStrategy = decisionStrategy;
@@ -842,10 +832,10 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_setLeak, U"OTGrammar: Set leak", nullptr) {
-	REAL4 (leak, U"Leak", U"0.0")
+	REAL (leak, U"Leak", U"0.0")
 OK
 	FIND_ONE (OTGrammar)
-		SET_REAL (U"Leak", my leak);
+		SET_REAL (leak, my leak)
 DO
 	MODIFY_EACH (OTGrammar)
 		my leak = leak;
@@ -853,8 +843,8 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_setConstraintPlasticity, U"OTGrammar: Set constraint plasticity", nullptr) {
-	NATURAL4 (constraint, U"Constraint", U"1")
-	REAL4 (plasticity, U"Plasticity", U"1.0")
+	NATURAL (constraint, U"Constraint", U"1")
+	REAL (plasticity, U"Plasticity", U"1.0")
 	OK
 DO
 	MODIFY_EACH (OTGrammar)
@@ -865,7 +855,7 @@ DO
 // MARK: Modify structure
 
 FORM (MODIFY_OTGrammar_removeConstraint, U"OTGrammar: Remove constraint", nullptr) {
-	SENTENCE4 (constraintName, U"Constraint name", U"")
+	SENTENCE (constraintName, U"Constraint name", U"")
 	OK
 DO
 	MODIFY_EACH (OTGrammar)
@@ -874,7 +864,7 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_removeHarmonicallyBoundedCandidates, U"OTGrammar: Remove harmonically bounded candidates", nullptr) {
-	BOOLEAN4 (singly, U"Singly", false)
+	BOOLEAN (singly, U"Singly", false)
 	OK
 DO
 	MODIFY_EACH (OTGrammar)
@@ -885,7 +875,7 @@ DO
 // MARK: OTGRAMMAR & STRINGS
 
 FORM (NEW1_MODIFY_OTGrammar_Strings_inputsToOutputs, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	FIND_TWO (OTGrammar, Strings)
@@ -897,23 +887,23 @@ DO
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsGrammatical) {
 	NUMBER_TWO (OTGrammar, Strings)
-		long result = OTGrammar_areAllPartialOutputsGrammatical (me, you);
+		integer result = OTGrammar_areAllPartialOutputsGrammatical (me, you);
 	NUMBER_TWO_END (result ? U" (all grammatical)" : U" (not all grammatical)")
 }
 
 DIRECT (BOOLEAN_OTGrammar_Strings_areAllPartialOutputsSinglyGrammatical) {
 	NUMBER_TWO (OTGrammar, Strings)
-		long result = OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you);
+		integer result = OTGrammar_areAllPartialOutputsSinglyGrammatical (me, you);
 	NUMBER_TWO_END (result ? U" (all singly grammatical)" : U" (not all singly grammatical)")
 }
 
 FORM (MODIFY_OTGrammar_Stringses_learn, U"OTGrammar: Learn", U"OTGrammar & 2 Strings: Learn...") {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	REAL4 (plasticity, U"Plasticity", U"0.1")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", 1)
-	NATURAL4 (numberOfChews, U"Number of chews", U"1")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (plasticity, U"Plasticity", U"0.1")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
+	NATURAL (numberOfChews, U"Number of chews", U"1")
 	OK
 DO
 	MODIFY_FIRST_OF_ONE_AND_COUPLE_WEAK (OTGrammar, Strings)
@@ -923,13 +913,13 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_Strings_learnFromPartialOutputs, U"OTGrammar: Learn from partial adult outputs", nullptr) {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	REAL4 (plasticity, U"Plasticity", U"0.1")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", 1)
-	NATURAL4 (numberOfChews, U"Number of chews", U"1")
-	INTEGER4 (storeHistoryEvery, U"Store history every", U"0")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (plasticity, U"Plasticity", U"0.1")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
+	NATURAL (numberOfChews, U"Number of chews", U"1")
+	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
 	FIND_TWO (OTGrammar, Strings)
@@ -951,9 +941,9 @@ DO
 // MARK: OTGRAMMAR & DISTRIBUTIONS
 
 FORM (REAL_MODIFY_OTGrammar_Distributions_getFractionCorrect, U"OTGrammar & Distributions: Get fraction correct...", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	INTEGER4 (replications, U"Replications", U"100000")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	INTEGER (replications, U"Replications", U"100000")
 	OK
 DO
 	FIND_TWO (OTGrammar, Distributions)
@@ -965,17 +955,17 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs, U"OTGrammar & Distributions: Learn from partial outputs", U"OT learning 6. Shortcut to grammar learning") {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	REAL4 (initialPlasticity, U"Initial plasticity", U"1.0")
-	NATURAL4 (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
-	REAL4 (plasticityDecrement, U"Plasticity decrement", U"0.1")
-	NATURAL4 (numberOfPlasticities, U"Number of plasticities", U"4")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", 1)
-	NATURAL4 (numberOfChews, U"Number of chews", U"1")
-	INTEGER4 (storeHistoryEvery, U"Store history every", U"0")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (initialPlasticity, U"Initial plasticity", U"1.0")
+	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
+	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
+	NATURAL (numberOfPlasticities, U"Number of plasticities", U"4")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
+	NATURAL (numberOfChews, U"Number of chews", U"1")
+	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
 	FIND_TWO (OTGrammar, Distributions)
@@ -995,17 +985,17 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_rrip, U"OTGrammar & Distributions: Learn from partial outputs (rrip)", U"OT learning 6. Shortcut to grammar learning") {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	REAL4 (initialPlasticity, U"Initial plasticity", U"1.0")
-	NATURAL4 (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
-	REAL4 (plasticityDecrement, U"Plasticity decrement", U"0.1")
-	NATURAL4 (numberOfPlasticities, U"Number of plasticities", U"4")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", 1)
-	NATURAL4 (numberOfChews, U"Number of chews", U"1")
-	INTEGER4 (storeHistoryEvery, U"Store history every", U"0")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (initialPlasticity, U"Initial plasticity", U"1.0")
+	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
+	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
+	NATURAL (numberOfPlasticities, U"Number of plasticities", U"4")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
+	NATURAL (numberOfChews, U"Number of chews", U"1")
+	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
 	FIND_TWO (OTGrammar, Distributions)
@@ -1025,17 +1015,17 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_eip, U"OTGrammar & Distributions: Learn from partial outputs (eip)", U"OT learning 6. Shortcut to grammar learning") {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	REAL4 (initialPlasticity, U"Initial plasticity", U"1.0")
-	NATURAL4 (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
-	REAL4 (plasticityDecrement, U"Plasticity decrement", U"0.1")
-	NATURAL4 (numberOfPlasticities, U"Number of plasticities", U"4")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", 1)
-	NATURAL4 (numberOfChews, U"Number of chews", U"1")
-	INTEGER4 (storeHistoryEvery, U"Store history every", U"0")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (initialPlasticity, U"Initial plasticity", U"1.0")
+	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
+	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
+	NATURAL (numberOfPlasticities, U"Number of plasticities", U"4")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
+	NATURAL (numberOfChews, U"Number of chews", U"1")
+	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
 	FIND_TWO (OTGrammar, Distributions)
@@ -1055,17 +1045,17 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_Distributions_learnFromPartialOutputs_wrip, U"OTGrammar & Distributions: Learn from partial outputs (wrip)", U"OT learning 6. Shortcut to grammar learning") {
-	NATURAL4 (columnNumber, U"Column number", U"1")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	REAL4 (initialPlasticity, U"Initial plasticity", U"1.0")
-	NATURAL4 (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
-	REAL4 (plasticityDecrement, U"Plasticity decrement", U"0.1")
-	NATURAL4 (numberOfPlasticities, U"Number of plasticities", U"4")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", 1)
-	NATURAL4 (numberOfChews, U"Number of chews", U"1")
-	INTEGER4 (storeHistoryEvery, U"Store history every", U"0")
+	NATURAL (columnNumber, U"Column number", U"1")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (initialPlasticity, U"Initial plasticity", U"1.0")
+	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
+	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
+	NATURAL (numberOfPlasticities, U"Number of plasticities", U"4")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", 1)
+	NATURAL (numberOfChews, U"Number of chews", U"1")
+	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
 	FIND_TWO (OTGrammar, Distributions)
@@ -1085,7 +1075,7 @@ DO
 }
 
 FORM (LIST_OTGrammar_Distributions_listObligatoryRankings, U"OTGrammar & Distributions: Get fraction correct...", nullptr) {
-	NATURAL4 (columnNumber, U"Column number", U"1")
+	NATURAL (columnNumber, U"Column number", U"1")
 	OK
 DO
 	INFO_TWO (OTGrammar, Distributions)
@@ -1096,8 +1086,8 @@ DO
 // MARK: OTGRAMMAR & PAIRDISTRIBUTION
 
 FORM (MODIFY_OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairDistribution: Find positive weights", U"OTGrammar & PairDistribution: Find positive weights...") {
-	POSITIVE4 (weightFloor, U"Weight floor", U"1.0")
-	POSITIVE4 (marginOfSeparation, U"Margin of separation", U"1.0")
+	POSITIVE (weightFloor, U"Weight floor", U"1.0")
+	POSITIVE (marginOfSeparation, U"Margin of separation", U"1.0")
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (OTGrammar, PairDistribution)
@@ -1106,8 +1096,8 @@ DO
 }
 
 FORM (REAL_MODIFY_OTGrammar_PairDistribution_getFractionCorrect, U"OTGrammar & PairDistribution: Get fraction correct...", nullptr) {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	INTEGER4 (replications, U"Replications", U"100000")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	INTEGER (replications, U"Replications", U"100000")
 	OK
 DO
 	FIND_TWO (OTGrammar, PairDistribution)
@@ -1124,12 +1114,12 @@ DO
 }
 
 FORM (INTEGER_MODIFY_OTGrammar_PairDistribution_getMinimumNumberCorrect, U"OTGrammar & PairDistribution: Get minimum number correct...", nullptr) {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	INTEGER4 (replicationsPerInput, U"Replications per input", U"1000")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	INTEGER (replicationsPerInput, U"Replications per input", U"1000")
 	OK
 DO
 	FIND_TWO (OTGrammar, PairDistribution)
-		long result;
+		integer result;
 		try {
 			result = OTGrammar_PairDistribution_getMinimumNumberCorrect (me, you,
 				evaluationNoise, replicationsPerInput);
@@ -1143,15 +1133,15 @@ DO
 }
 
 FORM (MODIFY_OTGrammar_PairDistribution_learn, U"OTGrammar & PairDistribution: Learn", U"OT learning 6. Shortcut to grammar learning") {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	POSITIVE4 (initialPlasticity, U"Initial plasticity", U"1.0")
-	NATURAL4 (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
-	REAL4 (plasticityDecrement, U"Plasticity decrement", U"0.1")
-	NATURAL4 (numberOfPlasticities, U"Number of plasticities", U"4")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	BOOLEAN4 (honourLocalRankings, U"Honour local rankings", true)
-	NATURAL4 (numberOfChews, U"Number of chews", U"1")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	POSITIVE (initialPlasticity, U"Initial plasticity", U"1.0")
+	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
+	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
+	NATURAL (numberOfPlasticities, U"Number of plasticities", U"4")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	BOOLEAN (honourLocalRankings, U"Honour local rankings", true)
+	NATURAL (numberOfChews, U"Number of chews", U"1")
 	OK
 DO
 	MODIFY_FIRST_OF_TWO_WEAK (OTGrammar, PairDistribution)
@@ -1173,38 +1163,35 @@ DIRECT (LIST_OTGrammar_PairDistribution_listObligatoryRankings) {
 // MARK: New
 
 FORM (NEW1_Create_multi_level_metrics_grammar, U"Create multi-level metrics grammar", nullptr) {
-	OPTIONMENU4 (initialRanking, U"Initial ranking", 1)
-		OPTION (U"Equal")
-		OPTION (U"Foot form high")
-		OPTION (U"WSP high")
-	OPTIONMENU4 (trochaicityConstraint, U"Trochaicity constraint", 1)
+	OPTIONMENU_ENUM (initialRanking, U"Initial ranking", kOTGrammar_createMetricsGrammar_initialRanking, DEFAULT)
+	OPTIONMENU (trochaicityConstraint, U"Trochaicity constraint", 1)
 		OPTION (U"FtNonfinal")
 		OPTION (U"Trochaic")
-	BOOLEAN4 (includeFootBimoraic, U"Include FootBimoraic", false)
-	BOOLEAN4 (includeFootBisyllabic, U"Include FootBisyllabic", false)
-	BOOLEAN4 (includePeripheral, U"Include Peripheral", false)
-	OPTIONMENU4 (nonfinalityConstraint, U"Nonfinality constraint", 1)
+	BOOLEAN (includeFootBimoraic, U"Include FootBimoraic", false)
+	BOOLEAN (includeFootBisyllabic, U"Include FootBisyllabic", false)
+	BOOLEAN (includePeripheral, U"Include Peripheral", false)
+	OPTIONMENU (nonfinalityConstraint, U"Nonfinality constraint", 1)
 		OPTION (U"Nonfinal")
 		OPTION (U"MainNonfinal")
 		OPTION (U"HeadNonfinal")
-	BOOLEAN4 (overtFormsHaveSecondaryStress, U"Overt forms have secondary stress", true)
-	BOOLEAN4 (includeClashAndLapse, U"Include *Clash and *Lapse", false)
-	BOOLEAN4 (includeCodas, U"Include codas", false)
+	BOOLEAN (overtFormsHaveSecondaryStress, U"Overt forms have secondary stress", true)
+	BOOLEAN (includeClashAndLapse, U"Include *Clash and *Lapse", false)
+	BOOLEAN (includeCodas, U"Include codas", false)
 	OK
 DO
 	CREATE_ONE
 		autoOTMulti result = OTMulti_create_metrics (initialRanking, trochaicityConstraint,
 			includeFootBimoraic, includeFootBisyllabic, includePeripheral, nonfinalityConstraint,
 			overtFormsHaveSecondaryStress, includeClashAndLapse, includeCodas);
-	CREATE_ONE_END (GET_STRING (U"Initial ranking"))
+	CREATE_ONE_END (kOTGrammar_createMetricsGrammar_initialRanking_getText (initialRanking))
 }
 
 // MARK: Draw
 
 FORM (GRAPHICS_OTMulti_drawTableau, U"Draw tableau", U"OT learning") {
-	SENTENCE4 (partialForm1, U"Partial form 1", U"")
-	SENTENCE4 (partialForm2, U"Partial form 2", U"")
-	BOOLEAN4 (showDisharmonies, U"Show disharmonies", true)
+	SENTENCE (partialForm1, U"Partial form 1", U"")
+	SENTENCE (partialForm2, U"Partial form 2", U"")
+	BOOLEAN (showDisharmonies, U"Show disharmonies", true)
 	OK
 DO
 	GRAPHICS_EACH (OTMulti)
@@ -1213,9 +1200,9 @@ DO
 }
 
 FORM (GRAPHICS_OTMulti_drawTableau_narrowly, U"Draw tableau (narrowly)", U"OT learning") {
-	SENTENCE4 (partialForm1, U"Partial form 1", U"")
-	SENTENCE4 (partialForm2, U"Partial form 2", U"")
-	BOOLEAN4 (showDisharmonies, U"Show disharmonies", true)
+	SENTENCE (partialForm1, U"Partial form 1", U"")
+	SENTENCE (partialForm2, U"Partial form 2", U"")
+	BOOLEAN (showDisharmonies, U"Show disharmonies", true)
 	OK
 DO
 	GRAPHICS_EACH (OTMulti)
@@ -1227,24 +1214,23 @@ DO
 
 DIRECT (WINDOW_OTMulti_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit an OTMulti from batch.");
-	LOOP {
-		iam (OTMulti);
+	FIND_ONE_WITH_IOBJECT (OTMulti)
 		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: Query
 
 DIRECT (INTEGER_OTMulti_getNumberOfConstraints) {
 	NUMBER_ONE (OTMulti)
-		long result = my numberOfConstraints;
+		integer result = my numberOfConstraints;
 	NUMBER_ONE_END (U" constraints")
 }
 
 FORM (STRING_OTMulti_getConstraint, U"Get constraint name", nullptr) {
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
 	STRING_ONE (OTMulti)
@@ -1255,16 +1241,16 @@ DO
 }
 
 FORM (INTEGER_OTMulti_getConstraintIndexFromName, U"OTMulti: Get constraint number", nullptr) {
-	SENTENCE4 (constraintName, U"Constraint name", U"")
+	SENTENCE (constraintName, U"Constraint name", U"")
 	OK
 DO
 	NUMBER_ONE (OTMulti)
-		long result = OTMulti_getConstraintIndexFromName (me, constraintName);
+		integer result = OTMulti_getConstraintIndexFromName (me, constraintName);
 	NUMBER_ONE_END (U" (index of constraint ", constraintName, U")")
 }
 
 FORM (REAL_OTMulti_getRankingValue, U"Get ranking value", nullptr) {
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTMulti)
@@ -1275,7 +1261,7 @@ DO
 }
 
 FORM (REAL_OTMulti_getDisharmony, U"Get disharmony", nullptr) {
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTMulti)
@@ -1287,12 +1273,12 @@ DO
 
 DIRECT (INTEGER_OTMulti_getNumberOfCandidates) {
 	NUMBER_ONE (OTMulti)
-		long result = my numberOfCandidates;
+		integer result = my numberOfCandidates;
 	NUMBER_ONE_END (U" candidates")
 }
 
 FORM (STRING_OTMulti_getCandidate, U"Get candidate", nullptr) {
-	NATURAL4 (candidateNumber, U"Candidate number", U"1")
+	NATURAL (candidateNumber, U"Candidate number", U"1")
 	OK
 DO
 	STRING_ONE (OTMulti)
@@ -1303,8 +1289,8 @@ DO
 }
 
 FORM (INTEGER_OTMulti_getNumberOfViolations, U"Get number of violations", nullptr) {
-	NATURAL4 (candidateNumber, U"Candidate number", U"1")
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
+	NATURAL (candidateNumber, U"Candidate number", U"1")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
 	OK
 DO
 	NUMBER_ONE (OTMulti)
@@ -1312,24 +1298,24 @@ DO
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
-		long result = my candidates [candidateNumber]. marks [constraintNumber];
+		integer result = my candidates [candidateNumber]. marks [constraintNumber];
 	NUMBER_ONE_END (U" violations")
 }
 
 FORM (INTEGER_OTMulti_getWinner, U"OTMulti: Get winner", nullptr) {
-	SENTENCE4 (partialForm1, U"Partial form 1", U"")
-	SENTENCE4 (partialForm2, U"Partial form 2", U"")
+	SENTENCE (partialForm1, U"Partial form 1", U"")
+	SENTENCE (partialForm2, U"Partial form 2", U"")
 	OK
 DO
 	NUMBER_ONE (OTMulti)
-		long result = OTMulti_getWinner (me, partialForm1, partialForm2);
+		integer result = OTMulti_getWinner (me, partialForm1, partialForm2);
 	NUMBER_ONE_END (U" (winner)")
 }
 
 // MARK: Evaluate
 
 FORM (MODIFY_OTMulti_evaluate, U"OTMulti: Evaluate", nullptr) {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	MODIFY_EACH (OTMulti)
@@ -1338,9 +1324,9 @@ DO
 }
 
 FORM (STRING_MODIFY_OTMulti_generateOptimalForm, U"OTMulti: Generate optimal form", nullptr) {
-	SENTENCE4 (partialForm1, U"Partial form 1", U"")
-	SENTENCE4 (partialForm2, U"Partial form 2", U"")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	SENTENCE (partialForm1, U"Partial form 1", U"")
+	SENTENCE (partialForm2, U"Partial form 2", U"")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	FIND_ONE (OTMulti)
@@ -1352,10 +1338,10 @@ DO
 }
 
 FORM (NEW1_MODIFY_OTMulti_generateOptimalForms, U"OTMulti: Generate optimal forms", nullptr) {
-	SENTENCE4 (partialForm1, U"Partial form 1", U"")
-	SENTENCE4 (partialForm2, U"Partial form 2", U"")
-	NATURAL4 (numberOfTrials, U"Number of trials", U"1000")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	SENTENCE (partialForm1, U"Partial form 1", U"")
+	SENTENCE (partialForm2, U"Partial form 2", U"")
+	NATURAL (numberOfTrials, U"Number of trials", U"1000")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	FIND_ONE (OTMulti)
@@ -1367,10 +1353,10 @@ DO
 }
 
 FORM (NEW_MODIFY_OTMulti_to_Distribution, U"OTMulti: Compute output distribution", nullptr) {
-	SENTENCE4 (partialForm1, U"Partial form 1", U"")
-	SENTENCE4 (partialForm2, U"Partial form 2", U"")
-	NATURAL4 (numberOfTrials, U"Number of trials", U"100000")
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
+	SENTENCE (partialForm1, U"Partial form 1", U"")
+	SENTENCE (partialForm2, U"Partial form 2", U"")
+	NATURAL (numberOfTrials, U"Number of trials", U"100000")
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
 	OK
 DO
 	LOOP {
@@ -1390,9 +1376,9 @@ END }
 // MARK: Modify ranking
 
 FORM (MODIFY_OTMulti_setRanking, U"OTMulti: Set ranking", nullptr) {
-	NATURAL4 (constraint, U"Constraint", U"1")
-	REAL4 (ranking, U"Ranking", U"100.0")
-	REAL4 (disharmony, U"Disharmony", U"100.0")
+	NATURAL (constraint, U"Constraint", U"1")
+	REAL (ranking, U"Ranking", U"100.0")
+	REAL (disharmony, U"Disharmony", U"100.0")
 	OK
 DO
 	MODIFY_EACH (OTMulti)
@@ -1401,7 +1387,7 @@ DO
 }
 
 FORM (MODIFY_OTMulti_resetAllRankings, U"OTMulti: Reset all rankings", nullptr) {
-	REAL4 (ranking, U"Ranking", U"100.0")
+	REAL (ranking, U"Ranking", U"100.0")
 	OK
 DO
 	MODIFY_EACH (OTMulti)
@@ -1410,15 +1396,15 @@ DO
 }
 
 FORM (MODIFY_OTMulti_learnOne, U"OTMulti: Learn one", nullptr) {
-	SENTENCE4 (partialForm1, U"Partial form 1", U"")
-	SENTENCE4 (partialForm2, U"Partial form 2", U"")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	OPTIONMENU4 (direction, U"Direction", 3)
+	SENTENCE (partialForm1, U"Partial form 1", U"")
+	SENTENCE (partialForm2, U"Partial form 2", U"")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU (direction, U"Direction", 3)
 		OPTION (U"forward")
 		OPTION (U"backward")
 		OPTION (U"bidirectionally")
-	POSITIVE4 (plasticity, U"Plasticity", U"0.1")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	POSITIVE (plasticity, U"Plasticity", U"0.1")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
 	OK
 DO
 	MODIFY_EACH_WEAK (OTMulti)
@@ -1430,10 +1416,10 @@ DO
 // MARK: Modify behaviour
 
 FORM (MODIFY_OTMulti_setDecisionStrategy, U"OTMulti: Set decision strategy", nullptr) {
-	RADIO_ENUM4 (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
+	RADIO_ENUM (decisionStrategy, U"Decision strategy", kOTGrammar_decisionStrategy, DEFAULT)
 OK
 	FIND_ONE (OTMulti)
-		SET_ENUM (U"Decision strategy", kOTGrammar_decisionStrategy, my decisionStrategy);
+		SET_ENUM (decisionStrategy, kOTGrammar_decisionStrategy, my decisionStrategy);
 DO
 	MODIFY_EACH (OTMulti)
 		my decisionStrategy = decisionStrategy;
@@ -1441,10 +1427,10 @@ DO
 }
 
 FORM (MODIFY_OTMulti_setLeak, U"OTGrammar: Set leak", nullptr) {
-	REAL4 (leak, U"Leak", U"0.0")
+	REAL (leak, U"Leak", U"0.0")
 OK
 	FIND_ONE (OTMulti)
-		SET_REAL (U"Leak", my leak);
+		SET_REAL (leak, my leak)
 DO
 	MODIFY_EACH (OTMulti)
 		my leak = leak;
@@ -1452,8 +1438,8 @@ DO
 }
 
 FORM (MODIFY_OTMulti_setConstraintPlasticity, U"OTMulti: Set constraint plasticity", nullptr) {
-	NATURAL4 (constraintNumber, U"Constraint number", U"1")
-	REAL4 (plasticity, U"Plasticity", U"1.0")
+	NATURAL (constraintNumber, U"Constraint number", U"1")
+	REAL (plasticity, U"Plasticity", U"1.0")
 	OK
 DO
 	MODIFY_EACH (OTMulti)
@@ -1464,7 +1450,7 @@ DO
 // MARK: Modify structure
 
 FORM (MODIFY_OTMulti_removeConstraint, U"OTMulti: Remove constraint", nullptr) {
-	SENTENCE4 (constraintName, U"Constraint name", U"")
+	SENTENCE (constraintName, U"Constraint name", U"")
 	OK
 DO
 	MODIFY_EACH (OTMulti)
@@ -1475,18 +1461,18 @@ DO
 // MARK: OTMULTI & PAIRDISTRIBUTION
 
 FORM (DANGEROUS_MODIFY_OTMulti_PairDistribution_learn, U"OTMulti & PairDistribution: Learn", nullptr) {
-	REAL4 (evaluationNoise, U"Evaluation noise", U"2.0")
-	OPTIONMENU_ENUM4 (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
-	OPTIONMENU4 (direction, U"Direction", 3)
+	REAL (evaluationNoise, U"Evaluation noise", U"2.0")
+	OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	OPTIONMENU (direction, U"Direction", 3)
 		OPTION (U"forward")
 		OPTION (U"backward")
 		OPTION (U"bidirectionally")
-	POSITIVE4 (initialPlasticity, U"Initial plasticity", U"1.0")
-	NATURAL4 (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
-	REAL4 (plasticityDecrement, U"Plasticity decrement", U"0.1")
-	NATURAL4 (numberOfPlasticities, U"Number of plasticities", U"4")
-	REAL4 (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
-	INTEGER4 (storeHistoryEvery, U"Store history every", U"0")
+	POSITIVE (initialPlasticity, U"Initial plasticity", U"1.0")
+	NATURAL (replicationsPerPlasticity, U"Replications per plasticity", U"100000")
+	REAL (plasticityDecrement, U"Plasticity decrement", U"0.1")
+	NATURAL (numberOfPlasticities, U"Number of plasticities", U"4")
+	REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
+	INTEGER (storeHistoryEvery, U"Store history every", U"0")
 	OK
 DO
 	FIND_TWO (OTMulti, PairDistribution)
@@ -1509,7 +1495,7 @@ DO
 // MARK: OTMULTI & STRINGS
 
 FORM (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to outputs", U"OTGrammar: Inputs to outputs...") {
-	REAL4 (evaluationNoide, U"Evaluation noise", U"2.0")
+	REAL (evaluationNoide, U"Evaluation noise", U"2.0")
 	OK
 DO
 	FIND_TWO (OTMulti, Strings)
@@ -1524,10 +1510,10 @@ DO
 // MARK: New
 
 FORM (NEW1_Create_RBM, U"Create RBM (Restricted Boltzmann Machine)", nullptr) {
-	WORD4 (name, U"Name", U"network")
-	NATURAL4 (numberOfInputNodes, U"Number of input nodes", U"50")
-	NATURAL4 (numberOfOutputNodes, U"Number of output nodes", U"20")
-	BOOLEAN4 (inputsAreBinary, U"Inputs are binary", true)
+	WORD (name, U"Name", U"network")
+	NATURAL (numberOfInputNodes, U"Number of input nodes", U"50")
+	NATURAL (numberOfOutputNodes, U"Number of output nodes", U"20")
+	BOOLEAN (inputsAreBinary, U"Inputs are binary", true)
 	OK
 DO
 	CREATE_ONE
@@ -1574,7 +1560,7 @@ DIRECT (MODIFY_RBM_sampleOutput) {
 }
 
 FORM (MODIFY_RBM_update, U"RBM: Update", nullptr) {
-	POSITIVE4 (learningRate, U"Learning rate", U"0.001")
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
 	MODIFY_EACH (RBM)
@@ -1629,7 +1615,7 @@ DIRECT (NEW_RBM_extractWeights) {
 // MARK: - RBM & PATTERN
 
 FORM (MODIFY_RBM_PatternList_applyToInput, U"RBM & PatternList: Apply to input", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (RBM, PatternList)
@@ -1638,7 +1624,7 @@ DO
 }
 
 FORM (MODIFY_RBM_PatternList_applyToOutput, U"RBM & PatternList: Apply to output", nullptr) {
-	NATURAL4 (rowNumber, U"Row number", U"1")
+	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (RBM, PatternList)
@@ -1647,11 +1633,179 @@ DO
 }
 
 FORM (MODIFY_RBM_PatternList_learn, U"RBM & PatternList: Learn", nullptr) {
-	POSITIVE4 (learningRate, U"Learning rate", U"0.001")
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (RBM, PatternList)
 		RBM_PatternList_learn (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+// MARK: - DEEP BELIEF NETWORK
+
+// MARK: New
+
+FORM (NEW1_Create_DeepBeliefNetwork, U"Create DeepBeliefNetwork", nullptr) {
+	WORD (name, U"Name", U"network")
+	NUMVEC (numbersOfNodes, U"Numbers of nodes", U"{ 30, 50, 20 }")
+	BOOLEAN (inputsAreBinary, U"Inputs are binary", false)
+	OK
+DO
+	CREATE_ONE
+		autoDeepBeliefNetwork result = DeepBeliefNetwork_create (numbersOfNodes, inputsAreBinary);
+	CREATE_ONE_END (name)
+}
+
+// MARK: Modify
+
+FORM (MODIFY_DeepBeliefNetwork_spreadUp, U"DeepBeliefNetwork: Spread up", nullptr) {
+	RADIO_ENUM (activationType, U"Activation type", kDeepBeliefNetwork_activationType, STOCHASTIC)
+	OK
+DO
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_spreadUp (me, activationType);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_spreadDown, U"DeepBeliefNetwork: Spread down", nullptr) {
+	RADIO_ENUM (activationType, U"Activation type", kDeepBeliefNetwork_activationType, DETERMINISTIC)
+	OK
+DO
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_spreadDown (me, activationType);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_DeepBeliefNetwork_spreadUp_reconstruction) {
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_spreadUp_reconstruction (me);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_DeepBeliefNetwork_spreadDown_reconstruction) {
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_spreadDown_reconstruction (me);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_DeepBeliefNetwork_sampleInput) {
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_sampleInput (me);
+	MODIFY_EACH_END
+}
+
+DIRECT (MODIFY_DeepBeliefNetwork_sampleOutput) {
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_sampleOutput (me);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_update, U"DeepBeliefNetwork: Update", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_EACH (DeepBeliefNetwork)
+		DeepBeliefNetwork_update (me, learningRate);
+	MODIFY_EACH_END
+}
+
+// MARK: Extract
+
+DIRECT (NEW_DeepBeliefNetwork_extractInputActivities) {
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractInputActivities (me);
+	CONVERT_EACH_END (my name, U"_inputActivities")
+}
+
+DIRECT (NEW_DeepBeliefNetwork_extractOutputActivities) {
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractOutputActivities (me);
+	CONVERT_EACH_END (my name, U"_outputActivities")
+}
+
+DIRECT (NEW_DeepBeliefNetwork_extractInputReconstruction) {
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractInputReconstruction (me);
+	CONVERT_EACH_END (my name, U"_inputReconstruction")
+}
+
+DIRECT (NEW_DeepBeliefNetwork_extractOutputReconstruction) {
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractOutputReconstruction (me);
+	CONVERT_EACH_END (my name, U"_outputReconstruction")
+}
+
+FORM (NEW_DeepBeliefNetwork_extractInputBiases, U"DeepBeliefNetwork: Extract input biases", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractInputBiases (me, layerNumber);
+	CONVERT_EACH_END (my name, U"_inputBiases")
+}
+
+FORM (NEW_DeepBeliefNetwork_extractOutputBiases, U"DeepBeliefNetwork: Extract output biases", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractOutputBiases (me, layerNumber);
+	CONVERT_EACH_END (my name, U"_outputBiases")
+}
+
+FORM (NEW_DeepBeliefNetwork_extractWeights, U"DeepBeliefNetwork: Extract weights", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	CONVERT_EACH (DeepBeliefNetwork)
+		autoMatrix result = DeepBeliefNetwork_extractWeights (me, layerNumber);
+	CONVERT_EACH_END (my name, U"_weights")
+}
+
+FORM (NUMMAT_DeepBeliefNetwork_getWeights, U"DeepBeliefNetwork: Get weigths", nullptr) {
+	NATURAL (layerNumber, U"Layer number", U"1")
+	OK
+DO
+	NUMMAT_ONE (DeepBeliefNetwork)
+		autonummat result = DeepBeliefNetwork_getWeights_nummat (me, layerNumber);
+	NUMMAT_ONE_END
+}
+
+// MARK: - RBM & PATTERN
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_applyToInput, U"DeepBeliefNetwork & PatternList: Apply to input", nullptr) {
+	NATURAL (rowNumber, U"Row number", U"1")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_applyToInput (me, you, rowNumber);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_applyToOutput, U"DeepBeliefNetwork & PatternList: Apply to output", nullptr) {
+	NATURAL (rowNumber, U"Row number", U"1")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_applyToOutput (me, you, rowNumber);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_learn, U"DeepBeliefNetwork & PatternList: Learn", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_learn (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (MODIFY_DeepBeliefNetwork_PatternList_learnByLayer, U"DeepBeliefNetwork & PatternList: Learn by layer", nullptr) {
+	POSITIVE (learningRate, U"Learning rate", U"0.001")
+	OK
+DO
+	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
+		DeepBeliefNetwork_PatternList_learnByLayer (me, you, learningRate);
 	MODIFY_FIRST_OF_TWO_END
 }
 
@@ -1661,7 +1815,7 @@ void praat_uvafon_gram_init ();
 void praat_uvafon_gram_init () {
 	Thing_recognizeClassesByName (classNetwork,
 		classOTGrammar, classOTHistory, classOTMulti,
-		classRBM,
+		classRBM, classDeepBeliefNetwork,
 		nullptr);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
@@ -1786,6 +1940,7 @@ void praat_uvafon_gram_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create rectangular Network...", nullptr, 1, NEW1_Create_rectangular_Network);
 		praat_addMenuCommand (U"Objects", U"New", U"Create rectangular Network (vertical)...", nullptr, 1, NEW1_Create_rectangular_Network_vertical);
 		praat_addMenuCommand (U"Objects", U"New", U"Create RBM...", nullptr, 1, NEW1_Create_RBM);
+		praat_addMenuCommand (U"Objects", U"New", U"Create DeepBeliefNetwork...", nullptr, 1, NEW1_Create_DeepBeliefNetwork);
 
 	praat_addAction1 (classNetwork, 0, U"Draw...", nullptr, 0, GRAPHICS_Network_draw);
 	praat_addAction1 (classNetwork, 1, U"Tabulate -", nullptr, 0, nullptr);
@@ -1834,6 +1989,30 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, MODIFY_RBM_PatternList_applyToInput);
 	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_RBM_PatternList_applyToOutput);
 	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_RBM_PatternList_learn);
+
+	praat_addAction1 (classDeepBeliefNetwork, 0, U"Query", nullptr, 0, nullptr);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Get weights...", nullptr, 0, NUMMAT_DeepBeliefNetwork_getWeights);
+	praat_addAction1 (classDeepBeliefNetwork, 0, U"Modify", nullptr, 0, nullptr);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread up...", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadUp);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread down...", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadDown);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread up (reconstruction)", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadUp_reconstruction);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread down (reconstruction)", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadDown_reconstruction);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Sample input", nullptr, 0, MODIFY_DeepBeliefNetwork_sampleInput);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Sample output", nullptr, 0, MODIFY_DeepBeliefNetwork_sampleOutput);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Update...", nullptr, 0, MODIFY_DeepBeliefNetwork_update);
+	praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract", nullptr, 0, nullptr);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input activities", nullptr, 0, NEW_DeepBeliefNetwork_extractInputActivities);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output activities", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputActivities);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input reconstruction", nullptr, 0, NEW_DeepBeliefNetwork_extractInputReconstruction);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output reconstruction", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputReconstruction);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input biases...", nullptr, 0, NEW_DeepBeliefNetwork_extractInputBiases);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output biases...", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputBiases);
+		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract weights...", nullptr, 0, NEW_DeepBeliefNetwork_extractWeights);
+
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_applyToInput);
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_applyToOutput);
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_learn);
+	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Learn by layer...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_learnByLayer);
 }
 
 /* End of file praat_gram.cpp */

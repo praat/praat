@@ -3,7 +3,7 @@
 
 /* KNN_prune.h
  *
- * Copyright (C) 2007-2008 Ola Söder
+ * Copyright (C) 2007-2008 Ola Söder, 2011,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,60 +37,60 @@
 /////////////////////////////////////////////////////
 
 // Prune
-long KNN_prune_prune
+integer KNN_prune_prune
 (
     KNN me,             // the classifier to be pruned
     double n,           // pruning degree: noise, 0 <= n <= 1
     double r,           // pruning redundancy: noise, 0 <= n <= 1
-    long k              // k(!)
+    integer k           // k(!)
 );
 
 // sort indices according to pruning order defined by rule 2
 void KNN_prune_sort
 (
-    PatternList p,          // source
+    PatternList p,      // source
     Categories c,       // source
-    long k,             // k(!)
-    long * indices,     // indices of instances to be sorted
-    long nindices       // the number of instances to be sorted
+    integer k,          // k(!)
+    integer *indices,   // indices of instances to be sorted
+    integer nindices    // the number of instances to be sorted
 );
 
 // k-coverage
-long KNN_prune_kCoverage
+integer KNN_prune_kCoverage
 (
-    PatternList p,          // source
+    PatternList p,      // source
     Categories c,       // source
-    long y,             // source instance index
-    long k,             // k(!)
-    long * indices      // Out: kCoverage set
+    integer y,          // source instance index
+    integer k,          // k(!)
+    integer * indices   // Out: kCoverage set
 );
 
 // testing for superfluousness
 int KNN_prune_superfluous
 (
-    PatternList p,          // source
+    PatternList p,      // source
     Categories c,       // source
-    long y,             // source instance index
-    long k,             // k(!)
-    long skipper        // Skipping instance skipper
+    integer y,          // source instance index
+    integer k,          // k(!)
+    integer skipper     // Skipping instance skipper
 );
 
 // testing for criticalness
 int KNN_prune_critical
 (
-    PatternList p,          // source
+    PatternList p,      // source
     Categories c,       // source
-    long y,             // source instance index
-    long k              // k(!)
+    integer y,          // source instance index
+    integer k           // k(!)
 );
 
 // testing for noisyness
 int KNN_prune_noisy
 (
-    PatternList p,          // source
+    PatternList p,      // source
     Categories c,       // source
-    long y,             // source instance index
-    long k              // k(!)
+    integer y,          // source instance index
+    integer k           // k(!)
 );
 
 /* End of file KNN_prune.h */

@@ -551,7 +551,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { '0', '^', 2, 1, { "/ringover",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  42,  42,  42,  42, UNICODE_COMBINING_RING_ABOVE }, // voiceless
 { 'v', '^', 2, 1, { "/caronover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  38,  38,  38,  38, UNICODE_COMBINING_CARON }, // hacek
 { 'N', '^', 2, 1, { "/breveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  40,  40,  40,  40, UNICODE_COMBINING_BREVE }, // nonsyllabic
-{ 'c', 'n', 2, 1, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // ? unreleased
+{ 'c', 'n', 2, 2, { "/corner",         260, 0,   299, 299,  260, 0,    260, 0,   0,   0   }, 124, 124, 124, 124, UNICODE_COMBINING_LEFT_ANGLE_ABOVE }, // ? unreleased
 { 'c', 'v', 2, 1, { "/halfringleft",     0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  55,  55,  55,  55, UNICODE_COMBINING_LEFT_HALF_RING_BELOW }, // unrounded
 { 'T', '^', 2, 1, { "/raising",          0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  51,  51,  51,  51, UNICODE_COMBINING_UP_TACK_BELOW },
 { 'T', 'v', 2, 1, { "/lowering",         0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  52,  52,  52,  52, UNICODE_COMBINING_DOWN_TACK_BELOW },
@@ -637,7 +637,7 @@ static void init () {
 }
 
 char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes) {
-	long nquote = 0;
+	integer nquote = 0;
 	char32_t kar, kar1, kar2;
 	if (! inited) init ();
 	while ((kar = *generic++) != U'\0') {
@@ -654,7 +654,7 @@ char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int e
 			}
 		}
 		if (kar == U'\\' && (kar1 = generic [0]) >= 32 && kar1 <= 126 && (kar2 = generic [1]) >= 32 && kar2 <= 126) {
-			long location = where [kar1 - 32] [kar2 - 32];
+			integer location = where [kar1 - 32] [kar2 - 32];
 			if (location == 0) {
 				*native++ = kar;
 				*native++ = kar1;   /* Even if this is a backslash itself... */

@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,8 +83,8 @@ Thing_define (Praat_Command, Thing) {
 	const char32 *window, *menu;
 	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
 	const char32 *after;   // title of previous command, often null; if starting with an asterisk (deprecation), then a reference to the replacement
-	int32 uniqueID;   // for sorting the added commands
-	int32 sortingTail;
+	integer uniqueID;   // for sorting the added commands
+	integer sortingTail;
 };
 
 #define praat_STARTING_UP  1
@@ -92,7 +92,7 @@ Thing_define (Praat_Command, Thing) {
 #define praat_HANDLING_EVENTS  3
 
 int praat_numberOfSelected (ClassInfo klas);
-long praat_idOfSelected (ClassInfo klas, int inplace);
+integer praat_idOfSelected (ClassInfo klas, int inplace);
 char32 * praat_nameOfSelected (ClassInfo klas, int inplace);
 
 /* Used by praat.cpp; defined in praat_picture.cpp.
@@ -123,7 +123,7 @@ void praat_list_foreground ();   // updates the list of objects after background
 void praat_background ();
 void praat_foreground ();
 Editor praat_findEditorFromString (const char32 *string);
-Editor praat_findEditorById (long id);
+Editor praat_findEditorById (integer id);
 
 void praat_showLogo (bool autoPopDown);
 
@@ -132,8 +132,8 @@ void praat_menuCommands_init ();
 void praat_menuCommands_exit ();
 int praat_doMenuCommand (const char32 *command, const char32 *arguments, Interpreter interpreter);   // 0 = not found
 int praat_doMenuCommand (const char32 *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
-long praat_getNumberOfMenuCommands ();
-Praat_Command praat_getMenuCommand (long i);
+integer praat_getNumberOfMenuCommands ();
+Praat_Command praat_getMenuCommand (integer i);
 
 /* Communication with praat_actions.cpp: */
 void praat_actions_show ();
@@ -143,8 +143,8 @@ void praat_actions_createDynamicMenu (GuiWindow window);
 void praat_saveAddedActions (MelderString *buffer);
 int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter);   // 0 = not found
 int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
-long praat_getNumberOfActions ();   // for ButtonEditor
-Praat_Command praat_getAction (long i);   // for ButtonEditor
+integer praat_getNumberOfActions ();   // for ButtonEditor
+Praat_Command praat_getAction (integer i);   // for ButtonEditor
 
 /* Communication with praat_statistics.cpp: */
 void praat_statistics_prefs ();   // at init time

@@ -41,7 +41,7 @@
 
 void FunctionTerms_init (FunctionTerms me, double xmin, double xmax, long numberOfCoefficients);
 
-void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, int allowTrailingZeros);
+void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, bool allowTrailingZeros);
 
 autoFunctionTerms FunctionTerms_create (double xmin, double xmax, long numberOfCoefficients);
 
@@ -87,7 +87,7 @@ Thing_define (Polynomial, FunctionTerms) {
 	// overridden methods:
 	public:
 		virtual double v_evaluate (double x);
-		virtual void v_evaluate_z (dcomplex *z, dcomplex *p);
+		virtual dcomplex v_evaluate_z (dcomplex z);
 		virtual void v_evaluateTerms (double x, double terms[]);
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 		//virtual long v_getDegree ();   David, is het OK dat deze niet overschreven wordt? Ja
@@ -103,7 +103,7 @@ void Polynomial_scaleCoefficients_monic (Polynomial me);
 autoPolynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax);
 /* x' = (x-location) / scale */
 
-void Polynomial_evaluate_z (Polynomial me, dcomplex *z, dcomplex *p);
+dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z);
 /* Evaluate at complex z = x + iy */
 
 
@@ -152,7 +152,7 @@ void Polynomial_divide_firstOrderFactor (Polynomial me, double factor, double *p
 /* Functions: calculate coefficients of new polynomial P(x)/(x-a)
  * if p_remainder != nullptr it will contain 
  *		remainder after dividing by monomial factor x-a.
- * 		NUMundefined if my numberOfCoefficients == 1 (error condition)
+ * 		`undefined` if my numberOfCoefficients == 1 (error condition)
  * Postcondition: my numberOfCoefficients reduced by 1 
 */
 

@@ -59,8 +59,8 @@
  *    *error		    : array[1..nNodes] the error at node
  *    *dw		    	: array[1..nWeights] total derivative for weights
  *    *dwi		   		: array[1..nWeights] derivative per pattern
- * long dimension		: dimension of minimizer space (<= my nWeights)
- * long nPatterns	    : the #patterns to be learned
+ *  long dimension		: dimension of minimizer space (<= my nWeights)
+ *  long nPatterns	    : the #patterns to be learned
  * double **inputPattern: matrix[1..nPatterns][1..nInputs]
  * double **targetActivation: matrix[1..nPatterns][1..nOutputs]
  * double accumulatedCost : accumulated costs of testing/training with patterns
@@ -122,7 +122,7 @@ void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesIn
 autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2,
 	long numberOfOutputs, bool outputsAreLinear);
 
-autostring32 FFNet_createNameFromTopology (FFNet me);
+char32 * FFNet_createNameFromTopology (FFNet me);
 /* Create names as <inputs>-<outputs>, <inputs>-<hidden>-<outputs>,
 	<inputs>-<hidden1>-<hidden2>-<outputs> for 1, 2 or 3 layer networks.
 */

@@ -1,6 +1,6 @@
 /* prefs_install.h
  *
- * Copyright (C) 2013,2015 Paul Boersma
+ * Copyright (C) 2013,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
 #undef prefs_add_int
 #undef prefs_add_int_with_data
 #undef prefs_override_int
-#undef prefs_add_long
-#undef prefs_add_long_with_data
-#undef prefs_override_long
+#undef prefs_add_integer
+#undef prefs_add_integer_with_data
+#undef prefs_override_integer
 #undef prefs_add_bool
 #undef prefs_add_bool_with_data
 #undef prefs_override_bool
@@ -48,11 +48,11 @@
 #define prefs_override_int(Klas,name,version,default) \
 	Preferences_addInt (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
 
-#define prefs_add_long(Klas,name,version,default) \
-	Preferences_addLong (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
-#define prefs_add_long_with_data(Klas,name,version,default)  prefs_add_long (Klas, name, version, default)
-#define prefs_override_long(Klas,name,version,default) \
-	Preferences_addLong (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
+#define prefs_add_integer(Klas,name,version,default) \
+	Preferences_addInteger (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
+#define prefs_add_integer_with_data(Klas,name,version,default)  prefs_add_integer (Klas, name, version, default)
+#define prefs_override_integer(Klas,name,version,default) \
+	Preferences_addInteger (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atoi (sdefault_##name));
 
 #define prefs_add_bool(Klas,name,version,default) \
 	Preferences_addBool (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, default);
@@ -67,10 +67,10 @@
 	Preferences_addDouble (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, Melder_atof (sdefault_##name));
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
-	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated##_##default);
+	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated :: default);
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  prefs_add_enum (Klas, name, version, enumerated, default)
 #define prefs_override_enum(Klas,name,version,enumerated,default) \
-	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated##_##default);
+	Preferences_addEnum (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name, enumerated, enumerated :: default);
 
 #define prefs_add_string(Klas,name,version,default) \
 	Preferences_addString (Melder_cat (U"" #Klas U"." #name, version >= 2 ? U"." #version : U""), & s_##name [0], default);

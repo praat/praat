@@ -1,6 +1,6 @@
 /* GraphicsPostscript.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,8 +127,8 @@ void structGraphicsPostscript :: v_destroy () noexcept {
 	GraphicsPostscript_Parent :: v_destroy ();
 }
 
-autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kGraphicsPostscript_spots spots,
-	enum kGraphicsPostscript_paperSize paperSize, enum kGraphicsPostscript_orientation rotation, double magnification)
+autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, kGraphicsPostscript_spots spots,
+	kGraphicsPostscript_paperSize paperSize, kGraphicsPostscript_orientation rotation, double magnification)
 {
 	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
@@ -136,13 +136,13 @@ autoGraphics Graphics_create_postscriptjob (MelderFile file, int resolution, enu
 	my job = true, my eps = false, my printer = false;
 	my d_printf = (int (*)(void *, const char*, ...)) fprintf;
 	Graphics_init (me.get(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
-	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
+	my photocopyable = spots == kGraphicsPostscript_spots::PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
- 	if (paperSize == kGraphicsPostscript_paperSize_A3) my paperWidth = 842 / 72.0, my paperHeight = 1191 / 72.0;
-	else if (paperSize == kGraphicsPostscript_paperSize_US_LETTER) my paperWidth = 612 / 72.0, my paperHeight = 792 / 72.0;
+ 	if (paperSize == kGraphicsPostscript_paperSize::A3) my paperWidth = 842 / 72.0, my paperHeight = 1191 / 72.0;
+	else if (paperSize == kGraphicsPostscript_paperSize::US_LETTER) my paperWidth = 612 / 72.0, my paperHeight = 792 / 72.0;
 	else my paperWidth = 595 / 72.0, my paperHeight = 842 / 72.0;
-	my landscape = rotation == kGraphicsPostscript_orientation_LANDSCAPE;
+	my landscape = rotation == kGraphicsPostscript_orientation::LANDSCAPE;
 	my magnification = magnification;
 	my includeFonts = true;
 	my d_file = Melder_fopen (file, "w");
@@ -194,7 +194,7 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 {
 	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
-	int left, right, top, bottom;
+	integer left, right, top, bottom;
 	my postScript = true, my languageLevel = 2;
 	my job = false, my eps = true, my printer = false;
 	#if defined (macintosh)
@@ -204,7 +204,7 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 		my d_printf = (int (*)(void *, const char*, ...)) fprintf;
 	#endif
 	Graphics_init (me.get(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
-	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
+	my photocopyable = spots == kGraphicsPostscript_spots::PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
 	my paperWidth = 7.5, my paperHeight = 11.0;
@@ -222,10 +222,10 @@ autoGraphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGra
 	 * We will honour version 3.0 of the DSC for Encapsulated PostScript files,
 	 * which includes supplying the bounding box information.
 	 */
-	left = (int) floor (x1inches * 72);
-	right = (int) ceil (x2inches * 72);
-	top = (int) ceil ((y2inches - my d_y1wNDC) * 72);
-	bottom = (int) floor ((y1inches - my d_y1wNDC) * 72);
+	left  = Melder_ifloor   (x1inches * 72);
+	right = Melder_iceiling (x2inches * 72);
+	top    = Melder_iceiling ((y2inches - my d_y1wNDC) * 72);
+	bottom = Melder_ifloor   ((y1inches - my d_y1wNDC) * 72);
 	my d_printf (my d_file, "%%!PS-Adobe-3.0 EPSF-3.0\n");
 	my d_printf (my d_file, "%%%%BoundingBox: %d %d %d %d\n", left, bottom, right, top);
 	my d_printf (my d_file, "%%%%Creator: Praat Shell 5.1\n");
@@ -249,12 +249,12 @@ autoGraphics Graphics_create_postscriptprinter () {
 	my job = false, my eps = false, my printer = true;
 	my d_printf = Printer_postScript_printf;
 	Graphics_init (me.get(), thePrinter. resolution);   // virtual resolution
-	my photocopyable = thePrinter. spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
+	my photocopyable = thePrinter. spots == kGraphicsPostscript_spots::PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
 	my paperWidth = (double) thePrinter. paperWidth / my resolution;
 	my paperHeight = (double) thePrinter. paperHeight / my resolution;
-	my landscape = thePrinter. orientation == kGraphicsPostscript_orientation_LANDSCAPE;
+	my landscape = thePrinter. orientation == kGraphicsPostscript_orientation::LANDSCAPE;
 	my magnification = thePrinter. magnification;
 	my includeFonts = true;
 	my d_x1DC = my d_x1DCmin = my resolution / 2;

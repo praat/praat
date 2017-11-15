@@ -1,6 +1,6 @@
 /* Pitch_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 autoPitchTier Pitch_to_PitchTier (Pitch me) {
 	try {
 		autoPitchTier thee = PitchTier_create (my xmin, my xmax);
-		for (long i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++) {
 			double frequency = my frame [i]. candidate [1]. frequency;
 
 			/*
@@ -47,11 +47,11 @@ static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double 
 	int lineType = Graphics_inqLineType (g);
 	double lineWidth = Graphics_inqLineWidth (g);
 	double slope = (fright - fleft) / (tmax - tmin);
-	long imin = Sampled_xToNearestIndex (me, tmin);
+	integer imin = Sampled_xToNearestIndex (me, tmin);
 	if (imin < 1) imin = 1;
-	long imax = Sampled_xToNearestIndex (me, tmax);
+	integer imax = Sampled_xToNearestIndex (me, tmax);
 	if (imax > my nx) imax = my nx;
-	for (long i = imin; i <= imax; i ++) {
+	for (integer i = imin; i <= imax; i ++) {
 		double tleft, tright;
 		if (! Pitch_isVoiced_i (me, i)) {
 			if (nonPeriodicLineType == 2) continue;
@@ -73,7 +73,7 @@ static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double 
 void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, int garnish, const char32 *method)
 {
-	long n = my points.size, imin, imax, i;
+	integer n = my points.size, imin, imax, i;
 	if (nonPeriodicLineType == 0) {
 		PitchTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method);
 		return;
@@ -119,7 +119,7 @@ autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	try {
 		if (tier -> points.size == 0) Melder_throw (U"No pitch points.");
 		autoPitch thee = Data_copy (me);
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & thy frame [iframe];
 			Pitch_Candidate cand = & frame -> candidate [1];
 			if (cand -> frequency > 0.0 && cand -> frequency <= my ceiling)

@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2011,2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1998-2011,2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,17 +40,17 @@
  */
 
 /* exported */ struct Printer thePrinter = {
-	kGraphicsPostscript_spots_DEFAULT, kGraphicsPostscript_paperSize_DEFAULT, kGraphicsPostscript_orientation_DEFAULT, false,
-	true, kGraphicsPostscript_fontChoiceStrategy_DEFAULT,
+	kGraphicsPostscript_spots::DEFAULT, kGraphicsPostscript_paperSize::DEFAULT, kGraphicsPostscript_orientation::DEFAULT, false,
+	true, kGraphicsPostscript_fontChoiceStrategy::DEFAULT,
 	600, 5100, 6600,
 	1.0
 };
 
 void Printer_prefs () {
-	Preferences_addEnum (U"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, kGraphicsPostscript_spots_DEFAULT);
-	Preferences_addEnum (U"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, kGraphicsPostscript_paperSize_DEFAULT);
+	Preferences_addEnum (U"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, kGraphicsPostscript_spots::DEFAULT);
+	Preferences_addEnum (U"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, kGraphicsPostscript_paperSize::DEFAULT);
 	Preferences_addBool (U"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript, true);
-	Preferences_addEnum (U"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy_DEFAULT);
+	Preferences_addEnum (U"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy::DEFAULT);
 }
 
 #if cocoa
@@ -147,71 +147,6 @@ int Printer_pageSetup () {
 	return 1;
 }
 
-static void DO_Printer_postScriptSettings (UiForm dia, int /* narg */, Stackel /* args */,
-	const char32 * /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
-	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
-{
-	#if defined (_WIN32)
-		thePrinter. allowDirectPostScript = GET_INTEGER (U"Allow direct PostScript");
-	#endif
-	thePrinter. spots = GET_ENUM (kGraphicsPostscript_spots, U"Grey resolution");
-	#if defined (UNIX)
-		thePrinter. paperSize = GET_ENUM (kGraphicsPostscript_paperSize, U"Paper size");
-	 	if (thePrinter. paperSize == kGraphicsPostscript_paperSize_A3) {
-	 		thePrinter. paperWidth = 842 * thePrinter. resolution / 72;
-	 		thePrinter. paperHeight = 1191 * thePrinter. resolution / 72;
-		} else if (thePrinter. paperSize == kGraphicsPostscript_paperSize_US_LETTER) {
-			thePrinter. paperWidth = 612 * thePrinter. resolution / 72;
-			thePrinter. paperHeight = 792 * thePrinter. resolution / 72;
-		} else {
-			thePrinter. paperWidth = 595 * thePrinter. resolution / 72;
-			thePrinter. paperHeight = 842 * thePrinter. resolution / 72;
-		}
-		thePrinter. orientation = GET_ENUM (kGraphicsPostscript_orientation, U"Orientation");
-		thePrinter. magnification = GET_REAL (U"Magnification");
-		Site_setPrintCommand (GET_STRING (U"printCommand"));
-	#endif
-	thePrinter. fontChoiceStrategy = GET_ENUM (kGraphicsPostscript_fontChoiceStrategy, U"Font choice strategy");
-}
-
-int Printer_postScriptSettings () {
-	static UiForm dia;
-	if (! dia) {
-		UiField radio;
-		dia = UiForm_create (theCurrentPraatApplication -> topShell, U"PostScript settings", DO_Printer_postScriptSettings, nullptr, U"PostScript settings...", U"PostScript settings...");
-		#if defined (_WIN32)
-			BOOLEAN (U"Allow direct PostScript", true);
-		#endif
-		RADIO_ENUM (U"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
-		#if defined (UNIX)
-			RADIO_ENUM (U"Paper size", kGraphicsPostscript_paperSize, DEFAULT);
-			RADIO_ENUM (U"Orientation", kGraphicsPostscript_orientation, DEFAULT);
-			POSITIVE (U"Magnification", U"1.0");
-			LABEL (U"label", U"Print command:");
-			#if defined (linux)
-				TEXTFIELD (U"printCommand", U"lpr %s");
-			#else
-				TEXTFIELD (U"printCommand", U"lp -c %s");
-			#endif
-		#endif
-		RADIO_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT);
-		UiForm_finish (dia);
-	}
-	#if defined (_WIN32)
-		SET_INTEGER (U"Allow direct PostScript", thePrinter. allowDirectPostScript);
-	#endif
-	SET_ENUM (U"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
-	#if defined (UNIX)
-		SET_ENUM (U"Paper size", kGraphicsPostscript_paperSize, thePrinter. paperSize);
-		SET_ENUM (U"Orientation", kGraphicsPostscript_orientation, thePrinter. orientation);
-		SET_REAL (U"Magnification", thePrinter. magnification);
-		SET_STRING (U"printCommand", Site_getPrintCommand ());
-	#endif
-	SET_ENUM (U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
-	UiForm_do (dia, false);
-	return 1;
-}
-
 #ifdef _WIN32
 	static BOOL CALLBACK AbortFunc (HDC hdc, int nCode) {
 		MSG msg;
@@ -272,7 +207,7 @@ int Printer_postScriptSettings () {
 int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 	try {
 		#if defined (UNIX)
-			structMelderFile tempFile = { 0 };
+			structMelderFile tempFile { };
 			char tempPath_utf8 [] = "/tmp/picXXXXXX";
 			close (mkstemp (tempPath_utf8));
 			Melder_pathToFile (Melder_peek8to32 (tempPath_utf8), & tempFile);

@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2012,2013,2015,2016 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 #if motif
 	static void NativeMenuItem_setText (GuiObject me) {
 		int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-		static MelderString title { 0 };
+		static MelderString title { };
 		if (acc == 0) {
 			MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
 		} else {

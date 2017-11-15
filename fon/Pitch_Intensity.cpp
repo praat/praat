@@ -1,6 +1,6 @@
 /* Pitch_Intensity.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 static void Pitch_getExtrema (Pitch me, double *minimum, double *maximum) {
 	*minimum = 1e308, *maximum = -1e308;
-	for (long i = 1; i <= my nx; i ++) {
+	for (integer i = 1; i <= my nx; i ++) {
 		double frequency = my frame [i]. candidate [1]. frequency;
 		if (frequency == 0.0) continue;   // voiceless
 		if (frequency < *minimum) *minimum = frequency;
@@ -40,18 +40,18 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	if (s1 == s2) { s1 -= 1.0; s2 += 1.0; }
 	Graphics_setWindow (g, f1, f2, s1, s2);
 	Graphics_setInner (g);
-	double previousX = NUMundefined;
-	double previousY = NUMundefined;
-	long previousI = 0;
-	for (long i = 1; i <= pitch -> nx; i ++) {
+	double previousX = undefined;
+	double previousY = undefined;
+	integer previousI = 0;
+	for (integer i = 1; i <= pitch -> nx; i ++) {
 		double t = Sampled_indexToX (pitch, i);
 		double x = pitch -> frame [i]. candidate [1]. frequency;
-		double y = Sampled_getValueAtX (intensity, t, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, true);
+		double y = Sampled_getValueAtX (intensity, t, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ, true);
 		if (x == 0) {
 			continue;   // voiceless
 		}
 		if (connect & 1) Graphics_speckle (g, x, y);
-		if ((connect & 2) && NUMdefined (previousX)) {
+		if ((connect & 2) && isdefined (previousX)) {
 			if (previousI >= 1 && previousI < i - 1) {
 				Graphics_setLineType (g, Graphics_DOTTED);
 			}
@@ -73,9 +73,9 @@ void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 }
 
 double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
-	long numberOfValidLocalMeasurements = 0;
+	integer numberOfValidLocalMeasurements = 0;
 	double sumOfLocalValues = 0.0;
-	for (long iframe = 1; iframe <= my nx; iframe ++) {
+	for (integer iframe = 1; iframe <= my nx; iframe ++) {
 		double t = Sampled_indexToX (me, iframe);
 		bool localMeasurentIsValid = Pitch_isVoiced_t (thee, t);
 		if (localMeasurentIsValid) {
@@ -84,13 +84,13 @@ double Pitch_Intensity_getMean (Pitch thee, Intensity me) {
 			numberOfValidLocalMeasurements += 1;
 		}
 	}
-	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : NUMundefined;
+	return numberOfValidLocalMeasurements > 0 ? sumOfLocalValues / numberOfValidLocalMeasurements : undefined;
 }
 
 double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
-	long numberOfValidLocalMeasurements = 0;
+	integer numberOfValidLocalMeasurements = 0;
 	double sumOfLocalAbsoluteSlopes = 0.0;
-	for (long iframe = 1; iframe < my nx; iframe ++) {
+	for (integer iframe = 1; iframe < my nx; iframe ++) {
 		double t1 = Sampled_indexToX (me, iframe);
 		double t2 = t1 + my dx;
 		bool localMeasurentIsValid = ( Pitch_isVoiced_t (thee, t1) && Pitch_isVoiced_t (thee, t2) );
@@ -101,7 +101,7 @@ double Pitch_Intensity_getMeanAbsoluteSlope (Pitch thee, Intensity me) {
 		}
 	}
 	sumOfLocalAbsoluteSlopes /= my dx;   // convert to dB per second
-	return numberOfValidLocalMeasurements > 0 ? sumOfLocalAbsoluteSlopes / numberOfValidLocalMeasurements : NUMundefined;
+	return numberOfValidLocalMeasurements > 0 ? sumOfLocalAbsoluteSlopes / numberOfValidLocalMeasurements : undefined;
 }
 
 /* End of file Pitch_Intensity.cpp */

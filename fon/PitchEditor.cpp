@@ -30,14 +30,14 @@ Thing_implement (PitchEditor, FunctionEditor, 0);
 
 static void menu_cb_setCeiling (PitchEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Change ceiling", nullptr)
-		POSITIVE (U"Ceiling (Hz)", U"600.0")
+		POSITIVE (ceiling, U"Ceiling (Hz)", U"600.0")
 	EDITOR_OK
 		Pitch pitch = (Pitch) my data;
-		SET_REAL (U"Ceiling", pitch -> ceiling)
+		SET_REAL (ceiling, pitch -> ceiling)
 	EDITOR_DO
 		Pitch pitch = (Pitch) my data;
 		Editor_save (me, U"Change ceiling");
-		Pitch_setCeiling (pitch, GET_REAL (U"Ceiling"));
+		Pitch_setCeiling (pitch, ceiling);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -45,23 +45,21 @@ static void menu_cb_setCeiling (PitchEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Path finder", nullptr)
-		REAL (U"Silence threshold", U"0.03")
-		REAL (U"Voicing threshold", U"0.45")
-		REAL (U"Octave cost", U"0.01")
-		REAL (U"Octave-jump cost", U"0.35")
-		REAL (U"Voiced/unvoiced cost", U"0.14")
-		POSITIVE (U"Ceiling (Hz)", U"600.0")
-		BOOLEAN (U"Pull formants", false)
+		REAL (silenceThreshold, U"Silence threshold", U"0.03")
+		REAL (voicingThreshold, U"Voicing threshold", U"0.45")
+		REAL (octaveCost, U"Octave cost", U"0.01")
+		REAL (octaveJumpCost, U"Octave-jump cost", U"0.35")
+		REAL (voicedUnvoicedCost, U"Voiced/unvoiced cost", U"0.14")
+		POSITIVE (ceiling, U"Ceiling (Hz)", U"600.0")
+		BOOLEAN (pullFormants, U"Pull formants", false)
 	EDITOR_OK
 		Pitch pitch = (Pitch) my data;
-		SET_REAL (U"Ceiling", pitch -> ceiling)
+		SET_REAL (ceiling, pitch -> ceiling)
 	EDITOR_DO
 		Pitch pitch = (Pitch) my data;
 		Editor_save (me, U"Path finder");
-		Pitch_pathFinder (pitch,
-			GET_REAL (U"Silence threshold"), GET_REAL (U"Voicing threshold"),
-			GET_REAL (U"Octave cost"), GET_REAL (U"Octave-jump cost"),
-			GET_REAL (U"Voiced/unvoiced cost"), GET_REAL (U"Ceiling"), GET_INTEGER (U"Pull formants"));
+		Pitch_pathFinder (pitch, silenceThreshold, voicingThreshold,
+			octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, pullFormants);
 		FunctionEditor_redraw (me);
 		Editor_broadcastDataChanged (me);
 	EDITOR_END
@@ -69,9 +67,9 @@ static void menu_cb_pathFinder (PitchEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_getPitch (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	if (my startSelection == my endSelection) {
-		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my startSelection, kPitch_unit_HERTZ, 1), U"Hz");
+		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my startSelection, kPitch_unit::HERTZ, 1), U"Hz");
 	} else {
-		Melder_informationReal (Pitch_getMean ((Pitch) my data, my startSelection, my endSelection, kPitch_unit_HERTZ), U"Hz");
+		Melder_informationReal (Pitch_getMean ((Pitch) my data, my startSelection, my endSelection, kPitch_unit::HERTZ), U"Hz");
 	}
 }
 
@@ -109,14 +107,14 @@ static void menu_cb_octaveDown (PitchEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_voiceless (PitchEditor me, EDITOR_ARGS_DIRECT) {
 	Pitch pitch = (Pitch) my data;
-	long ileft = Sampled_xToHighIndex (pitch, my startSelection);
-	long iright = Sampled_xToLowIndex (pitch, my endSelection);
+	integer ileft = Sampled_xToHighIndex (pitch, my startSelection);
+	integer iright = Sampled_xToLowIndex (pitch, my endSelection);
 	if (ileft < 1) ileft = 1;
 	if (iright > pitch -> nx) iright = pitch -> nx;
 	Editor_save (me, U"Unvoice");
-	for (long i = ileft; i <= iright; i ++) {
+	for (integer i = ileft; i <= iright; i ++) {
 		Pitch_Frame frame = & pitch -> frame [i];
-		for (long cand = 1; cand <= frame -> nCandidates; cand ++) {
+		for (integer cand = 1; cand <= frame -> nCandidates; cand ++) {
 			if (frame -> candidate [cand]. frequency == 0.0) {
 				struct structPitch_Candidate help = frame -> candidate [1];
 				frame -> candidate [1] = frame -> candidate [cand];
@@ -159,8 +157,6 @@ void structPitchEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structPitchEditor :: v_draw () {
 	Pitch pitch = (Pitch) our data;
-	long it, it1, it2;
-	double dyUnv, dyIntens;
 
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (our graphics.get(), Graphics_WHITE);
@@ -168,22 +164,23 @@ void structPitchEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
-	dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
-	dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
+	real dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
+	real dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
 
+	integer it1, it2;
 	Sampled_getWindowSamples (pitch, our startWindow, our endWindow, & it1, & it2);
 
 	/*
 	 * Show pitch.
 	 */
 	{
-		long df =
-			pitch -> ceiling > 10000 ? 2000 :
-			pitch -> ceiling > 5000 ? 1000 :
-			pitch -> ceiling > 2000 ? 500 :
-			pitch -> ceiling > 800 ? 200 :
-			pitch -> ceiling > 400 ? 100 :
-			50;
+		real df =
+			pitch -> ceiling > 10000.0 ? 2000.0 :
+			pitch -> ceiling > 5000.0 ? 1000.0 :
+			pitch -> ceiling > 2000.0 ? 500.0 :
+			pitch -> ceiling > 800.0 ? 200.0 :
+			pitch -> ceiling > 400.0 ? 100.0 :
+			50.0;
 		double radius;
 		Graphics_Viewport previous;
 		previous = Graphics_insetViewport (our graphics.get(), 0.0, 1.0, dyUnv, 1.0 - dyIntens);
@@ -193,8 +190,8 @@ void structPitchEditor :: v_draw () {
 		/* Horizontal hair at current pitch. */
 
 		if (our startSelection == our endSelection && our startSelection >= our startWindow && our startSelection <= our endWindow) {
-			double f = Pitch_getValueAtTime (pitch, our startSelection, kPitch_unit_HERTZ, Pitch_LINEAR);
-			if (NUMdefined (f)) {
+			double f = Pitch_getValueAtTime (pitch, our startSelection, kPitch_unit::HERTZ, Pitch_LINEAR);
+			if (isdefined (f)) {
 				Graphics_setColour (our graphics.get(), Graphics_RED);
 				Graphics_line (our graphics.get(), our startWindow - radius, f, our endWindow, f);
 				Graphics_setTextAlignment (our graphics.get(), Graphics_RIGHT, Graphics_HALF);
@@ -207,7 +204,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_setColour (our graphics.get(), Graphics_BLUE);
 		Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
-		for (long f = df; f <= pitch -> ceiling; f += df) {
+		for (real f = df; f <= pitch -> ceiling; f += df) {
 			Graphics_line (our graphics.get(), our startWindow, f, our endWindow, f);
 			Graphics_text (our graphics.get(), our endWindow + 0.5 * radius, f,   f, U" Hz");
 		}
@@ -215,7 +212,7 @@ void structPitchEditor :: v_draw () {
 
 		/* Show candidates. */
 
-		for (it = it1; it <= it2; it ++) {
+		for (integer it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
 			double f = frame -> candidate [1]. frequency;
@@ -226,7 +223,7 @@ void structPitchEditor :: v_draw () {
 			Graphics_setColour (our graphics.get(), Graphics_BLACK);
 			Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
 			for (int icand = 1; icand <= frame -> nCandidates; icand ++) {
-				int strength = (int) floor (10 * frame -> candidate [icand]. strength + 0.5);
+				int strength = Melder_iround (10 * frame -> candidate [icand]. strength);
 				f = frame -> candidate [icand]. frequency;
 				if (strength > 9) strength = 9;
 				if (f > 0 && f <= pitch -> ceiling) Graphics_text (our graphics.get(), t, f, strength);
@@ -247,10 +244,10 @@ void structPitchEditor :: v_draw () {
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our endWindow, 0.5, U"intens");
 		Graphics_setTextAlignment (our graphics.get(), Graphics_CENTRE, Graphics_HALF);
-		for (it = it1; it <= it2; it ++) {
+		for (integer it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
-			long strength = lround (10 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
+			integer strength = Melder_iround (10.0 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
 			if (strength > 9) strength = 9;
 			Graphics_text (our graphics.get(), t, 0.5,   strength);
 		}
@@ -271,7 +268,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_text (our graphics.get(), our startWindow, 0.5, U"Unv");
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
 		Graphics_text (our graphics.get(), our endWindow, 0.5, U"Unv");
-		for (it = it1; it <= it2; it ++) {
+		for (integer it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;
 			double f = frame -> candidate [1]. frequency;
@@ -297,7 +294,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	double minimumDf = 1e30;
 	int cand, bestCandidate = -1;
 
-	long ibestFrame;
+	integer ibestFrame;
 	Pitch_Frame bestFrame;
 	ibestFrame = Sampled_xToNearestIndex (pitch, xWC);
 	if (ibestFrame < 1) ibestFrame = 1;

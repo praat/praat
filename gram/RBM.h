@@ -2,7 +2,7 @@
 #define _RBM_h_
 /* RBM
  *
- * Copyright (C) 2016 Paul Boersma
+ * Copyright (C) 2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
 
 #include "RBM_def.h"
 
-void RBM_init (RBM me, long numberOfInputNodes, long numberOfOutputNodes, bool inputsAreBinary);
+void RBM_init (RBM me, integer numberOfInputNodes, integer numberOfOutputNodes, bool inputsAreBinary);
 
-autoRBM RBM_create (long numberOfInputNodes, long numberOfOutputNodes, bool inputsAreBinary);
+autoRBM RBM_create (integer numberOfInputNodes, integer numberOfOutputNodes, bool inputsAreBinary);
 
 void RBM_spreadUp (RBM me);
 void RBM_spreadDown (RBM me);
@@ -35,8 +35,8 @@ void RBM_sampleInput (RBM me);
 void RBM_sampleOutput (RBM me);
 void RBM_update (RBM me, double learningRate);
 
-void RBM_PatternList_applyToInput (RBM me, PatternList thee, long rowNumber);
-void RBM_PatternList_applyToOutput (RBM me, PatternList thee, long rowNumber);
+void RBM_PatternList_applyToInput (RBM me, PatternList thee, integer rowNumber);
+void RBM_PatternList_applyToOutput (RBM me, PatternList thee, integer rowNumber);
 void RBM_PatternList_learn (RBM me, PatternList thee, double learningRate);
 
 autoMatrix RBM_extractInputActivities (RBM me);

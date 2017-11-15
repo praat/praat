@@ -59,7 +59,7 @@ static void LPC_Frame_and_Sound_filter (LPC_Frame me, Sound thee, int channel) {
 
 void LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, int channel) {
 	double *x = thy z[channel];
-	autoNUMvector<double> y (0L, my nCoefficients);
+	autoNUMvector <double> y ((integer) 0, my nCoefficients);
 	for (long i = 1; i <= thy nx; i++) {
 		y[0] = x[i];
 		for (long j = 1; j <= my nCoefficients; j++) {
@@ -371,9 +371,9 @@ end:
 static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, int method, double tol1, double tol2) {
 	double t1, samplingFrequency = 1.0 / my dx;
 	double windowDuration = 2 * analysisWidth; /* gaussian window */
-	long nFrames, frameErrorCount = 0;
+	integer numberOfFrames, frameErrorCount = 0;
 
-	if (floor (windowDuration / my dx) < predictionOrder + 1) {
+	if (Melder_roundDown (windowDuration / my dx) < predictionOrder + 1) {
 		Melder_throw (U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
 			U" the analysis window duration has to be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
 	}
@@ -381,11 +381,11 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	if (windowDuration > my dx * my nx) {
 		windowDuration = my dx * my nx;
 	}
-	Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
+	Sampled_shortTermAnalysis (me, windowDuration, dt, & numberOfFrames, & t1);
 	autoSound sound = Data_copy (me);
 	autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 	autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
-	autoLPC thee = LPC_create (my xmin, my xmax, nFrames, dt, t1, predictionOrder, my dx);
+	autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, dt, t1, predictionOrder, my dx);
 
 	autoMelderProgress progress (U"LPC analysis");
 
@@ -393,7 +393,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 	}
 
-	for (long i = 1; i <= nFrames; i++) {
+	for (integer i = 1; i <= numberOfFrames; i ++) {
 		LPC_Frame lpcframe = (LPC_Frame) & thy d_frames[i];
 		double t = Sampled_indexToX (thee.get(), i);
 		LPC_Frame_init (lpcframe, predictionOrder);
@@ -418,7 +418,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 			}
 		}
 		if ((i % 10) == 1) {
-			Melder_progress ( (double) i / nFrames, U"LPC analysis of frame ", i, U" out of ", nFrames, U".");
+			Melder_progress ( (double) i / numberOfFrames, U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
 		}
 	}
 	return thee;
@@ -470,19 +470,19 @@ autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee) {
 		}
 		autoSound him = Data_copy (thee);
 
-		double *e = his z[1], *x = thy z[1];
-		for (long i = 1; i <= his nx; i++) {
-			double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
-			long iFrame = lround ( (t - my x1) / my dx + 1.0); /* Sampled_xToNearestIndex (me, t) */
+		double *e = his z [1], *x = thy z [1];
+		for (integer i = 1; i <= his nx; i ++) {
+			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
+			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
 			double *a;
 			if (iFrame < 1 || iFrame > my nx) {
-				e[i] = 0.0;
+				e [i] = 0.0;
 				continue;
 			}
-			a = my d_frames[iFrame].a;
-			long m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i - 1;
-			for (long j = 1; j <= m; j++) {
-				e[i] += a[j] * x[i - j];
+			a = my d_frames [iFrame]. a;
+			integer m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i - 1;
+			for (integer j = 1; j <= m; j ++) {
+				e [i] += a [j] * x [i - j];
 			}
 		}
 		return him;
@@ -515,9 +515,9 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 		double *x = his z[1];
 		long ifirst = Sampled_xToHighIndex (thee, xmin);
 		long ilast = Sampled_xToLowIndex (thee, xmax);
-		for (long i = ifirst; i <= ilast; i++) {
-			double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
-			long iFrame = lround ( (t - my x1) / my dx + 1.0); /* Sampled_xToNearestIndex (me, t) */
+		for (integer i = ifirst; i <= ilast; i ++) {
+			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
+			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
 			if (iFrame < 1) {
 				continue;
 			}
@@ -525,7 +525,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 				break;
 			}
 			double *a = my d_frames[iFrame].a;
-			long m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i - 1;
+			integer m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i - 1;
 			for (long j = 1; j <= m; j++) {
 				x[i] -= a[j] * x[i - j];
 			}
@@ -544,7 +544,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 			for (long i = ifirst; i <= ilast; i++) {
 				double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
 				double riFrame = (t - my x1) / my dx + 1; /* Sampled_xToIndex (me, t); */
-				long iFrame = (long) floor (riFrame);
+				integer iFrame = Melder_ifloor (riFrame);
 				double phase = riFrame - iFrame;
 				if (iFrame < 0 || iFrame > my nx) {
 					x[i] = 0.0;
@@ -562,7 +562,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 	}
 }
 
-void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time) {
+void LPC_and_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, int channel, double time) {
 	long frameIndex = Sampled_xToNearestIndex (me, time);
 	if (frameIndex < 1) {
 		frameIndex = 1;
@@ -588,14 +588,14 @@ void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channe
 autoSound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterWithFilterAtTime_inline (me, him.get(), channel, time);
+		LPC_and_Sound_filterWithFilterAtTime_inplace (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not filtered.");
 	}
 }
 
-void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time) {
+void LPC_and_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, int channel, double time) {
 	try {
 		long frameIndex = Sampled_xToNearestIndex (me, time);
 		if (frameIndex < 1) {
@@ -622,7 +622,7 @@ void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int
 autoSound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him.get(), channel, time);
+		LPC_and_Sound_filterInverseWithFilterAtTime_inplace (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");

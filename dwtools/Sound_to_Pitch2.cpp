@@ -76,28 +76,33 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		double firstTime, newSamplingFrequency = 2 * maximumFrequency;
 		double windowDuration = 2 / minimumPitch, halfWindow = windowDuration / 2;
 		double atans = nPointsPerOctave * NUMlog2 (65.0 / 50.0) - 1;
-		// Number of speech samples in the downsampled signal in each frame:
-		// 100 for windowDuration == 0.04 and newSamplingFrequency == 2500
-		long nx = lround (windowDuration * newSamplingFrequency);
+		/*
+			Number of speech samples in the downsampled signal in each frame:
+			100 for windowDuration == 0.04 and newSamplingFrequency == 2500
+		*/
+		integer nx = Melder_iround (windowDuration * newSamplingFrequency);
 
-		// The minimum number of points for the fft is 256.
-		long nfft = 1;
-		while ( (nfft *= 2) < nx || nfft <= 128) {
+		/*
+			The minimum number of points for the FFT is 256.
+		*/
+		integer nfft = 1;
+		while ((nfft *= 2) < nx || nfft <= 128) {
 			;
 		}
-		long nfft2 = nfft / 2 + 1;
+		integer nfft2 = nfft / 2 + 1;
 		double frameDuration = nfft / newSamplingFrequency;
 		double df = newSamplingFrequency / nfft;
 
-		// The number of points on the octave scale
-
+		/*
+			The number of points on the octave scale.
+		*/
 		double fminl2 = NUMlog2 (minimumPitch), fmaxl2 = NUMlog2 (maximumFrequency);
-		long nFrequencyPoints = (long) floor ((fmaxl2 - fminl2) * nPointsPerOctave);
+		integer nFrequencyPoints = Melder_ifloor ((fmaxl2 - fminl2) * nPointsPerOctave);
 		double dfl2 = (fmaxl2 - fminl2) / (nFrequencyPoints - 1);
 
 		autoSound sound = Sound_resample (me, newSamplingFrequency, 50);
-		long numberOfFrames;
-		Sampled_shortTermAnalysis (sound.get(), windowDuration, timeStep, &numberOfFrames, &firstTime);
+		integer numberOfFrames;
+		Sampled_shortTermAnalysis (sound.get(), windowDuration, timeStep, & numberOfFrames, & firstTime);
 		autoSound frame = Sound_createSimple (1, frameDuration, newSamplingFrequency);
 		autoSound hamming = Sound_createHamming (nx / newSamplingFrequency, newSamplingFrequency);
 		autoPitch thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime, ceiling, maxnCandidates);
@@ -177,10 +182,10 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			// Go to a logarithmic scale and perform cubic spline interpolation to get
 			// spectral values for the increased number of frequency points.
 
-			NUMspline (fl2.peek(), specAmp.peek(), nfft2, 1e30, 1e30, yv2.peek());
-			for (long j = 1; j <= nFrequencyPoints; j++) {
+			NUMcubicSplineInterpolation_getSecondDerivatives (fl2.peek(), specAmp.peek(), nfft2, 1e30, 1e30, yv2.peek());
+			for (long j = 1; j <= nFrequencyPoints; j ++) {
 				double f = fminl2 + (j - 1) * dfl2;
-				NUMsplint (fl2.peek(), specAmp.peek(), yv2.peek(), nfft2, f, &al2[j]);
+				al2 [j] = NUMcubicSplineInterpolation (fl2.peek(), specAmp.peek(), yv2.peek(), nfft2, f);
 			}
 
 			// Multiply by frequency selectivity of the auditory system.
@@ -195,7 +200,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			pitchFrame -> nCandidates = 0; /* !!!!! */
 
 			for (long m = 1; m <= maxnSubharmonics + 1; m++) {
-				long kb = 1 + (long) floor (nPointsPerOctave * NUMlog2 (m));
+				integer kb = 1 + Melder_ifloor (nPointsPerOctave * NUMlog2 (m));
 				for (long k = kb; k <= nFrequencyPoints; k++) {
 					sumspec[k - kb + 1] += al2[k] * hm;
 				}

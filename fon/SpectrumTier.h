@@ -2,7 +2,7 @@
 #define _SpectrumTier_h_
 /* SpectrumTier.h
  *
- * Copyright (C) 2007-2011,2014,2015 Paul Boersma
+ * Copyright (C) 2007-2011,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ Thing_define (SpectrumTier, RealTier) {
 		override;
 	int v_domainQuantity ()
 		override { return MelderQuantity_FREQUENCY_HERTZ; }
-	const char32 * v_getUnitText (long /* ilevel */, int /* unit */, unsigned long /* flags */)
+	const char32 * v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
 		override { return U"Frequency (Hz)"; }
 };
 

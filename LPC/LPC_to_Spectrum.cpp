@@ -18,7 +18,7 @@
 
 /*
  djmw 20020529 GPL header
- djmw 20020529 Changed NUMrealft to NUMforwardRealFastFourierTransform_f
+ djmw 20020529 Changed NUMrealft to NUMforwardRealFastFourierTransform
  djmw 20030708 Added NUM2.h
  djmw 20080122 float -> double
 */

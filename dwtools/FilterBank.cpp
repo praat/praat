@@ -1,6 +1,6 @@
 /* FilterBank.cpp
  *
- * Copyright (C) 1993-2012, 2014-2015 David Weenink
+ * Copyright (C) 1993-2012, 2014-2015 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
 static double scaleFrequency (double f, int scale_from, int scale_to) {
-	double fhz = NUMundefined;
+	double fhz = undefined;
 
 	if (scale_from == scale_to) {
 		return f;
@@ -52,7 +52,7 @@ static double scaleFrequency (double f, int scale_from, int scale_to) {
 		fhz = MELTOHZ (f);
 	}
 
-	if (scale_to == FilterBank_HERTZ || fhz == NUMundefined) {
+	if (scale_to == FilterBank_HERTZ || isundef (fhz)) {
 		return fhz;
 	}
 
@@ -61,7 +61,7 @@ static double scaleFrequency (double f, int scale_from, int scale_to) {
 	} else if (scale_to == FilterBank_MEL) {
 		f = HZTOMEL (fhz);
 	} else {
-		return NUMundefined;
+		return undefined;
 	}
 	return f;
 }
@@ -139,7 +139,7 @@ static void setDrawingLimits (double *a, long n, double amin, double amax, long 
 
 	long lower = 1;
 	for (long i = 1; i <= n; i++) {
-		if (a[i] == NUMundefined) {
+		if (isundef (a[i])) {
 			if (lower == 0) {
 				// high frequency part
 				*iend = i;
@@ -252,9 +252,9 @@ void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax, doub
 	if (ymax <= ymin) {
 		ymin = my ymin; ymax = my ymax;
 	}
-	long ixmin, ixmax, iymin, iymax;
-	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, &ixmin, &ixmax);
-	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, &iymin, &iymax);
+	integer ixmin, ixmax, iymin, iymax;
+	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, & ixmin, & ixmax);
+	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, & iymin, & iymax);
 	if (maximum <= minimum) {
 		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, &minimum, &maximum);
 	}
@@ -292,27 +292,26 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
 
-	for (long j = fromFilter; j <= toFilter; j++) {
+	for (long j = fromFilter; j <= toFilter; j ++) {
 		double df = (zmax - zmin) / (n - 1);
 		double zMid = Matrix_rowToY (me, j);
-		long ibegin, iend;
 
-		for (long i = 1; i <= n; i++) {
+		for (long i = 1; i <= n; i ++) {
 			double f = zmin + (i - 1) * df;
 			double z = scaleFrequency (f, toFreqScale, FilterBank_BARK);
-			if (z == NUMundefined) {
-				a[i] = NUMundefined;
+			if (isundef (z)) {
+				a [i] = undefined;
 			} else {
 				z -= zMid + 0.215;
-				a[i] = 7.0 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
+				a [i] = 7.0 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
 				if (! dbScale) {
 					a[i] = pow (10.0, a[i]);
 				}
 			}
 		}
 
-		setDrawingLimits (a.peek(), n, ymin, ymax, &ibegin, &iend);
-
+		long ibegin, iend;
+		setDrawingLimits (a.peek(), n, ymin, ymax, & ibegin, & iend);
 		if (ibegin <= iend) {
 			double fmin = zmin + (ibegin - 1) * df;
 			double fmax = zmax - (n - iend) * df;
@@ -391,12 +390,12 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 			// Filterfunction: triangular on a linear frequency scale AND a linear amplitude scale.
 			double f = zmin + (i - 1) * df;
 			double z = scaleFrequency (f, toFreqScale, FilterBank_HERTZ);
-			if (z == NUMundefined) {
-				a[i] = NUMundefined;
+			if (isundef (z)) {
+				a [i] = undefined;
 			} else {
-				a[i] = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, z);
+				a [i] = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, z);
 				if (dbScale) {
-					a[i] = to_dB (a[i], 10, ymin);
+					a [i] = to_dB (a [i], 10.0, ymin);
 				}
 			}
 		}
@@ -523,12 +522,12 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 		for (long i = 1; i <= n; i++) {
 			double f = zmin + (i - 1) * df;
 			double z = scaleFrequency (f, toFreqScale, FilterBank_HERTZ);
-			if (z == NUMundefined) {
-				a[i] = NUMundefined;
+			if (isundef (z)) {
+				a [i] = undefined;
 			} else {
-				a[i] = NUMformantfilter_amplitude (fc, bandwidth, z);
+				a [i] = NUMformantfilter_amplitude (fc, bandwidth, z);
 				if (dbScale) {
-					a[i] = to_dB (a[i], 10, ymin);
+					a [i] = to_dB (a [i], 10, ymin);
 				}
 			}
 		}
@@ -817,7 +816,7 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, long first, long last) {
 static autoMelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, double f1_mel, double df_mel) {
 	try {
 		int use_c0 = 0;
-		long nf = lround ((my fmax - my fmin) / df_mel);
+		integer nf = Melder_iround ((my fmax - my fmin) / df_mel);
 		double fmin = MAX (f1_mel - df_mel, 0), fmax = f1_mel + (nf + 1) * df_mel;
 
 		if (nf < 1) {
@@ -954,7 +953,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
 		double zmax = NUMhertzToBark2 (nyquist);
 		double fmin_bark = 0;
-		long nt, frameErrorCount = 0;
+		integer nt, frameErrorCount = 0;
 
 		// Check defaults.
 
@@ -969,7 +968,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 		}
 
 		fmax_bark = MIN (fmax_bark, zmax);
-		long nf = lround ( (fmax_bark - f1_bark) / df_bark);
+		integer nf = Melder_iround ( (fmax_bark - f1_bark) / df_bark);
 		if (nf <= 0) {
 			Melder_throw (U"The combination of filter parameters is not valid.");
 		}
@@ -1045,7 +1044,7 @@ autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, dou
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
 		double fmin_mel = 0;
 		double fbottom = HZTOMEL (100.0), fceiling = HZTOMEL (nyquist);
-		long nt, frameErrorCount = 0;
+		integer nt, frameErrorCount = 0;
 
 		// Check defaults.
 
@@ -1064,10 +1063,10 @@ autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, dou
 
 		// Determine the number of filters.
 
-		long nf = lround ((fmax_mel - f1_mel) / df_mel);
+		integer nf = Melder_iround ((fmax_mel - f1_mel) / df_mel);
 		fmax_mel = f1_mel + nf * df_mel;
 
-		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
+		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, nt, dt, t1, fmin_mel, fmax_mel, nf, df_mel, f1_mel);
@@ -1155,16 +1154,16 @@ autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth, double
 
 autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw) {
 	try {
-		double t1, windowDuration = 2 * analysisWidth; /* gaussian window */
+		double t1, windowDuration = 2 * analysisWidth;   // Gaussian window
 		double nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist, fmin_hz = 0;
-		long nt, f0_undefined = 0;
+		integer nt, f0_undefined = 0;
 
 		if (my xmin > thy xmin || my xmax > thy xmax) Melder_throw
 			(U"The domain of the Sound is not included in the domain of the Pitch.");
 
-		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit_HERTZ);
+		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit::HERTZ);
 
-		if (f0_median == NUMundefined || f0_median == 0) {
+		if (isundef (f0_median) || f0_median == 0.0) {
 			f0_median = 100;
 			Melder_warning (U"Pitch values undefined. Bandwith fixed to 100 Hz. ");
 		}
@@ -1183,23 +1182,25 @@ autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double
 		}
 
 		fmax_hz = MIN (fmax_hz, nyquist);
-		long nf = lround ( (fmax_hz - f1_hz) / df_hz);
+		integer nf = Melder_iround ( (fmax_hz - f1_hz) / df_hz);
 
-		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
+		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
 		autoFormantFilter him = FormantFilter_create (my xmin, my xmax, nt, dt, t1,
 		                        fmin_hz, fmax_hz, nf, df_hz, f1_hz);
 
-		// Temporary objects
-
+		/*
+			Temporary objects.
+		*/
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");
 		for (long i = 1; i <= nt; i++) {
 			double t = Sampled_indexToX (him.get(), i);
-			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit_HERTZ, 0);
+			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit::HERTZ, 0);
 
-			if (f0 == NUMundefined || f0 == 0) {
-				f0_undefined++; f0 = f0_median;
+			if (isundef (f0) || f0 == 0.0) {
+				f0_undefined ++;
+				f0 = f0_median;
 			}
 			b = relative_bw * f0;
 			Sound_into_Sound (me, sframe.get(), t - windowDuration / 2);
@@ -1207,9 +1208,8 @@ autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double
 
 			Sound_into_FormantFilter_frame (sframe.get(), him.get(), i, b);
 
-			if ( (i % 10) == 1) {
-				Melder_progress ( (double) i / nt, U"Frame ", i, U" out of ",
-				                   nt, U".");
+			if (i % 10 == 1) {
+				Melder_progress ((double) i / nt, U"Frame ", i, U" out of ", nt, U".");
 			}
 		}
 

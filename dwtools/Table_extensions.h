@@ -32,7 +32,7 @@
 
 long Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter interpreter);
 
-long *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, long *numberOfMatches);
+integer *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, integer *numberOfMatches);
 
 autoTable Table_create_petersonBarney1952 ();
 
@@ -44,7 +44,7 @@ autoTable Table_create_esposito2006 ();
 
 autoTable Table_create_ganong1980 ();
 
-double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
+double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber);
 
 // Two one-way tests for normal and non-normally distributed data, respectively.
 autoTable Table_getOneWayAnalysisOfVarianceF (Table me, long column, long groupColumn, autoTable *means, autoTable *meansDiff, autoTable *meansDiffProbabilities);
@@ -67,13 +67,13 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataCo
 
 void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, bool garnish);
 
-void Table_boxPlotsWhere (Table me, Graphics g, char32 *dataColumns_string, long factorColumn, double ymin, double ymax, bool garnish, const char32 *formula, Interpreter interpreter);
+void Table_boxPlotsWhere (Table me, Graphics g, const char32 *dataColumns_string, long factorColumn, double ymin, double ymax, bool garnish, const char32 *formula, Interpreter interpreter);
 
 autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter interpreter);
 
-autoTable Table_extractColumnRanges (Table me, char32 *ranges);
+autoTable Table_extractColumnRanges (Table me, const char32 *ranges);
 
-autoTable Table_extractMahalanobisWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, int which_Melder_NUMBER, const char32 *formula, Interpreter interpreter);
+autoTable Table_extractMahalanobisWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, kMelder_number which, const char32 *formula, Interpreter interpreter);
 
 void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax, bool garnish, const char32 *formula, Interpreter interpreter);
 

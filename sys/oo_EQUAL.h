@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 		if (our x [i] != thy x [i]) return false; \
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		if (our x [i] != thy x [i]) return false; \
 
 #define oo_VECTOR(type,storage,x,min,max)  \
@@ -37,18 +37,18 @@
 	if (! our x != ! thy x || \
 		(our x && ! NUMmatrix_equal <type> (our x, thy x, row1, row2, col1, col2))) return false;
 
-#define oo_ENUMx(type,storage,Type,x)  \
+#define oo_ENUMx(kType,storage,x)  \
 	if (our x != thy x) return false;
 
-#define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) if (our x [i] != thy x [i]) return false;
+//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
+//	for (int i = 0; i < n; i ++) if (our x [i] != thy x [i]) return false;
 
-#define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) if (our x [i] != thy x [i]) return false;
+//#define oo_ENUMx_SET(kType,storage,x,setType)  \
+//	for (int i = 0; i <= (int) setType::MAX; i ++) if (our x [i] != thy x [i]) return false;
 
-#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	if (! our x != ! thy x || \
-		(our x && ! NUMvector_equal <type> (our x, thy x, min, max))) return false;
+//#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
+//	if (! our x != ! thy x || \
+//		(our x && ! NUMvector_equal <type> (our x, thy x, min, max))) return false;
 
 #define oo_STRINGx(storage,x)  \
 	if (! Melder_equ (our x, thy x)) return false;
@@ -58,13 +58,13 @@
 		if (! Melder_equ (our x [i], thy x [i])) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= setType::MAX; i ++) \
 		if (! Melder_equ (our x [i], thy x [i])) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (! our x != ! thy x) return false; \
 	if (our x) { \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			if (! Melder_equ (our x [i], thy x [i])) return false; \
 	}
 
@@ -76,21 +76,21 @@
 		if (! our x [i]. equal (& thy x [i])) return false;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
+	for (int i = 0; i <= (int) setType::MAX; i ++) \
 		if (! our x [i]. equal (& thy x [i])) return false;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (! our x != ! thy x) return false; \
 	if (our x) { \
-		for (long i = min; i <= max; i ++) \
+		for (integer i = min; i <= max; i ++) \
 			if (! our x [i]. equal (& thy x [i])) return false; \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (! our x != ! thy x) return false; \
 	if (our x) { \
-		for (long i = row1; i <= row2; i ++) \
-			for (long j = col1; j <= col2; j ++) \
+		for (integer i = row1; i <= row2; i ++) \
+			for (integer j = col1; j <= col2; j ++) \
 				if (! our x [i] [j]. equal (& thy x [i] [j])) return false; \
 	}
 
@@ -98,7 +98,7 @@
 	if (! our x != ! thy x || (our x && ! Data_equal (our x.get(), thy x.get()))) return false;
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	for (long i = 1; i <= our x.size; i ++) { \
+	for (integer i = 1; i <= our x.size; i ++) { \
 		if (! our x.at [i] != ! thy x.at [i] || (our x.at [i] && ! Data_equal (our x.at [i], thy x.at [i]))) return false; \
 	}
 

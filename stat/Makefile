@@ -1,9 +1,9 @@
 # Makefile of the library "stat"
-# Paul Boersma, 22 October 2016
+# Paul Boersma, 8 August 2017
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../fon -I ../stat
+CPPFLAGS = -I ../kar -I ../sys -I ../dwsys -I ../dwtools -I ../fon -I ../stat
 
 OBJECTS = Table.o TableEditor.o Regression.o manual_statistics.o \
    praat_TableOfReal.o praat_Stat.o \
@@ -24,4 +24,4 @@ clean:
 	$(RM) $(OBJECTS)
 	$(RM) libstat.a
 
-$(OBJECTS): *.h ../num/NUM.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../fon/*.h
+$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../dwtools/*.h ../fon/*.h ../stat/*.h

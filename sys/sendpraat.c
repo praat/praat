@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 3 March 2017 */
+/* 21 August 2017 */
 
 /*
  * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
@@ -49,7 +49,7 @@
 	#include <unistd.h>
 	#include <ctype.h>
 	#include <wchar.h>
-	#if defined (NO_GRAPHICS)
+	#if defined (NO_GRAPHICS) || defined (NO_GUI)   /* for use inside Praat */
 		#define gtk 0
 	#else
 		#include <gtk/gtk.h>
@@ -234,7 +234,9 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			 * Notify main window.
 			 */
 			GdkEventClient gevent;
+#if !GLIB_CHECK_VERSION(2,35,0)
 			g_type_init ();
+#endif
 			int displaySupplied = display != NULL;
 			if (! displaySupplied) {
 				display = gdk_display_open (getenv ("DISPLAY"));   /* GdkDisplay* */
@@ -384,7 +386,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 			return errorMessageW;
 		}
 		if (timeOut)
-			fwprintf (messageFile, L"#%ld\n", getpid ());   /* Write own process ID for callback. */
+			fwprintf (messageFile, L"#%ld\n", (long) getpid ());   /* Write own process ID for callback. */
 		fwprintf (messageFile, L"\ufeff%ls", text);
 		fclose (messageFile);
 	#elif win
@@ -458,7 +460,9 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 			 */
 			GdkEventClient gevent;
 			int displaySupplied = display != NULL;
+#if !GLIB_CHECK_VERSION(2,35,0)
 			g_type_init ();
+#endif
 			if (! displaySupplied) {
 				display = gdk_display_open (getenv ("DISPLAY"));   /* GdkDisplay* */
 				if (display == NULL) {
@@ -475,7 +479,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 				if (! displaySupplied) gdk_display_close (display);
 				swprintf (errorMessageW, 1000, L"Cannot send message to %ls (window %ld). "
 					"The program %ls may have been started by a different user, "
-					"or may have crashed.", programName, wid, programName);
+					"or may have crashed.", programName, (long) wid, programName);
 				return errorMessageW;
 			}
 			if (! displaySupplied) gdk_display_close (display);

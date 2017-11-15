@@ -2,7 +2,7 @@
 #define _Harmonicity_h_
 /* Harmonicity.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ Thing_define (Harmonicity, Vector) {
 			// -200 means silence.
 */
 
-autoHarmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1);
+autoHarmonicity Harmonicity_create (double tmin, double tmax, integer nt, double dt, double t1);
 
 void Harmonicity_draw (Harmonicity me, double tmin, double tmax, double min, double max);
 /*

@@ -1,6 +1,6 @@
 /* NUM.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * pb 2002/03/07 GPL
  * pb 2003/06/19 ridders3 replaced with ridders
  * pb 2003/07/09 gsl
- * pb 2003/08/27 NUMfisherQ: underflow and iteration excess should not return NUMundefined
+ * pb 2003/08/27 NUMfisherQ: underflow and iteration excess should not return undefined
  * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
  * pb 2007/01/27 use #defines for value interpolation
@@ -31,12 +31,9 @@
  * pb 2011/03/29 C++
  */
 
-#include "NUM.h"
-#include "NUM2.h"
-#include <stdlib.h>
 #include "melder.h"
+#include "NUM2.h"
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
-#define my  me ->
 double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (base, exponent); }
 /*
 	GSL is more accurate than the other routines, but makes
@@ -67,13 +64,13 @@ void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *
 	*a2 = exp (- 2 * NUMpi * bandwidth * dt);
 }
 
-void NUMfilterSecondOrderSection_a (double x [], long n, double a1, double a2) {
+void NUMfilterSecondOrderSection_a (double x [], integer n, double a1, double a2) {
 	x [2] += a1 * x [1];
-	for (long i = 3; i <= n; i ++)
+	for (integer i = 3; i <= n; i ++)
 		x [i] += a1 * x [i - 1] - a2 * x [i - 2];
 }
 
-void NUMfilterSecondOrderSection_fb (double x [], long n, double dt, double formant, double bandwidth) {
+void NUMfilterSecondOrderSection_fb (double x [], integer n, double dt, double formant, double bandwidth) {
 	double a1, a2;
 	NUMfbtoa (formant, bandwidth, dt, & a1, & a2);
 	NUMfilterSecondOrderSection_a (x, n, a1, a2);
@@ -83,32 +80,31 @@ double NUMftopreemphasis (double f, double dt) {
 	return exp (- 2.0 * NUMpi * f * dt);
 }
 
-void NUMpreemphasize_a (double x [], long n, double preemphasis) {
-	for (long i = n; i >= 2; i --)
+void NUMpreemphasize_a (double x [], integer n, double preemphasis) {
+	for (integer i = n; i >= 2; i --)
 		x [i] -= preemphasis * x [i - 1];
 }
 
-void NUMdeemphasize_a (double x [], long n, double preemphasis) {
-	long i;
-	for (i = 2; i <= n; i ++)
+void NUMdeemphasize_a (double x [], integer n, double preemphasis) {
+	for (integer i = 2; i <= n; i ++)
 		x [i] += preemphasis * x [i - 1];
 }
 
-void NUMpreemphasize_f (double x [], long n, double dt, double frequency) {
+void NUMpreemphasize_f (double x [], integer n, double dt, double frequency) {
 	NUMpreemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
 }
 
-void NUMdeemphasize_f (double x [], long n, double dt, double frequency) {
+void NUMdeemphasize_f (double x [], integer n, double dt, double frequency) {
 	NUMdeemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
 }
 
-void NUMautoscale (double x [], long n, double scale) {
+void NUMautoscale (double x [], integer n, double scale) {
 	double maximum = 0.0;
-	for (long i = 1; i <= n; i ++)
+	for (integer i = 1; i <= n; i ++)
 		if (fabs (x [i]) > maximum) maximum = fabs (x [i]);
 	if (maximum > 0.0) {
 		double factor = scale / maximum;
-		for (long i = 1; i <= n; i ++)
+		for (integer i = 1; i <= n; i ++)
 			x [i] *= factor;
 	}
 }
@@ -116,11 +112,11 @@ void NUMautoscale (double x [], long n, double scale) {
 double NUMlnGamma (double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_lngamma_e (x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return ( status == GSL_SUCCESS ? result. val : undefined );
 }
 
 double NUMbeta (double z, double w) {
-	if (z <= 0.0 || w <= 0.0) return NUMundefined;
+	if (z <= 0.0 || w <= 0.0) return undefined;
 	return exp (NUMlnGamma (z) + NUMlnGamma (w) - NUMlnGamma (z + w));
 }
 
@@ -129,22 +125,22 @@ double NUMincompleteBeta (double a, double b, double x) {
 	int status = gsl_sf_beta_inc_e (a, b, x, & result);
 	if (status != GSL_SUCCESS && status != GSL_EUNDRFLW && status != GSL_EMAXITER) {
 		Melder_fatal (U"NUMincompleteBeta status ", status);
-		return NUMundefined;
+		return undefined;
 	}
 	return result. val;
 }
 
 double NUMbinomialP (double p, double k, double n) {
 	double binomialQ;
-	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return NUMundefined;
+	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return undefined;
 	if (k == n) return 1.0;
 	binomialQ = NUMincompleteBeta (k + 1, n - k, p);
-	if (binomialQ == NUMundefined) return NUMundefined;
+	if (isundef (binomialQ)) return undefined;
 	return 1.0 - binomialQ;
 }
 
 double NUMbinomialQ (double p, double k, double n) {
-	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return NUMundefined;
+	if (p < 0.0 || p > 1.0 || n <= 0.0 || k < 0.0 || k > n) return undefined;
 	if (k == 0.0) return 1.0;
 	return NUMincompleteBeta (k, n - k + 1, p);
 }
@@ -163,7 +159,7 @@ static double binomialQ (double p, void *binomial_void) {
 
 double NUMinvBinomialP (double p, double k, double n) {
 	static struct binomial binomial;
-	if (p < 0 || p > 1 || n <= 0 || k < 0 || k > n) return NUMundefined;
+	if (p < 0 || p > 1 || n <= 0 || k < 0 || k > n) return undefined;
 	if (k == n) return 1.0;
 	binomial. p = p;
 	binomial. k = k;
@@ -173,7 +169,7 @@ double NUMinvBinomialP (double p, double k, double n) {
 
 double NUMinvBinomialQ (double p, double k, double n) {
 	static struct binomial binomial;
-	if (p < 0 || p > 1 || n <= 0 || k < 0 || k > n) return NUMundefined;
+	if (p < 0 || p > 1 || n <= 0 || k < 0 || k > n) return undefined;
 	if (k == 0) return 0.0;
 	binomial. p = p;
 	binomial. k = k;
@@ -223,15 +219,15 @@ double NUMbessel_i1_f (double x) {
 		+ t * (-0.00420059)))))))));
 }
 
-double NUMbesselI (long n, double x) {
+double NUMbesselI (integer n, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_bessel_In_e (n, x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return ( status == GSL_SUCCESS ? result. val : undefined );
 }
 
 /* Modified Bessel function K0. Abramowicz & Stegun, p. 379. */
 double NUMbessel_k0_f (double x) {
-	if (x <= 0.0) return NUMundefined;   /* Positive infinity. */
+	if (x <= 0.0) return undefined;
 	if (x <= 2.0) {
 		/* Formula 9.8.5. Accuracy 1e-8. */
 		double x2 = 0.5 * x, t = x2 * x2;
@@ -251,7 +247,7 @@ double NUMbessel_k0_f (double x) {
 
 /* Modified Bessel function K1. Abramowicz & Stegun, p. 379. */
 double NUMbessel_k1_f (double x) {
-	if (x <= 0.0) return NUMundefined;   /* Positive infinity. */
+	if (x <= 0.0) return undefined;
 	if (x <= 2.0) {
 		/* Formula 9.8.7. Accuracy  of the polynomial factor 8e-9. */
 		double x2 = 0.5 * x, t = x2 * x2;
@@ -269,44 +265,43 @@ double NUMbessel_k1_f (double x) {
 			 + t * (0.00325614 + t * (-0.00068245)))))));
 }
 
-double NUMbesselK_f (long n, double x) {
-	double twoByX, besselK_min2, besselK_min1, besselK = NUMundefined;
-	long i;
+double NUMbesselK_f (integer n, double x) {
+	double besselK = undefined;
 	Melder_assert (n >= 0 && x > 0);
-	besselK_min2 = NUMbessel_k0_f (x);
+	double besselK_min2 = NUMbessel_k0_f (x);
 	if (n == 0) return besselK_min2;
-	besselK_min1 = NUMbessel_k1_f (x);
+	double besselK_min1 = NUMbessel_k1_f (x);
 	if (n == 1) return besselK_min1;
 	Melder_assert (n >= 2);
-	twoByX = 2.0 / x;
+	double twoByX = 2.0 / x;
 	/*
 		Recursion formula.
 	*/
-	for (i = 1; i < n; i ++) {
+	for (integer i = 1; i < n; i ++) {
 		besselK = besselK_min2 + twoByX * i * besselK_min1;
 		besselK_min2 = besselK_min1;
 		besselK_min1 = besselK;
 	}
-	Melder_assert (NUMdefined (besselK));
+	Melder_assert (isdefined (besselK));
 	return besselK;
 }
 
-double NUMbesselK (long n, double x) {
+double NUMbesselK (integer n, double x) {
 	gsl_sf_result result;
-	int status = gsl_sf_bessel_Kn_e (n, x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	int status = gsl_sf_bessel_Kn_e ((int) n, x, & result);
+	return ( status == GSL_SUCCESS ? result. val : undefined );
 }
 
 double NUMsigmoid (double x)
-	{ return x > 0.0 ? 1 / (1 + exp (- x)) : 1 - 1 / (1 + exp (x)); }
+	{ return x > 0.0 ? 1.0 / (1.0 + exp (- x)) : 1.0 - 1.0 / (1.0 + exp (x)); }
 
 double NUMinvSigmoid (double x)
-	{ return x <= 0.0 || x >= 1.0 ? NUMundefined : log (x / (1.0 - x)); }
+	{ return x <= 0.0 || x >= 1.0 ? undefined : log (x / (1.0 - x)); }
 
 double NUMerfcc (double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_erfc_e (x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 double NUMgaussP (double z) {
@@ -320,43 +315,42 @@ double NUMgaussQ (double z) {
 double NUMincompleteGammaP (double a, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_gamma_inc_P_e (a, x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 double NUMincompleteGammaQ (double a, double x) {
 	gsl_sf_result result;
 	int status = gsl_sf_gamma_inc_Q_e (a, x, & result);
-	return status == GSL_SUCCESS ? result. val : NUMundefined;
+	return status == GSL_SUCCESS ? result. val : undefined;
 }
 
 double NUMchiSquareP (double chiSquare, double degreesOfFreedom) {
-	if (chiSquare < 0 || degreesOfFreedom <= 0) return NUMundefined;
+	if (chiSquare < 0 || degreesOfFreedom <= 0) return undefined;
 	return NUMincompleteGammaP (0.5 * degreesOfFreedom, 0.5 * chiSquare);
 }
 
 double NUMchiSquareQ (double chiSquare, double degreesOfFreedom) {
-	if (chiSquare < 0 || degreesOfFreedom <= 0) return NUMundefined;
+	if (chiSquare < 0 || degreesOfFreedom <= 0) return undefined;
 	return NUMincompleteGammaQ (0.5 * degreesOfFreedom, 0.5 * chiSquare);
 }
 
-double NUMcombinations (long n, long k) {
-	double result = 1.0;
-	long i;
+double NUMcombinations (integer n, integer k) {
+	real80 result = 1.0;
 	if (k > n / 2) k = n - k;
-	for (i = 1; i <= k; i ++) result *= n - i + 1;
-	for (i = 2; i <= k; i ++) result /= i;
-	return result;
+	for (integer i = 1; i <= k; i ++) result *= n - i + 1;
+	for (integer i = 2; i <= k; i ++) result /= i;
+	return (real) result;
 }
 
 #define NUM_interpolate_simple_cases \
-	if (nx < 1) return NUMundefined; \
+	if (nx < 1) return undefined; \
 	if (x > nx) return y [nx]; \
 	if (x < 1) return y [1]; \
 	if (x == midleft) return y [midleft]; \
 	/* 1 < x < nx && x not integer: interpolate. */ \
 	if (maxDepth > midright - 1) maxDepth = midright - 1; \
 	if (maxDepth > nx - midleft) maxDepth = nx - midleft; \
-	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST) return y [(long) floor (x + 0.5)]; \
+	if (maxDepth <= NUM_VALUE_INTERPOLATE_NEAREST) return y [(integer) floor (x + 0.5)]; \
 	if (maxDepth == NUM_VALUE_INTERPOLATE_LINEAR) return y [midleft] + (x - midleft) * (y [midright] - y [midleft]); \
 	if (maxDepth == NUM_VALUE_INTERPOLATE_CUBIC) { \
 		double yl = y [midleft], yr = y [midright]; \
@@ -366,8 +360,8 @@ double NUMcombinations (long n, long k) {
 	}
 
 #if defined (__POWERPC__)
-double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
-	long ix, midleft = floor (x), midright = midleft + 1, left, right;
+double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth) {
+	integer ix, midleft = (integer) floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa, cosaa, sinaa, cosdaa, sindaa;
 	NUM_interpolate_simple_cases
 	left = midright - maxDepth, right = midleft + maxDepth;
@@ -400,8 +394,8 @@ double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
 	return result;
 }
 #else
-double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
-	long ix, midleft = (long) floor (x), midright = midleft + 1, left, right;
+double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth) {
+	integer ix, midleft = (integer) floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa;
 	NUM_interpolate_simple_cases
 	left = midright - maxDepth, right = midleft + maxDepth;
@@ -437,7 +431,7 @@ double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
 struct improve_params {
 	int depth;
 	double *y;
-	long ixmax;
+	integer ixmax;
 	int isMaximum;
 };
 
@@ -447,7 +441,7 @@ static double improve_evaluate (double x, void *closure) {
 	return my isMaximum ? - y : y;
 }
 
-double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real, int isMaximum) {
+double NUMimproveExtremum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real, int isMaximum) {
 	struct improve_params params;
 	double result;
 	if (ixmid <= 1) { *ixmid_real = 1; return y [1]; }
@@ -471,34 +465,34 @@ double NUMimproveExtremum (double *y, long nx, long ixmid, int interpolation, do
 	return isMaximum ? - result : result;
 }
 
-double NUMimproveMaximum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real)
+double NUMimproveMaximum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real)
 	{ return NUMimproveExtremum (y, nx, ixmid, interpolation, ixmid_real, 1); }
-double NUMimproveMinimum (double *y, long nx, long ixmid, int interpolation, double *ixmid_real)
+double NUMimproveMinimum (double *y, integer nx, integer ixmid, int interpolation, double *ixmid_real)
 	{ return NUMimproveExtremum (y, nx, ixmid, interpolation, ixmid_real, 0); }
 
 /********** Viterbi **********/
 
 void NUM_viterbi (
-	long numberOfFrames, long maxnCandidates,
-	long (*getNumberOfCandidates) (long iframe, void *closure),
-	double (*getLocalCost) (long iframe, long icand, void *closure),
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, void *closure),
-	void (*putResult) (long iframe, long place, void *closure),
+	integer numberOfFrames, integer maxnCandidates,
+	integer (*getNumberOfCandidates) (integer iframe, void *closure),
+	double (*getLocalCost) (integer iframe, integer icand, void *closure),
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, void *closure),
+	void (*putResult) (integer iframe, integer place, void *closure),
 	void *closure)
 {
 	autoNUMmatrix <double> delta (1, numberOfFrames, 1, maxnCandidates);
-	autoNUMmatrix <long> psi (1, numberOfFrames, 1, maxnCandidates);
-	autoNUMvector <long> numberOfCandidates (1, numberOfFrames);
-	for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+	autoNUMmatrix <integer> psi (1, numberOfFrames, 1, maxnCandidates);
+	autoNUMvector <integer> numberOfCandidates (1, numberOfFrames);
+	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		numberOfCandidates [iframe] = getNumberOfCandidates (iframe, closure);
-		for (long icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
+		for (integer icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
 			delta [iframe] [icand] = - getLocalCost (iframe, icand, closure);
 	}
-	for (long iframe = 2; iframe <= numberOfFrames; iframe ++) {
-		for (long icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
+	for (integer iframe = 2; iframe <= numberOfFrames; iframe ++) {
+		for (integer icand2 = 1; icand2 <= numberOfCandidates [iframe]; icand2 ++) {
 			double maximum = -1e308;
-			long place = 0;
-			for (long icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
+			integer place = 0;
+			for (integer icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
 				double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
 					- getTransitionCost (iframe, icand1, icand2, closure);
 				if (value > maximum) { maximum = value; place = icand1; }
@@ -512,15 +506,15 @@ void NUM_viterbi (
 	/*
 	 * Find the end of the most probable path.
 	 */
-	long place;
+	integer place;
 	double maximum = delta [numberOfFrames] [place = 1];
-	for (long icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
+	for (integer icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
 		if (delta [numberOfFrames] [icand] > maximum)
 			maximum = delta [numberOfFrames] [place = icand];
 	/*
 	 * Backtrack.
 	 */
-	for (long iframe = numberOfFrames; iframe >= 1; iframe --) {
+	for (integer iframe = numberOfFrames; iframe >= 1; iframe --) {
 		putResult (iframe, place, closure);
 		place = psi [iframe] [place];
 	}
@@ -529,46 +523,46 @@ void NUM_viterbi (
 /******************/
 
 struct parm2 {
-	int ntrack;
-	long ncomb;
-	long **indices;
-	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure);
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure);
-	void (*putResult) (long iframe, long place, int itrack, void *closure);
+	integer ntrack;
+	integer ncomb;
+	integer **indices;
+	double (*getLocalCost) (integer iframe, integer icand, integer itrack, void *closure);
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, integer itrack, void *closure);
+	void (*putResult) (integer iframe, integer place, integer itrack, void *closure);
 	void *closure;
 };
 
-static long getNumberOfCandidates_n (long iframe, void *closure) {
+static integer getNumberOfCandidates_n (integer iframe, void *closure) {
 	struct parm2 *me = (struct parm2 *) closure;
 	(void) iframe;
 	return my ncomb;
 }
-static double getLocalCost_n (long iframe, long jcand, void *closure) {
+static double getLocalCost_n (integer iframe, integer jcand, void *closure) {
 	struct parm2 *me = (struct parm2 *) closure;
 	double localCost = 0.0;
-	for (int itrack = 1; itrack <= my ntrack; itrack ++)
+	for (integer itrack = 1; itrack <= my ntrack; itrack ++)
 		localCost += my getLocalCost (iframe, my indices [jcand] [itrack], itrack, my closure);
 	return localCost;
 }
-static double getTransitionCost_n (long iframe, long jcand1, long jcand2, void *closure) {
+static double getTransitionCost_n (integer iframe, integer jcand1, integer jcand2, void *closure) {
 	struct parm2 *me = (struct parm2 *) closure;
 	double transitionCost = 0.0;
-	for (int itrack = 1; itrack <= my ntrack; itrack ++)
+	for (integer itrack = 1; itrack <= my ntrack; itrack ++)
 		transitionCost += my getTransitionCost (iframe,
 			my indices [jcand1] [itrack], my indices [jcand2] [itrack], itrack, my closure);
 	return transitionCost;
 }
-static void putResult_n (long iframe, long jplace, void *closure) {
+static void putResult_n (integer iframe, integer jplace, void *closure) {
 	struct parm2 *me = (struct parm2 *) closure;
-	for (int itrack = 1; itrack <= my ntrack; itrack ++)
+	for (integer itrack = 1; itrack <= my ntrack; itrack ++)
 		my putResult (iframe, my indices [jplace] [itrack], itrack, my closure);
 }
 
 void NUM_viterbi_multi (
-	long nframe, long ncand, int ntrack,
-	double (*getLocalCost) (long iframe, long icand, int itrack, void *closure),
-	double (*getTransitionCost) (long iframe, long icand1, long icand2, int itrack, void *closure),
-	void (*putResult) (long iframe, long place, int itrack, void *closure),
+	integer nframe, integer ncand, integer ntrack,
+	double (*getLocalCost) (integer iframe, integer icand, integer itrack, void *closure),
+	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, integer itrack, void *closure),
+	void (*putResult) (integer iframe, integer place, integer itrack, void *closure),
 	void *closure)
 {
 	struct parm2 parm;
@@ -576,7 +570,7 @@ void NUM_viterbi_multi (
 
 	if (ntrack > ncand) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Number of tracks (", ntrack, U") should not exceed number of candidates (", ncand, U").");
-	double ncomb = NUMcombinations (ncand, ntrack);
+	integer ncomb = Melder_iround (NUMcombinations (ncand, ntrack));
 	if (ncomb > 10000000) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Unrealistically high number of combinations (", ncomb, U").");
 	parm. ntrack = ntrack;
@@ -595,20 +589,20 @@ void NUM_viterbi_multi (
 	 *   2 4 5
 	 *   3 4 5
 	 */
-	autoNUMmatrix <long> indices (1, parm. ncomb, 1, ntrack);
+	autoNUMmatrix <integer> indices (1, parm. ncomb, 1, ntrack);
 	parm.indices = indices.peek();
-	autoNUMvector <long> icand (1, ntrack);
-	for (int itrack = 1; itrack <= ntrack; itrack ++)
+	autoNUMvector <integer> icand (1, ntrack);
+	for (integer itrack = 1; itrack <= ntrack; itrack ++)
 		icand [itrack] = itrack;   // start out with "1 2 3"
-	long jcomb = 0;
+	integer jcomb = 0;
 	for (;;) {
 		jcomb ++;
-		for (int itrack = 1; itrack <= ntrack; itrack ++)
+		for (integer itrack = 1; itrack <= ntrack; itrack ++)
 			parm. indices [jcomb] [itrack] = icand [itrack];
-		int itrack = ntrack;
+		integer itrack = ntrack;
 		for (; itrack >= 1; itrack --) {
 			if (++ icand [itrack] <= ncand - (ntrack - itrack)) {
-				for (int jtrack = itrack + 1; jtrack <= ntrack; jtrack ++)
+				for (integer jtrack = itrack + 1; jtrack <= ntrack; jtrack ++)
 					icand [jtrack] = icand [itrack] + jtrack - itrack;
 				break;
 			}
@@ -623,11 +617,11 @@ void NUM_viterbi_multi (
 	NUM_viterbi (nframe, ncomb, getNumberOfCandidates_n, getLocalCost_n, getTransitionCost_n, putResult_n, & parm);
 }
 
-int NUMrotationsPointInPolygon (double x0, double y0, long n, double x [], double y []) {
-	long nup = 0, i;
+int NUMrotationsPointInPolygon (double x0, double y0, integer n, double x [], double y []) {
+	integer nup = 0, i;
 	int upold = y [n] > y0, upnew;
 	for (i = 1; i <= n; i ++) if ((upnew = y [i] > y0) != upold) {
-		long j = i == 1 ? n : i - 1;
+		integer j = i == 1 ? n : i - 1;
 		if (x0 < x [i] + (x [j] - x [i]) * (y0 - y [i]) / (y [j] - y [i])) {
 			if (upnew) nup ++; else nup --;
 		}

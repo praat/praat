@@ -1,6 +1,6 @@
 /* Praat_tests.cpp
  *
- * Copyright (C) 2001-2012,2015,2016 Paul Boersma
+ * Copyright (C) 2001-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
 
 #include "Graphics.h"
 #include "praat.h"
+#include "NUM2.h"
+#include "Sound.h"
 
 #include "enums_getText.h"
 #include "Praat_tests_enums.h"
@@ -46,8 +48,13 @@ static autoDaata newAutoData () {
 	autoDaata data (Thing_new (Daata));
 	return data;
 }
+static int length (const char32 *s) {
+	int result = str32len (s);
+	Melder_free (s);
+	return result;
+}
 
-int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
+int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
 	int64 n = Melder_atoi (arg1);
 	double t = 0.0;
 	(void) arg1;
@@ -57,74 +64,76 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 	Melder_clearInfo ();
 	Melder_stopwatch ();
 	switch (itest) {
-		case kPraatTests_TIME_RANDOM_FRACTION: {
+		case kPraatTests::TIME_RANDOM_FRACTION: {
 			for (int64 i = 1; i <= n; i ++)
 				(void) NUMrandomFraction ();
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_RANDOM_GAUSS: {
+		case kPraatTests::TIME_RANDOM_GAUSS: {
 			for (int64 i = 1; i <= n; i ++)
 				(void) NUMrandomGauss (0.0, 1.0);
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_SORT: {
-			long m = Melder_atoi (arg2);
-			long *array = NUMvector <long> (1, m);
-			for (int64 i = 1; i <= m; i ++)
-				array [i] = NUMrandomInteger (1, 100);
+		case kPraatTests::TIME_SORT: {
+			integer size = Melder_atoi (arg2);
+			double *array = NUMvector <double> (1, size);
 			Melder_stopwatch ();
-			for (int64 i = 1; i <= n; i ++)
-				NUMsort_l (m, array);
-			t = Melder_stopwatch ();
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				for (int64 i = 1; i <= size; i ++) {
+					array [i] = NUMrandomFraction ();
+				}
+				NUMsort_d (size, array);
+			}
+			t = Melder_stopwatch () / (size * log2 (size));
 			NUMvector_free (array, 1);
 		} break;
-		case kPraatTests_TIME_INTEGER: {
+		case kPraatTests::TIME_INTEGER: {
 			int64 sum = 0;
 			for (int64 i = 1; i <= n; i ++)
 				sum += i * (i - 1) * (i - 2);
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_FLOAT: {
+		case kPraatTests::TIME_FLOAT: {
 			double sum = 0.0, fn = n;
-			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
+			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += fi * (fi - 1.0) * (fi - 2.0);
-			t = Melder_stopwatch ();
+			t = Melder_stopwatch ();   // 2.02 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_BUILTIN: {
+		case kPraatTests::TIME_FLOAT_TO_UNSIGNED_BUILTIN: {
 			uint64_t sum = 0;
 			double fn = n;
-			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
+			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += (uint32) fi;
-			t = Melder_stopwatch ();   // 2.59   // 1.60
+			t = Melder_stopwatch ();   // 1.45 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_FLOAT_TO_UNSIGNED_EXTERN: {
+		case kPraatTests::TIME_FLOAT_TO_UNSIGNED_EXTERN: {
 			uint64_t sum = 0;
 			double fn = n;
-			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
+			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += (uint32) ((int32) (fi - 2147483648.0) + 2147483647L + 1);
-			t = Melder_stopwatch ();   // 1.60
+			t = Melder_stopwatch ();   // 1.47 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_UNSIGNED_TO_FLOAT_BUILTIN: {
+		case kPraatTests::TIME_UNSIGNED_TO_FLOAT_BUILTIN: {
 			double sum = 0.0;
 			uint32 nu = (uint32) n;
 			for (uint32 iu = 1; iu <= nu; iu ++)
 				sum += (double) iu;
-			t = Melder_stopwatch ();   // 1.35
+			t = Melder_stopwatch ();   // 0.88 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_UNSIGNED_TO_FLOAT_EXTERN: {
+		case kPraatTests::TIME_UNSIGNED_TO_FLOAT_EXTERN: {
 			double sum = 0.0;
 			uint32 nu = (uint32) n;
 			for (uint32 iu = 1; iu <= nu; iu ++)
 				sum += (double) (int32) (iu - 2147483647L - 1) + 2147483648.0;
-			t = Melder_stopwatch ();   // 0.96
+			t = Melder_stopwatch ();   // 0.87 ns
 			MelderInfo_writeLine (sum);
 		} break;
-		case kPraatTests_TIME_STRING_MELDER_32: {
+		case kPraatTests::TIME_STRING_MELDER_32: {
 			autoMelderString string;
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -135,7 +144,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_MELDER_32_ALLOC: {
+		case kPraatTests::TIME_STRING_MELDER_32_ALLOC: {
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
 			for (int64 i = 1; i <= n; i ++) {
@@ -146,7 +155,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_S: {
+		case kPraatTests::TIME_STRING_CPP_S: {
 			std::string s = "";
 			char word [] { "abc" };
 			word [2] = (char) NUMrandomInteger ('a', 'z');
@@ -157,7 +166,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_C: {
+		case kPraatTests::TIME_STRING_CPP_C: {
 			std::basic_string<char> s = "";
 			char word [] { "abc" };
 			word [2] = (char) NUMrandomInteger ('a', 'z');
@@ -168,7 +177,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_WS: {
+		case kPraatTests::TIME_STRING_CPP_WS: {
 			std::wstring s = L"";
 			wchar_t word [] { L"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -179,7 +188,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_WC: {
+		case kPraatTests::TIME_STRING_CPP_WC: {
 			std::basic_string<wchar_t> s = L"";
 			wchar_t word [] { L"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -190,7 +199,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_32: {
+		case kPraatTests::TIME_STRING_CPP_32: {
 			std::basic_string<char32_t> s = U"";
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -201,7 +210,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRING_CPP_U32STRING: {
+		case kPraatTests::TIME_STRING_CPP_U32STRING: {
 			std::u32string s = U"";
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -212,7 +221,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STRCPY: {
+		case kPraatTests::TIME_STRCPY: {
 			char buffer [100];
 			char word [] { "abc" };
 			word [2] = (char) NUMrandomInteger ('a', 'z');
@@ -224,7 +233,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (Melder_peek8to32 (buffer));
 		} break;
-		case kPraatTests_TIME_WCSCPY: {
+		case kPraatTests::TIME_WCSCPY: {
 			wchar_t buffer [100];
 			wchar_t word [] { L"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -235,7 +244,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_TIME_STR32CPY: {
+		case kPraatTests::TIME_STR32CPY: {
 			char32 buffer [100];
 			char32 word [] { U"abc" };
 			word [2] = NUMrandomInteger ('a', 'z');
@@ -247,14 +256,192 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			t = Melder_stopwatch ();
 			MelderInfo_writeLine (buffer);
 		} break;
-		case kPraatTests_TIME_GRAPHICS_TEXT_TOP: {
+		case kPraatTests::TIME_GRAPHICS_TEXT_TOP: {
 			autoPraatPicture picture;
 			for (int64 i = 1; i <= n; i ++) {
 				Graphics_textTop (GRAPHICS, false, U"hello world");
 			}
 			t = Melder_stopwatch ();
 		} break;
-		case kPraatTests_THING_AUTO: {
+		case kPraatTests::TIME_UNDEFINED_NUMUNDEFINED: {
+			bool isAllDefined = true;
+			double x = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				x += (double) i;
+				isAllDefined &= ( x != undefined );
+			}
+			t = Melder_stopwatch ();   // 0.86 ns
+			MelderInfo_writeLine (isAllDefined, U" ", x);
+		} break;
+		case kPraatTests::TIME_UNDEFINED_ISINF_OR_ISNAN: {
+			bool isAllDefined = true;
+			double x = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				x += (double) i;
+				isAllDefined &= ! isinf (x) && ! isnan (x);
+				//isAllDefined &= ! isfinite (x);   // same
+			}
+			t = Melder_stopwatch ();   // 1.29 ns
+			MelderInfo_writeLine (isAllDefined, U" ", x);
+		} break;
+		case kPraatTests::TIME_UNDEFINED_0x7FF: {
+			bool isAllDefined = true;
+			double x = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				x += (double) i;
+				isAllDefined &= ((* (uint64_t *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000;
+			}
+			t = Melder_stopwatch ();   // 0.90 ns
+			MelderInfo_writeLine (isAllDefined, U" ", x);
+		} break;
+		case kPraatTests::TIME_INNER: {
+			int size = Melder_atoi (arg2);
+			autonumvec x { size, kTensorInitializationType::RAW }, y { size, kTensorInitializationType::RAW };
+			for (int64 i = 1; i <= size; i ++) {
+				x [i] = NUMrandomGauss (0.0, 1.0);
+				y [i] = NUMrandomGauss (0.0, 1.0);
+			}
+			real z = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				z += inner_scalar (x.get(), y.get());
+			}
+			t = Melder_stopwatch () / size;   // 0.43 ns per multiplication-addition pair
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests::TIME_OUTER_NUMMAT: {
+			int nrow = 100, ncol = 100;
+			numvec x { NUMvector<double> (1, nrow), nrow }, y { NUMvector<double> (1, ncol), ncol };
+			for (int64 i = 1; i <= nrow; i ++)
+				x.at [i] = NUMrandomGauss (0.0, 1.0);
+			for (int64 i = 1; i <= ncol; i ++)
+				y.at [i] = NUMrandomGauss (0.0, 1.0);
+			for (int64 i = 1; i <= n; i ++) {
+				const autonummat mat = outer_nummat (x, y);
+			}
+			t = Melder_stopwatch () / nrow / ncol;   // 0.29 ns, i.e. less than one clock cycle per cell
+			NUMvector_free (x.at, 1);
+			NUMvector_free (y.at, 1);
+		} break;
+		case kPraatTests::CHECK_INVFISHERQ: {
+			MelderInfo_writeLine (NUMinvFisherQ (0.003, 1, 100000));
+		} break;
+		case kPraatTests::TIME_AUTOSTRING: {
+			const char32 *strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
+			int64 sumOfLengths = 0;
+			for (int64 i = 1; i <= n; i ++) {
+				int istring = i % 6;
+				autostring32 s = Melder_dup (strings [istring]);
+				sumOfLengths += length (s.transfer());
+			}
+			t = Melder_stopwatch ();   // 72 ns (but 152 bytes more)
+			MelderInfo_writeLine (sumOfLengths);
+		} break;
+		case kPraatTests::TIME_CHAR32: {
+			const char32 *strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
+			int64 sumOfLengths = 0;
+			for (int64 i = 1; i <= n; i ++) {
+				int istring = i % 6;
+				char32 *s = Melder_dup (strings [istring]);
+				sumOfLengths += length (s);
+			}
+			t = Melder_stopwatch ();   // 72 ns
+			MelderInfo_writeLine (sumOfLengths);
+		} break;
+		case kPraatTests::TIME_SUM: {
+			integer size = Melder_atoi (arg2);
+			autonumvec x { size, kTensorInitializationType::RAW };
+			for (integer i = 1; i <= size; i ++)
+				x [i] = NUMrandomGauss (0.0, 1.0);
+			double z = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				real sum = sum_scalar (x.get());
+				z += sum;
+			}
+			t = Melder_stopwatch () / size;   // for size == 100: 0.31 ns
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests::TIME_MEAN: {
+			integer size = Melder_atoi (arg2);
+			autonumvec x { size, kTensorInitializationType::RAW };
+			for (integer i = 1; i <= size; i ++)
+				x [i] = NUMrandomGauss (0.0, 1.0);
+			double z = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				real sum = mean_scalar (x.get());
+				z += sum;
+			}
+			t = Melder_stopwatch () / size;   // for size == 100: 0.34 ns
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests::TIME_STDEV: {
+			integer size = 10000;
+			autonumvec x { size, kTensorInitializationType::RAW };
+			for (integer i = 1; i <= size; i ++)
+				x [i] = NUMrandomGauss (0.0, 1.0);
+			double z = 0.0;
+			for (int64 i = 1; i <= n; i ++) {
+				real stdev = stdev_scalar (x.get());
+				z += stdev;
+			}
+			t = Melder_stopwatch () / size;
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests::TIME_ALLOC: {
+			integer size = Melder_atoi (arg2);
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				autonumvec result (size, kTensorInitializationType::RAW);
+			}
+			t = Melder_stopwatch () / size;
+		} break;
+		case kPraatTests::TIME_ALLOC0: {
+			integer size = Melder_atoi (arg2);
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				autonumvec result (size, kTensorInitializationType::RAW);
+			}
+			t = Melder_stopwatch () / size;
+		} break;
+		case kPraatTests::TIME_ZERO: {
+			integer size = Melder_atoi (arg2);
+			autonumvec result { size, kTensorInitializationType::RAW };
+			double z = 0.0;
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				for (integer i = 1; i <= size; i ++) {
+					result [i] = (real) i;
+				}
+				z += result [size - 1];
+			}
+			t = Melder_stopwatch () / size;
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests::TIME_MALLOC: {
+			integer size = Melder_atoi (arg2);
+			double z = 0.0;
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				double *result = (double *) malloc (sizeof (double) * (size_t) size);
+				for (integer i = 0; i < size; i ++) {
+					result [i] = (real) i;
+				}
+				z += result [size - 1];
+				free (result);
+			}
+			t = Melder_stopwatch () / size;
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests::TIME_CALLOC: {
+			integer size = Melder_atoi (arg2);
+			double z = 0.0;
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
+				double *result = (double *) calloc (sizeof (double), (size_t) size);
+				for (integer i = 0; i < size; i ++) {
+					result [i] = (real) i;
+				}
+				z += result [size - 1];
+				free (result);
+			}
+			t = Melder_stopwatch () / size;
+			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests::THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;
 			{
 				Melder_casual (U"1\n");
@@ -313,7 +500,7 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 			}
 			int numberOfThingsAfter = theTotalNumberOfThings;
 			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
-			#if 1
+			#if 0
 				MelderCallback<void,structDaata>::FunctionType f;
 				typedef void (*DataFunc) (Daata);
 				typedef void (*OrderedFunc) (Ordered);
@@ -326,6 +513,32 @@ int Praat_tests (int itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *ar
 				autoDaata data = Thing_new (Daata);
 				dataFun3 (data.get());
 			#endif
+			{
+				#if 1
+				autoMelderAsynchronous x;
+				//autoMelderAsynchronous y = x;   // deleted copy constructor
+				autoMelderAsynchronous y = x.move();   // defined move constructor
+				//x = y;   // deleted copy assignment
+				x = y.move();   // defined move assignment
+				autonumvec a;
+				autonumvec b = a.move();
+				const autonumvec c;
+				const autonumvec d { };
+				double *e;
+				const autonumvec f { e, 10 };
+				const autonumvec g { 100, kTensorInitializationType::ZERO };
+				//return f;   // call to deleted constructor
+				numvec h;
+				autonumvec j;
+				numvec *ph = & h;
+				autonumvec *pj = & j;
+				ph = pj;   // (in)correctly? accepted
+				//pj = ph;   // correctly ruled out
+				#endif
+				autoSound sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.0);
+				sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.00005);
+				Melder_casual (U"hello ", sound -> dx);
+			}
 		} break;
 	}
 	MelderInfo_writeLine (Melder_single (t / n * 1e9), U" nanoseconds");

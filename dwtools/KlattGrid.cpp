@@ -1,6 +1,6 @@
 /* KlattGrid.cpp
  *
- * Copyright (C) 2008-2014 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2008-2014 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@
 /*static double NUMinterpolateLinear (double x1, double y1, double x2, double y2, double x)
 {
 	if (y1 == y2) return y1;
-	if (x1 == x2) return NUMundefined;
+	if (x1 == x2) return undefined;
 	return (y2 - y1) * (x - x1) / (x2 - x1) + y1;
 }*/
 
@@ -119,10 +119,10 @@ static void rel_to_abs (double *w, double *ws, long n, double d) {
 static bool RealTier_valuesInRange (RealTier me, double min, double max) {
 	for (long i = 1; i <= my points.size; i ++) {
 		RealPoint p = my points.at [i];
-		if (NUMdefined (min) && p -> value < min) {
+		if (isdefined (min) && p -> value < min) {
 			return false;
 		}
-		if (NUMdefined (max) && p -> value < max) {
+		if (isdefined (max) && p -> value < max) {
 			return false;
 		}
 	}
@@ -130,22 +130,22 @@ static bool RealTier_valuesInRange (RealTier me, double min, double max) {
 }
 
 static double PointProcess_getPeriodAtIndex (PointProcess me, long it, double maximumPeriod) {
-	double period = NUMundefined;
+	double period = undefined;
 	if (it >= 2) {
 		period = my t [it] - my t [it - 1];
 		if (period > maximumPeriod) {
-			period = NUMundefined;
+			period = undefined;
 		}
 	}
-	if (period == NUMundefined) {
+	if (isundef (period)) {
 		if (it < my nt) {
 			period = my t [it + 1] - my t [it];
 			if (period > maximumPeriod) {
-				period = NUMundefined;
+				period = undefined;
 			}
 		}
 	}
-	// NUMundefined can only occur for a single isolated pulse.
+	// undefined can only occur for a single isolated pulse.
 	return period;
 }
 
@@ -198,7 +198,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 				// Add my points between t1 and t2
 				while (mytime > lasttime && mytime < t2) {
 					double dvalue = RealTier_getValueAtTime (delta, mytime);
-					if (NUMdefined (dvalue)) {
+					if (isdefined (dvalue)) {
 						double fraction = (mytime - t1) / (openglottis_fadeFraction * openDuration);
 						myvalue += dvalue * fraction;
 					}
@@ -208,7 +208,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 
 			double myvalue2 = RealTier_getValueAtTime (me, t2);
 			double dvalue = RealTier_getValueAtTime (delta, t2);
-			if (NUMdefined (dvalue)) {
+			if (isdefined (dvalue)) {
 				myvalue2 += dvalue;
 			}
 			RealTier_addPoint (thee.get(), t2, myvalue2);
@@ -217,7 +217,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 
 			while (mytime > lasttime && mytime < t3) {
 				dvalue = RealTier_getValueAtTime (delta, mytime);
-				if (NUMdefined (dvalue)) {
+				if (isdefined (dvalue)) {
 					myvalue += dvalue;
 				}
 				UPDATE_TIER
@@ -227,7 +227,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 
 			double myvalue3 = RealTier_getValueAtTime (me, t3);
 			dvalue = RealTier_getValueAtTime (delta, t3);
-			if (NUMdefined (dvalue)) {
+			if (isdefined (dvalue)) {
 				myvalue3 += dvalue;
 			}
 			RealTier_addPoint (thee.get(), t3, myvalue3);
@@ -236,7 +236,7 @@ static autoRealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phona
 				// Add my points between t3 and t4
 				while (mytime > lasttime && mytime < t4) {
 					dvalue = RealTier_getValueAtTime (delta, mytime);
-					if (NUMdefined (dvalue)) {
+					if (isdefined (dvalue)) {
 						double fraction = 1 - (mytime - t3) / (openglottis_fadeFraction * openDuration);
 						myvalue += dvalue * fraction;
 					}
@@ -272,7 +272,7 @@ static bool FormantGrid_Intensities_isFormantDefined (FormantGrid me, OrderedOf<
 	return exists;
 }
 
-static void check_formants (long numberOfFormants, long *ifb, long *ife) {
+static void check_formants (integer numberOfFormants, integer *ifb, integer *ife) {
 	if (numberOfFormants <= 0 || *ifb > numberOfFormants || *ife < *ifb || *ife < 1) {
 		*ife = 0;  // overrules everything *ifb value is a don't care now
 		return;
@@ -286,7 +286,7 @@ static void check_formants (long numberOfFormants, long *ifb, long *ife) {
 }
 
 static autoSound Sound_createEmptyMono (double xmin, double xmax, double samplingFrequency) {
-	long nt = (long) ceil ( (xmax - xmin) * samplingFrequency);
+	integer nt = Melder_iceiling ((xmax - xmin) * samplingFrequency);
 	double dt = 1.0 / samplingFrequency;
 	double tmid = (xmin + xmax) / 2.0;
 	double t1 = tmid - 0.5 * (nt - 1) * dt;
@@ -294,7 +294,7 @@ static autoSound Sound_createEmptyMono (double xmin, double xmax, double samplin
 	return Sound_create (1, xmin, xmax, nt, dt, t1);
 }
 
-static void _Sounds_add_inline (Sound me, Sound thee) {
+static void _Sounds_add_inplace (Sound me, Sound thee) {
 	for (long i = 1; i <= my nx; i ++) {
 		my z [1] [i] += thy z [1] [i];
 	}
@@ -338,7 +338,7 @@ static autoSound _Sound_diff (Sound me, int scale) {
 	}
 }
 
-/*static void _Sounds_addDifferentiated_inline (Sound me, Sound thee)
+/*static void _Sounds_addDifferentiated_inplace (Sound me, Sound thee)
 {
 	double pval = 0, dx = my dx;
 	for (long i = 1; i <= my nx; i++)
@@ -386,7 +386,7 @@ static void NUMcircle_radial_intersection_sq (double x, double y, double r, doub
 		*xi = x + dx * r / d;
 		*yi = y + dy * r / d;
 	} else {
-		*xi = *yi = NUMundefined;
+		*xi = *yi = undefined;
 	}
 }
 
@@ -418,7 +418,7 @@ static void _summer_drawConnections (Graphics g, double x, double y, double r, c
 			}
 		}
 		NUMcircle_radial_intersection_sq (x, y, r, xp, yp, &xto, &yto);
-		if (xto == NUMundefined || yto == NUMundefined) {
+		if (isundef (xto) || isundef (yto)) {
 			continue;
 		}
 		if (arrow) {
@@ -478,7 +478,7 @@ static void draw_oneSection (Graphics g, double xmin, double xmax, double ymin, 
 
 /************************ Sound & FormantGrid *********************************************/
 
-static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant, int antiformant) {
+static void _Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGrid thee, long iformant, int antiformant) {
 	if (iformant < 1 || iformant > thy formants.size) {
 		Melder_warning (U"Formant ", iformant, U" does not exist.");
 		return;
@@ -505,22 +505,22 @@ static void _Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGri
 		double t = my x1 + (is - 1) * my dx;
 		double f = RealTier_getValueAtTime (ftier, t);
 		double b = RealTier_getValueAtTime (btier, t);
-		if (f <= nyquist && NUMdefined (b)) {
+		if (f <= nyquist && isdefined (b)) {
 			Filter_setFB (r.get(), f, b);
 		}
 		my z [1] [is] = Filter_getOutput (r.get(), my z[1][is]);
 	}
 }
 
-void Sound_FormantGrid_filterWithOneAntiFormant_inline (Sound me, FormantGrid thee, long iformant) {
-	_Sound_FormantGrid_filterWithOneFormant_inline (me, thee, iformant, 1);
+void Sound_FormantGrid_filterWithOneAntiFormant_inplace (Sound me, FormantGrid thee, long iformant) {
+	_Sound_FormantGrid_filterWithOneFormant_inplace (me, thee, iformant, 1);
 }
 
-void Sound_FormantGrid_filterWithOneFormant_inline (Sound me, FormantGrid thee, long iformant) {
-	_Sound_FormantGrid_filterWithOneFormant_inline (me, thee, iformant, 0);
+void Sound_FormantGrid_filterWithOneFormant_inplace (Sound me, FormantGrid thee, long iformant) {
+	_Sound_FormantGrid_filterWithOneFormant_inplace (me, thee, iformant, 0);
 }
 
-void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant) {
+void Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (Sound me, FormantGrid thee, OrderedOf<structIntensityTier>* amplitudes, long iformant) {
 	try {
 		if (iformant < 1 || iformant > thy formants.size) {
 			Melder_throw (U"Formant ", iformant, U" not defined. \nThis formant will not be used.");
@@ -542,10 +542,10 @@ void Sound_FormantGrid_Intensities_filterWithOneFormant_inline (Sound me, Forman
 			double f = RealTier_getValueAtTime (ftier, t);
 			double b = RealTier_getValueAtTime (btier, t);
 			double a;
-			if (f <= nyquist && NUMdefined (b)) {
+			if (f <= nyquist && isdefined (b)) {
 				Filter_setFB (r.get(), f, b);
 				a = RealTier_getValueAtTime (atier, t);
-				if (NUMdefined (a)) {
+				if (isdefined (a)) {
 					r -> a *= DB_to_A (a);
 				}
 			}
@@ -572,7 +572,7 @@ autoSound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Orde
 		for (long iformant = iformantb; iformant <= iformante; iformant ++) {
 			if (FormantGrid_Intensities_isFormantDefined (thee, amplitudes, iformant)) {
 				autoSound tmp = Data_copy (me);
-				Sound_FormantGrid_Intensities_filterWithOneFormant_inline (tmp.get(), thee, amplitudes, iformant);
+				Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (tmp.get(), thee, amplitudes, iformant);
 				for (long is = 1; is <= my nx; is ++) {
 					his z [1] [is] += ( alternatingSign >= 0 ? tmp -> z [1] [is] : - tmp -> z [1] [is] );
 				}
@@ -728,20 +728,20 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 	do {
 		double time = ( hasPower1Points ? my power1 -> points.at [ipoint] -> number : 0.5 * (my xmin + my xmax) );
 		double power1 = RealTier_getValueAtIndex (my power1.get(), ipoint);
-		if (power1 == NUMundefined) {
+		if (isundef (power1)) {
 			power1 = KlattGrid_POWER1_DEFAULT;
 		}
-		if (power1 <= 0) {
+		if (power1 <= 0.0) {
 			Melder_throw (U"All power1 values must greater than zero.");
 		}
 		double power2 = RealTier_getValueAtTime (my power2.get(), time);
-		if (power2 == NUMundefined) {
+		if (isundef (power2)) {
 			power2 = KlattGrid_POWER2_DEFAULT;
 		}
 		if (power2 <= power1) {
 			Melder_throw (U"At all times a power1 value must be smaller than the corresponding power2 value.");
 		}
-	} while (++ipoint < my power1 -> points.size);
+	} while (++ ipoint < my power1 -> points.size);
 
 	// Now check power2 values. This is necessary to catch situations where power2 has a valley:
 	// power1(0) = 3; power2(1)= 4; power2(1)= 4; power2(0.5) = 3;
@@ -750,17 +750,17 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 	do {
 		double time = ( hasPower2Points ? my power2 -> points.at [ipoint] -> number : 0.5 * (my xmin + my xmax) );
 		double power2 = RealTier_getValueAtIndex (my power2.get(), ipoint);
-		if (power2 == NUMundefined) {
+		if (isundef (power2)) {
 			power2 = KlattGrid_POWER2_DEFAULT;
 		}
 		double power1 = RealTier_getValueAtTime (my power1.get(), time);
-		if (power1 == NUMundefined) {
+		if (isundef (power1)) {
 			power1 = KlattGrid_POWER1_DEFAULT;
 		}
 		if (power2 <= power1) {
 			Melder_throw (U"At all times the power2 value must be greater than the corresponding power1 value.");
 		}
-	} while (++ipoint < my power2 -> points.size);
+	} while (++ ipoint < my power2 -> points.size);
 }
 
 static void PhonationGrid_draw_inside (PhonationGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yout) {
@@ -819,7 +819,7 @@ void PhonationGrid_draw (PhonationGrid me, Graphics g) {
 
 double PhonationGrid_getMaximumPeriod (PhonationGrid me) {
 	double minimumPitch = RealTier_getMinimumValue (my pitch.get());
-	return 2.0 / ( NUMdefined (minimumPitch) && minimumPitch != 0.0 ? minimumPitch : my xmax - my xmin );
+	return 2.0 / ( isdefined (minimumPitch) && minimumPitch != 0.0 ? minimumPitch : my xmax - my xmin );
 }
 
 static autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, RealTier flutter, double maximumPeriod) {
@@ -834,7 +834,7 @@ static autoPointProcess PitchTier_to_PointProcess_flutter (PitchTier pitch, Real
 			double period = thy t [it] - thy t [it - 1];
 			if (period < maximumPeriod && flutter -> points.size > 0) {
 				double fltr = RealTier_getValueAtTime (flutter, t);
-				if (NUMdefined (fltr)) {
+				if (isdefined (fltr)) {
 					// newF0 = f0 * (1 + (val / 50) * (sin ... + ...));
 					double newPeriod = period / (1.0 + (fltr / 50.0) * (sin (2.0 * NUMpi * 12.7 * t) + sin (2.0 * NUMpi * 7.1 * t) + sin (2.0 * NUMpi * 4.7 * t)));
 					tsum += newPeriod - period;
@@ -860,7 +860,7 @@ autoSound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFr
 				double t = thy x1 + (i - 1) * thy dx;
 				double val = NUMrandomUniform (-1.0, 1.0);
 				double a = DBSPL_to_A (RealTier_getValueAtTime (my aspirationAmplitude.get(), t));
-				if (NUMdefined (a)) {
+				if (isdefined (a)) {
 					thy z [1] [i] = lastval = val + 0.75 * lastval;
 					lastval = (val += 0.75 * lastval); // soft low-pass
 					thy z [1] [i] = val * a;
@@ -873,7 +873,7 @@ autoSound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFr
 	}
 }
 
-static void Sound_PhonationGrid_spectralTilt_inline (Sound thee, PhonationGrid me) {
+static void Sound_PhonationGrid_spectralTilt_inplace (Sound thee, PhonationGrid me) {
 	if (my spectralTilt -> points.size > 0) {
 		/* Spectral tilt
 			Filter y[n] = a * x[n] + b * y[n-1] => H(z) = a / (1 - bz^(-1)).
@@ -917,7 +917,7 @@ static void nrfunction (double x, double *fx, double *dfx, void *closure) {
 }
 
 static double get_collisionPoint_x (double n, double m, double collisionPhase) {
-	double y = NUMundefined;
+	double y = undefined;
 	/*
 	Domain [0,1]:
 	The glottal flow is given by:
@@ -986,7 +986,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 			double pulseScale = 1.0;        // For alternate pulses in case of diplophonia
 
 			double period = PointProcess_getPeriodAtIndex (point.get(), it, pp -> maximumPeriod);
-			if (period == NUMundefined) {
+			if (isundef (period)) {
 				period = 0.5 * pp -> maximumPeriod; // Some default value
 			}
 
@@ -996,15 +996,15 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 			double periodStart = t - period; // point where period starts:
 
 			double collisionPhase = pp -> collisionPhase ? RealTier_getValueAtTime (my collisionPhase.get(), periodStart) : 0.0;
-			if (collisionPhase == NUMundefined) {
+			if (isundef (collisionPhase)) {
 				collisionPhase = 0.0;
 			}
 			double power1 = pp -> flowFunction == 1 ? RealTier_getValueAtTime (my power1.get(), periodStart) : pp -> flowFunction;
-			if (power1 == NUMundefined) {
+			if (isundef (power1)) {
 				power1 = KlattGrid_POWER1_DEFAULT;
 			}
 			double power2 = pp -> flowFunction == 1 ? RealTier_getValueAtTime (my power2.get(), periodStart) : pp -> flowFunction + 1;
-			if (power2 == NUMundefined) {
+			if (isundef (power2)) {
 				power2 = KlattGrid_POWER2_DEFAULT;
 			}
 			try {
@@ -1014,7 +1014,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 			}
 
 			double openPhase = RealTier_getValueAtTime (my openPhase.get(), periodStart);
-			if (openPhase == NUMundefined) {
+			if (isundef (openPhase)) {
 				openPhase = KlattGrid_OPENPHASE_DEFAULT;
 			}
 
@@ -1026,7 +1026,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 			// The doublePulsing scales the amplitudes as well as the delay linearly.
 
 			double doublePulsing = pp -> doublePulsing ? RealTier_getValueAtTime (my doublePulsing.get(), periodStart) : 0.0;
-			if (doublePulsing == NUMundefined) {
+			if (isundef (doublePulsing)) {
 				doublePulsing = 0.0;
 			}
 
@@ -1034,7 +1034,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 				diplophonicPulseIndex ++;
 				if (diplophonicPulseIndex % 2 == 1) {   // the odd-numbered one
 					double nextPeriod = PointProcess_getPeriodAtIndex (point.get(), it + 1, pp -> maximumPeriod);
-					if (nextPeriod == NUMundefined) {
+					if (isundef (nextPeriod)) {
 						nextPeriod = period;
 					}
 					double openPhase2 = KlattGrid_OPENPHASE_DEFAULT;
@@ -1062,7 +1062,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, PhonationTier thee, double samplingFrequency) {
 	try {
 		PhonationGridPlayOptions p = my options.get();
-		double lastVal = NUMundefined;
+		double lastVal = undefined;
 
 		if (my voicingAmplitude -> points.size == 0) {
 			Melder_throw (U"Voicing amplitude tier is empty.");
@@ -1106,7 +1106,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 			// Fill in the samples to the left of the current point.
 
 			long midSample = Sampled_xToLowIndex (him.get(), t), beginSample;
-			beginSample = midSample - (long) floor (te / his dx);
+			beginSample = midSample - Melder_ifloor (te / his dx);
 			if (beginSample < 1) {
 				beginSample = 0;
 			}
@@ -1147,7 +1147,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 				double ta = collisionPhase * (period * openPhase);
 				double factorPerSample = exp (- his dx / ta);
 				double value = flow * exp (- (his x1 + midSample * his dx - t) / ta);
-				long endSample = midSample + (long) floor (20.0 * ta / his dx);
+				integer endSample = midSample + Melder_ifloor (20.0 * ta / his dx);
 				if (endSample > his nx) {
 					endSample = his nx;
 				}
@@ -1161,7 +1161,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 		// Scale voiced part and add breathiness during open phase
 		if (p -> flowDerivative) {
 			double extremum = Vector_getAbsoluteExtremum (him.get(), 0.0, 0.0, Vector_VALUE_INTERPOLATION_CUBIC);
-			if (! NUMdefined (lastVal)) {
+			if (isundef (lastVal)) {
 				lastVal = 0.0;
 			}
 			for (long i = 1; i <= his nx; i ++) {
@@ -1205,13 +1205,13 @@ static autoSound PhonationGrid_to_Sound (PhonationGrid me, CouplingGrid him, dou
 				thee = PhonationGrid_to_Sound_voiced (me, samplingFrequency);
 			}
 			if (pp -> spectralTilt) {
-				Sound_PhonationGrid_spectralTilt_inline (thee.get(), me);
+				Sound_PhonationGrid_spectralTilt_inplace (thee.get(), me);
 			}
 		}
 		if (pp -> aspiration) {
 			autoSound aspiration = PhonationGrid_to_Sound_aspiration (me, samplingFrequency);
 			if (thee) {
-				_Sounds_add_inline (thee.get(), aspiration.get());
+				_Sounds_add_inplace (thee.get(), aspiration.get());
 			} else {
 				thee = aspiration.move();
 			}
@@ -1348,7 +1348,7 @@ autoVocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberO
 	}
 }
 
-static void VocalTractGrid_CouplingGrid_drawCascade_inline (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double *yin, double *yout) {
+static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double *yin, double *yout) {
 	long numberOfOralFormants = my oral_formants -> formants.size;
 	long numberOfNasalFormants = my nasal_formants -> formants.size;
 	long numberOfNasalAntiFormants = my nasal_antiformants -> formants.size;
@@ -1412,7 +1412,7 @@ end:
 	}
 }
 
-static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout) {
+static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me, CouplingGrid thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout) {
 	// (0: filler) (1: hor. line to split) (2: split to diff) (3: diff) (4: diff to split)
 	// (5: split to filter) (6: filters) (7: conn to summer) (8: summer)
 	double xw [9] = { 0.0, 0.3, 0.2, 1.5, 0.5, 0.5, 1.0, 0.5, 0.5 }, xws [9];
@@ -1526,8 +1526,8 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inline (VocalTractGrid me, 
 
 static void VocalTractGrid_CouplingGrid_draw_inside (VocalTractGrid me, CouplingGrid thee, Graphics g, int filterModel, double xmin, double xmax, double ymin, double ymax, double dy, double *yin, double *yout) {
 	filterModel == KlattGrid_FILTER_CASCADE ?
-	VocalTractGrid_CouplingGrid_drawCascade_inline (me, thee, g, xmin, xmax, ymin, ymax, yin, yout) :
-	VocalTractGrid_CouplingGrid_drawParallel_inline (me, thee, g, xmin, xmax, ymin, ymax, dy, yin, yout);
+	VocalTractGrid_CouplingGrid_drawCascade_inplace (me, thee, g, xmin, xmax, ymin, ymax, yin, yout) :
+	VocalTractGrid_CouplingGrid_drawParallel_inplace (me, thee, g, xmin, xmax, ymin, ymax, dy, yin, yout);
 }
 
 static void VocalTractGrid_CouplingGrid_draw (VocalTractGrid me, CouplingGrid thee, Graphics g, int filterModel) {
@@ -1560,11 +1560,11 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 		long numberOfTrachealAntiFormants = tracheal_antiformants -> formants.size;
 		long numberOfNasalFormants = nasal_formants -> formants.size;
 		long numberOfNasalAntiFormants = nasal_antiformants -> formants.size;
-		check_formants (numberOfFormants, & (pv -> startOralFormant), & (pv -> endOralFormant));
-		check_formants (numberOfNasalFormants, & (pv -> startNasalFormant), & (pv -> endNasalFormant));
-		check_formants (numberOfTrachealFormants, & (pc -> startTrachealFormant), & (pc -> endTrachealFormant));
-		check_formants (numberOfNasalAntiFormants, & (pv -> startNasalAntiFormant), & (pv -> endNasalAntiFormant));
-		check_formants (numberOfTrachealAntiFormants, & (pc -> startTrachealAntiFormant), & (pc -> endTrachealAntiFormant));
+		check_formants (numberOfFormants, & pv -> startOralFormant, & pv -> endOralFormant);
+		check_formants (numberOfNasalFormants, & pv -> startNasalFormant, & pv -> endNasalFormant);
+		check_formants (numberOfTrachealFormants, & pc -> startTrachealFormant, & pc -> endTrachealFormant);
+		check_formants (numberOfNasalAntiFormants, & pv -> startNasalAntiFormant, & pv -> endNasalAntiFormant);
+		check_formants (numberOfTrachealAntiFormants, & pc -> startTrachealAntiFormant, & pc -> endTrachealAntiFormant);
 
 		autoSound him = Data_copy (me);
 
@@ -1579,7 +1579,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 0;
 			for (long iformant = pv -> startNasalFormant; iformant <= pv -> endNasalFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (thy nasal_formants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), thy nasal_formants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), thy nasal_formants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Nasal formant", iformant, ": frequency and/or bandwidth missing.");
 					nasal_formant_warning++; any_warning++;
@@ -1592,7 +1592,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 1;
 			for (long iformant = pv -> startNasalAntiFormant; iformant <= pv -> endNasalAntiFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (thy nasal_antiformants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), thy nasal_antiformants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), thy nasal_antiformants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Nasal antiformant", iformant, ": frequency and/or bandwidth missing.");
 					nasal_antiformant_warning++; any_warning++;
@@ -1605,7 +1605,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 0;
 			for (long iformant = pc -> startTrachealFormant; iformant <= pc -> endTrachealFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (tracheal_formants, iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), tracheal_formants, iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), tracheal_formants, iformant, antiformants);
 				} else {
 					// Melder_warning ("Tracheal formant", iformant, ": frequency and/or bandwidth missing.");
 					tracheal_formant_warning++; any_warning++;
@@ -1618,7 +1618,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			antiformants = 1;
 			for (long iformant = pc -> startTrachealAntiFormant; iformant <= pc -> endTrachealAntiFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (tracheal_antiformants, iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), tracheal_antiformants, iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), tracheal_antiformants, iformant, antiformants);
 				} else {
 					// Melder_warning ("Tracheal antiformant", iformant, ": frequency and/or bandwidth missing.");
 					tracheal_antiformant_warning++; any_warning++;
@@ -1634,7 +1634,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, Voc
 			}
 			for (long iformant = pv -> startOralFormant; iformant <= pv -> endOralFormant; iformant ++) {
 				if (FormantGrid_isFormantDefined (formants.get(), iformant)) {
-					_Sound_FormantGrid_filterWithOneFormant_inline (him.get(), formants.get(), iformant, antiformants);
+					_Sound_FormantGrid_filterWithOneFormant_inplace (him.get(), formants.get(), iformant, antiformants);
 				} else {
 					// Melder_warning ("Oral formant", iformant, ": frequency and/or bandwidth missing.");
 					oral_formant_warning++; any_warning++;
@@ -1696,7 +1696,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			if (pv -> startOralFormant == 1) {
 				him = Data_copy (me);
 				if (oral_formants -> formants.size > 0) {
-					Sound_FormantGrid_Intensities_filterWithOneFormant_inline (him.get(), oral_formants, & thy oral_formants_amplitudes, 1);
+					Sound_FormantGrid_Intensities_filterWithOneFormant_inplace (him.get(), oral_formants, & thy oral_formants_amplitudes, 1);
 				}
 			}
 		}
@@ -1708,7 +1708,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			if (! him) {
 				him = Data_copy (nasal.get());
 			} else {
-				_Sounds_add_inline (him.get(), nasal.get());
+				_Sounds_add_inplace (him.get(), nasal.get());
 			}
 		}
 
@@ -1729,7 +1729,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 				if (! him) {
 					him = Data_copy (vocalTract.get());
 				} else {
-					_Sounds_add_inline (him.get(), vocalTract.get());
+					_Sounds_add_inplace (him.get(), vocalTract.get());
 				}
 			}
 		}
@@ -1742,7 +1742,7 @@ static autoSound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, Vo
 			if (! him) {
 				him = Data_copy (trachea.get());
 			} else {
-				_Sounds_add_inline (him.get(), trachea.get());
+				_Sounds_add_inplace (him.get(), trachea.get());
 			}
 		}
 
@@ -1841,7 +1841,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 			if (itier <= my formants.size) {
 				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my formants.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
-					if (! RealTier_valuesInRange (rt.get(), 0, NUMundefined)) {
+					if (! RealTier_valuesInRange (rt.get(), 0, undefined)) {
 						Melder_throw (U"Formant ", itier, U" coupling gives negative values.");
 					}
 					my formants. replaceItem_move (rt.move(), itier);
@@ -1851,7 +1851,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 			if (itier <= my bandwidths.size) {
 				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my bandwidths.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
-					if (! RealTier_valuesInRange (rt.get(), 0, NUMundefined)) {
+					if (! RealTier_valuesInRange (rt.get(), 0, undefined)) {
 						Melder_throw (U"Bandwidth ", itier, U" coupling gives negative values.");
 					}
 					my bandwidths. replaceItem_move (rt.move(), itier);
@@ -2017,7 +2017,7 @@ autoSound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency) {
 			double a = 0.0;
 			if (my fricationAmplitude -> points.size > 0) {
 				double dba = RealTier_getValueAtTime (my fricationAmplitude.get(), t);
-				a = ( NUMdefined (dba) ? DBSPL_to_A (dba) : 0.0 );
+				a = ( isdefined (dba) ? DBSPL_to_A (dba) : 0.0 );
 			}
 			lastval = (val += 0.75 * lastval); // TODO: soft low-pass coefficient must be Fs dependent!
 			thy z[1][i] = val * a;
@@ -2053,10 +2053,10 @@ autoSound Sound_FricationGrid_filter (Sound me, FricationGrid thee) {
 		if (pf -> bypass) {
 			for (long is = 1; is <= his nx; is ++) {	// Bypass
 				double t = his x1 + (is - 1) * his dx;
-				double ab = 0;
+				double ab = 0.0;
 				if (thy bypass -> points.size > 0) {
 					double val = RealTier_getValueAtTime (thy bypass.get(), t);
-					ab = val == NUMundefined ? 0 : DB_to_A (val);
+					ab = ( isundef (val) ? 0.0 : DB_to_A (val) );
 				}
 				his z [1] [is] += my z [1] [is] * ab;
 			}
@@ -2292,7 +2292,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel) {
 		xc2 = xc1 + xw [3];
 		yc2 = yout_phonation + dy / 2.0;
 		yc1 = yc2 - dy;
-		VocalTractGrid_CouplingGrid_drawCascade_inline (my vocalTract.get(), my coupling.get(), g, xc1, xc2, yc1, yc2, &yin_vocalTract_c, &yout_vocalTract_c);
+		VocalTractGrid_CouplingGrid_drawCascade_inplace (my vocalTract.get(), my coupling.get(), g, xc1, xc2, yc1, yc2, &yin_vocalTract_c, &yout_vocalTract_c);
 
 		tf -> x[1] = xc2;
 		tf -> y[1] = yout_vocalTract_c;
@@ -2345,7 +2345,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel) {
 
 		xp1 = xmin + xws [2];
 		xp2 = xp1 + xw [3];
-		VocalTractGrid_CouplingGrid_drawParallel_inline (my vocalTract.get(), my coupling.get(), g, xp1, xp2, yp1, yp2, dy_vocalTract_p, &yin_vocalTract_p, &yout_vocalTract_p);
+		VocalTractGrid_CouplingGrid_drawParallel_inplace (my vocalTract.get(), my coupling.get(), g, xp1, xp2, yp1, yp2, dy_vocalTract_p, &yin_vocalTract_p, &yout_vocalTract_p);
 
 		tf -> x[1] = xp2;
 		tf -> y[1] = yout_vocalTract_p;
@@ -2459,12 +2459,12 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 			IntensityTier amplitudes = ordered->at [irow];
 			Formula_compile (interpreter, amplitudes, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 			for (long icol = 1; icol <= amplitudes -> points.size; icol ++) {
-				struct Formula_Result result;
+				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				if (result. result.numericResult == NUMundefined) {
+				if (isundef (result. numericResult)) {
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				}
-				amplitudes -> points.at [icol] -> value = result. result.numericResult;
+				amplitudes -> points.at [icol] -> value = result. numericResult;
 			}
 		}
 	} catch (MelderError) {
@@ -2475,7 +2475,7 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *
 double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iformant, double t) {
 	OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 	if (iformant < 0 || iformant > ordered->size) {
-		return NUMundefined;
+		return undefined;
 	}
 	return RealTier_getValueAtTime (ordered->at [iformant], t);
 }
@@ -2819,7 +2819,7 @@ autoSound KlattGrid_to_Sound (KlattGrid me) {
 		if (pf -> endFricationFormant > 0 || pf -> bypass) {
 			autoSound frication = FricationGrid_to_Sound (my frication.get(), samplingFrequency);
 			if (thee) {
-				_Sounds_add_inline (thee.get(), frication.get());
+				_Sounds_add_inplace (thee.get(), frication.get());
 			} else {
 				thee = frication.move();
 			}
@@ -2884,8 +2884,8 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 	try {
 		Table kt = (Table) me;
 
-		long nrows = my rows.size;
-		double tmin = 0, tmax = nrows * frameDuration;
+		long numberOfRows = my rows.size;
+		double tmin = 0, tmax = numberOfRows * frameDuration;
 		double dBNul = -300;
 		double dB_offset = -20.0 * log10 (2.0e-5) - 87.0; // in KlattTable maximum in DB_to_LIN is at 87 dB : 32767
 		double dB_offset_voicing = 20.0 * log10 (320000 / 32767); // V'[n] in range (-320000,32000)
@@ -2903,7 +2903,7 @@ autoKlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration) {
 		autoKlattGrid thee = KlattGrid_create (tmin, tmax, numberOfFormants, numberOfNasalFormants,
 		                                       numberOfNasalAntiFormants, numberOfTrachealFormants, numberOfTrachealAntiFormants,
 		                                       numberOfFricationFormants, numberOfDeltaFormants);
-		for (long irow = 1; irow <= nrows; irow++) {
+		for (long irow = 1; irow <= numberOfRows; irow++) {
 			double t = (irow - 1) * frameDuration;
 
 			long icol = 1;

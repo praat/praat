@@ -2,7 +2,7 @@
 #define _AnyTier_h_
 /* AnyTier.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,19 +33,19 @@ Thing_define (AnyTier, Function) {
 		override;
 };
 
-long AnyTier_timeToLowIndex (AnyTier me, double time);
+integer AnyTier_timeToLowIndex (AnyTier me, double time);
 
-long AnyTier_timeToHighIndex (AnyTier me, double time);
+integer AnyTier_timeToHighIndex (AnyTier me, double time);
 
-long AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, long *imin, long *imax);
+integer AnyTier_getWindowPoints (AnyTier me, double tmin, double tmax, integer *imin, integer *imax);
 
-long AnyTier_timeToNearestIndex (AnyTier me, double time);
+integer AnyTier_timeToNearestIndex (AnyTier me, double time);
 
-long AnyTier_hasPoint (AnyTier me, double t);
+integer AnyTier_hasPoint (AnyTier me, double t);
 
 void AnyTier_addPoint_move (AnyTier me, autoAnyPoint point);
 
-void AnyTier_removePoint (AnyTier me, long i);
+void AnyTier_removePoint (AnyTier me, integer i);
 
 void AnyTier_removePointNear (AnyTier me, double time);
 

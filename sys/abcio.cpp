@@ -1,6 +1,6 @@
 /* abcio.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@
  */
 
 #include "melder.h"
-#include "NUM.h"
 #include <ctype.h>
 #ifdef macintosh
 	#include <TargetConditionals.h>
@@ -42,7 +41,7 @@
 
 /********** text I/O **********/
 
-static long getInteger (MelderReadText me) {
+static int64 getInteger (MelderReadText me) {
 	char buffer [41];
 	char32 c;
 	/*
@@ -79,10 +78,10 @@ static long getInteger (MelderReadText me) {
 	if (i >= 40)
 		Melder_throw (U"Found long text while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
 	buffer [i + 1] = '\0';
-	return strtol (buffer, nullptr, 10);
+	return strtoll (buffer, nullptr, 10);
 }
 
-static unsigned long getUnsigned (MelderReadText me) {
+static uint64 getUnsigned (MelderReadText me) {
 	char buffer [41];
 	char32 c;
 	for (c = MelderReadText_getChar (me); ! isdigit ((int) c) && c != U'+'; c = MelderReadText_getChar (me)) {
@@ -118,7 +117,7 @@ static unsigned long getUnsigned (MelderReadText me) {
 	if (i >= 40)
 		Melder_throw (U"Found long text while searching for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
 	buffer [i + 1] = '\0';
-	return strtoul (buffer, nullptr, 10);
+	return strtoull (buffer, nullptr, 10);
 }
 
 static double getReal (MelderReadText me) {
@@ -162,14 +161,14 @@ static double getReal (MelderReadText me) {
 		double numerator, denominator;
 		*slash = '\0';
 		numerator = Melder_a8tof (buffer), denominator = Melder_a8tof (slash + 1);
-		if (numerator == HUGE_VAL || denominator == HUGE_VAL || denominator == 0.0)
-			return HUGE_VAL;
+		if (isundef (numerator) || isundef (denominator) || denominator == 0.0)
+			return undefined;
 		return numerator / denominator;
 	}
 	return Melder_a8tof (buffer);
 }
 
-static short getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
+static int getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
 	char32 buffer [41], c;
 	for (c = MelderReadText_getChar (me); c != U'<'; c = MelderReadText_getChar (me)) {
 		if (c == U'\0')
@@ -211,7 +210,7 @@ static short getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
 }
 
 static char32 * getString (MelderReadText me) {
-	static MelderString buffer { 0 };
+	static MelderString buffer { };
 	MelderString_empty (& buffer);
 	for (char32 c = MelderReadText_getChar (me); c != U'\"'; c = MelderReadText_getChar (me)) {
 		if (c == U'\0')
@@ -262,10 +261,10 @@ static char32 * getString (MelderReadText me) {
 #include "enums_getValue.h"
 #include "abcio_enums.h"
 
-int texgeti1 (MelderReadText text) {
+int texgeti8 (MelderReadText text) {
 	try {
-		long externalValue = getInteger (text);
-		if (externalValue < -128 || externalValue > +127)
+		int64 externalValue = getInteger (text);
+		if (externalValue < INT8_MIN || externalValue > INT8_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (-128 .. +127).");
 		return (int) externalValue;
 	} catch (MelderError) {
@@ -273,30 +272,43 @@ int texgeti1 (MelderReadText text) {
 	}
 }
 
-int texgeti2 (MelderReadText text) {
+int16 texgeti16 (MelderReadText text) {
 	try {
-		long externalValue = getInteger (text);
-		if (externalValue < -32768 || externalValue > +32767)
+		int64 externalValue = getInteger (text);
+		if (externalValue < INT16_MIN || externalValue > INT16_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (-32768 .. +32767).");
-		return (int) externalValue;
+		return (int16) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Signed short integer not read from text file.");
 	}
 }
 
-long texgeti4 (MelderReadText text) {
+int32 texgeti32 (MelderReadText text) {
 	try {
-		long externalValue = getInteger (text);
-		return externalValue;
+		int64 externalValue = getInteger (text);
+		if (externalValue < INT32_MIN || externalValue > INT32_MAX)
+			Melder_throw (U"Value (", externalValue, U") out of range (-2147483648 .. +2147483647).");
+		return (int32) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not read from text file.");
 	}
 }
 
-unsigned int texgetu1 (MelderReadText text) {
+integer texgetinteger (MelderReadText text) {
 	try {
-		unsigned long externalValue = getUnsigned (text);
-		if (externalValue > 255)
+		int64 externalValue = getInteger (text);
+		if (externalValue < INT32_MIN || externalValue > INT32_MAX)
+			Melder_throw (U"Value (", externalValue, U") out of range (-2147483648 .. +2147483647).");   // this will change
+		return (integer) externalValue;
+	} catch (MelderError) {
+		Melder_throw (U"Signed integer not read from text file.");
+	}
+}
+
+unsigned int texgetu8 (MelderReadText text) {
+	try {
+		uint64 externalValue = getUnsigned (text);
+		if (externalValue > UINT8_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (0 .. 255).");
 		return (unsigned int) externalValue;
 	} catch (MelderError) {
@@ -304,41 +316,43 @@ unsigned int texgetu1 (MelderReadText text) {
 	}
 }
 
-unsigned int texgetu2 (MelderReadText text) {
+uint16 texgetu16 (MelderReadText text) {
 	try {
-		unsigned long externalValue = getUnsigned (text);
-		if (externalValue > 65535)
+		uint64 externalValue = getUnsigned (text);
+		if (externalValue > UINT16_MAX)
 			Melder_throw (U"Value (", externalValue, U") out of range (0 .. 65535).");
-		return (unsigned int) externalValue;
+		return (uint16) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned short integer not read from text file.");
 	}
 }
 
-unsigned long texgetu4 (MelderReadText text) {
+uint32 texgetu32 (MelderReadText text) {
 	try {
-		unsigned long externalValue = getUnsigned (text);
-		return externalValue;
+		uint64 externalValue = getUnsigned (text);
+		if (externalValue > UINT32_MAX)
+			Melder_throw (U"Value (", externalValue, U") out of range (0 .. 4294967295).");
+		return (uint32) externalValue;
 	} catch (MelderError) {
 		Melder_throw (U"Unsigned integer not read from text file.");
 	}
 }
 
-double texgetr4 (MelderReadText text) { return getReal (text); }
-double texgetr8 (MelderReadText text) { return getReal (text); }
-double texgetr10 (MelderReadText text) { return getReal (text); }
-fcomplex texgetc8 (MelderReadText text) { fcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
-dcomplex texgetc16 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
+double texgetr32 (MelderReadText text) { return getReal (text); }
+double texgetr64 (MelderReadText text) { return getReal (text); }
+double texgetr80 (MelderReadText text) { return getReal (text); }
+dcomplex texgetc64  (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
+dcomplex texgetc128 (MelderReadText text) { dcomplex z; z.re = getReal (text); z.im = getReal (text); return z; }
 
-short texgete1 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
-short texgete2 (MelderReadText text, int (*getValue) (const char32 *)) { return getEnum (text, getValue); }
-short texgeteb (MelderReadText text) { return getEnum (text, kBoolean_getValue); }
-short texgeteq (MelderReadText text) { return getEnum (text, kQuestion_getValue); }
-short texgetex (MelderReadText text) { return getEnum (text, kExistence_getValue); }
-char *texgets2 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
-char *texgets4 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
-char32 *texgetw2 (MelderReadText text) { return Melder_dup   (getString (text)); }
-char32 *texgetw4 (MelderReadText text) { return Melder_dup   (getString (text)); }
+int texgete8 (MelderReadText text, enum_generic_getValue getValue) { return getEnum (text, getValue); }
+int texgete16 (MelderReadText text, enum_generic_getValue getValue) { return getEnum (text, getValue); }
+bool texgeteb (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kBoolean_getValue); }
+bool texgeteq (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kQuestion_getValue); }
+bool texgetex (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kExistence_getValue); }
+char *texgets16 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
+char *texgets32 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
+char32 *texgetw16 (MelderReadText text) { return Melder_dup   (getString (text)); }
+char32 *texgetw32 (MelderReadText text) { return Melder_dup   (getString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }
@@ -376,53 +390,55 @@ void texputintro (MelderFile file, const char32 *s1, const char32 *s2, const cha
 			s6 && s6 [0] == U'd' && s6 [1] == U'_' ? & s6 [2] : & s6 [0]); \
 	}
 
-void texputi1 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputi8 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputi2 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputi16 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputi4 (MelderFile file, long i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputi32 (MelderFile file, long i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputu1 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputinteger (MelderFile file, integer number, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+	PUTLEADER
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, number, file -> verbose ? U" " : nullptr);
+}
+void texputu8 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputu2 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputu16 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputu4 (MelderFile file, unsigned long u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputu32 (MelderFile file, unsigned long u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputr4 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputr32 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, Melder_single (x), file -> verbose ? U" " : nullptr);
 }
-void texputr8 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputr64 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, x, file -> verbose ? U" " : nullptr);
 }
-void texputc8 (MelderFile file, fcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputc64 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : nullptr, Melder_single (z.re),
-		file -> verbose ? U" + " : U" ", Melder_single (z.im), file -> verbose ? U" i " : nullptr);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
 }
-void texputc16 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
-	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z.re,
-		file -> verbose ? U" + " : U" ", z.im, file -> verbose ? U" i " : nullptr);
+	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
 }
-void texpute1 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texpute8 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = <" : U"<", getText (i), file -> verbose ? U"> " : U">");
 }
-void texpute2 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texpute16 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = <" : U"<", getText (i), file -> verbose ? U"> " : U">");
 }
@@ -438,7 +454,7 @@ void texputex (MelderFile file, bool i, const char32 *s1, const char32 *s2, cons
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U"? " : nullptr, i ? U"<exists>" : U"<absent>", file -> verbose ? U" " : nullptr);
 }
-void texputs1 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs8 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -450,7 +466,7 @@ void texputs1 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputs2 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs16 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -462,7 +478,7 @@ void texputs2 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputs4 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs32 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -474,7 +490,7 @@ void texputs4 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputw2 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputw16 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -486,7 +502,7 @@ void texputw2 (MelderFile file, const char32 *s, const char32 *s1, const char32 
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputw32 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -556,7 +572,7 @@ void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 
 #endif
 
 /*
-	The routines bingetr4, bingetr8, binputr4, and binputr8,
+	The routines bingetr32, bingetr64, binputr32, and binputr64,
 	were implemented by Paul Boersma from the descriptions of the IEEE floating-point formats,
 	as found in the MC68881/MC68882 User's Manual by Motorola (second edition, 1989).
 	The following copyright notice only refers to the code of bingetr10 and binputr10.
@@ -589,7 +605,6 @@ void texputw4 (MelderFile file, const char32 *s, const char32 *s1, const char32 
  *    Silicon Graphics IRIS, MIPS compiler
  *    Cray X/MP and Y/MP
  *    Digital Equipment VAX
- *
  *
  * Implemented by Malcolm Slaney and Ken Turkowski.
  *
@@ -637,7 +652,7 @@ static void writeError (const char32 *text) {
 	Melder_throw (U"Error in file while trying to write ", text);
 }
 
-unsigned int bingetu1 (FILE *f) {
+unsigned int bingetu8 (FILE *f) {
 	try {
 		int externalValue = getc (f);   // either -1 (EOF) or in the range 0..255
 		if (externalValue < 0) readError (f, U"a byte.");
@@ -647,7 +662,7 @@ unsigned int bingetu1 (FILE *f) {
 	}
 }
 
-void binputu1 (unsigned int u, FILE *f) {
+void binputu8 (unsigned int u, FILE *f) {
 	try {
 		if (putc ((int) u, f) < 0) writeError (U"a byte.");
 	} catch (MelderError) {
@@ -655,7 +670,7 @@ void binputu1 (unsigned int u, FILE *f) {
 	}
 }
 
-int bingeti1 (FILE *f) {
+int bingeti8 (FILE *f) {
 	try {
 		int externalValue = getc (f);
 		if (externalValue < 0) readError (f, U"a byte.");
@@ -665,7 +680,7 @@ int bingeti1 (FILE *f) {
 	}
 }
 
-void binputi1 (int u, FILE *f) {
+void binputi8 (int u, FILE *f) {
 	try {
 		if (putc (u, f) < 0) writeError (U"a byte.");
 	} catch (MelderError) {
@@ -673,7 +688,25 @@ void binputi1 (int u, FILE *f) {
 	}
 }
 
-int bingete1 (FILE *f, int min, int max, const char32 *type) {
+bool bingetbool8 (FILE *f) {
+	try {
+		int externalValue = getc (f);
+		if (externalValue < 0) readError (f, U"a byte.");
+		return (bool) externalValue;   // this converts e.g. 200 to true
+	} catch (MelderError) {
+		Melder_throw (U"Boolean not read from 1 byte in binary file.");
+	}
+}
+
+void binputbool8 (bool value, FILE *f) {
+	try {
+		if (putc (value, f) < 0) writeError (U"a byte.");
+	} catch (MelderError) {
+		Melder_throw (U"Boolean not written to 1 byte in binary file.");
+	}
+}
+
+int bingete8 (FILE *f, int min, int max, const char32 *type) {
 	try {
 		int externalValue = getc (f);
 		if (externalValue < 0) readError (f, U"a byte.");
@@ -686,7 +719,7 @@ int bingete1 (FILE *f, int min, int max, const char32 *type) {
 	}
 }
 
-void binpute1 (int value, FILE *f) {
+void binpute8 (int value, FILE *f) {
 	try {
 		if (putc (value, f) < 0) writeError (U"a byte.");
 	} catch (MelderError) {
@@ -719,7 +752,7 @@ macro_bingetb (7)
 
 void bingetb (FILE *f) { (void) f; bitsInReadBuffer = 0; }
 
-int16 bingeti2 (FILE *f) {
+int16 bingeti16 (FILE *f) {
 	try {
 		if (binario_16bitBE && Melder_debug != 18) {
 			int16 s;
@@ -737,7 +770,7 @@ int16 bingeti2 (FILE *f) {
 	}
 }
 
-int16 bingeti2LE (FILE *f) {
+int16 bingeti16LE (FILE *f) {
 	try {
 		if (binario_16bitLE && Melder_debug != 18) {
 			int16 s;
@@ -755,7 +788,7 @@ int16 bingeti2LE (FILE *f) {
 	}
 }
 
-uint16 bingetu2 (FILE *f) {
+uint16 bingetu16 (FILE *f) {
 	try {
 		if (binario_16bitBE && Melder_debug != 18) {
 			uint16 s;
@@ -773,7 +806,7 @@ uint16 bingetu2 (FILE *f) {
 	}
 }
 
-uint16 bingetu2LE (FILE *f) {
+uint16 bingetu16LE (FILE *f) {
 	try {
 		if (binario_16bitLE && Melder_debug != 18) {
 			uint16 s;
@@ -791,7 +824,7 @@ uint16 bingetu2LE (FILE *f) {
 	}
 }
 
-int bingete2 (FILE *f, int min, int max, const char32 *type) {
+int bingete16 (FILE *f, int min, int max, const char32 *type) {
 	try {
 		int16 result;
 		if (binario_16bitBE && Melder_debug != 18) {
@@ -812,7 +845,7 @@ int bingete2 (FILE *f, int min, int max, const char32 *type) {
 	}
 }
 
-int32 bingeti3 (FILE *f) {
+int32 bingeti24 (FILE *f) {
 	try {
 		uint8 bytes [3];
 		if (fread (bytes, sizeof (uint8), 3, f) != 3) readError (f, U"three bytes.");
@@ -828,7 +861,7 @@ int32 bingeti3 (FILE *f) {
 	}
 }
 
-int32 bingeti3LE (FILE *f) {
+int32 bingeti24LE (FILE *f) {
 	try {
 		uint8 bytes [3];
 		if (fread (bytes, sizeof (uint8), 3, f) != 3) readError (f, U"three bytes.");
@@ -844,7 +877,7 @@ int32 bingeti3LE (FILE *f) {
 	}
 }
 
-int32 bingeti4 (FILE *f) {
+int32 bingeti32 (FILE *f) {
 	try {
 		if (binario_32bitBE && Melder_debug != 18) {
 			int32 l;
@@ -864,7 +897,7 @@ int32 bingeti4 (FILE *f) {
 	}
 }
 
-int32 bingeti4LE (FILE *f) {
+int32 bingeti32LE (FILE *f) {
 	try {
 		if (binario_32bitLE && Melder_debug != 18) {
 			int32 l;
@@ -884,7 +917,27 @@ int32 bingeti4LE (FILE *f) {
 	}
 }
 
-uint32 bingetu4 (FILE *f) {
+integer bingetinteger (FILE *f) {
+	try {
+		if (binario_32bitBE && Melder_debug != 18) {
+			int32 l;
+			if (fread (& l, sizeof (int32), 1, f) != 1) readError (f, U"a signed 32-bit integer.");
+			return (integer) l;
+		} else {
+			uint8 bytes [4];
+			if (fread (bytes, sizeof (uint8), 4, f) != 4) readError (f, U"four bytes.");
+			return (integer) (int32)
+				((uint32) ((uint32) bytes [0] << 24) |
+				 (uint32) ((uint32) bytes [1] << 16) |
+				 (uint32) ((uint32) bytes [2] << 8) |
+						   (uint32) bytes [3]);
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Signed integer not read from 4 bytes in binary file.");
+	}
+}
+
+uint32 bingetu32 (FILE *f) {
 	try {
 		if (binario_32bitBE && Melder_debug != 18) {
 			uint32_t l;
@@ -904,7 +957,7 @@ uint32 bingetu4 (FILE *f) {
 	}
 }
 
-uint32 bingetu4LE (FILE *f) {
+uint32 bingetu32LE (FILE *f) {
 	try {
 		if (binario_32bitLE && Melder_debug != 18) {
 			uint32 l;
@@ -924,7 +977,7 @@ uint32 bingetu4LE (FILE *f) {
 	}
 }
 
-double bingetr4 (FILE *f) {
+double bingetr32 (FILE *f) {
 	try {
 		if (binario_floatIEEE4msb && Melder_debug != 18) {
 			float x;
@@ -945,7 +998,7 @@ double bingetr4 (FILE *f) {
 				if (mantissa == 0) x = 0.0;
 				else x = ldexp ((double) mantissa, exponent - 149);   // denormalized
 			else if (exponent == 0x000000FF)   // Infinity or Not-a-Number
-				x = HUGE_VAL;
+				return undefined;
 			else   // finite
 				x = ldexp ((double) (mantissa | 0x00800000), exponent - 150);
 			return bytes [0] & 0x80 ? - x : x;
@@ -955,7 +1008,7 @@ double bingetr4 (FILE *f) {
 	}
 }
 
-double bingetr4LE (FILE *f) {
+double bingetr32LE (FILE *f) {
 	try {
 		if (binario_floatIEEE4lsb && Melder_debug != 18) {
 			float x;
@@ -976,7 +1029,7 @@ double bingetr4LE (FILE *f) {
 				if (mantissa == 0) x = 0.0;
 				else x = ldexp ((double) mantissa, exponent - 149);   // denormalized
 			else if (exponent == 0x000000FF)   // Infinity or Not-a-Number
-				x = HUGE_VAL;
+				return undefined;
 			else   // finite
 				x = ldexp ((double) (mantissa | 0x00800000), exponent - 150);
 			return bytes [3] & 0x80 ? - x : x;
@@ -986,9 +1039,9 @@ double bingetr4LE (FILE *f) {
 	}
 }
 
-double bingetr8 (FILE *f) {
+double bingetr64 (FILE *f) {
 	try {
-		if (binario_doubleIEEE8msb && Melder_debug != 18) {
+		if (binario_doubleIEEE8msb && Melder_debug != 18 || Melder_debug == 181) {
 			double x;
 			if (fread (& x, sizeof (double), 1, f) != 1) readError (f, U"a 64-bit floating-point number.");
 			return x;
@@ -1013,7 +1066,7 @@ double bingetr8 (FILE *f) {
 				else x = ldexp ((double) highMantissa, exponent - 1042) +
 					ldexp ((double) lowMantissa, exponent - 1074);   // denormalized
 			else if (exponent == 0x000007FF)   // Infinity or Not-a-Number
-				x = HUGE_VAL;
+				return undefined;
 			else
 				x = ldexp ((double) (highMantissa | 0x00100000), exponent - 1043) +
 					ldexp ((double) lowMantissa, exponent - 1075);
@@ -1024,7 +1077,7 @@ double bingetr8 (FILE *f) {
 	}
 }
 
-double bingetr10 (FILE *f) {
+double bingetr80 (FILE *f) {
 	try {
 		uint8 bytes [10];
 		if (fread (bytes, sizeof (uint8), 10, f) != 10) readError (f, U"ten bytes.");
@@ -1042,8 +1095,8 @@ double bingetr10 (FILE *f) {
 			(uint32) ((uint32) bytes [8] << 8) |
 					  (uint32) bytes [9];
 		double x;
-		if (exponent == 0 && highMantissa == 0 && lowMantissa == 0) x = 0;
-		else if (exponent == 0x00007FFF) x = HUGE_VAL;   // Infinity or NaN
+		if (exponent == 0 && highMantissa == 0 && lowMantissa == 0) x = 0.0;
+		else if (exponent == 0x00007FFF) return undefined;   // Infinity or NaN
 		else {
 			exponent -= 16383;   // between -16382 and +16383
 			x = ldexp ((double) highMantissa, exponent - 31);
@@ -1082,7 +1135,7 @@ void binputb (FILE *f) {
 	writeBuffer = 0;
 }
 
-void binputi2 (int16 i, FILE *f) {
+void binputi16 (int16 i, FILE *f) {
 	try {
 		if (binario_16bitBE && Melder_debug != 18) {
 			if (fwrite (& i, sizeof (short), 1, f) != 1) writeError (U"a signed 16-bit integer.");
@@ -1097,7 +1150,7 @@ void binputi2 (int16 i, FILE *f) {
 	}
 }
 
-void binputi2LE (int16 i, FILE *f) {
+void binputi16LE (int16 i, FILE *f) {
 	try {
 		if (binario_16bitLE && Melder_debug != 18) {
 			if (fwrite (& i, sizeof (short), 1, f) != 1) writeError (U"a signed 16-bit integer.");
@@ -1112,7 +1165,7 @@ void binputi2LE (int16 i, FILE *f) {
 	}
 }
 
-void binputu2 (uint16 u, FILE *f) {
+void binputu16 (uint16 u, FILE *f) {
 	try {
 		if (binario_16bitBE && Melder_debug != 18) {
 			if (fwrite (& u, sizeof (uint16_t), 1, f) != 1) writeError (U"an unsigned 16-bit integer.");
@@ -1127,7 +1180,7 @@ void binputu2 (uint16 u, FILE *f) {
 	}
 }
 
-void binputu2LE (uint16 u, FILE *f) {
+void binputu16LE (uint16 u, FILE *f) {
 	try {
 		if (binario_16bitLE && Melder_debug != 18) {
 			if (fwrite (& u, sizeof (uint16_t), 1, f) != 1) writeError (U"an unsigned 16-bit integer.");
@@ -1142,7 +1195,7 @@ void binputu2LE (uint16 u, FILE *f) {
 	}
 }
 
-void binpute2 (int value, FILE *f) {
+void binpute16 (int value, FILE *f) {
 	try {
 		if (binario_16bitBE && Melder_debug != 18) {
 			short s = value;
@@ -1158,7 +1211,7 @@ void binpute2 (int value, FILE *f) {
 	}
 }
 
-void binputi3 (int32 i, FILE *f) {
+void binputi24 (int32 i, FILE *f) {
 	try {
 		char bytes [3];
 		bytes [0] = (char) (i >> 16);   // truncate
@@ -1170,7 +1223,7 @@ void binputi3 (int32 i, FILE *f) {
 	}
 }
 
-void binputi3LE (int32 i, FILE *f) {
+void binputi24LE (int32 i, FILE *f) {
 	try {
 		char bytes [3];
 		bytes [2] = (char) (i >> 16);   // truncate
@@ -1182,7 +1235,7 @@ void binputi3LE (int32 i, FILE *f) {
 	}
 }
 
-void binputi4 (int32 i, FILE *f) {
+void binputi32 (int32 i, FILE *f) {
 	try {
 		if (binario_32bitBE && Melder_debug != 18) {
 			if (fwrite (& i, sizeof (int32), 1, f) != 1) writeError (U"a signed 32-bit integer.");
@@ -1199,7 +1252,7 @@ void binputi4 (int32 i, FILE *f) {
 	}
 }
 
-void binputi4LE (int32 i, FILE *f) {
+void binputi32LE (int32 i, FILE *f) {
 	try {
 		if (binario_32bitLE && Melder_debug != 18) {
 			if (fwrite (& i, sizeof (int32), 1, f) != 1) writeError (U"a signed 32-bit integer.");
@@ -1216,7 +1269,22 @@ void binputi4LE (int32 i, FILE *f) {
 	}
 }
 
-void binputu4 (uint32 u, FILE *f) {
+void binputinteger (integer i, FILE *f) {
+	try {
+		if (i < INT32_MIN || i > INT32_MAX)
+			Melder_throw (U"The number ", i, U" is too big to fit into 32 bits.");   // this will change in the future
+		char bytes [4];
+		bytes [0] = (char) (i >> 24);   // truncate
+		bytes [1] = (char) (i >> 16);   // truncate
+		bytes [2] = (char) (i >> 8);   // truncate
+		bytes [3] = (char) i;   // truncate
+		if (fwrite (bytes, sizeof (char), 4, f) != 4) writeError (U"a signed 32-bit integer.");
+	} catch (MelderError) {
+		Melder_throw (U"Signed integer not written to 4 bytes in binary file.");
+	}
+}
+
+void binputu32 (uint32 u, FILE *f) {
 	try {
 		if (binario_32bitBE && Melder_debug != 18) {
 			if (fwrite (& u, sizeof (uint32), 1, f) != 1) writeError (U"an unsigned 32-bit integer.");
@@ -1233,7 +1301,7 @@ void binputu4 (uint32 u, FILE *f) {
 	}
 }
 
-void binputu4LE (uint32 u, FILE *f) {
+void binputu32LE (uint32 u, FILE *f) {
 	try {
 		if (binario_32bitLE && Melder_debug != 18) {
 			if (fwrite (& u, sizeof (uint32), 1, f) != 1) writeError (U"an unsigned 32-bit integer.");
@@ -1250,11 +1318,11 @@ void binputu4LE (uint32 u, FILE *f) {
 	}
 }
 
-void binputr4 (double x, FILE *f) {
+void binputr32 (double x, FILE *f) {
 	try {
 		if (binario_floatIEEE4msb && Melder_debug != 18) {
-			float x4 = (float) x;   // convert down, with loss of precision
-			if (fwrite (& x4, sizeof (float), 1, f) != 1) writeError (U"a 32-bit floating-point number.");
+			float x32 = (float) x;   // convert down, with loss of precision
+			if (fwrite (& x32, sizeof (float), 1, f) != 1) writeError (U"a 32-bit floating-point number.");
 		} else {
 			uint8 bytes [4];
 			int sign, exponent;
@@ -1265,7 +1333,7 @@ void binputr4 (double x, FILE *f) {
 			if (x == 0.0) { exponent = 0; mantissa = 0; }
 			else {
 				fMantissa = frexp (x, & exponent);
-				if ((exponent > 128) || ! (fMantissa < 1))   // Infinity or Not-a-Number
+				if ((exponent > 128) || ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 					{ exponent = sign | 0x00FF; mantissa = 0; }   // Infinity
 				else {   // finite
 					exponent += 126;   // add bias
@@ -1290,11 +1358,11 @@ void binputr4 (double x, FILE *f) {
 	}
 }
 
-void binputr4LE (double x, FILE *f) {
+void binputr32LE (double x, FILE *f) {
 	try {
 		if (binario_floatIEEE4lsb && Melder_debug != 18) {
-			float x4 = (float) x;   // convert down, with loss of precision
-			if (fwrite (& x4, sizeof (float), 1, f) != 1) writeError (U"a 32-bit floating-point number.");
+			float x32 = (float) x;   // convert down, with loss of precision
+			if (fwrite (& x32, sizeof (float), 1, f) != 1) writeError (U"a 32-bit floating-point number.");
 		} else {
 			uint8 bytes [4];
 			int sign, exponent;
@@ -1305,7 +1373,7 @@ void binputr4LE (double x, FILE *f) {
 			if (x == 0.0) { exponent = 0; mantissa = 0; }
 			else {
 				fMantissa = frexp (x, & exponent);
-				if ((exponent > 128) || ! (fMantissa < 1))   // Infinity or Not-a-Number
+				if ((exponent > 128) || ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 					{ exponent = sign | 0x00FF; mantissa = 0; }   // Infinity
 				else {   // finite
 					exponent += 126;   // add bias
@@ -1315,7 +1383,7 @@ void binputr4LE (double x, FILE *f) {
 					}
 					exponent |= sign;
 					fMantissa = ldexp (fMantissa, 24);          
-					fsMantissa = floor (fMantissa); 
+					fsMantissa = floor (fMantissa);
 					mantissa = (uint32) fsMantissa & 0x007FFFFF;
 				}
 			}
@@ -1330,10 +1398,19 @@ void binputr4LE (double x, FILE *f) {
 	}
 }
 
-void binputr8 (double x, FILE *f) {
+void binputr64 (double x, FILE *f) {
 	try {
-		if (binario_doubleIEEE8msb && Melder_debug != 18) {
+		if (binario_doubleIEEE8msb && Melder_debug != 18 || Melder_debug == 181) {
 			if (fwrite (& x, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
+		} else if (binario_doubleIEEE8lsb && Melder_debug != 18) {
+			union { double xx; uint8 bytes [8]; };
+			xx = x;
+			uint8 tmp;
+			tmp = bytes [0], bytes [0] = bytes [7], bytes [7] = tmp;
+			tmp = bytes [1], bytes [1] = bytes [6], bytes [6] = tmp;
+			tmp = bytes [2], bytes [2] = bytes [5], bytes [5] = tmp;
+			tmp = bytes [3], bytes [3] = bytes [4], bytes [4] = tmp;
+			if (fwrite (& xx, sizeof (double), 1, f) != 1) writeError (U"a 64-bit floating-point number.");
 		} else {
 			uint8 bytes [8];
 			int sign, exponent;
@@ -1344,7 +1421,7 @@ void binputr8 (double x, FILE *f) {
 			if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
 			else {
 				fMantissa = frexp (x, & exponent);
-				if ((exponent > 1024) || ! (fMantissa < 1))   // Infinity or Not-a-Number
+				if (/*(exponent > 1024) ||*/ ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 					{ exponent = sign | 0x07FF; highMantissa = 0; lowMantissa = 0; }   // Infinity
 				else { // finite
 					exponent += 1022;   // add bias
@@ -1354,7 +1431,7 @@ void binputr8 (double x, FILE *f) {
 					}
 					exponent |= sign;
 					fMantissa = ldexp (fMantissa, 21);          
-					fsMantissa = floor (fMantissa); 
+					fsMantissa = floor (fMantissa);
 					highMantissa = (uint32) fsMantissa & 0x000FFFFF;
 					fMantissa = ldexp (fMantissa - fsMantissa, 32); 
 					fsMantissa = floor (fMantissa); 
@@ -1376,7 +1453,7 @@ void binputr8 (double x, FILE *f) {
 	}
 }
 
-void binputr10 (double x, FILE *f) {
+void binputr80 (double x, FILE *f) {
 	try {
 		unsigned char bytes [10];
 		Melder_assert (sizeof (int) > 2);
@@ -1388,7 +1465,7 @@ void binputr10 (double x, FILE *f) {
 		if (x == 0.0) { exponent = 0; highMantissa = 0; lowMantissa = 0; }
 		else {
 			fMantissa = frexp (x, & exponent);
-			if ((exponent > 16384) || ! (fMantissa < 1))   // Infinity or Not-a-Number
+			if ((exponent > 16384) || ! (fMantissa < 1.0))   // Infinity or Not-a-Number
 				{ exponent = sign | 0x7FFF; highMantissa = 0; lowMantissa = 0; }   // Infinity
 			else {   // finite
 				exponent += 16382;   // add bias
@@ -1398,7 +1475,7 @@ void binputr10 (double x, FILE *f) {
 				}
 				exponent |= sign;
 				fMantissa = ldexp (fMantissa, 32);          
-				fsMantissa = floor (fMantissa); 
+				fsMantissa = floor (fMantissa);
 				highMantissa = (uint32) fsMantissa;
 				fMantissa = ldexp (fMantissa - fsMantissa, 32); 
 				fsMantissa = floor (fMantissa); 
@@ -1421,53 +1498,53 @@ void binputr10 (double x, FILE *f) {
 	}
 }
 
-fcomplex bingetc8 (FILE *f) {
+dcomplex bingetc64 (FILE *f) {
 	try {
-		fcomplex result;
-		result. re = bingetr4 (f);
-		result. im = bingetr4 (f);
+		dcomplex result;
+		result.re = bingetr32 (f);
+		result.im = bingetr32 (f);
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not read from 8 bytes in binary file.");
-		fcomplex result = { 0 };
+		dcomplex result { };
 		return result;
 	}
 }
 
-dcomplex bingetc16 (FILE *f) {
+dcomplex bingetc128 (FILE *f) {
 	try {
 		dcomplex result;
-		result. re = bingetr8 (f);
-		result. im = bingetr8 (f);
+		result.re = bingetr64 (f);
+		result.im = bingetr64 (f);
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not read from 16 bytes in binary file.");
-		dcomplex result = { 0 };
+		dcomplex result { };
 		return result;
 	}
 }
 
-void binputc8 (fcomplex z, FILE *f) {
+void binputc64 (dcomplex z, FILE *f) {
 	try {
-		binputr4 (z. re, f);
-		binputr4 (z. im, f);
+		binputr32 (z.re, f);
+		binputr32 (z.im, f);
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not written to 8 bytes in binary file.");
 	}
 }
 
-void binputc16 (dcomplex z, FILE *f) {
+void binputc128 (dcomplex z, FILE *f) {
 	try {
-		binputr8 (z. re, f);
-		binputr8 (z. im, f);
+		binputr64 (z.re, f);
+		binputr64 (z.im, f);
 	} catch (MelderError) {
 		Melder_throw (U"Complex number not written to 16 bytes in binary file.");
 	}
 }
 
-char * bingets1 (FILE *f) {
+char * bingets8 (FILE *f) {
 	try {
-		unsigned int length = bingetu1 (f);
+		unsigned int length = bingetu8 (f);
 		autostring8 result = Melder_malloc (char, length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
@@ -1478,9 +1555,9 @@ char * bingets1 (FILE *f) {
 	}
 }
 
-char * bingets2 (FILE *f) {
+char * bingets16 (FILE *f) {
 	try {
-		uint16_t length = bingetu2 (f);
+		uint16_t length = bingetu16 (f);
 		autostring8 result = Melder_malloc (char, (int64) length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
@@ -1491,9 +1568,9 @@ char * bingets2 (FILE *f) {
 	}
 }
 
-char * bingets4 (FILE *f) {
+char * bingets32 (FILE *f) {
 	try {
-		uint32_t length = bingetu4 (f);
+		uint32_t length = bingetu32 (f);
 		autostring8 result = Melder_malloc (char, (int64) length + 1);
 		if (fread (result.peek(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
@@ -1504,22 +1581,22 @@ char * bingets4 (FILE *f) {
 	}
 }
 
-char32 * bingetw1 (FILE *f) {
+char32 * bingetw8 (FILE *f) {
 	try {
 		autostring32 result;
-		unsigned short length = bingetu1 (f);
+		unsigned int length = bingetu8 (f);
 		if (length == 0xFF) {   // an escape for encoding
 			/*
 			 * UTF-16
 			 */
-			length = bingetu1 (f);
+			length = bingetu8 (f);
 			result.reset (Melder_malloc (char32, (int64) length + 1));
-			for (unsigned short i = 0; i < length; i ++) {
-				char32 kar = bingetu2 (f);
+			for (unsigned int i = 0; i < length; i ++) {
+				char32 kar = bingetu16 (f);
 				if ((kar & 0x00F800) == 0x00D800) {
 					if (kar > 0x00DBFF)
 						Melder_throw (U"Incorrect Unicode value (first surrogate member ", kar, U").");
-					char32 kar2 = bingetu2 (f);
+					char32 kar2 = bingetu16 (f);
 					if (kar2 < 0x00DC00 || kar2 > 0x00DFFF)
 						Melder_throw (U"Incorrect Unicode value (second surrogate member ", kar2, U").");
 					result [i] = (((kar & 0x0003FF) << 10) | (kar2 & 0x0003FF)) + 0x010000;
@@ -1532,8 +1609,8 @@ char32 * bingetw1 (FILE *f) {
 			 * ASCII
 			 */
 			result.reset (Melder_malloc (char32, (int64) length + 1));
-			for (unsigned short i = 0; i < length; i ++) {
-				result [i] = bingetu1 (f);
+			for (unsigned int i = 0; i < length; i ++) {
+				result [i] = bingetu8 (f);
 			}
 		}
 		result [length] = U'\0';
@@ -1543,22 +1620,22 @@ char32 * bingetw1 (FILE *f) {
 	}
 }
 
-char32 * bingetw2 (FILE *f) {
+char32 * bingetw16 (FILE *f) {
 	try {
 		autostring32 result;
-		uint16 length = bingetu2 (f);
+		uint16 length = bingetu16 (f);
 		if (length == 0xFFFF) {   // an escape for encoding
 			/*
 			 * UTF-16
 			 */
-			length = bingetu2 (f);
+			length = bingetu16 (f);
 			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (uint16 i = 0; i < length; i ++) {
-				char32 kar = (char32) (char16) bingetu2 (f);
+				char32 kar = (char32) (char16) bingetu16 (f);
 				if ((kar & 0x00F800) == 0x00D800) {
 					if (kar > 0x00DBFF)
 						Melder_throw (U"Incorrect Unicode value (first surrogate member ", kar, U").");
-					char32 kar2 = (char32) (char16) bingetu2 (f);
+					char32 kar2 = (char32) (char16) bingetu16 (f);
 					if (kar2 < 0x00DC00 || kar2 > 0x00DFFF)
 						Melder_throw (U"Incorrect Unicode value (second surrogate member ", kar2, U").");
 					result [i] = (((kar & 0x0003FF) << 10) | (kar2 & 0x0003FF)) + 0x010000;
@@ -1572,7 +1649,7 @@ char32 * bingetw2 (FILE *f) {
 			 */
 			result.reset (Melder_malloc (char32, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
-				result [i] = (char32) (char8) bingetu1 (f);
+				result [i] = (char32) (char8) bingetu8 (f);
 			}
 		}
 		result [length] = U'\0';
@@ -1582,22 +1659,22 @@ char32 * bingetw2 (FILE *f) {
 	}
 }
 
-char32 * bingetw4 (FILE *f) {
+char32 * bingetw32 (FILE *f) {
 	try {
 		autostring32 result;
-		uint32 length = bingetu4 (f);
+		uint32 length = bingetu32 (f);
 		if (length == 0xFFFFFFFF) {   // an escape for encoding
 			/*
 			 * UTF-16
 			 */
-			length = bingetu4 (f);
+			length = bingetu32 (f);
 			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (uint32 i = 0; i < length; i ++) {
-				char32 kar = bingetu2 (f);
+				char32 kar = bingetu16 (f);
 				if ((kar & 0x00F800) == 0x00D800) {
 					if (kar > 0x00DBFF)
 						Melder_throw (U"Incorrect Unicode value (first surrogate member ", kar, U").");
-					char32 kar2 = bingetu2 (f);
+					char32 kar2 = bingetu16 (f);
 					if (kar2 < 0x00DC00 || kar2 > 0x00DFFF)
 						Melder_throw (U"Incorrect Unicode value (second surrogate member ", kar2, U").");
 					result [i] = (((kar & 0x0003FF) << 10) | (kar2 & 0x0003FF)) + 0x010000;
@@ -1611,7 +1688,7 @@ char32 * bingetw4 (FILE *f) {
 			 */
 			result.reset (Melder_malloc (char32, (int64) length + 1));
 			for (uint32 i = 0; i < length; i ++) {
-				result [i] = bingetu1 (f);
+				result [i] = bingetu8 (f);
 			}
 		}
 		result [length] = U'\0';
@@ -1621,17 +1698,17 @@ char32 * bingetw4 (FILE *f) {
 	}
 }
 
-void binputs1 (const char *s, FILE *f) {
+void binputs8 (const char *s, FILE *f) {
 	try {
 		if (! s) {
-			binputu1 (0, f);
+			binputu8 (0, f);
 		} else {
 			size_t length = strlen (s);
 			if (length > UINT8_MAX) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 255 characters.");
 				length = UINT8_MAX;
 			}
-			binputu1 (length, f);
+			binputu8 (length, f);
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw (U"Error in file while trying to write ", length, U" one-byte characters.");
 		}
@@ -1640,17 +1717,17 @@ void binputs1 (const char *s, FILE *f) {
 	}
 }
 
-void binputs2 (const char *s, FILE *f) {
+void binputs16 (const char *s, FILE *f) {
 	try {
 		if (! s) {
-			binputu2 (0, f);
+			binputu16 (0, f);
 		} else {
 			size_t length = strlen (s);
 			if (length > UINT16_MAX) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 65535 characters.");
 				length = UINT16_MAX;
 			}
-			binputu2 ((uint16_t) length, f);   // safe conversion down
+			binputu16 ((uint16_t) length, f);   // safe conversion down
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw (U"Error in file while trying to write ", length, U" one-byte characters.");
 		}
@@ -1659,17 +1736,17 @@ void binputs2 (const char *s, FILE *f) {
 	}
 }
 
-void binputs4 (const char *s, FILE *f) {
+void binputs32 (const char *s, FILE *f) {
 	try {
 		if (! s) {
-			binputu4 (0, f);
+			binputu32 (0, f);
 		} else {
 			size_t length = strlen (s);
 			if (length > UINT32_MAX) {
 				Melder_warning (U"Text of ", length, U" characters truncated to 4,294,967,295 characters.");
 				length = UINT32_MAX;
 			}
-			binputu4 (length, f);
+			binputu32 (length, f);
 			if (fwrite (s, sizeof (char), length, f) != length)
 				Melder_throw (U"Error in file while trying to write ", length, U" one-byte characters.");
 		}
@@ -1680,20 +1757,20 @@ void binputs4 (const char *s, FILE *f) {
 
 static inline void binpututf16 (char32 kar, FILE *f) {
 	if (kar <= 0x00FFFF) {
-		binputu2 ((uint16) kar, f);   // truncate to lower 16 bits
+		binputu16 ((uint16) kar, f);   // truncate to lower 16 bits
 	} else if (kar <= 0x10FFFF) {
 		kar -= 0x010000;
-		binputu2 ((uint16) (0x00D800 | (kar >> 10)), f);
-		binputu2 ((uint16) (0x00DC00 | (kar & 0x0003FF)), f);
+		binputu16 ((uint16) (0x00D800 | (kar >> 10)), f);
+		binputu16 ((uint16) (0x00DC00 | (kar & 0x0003FF)), f);
 	} else {
 		Melder_fatal (U"Impossible Unicode value.");
 	}
 }
 
-void binputw1 (const char32 *s, FILE *f) {
+void binputw8 (const char32 *s, FILE *f) {
 	try {
 		if (! s) {
-			binputu1 (0, f);
+			binputu8 (0, f);
 		} else {
 			uint32 length = str32len (s);
 			if (length > UINT8_MAX - 1) {
@@ -1704,16 +1781,16 @@ void binputw1 (const char32 *s, FILE *f) {
 				/*
 				 * ASCII
 				 */
-				binputu1 (length, f);
+				binputu8 (length, f);
 				for (size_t i = 0; i < length; i ++) {
-					binputu1 ((unsigned int) (char) s [i], f);
+					binputu8 ((unsigned int) (char) s [i], f);
 				}
 			} else {
 				/*
 				 * UTF-16
 				 */
-				binputu1 (0xFF, f);   // an escape for multibyte encoding
-				binputu1 (length, f);
+				binputu8 (0xFF, f);   // an escape for multibyte encoding
+				binputu8 (length, f);
 				for (size_t i = 0; i < length; i ++) {
 					binpututf16 (s [i], f);
 				}
@@ -1724,10 +1801,10 @@ void binputw1 (const char32 *s, FILE *f) {
 	}
 }
 
-void binputw2 (const char32 *s, FILE *f) {
+void binputw16 (const char32 *s, FILE *f) {
 	try {
 		if (! s) {
-			binputu2 (0, f);
+			binputu16 (0, f);
 		} else {
 			int64 length = str32len (s);
 			if (length > UINT16_MAX - 1) {
@@ -1738,16 +1815,16 @@ void binputw2 (const char32 *s, FILE *f) {
 				/*
 				 * ASCII
 				 */
-				binputu2 ((uint16) length, f);
+				binputu16 ((uint16) length, f);
 				for (int64 i = 0; i < length; i ++) {
-					binputu1 ((unsigned int) (char8) s [i], f);
+					binputu8 ((unsigned int) (char8) s [i], f);
 				}
 			} else {
 				/*
 				 * UTF-16
 				 */
-				binputu2 (0xFFFF, f);   // an escape for multibyte encoding
-				binputu2 ((uint16) length, f);
+				binputu16 (0xFFFF, f);   // an escape for multibyte encoding
+				binputu16 ((uint16) length, f);
 				for (int64 i = 0; i < length; i ++) {
 					binpututf16 (s [i], f);
 				}
@@ -1758,10 +1835,10 @@ void binputw2 (const char32 *s, FILE *f) {
 	}
 }
 
-void binputw4 (const char32 *s, FILE *f) {
+void binputw32 (const char32 *s, FILE *f) {
 	try {
 		if (! s) {
-			binputu4 (0, f);
+			binputu32 (0, f);
 		} else {
 			int64 length = str32len (s);
 			if (length > UINT32_MAX - 1) {
@@ -1772,16 +1849,16 @@ void binputw4 (const char32 *s, FILE *f) {
 				/*
 				 * ASCII
 				 */
-				binputu4 ((uint32) length, f);
+				binputu32 ((uint32) length, f);
 				for (int64 i = 0; i < length; i ++) {
-					binputu1 ((unsigned int) (char) s [i], f);
+					binputu8 ((unsigned int) (char) s [i], f);
 				}
 			} else {
 				/*
 				 * UTF-16
 				 */
-				binputu4 (0xFFFFFFFF, f);   // an escape for multibyte encoding
-				binputu4 ((uint32) length, f);
+				binputu32 (0xFFFFFFFF, f);   // an escape for multibyte encoding
+				binputu32 ((uint32) length, f);
 				for (int64 i = 0; i < length; i ++) {
 					binpututf16 (s [i], f);
 				}

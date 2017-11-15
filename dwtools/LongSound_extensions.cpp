@@ -93,7 +93,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		autoNUMvector<short> buffer (1, nchannels * nbuf);
 
 		autoMelderFile f  = MelderFile_create (file);
-		MelderFile_writeAudioFileHeader (file, audioFileType, (long) floor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_ifloor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 
 		for (long i = 1; i <= numberOfReads; i++) {
 			long n_to_write = i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf;
@@ -102,7 +102,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding (audioFileType,
                 numberOfBitsPerSamplePoint), buffer.peek(), n_to_write);
 		}
-		MelderFile_writeAudioFileTrailer (file, audioFileType, (long) floor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
+		MelderFile_writeAudioFileTrailer (file, audioFileType, Melder_ifloor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 		f.close ();
 	} catch (MelderError) {
 		Melder_throw (me, U": no stereo audio file created.");
@@ -178,7 +178,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 }
 
 void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderFile file) {
-	long pre_append_endpos = 0, numberOfBitsPerSamplePoint = 16;
+	integer pre_append_endpos = 0, numberOfBitsPerSamplePoint = 16;
 	try {
 		if (my size < 1) {
 			Melder_throw (U"No Sound or LongSound objects to append.");
@@ -197,10 +197,9 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 		autofile f = Melder_fopen (file, "r+b");
 		file -> filePointer = f; // essential !!
 		double sampleRate_d;
-		long startOfData;
-		int32 numberOfSamples;
-		int numberOfChannels, encoding;
-		int audioFileType = MelderFile_checkSoundFile (file, &numberOfChannels, &encoding, &sampleRate_d, &startOfData, &numberOfSamples);
+		integer startOfData, numberOfSamples, numberOfChannels;
+		int encoding;
+		int audioFileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate_d, & startOfData, & numberOfSamples);
 
 		if (audioFileType == 0) {
 			Melder_throw (U"Not a sound file.");
@@ -208,13 +207,13 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 
 		// Check whether all the sampling frequencies and channels match.
 
-		long sampleRate = (long) floor (sampleRate_d);
+		integer sampleRate = Melder_ifloor (sampleRate_d);
 		for (long i = 1; i <= my size; i ++) {
 			bool sampleRatesMatch, numbersOfChannelsMatch;
 			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
-				sampleRatesMatch = floor (1.0 / sound -> dx + 0.5) == sampleRate;
+				sampleRatesMatch = Melder_iround (1.0 / sound -> dx) == sampleRate;
 				numbersOfChannelsMatch = sound -> ny == numberOfChannels;
 				numberOfSamples += sound -> nx;
 			} else {

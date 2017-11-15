@@ -1,6 +1,6 @@
 /* melder_textencoding.cpp
  *
- * Copyright (C) 2007-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 2007-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,19 +29,19 @@
 #endif
 
 static struct {
-	enum kMelder_textInputEncoding inputEncoding;
-	enum kMelder_textOutputEncoding outputEncoding;
+	kMelder_textInputEncoding inputEncoding;
+	kMelder_textOutputEncoding outputEncoding;
 } preferences;
 
-void Melder_setInputEncoding (enum kMelder_textInputEncoding encoding) { preferences. inputEncoding = encoding; }
-int Melder_getInputEncoding () { return preferences. inputEncoding; }
+void Melder_setInputEncoding (kMelder_textInputEncoding encoding) { preferences. inputEncoding = encoding; }
+kMelder_textInputEncoding Melder_getInputEncoding () { return preferences. inputEncoding; }
 
-void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding) { preferences. outputEncoding = encoding; }
-enum kMelder_textOutputEncoding Melder_getOutputEncoding () { return preferences. outputEncoding; }
+void Melder_setOutputEncoding (kMelder_textOutputEncoding encoding) { preferences. outputEncoding = encoding; }
+kMelder_textOutputEncoding Melder_getOutputEncoding () { return preferences. outputEncoding; }
 
 void Melder_textEncoding_prefs () {
-	Preferences_addEnum (U"TextEncoding.inputEncoding", & preferences. inputEncoding, kMelder_textInputEncoding, kMelder_textInputEncoding_DEFAULT);
-	Preferences_addEnum (U"TextEncoding.outputEncoding", & preferences. outputEncoding, kMelder_textOutputEncoding, kMelder_textOutputEncoding_DEFAULT);
+	Preferences_addEnum (U"TextEncoding.inputEncoding", & preferences. inputEncoding, kMelder_textInputEncoding, kMelder_textInputEncoding::DEFAULT);
+	Preferences_addEnum (U"TextEncoding.outputEncoding", & preferences. outputEncoding, kMelder_textOutputEncoding, kMelder_textOutputEncoding::DEFAULT);
 }
 
 bool Melder_isValidAscii (const char32 *text) {
@@ -65,10 +65,10 @@ bool Melder_isEncodable (const char32 *text, int outputEncoding) {
 			}
 			return true;
 		} break;
-		case kMelder_textOutputEncoding_UTF8:
-		case kMelder_textOutputEncoding_UTF16:
-		case kMelder_textOutputEncoding_ASCII_THEN_UTF16:
-		case kMelder_textOutputEncoding_ISO_LATIN1_THEN_UTF16: {
+		case (int) kMelder_textOutputEncoding::UTF8:
+		case (int) kMelder_textOutputEncoding::UTF16:
+		case (int) kMelder_textOutputEncoding::ASCII_THEN_UTF16:
+		case (int) kMelder_textOutputEncoding::ISO_LATIN1_THEN_UTF16: {
 			return true;
 		}
 	}
@@ -98,7 +98,7 @@ bool Melder_str8IsValidUtf8 (const char *string) {
 	return true;
 }
 
-long Melder_killReturns_inline (char *text) {
+integer Melder_killReturns_inplace (char *text) {
 	const char *from;
 	char *to;
 	for (from = text, to = text; *from != '\0'; from ++, to ++) {
@@ -118,7 +118,7 @@ long Melder_killReturns_inline (char *text) {
 }
 
 template <class CHAR>
-long Melder_killReturns_inlineCHAR (CHAR *text) {
+integer Melder_killReturns_inplaceCHAR (CHAR *text) {
 	const CHAR *from;
 	CHAR *to;
 	for (from = text, to = text; *from != '\0'; from ++, to ++) {
@@ -140,8 +140,8 @@ long Melder_killReturns_inlineCHAR (CHAR *text) {
 	*to = '\0';   // closing null character
 	return to - text;
 }
-long Melder_killReturns_inline (char32 *text) {
-	return Melder_killReturns_inlineCHAR <char32> (text);
+integer Melder_killReturns_inplace (char32 *text) {
+	return Melder_killReturns_inplaceCHAR <char32> (text);
 }
 
 size_t str32len_utf8 (const char32 *string, bool nativizeNewlines) {
@@ -189,11 +189,11 @@ size_t str32len_utf16 (const char32 *string, bool nativizeNewlines) {
 
 char32 * Melder_peek8to32 (const char *textA) {
 	if (! textA) return nullptr;
-	static MelderString buffers [19] { { 0 } };
+	static MelderString buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
-	unsigned long n = strlen (textA), i, j;
+	uinteger n = strlen (textA), i, j;
 	for (i = 0, j = 0; i <= n; i ++) {
 		char8 kar1 = (char8) textA [i];   // convert sign
 		if (kar1 <= 0x7F) {
@@ -328,43 +328,43 @@ char32 Melder_decodeWindowsLatin1 [256] = {
 	220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
-void Melder_8to32_inline (const char *string8, char32 *string32, int inputEncoding) {
+void Melder_8to32_inplace (const char *string8, char32 *string32, kMelder_textInputEncoding inputEncoding) {
 	char32 *q = & string32 [0];
-	if (inputEncoding == 0) {
+	if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
 		inputEncoding = preferences. inputEncoding;
 		/*
 		 * In case the preferences weren't initialized yet, use the platform defaults:
 		 */
-		if (inputEncoding == 0) {
+		if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
 			#if defined (macintosh)
-				inputEncoding = kMelder_textInputEncoding_UTF8_THEN_MACROMAN;
+				inputEncoding = kMelder_textInputEncoding::UTF8_THEN_MACROMAN;
 			#elif defined (_WIN32)
-				inputEncoding = kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1;
+				inputEncoding = kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1;
 			#else
-				inputEncoding = kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1;
+				inputEncoding = kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1;
 			#endif
 		}
 	}
-	if (inputEncoding == kMelder_textInputEncoding_UTF8 ||
-		inputEncoding == kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1 ||
-		inputEncoding == kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1 ||
-		inputEncoding == kMelder_textInputEncoding_UTF8_THEN_MACROMAN)
+	if (inputEncoding == kMelder_textInputEncoding::UTF8 ||
+		inputEncoding == kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1 ||
+		inputEncoding == kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1 ||
+		inputEncoding == kMelder_textInputEncoding::UTF8_THEN_MACROMAN)
 	{
 		if (Melder_str8IsValidUtf8 (string8)) {
-			inputEncoding = kMelder_textInputEncoding_UTF8;
-		} else if (inputEncoding == kMelder_textInputEncoding_UTF8_THEN_ISO_LATIN1) {
-			inputEncoding = kMelder_textInputEncoding_ISO_LATIN1;
-		} else if (inputEncoding == kMelder_textInputEncoding_UTF8_THEN_WINDOWS_LATIN1) {
-			inputEncoding = kMelder_textInputEncoding_WINDOWS_LATIN1;
-		} else if (inputEncoding == kMelder_textInputEncoding_UTF8_THEN_MACROMAN) {
-			inputEncoding = kMelder_textInputEncoding_MACROMAN;
+			inputEncoding = kMelder_textInputEncoding::UTF8;
+		} else if (inputEncoding == kMelder_textInputEncoding::UTF8_THEN_ISO_LATIN1) {
+			inputEncoding = kMelder_textInputEncoding::ISO_LATIN1;
+		} else if (inputEncoding == kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1) {
+			inputEncoding = kMelder_textInputEncoding::WINDOWS_LATIN1;
+		} else if (inputEncoding == kMelder_textInputEncoding::UTF8_THEN_MACROMAN) {
+			inputEncoding = kMelder_textInputEncoding::MACROMAN;
 		} else {
-			Melder_assert (inputEncoding == kMelder_textInputEncoding_UTF8);
+			Melder_assert (inputEncoding == kMelder_textInputEncoding::UTF8);
 			Melder_throw (U"Text is not valid UTF-8; please try a different text input encoding.");
 		}
 	}
 	const char8 *p = (const char8 *) & string8 [0];
-	if (inputEncoding == kMelder_textInputEncoding_UTF8) {
+	if (inputEncoding == kMelder_textInputEncoding::UTF8) {
 		while (*p != '\0') {
 			char32 kar1 = * p ++;   // convert up without sign extension
 			if (kar1 <= 0x00007F) {
@@ -381,42 +381,42 @@ void Melder_8to32_inline (const char *string8, char32 *string32, int inputEncodi
 				* q ++ = kar;
 			}
 		}
-	} else if (inputEncoding == kMelder_textInputEncoding_ISO_LATIN1) {
+	} else if (inputEncoding == kMelder_textInputEncoding::ISO_LATIN1) {
 		while (*p != '\0') {
 			* q ++ = * p ++;
 		}
-	} else if (inputEncoding == kMelder_textInputEncoding_WINDOWS_LATIN1) {
+	} else if (inputEncoding == kMelder_textInputEncoding::WINDOWS_LATIN1) {
 		while (*p != '\0') {
 			* q ++ = Melder_decodeWindowsLatin1 [* p ++];
 		}
-	} else if (inputEncoding == kMelder_textInputEncoding_MACROMAN) {
+	} else if (inputEncoding == kMelder_textInputEncoding::MACROMAN) {
 		while (*p != '\0') {
 			* q ++ = Melder_decodeMacRoman [* p ++];
 		}
-	} else if (inputEncoding != kMelder_textInputEncoding_UTF8) {
-		Melder_fatal (U"Unknown text input encoding ", inputEncoding, U".");
+	} else if (inputEncoding != kMelder_textInputEncoding::UTF8) {
+		Melder_fatal (U"Unknown text input encoding ", (int) inputEncoding, U".");
 	}
 	* q = U'\0';   // closing null character
-	(void) Melder_killReturns_inlineCHAR <char32> (string32);
+	(void) Melder_killReturns_inplaceCHAR <char32> (string32);
 }
 
-char32 * Melder_8to32 (const char *string, int inputEncoding) {
+char32 * Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding) {
 	if (! string) return nullptr;
 	autostring32 result = Melder_malloc (char32, (int64) strlen (string) + 1);
-	Melder_8to32_inline (string, result.peek(), inputEncoding);
+	Melder_8to32_inplace (string, result.peek(), inputEncoding);
 	return result.transfer();
 }
 
 char32 * Melder_8to32 (const char *string) {
 	if (! string) return nullptr;
 	autostring32 result = Melder_malloc (char32, (int64) strlen (string) + 1);
-	Melder_8to32_inline (string, result.peek(), kMelder_textInputEncoding_UTF8);
+	Melder_8to32_inplace (string, result.peek(), kMelder_textInputEncoding::UTF8);
 	return result.transfer();
 }
 
 char32 * Melder_peek16to32 (const char16 *text) {
 	if (! text) return nullptr;
-	static MelderString buffers [19] { { 0 } };
+	static MelderString buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
@@ -447,7 +447,7 @@ char32 * Melder_16to32 (const char16 *text) {
 	return Melder_dup (Melder_peek16to32 (text));
 }
 
-void Melder_32to8_inline (const char32 *string, char *utf8) {
+void Melder_32to8_inplace (const char32 *string, char *utf8) {
 	int64 n = str32len (string), i, j;
 	for (i = 0, j = 0; i < n; i ++) {
 		char32 kar = string [i];
@@ -476,7 +476,7 @@ void Melder_32to8_inline (const char32 *string, char *utf8) {
 char * Melder_32to8 (const char32 *string) {
 	if (! string) return nullptr;
 	autostring8 result = Melder_malloc (char, (int64) str32len_utf8 (string, true) + 1);
-	Melder_32to8_inline (string, result.peek());
+	Melder_32to8_inplace (string, result.peek());
 	return result.transfer();
 }
 
@@ -496,13 +496,13 @@ char * Melder_peek32to8 (const char32 *text) {
 		buffer [ibuffer] = (char *) Melder_realloc_f (buffer [ibuffer], (int64) sizeNeeded * (int64) sizeof (char));
 		bufferSize [ibuffer] = sizeNeeded;
 	}
-	Melder_32to8_inline (text, buffer [ibuffer]);
+	Melder_32to8_inplace (text, buffer [ibuffer]);
 	return buffer [ibuffer];
 }
 
 char16 * Melder_peek32to16 (const char32 *text, bool nativizeNewlines) {
 	if (! text) return nullptr;
-	static MelderString16 buffers [19] { { 0 } };
+	static MelderString16 buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	MelderString16_empty (& buffers [ibuffer]);

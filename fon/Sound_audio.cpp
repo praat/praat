@@ -1,6 +1,6 @@
 /* Sound_audio.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,11 +90,11 @@ static int ulaw2linear [] =
        };
 
 struct Sound_recordFixedTime_Info {
-	long numberOfSamples, numberOfSamplesRead;
+	integer numberOfSamples, numberOfSamplesRead;
 	short *buffer;
 };
-static long getNumberOfSamplesRead (volatile struct Sound_recordFixedTime_Info *info) {
-	volatile long numberOfSamplesRead = info -> numberOfSamplesRead;
+static integer getNumberOfSamplesRead (volatile struct Sound_recordFixedTime_Info *info) {
+	volatile integer numberOfSamplesRead = info -> numberOfSamplesRead;
 	return numberOfSamplesRead;
 }
 
@@ -127,11 +127,11 @@ static int portaudioStreamCallback (
 autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
 	bool inputUsesPortAudio =
 		#if defined (_WIN32)
-			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_MME_VIA_PORTAUDIO;
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::MME_VIA_PORTAUDIO;
 		#elif defined (macintosh)
-			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_COREAUDIO_VIA_PORTAUDIO;
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::COREAUDIO_VIA_PORTAUDIO;
 		#else
-			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem_ALSA_VIA_PORTAUDIO;
+			MelderAudio_getInputSoundSystem () == kMelder_inputSoundSystem::ALSA_VIA_PORTAUDIO;
 		#endif
 	PaStream *portaudioStream = nullptr;
 	#if defined (macintosh)
@@ -142,7 +142,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 		int fd_mixer = -1;
 	#endif
 	try {
-		long numberOfSamples, i;
+		integer numberOfSamples, i;
 		bool mulaw = false;
 		bool can16bit = true;
 		bool fakeMonoByStereo = false;   // will be set to `true` for systems (like MacOS X) that do not allow direct mono recording
@@ -261,7 +261,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 			#if defined (macintosh) || defined (_WIN32)
 				/* Taken from Audio Control Panel. */
 			#elif defined (linux) && ! defined (NO_AUDIO)
-				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : floor (gain * 100 + 0.5));  
+				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : Melder_iround (gain * 100));  
 				balance = balance <= 0 ? 0 : balance >= 1 ? 1 : balance;
 				if (balance >= 0.5) {
 					val = (int)(((int)(val*balance/(1-balance)) << 8) | val);
@@ -337,7 +337,7 @@ autoSound Sound_record_fixedTime (int inputSource, double gain, double balance, 
 
 		/* Create a buffer for recording, and the resulting sound. */
 
-		numberOfSamples = lround (sampleRate * duration);
+		numberOfSamples = Melder_iround (sampleRate * duration);
 		if (numberOfSamples < 1)
 			Melder_throw (U"Duration too short.");
 		autoNUMvector <short> buffer (1, numberOfSamples * (fakeMonoByStereo ? 2 : 1));
@@ -415,7 +415,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 				if (mulaw)
 					read (fd, (char *) & buffer [1], numberOfSamples);
 				else {
-					long bytesLeft = 2 * numberOfSamples, dbytes, bytesRead = 0;
+					integer bytesLeft = 2 * numberOfSamples, dbytes, bytesRead = 0;
 					while (bytesLeft) {
 						//Melder_casual ("Reading %ld bytes", bytesLeft > 4000 ? 4000 : bytesLeft);
 						dbytes = read (fd, & ((char *) buffer.peek()) [2 + bytesRead], bytesLeft > 4000 ? 4000 : bytesLeft);
@@ -432,7 +432,7 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 
 		if (fakeMonoByStereo)
 			for (i = 1; i <= numberOfSamples; i ++)
-				my z [1] [i] = ((long) buffer [i + i - 1] + buffer [i + i]) * (1.0 / 65536);
+				my z [1] [i] = ((integer) buffer [i + i - 1] + buffer [i + i]) * (1.0 / 65536);
 		else if (mulaw)
 			for (i = 1; i <= numberOfSamples; i ++)
 				my z [1] [i] = ulaw2linear [((unsigned char *) buffer.peek()) [i]] * (1.0 / 32768);
@@ -482,14 +482,14 @@ for (i = 1; i <= numberOfSamples; i ++) trace (U"Recorded ", buffer [i]);
 /********** PLAYING A SOUND **********/
 
 static struct SoundPlay {
-	long numberOfSamples, i1, i2, silenceBefore, silenceAfter;
+	integer numberOfSamples, i1, i2, silenceBefore, silenceAfter;
 	double tmin, tmax, dt, t1;
 	Sound_PlayCallback callback;
 	Thing boss;
 	int16 *buffer;
 } thePlayingSound;
 
-static bool melderPlayCallback (void *closure, long samplesPlayed) {
+static bool melderPlayCallback (void *closure, integer samplesPlayed) {
 	struct SoundPlay *me = (struct SoundPlay *) closure;
 	int phase = 2;
 	double t = samplesPlayed <= my silenceBefore ? my tmin :
@@ -507,12 +507,12 @@ static bool melderPlayCallback (void *closure, long samplesPlayed) {
 void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback callback, Thing boss)
 {
 	try {
-		long ifsamp = lround (1.0 / my dx), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
+		integer ifsamp = Melder_iround (1.0 / my dx), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
 		if (ifsamp == bestSampleRate) {
 			struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
 			double *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : nullptr;
 			MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-			long i1, i2;
+			integer i1, i2;
 			if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) return;
 			thy tmin = tmin;
 			thy tmax = tmax;
@@ -520,31 +520,31 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 			thy t1 = my x1;
 			thy callback = callback;
 			thy boss = boss;
-			thy silenceBefore = (long) (ifsamp * MelderAudio_getOutputSilenceBefore ());
-			thy silenceAfter = (long) (ifsamp * MelderAudio_getOutputSilenceAfter ());
-			int numberOfChannels = my ny;
+			thy silenceBefore = Melder_iroundTowardsZero (ifsamp * MelderAudio_getOutputSilenceBefore ());
+			thy silenceAfter = Melder_iroundTowardsZero (ifsamp * MelderAudio_getOutputSilenceAfter ());
+			integer numberOfChannels = my ny;
 			NUMvector_free (thy buffer, 1);   // just in case
 			thy buffer = NUMvector <short> (1, (i2 - i1 + 1 + thy silenceBefore + thy silenceAfter) * numberOfChannels);
 			thy i1 = i1;
 			thy i2 = i2;
 			short *to = thy buffer + thy silenceBefore * numberOfChannels;
 			if (numberOfChannels > 2) {
-				for (long i = i1; i <= i2; i ++) {
-					for (long chan = 1; chan <= my ny; chan ++) {
-						long value = (long) round (my z [chan] [i] * 32768.0);
+				for (integer i = i1; i <= i2; i ++) {
+					for (integer chan = 1; chan <= my ny; chan ++) {
+						integer value = Melder_iround_tieDown (my z [chan] [i] * 32768.0);
 						* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
 					}
 				}
 			} else if (numberOfChannels == 2) {
-				for (long i = i1; i <= i2; i ++) {
-					long valueLeft = (long) round (fromLeft [i] * 32768.0);
+				for (integer i = i1; i <= i2; i ++) {
+					integer valueLeft = Melder_iround_tieDown (fromLeft [i] * 32768.0);
 					* ++ to = valueLeft < -32768 ? -32768 : valueLeft > 32767 ? 32767 : valueLeft;
-					long valueRight = (long) round (fromRight [i] * 32768.0);
+					integer valueRight = Melder_iround_tieDown (fromRight [i] * 32768.0);
 					* ++ to = valueRight < -32768 ? -32768 : valueRight > 32767 ? 32767 : valueRight;
 				}
 			} else {
-				for (long i = i1; i <= i2; i ++) {
-					long value = (long) round (fromLeft [i] * 32768.0);
+				for (integer i = i1; i <= i2; i ++) {
+					integer value = Melder_iround_tieDown (fromLeft [i] * 32768.0);
 					* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
 				}
 			}

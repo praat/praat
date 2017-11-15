@@ -1,6 +1,6 @@
 /* Praat_tests_enums.h
  *
- * Copyright (C) 2001-2012,2015,2016 Paul Boersma
+ * Copyright (C) 2001-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,23 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 20, TIME_WCSCPY, U"TimeWcscpy")
 	enums_add (kPraatTests, 21, TIME_STR32CPY, U"TimeStr32cpy")
 	enums_add (kPraatTests, 22, TIME_GRAPHICS_TEXT_TOP, U"TimeGraphicsTextTop")
-	enums_add (kPraatTests, 23, THING_AUTO, U"ThingAuto")
-enums_end (kPraatTests, 23, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 23, TIME_UNDEFINED_NUMUNDEFINED, U"TimeUndefinedNUMundefined")
+	enums_add (kPraatTests, 24, TIME_UNDEFINED_ISINF_OR_ISNAN, U"TimeUndefinedIsinfOrIsnan")
+	enums_add (kPraatTests, 25, TIME_UNDEFINED_0x7FF, U"TimeUndefined0x7FF")
+	enums_add (kPraatTests, 26, TIME_INNER, U"TimeInner")
+	enums_add (kPraatTests, 27, TIME_OUTER_NUMMAT, U"TimeOuter##")
+	enums_add (kPraatTests, 28, CHECK_INVFISHERQ, U"invFisherQ(0.003,1,100000)")
+	enums_add (kPraatTests, 29, TIME_AUTOSTRING, U"TimeAutostring")
+	enums_add (kPraatTests, 30, TIME_CHAR32, U"TimeChar32")
+	enums_add (kPraatTests, 31, TIME_SUM, U"TimeSum")
+	enums_add (kPraatTests, 32, TIME_MEAN, U"TimeMean")
+	enums_add (kPraatTests, 33, TIME_STDEV, U"TimeStdev")
+	enums_add (kPraatTests, 34, TIME_ALLOC, U"TimeAlloc")
+	enums_add (kPraatTests, 35, TIME_ALLOC0, U"TimeAlloc0")
+	enums_add (kPraatTests, 36, TIME_ZERO, U"TimeZero")
+	enums_add (kPraatTests, 37, TIME_MALLOC, U"TimeMalloc")
+	enums_add (kPraatTests, 38, TIME_CALLOC, U"TimeCalloc")
+	enums_add (kPraatTests, 39, THING_AUTO, U"ThingAuto")
+enums_end (kPraatTests, 39, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */

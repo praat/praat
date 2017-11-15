@@ -48,8 +48,8 @@ autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fr
 	
 		// Determine index range. We use all the real or virtual samples that fit within [fromTime..toTime].
 
-		long ix1 = 1 + (long) ceil ((fromTime - my x1) / my dx);
-		long ix2 = 1 + (long) floor ((toTime - my x1) / my dx);
+		long ix1 = 1 + Melder_iceiling ((fromTime - my x1) / my dx);
+		integer ix2 = 1 + Melder_ifloor ((toTime - my x1) / my dx);
 		if (ix2 < ix1) {
 			Melder_throw (U"Mixed Sound would contain no samples.");
 		}
@@ -130,8 +130,11 @@ autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 	}
 }
 
+#if 0
+// TODO
 void LongSound_and_MixingMatrix_playPart (LongSound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback callback, Thing boss) {
 	
 }
+#endif
 
 /* End of file Sound_and_MixingMatrix.cpp */

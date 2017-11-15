@@ -45,7 +45,7 @@ void structTextEditor :: v_destroy () noexcept {
 void structTextEditor :: v_nameChanged () {
 	if (v_fileBased ()) {
 		bool dirtinessAlreadyShown = GuiWindow_setDirty (our windowForm, our dirty);
-		static MelderString windowTitle { 0 };
+		static MelderString windowTitle { };
 		if (our name [0] == U'\0') {
 			MelderString_copy (& windowTitle, U"(untitled");
 			if (dirty && ! dirtinessAlreadyShown)
@@ -64,7 +64,7 @@ void structTextEditor :: v_nameChanged () {
 }
 
 static void openDocument (TextEditor me, MelderFile file) {
-	for (long ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size; ieditor ++) {
+	for (integer ieditor = 1; ieditor <= theReferencesToAllOpenTextEditors.size; ieditor ++) {
 		TextEditor editor = theReferencesToAllOpenTextEditors.at [ieditor];
 		if (editor != me && MelderFile_equal (file, & editor -> file)) {
 			Editor_raise (editor);
@@ -397,27 +397,27 @@ static void menu_cb_erase (TextEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_remove (my textWidget);
 }
 
-static bool getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
-	long left, right;
+static bool getSelectedLines (TextEditor me, integer *firstLine, integer *lastLine) {
+	integer left, right;
 	char32 *text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
-	long textLength = str32len (text);
+	integer textLength = str32len (text);
 	Melder_assert (left >= 0);
 	Melder_assert (left <= right);
 	Melder_assert (right <= textLength);
-	long i = 0;
+	integer i = 0;
 	*firstLine = 1;
 	/*
 	 * Cycle through the text in order to see how many linefeeds we pass.
 	 */
 	for (; i < left; i ++) {
-		if (text [i] == '\n') {
+		if (text [i] == U'\n') {
 			(*firstLine) ++;
 		}
 	}
 	if (left == right) return false;
 	*lastLine = *firstLine;
 	for (; i < right; i ++) {
-		if (text [i] == '\n') {
+		if (text [i] == U'\n') {
 			(*lastLine) ++;
 		}
 	}
@@ -428,11 +428,11 @@ static bool getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
 static char32 *theFindString = nullptr, *theReplaceString = nullptr;
 static void do_find (TextEditor me) {
 	if (! theFindString) return;   // e.g. when the user does "Find again" before having done any "Find"
-	long left, right;
+	integer left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	char32 *location = str32str (& text [right], theFindString);
 	if (location) {
-		long index = location - text.peek();
+		integer index = location - text.peek();
 		GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
@@ -442,7 +442,7 @@ static void do_find (TextEditor me) {
 		/* Try from the start of the document. */
 		location = str32str (text.peek(), theFindString);
 		if (location) {
-			long index = location - text.peek();
+			integer index = location - text.peek();
 			GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32
@@ -461,7 +461,7 @@ static void do_replace (TextEditor me) {
 		do_find (me);
 		return;
 	}
-	long left, right;
+	integer left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	GuiText_replace (my textWidget, left, right, theReplaceString);
 	GuiText_setSelection (my textWidget, left, left + str32len (theReplaceString));
@@ -473,13 +473,12 @@ static void do_replace (TextEditor me) {
 
 static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find", nullptr)
-		LABEL (U"", U"Find:")
-		TEXTFIELD (U"findString", U"")
+		TEXTFIELD (findString, U"Find:", U"")
 	EDITOR_OK
-		if (theFindString) SET_STRING (U"findString", theFindString);
+		if (theFindString) SET_STRING (findString, theFindString);
 	EDITOR_DO
 		Melder_free (theFindString);
-		theFindString = Melder_dup_f (GET_STRING (U"findString"));
+		theFindString = Melder_dup_f (findString);
 		do_find (me);
 	EDITOR_END
 }
@@ -490,23 +489,21 @@ static void menu_cb_findAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
 
 static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find", nullptr)
-		LABEL (U"", U"This is a \"slow\" find-and-replace method;")
-		LABEL (U"", U"if the selected text is identical to the Find string,")
-		LABEL (U"", U"the selected text will be replaced by the Replace string;")
-		LABEL (U"", U"otherwise, the next occurrence of the Find string will be selected.")
-		LABEL (U"", U"So you typically need two clicks on Apply to get a text replaced.")
-		LABEL (U"", U"Find:")
-		TEXTFIELD (U"findString", U"")
-		LABEL (U"", U"Replace with:")
-		TEXTFIELD (U"replaceString", U"")
+		LABEL (U"This is a \"slow\" find-and-replace method;")
+		LABEL (U"if the selected text is identical to the Find string,")
+		LABEL (U"the selected text will be replaced by the Replace string;")
+		LABEL (U"otherwise, the next occurrence of the Find string will be selected.")
+		LABEL (U"So you typically need two clicks on Apply to get a text replaced.")
+		TEXTFIELD (findString, U"Find:", U"")
+		TEXTFIELD (replaceString, U"Replace with:", U"")
 	EDITOR_OK
-		if (theFindString) SET_STRING (U"findString", theFindString);
-		if (theReplaceString) SET_STRING (U"replaceString", theReplaceString);
+		if (theFindString) SET_STRING (findString, theFindString);
+		if (theReplaceString) SET_STRING (replaceString, theReplaceString);
 	EDITOR_DO
 		Melder_free (theFindString);
-		theFindString = Melder_dup (GET_STRING (U"findString"));
+		theFindString = Melder_dup (findString);
 		Melder_free (theReplaceString);
-		theReplaceString = Melder_dup (GET_STRING (U"replaceString"));
+		theReplaceString = Melder_dup (replaceString);
 		do_replace (me);
 	EDITOR_END
 }
@@ -516,7 +513,7 @@ static void menu_cb_replaceAgain (TextEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_whereAmI (TextEditor me, EDITOR_ARGS_DIRECT) {
-	long numberOfLinesLeft, numberOfLinesRight;
+	integer numberOfLinesLeft, numberOfLinesRight;
 	if (! getSelectedLines (me, & numberOfLinesLeft, & numberOfLinesRight)) {
 		Melder_information (U"The cursor is on line ", numberOfLinesLeft, U".");
 	} else if (numberOfLinesLeft == numberOfLinesRight) {
@@ -527,15 +524,15 @@ static void menu_cb_whereAmI (TextEditor me, EDITOR_ARGS_DIRECT) {
 }
 
 static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
-	EDITOR_FORM (U"Go to line", 0)
-		NATURAL (U"Line", U"1")
+	EDITOR_FORM (U"Go to line", nullptr)
+		NATURAL (lineToGo, U"Line", U"1")
 	EDITOR_OK
-		long firstLine, lastLine;
+		integer firstLine, lastLine;
 		getSelectedLines (me, & firstLine, & lastLine);
-		SET_INTEGER (U"Line", firstLine);
+		SET_INTEGER (lineToGo, firstLine)
 	EDITOR_DO
 		autostring32 text = GuiText_getString (my textWidget);
-		long lineToGo = GET_INTEGER (U"Line"), currentLine = 1;
+		integer currentLine = 1;
 		int64 left = 0, right = 0;
 		if (lineToGo == 1) {
 			for (; text [right] != U'\n' && text [right] != U'\0'; right ++) { }
@@ -615,11 +612,11 @@ static void menu_cb_18 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 18
 static void menu_cb_24 (TextEditor me, EDITOR_ARGS_DIRECT) { setFontSize (me, 24); }
 static void menu_cb_fontSize (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Text window: Font size", nullptr)
-		NATURAL (U"Font size (points)", U"12")
+		NATURAL (fontSize, U"Font size (points)", U"12")
 	EDITOR_OK
-		SET_INTEGER (U"Font size", (long) my p_fontSize);
+		SET_INTEGER (fontSize, (integer) my p_fontSize);
 	EDITOR_DO
-		setFontSize (me, GET_INTEGER (U"Font size"));
+		setFontSize (me, fontSize);
 	EDITOR_END
 }
 

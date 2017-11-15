@@ -1,6 +1,6 @@
 /* LPC_and_LineSpectralFrequencies.cpp
  *
- * Copyright (C) 2016 David Weenink
+ * Copyright (C) 2016-2017 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@
  */
 static void cos2x (double *g, long order) {
 	for (long i = 2; i <= order; i ++) {
-		for (long j = order; j > i; j--) {
-			g [j - 2] -= g[j];
+		for (long j = order; j > i; j --) {
+			g [j - 2] -= g [j];
 		}
 		g [i - 2] -= 2.0 * g [i];
 	}
@@ -44,7 +44,7 @@ static void Polynomial_fromLPC_Frame_lspsum (Polynomial me, LPC_Frame lpc) {
 	
 	long order = lpc -> nCoefficients, g_order = (order + 1) / 2; // orders
 	my coefficients [order + 2] = 1.0;
-	for (long i = 1; i <= order; i++) {
+	for (long i = 1; i <= order; i ++) {
 		my coefficients [order + 2 - i] = lpc -> a [i] + lpc -> a [order + 1 - i];
 	}
 	my coefficients [1] = 1.0;
@@ -54,7 +54,7 @@ static void Polynomial_fromLPC_Frame_lspsum (Polynomial me, LPC_Frame lpc) {
 		Polynomial_divide_firstOrderFactor (me, -1.0, nullptr);
 	}
 	/* transform to cos(w) terms */
-	for (long i = 1; i <= g_order + 1; i++) {
+	for (long i = 1; i <= g_order + 1; i ++) {
 		my coefficients [i] = my coefficients [g_order + i];
 	}
 	my numberOfCoefficients = g_order + 1;
@@ -66,8 +66,8 @@ static void Polynomial_fromLPC_Frame_lspdif (Polynomial me, LPC_Frame lpc) {
 	/* Fa (z) = A(z) - z^-(p+1)A(1/z) */
 	long order = lpc -> nCoefficients;
 	my coefficients [order + 2] = -1.0;
-	for (long i = 1; i <= order; i++) {
-		my coefficients [order + 2 - i] = -lpc -> a [i] + lpc -> a [order + 1 - i];
+	for (long i = 1; i <= order; i ++) {
+		my coefficients [order + 2 - i] = - lpc -> a [i] + lpc -> a [order + 1 - i];
 	}
 	my coefficients [1] = 1.0;
 	my numberOfCoefficients = order + 2;
@@ -79,7 +79,7 @@ static void Polynomial_fromLPC_Frame_lspdif (Polynomial me, LPC_Frame lpc) {
 	}
 	/* transform to cos(w) terms */
 	long g_order = my numberOfCoefficients / 2;
-	for (long i = 1; i <= g_order + 1; i++) {
+	for (long i = 1; i <= g_order + 1; i ++) {
 		my coefficients [i] = my coefficients [g_order + i];
 	}
 	my numberOfCoefficients = g_order + 1;
@@ -116,7 +116,7 @@ static void Roots_fromPolynomial (Roots me, Polynomial g, long numberOfDerivativ
 	/* The constraints M[j] (Semenov et al. eq. (8)) can be calculated by taking absolute values of 
 	 * the polynomial coefficients and evaluating the polynomial and the derivatives at x = 1.0
 	 */
-	for (long k = 0; k <= g_order; k++) {
+	for (long k = 0; k <= g_order; k ++) {
 		gabs [k] = fabs (g -> coefficients [k + 1]);
 	}
 	evaluatePolynomialAndDerivatives (gabs, g_order, 1.0, constraints, numberOfDerivatives);
@@ -131,26 +131,26 @@ static void Roots_fromPolynomial (Roots me, Polynomial g, long numberOfDerivativ
 		while (j <= numberOfDerivatives && (rootsOnIntervalPossible_f || rootsOnIntervalPossible_df)) {
 			intervals [j] = intervals [j - 1] * (xmax - xmin);
 			long k = j - 1;
-			if (j > 1) { // start at first derivative
+			if (j > 1) {   // start at first derivative
 				dsum1 += fabs (derivatives [k]) * intervals [k] / (p2 [k] * fact [k]);
 			}
-			if (j > 2) { // start at second derivative
+			if (j > 2) {   // start at second derivative
 				dsum2 += fabs (derivatives [k]) * intervals [k - 1] / (p2 [k - 1] * fact [k - 1]);
 				if (rootsOnIntervalPossible_f) {
 					double testValue1 = dsum1 + constraints [j] * intervals [j] / (p2 [j] * fact [j]);
-					rootsOnIntervalPossible_f = ! (fxmid + testValue1 < 0 || fxmid - testValue1 > 0);
+					rootsOnIntervalPossible_f = ! (fxmid + testValue1 < 0.0 || fxmid - testValue1 > 0.0);
 				}
 				if (rootsOnIntervalPossible_df) {
 					double testValue2 = dsum2 + constraints [j] * intervals [j - 1] / (p2 [j - 1] * fact [j - 1]);
-					rootsOnIntervalPossible_df = ! (fdxmin + testValue2 < 0 || fdxmin - testValue2 > 0);
+					rootsOnIntervalPossible_df = ! (fdxmin + testValue2 < 0.0 || fdxmin - testValue2 > 0.0);
 				}
 			}
 			j++;
 		}
 		if (rootsOnIntervalPossible_f) {
-			if (rootsOnIntervalPossible_df) { // f(x) uncertain && f'(x) uncertain : bisect
+			if (rootsOnIntervalPossible_df) {   // f(x) uncertain && f'(x) uncertain: bisect
 				xmax = xmid;
-			} else {// f(x) uncertain; f'(x) certain
+			} else {   // f(x) uncertain; f'(x) certain
 				double fxmin = evaluatePolynomial (g, g_order, xmin);
 				double fxmax = evaluatePolynomial (g, g_order, xmax);
 				if (fxmin * fxmax <= 0.0) {
@@ -177,7 +177,7 @@ static long Roots_fromPolynomial_grid (Roots me, Polynomial thee, double gridSiz
 		xmax = xmax > thy xmax ? thy xmax : xmax;
 		//double root = Polynomial_findOneRealRoot_nr (thee, xmin, xmax);
 		double root = Polynomial_findOneSimpleRealRoot_ridders (thee, xmin, xmax);
-		if (root != NUMundefined && (numberOfRootsFound == 0 || my v [numberOfRootsFound].re != root)) {
+		if (isdefined (root) && (numberOfRootsFound == 0 || my v [numberOfRootsFound].re != root)) {
 			my v [++numberOfRootsFound].re = root; // root not at border of interval
 			my v [numberOfRootsFound].im = 0.0;
 		}
@@ -207,15 +207,15 @@ static void LineSpectralFrequencies_Frame_initFromLPC_Frame_grid (LineSpectralFr
 		Melder_throw (U"Too many bisections.");
 	}
 	// [g1-> xmin, g1 -> xmax] <==> [nyquistFrequency, 0] i.e. highest root corresponds to lowest frequency
-	for (long i = 1; i <= half_order_g1; i++) {
+	for (long i = 1; i <= half_order_g1; i ++) {
 		my frequencies [2 * i - 1] = acos (roots -> v [half_order_g1 + 1 - i].re / 2.0) / NUMpi * maximumFrequency; 
 	}
 	// the roots of g2 lie inbetween the roots of g1
-	for (long i = 1; i <= half_order_g2; i++) {
+	for (long i = 1; i <= half_order_g2; i ++) {
 		double xmax = roots -> v [half_order_g1 + 1 - i].re;
 		double xmin = i == half_order_g1 ? g1 -> xmin : roots -> v [half_order_g1 - i].re;
 		double root = Polynomial_findOneSimpleRealRoot_ridders (g2, xmin, xmax);
-		if (root != NUMundefined) {
+		if (isdefined (root)) {
 			my frequencies [2 * i] = acos (root / 2.0) / NUMpi * maximumFrequency;
 		} else { 
 			my numberOfFrequencies --;
@@ -255,7 +255,7 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 
 	/* Reconstruct Fs (z) */
 	long numberOfOmegas = (thy numberOfFrequencies + 1) / 2;
-	for (long i = 1; i <= numberOfOmegas; i++) {
+	for (long i = 1; i <= numberOfOmegas; i ++) {
 		double omega = thy frequencies [2 * i -1] / maximumFrequency * NUMpi;
 		my a[i] = -2.0 * cos (omega);
 	}
@@ -263,21 +263,21 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 
 	/* Reconstruct Fa (z) */
 	numberOfOmegas = thy numberOfFrequencies / 2;
-	for (long i = 1; i <= numberOfOmegas; i++) {
+	for (long i = 1; i <= numberOfOmegas; i ++) {
 		double omega = thy frequencies [2 * i] / maximumFrequency * NUMpi;
 		my a [i] = -2.0 * cos (omega);
 	}
 	Polynomial_initFromProductOfSecondOrderTerms (fa, my a, numberOfOmegas);
 	
 	if (thy numberOfFrequencies % 2 == 0) {
-		Polynomial_multiply_firstOrderFactor (fs, -1.0); // * (z + 1)
-		Polynomial_multiply_firstOrderFactor (fa, 1.0); // * (z - 1)
+		Polynomial_multiply_firstOrderFactor (fs, -1.0);   // * (z + 1)
+		Polynomial_multiply_firstOrderFactor (fa, 1.0);   // * (z - 1)
 	} else {
-		Polynomial_multiply_secondOrderFactor (fa, 1.0); // * (z^2 - 1)
+		Polynomial_multiply_secondOrderFactor (fa, 1.0);   // * (z^2 - 1)
 	}
 	Melder_assert (fs -> numberOfCoefficients == fa -> numberOfCoefficients);
 	/* A(z) = (Fs(z) + Fa(z) / 2 */
-	for (long i = 1; i <= fs -> numberOfCoefficients - 2; i++) {
+	for (long i = 1; i <= fs -> numberOfCoefficients - 2; i ++) {
 		my a [thy numberOfFrequencies - i + 1] = 0.5 * (fs -> coefficients [i+1] + fa -> coefficients [i+1]);
 	}
 }

@@ -59,7 +59,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
 			Melder_throw (U"CC orders must be equal.");
 		}
-		long nr = (long) floor (dtr / my dx);
+		integer nr = Melder_ifloor (dtr / my dx);
 		if (wr != 0.0 && nr < 2) {
 			Melder_throw (U"Time window for regression is too small.");
 		}
@@ -72,8 +72,8 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 		}
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
-		autoNUMvector<double> ri (0L, my maximumNumberOfCoefficients);
-		autoNUMvector<double> rj (0L, my maximumNumberOfCoefficients);
+		autoNUMvector <double> ri ((integer) 0, my maximumNumberOfCoefficients);
+		autoNUMvector <double> rj ((integer) 0, my maximumNumberOfCoefficients);
 
 		/* Calculate distance matrix. */
 
@@ -85,7 +85,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 
 			for (long j = 1; j <= thy nx; j ++) {
 				CC_Frame fj = & thy frame [j];
-				double dist = 0.0, distr = 0.0;
+				real80 dist = 0.0, distr = 0.0;
 
 				/* Cepstral distance. */
 
@@ -126,7 +126,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 				}
 
 				dist /= wc + wle + wr + wer;
-				his z [i] [j] = sqrt (dist);   // prototype along y-direction
+				his z [i] [j] = sqrt ((real) dist);   // prototype along y-direction
 			}
 
 			if (i % 10 == 1) {

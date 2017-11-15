@@ -2,7 +2,7 @@
 #define _AmplitudeTierEditor_h_
 /* AmplitudeTierEditor.h
  *
- * Copyright (C) 2003-2011,2012,2014,2015 Paul Boersma
+ * Copyright (C) 2003-2011,2012,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,6 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override;
 	const char32 * v_quantityText ()
 		override { return U"Sound pressure (Pa)"; }
-	const char32 * v_quantityKey ()
-		override { return U"Sound pressure"; }
 	const char32 * v_rightTickUnits ()
 		override { return U" Pa"; }
 	double v_defaultYmin ()
@@ -47,10 +45,6 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override { return U"Minimum amplitude (Pa)"; }
 	const char32 * v_ymaxText ()
 		override { return U"Maximum amplitude (Pa)"; }
-	const char32 * v_yminKey ()
-		override { return U"Minimum amplitude"; }
-	const char32 * v_ymaxKey ()
-		override { return U"Maximum amplitude"; }
 };
 
 autoAmplitudeTierEditor AmplitudeTierEditor_create (const char32 *title,

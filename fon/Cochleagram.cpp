@@ -1,6 +1,6 @@
 /* Cochleagram.cpp
  *
- * Copyright (C) 1992-2011,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 Thing_implement (Cochleagram, Matrix, 2);
 
-autoCochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1, double df, long nf) {
+autoCochleagram Cochleagram_create (double tmin, double tmax, integer nt, double dt, double t1, double df, integer nf) {
 	try {
 		autoCochleagram me = Thing_new (Cochleagram);
 		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, 0.0, nf * df, nf, df, 0.5 * df);
@@ -31,16 +31,16 @@ autoCochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt
 	}
 }
 
-void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, int garnish) {
+void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, bool garnish) {
 	static double border [1 + 12]
 		{ 0.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0, 70.0, 75.0, 80.0 };
 	try {
 		autoCochleagram copy = Data_copy (me);
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-		long itmin, itmax;
+		integer itmin, itmax;
 		Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
-		for (long iy = 2; iy < my ny; iy ++)
-			for (long ix = itmin; ix <= itmax; ix ++)
+		for (integer iy = 2; iy < my ny; iy ++)
+			for (integer ix = itmin; ix <= itmax; ix ++)
 				if (my z [iy] [ix] > my z [iy - 1] [ix] &&
 					my z [iy] [ix] > my z [iy + 1] [ix])
 				{
@@ -74,19 +74,19 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 		if (my ny != thy ny)
 			Melder_throw (U"Unequal numbers of frequencies.");
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-		long itmin, itmax;
-		long nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
+		integer itmin, itmax;
+		integer nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
 		if (nt == 0)
 			Melder_throw (U"Window too short.");
-		double diff = 0.0;
-		for (long itime = itmin; itime <= itmax; itime ++) {
-			for (long ifreq = 1; ifreq <= my ny; ifreq ++) {
+		real80 diff = 0.0;
+		for (integer itime = itmin; itime <= itmax; itime ++) {
+			for (integer ifreq = 1; ifreq <= my ny; ifreq ++) {
 				double d = my z [ifreq] [itime] - thy z [ifreq] [itime];
 				diff += d * d;
 			}
 		}
 		diff /= nt * my ny;
-		return sqrt (diff);
+		return sqrt ((real) diff);
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": difference not computed.");
 	}

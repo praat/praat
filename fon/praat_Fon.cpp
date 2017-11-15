@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ DO
 
 FORM (GRAPHICS_Cochleagram_paint, U"Paint Cochleagram", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	BOOLEAN4 (garnish, U"Garnish", true)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Cochleagram)
@@ -124,10 +124,10 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Cochleagram_formula, U"Cochleagram Formula", U"Cochleagram: Formula...") {
-	LABEL (U"label", U"`x' is time in seconds, `y' is place in Bark")
-	LABEL (U"label", U"y := y1; for row := 1 to nrow do { x := x1; "
-		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-	TEXTFIELD4 (formula, U"formula", U"self")
+	LABEL (U"`x` is time in seconds, `y` is place in Bark")
+	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula` ; x := x + dx } y := y + dy }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Cochleagram)
@@ -138,7 +138,7 @@ DO
 // MARK: Analyse
 
 FORM (NEW_Cochleagram_to_Excitation, U"From Cochleagram to Excitation", nullptr) {
-	REAL4 (time, U"Time (s)", U"0.0")
+	REAL (time, U"Time (s)", U"0.0")
 	OK
 DO
 	CONVERT_EACH (Cochleagram)
@@ -159,11 +159,9 @@ DIRECT (NEW_Cochleagram_to_Matrix) {
 // MARK: New
 
 FORM (NEW1_Corpus_create, U"Create Corpus", U"Create Corpus...") {
-	WORD4 (name, U"Name", U"myCorpus")
-	LABEL (U"", U"Folder with sound files:")
-	TEXTFIELD4 (folderWithSoundFiles, U"folderWithSoundFiles", U"")
-	LABEL (U"", U"Folder with annotation files:")
-	TEXTFIELD4 (folderWithAnnotationFiles, U"folderWithAnnotationFiles", U"")
+	WORD (name, U"Name", U"myCorpus")
+	TEXTFIELD (folderWithSoundFiles, U"Folder with sound files:", U"")
+	TEXTFIELD (folderWithAnnotationFiles, U"Folder with annotation files:", U"")
 	OK
 DO
 END }
@@ -172,19 +170,18 @@ END }
 
 DIRECT (WINDOW_Corpus_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a Corpus from batch.");
-	LOOP {
-		iam (Corpus);
+	FIND_ONE_WITH_IOBJECT (Corpus)
 		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: - DISTRIBUTIONS
 
 FORM (NEW_Distributions_to_Transition, U"To Transition", nullptr) {
-	NATURAL4 (environment, U"Environment", U"1")
-	BOOLEAN4 (greedy, U"Greedy", true)
+	NATURAL (environment, U"Environment", U"1")
+	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
 	CONVERT_EACH (Distributions)
@@ -193,8 +190,8 @@ DO
 }
 
 FORM (NEW1_Distributions_to_Transition_adj, U"To Transition", nullptr) {
-	NATURAL4 (environment, U"Environment", U"1")
-	BOOLEAN4 (greedy, U"Greedy", true)
+	NATURAL (environment, U"Environment", U"1")
+	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
 	CONVERT_TWO (Distributions, Transition)
@@ -203,8 +200,8 @@ DO
 }
 
 FORM (NEW1_Distributions_to_Transition_noise, U"To Transition (noise)", nullptr) {
-	NATURAL4 (environment, U"Environment", U"1")
-	BOOLEAN4 (greedy, U"Greedy", true)
+	NATURAL (environment, U"Environment", U"1")
+	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
 	CONVERT_COUPLE (Distributions)
@@ -213,8 +210,8 @@ DO
 }
 
 FORM (NEW1_Distributions_to_Transition_noise_adj, U"To Transition (noise)", nullptr) {
-	NATURAL4 (environment, U"Environment", U"1")
-	BOOLEAN4 (greedy, U"Greedy", true)
+	NATURAL (environment, U"Environment", U"1")
+	BOOLEAN (greedy, U"Greedy", true)
 	OK
 DO
 	CONVERT_COUPLE_AND_ONE (Distributions, Transition)
@@ -241,11 +238,11 @@ DIRECT (HELP_Excitation_help) {
 // MARK: Draw
 
 FORM (GRAPHICS_Excitation_draw, U"Draw Excitation", nullptr) {
-	REAL4 (fromFrequency, U"From frequency (Bark)", U"0.0")
-	REAL4 (toFrequency, U"To frequency (Bark)", U"25.6")
-	REAL4 (minimum, U"Minimum (phon)", U"0.0")
-	REAL4 (maximum, U"Maximum (phon)", U"100.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"From frequency (Bark)", U"0.0")
+	REAL (toFrequency, U"To frequency (Bark)", U"25.6")
+	REAL (minimum, U"Minimum (phon)", U"0.0")
+	REAL (maximum, U"Maximum (phon)", U"100.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Excitation)
@@ -264,9 +261,9 @@ DIRECT (REAL_Excitation_getLoudness) {
 // MARK: Modify
 
 FORM (MODIFY_Excitation_formula, U"Excitation Formula", U"Excitation: Formula...") {
-	LABEL (U"label", U"`x' is the place in Bark, `col' is the bin number")
-	LABEL (U"label", U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	TEXTFIELD4 (formula, U"formula", U"self")
+	LABEL (U"`x` is the place in Bark, `col` is the bin number")
+	LABEL (U"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Excitation)
@@ -277,7 +274,7 @@ DO
 // MARK: Convert
 
 FORM (NEW_Excitation_to_Formant, U"From Excitation to Formant", 0) {
-	NATURAL4 (maximumNumberOfFormants, U"Maximum number of formants", U"20")
+	NATURAL (maximumNumberOfFormants, U"Maximum number of formants", U"20")
 	OK
 DO
 	CONVERT_EACH (Excitation)
@@ -303,9 +300,9 @@ DIRECT (HELP_Formant_help) {
 
 FORM (GRAPHICS_Formant_drawSpeckles, U"Draw Formant", U"Formant: Draw speckles...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	POSITIVEVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
-	REALVAR (dynamicRange, U"Dynamic range (dB)", U"30.0")
-	BOOLEANVAR (garnish, U"Garnish", 1)
+	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
+	REAL (dynamicRange, U"Dynamic range (dB)", U"30.0")
+	BOOLEAN (garnish, U"Garnish", 1)
 	OK
 DO
 	GRAPHICS_EACH (Formant)
@@ -315,8 +312,8 @@ DO
 
 FORM (GRAPHICS_Formant_drawTracks, U"Draw formant tracks", U"Formant: Draw tracks...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	POSITIVEVAR (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
-	BOOLEANVAR (garnish, U"Garnish", 1)
+	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5500.0")
+	BOOLEAN (garnish, U"Garnish", 1)
 	OK
 DO
 	GRAPHICS_EACH (Formant)
@@ -326,15 +323,15 @@ DO
 
 FORM (GRAPHICS_Formant_scatterPlot, U"Formant: Scatter plot", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	NATURAL4 (horizontalFormantNumber, U"Horizontal formant number", U"2")
-	REAL4 (left, U"left Horizontal range (Hz)", U"3000.0")
-	REAL4 (right, U"right Horizontal range (Hz)", U"400.0")
-	NATURAL4 (verticalFormantNumber, U"Vertical formant number", U"1")
-	REAL4 (bottom, U"left Vertical range (Hz)", U"1500.0")
-	REAL4 (top, U"right Vertical range (Hz)", U"100.0")
-	POSITIVE4 (markSize, U"Mark size (mm)", U"1.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
-	SENTENCE4 (markString, U"Mark string (+xo.)", U"+")
+	NATURAL (horizontalFormantNumber, U"Horizontal formant number", U"2")
+	REAL (left, U"left Horizontal range (Hz)", U"3000.0")
+	REAL (right, U"right Horizontal range (Hz)", U"400.0")
+	NATURAL (verticalFormantNumber, U"Vertical formant number", U"1")
+	REAL (bottom, U"left Vertical range (Hz)", U"1500.0")
+	REAL (top, U"right Vertical range (Hz)", U"100.0")
+	POSITIVE (markSize, U"Mark size (mm)", U"1.0")
+	BOOLEAN (garnish, U"Garnish", true)
+	SENTENCE (markString, U"Mark string (+xo.)", U"+")
 	OK
 DO
 	GRAPHICS_EACH (Formant)
@@ -347,14 +344,14 @@ DO
 // MARK: Tabulate
 
 FORM (LIST_Formant_list, U"Formant: List", nullptr) {
-	BOOLEAN4 (includeFrameNumber, U"Include frame number", false)
-	BOOLEAN4 (includeTime, U"Include time", true)
-	NATURAL4 (numberOfTimeDecimals, U"Number of time decimals", U"6")
-	BOOLEAN4 (includeIntensity, U"Include intensity", false)
-	NATURAL4 (numberOfIntensityDecimals, U"Number of intensity decimals", U"3")
-	BOOLEAN4 (includeNumberOfFormants, U"Include number of formants", true)
-	NATURAL4 (numberOfFrequencyDecimals, U"Number of frequency decimals", U"3")
-	BOOLEAN4 (includeBandwidths, U"Include bandwidths", true)
+	BOOLEAN (includeFrameNumber, U"Include frame number", false)
+	BOOLEAN (includeTime, U"Include time", true)
+	NATURAL (numberOfTimeDecimals, U"Number of time decimals", U"6")
+	BOOLEAN (includeIntensity, U"Include intensity", false)
+	NATURAL (numberOfIntensityDecimals, U"Number of intensity decimals", U"3")
+	BOOLEAN (includeNumberOfFormants, U"Include number of formants", true)
+	NATURAL (numberOfFrequencyDecimals, U"Number of frequency decimals", U"3")
+	BOOLEAN (includeBandwidths, U"Include bandwidths", true)
 	OK
 DO
 	INFO_ONE (Formant)
@@ -365,14 +362,14 @@ DO
 }
 
 FORM (NEW_Formant_downto_Table, U"Formant: Down to Table", nullptr) {
-	BOOLEAN4 (includeFrameNumber, U"Include frame number", false)
-	BOOLEAN4 (includeTime, U"Include time", true)
-	NATURAL4 (numberOfTimeDecimals, U"Number of time decimals", U"6")
-	BOOLEAN4 (includeIntensity, U"Include intensity", false)
-	NATURAL4 (numberOfIntensityDecimals, U"Number of intensity decimals", U"3")
-	BOOLEAN4 (includeNumberOfFormants, U"Include number of formants", true)
-	NATURAL4 (numberOfFrequencyDecimals, U"Number of frequency decimals", U"3")
-	BOOLEAN4 (includeBandwidths, U"Include bandwidths", true)
+	BOOLEAN (includeFrameNumber, U"Include frame number", false)
+	BOOLEAN (includeTime, U"Include time", true)
+	NATURAL (numberOfTimeDecimals, U"Number of time decimals", U"6")
+	BOOLEAN (includeIntensity, U"Include intensity", false)
+	NATURAL (numberOfIntensityDecimals, U"Number of intensity decimals", U"3")
+	BOOLEAN (includeNumberOfFormants, U"Include number of formants", true)
+	NATURAL (numberOfFrequencyDecimals, U"Number of frequency decimals", U"3")
+	BOOLEAN (includeBandwidths, U"Include bandwidths", true)
 	OK
 DO
 	CONVERT_EACH (Formant)
@@ -385,74 +382,64 @@ DO
 // MARK: Query
 
 FORM (REAL_Formant_getValueAtTime, U"Formant: Get value", U"Formant: Get value at time...") {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
-	REAL4 (time, U"Time (s)", U"0.5")
-	RADIO4x (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO4 (interpolation, U"Interpolation", 1)   // ignored
+	NATURAL (formantNumber, U"Formant number", U"1")
+	REAL (time, U"Time (s)", U"0.5")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
+	RADIO (interpolation, U"Interpolation", 1)   // ignored
 		RADIOBUTTON (U"Linear")
 	OK
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getValueAtTime (me, formantNumber, time, unit);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getBandwidthAtTime, U"Formant: Get bandwidth", U"Formant: Get bandwidth at time...") {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
-	REAL4 (time, U"Time (s)", U"0.5")
-	RADIO4x (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO4 (interpolation, U"Interpolation", 1)   // ignored
+	NATURAL (formantNumber, U"Formant number", U"1")
+	REAL (time, U"Time (s)", U"0.5")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
+	RADIO (interpolation, U"Interpolation", 1)   // ignored
 		RADIOBUTTON (U"Linear")
 	OK
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getBandwidthAtTime (me, formantNumber, time, unit);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getMinimum, U"Formant: Get minimum", U"Formant: Get minimum...") {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4x (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO4x (interpolation, U"Interpolation", 2, 0)
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getMinimum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getMaximum, U"Formant: Get maximum", U"Formant: Get maximum...") {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4x (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO4x (interpolation, U"Interpolation", 2, 0)
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getMaximum (me, formantNumber, fromTime, toTime, unit, interpolation);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getTimeOfMinimum, U"Formant: Get time of minimum", U"Formant: Get time of minimum...") {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4x (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO4x (interpolation, U"Interpolation", 2, 0)
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
@@ -463,12 +450,10 @@ DO
 }
 
 FORM (REAL_Formant_getTimeOfMaximum, U"Formant: Get time of maximum", U"Formant: Get time of maximum...") {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4x (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	RADIO4x (interpolation, U"Interpolation", 2, 0)
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
@@ -480,79 +465,71 @@ DO
 
 DIRECT (INTEGER_Formant_getMaximumNumberOfFormants) {
 	NUMBER_ONE (Formant)
-		long result = Formant_getMaxNumFormants (me);
+		integer result = Formant_getMaxNumFormants (me);
 	NUMBER_ONE_END (U" (there are at most this many formants in every frame)")
 }
 
 FORM (REAL_Formant_getMean, U"Formant: Get mean", U"Formant: Get mean...") {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4x (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	OK
 DO
 	NUMBER_ONE (Formant)
 		double result = Formant_getMean (me, formantNumber, fromTime, toTime, unit);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 DIRECT (INTEGER_Formant_getMinimumNumberOfFormants) {
 	NUMBER_ONE (Formant)
-		long result = Formant_getMinNumFormants (me);
+		integer result = Formant_getMinNumFormants (me);
 	NUMBER_ONE_END (U" (there are at least this many formants in every frame)");
 }
 
 FORM (INTEGER_Formant_getNumberOfFormants, U"Formant: Get number of formants", U"Formant: Get number of formants...") {
-	NATURAL4 (frameNumber, U"Frame number", U"1")
+	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
 	NUMBER_ONE (Formant)
 		if (frameNumber > my nx)
 			Melder_throw (U"There is no frame ", frameNumber, U" in a Formant with only ", my nx, U" frames.");
-		long result = my d_frames [frameNumber]. nFormants;
+		integer result = my d_frames [frameNumber]. nFormants;
 	NUMBER_ONE_END (U" formants")
 }
 
 FORM (REAL_Formant_getQuantile, U"Formant: Get quantile", nullptr) {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4 (unit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	REAL4 (quantile, U"Quantile", U"0.50 (= median)")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
+	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit - 1);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+		double result = Formant_getQuantile (me, formantNumber, quantile, fromTime, toTime, unit);
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getQuantileOfBandwidth, U"Formant: Get quantile of bandwidth", nullptr) {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4 (unit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
-	REAL4 (quantile, U"Quantile", U"0.50 (= median)")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
+	REAL (quantile, U"Quantile", U"0.50 (= median)")
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit - 1);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+		double result = Formant_getQuantileOfBandwidth (me, formantNumber, quantile, fromTime, toTime, unit);
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 FORM (REAL_Formant_getStandardDeviation, U"Formant: Get standard deviation", nullptr) {
-	NATURAL4 (formantNumber, U"Formant number", U"1")
+	NATURAL (formantNumber, U"Formant number", U"1")
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4 (unit, U"Unit", 1)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Bark")
+	RADIO_ENUM (unit, U"Unit", kFormant_unit, HERTZ)
 	OK
 DO
 	NUMBER_ONE (Formant)
-		double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit - 1);
-	NUMBER_ONE_END (U" ", GET_STRING (U"Unit"))
+		double result = Formant_getStandardDeviation (me, formantNumber, fromTime, toTime, unit);
+	NUMBER_ONE_END (U" ", kFormant_unit_getText (unit))
 }
 
 // MARK: Modify
@@ -564,8 +541,8 @@ DIRECT (MODIFY_Formant_sort) {
 }
 
 FORM (MODIFY_Formant_formula_frequencies, U"Formant: Formula (frequencies)", U"Formant: Formula (frequencies)...") {
-	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD4 (formula, U"formula", U"if row = 2 then self + 200 else self fi")
+	LABEL (U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+	TEXTFIELD (formula, U"Formula:", U"if row = 2 then self + 200 else self fi")
 	OK
 DO
 	MODIFY_EACH_WEAK (Formant)
@@ -574,8 +551,8 @@ DO
 }
 
 FORM (MODIFY_Formant_formula_bandwidths, U"Formant: Formula (bandwidths)", U"Formant: Formula (bandwidths)...") {
-	LABEL (U"", U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
-	TEXTFIELD4 (formula, U"formula", U"self / 2 ; sharpen all peaks")
+	LABEL (U"row is formant number, col is frame number: for row from 1 to nrow do for col from 1 to ncol do B (row, col) :=")
+	TEXTFIELD (formula, U"Formula:", U"self / 2 ; sharpen all peaks")
 	OK
 DO
 	MODIFY_EACH_WEAK (Formant)
@@ -586,15 +563,15 @@ DO
 // MARK: Convert
 
 FORM (NEW_Formant_tracker, U"Formant tracker", U"Formant: Track...") {
-	NATURAL4 (numberOfTracks, U"Number of tracks (1-5)", U"3")
-	REAL4 (referenceF1, U"Reference F1 (Hz)", U"550")
-	REAL4 (referenceF2, U"Reference F2 (Hz)", U"1650")
-	REAL4 (referenceF3, U"Reference F3 (Hz)", U"2750")
-	REAL4 (referenceF4, U"Reference F4 (Hz)", U"3850")
-	REAL4 (referenceF5, U"Reference F5 (Hz)", U"4950")
-	REAL4 (frequencyCost, U"Frequency cost (/kHz)", U"1.0")
-	REAL4 (bandwidthCost, U"Bandwidth cost", U"1.0")
-	REAL4 (transitionCost, U"Transition cost (/octave)", U"1.0")
+	NATURAL (numberOfTracks, U"Number of tracks (1-5)", U"3")
+	REAL (referenceF1, U"Reference F1 (Hz)", U"550")
+	REAL (referenceF2, U"Reference F2 (Hz)", U"1650")
+	REAL (referenceF3, U"Reference F3 (Hz)", U"2750")
+	REAL (referenceF4, U"Reference F4 (Hz)", U"3850")
+	REAL (referenceF5, U"Reference F5 (Hz)", U"4950")
+	REAL (frequencyCost, U"Frequency cost (/kHz)", U"1.0")
+	REAL (bandwidthCost, U"Bandwidth cost", U"1.0")
+	REAL (transitionCost, U"Transition cost (/octave)", U"1.0")
 	OK
 DO
 	if (numberOfTracks > 5) Melder_throw (U"Your number of tracks should not be more than 5.");
@@ -618,7 +595,7 @@ DIRECT (NEW_Formant_downto_FormantTier) {
 }
 
 FORM (NEW_Formant_to_Matrix, U"From Formant to Matrix", nullptr) {
-	INTEGER4 (formantNumber, U"Formant number", U"1")
+	INTEGER (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	CONVERT_EACH (Formant)
@@ -660,8 +637,8 @@ DIRECT (HELP_Harmonicity_help) {
 
 FORM (GRAPHICS_Harmonicity_draw, U"Draw harmonicity", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (minimum, U"Minimum", U"0.0")
-	REALVAR (maximum, U"Maximum", U"0.0 (= auto)")
+	REAL (minimum, U"Minimum", U"0.0")
+	REAL (maximum, U"Maximum", U"0.0 (= auto)")
 	OK
 DO
 	LOOP {
@@ -737,20 +714,20 @@ DO
 }
 
 FORM (REAL_Harmonicity_getValueInFrame, U"Get value in frame", U"Harmonicity: Get value in frame...") {
-	INTEGER4 (frameNumber, U"Frame number", U"10")
+	INTEGER (frameNumber, U"Frame number", U"10")
 	OK
 DO
 	NUMBER_ONE (Harmonicity)
-		double result = frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber];
+		double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
 	NUMBER_ONE_END (U" dB")
 }
 
 // MARK: Modify
 
 FORM (MODIFY_Harmonicity_formula, U"Harmonicity Formula", U"Harmonicity: Formula...") {
-	LABEL (U"label", U"x is time")
-	LABEL (U"label", U"for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTFIELD4 (formula, U"formula", U"self")
+	LABEL (U"`x` is time")
+	LABEL (U"for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"self")
 	OK
 DO
 	MODIFY_EACH_WEAK (Harmonicity)
@@ -778,9 +755,9 @@ DIRECT (HELP_Intensity_help) {
 
 FORM (GRAPHICS_Intensity_draw, U"Draw Intensity", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REAL4 (minimum, U"Minimum (dB)", U"0.0")
-	REAL4 (maximum, U"Maximum (dB)", U"0.0 (= auto)")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	REAL (minimum, U"Minimum (dB)", U"0.0")
+	REAL (maximum, U"Maximum (dB)", U"0.0 (= auto)")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Intensity)
@@ -800,11 +777,11 @@ DO
 }
 
 FORM (REAL_Intensity_getValueInFrame, U"Get value in frame", U"Intensity: Get value in frame...") {
-	INTEGERVAR (frameNumber, U"Frame number", U"10")
+	INTEGER (frameNumber, U"Frame number", U"10")
 	OK
 DO
 	NUMBER_ONE (Intensity)
-		double result = frameNumber < 1 || frameNumber > my nx ? NUMundefined : my z [1] [frameNumber];
+		double result = ( frameNumber < 1 || frameNumber > my nx ? undefined : my z [1] [frameNumber] );
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -846,7 +823,7 @@ DO
 
 FORM (REAL_Intensity_getQuantile, U"Intensity: Get quantile", 0) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REAL4 (quantile, U"Quantile (0-1)", U"0.50")
+	REAL (quantile, U"Quantile (0-1)", U"0.50")
 	OK
 DO
 	NUMBER_ONE (Intensity)
@@ -865,7 +842,7 @@ DO
 
 FORM (REAL_Intensity_getMean, U"Intensity: Get mean", U"Intensity: Get mean...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	RADIO4 (averagingMethod, U"Averaging method", 1)
+	RADIO (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
@@ -888,9 +865,9 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Intensity_formula, U"Intensity Formula", nullptr) {
-	LABEL (U"label", U"`x' is the time in seconds, `col' is the frame number, `self' is in dB")
-	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [col] := `formula' ; x := x + dx }")
-	TEXTFIELD4 (formula, U"formula", U"0")
+	LABEL (U"`x` is the time in seconds, `col` is the frame number, `self` is in dB")
+	LABEL (U"x := x1;   for col := 1 to ncol do { self [col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Intensity)
@@ -929,12 +906,12 @@ DIRECT (NEW_Intensity_downto_Matrix) {
 // MARK: - INTENSITY & PITCH
 
 FORM (GRAPHICS_Pitch_Intensity_draw, U"Plot intensity by pitch", nullptr) {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= auto)")
-	REAL4 (fromIntensity, U"From intensity (dB)", U"0.0")
-	REAL4 (toIntensity, U"To intensity (dB)", U"100.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
-	RADIO4 (drawingMethod, U"Drawing method", 1)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= auto)")
+	REAL (fromIntensity, U"From intensity (dB)", U"0.0")
+	REAL (toIntensity, U"To intensity (dB)", U"100.0")
+	BOOLEAN (garnish, U"Garnish", true)
+	RADIO (drawingMethod, U"Drawing method", 1)
 		RADIOBUTTON (U"Speckles")
 		RADIOBUTTON (U"Curve")
 		RADIOBUTTON (U"Speckles and curve")
@@ -983,8 +960,8 @@ DIRECT (NEW1_Ltases_average) {
 }
 
 FORM (NEW_Ltas_computeTrendLine, U"Ltas: Compute trend line", U"Ltas: Compute trend line...") {
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"600.0")
-	POSITIVEVAR (toFrequency, U"right Frequency range (Hz)", U"4000.0")
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"600.0")
+	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
 	CONVERT_EACH (Ltas)
@@ -993,11 +970,11 @@ DO
 }
 
 FORM (GRAPHICS_old_Ltas_draw, U"Ltas: Draw", nullptr) {
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
-	REALVAR (fromPower, U"left Power range (dB/Hz)", U"-20.0")
-	REALVAR (toPower, U"right Power range (dB/Hz)", U"80.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL (fromPower, U"left Power range (dB/Hz)", U"-20.0")
+	REAL (toPower, U"right Power range (dB/Hz)", U"80.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Ltas)
@@ -1006,13 +983,13 @@ DO
 }
 
 FORM (GRAPHICS_Ltas_draw, U"Ltas: Draw", nullptr) {
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
-	REALVAR (fromPower, U"left Power range (dB/Hz)", U"-20.0")
-	REALVAR (toPower, U"right Power range (dB/Hz)", U"80.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
-	LABEL (U"", U"")
-	OPTIONMENUSTRVAR (drawingMethod, U"Drawing method", 2)
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL (fromPower, U"left Power range (dB/Hz)", U"-20.0")
+	REAL (toPower, U"right Power range (dB/Hz)", U"80.0")
+	BOOLEAN (garnish, U"Garnish", true)
+	LABEL (U"")
+	OPTIONMENUSTR (drawingMethod, U"Drawing method", 2)
 		OPTION (U"Curve")
 		OPTION (U"Bars")
 		OPTION (U"Poles")
@@ -1025,9 +1002,9 @@ DO_ALTERNATIVE (GRAPHICS_old_Ltas_draw)
 }
 
 FORM (MODIFY_Ltas_formula, U"Ltas Formula", nullptr) {
-	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number")
-	LABEL (U"label", U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	TEXTFIELD4 (formula, U"formula", U"0")
+	LABEL (U"`x` is the frequency in hertz, `col` is the bin number")
+	LABEL (U"x := x1;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Ltas)
@@ -1054,7 +1031,7 @@ DIRECT (REAL_Ltas_getBinWidth) {
 }
 
 FORM (REAL_Ltas_getFrequencyFromBinNumber, U"Ltas: Get frequency from bin number", U"Ltas: Get frequency from bin number...") {
-	NATURAL4 (binNumber, U"Bin number", U"1")
+	NATURAL (binNumber, U"Bin number", U"1")
 	OK
 DO
 	NUMBER_ONE (Ltas)
@@ -1063,7 +1040,7 @@ DO
 }
 
 FORM (REAL_Ltas_getBinNumberFromFrequency, U"Ltas: Get band from frequency", U"Ltas: Get band from frequency...") {
-	REAL4 (frequency, U"Frequency (Hz)", U"2000.0")
+	REAL (frequency, U"Frequency (Hz)", U"2000.0")
 	OK
 DO
 	NUMBER_ONE (Ltas)
@@ -1072,9 +1049,9 @@ DO
 }
 
 FORM (REAL_Ltas_getFrequencyOfMinimum, U"Ltas: Get frequency of minimum", U"Ltas: Get frequency of minimum...") {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO4x (interpolation, U"Interpolation", 1, 0)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIOx (interpolation, U"Interpolation", 1, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -1088,9 +1065,9 @@ DO
 }
 
 FORM (REAL_Ltas_getFrequencyOfMaximum, U"Ltas: Get frequency of maximum", U"Ltas: Get frequency of maximum...") {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO4x (interpolation, U"Interpolation", 1, 0)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIOx (interpolation, U"Interpolation", 1, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -1104,11 +1081,11 @@ DO
 }
 
 FORM (REAL_Ltas_getLocalPeakHeight, U"Ltas: Get local peak height", nullptr) {
-	REALVAR (environmentMin, U"left Environment (Hz)", U"1700.0")
-	REALVAR (environmentMax, U"right Environment (Hz)", U"4200.0")
-	REALVAR (peakMin, U"left Peak (Hz)", U"2400.0")
-	REALVAR (peakMax, U"right Peak (Hz)", U"3200.0")
-	RADIOVAR (averagingMethod, U"Averaging method", 1)
+	REAL (environmentMin, U"left Environment (Hz)", U"1700.0")
+	REAL (environmentMax, U"right Environment (Hz)", U"4200.0")
+	REAL (peakMin, U"left Peak (Hz)", U"2400.0")
+	REAL (peakMax, U"right Peak (Hz)", U"3200.0")
+	RADIO (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
@@ -1126,9 +1103,9 @@ DO
 }
 
 FORM (REAL_Ltas_getMaximum, U"Ltas: Get maximum", U"Ltas: Get maximum...") {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO4x (interpolation, U"Interpolation", 1, 0)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIOx (interpolation, U"Interpolation", 1, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -1142,9 +1119,9 @@ DO
 }
 
 FORM (REAL_Ltas_getMean, U"Ltas: Get mean", U"Ltas: Get mean...") {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO4 (averagingMethod, U"Averaging method", 1)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
@@ -1157,9 +1134,9 @@ DO
 }
 
 FORM (REAL_Ltas_getMinimum, U"Ltas: Get minimum", U"Ltas: Get minimum...") {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO4x (interpolation, U"Interpolation", 1, 0)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIOx (interpolation, U"Interpolation", 1, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 		RADIOBUTTON (U"Cubic")
@@ -1174,16 +1151,16 @@ DO
 
 DIRECT (INTEGER_Ltas_getNumberOfBins) {
 	NUMBER_ONE (Ltas)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" bins")
 }
 
 FORM (REAL_Ltas_getSlope, U"Ltas: Get slope", 0) {
-	REAL4 (lowBandFrom, U"left Low band (Hz)", U"0.0")
-	REAL4 (lowBandTo, U"right Low band (Hz)", U"1000.0")
-	REAL4 (highBandFrom, U"left High band (Hz)", U"1000.0")
-	REAL4 (highBandTo, U"right High band (Hz)", U"4000.0")
-	RADIO4 (averagingMethod, U"Averaging method", 1)
+	REAL (lowBandFrom, U"left Low band (Hz)", U"0.0")
+	REAL (lowBandTo, U"right Low band (Hz)", U"1000.0")
+	REAL (highBandFrom, U"left High band (Hz)", U"1000.0")
+	REAL (highBandTo, U"right High band (Hz)", U"4000.0")
+	RADIO (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
@@ -1195,9 +1172,9 @@ DO
 }
 
 FORM (REAL_Ltas_getStandardDeviation, U"Ltas: Get standard deviation", U"Ltas: Get standard deviation...") {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
-	RADIO4 (averagingMethod, U"Averaging method", 1)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"0.0 (= all)")
+	RADIO (averagingMethod, U"Averaging method", 1)
 		RADIOBUTTON (U"energy")
 		RADIOBUTTON (U"sones")
 		RADIOBUTTON (U"dB")
@@ -1212,8 +1189,8 @@ DO
 }
 
 FORM (REAL_Ltas_getValueAtFrequency, U"Ltas: Get value", U"Ltas: Get value at frequency...") {
-	REAL4 (frequency, U"Frequency (Hz)", U"1500.0")
-	RADIO4x (interpolation, U"Interpolation", 1, 0)
+	REAL (frequency, U"Frequency (Hz)", U"1500.0")
+	RADIOx (interpolation, U"Interpolation", 1, 0)
 		RADIOBUTTON (U"Nearest")
 		RADIOBUTTON (U"Linear")
 		RADIOBUTTON (U"Cubic")
@@ -1229,11 +1206,11 @@ DO
 }
 
 FORM (REAL_Ltas_getValueInBin, U"Get value in bin", U"Ltas: Get value in bin...") {
-	INTEGER4 (binNumber, U"Bin number", U"100")
+	INTEGER (binNumber, U"Bin number", U"100")
 	OK
 DO
 	NUMBER_ONE (Ltas)
-		double result = binNumber < 1 || binNumber > my nx ? NUMundefined : my z [1] [binNumber];
+		double result = binNumber < 1 || binNumber > my nx ? undefined : my z [1] [binNumber];
 	NUMBER_ONE_END (U" dB")
 }
 
@@ -1248,8 +1225,8 @@ DIRECT (NEW1_Ltases_merge) {
 }
 
 FORM (NEW_Ltas_subtractTrendLine, U"Ltas: Subtract trend line", U"Ltas: Subtract trend line...") {
-	REAL4 (fromFrequency, U"left Frequency range (Hz)", U"600.0")
-	POSITIVE4 (toFrequency, U"right Frequency range (Hz)", U"4000.0")
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"600.0")
+	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"4000.0")
 	OK
 DO
 	CONVERT_EACH (Ltas)
@@ -1281,14 +1258,13 @@ static void cb_ManipulationEditor_publication (Editor /* editor */, autoDaata pu
 }
 DIRECT (WINDOW_Manipulation_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Manipulation from batch.");
-	LOOP {
-		iam (Manipulation);
+	FIND_ONE_WITH_IOBJECT (Manipulation)
 		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_ManipulationEditor_publication);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 DIRECT (NEW_Manipulation_extractDurationTier) {
 	CONVERT_EACH (Manipulation)
@@ -1421,14 +1397,14 @@ DIRECT (NEW1_Manipulation_TextTier_to_Manipulation) {
 // MARK: - PARAMCURVE
 
 FORM (GRAPHICS_ParamCurve_draw, U"Draw parametrized curve", nullptr) {
-	REAL4 (tmin, U"Tmin", U"0.0")
-	REAL4 (tmax, U"Tmax", U"0.0")
-	REAL4 (step, U"Step", U"0.0")
-	REAL4 (xmin, U"Xmin", U"0.0")
-	REAL4 (xmax, U"Xmax", U"0.0")
-	REAL4 (ymin, U"Ymin", U"0.0")
-	REAL4 (ymax, U"Ymax", U"0.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	REAL (tmin, U"Tmin", U"0.0")
+	REAL (tmax, U"Tmax", U"0.0")
+	REAL (step, U"Step", U"0.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0")
+	REAL (ymin, U"Ymin", U"0.0")
+	REAL (ymax, U"Ymax", U"0.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (ParamCurve)
@@ -1444,7 +1420,7 @@ DIRECT (HELP_ParamCurve_help) {
 
 DIRECT (INTEGER_Pitch_getNumberOfVoicedFrames) {
 	NUMBER_ONE (Pitch)
-		long result = Pitch_countVoicedFrames (me);
+		integer result = Pitch_countVoicedFrames (me);
 	NUMBER_ONE_END (U" voiced frames")
 }
 
@@ -1456,113 +1432,112 @@ DIRECT (INFO_Pitch_difference) {
 
 FORM (GRAPHICS_Pitch_draw, U"Pitch: Draw", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"0.0")
-	POSITIVEVAR (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	REAL (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"0.0")
+	POSITIVE (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_HERTZ);
+			garnish, Pitch_speckle_NO, kPitch_unit::HERTZ);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_drawErb, U"Pitch: Draw erb", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"left Frequency range (ERB)", U"0")
-	REALVAR (toFrequency, U"right Frequency range (ERB)", U"10.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (ERB)", U"0")
+	REAL (toFrequency, U"right Frequency range (ERB)", U"10.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_ERB);
+			garnish, Pitch_speckle_NO, kPitch_unit::ERB);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_drawLogarithmic, U"Pitch: Draw logarithmic", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	POSITIVEVAR (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"50.0")
-	POSITIVEVAR (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	POSITIVE (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"50.0")
+	POSITIVE (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_HERTZ_LOGARITHMIC);
+			garnish, Pitch_speckle_NO, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_drawMel, U"Pitch: Draw mel", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (mel)", U"500.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (mel)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (mel)", U"500.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_MEL);
+			garnish, Pitch_speckle_NO, kPitch_unit::MEL);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_drawSemitones100, U"Pitch: Draw semitones (re 100 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 100 Hz:")
-	REALVAR (fromFrequency, U"left Frequency range (st)", U"-12.0")
-	REALVAR (toFrequency, U"right Frequency range (st)", U"30.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	LABEL (U"Range in semitones re 100 Hz:")
+	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
+	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_100);
+			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_100);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_drawSemitones200, U"Pitch: Draw semitones (re 200 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 200 Hz:")
-	REALVAR (fromFrequency, U"left Frequency range (st)", U"-24.0")
-	REALVAR (toFrequency, U"right Frequency range (st)", U"18.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	LABEL (U"Range in semitones re 200 Hz:")
+	REAL (fromFrequency, U"left Frequency range (st)", U"-24.0")
+	REAL (toFrequency, U"right Frequency range (st)", U"18.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_200);
+			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_200);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_drawSemitones440, U"Pitch: Draw semitones (re 440 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 440 Hz:")
-	REALVAR (fromFrequency, U"left Frequency range (st)", U"-36.0")
-	REALVAR (toFrequency, U"right Frequency range (st)", U"6.0")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	LABEL (U"Range in semitones re 440 Hz:")
+	REAL (fromFrequency, U"left Frequency range (st)", U"-36.0")
+	REAL (toFrequency, U"right Frequency range (st)", U"6.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
 		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
-			garnish, Pitch_speckle_NO, kPitch_unit_SEMITONES_440);
+			garnish, Pitch_speckle_NO, kPitch_unit::SEMITONES_440);
 	GRAPHICS_EACH_END
 }
 
 DIRECT (WINDOW_Pitch_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Pitch from batch.");
-	LOOP {
-		iam (Pitch);
+	FIND_ONE_WITH_IOBJECT (Pitch)
 		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 FORM (MODIFY_Pitch_formula, U"Pitch: Formula", U"Formula...") {
-	LABEL (U"", U"x = time; col = frame; row = candidate (1 = current path); frequency (time, candidate) :=")
-	TEXTFIELD4 (formula, U"formula", U"self*2; Example: octave jump up")
+	LABEL (U"`x` is time; `col` is frame number; `row` = candidate (1 = current path); frequency (time, candidate) :=")
+	TEXTFIELD (formula, U"Formula:", U"self*2 ; example: octave jump up")
 	OK
 DO
 	MODIFY_EACH_WEAK (Pitch)
@@ -1572,45 +1547,45 @@ DO
 
 FORM (REAL_Pitch_getMinimum, U"Pitch: Get minimum", 0) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
-	RADIOVARx (interpolation, U"Interpolation", 2, 0)
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	NUMBER_ONE (Pitch)
 		double result = Pitch_getMinimum (me, fromTime, toTime, unit, interpolation);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getMaximum, U"Pitch: Get maximum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
-	RADIOVARx (interpolation, U"Interpolation", 2, 0)
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	NUMBER_ONE (Pitch)
 		double result = Pitch_getMaximum (me, fromTime, toTime, unit, interpolation);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getMean, U"Pitch: Get mean", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
 	NUMBER_ONE (Pitch)
 		double result = Pitch_getMean (me, fromTime, toTime, unit);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
 }
 
 FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
-	RADIOVAR (unit, U"Unit", 1)
+	RADIO (unit, U"Unit", 1)
 		RADIOBUTTON (U"Hertz")
 		RADIOBUTTON (U"Mel")
 		RADIOBUTTON (U"Semitones")
@@ -1619,12 +1594,14 @@ FORM (REAL_Pitch_getMeanAbsoluteSlope, U"Pitch: Get mean absolute slope", 0) {
 DO
 	FIND_ONE (Pitch)
 		double slope;
-		long nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
+		integer nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 			(me, & slope);
 		if (nVoiced < 2) {
 			Melder_information (U"--undefined--");
 		} else {
-			Melder_information (slope, U" ", GET_STRING (U"Unit"), U"/s");
+			Melder_information (slope, U" ",
+				(unit == 1 ? U"Hz" : unit == 2 ? U"mel" : unit == 3 ? U"semitones" : U"ERB"),
+				U"/s");
 		}
 	END
 }
@@ -1638,19 +1615,19 @@ DIRECT (REAL_Pitch_getMeanAbsSlope_noOctave) {
 
 FORM (REAL_Pitch_getQuantile, U"Pitch: Get quantile", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (quantile, U"Quantile", U"0.50 (= median)")
-	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
+	REAL (quantile, U"Quantile", U"0.50 (= median)")
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Sampled_getQuantile (me, fromTime, toTime, quantile, Pitch_LEVEL_FREQUENCY, unit);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+		double result = Sampled_getQuantile (me, fromTime, toTime, quantile, Pitch_LEVEL_FREQUENCY, (int) unit);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 
 FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENUVAR (unit, U"Unit", 1)
+	OPTIONMENU (unit_i, U"Unit", 1)
 		OPTION (U"Hertz")
 		OPTION (U"mel")
 		OPTION (U"logHertz")
@@ -1658,72 +1635,72 @@ FORM (REAL_Pitch_getStandardDeviation, U"Pitch: Get standard deviation", nullptr
 		OPTION (U"ERB")
 	OK
 DO
-	unit =
-		unit == 1 ? kPitch_unit_HERTZ :
-		unit == 2 ? kPitch_unit_MEL :
-		unit == 3 ? kPitch_unit_LOG_HERTZ :
-		unit == 4 ? kPitch_unit_SEMITONES_1 :
-		kPitch_unit_ERB;
+	kPitch_unit unit =
+		unit_i == 1 ? kPitch_unit::HERTZ :
+		unit_i == 2 ? kPitch_unit::MEL :
+		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
+		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
+		kPitch_unit::ERB;
 	NUMBER_ONE (Pitch)
 		double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
 		const char32 *unitText =
-			unit == kPitch_unit_HERTZ ? U"Hz" :
-			unit == kPitch_unit_MEL ? U"mel" :
-			unit == kPitch_unit_LOG_HERTZ ? U"logHz" :
-			unit == kPitch_unit_SEMITONES_1 ? U"semitones" :
+			unit == kPitch_unit::HERTZ ? U"Hz" :
+			unit == kPitch_unit::MEL ? U"mel" :
+			unit == kPitch_unit::LOG_HERTZ ? U"logHz" :
+			unit == kPitch_unit::SEMITONES_1 ? U"semitones" :
 			U"ERB";
 	NUMBER_ONE_END (U" ", unitText)
 }
 
 FORM (REAL_Pitch_getTimeOfMaximum, U"Pitch: Get time of maximum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
-	RADIOVARx (interpolation, U"Interpolation", 2, 0)
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, unit, interpolation);
+		double result = Pitch_getTimeOfMaximum (me, fromTime, toTime, (kPitch_unit) unit, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
 FORM (REAL_Pitch_getTimeOfMinimum, U"Pitch: Get time of minimum", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
-	RADIOVARx (interpolation, U"Interpolation", 2, 0)
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"None")
 		RADIOBUTTON (U"Parabolic")
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, unit, interpolation);
+		double result = Pitch_getTimeOfMinimum (me, fromTime, toTime, (kPitch_unit) unit, interpolation);
 	NUMBER_ONE_END (U" seconds")
 }
 
 FORM (REAL_Pitch_getValueAtTime, U"Pitch: Get value at time", U"Pitch: Get value at time...") {
-	REALVAR (time, U"Time (s)", U"0.5")
-	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
-	RADIOVARx (interpolation, U"Interpolation", 2, 0)
+	REAL (time, U"Time (s)", U"0.5")
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
+	RADIOx (interpolation, U"Interpolation", 2, 0)
 		RADIOBUTTON (U"Nearest")
 		RADIOBUTTON (U"Linear")
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, unit, interpolation);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0))
+		double result = Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, (int) unit, interpolation);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0))
 }
 	
 FORM (REAL_Pitch_getValueInFrame, U"Pitch: Get value in frame", U"Pitch: Get value in frame...") {
-	INTEGERVAR (frameNumber, U"Frame number", U"10")
-	OPTIONMENU_ENUMVAR (unit, U"Unit", kPitch_unit, DEFAULT)
+	INTEGER (frameNumber, U"Frame number", U"10")
+	OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, DEFAULT)
 	OK
 DO
 	NUMBER_ONE (Pitch)
-		double result = Sampled_getValueAtSample (me, frameNumber, Pitch_LEVEL_FREQUENCY, unit);
-		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, unit);
-	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
+		double result = Sampled_getValueAtSample (me, frameNumber, Pitch_LEVEL_FREQUENCY, (int) unit);
+		result = Function_convertToNonlogarithmic (me, result, Pitch_LEVEL_FREQUENCY, (int) unit);
+	NUMBER_ONE_END (U" ", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, (int) unit, 0));
 }
 
 DIRECT (HELP_Pitch_help) {
@@ -1755,7 +1732,7 @@ DIRECT (PLAY_Pitch_play) {
 }
 
 FORM (NEW_Pitch_smooth, U"Pitch: Smooth", U"Pitch: Smooth...") {
-	REALVAR (bandwidth, U"Bandwidth (Hz)", U"10.0")
+	REAL (bandwidth, U"Bandwidth (Hz)", U"10.0")
 	OK
 DO
 	CONVERT_EACH (Pitch)
@@ -1765,102 +1742,108 @@ DO
 
 FORM (GRAPHICS_Pitch_speckle, U"Pitch: Speckle", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"0.0")
-	POSITIVEVAR (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"0.0")
+	POSITIVE (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency should be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_speckleErb, U"Pitch: Speckle erb", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"left Frequency range (ERB)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (ERB)", U"10.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (ERB)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (ERB)", U"10.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_ERB);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::ERB);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_speckleLogarithmic, U"Pitch: Speckle logarithmic", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	POSITIVEVAR (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"50.0")
-	POSITIVEVAR (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	POSITIVE (fromFrequency, STRING_FROM_FREQUENCY_HZ, U"50.0")
+	POSITIVE (toFrequency, STRING_TO_FREQUENCY_HZ, U"500.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	if (toFrequency <= fromFrequency) Melder_throw (U"Maximum frequency must be greater than minimum frequency.");
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_HERTZ_LOGARITHMIC);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::HERTZ_LOGARITHMIC);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_speckleMel, U"Pitch: Speckle mel", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"left Frequency range (mel)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (mel)", U"500.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (mel)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (mel)", U"500.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_MEL);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::MEL);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_speckleSemitones100, U"Pitch: Speckle semitones (re 100 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 100 hertz:")
-	REALVAR (fromFrequency, U"left Frequency range (st)", U"-12.0")
-	REALVAR (toFrequency, U"right Frequency range (st)", U"30.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	LABEL (U"Range in semitones re 100 hertz:")
+	REAL (fromFrequency, U"left Frequency range (st)", U"-12.0")
+	REAL (toFrequency, U"right Frequency range (st)", U"30.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_100);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_speckleSemitones200, U"Pitch: Speckle semitones (re 200 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 200 hertz:")
-	REALVAR (fromFrequency, U"left Frequency range (st)", U"-24.0")
-	REALVAR (toFrequency, U"right Frequency range (st)", U"18.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	LABEL (U"Range in semitones re 200 hertz:")
+	REAL (fromFrequency, U"left Frequency range (st)", U"-24.0")
+	REAL (toFrequency, U"right Frequency range (st)", U"18.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_200);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_200);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Pitch_speckleSemitones440, U"Pitch: Speckle semitones (re 440 Hz)", U"Pitch: Draw...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	LABEL (U"", U"Range in semitones re 440 hertz:")
-	REALVAR (fromFrequency, U"left Frequency range (st)", U"-36.0")
-	REALVAR (toFrequency, U"right Frequency range (st)", U"6.0")
-	BOOLEANVAR (garnish, U"Garnish", true)
+	LABEL (U"Range in semitones re 440 hertz:")
+	REAL (fromFrequency, U"left Frequency range (st)", U"-36.0")
+	REAL (toFrequency, U"right Frequency range (st)", U"6.0")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Pitch)
-		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit_SEMITONES_440);
+		Pitch_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, Pitch_speckle_YES, kPitch_unit::SEMITONES_440);
 	GRAPHICS_EACH_END
 }
 
 FORM (NEW_Pitch_subtractLinearFit, U"Pitch: subtract linear fit", nullptr) {
-	RADIOVARx (unit, U"Unit", 1, 0)
-		RADIOBUTTON (U"Hertz")
-		RADIOBUTTON (U"Hertz (logarithmic)")
-		RADIOBUTTON (U"Mel")
-		RADIOBUTTON (U"Semitones")
-		RADIOBUTTON (U"ERB")
+	OPTIONMENU (unit_i, U"Unit", 1)
+		OPTION (U"Hertz")
+		OPTION (U"mel")
+		OPTION (U"logHertz")
+		OPTION (U"semitones")
+		OPTION (U"ERB")
 	OK
 DO
+	kPitch_unit unit =
+		unit_i == 1 ? kPitch_unit::HERTZ :
+		unit_i == 2 ? kPitch_unit::MEL :
+		unit_i == 3 ? kPitch_unit::LOG_HERTZ :
+		unit_i == 4 ? kPitch_unit::SEMITONES_1 :
+		kPitch_unit::ERB;
 	CONVERT_EACH (Pitch)
 		autoPitch result = Pitch_subtractLinearFit (me, unit);
 	CONVERT_EACH_END (my name)
@@ -1903,8 +1886,8 @@ DIRECT (NEW_Pitch_to_Sound_hum) {
 }
 
 FORM (NEW_Pitch_to_Sound_sine, U"Pitch: To Sound (sine)", nullptr) {
-	POSITIVE4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
-	RADIO4x (cutVoicelessStretches, U"Cut voiceless stretches", 2, 0)
+	POSITIVE (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	RADIOx (cutVoicelessStretches, U"Cut voiceless stretches", 2, 0)
 		OPTION (U"exactly")
 		OPTION (U"at nearest zero crossings")
 	OK
@@ -1915,8 +1898,8 @@ DO
 }
 
 FORM (NEW_Pitch_to_TextGrid, U"To TextGrid...", U"Pitch: To TextGrid...") {
-	SENTENCEVAR (tierNames, U"Tier names", U"Mary John bell")
-	SENTENCEVAR (pointTiers, U"Point tiers", U"bell")
+	SENTENCE (tierNames, U"Tier names", U"Mary John bell")
+	SENTENCE (pointTiers, U"Point tiers", U"bell")
 	OK
 DO
 	CONVERT_EACH (Pitch)
@@ -1934,13 +1917,13 @@ DIRECT (NEW_Pitch_to_TextTier) {
 
 FORM (GRAPHICS_old_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REALVAR (toFrequency, U"To frequency (Hz)", U"500.0")
-	RADIOVARx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"500.0")
+	RADIOx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
 		RADIOBUTTON (U"Normal")
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
-	BOOLEANVAR (garnish, U"Garnish", 1)
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_TWO (PitchTier, Pitch)
@@ -1951,15 +1934,15 @@ DO
 
 FORM (GRAPHICS_PitchTier_Pitch_draw, U"PitchTier & Pitch: Draw", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"From frequency (Hz)", U"0.0")
-	REALVAR (toFrequency, U"To frequency (Hz)", U"500.0")
-	RADIOVARx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
+	REAL (fromFrequency, U"From frequency (Hz)", U"0.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"500.0")
+	RADIOx (lineTypeForNonperiodicIntervals, U"Line type for non-periodic intervals", 2, 0)
 		RADIOBUTTON (U"Normal")
 		RADIOBUTTON (U"Dotted")
 		RADIOBUTTON (U"Blank")
-	BOOLEANVAR (garnish, U"Garnish", 1)
-	LABEL (U"", U"")
-	OPTIONMENUSTRVAR (drawingMethod, U"Drawing method", 1)
+	BOOLEAN (garnish, U"Garnish", true)
+	LABEL (U"")
+	OPTIONMENUSTR (drawingMethod, U"Drawing method", 1)
 		OPTION (U"lines")
 		OPTION (U"speckles")
 		OPTION (U"lines and speckles")
@@ -2000,8 +1983,8 @@ DIRECT (NEW1_Sound_Pitch_to_PointProcess_cc) {
 }
 
 FORM (NEW1_Sound_Pitch_to_PointProcess_peaks, U"Sound & Pitch: To PointProcess (peaks)", 0) {
-	BOOLEANVAR (includeMaxima, U"Include maxima", 1)
-	BOOLEANVAR (includeMinima, U"Include minima", 0)
+	BOOLEAN (includeMaxima, U"Include maxima", true)
+	BOOLEAN (includeMinima, U"Include minima", false)
 	OK
 DO
 	CONVERT_TWO (Sound, Pitch)
@@ -2012,10 +1995,10 @@ DO
 // MARK: - POLYGON
 
 FORM (GRAPHICS_Polygon_draw, U"Polygon: Draw", nullptr) {
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
-	REALVAR (ymin, U"Ymin", U"0.0")
-	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0 (= all)")
+	REAL (ymin, U"Ymin", U"0.0")
+	REAL (ymax, U"Ymax", U"0.0 (= all)")
 	OK
 DO
 	GRAPHICS_EACH (Polygon)
@@ -2024,11 +2007,11 @@ DO
 }
 
 FORM (GRAPHICS_Polygon_drawCircles, U"Polygon: Draw circles", nullptr) {
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
-	REALVAR (ymin, U"Ymin", U"0.0")
-	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
-	POSITIVEVAR (diameter, U"Diameter (mm)", U"3.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0 (= all)")
+	REAL (ymin, U"Ymin", U"0.0")
+	REAL (ymax, U"Ymax", U"0.0 (= all)")
+	POSITIVE (diameter, U"Diameter (mm)", U"3.0")
 	OK
 DO
 	GRAPHICS_EACH (Polygon)
@@ -2037,10 +2020,10 @@ DO
 }
 
 FORM (GRAPHICS_Polygon_drawClosed, U"Polygon: Draw", nullptr) {
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
-	REALVAR (ymin, U"Ymin", U"0.0")
-	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0 (= all)")
+	REAL (ymin, U"Ymin", U"0.0")
+	REAL (ymax, U"Ymax", U"0.0 (= all)")
 	OK
 DO
 	GRAPHICS_EACH (Polygon)
@@ -2049,12 +2032,12 @@ DO
 }
 
 FORM (GRAPHICS_Polygons_drawConnection, U"Polygons: Draw connection", nullptr) {
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
-	REALVAR (ymin, U"Ymin", U"0.0")
-	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
-	BOOLEANVAR (arrow, U"Arrow", false)
-	POSITIVEVAR (relativeLength, U"Relative length", U"0.9")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0 (= all)")
+	REAL (ymin, U"Ymin", U"0.0")
+	REAL (ymax, U"Ymax", U"0.0 (= all)")
+	BOOLEAN (arrow, U"Arrow", false)
+	POSITIVE (relativeLength, U"Relative length", U"0.9")
 	OK
 DO
 	GRAPHICS_COUPLE (Polygon)
@@ -2067,24 +2050,24 @@ DIRECT (HELP_Polygon_help) {
 }
 
 FORM (GRAPHICS_Polygon_paint, U"Polygon: Paint", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
-	REALVAR (ymin, U"Ymin", U"0.0")
-	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0 (= all)")
+	REAL (ymin, U"Ymin", U"0.0")
+	REAL (ymax, U"Ymax", U"0.0 (= all)")
 	OK
 DO
 	GRAPHICS_EACH (Polygon)
-		Polygon_paint (me, GRAPHICS, GET_COLOUR (U"Colour"), xmin, xmax, ymin, ymax);
+		Polygon_paint (me, GRAPHICS, colour, xmin, xmax, ymin, ymax);
 	GRAPHICS_EACH_END
 }
 
 FORM (GRAPHICS_Polygon_paintCircles, U"Polygon: Paint circles", nullptr) {
-	REALVAR (xmin, U"Xmin", U"0.0")
-	REALVAR (xmax, U"Xmax", U"0.0 (= all)")
-	REALVAR (ymin, U"Ymin", U"0.0")
-	REALVAR (ymax, U"Ymax", U"0.0 (= all)")
-	POSITIVEVAR (diameter, U"Diameter (mm)", U"3.0")
+	REAL (xmin, U"Xmin", U"0.0")
+	REAL (xmax, U"Xmax", U"0.0 (= all)")
+	REAL (ymin, U"Ymin", U"0.0")
+	REAL (ymax, U"Ymax", U"0.0 (= all)")
+	POSITIVE (diameter, U"Diameter (mm)", U"3.0")
 	OK
 DO
 	GRAPHICS_EACH (Polygon)
@@ -2099,7 +2082,7 @@ DIRECT (MODIFY_Polygon_randomize) {
 }
 
 FORM (MODIFY_Polygon_salesperson, U"Polygon: Find shortest path", nullptr) {
-	NATURALVAR (numberOfIterations, U"Number of iterations", U"1")
+	NATURAL (numberOfIterations, U"Number of iterations", U"1")
 	OK
 DO
 	MODIFY_EACH (Polygon)
@@ -2117,12 +2100,12 @@ DIRECT (NEW_Polygon_to_Matrix) {
 
 FORM (INFO_Sound_Pitch_PointProcess_voiceReport, U"Voice report", U"Voice") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	POSITIVE4 (fromPitch, U"left Pitch range (Hz)", U"75.0")
-	POSITIVE4 (toPitch, U"right Pitch range (Hz)", U"600.0")
-	POSITIVE4 (maximumPeriodFactor, U"Maximum period factor", U"1.3")
-	POSITIVE4 (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
-	REAL4 (silenceThreshold, U"Silence threshold", U"0.03")
-	REAL4 (voicingThreshold, U"Voicing threshold", U"0.45")
+	POSITIVE (fromPitch, U"left Pitch range (Hz)", U"75.0")
+	POSITIVE (toPitch, U"right Pitch range (Hz)", U"600.0")
+	POSITIVE (maximumPeriodFactor, U"Maximum period factor", U"1.3")
+	POSITIVE (maximumAmplitudeFactor, U"Maximum amplitude factor", U"1.6")
+	REAL (silenceThreshold, U"Silence threshold", U"0.03")
+	REAL (voicingThreshold, U"Voicing threshold", U"0.45")
 	OK
 DO
 	INFO_THREE (Sound, Pitch, PointProcess)
@@ -2136,7 +2119,7 @@ DO
 // MARK: - SOUND & POINTPROCESS & PITCHTIER & DURATIONTIER
 
 FORM (NEW1_Sound_Point_Pitch_Duration_to_Sound, U"To Sound", nullptr) {
-	POSITIVE4 (longestPeriod, U"Longest period (s)", U"0.02")
+	POSITIVE (longestPeriod, U"Longest period (s)", U"0.02")
 	OK
 DO
 	CONVERT_FOUR (Sound, PointProcess, PitchTier, DurationTier)
@@ -2148,14 +2131,14 @@ DO
 
 FORM (GRAPHICS_Spectrogram_paint, U"Spectrogram: Paint", U"Spectrogram: Paint...") {
 	praat_TimeFunction_RANGE (fromTime, toTime)
-	REALVAR (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REALVAR (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
-	REAL4 (maximum, U"Maximum (dB/Hz)", U"100.0")
-	BOOLEAN4 (autoscaling, U"Autoscaling", 1)
-	POSITIVE4 (dynamicRange, U"Dynamic range (dB)", U"50.0")
-	REAL4 (preEmphasis, U"Pre-emphasis (dB/oct)", U"6.0")
-	REAL4 (dynamicCompression, U"Dynamic compression (0-1)", U"0.0")
-	BOOLEAN4 (garnish, U"Garnish", 1)
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL (maximum, U"Maximum (dB/Hz)", U"100.0")
+	BOOLEAN (autoscaling, U"Autoscaling", 1)
+	POSITIVE (dynamicRange, U"Dynamic range (dB)", U"50.0")
+	REAL (preEmphasis, U"Pre-emphasis (dB/oct)", U"6.0")
+	REAL (dynamicCompression, U"Dynamic compression (0-1)", U"0.0")
+	BOOLEAN (garnish, U"Garnish", 1)
 	OK
 DO
 	GRAPHICS_EACH (Spectrogram)
@@ -2165,12 +2148,11 @@ DO
 }
 
 FORM (MODIFY_Spectrogram_formula, U"Spectrogram: Formula", U"Spectrogram: Formula...") {
-	LABEL (U"label", U"Do for all times and frequencies:")
-	LABEL (U"label", U"   `x' is the time in seconds")
-	LABEL (U"label", U"   `y' is the frequency in hertz")
-	LABEL (U"label", U"   `self' is the current value in Pa\u00B2/Hz")
-	LABEL (U"label", U"   Replace all values with:")
-	TEXTFIELD4 (formula, U"formula", U"self * exp (- x / 0.1)")
+	LABEL (U"Do for all times and frequencies:")
+	LABEL (U"   `x` is the time in seconds")
+	LABEL (U"   `y` is the frequency in hertz")
+	LABEL (U"   `self` is the current value in Pa\u00B2/Hz")
+	TEXTFIELD (formula, U"   Replace all values with:", U"self * exp (- x / 0.1)")
 	OK
 DO
 	MODIFY_EACH_WEAK (Spectrogram)
@@ -2179,8 +2161,8 @@ DO
 }
 
 FORM (REAL_Spectrogram_getPowerAt, U"Spectrogram: Get power at (time, frequency)", nullptr) {
-	REAL4 (time, U"Time (s)", U"0.5")
-	REAL4 (frequency, U"Frequency (Hz)", U"1000")
+	REAL (time, U"Time (s)", U"0.5")
+	REAL (frequency, U"Frequency (Hz)", U"1000")
 	OK
 DO
 	NUMBER_ONE (Spectrogram)
@@ -2205,7 +2187,7 @@ DIRECT (NEW_Spectrogram_to_Matrix) {
 }
 
 FORM (NEW_Spectrogram_to_Sound, U"Spectrogram: To Sound", nullptr) {
-	REAL4 (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
+	REAL (samplingFrequency, U"Sampling frequency (Hz)", U"44100.0")
 	OK
 DO
 	CONVERT_EACH (Spectrogram)
@@ -2214,7 +2196,7 @@ DO
 }
 
 FORM (NEW_Spectrogram_to_Spectrum, U"Spectrogram: To Spectrum (slice)", nullptr) {
-	REALVAR (time, U"Time (seconds)", U"0.0")
+	REAL (time, U"Time (seconds)", U"0.0")
 	OK
 DO
 	CONVERT_EACH (Spectrogram)
@@ -2224,13 +2206,12 @@ DO
 
 DIRECT (WINDOW_Spectrogram_view) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrogram from batch.");
-	LOOP {
-		iam (Spectrogram);
+	FIND_ONE_WITH_IOBJECT (Spectrogram)
 		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: - SPECTRUM
 
@@ -2244,22 +2225,21 @@ DIRECT (HELP_Spectrum_help) {
 
 DIRECT (WINDOW_Spectrum_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Spectrum from batch.");
-	LOOP {
-		iam (Spectrum);
+	FIND_ONE_WITH_IOBJECT (Spectrum)
 		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: Draw
 
 FORM (GRAPHICS_Spectrum_draw, U"Spectrum: Draw", nullptr) {
-	REAL4 (fromFrequency, U"left Frequency range (Hz)", U"0.0")
-	REAL4 (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
-	REAL4 (minimumPower, U"Minimum power (dB/Hz)", U"0 (= auto)")
-	REAL4 (maximumPower, U"Maximum power (dB/Hz)", U"0 (= auto)")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
+	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0 (= all)")
+	REAL (minimumPower, U"Minimum power (dB/Hz)", U"0 (= auto)")
+	REAL (maximumPower, U"Maximum power (dB/Hz)", U"0 (= auto)")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Spectrum)
@@ -2268,11 +2248,11 @@ DO
 }
 
 FORM (GRAPHICS_Spectrum_drawLogFreq, U"Spectrum: Draw (log freq)", nullptr) {
-	POSITIVE4 (fromFrequency, U"left Frequency range (Hz)", U"10.0")
-	POSITIVE4 (toFrequency, U"right Frequency range (Hz)", U"10000.0")
-	REAL4 (minimumPower, U"Minimum power (dB/Hz)", U"0 (= auto)")
-	REAL4 (maximumPower, U"Maximum power (dB/Hz)", U"0 (= auto)")
-	BOOLEAN4 (garnish, U"Garnish", true)
+	POSITIVE (fromFrequency, U"left Frequency range (Hz)", U"10.0")
+	POSITIVE (toFrequency, U"right Frequency range (Hz)", U"10000.0")
+	REAL (minimumPower, U"Minimum power (dB/Hz)", U"0 (= auto)")
+	REAL (maximumPower, U"Maximum power (dB/Hz)", U"0 (= auto)")
+	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (Spectrum)
@@ -2283,12 +2263,12 @@ DO
 // MARK: Tabulate
 
 FORM (LIST_Spectrum_list, U"Spectrum: List", 0) {
-	BOOLEAN4 (includeBinNumber, U"Include bin number", false)
-	BOOLEAN4 (includeFrequency, U"Include frequency", true)
-	BOOLEAN4 (includeRealPart, U"Include real part", false)
-	BOOLEAN4 (includeImaginaryPart, U"Include imaginary part", false)
-	BOOLEAN4 (includeEnergyDensity, U"Include energy density", false)
-	BOOLEAN4 (includePowerDensity, U"Include power density", true)
+	BOOLEAN (includeBinNumber, U"Include bin number", false)
+	BOOLEAN (includeFrequency, U"Include frequency", true)
+	BOOLEAN (includeRealPart, U"Include real part", false)
+	BOOLEAN (includeImaginaryPart, U"Include imaginary part", false)
+	BOOLEAN (includeEnergyDensity, U"Include energy density", false)
+	BOOLEAN (includePowerDensity, U"Include power density", true)
 	OK
 DO
 	INFO_ONE (Spectrum)
@@ -2300,8 +2280,8 @@ DO
 // MARK: Query
 
 FORM (REAL_Spectrum_getBandDensity, U"Spectrum: Get band density", nullptr) {
-	REAL4 (bandFloor, U"Band floor (Hz)", U"200.0")
-	REAL4 (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
+	REAL (bandFloor, U"Band floor (Hz)", U"200.0")
+	REAL (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2310,10 +2290,10 @@ DO
 }
 
 FORM (REAL_Spectrum_getBandDensityDifference, U"Spectrum: Get band density difference", nullptr) {
-	REAL4 (lowBandFloor, U"Low band floor (Hz)", U"0.0")
-	REAL4 (lowBandCeiling, U"Low band ceiling (Hz)", U"500.0")
-	REAL4 (highBandFloor, U"High band floor (Hz)", U"500.0")
-	REAL4 (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
+	REAL (lowBandFloor, U"Low band floor (Hz)", U"0.0")
+	REAL (lowBandCeiling, U"Low band ceiling (Hz)", U"500.0")
+	REAL (highBandFloor, U"High band floor (Hz)", U"500.0")
+	REAL (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2323,8 +2303,8 @@ DO
 }
 
 FORM (REAL_Spectrum_getBandEnergy, U"Spectrum: Get band energy", nullptr) {
-	REAL4 (bandFloor, U"Band floor (Hz)", U"200.0")
-	REAL4 (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
+	REAL (bandFloor, U"Band floor (Hz)", U"200.0")
+	REAL (bandCeiling, U"Band ceiling (Hz)", U"1000.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2333,10 +2313,10 @@ DO
 }
 
 FORM (REAL_Spectrum_getBandEnergyDifference, U"Spectrum: Get band energy difference", nullptr) {
-	REAL4 (lowBandFloor, U"Low band floor (Hz)", U"0.0")
-	REAL4 (lowBandCeiling, U"Low band ceiling (Hz)", U"500.0")
-	REAL4 (highBandFloor, U"High band floor (Hz)", U"500.0")
-	REAL4 (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
+	REAL (lowBandFloor, U"Low band floor (Hz)", U"0.0")
+	REAL (lowBandCeiling, U"Low band ceiling (Hz)", U"500.0")
+	REAL (highBandFloor, U"High band floor (Hz)", U"500.0")
+	REAL (highBandCeiling, U"High band ceiling (Hz)", U"4000.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2346,7 +2326,7 @@ DO
 }
 
 FORM (REAL_Spectrum_getBinNumberFromFrequency, U"Spectrum: Get bin number from frequency", nullptr) {
-	REAL4 (frequency, U"Frequency (Hz)", U"2000.0")
+	REAL (frequency, U"Frequency (Hz)", U"2000.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2361,8 +2341,8 @@ DIRECT (REAL_Spectrum_getBinWidth) {
 }
 
 FORM (REAL_Spectrum_getCentralMoment, U"Spectrum: Get central moment", U"Spectrum: Get central moment...") {
-	POSITIVE4 (moment, U"Moment", U"3.0")
-	POSITIVE4 (power, U"Power", U"2.0")
+	POSITIVE (moment, U"Moment", U"3.0")
+	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2371,7 +2351,7 @@ DO
 }
 
 FORM (REAL_Spectrum_getCentreOfGravity, U"Spectrum: Get centre of gravity", U"Spectrum: Get centre of gravity...") {
-	POSITIVE4 (power, U"Power", U"2.0")
+	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2380,7 +2360,7 @@ DO
 }
 
 FORM (REAL_Spectrum_getFrequencyFromBin, U"Spectrum: Get frequency from bin", nullptr) {
-	NATURAL4 (bandNumber, U"Band number", U"1")
+	NATURAL (bandNumber, U"Band number", U"1")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2401,7 +2381,7 @@ DIRECT (REAL_Spectrum_getHighestFrequency) {
 }
 
 FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullptr) {
-	NATURAL4 (binNumber, U"Bin number", U"100")
+	NATURAL (binNumber, U"Bin number", U"100")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2411,7 +2391,7 @@ DO
 }
 
 FORM (REAL_Spectrum_getImaginaryValueInBin, U"Spectrum: Get imaginary value in bin", nullptr) {
-	NATURAL4 (binNumber, U"Bin number", U"100")
+	NATURAL (binNumber, U"Bin number", U"100")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2421,7 +2401,7 @@ DO
 }
 
 FORM (REAL_Spectrum_getKurtosis, U"Spectrum: Get kurtosis", U"Spectrum: Get kurtosis...") {
-	POSITIVE4 (power, U"Power", U"2.0")
+	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2431,12 +2411,12 @@ DO
 
 DIRECT (INTEGER_Spectrum_getNumberOfBins) {
 	NUMBER_ONE (Spectrum)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" bins")
 }
 
 FORM (REAL_Spectrum_getSkewness, U"Spectrum: Get skewness", U"Spectrum: Get skewness...") {
-	POSITIVEVAR (power, U"Power", U"2.0")
+	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2445,7 +2425,7 @@ DO
 }
 
 FORM (REAL_Spectrum_getStandardDeviation, U"Spectrum: Get standard deviation", U"Spectrum: Get standard deviation...") {
-	POSITIVEVAR (power, U"Power", U"2.0")
+	POSITIVE (power, U"Power", U"2.0")
 	OK
 DO
 	NUMBER_ONE (Spectrum)
@@ -2456,13 +2436,13 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Spectrum_formula, U"Spectrum: Formula", U"Spectrum: Formula...") {
-	LABEL (U"label", U"`x' is the frequency in hertz, `col' is the bin number;   "
+	LABEL (U"`x` is the frequency in hertz, `col` is the bin number;   "
 		"`y' = `row' is 1 (real part) or 2 (imaginary part)")
-	LABEL (U"label", U"y := 1;   row := 1;   "
-		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula' ; x := x + dx }")
-	LABEL (U"label", U"y := 2;   row := 2;   "
-		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula' ; x := x + dx }")
-	TEXTFIELD4 (formula, U"formula", U"0")
+	LABEL (U"y := 1;   row := 1;   "
+		"x := 0;   for col := 1 to ncol do { self [1, col] := `formula` ; x := x + dx }")
+	LABEL (U"y := 2;   row := 2;   "
+		"x := 0;   for col := 1 to ncol do { self [2, col] := `formula` ; x := x + dx }")
+	TEXTFIELD (formula, U"Formula:", U"0")
 	OK
 DO
 	MODIFY_EACH_WEAK (Spectrum)
@@ -2471,9 +2451,9 @@ DO
 }
 
 FORM (MODIFY_Spectrum_passHannBand, U"Spectrum: Filter (pass Hann band)", U"Spectrum: Filter (pass Hann band)...") {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"500.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"1000.0")
-	POSITIVE4 (smoothing, U"Smoothing (Hz)", U"100.0")
+	REAL (fromFrequency, U"From frequency (Hz)", U"500.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"1000.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
 	OK
 DO
 	MODIFY_EACH (Spectrum)
@@ -2482,9 +2462,9 @@ DO
 }
 
 FORM (MODIFY_Spectrum_stopHannBand, U"Spectrum: Filter (stop Hann band)", U"Spectrum: Filter (stop Hann band)...") {
-	REAL4 (fromFrequency, U"From frequency (Hz)", U"500.0")
-	REAL4 (toFrequency, U"To frequency (Hz)", U"1000.0")
-	POSITIVE4 (smoothing, U"Smoothing (Hz)", U"100.0")
+	REAL (fromFrequency, U"From frequency (Hz)", U"500.0")
+	REAL (toFrequency, U"To frequency (Hz)", U"1000.0")
+	POSITIVE (smoothing, U"Smoothing (Hz)", U"100.0")
 	OK
 DO
 	MODIFY_EACH (Spectrum)
@@ -2495,7 +2475,7 @@ DO
 // MARK: Convert
 
 FORM (NEW_Spectrum_cepstralSmoothing, U"Spectrum: Cepstral smoothing", nullptr) {
-	POSITIVE4 (bandwidth, U"Bandwidth (Hz)", U"500.0")
+	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"500.0")
 	OK
 DO
 	CONVERT_EACH (Spectrum)
@@ -2504,8 +2484,8 @@ DO
 }
 
 FORM (NEW_Spectrum_lpcSmoothing, U"Spectrum: LPC smoothing", 0) {
-	NATURAL4 (numberOfPeaks, U"Number of peaks", U"5")
-	POSITIVE4 (preEmphasisFrom, U"Pre-emphasis from (Hz)", U"50.0")
+	NATURAL (numberOfPeaks, U"Number of peaks", U"5")
+	POSITIVE (preEmphasisFrom, U"Pre-emphasis from (Hz)", U"50.0")
 	OK
 DO
 	CONVERT_EACH (Spectrum)
@@ -2514,7 +2494,7 @@ DO
 }
 
 FORM (NEW_Spectrum_to_Excitation, U"Spectrum: To Excitation", nullptr) {
-	POSITIVE4 (frequencyResolution, U"Frequency resolution (Bark)", U"0.1")
+	POSITIVE (frequencyResolution, U"Frequency resolution (Bark)", U"0.1")
 	OK
 DO
 	CONVERT_EACH (Spectrum)
@@ -2523,8 +2503,8 @@ DO
 }
 
 FORM (NEW_Spectrum_to_Formant_peaks, U"Spectrum: To Formant (peaks)", nullptr) {
-	LABEL (U"", U"Warning: this simply picks peaks from 0 Hz up!")
-	NATURAL4 (maximumNumberOfFormants, U"Maximum number of formants", U"1000")
+	LABEL (U"Warning: this simply picks peaks from 0 Hz up!")
+	NATURAL (maximumNumberOfFormants, U"Maximum number of formants", U"1000")
 	OK
 DO
 	CONVERT_EACH (Spectrum)
@@ -2533,7 +2513,7 @@ DO
 }
 
 FORM (NEW_Spectrum_to_Ltas, U"Spectrum: To Long-term average spectrum", nullptr) {
-	POSITIVE4 (bandwidth, U"Bandwidth (Hz)", U"1000.0")
+	POSITIVE (bandwidth, U"Bandwidth (Hz)", U"1000.0")
 	OK
 DO
 	CONVERT_EACH (Spectrum)
@@ -2576,9 +2556,8 @@ DIRECT (NEW_Spectrum_to_SpectrumTier_peaks) {
 // MARK: New
 
 FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create Strings as file list...") {
-	SENTENCEVAR (name, U"Name", U"fileList")
-	LABEL (U"", U"File path:")
-	static structMelderDir defaultDir { { 0 } };
+	SENTENCE (name, U"Name", U"fileList")
+	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
 	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
 	static char32 defaultPath [kMelder_MAXPATH+1];
@@ -2592,7 +2571,7 @@ FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create St
 	#else
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
 	#endif
-	TEXTVAR (path, U"path", defaultPath)
+	TEXTFIELD (path, U"File path:", defaultPath)
 	OK
 DO
 	CREATE_ONE
@@ -2601,9 +2580,8 @@ DO
 }
 
 FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U"Create Strings as directory list...") {
-	SENTENCEVAR (name, U"Name", U"directoryList")
-	LABEL (U"", U"Path:")
-	static structMelderDir defaultDir = { { 0 } };
+	SENTENCE (name, U"Name", U"directoryList")
+	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
 	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
 	static char32 defaultPath [kMelder_MAXPATH+1];
@@ -2617,7 +2595,7 @@ FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U
 	#else
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
 	#endif
-	TEXTVAR (path, U"path", defaultPath)
+	TEXTFIELD (path, U"Path:", defaultPath)
 	OK
 DO
 	CREATE_ONE
@@ -2651,30 +2629,29 @@ DIRECT (HELP_Strings_help) {
 
 DIRECT (WINDOW_Strings_viewAndEdit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a Strings from batch.");
-	LOOP {
-		iam (Strings);
+	FIND_ONE_WITH_IOBJECT (Strings)
 		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.get(), IOBJECT);
 		editor.releaseToUser();
-	}
-END }
+	END
+}
 
 // MARK: Query
 
 DIRECT (BOOLEAN_Strings_equal) {
 	NUMBER_COUPLE (Strings)
-		long result = (long) Data_equal (me, you);   // cast bool to 0 or 1
+		integer result = (integer) Data_equal (me, you);   // cast bool to 0 or 1
 	NUMBER_COUPLE_END (result ? U" (equal)" : U" (unequal)")
 }
 
 DIRECT (INTEGER_Strings_getNumberOfStrings) {
 	NUMBER_ONE (Strings)
-		long result = my numberOfStrings;
+		integer result = my numberOfStrings;
 	NUMBER_ONE_END (U" strings")
 }
 
 FORM (STRING_Strings_getString, U"Get string", nullptr) {
-	NATURAL4 (position, U"Position", U"1")
+	NATURAL (position, U"Position", U"1")
 	OK
 DO
 	STRING_ONE (Strings)
@@ -2685,9 +2662,8 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Strings_insertString, U"Strings: Insert string", nullptr) {
-	INTEGERVAR (atPosition, U"At position", U"0 (= at end)")
-	LABEL (U"", U"String:")
-	TEXTVAR (string, U"string", U"")
+	INTEGER (atPosition, U"At position", U"0 (= at end)")
+	TEXTFIELD (string, U"String:", U"")
 	OK
 DO
 	MODIFY_EACH (Strings)
@@ -2714,7 +2690,7 @@ DIRECT (MODIFY_Strings_randomize) {
 }
 
 FORM (MODIFY_Strings_removeString, U"Strings: Remove string", nullptr) {
-	NATURAL4 (position, U"Position", U"1")
+	NATURAL (position, U"Position", U"1")
 	OK
 DO
 	MODIFY_EACH (Strings)
@@ -2723,9 +2699,8 @@ DO
 }
 
 FORM (MODIFY_Strings_setString, U"Strings: Set string", nullptr) {
-	NATURAL4 (position, U"Position", U"1")
-	LABEL (U"", U"New string:")
-	TEXTFIELD4 (newString, U"newString", U"")
+	NATURAL (position, U"Position", U"1")
+	TEXTFIELD (newString, U"New string:", U"")
 	OK
 DO
 	MODIFY_EACH (Strings)
@@ -2742,16 +2717,16 @@ DIRECT (MODIFY_Strings_sort) {
 // MARK: Convert
 
 FORM (NEW_Strings_replaceAll, U"Strings: Replace all", nullptr) {
-	SENTENCE4 (find, U"Find", U"a")
-	SENTENCE4 (replaceWith, U"Replace with", U"b")
-	INTEGER4 (replaceLimitPerString, U"Replace limit per string", U"0 (= unlimited)")
-	RADIO4x (findAndReplaceStringsAre, U"Find and replace strings are", 1, 0)
+	SENTENCE (find, U"Find", U"a")
+	SENTENCE (replaceWith, U"Replace with", U"b")
+	INTEGER (replaceLimitPerString, U"Replace limit per string", U"0 (= unlimited)")
+	RADIOx (findAndReplaceStringsAre, U"Find and replace strings are", 1, 0)
 		RADIOBUTTON (U"literals")
 		RADIOBUTTON (U"regular expressions")
 	OK
 DO
 	CONVERT_EACH (Strings)
-		long numberOfMatches, numberOfStringMatches;
+		integer numberOfMatches, numberOfStringMatches;
 		autoStrings result = Strings_change (me, find, replaceWith,
 			replaceLimitPerString, & numberOfMatches, & numberOfStringMatches, findAndReplaceStringsAre);   // FIXME: boolean inappropriate
 	CONVERT_EACH_END (my name, U"_replaced")
@@ -2780,12 +2755,12 @@ DIRECT (NEW_Table_to_Matrix) {
 // MARK: - TEXTGRID; the remainder is in praat_TextGrid_init.cpp
 
 FORM (NEW1_TextGrid_create, U"Create TextGrid", U"Create TextGrid...") {
-	LABEL (U"", U"Hint: to label or segment an existing Sound,")
-	LABEL (U"", U"select that Sound and choose \"To TextGrid...\".")
-	REAL4 (startTime, U"Start time (s)", U"0.0")
-	REAL4 (endTime, U"End time (s)", U"1.0")
-	SENTENCE4 (allTierNames, U"All tier names", U"Mary John bell")
-	SENTENCE4 (whichOfTheseArePointTiers, U"Which of these are point tiers?", U"bell")
+	LABEL (U"Hint: to label or segment an existing Sound,")
+	LABEL (U"select that Sound and choose \"To TextGrid...\".")
+	REAL (startTime, U"Start time (s)", U"0.0")
+	REAL (endTime, U"End time (s)", U"1.0")
+	SENTENCE (allTierNames, U"All tier names", U"Mary John bell")
+	SENTENCE (whichOfTheseArePointTiers, U"Which of these are point tiers?", U"bell")
 	OK
 DO
 	if (endTime <= startTime) Melder_throw (U"The end time should be greater than the start time");
@@ -2811,12 +2786,12 @@ DIRECT (NEW_Transition_conflate) {
 }
 
 FORM (GRAPHICS_Transition_drawAsNumbers, U"Draw as numbers", nullptr) {
-	RADIO4 (format, U"Format", 1)
+	RADIO (format, U"Format", 1)
 		RADIOBUTTON (U"decimal")
 		RADIOBUTTON (U"exponential")
 		RADIOBUTTON (U"free")
 		RADIOBUTTON (U"rational")
-	NATURAL4 (precision, U"Precision", U"2")
+	NATURAL (precision, U"Precision", U"2")
 	OK
 DO
 	GRAPHICS_EACH (Transition)
@@ -2839,7 +2814,7 @@ DIRECT (HELP_Transition_help) {
 }
 
 FORM (NEW_Transition_power, U"Transition: Power...", nullptr) {
-	NATURAL4 (power, U"Power", U"2")
+	NATURAL (power, U"Power", U"2")
 	OK
 DO
 	CONVERT_EACH (Transition)
@@ -2856,15 +2831,15 @@ DIRECT (NEW_Transition_to_Matrix) {
 // MARK: - Praat menu
 
 FORM (INFO_Praat_test, U"Praat test", 0) {
-	OPTIONMENU_ENUM4 (test, U"Test", kPraatTests, DEFAULT)
-	SENTENCE4 (arg1, U"arg1", U"1000000")
-	SENTENCE4 (arg2, U"arg2", U"")
-	SENTENCE4 (arg3, U"arg3", U"")
-	SENTENCE4 (arg4, U"arg4", U"")
+	OPTIONMENU_ENUM (test, U"Test", kPraatTests, DEFAULT)
+	SENTENCE (arg1, U"arg1", U"1000000")
+	SENTENCE (arg2, U"arg2", U"")
+	SENTENCE (arg3, U"arg3", U"")
+	SENTENCE (arg4, U"arg4", U"")
 	OK
 DO
 	INFO_NONE
-		Praat_tests (test, arg1, arg2, arg3, arg4);
+		Praat_tests ((kPraatTests) test, arg1, arg2, arg3, arg4);
 	INFO_NONE_END
 }
 
@@ -2886,7 +2861,7 @@ DIRECT (HELP_SearchManual_Fon) { Melder_search (); END }
 
 // MARK: - file recognizers
 
-static autoDaata cgnSyntaxFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata cgnSyntaxFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 57) return autoDaata ();
 	if (! strnequ (& header [0], "<?xml version=\"1.0\"?>", 21) ||
 	    (! strnequ (& header [22], "<!DOCTYPE ttext SYSTEM \"ttext.dtd\">", 35) &&
@@ -2894,7 +2869,7 @@ static autoDaata cgnSyntaxFileRecognizer (int nread, const char *header, MelderF
 	return TextGrid_readFromCgnSyntaxFile (file);
 }
 
-static autoDaata chronologicalTextGridTextFileRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata chronologicalTextGridTextFileRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 100) return autoDaata ();
 	if (strnequ (& header [0], "\"Praat chronological TextGrid text file\"", 40))
 		return TextGrid_readFromChronologicalTextFile (file);

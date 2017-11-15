@@ -19,8 +19,8 @@
 #define ooSTRUCT Eigen
 oo_DEFINE_CLASS (Eigen, Daata)
 
-	oo_LONG (numberOfEigenvalues)
-	oo_LONG (dimension)
+	oo_INTEGER (numberOfEigenvalues)
+	oo_INTEGER (dimension)
 	oo_DOUBLE_VECTOR (eigenvalues, numberOfEigenvalues)
 	oo_DOUBLE_MATRIX (eigenvectors, numberOfEigenvalues, dimension)
 

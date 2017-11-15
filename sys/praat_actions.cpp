@@ -66,13 +66,13 @@ static void fixSelectionSpecification (ClassInfo *class1, int *n1, ClassInfo *cl
 	}
 }
 
-static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, ClassInfo class4, const char32 *title) {
+static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, ClassInfo class4, const char32 *title) {
 /*
  * An action command is fully specified by its environment (the selected classes) and its title.
  * Precondition:
  *	class1, class2, and class3 must be in sorted order.
  */
-	for (long i = 1; i <= theActions.size; i ++) {
+	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		if (class1 == action -> class1 && class2 == action -> class2 &&
 		    class3 == action -> class3 && class4 == action -> class4 &&
@@ -82,24 +82,24 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
 }
 
 void praat_addAction1_ (ClassInfo class1, int n1,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
 { praat_addAction4_ (class1, n1, nullptr, 0, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction2_ (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
 { praat_addAction4_ (class1, n1, class2, n2, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction3_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
 { praat_addAction4_ (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const char32 *title, const char32 *after, unsigned long flags, UiCallback callback, const char32 *nameOfCallback)
+	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
 {
 	try {
 		int depth = flags, key = 0;
 		bool unhidable = false, hidden = false, attractive = false;
-		unsigned long guiFlags = 0;
+		uint32 guiFlags = 0;
 		if (flags > 7) {
 			depth = ((flags & praat_DEPTH_7) >> 16);
 			unhidable = (flags & praat_UNHIDABLE) != 0;
@@ -123,9 +123,9 @@ void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, Clas
 		/*
 		 * Determine the position of the new command.
 		 */
-		long position;
+		integer position;
 		if (after && after [0] != U'*') {   // search for existing command with same selection
-			long found = lookUpMatchingAction (class1, class2, class3, class4, after);
+			integer found = lookUpMatchingAction (class1, class2, class3, class4, after);
 			if (found == 0)
 				Melder_throw (U"The action command \"", title, U"\" cannot be put after \"", after, U"\",\n"
 					U"because the latter command does not exist.");
@@ -168,9 +168,9 @@ void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, Clas
 static void deleteDynamicMenu () {
 	if (praatP.phase != praat_HANDLING_EVENTS) return;
 	if (actionsInvisible) return;
-	static long numberOfDeletions;
+	static integer numberOfDeletions;
 	trace (U"deletion #", ++ numberOfDeletions);
-	for (long i = 1; i <= theActions.size; i ++) {
+	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		if (action -> button) {
 			trace (U"trying to destroy action ", i, U" of ", theActions.size, U": ", action -> title);
@@ -244,17 +244,19 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		/*
 		 * If the button already exists, remove it.
 		 */
-		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
-		if (found) {
-			theActions. removeItem (found);
+		{// scope
+			integer found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
+			if (found) {
+				theActions. removeItem (found);
+			}
 		}
 
 		/*
 		 * Determine the position of the new command.
 		 */
-		long position;
+		integer position;
 		if (str32len (after)) {   // search for existing command with same selection
-			long found = lookUpMatchingAction (class1, class2, class3, nullptr, after);
+			integer found = lookUpMatchingAction (class1, class2, class3, nullptr, after);
 			if (found) {
 				position = found + 1;   // after 'after'
 			} else {
@@ -281,14 +283,14 @@ void praat_addActionScript (const char32 *className1, int n1, const char32 *clas
 		if (str32len (script) == 0) {
 			action -> script = nullptr;
 		} else {
-			structMelderFile file = { 0 };
+			structMelderFile file { };
 			Melder_relativePathToFile (script, & file);
 			action -> script = Melder_dup_f (Melder_fileToPath (& file));
 		}
 		action -> after = str32len (after) ? Melder_dup_f (after) : nullptr;
 		action -> phase = praatP.phase;
 		if (praatP.phase >= praat_READING_BUTTONS) {
-			static long uniqueID = 0;
+			static integer uniqueID = 0;
 			action -> uniqueID = ++ uniqueID;
 		}
 
@@ -306,7 +308,7 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
+		integer found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (! found) {
 			Melder_throw (U"Action command \"", class1 -> className,
 				class2 ? U" & ": U"", class2 -> className,
@@ -345,7 +347,7 @@ void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
+		integer found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (! found) {
 			Melder_throw (U"Praat: action command \"", class1 ? class1 -> className : nullptr,
 				class2 ? U" & ": nullptr, class2 ? class2 -> className : nullptr,
@@ -388,7 +390,7 @@ void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
-		long found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
+		integer found = lookUpMatchingAction (class1, class2, class3, nullptr, title);
 		if (! found) {
 			Melder_throw (U"Action command \"", class1 ? class1 -> className : nullptr,
 				class2 ? U" & ": nullptr, class2 ? class2 -> className : nullptr,
@@ -447,7 +449,7 @@ static int compareActions (const void *void_me, const void *void_thee) {
 }
 
 void praat_sortActions () {
-	for (long i = 1; i <= theActions.size; i ++) {
+	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		action -> sortingTail = i;
 	}
@@ -466,8 +468,8 @@ static const char32 *objectString (int number) {
 static bool allowExecutionHook (void *closure) {
 	UiCallback callback = (UiCallback) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
-	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
-	for (long i = 1; i <= theActions.size; i ++) {
+	integer numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
+	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command me = theActions.at [i];
 		if (my callback == callback) {
 			int sel1, sel2 = 0, sel3 = 0, sel4 = 0;
@@ -554,7 +556,7 @@ void praat_actions_show () {
 		if (theCurrentPraatObjects -> totalSelection != 0 && ! Melder_backgrounding)
 			GuiThing_setSensitive (praat_writeMenu, true);
 	}
-	for (long i = 1; i <= theActions.size; i ++) {
+	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		int sel1 = 0, sel2 = 0, sel3 = 0, sel4 = 0;
 		int n1 = action -> n1, n2 = action -> n2, n3 = action -> n3, n4 = action -> n4;
@@ -588,7 +590,7 @@ void praat_actions_show () {
 		GuiMenu currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;
 		bool writeMenuGoingToSeparate = false;
 		int y = Machine_getMenuBarHeight () + 10;
-		for (long i = 1; i <= theActions.size; i ++) {   // add buttons or make existing buttons sensitive (executable)
+		for (integer i = 1; i <= theActions.size; i ++) {   // add buttons or make existing buttons sensitive (executable)
 			Praat_Command me = theActions.at [i];
 			if (my depth == 0) currentSubmenu1 = nullptr, currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
 			if (my depth == 1) currentSubmenu2 = nullptr;   // prevent attachment of later deep actions to earlier submenus after removal of label
@@ -676,14 +678,14 @@ void praat_actions_createDynamicMenu (GuiWindow window) {
 }
 
 void praat_saveAddedActions (MelderString *buffer) {
-	long maxID = 0;
-	for (long iaction = 1; iaction <= theActions.size; iaction ++) {
+	integer maxID = 0;
+	for (integer iaction = 1; iaction <= theActions.size; iaction ++) {
 		Praat_Command action = theActions.at [iaction];
 		if (action -> uniqueID > maxID)
 			maxID = action -> uniqueID;
 	}
-	for (long ident = 1; ident <= maxID; ident ++)
-		for (long iaction = 1; iaction <= theActions.size; iaction ++) {
+	for (integer ident = 1; ident <= maxID; ident ++)
+		for (integer iaction = 1; iaction <= theActions.size; iaction ++) {
 			Praat_Command me = theActions.at [iaction];
 			if (my uniqueID == ident && ! my hidden && my title) {
 				MelderString_append (buffer, U"Add action command...",
@@ -695,7 +697,7 @@ void praat_saveAddedActions (MelderString *buffer) {
 				break;
 			}
 		}
-	for (long iaction = 1; iaction <= theActions.size; iaction ++) {
+	for (integer iaction = 1; iaction <= theActions.size; iaction ++) {
 		Praat_Command me = theActions.at [iaction];
 		if (my toggled && my title && ! my uniqueID && ! my script) {
 			MelderString_append (buffer, ( my hidden ? U"Hide" : U"Show" ), U" action command...",
@@ -708,7 +710,7 @@ void praat_saveAddedActions (MelderString *buffer) {
 }
 
 int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter) {
-	long i = 1;
+	integer i = 1;
 	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title, command))) i ++;
 	if (i > theActions.size) return 0;   // not found
 	theActions.at [i] -> callback (nullptr, 0, nullptr, arguments, interpreter, command, false, nullptr);
@@ -716,16 +718,16 @@ int praat_doAction (const char32 *command, const char32 *arguments, Interpreter 
 }
 
 int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter interpreter) {
-	long i = 1;
+	integer i = 1;
 	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title, command))) i ++;
 	if (i > theActions.size) return 0;   // not found
 	theActions.at [i] -> callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
 	return 1;
 }
 
-long praat_getNumberOfActions () { return theActions.size; }
+integer praat_getNumberOfActions () { return theActions.size; }
 
-Praat_Command praat_getAction (long i)
+Praat_Command praat_getAction (integer i)
 	{ return i < 0 || i > theActions.size ? nullptr : theActions.at [i]; }
 
 void praat_background () {

@@ -22,12 +22,12 @@
 
 DIRECT (INTEGER_TimeFrameSampled_getNumberOfFrames) {
 	NUMBER_ONE (Sampled)
-		long result = my nx;
+		integer result = my nx;
 	NUMBER_ONE_END (U" frames");
 }
 
 FORM (REAL_TimeFrameSampled_getFrameFromTime, U"Get frame number from time", U"Get frame number from time...") {
-	REAL4 (time, U"Time (s)", U"0.5")
+	REAL (time, U"Time (s)", U"0.5")
 	OK
 DO
 	NUMBER_ONE (Sampled)
@@ -42,7 +42,7 @@ DIRECT (REAL_TimeFrameSampled_getFrameLength) {
 }
 
 FORM (REAL_TimeFrameSampled_getTimeFromFrame, U"Get time from frame number", U"Get time from frame number...") {
-	NATURAL4 (frameNumber, U"Frame number", U"1")
+	NATURAL (frameNumber, U"Frame number", U"1")
 	OK
 DO
 	NUMBER_ONE (Sampled)

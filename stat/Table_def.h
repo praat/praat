@@ -1,6 +1,6 @@
 /* Table_def.h
  *
- * Copyright (C) 2002-2012,2015,2016 Paul Boersma
+ * Copyright (C) 2002-2012,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@ oo_END_STRUCT (TableCell)
 #define ooSTRUCT TableRow
 oo_DEFINE_CLASS (TableRow, Daata)
 
-	oo_LONG (numberOfColumns)
+	oo_INTEGER (numberOfColumns)
 	oo_STRUCT_VECTOR (TableCell, cells, numberOfColumns)
 
 	#if oo_DECLARING || oo_COPYING
-		oo_LONG (sortingIndex)
+		oo_INTEGER (sortingIndex)
 	#endif
 
 oo_END_CLASS (TableRow)
@@ -50,7 +50,7 @@ oo_DEFINE_STRUCT (TableColumnHeader)
 	oo_STRING (label)
 
 	#if oo_DECLARING || oo_COPYING
-		oo_INT (numericized)
+		oo_INT16 (numericized)
 	#endif
 
 oo_END_STRUCT (TableColumnHeader)
@@ -60,7 +60,7 @@ oo_END_STRUCT (TableColumnHeader)
 #define ooSTRUCT Table
 oo_DEFINE_CLASS (Table, Daata)
 
-	oo_LONG (numberOfColumns)
+	oo_INTEGER (numberOfColumns)
 	oo_STRUCT_VECTOR (TableColumnHeader, columnHeaders, numberOfColumns)
 	oo_COLLECTION_OF (OrderedOf, rows, TableRow, 0)
 
@@ -77,15 +77,15 @@ oo_DEFINE_CLASS (Table, Daata)
 			override { return numberOfColumns; }
 		bool v_hasGetColStr ()
 			override { return true; }
-		const char32 * v_getColStr (long columnNumber)
+		const char32 * v_getColStr (integer columnNumber)
 			override;
 		bool v_hasGetMatrix ()
 			override { return true; }
-		double v_getMatrix (long rowNumber, long columnNumber)
+		double v_getMatrix (integer rowNumber, integer columnNumber)
 			override;
 		bool v_hasGetMatrixStr ()
 			override { return true; }
-		const char32 * v_getMatrixStr (long rowNumber, long columnNumber)
+		const char32 * v_getMatrixStr (integer rowNumber, integer columnNumber)
 			override;
 		bool v_hasGetColIndex ()
 			override { return true; }

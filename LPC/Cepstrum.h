@@ -25,27 +25,25 @@
 */
 
 /*
-	The Cepstrum is a sequence of REAL numbers.
+	The Cepstrum is a sequence of real numbers.
 	It is the spectrum of the power spectrum of a (sound) signal.
 */
 
 #include "Matrix.h"
 
 Thing_define (Cepstrum, Matrix) {
-	// overridden methods:
-	public:
-		virtual double v_getValueAtSample (long isamp, long which, int units);
+	double v_getValueAtSample (integer isamp, integer which, int units)
+		override;
 };
 
 /*
-	The Cepstrum is a sequence of REAL numbers.
+	The Cepstrum is a sequence of real numbers.
 	It is the power spectrum of the power spectrum of a (sound) signal.
 */
 
 Thing_define (PowerCepstrum, Cepstrum) {
-	// overridden methods:
-	public:
-		virtual double v_getValueAtSample (long isamp, long which, int units);
+	double v_getValueAtSample (integer isamp, integer which, int units)
+		override;
 };
 
 /*
@@ -99,9 +97,9 @@ double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCe
 double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod, double *qpeak);
 void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *slope, double *intercept, int lineType, int method);
 autoPowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
-void PowerCepstrum_subtractTilt_inline (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
+void PowerCepstrum_subtractTilt_inplace (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
 
-void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
+void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
 autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
 
 autoMatrix PowerCepstrum_to_Matrix (PowerCepstrum me);

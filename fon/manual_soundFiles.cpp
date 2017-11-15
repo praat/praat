@@ -1,6 +1,6 @@
 /* manual_soundFiles.cpp
  *
- * Copyright (C) 1992-2008,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2010,2011,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -418,7 +418,7 @@ INTRO (U"A command in the @@Open menu@ that creates a @LongSound object.")
 NORMAL (U"The file will be opened for reading only. The file stays open until you remove the LongSound object.")
 MAN_END
 
-MAN_BEGIN (U"Sesam/LVS files", U"ppgb", 20141001)
+MAN_BEGIN (U"Sesam/LVS files", U"ppgb", 20170828)
 INTRO (U"A way for storing a @Sound object on disk.")
 ENTRY (U"File format")
 NORMAL (U"The sound files used by the SESAM and LVS programs. Each sample is normally quantized into 12 bits.")
@@ -430,7 +430,7 @@ NORMAL (U"The 12-bit sample values are divided by 2048 so that the amplitude "
 NORMAL (U"The resulting #Sound will appear in the List of Objects; "
 	"its name will be equal to the file name, without extension.")
 NORMAL (U"If the sound was encoded in 16 bits per sample, you should divide by 16 after reading "
-	"(with $$Formula: \"self/16\"$)")
+	"(with $$Formula: ~ self / 16$)")
 ENTRY (U"Saving")
 NORMAL (U"With ##Save as Sesam file...#. Praat then asks you for a file name. "
 	"After you click OK, the samples of the Sound are multiplied by 2048 "
@@ -440,7 +440,7 @@ NORMAL (U"To avoid clipping, keep the absolute amplitude below 1.000. "
 	"If the maximum sound pressure level is 91 dB (top = 2047), "
 	"the quantization threshold is (top = 1/2) 19 dB.")
 NORMAL (U"If you prefer 16-bit encoding, you should multiply by 16 before saving "
-	"(with $$Formula: \"self*16\"$)")
+	"(with $$Formula: ~ self * 16$)")
 MAN_END
 
 }

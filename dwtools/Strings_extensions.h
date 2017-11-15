@@ -33,38 +33,36 @@
 #include "Index.h"
 #include "Table.h"
 
-
-autoStrings Strings_createFixedLength (long numberOfStrings);
+autoStrings Strings_createFixedLength (integer numberOfStrings);
 
 autoStrings Strings_createAsCharacters (const char32 *string);
 
 autoStrings Strings_createAsTokens (const char32 *string, const char32 *separators);
 
-long Strings_findString (Strings me, const char32 *string);
+integer Strings_findString (Strings me, const char32 *string);
 
 autoStrings Strings_append (OrderedOf<structStrings>* me);
 
 autoStrings Strings_change (Strings me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);
+	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp);
 
-autoStrings strings_to_Strings (char32 **strings, long from, long to);
+autoStrings strings_to_Strings (char32 **strings, integer from, integer to);
 
 // If the Strings is only an intermediate object to achieve other goals, use the following two routines to avoid copying.
-autoStrings strings_to_Strings_link (char32** strings, long n);
+autoStrings strings_to_Strings_link (char32** strings, integer n);
 // for (i=1; i<= n; i++) my strings[i] = strings[i];
 
 void Strings_unlink (Strings me);
 // for (i=1; i<= my numberOfStrings; i++) my strings[i] = nullptr;
 
-autoStrings Strings_extractPart (Strings me, long start, long end);
-
+autoStrings Strings_extractPart (Strings me, integer start, integer end);
 
 autoStringsIndex Strings_to_StringsIndex (Strings me);
 
 autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes);
 /* Construct the index with strings in classes, index[i]=0 when my strings[i] doesn't occur in classes */
 
-autoStringsIndex Table_to_StringsIndex_column (Table me, long column);
+autoStringsIndex Table_to_StringsIndex_column (Table me, integer column);
 
 autoStrings StringsIndex_to_Strings (StringsIndex me);
 

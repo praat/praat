@@ -60,7 +60,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 			Melder_throw (U"Your sound is too short:\nit should be at least as long as one window length.");
 		}
 		
-		long nsamp_window = (long) floor (windowLength / my dx);
+		integer nsamp_window = Melder_ifloor (windowLength / my dx);
 		long halfnsamp_window = nsamp_window / 2 - 1;
 		nsamp_window = halfnsamp_window * 2;
 		
@@ -68,8 +68,8 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 			Melder_throw (U"Your analysis window is too short: less than two samples.");
 		}
 		
-		long numberOfFrames;
-		Sampled_shortTermAnalysis (me, windowLength, timeStep, &numberOfFrames, &t1);
+		integer numberOfFrames;
+		Sampled_shortTermAnalysis (me, windowLength, timeStep, & numberOfFrames, & t1);
 
 		// Compute sampling of the spectrum
 
@@ -165,9 +165,9 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 
 			// Where should the sound be placed?
 
-			long thyEndSampleP = (long) floor (fmin (thyStartSample + synthesis -> nx - 1, thyStartSample + stretchedStepSizeSamples - 1)); // guard against extreme stretches
+			integer thyEndSampleP = Melder_ifloor (fmin (thyStartSample + synthesis -> nx - 1, thyStartSample + stretchedStepSizeSamples - 1)); // guard against extreme stretches
 			if (iframe == my nx) {
-				thyEndSampleP = (long) floor (fmin (thy nx, thyStartSample + synthesis -> nx - 1));   // ppgb: waarom naar beneden afgerond?
+				thyEndSampleP = Melder_ifloor (fmin (thy nx, thyStartSample + synthesis -> nx - 1));   // ppgb: waarom naar beneden afgerond?
 			}
 			for (long j = thyStartSample; j <= thyEndSampleP; j++) {
 				thy z[1][j] = synthesis -> z[1][j - thyStartSample + 1];

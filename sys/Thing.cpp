@@ -1,6 +1,6 @@
 /* Thing.cpp
  *
- * Copyright (C) 1992-2012,2015 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #include <time.h>
 #include "Thing.h"
 
-long theTotalNumberOfThings;
+integer theTotalNumberOfThings;
 
 void structThing :: v_info ()
 {
@@ -56,7 +56,7 @@ autoThing Thing_newFromClass (ClassInfo classInfo) {
 	return me;
 }
 
-static int theNumberOfReadableClasses = 0;
+static integer theNumberOfReadableClasses = 0;
 static ClassInfo theReadableClasses [1 + 1000];
 static void _Thing_addOneReadableClass (ClassInfo readableClass) {
 	if (++ theNumberOfReadableClasses > 1000)
@@ -76,10 +76,10 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...) {
 	va_end (arg);
 }
 
-long Thing_listReadableClasses () {
+integer Thing_listReadableClasses () {
 	Melder_clearInfo ();
 	MelderInfo_open ();
-	for (long iclass = 1; iclass <= theNumberOfReadableClasses; iclass ++) {
+	for (integer iclass = 1; iclass <= theNumberOfReadableClasses; iclass ++) {
 		ClassInfo klas = theReadableClasses [iclass];
 		MelderInfo_writeLine (klas -> sequentialUniqueIdOfReadableClass, U"\t", klas -> className);
 	}
@@ -87,7 +87,7 @@ long Thing_listReadableClasses () {
 	return theNumberOfReadableClasses;
 }
 
-static int theNumberOfAliases = 0;
+static integer theNumberOfAliases = 0;
 static struct {
 	ClassInfo readableClass;
 	const char32 *otherName;
@@ -101,6 +101,7 @@ void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *oth
 ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
 	static char32 buffer [1+100];
 	str32ncpy (buffer, klas ? klas : U"", 100);
+	buffer [100] = U'\0';
 	char32 *space = str32chr (buffer, U' ');
 	if (space) {
 		*space = U'\0';   // strip version number
@@ -112,7 +113,7 @@ ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
 	/*
 	 * First try the class names that were registered with Thing_recognizeClassesByName.
 	 */
-	for (int i = 1; i <= theNumberOfReadableClasses; i ++) {
+	for (integer i = 1; i <= theNumberOfReadableClasses; i ++) {
 		ClassInfo classInfo = theReadableClasses [i];
 		if (str32equ (buffer, classInfo -> className)) {
 			return classInfo;
@@ -122,7 +123,7 @@ ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
 	/*
 	 * Then try the aliases that were registered with Thing_recognizeClassByOtherName.
 	 */
-	for (int i = 1; i <= theNumberOfAliases; i ++) {
+	for (integer i = 1; i <= theNumberOfAliases; i ++) {
 		if (str32equ (buffer, theAliases [i]. otherName)) {
 			ClassInfo classInfo = theAliases [i]. readableClass;
 			return classInfo;
@@ -199,7 +200,7 @@ void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 	return me;
 }
 
-void Thing_infoWithIdAndFile (Thing me, long id, MelderFile file) {
+void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file) {
 	//Melder_assert (me);
 	Melder_clearInfo ();
 	MelderInfo_open ();
@@ -213,10 +214,10 @@ void Thing_info (Thing me) {
 	Thing_infoWithIdAndFile (me, 0, nullptr);
 }
 
-char32 * Thing_getName (Thing me) { return my name; }
+const char32 * Thing_getName (Thing me) { return my name; }
 
-char32 * Thing_messageName (Thing me) {
-	static MelderString buffers [19] { { 0 } };
+const char32 * Thing_messageName (Thing me) {
+	static MelderString buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	if (my name) {
@@ -242,9 +243,9 @@ void Thing_setName (Thing me, const char32 *name /* cattable */) {
 
 void Thing_swap (Thing me, Thing thee) {
 	Melder_assert (my classInfo == thy classInfo);
-	int n = my classInfo -> size;
+	integer n = my classInfo -> size;
 	char *p, *q;
-	int i;
+	integer i;
 	for (p = (char *) me, q = (char *) thee, i = n; i > 0; i --, p ++, q ++) {
 		char tmp = *p;
 		*p = *q;

@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ static void _Melder_progress (double progress, const char32 *message) {
 	}
 }
 
-static MelderString theProgressBuffer = { 0 };
+static MelderString theProgressBuffer { };
 
 void Melder_progress (double progress) {
 	_Melder_progress (progress, U"");
@@ -257,41 +257,41 @@ void * Melder_monitor (double progress, Melder_19_ARGS) {
 
 /********** NUMBER AND STRING COMPARISONS **********/
 
-bool Melder_numberMatchesCriterion (double value, int which_kMelder_number, double criterion) {
+bool Melder_numberMatchesCriterion (double value, kMelder_number which, double criterion) {
 	return
-		(which_kMelder_number == kMelder_number_EQUAL_TO && value == criterion) ||
-		(which_kMelder_number == kMelder_number_NOT_EQUAL_TO && value != criterion) ||
-		(which_kMelder_number == kMelder_number_LESS_THAN && value < criterion) ||
-		(which_kMelder_number == kMelder_number_LESS_THAN_OR_EQUAL_TO && value <= criterion) ||
-		(which_kMelder_number == kMelder_number_GREATER_THAN && value > criterion) ||
-		(which_kMelder_number == kMelder_number_GREATER_THAN_OR_EQUAL_TO && value >= criterion);
+		(which == kMelder_number::EQUAL_TO && value == criterion) ||
+		(which == kMelder_number::NOT_EQUAL_TO && value != criterion) ||
+		(which == kMelder_number::LESS_THAN && value < criterion) ||
+		(which == kMelder_number::LESS_THAN_OR_EQUAL_TO && value <= criterion) ||
+		(which == kMelder_number::GREATER_THAN && value > criterion) ||
+		(which == kMelder_number::GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-bool Melder_stringMatchesCriterion (const char32 *value, int which_kMelder_string, const char32 *criterion) {
+bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, const char32 *criterion) {
 	if (! value) {
 		value = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
 	if (! criterion) {
 		criterion = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
-	if (which_kMelder_string <= kMelder_string_NOT_EQUAL_TO) {
+	if (which <= kMelder_string::NOT_EQUAL_TO) {
 		bool matchPositiveCriterion = str32equ (value, criterion);
-		return ( which_kMelder_string == kMelder_string_EQUAL_TO ) == matchPositiveCriterion;
+		return ( which == kMelder_string::EQUAL_TO ) == matchPositiveCriterion;
 	}
-	if (which_kMelder_string <= kMelder_string_DOES_NOT_CONTAIN) {
+	if (which <= kMelder_string::DOES_NOT_CONTAIN) {
 		bool matchPositiveCriterion = !! str32str (value, criterion);
-		return ( which_kMelder_string == kMelder_string_CONTAINS ) == matchPositiveCriterion;
+		return ( which == kMelder_string::CONTAINS ) == matchPositiveCriterion;
 	}
-	if (which_kMelder_string <= kMelder_string_DOES_NOT_START_WITH) {
+	if (which <= kMelder_string::DOES_NOT_START_WITH) {
 		bool matchPositiveCriterion = str32nequ (value, criterion, str32len (criterion));
-		return ( which_kMelder_string == kMelder_string_STARTS_WITH ) == matchPositiveCriterion;
+		return ( which == kMelder_string::STARTS_WITH ) == matchPositiveCriterion;
 	}
-	if (which_kMelder_string <= kMelder_string_DOES_NOT_END_WITH) {
+	if (which <= kMelder_string::DOES_NOT_END_WITH) {
 		int criterionLength = str32len (criterion), valueLength = str32len (value);
 		bool matchPositiveCriterion = ( criterionLength <= valueLength && str32equ (value + valueLength - criterionLength, criterion) );
-		return (which_kMelder_string == kMelder_string_ENDS_WITH) == matchPositiveCriterion;
+		return (which == kMelder_string::ENDS_WITH) == matchPositiveCriterion;
 	}
-	if (which_kMelder_string == kMelder_string_MATCH_REGEXP) {
+	if (which == kMelder_string::MATCH_REGEXP) {
 		char32 *place = nullptr;
 		regexp *compiled_regexp = CompileRE_throwable (criterion, 0);
 		if (ExecRE (compiled_regexp, nullptr, value, nullptr, 0, '\0', '\0', nullptr, nullptr, nullptr))
@@ -771,11 +771,11 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 	 */
 	MelderThread_LOCK (theMelder_fatal_mutex);
 	static char32 fileNameBuffer [1000], conditionBuffer [1000], lineNumberBuffer [40];
-	Melder_8to32_inline (fileName, fileNameBuffer, kMelder_textInputEncoding_UTF8);
-	Melder_8to32_inline (condition, conditionBuffer, kMelder_textInputEncoding_UTF8);
+	Melder_8to32_inplace (fileName, fileNameBuffer, kMelder_textInputEncoding::UTF8);
+	Melder_8to32_inplace (condition, conditionBuffer, kMelder_textInputEncoding::UTF8);
 	static char lineNumberBuffer8 [40];
 	sprintf (lineNumberBuffer8, "%d", lineNumber);
-	Melder_8to32_inline (lineNumberBuffer8, lineNumberBuffer, kMelder_textInputEncoding_UTF8);
+	Melder_8to32_inplace (lineNumberBuffer8, lineNumberBuffer, kMelder_textInputEncoding::UTF8);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), U"Assertion failed in file \"");
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), fileNameBuffer);

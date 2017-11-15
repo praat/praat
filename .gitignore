@@ -1,10 +1,11 @@
-# Intermediate build products for Windows and Linux
+# intermediate build products for Windows and Linux
 *.o
 *.a
 
+# the project for MacOSX
 *.xcodeproj/
 
-# Intermediate build products for MacOSX
+# intermediate build products for MacOSX
 DerivedData
 
 # OSX-specific files
@@ -17,17 +18,20 @@ DerivedData
 # Praat temporary files
 *kanweg*
 
+# a file that everybody should copy explicitly from their makefiles directory
+# and then rename
 makefile.defs
 
-# Executables
+# executables
 praat
 Praat
 Praat.exe
 
+# files created by R scripts in the test folders
+.Rdata
+.Rhistory
+
 \.autotools
-
 \.project
-
 \.cproject
-
 \.settings/

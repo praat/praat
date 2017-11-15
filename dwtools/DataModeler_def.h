@@ -21,8 +21,8 @@
 oo_DEFINE_CLASS (DataModeler, Function)
 
 	oo_INT (type)	// polynomial, legendre ...
-	oo_LONG (numberOfDataPoints)
-	oo_LONG (numberOfParameters)
+	oo_INTEGER (numberOfDataPoints)
+	oo_INTEGER (numberOfParameters)
 	oo_DOUBLE_VECTOR (x, numberOfDataPoints)
 	oo_DOUBLE_VECTOR (y, numberOfDataPoints)
 	oo_DOUBLE_VECTOR (sigmaY, numberOfDataPoints)

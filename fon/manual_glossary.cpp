@@ -1,6 +1,6 @@
 /* manual_glossary.cpp
  *
- * Copyright (C) 1992-2008,2014,2015 Paul Boersma
+ * Copyright (C) 1992-2008,2010,2011,2014-2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ static void draw_TimeDomain_Sound (Graphics g) {
 	Sound_draw (manual_exampleSound (), g, 0, 0, 0, 0, true, U"curve");
 }
 static void draw_TimeDomain_Pitch (Graphics g) {
-	Pitch_draw (manual_examplePitch (), g, 0, 0, 200.0, 500.0, true, Pitch_speckle_NO, kPitch_unit_HERTZ);
+	Pitch_draw (manual_examplePitch (), g, 0, 0, 200.0, 500.0, true, Pitch_speckle_NO, kPitch_unit::HERTZ);
 }
 
 void manual_glossary_init (ManPages me);
@@ -164,7 +164,7 @@ NORMAL (U"Between 0.10 and 0.20 seconds, the pitch rises linearly from 170 to 18
 	"and between 0.20 and 0.45 seconds it falls linearly from 180 to 110 Hz. "
 	"This is %%linear interpolation%: at all times between two adjacent points, "
 	"the pitch values follow the straight line that connects the two points.")
-NORMAL (U"(Before 0.10 seconds and after 0.45 seconds there is @@constant extrapolation@.")
+NORMAL (U"(Before 0.10 seconds and after 0.45 seconds there is @@constant extrapolation@.)")
 ENTRY (U"Linear interpolation in Praat")
 NORMAL (U"Praat uses linear interpolation in all tiers and grids with values at time points "
 	"(@PitchTier, @IntensityTier, @DurationTier, @AmplitudeTier, @FormantGrid).")

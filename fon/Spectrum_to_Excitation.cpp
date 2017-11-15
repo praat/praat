@@ -1,6 +1,6 @@
 /* Spectrum_to_Excitation.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,29 +20,29 @@
 
 autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 	try {
-		long nbark = (int) floor (25.6 / dbark + 0.5);
+		integer nbark = Melder_iround (25.6 / dbark);
 		double *re = my z [1], *im = my z [2]; 
 
 		autoNUMvector <double> auditoryFilter (1, nbark);
-		double filterArea = 0;
-		for (long i = 1; i <= nbark; i ++) {
+		double filterArea = 0.0;
+		for (integer i = 1; i <= nbark; i ++) {
 			double bark = dbark * (i - nbark/2) + 0.474;
 			filterArea += auditoryFilter [i] = pow (10, (1.581 + 0.75 * bark - 1.75 * sqrt (1 + bark * bark)));
 		}
-		/*for (long i = 1; i <= nbark; i ++)
+		/*for (integer i = 1; i <= nbark; i ++)
 			auditoryFilter [i] /= filterArea;*/
 		autoNUMvector <double> rFreqs (1, nbark + 1);
-		autoNUMvector <long> iFreqs (1, nbark + 1);
-		for (long i = 1; i <= nbark + 1; i ++) {
+		autoNUMvector <integer> iFreqs (1, nbark + 1);
+		for (integer i = 1; i <= nbark + 1; i ++) {
 			rFreqs [i] = Excitation_barkToHertz (dbark * (i - 1));
 			iFreqs [i] = Sampled_xToNearestIndex (me, rFreqs [i]);
 		}
 		autoNUMvector <double> inSig (1, nbark);
-		for (long i = 1; i <= nbark; i ++) {
-			long low = iFreqs [i], high = iFreqs [i + 1] - 1;
+		for (integer i = 1; i <= nbark; i ++) {
+			integer low = iFreqs [i], high = iFreqs [i + 1] - 1;
 			if (low < 1) low = 1;
 			if (high > my nx) high = my nx;
-			for (long j = low; j <= high; j ++) {
+			for (integer j = low; j <= high; j ++) {
 				inSig [i] += re [j] * re [j] + im [j] * im [j];   // Pa2 s2
 			}
 
@@ -54,14 +54,14 @@ autoExcitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 		/* Convolution with auditory (masking) filter. */
 
 		autoNUMvector <double> outSig (1, 2 * nbark);
-		for (long i = 1; i <= nbark; i ++) {
-			for (long j = 1; j <= nbark; j ++) {
+		for (integer i = 1; i <= nbark; i ++) {
+			for (integer j = 1; j <= nbark; j ++) {
 				outSig [i + j] += inSig [i] * auditoryFilter [j];
 			}
 		}
 
 		autoExcitation thee = Excitation_create (dbark, nbark);
-		for (long i = 1; i <= nbark; i ++) {
+		for (integer i = 1; i <= nbark; i ++) {
 			thy z [1] [i] = Excitation_soundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.get(), i));
 		}
 

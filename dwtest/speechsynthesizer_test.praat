@@ -3,11 +3,11 @@
 
 # show memory leaks of espeak 
 
-Create SpeechSynthesizer: "English", "default"
+synth = Create SpeechSynthesizer: "English (Great Britain)", "Female1"
 numberOfTries = 500
 table = Create Table with column names: "m", numberOfTries, "run bytes"
 for i to numberOfTries
-	selectObject: "SpeechSynthesizer English_default"
+	selectObject: synth
 	s = To Sound: "This is some text.", "no"
 	removeObject: s
 	@get_memoryTotalCreated
@@ -17,13 +17,13 @@ for i to numberOfTries
 endfor
 selectObject: table
 Append column: "diff"
-Formula (column range): "diff", "diff", "self[row,""bytes""]-self[row-1,""bytes""]"
+Formula (column range): "diff", "diff", ~ self [row, "bytes"] - self [row-1, "bytes"]
 result = Extract rows where: "row > 1"
 removeObject: table
 selectObject: result
 minimum = Get minimum: "diff"
 Append column: "rdiff"
-Formula (column range): "rdiff", "rdiff",  "self[""diff""] - minimum"
+Formula (column range): "rdiff", "rdiff", ~ self ["diff"] - minimum
 
 Erase all
 @asSpectrum: result, 3
@@ -66,7 +66,7 @@ procedure asSpectrum: .table, .column
 	.sound = Extract one channel: .column
 	Override sampling frequency: 1000
 	.spectrum = To Spectrum: "no"
-	Formula: "if col > 1 then self else 0 fi"
+	Formula: ~ if col > 1 then self else 0 fi
 	removeObject: .tor, .mat, .matt, .sound1
 	selectObject: .spectrum	
 endproc

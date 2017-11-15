@@ -2,7 +2,7 @@
 #define _Sound_and_Spectrogram_h_
 /* Sound_and_Spectrogram.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "Sound_and_Spectrogram_enums.h"
 
 autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, double fmax,
-	double minimumTimeStep1, double minimumFreqStep1, enum kSound_to_Spectrogram_windowShape windowShape,
+	double minimumTimeStep1, double minimumFreqStep1, kSound_to_Spectrogram_windowShape windowShape,
 	double maximumTimeOversampling, double maximumFreqOversampling);
 
 autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp);

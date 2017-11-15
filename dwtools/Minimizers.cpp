@@ -77,13 +77,13 @@ void Minimizer_init (Minimizer me, long nParameters, Daata object) {
 	my object = object;
 	my minimum = 1.0e30;
 	my afterHook = classMinimizer_afterHook;
-	Minimizer_reset (me, nullptr); /* added 27/11/97 */
+	Minimizer_reset (me, nullptr);   // added 27/11/97
 }
 
 static void monitor_off (Minimizer me) {
 	Melder_monitor (1.1);
 	if (my gmonitor) {
-		Graphics_clearWs (my gmonitor); // DON'T forget (my gmonitor)
+		Graphics_clearWs (my gmonitor);   // DON'T forget (my gmonitor)
 		my gmonitor = nullptr;
 	}
 }
@@ -98,8 +98,8 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 
 		if (my iteration + maxNumOfIterations > my maxNumOfIterations) {
 			my maxNumOfIterations += maxNumOfIterations;
-			if (my history) { // clumsy because vector must have been allocated  before one can append
-				NUMvector_append<double> (& my history, 1, & my maxNumOfIterations);
+			if (my history) {   // clumsy because vector must have been allocated  before one can append
+				NUMvector_append <double> (& my history, 1, & my maxNumOfIterations);
 			} else {
 				my history = NUMvector<double> (1, my maxNumOfIterations);
 			}
@@ -107,7 +107,7 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 		if (monitor) {
 			my gmonitor = (Graphics) Melder_monitor (0.0, U"Starting...");
 		}
-		my start = 1; /* for my after() */
+		my start = 1;   // for my after()
 		my v_minimize ();
 		if (monitor) {
 			monitor_off (me);
@@ -116,9 +116,9 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 			U" iterations and ", my funcCalls, U" function calls.");
 	} catch (MelderError) {
 		if (monitor) {
-			monitor_off (me);    // temporarily until better monitor facilities
+			monitor_off (me);   // temporarily until better monitor facilities
 		}
-		Melder_clearError(); // memory error in history mechanism is not fatal
+		Melder_clearError();   // memory error in history mechanism is not fatal
 	}
 }
 

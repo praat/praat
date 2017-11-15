@@ -235,7 +235,7 @@ void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerView
 }
 
 void structPicture :: v_destroy () noexcept {
-	Picture_erase (this);
+	//Picture_erase (this);   // dangerous if called from automatic destructor
 	Picture_Parent :: v_destroy ();
 }
 

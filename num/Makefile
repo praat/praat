@@ -1,5 +1,5 @@
 # Makefile of the library "num"
-# Paul Boersma, 24 August 2013
+# Paul Boersma, 8 August 2017
 
 include ../makefile.defs
 
@@ -21,4 +21,4 @@ libnum.a: $(OBJECTS)
 	$(AR) cq libnum.a $(OBJECTS)
 	$(RANLIB) libnum.a
 
-$(OBJECTS): *.h ../external/gsl/*.h ../external/glpk/*.h ../sys/*.h ../dwsys/*.h
+$(OBJECTS): ../external/gsl/*.h ../external/glpk/*.h ../sys/*.h ../dwsys/*.h

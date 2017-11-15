@@ -81,16 +81,16 @@ void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphi
 		tmin = my xmin;
 		tmax = my xmax;
 	}
-	long itmin, itmax;
+	integer itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
 		return;
 	}
 	if (fmax <= fmin) {
 		double f1max, f2min; 
 		autoNUMvector<double> f1 (itmin, itmax), f2 (itmin, itmax);
-		for (long iframe = itmin; iframe <= itmax; iframe++) {
-			f1[iframe] = my d_frames[iframe].frequencies[1];
-			f2[iframe] = my d_frames[iframe].frequencies[my d_frames[iframe].numberOfFrequencies];
+		for (integer iframe = itmin; iframe <= itmax; iframe ++) {
+			f1 [iframe] = my d_frames [iframe]. frequencies [1];
+			f2 [iframe] = my d_frames [iframe]. frequencies [my d_frames[iframe]. numberOfFrequencies];
 		}
 		NUMvector_extrema (f1.peek(), itmin, itmax, & fmin, & f1max);
 		NUMvector_extrema (f2.peek(), itmin, itmax, & f2min, & fmax);
@@ -102,7 +102,7 @@ void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphi
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
-	for (long iframe = itmin; iframe <= itmax; iframe++) {
+	for (integer iframe = itmin; iframe <= itmax; iframe ++) {
 		LineSpectralFrequencies_Frame lsf = & my d_frames[iframe];
 		double x = Sampled_indexToX (me, iframe);
 		for (long ifreq = 1; ifreq <= lsf -> numberOfFrequencies; ifreq++) {

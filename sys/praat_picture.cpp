@@ -21,13 +21,14 @@
 #include "Printer.h"
 #include "machine.h"
 #include "Formula.h"
+#include "site.h"
 
 #include "GuiP.h"
 
 static bool praat_mouseSelectsInnerViewport;
 
 void praat_picture_prefs () {
-	Preferences_addEnum (U"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, kGraphics_font_DEFAULT);
+	Preferences_addEnum (U"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, kGraphics_font::DEFAULT);
 	Preferences_addInt (U"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10);
 	Preferences_addBool (U"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport, false);
 }
@@ -40,13 +41,13 @@ static autoPicture praat_picture;
 
 /***** "Font" MENU: font part *****/
 
-static GuiMenuItem praatButton_fonts [1 + kGraphics_font_MAX];
+static GuiMenuItem praatButton_fonts [1 + (int) kGraphics_font::MAX];
 
 static void updateFontMenu () {
 	if (! theCurrentPraatApplication -> batch) {
-		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
-		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;
-		for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
+		if (theCurrentPraatPicture -> font < (int) kGraphics_font::MIN) theCurrentPraatPicture -> font = (int) kGraphics_font::MIN;
+		if (theCurrentPraatPicture -> font > (int) kGraphics_font::MAX) theCurrentPraatPicture -> font = (int) kGraphics_font::MAX;
+		for (int i = (int) kGraphics_font::MIN; i <= (int) kGraphics_font::MAX; i ++) {
 			GuiMenuItem_check (praatButton_fonts [i], theCurrentPraatPicture -> font == i);
 		}
 	}
@@ -56,15 +57,15 @@ static void setFont (kGraphics_font font) {
 		autoPraatPicture picture;
 		Graphics_setFont (GRAPHICS, font);
 	}
-	theCurrentPraatPicture -> font = font;
+	theCurrentPraatPicture -> font = (int) font;
 	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
 		updateFontMenu ();
 	}
 }
-DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font_TIMES);     END }
-DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font_HELVETICA); END }
-DIRECT (GRAPHICS_Palatino)  { setFont (kGraphics_font_PALATINO);  END }
-DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font_COURIER);   END }
+DIRECT (GRAPHICS_Times)     { setFont (kGraphics_font::TIMES);     END }
+DIRECT (GRAPHICS_Helvetica) { setFont (kGraphics_font::HELVETICA); END }
+DIRECT (GRAPHICS_Palatino)  { setFont (kGraphics_font::PALATINO);  END }
+DIRECT (GRAPHICS_Courier)   { setFont (kGraphics_font::COURIER);   END }
 
 /***** "Font" MENU: size part *****/
 
@@ -96,9 +97,9 @@ DIRECT (GRAPHICS_14) { setFontSize (14); END }
 DIRECT (GRAPHICS_18) { setFontSize (18); END }
 DIRECT (GRAPHICS_24) { setFontSize (24); END }
 FORM (GRAPHICS_Font_size, U"Praat picture: Font size", U"Font menu") {
-	NATURAL4 (fontSize, U"Font size (points)", U"10")
+	NATURAL (fontSize, U"Font size (points)", U"10")
 OK
-	SET_INTEGER (U"Font size", (long) theCurrentPraatPicture -> fontSize);
+	SET_INTEGER (fontSize, (integer) theCurrentPraatPicture -> fontSize);
 DO
 	setFontSize (fontSize);
 END }
@@ -157,30 +158,30 @@ DIRECT (GRAPHICS_MouseSelectsOuterViewport) {
 END }
 
 FORM (GRAPHICS_SelectInnerViewport, U"Praat picture: Select inner viewport", U"Select inner viewport...") {
-	LABEL (U"", U"The viewport is the selected rectangle in the Picture window.")
-	LABEL (U"", U"It is where your next drawing will appear.")
-	LABEL (U"", U"The rectangle you select here will not include the margins.")
-	LABEL (U"", U"")
-	REAL4 (left, U"left Horizontal range (inches)", U"0.0")
-	REAL4 (right, U"right Horizontal range (inches)", U"6.0")
-	REAL4 (top, U"left Vertical range (inches)", U"0.0")
-	REAL4 (bottom, U"right Vertical range (inches)", U"6.0")
+	LABEL (U"The viewport is the selected rectangle in the Picture window.")
+	LABEL (U"It is where your next drawing will appear.")
+	LABEL (U"The rectangle you select here will not include the margins.")
+	LABEL (U"")
+	REAL (left, U"left Horizontal range (inches)", U"0.0")
+	REAL (right, U"right Horizontal range (inches)", U"6.0")
+	REAL (top, U"left Vertical range (inches)", U"0.0")
+	REAL (bottom, U"right Vertical range (inches)", U"6.0")
 OK
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC))
 		ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
 	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
 		xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-	SET_REAL (U"left Horizontal range", theCurrentPraatPicture -> x1NDC + xmargin)
-	SET_REAL (U"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin)
-	SET_REAL (U"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin)
-	SET_REAL (U"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin)
+	SET_REAL (left, theCurrentPraatPicture -> x1NDC + xmargin)
+	SET_REAL (right, theCurrentPraatPicture -> x2NDC - xmargin)
+	SET_REAL (top, 12 - theCurrentPraatPicture -> y2NDC + ymargin)
+	SET_REAL (bottom, 12 - theCurrentPraatPicture -> y1NDC - ymargin)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	trace (U"1: xmargin ", xmargin, U" ymargin ", ymargin);
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
-		long x1DC, x2DC, y1DC, y2DC;
+		integer x1DC, x2DC, y1DC, y2DC;
 		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
@@ -228,19 +229,19 @@ DO
 END }
 
 FORM (GRAPHICS_SelectOuterViewport, U"Praat picture: Select outer viewport", U"Select outer viewport...") {
-	LABEL (U"", U"The viewport is the selected rectangle in the Picture window.")
-	LABEL (U"", U"It is where your next drawing will appear.")
-	LABEL (U"", U"The rectangle you select here will include the margins.")
-	LABEL (U"", U"")
-	REAL4 (left, U"left Horizontal range (inches)", U"0.0")
-	REAL4 (right, U"right Horizontal range (inches)", U"6.0")
-	REAL4 (top, U"left Vertical range (inches)", U"0.0")
-	REAL4 (bottom, U"right Vertical range (inches)", U"6.0")
+	LABEL (U"The viewport is the selected rectangle in the Picture window.")
+	LABEL (U"It is where your next drawing will appear.")
+	LABEL (U"The rectangle you select here will include the margins.")
+	LABEL (U"")
+	REAL (left, U"left Horizontal range (inches)", U"0.0")
+	REAL (right, U"right Horizontal range (inches)", U"6.0")
+	REAL (top, U"left Vertical range (inches)", U"0.0")
+	REAL (bottom, U"right Vertical range (inches)", U"6.0")
 OK
-	SET_REAL (U"left Horizontal range", theCurrentPraatPicture -> x1NDC);
-	SET_REAL (U"right Horizontal range", theCurrentPraatPicture -> x2NDC);
-	SET_REAL (U"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC);
-	SET_REAL (U"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
+	SET_REAL (left, theCurrentPraatPicture -> x1NDC)
+	SET_REAL (right, theCurrentPraatPicture -> x2NDC)
+	SET_REAL (top, 12 - theCurrentPraatPicture -> y2NDC)
+	SET_REAL (bottom, 12 - theCurrentPraatPicture -> y1NDC)
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Viewport commands are not available inside manuals.");
 	if (left == right) {
@@ -273,23 +274,23 @@ DO
 END }
 
 FORM (GRAPHICS_ViewportText, U"Praat picture: Viewport text", U"Viewport text...") {
-	RADIO4x (horizontalAlignment, U"Horizontal alignment", 2, 0)
+	RADIOx (horizontalAlignment, U"Horizontal alignment", 2, 0)
 		RADIOBUTTON (U"Left")
 		RADIOBUTTON (U"Centre")
 		RADIOBUTTON (U"Right")
-	RADIO4x (verticalAlignment, U"Vertical alignment", 2, 0)
+	RADIOx (verticalAlignment, U"Vertical alignment", 2, 0)
 		RADIOBUTTON (U"Bottom")
 		RADIOBUTTON (U"Half")
 		RADIOBUTTON (U"Top")
-	REAL4 (rotation, U"Rotation (degrees)", U"0")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (rotation, U"Rotation (degrees)", U"0")
+	TEXTFIELD (text, U"Text:", U"")
 OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	autoPraatPicture picture;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	Graphics_setWindow (GRAPHICS, 0, 1, 0, 1);
-	Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+	Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 	Graphics_setTextRotation (GRAPHICS, rotation);
 	Graphics_text (GRAPHICS, horizontalAlignment == 0 ? 0.0 : horizontalAlignment == 1 ? 0.5 : 1.0,
 		verticalAlignment == 0 ? 0.0 : verticalAlignment == 1 ? 0.5 : 1.0, text);
@@ -345,9 +346,9 @@ DIRECT (GRAPHICS_Dashed_line)        { setLineType (Graphics_DASHED);        END
 DIRECT (GRAPHICS_Dashed_dotted_line) { setLineType (Graphics_DASHED_DOTTED); END }
 
 FORM (GRAPHICS_Line_width, U"Praat picture: Line width", nullptr) {
-	POSITIVE4 (lineWidth, U"Line width", U"1.0")
+	POSITIVE (lineWidth, U"Line width", U"1.0")
 OK
-	SET_REAL (U"Line width", theCurrentPraatPicture -> lineWidth);
+	SET_REAL (lineWidth, theCurrentPraatPicture -> lineWidth)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -357,9 +358,9 @@ DO
 END }
 
 FORM (GRAPHICS_Arrow_size, U"Praat picture: Arrow size", nullptr) {
-	POSITIVE4 (arrowSize, U"Arrow size", U"1.0")
+	POSITIVE (arrowSize, U"Arrow size", U"1.0")
 OK
-	SET_REAL (U"Arrow size", theCurrentPraatPicture -> arrowSize);
+	SET_REAL (arrowSize, theCurrentPraatPicture -> arrowSize)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -369,11 +370,11 @@ DO
 END }
 
 FORM (GRAPHICS_Speckle_size, U"Praat picture: Speckle size", nullptr) {
-	LABEL (U"", U"Here you determine the diameter (in millimetres)")
-	LABEL (U"", U"of the dots that are drawn by \"speckle\" commands.")
-	POSITIVE4 (speckleSize, U"Speckle size (mm)", U"1.0")
+	LABEL (U"Here you determine the diameter (in millimetres)")
+	LABEL (U"of the dots that are drawn by \"speckle\" commands.")
+	POSITIVE (speckleSize, U"Speckle size (mm)", U"1.0")
 OK
-	SET_REAL (U"Speckle size", theCurrentPraatPicture -> speckleSize);
+	SET_REAL (speckleSize, theCurrentPraatPicture -> speckleSize)
 DO
 	{// scope
 		autoPraatPicture picture;
@@ -411,10 +412,9 @@ DIRECT (GRAPHICS_Silver)  { setColour (Graphics_SILVER);  END }
 DIRECT (GRAPHICS_Grey)    { setColour (Graphics_GREY);    END }
 
 FORM (GRAPHICS_Colour, U"Praat picture: Colour", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.0")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.0")
 OK
 DO
-	Graphics_Colour colour = GET_COLOUR (U"Colour");
 	{// scope
 		autoPraatPicture picture;
 		Graphics_setColour (GRAPHICS, colour);
@@ -427,145 +427,65 @@ END }
 
 /***** "File" MENU *****/
 
-FORM_READ (GRAPHICS_Picture_readFromPraatPictureFile, U"Read picture from praat picture file", 0, false) {
+FORM_READ (GRAPHICS_Picture_readFromPraatPictureFile, U"Read picture from praat picture file", nullptr, false) {
 	Picture_readFromPraatPictureFile (praat_picture.get(), file);
 END }
 
-static void GRAPHICS_Picture_writeToEpsFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as EPS file",
-		GRAPHICS_Picture_writeToEpsFile, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { 0 };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture.get(), file, true, false);
-	}
-}
-/*FORM_SAVE (GRAPHICS_Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", 0, U"praat.eps")
-	if (! Picture_writeToEpsFile (praat_picture, fileName, true, false)) return 0;
-END*/
+FORM_SAVE (GRAPHICS_Picture_writeToEpsFile, U"Save picture as Encapsulated PostScript file", nullptr, U"praat.eps") {
+	Picture_writeToEpsFile (praat_picture.get(), file, true, false);
+END }
 
-static void GRAPHICS_Picture_writeToFontlessEpsFile_xipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as fontless EPS file",
-		GRAPHICS_Picture_writeToFontlessEpsFile_xipa, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { 0 };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture.get(), file, false, false);
-	}
-}
+FORM_SAVE (GRAPHICS_Picture_writeToFontlessEpsFile_xipa, U"Save as fontless EPS file", nullptr, U"praat.eps") {
+	Picture_writeToEpsFile (praat_picture.get(), file, false, false);
+END }
 
-static void GRAPHICS_Picture_writeToFontlessEpsFile_silipa (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as fontless EPS file",
-		GRAPHICS_Picture_writeToFontlessEpsFile_silipa, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.eps");
-	} else { MelderFile file; structMelderFile file2 { 0 };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToEpsFile (praat_picture.get(), file, false, true);
-	}
-}
+FORM_SAVE (GRAPHICS_Picture_writeToFontlessEpsFile_silipa, U"Save as fontless EPS file", nullptr, U"praat.eps") {
+	Picture_writeToEpsFile (praat_picture.get(), file, false, true);
+END }
 
-static void GRAPHICS_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PDF file",
-		GRAPHICS_Picture_writeToPdfFile, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.pdf");
-	} else { MelderFile file; structMelderFile file2 { 0 };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPdfFile (praat_picture.get(), file);
-		} else {
-			try {
-				//autoPraatPicture picture;
-				autoGraphics graphics = Graphics_create_pdffile (file, 300, NUMundefined, 10.24, NUMundefined, 7.68);
-				Graphics_play (GRAPHICS, graphics.get());
-			} catch (MelderError) {
-				Melder_throw (U"Picture not written to PDF file ", file, U".");
-			}
+FORM_SAVE (GRAPHICS_Picture_writeToPdfFile, U"Save as PDF file", nullptr, U"praat.pdf") {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		Picture_writeToPdfFile (praat_picture.get(), file);
+	} else {
+		try {
+			//autoPraatPicture picture;
+			autoGraphics graphics = Graphics_create_pdffile (file, 300, undefined, 10.24, undefined, 7.68);
+			Graphics_play (GRAPHICS, graphics.get());
+		} catch (MelderError) {
+			Melder_throw (U"Picture not written to PDF file ", file, U".");
 		}
 	}
-}
+END }
 
-static void GRAPHICS_Picture_writeToPngFile_300 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PNG file",
-		GRAPHICS_Picture_writeToPngFile_300, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.png");
-	} else { MelderFile file; structMelderFile file2 { 0 };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPngFile_300 (praat_picture.get(), file);
-		} else {
-			try {
-				autoGraphics graphics = Graphics_create_pngfile (file, 300, 0.0, 10.24, 0.0, 7.68);
-				Graphics_play (GRAPHICS, graphics.get());
-			} catch (MelderError) {
-				Melder_throw (U"Picture not written to PNG file ", file, U".");
-			}
+FORM_SAVE (GRAPHICS_Picture_writeToPngFile_300, U"Save as PNG file", nullptr, U"praat.png") {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		Picture_writeToPngFile_300 (praat_picture.get(), file);
+	} else {
+		try {
+			autoGraphics graphics = Graphics_create_pngfile (file, 300, 0.0, 10.24, 0.0, 7.68);
+			Graphics_play (GRAPHICS, graphics.get());
+		} catch (MelderError) {
+			Melder_throw (U"Picture not written to PNG file ", file, U".");
 		}
 	}
-}
+END }
 
-static void GRAPHICS_Picture_writeToPngFile_600 (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as PNG file",
-		GRAPHICS_Picture_writeToPngFile_600, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.png");
-	} else { MelderFile file; structMelderFile file2 { 0 };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		if (theCurrentPraatPicture == & theForegroundPraatPicture) {
-			Picture_writeToPngFile_600 (praat_picture.get(), file);
-		} else {
-			try {
-				autoGraphics graphics = Graphics_create_pngfile (file, 600, 0.0, 10.24, 0.0, 7.68);
-				Graphics_play (GRAPHICS, graphics.get());
-			} catch (MelderError) {
-				Melder_throw (U"Picture not written to PNG file ", file, U".");
-			}
+FORM_SAVE (GRAPHICS_Picture_writeToPngFile_600, U"Save as PNG file", nullptr, U"praat.png") {
+	if (theCurrentPraatPicture == & theForegroundPraatPicture) {
+		Picture_writeToPngFile_600 (praat_picture.get(), file);
+	} else {
+		try {
+			autoGraphics graphics = Graphics_create_pngfile (file, 600, 0.0, 10.24, 0.0, 7.68);
+			Graphics_play (GRAPHICS, graphics.get());
+		} catch (MelderError) {
+			Melder_throw (U"Picture not written to PNG file ", file, U".");
 		}
 	}
-}
+END }
 
-static void GRAPHICS_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
-	Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-{
-	static UiForm dia;
-	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as Praat picture file",
-		GRAPHICS_Picture_writeToPraatPictureFile, nullptr, invokingButtonTitle, nullptr);
-	if (narg < 0) UiForm_info (dia, narg); else if (! sendingForm && ! args && ! sendingString) {
-		UiOutfile_do (dia, U"praat.prapic");
-	} else { MelderFile file; structMelderFile file2 { 0 };
-		if (! args && ! sendingString) file = UiFile_getFile (dia);
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-		Picture_writeToPraatPictureFile (praat_picture.get(), file);
-	}
-}
+FORM_SAVE (GRAPHICS_Picture_writeToPraatPictureFile, U"Save as Praat picture file", nullptr, U"praat.prapic") {
+	Picture_writeToPraatPictureFile (praat_picture.get(), file);
+END }
 
 #ifdef macintosh
 DIRECT (GRAPHICS_Page_setup) {
@@ -573,29 +493,68 @@ DIRECT (GRAPHICS_Page_setup) {
 END }
 #endif
 
-DIRECT (GRAPHICS_PostScript_settings) {
-	Printer_postScriptSettings ();
-END }
+FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript settings...") {
+	#if defined (_WIN32)
+		BOOLEAN (allowDirectPostscript, U"Allow direct PostScript", true);
+	#endif
+	RADIO_ENUM (greyResolution, U"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
+	#if defined (UNIX)
+		RADIO_ENUM (paperSize, U"Paper size", kGraphicsPostscript_paperSize, DEFAULT)
+		RADIO_ENUM (orientation, U"Orientation", kGraphicsPostscript_orientation, DEFAULT)
+		POSITIVE (magnification, U"Magnification", U"1.0");
+		#if defined (linux)
+			TEXTFIELD (printCommand, U"Print command:", U"lpr %s")
+		#else
+			TEXTFIELD (printCommand, U"Print command:", U"lp -c %s")
+		#endif
+	#endif
+	RADIO_ENUM (fontChoiceStrategy, U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT)
+OK
+	#if defined (_WIN32)
+		SET_BOOLEAN (allowDirectPostscript, thePrinter. allowDirectPostScript)
+	#endif
+	SET_ENUM (greyResolution, kGraphicsPostscript_spots, thePrinter. spots)
+	#if defined (UNIX)
+		SET_ENUM (paperSize, kGraphicsPostscript_paperSize, thePrinter. paperSize)
+		SET_ENUM (orientation, kGraphicsPostscript_orientation, thePrinter. orientation)
+		SET_REAL (magnification, thePrinter. magnification)
+		SET_STRING (printCommand, Site_getPrintCommand ())
+	#endif
+	SET_ENUM (fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy)
+DO
+	INFO_NONE
+		#if defined (_WIN32)
+			thePrinter. allowDirectPostScript = allowDirectPostscript;
+		#endif
+		thePrinter. spots = greyResolution;
+		#if defined (UNIX)
+			thePrinter. paperSize = paperSize;
+			if (thePrinter. paperSize == kGraphicsPostscript_paperSize::A3) {
+				thePrinter. paperWidth = 842 * thePrinter. resolution / 72;
+				thePrinter. paperHeight = 1191 * thePrinter. resolution / 72;
+			} else if (thePrinter. paperSize == kGraphicsPostscript_paperSize::US_LETTER) {
+				thePrinter. paperWidth = 612 * thePrinter. resolution / 72;
+				thePrinter. paperHeight = 792 * thePrinter. resolution / 72;
+			} else {
+				thePrinter. paperWidth = 595 * thePrinter. resolution / 72;
+				thePrinter. paperHeight = 842 * thePrinter. resolution / 72;
+			}
+			thePrinter. orientation = orientation;
+			thePrinter. magnification = magnification;
+			Site_setPrintCommand (printCommand);
+		#endif
+		thePrinter. fontChoiceStrategy = fontChoiceStrategy;
+	INFO_NONE_END
+}
 
 DIRECT (GRAPHICS_Print) {
 	Picture_print (praat_picture.get());
 END }
 
 #ifdef _WIN32
-	static void GRAPHICS_Picture_writeToWindowsMetafile (UiForm sendingForm, int /* narg */, Stackel args, const char32 *sendingString,
-		Interpreter /* interpreter */, const char32 *invokingButtonTitle, bool /* modified */, void *)
-	{
-		static UiForm dia;
-		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, U"Save as Windows metafile",
-			GRAPHICS_Picture_writeToWindowsMetafile, nullptr, invokingButtonTitle, nullptr);
-		if (! sendingForm && ! args && ! sendingString) {
-			UiOutfile_do (dia, U"praat.emf");
-		} else { MelderFile file; structMelderFile file2 { 0 };
-			if (! args && ! sendingString) file = UiFile_getFile (dia);
-			else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
-			Picture_writeToWindowsMetafile (praat_picture.get(), file);
-		}
-	}
+	FORM_SAVE (GRAPHICS_Picture_writeToWindowsMetafile, U"Save as Windows metafile", nullptr, U"praat.emf") {
+		Picture_writeToWindowsMetafile (praat_picture.get(), file);
+	END }
 #endif
 
 #if defined (_WIN32) || defined (macintosh)
@@ -625,10 +584,10 @@ DIRECT (GRAPHICS_Erase_all) {
 		Graphics_Colour colour = GRAPHICS -> colour;
 		Graphics_setColour (GRAPHICS, Graphics_WHITE);
 		double x1, y1, x2, y2;
-		//printf ("%ld %ld %ld %ld\n", GRAPHICS -> d_x1DC, GRAPHICS -> d_y1DC, GRAPHICS -> d_x2DC, GRAPHICS -> d_y2DC);
+		//Melder_casual (GRAPHICS -> d_x1DC, U" ", GRAPHICS -> d_y1DC, U" ", GRAPHICS -> d_x2DC, U" ", GRAPHICS -> d_y2DC);
 		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x1DC, GRAPHICS -> d_y1DC, & x1, & y1);
 		Graphics_DCtoWC (GRAPHICS, GRAPHICS -> d_x2DC, GRAPHICS -> d_y2DC, & x2, & y2);
-		//printf ("%f %f %f %f\n", x1, y1, x2, y2);
+		//Melder_casual (x1, U" ", y1, U" ", x2, U" ", y2);
 		Graphics_fillRectangle (GRAPHICS, x1, x2, y1, y2);
 		Graphics_setColour (GRAPHICS, colour);
 		#endif
@@ -638,18 +597,14 @@ END }
 /***** "World" MENU *****/
 
 FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
-	REAL4 (horizontalPosition, U"Horizontal position", U"0.0")
-	OPTIONMENU4x (horizontalAlignment, U"Horizontal alignment", 2, 0)
-		OPTION (U"Left")
-		OPTION (U"Centre")
-		OPTION (U"Right")
-	REAL4 (verticalPosition, U"Vertical position", U"0.0")
-	OPTIONMENU4x (verticalAlignment, U"Vertical alignment", 2, 0)
+	REAL (horizontalPosition, U"Horizontal position", U"0.0")
+	OPTIONMENU_ENUM (horizontalAlignment, U"Horizontal alignment", kGraphics_horizontalAlignment, LEFT)
+	REAL (verticalPosition, U"Vertical position", U"0.0")
+	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
 		OPTION (U"Bottom")
 		OPTION (U"Half")
 		OPTION (U"Top")
-	LABEL (U"", U"Text:")
-	TEXTFIELD4 (text, U"text", U"")
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -661,27 +616,26 @@ DO
 }
 
 FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", nullptr) {
-	REAL4 (horizontalPosition, U"Horizontal position", U"0.0")
-	OPTIONMENU4x (horizontalAlignment, U"Horizontal alignment", 2, 0)
+	REAL (horizontalPosition, U"Horizontal position", U"0.0")
+	OPTIONMENUx (horizontalAlignment, U"Horizontal alignment", 2, 0)
 		OPTION (U"Left")
 		OPTION (U"Centre")
 		OPTION (U"Right")
-	REAL4 (verticalPosition, U"Vertical position", U"0.0")
-	OPTIONMENU4x (verticalAlignment, U"Vertical alignment", 2, 0)
+	REAL (verticalPosition, U"Vertical position", U"0.0")
+	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
 		OPTION (U"Bottom")
 		OPTION (U"Half")
 		OPTION (U"Top")
-	OPTIONMENU_ENUM4 (font, U"Font", kGraphics_font, DEFAULT)
-	NATURAL4 (fontSize, U"Font size", U"10")
-	SENTENCE4 (rotation, U"Rotation (degrees or dx;dy)", U"0")
-	LABEL (U"", U"Text:")
-	TEXTFIELD4 (text, U"text", U"")
+	OPTIONMENU_ENUM (font, U"Font", kGraphics_font, DEFAULT)
+	NATURAL (fontSize, U"Font size", U"10")
+	SENTENCE (rotation, U"Rotation (degrees or dx;dy)", U"0")
+	TEXTFIELD (text, U"Text:", U"")
 OK
 DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
 	int currentSize = Graphics_inqFontSize (GRAPHICS);
 	GRAPHICS_NONE
-		Graphics_setTextAlignment (GRAPHICS, horizontalAlignment, verticalAlignment);
+		Graphics_setTextAlignment (GRAPHICS, (kGraphics_horizontalAlignment) horizontalAlignment, verticalAlignment);
 		Graphics_setInner (GRAPHICS);
 		Graphics_setFont (GRAPHICS, (kGraphics_font) font);
 		Graphics_setFontSize (GRAPHICS, fontSize);
@@ -699,10 +653,10 @@ DO
 }
 
 FORM (GRAPHICS_DrawLine, U"Praat picture: Draw line", nullptr) {
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (toY, U"To y", U"1.0")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (toY, U"To y", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -713,10 +667,10 @@ DO
 }
 
 FORM (GRAPHICS_DrawArrow, U"Praat picture: Draw arrow", nullptr) {
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (toY, U"To y", U"1.0")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (toY, U"To y", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -727,10 +681,10 @@ DO
 }
 
 FORM (GRAPHICS_DrawDoubleArrow, U"Praat picture: Draw double arrow", nullptr) {
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (toY, U"To y", U"1.0")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (toY, U"To y", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -744,24 +698,23 @@ Thing_define (PraatPictureFunction, Daata) {
 	// new data:
 	public:
 		double xmin, xmax, dx, x1;
-		long nx;
+		integer nx;
 	// overridden methods:
-		virtual bool v_hasGetXmin () { return true; }   virtual double v_getXmin ()        { return xmin; }
-		virtual bool v_hasGetXmax () { return true; }   virtual double v_getXmax ()        { return xmax; }
-		virtual bool v_hasGetNx   () { return true; }   virtual double v_getNx   ()        { return nx; }
-		virtual bool v_hasGetDx   () { return true; }   virtual double v_getDx   ()        { return dx; }
-		virtual bool v_hasGetX    () { return true; }   virtual double v_getX    (long ix) { return x1 + (ix - 1) * dx; }
+		virtual bool v_hasGetXmin () { return true; }   virtual double v_getXmin ()           { return xmin; }
+		virtual bool v_hasGetXmax () { return true; }   virtual double v_getXmax ()           { return xmax; }
+		virtual bool v_hasGetNx   () { return true; }   virtual double v_getNx   ()           { return nx; }
+		virtual bool v_hasGetDx   () { return true; }   virtual double v_getDx   ()           { return dx; }
+		virtual bool v_hasGetX    () { return true; }   virtual double v_getX    (integer ix) { return x1 + (ix - 1) * dx; }
 };
 Thing_implement (PraatPictureFunction, Daata, 0);
 
 FORM (GRAPHICS_DrawFunction, U"Praat picture: Draw function", nullptr) {
-	LABEL (U"", U"This command assumes that the x and y axes")
-	LABEL (U"", U"have been set by a Draw command or by \"Axes...\".")
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (toX, U"To x", U"0.0 (= all)")
-	NATURAL4 (numberOfHorizontalSteps, U"Number of horizontal steps", U"1000")
-	LABEL (U"", U"Formula:")
-	TEXTFIELD4 (formula, U"formula", U"x^2 - x^4")
+	LABEL (U"This command assumes that the x and y axes")
+	LABEL (U"have been set by a Draw command or by \"Axes...\".")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"0.0 (= all)")
+	NATURAL (numberOfHorizontalSteps, U"Number of horizontal steps", U"1000")
+	TEXTFIELD (formula, U"Formula:", U"x^2 - x^4")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
@@ -776,10 +729,10 @@ DO
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (numberOfHorizontalSteps - 1);
 	Formula_compile (interpreter, function.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-	for (long i = 1; i <= numberOfHorizontalSteps; i ++) {
-		struct Formula_Result result;
+	for (integer i = 1; i <= numberOfHorizontalSteps; i ++) {
+		Formula_Result result;
 		Formula_run (1, i, & result);
-		y [i] = result. result.numericResult;
+		y [i] = result. numericResult;
 	}
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
@@ -789,10 +742,10 @@ DO
 }
 
 FORM (GRAPHICS_DrawRectangle, U"Praat picture: Draw rectangle", nullptr) {
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toY, U"To y", U"1.0")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -803,27 +756,27 @@ DO
 }
 
 FORM (GRAPHICS_PaintRectangle, U"Praat picture: Paint rectangle", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toY, U"To y", U"1.0")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillRectangle (GRAPHICS, fromX, toX, fromY, toY);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
 }
 
 FORM (GRAPHICS_DrawRoundedRectangle, U"Praat picture: Draw rounded rectangle", nullptr) {
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toY, U"To y", U"1.0")
-	POSITIVE4 (radius, U"Radius (mm)", U"3.0")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
+	POSITIVE (radius, U"Radius (mm)", U"3.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -834,28 +787,28 @@ DO
 }
 
 FORM (GRAPHICS_PaintRoundedRectangle, U"Praat picture: Paint rounded rectangle", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toY, U"To y", U"1.0")
-	POSITIVE4 (radius, U"Radius (mm)", U"3.0")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
+	POSITIVE (radius, U"Radius (mm)", U"3.0")
 	OK
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillRoundedRectangle (GRAPHICS, fromX, toX, fromY, toY, radius);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
 }
 
 FORM (GRAPHICS_DrawArc, U"Praat picture: Draw arc", nullptr) {
-	REAL4 (centreX, U"Centre x", U"0.0")
-	REAL4 (centreY, U"Centre y", U"0.0")
-	POSITIVE4 (radius, U"Radius (along x)", U"1.0")
-	REAL4 (fromAngle, U"From angle (degrees)", U"0.0")
-	REAL4 (toAngle, U"To angle (degrees)", U"90.0")
+	REAL (centreX, U"Centre x", U"0.0")
+	REAL (centreY, U"Centre y", U"0.0")
+	POSITIVE (radius, U"Radius (along x)", U"1.0")
+	REAL (fromAngle, U"From angle (degrees)", U"0.0")
+	REAL (toAngle, U"To angle (degrees)", U"90.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -866,10 +819,10 @@ DO
 }
 
 FORM (GRAPHICS_DrawEllipse, U"Praat picture: Draw ellipse", nullptr) {
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toY, U"To y", U"1.0")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -880,25 +833,25 @@ DO
 }
 
 FORM (GRAPHICS_PaintEllipse, U"Praat picture: Paint ellipse", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toY, U"To y", U"1.0")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillEllipse (GRAPHICS, fromX, toX, fromY, toY);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
 }
 
 FORM (GRAPHICS_DrawCircle, U"Praat picture: Draw circle", nullptr) {
-	REAL4 (centreX, U"Centre x", U"0.0")
-	REAL4 (centreY, U"Centre y", U"0.0")
-	POSITIVE4 (radius, U"Radius (along x)", U"1.0")
+	REAL (centreX, U"Centre x", U"0.0")
+	REAL (centreY, U"Centre y", U"0.0")
+	POSITIVE (radius, U"Radius (along x)", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -909,24 +862,24 @@ DO
 }
 
 FORM (GRAPHICS_PaintCircle, U"Praat picture: Paint circle", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REAL4 (centreX, U"Centre x", U"0.0")
-	REAL4 (centreY, U"Centre y", U"0.0")
-	POSITIVE4 (radius, U"Radius (along x)", U"1.0")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	REAL (centreX, U"Centre x", U"0.0")
+	REAL (centreY, U"Centre y", U"0.0")
+	POSITIVE (radius, U"Radius (along x)", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillCircle (GRAPHICS, centreX, centreY, radius);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
 }
 
 FORM (GRAPHICS_DrawCircle_mm, U"Praat picture: Draw circle (mm)", nullptr) {
-	REAL4 (centreX, U"Centre x", U"0.0")
-	REAL4 (centreY, U"Centre y", U"0.0")
-	POSITIVE4 (diameter, U"Diameter (mm)", U"5.0")
+	REAL (centreX, U"Centre x", U"0.0")
+	REAL (centreY, U"Centre y", U"0.0")
+	POSITIVE (diameter, U"Diameter (mm)", U"5.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -937,27 +890,26 @@ DO
 }
 
 FORM (GRAPHICS_PaintCircle_mm, U"Praat picture: Paint circle (mm)", nullptr) {
-	COLOUR (U"Colour (0-1, name, or {r,g,b})", U"0.5")
-	REAL4 (centreX, U"Centre x", U"0.0")
-	REAL4 (centreY, U"Centre y", U"0.0")
-	POSITIVE4 (diameter, U"Diameter (mm)", U"5.0")
+	COLOUR (colour, U"Colour (0-1, name, or {r,g,b})", U"0.5")
+	REAL (centreX, U"Centre x", U"0.0")
+	REAL (centreY, U"Centre y", U"0.0")
+	POSITIVE (diameter, U"Diameter (mm)", U"5.0")
 	OK
 DO
 	GRAPHICS_NONE
 		Graphics_setInner (GRAPHICS);
-		Graphics_setColour (GRAPHICS, GET_COLOUR (U"Colour"));
+		Graphics_setColour (GRAPHICS, colour);
 		Graphics_fillCircle_mm (GRAPHICS, centreX, centreY, diameter);
 		Graphics_unsetInner (GRAPHICS);
 	GRAPHICS_NONE_END
 }
 
 FORM (GRAPHICS_InsertPictureFromFile, U"Praat picture: Insert picture from file", U"Insert picture from file...") {
-	LABEL (U"", U"File name:")
-	TEXTFIELD4 (fileName, U"fileName", U"~/Desktop/paul.jpg")
-	REAL4 (fromX, U"From x", U"0.0")
-	REAL4 (toX, U"To x", U"1.0")
-	REAL4 (fromY, U"From y", U"0.0")
-	REAL4 (toY, U"To y", U"1.0")
+	TEXTFIELD (fileName, U"File name:", U"~/Desktop/paul.jpg")
+	REAL (fromX, U"From x", U"0.0")
+	REAL (toX, U"To x", U"1.0")
+	REAL (fromY, U"From y", U"0.0")
+	REAL (toY, U"To y", U"1.0")
 	OK
 DO
 	GRAPHICS_NONE
@@ -968,17 +920,17 @@ DO
 }
 
 FORM (GRAPHICS_Axes, U"Praat picture: Axes", U"Axes...") {
-	REAL4 (left, U"left Left and right", U"0.0")
-	REAL4 (right, U"right Left and right", U"1.0")
-	REAL4 (bottom, U"left Bottom and top", U"0.0")
-	REAL4 (top, U"right Bottom and top", U"1.0")
+	REAL (left, U"left Left and right", U"0.0")
+	REAL (right, U"right Left and right", U"1.0")
+	REAL (bottom, U"left Bottom and top", U"0.0")
+	REAL (top, U"right Bottom and top", U"1.0")
 OK
 	double x1WC, x2WC, y1WC, y2WC;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	SET_REAL (U"left Left and right", x1WC);
-	SET_REAL (U"right Left and right", x2WC);
-	SET_REAL (U"left Bottom and top", y1WC);
-	SET_REAL (U"right Bottom and top", y2WC);
+	SET_REAL (left, x1WC)
+	SET_REAL (right, x2WC)
+	SET_REAL (top, y1WC)
+	SET_REAL (bottom, y2WC)
 DO
 	if (left == right) Melder_throw (U"Left and right should not be equal.");
 	if (top == bottom) Melder_throw (U"Top and bottom should not be equal.");
@@ -996,8 +948,8 @@ DIRECT (GRAPHICS_DrawInnerBox) {
 }
 
 FORM (GRAPHICS_TextLeft, U"Praat picture: Text left", U"Text left/right/top/bottom...") {
-	BOOLEAN4 (farr, U"Far", true)
-	TEXTFIELD4 (text, U"text", U"")
+	BOOLEAN (farr, U"Far", true)
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -1006,8 +958,8 @@ DO
 }
 
 FORM (GRAPHICS_TextRight, U"Praat picture: Text right", U"Text left/right/top/bottom...") {
-	BOOLEAN4 (farr, U"Far", true)
-	TEXTFIELD4 (text, U"text", U"")
+	BOOLEAN (farr, U"Far", true)
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -1016,8 +968,8 @@ DO
 }
 
 FORM (GRAPHICS_TextTop, U"Praat picture: Text top", U"Text left/right/top/bottom...") {
-	BOOLEAN4 (farr, U"Far", true)
-	TEXTFIELD4 (text, U"text", U"")
+	BOOLEAN (farr, U"Far", true)
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -1026,8 +978,8 @@ DO
 }
 
 FORM (GRAPHICS_TextBottom, U"Praat picture: Text bottom", U"Text left/right/top/bottom...") {
-	BOOLEAN4 (farr, U"Far", true)
-	TEXTFIELD4 (text, U"text", U"")
+	BOOLEAN (farr, U"Far", true)
+	TEXTFIELD (text, U"Text:", U"")
 	OK
 DO
 	GRAPHICS_NONE
@@ -1036,11 +988,11 @@ DO
 }
 
 #define FIELDS_MARKS_EVERY  \
-	POSITIVE4 (units, U"Units", U"1.0") \
-	POSITIVE4 (distance, U"Distance", U"0.1") \
-	BOOLEAN4 (writeNumbers, U"Write numbers", true) \
-	BOOLEAN4 (drawTicks, U"Draw ticks", true) \
-	BOOLEAN4 (drawDottedLines, U"Draw dotted lines", true)
+	POSITIVE (units, U"Units", U"1.0") \
+	POSITIVE (distance, U"Distance", U"0.1") \
+	BOOLEAN (writeNumbers, U"Write numbers", true) \
+	BOOLEAN (drawTicks, U"Draw ticks", true) \
+	BOOLEAN (drawDottedLines, U"Draw dotted lines", true)
 
 FORM (GRAPHICS_MarksLeftEvery, U"Praat picture: Marks left every...", U"Marks left/right/top/bottom every...") {
 	FIELDS_MARKS_EVERY
@@ -1079,10 +1031,10 @@ DO
 }
 
 #define FIELDS_MARKS  \
-	NATURAL4 (numberOfMarks, U"Number of marks", U"6") \
-	BOOLEAN4 (writeNumbers, U"Write numbers", true) \
-	BOOLEAN4 (drawTicks, U"Draw ticks", true) \
-	BOOLEAN4 (drawDottedLines, U"Draw dotted lines", true)
+	NATURAL (numberOfMarks, U"Number of marks", U"6") \
+	BOOLEAN (writeNumbers, U"Write numbers", true) \
+	BOOLEAN (drawTicks, U"Draw ticks", true) \
+	BOOLEAN (drawDottedLines, U"Draw dotted lines", true)
 
 FORM (GRAPHICS_MarksLeft, U"Praat picture: Marks left", U"Marks left/right/top/bottom...") {
 	FIELDS_MARKS
@@ -1125,10 +1077,10 @@ DO
 }
 
 #define FIELDS_MARKS_LOGARITHMIC  \
-	NATURAL4 (marksPerDecade, U"Marks per decade", U"3") \
-	BOOLEAN4 (writeNumbers, U"Write numbers", true) \
-	BOOLEAN4 (drawTicks, U"Draw ticks", true) \
-	BOOLEAN4 (drawDottedLines, U"Draw dotted lines", true)
+	NATURAL (marksPerDecade, U"Marks per decade", U"3") \
+	BOOLEAN (writeNumbers, U"Write numbers", true) \
+	BOOLEAN (drawTicks, U"Draw ticks", true) \
+	BOOLEAN (drawDottedLines, U"Draw dotted lines", true)
 
 FORM (GRAPHICS_LogarithmicMarksLeft, U"Praat picture: Logarithmic marks left", U"Logarithmic marks left/right/top/bottom...") {
 	FIELDS_MARKS_LOGARITHMIC
@@ -1173,12 +1125,11 @@ static void sortBoundingBox (double *x1WC, double *x2WC, double *y1WC, double *y
 }
 
 FORM (GRAPHICS_OneMarkLeft, U"Praat picture: One mark left", U"One mark left/right/top/bottom...") {
-	REAL4 (position, U"Position", U"0.0")
-	BOOLEAN4 (writeNumber, U"Write number", true)
-	BOOLEAN4 (drawTick, U"Draw tick", true)
-	BOOLEAN4 (drawDottedLine, U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (position, U"Position", U"0.0")
+	BOOLEAN (writeNumber, U"Write number", true)
+	BOOLEAN (drawTick, U"Draw tick", true)
+	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1196,12 +1147,11 @@ DO
 }
 
 FORM (GRAPHICS_OneMarkRight, U"Praat picture: One mark right", U"One mark left/right/top/bottom...") {
-	REAL4 (position, U"Position", U"0.0")
-	BOOLEAN4 (writeNumber, U"Write number", true)
-	BOOLEAN4 (drawTick, U"Draw tick", true)
-	BOOLEAN4 (drawDottedLine, U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (position, U"Position", U"0.0")
+	BOOLEAN (writeNumber, U"Write number", true)
+	BOOLEAN (drawTick, U"Draw tick", true)
+	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1219,12 +1169,11 @@ DO
 }
 
 FORM (GRAPHICS_OneMarkTop, U"Praat picture: One mark top", U"One mark left/right/top/bottom...") {
-	REAL4 (position, U"Position", U"0.0")
-	BOOLEAN4 (writeNumber, U"Write number", true)
-	BOOLEAN4 (drawTick, U"Draw tick", true)
-	BOOLEAN4 (drawDottedLine, U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (position, U"Position", U"0.0")
+	BOOLEAN (writeNumber, U"Write number", true)
+	BOOLEAN (drawTick, U"Draw tick", true)
+	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1242,12 +1191,11 @@ DO
 }
 
 FORM (GRAPHICS_OneMarkBottom, U"Praat picture: One mark bottom", U"One mark left/right/top/bottom...") {
-	REAL4 (position, U"Position", U"0.0")
-	BOOLEAN4 (writeNumber, U"Write number", true)
-	BOOLEAN4 (drawTick, U"Draw tick", true)
-	BOOLEAN4 (drawDottedLine, U"Draw dotted line", true)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (position, U"Position", U"0.0")
+	BOOLEAN (writeNumber, U"Write number", true)
+	BOOLEAN (drawTick, U"Draw tick", true)
+	BOOLEAN (drawDottedLine, U"Draw dotted line", true)
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1265,12 +1213,11 @@ DO
 }
 
 FORM (GRAPHICS_OneLogarithmicMarkLeft, U"Praat picture: One logarithmic mark left", U"One logarithmic mark left/right/top/bottom...") {
-	REAL4 (position, U"Position", U"1.0")
-	BOOLEAN4 (writeNumber, U"Write number", 1)
-	BOOLEAN4 (drawTick, U"Draw tick", 1)
-	BOOLEAN4 (drawDottedLine, U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (position, U"Position", U"1.0")
+	BOOLEAN (writeNumber, U"Write number", 1)
+	BOOLEAN (drawTick, U"Draw tick", 1)
+	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1288,12 +1235,11 @@ DO
 }
 
 FORM (GRAPHICS_OneLogarithmicMarkRight, U"Praat picture: One logarithmic mark right", U"One logarithmic mark left/right/top/bottom...") {
-	REAL4 (position, U"Position", U"1.0")
-	BOOLEAN4 (writeNumber, U"Write number", 1)
-	BOOLEAN4 (drawTick, U"Draw tick", 1)
-	BOOLEAN4 (drawDottedLine, U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (position, U"Position", U"1.0")
+	BOOLEAN (writeNumber, U"Write number", 1)
+	BOOLEAN (drawTick, U"Draw tick", 1)
+	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1311,12 +1257,11 @@ DO
 }
 
 FORM (GRAPHICS_OneLogarithmicMarkTop, U"Praat picture: One logarithmic mark top", U"One logarithmic mark left/right/top/bottom...") {
-	REAL4 (position, U"Position", U"1.0")
-	BOOLEAN4 (writeNumber, U"Write number", 1)
-	BOOLEAN4 (drawTick, U"Draw tick", 1)
-	BOOLEAN4 (drawDottedLine, U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (position, U"Position", U"1.0")
+	BOOLEAN (writeNumber, U"Write number", 1)
+	BOOLEAN (drawTick, U"Draw tick", 1)
+	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1334,12 +1279,11 @@ DO
 }
 
 FORM (GRAPHICS_OneLogarithmicMarkBottom, U"Praat picture: One logarithmic mark bottom", U"One logarithmic mark left/right/top/bottom...") {
-	REAL4 (position, U"Position", U"1.0")
-	BOOLEAN4 (writeNumber, U"Write number", 1)
-	BOOLEAN4 (drawTick, U"Draw tick", 1)
-	BOOLEAN4 (drawDottedLine, U"Draw dotted line", 1)
-	LABEL (U"", U"Draw text:")
-	TEXTFIELD4 (text, U"text", U"")
+	REAL (position, U"Position", U"1.0")
+	BOOLEAN (writeNumber, U"Write number", 1)
+	BOOLEAN (drawTick, U"Draw tick", 1)
+	BOOLEAN (drawDottedLine, U"Draw dotted line", 1)
+	TEXTFIELD (text, U"Draw text:", U"")
 	OK
 DO
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1357,7 +1301,7 @@ DO
 }
 
 FORM (GRAPHICS_HorizontalMmToWorldCoordinates, U"Compute horizontal distance in world coordinates", nullptr) {
-	REAL4 (distance, U"Distance (mm)", U"10.0")
+	REAL (distance, U"Distance (mm)", U"10.0")
 	OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
@@ -1369,7 +1313,7 @@ DO
 END }
 
 FORM (GRAPHICS_HorizontalWorldCoordinatesToMm, U"Compute horizontal distance in millimetres", nullptr) {
-	REAL4 (distance, U"Distance (wc)", U"0.1")
+	REAL (distance, U"Distance (wc)", U"0.1")
 	OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
@@ -1381,7 +1325,7 @@ DO
 END }
 
 FORM (GRAPHICS_VerticalMmToWorldCoordinates, U"Compute vertical distance in world coordinates", nullptr) {
-	REAL4 (distance, U"Distance (mm)", U"10.0")
+	REAL (distance, U"Distance (mm)", U"10.0")
 	OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
@@ -1393,7 +1337,7 @@ DO
 END }
 
 FORM (GRAPHICS_VerticalWorldCoordinatesToMm, U"Compute vertical distance in millimetres", nullptr) {
-	REAL4 (distance, U"Distance (wc)", U"1.0")
+	REAL (distance, U"Distance (wc)", U"1.0")
 	OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
@@ -1405,7 +1349,7 @@ DO
 END }
 
 FORM (GRAPHICS_TextWidth_worldCoordinates, U"Text width in world coordinates", nullptr) {
-	TEXTFIELD4 (text, U"text", U"Hello world")
+	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
@@ -1418,7 +1362,7 @@ DO
 END }
 
 FORM (GRAPHICS_TextWidth_mm, U"Text width in millimetres", nullptr) {
-	TEXTFIELD4 (text, U"text", U"Hello world")
+	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
@@ -1431,10 +1375,10 @@ DO
 END }
 
 FORM (GRAPHICS_PostScriptTextWidth_worldCoordinates, U"PostScript text width in world coordinates", nullptr) {
-	RADIO4x (phoneticFont, U"Phonetic font", 1, 0)
+	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
-	TEXTFIELD4 (text, U"text", U"Hello world")
+	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
@@ -1447,10 +1391,10 @@ DO
 END }
 
 FORM (GRAPHICS_PostScriptTextWidth_mm, U"PostScript text width in millimetres", nullptr) {
-	RADIO4x (phoneticFont, U"Phonetic font", 1, 0)
+	RADIOx (phoneticFont, U"Phonetic font", 1, 0)
 		RADIOBUTTON (U"XIPA")
 		RADIOBUTTON (U"SILIPA")
-	TEXTFIELD4 (text, U"text", U"Hello world")
+	TEXTFIELD (text, U"Text:", U"Hello world")
 	OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
@@ -1483,7 +1427,7 @@ DIRECT (GRAPHICS_Picture_settings_report) {
 	MelderInfo_writeLine (U"Font size: ", theCurrentPraatPicture -> fontSize, U" points");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
-		long x1DC, x2DC, y1DC, y2DC;
+		integer x1DC, x2DC, y1DC, y2DC;
 		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
 		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
@@ -1506,7 +1450,7 @@ DIRECT (GRAPHICS_Picture_settings_report) {
 		theCurrentPraatPicture != & theForegroundPraatPicture ?
 			theCurrentPraatPicture -> y2NDC - ymargin :
 			12 - theCurrentPraatPicture -> y1NDC - ymargin, units);
-	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText (theCurrentPraatPicture -> font));
+	MelderInfo_writeLine (U"Font: ", kGraphics_font_getText ((kGraphics_font) theCurrentPraatPicture -> font));
 	MelderInfo_writeLine (U"Line type: ",
 		theCurrentPraatPicture -> lineType == Graphics_DRAWN ? U"Solid" :
 		theCurrentPraatPicture -> lineType == Graphics_DOTTED ? U"Dotted" :
@@ -1643,7 +1587,7 @@ void praat_picture_editor_close () {
 	praat_picture_close ();
 }
 
-static autoDaata pictureRecognizer (int nread, const char *header, MelderFile file) {
+static autoDaata pictureRecognizer (integer nread, const char *header, MelderFile file) {
 	if (nread < 2) return autoDaata ();
 	if (strnequ (header, "PraatPictureFile", 16)) {
 		Picture_readFromPraatPictureFile (praat_picture.get(), file);
@@ -1870,10 +1814,10 @@ void praat_picture_init () {
 	praatButton_18 = praat_addMenuCommand (U"Picture", U"Font", U"18", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_18);
 	praatButton_24 = praat_addMenuCommand (U"Picture", U"Font", U"24", nullptr, praat_CHECKBUTTON | praat_NO_API, GRAPHICS_24);
 	praat_addMenuCommand (U"Picture", U"Font", U"-- font ---", nullptr, 0, nullptr);
-	praatButton_fonts [kGraphics_font_TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST, GRAPHICS_Times);
-	praatButton_fonts [kGraphics_font_HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT, GRAPHICS_Helvetica);
-	praatButton_fonts [kGraphics_font_PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT, GRAPHICS_Palatino);
-	praatButton_fonts [kGraphics_font_COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT, GRAPHICS_Courier);
+	praatButton_fonts [(int) kGraphics_font::TIMES] = praat_addMenuCommand (U"Picture", U"Font", U"Times", nullptr, praat_RADIO_FIRST, GRAPHICS_Times);
+	praatButton_fonts [(int) kGraphics_font::HELVETICA] = praat_addMenuCommand (U"Picture", U"Font", U"Helvetica", nullptr, praat_RADIO_NEXT, GRAPHICS_Helvetica);
+	praatButton_fonts [(int) kGraphics_font::PALATINO] = praat_addMenuCommand (U"Picture", U"Font", U"Palatino", nullptr, praat_RADIO_NEXT, GRAPHICS_Palatino);
+	praatButton_fonts [(int) kGraphics_font::COURIER] = praat_addMenuCommand (U"Picture", U"Font", U"Courier", nullptr, praat_RADIO_NEXT, GRAPHICS_Courier);
 
 	praat_addMenuCommand (U"Picture", U"Help", U"Picture window help", nullptr, '?', HELP_PictureWindowHelp);
 	praat_addMenuCommand (U"Picture", U"Help", U"About special symbols", nullptr, 0, HELP_AboutSpecialSymbols);

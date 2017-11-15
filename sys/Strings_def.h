@@ -1,6 +1,6 @@
 /* Strings_def.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #define ooSTRUCT Strings
 oo_DEFINE_CLASS (Strings, Daata)
 
-	oo_LONG (numberOfStrings)
+	oo_INTEGER (numberOfStrings)
 	oo_STRING_VECTOR (strings, numberOfStrings)
 
 	#if oo_DECLARING
@@ -28,7 +28,7 @@ oo_DEFINE_CLASS (Strings, Daata)
 			override;
 		bool v_hasGetVectorStr ()
 			override { return true; }
-		const char32 * v_getVectorStr (long icol)
+		const char32 * v_getVectorStr (integer icol)
 			override;
 	#endif
 

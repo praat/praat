@@ -20,19 +20,19 @@
 #define ooSTRUCT HMMState
 oo_DEFINE_CLASS (HMMState, Daata)
 
-	oo_STRING(label)
+	oo_STRING (label)
 
-oo_END_CLASS(HMMState)
+oo_END_CLASS (HMMState)
 #undef ooSTRUCT
 
 
 #define ooSTRUCT HMMObservation
 oo_DEFINE_CLASS (HMMObservation, Daata)
 
-	oo_STRING(label)
+	oo_STRING (label)
 	oo_AUTO_OBJECT (GaussianMixture, 1, gm)
 
-oo_END_CLASS(HMMObservation)
+oo_END_CLASS (HMMObservation)
 #undef ooSTRUCT
 
 
@@ -41,10 +41,10 @@ oo_DEFINE_CLASS (HMM, Daata)
 
 	oo_INT (notHidden) // to model a Markov model instead of HMM
 	oo_INT (leftToRight)
-	oo_LONG (numberOfStates)
-	oo_LONG (numberOfObservationSymbols)
-	oo_LONG (numberOfMixtureComponents)
-	oo_LONG (componentDimension)
+	oo_INTEGER (numberOfStates)
+	oo_INTEGER (numberOfObservationSymbols)
+	oo_INTEGER (numberOfMixtureComponents)
+	oo_INTEGER (componentDimension)
 	oo_INT (componentStorage)
 	oo_DOUBLE_MATRIX_FROM (transitionProbs, 0, numberOfStates, 1, numberOfStates + 1) // row 0: initial probabilities
 	oo_DOUBLE_MATRIX (emissionProbs, numberOfStates, numberOfObservationSymbols)
@@ -56,21 +56,21 @@ oo_DEFINE_CLASS (HMM, Daata)
 			override;
 	#endif
 
-oo_END_CLASS(HMM)
+oo_END_CLASS (HMM)
 #undef ooSTRUCT
 
 
 #define ooSTRUCT HMMViterbi
 oo_DEFINE_CLASS (HMMViterbi, Daata)
 
-	oo_LONG (numberOfTimes)
-	oo_LONG (numberOfStates)
+	oo_INTEGER (numberOfTimes)
+	oo_INTEGER (numberOfStates)
 	oo_DOUBLE (prob)
 	oo_DOUBLE_MATRIX (viterbi, numberOfStates, numberOfTimes)
-	oo_LONG_MATRIX (bp, numberOfStates, numberOfTimes)
-	oo_LONG_VECTOR (path, numberOfTimes)
+	oo_INTEGER_MATRIX (bp, numberOfStates, numberOfTimes)
+	oo_INTEGER_VECTOR (path, numberOfTimes)
 
-oo_END_CLASS(HMMViterbi)
+oo_END_CLASS (HMMViterbi)
 #undef ooSTRUCT
 
 

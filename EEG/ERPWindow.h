@@ -2,7 +2,7 @@
 #define _ERPWindow_h_
 /* ERPWindow.h
  *
- * Copyright (C) 2012,2013,2014,2015 Paul Boersma
+ * Copyright (C) 2012,2013,2014,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "ERP.h"
 
 Thing_define (ERPWindow, SoundEditor) {
-	const char32 * v_getChannelName (long channelNumber)
+	const char32 * v_getChannelName (integer channelNumber)
 		override {
 			ERP erp = (ERP) our data;
 			return erp -> channelNames [channelNumber];

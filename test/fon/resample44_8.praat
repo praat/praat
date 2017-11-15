@@ -4,7 +4,7 @@ Times
 depth = 200
 
 sweep = Create Sound from formula: "sweep", 1, 0, 10, 44100,
-	... "sin (2 * pi * 1000 * x^2)"
+	... ~ sin (2 * pi * 1000 * x^2)
 To Spectrogram: 0.05, 20000, 0.002, 20, "Gaussian"
 Select outer viewport: 0, 6, 0, 3
 Paint: 0, 0, 0, 20000, 100, "yes", 90, 0, 0, "yes"
@@ -21,10 +21,10 @@ cutoff = 3600
 for ifilter from 0 to 1
 	filter_mat [ifilter] = Create Matrix: "filter", -depth / 44100, depth / 44100,
 	... depth*2, 1 / 44100, (-depth+0.75-0.5*ifilter) / 44100,
-	... 1, 1, 1, 1, 1, "if x = 0 then 1 else sin (2*pi*x*cutoff) / (2*pi*x*cutoff)
-	... * (0.5 + 0.5 * cos (pi * x*44100 / depth)) fi"
+	... 1, 1, 1, 1, 1, ~ if x = 0 then 1 else sin (2*pi*x*cutoff) / (2*pi*x*cutoff)
+	... * (0.5 + 0.5 * cos (pi * x*44100 / depth)) fi
 	sum = Get sum
-	Formula: "self / sum"
+	Formula: ~ self / sum
 	filter [ifilter] = To Sound
 	;Multiply by window: "Hanning"
 	plusObject: sweep
@@ -32,7 +32,7 @@ for ifilter from 0 to 1
 endfor
 
 mooi = Create Sound from formula: "mooi", 1, 0, 10, 44100/5.5,
-	... "object [sweep_low [col mod 2], (col*11+(col mod 2))/2]"
+	... ~ object [sweep_low [col mod 2], (col*11+(col mod 2))/2]
 To Spectrogram: 0.05, 6000, 0.002, 20, "Gaussian"
 Select outer viewport: 0, 6, 6, 9
 Paint: 0, 0, 0, 6000, 100, "yes", 90, 0, 0, "yes"

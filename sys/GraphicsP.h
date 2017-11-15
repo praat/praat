@@ -34,19 +34,22 @@ void Graphics_init (Graphics me, int resolution);
 		my fontStyle == Graphics_NORMAL;
 */ 
 
-#define kGraphics_font_SYMBOL  (kGraphics_font_MAX + 1)
-#define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
-#define kGraphics_font_IPAPALATINO  (kGraphics_font_MAX + 3)
-#define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 4)
-#define kGraphics_font_CHINESE  (kGraphics_font_MAX + 5)
-#define kGraphics_font_JAPANESE  (kGraphics_font_MAX + 6)
+#define kGraphics_font_SYMBOL  ((int) kGraphics_font::MAX + 1)
+#define kGraphics_font_IPATIMES  ((int) kGraphics_font::MAX + 2)
+#define kGraphics_font_IPAPALATINO  ((int) kGraphics_font::MAX + 3)
+#define kGraphics_font_DINGBATS  ((int) kGraphics_font::MAX + 4)
+#define kGraphics_font_CHINESE  ((int) kGraphics_font::MAX + 5)
+#define kGraphics_font_JAPANESE  ((int) kGraphics_font::MAX + 6)
 
+/*
+	Honour the NO_GRAPHICS compiler switch.
+*/
 #if defined (NO_GRAPHICS)
 	#define cairo 0
 	#define gdi 0
 	#define direct2d 0
 	#define quartz 0
-#elif gtk
+#elif defined (UNIX)   /* include graphics even if there is no GUI, in order to be able to save PNG files */
 	#define cairo 1   /* Cairo, including Pango */
 	#define gdi 0
 	#define direct2d 0
@@ -61,6 +64,14 @@ void Graphics_init (Graphics me, int resolution);
 	#define gdi 0
 	#define direct2d 0
 	#define quartz 1   /* Quartz, including CoreText */
+#else
+	/*
+		Unknown platforms have no graphics.
+	*/
+	#define cairo 0
+	#define gdi 0
+	#define direct2d 0
+	#define quartz 0
 #endif
 
 Thing_define (GraphicsScreen, Graphics) {
@@ -68,12 +79,14 @@ Thing_define (GraphicsScreen, Graphics) {
 	structMelderFile d_file;
 	#if defined (NO_GRAPHICS)
 	#elif cairo
-		GdkDisplay *d_display;
-		#if ALLOW_GDK_DRAWING
-			GdkDrawable *d_window;
-			GdkGC *d_gdkGraphicsContext;
-		#else
-			GdkWindow *d_window;
+		#if gtk
+			GdkDisplay *d_display;
+			#if ALLOW_GDK_DRAWING
+				GdkDrawable *d_window;
+				GdkGC *d_gdkGraphicsContext;
+			#else
+				GdkWindow *d_window;
+			#endif
 		#endif
 		cairo_surface_t *d_cairoSurface;
 		cairo_t *d_cairoGraphicsContext;
@@ -98,9 +111,9 @@ Thing_define (GraphicsScreen, Graphics) {
 
 	void v_destroy () noexcept
 		override;
-	void v_polyline (long numberOfPoints, double *xyDC, bool close)
+	void v_polyline (integer numberOfPoints, double *xyDC, bool close)
 		override;
-	void v_fillArea (long numberOfPoints, double *xyDC)
+	void v_fillArea (integer numberOfPoints, double *xyDC)
 		override;
 	void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC)
 		override;
@@ -148,9 +161,9 @@ Thing_define (GraphicsPostscript, Graphics) {
 
 	void v_destroy () noexcept
 		override;
-	void v_polyline (long numberOfPoints, double *xyDC, bool close)
+	void v_polyline (integer numberOfPoints, double *xyDC, bool close)
 		override;
-	void v_fillArea (long numberOfPoints, double *xyDC)
+	void v_fillArea (integer numberOfPoints, double *xyDC)
 		override;
 	void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC)
 		override;
@@ -172,10 +185,10 @@ Thing_define (GraphicsPostscript, Graphics) {
 
 /* Opcodes for recording. */
 
-double * _Graphics_check (Graphics me, long number);
+double * _Graphics_check (Graphics me, integer number);
 #define put(f)  * ++ p = (double) (f)
 #define op(opcode,number)  double *p = _Graphics_check (me, number); if (! p) return; put (opcode); put (number)
-#define mput(n,a)  { double *f = a; for (long l = 0; l < n; l ++) put (f [l]); }
+#define mput(n,a)  { double *f = a; for (integer l = 0; l < n; l ++) put (f [l]); }
 #define sput(s,l)  { put (l); strcpy ((char *) (p + 1), s); p += l; }
 
 /* When adding opcodes in the following list, add them at the end. */
@@ -201,7 +214,7 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 };
 
 void _GraphicsScreen_text_init (GraphicsScreen me);
-void _Graphics_fillRectangle (Graphics me, long x1DC, long x2DC, long y1DC, long y2DC);
+void _Graphics_fillRectangle (Graphics me, integer x1DC, integer x2DC, integer y1DC, integer y2DC);
 void _Graphics_setColour (Graphics me, Graphics_Colour colour);
 void _Graphics_setGrey (Graphics me, double grey);
 void _Graphics_colour_init (Graphics me);

@@ -107,7 +107,7 @@ static void regression (Cepstrumc me, long frame, double r[], long nr) {
 
 autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint) {
 	try {
-		long nr = (long) floor (dtr / my dx);
+		integer nr = Melder_ifloor (dtr / my dx);
 
 		if (my maxnCoefficients != thy maxnCoefficients) {
 			Melder_throw (U"Cepstrumc orders must be equal.");
@@ -122,21 +122,21 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 			Melder_casual (U"Number of frames used for regression coefficients ", nr);
 		}
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
-		autoNUMvector<double> ri (0L, my maxnCoefficients);
-		autoNUMvector<double> rj (0L, my maxnCoefficients);
+		autoNUMvector <double> ri ((integer) 0, my maxnCoefficients);
+		autoNUMvector <double> rj ((integer) 0, my maxnCoefficients);
 
 		// Calculate distance matrix
 
 		autoMelderProgress progress (U"");
-		for (long i = 1; i <= my nx; i++) {
-			Cepstrumc_Frame fi = & my frame[i];
+		for (long i = 1; i <= my nx; i ++) {
+			Cepstrumc_Frame fi = & my frame [i];
 			regression (me, i, ri.peek(), nr);
-			for (long j = 1; j <= thy nx; j++) {
-				Cepstrumc_Frame fj = & thy frame[j];
-				double d, dist = 0, distr = 0;
+			for (long j = 1; j <= thy nx; j ++) {
+				Cepstrumc_Frame fj = & thy frame [j];
+				real80 d, dist = 0, distr = 0;
 				if (wc != 0) { /* cepstral distance */
-					for (long k = 1; k <= fj -> nCoefficients; k++) {
-						d = fi -> c[k] - fj -> c[k];
+					for (long k = 1; k <= fj -> nCoefficients; k ++) {
+						d = fi -> c [k] - fj -> c [k];
 						dist += d * d;
 					}
 					dist *= wc;
@@ -144,15 +144,15 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 				// log energy distance
 				d = fi -> c[0] - fj -> c[0];
 				dist += wle * d * d;
-				if (wr != 0) { // regression distance
+				if (wr != 0) {   // regression distance
 					regression (thee, j, rj.peek(), nr);
-					for (long k = 1; k <= fj -> nCoefficients; k++) {
+					for (long k = 1; k <= fj -> nCoefficients; k ++) {
 						d = ri[k] - rj[k];
 						distr += d * d;
 					}
 					dist += wr * distr;
 				}
-				if (wer != 0) { // regression on c[0]: log(energy)
+				if (wer != 0) {   // regression on c[0]: log(energy)
 					if (wr == 0) {
 						regression (thee, j, rj.peek(), nr);
 					}
@@ -160,7 +160,7 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 					dist += wer * d * d;
 				}
 				dist /= wc + wle + wr + wer;
-				his z[i][j] = sqrt (dist); // prototype along y-direction
+				his z[i][j] = sqrt ((real) dist);   // prototype along y-direction
 			}
 			Melder_progress ( (double) i / my nx, U"Calculate distances: frame ",
 			                   i, U" from ", my nx, U".");

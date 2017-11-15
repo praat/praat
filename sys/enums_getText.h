@@ -1,6 +1,6 @@
 /* enums_getText.h
  *
- * Copyright (C) 2007,2015 Paul Boersma
+ * Copyright (C) 2007,2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 #undef enums_add
 #undef enums_alt
 #undef enums_end
-#define enums_begin(type,minimum)  const char32 * type##_getText (int testValue) { return
-#define enums_add(type,value,which,text)  testValue == type##_##which ? text :
-#define enums_alt(type,which,text)
-#define enums_end(type,maximum,def) type##_getText (type##_DEFAULT); }
+#define enums_begin(kType,minimum)  const char32 * kType##_getText (kType testValue) { return
+#define enums_add(kType,value,which,text)  testValue == kType::which ? text :
+#define enums_alt(kType,which,text)
+#define enums_end(kType,maximum,def) kType##_getText (kType::DEFAULT); }
 
 /* End of file enums_getText.h */
