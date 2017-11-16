@@ -665,12 +665,13 @@ void Graphics_markBottomLogarithmic (Graphics me, double position, bool hasNumbe
 
 void Graphics_marksLeftEvery (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
-	int lineType = my lineType, first, last;
+	int lineType = my lineType;
+	integer first, last;
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	distance *= units;
-	first = (int) ceil (( y1WC < y2WC ? y1WC : y2WC ) / distance - 1e-5);
-	last = (int) floor (( y1WC < y2WC ? y2WC : y1WC) / distance + 1e-5);
+	first = Melder_iceiling (( y1WC < y2WC ? y1WC : y2WC ) / distance - 1e-5);
+	last  = Melder_ifloor   (( y1WC < y2WC ? y2WC : y1WC ) / distance + 1e-5);
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
 	Graphics_setTextAlignment (me, Graphics_RIGHT, Graphics_HALF);
@@ -679,7 +680,7 @@ void Graphics_marksLeftEvery (Graphics me, double units, double distance, bool h
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
 	}
-	for (int i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		double yWC = i * distance;
 		if (haveNumbers) Graphics_text (me, - my horTick, yWC, Melder_float (Melder_half (yWC / units)));
 		if (haveTicks) Graphics_line (me, - my horTick, yWC, 0.0, yWC);
@@ -688,7 +689,7 @@ void Graphics_marksLeftEvery (Graphics me, double units, double distance, bool h
 	if (haveDottedLines) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		for (int i = first; i <= last; i ++) {
+		for (integer i = first; i <= last; i ++) {
 			double yWC = i * distance;
 			Graphics_line (me, 0.0, yWC, 1.0, yWC);
 		}
@@ -702,12 +703,13 @@ void Graphics_marksLeftEvery (Graphics me, double units, double distance, bool h
 
 void Graphics_marksRightEvery (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
-	int lineType = my lineType, first, last;
+	int lineType = my lineType;
+	integer first, last;
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	distance *= units;
-	first = (int) ceil (( y1WC < y2WC ? y1WC : y2WC ) / distance - 1e-5);
-	last = (int) floor (( y1WC < y2WC ? y2WC : y1WC) / distance + 1e-5);
+	first = Melder_iceiling (( y1WC < y2WC ? y1WC : y2WC ) / distance - 1e-5);
+	last  = Melder_ifloor   (( y1WC < y2WC ? y2WC : y1WC ) / distance + 1e-5);
 	if (first > last) return;
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, 0, 1, y1WC, y2WC);
@@ -717,7 +719,7 @@ void Graphics_marksRightEvery (Graphics me, double units, double distance, bool 
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
 	}
-	for (int i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		double yWC = i * distance;
 		if (haveNumbers) Graphics_text (me, 1.0 + my horTick, yWC, Melder_float (Melder_half (yWC / units)));
 		if (haveTicks) Graphics_line (me, 1.0, yWC, 1.0 + my horTick, yWC);
@@ -726,7 +728,7 @@ void Graphics_marksRightEvery (Graphics me, double units, double distance, bool 
 	if (haveDottedLines) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		for (int i = first; i <= last; i ++) {
+		for (integer i = first; i <= last; i ++) {
 			double yWC = i * distance;
 			Graphics_line (me, 0.0, yWC, 1.0, yWC);
 		}
@@ -740,12 +742,13 @@ void Graphics_marksRightEvery (Graphics me, double units, double distance, bool 
 
 void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
-	int lineType = my lineType, first, last;
+	int lineType = my lineType;
+	integer first, last;
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	distance *= units;
-	first = (int) ceil (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
-	last = (int) floor (( x1WC < x2WC ? x2WC : x1WC) / distance + 1e-5);
+	first = Melder_iceiling (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
+	last  = Melder_ifloor   (( x1WC < x2WC ? x2WC : x1WC ) / distance + 1e-5);
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_TOP);
@@ -754,7 +757,7 @@ void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
 	}
-	for (int i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		double xWC = i * distance;
 		if (haveNumbers) Graphics_text (me, xWC, - my vertTick, Melder_float (Melder_half (xWC / units)));
 		if (haveTicks) Graphics_line (me, xWC, - my vertTick, xWC, 0.0);
@@ -763,7 +766,7 @@ void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool
 	if (haveDottedLines) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		for (int i = first; i <= last; i ++) {
+		for (integer i = first; i <= last; i ++) {
 			double xWC = i * distance;
 			Graphics_line (me, xWC, 0.0, xWC, 1.0);
 		}
@@ -777,12 +780,13 @@ void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool
 
 void Graphics_marksTopEvery (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines) {
 	double x1WC = my d_x1WC, x2WC = my d_x2WC, y1WC = my d_y1WC, y2WC = my d_y2WC;
-	int lineType = my lineType, first, last;
+	int lineType = my lineType;
+	integer first, last;
 	double lineWidth = my lineWidth;
 	Graphics_Colour colour = my colour;
 	distance *= units;
-	first = (int) ceil (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
-	last = (int) floor (( x1WC < x2WC ? x2WC : x1WC) / distance + 1e-5);
+	first = Melder_iceiling (( x1WC < x2WC ? x1WC : x2WC ) / distance - 1e-5);
+	last  = Melder_ifloor   (( x1WC < x2WC ? x2WC : x1WC ) / distance + 1e-5);
 	Graphics_setColour (me, Graphics_BLACK);
 	Graphics_setWindow (me, x1WC, x2WC, 0.0, 1.0);
 	Graphics_setTextAlignment (me, Graphics_CENTRE, Graphics_BOTTOM);
@@ -791,7 +795,7 @@ void Graphics_marksTopEvery (Graphics me, double units, double distance, bool ha
 		Graphics_setLineType (me, Graphics_DRAWN);
 		Graphics_setLineWidth (me, 2.0 * lineWidth);
 	}
-	for (int i = first; i <= last; i ++) {
+	for (integer i = first; i <= last; i ++) {
 		double xWC = i * distance;
 		if (haveNumbers) Graphics_text (me, xWC, 1.0 + my vertTick, Melder_float (Melder_half (xWC / units)));
 		if (haveTicks) Graphics_line (me, xWC, 1.0, xWC, 1.0 + my vertTick);
@@ -800,7 +804,7 @@ void Graphics_marksTopEvery (Graphics me, double units, double distance, bool ha
 	if (haveDottedLines) {
 		Graphics_setLineType (me, Graphics_DOTTED);
 		Graphics_setLineWidth (me, 0.67 * lineWidth);
-		for (int i = first; i <= last; i ++) {
+		for (integer i = first; i <= last; i ++) {
 			double xWC = i * distance;
 			Graphics_line (me, xWC, 0.0, xWC, 1.0);
 		}

@@ -268,9 +268,9 @@ LIST_ITEM1 (U"\\bu @@Sound: Get intensity (dB)")
 NORMAL (U"Modification:")
 LIST_ITEM (U"\\bu @@Matrix: Formula...")
 LIST_ITEM (U"\\bu @@Sound: Set value at sample number...")
-LIST_ITEM (U"\\bu @@Sound: Filter with one formant (in-line)...")
-LIST_ITEM (U"\\bu @@Sound: Pre-emphasize (in-line)...")
-LIST_ITEM (U"\\bu @@Sound: De-emphasize (in-line)...")
+LIST_ITEM (U"\\bu @@Sound: Filter with one formant (in-place)...")
+LIST_ITEM (U"\\bu @@Sound: Pre-emphasize (in-place)...")
+LIST_ITEM (U"\\bu @@Sound: De-emphasize (in-place)...")
 NORMAL (U"Annotation (see @@Intro 7. Annotation@):")
 LIST_ITEM (U"\\bu @@Sound: To TextGrid...")
 NORMAL (U"Periodicity analysis:")
@@ -356,10 +356,10 @@ NORMAL (U"Since the Sound object completely resides in memory, its size is limit
 	"you could use the @LongSound object instead, which you can view in the @LongSoundEditor.")
 MAN_END
 
-MAN_BEGIN (U"Sound: De-emphasize (in-line)...", U"ppgb", 20030309)
+MAN_BEGIN (U"Sound: De-emphasize (in-place)...", U"ppgb", 20171114)
 INTRO (U"A command to change the spectral slope of every selected @Sound object.")
-NORMAL (U"The reverse of @@Sound: Pre-emphasize (in-line)...@. For an example, see @@Source-filter synthesis@.")
-NORMAL (U"This is the in-line version of @@Sound: Filter (de-emphasis)...@, "
+NORMAL (U"The reverse of @@Sound: Pre-emphasize (in-place)...@. For an example, see @@Source-filter synthesis@.")
+NORMAL (U"This is the in-place version of @@Sound: Filter (de-emphasis)...@, "
 	"i.e., it does not create a new Sound object but modifies an existing object.")
 ENTRY (U"Setting")
 TAG (U"##From frequency (Hz)")
@@ -633,12 +633,12 @@ FORMULA (U"%y__2_ := %x__2_ \\-- %p %y__1_")
 FORMULA (U"\\At%n \\>_ 3:   %y__n_ := %x__n_ \\-- %p %y__%n-1_ \\-- %q %y__%n-2_")
 NORMAL (U"After filtering, the sound %y is scaled so that its absolute extremum is 0.9.")
 NORMAL (U"For a comparative discussion of various filtering methods, see the @Filtering tutorial.")
-NORMAL (U"This filter has an in-line version: @@Sound: Filter with one formant (in-line)...@.")
+NORMAL (U"This filter has an in-place version: @@Sound: Filter with one formant (in-place)...@.")
 MAN_END
 
-MAN_BEGIN (U"Sound: Filter with one formant (in-line)...", U"ppgb", 20030309)
-INTRO (U"A command to filter every selected @Sound object in-line, with a single formant of a specified frequency and bandwidth.")
-NORMAL (U"This is the in-line version of @@Sound: Filter (one formant)...@, "
+MAN_BEGIN (U"Sound: Filter with one formant (in-place)...", U"ppgb", 20171114)
+INTRO (U"A command to filter every selected @Sound object in-place, with a single formant of a specified frequency and bandwidth.")
+NORMAL (U"This is the in-place version of @@Sound: Filter (one formant)...@, "
 	"i.e. it does not create a new Sound object but modifies the selected object.")
 MAN_END
 
@@ -944,10 +944,10 @@ NORMAL (U"where \\De%t is the sampling period of the sound. The new sound %y is 
 FORMULA (U"%y__%i_ = %x__%i_ - %\\al %x__%i-1_")
 MAN_END
 
-MAN_BEGIN (U"Sound: Pre-emphasize (in-line)...", U"ppgb", 20030309)
+MAN_BEGIN (U"Sound: Pre-emphasize (in-place)...", U"ppgb", 20171114)
 INTRO (U"A command to change the spectral slope of every selected @Sound object.")
-NORMAL (U"The reverse of @@Sound: De-emphasize (in-line)...@.")
-NORMAL (U"This is the in-line version of @@Sound: Filter (pre-emphasis)...@, "
+NORMAL (U"The reverse of @@Sound: De-emphasize (in-place)...@.")
+NORMAL (U"This is the in-place version of @@Sound: Filter (pre-emphasis)...@, "
 	"i.e., it does not create a new Sound object but modifies an existing object.")
 ENTRY (U"Algorithm")
 NORMAL (U"The pre-emphasis factor %\\al is computed as")

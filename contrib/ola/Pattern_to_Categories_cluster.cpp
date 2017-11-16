@@ -76,13 +76,13 @@ autoCategories PatternList_to_Categories_cluster
 			for (integer y = 1; y <= centroids->ny; y++)
 			{
 				int ifriend = 1;
-				integer ys = (integer) lround (NUMrandomUniform (1, p->ny));
+				integer ys = Melder_iround (NUMrandomUniform (1, p -> ny));   // BUG probably wrong (the edges have half-probability)
 
 				if (nfriends)
 				{
 					while (ifriend)
 					{
-						ys = (integer) lround(NUMrandomUniform(1, p->ny));
+						ys = Melder_iround (NUMrandomUniform (1, p->ny));   // BUG probably wrong (the edges have half-probability)
 						for (integer fc = 0; fc < nfriends; fc++)
 						{
 							ifriend = 0;

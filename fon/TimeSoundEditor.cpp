@@ -194,7 +194,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 	} else if (my d_sound.data) {
 		Sound sound = my d_sound.data;
 		double margin = 0.0;
-		integer nmargin = Melder_iroundDown (margin / sound -> dx);
+		integer nmargin = Melder_ifloor (margin / sound -> dx);
 		integer first, last, numberOfSamples = Sampled_getWindowSamples (sound,
 			my startSelection, my endSelection, & first, & last) + nmargin * 2;
 		first -= nmargin;

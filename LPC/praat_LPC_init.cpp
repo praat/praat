@@ -245,7 +245,7 @@ DO
 	NUMBER_ONE_END (U" dB; quefrency=", qpeak, U" s (f=", 1.0 / qpeak, U" Hz).");
 }
 
-FORM (MODIFY_PowerCepstrum_subtractTilt_inline, U"PowerCepstrum: Subtract tilt (in-line)", nullptr) {
+FORM (MODIFY_PowerCepstrum_subtractTilt_inplace, U"PowerCepstrum: Subtract tilt (in-place)", nullptr) {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (lineType, U"Line type", 1)
@@ -257,17 +257,17 @@ FORM (MODIFY_PowerCepstrum_subtractTilt_inline, U"PowerCepstrum: Subtract tilt (
 	OK
 DO
 	MODIFY_EACH (PowerCepstrum)
-		PowerCepstrum_subtractTilt_inline (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
+		PowerCepstrum_subtractTilt_inplace (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_PowerCepstrum_smooth_inline, U"PowerCepstrum: Smooth (in-line)", nullptr) {
+FORM (MODIFY_PowerCepstrum_smooth_inplace, U"PowerCepstrum: Smooth (in-place)", nullptr) {
 	REAL (quefrencySmoothingWindowDuration, U"Quefrency averaging window (s)", U"0.0005")
 	NATURAL (numberOfIterations, U"Number of iterations", U"1");
 	OK
 DO
 	MODIFY_EACH (PowerCepstrum)
-		PowerCepstrum_smooth_inline (me, quefrencySmoothingWindowDuration, numberOfIterations);
+		PowerCepstrum_smooth_inplace (me, quefrencySmoothingWindowDuration, numberOfIterations);
 	MODIFY_EACH_END
 }
 
@@ -393,7 +393,7 @@ DO
 	CONVERT_EACH_END (my name, U"_minusTilt")
 }
 
-FORM (MODIFY_PowerCepstrogram_subtractTilt_inline, U"PowerCepstrogram: Subtract tilt (in-line)", nullptr) {
+FORM (MODIFY_PowerCepstrogram_subtractTilt_inplace, U"PowerCepstrogram: Subtract tilt (in-place)", nullptr) {
 	REAL (fromQuefrency_tiltLine, U"left Tilt line quefrency range (s)", U"0.001")
 	REAL (toQuefrency_tiltLine, U"right Tilt line quefrency range (s)", U"0.0 (= end)")
 	OPTIONMENU (lineType, U"Line type", 2)
@@ -405,7 +405,7 @@ FORM (MODIFY_PowerCepstrogram_subtractTilt_inline, U"PowerCepstrogram: Subtract 
 	OK
 DO
 	MODIFY_EACH (PowerCepstrogram)
-		PowerCepstrogram_subtractTilt_inline (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
+		PowerCepstrogram_subtractTilt_inplace (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
 	MODIFY_EACH_END
 }
 
@@ -975,7 +975,7 @@ FORM (NEW1_LPC_and_Sound_filter, U"LPC & Sound: Filter", U"LPC & Sound: Filter..
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filter (me , you, useGain);
+		autoSound result = LPC_and_Sound_filter (me, you, useGain);
 	CONVERT_TWO_END (my name)
 }
 
@@ -988,13 +988,13 @@ FORM (NEW1_LPC_and_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one 
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterWithFilterAtTime (me , you, channel - 1, time);
+		autoSound result = LPC_and_Sound_filterWithFilterAtTime (me, you, channel - 1, time);
 	CONVERT_TWO_END (my name)
 }
 
 DIRECT (NEW1_LPC_and_Sound_filterInverse) {
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterInverse (me , you);
+		autoSound result = LPC_and_Sound_filterInverse (me, you);
 	CONVERT_TWO_END (my name)
 }
 
@@ -1008,7 +1008,7 @@ FORM (NEW1_LPC_and_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (i
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterInverseWithFilterAtTime (me , you, channel - 1, time);
+		autoSound result = LPC_and_Sound_filterInverseWithFilterAtTime (me, you, channel - 1, time);
 	CONVERT_TWO_END (my name)
 }
 
@@ -1048,8 +1048,10 @@ void praat_uvafon_LPC_init () {
 		praat_addAction1 (classPowerCepstrum, 0, U"Get rhamonics to noise ratio...", 0, 1, REAL_PowerCepstrum_getRNR);
 	praat_addAction1 (classPowerCepstrum, 1, U"Modify -", 0, 0, 0);
 		praat_addAction1 (classPowerCepstrum, 0, U"Formula...", 0, 1, MODIFY_PowerCepstrum_formula);
-		praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt (in-line)...", 0, 1, MODIFY_PowerCepstrum_subtractTilt_inline);
-		praat_addAction1 (classPowerCepstrum, 0, U"Smooth (in-line)...", 0, 1, MODIFY_PowerCepstrum_smooth_inline);
+		praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt (in-place)...", 0, 1, MODIFY_PowerCepstrum_subtractTilt_inplace);
+		praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt (in-line)...", 0, praat_DEPTH_1 + praat_DEPRECATED_2017, MODIFY_PowerCepstrum_subtractTilt_inplace);
+		praat_addAction1 (classPowerCepstrum, 0, U"Smooth (in-place)...", 0, 1, MODIFY_PowerCepstrum_smooth_inplace);
+		praat_addAction1 (classPowerCepstrum, 0, U"Smooth (in-line)...", 0, praat_DEPTH_1 + praat_DEPRECATED_2017, MODIFY_PowerCepstrum_smooth_inplace);
 
 	praat_addAction1 (classPowerCepstrum, 0, U"Subtract tilt...", 0, 0, NEW_PowerCepstrum_subtractTilt);
 	praat_addAction1 (classPowerCepstrum, 0, U"Smooth...", 0, 0, NEW_PowerCepstrum_smooth);
@@ -1071,7 +1073,8 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classPowerCepstrogram, 0, U"Modify -", nullptr, 0, nullptr);
 		praat_TimeFunction_modify_init (classPowerCepstrogram);
 		praat_addAction1 (classPowerCepstrogram, 0, U"Formula...", 0, 1, MODIFY_PowerCepstrogram_formula);
-		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-line)...", 0, 1, MODIFY_PowerCepstrogram_subtractTilt_inline);
+		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-place)...", 0, 1, MODIFY_PowerCepstrogram_subtractTilt_inplace);
+		praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt (in-line)...", 0, praat_DEPTH_1 + praat_DEPRECATED_2017, MODIFY_PowerCepstrogram_subtractTilt_inplace);
 	praat_addAction1 (classPowerCepstrogram, 0, U"To PowerCepstrum (slice)...", 0, 0, NEW_PowerCepstrogram_to_PowerCepstrum_slice);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Smooth...", 0, 0, NEW_PowerCepstrogram_smooth);
 	praat_addAction1 (classPowerCepstrogram, 0, U"Subtract tilt...", 0, 0, NEW_PowerCepstrogram_subtractTilt);

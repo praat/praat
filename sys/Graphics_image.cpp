@@ -279,7 +279,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 				}
 				for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
 					double iy_real = iy2 + 0.5 - ((double) ny * (yDC - y2DC)) / (y1DC - y2DC);
-					integer itop = (integer) ceil (iy_real), ibottom = itop - 1;
+					integer itop = Melder_iceiling (iy_real), ibottom = itop - 1;
 					double bottomWeight = itop - iy_real, topWeight = 1.0 - bottomWeight;
 					unsigned char *pixelAddress = ROW_START_ADDRESS;
 					if (itop > iy2) itop = iy2;
@@ -349,9 +349,9 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			try {
 				autoNUMvector <integer> ix (clipx1, clipx2);
 				for (xDC = clipx1; xDC < clipx2; xDC += undersampling)
-					ix [xDC] = floor (ix1 + (nx * (xDC - x1DC)) / (x2DC - x1DC));
+					ix [xDC] = Melder_ifloor (ix1 + (nx * (xDC - x1DC)) / (x2DC - x1DC));
 				for (yDC = clipy2; yDC < clipy1; yDC += undersampling) {
-					integer iy = ceil (iy2 - (ny * (yDC - y2DC)) / (y1DC - y2DC));
+					integer iy = Melder_iceiling (iy2 - (ny * (yDC - y2DC)) / (y1DC - y2DC));
 					unsigned char *pixelAddress = ROW_START_ADDRESS;
 					Melder_assert (iy >= iy1 && iy <= iy2);
 					if (z_float) {
@@ -469,8 +469,8 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 		double rowSize_pixels = (double) (y2DC - y1DC) / ny;
 		double colSize_inches = colSize_pixels / my resolution;
 		double rowSize_inches = rowSize_pixels / my resolution;
-		interpolateX = ceil (colSize_inches * smallestImageResolution);   // number of interpolation points per horizontal sample
-		interpolateY = ceil (rowSize_inches * smallestImageResolution);   // number of interpolation points per vertical sample
+		interpolateX = Melder_iceiling (colSize_inches * smallestImageResolution);   // number of interpolation points per horizontal sample
+		interpolateY = Melder_iceiling (rowSize_inches * smallestImageResolution);   // number of interpolation points per vertical sample
 	}
 
 	if (interpolateX <= 1 && interpolateY <= 1) {
@@ -769,7 +769,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const char32 *rela
 		structMelderFile file { };
 		Melder_relativePathToFile (relativeFileName, & file);
 		char utf8 [500];
-		Melder_str32To8bitFileRepresentation_inline (file. path, utf8);
+		Melder_str32To8bitFileRepresentation_inplace (file. path, utf8);
 		CFStringRef path = CFStringCreateWithCString (nullptr, utf8, kCFStringEncodingUTF8);
 		CFURLRef url = CFURLCreateWithFileSystemPath (nullptr, path, kCFURLPOSIXPathStyle, false);
 		CFRelease (path);

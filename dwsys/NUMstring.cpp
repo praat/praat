@@ -39,7 +39,7 @@ int NUMstring_containsPrintableCharacter (const char32 *s) {
 	return 0;
 }
 
-void NUMstring_chopWhiteSpaceAtExtremes_inline (char32 *string) {
+void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string) {
 	int64 start = 0;
 	while (iswspace ((int) string[start]) != 0) {
 		start++;
@@ -520,8 +520,8 @@ integer *NUMstring_getElementsOfRanges (const char32 *ranges, integer maximumEle
 
 char32 * NUMstring_timeNoDot (double time) {
 	static char32 string[100];
-	integer seconds = Melder_iroundDown (time);
-	long ms = lround ((time - seconds) * 1000.0);
+	integer seconds = Melder_ifloor (time);
+	integer ms = Melder_iround ((time - seconds) * 1000.0);
 	Melder_sprint (string,100, U"_", seconds, U"_", ms);
 	return string;
 }

@@ -259,7 +259,7 @@ autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfForm
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double nyquist = 0.5 / my dx;
-	integer predictionOrder = Melder_iroundDown (2 * numberOfFormants);
+	integer predictionOrder = Melder_ifloor (2 * numberOfFormants);
 	try {
 		autoSound sound;
 		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1.0) < 1.0e-12) {

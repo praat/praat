@@ -98,7 +98,7 @@ bool Melder_str8IsValidUtf8 (const char *string) {
 	return true;
 }
 
-integer Melder_killReturns_inline (char *text) {
+integer Melder_killReturns_inplace (char *text) {
 	const char *from;
 	char *to;
 	for (from = text, to = text; *from != '\0'; from ++, to ++) {
@@ -118,7 +118,7 @@ integer Melder_killReturns_inline (char *text) {
 }
 
 template <class CHAR>
-integer Melder_killReturns_inlineCHAR (CHAR *text) {
+integer Melder_killReturns_inplaceCHAR (CHAR *text) {
 	const CHAR *from;
 	CHAR *to;
 	for (from = text, to = text; *from != '\0'; from ++, to ++) {
@@ -140,8 +140,8 @@ integer Melder_killReturns_inlineCHAR (CHAR *text) {
 	*to = '\0';   // closing null character
 	return to - text;
 }
-integer Melder_killReturns_inline (char32 *text) {
-	return Melder_killReturns_inlineCHAR <char32> (text);
+integer Melder_killReturns_inplace (char32 *text) {
+	return Melder_killReturns_inplaceCHAR <char32> (text);
 }
 
 size_t str32len_utf8 (const char32 *string, bool nativizeNewlines) {
@@ -328,7 +328,7 @@ char32 Melder_decodeWindowsLatin1 [256] = {
 	220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
-void Melder_8to32_inline (const char *string8, char32 *string32, kMelder_textInputEncoding inputEncoding) {
+void Melder_8to32_inplace (const char *string8, char32 *string32, kMelder_textInputEncoding inputEncoding) {
 	char32 *q = & string32 [0];
 	if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
 		inputEncoding = preferences. inputEncoding;
@@ -397,20 +397,20 @@ void Melder_8to32_inline (const char *string8, char32 *string32, kMelder_textInp
 		Melder_fatal (U"Unknown text input encoding ", (int) inputEncoding, U".");
 	}
 	* q = U'\0';   // closing null character
-	(void) Melder_killReturns_inlineCHAR <char32> (string32);
+	(void) Melder_killReturns_inplaceCHAR <char32> (string32);
 }
 
 char32 * Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding) {
 	if (! string) return nullptr;
 	autostring32 result = Melder_malloc (char32, (int64) strlen (string) + 1);
-	Melder_8to32_inline (string, result.peek(), inputEncoding);
+	Melder_8to32_inplace (string, result.peek(), inputEncoding);
 	return result.transfer();
 }
 
 char32 * Melder_8to32 (const char *string) {
 	if (! string) return nullptr;
 	autostring32 result = Melder_malloc (char32, (int64) strlen (string) + 1);
-	Melder_8to32_inline (string, result.peek(), kMelder_textInputEncoding::UTF8);
+	Melder_8to32_inplace (string, result.peek(), kMelder_textInputEncoding::UTF8);
 	return result.transfer();
 }
 
@@ -447,7 +447,7 @@ char32 * Melder_16to32 (const char16 *text) {
 	return Melder_dup (Melder_peek16to32 (text));
 }
 
-void Melder_32to8_inline (const char32 *string, char *utf8) {
+void Melder_32to8_inplace (const char32 *string, char *utf8) {
 	int64 n = str32len (string), i, j;
 	for (i = 0, j = 0; i < n; i ++) {
 		char32 kar = string [i];
@@ -476,7 +476,7 @@ void Melder_32to8_inline (const char32 *string, char *utf8) {
 char * Melder_32to8 (const char32 *string) {
 	if (! string) return nullptr;
 	autostring8 result = Melder_malloc (char, (int64) str32len_utf8 (string, true) + 1);
-	Melder_32to8_inline (string, result.peek());
+	Melder_32to8_inplace (string, result.peek());
 	return result.transfer();
 }
 
@@ -496,7 +496,7 @@ char * Melder_peek32to8 (const char32 *text) {
 		buffer [ibuffer] = (char *) Melder_realloc_f (buffer [ibuffer], (int64) sizeNeeded * (int64) sizeof (char));
 		bufferSize [ibuffer] = sizeNeeded;
 	}
-	Melder_32to8_inline (text, buffer [ibuffer]);
+	Melder_32to8_inplace (text, buffer [ibuffer]);
 	return buffer [ibuffer];
 }
 

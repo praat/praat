@@ -212,7 +212,7 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 	long numberOfCells = numberOfRows * numberOfColumns;
 	autoPermutation p = Permutation_create (numberOfCells);
 	if (randomFillOrder) {
-		Permutation_permuteRandomly_inline (p.get(), 1, numberOfCells);
+		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
 	}
 	double zAbsMax = fabs (zmax) > fabs (zmin) ? fabs (zmax) : fabs (zmin);
 	Graphics_Colour colour = Graphics_inqColour (g);

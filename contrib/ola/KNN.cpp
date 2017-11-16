@@ -770,15 +770,15 @@ double KNN_modelSearch
 		double drange = 1.0;
 		double drate = rate / range;
 
-		soil best = { 0, (integer) lround (dpivot), (integer) lround (dpivot) };
+		soil best = { 0, Melder_iround (dpivot), Melder_iround (dpivot) };
 		autoNUMvector <soil> field ((integer) 0, nseeds - 1);
 
 		while (range > 0)
 		{
 			for (integer n = 0; n < nseeds; n++)
 			{
-				field[n].k = lround (NUMrandomUniform (OlaMAX (pivot - range, 1), OlaMIN (pivot + range, max)));
-				field[n].dist = lround (NUMrandomUniform (OlaMAX (dpivot - drange, 0), OlaMIN (dpivot + drange, 2)));
+				field[n].k = Melder_iround (NUMrandomUniform (OlaMAX (pivot - range, 1), OlaMIN (pivot + range, max)));
+				field[n].dist = Melder_iround (NUMrandomUniform (OlaMAX (dpivot - drange, 0), OlaMIN (dpivot + drange, 2)));
 				field[n].performance = KNN_evaluate (me, fws, field[n].k, dists[field[n].dist], mode);
 			}
 
@@ -1652,8 +1652,8 @@ void KNN_SA_t_step
 )
 
 {
-    integer i1 = lround ((((KNN_SA_t *) istruct) -> p -> ny - 1) * gsl_rng_uniform (r)) + 1;
-    integer i2 = (i1 + lround (step_size * gsl_rng_uniform (r))) % ((KNN_SA_t *) istruct) -> p -> ny + 1;
+    integer i1 = Melder_iround ((((KNN_SA_t *) istruct) -> p -> ny - 1) * gsl_rng_uniform (r)) + 1;
+    integer i2 = (i1 + Melder_iround (step_size * gsl_rng_uniform (r))) % ((KNN_SA_t *) istruct) -> p -> ny + 1;
 
     if (i1 == i2)
         return;
@@ -1752,13 +1752,13 @@ void KNN_SA_partition
                             //
     integer i2,             //
                             //
-    integer * result        // [0] anv. ej
+    integer * result        // [0] not used
                             //
 )
 
 {
-    integer c1 = (integer) lround(NUMrandomUniform(i1, i2));
-    integer c2 = (integer) lround(NUMrandomUniform(i1, i2));
+    integer c1 = Melder_iround (NUMrandomUniform (i1, i2));   // BUG: probably incorrect (the edges have half-probability)
+    integer c2 = Melder_iround (NUMrandomUniform (i1, i2));
 
     double *p1 = NUMvector <double> (1, p->nx); 
     double *p2 = NUMvector <double> (1, p->nx);

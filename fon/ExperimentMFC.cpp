@@ -236,12 +236,12 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		 * Create the play buffer.
 		 */
 		maximumStimulusPlaySamples =
-			lround (my stimulusInitialSilenceDuration / my samplePeriod)
-			+ lround (my stimulusFinalSilenceDuration / my samplePeriod)
+			Melder_iround (my stimulusInitialSilenceDuration / my samplePeriod)
+			+ Melder_iround (my stimulusFinalSilenceDuration / my samplePeriod)
 			+ stimulusCarrierBeforeSamples + maximumStimulusSamples + stimulusCarrierAfterSamples + 2;
 		maximumResponsePlaySamples =
-			lround (my responseInitialSilenceDuration / my samplePeriod)
-			+ lround (my responseFinalSilenceDuration / my samplePeriod)
+			Melder_iround (my responseInitialSilenceDuration / my samplePeriod)
+			+ Melder_iround (my responseFinalSilenceDuration / my samplePeriod)
 			+ responseCarrierBeforeSamples + maximumResponseSamples + responseCarrierAfterSamples + 2;
 		maximumPlaySamples = maximumStimulusPlaySamples > maximumResponsePlaySamples ? maximumStimulusPlaySamples : maximumResponsePlaySamples;
 		my playBuffer = Sound_create (my numberOfChannels, 0.0, maximumPlaySamples * my samplePeriod,
@@ -290,7 +290,7 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 {
 	integer numberOfSamplesWritten = 0;
 
-	integer initialSilenceSamples = lround (initialSilenceDuration / my samplePeriod);
+	integer initialSilenceSamples = Melder_iround (initialSilenceDuration / my samplePeriod);
 	for (integer channel = 1; channel <= my numberOfChannels; channel ++) {
 		for (integer i = 1; i <= initialSilenceSamples; i ++) {
 			my playBuffer -> z [channel] [i] = 0.0;
@@ -322,7 +322,7 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 		numberOfSamplesWritten += carrierAfter -> nx;
 	}
 
-	integer finalSilenceSamples = lround (finalSilenceDuration / my samplePeriod);
+	integer finalSilenceSamples = Melder_iround (finalSilenceDuration / my samplePeriod);
 	for (integer channel = 1; channel <= my numberOfChannels; channel ++) {
 		for (integer i = 1; i <= finalSilenceSamples; i ++) {
 			my playBuffer -> z [channel] [i + numberOfSamplesWritten] = 0.0;

@@ -107,7 +107,7 @@ double structSound :: v_getMatrix (integer irow, integer icol) {
 }
 
 double structSound :: v_getFunction2 (double x, double y) {
-	integer channel = Melder_iroundDown (y);
+	integer channel = Melder_ifloor (y);
 	if (channel < 0 || channel > ny || y != (double) channel) return 0.0;
 	return v_getFunction1 (channel, x);
 }
@@ -199,7 +199,7 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 		double sumOfFirstTimes = 0.0;
 		for (integer isound = 1; isound <= my size; isound ++) {
 			Sound sound = my at [isound];
-			numberOfInitialZeroes [isound] = Melder_iroundDown ((sound -> xmin - sharedMinimumTime) / sharedSamplingPeriod);
+			numberOfInitialZeroes [isound] = Melder_ifloor ((sound -> xmin - sharedMinimumTime) / sharedSamplingPeriod);
 			double newFirstTime = sound -> x1 - sound -> dx * numberOfInitialZeroes [isound];
 			sumOfFirstTimes += newFirstTime;
 			integer newNumberOfSamplesThroughLastNonzero = sound -> nx + numberOfInitialZeroes [isound];
@@ -355,7 +355,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 	if (fabs (upfactor - 2) < 1e-6) return Sound_upsample (me);
 	if (fabs (upfactor - 1) < 1e-6) return Data_copy (me);
 	try {
-		integer numberOfSamples = lround ((my xmax - my xmin) * samplingFrequency);
+		integer numberOfSamples = Melder_iround ((my xmax - my xmin) * samplingFrequency);
 		if (numberOfSamples < 1)
 			Melder_throw (U"The resampled Sound would have no samples.");
 		autoSound filtered;
@@ -370,7 +370,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 				}
 				NUMvector_copyElements (my z [channel], & data [antiTurnAround], 1, my nx);
 				NUMrealft (data.at, nfft, 1);   // go to the frequency domain
-				for (integer i = Melder_iroundDown (upfactor * nfft); i <= nfft; i ++) {
+				for (integer i = Melder_ifloor (upfactor * nfft); i <= nfft; i ++) {
 					data [i] = 0.0;   // filter away high frequencies
 				}
 				data [2] = 0.0;
@@ -392,7 +392,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 				for (integer i = 1; i <= numberOfSamples; i ++) {
 					double x = Sampled_indexToX (thee.get(), i);
 					double index = Sampled_xToIndex (me, x);
-					integer leftSample = Melder_iroundDown (index);
+					integer leftSample = Melder_ifloor (index);
 					double fraction = index - leftSample;
 					to [i] = leftSample < 1 || leftSample >= my nx ? 0.0 :
 						(1 - fraction) * from [leftSample] + fraction * from [leftSample + 1];
@@ -413,7 +413,7 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 
 autoSound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	try {
-		integer nx_silence = lround (silenceDuration / my dx), nx = my nx + nx_silence + thy nx;
+		integer nx_silence = Melder_iround (silenceDuration / my dx), nx = my nx + nx_silence + thy nx;
 		if (my ny != thy ny)
 			Melder_throw (U"The numbers of channels are not equal (e.g. one is mono, the other stereo).");
 		if (my dx != thy dx)
@@ -448,7 +448,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 			}
 			nx += sound -> nx;
 		}
-		numberOfSmoothingSamples = lround (overlapTime / dx);
+		numberOfSmoothingSamples = Melder_iround (overlapTime / dx);
 		autoSound thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx);
 		autonumvec smoother;
 		if (numberOfSmoothingSamples > 0) {
@@ -925,7 +925,7 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 		/*
 		 * Translate number of components.
 		 */
-		integer maximumNumberOfComponents = Melder_iroundDown ((ceiling - firstFrequency) / frequencyStep) + 1;
+		integer maximumNumberOfComponents = Melder_ifloor ((ceiling - firstFrequency) / frequencyStep) + 1;
 		if (numberOfComponents <= 0 || numberOfComponents > maximumNumberOfComponents)
 			numberOfComponents = maximumNumberOfComponents;
 		if (numberOfComponents < 1)
@@ -934,7 +934,7 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 		 * Generate the Sound.
 		 */
 		double factor = 0.99 / numberOfComponents;
-		autoSound me = Sound_create (1, startTime, endTime, lround ((endTime - startTime) * samplingFrequency),
+		autoSound me = Sound_create (1, startTime, endTime, Melder_iround ((endTime - startTime) * samplingFrequency),
 			1.0 / samplingFrequency, startTime + 0.5 / samplingFrequency);
 		double *amplitude = my z [1];
 		for (integer isamp = 1; isamp <= my nx; isamp ++) {
@@ -1051,8 +1051,8 @@ autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape 
 		/*
 		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
 		 */
-		integer ix1 = 1 + (integer) ceil ((t1 - my x1) / my dx);
-		integer ix2 = 1 + Melder_iroundDown ((t2 - my x1) / my dx);
+		integer ix1 = 1 + Melder_iceiling ((t1 - my x1) / my dx);
+		integer ix2 = 1 + Melder_ifloor   ((t2 - my x1) / my dx);
 		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
 		/*
 		 * Create sound, optionally shifted to [0..t2-t1].
@@ -1090,8 +1090,8 @@ autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double ov
 		/*
 		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
 		 */
-		integer ix1 = 1 + (integer) ceil ((t1 - my x1) / my dx);
-		integer ix2 = 1 + Melder_iroundDown ((t2 - my x1) / my dx);
+		integer ix1 = 1 + Melder_iceiling ((t1 - my x1) / my dx);
+		integer ix2 = 1 + Melder_ifloor   ((t2 - my x1) / my dx);
 		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
 		/*
 		 * Create sound.
@@ -1139,14 +1139,14 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth) {
 	try {
 		autoSound thee = Data_copy (me);
-		Sound_filterWithOneFormantInline (thee.get(), frequency, bandwidth);
+		Sound_filterWithOneFormantInplace (thee.get(), frequency, bandwidth);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered (one formant).");
 	}
 }
 
-void Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwidth) {
+void Sound_filterWithOneFormantInplace (Sound me, double frequency, double bandwidth) {
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		NUMfilterSecondOrderSection_fb (my z [channel], my nx, my dx, frequency, bandwidth);
 	}
@@ -1198,8 +1198,8 @@ autoSound Sounds_crossCorrelate_short (Sound me, Sound thee, double tmin, double
 		double dt = my dx;
 		double dphase = (thy x1 - my x1) / dt;
 		dphase -= Melder_roundDown (dphase);   // a number between 0 and 1
-		integer i1 = (integer) ceil (tmin / dt - dphase);   // index of first sample if sample at dphase has index 0
-		integer i2 = Melder_iroundDown (tmax / dt - dphase);   // index of last sample if sample at dphase has index 0
+		integer i1 = Melder_iceiling (tmin / dt - dphase);   // index of first sample if sample at dphase has index 0
+		integer i2 = Melder_ifloor   (tmax / dt - dphase);   // index of last sample if sample at dphase has index 0
 		integer nt = i2 - i1 + 1;
 		if (nt < 1)
 			Melder_throw (U"Window too small.");

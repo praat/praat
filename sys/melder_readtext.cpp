@@ -95,7 +95,7 @@ char32 * MelderReadText_readLine (MelderReadText me) {
 			text32 = Melder_malloc_f (char32, sizeNeeded + 100);
 			size = sizeNeeded + 100;
 		}
-		Melder_8to32_inline (result8, text32, my input8Encoding);
+		Melder_8to32_inplace (result8, text32, my input8Encoding);
 		return text32;
 	}
 }
@@ -211,7 +211,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 			}
 			if (string8) {
 				*string8 = text8bit.transfer();
-				(void) Melder_killReturns_inline (*string8);
+				(void) Melder_killReturns_inplace (*string8);
 				return nullptr;   // OK
 			} else {
 				text.reset (Melder_8to32 (text8bit.peek(), kMelder_textInputEncoding::UNDEFINED));
@@ -265,7 +265,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 				}
 			}
 			text [length] = '\0';
-			(void) Melder_killReturns_inline (text.peek());
+			(void) Melder_killReturns_inplace (text.peek());
 		}
 		f.close (file);
 		return text.transfer();

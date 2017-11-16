@@ -29,9 +29,9 @@ autoVocalTract Art_Speaker_to_VocalTract (Art art, Speaker speaker) {
 	integer numberOfSections = 0;
 	for (integer isection = 1; isection <= 27; isection ++) {
 		Delta_Tube tube = delta -> tube + 37 + isection;
-		int numberOfConstantSections = lround (tube -> Dxeq / sectionLength);
+		integer numberOfConstantSections = Melder_iround (tube -> Dxeq / sectionLength);
 		double constantArea = tube -> Dyeq * tube -> Dzeq;
-		for (int jsection = 1; jsection <= numberOfConstantSections; jsection ++)
+		for (integer jsection = 1; jsection <= numberOfConstantSections; jsection ++)
 			area [++ numberOfSections] = constantArea;
 	}
 	autoVocalTract thee = VocalTract_create (numberOfSections, sectionLength);

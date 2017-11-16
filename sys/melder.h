@@ -411,8 +411,8 @@ bool Melder_isEncodable (const char32 *string, int outputEncoding);
 extern char32 Melder_decodeMacRoman [256];
 extern char32 Melder_decodeWindowsLatin1 [256];
 
-integer Melder_killReturns_inline (char32 *text);
-integer Melder_killReturns_inline (char *text);
+integer Melder_killReturns_inplace (char32 *text);
+integer Melder_killReturns_inplace (char *text);
 /*
 	 Replaces all bare returns (old Mac) or return-plus-linefeed sequences (Win) with bare linefeeds
 	 (generic: Unix and modern Mac).
@@ -423,7 +423,7 @@ size_t str32len_utf8  (const char32 *string, bool nativizeNewlines);
 size_t str32len_utf16 (const char32 *string, bool nativizeNewlines);
 
 extern "C" char32 * Melder_peek8to32 (const char *string);
-void Melder_8to32_inline (const char *source, char32 *target, kMelder_textInputEncoding inputEncoding);
+void Melder_8to32_inplace (const char *source, char32 *target, kMelder_textInputEncoding inputEncoding);
 	// errors: Text is not valid UTF-8.
 char32 * Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding);
 	// errors: Out of memory; Text is not valid UTF-8.
@@ -434,7 +434,7 @@ char32 * Melder_peek16to32 (const char16 *text);
 char32 * Melder_16to32 (const char16 *text);
 
 extern "C" char * Melder_peek32to8 (const char32 *string);
-void Melder_32to8_inline (const char32 *string, char *utf8);
+void Melder_32to8_inplace (const char32 *string, char *utf8);
 char * Melder_32to8 (const char32 *string);
 char16 * Melder_32to16 (const char32 *string);
 	// errors: Out of memory.
@@ -449,8 +449,8 @@ extern "C" char16 * Melder_peek32to16 (const char32 *string);
 	inline static char32 * Melder_Wto32 (const wchar_t *string) { return Melder_16to32 ((const char16 *) string); }
 #endif
 
-void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *utf8);
-void Melder_8bitFileRepresentationToStr32_inline (const char *utf8, char32 *string);
+void Melder_str32To8bitFileRepresentation_inplace (const char32 *string, char *utf8);
+void Melder_8bitFileRepresentationToStr32_inplace (const char *utf8, char32 *string);
 const void * Melder_peek32toCfstring (const char32 *string);
 void Melder_fwrite32to8 (const char32 *ptr, FILE *f);
 
@@ -2131,6 +2131,7 @@ inline static integer Melder_iroundDown (double x) {
 		U"When rounding down the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
 }
+#define Melder_ifloor  Melder_iroundDown
 
 inline static double Melder_roundUp (double x) {
 	return ceil (x);
@@ -2142,6 +2143,7 @@ inline static integer Melder_iroundUp (double x) {
 		U"When rounding up the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
 }
+#define Melder_iceiling  Melder_iroundUp
 
 inline static double Melder_roundTowardsZero (double x) {
 	return x >= 0.0 ? Melder_roundDown (x) : Melder_roundUp (x);
@@ -2174,6 +2176,7 @@ inline static integer Melder_iround_tieUp (double x) {
 		U"When rounding the real value ", x, U", the result cannot be represented in an integer.");
 	return (integer) xround;
 }
+#define Melder_iround  Melder_iround_tieUp
 
 inline static double Melder_round_tieDown (double x) {
 	return Melder_roundUp (x - 0.5);

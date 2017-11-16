@@ -419,9 +419,9 @@ static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
 	 */
 	imin -= MARGIN * n;
 	if (imin < 1) imin = 1;
-	imax = imin + Melder_iroundDown ((1.0 + 2.0 * MARGIN) * n);
+	imax = imin + Melder_ifloor ((1.0 + 2.0 * MARGIN) * n);
 	if (imax > my nx) imax = my nx;
-	imin = imax - Melder_iroundDown ((1.0 + 2.0 * MARGIN) * n);
+	imin = imax - Melder_ifloor ((1.0 + 2.0 * MARGIN) * n);
 	if (imin < 1) imin = 1;
 	Melder_assert (imax - imin + 1 <= my nmax);
 	/*
@@ -637,7 +637,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		Sampled data = my at [1];
 		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
-			sampleRate = lround (1.0 / sound -> dx);
+			sampleRate = Melder_iround (1.0 / sound -> dx);
 			numberOfChannels = sound -> ny;
 			n = sound -> nx;
 		} else {
@@ -654,7 +654,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
-				sampleRatesMatch = round (1.0 / sound -> dx) == sampleRate;
+				sampleRatesMatch = Melder_iround (1.0 / sound -> dx) == sampleRate;
 				numbersOfChannelsMatch = sound -> ny == numberOfChannels;
 				n += sound -> nx;
 			} else {

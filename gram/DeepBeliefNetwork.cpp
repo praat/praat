@@ -52,8 +52,8 @@ void DeepBeliefNetwork_init (DeepBeliefNetwork me, numvec numbersOfNodes, bool i
 	integer numberOfLayers = numbersOfNodes.size - 1;
 	for (integer ilayer = 1; ilayer <= numberOfLayers; ilayer ++) {
 		autoRBM layer = RBM_create (
-			Melder_iround_tieUp (numbersOfNodes [ilayer]),
-			Melder_iround_tieUp (numbersOfNodes [ilayer + 1]),
+			Melder_iround (numbersOfNodes [ilayer]),
+			Melder_iround (numbersOfNodes [ilayer + 1]),
 			ilayer == 1 ? inputsAreBinary : true
 		);
 		my layers. addItem_move (layer.move());

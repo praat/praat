@@ -75,7 +75,7 @@ void PitchTier_hum (PitchTier me) {
 autoSound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency) {
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
-		integer numberOfSamples = 1 + Melder_iroundDown ((my xmax - my xmin) * samplingFrequency);   // >= 1
+		integer numberOfSamples = 1 + Melder_ifloor ((my xmax - my xmin) * samplingFrequency);   // >= 1
 		double samplingPeriod = 1.0 / samplingFrequency;
 		double tmid = (tmin + tmax) / 2.0;
 		double t1 = tmid - 0.5 * (numberOfSamples - 1) * samplingPeriod;

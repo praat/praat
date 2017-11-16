@@ -40,7 +40,7 @@ FORM (NEW_EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG:
 DO
 	CONVERT_EACH (EEG)
 		autoCrossCorrelationTable result = EEG_to_CrossCorrelationTable (me, fromTime, toTime, lagTime, channels);
-	CONVERT_EACH_END (my name, U"_", round (lagTime * 1000.0))
+	CONVERT_EACH_END (my name, U"_", Melder_iround (lagTime * 1000.0))
 }
 
 FORM (NEW_EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
@@ -435,7 +435,7 @@ FORM (NEW_Sound_to_Sound_whiteChannels, U"Sound: To Sound (white channels)", U"S
     OK
 DO
     if (varianceFraction > 1.0) varianceFraction = 1.0;
-    integer permille = Melder_iroundDown (varianceFraction * 1000.0);
+    integer permille = Melder_ifloor (varianceFraction * 1000.0);
     CONVERT_EACH (Sound)
 		autoSound result = Sound_whitenChannels (me, varianceFraction);
     CONVERT_EACH_END (my name, U"_", permille);

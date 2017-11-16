@@ -59,7 +59,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		/*
 		 * Compute the time sampling.
 		 */
-		integer nsamp_window = Melder_iroundDown (physicalAnalysisWidth / my dx);
+		integer nsamp_window = Melder_ifloor (physicalAnalysisWidth / my dx);
 		integer halfnsamp_window = nsamp_window / 2 - 1;
 		nsamp_window = halfnsamp_window * 2;
 		if (nsamp_window < 1)
@@ -68,7 +68,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 			Melder_throw (U"Your sound is too short:\n"
 				U"it should be at least as long as ",
 				windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? U"two window lengths." : U"one window length.");
-		integer numberOfTimes = 1 + Melder_iroundDown ((duration - physicalAnalysisWidth) / timeStep);   // >= 1
+		integer numberOfTimes = 1 + Melder_ifloor ((duration - physicalAnalysisWidth) / timeStep);   // >= 1
 		double t1 = my x1 + 0.5 * ((double) (my nx - 1) * my dx - (double) (numberOfTimes - 1) * timeStep);
 			/* Centre of first frame. */
 
@@ -76,7 +76,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		 * Compute the frequency sampling of the FFT spectrum.
 		 */
 		if (fmax <= 0.0 || fmax > nyquist) fmax = nyquist;
-		integer numberOfFreqs = Melder_iroundDown (fmax / freqStep);
+		integer numberOfFreqs = Melder_ifloor (fmax / freqStep);
 		if (numberOfFreqs < 1) return autoSpectrogram ();
 		integer nsampFFT = 1;
 		while (nsampFFT < nsamp_window || nsampFFT < 2 * numberOfFreqs * (nyquist / fmax))
@@ -86,11 +86,11 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		/*
 		 * Compute the frequency sampling of the spectrogram.
 		 */
-		integer binWidth_samples = Melder_iroundDown (freqStep * my dx * nsampFFT);
+		integer binWidth_samples = Melder_ifloor (freqStep * my dx * nsampFFT);
 		if (binWidth_samples < 1) binWidth_samples = 1;
 		double binWidth_hertz = 1.0 / (my dx * nsampFFT);
 		freqStep = binWidth_samples * binWidth_hertz;
-		numberOfFreqs = Melder_iroundDown (fmax / freqStep);
+		numberOfFreqs = Melder_ifloor (fmax / freqStep);
 		if (numberOfFreqs < 1) return autoSpectrogram ();
 
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
@@ -184,7 +184,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 	try {
 		double dt = 1.0 / fsamp;
-		integer n = Melder_iroundDown ((my xmax - my xmin) / dt);
+		integer n = Melder_ifloor ((my xmax - my xmin) / dt);
 		if (n < 0) return autoSound ();
 		autoSound thee = Sound_create (1, my xmin, my xmax, n, dt, 0.5 * dt);
 		for (integer i = 1; i <= n; i ++) {
@@ -192,7 +192,7 @@ autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 			double rframe = Sampled_xToIndex (me, t), phase, value = 0.0;
 			integer leftFrame, rightFrame;
 			if (rframe < 1 || rframe >= my nx) continue;
-			leftFrame = Melder_iroundDown (rframe), rightFrame = leftFrame + 1, phase = rframe - leftFrame;
+			leftFrame = Melder_ifloor (rframe), rightFrame = leftFrame + 1, phase = rframe - leftFrame;
 			for (integer j = 1; j <= my ny; j ++) {
 				double f = Matrix_rowToY (me, j);
 				double power = my z [j] [leftFrame] * (1 - phase) + my z [j] [rightFrame] * phase;

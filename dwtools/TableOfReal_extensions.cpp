@@ -326,7 +326,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 	integer nrows;
 	autoNUMvector <real> irows (NUMstring_to_numbers (rows, & nrows), 1);
 	for (integer i = 1; i <= nrows; i ++) {
-		integer irow = Melder_iroundDown (irows [i]);
+		integer irow = Melder_ifloor (irows [i]);
 		if (irow < 0 || irow > my numberOfRows) {
 			Melder_throw (U"Invalid row (", irow, U").");
 		}
@@ -357,7 +357,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 	double dx = (interbarsFraction + nrows + (nrows - 1) * interbarFraction) * bar_width;
 
 	for (long i = 1; i <= nrows; i++) {
-		integer irow = Melder_iroundDown (irows[i]);
+		integer irow = Melder_ifloor (irows[i]);
 		double xb = xoffsetFraction * bar_width + (i - 1) * (1.0 + interbarFraction) * bar_width;
 
 		double x1 = xb;
@@ -896,10 +896,11 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy
 		rowb = 1;
 	}
 	if (rowe > m) {
-		rowe = Melder_iroundDown (m);
+		rowe = Melder_ifloor (m);
 	}
 	if (rowe <= rowb) {
-		rowb = 1; rowe = Melder_iroundDown (m);
+		rowb = 1;
+		rowe = Melder_ifloor (m);
 	}
 
 	if (xmax == xmin) {
@@ -1130,7 +1131,7 @@ autoTableOfReal TableOfReal_create_weenink1983 (int option) {
 autoTableOfReal TableOfReal_randomizeRows (TableOfReal me) {
 	try {
 		autoPermutation p = Permutation_create (my numberOfRows);
-		Permutation_permuteRandomly_inline (p.get(), 0, 0);
+		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
 		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, p.get());
 		return thee;
 	} catch (MelderError) {

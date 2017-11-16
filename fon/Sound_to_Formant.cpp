@@ -264,14 +264,14 @@ void Formant_sort (Formant me) {
 	}
 }
 
-static autoFormant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOfPoles,
+static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, int numberOfPoles,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double duration = my nx * my dx, t1;
 	double dt_window = 2.0 * halfdt_window;
-	integer nFrames = 1 + Melder_iroundDown ((duration - dt_window) / dt);
-	integer nsamp_window = Melder_iroundDown (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
+	integer nFrames = 1 + Melder_ifloor ((duration - dt_window) / dt);
+	integer nsamp_window = Melder_ifloor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
 
 	if (nsamp_window < numberOfPoles + 1)
 		Melder_throw (U"Window too short.");
@@ -349,7 +349,7 @@ autoFormant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double
 	} else {
 		sound = Sound_resample (me, maximumFrequency * 2, 50);
 	}
-	return Sound_to_Formant_any_inline (sound.get(), dt, numberOfPoles, halfdt_window, which, preemphasisFrequency, safetyMargin);
+	return Sound_to_Formant_any_inplace (sound.get(), dt, numberOfPoles, halfdt_window, which, preemphasisFrequency, safetyMargin);
 }
 
 autoFormant Sound_to_Formant_burg (Sound me, double dt, double nFormants, double maximumFrequency, double halfdt_window, double preemphasisFrequency) {

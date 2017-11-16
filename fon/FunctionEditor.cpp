@@ -387,7 +387,7 @@ static void gui_drawingarea_cb_resize (FunctionEditor me, GuiDrawingArea_ResizeE
 	 * Put the function viewer at the left and the selection viewer at the right.
 	 */
 	my functionViewerLeft = 0;
-	my functionViewerRight = my p_showSelectionViewer ? Melder_iroundDown (width * (2.0/3.0)) : width;
+	my functionViewerRight = my p_showSelectionViewer ? Melder_ifloor (width * (2.0/3.0)) : width;
 	my selectionViewerLeft = my functionViewerRight;
 	my selectionViewerRight = width;
 	my height = event -> height + 111;

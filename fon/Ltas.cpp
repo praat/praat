@@ -260,7 +260,7 @@ autoLtas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 
 autoLtas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 	try {
-		integer numberOfBands = (integer) ceil ((my xmax - my xmin) / bandWidth);
+		integer numberOfBands = Melder_iceiling ((my xmax - my xmin) / bandWidth);
 		if (bandWidth <= my dx)
 			Melder_throw (U"Bandwidth must be greater than ", my dx, U".");
 		autoLtas thee = Thing_new (Ltas);
@@ -310,7 +310,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 {
 	try {
 		integer numberOfPeriods = pulses -> nt - 2, totalNumberOfEnergies = 0;
-		autoLtas ltas = Ltas_create (Melder_iroundDown (maximumFrequency / bandWidth), bandWidth);
+		autoLtas ltas = Ltas_create (Melder_ifloor (maximumFrequency / bandWidth), bandWidth);
 		ltas -> xmax = maximumFrequency;
 		autoLtas numbers = Data_copy (ltas.get());
 		if (numberOfPeriods < 1)
@@ -337,7 +337,7 @@ autoLtas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 					double realPart = spectrum -> z [1] [ifreq];
 					double imaginaryPart = spectrum -> z [2] [ifreq];
 					double energy = (realPart * realPart + imaginaryPart * imaginaryPart) * 2.0 * spectrum -> dx /* OLD: * sound -> nx */;
-					integer iband = (integer) ceil (frequency / bandWidth);
+					integer iband = Melder_iceiling (frequency / bandWidth);
 					if (iband >= 1 && iband <= ltas -> nx) {
 						ltas -> z [1] [iband] += energy;
 						numbers -> z [1] [iband] += 1;

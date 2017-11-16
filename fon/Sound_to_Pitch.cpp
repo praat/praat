@@ -361,7 +361,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		Melder_assert (maxnCandidates >= 2);
 		Melder_assert (method >= AC_HANNING && method <= FCC_ACCURATE);
 
-		if (maxnCandidates < ceiling / minimumPitch) maxnCandidates = Melder_iroundDown (ceiling / minimumPitch);
+		if (maxnCandidates < ceiling / minimumPitch) maxnCandidates = Melder_ifloor (ceiling / minimumPitch);
 
 		if (dt <= 0.0) dt = periodsPerWindow / minimumPitch / 4.0;   // e.g. 3 periods, 75 Hz: 10 milliseconds
 
@@ -393,7 +393,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		 * We need this to compute the local mean of the sound (looking one period in both directions),
 		 * and to compute the local peak of the sound (looking half a period in both directions).
 		 */
-		integer nsamp_period = Melder_iroundDown (1.0 / my dx / minimumPitch);
+		integer nsamp_period = Melder_ifloor (1.0 / my dx / minimumPitch);
 		integer halfnsamp_period = nsamp_period / 2 + 1;
 
 		if (ceiling > 0.5 / my dx) ceiling = 0.5 / my dx;
@@ -402,7 +402,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		 * Determine window length in seconds and in samples.
 		 */
 		real dt_window = periodsPerWindow / minimumPitch;
-		integer nsamp_window = Melder_iroundDown (dt_window / my dx);
+		integer nsamp_window = Melder_ifloor (dt_window / my dx);
 		integer halfnsamp_window = nsamp_window / 2 - 1;
 		if (halfnsamp_window < 2)
 			Melder_throw (U"Analysis window too short.");
@@ -411,9 +411,9 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		/*
 		 * Determine the minimum and maximum lags.
 		 */
-		minimumLag = Melder_iroundDown (1.0 / my dx / ceiling);
+		minimumLag = Melder_ifloor (1.0 / my dx / ceiling);
 		if (minimumLag < 2) minimumLag = 2;
-		maximumLag = Melder_iroundDown (nsamp_window / periodsPerWindow) + 2;
+		maximumLag = Melder_ifloor (nsamp_window / periodsPerWindow) + 2;
 		if (maximumLag > nsamp_window) maximumLag = nsamp_window;
 
 		/*
@@ -465,7 +465,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		if (method >= FCC_NORMAL) {   /* For cross-correlation analysis. */
 
 			nsampFFT = 0;
-			brent_ixmax = Melder_iroundDown (nsamp_window * interpolation_depth);
+			brent_ixmax = Melder_ifloor (nsamp_window * interpolation_depth);
 
 		} else {   /* For autocorrelation analysis. */
 
@@ -523,7 +523,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			}
 			windowR [1] = 1.0;   // normalize
 
-			brent_ixmax = Melder_iroundDown (nsamp_window * interpolation_depth);
+			brent_ixmax = Melder_ifloor (nsamp_window * interpolation_depth);
 		}
 
 		autoMelderProgress progress (U"Sound to Pitch...");

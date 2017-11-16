@@ -463,7 +463,7 @@ autoOTGrammar OTGrammar_create_metrics (
 		}
 		my tableaus = NUMvector <structOTGrammarTableau> (1, numberOfTableaus);
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
-			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : lround (pow (maximumUnderlyingWeight, numberOfSyllables));
+			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables));
 			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 				underlyingWeightPattern [isyll] = 1;   /* L or cv */
 			}

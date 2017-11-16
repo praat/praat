@@ -82,7 +82,7 @@ const char32 * Melder_getShellDirectory () {
 	return & theShellDirectory [0];
 }
 
-void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *utf8) {
+void Melder_str32To8bitFileRepresentation_inplace (const char32 *string, char *utf8) {
 	#if defined (macintosh)
 		/*
 			On the Mac, the POSIX path name is stored in canonically decomposed UTF-8 encoding.
@@ -111,7 +111,7 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 		CFStringGetCString (cfpath2, (char *) utf8, kMelder_MAXPATH+1, kCFStringEncodingUTF8);   // Mac POSIX requires UTF-8
 		CFRelease (cfpath2);
 	#elif defined (UNIX) || defined (__CYGWIN__)
-		Melder_32to8_inline (string, utf8);
+		Melder_32to8_inplace (string, utf8);
 	#elif defined (_WIN32)
 		int n = str32len (string), i, j;
 		for (i = 0, j = 0; i < n; i ++) {
@@ -124,14 +124,14 @@ void Melder_str32To8bitFileRepresentation_inline (const char32 *string, char *ut
 }
 
 #if defined (UNIX)
-void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *path32) {
+void Melder_8bitFileRepresentationToStr32_inplace (const char *path8, char32 *path32) {
 	#if defined (macintosh)
 		CFStringRef cfpath = CFStringCreateWithCString (nullptr, path8, kCFStringEncodingUTF8);
 		if (! cfpath) {
 			/*
 				Probably something wrong, like a disk was disconnected in the meantime.
 			*/
-			Melder_8to32_inline (path8, path32, kMelder_textInputEncoding::UTF8);
+			Melder_8to32_inplace (path8, path32, kMelder_textInputEncoding::UTF8);
 			Melder_throw (U"Unusual error finding or creating file ", path32, U".");
 		}
 		CFMutableStringRef cfpath2 = CFStringCreateMutableCopy (nullptr, 0, cfpath);
@@ -154,7 +154,7 @@ void Melder_8bitFileRepresentationToStr32_inline (const char *path8, char32 *pat
 		path32 [n_utf32] = U'\0';
 		CFRelease (cfpath2);
 	#else
-		Melder_8to32_inline (path8, path32, kMelder_textInputEncoding::UTF8);
+		Melder_8to32_inplace (path8, path32, kMelder_textInputEncoding::UTF8);
 	#endif
 }
 #endif
@@ -545,7 +545,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	 * On MacOS, the characters also have to be decomposed.
 	 */
 	char utf8path [kMelder_MAXPATH+1];
-	Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
+	Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8path);
 	FILE *f;
 	file -> openForWriting = ( type [0] == 'w' || type [0] == 'a' || strchr (type, '+') );
 	if (str32equ (file -> path, U"<stdout>") && file -> openForWriting) {
@@ -621,7 +621,7 @@ void Melder_fclose (MelderFile file, FILE *f) {
 	#if defined (CURLPRESENT)
  	if (str32str (file -> wpath, U"://") && file -> openForWriting) {
 		unsigned char utf8path [kMelder_MAXPATH+1];
-		Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
+		Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8path);
 		/* Rewind the file. */
 		if (f) rewind (f);
 		CURLcode CURLreturn;
@@ -683,7 +683,7 @@ void Melder_files_cleanUp () {
 bool MelderFile_exists (MelderFile file) {
 	#if defined (UNIX)
 		char utf8path [kMelder_MAXPATH+1];
-		Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
+		Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8path);
 		struct stat statistics;
 		return ! stat (utf8path, & statistics);
 	#else
@@ -712,7 +712,7 @@ bool MelderFile_readable (MelderFile file) {
 integer MelderFile_length (MelderFile file) {
 	#if defined (UNIX)
 		char utf8path [kMelder_MAXPATH+1];
-		Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
+		Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8path);
 		struct stat statistics;
 		if (stat ((char *) utf8path, & statistics) != 0) return -1;
 		return statistics. st_size;
@@ -734,7 +734,7 @@ void MelderFile_delete (MelderFile file) {
 	if (! file) return;
 	#if defined (UNIX)
 		char utf8path [kMelder_MAXPATH+1];
-		Melder_str32To8bitFileRepresentation_inline (file -> path, utf8path);
+		Melder_str32To8bitFileRepresentation_inplace (file -> path, utf8path);
 		remove ((char *) utf8path);
 	#elif defined (_WIN32)
 		DeleteFile (Melder_peek32toW (file -> path));
@@ -763,7 +763,7 @@ void Melder_getDefaultDir (MelderDir dir) {
 	#if defined (UNIX)
 		char path [kMelder_MAXPATH+1];
 		getcwd (path, kMelder_MAXPATH+1);
-		Melder_8bitFileRepresentationToStr32_inline (path, dir -> path);
+		Melder_8bitFileRepresentationToStr32_inplace (path, dir -> path);
 	#elif defined (_WIN32)
 		static WCHAR dirPathW [kMelder_MAXPATH+1];
 		GetCurrentDirectory (kMelder_MAXPATH+1, dirPathW);
@@ -796,7 +796,7 @@ void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) 
 		Melder_sprint (file. path,kMelder_MAXPATH+1, parent -> path, U"/", dirName);   // relative path
 	}
 	char utf8path [kMelder_MAXPATH+1];
-	Melder_str32To8bitFileRepresentation_inline (file. path, utf8path);
+	Melder_str32To8bitFileRepresentation_inplace (file. path, utf8path);
 	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   // ignore if directory already exists
 		Melder_throw (U"Cannot create directory ", & file, U".");
 #elif defined (_WIN32)

@@ -477,7 +477,7 @@ double DTW_getPathY (DTW me, double tx) {
 
 	// Find column in DTW matrix
 
-	integer ix = Melder_iroundDown ((tx - my x1) / my dx) + 1;
+	integer ix = Melder_ifloor ((tx - my x1) / my dx) + 1;
 	if (ix < 1) {
 		ix = 1;
 	}
@@ -1209,7 +1209,7 @@ static void DTW_and_Polygon_setUnreachableParts (DTW me, Polygon thee, long **ps
         // find border "above" polygon
         for (long ix = 1; ix <= my nx; ix ++) {
             double x = my x1 + (ix - 1) * my dx;
-            integer iystart = Melder_iroundDown (dtw_slope * ix * (my dx / my dy)) + 1;
+            integer iystart = Melder_ifloor (dtw_slope * ix * (my dx / my dy)) + 1;
             for (long iy = iystart + 1; iy <= my ny; iy ++) {
                 double y = my y1 + (iy - 1) * my dy;
                 if (Polygon_getLocationOfPoint (thee, x, y, eps) == Polygon_OUTSIDE) {
@@ -1223,7 +1223,7 @@ static void DTW_and_Polygon_setUnreachableParts (DTW me, Polygon thee, long **ps
         // find border "below" polygon
         for (long ix = 2; ix <= my nx; ix ++) {
             double x = my x1 + (ix - 1) * my dx;
-            integer iystart = Melder_iroundDown (dtw_slope * ix * (my dx / my dy));   // start 1 lower
+            integer iystart = Melder_ifloor (dtw_slope * ix * (my dx / my dy));   // start 1 lower
             if (iystart > my ny) iystart = my ny;
             for (long iy = iystart - 1; iy >= 1; iy --) {
                 double y = my y1 + (iy - 1) * my dy;
@@ -1409,7 +1409,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoM
         // Make begin part of first column reachable
         integer rowto = delta_xy;
         if (localSlope != 1) {
-			rowto = Melder_iroundDown (slopes [localSlope]) + 1;
+			rowto = Melder_ifloor (slopes [localSlope]) + 1;
 		}
         for (long iy = 2; iy <= rowto; iy ++) {
             if (localSlope != 1) {
@@ -1422,7 +1422,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoM
         // Make begin part of first row reachable
         integer colto = delta_xy;
         if (localSlope != 1) {
-			colto = Melder_iroundDown (slopes [localSlope]) + 1;
+			colto = Melder_ifloor (slopes [localSlope]) + 1;
 		}
         for (long ix = 2; ix <= colto; ix ++) {
             if (localSlope != 1) {

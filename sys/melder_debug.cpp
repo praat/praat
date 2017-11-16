@@ -100,7 +100,7 @@ the behaviour of Praat will temporarily change in the following ways:
 /*
  * peek32to8 substitutes for Melder_peek32to8(),
  * which can call Melder_realloc() and Melder_free();
- * also, we need no newline nativization, as Melder_32to8_inline() does.
+ * also, we need no newline nativization, as Melder_32to8_inplace() does.
  */
 static const char * peek32to8 (const char32 *string) {
 	if (! string) return "";
@@ -410,7 +410,7 @@ static FILE * Melder_trace_open (const char *fileName, int lineNumber, const cha
 		f = _wfopen ((const wchar_t *) peek32to16 (theTracingFile. path), L"a");
 	#else
 		char utf8path [kMelder_MAXPATH+1];
-		Melder_str32To8bitFileRepresentation_inline (theTracingFile. path, utf8path);   // this Melder_xxx() function is OK to call
+		Melder_str32To8bitFileRepresentation_inplace (theTracingFile. path, utf8path);   // this Melder_xxx() function is OK to call
 		f = fopen ((char *) utf8path, "a");
 	#endif
 	if (! f) f = stderr;   // if the file cannot be opened, we can still trace to stderr!

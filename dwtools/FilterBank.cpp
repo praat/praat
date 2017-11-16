@@ -816,7 +816,7 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, long first, long last) {
 static autoMelFilter MFCC_to_MelFilter2 (MFCC me, long first_cc, long last_cc, double f1_mel, double df_mel) {
 	try {
 		int use_c0 = 0;
-		long nf = lround ((my fmax - my fmin) / df_mel);
+		integer nf = Melder_iround ((my fmax - my fmin) / df_mel);
 		double fmin = MAX (f1_mel - df_mel, 0), fmax = f1_mel + (nf + 1) * df_mel;
 
 		if (nf < 1) {
@@ -968,7 +968,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 		}
 
 		fmax_bark = MIN (fmax_bark, zmax);
-		long nf = lround ( (fmax_bark - f1_bark) / df_bark);
+		integer nf = Melder_iround ( (fmax_bark - f1_bark) / df_bark);
 		if (nf <= 0) {
 			Melder_throw (U"The combination of filter parameters is not valid.");
 		}
@@ -1063,7 +1063,7 @@ autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, dou
 
 		// Determine the number of filters.
 
-		long nf = lround ((fmax_mel - f1_mel) / df_mel);
+		integer nf = Melder_iround ((fmax_mel - f1_mel) / df_mel);
 		fmax_mel = f1_mel + nf * df_mel;
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
@@ -1182,7 +1182,7 @@ autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double
 		}
 
 		fmax_hz = MIN (fmax_hz, nyquist);
-		long nf = lround ( (fmax_hz - f1_hz) / df_hz);
+		integer nf = Melder_iround ( (fmax_hz - f1_hz) / df_hz);
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
 		autoFormantFilter him = FormantFilter_create (my xmin, my xmax, nt, dt, t1,
