@@ -975,7 +975,7 @@ FORM (NEW1_LPC_and_Sound_filter, U"LPC & Sound: Filter", U"LPC & Sound: Filter..
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filter (me , you, useGain);
+		autoSound result = LPC_and_Sound_filter (me, you, useGain);
 	CONVERT_TWO_END (my name)
 }
 
@@ -988,13 +988,13 @@ FORM (NEW1_LPC_and_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one 
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterWithFilterAtTime (me , you, channel - 1, time);
+		autoSound result = LPC_and_Sound_filterWithFilterAtTime (me, you, channel - 1, time);
 	CONVERT_TWO_END (my name)
 }
 
 DIRECT (NEW1_LPC_and_Sound_filterInverse) {
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterInverse (me , you);
+		autoSound result = LPC_and_Sound_filterInverse (me, you);
 	CONVERT_TWO_END (my name)
 }
 
@@ -1008,7 +1008,7 @@ FORM (NEW1_LPC_and_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (i
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterInverseWithFilterAtTime (me , you, channel - 1, time);
+		autoSound result = LPC_and_Sound_filterInverseWithFilterAtTime (me, you, channel - 1, time);
 	CONVERT_TWO_END (my name)
 }
 
