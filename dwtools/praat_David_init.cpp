@@ -612,9 +612,9 @@ FORM (NEW_CCA_extractEigen, U"CCA: Exxtract Eigen", nullptr) {
 		OPTION (U"Independent")
 	OK
 DO
-		CONVERT_EACH (CCA)
-			autoEigen result = choice == 1 ? Data_copy (my y.get()) : Data_copy (my x.get());
-		CONVERT_EACH_END (my name, (choice == 1 ? U"_y" : U"_x"))
+	CONVERT_EACH (CCA)
+		autoEigen result = choice == 1 ? Data_copy (my y.get()) : Data_copy (my x.get());
+	CONVERT_EACH_END (my name, (choice == 1 ? U"_y" : U"_x"))
 }
 
 /***************** ChebyshevSeries ****************************************/
@@ -657,7 +657,7 @@ FORM (INTEGER_ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationT
 DO
 	INTEGER_ONE (ClassificationTable)
 		long result = TableOfReal_getColumnIndexAtMaximumInRow (me, rowNumber);
-	INTEGER_ONE_END (U" class index at maximum in row")
+	INTEGER_ONE_END (U" (class index at maximum in row)")
 }
 
 FORM (INTEGER_ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationTable: Get class label at maximum in row", nullptr) {
@@ -1800,7 +1800,7 @@ DO
 			long icol = Matrix_xToNearestColumn (me, xTime);
 			result = my z[irow][icol];
 		}
-		NUMBER_ONE_END (U" (= distance at (", xTime, U", ", yTime, U"))")
+	NUMBER_ONE_END (U" (= distance at (", xTime, U", ", yTime, U"))")
 }
 
 DIRECT (REAL_DTW_getMinimumDistance) {
@@ -1827,7 +1827,7 @@ DO
 		iam (DTW);
 		autoMatrix cp = DTW_to_Matrix_distances (me);
 		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), formula, interpreter, 0);
+			Matrix_formula (me, formula, interpreter, 0);
 			double minimum, maximum;
 			Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 			if (minimum < 0) {

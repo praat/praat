@@ -1408,7 +1408,7 @@ FORM (MODIFY_OTMulti_learnOne, U"OTMulti: Learn one", nullptr) {
 	OK
 DO
 	MODIFY_EACH_WEAK (OTMulti)
-		OTMulti_learnOne (me, partialForm1, partialForm2, (kOTGrammar_rerankingStrategy) updateRule,
+		OTMulti_learnOne (me, partialForm1, partialForm2, updateRule,
 			direction, plasticity, relativePlasticitySpreading);
 	MODIFY_EACH_WEAK_END
 }
@@ -1479,7 +1479,7 @@ DO
 		autoTable history;
 		try {
 			OTMulti_PairDistribution_learn (me, you, evaluationNoise,
-				(kOTGrammar_rerankingStrategy) updateRule, direction,
+				updateRule, direction,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
 				relativePlasticitySpreading, storeHistoryEvery, & history);
 			praat_dataChanged (me);
