@@ -22,6 +22,7 @@
 /* 24 May 2011: C++ */
 /* 5 June 2015: char32 */
 
+#include "FileInMemoryManager.h"
 #include "Praat_tests.h"
 
 #include "Graphics.h"
@@ -539,6 +540,9 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.00005);
 				Melder_casual (U"hello ", sound -> dx);
 			}
+		} break;
+		case kPraatTests::FILEINMEMORYMANAGER_IO: {
+			test_FileInMemoryManager_io ();
 		} break;
 	}
 	MelderInfo_writeLine (Melder_single (t / n * 1e9), U" nanoseconds");

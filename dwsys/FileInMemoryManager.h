@@ -62,5 +62,6 @@ int FileInMemoryManager_fprintf (FileInMemoryManager me, FILE * stream, const ch
 
 int FileInMemoryManager_ungetc (FileInMemoryManager me, int character, FILE * stream);
 
+void test_FileInMemoryManager_io (void);
 
 #endif // _FileInMemoryManager_h_

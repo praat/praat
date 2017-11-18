@@ -823,7 +823,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 					if (end2) {
 						RemoveEnding(tr, wordx, end2, word_copy);
 						end_type = TranslateRules(tr, wordx, phonemes, N_WORD_PHONEMES, end_phonemes, wflags|FLAG_NO_TRACE, dictionary_flags);
-						strcpy(wordx, word_copy);
+						memcpy(wordx, word_copy, strlen(word_copy));
 						if ((end_type & SUFX_P) == 0) {
 							// after removing the suffix, the prefix is no longer recognised.
 							// Keep the suffix, but don't use the prefix
@@ -930,7 +930,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 						wordx[-1] = ' ';
 						if (phonemes[0] == phonSWITCH) {
 							// change to another language in order to translate this word
-							strcpy(wordx, word_copy);
+							memcpy(wordx, word_copy, strlen(word_copy));
 							strcpy(word_phonemes, phonemes);
 							return 0;
 						}
@@ -948,7 +948,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 						found = LookupDictList(tr, &wordx, phonemes, dictionary_flags2, end_flags, wtab);  // without prefix and suffix
 						if (phonemes[0] == phonSWITCH) {
 							// change to another language in order to translate this word
-							strcpy(wordx, word_copy);
+							memcpy(wordx, word_copy, strlen(word_copy));
 							strcpy(word_phonemes, phonemes);
 							return 0;
 						}
@@ -988,7 +988,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 							if (phonemes[0] == phonSWITCH) {
 								// change to another language in order to translate this word
 								strcpy(word_phonemes, phonemes);
-								strcpy(wordx, word_copy);
+								memcpy(wordx, word_copy, strlen(word_copy));
 								wordx[-1] = c_temp;
 								return 0;
 							}
@@ -1002,7 +1002,7 @@ static int TranslateWord3(Translator *tr, char *word_start, WORD_TAB *wtab, char
 					AppendPhonemes(tr, phonemes, N_WORD_PHONEMES, end_phonemes);
 					end_phonemes[0] = 0;
 				}
-				strcpy(wordx, word_copy);
+				memcpy(wordx, word_copy, strlen(word_copy));
 			}
 
 			wordx[-1] = c_temp;
