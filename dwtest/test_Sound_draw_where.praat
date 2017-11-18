@@ -5,7 +5,7 @@ Erase all
 
 appendInfoLine: "Sound_drawWhere_test.praat"
 # maximally steep
-appendInfoLine: tab$, "Top: sawtooth in blue with parts above 0.5 in red"
+appendInfoLine: tab$, "Top: sawtooth in blue with parts above 0.5 in red + red line"
 s = Create Sound from formula: "s", 1, 0, 1, 44100, "20*((x mod 0.1) - 0.05)"
 ymin = -1.1
 ymax = 1.1
@@ -71,5 +71,6 @@ Draw inner box
 Text top: "no", "Random amplitudes: parts > 0.5 red in the first half of every 0.001 s"
 removeObject: s
 
+Colour: "Black"
 appendInfoLine: "Sound_drawWhere_test.praat End"
 
