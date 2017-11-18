@@ -31,7 +31,7 @@ autoSound Sound_readFromCmuAudioFile (MelderFile file);
 
 /* only 16 bit signed has been tested !! */
 autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding,
-	int littleEndian, int unSigned, long skipNBytes, double samplingFrequency);
+	bool littleEndian, bool unSigned, integer skipNBytes, double samplingFrequency);
 /* Reads a Sound from a raw file:
  *	fileName	: name of the file
  *	format		: "integer" (default)
@@ -47,7 +47,7 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate);
 /*
 */
 
-void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, int nBitsCoding, int unSigned);
+void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool littleEndian, int nBitsCoding, bool unSigned);
 
 void Sound_into_Sound (Sound me, Sound to, double startTime);
 /* precondition: my dx == to->dx (equal sampling times */
@@ -70,26 +70,26 @@ autoSound Sound_createGaussian (double windowDuration, double samplingFrequency)
 autoSound Sound_createHamming (double windowDuration, double samplingFrequency);
 
 autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime, double samplingFrequency,
-	double firstFrequency, long numberOfComponents, double frequencyDistance, int scaleAmplitudes);
+	double firstFrequency, integer numberOfComponents, double frequencyDistance, bool scaleAmplitudes);
 
 autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency,
-	double firstFrequency, long numberOfComponents, long mistunedComponent, double mistuningFraction, int scaleAmplitudes);
+	double firstFrequency, integer numberOfComponents, integer mistunedComponent, double mistuningFraction, bool scaleAmplitudes);
 
 autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double samplingFrequency,
-	double gamma, double frequency, double bandwidth, double initialPhase, double addition, int scaleAmplitudes);
+	double gamma, double frequency, double bandwidth, double initialPhase, double addition, bool scaleAmplitudes);
 
 autoSound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
-	double lowestFrequency, long numberOfComponents, double frequencyChange, double amplitudeRange);
+	double lowestFrequency, integer numberOfComponents, double frequencyChange, double amplitudeRange);
 
 autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
-	double samplingFrequency, double lowestFrequency, long numberOfComponents,
+	double samplingFrequency, double lowestFrequency, integer numberOfComponents,
 	double frequencyChange_st, double amplitudeRange, double octaveShiftFraction);
 
 autoSound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime, double samplingFrequency,
-	double baseFrequency, double frequencyShiftRatio, long numberOfComponents);
+	double baseFrequency, double frequencyShiftRatio, integer numberOfComponents);
 
 autoSound Sound_createPlompTone (double minimumTime, double maximumTime, double samplingFrequency,
-	double baseFrequency, double frequencyFraction, long m);
+	double baseFrequency, double frequencyFraction, integer m);
 
 autoSound Sound_createFromWindowFunction (double effectiveTime, double samplingFrequency, int windowType);
 /* 1; rect 2:hamming 3: bartlet 4: welch 5: hanning 6:gaussian */
@@ -123,7 +123,7 @@ void Sound_scale_dB (Sound me, double level_dB);
 	where extremum is the maximum of the absolute values the signal values.
 */
 
-void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, int fadeGlobal);
+void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bool fadeGlobal);
 /* if inout <= 0 fade in with (1-cos)/2  else fade out with (1+cos)/2
 	channel = 0 (all), 1 (left), 2 (right).
 */
@@ -133,7 +133,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, in
 #define FROM_BOTTOM_TO_TOP 2
 #define FROM_TOP_TO_BOTTOM 3
 
-void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, int direction, int garnish);
+void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, int direction, bool garnish);
 /* direction is one of the macros's FROM_LEFT_TO_RIGHT... */
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,

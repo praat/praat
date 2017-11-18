@@ -5463,7 +5463,7 @@ FORM (MODIFY_Sound_fadeIn, U"Sound: Fade in", U"Sound: Fade in...") {
 	OK
 DO
 	MODIFY_EACH (Sound)
-		Sound_fade (me, channel, time, fadeTime, -1, silentFromStart);
+		Sound_fade (me, channel, time, fadeTime, -1.0, silentFromStart);
 	MODIFY_EACH_END
 }
 
