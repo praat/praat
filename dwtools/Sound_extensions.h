@@ -158,8 +158,6 @@ autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, d
 	within time dt
 */
 
-void Sound_filter_part_formula (Sound me, double t1, double t2, const char32 *formula, Interpreter interpreter);
-
 autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 	double formantMultiplier, // > 0
 	double pitchMultiplier, // > 0
