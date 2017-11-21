@@ -1518,7 +1518,7 @@ FORM (NEW_Sound_to_Harmonicity_cc, U"Sound: To Harmonicity (cc)", U"Sound: To Ha
 	POSITIVE (timeStep, U"Time step (s)", U"0.01")
 	POSITIVE (minimumPitch, U"Minimum pitch (Hz)", U"75.0")
 	REAL (silenceThreshold, U"Silence threshold", U"0.1")
-	POSITIVE (periodsPerWindow, U"Periods per window", U"4.5")
+	POSITIVE (periodsPerWindow, U"Periods per window", U"1.0")
 	OK
 DO
 	CONVERT_EACH (Sound)
