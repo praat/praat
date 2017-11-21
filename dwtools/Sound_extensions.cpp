@@ -324,9 +324,8 @@ autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsC
 			skipNBytes = 0;
 		}
 		integer nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
-		if (nSamples < 1) {
-			Melder_throw (U"No samples left to read");
-		}
+		Melder_require (nSamples > 0, U"No samples left to read");
+		
 		autoSound me = Sound_createSimple (1, nSamples / samplingFrequency, samplingFrequency);
 		fseek (f, skipNBytes, SEEK_SET);
 		if (nBytesPerSample == 1 && unSigned) {
@@ -365,9 +364,8 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool l
 		if (strequ (format, "float")) {
 			nBytesPerSample = 4;
 		}
-		if (nBytesPerSample == 3 || nBytesPerSample > 4) {
-			Melder_throw (U"number of bytes per sample should be 1, 2 or 4.");
-		}
+		Melder_require (nBytesPerSample == 1 || nBytesPerSample == 2 || nBytesPerSample == 4, U"number of bytes per sample should be 1, 2 or 4.");
+		
 		if (nBytesPerSample == 1 && unSigned) {
 			u1write (me, f, & nClip);
 		} else if (nBytesPerSample == 1 && ! unSigned) {
@@ -479,16 +477,13 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 		autofile f = Melder_fopen (file, "rb");
 
 		integer filelength = MelderFile_length (file);
-		if (filelength <= 0) {
-			Melder_throw (U"File is empty.");
-		}
-
+		
+		Melder_require (filelength > 0, U"File is empty.");
+		
 		// Two samples in each byte
 
 		integer numberOfSamples = 2 * filelength;
-		if (numberOfSamples <= 0) {
-			Melder_throw (U"File too long");
-		}
+		
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate);
 
 		// Read all bytes and decode
@@ -497,10 +492,13 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 		dialogic_adpcm_init (& adpcm);
 
 		integer n = 1;
-		for (integer i = 1; i <= filelength; i++) {
+		for (integer i = 1; i <= filelength; i ++) {
 			unsigned char sc;
-			(void) fread (& sc, 1, 1, f);
-			adpcm.code = (char) ( (sc >> 4) & 0x0f);
+			integer nread = fread (& sc, 1, 1, f);
+			if (nread != 1) {
+				Melder_throw (U"Error: trying to read byte number ", i);
+			}
+			adpcm.code = (char) ((sc >> 4) & 0x0f);
 			my z [1] [n ++] = dialogic_adpcm_decode (& adpcm);
 			adpcm.code = (char) (sc & 0x0f);
 			my z [1] [n ++] = dialogic_adpcm_decode (& adpcm);
@@ -508,7 +506,7 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 		f.close (file);
 		return me;
 	} catch (MelderError) {
-		Melder_throw (U"Sound not read from Dialogic ADPCM file", MelderFile_messageName (file), U".");
+		Melder_throw (U"Sound not read from Dialogic ADPCM file ", MelderFile_messageName (file), U".");
 	}
 }
 
@@ -798,12 +796,8 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	try {
-		if (centre_frequency <= 0) {
-			Melder_throw (U"Centre frequency must be positive.");
-		}
-		if (bandwidth < 0) {
-			Melder_throw (U"Bandwidth must be positive.");
-		}
+		Meldr_require (centre_frequency > 0, U"Centre frequency must be positive.");
+		Melder_require (bandwidth > 0, U"Bandwidth must be positive.");
 
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 		autoNUMvector<double> y (1, my nx);
@@ -1190,54 +1184,6 @@ IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, do
 }
 */
 
-void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3) {
-	if (my dx != thy dx) {
-		Melder_throw (U"Sample rates must be equal.");
-	}
-
-	if (t1 == 0) {
-		t1 =  my xmin;
-	}
-	if (t2 == 0) {
-		t2 =  my xmax;
-	}
-
-	integer i1 = Sampled_xToHighIndex (me, t1);
-	integer i2 = Sampled_xToLowIndex (me, t2);
-	if (i1 > i2 || i2 > my nx || i1 < 1) Melder_throw
-		(U"Times of part to be overwritten must be within the sound.");
-
-	if (t3 == 0) {
-		t3 = thy xmin;
-	}
-	integer i3 = Sampled_xToHighIndex (thee, t3);
-	integer i4 = Sampled_xToLowIndex (thee, t3 + t2 - t1);
-	if (i4 > thy nx || i3 < 1) {
-		Melder_throw (U"Not enough samples to be copied.");
-	}
-	if (i4 - i3 != i2 - i1) {
-		Melder_throw (U"Error i4 - i3 != i2 - i1.");
-	}
-
-	for (integer i = i1; i <= i2; i ++) {
-		my z [1] [i] = thy z [1] [i - i1 + i3];
-	}
-}
-
-void Sound_filter_part_formula (Sound me, double t1, double t2, const char32 *formula, Interpreter interpreter) {
-	try {
-		autoSound part = Sound_extractPart (me, t1, t2, kSound_windowShape::RECTANGULAR, 1, 1);
-		autoSpectrum spec = Sound_to_Spectrum (part.get(), true);
-		Matrix_formula ( (Matrix) spec.get(), formula, interpreter, 0);
-		autoSound filtered = Spectrum_to_Sound (spec.get());
-
-		// Overwrite part between t1 and t2 of original with the filtered signal */
-
-		Sound_overwritePart (me, t1, t2, filtered.get(), 0);
-	} catch (MelderError) {
-		Melder_throw (me, U": part not filtered by formula.");
-	}
-}
 
 /*
    First approximation on the basis of differences in the sampled signal.
@@ -1343,8 +1289,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
 	try {
 		const char32 *silentLabel = U"-", *soundingLabel = U"+";
-		autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
-			minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
+		autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		IntervalTier tier = (IntervalTier) dbs -> tiers->at [1];
 		Melder_assert (tier -> intervals.size > 0);
 		TextInterval interval = tier -> intervals.at [1];
@@ -1394,11 +1339,11 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
         for (integer iint = 1; iint <= thy intervals.size; iint ++) {
             TextInterval interval = thy intervals.at [iint];
             if (! Melder_equ (interval -> text, match)) {
-				integer ipos;
-                Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, &ixmin, &ixmax);
+                Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
 				if (ixmin == previous_ixmax) {
 					ixmin ++;
 				}
+				integer ipos = 0; // to prevent compiler warning -Wmaybe-uninitilized
 				previous_ixmax = ixmax;
                 for (integer ichan = 1; ichan <= my ny; ichan ++) {
                     ipos = numberOfSamples + 1;
@@ -1850,7 +1795,7 @@ static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, doubl
 	 It is essential that the intermediate interpolated y-values are always between the values at samples ileft and ileft+1.
 	 We cannot use a sinc-interpolation because at strong amplitude changes high-frequency oscillations may occur.
 */
-static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer ileft, bool left, bool right, const char32 *formula, Interpreter interpreter, int interpolation, integer numberOfBisections, double *x, double *y) {
+static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer ileft, bool left, bool right, const char32 *formula, Interpreter interpreter, integer numberOfBisections, double *x, double *y) {
 	
 	Melder_require (left != right, U"Invalid situation.");
 	
@@ -1867,7 +1812,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 	}
 	
 	/*
-		Create a new Sound with only 3 samples in it. 
+		For the bisection we create a Sound with only 3 samples in it which is sufficient for doing linear interpolation.
 		The domain needs to be the same as the sound otherwise the formula might give wrong answers because 
 		it might contains references to other matrix objects!
 		We also need all the channels because the formula might involve relations between the 
@@ -1888,7 +1833,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 		xmid = 0.5 * (xleft + xright); // the bisection
 
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			thy z [channel] [2] = Vector_getValueAtX (me, xmid, channel, interpolation);
+			thy z [channel] [2] = Vector_getValueAtX (me, xmid, channel, Vector_VALUE_INTERPOLATION_LINEAR);
 		}
 		Formula_Result result;
 		Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
@@ -1908,7 +1853,6 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 				thy z [channel] [3] = thy z [channel] [2];
 			}
 		}
-		Melder_assert (left != right);
 		istep ++;
 	} while (istep < numberOfBisections);
 
@@ -1918,6 +1862,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
 	bool garnish, const char32 *method, integer numberOfBisections, const char32 *formula, Interpreter interpreter) {
+	
 	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
 	integer ixmin, ixmax;
@@ -1979,45 +1924,46 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			Formula_run (channel, 1, & result);
 			bool previous = (result. numericResult != 0.0); // numericResult == 0.0 means false!
 			integer istart = ixmin; // first sample of segment to be drawn
-			double xb = Sampled_indexToX (me, ixmin);
-			double yb = my z [channel] [ixmin], xe, ye;
+			double xb, yb, xe, ye;
 			for (integer ix = ixmin + 1; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
 				bool current = (result. numericResult != 0.0); // numericResult == 0.0 means false!
 				if (previous && not current) { 
 					/* 
-						T to F change: we are leaving a drawn segment
+						T to F change: we are leaving a segment to be drawn
+						1. Draw the curve between the sample numbers from istart to ix-1 (previous). 
+						2. Find the (x,y) in the interval between sample numbers ix-1 and ix (current) where the change from
+							T to F occurs and draw the line between the previous point and (x,y).
+						3. Compile the formula again because it has been changed during the interpolation
 					*/
+					xb = Matrix_columnToX (me, ix - 1);
+					yb = my z [channel] [ix - 1];
 					if (ix - istart > 1) {
-						xb = Matrix_columnToX (me, istart);
-						xe = Matrix_columnToX (me, ix - 1);
-						Graphics_function (g, my z [channel], istart, ix - 1, xb, xe);
-						xb = xe;
-						yb = my z [channel] [ix - 1];
+						double x1 = Matrix_columnToX (me, istart);
+						Graphics_function (g, my z [channel], istart, ix - 1, x1, xb);
 					}
-					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, & xe, & ye);
+					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, numberOfBisections, & xe, & ye);
 					Graphics_line (g, xb, yb, xe, ye);
-					/*
-						Compile the formula again because it was changed during the interpolation
-					*/
 					Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-				} else if (not previous && current ) { // F to T change: we are leaving a not-drawn segment
+				} else if (not previous && current ) {
+					/*
+						F to T change: we are entering a segment to be drawn.
+						1. Find the (x,y) where the F changes to T and then draw the line from that (x,y) to the current point.
+						2. Compile the formula again
+					*/
 					istart = ix;
-					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, & xb, & yb);
+					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, numberOfBisections, & xb, & yb);
 					xe = Sampled_indexToX (me, ix);
 					ye = my z [channel] [ix];
 					Graphics_line (g, xb, yb, xe, ye);
-					xb = xe; yb = ye;
 					Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-				} else if (previous && current && ix == ixmax) { // TT & last
-					xe = Matrix_columnToX (me, istart);
-					ye = my z [channel] [istart];
-					Graphics_line (g, xb, yb, xe, ye);
-					xb = xe; xe = Matrix_columnToX (me, ix);
-					Graphics_function (g, my z [channel], istart, ix, xb, xe);
-					xb = xe; yb = my z [channel] [ix];
 				}
 				previous = current;
+			}
+			if (previous && ixmax - istart > 0) {
+				xb = Matrix_columnToX (me, istart);
+				xe = Matrix_columnToX (me, ixmax);
+				Graphics_function (g, my z [channel], istart, ixmax, xb, xe);
 			}
 		}
 	}
@@ -2055,7 +2001,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 					previous = current;
 				}
 				if (previous != current) {
-					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, &xe, &ye);
+					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, numberOfBisections, & xe, & ye);
 					if (current) { // entering painting area
 						tmini = xe;
 					} else { //leaving painting area
