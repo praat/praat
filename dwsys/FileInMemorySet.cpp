@@ -43,6 +43,16 @@ Thing_implement (FileInMemorySet, SortedSet, 0);
 void structFileInMemorySet :: v_info () {
 	FileInMemorySet_Parent :: v_info ();
 	MelderInfo_writeLine (U"Number of files: ", size);
+	MelderInfo_writeLine (U"Total number of bytes: ", FileInMemorySet_getTotalNumberOfBytes (this));
+}
+
+integer FileInMemorySet_getTotalNumberOfBytes (FileInMemorySet me) {
+	integer numberOfBytes = 0;
+	for (integer ifile = 1; ifile <= my size; ifile ++) {
+		FileInMemory fim = (FileInMemory) my at [ifile];
+		numberOfBytes += fim -> d_numberOfBytes;
+	}
+	return numberOfBytes;
 }
 
 autoFileInMemorySet FileInMemorySet_create () {

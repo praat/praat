@@ -36,6 +36,7 @@ autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_st
 /* Only creates references to files in memory. Once me is deleted, the references are not valid any more!! */
 autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion);
 
+integer FileInMemorySet_getTotalNumberOfBytes (FileInMemorySet me);
 
 autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list);
 

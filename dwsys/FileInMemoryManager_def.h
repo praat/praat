@@ -22,6 +22,11 @@ oo_DEFINE_CLASS (FileInMemoryManager, Daata)
 	oo_AUTO_OBJECT (FileInMemorySet, 0, files)
 	oo_AUTO_OBJECT (FileInMemorySet, 0, openFiles)
 	oo_INTEGER (errorNumber)
+	#if oo_DECLARING
+
+		void v_info () override;
+
+	#endif
 	
 oo_END_CLASS (FileInMemoryManager)
 #undef ooSTRUCT
