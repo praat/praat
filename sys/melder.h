@@ -732,7 +732,7 @@ void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1,
 		col2 >= col1;
 */
 
-void NUMmatrix_free (integer elementSize, void *m, integer row1, integer col1) noexcept;
+void NUMmatrix_free_ (integer elementSize, char **m, integer row1, integer col1) noexcept;
 /*
 	Function:
 		destroy a matrix m created with NUM...matrix.
@@ -749,7 +749,7 @@ void * NUMmatrix_copy (integer elementSize, void *m, integer row1, integer row2,
 		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
 */
 
-void NUMmatrix_copyElements (integer elementSize, void *m, void *to, integer row1, integer row2, integer col1, integer col2);
+void NUMmatrix_copyElements_ (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2);
 /*
 	copy the matrix elements m [r1..r2] [c1..c2] to those of a matrix 'to'.
 	These matrices need not have been created by NUMmatrix.
@@ -1074,7 +1074,7 @@ T** NUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero
 
 template <class T>
 void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
-	NUMmatrix_free (sizeof (T), ptr, row1, col1);
+	NUMmatrix_free_ (sizeof (T), reinterpret_cast <char **> (ptr), row1, col1);
 }
 
 template <class T>
@@ -1097,7 +1097,7 @@ bool NUMmatrix_equal (T** m1, T** m2, integer row1, integer row2, integer col1, 
 
 template <class T>
 void NUMmatrix_copyElements (T** mfrom, T** mto, integer row1, integer row2, integer col1, integer col2) {
-	NUMmatrix_copyElements (sizeof (T), mfrom, mto, row1, row2, col1, col2);
+	NUMmatrix_copyElements_ (sizeof (T), reinterpret_cast <char **> (mfrom), reinterpret_cast <char **> (mto), row1, row2, col1, col2);
 }
 
 template <class T>
@@ -1116,7 +1116,7 @@ public:
 	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
 	}
 	~autoNUMmatrix () {
-		if (d_ptr) NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
+		if (d_ptr) NUMmatrix_free_ (sizeof (T), reinterpret_cast <char **> (d_ptr), d_row1, d_col1);
 	}
 	T*& operator[] (integer row) {
 		return d_ptr [row];
@@ -1131,7 +1131,7 @@ public:
 	}
 	void reset (integer row1, integer row2, integer col1, integer col2) {
 		if (d_ptr) {
-			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
+			NUMmatrix_free_ (sizeof (T), reinterpret_cast <char **> (d_ptr), d_row1, d_col1);
 			d_ptr = nullptr;
 		}
 		d_row1 = row1;
@@ -1140,7 +1140,7 @@ public:
 	}
 	void reset (integer row1, integer row2, integer col1, integer col2, bool zero) {
 		if (d_ptr) {
-			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
+			NUMmatrix_free_ (sizeof (T), reinterpret_cast <char **> (d_ptr), d_row1, d_col1);
 			d_ptr = nullptr;
 		}
 		d_row1 = row1;
