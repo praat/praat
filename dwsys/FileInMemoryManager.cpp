@@ -47,6 +47,12 @@
 
 Thing_implement (FileInMemoryManager, Daata, 0);
 
+void structFileInMemoryManager :: v_info () {
+	FileInMemoryManager_Parent :: v_info ();
+	MelderInfo_writeLine (U"Number of files: ", files -> size);
+	MelderInfo_writeLine (U"Total number of bytes: ", FileInMemorySet_getTotalNumberOfBytes (files.get()));
+}
+
 bool FileInMemoryManager_hasDirectory (FileInMemoryManager me, const char32 *name) {
 		return FileInMemorySet_hasDirectory (my files.get(), name);
 }

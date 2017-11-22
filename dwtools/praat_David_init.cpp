@@ -2508,110 +2508,6 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
-FORM (INFO_FileInMemoryManager_fopen, U"FileInMemoryManager: Open file in memory", nullptr) {
-	SENTENCE (fileName, U"File name", U"/home/david/projects/espeak-ng/espeak-ng-data/lang/aav/vi")
-	WORD (mode, U"Mode", U"r")
-	OK
-DO
-	NUMBER_ONE (FileInMemoryManager)
-		FILE *stream = FileInMemoryManager_fopen (me, Melder_peek32to8 (fileName), Melder_peek32to8 (mode));
-		integer result = stream ? reinterpret_cast<integer> (stream) : 0;
-	NUMBER_ONE_END (U" (index in set)")
-}
-
-FORM (INFO_FileInMemoryManager_fclose, U"FileInMemoryManager: Close file in memory", nullptr) {
-	NATURAL (index, U"Index", U"1")
-	OK
-DO
-	NUMBER_ONE (FileInMemoryManager)
-		integer result = FileInMemoryManager_fclose (me, (reinterpret_cast<FILE *> (index)));
-	NUMBER_ONE_END (U"")
-}
-
-FORM (INFO_FileInMemoryManager_fgets, U"FileInMemoryManager: fgets", nullptr) {
-	NATURAL (index, U"Index", U"1")
-	NATURAL (numberOfCharacters, U"Number of characters", U"10")
-	OK
-DO
-	STRING_ONE (FileInMemoryManager)
-		autoNUMvector<char> str ((integer) 0, numberOfCharacters);
-		char *str2 = FileInMemoryManager_fgets (me, & str [0], numberOfCharacters, reinterpret_cast<FILE *> (index));
-		char32 *result = Melder_peek8to32 (& str2 [0]);
-	STRING_ONE_END
-}
-
-FORM (INFO_FileInMemoryManager_fgetc, U"FileInMemoryManager: fgetc", nullptr) {
-	NATURAL (index, U"Index", U"1")
-	OK
-DO
-	NUMBER_ONE (FileInMemoryManager)
-		integer result = FileInMemoryManager_fgetc (me, reinterpret_cast<FILE *> (index));
-	NUMBER_ONE_END (U"")
-}
-
-FORM (INFO_FileInMemoryManager_ungetc, U"FileInMemoryManager: ungetc", nullptr) {
-	NATURAL (index, U"Index", U"1")
-	INTEGER (character, U"Character (int)", U"40")
-	OK
-DO
-	NUMBER_ONE (FileInMemoryManager)
-		integer result = FileInMemoryManager_ungetc (me, character, reinterpret_cast<FILE *> (index));
-	NUMBER_ONE_END (U"")
-}
-
-FORM (INFO_FileInMemoryManager_fprintf, U"FileInMemoryManager: fprintf (stderr, ...)", nullptr) {
-	INTEGER (number, U"Integer", U"10")
-	SENTENCE (string, U"String", U"a bcd")
-	OK
-DO
-	INFO_ONE (FileInMemoryManager)
-		MelderInfo_open();
-		const char *format1 ="number and string: \"%ld %s\"";
-		FileInMemoryManager_fprintf (me, stderr, format1, number, Melder_peek32to8 (string));
-		const char *format2 ="number: \"%ld\"";
-		FileInMemoryManager_fprintf (me, stderr, format2, number);
-		MelderInfo_close();
-	INFO_ONE_END
-}
-
-FORM (INFO_FileInMemoryManager_fread, U"FileInMemoryManager: fread", nullptr) {
-	NATURAL (index, U"Index", U"1")
-	NATURAL (elementSize, U"Element size (bytes)", U"1")
-	NATURAL (numberOfElements, U"Number of elements", U"1")
-	OK
-DO
-	STRING_ONE (FileInMemoryManager)
-		integer numberOfBytes = elementSize * numberOfElements;
-		autoNUMvector<char> str ((integer) 0, numberOfBytes);
-		size_t numberRead = FileInMemoryManager_fread (me, & str [0], elementSize, numberOfElements, reinterpret_cast<FILE *> (index));
-		str [numberRead * elementSize] = '\0';
-		char32 *result = Melder_peek8to32 (& str [0]);
-	STRING_ONE_END
-}
-
-FORM (INFO_FileInMemoryManager_fseek, U"FileInMemoryManager: fseek", nullptr) {
-	NATURAL (index, U"Index", U"1")
-	INTEGER (offset, U"Offset (bytes)", U"1")
-	OPTIONMENU (origin, U"Reference position", 1)
-		OPTION (U"Start")
-		OPTION (U"Current")
-		OPTION (U"End")
-	OK
-DO
-	NUMBER_ONE (FileInMemoryManager)
-		integer result = FileInMemoryManager_fseek (me, (reinterpret_cast<FILE *> (index)), offset, origin == 1 ? SEEK_SET : origin == 2 ? SEEK_CUR : SEEK_END);
-	NUMBER_ONE_END (U"")
-}
-
-FORM (INFO_FileInMemoryManager_rewind, U"FileInMemoryManager_rewind", nullptr) {
-	NATURAL (index, U"Index", U"1")
-	OK
-DO
-	MODIFY_EACH (FileInMemoryManager)
-		FileInMemoryManager_rewind (me, reinterpret_cast<FILE *> (index));
-	MODIFY_EACH_END
-}
-
 FORM (NEW_FileInMemorySet_createFromDirectoryContents, U"Create files in memory from directory contents", nullptr) {
 	SENTENCE (name, U"Name", U"list")
 	TEXTFIELD (directory, U"Directory:", U"/home/david/projects/espeak-ng/espeak-ng-data/voices/!v")
@@ -7957,24 +7853,11 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemoryManager, 1, U"Query -", nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfFiles);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfOpenFiles);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Get characters (fgets)...", nullptr, 1, INFO_FileInMemoryManager_fgets);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Get character (fgetc)...", nullptr, 1, INFO_FileInMemoryManager_fgetc);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Get elements (fread)...", nullptr, 1, INFO_FileInMemoryManager_fread);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Has directory?", nullptr, 1, INFO_FileInMemoryManager_hasDirectory);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Modify -", nullptr, 0, nullptr);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Open file (fopen)...", nullptr, 1, INFO_FileInMemoryManager_fopen);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Close file (fclose)...", nullptr, 1, INFO_FileInMemoryManager_fclose);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Reposition (fseek)...", nullptr, 1, INFO_FileInMemoryManager_fseek);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Rewind file (rewind)...", nullptr, 1, INFO_FileInMemoryManager_rewind);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Push back character (ungetc)...", nullptr, 1, INFO_FileInMemoryManager_ungetc);
-	praat_addAction1 (classFileInMemoryManager, 1, U"Write to file stderr (fprintf)...", nullptr, 1, INFO_FileInMemoryManager_fprintf);
-
+	
 	praat_addAction1 (classFileInMemoryManager, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemoryManager_extractFiles);
 	praat_addAction1 (classFileInMemoryManager, 0, U"Down to Table...", nullptr, 0, NEW1_FileInMemoryManager_downto_Table);
-
-
-
-
+	
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, praat_DEPRECATED_2015, HELP_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
 	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawSpectrum);
