@@ -33,12 +33,12 @@ autoTableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee);
 	the correlation of a canonical variable with an original variable.
 */
 
-double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to);
+double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, integer canonicalVariate_from, integer canonicalVariate_to);
 /*
 	Get the fraction of variance extracted from the dependent/independent set by the canonical variate range.
 */
 
-double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to);
+double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, integer canonicalVariate_from, integer canonicalVariate_to);
 /*
 	The Stewart-Love redundancy is the fraction of variance extracted by the canonical variate times
 	the fraction of shared variance between the canonical variate and the corresponding canonical variate

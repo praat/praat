@@ -2,7 +2,7 @@
 #define _Confusion_h_
 /* Confusion.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ Thing_define (Confusion, TableOfReal) {
 	A Confusion matrix has both row and column labels.
 */
 
-autoConfusion Confusion_create (long numberOfStimuli, long numberOfResponses);
+autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfResponses);
 
 autoConfusion Confusion_createSimple (const char32 *labels);
 
@@ -59,11 +59,9 @@ void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
  *  *uxy    symmetrical dependency
  */
 
-void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberOfCorrect);
+void Confusion_getFractionCorrect (Confusion me, double *fraction, integer *numberOfCorrect);
 
-void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g,
-	long index, double lowerPercentage, double xmin, double xmax,
-	double ymin, double ymax, int garnish);
+void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index, double lowerPercentage, double xmin, double xmax, double ymin, double ymax, int garnish);
 /* 1. Draw my rowLabels centered at ( matrix->z[i][1], matrix->z[i][2]).
  * 2. Draw arrows and circles according to:
  *	for (i=1; i <= my numberOfRows; i++)
@@ -81,15 +79,15 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g,
 autoMatrix Confusion_difference (Confusion me, Confusion thee);
 /* return matrix with the difference between the two confusion matrices */
 
-long Confusion_getNumberOfEntries (Confusion me);
+integer Confusion_getNumberOfEntries (Confusion me);
 
-autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
+autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos);
 
-autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
+autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos);
 
-autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, long newpos);
+autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos);
 
-autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace, long maximumNumberOfReplaces, int use_regexp);
+autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace, integer maximumNumberOfReplaces, int use_regexp);
 /* 
 	Group row and column labels according to search and replace.
 */

@@ -2,7 +2,7 @@
  *
  *	Dynamic Time Warp of two CCs.
  *
- * Copyright (C) 1993-2013, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,43 +26,42 @@
 
 #include "CCs_to_DTW.h"
 
-static void regression (CC me, long frame, double r[], long nr) {
+static void regression (CC me, integer frame, double r[], integer nr) {
 
 	// sum(i^2;i=-n..n) = 2n^3/3 + n^2 +n/3 = n (n (2n/3 + 1) + 1/3);
 
-	long nrd2 = nr / 2;
+	integer nrd2 = nr / 2;
 	double sumsq = nrd2 * (nrd2 * (nr / 3.0 + 1.0) + 1.0 / 3.0);
 
 	if (frame <= nrd2 || frame >= my nx - nrd2) {
 		return;
 	}
 
-	for (long i = 0; i <= my maximumNumberOfCoefficients; i++) {
-		r[i] = 0.0;
+	for (integer i = 0; i <= my maximumNumberOfCoefficients; i ++) {
+		r [i] = 0.0;
 	}
 
-	long nmin = CC_getMinimumNumberOfCoefficients (me, frame - nrd2, frame + nrd2);
+	integer nmin = CC_getMinimumNumberOfCoefficients (me, frame - nrd2, frame + nrd2);
 
-	for (long i = 0; i <= nmin; i++) {
+	for (integer i = 0; i <= nmin; i ++) {
 		double ri = 0;
-		for (long j = -nrd2; j <= nrd2; j++) {
+		for (integer j = -nrd2; j <= nrd2; j ++) {
 			CC_Frame cf = & my frame[frame + j];
-			double c = i == 0 ? cf -> c0 : cf -> c[i];
+			double c = i == 0 ? cf -> c0 : cf -> c [i];
 			ri += c * j;
 		}
-		r[i] = ri / sumsq / my dx;
+		r [i] = ri / sumsq / my dx;
 	}
 }
 
 autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer, double dtr) {
 	try {
-		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
-			Melder_throw (U"CC orders must be equal.");
-		}
 		integer nr = Melder_ifloor (dtr / my dx);
-		if (wr != 0.0 && nr < 2) {
-			Melder_throw (U"Time window for regression is too small.");
-		}
+		
+		Melder_require (my maximumNumberOfCoefficients == thy maximumNumberOfCoefficients,
+			U"CC orders must be equal.");
+		Melder_require (! (wr != 0.0 && nr < 2), 
+			U"Time window for regression is too small.");
 
 		if (nr % 2 == 0) {
 			nr ++;
@@ -78,19 +77,19 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 		/* Calculate distance matrix. */
 
 		autoMelderProgress progess (U"CCs_to_DTW");
-		for (long i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++) {
 			CC_Frame fi = & my frame [i];
 
 			regression (me, i, ri.peek(), nr);
 
-			for (long j = 1; j <= thy nx; j ++) {
+			for (integer j = 1; j <= thy nx; j ++) {
 				CC_Frame fj = & thy frame [j];
 				real80 dist = 0.0, distr = 0.0;
 
 				/* Cepstral distance. */
 
 				if (wc != 0.0) {
-					for (long k = 1; k <= fj -> numberOfCoefficients; k ++) {
+					for (integer k = 1; k <= fj -> numberOfCoefficients; k ++) {
 						double d = fi -> c [k] - fj -> c [k];
 						dist += d * d;
 					}
@@ -108,7 +107,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 
 				if (wr != 0.0) {
 					regression (thee, j, rj.peek(), nr);
-					for (long k = 1; k <= fj -> numberOfCoefficients; k ++) {
+					for (integer k = 1; k <= fj -> numberOfCoefficients; k ++) {
 						double d = ri [k] - rj [k];
 						distr += d * d;
 					}

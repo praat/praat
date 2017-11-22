@@ -33,7 +33,7 @@
 
 Thing_implement (ClassificationTable, TableOfReal, 0);
 
-autoClassificationTable ClassificationTable_create (long numberOfRows, long numberOfClasses) {
+autoClassificationTable ClassificationTable_create (integer numberOfRows, integer numberOfClasses) {
 	try {
 		autoClassificationTable me = Thing_new (ClassificationTable);
 		TableOfReal_init (me.get(), numberOfRows, numberOfClasses);
@@ -61,8 +61,8 @@ void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTab
 	if (my numberOfColumns != thy numberOfColumns) {
 		Melder_throw (U"The number of columns must be equal.");
 	}
-	for (long irow = 1; irow <= thy numberOfRows; irow ++) {
-		long index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
+	for (integer irow = 1; irow <= thy numberOfRows; irow ++) {
+		integer index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
 		Confusion_increase (me, thy rowLabels [irow], my columnLabels [index]);
 	}
 }
@@ -71,10 +71,10 @@ autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTab
 	try {
 		autoStrings thee = Strings_createFixedLength (my numberOfRows);
 		Melder_assert (my numberOfColumns > 0);
-		for (long i = 1; i <= my numberOfRows; i ++) {
+		for (integer i = 1; i <= my numberOfRows; i ++) {
 			double max = my data [i] [1];
-			long col = 1;
-			for (long j = 2; j <= my numberOfColumns; j ++) {
+			integer col = 1;
+			for (integer j = 2; j <= my numberOfColumns; j ++) {
 				if (my data [i] [j] > max) {
 					max = my data [i] [j];
 					col = j;
@@ -94,10 +94,10 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 	try {
 		autoCategories thee = Categories_create ();
 		Melder_assert (my numberOfColumns > 0);
-		for (long i = 1; i <= my numberOfRows; i ++) {
+		for (integer i = 1; i <= my numberOfRows; i ++) {
 			double max = my data [i] [1];
-			long col = 1;
-			for (long j = 2; j <= my numberOfColumns; j ++) {
+			integer col = 1;
+			for (integer j = 2; j <= my numberOfColumns; j ++) {
 				if (my data [i] [j] > max) {
 					max = my data [i] [j];
 					col = j;
@@ -114,17 +114,17 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable me) {
 	try {
 		autoCorrelation thee = Correlation_create (my numberOfColumns);
-		for (long icol = 1; icol <= thy numberOfColumns; icol ++) {
+		for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
 			char32 *label = my columnLabels [icol];
 			TableOfReal_setRowLabel (thee.get(), icol, label);
 			TableOfReal_setColumnLabel (thee.get(), icol, label);
 		}
 
-		for (long irow = 1; irow <= thy numberOfColumns; irow ++) {
+		for (integer irow = 1; irow <= thy numberOfColumns; irow ++) {
 			thy data [irow] [irow] = 1.0;
-			for (long icol = irow + 1; icol <= thy numberOfColumns; icol ++) {
+			for (integer icol = irow + 1; icol <= thy numberOfColumns; icol ++) {
 				double n11 = 0.0, n22 = 0.0, n12 = 0.0;
-				for (long i = 1; i <= my numberOfRows; i ++) {
+				for (integer i = 1; i <= my numberOfRows; i ++) {
 					n12 += my data [i] [irow] * my data [i] [icol];
 					n11 += my data [i] [irow] * my data [i] [irow];
 					n22 += my data [i] [icol] * my data [i] [icol];

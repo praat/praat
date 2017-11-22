@@ -2,7 +2,7 @@
 #define _Configuration_and_Procrustes_h_
 /* Configuration_and_Procrustes.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,6 @@
 	#include "Procrustes.h"
 #endif
 
-autoProcrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal);
+autoProcrustes Configurations_to_Procrustes (Configuration me, Configuration thee, bool orthogonal);
 
 #endif /* _Configuration_and_Procrustes_h_ */

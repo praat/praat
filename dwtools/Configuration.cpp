@@ -1,6 +1,6 @@
 /* Configuration.cpp
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ void structConfiguration :: v_info () {
 	MelderInfo_writeLine (U"Metric: ", metric);
 }
 
-autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimensions) {
+autoConfiguration Configuration_create (integer numberOfPoints, integer numberOfDimensions) {
 	try {
 		autoConfiguration me = Thing_new (Configuration);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfDimensions);
@@ -84,19 +84,19 @@ autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimens
 	}
 }
 
-void Configuration_setMetric (Configuration me, long metric) {
+void Configuration_setMetric (Configuration me, integer metric) {
 	my metric = metric;
 }
 
 void Configuration_setDefaultWeights (Configuration me) {
-	for (long i = 1; i <= my numberOfColumns; i++) {
-		my w[i] = 1;
+	for (integer i = 1; i <= my numberOfColumns; i ++) {
+		my w [i] = 1;
 	}
 }
 
 void Configuration_setSqWeights (Configuration me, const double weight[]) {
-	for (long i = 1; i <= my numberOfColumns; i++) {
-		my w[i] = sqrt (weight[i]);
+	for (integer i = 1; i <= my numberOfColumns; i ++) {
+		my w [i] = sqrt (weight [i]);
 	}
 }
 
@@ -114,14 +114,14 @@ void Configuration_normalize (Configuration me, double sumsq, bool columns) {
 }
 
 void Configuration_randomize (Configuration me) {
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			my data[i][j] = NUMrandomUniform (-1.0, 1.0);
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
+			my data [i] [j] = NUMrandomUniform (-1.0, 1.0);
 		}
 	}
 }
 
-void Configuration_rotate (Configuration me, long dimension1, long dimension2, double angle_degrees) {
+void Configuration_rotate (Configuration me, integer dimension1, integer dimension2, double angle_degrees) {
 	double f = NUMpi * (2.0 - angle_degrees / 180.0);
 	double cosa = cos (f), sina = sin (f);
 
@@ -130,15 +130,16 @@ void Configuration_rotate (Configuration me, long dimension1, long dimension2, d
 	}
 
 	if (dimension1 > dimension2) {
-		long dt = dimension1; dimension1 = dimension2; dimension2 = dt;
+		integer dt = dimension1; dimension1 = dimension2; dimension2 = dt;
 	}
 	if (dimension1 < 1 || dimension2 > my numberOfColumns) {
 		return;
 	}
-	for (long i = 1; i <= my numberOfRows; i++) {
-		double x1 = my data[i][dimension1], x2 = my data[i][dimension2];
-		my data[i][dimension1] =   cosa * x1 + sina * x2;
-		my data[i][dimension2] = - sina * x1 + cosa * x2;
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		double x1 = my data [i] [dimension1];
+		double x2 = my data [i] [dimension2];
+		my data [i] [dimension1] =   cosa * x1 + sina * x2;
+		my data [i] [dimension2] = - sina * x1 + cosa * x2;
 	}
 }
 
@@ -147,19 +148,19 @@ void Configuration_invertDimension (Configuration me, int dimension) {
 		return;
 	}
 
-	for (long i = 1; i <= my numberOfRows; i++) {
-		my data[i][dimension] = - my data[i][dimension];
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		my data [i] [dimension] = - my data [i] [dimension];
 	}
 }
 
 
-static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers) {
+static double NUMsquaredVariance (double **a, integer nr, integer nc, bool rawPowers) {
 	double v4 = 0.0;
 
-	for (long j = 1; j <= nc; j++) {
+	for (integer j = 1; j <= nc; j ++) {
 		double sum4 = 0.0, mean = 0.0;
-		for (long i = 1; i <= nr; i++) {
-			double sq = a[i][j] * a[i][j];
+		for (integer i = 1; i <= nr; i ++) {
+			double sq = a [i] [j] * a [i] [j];
 			sum4 += sq * sq;
 			mean += sq;
 		}
@@ -177,7 +178,7 @@ static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers) {
 		planar rotations: a remedy against nonoptimal varimax rotations",
 		Psychometrika 60, 437-446.
 */
-static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normalizeRows, int quartimax, long maximumNumberOfIterations, double tolerance) {
+static void NUMvarimax (double **xm, double **ym, integer nr, integer nc, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
 	Melder_assert (nr > 0 && nc > 0);
 
 	NUMmatrix_copyElements (xm, ym, 1, nr, 1, nc);
@@ -198,16 +199,16 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 
 	if (normalizeRows) {
 		norm.reset (1, nr);
-		for (long i = 1; i <= nr; i++) {
-			for (long j = 1; j <= nc; j++) {
-				norm[i] += ym[i][j] * ym[i][j];
+		for (integer i = 1; i <= nr; i ++) {
+			for (integer j = 1; j <= nc; j ++) {
+				norm [i] += ym [i] [j] * ym [i] [j];
 			}
-			if (norm[i] <= 0.0) {
+			if (norm [i] <= 0.0) {
 				continue;
 			}
-			norm[i] = sqrt (norm[i]);
-			for (long j = 1; j <= nc; j++) {
-				ym[i][j] /= norm[i];
+			norm [i] = sqrt (norm [i]);
+			for (integer j = 1; j <= nc; j ++) {
+				ym [i] [j] /= norm [i];
 			}
 		}
 	}
@@ -222,17 +223,18 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 	// Treat columns pairwise.
 
 	double varianceSq_old;
-	long numberOfIterations = 0;
+	integer numberOfIterations = 0;
 	do {
-		for (long c1 = 1; c1 <= nc; c1++) {
-			for (long c2 = c1 + 1; c2 <= nc; c2++) {
+		for (integer c1 = 1; c1 <= nc; c1 ++) {
+			for (integer c2 = c1 + 1; c2 <= nc; c2 ++) {
 				double um = 0.0, vm = 0.0;
-				for (long i = 1; i <= nr; i++) {
-					double x = ym[i][c1], y = ym[i][c2];
-					u[i] = x * x - y * y;
-					um += u[i];
-					v[i] = 2.0 * x * y;
-					vm += v[i];
+				for (integer i = 1; i <= nr; i ++) {
+					double x = ym [i] [c1];
+					double y = ym [i] [c2];
+					u [i] = x * x - y * y;
+					um += u [i];
+					v [i] = 2.0 * x * y;
+					vm += v [i];
 				}
 				um /= nr; vm /= nr;
 				if (quartimax || nr == 1) {
@@ -247,8 +249,9 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 						a's multiplication by 2 outside the loop.
 				*/
 				double a = 0.0, b = 0.0;
-				for (long i = 1; i <= nr; i++) {
-					double ui = u[i] - um, vi = v[i] - vm;
+				for (integer i = 1; i <= nr; i ++) {
+					double ui = u [i] - um;
+					double vi = v [i] - vm;
 					a += ui * vi;
 					b += ui * ui - vi * vi;
 				}
@@ -272,10 +275,10 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 
 				// Rotate in the plane spanned by c1 and c2.
 
-				for (long i = 1; i <= nr; i++) {
-					double *xt = ym[i], xtc1 = xt[c1];
-					xt[c1] = xtc1 * t11 + xt[c2] * t21;
-					xt[c2] = xtc1 * t12 + xt[c2] * t22;
+				for (integer i = 1; i <= nr; i ++) {
+					double *xt = ym [i], xtc1 = xt [c1];
+					xt [c1] = xtc1 * t11 + xt [c2] * t21;
+					xt [c2] = xtc1 * t12 + xt [c2] * t22;
 				}
 			}
 		}
@@ -288,16 +291,15 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 	         numberOfIterations < maximumNumberOfIterations);
 
 	if (normalizeRows) {
-		for (long i = 1; i <= nr; i++) {
-			for (long j = 1; j <= nc; j++) {
-				ym[i][j] *= norm[i];
+		for (integer i = 1; i <= nr; i ++) {
+			for (integer j = 1; j <= nc; j ++) {
+				ym [i] [j] *= norm [i];
 			}
 		}
 	}
 }
 
-autoConfiguration Configuration_varimax (Configuration me, int normalizeRows,
-                                     int quartimax, long maximumNumberOfIterations, double tolerance) {
+autoConfiguration Configuration_varimax (Configuration me, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
 	try {
 		autoConfiguration thee = Data_copy (me);
 		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
@@ -307,7 +309,7 @@ autoConfiguration Configuration_varimax (Configuration me, int normalizeRows,
 	}
 }
 
-autoConfiguration Configuration_congruenceRotation (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance) {
+autoConfiguration Configuration_congruenceRotation (Configuration me, Configuration thee, integer maximumNumberOfIterations, double tolerance) {
 	try {
 		autoAffineTransform at = Configurations_to_AffineTransform_congruence (me, thee, maximumNumberOfIterations, tolerance);
 		autoConfiguration him = Configuration_and_AffineTransform_to_Configuration (me, at.get());
@@ -331,10 +333,9 @@ void Configuration_rotateToPrincipalDirections (Configuration me) {
 	}
 }
 
-void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax,
-	int labelSize, bool useRowLabels, const char32 *label, bool garnish)
+void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax, int labelSize, bool useRowLabels, const char32 *label, bool garnish)
 {
-	long nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
+	integer nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
 
 	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || yCoordinate > numberOfDimensions)) {
 		return;
@@ -349,9 +350,9 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	autoNUMvector<double> x (1, nPoints);
 	autoNUMvector<double> y (1, nPoints);
 
-	for (long i = 1; i <= nPoints; i ++) {
-		x[i] = my data [i] [xCoordinate] * my w [xCoordinate];
-		y[i] = ( numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0 );
+	for (integer i = 1; i <= nPoints; i ++) {
+		x [i] = my data [i] [xCoordinate] * my w [xCoordinate];
+		y [i] = numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0;
 	}
 	if (xmax <= xmin) {
 		NUMvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
@@ -371,7 +372,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	Graphics_setInner (g);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	Graphics_setFontSize (g, labelSize);
-	for (long i = 1; i <= my numberOfRows; i ++) {
+	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {
 			const char32 *plotLabel = ( useRowLabels ? my rowLabels [i] : label );
 			if (NUMstring_containsPrintableCharacter (plotLabel)) {
@@ -403,7 +404,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	}
 }
 
-void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish) {
+void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, double scale, bool confidence, const char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish) {
 	autoSSCPList sscps = TableOfReal_to_SSCPList_byLabel (me);
 	SSCPList_drawConcentrationEllipses (sscps.get(), g, scale, confidence, label, d1, d2, xmin, xmax, ymin, ymax, fontSize, garnish);
 }
@@ -420,7 +421,7 @@ autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
 	}
 }
 
-autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions) {
+autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numberOfDimensions) {
 	try {
 		if (numberOfDimensions < 1 || numberOfDimensions > my numberOfColumns) {
 			numberOfDimensions = my numberOfColumns;
@@ -479,12 +480,12 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 			Thing_setName (me.get(), U"R");
 		}
 
-		for (long i = 1; i <= 32; i++) {
-			char32 s[20];
-			Melder_sprint (s,20, i);
+		for (integer i = 1; i <= 32; i ++) {
+			char32 s [20];
+			Melder_sprint (s, 20, i);
 			TableOfReal_setRowLabel (me.get(), i, s);
-			my data [i][1] = x[i];
-			my data [i][2] = y[i];
+			my data [i] [1] = x [i];
+			my data [i] [2] = y [i];
 		}
 		return me;
 	} catch (MelderError) {
@@ -493,15 +494,15 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 }
 
 autoConfiguration Configuration_createCarrollWishExample () {
-	double  x[10] = {0.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0};
-	double  y[10] = {0.0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0};
+	double  x [10] = {0.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0};
+	double  y [10] = {0.0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0};
 	char32 const *label[] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
 	try {
-		long nObjects = 9;
+		integer nObjects = 9;
 		autoConfiguration me = Configuration_create (nObjects, 2);
-		for (long i = 1; i <= nObjects; i++) {
-			my data[i][1] = x[i];
-			my data[i][2] = y[i];
+		for (integer i = 1; i <= nObjects; i ++) {
+			my data [i] [1] = x [i];
+			my data [i] [2] = y [i];
 			TableOfReal_setRowLabel (me.get(), i, label[i]);
 		}
 		return me;

@@ -2,7 +2,7 @@
 #define _ContingencyTable_h_
 /* ContingencyTable.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ Thing_define (ContingencyTable, TableOfReal) {
 
 // entries must be nonnegative numbers
 
-autoContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns);
+autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numberOfColumns);
 
 double ContingencyTable_chisqProbability (ContingencyTable me);
 

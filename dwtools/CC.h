@@ -2,7 +2,7 @@
 #define _CC_h_
 /* CC.h
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,30 +30,30 @@
 
 #include "CC_def.h"
 
-void CC_init (CC me, double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin, double fmax);
+void CC_init (CC me, double tmin, double tmax, integer nt, double dt, double t1, integer maximumNumberOfCoefficients, double fmin, double fmax);
 
-void CC_getNumberOfCoefficients_extrema (CC me, long startframe, long endframe, long *min, long *max);
+void CC_getNumberOfCoefficients_extrema (CC me, integer startframe, integer endframe, integer *min, integer *max);
 
-long CC_getMinimumNumberOfCoefficients (CC me, long startframe, long endframe);
+integer CC_getMinimumNumberOfCoefficients (CC me, integer startframe, integer endframe);
 
-long CC_getMaximumNumberOfCoefficients (CC me, long startframe, long endframe);
+integer CC_getMaximumNumberOfCoefficients (CC me, integer startframe, integer endframe);
 
-long CC_getNumberOfCoefficients (CC me, long iframe);
+integer CC_getNumberOfCoefficients (CC me, integer iframe);
 
-double CC_getValueInFrame (CC me, long iframe, long index);
+double CC_getValueInFrame (CC me, integer iframe, integer index);
 
-double CC_getC0ValueInFrame (CC me, long iframe);
+double CC_getC0ValueInFrame (CC me, integer iframe);
 
-void CC_paint (CC me, Graphics g, double xmin, double xmax, long cmin, long cmax, double minimum, double maximum, int garnish);
+void CC_paint (CC me, Graphics g, double xmin, double xmax, integer cmin, integer cmax, double minimum, double maximum, int garnish);
 
 void CC_drawC0 (CC me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
 
 autoMatrix CC_to_Matrix (CC me);
 
-double CC_getValue (CC me, double t, long index);
+double CC_getValue (CC me, double t, integer index);
 
 /******************* Frames ************************************************/
 
-void CC_Frame_init (CC_Frame me, long numberOfCoefficients);
+void CC_Frame_init (CC_Frame me, integer numberOfCoefficients);
 
 #endif /* _CC_h_ */
