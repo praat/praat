@@ -277,24 +277,16 @@ autoSound Sound_readFromCmuAudioFile (MelderFile file) {
 	try {
 		bool littleEndian = true;
 		autofile f = Melder_fopen (file, "rb");
-		if (bingeti16LE (f) != 6) {
-			Melder_throw (U"Incorrect header size.");
-		}
+		Melder_require (bingeti16LE (f) == 6, U"Incorrect header size.");
+		
 		bingeti16LE (f);
 		short nChannels = bingeti16LE (f);
-		if (nChannels < 1) {
-			Melder_throw (U"Incorrect number of channels.");
-		}
-		if (nChannels > 1) {
-			Melder_throw (U"File has multiple channels: cannot read.");
-		}
-		if (bingeti16LE (f) < 1) {
-			Melder_throw (U"Incorrect sampling frequency.");
-		}
+		Melder_require (nChannels == 1, U"Incorrect number of channels.");
+		Melder_require (bingeti16LE (f) > 0, U"Incorrect sampling frequency.");
+		
 		integer nSamples = bingeti32LE (f);
-		if (nSamples < 1) {
-			Melder_throw (U"Incorrect number of samples.");
-		}
+		Melder_require (nSamples > 0, U"Incorrect number of samples.");
+		
 		autoSound me = Sound_createSimple (1, nSamples / 16000.0, 16000);
 		i2read (me.get(), f, littleEndian);
 		f.close (file);
@@ -317,14 +309,13 @@ autoSound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsC
 		if (strequ (format, "float")) {
 			nBytesPerSample = 4;
 		}
-		if (nBytesPerSample == 3 || nBytesPerSample > 4) {
-			Melder_throw (U"Number of bytes per sample should be 1, 2 or 4.");
-		}
+		Melder_require (! (nBytesPerSample == 3), U"Number of bytes per sample should be 1, 2 or 4.");
+		
 		if (skipNBytes <= 0) {
 			skipNBytes = 0;
 		}
 		integer nSamples = (MelderFile_length (file) - skipNBytes) / nBytesPerSample;
-		Melder_require (nSamples > 0, U"No samples left to read");
+		Melder_require (nSamples > 0, U"No samples left to read.");
 		
 		autoSound me = Sound_createSimple (1, nSamples / samplingFrequency, samplingFrequency);
 		fseek (f, skipNBytes, SEEK_SET);
@@ -364,7 +355,7 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool l
 		if (strequ (format, "float")) {
 			nBytesPerSample = 4;
 		}
-		Melder_require (nBytesPerSample == 1 || nBytesPerSample == 2 || nBytesPerSample == 4, U"number of bytes per sample should be 1, 2 or 4.");
+		Melder_require (! (nBytesPerSample == 3), U"number of bytes per sample should be 1, 2 or 4.");
 		
 		if (nBytesPerSample == 1 && unSigned) {
 			u1write (me, f, & nClip);
@@ -495,9 +486,7 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 		for (integer i = 1; i <= filelength; i ++) {
 			unsigned char sc;
 			integer nread = fread (& sc, 1, 1, f);
-			if (nread != 1) {
-				Melder_throw (U"Error: trying to read byte number ", i);
-			}
+			Melder_require (nread == 1, U"Error: trying to read byte number ", i, U".");
 			adpcm.code = (char) ((sc >> 4) & 0x0f);
 			my z [1] [n ++] = dialogic_adpcm_decode (& adpcm);
 			adpcm.code = (char) (sc & 0x0f);
@@ -2092,12 +2081,9 @@ autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges) {
 /* After a script by Ton Wempe */
 static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength) {
 	try {
-		if (my dx != noise -> dx) {
-			Melder_throw (U"The sound and the noise must have the same sampling frequency.");
-		}
-		if (noise -> ny != 1 || noise -> ny != 1) {
-			Melder_throw (U"The number of channels in the noise and the sound should equal 1.");
-		}
+		Melder_require (my dx == noise -> dx, U"The sound and the noise must have the same sampling frequency.");
+		Melder_require (noise -> ny == 1 && noise -> ny == 1, U"The number of channels in the noise and the sound should equal 1.");
+
 		double samplingFrequency = 1.0 / my dx;
 		autoSound denoised = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		autoSound analysisWindow = Sound_createSimple (1, windowLength, samplingFrequency);
@@ -2167,9 +2153,8 @@ static void Sound_findNoise (Sound me, double minimumNoiseDuration, double *nois
 		if (tmax > my xmax) {
 			tmax = my xmax; tmin = tmax - minimumNoiseDuration;
 		}
-		if (tmin < my xmin) {
-			Melder_throw (U"Sound too short, or window length too long.");
-		}
+		Melder_require (tmin >= my xmin, U"Sound too short, or window length too long.");
+		
 		*noiseStart = tmin;
 		*noiseEnd = tmax;
 	} catch (MelderError) {

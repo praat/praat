@@ -3,7 +3,7 @@
 
 /* ComplexSpectrogram.h
  * 
- * Copyright (C) 2014 David Weenink
+ * Copyright (C) 2014-2017 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 
 #include "ComplexSpectrogram_def.h"
 
-autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, long nt, double dt,
-	double t1, double fmin, double fmax, long nf, double df, double f1);
+autoComplexSpectrogram ComplexSpectrogram_create (double tmin, double tmax, integer nt, double dt,
+	double t1, double fmin, double fmax, integer nf, double df, double f1);
 
 autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLength, double timeStep);
 /* Hann window because we want to reconstruct */

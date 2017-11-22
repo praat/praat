@@ -1,6 +1,6 @@
 /* ContingencyTable.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ void structContingencyTable :: v_info () {
 	MelderInfo_writeLine (U"  Probability: ", ContingencyTable_chisqProbability (this));
 }
 
-autoContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns) {
+autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numberOfColumns) {
 	try {
 		autoContingencyTable me = Thing_new (ContingencyTable);
 		TableOfReal_init (me.get(), numberOfRows, numberOfColumns);
@@ -69,15 +69,15 @@ double ContingencyTable_chisqProbability (ContingencyTable me) {
 
 double ContingencyTable_cramersStatistic (ContingencyTable me) {
 	double chisq, sum = 0.0, df;
-	long nr = my numberOfRows, nc = my numberOfColumns, nmin = nr;
+	integer nr = my numberOfRows, nc = my numberOfColumns, nmin = nr;
 
 	if (nr == 1 || nc == 1) {
 		return 0.0;
 	}
 
-	for (long i = 1; i <= nr; i++) {
-		for (long j = 1; j <= nc; j++) {
-			sum += my data[i][j];
+	for (integer i = 1; i <= nr; i ++) {
+		for (integer j = 1; j <= nc; j ++) {
+			sum += my data [i] [j];
 		}
 	}
 
@@ -86,7 +86,7 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 	}
 	nmin--;
 
-	ContingencyTable_chisq (me, &chisq, &df);
+	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
 	}
@@ -95,15 +95,15 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 	double chisq, sum = 0.0, df;
-	long nr = my numberOfRows, nc = my numberOfColumns;
+	integer nr = my numberOfRows, nc = my numberOfColumns;
 
-	for (long i = 1; i <= nr; i++) {
-		for (long j = 1; j <= nc; j++) {
-			sum += my data[i][j];
+	for (integer i = 1; i <= nr; i ++) {
+		for (integer j = 1; j <= nc; j ++) {
+			sum += my data [i] [j];
 		}
 	}
 
-	ContingencyTable_chisq (me, &chisq, &df);
+	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
 	}
@@ -111,7 +111,7 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 }
 
 void ContingencyTable_chisq (ContingencyTable me, double *chisq, double *df) {
-	long nr = my numberOfRows, nc = my numberOfColumns;
+	integer nr = my numberOfRows, nc = my numberOfColumns;
 
 	*chisq = 0.0; *df = 0.0;
 
@@ -121,36 +121,36 @@ void ContingencyTable_chisq (ContingencyTable me, double *chisq, double *df) {
 	// row and column marginals
 
 	double sum = 0.0;
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			rowsum[i] += my data[i][j];
-			colsum[j] += my data[i][j];
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
+			rowsum [i] += my data [i] [j];
+			colsum [j] += my data [i] [j];
 		}
-		sum += rowsum[i];
+		sum += rowsum [i];
 	}
 
-	for (long i = 1; i <= my numberOfRows; i++) {
-		if (rowsum[i] == 0.0) {
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		if (rowsum [i] == 0.0) {
 			--nr;
 		}
 	}
-	for (long j = 1; j <= my numberOfColumns; j++) {
-		if (colsum[j] == 0.0) {
+	for (integer j = 1; j <= my numberOfColumns; j ++) {
+		if (colsum [j] == 0.0) {
 			--nc;
 		}
 	}
 
 	*df = (nr - 1.0) * (nc - 1.0);
-	for (long i = 1; i <= my numberOfRows; i++) {
-		if (rowsum[i] == 0.0) {
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		if (rowsum [i] == 0.0) {
 			continue;
 		}
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			if (colsum[j] == 0.0) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
+			if (colsum [j] == 0.0) {
 				continue;
 			}
-			double expt = rowsum[i] * colsum[j] / sum;
-			double tmp = my data[i][j] - expt;
+			double expt = rowsum [i] * colsum [j] / sum;
+			double tmp = my data [i] [j] - expt;
 			*chisq += tmp * tmp / expt;
 		}
 	}
@@ -165,38 +165,38 @@ void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, dou
 	// row and column totals
 
 	double sum = 0.0;
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			rowsum[i] += my data[i][j];
-			colsum[j] += my data[i][j];
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
+			rowsum [i] += my data [i] [j];
+			colsum [j] += my data [i] [j];
 		}
-		sum += rowsum[i];
+		sum += rowsum [i];
 	}
 
 	// Entropy of x distribution
 
-	for (long j = 1; j <= my numberOfColumns; j++) {
-		if (colsum[j] > 0.0) {
-			double p = colsum[j] / sum;
+	for (integer j = 1; j <= my numberOfColumns; j ++) {
+		if (colsum [j] > 0.0) {
+			double p = colsum [j] / sum;
 			*hx -= p * NUMlog2 (p);
 		}
 	}
 
 	// Entropy of y distribution
 
-	for (long i = 1; i <= my numberOfRows; i++) {
-		if (rowsum[i] > 0.0) {
-			double p = rowsum[i] / sum;
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		if (rowsum [i] > 0.0) {
+			double p = rowsum [i] / sum;
 			*hy -= p * NUMlog2 (p);
 		}
 	}
 
 	// Total entropy
 
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
-			if (my data[i][j] > 0.0) {
-				double p = my data[i][j] / sum;
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
+			if (my data [i] [j] > 0.0) {
+				double p = my data [i] [j] / sum;
 				*h -= p * NUMlog2 (p);
 			}
 		}

@@ -28,17 +28,17 @@
 #undef your
 #define your ((AffineTransform_Table) thy methods) ->
 
-static void do_steps45 (double **w, double **t, double **c, long n, double *f) {
+static void do_steps45 (double **w, double **t, double **c, integer n, double *f) {
 	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
 
-	for (long i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i ++) {
 		double d = 0.0;
-		for (long k = 1; k <= n; k++) {
-			d += w[k][i] * t[k][i];
+		for (integer k = 1; k <= n; k++) {
+			d += w [k] [i] * t [k] [i];
 		}
 		if (d < 0.0) {
-			for (long k = 1; k <= n; k++) {
-				t[k][i] = -t[k][i];
+			for (integer k = 1; k <= n; k++) {
+				t [k] [i] = -t [k] [i];
 			}
 		}
 	}
@@ -46,12 +46,12 @@ static void do_steps45 (double **w, double **t, double **c, long n, double *f) {
 	// Step 5 & 11: f = tr W'T (Diag (T'CT))^-1/2
 
 	*f = 0.0;
-	for (long i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i ++) {
 		double d = 0.0, tct = 0.0;
-		for (long k = 1; k <= n; k++) {
-			d += w[k][i] * t[k][i];
-			for (long j = 1; j <= n; j++) {
-				tct += t[k][i] * c[k][j] * t[j][i];
+		for (integer k = 1; k <= n; k ++) {
+			d += w [k] [i] * t [k] [i];
+			for (integer j = 1; j <= n; j ++) {
+				tct += t [k] [i] * c [k] [j] * t [j] [i];
 			}
 		}
 		if (tct > 0.0) {
@@ -60,13 +60,13 @@ static void do_steps45 (double **w, double **t, double **c, long n, double *f) {
 	}
 }
 
-static void NUMmaximizeCongruence (double **b, double **a, long nr, long nc, double **t, long maximumNumberOfIterations, double tolerance) {
-	long numberOfIterations = 0;
+static void NUMmaximizeCongruence (double **b, double **a, integer nr, integer nc, double **t, integer maximumNumberOfIterations, double tolerance) {
+	integer numberOfIterations = 0;
 	Melder_assert (nr > 0 && nc > 0);
 	Melder_assert (t);
 
 	if (nc == 1) {
-		t[1][1] = 1; return;
+		t [1] [1] = 1; return;
 	}
 	autoNUMmatrix<double> c (1, nc, 1, nc);
 	autoNUMmatrix<double> w (1, nc, 1, nc);
@@ -77,77 +77,76 @@ static void NUMmaximizeCongruence (double **b, double **a, long nr, long nc, dou
 	// Steps 1 & 2: C = A'A and W = A'B
 
 	double checkc = 0, checkw = 0;
-	for (long i = 1; i <= nc; i++) {
-		for (long j = 1; j <= nc; j++) {
-			for (long k = 1; k <= nr; k++) {
-				c[i][j] += a[k][i] * a[k][j];
-				w[i][j] += a[k][i] * b[k][j];
+	for (integer i = 1; i <= nc; i ++) {
+		for (integer j = 1; j <= nc; j ++) {
+			for (integer k = 1; k <= nr; k ++) {
+				c [i] [j] += a [k] [i] * a [k] [j];
+				w [i] [j] += a [k] [i] * b [k] [j];
 			}
-			checkc += c[i][j]; checkw += w[i][j];
+			checkc += c [i] [j];
+			checkw += w [i] [j];
 		}
 	}
-
-	if (checkc == 0.0 || checkw == 0.0) {
-		Melder_throw (U"NUMmaximizeCongruence: we cannot rotate a zero matrix.");
-	}
+	
+	Melder_require (checkc != 0.0 && checkw != 0.0, U"NUMmaximizeCongruence: we cannot rotate a zero matrix.");
 
 	// Scale W by (diag(B'B))^-1/2
 
-	for (long j = 1; j <= nc; j++) {
+	for (integer j = 1; j <= nc; j ++) {
 		double scale = 0.0;
-		for (long k = 1; k <= nr; k++) {
-			scale += b[k][j] * b[k][j];
+		for (integer k = 1; k <= nr; k ++) {
+			scale += b [k] [j] * b [k] [j];
 		}
 		if (scale > 0.0) {
 			scale = 1.0 / sqrt (scale);
 		}
-		for (long i = 1; i <= nc; i++) {
-			w[i][j] *= scale;
+		for (integer i = 1; i <= nc; i++) {
+			w [i] [j] *= scale;
 		}
 	}
 
 	// Step 3: largest eigenvalue of C
 
-	evec[1] = 1.0;
+	evec [1] = 1.0;
 	double rho, f, f_old;
 	NUMdominantEigenvector (c.peek(), nc, evec.peek(), &rho, 1.0e-6);
 
-	do_steps45 (w.peek(), t, c.peek(), nc, &f);
+	do_steps45 (w.peek(), t, c.peek(), nc, & f);
 	do {
-		for (long j = 1; j <= nc; j++) {
+		for (integer j = 1; j <= nc; j ++) {
 			// Step 7.a
 
 			double p = 0.0;
-			for (long k = 1; k <= nc; k++) {
-				for (long i = 1; i <= nc; i++) {
-					p += t[k][j] * c[k][i] * t[i][j];
+			for (integer k = 1; k <= nc; k ++) {
+				for (integer i = 1; i <= nc; i ++) {
+					p += t [k] [j] * c [k] [i] * t [i] [j];
 				}
 			}
 
 			// Step 7.b
 
 			double q = 0.0;
-			for (long k = 1; k <= nc; k++) {
-				q += w[k][j] * t[k][j];
+			for (integer k = 1; k <= nc; k ++) {
+				q += w [k] [j] * t [k] [j];
 			}
 
 			// Step 7.c
 
 			if (q == 0.0) {
-				for (long i = 1; i <= nc; i++) {
-					u[i][j] = 0.0;
+				for (integer i = 1; i <= nc; i ++) {
+					u [i] [j] = 0.0;
 				}
 			} else {
 				double ww = 0.0;
-				for (long k = 1; k <= nc; k++) {
-					ww += w[k][j] * w[k][j];
+				for (integer k = 1; k <= nc; k ++) {
+					ww += w [k] [j] * w [k] [j];
 				}
-				for (long i = 1; i <= nc; i++) {
+				for (integer i = 1; i <= nc; i ++) {
 					double ct = 0.0;
-					for (long k = 1; k <= nc; k++) {
-						ct += c[i][k] * t[k][j];
+					for (integer k = 1; k <= nc; k ++) {
+						ct += c [i] [k] * t [k] [j];
 					}
-					u[i][j] = (q * (ct - rho * t[i][j]) / p - 2.0 * ww * t[i][j] / q - w[i][j]) / sqrt (p);
+					u [i] [j] = (q * (ct - rho * t [i] [j]) / p - 2.0 * ww * t [i] [j] / q - w [i] [j]) / sqrt (p);
 				}
 			}
 		}
@@ -158,11 +157,11 @@ static void NUMmaximizeCongruence (double **b, double **a, long nr, long nc, dou
 
 		// Step 9
 
-		for (long i = 1; i <= nc; i++) {
-			for (long j = 1; j <= nc; j++) {
-				t[i][j] = 0.0;
-				for (long  k = 1; k <= nc; k++) {
-					t[i][j] -= svd -> u[i][k] * svd -> v[j][k];
+		for (integer i = 1; i <= nc; i ++) {
+			for (integer j = 1; j <= nc; j ++) {
+				t [i] [j] = 0.0;
+				for (integer  k = 1; k <= nc; k ++) {
+					t [i] [j] -= svd -> u [i] [k] * svd -> v [j] [k];
 				}
 			}
 		}
@@ -172,12 +171,12 @@ static void NUMmaximizeCongruence (double **b, double **a, long nr, long nc, dou
 
 		// Steps 10 & 11 equal steps 4 & 5
 
-		do_steps45 (w.peek(), t, c.peek(), nc, &f);
+		do_steps45 (w.peek(), t, c.peek(), nc, & f);
 
 	} while (fabs (f_old - f) / f_old > tolerance && numberOfIterations < maximumNumberOfIterations);
 }
 
-autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration me, Configuration thee, long maximumNumberOfIterations, double tolerance) {
+autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration me, Configuration thee, integer maximumNumberOfIterations, double tolerance) {
 	try {
 		// Use Procrustes transform to obtain starting configuration.
 		// (We only need the transformation matrix T.)
@@ -194,9 +193,8 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 
 autoConfiguration Configuration_and_AffineTransform_to_Configuration (Configuration me, AffineTransform thee) {
 	try {
-		if (my numberOfColumns != thy n) {
-			Melder_throw (U"Dimensions do not agree.");
-		}
+		Melder_require (my numberOfColumns == thy n, U"Dimensions do not agree.");
+		
 		autoConfiguration him = Data_copy (me);
 
 		// Apply transformation YT

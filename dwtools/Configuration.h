@@ -2,7 +2,7 @@
 #define _Configuration_h_
 /* Configuration.h
  *
- * Copyright (C) 1992-2011,2015 David Weenink
+ * Copyright (C) 1992-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
 
 #pragma mark - class Configuration
 
-autoConfiguration Configuration_create (long numberOfPoints, long numberOfDimensions);
+autoConfiguration Configuration_create (integer numberOfPoints, integer numberOfDimensions);
 
-void Configuration_setMetric (Configuration me, long metric);
+void Configuration_setMetric (Configuration me, integer metric);
 
 void Configuration_setDefaultWeights (Configuration me);
 /* All w[i] = 1 */
@@ -50,7 +50,7 @@ void Configuration_normalize (Configuration me, double variance, bool choice);
 	       == 0 : normalize matrix
 */
 
-void Configuration_rotate (Configuration me, long dimension1, long dimension2, double angle_degrees);
+void Configuration_rotate (Configuration me, integer dimension1, integer dimension2, double angle_degrees);
 /*
 	Precondition:
 		dimension1 != dimension2
@@ -66,14 +66,14 @@ void Configuration_invertDimension (Configuration me, int dimension);
 */
 
 autoConfiguration Configuration_congruenceRotation (Configuration me, Configuration thee,
-	long maximumNumberOfIterations, double tolerance);
+	integer maximumNumberOfIterations, double tolerance);
 /*
 	Rotate thee for maximum congruence. Algorithm:
 	Henk Kiers & Patrick Groenen (1996), "A monotonically convergent algorithm for
 		orthogonal congruence rotation", Psychometrika 61, 375-389.
 */
 
-autoConfiguration Configuration_varimax (Configuration me, int normalizeRows, int quartimax, long maximumNumberOfIterations, double tolerance);
+autoConfiguration Configuration_varimax (Configuration me, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance);
 /*
 	Perform varimax rotation. Algorithm with extra security from:
 	Jos Ten Berge (1995), "Suppressing permutations or rigid planar rotations:
@@ -87,12 +87,12 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
 	int labelSize, bool useRowLabels, const char32 *label, bool garnish);
 
 void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
-	double scale, bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
+	double scale, bool confidence, const char32 *label, integer d1, integer d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, bool garnish);
 
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me);
 
-autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, long numberOfDimensions);
+autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numberOfDimensions);
 /*
 	Precondition:
 		numberOfDimensions > 0

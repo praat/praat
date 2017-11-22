@@ -1,6 +1,6 @@
 /* Categories_and_Strings.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,14 +25,13 @@
 
 autoStrings Categories_to_Strings (Categories me) {
 	try {
-		if (my size < 1) {
-			Melder_throw (U"No elements.");
-		}
+		Melder_require (my size > 0, U"No elements.");
+		
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, my size);
 		thy numberOfStrings = my size;
 
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			SimpleString s = my at [i];
 			thy strings [i] = Melder_dup (s -> string);
 		}
@@ -44,13 +43,12 @@ autoStrings Categories_to_Strings (Categories me) {
 
 autoCategories Strings_to_Categories (Strings me) {
 	try {
-		if (my numberOfStrings < 1) {
-			Melder_throw (U"Empty strings.");
-		}
+		Melder_require (my numberOfStrings > 0, U"Empty strings.");
+		
 		autoCategories thee = Thing_new (Categories);
 		thy _grow (my numberOfStrings);
 
-		for (long i = 1; i <= my numberOfStrings; i++) {
+		for (integer i = 1; i <= my numberOfStrings; i ++) {
 			autoSimpleString s = SimpleString_create (my strings [i]);
 			thy addItem_move (s.move());
 		}
