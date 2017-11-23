@@ -1,6 +1,6 @@
 /* SimpleVector.cpp
  *
- * Copyright (C) 1994-2012, 2015-2016 David Weenink
+ * Copyright (C) 1994-2012, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,12 +44,12 @@
 
 Thing_implement (DoubleVector, Daata, 0);
 
-void DoubleVector_init (DoubleVector me, long min, long max) {
+void DoubleVector_init (DoubleVector me, integer min, integer max) {
 	my min = min; my max = max;
 	my v = NUMvector<double> (min, max);
 }
 
-autoDoubleVector DoubleVector_create (long min, long max) {
+autoDoubleVector DoubleVector_create (integer min, integer max) {
 	try {
 		autoDoubleVector me = Thing_new (DoubleVector);
 		DoubleVector_init (me.get(), min, max);
@@ -61,12 +61,12 @@ autoDoubleVector DoubleVector_create (long min, long max) {
 
 Thing_implement (ComplexVector, Daata, 0);
 
-void ComplexVector_init (ComplexVector me, long min, long max) {
+void ComplexVector_init (ComplexVector me, integer min, integer max) {
 	my min = min; my max = max;
 	my v = NUMvector<dcomplex> (min, max);
 }
 
-autoComplexVector ComplexVector_create (long min, long max) {
+autoComplexVector ComplexVector_create (integer min, integer max) {
 	try {
 		autoComplexVector me = Thing_new (ComplexVector);
 		ComplexVector_init (me.get(), min, max);

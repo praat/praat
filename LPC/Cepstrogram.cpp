@@ -1,6 +1,6 @@
 /* Cepstrogram.cpp
  *
- * Copyright (C) 2013, 2016 David Weenink
+ * Copyright (C) 2013 - 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@
 Thing_implement (Cepstrogram, Matrix, 2);
 Thing_implement (PowerCepstrogram, Cepstrogram, 2); // derives from Matrix -> also version 2
 
-autoCepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
-	double qmin, double qmax, long nq, double dq, double q1) {
+autoCepstrogram Cepstrogram_create (double tmin, double tmax, integer nt, double dt, double t1,
+	double qmin, double qmax, integer nq, double dq, double q1) {
 	try {
 		autoCepstrogram me = Thing_new (Cepstrogram);
 
@@ -48,8 +48,8 @@ autoCepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt
 	}
 }
 
-autoPowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
-	double qmin, double qmax, long nq, double dq, double q1) {
+autoPowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, integer nt, double dt, double t1,
+	double qmin, double qmax, integer nq, double dq, double q1) {
 	try {
 		autoPowerCepstrogram me = Thing_new (PowerCepstrogram);
 
@@ -70,12 +70,12 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	}
 	autoMatrix thee = Data_copy (me);
 	double min = 1e308, max = -min;
-	for (long i = 1; i <= my ny; i++) {
-		for (long j = 1; j <= my nx; j++) {
-			double val = TO10LOG (my z[i][j]);
+	for (integer i = 1; i <= my ny; i ++) {
+		for (integer j = 1; j <= my nx; j ++) {
+			double val = TO10LOG (my z [i] [j]);
 			min = val < min ? val : min;
 			max = val > max ? val : max;
-			thy z[i][j] = val;
+			thy z [i] [j] = val;
 		}
 	}
 	double dBminimum = dBmaximum - dynamicRangedB;
@@ -83,16 +83,16 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 		dBminimum = min; dBmaximum = max;
 	}
 
-	for (long j = 1; j <= my nx; j++) {
-		double lmax = thy z[1][j];
-		for (long i = 2; i <= my ny; i++) {
-			if (thy z[i][j] > lmax) {
-				lmax = thy z[i][j];
+	for (integer j = 1; j <= my nx; j ++) {
+		double lmax = thy z [1] [j];
+		for (integer i = 2; i <= my ny; i ++) {
+			if (thy z [i] [j] > lmax) {
+				lmax = thy z [i] [j];
 			}
 		}
 		double factor = dynamicCompression * (max - lmax);
-		for (long i = 1; i <= my ny; i++) {
-			thy z[i][j] += factor;
+		for (integer i = 1; i <= my ny; i ++) {
+			thy z [i] [j] += factor;
 		}
 	}
 	
@@ -120,13 +120,13 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 void PowerCepstrogram_subtractTilt_inplace (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod) {
 	try {
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
-		for (long i = 1; i <= my nx; i++) {
-			for (long j = 1; j <= my ny; j++) {
-				thy z[1][j] = my z[j][i];
+		for (integer i = 1; i <= my nx; i ++) {
+			for (integer j = 1; j <= my ny; j ++) {
+				thy z [1] [j] = my z [j] [i];
 			}
 			PowerCepstrum_subtractTilt_inplace (thee.get(), qstartFit, qendFit, lineType, fitMethod);
-			for (long j = 1; j <= my ny; j++) {
-				my z[j][i] = thy z[1][j];
+			for (integer j = 1; j <= my ny; j ++) {
+				my z [j] [i] = thy z [1] [j];
 			}
 		}
 	} catch (MelderError) {
@@ -149,9 +149,9 @@ autoTable PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pit
 	try {
 		autoTable thee = Table_createWithColumnNames (my nx, U"time quefrency cpp f0");
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
-		for (long i = 1; i <= my nx; i++) {
-			for (long j = 1; j <= my ny; j++) {
-				his z[1][j] = my z[j][i];
+		for (integer i = 1; i <= my nx; i ++) {
+			for (integer j = 1; j <= my ny; j ++) {
+				his z [1] [j] = my z [j] [i];
 			}
 			double qpeak, cpp = PowerCepstrum_getPeakProminence_hillenbrand (him.get(), pitchFloor, pitchCeiling, &qpeak);
 			double time = Sampled_indexToX (me, i);
@@ -170,12 +170,12 @@ autoTable PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor,
 	try {
 		autoTable thee = Table_createWithColumnNames (my nx, U"time quefrency cpp f0 rnr");
 		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
-		for (long i = 1; i <= my nx; i++) {
-			for (long j = 1; j <= my ny; j++) {
-				his z[1][j] = my z[j][i];
+		for (integer i = 1; i <= my nx; i ++) {
+			for (integer j = 1; j <= my ny; j ++) {
+				his z [1] [j] = my z [j] [i];
 			}
 			double qpeak, cpp = PowerCepstrum_getPeakProminence (him.get(), pitchFloor, pitchCeiling, interpolation,
-				qstartFit, qendFit, lineType, fitMethod, &qpeak);
+				qstartFit, qendFit, lineType, fitMethod, & qpeak);
 			double rnr = PowerCepstrum_getRNR (him.get(), pitchFloor, pitchCeiling, deltaF0);
 			double time = Sampled_indexToX (me, i);
 			Table_setNumericValue (thee.get(), i, 1, time);
@@ -198,15 +198,15 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 		if (numberOfFrames > 1) {
 			autoNUMvector<double> qin (1, my nx);
 			autoNUMvector<double> qout (1, my nx);
-			for (long iq = 1; iq <= my ny; iq++) {
-				for (long iframe = 1; iframe <= my nx; iframe++) {
+			for (integer iq = 1; iq <= my ny; iq ++) {
+				for (integer iframe = 1; iframe <= my nx; iframe ++) {
 					//qin[iframe] = TO10LOG (my z[iq][iframe]);
-					qin[iframe] = thy z[iq][iframe];
+					qin [iframe] = thy z [iq] [iframe];
 				}
 				NUMvector_smoothByMovingAverage (qin.peek(), my nx, numberOfFrames, qout.peek());
-				for (long iframe = 1; iframe <= my nx; iframe++) {
+				for (integer iframe = 1; iframe <= my nx; iframe ++) {
 					//thy z[iq][iframe] = FROMLOG (qout[iframe]); // inverse 
-					thy z[iq][iframe] = qout[iframe]; // inverse 
+					thy z [iq] [iframe] = qout [iframe]; // inverse 
 				}
 			}
 		}
@@ -215,15 +215,15 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 		if (numberOfQuefrencyBins > 1) {
 			autoNUMvector<double> qin (1, thy ny);
 			autoNUMvector<double> qout (1, thy ny);
-			for (long iframe = 1; iframe <= my nx; iframe++) {
-				for (long iq = 1; iq <= thy ny; iq++) {
+			for (integer iframe = 1; iframe <= my nx; iframe ++) {
+				for (integer iq = 1; iq <= thy ny; iq ++) {
 					//qin[iq] = TO10LOG (my z[iq][iframe]);
-					qin[iq] = thy z[iq][iframe];
+					qin [iq] = thy z [iq] [iframe];
 				}
 				NUMvector_smoothByMovingAverage (qin.peek(), thy ny, numberOfQuefrencyBins, qout.peek());
-				for (long iq = 1; iq <= thy ny; iq++) {
+				for (integer iq = 1; iq <= thy ny; iq ++) {
 					//thy z[iq][iframe] = FROMLOG (qout[iq]);
-					thy z[iq][iframe] = qout[iq];
+					thy z [iq] [iframe] = qout [iq];
 				}
 			}
 		}
@@ -245,11 +245,11 @@ autoMatrix PowerCepstrogram_to_Matrix (PowerCepstrogram me) {
 
 autoPowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, double time) {
 	try {
-		long iframe = Sampled_xToNearestIndex (me, time);
+		integer iframe = Sampled_xToNearestIndex (me, time);
 		iframe = iframe < 1 ? 1 : iframe > my nx ? my nx : iframe;
 		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
-		for (long i = 1; i <= my ny; i++) {
-			thy z[1][i] = my z[i][iframe];
+		for (integer i = 1; i <= my ny; i ++) {
+			thy z [1] [i] = my z [i] [iframe];
 		}
 		return thee;
 	} catch (MelderError) {
@@ -285,23 +285,23 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		// find out the size of the FFT
-		long nfft = 2;
+		integer nfft = 2;
 		while (nfft < sframe -> nx) nfft *= 2;
-		long nq = nfft / 2 + 1;
+		integer nq = nfft / 2 + 1;
 		double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nq - 1);
 		autoPowerCepstrogram thee = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nq, dq, 0);
 
 		autoMelderProgress progress (U"Cepstrogram analysis");
 
-		for (long iframe = 1; iframe <= nFrames; iframe++) {
+		for (integer iframe = 1; iframe <= nFrames; iframe++) {
 			double t = Sampled_indexToX (thee.get(), iframe);
 			Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
 			Vector_subtractMean (sframe.get());
 			Sounds_multiply (sframe.get(), window.get());
 			autoSpectrum spec = Sound_to_Spectrum (sframe.get(), 1); // FFT yes
 			autoPowerCepstrum cepstrum = Spectrum_to_PowerCepstrum (spec.get());
-			for (long i = 1; i <= nq; i++) {
-				thy z[i][iframe] = cepstrum -> z[1][i];
+			for (integer i = 1; i <= nq; i ++) {
+				thy z [i] [iframe] = cepstrum -> z [1] [i];
 			}
 			if ((iframe % 10) == 1) {
 				Melder_progress ((double) iframe / nFrames, U"PowerCepstrogram analysis of frame ",
@@ -322,19 +322,19 @@ autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 		if (my x1 != 0.0) {
 			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
 		}
-		long numberOfSamples = my nx - 1;
+		integer numberOfSamples = my nx - 1;
 		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
-		NUMfft_Table_init (&fftTable, my nx);
+		NUMfft_Table_init (& fftTable, my nx);
 		autoNUMvector<double> amp (1, my nx);
 		
-		for (long i = 1; i <= my nx; i++) {
+		for (integer i = 1; i <= my nx; i ++) {
 			amp [i] = my v_getValueAtSample (i, 0, 2);
 		}
-		NUMfft_forward (&fftTable, amp.peek());
+		NUMfft_forward (& fftTable, amp.peek());
 		
-		for (long i = 1; i <= my nx; i++) {
-			double val = amp[i] / numberOfSamples;// scaling 1/n because ifft(fft(1))= n;
-			thy z[1][i] = val * val; // power cepstrum
+		for (integer i = 1; i <= my nx; i ++) {
+			double val = amp [i] / numberOfSamples;// scaling 1/n because ifft(fft(1))= n;
+			thy z [1] [i] = val * val; // power cepstrum
 		}
 		return thee;
 	} catch (MelderError) {
@@ -346,18 +346,18 @@ autoCepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 //    re   im    re     im                   re      im
 // ((fft[1],0) (fft[2],fft[3]), (,), (,), (fft[nfft], 0))  nfft even
 // ((fft[1],0) (fft[2],fft[3]), (,), (,), (fft[nfft-1], fft[nfft]))  nfft uneven
-static void complexfftoutput_to_power (double *fft, long nfft, double *dbs, bool to_db) {
-	double valsq = fft[1] * fft[1];
+static void complexfftoutput_to_power (double *fft, integer nfft, double *dbs, bool to_db) {
+	double valsq = fft [1] * fft [1];
 	dbs[1] = to_db ? TOLOG (valsq) : valsq;
-	long nfftdiv2p1 = (nfft + 2) / 2;
-	long nend = nfft % 2 == 0 ? nfftdiv2p1 : nfftdiv2p1 + 1;
-	for (long i = 2; i < nend; i++) {
-		double re = fft[i + i - 2], im = fft[i + i - 1];
+	integer nfftdiv2p1 = (nfft + 2) / 2;
+	integer nend = nfft % 2 == 0 ? nfftdiv2p1 : nfftdiv2p1 + 1;
+	for (integer i = 2; i < nend; i ++) {
+		double re = fft [i + i - 2], im = fft [i + i - 1];
 		valsq = re * re + im * im;
-		dbs[i] = to_db ? TOLOG (valsq) : valsq;
+		dbs [i] = to_db ? TOLOG (valsq) : valsq;
 	}
 	if (nfft % 2 == 0) {
-		valsq = fft[nfft] * fft[nfft];
+		valsq = fft [nfft] * fft [nfft];
 		dbs[nfftdiv2p1] = to_db ? TOLOG (valsq) : valsq;
 	}
 }
@@ -378,8 +378,8 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			thee = Data_copy (me);
 		}
 		// pre-emphasis with fixed coefficient 0.9
-		for (long i = thy nx; i > 1; i--) {
-			thy z[1][i] -= 0.9 * thy z[1][i - 1];
+		for (integer i = thy nx; i > 1; i --) {
+			thy z [1] [i] -= 0.9 * thy z [1] [i - 1];
 		}
 		integer nosInWindow = (integer) floorl (analysisWidth * samplingFrequency), numberOfFrames;
 		if (nosInWindow < 8) {
@@ -388,45 +388,45 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 		double t1;
 		Sampled_shortTermAnalysis (thee.get(), analysisWidth, dt, & numberOfFrames, & t1);
 		autoNUMvector<double> hamming (1, nosInWindow);
-		for (long i = 1; i <= nosInWindow; i++) {
-			hamming[i] = 0.54 -0.46 * cos(2 * NUMpi * (i - 1) / (nosInWindow - 1));
+		for (integer i = 1; i <= nosInWindow; i ++) {
+			hamming [i] = 0.54 -0.46 * cos(2 * NUMpi * (i - 1) / (nosInWindow - 1));
 		}
-		long nfft = 8; // minimum possible
+		integer nfft = 8; // minimum possible
 		while (nfft < nosInWindow) { nfft *= 2; }
-		long nfftdiv2 = nfft / 2;
+		integer nfftdiv2 = nfft / 2;
 		autoNUMvector<double> fftbuf (1, nfft); // "complex" array
 		autoNUMvector<double> spectrum (1, nfftdiv2 + 1); // +1 needed 
 		autoNUMfft_Table fftTable;
-		NUMfft_Table_init (&fftTable, nfft); // sound to spectrum
+		NUMfft_Table_init (& fftTable, nfft); // sound to spectrum
 		
 		double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1);
 		autoPowerCepstrogram him = PowerCepstrogram_create (my xmin, my xmax, numberOfFrames, dt, t1, 0, qmax, nfftdiv2+1, dq, 0);
 		
 		autoMelderProgress progress (U"Cepstrogram analysis");
 		
-		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			double tbegin = t1 + (iframe - 1) * dt - analysisWidth / 2;
 			tbegin = tbegin < thy xmin ? thy xmin : tbegin;
-			long istart = Sampled_xToLowIndex (thee.get(), tbegin);   // ppgb: afronding naar beneden?
+			integer istart = Sampled_xToLowIndex (thee.get(), tbegin);   // ppgb: afronding naar beneden?
 			istart = istart < 1 ? 1 : istart;
-			long iend = istart + nosInWindow - 1;
+			integer iend = istart + nosInWindow - 1;
 			iend = iend > thy nx ? thy nx : iend;
-			for (long i = 1; i <= nosInWindow; i++) {
-				fftbuf[i] = thy z[1][istart + i - 1] * hamming[i];
+			for (integer i = 1; i <= nosInWindow; i ++) {
+				fftbuf [i] = thy z [1] [istart + i - 1] * hamming [i];
 			}
-			for (long i = nosInWindow + 1; i <= nfft; i++) { 
-				fftbuf[i] = 0;
+			for (integer i = nosInWindow + 1; i <= nfft; i ++) { 
+				fftbuf [i] = 0;
 			}
 			NUMfft_forward (&fftTable, fftbuf.peek());
 			complexfftoutput_to_power (fftbuf.peek(), nfft, spectrum.peek(), true); // log10(|fft|^2)
 			// subtract average
-			double specmean = spectrum[1];
-			for (long i = 2; i <= nfftdiv2 + 1; i++) {
-				specmean += spectrum[i];
+			double specmean = spectrum [1];
+			for (integer i = 2; i <= nfftdiv2 + 1; i ++) {
+				specmean += spectrum [i];
 			}
 			specmean /= nfftdiv2 + 1;
-			for (long i = 1; i <= nfftdiv2 + 1; i++) {
-				spectrum[i] -= specmean;
+			for (integer i = 1; i <= nfftdiv2 + 1; i ++) {
+				spectrum [i] -= specmean;
 			}
 			/*
 			 * Here we diverge from Hillenbrand as he takes the fft of half of the spectral values.
@@ -435,15 +435,15 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double pit
 			 * At the same time this results in twice as many numbers in the quefrency domain, i.e. we end up with nfft/2+1
 			 * numbers while H. has only nfft/4!
 			 */
-			fftbuf[1] = spectrum[1];
-			for (long i = 2; i < nfftdiv2 + 1; i++) {
-				fftbuf[i+i-2] = spectrum[i];
-				fftbuf[i+i-1] = 0;
+			fftbuf [1] = spectrum [1];
+			for (integer i = 2; i < nfftdiv2 + 1; i ++) {
+				fftbuf [i+i-2] = spectrum [i];
+				fftbuf [i+i-1] = 0;
 			}
-			fftbuf[nfft] = spectrum[nfftdiv2 + 1];
-			NUMfft_backward (&fftTable, fftbuf.peek());
-			for (long i = 1; i <= nfftdiv2 + 1; i++) {
-				his z[i][iframe] = fftbuf[i] * fftbuf[i];
+			fftbuf [nfft] = spectrum [nfftdiv2 + 1];
+			NUMfft_backward (& fftTable, fftbuf.peek());
+			for (integer i = 1; i <= nfftdiv2 + 1; i ++) {
+				his z [i] [iframe] = fftbuf [i] * fftbuf [i];
 			}
 			if ((iframe % 10) == 1) {
 				Melder_progress ((double) iframe / numberOfFrames, U"Cepstrogram analysis of frame ",

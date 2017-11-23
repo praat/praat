@@ -1,6 +1,6 @@
 /* Simple_extensions.cpp
  *
- * Copyright (C) 1994-2011, 2015-2016 David Weenink
+ * Copyright (C) 1994-2011, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ void SimpleString_append_c (SimpleString me, const char32 *str) {
 		return;
 	}
 	long myLength = str32len (my string);
-	my string = (char32 *) Melder_realloc (my string, (myLength + str32len (str) + 1) * (int64) sizeof (char32));
+	my string = (char32 *) Melder_realloc (my string, (myLength + str32len (str) + 1) * (integer) sizeof (char32));
 	str32cpy (& my string[myLength], str);
 }
 
@@ -79,7 +79,7 @@ const char32 *SimpleString_nativize_c (SimpleString me, int educateQuotes) {
 
 const char32 *SimpleString_genericize_c (SimpleString me) {
 	autoSimpleString thee = Data_copy (me);
-	my string = (char32 *) Melder_realloc (my string, (3 * str32len (my string) + 1) * (int64) sizeof (char32));
+	my string = (char32 *) Melder_realloc (my string, (3 * str32len (my string) + 1) * (integer) sizeof (char32));
 	Longchar_genericize32 (thy string, my string);
 	return my string;
 }

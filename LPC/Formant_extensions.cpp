@@ -1,6 +1,6 @@
 /* Formant_extensions.cpp
  *
- * Copyright (C) 2012,2015-2016 David Weenink
+ * Copyright (C) 2012,2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 #include "Formant_extensions.h"
 #include "NUM2.h"
 
-void Formant_formula (Formant me, double tmin, double tmax, long formantmin, long formantmax, Interpreter interpreter, char32 *expression) {
+void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, integer formantmax, Interpreter interpreter, char32 *expression) {
 	try {
-		long numberOfPossibleFormants = my maxnFormants;
+		integer numberOfPossibleFormants = my maxnFormants;
 		if (tmax <= tmin) {
 			tmin = my xmin; tmax = my xmax;
 		}
@@ -32,13 +32,13 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 		formantmax = formantmax > numberOfPossibleFormants ? numberOfPossibleFormants : formantmax;
 
 		autoMatrix fb = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 2 * numberOfPossibleFormants, 2 * numberOfPossibleFormants, 1.0, 1.0);
-		for (long iframe = 1; iframe <= my nx; iframe ++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			int numberOfFormants = frame -> nFormants < numberOfPossibleFormants ? frame -> nFormants : numberOfPossibleFormants;
-			for (long iformant = 1; iformant <= numberOfFormants; iformant++) {
+			for (integer iformant = 1; iformant <= numberOfFormants; iformant++) {
 				if (iformant <= frame -> nFormants) {
-					fb -> z[2 * iformant - 1][iframe] = frame -> formant[iformant].frequency;
-					fb -> z[2 * iformant    ][iframe] = frame -> formant[iformant].bandwidth;
+					fb -> z [2 * iformant - 1] [iframe] = frame -> formant [iformant].frequency;
+					fb -> z [2 * iformant    ] [iframe] = frame -> formant [iformant].bandwidth;
 				}
 			}
 		}
@@ -50,32 +50,32 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 		(void) Matrix_getWindowSamplesX (fb.get(), tmin, tmax, & ixmin, & ixmax);
 		(void) Matrix_getWindowSamplesY (fb.get(), ymin, ymax, & iymin, & iymax);
 
-		for (long iframe = ixmin; iframe <= ixmax; iframe++) {
+		for (integer iframe = ixmin; iframe <= ixmax; iframe ++) {
 			// if some of the formant frequencies are set to zero => remove the formant
 			Formant_Frame frame = & my d_frames [iframe];
 			int numberOfFormants = frame -> nFormants < formantmax ? frame -> nFormants : formantmax;
 			int iformantto = formantmin > 1 ? formantmin - 1 : 0;
-			for (long iformant = formantmin; iformant <= numberOfFormants; iformant++) {
-				double frequency = fb -> z[2 * iformant - 1][iframe];
-				double bandWidth = fb -> z[2 * iformant    ][iframe];
+			for (integer iformant = formantmin; iformant <= numberOfFormants; iformant++) {
+				double frequency = fb -> z [2 * iformant - 1] [iframe];
+				double bandWidth = fb -> z [2 * iformant    ] [iframe];
 				if (frequency > 0 && bandWidth > 0) {
 					iformantto++;
-					frame -> formant[iformantto].frequency = frequency;
-					frame -> formant[iformantto].bandwidth = bandWidth;
+					frame -> formant [iformantto].frequency = frequency;
+					frame -> formant [iformantto].bandwidth = bandWidth;
 				} else {
-					frame -> formant[iformant].frequency = frame -> formant[iformant].bandwidth = 0.0;
+					frame -> formant [iformant].frequency = frame -> formant [iformant].bandwidth = 0.0;
 				}
 			}
 			// shift the (higher) formants down if necessary.
-			for (long iformant = formantmax + 1; iformant <= frame -> nFormants; iformant++) {
-				double frequency = fb -> z[2 * iformant - 1][iframe];
-				double bandWidth = fb -> z[2 * iformant    ][iframe];
+			for (integer iformant = formantmax + 1; iformant <= frame -> nFormants; iformant ++) {
+				double frequency = fb -> z [2 * iformant - 1] [iframe];
+				double bandWidth = fb -> z [2 * iformant    ] [iframe];
 				if (frequency > 0 && bandWidth > 0) {
-					iformantto++;
-					frame -> formant[iformantto].frequency = frequency;
-					frame -> formant[iformantto].bandwidth = bandWidth;
+					iformantto ++;
+					frame -> formant [iformantto].frequency = frequency;
+					frame -> formant [iformantto].bandwidth = bandWidth;
 				} else {
-					frame -> formant[iformant].frequency = frame -> formant[iformant].bandwidth = 0.0;
+					frame -> formant [iformant].frequency = frame -> formant [iformant].bandwidth = 0.0;
 				}
 			}
 			frame ->  nFormants = iformantto;
@@ -85,24 +85,21 @@ void Formant_formula (Formant me, double tmin, double tmax, long formantmin, lon
 	}
 }
 
-autoIntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, long iformant) {
+autoIntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant) {
 	try {
-		if (my xmin != thy xmin || my xmax != thy xmax) {
-			Melder_throw (U"The start and end times of the Formant and the Spectrogram must be equal.");
-		}
-		if (iformant < 1 || iformant > my maxnFormants) {
-			Melder_throw (U"Formant number not in range [1, ", my maxnFormants, U"].");
-		}
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"The start and end times of the Formant and the Spectrogram must be equal.");
+		Melder_require (iformant > 0 && iformant <= my maxnFormants, U"Formant number not in range [1, ", my maxnFormants, U"].");
+		
 		autoIntensityTier him = IntensityTier_create (my xmin, my xmax);
 		double previousValue = -80000.0; // can never occur
 		double previousTime = my xmin;
-		for (long iframe = 1; iframe <= my nx; iframe++) {
+		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
-			long numberOfFormants = frame -> nFormants;
+			integer numberOfFormants = frame -> nFormants;
 			double time = Sampled_indexToX (me, iframe);
 			double value = 0;
 			if (iformant <= numberOfFormants) {
-				double f = frame -> formant[iformant].frequency;
+				double f = frame -> formant [iformant].frequency;
 				value = Matrix_getValueAtXY (thee, time, f);
 				value = isdefined (value) ? value : 0.0;
 			}

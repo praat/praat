@@ -405,6 +405,7 @@ void Permutation_previous_inplace (Permutation me) {
 			k = j;
 		}
 	}
+	
 	SWAP (p [i], p [k])
 
 	for (integer j = i + 1; j <= ( (size + i) / 2); j++) {
