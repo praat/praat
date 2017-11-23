@@ -2,7 +2,7 @@
 #define _Excitations_h_
 /* Excitations.h
  *
- * Copyright (C) 1993-2011,2015-2016 David Weenink, 2015,2016 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2015,2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +35,13 @@ void ExcitationList_addItems (ExcitationList me, OrderedOf <structExcitation> * 
 
 autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> * me);
 
-autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join);
+autoPatternList ExcitationList_to_PatternList (ExcitationList me, integer join);
 /* Precondition: my size >= 1, all items have same dimension */
 
 autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me);
 /* Precondition: my size >= 1, all items have same dimension */
 
-autoExcitation ExcitationList_extractItem (ExcitationList m, long item);
+autoExcitation ExcitationList_extractItem (ExcitationList m, integer item);
 
 /* End of file Excitations.h */
 #endif

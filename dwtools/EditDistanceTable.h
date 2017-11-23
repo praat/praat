@@ -2,7 +2,7 @@
 #define _EditDistanceTable_h_
 /* EditDistanceTable.h
  *
- * Copyright (C) 2012, 2015-2016 David Weenink
+ * Copyright (C) 2012, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@
 
 #include "EditDistanceTable_def.h"
 
-autoWarpingPath WarpingPath_create (long length);
+autoWarpingPath WarpingPath_create (integer length);
 
 // Search the path for the corresponding axis value. If path is horizontal/vertical
 //  ivar1 and ivar2 will not be equal. The return value is the length of the path segment (ivar2-ivar1 +1)
-long WarpingPath_getColumnsFromRowIndex (WarpingPath me, long irow, long *icol1, long *icol2);
+integer WarpingPath_getColumnsFromRowIndex (WarpingPath me, integer irow, integer *icol1, integer *icol2);
 
-long WarpingPath_getRowsFromColumnIndex (WarpingPath me, long icol, long *irow1, long *irow2);
+integer WarpingPath_getRowsFromColumnIndex (WarpingPath me, integer icol, integer *irow1, integer *irow2);
 
 
-autoEditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphabetSize);
+autoEditCostsTable EditCostsTable_create (integer targetAlphabetSize, integer sourceAlphabetSize);
 /* The insertion, deletion and substitution costs are specified in this table
  * 1..n-2 target symbols (target alphabet)
  * 1..m-2 source symbols (source alphabet)
@@ -49,9 +49,9 @@ autoEditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAl
 
 void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts);
 
-long EditCostsTable_getTargetIndex (EditCostsTable me, const char32 *symbol);
+integer EditCostsTable_getTargetIndex (EditCostsTable me, const char32 *symbol);
 
-long EditCostsTable_getSourceIndex (EditCostsTable me, const char32 *symbol);
+integer EditCostsTable_getSourceIndex (EditCostsTable me, const char32 *symbol);
 
 double EditCostsTable_getInsertionCost (EditCostsTable me, const char32 *symbol);
 

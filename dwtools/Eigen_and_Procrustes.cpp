@@ -1,5 +1,5 @@
 /* Eigen_and_Procrustes.cpp
- * Copyright (C) 2005-2011, 2015-2016 David Weenink
+ * Copyright (C) 2004-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,26 +21,20 @@
 #include "Configuration_and_Procrustes.h"
 #include "NUM2.h"
 
-autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, long evec_from, long evec_to) {
+autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, integer evec_to) {
 	try {
-		long nvectors = evec_to - evec_from + 1;
-		long nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
-
-		if (my dimension != thy dimension) {
-			Melder_throw (U"The eigenvectors must have the same dimension.");
-		}
-
-		if (evec_from > evec_to || evec_from < 1 || evec_to > nmin) {
-			Melder_throw (U"Eigenvector range too large.");
-		}
+		integer nvectors = evec_to - evec_from + 1;
+		integer nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
+		Melder_require (my dimension == thy dimension, U"The eigenvectors must have the same dimension.");
+		Melder_require (evec_from <= evec_to && evec_from > 0 && evec_to <= nmin, U"Eigenvector range too large.");
 
 		autoNUMmatrix<double> x (1, my dimension, 1, nvectors);
 		autoNUMmatrix<double> y (1, my dimension, 1, nvectors);
 
-		for (long j = 1; j <= nvectors; j++) {
-			for (long i = 1; i <= my dimension; i++) {
-				x[i][j] =  my eigenvectors [evec_from + j - 1] [i];
-				y[i][j] = thy eigenvectors [evec_from + j - 1] [i];
+		for (integer j = 1; j <= nvectors; j ++) {
+			for (integer i = 1; i <= my dimension; i ++) {
+				x[i] [j] =  my eigenvectors [evec_from + j - 1] [i];
+				y[i] [j] = thy eigenvectors [evec_from + j - 1] [i];
 			}
 		}
 

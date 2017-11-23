@@ -1,6 +1,6 @@
 /* Eigen_and_SSCP.c
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,22 +25,22 @@
 #include "Eigen_and_SSCP.h"
 
 static void Eigen_and_SSCP_into_SSCP_project (Eigen me, SSCP thee, SSCP him) {
-	for (long i = 1; i <= my numberOfEigenvalues; i++) {
-		for (long j = i; j <= my numberOfEigenvalues; j++) {
+	for (integer i = 1; i <= my numberOfEigenvalues; i ++) {
+		for (integer j = i; j <= my numberOfEigenvalues; j ++) {
 			double tmp = 0;
-			for (long k = 1; k <= my dimension; k++) {
-				for (long m = 1; m <= my dimension; m++) {
-					tmp += my eigenvectors[i][k] * thy data[k][m] * my eigenvectors[j][m];
+			for (integer k = 1; k <= my dimension; k ++) {
+				for (integer m = 1; m <= my dimension; m ++) {
+					tmp += my eigenvectors [i] [k] * thy data [k] [m] * my eigenvectors [j] [m];
 				}
 			}
-			his data[i][j] = his data[j][i] = tmp;
+			his data [i] [j] = his data [j] [i] = tmp;
 		}
 
 		double tmp = 0;
-		for (long m = 1; m <= my dimension; m++) {
-			tmp += thy centroid[m] * my eigenvectors[i][m];
+		for (integer m = 1; m <= my dimension; m ++) {
+			tmp += thy centroid [m] * my eigenvectors [i] [m];
 		}
-		his centroid[i] = tmp;
+		his centroid [i] = tmp;
 	}
 	his numberOfObservations = SSCP_getNumberOfObservations (thee);
 }
@@ -48,9 +48,7 @@ static void Eigen_and_SSCP_into_SSCP_project (Eigen me, SSCP thee, SSCP him) {
 
 autoSSCP Eigen_and_SSCP_project (Eigen me, SSCP thee) {
 	try {
-		if (thy numberOfRows != my dimension) {
-			Melder_throw (U"SSCP_and_Eigen_project: dimensions don't agree.");
-		}
+		Melder_require (thy numberOfRows == my dimension, U"Dimensions don't agree.");
 		autoSSCP him = SSCP_create (my numberOfEigenvalues);
 		Eigen_and_SSCP_into_SSCP_project (me, thee, him.get());
 		return him;
@@ -61,9 +59,7 @@ autoSSCP Eigen_and_SSCP_project (Eigen me, SSCP thee) {
 
 autoCovariance Eigen_and_Covariance_project (Eigen me, Covariance thee) {
 	try {
-		if (thy numberOfRows != my dimension) {
-			Melder_throw (U"Covariance_and_Eigen_project: dimensions don't agree.");
-		}
+		Melder_require (thy numberOfRows == my dimension, U"Dimensions don't agree.");
 		autoCovariance him = Covariance_create (my numberOfEigenvalues);
 		Eigen_and_SSCP_into_SSCP_project (me, thee, him.get());
 		return him;
