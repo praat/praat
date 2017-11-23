@@ -37,7 +37,7 @@ autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precisi
 			autoTextTier him = Data_copy (thee);
 			his xmin = my xmin;
 			his xmax = my xmax;
-			for (long i = 1; i <= his points.size; i++) {
+			for (long i = 1; i <= his points.size; i ++) {
 				TextPoint textpoint = his points.at [i];
 				double time = DTW_getXTimeFromYTime (me, textpoint -> number);
 				textpoint -> number = time;
@@ -47,7 +47,7 @@ autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precisi
 			autoTextTier him = Data_copy (thee);
 			his xmin = my ymin;
 			his xmax = my ymax;
-			for (long i = 1; i <= his points.size; i++) {
+			for (long i = 1; i <= his points.size; i ++) {
 				TextPoint textpoint = his points.at [i];
 				double time = DTW_getYTimeFromXTime (me, textpoint -> number);
 				textpoint -> number = time;
@@ -142,9 +142,9 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 				integer ixmin, ixmax;
 				integer numberOfFrames = Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 				double sumOfDistances = 0;
-				while (pathIndex < my pathLength && my path[pathIndex].x < ixmax) {
-					sumOfDistances += my z[my path[pathIndex].y][my path[pathIndex].x];
-					pathIndex++;
+				while (pathIndex < my pathLength && my path [pathIndex].x < ixmax) {
+					sumOfDistances += my z [my path [pathIndex].y] [my path [pathIndex].x];
+					pathIndex ++;
 				}
 				Table_setNumericValue (him.get(), i, 1, textinterval -> xmin);
 				Table_setNumericValue (him.get(), i, 2, textinterval -> xmax);
@@ -160,9 +160,9 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 				integer iymin, iymax;
 				integer numberOfFrames = Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 				double sumOfDistances = 0;
-				while (pathIndex < my pathLength && my path[pathIndex].y < iymax) {
-					sumOfDistances += my z[my path[pathIndex].y][my path[pathIndex].x];
-					pathIndex++;
+				while (pathIndex < my pathLength && my path [pathIndex].y < iymax) {
+					sumOfDistances += my z [my path [pathIndex].y] [my path [pathIndex].x];
+					pathIndex ++;
 				}
 				Table_setNumericValue (him.get(), i, 1, textinterval -> xmin);
 				Table_setNumericValue (him.get(), i, 2, textinterval -> xmax);
