@@ -50,13 +50,10 @@ void structFileInMemory :: v_info () {
 
 autoFileInMemory FileInMemory_create (MelderFile file) {
 	try {
-		if (! MelderFile_readable (file)) {
-			Melder_throw (U"File not readable.");
-		}
+		Melder_require (MelderFile_readable (file), U"File not readable.");
 		integer length = MelderFile_length (file);
-		if (length <= 0) {
-			Melder_throw (U"File is empty.");
-		}
+		Melder_require (length > 0, U"File is empty.");
+		
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my d_path = Melder_dup (file -> path);
 		my d_id = Melder_dup (MelderFile_name (file));
@@ -103,12 +100,12 @@ void FileInMemory_setId (FileInMemory me, const char32 *newId) {
 
 void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numberOfBytesPerLine)
 {
-	if (numberOfBytesPerLine <= 0) {
+	if (numberOfBytesPerLine < 1) {
 		numberOfBytesPerLine = 20;
 	}
 	MelderInfo_writeLine (U"\t\tstatic unsigned char ", name, U"_data[", my d_numberOfBytes+1, U"] = {");
 	for (integer i = 0; i < my d_numberOfBytes; i++) {
-		unsigned char number = my d_data[i];
+		unsigned char number = my d_data [i];
 		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? U"\t\t\t" : U""), number, U",",
 			((i % numberOfBytesPerLine == (numberOfBytesPerLine - 1)) ? U"\n" : U" "));
 	}
