@@ -2,7 +2,7 @@
 #define _Permutation_h_
 /* Permutation.h
  *
- * Copyright (C) 2005-2011, 2015 David Weenink
+ * Copyright (C) 2005-2011, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@
 	Class invariant: any permutation equals the identity permutation after all its elements are sorted ascendingly.
 */
 
-void Permutation_init (Permutation me, long numberOfElements);
+void Permutation_init (Permutation me, integer numberOfElements);
 
-autoPermutation Permutation_create (long numberOfElements);
+autoPermutation Permutation_create (integer numberOfElements);
 /*
 	Create the Permutation data structure and fill
 		with the identical permutation (1,2,..n)
@@ -41,40 +41,40 @@ void Permutation_checkInvariant (Permutation me);
 void Permutation_sort (Permutation me);
 /* Set p[1..n]=1,..n */
 
-void Permutation_permuteRandomly_inplace (Permutation me, long from, long to);
+void Permutation_permuteRandomly_inplace (Permutation me, integer from, integer to);
 
-autoPermutation Permutation_permuteRandomly (Permutation me, long from, long to);
+autoPermutation Permutation_permuteRandomly (Permutation me, integer from, integer to);
 /* Generate a new sequence by permuting the elements from..to */
 
-autoPermutation Permutation_rotate (Permutation me, long from, long to, long step);
+autoPermutation Permutation_rotate (Permutation me, integer from, integer to, integer step);
 
-void Permutation_swapOneFromRange (Permutation me, long from, long to, long pos, int forbidsame);
+void Permutation_swapOneFromRange (Permutation me, integer from, integer to, integer pos, bool forbidsame);
 /* Swap item at pos with one randomly chosen in interval [from,to]. If pos in [from,to]
 	and forbidsame==true then new position may not be equal to pos. */
 
-void Permutation_swapBlocks (Permutation me, long from, long to, long blocksize);
+void Permutation_swapBlocks (Permutation me, integer from, integer to, integer blocksize);
 /* Swap two blocks */
 
-void Permutation_swapPositions (Permutation me, long i1, long i2);
+void Permutation_swapPositions (Permutation me, integer i1, integer i2);
 
-void Permutation_swapNumbers (Permutation me, long i1, long i2);
+void Permutation_swapNumbers (Permutation me, integer i1, integer i2);
 
-autoPermutation Permutation_interleave (Permutation me, long from, long to, long blocksize, long offset);
+autoPermutation Permutation_interleave (Permutation me, integer from, integer to, integer blocksize, integer offset);
 
-autoPermutation Permutation_permuteBlocksRandomly (Permutation me, long from, long to, long blocksize, int permuteWithinBlocks, int noDoublets);
+autoPermutation Permutation_permuteBlocksRandomly (Permutation me, integer from, integer to, integer blocksize, bool permuteWithinBlocks, bool noDoublets);
 /* Permute blocks of size blocksize randomly. If permuteWithinBlocks=true and noDoublets=true forbid that the last
 	number in a block and the first number in the following block are 'equal modulo blocksize'. */
 
-long Permutation_getValueAtIndex (Permutation me, long i);
+integer Permutation_getValueAtIndex (Permutation me, integer i);
 /* return i > 0 && i < my n ? my p[i] : -1 */
 
-long Permutation_getIndexAtValue (Permutation me, long value);
+integer Permutation_getIndexAtValue (Permutation me, integer value);
 /* Find i for which p[i] = value */
 
 autoPermutation Permutation_invert (Permutation me);
 /*  */
 
-autoPermutation Permutation_reverse (Permutation me, long from, long to);
+autoPermutation Permutation_reverse (Permutation me, integer from, integer to);
 /* (n1,n2,...nn) to (nn,...n2,n1) */
 
 void Permutation_next_inplace (Permutation me);
