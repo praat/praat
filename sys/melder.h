@@ -675,7 +675,7 @@ inline static bool isundef (double x) { return ((* (uint64_t *) & x) & 0x7FF0000
 
 /********** Arrays with one index (NUMarrays.cpp) **********/
 
-void * NUMvector (integer elementSize, integer lo, integer hi, bool zero);
+char * NUMvector_ (integer elementSize, integer lo, integer hi, bool zero);
 /*
 	Function:
 		create a vector [lo...hi]; if `zero`, then all values are initialized to 0.
@@ -972,13 +972,13 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, integer ivar);
 
 template <class T>
 T* NUMvector (integer from, integer to) {
-	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to, true));
+	T* result = reinterpret_cast <T*> (NUMvector_ (sizeof (T), from, to, true));
 	return result;
 }
 
 template <class T>
 T* NUMvector (integer from, integer to, bool zero) {
-	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to, zero));
+	T* result = reinterpret_cast <T*> (NUMvector_ (sizeof (T), from, to, zero));
 	return result;
 }
 

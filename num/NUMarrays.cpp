@@ -24,7 +24,7 @@ integer NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
 
 /*** Generic memory functions for vectors. ***/
 
-void * NUMvector (integer elementSize, integer lo, integer hi, bool initializeToZero) {
+char* NUMvector_ (integer elementSize, integer lo, integer hi, bool initializeToZero) {
 	try {
 		if (hi < lo) return nullptr;   // not an error
 		char *result;
@@ -53,7 +53,7 @@ void NUMvector_free (integer elementSize, void *v, integer lo) noexcept {
 void * NUMvector_copy (integer elementSize, void *v, integer lo, integer hi) {
 	try {
 		if (! v) return nullptr;
-		char *result = reinterpret_cast <char *> (NUMvector (elementSize, lo, hi, false));
+		char *result = NUMvector_ (elementSize, lo, hi, false);
 		integer offset = lo * elementSize;
 		memcpy (result + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 		return result;
@@ -78,7 +78,7 @@ void NUMvector_append (integer elementSize, void **v, integer lo, integer *hi) {
 	try {
 		char *result;
 		if (! *v) {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo, true));
+			result = NUMvector_ (elementSize, lo, lo, true);
 			*hi = lo;
 		} else {
 			integer offset = lo * elementSize;
@@ -100,11 +100,11 @@ void NUMvector_insert (integer elementSize, void **v, integer lo, integer *hi, i
 	try {
 		char *result;
 		if (! *v) {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo, true));
+			result = NUMvector_ (elementSize, lo, lo, true);
 			*hi = lo;
 			Melder_assert (position == lo);
 		} else {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, *hi + 1, false));
+			result = NUMvector_ (elementSize, lo, *hi + 1, false);
 			Melder_assert (position >= lo && position <= *hi + 1);
 			NUMvector_copyElements (elementSize, *v, result, lo, position - 1);
 			memset (result + position * elementSize, 0, elementSize);

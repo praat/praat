@@ -495,7 +495,8 @@ class autoThingVector {
 	integer d_from, d_to;
 public:
 	autoThingVector<T> (integer from, integer to) : d_from (from), d_to (to) {
-		d_ptr = static_cast <_Thing_auto<T>*> (NUMvector (sizeof (_Thing_auto<T>), from, to, true));
+		//d_ptr = reinterpret_cast <_Thing_auto<T>*> (NUMvector_ (sizeof (_Thing_auto<T>), from, to, true));
+		d_ptr = NUMvector <_Thing_auto<T>> (from, to, true);
 	}
 	autoThingVector (_Thing_auto<T> *ptr, integer from, integer to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
