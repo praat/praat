@@ -40,66 +40,66 @@ void NUMrankColumns (double **m, integer rb, integer re, integer cb, integer ce)
 	autoNUMvector <double> v (1, nr);
 	autoNUMvector <integer> index (1, nr);
 
-	for (integer j = cb; j <= ce; j++) {
-		for (integer i = 1; i <= nr; i++) {
-			v[i] = m[rb + i - 1][j];
+	for (integer j = cb; j <= ce; j ++) {
+		for (integer i = 1; i <= nr; i ++) {
+			v [i] = m [rb + i - 1] [j];
 		}
-		for (integer i = 1; i <= nr; i++) {
-			index[i] = i;
+		for (integer i = 1; i <= nr; i ++) {
+			index [i] = i;
 		}
 		NUMsort2 (nr, v.peek(), index.peek());
 		NUMrank (nr, v.peek());
-		for (long i = 1; i <= nr; i++) {
-			m[rb + index[i] - 1][j] = v[i];
+		for (long i = 1; i <= nr; i ++) {
+			m [rb + index [i] - 1] [j] = v [i];
 		}
 	}
 }
 
 template <class T>
-void NUMindexx (const T a[], long n, long index[], int (*compare) (void *, void *)) {
-	long ii, imin;
+void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *, void *)) {
+	integer ii, imin;
 	T min;
-	for (long j = 1; j <= n; j++) {
-		index[j] = j;
+	for (integer j = 1; j <= n; j ++) {
+		index [j] = j;
 	}
 	if (n < 2) return;   // Already sorted
 	if (n == 2) {
-		if (COMPARELT(a[2], a[1])) {
-			index[1] = 2; index[2] = 1;
+		if (COMPARELT (a [2], a [1])) {
+			index [1] = 2; index [2] = 1;
 		}
 		return;
 	} 
 	if (n <= 12) {
-		for (long i = 1; i < n; i++) {
+		for (integer i = 1; i < n; i ++) {
 			imin = i;
-			min = a[index[imin]];
-			for (long j = i + 1; j <= n; j++) {
-				if (COMPARELT(a[index[j]], min)) {
+			min = a [index [imin]];
+			for (integer j = i + 1; j <= n; j ++) {
+				if (COMPARELT (a[index [j]], min)) {
 					imin = j;
-					min = a[index[j]];
+					min = a [index [j]];
 				}
 			}
-			ii = index[imin]; index[imin] = index[i]; index[i] = ii;
+			ii = index [imin]; index [imin] = index [i]; index [i] = ii;
 		}
 		return;
 	}
 	// H1
-	long l = n / 2 + 1, r = n;
+	integer l = n / 2 + 1, r = n;
 	for (;;) { // H2
-		long k, i;
+		integer k, i;
 		if (l > 1) {
-			l--;
-			k = index[l];
+			l --;
+			k = index [l];
 		} else { // l == 1
-			k = index[r];
-			index[r] = index[1];
-			r--;
+			k = index [r];
+			index [r] = index [1];
+			r --;
 			if (r == 1) {
-				index[1] = k; break;
+				index [1] = k; break;
 			}
 		}
 		// H3 
-		long j = l;
+		integer j = l;
 		for (;;) {
 			// H4
 			i = j;
@@ -107,17 +107,17 @@ void NUMindexx (const T a[], long n, long index[], int (*compare) (void *, void 
 			if (j > r) {
 				break;
 			}
-			if (j < r && COMPARELT (a[index[j]], a[index[j + 1]])) {
+			if (j < r && COMPARELT (a [index [j]], a [index [j + 1]])) {
 				j++; // H5
 			}
-			index[i] = index[j]; // H7
+			index [i] = index [j]; // H7
 		}
 		for (;;) { // H8' 
 			j = i;
 			i = j >> 1;
 			// H9'
-			if (j == l || COMPARELT (a[k], a[index[i]])) {
-				index[j] = k; break;
+			if (j == l || COMPARELT (a [k], a [index [i]])) {
+				index [j] = k; break;
 			}
 			index[j] = index[i];
 		}
@@ -127,33 +127,33 @@ void NUMindexx (const T a[], long n, long index[], int (*compare) (void *, void 
 
 #define MACRO_NUMindex(TYPE) \
 { \
-	long l, r, j, i, ii, k, imin; \
+	integer l, r, j, i, ii, k, imin; \
 	TYPE min; \
-	for (j = 1; j <= n; j++) index[j] = j;	\
+	for (j = 1; j <= n; j ++) index[j] = j;	\
 	if (n < 2) return;   /* Already sorted. */ \
 	if (n == 2) \
 	{ \
-		if (COMPARELT(a[2], a[1])) \
+		if (COMPARELT (a [2], a [1])) \
 		{\
-			index[1] = 2; index[2] = 1; \
+			index [1] = 2; index [2] = 1; \
 		} \
 		return; \
 	} \
 	if (n <= 12) \
 	{ \
-		for (i = 1; i < n; i++) \
+		for (i = 1; i < n; i ++) \
 		{ \
 			imin = i; \
-			min = a[index[imin]]; \
-			for (j = i + 1; j <= n; j++) \
+			min = a[index [imin]]; \
+			for (j = i + 1; j <= n; j ++) \
 			{\
-				if (COMPARELT(a[index[j]], min))\
+				if (COMPARELT (a[ index [j]], min))\
 				{ \
 					imin = j; \
-					min = a[index[j]]; \
+					min = a [index [j]]; \
 				} \
 			} \
-			ii = index[imin]; index[imin] = index[i]; index[i] = ii; \
+			ii = index [imin]; index [imin] = index [i]; index [i] = ii; \
 		} \
 		return; \
 	} \
@@ -164,17 +164,17 @@ void NUMindexx (const T a[], long n, long index[], int (*compare) (void *, void 
 	{ \
 		if (l > 1) \
 		{ \
-			l--; \
+			l --; \
 			k = index[l]; \
 		} \
 		else /* l == 1 */ \
 		{ \
-			k = index[r]; \
-			index[r] = index[1]; \
-			r--; \
+			k = index [r]; \
+			index [r] = index [1]; \
+			r --; \
 			if (r == 1) \
 			{ \
-				index[1] = k; break; \
+				index [1] = k; break; \
 			} \
 		} \
 		/* H3 */ \
@@ -185,8 +185,8 @@ void NUMindexx (const T a[], long n, long index[], int (*compare) (void *, void 
 			i = j; \
 			j *= 2; \
 			if (j > r) break; \
-			if (j < r && COMPARELT (a[index[j]], a[index[j + 1]])) j++; /* H5 */\
-			index[i] = index[j]; /* H7 */\
+			if (j < r && COMPARELT (a [index [j]], a [index [j + 1]])) j ++; /* H5 */\
+			index [i] = index [j]; /* H7 */\
 		} \
 		for (;;)  /*H8' */\
 		{\
@@ -195,9 +195,9 @@ void NUMindexx (const T a[], long n, long index[], int (*compare) (void *, void 
 			/* H9' */ \
 			if (j == l || COMPARELT (a[k], a[index[i]])) \
 			{ \
-				index[j] = k; break; \
+				index [j] = k; break; \
 			} \
-			index[j] = index[i]; \
+			index [j] = index [i]; \
 		}\
 	} \
 }
@@ -229,65 +229,65 @@ void NUMsort1 (integer n, T a[]) {
 		Knuth's initial assumption is now fulfilled: n >= 2.
 	*/
 	if (n == 2) {
-		if (a[1] > a[2]) {
-			min = a[2]; a[2] = a[1]; a[1] = min;
+		if (a [1] > a [2]) {
+			min = a [2]; a [2] = a [1]; a [1] = min;
 		}
 		return;
 	}
 	if (n <= 12) {
-		long imin;
-		for (long i = 1; i < n; i++) {
-			min = a[i];
+		integer imin;
+		for (integer i = 1; i < n; i ++) {
+			min = a [i];
 			imin = i;
-			for (long j = i + 1; j <= n; j++) {
-				if (a[j] < min) {
+			for (integer j = i + 1; j <= n; j ++) {
+				if (a [j] < min) {
 					min = a [j];
 					imin = j;
 				}
 			}
-			a[imin] = a[i];
-			a[i] = min;
+			a [imin] = a [i];
+			a [i] = min;
 		}
 		return;
 	}
 	// H1
-	long l = (n >> 1) + 1, r = n;
+	integer l = (n >> 1) + 1, r = n;
 	for (;;) { // H2
 		T ak;
 		if (l > 1) {
-			l--;
-			ak = a[l];
+			l --;
+			ak = a [l];
 		} else { // l == 1
-			ak = a[r];
-			a[r] = a[1];
-			r--;
+			ak = a [r];
+			a [r] = a [1];
+			r --;
 			if (r == 1) {
-				a[1] = ak; return;
+				a [1] = ak; return;
 			}
 		}
 		// H3
-		long i, j = l;
+		integer i, j = l;
 		for (;;) { // H4
 			i = j;
 			j = j << 1;
 			if (j > r) {
 				break;
 			}
-			if (j < r && a[j] < a[j + 1]) {
-				j++; // H5
+			if (j < r && a [j] < a [j + 1]) {
+				j ++; // H5
 			}
 			// if (k >= a[j]) break;
-			a[i] = a[j]; // H7 
+			a [i] = a [j]; // H7 
 		}
 		//	a[i] = k; H8 
 		for (;;) { // H8'
 			j = i;
 			i = j >> 1;
 			// H9'
-			if (j == l || ak <= a[i]) {
-				a[j] = ak; break;
+			if (j == l || ak <= a [i]) {
+				a [j] = ak; break;
 			}
-			a[j] = a[i];
+			a [j] = a [i];
 		}
 	}
 }

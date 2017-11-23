@@ -26,6 +26,6 @@
 #include "Permutation.h"
 #include "Index.h"
 
-autoPermutation Index_to_Permutation_permuteRandomly (Index me, int permuteWithinClass);
+autoPermutation Index_to_Permutation_permuteRandomly (Index me, bool permuteWithinClass);
 
 #endif /* _Permutation_and_Index_h_ */

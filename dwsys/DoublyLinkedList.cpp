@@ -1,6 +1,6 @@
 /* DoublyLinkedList.cpp
  *
- * Copyright (C) 2011-2013, 2015-2016 David Weenink
+ * Copyright (C) 2011-2013, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ void DoublyLinkedList_addFront (DoublyLinkedList me, DoublyLinkedNode node) {
 		my back = node;
 		node -> next = nullptr;
 		node -> prev = nullptr;
-		my numberOfNodes++;
+		my numberOfNodes ++;
 	}
 }
 
@@ -94,7 +94,7 @@ void DoublyLinkedList_addBefore (DoublyLinkedList me, DoublyLinkedNode pos, Doub
 		pos -> prev -> next = node;
 	}
 	pos -> prev = node;
-	my numberOfNodes++;
+	my numberOfNodes ++;
 }
 
 void DoublyLinkedList_addAfter (DoublyLinkedList me, DoublyLinkedNode pos, DoublyLinkedNode node) {
@@ -106,7 +106,7 @@ void DoublyLinkedList_addAfter (DoublyLinkedList me, DoublyLinkedNode pos, Doubl
 		pos -> next -> prev = node;
 	}
 	pos -> next = node;
-	my numberOfNodes++;
+	my numberOfNodes ++;
 }
 
 void DoublyLinkedList_remove (DoublyLinkedList me, DoublyLinkedNode node) {
@@ -124,7 +124,7 @@ void DoublyLinkedList_remove (DoublyLinkedList me, DoublyLinkedNode node) {
 		node -> next -> prev = node -> prev;
 	}
 	forget (node);
-	my numberOfNodes--;
+	my numberOfNodes --;
 }
 
 // Preconditions:
