@@ -2,7 +2,7 @@
 #define  _LPC_and_Formant_h_
 /* LPC_and_Formant.h
  *
- * Copyright (C) 1994-2011, 2015-2016 David Weenink
+ * Copyright (C) 1994-2011, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,6 @@ void Formant_Frame_scale (Formant_Frame me, double scale);
 
 void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin);
 
-void Formant_Frame_init (Formant_Frame me, long nFormants);
+void Formant_Frame_init (Formant_Frame me, integer nFormants);
 
 #endif /* _LPC_and_Formant_h_ */

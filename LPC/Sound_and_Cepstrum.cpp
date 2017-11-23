@@ -35,7 +35,7 @@
 */
 autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 	try {
-		long nfft = 2;
+		integer nfft = 2;
 		while (nfft < my nx) {
 			nfft *= 2;
 		}
@@ -46,9 +46,9 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 		autoNUMvector<double> x (1, nfft);
 		autoNUMvector<double> nx (1, nfft);
 
-		for (long i = 1; i <= my nx; i++) {
-			x[i] = my z[1][i];
-			nx[i] = (i - 1) * x[i];
+		for (integer i = 1; i <= my nx; i ++) {
+			x [i] = my z [1] [i];
+			nx [i] = (i - 1) * x [i];
 		}
 
 		// Step 1: Fourier transform x(n) -> X(f)
@@ -59,28 +59,28 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 
 		// Step 2: Multiply {X^*(f) * NX(f)} / |X(f)|^2
 		// Compute Avg (ln |X(f)|) as Avg (ln |X(f)|^2) / 2.
-		// Treat i=1 separately: x[1] * nx[1] / |x[1]|^2
+		// Treat i=1 separately: x [1] * nx [1] / |x [1]|^2
 
 		double lnxa = 0.0;
-		if (x[1] != 0.0) {
-			lnxa = 2.0 * log (fabs (x[1]));
-			x[1] = nx[1] / x[1];
+		if (x [1] != 0.0) {
+			lnxa = 2.0 * log (fabs (x [1]));
+			x [1] = nx [1] / x [1];
 		}
-		if (x[2] != 0.0) {
-			lnxa = 2.0 * log (fabs (x[2]));
-			x[2] = nx[2] / x[2];
+		if (x [2] != 0.0) {
+			lnxa = 2.0 * log (fabs (x [2]));
+			x [2] = nx [2] / x [2];
 		}
 
-		for (long i = 3; i < nfft; i += 2) {
-			double xr = x[i], nxr = nx[i];
-			double xi = x[i + 1], nxi = nx[i + 1];
+		for (integer i = 3; i < nfft; i += 2) {
+			double xr = x [i], nxr = nx [i];
+			double xi = x [i + 1], nxi = nx [i + 1];
 			double xa = xr * xr + xi * xi;
 			if (xa > 0.0) {
-				x[i]   = (xr * nxr + xi * nxi) / xa;
-				x[i + 1] = (xr * nxi - xi * nxr) / xa;
+				x [i]   = (xr * nxr + xi * nxi) / xa;
+				x [i + 1] = (xr * nxi - xi * nxr) / xa;
 				lnxa += log (xa);
 			} else {
-				x[i] = x[i + 1] = 0.0;
+				x [i] = x [i + 1] = 0.0;
 			}
 		}
 
@@ -94,13 +94,13 @@ autoCepstrum Sound_to_Cepstrum_bw (Sound me) {
 		// Step 5: Inverse fft-correction factor: 1/nfftd2
 		// Divide n * xhat (n) by n
 
-		for (long i = 2; i <= my nx; i++) {
-			thy z[1][i] = x[i] / ( (i - 1) * nfft);
+		for (integer i = 2; i <= my nx; i++) {
+			thy z [1] [i] = x [i] / ( (i - 1) * nfft);
 		}
 
-		// Step 6: xhat[0] = Avg (ln |X(f)|)
+		// Step 6: xhat [0] = Avg (ln |X(f)|)
 
-		thy z[1][1] = lnxa;
+		thy z [1] [1] = lnxa;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Cepstrum created.");

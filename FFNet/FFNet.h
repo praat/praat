@@ -2,7 +2,7 @@
 #define _FFNet_h_
 /* FFNet.h
  *
- * Copyright (C) 1997-2011, 2015-2016 David Weenink
+ * Copyright (C) 1997-207 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,11 +116,11 @@
  *  copy everything except minimizer, patterns and inputs.
  */
 
-void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2,
-	long numberOfOutputs, bool outputsAreLinear);
+void FFNet_init (FFNet me, long numberOfInputs, integer nodesInLayer1, integer nodesInLayer2,
+	integer numberOfOutputs, bool outputsAreLinear);
 
-autoFFNet FFNet_create (long numberOfInputs, long numberInLayer1, long numberInLayer2,
-	long numberOfOutputs, bool outputsAreLinear);
+autoFFNet FFNet_create (integer numberOfInputs, integer numberInLayer1, integer numberInLayer2,
+	integer numberOfOutputs, bool outputsAreLinear);
 
 char32 * FFNet_createNameFromTopology (FFNet me);
 /* Create names as <inputs>-<outputs>, <inputs>-<hidden>-<outputs>,
@@ -137,13 +137,13 @@ void FFNet_setNonLinearity (FFNet me, int type);
 
 void FFNet_setOutputCategories (FFNet me, Categories thee);
 
-double FFNet_getBias (FFNet me, long layer, long unit);
+double FFNet_getBias (FFNet me, integer layer, integer unit);
 
-void FFNet_setBias (FFNet me, long layer, long node, double value);
+void FFNet_setBias (FFNet me, integer layer, integer node, double value);
 
-void FFNet_setWeight (FFNet me, long later, long node, long node_from, double value);
+void FFNet_setWeight (FFNet me, integer later, integer node, integer node_from, double value);
 
-double FFNet_getWeight (FFNet me, long later, long node, long node_from);
+double FFNet_getWeight (FFNet me, integer later, integer node, integer node_from);
 
 void FFNet_reset (FFNet me, double wrange);
 /* reset the neural net:
@@ -152,11 +152,11 @@ void FFNet_reset (FFNet me, double wrange);
  *   forget links with minimizer.
  */
 
-const char32* FFNet_getCategoryOfOutputUnit (FFNet me, long outputUnit);
+const char32* FFNet_getCategoryOfOutputUnit (FFNet me, integer outputUnit);
 
-long FFNet_getOutputUnitOfCategory (FFNet me, const char32* category);
+integer FFNet_getOutputUnitOfCategory (FFNet me, const char32* category);
 
-void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], long layer);
+void FFNet_propagateToLayer (FFNet me, const double input[], double activity[], integer layer);
 /* propagate the input through the net to layer and calculate the activities */
 
 void FFNet_propagate (FFNet me, const double input[], double output[]);
@@ -174,38 +174,38 @@ void FFNet_computeDerivative (FFNet me);
 /* step (4) compute derivative in my dwi */
 /* Precondition: step (3) */
 
-long FFNet_getWinningUnit (FFNet me, int labeling);
+integer FFNet_getWinningUnit (FFNet me, int labeling);
 /* labeling = 1 : winner-takes-all */
 /* labeling = 2 : stochastic */
 
 void FFNet_selectAllWeights (FFNet me);
 
-void FFNet_selectBiasesInLayer (FFNet me, long layer);
+void FFNet_selectBiasesInLayer (FFNet me, integer layer);
 
-long FFNet_dimensionOfSearchSpace (FFNet me);
+integer FFNet_dimensionOfSearchSpace (FFNet me);
 /* count the selected weights */
 
-long FFNet_getNumberOfWeights (FFNet me);
+integer FFNet_getNumberOfWeights (FFNet me);
 /* return my nWeights */
 
-void FFNet_weightConnectsUnits (FFNet me, long index, long *fromUnit, long *toUnit, long *layer);
+void FFNet_weightConnectsUnits (FFNet me, integer index, integer *fromUnit, integer *toUnit, integer *layer);
 /*
  * w[index] connects unit fromUnit in "layer-1" with unit toUnit in "layer".
  *  fromUnit returns 0 then w[index] is bias.
  */
 
-long FFNet_getNodeNumberFromUnitNumber (FFNet me, long unit, long layer);
+integer FFNet_getNodeNumberFromUnitNumber (FFNet me, integer unit, integer layer);
 
-void FFNet_nodeToUnitInLayer (FFNet me, long node, long *unit, long *layer);
+void FFNet_nodeToUnitInLayer (FFNet me, integer node, integer *unit, integer *layer);
 /* translate node index to unit "unit" in layer "layer" */
 
-long FFNet_getNumberOfLayers (FFNet me);
+integer FFNet_getNumberOfLayers (FFNet me);
 
-long FFNet_getNumberOfUnits (FFNet me);
+integer FFNet_getNumberOfUnits (FFNet me);
 
-long FFNet_getNumberOfHiddenLayers (FFNet me);
+integer FFNet_getNumberOfHiddenLayers (FFNet me);
 
-long FFNet_getNumberOfUnitsInLayer (FFNet me, int layer);
+integer FFNet_getNumberOfUnitsInLayer (FFNet me, int layer);
 
 double FFNet_getMinimum (FFNet me);
 
@@ -218,18 +218,18 @@ void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int toLayer, int scaling, i
 /* are drawn with boxes. The area of each box corresponds to the strength. */
 /* Black boxes have negative strength? */
 
-void FFNet_drawCostHistory (FFNet me, Graphics g, long from_iteration, long to_iteration,
+void FFNet_drawCostHistory (FFNet me, Graphics g, integer from_iteration, integer to_iteration,
 	double from_cost, double to_cost, int garnish);
 /* draw cost vs epochs */
 
-autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2);
+autoCollection FFNet_createIrisExample (integer numberOfHidden1, integer numberOfHidden2);
 
-autoTableOfReal FFNet_extractWeights (FFNet me, long layer);
+autoTableOfReal FFNet_extractWeights (FFNet me, integer layer);
 
-void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish);
+void FFNet_drawWeights (FFNet me, Graphics g, integer layer, int garnish);
 
-autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer);
+autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, integer layer);
 
-autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, long numberOfUnits1, long numberOfUnits2);
+autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, integer numberOfUnits1, integer numberOfUnits2);
 
 #endif /* _FFNet_h_ */

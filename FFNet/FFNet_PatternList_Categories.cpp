@@ -1,6 +1,6 @@
 /* FFNet_PatternList_Categories.cpp
  *
- * Copyright (C) 1994-2011, 2015-2016 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,20 +28,14 @@
 #include "FFNet_PatternList_ActivationList.h"
 
 static void _FFNet_PatternList_Categories_checkDimensions (FFNet me, PatternList p, Categories c) {
-	if (my nInputs != p -> nx) {
-		Melder_throw (U"The PatternList and the FFNet do not match.\nThe number of colums in the PatternList must equal the number of inputs in the FFNet.");
-	}
-	if (p -> ny != c->size) {
-		Melder_throw (U"The PatternList and the categories do not match.\nThe number of rows in the PatternList must equal the number of categories.");
-	}
-	if (! _PatternList_checkElements (p)) {
-		Melder_throw (U"All PatternList elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
-	}
+	Melder_require (my nInputs == p -> nx, U"The PatternList and the FFNet do not match.\nThe number of colums in the PatternList must equal the number of inputs in the FFNet.");
+	Melder_require (p -> ny == c->size, U"The PatternList and the categories do not match.\nThe number of rows in the PatternList must equal the number of categories.");
+	Melder_require (_PatternList_checkElements (p), U"All PatternList elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
 }
 
 double FFNet_PatternList_Categories_getCosts_total (FFNet me, PatternList p, Categories c, int costFunctionType) {
 	try {
-		      _FFNet_PatternList_Categories_checkDimensions (me, p, c);
+		_FFNet_PatternList_Categories_checkDimensions (me, p, c);
 		autoActivationList activation = FFNet_Categories_to_ActivationList (me, c);
 		return FFNet_PatternList_ActivationList_getCosts_total (me, p, activation.get(), costFunctionType);
 	} catch (MelderError) {
@@ -55,7 +49,7 @@ double FFNet_PatternList_Categories_getCosts_average (FFNet me, PatternList p, C
 }
 
 void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c, long maxNumOfEpochs, double tolerance, double learningRate, double momentum, int costFunctionType) {
-	   _FFNet_PatternList_Categories_checkDimensions (me, p, c);
+	_FFNet_PatternList_Categories_checkDimensions (me, p, c);
 	autoActivationList activation = FFNet_Categories_to_ActivationList (me, c);
 	double min, max;
 	Matrix_getWindowExtrema (p, 0, 0, 0, 0, & min, & max);
@@ -63,7 +57,7 @@ void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c
 }
 
 void FFNet_PatternList_Categories_learnSM (FFNet me, PatternList p, Categories c, long maxNumOfEpochs, double tolerance, int costFunctionType) {
-	   _FFNet_PatternList_Categories_checkDimensions (me, p, c);
+	_FFNet_PatternList_Categories_checkDimensions (me, p, c);
 	autoActivationList activation = FFNet_Categories_to_ActivationList (me, c);
 	double min, max;
 	Matrix_getWindowExtrema (p, 0, 0, 0, 0, & min, & max);
@@ -72,15 +66,9 @@ void FFNet_PatternList_Categories_learnSM (FFNet me, PatternList p, Categories c
 
 autoCategories FFNet_PatternList_to_Categories (FFNet me, PatternList thee, int labeling) {
 	try {
-		if (! my outputCategories) {
-			Melder_throw (U"The FFNet has no output categories.");
-		}
-		if (my nInputs != thy nx) {
-			Melder_throw (U"The number of colums in the PatternList (", thy nx, U") should equal the number of inputs in the FFNet (", my nInputs, U").");
-		}
-		if (! _PatternList_checkElements (thee)) {
-			Melder_throw (U"All PatternList elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
-		}
+		Melder_require (my outputCategories, U"The FFNet has no output categories.");
+		Melder_require (my nInputs == thy nx, U"The number of colums in the PatternList (", thy nx, U") should equal the number of inputs in the FFNet (", my nInputs, U").");
+		Melder_require (_PatternList_checkElements (thee), U"All PatternList elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
 
 		autoCategories him = Categories_create ();
 

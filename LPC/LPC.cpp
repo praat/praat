@@ -67,14 +67,14 @@ void LPC_Frame_init (LPC_Frame me, int nCoefficients) {
 	my nCoefficients = nCoefficients;
 }
 
-void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1, int predictionOrder, double samplingPeriod) {
+void LPC_init (LPC me, double tmin, double tmax, integer nt, double dt, double t1, int predictionOrder, double samplingPeriod) {
 	my samplingPeriod = samplingPeriod;
 	my maxnCoefficients = predictionOrder;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my d_frames = NUMvector<structLPC_Frame> (1, nt);
 }
 
-autoLPC LPC_create (double tmin, double tmax, long nt, double dt, double t1, int predictionOrder, double samplingPeriod) {
+autoLPC LPC_create (double tmin, double tmax, integer nt, double dt, double t1, int predictionOrder, double samplingPeriod) {
 	try {
 		autoLPC me = Thing_new (LPC);
 		LPC_init (me.get(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
@@ -84,7 +84,7 @@ autoLPC LPC_create (double tmin, double tmax, long nt, double dt, double t1, int
 	}
 }
 
-void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, double gmax, int garnish) {
+void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, double gmax, bool garnish) {
 	if (tmax <= tmin) {
 		tmin = my xmin;
 		tmax = my xmax;
@@ -131,9 +131,9 @@ void LPC_drawPoles (LPC me, Graphics g, double time, int garnish) {
 autoMatrix LPC_downto_Matrix_lpc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
-		for (long j = 1; j <= my nx; j ++) {
+		for (integer j = 1; j <= my nx; j ++) {
 			LPC_Frame lpc = & my d_frames [j];
-			for (long i = 1; i <= lpc -> nCoefficients; i ++) {
+			for (integer i = 1; i <= lpc -> nCoefficients; i ++) {
 				thy z [i] [j] = lpc -> a [i];
 			}
 		}
@@ -147,10 +147,10 @@ autoMatrix LPC_downto_Matrix_rc (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoNUMvector<double> rc (1, my maxnCoefficients);
-		for (long j = 1; j <= my nx; j ++) {
+		for (integer j = 1; j <= my nx; j ++) {
 			LPC_Frame lpc = & my d_frames [j];
 			NUMlpc_lpc_to_rc (lpc -> a, lpc -> nCoefficients, rc.peek());
-			for (long i = 1; i <= lpc -> nCoefficients; i ++) {
+			for (integer i = 1; i <= lpc -> nCoefficients; i ++) {
 				thy z [i] [j] = rc [i];
 			}
 		}
@@ -165,11 +165,11 @@ autoMatrix LPC_downto_Matrix_area (LPC me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1.0, 1.0);
 		autoNUMvector<double> rc (1, my maxnCoefficients);
 		autoNUMvector<double> area (1, my maxnCoefficients);
-		for (long j = 1; j <= my nx; j ++) {
+		for (integer j = 1; j <= my nx; j ++) {
 			LPC_Frame lpc = & my d_frames [j];
 			NUMlpc_lpc_to_rc (lpc -> a, lpc -> nCoefficients, rc.peek());
 			NUMlpc_rc_to_area (rc.peek(), lpc -> nCoefficients, area.peek());
-			for (long i = 1; i <= lpc -> nCoefficients; i ++) {
+			for (integer i = 1; i <= lpc -> nCoefficients; i ++) {
 				thy z [i] [j] = area [i];
 			}
 		}

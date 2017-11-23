@@ -55,7 +55,7 @@ void structTube :: v_info () {
 	MelderInfo_writeLine (U"First frame at: ", x1, U" seconds");
 }
 
-void Tube_Frame_init (Tube_Frame me, long nSegments, double length) {
+void Tube_Frame_init (Tube_Frame me, integer nSegments, double length) {
 	my nSegments = nSegments;
 	my length = length;
 	if (nSegments <= 0) {
@@ -72,22 +72,22 @@ void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee) {
 
 	double s = 0.0001; /* 1.0 cm^2 at glottis */
 	double *rc = my c, *area = thy c;
-	for (long i = my nSegments; i > 0; i--) {
-		s *= (1.0 + rc[i]) / (1.0 - rc[i]);
-		area[i] = s;
+	for (integer i = my nSegments; i > 0; i --) {
+		s *= (1.0 + rc [i]) / (1.0 - rc [i]);
+		area [i] = s;
 	}
 }
 
 static void Tube_setLengths (Tube me, double length) {
-	for (long i = 1; i <= my nx; i++) {
-		Tube_Frame f = & my frame[i];
+	for (integer i = 1; i <= my nx; i ++) {
+		Tube_Frame f = & my frame [i];
 		if (f) {
 			f -> length = length;
 		}
 	}
 }
 
-void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
+void Tube_init (Tube me, double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength) {
 	my maxnSegments = maxnSegments;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my frame = NUMvector<structTube_Frame> (1, nt);
@@ -96,11 +96,11 @@ void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1
 
 Thing_implement (Area, Tube, 0);
 
-void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
+void Area_init (Area me, double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength) {
 	Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 }
 
-autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
+autoArea Area_create (double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength) {
 	try {
 		autoArea me = Thing_new (Area);
 		Area_init (me.get(), tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
@@ -112,11 +112,11 @@ autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1, l
 
 Thing_implement (RC, Tube, 0);
 
-void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength) {
+void RC_init (RC me, double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength) {
 	Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 }
 
-autoRC RC_create (double tmin, double tmax, long nt, double dt, double t1, long maxnCoefficients, double defaultLength) {
+autoRC RC_create (double tmin, double tmax, integer nt, double dt, double t1, integer maxnCoefficients, double defaultLength) {
 	try {
 		autoRC me = Thing_new (RC);
 		RC_init (me.get(), tmin, tmax, nt, dt, t1, maxnCoefficients, defaultLength);

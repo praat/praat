@@ -23,7 +23,7 @@
 
 #include "FFNet_PatternList.h"
 
-void FFNet_PatternList_drawActivation (FFNet me, PatternList pattern, Graphics g, long index) {
+void FFNet_PatternList_drawActivation (FFNet me, PatternList pattern, Graphics g, integer index) {
 	if (index < 1 || index > pattern->ny) {
 		return;
 	}

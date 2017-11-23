@@ -2,7 +2,7 @@
 #define _FFNet_PatternList_ActivationList_h_
 /* FFNet_PatternList_ActivationList.h
  *
- * Copyright (C) 1994-2011,2015-2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1994-2017 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@
 #include "ActivationList.h"
 #include "Minimizers.h"
 
-void FFNet_PatternList_ActivationList_learnSD (FFNet me, PatternList p, ActivationList a, long maxNumOfEpochs,
+void FFNet_PatternList_ActivationList_learnSD (FFNet me, PatternList p, ActivationList a, integer maxNumOfEpochs,
     double tolerance, double learningRate, double momentum, int costFunctionType);
 /* Steepest Descent minimization */
 
-void FFNet_PatternList_ActivationList_learnSM (FFNet me, PatternList p, ActivationList a, long maxNumOfEpochs,
+void FFNet_PatternList_ActivationList_learnSM (FFNet me, PatternList p, ActivationList a, integer maxNumOfEpochs,
     double tolerance, int costFunctionType);
 
 double FFNet_PatternList_ActivationList_getCosts_total (FFNet me, PatternList p, ActivationList a, int costFunctionType);
 double FFNet_PatternList_ActivationList_getCosts_average (FFNet me, PatternList p, ActivationList a, int costFunctionType);
 
-autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p, long layer);
+autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p, integer layer);
 /* Calculate the activations at a layer */
 /* if (layer<1 || layer > my nLayers) layer = my nLayers; */
 

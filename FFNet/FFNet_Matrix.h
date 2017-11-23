@@ -2,7 +2,7 @@
 #define _FFNet_Matrix_h_
 /* FFNet_Matrix.h
  *
- * Copyright (C) 1997-2011, 2015 David Weenink
+ * Copyright (C) 1997-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,10 +37,10 @@
 /* x1 = y1 = 1																*/
 /*																			*/
 
-autoMatrix FFNet_weightsToMatrix (FFNet me, long layer, bool deltaWeights);
+autoMatrix FFNet_weightsToMatrix (FFNet me, integer layer, bool deltaWeights);
 /* (delta) weights connected to layer into Matrix */
 
-autoFFNet FFNet_weightsFromMatrix (FFNet me, Matrix matrix, long layer);
+autoFFNet FFNet_weightsFromMatrix (FFNet me, Matrix matrix, integer layer);
 /* creates a new FFNet in which the weights that connect to layer are		*/
 /* replaced by the weights in the matrix									*/
 

@@ -367,7 +367,7 @@ DIRECT (REAL_PowerCepstrogram_getEndQuefrency) {
 
 DIRECT (INTEGER_PowerCepstrogram_getNumberOfQuefrencyBins) {
 	INTEGER_ONE (PowerCepstrogram)
-		long result = my ny;
+		integer result = my ny;
 	INTEGER_ONE_END (U" quefrency bins")
 }
 
@@ -659,7 +659,7 @@ DO
 	INTEGER_ONE (LPC)
 		Melder_require (frameNumber <= my nx,
 			U"Your frame number (", frameNumber, U") is too large. It should be between 1 and ", my nx, U".");
-		long result = my d_frames[frameNumber].nCoefficients;
+		integer result = my d_frames[frameNumber].nCoefficients;
 	INTEGER_ONE_END (U" coefficients")
 }
 

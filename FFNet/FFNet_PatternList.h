@@ -27,6 +27,6 @@
 #include "PatternList.h"
 #include "FFNet.h"
 
-void FFNet_PatternList_drawActivation( FFNet me, PatternList pattern, Graphics g, long ipattern );
+void FFNet_PatternList_drawActivation (FFNet me, PatternList pattern, Graphics g, integer ipattern );
 
 #endif /* _FFNet_PatternList_h_ */
