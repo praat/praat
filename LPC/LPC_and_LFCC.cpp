@@ -34,25 +34,25 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 		return;
 	}
 
-	c[1] = -a[1];
-	for (long n = 2; n <= MIN (my nCoefficients, thy numberOfCoefficients); n++) {
+	c [1] = -a [1];
+	for (integer n = 2; n <= MIN (my nCoefficients, thy numberOfCoefficients); n ++) {
 		double s = 0;
-		for (long k = 1; k < n; k++) {
-			s += a[k] * c[n - k] * (n - k);
+		for (integer k = 1; k < n; k ++) {
+			s += a [k] * c [n - k] * (n - k);
 		}
-		c[n] = -a[n] - s / n;
+		c [n] = -a [n] - s / n;
 	}
-	for (long n = my nCoefficients + 1; n <= thy numberOfCoefficients; n++) {
+	for (integer n = my nCoefficients + 1; n <= thy numberOfCoefficients; n ++) {
 		double s = 0;
-		for (long k = 1; k <= my nCoefficients; k++) {
-			s += a[k] * c[n - k] * (n - k);
+		for (integer k = 1; k <= my nCoefficients; k ++) {
+			s += a [k] * c [n - k] * (n - k);
 		}
-		c[n] = - s / n;
+		c [n] = - s / n;
 	}
 }
 
 void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
-	long n = MIN (my numberOfCoefficients, thy nCoefficients);
+	integer n = MIN (my numberOfCoefficients, thy nCoefficients);
 	double *c = my c, *a = thy a;
 
 	thy gain = exp (2.0 * my c0);
@@ -61,17 +61,17 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
 		return;
 	}
 
-	a[1] = -c[1];
-	for (long i = 2; i <= n; i++) {
-		double ai = c[i] * i;
-		for (long j = 1; j < i; j++) {
-			ai += a[j] * c[i - j] * (i - j);
+	a [1] = -c [1];
+	for (integer i = 2; i <= n; i ++) {
+		double ai = c [i] * i;
+		for (integer j = 1; j < i; j ++) {
+			ai += a [j] * c [i - j] * (i - j);
 		}
-		a[i] = -ai / i;
+		a [i] = -ai / i;
 	}
 }
 
-autoLFCC LPC_to_LFCC (LPC me, long numberOfCoefficients) {
+autoLFCC LPC_to_LFCC (LPC me, integer numberOfCoefficients) {
 	try {
 		if (numberOfCoefficients < 1) {
 			numberOfCoefficients = my maxnCoefficients;
@@ -79,9 +79,9 @@ autoLFCC LPC_to_LFCC (LPC me, long numberOfCoefficients) {
 
 		autoLFCC thee = LFCC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0, 0.5 / my samplingPeriod);
 
-		for (long i = 1; i <= my nx; i++) {
-			CC_Frame_init (& thy frame[i], numberOfCoefficients);
-			LPC_Frame_into_CC_Frame (& my d_frames[i], & thy frame[i]);
+		for (integer i = 1; i <= my nx; i ++) {
+			CC_Frame_init (& thy frame [i], numberOfCoefficients);
+			LPC_Frame_into_CC_Frame (& my d_frames [i], & thy frame [i]);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -89,7 +89,7 @@ autoLFCC LPC_to_LFCC (LPC me, long numberOfCoefficients) {
 	}
 }
 
-autoLPC LFCC_to_LPC (LFCC me, long numberOfCoefficients) {
+autoLPC LFCC_to_LPC (LFCC me, integer numberOfCoefficients) {
 	try {
 		if (numberOfCoefficients < 1) {
 			numberOfCoefficients = my maximumNumberOfCoefficients;
@@ -97,9 +97,9 @@ autoLPC LFCC_to_LPC (LFCC me, long numberOfCoefficients) {
 		numberOfCoefficients = MIN (numberOfCoefficients, my maximumNumberOfCoefficients);
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0.5 / my fmax);
 
-		for (long i = 1; i <= my nx; i++) {
-			LPC_Frame_init (& thy d_frames[i], numberOfCoefficients);
-			CC_Frame_into_LPC_Frame (& my frame[i], & thy d_frames[i]);
+		for (integer i = 1; i <= my nx; i ++) {
+			LPC_Frame_init (& thy d_frames [i], numberOfCoefficients);
+			CC_Frame_into_LPC_Frame (& my frame [i], & thy d_frames [i]);
 		}
 		return thee;
 	} catch (MelderError) {

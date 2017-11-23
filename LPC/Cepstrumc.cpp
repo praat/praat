@@ -1,6 +1,6 @@
 /* Cepstrumc.c
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients) {
 	my nCoefficients = nCoefficients;
 }
 
-void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
+void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, integer nt, double dt, double t1,
                      int nCoefficients, double samplingFrequency) {
 	my samplingFrequency = samplingFrequency;
 	my maxnCoefficients = nCoefficients;
@@ -71,7 +71,7 @@ void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt,
 	my frame = NUMvector<structCepstrumc_Frame> (1, nt);
 }
 
-autoCepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
+autoCepstrumc Cepstrumc_create (double tmin, double tmax, integer nt, double dt, double t1,
                             int nCoefficients, double samplingFrequency) {
 	try {
 		autoCepstrumc me = Thing_new (Cepstrumc);
@@ -82,25 +82,25 @@ autoCepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, do
 	}
 }
 
-static void regression (Cepstrumc me, long frame, double r[], long nr) {
-	long nc = 1e6; double sumsq = 0;
-	for (long i = 0; i <= my maxnCoefficients; i++) {
-		r[i] = 0;
+static void regression (Cepstrumc me, integer frame, double r [], integer nr) {
+	integer nc = 1e6; double sumsq = 0;
+	for (integer i = 0; i <= my maxnCoefficients; i ++) {
+		r [i] = 0;
 	}
 	if (frame <= nr / 2 || frame >= my nx - nr / 2) {
 		return;
 	}
-	for (long j = -nr / 2; j <= nr / 2; j++) {
-		Cepstrumc_Frame f = & my frame[frame + j];
+	for (integer j = -nr / 2; j <= nr / 2; j ++) {
+		Cepstrumc_Frame f = & my frame [frame + j];
 		if (f->nCoefficients < nc) {
 			nc = f->nCoefficients;
 		}
 		sumsq += j * j;
 	}
-	for (long i = 0; i <= nc; i++) {
-		for (long j = -nr / 2; j <= nr / 2; j++) {
-			Cepstrumc_Frame f = & my frame[frame + j];
-			r[i] += f->c[i] * j / sumsq / my dx;
+	for (integer i = 0; i <= nc; i ++) {
+		for (integer j = -nr / 2; j <= nr / 2; j ++) {
+			Cepstrumc_Frame f = & my frame [frame + j];
+			r [i] += f->c [i] * j / sumsq / my dx;
 		}
 	}
 }
@@ -116,7 +116,7 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 			Melder_throw (U"Time window for regression coefficients too small.");
 		}
 		if (nr % 2 == 0) {
-			nr++;
+			nr ++;
 		}
 		if (wr != 0) {
 			Melder_casual (U"Number of frames used for regression coefficients ", nr);
@@ -128,39 +128,39 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 		// Calculate distance matrix
 
 		autoMelderProgress progress (U"");
-		for (long i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++) {
 			Cepstrumc_Frame fi = & my frame [i];
 			regression (me, i, ri.peek(), nr);
-			for (long j = 1; j <= thy nx; j ++) {
+			for (integer j = 1; j <= thy nx; j ++) {
 				Cepstrumc_Frame fj = & thy frame [j];
 				real80 d, dist = 0, distr = 0;
 				if (wc != 0) { /* cepstral distance */
-					for (long k = 1; k <= fj -> nCoefficients; k ++) {
+					for (integer k = 1; k <= fj -> nCoefficients; k ++) {
 						d = fi -> c [k] - fj -> c [k];
 						dist += d * d;
 					}
 					dist *= wc;
 				}
 				// log energy distance
-				d = fi -> c[0] - fj -> c[0];
+				d = fi -> c [0] - fj -> c [0];
 				dist += wle * d * d;
 				if (wr != 0) {   // regression distance
 					regression (thee, j, rj.peek(), nr);
-					for (long k = 1; k <= fj -> nCoefficients; k ++) {
-						d = ri[k] - rj[k];
+					for (integer k = 1; k <= fj -> nCoefficients; k ++) {
+						d = ri [k] - rj [k];
 						distr += d * d;
 					}
 					dist += wr * distr;
 				}
-				if (wer != 0) {   // regression on c[0]: log(energy)
+				if (wer != 0) {   // regression on c [0]: log(energy)
 					if (wr == 0) {
 						regression (thee, j, rj.peek(), nr);
 					}
-					d = ri[0] - rj[0];
+					d = ri [0] - rj [0];
 					dist += wer * d * d;
 				}
 				dist /= wc + wle + wr + wer;
-				his z[i][j] = sqrt ((real) dist);   // prototype along y-direction
+				his z [i] [j] = sqrt ((real) dist);   // prototype along y-direction
 			}
 			Melder_progress ( (double) i / my nx, U"Calculate distances: frame ",
 			                   i, U" from ", my nx, U".");
@@ -177,10 +177,10 @@ autoMatrix Cepstrumc_to_Matrix (Cepstrumc me) {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 		                                 0, my maxnCoefficients, my maxnCoefficients + 1, 1, 0);
 
-		for (long i = 1; i <= my nx; i++) {
-			Cepstrumc_Frame him = & my frame[i];
-			for (long j = 1; j <= his nCoefficients + 1; j++) {
-				thy z[j][i] = his c[j - 1];
+		for (integer i = 1; i <= my nx; i ++) {
+			Cepstrumc_Frame him = & my frame [i];
+			for (integer j = 1; j <= his nCoefficients + 1; j ++) {
+				thy z [j] [i] = his c [j - 1];
 			}
 		}
 		return thee;

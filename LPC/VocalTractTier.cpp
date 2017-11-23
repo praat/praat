@@ -1,6 +1,6 @@
 /* VocalTractTier.cpp
  *
- * Copyright (C) 2012, 2015-2016 David Weenink
+ * Copyright (C) 2012, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,13 +44,13 @@ void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, doubl
 	Graphics_setInner (g);
 	double maxCrossection = sqrt (maxArea);
 	Graphics_setWindow (g, 0.0, maxLength, -maxCrossection, maxCrossection);
-	for (long isection = 1; isection <= my nx; isection++) {
+	for (long isection = 1; isection <= my nx; isection ++) {
 		double x1 = (isection - 1.0) * my dx, x2 = x1 + my dx;
-		double crosssection2 = sqrt (my z[1][isection]);
+		double crosssection2 = sqrt (my z [1] [isection]);
 		Graphics_line (g, x1, crosssection2, x2, crosssection2);
 		Graphics_line (g, x1, -crosssection2, x2, -crosssection2);
 		if (isection > 1) {
-			double crosssection1 = sqrt (my z[1][isection - 1]);
+			double crosssection1 = sqrt (my z [1] [isection - 1]);
 			Graphics_line (g, x1, crosssection1, x1, crosssection2);
 			Graphics_line (g, x1, -crosssection1, x1, -crosssection2);
 		} else if (isection == 1 and closedAtGlottis) {

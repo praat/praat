@@ -136,12 +136,12 @@ void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integ
 
 	Eigen_init (me, numberOfEigenvalues, numberOfColumns);
 	integer k = 0;
-	for (integer i = 1; i <= nsv; i++) {
-		double t = svd -> d[i];
+	for (integer i = 1; i <= nsv; i ++) {
+		double t = svd -> d [i];
 		if (t > 0.0) {
-			my eigenvalues[++k] = t * t;
-			for (integer j = 1; j <= numberOfColumns; j++) {
-				my eigenvectors[k][j] = svd -> v[j][i];
+			my eigenvalues [++ k] = t * t;
+			for (integer j = 1; j <= numberOfColumns; j ++) {
+				my eigenvectors [k] [j] = svd -> v [j] [i];
 			}
 		}
 	}
@@ -170,46 +170,41 @@ void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, i
 	(void) NUMlapack_dggsvd (&jobu, &jobv, &jobq, &m, &n, &p, &k, &ll,
 	    &ac[1][1], &lda, &bc[1][1], &ldb, &alpha[1], &beta[1], u, &ldu,
 	    v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
-
-	if (info != 0) {
-		Melder_throw (U"dggsvd fails.");
-	}
+	Melder_require (info == 0, U"dggsvd fails.");
 
 	// Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
 
 	maxsv2 = -1.0;
-	for (integer i = k + 1; i <= k + ll; i++) {
-		double t = alpha[i] / beta[i];
-		alpha[i] = t * t;
-		if (alpha[i] > maxsv2) {
-			maxsv2 = alpha[i];
+	for (integer i = k + 1; i <= k + ll; i ++) {
+		double t = alpha [i] / beta [i];
+		alpha [i] = t * t;
+		if (alpha [i] > maxsv2) {
+			maxsv2 = alpha [i];
 		}
 	}
 
 	// Deselect the eigenvalues < eps * max_eigenvalue.
 
 	n = 0;
-	for (integer i = k + 1; i <= k + ll; i++) {
-		if (alpha[i] < NUMfpp -> eps * maxsv2) {
-			n++; alpha[i] = -1.0;
+	for (integer i = k + 1; i <= k + ll; i ++) {
+		if (alpha [i] < NUMfpp -> eps * maxsv2) {
+			n ++; alpha [i] = -1.0;
 		}
 	}
 
-	if (ll - n < 1) {
-		Melder_throw (U"No eigenvectors can be found. Matrix too singular.");
-	}
+	Melder_require (ll - n > 0, U"No eigenvectors can be found. Matrix too singular.");
 
 	Eigen_init (me, ll - n, numberOfColumns);
 
 	integer ii = 0;
-	for (integer i = k + 1; i <= k + ll; i++) {
-		if (alpha[i] == -1.0) {
+	for (integer i = k + 1; i <= k + ll; i ++) {
+		if (alpha [i] == -1.0) {
 			continue;
 		}
 
-		my eigenvalues[++ii] = alpha[i];
-		for (integer j = 1; j <= numberOfColumns; j++) {
-			my eigenvectors[ii][j] = q[i][j];
+		my eigenvalues [++ ii] = alpha [i];
+		for (integer j = 1; j <= numberOfColumns; j ++) {
+			my eigenvectors [ii] [j] = q [i] [j];
 		}
 	}
 
@@ -233,26 +228,22 @@ void Eigen_initFromSymmetricMatrix (Eigen me, double **a, integer n) {
 
 	// Get size of work array
 
-	(void) NUMlapack_dsyev (& jobz, & uplo, & n, & my eigenvectors [1] [1], & n,
-	                        & my eigenvalues [1], wt, & lwork, & info);
-	if (info != 0) {
-		Melder_throw (U"dsyev initialization fails");
-	}
+	(void) NUMlapack_dsyev (& jobz, & uplo, & n, & my eigenvectors [1] [1], & n, & my eigenvalues [1], wt, & lwork, & info);
+	Melder_require (info == 0, U"dsyev initialization fails");
+	
 
 	lwork = Melder_ifloor (wt [0]);
 	autoNUMvector <double> work ((integer) 0, lwork);
 
 	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n, &my eigenvalues[1], work.peek(), & lwork, & info);
-	if (info != 0) {
-		Melder_throw (U"dsyev fails");
-	}
+	Melder_require (info == 0, U"dsyev fails");
 
 	// We want descending order instead of ascending.
 
-	for (integer i = 1; i <= n / 2; i++) {
+	for (integer i = 1; i <= n / 2; i ++) {
 		integer ilast = n - i + 1;
 
-		SWAP (my eigenvalues[i], my eigenvalues [ilast])
+		SWAP (my eigenvalues [i], my eigenvalues [ilast])
 		for (integer j = 1; j <= n; j ++) {
 			SWAP (my eigenvectors [i] [j], my eigenvectors [ilast] [j])
 		}
@@ -308,10 +299,10 @@ double Eigen_getCumulativeContributionOfComponents (Eigen me, integer from, inte
 		to = my numberOfEigenvalues;
 	}
 	if (from > 0 && to <= my numberOfEigenvalues && from <= to) {
-		for (integer i = 1; i <= my numberOfEigenvalues; i++) {
-			sum += my eigenvalues[i];
+		for (integer i = 1; i <= my numberOfEigenvalues; i ++) {
+			sum += my eigenvalues [i];
 			if (i >= from && i <= to) {
-				partial += my eigenvalues[i];
+				partial += my eigenvalues [i];
 			}
 		}
 	}
@@ -329,7 +320,7 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 	integer n = 1;
 	double p = my eigenvalues[1];
 	while (p / sum < fraction && n < my numberOfEigenvalues) {
-		p += my eigenvalues[++n];
+		p += my eigenvalues [++ n];
 	}
 	return n;
 }
@@ -337,21 +328,21 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 void Eigen_sort (Eigen me) {
 	double temp, *e = my eigenvalues, **v = my eigenvectors;
 
-	for (integer i = 1; i < my numberOfEigenvalues; i++) {
+	for (integer i = 1; i < my numberOfEigenvalues; i ++) {
 		integer k;
-		double emax = e[k = i];
-		for (integer j = i + 1; j <= my numberOfEigenvalues; j++) {
-			if (e[j] > emax) {
-				emax = e[k = j];
+		double emax = e [k = i];
+		for (integer j = i + 1; j <= my numberOfEigenvalues; j ++) {
+			if (e [j] > emax) {
+				emax = e [k = j];
 			}
 		}
 		if (k != i) {
 
 			// Swap eigenvalues and eigenvectors
 
-			SWAP (e[i], e[k])
-			for (integer j = 1; j <= my dimension; j++) {
-				SWAP (v[i][j], v[k][j])
+			SWAP (e [i], e [k])
+			for (integer j = 1; j <= my dimension; j ++) {
+				SWAP (v [i] [j], v [k] [j])
 			}
 		}
 	}
@@ -363,8 +354,8 @@ void Eigen_invertEigenvector (Eigen me, integer ivec) {
 		return;
 	}
 
-	for (integer j = 1; j <= my dimension; j++) {
-		my eigenvectors[ivec][j] = - my eigenvectors[ivec][j];
+	for (integer j = 1; j <= my dimension; j ++) {
+		my eigenvectors [ivec] [j] = - my eigenvectors [ivec] [j];
 	}
 }
 
@@ -407,7 +398,7 @@ void Eigen_drawEigenvalues (Eigen me, Graphics g, integer first, integer last, d
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, true, ( fractionOfTotal ? ( cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue" ) :
+		Graphics_textLeft (g, true, (fractionOfTotal ? (cumulative ? U"Cumulative fractional eigenvalue" : U"Fractional eigenvalue" ) :
 			                   ( cumulative ? U"Cumulative eigenvalue" : U"Eigenvalue" ) ));
 		Graphics_ticks (g, first, last, true, true, false, true);
 		Graphics_marksLeft (g, 2, true, true, false);
@@ -426,28 +417,28 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, integer ivec, integer first, i
 		first = 1; last = my dimension;
 		xmin = 0.5; xmax = last + 0.5;
 	}
-	double *vec = my eigenvectors[ivec];
-	double w = weigh ? sqrt (my eigenvalues[ivec]) : 1.0;
+	double *vec = my eigenvectors [ivec];
+	double w = weigh ? sqrt (my eigenvalues [ivec]) : 1.0;
 
 	// If ymax < ymin the eigenvector will automatically be drawn inverted.
 
 	if (ymax == ymin) {
-		NUMvector_extrema (vec, first, last, &ymin, &ymax);
+		NUMvector_extrema (vec, first, last, & ymin, & ymax);
 		ymax *= w; ymin *= w;
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 
-	for (integer i = first; i <= last; i++) {
-		Graphics_mark (g, i, w * vec[i], size_mm, mark);
+	for (integer i = first; i <= last; i ++) {
+		Graphics_mark (g, i, w * vec [i], size_mm, mark);
 		if (connect && i > first) {
-			Graphics_line (g, i - 1.0, w * vec[i - 1], i, w * vec[i]);
+			Graphics_line (g, i - 1.0, w * vec [i - 1], i, w * vec [i]);
 		}
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		Graphics_markBottom (g, first, false, true, false, rowLabels ? rowLabels[first] : Melder_integer (first));
-		Graphics_markBottom (g, last, false, true, false, rowLabels ? rowLabels[last] : Melder_integer (last));
+		Graphics_markBottom (g, first, false, true, false, rowLabels ? rowLabels [first] : Melder_integer (first));
+		Graphics_markBottom (g, last, false, true, false, rowLabels ? rowLabels [last] : Melder_integer (last));
 		Graphics_drawInnerBox (g);
 		if (ymin * ymax < 0.0) {
 			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
@@ -506,12 +497,8 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 	}
 	integer nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 
-	if (my dimension != thy dimension) {
-		Melder_throw (U"The eigenvectors must have the same dimension.");
-	}
-	if (ivec_from > ivec_to || ivec_from < 1 || ivec_to > nmin) {
-		Melder_throw (U"Eigenvector range too large.");
-	}
+	Melder_require (my dimension == thy dimension, U"The eigenvectors must have the same dimension.");
+	Melder_require (ivec_from > 0 && ivec_from <= ivec_to && ivec_to <= nmin, U"Eigenvector range too large.");
 
 	autoNUMmatrix<double> c (1, nvectors, 1, nvectors);
 
@@ -522,16 +509,16 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 		Compute C.
 	*/
 
-	for (integer i = 1; i <= nvectors; i++) {
-		for (integer j = 1; j <= nvectors; j++) {
+	for (integer i = 1; i <= nvectors; i ++) {
+		for (integer j = 1; j <= nvectors; j ++) {
 			for (integer k = 1; k <= my dimension; k++) {
-				c[i][j] += my eigenvectors[ivec_from + i - 1][k] * thy eigenvectors[ivec_from + j - 1][k];
+				c [i] [j] += my eigenvectors [ivec_from + i - 1] [k] * thy eigenvectors [ivec_from + j - 1] [k];
 			}
 		}
 	}
 	autoSVD svd = SVD_create_d (c.peek(), nvectors, nvectors);
-	for (integer i = 1; i <= nvectors; i++) {
-		angles_degrees[i] = acos (svd -> d[i]) * 180.0 / NUMpi;
+	for (integer i = 1; i <= nvectors; i ++) {
+		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;
 	}
 }
 
@@ -555,9 +542,8 @@ void Eigen_and_matrix_into_matrix_principalComponents (Eigen me, double **from, 
 	 */
 	from_colbegin = from_colbegin <= 0 ? 1 : from_colbegin;
 	to_colbegin = to_colbegin <= 0 ? 1 : to_colbegin;
-	if (numberOfDimensionsToKeep > my numberOfEigenvalues) {
-		Melder_throw (U"The number of dimensions to keep must not be larger than the number of eigenvalues.");
-	}
+	Melder_require (numberOfDimensionsToKeep <= my numberOfEigenvalues, U"The number of dimensions to keep must not be larger than the number of eigenvalues.");
+	
 	for (integer irow = 1; irow <= numberOfRows; irow ++) {
 		for (integer icol = 1; icol <= numberOfDimensionsToKeep; icol ++) {
 			real80 r = 0.0;
@@ -569,7 +555,6 @@ void Eigen_and_matrix_into_matrix_principalComponents (Eigen me, double **from, 
 		}
 	}
 }
-
 
 #undef MAX
 #undef MIN

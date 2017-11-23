@@ -1,6 +1,6 @@
 /* Distance.cpp
  *
- * Copyright (C) 1993-2011, 2015, 2017 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 Thing_implement (Distance, Proximity, 0);
 
-autoDistance Distance_create (long numberOfPoints) {
+autoDistance Distance_create (integer numberOfPoints) {
 	try {
 		autoDistance me = Thing_new (Distance);
 		Proximity_init (me.get(), numberOfPoints);
@@ -37,8 +37,8 @@ autoDistance Distance_create (long numberOfPoints) {
 
 double Distance_getMaximumDistance (Distance me) {
 	double dmax = 0.0;
-	for (long i = 1; i <= my numberOfRows; i ++) { // symmetric matrix
-		for (long j = i + 1; j <= my numberOfColumns; j ++) {
+	for (integer i = 1; i <= my numberOfRows; i ++) { // symmetric matrix
+		for (integer j = i + 1; j <= my numberOfColumns; j ++) {
 			if (my data [i] [j] > dmax) {
 				dmax = my data [i] [j];
 			}

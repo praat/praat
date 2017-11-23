@@ -50,8 +50,8 @@ static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS_DIRECT) {
 #pragma mark - Collection extensions
 
 /* Preconditions: */
-/*	1 <= (position[i], newpos) <= size; */
-/*	newpos <= position[1] || newpos >= position[npos] */
+/*	1 <= (position  [i], newpos) <= size; */
+/*	newpos <= position  [1] || newpos >= position  [npos] */
 static void Ordered_moveItems (Ordered me, integer position [], integer npos, integer newpos) {
 	integer pos, min = position [1], max = position [1];
 

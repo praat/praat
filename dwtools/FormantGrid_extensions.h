@@ -2,7 +2,7 @@
 #define _FormantGrid_extensions_h_
 /* FormantGrid_extensions.h
  *
- * Copyright (C) 2009-2011, 2015 David Weenink
+ * Copyright (C) 2009-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

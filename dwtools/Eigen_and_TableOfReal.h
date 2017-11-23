@@ -3,7 +3,7 @@
 
 /* Eigen_and_TableOfReal.h
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,13 +28,13 @@
 #include "Eigen.h"
 #include "TableOfReal.h"
 
-autoTableOfReal Eigen_and_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfReal thee, long from, long numberOfComponents);
+autoTableOfReal Eigen_and_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfReal thee, integer from, integer numberOfComponents);
 /*
 	Purpose: project the rows of the TableOfReal (thee) starting at index 'from'
 	on the eigenspace (me).
 */
 
-void Eigen_and_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data, long data_startColumn, TableOfReal to, long to_startColumn, long numberOfComponentsToKeep);
+void Eigen_and_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data, integer data_startColumn, TableOfReal to, integer to_startColumn, integer numberOfComponentsToKeep);
 /*
 	Purpose: project vectors of length 'me -> dimension' that start at 'data_startColumn' in 'data' on the
 	eigenspace of 'me'. Results are stored from column 'to_startColumn' on in existing TableOfReal (to).

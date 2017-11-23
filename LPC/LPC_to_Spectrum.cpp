@@ -27,7 +27,7 @@
 #include "NUM2.h"
 
 /*
-	PSD(f) = (sigma^2 T) /|1 + Sum (k=1..p, a[k] exp(-2 pi i f k T))|^2,
+	PSD(f) = (sigma^2 T) /|1 + Sum (k=1..p, a [k] exp(-2 pi i f k T))|^2,
 	where sigma^2 == gain, T is samplinginterval
 
 	LPC-spectrum is approximately 20 dB too high (w.r.t. 25 ms spectrum from Sound)
@@ -35,15 +35,15 @@
 
 void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction, double deEmphasisFrequency) {
 	if (my nCoefficients == 0) {
-		for (long i = 1; i <= thy nx; i++) {
-			thy z[1][i] = thy z[2][i] = 0.0;
+		for (integer i = 1; i <= thy nx; i ++) {
+			thy z [1] [i] = thy z [2] [i] = 0.0;
 		}
 		return;
 	}
 
 	// When deEmphasisFrequency is effective we need 1 extra position in the fftbuffer.
 
-	long nfft = 2 * (thy nx - 1), ndata = my nCoefficients + 1;
+	integer nfft = 2 * (thy nx - 1), ndata = my nCoefficients + 1;
 	double scale = 1.0 / sqrt (2.0 * thy xmax * thy dx);
 	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft)) {
 		Melder_throw (U"Spectrum size not large enough.");
@@ -51,31 +51,31 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 
 	autoNUMvector<double> fftbuffer (1, nfft);
 
-	// Copy 1, a[1], ... a[p] into fftbuffer
+	// Copy 1, a [1], ... a [p] into fftbuffer
 
-	fftbuffer[1] = 1;
-	for (long i = 2; i <= ndata; i++) {
-		fftbuffer[i] = my a[i - 1];
+	fftbuffer [1] = 1;
+	for (integer i = 2; i <= ndata; i ++) {
+		fftbuffer [i] = my a [i - 1];
 	}
 
 	if (deEmphasisFrequency < thy xmax) {
-		// Multiply (1, a[1] z^-1, ... a[p] z^-p) by (1 - b z^-1)
+		// Multiply (1, a [1] z^-1, ... a [p] z^-p) by (1 - b z^-1)
 
 		double b = exp (- 2.0 * NUMpi * deEmphasisFrequency / thy xmax);
 		ndata ++;
-		for (long i = ndata; i > 1; i--) {
-			fftbuffer[i] -= b * fftbuffer[i - 1];
+		for (integer i = ndata; i > 1; i--) {
+			fftbuffer [i] -= b * fftbuffer [i - 1];
 		}
 	}
 
 	/*
-		Calculate sum (k=0..ndata; a[k] (z)^-k) along a contour with radius r:
-		sum (k=0..ndata; a[k] (rz)^-k) = sum (k=0..ndata; (a[k]r^-k) z^-k)
+		Calculate sum (k=0..ndata; a [k] (z)^-k) along a contour with radius r:
+		sum (k=0..ndata; a [k] (rz)^-k) = sum (k=0..ndata; (a [k]r^-k) z^-k)
 	*/
 
 	double g = exp (NUMpi * bandwidthReduction / (thy dx * nfft)); /* r = 1/g */
-	for (long i = 2; i <= ndata; i++) {
-		fftbuffer[i] *= pow (g, i - 1);
+	for (integer i = 2; i <= ndata; i ++) {
+		fftbuffer [i] *= pow (g, i - 1);
 	}
 
 	/*
@@ -88,24 +88,24 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 	if (my gain > 0.0) {
 		scale *= sqrt (my gain);
 	}
-	thy z[1][1] = scale / fftbuffer[1];
-	thy z[2][1] = 0.0;
-	for (long i = 2; i <= nfft / 2; i++) {
+	thy z [1] [1] = scale / fftbuffer [1];
+	thy z [2] [1] = 0.0;
+	for (integer i = 2; i <= nfft / 2; i ++) {
 		// We use: 1 / (a + ib) = (a - ib) / (a^2 + b^2)
 
-		double re = fftbuffer[i + i - 1], im = fftbuffer[i + i];
+		double re = fftbuffer [i + i - 1], im = fftbuffer [i + i];
 		double invSquared = scale / (re * re + im * im);
-		thy z[1][i] =  re * invSquared;
-		thy z[2][i] = -im * invSquared;
+		thy z [1] [i] =  re * invSquared;
+		thy z [2] [i] = -im * invSquared;
 	}
-	thy z[1][thy nx] = scale / fftbuffer[2];
-	thy z[2][thy nx] = 0.0;
+	thy z [1] [thy nx] = scale / fftbuffer [2];
+	thy z [2] [thy nx] = 0.0;
 }
 
 autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
 	try {
 		double samplingFrequency = 1.0 / my samplingPeriod;
-		long nfft = 2, index = Sampled_xToNearestIndex (me, t);
+		integer nfft = 2, index = Sampled_xToNearestIndex (me, t);
 
 		if (index < 1) {
 			index = 1;
@@ -116,11 +116,11 @@ autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthRe
 		if (dfMin <= 0) {
 			nfft = 512; dfMin = samplingFrequency / nfft;
 		}
-		while (samplingFrequency / nfft > dfMin || nfft <= my d_frames[index].nCoefficients) {
+		while (samplingFrequency / nfft > dfMin || nfft <= my d_frames [index].nCoefficients) {
 			nfft *= 2;
 		}
 		autoSpectrum thee = Spectrum_create (samplingFrequency / 2.0, nfft / 2 + 1);
-		LPC_Frame_into_Spectrum (& my d_frames[index], thee.get(), bandwidthReduction, deEmphasisFrequency);
+		LPC_Frame_into_Spectrum (& my d_frames [index], thee.get(), bandwidthReduction, deEmphasisFrequency);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum created.");

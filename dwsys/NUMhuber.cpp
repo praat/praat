@@ -1,6 +1,6 @@
 /* NUMhuber.cpp
  *
- * Copyright (C) 1994-2008, 2015 David Weenink
+ * Copyright (C) 1994-2008, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,8 @@ void NUMmad (double *x, integer n, double *location, bool wantlocation, double *
 	double *tmp = work;
 
 	*mad = undefined;
-	if (n < 1) {
-		Melder_throw (U"The dimension must be at least 1");
-	}
+	Melder_require (n > 0, U"The dimension must be at least 1");
+	
 	if (n == 1) {
 		*location = x[1];
 		return;
@@ -40,8 +39,8 @@ void NUMmad (double *x, integer n, double *location, bool wantlocation, double *
 		tmp = atmp.peek();
 	}
 
-	for (integer i = 1; i <= n; i++) {
-		tmp[i] = x[i];
+	for (integer i = 1; i <= n; i ++) {
+		tmp [i] = x [i];
 	}
 
 	if (wantlocation) {
@@ -50,7 +49,7 @@ void NUMmad (double *x, integer n, double *location, bool wantlocation, double *
 	}
 
 	for (integer i = 1; i <= n; i++) {
-		tmp[i] = fabs (tmp[i] - *location);
+		tmp [i] = fabs (tmp [i] - *location);
 	}
 
 	NUMsort_d (n, tmp);
@@ -96,26 +95,26 @@ void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocat
 		double low  = mu0 - k * s0;
 		double high = mu0 + k * s0;
 
-		for (integer i = 1; i <= n; i++) {
-			if (x[i] < low) {
-				tmp[i] = low;
-			} else if (x[i] > high) {
-				tmp[i] = high;
+		for (integer i = 1; i <= n; i ++) {
+			if (x [i] < low) {
+				tmp [i] = low;
+			} else if (x [i] > high) {
+				tmp [i] = high;
 			} else {
-				tmp[i] =  x[i];
+				tmp [i] =  x [i];
 			}
 		}
 		if (wantlocation) {
 			mu1 = 0.0;
-			for (integer i = 1; i <= n; i++) {
-				mu1 += tmp[i];
+			for (integer i = 1; i <= n; i ++) {
+				mu1 += tmp [i];
 			}
 			mu1 /= n;
 		}
 		if (wantscale) {
 			s1 = 0.0;
-			for (integer i = 1; i <= n; i++) {
-				double dx = tmp[i] - mu1;
+			for (integer i = 1; i <= n; i ++) {
+				double dx = tmp [i] - mu1;
 				s1 += dx * dx;
 			}
 			s1 = sqrt (s1 / (n1 * beta));

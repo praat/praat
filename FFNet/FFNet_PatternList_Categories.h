@@ -2,7 +2,7 @@
 #define _FFNet_PatternList_Categories_h_
 /* FFNet_PatternList_Categories.h
  *
- * Copyright (C) 1994-2011, 2015-2016 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@
 #include "Categories.h"
 #include "Minimizers.h"
 
-void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c, long maxNumOfEpochs,
+void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c, integer maxNumOfEpochs,
     double tolerance, double learningRate, double momentum, int costFunctionType);
 /* Steepest descent */
 
-void FFNet_PatternList_Categories_learnSM (FFNet me, PatternList p, Categories c, long maxNumOfEpochs,
+void FFNet_PatternList_Categories_learnSM (FFNet me, PatternList p, Categories c, integer maxNumOfEpochs,
     double tolerance, int costFunctionType);
 /* Conj. Gradient vdSmagt */
 

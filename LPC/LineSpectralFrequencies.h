@@ -2,7 +2,7 @@
 #define _LineSpectralFrequencies_h_
 /* LineSpectralFrequencies.h
  *
- * Copyright (C) 2016 David Weenink
+ * Copyright (C) 2016-2017 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,9 @@
 	nx : number of frames
 */
 
-void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, long nt, double dt, double t1, long numberOfFrequencies, double maximumFrequency);
+void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, integer nt, double dt, double t1, integer numberOfFrequencies, double maximumFrequency);
 
-autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, long nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency);
+autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, integer nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency);
 
 void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphics g, double fromTime, double toTime, double fmin, double fmax, bool garnish);
 

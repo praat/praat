@@ -2,7 +2,7 @@
 #define _FFNet_Eigen_h_
 /* FFNet_Eigen.h
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +26,14 @@
 #include "FFNet.h"
 #include "Eigen.h"
 
-void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, long pcx, long pcy,
+void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pcx, integer pcy,
     double xmin, double xmax, double ymin, double ymax);
 /* Draw intersections of hyperplanes of units in layer 1 with eigenplane */
 /* formed by pcx and pcy. */
 /* pcx (pcy) > 0	: negative values left (bottom), positive right (top) */
 /* pcx (pcy) < 0	: negative values right (top). */
 
-void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g, long unit,
-	long layer,	long pcx, long pcy, double xmin, double xmax, double ymin, double ymax);
+void FFNet_Eigen_drawDecisionPlaneInEigenspace (FFNet me, Eigen thee, Graphics g, integer unit,
+	integer layer,	integer pcx, integer pcy, double xmin, double xmax, double ymin, double ymax);
 
 #endif /* _FFNet_Eigen_h_ */

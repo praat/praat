@@ -1,6 +1,6 @@
 /* SVD.h
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,17 +28,17 @@
 
 #include "SVD_def.h"
 
-void SVD_init (SVD me, long numberOfRows, long numberOfColumns);
+void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns);
 
-autoSVD SVD_create (long numberOfRows, long numberOfColumns);
+autoSVD SVD_create (integer numberOfRows, integer numberOfColumns);
 /*
 	my tolerance = eps * MAX (numberOfRows, numberOfColumns)
 	where eps is the floating point precision, approximately 2.2e-16
 */
 
-autoSVD SVD_create_d (double **m, long numberOfRows, long numberOfColumns);
+autoSVD SVD_create_d (double **m, integer numberOfRows, integer numberOfColumns);
 
-autoSVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns);
+autoSVD SVD_create_f (float **m, integer numberOfRows, integer numberOfColumns);
 /*
 	Copy matrix into svd->u and calculate U D V'
 */
@@ -67,14 +67,14 @@ void SVD_setTolerance (SVD me, double tolerance);
 
 double SVD_getTolerance (SVD me);
 
-long SVD_zeroSmallSingularValues (SVD me, double tolerance);
+integer SVD_zeroSmallSingularValues (SVD me, double tolerance);
 /*
 	Zero singular values smaller than maximum_singular_value * tolerance
 	If tolerance == 0 then then my tolerance will be used.
 	Return the number of s.v.'s zeroed.
 */
 
-void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m);
+void SVD_synthesize (SVD me, integer sv_from, integer sv_to, double **m);
 /*
 	Synthesize matrix as U D(sv_from:sv_to) V'.
 	(The synthesized matrix is an approximation of the svd'ed matrix with
@@ -86,11 +86,11 @@ void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m);
 void SVD_getSquared (SVD me, double **m, bool inverse);
 // compute V D^2 V' or V D^-2 V'
 
-long SVD_getRank (SVD me);
+integer SVD_getRank (SVD me);
 
-autoGSVD GSVD_create (long numberOfColumns);
+autoGSVD GSVD_create (integer numberOfColumns);
 
-autoGSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, double **m2, long numberOfRows2);
+autoGSVD GSVD_create_d (double **m1, integer numberOfRows1, integer numberOfColumns, double **m2, integer numberOfRows2);
 
 void GSVD_setTolerance (GSVD me, double tolerance);
 

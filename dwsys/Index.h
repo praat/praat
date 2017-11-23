@@ -2,7 +2,7 @@
 #define _Index_h_
 /* Index.h
  *
- * Copyright (C) 2005-2011, 2016 David Weenink
+ * Copyright (C) 2005-2011, 2016-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,20 +32,20 @@
  * The Index derived from this Strings will have 3 elements in its sorted set "a", "o" and "u"
  * The item array with indices will have the following content: 3, 2, 1, 3, 3, 2, 1
  */
-void Index_init (Index me, long numberOfElements);
+void Index_init (Index me, integer numberOfElements);
 
-autoIndex Index_extractPart (Index me, long from, long to);
+autoIndex Index_extractPart (Index me, integer from, integer to);
 
-long Index_getClassIndexFromItemIndex (Index me, long itemIndex);
+integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex);
 
-autoStringsIndex StringsIndex_create (long numberOfItems);
+autoStringsIndex StringsIndex_create (integer numberOfItems);
 
 int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *classLabel);
 
-const char32 *StringsIndex_getClassLabelFromClassIndex (StringsIndex me, long classNumber);
+const char32 *StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer classNumber);
 
-const char32 *StringsIndex_getItemLabelFromItemIndex (StringsIndex me, long itemNumber);
+const char32 *StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer itemNumber);
 
-long StringsIndex_countItems (StringsIndex me, int iclas);
+integer StringsIndex_countItems (StringsIndex me, int iclas);
 
 #endif /* _Index_h_ */

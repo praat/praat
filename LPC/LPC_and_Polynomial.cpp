@@ -23,9 +23,9 @@
 #include "LPC_and_Polynomial.h"
 
 autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
-	long degree = (long) my nCoefficients;
+	integer degree = (integer) my nCoefficients;
 	autoPolynomial thee = Polynomial_create (-1, 1, degree);
-	for (long i = 1; i <= degree; i ++) {
+	for (integer i = 1; i <= degree; i ++) {
 		thy coefficients [i] = my a [degree - i + 1];
 	}
 	thy coefficients[degree + 1] = 1.0;
@@ -34,7 +34,7 @@ autoPolynomial LPC_Frame_to_Polynomial (LPC_Frame me) {
 
 autoPolynomial LPC_to_Polynomial (LPC me, double time) {
 	try {
-		long iFrame = Sampled_xToIndex (me, time);
+		integer iFrame = Sampled_xToIndex (me, time);
 		if (iFrame < 1) {
 			iFrame = 1;
 		}

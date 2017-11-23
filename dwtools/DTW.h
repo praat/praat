@@ -2,7 +2,7 @@
 #define _DTW_h_
 /* DTW.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +41,11 @@
 #define DTW_X 4
 #define DTW_Y 6
 
-void DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx);
+void DTW_Path_Query_init (DTW_Path_Query me, integer ny, integer nx);
 
 /* Prototype on y-axis and test on x-axis */
-autoDTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
-	double tminc, double tmaxc, long ntc, double dtc, double t1c);
+autoDTW DTW_create (double tminp, double tmaxp, integer ntp, double dtp, double t1p,
+	double tminc, double tmaxc, integer ntc, double dtc, double t1c);
 
 void DTW_setWeights (DTW me, double wx, double wy, double wd);
 
@@ -53,7 +53,7 @@ autoDTW DTW_swapAxes (DTW me);
 
 void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cumulativeDists);
 
-void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope); // deprecated
+void DTW_findPath (DTW me, bool matchStart, bool matchEnd, int slope); // deprecated
 /* Obsolete
 	Function:
 		Calculate the minimum path (through a distance matrix).
@@ -80,13 +80,13 @@ double DTW_getXTimeFromYTime (DTW me, double ty);
 
 double DTW_getPathY (DTW me, double tx);
 
-long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
+integer DTW_getMaximumConsecutiveSteps (DTW me, int direction);
 
 void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, double minimum, double maximum, bool garnish);
 
 void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin,
-	double ymax, int garnish);
+	double ymax, bool garnish);
 
 void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, bool garnish);
 void DTW_drawWarpY (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double ty, bool garnish);
@@ -113,11 +113,11 @@ autoMatrix DTW_to_Matrix_cumulativeDistances (DTW me, double sakoeChibaBand, int
 
 autoMatrix DTW_and_Polygon_to_Matrix_cumulativeDistances (DTW me, Polygon thee, int localSlope);
 
-autoDTW Matrices_to_DTW (Matrix me, Matrix thee, int matchStart, int matchEnd, int slope, double metric);
+autoDTW Matrices_to_DTW (Matrix me, Matrix thee, bool matchStart, bool matchEnd, int slope, double metric);
 
-autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, int matchStart, int matchEnd, int slope, double metric);
+autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, bool matchStart, bool matchEnd, int slope, double metric);
 
-autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, int matchStart, int matchEnd, int slope);
+autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, bool matchStart, bool matchEnd, int slope);
 
 autoDurationTier DTW_to_DurationTier (DTW me);
 

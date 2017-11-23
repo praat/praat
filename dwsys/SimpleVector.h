@@ -2,7 +2,7 @@
 #define _SimpleVector_h_
 /* SimpleVector.h
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 
 #include "SimpleVector_def.h"
 
-void DoubleVector_init (DoubleVector me, long min, long max);
+void DoubleVector_init (DoubleVector me, integer min, integer max);
 
-autoDoubleVector DoubleVector_create (long min, long max);
+autoDoubleVector DoubleVector_create (integer min, integer max);
 
-void ComplexVector_init (ComplexVector me, long min, long max);
+void ComplexVector_init (ComplexVector me, integer min, integer max);
 
-autoComplexVector ComplexVector_create (long min, long max);
+autoComplexVector ComplexVector_create (integer min, integer max);
 
 #endif /* _SimpleVector_h_ */

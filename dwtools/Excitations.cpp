@@ -1,6 +1,6 @@
 /* Excitations.cpp
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2016 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2016 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,7 @@ Thing_implement (ExcitationList, Ordered, 0);
 void ExcitationList_addItem_copy (ExcitationList me, Excitation you) {
 	try {
 		if (my size > 0) {
-			if (your nx != my at [1] -> nx) { // may test more dx, xmin, xmax?
-				Melder_throw (U"Dimension of ", you, U" differs from the rest.");
-			}
+			Melder_require (your nx == my at [1] -> nx, U"Dimension of ", you, U" differs from the rest.");
 		}
 		autoExcitation newItem = Data_copy (you);
 		my addItem_move (newItem.move());
@@ -35,7 +33,7 @@ void ExcitationList_addItem_copy (ExcitationList me, Excitation you) {
 }
 
 void ExcitationList_addItems (ExcitationList me, OrderedOf <structExcitation> * list) {
-	for (long i = 1; i <= list -> size; i ++) {
+	for (integer i = 1; i <= list -> size; i ++) {
 		ExcitationList_addItem_copy (me, list -> at [i]);
 	}
 }
@@ -50,25 +48,24 @@ autoExcitationList Excitations_to_ExcitationList (OrderedOf <structExcitation> *
 	}
 }
 
-autoPatternList ExcitationList_to_PatternList (ExcitationList me, long join) {
+autoPatternList ExcitationList_to_PatternList (ExcitationList me, integer join) {
 	try {
 		Melder_assert (my size > 0);
 		Excitation excitation = my at [1];
 		if (join < 1) {
 			join = 1;
 		}
-		if (my size % join != 0) {
-			Melder_throw (U"Number of rows is not a multiple of join.");
-		}
+		Melder_require (my size % join == 0, U"Number of rows is not a multiple of join.");
+		
 		autoPatternList thee = PatternList_create (my size / join, join * excitation -> nx);
-		long r = 0, c = 1;
-		for (long i = 1; i <= my size; i ++) {
+		integer r = 0, c = 1;
+		for (integer i = 1; i <= my size; i ++) {
 			double *z = my at [i] -> z [1];
 			if ((i - 1) % join == 0) {
 				r ++;
 				c = 1;
 			}
-			for (long j = 1; j <= excitation -> nx; j ++) {
+			for (integer j = 1; j <= excitation -> nx; j ++) {
 				thy z [r] [c ++] = z [j];
 			}
 		}
@@ -83,9 +80,9 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 		Melder_assert (my size > 0);
 		Excitation excitation = my at [1];
 		autoTableOfReal thee = TableOfReal_create (my size, excitation -> nx);
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			double *z = my at [i] -> z [1];
-			for (long j = 1; j <= excitation -> nx; j ++) {
+			for (integer j = 1; j <= excitation -> nx; j ++) {
 				thy data [i] [j] = z [j];
 			}
 		}
@@ -95,11 +92,10 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 	}
 }
 
-autoExcitation ExcitationList_extractItem (ExcitationList me, long item) {
+autoExcitation ExcitationList_extractItem (ExcitationList me, integer item) {
 	try {
-		if (item < 1 || item > my size) {
-			Melder_throw (U"Not a valid element number.");
-		}
+		Melder_require (item > 0 && item <= my size, U"Not a valid element number.");
+		
 		autoExcitation thee = Data_copy (my at [item]);
 		Thing_setName (thee.get(), Thing_getName (my at [item]));
 		return thee;

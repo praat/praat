@@ -177,7 +177,7 @@ static double wprob(double w, double rr, double cc)
     /* integrate over each interval */
 
     cc1 = cc - 1.0;
-    for (wi = 1; wi <= wincr; wi++) {
+    for (wi = 1; wi <= wincr; wi ++) {
 		elsum = 0.0;
 		a = double (0.5 * (bub + blb));
 

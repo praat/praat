@@ -2,7 +2,7 @@
 #define _Cepstrumc_h_
 /* Cepstrumc.h
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@
 
 #include "Cepstrumc_def.h"
 
-void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
+void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, integer nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency);
 	
-autoCepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
+autoCepstrumc Cepstrumc_create (double tmin, double tmax, integer nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency);
 
 /******************* Frames ************************************************/

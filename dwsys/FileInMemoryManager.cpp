@@ -133,13 +133,11 @@ autoFileInMemorySet FileInMemoryManager_extractFiles (FileInMemoryManager me, kM
 
 static integer _FileInMemoryManager_getIndexInOpenFiles (FileInMemoryManager me, FILE *stream) {
 	integer filesIndex = reinterpret_cast<integer> (stream);
-	if (filesIndex > 0 && filesIndex <= my files -> size) {
-		FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
-		integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path);
-		return openFilesIndex;
-	} else {
-			Melder_throw (me, U": Invalid file index: ", filesIndex);
-	}
+	Melder_require (filesIndex > 0 && filesIndex <= my files -> size, U": Invalid file index: ", filesIndex);
+
+	FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
+	integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path);
+	return openFilesIndex;
 }
 
 /* 
@@ -433,31 +431,30 @@ integer FileInMemoryManager_ftell (FileInMemoryManager me, FILE *stream) {
 char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	char *result = nullptr;
-	if (openFilesIndex > 0) {
-		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
-		integer startPos = fim -> d_position;
-		if (startPos < fim -> d_numberOfBytes) {
-			integer i = 0, endPos = startPos + num;
-			endPos = endPos < fim -> d_numberOfBytes ? endPos : fim -> d_numberOfBytes;
-			const unsigned char * p = fim -> d_data + startPos;
-			char *p_str = str;
-			if (fim -> ungetChar > 0) {
-				/*
-					copy the ungetChar and advance one position in stream
-				*/
-				*p_str ++ = fim -> ungetChar;
-				p ++; i ++;
-				fim -> ungetChar = -1;
-			}
-			while (i ++ < num && (*p_str ++ = *p) && *p ++ != '\n');
-			str [i] = '\0';
-			fim -> d_position += i;
-			result = str; // everything ok, return the str pointer
-		} else {
-			fim -> d_errno = EOF;
+	
+	Melder_require (openFilesIndex > 0, U": File is not open.");
+
+	FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
+	integer startPos = fim -> d_position;
+	if (startPos < fim -> d_numberOfBytes) {
+		integer i = 0, endPos = startPos + num;
+		endPos = endPos < fim -> d_numberOfBytes ? endPos : fim -> d_numberOfBytes;
+		const unsigned char * p = fim -> d_data + startPos;
+		char *p_str = str;
+		if (fim -> ungetChar > 0) {
+			/*
+				copy the ungetChar and advance one position in stream
+			*/
+			*p_str ++ = fim -> ungetChar;
+			p ++; i ++;
+			fim -> ungetChar = -1;
 		}
+		while (i ++ < num && (*p_str ++ = *p) && *p ++ != '\n');
+		str [i] = '\0';
+		fim -> d_position += i;
+		result = str; // everything ok, return the str pointer
 	} else {
-		Melder_throw (me, U": File is not open.");
+		fim -> d_errno = EOF;
 	}
 	return result;
 }
@@ -525,30 +522,29 @@ int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream) {
 */
 size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t count, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
+	
+	Melder_require (openFilesIndex > 0 && size > 0 && count > 0, U": File is not open.");
+	
+	FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 	size_t result = 0;
-	if (openFilesIndex > 0 && size > 0 && count > 0) {
-		FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
-		integer startPos = fim -> d_position;
-		if (startPos < fim -> d_numberOfBytes) {
-			integer i = 0, endPos = startPos + count * size;
-			
-			if (endPos > fim -> d_numberOfBytes) {
-				count = (fim -> d_numberOfBytes - startPos) / size;
-				endPos = startPos + count * size;
-				fim -> d_errno = EOF;
-			}
-			integer numberOfBytes = count * size;
-			const unsigned char * p = fim -> d_data + fim -> d_position;
-			char * str = static_cast<char *> (ptr);
-			while (i < numberOfBytes) {
-				str [i ++] = *p ++;
-			}
-			fim -> d_position = endPos;
+	integer startPos = fim -> d_position;
+	if (startPos < fim -> d_numberOfBytes) {
+		integer i = 0, endPos = startPos + count * size;
+		
+		if (endPos > fim -> d_numberOfBytes) {
+			count = (fim -> d_numberOfBytes - startPos) / size;
+			endPos = startPos + count * size;
+			fim -> d_errno = EOF;
 		}
-		result = count;
-	} else {
-		Melder_throw (me, U": File is not open.");
+		integer numberOfBytes = count * size;
+		const unsigned char * p = fim -> d_data + fim -> d_position;
+		char * str = static_cast<char *> (ptr);
+		while (i < numberOfBytes) {
+			str [i ++] = *p ++;
+		}
+		fim -> d_position = endPos;
 	}
+	result = count;
 	return result;
 }
 

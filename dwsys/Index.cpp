@@ -1,6 +1,6 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2011,2015,2016 David Weenink
+ * Copyright (C) 2005-2011, 2015-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,16 +55,15 @@ void structIndex :: v_info () {
 	MelderInfo_writeLine (U"Number of items: ", our numberOfItems);
 }
 
-void Index_init (Index me, long numberOfItems) {
-	if (numberOfItems < 1) {
-		Melder_throw (U"Cannot create index without items.");
-	}
+void Index_init (Index me, integer numberOfItems) {
+	Melder_require (numberOfItems > 0, U"Cannot create index without items.");
+	
 	my classes = Ordered_create ();
 	my numberOfItems = numberOfItems;
 	my classIndex = NUMvector<integer> (1, numberOfItems);
 }
 
-autoIndex Index_extractPart (Index me, long from, long to) {
+autoIndex Index_extractPart (Index me, integer from, integer to) {
 	try {
 		if (from == 0) {
 			from = 1;
@@ -72,13 +71,12 @@ autoIndex Index_extractPart (Index me, long from, long to) {
 		if (to == 0) {
 			to = my numberOfItems;
 		}
-		if (to < from || from < 1 || to > my numberOfItems) {
-			Melder_throw (U"Range should be in interval [1,", my numberOfItems, U"].");
-		}
+		Melder_require (from <= to && from > 0 && to <= my numberOfItems, U"Range should be in interval [1,", my numberOfItems, U"].");
+		
 		autoIndex thee = Data_copy (me);
 		thy numberOfItems = to - from + 1;
 		
-		for (long i = 1; i <= thy numberOfItems; i ++) {
+		for (integer i = 1; i <= thy numberOfItems; i ++) {
 			thy classIndex [i] = my classIndex [from + i - 1];
 		}
 		return thee;
@@ -89,7 +87,7 @@ autoIndex Index_extractPart (Index me, long from, long to) {
 
 Thing_implement (StringsIndex, Index, 0);
 
-autoStringsIndex StringsIndex_create (long numberOfItems) {
+autoStringsIndex StringsIndex_create (integer numberOfItems) {
 	try {
 		autoStringsIndex me = Thing_new (StringsIndex);
 		Index_init (me.get(), numberOfItems);
@@ -99,8 +97,8 @@ autoStringsIndex StringsIndex_create (long numberOfItems) {
 	}
 }
 
-long Index_getClassIndexFromItemIndex (Index me, long itemIndex) {
-	long result = 0;
+integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex) {
+	integer result = 0;
 	if (itemIndex >= 0 && itemIndex <= my numberOfItems) {
 		result = my classIndex [itemIndex];
 	}
@@ -108,7 +106,7 @@ long Index_getClassIndexFromItemIndex (Index me, long itemIndex) {
 }
 
 int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *klasLabel) {
-	for (long i = 1; i <= my classes->size; i ++) {
+	for (integer i = 1; i <= my classes->size; i ++) {
 		SimpleString ss = (SimpleString) my classes->at [i];   // FIXME cast
 		if (Melder_equ (ss -> string, klasLabel)) {
 			return i;
@@ -117,7 +115,7 @@ int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *klasLabel
 	return 0;
 }
 
-const char32 *StringsIndex_getClassLabelFromClassIndex (StringsIndex me, long klasIndex) {
+const char32 *StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer klasIndex) {
 	const char32 *result = undefinedClassLabel;
 	if (klasIndex > 0 && klasIndex <= my classes -> size) {
 		SimpleString ss = (SimpleString) my classes->at [klasIndex];   // FIXME cast
@@ -126,19 +124,19 @@ const char32 *StringsIndex_getClassLabelFromClassIndex (StringsIndex me, long kl
 	return result;
 }
 
-const char32 *StringsIndex_getItemLabelFromItemIndex (StringsIndex me, long itemNumber) {
+const char32 *StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer itemNumber) {
 	const char32 *result = undefinedClassLabel;
 	if (itemNumber > 0 && itemNumber <= my numberOfItems) {
-		long klas = my classIndex [itemNumber];
+		integer klas = my classIndex [itemNumber];
 		SimpleString ss = (SimpleString) my classes->at [klas];   // FIXME cast
 		result = ss -> string;
 	}
 	return result;
 }
 
-long StringsIndex_countItems (StringsIndex me, int iclass) {
-	long sum = 0;
-	for (long i = 1; i <= my numberOfItems; i ++) {
+integer StringsIndex_countItems (StringsIndex me, int iclass) {
+	integer sum = 0;
+	for (integer i = 1; i <= my numberOfItems; i ++) {
 		if (my classIndex [i] == iclass) {
 			sum ++;
 		}

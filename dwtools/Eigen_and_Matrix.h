@@ -3,7 +3,7 @@
 
 /* Eigen_and_Matrix.h
  *
- * Copyright (C) 1993-2011,2015-2016 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

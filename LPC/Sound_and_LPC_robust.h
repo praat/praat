@@ -2,7 +2,7 @@
 #define _Sound_and_LPC_robust_h_
 /* Sound_and_LPC_robust.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,9 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 */
 
 autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
-	double preEmphasisFrequency, double k, int itermax, double tol, int wantlocation);
+	double preEmphasisFrequency, double k, int itermax, double tol, bool wantlocation);
 
 autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
-	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, int itermax, double tol, int wantlocation);
+	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, int itermax, double tol, bool wantlocation);
 
 #endif /* _Sound_and_LPC_robust_h_ */
