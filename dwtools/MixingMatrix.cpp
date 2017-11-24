@@ -21,7 +21,7 @@
 
 Thing_implement (MixingMatrix, TableOfReal, 0);
 
-autoMixingMatrix MixingMatrix_create (long numberOfOutputChannels, long numberOfInputChannels) {
+autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer numberOfInputChannels) {
 	try {
 		autoMixingMatrix me = Thing_new (MixingMatrix);
 		TableOfReal_init (me.get(), numberOfOutputChannels, numberOfInputChannels);
@@ -31,13 +31,13 @@ autoMixingMatrix MixingMatrix_create (long numberOfOutputChannels, long numberOf
 	}
 }
 
-autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long numberOfInputChannels, char32 *elements) {
+autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, char32 *elements) {
 	try {
-		long inum = 1, ntokens = Melder_countTokens (elements);
+		integer inum = 1, ntokens = Melder_countTokens (elements);
 		if (ntokens == 0) {
 			Melder_throw (U"No matrix elements.");
 		}
-		long numberOfCells = numberOfInputChannels * numberOfOutputChannels;
+		integer numberOfCells = numberOfInputChannels * numberOfOutputChannels;
 
 		autoMixingMatrix me = MixingMatrix_create (numberOfOutputChannels, numberOfInputChannels);
 
@@ -46,16 +46,16 @@ autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long nu
 		*/
 		double number;
 		for (char32 *token = Melder_firstToken (elements); token && inum <= ntokens; token = Melder_nextToken (), inum ++) {
-			long irow = (inum - 1) / numberOfInputChannels + 1;
-			long icol = (inum - 1) % numberOfInputChannels + 1;
-			Interpreter_numericExpression (0, token, &number);
+			integer irow = (inum - 1) / numberOfInputChannels + 1;
+			integer icol = (inum - 1) % numberOfInputChannels + 1;
+			Interpreter_numericExpression (0, token, & number);
 
 			my data [irow] [icol] = number;
 		}
 		if (ntokens < numberOfCells) {
-			for (long i = inum; i <= numberOfCells; i ++) {
-				long irow = (inum - 1) / numberOfInputChannels + 1;
-				long icol = (inum - 1) % numberOfInputChannels + 1;
+			for (integer i = inum; i <= numberOfCells; i ++) {
+				integer irow = (inum - 1) / numberOfInputChannels + 1;
+				integer icol = (inum - 1) % numberOfInputChannels + 1;
 				my data [irow] [icol] = number; // repeat the last number given!
 			}
 		}
@@ -66,16 +66,16 @@ autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long nu
 }
 
 void MixingMatrix_setRandomGauss (MixingMatrix me, double mean, double stdev) {
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
+	for (integer i = 1; i <= my numberOfRows; i++) {
+		for (integer j = 1; j <= my numberOfColumns; j++) {
 			my data[i][j] = NUMrandomGauss (mean, stdev);
 		}
 	}
 }
 
-void MixingMatrix_multiplyInputChannel (MixingMatrix me, long inputChannel, double value) {
+void MixingMatrix_multiplyInputChannel (MixingMatrix me, integer inputChannel, double value) {
 	if (inputChannel >= 1 && inputChannel <= my numberOfColumns) {
-		for (long i = 1; i <= my numberOfRows; i ++) {
+		for (integer i = 1; i <= my numberOfRows; i ++) {
 			my data [i] [inputChannel] *= value;
 		}
 	}
@@ -83,8 +83,8 @@ void MixingMatrix_multiplyInputChannel (MixingMatrix me, long inputChannel, doub
 
 // https://developer.mozilla.org/en-US/docs/Web/API/AudioNode/channelInterpretation
 void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= my numberOfColumns; j++) {
+	for (integer i = 1; i <= my numberOfRows; i++) {
+		for (integer j = 1; j <= my numberOfColumns; j++) {
 			my data [i][j] = 0;
 		}
 	}
@@ -208,25 +208,25 @@ void MixingMatrix_setStandardChannelInterpretation (MixingMatrix me) {
 	if (! dimensionsCovered) {
 		// Fill each output channel with its input counterpart, that is the input channel with the same index. 
 		// Channels with no corresponding input channels are left silent.
-		long lowerDimension = my numberOfRows < my numberOfColumns ? my numberOfRows: my numberOfColumns;
-		for (long i = 1; i <= lowerDimension; i++) {
+		integer lowerDimension = my numberOfRows < my numberOfColumns ? my numberOfRows: my numberOfColumns;
+		for (integer i = 1; i <= lowerDimension; i++) {
 			my data [i][i] = 1.0;
 		}
 	}
 }
 
 void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels) {
-	long numberOfMuteChannels = 0;
-	for (long icol = 1; icol <= my numberOfColumns; icol++) {
+	integer numberOfMuteChannels = 0;
+	for (integer icol = 1; icol <= my numberOfColumns; icol++) {
 		if (muteChannels [icol]) {
 			numberOfMuteChannels ++;
 		}
 	}
 	// Set all mute channels to 0 and all other channels to 1. To prevent overflow scale by the number of channels that are on.
 	double coefficient = my numberOfColumns > numberOfMuteChannels ? 1.0 / (my numberOfColumns - numberOfMuteChannels) : 0.0;
-	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		double channelScaling = muteChannels [icol] ? 0.0 : coefficient;
-		for (long irow = 1; irow <= my numberOfRows; irow ++) {
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			my data [irow][icol] = channelScaling;
 		}
 	}

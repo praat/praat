@@ -1,6 +1,6 @@
 /* KlattGridEditors.c
  *
- * Copyright (C) 2009-2011 david Weenink
+ * Copyright (C) 2009-2017 david Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -311,12 +311,9 @@ autoKlattGrid_FormantGridEditor KlattGrid_FormantGridEditor_create (const char32
 	try {
 		Melder_assert (data);
 		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (data, formantType);
-		if (! fg) {
-			Melder_throw (U"Formant type unknown.");
-		}
-		if (FormantGrid_isEmpty (fg -> get())) {
-			Melder_throw (U"Cannot edit an empty formant grid.");
-		}
+		Melder_require (fg, U"Formant type unknown.");
+		Melder_require (! FormantGrid_isEmpty (fg -> get()), U"Cannot edit an empty formant grid.");
+		
 		autoKlattGrid_FormantGridEditor me = Thing_new (KlattGrid_FormantGridEditor);
 		my klattgrid = data;
 		FormantGridEditor_init (me.get(), title, fg->get());

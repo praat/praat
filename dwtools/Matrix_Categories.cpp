@@ -1,6 +1,6 @@
 /* Matrix_Categories.cpp
  *
- * Copyright (C) 1993-2011,2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,7 @@
 
 autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee) {
 	try {
-		if (thy size != my ny) {
-			Melder_throw (U"Number of rows and number of categories must be equal.");
-		}
+		Melder_require (thy size == my ny, U"Number of rows and number of categories must be equal.");
 
 		autoTableOfReal him = TableOfReal_create (my ny, my nx);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, nullptr, 1, 1);

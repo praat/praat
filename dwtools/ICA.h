@@ -53,37 +53,37 @@ Collection_define (CrossCorrelationTableList, OrderedOf, CrossCorrelationTable) 
 	  in general not the case for cross-correlations.
 */
 
-autoCrossCorrelationTable CrossCorrelationTable_create (long dimension);
+autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension);
 
-autoCrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32 *centroid, long numberOfSamples);
+autoCrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32 *centroid, integer numberOfSamples);
 
 /* (sum(i,j=1..dimension, i!=j; C[i][j]^2))/(dimension*(dimension-1)) */
 double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me);
 
 autoCrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee);
 
-double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableList me, double *w, long start, long end);
+double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableList me, double *w, integer start, integer end);
 
-double CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTableList me, Diagonalizer thee, double *w, long start, long end);
+double CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTableList me, Diagonalizer thee, double *w, integer start, integer end);
 
-autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (long dimension, long n, int firstPositiveDefinite, double sigma);
+autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer dimension, integer n, int firstPositiveDefinite, double sigma);
 
-autoDiagonalizer Diagonalizer_create (long dimension);
+autoDiagonalizer Diagonalizer_create (integer dimension);
 
-autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
+autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double delta_w, int method);
 
 autoSound Sound_whitenChannels (Sound me, double varianceFraction);
 autoSound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction);
 
-void MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, long maxNumberOfIterations, double tol, int method);
+void MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method);
 
-void MixingMatrix_and_Sound_improveUnmixing (MixingMatrix me, Sound thee, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double tol, int method);
+void MixingMatrix_and_Sound_improveUnmixing (MixingMatrix me, Sound thee, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method);
 /*
 	Determine the matrix that diagonalizes a series of CrossCorrelationTables as well as possible.
 */
-autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTableList me, long maxNumberOfIterations, double tol, int method);
+autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTableList me, integer maxNumberOfIterations, double tol, int method);
 
-void Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, long maxNumberOfIterations, double tol, int method);
+void Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method);
 
 autoCrossCorrelationTableList CrossCorrelationTables_to_CrossCorrelationTableList (OrderedOf<structCrossCorrelationTable> *me);
 /*
@@ -110,11 +110,11 @@ autoCovariance Sound_to_Covariance_channels (Sound me, double startTime, double 
 /*
 	Determine a CrossCorrelationTable for lags (k-1)*lagStep, where k = 1...n.
 */
-autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, double startTime, double endTime, double lagStep, long n);
+autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, double startTime, double endTime, double lagStep, integer n);
 
 autoMixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
 
-autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double tol, int method);
+autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method);
 
 
 #endif /*_ICA_h_ */

@@ -32,9 +32,9 @@
 
 static autoTableOfReal getStandardizedLogFrequencyPolsData (bool includeLevels) {
 	autoTableOfReal me = TableOfReal_create_pols1973 (includeLevels);
-	for (long i = 1; i <= my numberOfRows; i++) {
-		for (long j = 1; j <= 3; j++) {
-			my data[i][j] = log10 (my data[i][j]);
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer j = 1; j <= 3; j++) {
+			my data [i] [j] = log10 (my data [i] [j]);
 		}
 	}
 	TableOfReal_standardizeColumns (me.get());

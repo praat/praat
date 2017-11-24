@@ -23,11 +23,11 @@
 Thing_define (MixingMatrix, TableOfReal) {
 };
 
-autoMixingMatrix MixingMatrix_create (long numberOfOutputChannels, long numberOfInputChannels);
+autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer numberOfInputChannels);
 
-autoMixingMatrix MixingMatrix_createSimple (long numberOfOutputChannels, long numberOfInputChannels, char32 *elements);
+autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, char32 *elements);
 
-void MixingMatrix_multiplyInputChannel (MixingMatrix me, long inputChannel, double value);
+void MixingMatrix_multiplyInputChannel (MixingMatrix me, integer inputChannel, double value);
 
 void MixingMatrix_muteAndActivateChannels (MixingMatrix me, bool *muteChannels);
 
