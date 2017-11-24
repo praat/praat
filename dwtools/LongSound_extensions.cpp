@@ -1,6 +1,6 @@
 /* LongSound_extensions.c
  *
- * Copyright (C) 1993-2013, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,39 +48,34 @@
 /*
   Precondition: size (my buffer) >= nbuf
 */
-static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long nbuf, int nchannels, int ichannel, long ibuf) {
-	long numberOfReads = (my nx - 1) / nbuf + 1;
-	long n_to_read = 0;
+static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, integer nbuf, int nchannels, int ichannel, integer ibuf) {
+	integer numberOfReads = (my nx - 1) / nbuf + 1;
+	integer n_to_read = 0;
 
 	if (ibuf <= numberOfReads) {
 		n_to_read = ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf;
-		long imin = (ibuf - 1) * nbuf + 1;
+		integer imin = (ibuf - 1) * nbuf + 1;
 		LongSound_readAudioToShort (me, my buffer, imin, n_to_read);
 
-		for (long i = 1; i <= n_to_read; i++) {
-			buffer[nchannels * (i - 1) + ichannel] = my buffer[i];
+		for (integer i = 1; i <= n_to_read; i ++) {
+			buffer [nchannels * (i - 1) + ichannel] = my buffer [i];
 		}
 	}
 	if (ibuf >= numberOfReads) {
-		for (long i = n_to_read + 1; i <= nbuf; i++) {
-			buffer[nchannels * (i - 1) + ichannel] = 0;
+		for (integer i = n_to_read + 1; i <= nbuf; i ++) {
+			buffer [nchannels * (i - 1) + ichannel] = 0;
 		}
 	}
 }
 
 void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audioFileType, MelderFile file) {
 	try {
-		long nbuf = my nmax < thy nmax ? my nmax : thy nmax;
-		long nx = my nx > thy nx ? my nx : thy nx;
-		long numberOfReads = (nx - 1) / nbuf + 1, numberOfBitsPerSamplePoint = 16;
-
-		if (thy numberOfChannels != my numberOfChannels || my numberOfChannels != 1) {
-			Melder_throw (U"LongSounds should be mono.");
-		}
-
-		if (my sampleRate != thy sampleRate) {
-			Melder_throw (U"Sample rates should be equal.");
-		}
+		integer nbuf = my nmax < thy nmax ? my nmax : thy nmax;
+		integer nx = my nx > thy nx ? my nx : thy nx;
+		integer numberOfReads = (nx - 1) / nbuf + 1, numberOfBitsPerSamplePoint = 16;
+		
+		Melder_require (thy numberOfChannels == my numberOfChannels && my numberOfChannels == 1, U"LongSounds should be mono.");
+		Melder_require (my sampleRate == thy sampleRate, U"Sampling frequencies should be equal.");
 
 		/*
 			Allocate a stereo buffer of size (2 * the smallest)!
@@ -89,14 +84,14 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 			potential differences in internal buffer size.
 		*/
 
-		long nchannels = 2;
+		integer nchannels = 2;
 		autoNUMvector<short> buffer (1, nchannels * nbuf);
 
 		autoMelderFile f  = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, Melder_ifloor (my sampleRate), nx, nchannels, numberOfBitsPerSamplePoint);
 
-		for (long i = 1; i <= numberOfReads; i++) {
-			long n_to_write = i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf;
+		for (integer i = 1; i <= numberOfReads; i ++) {
+			integer n_to_write = i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf;
 			_LongSound_to_multichannel_buffer (me, buffer.peek(), nbuf, nchannels, 1, i);
 			_LongSound_to_multichannel_buffer (thee, buffer.peek(), nbuf, nchannels, 2, i);
 			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding (audioFileType,
@@ -116,12 +111,12 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 	you can sometimes use write(fd, "", 0). However, there is no portable
 	solution, nor a way to delete blocks at the beginning.
 */
-static void MelderFile_truncate (MelderFile me, long size) {
+static void MelderFile_truncate (MelderFile me, integer size) {
 #if defined(_WIN32)
 
 	HANDLE hFile;
 	DWORD fdwAccess = GENERIC_READ | GENERIC_WRITE, fPos;
-	DWORD fdwShareMode = 0; /* File cannot be shared */
+	DWORD fdwShareMode = 0; // File cannot be shared
 	LPSECURITY_ATTRIBUTES lpsa = nullptr;
 	DWORD fdwCreate = OPEN_EXISTING;
 	LARGE_INTEGER fileSize;
@@ -129,18 +124,15 @@ static void MelderFile_truncate (MelderFile me, long size) {
 	MelderFile_close (me);
 
 	hFile = CreateFileW (Melder_peek32toW (my path), fdwAccess, fdwShareMode, lpsa, fdwCreate, FILE_ATTRIBUTE_NORMAL, nullptr);
-	if (hFile == INVALID_HANDLE_VALUE) {
-		Melder_throw (U"Can't open file ", me, U".");
-	}
+	
+	Melder_require (hFile != INVALID_HANDLE_VALUE, U"Can't open file ", me, U".");
 
 	// Set current file pointer to position 'size'
 
 	fileSize.LowPart = size;
 	fileSize.HighPart = 0; /* Limit the file size to 2^32 - 2 bytes */
 	fPos = SetFilePointer (hFile, fileSize.LowPart, &fileSize.HighPart, FILE_BEGIN);
-	if (fPos == 0xFFFFFFFF) {
-		Melder_throw (U"Can't set the position at size ", size, U"for file ", me, U".");
-	}
+	Melder_require (fPos != 0xFFFFFFFF, (U"Can't set the position at size ", size, U"for file ", me, U".");
 
 	// Limit the file size as the current position of the file pointer.
 
@@ -150,28 +142,27 @@ static void MelderFile_truncate (MelderFile me, long size) {
 #elif defined(linux) || defined(macintosh)
 
 	MelderFile_close (me);
-	if (truncate (Melder_peek32to8 (my path), size) == -1) {
-		Melder_throw (U"Truncating failed for file ", MelderFile_messageName (me), U" (", Melder_peek8to32 (strerror (errno)), U").");
-	}
+	int succes = truncate (Melder_peek32to8 (my path), size);
+	Melder_require (succes == 0, U"Truncating failed for file ", MelderFile_messageName (me), U" (", Melder_peek8to32 (strerror (errno)), U").");
 #else
 	Melder_throw (U"Don't know what to do.");
 #endif
 }
 
-static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, long n, MelderFile file) {
-	long offset = imin;
-	long numberOfBuffers = (n - 1) / my nmax + 1, numberOfBitsPerSamplePoint = 16;
-	long numberOfSamplesInLastBuffer = (n - 1) % my nmax + 1;
+static void writePartToOpenFile16 (LongSound me, int audioFileType, integer imin, integer n, MelderFile file) {
+	integer offset = imin;
+	integer numberOfBuffers = (n - 1) / my nmax + 1, numberOfBitsPerSamplePoint = 16;
+	integer numberOfSamplesInLastBuffer = (n - 1) % my nmax + 1;
 	if (file -> filePointer) {
-		for (long ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++) {
-			long numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
+		for (integer ibuffer = 1; ibuffer <= numberOfBuffers; ibuffer ++) {
+			integer numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
 			LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
 			offset += numberOfSamplesToCopy;
 			MelderFile_writeShortToAudio (file, my numberOfChannels, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my buffer, numberOfSamplesToCopy);
 		}
 	}
 
-	//  We "have" no samples any longer.
+	//  We "have" no samples any integerer.
 	
 	my imin = 1;
 	my imax = 0;
@@ -180,10 +171,8 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderFile file) {
 	integer pre_append_endpos = 0, numberOfBitsPerSamplePoint = 16;
 	try {
-		if (my size < 1) {
-			Melder_throw (U"No Sound or LongSound objects to append.");
-		}
-
+		Melder_require (my size > 0, U"No Sound or LongSound objects to append.");
+		
 		/*
 			We have to open with "r+" mode because this will position the stream
 			at the beginning of the file. The "a" mode does not allow us to
@@ -201,14 +190,12 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 		int encoding;
 		int audioFileType = MelderFile_checkSoundFile (file, & numberOfChannels, & encoding, & sampleRate_d, & startOfData, & numberOfSamples);
 
-		if (audioFileType == 0) {
-			Melder_throw (U"Not a sound file.");
-		}
-
+		Melder_require (audioFileType > 0, U"Not a sound file.");
+		
 		// Check whether all the sampling frequencies and channels match.
 
 		integer sampleRate = Melder_ifloor (sampleRate_d);
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			bool sampleRatesMatch, numbersOfChannelsMatch;
 			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
@@ -222,12 +209,8 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 				numbersOfChannelsMatch = longSound -> numberOfChannels == numberOfChannels;
 				numberOfSamples += longSound -> nx;
 			}
-			if (! sampleRatesMatch) {
-				Melder_throw (U"Sample rates do not match.");
-			}
-			if (! numbersOfChannelsMatch) {
-				Melder_throw (U"Cannot mix stereo and mono.");
-			}
+			Melder_require (sampleRatesMatch, U"Sampling frequencies do not match.");
+			Melder_require (numbersOfChannelsMatch, U"The number of channels do not match.");
 		}
 
 		// Search the end of the file, count the number of bytes and append.
@@ -237,7 +220,7 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 		pre_append_endpos = MelderFile_tell (file);
 
 		errno = 0;
-		for (long i = 1; i <= my size; i ++) {
+		for (integer i = 1; i <= my size; i ++) {
 			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
@@ -247,9 +230,7 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 				LongSound longSound = (LongSound) data;
 				writePartToOpenFile16 (longSound, audioFileType, 1, longSound -> nx, file);
 			}
-			if (errno != 0) {
-				Melder_throw (U"Error during writing.");
-			}
+			Melder_require (errno == 0, U"Error during writing.");
 		}
 
 		// Update header

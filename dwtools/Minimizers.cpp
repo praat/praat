@@ -39,10 +39,10 @@
 #define TOL 2e-4
 #define SHFT(a, b, c, d)	(a) = (b); (b) = (c); (c) = (d);
 #define MOV3(a, b, c, d, e, f)	(a) = (d); (b) = (e); (c) = (f);
-#define FUNC1(fx, x) for (i=1; i <= my nParameters; i++) my ptry[i] = p[i] + (x) * direction[i]; \
+#define FUNC1(fx, x) for (i=1; i <= my nParameters; i ++) my ptry [i] = p [i] + (x) * direction [i]; \
 	(fx) = my func (my object, my ptry);
-#define DFUNC1(df, x) for (i=1; i <= my nParameters; i++) my ptry[i] = p[i] + (x) * direction[i]; \
-	my dfunc (my object, my ptry, my dp); for (df=0, i=1; i <= my nParameters; i++) df += my dp[i] * direction[i];
+#define DFUNC1(df, x) for (i=1; i <= my nParameters; i ++) my ptry [i] = p [i] + (x) * direction [i]; \
+	my dfunc (my object, my ptry, my dp); for (df=0, i=1; i <= my nParameters; i ++) df += my dp [i] * direction [i];
 
 Thing_implement (Minimizer, Thing, 0);
 
@@ -59,19 +59,19 @@ static void classMinimizer_afterHook (Minimizer me, Thing /* boss */) {
 	}
 
 	if (my start == 1) {
-		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0.0, 1.1 * my history[1], 1);
+		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0.0, 1.1 * my history [1], 1);
 		Graphics_textTop (my gmonitor, false, Melder_cat (U"Dimension of search space: ", my nParameters));
 	}
 	Graphics_beginMovieFrame (my gmonitor, nullptr);
 	Graphics_setInner (my gmonitor);
-	Graphics_line (my gmonitor, my iteration, my history[my iteration], my iteration, my history[my iteration]);
+	Graphics_line (my gmonitor, my iteration, my history [my iteration], my iteration, my history [my iteration]);
 	Graphics_unsetInner (my gmonitor);
 	Graphics_endMovieFrame (my gmonitor, 0.0);
 	Melder_monitor ((double) (my iteration) / my maxNumOfIterations, U"Iterations: ", my iteration, 
 		U", Function calls: ", my funcCalls, U", Cost: ", my minimum);
 }
 
-void Minimizer_init (Minimizer me, long nParameters, Daata object) {
+void Minimizer_init (Minimizer me, integer nParameters, Daata object) {
 	my nParameters = nParameters;
 	my p = NUMvector<double> (1, nParameters);
 	my object = object;
@@ -88,7 +88,7 @@ static void monitor_off (Minimizer me) {
 	}
 }
 
-void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance, int monitor) {
+void Minimizer_minimize (Minimizer me, integer maxNumOfIterations, double tolerance, int monitor) {
 	try {
 
 		my tolerance = tolerance;
@@ -122,7 +122,7 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 	}
 }
 
-void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIterationsPerTime, double tolerance) {
+void Minimizer_minimizeManyTimes (Minimizer me, integer numberOfTimes, integer maxIterationsPerTime, double tolerance) {
 	double fopt = my minimum;
 	int monitorSingle = numberOfTimes == 1;
 
@@ -132,7 +132,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 		Melder_progress (0.0, U"Minimize many times");
 	}
 	/* on first iteration start with current parameters 27/11/97 */
-	for (long i = 1; i <= numberOfTimes; i++) {
+	for (integer i = 1; i <= numberOfTimes; i ++) {
 		Minimizer_minimize (me, maxIterationsPerTime, tolerance, monitorSingle);
 		Melder_casual (U"Current ", i, U": minimum = ", my minimum);
 		if (my minimum < fopt) {
@@ -164,14 +164,14 @@ void Minimizer_setAfterEachIteration (Minimizer me, void (*afterHook) (Minimizer
 }
 #endif
 
-void Minimizer_reset (Minimizer me, const double guess[]) {
+void Minimizer_reset (Minimizer me, const double guess []) {
 	if (guess) {
-		for (long i = 1; i <= my nParameters; i++) {
-			my p[i] = guess[i];
+		for (integer i = 1; i <= my nParameters; i ++) {
+			my p [i] = guess [i];
 		}
 	} else {
-		for (long i = 1; i <= my nParameters; i++) {
-			my p[i] = NUMrandomUniform (-1.0, 1.0);
+		for (integer i = 1; i <= my nParameters; i ++) {
+			my p [i] = NUMrandomUniform (-1.0, 1.0);
 		}
 	}
 
@@ -182,14 +182,14 @@ void Minimizer_reset (Minimizer me, const double guess[]) {
 	my v_reset ();
 }
 
-void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, double hmin, double hmax, int garnish) {
+void Minimizer_drawHistory (Minimizer me, Graphics g, integer iFrom, integer iTo, double hmin, double hmax, int garnish) {
 	if (! my history) {
 		return;
 	}
 	if (iTo <= iFrom) {
 		iFrom = 1; iTo = my iteration;
 	}
-	long itmin = iFrom, itmax = iTo;
+	integer itmin = iFrom, itmax = iTo;
 	if (itmin < 1) {
 		itmin = 1;
 	}
@@ -229,11 +229,11 @@ void structSteepestDescentMinimizer :: v_minimize () {
 	double fret = func (object, p);
 	while (iteration < maxNumOfIterations) {
 		dfunc (object, p, dp.peek());
-		for (long i = 1; i <= nParameters; i++) {
-			dpp[i] = - eta * dp[i] + momentum * dpp[i];
-			p[i] += dpp[i];
+		for (integer i = 1; i <= nParameters; i ++) {
+			dpp [i] = - eta * dp [i] + momentum * dpp [i];
+			p [i] += dpp [i];
 		}
-		history[++iteration] = minimum = func (object, p);
+		history [ ++iteration] = minimum = func (object, p);
 		success = 2.0 * fabs (fret - minimum) < tolerance * (fabs (fret) + fabs (minimum));
 		if (our afterHook) {
 			try {
@@ -251,7 +251,7 @@ void structSteepestDescentMinimizer :: v_minimize () {
 	}
 }
 
-autoSteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double p[]), void (*dfunc) (Daata object, const double p[], double dp[])) {
+autoSteepestDescentMinimizer SteepestDescentMinimizer_create (integer nParameters, Daata object, double (*func) (Daata object, const double p []), void (*dfunc) (Daata object, const double p [], double dp [])) {
 	try {
 		autoSteepestDescentMinimizer me = Thing_new (SteepestDescentMinimizer);
 		Minimizer_init (me.get(), nParameters, object);
@@ -288,7 +288,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 		gcg0 = gopt_sq = 0.0;
 	}
 	restart_flag = 1;
-	while (++ this -> iteration <= maxNumOfIterations) {
+	while ( ++ this -> iteration <= maxNumOfIterations) {
 		if (flag & 1) {
 			if (one_up) {
 				decrease_direction_found = 0;
@@ -307,30 +307,30 @@ void structVDSmagtMinimizer :: v_minimize () {
 		}
 		if (restart == 0) {
 			rtemp = rtemp2 = 0.0;
-			for (long i = 1; i <= nParameters; i++) {
-				rtemp += gc[i] * grst[i];
-				rtemp2 += gc[i] * srst[i];
+			for (integer i = 1; i <= nParameters; i ++) {
+				rtemp += gc [i] * grst [i];
+				rtemp2 += gc [i] * srst [i];
 			}
 			gamma = rtemp / gamma_in;
 			if (fabs (beta * gropt - gamma * rtemp2) > 0.2 * gopt_sq) {
 				restart = 1;
 			} else {
-				for (long i = 1; i <= nParameters; i++) {
-					s[i] = beta * s[i] + gamma * srst[i] - gc[i];
+				for (integer i = 1; i <= nParameters; i ++) {
+					s [i] = beta * s [i] + gamma * srst [i] - gc [i];
 				}
 			}
 		}
 		if (restart == 2) {
-			for (long i = 1; i <= nParameters; i++) {
-				s[i] = - dp[i];
+			for (integer i = 1; i <= nParameters; i ++) {
+				s [i] = - dp [i];
 			}
 			restart = 1;
 		} else if (restart == 1) {
 			gamma_in = gropt - gr0;
-			for (long i = 1; i <= nParameters; i++) {
-				srst[i] = s[i];
-				s[i] = beta * s[i] - gc[i];
-				grst[i] = gc[i] - g0[i];
+			for (integer i = 1; i <= nParameters; i ++) {
+				srst [i] = s [i];
+				s [i] = beta * s [i] - gc [i];
+				grst [i] = gc [i] - g0 [i];
 			}
 			restart = 0;
 		}
@@ -341,9 +341,9 @@ void structVDSmagtMinimizer :: v_minimize () {
 		flag = 0;
 		lineSearch_iteration = 0;
 		rtemp = 0.0;
-		for (long i = 1; i <= nParameters; i++) {
-			rtemp += dp[i] * s[i];
-			g0[i] = dp[i];
+		for (integer i = 1; i <= nParameters; i ++) {
+			rtemp += dp [i] * s [i];
+			g0 [i] = dp [i];
 		}
 		gr0 = gropt = rtemp;
 		if (l_iteration == 1) {
@@ -384,17 +384,17 @@ void structVDSmagtMinimizer :: v_minimize () {
 					}
 				}
 				alpha = alphamin + dalpha;
-				for (long i = 1; i <= nParameters; i++) {
-					pc[i] = p[i] + dalpha * s[i];
+				for (integer i = 1; i <= nParameters; i ++) {
+					pc [i] = p [i] + dalpha * s [i];
 				}
 				fc = func (object, pc);
 				dfunc (object, pc, gc);
 				l_iteration ++;
-				lineSearch_iteration++;
+				lineSearch_iteration ++;
 				gsq = grc = 0.0;
-				for (long i = 1; i <= nParameters; i++) {
-					gsq += gc[i] * gc[i];
-					grc += gc[i] * s[i];
+				for (integer i = 1; i <= nParameters; i ++) {
+					gsq += gc [i] * gc [i];
+					grc += gc [i] * s [i];
 				}
 				fch = fc - minimum;
 				gr2s = (grc - gropt) / dalpha;
@@ -434,10 +434,10 @@ void structVDSmagtMinimizer :: v_minimize () {
 
 			fc = history [this -> iteration] = minimum;
 			rtemp = 0.0;
-			for (long i = 1; i <= nParameters; i++) {
-				pc[i] = p[i];
-				gc[i] = dp[i];
-				rtemp += gc[i] * g0[i];
+			for (integer i = 1; i <= nParameters; i ++) {
+				pc [i] = p [i];
+				gc [i] = dp [i];
+				rtemp += gc [i] * g0 [i];
 			}
 			gcg0 = rtemp;
 			if (fabs (gropt - gr0) > tolerance) {
@@ -446,7 +446,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 					break;
 				}
 			}
-			again++;
+			again ++;
 			if (again > 0) {
 				flag += 2;
 			}
@@ -480,7 +480,7 @@ void structVDSmagtMinimizer :: v_reset () {
 	restart_flag = 1;
 }
 
-autoVDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Daata object, double (*func) (Daata object, const double x[]), void (*dfunc) (Daata object, const double x[], double dx[])) {
+autoVDSmagtMinimizer VDSmagtMinimizer_create (integer nParameters, Daata object, double (*func) (Daata object, const double x []), void (*dfunc) (Daata object, const double x [], double dx [])) {
 	try {
 		autoVDSmagtMinimizer me = Thing_new (VDSmagtMinimizer);
 		Minimizer_init (me.get(), nParameters, object);
@@ -511,7 +511,7 @@ void structLineMinimizer :: v_destroy () noexcept {
 
 Thing_implement (LineMinimizer, Minimizer, 0);
 
-void LineMinimizer_init (LineMinimizer me, long nParameters, Daata object, double (*func) (Daata, const double [])) {
+void LineMinimizer_init (LineMinimizer me, integer nParameters, Daata object, double (*func) (Daata, const double [])) {
 	Minimizer_init (me, nParameters, object);
 	my direction = NUMvector<double> (1, nParameters);
 	my ptry = NUMvector<double> (1, nParameters);

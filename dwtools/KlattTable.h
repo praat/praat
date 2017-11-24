@@ -87,7 +87,7 @@ anp   	Amplitude of the parallel branch nasal formant.
 
 ab  (08)	Amplitude of bypass frication in dB. 0-80.
 
-avp	Amplitude of voicing for the parallel branch, 0-70 dB.
+avp		Amplitude of voicing for the parallel branch, 0-70 dB.
 
 gain  	Overall gain in dB range 0-80.
 

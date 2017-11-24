@@ -1,6 +1,6 @@
 /* KlattTable.cpp
  *
- * Copyright (C) 2008-2011, 2015-2016 David Weenink
+ * Copyright (C) 2008-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -370,33 +370,33 @@ Thing_implement (KlattTable, Table, 0);
 
 /* Structure for Klatt Parameters */
 typedef struct structKlattFrame {
-	long F0hz10;	/* Voicing fund freq in units of 0.1 Hz */
-	long AVdb;	/* Amp of voicing in dB, 0 to 70 */
-	long Fhz[9];	/* Formant freqs in Hz */
-	long Bhz[9];	/* bandwidths in Hz */
-	long Bphz[7];	/* Bandwidths, parallel branch */
-	long A[7];	/* Formant amplitudes parallel branch */
-	long FNZhz;	/* Nasal zero freq in Hz,  248 to  528     */
-	long BNZhz;	/* Nasal zero bw in Hz,             40 to 1000 */
-	long FNPhz;	/* Nasal pole freq in Hz,           248 to  528 */
-	long BNPhz;	/* Nasal pole bw in Hz,             40 to 1000 */
-	long ah;	/* Amp of aspiration in dB,         0 to   70 */
-	long Kopen;	/* # of samples in open period,     10 to   65 */
-	long Aturb;	/* Breathiness in voicing,          0 to   80 */
-	long TLTdb;	/* Voicing spectral tilt in dB,     0 to   24 */
-	long AF;	/* Amp of frication in dB,          0 to   80 */
-	long Kskew;	/* Skewness of alternate periods,   0 to   40 in sample#/2 */
-	long ANP;	/* Amp of par nasal pole in dB,     0 to   80 */
-	long AB;	/* Amp of bypass fric. in dB,       0 to   80 */
-	long AVpdb;	/* Amp of voicing,  par in dB,      0 to   70 */
-	long Gain0;	/* Overall gain, 60 dB is unity,    0 to   60 */
+	integer F0hz10;	/* Voicing fund freq in units of 0.1 Hz */
+	integer AVdb;	/* Amp of voicing in dB, 0 to 70 */
+	integer Fhz [9];	/* Formant freqs in Hz */
+	integer Bhz [9];	/* bandwidths in Hz */
+	integer Bphz [7];	/* Bandwidths, parallel branch */
+	integer A [7];	/* Formant amplitudes parallel branch */
+	integer FNZhz;	/* Nasal zero freq in Hz,  248 to  528     */
+	integer BNZhz;	/* Nasal zero bw in Hz,             40 to 1000 */
+	integer FNPhz;	/* Nasal pole freq in Hz,           248 to  528 */
+	integer BNPhz;	/* Nasal pole bw in Hz,             40 to 1000 */
+	integer ah;	/* Amp of aspiration in dB,         0 to   70 */
+	integer Kopen;	/* # of samples in open period,     10 to   65 */
+	integer Aturb;	/* Breathiness in voicing,          0 to   80 */
+	integer TLTdb;	/* Voicing spectral tilt in dB,     0 to   24 */
+	integer AF;	/* Amp of frication in dB,          0 to   80 */
+	integer Kskew;	/* Skewness of alternate periods,   0 to   40 in sample#/2 */
+	integer ANP;	/* Amp of par nasal pole in dB,     0 to   80 */
+	integer AB;	/* Amp of bypass fric. in dB,       0 to   80 */
+	integer AVpdb;	/* Amp of voicing,  par in dB,      0 to   70 */
+	integer Gain0;	/* Overall gain, 60 dB is unity,    0 to   60 */
 } *KlattFrame;
 
 static const char32 *columnNames = U"f0 av f1 b1 f2 b2 f3 b3 f4 b4 f5 b5 f6 b6 fnz bnz fnp bnp ah kopen aturb tilt af skew a1 b1p a2 b2p a3 b3p a4 b4p a5 b5p a6 b6p anp ab avp gain";
-static const char32 *columnNamesA[KlattTable_NPAR + 1] = {U"", U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6", U"fnz", U"bnz", U"fnp", U"bnp", U"ah", U"kopen", U"aturb", U"tilt", U"af", U"skew", U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain"};
+static const char32 *columnNamesA [KlattTable_NPAR + 1] = {U"", U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6", U"fnz", U"bnz", U"fnp", U"bnp", U"ah", U"kopen", U"aturb", U"tilt", U"af", U"skew", U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain"};
 
-static double DBtoLIN (long dB) {
-	static double amptable[88] = {
+static double DBtoLIN (integer dB) {
+	static double amptable [88] = {
 		0.0,
 		0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 		0.0, 0.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 13.0, 14.0,
@@ -408,7 +408,7 @@ static double DBtoLIN (long dB) {
 		5104.0, 5751.0, 6488.0, 7291.0, 8192.0, 9093.0, 10207.0, 11502.0, 12976.0, 14582.0,
 		16384.0, 18350.0, 20644.0, 23429.0, 26214.0, 29491.0, 32767
 	};
-	return (dB < 0) || (dB > 87) ? 0 : amptable[dB] * .001;
+	return (dB < 0) || (dB > 87) ? 0 : amptable [dB] * .001;
 }
 
 /* Structure for Klatt Globals */
@@ -416,23 +416,23 @@ static double DBtoLIN (long dB) {
 
 typedef struct structKlattGlobal {
 	int synthesis_model; /* cascade-parallel or all-parallel */
-	int outsl;       /* Output waveform selector                      */
-	long samrate;     /* Number of output samples per second           */
-	long FLPhz ;      /* Frequeny of glottal downsample low-pass filter */
-	long BLPhz ;      /* Bandwidth of glottal downsample low-pass filter */
-	long nfcascade;   /* Number of formants in cascade vocal tract    */
-	int glsource;    /* Type of glottal source */
-	int f0_flutter;   /* Percentage of f0 flutter 0-100 */
-	long nspfr;       /* number of samples per frame */
-	long nper;        /* Counter for number of samples in a pitch period */
-	long ns;
-	long T0;          /* Fundamental period in output samples times 4 */
-	long nopen;       /* Number of samples in open phase of period    */
-	long nmod;        /* Position in period to begin noise amp. modul */
-	long Kopen;       /* # of samples in open period,     10 to   65 */
-	long Kskew;       /* Skewness of alternate periods,   0 to   40 in sample#/2 */
+	int outsl;       	/* Output waveform selector                      */
+	integer samrate;     /* Number of output samples per second           */
+	integer FLPhz ;      /* Frequeny of glottal downsample low-pass filter */
+	integer BLPhz ;      /* Bandwidth of glottal downsample low-pass filter */
+	integer nfcascade;   /* Number of formants in cascade vocal tract    */
+	int glsource;    	/* Type of glottal source */
+	int f0_flutter;   	/* Percentage of f0 flutter 0-100 */
+	integer nspfr;       /* number of samples per frame */
+	integer nper;        /* Counter for number of samples in a pitch period */
+	integer ns;
+	integer T0;          /* Fundamental period in output samples times 4 */
+	integer nopen;       /* Number of samples in open phase of period    */
+	integer nmod;        /* Position in period to begin noise amp. modul */
+	integer Kopen;       /* # of samples in open period,     10 to   65 */
+	integer Kskew;       /* Skewness of alternate periods,   0 to   40 in sample#/2 */
 	double TLTdb;       /* Voicing spectral tilt in dB,     0 to   24 */
-	long nrand;       /* Varible used by random number generator      */
+	integer nrand;       /* Varible used by random number generator      */
 	double pulse_shape_a;  /* Makes waveshape of glottal pulse when open   */
 	double pulse_shape_b;  /* Makes waveshape of glottal pulse when open   */
 	double onemd;
@@ -446,30 +446,27 @@ typedef struct structKlattGlobal {
 	double Aturb;	/* Breathiness in voicing,          0 to   80 */
 	double amp_breth; /* ATURB converted to linear gain           */
 	double amp_gain0; /* G0 converted to linear gain              */
-	long num_samples; /* number of glottal samples */
+	integer num_samples; /* number of glottal samples */
 	double sample_factor; /* multiplication factor for glottal samples */
 	short *natural_samples; /* pointer to an array of glottal samples */
-	long F0hz10; /* Voicing fund freq in units of 0.1 Hz */
-	long original_f0; /* original value of f0 not modified by flutter (kanweg) */
-	autoResonator rp[7], rc[9], rnpp, rnpc, rgl, rlp, rout;
+	integer F0hz10; /* Voicing fund freq in units of 0.1 Hz */
+	integer original_f0; /* original value of f0 not modified by flutter (kanweg) */
+	autoResonator rp [7], rc [9], rnpp, rnpc, rgl, rlp, rout;
 	autoAntiResonator rnz;
 } *KlattGlobal;
 
 autoKlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 	try {
 		autoMatrix thee = Matrix_readFromRawTextFile (fs);
-
-		if (thy nx != KlattTable_NPAR) {
-			Melder_throw (U"A KlattTable needs ",  KlattTable_NPAR, U" columns.");
-		}
+		Melder_require (thy nx == KlattTable_NPAR, U"A KlattTable needs ",  KlattTable_NPAR, U" columns.");
 
 		autoKlattTable me = Thing_new (KlattTable);
 		Table_initWithColumnNames (me.get(), thy ny, columnNames);
-		for (long irow = 1; irow <= thy ny; irow++) {
-			for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++) {
-				double val = thy z[irow][jcol];
+		for (integer irow = 1; irow <= thy ny; irow ++) {
+			for (integer jcol = 1; jcol <= KlattTable_NPAR; jcol ++) {
+				double val = thy z [irow] [jcol];
 				if (jcol > 3 && jcol < 13 && (jcol % 2 == 0) && val <= 0) { // bw == 0?
-					val = thy z[irow][jcol - 1] / 10;
+					val = thy z [irow] [jcol - 1] / 10;
 				}
 				Table_setNumericValue ( (Table) me.get(), irow, jcol, val);
 			}
@@ -481,10 +478,10 @@ autoKlattTable KlattTable_readFromRawTextFile (MelderFile fs) {
 }
 
 static void KlattGlobal_free (KlattGlobal me) {
-	for (long i = 1; i <= 8; i++) {
-		my rc[i].reset();
+	for (integer i = 1; i <= 8; i ++) {
+		my rc [i].reset();
 		if (i <= 6) {
-			my rp[i].reset();
+			my rp [i].reset();
 		}
 	}
 	my rnpp.reset();
@@ -504,10 +501,10 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency) {
 		my samrate = Melder_ifloor (samplingFrequency);
 		double dT = 1.0 / my samrate;
 
-		for (long i = 1; i <= 8; i++) {
-			my rc[i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
+		for (integer i = 1; i <= 8; i ++) {
+			my rc [i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
 			if (i <= 6) {
-				my rp[i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
+				my rp [i] = Resonator_create (dT, Resonator_NORMALISATION_H0);
 			}
 		}
 		my rnpp = Resonator_create (dT, Resonator_NORMALISATION_H0);
@@ -524,8 +521,8 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency) {
 }
 
 static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFormants, int glottalSource,
-                              double frameDuration, long flutter, int outputType) {
-	static short natural_samples[NUMBER_OF_SAMPLES] = {
+                              double frameDuration, integer flutter, int outputType) {
+	static short natural_samples [NUMBER_OF_SAMPLES] = {
 		-310, -400, 530, 356, 224, 89, 23, -10, -58, -16, 461, 599, 536, 701, 770,
 		605, 497, 461, 560, 404, 110, 224, 131, 104, -97, 155, 278, -154, -1165,
 		-598, 737, 125, -592, 41, 11, -247, -10, 65, 92, 80, -304, 71, 167, -1, 122,
@@ -571,7 +568,7 @@ autoKlattTable KlattTable_create (double frameDuration, double totalDuration) {
 
 //static void frame_init(KlattGlobal_ptr globals, KlattFrame_ptr frame)
 static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
-	double amp_parF[7] = {0, 0.4, 0.15, 0.06, 0.04, 0.022, 0.03};
+	double amp_parF [7] = {0, 0.4, 0.15, 0.06, 0.04, 0.022, 0.03};
 
 	my F0hz10 = thy F0hz10;
 	my original_f0 = my F0hz10 / 10;
@@ -598,9 +595,9 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 
 	/* Set coefficients of variable cascade resonators */
 
-	for (long i = 8; i > 0; i--) {
+	for (integer i = 8; i > 0; i--) {
 		if (my nfcascade >= i) {
-			Filter_setFB (my rc[i].get(), thy Fhz[i], thy Bhz[i]);
+			Filter_setFB (my rc [i].get(), thy Fhz [i], thy Bhz [i]);
 		}
 	}
 
@@ -611,9 +608,9 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 
 	/* Set coefficients of parallel resonators, and amplitude of outputs */
 
-	for (long i = 1; i <= 6; i++) {
-		Filter_setFB (my rp[i].get(), thy Fhz[i], thy Bphz[i]);
-		my rp[i] -> a *= amp_parF[i] * DBtoLIN (thy A[i]);
+	for (integer i = 1; i <= 6; i ++) {
+		Filter_setFB (my rp [i].get(), thy Fhz [i], thy Bphz [i]);
+		my rp [i] -> a *= amp_parF [i] * DBtoLIN (thy A [i]);
 	}
 
 	Filter_setFB (my rnpp.get(), thy FNPhz, thy BNPhz);
@@ -621,7 +618,7 @@ static void KlattGlobal_getFrame (KlattGlobal me, KlattFrame thee) {
 
 	/* output low-pass filter */
 
-	Filter_setFB (my rout.get(), 0, (long) (my samrate / 2));
+	Filter_setFB (my rout.get(), 0, (integer) (my samrate / 2));
 }
 
 /*
@@ -635,15 +632,15 @@ slowly varying sine waves.
 */
 
 static void KlattFrame_flutter (KlattGlobal me) {
-	static long time_count = 0;
+	static integer time_count = 0;
 	double fla = (double) my f0_flutter / 50;
 	double flb = (double) my original_f0 / 100;
 	double flc = sin (2 * NUMpi * 12.7 * time_count);
 	double fld = sin (2 * NUMpi * 7.1 * time_count);
 	double fle = sin (2 * NUMpi * 4.7 * time_count);
 	double delta_f0 =  fla * flb * (flc + fld + fle) * 10;
-	my F0hz10 += (long) delta_f0;
-	time_count++;
+	my F0hz10 += (integer) delta_f0;
+	time_count ++;
 }
 
 /*
@@ -669,10 +666,10 @@ with a critically-damped second-order filter, time constant proportional
 to Kopen.
 */
 static double KlattGlobal_impulsive_source (KlattGlobal me) {   // ppgb: dit was een float; kan niet goed zijn
-	static double doublet[] = {0.0, 13000000.0, -13000000.0};
+	static double doublet [] = {0.0, 13000000.0, -13000000.0};
 	static double vwave;
 
-	vwave = my nper < 3 ? doublet[my nper] : 0;
+	vwave = my nper < 3 ? doublet [my nper] : 0;
 
 	return Filter_getOutput (my rgl.get(), vwave);
 }
@@ -706,13 +703,13 @@ static double KlattGlobal_sampled_source (KlattGlobal me) {   // ppgb: dit was e
 
 		double temp_diff = ftemp - itemp;
 
-		long current_value = my natural_samples[itemp];
-		long  next_value = my natural_samples[itemp + 1];
+		integer current_value = my natural_samples [itemp];
+		integer  next_value = my natural_samples [itemp + 1];
 
 		double diff_value = next_value - current_value;
 		diff_value = diff_value * temp_diff;
 
-		result = my natural_samples[itemp] + diff_value;
+		result = my natural_samples [itemp] + diff_value;
 		result = result * my sample_factor;
 	}
 
@@ -731,7 +728,7 @@ static double KlattGlobal_sampled_source (KlattGlobal me) {   // ppgb: dit was e
 
   If the radiation characterivative, a temporal derivative
   is folded in, and we go from continuous time to discrete
-  integers n:  dV/dt = vwave[n]
+  integers n:  dV/dt = vwave [n]
                         = sum over i=1,2,...,n of { a - (i * b) }
                         = a n  -  b/2 n**2
 
@@ -746,24 +743,24 @@ static double KlattGlobal_sampled_source (KlattGlobal me) {   // ppgb: dit was e
 
   Thus, to generate the table below for 40 <= nopen <= 263:
 
-  B0[nopen - 40] = 1920000 / (nopen * nopen)
+  B0 [nopen - 40] = 1920000 / (nopen * nopen)
 
   Modified calculation by djmw 20081127
-  Given a and b as above (which are wrong, see below) V'[n]= b*N/3*n - b/2*n^2.
-  V'[N]=b/3*N^2-b/2*N^2=b/6*N^2
-  Given the table B0 for N=40, b=1200 and V'[N]=1200/6*(40)^2=320000
-  Also b=G/N^2 then V'[n]=-G/6 (=1920000/6=320000)!
+  Given a and b as above (which are wrong, see below) V' [n]= b*N/3*n - b/2*n^2.
+  V' [N]=b/3*N^2-b/2*N^2=b/6*N^2
+  Given the table B0 for N=40, b=1200 and V' [N]=1200/6*(40)^2=320000
+  Also b=G/N^2 then V' [n]=-G/6 (=1920000/6=320000)!
 
 
   (We have not implemented the following correct calculations in the code) N=nopen
-  dV/dt = vwave[n]=sum(i=1, n, a-i*b) = a*n-b*1/2*n*(n+1)=(a-b/2)*n-b/2 * n^2
+  dV/dt = vwave [n]=sum(i=1, n, a-i*b) = a*n-b*1/2*n*(n+1)=(a-b/2)*n-b/2 * n^2
   (Here they forgot that sum(i=1,N,i)=1/2*n*(n+1) ! )
-  We want the sum(i=1,N, dV/dt[n])==0, therefore (a-b/2)*1/2*N*(N+1)-b*1/2*1/6*N*(N+1)*(2*N+1)==0.
+  We want the sum(i=1,N, dV/dt [n])==0, therefore (a-b/2)*1/2*N*(N+1)-b*1/2*1/6*N*(N+1)*(2*N+1)==0.
   It follows that (a-b/2) - b*1/6*(2*N+1)==0 => a = b*(N+2)/3
-  we can rewrite with only b: V'[n] = b/2 {(2N+1)/3*n - n^2}
-  The maximum of V'[n] is where (2N+1)/3-2n==0 => for n=(2N+1)/6
+  we can rewrite with only b: V' [n] = b/2 {(2N+1)/3*n - n^2}
+  The maximum of V' [n] is where (2N+1)/3-2n==0 => for n=(2N+1)/6
   This maximum is b/2{(2N+1)/3*(2N+1)/(2*3)-((2N+1)/(2*3))^2} = 1/72*b*(2N+1)^2
-  The minimum is at n=N and equals V'[N]=b/6 {N-N^2}.
+  The minimum is at n=N and equals V' [N]=b/6 {N-N^2}.
   This minimum has larger amplitude than the maximum.
   b = 6*gain/(N^2-N), b approx 6*gain/N^2. With a maximum gain of 32767 we arrive at
   b= 196602 / (N^2-N) Their value is 20*log10(1920000/196602) = 19.79 dB too high!
@@ -771,8 +768,8 @@ static double KlattGlobal_sampled_source (KlattGlobal me) {   // ppgb: dit was e
 */
 
 static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
-	static long skew;
-	static short B0[224] = {
+	static integer skew;
+	static short B0 [224] = {
 		1200, 1142, 1088, 1038, 991, 948, 907, 869, 833, 799, 768, 738, 710, 683, 658,
 		634, 612, 590, 570, 551, 533, 515, 499, 483, 468, 454, 440, 427, 415, 403,
 		391, 380, 370, 360, 350, 341, 332, 323, 315, 307, 300, 292, 285, 278, 272,
@@ -831,12 +828,12 @@ static void KlattGlobal_pitch_synch_par_reset (KlattGlobal me) {
 
 		/* Reset a & b, which determine shape of "natural" glottal waveform */
 
-		my pulse_shape_b = B0[my nopen - 40];
+		my pulse_shape_b = B0 [my nopen - 40];
 		my pulse_shape_a = (my pulse_shape_b * my nopen) * 0.333;
 
 		/* Reset width of "impulsive" glottal pulse */
 
-		long temp = my samrate / my nopen;
+		integer temp = my samrate / my nopen;
 
 		Filter_setFB (my rgl.get(), 0, temp); // Only used for impulsive source.
 
@@ -891,7 +888,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 
 	/* MAIN LOOP, for each output sample of current frame: */
 
-	for (my ns = 0; my ns < my nspfr; my ns++) {
+	for (my ns = 0; my ns < my nspfr; my ns ++) {
 
 		/* Get low-passed random number for aspiration and frication noise */
 
@@ -916,7 +913,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 			period of female voice.
 		*/
 
-		for (long n4 = 0; n4 < 4; n4++) {
+		for (integer n4 = 0; n4 < 4; n4 ++) {
 			switch (my glsource) {
 				case IMPULSIVE:
 					voice = KlattGlobal_impulsive_source (me);
@@ -945,7 +942,7 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 
 			/* Increment counter that keeps track of 4*samrate samples per sec */
 
-			my nper++;
+			my nper ++;
 		}
 
 		/*
@@ -988,9 +985,9 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 			out = Filter_getOutput (my rnz.get(), glotout); /* anti resonator */
 			out = Filter_getOutput (my rnpc.get(), out);
 
-			for (long i = 8; i > 0; i--) {
+			for (integer i = 8; i > 0; i--) {
 				if (my nfcascade >= i) {
-					out = Filter_getOutput (my rc[i].get(), out);
+					out = Filter_getOutput (my rc [i].get(), out);
 				}
 			}
 		} else {
@@ -1016,19 +1013,19 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 			source: through r1 and rnp
 			diff(source)+frication: r2, r3, r4 , r5, r6, ab
 
-		Problem: The source signal is already v'[n], and we are differentiating here again ???
+		Problem: The source signal is already v' [n], and we are differentiating here again ???
 		*/
 
-		out += Filter_getOutput (my rp[1].get(), sourc);
+		out += Filter_getOutput (my rp [1].get(), sourc);
 
 		sourc = frics + par_glotout - glotlast; // diff
 		glotlast = par_glotout;
 
 		out += Filter_getOutput (my rnpp.get(), sourc);
 
-		for (long i = 6; i >= 2; i--) {
+		for (integer i = 6; i >= 2; i--) {
 			if (my nfcascade >= i) {
-				out = Filter_getOutput (my rp[i].get(), sourc) - out;
+				out = Filter_getOutput (my rp [i].get(), sourc) - out;
 			}
 		}
 
@@ -1072,13 +1069,13 @@ static void KlattGlobal_synthesizeFrame (KlattGlobal me, short *output) {
 		if (temp >	32767.0) {
 			temp =  32767.0;
 		}
-		*output++ = temp;   // ppgb: truncatie naar 0, dus compressie; is dat de bedoeling?
+		*output ++ = temp;   // ppgb: truncatie naar 0, dus compressie; is dat de bedoeling?
 	}
 }
 
 static int KlattTable_checkLimits (KlattTable me) {
-	long nviolations_upper[KlattTable_NPAR + 1] = { 0 }, nviolations_lower[KlattTable_NPAR + 1] = { 0 };
-	long lower[KlattTable_NPAR + 1] = { 0, // dummy
+	integer nviolations_upper [KlattTable_NPAR + 1] = { 0 }, nviolations_lower [KlattTable_NPAR + 1] = { 0 };
+	integer lower [KlattTable_NPAR + 1] = { 0, // dummy
 		10, 0,  // f0, av
 		200, 40, 550, 40, 1200, 40, 1200, 40, 1200, 40, 1200, 40, // f1,b1 -- f6,b6
 		248, 40, 248, 40, // fnz, bnz, fnp, bnp
@@ -1086,7 +1083,7 @@ static int KlattTable_checkLimits (KlattTable me) {
 		0, 40, 0, 40, 0, 40, 0, 40, 0, 40, 0, 40, // a1,b1p -- a6,b6p
 		0, 0, 0, 0 // anp, ab, avp, gain
 	};
-	long upper[KlattTable_NPAR + 1] = { 0, // dummy
+	integer upper [KlattTable_NPAR + 1] = { 0, // dummy
 		10000, 70,   // f0, av
 		1300, 1000, 3000, 1000, 4999, 1000, 4999, 1000, 6999, 1000, 7000, 1000,  // f1,b1 -- f6,b6
 		528, 1000, 528, 1000, // fnz, bnz, fnp, bnp
@@ -1095,14 +1092,14 @@ static int KlattTable_checkLimits (KlattTable me) {
 		80, 80, 70, 80  // anp, ab, avp, gain
 	};
 
-	long nv = 0;
-	for (long irow = 1; irow <= my rows.size; irow ++) {
-		for (long j = 1; j <= KlattTable_NPAR; j++) {
-			long val = Table_getNumericValue_Assert (me, irow, j);   // ppgb: truncatie? kan dat kloppen?
+	integer nv = 0;
+	for (integer irow = 1; irow <= my rows.size; irow ++) {
+		for (integer j = 1; j <= KlattTable_NPAR; j ++) {
+			integer val = Table_getNumericValue_Assert (me, irow, j);   // ppgb: truncatie? kan dat kloppen?
 			if (val < lower [j]) {
 				nviolations_lower [j] ++;
 				nv ++;
-			} else if (val > upper[j]) {
+			} else if (val > upper [j]) {
 				nviolations_upper [j] ++;
 				nv ++;
 			}
@@ -1112,7 +1109,7 @@ static int KlattTable_checkLimits (KlattTable me) {
 		MelderInfo_open ();
 		MelderInfo_writeLine (U"Diagnostics for KlattTable \"", Thing_getName (me), U"\":");
 		MelderInfo_writeLine (U"Number of frames: ", my rows.size);
-		for (long j = 1; j <= KlattTable_NPAR; j ++) {
+		for (integer j = 1; j <= KlattTable_NPAR; j ++) {
 			if (nviolations_lower [j] > 0) {
 				if (nviolations_upper [j] > 0) {
 					MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_lower [j], U" frame(s) < min = ", nviolations_lower [j], U"; ",
@@ -1120,7 +1117,7 @@ static int KlattTable_checkLimits (KlattTable me) {
 				} else {
 					MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_lower [j], U" frame(s) < min = ", lower [j]);
 				}
-			} else if (nviolations_upper[j] > 0) {
+			} else if (nviolations_upper [j] > 0) {
 				MelderInfo_writeLine (columnNamesA [j], U": ", nviolations_upper [j], U" frame(s) > max = ", upper [j]);
 			}
 		}
@@ -1134,7 +1131,7 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 	KlattGlobal thee = 0;
 	KlattFrame frame = 0;
 	try {
-		long numberOfSamples = 1, par[KlattTable_NPAR + 1];
+		integer numberOfSamples = 1, par [KlattTable_NPAR + 1];
 
 		if (! KlattTable_checkLimits (me)) {
 			Melder_warning (U"Some values in the KlattTable are outside the limits, the resulting sound may sound weird.");
@@ -1148,40 +1145,40 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 
 		autoSound him = Sound_createSimple (1, frameDuration * my rows.size, samplingFrequency);
 
-		for (long irow = 1 ; irow <= my rows.size; irow++) {
-			for (long col = 1; col <= KlattTable_NPAR; col++) {
-				par[col] = Table_getNumericValue_Assert (me, irow, col);   // ppgb: truncatie?
+		for (integer irow = 1 ; irow <= my rows.size; irow ++) {
+			for (integer col = 1; col <= KlattTable_NPAR; col ++) {
+				par [col] = Table_getNumericValue_Assert (me, irow, col);   // ppgb: truncatie?
 			}
-			long jcol = 1;
-			frame ->  F0hz10 = par[jcol++]; frame ->  AVdb = par[jcol++];
-			frame ->  Fhz[1] = par[jcol++]; frame ->  Bhz[1] = par[jcol++];
-			frame ->  Fhz[2] = par[jcol++]; frame ->  Bhz[2] = par[jcol++];
-			frame ->  Fhz[3] = par[jcol++];	frame ->  Bhz[3] = par[jcol++];
-			frame ->  Fhz[4] = par[jcol++];	frame ->  Bhz[4] = par[jcol++];
-			frame ->  Fhz[5] = par[jcol++];	frame ->  Bhz[5] = par[jcol++];
-			frame ->  Fhz[6] = par[jcol++];	frame ->  Bhz[6] = par[jcol++];
-			frame ->  FNZhz = par[jcol++];	frame ->  BNZhz = par[jcol++];
-			frame ->  FNPhz = par[jcol++];	frame ->  BNPhz = par[jcol++];
-			frame ->  ah = par[jcol++];		frame ->  Kopen = par[jcol++];
-			frame ->  Aturb = par[jcol++];	frame ->  TLTdb = par[jcol++];
-			frame ->  AF = par[jcol++];		frame ->  Kskew = par[jcol++];
-			frame ->  A[1] = par[jcol++];	frame ->  Bphz[1] = par[jcol++];
-			frame ->  A[2] = par[jcol++];	frame ->  Bphz[2] = par[jcol++];
-			frame ->  A[3] = par[jcol++];   frame ->  Bphz[3] = par[jcol++];
-			frame ->  A[4] = par[jcol++];   frame ->  Bphz[4] = par[jcol++];
-			frame ->  A[5] = par[jcol++];   frame ->  Bphz[5] = par[jcol++];
-			frame ->  A[6] = par[jcol++];   frame ->  Bphz[6] = par[jcol++];
-			frame ->  ANP = par[jcol++];    frame ->  AB = par[jcol++];
-			frame ->  AVpdb = par[jcol++];  frame ->  Gain0 = par[jcol++];;
-			frame ->  Fhz[7] = 6500;        frame ->  Bhz[7] = 600;
-			frame ->  Fhz[8] = 7500;        frame ->  Bhz[8] = 600;
+			integer jcol = 1;
+			frame ->  F0hz10 = par [jcol ++]; frame ->  AVdb = par [jcol ++];
+			frame ->  Fhz [1] = par [jcol ++]; frame ->  Bhz [1] = par [jcol ++];
+			frame ->  Fhz [2] = par [jcol ++]; frame ->  Bhz [2] = par [jcol ++];
+			frame ->  Fhz [3] = par [jcol ++];	frame ->  Bhz [3] = par [jcol ++];
+			frame ->  Fhz [4] = par [jcol ++];	frame ->  Bhz [4] = par [jcol ++];
+			frame ->  Fhz [5] = par [jcol ++];	frame ->  Bhz [5] = par [jcol ++];
+			frame ->  Fhz [6] = par [jcol ++];	frame ->  Bhz [6] = par [jcol ++];
+			frame ->  FNZhz = par [jcol ++];	frame ->  BNZhz = par [jcol ++];
+			frame ->  FNPhz = par [jcol ++];	frame ->  BNPhz = par [jcol ++];
+			frame ->  ah = par [jcol ++];		frame ->  Kopen = par [jcol ++];
+			frame ->  Aturb = par [jcol ++];	frame ->  TLTdb = par [jcol ++];
+			frame ->  AF = par [jcol ++];		frame ->  Kskew = par [jcol ++];
+			frame ->  A [1] = par [jcol ++];	frame ->  Bphz [1] = par [jcol ++];
+			frame ->  A [2] = par [jcol ++];	frame ->  Bphz [2] = par [jcol ++];
+			frame ->  A [3] = par [jcol ++];   frame ->  Bphz [3] = par [jcol ++];
+			frame ->  A [4] = par [jcol ++];   frame ->  Bphz [4] = par [jcol ++];
+			frame ->  A [5] = par [jcol ++];   frame ->  Bphz [5] = par [jcol ++];
+			frame ->  A [6] = par [jcol ++];   frame ->  Bphz [6] = par [jcol ++];
+			frame ->  ANP = par [jcol ++];    frame ->  AB = par [jcol ++];
+			frame ->  AVpdb = par [jcol ++];  frame ->  Gain0 = par [jcol ++];;
+			frame ->  Fhz [7] = 6500;        frame ->  Bhz [7] = 600;
+			frame ->  Fhz [8] = 7500;        frame ->  Bhz [8] = 600;
 
 			KlattGlobal_getFrame (thee, frame);
 
 			KlattGlobal_synthesizeFrame (thee, iwave.peek());
 
-			for (long isam = 0; isam < thy nspfr; isam++) {
-				his z[1][numberOfSamples++] = iwave[isam] / 32768.0;
+			for (integer isam = 0; isam < thy nspfr; isam ++) {
+				his z [1] [numberOfSamples ++] = iwave [isam] / 32768.0;
 			}
 		}
 		KlattGlobal_free (thee); KlattFrame_free (frame);
@@ -1195,9 +1192,9 @@ autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synt
 
 
 autoKlattTable KlattTable_createExample () {
-	long nrows = 1376;
+	integer nrows = 1376;
 	struct klatt_params {
-		short p[40];
+		short p [40];
 	} klatt_data [1376] = {
 		{{ 1000, 0, 542, 0, 1372, 0, 2634, 0, 3737, 0, 5740, 0, 6914, 0, 0, 0, 200, 30, 0, 60, 0, 0, 0, 0, 0, 52, 0, 56, 0, 71, 0, 66, 0, 80, 0, 80, 0, 0, 0, 60 }},
 		{{ 1000, 0, 542, 0, 1372, 0, 2634, 0, 3737, 0, 5740, 0, 6914, 0, 0, 0, 200, 30, 0, 60, 0, 0, 0, 0, 0, 52, 0, 56, 0, 71, 0, 66, 0, 80, 0, 80, 0, 0, 0, 60 }},
@@ -2579,11 +2576,11 @@ autoKlattTable KlattTable_createExample () {
 	try {
 		autoKlattTable me = Thing_new (KlattTable);
 		Table_initWithColumnNames (me.get(), nrows, columnNames);
-		for (long irow = 1; irow <= nrows; irow++) {
-			for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++) {
-				double val = klatt_data[irow - 1].p[jcol - 1];
+		for (integer irow = 1; irow <= nrows; irow ++) {
+			for (integer jcol = 1; jcol <= KlattTable_NPAR; jcol ++) {
+				double val = klatt_data [irow - 1].p [jcol - 1];
 				if (jcol > 3 && jcol < 13 && (jcol % 2 == 0) && val <= 0) { // bw == 0?
-					val = klatt_data[irow - 1].p[jcol] / 10;
+					val = klatt_data [irow - 1].p [jcol] / 10;
 				}
 				Table_setNumericValue ( (Table) me.get(), irow, jcol, val);
 			}
@@ -2596,9 +2593,8 @@ autoKlattTable KlattTable_createExample () {
 
 autoKlattTable Table_to_KlattTable (Table me) {
 	try {
-		if (my numberOfColumns != KlattTable_NPAR) {
-			Melder_throw (U"A KlattTable needs ", KlattTable_NPAR, U" columns.");
-		}
+		Melder_require (my numberOfColumns == KlattTable_NPAR, U"A KlattTable needs ", KlattTable_NPAR, U" columns.");
+		
 		autoKlattTable thee = Thing_new (KlattTable);
 		my structTable :: v_copy (thee.get());
 		return thee;

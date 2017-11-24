@@ -4,7 +4,7 @@
  *
  * Mel Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2013, 2016-2017 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +55,9 @@ Thing_define (MFCC, CC) {
 	c0 represents the sum of the dB filter outputs.
 */
 
-autoMFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1, long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel);
+autoMFCC MFCC_create (double tmin, double tmax, integer nt, double dt, double t1, integer maximumNumberOfCoefficients, double fmin_mel, double fmax_mel);
 
-void MFCC_lifter (MFCC me, long lifter);
+void MFCC_lifter (MFCC me, integer lifter);
 /*
 	Lifter the cepstral coefficients:
 	c[i] *= (1 + lifter / 2 * sin (NUMpi * i / lifter))
