@@ -42,8 +42,8 @@ Thing_implement (Artword, Daata, 0);
 autoArtword Artword_create (double totalTime) {
 	autoArtword me = Thing_new (Artword);
 	my totalTime = totalTime;
-	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)
-		Artword_setDefault (me.get(), (kArt_muscle) i);
+	for (kArt_muscle muscle = (kArt_muscle) 1; muscle <= kArt_muscle::MAX; ++ muscle)
+		Artword_setDefault (me.get(), muscle);
 	return me;
 }
 
@@ -65,6 +65,7 @@ void Artword_setTarget (Artword me, kArt_muscle muscle, double time, double targ
 	try {
 		Melder_assert ((int) muscle >= 1);
 		Melder_assert ((int) muscle <= (int) kArt_muscle::MAX);
+		Melder_assert (muscle <= kArt_muscle::MAX);
 		ArtwordData f = & my data [(int) muscle];
 		Melder_assert (f -> numberOfTargets >= 2);
 		int32 insertionPosition = 1;   // should be able to go up to 32768

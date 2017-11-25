@@ -29,8 +29,9 @@ Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
 
 void structSoundEditor :: v_dataChanged () {
 	Sound sound = (Sound) data;
-	Melder_assert (sound);   // LongSound objects should not get v_dataChanged messages
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & d_sound.minimum, & d_sound.maximum);   // BUG unreadable
+	Melder_assert (sound);
+	if (sound -> classInfo == classSound)   // LongSound editors can get spurious v_dataChanged messages (e.g. in a TextGrid editor)
+		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & d_sound.minimum, & d_sound.maximum);   // BUG unreadable
 	v_reset_analysis ();
 	SoundEditor_Parent :: v_dataChanged ();
 }

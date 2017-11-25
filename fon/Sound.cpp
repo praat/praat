@@ -452,7 +452,7 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 		autoSound thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx);
 		autonumvec smoother;
 		if (numberOfSmoothingSamples > 0) {
-			smoother.reset (numberOfSmoothingSamples, kTensorInitializationType::RAW);
+			smoother = autonumvec (numberOfSmoothingSamples, kTensorInitializationType::RAW);
 			double factor = NUMpi / numberOfSmoothingSamples;
 			for (integer i = 1; i <= numberOfSmoothingSamples; i ++) {
 				smoother [i] = 0.5 - 0.5 * cos (factor * (i - 0.5));
