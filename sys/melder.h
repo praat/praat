@@ -1295,24 +1295,6 @@ public:
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		return { oldAt, our size };
 	}
-	void reset () {   // destroy the current payload (if any) and have no new payload
-		our numvec :: reset ();
-	}
-	void reset (integer newSize, kTensorInitializationType initializationType) {   // destroy the current payload (if any) and manufacture a new payload
-		our numvec :: reset ();   // exception guarantee: leave *this in a reasonable state...
-		our _initAt (newSize, initializationType);   // ...in case this line throws an exception
-		our size = newSize;
-	}
-	void reset (double *newAt, integer newSize) {   // destroy the current payload (if any) and buy a new payload
-		if (our at) our _freeAt ();
-		our at = newAt;
-		our size = newSize;
-	}
-	void reset (numvec newX) {   // destroy the current payload (if any) and buy a new payload
-		if (our at) our _freeAt ();
-		our at = newX.at;
-		our size = newX.size;
-	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
 	*/
@@ -1395,27 +1377,6 @@ public:
 		double **oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		return { oldAt, our nrow, our ncol };
-	}
-	void reset () {   // destroy the current payload (if any) and have no new payload
-		our nummat :: reset ();
-	}
-	void reset (integer newNrow, integer newNcol, kTensorInitializationType initializationType) {   // destroy the current payload (if any) and manufacture a new payload
-		our nummat :: reset ();   // exception guarantee: leave *this in a reasonable state...
-		our _initAt (newNrow, newNcol, initializationType);   // ...in case this line throws an exception
-		our nrow = newNrow;
-		our ncol = newNcol;
-	}
-	void reset (double **newAt, integer newNrow, integer newNcol) {   // destroy the current payload (if any) and buy a new payload
-		if (our at) our _freeAt ();
-		our at = newAt;
-		our nrow = newNrow;
-		our ncol = newNcol;
-	}
-	void reset (nummat newX) {   // destroy the current payload (if any) and buy a new payload
-		if (our at) our _freeAt ();
-		our at = newX.at;
-		our nrow = newX.nrow;
-		our ncol = newX.ncol;
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
