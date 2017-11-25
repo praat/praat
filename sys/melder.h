@@ -675,7 +675,7 @@ inline static bool isundef (double x) { return ((* (uint64_t *) & x) & 0x7FF0000
 
 /********** Arrays with one index (NUMarrays.cpp) **********/
 
-char * NUMvector_ (integer elementSize, integer lo, integer hi, bool zero);
+char * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero);
 /*
 	Function:
 		create a vector [lo...hi]; if `zero`, then all values are initialized to 0.
@@ -683,7 +683,7 @@ char * NUMvector_ (integer elementSize, integer lo, integer hi, bool zero);
 		hi >= lo;
 */
 
-void NUMvector_free (integer elementSize, void *v, integer lo) noexcept;
+void NUMvector_free_generic (integer elementSize, char *v, integer lo) noexcept;
 /*
 	Function:
 		destroy a vector v that was created with NUMvector.
@@ -691,7 +691,7 @@ void NUMvector_free (integer elementSize, void *v, integer lo) noexcept;
 		lo must have the same values as with the creation of the vector.
 */
 
-void * NUMvector_copy (integer elementSize, void *v, integer lo, integer hi);
+char * NUMvector_copy_generic (integer elementSize, char *v, integer lo, integer hi);
 /*
 	Function:
 		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
@@ -699,21 +699,21 @@ void * NUMvector_copy (integer elementSize, void *v, integer lo, integer hi);
 		if v != nullptr, the values v [lo..hi] must exist.
 */
 
-void NUMvector_copyElements (integer elementSize, void *v, void *to, integer lo, integer hi);
+void NUMvector_copyElements_generic (integer elementSize, char *v, char *to, integer lo, integer hi);
 /*
 	copy the vector elements v [lo..hi] to those of a vector 'to'.
 	These vectors need not have been created by NUMvector.
 */
 
-bool NUMvector_equal (integer elementSize, void *v1, void *v2, integer lo, integer hi);
+bool NUMvector_equal_generic (integer elementSize, char *v1, char *v2, integer lo, integer hi);
 /*
 	return true if the vector elements v1 [lo..hi] are equal
 	to the corresponding elements of the vector v2; otherwise, return false.
 	The vectors need not have been created by NUMvector.
 */
 
-void NUMvector_append (integer elementSize, void **v, integer lo, integer *hi);
-void NUMvector_insert (integer elementSize, void **v, integer lo, integer *hi, integer position);
+void NUMvector_append_generic (integer elementSize, char **v, integer lo, integer *hi);
+void NUMvector_insert_generic (integer elementSize, char **v, integer lo, integer *hi, integer position);
 /*
 	add one element to the vector *v.
 	The new element is initialized to zero.
@@ -972,45 +972,45 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, integer ivar);
 
 template <class T>
 T* NUMvector (integer from, integer to) {
-	T* result = reinterpret_cast <T*> (NUMvector_ (sizeof (T), from, to, true));
+	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, true));
 	return result;
 }
 
 template <class T>
-T* NUMvector (integer from, integer to, bool zero) {
-	T* result = reinterpret_cast <T*> (NUMvector_ (sizeof (T), from, to, zero));
+T* NUMvector (integer from, integer to, bool initializeToZero) {
+	T* result = reinterpret_cast <T*> (NUMvector_generic (sizeof (T), from, to, initializeToZero));
 	return result;
 }
 
 template <class T>
 void NUMvector_free (T* ptr, integer from) noexcept {
-	NUMvector_free (sizeof (T), ptr, from);
+	NUMvector_free_generic (sizeof (T), reinterpret_cast <char *> (ptr), from);
 }
 
 template <class T>
 T* NUMvector_copy (T* ptr, integer lo, integer hi) {
-	T* result = static_cast <T*> (NUMvector_copy (sizeof (T), ptr, lo, hi));
+	T* result = reinterpret_cast <T*> (NUMvector_copy_generic (sizeof (T), reinterpret_cast <char *> (ptr), lo, hi));
 	return result;
 }
 
 template <class T>
 bool NUMvector_equal (T* v1, T* v2, integer lo, integer hi) {
-	return NUMvector_equal (sizeof (T), v1, v2, lo, hi);
+	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <char *> (v1), reinterpret_cast <char *> (v2), lo, hi);
 }
 
 template <class T>
 void NUMvector_copyElements (T* vfrom, T* vto, integer lo, integer hi) {
-	NUMvector_copyElements (sizeof (T), vfrom, vto, lo, hi);
+	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <char *> (vfrom), reinterpret_cast <char *> (vto), lo, hi);
 }
 
 template <class T>
 void NUMvector_append (T** v, integer lo, integer *hi) {
-	NUMvector_append (sizeof (T), (void**) v, lo, hi);
+	NUMvector_append_generic (sizeof (T), reinterpret_cast <char **> (v), lo, hi);
 }
 
 template <class T>
 void NUMvector_insert (T** v, integer lo, integer *hi, integer position) {
-	NUMvector_insert (sizeof (T), (void**) v, lo, hi, position);
+	NUMvector_insert_generic (sizeof (T), reinterpret_cast <char **> (v), lo, hi, position);
 }
 
 template <class T>
@@ -1029,7 +1029,7 @@ public:
 	autoNUMvector () : d_ptr (nullptr), d_from (1) {
 	}
 	~autoNUMvector<T> () {
-		if (d_ptr) NUMvector_free (sizeof (T), d_ptr, d_from);
+		if (d_ptr) NUMvector_free (d_ptr, d_from);
 	}
 	T& operator[] (integer i) {
 		return d_ptr [i];
@@ -1044,7 +1044,7 @@ public:
 	}
 	void reset (integer from, integer to) {
 		if (d_ptr) {
-			NUMvector_free (sizeof (T), d_ptr, d_from);
+			NUMvector_free (d_ptr, d_from);
 			d_ptr = nullptr;
 		}
 		d_from = from;
@@ -1052,7 +1052,7 @@ public:
 	}
 	void reset (integer from, integer to, bool zero) {
 		if (d_ptr) {
-			NUMvector_free (sizeof (T), d_ptr, d_from);
+			NUMvector_free (d_ptr, d_from);
 			d_ptr = nullptr;
 		}
 		d_from = from;
@@ -1168,7 +1168,7 @@ public:
 		if (d_ptr) {
 			for (integer i = d_from; i <= d_to; i ++)
 				Melder_free (d_ptr [i]);
-			NUMvector_free (sizeof (T), d_ptr, d_from);
+			NUMvector_free (d_ptr, d_from);
 		}
 	}
 	T& operator[] (integer i) {
@@ -1186,7 +1186,7 @@ public:
 		if (d_ptr) {
 			for (integer i = d_from; i <= d_to; i ++)
 				Melder_free (d_ptr [i]);
-			NUMvector_free (sizeof (T), d_ptr, d_from);
+			NUMvector_free (d_ptr, d_from);
 			d_ptr = nullptr;
 		}
 		d_from = from;   // this assignment is safe, because d_ptr is null
@@ -1197,7 +1197,7 @@ public:
 		if (d_ptr) {
 			for (integer i = d_from; i <= d_to; i ++)
 				Melder_free (d_ptr [i]);
-			NUMvector_free (sizeof (T), d_ptr, d_from);
+			NUMvector_free (d_ptr, d_from);
 			d_ptr = nullptr;
 		}
 		d_from = from;   // this assignment is safe, because d_ptr is null

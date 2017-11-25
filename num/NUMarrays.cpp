@@ -24,7 +24,7 @@ integer NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
 
 /*** Generic memory functions for vectors. ***/
 
-char* NUMvector_ (integer elementSize, integer lo, integer hi, bool initializeToZero) {
+char * NUMvector_generic (integer elementSize, integer lo, integer hi, bool initializeToZero) {
 	try {
 		if (hi < lo) return nullptr;   // not an error
 		char *result;
@@ -43,42 +43,48 @@ char* NUMvector_ (integer elementSize, integer lo, integer hi, bool initializeTo
 	}
 }
 
-void NUMvector_free (integer elementSize, void *v, integer lo) noexcept {
-	if (! v) return;   // no error
-	char *dum = (char *) v + lo * elementSize;
-	Melder_free (dum);
+void NUMvector_free_generic (integer elementSize, char *vector, integer lo) noexcept {
+	if (! vector) return;   // no error
+	char *cells = & vector [lo * elementSize];
+	Melder_free (cells);
 	theTotalNumberOfArrays -= 1;
 }
 
-void * NUMvector_copy (integer elementSize, void *v, integer lo, integer hi) {
+char * NUMvector_copy_generic (integer elementSize, char *vector, integer lo, integer hi) {
 	try {
-		if (! v) return nullptr;
-		char *result = NUMvector_ (elementSize, lo, hi, false);
-		integer offset = lo * elementSize;
-		memcpy (result + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
+		if (! vector) return nullptr;
+		char *result = NUMvector_generic (elementSize, lo, hi, false);
+		char *p_cells = & vector [lo * elementSize];
+		char *p_resultCells = & result [lo * elementSize];
+		integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
+		memcpy (p_resultCells, p_cells, (size_t) numberOfBytesToCopy);
 		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Vector of elements not copied.");
 	}
 }
 
-void NUMvector_copyElements (integer elementSize, void *v, void *to, integer lo, integer hi) {
-	integer offset = lo * elementSize;
-	Melder_assert (!! v && !! to);
-	if (hi >= lo) memcpy ((char *) to + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
+void NUMvector_copyElements_generic (integer elementSize, char *fromVector, char *toVector, integer lo, integer hi) {
+	Melder_assert (fromVector && toVector);
+	char *p_fromCells = & fromVector [lo * elementSize];
+	char *p_toCells   = & toVector   [lo * elementSize];
+	integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
+	if (hi >= lo) memcpy (p_toCells, p_fromCells, (size_t) numberOfBytesToCopy);
 }
 
-bool NUMvector_equal (integer elementSize, void *v1, void *v2, integer lo, integer hi) {
-	integer offset = lo * elementSize;
-	Melder_assert (v1 && v2);
-	return ! memcmp ((char *) v1 + offset, (char *) v2 + offset, (hi - lo + 1) * elementSize);
+bool NUMvector_equal_generic (integer elementSize, char *vector1, char *vector2, integer lo, integer hi) {
+	Melder_assert (vector1 && vector2);
+	char *p_cells1 = & vector1 [lo * elementSize];
+	char *p_cells2 = & vector2 [lo * elementSize];
+	integer numberOfBytesToCompare = (hi - lo + 1) * elementSize;
+	return memcmp (p_cells1, p_cells2, (size_t) numberOfBytesToCompare) == 0;
 }
 
-void NUMvector_append (integer elementSize, void **v, integer lo, integer *hi) {
+void NUMvector_append_generic (integer elementSize, char **v, integer lo, integer *hi) {
 	try {
 		char *result;
 		if (! *v) {
-			result = NUMvector_ (elementSize, lo, lo, true);
+			result = NUMvector_generic (elementSize, lo, lo, true);
 			*hi = lo;
 		} else {
 			integer offset = lo * elementSize;
@@ -96,20 +102,20 @@ void NUMvector_append (integer elementSize, void **v, integer lo, integer *hi) {
 	}
 }
 
-void NUMvector_insert (integer elementSize, void **v, integer lo, integer *hi, integer position) {
+void NUMvector_insert_generic (integer elementSize, char **v, integer lo, integer *hi, integer position) {
 	try {
 		char *result;
 		if (! *v) {
-			result = NUMvector_ (elementSize, lo, lo, true);
+			result = NUMvector_generic (elementSize, lo, lo, true);
 			*hi = lo;
 			Melder_assert (position == lo);
 		} else {
-			result = NUMvector_ (elementSize, lo, *hi + 1, false);
+			result = NUMvector_generic (elementSize, lo, *hi + 1, false);
 			Melder_assert (position >= lo && position <= *hi + 1);
-			NUMvector_copyElements (elementSize, *v, result, lo, position - 1);
+			NUMvector_copyElements_generic (elementSize, *v, result, lo, position - 1);
 			memset (result + position * elementSize, 0, elementSize);
-			NUMvector_copyElements (elementSize, *v, result + elementSize, position, *hi);
-			NUMvector_free (elementSize, *v, lo);
+			NUMvector_copyElements_generic (elementSize, *v, result + elementSize, position, *hi);
+			NUMvector_free_generic (elementSize, *v, lo);
 			(*hi) ++;
 		}
 		*v = result;

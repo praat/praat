@@ -207,7 +207,7 @@ static void NUMvector_extendNumberOfElements (integer elementSize, void **v, int
 		char *result;
 		if (! *v) {
 			integer newhi = lo + extraDemand - 1;
-			result = NUMvector_ (elementSize, lo, newhi, true);
+			result = NUMvector_generic (elementSize, lo, newhi, true);
 			*hi = newhi;
 		} else {
 			integer offset = lo * elementSize;

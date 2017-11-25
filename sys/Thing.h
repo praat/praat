@@ -506,7 +506,7 @@ public:
 		if (d_ptr) {
 			for (integer i = d_from; i <= d_to; i ++)
 				d_ptr [i].reset();
-			NUMvector_free (sizeof (_Thing_auto<T>), d_ptr, d_from);
+			NUMvector_free (d_ptr, d_from);
 		}
 	}
 	_Thing_auto<T>& operator[] (integer i) {
