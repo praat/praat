@@ -1,6 +1,6 @@
 /* PatternList.cpp
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@
 Thing_implement (PatternList, Matrix, 2);
 
 int _PatternList_checkElements (PatternList me) {
-	for (long i = 1; i <= my ny; i++) {
-		for (long j = 1; j <= my nx; j++) {
-			if (my z[i][j] < 0 || my z[i][j] > 1) {
+	for (integer i = 1; i <= my ny; i ++) {
+		for (integer j = 1; j <= my nx; j ++) {
+			if (my z [i] [j] < 0 || my z [i] [j] > 1) {
 				return 0;
 			}
 		}
@@ -38,13 +38,13 @@ int _PatternList_checkElements (PatternList me) {
 	return 1;
 }
 
-void PatternList_init (PatternList me, long ny, long nx) {
+void PatternList_init (PatternList me, integer ny, integer nx) {
 	my ny = ny;
 	my nx = nx;
 	Matrix_init (me, 1, nx, nx, 1, 1, 1, ny, ny, 1, 1);
 }
 
-autoPatternList PatternList_create (long ny, long nx) {
+autoPatternList PatternList_create (integer ny, integer nx) {
 	try {
 		autoPatternList me = Thing_new (PatternList);
 		PatternList_init (me.get(), ny, nx);
@@ -63,25 +63,25 @@ void PatternList_normalize (PatternList me, int choice, double pmin, double pmax
 	}
 
 	if (choice == 1) {
-		for (long i = 1; i <= my ny; i++) {
-			for (long j = 1; j <= my nx; j++) {
-				my z[i][j] = (my z[i][j] - pmin) / (pmax - pmin);
+		for (integer i = 1; i <= my ny; i ++) {
+			for (integer j = 1; j <= my nx; j ++) {
+				my z [i] [j] = (my z [i] [j] - pmin) / (pmax - pmin);
 			}
 		}
 	} else { /* default choice */
-		for (long i = 1; i <= my ny; i++) {
+		for (integer i = 1; i <= my ny; i ++) {
 			double sum = 0;
-			for (long j = 1; j <= my nx; j++) {
-				sum += (my z[i][j] -= pmin);
+			for (integer j = 1; j <= my nx; j ++) {
+				sum += (my z [i] [j] -= pmin);
 			}
-			for (long j = 1; j <= my nx; j++) {
-				my z[i][j] *= 1.0 / sum;
+			for (integer j = 1; j <= my nx; j ++) {
+				my z [i] [j] *= 1.0 / sum;
 			}
 		}
 	}
 }
 
-void PatternList_draw (PatternList me, Graphics g, long pattern, double xmin, double xmax, double ymin, double ymax, int garnish) {
+void PatternList_draw (PatternList me, Graphics g, integer pattern, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	Matrix_drawRows (me, g, xmin, xmax, pattern - 0.5, pattern + 0.5, ymin, ymax);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -95,20 +95,18 @@ autoPatternList Matrix_to_PatternList (Matrix me, int join) {
 		if (join < 1) {
 			join = 1;
 		}
-		if ( (my ny % join) != 0) {
-			Melder_throw (U"Number of rows is not a multiple of join factor.");
-		}
+		Melder_require (my ny % join == 0, U"Number of rows should be a multiple of join factor.");
 
 		autoPatternList thee = PatternList_create (my ny / join, join * my nx);
 
-		long r = 0, c = 1;
-		for (long i = 1; i <= my ny; i++) {
+		integer r = 0, c = 1;
+		for (integer i = 1; i <= my ny; i ++) {
 			if ( (i - 1) % join == 0) {
-				r++;
+				r ++;
 				c = 1;
 			}
-			for (long j = 1; j <= my nx; j++) {
-				thy z[r][c++] = my z[i][j];
+			for (integer j = 1; j <= my nx; j ++) {
+				thy z [r] [c ++] = my z [i] [j];
 			}
 		}
 		return thee;

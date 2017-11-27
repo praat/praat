@@ -336,13 +336,13 @@ END }
 
 DIRECT (INTEGER_Categories_getNumberOfCategories) {
 	INTEGER_ONE (Categories)
-		long result = my size;
+		integer result = my size;
 	INTEGER_ONE_END (U" categories")
 }
 
 DIRECT (INTEGER_Categories_getNumberOfDifferences) {
 	NUMBER_COUPLE (Categories)
-		long result = OrderedOfString_getNumberOfDifferences (me, you);
+		integer result = OrderedOfString_getNumberOfDifferences (me, you);
 	NUMBER_COUPLE_END (U" differences")
 }
 DIRECT (REAL_Categories_getFractionDifferent) {
@@ -353,7 +353,7 @@ DIRECT (REAL_Categories_getFractionDifferent) {
 
 DIRECT (INTEGER_Categories_difference) {
 	NUMBER_COUPLE (Categories)
-		long result;
+		integer result;
 		double fraction;
 		OrderedOfString_difference (me, you, & result, &fraction);
 	NUMBER_COUPLE_END (U" (difference)")
@@ -396,7 +396,7 @@ FORM (INTEGER_CC_getNumberOfCoefficients, U"Get number of coefficients", nullptr
 	OK
 DO
 	INTEGER_ONE (CC)
-		long result = CC_getNumberOfCoefficients (me, frameNumber);
+		integer result = CC_getNumberOfCoefficients (me, frameNumber);
 	INTEGER_ONE_END (U" (number of coefficients)")
 }
 
@@ -508,7 +508,7 @@ DO
 
 DIRECT (INTEGER_CCA_getNumberOfCorrelations) {
 	INTEGER_ONE (CCA)
-		long result = my numberOfCoefficients;
+		integer result = my numberOfCoefficients;
 	INTEGER_ONE_END (U"")
 }
 
@@ -656,7 +656,7 @@ FORM (INTEGER_ClassificationTable_getClassIndexAtMaximumInRow, U"ClassificationT
 	OK
 DO
 	INTEGER_ONE (ClassificationTable)
-		long result = TableOfReal_getColumnIndexAtMaximumInRow (me, rowNumber);
+		integer result = TableOfReal_getColumnIndexAtMaximumInRow (me, rowNumber);
 	INTEGER_ONE_END (U" (class index at maximum in row)")
 }
 
@@ -1001,7 +1001,7 @@ FORM (REAL_Covariance_getSignificanceOfOneVariance, U"Covariance: Get significan
 	OK
 DO
 	NUMBER_ONE (Covariance)
-		double result, chisq; long ndf;
+		double result, chisq; integer ndf;
 		Covariance_getSignificanceOfOneVariance (me, index, value, & result, & chisq, & ndf);
 	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf)
 }
@@ -1163,7 +1163,7 @@ FORM (NEW1_Discriminant_and_TableOfReal_mahalanobis, U"Discriminant & TableOfRea
 	OK
 DO
 	CONVERT_TWO (Discriminant, TableOfReal)
-		long group = Discriminant_groupLabelToIndex (me, groupLabel);
+		integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"Your group label \"", groupLabel, U"\" does not exist.");
 		autoTableOfReal result = Discriminant_and_TableOfReal_mahalanobis (me, you, group, poolCovariances);
 	CONVERT_TWO_END (U"mahalanobis")
@@ -1171,13 +1171,13 @@ DO
 
 DIRECT (INTEGER_Discriminant_getNumberOfEigenvalues) {
 	INTEGER_ONE (Discriminant)
-		long result = my eigen -> numberOfEigenvalues;
+		integer result = my eigen -> numberOfEigenvalues;
 	INTEGER_ONE_END (U" (number of eigenvalues)")
 }
 
 DIRECT (INTEGER_Discriminant_getDimension) {
 	INTEGER_ONE (Discriminant)
-		long result = my eigen -> dimension;
+		integer result = my eigen -> dimension;
 	INTEGER_ONE_END (U" (dimension)")
 }
 
@@ -1186,10 +1186,9 @@ FORM (REAL_Discriminant_getEigenvalue, U"Discriminant: Get eigenvalue", U"Eigen:
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		if (eigenvalueNumber > my eigen -> numberOfEigenvalues) {
-			Melder_throw (U"Eigenvalue number must be smaller than ", my eigen -> numberOfEigenvalues + 1);
-		}
-		long result = my eigen -> eigenvalues[eigenvalueNumber];
+		Melder_require (eigenvalueNumber <= my eigen -> numberOfEigenvalues, 
+			U"Eigenvalue number must be smaller than ", my eigen -> numberOfEigenvalues + 1);
+		double result = my eigen -> eigenvalues[eigenvalueNumber];
 	NUMBER_ONE_END (U" (eigenvalue [)", eigenvalueNumber, U"])")
 }
 
@@ -1257,7 +1256,7 @@ DIRECT (INFO_Discriminant_reportEqualityOfCovariances_wald) {
 	LOOP {
 		iam (Discriminant);
 		structCovarianceList list;
-		for (long i = 1; i <= my groups->size; i ++) {
+		for (integer i = 1; i <= my groups->size; i ++) {
 			SSCP sscp = my groups->at [i];
 			autoCovariance covariance = SSCP_to_Covariance (sscp, 1);   // FIXME numberOfConstraints shouldn't be 1, should it?
 			list. addItem_move (covariance.move());
@@ -1282,7 +1281,7 @@ FORM (REAL_Discriminant_getConcentrationEllipseArea, U"Discriminant: Get concent
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		long group = Discriminant_groupLabelToIndex (me, groupLabel);
+		integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		double result = Discriminant_getConcentrationEllipseArea (me, group, numberOfSigmas, false, discriminatPlane, xDimension, yDimension);
 	NUMBER_ONE_END (U" (concentration ellipse area)")
@@ -1297,7 +1296,7 @@ FORM (REAL_Discriminant_getConfidenceEllipseArea, U"Discriminant: Get confidence
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		long group = Discriminant_groupLabelToIndex (me, groupLabel);
+		integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		double result = Discriminant_getConcentrationEllipseArea (me, group, confidenceLevel, true, discriminatPlane, xDimension, yDimension);
 	NUMBER_ONE_END (U" (confidence ellipse area)")
@@ -1308,7 +1307,7 @@ FORM (REAL_Discriminant_getLnDeterminant_group, U"Discriminant: Get determinant 
 	OK
 DO
 	NUMBER_ONE (Discriminant)
-		long group = Discriminant_groupLabelToIndex (me, groupLabel);
+		integer group = Discriminant_groupLabelToIndex (me, groupLabel);
 		Melder_require (group > 0, U"The group label \"", groupLabel, U"\" does not exist.");
 		double result = Discriminant_getLnDeterminant_group (me, group);
 	NUMBER_ONE_END (U" (ln(determinant) group")
@@ -1486,19 +1485,19 @@ DO
 
 DIRECT (INTEGER_Discriminant_getNumberOfFunctions) {
 	INTEGER_ONE (Discriminant)
-		long result = Discriminant_getNumberOfFunctions (me);
+		integer result = Discriminant_getNumberOfFunctions (me);
 	INTEGER_ONE_END (U"")
 }
 
 DIRECT (INTEGER_Discriminant_getDimensionOfFunctions) {
 	INTEGER_ONE (Discriminant)
-		long result = Eigen_getDimensionOfComponents (my eigen.get());
+		integer result = Eigen_getDimensionOfComponents (my eigen.get());
 	INTEGER_ONE_END (U"")
 }
 
 DIRECT (INTEGER_Discriminant_getNumberOfGroups) {
 	INTEGER_ONE (Discriminant)
-		long result = Discriminant_getNumberOfGroups (me);
+		integer result = Discriminant_getNumberOfGroups (me);
 	INTEGER_ONE_END (U"")
 }
 
@@ -1507,7 +1506,7 @@ FORM (INTEGER_Discriminant_getNumberOfObservations, U"Discriminant: Get number o
 	OK
 DO
 	INTEGER_ONE (Discriminant)
-		long result = Discriminant_getNumberOfObservations (me, group);
+		integer result = Discriminant_getNumberOfObservations (me, group);
 	INTEGER_ONE_END (U"")
 }
 
@@ -1679,7 +1678,7 @@ DIRECT (REAL_DTW_getTotalDurationY) {
 
 DIRECT (INTEGER_DTW_getNumberOfFramesX) {
 	INTEGER_ONE (DTW)
-		long result = my nx;
+		integer result = my nx;
 	INTEGER_ONE_END (U" (= number of frames along x)")
 }
 
@@ -1778,7 +1777,7 @@ DO
 	int direction_code [] = { DTW_START, DTW_X, DTW_Y, DTW_XANDY };
 	const char32 *direction_string [] = { U"", U"x", U"y", U"diagonal" };
 	INTEGER_ONE (DTW)
-		long result = DTW_getMaximumConsecutiveSteps (me, direction_code [direction]);
+		integer result = DTW_getMaximumConsecutiveSteps (me, direction_code [direction]);
 	INTEGER_ONE_END (U" (= maximum number of consecutive steps in ", direction_string [direction], U" direction)")
 }
 
@@ -1796,8 +1795,8 @@ DO
 	NUMBER_ONE (DTW)
 		double result = undefined;
 		if ((xTime >= my xmin && xTime <= my xmax) && (yTime >= my ymin && yTime <= my ymax)) {
-			long irow = Matrix_yToNearestRow (me, yTime);
-			long icol = Matrix_xToNearestColumn (me, xTime);
+			integer irow = Matrix_yToNearestRow (me, yTime);
+			integer icol = Matrix_xToNearestColumn (me, xTime);
 			result = my z[irow][icol];
 		}
 	NUMBER_ONE_END (U" (= distance at (", xTime, U", ", yTime, U"))")
@@ -1858,8 +1857,8 @@ DO
 		if (yTime < my ymin || yTime > my ymax) {
 			Melder_throw (U"Time at y outside domain.");
 		}
-		long irow = Matrix_yToNearestRow (me, yTime);
-		long icol = Matrix_xToNearestColumn (me, xTime);
+		integer irow = Matrix_yToNearestRow (me, yTime);
+		integer icol = Matrix_xToNearestColumn (me, xTime);
 		my z[irow][icol] = newDistance;
 	MODIFY_EACH_END
 }
@@ -2013,7 +2012,7 @@ FORM (INTEGER_EditCostsTable_getTargetIndex, U"EditCostsTable: Get target index"
 	OK
 DO
 	INTEGER_ONE (EditCostsTable)
-		long result = EditCostsTable_getTargetIndex (me, target);
+		integer result = EditCostsTable_getTargetIndex (me, target);
 	INTEGER_ONE_END (U" (target index)")
 }
 
@@ -2022,7 +2021,7 @@ FORM (INTEGER_EditCostsTable_getSourceIndex, U"EditCostsTable: Get source index"
 	OK
 DO
 	INTEGER_ONE (EditCostsTable)
-		long result = EditCostsTable_getSourceIndex (me, source);
+		integer result = EditCostsTable_getSourceIndex (me, source);
 	INTEGER_ONE_END (U" (source index)")
 }
 
@@ -2201,13 +2200,13 @@ DO
 
 DIRECT (INTEGER_Eigen_getNumberOfEigenvalues) {
 	INTEGER_ONE (Eigen)
-		long result = my numberOfEigenvalues;
+		integer result = my numberOfEigenvalues;
 	INTEGER_ONE_END (U" (number of eigenvalues/vectors)")
 }
 
 DIRECT (INTEGER_Eigen_getDimension) {
 	INTEGER_ONE (Eigen)
-		long result = my dimension;
+		integer result = my dimension;
 	INTEGER_ONE_END (U" (dimension)")
 }
 
@@ -2287,7 +2286,7 @@ DIRECT (HELP_Index_help) {
 
 DIRECT (INTEGER_Index_getNumberOfClasses) {
 	INTEGER_ONE (Index)
-		long result = my classes -> size;
+		integer result = my classes -> size;
 	INTEGER_ONE_END (U" (number of classes)")
 }
 
@@ -2314,7 +2313,7 @@ FORM (INTEGER_Index_getClassIndexFromItemIndex, U"Index: Get item index", nullpt
 	OK
 DO
 	INTEGER_ONE (Index)
-		long result = Index_getClassIndexFromItemIndex (me, itemIndex);
+		integer result = Index_getClassIndexFromItemIndex (me, itemIndex);
 	INTEGER_ONE_END (U" (class index)")
 }
 
@@ -2323,7 +2322,7 @@ FORM (INTEGER_StringsIndex_getClassIndexFromClassLabel, U"StringsIndex: Get clas
 	OK
 DO
 	INTEGER_ONE (StringsIndex)
-		long result = StringsIndex_getClassIndexFromClassLabel (me, klasLabel);
+		integer result = StringsIndex_getClassIndexFromClassLabel (me, klasLabel);
 	INTEGER_ONE_END (U" (class index)")
 }
 
@@ -2368,7 +2367,7 @@ FORM (MODIFY_ExcitationList_formula, U"ExcitationList: Formula", nullptr) {
 	OK
 DO
 	MODIFY_EACH (ExcitationList)
-		for (long j = 1; j <= my size; j ++) {
+		for (integer j = 1; j <= my size; j ++) {
 			Matrix_formula (my at [j], formula, interpreter, nullptr);
 		}
 	MODIFY_EACH_END
@@ -2962,7 +2961,7 @@ DO
 
 DIRECT (INTEGER_FunctionTerms_getNumberOfCoefficients) {
 	INTEGER_ONE (FunctionTerms)
-		long result = my numberOfCoefficients;
+		integer result = my numberOfCoefficients;
 	INTEGER_ONE_END (U"")
 }
 
@@ -2978,7 +2977,7 @@ DO
 
 DIRECT (INTEGER_FunctionTerms_getDegree) {
 	INTEGER_ONE (FunctionTerms)
-		long result = FunctionTerms_getDegree (me);
+		integer result = FunctionTerms_getDegree (me);
 	INTEGER_ONE_END (U"")
 }
 
@@ -3186,7 +3185,7 @@ FORM (REAL_Table_getMedianAbsoluteDeviation, U"Table: Get median absolute deviat
 	OK
 DO
 	NUMBER_ONE (Table)
-		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		double result = Table_getMedianAbsoluteDeviation (me, icol);
 	NUMBER_ONE_END (U"")
 }
@@ -3203,7 +3202,7 @@ static void print_means (Table me) {
 		Melder_padOrTruncate (15, my columnHeaders[1].label), U"\t",
 		Melder_padOrTruncate (15, my columnHeaders[2].label), U"\t",
 		Melder_padOrTruncate (15, my columnHeaders[3].label));
-	for (long irow = 1; irow <= my rows.size; irow ++) {
+	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		MelderInfo_writeLine (
 			Melder_padOrTruncate (15, row -> cells[1].string), U"\t",
@@ -3217,7 +3216,7 @@ FORM (INTEGER_Table_getNumberOfRowsWhere, U"", nullptr) {
 	OK
 DO
 	INTEGER_ONE (Table)
-		long result = Table_getNumberOfRowsWhere (me, formula, interpreter);
+		integer result = Table_getNumberOfRowsWhere (me, formula, interpreter);
 	INTEGER_ONE_END (U"")
 }
 
@@ -3230,8 +3229,8 @@ FORM (INFO_Table_reportOneWayAnova, U"Table: Report one-way anova",  U"Table: Re
 	OK
 DO
 	INFO_ONE (Table)
-		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factor_string);
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factor_string);
+		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		autoTable means, meansDiff, meansDiffProbabilities;
 		autoTable anova = Table_getOneWayAnalysisOfVarianceF (me, dataColumn, factorColumn, &means, &meansDiff, & meansDiffProbabilities);
 		MelderInfo_open ();
@@ -3260,9 +3259,9 @@ FORM (INFO_Table_reportTwoWayAnova, U"Table: Report two-way anova", U"Table: Rep
 	OK
 DO
 	INFO_ONE (Table)
-		long firstFactorColumn = Table_getColumnIndexFromColumnLabel (me, firstFactor_string);
-		long secondFactorColumn = Table_getColumnIndexFromColumnLabel (me, secondFactor_string);
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		integer firstFactorColumn = Table_getColumnIndexFromColumnLabel (me, firstFactor_string);
+		integer secondFactorColumn = Table_getColumnIndexFromColumnLabel (me, secondFactor_string);
+		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		autoTable means, sizes;
 		autoTable anova = Table_getTwoWayAnalysisOfVarianceF (me, dataColumn, firstFactorColumn, secondFactorColumn, &means, &sizes);
 		MelderInfo_open ();
@@ -3285,8 +3284,8 @@ FORM (INFO_Table_reportOneWayKruskalWallis, U"Table: Report one-way Kruskal-Wall
 	OK
 DO
 	INFO_ONE (Table)
-		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factor_string);
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factor_string);
+		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		double df, kruskalWallis, prob;
 		autoTable result = Table_getOneWayKruskalWallis (me, dataColumn, factorColumn, & prob, & kruskalWallis, & df);
 		MelderInfo_open ();
@@ -3305,7 +3304,7 @@ FORM (NEW_Table_to_StringsIndex_column, U"Table: To StringsIndex (column)", null
 	OK
 DO
 	CONVERT_EACH (Table)
-		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		integer icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		autoStringsIndex result = Table_to_StringsIndex_column (me, icol);
 	CONVERT_EACH_END (my name, U"_", columnLabel)
 }
@@ -3574,7 +3573,7 @@ DIRECT (REAL_FilterBank_getLowestFrequency) {
 
 DIRECT (INTEGER_FilterBank_getNumberOfFrequencies) {
 	INTEGER_ONE (FilterBank)
-		long result = my ny;
+		integer result = my ny;
 	INTEGER_ONE_END (U"")
 }
 
@@ -3610,14 +3609,14 @@ DO
 	NUMBER_ONE (FilterBank)
 		double result = undefined;
 		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
-			long col = Matrix_xToNearestColumn (me, time);
+			integer col = Matrix_xToNearestColumn (me, time);
 			if (col < 1) {
 				col = 1;
 			}
 			if (col > my nx) {
 				col = my nx;
 			}
-			long row = Matrix_yToNearestRow (me, frequency);
+			integer row = Matrix_yToNearestRow (me, frequency);
 			if (row < 1) {
 				row = 1;
 			}
@@ -3645,7 +3644,7 @@ DIRECT (REAL_BandFilterSpectrogram_getLowestFrequency) {
 
 DIRECT (INTEGER_BandFilterSpectrogram_getNumberOfFrequencies) {
 	INTEGER_ONE (BandFilterSpectrogram)
-		long result = my ny;
+		integer result = my ny;
 	INTEGER_ONE_END (U"")
 }
 
@@ -3681,14 +3680,14 @@ DO
 	NUMBER_ONE (BandFilterSpectrogram)
 		double result = undefined;
 		if ((frequency >= my ymin && frequency <= my ymax) && (time >+ my xmin && time <= my ymin)) {
-			long col = Matrix_xToNearestColumn (me, time);
+			integer col = Matrix_xToNearestColumn (me, time);
 			if (col < 1) {
 				col = 1;
 			}
 			if (col > my nx) {
 				col = my nx;
 			}
-			long row = Matrix_yToNearestRow (me, frequency);
+			integer row = Matrix_yToNearestRow (me, frequency);
 			if (row < 1) {
 				row = 1;
 			}
@@ -3971,13 +3970,13 @@ DO
 
 DIRECT (INTEGER_PatternList_getNumberOfPatterns) {
 	INTEGER_ONE (PatternList)
-		long result = my ny;
+		integer result = my ny;
 	INTEGER_ONE_END (U" (number of patterns)")
 }
 
 DIRECT (INTEGER_PatternList_getPatternSize) {
 	INTEGER_ONE (PatternList)
-		long result = my nx;
+		integer result = my nx;
 	INTEGER_ONE_END (U" (pattern size)")
 }
 
@@ -4234,7 +4233,7 @@ DO
 
 DIRECT (INTEGER_Permutation_getNumberOfElements) {
 	INTEGER_ONE (Permutation)
-		long result = my numberOfElements;
+		integer result = my numberOfElements;
 	INTEGER_ONE_END (U" (number of elements)")
 }
 
@@ -4243,7 +4242,7 @@ FORM (INTEGER_Permutation_getValueAtIndex, U"Permutation: Get value", U"Permutat
 	OK
 DO
 	INTEGER_ONE (Permutation)
-		long result = Permutation_getValueAtIndex (me, index);
+		integer result = Permutation_getValueAtIndex (me, index);
 	INTEGER_ONE_END (U" (value, at index = ", index, U")")
 }
 
@@ -4252,7 +4251,7 @@ FORM (INTEGER_Permutation_getIndexAtValue, U"Permutation: Get index", U"Permutat
 	OK
 DO
 	INTEGER_ONE (Permutation)
-		long result = Permutation_getIndexAtValue (me, value);
+		integer result = Permutation_getIndexAtValue (me, value);
 	INTEGER_ONE_END (U" (index, at value = ", value, U")")
 }
 
@@ -4503,7 +4502,7 @@ DO
 
 DIRECT (INTEGER_Polygon_getNumberOfPoints) {
 	INTEGER_ONE (Polygon)
-		long result = my numberOfPoints;
+		integer result = my numberOfPoints;
 	INTEGER_ONE_END (U" (number of points)")
 }
 
@@ -4852,7 +4851,7 @@ DO
 
 DIRECT (INTEGER_Roots_getNumberOfRoots) {
 	INTEGER_ONE (Roots)
-		long result = Roots_getNumberOfRoots (me);
+		integer result = Roots_getNumberOfRoots (me);
 	INTEGER_ONE_END (U"")
 }
 
@@ -5009,7 +5008,7 @@ static void Sound_create_checkCommonFields (double startTime, double endTime, do
 		}
 	}
 	if (numberOfSamples_real > LONG_MAX) {   // ppgb: kan niet in een 64-bit-omgeving
-		Melder_throw (U"A Sound cannot have ", Melder_bigInteger ((long) numberOfSamples_real), U" samples; the maximum is ", Melder_bigInteger (LONG_MAX), U" samples.\n");
+		Melder_throw (U"A Sound cannot have ", Melder_bigInteger ((integer) numberOfSamples_real), U" samples; the maximum is ", Melder_bigInteger (LONG_MAX), U" samples.\n");
 	}
 }
 
@@ -5126,7 +5125,7 @@ FORM (GRAPHICS_Sound_drawWhere, U"Sound: Draw where", U"Sound: Draw where...") {
 	TEXTFIELD (formula, U"Draw only those parts where the following condition holds:", U"x < xmin + (xmax - xmin) / 2; first half")
 	OK
 DO
-	long numberOfBisections = 10;
+	integer numberOfBisections = 10;
 	GRAPHICS_EACH (Sound)
 		Sound_drawWhere (me, GRAPHICS, fromTime, toTime, ymin, ymax, garnish, drawingMethod, numberOfBisections, formula, interpreter);
 	GRAPHICS_EACH_END
@@ -5509,7 +5508,7 @@ FORM (GRAPHICS_Sound_paintWhere, U"Sound paint where", U"Sound: Paint where...")
 	TEXTFIELD (formula, U"Paint only those parts where the following condition holds:", U"1; always")
 	OK
 DO
-	long numberOfBisections = 10;
+	integer numberOfBisections = 10;
 	GRAPHICS_EACH (Sound)
 		Sound_paintWhere (me, GRAPHICS, colour, fromTime, toTime, ymin, ymax, level, garnish, numberOfBisections, formula,
 			interpreter);
@@ -5899,7 +5898,7 @@ DO
 
 DIRECT (INTEGER_Spline_getOrder) {
 	INTEGER_ONE (Spline)
-		long result = Spline_getOrder (me);
+		integer result = Spline_getOrder (me);
 	INTEGER_ONE_END (U" (order)")
 }
 
@@ -5994,7 +5993,7 @@ DO
 
 DIRECT (INTEGER_SSCP_getDegreesOfFreedom) {
 	INTEGER_ONE (SSCP)
-		long result = SSCP_getDegreesOfFreedom (me);
+		integer result = SSCP_getDegreesOfFreedom (me);
 	INTEGER_ONE_END (U" (degrees of freedom)")
 }
 
@@ -6214,9 +6213,9 @@ FORM (GRAPHICS_Table_scatterPlotWhere, U"Table: Scatter plot where", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		long markColumn = Table_getColumnIndexFromColumnLabel (me, markColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer markColumn = Table_getColumnIndexFromColumnLabel (me, markColumn_string);
 		autoTable part = Table_extractRowsWhere (me, formula, interpreter);
 		Table_scatterPlot (part.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markColumn, fontSize, garnish);
 	GRAPHICS_EACH_END
@@ -6236,8 +6235,8 @@ FORM (GRAPHICS_Table_scatterPlotMarkWhere, U"Scatter plot where (marks)", nullpt
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		autoTable part = Table_extractRowsWhere (me, formula, interpreter);
 		Table_scatterPlot_mark (part.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, markSize_mm, mark_string, garnish);
 	GRAPHICS_EACH_END
@@ -6277,8 +6276,8 @@ FORM (GRAPHICS_Table_LineGraphWhere, U"Table: Line graph where", U"Table: Line g
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		long xcolumn = Table_findColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer xcolumn = Table_findColumnIndexFromColumnLabel (me, xColumn_string);
 		Table_lineGraphWhere (me, GRAPHICS, xcolumn, xmin, xmax,ycolumn, ymin, ymax, text, angle, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6292,7 +6291,7 @@ FORM (GRAPHICS_Table_boxPlots, U"Table: Box plots", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6307,7 +6306,7 @@ FORM (GRAPHICS_Table_boxPlotsWhere, U"Table: Box plots where", U"Table: Box plot
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_boxPlotsWhere (me, GRAPHICS, dataColumns_string, factorColumn, ymin, ymax, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6325,8 +6324,8 @@ FORM (GRAPHICS_Table_drawEllipseWhere, U"Draw ellipse (standard deviation)", nul
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		autoTable thee = Table_extractRowsWhere (me, formula, interpreter);
 		Table_drawEllipse_e (thee.get(), GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, numberOfSigmas, garnish);
 	GRAPHICS_EACH_END
@@ -6346,9 +6345,9 @@ FORM (GRAPHICS_Table_drawEllipses, U"Table: Draw ellipses", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		long factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, xmin, xmax, ymin, ymax, numberOfSigmas, fontSize, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6368,9 +6367,9 @@ FORM (GRAPHICS_Table_drawEllipsesWhere, U"Table: Draw ellipses where", nullptr) 
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		long factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer factorcolumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, xmin,  xmax, ymin, ymax,  numberOfSigmas, fontSize, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6386,7 +6385,7 @@ FORM (GRAPHICS_Table_normalProbabilityPlot, U"Table: Normal probability plot", U
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long column = Table_getColumnIndexFromColumnLabel (me, column_string);
+		integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
 		Table_normalProbabilityPlot (me, GRAPHICS, column, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	GRAPHICS_EACH_END
 }
@@ -6402,7 +6401,7 @@ FORM (GRAPHICS_Table_normalProbabilityPlotWhere, U"Table: Normal probability plo
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long column = Table_getColumnIndexFromColumnLabel (me, column_string);
+		integer column = Table_getColumnIndexFromColumnLabel (me, column_string);
 		autoTable thee = Table_extractRowsWhere (me, formula, interpreter);
 		Table_normalProbabilityPlot (thee.get(), GRAPHICS, column, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
 	GRAPHICS_EACH_END
@@ -6422,8 +6421,8 @@ FORM (GRAPHICS_Table_quantileQuantilePlot, U"Table: Quantile-quantile plot", U"T
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
 		Table_quantileQuantilePlot (me, GRAPHICS, xcolumn, ycolumn, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, label, garnish);
 	GRAPHICS_EACH_END
 }
@@ -6444,8 +6443,8 @@ FORM (GRAPHICS_Table_quantileQuantilePlot_betweenLevels, U"Table: Quantile-quant
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
-		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
+		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		integer factorColumn = Table_getColumnIndexFromColumnLabel (me, factorColumn_string);
 		Table_quantileQuantilePlot_betweenLevels (me, GRAPHICS, dataColumn, factorColumn, xLevel_string, yLevelString, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, label, garnish);
 	GRAPHICS_EACH_END
 }
@@ -6461,7 +6460,7 @@ FORM (GRAPHICS_Table_lagPlot, U"Table: lag plot", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		Table_lagPlotWhere (me, GRAPHICS, dataColumn, lag, fromXY, toXY, label, labelSize, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6479,7 +6478,7 @@ FORM (GRAPHICS_Table_lagPlotWhere, U"Table: lag plot where", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		Table_lagPlotWhere (me, GRAPHICS, dataColumn, lag, fromXY, toXY, label, labelSize, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6496,7 +6495,7 @@ FORM (GRAPHICS_Table_distributionPlot, U"Table: Distribution plot", nullptr) {
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, numberOfBins, minimumFrequency, maximumFrequency, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6514,7 +6513,7 @@ FORM (GRAPHICS_Table_distributionPlotWhere, U"Table: Distribution plot where", n
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
+		integer dataColumn = Table_getColumnIndexFromColumnLabel (me, dataColumn_string);
 		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, minimumValue, maximumValue, numberOfBins, minimumFrequency, maximumFrequency, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6533,10 +6532,10 @@ FORM (GRAPHICS_Table_horizontalErrorBarsPlot, U"Table: Horizontal error bars plo
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		long xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		long xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
+		integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
 		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, xl, xu, barSize_mm, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6556,10 +6555,10 @@ FORM (GRAPHICS_Table_horizontalErrorBarsPlotWhere, U"Table: Horizontal error bar
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		long xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		long xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer xl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
+		integer xu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
 		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, xl, xu, barSize_mm, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6578,10 +6577,10 @@ FORM (GRAPHICS_Table_verticalErrorBarsPlot, U"Table: Vertical error bars plot", 
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		long yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		long yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
+		integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
 		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, yl, yu, barSize_mm, garnish, U"1", interpreter);
 	GRAPHICS_EACH_END
 }
@@ -6601,10 +6600,10 @@ FORM (GRAPHICS_Table_verticalErrorBarsPlotWhere, U"Table: Vertical error bars pl
 	OK
 DO
 	GRAPHICS_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
-		long yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
-		long yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, xColumn_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, yColumn_string);
+		integer yl = Table_findColumnIndexFromColumnLabel (me, lowerErrorColumn_string);
+		integer yu = Table_findColumnIndexFromColumnLabel (me, upperErrorColumn_string);
 		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn, xmin, xmax, ymin, ymax, yl, yu, barSize_mm, garnish, formula, interpreter);
 	GRAPHICS_EACH_END
 }

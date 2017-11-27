@@ -1,6 +1,6 @@
 /* praat_DataModeler_init.cpp
  *
- * Copyright (C) 2014,2016 David Weenink
+ * Copyright (C) 2014-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ FORM (GRAPHICS_DataModeler_speckle, U"DataModeler: Speckle", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	long order = 6;
+	integer order = 6;
 	GRAPHICS_EACH (DataModeler)
 		DataModeler_speckle (me, GRAPHICS, xmin, xmax,ymin, ymax, 0, order + 1, errorBars, barWidth_mm, xOffset_mm, garnish);
 	GRAPHICS_EACH_END
@@ -83,13 +83,13 @@ DO
 
 DIRECT (INTEGER_DataModeler_getNumberOfParameters) {
 	INTEGER_ONE (DataModeler)
-		long result = my numberOfParameters;
+		integer result = my numberOfParameters;
 	INTEGER_ONE_END (U" (= number of parameters)")
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfFixedParameters) {
 	INTEGER_ONE (DataModeler)
-		long result = DataModeler_getNumberOfFixedParameters (me);
+		integer result = DataModeler_getNumberOfFixedParameters (me);
 	INTEGER_ONE_END (U"(= number of parameters)")
 }
 
@@ -127,7 +127,7 @@ FORM (REAL_DataModeler_getVarianceOfParameters, U"DataModeler: Get variance of p
 	INTEGER (toParameter, U"right Parameter range", U"0")
 	OK
 DO
-	long nofp;
+	integer nofp;
 	NUMBER_ONE (DataModeler)
 		double result = DataModeler_getVarianceOfParameters (me, fromParameter, toParameter, &nofp);
 	NUMBER_ONE_END (U" (for ", nofp, U" free parameters)")
@@ -135,13 +135,13 @@ DO
 
 DIRECT (INTEGER_DataModeler_getNumberOfDataPoints) {
 	INTEGER_ONE (DataModeler)
-		long result = my numberOfDataPoints;
+		integer result = my numberOfDataPoints;
 	INTEGER_ONE_END (U" (= number of data points)")
 }
 
 DIRECT (INTEGER_DataModeler_getNumberOfInvalidDataPoints) {
 	INTEGER_ONE (DataModeler)
-		long result = DataModeler_getNumberOfInvalidDataPoints (me);
+		integer result = DataModeler_getNumberOfInvalidDataPoints (me);
 	INTEGER_ONE_END (U" (= number of invalid data points)")
 }
 
@@ -158,7 +158,7 @@ DO
 
 DIRECT (REAL_DataModeler_getResidualSumOfSquares) {
 	NUMBER_ONE (DataModeler)
-		long n;
+		integer n;
 		double result = DataModeler_getResidualSumOfSquares (me, &n);
 	NUMBER_ONE_END (U"  (for ", n, U" datapoints)")
 }
@@ -365,7 +365,7 @@ DO
 }
 
 FORM (NEW_Formant_to_FormantModeler, U"Formant: To FormantModeler", nullptr) {
-//double tmin, double tmax, long numberOfFormants, long numberOfParametersPerTrack
+//double tmin, double tmax, integer numberOfFormants, integer numberOfParametersPerTrack
 	REAL (fromTime, U"left Start time", U"0.0")
 	REAL (toTime, U"right End time", U"0.1")
 	NATURAL (numberOfFormants, U"Number of formants", U"3")
@@ -404,9 +404,9 @@ DO
 		iam (Formant);
 		formants. addItem_ref (me);
 	}
-	long index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
+	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType, 0, numberOfSigmas, power, 1.0, 1.0, 1.0, 1.0, 1.0);
 	// next code is necessary to get the Formant at postion index selected and to get its name
-	long iselected = 0;
+	integer iselected = 0;
 	Formant him = nullptr;
 	LOOP {
 		iselected ++;
@@ -446,9 +446,9 @@ DO
 		iam (Formant);
 		formants. addItem_ref (me);
 	}
-	long index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
+	integer index = Formants_getSmoothestInInterval (& formants, fromTime, toTime, numberOfFormantTracks, order + 1, weighDataType, 1, numberOfSigmas, power, minimumF1, maximumF1, minimumF2, maximumF2, minimumF3);
 	// next code is necessary to get the Formant at postion index selected and to get its name
-	long iselected = 0;
+	integer iselected = 0;
 	Formant him = nullptr;
 	LOOP {
 		iselected ++;
@@ -490,7 +490,7 @@ FORM (GRAPHICS_FormantModeler_drawTracks, U"FormantModeler: Draw tracks", nullpt
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	long order = 6;
+	integer order = 6;
 	GRAPHICS_EACH (FormantModeler)
 		FormantModeler_drawTracks (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 0, order + 1, xOffset_mm, garnish);
 	GRAPHICS_EACH_END
@@ -508,7 +508,7 @@ FORM (GRAPHICS_FormantModeler_speckle, U"FormantModeler: Speckle", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	long order = 6;
+	integer order = 6;
 	GRAPHICS_EACH (FormantModeler)
 		FormantModeler_speckle (me, GRAPHICS, fromTime, toTime, maximumFrequency, fromFormant, toFormant, 0, order + 1, errorBars, barWidth_mm, xOffset_mm, garnish);
 	GRAPHICS_EACH_END
@@ -599,7 +599,7 @@ FORM (GRAPHICS_FormantModeler_drawBasisFunction, U"FormantModeler: Draw basis fu
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (ymin, U"left Amplitude range (Hz)", U"0.0")
 	REAL (ymax, U"right Amplitude range (Hz)", U"5500.0")
-	//long iterm, bool scaled, long numberOfPoints, int garnish
+	//integer iterm, bool scaled, integer numberOfPoints, int garnish
 	NATURAL (formantNumber, U"Formant number", U"1")
 	NATURAL (basisFunctionIndex, U"Basis function", U"2")
 	BOOLEAN (scale, U"Scale function with parameter value", false)
@@ -657,7 +657,7 @@ DO
 
 DIRECT (INTEGER_FormantModeler_getNumberOfTracks) {
 	INTEGER_ONE (FormantModeler)
-		long result = FormantModeler_getNumberOfTracks (me);
+		integer result = FormantModeler_getNumberOfTracks (me);
 	INTEGER_ONE_END (U" (= number of formants)")
 }
 
@@ -667,7 +667,7 @@ FORM (INTEGER_FormantModeler_getNumberOfParameters, U"FormantModeler: Get number
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
-		long result = FormantModeler_getNumberOfParameters (me, formantNumber);
+		integer result = FormantModeler_getNumberOfParameters (me, formantNumber);
 	INTEGER_ONE_END (U" (= number of parameters for F", formantNumber, U")")
 }
 
@@ -677,13 +677,13 @@ FORM (INTEGER_FormantModeler_getNumberOfFixedParameters, U"FormantModeler: Get n
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
-		long result = FormantModeler_getNumberOfFixedParameters (me, formantNumber);
+		integer result = FormantModeler_getNumberOfFixedParameters (me, formantNumber);
 	INTEGER_ONE_END (U" (= number of fixed parameters for F", formantNumber, U")")
 }
 
 DIRECT (INTEGER_FormantModeler_getNumberOfDataPoints) {
 	INTEGER_ONE (FormantModeler)
-		long result = FormantModeler_getNumberOfDataPoints (me);
+		integer result = FormantModeler_getNumberOfDataPoints (me);
 	INTEGER_ONE_END (U"")
 }
 
@@ -692,7 +692,7 @@ FORM (INTEGER_FormantModeler_getNumberOfInvalidDataPoints, U"FormantModeler: Get
 	OK
 DO
 	INTEGER_ONE (FormantModeler)
-		long result = FormantModeler_getNumberOfInvalidDataPoints (me, formantNumber);
+		integer result = FormantModeler_getNumberOfInvalidDataPoints (me, formantNumber);
 	INTEGER_ONE_END (U" (= number of invalid data points for F", formantNumber, U")")
 }
 
@@ -736,7 +736,7 @@ FORM (REAL_FormantModeler_getVarianceOfParameters, U"FormantModeler: Get varianc
 	INTEGER (toParameter, U"right Parameter range", U"0")
 	OK
 DO
-	long numberOfFreeParameters;
+	integer numberOfFreeParameters;
 	NUMBER_ONE (FormantModeler)
 		double result = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, fromParameter, toParameter, & numberOfFreeParameters);
 	NUMBER_ONE_END (U" (for ", numberOfFreeParameters, U" free parameters.)")
@@ -1166,9 +1166,9 @@ FORM (NEW_Table_to_DataModeler, U"", nullptr) {
 	OK
 DO
 	CONVERT_EACH (Table)
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, columnWithX_string);
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, columnWithY_string);
-		long scolumn = Table_findColumnIndexFromColumnLabel (me, columnEithSigma_string);
+		integer xcolumn = Table_getColumnIndexFromColumnLabel (me, columnWithX_string);
+		integer ycolumn = Table_getColumnIndexFromColumnLabel (me, columnWithY_string);
+		integer scolumn = Table_findColumnIndexFromColumnLabel (me, columnEithSigma_string);
 		autoDataModeler result = Table_to_DataModeler (me, xmin, xmax, xcolumn, ycolumn, scolumn, maximumOrder + 1, functionType);
 	CONVERT_EACH_END (my name)
 }

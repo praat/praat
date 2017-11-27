@@ -2,7 +2,7 @@
 #define _Polynomial_h_
 /* Polynomial.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,15 +39,15 @@
 
 #include "Polynomial_def.h"
 
-void FunctionTerms_init (FunctionTerms me, double xmin, double xmax, long numberOfCoefficients);
+void FunctionTerms_init (FunctionTerms me, double xmin, double xmax, integer numberOfCoefficients);
 
 void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, bool allowTrailingZeros);
 
-autoFunctionTerms FunctionTerms_create (double xmin, double xmax, long numberOfCoefficients);
+autoFunctionTerms FunctionTerms_create (double xmin, double xmax, integer numberOfCoefficients);
 
 void FunctionTerms_setDomain (FunctionTerms me, double xmin, double xmax);
 
-void FunctionTerms_setCoefficient (FunctionTerms me, long index, double value);
+void FunctionTerms_setCoefficient (FunctionTerms me, integer index, double value);
 
 double FunctionTerms_evaluate (FunctionTerms me, double x);
 
@@ -57,7 +57,7 @@ void FunctionTerms_evaluateTerms (FunctionTerms me, double x, double terms[]);
 
 void FunctionTerms_getExtrema (FunctionTerms me, double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 
-long FunctionTerms_getDegree (FunctionTerms me);
+integer FunctionTerms_getDegree (FunctionTerms me);
 
 double FunctionTerms_getMinimum (FunctionTerms me, double x1, double x2);
 
@@ -80,7 +80,7 @@ void FunctionTerms_draw (FunctionTerms me, Graphics g, double xmin, double xmax,
 	Polynomials can be extrapolated.
 	LegendreSeries and ChebyshevSeries cannot be extrapolated.
 */
-void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, long index, double xmin, double xmax,
+void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, integer index, double xmin, double xmax,
 	double ymin, double ymax, int extrapolate, int garnish);
 
 Thing_define (Polynomial, FunctionTerms) {
@@ -90,10 +90,10 @@ Thing_define (Polynomial, FunctionTerms) {
 		virtual dcomplex v_evaluate_z (dcomplex z);
 		virtual void v_evaluateTerms (double x, double terms[]);
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
-		//virtual long v_getDegree ();   David, is het OK dat deze niet overschreven wordt? Ja
+		//virtual integer v_getDegree ();   David, is het OK dat deze niet overschreven wordt? Ja
 };
 
-autoPolynomial Polynomial_create (double xmin, double xmax, long degree);
+autoPolynomial Polynomial_create (double xmin, double xmax, integer degree);
 
 autoPolynomial Polynomial_createFromString (double xmin, double xmax, const char32 *s);
 
@@ -111,10 +111,10 @@ dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z);
  * Precondition : my numberOfCoeffcients >= 3+2*numberOfOmegas
  * 	Polynomial is uses as a "buffer". We define it one and reuse it 
  */
-void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, long numberOfTerms);
+void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, integer numberOfTerms);
 autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, const char32 *s);
 
-void Polynomial_initFromRealRoots (Polynomial me, double *roots, long numberOfRoots);
+void Polynomial_initFromRealRoots (Polynomial me, double *roots, integer numberOfRoots);
 autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, const char32 *s);
 
 double Polynomial_getArea (Polynomial me, double xmin, double xmax);
@@ -129,7 +129,7 @@ double Polynomial_evaluate (Polynomial me, double x);
 
 void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *fx, double *dfx);
 
-void Polynomial_evaluateDerivatives (Polynomial me, double x, double *derivatives /*[0.. numberOfDerivatives]*/, long numberOfDerivatives);
+void Polynomial_evaluateDerivatives (Polynomial me, double x, double *derivatives /*[0.. numberOfDerivatives]*/, integer numberOfDerivatives);
 /* derivatives[0] = Polynomial_evaluate (me, x); */
 
 void Polynomial_evaluateTerms (Polynomial me, double x, double terms[]);
@@ -169,7 +169,7 @@ Thing_define (LegendreSeries, FunctionTerms) {
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 };
 
-autoLegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPolynomials);
+autoLegendreSeries LegendreSeries_create (double xmin, double xmax, integer numberOfPolynomials);
 
 autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const char32 *s);
 
@@ -180,7 +180,7 @@ autoPolynomial LegendreSeries_to_Polynomial (LegendreSeries me);
 Thing_define (Roots, ComplexVector) {
 };
 
-autoRoots Roots_create (long numberOfRoots);
+autoRoots Roots_create (integer numberOfRoots);
 
 void Roots_fixIntoUnitCircle (Roots me);
 
@@ -191,16 +191,16 @@ dcomplex Roots_evaluate_z (Roots me, dcomplex z);
 
 autoRoots Polynomial_to_Roots_ev (Polynomial me);
 
-long Roots_getNumberOfRoots (Roots me);
+integer Roots_getNumberOfRoots (Roots me);
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
 	const char32 *symbol, int fontSize, int garnish);
 
-dcomplex Roots_getRoot (Roots me, long index);
+dcomplex Roots_getRoot (Roots me, integer index);
 
-void Roots_setRoot (Roots me, long index, double re, double im);
+void Roots_setRoot (Roots me, integer index, double re, double im);
 
-autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, long numberOfFrequencies, double radius);
+autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numberOfFrequencies, double radius);
 
 autoRoots Polynomial_to_Roots (Polynomial me);
 /* Find roots of polynomial and polish them */
@@ -215,11 +215,11 @@ void Roots_and_Polynomial_polish (Roots me, Polynomial thee);
 
 autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal);
 
-autoPolynomial TableOfReal_to_Polynomial (TableOfReal me, long degree, long xcol, long ycol, long scol);
+autoPolynomial TableOfReal_to_Polynomial (TableOfReal me, integer degree, integer xcol, integer ycol, integer scol);
 
-autoLegendreSeries TableOfReal_to_LegendreSeries (TableOfReal me, long numberOfPolynomials, long xcol, long ycol, long scol);
+autoLegendreSeries TableOfReal_to_LegendreSeries (TableOfReal me, integer numberOfPolynomials, integer xcol, integer ycol, integer scol);
 
-autoSpectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, long numberOfFrequencies, double radius);
+autoSpectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, integer numberOfFrequencies, double radius);
 
 /*
 	A ChebyshevSeries p(x) on a domain [xmin,xmax] is defined as the
@@ -238,15 +238,15 @@ Thing_define (ChebyshevSeries, FunctionTerms) {
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
 };
 
-autoChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, long numberOfPolynomials);
+autoChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, integer numberOfPolynomials);
 
 autoChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, const char32 *s);
 
 autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 
-void Spline_init (Spline me, double xmin, double xmax, long degree, long numberOfCoefficients, long numberOfKnots);
+void Spline_init (Spline me, double xmin, double xmax, integer degree, integer numberOfCoefficients, integer numberOfKnots);
 
-long Spline_getOrder (Spline me);
+integer Spline_getOrder (Spline me);
 
 void Spline_drawKnots (Spline me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
 
@@ -260,30 +260,30 @@ Thing_define (MSpline, Spline) {
 		virtual void v_evaluateTerms (double x, double terms[]);
 };
 
-autoMSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
+autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
 
-autoMSpline MSpline_createFromStrings (double xmin, double xmax, long degree, const char32 *coef, const char32 *interiorKnots);
+autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, const char32 *coef, const char32 *interiorKnots);
 
 Thing_define (ISpline, Spline) {
 	// overridden methods:
 	public:
 		virtual double v_evaluate (double x);
 		virtual void v_evaluateTerms (double x, double terms[]);
-		virtual long v_getOrder ();
+		virtual integer v_getOrder ();
 };
 
-autoISpline ISpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
+autoISpline ISpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
 
-autoISpline ISpline_createFromStrings (double xmin, double xmax, long degree, const char32 *coef, const char32 *interiorKnots);
+autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, const char32 *coef, const char32 *interiorKnots);
 
 /****************** fit **********************************************/
 
 void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freezeCoefficients[], double tol, int ic, autoCovariance *c);
 
-autoPolynomial RealTier_to_Polynomial (RealTier me, long degree, double tol, int ic, autoCovariance *cvm);
+autoPolynomial RealTier_to_Polynomial (RealTier me, integer degree, double tol, int ic, autoCovariance *cvm);
 
-autoLegendreSeries RealTier_to_LegendreSeries (RealTier me, long degree, double tol, int ic, autoCovariance *cvm);
+autoLegendreSeries RealTier_to_LegendreSeries (RealTier me, integer degree, double tol, int ic, autoCovariance *cvm);
 
-autoChebyshevSeries RealTier_to_ChebyshevSeries (RealTier me, long degree, double tol, int ic, autoCovariance *cvm);
+autoChebyshevSeries RealTier_to_ChebyshevSeries (RealTier me, integer degree, double tol, int ic, autoCovariance *cvm);
 
 #endif /* _Polynomial_h_ */
