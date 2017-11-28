@@ -24,7 +24,7 @@
 #include "espeakdata_FileInMemory.h"
 #include "espeak_ng.h"
 #include "speech.h"
-#include "voice.h"
+#include "synthesize.h"
 #include <errno.h>
 
 extern autoFileInMemoryManager espeak_ng_FileInMemoryManager;
@@ -137,6 +137,226 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 			Melder_warning (U"Voice data for ", fname, U" could not be gathered.");
 		}*/
 	}
+}
+
+/*
+	The espeak-ng data files have been written with little endian byte order. To be able to use these files on big endian hardware we have to change these files as if they were written on a big endian machine.
+	The following routines were modeled after espeak-phonemedata.c by Jonathan Duddington.
+	A serious bug in his code for the phontab_to_bigendian procedure has been corrected.
+	A better solution would be:
+		espeak-ng should read a little endian int32 as 4 unsigned bytes:
+			int32 i = (byte[0]<<0) | (byte[1]<<8) | (byte[2]<<16) | (byte[3]<<24);
+		a int16 (short) as 2 unsigned bytes:
+			int16 i = (byte[0]<<0) | (byte[1]<<8);
+		Then no conversion of data files would be necessary.
+
+*/
+
+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+	#define SWAP_2(i1) { integer i2 = i1 + 1; \
+		thy d_data [i1] = my d_data [i2]; \
+		thy d_data [i2] = my d_data [i1]; }
+
+	#define SWAP_4(i1) { integer i2 = i1 + 1, i3 = i1 + 2, i4 = i1 + 3; \
+		thy d_data [i1] = my d_data [i4]; \
+		thy d_data [i2] = my d_data [i3]; \
+		thy d_data [i3] = my d_data [i2]; \
+		thy d_data [i4] = my d_data [i1]; }
+#else
+	#define SWAP_2(i1)
+	#define SWAP_4(i1)
+#endif
+
+static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory manifest) {
+	try {
+		autoFileInMemory thee = Data_copy (me);
+		FILE *phondataf = fopen (Melder_peek32to8 (my d_path), "r");
+		FILE *manifestf = fopen (Melder_peek32to8 (manifest -> d_path), "r");
+		char line [1024];
+		// copy 4 bytes: version number
+		// copy 4 bytes: sample rate
+		while (fgets (line, sizeof (line), manifestf)) {
+			if (! isupper (line [0])) continue;
+			unsigned int index;
+			sscanf(& line [2], "%x", & index);
+			fseek (phondataf, index, SEEK_SET);
+			integer i1 = index;
+			if (line [0] == 'S') { // 
+				/*
+					typedef struct {
+						short length;
+						unsigned char n_frames;
+						unsigned char sqflags;
+						frame_t frame[N_SEQ_FRAMES];
+					} SPECT_SEQ;
+				*/
+
+				SWAP_2 (i1)
+				index += 2; // skip the short length
+				integer numberOfFrames = my d_data [index]; // unsigned char n_frames
+				index += 2; // skip the 2 unsigned char's n_frames & sqflags
+				
+				for (integer n = 1; n <= numberOfFrames; n ++) {
+					/* 
+						typedef struct { //64 bytes
+							short frflags;
+							short ffreq[7];
+							unsigned char length;
+							unsigned char rms;
+							unsigned char fheight[8];
+							unsigned char fwidth[6];          // width/4  f0-5
+							unsigned char fright[3];          // width/4  f0-2
+							unsigned char bw[4];        // Klatt bandwidth BNZ /2, f1,f2,f3
+							unsigned char klattp[5];    // AV, FNZ, Tilt, Aspr, Skew
+							unsigned char klattp2[5];   // continuation of klattp[],  Avp, Fric, FricBP, Turb
+							unsigned char klatt_ap[7];  // Klatt parallel amplitude
+							unsigned char klatt_bp[7];  // Klatt parallel bandwidth  /2
+							unsigned char spare;        // pad to multiple of 4 bytes
+						} frame_t;   //  with extra Klatt parameters for parallel resonators
+
+						typedef struct {  // 44 bytes
+							short frflags;
+							short ffreq[7];
+							unsigned char length;
+							unsigned char rms;
+							unsigned char fheight[8];
+							unsigned char fwidth[6];          // width/4  f0-5
+							unsigned char fright[3];          // width/4  f0-2
+							unsigned char bw[4];        // Klatt bandwidth BNZ /2, f1,f2,f3
+							unsigned char klattp[5];    // AV, FNZ, Tilt, Aspr, Skew
+						} frame_t2;
+						Both frame_t and frame_t2 start with 8 short's.
+					*/
+					i1 = index;
+					for (integer i = 1; i <= 8; i ++) {
+						SWAP_2 (i1)
+						i1 += 2;
+					}
+					// 
+					#define FRFLAG_KLATT 0x01
+					index += (thy d_data [i1] & FRFLAG_KLATT) ? sizeof (frame_t) : sizeof (frame_t2); // thy is essential!
+				}				
+			} else if (line [0] == 'W') { // Wave data
+				int length = my d_data [i1 + 1] * 256 + my d_data [i1];
+				index += 4;
+				
+				index += length; // char wavedata[length]
+				
+				index += index % 3;
+				
+			} else if (line [0] == 'E') {
+				
+				index += 128; // Envelope: skip 128 bytes
+				
+				
+			} else if (line [0] == 'Q') {
+				unsigned int length = my d_data [index + 2] << 8 + my d_data [index + 3];
+				length *= 4;
+				
+				index += length;
+			}
+			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U"is larger than file length (", my d_numberOfBytes, U")."); 
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"phondata not converted to bigendian.");
+	}
+}
+
+static autoFileInMemory phontab_to_bigendian (FileInMemory me) {
+	try {
+		autoFileInMemory thee = Data_copy (me);
+		integer numberOfPhonemeTables = my d_data [0];
+		integer index = 4; // skip first 4 bytes
+		for (integer itab = 1; itab <= numberOfPhonemeTables; itab ++) {
+			integer numberOfPhonemes = thy d_data [index];
+			
+			index += 4; // This is 8 (incorrect) in the original code of espeak.
+			
+			index += N_PHONEME_TAB_NAME; // skip the name
+			integer phonemeTableSizes = numberOfPhonemes * sizeof (PHONEME_TAB);
+			Melder_require (index + phonemeTableSizes <= my d_numberOfBytes, U"Too many tables to process. (table ", itab, U" from ", numberOfPhonemeTables, U").");
+			for (integer j = 1; j <= numberOfPhonemes; j ++) {
+				/*
+					typedef struct { // 16 bytes
+						unsigned int  mnemonic;      // 1st char is in the l.s.byte
+						unsigned int  phflags;       // bits 16-19 place of articulation
+						unsigned short program;
+						unsigned char  code;         // the phoneme number
+						unsigned char  type;         // phVOWEL, phPAUSE, phSTOP etc
+						unsigned char  start_type;
+						unsigned char  end_type;
+						unsigned char  std_length;   // for vowels, in mS/2;  for phSTRESS, the stress/tone type
+						unsigned char  length_mod;   // a length_mod group number, used to access length_mod_tab
+					} PHONEME_TAB;
+				*/
+				integer i1 = index;
+				SWAP_4 (i1)				
+				i1 += 4;
+				SWAP_4 (i1);
+				i1 += 4;
+				SWAP_2 (i1)
+				index += sizeof (PHONEME_TAB);
+			}
+			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U" is larger than file length (", my d_numberOfBytes, U").");
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"phontab not converted to bigendian.");
+	}
+}
+	
+static autoFileInMemory phonindex_to_bigendian (FileInMemory me) {
+	try {
+		autoFileInMemory thee = Data_copy (me);
+		integer numberOfShorts = (my d_numberOfBytes - 4 - 1) / 2;
+		integer index = 4; // skip first 4 bytes
+		for (integer i = 0; i < numberOfShorts; i ++) {
+			SWAP_2 (index)
+			index += 2;
+			Melder_require (index <= my d_numberOfBytes, U"Position ", index, U" is larger than file length (", my d_numberOfBytes, U").");
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"phonindex not converted to bigendian.");
+	}
+}
+
+void espeak_ng_data_to_bigendian () {
+	FileInMemoryManager me = ESPEAK_FILEINMEMORYMANAGER;
+	autoMelderString file;
+
+	MelderString_append (& file, Melder_peek8to32 (PATH_ESPEAK_DATA), U"/phondata-manifest");
+	integer index = FileInMemorySet_lookUp (my files.get(), file.string);
+	Melder_require (index > 0, U"phondata-manifest not present.");
+	FileInMemory manifest = (FileInMemory) my files -> at [index];
+
+	MelderString_empty (& file);
+	MelderString_append (& file, Melder_peek8to32 (PATH_ESPEAK_DATA), U"/phondata");
+	index = FileInMemorySet_lookUp (my files.get(), file.string);
+	Melder_require (index > 0, U"phondata not present.");
+	FileInMemory phondata = (FileInMemory) my files -> at [index];
+
+	autoFileInMemory phondata_new = phondata_to_bigendian (phondata, manifest);
+	my files -> replaceItem_move (phondata_new.move(), index);
+
+	MelderString_empty (& file);
+	MelderString_append (& file, Melder_peek8to32 (PATH_ESPEAK_DATA), U"/phontab");
+	index = FileInMemorySet_lookUp (my files.get(), file.string);
+	Melder_require (index > 0, U"phonindex not present.");
+	FileInMemory phontab = (FileInMemory) my files -> at [index];
+
+	autoFileInMemory phontab_new = phontab_to_bigendian (phontab);	
+	my files -> replaceItem_move (phontab_new.move(), index);
+
+	MelderString_empty (& file);
+	MelderString_append (& file, Melder_peek8to32 (PATH_ESPEAK_DATA), U"/phonindex");
+	index = FileInMemorySet_lookUp (my files.get(), file.string);
+	Melder_require (index > 0, U"phonindex not present.");
+	FileInMemory phonindex = (FileInMemory) my files -> at [index];
+
+	autoFileInMemory phonindex_new = phonindex_to_bigendian (phonindex);	
+	my files -> replaceItem_move (phonindex_new.move(), index);
 }
 
 /* End of file espeak_io.cpp */

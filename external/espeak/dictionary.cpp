@@ -134,7 +134,9 @@ static void InitGroups(Translator *tr)
 		p++;
 
 		if (p[0] == RULE_REPLACEMENTS) {
-			pw = (unsigned int *)(((intptr_t)p+4) & ~3); // advance to next word boundary
+			while ((size_t)p % 4 > 0) { p ++; } // advance to next word boundary
+			pw = (unsigned int *) p;
+			//pw = (unsigned int *)(((intptr_t)p+4) & ~3); // advance to next word boundary
 			tr->langopts.replace_chars = pw;
 			while (pw[0] != 0)
 				pw += 2; // find the end of the replacement list, each entry is 2 words.

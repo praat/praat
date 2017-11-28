@@ -298,16 +298,10 @@ static const char *LookupCharName(Translator *tr, int c, int only)
 }
 
 int Read4Bytes(FILE *f)
-{
-	// Read 4 bytes (least significant first) into a word
-	int ix;
-	unsigned char c;
-	int acc = 0;
-
-	for (ix = 0; ix < 4; ix++) {
-		c = fgetc(f) & 0xff;
-		acc += (c << (ix*8));
-	}
+{ // read int32 from little endian byte stream
+	char p4[4];
+	fread (p4, 1, 4, f);
+	int acc = GET_INT32 (p4);
 	return acc;
 }
 
