@@ -476,7 +476,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 	bool wordItalic = false, wordBold = false, wordCode = false, letterSuper = false;
 	for (ManPage_Paragraph paragraph = paragraphs; (int) paragraph -> type != 0; paragraph ++) {
 		const char32 *p = paragraph -> text;
-		int inTable;
+		bool inTable, inPromptedTable;
 		bool isListItem = paragraph -> type == kManPage_type::LIST_ITEM ||
 			(paragraph -> type >= kManPage_type::LIST_ITEM1 && paragraph -> type <= kManPage_type::LIST_ITEM3);
 		bool isTag = paragraph -> type == kManPage_type::TAG ||
@@ -609,10 +609,16 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			}
 			MelderString_append (buffer, stylesInfo [(int) paragraph -> type]. htmlIn, U"\n");
 		}
-		inTable = *p == U'\t';
+		inTable = !! str32chr (p, U'\t');
 		if (inTable) {
-			MelderString_append (buffer, U"<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>");
-			p ++;
+			if (*p == U'\t') {
+				MelderString_append (buffer, U"<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=middle>");
+				p ++;
+				inPromptedTable = false;
+			} else {
+				MelderString_append (buffer, U"<table border=0 cellpadding=0 cellspacing=0><tr><td width=100 align=left>");
+				inPromptedTable = true;
+			}
 		}
 		/*
 		 * Leading spaces should be visible (mainly used in code fragments).
@@ -747,7 +753,12 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			} else if (*p == U'\\' && p [1] == U's' && p [2] == U'{') {
 				MelderString_append (buffer, U"<font size=-1>"); inSmall = true; p += 3;
 			} else if (*p == U'\t' && inTable) {
-				MelderString_append (buffer, U"<td width=100 align=middle>"); p ++;
+				if (inPromptedTable) {
+					inPromptedTable = false;
+					p ++;   // skip one tab
+				} else {
+					MelderString_append (buffer, U"<td width=100 align=middle>"); p ++;
+				}
 			} else if (*p == U'<') {
 				MelderString_append (buffer, U"&lt;"); p ++;
 			} else if (*p == U'>') {

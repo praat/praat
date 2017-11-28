@@ -26,7 +26,12 @@ typedef int (*enum_generic_getValue) (const char32 *text);
 #define enums_end(kType,maximum,default) MAX = maximum, \
 	DEFAULT = default }; \
 	const char32 * kType##_getText (kType value); \
-	kType kType##_getValue (const char32 *text);
+	kType kType##_getValue (const char32 *text); \
+	inline static kType& operator++ (kType& value) { \
+		value = static_cast <kType> (static_cast <int> (value) + 1); \
+		return value; \
+	}
+
 
 /* End of file enums.h */
 #endif
