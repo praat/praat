@@ -39,16 +39,16 @@ autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
 
 autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fromTime, double toTime) {
 	try {
-		if (my ny != thy numberOfColumns) {
-			Melder_throw (U"The number of inputs in the MixingMatrix and the number of channels in the Sound must be equal.");
-		}
+		Melder_require (my ny == thy numberOfColumns,
+			U"The number of inputs in the MixingMatrix and the number of channels in the Sound must be equal.");
+		
 		if (fromTime == toTime) { 
 			fromTime = my xmin; toTime = my xmax; 
 		}
 	
 		// Determine index range. We use all the real or virtual samples that fit within [fromTime..toTime].
 
-		long ix1 = 1 + Melder_iceiling ((fromTime - my x1) / my dx);
+		integer ix1 = 1 + Melder_iceiling ((fromTime - my x1) / my dx);
 		integer ix2 = 1 + Melder_ifloor ((toTime - my x1) / my dx);
 		if (ix2 < ix1) {
 			Melder_throw (U"Mixed Sound would contain no samples.");
@@ -74,14 +74,14 @@ autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fr
 		* 		ix1=4, ix2=21 [4,12] -> [1,9]
 		*/
 		if (! (toTime < my xmin || fromTime > my xmax)) {
-			for (long i = 1; i <= thy numberOfRows; i++) {
-				for (long ichan = 1; ichan <= my ny; ichan ++) {
-					double mixingCoeffient = thy data [i][ichan];
+			for (integer i = 1; i <= thy numberOfRows; i ++) {
+				for (integer ichan = 1; ichan <= my ny; ichan ++) {
+					double mixingCoeffient = thy data [i] [ichan];
 					if (mixingCoeffient != 0.0) {
-						double *from = my z [ichan], *to = his z[i];
-						long to_i1 = 1, to_i2 = his nx;
+						double *from = my z [ichan], *to = his z [i];
+						integer to_i1 = 1, to_i2 = his nx;
 						if (ix1 < 1) { // (1) + (2)
-							to = his z[i] + 1 - ix1;
+							to = his z [i] + 1 - ix1;
 							to_i1 = 1 - ix1; to_i2 = to_i1 + my nx; // (2)
 							if (ix2 < my nx) { // (1)
 								to_i2 = 1 - ix1 + ix2;
@@ -93,7 +93,7 @@ autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fr
 								to_i2 = his nx;
 							}
 						}
-						for (long j = 1; j <= to_i2 - to_i1 + 1; j++) {
+						for (integer j = 1; j <= to_i2 - to_i1 + 1; j ++) {
 							to [j] += mixingCoeffient * from [j];
 						}
 					}
@@ -108,20 +108,19 @@ autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fr
 
 autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 	try {
-		if (my ny != thy numberOfRows) {
-			Melder_throw (U"The MixingMatrix and the Sound must have the same number of channels.");
-		}
+		Melder_require (my ny == thy numberOfColumns,
+			U"The number of inputs in the MixingMatrix and the number of channels in the Sound must be equal.");
 
 		autoNUMmatrix<double> minv (1, thy numberOfColumns, 1, thy numberOfRows);
 		NUMpseudoInverse (thy data, thy numberOfRows, thy numberOfColumns, minv.peek(), 0);
 		autoSound him = Sound_create (thy numberOfColumns, my xmin, my xmax, my nx, my dx, my x1);
-		for (long i = 1; i <= thy numberOfColumns; i++) {
-			for (long j = 1; j <= my nx; j++) {
-				double s = 0;
-				for (long k = 1; k <= my ny; k++) {
-					s += minv[i][k] * my z[k][j];
+		for (integer i = 1; i <= thy numberOfColumns; i ++) {
+			for (integer j = 1; j <= my nx; j ++) {
+				real80 s = 0.0;
+				for (integer k = 1; k <= my ny; k ++) {
+					s += minv [i] [k] * my z [k] [j];
 				}
-				his z[i][j] = s;
+				his z [i] [j] = (real) s;
 			}
 		}
 		return him;
@@ -129,12 +128,5 @@ autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 		Melder_throw (me, U": not unmixed.");
 	}
 }
-
-#if 0
-// TODO
-void LongSound_and_MixingMatrix_playPart (LongSound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback callback, Thing boss) {
-	
-}
-#endif
 
 /* End of file Sound_and_MixingMatrix.cpp */

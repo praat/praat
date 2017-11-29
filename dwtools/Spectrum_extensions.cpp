@@ -1,6 +1,6 @@
 /* Spectrum_extensions.cpp
  *
- * Copyright (C) 1993-2013, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ struct tribolet_struct {
 	double thlinc, thlcon;
 	double ddf, dvtmn2;
 	double *x;
-	long nx, l, count;
+	integer nx, l, count;
 	int reverse_sign;
 };
 
@@ -62,10 +62,10 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad, dou
 	double cosf = cos (freq_rad), sinf = sin (freq_rad);
 	double a = 2 * cosf, b, u1 = 0, u2 = u1, w1 = u1, w2 = u1;
 	double *x = tbs -> x;
-	long nx = tbs -> nx;
+	integer nx = tbs -> nx;
 
-	for (long j = 1; j <= nx; j++) {
-		double xj = x[j];
+	for (integer j = 1; j <= nx; j ++) {
+		double xj = x [j];
 		double u0 =           xj + a * u1 - u2;
 		double w0 = (j - 1) * xj + a * w1 - w2;
 		u2 = u1;
@@ -112,14 +112,14 @@ static int phase_check (double pv, double *phase, double thlcon) {
 // Phase unwrapping based on Tribolet's adaptive integration method.
 // the unwrapped phase estimate is returned.
 static double phase_unwrap (struct tribolet_struct *tbs, double pfreq, double ppv, double pdvt, double *pphase, double *ppdvt) {
-	double sdvt[25], sppv[25];
+	double sdvt [25], sppv [25];
 	double freq, phase = 0, phase_inc;
 	double delta, xr, xi, xmsq, nxr, nxi;
-	long k, sindex[25], pindex = 1, sp = 1;
+	integer k, sindex [25], pindex = 1, sp = 1;
 
-	sppv[sp] = ppv;
-	sdvt[sp] = pdvt;
-	sindex[sp] = tbs -> l + 1;
+	sppv [sp] = ppv;
+	sdvt [sp] = pdvt;
+	sindex [sp] = tbs -> l + 1;
 
 	goto p40;
 
@@ -131,7 +131,7 @@ p20:
 		pi in the phase.
 	*/
 
-	if ((sindex[sp] - pindex) <= 1) {
+	if ((sindex [sp] - pindex) <= 1) {
 		return phase;
 	}
 
@@ -139,13 +139,13 @@ p20:
 		Get the intermediate frequency value and compute its phase
 		derivative and principal value.
 	*/
-	k = (sindex[sp] + pindex) / 2;
+	k = (sindex [sp] + pindex) / 2;
 	freq = pfreq + (k - 1) * tbs -> ddf;
 	getSpectralValues (tbs, freq, &xr, &xi, &nxr, &nxi);
-	sindex[++sp] = k;
-	sppv[sp] = PPVPHA (xr, xi, tbs -> reverse_sign);
+	sindex [ ++sp] = k;
+	sppv [sp] = PPVPHA (xr, xi, tbs -> reverse_sign);
 	xmsq = xr * xr + xi * xi;
-	sdvt[sp] = PHADVT (xr, xi, nxr, nxi, xmsq);
+	sdvt [sp] = PHADVT (xr, xi, nxr, nxi, xmsq);
 
 p40:
 	/*
@@ -154,8 +154,8 @@ p40:
 		increment, is greater than the specified threshold, adapt step size.
 	*/
 
-	delta = 0.5 * tbs -> ddf * (sindex[sp] - pindex);
-	phase_inc = delta * (*ppdvt + sdvt[sp]);
+	delta = 0.5 * tbs -> ddf * (sindex [sp] - pindex);
+	phase_inc = delta * (*ppdvt + sdvt [sp]);
 
 	if (fabs (phase_inc - delta * tbs -> dvtmn2) > tbs -> thlinc) {
 		goto p20;
@@ -163,7 +163,7 @@ p40:
 
 	phase = *pphase + phase_inc;
 
-	if (! phase_check (sppv[sp], &phase, tbs -> thlcon)) {
+	if (! phase_check (sppv [sp], &phase, tbs -> thlcon)) {
 		goto p20;
 	}
 
@@ -177,9 +177,9 @@ p40:
 
 	// p10: Update previous estimate.
 
-	pindex = sindex[sp];
+	pindex = sindex [sp];
 	*pphase = phase;
-	*ppdvt = sdvt[sp--];
+	*ppdvt = sdvt [sp--];
 
 	goto p40;
 }
@@ -189,21 +189,19 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 		struct tribolet_struct tbs;
 		int remove_linear_part = 1;
 
-		long nfft = 2;
+		integer nfft = 2;
 		while (nfft < my nx - 1) {
 			nfft *= 2;
 		}
 		nfft *= 2;
 
-		if (nfft / 2 != my nx - 1) {
-			Melder_throw (U"Dimension of Spectrum is not (power of 2 - 1).");
-		}
+		Melder_require (nfft / 2 == my nx - 1, U"Dimension of Spectrum must be a power of 2 - 1.");
 
 		autoSound x = Spectrum_to_Sound (me);
 		autoSound nx = Data_copy (x.get());
 
-		for (long i = 1; i <= x -> nx; i++) {
-			nx -> z[1][i] *= (i - 1);
+		for (integer i = 1; i <= x -> nx; i ++) {
+			nx -> z [1] [i] *= (i - 1);
 		}
 		autoSpectrum snx = Sound_to_Spectrum (nx.get(), 1);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1);
@@ -212,40 +210,40 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 
 		tbs.thlinc = THLINC;
 		tbs.thlcon = THLCON;
-		tbs.x = x -> z[1];
+		tbs.x = x -> z [1];
 		tbs.nx = x -> nx;
 		tbs.l = Melder_ifloor (pow (2, EXP2) + 0.1);
 		tbs.ddf = NUM2pi / ( (tbs.l) * nfft);
-		tbs.reverse_sign = my z[1][1] < 0;
+		tbs.reverse_sign = my z [1] [1] < 0;
 		tbs.count = 0;
 
 		// Reuse snx : put phase derivative (d/df) in imaginary part.
 
 		tbs.dvtmn2 = 0;
-		for (long i = 1; i <= my nx; i ++) {
-			double xr = my z[1][i], xi = my z[2][i];
-			double nxr = snx -> z[1][i], nxi = snx -> z[2][i];
+		for (integer i = 1; i <= my nx; i ++) {
+			double xr = my z [1] [i], xi = my z [2] [i];
+			double nxr = snx -> z [1] [i], nxi = snx -> z [2] [i];
 			double xmsq = xr * xr + xi * xi;
 			double pdvt = PHADVT (xr, xi, nxr, nxi, xmsq);
-			thy z[1][i] = xmsq;
-			snx -> z[2][i] = pdvt;
+			thy z [1] [i] = xmsq;
+			snx -> z [2] [i] = pdvt;
 			tbs.dvtmn2 += pdvt;
 		}
 
-		tbs.dvtmn2 = (2 * tbs.dvtmn2 - snx -> z[2][1] - snx -> z[2][my nx]) / (my nx - 1);
+		tbs.dvtmn2 = (2 * tbs.dvtmn2 - snx -> z [2] [1] - snx -> z [2] [my nx]) / (my nx - 1);
 
 		autoMelderProgress progress (U"Phase unwrapping");
 
 		double pphase = 0, phase = 0;
-		double ppdvt = snx -> z[2][1];
-		thy z[2][1] = PPVPHA (my z[1][1], my z[2][1], tbs.reverse_sign);
-		for (long i = 2; i <= my nx; i ++) {
+		double ppdvt = snx -> z [2] [1];
+		thy z [2] [1] = PPVPHA (my z [1] [1], my z [2] [1], tbs.reverse_sign);
+		for (integer i = 2; i <= my nx; i ++) {
 			double pfreq = NUM2pi * (i - 1) / nfft;
-			double pdvt = snx -> z[2][i];
-			double ppv = PPVPHA (my z[1][i], my z[2][i], tbs.reverse_sign);
+			double pdvt = snx -> z [2] [i];
+			double ppv = PPVPHA (my z [1] [i], my z [2] [i], tbs.reverse_sign);
 			phase = phase_unwrap (&tbs, pfreq, ppv, pdvt, &pphase, &ppdvt);
 			ppdvt = pdvt;
-			thy z[2][i] = pphase = phase;
+			thy z [2] [i] = pphase = phase;
 			Melder_progress ( (double) i / my nx, i,
 			                   U" unwrapped phases from ", my nx, U".");
 		}
@@ -254,8 +252,8 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 
 		if (remove_linear_part) {
 			phase /= my nx - 1;
-			for (long i = 2; i <= my nx; i ++) {
-				thy z[2][i] -= phase * (i - 1);
+			for (integer i = 2; i <= my nx; i ++) {
+				thy z [2] [i] -= phase * (i - 1);
 			}
 		}
 		Melder_information (U"Number of spectral values: ", tbs.count);
@@ -268,14 +266,14 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 
 void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax, double phase_min, double phase_max, int unwrap, int garnish) {
 	autoMatrix thee;
-	int reverse_sign = my z[1][1] < 0;
+	int reverse_sign = my z [1] [1] < 0;
 
 	if (unwrap) {
 		thee = Spectrum_unwrap (me);
 	} else {
 		thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 2.0, 2, 1.0, 1.0);
-		for (long i = 1; i <= my nx; i ++) {
-			thy z[2][i] = PPVPHA (my z[1][i], my z[2][i], reverse_sign);
+		for (integer i = 1; i <= my nx; i ++) {
+			thy z [2] [i] = PPVPHA (my z [1] [i], my z [2] [i], reverse_sign);
 		}
 	}
 
@@ -287,14 +285,14 @@ void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax, dou
 
 autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 	try {
-		if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax || my dx != thy dx) {
-			Melder_throw (U"Dimensions of both spectra do not conform.");
-		}
+		Melder_require (my nx == thy nx && my x1 == thy x1 && my xmax == thy xmax && my dx == thy dx,
+			U"Dimensions of both spectra must be the same.");
+
 		autoSpectrum him = Data_copy (me);
 
-		for (long i = 1; i <= his nx; i++) {
-			his z[1][i] = my z[1][i] * thy z[1][i] - my z[2][i] * thy z[2][i];
-			his z[2][i] = my z[1][i] * thy z[2][i] + my z[2][i] * thy z[1][i];
+		for (integer i = 1; i <= his nx; i ++) {
+			his z [1] [i] = my z [1] [i] * thy z [1] [i] - my z [2] [i] * thy z [2] [i];
+			his z [2] [i] = my z [1] [i] * thy z [2] [i] + my z [2] [i] * thy z [1] [i];
 		}
 		return him;
 	} catch (MelderError) {
@@ -303,12 +301,12 @@ autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 }
 
 void Spectrum_conjugate (Spectrum me) {
-	for (long i = 1; i <= my nx; i++) {
-		my z[2][i] = - my z[2][i];
+	for (integer i = 1; i <= my nx; i ++) {
+		my z [2] [i] = - my z [2] [i];
 	}
 }
 
-autoSpectrum Spectrum_resample (Spectrum me, long numberOfFrequencies) {
+autoSpectrum Spectrum_resample (Spectrum me, integer numberOfFrequencies) {
 	try {
 		double newSamplingFrequency = (1 / my dx) * numberOfFrequencies / my nx;
 		// resample real and imaginary part !
@@ -325,20 +323,20 @@ autoSpectrum Spectrum_resample (Spectrum me, long numberOfFrequencies) {
 static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
 	try {
 		double xmax = my xmax;
-		long numberOfFrequencies = my nx, interpolationDepth = 50;
+		integer numberOfFrequencies = my nx, interpolationDepth = 50;
 		if (changeMaximumFrequency) {
 			xmax += shiftBy;
 			numberOfFrequencies += (xmax - my xmax) / my dx;
 		}
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
 		// shiftBy >= 0
-		for (long i = 1; i <= thy nx; i++) {
+		for (integer i = 1; i <= thy nx; i ++) {
 			double thyf = thy x1 + (i - 1) * thy dx;
 			double myf = thyf - shiftBy;
 			if (myf >= my xmin && myf <= my xmax) {
 				double index = Sampled_xToIndex (me, myf);
-				thy z[1][i] = NUM_interpolate_sinc (my z[1], my nx, index, interpolationDepth);
-				thy z[2][i] = NUM_interpolate_sinc (my z[2], my nx, index, interpolationDepth);
+				thy z [1] [i] = NUM_interpolate_sinc (my z [1], my nx, index, interpolationDepth);
+				thy z [2] [i] = NUM_interpolate_sinc (my z [2], my nx, index, interpolationDepth);
 			}
 		}
 		return thee;
@@ -348,7 +346,7 @@ static autoSpectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, boo
 }
 #endif
 
-autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth) {
+autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, integer interpolationDepth) {
 	try {
 		double xmax = my xmax;
 		integer numberOfFrequencies = my nx;
@@ -358,50 +356,50 @@ autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newM
 		}
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
 		// shiftBy >= 0
-		for (long i = 1; i <= thy nx; i++) {
+		for (integer i = 1; i <= thy nx; i ++) {
 			double thyf = thy x1 + (i - 1) * thy dx;
 			double myf = thyf - shiftBy;
 			if (myf >= my xmin && myf <= my xmax) {
 				double index = Sampled_xToIndex (me, myf);
-				thy z[1][i] = NUM_interpolate_sinc (my z[1], my nx, index, interpolationDepth);
-				thy z[2][i] = NUM_interpolate_sinc (my z[2], my nx, index, interpolationDepth);
+				thy z [1] [i] = NUM_interpolate_sinc (my z [1], my nx, index, interpolationDepth);
+				thy z [2] [i] = NUM_interpolate_sinc (my z [2], my nx, index, interpolationDepth);
 			}
 		}
 		// Make imaginary part of first and last sample zero
 		// so Spectrum_to_Sound uses FFT if numberOfSamples was power of 2!
-		double amp = sqrt (thy z[1][1] * thy z[1][1] + thy z[2][1] * thy z[2][1]);
-		thy z[1][1] = amp; thy z[2][1] = 0;
-		amp = sqrt (thy z[1][thy nx] * thy z[1][thy nx] + thy z[2][thy nx] * thy z[2][thy nx]);
-		thy z[1][thy nx] = amp; thy z[2][thy nx] = 0;
+		double amp = sqrt (thy z [1] [1] * thy z [1] [1] + thy z [2] [1] * thy z [2] [1]);
+		thy z [1] [1] = amp; thy z [2] [1] = 0;
+		amp = sqrt (thy z [1] [thy nx] * thy z [1] [thy nx] + thy z [2] [thy nx] * thy z [2] [thy nx]);
+		thy z [1] [thy nx] = amp; thy z [2] [thy nx] = 0;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not shifted.");
 	}
 }
 
-autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interpolationDepth, int freqscale, int method) {
+autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, integer interpolationDepth, int freqscale, int method) {
 	try {
 		double fdomain = my xmax - my xmin, factor = fdomain / fmax ;
-		//long numberOfFrequencies = 1.0 + fmax / my dx; // keep dx the same, otherwise the "duration" changes
+		//integer numberOfFrequencies = 1.0 + fmax / my dx; // keep dx the same, otherwise the "duration" changes
 		double xmax = my xmax / factor;
 		integer numberOfFrequencies = Melder_ifloor (my nx / factor); // keep dx the same, otherwise the "duration" changes
 		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
-		thy z[1][1] = my z[1][1]; thy z[2][1] = my z[2][1];
+		thy z [1] [1] = my z [1] [1]; thy z [2] [1] = my z [2] [1];
 		double df = freqscale == 1 ? factor * my dx : log10 (fdomain) / (numberOfFrequencies - 1);
-		for (long i = 2; i <= numberOfFrequencies; i++) {
+		for (integer i = 2; i <= numberOfFrequencies; i ++) {
 			double f = my xmin + (freqscale == 1 ? (i - 1) * df : pow (10.0, (i - 1) * df));
 			double x, y, index = (f - my x1) / my dx + 1;
 			if (index > my nx) {
 				break;
 			}
 			if (method == 1) {
-				x = NUM_interpolate_sinc (my z[1], my nx, index, interpolationDepth);
-				y = NUM_interpolate_sinc (my z[2], my nx, index, interpolationDepth);
+				x = NUM_interpolate_sinc (my z [1], my nx, index, interpolationDepth);
+				y = NUM_interpolate_sinc (my z [2], my nx, index, interpolationDepth);
 			} else {
 				x = undefined;   // ppgb: better than data from random memory
 				y = undefined;
 			}
-			thy z[1][i] = x; thy z[2][i] = y;
+			thy z [1] [i] = x; thy z [2] [i] = y;
 		}
 		return thee;
 	} catch (MelderError) {

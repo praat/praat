@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2011, 2015-2017 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tm
 
 	double fref_st = 12.0 * log (fref_Hz / 100.0) / NUMln2;
 
-	for (long i = 1; i <= my points.size; i++) {
+	for (integer i = 1; i <= my points.size; i ++) {
 		RealPoint point = my points.at [i];
 		double f = point -> value;
 		if (point -> number < tmin || point -> number > tmax) {
@@ -101,11 +101,11 @@ static void Pitch_scaleDuration (Pitch me, double multiplier) {
 }
 
 static void Pitch_scalePitch (Pitch me, double multiplier) {
-	for (long i = 1; i <= my nx; i++) {
-		double f = my frame[i].candidate[1].frequency;
+	for (integer i = 1; i <= my nx; i ++) {
+		double f = my frame [i].candidate [1].frequency;
 		f *= multiplier;
 		if (f < my ceiling) {
-			my frame[i].candidate[1].frequency = f;
+			my frame [i].candidate [1].frequency = f;
 		}
 	}
 }
@@ -156,8 +156,8 @@ static void u1read (Sound me, FILE *f) {
 	}
 }
 
-static void i2write (Sound me, FILE *f, bool littleEndian, long *nClip) {
-	double *s = my z[1], min = -32768, max = 32767;
+static void i2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
+	double *s = my z [1], min = -32768, max = 32767;
 	void (*put) (int16_t, FILE *) = littleEndian ? binputi16LE : binputi16;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
@@ -182,7 +182,7 @@ static void i2read (Sound me, FILE *f, bool littleEndian) {
 }
 
 static void u2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
-	double *s = my z[1], min = 0, max = 65535;
+	double *s = my z [1], min = 0, max = 65535;
 	void (*put) (uint16_t, FILE *) = littleEndian ? binputu16LE : binputu16;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
@@ -199,7 +199,7 @@ static void u2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 }
 
 static void u2read (Sound me, FILE *f, bool littleEndian) {
-	double *s = my z[1];
+	double *s = my z [1];
 	uint16_t (*get) (FILE *) = littleEndian ? bingetu16LE : bingetu16;
 	for (integer i = 1; i <= my nx; i ++) {
 		s [i] = get (f) / 32768.0 - 1.0;
@@ -210,8 +210,8 @@ static void i4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 	double *s = my z [1]; double min = -2147483648.0, max = 2147483647.0;
 	void (*put) (int32_t, FILE *) = littleEndian ? binputi32LE : binputi32;
 	*nClip = 0;
-	for (integer i = 1; i <= my nx; i++) {
-		double sample = round (s[i] * 2147483648.0);
+	for (integer i = 1; i <= my nx; i ++) {
+		double sample = round (s [i] * 2147483648.0);
 		if (sample > max) {
 			sample = max;
 			(*nClip) ++;
@@ -232,7 +232,7 @@ static void i4read (Sound me, FILE *f, bool littleEndian) {
 }
 
 
-static void u4write (Sound me, FILE *f, bool littleEndian, long *nClip) {
+static void u4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 	double *s = my z [1]; double min = 0.0, max = 4294967295.0;
 	void (*put) (uint32_t, FILE *) = littleEndian ? binputu32LE : binputu32;
 	*nClip = 0;
@@ -375,9 +375,9 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, bool l
 		if (nClip > 0) {
 			Melder_warning (nClip, U" from ", my nx, U" samples have been clipped.\nAdvice: you could scale the amplitudes or save as a binary file.");
 		}
-		if (feof ((FILE *) f) || ferror ((FILE *) f)) {
-			Melder_throw (U"Sound_writeToRawFile: not completed");
-		}
+		
+		Melder_require (feof ((FILE *) f) == 0 && ferror ((FILE *) f) == 0, U"Sound_writeToRawFile: not completed");
+		
 		f.close (file);
 	} catch (MelderError) {
 		Melder_throw (me, U": saving as raw file not performed.");
@@ -403,10 +403,10 @@ static void dialogic_adpcm_init (struct dialogic_adpcm *adpcm) {
 
 	adpcm -> last = 0;
 	adpcm -> index = 0;
-	for (long i = 0; i < 49; i++) {
+	for (integer i = 0; i < 49; i ++) {
 		adpcm -> step_size [i] = step_size [i];
 	}
-	for (long i = 0; i <  8; i++) {
+	for (integer i = 0; i <  8; i ++) {
 		adpcm -> adjust [i] = adjust [i];
 	}
 }
@@ -517,7 +517,7 @@ void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 void Sound_deEmphasis (Sound me, double deEmphasisFrequency) {
 	double deEmphasis = exp (- 2.0 * NUMpi * deEmphasisFrequency * my dx);
 	for (integer channel = 1; channel <= my ny; channel ++) {
-		double *s = my z[channel];
+		double *s = my z [channel];
 		for (integer i = 2; i <= my nx; i ++) {
 			s [i] += deEmphasis * s [i - 1];
 		}
@@ -607,7 +607,7 @@ autoSound Sound_createSimpleToneComplex (double minimumTime, double maximumTime,
 	                                firstFrequency, numberOfComponents, frequencyDistance, 0, 0, scaleAmplitudes);
 }
 
-autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, long numberOfComponents, long mistunedComponent, double mistuningFraction, bool scaleAmplitudes) {
+autoSound Sound_createMistunedHarmonicComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, integer numberOfComponents, integer mistunedComponent, double mistuningFraction, bool scaleAmplitudes) {
 	if (firstFrequency + (numberOfComponents - 1) * firstFrequency > samplingFrequency / 2) {
 		Melder_warning (U"Sound_createMistunedHarmonicComplex: frequency of (some) components too high.");
 		numberOfComponents = Melder_ifloor (1.0 + (0.5 * samplingFrequency - firstFrequency) / firstFrequency);
@@ -648,53 +648,53 @@ autoSound Sound_createGammaTone (double minimumTime, double maximumTime, double 
 
 #if 0
 // This routine is unstable for small values of f and large b. Better to use cross-correlation of gammatone with sound.
-static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_frequency, double bandwidth, double samplingFrequency) {
-	double a[5], b[9], dt = 1.0 / samplingFrequency, wt = NUMpi * centre_frequency * dt;
+static void NUMgammatoneFilter4 (double *x, double *y, integer n, double centre_frequency, double bandwidth, double samplingFrequency) {
+	double a [5], b [9], dt = 1.0 / samplingFrequency, wt = NUMpi * centre_frequency * dt;
 	double bt = 2 * NUMpi * bandwidth * dt, dt2 = dt * dt, dt4 = dt2 * dt2;
 
 	Melder_assert (n > 0 && centre_frequency > 0 && bandwidth >= 0 && samplingFrequency > 0);
 
 	/*
 		The filter function is:
-			H(z) = sum (i=0..4, a[i] z^-i) / sum (j=0..4, b[j] z^-j)
+			H(z) = sum (i=0..4, a [i] z^-i) / sum (j=0..4, b [j] z^-j)
 		Coefficients a & b according to:
 		Slaney (1993), An efficient implementation of the Patterson-Holdsworth
 		auditory filterbank, Apple Computer Technical Report 35, 41 pages.
 		For the a's we have left out an overal scale factor of dt^4.
-		This makes a[0] = 1.
+		This makes a [0] = 1.
 	*/
 
-	a[0] = dt4;
-	a[1] = -4 * dt4 * cos (2 * wt) * exp (-    bt);
-	a[2] =  6 * dt4 * cos (4 * wt) * exp (-2 * bt);
-	a[3] = -4 * dt4 * cos (6 * wt) * exp (-3 * bt);
-	a[4] =      dt4 * cos (8 * wt) * exp (-4 * bt);
+	a [0] = dt4;
+	a [1] = -4 * dt4 * cos (2 * wt) * exp (-    bt);
+	a [2] =  6 * dt4 * cos (4 * wt) * exp (-2 * bt);
+	a [3] = -4 * dt4 * cos (6 * wt) * exp (-3 * bt);
+	a [4] =      dt4 * cos (8 * wt) * exp (-4 * bt);
 
-	b[0] = 1;
-	b[1] = -8 * cos (2 * wt)                           * exp (-    bt);
-	b[2] = (16 + 12 * cos (4 * wt))                    * exp (-2 * bt);
-	b[3] = (-48 * cos (2 * wt) - 8 * cos (6 * wt))     * exp (-3 * bt);
-	b[4] = (36 + 32 * cos (4 * wt) + 2 * cos (8 * wt)) * exp (-4 * bt);
-	b[5] = (-48 * cos (2 * wt) - 8 * cos (6 * wt))     * exp (-5 * bt);
-	b[6] = (16 + 12 * cos (4 * wt))                    * exp (-6 * bt);
-	b[7] = -8 * cos (2 * wt)                           * exp (-7 * bt);
-	b[8] =                                               exp (-8 * bt);
+	b [0] = 1;
+	b [1] = -8 * cos (2 * wt)                           * exp (-    bt);
+	b [2] = (16 + 12 * cos (4 * wt))                    * exp (-2 * bt);
+	b [3] = (-48 * cos (2 * wt) - 8 * cos (6 * wt))     * exp (-3 * bt);
+	b [4] = (36 + 32 * cos (4 * wt) + 2 * cos (8 * wt)) * exp (-4 * bt);
+	b [5] = (-48 * cos (2 * wt) - 8 * cos (6 * wt))     * exp (-5 * bt);
+	b [6] = (16 + 12 * cos (4 * wt))                    * exp (-6 * bt);
+	b [7] = -8 * cos (2 * wt)                           * exp (-7 * bt);
+	b [8] =                                               exp (-8 * bt);
 
-	// Calculate gain (= Abs (H(z); f=fc) and scale a[0-4] with it.
+	// Calculate gain (= Abs (H(z); f=fc) and scale a [0-4] with it.
 
 	double zr =  cos (2 * wt), zi = -sin (2 * wt);
-	double dr = a[4], di = 0, tr, ti, nr, ni;
+	double dr = a [4], di = 0, tr, ti, nr, ni;
 
-	for (long j = 1; j <= 4; j++) {
-		tr = a[4 - j] + zr * dr - zi * di;
+	for (integer j = 1; j <= 4; j ++) {
+		tr = a [4 - j] + zr * dr - zi * di;
 		ti = zi * dr + zr * di;
 		dr = tr; di = ti;
 	}
 
-	dr = b[8];
+	dr = b [8];
 	di = 0;
-	for (long j = 1; j <= 8; j++) {
-		nr = b[8 - j] + zr * dr - zi * di;
+	for (integer j = 1; j <= 8; j ++) {
+		nr = b [8 - j] + zr * dr - zi * di;
 		ni = zi * dr + zr * di;
 		dr = nr; di = ni;
 	}
@@ -704,82 +704,82 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 	double gi = ti * nr - tr * ni;
 	double gain = sqrt (gr * gr + gi * gi) / n2;
 
-	for (long j = 0; j <= 4; j++) {
-		a[j] /= gain;
+	for (integer j = 0; j <= 4; j ++) {
+		a [j] /= gain;
 	}
 
 	if (Melder_debug == -1) {
 		Melder_casual (
-			U"--gammatonefilter4--\nF = ", centre_frequency,
+			U" --gammatonefilter4 --\nF = ", centre_frequency,
 			U", B = ", bandwidth,
 			U", T = ", dt,
 			U"\nGain = ", gain
 		);
-		for (long i = 0; i <= 4; i++) {
-			Melder_casual (U"a[", i, U"] = ", a[i]);
+		for (integer i = 0; i <= 4; i ++) {
+			Melder_casual (U"a [", i, U"] = ", a [i]);
 		}
-		for (long i = 0; i <= 8; i++) {
-			Melder_casual (U"b[", i, U"] = ", b[i]);
+		for (integer i = 0; i <= 8; i ++) {
+			Melder_casual (U"b [", i, U"] = ", b [i]);
 		}
 	}
 
 	/* Perform the filtering. For the first 8 samples we must do some extra work.
-	y[1] = a[0] * x[1];
+	y [1] = a [0] * x [1];
 	if (n > 1) {
-		y[2] = a[0] * x[2];
-		y[2] += a[1] * x[1] - b[1] * y[1];
+		y [2] = a [0] * x [2];
+		y [2] += a [1] * x [1] - b [1] * y [1];
 	}
 	if (n > 2) {
-		y[2] = a[0] * x[2];
-		y[2] += a[2] * x[i - 2] - b[2] * y[i - 2];
+		y [2] = a [0] * x [2];
+		y [2] += a [2] * x [i - 2] - b [2] * y [i - 2];
 	}
 	*/
-	long n8 = n < 8 ? n : 8;
-	for (long i = 1; i <= n8; i++) {
-		y[i] = a[0] * x[i];
+	integer n8 = n < 8 ? n : 8;
+	for (integer i = 1; i <= n8; i ++) {
+		y [i] = a [0] * x [i];
 		if (i > 1) {
-			y[i] += a[1] * x[i - 1] - b[1] * y[i - 1];
+			y [i] += a [1] * x [i - 1] - b [1] * y [i - 1];
 		} else {
 			continue;
 		}
 		if (i > 2) {
-			y[i] += a[2] * x[i - 2] - b[2] * y[i - 2];
+			y [i] += a [2] * x [i - 2] - b [2] * y [i - 2];
 		} else {
 			continue;
 		}
 		if (i > 3) {
-			y[i] += a[3] * x[i - 3] - b[3] * y[i - 3];
+			y [i] += a [3] * x [i - 3] - b [3] * y [i - 3];
 		} else {
 			continue;
 		}
 		if (i > 4) {
-			y[i] += a[4] * x[i - 4] - b[4] * y[i - 4];
+			y [i] += a [4] * x [i - 4] - b [4] * y [i - 4];
 		} else {
 			continue;
 		}
 		if (i > 5) {
-			y[i] -= b[5] * y[i - 5];
+			y [i] -= b [5] * y [i - 5];
 		} else {
 			continue;
 		}
 		if (i > 6) {
-			y[i] -= b[6] * y[i - 6];
+			y [i] -= b [6] * y [i - 6];
 		} else {
 			continue;
 		}
 		if (i > 7) {
-			y[i] -= b[7] * y[i - 7];
+			y [i] -= b [7] * y [i - 7];
 		}
 	}
 
-	for (long i = n8 + 1; i <= n; i++) {
-		// y[i]  = a[0] * x[i];
-		// y[i] += a[1] * x[i-1] + a[2] * x[i-2] + a[3] * x[i-3] + a[4] * x[i-4];
-		// y[i] -= b[1] * y[i-1] + b[2] * y[i-2] + b[3] * y[i-3] + b[4] * y[i-4];
-		// y[i] -= b[5] * y[i-5] + b[6] * y[i-6] + b[7] * y[i-7] + b[8] * y[i-8];
-		y[i] = a[0] * x[i] + a[1] * x[i - 1] + a[2] * x[i - 2] + a[3] * x[i - 3] + a[4] * x[i - 4]
-		       - b[1] * y[i - 1] - b[2] * y[i - 2] - b[3] * y[i - 3] - b[4] * y[i - 4]
-		       - b[5] * y[i - 5] - b[6] * y[i - 6] - b[7] * y[i - 7] - b[8] * y[i - 8];
+	for (integer i = n8 + 1; i <= n; i ++) {
+		// y [i]  = a [0] * x [i];
+		// y [i] += a [1] * x [i-1] + a [2] * x [i-2] + a [3] * x [i-3] + a [4] * x [i-4];
+		// y [i] -= b [1] * y [i-1] + b [2] * y [i-2] + b [3] * y [i-3] + b [4] * y [i-4];
+		// y [i] -= b [5] * y [i-5] + b [6] * y [i-6] + b [7] * y [i-7] + b [8] * y [i-8];
+		y [i] = a [0] * x [i] + a [1] * x [i - 1] + a [2] * x [i - 2] + a [3] * x [i - 3] + a [4] * x [i - 4]
+		       - b [1] * y [i - 1] - b [2] * y [i - 2] - b [3] * y [i - 3] - b [4] * y [i - 4]
+		       - b [5] * y [i - 5] - b [6] * y [i - 6] - b [7] * y [i - 7] - b [8] * y [i - 8];
 	}
 }
 
@@ -793,15 +793,15 @@ autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, dou
 		autoNUMvector<double> x (1, my nx);
 
 		double fs = 1 / my dx;
-		for (long channel = 1; channel <= my ny; channel++) {
-			for (long i = 1; i <= my nx; i++) {
-				x[i] = my z[channel][i];
+		for (integer channel = 1; channel <= my ny; channel ++) {
+			for (integer i = 1; i <= my nx; i ++) {
+				x [i] = my z [channel] [i];
 			}
 
 			NUMgammatoneFilter4 (x.peek(), y.peek(), my nx, centre_frequency, bandwidth, fs);
 
-			for (long i = 1; i <= my nx; i++) {
-				thy z[channel][i] = y[i];
+			for (integer i = 1; i <= my nx; i ++) {
+				thy z [channel] [i] = y [i];
 			}
 		}
 		return thee;
@@ -840,21 +840,21 @@ autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, doub
 Sound Sound_createShepardTone (double minimumTime, double maximumTime, double samplingFrequency,
 	double baseFrequency, double frequencyShiftFraction, double maximumFrequency, double amplitudeRange)
 {
-	Sound me; long i, j, nComponents = 1 + log2 (maximumFrequency / 2 / baseFrequency);
+	Sound me; integer i, j, nComponents = 1 + log2 (maximumFrequency / 2 / baseFrequency);
 	double lmin = pow (10, - amplitudeRange / 10);
 	double twoPi = 2.0 * NUMpi, f = baseFrequency * (1 + frequencyShiftFraction);
 	if (nComponents < 2) Melder_warning (U"Sound_createShepardTone: only 1 component.");
 	Melder_casual (U"Sound_createShepardTone: ", nComponents, U" components.");
 	if (! (me = Sound_create2 (minimumTime, maximumTime, samplingFrequency))) return nullptr;
 
-	for (j=1; j <= nComponents; j++)
+	for (j=1; j <= nComponents; j ++)
 	{
 		double fj = f * pow (2, j-1), wj = twoPi * fj;
 		double amplitude = lmin + (1 - lmin) *
 			(1 - cos (twoPi * log (fj + 1) / log (maximumFrequency + 1))) / 2;
-		for (i=1; i <= my nx; i++)
+		for (i=1; i <= my nx; i ++)
 		{
-			my z[1][i] += amplitude * sin (wj * (i - 0.5) * my dx);
+			my z [1] [i] += amplitude * sin (wj * (i - 0.5) * my dx);
 		}
 	}
 	Vector_scale (me, 0.99996948);
@@ -962,7 +962,7 @@ autoSound Sound_createShepardTone (double minimumTime, double maximumTime, doubl
 			} else {
 				argt = twoPi * ft * t;
 			}
-			for (long j = 1; j <= numberOfComponents; j++) {
+			for (integer j = 1; j <= numberOfComponents; j ++) {
 				while (ft >= maximumFrequency) {
 					ft /= scale;
 					argt /= scale;
@@ -1131,7 +1131,7 @@ void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, doub
 
 void Sound_into_Sound (Sound me, Sound to, double startTime) {
 	integer index = Sampled_xToNearestIndex (me, startTime);
-	for (integer i = 1; i <= to -> nx; i++) {
+	for (integer i = 1; i <= to -> nx; i ++) {
 		integer j = index - 1 + i;
 		to -> z [1] [i] = j < 1 || j > my nx ? 0 : my z [1] [j];
 	}
@@ -1142,7 +1142,7 @@ IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, do
 IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, double window)
 {
 	double window2 = window / 2;
-	double t1 = thy t[1] - window2;
+	double t1 = thy t [1] - window2;
 	if (t1 < my xmin) t1 = my xmin;
 	double t2 = t1 + window2;
 	if (t2 > my xmax) t2 = my xmax;
@@ -1150,13 +1150,13 @@ IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, do
 	autoTextInterval interval = TextInterval_create (t1, t2, "yes");
 	Collection_addItem_move (his intervals, interval.move());
 
-	for (long i = 2; i <= thy nt; i++)
+	for (integer i = 2; i <= thy nt; i ++)
 	{
-		double t =  thy t[i];
+		double t =  thy t [i];
 
 		if (t <= t2)
 		{
-			long index = his points.size;
+			integer index = his points.size;
 			RealPoint point = his points->at [index];
 			t2 = t + window2;
 			if (t2 > my xmax) t2 = my xmax;
@@ -1186,7 +1186,7 @@ autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, d
 		if (dtn < 1) {
 			dtn = 1;
 		}
-		double *s = my z[1];
+		double *s = my z [1];
 		while (i < my nx) {
 			integer j = i + 1, step = 1;
 			while (j <= i + dtn && j <= my nx) {
@@ -1195,7 +1195,7 @@ autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, d
 					PointProcess_addPoint (thee.get(), t);
 					step = j - i + 1; break;
 				}
-				j++;
+				j ++;
 			}
 			i += step;
 		}
@@ -1312,7 +1312,7 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
                 // if two contiguous intervals have to be copied then the last sample of previous interval
                 // and first sample of current interval might sometimes be equal
 				if (ixmin == previous_ixmax) {
-					 --numberOfSamples;
+					-- numberOfSamples;
 				}
 				previous_ixmax = ixmax;
 			} else { // matches label
@@ -1448,11 +1448,11 @@ static autoPitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 		autoPitch thee = Pitch_create (my xmin, xmax, my nx, dx, x1, my ceiling, 2);
 
 		for (integer i = 1; i <= my nx; i ++) {
-			double f = my frame[i].candidate[1].frequency;
-			thy frame[i].candidate[1].strength = my frame[i].candidate[1].strength;
+			double f = my frame [i].candidate [1].frequency;
+			thy frame [i].candidate [1].strength = my frame [i].candidate [1].strength;
 			f /= scaleFactor;
 			if (f < my ceiling) {
-				thy frame[i].candidate[1].frequency = f;
+				thy frame [i].candidate [1].frequency = f;
 			}
 		}
 		return thee;
@@ -1645,7 +1645,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bo
 		}
 		Melder_warning (U"The fade time is larger than the part of the sound to fade ", fade_inout, U". Fade-", fade_inout, U" will be incomplete.");
 	}
-	for (integer ichannel = iystart; ichannel <= iyend; ichannel++) {
+	for (integer ichannel = iystart; ichannel <= iyend; ichannel ++) {
 		for (integer i = istart; i <= iend; i ++) {
 			double cosp = cos (NUMpi * (i0 + i - istart) / (numberOfSamples - 1));
 			if (inout <= 0) {
@@ -1707,7 +1707,7 @@ autoSound Sound_createFromWindowFunction (double windowDuration, double sampling
 	}
 }
 
-/* y[n] = sum(i=-n, i=n, x[n+mi])/(2*n+1) */
+/* y [n] = sum(i=-n, i=n, x [n+mi])/(2*n+1) */
 autoSound Sound_localAverage (Sound me, double averagingInterval, int windowType) {
 	try {
 		double windowDuration = windowType == 6 ? 2 * averagingInterval : averagingInterval;
@@ -1719,7 +1719,7 @@ autoSound Sound_localAverage (Sound me, double averagingInterval, int windowType
 		if (nswindow2 < 1) {
 			return thee;
 		}
-		double *w = window -> z[1];
+		double *w = window -> z [1];
 
 		for (integer k = 1; k <= thy ny; k ++) {
 			for (integer i = 1; i <= my nx; i ++) {
@@ -1790,7 +1790,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 	
 	if (left) {
 		*x = Matrix_columnToX (me, ileft);
-		*y = my z [ichannel][ileft];
+		*y = my z [ichannel] [ileft];
 	} else {
 		*x = Matrix_columnToX (me, ileft + 1);
 		*y = my z [ichannel] [ileft + 1];
@@ -1978,7 +1978,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 
 		Graphics_setColour (g, colour);
 		Graphics_setInner (g);
-		for (integer channel = 1; channel <= my ny; channel++) {
+		for (integer channel = 1; channel <= my ny; channel ++) {
 			Graphics_setWindow (g, tmin, tmax, minimum - (my ny - channel) * (maximum - minimum), maximum + (channel - 1) * (maximum - minimum));
 			bool current, previous = true, fill = false; // fill only when leaving area
 			double tmini = tmin, tmaxi = tmax, xe, ye;
@@ -2005,11 +2005,11 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 				}
 				if (fill) {
 					autoPolygon him = Sound_to_Polygon (me, channel, tmini, tmaxi, minimum, maximum, level);
-					Graphics_fillArea (g, his numberOfPoints, &his x[1], &his y[1]);
+					Graphics_fillArea (g, his numberOfPoints, &his x [1], &his y [1]);
 					fill = false;
 				}
 				previous = current;
-			} while (++ix <= ixmax);
+			} while ( ++ix <= ixmax);
 		}
 		Graphics_setWindow (g, tmin, tmax, minimum, maximum);
 		if (garnish && my ny == 2) {
@@ -2045,10 +2045,10 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 
 		Graphics_setColour (g, colour);
 		Graphics_setInner (g);
-		for (integer channel = 1; channel <= numberOfChannels; channel++) {
+		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 			autoPolygon him = Sounds_to_Polygon_enclosed (me, thee, channel, tmin, tmax, minimum, maximum);
 			Graphics_setWindow (g, tmin, tmax, minimum - (numberOfChannels - channel) * (maximum - minimum), maximum + (channel - 1) * (maximum - minimum));
-			Graphics_fillArea (g, his numberOfPoints, &his x[1], &his y[1]);
+			Graphics_fillArea (g, his numberOfPoints, &his x [1], &his y [1]);
 		}
 		Graphics_setWindow (g, tmin, tmax, minimum, maximum);
 		if (garnish && (my ny == 2 || thy ny == 2)) {
@@ -2069,7 +2069,7 @@ autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges) {
 		autoNUMvector <integer> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoSound thee = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer i = 1; i <= numberOfChannels; i ++) {
-			double *from = my z[channels[i]], *to = thy z [i];
+			double *from = my z [channels [i]], *to = thy z [i];
 			NUMvector_copyElements<double> (from, to, 1, my nx);
 		}
 		return thee;
@@ -2093,42 +2093,42 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 		double bandwidth = samplingFrequency / windowSamples;
 		autoLtas noiseLtas = Sound_to_Ltas (noise_copy.get(), bandwidth);
 		autoNUMvector<double> noiseAmplitudes (1, noiseLtas -> nx);
-		for (integer i = 1; i <= noiseLtas -> nx; i++) {
-			noiseAmplitudes[i] = pow (10.0, (noiseLtas -> z[1][i] - 94) / 20);
+		for (integer i = 1; i <= noiseLtas -> nx; i ++) {
+			noiseAmplitudes [i] = pow (10.0, (noiseLtas -> z [1] [i] - 94) / 20);
 		}
 		
 		autoMelderProgress progress (U"Remove noise");
 		
 		integer stepSizeSamples = windowSamples / 4;
 		integer numberOfSteps = my nx / stepSizeSamples;
-		for (integer istep = 1; istep <= numberOfSteps; istep++) {
+		for (integer istep = 1; istep <= numberOfSteps; istep ++) {
 			integer istart = (istep - 1) * stepSizeSamples + 1;
 
 			if (istart >= my nx) {
 				break; // finished
 			}
 			integer nsamples = istart + windowSamples - 1 > my nx ? my nx - istart + 1 : windowSamples;
-			for (integer j = 1; j <= nsamples; j++) {
-				analysisWindow -> z[1][j] = my z[1][istart - 1 + j];
+			for (integer j = 1; j <= nsamples; j ++) {
+				analysisWindow -> z [1] [j] = my z [1] [istart - 1 + j];
 			}
-			for (integer j = nsamples + 1; j <= windowSamples; j++) {
-				analysisWindow -> z[1][j] = 0;
+			for (integer j = nsamples + 1; j <= windowSamples; j ++) {
+				analysisWindow -> z [1] [j] = 0;
 			}
 			autoSpectrum analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), 0);
 
 			// Suppress noise in the analysisSpectrum by subtracting the noise spectrum
 
-			double *x = analysisSpectrum -> z[1], *y = analysisSpectrum -> z[2];
-			for (integer i = 1; i <= analysisSpectrum -> nx; i++) {
-				double amp = sqrt (x[i] * x[i] + y[i] * y[i]);
-				double factor = 1 - 1.5 * noiseAmplitudes[i] / amp;
+			double *x = analysisSpectrum -> z [1], *y = analysisSpectrum -> z [2];
+			for (integer i = 1; i <= analysisSpectrum -> nx; i ++) {
+				double amp = sqrt (x [i] * x [i] + y [i] * y [i]);
+				double factor = 1 - 1.5 * noiseAmplitudes [i] / amp;
 				factor = factor < 1e-6 ? 1e-6 : factor;
-				x[i] *= factor; y[i] *= factor;
+				x [i] *= factor; y [i] *= factor;
 			}
 			autoSound suppressed = Spectrum_to_Sound (analysisSpectrum.get());
 			Sound_multiplyByWindow (suppressed.get(), kSound_windowShape::HANNING);
-			for (integer j = 1; j <= nsamples; j++) {
-				denoised -> z[1][istart - 1 + j] += 0.5 * suppressed -> z[1][j]; // 0.5 because of 2-fold oversampling
+			for (integer j = 1; j <= nsamples; j ++) {
+				denoised -> z [1] [istart - 1 + j] += 0.5 * suppressed -> z [1] [j]; // 0.5 because of 2-fold oversampling
 			}
 			if ((istep % 10) == 1) {
 				Melder_progress ( (double) istep / numberOfSteps, U"Remove noise: frame ", istep, U" out of ", numberOfSteps, U".");
@@ -2168,7 +2168,7 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 		autoSound denoised = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 		bool findNoise = noiseEnd <= noiseStart;
 		double minimumNoiseDuration = 2 * windowLength;
-		for (long ichannel = 1; ichannel <= my ny; ichannel++) {
+		for (integer ichannel = 1; ichannel <= my ny; ichannel ++) {
 			autoSound denoisedi, channeli = Sound_extractChannel (filtered.get(), ichannel);
 			if (findNoise) {
 				Sound_findNoise (channeli.get(), minimumNoiseDuration, & noiseStart, & noiseEnd);
@@ -2177,7 +2177,7 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 			if (method == 1) { // spectral subtraction
 				denoisedi = Sound_removeNoiseBySpectralSubtraction_mono (filtered.get(), noise.get(), windowLength);
 			}
-			NUMvector_copyElements<double> (denoisedi -> z[1], denoised -> z[ichannel], 1, my nx);
+			NUMvector_copyElements<double> (denoisedi -> z [1], denoised -> z [ichannel], 1, my nx);
 		}
 		return denoised;
 	} catch (MelderError) {
@@ -2185,7 +2185,7 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 	}
 }
 
-void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, long precision) {
+void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, integer precision) {
 	try {
 		autoSpectrum spectrum = Sound_to_Spectrum (me, 1);
 		autoSpectrum shifted = Spectrum_shiftFrequencies (spectrum.get(), shiftBy, newSamplingFrequency / 2, precision);

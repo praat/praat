@@ -2,7 +2,7 @@
 #define _Proximity_h_
 /* Proximity.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,6 @@
 Thing_define (Proximity, TableOfReal) {
 };
 
-void Proximity_init (Proximity me, long numberOfPoints);
+void Proximity_init (Proximity me, integer numberOfPoints);
 
 #endif /* _Proximity_h_ */

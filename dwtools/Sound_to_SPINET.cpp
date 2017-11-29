@@ -1,6 +1,6 @@
 /* Sound_to_SPINET.cpp
  *
- * Copyright (C) 1993-2013, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 #include "Sound_to_SPINET.h"
 #include "NUM2.h"
 
-static double fgamma (double x, long n) {
+static double fgamma (double x, integer n) {
 	double x2p1 = 1.0 + x * x, d = x2p1;
-	for (long i = 2; i <= n; i ++) {
+	for (integer i = 2; i <= n; i ++) {
 		d *= x2p1;
 	}
 	return 1.0 / d;
@@ -37,7 +37,7 @@ static double fgamma (double x, long n) {
 	0 < minimumFrequencyHz < maximumFrequencyHz
 */
 
-autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, double minimumFrequencyHz, double maximumFrequencyHz, long nFilters, double excitationErbProportion, double inhibitionErbProportion) {
+autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, double minimumFrequencyHz, double maximumFrequencyHz, integer nFilters, double excitationErbProportion, double inhibitionErbProportion) {
 	try {
 		const double b = 1.02, samplingFrequency = 1.0 / my dx;
 
@@ -95,8 +95,8 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 		for (integer i = 1; i <= nFilters; i ++) {
 			for (integer k = 1; k <= nFilters; k ++) {
 				double fr = (f [k] - f [i]) / bw [i];
-				aex[i] += fgamma (fr / thy excitationErbProportion, thy gamma);
-				ain[i] += fgamma (fr / thy inhibitionErbProportion, thy gamma);
+				aex [i] += fgamma (fr / thy excitationErbProportion, thy gamma);
+				ain [i] += fgamma (fr / thy inhibitionErbProportion, thy gamma);
 			}
 		}
 
@@ -105,7 +105,7 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 		for (integer j = 1; j <= numberOfFrames; j ++)
 			for (integer i = 1; i <= nFilters; i ++) {
 				real80 a = 0.0;
-				for (long k = 1; k <= nFilters; k ++) {
+				for (integer k = 1; k <= nFilters; k ++) {
 					double fr = (f [k] - f [i]) / bw [i];
 					double hexsq = fgamma (fr / thy excitationErbProportion, thy gamma);
 					double hinsq = fgamma (fr / thy inhibitionErbProportion, thy gamma);

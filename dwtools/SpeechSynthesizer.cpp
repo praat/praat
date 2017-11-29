@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
-//  * Copyright (C) 2011-2013, 2015-2016 David Weenink
+//  * Copyright (C) 2011-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,10 +114,10 @@ void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice) {
 	my consonant_ampv = voice -> consonant_ampv;
 	my samplerate = voice -> samplerate;
 	my numberOfKlattParameters = 8;
-	for (long i = 1; i <= my numberOfKlattParameters; i ++) {
+	for (integer i = 1; i <= my numberOfKlattParameters; i ++) {
 		my klattv [i] = voice -> klattv [i - 1];
 	}
-	for (long i = 1; i <= my numberOfFormants; i ++) {
+	for (integer i = 1; i <= my numberOfFormants; i ++) {
 		my freq [i] = voice -> freq [i - 1];
 		my height [i] = voice -> height [i - 1];
 		my width [i] = voice -> width [i - 1];
@@ -129,7 +129,7 @@ void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice) {
 		my breathw [i] = voice -> breathw [i - 1];
 	}
 	my numberOfToneAdjusts = 1000;
-	for (long i = 1; i <= my numberOfToneAdjusts; i ++) {
+	for (integer i = 1; i <= my numberOfToneAdjusts; i ++) {
 		my tone_adjust [i] = voice -> tone_adjust [i - 1];
 	}
 }
@@ -162,10 +162,10 @@ void EspeakVoice_into_voice (EspeakVoice me, voice_t *voice) {
 	voice -> consonant_amp = my consonant_amp;
 	voice -> consonant_ampv = my consonant_ampv;
 	voice -> samplerate = my samplerate;
-	for (long i = 1; i <= my numberOfKlattParameters; i ++) {
+	for (integer i = 1; i <= my numberOfKlattParameters; i ++) {
 		voice -> klattv [i - 1] = my klattv [i];
 	}
-	for (long i = 1; i <= my numberOfFormants; i ++) {
+	for (integer i = 1; i <= my numberOfFormants; i ++) {
 		voice -> freq [i - 1] = my freq [i];
 		voice -> height [i - 1] = my height [i];
 		voice -> width [i - 1] = my width [i];
@@ -176,7 +176,7 @@ void EspeakVoice_into_voice (EspeakVoice me, voice_t *voice) {
 		voice -> breath [i - 1] = my breath [i];
 		voice -> breathw [i - 1] = my breathw [i];
 	}
-	for (long i = 1; i <= my numberOfToneAdjusts; i ++) {
+	for (integer i = 1; i <= my numberOfToneAdjusts; i ++) {
 		voice -> tone_adjust [i - 1] = voice -> tone_adjust [i];
 	}
 }
@@ -255,7 +255,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 			//my events = Table "time type type-t t-pos length a-pos sample id uniq";
 			//                    1    2     3      4     5     6     7      8   9
 			Table_appendRow (my d_events.get());
-			long irow = my d_events -> rows.size;
+			integer irow = my d_events -> rows.size;
 			double time = events -> audio_position * 0.001;
 			Table_setNumericValue (my d_events.get(), irow, 1, time);
 			Table_setNumericValue (my d_events.get(), irow, 2, events -> type);
@@ -278,7 +278,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	}
 	if (me) {
 		NUMvector_supplyStorage<int> (& my d_wav, 1, & my d_wavCapacity, my d_numberOfSamples, numsamples);
-		for (long i = 1; i <= numsamples; i++) {
+		for (integer i = 1; i <= numsamples; i++) {
 			my d_wav [my d_numberOfSamples + i] = wav [i - 1];
 		}
 		my d_numberOfSamples += numsamples;
@@ -370,13 +370,13 @@ void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text) {
 	Sound_play (thee.get(), nullptr, nullptr);
 }
 
-static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFrequency)
+static autoSound buffer_to_Sound (int *wav, integer numberOfSamples, double samplingFrequency)
 {
 	try {
 		double dx = 1.0 / samplingFrequency;
 		double xmax = numberOfSamples * dx;
 		autoSound thee = Sound_create (1, 0.0, xmax, numberOfSamples, dx, dx / 2.0);
-		for (long i = 1; i <= numberOfSamples; i++) {
+		for (integer i = 1; i <= numberOfSamples; i++) {
 			thy z[1][i] = wav[i] / 32768.0;
 		}
 		return thee;
@@ -385,7 +385,7 @@ static autoSound buffer_to_Sound (int *wav, long numberOfSamples, double samplin
 	}
 }
 
-static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, double time, const char32 *newLabel, bool isNewleftLabel) {
+static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval, double time, const char32 *newLabel, bool isNewleftLabel) {
 	if (time <= my xmin || time >= my xmax) {
 		Melder_throw (U"Time is outside interval domains.");
 	}
@@ -406,7 +406,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 
 static void Table_setEventTypeString (Table me) {
 	try {
-		for (long i = 1; i <= my rows.size; i ++) {
+		for (integer i = 1; i <= my rows.size; i ++) {
 			int type = Table_getNumericValue_Assert (me, i, 2);
 			const char32 *label = U"0";
 			if (type == espeakEVENT_WORD) {
@@ -441,13 +441,13 @@ static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
 }
 
 static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
-	long intervalIndex = my intervals.size;
+	integer intervalIndex = my intervals.size;
 	TextInterval right = my intervals.at [intervalIndex];
-	long labelLength_right = TextInterval_labelLength (right);
+	integer labelLength_right = TextInterval_labelLength (right);
 	bool isEmptyInterval_right = labelLength_right == 0 || (labelLength_right == 1 && Melder_equ (right -> text, U"\001"));
 	while (intervalIndex > 1) {
 		TextInterval left = my intervals.at [intervalIndex - 1];
-		long labelLength_left = TextInterval_labelLength (left);
+		integer labelLength_left = TextInterval_labelLength (left);
 		bool isEmptyInterval_left = labelLength_left == 0 || (labelLength_left == 1 && Melder_equ (left -> text, U"\001"));
 		if (isEmptyInterval_right && isEmptyInterval_left) {
 			// remove right interval and empty left interval
@@ -468,7 +468,7 @@ static void IntervalTier_insertBoundaryAndMergeIntervalsAfter (IntervalTier me, 
 		return;
 	}
 	
-	long intervalNumber = IntervalTier_timeToLowIndex (me, t);
+	integer intervalNumber = IntervalTier_timeToLowIndex (me, t);
 	while (my intervals.size > intervalNumber + 1) {
 		my intervals. removeItem (my intervals.size);
 	}
@@ -496,11 +496,11 @@ static bool almost_equal (double t1, double t2) {
 }
 
 static void IntervalTier_insertEmptyIntervalsFromOtherTier (IntervalTier to, IntervalTier from) {
-	for (long iint = 1; iint <= from -> intervals.size; iint ++) {
+	for (integer iint = 1; iint <= from -> intervals.size; iint ++) {
 		TextInterval tifrom = from -> intervals.at [iint];
 		if (TextInterval_labelLength (tifrom) == 0) {   // found empty interval
 			double t_left = tifrom -> xmin, t_right = tifrom -> xmax;
-			long intervalIndex_to = IntervalTier_timeToLowIndex (to, t_left);
+			integer intervalIndex_to = IntervalTier_timeToLowIndex (to, t_left);
 			if (intervalIndex_to > 0) {   // insert to the right of intervalIndex_to
 				TextInterval tito = to -> intervals.at [intervalIndex_to];
 				if (! almost_equal (tito -> xmin, t_left)) {   // not on the start boundary of the interval, it cannot be at xmax
@@ -523,7 +523,7 @@ static void IntervalTier_insertEmptyIntervalsFromOtherTier (IntervalTier to, Int
 }
 
 static void IntervalTier_removeVeryShortIntervals (IntervalTier me) {
-	long iint = 1;
+	integer iint = 1;
 	while (iint <= my intervals.size) {
 		TextInterval ti = my intervals.at [iint];
 		if (almost_equal (ti -> xmin, ti -> xmax)) {
@@ -537,17 +537,17 @@ static void IntervalTier_removeVeryShortIntervals (IntervalTier me) {
 static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin, double xmax) {
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	try {
-		long length, textLength = str32len (text);
-		long numberOfRows = my rows.size;
-		long timeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"time");
-		long typeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"type");
-		long tposColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"t-pos");
-		long   idColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"id");
+		integer length, textLength = str32len (text);
+		integer numberOfRows = my rows.size;
+		integer timeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"time");
+		integer typeColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"type");
+		integer tposColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"t-pos");
+		integer   idColumnIndex = Table_getColumnIndexFromColumnLabel (me, U"id");
 		autoTextGrid thee = TextGrid_create (xmin, xmax, U"sentence clause word phoneme", U"");
 
 		TextGrid_setIntervalText (thee.get(), 1, 1, text);
 
-		long p1c = 1, p1w = 1;
+		integer p1c = 1, p1w = 1;
 		double time_phon_p = xmin;
 		bool wordEnd = false;
 		autoMelderString mark;
@@ -556,10 +556,10 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 		IntervalTier words = (IntervalTier) thy tiers->at [3];
 		IntervalTier phonemes = (IntervalTier) thy tiers->at [4];
 
-		for (long i = 1; i <= numberOfRows; i++) {
+		for (integer i = 1; i <= numberOfRows; i++) {
 			double time = Table_getNumericValue_Assert (me, i, timeColumnIndex);
 			int type = Table_getNumericValue_Assert (me, i, typeColumnIndex);
-			long pos = Table_getNumericValue_Assert (me, i, tposColumnIndex);
+			integer pos = Table_getNumericValue_Assert (me, i, tposColumnIndex);
 			if (type == espeakEVENT_SENTENCE) {
 				// Only insert a new boundary, no text
 				// text will be inserted at end sentence event

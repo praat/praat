@@ -88,13 +88,13 @@ DO
 
 DIRECT (INTEGER_GaussianMixture_getNumberOfComponents) {
 	INTEGER_ONE (GaussianMixture)
-		long result = my numberOfComponents;
+		integer result = my numberOfComponents;
 	INTEGER_ONE_END (U"(= number of components)")
 }
 
 DIRECT (INTEGER_GaussianMixture_getDimensionOfComponent) {
 	INTEGER_ONE (GaussianMixture)
-		long result = my dimension;
+		integer result = my dimension;
 	INTEGER_ONE_END (U"(= dimension of component)")
 }
 

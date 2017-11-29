@@ -57,7 +57,7 @@ static const char32 *CONFIGURATION_BUTTON = U"To Configuration -";
 	Sort row 1 and move row 2 along and store in rows 4 and 5 respectively
 	Make an index for row 1 and store in row 6
 */
-static void TabelOfReal_testSorting (TableOfReal me, long rowtoindex) {
+static void TabelOfReal_testSorting (TableOfReal me, integer rowtoindex) {
 	try {
 		integer nc = my numberOfColumns;
 

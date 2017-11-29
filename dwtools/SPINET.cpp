@@ -1,6 +1,6 @@
 /* SPINET.cpp
  *
- * Copyright (C) 1993-2012, 2016 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,8 +49,7 @@
 
 Thing_implement (SPINET, SampledXY, 0);
 
-static long SampledXY_getWindowExtrema (SampledXY me, double **z, long ixmin, long ixmax, long iymin, long iymax,
-                                  double *minimum, double *maximum) {
+static integer SampledXY_getWindowExtrema (SampledXY me, double **z, integer ixmin, integer ixmax, integer iymin, integer iymax, double *minimum, double *maximum) {
 /*
 	Function:
 		compute the minimum and maximum values of z over all samples inside [ixmin, ixmax] * [iymin, iymax].
@@ -77,14 +76,14 @@ static long SampledXY_getWindowExtrema (SampledXY me, double **z, long ixmin, lo
 	if (ixmin > ixmax || iymin > iymax) {
 		return 0;
 	}
-	*minimum = *maximum = z[iymin][ixmin];
-	for (long iy = iymin; iy <= iymax; iy ++)
-		for (long ix = ixmin; ix <= ixmax; ix ++) {
-			if (z[iy][ix] < *minimum) {
-				*minimum = z[iy][ix];
+	*minimum = *maximum = z [iymin] [ixmin];
+	for (integer iy = iymin; iy <= iymax; iy ++)
+		for (integer ix = ixmin; ix <= ixmax; ix ++) {
+			if (z [iy] [ix] < *minimum) {
+				*minimum = z [iy] [ix];
 			}
-			if (z[iy][ix] > *maximum) {
-				*maximum = z[iy][ix];
+			if (z [iy] [ix] > *maximum) {
+				*maximum = z [iy] [ix];
 			}
 		}
 	return (ixmax - ixmin + 1) * (iymax - iymin + 1);
@@ -103,7 +102,7 @@ void structSPINET :: v_info () {
 	MelderInfo_writeLine (U"Maximum powerrectified: ", maxs);
 }
 
-autoSPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1, double minimumFrequency, double maximumFrequency, long nFilters, double excitationErbProportion, double inhibitionErbProportion) {
+autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, double t1, double minimumFrequency, double maximumFrequency, integer nFilters, double excitationErbProportion, double inhibitionErbProportion) {
 	try {
 		autoSPINET me = Thing_new (SPINET);
 		double minErb = NUMhertzToErb (minimumFrequency);
@@ -124,9 +123,9 @@ autoSPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime, double fromErb, double toErb, double minimum, double maximum, int enhanced, int garnish) {
 	double **z = enhanced ? my s : my y;
 	autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-	for (long j = 1; j <= my ny; j++) {
-		for (long i = 1; i <= my nx; i++) {
-			thy z[j][i] = z[j][i];
+	for (integer j = 1; j <= my ny; j ++) {
+		for (integer i = 1; i <= my nx; i ++) {
+			thy z [j] [i] = z [j] [i];
 		}
 	}
 	Matrix_paintCells (thee.get(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
@@ -153,8 +152,8 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 	SampledXY_getWindowSamplesY (me, fromErb, toErb, &ifmin, &ifmax);
 	autoNUMvector<double> spec (1, my ny);
 
-	for (long i = 1; i <= my ny; i++) {
-		spec[i] = z[i][icol];
+	for (integer i = 1; i <= my ny; i ++) {
+		spec [i] = z [i] [icol];
 	}
 	if (maximum <= minimum) {
 		NUMvector_extrema (spec.peek(), ifmin, ifmax, &minimum, &maximum);
@@ -163,11 +162,11 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 		minimum -= 1;
 		maximum += 1;
 	}
-	for (long i = ifmin; i <= ifmax; i++) {
-		if (spec[i] > maximum) {
-			spec[i] = maximum;
-		} else if (spec[i] < minimum) {
-			spec[i] = minimum;
+	for (integer i = ifmin; i <= ifmax; i ++) {
+		if (spec [i] > maximum) {
+			spec [i] = maximum;
+		} else if (spec [i] < minimum) {
+			spec [i] = minimum;
 		}
 	}
 	Graphics_setInner (g);
