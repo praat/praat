@@ -62,4 +62,12 @@ int espeak_io_GetFileLength (const char *filename);
 
 void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language_file);
 
+void espeak_ng_data_to_bigendian (void);
+
+int get_int32_le (char *byte);
+
+short get_int16_le (char *byte);
+
+int get_set_int32_le (char *byte); 
+
 #endif

@@ -506,7 +506,6 @@ int  SelectPhonemeTableName(const char *name);
 
 void Write4Bytes(FILE *f, int value);
 int Read4Bytes(FILE *f);
-int Reverse4Bytes(int word);
 
 #define ENV_LEN  128    // length of pitch envelopes
 #define PITCHfall   0  // standard pitch envelopes
