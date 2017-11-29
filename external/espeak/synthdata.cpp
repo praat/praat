@@ -123,12 +123,9 @@ espeak_ng_STATUS LoadPhData(int *srate, espeak_ng_ERROR_CONTEXT *context)
 	n_tunes = length / sizeof(TUNE);
 
 	// read the version number and sample rate from the first 8 bytes of phondata
-	version = 0; // bytes 0-3, version number
-	rate = 0;    // bytes 4-7, sample rate
-	for (ix = 0; ix < 4; ix++) {
-		version += (wavefile_data[ix] << (ix*8));
-		rate += (wavefile_data[ix+4] << (ix*8));
-	}
+	
+	version = get_int32_le ((char *) wavefile_data); // bytes 0-3, version number
+	rate = get_int32_le ((char *) (wavefile_data + 4)); // bytes 4-7, sample rate
 
 	if (version != version_phdata)
 		return create_version_mismatch_error_context(context, path_home, version, version_phdata);

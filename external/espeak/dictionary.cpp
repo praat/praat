@@ -87,23 +87,6 @@ void strncpy0(char *to, const char *from, int size)
 }
 #pragma GCC visibility pop
 
-int Reverse4Bytes(int word)
-{
-	// reverse the order of bytes from little-endian to big-endian
-#ifdef ARCH_BIG
-	int ix;
-	int word2 = 0;
-
-	for (ix = 0; ix <= 24; ix += 8) {
-		word2 = word2 << 8;
-		word2 |= (word >> ix) & 0xff;
-	}
-	return word2;
-#else
-	return word;
-#endif
-}
-
 static void InitGroups(Translator *tr)
 {
 	// Called after dictionary 1 is loaded, to set up table of entry points for translation rule chains
@@ -112,7 +95,6 @@ static void InitGroups(Translator *tr)
 	int ix;
 	char *p;
 	char *p_name;
-	unsigned int *pw;
 	unsigned char c, c2;
 	int len;
 
@@ -134,21 +116,20 @@ static void InitGroups(Translator *tr)
 		p++;
 
 		if (p[0] == RULE_REPLACEMENTS) {
-			pw = (unsigned int *)(((intptr_t)p+4) & ~3); // advance to next word boundary
-			tr->langopts.replace_chars = pw;
-			while (pw[0] != 0)
-				pw += 2; // find the end of the replacement list, each entry is 2 words.
-			p = (char *)(pw+1);
-
-#ifdef ARCH_BIG
-			pw = (unsigned int *)(tr->langopts.replace_chars);
-			while (*pw != 0) {
-				*pw = Reverse4Bytes(*pw);
-				pw++;
-				*pw = Reverse4Bytes(*pw);
-				pw++;
+			//(unsigned int *)pw = (unsigned int *)(((intptr_t)p+4) & ~3); // advance to next word boundary
+			p += 4;
+			while ((size_t)p % 4 > 0) { p --; }
+			
+			tr->langopts.replace_chars = (unsigned int *) p;
+			
+			int i32 = get_set_int32_le (p);
+			while (i32 != 0) {
+				p += 4;
+				get_set_int32_le (p);
+				p += 4;
+				i32 = get_set_int32_le (p);
 			}
-#endif
+			p += 4;
 			continue;
 		}
 
@@ -194,7 +175,6 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 {
 	int hash;
 	char *p;
-	int *pw;
 	int length;
 	FILE *f;
 	int size;
@@ -230,17 +210,17 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	size = fread(tr->data_dictlist, 1, size, f);
 	fclose(f);
 
-	pw = (int *)(tr->data_dictlist);
-	length = Reverse4Bytes(pw[1]);
+	int hash_number = get_int32_le (tr->data_dictlist);
+	length = get_int32_le (tr->data_dictlist + 4);
 
 	if (size <= (N_HASH_DICT + sizeof(int)*2)) {
 		fprintf(stderr, "Empty _dict file: '%s\n", fname);
 		return 2;
 	}
 
-	if ((Reverse4Bytes(pw[0]) != N_HASH_DICT) ||
+	if ((hash_number != N_HASH_DICT) ||
 	    (length <= 0) || (length > 0x8000000)) {
-		fprintf(stderr, "Bad data: '%s' (%x length=%x)\n", fname, Reverse4Bytes(pw[0]), length);
+		fprintf(stderr, "Bad data: '%s' (%x length=%x)\n", fname, hash_number, length);
 		return 2;
 	}
 	tr->data_dictrules = &(tr->data_dictlist[length]);

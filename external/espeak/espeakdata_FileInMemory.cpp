@@ -19,6 +19,7 @@
 
 // The glue between Praat and espeak
 
+
 #include "NUM2.h"
 #include "espeak_ng.h"
 #include "FileInMemoryManager.h"
@@ -58,6 +59,10 @@ void espeakdata_praat_init () {
 		espeakdata_voices_propertiesTable = Table_createAsEspeakVoicesProperties ();
 		espeakdata_languages_names = Table_column_to_Strings (espeakdata_languages_propertiesTable.get(), 2);
 		espeakdata_voices_names = Table_column_to_Strings (espeakdata_voices_propertiesTable.get(), 2);
+		int test = 1;
+		if (* ((char *) & test) != 1) { // (too?) simple endian test
+			espeak_ng_data_to_bigendian ();
+		}
 	} catch (MelderError) {
 		Melder_throw (U"Espeakdata initialization not performed.");
 	}

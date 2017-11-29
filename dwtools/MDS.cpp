@@ -1680,8 +1680,8 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight we
 double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int stressMeasure) {
 	integer nPoints = d -> numberOfRows;
 	double stress = undefined;
-	Melder_require (nPoints > 0 && nPoints == c -> numberOfRows && nPoints == t -> numberOfPoints 
-		&& w && nPoints == w -> numberOfRows, U"Dimensions do not agree.");
+	Melder_require (nPoints > 0 && nPoints == c -> numberOfRows && nPoints == t -> numberOfPoints ||
+		(w && nPoints == w -> numberOfRows), U"Dimensions do not agree.");
 
 	autoWeight aw;
 	if (! w) {
@@ -1768,14 +1768,13 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 	try {
 		integer nPoints = conf -> numberOfRows;
 		integer nDimensions = conf -> numberOfColumns;
-		double tol = 1e-6, stressp = 1e308, stres;
-		bool no_weight = ! weight;
+		double tol = 1e-6, stressp = 1e308, stres = 0.0;
 
-		Melder_require (my numberOfRows == nPoints && t -> numberOfPoints == nPoints &&
-			weight && weight -> numberOfRows == nPoints, U"Dimensions do not agree.");
+		Melder_require (my numberOfRows == nPoints && t -> numberOfPoints == nPoints ||
+			(weight && weight -> numberOfRows == nPoints), U"Dimensions do not agree.");
 
 		autoWeight aw;
-		if (no_weight) {
+		if (! weight) {
 			aw = Weight_create (nPoints);
 			weight = aw.get();
 		}
@@ -1804,8 +1803,10 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 			v [i] [i] = (real) wsum;
 		}
 
-		// V is row and column centered and therefore: rank(V) <= nPoints-1.
-		// V^-1 does not exist -> get Moore-Penrose inverse.
+		/*
+			V is row and column centered and therefore: rank(V) <= nPoints-1.
+			V^-1 does not exist -> get Moore-Penrose inverse.
+		*/
 
 		NUMpseudoInverse (v.peek(), nPoints, nPoints, vplus.peek(), tol);
 		for (integer iter = 1; iter <= numberOfIterations; iter ++) {
@@ -1858,7 +1859,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf,  Weight w, Transformator t, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
-		bool showSingle = ( showProgress && numberOfRepetitions == 1 );
+		bool showSingle = showProgress && numberOfRepetitions == 1;
 		double stress, stressmax = 1e308;
 
 		autoConfiguration cstart = Data_copy (conf);
@@ -1878,7 +1879,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (
 			TableOfReal_centreColumns (cstart.get());
 
 			if (showMulti) {
-				Melder_progress ( (double) i / (numberOfRepetitions + 1), i, U" from ", numberOfRepetitions);
+				Melder_progress ((double) i / (numberOfRepetitions + 1), i, U" from ", numberOfRepetitions);
 			}
 		}
 		if (showMulti) {

@@ -2,7 +2,7 @@
 #define _PatternList_h_
 /* Pattern.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,16 +37,16 @@ Thing_define (PatternList, Matrix) {
    z[iy][ix]		:the inputs. All elements in interval [0,1].
 */
 
-void PatternList_init (PatternList me, long ny, long nx);
+void PatternList_init (PatternList me, integer ny, integer nx);
 
-autoPatternList PatternList_create (long ny, long nx);
+autoPatternList PatternList_create (integer ny, integer nx);
 
 void PatternList_normalize (PatternList me, int choice, double pmin, double pmax);
 /* choice == 1: z[i][j] = (z[i][j]-pmin) / (pmax-pmin);
  * choice == 2: z[i][j] *= 1.0 / sum(j=1,j=nx, z[i][j]-pmin)
  */
 
-void PatternList_draw (PatternList me, Graphics g, long pattern, double xmin, double xmax,
+void PatternList_draw (PatternList me, Graphics g, integer pattern, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
 
 autoPatternList Matrix_to_PatternList (Matrix me, int join);

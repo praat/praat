@@ -26,15 +26,15 @@
 #include "Pitch_extensions.h"
 
 void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCandidates) {
-	long pos = 0;
+	integer pos = 0;
 	double weakest = 1e308;
 	if (my nCandidates < maxnCandidates) {
 		pos = ++ my nCandidates;
 	} else {
 		// Find weakest candidate so far (skip the unvoiced one)
-		for (long i = 1; i <= maxnCandidates; i++) {
-			if (my candidate[i].strength < weakest && my candidate[i].frequency > 0) {
-				weakest = my candidate[i].strength;
+		for (integer i = 1; i <= maxnCandidates; i ++) {
+			if (my candidate [i].strength < weakest && my candidate [i].frequency > 0) {
+				weakest = my candidate [i].strength;
 				pos = i;
 			}
 		}
@@ -43,22 +43,22 @@ void Pitch_Frame_addPitch (Pitch_Frame me, double f, double strength, int maxnCa
 		}
 	}
 	if (pos > 0) {
-		my candidate[pos].frequency = f;
-		my candidate[pos].strength = strength;
+		my candidate [pos].frequency = f;
+		my candidate [pos].strength = strength;
 	}
 }
 
 void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *p_strength) {
-	long pos = 1;
+	integer pos = 1;
 	double strength = -1.0;
-	for (long i = 1; i <= my nCandidates; i++) {
-		if (my candidate[i].strength > strength && my candidate[i].frequency > 0) {
-			strength = my candidate[i].strength;
+	for (integer i = 1; i <= my nCandidates; i ++) {
+		if (my candidate [i].strength > strength && my candidate [i].frequency > 0) {
+			strength = my candidate [i].strength;
 			pos = i;
 		}
 	}
 	if (f) {
-		*f = my candidate[pos].frequency;
+		*f = my candidate [pos].frequency;
 	}
 	if (p_strength) {
 		*p_strength = strength;
@@ -67,33 +67,33 @@ void Pitch_Frame_getPitch (Pitch_Frame me, double *f, double *p_strength) {
 
 void Pitch_Frame_resizeStrengths (Pitch_Frame me, double maxStrength, double unvoicedCriterium) {
 	int pos = 1;
-	double strongest = my candidate[1].strength;
-	for (long i = 2; i <= my nCandidates; i++) {
-		if (my candidate[i].strength > strongest) {
-			strongest = my candidate[i].strength;
+	double strongest = my candidate [1].strength;
+	for (integer i = 2; i <= my nCandidates; i ++) {
+		if (my candidate [i].strength > strongest) {
+			strongest = my candidate [i].strength;
 			pos = i;
 		}
 	}
 	if (strongest != 0) {
-		for (long i = 1; i <= my nCandidates; i++) {
-			my candidate[i].strength *= maxStrength / strongest;
+		for (integer i = 1; i <= my nCandidates; i ++) {
+			my candidate [i].strength *= maxStrength / strongest;
 		}
 	}
 	if (maxStrength < unvoicedCriterium) {
-		for (long i = 1; i <= my nCandidates; i++) {
-			if (my candidate[i].frequency == 0) {
+		for (integer i = 1; i <= my nCandidates; i ++) {
+			if (my candidate [i].frequency == 0) {
 				pos = i;
 				break;
 			}
 		}
 	}
 	if (pos != 1) {
-		double tmp = my candidate[1].frequency;
-		my candidate[1].frequency = my candidate[pos].frequency;
-		my candidate[pos].frequency = tmp;
-		tmp = my candidate[1].strength;
-		my candidate[1].strength = my candidate[pos].strength;
-		my candidate[pos].strength = tmp;
+		double tmp = my candidate [1].frequency;
+		my candidate [1].frequency = my candidate [pos].frequency;
+		my candidate [pos].frequency = tmp;
+		tmp = my candidate [1].strength;
+		my candidate [1].strength = my candidate [pos].strength;
+		my candidate [pos].strength = tmp;
 	}
 }
 
@@ -106,12 +106,12 @@ autoPitch Pitch_scaleTime (Pitch me, double scaleFactor) {
 			xmax = my xmin + my nx * dx;
 		}
 		autoPitch thee = Pitch_create (my xmin, xmax, my nx, dx, x1, my ceiling, 2);
-		for (long i = 1; i <= my nx; i++) {
-			double f = my frame[i].candidate[1].frequency;
-			thy frame[i].candidate[1].strength = my frame[i].candidate[1].strength;
+		for (integer i = 1; i <= my nx; i ++) {
+			double f = my frame [i].candidate [1].frequency;
+			thy frame [i].candidate [1].strength = my frame [i].candidate [1].strength;
 			f /= scaleFactor;
 			if (f < my ceiling) {
-				thy frame[i].candidate[1].frequency = f;
+				thy frame [i].candidate [1].frequency = f;
 			}
 		}
 		return thee;
@@ -162,7 +162,7 @@ autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_H
 		double fmidr = fminr + ranger / 2.0;
 		double factor = ranger / range;
 		autoPitchTier thee = Data_copy (me);
-		for (long i = 1; i <= my points.size; i ++) {
+		for (integer i = 1; i <= my points.size; i ++) {
 			RealPoint point = thy points.at [i];
 			double f = HertzToSpecial (point -> value, pitchUnit);
 			f = factor * (f - fmidr);
@@ -177,25 +177,19 @@ autoPitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_H
 
 autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double pitchCeiling) {
 	try {
-		if (my points.size < 1) {
-			Melder_throw (U"The PitchTier is empty.");
-		}
-		if (dt <= 0) {
-			Melder_throw (U"The time step should be a positive number.");
-		}
-		if (pitchFloor >= pitchCeiling) {
-			Melder_throw (U"The pitch ceiling must be larger than the pitch floor.");
-		}
+		Melder_require (my points.size > 0, U"The PitchTier is empty.");
+		Melder_require (dt > 0.0, U"The time step should be a positive number.");
+		Melder_require (pitchFloor < pitchCeiling, U"The pitch floor must be lower than the pitch ceiling.");
+		
 		double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2.0;
 		integer nt = Melder_ifloor ((tmax - tmin - t1) / dt);
 		if (t1 + nt * dt < tmax) {
 			nt ++;
 		}
-		if (nt < 1) {
-			Melder_throw (U"Duration is too short.");
-		}
+		Melder_require (nt > 0, U"Duration is too short.");
+		
 		autoPitch thee = Pitch_create (tmin, tmax, nt, dt, t1, pitchCeiling, 1);
-		for (long i = 1; i <= nt; i ++) {
+		for (integer i = 1; i <= nt; i ++) {
 			Pitch_Frame frame = (Pitch_Frame) & thy frame [i];
 			Pitch_Candidate candidate = (Pitch_Candidate) & frame -> candidate [1];
 			double t = t1 + (i - 1) * dt;

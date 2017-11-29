@@ -33,11 +33,11 @@
 
 #include "PCA_def.h"
 
-autoPCA PCA_create (long numberOfComponents, long dimension);
+autoPCA PCA_create (integer numberOfComponents, integer dimension);
 
-void PCA_setNumberOfObservations (PCA me, long numberOfObservations);
+void PCA_setNumberOfObservations (PCA me, integer numberOfObservations);
 
-long PCA_getNumberOfObservations (PCA me);
+integer PCA_getNumberOfObservations (PCA me);
 
 autoPCA TableOfReal_to_PCA_byRows (TableOfReal me);
 
@@ -49,15 +49,15 @@ autoPCA Matrix_to_PCA_byRows (Matrix me);
 autoPCA Matrix_to_PCA_byColumns (Matrix me);
 /* Calculate PCA of M'M */
 
-void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *prob, double *chisq, double *df);
+void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conservative, double *prob, double *chisq, double *df);
 /* Morrison, Multivariate statistical methods, page 336 */
 
-autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal thee, long numberOfDimensionsToKeep);
-autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee, long numberOfDimensions);
+autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep);
+autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee, integer numberOfDimensions);
 
-autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, long numberOfDimensions);
+autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, integer numberOfDimensions);
 
-double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, long from, long to);
+double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer from, integer to);
 /*	Get fraction variance of the table projected in the pca-space.
 	Shorthand for projecting the Covariance of the TableOfReal on the PCA-space
 	and quering the projected Covariance for 'fraction variance'.
