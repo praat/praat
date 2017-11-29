@@ -109,10 +109,9 @@ procedure create_phonFileInMemorySet
 	fim2 = Create FileInMemory: espeakdata_dir$ + "/phonindex"
 	fim3 = Create FileInMemory: espeakdata_dir$ + "/phontab"
 	fim4 = Create FileInMemory: espeakdata_dir$ + "/intonations"
-	fim5 = Create FileInMemory: espeakdata_dir$ + "/phondata-manifest"
-	selectObject: fim1, fim2, fim3, fim4, fim5
+	selectObject: fim1, fim2, fim3, fim4
 	phon_fims = To FileInMemorySet
-	removeObject: fim1, fim2, fim3, fim4, fim5
+	removeObject: fim1, fim2, fim3, fim4
 endproc
 
 procedure create_languageFileInMemorySet

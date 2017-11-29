@@ -16,10 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// int16 & int32 are in little endian order
-#define GET_INT16(byte) ((byte[0]<<0) | (byte[1]<<8))
-#define GET_INT32(byte) ((byte[0]<<0) | (byte[1]<<8) | (byte[2]<<16) | (byte[3]<<24))
-
 #ifndef ESPEAK_NG_H
 #define ESPEAK_NG_H
 
