@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2012, 2014-2017 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 #include "Strings_.h"
 #include "SSCP.h"
 
-void TableOfReal_to_PatternList_and_Categories(TableOfReal me, long fromrow, long torow, long fromcol, long tocol,
+void TableOfReal_to_PatternList_and_Categories(TableOfReal me, integer fromrow, integer torow, integer fromcol, integer tocol,
 	autoPatternList *p, autoCategories *c);
 
 autoTableOfReal TableOfReal_transpose (TableOfReal me);
@@ -41,7 +41,7 @@ autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me);
 
 integer *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me);
 
-autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index[], int reverse);
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index[], bool reverse);
 // thy data[reverse ? i : index[i]][j] = my data[reverse ? index[i] : i]
 
 autoTableOfReal TableOfReal_createIrisDataset ();
@@ -55,45 +55,45 @@ autoTableOfReal TableOfReal_create_weenink1983 (int option); /* M W C */
 /* The data for Fig. 2 in Sandwell (1987) */
 autoTableOfReal TableOfReal_create_sandwell1987 ();
 
-void TableOfReal_getColumnExtrema (TableOfReal me, long col, double *min, double *max);
+void TableOfReal_getColumnExtrema (TableOfReal me, integer col, double *min, double *max);
 
-long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber);
+integer TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, integer rowNumber);
 
-const char32 *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, long rowNumber);
+const char32 *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, integer rowNumber);
 
-void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *rows, long colb, long cole,
+void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *rows, integer colb, integer cole,
 	double ymin, double ymax, double xoffsetFraction, double interbarFraction,
 	double interbarsFraction, const char32 *greys, bool garnish);
 
-void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, long icx, long icy, long rowb,
-	long rowe, double xmin, double xmax, double ymin, double ymax,
+void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integer icy, integer rowb,
+	integer rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, bool useRowLabels, const char32 *label, bool garnish);
 
-void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, bool garnish);
+void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, bool randomFillOrder, bool garnish);
 
-void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, long colb, long cole, double fractionWhite);
+void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb, integer cole, double fractionWhite);
 
-void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, long rowmin, long rowmax, long colmin, long colmax,
+void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integer rowmax, integer colmin, integer colmax,
 	double ymin, double ymax, bool garnish);
 
-void TableOfReal_drawVectors (TableOfReal me, Graphics g, long colx1, long coly1,
-	long colx2, long coly2, double xmin, double xmax,
+void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer coly1,
+	integer colx2, integer coly2, double xmin, double xmax,
 	double ymin, double ymax, int vectype, int labelsize, bool garnish);
 
 void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double sv_splitfactor, int labelsize,
 	bool garnish);
 
-void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, int column, double minimum, double maximum, long nBins,
+void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, integer column, double minimum, double maximum, integer nBins,
 	double freqMin, double freqMax, bool cumulative, bool garnish);
 
-long TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, int columnLabels,
-	int use_regexp);
+integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, bool columnLabels,
+	bool use_regexp);
 /*
 	Find number of labels that match search description.
 */
 
-int TableOfReal_equalLabels (TableOfReal me, TableOfReal thee, int rowLabels, int columnLabels);
+bool TableOfReal_equalLabels (TableOfReal me, TableOfReal thee, bool rowLabels, bool columnLabels);
 /* return 1 when labels are equal else 0 */
 
 void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, int columnOrigin);
@@ -107,21 +107,21 @@ void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, in
 	columnOrigin == -1 copy from row
 */
 
-void TableOfReal_labelsFromCollectionItemNames (TableOfReal me, Collection thee, int row, int column);
+void TableOfReal_setLabelsFromCollectionItemNames (TableOfReal me, Collection thee, bool setRowLabels, bool setColumnLabels);
 
-void TableOfReal_setSequentialColumnLabels (TableOfReal me, long from, long to, const char32 *precursor, long number, long increment);
+void TableOfReal_setSequentialColumnLabels (TableOfReal me, integer from, integer to, const char32 *precursor, integer number, integer increment);
 
-void TableOfReal_setSequentialRowLabels (TableOfReal me, long from, long to, const char32 *precursor, long number, long increment);
+void TableOfReal_setSequentialRowLabels (TableOfReal me, integer from, integer to, const char32 *precursor, integer number, integer increment);
 
-int TableOfReal_hasRowLabels (TableOfReal me);
+bool TableOfReal_hasRowLabels (TableOfReal me);
 
-int TableOfReal_hasColumnLabels (TableOfReal me);
+bool TableOfReal_hasColumnLabels (TableOfReal me);
 
 void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp);
+	integer maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);
 
 void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp);
+	integer maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);
 /*
 	Change all row/column labels. The 'search' and 'replace' string are
 	interpreted as regular expressions when 'use_regexp' != 0.
@@ -138,15 +138,15 @@ void TableOfReal_centreColumns (TableOfReal me);
 void TableOfReal_centreColumns_byRowLabel (TableOfReal me);
 /* PRECONDITION: Table must be sorted by row labels !! */
 
-double TableOfReal_getColumnQuantile (TableOfReal me, long col, double quantile);
+double TableOfReal_getColumnQuantile (TableOfReal me, integer col, double quantile);
 
 double TableOfReal_getRowSumByLabel (TableOfReal me, const char32 *label);
 
-double TableOfReal_getRowSum (TableOfReal me, long index);
+double TableOfReal_getRowSum (TableOfReal me, integer index);
 
 double TableOfReal_getColumnSumByLabel (TableOfReal me, const char32 *label);
 
-double TableOfReal_getColumnSum (TableOfReal me, long index);
+double TableOfReal_getColumnSum (TableOfReal me, integer index);
 
 double TableOfReal_getGrandSum (TableOfReal me);
 
@@ -154,7 +154,7 @@ void TableOfReal_centreRows (TableOfReal me);
 
 void TableOfReal_doubleCentre (TableOfReal me);
 
-int TableOfReal_checkPositive (TableOfReal me);
+bool TableOfReal_checkPositive (TableOfReal me);
 
 double TableOfReal_getTableNorm (TableOfReal me);
 
@@ -191,7 +191,7 @@ autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, bool upper, b
 
 autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee);
 
-void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, long myrow, long thyrow);
+void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer myrow, integer thyrow);
 
 /* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, Journal of Multivariate Analysis 62, 1-23. */
 double TableOfReal_normalityTest_BHEP (TableOfReal me, double *beta /* input and output */, double *tnb, double *lnmu, double *lnvar);
@@ -207,6 +207,6 @@ bool TableOfRealList_haveIdenticalDimensions (TableOfRealList me);
 
 autoTableOfReal TableOfRealList_appendColumnsMany (TableOfRealList me);
 
-autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, double xmin, double xmax, double nx, double ymin, double ymax, long ny, int /* method */);
+autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, double xmin, double xmax, double nx, double ymin, double ymax, integer ny, int /* method */);
 
 #endif /* _TableOfReal_extensions_h_ */

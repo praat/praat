@@ -413,7 +413,7 @@ static void create_index (char32 **s, integer sb, integer se, char32 **ref, inte
 }
 
 autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace,
-	integer maximumNumberOfReplaces, int use_regexp) {
+	integer maximumNumberOfReplaces, bool use_regexp) {
 	try {
 		integer nmatches, nstringmatches;
 		Melder_require (my rowLabels != nullptr && my columnLabels != nullptr, U"No row or column labels.");
@@ -635,7 +635,7 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 	}
 }
 
-void Confusion_drawAsNumbers (Confusion me, Graphics g, int marginals, int iformat, int precision) {
+void Confusion_drawAsNumbers (Confusion me, Graphics g, bool marginals, int iformat, int precision) {
 	TableOfReal thee = me;
 	autoTableOfReal athee;
 	if (marginals) {

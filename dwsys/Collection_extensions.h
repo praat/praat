@@ -60,10 +60,10 @@ void OrderedOfString_drawItem (OrderedOfString me, Graphics g, long index, doubl
 
 void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, long n);
 
-void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, int user_regexp);
+void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, bool use_regexp);
 
 void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, bool use_regexp);
 
 long OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, long *translation);
 /* Check whether my items are (a subset of)|(in) thy items.

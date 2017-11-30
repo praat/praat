@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2012,2015,2017 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 #include "TextGrid.h"
 
-autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
+autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile);
 /*
 	Read TIMIT label file with the following structure:
 		samplenumber1 samplenumber2 label1
@@ -34,7 +34,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
 		samplenumber2n-1 samplenumber2n labeln
 
 	The first tier of TextGrid will contain the TIMIT labels.
-	If phnFile != 0, the second tier will contain the translation of the
+	If phnFile == true, the second tier will contain the translation of the
 	TIMIT labels into IPA labels.
 	For the translation from sample number to time a default sampling
 	frequency of 16000 Hz is assumed.
@@ -78,9 +78,9 @@ void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 
 void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName);
 
-void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
+void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 *search, const char32 *replace, bool use_regexp, integer *nmatches, integer *nstringmatches);
 
-void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
+void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const char32 *search, const char32 *replace, bool use_regexp, integer *nmatches, integer *nstringmatches);
 
 void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const char32 *label);
 
@@ -88,7 +88,7 @@ void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label
 
 void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *label, double minimumDuration);
 
-void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to, const char32 *search, const char32 *replace, int use_regexp, integer *nmatches, integer *nstringmatches);
+void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to, const char32 *search, const char32 *replace, bool use_regexp, integer *nmatches, integer *nstringmatches);
 
 /* Set the start/end time to a smaller/larger value.
  * If mark is null, only times are changed

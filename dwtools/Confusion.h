@@ -87,7 +87,7 @@ autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, cons
 
 autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos);
 
-autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace, integer maximumNumberOfReplaces, int use_regexp);
+autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace, integer maximumNumberOfReplaces, bool use_regexp);
 /* 
 	Group row and column labels according to search and replace.
 */
@@ -100,7 +100,7 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me);
 	i.e., column and row sums.
 */
 
-void Confusion_drawAsNumbers (Confusion me, Graphics g, int marginals, int iformat, int precision);
+void Confusion_drawAsNumbers (Confusion me, Graphics g, bool marginals, int iformat, int precision);
 // option marginals draw one extra row and column with sums.
 
 #endif /* _Confusion_h_ */
