@@ -1,6 +1,6 @@
 /* SPINET_to_Pitch.cpp
  *
- * Copyright (C) 1993-2011,2015-2016 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@
 	from Erb-scale to log2-scale
 */
 
-autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, int maxnCandidates) {
+autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, integer maxnCandidates) {
 	try {
-		long nPointsPerOctave = 48;
+		integer nPointsPerOctave = 48;
 		double fmin = NUMerbToHertz (SampledXY_indexToY (me, 1L));
 		double fmax = NUMerbToHertz (SampledXY_indexToY (me, my ny));
 		double fminl2 = NUMlog2 (fmin), fmaxl2 = NUMlog2 (fmax);
@@ -42,12 +42,8 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		integer maxHarmonic = Melder_ifloor (fmax / fmin);
 		double maxStrength = 0.0, unvoicedCriterium = 0.45, maxPower = 0.0;
 
-		if (nFrequencyPoints < 2) {
-			Melder_throw (U"Frequency range too small.");
-		}
-		if (ceiling <= fmin) {
-			Melder_throw (U"Ceiling is smaller than centre frequency of lowest filter.");
-		}
+		Melder_require (nFrequencyPoints > 1, U"Frequency range too small.");
+		Melder_require (fmin < ceiling, U"The centre frequency of the lowest filter must be smaller than the ceiling.");
 
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, ceiling, maxnCandidates);
 		autoNUMvector<double> power (1, my nx);
@@ -59,36 +55,34 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 
 		// From ERB's to log (f)
 
-		for (long i = 1; i <= my ny; i++) {
+		for (integer i = 1; i <= my ny; i ++) {
 			double f = NUMerbToHertz (my y1 + (i - 1) * my dy);
-			fl2[i] = NUMlog2 (f);
+			fl2 [i] = NUMlog2 (f);
 		}
 
 		// Determine global maximum power in frame
 
-		for (long j = 1; j <= my nx; j++) {
+		for (integer j = 1; j <= my nx; j ++) {
 			double p = 0.0;
-			for (long i = 1; i <= my ny; i++) {
-				p += my s[i][j];
+			for (integer i = 1; i <= my ny; i ++) {
+				p += my s [i] [j];
 			}
 			if (p > maxPower) {
 				maxPower = p;
 			}
-			power[j] = p;
+			power [j] = p;
 		}
-		if (maxPower == 0.0) {
-			Melder_throw (U"No power");
-		}
+		Melder_require (maxPower != 0.0, U"The sound is empty.");
 
-		for (long j = 1; j <= my nx; j++) {
-			Pitch_Frame pitchFrame = &thy frame[j];
+		for (integer j = 1; j <= my nx; j ++) {
+			Pitch_Frame pitchFrame = &thy frame [j];
 
-			pitchFrame -> intensity = power[j] / maxPower;
-			for (long i = 1; i <= my ny; i ++) {
-				y [i] = my s[i][j];
+			pitchFrame -> intensity = power [j] / maxPower;
+			for (integer i = 1; i <= my ny; i ++) {
+				y [i] = my s [i] [j];
 			}
 			NUMcubicSplineInterpolation_getSecondDerivatives (fl2.peek(), y.peek(), my ny, 1e30, 1e30, yv2.peek());
-			for (long k = 1; k <= nFrequencyPoints; k ++) {
+			for (integer k = 1; k <= nFrequencyPoints; k ++) {
 				double f = fminl2 + (k - 1) * dfl2;
 				pitch [k] = NUMcubicSplineInterpolation (fl2.peek(), y.peek(), yv2.peek(), my ny, f);
 				sumspec [k] = 0.0;
@@ -96,10 +90,10 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 
 			// Formula (8): weighted harmonic summation.
 
-			for (long m = 1; m <= maxHarmonic; m ++) {
+			for (integer m = 1; m <= maxHarmonic; m ++) {
 				double hm = 1 - harmonicFallOffSlope * NUMlog2 (m);
 				integer kb = 1 + Melder_ifloor (nPointsPerOctave * NUMlog2 (m));
-				for (long k = kb; k <= nFrequencyPoints; k ++) {
+				for (integer k = kb; k <= nFrequencyPoints; k ++) {
 					if (pitch [k] > 0.0) {
 						sumspec [k - kb + 1] += pitch [k] * hm;
 					}
@@ -112,8 +106,8 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			pitchFrame -> nCandidates = 0; /* !!!!! */
 			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates); /* unvoiced */
 
-			for (long k = 2; k <= nFrequencyPoints - 1; k++) {
-				double y1 = sumspec[k - 1], y2 = sumspec[k], y3 = sumspec[k + 1];
+			for (integer k = 2; k <= nFrequencyPoints - 1; k ++) {
+				double y1 = sumspec [k - 1], y2 = sumspec [k], y3 = sumspec [k + 1];
 				if (y2 > y1 && y2 >= y3) {
 					double denum = y1 - 2.0 * y2 + y3, tmp = y3 - 4.0 * y2;
 					double x = dfl2 * (y1 - y3) / (2 * denum);
@@ -129,10 +123,10 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 
 		// Scale the pitch strengths
 
-		for (long j = 1; j <= my nx; j++) {
+		for (integer j = 1; j <= my nx; j ++) {
 			double f0, localStrength;
-			Pitch_Frame_getPitch (&thy frame[j], &f0, &localStrength);
-			Pitch_Frame_resizeStrengths (&thy frame[j], localStrength / maxStrength, unvoicedCriterium);
+			Pitch_Frame_getPitch (&thy frame [j], &f0, &localStrength);
+			Pitch_Frame_resizeStrengths (&thy frame [j], localStrength / maxStrength, unvoicedCriterium);
 		}
 		return thee;
 	} catch (MelderError) {

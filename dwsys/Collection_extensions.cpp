@@ -208,15 +208,11 @@ void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, long n) {
 	}
 }
 
-void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
+void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, bool use_regexp) {
 	regexp *compiled_search = nullptr;
 	try {
-		if (! search) {
-			Melder_throw (U"Missing search string.");
-		}
-		if (! replace) {
-			Melder_throw (U"Missing replace string.");
-		}
+		Melder_require (search, U"Missing search string.");
+		Melder_require (replace, U"Missing replace string.");
 
 		if (use_regexp) {
 			compiled_search = CompileRE_throwable (search, 0);
@@ -224,7 +220,7 @@ void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *
 		for (long i = 1; i <= my size; i ++) {
 			SimpleString ss = my at [i];
 			integer nmatches_sub;
-			char32 *r = use_regexp ? str_replace_regexp (ss -> string, compiled_search, replace, maximumNumberOfReplaces, &nmatches_sub) : str_replace_literal (ss -> string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
+			char32 *r = use_regexp ? str_replace_regexp (ss -> string, compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) : str_replace_literal (ss -> string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
 
 			// Change without error:
 			Melder_free (ss -> string);
@@ -273,7 +269,7 @@ long OrderedOfString_getSize (OrderedOfString me) {
 	return my size;
 }
 
-void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, int use_regexp) {
+void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, bool use_regexp) {
 	if (! search) {
 		return;
 	}

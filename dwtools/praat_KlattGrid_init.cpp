@@ -99,7 +99,7 @@ static void KlattGrid_PhonationGridPlayOptions (KlattGrid me, int useVoicing, in
 	INTEGER (fromNasalAntiFormant, U"left Nasal antiformant range", U"1") \
 	INTEGER (toNasalAntiFormant, U"right Nasal antiformant range", U"1")
 	
-static void KlattGrid_formantSelection_vocalTract (KlattGrid me, int filtersStructure, long fromOralFormant, long toOralFormant, long fromNasalFormant, long toNasalFormant, long fromNasalAntiFormant, long toNasalAntiFormant) {
+static void KlattGrid_formantSelection_vocalTract (KlattGrid me, int filtersStructure, integer fromOralFormant, integer toOralFormant, integer fromNasalFormant, integer toNasalFormant, integer fromNasalAntiFormant, integer toNasalAntiFormant) {
 	VocalTractGridPlayOptions pv = my vocalTract -> options.get();
 	pv -> filterModel = (filtersStructure == 1 ? KlattGrid_FILTER_CASCADE : KlattGrid_FILTER_PARALLEL);
 	pv -> startOralFormant = fromOralFormant;
@@ -120,7 +120,7 @@ static void KlattGrid_formantSelection_vocalTract (KlattGrid me, int filtersStru
 	INTEGER (fromDeltaBandwidth, U"left Delta bandwidth range", U"1") \
 	INTEGER (toDeltaBandwidth, U"right Delta bandwidth range", U"1")
 
-static void KlattGrid_formantSelection_coupling (KlattGrid me, long fromTrachealFormant, long toTrachealFormant, long fromTrachealAntiFormant, long toTrachealAntiFormant, long fromDeltaFormant, long toDeltaFormant, long fromDeltaBandwidth, long toDeltaBandwidth) {
+static void KlattGrid_formantSelection_coupling (KlattGrid me, integer fromTrachealFormant, integer toTrachealFormant, integer fromTrachealAntiFormant, integer toTrachealAntiFormant, integer fromDeltaFormant, integer toDeltaFormant, integer fromDeltaBandwidth, integer toDeltaBandwidth) {
 	CouplingGridPlayOptions pc = my coupling -> options.get();
 	pc -> startTrachealFormant = fromTrachealFormant;
 	pc -> endTrachealFormant = toTrachealFormant;
@@ -137,7 +137,7 @@ static void KlattGrid_formantSelection_coupling (KlattGrid me, long fromTracheal
 	INTEGER (toFricationFormant, U"right Frication formant range", U"6") \
 	BOOLEAN (useFricationBypass, U"Frication bypass", true)
 
-static void KlattGrid_formantSelection_frication (KlattGrid me, long fromFricationFormant, long toFricationFormant, int useFricationBypass) {
+static void KlattGrid_formantSelection_frication (KlattGrid me, integer fromFricationFormant, integer toFricationFormant, int useFricationBypass) {
 	FricationGridPlayOptions pf = my frication -> options.get();
 	pf -> startFricationFormant = fromFricationFormant;
 	pf -> endFricationFormant = toFricationFormant;

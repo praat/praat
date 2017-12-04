@@ -391,7 +391,7 @@ static char32 **strs_replace_regexp (char32 **from, integer lo, integer hi, cons
 	return result.transfer();
 }
 
-char32 **strs_replace (char32 **from, integer lo, integer hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp) {
+char32 **strs_replace (char32 **from, integer lo, integer hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	return use_regexp ? strs_replace_regexp (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches) :
 		strs_replace_literal (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches);
 }

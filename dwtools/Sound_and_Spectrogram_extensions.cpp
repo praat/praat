@@ -45,20 +45,20 @@ autoSound BandFilterSpectrogram_as_Sound (BandFilterSpectrogram me, int to_dB);
 	where erf(x) = 1 - erfc(x) and n is the windowLength in samples.
 	To compare with the rectangular window we need to divide this by the window width (n -1) x 1^2.
 */
-static void _Spectrogram_windowCorrection (Spectrogram me, long numberOfSamples_window) {
-	double windowFactor = 1;
+static void _Spectrogram_windowCorrection (Spectrogram me, integer numberOfSamples_window) {
+	double windowFactor = 1.0;
 	if (numberOfSamples_window > 1) {
 		double e12 = exp (-12);
-		double denum = (e12 - 1) * (e12 - 1) * 24 * (numberOfSamples_window - 1);
-		double arg1 = 2 * NUMsqrt3 * (numberOfSamples_window - 1) / (numberOfSamples_window + 1);
+		double denum = (e12 - 1) * (e12 - 1.0) * 24 * (numberOfSamples_window - 1);
+		double arg1 = 2.0 * NUMsqrt3 * (numberOfSamples_window - 1) / (numberOfSamples_window + 1);
 		double arg2 = arg1 * NUMsqrt2;
 		double p2 = NUMsqrtpi * NUMsqrt3 * NUMsqrt2 * (1 - NUMerfcc (arg2)) * (numberOfSamples_window + 1);
 		double p1 = 4 * NUMsqrtpi * NUMsqrt3 * e12 * (1 - NUMerfcc (arg1)) * (numberOfSamples_window + 1);
 		windowFactor =  (p2 - p1 + 24 * (numberOfSamples_window - 1) * e12 * e12) / denum;
 	}
-	for (long i = 1; i <= my ny; i++) {
-		for (long j = 1; j <= my nx; j++) {
-			my z[i][j] /= windowFactor;
+	for (integer i = 1; i <= my ny; i ++) {
+		for (integer j = 1; j <= my nx; j ++) {
+			my z [i] [j] /= windowFactor;
 		}
 	}
 }
@@ -72,64 +72,64 @@ static autoSpectrum Sound_to_Spectrum_power (Sound me) {
 		// thy dx : width of frequency bin
 		// my xmax - my xmin : duration of sound
 
-		double *re = thy z[1], *im = thy z[2];
-		for (long i = 1; i <= thy nx; i++) {
-			double power = scale * (re[i] * re[i] + im[i] * im [i]);
-			re[i] = power; im[i] = 0;
+		double *re = thy z [1], *im = thy z [2];
+		for (integer i = 1; i <= thy nx; i ++) {
+			double power = scale * (re [i] * re [i] + im [i] * im [i]);
+			re [i] = power; im [i] = 0;
 		}
 
 		// Correction of frequency bins at 0 Hz and nyquist: don't count for two.
 
-		re[1] *= 0.5; re[thy nx] *= 0.5;
+		re [1] *= 0.5; re [thy nx] *= 0.5;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum with spectral power created.");
 	}
 }
 
-static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, long frame) {
+static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, integer frame) {
 	autoSpectrum him = Sound_to_Spectrum_power (me);
-	long numberOfFrequencies = his nx;
+	integer numberOfFrequencies = his nx;
 	autoNUMvector<double> z (1, numberOfFrequencies);
 
-	for (long ifreq = 1; ifreq <= numberOfFrequencies; ifreq++) {
+	for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
 		double fhz = his x1 + (ifreq - 1) * his dx;
-		z[ifreq] = thy v_hertzToFrequency (fhz);
+		z [ifreq] = thy v_hertzToFrequency (fhz);
 	}
 
-	for (long i = 1; i <= thy ny; i++) {
+	for (integer i = 1; i <= thy ny; i ++) {
 		double p = 0;
 		double z0 = thy y1 + (i - 1) * thy dy;
-		double *pow = his z[1]; // TODO ??
-		for (long ifreq = 1; ifreq <= numberOfFrequencies; ifreq++) {
+		double *pow = his z [1]; // TODO ??
+		for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
 			// Sekey & Hanson filter is defined in the power domain.
 			// We therefore multiply the power with a (and not a^2).
 			// integral (F(z),z=0..25) = 1.58/9
 
-			double a = NUMsekeyhansonfilter_amplitude (z0, z[ifreq]);
-			p += a * pow[ifreq] ;
+			double a = NUMsekeyhansonfilter_amplitude (z0, z [ifreq]);
+			p += a * pow [ifreq] ;
 		}
-		thy z[i][frame] = p;
+		thy z [i] [frame] = p;
 	}
 }
 
 autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double dt, double f1_bark, double fmax_bark, double df_bark) {
 	try {
 		double nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist;
-		double windowDuration = 2 * analysisWidth; /* gaussian window */
+		double windowDuration = 2.0 * analysisWidth; /* gaussian window */
 		double zmax = NUMhertzToBark2 (nyquist);
 		double fmin_bark = 0;
 
 		// Check defaults.
 
-		if (f1_bark <= 0) {
-			f1_bark = 1;
+		if (f1_bark <= 0.0) {
+			f1_bark = 1.0;
 		}
-		if (fmax_bark <= 0) {
+		if (fmax_bark <= 0.0) {
 			fmax_bark = zmax;
 		}
 		if (df_bark <= 0) {
-			df_bark = 1;
+			df_bark = 1.0;
 		}
 
 		fmax_bark = MIN (fmax_bark, zmax);
@@ -168,7 +168,7 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 	}
 }
 
-static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, long frame) {
+static void Sound_into_MelSpectrogram_frame (Sound me, MelSpectrogram thee, integer frame) {
 	autoSpectrum him = Sound_to_Spectrum_power (me);
 
 	for (integer ifilter = 1; ifilter <= thy ny; ifilter ++) {
@@ -249,25 +249,26 @@ autoMelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, doub
 	Analog formant filter response :
 	H(f) = i f B / (f1^2 - f^2 + i f B)
 */
-static int Sound_into_Spectrogram_frame (Sound me, Spectrogram thee, long frame, double bw) {
+static int Sound_into_Spectrogram_frame (Sound me, Spectrogram thee, integer frame, double bw) {
 	Melder_assert (bw > 0);
 	autoSpectrum him = Sound_to_Spectrum_power (me);
 
-	for (long ifilter = 1; ifilter <= thy ny; ifilter ++) {
+	for (integer ifilter = 1; ifilter <= thy ny; ifilter ++) {
 		double p = 0;
 		double fc = thy y1 + (ifilter - 1) * thy dy;
 		double *pow = his z [1];
-		for (long ifreq = 1; ifreq <= his nx; ifreq ++) {
-			// H(f) = ifB / (fc^2 - f^2 + ifB)
-			// H(f)| = fB / sqrt ((fc^2 - f^2)^2 + f^2B^2)
-			//|H(f)|^2 = f^2B^2 / ((fc^2 - f^2)^2 + f^2B^2)
-			//         = 1 / (((fc^2 - f^2) /fB)^2 + 1)
-
+		for (integer ifreq = 1; ifreq <= his nx; ifreq ++) {
+			/*
+				H(f) = ifB / (fc^2 - f^2 + ifB)
+				H(f)| = fB / sqrt ((fc^2 - f^2)^2 + f^2B^2)
+				|H(f)|^2 = f^2B^2 / ((fc^2 - f^2)^2 + f^2B^2)
+						 = 1 / (((fc^2 - f^2) /fB)^2 + 1)
+			*/
 			double f = his x1 + (ifreq - 1) * his dx;
 			double a = NUMformantfilter_amplitude (fc, bw, f);
-			p += a * pow[ifreq];
+			p += a * pow [ifreq];
 		}
-		thy z[ifilter][frame] = p;
+		thy z [ifilter] [frame] = p;
 	}
 	return 1;
 }
@@ -334,7 +335,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelderProgress progress (U"Sound & Pitch: To FormantFilter");
-		for (integer iframe = 1; iframe <= numberOfFrames; iframe++) {
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			double t = Sampled_indexToX (him.get(), iframe);
 			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit::HERTZ, 0);
 
@@ -365,9 +366,9 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 autoSound BandFilterSpectrogram_as_Sound (BandFilterSpectrogram me, int unit) {
 	try {
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
-		for (long i = 1; i <= my ny; i ++) {
-			for (long j = 1; j <= my nx; j ++)
-				thy z[i][j] = my v_getValueAtSample (j, i, unit);
+		for (integer i = 1; i <= my ny; i ++) {
+			for (integer j = 1; j <= my nx; j ++)
+				thy z [i] [j] = my v_getValueAtSample (j, i, unit);
 		}
 		return thee;
 	} catch (MelderError) {

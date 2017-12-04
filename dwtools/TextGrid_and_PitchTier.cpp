@@ -51,7 +51,7 @@ static double RealTier_getMinimumValue_interval (RealTier me, double tmin, doubl
 	integer imin, imax;
 	(void) AnyTier_getWindowPoints ((AnyTier) me, tmin, tmax, & imin, & imax);
 	double result = undefined;
-	for (long i = imin; i <= imax; i ++) {
+	for (integer i = imin; i <= imax; i ++) {
 		RealPoint point = my points.at [i];
 		if (isundef (result) || point -> value < result) {
 			result = point -> value;
@@ -64,7 +64,7 @@ static double RealTier_getMaximumValue_interval (RealTier me, double tmin, doubl
 	integer imin, imax;
 	(void) AnyTier_getWindowPoints ((AnyTier) me, tmin, tmax, & imin, & imax);
 	double result = undefined;
-	for (long i = imin; i <= imax; i ++) {
+	for (integer i = imin; i <= imax; i ++) {
 		RealPoint point = my points.at [i];
 		if (isundef (result) || point -> value > result) {
 			result = point -> value;
@@ -109,7 +109,7 @@ static double * getTimesFromRelativeTimesString (double tmin, double tmax, const
 */
 static double note_to_frequency (const char32 *token, double a4) {
 	double base = a4 / 8.0;
-	long octave, index;
+	integer octave, index;
 	const char32 note = *token++, char2 = *token++;
 	if (note == U'a' || note == U'A') {
 		index = 1;
@@ -162,11 +162,10 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 		
 		autoStrings items = Strings_createAsTokens (pitches_string, U" ");
 		integer numberOfPitches = items -> numberOfStrings;
-		if (numberOfTimes != numberOfPitches) {
-			Melder_throw (U"The number of items in the times and the pitches string have to be equal.");
-		}
+		Melder_require (numberOfTimes == numberOfPitches,
+			U"The number of items in the times and the pitches string have to be equal.");
 		autoNUMvector<double> pitchesraw (1, numberOfPitches);
-		for (long i = 1; i <= numberOfPitches; i ++) {
+		for (integer i = 1; i <= numberOfPitches; i ++) {
 			const char32 *token = items -> strings [i];
 			if (pitch_as == PITCH_VALUE_AS_MUSIC_NOTE) {
 				pitchesraw [i] = note_to_frequency (token, 440.0);
@@ -203,10 +202,8 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 			} else {
 				// we should not be here
 			}
-			
-			if (isundef (pitchAnchor) && (pitchAnchor_status != PITCH_ANCHOR_IS_NOT_USED)) {
-				Melder_throw (U"The pitch anchor value is undefined because the PitchTier is empty.");
-			}
+			Melder_require (isdefined (pitchAnchor) || pitchAnchor_status == PITCH_ANCHOR_IS_NOT_USED,
+				U"The pitch anchor value is undefined because the PitchTier is empty.");
 			
 			/*
 				How to interpret the "pitch" value
@@ -254,7 +251,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 
 static void PitchTiers_replacePoints (PitchTier me, PitchTier thee) {
 	AnyTier_removePointsBetween ((AnyTier) me, thy xmin, thy xmax);
-	for (long i = 1; i <= thy points.size; i ++) {
+	for (integer i = 1; i <= thy points.size; i ++) {
 		RealPoint pp = thy points.at [i];
 		RealTier_addPoint (me, pp -> number, pp -> value);
 	}
@@ -273,7 +270,7 @@ void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, const cha
 autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
 	try {
 		autoPitchTier him = Data_copy (thee);
-		for (long i = 1; i <= my intervals.size; i ++) {
+		for (integer i = 1; i <= my intervals.size; i ++) {
 			TextInterval segment = my intervals.at [i];
 			if (Melder_stringMatchesCriterion (segment -> text, which, criterion)) {
 				double xmin = segment -> xmin, xmax = segment -> xmax;
@@ -287,7 +284,7 @@ autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTie
 	}
 }
 
-static autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, long tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
+static autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, integer tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		return IntervalTier_and_PitchTier_to_PitchTier (tier, thee, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status, which, criterion);
@@ -300,22 +297,22 @@ static autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier
 	We specify pitches as tone levels (1 - numberOfToneLevels). These levels are relative to the pitch range of a speaker.
 	(normally in Mandarin Chinese they count 5 levels).
 */
-static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, long numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
+static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
 	try {
 		if (tmin >= tmax) {
 			tmin = my xmin; tmax = my xmax;
 		}
-		if (fmin >= fmax) {
-			Melder_throw (U"The lowest frequency must be lower than the highest frequency.");
-		}
+		Melder_require (fmin < fmax, 
+			U"The lowest frequency must be lower than the highest frequency.");
+
 		integer numberOfTimes, numberOfPitches;
 		autoNUMvector<double> times (getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);
 		autoNUMvector<double> pitches (NUMstring_to_numbers (pitches_string, & numberOfPitches), 1);
-		if (numberOfTimes != numberOfPitches) {
-			Melder_throw (U"The number of items in the times and the pitches string have to be equal.");
-		}
+		Melder_require (numberOfTimes == numberOfPitches,
+			U"The number of items in the times and the pitches string have to be equal.");
+
 		double scale = log10 (fmax / fmin) / numberOfToneLevels;
-		for (long i = 1; i <= numberOfPitches; i ++) {
+		for (integer i = 1; i <= numberOfPitches; i ++) {
 			pitches [i] = fmin * pow (10.0, scale * pitches [i]);
 		}
 		NUMsort2<double, double> (numberOfTimes, times.peek(), pitches.peek());
@@ -326,7 +323,7 @@ static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, do
 	}
 }
 
-void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, long numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
+void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
 	try {
 		autoPitchTier thee = PitchTier_createAsModifiedPart_toneLevels (me, tmin, tmax, fmin, fmax, numberOfToneLevels, times_string, time_offset, pitches_string);
 		PitchTiers_replacePoints (me, thee.get());

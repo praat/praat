@@ -208,7 +208,7 @@ void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double x
 	Graphics_setFontSize (g, fontSize);
 }
 
-void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, long numberOfColumns, double zmin, double zmax, double cellSizeFactor, int randomFillOrder) {
+void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, long numberOfColumns, double zmin, double zmax, double cellSizeFactor, bool randomFillOrder) {
 	long numberOfCells = numberOfRows * numberOfColumns;
 	autoPermutation p = Permutation_create (numberOfCells);
 	if (randomFillOrder) {

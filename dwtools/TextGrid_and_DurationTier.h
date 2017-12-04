@@ -28,6 +28,6 @@ void TextTier_and_DurationTier_scaleTimes (TextTier me, DurationTier thee);
 
 autoTextGrid TextGrid_and_DurationTier_scaleTimes (TextGrid me, DurationTier thee);
 
-autoDurationTier TextGrid_to_DurationTier (TextGrid me, long tierNumber, double timeScalefactor, double leftTransitionDuration, double rightTransitionDuration, kMelder_string which, const char32 *criterion);
+autoDurationTier TextGrid_to_DurationTier (TextGrid me, integer tierNumber, double timeScalefactor, double leftTransitionDuration, double rightTransitionDuration, kMelder_string which, const char32 *criterion);
 
 #endif

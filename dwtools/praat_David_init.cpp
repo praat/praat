@@ -773,7 +773,7 @@ FORM (NEW_Confusion_condense, U"Confusion: Condense", U"Confusion: Condense...")
 	OK
 DO
 	CONVERT_EACH (Confusion)
-		autoConfusion result = Confusion_condense (me, search_string, replace_string, replaceLimit, matchType);
+		autoConfusion result = Confusion_condense (me, search_string, replace_string, replaceLimit, matchType == 2);
 	CONVERT_EACH_END (my name, U"_cnd")
 }
 

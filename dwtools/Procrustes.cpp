@@ -1,6 +1,6 @@
 /* Procrustes.cpp
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,14 +48,14 @@
 
 Thing_implement (Procrustes, AffineTransform, 0);
 
-void structProcrustes :: v_transform (double **in, long nrows, double **out) {
-	for (long i = 1; i <= nrows; i++) {
-		for (long j = 1; j <= n; j++) {
+void structProcrustes :: v_transform (double **in, integer nrows, double **out) {
+	for (integer i = 1; i <= nrows; i ++) {
+		for (integer j = 1; j <= n; j ++) {
 			double tmp = 0.0;
-			for (long k = 1; k <= n; k++) {
-				tmp += in[i][k] * r[k][j];
+			for (integer k = 1; k <= n; k ++) {
+				tmp += in [i] [k] * r [k] [j];
 			}
-			out[i][j] = s * tmp + t[j];
+			out [i] [j] = s * tmp + t [j];
 		}
 	}
 }
@@ -69,39 +69,39 @@ autoAffineTransform structProcrustes :: v_invert () {
 
 	thy s = s == 0.0 ? 1.0 : 1.0 / s;
 
-	for (long i = 1; i <= n; i++) {
-		for (long j = i + 1; j <= n; j++) {
-			thy r[i][j] = r[j][i];
-			thy r[j][i] = r[i][j];
+	for (integer i = 1; i <= n; i ++) {
+		for (integer j = i + 1; j <= n; j ++) {
+			thy r [i] [j] = r [j] [i];
+			thy r [j] [i] = r [i] [j];
 		}
-		thy t[i] = 0.0;
+		thy t [i] = 0.0;
 		/*
-		for (j = 1; j <= thy n; j++)
+		for (j = 1; j <= thy n; j ++)
 		{
-			thy t[i] -= thy r[i][j] * t[j];
+			thy t [i] -= thy r [i] [j] * t [j];
 		}
 		*/
-		for (long j = 1; j <= thy n; j++) {
-			thy t[i] -= thy r[j][i] * t[j];
+		for (integer j = 1; j <= thy n; j ++) {
+			thy t [i] -= thy r [j] [i] * t [j];
 		}
 
-		thy t[i] *= thy s;
+		thy t [i] *= thy s;
 	}
 	return thee.move();   // explicit move() seems to be needed because of the type difference
 }
 
 static void Procrustes_setDefaults (Procrustes me) {
 	my s = 1.0;
-	for (long i = 1; i <= my n; i++) {
-		my t[i] = 0.0;
-		my r[i][i] = 1.0;
-		for (long j = i + 1; j <= my n; j++) {
-			my r[i][j] = my r[j][i] = 0.0;
+	for (integer i = 1; i <= my n; i ++) {
+		my t [i] = 0.0;
+		my r [i] [i] = 1.0;
+		for (integer j = i + 1; j <= my n; j ++) {
+			my r [i] [j] = my r [j] [i] = 0.0;
 		}
 	}
 }
 
-autoProcrustes Procrustes_create (long n) {
+autoProcrustes Procrustes_create (integer n) {
 	try {
 		autoProcrustes me = Thing_new (Procrustes);
 		AffineTransform_init (me.get(), n);

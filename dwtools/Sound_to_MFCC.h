@@ -2,7 +2,7 @@
 #define _Sound_to_MFCC_h_
 /* Sound_to_MFCC.h
  *
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #include "MFCC.h"
 #include "Sound.h"
 
-autoMFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth,
+autoMFCC Sound_to_MFCC (Sound me, integer numberOfCoefficients, double analysisWidth,
 	double dt, double f1_mel, double fmax_mel, double df_mel);
 
 #endif /* _Sound_to_MFCC_h_ */

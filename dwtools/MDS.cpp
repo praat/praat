@@ -527,7 +527,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal must be a square table.");
-		TableOfReal_checkPositive (me);
+		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
 		autoDissimilarity thee = Thing_new (Dissimilarity);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -539,7 +539,7 @@ autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal must be a square table.");
-		TableOfReal_checkPositive (me);
+		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
 		autoSimilarity thee = Thing_new (Similarity);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -551,7 +551,7 @@ autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 autoDistance TableOfReal_to_Distance (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal must be a square table.");
-		TableOfReal_checkPositive (me);
+		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
 		autoDistance thee = Thing_new (Distance);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -562,7 +562,7 @@ autoDistance TableOfReal_to_Distance (TableOfReal me) {
 
 autoSalience TableOfReal_to_Salience (TableOfReal me) {
 	try {
-		TableOfReal_checkPositive (me);
+		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
 		autoSalience thee = Thing_new (Salience);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -573,7 +573,7 @@ autoSalience TableOfReal_to_Salience (TableOfReal me) {
 
 autoWeight TableOfReal_to_Weight (TableOfReal me) {
 	try {
-		TableOfReal_checkPositive (me);
+		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
 		autoWeight thee = Thing_new (Weight);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -1204,7 +1204,7 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 	if (n == 0) {
 		return;
 	}
-	Melder_require (TableOfReal_equalLabels (me, thee, 1, 1), U"Dimensions and labels must be the same.");
+	Melder_require (TableOfReal_equalLabels (me, thee, true, true), U"Dimensions and labels must be the same.");
 	
 	if (xmax <= xmin) {
 		xmin = xmax = x [1] [2];
@@ -1389,7 +1389,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		Thing_setName (mdsw.get(), U"ytl");
 		Thing_setName (thee.get(), U"ytl");
-		TableOfReal_labelsFromCollectionItemNames (mdsw.get(), (Collection) me, 1, 0);   // FIXME cast
+		TableOfReal_setLabelsFromCollectionItemNames (mdsw.get(), (Collection) me, true, false);   // FIXME cast
 
 		/*
 			Determine the average scalar product matrix (Pmean) of dimension [1..nPoints] [1..nPoints].
@@ -2413,7 +2413,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 		}
 		if (p_sal) {
 			Thing_setName (sal.get(), U"indscal");
-			TableOfReal_labelsFromCollectionItemNames (sal.get(), (Collection) sp, 1, 0);   // FIXME cast
+			TableOfReal_setLabelsFromCollectionItemNames (sal.get(), (Collection) sp, true, false);   // FIXME cast
 			*p_sal = sal.move();
 		}
 		if (p_varianceAccountedFor) {
@@ -2490,7 +2490,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 		Thing_setName (configuration.get(), U"indscal_mr");
 		Thing_setName (salience.get(), U"indscal_mr");
-		TableOfReal_labelsFromCollectionItemNames (salience.get(), (Collection) dissims, 1, 0);   // FIXME cast
+		TableOfReal_setLabelsFromCollectionItemNames (salience.get(), (Collection) dissims, true, false);   // FIXME cast
 
 		if (p_configuration) {
 			*p_configuration = configuration.move();

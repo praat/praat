@@ -2,7 +2,7 @@
 #define _SPINET_h_
 /* SPINET.h
  *
- * Copyright (C) 1993-2011,2015 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
 
 #include "SPINET_def.h"
 
-autoSPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
-	 double minimumFrequency, double maximumFrequency, long nFilters,
+autoSPINET SPINET_create (double tmin, double tmax, integer nt, double dt, double t1,
+	 double minimumFrequency, double maximumFrequency, integer nFilters,
 	 double excitationErbProportion, double inhibitionErbProportion);
 
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime,

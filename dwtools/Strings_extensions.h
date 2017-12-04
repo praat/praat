@@ -2,7 +2,7 @@
 #define _Strings_extensions_h_
 /* Strings_extensions.h
  *
- * Copyright (C) 1993-2012, 2015, 2017 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ integer Strings_findString (Strings me, const char32 *string);
 autoStrings Strings_append (OrderedOf<structStrings>* me);
 
 autoStrings Strings_change (Strings me, const char32 *search, const char32 *replace,
-	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, int use_regexp);
+	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);
 
 autoStrings strings_to_Strings (char32 **strings, integer from, integer to);
 

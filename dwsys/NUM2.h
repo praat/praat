@@ -75,7 +75,7 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp);
 
 char32 **strs_replace (char32 **from, integer lo, integer hi, const char32 *search,
 	const char32 *replace, int maximumNumberOfReplaces, integer *nmatches,
-	integer *nstringmatches, int use_regexp);
+	integer *nstringmatches, bool use_regexp);
 /*
 	Searches and replaces in string array of strings.
 	If use_regexp != 0, 'search' and 'replace' will be interpreted

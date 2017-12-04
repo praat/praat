@@ -1,6 +1,6 @@
 /* Sound_to_MFCC.cpp
  *
- * Copyright (C) 1993-2011, 2014-2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "Sound_to_MFCC.h"
 #include "Sound_and_Spectrogram_extensions.h"
 
-autoMFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth, double dt, double f1_mel, double fmax_mel, double df_mel) {
+autoMFCC Sound_to_MFCC (Sound me, integer numberOfCoefficients, double analysisWidth, double dt, double f1_mel, double fmax_mel, double df_mel) {
 	try {
 		autoMelSpectrogram mf = Sound_to_MelSpectrogram (me, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
 		autoMFCC mfcc = MelSpectrogram_to_MFCC (mf.get(), numberOfCoefficients);
