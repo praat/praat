@@ -21,7 +21,9 @@ procedure ltas
 		info$ = Report spectral tilt: 100, 10000, "Logarithmic", "Robust"
 		slope =  extractNumber (info$, "Slope:")
 		offset = extractNumber (info$, "Offset:")
-		appendInfoLine: tab$, "Slope= ", fixed$ (slope, 4), "; Offset= ", fixed$ (offset, 4)
+		slopediffr = (slope - slope [1]) / slope [1]
+		offsetdiffr = (offset - offset [1]) / offset
+		appendInfoLine: tab$, "r. slopediff= ", percent$ (slopediffr, 1), "; Offset= ", fixed$ (offsetdiffr, 1)
 		assert slope > (slope[i] - slopemargin[i]) and slope < (slope[i] + slopemargin[i])
 		assert offset > (offset[i] - offsetmargin[i]) and offset < (offset[i] + offsetmargin[i])
 		removeObject: s[i], ltas
