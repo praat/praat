@@ -20,7 +20,6 @@
 	djmw 20171024
 */
 
-#include "espeak_io.h"
 #include "espeakdata_FileInMemory.h"
 #include "espeak_ng.h"
 #include "speech.h"
