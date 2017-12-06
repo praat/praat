@@ -632,7 +632,7 @@ void FilterBank_equalizeIntensities (FilterBank me, double intensity_db) {
 }
 
 void FilterBank_and_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, integer component, double dblevel, double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
-	Melder_require (component > 0 && component <= thy numberOfEigenvalues, U"Component too large.");
+	Melder_require (component > 0 && component <= thy numberOfEigenvalues, U"Component should be in the range [1, ", thy numberOfEigenvalues, U"].");
 	
 	// Scale Intensity
 
@@ -1152,7 +1152,7 @@ autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double
 		double nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist, fmin_hz = 0;
 		integer nt, f0_undefined = 0;
 
-		Melder_require (my xmin >= thy xmin && my xmax <= thy xmax, U"The domain of the Sound is not included in the domain of the Pitch.");
+		Melder_require (my xmin >= thy xmin && my xmax <= thy xmax, U"The domain of the Sound should be included in the domain of the Pitch.");
 
 		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit::HERTZ);
 

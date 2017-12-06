@@ -217,12 +217,12 @@ void SVD_compute (SVD me) {
 		integer n = my numberOfRows;
 
 		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u[1][1], & lda, & my d[1], & my v[1][1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
-		Melder_require (info == 0, U"SVD not precomputed.");
+		Melder_require (info == 0, U"SVD could not be precomputed.");
 
 		lwork = wt [0];
 		autoNUMvector<double> work ((integer) 0, lwork);
 		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u[1][1], & lda, & my d[1], & my v[1][1], & ldu, nullptr, & ldvt, work.peek(), & lwork, & info);
-		Melder_require (info == 0, U"SVD not computed.");
+		Melder_require (info == 0, U"SVD could not be computed.");
 
 		NUMtranspose_d (my v, MIN (m, n));
 		if (transpose) {

@@ -46,7 +46,7 @@ void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee) {
 	double *rc = thy c;
 	for (integer m = p; m > 0; m --) {
 		rc [m] = a [m];
-		Melder_require (rc [m] <= 1.0, U"Relection coefficient [", m, U"] larger 1.");
+		Melder_require (rc [m] <= 1.0, U"Relection coefficient [", m, U"] should be smaller than 1.");
 		for (integer i = 1; i < m; i ++) {
 			b [i] = a [i];
 		}

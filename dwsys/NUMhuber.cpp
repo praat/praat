@@ -27,7 +27,7 @@ void NUMmad (double *x, integer n, double *location, bool wantlocation, double *
 	double *tmp = work;
 
 	*mad = undefined;
-	Melder_require (n > 0, U"The dimension must be at least 1");
+	Melder_require (n > 0, U"The dimension should be larger than zero.");
 	
 	if (n == 1) {
 		*location = x[1];

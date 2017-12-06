@@ -59,7 +59,7 @@ static integer Permutation_checkRange (Permutation me, integer *from, integer *t
 	}
 
 	Melder_require (*from > 0 && *from <= my numberOfElements && *to > 0 && *to <= my numberOfElements,
-		U"Range must be in [1, ", my numberOfElements, U"].");
+		U"Range should be in [1, ", my numberOfElements, U"].");
 
 	return *to - *from + 1;
 }
@@ -68,7 +68,7 @@ void Permutation_checkInvariant (Permutation me) {
 	autoPermutation thee = Data_copy (me);
 	NUMsort_integer (thy numberOfElements, thy p);
 	for (integer i = 1; i <= my numberOfElements; i ++) {
-		Melder_require (thy p [i] == i, me, U": not a valid permutation.");
+		Melder_require (thy p [i] == i, me, U": is not a valid permutation.");
 	}
 }
 
@@ -79,7 +79,7 @@ void structPermutation :: v_info () {
 
 void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/) {
 	numberOfElements = texgeti32 (text);
-	Melder_require (numberOfElements > 0, U"Number of elements must be greater than zero.");
+	Melder_require (numberOfElements > 0, U"Number of elements should be greater than zero.");
 	
 	p = NUMvector_readText_integer (1, numberOfElements, text, "p");
 	Permutation_checkInvariant (this);
@@ -109,7 +109,8 @@ void Permutation_sort (Permutation me) {
 
 void Permutation_swapPositions (Permutation me, integer i1, integer i2) {
 	try {
-		Melder_require (i1 > 0 && i1 <= my numberOfElements && i2 > 0 && i2 <= my numberOfElements, U"Invalid positions.");
+		Melder_require (i1 > 0 && i1 <= my numberOfElements && i2 > 0 && i2 <= my numberOfElements, 
+			U"Positions should be within the range [1, ",  my numberOfElements, U"].");
 		SWAP (my p [i1], my p [i2])
 	} catch (MelderError) {
 		Melder_throw (me, U":positions not swapped.");
@@ -119,7 +120,8 @@ void Permutation_swapPositions (Permutation me, integer i1, integer i2) {
 void Permutation_swapNumbers (Permutation me, integer i1, integer i2) {
 	try {
 		integer ip = 0;
-		Melder_require (i1 > 0 && i1 <= my numberOfElements && i2 > 0 && i2 <= my numberOfElements, U"Invalid positions.");
+		Melder_require (i1 > 0 && i1 <= my numberOfElements && i2 > 0 && i2 <= my numberOfElements, 
+			U"Positions should be within the range [1, ",  my numberOfElements, U"].");
 		
 		if (i1 == i2) {
 			return;
@@ -144,9 +146,9 @@ void Permutation_swapNumbers (Permutation me, integer i1, integer i2) {
 
 void Permutation_swapBlocks (Permutation me, integer from, integer to, integer blocksize) {
 	try {
-		Melder_require (blocksize > 0 && blocksize <= my numberOfElements / 2, U"Blocksize must be in [1, %d] range.", my numberOfElements / 2);
+		Melder_require (blocksize > 0 && blocksize <= my numberOfElements / 2, U"Blocksize should be in [1, %d] range.", my numberOfElements / 2);
 		Melder_require (from > 0 && to > 0 && from + blocksize <= my numberOfElements && to + blocksize <= my numberOfElements,
-			U"Start and finish positions of the two blocks must be in [1,", my numberOfElements, U"] range.");
+			U"Start and finish positions of the two blocks should be in [1,", my numberOfElements, U"] range.");
 
 		if (from == to) {
 			return;
@@ -238,7 +240,7 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, integer from,
 		}
 
 		integer nblocks  = n / blocksize, nrest = n % blocksize;
-		Melder_require (nrest == 0, U"It is not possible to fit an integer number of blocks in the range.\n(The last block is only of size ", nrest, U").");
+		Melder_require (nrest == 0, U"There should fit an integer number of blocks in the range.\n(The last block is only of size ", nrest, U").");
 		
 		autoPermutation pblocks = Permutation_create (nblocks);
 
@@ -268,11 +270,11 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, integer from,
 
 autoPermutation Permutation_interleave (Permutation me, integer from, integer to, integer blocksize, integer offset) {
 	try {
-		Melder_require (offset < blocksize, U"Offset must be smaller than blocksize.");
+		Melder_require (offset < blocksize, U"Offset should be smaller than blocksize.");
 		integer n = Permutation_checkRange (me, & from, & to);
 		integer nblocks = n / blocksize;
 		integer nrest = n % blocksize;
-		Melder_require (nrest == 0, U"There is not an integer number of blocks in the range.\n"
+		Melder_require (nrest == 0, U"There should fit an integer number of blocks in the range.\n"
 				U"(The last block is only of size ", nrest, U" instead of ", blocksize, U").");
 		
 		autoPermutation thee = Data_copy (me);
@@ -355,7 +357,7 @@ void Permutation_next_inplace (Permutation me) {
 	integer size = my numberOfElements;
 	integer *p = & my p [1];
 
-	Melder_require (size > 1, U"The permutation must have more than one element.");
+	Melder_require (size > 1, U"The permutation should have more than one element.");
 	
 	integer i = size - 2;
 
@@ -388,7 +390,7 @@ void Permutation_previous_inplace (Permutation me) {
 	integer size = my numberOfElements;
 	integer *p = & my p [1];
 
-	Melder_require (size > 1, U"The permutation must have more than one element.");
+	Melder_require (size > 1, U"The permutation should have more than one element.");
 
 	integer i = size - 2;
 
@@ -396,7 +398,7 @@ void Permutation_previous_inplace (Permutation me) {
 		i --;
 	}
 	
-	Melder_require (! (i == 0 && p [0] < p [1]), U"No previous");
+	Melder_require (! (i == 0 && p [0] < p [1]), U"No previous element.");
 
 	integer k = i + 1;
 
@@ -415,7 +417,7 @@ void Permutation_previous_inplace (Permutation me) {
 
 autoPermutation Permutations_multiply2 (Permutation me, Permutation thee) {
 	try {
-		Melder_require (my numberOfElements == thy numberOfElements, U"Number of elements must be equal.");
+		Melder_require (my numberOfElements == thy numberOfElements, U"Number of elements should be equal.");
 		
 		autoPermutation him = Data_copy (me);
 		for (integer i = 1; i <= my numberOfElements; i ++) {
@@ -429,7 +431,7 @@ autoPermutation Permutations_multiply2 (Permutation me, Permutation thee) {
 
 autoPermutation Permutations_multiply (OrderedOf<structPermutation>* me) {
 	try {
-	Melder_require (my size > 1, U"At least two Permutations needed.");
+	Melder_require (my size > 1, U"There should be at least two Permutations to multiply.");
 		autoPermutation thee = Permutations_multiply2 (my at [1], my at [2]);
 		for (integer i = 3; i <= my size; i ++) {
 			autoPermutation him = Permutations_multiply2 (thee.get(), my at [i]);

@@ -421,10 +421,10 @@ static integer *getElementsOfRanges (const char32 *ranges, integer maximumElemen
 			previousElement = currentElement;
 			do { p ++; } while (isdigit ((int) *p));
 		} else if (*p == ':') {
-			Melder_require (previousElement != 0, U"Cannot start range with colon.");
+			Melder_require (previousElement != 0, U"The range should not start with a colon.");
 			
 			do { p ++; } while (*p == U' ' || *p == U'\t');
-			Melder_require (*p != U'\0', U"Cannot end range with colon.");
+			Melder_require (*p != U'\0', U"The range should not end with a colon.");
 			Melder_require (isdigit ((int) *p), U"End of range should be a positive whole number.");
 			
 			integer currentElement = Melder_atoi (p);

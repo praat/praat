@@ -50,14 +50,14 @@ void Eigen_and_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal d
 	
 	Melder_require (data_startColumn + my dimension - 1 <= data -> numberOfColumns, U"Your start column in the table is too large.");
 	Melder_require (to_startColumn + numberOfComponentsToKeep - 1 <= to -> numberOfColumns, U" Your start column in the 'to' matrix is too large.");
-	Melder_require (data -> numberOfRows == to -> numberOfRows, U"Both tables must have the same number of rows.");
+	Melder_require (data -> numberOfRows == to -> numberOfRows, U"Both tables should have the same number of rows.");
 	
 	NUMdmatrix_projectRowsOnEigenspace (data -> data, data -> numberOfRows, data_startColumn, my eigenvectors, numberOfComponentsToKeep, my dimension, to -> data, to_startColumn);
 }
 
 autoEigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
 	try {
-		Melder_require (my numberOfColumns == thy numberOfColumns, U"Both tables must have the same number of columns.");
+		Melder_require (my numberOfColumns == thy numberOfColumns, U"Both tables should have the same number of columns.");
 		autoEigen him = Thing_new (Eigen);
 		Eigen_initFromSquareRootPair (him.get(), my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
 		return him;

@@ -56,7 +56,7 @@ autoCategories FFNet_ActivationList_to_Categories (FFNet me, ActivationList acti
 	try {
 		integer (*labelingFunction) (FFNet me, const double act []);
 		Melder_require (my outputCategories, U"No Categories (has the FFNet been trained yet?).");
-		Melder_require (my nOutputs == activation -> nx, U"Number of columns and number of outputs must be equal.");
+		Melder_require (my nOutputs == activation -> nx, U"Number of columns and number of outputs should be equal.");
 
 		autoCategories thee = Categories_create ();
 		labelingFunction = labeling == 2 ? stochastic : winnerTakesAll;
@@ -77,7 +77,7 @@ autoActivationList FFNet_Categories_to_ActivationList (FFNet me, Categories thee
 		Melder_require (my outputCategories, U"The FFNet does not have categories.");
 		
 		integer nl = OrderedOfString_isSubsetOf (uniq.get(), my outputCategories.get(), 0);
-		Melder_require (nl > 0, U"The Categories do not match the categories of the FFNet.");
+		Melder_require (nl > 0, U"The Categories should match the categories of the FFNet.");
 
 		autoActivationList him = ActivationList_create (thy size, my nOutputs);
 		for (integer i = 1; i <= thy size; i ++) {

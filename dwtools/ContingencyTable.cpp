@@ -224,7 +224,7 @@ autoContingencyTable Confusion_to_ContingencyTable (Confusion me) {
 
 autoContingencyTable TableOfReal_to_ContingencyTable (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
+		Melder_require (TableOfReal_checkPositive (me), U"All values in the table should be positive.");
 		autoContingencyTable thee = Thing_new (ContingencyTable);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;

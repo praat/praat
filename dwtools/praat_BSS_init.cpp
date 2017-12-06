@@ -459,7 +459,7 @@ FORM (NEW1_Sound_and_MixingMatrix_mixPart, U"Sound & MixingMatrix: Mix part", U"
 	OK
 DO
 	if (toTime < fromTime) {
-		Melder_throw (U"The start time must be lower than the end time.");
+		Melder_throw (U"The start time should be lower than the end time.");
 	}
 	CONVERT_TWO (Sound, MixingMatrix)
 		autoSound result = Sound_and_MixingMatrix_mixPart (me, you, fromTime, toTime);

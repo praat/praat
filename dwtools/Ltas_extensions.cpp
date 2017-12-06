@@ -25,7 +25,7 @@ void Ltas_fitTiltLine (Ltas me, double fmin, double fmax, bool lnf, int method, 
 			fmin = my xmin; fmax = my xmax;
 		}
 		integer ifmin, ifmax, numberOfSamples = Sampled_getWindowSamples (me, fmin, fmax, & ifmin, & ifmax);
-		Melder_require (numberOfSamples > 1, U"There must be at least two data points to fit a line.");
+		Melder_require (numberOfSamples > 1, U"There should be at least two data points to fit a line.");
 		autoNUMvector<double> x (1, numberOfSamples);
 		autoNUMvector<double> y (1, numberOfSamples);
 		for (integer i = ifmin; i <= ifmax; i ++) {

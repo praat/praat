@@ -128,7 +128,7 @@ void DoublyLinkedList_remove (DoublyLinkedList me, DoublyLinkedNode node) {
 }
 
 // Preconditions:
-//	from and to must be part of the list
+//	from and to should be part of the list
 //	from must occur before to
 void DoublyLinkedList_sortPart (DoublyLinkedList me, DoublyLinkedNode from, DoublyLinkedNode to) {
 	// Save data

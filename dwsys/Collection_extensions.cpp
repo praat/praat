@@ -211,8 +211,8 @@ void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, long n) {
 void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, bool use_regexp) {
 	regexp *compiled_search = nullptr;
 	try {
-		Melder_require (search, U"Missing search string.");
-		Melder_require (replace, U"Missing replace string.");
+		Melder_require (search, U"The search string should not be empty.");
+		Melder_require (replace, U"The replace string should not be empty.");
 
 		if (use_regexp) {
 			compiled_search = CompileRE_throwable (search, 0);

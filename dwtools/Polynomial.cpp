@@ -539,7 +539,7 @@ void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, integer inde
 
 void FunctionTerms_setCoefficient (FunctionTerms me, integer index, double value) {
 	Melder_require (index >0 && index <= my numberOfCoefficients, U"Index out of range [1, ", my numberOfCoefficients, U"].");
-	Melder_require (value == 0.0 && index < my numberOfCoefficients, U"You cannot remove the highest degree term.");
+	Melder_require (value == 0.0 && index < my numberOfCoefficients, U"You should not remove the highest degree term.");
 	my coefficients [index] = value;
 }
 
@@ -884,7 +884,7 @@ void Polynomial_multiply_secondOrderFactor (Polynomial me, double factor) {
 autoPolynomial Polynomials_multiply (Polynomial me, Polynomial thee) {
 	try {
 		integer n1 = my numberOfCoefficients, n2 = thy numberOfCoefficients;
-		Melder_require (my xmax > thy xmin && my xmin < thy xmax, U"Domains must overlap.");
+		Melder_require (my xmax > thy xmin && my xmin < thy xmax, U"Domains should overlap.");
 	
 		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
 		double xmax = my xmax < thy xmax ? my xmax : thy xmax;
@@ -1337,7 +1337,7 @@ void Polynomial_divide_secondOrderFactor (Polynomial me, double factor) {
 }
 
 void Roots_setRoot (Roots me, integer index, double re, double im) {
-	Melder_require (index >= my min && index <= my max, U"Index must be in interval [1, ", my max, U"].");
+	Melder_require (index >= my min && index <= my max, U"Index should be in interval [1, ", my max, U"].");
 	my v [index].re = re;
 	my v [index].im = im;
 }
@@ -1353,7 +1353,7 @@ dcomplex Roots_evaluate_z (Roots me, dcomplex z) {
 
 autoSpectrum Roots_to_Spectrum (Roots me, double nyquistFrequency, integer numberOfFrequencies, double radius) {
 	try {
-		Melder_require (numberOfFrequencies > 1, U"Number of frequencies must be greater than 1.");
+		Melder_require (numberOfFrequencies > 1, U"Number of frequencies should be greater than 1.");
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFrequencies);
 
 		double phi = NUMpi / (numberOfFrequencies - 1);
@@ -1382,7 +1382,7 @@ dcomplex Roots_getRoot (Roots me, integer index) {
 /* Can be speeded up by doing a FFT */
 autoSpectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, integer numberOfFrequencies, double radius) {
 	try {
-		Melder_require (numberOfFrequencies > 1, U"Number of frequencies must be greater than 1.");
+		Melder_require (numberOfFrequencies > 1, U"Number of frequencies should be greater than 1.");
 		autoSpectrum thee = Spectrum_create (nyquistFrequency, numberOfFrequencies);
 
 		double phi = NUMpi / (numberOfFrequencies - 1);
@@ -1531,7 +1531,7 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze
 		integer numberOfData = thy points.size;
 		integer numberOfParameters = my numberOfCoefficients;
 		integer numberOfFreeParameters = numberOfParameters;
-		Melder_require (numberOfData > 1, U"The number of data point must be larger than 1.");
+		Melder_require (numberOfData > 1, U"The number of data point should be larger than 1.");
 
 		autoFunctionTerms frozen = Data_copy (me);
 		autoNUMvector<double> terms (1, my numberOfCoefficients);
@@ -1770,21 +1770,21 @@ integer structSpline :: v_getOrder () {
 /* Precondition: FunctionTerms part inited + degree */
 static void Spline_initKnotsFromString (Spline me, integer degree, const char32 *interiorKnots) {
 
-	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree must be <= ", Spline_MAXIMUM_DEGREE, U".");
+	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
 	integer numberOfInteriorKnots;
 	autoNUMvector <real> numbers (NUMstring_to_numbers (interiorKnots, & numberOfInteriorKnots), 1);
 	if (numberOfInteriorKnots > 0) {
 		NUMsort_d (numberOfInteriorKnots, numbers.peek());
 		if (numbers [1] <= my xmin || numbers [numberOfInteriorKnots] > my xmax) {
-			Melder_throw (U"Knots must be inside domain.");
+			Melder_throw (U"Knots should be inside domain.");
 		}
 	}
 
 	my degree = degree;
 	integer order = Spline_getOrder (me); /* depends on spline type !! */
 	integer n = numberOfInteriorKnots + order;
-	Melder_require (my numberOfCoefficients == n, U"Number of coefficients must equal ", n, U".");
+	Melder_require (my numberOfCoefficients == n, U"Number of coefficients should equal ", n, U".");
 
 	my numberOfKnots = numberOfInteriorKnots + 2;
 	my knots = NUMvector<double> (1, my numberOfKnots);
@@ -1798,7 +1798,7 @@ static void Spline_initKnotsFromString (Spline me, integer degree, const char32 
 
 void Spline_init (Spline me, double xmin, double xmax, integer degree, integer numberOfCoefficients, integer numberOfKnots) {
 
-	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree must be <= ", Spline_MAXIMUM_DEGREE, U".");
+	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
 	my knots = NUMvector<double> (1, numberOfKnots);
@@ -1923,7 +1923,7 @@ autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer nu
 
 autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, const char32 *coef, const char32 *interiorKnots) {
 	try {
-		Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree must be <= ", Spline_MAXIMUM_DEGREE, U".");
+		Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 		
 		autoMSpline me = Thing_new (MSpline);
 		FunctionTerms_initFromString (me.get(), xmin, xmax, coef, 1);

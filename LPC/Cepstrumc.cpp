@@ -110,7 +110,7 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 		integer nr = Melder_ifloor (dtr / my dx);
 
 		if (my maxnCoefficients != thy maxnCoefficients) {
-			Melder_throw (U"Cepstrumc orders must be equal.");
+			Melder_throw (U"Cepstrumc orders should be equal.");
 		}
 		if (wr != 0 && nr < 2) {
 			Melder_throw (U"Time window for regression coefficients too small.");

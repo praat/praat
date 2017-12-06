@@ -21,7 +21,7 @@
 
 autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee) {
 	try {
-		Melder_require (thy size == my ny, U"Number of rows and number of categories must be equal.");
+		Melder_require (thy size == my ny, U"Number of rows and number of categories should be equal.");
 
 		autoTableOfReal him = TableOfReal_create (my ny, my nx);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, nullptr, 1, 1);

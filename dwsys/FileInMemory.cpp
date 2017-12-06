@@ -50,9 +50,9 @@ void structFileInMemory :: v_info () {
 
 autoFileInMemory FileInMemory_create (MelderFile file) {
 	try {
-		Melder_require (MelderFile_readable (file), U"File not readable.");
+		Melder_require (MelderFile_readable (file), U"File is not readable.");
 		integer length = MelderFile_length (file);
-		Melder_require (length > 0, U"File is empty.");
+		Melder_require (length > 0, U"File should not be empty.");
 		
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my d_path = Melder_dup (file -> path);

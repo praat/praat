@@ -743,7 +743,7 @@ static void DTW_and_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmi
 	Melder_require ((my ymin == (*y) -> xmin && my ymax == (*y) -> xmax &&
 		my xmin == (*x) -> xmin && my xmax == (*x) -> xmax) ||
 		(my ymin == (*x) -> xmin && my ymax == (*x) -> xmax &&
-		my xmin == (*y) -> xmin && my xmax == (*y) -> xmax), U"The domains of the DTW and the sound(s) don't match");
+		my xmin == (*y) -> xmin && my xmax == (*y) -> xmax), U"The domains of the DTW and the sound(s) should be equal.");
 
 	if (*xmin >= *xmax) {
 		*xmin = my xmin;
@@ -927,7 +927,7 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 */
 autoDTW Matrices_to_DTW (Matrix me, Matrix thee, bool matchStart, bool matchEnd, int slope, double metric) {
 	try {
-		Melder_require (thy ny == my ny, U"Columns must have the same dimensions.");
+		Melder_require (thy ny == my ny, U"Column sizes should be equal.");
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
 		autoMelderProgress progess (U"Calculate distances");
@@ -967,7 +967,7 @@ autoDTW Matrices_to_DTW (Matrix me, Matrix thee, bool matchStart, bool matchEnd,
 
 autoDTW Spectrograms_to_DTW (Spectrogram me, Spectrogram thee, bool matchStart, bool matchEnd, int slope, double metric) {
 	try {
-		Melder_require (my xmin == thy xmin && my ymax == thy ymax && my ny == thy ny, U"The number of frequencies and/or frequency ranges do not match.");
+		Melder_require (my xmin == thy xmin && my ymax == thy ymax && my ny == thy ny, U"The number of frequencies and/or frequency ranges should be equal.");
 
 		autoMatrix m1 = Spectrogram_to_Matrix (me);
 		autoMatrix m2 = Spectrogram_to_Matrix (thee);
@@ -1007,8 +1007,8 @@ static int Pitch_findFirstAndLastVoicedFrame (Pitch me, integer *first, integer 
 autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weight, bool matchStart, bool matchEnd, int slope);
 autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_weight, bool matchStart, bool matchEnd, int slope) { // vuv_costs=24, time_weight=10 ?
 	try {
-		Melder_require (vuv_costs >= 0.0, U"Voiced-unvoiced costs may not be negative.");
-		Melder_require (time_weight >= 0.0, U"Time costs weight may not be negative.");
+		Melder_require (vuv_costs >= 0.0, U"Voiced-unvoiced costs should not be negative.");
+		Melder_require (time_weight >= 0.0, U"Time costs weight should not be negative.");
 
 		integer myfirst, mylast, thyfirst, thylast;
 		Melder_require (Pitch_findFirstAndLastVoicedFrame (me, & myfirst, & mylast) && Pitch_findFirstAndLastVoicedFrame (thee, & thyfirst, & thylast), U"No voiced frames.");
@@ -1054,8 +1054,8 @@ autoDTW Pitches_to_DTW_sgc (Pitch me, Pitch thee, double vuv_costs, double time_
 
 autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, bool matchStart, bool matchEnd, int slope) { // vuv_costs=24, time_weight=10 ?
 	try {
-		Melder_require (vuv_costs >= 0.0, U"Voiced-unvoiced costs may not be negative.");
-		Melder_require (time_weight >= 0.0, U"Time costs weight may not be negative.");
+		Melder_require (vuv_costs >= 0.0, U"Voiced-unvoiced costs should not be negative.");
+		Melder_require (time_weight >= 0.0, U"Time costs weight should not be negative.");
 
 		autoDTW him = DTW_create (my xmin, my xmax, my nx, my dx, my x1, thy xmin, thy xmax, thy nx, thy dx, thy x1);
 		autoNUMvector<double> pitchx (1, thy nx);
@@ -1100,11 +1100,11 @@ void DTW_and_Matrix_replace (DTW me, Matrix thee) {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax && my ymin == thy ymin && my ymax == thy ymax,
 			U"The X and Y domains of the matrix and the DTW must be equal.");
 		Melder_require (my nx == thy nx && my dx == thy dx && my ny == thy ny && my dy == thy dy,
-			U"The sampling of the matrix and the DTW must be equal.");
+			U"The sampling of the matrix and the DTW should be equal.");
 		
 		double minimum, maximum;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
-		Melder_require (minimum >= 0.0, U"Distances must not be negative.");
+		Melder_require (minimum >= 0.0, U"Distances should not be negative.");
 		
 		NUMmatrix_copyElements<double> (thy z, my z, 1, my ny, 1, my nx);
 	} catch (MelderError) {

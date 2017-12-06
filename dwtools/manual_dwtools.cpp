@@ -318,7 +318,7 @@ NORMAL (U"A ##canonical variate# is a new variable (variate) formed by making a 
 	"A linear combination of variables is the same as a weighted sum of variables. "
 	"Because we can in infinitely many ways choose combinations of weights between variables in a data set, "
 	"there are also infinitely many canonical variates possible. ")
-NORMAL (U"In general additional constraints must be satisfied by the weights to get a meaningful canonical variate. "
+NORMAL (U"In general additional constraints should be satisfied by the weights to get a meaningful canonical variate. "
 	"For example, in @@Canonical correlation analysis|canonical correlation analyis@ a data set is split up into two parts, a %%dependent% and an %%independent% part. "
 	"In both parts we can form a canonical variate and we choose weights that maximize the correlation between these canonical variates "
 	"(there is an @@TableOfReal: To CCA...|algorithm@ that calculates these weights).")
@@ -564,7 +564,7 @@ NORMAL (U"In a canonical correlation analysis of the dataset above, we try "
 	"When we have found these %u__1_ and %v__1_ we next try to find a new "
 	"combination %u__2_ of the formant frequencies and a new combination "
 	"%v__2_ of the levels that have maximum correlation. These %u__2_ and "
-	"%v__2_ must be uncorrelated with %u__1_ and %v__1_. "
+	"%v__2_ should be uncorrelated with %u__1_ and %v__1_. "
 	"When we express the above with formulas we have:")
 FORMULA (U"%u__1_ = %y__11_%F__1_+%y__12_%F__2_ + %y__13_%F__3_")
 FORMULA (U"%v__1_ = %x__11_%L__1_+%x__12_%L__2_ + %x__13_%L__3_")
@@ -1026,8 +1026,8 @@ INTRO (U"Input @@Covariance@ matrix cell values.")
 ENTRY (U"Constraints on input values")
 TAG (U"A covariance matrix is a %%symmetric% matrix: values input at cell [%i,%j] will be automatically input at "
 	"cell [%j,%i] too.")
-TAG (U"All values on the diagonal must be positive numbers.")
-TAG (U"The absolute value of an off-diagonal element at cell [%i,%j] must be smaller than the corresponding diagonal "
+TAG (U"All values on the diagonal should be positive numbers.")
+TAG (U"The absolute value of an off-diagonal element at cell [%i,%j] should be smaller than the corresponding diagonal "
 	"elements at cells [%i,%i] and [%j,%j].")
 MAN_END
 
@@ -1843,7 +1843,7 @@ DEFINITION (U"specifies the dimension of the resulting @Configuration. This dime
 	"given the resulting Configuration will have the maximum dimension as allowed by Discrimininant. "
 	"(Technically speaking: the number of eigenvectors (or eigenvalues) in the selected Discriminant is equal to the maximum allowed dimension.)")
 ENTRY (U"Precondition")
-NORMAL (U"The dimension of the Discriminant and the Configuration must conform in the sense that the number of columns in the TableOfReal and the length of an eigenvector in the Discriminant must be equal.")
+NORMAL (U"The dimension of the Discriminant and the Configuration must conform in the sense that the number of columns in the TableOfReal and the length of an eigenvector in the Discriminant should be equal.")
 NORMAL (U"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
@@ -2194,7 +2194,7 @@ DEFINITION (U"when on, the eigenvector is multiplied with the square root of the
 	"the %i-th element in the %j-th component loading vector gives the covariance between the %i-th "
 	"original variable and the %j-th principal component.)")
 TAG (U"##Element range#")
-DEFINITION (U"determine the first and last element of the vector that must be drawn.")
+DEFINITION (U"determine the first and last element of the vector that should be drawn.")
 TAG (U"##Minimum# and ##Maximum#")
 DEFINITION (U"determine the lower and upper bounds of the plot (choosing #Maximum smaller than #Minimum "
 	"will draw the %%inverted% eigenvector). ")
@@ -2749,7 +2749,7 @@ INTRO (U"A command to ask the selected @PCA for the minimum number of "
 	"to explain the given fraction %%variance accounted for%.")
 ENTRY (U"Setting")
 TAG (U"##Variance accounted for (fraction)")
-DEFINITION (U"the fraction variance accounted for that must be explained.")
+DEFINITION (U"the fraction variance accounted for that should be explained.")
 MAN_END
 
 MAN_BEGIN (U"PCA: To TableOfReal (reconstruct 1)...", U"djmw", 20030108)
@@ -5020,9 +5020,9 @@ INTRO (U"A command that creates a @CCA object from the selected "
 ENTRY (U"Settings")
 TAG (U"%%Dimension of dependent variate (ny)")
 DEFINITION (U"defines the partition of the table into the two parts whose "
-	"correlations will be determined. The first %ny columns must be the "
+	"correlations will be determined. The first %ny columns should be the "
 	"dependent part, the rest of the columns will be interpreted as the "
-	"independent part (%nx columns). In general %nx must be larger than or "
+	"independent part (%nx columns). In general %nx should be larger than or "
 	"equal to %ny.")
 ENTRY (U"Behaviour")
 NORMAL (U"Calculates canonical correlations between the %dependent and the "

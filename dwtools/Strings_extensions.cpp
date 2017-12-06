@@ -37,7 +37,7 @@
 
 autoStrings Strings_createFixedLength (integer numberOfStrings) {
 	try {
-		Melder_require (numberOfStrings > 0, U"The number of strings must be positive.");
+		Melder_require (numberOfStrings > 0, U"The number of strings should be positive.");
 		
 		autoStrings me = Thing_new (Strings);
 		my strings = NUMvector<char32 *> (1, numberOfStrings);

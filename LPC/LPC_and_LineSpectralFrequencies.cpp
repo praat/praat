@@ -88,7 +88,7 @@ static void Polynomial_fromLPC_Frame_lspdif (Polynomial me, LPC_Frame lpc) {
 }
 
 #if 0
-/* g[0]+g[1]x + ... g[m]*x^ m = 0 ; m must be even
+/* g[0]+g[1]x + ... g[m]*x^ m = 0 ; m should be even
  * Semenov, Kalyuzhny, Kovtonyuk (2003), Efficient calculation of line spectral frequencies based on new method for solution of transcendental equations,
  * ICASSP 2003, 457--460
  * 		g[0 .. g_order]
@@ -97,7 +97,7 @@ static void Polynomial_fromLPC_Frame_lspdif (Polynomial me, LPC_Frame lpc) {
  */
 static void Roots_fromPolynomial (Roots me, Polynomial g, integer numberOfDerivatives, double *work) {
 	if (numberOfDerivatives < 3) {
-		Melder_throw (U"Number of derivatives must be at least 3.");
+		Melder_throw (U"Number of derivatives should be at least 3.");
 	}
 	double xmin = -1.0, xmax = 1.0;
 	integer numberOfRootsFound = 0;

@@ -122,7 +122,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 
 		/*
 			For the cubic spline interpolation we need the frequencies on an octave
-			scale, i.e., a log2 scale. All frequencies must be DIFFERENT, otherwise
+			scale, i.e., a log2 scale. All frequencies should be DIFFERENT, otherwise
 			the cubic spline interpolation will give corrupt results.
 			Because log2(f==0) is not defined, we use the heuristic: f [2] - f [1] == f [3] - f [2].
 		*/

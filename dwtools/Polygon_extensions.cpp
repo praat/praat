@@ -74,7 +74,7 @@ autoPolygon Polygon_createSimple (char32 *xystring) {
 	try {
 		integer numberOfInputs;
 		autoNUMvector <double> xys (NUMstring_to_numbers (xystring, & numberOfInputs), 1);
-		Melder_require (numberOfInputs >= 6, U"There must be at least 3 points (= x,y pairs) in the Polygon");
+		Melder_require (numberOfInputs >= 6, U"There should be at least 3 points (= x,y pairs) in the Polygon");
 		Melder_require (numberOfInputs % 2 == 0, U"One value is missing.");
 		
 		integer numberOfPoints = numberOfInputs / 2;
@@ -293,7 +293,7 @@ autoPolygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, d
 autoPolygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tmin, double tmax, double ymin, double ymax) {
 	try {
 		bool clip = ymin < ymax;
-		Melder_require (channel > 0 && channel <= my ny && channel <= thy ny, U"Invalud channel."); 
+		Melder_require (channel > 0 && channel <= my ny && channel <= thy ny, U"Invalid channel."); 
 		
 		// find overlap in the domains  with xmin workaround as in Sound_to_Polygon
 		double xmin1 = my x1 - 0.5 * my dx, xmin2 = thy x1 - 0.5 * thy dx ;

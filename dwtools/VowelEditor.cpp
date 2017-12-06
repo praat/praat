@@ -1030,7 +1030,7 @@ static void menu_cb_setF3F4 (VowelEditor me, EDITOR_ARGS_FORM) {
 		POSITIVE (b4, U"B4 (Hz)", U"350.0")
 	EDITOR_OK
 	EDITOR_DO
-		Melder_require (f3 < f4, U"F4 must be larger than F3.");
+		Melder_require (f3 < f4, U"F4 should be larger than F3.");
 		VowelEditor_setF3F4 (me, f3, b3, f4, b4);
 	EDITOR_END
 }

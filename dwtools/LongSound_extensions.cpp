@@ -209,8 +209,8 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 				numbersOfChannelsMatch = longSound -> numberOfChannels == numberOfChannels;
 				numberOfSamples += longSound -> nx;
 			}
-			Melder_require (sampleRatesMatch, U"Sampling frequencies do not match.");
-			Melder_require (numbersOfChannelsMatch, U"The number of channels do not match.");
+			Melder_require (sampleRatesMatch, U"Sampling frequencies should match.");
+			Melder_require (numbersOfChannelsMatch, U"The number of channels should match.");
 		}
 
 		// Search the end of the file, count the number of bytes and append.

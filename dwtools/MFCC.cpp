@@ -125,7 +125,7 @@ autoSound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scal
 	try {
 		Melder_require (my dx == thy dx, U"The samplings of the two MFCC's have to be equal.");
 		Melder_require (my maximumNumberOfCoefficients == thy maximumNumberOfCoefficients,
-			U"The number of coefficients in the two MFCC's have to be equal.");
+			U"The number of coefficients in the two MFCC's should be equal.");
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
 		autoSound cc = Sounds_convolve (target.get(), source.get(), scaling, signalOutsideTimeDomain);

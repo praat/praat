@@ -189,8 +189,8 @@ void structFFNet :: v_info () {
 void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, long numberOfOutputs, bool outputsAreLinear) {
 	long numberOfLayers = 3;
 	
-	Melder_require (numberOfInputs > 0, U"Number of inputs must be greater than zero.");
-	Melder_require (numberOfOutputs > 0, U"Number of outputs must be greater than zero.");
+	Melder_require (numberOfInputs > 0, U"Number of inputs should be greater than zero.");
+	Melder_require (numberOfOutputs > 0, U"Number of outputs should be greater than zero.");
 	
 	if (nodesInLayer1 < 1) {
 		numberOfLayers --;
@@ -663,7 +663,7 @@ void FFNet_drawActivation (FFNet me, Graphics g) {
 
 /* This routine is deprecated since praat-4.2.4 20040422 and will be removed in the future. */
 void FFNet_drawWeightsToLayer (FFNet me, Graphics g, int layer, int scaling, int garnish) {
-	Melder_require (layer > 0 && layer <= my nLayers, U"Layer number must be between 1 and ", my nLayers, U".");
+	Melder_require (layer > 0 && layer <= my nLayers, U"Layer number should be between 1 and ", my nLayers, U".");
 	
 	autoMatrix weights = FFNet_weightsToMatrix (me, layer, false);
 	Matrix_scale (weights.get(), scaling);
@@ -738,7 +738,7 @@ autoCollection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidde
 
 autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 	try {
-		Melder_require (layer > 0 && layer <= my nLayers, U"Layer number must be between 1 and ", my nLayers, U".");
+		Melder_require (layer > 0 && layer <= my nLayers, U"Layer number should be between 1 and ", my nLayers, U".");
 
 		long numberOfUnitsFrom = my nUnitsInLayer [layer - 1] + 1;
 		long numberOfUnitsTo = my nUnitsInLayer [layer];
@@ -771,66 +771,13 @@ autoTableOfReal FFNet_extractWeights (FFNet me, long layer) {
 	}
 }
 
-autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer) {
-	try {
-		Melder_require (layer > 0 && layer <= my nLayers, U"Layer number must be between 1 and ", my nLayers, U".");
-
-		if (my nUnitsInLayer [layer] != his numberOfColumns || my nUnitsInLayer [layer - 1] + 1 == his numberOfRows) {
-			long trys [1+3], rows [1+3], cols [1+3], ntry = my nLayers > 3 ? 3 : my nLayers, ok = 0;
-			if (my nLayers > 3) {
-				Melder_throw (U"Dimensions don't fit.");
-			}
-			for (long i = 1; i <= ntry; i ++) {
-				cols [i] = my nUnitsInLayer [i] == his numberOfColumns;
-				rows [i] = my nUnitsInLayer [i - 1] + 1 == his numberOfRows;
-				trys [i] = rows [i] && cols [i];
-				if (trys [i]) {
-					ok ++;
-				}
-			}
-			if (! rows [layer]){
-				Melder_throw (U"The number of rows in the TableOfReal does not equal \n"
-				U"the number of units in the layer that connect to layer ", layer, U".");
-			} else {
-				Melder_throw (U"The number of columns in the TableOfReal does not equal \n"
-				    U"the number of units in layer ", layer, U".");
-			}
-			if (ok == 0) {
-				Melder_throw (U"Please quit, there is no appropriate layer in the FFNet for this TableOfReal.");
-			} else {
-				if (ok == 1) {
-					Melder_throw (U"Please try again with layer number ", trys [1] ? trys [1] : (trys [2] ? trys [2] : trys [3]), U".");
-				} else {
-					Melder_throw (U"Please try again with one of the other two layer numbers.");
-				}
-			}
-		}
-		autoFFNet thee = Data_copy (me);
-		long node = 1;
-		for (long i = 0; i < layer; i ++) {
-			node += thy nUnitsInLayer [i] + 1;
-		}
-		for (long i = 1; i <= thy nUnitsInLayer [layer]; i ++, node ++) {
-			long k = 1;
-			for (long j = thy wFirst [node]; j <= thy wLast [node]; j ++, k ++) {
-				thy w [j] = his data [k] [i];
-			}
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no FFNet created.");
-	}
-}
-
 autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, long numberOfUnits1, long numberOfUnits2) {
 	try {
 		numberOfUnits1 = numberOfUnits1 > 0 ? numberOfUnits1 : 0;
 		numberOfUnits2 = numberOfUnits2 > 0 ? numberOfUnits2 : 0;
 		autoCategories uniq = Categories_selectUniqueItems (you);
 		long numberOfOutputs = uniq -> size;
-		if (numberOfOutputs < 1) {
-			Melder_throw (U"There are no categories in the Categories.");
-		}
+		Melder_require (numberOfOutputs > 0, U"The Categories should not be empty.");
 		autoFFNet result = FFNet_create (my nx, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
 		FFNet_setOutputCategories (result.get(), uniq.get());
 		autostring32 ffnetName = FFNet_createNameFromTopology (result.get());

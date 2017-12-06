@@ -21,7 +21,7 @@
 
 void IntervalTier_and_DurationTier_scaleTimes (IntervalTier me, DurationTier thee) {
 	Melder_require (my xmin == thy xmin && my xmax == thy xmax,
-		U"The domains of the IntervalTier and the DurationTier must be equal.");
+		U"The domains of the IntervalTier and the DurationTier should be equal.");
 	double xmax_new = my xmin + RealTier_getArea (thee, my xmin, my xmax);
 	for (integer i = 1; i <= my intervals.size; i ++) {
 		TextInterval segment = my intervals.at [i];
@@ -35,7 +35,7 @@ void IntervalTier_and_DurationTier_scaleTimes (IntervalTier me, DurationTier the
 
 void TextTier_and_DurationTier_scaleTimes (TextTier me, DurationTier thee) {
 	Melder_require (my xmin == thy xmin && my xmax == thy xmax,
-		U"The domains of the TextTier and the DurationTier must be equal.");
+		U"The domains of the TextTier and the DurationTier should be equal.");
 	double xmax_new = my xmin + RealTier_getArea (thee, my xmin, my xmax);
 	for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
 		TextPoint point = my points.at [ipoint];
@@ -48,7 +48,7 @@ void TextTier_and_DurationTier_scaleTimes (TextTier me, DurationTier thee) {
 autoTextGrid TextGrid_and_DurationTier_scaleTimes (TextGrid me, DurationTier thee) {
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
-			U"The domains of the TextGrid and the DurationTier must be equal.");
+			U"The domains of the TextGrid and the DurationTier should be equal.");
 		
 		double xmax_new = my xmin + RealTier_getArea (thee, my xmin, my xmax);
 		autoTextGrid him = Data_copy (me);

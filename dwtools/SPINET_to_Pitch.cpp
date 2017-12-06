@@ -43,7 +43,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 		double maxStrength = 0.0, unvoicedCriterium = 0.45, maxPower = 0.0;
 
 		Melder_require (nFrequencyPoints > 1, U"Frequency range too small.");
-		Melder_require (fmin < ceiling, U"The centre frequency of the lowest filter must be smaller than the ceiling.");
+		Melder_require (fmin < ceiling, U"The centre frequency of the lowest filter should be smaller than the ceiling.");
 
 		autoPitch thee = Pitch_create (my xmin, my xmax, my nx, my dx, my x1, ceiling, maxnCandidates);
 		autoNUMvector<double> power (1, my nx);
@@ -72,7 +72,7 @@ autoPitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceilin
 			}
 			power [j] = p;
 		}
-		Melder_require (maxPower != 0.0, U"The sound is empty.");
+		Melder_require (maxPower != 0.0, U"The sound should not have all amplitudes equal to zero.");
 
 		for (integer j = 1; j <= my nx; j ++) {
 			Pitch_Frame pitchFrame = &thy frame [j];

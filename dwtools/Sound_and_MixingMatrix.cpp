@@ -40,7 +40,7 @@ autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
 autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fromTime, double toTime) {
 	try {
 		Melder_require (my ny == thy numberOfColumns,
-			U"The number of inputs in the MixingMatrix and the number of channels in the Sound must be equal.");
+			U"The number of inputs in the MixingMatrix and the number of channels in the Sound should be equal.");
 		
 		if (fromTime == toTime) { 
 			fromTime = my xmin; toTime = my xmax; 
@@ -109,7 +109,7 @@ autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fr
 autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 	try {
 		Melder_require (my ny == thy numberOfColumns,
-			U"The number of inputs in the MixingMatrix and the number of channels in the Sound must be equal.");
+			U"The number of inputs in the MixingMatrix and the number of channels in the Sound should be equal.");
 
 		autoNUMmatrix<double> minv (1, thy numberOfColumns, 1, thy numberOfRows);
 		NUMpseudoInverse (thy data, thy numberOfRows, thy numberOfColumns, minv.peek(), 0);

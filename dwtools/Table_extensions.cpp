@@ -3404,7 +3404,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		integer numberOfLevels = levels -> classes->size;
 		
 		Melder_require (numberOfLevels > 1, 
-			U"There must be at least two levels.");
+			U"There should be at least two levels.");
 
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
@@ -3595,7 +3595,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 		}
 		integer numberOfLevels = levels -> classes->size;
 		Melder_require (numberOfLevels > 1,
-			U"There must be at least two levels.");
+			U"There should be at least two levels.");
 		autoNUMvector<integer> factorLevelSizes (1, numberOfLevels);
 		autoNUMvector<double> factorLevelMeans (1, numberOfLevels);
 
@@ -3695,9 +3695,9 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 		integer numberOfLevelsB = levelsB -> classes->size;
 		
 		Melder_require (numberOfLevelsA > 1,
-			U"There must be at least two levels in \"", label_A, U"\".");
+			U"There should be at least two levels in \"", label_A, U"\".");
 		Melder_require (numberOfLevelsB > 1,
-			U"There must be at least two levels in \"", label_B, U"\".");
+			U"There should be at least two levels in \"", label_B, U"\".");
 
 		/* Formula's according to A. Khuri (1998), Unweighted sums of squares
 		 *   in unbalanced analysis of variance, Journal of Statistical Planning

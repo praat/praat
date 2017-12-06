@@ -302,7 +302,7 @@ autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double ana
 		integer numberOfFrames, numberOfUndefinedPitchFrames = 0;
 
 		Melder_require (my xmin >= thy xmin && my xmax <= thy xmax,
-			U"The domain of the Sound is not included in the domain of the Pitch.");
+			U"The domain of the Sound should be included in the domain of the Pitch.");
 
 		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit::HERTZ);
 

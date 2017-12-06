@@ -64,11 +64,11 @@ autoTableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
 
 static void _CCA_and_Correlation_check (CCA me, Correlation thee, integer canonicalVariate_from, integer canonicalVariate_to) {
 	Melder_require (my y -> dimension + my x -> dimension == thy numberOfColumns, 
-		U"The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object");
+		U"The number of columns in the Correlation object should equal the sum of the dimensions in the CCA object");
 	Melder_require (canonicalVariate_to >= canonicalVariate_from,
-		U"The second value in the \"Canonical variate range\" must be equal or larger than the first.");
+		U"The second value in the \"Canonical variate range\" should be equal or larger than the first.");
 	Melder_require (canonicalVariate_from > 0 && canonicalVariate_to <= my numberOfCoefficients, 
-		U"The \"Canonical variate range\" must be within the interval [1, ", my numberOfCoefficients, U"].");
+		U"The \"Canonical variate range\" should be within the interval [1, ", my numberOfCoefficients, U"].");
 }
 
 double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, integer canonicalVariate_from, integer canonicalVariate_to) {

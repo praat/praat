@@ -87,7 +87,7 @@ autoMatrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double sc
 		for (integer i = 1; i <= my ny; i ++) {
 			for (integer j = 1; j <= my nx; j ++) {
 				double val = floor_dB;
-				Melder_require (my z [i] [j] >= 0, U"Power in Spectrogram must be positive.");
+				Melder_require (my z [i] [j] >= 0, U"Power in Spectrogram should be positive.");
 				val = scaleFactor * log10 (my z [i] [j] / reference);
 				if (val < floor_dB) {
 					val = floor_dB;

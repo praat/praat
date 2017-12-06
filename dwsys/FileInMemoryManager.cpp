@@ -432,7 +432,7 @@ char *FileInMemoryManager_fgets (FileInMemoryManager me, char *str, int num, FIL
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	char *result = nullptr;
 	
-	Melder_require (openFilesIndex > 0, U": File is not open.");
+	Melder_require (openFilesIndex > 0, U": File should be open.");
 
 	FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 	integer startPos = fim -> d_position;
@@ -523,7 +523,7 @@ int FileInMemoryManager_fgetc (FileInMemoryManager me, FILE *stream) {
 size_t FileInMemoryManager_fread (FileInMemoryManager me, void *ptr, size_t size, size_t count, FILE *stream) {
 	integer openFilesIndex = _FileInMemoryManager_getIndexInOpenFiles (me, stream);
 	
-	Melder_require (openFilesIndex > 0 && size > 0 && count > 0, U": File is not open.");
+	Melder_require (openFilesIndex > 0 && size > 0 && count > 0, U": File should be open.");
 	
 	FileInMemory fim = static_cast<FileInMemory> (my openFiles -> at [openFilesIndex]);
 	size_t result = 0;

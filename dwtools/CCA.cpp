@@ -97,9 +97,9 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 	try {
 		integer n = my numberOfRows, nx = my numberOfColumns - ny;
 		Melder_require (ny > 0 && ny < my numberOfColumns, U"Dimension of first part not correct.");
-		Melder_require (ny <= nx, U"The dimension of the dependent part (", ny, U") must be less than or equal to "
+		Melder_require (ny <= nx, U"The dimension of the dependent part (", ny, U") should not exceed "
 				"the dimension of the independent part (", nx, U").");
-		Melder_require (n >= ny, U"The number of observations must be larger then ", ny, U".");
+		Melder_require (n >= ny, U"The number of observations should be larger then ", ny, U".");
 		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns),
 			U"At least one of the table's elements is undefined."); 	
 		
@@ -212,13 +212,13 @@ autoTableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, integer nu
 		integer nx = my x -> dimension, ny = my y -> dimension;
 
 		Melder_require (ny + nx == thy numberOfColumns, U"The number of columns in the table (", thy numberOfColumns,
-			U") does not agree with the dimensions of the CCA object (ny + nx = ", ny, U" + ", nx, U").");
+			U") should agree with the dimensions of the CCA object (ny + nx = ", ny, U" + ", nx, U").");
 
 		if (numberOfFactors == 0) {
 			numberOfFactors = my numberOfCoefficients;
 		}
 		Melder_require (numberOfFactors > 0 && numberOfFactors <= my numberOfCoefficients, 
-			U"The number of factors must be in interval [1, ", my numberOfCoefficients, U"].");
+			U"The number of factors should be in interval [1, ", my numberOfCoefficients, U"].");
 		
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
@@ -248,7 +248,7 @@ autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, integer f
 			from = 1;
 		}
 		integer ncols = thy numberOfColumns - from + 1;
-		Melder_require (from > 0 && ncols == nx, U"The number of columns to analyze must be equal to ", nx, U".");
+		Melder_require (from > 0 && ncols == nx, U"The number of columns to analyze should be equal to ", nx, U".");
 
 		// ???? dimensions if nx .. ny ??
 

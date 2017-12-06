@@ -1249,7 +1249,7 @@ double NUMispline (double aknot [], integer nKnots, integer order, integer i, do
 	}
 	/*
 		Equation 5 in Ramsay's article contains some errors!!!
-		1. the interval selection must be 'j-k <= i <= j' instead of
+		1. the interval selection should be 'j-k <= i <= j' instead of
 			j-k+1 <= i <= j'
 		2. the summation index m starts at 'i+1' instead of 'i'
 	*/
@@ -1947,7 +1947,7 @@ void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer 
 	}
 
 	if (max < 0 || min < 0) {
-		Melder_throw (U"NUMdmatrix_to_dBs: all matrix elements must be positive.");
+		Melder_throw (U"NUMdmatrix_to_dBs: all matrix elements should be positive.");
 	}
 	ref_db = factor10 * log10 (ref);
 

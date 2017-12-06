@@ -742,8 +742,8 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	my dataPointStatus = NUMvector<int> (1, numberOfDataPoints);
 	my numberOfParameters = numberOfParameters;
 	
-	Melder_require (numberOfParameters > 0, U"The number of parameters must be greater than zero.");
-	Melder_require (numberOfParameters <= numberOfDataPoints, U"The number of parameters must be smaller than or equal to the number of data points");
+	Melder_require (numberOfParameters > 0, U"The number of parameters should be greater than zero.");
+	Melder_require (numberOfParameters <= numberOfDataPoints, U"The number of parameters should not exceed the number of data points");
 	
 	my parameter = NUMvector<double> (1, numberOfParameters);
 	my parameterStatus = NUMvector<int> (1, numberOfParameters);
@@ -766,8 +766,8 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax, integer numb
 	try {
 		integer numberOfParameters;
 		autoNUMvector <double> parameter (NUMstring_to_numbers (parameters, & numberOfParameters), 1);
-		Melder_require (numberOfParameters > 0, U"At least one parameter must be defined.");
-		Melder_require (xmin < xmax, U"The domain must be defined properly.");
+		Melder_require (numberOfParameters > 0, U"At least one parameter should be defined.");
+		Melder_require (xmin < xmax, U"The domain should be defined properly.");
 		
 		autoDataModeler me = DataModeler_create (xmin, xmax, numberOfDataPoints, numberOfParameters, type);
 		for (integer i = 1; i <= numberOfParameters; i ++) {
@@ -928,7 +928,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 		if (xmax <= xmin) {
 			NUMvector_extrema<double> (x.peek(), 1, numberOfData, &xmin, &xmax);
 		}
-		Melder_require (xmin < xmax, U"Range of x-values too small.");
+		Melder_require (xmin < xmax, U"The range of the x-values is too small.");
 		
 		integer numberOfDataPoints = 0, validData = 0;
 		for (integer i = 1; i <= numberOfData; i ++) {
@@ -953,7 +953,7 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 		thy useSigmaY = useSigmaY;
 		thy numberOfDataPoints = numberOfDataPoints;
 		thy tolerance = 1e-5;
-		Melder_require (validData >= numberOfParameters, U"The number of parameters must not exceed the number of data points.");
+		Melder_require (validData >= numberOfParameters, U"The number of parameters should not exceed the number of data points.");
 		
 		DataModeler_setDataWeighing (thee.get(), DataModeler_DATA_WEIGH_SIGMA);
 		DataModeler_fit (thee.get());
@@ -1101,7 +1101,8 @@ void FormantModeler_setParametersFree (FormantModeler me, integer fromFormant, i
 		fromFormant = 1;
 		toFormant = numberOfFormants;
 	}
-	Melder_require (toFormant > 0 && toFormant <= numberOfFormants && fromFormant > 0 && fromFormant <= numberOfFormants && fromFormant <= toFormant, U"Formant number(s) must be in the interval [1, ", numberOfFormants, U"].");
+	Melder_require (toFormant > 0 && toFormant <= numberOfFormants && fromFormant > 0 && fromFormant <= numberOfFormants && fromFormant <= toFormant, 
+		U"Formant number(s) should be in the interval [1, ", numberOfFormants, U"].");
 	
 	for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
 		DataModeler ffi = my trackmodelers.at [iformant];
@@ -1114,7 +1115,8 @@ void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, int
 	if (toFormant < fromFormant || (fromFormant == toFormant && fromFormant == 0)) {
 		fromFormant = 1; toFormant= numberOfFormants;
 	}
-	Melder_require (toFormant > 0 && toFormant <= numberOfFormants && fromFormant > 0 && fromFormant <= numberOfFormants && fromFormant <= toFormant, U"Formant number(s) must be in the interval [1, ", numberOfFormants, U"].");
+	Melder_require (toFormant > 0 && toFormant <= numberOfFormants && fromFormant > 0 && fromFormant <= numberOfFormants && fromFormant <= toFormant, 
+		U"Formant number(s) should be in the interval [1, ", numberOfFormants, U"].");
 	
 	for (integer iformant = fromFormant; iformant <= toFormant; iformant ++) {
 		DataModeler ffi = my trackmodelers.at [iformant];
@@ -1236,7 +1238,7 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 	try {
 		integer ixmin, ixmax;
 		Melder_require (FormantModeler_drawingSpecifiers_x (me, & xmin, & xmax, & ixmin, & ixmax) > 0,
-			U"Not enough data points in drawing range.");
+			U"The are not enough data points in the drawing range.");
 
 		integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoNUMvector<double> var (1, numberOfDataPoints);
@@ -1578,7 +1580,8 @@ autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY) {
 
 autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer iformant) {
 	try {
-		Melder_require (iformant > 0 && iformant<= my trackmodelers.size, U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
+		Melder_require (iformant > 0 && iformant<= my trackmodelers.size, 
+			U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
 		
 		DataModeler ff = my trackmodelers.at [iformant];
 		autoDataModeler thee = Data_copy (ff);
@@ -1590,7 +1593,8 @@ autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer if
 
 autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integer iformant) {
 	try {
-		Melder_require (iformant > 0 && iformant<= my trackmodelers.size, U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
+		Melder_require (iformant > 0 && iformant<= my trackmodelers.size, 
+			U"The formant should be greater than zero and smaller than or equal to ", my trackmodelers.size);
 		DataModeler thee = my trackmodelers.at [iformant];
 		autoCovariance cov = Data_copy (thy parameterCovariances.get());
 		return cov;
@@ -1620,7 +1624,7 @@ autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tm
 			tmin = my xmin; tmax = my xmax;
 		}
 		integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		Melder_require (numberOfDataPoints >= numberOfParametersPerTrack, U"Not enought data points, extend the selection.");
+		Melder_require (numberOfDataPoints >= numberOfParametersPerTrack, U"There are not enought data points, please extend the selection.");
 		
 		autoFormantModeler thee = FormantModeler_create (tmin, tmax, numberOfFormants, numberOfDataPoints, numberOfParametersPerTrack);
 		for (integer iformant = 1; iformant <= numberOfFormants; iformant ++) {
@@ -1933,13 +1937,13 @@ integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double
 					numberOfInvalids ++;
 				}
 			}
-			Melder_require (numberOfInvalids < numberOfFormantObjects, U"None of the Formants has enough formant tracks. Lower your upper formant number.");
+			Melder_require (numberOfInvalids < numberOfFormantObjects, U"None of the Formants has enough formant tracks. Please, lower your upper formant number.");
 			
 		}
 		if (tmax <= tmin) { // default
 			tmin = tminf; tmax = tmaxf;
 		}
-		Melder_require (tmin >= tminf && tmax <= tmaxf, U"The selected interval needs to be within the Formant object's domain.");
+		Melder_require (tmin >= tminf && tmax <= tmaxf, U"The selected interval should be within the Formant object's domain.");
 		
 		/* The chisq is not meaningfull as a the only test whether one model is better than the other because 
 			if we have two models 1 & 2 with the same data points (x1 [i]=x2 [i] and y1 [i]= y2 [i] but if 
@@ -2026,7 +2030,7 @@ autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, inte
 			tmin = my xmin; tmax = my xmax;
 		}
 		integer numberOfDataPoints = Sampled_getWindowSamples (me, tmin, tmax, & ifmin, & ifmax);
-		Melder_require (numberOfParameters <= numberOfDataPoints, U"The number of parameters cannot be larger than the number of data points. Extend the selection.");
+		Melder_require (numberOfParameters <= numberOfDataPoints, U"The number of parameters should not exceed the number of data points. Please, extend the selection.");
 		
 		autoPitchModeler thee = Thing_new (PitchModeler);
 		DataModeler_init (thee.get(), tmin, tmax, numberOfDataPoints, numberOfParameters, DataModeler_TYPE_LEGENDRE);
@@ -2077,7 +2081,7 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 			startTime = my xmin; endTime = my xmax;
 		}
 		double nyquistFrequency = 0.5 / my dx;
-		Melder_require (maxFreq <= nyquistFrequency, U"The upper value of the maximum frequency range cannot be higher than the Nyquist frequency of the sound.");
+		Melder_require (maxFreq <= nyquistFrequency, U"The upper value of the maximum frequency range should not exceed the Nyquist frequency of the sound.");
 		
 		double df = 0, mincriterium = 1e28;
 		if (minFreq >= maxFreq) {
@@ -2131,7 +2135,7 @@ autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double
 			startTime = my xmin; endTime = my xmax;
 		}
 		double nyquistFrequency = 0.5 / my dx;
-		Melder_require (maxFreq <= nyquistFrequency, U"The upper value of the maximum frequency range cannot be higher than the Nyquist frequency of the sound.");
+		Melder_require (maxFreq <= nyquistFrequency, U"The upper value of the maximum frequency range should not exceed the Nyquist frequency of the sound.");
 		double df = 0, mincriterium = 1e28;
 		if (minFreq >= maxFreq) {
 			numberOfFrequencySteps = 1;

@@ -59,7 +59,7 @@ void Tube_Frame_init (Tube_Frame me, integer nSegments, double length) {
 	my nSegments = nSegments;
 	my length = length;
 	if (nSegments <= 0) {
-		Melder_throw (U"Number of segments must be a natural number.");
+		Melder_throw (U"Number of segments should be a natural number.");
 	}
 	my c = NUMvector<double> (1, nSegments);
 }

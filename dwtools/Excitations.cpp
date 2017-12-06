@@ -23,7 +23,7 @@ Thing_implement (ExcitationList, Ordered, 0);
 void ExcitationList_addItem_copy (ExcitationList me, Excitation you) {
 	try {
 		if (my size > 0) {
-			Melder_require (your nx == my at [1] -> nx, U"Dimension of ", you, U" differs from the rest.");
+			Melder_require (your nx == my at [1] -> nx, U"Dimension of ", you, U" should agree with the rest.");
 		}
 		autoExcitation newItem = Data_copy (you);
 		my addItem_move (newItem.move());
@@ -55,7 +55,7 @@ autoPatternList ExcitationList_to_PatternList (ExcitationList me, integer join) 
 		if (join < 1) {
 			join = 1;
 		}
-		Melder_require (my size % join == 0, U"Number of rows is not a multiple of join.");
+		Melder_require (my size % join == 0, U"Number of rows should be a multiple of the join.");
 		
 		autoPatternList thee = PatternList_create (my size / join, join * excitation -> nx);
 		integer r = 0, c = 1;
@@ -94,7 +94,7 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 
 autoExcitation ExcitationList_extractItem (ExcitationList me, integer item) {
 	try {
-		Melder_require (item > 0 && item <= my size, U"Not a valid element number.");
+		Melder_require (item > 0 && item <= my size, U"Item number should be in the range [1, ", my size, U"].");
 		
 		autoExcitation thee = Data_copy (my at [item]);
 		Thing_setName (thee.get(), Thing_getName (my at [item]));

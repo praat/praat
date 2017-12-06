@@ -83,7 +83,7 @@ static void FormantGrid_addBandwidthTier (FormantGrid me, int position) {
 
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position) {
 	try {
-		Melder_require (my formants.size == my bandwidths.size, U"Number of formants and bandwidths must be equal.");
+		Melder_require (my formants.size == my bandwidths.size, U"Number of formants and bandwidths should be equal.");
 		
 		if (position > my formants.size || position < 1) {
 			position = my formants.size + 1;

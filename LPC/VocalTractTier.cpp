@@ -106,7 +106,7 @@ void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTra
 			VocalTractPoint vtp = my d_vocalTracts.at [1];
 			long numberOfSections = vtp -> d_vocalTract -> nx;
 			if (numberOfSections != vocaltract -> nx) {
-				Melder_throw (U"The number of sections must be equal to ", numberOfSections, U".");
+				Melder_throw (U"The number of sections should be equal to ", numberOfSections, U".");
 			}
 		}
 		my d_vocalTracts. addItem_move (thee.move());

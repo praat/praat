@@ -76,7 +76,7 @@ autoAffineTransform structAffineTransform :: v_invert () {
 Thing_implement (AffineTransform, Daata, 0);
 
 void AffineTransform_init (AffineTransform me, integer n) {
-	Melder_require (n > 0, U"Dimensionality must be at least 1.");
+	Melder_require (n > 0, U"Dimensionality should be greater than zero.");
 	
 	my n = n;
 	my r = NUMmatrix<double> (1, n, 1, n);

@@ -25,8 +25,8 @@ autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, in
 	try {
 		integer nvectors = evec_to - evec_from + 1;
 		integer nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
-		Melder_require (my dimension == thy dimension, U"The eigenvectors must have the same dimension.");
-		Melder_require (evec_from <= evec_to && evec_from > 0 && evec_to <= nmin, U"Eigenvector range too large.");
+		Melder_require (my dimension == thy dimension, U"The eigenvectors should have the same dimension.");
+		Melder_require (evec_from <= evec_to && evec_from > 0 && evec_to <= nmin, U"Eigenvector range is too large.");
 
 		autoNUMmatrix<double> x (1, my dimension, 1, nvectors);
 		autoNUMmatrix<double> y (1, my dimension, 1, nvectors);

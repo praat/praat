@@ -177,8 +177,8 @@ autoActivationList FFNet_PatternList_to_ActivationList (FFNet me, PatternList p,
 		if (layer < 1 || layer > my nLayers) {
 			layer = my nLayers;
 		}
-		Melder_require (my nInputs == p -> nx, U"The PatternList and the FFNet do not match. The number of colums in the PatternList (", p -> nx, U") should equal the number of inputs in the FFNet (", my nInputs, U").");
-		Melder_require (_PatternList_checkElements (p), U"All PatternList elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
+		Melder_require (my nInputs == p -> nx, U"The number of colums in the PatternList (", p -> nx, U") should equal the number of inputs in the FFNet (", my nInputs, U").");
+		Melder_require (_PatternList_checkElements (p), U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");
 		
 		integer nPatterns = p -> ny;
 		autoActivationList thee = ActivationList_create (nPatterns, my nUnitsInLayer [layer]);
