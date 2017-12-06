@@ -72,7 +72,7 @@ gsl_histogram2d_pdf_alloc (const size_t nx, const size_t ny)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("histogram2d pdf length n should be positive integer",
+      GSL_ERROR_VAL ("histogram2d pdf length n must be positive integer",
                         GSL_EDOM, 0);
     }
 
@@ -140,7 +140,7 @@ gsl_histogram2d_pdf_init (gsl_histogram2d_pdf * p, const gsl_histogram2d * h)
     {
       if (h->bin[i] < 0)
         {
-          GSL_ERROR ("histogram bins should be non-negative to compute"
+          GSL_ERROR ("histogram bins must be non-negative to compute"
                      "a probability distribution", GSL_EDOM);
         }
     }

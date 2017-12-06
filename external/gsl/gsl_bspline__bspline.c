@@ -51,11 +51,11 @@ gsl_bspline_alloc(const size_t k, const size_t nbreak)
 {
   if (k == 0)
     {
-      GSL_ERROR_NULL("k should be at least 1", GSL_EINVAL);
+      GSL_ERROR_NULL("k must be at least 1", GSL_EINVAL);
     }
   else if (nbreak < 2)
     {
-      GSL_ERROR_NULL("nbreak should be at least 2", GSL_EINVAL);
+      GSL_ERROR_NULL("nbreak must be at least 2", GSL_EINVAL);
     }
   else
     {
@@ -270,7 +270,7 @@ Inputs: x - point for evaluation
 
 Return: success or error
 
-Notes: The w->knots vector should be initialized prior to calling
+Notes: The w->knots vector must be initialized prior to calling
        this function (see gsl_bspline_knots())
 */
 
@@ -358,7 +358,7 @@ Inputs: x   - point at which to evaluate splines
 
 Return: success or error
 
-Notes: 1) the w->knots vector should be initialized before calling
+Notes: 1) the w->knots vector must be initialized before calling
           this function
 
        2) On output, B contains:

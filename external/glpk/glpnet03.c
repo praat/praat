@@ -701,7 +701,7 @@ static void assign(struct csa *csa)
 *  (3) rran   - generates a real random number
 *
 *  The generator requires a machine with at least 32 bits of precision.
-*  The seed (iseed) should be in the range [1,(2**31)-1]. */
+*  The seed (iseed) must be in the range [1,(2**31)-1]. */
 
 static void setran(struct csa *csa, int iseed)
 {     xassert(iseed >= 1);

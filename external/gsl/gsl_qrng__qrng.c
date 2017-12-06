@@ -48,7 +48,7 @@ gsl_qrng_memcpy (gsl_qrng * dest, const gsl_qrng * src)
 {
   if (dest->type != src->type)
     {
-      GSL_ERROR ("generators should be of the same type", GSL_EINVAL);
+      GSL_ERROR ("generators must be of the same type", GSL_EINVAL);
     }
 
   dest->dimension = src->dimension;

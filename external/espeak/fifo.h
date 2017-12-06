@@ -43,7 +43,7 @@ espeak_ng_STATUS fifo_add_command(t_espeak_command *c);
 // In such a case, the calling function could wait and then add again these commands.
 espeak_ng_STATUS fifo_add_commands(t_espeak_command *c1, t_espeak_command *c2);
 
-// The current running command should be stopped and the awaiting commands are cleared.
+// The current running command must be stopped and the awaiting commands are cleared.
 espeak_ng_STATUS fifo_stop(void);
 
 // Is there a running command?

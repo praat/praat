@@ -305,7 +305,7 @@ typedef struct PaUtilHostApiRepresentation {
             - validate inputLatency and outputLatency
 
             - validate any platform specific flags, if flags are supplied they
-                should be valid.
+                must be valid.
     */
     PaError (*OpenStream)( struct PaUtilHostApiRepresentation *hostApi,
                            PaStream** stream,
@@ -325,7 +325,7 @@ typedef struct PaUtilHostApiRepresentation {
 } PaUtilHostApiRepresentation;
 
 
-/** Prototype for the initialization function which should be implemented by every
+/** Prototype for the initialization function which must be implemented by every
  host API.
  
  This function should only return an error other than paNoError if it encounters 

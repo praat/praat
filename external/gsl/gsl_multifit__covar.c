@@ -53,7 +53,7 @@ gsl_multifit_covar (const gsl_matrix * J, double epsrel, gsl_matrix * covar)
 
   if (covar->size1 != covar->size2 || covar->size1 != n)
     {
-      GSL_ERROR ("covariance matrix should be square and match second dimension of jacobian", GSL_EBADLEN);
+      GSL_ERROR ("covariance matrix must be square and match second dimension of jacobian", GSL_EBADLEN);
     }
 
   r = gsl_matrix_alloc (m, n);

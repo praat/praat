@@ -639,7 +639,7 @@ static void eliminate(LUX *lux, LUXWKA *wka, LUXELM *piv, int flag[],
          if (R_next[i] != 0) R_prev[R_next[i]] = i;
          R_head[R_len[i]] = i;
       }
-      /* at this point q-th (pivot) column should be empty */
+      /* at this point q-th (pivot) column must be empty */
       xassert(C_len[q] == 0);
       /* walk through p-th (pivot) row again and do the following... */
       for (vpj = V_row[p]; vpj != NULL; vpj = vpj->r_next)

@@ -39,7 +39,7 @@ gsl_sf_mathieu_workspace *gsl_sf_mathieu_alloc(const size_t nn,
   
   if (nn + 1 == 0)
   {
-      GSL_ERROR_NULL("matrix dimension should be positive integer", GSL_EINVAL);
+      GSL_ERROR_NULL("matrix dimension must be positive integer", GSL_EINVAL);
   }
 
   workspace =

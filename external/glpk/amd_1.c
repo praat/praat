@@ -15,10 +15,10 @@
  * compressed-column form, with sorted row indices in each column, and no
  * duplicate entries.  Diagonal entries may be present, but they are ignored.
  * Row indices of column j of A are stored in Ai [Ap [j] ... Ap [j+1]-1].
- * Ap [0] should be zero, and nz = Ap [n] is the number of entries in A.  The
- * size of the matrix, n, should be greater than or equal to zero.
+ * Ap [0] must be zero, and nz = Ap [n] is the number of entries in A.  The
+ * size of the matrix, n, must be greater than or equal to zero.
  *
- * This routine should be preceded by a call to AMD_aat, which computes the
+ * This routine must be preceded by a call to AMD_aat, which computes the
  * number of entries in each row/column in A+A', excluding the diagonal.
  * Len [j], on input, is the number of entries in row/column j of A+A'.  This
  * routine constructs the matrix A+A' and then calls AMD_2.  No error checking

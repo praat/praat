@@ -117,7 +117,7 @@ const char *Pa_GetErrorText( PaError errorCode );
  PortAudio API functions.
 
  If Pa_Initialize() is called multiple times, each successful 
- call should be matched with a corresponding call to Pa_Terminate(). 
+ call must be matched with a corresponding call to Pa_Terminate(). 
  Pairs of calls to Pa_Initialize()/Pa_Terminate() may overlap, and are not 
  required to be fully nested.
 
@@ -135,7 +135,7 @@ PaError Pa_Initialize( void );
 /** Library termination function - call this when finished using PortAudio.
  This function deallocates all resources allocated by PortAudio since it was
  initialized by a call to Pa_Initialize(). In cases where Pa_Initialise() has
- been called multiple times, each call should be matched with a corresponding call
+ been called multiple times, each call must be matched with a corresponding call
  to Pa_Terminate(). The final matching call to Pa_Terminate() will automatically
  close any PortAudio streams that are still open.
 
@@ -538,12 +538,12 @@ typedef struct PaStreamParameters
 
  @param inputParameters A structure that describes the input parameters used to
  open a stream. The suggestedLatency field is ignored. See PaStreamParameters
- for a description of these parameters. inputParameters should be NULL for
+ for a description of these parameters. inputParameters must be NULL for
  output-only streams.
 
  @param outputParameters A structure that describes the output parameters used
  to open a stream. The suggestedLatency field is ignored. See PaStreamParameters
- for a description of these parameters. outputParameters should be NULL for
+ for a description of these parameters. outputParameters must be NULL for
  input-only streams.
 
  @param sampleRate The required sampleRate. For full-duplex streams it is the
@@ -791,11 +791,11 @@ typedef int PaStreamCallback(
      
  @param inputParameters A structure that describes the input parameters used by
  the opened stream. See PaStreamParameters for a description of these parameters.
- inputParameters should be NULL for output-only streams.
+ inputParameters must be NULL for output-only streams.
 
  @param outputParameters A structure that describes the output parameters used by
  the opened stream. See PaStreamParameters for a description of these parameters.
- outputParameters should be NULL for input-only streams.
+ outputParameters must be NULL for input-only streams.
  
  @param sampleRate The desired sampleRate. For full-duplex streams it is the
  sample rate for both input and output

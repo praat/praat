@@ -26,7 +26,7 @@ Thing_define (ContingencyTable, TableOfReal) {
 		override;
 };
 
-// entries should be nonnegative numbers
+// entries must be nonnegative numbers
 
 autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numberOfColumns);
 

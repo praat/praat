@@ -1521,7 +1521,7 @@ static HRESULT InitFullDuplexInputOutputBuffers( PaWinDsStream *stream,
             &stream->pDirectSoundFullDuplex8,
             &pCaptureBuffer8,
             &pRenderBuffer8,
-            NULL /* pUnkOuter should be NULL */ 
+            NULL /* pUnkOuter must be NULL */ 
         );
 
     if( hr == DS_OK )

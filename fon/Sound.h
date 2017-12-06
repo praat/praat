@@ -244,14 +244,14 @@ autoSound Sound_record_fixedTime (int inputSource,
 				1.0 = right channel only.
 			samplingFrequency:
 				<=0.0 = do not change.
-				should be one of the sampling frequencies supported by the hardware.
+				must be one of the sampling frequencies supported by the hardware.
 			duration:
 				positive time in seconds.
 		Return value:
 			the resulting Sound.
 		Failures:
 			Hardware does not support sampling frequency.
-			Duration should be positive.
+			Duration must be positive.
 			Duration too long (out of memory).
 		Usage:
 			batch; in an interactive environment, it is better to use SoundRecorder_create,

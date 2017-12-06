@@ -104,7 +104,7 @@ extern const char * ipaSerifRegularPS [];
 			EnumFontFamiliesExW (my d_gdiGraphicsContext, & logFont, fontFuncEx_doulos, 0, 0);
 			ipaInited = true;
 			if (! charisAvailable && ! doulosAvailable) {
-				/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code should be non-reentrant !! */
+				/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
 				Melder_warning (U"The phonetic font is not available.\nSeveral characters may not look correct.\nSee www.praat.org");
 			}
 		}
@@ -236,7 +236,7 @@ inline static int chooseFont (Graphics me, _Graphics_widechar *lc) {
 				) :
 			  my font == kGraphics_font::HELVETICA ?
 				(int) kGraphics_font::HELVETICA :   // sans serif, so fall back on Lucida Grande or so for phonetic characters
-			  /* my font should be kGraphics_font_PALATINO */
+			  /* my font must be kGraphics_font_PALATINO */
 			  hasCharis && Melder_debug != 900 ?
 				kGraphics_font_IPAPALATINO :
 			  hasDoulos && Melder_debug != 900 ?
@@ -1319,7 +1319,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 				 */
 				globalLink = 1;
 				/*
-				 * Both '@' should be skipped and must not be drawn.
+				 * Both '@' must be skipped and must not be drawn.
 				 */
 				in ++;   // skip second '@'
 				continue;   // do not draw

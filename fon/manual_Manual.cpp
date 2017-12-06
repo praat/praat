@@ -113,7 +113,7 @@ NORMAL (U"In resolving the file name, the ManPages system replaces spaces "
 	"and converts any initial lower-case character by its upper-case variant. "
 	"For instance, if your link is \"\\@ \\@ back vowels\\@ \", "
 	"the file name will be ##Back_vowels.man#.")
-NORMAL (U"The title in the second line of ##Back_vowels.man# should be equal to the link name, "
+NORMAL (U"The title in the second line of ##Back_vowels.man# must be equal to the link name, "
 	"though capitalization of the first letter is allowed. "
 	"Thus, the title of ##Back_vowels.man# will probably be \"Back vowels\". "
 	"Likewise, the starting file with the title \"Welcome\" should have the name ##Welcome.man# "
@@ -162,7 +162,7 @@ NORMAL (U"The format of the sound link \"$$\\@ \\@ \\bsFIo.aifc|o\\@ $\" is to b
 	"tells the manual system that a sound file name follows. The manual system reads "
 	"this file, sees that it contains a sound, and plays that sound.")
 NORMAL (U"You can use relative path names, e.g., \\bsFIsounds/o.aifc refers to the file "
-	"##o.aifc# in the subdirectory #sounds, which should be contained in the same directory "
+	"##o.aifc# in the subdirectory #sounds, which must be contained in the same directory "
 	"as the ##.man# files. To make sure that your manual pages run on all platforms "
 	"(Windows, Macintosh, Unix), you will want to use the forward slash (/) to separate "
 	"the directory name(s) from the file name, as in this example "

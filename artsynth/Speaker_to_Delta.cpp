@@ -339,7 +339,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 	 */
 	thy tube [50]. right2 = thy tube + 65;   // pharynx to nose
 	thy tube [65]. left1 = thy tube + 50;   // nose to pharynx
-	thy tube [65]. Dxeq = thy tube [51]. Dxeq = thy tube [50]. Dxeq;   // all three should be of equal length
+	thy tube [65]. Dxeq = thy tube [51]. Dxeq = thy tube [50]. Dxeq;   // all three must be of equal length
 	thy tube [65]. Dx = thy tube [51]. Dx = thy tube [50]. Dx;
 
 	/* The rightmost boundaries: the lips (tube 64) and the nostrils (tube 78).

@@ -25,12 +25,12 @@ FUNCTION (gsl_matrix, view_array) (QUALIFIER ATOMIC * array,
 
   if (n1 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n1 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n1 must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (n2 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n2 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n2 must be positive integer",
                      GSL_EINVAL, view);
     }
 
@@ -59,12 +59,12 @@ FUNCTION(gsl_matrix, view_array_with_tda) (QUALIFIER ATOMIC * base,
 
   if (n1 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n1 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n1 must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (n2 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n2 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n2 must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (n2 > tda)
@@ -98,12 +98,12 @@ FUNCTION(gsl_matrix, view_vector) (QUALIFIED_TYPE(gsl_vector) * v,
 
   if (n1 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n1 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n1 must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (n2 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n2 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n2 must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (v->stride != 1) 
@@ -143,12 +143,12 @@ FUNCTION(gsl_matrix, view_vector_with_tda) (QUALIFIED_TYPE(gsl_vector) * v,
 
   if (n1 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n1 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n1 must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (n2 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n2 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n2 must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (v->stride != 1) 
@@ -193,12 +193,12 @@ FUNCTION (gsl_matrix, view_from_matrix) (TYPE(gsl_matrix) * m,
 {
   if (n1 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n1 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n1 must be positive integer",
                         GSL_EINVAL, 0);
     }
   else if (n2 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n2 should be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n2 must be positive integer",
                         GSL_EINVAL, 0);
     }
   else if (k1 + n1 > mm->size1)

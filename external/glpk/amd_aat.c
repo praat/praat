@@ -12,7 +12,7 @@
 /* AMD_aat:  compute the symmetry of the pattern of A, and count the number of
  * nonzeros each column of A+A' (excluding the diagonal).  Assumes the input
  * matrix has no errors, with sorted columns and no duplicates
- * (AMD_valid (n, n, Ap, Ai) should be AMD_OK, but this condition is not
+ * (AMD_valid (n, n, Ap, Ai) must be AMD_OK, but this condition is not
  * checked).
  */
 

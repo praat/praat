@@ -1140,7 +1140,7 @@ DO
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy)
-		Melder_throw (U"\"Position\" should be between ", y1WC, U" and ", y2WC, U".");
+		Melder_throw (U"\"Position\" must be between ", y1WC, U" and ", y2WC, U".");
 	GRAPHICS_NONE
 		Graphics_markLeft (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
 	GRAPHICS_NONE_END
@@ -1162,7 +1162,7 @@ DO
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < y1WC - dy || position > y2WC + dy)
-		Melder_throw (U"\"Position\" should be between ", y1WC, U" and ", y2WC, U".");
+		Melder_throw (U"\"Position\" must be between ", y1WC, U" and ", y2WC, U".");
 	GRAPHICS_NONE
 		Graphics_markRight (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
 	GRAPHICS_NONE_END
@@ -1184,7 +1184,7 @@ DO
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx)
-		Melder_throw (U"\"Position\" should be between ", x1WC, U" and ", x2WC, U".");
+		Melder_throw (U"\"Position\" must be between ", x1WC, U" and ", x2WC, U".");
 	GRAPHICS_NONE
 		Graphics_markTop (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
 	GRAPHICS_NONE_END
@@ -1206,7 +1206,7 @@ DO
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < x1WC - dx || position > x2WC + dx)
-		Melder_throw (U"\"Position\" should be between ", x1WC, U" and ", x2WC, U".");
+		Melder_throw (U"\"Position\" must be between ", x1WC, U" and ", x2WC, U".");
 	GRAPHICS_NONE
 		Graphics_markBottom (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
 	GRAPHICS_NONE_END
@@ -1228,7 +1228,7 @@ DO
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
-		Melder_throw (U"\"Position\" should be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
+		Melder_throw (U"\"Position\" must be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
 	GRAPHICS_NONE
 		Graphics_markLeftLogarithmic (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
 	GRAPHICS_NONE_END
@@ -1250,7 +1250,7 @@ DO
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dy = 0.2 * (y2WC - y1WC);
 	if (position < pow (10, y1WC - dy) || position > pow (10, y2WC + dy))
-		Melder_throw (U"\"Position\" should be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
+		Melder_throw (U"\"Position\" must be between ", pow (10, y1WC), U" and ", pow (10, y2WC), U".");
 	GRAPHICS_NONE
 		Graphics_markRightLogarithmic (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
 	GRAPHICS_NONE_END
@@ -1272,7 +1272,7 @@ DO
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
-		Melder_throw (U"\"Position\" should be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
+		Melder_throw (U"\"Position\" must be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
 	GRAPHICS_NONE
 		Graphics_markTopLogarithmic (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
 	GRAPHICS_NONE_END
@@ -1294,7 +1294,7 @@ DO
 	sortBoundingBox (& x1WC, & x2WC, & y1WC, & y2WC);
 	dx = 0.2 * (x2WC - x1WC);
 	if (position < pow (10, x1WC - dx) || position > pow (10, x2WC + dx))
-		Melder_throw (U"\"Position\" should be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
+		Melder_throw (U"\"Position\" must be between ", pow (10, x1WC), U" and ", pow (10, x2WC), U".");
 	GRAPHICS_NONE
 		Graphics_markBottomLogarithmic (GRAPHICS, position, writeNumber, drawTick, drawDottedLine, text);
 	GRAPHICS_NONE_END
@@ -1551,7 +1551,7 @@ void praat_picture_open () {
 	/* Make sure that they have the right values before every drawing. */
 	/* This is especially necessary after an 'erase picture': */
 	/* the output attributes that were set by the user before the 'erase' */
-	/* should be recorded before copying to a PostScript file. */
+	/* must be recorded before copying to a PostScript file. */
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType);

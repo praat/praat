@@ -101,7 +101,7 @@ void ios_feas_pump(glp_tree *T)
             goto done;
          }
       }
-      /* there should be at least one binary variable */
+      /* there must be at least one binary variable */
       if (nv == 0) goto done;
       if (T->parm->msg_lev >= GLP_MSG_ALL)
          xprintf("Applying FPUMP heuristic...\n");

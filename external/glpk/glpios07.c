@@ -360,7 +360,7 @@ static int lpx_cover_cut(LPX *lp, int len, int ind[], double val[],
       f_min = f_max = 0.0;
       for (k = nb+1; k <= len; k++)
       {  j = ind[k];
-         /* both bounds should be finite */
+         /* both bounds must be finite */
          if (lpx_get_col_type(lp, j) != LPX_DB) return 0;
          if (val[k] > 0.0)
          {  f_min += val[k] * lpx_get_col_lb(lp, j);

@@ -481,7 +481,7 @@ FLaC__INLINE FLAC__bool FLAC__bitreader_read_raw_uint32(FLAC__BitReader *br, FLA
 				br->consumed_bits = bits;
 				return true;
 			}
-			/* at this point 'bits' should be == FLAC__BITS_PER_WORD; because of previous assertions, it can't be larger */
+			/* at this point 'bits' must be == FLAC__BITS_PER_WORD; because of previous assertions, it can't be larger */
 			*val = word;
 			crc16_update_word_(br, word);
 			br->consumed_words++;

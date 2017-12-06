@@ -30,7 +30,7 @@ FUNCTION(gsl_fft_complex_wavetable,alloc) (size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("length n should be positive integer", GSL_EDOM, 0);
+      GSL_ERROR_VAL ("length n must be positive integer", GSL_EDOM, 0);
     }
 
   wavetable = (TYPE(gsl_fft_complex_wavetable) *) 
@@ -120,7 +120,7 @@ FUNCTION(gsl_fft_complex_workspace,alloc) (size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("length n should be positive integer", GSL_EDOM, 0);
+      GSL_ERROR_VAL ("length n must be positive integer", GSL_EDOM, 0);
     }
 
   workspace = (TYPE(gsl_fft_complex_workspace) *) 

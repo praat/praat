@@ -24,7 +24,7 @@ FUNCTION (gsl_block, alloc) (const size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("block length n should be positive integer",
+      GSL_ERROR_VAL ("block length n must be positive integer",
                         GSL_EINVAL, 0);
     }
 

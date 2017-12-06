@@ -94,8 +94,8 @@ typedef struct PaWinMmeStreamInfo{
 
         If PaWinMmeStreamInfo structures with PaWinMmeUseLowLevelLatencyParameters
         are supplied for both input and output in a full duplex stream, then the
-        input and output framesPerBuffer should be the same, or the larger of the
-        two should be a multiple of the smaller, otherwise a
+        input and output framesPerBuffer must be the same, or the larger of the
+        two must be a multiple of the smaller, otherwise a
         paIncompatibleHostApiSpecificStreamInfo error will be returned from
         Pa_OpenStream().
     */

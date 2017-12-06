@@ -64,7 +64,7 @@ gsl_eigen_genv_alloc(const size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_NULL ("matrix dimension should be positive integer",
+      GSL_ERROR_NULL ("matrix dimension must be positive integer",
                       GSL_EINVAL);
     }
 
@@ -169,7 +169,7 @@ gsl_eigen_genv (gsl_matrix * A, gsl_matrix * B, gsl_vector_complex * alpha,
 
   if (N != A->size2)
     {
-      GSL_ERROR ("matrix should be square to compute eigenvalues", GSL_ENOTSQR);
+      GSL_ERROR ("matrix must be square to compute eigenvalues", GSL_ENOTSQR);
     }
   else if ((N != B->size1) || (N != B->size2))
     {

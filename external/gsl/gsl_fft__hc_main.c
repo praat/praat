@@ -85,7 +85,7 @@ FUNCTION(gsl_fft_halfcomplex,transform) (BASE data[], const size_t stride, const
 
   if (n == 0)
     {
-      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
     }
 
   if (n == 1)

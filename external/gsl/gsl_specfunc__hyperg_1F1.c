@@ -1319,7 +1319,7 @@ hyperg_1F1_ab_negint(const int a, const int b, const double x, gsl_sf_result * r
   else {
     /* Apply a Kummer transformation to make x > 0 so
      * we can evaluate the polynomial safely. Of course,
-     * this assumes b <= a, which should be true for
+     * this assumes b <= a, which must be true for
      * a<0 and b<0, since otherwise the thing is undefined.
      */
     gsl_sf_result K;

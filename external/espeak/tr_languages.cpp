@@ -67,7 +67,7 @@
 #define OFFSET_KOREAN   0x1100
 #define OFFSET_ETHIOPIC 0x1200
 
-// character ranges should be listed in ascending unicode order
+// character ranges must be listed in ascending unicode order
 ALPHABET alphabets[] = {
 	{ "_el",    OFFSET_GREEK,    0x380, 0x3ff,  L('e', 'l'), AL_DONT_NAME | AL_NOT_LETTERS | AL_WORDS },
 	{ "_cyr",   OFFSET_CYRILLIC, 0x400, 0x52f,  0, 0 },

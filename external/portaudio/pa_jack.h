@@ -57,7 +57,7 @@ extern "C" {
  * JACK server may append a suffix to the client name, in order to avoid clashes among clients that
  * try to connect with the same name (e.g., different PA JACK clients).
  *
- * This function should be called before Pa_Initialize, otherwise it won't have any effect. Note that
+ * This function must be called before Pa_Initialize, otherwise it won't have any effect. Note that
  * the string is not copied, but instead referenced directly, so it must not be freed for as long as
  * PA might need it.
  * @sa PaJack_GetClientName

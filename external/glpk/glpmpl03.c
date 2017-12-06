@@ -1544,7 +1544,7 @@ FORMULA *reduce_terms
 --
 -- This routine deletes specified generic value.
 --
--- NOTE: The generic value to be deleted should be valid. */
+-- NOTE: The generic value to be deleted must be valid. */
 
 void delete_value
 (     MPL *mpl,
@@ -1914,14 +1914,14 @@ done: return ret;
 -- of given n-tuple. Non-free dummy indices are assigned values, which
 -- are computed by this routine.
 --
--- Number of components in the given n-tuple should be the same as number
+-- Number of components in the given n-tuple must be the same as number
 -- of free indices in the domain.
 --
 -- If the given n-tuple is not a member of the domain set, the routine
 -- func is not called, and non-zero code is returned.
 --
 -- For the sake of convenience it is allowed to specify domain as NULL
--- (then n-tuple also should be 0-tuple, i.e. empty), in which case this
+-- (then n-tuple also must be 0-tuple, i.e. empty), in which case this
 -- routine just calls the routine func and returns zero.
 --
 -- This routine allows recursive calls from the routine func providing
@@ -2155,7 +2155,7 @@ static void loop_domain_func(MPL *mpl, void *_my_info)
             for (memb = set->head; memb != NULL && my_info->looping;
                memb = memb->next)
             {  /* all components of the current n-tuple that correspond
-                  to non-free dummy indices should be feasible; otherwise
+                  to non-free dummy indices must be feasible; otherwise
                   the n-tuple is not in the basic set */
                temp1 = memb->tuple;
                temp2 = bound;
@@ -2327,7 +2327,7 @@ void check_elem_set
 {     WITHIN *within;
       MEMBER *memb;
       int eqno;
-      /* elemental set should be within all specified supersets */
+      /* elemental set must be within all specified supersets */
       for (within = set->within, eqno = 1; within != NULL; within =
          within->next, eqno++)
       {  xassert(within->code != NULL);
@@ -2655,7 +2655,7 @@ err:              mpl_error(mpl, "%s%s = %.*g not %s %.*g; see (%d)",
                xassert(cond != cond);
          }
       }
-      /* the value should be in all specified supersets */
+      /* the value must be in all specified supersets */
       for (in = par->in, eqno = 1; in != NULL; in = in->next, eqno++)
       {  TUPLE *dummy;
          xassert(in->code != NULL);
@@ -2893,7 +2893,7 @@ void check_value_sym
          }
          delete_symbol(mpl, bound);
       }
-      /* the value should be in all specified supersets */
+      /* the value must be in all specified supersets */
       for (in = par->in, eqno = 1; in != NULL; in = in->next, eqno++)
       {  TUPLE *dummy;
          xassert(in->code != NULL);
@@ -5172,7 +5172,7 @@ read_table:
             dca->type[k] = '?';
          /* read next record */
          if (mpl_tab_drv_read(mpl)) break;
-         /* all fields should be set by the driver */
+         /* all fields must be set by the driver */
          for (k = 1; k <= dca->nf; k++)
          {  if (dca->type[k] == '?')
                mpl_error(mpl, "field %s missing in input table",
@@ -5207,7 +5207,7 @@ read_table:
          {  MEMBER *memb;
             k++;
             xassert(k <= dca->nf);
-            /* there should be no member with the same n-tuple */
+            /* there must be no member with the same n-tuple */
             if (find_member(mpl, in->par->array, tup) != NULL)
                mpl_error(mpl, "%s%s already defined", in->par->name,
                format_tuple(mpl, '[', tup));

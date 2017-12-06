@@ -33,7 +33,7 @@ gsl_poly_complex_workspace_alloc (size_t n)
   
   if (n == 0)
     {
-      GSL_ERROR_VAL ("matrix size n should be positive integer", GSL_EDOM, 0);
+      GSL_ERROR_VAL ("matrix size n must be positive integer", GSL_EDOM, 0);
     }
 
   w = (gsl_poly_complex_workspace *) 

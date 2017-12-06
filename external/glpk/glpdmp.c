@@ -169,7 +169,7 @@ void *dmp_get_atom(DMP *pool, int size)
 *  The parameter size is the atom size, in bytes, 1 <= size <= 256.
 *
 *  Note that the atom can be returned only to the pool, from which it
-*  was obtained, and its size should be exactly the same as on obtaining
+*  was obtained, and its size must be exactly the same as on obtaining
 *  it from the pool. */
 
 void dmp_free_atom(DMP *pool, void *atom, int size)

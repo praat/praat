@@ -29,7 +29,7 @@ gsl_histogram_alloc (size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("histogram length n should be positive integer",
+      GSL_ERROR_VAL ("histogram length n must be positive integer",
                         GSL_EDOM, 0);
     }
 
@@ -88,7 +88,7 @@ gsl_histogram_calloc_uniform (const size_t n, const double xmin,
 
   if (xmin >= xmax)
     {
-      GSL_ERROR_VAL ("xmin should be less than xmax", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("xmin must be less than xmax", GSL_EINVAL, 0);
     }
 
   h = gsl_histogram_calloc (n);
@@ -151,7 +151,7 @@ gsl_histogram_set_ranges_uniform (gsl_histogram * h, double xmin, double xmax)
 
   if (xmin >= xmax)
     {
-      GSL_ERROR ("xmin should be less than xmax", GSL_EINVAL);
+      GSL_ERROR ("xmin must be less than xmax", GSL_EINVAL);
     }
 
   /* initialize ranges */

@@ -80,11 +80,11 @@ gsl_linalg_bidiag_decomp (gsl_matrix * A, gsl_vector * tau_U, gsl_vector * tau_V
     }
   else if (tau_U->size  != A->size2)
     {
-      GSL_ERROR ("size of tau_U should be N", GSL_EBADLEN);
+      GSL_ERROR ("size of tau_U must be N", GSL_EBADLEN);
     }
   else if (tau_V->size + 1 != A->size2)
     {
-      GSL_ERROR ("size of tau_V should be (N - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau_V must be (N - 1)", GSL_EBADLEN);
     }
   else
     {
@@ -162,19 +162,19 @@ gsl_linalg_bidiag_unpack (const gsl_matrix * A,
     }
   else if (tau_U->size != K)
     {
-      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
     }
   else if (tau_V->size + 1 != K)
     {
-      GSL_ERROR ("size of tau should be MIN(M,N) - 1", GSL_EBADLEN);
+      GSL_ERROR ("size of tau must be MIN(M,N) - 1", GSL_EBADLEN);
     }
   else if (U->size1 != M || U->size2 != N)
     {
-      GSL_ERROR ("size of U should be M x N", GSL_EBADLEN);
+      GSL_ERROR ("size of U must be M x N", GSL_EBADLEN);
     }
   else if (V->size1 != N || V->size2 != N)
     {
-      GSL_ERROR ("size of V should be N x N", GSL_EBADLEN);
+      GSL_ERROR ("size of V must be N x N", GSL_EBADLEN);
     }
   else if (diag->size != K)
     {
@@ -182,7 +182,7 @@ gsl_linalg_bidiag_unpack (const gsl_matrix * A,
     }
   else if (superdiag->size + 1 != K)
     {
-      GSL_ERROR ("size of subdiagonal should be (diagonal size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of subdiagonal must be (diagonal size - 1)", GSL_EBADLEN);
     }
   else
     {
@@ -261,15 +261,15 @@ gsl_linalg_bidiag_unpack2 (gsl_matrix * A,
     }
   else if (tau_U->size != K)
     {
-      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
     }
   else if (tau_V->size + 1 != K)
     {
-      GSL_ERROR ("size of tau should be MIN(M,N) - 1", GSL_EBADLEN);
+      GSL_ERROR ("size of tau must be MIN(M,N) - 1", GSL_EBADLEN);
     }
   else if (V->size1 != N || V->size2 != N)
     {
-      GSL_ERROR ("size of V should be N x N", GSL_EBADLEN);
+      GSL_ERROR ("size of V must be N x N", GSL_EBADLEN);
     }
   else
     {
@@ -337,7 +337,7 @@ gsl_linalg_bidiag_unpack_B (const gsl_matrix * A,
     }
   else if (superdiag->size + 1 != K)
     {
-      GSL_ERROR ("size of subdiagonal should be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of subdiagonal must be (matrix size - 1)", GSL_EBADLEN);
     }
   else
     {

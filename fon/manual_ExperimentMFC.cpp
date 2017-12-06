@@ -143,7 +143,7 @@ INTRO (U"You can see that the @@ExperimentMFC 2.1. The experiment file|example e
 	"These are the %names of the four stimuli.")
 NORMAL (U"Because in the example experiment stimuli are sounds, "
 	"each of the four stimuli should be in a sound file. "
-	"The names of these sound files should be identical to the names "
+	"The names of these sound files must be identical to the names "
 	"of the stimuli, bracketed with %stimulusFileNamehead and %stimulusFileNameTail. "
 	"Hence, the stimuli are expected in the following four files:")
 LIST_ITEM (U"Sounds/heed.wav")

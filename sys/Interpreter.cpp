@@ -1907,7 +1907,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						while (Melder_isblank (*p)) p ++;   // go to first token after variable name
 						if (*p == U'[') {
 							/*
-								This should be an assignment to an indexed string variable.
+								This must be an assignment to an indexed string variable.
 							*/
 							*endOfVariable = U'\0';
 							static MelderString indexedVariableName { };
@@ -2028,7 +2028,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							while (Melder_isblank (*p)) p ++;   // go to first token after matrix name
 							if (*p == U'=') {
 								/*
-									This should be an assignment to a matrix variable.
+									This must be an assignment to a matrix variable.
 								*/
 								p ++;   // step over equals sign
 								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
@@ -2109,7 +2109,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 							} else if (*p == U'~') {
 								/*
-									This should be a formula assignment to a matrix variable.
+									This must be a formula assignment to a matrix variable.
 								*/
 								p ++;   // step over tilde
 								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
@@ -2143,7 +2143,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							while (Melder_isblank (*p)) p ++;   // go to first token after array name
 							if (*p == U'=') {
 								/*
-									This should be an assignment to a vector variable.
+									This must be an assignment to a vector variable.
 								*/
 								p ++;   // step over equals sign
 								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
@@ -2224,7 +2224,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 							} else if (*p == U'~') {
 								/*
-									This should be a formula assignment to a vector variable.
+									This must be a formula assignment to a vector variable.
 								*/
 								p ++;   // step over tilde
 								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
@@ -2263,13 +2263,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						while (Melder_isblank (*p)) p ++;
 						if (*p == U'=' || ((*p == U'+' || *p == U'-' || *p == U'*' || *p == U'/') && p [1] == U'=')) {
 							/*
-								This should be an assignment (though: "echo = ..." ???)
+								This must be an assignment (though: "echo = ..." ???)
 							*/
 							typeOfAssignment = *p == U'+' ? 1 : *p == U'-' ? 2 : *p == U'*' ? 3 : *p == U'/' ? 4 : 0;
 							*endOfVariable = U'\0';   // close variable name; FIXME: this can be any weird character, e.g. hallo&
 						} else if (*p == U'[') {
 							/*
-								This should be an assignment to an indexed numeric variable.
+								This must be an assignment to an indexed numeric variable.
 							*/
 							*endOfVariable = U'\0';
 							static MelderString indexedVariableName { };

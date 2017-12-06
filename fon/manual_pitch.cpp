@@ -239,7 +239,7 @@ DEFINITION (U"the time domain along the horizontal axis. "
 TAG (U"##Minimum frequency (Hz)")
 TAG (U"##Maximum frequency (Hz)")
 DEFINITION (U"the frequency range along the vertical axis. "
-	"##Maximum frequency# should be greater than ##Minimum frequency#.")
+	"##Maximum frequency# must be greater than ##Minimum frequency#.")
 ENTRY (U"Behaviour")
 NORMAL (U"In unvoiced frames, nothing will be drawn.")
 NORMAL (U"In voiced frames, the pitch frequency associated with the frame "
@@ -771,11 +771,11 @@ LIST_ITEM (U"1. The first point %t__1_ is the absolute extremum of the amplitude
 	"between %t__%mid_ \\-- %T__0_ / 2 and %t__%mid_ + %T__0_ / 2, where %t__%mid_ is the midpoint of the interval, "
 	"and %T__0_ is the period at %t__%mid_, as can be interpolated from the #Pitch contour.")
 LIST_ITEM (U"2. From this point, we recursively search for points %t__%i_ to the left "
-	"until we reach the left edge of the interval. These points should be located between "
+	"until we reach the left edge of the interval. These points must be located between "
 	"%t__%i\\--1_ \\-- 1.2 %T__0_(%t__%i\\--1_) and %t__%i\\--1_ \\-- 0.8 %T__0_(%t__%i\\--1_), "
 	"and the cross-correlation of the amplitude "
 	"in its environment [%t__%i_ \\-- %T__0_(%t__%i_) / 2; %t__%i_ + %T__0_(%t__%i_) / 2] "
-	"with the amplitude of the environment of the existing point %t__%i\\--1_ should be maximal "
+	"with the amplitude of the environment of the existing point %t__%i\\--1_ must be maximal "
 	"(we use parabolic interpolation between samples of the correlation function).")
 LIST_ITEM (U"3. The same is done to the right of %t__1_.")
 LIST_ITEM (U"4. Though the voiced/unvoiced decision is initially taken by the #Pitch contour, "

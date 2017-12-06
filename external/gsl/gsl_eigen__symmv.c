@@ -41,7 +41,7 @@ gsl_eigen_symmv_alloc (const size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_NULL ("matrix dimension should be positive integer", GSL_EINVAL);
+      GSL_ERROR_NULL ("matrix dimension must be positive integer", GSL_EINVAL);
     }
   
   w= ((gsl_eigen_symmv_workspace *) malloc (sizeof(gsl_eigen_symmv_workspace)));
@@ -101,7 +101,7 @@ gsl_eigen_symmv (gsl_matrix * A, gsl_vector * eval, gsl_matrix * evec,
 {
   if (A->size1 != A->size2)
     {
-      GSL_ERROR ("matrix should be square to compute eigenvalues", GSL_ENOTSQR);
+      GSL_ERROR ("matrix must be square to compute eigenvalues", GSL_ENOTSQR);
     }
   else if (eval->size != A->size1)
     {

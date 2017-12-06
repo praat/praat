@@ -42,7 +42,7 @@ gsl_histogram_calloc_range (size_t n, double *range)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("histogram length n should be positive integer",
+      GSL_ERROR_VAL ("histogram length n must be positive integer",
                         GSL_EDOM, 0);
     }
 
@@ -52,7 +52,7 @@ gsl_histogram_calloc_range (size_t n, double *range)
     {
       if (range[i] >= range[i + 1])
         {
-          GSL_ERROR_VAL ("histogram bin extremes  should be "
+          GSL_ERROR_VAL ("histogram bin extremes  must be "
                             "in increasing order", GSL_EDOM, 0);
         }
     }

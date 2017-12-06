@@ -51,7 +51,7 @@
 *  RETURNS
 *
 *  The routine glp_malloc returns a pointer to the allocated block.
-*  To free this block the routine glp_free (not free!) should be used. */
+*  To free this block the routine glp_free (not free!) must be used. */
 
 void *glp_malloc(int size)
 {     ENV *env = get_env_ptr();
@@ -104,7 +104,7 @@ void *glp_malloc(int size)
 *  RETURNS
 *
 *  The routine glp_calloc returns a pointer to the allocated block.
-*  To free this block the routine glp_free (not free!) should be used. */
+*  To free this block the routine glp_free (not free!) must be used. */
 
 void *glp_calloc(int n, int size)
 {     if (n < 1)

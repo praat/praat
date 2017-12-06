@@ -371,7 +371,7 @@ NORMAL (U"For example, suppose that you record some speech on a CD recorder or w
 	"When you later open the recorded noise in Praat's sound window, Praat tells you that its average intensity "
 	"(switch on ##Show intensity#) is 68.6 dB. You then know that you have to add 7.9 dB to intensities measured in Praat "
 	"to get at the true sound pressure level. Thus, if your speech contains a long [a:] whose average intensity "
-	"is measured in the Sound window as 71.1 dB, its true sound pressure level should be 79.0 dB.")
+	"is measured in the Sound window as 71.1 dB, its true sound pressure level must be 79.0 dB.")
 NORMAL (U"In this example, you can make Praat's sound window show the true sound pressures in Pascal "
 	"and true sound pressure levels in dB, if you multiply the sound with a factor of 10^^(7.9/20)^, "
 	"which you can do by selecting the Sound and choosing ##Multiply...# from the #Modify menu, "
@@ -565,7 +565,7 @@ NORMAL (U"If the interpolation method is Cubic, the interpolation is performed o
 	"##Get time of maximum...# and ##Get value at time...#.")
 ENTRY (U"4. Highest precision: sinc interpolation")
 NORMAL (U"If the interpolation method is Sinc70 or Sinc700, the algorithm assumes that the signal "
-	"is a sum of sinc functions, so that a number of points (namely, 70 or 700) on each side of the initial guess %m should be taken into account "
+	"is a sum of sinc functions, so that a number of points (namely, 70 or 700) on each side of the initial guess %m must be taken into account "
 	"(see @@vector value interpolation@). The algorithm finds the maximum of this continuous function by Brent's method (see @@Press et al. (1992)@).")
 NORMAL (U"This method is appropriate for signals that result from sampling a continuous signal after it has been low-pass filtered "
 	"at the @@Nyquist frequency@. See:")
@@ -583,7 +583,7 @@ NORMAL (U"The signal is described with the sequence %y__%i_, %i = 1...%n, where 
 	"Each sample %i is associated with an %x location (typically, time) given by %x__%i_ = %x__1_ + (%i - 1) %dx, "
 	"where %dx is the sample period, so that the real-valued sample number associated with a given time %x is")
 FORMULA (U"%s = (%x - %x__1_) / %dx + 1")
-NORMAL (U"If the resulting %s is an integer number, the %y value should be %y__%s_. Otherwise, the estimated %y value %y(%s) should be interpolated "
+NORMAL (U"If the resulting %s is an integer number, the %y value must be %y__%s_. Otherwise, the estimated %y value %y(%s) must be interpolated "
 	"from nearby values of %y. The precision of the result depends on the %%interpolation method% of this algorithm.")
 ENTRY (U"1. Lowest precision: round to sample")
 NORMAL (U"If the interpolation method is Nearest, we take the value of the nearest point:")
@@ -636,8 +636,8 @@ LIST_ITEM (U"4. At the left and right points, one of the %φ is 0 and the other 
 	"%y is computed with exact precision.")
 ENTRY (U"4. Highest precision: sinc interpolation")
 NORMAL (U"If the interpolation method is Sinc70 or Sinc700, the algorithm assumes that the signal "
-	"is a sum of sinc functions, so that a number of points (the %%interpolation depth%: 70 or 700) on each side of %s should be taken into account.")
-NORMAL (U"Because the interpolation depth should be finite, the sum of sinc functions is multiplied by a Hanning window:")
+	"is a sum of sinc functions, so that a number of points (the %%interpolation depth%: 70 or 700) on each side of %s must be taken into account.")
+NORMAL (U"Because the interpolation depth must be finite, the sum of sinc functions is multiplied by a Hanning window:")
 FORMULA (U"%s__%l_ ≡ floor (%s);   %s__%r_ ≡ %s__%l_ + 1")
 FORMULA (U"%φ__%l_ ≡ %s - %s__%l_;   %φ__%r_ ≡ 1 - %φ__%l_")
 FORMULA (U"%y(%s) ≈ ∑__%i=1...%N_ %y__%r-%i_ sinc (%π(%φ__%l_+%i-1)) (1/2 + 1/2 cos (%π(%φ__%l_+%i-1)/(%φ__%l_+%N))) +")

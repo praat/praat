@@ -74,7 +74,7 @@ gsl_cdf_beta_Pinv (const double P, const double a, const double b)
 
   if (P < 0.0 || P > 1.0)
     {
-      CDF_ERROR ("P should be in range 0 < P < 1", GSL_EDOM);
+      CDF_ERROR ("P must be in range 0 < P < 1", GSL_EDOM);
     }
 
   if (a < 0.0)
@@ -191,7 +191,7 @@ gsl_cdf_beta_Qinv (const double Q, const double a, const double b)
 
   if (Q < 0.0 || Q > 1.0)
     {
-      CDF_ERROR ("Q should be inside range 0 < Q < 1", GSL_EDOM);
+      CDF_ERROR ("Q must be inside range 0 < Q < 1", GSL_EDOM);
     }
 
   if (a < 0.0)

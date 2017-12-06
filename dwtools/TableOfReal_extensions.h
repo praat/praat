@@ -136,7 +136,7 @@ void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const
 void TableOfReal_centreColumns (TableOfReal me);
 
 void TableOfReal_centreColumns_byRowLabel (TableOfReal me);
-/* PRECONDITION: Table should be sorted by row labels !! */
+/* PRECONDITION: Table must be sorted by row labels !! */
 
 double TableOfReal_getColumnQuantile (TableOfReal me, integer col, double quantile);
 

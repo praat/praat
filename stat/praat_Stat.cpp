@@ -1035,7 +1035,7 @@ static bool isTabSeparated_utf16le (integer nread, const char *header) {
 static autoDaata tabSeparatedFileRecognizer (integer nread, const char *header, MelderFile file) {
 	/*
 	 * A table is recognized if it has at least one tab symbol,
-	 * which should be before the first newline symbol (if any).
+	 * which must be before the first newline symbol (if any).
 	 */
 	unsigned char *uheader = (unsigned char *) header;
 	bool isTabSeparated =

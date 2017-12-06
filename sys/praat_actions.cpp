@@ -70,7 +70,7 @@ static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassIn
 /*
  * An action command is fully specified by its environment (the selected classes) and its title.
  * Precondition:
- *	class1, class2, and class3 should be in sorted order.
+ *	class1, class2, and class3 must be in sorted order.
  */
 	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];

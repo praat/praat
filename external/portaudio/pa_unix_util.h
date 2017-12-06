@@ -202,7 +202,7 @@ PaError PaUnixThread_Terminate( PaUnixThread* self, int wait, PaError* exitResul
 
 /** Prepare to notify waiting parent thread.
  *
- * An internal lock should be held before the parent is notified in PaUnixThread_NotifyParent, call this to
+ * An internal lock must be held before the parent is notified in PaUnixThread_NotifyParent, call this to
  * acquire it beforehand.
  * @return: If parent is not waiting, paInternalError.
  */

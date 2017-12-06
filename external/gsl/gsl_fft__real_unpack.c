@@ -28,7 +28,7 @@ FUNCTION(gsl_fft_real,unpack) (const BASE real_coefficient[],
 
   if (n == 0)
     {
-      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
     }
 
   for (i = 0; i < n; i++)

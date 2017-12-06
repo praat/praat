@@ -198,7 +198,7 @@ static int branch_drtom(glp_tree *T, int *_next)
       int j, jj, k, t, next, kase, len, stat, *ind;
       double x, dk, alfa, delta_j, delta_k, delta_z, dz_dn, dz_up,
          dd_dn, dd_up, degrad, *val;
-      /* basic solution of LP relaxation should be optimal */
+      /* basic solution of LP relaxation must be optimal */
       xassert(glp_get_status(mip) == GLP_OPT);
       /* allocate working arrays */
       ind = xcalloc(1+n, sizeof(int));
@@ -359,7 +359,7 @@ skip:       /* new Z is never better than old Z, therefore the change
       /* free working arrays */
       xfree(ind);
       xfree(val);
-      /* something should be chosen */
+      /* something must be chosen */
       xassert(1 <= jj && jj <= n);
 #if 1 /* 02/XI-2009 */
       if (degrad < 1e-6 * (1.0 + 0.001 * fabs(mip->obj_val)))
@@ -430,7 +430,7 @@ static double eval_degrad(glp_prob *P, int j, double bnd)
       glp_smcp parm;
       int ret;
       double degrad;
-      /* the current basis should be optimal */
+      /* the current basis must be optimal */
       xassert(glp_get_status(P) == GLP_OPT);
       /* create a copy of P */
       lp = glp_create_prob();

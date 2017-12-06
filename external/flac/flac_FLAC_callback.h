@@ -140,7 +140,7 @@ typedef FLAC__int64 (*FLAC__IOCallback_Tell) (FLAC__IOHandle handle);
 /** Signature for the EOF callback.
  *  The signature and semantics mostly match POSIX feof() but WATCHOUT:
  *  on many systems, feof() is a macro, so in this case a wrapper function
- *  should be provided instead.
+ *  must be provided instead.
  *
  * \param  handle   The handle to the data source.
  * \retval int

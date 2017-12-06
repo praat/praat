@@ -80,7 +80,7 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 	If *pxmin equals *pxmax, then autowindowing from my xmin to my xmax.
 	If *pymin equals *pymax, then autoscaling from minimum to maximum;
 	if minimum then equals maximum, defaultDy will be subtracted from *pymin and added to *pymax;
-	it should be a positive real number (e.g. 0.5 Pa for Sound, 1.0 dB for Ltas).
+	it must be a positive real number (e.g. 0.5 Pa for Sound, 1.0 dB for Ltas).
 	method can be "curve", "bars", "poles", or "speckles"; it must not be null;
 	if anything else is specified, a curve is drawn.
 */

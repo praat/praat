@@ -973,11 +973,11 @@ static PaError ValidateOpenStreamParameters(
 
     if( streamFlags & paNeverDropInput )
     {
-        /* should be a callback stream */
+        /* must be a callback stream */
         if( !streamCallback )
              return paInvalidFlag;
 
-        /* should be a full duplex stream */
+        /* must be a full duplex stream */
         if( (inputParameters == NULL) || (outputParameters == NULL) )
             return paInvalidFlag;
 

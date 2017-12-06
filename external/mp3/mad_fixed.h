@@ -66,7 +66,7 @@ typedef mad_fixed_t mad_sample_t;
  * from 56 fractional bits back to 28 (and rounding.)
  *
  * Changing the definition of MAD_F_FRACBITS is only partially
- * supported, and should be done with care.
+ * supported, and must be done with care.
  */
 
 # define MAD_F_FRACBITS		28

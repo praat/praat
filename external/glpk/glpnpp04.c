@@ -65,7 +65,7 @@
 *            k=0
 *
 *  where x[k] are binary columns (variables). If u[q] < 2^n - 1, the
-*  following additional inequality constraint should be also included in
+*  following additional inequality constraint must be also included in
 *  the transformed problem:
 *
 *     n-1
@@ -295,7 +295,7 @@ static void drop_form(NPP *npp, struct elem *ptr)
 *  where all variables x[j] are binary. This inequality expresses the
 *  condition that in any integer feasible solution at most one variable
 *  from set J can take non-zero (unity) value while other variables
-*  should be equal to zero. W.l.o.g. it is assumed that |J| >= 2, because
+*  must be equal to zero. W.l.o.g. it is assumed that |J| >= 2, because
 *  if J is empty or |J| = 1, the inequality (1) is redundant.
 *
 *  In general case the packing inequality may include original variables
@@ -435,7 +435,7 @@ static int hidden_packing(NPP *npp, struct elem *ptr, double *_b)
       int neg;
       double b = *_b, eps;
       xassert(npp == npp);
-      /* a[j] should be non-zero, x[j] should be binary, for all j in J */
+      /* a[j] must be non-zero, x[j] must be binary, for all j in J */
       for (e = ptr; e != NULL; e = e->next)
       {  xassert(e->aj != 0.0);
          xassert(e->xj->is_int);
@@ -502,7 +502,7 @@ int npp_hidden_packing(NPP *npp, NPPROW *row)
       struct elem *ptr, *e;
       int kase, ret, count = 0;
       double b;
-      /* the row should be inequality constraint */
+      /* the row must be inequality constraint */
       xassert(row->lb < row->ub);
       for (kase = 0; kase <= 1; kase++)
       {  if (kase == 0)
@@ -938,7 +938,7 @@ static int hidden_covering(NPP *npp, struct elem *ptr, double *_b)
       int neg;
       double b = *_b, eps;
       xassert(npp == npp);
-      /* a[j] should be non-zero, x[j] should be binary, for all j in J */
+      /* a[j] must be non-zero, x[j] must be binary, for all j in J */
       for (e = ptr; e != NULL; e = e->next)
       {  xassert(e->aj != 0.0);
          xassert(e->xj->is_int);
@@ -995,7 +995,7 @@ int npp_hidden_covering(NPP *npp, NPPROW *row)
       struct elem *ptr, *e;
       int kase, ret, count = 0;
       double b;
-      /* the row should be inequality constraint */
+      /* the row must be inequality constraint */
       xassert(row->lb < row->ub);
       for (kase = 0; kase <= 1; kase++)
       {  if (kase == 0)
@@ -1346,7 +1346,7 @@ int npp_reduce_ineq_coef(NPP *npp, NPPROW *row)
       struct elem *ptr, *e;
       int kase, count[2];
       double b;
-      /* the row should be inequality constraint */
+      /* the row must be inequality constraint */
       xassert(row->lb < row->ub);
       count[0] = count[1] = 0;
       for (kase = 0; kase <= 1; kase++)

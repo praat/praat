@@ -26,7 +26,7 @@ FUNCTION(gsl_fft_halfcomplex,unpack) (const BASE halfcomplex_coefficient[],
 
   if (n == 0)
     {
-      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
     }
 
   REAL(complex_coefficient,stride,0) = halfcomplex_coefficient[0];
@@ -62,7 +62,7 @@ FUNCTION(gsl_fft_halfcomplex,radix2_unpack) (const BASE halfcomplex_coefficient[
 
   if (n == 0)
     {
-      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
     }
 
   REAL(complex_coefficient,stride,0) = halfcomplex_coefficient[0];

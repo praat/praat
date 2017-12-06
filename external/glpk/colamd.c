@@ -248,7 +248,7 @@
 
             int A [Alen] ;      Input argument, undefined on output.
 
-                A is an integer array of size Alen.  Alen should be at least as
+                A is an integer array of size Alen.  Alen must be at least as
                 large as the bare minimum value given above, but this is very
                 low, and can result in excessive run time.  For best
                 performance, we recommend that Alen be greater than or equal to
@@ -275,7 +275,7 @@
                 p is an integer array of size n_col+1.  On input, it holds the
                 "pointers" for the column form of the matrix A.  Column c of
                 the matrix A is held in A [(p [c]) ... (p [c+1]-1)].  The first
-                entry, p [0], should be zero, and p [c] <= p [c+1] must hold
+                entry, p [0], must be zero, and p [c] <= p [c+1] must hold
                 for all c in the range 0 to n_col-1.  The value p [n_col] is
                 thus the total number of entries in the pattern of the matrix A.
                 Colamd returns FALSE if these conditions are not met.
@@ -460,7 +460,7 @@
                 p is an integer array of size n+1.  On input, it holds the
                 "pointers" for the column form of the matrix A.  Column c of
                 the matrix A is held in A [(p [c]) ... (p [c+1]-1)].  The first
-                entry, p [0], should be zero, and p [c] <= p [c+1] must hold
+                entry, p [0], must be zero, and p [c] <= p [c+1] must hold
                 for all c in the range 0 to n-1.  The value p [n] is
                 thus the total number of entries in the pattern of the matrix A.
                 Symamd returns FALSE if these conditions are not met.
@@ -476,7 +476,7 @@
                 where k is in the range 0 to n-1 (perm [0] = j means
                 that row and column j of A are the first row and column in
                 PAP').  The array is used as a workspace during the ordering,
-                which is why it should be of length n+1, not just n.
+                which is why it must be of length n+1, not just n.
 
             double knobs [COLAMD_KNOBS] ;       Input argument.
 
@@ -560,7 +560,7 @@
             void * (*allocate) (size_t, size_t)
 
                 A pointer to a function providing memory allocation.  The
-                allocated memory should be returned initialized to zero.  For a
+                allocated memory must be returned initialized to zero.  For a
                 C application, this argument should normally be a pointer to
                 calloc.  For a MATLAB mexFunction, the routine mxCalloc is
                 passed instead.
@@ -1226,7 +1226,7 @@ PUBLIC Int SYMAMD_MAIN                  /* return TRUE if OK, FALSE otherwise */
         return (FALSE) ;
     }
 
-    if (n < 0)          /* n should be >= 0 */
+    if (n < 0)          /* n must be >= 0 */
     {
         stats [COLAMD_STATUS] = COLAMD_ERROR_ncol_negative ;
         stats [COLAMD_INFO1] = n ;
@@ -1235,7 +1235,7 @@ PUBLIC Int SYMAMD_MAIN                  /* return TRUE if OK, FALSE otherwise */
     }
 
     nnz = p [n] ;
-    if (nnz < 0)        /* nnz should be >= 0 */
+    if (nnz < 0)        /* nnz must be >= 0 */
     {
         stats [COLAMD_STATUS] = COLAMD_ERROR_nnz_negative ;
         stats [COLAMD_INFO1] = nnz ;
@@ -1294,7 +1294,7 @@ PUBLIC Int SYMAMD_MAIN                  /* return TRUE if OK, FALSE otherwise */
         length = p [j+1] - p [j] ;
         if (length < 0)
         {
-            /* column pointers should be non-decreasing */
+            /* column pointers must be non-decreasing */
             stats [COLAMD_STATUS] = COLAMD_ERROR_col_length_negative ;
             stats [COLAMD_INFO1] = j ;
             stats [COLAMD_INFO2] = length ;
@@ -1539,7 +1539,7 @@ PUBLIC Int COLAMD_MAIN          /* returns TRUE if successful, FALSE otherwise*/
         return (FALSE) ;
     }
 
-    if (n_row < 0)      /* n_row should be >= 0 */
+    if (n_row < 0)      /* n_row must be >= 0 */
     {
         stats [COLAMD_STATUS] = COLAMD_ERROR_nrow_negative ;
         stats [COLAMD_INFO1] = n_row ;
@@ -1547,7 +1547,7 @@ PUBLIC Int COLAMD_MAIN          /* returns TRUE if successful, FALSE otherwise*/
         return (FALSE) ;
     }
 
-    if (n_col < 0)      /* n_col should be >= 0 */
+    if (n_col < 0)      /* n_col must be >= 0 */
     {
         stats [COLAMD_STATUS] = COLAMD_ERROR_ncol_negative ;
         stats [COLAMD_INFO1] = n_col ;
@@ -1556,7 +1556,7 @@ PUBLIC Int COLAMD_MAIN          /* returns TRUE if successful, FALSE otherwise*/
     }
 
     nnz = p [n_col] ;
-    if (nnz < 0)        /* nnz should be >= 0 */
+    if (nnz < 0)        /* nnz must be >= 0 */
     {
         stats [COLAMD_STATUS] = COLAMD_ERROR_nnz_negative ;
         stats [COLAMD_INFO1] = nnz ;
@@ -1720,7 +1720,7 @@ PRIVATE Int init_rows_cols      /* returns TRUE if OK, or FALSE otherwise */
 
         if (Col [col].length < 0)
         {
-            /* column pointers should be non-decreasing */
+            /* column pointers must be non-decreasing */
             stats [COLAMD_STATUS] = COLAMD_ERROR_col_length_negative ;
             stats [COLAMD_INFO1] = col ;
             stats [COLAMD_INFO2] = Col [col].length ;
@@ -3280,7 +3280,7 @@ PRIVATE void print_report
 
         case COLAMD_ERROR_p0_nonzero:
 
-            PRINTF(("Invalid column pointer, p [0] = %d, should be zero.\n", i1));
+            PRINTF(("Invalid column pointer, p [0] = %d, must be zero.\n", i1));
             break ;
 
         case COLAMD_ERROR_A_too_small:

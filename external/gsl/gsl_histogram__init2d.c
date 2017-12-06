@@ -30,13 +30,13 @@ gsl_histogram2d_alloc (const size_t nx, const size_t ny)
 
   if (nx == 0)
     {
-      GSL_ERROR_VAL ("histogram2d length nx should be positive integer",
+      GSL_ERROR_VAL ("histogram2d length nx must be positive integer",
                         GSL_EDOM, 0);
     }
 
   if (ny == 0)
     {
-      GSL_ERROR_VAL ("histogram2d length ny should be positive integer",
+      GSL_ERROR_VAL ("histogram2d length ny must be positive integer",
                         GSL_EDOM, 0);
     }
 
@@ -109,12 +109,12 @@ gsl_histogram2d_calloc_uniform (const size_t nx, const size_t ny,
 
   if (xmin >= xmax)
     {
-      GSL_ERROR_VAL ("xmin should be less than xmax", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("xmin must be less than xmax", GSL_EINVAL, 0);
     }
 
   if (ymin >= ymax)
     {
-      GSL_ERROR_VAL ("ymin should be less than ymax", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("ymin must be less than ymax", GSL_EINVAL, 0);
     }
 
   h = gsl_histogram2d_calloc (nx, ny);
@@ -137,13 +137,13 @@ gsl_histogram2d_calloc (const size_t nx, const size_t ny)
 
   if (nx == 0)
     {
-      GSL_ERROR_VAL ("histogram2d length nx should be positive integer",
+      GSL_ERROR_VAL ("histogram2d length nx must be positive integer",
                         GSL_EDOM, 0);
     }
 
   if (ny == 0)
     {
-      GSL_ERROR_VAL ("histogram2d length ny should be positive integer",
+      GSL_ERROR_VAL ("histogram2d length ny must be positive integer",
                         GSL_EDOM, 0);
     }
 
@@ -234,12 +234,12 @@ gsl_histogram2d_set_ranges_uniform (gsl_histogram2d * h,
 
   if (xmin >= xmax)
     {
-      GSL_ERROR_VAL ("xmin should be less than xmax", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("xmin must be less than xmax", GSL_EINVAL, 0);
     }
 
   if (ymin >= ymax)
     {
-      GSL_ERROR_VAL ("ymin should be less than ymax", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("ymin must be less than ymax", GSL_EINVAL, 0);
     }
 
   /* initialize ranges */

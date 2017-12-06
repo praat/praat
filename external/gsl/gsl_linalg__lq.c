@@ -89,7 +89,7 @@ gsl_linalg_LQ_decomp (gsl_matrix * A, gsl_vector * tau)
 
   if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
     }
   else
     {
@@ -134,7 +134,7 @@ gsl_linalg_LQ_solve_T (const gsl_matrix * LQ, const gsl_vector * tau, const gsl_
 {
   if (LQ->size1 != LQ->size2)
     {
-      GSL_ERROR ("LQ matrix should be square", GSL_ENOTSQR);
+      GSL_ERROR ("LQ matrix must be square", GSL_ENOTSQR);
     }
   else if (LQ->size2 != b->size)
     {
@@ -171,7 +171,7 @@ gsl_linalg_LQ_svx_T (const gsl_matrix * LQ, const gsl_vector * tau, gsl_vector *
 
   if (LQ->size1 != LQ->size2)
     {
-      GSL_ERROR ("LQ matrix should be square", GSL_ENOTSQR);
+      GSL_ERROR ("LQ matrix must be square", GSL_ENOTSQR);
     }
   else if (LQ->size1 != x->size)
     {
@@ -254,7 +254,7 @@ gsl_linalg_LQ_Lsolve_T (const gsl_matrix * LQ, const gsl_vector * b, gsl_vector 
 {
   if (LQ->size1 != LQ->size2)
     {
-      GSL_ERROR ("LQ matrix should be square", GSL_ENOTSQR);
+      GSL_ERROR ("LQ matrix must be square", GSL_ENOTSQR);
     }
   else if (LQ->size1 != b->size)
     {
@@ -284,7 +284,7 @@ gsl_linalg_LQ_Lsvx_T (const gsl_matrix * LQ, gsl_vector * x)
 {
   if (LQ->size1 != LQ->size2)
     {
-      GSL_ERROR ("LQ matrix should be square", GSL_ENOTSQR);
+      GSL_ERROR ("LQ matrix must be square", GSL_ENOTSQR);
     }
   else if (LQ->size2 != x->size)
     {
@@ -305,7 +305,7 @@ gsl_linalg_L_solve_T (const gsl_matrix * L, const gsl_vector * b, gsl_vector * x
 {
   if (L->size1 != L->size2)
     {
-      GSL_ERROR ("R matrix should be square", GSL_ENOTSQR);
+      GSL_ERROR ("R matrix must be square", GSL_ENOTSQR);
     }
   else if (L->size2 != b->size)
     {
@@ -340,11 +340,11 @@ gsl_linalg_LQ_vecQT (const gsl_matrix * LQ, const gsl_vector * tau, gsl_vector *
 
   if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
     }
   else if (v->size != M)
     {
-      GSL_ERROR ("vector size should be M", GSL_EBADLEN);
+      GSL_ERROR ("vector size must be M", GSL_EBADLEN);
     }
   else
     {
@@ -373,11 +373,11 @@ gsl_linalg_LQ_vecQ (const gsl_matrix * LQ, const gsl_vector * tau, gsl_vector * 
 
   if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
     }
   else if (v->size != M)
     {
-      GSL_ERROR ("vector size should be M", GSL_EBADLEN);
+      GSL_ERROR ("vector size must be M", GSL_EBADLEN);
     }
   else
     {
@@ -409,15 +409,15 @@ gsl_linalg_LQ_unpack (const gsl_matrix * LQ, const gsl_vector * tau, gsl_matrix 
 
   if (Q->size1 != M || Q->size2 != M)
     {
-      GSL_ERROR ("Q matrix should be M x M", GSL_ENOTSQR);
+      GSL_ERROR ("Q matrix must be M x M", GSL_ENOTSQR);
     }
   else if (L->size1 != N || L->size2 != M)
     {
-      GSL_ERROR ("R matrix should be N x M", GSL_ENOTSQR);
+      GSL_ERROR ("R matrix must be N x M", GSL_ENOTSQR);
     }
   else if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
     }
   else
     {
@@ -475,15 +475,15 @@ gsl_linalg_LQ_update (gsl_matrix * Q, gsl_matrix * L,
 
   if (Q->size1 != M || Q->size2 != M)
     {
-      GSL_ERROR ("Q matrix should be N x N if L is M x N", GSL_ENOTSQR);
+      GSL_ERROR ("Q matrix must be N x N if L is M x N", GSL_ENOTSQR);
     }
   else if (w->size != M)
     {
-      GSL_ERROR ("w should be length N if L is M x N", GSL_EBADLEN);
+      GSL_ERROR ("w must be length N if L is M x N", GSL_EBADLEN);
     }
   else if (v->size != N)
     {
-      GSL_ERROR ("v should be length M if L is M x N", GSL_EBADLEN);
+      GSL_ERROR ("v must be length M if L is M x N", GSL_EBADLEN);
     }
   else
     {

@@ -69,7 +69,7 @@ gsl_eigen_nonsymmv_alloc(const size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_NULL ("matrix dimension should be positive integer",
+      GSL_ERROR_NULL ("matrix dimension must be positive integer",
                       GSL_EINVAL);
     }
 
@@ -160,7 +160,7 @@ gsl_eigen_nonsymmv (gsl_matrix * A, gsl_vector_complex * eval,
 
   if (N != A->size2)
     {
-      GSL_ERROR ("matrix should be square to compute eigenvalues", GSL_ENOTSQR);
+      GSL_ERROR ("matrix must be square to compute eigenvalues", GSL_ENOTSQR);
     }
   else if (eval->size != N)
     {
@@ -168,7 +168,7 @@ gsl_eigen_nonsymmv (gsl_matrix * A, gsl_vector_complex * eval,
     }
   else if (evec->size1 != evec->size2)
     {
-      GSL_ERROR ("eigenvector matrix should be square", GSL_ENOTSQR);
+      GSL_ERROR ("eigenvector matrix must be square", GSL_ENOTSQR);
     }
   else if (evec->size1 != N)
     {
@@ -242,7 +242,7 @@ gsl_eigen_nonsymmv_Z (gsl_matrix * A, gsl_vector_complex * eval,
 
   if (A->size1 != A->size2)
     {
-      GSL_ERROR ("matrix should be square to compute eigenvalues/eigenvectors", GSL_ENOTSQR);
+      GSL_ERROR ("matrix must be square to compute eigenvalues/eigenvectors", GSL_ENOTSQR);
     }
   else if (eval->size != A->size1)
     {
@@ -250,7 +250,7 @@ gsl_eigen_nonsymmv_Z (gsl_matrix * A, gsl_vector_complex * eval,
     }
   else if (evec->size1 != evec->size2)
     {
-      GSL_ERROR ("eigenvector matrix should be square", GSL_ENOTSQR);
+      GSL_ERROR ("eigenvector matrix must be square", GSL_ENOTSQR);
     }
   else if (evec->size1 != A->size1)
     {

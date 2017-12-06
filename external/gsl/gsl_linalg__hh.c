@@ -42,7 +42,7 @@ gsl_linalg_HH_solve (gsl_matrix * A, const gsl_vector * b, gsl_vector * x)
     }
   else if (A->size2 != x->size)
     {
-      GSL_ERROR ("matrix and vector sizes should be equal", GSL_EBADLEN);
+      GSL_ERROR ("matrix and vector sizes must be equal", GSL_EBADLEN);
     }
   else
     {
@@ -67,7 +67,7 @@ gsl_linalg_HH_svx (gsl_matrix * A, gsl_vector * x)
     }
   else if (A->size2 != x->size)
     {
-      GSL_ERROR ("matrix and vector sizes should be equal", GSL_EBADLEN);
+      GSL_ERROR ("matrix and vector sizes must be equal", GSL_EBADLEN);
     }
   else
     {

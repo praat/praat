@@ -248,7 +248,7 @@ void lpx_put_mip_soln(glp_prob *lp, int i_stat, double row_mipx[],
       {  for (j = 1; j <= lp->n; j++)
          {  col = lp->col[j];
             if (col->kind == GLP_IV && col->mipx != floor(col->mipx))
-               xerror("lpx_put_mip_soln: col_mipx[%d] = %.*g; should be i"
+               xerror("lpx_put_mip_soln: col_mipx[%d] = %.*g; must be i"
                   "ntegral\n", j, DBL_DIG, col->mipx);
          }
       }

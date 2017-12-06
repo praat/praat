@@ -58,7 +58,7 @@ gsl_rng_memcpy (gsl_rng * dest, const gsl_rng * src)
 {
   if (dest->type != src->type)
     {
-      GSL_ERROR ("generators should be of the same type", GSL_EINVAL);
+      GSL_ERROR ("generators must be of the same type", GSL_EINVAL);
     }
 
   memcpy (dest->state, src->state, src->type->size);

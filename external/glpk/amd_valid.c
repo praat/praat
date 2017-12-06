@@ -18,7 +18,7 @@
  *      nz = Ap [n_col] >= 0        number of entries in the matrix
  *      Ap [0] == 0
  *      Ap [j] <= Ap [j+1] for all j in the range 0 to n_col.
- *      Ai [0 ... nz-1] should be in the range 0 to n_row-1.
+ *      Ai [0 ... nz-1] must be in the range 0 to n_row-1.
  *
  * If any of the above conditions hold, AMD_INVALID is returned.  If the
  * following condition holds, AMD_OK_BUT_JUMBLED is returned (a warning,
@@ -54,7 +54,7 @@ GLOBAL Int AMD_valid
     nz = Ap [n_col] ;
     if (Ap [0] != 0 || nz < 0)
     {
-        /* column pointers must start at Ap [0] = 0, and Ap [n] should be >= 0 */
+        /* column pointers must start at Ap [0] = 0, and Ap [n] must be >= 0 */
         AMD_DEBUG0 (("column 0 pointer bad or nz < 0\n")) ;
         return (AMD_INVALID) ;
     }
@@ -65,7 +65,7 @@ GLOBAL Int AMD_valid
         AMD_DEBUG2 (("\nColumn: "ID" p1: "ID" p2: "ID"\n", j, p1, p2)) ;
         if (p1 > p2)
         {
-            /* column pointers should be ascending */
+            /* column pointers must be ascending */
             AMD_DEBUG0 (("column "ID" pointer bad\n", j)) ;
             return (AMD_INVALID) ;
         }

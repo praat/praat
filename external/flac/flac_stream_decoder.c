@@ -3014,7 +3014,7 @@ FLAC__bool seek_to_absolute_sample_(FLAC__StreamDecoder *decoder, FLAC__uint64 s
 	/*
 	 * Now we refine the bounds if we have a seektable with
 	 * suitable points.  Note that according to the spec they
-	 * should be ordered by ascending sample number.
+	 * must be ordered by ascending sample number.
 	 *
 	 * Note: to protect against invalid seek tables we will ignore points
 	 * that have frame_samples==0 or sample_number>=total_samples

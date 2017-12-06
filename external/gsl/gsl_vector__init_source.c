@@ -25,7 +25,7 @@ FUNCTION (gsl_vector, alloc) (const size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n should be positive integer",
+      GSL_ERROR_VAL ("vector length n must be positive integer",
                         GSL_EINVAL, 0);
     }
 
@@ -86,13 +86,13 @@ FUNCTION (gsl_vector, alloc_from_block) (TYPE(gsl_block) * block,
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n should be positive integer",
+      GSL_ERROR_VAL ("vector length n must be positive integer",
                         GSL_EINVAL, 0);
     }
 
   if (stride == 0)
     {
-      GSL_ERROR_VAL ("stride should be positive integer", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("stride must be positive integer", GSL_EINVAL, 0);
     }
 
   if (block->size <= offset + (n - 1) * stride)
@@ -127,13 +127,13 @@ FUNCTION (gsl_vector, alloc_from_vector) (TYPE(gsl_vector) * w,
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n should be positive integer",
+      GSL_ERROR_VAL ("vector length n must be positive integer",
                         GSL_EINVAL, 0);
     }
 
   if (stride == 0)
     {
-      GSL_ERROR_VAL ("stride should be positive integer", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("stride must be positive integer", GSL_EINVAL, 0);
     }
 
   if (offset + (n - 1) * stride >= w->size)

@@ -139,7 +139,7 @@ int theFunctionEditor_playCallback (FunctionEditor me, int phase, double tmin, d
 
 /*
 	Attributes:
-		data: should be a Function.
+		data: must be a Function.
 
 	int clickB (double xWC, double yWC);
 		"user clicked in data window with the middle mouse button (Mac: control- or option-click)."

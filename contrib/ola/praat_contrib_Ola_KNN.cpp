@@ -370,9 +370,9 @@ DO
 				break;
 		}
 		Melder_require (your ny == his size,
-			U"Your number of Categories (", your ny, U") should equal the number of rows in the PatternList (", his size, U").");
+			U"Your number of Categories (", your ny, U") should be equal to the number of rows in PatternList (", his size, U").");
 		if (your nx != my input -> nx)
-			Melder_throw (U"The dimensionality of the PatternList should be equal to that of the instance base.");
+			Melder_throw (U"The dimensionality of PatternList should be equal to that of the instance base.");
 		if (your nx != her fweights -> numberOfColumns)
 			Melder_throw (U"The number of feature weights should be equal to the dimensionality of the PatternList.");
 		double result = KNN_evaluateWithTestSet (me, you, him, she, kNeighbours, voteWeighting);
@@ -546,7 +546,7 @@ DO
 		if (kClusters < 1 || kClusters > my ny)
 			Melder_throw (U"Please select a value of k such that 0 < k <= ", my ny, U".");
 		Melder_require (maximumNumberOfReseeds >= 0,
-			U"The maximum number of reseeds should not be less than zero.");
+			U"The maximum number of reseeds should be 0 or positive.");
 		Melder_require (clusterSizeRatioConstraint > 0.0 && clusterSizeRatioConstraint <= 1.0,
 			U"The cluster size ratio constraint should be between 0.0 (exclusive) and 1.0 (inclusive).");
 		autoCategories result = PatternList_to_Categories_cluster (me, you, kClusters, clusterSizeRatioConstraint, maximumNumberOfReseeds);

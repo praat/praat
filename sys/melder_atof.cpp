@@ -31,7 +31,7 @@ static const T *findEndOfNumericString (const T *string) noexcept {
 	 */
 	if (*p == '+' || *p == '-') p ++;
 	/*
-	 * The next character should be a decimal digit.
+	 * The next character must be a decimal digit.
 	 * So we don't allow things like ".5".
 	 */
 	if (*p < '0' || *p > '9') return nullptr;   // string is not numeric

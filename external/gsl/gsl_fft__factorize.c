@@ -77,7 +77,7 @@ fft_factorize (const size_t n,
 
   if (n == 0)
     {
-      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
     }
 
   if (n == 1)

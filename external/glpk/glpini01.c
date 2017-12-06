@@ -561,7 +561,7 @@ static void adv_basis(glp_prob *lp)
 *  The routine glp_adv_basis constructs an advanced initial basis for
 *  the specified problem object.
 *
-*  The parameter flags is reserved for use in the future and should be
+*  The parameter flags is reserved for use in the future and must be
 *  specified as zero. */
 
 void glp_adv_basis(glp_prob *lp, int flags)

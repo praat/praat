@@ -104,7 +104,7 @@ char32 *str_replace_regexp (const char32 *string, regexp *search_compiled,
 	If maximumNumberOfReplaces <= 0 the interpreted 'replaceRE' replaces
 	ALL occurrences.
 	'search_regexp' is an efficient representation of the search RE and
-	is the result of the compileRE-function which should be called first before
+	is the result of the compileRE-function which must be called first before
 	calling this routine.
 	The number of matches found is returned in 'nmatches'.
 */
@@ -138,7 +138,7 @@ double **NUMdmatrix_transpose (double **m, integer nr, integer nc);
  * Function:
  *	 compute minimum and maximum values of array v[lo..hi].
  * Precondition:
- *	 lo and hi should be valid indices in the array.
+ *	 lo and hi must be valid indices in the array.
 */
 template <class T>
 void NUMvector_extrema (T *v, integer lo, integer hi, double *p_min, double *p_max) {
@@ -1194,7 +1194,7 @@ void NUMfft_backward (NUMfft_Table table, double *data);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
-		(Result in this case should be multiplied by 1/n.)
+		(Result in this case must be multiplied by 1/n.)
 	Preconditions:
 		n is an integer power of 2.
 		data != NULL;
@@ -1246,7 +1246,7 @@ void NUMreverseRealFastFourierTransform (double  *data, integer n);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
-		(Result in this case should be multiplied by 1/n.)
+		(Result in this case must be multiplied by 1/n.)
 	Preconditions:
 		n is an integer power of 2.
 		data != NULL;
@@ -1269,7 +1269,7 @@ void NUMlineFit (double *x, double *y, integer numberOfPoints, double *m, double
 void NUMlineFit_theil (double *x, double *y, integer numberOfPoints, double *m, double *intercept, bool incompleteMethod);
 /*
  * Preconditions:
- *		all x[i] should be different, i.e. x[i] != x[j] for all i = 1..(numberOfPoints - 1), j = (i+1) ..numberOfPoints
+ *		all x[i] must be different, i.e. x[i] != x[j] for all i = 1..(numberOfPoints - 1), j = (i+1) ..numberOfPoints
  * Algorithm:
  * Theils robust line fit method:
  * 1. Use all combination of pairs (x[i],y[i]), (x[j],y[j]) to calculate an intercept m[k] as

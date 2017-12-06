@@ -117,7 +117,7 @@ void bigmul(int n, int m, unsigned short x[], unsigned short y[])
 *  x[1], ..., x[n+m-1].
 * 
 *  y is an array containing digits of the divisor in elements y[0],
-*  y[1], ..., y[m-1]. The highest digit y[m-1] should be non-zero.
+*  y[1], ..., y[m-1]. The highest digit y[m-1] must be non-zero.
 * 
 *  On exit n+1 digits of the quotient are stored in elements x[m],
 *  x[m+1], ..., x[n+m], and m digits of the remainder are stored in
@@ -273,9 +273,9 @@ int main(void)
          bigmul(n, m, z, y);
          /* z[0,...,m-1] := z mod y, z[m,...,n+m-1] := z div y */
          bigdiv(n, m, z, y);
-         /* z mod y should be 0 */
+         /* z mod y must be 0 */
          for (j = 0; j < m; j++) assert(z[j] == 0);
-         /* z div y should be x */
+         /* z div y must be x */
          for (j = 0; j < n; j++) assert(z[m+j] == x[j]);
       }
       fprintf(stderr, "%d tests successfully passed\n", N_TEST);

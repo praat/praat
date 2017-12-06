@@ -29,7 +29,7 @@ FUNCTION (gsl_vector, swap) (TYPE (gsl_vector) * v, TYPE (gsl_vector) * w)
 
   if (v->size != w->size)
     {
-      GSL_ERROR("vector lengths should be equal", GSL_EINVAL);
+      GSL_ERROR("vector lengths must be equal", GSL_EINVAL);
     }
 
   for (i = 0; i < size; i++)

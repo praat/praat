@@ -703,7 +703,7 @@ int gsl_sf_sinc_e(double x, gsl_sf_result * result)
       return GSL_SUCCESS;
     }
     else {
-      /* Large arguments should be handled separately.
+      /* Large arguments must be handled separately.
        */
       const double r = M_PI*ax;
       gsl_sf_result s;

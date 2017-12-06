@@ -166,8 +166,8 @@ glp_tree *ios_create_tree(glp_prob *mip, const glp_iocp *parm)
 *
 *  The routine ios_revive_node revives the specified subproblem, whose
 *  reference number is p, and thereby makes it the current subproblem.
-*  Note that the specified subproblem should be active. Besides, if the
-*  current subproblem already exists, it should be frozen before reviving
+*  Note that the specified subproblem must be active. Besides, if the
+*  current subproblem already exists, it must be frozen before reviving
 *  another subproblem. */
 
 void ios_revive_node(glp_tree *tree, int p)
@@ -177,7 +177,7 @@ void ios_revive_node(glp_tree *tree, int p)
       xassert(1 <= p && p <= tree->nslots);
       node = tree->slot[p].node;
       xassert(node != NULL);
-      /* the specified subproblem should be active */
+      /* the specified subproblem must be active */
       xassert(node->count == 0);
       /* the current subproblem must not exist */
       xassert(tree->curr == NULL);
@@ -532,7 +532,7 @@ void ios_freeze_node(glp_tree *tree)
 *
 *  The routine ios_clone_node clones the specified subproblem, whose
 *  reference number is p, creating its nnn exact copies. Note that the
-*  specified subproblem should be active and should be in the frozen state
+*  specified subproblem must be active and must be in the frozen state
 *  (i.e. it must not be the current subproblem).
 *
 *  Each clone, an exact copy of the specified subproblem, becomes a new
@@ -640,9 +640,9 @@ void ios_clone_node(glp_tree *tree, int p, int nnn, int ref[])
       xassert(1 <= p && p <= tree->nslots);
       node = tree->slot[p].node;
       xassert(node != NULL);
-      /* the specified subproblem should be active */
+      /* the specified subproblem must be active */
       xassert(node->count == 0);
-      /* and should be in the frozen state */
+      /* and must be in the frozen state */
       xassert(tree->curr != node);
       /* remove the specified subproblem from the active list, because
          it becomes inactive */
@@ -676,7 +676,7 @@ void ios_clone_node(glp_tree *tree, int p, int nnn, int ref[])
 *  DESCRIPTION
 *
 *  The routine ios_delete_node deletes the specified subproblem, whose
-*  reference number is p. The subproblem should be active and should be in
+*  reference number is p. The subproblem must be active and must be in
 *  the frozen state (i.e. it must not be the current subproblem).
 *
 *  Note that deletion is performed recursively, i.e. if a subproblem to
@@ -689,9 +689,9 @@ void ios_delete_node(glp_tree *tree, int p)
       xassert(1 <= p && p <= tree->nslots);
       node = tree->slot[p].node;
       xassert(node != NULL);
-      /* the specified subproblem should be active */
+      /* the specified subproblem must be active */
       xassert(node->count == 0);
-      /* and should be in the frozen state */
+      /* and must be in the frozen state */
       xassert(tree->curr != node);
       /* remove the specified subproblem from the active list, because
          it is gone from the tree */
@@ -768,7 +768,7 @@ loop: /* recursive deletion starts here */
             child subproblems */
          xassert(node->count > 0);
          node->count--;
-         /* if now the parent subproblem has no childs, it also should be
+         /* if now the parent subproblem has no childs, it also must be
             deleted */
          if (node->count == 0) goto loop;
       }
@@ -896,7 +896,7 @@ void ios_eval_degrad(glp_tree *tree, int j, double *dn, double *up)
       double alfa, beta, gamma, delta, dz;
       int *ind = tree->iwrk;
       double *val = tree->dwrk;
-      /* current basis should be optimal */
+      /* current basis must be optimal */
       xassert(glp_get_status(mip) == GLP_OPT);
       /* basis factorization must exist */
       xassert(glp_bf_exists(mip));

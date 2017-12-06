@@ -504,7 +504,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 /*
  * We now create the native objects associated with this widget,
  * but do not show them on the screen yet (ideally).
- * A reference should be made from widget to native object and back.
+ * A reference must be made from widget to native object and back.
  * On Mac, we normally use the RefCon fields of the windows and controls.
  * On Win, we use SetWindowLongPtr (window, GWLP_USERDATA, (LONG_PTR) widget).
  */

@@ -114,7 +114,7 @@ gsl_eigen_gen_alloc(const size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_NULL ("matrix dimension should be positive integer",
+      GSL_ERROR_NULL ("matrix dimension must be positive integer",
                       GSL_EINVAL);
     }
 
@@ -215,7 +215,7 @@ gsl_eigen_gen (gsl_matrix * A, gsl_matrix * B, gsl_vector_complex * alpha,
 
   if (N != A->size2)
     {
-      GSL_ERROR ("matrix should be square to compute eigenvalues", GSL_ENOTSQR);
+      GSL_ERROR ("matrix must be square to compute eigenvalues", GSL_ENOTSQR);
     }
   else if ((N != B->size1) || (N != B->size2))
     {
@@ -1285,7 +1285,7 @@ block so we can split off a 1-by-1 block.
 
 Inputs: H - upper hessenberg matrix
         R - upper triangular matrix
-        q - index such that R(q,q) = 0 (q should be > 0)
+        q - index such that R(q,q) = 0 (q must be > 0)
         w - workspace
 */
 

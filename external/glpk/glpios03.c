@@ -244,7 +244,7 @@ static void record_solution(glp_tree *T)
          if (col->kind == GLP_CV)
             col->mipx = col->prim;
          else if (col->kind == GLP_IV)
-         {  /* value of the integer column should be integral */
+         {  /* value of the integer column must be integral */
             col->mipx = floor(col->prim + 0.5);
          }
          else
@@ -268,7 +268,7 @@ static void fix_by_red_cost(glp_tree *T)
       double obj, lb, ub, dj;
       /* the global bound must exist */
       xassert(T->mip->mip_stat == GLP_FEAS);
-      /* basic solution of LP relaxation should be optimal */
+      /* basic solution of LP relaxation must be optimal */
       xassert(mip->pbs_stat == GLP_FEAS && mip->dbs_stat == GLP_FEAS);
       /* determine the objective function value */
       obj = mip->obj_val;
@@ -336,7 +336,7 @@ static void fix_by_red_cost(glp_tree *T)
 *  branch_on - perform branching on specified variable
 *
 *  This routine performs branching on j-th column (structural variable)
-*  of the current subproblem. The specified column should be of integer
+*  of the current subproblem. The specified column must be of integer
 *  kind and must have a fractional value in optimal basic solution of
 *  LP relaxation of the current subproblem (i.e. only columns for which
 *  the flag non_int[j] is set are valid candidates to branch on).
@@ -1136,7 +1136,7 @@ fath: /* the current subproblem has been fathomed */
       /* and prune the corresponding branch of the tree */
       ios_delete_node(T, p);
       /* if a new integer feasible solution has just been found, other
-         branches may become hopeless and therefore should be pruned */
+         branches may become hopeless and therefore must be pruned */
       if (T->mip->mip_stat == GLP_FEAS) cleanup_the_tree(T);
       /* new subproblem selection is needed due to backtracking */
       pred_p = 0;

@@ -61,7 +61,7 @@
    Computation, 68, 225 (1999), 261--269:
    http://www.iro.umontreal.ca/~lecuyer/myftp/papers/tausme2.ps
 
-        ... the k_j most significant bits of z_j should be non-
+        ... the k_j most significant bits of z_j must be non-
         zero, for each j. (Note: this restriction also applies to the 
         computer code given in [4], but was mistakenly not mentioned in
         that paper.)

@@ -597,10 +597,10 @@ extern FLAC_API const FLAC__uint64 FLAC__STREAM_METADATA_SEEKPOINT_PLACEHOLDER;
 /** FLAC SEEKTABLE structure.  (c.f. <A HREF="../format.html#metadata_block_seektable">format specification</A>)
  *
  * \note From the format specification:
- * - The seek points should be sorted by ascending sample number.
- * - Each seek point's sample number should be the first sample of the
+ * - The seek points must be sorted by ascending sample number.
+ * - Each seek point's sample number must be the first sample of the
  *   target frame.
- * - Each seek point's sample number should be unique within the table.
+ * - Each seek point's sample number must be unique within the table.
  * - Existence of a SEEKTABLE block implies a correct setting of
  *   total_samples in the stream_info block.
  * - Behavior is undefined when more than one SEEKTABLE block is
@@ -832,7 +832,7 @@ typedef struct {
 	FLAC__MetadataType type;
 	/**< The type of the metadata block; used determine which member of the
 	 * \a data union to dereference.  If type >= FLAC__METADATA_TYPE_UNDEFINED
-	 * then \a data.unknown should be used. */
+	 * then \a data.unknown must be used. */
 
 	FLAC__bool is_last;
 	/**< \c true if this metadata block is the last, else \a false */
@@ -893,7 +893,7 @@ FLAC_API FLAC__bool FLAC__format_sample_rate_is_subset(unsigned sample_rate);
 /** Check a Vorbis comment entry name to see if it conforms to the Vorbis
  *  comment specification.
  *
- *  Vorbis comment names should be composed only of characters from
+ *  Vorbis comment names must be composed only of characters from
  *  [0x20-0x3C,0x3E-0x7D].
  *
  * \param name       A NUL-terminated string to be checked.
@@ -907,7 +907,7 @@ FLAC_API FLAC__bool FLAC__format_vorbiscomment_entry_name_is_legal(const char *n
 /** Check a Vorbis comment entry value to see if it conforms to the Vorbis
  *  comment specification.
  *
- *  Vorbis comment values should be valid UTF-8 sequences.
+ *  Vorbis comment values must be valid UTF-8 sequences.
  *
  * \param value      A string to be checked.
  * \param length     A the length of \a value in bytes.  May be
@@ -923,8 +923,8 @@ FLAC_API FLAC__bool FLAC__format_vorbiscomment_entry_value_is_legal(const FLAC__
 /** Check a Vorbis comment entry to see if it conforms to the Vorbis
  *  comment specification.
  *
- *  Vorbis comment entries should be of the form 'name=value', and 'name' and
- *  'value' should be legal according to
+ *  Vorbis comment entries must be of the form 'name=value', and 'name' and
+ *  'value' must be legal according to
  *  FLAC__format_vorbiscomment_entry_name_is_legal() and
  *  FLAC__format_vorbiscomment_entry_value_is_legal() respectively.
  *

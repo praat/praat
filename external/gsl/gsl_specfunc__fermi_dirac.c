@@ -1089,7 +1089,7 @@ fd_series_int(const int j, const double x, gsl_sf_result * result)
   }
 
   /* Now sum the terms where eta() is negative.
-   * The argument of eta() should be odd as well,
+   * The argument of eta() must be odd as well,
    * so it is convenient to transform the series
    * as follows:
    *

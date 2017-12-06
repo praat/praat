@@ -252,7 +252,7 @@ frac:       while (isdigit(mpl->c)) append_char(mpl);
             }
             while (isdigit(mpl->c)) append_char(mpl);
          }
-         /* there should be no letter following the numeric literal */
+         /* there must be no letter following the numeric literal */
          if (isalpha(mpl->c) || mpl->c == '_')
          {  enter_context(mpl);
             mpl_error(mpl, "symbol %s%c... should be enclosed in quotes",
@@ -1003,7 +1003,7 @@ CODE *object_reference(MPL *mpl)
       else
       {  /* subscript list is not specified */
          if (dim != 0)
-            mpl_error(mpl, "%s should be subscripted", name);
+            mpl_error(mpl, "%s must be subscripted", name);
          list = create_arg_list(mpl);
       }
       /* parse optional suffix */
@@ -1462,7 +1462,7 @@ void append_block(MPL *mpl, DOMAIN *domain, DOMAIN_BLOCK *block)
 -- list of specified domain block.
 --
 -- The parameter name is symbolic name of the dummy index associated
--- with the slot (the character string should be allocated). NULL means
+-- with the slot (the character string must be allocated). NULL means
 -- the dummy index is not explicitly specified.
 --
 -- The parameter code is pseudo-code for computing symbolic value, at
@@ -1581,7 +1581,7 @@ expr:    {  /* current component of <expression list> is expression */
             if (mpl->token == T_COMMA || dim > 1)
             {  if (code->type == A_NUMERIC)
                   code = make_unary(mpl, O_CVTSYM, code, A_SYMBOLIC, 0);
-               /* now the expression should be of symbolic type */
+               /* now the expression must be of symbolic type */
                if (code->type != A_SYMBOLIC)
                   mpl_error(mpl, "component expression has invalid type");
                xassert(code->dim == 0);
@@ -1619,12 +1619,12 @@ expr:    {  /* current component of <expression list> is expression */
          code = make_code(mpl, O_SLICE, &arg, A_TUPLE, dim);
       }
       get_token(mpl /* ) */);
-      /* if <primary expression> is a slice, there should be the keyword
+      /* if <primary expression> is a slice, there must be the keyword
          'in', which follows the right parenthesis */
       if (slice && mpl->token != T_IN)
          mpl_error(mpl, "keyword in missing where expected");
       /* if the slice flag is set and there is the keyword 'in', which
-         follows <primary expression>, the latter should be a slice */
+         follows <primary expression>, the latter must be a slice */
       if (flag_x && mpl->token == T_IN && !slice)
       {  if (dim == 1)
             mpl_error(mpl, "syntax error in indexing expression");
@@ -1655,13 +1655,13 @@ CODE *literal_set(MPL *mpl, CODE *code)
       arg.list = create_arg_list(mpl);
       /* parse <member list> */
       for (j = 1; ; j++)
-      {  /* all member expressions should be n-tuples; so, if the current
+      {  /* all member expressions must be n-tuples; so, if the current
             expression is not n-tuple, convert it to 1-tuple */
          if (code->type == A_NUMERIC)
             code = make_unary(mpl, O_CVTSYM, code, A_SYMBOLIC, 0);
          if (code->type == A_SYMBOLIC)
             code = make_unary(mpl, O_CVTTUP, code, A_TUPLE, 1);
-         /* now the expression should be n-tuple */
+         /* now the expression must be n-tuple */
          if (code->type != A_TUPLE)
             mpl_error(mpl, "member expression has invalid type");
          /* all member expressions must have identical dimension */
@@ -1789,7 +1789,7 @@ expr:    /* parse expression that follows either the keyword 'in' (in
          if (code->type != A_ELEMSET)
          {  /* it is not <basic expression> and therefore it can only
                be the very first <member expression> in <literal set>;
-               however, then there should be no dummy index neither slice
+               however, then there must be no dummy index neither slice
                between the left brace and this expression */
             if (block != NULL)
                mpl_error(mpl, "domain expression has invalid type");
@@ -1812,7 +1812,7 @@ expr:    /* parse expression that follows either the keyword 'in' (in
             for (j = 1; j <= code->dim; j++)
                append_slot(mpl, block, NULL, NULL);
          }
-         /* number of indexing positions in <indexing element> should be
+         /* number of indexing positions in <indexing element> must be
             the same as dimension of n-tuples in basic set */
          {  int dim = 0;
             for (slot = block->list; slot != NULL; slot = slot->next)
@@ -1856,7 +1856,7 @@ expr:    /* parse expression that follows either the keyword 'in' (in
             code = make_unary(mpl, O_CVTNUM, code, A_NUMERIC, 0);
          if (code->type == A_NUMERIC)
             code = make_unary(mpl, O_CVTLOG, code, A_LOGICAL, 0);
-         /* now the expression should be of logical type */
+         /* now the expression must be of logical type */
          if (code->type != A_LOGICAL)
             mpl_error(mpl, "expression following colon has invalid type");
          xassert(code->dim == 0);
@@ -1977,7 +1977,7 @@ CODE *iterated_expression(MPL *mpl)
             if (arg.loop.x->type == A_SYMBOLIC)
                arg.loop.x = make_unary(mpl, O_CVTNUM, arg.loop.x,
                   A_NUMERIC, 0);
-            /* now the integrand should be of numeric type or linear form
+            /* now the integrand must be of numeric type or linear form
                (the latter is only allowed for the sum operator) */
             if (!(arg.loop.x->type == A_NUMERIC ||
                   op == O_SUM && arg.loop.x->type == A_FORMULA))
@@ -1997,7 +1997,7 @@ err:           mpl_error(mpl, "integrand following %s{...} has invalid type"
             if (arg.loop.x->type == A_NUMERIC)
                arg.loop.x = make_unary(mpl, O_CVTLOG, arg.loop.x,
                   A_LOGICAL, 0);
-            /* now the integrand should be of logical type */
+            /* now the integrand must be of logical type */
             if (arg.loop.x->type != A_LOGICAL) goto err;
             xassert(arg.loop.x->dim == 0);
             /* generate pseudo-code */
@@ -2012,7 +2012,7 @@ err:           mpl_error(mpl, "integrand following %s{...} has invalid type"
             if (arg.loop.x->type == A_SYMBOLIC)
                arg.loop.x = make_unary(mpl, O_CVTTUP, arg.loop.x,
                   A_TUPLE, 1);
-            /* now the integrand should be n-tuple */
+            /* now the integrand must be n-tuple */
             if (arg.loop.x->type != A_TUPLE) goto err;
             xassert(arg.loop.x->dim > 0);
             /* generate pseudo-code */
@@ -2108,7 +2108,7 @@ CODE *branched_expression(MPL *mpl)
          x = make_unary(mpl, O_CVTNUM, x, A_NUMERIC, 0);
       if (x->type == A_NUMERIC)
          x = make_unary(mpl, O_CVTLOG, x, A_LOGICAL, 0);
-      /* now the expression should be of logical type */
+      /* now the expression must be of logical type */
       if (x->type != A_LOGICAL)
          mpl_error(mpl, "expression following if has invalid type");
       xassert(x->dim == 0);
@@ -2961,7 +2961,7 @@ SET *set_statement(MPL *mpl)
          mpl_error(mpl, "invalid use of reserved keyword %s", mpl->image);
       else
          mpl_error(mpl, "symbolic name missing where expected");
-      /* there should be no other object with the same name */
+      /* there must be no other object with the same name */
       if (avl_find_node(mpl->tree, mpl->image) != NULL)
          mpl_error(mpl, "%s multiply declared", mpl->image);
       /* create model set */
@@ -3009,7 +3009,7 @@ SET *set_statement(MPL *mpl)
             if (!(mpl->token == T_NUMBER &&
                   1.0 <= mpl->value && mpl->value <= 20.0 &&
                   floor(mpl->value) == mpl->value))
-               mpl_error(mpl, "dimension should be integer between 1 and 20");
+               mpl_error(mpl, "dimension must be integer between 1 and 20");
             dimen = (int)(mpl->value + 0.5);
             if (dimen_used)
                mpl_error(mpl, "at most one dimension attribute allowed");
@@ -3137,7 +3137,7 @@ err2:          mpl_error(mpl, "dimension of %s too small", mpl->image);
             {  if (mpl->token != T_NUMBER)
                   mpl_error(mpl, "component number missing where expected");
                if (str2int(mpl->image, &i) != 0)
-err3:             mpl_error(mpl, "component number should be integer between "
+err3:             mpl_error(mpl, "component number must be integer between "
                      "1 and %d", gadget->set->dimen);
                if (!(1 <= i && i <= gadget->set->dimen)) goto err3;
                if (fff[i-1] != 0)
@@ -3153,7 +3153,7 @@ err3:             mpl_error(mpl, "component number should be integer between "
                   mpl_error(mpl, "syntax error in data attribute");
             }
             if (k < gadget->set->dimen)
-               mpl_error(mpl, "there are should be %d components rather than "
+               mpl_error(mpl, "there are must be %d components rather than "
                   "%d", gadget->set->dimen, k);
             get_token(mpl /* ) */);
          }
@@ -3206,7 +3206,7 @@ PARAMETER *parameter_statement(MPL *mpl)
          mpl_error(mpl, "invalid use of reserved keyword %s", mpl->image);
       else
          mpl_error(mpl, "symbolic name missing where expected");
-      /* there should be no other object with the same name */
+      /* there must be no other object with the same name */
       if (avl_find_node(mpl->tree, mpl->image) != NULL)
          mpl_error(mpl, "%s multiply declared", mpl->image);
       /* create model parameter */
@@ -3280,7 +3280,7 @@ bin:     {  if (binary_used)
                mpl_error(mpl, "integer or binary parameter cannot be symbol"
                   "ic");
             /* the parameter may be referenced from expressions given
-               in the same parameter declaration, so its type should be
+               in the same parameter declaration, so its type must be
                completed before parsing that expressions */
             if (!(par->cond == NULL && par->in == NULL &&
                   par->assign == NULL && par->option == NULL))
@@ -3384,7 +3384,7 @@ err:           mpl_error(mpl, "at most one := or default allowed");
             get_token(mpl /* := */);
             /* parse an expression that follows ':=' */
             par->assign = expression_5(mpl);
-            /* the expression should be of numeric/symbolic type */
+            /* the expression must be of numeric/symbolic type */
             if (!(par->assign->type == A_NUMERIC ||
                   par->assign->type == A_SYMBOLIC))
                mpl_error(mpl, "expression following := has invalid type");
@@ -3464,7 +3464,7 @@ VARIABLE *variable_statement(MPL *mpl)
          mpl_error(mpl, "invalid use of reserved keyword %s", mpl->image);
       else
          mpl_error(mpl, "symbolic name missing where expected");
-      /* there should be no other object with the same name */
+      /* there must be no other object with the same name */
       if (avl_find_node(mpl->tree, mpl->image) != NULL)
          mpl_error(mpl, "%s multiply declared", mpl->image);
       /* create model variable */
@@ -3651,14 +3651,14 @@ CONSTRAINT *constraint_statement(MPL *mpl)
       }
       else if (mpl->token == T_SPTP)
          get_token(mpl /* s.t. */);
-      /* the current token should be symbolic name of constraint */
+      /* the current token must be symbolic name of constraint */
       if (mpl->token == T_NAME)
          ;
       else if (is_reserved(mpl))
          mpl_error(mpl, "invalid use of reserved keyword %s", mpl->image);
       else
          mpl_error(mpl, "symbolic name missing where expected");
-      /* there should be no other object with the same name */
+      /* there must be no other object with the same name */
       if (avl_find_node(mpl->tree, mpl->image) != NULL)
          mpl_error(mpl, "%s multiply declared", mpl->image);
       /* create model constraint */
@@ -3714,7 +3714,7 @@ CONSTRAINT *constraint_statement(MPL *mpl)
          case T_NE:
             mpl_error(mpl, "strict inequality not allowed");
          case T_SEMICOLON:
-            mpl_error(mpl, "constraint should be equality or inequality");
+            mpl_error(mpl, "constraint must be equality or inequality");
          default:
             goto err;
       }
@@ -3740,7 +3740,7 @@ CONSTRAINT *constraint_statement(MPL *mpl)
       {  /* it is another relational operator, therefore the constraint
             is double inequality */
          if (rho == T_EQ || mpl->token != rho)
-            mpl_error(mpl, "double inequality should be ... <= ... <= ... or "
+            mpl_error(mpl, "double inequality must be ... <= ... <= ... or "
                "... >= ... >= ...");
          /* the first expression cannot be linear form */
          if (first->type == A_FORMULA)
@@ -3859,7 +3859,7 @@ CONSTRAINT *objective_statement(MPL *mpl)
          mpl_error(mpl, "invalid use of reserved keyword %s", mpl->image);
       else
          mpl_error(mpl, "symbolic name missing where expected");
-      /* there should be no other object with the same name */
+      /* there must be no other object with the same name */
       if (avl_find_node(mpl->tree, mpl->image) != NULL)
          mpl_error(mpl, "%s multiply declared", mpl->image);
       /* create model objective */
@@ -3967,7 +3967,7 @@ TABLE *table_statement(MPL *mpl)
          mpl_error(mpl, "invalid use of reserved keyword %s", mpl->image);
       else
          mpl_error(mpl, "symbolic name missing where expected");
-      /* there should be no other object with the same name */
+      /* there must be no other object with the same name */
       if (avl_find_node(mpl->tree, mpl->image) != NULL)
          mpl_error(mpl, "%s multiply declared", mpl->image);
       /* create data table */
@@ -4053,7 +4053,7 @@ input_table:
          if (tab->u.in.set->assign != NULL)
             mpl_error(mpl, "%s needs no data", mpl->image);
          if (tab->u.in.set->dim != 0)
-            mpl_error(mpl, "%s should be a simple set", mpl->image);
+            mpl_error(mpl, "%s must be a simple set", mpl->image);
          get_token(mpl /* <symbolic name> */);
          if (mpl->token == T_INPUT)
             get_token(mpl /* <- */);
@@ -4103,7 +4103,7 @@ input_table:
       }
       /* check that the set dimen is equal to the number of fields */
       if (tab->u.in.set != NULL && tab->u.in.set->dimen != nflds)
-         mpl_error(mpl, "there should be %d field%s rather than %d",
+         mpl_error(mpl, "there must be %d field%s rather than %d",
             tab->u.in.set->dimen, tab->u.in.set->dimen == 1 ? "" : "s",
             nflds);
       get_token(mpl /* ] */);

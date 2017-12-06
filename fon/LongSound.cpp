@@ -632,7 +632,7 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		integer numberOfChannels;
 		if (my size < 1) Melder_throw (U"No Sound or LongSound objects to concatenate.");
 		/*
-		 * The sampling frequencies and numbers of channels should be equal for all (long)sounds.
+		 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 		 */
 		Sampled data = my at [1];
 		if (data -> classInfo == classSound) {

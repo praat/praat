@@ -1220,7 +1220,7 @@ factor is taken relative to the envelope of the original signal:
 
    your_envelope5(t) = your_envelope4(t) / your_envelope2(t)
 
-The components that were introduced by the rectification should be thrown out:
+The components that were introduced by the rectification must be thrown out:
 
    your_envelope6(t) = your_envelope5(t) * Butterworth?(t)
 
@@ -2076,7 +2076,7 @@ MAN_BEGIN (U"Read Matrix from raw text file...", U"ppgb", 19980322)
 INTRO (U"A command to read a @Matrix object from a file on disk.")
 ENTRY (U"File format")
 NORMAL (U"The file should contain each row of the matrix on a separate line. Within each row, "
-	"the elements should be separated by spaces or tabs.")
+	"the elements must be separated by spaces or tabs.")
 NORMAL (U"For instance, the following text file will be read as a Matrix with three rows and four columns:")
 CODE (U"0.19 3 245 123")
 CODE (U"18e-6 -3e18 0 0.0")

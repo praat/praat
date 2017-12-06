@@ -382,7 +382,7 @@ static void skip_field(struct csa *csa)
 {     /* read and skip next field (assumed to be blank) */
       read_field(csa);
       if (csa->field[0] != '\0')
-         error(csa, "field %d should be blank\n", csa->fldno);
+         error(csa, "field %d must be blank\n", csa->fldno);
       return;
 }
 
@@ -432,7 +432,7 @@ loop: if (indicator(csa, 0)) goto done;
       i = glp_add_rows(csa->P, 1);
       glp_set_row_name(csa->P, i, csa->field);
       glp_set_row_bnds(csa->P, i, type, 0.0, 0.0);
-      /* fields 3, 4, 5, and 6 should be blank */
+      /* fields 3, 4, 5, and 6 must be blank */
       skip_field(csa);
       skip_field(csa);
       skip_field(csa);
@@ -454,11 +454,11 @@ static void read_columns(struct csa *csa)
       /* no current column exists */
       j = 0, len = 0;
 loop: if (indicator(csa, 0)) goto done;
-      /* field 1 should be blank */
+      /* field 1 must be blank */
       if (csa->deck)
       {  read_field(csa);
          if (csa->field[0] != '\0')
-            error(csa, "field 1 should be blank\n");
+            error(csa, "field 1 must be blank\n");
       }
       else
          csa->fldno++;
@@ -469,11 +469,11 @@ loop: if (indicator(csa, 0)) goto done;
       read_field(csa), patch_name(csa, csa->field);
       if (strcmp(csa->field, "'MARKER'") == 0)
       {  /* process kind data record */
-         /* field 4 should be blank */
+         /* field 4 must be blank */
          if (csa->deck)
          {  read_field(csa);
             if (csa->field[0] != '\0')
-               error(csa, "field 4 should be blank\n");
+               error(csa, "field 4 must be blank\n");
          }
          else
             csa->fldno++;
@@ -487,7 +487,7 @@ loop: if (indicator(csa, 0)) goto done;
             error(csa, "missing keyword in field 5\n");
          else
             error(csa, "invalid keyword in field 5\n");
-         /* field 6 should be blank */
+         /* field 6 must be blank */
          skip_field(csa);
          goto loop;
       }
@@ -530,7 +530,7 @@ loop: if (indicator(csa, 0)) goto done;
          else
          {  read_field(csa), patch_name(csa, csa->field);
             if (csa->field[0] == '\0')
-            {  /* if field 5 is blank, field 6 also should be blank */
+            {  /* if field 5 is blank, field 6 also must be blank */
                skip_field(csa);
                continue;
             }
@@ -569,11 +569,11 @@ static void read_rhs(struct csa *csa)
       /* no current RHS vector exists */
       v = 0;
 loop: if (indicator(csa, 0)) goto done;
-      /* field 1 should be blank */
+      /* field 1 must be blank */
       if (csa->deck)
       {  read_field(csa);
          if (csa->field[0] != '\0')
-            error(csa, "field 1 should be blank\n");
+            error(csa, "field 1 must be blank\n");
       }
       else
          csa->fldno++;
@@ -605,7 +605,7 @@ blnk: {  /* new RHS vector */
          {  if (f == 3)
                error(csa, "missing row name in field 3\n");
             else
-            {  /* if field 5 is blank, field 6 also should be blank */
+            {  /* if field 5 is blank, field 6 also must be blank */
                skip_field(csa);
                continue;
             }
@@ -649,11 +649,11 @@ static void read_ranges(struct csa *csa)
       /* no current RANGES vector exists */
       v = 0;
 loop: if (indicator(csa, 0)) goto done;
-      /* field 1 should be blank */
+      /* field 1 must be blank */
       if (csa->deck)
       {  read_field(csa);
          if (csa->field[0] != '\0')
-            error(csa, "field 1 should be blank\n");
+            error(csa, "field 1 must be blank\n");
       }
       else
          csa->fldno++;
@@ -685,7 +685,7 @@ blnk: {  /* new RANGES vector */
          {  if (f == 3)
                error(csa, "missing row name in field 3\n");
             else
-            {  /* if field 5 is blank, field 6 also should be blank */
+            {  /* if field 5 is blank, field 6 also must be blank */
                skip_field(csa);
                continue;
             }
@@ -861,7 +861,7 @@ blnk: {  /* new BOUNDS vector */
       else
          glp_set_col_bnds(csa->P, j, GLP_FX, lb, ub);
       flag[j] |= (char)mask;
-      /* fields 5 and 6 should be blank */
+      /* fields 5 and 6 must be blank */
       skip_field(csa);
       skip_field(csa);
       goto loop;

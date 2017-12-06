@@ -67,7 +67,7 @@ typedef uint32_t PaUint32;
 
 /* PA_VALIDATE_TYPE_SIZES compares the size of the integer types at runtime to
  ensure that PortAudio was configured correctly, and raises an assertion if
- they don't match the expected values. <assert.h> should be included in the
+ they don't match the expected values. <assert.h> must be included in the
  context in which this macro is used.
 */
 #define PA_VALIDATE_TYPE_SIZES \

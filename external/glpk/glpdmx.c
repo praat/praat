@@ -494,7 +494,7 @@ int glp_read_maxflow(glp_graph *G, int *_s, int *_t, int a_cap,
          else
             error(csa, "wrong node designator; `s' or `t' expected");
          if (s > 0 && s == t)
-            error(csa, "source and sink nodes should be distinct");
+            error(csa, "source and sink nodes must be distinct");
          end_of_line(csa);
       }
       if (s == 0)

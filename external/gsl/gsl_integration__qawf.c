@@ -71,7 +71,7 @@ gsl_integration_qawf (gsl_function * f,
 
   if (epsabs <= 0)
     {
-      GSL_ERROR ("absolute tolerance epsabs should be positive", GSL_EBADTOL) ;
+      GSL_ERROR ("absolute tolerance epsabs must be positive", GSL_EBADTOL) ;
     }
 
   if (omega == 0.0)

@@ -143,7 +143,7 @@ FUNCTION (gsl_matrix, subrow) (QUALIFIED_TYPE(gsl_matrix) * m, const size_t i, c
     }
   else if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n should be positive integer",
+      GSL_ERROR_VAL ("vector length n must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (offset + n > m->size1)
@@ -176,7 +176,7 @@ FUNCTION (gsl_matrix, subcolumn) (QUALIFIED_TYPE(gsl_matrix) * m, const size_t j
     }
   else if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n should be positive integer",
+      GSL_ERROR_VAL ("vector length n must be positive integer",
                      GSL_EINVAL, view);
     }
   else if (offset + n > m->size2)

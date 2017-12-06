@@ -144,7 +144,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		 * Check whether all sounds have the same sampling frequency.
 		 */
 		if (my samplePeriod == 0.0) {
-			my samplePeriod = substimulus -> dx;   /* This should be the first sound read. */
+			my samplePeriod = substimulus -> dx;   /* This must be the first sound read. */
 		} else if (substimulus -> dx != my samplePeriod) {
 			Melder_throw (U"The sound in file ", & file, U" has a different sampling frequency than some other sound.");
 		}

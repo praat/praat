@@ -103,7 +103,7 @@ FUNCTION (gsl_matrix, swap_rowcol) (TYPE (gsl_matrix) * m,
 
   if (size1 != size2)
     {
-      GSL_ERROR ("matrix should be square to swap row and column", GSL_ENOTSQR);
+      GSL_ERROR ("matrix must be square to swap row and column", GSL_ENOTSQR);
     }
 
   if (i >= size1)
@@ -151,7 +151,7 @@ FUNCTION (gsl_matrix, transpose) (TYPE (gsl_matrix) * m)
 
   if (size1 != size2)
     {
-      GSL_ERROR ("matrix should be square to take transpose", GSL_ENOTSQR);
+      GSL_ERROR ("matrix must be square to take transpose", GSL_ENOTSQR);
     }
 
   for (i = 0; i < size1; i++)
@@ -188,7 +188,7 @@ FUNCTION (gsl_matrix, transpose_memcpy) (TYPE (gsl_matrix) * dest,
 
   if (dest_size2 != src_size1 || dest_size1 != src_size2)
     {
-      GSL_ERROR ("dimensions of dest matrix should be transpose of src matrix", 
+      GSL_ERROR ("dimensions of dest matrix must be transpose of src matrix", 
                  GSL_EBADLEN);
     }
 

@@ -482,7 +482,7 @@ typedef struct {
 #define NUM_SINGLE_STRESS_L  0x10000000
 
 	// bits0-1=which numbers routine to use.
-	// bit2=  thousands separator should be space
+	// bit2=  thousands separator must be space
 	// bit3=  , decimal separator, not .
 	// bit4=use three-and-twenty rather than twenty-three
 	// bit5='and' between tens and units
@@ -626,7 +626,7 @@ typedef struct {
 	char *letterGroups[N_LETTER_GROUPS];
 
 	// groups1 and groups2 are indexes into data_dictrules, set up by InitGroups()
-	// the two-letter rules for each letter should be consecutive in the language_rules source
+	// the two-letter rules for each letter must be consecutive in the language_rules source
 
 	char *groups1[256];         // translation rule lists, index by single letter
 	char *groups3[128];         // index by offset letter

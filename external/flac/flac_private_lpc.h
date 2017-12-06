@@ -107,7 +107,7 @@ void FLAC__lpc_compute_lp_coefficients(const FLAC__real autoc[], unsigned *max_o
  *	FLAC__lpc_quantize_coefficients()
  *	--------------------------------------------------------------------
  *	Quantizes the LP coefficients.  NOTE: precision + bits_per_sample
- *	should be less than 32 (sizeof(FLAC__int32)*8).
+ *	must be less than 32 (sizeof(FLAC__int32)*8).
  *
  *	IN lp_coeff[0,order-1]    LP coefficients
  *	IN order                  LP order

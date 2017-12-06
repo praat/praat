@@ -34,7 +34,7 @@ See Golub & Van Loan, "Matrix Computations" (3rd ed), algorithm
 
 Inputs: A   - matrix to reduce
         tau - where to store scalar factors in Householder
-              matrices; this vector should be of length N,
+              matrices; this vector must be of length N,
               where N is the order of A
 
 Return: GSL_SUCCESS unless error occurs
@@ -318,7 +318,7 @@ Inputs: M   - total matrix
         A   - (sub)matrix to reduce
         top - row index of top of A in M
         tau - where to store scalar factors in Householder
-              matrices; this vector should be of length N,
+              matrices; this vector must be of length N,
               where N is the order of A
 
 Return: GSL_SUCCESS unless error occurs

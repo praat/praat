@@ -701,7 +701,7 @@ void glp_set_obj_coef(glp_prob *lp, int j, double coef)
 *  The routine glp_set_mat_row stores (replaces) the contents of i-th
 *  row of the constraint matrix of the specified problem object.
 *
-*  Column indices and numeric values of new row elements should be placed
+*  Column indices and numeric values of new row elements must be placed
 *  in locations ind[1], ..., ind[len] and val[1], ..., val[len], where
 *  0 <= len <= n is the new length of i-th row, n is the current number
 *  of columns in the problem object. Elements with identical column
@@ -827,7 +827,7 @@ void glp_set_mat_row(glp_prob *lp, int i, int len, const int ind[],
 *  The routine glp_set_mat_col stores (replaces) the contents of j-th
 *  column of the constraint matrix of the specified problem object.
 *
-*  Row indices and numeric values of new column elements should be placed
+*  Row indices and numeric values of new column elements must be placed
 *  in locations ind[1], ..., ind[len] and val[1], ..., val[len], where
 *  0 <= len <= m is the new length of j-th column, m is the current
 *  number of rows in the problem object. Elements with identical column
@@ -948,7 +948,7 @@ void glp_set_mat_col(glp_prob *lp, int j, int len, const int ind[],
 *  the arrays ia, ja, and ar into the specified problem object. Before
 *  loading the current contents of the constraint matrix is destroyed.
 *
-*  Constraint coefficients (elements of the constraint matrix) should be
+*  Constraint coefficients (elements of the constraint matrix) must be
 *  specified as triplets (ia[k], ja[k], ar[k]) for k = 1, ..., ne,
 *  where ia[k] is the row index, ja[k] is the column index, ar[k] is a
 *  numeric value of corresponding constraint coefficient. The parameter

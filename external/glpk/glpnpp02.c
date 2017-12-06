@@ -77,7 +77,7 @@ static int rcv_free_row(NPP *npp, void *info);
 void npp_free_row(NPP *npp, NPPROW *p)
 {     /* process free (unbounded) row */
       struct free_row *info;
-      /* the row should be free */
+      /* the row must be free */
       xassert(p->lb == -DBL_MAX && p->ub == +DBL_MAX);
       /* create transformation stack entry */
       info = npp_push_tse(npp,
@@ -490,7 +490,7 @@ void npp_free_col(NPP *npp, NPPCOL *q)
       struct free_col *info;
       NPPCOL *s;
       NPPAIJ *aij;
-      /* the column should be free */
+      /* the column must be free */
       xassert(q->lb == -DBL_MAX && q->ub == +DBL_MAX);
       /* variable x[q] becomes s' */
       q->lb = 0.0, q->ub = +DBL_MAX;
@@ -964,7 +964,7 @@ void npp_dbnd_col(NPP *npp, NPPCOL *q)
       struct dbnd_col *info;
       NPPROW *p;
       NPPCOL *s;
-      /* the column should be non-negative with upper bound */
+      /* the column must be non-negative with upper bound */
       xassert(q->lb == 0.0);
       xassert(q->ub > 0.0);
       xassert(q->ub != +DBL_MAX);
@@ -1108,7 +1108,7 @@ void npp_fixed_col(NPP *npp, NPPCOL *q)
       struct fixed_col *info;
       NPPROW *i;
       NPPAIJ *aij;
-      /* the column should be fixed */
+      /* the column must be fixed */
       xassert(q->lb == q->ub);
       /* create transformation stack entry */
       info = npp_push_tse(npp,
@@ -1227,7 +1227,7 @@ int npp_make_equality(NPP *npp, NPPROW *p)
 {     /* process row with almost identical bounds */
       struct make_equality *info;
       double b, eps, nint;
-      /* the row should be double-sided inequality */
+      /* the row must be double-sided inequality */
       xassert(p->lb != -DBL_MAX);
       xassert(p->ub != +DBL_MAX);
       xassert(p->lb < p->ub);
@@ -1369,7 +1369,7 @@ int npp_make_fixed(NPP *npp, NPPCOL *q)
       NPPAIJ *aij;
       NPPLFE *lfe;
       double s, eps, nint;
-      /* the column should be double-bounded */
+      /* the column must be double-bounded */
       xassert(q->lb != -DBL_MAX);
       xassert(q->ub != +DBL_MAX);
       xassert(q->lb < q->ub);

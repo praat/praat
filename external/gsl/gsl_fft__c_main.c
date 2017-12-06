@@ -104,7 +104,7 @@ FUNCTION(gsl_fft_complex,transform) (TYPE(gsl_complex_packed_array) data,
 
   if (n == 0)
     {
-      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
     }
 
   if (n == 1)

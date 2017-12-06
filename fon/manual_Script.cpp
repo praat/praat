@@ -3063,7 +3063,7 @@ CODE (U"#runScript: \"playSine.praat\", 615, 0.9")
 CODE (U"#runScript: \"playSine.praat\", 687, 0.9")
 NORMAL (U"With #runScript, Praat will not display a form window, but simply execute the script "
 	"with the two arguments that you supply on the same line (e.g. 550 and 0.9).")
-NORMAL (U"Values for #choice should be passed as strings:")
+NORMAL (U"Values for #choice must be passed as strings:")
 CODE (U"#runScript: \"fill attributes.praat\", \"Navy blue\", \"With holes\"")
 NORMAL (U"You can pass values for #boolean either as \"yes\" and \"no\" or as 1 and 0.")
 MAN_END

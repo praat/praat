@@ -356,7 +356,7 @@ static int csv_read_record(TABDCA *dca, struct csv *csv)
          else
             xassert(csv != csv);
       }
-      /* now there should be NL */
+      /* now there must be NL */
       read_field(csv);
       xassert(csv->what != CSV_EOF);
       if (csv->what != CSV_EOR)

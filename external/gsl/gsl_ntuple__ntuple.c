@@ -87,7 +87,7 @@ gsl_ntuple_open (char *filename, void *ntuple_data, size_t size)
 
 /* 
  * gsl_ntuple_write:
- * write to file a data row, should be used in a loop!
+ * write to file a data row, must be used in a loop!
  */
 
 int
@@ -116,7 +116,7 @@ gsl_ntuple_bookdata (gsl_ntuple * ntuple)
 
 /* 
  * gsl_ntuple_read:
- * read form file a data row, should be used in a loop!
+ * read form file a data row, must be used in a loop!
  */
 
 int
