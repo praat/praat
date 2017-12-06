@@ -847,7 +847,7 @@ static int GetVowelStress(Translator *tr, unsigned char *phonemes, signed char *
 				j = count - 1;
 				while ((j > 0) && (*stressed_syllable == 0) && (vowel_stress[j] < 4)) {
 					if ((vowel_stress[j] != 0) && (vowel_stress[j] != 1)) {
-						// don't promote a phoneme which must be unstressed
+						// don't promote a phoneme which should be unstressed
 						vowel_stress[j] = 4;
 
 						if (max_stress < 4) {
@@ -883,7 +883,7 @@ static int GetVowelStress(Translator *tr, unsigned char *phonemes, signed char *
 			}
 
 			if ((stress < 0) && (control & 1) && (ph->phflags & phUNSTRESSED))
-				vowel_stress[count] = 1; // weak vowel, must be unstressed
+				vowel_stress[count] = 1; // weak vowel, should be unstressed
 
 			count++;
 			stress = -1;
@@ -2291,7 +2291,7 @@ int TranslateRules(Translator *tr, char *p_start, char *phonemes, int ph_size, c
 								p2 = p-1;
 								p[-1] = ix;
 								while ((p[0] = p[n]) != ' ')  p++;
-								while (n-- > 0) *p++ = ' '; // replacement character must be no longer than original
+								while (n-- > 0) *p++ = ' '; // replacement character should be no longer than original
 
 								if (tr->langopts.param[LOPT_DIERESES] && (lookupwchar(diereses_list, letter) > 0)) {
 									// vowel with dieresis, replace and continue from this point

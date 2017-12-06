@@ -30,12 +30,12 @@ gsl_combination_alloc (const size_t n, const size_t k)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("combination parameter n must be positive integer",
+      GSL_ERROR_VAL ("combination parameter n should be positive integer",
                         GSL_EDOM, 0);
     }
   if (k > n)
     {
-      GSL_ERROR_VAL ("combination length k must be an integer less than or equal to n",
+      GSL_ERROR_VAL ("combination length k should be an integer less than or equal to n",
                         GSL_EDOM, 0);
     }
   c = (gsl_combination *) malloc (sizeof (gsl_combination));

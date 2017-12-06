@@ -70,7 +70,7 @@ int NUMblas_dgemm (const char *transa, const char *transb, integer *m, integer *
              Unchanged on exit.
     N      - long.
              On entry,  N  specifies the number  of columns of the matrix
-             op( B ) and the number of columns of the matrix C. N must be
+             op( B ) and the number of columns of the matrix C. N should be
              at least zero.
              Unchanged on exit.
     K      - long.
@@ -91,7 +91,7 @@ int NUMblas_dgemm (const char *transa, const char *transb, integer *m, integer *
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
              in the calling (sub) program. When  TRANSA = 'N' or 'n' then
-             LDA must be at least  max( 1, m ), otherwise  LDA must be at
+             LDA should be at least  max( 1, m ), otherwise  LDA should be at
              least  max( 1, k ).
              Unchanged on exit.
     B      - double array of DIMENSION ( LDB, kb ), where kb is
@@ -104,7 +104,7 @@ int NUMblas_dgemm (const char *transa, const char *transb, integer *m, integer *
     LDB    - long.
              On entry, LDB specifies the first dimension of B as declared
              in the calling (sub) program. When  TRANSB = 'N' or 'n' then
-             LDB must be at least  max( 1, k ), otherwise  LDB must be at
+             LDB should be at least  max( 1, k ), otherwise  LDB should be at
              least  max( 1, n ).
              Unchanged on exit.
     BETA   - double.
@@ -142,11 +142,11 @@ int NUMblas_dger (integer *m, integer *n, double *alpha, double *x, integer *inc
     ==========
     M      - long.
              On entry, M specifies the number of rows of the matrix A.
-             M must be at least zero.
+             M should be at least zero.
              Unchanged on exit.
     N      - long.
              On entry, N specifies the number of columns of the matrix A.
-             N must be at least zero.
+             N should be at least zero.
              Unchanged on exit.
     ALPHA  - double.
              On entry, ALPHA specifies the scalar alpha.
@@ -175,7 +175,7 @@ int NUMblas_dger (integer *m, integer *n, double *alpha, double *x, integer *inc
              overwritten by the updated matrix.
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
-             in the calling (sub) program. LDA must be at least
+             in the calling (sub) program. LDA should be at least
              max( 1, m ).
              Unchanged on exit.
     Level 2 Blas routine.
@@ -205,11 +205,11 @@ int NUMblas_dgemv (const char *trans, integer *m, integer *n, double *alpha, dou
              Unchanged on exit.
     M      - long.
              On entry, M specifies the number of rows of the matrix A.
-             M must be at least zero.
+             M should be at least zero.
              Unchanged on exit.
     N      - long.
              On entry, N specifies the number of columns of the matrix A.
-             N must be at least zero.
+             N should be at least zero.
              Unchanged on exit.
     ALPHA  - double.
              On entry, ALPHA specifies the scalar alpha.
@@ -220,7 +220,7 @@ int NUMblas_dgemv (const char *trans, integer *m, integer *n, double *alpha, dou
              Unchanged on exit.
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
-             in the calling (sub) program. LDA must be at least
+             in the calling (sub) program. LDA should be at least
              max( 1, m ).
              Unchanged on exit.
     X      - double array of DIMENSION at least
@@ -340,7 +340,7 @@ int NUMblas_dsymv (const char *uplo, integer *n, double *alpha, double *a, integ
              Unchanged on exit.
     N      - long.
              On entry, N specifies the order of the matrix A.
-             N must be at least zero.
+             N should be at least zero.
              Unchanged on exit.
     ALPHA  - double.
              On entry, ALPHA specifies the scalar alpha.
@@ -357,7 +357,7 @@ int NUMblas_dsymv (const char *uplo, integer *n, double *alpha, double *a, integ
              Unchanged on exit.
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
-             in the calling (sub) program. LDA must be at least
+             in the calling (sub) program. LDA should be at least
              max( 1, n ).
              Unchanged on exit.
     X      - double array of dimension at least
@@ -405,7 +405,7 @@ int NUMblas_dsyr2 (const char *uplo, integer *n, double *alpha,	double *x, integ
              Unchanged on exit.
     N      - long.
              On entry, N specifies the order of the matrix A.
-             N must be at least zero.
+             N should be at least zero.
              Unchanged on exit.
     ALPHA  - double.
              On entry, ALPHA specifies the scalar alpha.
@@ -443,7 +443,7 @@ int NUMblas_dsyr2 (const char *uplo, integer *n, double *alpha,	double *x, integ
              lower triangular part of the updated matrix.
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
-             in the calling (sub) program. LDA must be at least
+             in the calling (sub) program. LDA should be at least
              max( 1, n ).
              Unchanged on exit.
 */
@@ -481,14 +481,14 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, integer *n, integer *k,
                                           beta*C.
              Unchanged on exit.
     N      - long.
-             On entry,  N specifies the order of the matrix C.  N must be
+             On entry,  N specifies the order of the matrix C.  N should be
              at least zero.
              Unchanged on exit.
     K      - long.
              On entry with  TRANS = 'N' or 'n',  K  specifies  the number
              of  columns  of the  matrices  A and B,  and on  entry  with
              TRANS = 'T' or 't' or 'C' or 'c',  K  specifies  the  number
-             of rows of the matrices  A and B.  K must be at least  zero.
+             of rows of the matrices  A and B.  K should be at least  zero.
              Unchanged on exit.
     ALPHA  - double.
              On entry, ALPHA specifies the scalar alpha.
@@ -503,7 +503,7 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, integer *n, integer *k,
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
              in  the  calling  (sub)  program.   When  TRANS = 'N' or 'n'
-             then  LDA must be at least  max( 1, n ), otherwise  LDA must
+             then  LDA should be at least  max( 1, n ), otherwise  LDA must
              be at least  max( 1, k ).
              Unchanged on exit.
     B      - double array of DIMENSION ( LDB, kb ), where kb is
@@ -516,7 +516,7 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, integer *n, integer *k,
     LDB    - long.
              On entry, LDB specifies the first dimension of B as declared
              in  the  calling  (sub)  program.   When  TRANS = 'N' or 'n'
-             then  LDB must be at least  max( 1, n ), otherwise  LDB must
+             then  LDB should be at least  max( 1, n ), otherwise  LDB must
              be at least  max( 1, k ).
              Unchanged on exit.
     BETA   - double.
@@ -582,11 +582,11 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
                                     triangular.
              Unchanged on exit.
     M      - long.
-             On entry, M specifies the number of rows of B. M must be at
+             On entry, M specifies the number of rows of B. M should be at
              least zero.
              Unchanged on exit.
     N      - long.
-             On entry, N specifies the number of columns of B.  N must be
+             On entry, N specifies the number of columns of B.  N should be
              at least zero.
              Unchanged on exit.
     ALPHA  - double.
@@ -610,8 +610,8 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
              in the calling (sub) program.  When  SIDE = 'L' or 'l'  then
-             LDA  must be at least  max( 1, m ),  when  SIDE = 'R' or 'r'
-             then LDA must be at least max( 1, n ).
+             LDA  should be at least  max( 1, m ),  when  SIDE = 'R' or 'r'
+             then LDA should be at least max( 1, n ).
              Unchanged on exit.
     B      - double array of DIMENSION ( LDB, n ).
              Before entry,  the leading  m by n part of the array  B must
@@ -657,7 +657,7 @@ int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, intege
              Unchanged on exit.
     N      - long.
              On entry, N specifies the order of the matrix A.
-             N must be at least zero.
+             N should be at least zero.
              Unchanged on exit.
     A      - double array of DIMENSION ( LDA, n ).
              Before entry with  UPLO = 'U' or 'u', the leading n by n
@@ -673,7 +673,7 @@ int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, intege
              Unchanged on exit.
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
-             in the calling (sub) program. LDA must be at least
+             in the calling (sub) program. LDA should be at least
              max( 1, n ).
              Unchanged on exit.
     X      - double array of dimension at least
@@ -727,11 +727,11 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
                                     triangular.
              Unchanged on exit.
     M      - long.
-             On entry, M specifies the number of rows of B. M must be at
+             On entry, M specifies the number of rows of B. M should be at
              least zero.
              Unchanged on exit.
     N      - long.
-             On entry, N specifies the number of columns of B.  N must be
+             On entry, N specifies the number of columns of B.  N should be
              at least zero.
              Unchanged on exit.
     ALPHA  - double.
@@ -755,8 +755,8 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
     LDA    - long.
              On entry, LDA specifies the first dimension of A as declared
              in the calling (sub) program.  When  SIDE = 'L' or 'l'  then
-             LDA  must be at least  max( 1, m ),  when  SIDE = 'R' or 'r'
-             then LDA must be at least max( 1, n ).
+             LDA  should be at least  max( 1, m ),  when  SIDE = 'R' or 'r'
+             then LDA should be at least max( 1, n ).
              Unchanged on exit.
     B      - double array of DIMENSION ( LDB, n ).
              Before entry,  the leading  m by n part of the array  B must

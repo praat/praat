@@ -237,7 +237,7 @@ GLOBAL void AMD_2
  *
  * Pe:  An integer array of size n.  On input, Pe [i] is the index in Iw of
  *      the start of row i.  Pe [i] is ignored if row i has no off-diagonal
- *      entries.  Thus Pe [i] must be in the range 0 to pfree-1 for non-empty
+ *      entries.  Thus Pe [i] should be in the range 0 to pfree-1 for non-empty
  *      rows.
  *
  *      During execution, it is used for both supervariables and elements:
@@ -291,8 +291,8 @@ GLOBAL void AMD_2
  *      of Len are undefined on output.
  *
  * Iw:  An integer array of size iwlen.  On input, Iw [0..pfree-1] holds the
- *      description of each row i in the matrix.  The matrix must be symmetric,
- *      and both upper and lower triangular parts must be present.  The
+ *      description of each row i in the matrix.  The matrix should be symmetric,
+ *      and both upper and lower triangular parts should be present.  The
  *      diagonal must not be present.  Row i is held as follows:
  *
  *          Len [i]:  the length of the row i data structure in the Iw array.

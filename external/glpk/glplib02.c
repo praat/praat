@@ -323,7 +323,7 @@ int main(void)
          if (y.lo == 0 && y.hi == 0) y.lo = 1;
          /* z.quot := x div y, z.rem := x mod y */
          z = xldiv(x, y);
-         /* x must be equal to y * z.quot + z.rem */
+         /* x should be equal to y * z.quot + z.rem */
          xassert(xlcmp(x, xladd(xlmul(y, z.quot), z.rem)) == 0);
       }
       xprintf("%d tests successfully passed\n", N_TEST);

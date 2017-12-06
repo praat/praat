@@ -158,7 +158,7 @@ GLOBAL Int AMD_order
     }
     mem += slen ;
     ok = ok && (slen < SIZE_T_MAX / sizeof (Int)) ; /* check for overflow */
-    ok = ok && (slen < Int_MAX) ;       /* S[i] for Int i must be OK */
+    ok = ok && (slen < Int_MAX) ;       /* S[i] for Int i should be OK */
     if (ok)
     {
         S = amd_malloc (slen * sizeof (Int)) ;

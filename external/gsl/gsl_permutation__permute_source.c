@@ -141,7 +141,7 @@ TYPE (gsl_permute_vector) (const gsl_permutation * p, TYPE (gsl_vector) * v)
 {
   if (v->size != p->size)
     {
-      GSL_ERROR ("vector and permutation must be the same length", GSL_EBADLEN);
+      GSL_ERROR ("vector and permutation should be the same length", GSL_EBADLEN);
     }
 
   TYPE (gsl_permute) (p->data, v->data, v->stride, v->size) ;
@@ -154,7 +154,7 @@ FUNCTION (gsl_permute_vector,inverse) (const gsl_permutation * p, TYPE (gsl_vect
 {
   if (v->size != p->size)
     {
-      GSL_ERROR ("vector and permutation must be the same length", GSL_EBADLEN);
+      GSL_ERROR ("vector and permutation should be the same length", GSL_EBADLEN);
     }
 
   FUNCTION (gsl_permute,inverse) (p->data, v->data, v->stride, v->size) ;

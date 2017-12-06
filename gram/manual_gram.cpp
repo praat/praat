@@ -558,7 +558,7 @@ LIST_ITEM (U"\tampa\t800000")
 LIST_ITEM (U"\tanpa\t200000")
 NORMAL (U"We compute (e.g. with @@Calculator...@) a %χ^2 of 30080^2/800000 + 30080^2/200000 = 5655.04, "
 	"which, of course, is much too high for a distribution with a single degree of freedom. "
-	"So the ranking difference must be smaller. If it is 2.4 (change the ranking of *G\\s{ESTURE} to 102.4), "
+	"So the ranking difference should be smaller. If it is 2.4 (change the ranking of *G\\s{ESTURE} to 102.4), "
 	"the numbers become something like")
 LIST_ITEM (U"\tampa\t801974")
 LIST_ITEM (U"\tanpa\t198026")
@@ -1026,7 +1026,7 @@ MAN_END
 /*
 MAN_BEGIN (U"OTGrammar examples", U"ppgb", 20001027)
 ENTRY (U"Safety margin and stochastic evaluation")
-NORMAL (U"What is a %small demotion step? This must be taken relative to another quantity. "
+NORMAL (U"What is a %small demotion step? This should be taken relative to another quantity. "
 	"This quantity is the evaluation noise.")
 NORMAL (U"If the %%ranking spreading% were zero, the demotions in the GLA would immediately stop once that "
 	"a constraint has fallen below its competitors. If the data contain an error, the grammar "

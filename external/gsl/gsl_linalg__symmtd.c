@@ -70,7 +70,7 @@ gsl_linalg_symmtd_decomp (gsl_matrix * A, gsl_vector * tau)
     }
   else if (tau->size + 1 != A->size1)
     {
-      GSL_ERROR ("size of tau must be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be (matrix size - 1)", GSL_EBADLEN);
     }
   else
     {
@@ -129,11 +129,11 @@ gsl_linalg_symmtd_unpack (const gsl_matrix * A,
 {
   if (A->size1 !=  A->size2)
     {
-      GSL_ERROR ("matrix A must be square", GSL_ENOTSQR);
+      GSL_ERROR ("matrix A should be square", GSL_ENOTSQR);
     }
   else if (tau->size + 1 != A->size1)
     {
-      GSL_ERROR ("size of tau must be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be (matrix size - 1)", GSL_EBADLEN);
     }
   else if (Q->size1 != A->size1 || Q->size2 != A->size1)
     {
@@ -145,7 +145,7 @@ gsl_linalg_symmtd_unpack (const gsl_matrix * A,
     }
   else if (sdiag->size + 1 != A->size1)
     {
-      GSL_ERROR ("size of subdiagonal must be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of subdiagonal should be (matrix size - 1)", GSL_EBADLEN);
     }
   else
     {
@@ -195,7 +195,7 @@ gsl_linalg_symmtd_unpack_T (const gsl_matrix * A,
 {
   if (A->size1 !=  A->size2)
     {
-      GSL_ERROR ("matrix A must be square", GSL_ENOTSQR);
+      GSL_ERROR ("matrix A should be square", GSL_ENOTSQR);
     }
   else if (diag->size != A->size1)
     {
@@ -203,7 +203,7 @@ gsl_linalg_symmtd_unpack_T (const gsl_matrix * A,
     }
   else if (sdiag->size + 1 != A->size1)
     {
-      GSL_ERROR ("size of subdiagonal must be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of subdiagonal should be (matrix size - 1)", GSL_EBADLEN);
     }
   else
     {

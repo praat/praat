@@ -223,7 +223,7 @@ int FLAC__lpc_quantize_coefficients(const FLAC__real lp_coeff[], unsigned order,
 		}
 	}
 	/* negative shift is very rare but due to design flaw, negative shift is
-	 * a NOP in the decoder, so it must be handled specially by scaling down
+	 * a NOP in the decoder, so it should be handled specially by scaling down
 	 * coeffs
 	 */
 	else {

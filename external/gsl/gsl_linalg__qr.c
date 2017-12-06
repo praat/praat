@@ -67,7 +67,7 @@ gsl_linalg_QR_decomp (gsl_matrix * A, gsl_vector * tau)
 
   if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
     }
   else
     {
@@ -111,7 +111,7 @@ gsl_linalg_QR_solve (const gsl_matrix * QR, const gsl_vector * tau, const gsl_ve
 {
   if (QR->size1 != QR->size2)
     {
-      GSL_ERROR ("QR matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("QR matrix should be square", GSL_ENOTSQR);
     }
   else if (QR->size1 != b->size)
     {
@@ -148,7 +148,7 @@ gsl_linalg_QR_svx (const gsl_matrix * QR, const gsl_vector * tau, gsl_vector * x
 
   if (QR->size1 != QR->size2)
     {
-      GSL_ERROR ("QR matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("QR matrix should be square", GSL_ENOTSQR);
     }
   else if (QR->size1 != x->size)
     {
@@ -231,7 +231,7 @@ gsl_linalg_QR_Rsolve (const gsl_matrix * QR, const gsl_vector * b, gsl_vector * 
 {
   if (QR->size1 != QR->size2)
     {
-      GSL_ERROR ("QR matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("QR matrix should be square", GSL_ENOTSQR);
     }
   else if (QR->size1 != b->size)
     {
@@ -261,7 +261,7 @@ gsl_linalg_QR_Rsvx (const gsl_matrix * QR, gsl_vector * x)
 {
   if (QR->size1 != QR->size2)
     {
-      GSL_ERROR ("QR matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("QR matrix should be square", GSL_ENOTSQR);
     }
   else if (QR->size1 != x->size)
     {
@@ -282,7 +282,7 @@ gsl_linalg_R_solve (const gsl_matrix * R, const gsl_vector * b, gsl_vector * x)
 {
   if (R->size1 != R->size2)
     {
-      GSL_ERROR ("R matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("R matrix should be square", GSL_ENOTSQR);
     }
   else if (R->size1 != b->size)
     {
@@ -311,7 +311,7 @@ gsl_linalg_R_svx (const gsl_matrix * R, gsl_vector * x)
 {
   if (R->size1 != R->size2)
     {
-      GSL_ERROR ("R matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("R matrix should be square", GSL_ENOTSQR);
     }
   else if (R->size2 != x->size)
     {
@@ -340,11 +340,11 @@ gsl_linalg_QR_QTvec (const gsl_matrix * QR, const gsl_vector * tau, gsl_vector *
 
   if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
     }
   else if (v->size != M)
     {
-      GSL_ERROR ("vector size must be N", GSL_EBADLEN);
+      GSL_ERROR ("vector size should be N", GSL_EBADLEN);
     }
   else
     {
@@ -373,11 +373,11 @@ gsl_linalg_QR_Qvec (const gsl_matrix * QR, const gsl_vector * tau, gsl_vector * 
 
   if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
     }
   else if (v->size != M)
     {
-      GSL_ERROR ("vector size must be N", GSL_EBADLEN);
+      GSL_ERROR ("vector size should be N", GSL_EBADLEN);
     }
   else
     {
@@ -408,7 +408,7 @@ gsl_linalg_QR_QTmat (const gsl_matrix * QR, const gsl_vector * tau, gsl_matrix *
 
   if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
     }
   else if (A->size1 != M)
     {
@@ -443,15 +443,15 @@ gsl_linalg_QR_unpack (const gsl_matrix * QR, const gsl_vector * tau, gsl_matrix 
 
   if (Q->size1 != M || Q->size2 != M)
     {
-      GSL_ERROR ("Q matrix must be M x M", GSL_ENOTSQR);
+      GSL_ERROR ("Q matrix should be M x M", GSL_ENOTSQR);
     }
   else if (R->size1 != M || R->size2 != N)
     {
-      GSL_ERROR ("R matrix must be M x N", GSL_ENOTSQR);
+      GSL_ERROR ("R matrix should be M x N", GSL_ENOTSQR);
     }
   else if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
     }
   else
     {
@@ -508,15 +508,15 @@ gsl_linalg_QR_update (gsl_matrix * Q, gsl_matrix * R,
 
   if (Q->size1 != M || Q->size2 != M)
     {
-      GSL_ERROR ("Q matrix must be M x M if R is M x N", GSL_ENOTSQR);
+      GSL_ERROR ("Q matrix should be M x M if R is M x N", GSL_ENOTSQR);
     }
   else if (w->size != M)
     {
-      GSL_ERROR ("w must be length M if R is M x N", GSL_EBADLEN);
+      GSL_ERROR ("w should be length M if R is M x N", GSL_EBADLEN);
     }
   else if (v->size != N)
     {
-      GSL_ERROR ("v must be length N if R is M x N", GSL_EBADLEN);
+      GSL_ERROR ("v should be length N if R is M x N", GSL_EBADLEN);
     }
   else
     {

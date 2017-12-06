@@ -84,7 +84,7 @@ gsl_multifit_linear_svd (const gsl_matrix * X,
     }
   else if (tol <= 0)
     {
-      GSL_ERROR ("tolerance must be positive", GSL_EINVAL);
+      GSL_ERROR ("tolerance should be positive", GSL_EINVAL);
     }
   else
     {

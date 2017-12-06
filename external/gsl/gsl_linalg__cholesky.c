@@ -154,7 +154,7 @@ gsl_linalg_cholesky_decomp (gsl_matrix * A)
       
       if (status == GSL_EDOM)
         {
-          GSL_ERROR ("matrix must be positive definite", GSL_EDOM);
+          GSL_ERROR ("matrix should be positive definite", GSL_EDOM);
         }
       
       return GSL_SUCCESS;
@@ -169,7 +169,7 @@ gsl_linalg_cholesky_solve (const gsl_matrix * LLT,
 {
   if (LLT->size1 != LLT->size2)
     {
-      GSL_ERROR ("cholesky matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("cholesky matrix should be square", GSL_ENOTSQR);
     }
   else if (LLT->size1 != b->size)
     {
@@ -204,7 +204,7 @@ gsl_linalg_cholesky_svx (const gsl_matrix * LLT,
 {
   if (LLT->size1 != LLT->size2)
     {
-      GSL_ERROR ("cholesky matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("cholesky matrix should be square", GSL_ENOTSQR);
     }
   else if (LLT->size2 != x->size)
     {

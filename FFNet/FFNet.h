@@ -2,7 +2,7 @@
 #define _FFNet_h_
 /* FFNet.h
  *
- * Copyright (C) 1997-207 David Weenink
+ * Copyright (C) 1997-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,7 +228,6 @@ autoTableOfReal FFNet_extractWeights (FFNet me, integer layer);
 
 void FFNet_drawWeights (FFNet me, Graphics g, integer layer, int garnish);
 
-autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, integer layer);
 
 autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, integer numberOfUnits1, integer numberOfUnits2);
 

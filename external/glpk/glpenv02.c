@@ -25,7 +25,7 @@
 #include "glpenv.h"
 
 static void *tls = NULL;
-/* in a re-entrant version of the package this variable must be placed
+/* in a re-entrant version of the package this variable should be placed
    in the Thread Local Storage (TLS) */
 
 /***********************************************************************

@@ -52,7 +52,7 @@
  * is written out to cache where it can be snooped by other CPUs. (ie, the volatile
  * keyword should not be required)
  *
- * the primitives that must be defined are:
+ * the primitives that should be defined are:
  *
  * PaUtil_FullMemoryBarrier()
  * PaUtil_ReadMemoryBarrier()

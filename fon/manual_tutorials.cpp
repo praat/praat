@@ -1803,7 +1803,7 @@ ENTRY (U"Praat 3.3, 6 October 1996")
 	LIST_ITEM (U"• New actions: #Formant: Viterbi tracker, Statistics menu, Scatter plot.")
 	LIST_ITEM (U"• Evaluation: For HNR analysis of speech, the cross-correlation method, "
 		"which has a sensitivity of 60 dB and a typical time resolution of 12 milliseconds, "
-		"must be considered better than the autocorrelation method, "
+		"should be considered better than the autocorrelation method, "
 		"which has a better sensitivity (80 dB), but a much worse time resolution (30 ms). "
 		"For pitch analysis, the autocorrelation method still beats the cross-correlation method "
 		"because of its better resistance against noise and echos, "

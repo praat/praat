@@ -87,7 +87,7 @@ CODE1 (U"\tTask A\t71\t39")
 CODE1 (U"\tTask B\t104\t16")
 NORMAL (U"The resulting %p is 0.00016. So what is the conclusion, if the measurements can clearly be dependent? "
 	"Well, if the null hypothesis is that all five participants are equally good at Task A as at Task B, "
-	"then this hypothesis can be rejected. The conclusion must be that %%these five participants% have on average "
+	"then this hypothesis can be rejected. The conclusion should be that %%these five participants% have on average "
 	"more trouble with Task A than with Task B. The student incorrectly concluded, however, that Task A was "
 	"more difficult for the average population than Task B. In order to be able to draw such a conclusion, "
 	"however, a different test would be required, namely one that takes into account that the five participants "

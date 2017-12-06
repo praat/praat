@@ -183,7 +183,7 @@ done: if (flag != NULL) xfree(flag);
 -- NULL, in which case numeric values are not copied. The arrays A_ptr,
 -- A_ind, and A_val are not changed on exit.
 --
--- On entry the arrays AT_ptr, AT_ind, and AT_val must be allocated,
+-- On entry the arrays AT_ptr, AT_ind, and AT_val should be allocated,
 -- but their content is ignored. On exit the routine stores a resultant
 -- nxm matrix A' in these arrays in storage-by-rows format. Note that
 -- if the parameter A_val is NULL, the array AT_val is not used.

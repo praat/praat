@@ -155,7 +155,7 @@ gsl_eigen_francis (gsl_matrix * H, gsl_vector_complex * eval,
 
   if (H->size1 != H->size2)
     {
-      GSL_ERROR ("matrix must be square to compute eigenvalues", GSL_ENOTSQR);
+      GSL_ERROR ("matrix should be square to compute eigenvalues", GSL_ENOTSQR);
     }
   else if (eval->size != H->size1)
     {
@@ -249,7 +249,7 @@ Notes: 1) If T is computed, it is stored in H on output. Otherwise,
           the diagonal of H will contain 1-by-1 and 2-by-2 blocks
           containing the eigenvalues.
 
-       2) The matrix Z must be initialized to the Hessenberg
+       2) The matrix Z should be initialized to the Hessenberg
           similarity matrix U. Or if you want the eigenvalues
           of H, initialize Z to the identity matrix.
 */
@@ -433,7 +433,7 @@ algorithm 7.5.1
 Inputs: H - upper Hessenberg matrix
         w - workspace
 
-Notes: The matrix H must be "reduced", ie: have no tiny subdiagonal
+Notes: The matrix H should be "reduced", ie: have no tiny subdiagonal
        elements. When computing the first householder reflection,
        we divide by H_{21} so it is necessary that this element
        is not zero. When a subdiagonal element becomes negligible,
@@ -680,7 +680,7 @@ of a matrix A. A small element is one that satisfies:
 
 |A_{i,i-1}| <= eps * (|A_{i,i}| + |A_{i-1,i-1}|)
 
-Inputs: A - matrix (must be at least 3-by-3)
+Inputs: A - matrix (should be at least 3-by-3)
 
 Return: row index of small subdiagonal element or 0 if not found
 

@@ -35,7 +35,7 @@ gsl_eigen_symmv_sort (gsl_vector * eval, gsl_matrix * evec,
 {
   if (evec->size1 != evec->size2)
     {
-      GSL_ERROR ("eigenvector matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("eigenvector matrix should be square", GSL_ENOTSQR);
     }
   else if (eval->size != evec->size1)
     {
@@ -105,7 +105,7 @@ gsl_eigen_hermv_sort (gsl_vector * eval, gsl_matrix_complex * evec,
 {
   if (evec->size1 != evec->size2)
     {
-      GSL_ERROR ("eigenvector matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("eigenvector matrix should be square", GSL_ENOTSQR);
     }
   else if (eval->size != evec->size1)
     {
@@ -175,7 +175,7 @@ gsl_eigen_nonsymmv_sort (gsl_vector_complex * eval,
 {
   if (evec && (evec->size1 != evec->size2))
     {
-      GSL_ERROR ("eigenvector matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("eigenvector matrix should be square", GSL_ENOTSQR);
     }
   else if (evec && (eval->size != evec->size1))
     {
@@ -263,7 +263,7 @@ gsl_eigen_genv_sort (gsl_vector_complex * alpha, gsl_vector * beta,
 {
   if (evec->size1 != evec->size2)
     {
-      GSL_ERROR ("eigenvector matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("eigenvector matrix should be square", GSL_ENOTSQR);
     }
   else if (alpha->size != evec->size1 || beta->size != evec->size1)
     {

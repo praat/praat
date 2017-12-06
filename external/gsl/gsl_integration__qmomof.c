@@ -38,7 +38,7 @@ gsl_integration_qawo_table_alloc (double omega, double L,
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("table length n must be positive integer",
+      GSL_ERROR_VAL ("table length n should be positive integer",
                         GSL_EDOM, 0);
     }
 

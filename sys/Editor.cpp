@@ -205,7 +205,7 @@ void structEditor :: v_destroy () noexcept {
 	trace (U"enter");
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	/*
-	 * The following command must be performed before the shell is destroyed.
+	 * The following command should be performed before the shell is destroyed.
 	 * Otherwise, we would be forgetting dangling command dialogs here.
 	 */
 	our menus.removeAllItems();

@@ -56,7 +56,7 @@ static const double bern[21] = {
 
 
 /* ((a)_x - 1)/x in the "small x" region where
- * cancellation must be controlled.
+ * cancellation should be controlled.
  *
  * Based on SLATEC DPOCH1().
  */
@@ -220,7 +220,7 @@ lnpoch_pos(const double a, const double x, gsl_sf_result * result)
   }
   else if(absx < 0.1*a && a > 15.0) {
     /* Be careful about the implied subtraction.
-     * Note that both a+x and and a must be
+     * Note that both a+x and and a should be
      * large here since a is not small
      * and x is not relatively large.
      * So we calculate using Stirling for Log[Gamma(z)].

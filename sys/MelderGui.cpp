@@ -189,7 +189,7 @@ static void gui_progress (double progress, const char32 *message) {
 	static GuiLabel label1 = nullptr, label2 = nullptr;
 	clock_t now = clock ();
 	if (progress <= 0.0 || progress >= 1.0 ||
-		now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
+		now - lastTime > CLOCKS_PER_SEC / 4)   // this time step should be much longer than the null-event waiting time
 	{
 		if (! dia)
 			_Melder_dia_init (& dia, & scale, & label1, & label2, & theProgressCancelButton, false);
@@ -215,7 +215,7 @@ static void * gui_monitor (double progress, const char32 *message) {
 	static GuiLabel label1 = nullptr, label2 = nullptr;
 	clock_t now = clock ();
 	if (progress <= 0.0 || progress >= 1.0 ||
-		now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
+		now - lastTime > CLOCKS_PER_SEC / 4)   // this time step should be much longer than the null-event waiting time
 	{
 		if (! dia) {
 			_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);

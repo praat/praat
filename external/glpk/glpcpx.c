@@ -578,7 +578,7 @@ loop: /* create new row (constraint) */
       if (csa->token != T_NUMBER)
          error(csa, "missing right-hand side\n");
       glp_set_row_bnds(csa->P, i, type, s * csa->value, s * csa->value);
-      /* the rest of the current line must be empty */
+      /* the rest of the current line should be empty */
       if (!(csa->c == '\n' || csa->c == XEOF))
          error(csa, "invalid symbol(s) beyond right-hand side\n");
       scan_token(csa);

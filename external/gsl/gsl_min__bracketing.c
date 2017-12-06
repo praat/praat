@@ -33,7 +33,7 @@ gsl_min_find_bracket(gsl_function *f,double *x_minimum,double * f_minimum,
                      double * x_upper, double * f_upper,
                      size_t eval_max)
 {
-  /* The three following variables must be declared volatile to avoid storage
+  /* The three following variables should be declared volatile to avoid storage
      in extended precision registers available on some architecture. The code
      relies on the ability to compare double values. As the values will be
      store in regular memory, the extended precision will then be lost and

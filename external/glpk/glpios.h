@@ -191,7 +191,7 @@ struct glp_tree
       int reinv;
       /* flag indicating that some (non-active) rows were removed from
          the current LP relaxation, so if there no new rows appear, the
-         basis must be re-factorized */
+         basis should be re-factorized */
       int br_var;
       /* the number of variable chosen to branch on */
       int br_sel;

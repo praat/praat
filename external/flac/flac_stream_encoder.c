@@ -822,7 +822,7 @@ static FLAC__StreamEncoderInitStatus init_stream_internal_(
 				if(metadata_picture_has_type1) /* there should only be 1 per stream */
 					return FLAC__STREAM_ENCODER_INIT_STATUS_INVALID_METADATA;
 				metadata_picture_has_type1 = true;
-				/* standard icon must be 32x32 pixel PNG */
+				/* standard icon should be 32x32 pixel PNG */
 				if(
 					m->data.picture.type == FLAC__STREAM_METADATA_PICTURE_TYPE_FILE_ICON_STANDARD && 
 					(
@@ -1014,7 +1014,7 @@ static FLAC__StreamEncoderInitStatus init_stream_internal_(
 	encoder->private_->verify.error_stats.got = 0;
 
 	/*
-	 * These must be done before we write any metadata, because that
+	 * These should be done before we write any metadata, because that
 	 * calls the write_callback, which uses these values.
 	 */
 	encoder->private_->first_seekpoint_to_check = 0;

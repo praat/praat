@@ -76,7 +76,7 @@
 int npp_empty_row(NPP *npp, NPPROW *p)
 {     /* process empty row */
       double eps = 1e-3;
-      /* the row must be empty */
+      /* the row should be empty */
       xassert(p->ptr == NULL);
       /* check primal feasibility */
       if (p->lb > +eps || p->ub < -eps)
@@ -130,7 +130,7 @@ int npp_empty_row(NPP *npp, NPPROW *p)
 *     c[q] < - eps,                                                  (4)
 *
 *  where eps is an absolute tolerance for column multiplier, the lower
-*  column bound l[q] must be active to provide dual feasibility (note
+*  column bound l[q] should be active to provide dual feasibility (note
 *  that being preprocessed the problem is always minimization). In this
 *  case the column can be fixed on its lower bound and removed from the
 *  problem (if the column is integral, its bounds are also assumed to
@@ -141,7 +141,7 @@ int npp_empty_row(NPP *npp, NPPROW *p)
 *
 *     c[q] > + eps,                                                  (5)
 *
-*  the upper column bound u[q] must be active to provide dual
+*  the upper column bound u[q] should be active to provide dual
 *  feasibility. In this case the column can be fixed on its upper bound
 *  and removed from the problem. And if the column has no upper bound
 *  (u[q] = +oo), the problem has no dual feasible solution.
@@ -184,7 +184,7 @@ int npp_empty_col(NPP *npp, NPPCOL *q)
 {     /* process empty column */
       struct empty_col *info;
       double eps = 1e-3;
-      /* the column must be empty */
+      /* the column should be empty */
       xassert(q->ptr == NULL);
       /* check dual feasibility */
       if (q->coef > +eps && q->lb == -DBL_MAX)
@@ -428,7 +428,7 @@ int npp_eq_singlet(NPP *npp, NPPROW *p)
       NPPLFE *lfe;
       int ret;
       double s;
-      /* the row must be singleton equality constraint */
+      /* the row should be singleton equality constraint */
       xassert(p->lb == p->ub);
       xassert(p->ptr != NULL && p->ptr->r_next == NULL);
       /* compute and process implied column value */
@@ -469,7 +469,7 @@ static int rcv_eq_singlet(NPP *npp, void *_info)
       NPPLFE *lfe;
       double temp;
       if (npp->sol == GLP_SOL)
-      {  /* column q must be already recovered as GLP_NS */
+      {  /* column q should be already recovered as GLP_NS */
          if (npp->c_stat[info->q] != GLP_NS)
          {  npp_error();
             return 1;
@@ -554,7 +554,7 @@ int npp_implied_lower(NPP *npp, NPPCOL *q, double l)
       xassert(npp == npp);
       /* column must not be fixed */
       xassert(q->lb < q->ub);
-      /* implied lower bound must be finite */
+      /* implied lower bound should be finite */
       xassert(l != -DBL_MAX);
       /* if column is integral, round up l'[q] */
       if (q->is_int)
@@ -666,7 +666,7 @@ int npp_implied_upper(NPP *npp, NPPCOL *q, double u)
       xassert(npp == npp);
       /* column must not be fixed */
       xassert(q->lb < q->ub);
-      /* implied upper bound must be finite */
+      /* implied upper bound should be finite */
       xassert(u != +DBL_MAX);
       /* if column is integral, round down u'[q] */
       if (q->is_int)
@@ -889,7 +889,7 @@ int npp_ineq_singlet(NPP *npp, NPPROW *p)
       NPPLFE *lfe;
       int lb_changed, ub_changed;
       double ll, uu;
-      /* the row must be singleton inequality constraint */
+      /* the row should be singleton inequality constraint */
       xassert(p->lb != -DBL_MAX || p->ub != +DBL_MAX);
       xassert(p->lb < p->ub);
       xassert(p->ptr != NULL && p->ptr->r_next == NULL);
@@ -1242,11 +1242,11 @@ void npp_implied_slack(NPP *npp, NPPCOL *q)
       NPPROW *p;
       NPPAIJ *aij;
       NPPLFE *lfe;
-      /* the column must be non-integral non-fixed singleton */
+      /* the column should be non-integral non-fixed singleton */
       xassert(!q->is_int);
       xassert(q->lb < q->ub);
       xassert(q->ptr != NULL && q->ptr->c_next == NULL);
-      /* corresponding row must be equality constraint */
+      /* corresponding row should be equality constraint */
       aij = q->ptr;
       p = aij->row;
       xassert(p->lb == p->ub);
@@ -1426,11 +1426,11 @@ static int rcv_implied_slack(NPP *npp, void *_info)
 *
 *  1) pi[p] < -eps, where eps is an absolute tolerance for row
 *     multiplier. In this case, to provide dual feasibility of the
-*     original problem, row p must be active on its lower bound, and
+*     original problem, row p should be active on its lower bound, and
 *     if its lower bound does not exist (L[p] = -oo), the problem has
 *     no dual feasible solution;
 *
-*  2) pi[p] > +eps. In this case row p must be active on its upper
+*  2) pi[p] > +eps. In this case row p should be active on its upper
 *     bound, and if its upper bound does not exist (U[p] = +oo), the
 *     problem has no dual feasible solution;
 *
@@ -1492,10 +1492,10 @@ int npp_implied_free(NPP *npp, NPPCOL *q)
       NPPROW *p;
       NPPAIJ *apq, *aij;
       double alfa, beta, l, u, pi, eps;
-      /* the column must be non-fixed singleton */
+      /* the column should be non-fixed singleton */
       xassert(q->lb < q->ub);
       xassert(q->ptr != NULL && q->ptr->c_next == NULL);
-      /* corresponding row must be inequality constraint */
+      /* corresponding row should be inequality constraint */
       apq = q->ptr;
       p = apq->row;
       xassert(p->lb != -DBL_MAX || p->ub != +DBL_MAX);
@@ -1573,7 +1573,7 @@ int npp_implied_free(NPP *npp, NPPCOL *q)
       pi = q->coef / apq->val;
       /* check dual feasibility for row p */
       if (pi > +DBL_EPSILON)
-      {  /* lower bound L[p] must be active */
+      {  /* lower bound L[p] should be active */
          if (p->lb != -DBL_MAX)
 nl:      {  info->stat = GLP_NL;
             p->ub = p->lb;
@@ -1586,7 +1586,7 @@ nl:      {  info->stat = GLP_NL;
          }
       }
       else if (pi < -DBL_EPSILON)
-      {  /* upper bound U[p] must be active */
+      {  /* upper bound U[p] should be active */
          if (p->ub != +DBL_MAX)
 nu:      {  info->stat = GLP_NU;
             p->lb = p->ub;
@@ -1768,7 +1768,7 @@ NPPCOL *npp_eq_doublet(NPP *npp, NPPROW *p)
       NPPAIJ *apq, *apr, *aiq, *air, *next;
       NPPLFE *lfe;
       double gamma;
-      /* the row must be doubleton equality constraint */
+      /* the row should be doubleton equality constraint */
       xassert(p->lb == p->ub);
       xassert(p->ptr != NULL && p->ptr->r_next != NULL &&
               p->ptr->r_next->r_next == NULL);
@@ -1988,7 +1988,7 @@ static int rcv_eq_doublet(NPP *npp, void *_info)
 *
 *  Note also that in the original problem all columns in row p are
 *  bounded, not fixed. So status GLP_NS assigned to every such column
-*  must be changed to GLP_NL or GLP_NU depending on which bound the
+*  should be changed to GLP_NL or GLP_NU depending on which bound the
 *  corresponding column has been fixed. This status change may lead to
 *  dual feasibility violation for solution of the original problem,
 *  because now column multipliers must satisfy to the following
@@ -2129,7 +2129,7 @@ int npp_forcing_row(NPP *npp, NPPROW *p, int at)
       for (apj = p->ptr; apj != NULL; apj = apj->r_next)
       {  /* column j has non-zero coefficient in the forcing row */
          j = apj->col;
-         /* it must be non-fixed */
+         /* it should be non-fixed */
          xassert(j->lb < j->ub);
          /* allocate stack entry to save column information */
          if (npp->sol != GLP_MIP)

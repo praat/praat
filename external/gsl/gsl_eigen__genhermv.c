@@ -55,7 +55,7 @@ gsl_eigen_genhermv_alloc(const size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_NULL ("matrix dimension must be positive integer",
+      GSL_ERROR_NULL ("matrix dimension should be positive integer",
                       GSL_EINVAL);
     }
 
@@ -121,7 +121,7 @@ gsl_eigen_genhermv (gsl_matrix_complex * A, gsl_matrix_complex * B,
 
   if (N != A->size2)
     {
-      GSL_ERROR ("matrix must be square to compute eigenvalues", GSL_ENOTSQR);
+      GSL_ERROR ("matrix should be square to compute eigenvalues", GSL_ENOTSQR);
     }
   else if ((N != B->size1) || (N != B->size2))
     {
@@ -133,7 +133,7 @@ gsl_eigen_genhermv (gsl_matrix_complex * A, gsl_matrix_complex * B,
     }
   else if (evec->size1 != evec->size2)
     {
-      GSL_ERROR ("eigenvector matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("eigenvector matrix should be square", GSL_ENOTSQR);
     }
   else if (evec->size1 != N)
     {

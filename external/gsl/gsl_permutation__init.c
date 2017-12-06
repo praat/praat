@@ -29,7 +29,7 @@ gsl_permutation_alloc (const size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("permutation length n must be positive integer",
+      GSL_ERROR_VAL ("permutation length n should be positive integer",
                         GSL_EDOM, 0);
     }
 

@@ -24,7 +24,7 @@ FUNCTION(gsl_vector, view_array) (QUALIFIER ATOMIC * base, size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n must be positive integer", 
+      GSL_ERROR_VAL ("vector length n should be positive integer", 
                      GSL_EINVAL, view);
     }
 
@@ -51,13 +51,13 @@ FUNCTION(gsl_vector, view_array_with_stride) (QUALIFIER ATOMIC * base,
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n must be positive integer", 
+      GSL_ERROR_VAL ("vector length n should be positive integer", 
                      GSL_EINVAL, view);
     }
 
   if (stride == 0)
     {
-      GSL_ERROR_VAL ("stride must be positive integer", 
+      GSL_ERROR_VAL ("stride should be positive integer", 
                      GSL_EINVAL, view);
     }
 

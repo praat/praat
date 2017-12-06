@@ -761,7 +761,7 @@ done: return ret;
 *  tableau for the basic variable, which is specified by the number k:
 *  if 1 <= k <= m, x[k] is k-th auxiliary variable; if m+1 <= k <= m+n,
 *  x[k] is (k-m)-th structural variable, where m is number of rows, and
-*  n is number of columns. The current basis must be available.
+*  n is number of columns. The current basis should be available.
 *
 *  The routine stores column indices and numerical values of non-zero
 *  elements of the computed row using sparse format to the locations
@@ -857,7 +857,7 @@ int glp_eval_tab_row(glp_prob *lp, int k, int ind[], double val[])
       else
          i = glp_get_col_bind(lp, k-m);
       if (i == 0)
-         xerror("glp_eval_tab_row: k = %d; variable must be basic", k);
+         xerror("glp_eval_tab_row: k = %d; variable should be basic", k);
       xassert(1 <= i && i <= m);
       /* allocate working arrays */
       rho = xcalloc(1+m, sizeof(double));
@@ -912,7 +912,7 @@ int glp_eval_tab_row(glp_prob *lp, int k, int ind[], double val[])
 *  table for the non-basic variable, which is specified by the number k:
 *  if 1 <= k <= m, x[k] is k-th auxiliary variable; if m+1 <= k <= m+n,
 *  x[k] is (k-m)-th structural variable, where m is number of rows, and
-*  n is number of columns. The current basis must be available.
+*  n is number of columns. The current basis should be available.
 *
 *  The routine stores row indices and numerical values of non-zero
 *  elements of the computed column using sparse format to the locations
@@ -971,7 +971,7 @@ int glp_eval_tab_col(glp_prob *lp, int k, int ind[], double val[])
       else
          stat = glp_get_col_stat(lp, k-m);
       if (stat == GLP_BS)
-         xerror("glp_eval_tab_col: k = %d; variable must be non-basic",
+         xerror("glp_eval_tab_col: k = %d; variable should be non-basic",
             k);
       /* obtain column N[k] with negative sign */
       col = xcalloc(1+m, sizeof(double));
@@ -1281,7 +1281,7 @@ int glp_transform_col(glp_prob *P, int len, int ind[], double val[])
 *  explicitly specified column of the simplex table.
 *
 *  The current basic solution associated with the LP problem object
-*  must be primal feasible.
+*  should be primal feasible.
 *
 *  The explicitly specified column of the simplex table shows how the
 *  basic variables xB depend on some non-basic variable x (which is not
@@ -1425,7 +1425,7 @@ up:      {  /* xB[i] has an upper bound */
 *  explicitly specified row of the simplex table.
 *
 *  The current basic solution associated with the LP problem object
-*  must be dual feasible.
+*  should be dual feasible.
 *
 *  The explicitly specified row of the simplex table is a linear form
 *  that shows how some basic variable x (which is not necessarily
@@ -1564,10 +1564,10 @@ int glp_dual_rtest(glp_prob *P, int len, const int ind[],
 *  (i.e. its auxiliary variable becomes non-basic).
 *
 *  The current basic solution associated with the problem object passed
-*  to the routine must be dual feasible, and its primal components must
+*  to the routine should be dual feasible, and its primal components must
 *  be defined.
 *
-*  The row to be analyzed must be previously transformed either with
+*  The row to be analyzed should be previously transformed either with
 *  the routine glp_eval_tab_row (if the row is in the problem object)
 *  or with the routine glp_transform_row (if the row is external, i.e.
 *  not in the problem object). This is needed to express the row only
@@ -1808,7 +1808,7 @@ int main(void)
 *  1 <= k <= m means auxiliary variable of corresponding row while
 *  m+1 <= k <= m+n means structural variable (column).
 *
-*  Note that the current basic solution must be optimal, and the basis
+*  Note that the current basic solution should be optimal, and the basis
 *  factorization must exist.
 *
 *  Results of the analysis have the following meaning.
@@ -1955,7 +1955,7 @@ store:   /* store analysis results */
 *  1 <= k <= m means auxiliary variable of corresponding row while
 *  m+1 <= k <= m+n means structural variable (column).
 *
-*  Note that the current basic solution must be optimal, and the basis
+*  Note that the current basic solution should be optimal, and the basis
 *  factorization must exist.
 *
 *  Results of the analysis have the following meaning.

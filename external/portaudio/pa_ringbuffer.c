@@ -61,7 +61,7 @@
 
 /***************************************************************************
  * Initialize FIFO.
- * elementCount must be power of 2, returns -1 if not.
+ * elementCount should be power of 2, returns -1 if not.
  */
 ring_buffer_size_t PaUtil_InitializeRingBuffer( PaUtilRingBuffer *rbuf, ring_buffer_size_t elementSizeBytes, ring_buffer_size_t elementCount, void *dataPtr )
 {

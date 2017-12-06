@@ -37,7 +37,7 @@
 *  DESCRIPTION
 *
 *  The routine ios_process_cuts analyzes each cut currently stored in
-*  the local cut pool, which must be non-empty, and either adds the cut
+*  the local cut pool, which should be non-empty, and either adds the cut
 *  to the current subproblem or just discards it. All cuts are assumed
 *  to be locally valid. On exit the local cut pool remains unchanged.
 *

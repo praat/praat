@@ -253,7 +253,7 @@ int delete_espeak_command(t_espeak_command *the_command)
 		case ET_TERMINATED_MSG:
 		{
 			// if the terminated msg is pending,
-			// it must be processed here for informing the calling program
+			// it should be processed here for informing the calling program
 			// that its message is finished.
 			// This can be important for cleaning the related user data.
 			t_espeak_terminated_msg *data = &(the_command->u.my_terminated_msg);

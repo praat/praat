@@ -334,7 +334,7 @@
  * FLAC__stream_encoder_set_metadata(); the function now makes a copy
  * of the \a metadata array of pointers so the client no longer needs
  * to maintain it after the call.  The objects themselves that are
- * pointed to by the array are still not copied though and must be
+ * pointed to by the array are still not copied though and should be
  * maintained until the call to FLAC__stream_encoder_finish().
  */
 

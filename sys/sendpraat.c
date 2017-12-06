@@ -78,7 +78,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
  *    This program must have been built with the Praat shell (the most common such programs are Praat and ALS).
  *    On Unix, the program name is usually all lower case, e.g. "praat" or "als", or the name of any other program.
  *    On Windows, you can use either "Praat", "praat", or the name of any other program.
- *    On Macintosh, 'programName' must be "Praat", "praat", "ALS", or the Macintosh signature of any other program.
+ *    On Macintosh, 'programName' should be "Praat", "praat", "ALS", or the Macintosh signature of any other program.
  * 'timeOut' is the time (in seconds) after which sendpraat will return with a time-out error message
  *    if the receiving program sends no notification of completion.
  *    On Unix and Macintosh, the message is sent asynchronously if 'timeOut' is 0;

@@ -25,12 +25,12 @@ FUNCTION (gsl_matrix, alloc) (const size_t n1, const size_t n2)
 
   if (n1 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n1 must be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n1 should be positive integer",
                         GSL_EINVAL, 0);
     }
   else if (n2 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n2 must be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n2 should be positive integer",
                         GSL_EINVAL, 0);
     }
 
@@ -93,17 +93,17 @@ FUNCTION (gsl_matrix, alloc_from_block) (TYPE(gsl_block) * block,
 
   if (n1 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n1 must be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n1 should be positive integer",
                         GSL_EINVAL, 0);
     }
   else if (n2 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n2 must be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n2 should be positive integer",
                         GSL_EINVAL, 0);
     }
   else if (d2 < n2)
     {
-      GSL_ERROR_VAL ("matrix dimension d2 must be greater than n2",
+      GSL_ERROR_VAL ("matrix dimension d2 should be greater than n2",
                         GSL_EINVAL, 0);
     }
   else if (block->size < offset + n1 * d2)
@@ -142,12 +142,12 @@ FUNCTION (gsl_matrix, alloc_from_matrix) (TYPE(gsl_matrix) * mm,
 
   if (n1 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n1 must be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n1 should be positive integer",
                         GSL_EINVAL, 0);
     }
   else if (n2 == 0)
     {
-      GSL_ERROR_VAL ("matrix dimension n2 must be positive integer",
+      GSL_ERROR_VAL ("matrix dimension n2 should be positive integer",
                         GSL_EINVAL, 0);
     }
   else if (k1 + n1 > mm->size1)

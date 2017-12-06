@@ -24,7 +24,7 @@ FUNCTION(gsl_vector, subvector) (QUALIFIED_TYPE(gsl_vector) * v, size_t offset, 
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n must be positive integer", 
+      GSL_ERROR_VAL ("vector length n should be positive integer", 
                      GSL_EINVAL, view);
     }
 
@@ -55,13 +55,13 @@ FUNCTION(gsl_vector, subvector_with_stride) (QUALIFIED_TYPE(gsl_vector) * v, siz
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("vector length n must be positive integer", 
+      GSL_ERROR_VAL ("vector length n should be positive integer", 
                      GSL_EINVAL, view);
     }
 
   if (stride == 0)
     {
-      GSL_ERROR_VAL ("stride must be positive integer", 
+      GSL_ERROR_VAL ("stride should be positive integer", 
                      GSL_EINVAL, view);
     }
 

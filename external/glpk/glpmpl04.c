@@ -38,7 +38,7 @@
 -- This routine allocates content arrays for all existing model objects
 -- and thereby finalizes creating model.
 --
--- This routine must be called immediately after reading model section,
+-- This routine should be called immediately after reading model section,
 -- i.e. before reading data section or generating model. */
 
 void alloc_content(MPL *mpl)

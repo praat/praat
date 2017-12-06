@@ -652,7 +652,7 @@ static void Melder_checkNistFile (FILE *f, integer *numberOfChannels, int *encod
 				*encoding = Melder_POLYPHONE;
 			else
 				*encoding = Melder_SHORTEN;
-		else if (strnequ (sval, "alaw", 4))   // must be after previous, because some files have "alaw,embedded..."
+		else if (strnequ (sval, "alaw", 4))   // should be after previous, because some files have "alaw,embedded..."
 			*encoding = Melder_ALAW;
 	}
 }

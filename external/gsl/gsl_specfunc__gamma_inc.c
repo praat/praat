@@ -483,7 +483,7 @@ gsl_sf_gamma_inc_Q_e(const double a, const double x, gsl_sf_result * result)
     return gamma_inc_Q_asymp_unif(a, x, result);
   }
   else if(a < 0.2 && x < 5.0) {
-    /* Cancellations at small a must be handled
+    /* Cancellations at small a should be handled
      * analytically; x should not be too big
      * either since the series terms grow
      * with x and log(x).

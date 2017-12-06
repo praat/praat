@@ -221,7 +221,7 @@ typedef enum {
 	/**< An error occurred in the underlying Ogg layer.  */
 
 	FLAC__STREAM_DECODER_SEEK_ERROR,
-	/**< An error occurred while seeking.  The decoder must be flushed
+	/**< An error occurred while seeking.  The decoder should be flushed
 	 * with FLAC__stream_decoder_flush() or reset with
 	 * FLAC__stream_decoder_reset() before decoding can continue.
 	 */
@@ -236,7 +236,7 @@ typedef enum {
 
 	FLAC__STREAM_DECODER_UNINITIALIZED
 	/**< The decoder is in the uninitialized state; one of the
-	 * FLAC__stream_decoder_init_*() functions must be called before samples
+	 * FLAC__stream_decoder_init_*() functions should be called before samples
 	 * can be processed.
 	 */
 
@@ -466,12 +466,12 @@ typedef struct FLAC__StreamDecoder {   // ppgb 20071120
 
 /** Signature for the read callback.
  *
- *  A function pointer matching this signature must be passed to
+ *  A function pointer matching this signature should be passed to
  *  FLAC__stream_decoder_init*_stream(). The supplied function will be
  *  called when the decoder needs more input data.  The address of the
  *  buffer to be filled is supplied, along with the number of bytes the
  *  buffer can hold.  The callback may choose to supply less data and
- *  modify the byte count but must be careful not to overflow the buffer.
+ *  modify the byte count but should be careful not to overflow the buffer.
  *  The callback then returns a status code chosen from
  *  FLAC__StreamDecoderReadStatus.
  *
@@ -655,7 +655,7 @@ typedef FLAC__bool (*FLAC__StreamDecoderEofCallback)(const FLAC__StreamDecoder *
 
 /** Signature for the write callback.
  *
- *  A function pointer matching this signature must be passed to one of
+ *  A function pointer matching this signature should be passed to one of
  *  the FLAC__stream_decoder_init_*() functions.
  *  The supplied function will be called when the decoder has decoded a
  *  single audio frame.  The decoder will pass the frame metadata as well
@@ -683,7 +683,7 @@ typedef FLAC__StreamDecoderWriteStatus (*FLAC__StreamDecoderWriteCallback)(const
 
 /** Signature for the metadata callback.
  *
- *  A function pointer matching this signature must be passed to one of
+ *  A function pointer matching this signature should be passed to one of
  *  the FLAC__stream_decoder_init_*() functions.
  *  The supplied function will be called when the decoder has decoded a
  *  metadata block.  In a valid FLAC file there will always be one
@@ -710,7 +710,7 @@ typedef void (*FLAC__StreamDecoderMetadataCallback)(const FLAC__StreamDecoder *d
 
 /** Signature for the error callback.
  *
- *  A function pointer matching this signature must be passed to one of
+ *  A function pointer matching this signature should be passed to one of
  *  the FLAC__stream_decoder_init_*() functions.
  *  The supplied function will be called whenever an error occurs during
  *  decoding.
@@ -1537,7 +1537,7 @@ FLAC_API FLAC__bool FLAC__stream_decoder_skip_single_frame(FLAC__StreamDecoder *
  *  this, the next write callback may contain a partial block.  The
  *  client must support seeking the input or this function will fail
  *  and return \c false.  Furthermore, if the decoder state is
- *  \c FLAC__STREAM_DECODER_SEEK_ERROR, then the decoder must be flushed
+ *  \c FLAC__STREAM_DECODER_SEEK_ERROR, then the decoder should be flushed
  *  with FLAC__stream_decoder_flush() or reset with
  *  FLAC__stream_decoder_reset() before decoding can continue.
  *

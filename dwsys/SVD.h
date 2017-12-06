@@ -79,7 +79,7 @@ void SVD_synthesize (SVD me, integer sv_from, integer sv_to, double **m);
 	Synthesize matrix as U D(sv_from:sv_to) V'.
 	(The synthesized matrix is an approximation of the svd'ed matrix with
 	only a selected number of sv's).
-	Matrix m is [numberOfRows x numberOfColumns] and must be allocated
+	Matrix m is [numberOfRows x numberOfColumns] and should be allocated
 	by caller!
 */
 

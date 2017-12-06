@@ -130,7 +130,7 @@ int mp3_recognize (int nread, const char *data)
 	if (bytes [0] == 'I' && bytes [1] == 'D' && bytes [2] == '3')
 		return 1;
 
-	/* Otherwise the beginning of the file must be an MP3 frame */
+	/* Otherwise the beginning of the file should be an MP3 frame */
 	if (bytes [0] != 0xFF)
 		return 0;
 

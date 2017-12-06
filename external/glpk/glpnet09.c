@@ -114,7 +114,7 @@ int kellerman(int n, int (*func)(void *info, int i, int ind[]),
       memset(&V->pos[1], 0, sizeof(int) * n);
       /* main loop */
       for (i = 1; i <= n; i++)
-      {  /* W must be empty */
+      {  /* W should be empty */
          xassert(W->size == 0);
          /* W := { j : i > j and (i,j) in E } */
          len = func(info, i, W->list);
@@ -136,7 +136,7 @@ int kellerman(int n, int (*func)(void *info, int i, int ind[]),
             continue;
          }
          /* try to include vertex i into existing cliques */
-         /* V must be empty */
+         /* V should be empty */
          xassert(V->size == 0);
          /* k is the number of cliques found so far */
          k = H->nv - n;

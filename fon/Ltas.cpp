@@ -262,7 +262,7 @@ autoLtas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 	try {
 		integer numberOfBands = Melder_iceiling ((my xmax - my xmin) / bandWidth);
 		if (bandWidth <= my dx)
-			Melder_throw (U"Bandwidth must be greater than ", my dx, U".");
+			Melder_throw (U"Bandwidth should be greater than ", my dx, U".");
 		autoLtas thee = Thing_new (Ltas);
 		Matrix_init (thee.get(), my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1.0, 1.0, 1, 1.0, 1.0);
 		for (integer iband = 1; iband <= numberOfBands; iband ++) {

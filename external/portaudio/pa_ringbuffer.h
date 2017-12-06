@@ -59,10 +59,10 @@
  to the ring buffer, another thread or callback reads from it).
 
  The PaUtilRingBuffer structure manages a ring buffer containing N 
- elements, where N must be a power of two. An element may be any size 
+ elements, where N should be a power of two. An element may be any size 
  (specified in bytes).
 
- The memory area used to store the buffer elements must be allocated by 
+ The memory area used to store the buffer elements should be allocated by 
  the client prior to calling PaUtil_InitializeRingBuffer() and must outlive
  the use of the ring buffer.
  
@@ -107,10 +107,10 @@ typedef struct PaUtilRingBuffer
 
  @param elementSizeBytes The size of a single data element in bytes.
 
- @param elementCount The number of elements in the buffer (must be a power of 2).
+ @param elementCount The number of elements in the buffer (should be a power of 2).
 
  @param dataPtr A pointer to a previously allocated area where the data
- will be maintained.  It must be elementCount*elementSizeBytes long.
+ will be maintained.  It should be elementCount*elementSizeBytes long.
 
  @return -1 if elementCount is not a power of 2, otherwise 0.
 */

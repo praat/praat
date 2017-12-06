@@ -69,7 +69,7 @@ typedef enum PaWasapiFlags
              method can only provide 15-20ms latency. */
     paWinWasapiPolling                  = (1 << 3),
 
-    /* forces custom thread priority setting. must be used if PaWasapiStreamInfo::threadPriority 
+    /* forces custom thread priority setting. should be used if PaWasapiStreamInfo::threadPriority 
        is set to custom value. */
     paWinWasapiThreadPriority           = (1 << 4)
 }
@@ -351,7 +351,7 @@ PaError PaWasapi_GetJackDescription(PaDeviceIndex nDevice, int jindex, PaWasapiJ
 
         2) Poll-Driven:
         Polling is another 2-nd method to operate with WASAPI. It is less efficient than Event-Driven
-        and provides latency at around 10-13ms. Polling must be used to overcome a system bug
+        and provides latency at around 10-13ms. Polling should be used to overcome a system bug
         under Windows Vista x64 when application is WOW64(32-bit) and Event-Driven method simply 
         times out (event handle is never signalled on buffer completion). Please note, such WOW64 bug 
         does not exist in Vista x86 or Windows 7.

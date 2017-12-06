@@ -207,7 +207,7 @@ autoRoots Polynomial_to_Roots (Polynomial me);
 
 double Polynomial_findOneSimpleRealRoot_nr (Polynomial me, double xmin, double xmax);
 double Polynomial_findOneSimpleRealRoot_ridders (Polynomial me, double xmin, double xmax);
-/* Preconditions: there must be exactly one root in the [xmin, xmax] interval;
+/* Preconditions: there should be exactly one root in the [xmin, xmax] interval;
  * Root will be found by newton-raphson with bisecting
  */
 

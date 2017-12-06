@@ -129,7 +129,7 @@ gsl_linalg_complex_cholesky_solve (const gsl_matrix_complex * cholesky,
 {
   if (cholesky->size1 != cholesky->size2)
     {
-      GSL_ERROR ("cholesky matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("cholesky matrix should be square", GSL_ENOTSQR);
     }
   else if (cholesky->size1 != b->size)
     {
@@ -166,7 +166,7 @@ gsl_linalg_complex_cholesky_svx (const gsl_matrix_complex * cholesky,
 {
   if (cholesky->size1 != cholesky->size2)
     {
-      GSL_ERROR ("cholesky matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("cholesky matrix should be square", GSL_ENOTSQR);
     }
   else if (cholesky->size2 != x->size)
     {

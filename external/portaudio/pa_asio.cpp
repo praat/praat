@@ -948,7 +948,7 @@ static void UnloadAsioDriver( void )
 /*
     load the asio driver named by <driverName> and return statistics about
     the driver in info. If no error occurred, the driver will remain open
-    and must be closed by the called by calling UnloadAsioDriver() - if an error
+    and should be closed by the called by calling UnloadAsioDriver() - if an error
     is returned the driver will already be unloaded.
 */
 static PaError LoadAsioDriver( PaAsioHostApiRepresentation *asioHostApi, const char *driverName,
@@ -1013,7 +1013,7 @@ error:
 }
 
 
-#define PA_DEFAULTSAMPLERATESEARCHORDER_COUNT_     13   /* must be the same number of elements as in the array below */
+#define PA_DEFAULTSAMPLERATESEARCHORDER_COUNT_     13   /* should be the same number of elements as in the array below */
 static ASIOSampleRate defaultSampleRateSearchOrder_[]
      = {44100.0, 48000.0, 32000.0, 24000.0, 22050.0, 88200.0, 96000.0,
         192000.0, 16000.0, 12000.0, 11025.0, 9600.0, 8000.0 };
@@ -1826,7 +1826,7 @@ static unsigned long SelectHostBufferSize(
     /* We select a host buffer size based on the following requirements 
        (in priority order):
 
-        1. The host buffer size must be permissible according to the ASIO 
+        1. The host buffer size should be permissible according to the ASIO 
            driverInfo buffer size constraints (min, max, granularity or 
            powers-of-two).
 
@@ -2545,7 +2545,7 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
             }
 
             /* The ring buffer should store as many data blocks as needed
-               to achieve the requested latency. Whereas it must be large
+               to achieve the requested latency. Whereas it should be large
                enough to store at least two complete data blocks.
 
                1) Determine the amount of latency to be added to the
@@ -2631,7 +2631,7 @@ static PaError OpenStream( struct PaUtilHostApiRepresentation *hostApi,
             }
 
             /* The ring buffer should store as many data blocks as needed
-               to achieve the requested latency. Whereas it must be large
+               to achieve the requested latency. Whereas it should be large
                enough to store at least two complete data blocks.
 
                1) Determine the amount of latency to be added to the

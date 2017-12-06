@@ -188,7 +188,7 @@ static void UiField_widgetToValue (UiField me) {
 					char32 clean [40];
 					str32cpy (clean, Melder_double (my realValue));
 					/*
-						If the default value is overtly real (rather than integer), the shown value must be overtly real as well.
+						If the default value is overtly real (rather than integer), the shown value should be overtly real as well.
 					*/
 					if ((str32chr (my stringDefaultValue, U'.') || str32chr (my stringDefaultValue, U'e')) &&
 						! (str32chr (clean, U'.') || str32chr (clean, U'e')))
@@ -1117,7 +1117,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
 				Melder_throw (U"Argument \"", my name, U"\" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
-				Melder_throw (U"Argument \"", my name, U"\" must be greater than 0.");
+				Melder_throw (U"Argument \"", my name, U"\" should be greater than 0.");
 			if (my realVariable) *my realVariable = my realValue;
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (arg -> which == Stackel_STRING) {
@@ -1138,7 +1138,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			} else if (arg -> which == Stackel_NUMBER) {
 				my integerValue = Melder_iround (arg -> number);
 				if (my type == UI_NATURAL && my integerValue < 1)
-					Melder_throw (U"Argument \"", my name, U"\" must be a positive whole number.");
+					Melder_throw (U"Argument \"", my name, U"\" should be a positive whole number.");
 			} else {
 				Melder_throw (U"Argument \"", my name, U"\" should be a number, not ", Stackel_whichText (arg), U".");
 			}
@@ -1277,7 +1277,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
 				Melder_throw (U"\"", my name, U"\" has the value \"undefined\".");
 			if (my type == UI_POSITIVE && my realValue <= 0.0)
-				Melder_throw (U"\"", my name, U"\" must be greater than 0.");
+				Melder_throw (U"\"", my name, U"\" should be greater than 0.");
 			if (my realVariable) *my realVariable = my realValue;
 		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
 			if (str32spn (string, U" \t") == str32len (string))
@@ -1294,7 +1294,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				my integerValue = Melder_iround (realValue);
 			}
 			if (my type == UI_NATURAL && my integerValue < 1)
-				Melder_throw (U"\"", my name, U"\" must be a positive whole number.");
+				Melder_throw (U"\"", my name, U"\" should be a positive whole number.");
 			if (my integerVariable) *my integerVariable = my integerValue;
 		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			Melder_free (my stringValue);

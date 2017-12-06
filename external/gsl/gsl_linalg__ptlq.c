@@ -80,15 +80,15 @@ gsl_linalg_PTLQ_decomp (gsl_matrix * A, gsl_vector * tau, gsl_permutation * p, i
 
   if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
     }
   else if (p->size != N)
     {
-      GSL_ERROR ("permutation size must be N", GSL_EBADLEN);
+      GSL_ERROR ("permutation size should be N", GSL_EBADLEN);
     }
   else if (norm->size != N)
     {
-      GSL_ERROR ("norm size must be N", GSL_EBADLEN);
+      GSL_ERROR ("norm size should be N", GSL_EBADLEN);
     }
   else
     {
@@ -202,23 +202,23 @@ gsl_linalg_PTLQ_decomp2 (const gsl_matrix * A, gsl_matrix * q, gsl_matrix * r, g
 
   if (q->size1 != M || q->size2 !=M) 
     {
-      GSL_ERROR ("q must be M x M", GSL_EBADLEN);
+      GSL_ERROR ("q should be M x M", GSL_EBADLEN);
     }
   else if (r->size1 != N || r->size2 !=M)
     {
-      GSL_ERROR ("r must be N x M", GSL_EBADLEN);
+      GSL_ERROR ("r should be N x M", GSL_EBADLEN);
     }
   else if (tau->size != GSL_MIN (M, N))
     {
-      GSL_ERROR ("size of tau must be MIN(M,N)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be MIN(M,N)", GSL_EBADLEN);
     }
   else if (p->size != N)
     {
-      GSL_ERROR ("permutation size must be N", GSL_EBADLEN);
+      GSL_ERROR ("permutation size should be N", GSL_EBADLEN);
     }
   else if (norm->size != N)
     {
-      GSL_ERROR ("norm size must be N", GSL_EBADLEN);
+      GSL_ERROR ("norm size should be N", GSL_EBADLEN);
     }
 
   gsl_matrix_memcpy (r, A);
@@ -250,7 +250,7 @@ gsl_linalg_PTLQ_solve_T (const gsl_matrix * QR,
 {
   if (QR->size1 != QR->size2)
     {
-      GSL_ERROR ("QR matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("QR matrix should be square", GSL_ENOTSQR);
     }
   else if (QR->size2 != p->size)
     {
@@ -282,7 +282,7 @@ gsl_linalg_PTLQ_svx_T (const gsl_matrix * LQ,
 {
   if (LQ->size1 != LQ->size2)
     {
-      GSL_ERROR ("LQ matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("LQ matrix should be square", GSL_ENOTSQR);
     }
   else if (LQ->size2 != p->size)
     {
@@ -350,7 +350,7 @@ gsl_linalg_PTLQ_Lsolve_T (const gsl_matrix * LQ,
 {
   if (LQ->size1 != LQ->size2)
     {
-      GSL_ERROR ("LQ matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("LQ matrix should be square", GSL_ENOTSQR);
     }
   else if (LQ->size1 != b->size)
     {
@@ -388,7 +388,7 @@ gsl_linalg_PTLQ_Lsvx_T (const gsl_matrix * LQ,
 {
   if (LQ->size1 != LQ->size2)
     {
-      GSL_ERROR ("LQ matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("LQ matrix should be square", GSL_ENOTSQR);
     }
   else if (LQ->size2 != x->size)
     {

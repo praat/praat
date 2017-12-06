@@ -114,7 +114,7 @@ solve_tridiag(
     free (gamma);
 
   if (status == GSL_EZERODIV) {
-    GSL_ERROR ("matrix must be positive definite", status);
+    GSL_ERROR ("matrix should be positive definite", status);
   }
 
   return status;
@@ -188,7 +188,7 @@ solve_tridiag_nonsym(
     free (alpha);
 
   if (status == GSL_EZERODIV) {
-    GSL_ERROR ("matrix must be positive definite", status);
+    GSL_ERROR ("matrix should be positive definite", status);
   }
 
   return status;
@@ -307,7 +307,7 @@ solve_cyc_tridiag(
     free (delta);
 
   if (status == GSL_EZERODIV) {
-    GSL_ERROR ("matrix must be positive definite", status);
+    GSL_ERROR ("matrix should be positive definite", status);
   }
 
   return status;
@@ -435,7 +435,7 @@ int solve_cyc_tridiag_nonsym(
     free (alpha);
 
   if (status == GSL_EZERODIV) {
-    GSL_ERROR ("matrix must be positive definite", status);
+    GSL_ERROR ("matrix should be positive definite", status);
   }
 
   return status;
@@ -528,7 +528,7 @@ gsl_linalg_solve_symm_cyc_tridiag(
     }
   else if (diag->size < 3)
     {
-      GSL_ERROR ("size of cyclic system must be 3 or more", GSL_EBADLEN);
+      GSL_ERROR ("size of cyclic system should be 3 or more", GSL_EBADLEN);
     }
   else 
     {
@@ -566,7 +566,7 @@ gsl_linalg_solve_cyc_tridiag(
     }
   else if (diag->size < 3)
     {
-      GSL_ERROR ("size of cyclic system must be 3 or more", GSL_EBADLEN);
+      GSL_ERROR ("size of cyclic system should be 3 or more", GSL_EBADLEN);
     }
   else 
     {

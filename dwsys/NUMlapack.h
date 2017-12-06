@@ -69,7 +69,7 @@ We have changed the following things:
    'increment' of size 'number of columns' to approach the next elements of the
    vector.
 3. In C, array storage is row wise. The leading dimension hack in many routines
-   therefor works opposite to the fortran implementation: it must be used for
+   therefor works opposite to the fortran implementation: it should be used for
    indexing COLUMNS instead of rows (lda =1 to index by row, lda=n to index by
    column). This also implies that the leading dimension of a matrix equals the
    number of columns.

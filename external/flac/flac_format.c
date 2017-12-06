@@ -418,7 +418,7 @@ FLAC_API FLAC__bool FLAC__format_cuesheet_is_legal(const FLAC__StreamMetadata_Cu
 			return false;
 		}
 		if(cue_sheet->lead_in % 588 != 0) {
-			if(violation) *violation = "CD-DA cue sheet lead-in length must be evenly divisible by 588 samples";
+			if(violation) *violation = "CD-DA cue sheet lead-in length should be evenly divisible by 588 samples";
 			return false;
 		}
 	}
@@ -441,7 +441,7 @@ FLAC_API FLAC__bool FLAC__format_cuesheet_is_legal(const FLAC__StreamMetadata_Cu
 
 		if(check_cd_da_subset) {
 			if(!((cue_sheet->tracks[i].number >= 1 && cue_sheet->tracks[i].number <= 99) || cue_sheet->tracks[i].number == 170)) {
-				if(violation) *violation = "CD-DA cue sheet track number must be 1-99 or 170";
+				if(violation) *violation = "CD-DA cue sheet track number should be 1-99 or 170";
 				return false;
 			}
 		}
@@ -449,9 +449,9 @@ FLAC_API FLAC__bool FLAC__format_cuesheet_is_legal(const FLAC__StreamMetadata_Cu
 		if(check_cd_da_subset && cue_sheet->tracks[i].offset % 588 != 0) {
 			if(violation) {
 				if(i == cue_sheet->num_tracks-1) /* the lead-out track... */
-					*violation = "CD-DA cue sheet lead-out offset must be evenly divisible by 588 samples";
+					*violation = "CD-DA cue sheet lead-out offset should be evenly divisible by 588 samples";
 				else
-					*violation = "CD-DA cue sheet track offset must be evenly divisible by 588 samples";
+					*violation = "CD-DA cue sheet track offset should be evenly divisible by 588 samples";
 			}
 			return false;
 		}
@@ -463,14 +463,14 @@ FLAC_API FLAC__bool FLAC__format_cuesheet_is_legal(const FLAC__StreamMetadata_Cu
 			}
 
 			if(cue_sheet->tracks[i].indices[0].number > 1) {
-				if(violation) *violation = "cue sheet track's first index number must be 0 or 1";
+				if(violation) *violation = "cue sheet track's first index number should be 0 or 1";
 				return false;
 			}
 		}
 
 		for(j = 0; j < cue_sheet->tracks[i].num_indices; j++) {
 			if(check_cd_da_subset && cue_sheet->tracks[i].indices[j].offset % 588 != 0) {
-				if(violation) *violation = "CD-DA cue sheet track index offset must be evenly divisible by 588 samples";
+				if(violation) *violation = "CD-DA cue sheet track index offset should be evenly divisible by 588 samples";
 				return false;
 			}
 
@@ -502,7 +502,7 @@ FLAC_API FLAC__bool FLAC__format_picture_is_legal(const FLAC__StreamMetadata_Pic
 	for(b = picture->description; *b; ) {
 		unsigned n = utf8len_(b);
 		if(n == 0) {
-			if(violation) *violation = "description string must be valid UTF-8";
+			if(violation) *violation = "description string should be valid UTF-8";
 			return false;
 		}
 		b += n;

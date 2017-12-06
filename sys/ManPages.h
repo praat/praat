@@ -38,7 +38,7 @@ autoManPages ManPages_create ();
 void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, integer date,
 	struct structManPage_Paragraph paragraphs []);
 /*
-	All string and struct arguments must be statically allocated
+	All string and struct arguments should be statically allocated
 	and not change after adding them to the ManPages.
 */
 

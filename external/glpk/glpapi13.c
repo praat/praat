@@ -166,7 +166,7 @@ err:        xerror("glp_ios_next_node: p = %d; invalid subproblem refer"
                "ence number\n", p);
          node = tree->slot[p].node;
          if (node == NULL) goto err;
-         /* the specified subproblem must be active */
+         /* the specified subproblem should be active */
          if (node->count != 0)
             xerror("glp_ios_next_node: p = %d; subproblem not in the ac"
                "tive list\n", p);
@@ -213,7 +213,7 @@ err:        xerror("glp_ios_prev_node: p = %d; invalid subproblem refer"
                "ence number\n", p);
          node = tree->slot[p].node;
          if (node == NULL) goto err;
-         /* the specified subproblem must be active */
+         /* the specified subproblem should be active */
          if (node->count != 0)
             xerror("glp_ios_prev_node: p = %d; subproblem not in the ac"
                "tive list\n", p);
@@ -582,11 +582,11 @@ err:     xerror("glp_ios_select_node: p = %d; invalid subproblem refere"
             "nce number\n", p);
       node = tree->slot[p].node;
       if (node == NULL) goto err;
-      /* the specified subproblem must be active */
+      /* the specified subproblem should be active */
       if (node->count != 0)
          xerror("glp_ios_select_node: p = %d; subproblem not in the act"
             "ive list\n", p);
-      /* no subproblem must be selected yet */
+      /* no subproblem should be selected yet */
       if (tree->next_p != 0)
          xerror("glp_ios_select_node: subproblem already selected\n");
       /* select the specified subproblem to continue the search */
@@ -641,7 +641,7 @@ int glp_ios_heur_sol(glp_tree *tree, const double x[])
       for (j = 1; j <= n; j++)
       {  GLPCOL *col = mip->col[j];
          if (col->kind == GLP_IV)
-         {  /* provided value must be integral */
+         {  /* provided value should be integral */
             if (x[j] != floor(x[j])) return 1;
          }
          obj += col->coef * x[j];

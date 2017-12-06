@@ -99,7 +99,7 @@ gsl_wavelet_workspace_alloc (size_t n)
 
   if (n == 0)
     {
-      GSL_ERROR_VAL ("length n must be positive integer", GSL_EDOM, 0);
+      GSL_ERROR_VAL ("length n should be positive integer", GSL_EDOM, 0);
     }
 
   work = (gsl_wavelet_workspace *) malloc (sizeof (gsl_wavelet_workspace));

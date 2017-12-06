@@ -340,7 +340,7 @@ MAN_BEGIN (U"Formant: Track...", U"ppgb", 20020308)
 INTRO (U"A command to extract a specified number of formant tracks from each selected @Formant object. "
 	"The tracks represent the cheapest paths through the measured formant values in consecutive frames.")
 ENTRY (U"How to use")
-NORMAL (U"In order to be capable of producing three tracks (i.e. F1, F2, and F3), there must be at least "
+NORMAL (U"In order to be capable of producing three tracks (i.e. F1, F2, and F3), there should be at least "
 	"three formant candidates in %every frame of the Formant object. The typical use of "
 	"this command, therefore, is to analyse five formants with @@Sound: To Formant (burg)...@ "
 	"and then use the tracking command to extract three tracks.")

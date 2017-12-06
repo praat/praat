@@ -33,22 +33,22 @@ gsl_integration_qaws_table_alloc (double alpha, double beta, int mu, int nu)
 
   if (alpha < -1.0)
     {
-      GSL_ERROR_VAL ("alpha must be greater than -1.0", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("alpha should be greater than -1.0", GSL_EINVAL, 0);
     }
 
   if (beta < -1.0)
     {
-      GSL_ERROR_VAL ("beta must be greater than -1.0", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("beta should be greater than -1.0", GSL_EINVAL, 0);
     }
 
   if (mu != 0 && mu != 1)
     {
-      GSL_ERROR_VAL ("mu must be 0 or 1", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("mu should be 0 or 1", GSL_EINVAL, 0);
     }
 
   if (nu != 0 && nu != 1)
     {
-      GSL_ERROR_VAL ("nu must be 0 or 1", GSL_EINVAL, 0);
+      GSL_ERROR_VAL ("nu should be 0 or 1", GSL_EINVAL, 0);
     }
 
   t = (gsl_integration_qaws_table *) 
@@ -77,22 +77,22 @@ gsl_integration_qaws_table_set (gsl_integration_qaws_table * t,
 {
   if (alpha < -1.0)
     {
-      GSL_ERROR ("alpha must be greater than -1.0", GSL_EINVAL);
+      GSL_ERROR ("alpha should be greater than -1.0", GSL_EINVAL);
     }
 
   if (beta < -1.0)
     {
-      GSL_ERROR ("beta must be greater than -1.0", GSL_EINVAL);
+      GSL_ERROR ("beta should be greater than -1.0", GSL_EINVAL);
     }
 
   if (mu != 0 && mu != 1)
     {
-      GSL_ERROR ("mu must be 0 or 1", GSL_EINVAL);
+      GSL_ERROR ("mu should be 0 or 1", GSL_EINVAL);
     }
 
   if (nu != 0 && nu != 1)
     {
-      GSL_ERROR ("nu must be 0 or 1", GSL_EINVAL);
+      GSL_ERROR ("nu should be 0 or 1", GSL_EINVAL);
     }
 
   t->alpha = alpha;

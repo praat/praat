@@ -106,9 +106,9 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long nu
 void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf);
 /*
 	A convenience function to avoid the calculation of the PCA each time we want to generate a random vector
-	The PCA must be the result of a previous SSCP_to_PCA call !
+	The PCA should be the result of a previous SSCP_to_PCA call !
 	The covariance matrix must not be singular or diagonal!
-	Returns the random sampled vector in vec (which must be of size my numberOfColumns).
+	Returns the random sampled vector in vec (which should be of size my numberOfColumns).
 	Preconditions:
 		1. Covariance may not be in diagonal representation (1 row)
 		2. Dimensions of me and PCA agree

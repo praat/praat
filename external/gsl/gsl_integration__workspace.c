@@ -29,7 +29,7 @@ gsl_integration_workspace_alloc (const size_t n)
   
   if (n == 0)
     {
-      GSL_ERROR_VAL ("workspace length n must be positive integer",
+      GSL_ERROR_VAL ("workspace length n should be positive integer",
                         GSL_EDOM, 0);
     }
 

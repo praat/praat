@@ -120,7 +120,7 @@ static FLAC__fixedpoint local__compute_rbps_integerized(FLAC__uint32 err, FLAC__
 	/*
 	 * The return value must have 16 fractional bits.  Since the whole part
 	 * of the base-2 log of a 32 bit number must fit in 5 bits, and fracbits
-	 * must be >= -3, these assertion allows us to be able to shift rbps
+	 * should be >= -3, these assertion allows us to be able to shift rbps
 	 * left if necessary to get 16 fracbits without losing any bits of the
 	 * whole part of rbps.
 	 *
@@ -199,7 +199,7 @@ static FLAC__fixedpoint local__compute_rbps_wide_integerized(FLAC__uint64 err, F
 	/*
 	 * The return value must have 16 fractional bits.  Since the whole part
 	 * of the base-2 log of a 32 bit number must fit in 5 bits, and fracbits
-	 * must be >= -3, these assertion allows us to be able to shift rbps
+	 * should be >= -3, these assertion allows us to be able to shift rbps
 	 * left if necessary to get 16 fracbits without losing any bits of the
 	 * whole part of rbps.
 	 *

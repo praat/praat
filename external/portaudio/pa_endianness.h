@@ -117,7 +117,7 @@ extern "C"
 
 
 /* PA_VALIDATE_ENDIANNESS compares the compile time and runtime endianness,
- and raises an assertion if they don't match. <assert.h> must be included in
+ and raises an assertion if they don't match. <assert.h> should be included in
  the context in which this macro is used.
 */
 #if defined(NDEBUG)

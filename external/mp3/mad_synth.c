@@ -518,7 +518,7 @@ void dct32(mad_fixed_t const in[32], unsigned int slot,
 
 # if defined(OPT_SSO)
 #  if MAD_F_FRACBITS != 28
-#   error "MAD_F_FRACBITS must be 28 to use OPT_SSO"
+#   error "MAD_F_FRACBITS should be 28 to use OPT_SSO"
 #  endif
 #  define ML0(hi, lo, x, y)	((lo)  = (x) * (y))
 #  define MLA(hi, lo, x, y)	((lo) += (x) * (y))

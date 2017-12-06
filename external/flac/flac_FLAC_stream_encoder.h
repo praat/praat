@@ -177,7 +177,7 @@ extern "C" {
  *   FLAC__stream_encoder_process_interleaved() - The client will pass a single
  *   pointer to data that is channel-interleaved (i.e. channel0_sample0,
  *   channel1_sample0, ... , channelN_sample0, channel0_sample1, ...).
- *   Again, the samples need not be block-aligned but they must be
+ *   Again, the samples need not be block-aligned but they should be
  *   sample-aligned, i.e. the first value should be channel0_sample0 and
  *   the last value channelN_sampleM.
  *
@@ -235,7 +235,7 @@ extern "C" {
  *
  * If the encoder gets into any other state besides \c FLAC__STREAM_ENCODER_OK
  * or \c FLAC__STREAM_ENCODER_UNINITIALIZED, it becomes invalid for encoding and
- * must be deleted with FLAC__stream_encoder_delete().
+ * should be deleted with FLAC__stream_encoder_delete().
  */
 typedef enum {
 
@@ -244,7 +244,7 @@ typedef enum {
 
 	FLAC__STREAM_ENCODER_UNINITIALIZED,
 	/**< The encoder is in the uninitialized state; one of the
-	 * FLAC__stream_encoder_init_*() functions must be called before samples
+	 * FLAC__stream_encoder_init_*() functions should be called before samples
 	 * can be processed.
 	 */
 
@@ -468,14 +468,14 @@ typedef struct FLAC__StreamEncoder {   // ppgb 20071120
 
 /** Signature for the read callback.
  *
- *  A function pointer matching this signature must be passed to
+ *  A function pointer matching this signature should be passed to
  *  FLAC__stream_encoder_init_ogg_stream() if seeking is supported.
  *  The supplied function will be called when the encoder needs to read back
  *  encoded data.  This happens during the metadata callback, when the encoder
  *  has to read, modify, and rewrite the metadata (e.g. seekpoints) gathered
  *  while encoding.  The address of the buffer to be filled is supplied, along
  *  with the number of bytes the buffer can hold.  The callback may choose to
- *  supply less data and modify the byte count but must be careful not to
+ *  supply less data and modify the byte count but should be careful not to
  *  overflow the buffer.  The callback then returns a status code chosen from
  *  FLAC__StreamEncoderReadStatus.
  *
@@ -519,7 +519,7 @@ typedef FLAC__StreamEncoderReadStatus (*FLAC__StreamEncoderReadCallback)(const F
 
 /** Signature for the write callback.
  *
- *  A function pointer matching this signature must be passed to
+ *  A function pointer matching this signature should be passed to
  *  FLAC__stream_encoder_init*_stream().  The supplied function will be called
  *  by the encoder anytime there is raw encoded data ready to write.  It may
  *  include metadata mixed with encoded audio frames and the data is not
@@ -879,7 +879,7 @@ FLAC_API FLAC__bool FLAC__stream_encoder_set_compression_level(FLAC__StreamEncod
 FLAC_API FLAC__bool FLAC__stream_encoder_set_blocksize(FLAC__StreamEncoder *encoder, unsigned value);
 
 /** Set to \c true to enable mid-side encoding on stereo input.  The
- *  number of channels must be 2 for this to have any effect.  Set to
+ *  number of channels should be 2 for this to have any effect.  Set to
  *  \c false to use only independent channel coding.
  *
  * \default \c false
@@ -1731,7 +1731,7 @@ FLAC_API FLAC__bool FLAC__stream_encoder_process(FLAC__StreamEncoder *encoder, c
  *  This version allows you to supply the input data where the channels
  *  are interleaved into a single array (i.e. channel0_sample0,
  *  channel1_sample0, ... , channelN_sample0, channel0_sample1, ...).
- *  The samples need not be block-aligned but they must be
+ *  The samples need not be block-aligned but they should be
  *  sample-aligned, i.e. the first value should be channel0_sample0
  *  and the last value channelN_sampleM.  Each sample should be a signed
  *  integer, right-justified to the resolution set by

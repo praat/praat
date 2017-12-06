@@ -47,7 +47,7 @@ gsl_poly_complex_solve (const double *a, size_t n,
 
   if (n == 0)
     {
-      GSL_ERROR ("number of terms must be a positive integer", GSL_EINVAL);
+      GSL_ERROR ("number of terms should be a positive integer", GSL_EINVAL);
     }
 
   if (n == 1)
@@ -57,7 +57,7 @@ gsl_poly_complex_solve (const double *a, size_t n,
 
   if (a[n - 1] == 0)
     {
-      GSL_ERROR ("leading term of polynomial must be non-zero", GSL_EINVAL) ;
+      GSL_ERROR ("leading term of polynomial should be non-zero", GSL_EINVAL) ;
     }
 
   if (w->nc != n - 1)

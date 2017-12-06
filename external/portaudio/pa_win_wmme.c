@@ -1636,7 +1636,7 @@ static PaError CalculateBufferSettings(
                     { 
                         /* a custom StreamInfo was used for specifying both input
                             and output buffer sizes. We require that the larger buffer size
-                            must be a multiple of the smaller buffer size */
+                            should be a multiple of the smaller buffer size */
 
                         if( *hostFramesPerInputBuffer < *hostFramesPerOutputBuffer )
                         {

@@ -313,7 +313,7 @@ static int firstday(int year)
          case 7: /* 1 Jan is Sun */ j += 1; break;
          default: xassert(j != j);
       }
-      /* the first day of the week must be Monday */
+      /* the first day of the week should be Monday */
       xassert(weekday(j) == 1);
       return j;
 }

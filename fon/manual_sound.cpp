@@ -1248,7 +1248,7 @@ FORMULA (U"(%f*%g) (%t) = \\in__%%t%1_^^%%t%2^ %f(%\\ta) %g(%t-%\\ta) %d%\\ta")
 NORMAL (U"In this formula, the argument of %f runs from %t__1_ to %t__2_, "
 	"but the argument of %g runs from (%t__1_ + %t__3_) - %t__2_ to (%t__2_ + %t__4_) - %t__1_, "
 	"i.e. from %t__3_ - (%t__2_ - %t__1_) to %t__4_ + (%t__2_ - %t__1_). "
-	"This means that the integration is performed over two equal stretches of time during which %g must be taken zero, "
+	"This means that the integration is performed over two equal stretches of time during which %g should be taken zero, "
 	"namely a time stretch before %t__3_ and a time stretch after %t__4_, both of duration %t__2_ - %t__1_ "
 	"(equivalent equations can be formulated that rely on two stretches of %t__4_ - %t__3_ of zeroes in %f rather than in %g, "
 	"or on a stretch of %t__2_ - %t__1_ of zeroes in %g and a stretch of %t__4_ - %t__3_ of zeroes in %f.")
@@ -1367,7 +1367,7 @@ FORMULA (U"cross-corr (%f, %g) (%\\ta) = \\in__%%t%1_^^%%t%2^ %f(%t) %g(%t+%\\ta
 NORMAL (U"In this formula, the argument of %f runs from %t__1_ to %t__2_, "
 	"but the argument of %g runs from %t__1_ + (%t__3_ - %t__2_) to %t__2_ + (%t__4_ - %t__1_), "
 	"i.e. from %t__3_ - (%t__2_ - %t__1_) to %t__4_ + (%t__2_ - %t__1_). "
-	"This means that the integration is performed over two equal stretches of time during which %g must be taken zero, "
+	"This means that the integration is performed over two equal stretches of time during which %g should be taken zero, "
 	"namely a time stretch before %t__3_ and a time stretch after %t__4_, both of duration %t__2_ - %t__1_ "
 	"(equivalent equations can be formulated that rely on two stretches of %t__4_ - %t__3_ of zeroes in %f rather than in %g, "
 	"or on a stretch of %t__2_ - %t__1_ of zeroes in %g and a stretch of %t__4_ - %t__3_ of zeroes in %f.")
@@ -1487,7 +1487,7 @@ FORMULA (U"%R__%f_ (%\\ta) = \\in__%%t%1_^^%%t%2^ %f(%t) %f(%t+%\\ta) %d%t")
 NORMAL (U"In this formula, the argument of the first %f runs from %t__1_ to %t__2_, "
 	"but the argument of the second %f runs from %t__1_ + (%t__1_ - %t__2_) to %t__2_ + (%t__2_ - %t__1_), "
 	"i.e. from %t__1_ - (%t__2_ - %t__1_) to %t__2_ + (%t__2_ - %t__1_). "
-	"This means that the integration is performed over two equal stretches of time during which %f must be taken zero, "
+	"This means that the integration is performed over two equal stretches of time during which %f should be taken zero, "
 	"namely a time stretch before %t__1_ and a time stretch after %t__2_, both of duration %t__2_ - %t__1_.")
 NORMAL (U"If you consider the sound outside its time domains as #similar to what it is within its time domain, instead of #zero, "
 	"the discretized formula in 1 should be based on the average over the jointly defined values of %f[%\\ta] and %f[%t-%\\ta], "

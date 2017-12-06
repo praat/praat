@@ -204,7 +204,7 @@ static void set_var_bounds(glp_tree *tree, struct MIR *mir)
          aij = aij->r_next;
          if (aij == NULL) continue;
          k2 = m + aij->col->j, a2 = aij->val;
-         /* there must be only two terms */
+         /* there should be only two terms */
          if (aij->r_next != NULL) continue;
          /* interchange terms, if needed */
          if (!mir->isint[k1] && mir->isint[k2])
@@ -438,7 +438,7 @@ static void check_agg_row(struct MIR *mir)
       r -= mir->agg_rhs;
       if (big < fabs(mir->agg_rhs))
          big = fabs(mir->agg_rhs);
-      /* the residual must be close to zero */
+      /* the residual should be close to zero */
       xassert(fabs(r) <= 1e-6 * big);
       return;
 }
@@ -650,7 +650,7 @@ static void check_mod_row(struct MIR *mir)
       r -= mir->mod_rhs;
       if (big < fabs(mir->mod_rhs))
          big = fabs(mir->mod_rhs);
-      /* the residual must be close to zero */
+      /* the residual should be close to zero */
       xassert(fabs(r) <= 1e-6 * big);
       return;
 }
@@ -945,7 +945,7 @@ static double generate(struct MIR *mir)
       {  double x;
          k = mir->cut_vec->ind[j];
          xassert(1 <= k && k <= m+n);
-         /* must be continuous */
+         /* should be continuous */
          xassert(!mir->isint[k]);
          if (mir->subst[k] == 'L')
          {  xassert(mir->lb[k] != -DBL_MAX);
@@ -1033,7 +1033,7 @@ static void check_raw_cut(struct MIR *mir, double r_best)
       r -= mir->cut_rhs;
       if (big < fabs(mir->cut_rhs))
          big = fabs(mir->cut_rhs);
-      /* the residual must be close to r_best */
+      /* the residual should be close to r_best */
       xassert(fabs(r - r_best) <= 1e-6 * big);
       return;
 }
@@ -1149,7 +1149,7 @@ static void check_cut_row(struct MIR *mir, double r_best)
       r -= mir->cut_rhs;
       if (big < fabs(mir->cut_rhs))
          big = fabs(mir->cut_rhs);
-      /* the residual must be close to r_best */
+      /* the residual should be close to r_best */
       xassert(fabs(r - r_best) <= 1e-6 * big);
       return;
 }

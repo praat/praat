@@ -427,7 +427,7 @@ int NUMlapack_dgebak (const char *job, const char *side, integer *n, integer *il
             = 'S', do backward transformation for scaling only;
             = 'B', do backward transformations for both permutation and
                    scaling.
-            JOB must be the same as the argument JOB supplied to NUMlapack_dgebal.
+            JOB should be the same as the argument JOB supplied to NUMlapack_dgebal.
 
     SIDE    (input) char*
             = 'R':  V contains right eigenvectors;
@@ -2596,7 +2596,7 @@ int NUMlapack_dlahqr (int * wantt, int * wantz, integer *n, integer *ilo,
 
     ILOZ    (input) long
     IHIZ    (input) long
-            Specify the rows of Z to which transformations must be
+            Specify the rows of Z to which transformations should be
             applied if WANTZ is .TRUE..
             1 <= ILOZ <= ILO; IHI <= IHIZ <= N.
 
@@ -2795,7 +2795,7 @@ int NUMlapack_dlaln2 (int * ltrans, integer *na, integer *nw, double *smin,
             The NA x NA matrix A.
 
     LDA     (input) long
-            The leading dimension of A.  It must be at least NA.
+            The leading dimension of A.  It should be at least NA.
 
     D1      (input) double
             The 1,1 element in the diagonal matrix D.
@@ -2809,7 +2809,7 @@ int NUMlapack_dlaln2 (int * ltrans, integer *na, integer *nw, double *smin,
             contains the imaginary part.
 
     LDB     (input) long
-            The leading dimension of B.  It must be at least NA.
+            The leading dimension of B.  It should be at least NA.
 
     WR      (input) double
             The real part of the scalar "w".
@@ -2824,10 +2824,10 @@ int NUMlapack_dlaln2 (int * ltrans, integer *na, integer *nw, double *smin,
             part.
 
     LDX     (input) long
-            The leading dimension of X.  It must be at least NA.
+            The leading dimension of X.  It should be at least NA.
 
     SCALE   (output) double
-            The scale factor that B must be multiplied by to insure
+            The scale factor that B should be multiplied by to insure
             that overflow does not occur when computing X.  Thus,
             (ca A - w D) X  will be SCALE*B, not B (ignoring
             perturbations of A.)  It will be at most 1.
@@ -3688,7 +3688,7 @@ int NUMlapack_dlascl (const char *type, integer *kl, integer *ku, double *cfrom,
     CTO     (input) double
             The matrix A is multiplied by CTO/CFROM. A(I,J) is computed
             without over/underflow if the final result CTO*A(I,J)/CFROM
-            can be represented without over/underflow.  CFROM must be
+            can be represented without over/underflow.  CFROM should be
             nonzero.
 
     M       (input) long
@@ -4209,7 +4209,7 @@ int NUMlapack_dlassq (integer *n, double *x, integer *incx, double *scale, doubl
 
        scl = max( scale, abs( x( i ) ) ).
 
-    scale and sumsq must be supplied in SCALE and SUMSQ and
+    scale and sumsq should be supplied in SCALE and SUMSQ and
     scl and smsq are overwritten on SCALE and SUMSQ respectively.
 
     The routine makes only one pass through the vector x.
@@ -5585,7 +5585,7 @@ int NUMlapack_drscl (integer *n, double *sa, double *sx,	integer *incx);
 
     SA      (input) double
             The scalar a which is used to divide each component of x.
-            SA must be >= 0, or the subroutine will divide by zero.
+            SA should be >= 0, or the subroutine will divide by zero.
 
     SX      (input/output) double array, dimension
                            (1+(N-1)*abs(INCX))
@@ -6255,7 +6255,7 @@ int NUMlapack_dtrevc (const char *side, const char *howmny, int * select, intege
     original matrix A = Q*T*Q', then Q*X and Q*Y are the matrices of
     right or left eigenvectors of A.
 
-    T must be in Schur canonical form (as returned by NUMlapack_dhseqr), that is,
+    T should be in Schur canonical form (as returned by NUMlapack_dhseqr), that is,
     block upper triangular with 1-by-1 and 2-by-2 diagonal blocks; each
     2-by-2 diagonal block has its diagonal elements equal and its
     off-diagonal elements of opposite sign.  Corresponding to each 2-by-2
@@ -6284,9 +6284,9 @@ int NUMlapack_dtrevc (const char *side, const char *howmny, int * select, intege
             computed.
             If HOWMNY = 'A' or 'B', SELECT is not referenced.
             To select the real eigenvector corresponding to a real
-            eigenvalue w(j), SELECT(j) must be set to .TRUE..  To select
+            eigenvalue w(j), SELECT(j) should be set to .TRUE..  To select
             the complex eigenvector corresponding to a complex conjugate
-            pair w(j) and w(j+1), either SELECT(j) or SELECT(j+1) must be
+            pair w(j) and w(j+1), either SELECT(j) or SELECT(j+1) should be
             set to .TRUE.; then on exit SELECT(j) is .TRUE. and
             SELECT(j+1) is .FALSE..
 

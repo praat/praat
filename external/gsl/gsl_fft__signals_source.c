@@ -32,7 +32,7 @@ FUNCTION(fft_signal,complex_pulse) (const size_t k,
 
   if (n == 0)
     {
-      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
     }
 
   /* gsl_complex pulse at position k,  data[j] = z * delta_{jk} */
@@ -74,7 +74,7 @@ FUNCTION(fft_signal,complex_constant) (const size_t n,
 
   if (n == 0)
     {
-      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
     }
 
   /* constant, data[j] = z */
@@ -114,7 +114,7 @@ FUNCTION(fft_signal,complex_exp) (const int k,
 
   if (n == 0)
     {
-      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
     }
 
   /* exponential,  data[j] = z * exp(2 pi i j k) */
@@ -173,7 +173,7 @@ FUNCTION(fft_signal,complex_exppair) (const int k1,
 
   if (n == 0)
     {
-      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
     }
 
   /* exponential,  data[j] = z1 * exp(2 pi i j k1) + z2 * exp(2 pi i j k2) */
@@ -244,7 +244,7 @@ FUNCTION(fft_signal,complex_noise) (const size_t n,
 
   if (n == 0)
     {
-      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
     }
 
   for (i = 0; i < n; i++)
@@ -271,7 +271,7 @@ FUNCTION(fft_signal,real_noise) (const size_t n,
 
   if (n == 0)
     {
-      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
     }
 
   for (i = 0; i < n; i++)

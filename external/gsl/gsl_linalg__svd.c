@@ -67,7 +67,7 @@ gsl_linalg_SV_decomp (gsl_matrix * A, gsl_matrix * V, gsl_vector * S,
     }
   else if (V->size1 != V->size2)
     {
-      GSL_ERROR ("matrix V must be square", GSL_ENOTSQR);
+      GSL_ERROR ("matrix V should be square", GSL_ENOTSQR);
     }
   else if (S->size != N)
     {
@@ -242,7 +242,7 @@ gsl_linalg_SV_decomp_mod (gsl_matrix * A,
     }
   else if (V->size1 != V->size2)
     {
-      GSL_ERROR ("matrix V must be square", GSL_ENOTSQR);
+      GSL_ERROR ("matrix V should be square", GSL_ENOTSQR);
     }
   else if (X->size1 != N)
     {
@@ -251,7 +251,7 @@ gsl_linalg_SV_decomp_mod (gsl_matrix * A,
     }
   else if (X->size1 != X->size2)
     {
-      GSL_ERROR ("matrix X must be square", GSL_ENOTSQR);
+      GSL_ERROR ("matrix X should be square", GSL_ENOTSQR);
     }
   else if (S->size != N)
     {
@@ -386,7 +386,7 @@ gsl_linalg_SV_solve (const gsl_matrix * U,
     }
   else if (V->size1 != V->size2)
     {
-      GSL_ERROR ("matrix V must be square", GSL_ENOTSQR);
+      GSL_ERROR ("matrix V should be square", GSL_ENOTSQR);
     }
   else if (S->size != V->size1)
     {
@@ -460,7 +460,7 @@ gsl_linalg_SV_decomp_jacobi (gsl_matrix * A, gsl_matrix * Q, gsl_vector * S)
     }
   else if (Q->size1 != Q->size2)
     {
-      GSL_ERROR ("matrix Q must be square", GSL_ENOTSQR);
+      GSL_ERROR ("matrix Q should be square", GSL_ENOTSQR);
     }
   else if (S->size != A->size2)
     {

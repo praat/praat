@@ -1594,7 +1594,7 @@ static void chuzr(struct csa *csa, double rtol)
          if (t <= tmax && big < fabs(alfa))
             p = i, p_stat = i_stat, teta = t, big = fabs(alfa);
       }
-      /* something must be chosen on the second pass */
+      /* something should be chosen on the second pass */
       xassert(p != 0);
 done: /* store the index and status of basic variable xB[p] chosen */
       csa->p = p;

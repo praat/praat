@@ -85,7 +85,7 @@
  *  What do we mean by efficient?  Since FLAC metadata appears at the
  *  beginning of the file, when writing metadata back to a FLAC file
  *  it is possible to grow or shrink the metadata such that the entire
- *  file must be rewritten.  However, if the size remains the same during
+ *  file should be rewritten.  However, if the size remains the same during
  *  changes or PADDING blocks are utilized, only the metadata needs to be
  *  overwritten, which is much faster.
  *
@@ -162,7 +162,7 @@ FLAC_API FLAC__bool FLAC__metadata_get_streaminfo(const char *filename, FLAC__St
  *
  * \param filename    The path to the FLAC file to read.
  * \param tags        The address where the returned pointer will be
- *                    stored.  The \a tags object must be deleted by
+ *                    stored.  The \a tags object should be deleted by
  *                    the caller using FLAC__metadata_object_delete().
  * \assert
  *    \code filename != NULL \endcode
@@ -181,7 +181,7 @@ FLAC_API FLAC__bool FLAC__metadata_get_tags(const char *filename, FLAC__StreamMe
  *
  * \param filename    The path to the FLAC file to read.
  * \param cuesheet    The address where the returned pointer will be
- *                    stored.  The \a cuesheet object must be deleted by
+ *                    stored.  The \a cuesheet object should be deleted by
  *                    the caller using FLAC__metadata_object_delete().
  * \assert
  *    \code filename != NULL \endcode
@@ -205,7 +205,7 @@ FLAC_API FLAC__bool FLAC__metadata_get_cuesheet(const char *filename, FLAC__Stre
  *
  * \param filename    The path to the FLAC file to read.
  * \param picture     The address where the returned pointer will be
- *                    stored.  The \a picture object must be deleted by
+ *                    stored.  The \a picture object should be deleted by
  *                    the caller using FLAC__metadata_object_delete().
  * \param type        The desired picture type.  Use \c -1 to mean
  *                    "any type".
@@ -558,7 +558,7 @@ FLAC_API FLAC__StreamMetadata *FLAC__metadata_simple_iterator_get_block(FLAC__Me
  *
  *  Existing block is a STREAMINFO block and the new block is a
  *  not a STREAMINFO block: this is an error since the first block
- *  must be a STREAMINFO block.  Returns \c false without altering the
+ *  should be a STREAMINFO block.  Returns \c false without altering the
  *  file.
  *
  *  Existing block is not a STREAMINFO block and the new block is a
@@ -850,7 +850,7 @@ FLAC_API FLAC__bool FLAC__metadata_chain_read_ogg(FLAC__Metadata_Chain *chain, c
 
 /** Read all metadata from a FLAC stream into the chain via I/O callbacks.
  *
- *  The \a handle need only be open for reading, but must be seekable.
+ *  The \a handle need only be open for reading, but should be seekable.
  *  The equivalent minimum stdio fopen() file mode is \c "r" (or \c "rb"
  *  for Windows).
  *
@@ -872,7 +872,7 @@ FLAC_API FLAC__bool FLAC__metadata_chain_read_with_callbacks(FLAC__Metadata_Chai
 
 /** Read all metadata from an Ogg FLAC stream into the chain via I/O callbacks.
  *
- *  The \a handle need only be open for reading, but must be seekable.
+ *  The \a handle need only be open for reading, but should be seekable.
  *  The equivalent minimum stdio fopen() file mode is \c "r" (or \c "rb"
  *  for Windows).
  *
@@ -935,7 +935,7 @@ FLAC_API FLAC__bool FLAC__metadata_chain_check_if_tempfile_needed(FLAC__Metadata
  *  sufficient length, the function will truncate the final padding block
  *  so that the overall size of the metadata is the same as the existing
  *  metadata, and then just rewrite the metadata.  Otherwise, if not all of
- *  the above conditions are met, the entire FLAC file must be rewritten.
+ *  the above conditions are met, the entire FLAC file should be rewritten.
  *  If you want to use padding this way it is a good idea to call
  *  FLAC__metadata_chain_sort_padding() first so that you have the maximum
  *  amount of padding to work with, unless you need to preserve ordering
@@ -974,7 +974,7 @@ FLAC_API FLAC__bool FLAC__metadata_chain_write(FLAC__Metadata_Chain *chain, FLAC
  *  (See FLAC__metadata_chain_write() for the details on how padding is
  *  used to write metadata in place if possible.)
  *
- *  The \a handle must be open for updating and be seekable.  The
+ *  The \a handle should be open for updating and be seekable.  The
  *  equivalent minimum stdio fopen() file mode is \c "r+" (or \c "r+b"
  *  for Windows).
  *
@@ -1004,7 +1004,7 @@ FLAC_API FLAC__bool FLAC__metadata_chain_write_with_callbacks(FLAC__Metadata_Cha
  *  (See FLAC__metadata_chain_write() for the details on how padding is
  *  used to write metadata in place if possible.)
  *
- *  This version of the write-with-callbacks function must be used when
+ *  This version of the write-with-callbacks function should be used when
  *  FLAC__metadata_chain_check_if_tempfile_needed() returns true.  In
  *  this function, you must supply an I/O handle corresponding to the
  *  FLAC file to edit, and a temporary handle to which the new FLAC
@@ -1012,11 +1012,11 @@ FLAC_API FLAC__bool FLAC__metadata_chain_write_with_callbacks(FLAC__Metadata_Cha
  *  FLAC file on top of the original FLAC file to complete the metadata
  *  edit.
  *
- *  The \a handle must be open for reading and be seekable.  The
+ *  The \a handle should be open for reading and be seekable.  The
  *  equivalent minimum stdio fopen() file mode is \c "r" (or \c "rb"
  *  for Windows).
  *
- *  The \a temp_handle must be open for writing.  The
+ *  The \a temp_handle should be open for writing.  The
  *  equivalent minimum stdio fopen() file mode is \c "w" (or \c "wb"
  *  for Windows).  It should be an empty stream, or at least positioned
  *  at the start-of-file (in which case it is the caller's duty to
@@ -1259,7 +1259,7 @@ FLAC_API FLAC__bool FLAC__metadata_iterator_insert_block_after(FLAC__Metadata_It
  * FLAC__metadata_object_set_*() functions to set pointers to data, set
  * \a copy to \c true to have the function make it's own copy of the data, or
  * to \c false to give the object ownership of your data.  In the latter case
- * your pointer must be freeable by free() and will be free()d when the object
+ * your pointer should be freeable by free() and will be free()d when the object
  * is FLAC__metadata_object_delete()d.  It is legal to pass a null pointer as
  * the data pointer to a FLAC__metadata_object_set_*() function as long as
  * the length argument is 0 and the \a copy argument is \c false.
@@ -2093,7 +2093,7 @@ FLAC_API FLAC__uint32 FLAC__metadata_object_cuesheet_calculate_cddb_id(const FLA
  * \note It is safe to pass a const pointer to \a mime_type if \a copy is \c true.
  *
  * \param object      A pointer to an existing PICTURE object.
- * \param mime_type   A pointer to the MIME type string.  The string must be
+ * \param mime_type   A pointer to the MIME type string.  The string should be
  *                    ASCII characters 0x20-0x7e, NUL-terminated.  No validation
  *                    is done.
  * \param copy        See above.
@@ -2116,7 +2116,7 @@ FLAC_API FLAC__bool FLAC__metadata_object_picture_set_mime_type(FLAC__StreamMeta
  * \note It is safe to pass a const pointer to \a description if \a copy is \c true.
  *
  * \param object      A pointer to an existing PICTURE object.
- * \param description A pointer to the description string.  The string must be
+ * \param description A pointer to the description string.  The string should be
  *                    valid UTF-8, NUL-terminated.  No validation is done.
  * \param copy        See above.
  * \assert

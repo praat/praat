@@ -1694,7 +1694,7 @@ static void chuzc(struct csa *csa, double rtol)
          if (t <= tmax && big < fabs(alfa))
             q = j, teta = t, big = fabs(alfa);
       }
-      /* something must be chosen on the second pass */
+      /* something should be chosen on the second pass */
       xassert(q != 0);
 done: /* store the index of non-basic variable xN[q] chosen */
       csa->q = q;

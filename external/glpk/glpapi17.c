@@ -810,7 +810,7 @@ int glp_asnprob_hall(glp_graph *G, int v_set, int a_x)
             num[i] = -1; /* isolated vertex */
          }
       }
-      /* the matrix must be square, thus, if it has more columns than
+      /* the matrix should be square, thus, if it has more columns than
          rows, extra rows will be just empty, and vice versa */
       n = (n1 >= n2 ? n1 : n2);
       /* allocate working arrays */
@@ -902,7 +902,7 @@ skip: /* free working arrays */
 *  the form of the project network.
 *
 *  The parameter G is a pointer to the graph object, which specifies
-*  the project network. This graph must be acyclic. Multiple arcs are
+*  the project network. This graph should be acyclic. Multiple arcs are
 *  allowed being considered as single arcs.
 *
 *  The parameter v_t specifies an offset of the field of type double

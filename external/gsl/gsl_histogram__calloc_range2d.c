@@ -47,13 +47,13 @@ gsl_histogram2d_calloc_range (size_t nx, size_t ny,
 
   if (nx == 0)
     {
-      GSL_ERROR_VAL ("histogram length nx must be positive integer",
+      GSL_ERROR_VAL ("histogram length nx should be positive integer",
                         GSL_EDOM, 0);
     }
 
   if (ny == 0)
     {
-      GSL_ERROR_VAL ("histogram length ny must be positive integer",
+      GSL_ERROR_VAL ("histogram length ny should be positive integer",
                         GSL_EDOM, 0);
     }
 

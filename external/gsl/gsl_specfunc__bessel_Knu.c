@@ -115,7 +115,7 @@ gsl_sf_bessel_lnKnu_e(const double nu, const double x, gsl_sf_result * result)
     gsl_sf_lngamma_e(nu, &lg_nu);
     ln_bound = -M_LN2 - nu*log(0.5*x) + lg_nu.val;
     if(ln_bound > GSL_LOG_DBL_MAX - 20.0) {
-      /* x must be very small or nu very large (or both).
+      /* x should be very small or nu very large (or both).
        */
       double xi  = 0.25*x*x;
       double sum = 1.0 - xi/(nu-1.0);

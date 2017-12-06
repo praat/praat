@@ -127,7 +127,7 @@ gsl_linalg_LU_solve (const gsl_matrix * LU, const gsl_permutation * p, const gsl
 {
   if (LU->size1 != LU->size2)
     {
-      GSL_ERROR ("LU matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("LU matrix should be square", GSL_ENOTSQR);
     }
   else if (LU->size1 != p->size)
     {
@@ -161,7 +161,7 @@ gsl_linalg_LU_svx (const gsl_matrix * LU, const gsl_permutation * p, gsl_vector 
 {
   if (LU->size1 != LU->size2)
     {
-      GSL_ERROR ("LU matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("LU matrix should be square", GSL_ENOTSQR);
     }
   else if (LU->size1 != p->size)
     {
@@ -195,15 +195,15 @@ gsl_linalg_LU_refine (const gsl_matrix * A, const gsl_matrix * LU, const gsl_per
 {
   if (A->size1 != A->size2)
     {
-      GSL_ERROR ("matrix a must be square", GSL_ENOTSQR);
+      GSL_ERROR ("matrix a should be square", GSL_ENOTSQR);
     }
   if (LU->size1 != LU->size2)
     {
-      GSL_ERROR ("LU matrix must be square", GSL_ENOTSQR);
+      GSL_ERROR ("LU matrix should be square", GSL_ENOTSQR);
     }
   else if (A->size1 != LU->size2)
     {
-      GSL_ERROR ("LU matrix must be decomposition of a", GSL_ENOTSQR);
+      GSL_ERROR ("LU matrix should be decomposition of a", GSL_ENOTSQR);
     }
   else if (LU->size1 != p->size)
     {

@@ -51,7 +51,7 @@ FUNCTION(gsl_fft_real,transform) (BASE data[], const size_t stride, const size_t
   
   if (n == 0)
     {
-      GSL_ERROR ("length n must be positive integer", GSL_EDOM);
+      GSL_ERROR ("length n should be positive integer", GSL_EDOM);
     }
 
   if (n == 1)

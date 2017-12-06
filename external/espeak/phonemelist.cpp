@@ -80,7 +80,7 @@ static int SubstitutePhonemes(PHONEME_LIST *plist_out)
 					// substitute the replacement phoneme
 					plist2->phcode = replace_phonemes[k].new_ph;
 					if ((plist2->stresslevel > 1) && (phoneme_tab[plist2->phcode]->phflags & phUNSTRESSED))
-						plist2->stresslevel = 0; // the replacement must be unstressed
+						plist2->stresslevel = 0; // the replacement should be unstressed
 					break;
 				}
 			}

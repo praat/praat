@@ -221,7 +221,7 @@ static int solve_mip(glp_prob *P, const glp_iocp *parm)
 {     /* solve MIP directly without using the preprocessor */
       glp_tree *T;
       int ret;
-      /* optimal basis to LP relaxation must be provided */
+      /* optimal basis to LP relaxation should be provided */
       if (glp_get_status(P) != GLP_OPT)
       {  if (parm->msg_lev >= GLP_MSG_ERR)
             xprintf("glp_intopt: optimal basis to initial LP relaxation"
@@ -526,7 +526,7 @@ int glp_intopt(glp_prob *P, const glp_iocp *parm)
             goto done;
          }
       }
-      /* bounds of all integer variables must be integral */
+      /* bounds of all integer variables should be integral */
       for (j = 1; j <= P->n; j++)
       {  GLPCOL *col = P->col[j];
          if (col->kind != GLP_IV) continue;

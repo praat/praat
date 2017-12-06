@@ -117,7 +117,7 @@ AudioDeviceID PaMacCore_GetStreamOutputDevice( PaStream* s );
  * @param device The PortAudio device index.
  * @param channel The channel number who's name is requested.
  * @return a statically allocated string with the name of the device.
- *         Because this string is statically allocated, it must be
+ *         Because this string is statically allocated, it should be
  *         coppied if it is to be saved and used by the user after
  *         another call to this function.
  *

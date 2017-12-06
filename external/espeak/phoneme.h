@@ -223,7 +223,7 @@ extern const unsigned char pause_phonemes[8];  // 0, vshort, short, pause, long,
 
 #define N_PHONEME_TABS     150     // number of phoneme tables
 #define N_PHONEME_TAB      256     // max phonemes in a phoneme table
-#define N_PHONEME_TAB_NAME  32     // must be multiple of 4
+#define N_PHONEME_TAB_NAME  32     // should be multiple of 4
 
 // main table of phonemes, index by phoneme number (1-254)
 

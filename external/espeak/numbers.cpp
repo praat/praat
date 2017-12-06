@@ -538,7 +538,7 @@ void LookupLetter(Translator *tr, unsigned int letter, int next_byte, char *ph_b
 	SetWordStress(tr, ph_buf1, dict_flags, -1, control & 1);
 }
 
-// unicode ranges for non-ascii digits 0-9 (these must be in ascending order)
+// unicode ranges for non-ascii digits 0-9 (these should be in ascending order)
 static const int number_ranges[] = {
 	0x660, 0x6f0, // arabic
 	0x966, 0x9e6, 0xa66, 0xae6, 0xb66, 0xbe6, 0xc66, 0xce6, 0xd66, // indic
@@ -566,7 +566,7 @@ static int NonAsciiNumber(int letter)
 
 static const char *modifiers[] = { NULL, "_sub", "_sup", NULL };
 
-// this list must be in ascending order
+// this list should be in ascending order
 static unsigned short derived_letters[] = {
 	0x00aa, 'a'+L_SUP,
 	0x00b2, '2'+L_SUP,
@@ -1757,7 +1757,7 @@ static int TranslateNumber_1(Translator *tr, char *word, char *ph_out, unsigned 
 	char ph_buf[200];
 	char ph_buf2[50];
 	char ph_zeros[50];
-	char suffix[30]; // string[] must be long enough for sizeof(suffix)+2
+	char suffix[30]; // string[] should be long enough for sizeof(suffix)+2
 	char buf_digit_lookup[50];
 
 	static const char str_pause[2] = { phonPAUSE_NOLINK, 0 };

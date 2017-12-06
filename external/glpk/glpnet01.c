@@ -52,7 +52,7 @@
 *  n     order of matrix.
 *
 *  icn   array containing the column indices of the non-zeros. Those
-*        belonging to a single row must be contiguous but the ordering
+*        belonging to a single row should be contiguous but the ordering
 *        of column indices within each row is unimportant and wasted
 *        space between rows is permitted.
 *

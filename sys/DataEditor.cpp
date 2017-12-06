@@ -252,7 +252,7 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 	static MelderString name { };
 	MelderString_empty (& name);
 
-	/* Identify the pressed button; it must be one of those created in the list. */
+	/* Identify the pressed button; it should be one of those created in the list. */
 
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
 		if (my d_fieldData [i]. button == event -> button) { ifield = i; break; }

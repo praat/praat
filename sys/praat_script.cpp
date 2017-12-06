@@ -392,7 +392,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			}
 		} else {
 			/*
-			 * This must be a formula command:
+			 * This should be a formula command:
 			 *    proc (args)
 			 */
 			Interpreter_voidExpression (interpreter, command);

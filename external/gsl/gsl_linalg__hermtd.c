@@ -67,7 +67,7 @@ gsl_linalg_hermtd_decomp (gsl_matrix_complex * A, gsl_vector_complex * tau)
     }
   else if (tau->size + 1 != A->size1)
     {
-      GSL_ERROR ("size of tau must be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be (matrix size - 1)", GSL_EBADLEN);
     }
   else
     {
@@ -133,11 +133,11 @@ gsl_linalg_hermtd_unpack (const gsl_matrix_complex * A,
 {
   if (A->size1 !=  A->size2)
     {
-      GSL_ERROR ("matrix A must be sqaure", GSL_ENOTSQR);
+      GSL_ERROR ("matrix A should be sqaure", GSL_ENOTSQR);
     }
   else if (tau->size + 1 != A->size1)
     {
-      GSL_ERROR ("size of tau must be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of tau should be (matrix size - 1)", GSL_EBADLEN);
     }
   else if (Q->size1 != A->size1 || Q->size2 != A->size1)
     {
@@ -149,7 +149,7 @@ gsl_linalg_hermtd_unpack (const gsl_matrix_complex * A,
     }
   else if (sdiag->size + 1 != A->size1)
     {
-      GSL_ERROR ("size of subdiagonal must be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of subdiagonal should be (matrix size - 1)", GSL_EBADLEN);
     }
   else
     {
@@ -203,7 +203,7 @@ gsl_linalg_hermtd_unpack_T (const gsl_matrix_complex * A,
 {
   if (A->size1 !=  A->size2)
     {
-      GSL_ERROR ("matrix A must be sqaure", GSL_ENOTSQR);
+      GSL_ERROR ("matrix A should be sqaure", GSL_ENOTSQR);
     }
   else if (diag->size != A->size1)
     {
@@ -211,7 +211,7 @@ gsl_linalg_hermtd_unpack_T (const gsl_matrix_complex * A,
     }
   else if (sdiag->size + 1 != A->size1)
     {
-      GSL_ERROR ("size of subdiagonal must be (matrix size - 1)", GSL_EBADLEN);
+      GSL_ERROR ("size of subdiagonal should be (matrix size - 1)", GSL_EBADLEN);
     }
   else
     {

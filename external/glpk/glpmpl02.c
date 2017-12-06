@@ -179,7 +179,7 @@ int is_literal(MPL *mpl, char *literal)
 /*----------------------------------------------------------------------
 -- read_number - read number.
 --
--- This routine reads the current token, which must be a number, and
+-- This routine reads the current token, which should be a number, and
 -- returns its numeric value. */
 
 double read_number(MPL *mpl)
@@ -193,7 +193,7 @@ double read_number(MPL *mpl)
 /*----------------------------------------------------------------------
 -- read_symbol - read symbol.
 --
--- This routine reads the current token, which must be a symbol, and
+-- This routine reads the current token, which should be a symbol, and
 -- returns its symbolic value. */
 
 SYMBOL *read_symbol(MPL *mpl)
@@ -247,7 +247,7 @@ SLICE *read_slice
       /* read slice components */
       slice = create_slice(mpl);
       for (;;)
-      {  /* the current token must be a symbol or asterisk */
+      {  /* the current token should be a symbol or asterisk */
          if (is_symbol(mpl))
             slice = expand_slice(mpl, slice, read_symbol(mpl));
          else if (mpl->token == T_ASTERISK)
@@ -265,7 +265,7 @@ SLICE *read_slice
          else
             mpl_error(mpl, "syntax error in slice");
       }
-      /* number of slice components must be the same as the appropriate
+      /* number of slice components should be the same as the appropriate
          dimension */
       if (slice_dimen(mpl, slice) != dim)
       {  switch (close)
@@ -319,13 +319,13 @@ SET *select_set
 -- included in elemental set assigned to the set member. Commae between
 -- symbols are optional and may be omitted anywhere.
 --
--- Number of components in the slice must be the same as dimension of
+-- Number of components in the slice should be the same as dimension of
 -- n-tuples in elemental sets assigned to the set members. To construct
 -- complete n-tuple the routine replaces null positions in the slice by
 -- corresponding <symbols>.
 --
 -- If the slice contains at least one null position, the current token
--- must be symbol. Otherwise, the routine reads no symbols to construct
+-- should be symbol. Otherwise, the routine reads no symbols to construct
 -- the n-tuple, so the current token is not checked. */
 
 void simple_format
@@ -393,7 +393,7 @@ void simple_format
 -- whether corresponding n-tuple needs to be included in the elemental
 -- set or not, respectively.
 --
--- Number of the slice components must be the same as dimension of the
+-- Number of the slice components should be the same as dimension of the
 -- elemental set. The slice must have two null positions. To construct
 -- complete n-tuple for particular element of the matrix the routine
 -- replaces first null position of the slice by the corresponding <row>
@@ -550,9 +550,9 @@ void set_data(MPL *mpl)
       else
       {  /* subscript list is not specified */
          if (set->dim != 0)
-            mpl_error(mpl, "%s must be subscripted", set->name);
+            mpl_error(mpl, "%s should be subscripted", set->name);
       }
-      /* there must be no member with the same subscript list */
+      /* there should be no member with the same subscript list */
       if (find_member(mpl, set->array, tuple) != NULL)
          mpl_error(mpl, "%s%s already defined",
             set->name, format_tuple(mpl, '[', tuple));
@@ -691,7 +691,7 @@ MEMBER *read_value
 {     MEMBER *memb;
       xassert(par != NULL);
       xassert(is_symbol(mpl));
-      /* there must be no member with the same n-tuple */
+      /* there should be no member with the same n-tuple */
       if (find_member(mpl, par->array, tuple) != NULL)
          mpl_error(mpl, "%s%s already defined",
             par->name, format_tuple(mpl, '[', tuple));
@@ -727,7 +727,7 @@ MEMBER *read_value
 -- the parameter member. Commae between data items are optional and may
 -- be omitted anywhere.
 --
--- Number of components in the slice must be the same as dimension of
+-- Number of components in the slice should be the same as dimension of
 -- the parameter. To construct the complete subscript list the routine
 -- replaces null positions in the slice by corresponding <symbols>. */
 
@@ -792,7 +792,7 @@ void plain_format
 -- or symbolic values assigned to the corresponding parameter members.
 -- If <value> is specified as single point, no value is provided.
 --
--- Number of components in the slice must be the same as dimension of
+-- Number of components in the slice should be the same as dimension of
 -- the parameter. The slice must have two null positions. To construct
 -- complete subscript list for particular <value> the routine replaces
 -- the first null position of the slice by the corresponding <row> (or
@@ -894,7 +894,7 @@ void tabular_format
 -- <prefix> ::= <empty>
 -- <prefix> ::= <set name> :
 --
--- where <names> are names of parameters (all the parameters must be
+-- where <names> are names of parameters (all the parameters should be
 -- subscripted and have identical dimensions), <symbols> are symbols
 -- used to define subscripts of parameter members, <values> are numeric
 -- or symbolic values assigned to the corresponding parameter members.
@@ -924,9 +924,9 @@ void tabbing_format
          if (next_token == T_COLON)
          {  /* select the set to saturate it with data */
             set = select_set(mpl, mpl->image);
-            /* the set must be simple (i.e. not set of sets) */
+            /* the set should be simple (i.e. not set of sets) */
             if (set->dim != 0)
-               mpl_error(mpl, "%s must be a simple set", set->name);
+               mpl_error(mpl, "%s should be a simple set", set->name);
             /* and must not be defined yet */
             if (set->array->head != NULL)
                mpl_error(mpl, "%s already defined", set->name);
@@ -943,12 +943,12 @@ void tabbing_format
       /* read the table heading that contains parameter names */
       list = create_slice(mpl);
       while (mpl->token != T_ASSIGN)
-      {  /* there must be symbolic name of parameter */
+      {  /* there should be symbolic name of parameter */
          if (!is_symbol(mpl))
             mpl_error(mpl, "parameter name or := missing where expected");
          /* select the parameter to saturate it with data */
          par = select_parameter(mpl, mpl->image);
-         /* the parameter must be subscripted */
+         /* the parameter should be subscripted */
          if (par->dim == 0)
             mpl_error(mpl, "%s not a subscripted parameter", mpl->image);
          /* the set (if specified) and all the parameters in the data
@@ -1073,7 +1073,7 @@ void parameter_data(MPL *mpl)
             mpl_error(mpl, "default value missing where expected");
          altval = read_symbol(mpl);
          /* if the default value follows the keyword 'param', the next
-            token must be only the colon */
+            token should be only the colon */
          if (mpl->token != T_COLON)
             mpl_error(mpl, "colon missing where expected");
       }
@@ -1088,14 +1088,14 @@ void parameter_data(MPL *mpl)
          /* on reading data in the tabbing format the default value is
             always copied, so delete the original symbol */
          if (altval != NULL) delete_symbol(mpl, altval);
-         /* the next token must be only semicolon */
+         /* the next token should be only semicolon */
          if (mpl->token != T_SEMICOLON)
             mpl_error(mpl, "symbol, number, or semicolon missing where expe"
                "cted");
          get_token(mpl /* ; */);
          goto done;
       }
-      /* in other cases there must be symbolic name of parameter, which
+      /* in other cases there should be symbolic name of parameter, which
          follows the keyword 'param' */
       if (!is_symbol(mpl))
          mpl_error(mpl, "parameter name missing where expected");

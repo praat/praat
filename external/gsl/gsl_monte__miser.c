@@ -82,7 +82,7 @@ gsl_monte_miser_integrate (gsl_monte_function * f,
     {
       if (xu[i] <= xl[i])
         {
-          GSL_ERROR ("xu must be greater than xl", GSL_EINVAL);
+          GSL_ERROR ("xu should be greater than xl", GSL_EINVAL);
         }
 
       if (xu[i] - xl[i] > GSL_DBL_MAX)
@@ -94,7 +94,7 @@ gsl_monte_miser_integrate (gsl_monte_function * f,
 
   if (state->alpha < 0)
     {
-      GSL_ERROR ("alpha must be non-negative", GSL_EINVAL);
+      GSL_ERROR ("alpha should be non-negative", GSL_EINVAL);
     }
 
   /* Compute volume */

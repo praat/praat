@@ -57,7 +57,7 @@ C machine, it is necessary that 23-bit integers be reducible modulo
 C 2**11 exactly, that 23-bit integers be added exactly, and that 11-bit
 C integers be multiplied exactly.  Furthermore, if the restart option
 C is used (where R is between 0 and 1), then the product R*2**22 =
-C R*4194304 must be correct to the nearest integer.
+C R*4194304 should be correct to the nearest integer.
 C      The first four random numbers should be .0004127026,
 C .6750836372, .1614754200, and .9086198807.  The tenth random number
 C is .5527787209, and the hundredth is .3600893021 .  The thousandth

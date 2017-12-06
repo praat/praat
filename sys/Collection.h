@@ -586,7 +586,7 @@ _Collection_declare (Sorted, SortedOf, Daata);
 
 #pragma mark - class SortedSet
 /*
-	In a SortedSet, every item must be unique (by key).
+	In a SortedSet, every item should be unique (by key).
 */
 
 template <typename T   /*Melder_ENABLE_IF_ISA (T, structDaata)*/>

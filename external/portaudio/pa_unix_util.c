@@ -118,7 +118,7 @@ void Pa_Sleep( long msec )
     /* XXX: Try sleeping the remaining time (contained in rem) if interrupted by a signal? */
 #else
     while( msec > 999 )     /* For OpenBSD and IRIX, argument */
-        {                   /* to usleep must be < 1000000.   */
+        {                   /* to usleep should be < 1000000.   */
         usleep( 999000 );
         msec -= 999;
         }

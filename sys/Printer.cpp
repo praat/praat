@@ -36,7 +36,7 @@
 
 /*
  * Everything must look the same on every printer, including on PDF,
- * so the margins must be constant with respect to the paper, not to the writable page.
+ * so the margins should be constant with respect to the paper, not to the writable page.
  */
 
 /* exported */ struct Printer thePrinter = {

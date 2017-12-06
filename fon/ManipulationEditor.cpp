@@ -383,7 +383,7 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		SET_REAL (maximum, my p_pitch_maximum)
 	EDITOR_DO
 		if (maximum <= my pitchTier.minPeriodic)
-			Melder_throw (U"Maximum pitch must be greater than ",
+			Melder_throw (U"Maximum pitch should be greater than ",
 				Melder_half (my pitchTier.minPeriodic), U" ", units_strings [(int) my p_pitch_units], U".");
 		my pref_pitch_maximum () = my p_pitch_maximum = maximum;
 		FunctionEditor_redraw (me);
@@ -429,7 +429,7 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 		double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration.get()) : undefined;
 		if (minimum > 1) Melder_throw (U"Minimum relative duration must not be greater than 1.");
 		if (maximum < 1) Melder_throw (U"Maximum relative duration must not be less than 1.");
-		if (minimum >= maximum) Melder_throw (U"Maximum relative duration must be greater than minimum.");
+		if (minimum >= maximum) Melder_throw (U"Maximum relative duration should be greater than minimum.");
 		if (isdefined (minimumValue) && minimum > minimumValue)
 			Melder_throw (U"Minimum relative duration must not be greater than the minimum value present, "
 				U"which is ", Melder_half (minimumValue), U".");

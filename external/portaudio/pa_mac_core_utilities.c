@@ -229,10 +229,10 @@ PaError PaMacCore_SetError(OSStatus error, int line, int isError)
  *
  * The returned ringBufferSize is computed using the following
  * constraints:
- *   - it must be at least 4.
- *   - it must be at least 3x framesPerBuffer.
- *   - it must be at least 2x the suggestedLatency.
- *   - it must be a power of 2.
+ *   - it should be at least 4.
+ *   - it should be at least 3x framesPerBuffer.
+ *   - it should be at least 2x the suggestedLatency.
+ *   - it should be a power of 2.
  * This function attempts to compute the minimum such size.
  *
  * FEEDBACK: too liberal/conservative/another way?
