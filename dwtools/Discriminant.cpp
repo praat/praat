@@ -420,7 +420,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		thy total = TableOfReal_to_SSCP (mew.get(), 0, 0, 0, 0);
 
 		if ((thy numberOfGroups = thy groups -> size) < 2) {
-			Melder_throw (U"Number of groups must be greater than one.");
+			Melder_throw (U"Number of groups should be greater than one.");
 		}
 
 		TableOfReal_centreColumns_byRowLabel (mew.get());

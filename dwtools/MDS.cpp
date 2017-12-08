@@ -550,7 +550,7 @@ autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 
 autoDistance TableOfReal_to_Distance (TableOfReal me) {
 	try {
-		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal must be a square table.");
+		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
 		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
 		autoDistance thee = Thing_new (Distance);
 		my structTableOfReal :: v_copy (thee.get());
@@ -2865,7 +2865,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			double value = strtod (start, &end);
 			start = end;
 			if (value < low || value > high) {
-				Melder_warning (U"drawSplines: knots must be in interval (", low, U", ", high, U")");
+				Melder_warning (U"drawSplines: knots should be in interval (", low, U", ", high, U")");
 				return;
 			}
 			if (numberOfKnots == 100) {

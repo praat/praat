@@ -100,12 +100,12 @@ static int checkLimits (Matrix me, int fromFreqScale, int toFreqScale, int *from
 		*toFilter = my ny;
 	}
 	if (*fromFilter > *toFilter) {
-		Melder_warning (U"Filter numbers must be in range [1, ", my ny, U"]");
+		Melder_warning (U"Filter numbers should be in range [1, ", my ny, U"]");
 		return 0;
 	}
 
 	if (*zmin < 0 || *zmax < 0) {
-		Melder_warning (U"Frequencies must be positive.");
+		Melder_warning (U"Frequencies should be positive.");
 		return 0;
 	}
 	if (*zmax <= *zmin) {
@@ -194,7 +194,7 @@ void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalSc
 	int myFreqScale = FilterBank_getFrequencyScale (me);
 
 	if (xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0) {
-		Melder_warning (U"Frequencies must be >= 0.");
+		Melder_warning (U"Frequencies should be >= 0.");
 		return;
 	}
 
@@ -505,7 +505,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 	}
 
 	if (bandwidth <= 0) {
-		Melder_warning (U"Bandwidth must be greater than zero.");
+		Melder_warning (U"Bandwidth should be greater than zero.");
 	}
 
 	integer n = 1000;
@@ -785,7 +785,7 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 		if (first >= last) {
 			first = 0; last = nf - 1;
 		}
-		Melder_require (first >= 0 && last <= nf, U"MFCC_to_MelFilter: coefficients must be in interval [0,", my maximumNumberOfCoefficients, U"].");
+		Melder_require (first >= 0 && last <= nf, U"MFCC_to_MelFilter: coefficients should be in interval [0,", my maximumNumberOfCoefficients, U"].");
 		
 		double df = (my fmax - my fmin) / (nf + 1);
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1, my fmin, my fmax, nf, df, df);
@@ -833,7 +833,7 @@ static autoMelFilter MFCC_to_MelFilter2 (MFCC me, integer first_cc, integer last
 		// Be strict
 
 		if (last_cc < first_cc || first_cc < 1 || last_cc > my maximumNumberOfCoefficients) {
-			Melder_throw (U"MFCC_to_MelFilter: coefficients must be in interval [1,", my maximumNumberOfCoefficients, U"].");
+			Melder_throw (U"MFCC_to_MelFilter: coefficients should be in interval [1,", my maximumNumberOfCoefficients, U"].");
 		}
 		autoNUMmatrix<double> dct (NUMcosinesTable (first_cc, last_cc, nf), first_cc, 1); // TODO ??
 		//if ((dct = NUMcosinesTable (first_cc, last_cc, nf)) == nullptr) return nullptr;

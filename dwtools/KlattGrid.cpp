@@ -2007,7 +2007,7 @@ autoSound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency) {
 				double dba = RealTier_getValueAtTime (my fricationAmplitude.get(), t);
 				a = ( isdefined (dba) ? DBSPL_to_A (dba) : 0.0 );
 			}
-			lastval = (val += 0.75 * lastval); // TODO: soft low-pass coefficient must be Fs dependent!
+			lastval = (val += 0.75 * lastval); // TODO: soft low-pass coefficient should be Fs dependent!
 			thy z [1] [i] = val * a;
 		}
 

@@ -463,7 +463,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 	for (integer i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
 		if (e2 -> dimension != dimension) {
-			Melder_throw (U"The dimension of the eigenvectors must be equal (offending object is ",  i, U").");
+			Melder_throw (U"The dimension of the eigenvectors should be equal (offending object is ",  i, U").");
 		}
 	}
 

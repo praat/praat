@@ -916,9 +916,9 @@ autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, intege
 				x [++ numberOfData] = val;
 				if (numberOfData > 1) {
 					if (val < x [numberOfData - 1]) {
-						Melder_throw (U"Data with x-values must be sorted.");
+						Melder_throw (U"Data with x-values should be sorted.");
 					} else if (val == x [numberOfData - 1]) {
-						Melder_throw (U"All x-values must be different.");
+						Melder_throw (U"All x-values should be different.");
 					}
 				}
 				y [numberOfData] = Table_getNumericValue_Assert (me, i, ycolumn);

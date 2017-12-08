@@ -73,13 +73,12 @@ static void NUMtranspose_d (double **m, long n);
 
 /* if A=UDV' then A' = (UDV')'=VDU' */
 static void SVD_transpose (SVD me) {
-	long tmpl = my numberOfRows;
 	double **tmpd = my u;
-
 	my u = my v;
 	my v = tmpd;
+	long tmp = my numberOfRows;
 	my numberOfRows = my numberOfColumns;
-	my numberOfColumns = tmpl;
+	my numberOfColumns = tmp;
 }
 
 /*
@@ -205,7 +204,7 @@ void SVD_compute (SVD me) {
 	try {
 		char jobu = 'S', jobvt = 'O';
 		integer m, lda, ldu, ldvt, info, lwork = -1;
-		double wt[2];
+		double wt [2];
 		int transpose = my numberOfRows < my numberOfColumns;
 
 		// Transpose: if rows < cols then data in v
@@ -216,12 +215,12 @@ void SVD_compute (SVD me) {
 		lda = ldu = ldvt = m = my numberOfColumns;
 		integer n = my numberOfRows;
 
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u[1][1], & lda, & my d[1], & my v[1][1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
+		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be precomputed.");
 
 		lwork = wt [0];
 		autoNUMvector<double> work ((integer) 0, lwork);
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u[1][1], & lda, & my d[1], & my v[1][1], & ldu, nullptr, & ldvt, work.peek(), & lwork, & info);
+		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, work.peek(), & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be computed.");
 
 		NUMtranspose_d (my v, MIN (m, n));
@@ -265,7 +264,7 @@ void SVD_solve (SVD me, double b [], double x []) {
 				for (integer i = 1; i <= my numberOfRows; i ++) {
 					tmp += my u [i] [j] * b [i];
 				}
-				tmp /= my d[j];
+				tmp /= my d [j];
 			}
 			t [j] = (real) tmp;
 		}
@@ -297,7 +296,7 @@ integer SVD_getMinimumNumberOfComponents (SVD me, double fractionOfSumOfEigenval
 	return j;
 }
 
-void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfEigenvalues) {
+void SVD_solve2 (SVD me, double b [], double x [], double fractionOfSumOfEigenvalues) {
 	try {
 		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
 		integer numberOfComponents = SVD_getMinimumNumberOfComponents (me, fractionOfSumOfEigenvalues);
@@ -306,7 +305,7 @@ void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfEigenvalu
 		/*  Solve UDV' x = b.
 			Solution: x = V D^-1 U' b 
 			
-			x = sum(i=1,M, (U[i].b)/d[i] V[i];
+			x = sum(i=1,M, (U [i].b)/d [i] V [i];
 		
 		*/
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -336,7 +335,7 @@ void SVD_sort (SVD me) {
 		NUMindexx (my d, mn_min, index.peek());
 
 		for (integer j = 1; j <= mn_min; j ++) {
-			integer from = index[mn_min - j + 1];
+			integer from = index [mn_min - j + 1];
 			my d [j] = thy d [from];
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				my u [i] [j] = thy u [i] [from];
@@ -352,7 +351,7 @@ void SVD_sort (SVD me) {
 
 integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 	integer numberOfZeroed = 0, mn_min = MIN (my numberOfRows, my numberOfColumns);
-	double dmax = my d[1];
+	double dmax = my d [1];
 
 	if (tolerance == 0.0) {
 		tolerance = my tolerance;
@@ -383,8 +382,8 @@ integer SVD_getRank (SVD me) {
 
 /*
 	SVD of A = U D V'.
-	If u[i] is the i-th column vector of U and v[i] the i-th column vector of V and s[i] the i-th singular value,
-	we can write the svd expansion  A = sum_{i=1}^n {d[i] u[i] v[i]'}.
+	If u [i] is the i-th column vector of U and v [i] the i-th column vector of V and s [i] the i-th singular value,
+	we can write the svd expansion  A = sum_{i=1}^n {d [i] u [i] v [i]'}.
 	Golub & van Loan, 3rd ed, p 71.
 */
 void SVD_synthesize (SVD me, integer sv_from, integer sv_to, double **m) {
@@ -394,21 +393,26 @@ void SVD_synthesize (SVD me, integer sv_from, integer sv_to, double **m) {
 		if (sv_to == 0) {
 			sv_to = mn_min;
 		}
-
-		if (sv_from > sv_to || sv_from < 1 || sv_to > mn_min) {
-			Melder_throw (U"Indices must be in range [1, ", mn_min, U"].");
-		}
-
+		Melder_require (sv_from > 0 && sv_from <= sv_to && sv_to <= mn_min, U"Indices must be in range [1, ", mn_min, U"].");
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfColumns; j ++) {
 				m [i] [j] = 0.0;
 			}
 		}
-
-		for (integer k = sv_from; k <= sv_to; k ++) {
-			for (integer i = 1; i <= my numberOfRows; i ++) {
-				for (integer j = 1; j <= my numberOfColumns; j ++) {
-					m [i] [j] += my d [k] * my u [i] [k] * my v [j] [k];
+		if (my numberOfRows >= my numberOfColumns) {
+			for (integer k = sv_from; k <= sv_to; k ++) {
+				for (integer i = 1; i <= my numberOfRows; i ++) {
+					for (integer j = 1; j <= my numberOfColumns; j ++) {
+						m [i] [j] += my d [k] * my u [i] [k] * my v [j] [k];
+					}
+				}
+			}
+		} else {
+			for (integer k = sv_from; k <= sv_to; k ++) {
+				for (integer i = 1; i <= my numberOfRows; i ++) {
+					for (integer j = 1; j <= my numberOfColumns; j ++) {
+						m [i] [j] += my d [k] * my v [k] [i] * my u [k] [j];
+					}
 				}
 			}
 		}
@@ -456,8 +460,8 @@ autoGSVD GSVD_create_d (double **m1, integer numberOfRows1, integer numberOfColu
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
 		integer k, l, info;
 		NUMlapack_dggsvd (& jobu1, & jobu2, & jobq, & m, & n, & p, & k, & l,
-		    & a[1][1], & m, & b[1][1], & p, & alpha[1], & beta[1], nullptr, & m,
-		    nullptr, & p, & q[1][1], & n, & work[1], & iwork[1], & info);
+		    & a [1] [1], & m, & b [1] [1], & p, & alpha [1], & beta [1], nullptr, & m,
+		    nullptr, & p, & q [1] [1], & n, & work [1], & iwork [1], & info);
 		Melder_require (info == 0, U"dggsvd failed, error = ", info);
 
 		integer kl = k + l;
@@ -480,7 +484,7 @@ autoGSVD GSVD_create_d (double **m1, integer numberOfRows1, integer numberOfColu
 
 		// Get R from a(1:k+l,n-k-l+1:n)
 
-		double *pr = & a[1][1];
+		double *pr = & a [1] [1];
 		for (integer i = 1; i <= kl; i ++) {
 			for (integer j = i; j <= kl; j ++) {
 				my r [i] [j] = pr [i - 1 + (n - kl + j - 1) * m]; /* from col-major */

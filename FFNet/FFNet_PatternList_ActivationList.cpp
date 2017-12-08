@@ -74,9 +74,9 @@ static void _FFNet_PatternList_ActivationList_checkDimensions (FFNet me, Pattern
 		Melder_throw (U"The PatternList and the ActivationList do not match.\nThe number of rows in the PatternList must equal the number of rows in the Activation.");
 	}
 	if (! _PatternList_checkElements (p)) {
-		Melder_throw (U"All PatternList elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");	}
+		Melder_throw (U"All PatternList elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the PatternList values first.");	}
 	if (! _ActivationList_checkElements (a)) {
-		Melder_throw (U"All Activation elements must be in the interval [0, 1].\nYou could use \"Formula...\" to scale the Activation values first.");
+		Melder_throw (U"All Activation elements should be in the interval [0, 1].\nYou could use \"Formula...\" to scale the Activation values first.");
 	}
 }
 

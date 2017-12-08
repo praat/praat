@@ -173,7 +173,7 @@ void Matrix_scale (Matrix me, int choice) {
 			}
 		}
 	} else {
-		Melder_flushError (U"Matrix_scale: choice must be > 0 && <= 3.");
+		Melder_flushError (U"Matrix_scale: choice should be > 0 && <= 3.");
 		return;
 	}
 	if (nZero) {

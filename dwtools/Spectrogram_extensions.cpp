@@ -237,7 +237,7 @@ double BandFilterSpectrogram_getFrequencyInHertz (BandFilterSpectrogram me, doub
 // xmin, xmax in hz versus bark/mel or lin
 void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	if (xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0) {
-		Melder_warning (U"Frequencies must be >= 0.");
+		Melder_warning (U"Frequencies should be >= 0.");
 		return;
 	}
 

@@ -839,7 +839,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 		cov1 -> numberOfObservations *= gamma;
 		cov2 -> numberOfObservations *= 1.0 - gamma;
 
-		// Replace cov1 at component + add cov2. If something goes wrong we must be able to restore original!
+		// Replace cov1 at component + add cov2. If something goes wrong we should be able to restore original!
 		try {
 			Thing_setName (cov2.get(), Melder_cat (Thing_getName (cov2.get()), U"-", my numberOfComponents + 1));
 			my covariances -> addItem_move (cov2.move());

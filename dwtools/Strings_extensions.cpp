@@ -177,7 +177,7 @@ autoStrings strings_to_Strings (char32 **strings, integer from, integer to) {
 autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	try {
 		Melder_require (from > 0 && from <= to && to <= my numberOfStrings,
-			U"Strings_extractPart: begin and end must be in interval [1, ", my numberOfStrings, U"].");
+			U"Strings_extractPart: begin and end should be in interval [1, ", my numberOfStrings, U"].");
 		return strings_to_Strings (my strings, from, to);
 	} catch (MelderError) {
 		Melder_throw (me, U": no part extracted.");
@@ -217,7 +217,7 @@ autoPermutation Strings_to_Permutation (Strings me, int sort) {
 autoStrings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee) {
 	try {
 		Melder_require (my numberOfStrings == thy numberOfElements,
-			U"Strings_and_Permutation_permuteStrings: The number of strings and the number of elements in the Permutation must be equal.");
+			U"Strings_and_Permutation_permuteStrings: The number of strings and the number of elements in the Permutation should be equal.");
 		autoStrings him = Strings_createFixedLength (my numberOfStrings);
 		for (integer i = 1; i <= thy numberOfElements; i ++) {
 			integer index = thy p [i];

@@ -288,7 +288,7 @@ autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, Config
 	try {
 		integer npc = thy numberOfColumns;
 		Melder_require (thy numberOfColumns <= my dimension,
-			U"The dimension of the Configuration must be less than or equal to the dimension of the PCA.");
+			U"The dimension of the Configuration should be less than or equal to the dimension of the PCA.");
 
 		if (npc > my numberOfEigenvalues) {
 			npc = my numberOfEigenvalues;

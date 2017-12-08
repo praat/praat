@@ -138,7 +138,7 @@ void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *lef
 static autoTextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
-            Melder_throw (U"Domains must be equal.");
+            Melder_throw (U"Domains should be equal.");
         }
         integer myIndex = 1;
 		double timeCut = 0.0;
@@ -175,7 +175,7 @@ static autoTextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me
 autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
-            Melder_throw (U"Domains must be equal.");
+            Melder_throw (U"Domains should be equal.");
         }
         autoNUMvector<double> durations (1, my intervals.size);
         for (integer i = 1; i <= my intervals.size; i ++) {
@@ -243,7 +243,7 @@ autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTi
 autoTextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
-            Melder_throw (U"Domains must be equal.");
+            Melder_throw (U"Domains should be equal.");
         }
         double cutDurations = 0;
         for (integer i = 1; i <= thy intervals.size; i ++) {
