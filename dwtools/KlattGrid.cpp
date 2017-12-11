@@ -729,13 +729,13 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 			power1 = KlattGrid_POWER1_DEFAULT;
 		}
 		
-		Melder_require (power1 > 0.0, U"All power1 values must greater than zero.");
+		Melder_require (power1 > 0.0, U"All power1 values should greater than zero.");
 
 		double power2 = RealTier_getValueAtTime (my power2.get(), time);
 		if (isundef (power2)) {
 			power2 = KlattGrid_POWER2_DEFAULT;
 		}
-		Melder_require (power1 < power2, U"At all times a power1 value must be smaller than the corresponding power2 value.");
+		Melder_require (power1 < power2, U"At all times a power1 value should be smaller than the corresponding power2 value.");
 		
 	} while ( ++ ipoint < my power1 -> points.size);
 
@@ -753,7 +753,7 @@ static void PhonationGrid_checkFlowFunction (PhonationGrid me) {
 		if (isundef (power1)) {
 			power1 = KlattGrid_POWER1_DEFAULT;
 		}
-		Melder_require (power1 < power2, U"At all times a power1 value must be smaller than the corresponding power2 value.");
+		Melder_require (power1 < power2, U"At all times a power1 value should be smaller than the corresponding power2 value.");
 		
 	} while ( ++ ipoint < my power2 -> points.size);
 }
@@ -954,7 +954,7 @@ autoPhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me) {
 		PhonationGridPlayOptions pp = my options.get();
 
 		PhonationGrid_checkFlowFunction (me);
-		Melder_require (my pitch -> points.size > 0, U"Pitch tier is empty.");
+		Melder_require (my pitch -> points.size > 0, U"Pitch tier should not be empty.");
 
 		if (pp -> maximumPeriod == 0.0) {
 			pp -> maximumPeriod = PhonationGrid_getMaximumPeriod (me);
@@ -1057,7 +1057,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 		PhonationGridPlayOptions p = my options.get();
 		double lastVal = undefined;
 
-		Melder_require (my voicingAmplitude -> points.size > 0, U"Voicing amplitude tier is empty.");
+		Melder_require (my voicingAmplitude -> points.size > 0, U"Voicing amplitude tier should not be empty.");
 
 		autoSound him = Sound_createEmptyMono (my xmin, my xmax, samplingFrequency);
 		autoSound breathy;
@@ -1832,7 +1832,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 			if (itier <= my formants.size) {
 				if (delta -> points.size > 0) {
 					autoRealTier rt = RealTier_updateWithDelta (my formants.at [itier], delta, thy glottis.get(), pc -> fadeFraction);
-					Melder_require (RealTier_valuesInRange (rt.get(), 0, undefined), U"Formant ", itier, U" coupling gives negative values.");
+					Melder_require (RealTier_valuesInRange (rt.get(), 0, undefined), U"Formant ", itier, U" coupling should not give negative values.");
 					
 					my formants. replaceItem_move (rt.move(), itier);
 				}
@@ -2007,7 +2007,7 @@ autoSound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency) {
 				double dba = RealTier_getValueAtTime (my fricationAmplitude.get(), t);
 				a = ( isdefined (dba) ? DBSPL_to_A (dba) : 0.0 );
 			}
-			lastval = (val += 0.75 * lastval); // TODO: soft low-pass coefficient must be Fs dependent!
+			lastval = (val += 0.75 * lastval); // TODO: soft low-pass coefficient should be Fs dependent!
 			thy z [1] [i] = val * a;
 		}
 
@@ -2370,7 +2370,7 @@ auto##tierType KlattGrid_extract##Name##Tier (KlattGrid me) \
 { return Data_copy (my phonation -> name.get()); } \
 void KlattGrid_replace##Name##Tier (KlattGrid me, tierType thee) \
 { try {\
-	Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains must be equal"); \
+	Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains should be equal"); \
 	auto##tierType any = Data_copy (thee); \
 	my phonation -> name = any.move(); \
 	} catch (MelderError) { Melder_throw (me, U": tier not replaced."); } \
@@ -2490,7 +2490,7 @@ autoIntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType,
 
 void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, integer iformant, IntensityTier thee) {
 	try {
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains must be equal.");
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains should be equal.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		Melder_require (iformant > 0 && iformant <= ordered -> size, U"Formant amplitude tier ", iformant, U" does not exist.");
 		autoIntensityTier any = Data_copy (thee);
@@ -2512,7 +2512,7 @@ autoFormantGrid KlattGrid_extractFormantGrid (KlattGrid me, int formantType) {
 
 void KlattGrid_replaceFormantGrid (KlattGrid me, int formantType, FormantGrid thee) {
 	try {
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains must be equal");
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains should be equal");
 		autoFormantGrid *fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
 		*fg = Data_copy (thee);
 	} catch (MelderError) {
@@ -2522,7 +2522,8 @@ void KlattGrid_replaceFormantGrid (KlattGrid me, int formantType, FormantGrid th
 
 void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, integer position) {
 	try {
-		Melder_require (formantType != KlattGrid_NASAL_ANTIFORMANTS && formantType != KlattGrid_TRACHEAL_ANTIFORMANTS && formantType != KlattGrid_DELTA_FORMANTS, U"Cannot add amplitude tier to this formant type.");
+		Melder_require (formantType != KlattGrid_NASAL_ANTIFORMANTS && formantType != KlattGrid_TRACHEAL_ANTIFORMANTS && formantType != KlattGrid_DELTA_FORMANTS, 
+			U"Cannot add amplitude tier to this formant type.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		integer noa = ordered->size;
 		if (position > noa || position < 1) {
@@ -2537,7 +2538,8 @@ void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, integer p
 
 void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, int formantType, integer position) {
 	try {
-		Melder_require (formantType != KlattGrid_NASAL_ANTIFORMANTS && formantType != KlattGrid_TRACHEAL_ANTIFORMANTS && formantType != KlattGrid_DELTA_FORMANTS, U"Cannot remove amplitude tier from this formant type.");
+		Melder_require (formantType != KlattGrid_NASAL_ANTIFORMANTS && formantType != KlattGrid_TRACHEAL_ANTIFORMANTS && formantType != KlattGrid_DELTA_FORMANTS, 
+			U"Cannot remove amplitude tier from this formant type.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		if (position > 0 && position <= ordered->size) {
 			ordered -> removeItem (position);
@@ -2568,7 +2570,7 @@ void KlattGrid_addFormant (KlattGrid me, int formantType, integer position) {
 
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		integer noa = ordered->size;
-		Melder_require (nof == noa, U"The number of formants (",  nof, U") and the number of amplitudes (", noa, U") must be equal.");
+		Melder_require (nof == noa, U"The number of formants (",  nof, U") and the number of amplitudes (", noa, U") should be equal.");
 		
 		FormantGrid_addFormantAndBandwidthTiers (fg->get(), position);
 		try {
@@ -2649,7 +2651,7 @@ autoFormantGrid KlattGrid_extractDeltaFormantGrid (KlattGrid me) {
 
 void KlattGrid_replaceDeltaFormantGrid (KlattGrid me, FormantGrid thee) {
 	try {
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains must be equal");
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains should be equal");
 		autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, KlattGrid_DELTA_FORMANTS);
 		autoFormantGrid him = Data_copy (thee);
 		*fg = him.move();
@@ -2660,12 +2662,13 @@ void KlattGrid_replaceDeltaFormantGrid (KlattGrid me, FormantGrid thee) {
 
 autoFormantGrid KlattGrid_to_oralFormantGrid_openPhases (KlattGrid me, double fadeFraction) {
 	try {
-		Melder_require (my vocalTract -> oral_formants -> formants.size > 0 || my vocalTract -> oral_formants -> bandwidths.size > 0, U"Formant grid is empty.");
+		Melder_require (my vocalTract -> oral_formants -> formants.size > 0 || my vocalTract -> oral_formants -> bandwidths.size > 0, 
+			U"Formant grid should not be empty.");
 		
 		if (fadeFraction < 0.0) {
 			fadeFraction = 0.0;
 		}
-		Melder_require (fadeFraction < 0.5, U"Fade fraction must be smaller than 0.5");
+		Melder_require (fadeFraction < 0.5, U"Fade fraction should be smaller than 0.5");
 		
 		my coupling -> options -> fadeFraction = fadeFraction;
 		autoFormantGrid thee = Data_copy ( (FormantGrid) my vocalTract -> oral_formants.get());
@@ -2706,7 +2709,7 @@ autoIntensityTier KlattGrid_extractFricationAmplitudeTier (KlattGrid me) {
 
 void KlattGrid_replaceFricationAmplitudeTier (KlattGrid me, IntensityTier thee) {
 	try {
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains must be equal");
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains should be equal");
 		my frication -> fricationAmplitude = Data_copy (thee);
 	} catch (MelderError) {
 		Melder_throw (me, U": no frication amplitude tier replaced.");
@@ -2731,7 +2734,7 @@ autoIntensityTier KlattGrid_extractFricationBypassTier (KlattGrid me) {
 
 void KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee) {
 	try {
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains must be equal");
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains should be equal");
 		my frication -> bypass = Data_copy (thee);
 	} catch (MelderError) {
 		Melder_throw (me, U": no frication bypass tier replaced.");
@@ -2741,7 +2744,7 @@ void KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee) {
 void KlattGrid_setGlottisCoupling (KlattGrid me) {
 	try {
 		my coupling -> glottis = PhonationGrid_to_PhonationTier (my phonation.get());
-		Melder_require (my coupling -> glottis, U"Empty phonation tier.");
+		Melder_require (my coupling -> glottis, U"Phonation tier should not be empty.");
 		
 	} catch (MelderError) {
 		Melder_throw (me, U": no coupling could be set.");
@@ -2824,7 +2827,7 @@ autoSound Sound_KlattGrid_filter_frication (Sound me, KlattGrid thee) {
 
 autoSound Sound_KlattGrid_filterByVocalTract (Sound me, KlattGrid thee, int filterModel) {
 	try {
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains must be equal.");
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains should be equal.");
 		
 		KlattGrid_setDefaultPlayOptions (thee);
 		thy coupling -> options -> openglottis = 0; // don't trust openglottis info!

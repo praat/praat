@@ -54,7 +54,7 @@ autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precisi
 			}
 			return him;
 		} else {
-			Melder_throw (U"The domain of the TextTier and one of the domains of the DTW must be equal.");
+			Melder_throw (U"The domain of the TextTier and one of the domains of the DTW should be equal.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"TextTier not created from DTW & TextTier.");
@@ -88,7 +88,7 @@ autoIntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee
 			}
 			return him;
 		} else {
-			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW must be equal.");
+			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW should be equal.");
 		}
 	} catch (MelderError) {
 		Melder_throw (U"IntervalTier not created from DTW & IntervalTier.");
@@ -105,7 +105,7 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precisi
 			tmin = my ymin;
 			tmax = my ymax;
 		} else {
-			Melder_throw (U"The domain of the TextGrid must be equal to one of the domains of the DTW.");
+			Melder_throw (U"The domain of the TextGrid should be equal to one of the domains of the DTW.");
 		}
 
 		autoTextGrid him = TextGrid_createWithoutTiers (tmin, tmax);
@@ -170,7 +170,7 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 				Table_setNumericValue (him.get(), i, 4, sumOfDistances / numberOfFrames);
 			}
 		} else {
-			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW must be equal.");
+			Melder_throw (U"The domain of the IntervalTier and one of the domains of the DTW should be equal.");
 		}
 		return him;
 	} catch (MelderError) {
@@ -182,7 +182,7 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) {
-			Melder_throw (U"The domain of the TextTier and the DTW must be equal.");
+			Melder_throw (U"The domain of the TextTier and the DTW should be equal.");
 		}
 		autoTextTier him =  Data_copy (thee);
 		his xmin = my ymin;
@@ -202,7 +202,7 @@ autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee) {
 	try {
 		if ( (my xmin != thy xmin) || my xmax != thy xmax) Melder_throw
-			(U"The domain of the IntervalTier and the DTW must be equal.");
+			(U"The domain of the IntervalTier and the DTW should be equal.");
 
 		autoIntervalTier him = Data_copy (thee);
 
@@ -226,7 +226,7 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 	try {
 		autoTextGrid him = Thing_new (TextGrid);
 		if (my xmin != thy xmin || my xmax != thy xmax) {
-			Melder_throw (U"The domain of the TextGrid and the y-domain of the DTW must be equal.");
+			Melder_throw (U"The domain of the TextGrid and the y-domain of the DTW should be equal.");
 		}
 
 		his xmin = my ymin;

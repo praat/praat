@@ -195,7 +195,7 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 		}
 		nfft *= 2;
 
-		Melder_require (nfft / 2 == my nx - 1, U"Dimension of Spectrum must be a power of 2 - 1.");
+		Melder_require (nfft / 2 == my nx - 1, U"Dimension of Spectrum should be a power of 2 - 1.");
 
 		autoSound x = Spectrum_to_Sound (me);
 		autoSound nx = Data_copy (x.get());
@@ -286,7 +286,7 @@ void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax, dou
 autoSpectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 	try {
 		Melder_require (my nx == thy nx && my x1 == thy x1 && my xmax == thy xmax && my dx == thy dx,
-			U"Dimensions of both spectra must be the same.");
+			U"Dimensions of both spectra should be the same.");
 
 		autoSpectrum him = Data_copy (me);
 

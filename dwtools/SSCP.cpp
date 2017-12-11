@@ -361,7 +361,7 @@ double SSCP_getConcentrationEllipseArea (SSCP me, double scale, bool confidence,
 
 	autoSSCP thee = _SSCP_extractTwoDimensions (me, d1, d2);
 	scale = SSCP_getEllipseScalefactor (thee.get(), scale, confidence);
-	Melder_require (scale > 0, U"Invalid scale factor.");
+	Melder_require (scale > 0, U"The scale factor should be larger than zero.");
 
 	double a, b, cs, sn;
 	NUMeigencmp22 (thy data [1] [1], thy data [1] [2], thy data [2] [2], & a, & b, & cs, & sn);
@@ -411,7 +411,7 @@ void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confi
 	Graphics_setInner (g);
 
 	scale = SSCP_getEllipseScalefactor (thee.get(), scale, confidence);
-	Melder_require (scale > 0, U"Invalid scale factor.");
+	Melder_require (scale > 0, U"The scale factor should be larger than zero.");
 	
 	_SSCP_drawTwoDimensionalEllipse (thee.get(), g, scale, 0);
 
@@ -508,7 +508,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long nu
 autoSSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long cole) {
 	try {
 		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns),
-			U"At least one of the table's elements is undefined.");
+			U"All the table's elements should be defined.");
 
 		if (rowb == 0 && rowe == 0) {
 			rowb = 1;
@@ -763,20 +763,20 @@ autoPCA SSCP_to_PCA (SSCP me) {
 void SSCP_setValue (SSCP me, long row, long col, double value) {
 	Melder_require (col > 0 && col <= my numberOfColumns, U"Illegal column number.");
 	Melder_require (row > 0 && row <= my numberOfRows, U"Illegal row number.");
-	Melder_require (! (row == col && value <= 0), U"Diagonal element must always be a positive number.");
+	Melder_require (! (row == col && value <= 0), U"Diagonal element should always be a positive number.");
 	
 	if (my numberOfRows == 1) { // diagonal
-		Melder_require (row == col, U"Row and column number must be equal for a diagonal matrix.");
+		Melder_require (row == col, U"Row and column number should be equal for a diagonal matrix.");
 		my data [1] [row] = value;
 	} else {
 		Melder_require (!(row != col && (fabs (value) > my data [row] [row] || fabs (value) > my data [row] [row])),
-			U"The off-diagonal cannot be larger than the diagonal values. Input diagonal elements first, or change this value.");
+			U"The off-diagonal should not be larger than the diagonal values. Input diagonal elements first, or change this value.");
 		my data [row] [col] = my data [col] [row] = value;
 	}
 }
 
 void SSCP_setCentroid (SSCP me, long component, double value) {
-	Melder_require (component > 0 && component <= my numberOfColumns, U"Illegal component number.");
+	Melder_require (component > 0 && component <= my numberOfColumns, U"Component number should not exceed ", my numberOfColumns, U".");
 	my centroid [component] = value;
 }
 
@@ -785,7 +785,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		char upper = 'L', diag = 'N';
 		integer info;
 		Melder_require (ny > 0 && ny < my numberOfRows, U"Invalid split.");
-		Melder_require (my numberOfRows > 1, U"Matrix cannot be diagonal.");
+		Melder_require (my numberOfRows > 1, U"Matrix should not be diagonal.");
 
 		integer m = my numberOfRows, nx = m - ny, xy_interchanged = nx < ny, yof = 0, xof = ny;
 		if (xy_interchanged) {
@@ -939,7 +939,7 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 
 		for (long k = 2; k <= my size; k ++) {
 			SSCP t = my at [k];
-			Melder_require (t -> numberOfRows == thy numberOfRows, U"The dimension of item ", k, U" does not agree.");
+			Melder_require (t -> numberOfRows == thy numberOfRows, U"The dimension of item ", k, U" should agree.");
 			
 			thy numberOfObservations += t -> numberOfObservations;
 
@@ -979,7 +979,7 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 		
 		for (long k = 2; k <= my size; k ++) {
 			Covariance t = my at [k];
-			Melder_require (t -> numberOfRows == thy numberOfRows, U"The dimension of item ", k, U" does not agree.");
+			Melder_require (t -> numberOfRows == thy numberOfRows, U"The dimension of item ", k, U" should agree.");
 
 			thy numberOfObservations += t -> numberOfObservations;
 
@@ -1167,8 +1167,8 @@ autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroi
 		autoNUMvector <real> covariances (NUMstring_to_numbers (s_covariances, & numberOfCovariances), 1);
 		long numberOfCovariances_wanted = dimension * (dimension + 1) / 2;
 		Melder_require (numberOfCovariances == numberOfCovariances_wanted,
-			U"The number of covariance matrix elements and the number of centroid elements are not in "
-			" concordance. There should be d(d+1)/2 covariance values and d centroid values.");
+			U"The number of covariance matrix elements and the number of centroid elements should agree. "
+			"There should be d(d+1)/2 covariance values and d centroid values.");
 		
 		autoCovariance me = Covariance_create (dimension);
 
@@ -1189,7 +1189,7 @@ autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroi
 		// Check if a valid covariance, first check variances then covariances
 
 		for (long irow = 1; irow <= dimension; irow ++) {
-			Melder_require (my data [irow] [irow] > 0.0, U"The diagonal matrix elements, must all be positive numbers.");
+			Melder_require (my data [irow] [irow] > 0.0, U"The diagonal matrix elements should all be positive numbers.");
 		}
 		for (long irow = 1; irow <= dimension; irow ++) {
 			for (long icol = irow + 1; icol <= dimension; icol ++) {
@@ -1217,8 +1217,8 @@ autoCorrelation Correlation_createSimple (char32 *s_correlations, char32 *s_cent
 		autoNUMvector<double> correlations (NUMstring_to_numbers (s_correlations, & numberOfCorrelations), 1);
 		long numberOfCorrelations_wanted = dimension * (dimension + 1) / 2;
 		Melder_require (numberOfCorrelations == numberOfCorrelations_wanted,
-			U"The number of correlation matrix elements and the number of centroid elements are not in "
-			" concordance. There should be d(d+1)/2 correlation values and d centroid values.");
+			U"The number of correlation matrix elements and the number of centroid elements should agree. "
+			"There should be d(d+1)/2 correlation values and d centroid values.");
 
 		autoCorrelation me = Correlation_create (dimension);
 
@@ -1239,14 +1239,14 @@ autoCorrelation Correlation_createSimple (char32 *s_correlations, char32 *s_cent
 		// Check if a valid correlations, first check variances then covariances
 
 		for (long irow = 1; irow <= dimension; irow ++) {
-			Melder_require (my data [irow] [irow] == 1.0, U"The diagonal matrix elements, must all equal 1.0.");
+			Melder_require (my data [irow] [irow] == 1.0, U"The diagonal matrix elements should all equal 1.0.");
 		}
 		for (long irow = 1; irow <= dimension; irow ++) {
 			for (long icol = irow + 1; icol <= dimension; icol ++) {
 				if (fabs (my data [irow] [icol]) > 1) {
 					long nmissing = (irow - 1) * irow / 2;
 					long inum = (irow - 1) * dimension + icol - nmissing;
-					Melder_throw (U"The correlation in cell [", irow, U",", icol, U"], i.e. input item ", inum, U" is larger then 1.0.");
+					Melder_throw (U"The correlation in cell [", irow, U",", icol, U"], i.e. input item ", inum, U" should not exceed 1.0.");
 				}
 			}
 		}
@@ -1328,7 +1328,7 @@ double SSCP_getLnDeterminant (SSCP me) {
 static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 	try {
 		Melder_require (my numberOfRows == thy numberOfRows && my numberOfColumns == thy numberOfColumns,
-			U"Matrices must have equal dimensions.");
+			U"Matrices should have equal dimensions.");
 		autoSSCPList sscps = SSCPList_create ();
 		autoSSCP sscp1 = Covariance_to_SSCP (me);
 		sscps -> addItem_move (sscp1.move());
@@ -1430,7 +1430,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	double df1 = p, df2 = N - p - 1;
 	
 	Melder_require (df2 >= 1.0, U"Not enough observations (", N, U") for this test.");
-	Melder_require (p >= N1 && p >= N2, U"The number of observations must larger than the number of variables.");
+	Melder_require (p >= N1 && p >= N2, U"The number of observations should be larger than the number of variables.");
 
 	dif = 0;
 	for (long i = 1; i <= p; i ++) {
@@ -1601,7 +1601,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 	integer numberOfObservations = Melder_ifloor (my numberOfObservations);
 	double  ln_me, ln_thee;
 	double chisq = undefined, df = undefined;
-	Melder_require (my numberOfRows == thy numberOfRows, U"Matrices must have equal dimensions.");
+	Melder_require (my numberOfRows == thy numberOfRows, U"Matrices should have equal dimensions.");
 
 	if (my numberOfObservations != thy numberOfObservations) {
 		numberOfObservations = Melder_ifloor (my numberOfObservations > thy numberOfObservations ?
@@ -1649,13 +1649,13 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 }
 
 static void checkOneIndex (TableOfReal me, long index) {
-	Melder_require (index > 0 && index <= my numberOfColumns, U"Index must be in interval [1, ", my numberOfColumns, U"].");
+	Melder_require (index > 0 && index <= my numberOfColumns, U"Index should be in interval [1, ", my numberOfColumns, U"].");
 }
 
 static void checkTwoIndices (TableOfReal me, long index1, long index2) {
 	Melder_require (index1 > 0 && index1 <= my numberOfColumns && index2 > 0 && index2 <= my numberOfColumns,
-		U"Index must be in interval [1, ", my numberOfColumns, U"].");
-	Melder_require (index1 != index2,U"Indices must be different.");
+		U"Index should be in interval [1, ", my numberOfColumns, U"].");
+	Melder_require (index1 != index2,U"Indices should be different.");
 }
 
 void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu, double *p_prob, double *p_t, double *p_df) {
@@ -1794,17 +1794,17 @@ void Covariance_getSignificanceOfVariancesRatio (Covariance me, long index1, lon
 autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, long numberOfTests, int method) {
 	try {
 		long m_bonferroni = my numberOfRows * (my numberOfRows - 1) / 2;
-		Melder_require (confidenceLevel > 0 && confidenceLevel <= 1.0, U"Confidence level must be in interval (0-1).");
+		Melder_require (confidenceLevel > 0 && confidenceLevel <= 1.0, U"Confidence level should be in interval (0-1).");
 
-		Melder_require (my numberOfObservations > 4, U"The number of observations must be greater than 4.");
-		Melder_require (numberOfTests >= 0, U"The \"number of tests\" cannot be less than zero.");
+		Melder_require (my numberOfObservations > 4, U"The number of observations should be greater than 4.");
+		Melder_require (numberOfTests >= 0, U"The \"number of tests\" should not be less than zero.");
 
 		if (numberOfTests == 0) {
 			numberOfTests = m_bonferroni;
 		}
 
 		if (numberOfTests > m_bonferroni) {
-			Melder_warning (U"The \"number of tests\" exceeds the number of elements in the Correlation object.");
+			Melder_warning (U"The \"number of tests\" should not exceed the number of elements in the Correlation object.");
 		}
 
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfRows);

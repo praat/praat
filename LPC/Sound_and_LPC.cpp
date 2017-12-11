@@ -374,7 +374,7 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 	integer numberOfFrames, frameErrorCount = 0;
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder, 
 		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
-		U" the analysis window duration has to be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
+		U" the analysis window duration should be greater than ", my dx * (predictionOrder + 1), U"Please increase the analysis window duration or lower the prediction order.");
 	
 	// Convenience: analyse the whole sound into one LPC_frame
 	if (windowDuration > my dx * my nx) {
@@ -461,8 +461,8 @@ autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth
 
 autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee) {
 	try {
-		Melder_require (my samplingPeriod == thy dx, U"Sampling frequencies are not the same.");
-		Melder_require (my xmin == thy xmin && thy xmax == my xmax, U"Domains of LPC and Sound are not equal.");
+		Melder_require (my samplingPeriod == thy dx, U"Sampling frequencies should be equal.");
+		Melder_require (my xmin == thy xmin && thy xmax == my xmax, U"Domains of LPC and Sound should be equal.");
 		
 		autoSound him = Data_copy (thee);
 
@@ -496,7 +496,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, bool useGain) {
 		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
 		double xmax = my xmax < thy xmax ? my xmax : thy xmax;
 		Melder_require (xmin < xmax, U"Domains of Sound [", thy xmin, U",", thy xmax, U"] and LPC [",
-			my xmin, U",", my xmax, U"] do not overlap.");
+			my xmin, U",", my xmax, U"] should overlap.");
 
 		// resample sound if samplings don't match
 		autoSound source;
@@ -568,7 +568,7 @@ void LPC_and_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer c
 	if (channel > thy ny) {
 		channel = 1;
 	}
-	Melder_require (frameIndex > 0 && frameIndex <= my nx, U"Frame number out of range.");
+	Melder_require (frameIndex > 0 && frameIndex <= my nx, U"Frame should be in the range [1, ", my nx, U"].");
 
 	if (channel > 0) {
 		LPC_Frame_and_Sound_filter (& (my d_frames [frameIndex]), thee, channel);

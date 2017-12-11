@@ -64,7 +64,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 		nsamp_window = halfnsamp_window * 2;
 		
 		Melder_require (nsamp_window > 1,
-			U"Your analysis window is too short: less than two samples.");
+			U"There should be atleast two samples in the window.");
 		
 		integer numberOfFrames;
 		Sampled_shortTermAnalysis (me, windowLength, timeStep, & numberOfFrames, & t1);
@@ -120,7 +120,7 @@ autoSound ComplexSpectrogram_to_Sound (ComplexSpectrogram me, double stretchFact
 		int originalNumberOfSamplesProbablyOdd = (lastPhase != 0.0 && lastPhase != pi && lastPhase != -pi) || 
 			my ymax - lastFrequency > 0.25 * my dx;
 		Melder_require (my y1 == 0.0, 
-			U"A Fourier-transformable ComplexSpectrogram must have a first frequency of 0 Hz, not ", my y1, U" Hz.");
+			U"A Fourier-transformable ComplexSpectrogram should have a first frequency of 0 Hz, not ", my y1, U" Hz.");
 		
 		integer nsamp_window = 2 * my ny - (originalNumberOfSamplesProbablyOdd ? 1 : 2 );
 		integer halfnsamp_window = nsamp_window / 2;

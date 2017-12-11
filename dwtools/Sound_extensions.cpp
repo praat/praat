@@ -469,7 +469,7 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 
 		integer filelength = MelderFile_length (file);
 		
-		Melder_require (filelength > 0, U"File is empty.");
+		Melder_require (filelength > 0, U"File should not be empty.");
 		
 		// Two samples in each byte
 
@@ -785,8 +785,8 @@ static void NUMgammatoneFilter4 (double *x, double *y, integer n, double centre_
 
 autoSound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth) {
 	try {
-		Meldr_require (centre_frequency > 0, U"Centre frequency must be positive.");
-		Melder_require (bandwidth > 0, U"Bandwidth must be positive.");
+		Meldr_require (centre_frequency > 0, U"Centre frequency should be positive.");
+		Melder_require (bandwidth > 0, U"Bandwidth should be positive.");
 
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
 		autoNUMvector<double> y (1, my nx);
@@ -870,7 +870,7 @@ autoSound Sound_createShepardToneComplex (double minimumTime, double maximumTime
 		Melder_require (highestFrequency <= samplingFrequency / 2.0,U"The highest frequency you want to generate is "
 				U"above the Nyquist frequency. Choose a larger value for \"Sampling frequency\", or lower values for "
 				U"\"Number of components\" or \"Lowest frequency\".");
-		Melder_require (octaveShiftFraction >= 0.0 && octaveShiftFraction < 1.0, U"Octave offset fraction must be greater or equal zero and smaller than one.");
+		Melder_require (octaveShiftFraction >= 0.0 && octaveShiftFraction < 1.0, U"Octave offset fraction should be greater or equal zero and smaller than one.");
 	
 		double octaveTime, sweeptime;
 		if (frequencyChange_st != 0.0) {
@@ -1210,7 +1210,7 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 	try {
 		double samplingFrequency_old = 1.0 / my dx;
 
-		Melder_require (my xmin == his xmin && my xmax == his xmax, U"The Pitch and the Sound object must have the same domain.");
+		Melder_require (my xmin == his xmin && my xmax == his xmax, U"The Pitch and the Sound object should have the same domain.");
 		
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
@@ -1352,7 +1352,7 @@ autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier t
 
 autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, const char32 *trimLabel) {
     try {
-		Melder_require (my ny == 1, U"The sound must be a mono sound.");
+		Melder_require (my ny == 1, U"The sound should be a mono sound.");
 		
         const char32 *silentLabel = U"silent", *soundingLabel = U"sounding";
         const char32 *copyLabel = U"";
@@ -1466,8 +1466,8 @@ autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantR
 		double samplingFrequency_old = 1 / my dx;
 
 		Melder_require (my ny == 1, U"Change Gender works only on mono sounds.");
-		Melder_require (my xmin == his xmin && my xmax == his xmax, U"The Pitch and the Sound object must have the same domain.");
-		Melder_require (new_pitch >= 0, U"The new pitch median must not be negative."); 
+		Melder_require (my xmin == his xmin && my xmax == his xmax, U"The Pitch and the Sound object should have the same domain.");
+		Melder_require (new_pitch >= 0, U"The new pitch median should not be negative."); 
 
 		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.get());
@@ -2081,7 +2081,7 @@ autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges) {
 /* After a script by Ton Wempe */
 static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound noise, double windowLength) {
 	try {
-		Melder_require (my dx == noise -> dx, U"The sound and the noise must have the same sampling frequency.");
+		Melder_require (my dx == noise -> dx, U"The sound and the noise should have the same sampling frequency.");
 		Melder_require (noise -> ny == 1 && noise -> ny == 1, U"The number of channels in the noise and the sound should equal 1.");
 
 		double samplingFrequency = 1.0 / my dx;

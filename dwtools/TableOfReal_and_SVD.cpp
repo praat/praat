@@ -24,11 +24,10 @@
 
 #include "TableOfReal_and_SVD.h"
 
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-
 autoTableOfReal SVD_to_TableOfReal (SVD me, integer from, integer to) {
 	try {
-		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
+		autoTableOfReal thee = TableOfReal_create (my isTransposed ? my numberOfColumns : my numberOfRows, 
+												   my isTransposed ? my numberOfRows : my numberOfColumns);
 		SVD_synthesize (me, from, to, thy data);
 		return thee;
 	} catch (MelderError) {
@@ -47,9 +46,8 @@ autoSVD TableOfReal_to_SVD (TableOfReal me) {
 
 autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 	try {
-		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
-		autoTableOfReal thee = TableOfReal_create (my numberOfRows, mn_min);
-		NUMmatrix_copyElements (my u, thy data, 1, my numberOfRows, 1, mn_min);
+		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
+		NUMmatrix_copyElements (my u, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": left singular vector not extracted.");
@@ -58,9 +56,8 @@ autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 
 autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 	try {
-		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
-		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, mn_min);
-		NUMmatrix_copyElements (my v, thy data, 1, my numberOfColumns, 1, mn_min);
+		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, my numberOfColumns);
+		NUMmatrix_copyElements (my v, thy data, 1, my numberOfColumns, 1, my numberOfColumns);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": right singular vector not extracted.");
@@ -69,9 +66,8 @@ autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 
 autoTableOfReal SVD_extractSingularValues (SVD me) {
 	try {
-		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
-		autoTableOfReal thee = TableOfReal_create (1, mn_min);
-		NUMvector_copyElements (my d, thy data[1], 1, mn_min);
+		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
+		NUMvector_copyElements (my d, thy data[1], 1, my numberOfColumns);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": singular values not extracted.");

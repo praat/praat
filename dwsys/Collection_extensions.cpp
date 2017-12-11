@@ -18,7 +18,7 @@
 
 /*
  djmw 20020812 GPL header
- djmw 20040420 Fraction in OrderedOfString_difference must be double.
+ djmw 20040420 Fraction in OrderedOfString_difference should be double.
  djmw 20050511 Skip printing unique labels in OrderedOfString
  djmw 20061214
  djmw 20061214 Changed info to Melder_writeLine<x> format.
@@ -101,7 +101,7 @@ int OrderedOfString_append (OrderedOfString me, const char32 *append) {
 autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee) {
 	try {
 		if (my size != thy size) {
-			Melder_throw (U"sizes must be equal.");
+			Melder_throw (U"sizes should be equal.");
 		}
 		autoOrderedOfString him = Data_copy (me);
 
@@ -211,8 +211,8 @@ void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, long n) {
 void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, bool use_regexp) {
 	regexp *compiled_search = nullptr;
 	try {
-		Melder_require (search, U"Missing search string.");
-		Melder_require (replace, U"Missing replace string.");
+		Melder_require (search, U"The search string should not be empty.");
+		Melder_require (replace, U"The replace string should not be empty.");
 
 		if (use_regexp) {
 			compiled_search = CompileRE_throwable (search, 0);

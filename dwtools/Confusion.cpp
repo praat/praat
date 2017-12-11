@@ -59,7 +59,7 @@ void structConfusion :: v_info () {
 
 autoConfusion Confusion_createFromStringses (Strings me, Strings thee) {
 	try {
-		Melder_require (my numberOfStrings > 0 && thy numberOfStrings > 0, U"Empty String(s).");
+		Melder_require (my numberOfStrings > 0 && thy numberOfStrings > 0, U"Both Strings should not be empty.");
 		
 		autoConfusion him = Confusion_create (my numberOfStrings, thy numberOfStrings);
 		for (integer irow = 1; irow <= my numberOfStrings; irow ++) {
@@ -89,14 +89,14 @@ autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfRespons
 autoConfusion Confusion_createSimple (const char32 *labels) {
 	try {
 		integer numberOfLabels = Melder_countTokens (labels);
-		Melder_require (numberOfLabels > 0, U"Not enough labels.");
+		Melder_require (numberOfLabels > 0, U"There should be at least one label.");
 		
 		autoConfusion me = Confusion_create (numberOfLabels, numberOfLabels);
 		integer ilabel = 1;
 		for (char32 *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
 			for (integer i = 1; i <= ilabel - 1; i ++) {
 				if (Melder_cmp (token, my rowLabels [i]) == 0) {
-					Melder_throw (U"Label ", i, U"and ", ilabel, U"may not be equal.");
+					Melder_throw (U"Label ", i, U" and ", ilabel, U" should not be equal.");
 				}
 			}
 			TableOfReal_setRowLabel (me.get(), ilabel, token);
@@ -111,7 +111,7 @@ autoConfusion Confusion_createSimple (const char32 *labels) {
 
 autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 	try {
-		Melder_require (my size == thy size, U"Categories_to_Confusion: dimensions have to agree.");
+		Melder_require (my size == thy size, U"Both Categories should have the same number of items.");
 
 		autoCategories ul1 = Categories_selectUniqueItems (me);
 		autoCategories ul2 = Categories_selectUniqueItems (thee);
@@ -203,10 +203,10 @@ void Confusion_getEntropies (Confusion me, double *p_h, double *p_hx, double *p_
 void Confusion_increase (Confusion me, const char32 *stim, const char32 *resp) {
 	try {
 		integer stimIndex = TableOfReal_rowLabelToIndex (me, stim);
-		Melder_require (stimIndex > 0, U"Stimulus not valid.");
+		Melder_require (stimIndex > 0, U"The stimulus name should be valid.");
 		
 		integer respIndex = TableOfReal_columnLabelToIndex (me, resp);
-		Melder_require (respIndex > 0, U"Response not valid.");
+		Melder_require (respIndex > 0, U"The response name should be valid.");
 
 		my data [stimIndex] [respIndex] += 1.0;
 	} catch (MelderError) {
@@ -217,11 +217,11 @@ void Confusion_increase (Confusion me, const char32 *stim, const char32 *resp) {
 double Confusion_getValue (Confusion me, const char32 *stim, const char32 *resp) {
 	integer stimIndex = TableOfReal_rowLabelToIndex (me, stim);
 	
-	Melder_require (stimIndex > 0, U"Stimulus not valid.");
+	Melder_require (stimIndex > 0, U"The stimulus should be valid.");
 	
 	integer respIndex = TableOfReal_columnLabelToIndex (me, resp);
 	
-	Melder_require (respIndex > 0, U"Response not valid.");
+	Melder_require (respIndex > 0, U"The response should be valid.");
 	
 	return my data [stimIndex] [respIndex];
 }
@@ -282,7 +282,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 	if (index > 0 && index <= my numberOfColumns) {
 		ib = ie = index;
 	}
-	Melder_require (thy ny == my numberOfRows, U"Wrong number of positions.");
+	Melder_require (thy ny == my numberOfRows, U"The number of stimuli should equal the number of rows in the matrix.");
 
 	if (xmax <= xmin) {
 		(void) Matrix_getWindowExtrema (thee, 1, 1, 1, thy ny, &xmin, &xmax);
@@ -375,7 +375,7 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 	try {
 		/* categories must be the same too*/
 		Melder_require (my numberOfColumns == thy numberOfColumns && my numberOfRows == thy numberOfRows,
-			U"Dimensions not equal.");
+			U"The dimensions should be equal.");
 
 		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns, 1.0, 1.0, 0.5, my numberOfRows + 0.5, my numberOfRows, 1.0, 1.0);
 
@@ -416,13 +416,13 @@ autoConfusion Confusion_condense (Confusion me, const char32 *search, const char
 	integer maximumNumberOfReplaces, bool use_regexp) {
 	try {
 		integer nmatches, nstringmatches;
-		Melder_require (my rowLabels != nullptr && my columnLabels != nullptr, U"No row or column labels.");
+		Melder_require (my rowLabels != nullptr && my columnLabels != nullptr, U"Both row and column labels should be present.");
 		
 		autostring32vector rowLabels (strs_replace (my rowLabels, 1, my numberOfRows, search, replace,
-			maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1, my numberOfRows);
+			maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp), 1, my numberOfRows);
 
 		autostring32vector columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns,  search, replace,
-			 maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1, my numberOfColumns);
+			 maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp), 1, my numberOfColumns);
 
 		autoStrings srow = Thing_new (Strings);
 		srow -> numberOfStrings = my numberOfRows;
@@ -462,7 +462,7 @@ autoConfusion Confusion_condense (Confusion me, const char32 *search, const char
 
 autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"Elements may not be negative.");
+		Melder_require (TableOfReal_checkPositive (me), U"Elements should not be negative.");
 		
 		autoConfusion thee = Thing_new (Confusion);
 		my structTableOfReal :: v_copy (thee.get());
@@ -505,7 +505,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const 
 				nfound ++;
 			}
 		}
-		Melder_require (nfound > 0, U"Invalid stimulus labels.");
+		Melder_require (nfound > 0, U"The stimulus labels are invalid.");
 		
 		if (nfound != ncondense) {
 			Melder_warning (U"One or more of the given stimulus labels are suspect.");
@@ -566,7 +566,7 @@ autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, cons
 			}
 		}
 		
-		Melder_require (nfound > 0, U"Invalid response labels.");
+		Melder_require (nfound > 0, U"The response labels are invalid.");
 		
 		if (nfound != ncondense) {
 			Melder_warning (U"One or more of the given response labels are suspect.");

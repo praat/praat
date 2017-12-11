@@ -27,7 +27,7 @@
 autoTableOfReal TableOfReal_and_Permutation_permuteRows (TableOfReal me, Permutation thee) {
 	try {
 		Melder_require (my numberOfRows == thy numberOfElements,
-			U"The number of rows in the table and the number of elements in the Permutation must be equal.");
+			U"The number of rows in the table and the number of elements in the Permutation should be equal.");
 		
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, my numberOfColumns);
 

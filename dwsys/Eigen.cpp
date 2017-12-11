@@ -463,7 +463,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 	for (integer i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
 		if (e2 -> dimension != dimension) {
-			Melder_throw (U"The dimension of the eigenvectors must be equal (offending object is ",  i, U").");
+			Melder_throw (U"The dimension of the eigenvectors should be equal (offending object is ",  i, U").");
 		}
 	}
 
@@ -497,7 +497,7 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 	}
 	integer nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 
-	Melder_require (my dimension == thy dimension, U"The eigenvectors must have the same dimension.");
+	Melder_require (my dimension == thy dimension, U"The eigenvectors should have equal dimensions.");
 	Melder_require (ivec_from > 0 && ivec_from <= ivec_to && ivec_to <= nmin, U"Eigenvector range too large.");
 
 	autoNUMmatrix<double> c (1, nvectors, 1, nvectors);
@@ -542,7 +542,7 @@ void Eigen_and_matrix_into_matrix_principalComponents (Eigen me, double **from, 
 	 */
 	from_colbegin = from_colbegin <= 0 ? 1 : from_colbegin;
 	to_colbegin = to_colbegin <= 0 ? 1 : to_colbegin;
-	Melder_require (numberOfDimensionsToKeep <= my numberOfEigenvalues, U"The number of dimensions to keep must not be larger than the number of eigenvalues.");
+	Melder_require (numberOfDimensionsToKeep <= my numberOfEigenvalues, U"The number of dimensions to keep should not be larger than the number of eigenvalues.");
 	
 	for (integer irow = 1; irow <= numberOfRows; irow ++) {
 		for (integer icol = 1; icol <= numberOfDimensionsToKeep; icol ++) {

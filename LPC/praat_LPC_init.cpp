@@ -598,7 +598,7 @@ FORM (NEW_LFCC_to_LPC, U"LFCC: To LPC", U"LFCC: To LPC...") {
 	INTEGER (numberOfCoefficients, U"Number of coefficients", U"0")
 	OK
 DO
-	Melder_require (numberOfCoefficients >= 0, U"Number of coefficients must be greater or equal zero.");
+	Melder_require (numberOfCoefficients >= 0, U"Number of coefficients should not be less than zero.");
 	CONVERT_EACH (LFCC)
 		autoLPC result = LFCC_to_LPC (me, numberOfCoefficients);
 	CONVERT_EACH_END (my name);
@@ -689,7 +689,7 @@ FORM (NEW_LPC_to_LFCC, U"LPC: To LFCC", U"LPC: To LFCC...") {
 	INTEGER (numberOfCoefficients, U"Number of coefficients", U"0")
 	OK
 DO
-	Melder_require (numberOfCoefficients >= 0, U"The number of coefficients should be greater than or equal to zero.");
+	Melder_require (numberOfCoefficients >= 0, U"The number of coefficients should not be less than zero.");
 	CONVERT_EACH (LPC)
 		autoLFCC result = LPC_to_LFCC (me, numberOfCoefficients);
 	CONVERT_EACH_END (my name)

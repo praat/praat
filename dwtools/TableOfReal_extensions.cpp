@@ -397,7 +397,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	integer nmin = MIN (nr, nc) - numberOfZeroed;
 	Melder_require (nmin > 1,
-		U"There must be at least two (independent) columns in the table.");
+		U"There should be at least two (independent) columns in the table.");
 
 	autoNUMvector<double> x (1, nPoints);
 	autoNUMvector<double> y (1, nPoints);
@@ -597,7 +597,7 @@ void TableOfReal_centreColumns (TableOfReal me) {
 void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee) {
 	try {
 		Melder_require (my numberOfRows == thy size,
-			U"The number of items in both objects must be equal.");
+			U"The number of items in both objects should be equal.");
 
 		/*
 			If anything goes wrong we must leave the Table intact. We first copy the Categories, swap the labels
@@ -1205,9 +1205,9 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer
 	int fontsize = Graphics_inqFontSize (g);
 
 	Melder_require (colx1 > 0 && colx1 <= nx && coly1 > 0 && coly1 <= nx,
-		U"The index in the \"From\" column(s) must be in range [1, ", nx, U"].");
+		U"The index in the \"From\" column(s) should be in range [1, ", nx, U"].");
 	Melder_require (colx2 > 0 && colx2 <= nx && coly2 > 0 && coly2 <= nx,
-		U"The index in the \"To\" column(s) must be in range [1, ", nx, U"].");
+		U"The index in the \"To\" column(s) should be in range [1, ", nx, U"].");
 
 	double min, max;
 	if (xmin >= xmax) {
@@ -1466,7 +1466,7 @@ autoTableOfReal TableOfReal_choleskyDecomposition (TableOfReal me, bool upper, b
 		integer n = my numberOfColumns, lda = my numberOfRows, info;
 
 		Melder_require (n == lda,
-			U"The table must be a square symmetric table.");
+			U"The table should be a square symmetric table.");
 		
 		autoTableOfReal thee = Data_copy (me);
 
@@ -1502,7 +1502,7 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 		integer ncols = my numberOfColumns + thy numberOfColumns;
 		integer labeldiffs = 0;
 		Melder_require (my numberOfRows == thy numberOfRows, 
-			U"Number of rows must be equal.");
+			U"Number of rows should be equal.");
 		
 		/* Stricter label checking???
 			append only if

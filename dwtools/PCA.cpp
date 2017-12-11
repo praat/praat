@@ -152,9 +152,9 @@ autoEigen PCA_to_Eigen (PCA me) {
 static autoPCA NUMdmatrix_to_PCA (double **m, integer numberOfRows, integer numberOfColumns, bool byColumns) {
 	try {
 		Melder_require (! NUMdmatrix_containsUndefinedElements (m, 1, numberOfRows, 1, numberOfColumns),
-			U"At least one of the matrix elements is undefined.");
+			U"No matrix elements should be undefined.");
 		Melder_require (NUMfrobeniusnorm (numberOfRows, numberOfColumns, m) > 0.0,
-			U"All values in your table are zero.");
+			U"not all values in your table should be zero.");
 		
 		autoNUMmatrix<double> mcopy;
 		integer numberOfRows2, numberOfColumns2;
@@ -288,7 +288,7 @@ autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, Config
 	try {
 		integer npc = thy numberOfColumns;
 		Melder_require (thy numberOfColumns <= my dimension,
-			U"The dimension of the Configuration must be less than or equal to the dimension of the PCA.");
+			U"The dimension of the Configuration should be less than or equal to the dimension of the PCA.");
 
 		if (npc > my numberOfEigenvalues) {
 			npc = my numberOfEigenvalues;

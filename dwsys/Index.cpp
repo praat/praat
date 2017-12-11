@@ -56,7 +56,7 @@ void structIndex :: v_info () {
 }
 
 void Index_init (Index me, integer numberOfItems) {
-	Melder_require (numberOfItems > 0, U"Cannot create index without items.");
+	Melder_require (numberOfItems > 0, U"The index should not be empty.");
 	
 	my classes = Ordered_create ();
 	my numberOfItems = numberOfItems;

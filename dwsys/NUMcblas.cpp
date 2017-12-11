@@ -1343,7 +1343,7 @@ L10:
 		   Cray machines) or the mantissa has an implicit bit, (e.g. IEEE
 		   machines, Dec Vax machines), which is perhaps the most likely. We
 		   have to assume the last alternative. If this is true, then we need
-		   to reduce EMAX by one because there must be some way of
+		   to reduce EMAX by one because there should be some way of
 		   representing zero in an implicit-bit system. On machines like
 		   Cray, we are reducing EMAX by one unnecessarily. */
 		-- (*emax);

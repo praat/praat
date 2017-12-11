@@ -119,8 +119,8 @@ integer Discriminant_getNumberOfObservations (Discriminant me, integer group) {
 }
 
 void Discriminant_setAprioriProbability (Discriminant me, integer group, double p) {
-	Melder_require (group > 0 && group <= my numberOfGroups, U"The group number (", group, U") must be in the interval [1, ", my numberOfGroups, U"]; the supplied value (", group, U") falls outside it.");
-	Melder_require (p >= 0.0 && p <= 1.0, U"The probability must be in the interval [0, 1]");
+	Melder_require (group > 0 && group <= my numberOfGroups, U"The group number (", group, U") should be in the interval [1, ", my numberOfGroups, U"]; the supplied value (", group, U") falls outside it.");
+	Melder_require (p >= 0.0 && p <= 1.0, U"The probability should be in the interval [0, 1]");
 
 	my aprioriProbabilities [group] = p;
 }
@@ -132,7 +132,7 @@ integer Discriminant_getNumberOfFunctions (Discriminant me) {
 }
 
 void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
-	Melder_require (my numberOfGroups == thy numberOfStrings, U"The number of strings must equal the number of groups.");
+	Melder_require (my numberOfGroups == thy numberOfStrings, U"The number of strings should equal the number of groups.");
 
 	for (integer i = 1; i <= my numberOfGroups; i ++) {
 		const char32 *noname = U"", *name;
@@ -325,7 +325,7 @@ autoSSCP Discriminant_extractPooledWithinGroupsSSCP (Discriminant me) {
 
 autoSSCP Discriminant_extractWithinGroupSSCP (Discriminant me, integer index) {
 	try {
-		Melder_require (index > 0 && index <= my numberOfGroups, U"Index must be in interval [1,", my numberOfGroups, U"].");
+		Melder_require (index > 0 && index <= my numberOfGroups, U"Index should be in interval [1,", my numberOfGroups, U"].");
 		
 		autoSSCP thee = Data_copy (my groups->at [index]);
 		return thee;
@@ -407,9 +407,9 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		integer dimension = my numberOfColumns;
 
 		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns), 
-			U"At least one of the table's elements is undefined.");
+			U"There should be no undefined elements in the table.");
 		
-		Melder_require (TableOfReal_hasRowLabels (me), U"At least one of the rows has no label.");
+		Melder_require (TableOfReal_hasRowLabels (me), U"All rows should be labeled.");
 
 		autoTableOfReal mew = TableOfReal_sortOnlyByRowLabels (me);
 		if (! TableOfReal_hasColumnLabels (mew.get())) {
@@ -420,7 +420,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		thy total = TableOfReal_to_SSCP (mew.get(), 0, 0, 0, 0);
 
 		if ((thy numberOfGroups = thy groups -> size) < 2) {
-			Melder_throw (U"Number of groups must be greater than one.");
+			Melder_throw (U"Number of groups should be greater than one.");
 		}
 
 		TableOfReal_centreColumns_byRowLabel (mew.get());
@@ -512,7 +512,7 @@ static double mahalanobisDistanceSq (double **li, integer n, double *v, double *
 
 autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, integer group, bool poolCovarianceMatrices) {
 	try {
-		Melder_require (group > 0 && group <= my numberOfGroups, U"Group does not exist.");
+		Melder_require (group > 0 && group <= my numberOfGroups, U"Group should be in the range [1, ", my numberOfGroups, U"].");
 		
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoCovariance covg = SSCP_to_Covariance (pool.get(), my numberOfGroups);
@@ -536,7 +536,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 		integer p = Eigen_getDimensionOfComponents (my eigen.get());   // ppgb wat betekent p?
 		integer m = thy numberOfRows;   // ppgb wat betekent m?
 
-		Melder_require (p == thy numberOfColumns, U"The number of columns does not agree with the dimension of the discriminant.");
+		Melder_require (p == thy numberOfColumns, U"The number of columns should agree with the dimension of the discriminant.");
 		
 		autoNUMvector<double> log_p (1, g);
 		autoNUMvector<double> log_apriori (1, g);

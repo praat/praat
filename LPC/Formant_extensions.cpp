@@ -87,8 +87,8 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 
 autoIntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant) {
 	try {
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"The start and end times of the Formant and the Spectrogram must be equal.");
-		Melder_require (iformant > 0 && iformant <= my maxnFormants, U"Formant number not in range [1, ", my maxnFormants, U"].");
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"The start and end times of the Formant and the Spectrogram should be equal.");
+		Melder_require (iformant > 0 && iformant <= my maxnFormants, U"Formant number should be in the range [1, ", my maxnFormants, U"].");
 		
 		autoIntensityTier him = IntensityTier_create (my xmin, my xmax);
 		double previousValue = -80000.0; // can never occur

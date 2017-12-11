@@ -181,8 +181,8 @@ autoSimilarity ConfigurationList_to_Similarity_cc (ConfigurationList me, Weight 
 
 autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 	try {
-		Melder_require (my size > 0, U"DistanceList is empty.");
-		Melder_require (TableOfRealList_haveIdenticalDimensions (my asTableOfRealList()), U"All matrices must have the same dimensions.");
+		Melder_require (my size > 0, U"DistanceList should not be empty.");
+		Melder_require (TableOfRealList_haveIdenticalDimensions (my asTableOfRealList()), U"All matrices should have the same dimensions.");
 
 		autoWeight aw;
 		if (! w) {
@@ -249,7 +249,7 @@ autoTransformator Transformator_create (integer numberOfPoints) {
 autoDistance Transformator_transform (Transformator me, MDSVec vec, Distance d, Weight w) {
 	try {
 		Melder_require (my numberOfPoints == vec -> nPoints && my numberOfPoints == d -> numberOfRows &&
-			d -> numberOfRows == w -> numberOfRows, U"Dimensions do not agree.");
+			d -> numberOfRows == w -> numberOfRows, U"Dimensions should agree.");
 		return my v_transform (vec, d, w);
 	} catch (MelderError) {
 		Melder_throw (me, U"Distance not created.");
@@ -274,7 +274,7 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 
 	// transform
 
-	Melder_require (etaSq > 0.0, U"Eta squared is zero.");
+	Melder_require (etaSq > 0.0, U"Eta squared should not be zero.");
 	
 	our ratio = rho / etaSq;
 	for (integer i = 1; i <= vec -> nProximities; i ++) {
@@ -441,7 +441,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		if (numberOfDimensions == 0) {
 			numberOfDimensions = dimmin - 1;
 		}
-		Melder_require (numberOfDimensions < dimmin, U"Dimension too high.");
+		Melder_require (numberOfDimensions < dimmin, U"Dimension should be lower than ", dimmin, U".");
 
 		/*
 			Ref: A. Gifi (1990), Nonlinear Multivariate Analysis, Wiley & Sons, reprinted 1996,
@@ -456,12 +456,12 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 				rowsum [i] += my data [i] [j];
 				colsum [j] += my data [i] [j];
 			}
-			Melder_require (rowsum [i] > 0.0, U"Empty row: ", i, U".");
+			Melder_require (rowsum [i] > 0.0, U"Row number ", i, U" should not be empty.");
 			sum += rowsum [i];
 		}
 
 		for (integer j = 1; j <= nc; j ++) {
-			Melder_require (colsum [j] > 0.0, U"Empty column: ", j, U".");
+			Melder_require (colsum [j] > 0.0, U"Column number ", j, U" should not be empty.");
 		}
 
 		// Remove trivial singular vectors (Eq. 8.24),
@@ -526,8 +526,8 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 
 autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 	try {
-		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal must be a square table.");
-		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
+		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
+		Melder_require (TableOfReal_checkPositive (me), U"No numbers in the table should be negative.");
 		autoDissimilarity thee = Thing_new (Dissimilarity);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -538,8 +538,8 @@ autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 
 autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 	try {
-		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal must be a square table.");
-		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
+		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
+		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
 		autoSimilarity thee = Thing_new (Similarity);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -550,8 +550,8 @@ autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 
 autoDistance TableOfReal_to_Distance (TableOfReal me) {
 	try {
-		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal must be a square table.");
-		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
+		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
+		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
 		autoDistance thee = Thing_new (Distance);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -562,7 +562,7 @@ autoDistance TableOfReal_to_Distance (TableOfReal me) {
 
 autoSalience TableOfReal_to_Salience (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
+		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
 		autoSalience thee = Thing_new (Salience);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -573,7 +573,7 @@ autoSalience TableOfReal_to_Salience (TableOfReal me) {
 
 autoWeight TableOfReal_to_Weight (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"Negative values in the table are not allowed.");
+		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
 		autoWeight thee = Thing_new (Weight);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -584,7 +584,7 @@ autoWeight TableOfReal_to_Weight (TableOfReal me) {
 
 autoScalarProduct TableOfReal_to_ScalarProduct (TableOfReal me) {
 	try {
-		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal must be a square table.");
+		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
 		autoScalarProduct thee = Thing_new (ScalarProduct);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -856,7 +856,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 
 		// Return c = average dissimilarity in case of failure
 
-		Melder_require (nPoints > 0, U"Matrix part is empty.");
+		Melder_require (nPoints > 0, U"Matrix part should not be empty.");
 
 		additiveConstant = Dissimilarity_getAverage (me);
 		Melder_require (isdefined (additiveConstant), U"There are no positive dissimilarities.");
@@ -892,7 +892,7 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 		// Get eigenvalues and sort them descending
 
 		NUMeigensystem (b.peek(), nPoints2, nullptr, eigenvalue.peek());
-		Melder_require (eigenvalue [1] > 0.0, U"Negative eigenvalues.");
+		Melder_require (eigenvalue [1] > 0.0, U"Eigenvalues should not be negative.");
 		additiveConstant = eigenvalue [1];
 		return additiveConstant;
 	} catch (MelderError) {
@@ -918,7 +918,7 @@ autoSimilarity Similarity_create (integer numberOfPoints) {
 
 autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmetrizeMethod) {
 	try {
-		Melder_require (my numberOfColumns == my numberOfRows, U"Confusion must be a square table.");
+		Melder_require (my numberOfColumns == my numberOfRows, U"Confusion should be a square table.");
 
 		integer nxy = my numberOfColumns;
 		autoSimilarity thee = Similarity_create (nxy);
@@ -1036,7 +1036,7 @@ autoWeight Dissimilarity_to_Weight (Dissimilarity me) {
 
 autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumConfusionLevel) {
 	try {
-		Melder_require (my numberOfColumns == my numberOfRows, U"Confusion must be a square table.");
+		Melder_require (my numberOfColumns == my numberOfRows, U"Confusion should be a square table.");
 		
 		Melder_assert (minimumConfusionLevel > 0.0);
 		autoDissimilarity thee = Dissimilarity_create (my numberOfColumns);
@@ -1121,7 +1121,7 @@ autoDissimilarity Distance_to_Dissimilarity (Distance me) {
 
 autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDimensions) {
 	try {
-		Melder_require (numberOfDimensions <= my numberOfRows, U"Number of dimensions too high.");
+		Melder_require (numberOfDimensions <= my numberOfRows, U"Number of dimensions should not exceed ", my numberOfRows, U".");
 		autoScalarProduct sp = Distance_to_ScalarProduct (me, false);
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		TableOfReal_copyLabels (me, thee.get(), 1, 0);
@@ -1204,7 +1204,7 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 	if (n == 0) {
 		return;
 	}
-	Melder_require (TableOfReal_equalLabels (me, thee, true, true), U"Dimensions and labels must be the same.");
+	Melder_require (TableOfReal_equalLabels (me, thee, true, true), U"The labels should be the same.");
 	
 	if (xmax <= xmin) {
 		xmin = xmax = x [1] [2];
@@ -1255,7 +1255,7 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 		autoDistanceList him = DistanceList_create ();
 		for (integer i = 1; i <= my size; i ++) {
 			MDSVec vec = my at [i];
-			Melder_require (vec -> nPoints == thy numberOfRows, U"Dimension of MDSVec and Distance must be equal.");
+			Melder_require (vec -> nPoints == thy numberOfRows, U"Dimension of MDSVec and Distance should be equal.");
 			autoDistance fit = MDSVec_Distance_monotoneRegression (vec, thee, tiesHandling);
 			his addItem_move (fit.move());
 		}
@@ -1268,7 +1268,7 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesHandling) {
 	try {
 		integer nProximities = my nProximities;
-		Melder_require (thy numberOfRows == my nPoints, U"Distance and MDSVVec dimension do not agreee.");
+		Melder_require (thy numberOfRows == my nPoints, U"Distance and MDSVVec dimensions should agreee.");
 		autoNUMvector<double> distance (1, nProximities);
 		autoNUMvector<double> fit (1, nProximities);
 		autoDistance him = Distance_create (thy numberOfRows);
@@ -1336,7 +1336,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 
 autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, int tiesHandling) {
 	try {
-		Melder_require (thy numberOfRows == my numberOfRows, U"Dimensions do not agree.");
+		Melder_require (thy numberOfRows == my numberOfRows, U"Dimensions should agree.");
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 		autoDistance him = MDSVec_Distance_monotoneRegression (vec.get(), thee, tiesHandling);
 		return him;
@@ -1424,7 +1424,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			We cannot determine weights from only one sp-matrix.
 		*/
 
-		Melder_require (numberOfSources > 1, U"Only one source.");
+		Melder_require (numberOfSources > 1, U"The number of sources should exceed one.");
 		
 		/*
 			Calculate the C [i] matrices [1..numberOfDimensions] [1..numberOfDimensions]
@@ -1681,7 +1681,7 @@ double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d,
 	integer nPoints = d -> numberOfRows;
 	double stress = undefined;
 	Melder_require (nPoints > 0 && nPoints == c -> numberOfRows && nPoints == t -> numberOfPoints ||
-		(w && nPoints == w -> numberOfRows), U"Dimensions do not agree.");
+		(w && nPoints == w -> numberOfRows), U"Dimensions should agree.");
 
 	autoWeight aw;
 	if (! w) {
@@ -1771,7 +1771,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		double tol = 1e-6, stressp = 1e308, stres = 0.0;
 
 		Melder_require (my numberOfRows == nPoints && t -> numberOfPoints == nPoints ||
-			(weight && weight -> numberOfRows == nPoints), U"Dimensions do not agree.");
+			(weight && weight -> numberOfRows == nPoints), U"Dimensions should agree.");
 
 		autoWeight aw;
 		if (! weight) {
@@ -2242,7 +2242,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 		integer numberOfData = my numberOfRows * (my numberOfRows - 1) / 2;
 
 		Melder_require (numberOfParameters <= numberOfData, 
-			U"The number of parameters must be smaller then the number of data.");
+			U"The number of parameters should not exceed the number of data.");
 		
 
 		autoKruskal thee = Kruskal_create (my numberOfRows, his numberOfColumns);
@@ -2717,7 +2717,7 @@ void DissimilarityList_Configuration_vaf (DissimilarityList me, Configuration th
 }
 
 void DistanceList_Configuration_Salience_vaf (DistanceList me, Configuration thee, Salience him, bool normalizeScalarProducts, double *vaf) {
-	Melder_require (my size == his numberOfRows && thy numberOfColumns == his numberOfColumns, U"Dimensions don't agree.");
+	Melder_require (my size == his numberOfRows && thy numberOfColumns == his numberOfColumns, U"Dimensions should agree.");
 	autoScalarProductList sp = DistanceList_to_ScalarProductList (me, normalizeScalarProducts);
 	ScalarProductList_Configuration_Salience_vaf (sp.get(), thee, him, vaf);
 }
@@ -2748,14 +2748,14 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 	autoNUMvector<double> w (NUMvector_copy (thy w, 1, thy numberOfColumns), 1); // save weights
 	try {
 		Melder_require (my size == his numberOfRows && thy numberOfColumns == his numberOfColumns,
-			U"Dimensions don't agree.");
+			U"Dimensions should agree.");
 
 		double t = 0.0, n = 0.0;
 		for (integer i = 1; i <= my size; i ++) {
 
 			ScalarProduct sp = my at [i];
 			Melder_require (sp -> numberOfRows == thy numberOfRows, 
-				U"Dimension of ScalarProduct ", i, U" does not match Configuration.");
+				U"Dimension of ScalarProduct ", i, U" should match Configuration.");
 
 			// weigh configuration before calculating variances
 
@@ -2865,7 +2865,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			double value = strtod (start, &end);
 			start = end;
 			if (value < low || value > high) {
-				Melder_warning (U"drawSplines: knots must be in interval (", low, U", ", high, U")");
+				Melder_warning (U"drawSplines: knots should be in interval (", low, U", ", high, U")");
 				return;
 			}
 			if (numberOfKnots == 100) {

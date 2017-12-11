@@ -625,7 +625,7 @@ static MNEM_TAB reserved_phonemes[] = {
 	{ "'!",     phonSTRESS_TONIC }, // stress - emphasized
 	{ "_;_",    phonPAUSE_CLAUSE }, // clause pause
 
-	{ "#@",     phonVOWELTYPES },   // vowel type groups, these must be consecutive
+	{ "#@",     phonVOWELTYPES },   // vowel type groups, these should be consecutive
 	{ "#a",     phonVOWELTYPES+1 },
 	{ "#e",     phonVOWELTYPES+2 },
 	{ "#i",     phonVOWELTYPES+3 },
@@ -2149,14 +2149,14 @@ static int CompilePhoneme(int compile_phoneme)
 					phcode = LookupPhoneme(item_string, 1);
 				phoneme_out->start_type = phcode;
 				if (phoneme_out->type == phINVALID)
-					error("a phoneme type or manner of articulation must be specified before starttype");
+					error("a phoneme type or manner of articulation should be specified before starttype");
 				break;
 			case kENDTYPE:
 				phcode = NextItem(tPHONEMEMNEM);
 				if (phcode == -1)
 					phcode = LookupPhoneme(item_string, 1);
 				if (phoneme_out->type == phINVALID)
-					error("a phoneme type or manner of articulation must be specified before endtype");
+					error("a phoneme type or manner of articulation should be specified before endtype");
 				else if (phoneme_out->type == phVOWEL)
 					phoneme_out->end_type = phcode;
 				else if (phcode != phoneme_out->start_type)

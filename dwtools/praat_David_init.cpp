@@ -41,11 +41,11 @@
  djmw 20050407 MelFilter_drawFilterFunctions error in field names crashed praat
  djmw 20050706 Eigen_getSumOfEigenvalues
  djmw 20051012 Robust LPC analysis test
- djmw 20051116 TableOfReal_drawScatterPlot horizontal and vertical axes indices must be positive numbers
+ djmw 20051116 TableOfReal_drawScatterPlot horizontal and vertical axes indices should be positive numbers
  djmw SVD extract lef/right singular vectors
  djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
  djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
- djmw 20070206 Sound_changeGender: pitch range factor must be >= 0
+ djmw 20070206 Sound_changeGender: pitch range factor should be >= 0
  djmw 20070304 Latest modification.
  djmw 20070903 Melder_new<1...>
  djmw 20071011 REQUIRE requires U"".
@@ -1187,7 +1187,7 @@ FORM (REAL_Discriminant_getEigenvalue, U"Discriminant: Get eigenvalue", U"Eigen:
 DO
 	NUMBER_ONE (Discriminant)
 		Melder_require (eigenvalueNumber <= my eigen -> numberOfEigenvalues, 
-			U"Eigenvalue number must be smaller than ", my eigen -> numberOfEigenvalues + 1);
+			U"Eigenvalue number should be smaller than ", my eigen -> numberOfEigenvalues + 1);
 		double result = my eigen -> eigenvalues[eigenvalueNumber];
 	NUMBER_ONE_END (U" (eigenvalue [)", eigenvalueNumber, U"])")
 }
@@ -4139,7 +4139,7 @@ FORM (INTEGER_PCA_getNumberOfComponentsVAF, U"PCA: Get number of components (VAF
 	POSITIVE (varianceFraction, U"Variance fraction (0-1)", U"0.95")
 	OK
 DO
-	Melder_require (varianceFraction >= 0.0 && varianceFraction <= 1.0, U"The variance fraction must be in interval [0-1].");
+	Melder_require (varianceFraction >= 0.0 && varianceFraction <= 1.0, U"The variance fraction should be in interval [0-1].");
 	NUMBER_ONE (PCA)
 		double result = Eigen_getDimensionOfFraction (me, varianceFraction);
 	NUMBER_ONE_END (U" (variance fraction)")
@@ -5802,8 +5802,8 @@ FORM (MODIFY_SpeechSynthesizer_speechOutputSettings, U"SpeechSynthesizer: Set sp
 	OK
 DO
 	if (wordGap < 0.0) wordGap = 0.0;
-	Melder_require (pitchAdjustment >= 0.5 && pitchAdjustment <= 2.0, U"The pitch adjustment must be between 0.5 and 2.0.");
-	Melder_require (pitchRange >= 0.0 && pitchRange <= 2.0, U"The pitch range multiplier must be between 0.0 and 2.0.");
+	Melder_require (pitchAdjustment >= 0.5 && pitchAdjustment <= 2.0, U"The pitch adjustment should be between 0.5 and 2.0.");
+	Melder_require (pitchRange >= 0.0 && pitchRange <= 2.0, U"The pitch range multiplier should be between 0.0 and 2.0.");
 	MODIFY_EACH (SpeechSynthesizer)
 		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordGap, pitchAdjustment, pitchRange, wordsPerMinute, outputPhonemeCodes);
 	MODIFY_EACH_END

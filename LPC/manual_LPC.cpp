@@ -345,7 +345,7 @@ MAN_BEGIN (U"LPC: To Spectrum (slice)...", U"djmw", 20071120)
 INTRO (U"You can choose this command after selecting 1 or more @LPC objects.")
 ENTRY (U"Settings")
 TAG (U"##Time (s)")
-DEFINITION (U"the time at which the Spectrum must be calculated.")
+DEFINITION (U"the time at which the Spectrum should be calculated.")
 TAG (U"##Minimum frequency resolution (Hz)")
 DEFINITION (U"successive frequencies in the @Spectrum "
 	"will be maximally this distance apart.")

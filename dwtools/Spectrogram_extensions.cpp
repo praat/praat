@@ -87,7 +87,7 @@ autoMatrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double sc
 		for (integer i = 1; i <= my ny; i ++) {
 			for (integer j = 1; j <= my nx; j ++) {
 				double val = floor_dB;
-				Melder_require (my z [i] [j] >= 0, U"Power in Spectrogram must be positive.");
+				Melder_require (my z [i] [j] >= 0, U"Power in Spectrogram should be positive.");
 				val = scaleFactor * log10 (my z [i] [j] / reference);
 				if (val < floor_dB) {
 					val = floor_dB;
@@ -237,7 +237,7 @@ double BandFilterSpectrogram_getFrequencyInHertz (BandFilterSpectrogram me, doub
 // xmin, xmax in hz versus bark/mel or lin
 void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	if (xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0) {
-		Melder_warning (U"Frequencies must be >= 0.");
+		Melder_warning (U"Frequencies should be >= 0.");
 		return;
 	}
 

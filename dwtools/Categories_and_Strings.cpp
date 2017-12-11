@@ -25,7 +25,7 @@
 
 autoStrings Categories_to_Strings (Categories me) {
 	try {
-		Melder_require (my size > 0, U"No elements.");
+		Melder_require (my size > 0, U"There should be at least one category present.");
 		
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector<char32 *> (1, my size);

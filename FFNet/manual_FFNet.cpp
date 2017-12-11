@@ -367,7 +367,7 @@ NORMAL (U"The number of categories in a @Categories must equal the number of row
 MAN_END
 
 MAN_BEGIN (U"ActivationList", U"djmw", 20160524)
-INTRO (U"A list of activations, organized as a @Matrix whose elements must be >= 0 and <= 1. "
+INTRO (U"A list of activations, organized as a @Matrix whose elements should be >= 0 and <= 1. "
 "Classification: the response of a particular layer in a neural net to a @PatternList."
 "Learning: the desired response of the output layer in a neural net to a @PatternList.")
 MAN_END

@@ -339,8 +339,8 @@ static double ptukey(double q, double rr, double cc, double df, int lower_tail, 
     if (q <= 0.0)
 		return R_DT_0;
 
-    /* df must be > 1 */
-    /* there must be at least two values */
+    /* df should be > 1 */
+    /* there should be at least two values */
 
     if (df < 2 || rr < 1 || cc < 2) {
 		return undefined;
@@ -553,7 +553,7 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
 	if (isundef (p) || isundef (rr) || isundef (cc) || isundef (df)) {
 		return undefined;
 	}
-    /* df must be > 1 ; there must be at least two values */
+    /* df should be > 1 ; there should be at least two values */
     if (df < 2.0 || rr < 1.0 || cc < 2.0) {
 		return undefined;
 	}
@@ -587,7 +587,7 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
 		ans = x1 - ((valx1 * (x1 - x0)) / (valx1 - valx0));
 		valx0 = valx1;
 
-		/* New iterate must be >= 0 */
+		/* New iterate should be >= 0 */
 
 		x0 = x1;
 		if (ans < 0.0) {

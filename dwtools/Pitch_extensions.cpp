@@ -179,7 +179,7 @@ autoPitch PitchTier_to_Pitch (PitchTier me, double dt, double pitchFloor, double
 	try {
 		Melder_require (my points.size > 0, U"The PitchTier is empty.");
 		Melder_require (dt > 0.0, U"The time step should be a positive number.");
-		Melder_require (pitchFloor < pitchCeiling, U"The pitch floor must be lower than the pitch ceiling.");
+		Melder_require (pitchFloor < pitchCeiling, U"The pitch floor should be lower than the pitch ceiling.");
 		
 		double tmin = my xmin, tmax = my xmax, t1 = my xmin + dt / 2.0;
 		integer nt = Melder_ifloor ((tmax - tmin - t1) / dt);

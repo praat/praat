@@ -330,7 +330,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 
 		Eigen_initFromSymmetricMatrix (eigen.get(), c0 -> data, dimension);
 		for (integer i = 1; i <= dimension; i ++) {
-			Melder_require (eigen -> eigenvalues [i] >= 0.0, U"Covariance matrix not positive definite, eigenvalue [", i, U"] is negative.");
+			Melder_require (eigen -> eigenvalues [i] >= 0.0, U"Covariance matrix should be positive definite. Eigenvalue [", i, U"] is negative.");
 			double scalef = 1.0 / sqrt (eigen -> eigenvalues [i]);
 			for (integer j = 1; j <= dimension; j ++) {
 				p [dimension - i + 1] [j] = scalef * eigen -> eigenvectors [i] [j];
@@ -504,7 +504,7 @@ autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double start
  */
 autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagStep) {
 	try {
-		Melder_require (my dx == thy dx, U"Sampling frequencies must be equal.");
+		Melder_require (my dx == thy dx, U"Sampling frequencies should be equal.");
 		if (relativeEndTime <= relativeStartTime) {
 			relativeStartTime = my xmin;
 			relativeEndTime = my xmax;
@@ -562,7 +562,7 @@ autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, doub
 			startTime = my xmin;
 			endTime = my xmax;
 		}
-		Melder_require (startTime + ncovars * lagStep <= endTime, U"Lag time too large.");
+		Melder_require (startTime + ncovars * lagStep <= endTime, U"Lag time is too large.");
 		
 		autoCrossCorrelationTableList thee = CrossCorrelationTableList_create ();
 		for (integer i = 1; i <= ncovars; i ++) {
@@ -608,7 +608,7 @@ autoDiagonalizer Diagonalizer_create (integer dimension) {
 
 autoDiagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me) {
 	try {
-		Melder_require (my numberOfRows == my numberOfColumns, U"The number of channels and the number of components must be equal.");
+		Melder_require (my numberOfRows == my numberOfColumns, U"The number of channels and the number of components should be equal.");
 		
 		autoDiagonalizer thee = Diagonalizer_create (my numberOfRows);
 		NUMpseudoInverse (my data, my numberOfRows, my numberOfColumns, thy data, 0);
@@ -648,7 +648,7 @@ autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTi
 
 autoMixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me) {
 	try {
-		Melder_require (my numberOfColumns == my numberOfRows, U"Number of rows and columns must be equal.");
+		Melder_require (my numberOfColumns == my numberOfRows, U"Number of rows and columns should be equal.");
 		
 		autoMixingMatrix thee = Thing_new (MixingMatrix);
 		my structTableOfReal :: v_copy (thee.get());
@@ -685,7 +685,7 @@ autoCrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, ch
 		integer ncovars_wanted = dimension * (dimension + 1) / 2;
 		
 		Melder_require (ncovars == ncovars_wanted, U"The number of matrix elements and the number of "
-			U"centroid elements are not in concordance. There should be \"d(d+1)/2\" matrix values and \"d\" centroid values.");
+			U"centroid elements should agree. There should be \"d(d+1)/2\" matrix values and \"d\" centroid values.");
 
 		autoCrossCorrelationTable me = CrossCorrelationTable_create (dimension);
 
@@ -794,7 +794,7 @@ double CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (CrossCo
 
 autoCrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee) {
 	try {
-		Melder_require (my numberOfRows == thy numberOfRows, U"The CrossCorrelationTable and the Diagonalizer matrix dimensions must be equal.");
+		Melder_require (my numberOfRows == thy numberOfRows, U"The CrossCorrelationTable and the Diagonalizer matrix dimensions should be equal.");
 
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (my numberOfColumns);
 		NUMdmatrices_multiply_VCVp (his data, thy data, my numberOfColumns, my numberOfColumns, my data, true);
@@ -916,7 +916,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 static void Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee, integer maxNumberOfIterations, double /* tol */, int /* method */) {
 	try {
 		integer iter = 0;
-		Melder_require (my ny == thy numberOfColumns, U"Dimensions do not agree.");
+		Melder_require (my ny == thy numberOfColumns, U"Dimensions should agree.");
 		
 		autoNUMmatrix<double> x (NUMmatrix_copy (my z, 1, my ny, 1, my nx), 1, 1);
 		do {

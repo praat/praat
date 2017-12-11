@@ -167,7 +167,7 @@ static void GaussianMixture_setLabelsFromTableOfReal (GaussianMixture me, TableO
 
 // only from big to reduced or same
 static void Covariance_into_Covariance (Covariance me, Covariance thee) {
-	Melder_require (my numberOfColumns == thy numberOfColumns, U"Dimensions must be equal.");
+	Melder_require (my numberOfColumns == thy numberOfColumns, U"Dimensions should be equal.");
 	
 	SSCP_unExpand (thee); // to its original state
 
@@ -374,7 +374,7 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 
 autoCovariance GaussianMixture_extractComponent (GaussianMixture me, integer component) {
 	try {
-		Melder_require (component > 0 && component <= my numberOfComponents, U"Illegal component.");
+		Melder_require (component > 0 && component <= my numberOfComponents, U"The component should be in [1, ", my numberOfComponents, U".");
 
 		autoCovariance thee = Data_copy (my covariances->at [component]);
 		return thee;
@@ -446,7 +446,7 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, d
 }
 
 void GaussianMixture_and_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax) {
-	Melder_require (my dimension == thy dimension, U"Dimensions must be equal.");
+	Melder_require (my dimension == thy dimension, U"Dimensions should be equal.");
 	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension, U"Incorrect directions.");
 	
 	autoSSCPList sscps = SSCPList_toTwoDimensions (my covariances->asSSCPList(), thy eigenvectors [d1], thy eigenvectors [d2]);
@@ -797,7 +797,7 @@ void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal 
 
 void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 	try {
-		Melder_require (component > 0 && component <= my numberOfComponents, U"Illegal component.");
+		Melder_require (component > 0 && component <= my numberOfComponents, U"The component should be in [1, ", my numberOfComponents, U"].");
 		
 		Covariance thee = my covariances->at [component];
 		// Always new PCA because we cannot be sure of data unchanged.
@@ -839,7 +839,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 		cov1 -> numberOfObservations *= gamma;
 		cov2 -> numberOfObservations *= 1.0 - gamma;
 
-		// Replace cov1 at component + add cov2. If something goes wrong we must be able to restore original!
+		// Replace cov1 at component + add cov2. If something goes wrong we should be able to restore original!
 		try {
 			Thing_setName (cov2.get(), Melder_cat (Thing_getName (cov2.get()), U"-", my numberOfComponents + 1));
 			my covariances -> addItem_move (cov2.move());
@@ -1207,7 +1207,7 @@ void GaussianMixture_removeComponent (GaussianMixture me, integer component) {
 
 autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numberOfComponents, double delta_lnp, integer maxNumberOfIterations, double lambda, int storage, int criterion) {
 	try {
-		Melder_require (my numberOfRows >= 2 * numberOfComponents, U"The number of data points must at least be twice the number of components.");
+		Melder_require (my numberOfRows >= 2 * numberOfComponents, U"The number of data points should at least be twice the number of components.");
 
 		autoGaussianMixture thee = GaussianMixture_create (numberOfComponents, my numberOfColumns, storage);
 		GaussianMixture_setLabelsFromTableOfReal (thee.get(), me);
@@ -1225,7 +1225,7 @@ autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numb
 
 autoCorrelation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee) {
 	try {
-		Melder_require (my dimension == thy numberOfColumns, U"Dimensions must be equal.");
+		Melder_require (my dimension == thy numberOfColumns, U"Dimensions should be equal.");
 		
 		autoClassificationTable ct = GaussianMixture_and_TableOfReal_to_ClassificationTable (me, thee);
 		autoCorrelation him = ClassificationTable_to_Correlation_columns (ct.get());
@@ -1269,7 +1269,7 @@ double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *xpo
 
 autoMatrix GaussianMixture_and_PCA_to_Matrix_density (GaussianMixture me, PCA thee, integer d1, integer d2, double xmin, double xmax, integer nx, double ymin, double ymax, integer ny) {
 	try {
-		Melder_require (my dimension == thy dimension, U"Dimensions must be equal.");
+		Melder_require (my dimension == thy dimension, U"Dimensions should be equal.");
 		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues, U"Direction index too high.");
 		
 		autoNUMvector<double> v (1, my dimension);
@@ -1333,7 +1333,7 @@ autoTableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTest
 	try {
 		integer n = thy numberOfRows, d = thy numberOfColumns, nocp1 = my numberOfComponents + 1;
 		
-		Melder_require (d == my dimension, U"Dimensions do not agree.");
+		Melder_require (d == my dimension, U"Dimensions should agree.");
 		
 		// We cannot use a classification table because this could weigh a far-off data point with high probability
 

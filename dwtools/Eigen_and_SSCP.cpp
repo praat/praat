@@ -59,7 +59,7 @@ autoSSCP Eigen_and_SSCP_project (Eigen me, SSCP thee) {
 
 autoCovariance Eigen_and_Covariance_project (Eigen me, Covariance thee) {
 	try {
-		Melder_require (thy numberOfRows == my dimension, U"Dimensions don't agree.");
+		Melder_require (thy numberOfRows == my dimension, U"Dimensions should agree.");
 		autoCovariance him = Covariance_create (my numberOfEigenvalues);
 		Eigen_and_SSCP_into_SSCP_project (me, thee, him.get());
 		return him;

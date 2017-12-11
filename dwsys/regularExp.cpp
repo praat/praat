@@ -22,7 +22,7 @@
  * | 2. The origin of this software must not be misrepresented, either |
  * |      by explicit claim or by omission.                            |
  * |                                                                   |
- * | 3. Altered versions must be plainly marked as such, and must not  |
+ * | 3. Altered versions should be plainly marked as such, and must not  |
  * |      be misrepresented as being the original software.            |
  * `-------------------------------------------------------------------'
  *
@@ -586,7 +586,7 @@ regexp *CompileRE (const char32 *exp, const char32 **errorText, int defaultFlags
 	   This also means that we don't allocate space until we are sure that the
 	   thing really will compile successfully, and we never have to move the
 	   code and thus invalidate pointers into it.  (Note that it has to be in
-	   one piece because free() must be able to free it all.) */
+	   one piece because free() should be able to free it all.) */
 
 	for (pass = 1; pass <= 2; pass++) {
 		/*-------------------------------------------*
@@ -841,7 +841,7 @@ static char32 *chunk (int paren, int *flag_param, len_range *range_param) {
 		}
 	}
 
-	/* For look ahead/behind, the length must be set to zero again */
+	/* For look ahead/behind, the length should be set to zero again */
 	if (look_only) {
 		range_param->lower = 0;
 		range_param->upper = 0;
@@ -2692,7 +2692,7 @@ static char32 *        makeDelimiterTable (const char32 *, char32 *);
  * ExecRE - match a `regexp' structure against a string
  *
  * If `end' is non-NULL, matches may not BEGIN past end, but may extend past
- * it.  If reverse is true, `end' must be specified, and searching begins at
+ * it.  If reverse is true, `end' should be specified, and searching begins at
  * `end'.  "isbol" should be set to true if the beginning of the string is the
  * actual beginning of a line (since `ExecRE' can't look backwards from the
  * beginning to find whether there was a newline before).  Likewise, "isbow"
@@ -2709,7 +2709,7 @@ static char32 *        makeDelimiterTable (const char32 *, char32 *);
  * Finally, match_to indicates the logical end of the string, till where
  * matches are allowed to extend. Note that look-ahead patterns may look
  * past that boundary. If match_to is set to NULL, the terminating \0 is
- * assumed to correspond to the logical boundary. Match_to, if set, must be
+ * assumed to correspond to the logical boundary. Match_to, if set, should be
  * larger than or equal to end, if set.
  */
 
@@ -4225,7 +4225,7 @@ static void reg_error (const char32 *str) {
  * lookup table for determining whether a character is a delimiter or
  * not.
  *
- * Table must be allocated by the caller.
+ * Table should be allocated by the caller.
  *
  * Return value is a pointer to the table.
  *----------------------------------------------------------------------*/

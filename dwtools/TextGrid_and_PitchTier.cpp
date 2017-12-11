@@ -303,7 +303,7 @@ static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, do
 			tmin = my xmin; tmax = my xmax;
 		}
 		Melder_require (fmin < fmax, 
-			U"The lowest frequency must be lower than the highest frequency.");
+			U"The lowest frequency should be lower than the highest frequency.");
 
 		integer numberOfTimes, numberOfPitches;
 		autoNUMvector<double> times (getTimesFromRelativeTimesString (tmin, tmax, times_string, time_offset, & numberOfTimes), 1);

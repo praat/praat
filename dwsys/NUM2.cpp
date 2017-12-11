@@ -259,9 +259,8 @@ void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, d
 }
 
 void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer ncols, integer ndf, double **covar) {
-	if (ndf < 0 || nrows - ndf < 1 || covar == 0) {
-		Melder_throw (U"Invalid arguments.");
-	}
+	Melder_require (ndf >= 0 && nrows - ndf > 0 && covar, U"Invalid arguments.");
+
 	for (integer i = 1; i <= ncols; i ++) {
 		for (integer j = i; j <= ncols; j ++) {
 			real80 sum = 0.0;
@@ -434,9 +433,7 @@ double NUMdeterminant_cholesky (double **a, integer n) {
 	char uplo = 'U';
 	integer lda = n, info;
 	NUMlapack_dpotf2 (& uplo, & n, & a [1] [1], & lda, & info);
-	if (info != 0) {
-		Melder_throw (U"Cannot determine Cholesky decomposition.");
-	}
+	Melder_require (info == 0, U"dpotf2 cannot determine Cholesky decomposition.");
 
 	// Determinant from diagonal, restore diagonal
 
@@ -466,9 +463,7 @@ void NUMlowerCholeskyInverse (double **a, integer n, double *p_lnd) {
 	// Fortran storage -> use uplo='U' to get 'L'.
 
 	(void) NUMlapack_dpotf2 (& uplo, & n, & a [1] [1], & n, & info);
-	if (info != 0) {
-		Melder_throw (U"dpotf2 fails.");
-	}
+	Melder_require (info == 0, U"dpotf2 fails.");
 
 	// Determinant from diagonal, diagonal is now sqrt (a [i] [i]) !
 
@@ -483,9 +478,7 @@ void NUMlowerCholeskyInverse (double **a, integer n, double *p_lnd) {
 	// Get the inverse */
 
 	(void) NUMlapack_dtrtri (& uplo, & diag, & n, & a [1] [1], & n, & info);
-	if (info != 0) {
-		Melder_throw (U"dtrtri fails.");
-	}
+	Melder_require (info == 0, U"dtrtri fails.");
 }
 
 double **NUMinverseFromLowerCholesky (double **m, integer n) {
@@ -560,9 +553,7 @@ void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambd
 			lambda += q [k] * mns [k] [l] * q [l];
 		}
 	}
-	if (lambda == 0.0) {
-		Melder_throw (U"Zero matrices ??");
-	}
+	Melder_require (lambda > 0.0, U"Zero matrices ??");
 
 	integer iter = 0;
 	do {
@@ -703,9 +694,7 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tolerance, double *result) {
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
-	if (nr <= 0 || nc <= 0) {
-		Melder_throw (U"Negative dimensions");
-	}
+	Melder_require (nr > 0 && nc > 0, U"The number of rows and the number of columns should at least be 1.");
 
 	autoSVD me = SVD_create_d (a, nr, nc);
 	SVD_zeroSmallSingularValues (me.get(), tol);
@@ -722,10 +711,8 @@ void NUMsolveEquation2 (double **a, long nr, long nc, double *b, double fraction
 void NUMsolveEquations (double **a, integer nr, integer nc, double **b, integer ncb, double tolerance, double **x) {
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
-	if (nr <= 0 || nc <= 0) {
-		Melder_throw (U"Negative dimensions");
-	}
-
+	Melder_require (nr > 0 && nc > 0, U"The number of rows and columns must be a positive number.");
+	
 	autoSVD me = SVD_create_d (a, nr, nc);
 	autoNUMvector<double> bt (1, nr + nc);
 	double *xt = & bt [nr];
@@ -842,9 +829,8 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 
 	char uplo = 'U';
 	(void) NUMlapack_dpotf2 (& uplo, & n3, & ftinv [1] [1], & n3, & info);
-	if (info != 0) {
-		Melder_throw (U"dpotf2 fails.");
-	}
+	Melder_require (info == 0, U"dpotf2 fails.");
+	
 	ftinv [1] [2] = ftinv [1] [3] = ftinv [2] [3] = 0.0;
 
 	// Construct G and its eigen-decomposition (eq. (4,5))
@@ -1114,10 +1100,7 @@ void NUMProcrustes (double **x, double **y, integer nPoints, integer nDimensions
 	for (integer i = 1; i <= nDimensions; i ++) {
 		trace += svd -> d [i];
 	}
-
-	if (trace == 0.0) {
-		Melder_throw (U"NUMProcrustes: degenerate configuration(s).");
-	}
+	Melder_require (trace > 0.0, U"NUMProcrustes: degenerate configuration(s).");
 
 	// 3. T = QP'
 
@@ -1183,10 +1166,8 @@ double NUMmspline (double knot [], integer nKnots, integer order, integer i, dou
 	integer jj, nSplines = nKnots - order;
 	
 	double y = 0.0;
-	if (nSplines <= 0) {
-		Melder_throw (U"No splines.");
-	}
-	
+	Melder_require (nSplines > 0, U"No splines.");
+	Melder_require (order > 0 && i <= nSplines, U"Combination of order and index not correct.");
 	/*
 		Find the interval where x is located.
 		M-splines of order k have degree k-1.
@@ -1195,9 +1176,6 @@ double NUMmspline (double knot [], integer nKnots, integer order, integer i, dou
 		knot [1] = ... = knot [order] && knot [nKnots-order+1] = ... knot [nKnots].
 	*/
 	
-	if (i > nSplines || order < 1) {
-		Melder_throw (U"Combination of order and index not correct.");
-	}
 	for (jj = order; jj <= nKnots - order + 1; jj ++) {
 		if (x < knot [jj]) {
 			break;
@@ -1249,7 +1227,7 @@ double NUMispline (double aknot [], integer nKnots, integer order, integer i, do
 	}
 	/*
 		Equation 5 in Ramsay's article contains some errors!!!
-		1. the interval selection must be 'j-k <= i <= j' instead of
+		1. the interval selection should be 'j-k <= i <= j' instead of
 			j-k+1 <= i <= j'
 		2. the summation index m starts at 'i+1' instead of 'i'
 	*/
@@ -1945,10 +1923,9 @@ void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer 
 			}
 		}
 	}
-
-	if (max < 0 || min < 0) {
-		Melder_throw (U"NUMdmatrix_to_dBs: all matrix elements must be positive.");
-	}
+	
+	Melder_require (min >= 0.0 && max >= 0.0, U"All matrix elements should be positive.");
+	
 	ref_db = factor10 * log10 (ref);
 
 	for (integer i = rb; i <= re; i ++) {
@@ -2020,9 +1997,8 @@ double NUMcubicSplineInterpolation (double xa [], double ya [], double y2a [], i
 		}
 	}
 	double h = xa [khi] - xa [klo];
-	if (h == 0.0) {
-		Melder_throw (U"NUMcubicSplineInterpolation: bad input value.");
-	}
+	Melder_require (h != 0.0, U"NUMcubicSplineInterpolation: bad input value.");
+	
 	double a = (xa [khi] - x) / h;
 	double b = (x - xa [klo]) / h;
 	double y = a * ya [klo] + b * ya [khi] + ( (a * a * a - a) * y2a [klo] + (b * b * b - b) * y2a [khi]) * (h * h) / 6.0;
@@ -2130,20 +2106,19 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 			continue;
 		}
 		ni ++;
-		if (ni > 2) {
-			Melder_throw (U"Too many intersections.");
-		}
+		Melder_require (ni <= 3, U"Too many intersections.");
+		
 		xi [ni] = x3;
 		yi [ni] = y3;
 	}
 	return ni;
 }
 
-
+#define SWAP(x,y) { tmp = x; x = y; y = tmp; }
 bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2) {
 	int ncrossings = 0;
 	bool xswap, yswap;
-	double a, b, x, y, t, xc [5], yc [5], xmin, xmax, ymin, ymax;
+	double tmp, xc [5], yc [5], xmin, xmax, ymin, ymax;
 
 	*xo1 = xl1; *yo1 = yl1; *xo2 = xl2; *yo2 = yl2;
 
@@ -2181,7 +2156,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 			*xo2 = xr2;
 		}
 		if (xswap) {
-			t = *xo1; *xo1 = *xo2; *xo2 = t;
+			SWAP (*xo1, *xo2)
 		}
 		return true;
 	}
@@ -2193,7 +2168,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 			*yo2 = yr2;
 		}
 		if (yswap) {
-			t = *yo1; *yo1 = *yo2; *yo2 = t;
+			SWAP (*yo1, *yo2)
 		}
 		return true;
 	}
@@ -2201,8 +2176,8 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	// Now we know that the line from (x1,y1) to (x2,y2) is neither horizontal nor vertical.
 	// Parametrize it as y = ax + b
 
-	a = (yl1 - yl2) / (xl1 - xl2);
-	b = yl1 - a * xl1;
+	double a = (yl1 - yl2) / (xl1 - xl2);
+	double b = yl1 - a * xl1;
 
 
 	//	To determine the crossings we have to avoid counting the crossings in a corner twice.
@@ -2210,7 +2185,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	//	and exclusive (..<..<) at the horizontal borders.
 
 
-	y = a * xr1 + b; // Crossing at y with left border: x = xr1
+	double y = a * xr1 + b; // Crossing at y with left border: x = xr1
 
 	if (y >= yr1 && y <= yr2 && xmin < xr1) { // Within vertical range?
 		ncrossings ++;
@@ -2219,7 +2194,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 		yc [2] = xl1 > xl2 ? yl1 : yl2;
 	}
 
-	x = (yr2 - b) / a; // Crossing at x with top border: y = yr2
+	double x = (yr2 - b) / a; // Crossing at x with top border: y = yr2
 
 	if (x > xr1 && x < xr2 && ymax > yr2) { // Within horizontal range?
 		ncrossings ++;
@@ -2254,23 +2229,21 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	if (ncrossings == 0) {
 		return false;
 	}
-	if (ncrossings == 1 || ncrossings == 2) {
-		// if start and endpoint of line are outside rectangle and ncrossings == 1,
-		// than the line only touches.
-		if (ncrossings == 1 &&
-				(xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
-				(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2)) {
-			return true;
-		}
+	Melder_require (ncrossings <= 2, U"Too many crossings found.");
 
-		if ( (xc [1] > xc [2] && ! xswap) || (xc [1] < xc [2] && xswap)) {
-			t = xc [1]; xc [1] = xc [2]; xc [2] = t;
-			t = yc [1]; yc [1] = yc [2]; yc [2] = t;
-		}
-		*xo1 = xc [1]; *yo1 = yc [1]; *xo2 = xc [2]; *yo2 = yc [2];
-	} else {
-		Melder_throw (U"Too many crossings found.");
+	/*
+		if start and endpoint of line are outside rectangle and ncrossings == 1, than the line only touches.
+	*/
+	if (ncrossings == 1 && (xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
+		(xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2)) {
+		return true;
 	}
+
+	if ((xc [1] > xc [2] && ! xswap) || (xc [1] < xc [2] && xswap)) {
+		SWAP (xc [1], xc [2])
+		SWAP (yc [1], yc [2])
+	}
+	*xo1 = xc [1]; *yo1 = yc [1]; *xo2 = xc [2]; *yo2 = yc [2];
 	return true;
 }
 
@@ -2524,9 +2497,7 @@ void NUMlpc_lpc_to_rc (double *lpc, integer p, double *rc) {
 	autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
 	for (integer m = p; m > 0; m--) {
 		rc [m] = a [m];
-		if (fabs (rc [m]) > 1) {
-			Melder_throw (U"Relection coefficient [", m, U"] larger than 1.");
-		}
+		Melder_require (fabs (rc [m]) <= 1.0, U"Relection coefficient [", m, U"] larger than 1.");
 		for (integer i = 1; i < m; i ++) {
 			b [i] = a [i];
 		}

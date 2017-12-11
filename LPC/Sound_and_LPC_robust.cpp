@@ -190,12 +190,12 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, d
 		double location = 0, windowDuration = 2 * analysisWidth; /* Gaussian window */
 		integer numberOfFrames, frameErrorCount = 0, iter = 0;
 		integer p = thy maxnCoefficients;
-		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Time domains differ.");
-		Melder_require (my dx == thy samplingPeriod, U"Sampling intervals differ.");
+		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Time domains should be equal.");
+		Melder_require (my dx == thy samplingPeriod, U"Sampling intervals should be equal.");
 		Melder_require (Melder_roundDown (windowDuration / my dx) > p, U"Analysis window too short.");
 		
 		Sampled_shortTermAnalysis (me, windowDuration, thy dx, & numberOfFrames, & t1);
-		Melder_require (numberOfFrames == thy nx && t1 == thy x1, U"Incorrect retrieved analysis width");
+		Melder_require (numberOfFrames == thy nx && t1 == thy x1, U"Incorrect retrieved analysis width.");
 
 		autoSound sound = Data_copy (me);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);

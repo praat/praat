@@ -59,7 +59,7 @@ autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, bool onl
 
 void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTable thee) {
 	if (my numberOfColumns != thy numberOfColumns) {
-		Melder_throw (U"The number of columns must be equal.");
+		Melder_throw (U"The number of columns should be equal.");
 	}
 	for (integer irow = 1; irow <= thy numberOfRows; irow ++) {
 		integer index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);

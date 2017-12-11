@@ -173,7 +173,7 @@ void Matrix_scale (Matrix me, int choice) {
 			}
 		}
 	} else {
-		Melder_flushError (U"Matrix_scale: choice must be > 0 && <= 3.");
+		Melder_flushError (U"Matrix_scale: choice should be > 0 && <= 3.");
 		return;
 	}
 	if (nZero) {
@@ -314,10 +314,10 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 autoMatrix Matrix_solveEquation (Matrix me, double /* tolerance */) {
 	try {
 		integer nr = my ny, nc = my nx - 1;
-		Melder_require (nc > 0, U"There must be at least 2 columns in the matrix.");
+		Melder_require (nc > 0, U"There should be at least 2 columns in the matrix.");
 		
 		if (nr < nc) {
-			Melder_warning (U"Solution iss not unique (fewer equations than unknowns).");
+			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");
 		}
 
 		autoNUMmatrix<double> u (1, nr, 1, nc);

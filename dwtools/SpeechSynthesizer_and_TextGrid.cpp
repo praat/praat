@@ -38,7 +38,7 @@ static autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, 
 autoSound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *p_tg)
 {
 	try {
-		Melder_require (thy text && thy text[0] != U'\0', U"TextInterval may not be empty.");
+		Melder_require (thy text && thy text[0] != U'\0', U"TextInterval should not be empty.");
 		
 		autoSound him = SpeechSynthesizer_to_Sound (me, thy text, p_tg, nullptr);
 		return him;
@@ -138,7 +138,7 @@ void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *lef
 static autoTextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
-            Melder_throw (U"Domains must be equal.");
+            Melder_throw (U"Domains should be equal.");
         }
         integer myIndex = 1;
 		double timeCut = 0.0;
@@ -175,7 +175,7 @@ static autoTextTier TextTier_and_IntervalTier_cutPartsMatchingLabel (TextTier me
 autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
-            Melder_throw (U"Domains must be equal.");
+            Melder_throw (U"Domains should be equal.");
         }
         autoNUMvector<double> durations (1, my intervals.size);
         for (integer i = 1; i <= my intervals.size; i ++) {
@@ -243,7 +243,7 @@ autoIntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTi
 autoTextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
-            Melder_throw (U"Domains must be equal.");
+            Melder_throw (U"Domains should be equal.");
         }
         double cutDurations = 0;
         for (integer i = 1; i <= thy intervals.size; i ++) {
@@ -464,12 +464,12 @@ autoTextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, co
 autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
 	try {
 		Melder_require (thy xmin == his xmin && thy xmax == his xmax,
-			U"Domains of Sound and TextGrid must be equal.");
+			U"Domains of Sound and TextGrid should be equal.");
 		Melder_require (fabs (1.0 / thy dx - my d_samplingFrequency) < 1e-9, 
-			U"The sampling frequencies of the SpeechSynthesizer and the Sound must be equal.");
+			U"The sampling frequencies of the SpeechSynthesizer and the Sound should be equal.");
 
 		integer numberOfTokens = Melder_countTokens (his text);
-		Melder_require (numberOfTokens > 0, U"The interval has no text.");
+		Melder_require (numberOfTokens > 0, U"The interval should have text.");
 		
 		// Remove silent intervals from start and end of sounds
 		double minPitch = 200.0, timeStep = 0.005, precision = thy dx;
@@ -560,9 +560,9 @@ typedef struct structAlignmentOfSoundAndTextStruct {
 static autoTextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align2 (SpeechSynthesizer me, Sound thee, TextInterval him, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
     try {
 		Melder_require (thy xmin == his xmin && thy xmax == his xmax,
-			U"Domains of Sound and TextGrid must be equal.");
+			U"Domains of Sound and TextGrid should be equal.");
 		Melder_require (fabs (1.0 / thy dx - my d_samplingFrequency) < 1e-9, 
-			U"The sampling frequencies of the SpeechSynthesizer and the Sound must be equal.");
+			U"The sampling frequencies of the SpeechSynthesizer and the Sound should be equal.");
 
         const char32 *trimLabel = U"trim";
         // 1. trim the silences of the sound

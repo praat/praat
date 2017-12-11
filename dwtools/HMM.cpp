@@ -485,7 +485,7 @@ autoHMM HMM_createSimple (int leftToRight, const char32 *states_string, const ch
 		integer numberOfStates = Melder_countTokens (states_string);
 		integer numberOfObservationSymbols = Melder_countTokens (symbols_string);
 
-		Melder_require (numberOfStates > 0 || numberOfObservationSymbols > 0, U"No states and no symbols given.");
+		Melder_require (numberOfStates > 0 || numberOfObservationSymbols > 0, U"The states and symbols should not be empty.");
 		
 		if (numberOfStates > 0) {
 			if (numberOfObservationSymbols <= 0) {
@@ -576,7 +576,7 @@ void HMM_setStartProbabilities (HMM me, char32 *probs) {
 
 void HMM_setTransitionProbabilities (HMM me, integer state_number, char32 *state_probs) {
 	try {
-		Melder_require (state_number <= my states->size, U"State number too large.");
+		Melder_require (state_number <= my states->size, U"State number should not exceed ", my states->size, U".");
 		
 		autoNUMvector<double> p (NUMwstring_to_probs (state_probs, my numberOfStates), 1);
 		for (integer i = 1; i <= my numberOfStates + 1; i ++) {
@@ -589,7 +589,7 @@ void HMM_setTransitionProbabilities (HMM me, integer state_number, char32 *state
 
 void HMM_setEmissionProbabilities (HMM me, integer state_number, char32 *emission_probs) {
 	try {
-		Melder_require (state_number <= my states->size, U"State number too large.");
+		Melder_require (state_number <= my states->size, U"State number should not exceed ", my states->size, U".");
 		Melder_require (! my notHidden, U"The emission probs of this model are fixed.");
 		
 		autoNUMvector<double> p (NUMwstring_to_probs (emission_probs, my numberOfObservationSymbols), 1);
@@ -1367,7 +1367,7 @@ double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
 		return undefined;
 	}
 	double p0 = my transitionProbs [0] [index [1]];
-	Melder_require (p0 > 0.0, U"You cannot start with a zero probability state.");
+	Melder_require (p0 > 0.0, U"You should not start with a zero probability state.");
 	
 	double lnp = log (p0);
 	for (integer it = 2; it <= thy numberOfStrings; it ++) {
@@ -1440,7 +1440,7 @@ double HMM_getProbabilityOfObservations (HMM me, integer *obs, integer numberOfT
 		alpha_t [js] = my transitionProbs [0] [js] * my emissionProbs [js] [obs [1]];
 		scale [1] += alpha_t [js];
 	}
-	Melder_require (scale [1] > 0.0, U"The observation sequence starts with a symbol which state has starting probability zero.");
+	Melder_require (scale [1] > 0.0, U"The observation sequence should not start with a symbol whose state has zero starting probability.");
 	
 	for (integer js = 1; js <= my numberOfStates; js ++) {
 		alpha_t [js] /= scale [1];

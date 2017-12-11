@@ -501,7 +501,7 @@ static void IntervalTier_cutInterval (IntervalTier me, integer index, int extend
 	integer size_pre = my intervals.size;
 
 	/*
-	 * There always must be at least one interval
+	 * There always should be at least one interval
 	 */
 	if (size_pre == 1 || index > size_pre || index < 1) {
 		return;
@@ -756,7 +756,7 @@ void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes)
 {
 	try {
 		if (my tiers->size != thy tiers->size) {
-			Melder_throw (U"The numbers of tiers must be equal.");
+			Melder_throw (U"The numbers of tiers should be equal.");
 		}
 		if (preserveTimes && thy xmin < my xmax) {
 			Melder_throw (U"The start time of the second TextGrid can't be earlier than the end time of the first one if you want to preserve times.");

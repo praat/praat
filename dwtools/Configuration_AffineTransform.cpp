@@ -88,7 +88,7 @@ static void NUMmaximizeCongruence (double **b, double **a, integer nr, integer n
 		}
 	}
 	
-	Melder_require (checkc != 0.0 && checkw != 0.0, U"NUMmaximizeCongruence: we cannot rotate a zero matrix.");
+	Melder_require (checkc != 0.0 && checkw != 0.0, U"NUMmaximizeCongruence: the matrix should not be zero.");
 
 	// Scale W by (diag(B'B))^-1/2
 
@@ -193,7 +193,7 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 
 autoConfiguration Configuration_and_AffineTransform_to_Configuration (Configuration me, AffineTransform thee) {
 	try {
-		Melder_require (my numberOfColumns == thy n, U"Dimensions do not agree.");
+		Melder_require (my numberOfColumns == thy n, U"The number of columns in the Configuration should equal the dimension of the transform.");
 		
 		autoConfiguration him = Data_copy (me);
 

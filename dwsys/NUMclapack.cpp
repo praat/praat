@@ -2013,7 +2013,7 @@ int NUMlapack_dgehrd (integer *n, integer *ilo, integer *ihi, double *a, integer
 			NUMlapack_dlahrd (ihi, &i__, &ib, &a_ref (1, i__), lda, &tau[i__], t, &c__65, &work[1], &ldwork);
 
 			/* Apply the block reflector H to A(1:ihi,i+ib:ihi) from the
-			   right, computing A := A - Y * V'. V(i+ib,ib-1) must be set to
+			   right, computing A := A - Y * V'. V(i+ib,ib-1) should be set to
 			   1. */
 
 			ei = a_ref (i__ + ib, i__ + ib - 1);
@@ -7896,7 +7896,7 @@ int NUMlapack_dhseqr (const char *job, const char *compz, integer *n, integer *i
 	smlnum = unfl * (nh / ulp);
 
 	/* I1 and I2 are the indices of the first row and last column of H to
-	   which transformations must be applied. If eigenvalues only are being
+	   which transformations should be applied. If eigenvalues only are being
 	   computed, I1 and I2 are set inside the main loop. */
 
 	if (wantt) {
@@ -8877,7 +8877,7 @@ int NUMlapack_dlahqr (int *wantt, int *wantz, integer *n, integer *ilo, integer 
 	smlnum = unfl * (nh / ulp);
 
 	/* I1 and I2 are the indices of the first row and last column of H to
-	   which transformations must be applied. If eigenvalues only are being
+	   which transformations should be applied. If eigenvalues only are being
 	   computed, I1 and I2 are set inside the main loop. */
 
 	if (*wantt) {

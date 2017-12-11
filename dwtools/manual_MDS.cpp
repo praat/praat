@@ -114,7 +114,7 @@ NORMAL (U"Evaluate the goodness-of-fit criterion and either repeat the minimizat
 	"(2.1\\--2.3) or continue.")
 NORMAL (U"3. Done: make %Y equal to %X and solve a last time for the %W__%i_.")
 NORMAL (U"Note: during the minimization the following constraints are effective:")
-LIST_ITEM (U"The configuration must be centered.")
+LIST_ITEM (U"The configuration should be centered.")
 LIST_ITEM (U"The sum of squared coordinates in the configuration space is one for "
 	"each dimension, i.e., the configuration always has unit variance in each dimension.")
 MAN_END

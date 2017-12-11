@@ -65,38 +65,39 @@
 void structSVD :: v_info () {
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
+	MelderInfo_writeLine (U"This matrix is", (isTransposed ? U"" : U"not "), U" transposed.");
 }
 
-Thing_implement (SVD, Daata, 0);
+Thing_implement (SVD, Daata, 1);
 
-static void NUMtranspose_d (double **m, long n);
-
-/* if A=UDV' then A' = (UDV')'=VDU' */
-static void SVD_transpose (SVD me) {
-	long tmpl = my numberOfRows;
-	double **tmpd = my u;
-
-	my u = my v;
-	my v = tmpd;
-	my numberOfRows = my numberOfColumns;
-	my numberOfColumns = tmpl;
+static void NUMtranspose_d (double **m, integer n) {
+	for (integer i = 1; i <= n - 1; i ++) {
+		for (integer j = i + 1; j <= n; j ++) {
+			double t = m [i] [j];
+			m [i] [j] = m [j] [i];
+			m [j] [i] = t;
+		}
+	}
 }
 
 /*
 	m >=n, mxn matrix A has svd UDV', where u is mxn, D is n and V is nxn.
-	m < n, mxn matrix A. Consider A' with svd (UDV')'= VDU', where v is mxm, D is m and U' is mxn
+	m < n, then transpose A. Consider A' with svd (UDV')'= VDU', where v is mxm, D is m and U' is mxn
 */
 void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
-	integer mn_min = MIN (numberOfRows, numberOfColumns);
+	if (numberOfRows < numberOfColumns) {
+		my isTransposed = numberOfRows < numberOfColumns;
+		integer tmp = numberOfRows; numberOfRows = numberOfColumns; numberOfColumns = tmp;
+	}
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
 	if (! NUMfpp) {
 		NUMmachar ();
 	}
-	my tolerance = NUMfpp -> eps * MAX (numberOfRows, numberOfColumns);
-	my u = NUMmatrix<double> (1, numberOfRows, 1, mn_min);
-	my v = NUMmatrix<double> (1, numberOfColumns, 1, mn_min);
-	my d = NUMvector<double> (1, mn_min);
+	my tolerance = NUMfpp -> eps * numberOfRows;
+	my u = NUMmatrix<double> (1, numberOfRows, 1, numberOfColumns);
+	my v = NUMmatrix<double> (1, numberOfColumns, 1, numberOfColumns);
+	my d = NUMvector<double> (1, numberOfColumns);
 }
 
 autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
@@ -130,38 +131,18 @@ autoSVD SVD_create_f (float **m, integer numberOfRows, integer numberOfColumns) 
 }
 
 void SVD_svd_d (SVD me, double **m) {
-	if (my numberOfRows >= my numberOfColumns) {
-		// Store m in u
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				my u [i] [j] = m [i] [j];
-			}
-		}
-	} else {
-		// Store m transposed in v
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				my v [j] [i] = m [i] [j];
-			}
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
+			my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];
 		}
 	}
 	SVD_compute (me);
 }
 
 void SVD_svd_f (SVD me, float **m) {
-	if (my numberOfRows >= my numberOfColumns) {
-		// Store in u
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				my u [j] [i] = m [i] [j];
-			}
-		}
-	} else {
-		// Store transposed in v
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				my v [i] [j] = m [j] [i];
-			}
+	for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
+			my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];
 		}
 	}
 	SVD_compute (me);
@@ -173,16 +154,6 @@ void SVD_setTolerance (SVD me, double tolerance) {
 
 double SVD_getTolerance (SVD me) {
 	return my tolerance;
-}
-
-static void NUMtranspose_d (double **m, integer n) {
-	for (integer i = 1; i <= n - 1; i ++) {
-		for (integer j = i + 1; j <= n; j ++) {
-			double t = m [i] [j];
-			m [i] [j] = m [j] [i];
-			m [j] [i] = t;
-		}
-	}
 }
 
 
@@ -205,29 +176,21 @@ void SVD_compute (SVD me) {
 	try {
 		char jobu = 'S', jobvt = 'O';
 		integer m, lda, ldu, ldvt, info, lwork = -1;
-		double wt[2];
-		int transpose = my numberOfRows < my numberOfColumns;
-
-		// Transpose: if rows < cols then data in v
-		if (transpose) {
-			SVD_transpose (me);
-		}
+		double wt [2];
 
 		lda = ldu = ldvt = m = my numberOfColumns;
 		integer n = my numberOfRows;
 
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u[1][1], & lda, & my d[1], & my v[1][1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
-		Melder_require (info == 0, U"SVD not precomputed.");
+		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
+		Melder_require (info == 0, U"SVD could not be precomputed.");
 
 		lwork = wt [0];
 		autoNUMvector<double> work ((integer) 0, lwork);
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u[1][1], & lda, & my d[1], & my v[1][1], & ldu, nullptr, & ldvt, work.peek(), & lwork, & info);
-		Melder_require (info == 0, U"SVD not computed.");
+		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, work.peek(), & lwork, & info);
+		Melder_require (info == 0, U"SVD could not be computed.");
 
-		NUMtranspose_d (my v, MIN (m, n));
-		if (transpose) {
-			SVD_transpose (me);
-		}
+		NUMtranspose_d (my v, my numberOfColumns);
+		
 	} catch (MelderError) {
 		Melder_throw (me, U": SVD could not be computed.");
 	}
@@ -252,27 +215,25 @@ void SVD_getSquared (SVD me, double **m, bool inverse) {
 
 void SVD_solve (SVD me, double b [], double x []) {
 	try {
-		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
-
-		autoNUMvector<double> t (1, mn_min);
+		autoNUMvector<double> t (1, my numberOfColumns);
 
 		/*  Solve UDV' x = b.
 			Solution: x = V D^-1 U' b */
 
-		for (integer j = 1; j <= mn_min; j ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			real80 tmp = 0.0;
 			if (my d [j] > 0.0) {
 				for (integer i = 1; i <= my numberOfRows; i ++) {
 					tmp += my u [i] [j] * b [i];
 				}
-				tmp /= my d[j];
+				tmp /= my d [j];
 			}
 			t [j] = (real) tmp;
 		}
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			real80 tmp = 0.0;
-			for (integer i = 1; i <= mn_min; i ++) {
+			for (integer i = 1; i <= my numberOfColumns; i ++) {
 				tmp += my v [j] [i] * t [i];
 			}
 			x [j] = (real) tmp;
@@ -282,31 +243,29 @@ void SVD_solve (SVD me, double b [], double x []) {
 	}
 }
 
-integer SVD_getMinimumNumberOfComponents (SVD me, double fractionOfSumOfEigenvalues) {
-	integer mn_min = MIN (my numberOfRows, my numberOfColumns);
-	real80 sumOfEigenvalues = 0.0;
-	for (integer i = 1; i <= mn_min; i ++) {
-		sumOfEigenvalues += my d [i];
+integer SVD_getMinimumNumberOfComponents (SVD me, double fractionOfSumOfSingularValues) {
+	real80 sumOfSingularValues = 0.0;
+	for (integer i = 1; i <= my numberOfColumns; i ++) {
+		sumOfSingularValues += my d [i];
 	}
-	double criterion = sumOfEigenvalues * fractionOfSumOfEigenvalues;
+	double criterion = sumOfSingularValues * fractionOfSumOfSingularValues;
 	integer j = 1;
 	real80 sum = my d [1];
-	while (sum < criterion && j < mn_min) {
+	while (sum < criterion && j < my numberOfColumns) {
 		sum += my d [++ j];
 	}
 	return j;
 }
 
-void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfEigenvalues) {
+void SVD_solve2 (SVD me, double b [], double x [], double fractionOfSumOfSingularValues) {
 	try {
-		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
-		integer numberOfComponents = SVD_getMinimumNumberOfComponents (me, fractionOfSumOfEigenvalues);
-		autonumvec t (mn_min, kTensorInitializationType:: RAW);
+		integer numberOfComponents = SVD_getMinimumNumberOfComponents (me, fractionOfSumOfSingularValues);
+		autonumvec t (my numberOfColumns, kTensorInitializationType:: RAW);
 
 		/*  Solve UDV' x = b.
 			Solution: x = V D^-1 U' b 
 			
-			x = sum(i=1,M, (U[i].b)/d[i] V[i];
+			x = sum(i=1,M, (U [i].b)/d [i] V [i];
 		
 		*/
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -329,14 +288,13 @@ void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfEigenvalu
 
 void SVD_sort (SVD me) {
 	try {
-		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoSVD thee = Data_copy (me);
-		autoNUMvector<integer> index (1, mn_min);
+		autoNUMvector<integer> index (1, my numberOfColumns);
 
-		NUMindexx (my d, mn_min, index.peek());
+		NUMindexx (my d, my numberOfColumns, index.peek());
 
-		for (integer j = 1; j <= mn_min; j ++) {
-			integer from = index[mn_min - j + 1];
+		for (integer j = 1; j <= my numberOfColumns; j ++) {
+			integer from = index [my numberOfColumns - j + 1];
 			my d [j] = thy d [from];
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				my u [i] [j] = thy u [i] [from];
@@ -351,18 +309,18 @@ void SVD_sort (SVD me) {
 }
 
 integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {
-	integer numberOfZeroed = 0, mn_min = MIN (my numberOfRows, my numberOfColumns);
-	double dmax = my d[1];
+	integer numberOfZeroed = 0;
+	double dmax = my d [1];
 
 	if (tolerance == 0.0) {
 		tolerance = my tolerance;
 	}
-	for (integer i = 2; i <= mn_min; i ++) {
+	for (integer i = 2; i <= my numberOfColumns; i ++) {
 		if (my d [i] > dmax) {
 			dmax = my d [i];
 		}
 	}
-	for (integer i = 1; i <= mn_min; i ++) {
+	for (integer i = 1; i <= my numberOfColumns; i ++) {
 		if (my d [i] < dmax * tolerance) {
 			my d [i] = 0.0; numberOfZeroed ++;
 		}
@@ -372,8 +330,8 @@ integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {
 
 
 integer SVD_getRank (SVD me) {
-	integer rank = 0, mn_min = MIN (my numberOfRows, my numberOfColumns);
-	for (integer i = 1; i <= mn_min; i ++) {
+	integer rank = 0;
+	for (integer i = 1; i <= my numberOfColumns; i ++) {
 		if (my d [i] > 0.0) {
 			rank ++;
 		}
@@ -383,32 +341,34 @@ integer SVD_getRank (SVD me) {
 
 /*
 	SVD of A = U D V'.
-	If u[i] is the i-th column vector of U and v[i] the i-th column vector of V and s[i] the i-th singular value,
-	we can write the svd expansion  A = sum_{i=1}^n {d[i] u[i] v[i]'}.
+	If u [i] is the i-th column vector of U and v [i] the i-th column vector of V and s [i] the i-th singular value,
+	we can write the svd expansion  A = sum_{i=1}^n {d [i] u [i] v [i]'}.
 	Golub & van Loan, 3rd ed, p 71.
 */
 void SVD_synthesize (SVD me, integer sv_from, integer sv_to, double **m) {
 	try {
-		integer mn_min = MIN (my numberOfRows, my numberOfColumns);
-
 		if (sv_to == 0) {
-			sv_to = mn_min;
+			sv_to = my numberOfColumns;
 		}
-
-		if (sv_from > sv_to || sv_from < 1 || sv_to > mn_min) {
-			Melder_throw (U"Indices must be in range [1, ", mn_min, U"].");
-		}
-
+		Melder_require (sv_from > 0 && sv_from <= sv_to && sv_to <= my numberOfColumns, U"Indices must be in range [1, ", my numberOfColumns, U"].");
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				m [i] [j] = 0.0;
+				if (my isTransposed) {
+					m [j] [i] = 0.0;
+				} else {
+					m [i] [j] = 0.0;
+				}
 			}
 		}
-
 		for (integer k = sv_from; k <= sv_to; k ++) {
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				for (integer j = 1; j <= my numberOfColumns; j ++) {
-					m [i] [j] += my d [k] * my u [i] [k] * my v [j] [k];
+					double value = my d [k] * my u [i] [k] * my v [j] [k];
+					if (my isTransposed) {
+						m [j] [i] += value;
+					} else {
+						m [i] [j] += value;
+					}
 				}
 			}
 		}
@@ -456,8 +416,8 @@ autoGSVD GSVD_create_d (double **m1, integer numberOfRows1, integer numberOfColu
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
 		integer k, l, info;
 		NUMlapack_dggsvd (& jobu1, & jobu2, & jobq, & m, & n, & p, & k, & l,
-		    & a[1][1], & m, & b[1][1], & p, & alpha[1], & beta[1], nullptr, & m,
-		    nullptr, & p, & q[1][1], & n, & work[1], & iwork[1], & info);
+		    & a [1] [1], & m, & b [1] [1], & p, & alpha [1], & beta [1], nullptr, & m,
+		    nullptr, & p, & q [1] [1], & n, & work [1], & iwork [1], & info);
 		Melder_require (info == 0, U"dggsvd failed, error = ", info);
 
 		integer kl = k + l;
@@ -480,7 +440,7 @@ autoGSVD GSVD_create_d (double **m1, integer numberOfRows1, integer numberOfColu
 
 		// Get R from a(1:k+l,n-k-l+1:n)
 
-		double *pr = & a[1][1];
+		double *pr = & a [1] [1];
 		for (integer i = 1; i <= kl; i ++) {
 			for (integer j = i; j <= kl; j ++) {
 				my r [i] [j] = pr [i - 1 + (n - kl + j - 1) * m]; /* from col-major */
