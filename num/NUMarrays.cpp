@@ -22,7 +22,7 @@ static integer theTotalNumberOfArrays;
 
 integer NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
 
-/*** Generic memory functions for vectors. ***/
+#pragma mark - Generic memory functions for vectors
 
 char * NUMvector_generic (integer elementSize, integer lo, integer hi, bool initializeToZero) {
 	try {
@@ -69,7 +69,7 @@ void NUMvector_copyElements_generic (integer elementSize, char *fromVector, char
 	char *p_fromCells = & fromVector [lo * elementSize];
 	char *p_toCells   = & toVector   [lo * elementSize];
 	integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
-	if (hi >= lo) memcpy (p_toCells, p_fromCells, (size_t) numberOfBytesToCopy);
+	if (hi >= lo) memcpy (p_toCells, p_fromCells, (size_t) numberOfBytesToCopy);   // BUG this assumes contiguity
 }
 
 bool NUMvector_equal_generic (integer elementSize, char *vector1, char *vector2, integer lo, integer hi) {
@@ -169,7 +169,7 @@ void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1,
 	}
 }
 
-char*** NUMtensor3_ (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero) {
+char*** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero) {
 	try {
 		int64 numberOfPlanes = pla2 - pla1 + 1;
 		int64 numberOfRows = row2 - row1 + 1;
@@ -227,7 +227,7 @@ void NUMmatrix_free_ (integer elementSize, char **m, integer row1, integer col1)
 	theTotalNumberOfArrays -= 1;
 }
 
-void NUMtensor3_free_ (integer elementSize, char ***t, integer pla1, integer row1, integer col1) noexcept {
+void NUMtensor3_free_generic (integer elementSize, char ***t, integer pla1, integer row1, integer col1) noexcept {
 	if (! t) return;
 	char *cells = & t [pla1] [row1] [col1 * elementSize];
 	Melder_free (cells);
