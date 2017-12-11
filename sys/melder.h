@@ -237,8 +237,8 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 
 #pragma mark - NUMBER TO STRING CONVERSION
 
-/**
-	The following routines return a static string, chosen from a circularly used set of 32 buffers.
+/*
+	The following functions return a static string, chosen from a circularly used set of 32 buffers.
 	You can call at most 32 of them in one Melder_casual call, for instance.
 */
 
@@ -1417,7 +1417,6 @@ struct MelderArg {
 		The types of arguments that never involve memory allocation:
 	*/
 	MelderArg (const char32 *            arg) : _arg (arg) { }
-	//MelderArg (const char   *            arg) : _arg (Melder_peek8to32 (arg)) { }
 	MelderArg (const double              arg) : _arg (Melder_double          (arg)) { }
 	MelderArg (const          long long  arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const unsigned long long  arg) : _arg (Melder_integer         ((int64) arg)) { }
@@ -1429,7 +1428,6 @@ struct MelderArg {
 	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const dcomplex            arg) : _arg (Melder_dcomplex        (arg)) { }
 	MelderArg (const char32_t            arg) : _arg (Melder_character       (arg)) { }
-	MelderArg (void *                    arg) : _arg (Melder_integer         ((int64) arg)) { }
 	/*
 		The types of arguments that sometimes involve memory allocation:
 	*/
@@ -1437,6 +1435,14 @@ struct MelderArg {
 	MelderArg (nummat                    arg) : _arg (Melder_nummat          (arg)) { }
 	MelderArg (Thing                     arg) : _arg (Thing_messageName      (arg)) { }
 	MelderArg (MelderFile                arg) : _arg (MelderFile_messageName (arg)) { }
+	/*
+		There could be more types of arguments, but those are rare;
+		you have to use explicit conversion to one of the types above.
+		For instance, you can write a char* string by using Melder_peek8to32()
+		(which sometimes involves memory allocation),
+		and you can write a void* by using Melder_pointer()
+		(which never involves memory allocation).
+	*/
 };
 
 #define Melder_1_ARG \
