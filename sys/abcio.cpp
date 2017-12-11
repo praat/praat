@@ -60,7 +60,7 @@ static int64 getInteger (MelderReadText me) {
 			Melder_throw (U"Found a string while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'<')
 			Melder_throw (U"Found an enumerated value while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
-		while (c != U' ' && c != U'\n' && c != U'\t' && c != U'\r') {
+		while (! iswspace (c)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), U").");
 			c = MelderReadText_getChar (me);
@@ -73,7 +73,7 @@ static int64 getInteger (MelderReadText me) {
 		buffer [i] = (char) (char8) c;   // guarded conversion down
 		c = MelderReadText_getChar (me);
 		if (c == U'\0') { break; }   // this may well be OK here
-		if (c == U' ' || c == U'\n' || c == U'\t' || c == U'\r') break;
+		if (iswspace (c)) break;
 	}
 	if (i >= 40)
 		Melder_throw (U"Found long text while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
@@ -99,7 +99,7 @@ static uint64 getUnsigned (MelderReadText me) {
 			Melder_throw (U"Found an enumerated value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'-')
 			Melder_throw (U"Found a negative value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
-		while (c != U' ' && c != U'\n' && c != U'\t' && c != U'\r') {
+		while (! iswspace (c)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), U").");
 			c = MelderReadText_getChar (me);
@@ -112,7 +112,7 @@ static uint64 getUnsigned (MelderReadText me) {
 		buffer [i] = (char) (char8) c;   // guarded conversion down
 		c = MelderReadText_getChar (me);
 		if (c == U'\0') { break; }   // this may well be OK here
-		if (c == U' ' || c == U'\n' || c == U'\t' || c == U'\r') break;
+		if (iswspace (c)) break;
 	}
 	if (i >= 40)
 		Melder_throw (U"Found long text while searching for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
@@ -138,7 +138,7 @@ static double getReal (MelderReadText me) {
 				Melder_throw (U"Found a string while looking for a real number in text (line ", MelderReadText_getLineNumber (me), U").");
 			if (c == U'<')
 				Melder_throw (U"Found an enumerated value while looking for a real number in text (line ", MelderReadText_getLineNumber (me), U").");
-			while (c != U' ' && c != U'\n' && c != U'\t' && c != U'\r') {
+			while (! iswspace (c)) {
 				if (c == U'\0')
 					Melder_throw (U"Early end of text detected in comment while looking for a real number (line ", MelderReadText_getLineNumber (me), U").");
 				c = MelderReadText_getChar (me);
@@ -150,7 +150,7 @@ static double getReal (MelderReadText me) {
 			buffer [i] = (char) (char8) c;   // guarded conversion down
 			c = MelderReadText_getChar (me);
 			if (c == U'\0') { break; }   // this may well be OK here
-			if (c == U' ' || c == U'\n' || c == U'\t' || c == U'\r') break;
+			if (iswspace (c)) break;
 		}
 		if (i >= 40)
 			Melder_throw (U"Found long text while searching for a real number in text (line ", MelderReadText_getLineNumber (me), U").");
@@ -183,7 +183,7 @@ static int getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
 			Melder_throw (U"Found a number while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'\"')
 			Melder_throw (U"Found a string while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), U").");
-		while (c != U' ' && c != U'\n' && c != U'\t' && c != U'\r') {
+		while (! iswspace (c)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
 			c = MelderReadText_getChar (me);
@@ -194,7 +194,7 @@ static int getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
 		c = MelderReadText_getChar (me);   // read past first '<'
 		if (c == U'\0')
 			Melder_throw (U"Early end of text detected while reading an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
-		if (c == U' ' || c == U'\n' || c == U'\t' || c == U'\r')
+		if (iswspace (c))
 			Melder_throw (U"No matching '>' while reading an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'>')
 			break;   // the expected closing bracket; not added to the buffer
@@ -225,7 +225,7 @@ static char32 * getString (MelderReadText me) {
 			Melder_throw (U"Found a number while looking for a string in text (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'<')
 			Melder_throw (U"Found an enumerated value while looking for a string in text (line ", MelderReadText_getLineNumber (me), U").");
-		while (c != U' ' && c != U'\n' && c != U'\t' && c != U'\r') {
+		while (! iswspace (c)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), U").");
 			c = MelderReadText_getChar (me);
@@ -239,7 +239,7 @@ static char32 * getString (MelderReadText me) {
 			char32 next = MelderReadText_getChar (me);
 			if (next == U'\0') { break; }   // closing quote is last character in file: OK
 			if (next != U'\"') {
-				if (next == U' ' || next == U'\n' || next == U'\t' || next == U'\r') {
+				if (iswspace (next)) {
 					// closing quote is followed by whitespace: it is OK to skip this whitespace (no need to "ungetChar")
 				} else {
 					char32 kar2 [2] = { next, U'\0' };

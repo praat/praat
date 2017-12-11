@@ -43,6 +43,7 @@
 #include "Printer.h"
 #include "ScriptEditor.h"
 #include "Strings_.h"
+#include "UnicodeData.h"
 
 #if gtk
 	#include <gdk/gdkx.h>
@@ -1528,7 +1529,54 @@ void praat_run () {
 		}
 	}
 
+	/*
+		Check the locale, to ensure identical behaviour on all computers.
+	*/
 	Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
+	Melder_assert (iswspace (' '));
+	Melder_assert (iswspace ('\r'));
+	Melder_assert (iswspace ('\n'));
+	Melder_assert (iswspace ('\t'));
+	Melder_assert (iswspace ('\f'));
+	Melder_assert (iswspace ('\v'));
+	Melder_assert (iswspace (UNICODE_OGHAM_SPACE_MARK));   // ISO 30112
+	//Melder_assert (iswspace (UNICODE_MONGOLIAN_VOWEL_SEPARATOR));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_EN_QUAD));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_EM_QUAD));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_EN_SPACE));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_EM_SPACE));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_THREE_PER_EM_SPACE));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_FOUR_PER_EM_SPACE));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_SIX_PER_EM_SPACE));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_FIGURE_SPACE));   // questionable
+	Melder_assert (iswspace (UNICODE_PUNCTUATION_SPACE));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_THIN_SPACE));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_HAIR_SPACE));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_ZERO_WIDTH_SPACE));   // questionable
+	//Melder_assert (iswspace (UNICODE_ZERO_WIDTH_NON_JOINER));
+	//Melder_assert (iswspace (UNICODE_ZERO_WIDTH_JOINER));
+	//Melder_assert (iswspace (UNICODE_LEFT_TO_RIGHT_MARK));
+	//Melder_assert (iswspace (UNICODE_RIGHT_TO_LEFT_MARK));
+	Melder_assert (iswspace (UNICODE_LINE_SEPARATOR));   // ISO 30112
+	Melder_assert (iswspace (UNICODE_PARAGRAPH_SEPARATOR));   // ISO 30112
+	Melder_assert (! iswspace (UNICODE_LEFT_TO_RIGHT_EMBEDDING));
+	Melder_assert (! iswspace (UNICODE_RIGHT_TO_LEFT_EMBEDDING));
+	Melder_assert (! iswspace (UNICODE_POP_DIRECTIONAL_FORMATTING));
+	Melder_assert (! iswspace (UNICODE_LEFT_TO_RIGHT_OVERRIDE));
+	Melder_assert (! iswspace (UNICODE_RIGHT_TO_LEFT_OVERRIDE));
+	Melder_assert (iswspace (UNICODE_MEDIUM_MATHEMATICAL_SPACE));   // ISO 30112
+	Melder_assert (! iswspace (UNICODE_WORD_JOINER));
+	Melder_assert (! iswspace (UNICODE_FUNCTION_APPLICATION));
+	Melder_assert (! iswspace (UNICODE_INVISIBLE_TIMES));
+	Melder_assert (! iswspace (UNICODE_INVISIBLE_SEPARATOR));
+	Melder_assert (! iswspace (UNICODE_INHIBIT_SYMMETRIC_SWAPPING));
+	Melder_assert (! iswspace (UNICODE_ACTIVATE_SYMMETRIC_SWAPPING));
+	Melder_assert (! iswspace (UNICODE_INHIBIT_ARABIC_FORM_SHAPING));
+	Melder_assert (! iswspace (UNICODE_ACTIVATE_ARABIC_FORM_SHAPING));
+	Melder_assert (! iswspace (UNICODE_NATIONAL_DIGIT_SHAPES));
+	Melder_assert (! iswspace (UNICODE_NOMINAL_DIGIT_SHAPES));
+	Melder_assert (iswspace (UNICODE_IDEOGRAPHIC_SPACE));   // ISO 30112; occurs on Japanese computers
+
 	{ unsigned char dummy = 200;
 		Melder_assert ((int) dummy == 200);
 	}
@@ -1549,12 +1597,14 @@ void praat_run () {
 	{ uint16 dummy = 40000;
 		Melder_assert ((int) (int16_t) dummy == -25536);   // bingeti16 relies on this
 		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete16 relies on this
+		Melder_assert ((integer) dummy == 40000);   // Melder_integer relies on this
 		Melder_assert ((double) dummy == 40000.0);
 		Melder_assert ((double) (int16_t) dummy == -25536.0);
 	}
 	{ unsigned int dummy = 40000;
 		Melder_assert ((int) (int16_t) dummy == -25536);
 		Melder_assert ((short) (int16_t) dummy == -25536);
+		Melder_assert ((integer) dummy == 40000);   // Melder_integer relies on this
 		Melder_assert ((double) dummy == 40000.0);
 		Melder_assert ((double) (int16_t) dummy == -25536.0);
 	}
