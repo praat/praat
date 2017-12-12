@@ -701,17 +701,10 @@ void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tol
 	SVD_solve (me.get(), b, result);
 }
 
-void NUMsolveEquation2 (double **a, long nr, long nc, double *b, double fractionOfSumOfEigenvalues, double *result) {
-
-	autoSVD me = SVD_create_d (a, nr, nc);
-	SVD_solve2 (me.get(), b, result, fractionOfSumOfEigenvalues);
-}
-
-
 void NUMsolveEquations (double **a, integer nr, integer nc, double **b, integer ncb, double tolerance, double **x) {
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
-	Melder_require (nr > 0 && nc > 0, U"The number of rows and columns must be a positive number.");
+	Melder_require (nr > 0 && nc > 0, U"The number of rows and columns should at least be 1.");
 	
 	autoSVD me = SVD_create_d (a, nr, nc);
 	autoNUMvector<double> bt (1, nr + nc);
