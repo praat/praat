@@ -627,7 +627,6 @@ void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tol
 	a & b are destroyed during the computation.
 	Algorithm: s.v.d.
 */
-void NUMsolveEquation2 (double **a, long nr, long nc, double *b, double fractionOfSumOfEigenvalues, double *result);
 
 void NUMsolveEquations (double **a, integer nr, integer nc, double **b, integer ncb, double tol, double **x);
 /*
