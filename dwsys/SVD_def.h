@@ -25,9 +25,9 @@ oo_DEFINE_CLASS (SVD, Daata)
 	oo_FROM (1)
 		oo_QUESTION (isTransposed)
 	oo_ENDFROM
-	oo_DOUBLE_MATRIX (u, numberOfRows, (numberOfColumns < numberOfRows ? numberOfColumns : numberOfRows))
-	oo_DOUBLE_MATRIX (v, numberOfColumns, (numberOfColumns < numberOfRows ? numberOfColumns : numberOfRows))
-	oo_DOUBLE_VECTOR (d, (numberOfColumns < numberOfRows ? numberOfColumns : numberOfRows))
+	oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
+	oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+	oo_DOUBLE_VECTOR (d, numberOfColumns)
 
 	#if oo_DECLARING
 		void v_info ()
