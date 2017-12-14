@@ -67,6 +67,14 @@ void SVD_setTolerance (SVD me, double tolerance);
 
 double SVD_getTolerance (SVD me);
 
+double SVD_getConditionNumber (SVD me);
+
+double SVD_getSumOfSingularValuesAsFractionOfTotal (SVD me, integer from, integer to);
+
+integer SVD_getMinimumNumberOfSingularValues (SVD me, double fractionOfSumOfSingularValues);
+
+double SVD_getSumOfSingularValues (SVD me, integer from, integer to);
+
 integer SVD_zeroSmallSingularValues (SVD me, double tolerance);
 /*
 	Zero singular values smaller than maximum_singular_value * tolerance

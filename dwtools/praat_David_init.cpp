@@ -6150,6 +6150,70 @@ DIRECT (NEW1_Strings_and_Permutation_permuteStrings) {
 	CONVERT_TWO_END (my name, U"_", your name)
 }
 
+/****************************** SVD *****************************************/
+
+DIRECT (HELP_SVD_help) {
+	HELP (U"singular value decomposition")
+}
+
+DIRECT (INTEGER_SVD_getNumberOfRows) {
+	INTEGER_ONE (SVD)
+		integer result = my isTransposed ? my numberOfColumns : my numberOfRows;
+	INTEGER_ONE_END (U" (number of rows)")	
+}
+
+DIRECT (INTEGER_SVD_getNumberOfColumns) {
+	INTEGER_ONE (SVD)
+		integer result = my isTransposed ? my numberOfRows : my numberOfColumns;
+	INTEGER_ONE_END (U" (= number of columns)")	
+}
+
+DIRECT (REAL_SVD_getConditionNumber) {
+	NUMBER_ONE (SVD)
+		double result = SVD_getConditionNumber (me);
+	NUMBER_ONE_END (U" (= condition number)")
+}
+
+FORM (REAL_SVD_getSingularValue, U"SVD: Get singular values", nullptr) {
+	NATURAL (index, U"Index", U"1")
+	OK
+DO
+	NUMBER_ONE (SVD)
+		Melder_require (index <= my numberOfColumns, U"Index must be in the range [1,", my numberOfColumns, U"].");
+		double result = my d [index];
+	NUMBER_ONE_END (U" (= singular value [", index, U"])")
+}
+
+FORM (REAL_SVD_getSumOfSingularValues, U"SVD: Get sum of singular values", nullptr) {
+	NATURAL (from, U"From", U"1")
+	INTEGER (to, U"To", U"0 (=last)")
+	OK
+DO
+	NUMBER_ONE (SVD)
+		double result = SVD_getSumOfSingularValues (me, from, to);
+	NUMBER_ONE_END (U" (sum of singular values)")
+}
+
+FORM (REAL_SVD_getSumOfSingularValuesAsFractionOfTotal, U"SVD: Get sum of singular values as fraction of total", nullptr) {
+	NATURAL (from, U"From", U"1")
+	INTEGER (to, U"To", U"0 (=last)")
+	OK
+DO
+	NUMBER_ONE (SVD)
+		double result = SVD_getSumOfSingularValuesAsFractionOfTotal (me, from, to);
+	NUMBER_ONE_END (U" (= fraction of total sum of singular values)")
+}
+
+FORM (INTEGER_SVD_getMinimumNumberOfSingularValues, U"SVD: Get minimum number of singular values", U"SVD: Get minimum number of singular values...") {
+	POSITIVE (fraction, U"Fraction of total sum", U"0.95")
+	OK
+DO
+	Melder_require (fraction <= 1.0, U"Fraction must be a number in (0,1).");
+	INTEGER_ONE (SVD)
+		integer result = SVD_getMinimumNumberOfSingularValues (me, fraction);
+	INTEGER_ONE_END (U" (= number of singular values needed)")
+}
+
 FORM (NEW_SVD_to_TableOfReal, U"SVD: To TableOfReal", U"SVD: To TableOfReal...") {
 	NATURAL (fromComponent, U"First component", U"1")
 	INTEGER (toComponent, U"Last component", U"0 (= all)")
@@ -7805,7 +7869,7 @@ void praat_uvafon_David_init () {
 		praat_addAction1 (classEigen, 0, U"Draw eigenvalues (scree)...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2010, GRAPHICS_Eigen_drawEigenvalues_scree);
 		praat_addAction1 (classEigen, 0, U"Draw eigenvalues...", nullptr, 1, GRAPHICS_Eigen_drawEigenvalues);
 		praat_addAction1 (classEigen, 0, U"Draw eigenvector...", nullptr, 1, GRAPHICS_Eigen_drawEigenvector);
-	praat_addAction1 (classEigen, 0, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classEigen, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 		praat_addAction1 (classEigen, 1, U"Get number of eigenvalues", nullptr, 1, INTEGER_Eigen_getNumberOfEigenvalues);
 		praat_addAction1 (classEigen, 1, U"Get eigenvalue...", nullptr, 1, REAL_Eigen_getEigenvalue);
 		praat_addAction1 (classEigen, 1, U"Get sum of eigenvalues...", nullptr, 1, REAL_Eigen_getSumOfEigenvalues);
@@ -7838,7 +7902,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemory, 0, U"To FileInMemorySet", nullptr, 0, NEW1_FilesInMemory_to_FileInMemorySet);
 	praat_addAction1 (classFileInMemory, 0, U"To FilesInMemory", nullptr, praat_DEPRECATED_2015, NEW1_FilesInMemory_to_FileInMemorySet);
 
-	praat_addAction1 (classFileInMemorySet, 1, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classFileInMemorySet, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemorySet, 1, U"Get number of files", nullptr, 1, INFO_FileInMemorySet_getNumberOfFiles);
 	praat_addAction1 (classFileInMemorySet, 1, U"Has directory?", nullptr, 1, INFO_FileInMemorySet_hasDirectory);
 
@@ -7849,7 +7913,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemorySet, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemorySet_extractFiles);
 	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0, MODIFY_FileInMemorySet_addItems);
 
-	praat_addAction1 (classFileInMemoryManager, 1, U"Query -", nullptr, 0, nullptr);
+	praat_addAction1 (classFileInMemoryManager, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfFiles);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of open files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfOpenFiles);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Has directory?", nullptr, 1, INFO_FileInMemoryManager_hasDirectory);
@@ -8187,6 +8251,17 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classStrings, 0, U"To Permutation...", U"To Distributions", 0, NEW_Strings_to_Permutation);
 	praat_addAction1 (classStrings, 2, U"To EditDistanceTable", U"To Distributions", 0, NEW_Strings_to_EditDistanceTable);
 
+	praat_addAction1 (classSVD, 0, U"SVD help", nullptr, 0, HELP_SVD_help);
+	praat_addAction1 (classSVD, 0, QUERY_BUTTON, nullptr, 0, 0);
+	praat_addAction1 (classSVD, 1, U"Get number of rows", nullptr, 1, INTEGER_SVD_getNumberOfRows);
+	praat_addAction1 (classSVD, 1, U"Get number of columns", nullptr, 1, INTEGER_SVD_getNumberOfColumns);
+	praat_addAction1 (classSVD, 1, U"Get condition number", nullptr, 1, REAL_SVD_getConditionNumber);
+	praat_addAction1 (classSVD, 0, U"-- singular values ---", nullptr, 1, nullptr);
+	praat_addAction1 (classSVD, 1, U"Get singular value...", nullptr, 1, REAL_SVD_getSingularValue);
+	praat_addAction1 (classSVD, 1, U"Get sum of singular values...", nullptr, 1, REAL_SVD_getSumOfSingularValues);
+	praat_addAction1 (classSVD, 1, U"Get sum of singular values (fraction)...", nullptr, 1, REAL_SVD_getSumOfSingularValuesAsFractionOfTotal);
+	praat_addAction1 (classSVD, 1, U"Get minimum number of singular values...", nullptr, 1, INTEGER_SVD_getMinimumNumberOfSingularValues);
+	
 	praat_addAction1 (classSVD, 0, U"To TableOfReal...", nullptr, 0, NEW_SVD_to_TableOfReal);
 	praat_addAction1 (classSVD, 0, U"Extract left singular vectors", nullptr, 0, NEW_SVD_extractLeftSingularVectors);
 	praat_addAction1 (classSVD, 0, U"Extract right singular vectors", nullptr, 0, NEW_SVD_extractRightSingularVectors);
