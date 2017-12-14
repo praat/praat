@@ -81,7 +81,7 @@ void * _Melder_malloc_f (int64 size) {
 		if (result) {
 			Melder_flushError (U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 		} else {
-			Melder_fatal (U"Out of memory: there is not enough room for another %s bytes.", Melder_bigInteger (size));
+			Melder_fatal (U"Out of memory: there is not enough room for another ", Melder_bigInteger (size), U" bytes.");
 		}
 	}
 	totalNumberOfAllocations += 1;

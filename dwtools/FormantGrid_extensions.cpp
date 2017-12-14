@@ -93,7 +93,7 @@ void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position) {
 			FormantGrid_addBandwidthTier (me, position);
 		} catch (MelderError) {
 			FormantGrid_removeFormantTier (me, position);
-			throw MelderError ();
+			throw;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no ties added.");

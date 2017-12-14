@@ -204,7 +204,7 @@ void structSpeechSynthesizer :: v_info () {
 static void NUMvector_extendNumberOfElements (integer elementSize, void **v, integer lo, integer *hi, integer extraDemand)
 {
 	try {
-		char *result;
+		byte *result;
 		if (! *v) {
 			integer newhi = lo + extraDemand - 1;
 			result = NUMvector_generic (elementSize, lo, newhi, true);
@@ -212,7 +212,7 @@ static void NUMvector_extendNumberOfElements (integer elementSize, void **v, int
 		} else {
 			integer offset = lo * elementSize;
 			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
-				result = reinterpret_cast <char *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 1 + extraDemand) * elementSize));
+				result = reinterpret_cast <byte *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 1 + extraDemand) * elementSize));
 				if ((result -= offset)) break;   // this will normally succeed at the first try
 				(void) Melder_realloc_f (result + offset, 1);   // ??make "sure" that the second try will succeed
 			}

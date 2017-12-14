@@ -113,5 +113,7 @@ inline static bool Longchar_Info_isDiacritic (Longchar_Info me) {
 	return me -> isDiacritic;
 }
 
+void Longchar_init ();
+
 /* End of file longchar.h */
 #endif

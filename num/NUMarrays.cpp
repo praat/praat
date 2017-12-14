@@ -24,15 +24,15 @@ integer NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
 
 #pragma mark - Generic memory functions for vectors
 
-char * NUMvector_generic (integer elementSize, integer lo, integer hi, bool initializeToZero) {
+byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool initializeToZero) {
 	try {
 		if (hi < lo) return nullptr;   // not an error
-		char *result;
+		byte *result;
 		Melder_assert (sizeof (char) == 1);   // some say that this is true by definition
 		for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
 			result = initializeToZero ?
-				reinterpret_cast<char*> (_Melder_calloc (hi - lo + 1, elementSize)) :
-				reinterpret_cast<char*> (_Melder_malloc ((hi - lo + 1) * elementSize));
+				reinterpret_cast<byte*> (_Melder_calloc (hi - lo + 1, elementSize)) :
+				reinterpret_cast<byte*> (_Melder_malloc ((hi - lo + 1) * elementSize));
 			if (result -= lo * elementSize) break;   // this will normally succeed at the first try
 			(void) Melder_realloc_f (result + lo * elementSize, 1);   // make "sure" that the second try will succeed (not *very* sure, because realloc might move memory even if it shrinks)
 		}
@@ -43,19 +43,19 @@ char * NUMvector_generic (integer elementSize, integer lo, integer hi, bool init
 	}
 }
 
-void NUMvector_free_generic (integer elementSize, char *vector, integer lo) noexcept {
+void NUMvector_free_generic (integer elementSize, byte *vector, integer lo) noexcept {
 	if (! vector) return;   // no error
-	char *cells = & vector [lo * elementSize];
+	byte *cells = & vector [lo * elementSize];
 	Melder_free (cells);
 	theTotalNumberOfArrays -= 1;
 }
 
-char * NUMvector_copy_generic (integer elementSize, char *vector, integer lo, integer hi) {
+byte * NUMvector_copy_generic (integer elementSize, byte *vector, integer lo, integer hi) {
 	try {
 		if (! vector) return nullptr;
-		char *result = NUMvector_generic (elementSize, lo, hi, false);
-		char *p_cells = & vector [lo * elementSize];
-		char *p_resultCells = & result [lo * elementSize];
+		byte *result = NUMvector_generic (elementSize, lo, hi, false);
+		byte *p_cells = & vector [lo * elementSize];
+		byte *p_resultCells = & result [lo * elementSize];
 		integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
 		memcpy (p_resultCells, p_cells, (size_t) numberOfBytesToCopy);
 		return result;
@@ -64,32 +64,32 @@ char * NUMvector_copy_generic (integer elementSize, char *vector, integer lo, in
 	}
 }
 
-void NUMvector_copyElements_generic (integer elementSize, char *fromVector, char *toVector, integer lo, integer hi) {
+void NUMvector_copyElements_generic (integer elementSize, byte *fromVector, byte *toVector, integer lo, integer hi) {
 	Melder_assert (fromVector && toVector);
-	char *p_fromCells = & fromVector [lo * elementSize];
-	char *p_toCells   = & toVector   [lo * elementSize];
+	byte *p_fromCells = & fromVector [lo * elementSize];
+	byte *p_toCells   = & toVector   [lo * elementSize];
 	integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
 	if (hi >= lo) memcpy (p_toCells, p_fromCells, (size_t) numberOfBytesToCopy);   // BUG this assumes contiguity
 }
 
-bool NUMvector_equal_generic (integer elementSize, char *vector1, char *vector2, integer lo, integer hi) {
+bool NUMvector_equal_generic (integer elementSize, byte *vector1, byte *vector2, integer lo, integer hi) {
 	Melder_assert (vector1 && vector2);
-	char *p_cells1 = & vector1 [lo * elementSize];
-	char *p_cells2 = & vector2 [lo * elementSize];
+	byte *p_cells1 = & vector1 [lo * elementSize];
+	byte *p_cells2 = & vector2 [lo * elementSize];
 	integer numberOfBytesToCompare = (hi - lo + 1) * elementSize;
 	return memcmp (p_cells1, p_cells2, (size_t) numberOfBytesToCompare) == 0;
 }
 
-void NUMvector_append_generic (integer elementSize, char **v, integer lo, integer *hi) {
+void NUMvector_append_generic (integer elementSize, byte **v, integer lo, integer *hi) {
 	try {
-		char *result;
+		byte *result;
 		if (! *v) {
 			result = NUMvector_generic (elementSize, lo, lo, true);
 			*hi = lo;
 		} else {
 			integer offset = lo * elementSize;
 			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
-				result = reinterpret_cast <char *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 2) * elementSize));
+				result = reinterpret_cast <byte *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 2) * elementSize));
 				if ((result -= offset) != nullptr) break;   // this will normally succeed at the first try
 				(void) Melder_realloc_f (result + offset, 1);   // make "sure" that the second try will succeed
 			}
@@ -102,9 +102,9 @@ void NUMvector_append_generic (integer elementSize, char **v, integer lo, intege
 	}
 }
 
-void NUMvector_insert_generic (integer elementSize, char **v, integer lo, integer *hi, integer position) {
+void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, integer *hi, integer position) {
 	try {
-		char *result;
+		byte *result;
 		if (! *v) {
 			result = NUMvector_generic (elementSize, lo, lo, true);
 			*hi = lo;
@@ -128,40 +128,33 @@ void NUMvector_insert_generic (integer elementSize, char **v, integer lo, intege
 
 void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool initializeToZero) {
 	try {
-		int64 numberOfRows = row2 - row1 + 1;
-		int64 numberOfColumns = col2 - col1 + 1;
-		int64 numberOfCells = numberOfRows * numberOfColumns;
+		const int64 numberOfRows = row2 - row1 + 1;
+		const int64 numberOfColumns = col2 - col1 + 1;
+		const int64 numberOfCells = numberOfRows * numberOfColumns;
 
-		/*
-		 * Allocate room for the row pointers.
-		 */
-		char **result;
-		Melder_assert (sizeof (char) == 1);   // true by definition
+		byte **result, **roomForRows;
 		for (;;) {
-			result = reinterpret_cast <char **> (_Melder_malloc_f (numberOfRows * (int64) sizeof (char *)));   // assume that all pointers have the same size
-			result -= row1;
+			const int64 pointerSize = (int64) sizeof (byte *);
+			const int64 sizeOfRoomForRows = numberOfRows * pointerSize;
+			roomForRows = reinterpret_cast <byte **> (_Melder_malloc (sizeOfRoomForRows));
+			result = roomForRows - row1;
 			if (result) break;   // this will normally succeed at the first try
-			(void) Melder_realloc_f (result + row1, 1);   // make "sure" that the second try will succeed
+			(void) Melder_realloc_f (roomForRows, 1);   // make "sure" that the second try will succeed (if this is an in-place realloc)
 		}
-		/*
-		 * Allocate room for the cells.
-		 * The first row pointer points to below the first cell.
-		 */
-		for (;;) {
-			try {
-				result [row1] = initializeToZero ?
-					reinterpret_cast <char *> (_Melder_calloc (numberOfCells, elementSize)) :
-					reinterpret_cast <char *> (_Melder_malloc (numberOfCells * elementSize));
-			} catch (MelderError) {
-				result += row1;
-				Melder_free (result);   // free the row pointers
-				throw MelderError ();
+		try {
+			byte * const roomForCells = initializeToZero ?
+				reinterpret_cast <byte *> (_Melder_calloc (numberOfCells, elementSize)) :
+				reinterpret_cast <byte *> (_Melder_malloc (numberOfCells * elementSize));
+			byte *p_cell = roomForCells - col1 * elementSize;
+			const int64 rowSize = numberOfColumns * elementSize;
+			for (integer irow = row1; irow <= row2; irow ++) {
+				result [irow] = p_cell;
+				p_cell += rowSize;
 			}
-			if ((result [row1] -= col1 * elementSize) != nullptr) break;   // this will normally succeed at the first try
-			(void) Melder_realloc_f (result [row1] + col1 * elementSize, 1);   // make "sure" that the second try will succeed
+		} catch (MelderError) {
+			Melder_free (roomForRows);
+			throw;
 		}
-		int64 rowSize = numberOfColumns * elementSize;
-		for (integer irow = row1 + 1; irow <= row2; irow ++) result [irow] = result [irow - 1] + rowSize;
 		theTotalNumberOfArrays += 1;
 		return result;
 	} catch (MelderError) {
@@ -169,47 +162,62 @@ void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1,
 	}
 }
 
-char*** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero) {
+byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero) {
 	try {
+		Melder_require (pla2 >= pla1,
+			U"The requested highest plane number (", pla2, U") should be at least as great as the requested lowest plane number (", pla1, U").");
 		int64 numberOfPlanes = pla2 - pla1 + 1;
+		Melder_require (row2 >= row1,
+			U"The requested highest row number (", row2, U") should be at least as great as the requested lowest row number (", row1, U").");
 		int64 numberOfRows = row2 - row1 + 1;
+		Melder_require (col2 >= col1,
+			U"The requested highest column number (", col2, U") should be at least as great as the requested lowest column number (", col1, U").");
 		int64 numberOfColumns = col2 - col1 + 1;
 		int64 numberOfCells = numberOfPlanes * numberOfRows * numberOfColumns;
 
 		/*
 			Allocate room for the plane pointers.
 		*/
-		char ***result;
+		byte ***result, ***planes;
 		for (;;) {
-			result = reinterpret_cast <char ***> (_Melder_malloc_f (numberOfPlanes * (int64) sizeof (char **)));   // assume that all pointers have the same size
-			result -= pla1;
+			planes = reinterpret_cast <byte ***> (_Melder_malloc (numberOfPlanes * (int64) sizeof (byte **)));   // assume that all pointers have the same size
+			result = planes - pla1;
 			if (result) break;   // this will normally succeed at the first try
-			(void) Melder_realloc_f (result + pla1, 1);   // make "sure" that the second try will succeed
+			(void) Melder_realloc_f (planes, 1);   // make "sure" that the second try will succeed
 		}
 		/*
 			Allocate room for the row pointers.
 		*/
-		char **rowPointers =
-			reinterpret_cast <char **> (_Melder_malloc_f (numberOfPlanes * numberOfRows * (int64) sizeof (char *)));   // assume that all pointers have the same size
-		result [pla1] = & rowPointers [0];
-		for (integer ipla = pla1 + 1; ipla <= pla2; ipla ++) {
-			result [ipla] = result [ipla - 1] + numberOfRows;
-		}
-		/*
-			Allocate room for the cells.
-		*/
-		char *cells = initializeToZero ?
-			reinterpret_cast <char *> (_Melder_calloc (numberOfCells, elementSize)) :
-			reinterpret_cast <char *> (_Melder_malloc (numberOfCells * elementSize));
-		char **q = & rowPointers [0];
-		char *p = & cells [0];
-		int64 rowSize = numberOfColumns * elementSize;
-		for (integer ipla = pla1; ipla <= pla2; ipla ++) {
-			for (integer irow = row1; irow <= row2; irow ++) {
-				*q = p;
-				++ q;
-				p += rowSize;
+		try {
+			byte **rows =
+				reinterpret_cast <byte **> (_Melder_malloc (numberOfPlanes * numberOfRows * (int64) sizeof (byte *)));   // assume that all pointers have the same size
+			byte **p_row = rows - row1;
+			for (integer ipla = pla1; ipla <= pla2; ipla ++) {
+				result [ipla] = p_row;
+				p_row += numberOfRows;
 			}
+			/*
+				Allocate room for the cells.
+			*/
+			try {
+				byte *cells = initializeToZero ?
+					reinterpret_cast <byte *> (_Melder_calloc (numberOfCells, elementSize)) :
+					reinterpret_cast <byte *> (_Melder_malloc (numberOfCells * elementSize));
+				byte *p_cell = cells - col1 * elementSize;
+				int64 rowSize = numberOfColumns * elementSize;
+				for (integer ipla = pla1; ipla <= pla2; ipla ++) {
+					for (integer irow = row1; irow <= row2; irow ++) {
+						result [ipla] [irow] = p_cell;
+						p_cell += rowSize;
+					}
+				}
+			} catch (MelderError) {
+				Melder_free (rows);
+				throw;
+			}
+		} catch (MelderError) {
+			Melder_free (planes);
+			throw;
 		}
 		theTotalNumberOfArrays += 1;
 		return result;
@@ -218,22 +226,22 @@ char*** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, int
 	}
 }
 
-void NUMmatrix_free_ (integer elementSize, char **m, integer row1, integer col1) noexcept {
+void NUMmatrix_free_ (integer elementSize, byte **m, integer row1, integer col1) noexcept {
 	if (! m) return;
-	char *cells = & m [row1] [col1 * elementSize];
+	byte *cells = & m [row1] [col1 * elementSize];
 	Melder_free (cells);
-	char **rowPointers = & m [row1];
+	byte **rowPointers = & m [row1];
 	Melder_free (rowPointers);
 	theTotalNumberOfArrays -= 1;
 }
 
-void NUMtensor3_free_generic (integer elementSize, char ***t, integer pla1, integer row1, integer col1) noexcept {
+void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, integer row1, integer col1) noexcept {
 	if (! t) return;
-	char *cells = & t [pla1] [row1] [col1 * elementSize];
+	byte *cells = & t [pla1] [row1] [col1 * elementSize];
 	Melder_free (cells);
-	char **rowPointers = & t [pla1] [row1];
+	byte **rowPointers = & t [pla1] [row1];
 	Melder_free (rowPointers);
-	char ***planePointers = & t [pla1];
+	byte ***planePointers = & t [pla1];
 	Melder_free (planePointers);
 	theTotalNumberOfArrays -= 1;
 }
