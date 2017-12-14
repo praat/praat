@@ -156,7 +156,6 @@ double SVD_getTolerance (SVD me) {
 	return my tolerance;
 }
 
-
 /*
 	Compute svd(A) = U D Vt.
 	The svd routine from CLAPACK uses (fortran) column major storage, while	C uses row major storage.
@@ -243,11 +242,8 @@ void SVD_solve (SVD me, double b [], double x []) {
 	}
 }
 
-integer SVD_getMinimumNumberOfComponents (SVD me, double fractionOfSumOfSingularValues) {
-	real80 sumOfSingularValues = 0.0;
-	for (integer i = 1; i <= my numberOfColumns; i ++) {
-		sumOfSingularValues += my d [i];
-	}
+integer SVD_getMinimumNumberOfSingularValues (SVD me, double fractionOfSumOfSingularValues) {
+	double sumOfSingularValues = SVD_getSumOfSingularValues (me, 1, my numberOfColumns);
 	double criterion = sumOfSingularValues * fractionOfSumOfSingularValues;
 	integer j = 1;
 	real80 sum = my d [1];
@@ -259,7 +255,7 @@ integer SVD_getMinimumNumberOfComponents (SVD me, double fractionOfSumOfSingular
 
 void SVD_solve2 (SVD me, double b [], double x [], double fractionOfSumOfSingularValues) {
 	try {
-		integer numberOfComponents = SVD_getMinimumNumberOfComponents (me, fractionOfSumOfSingularValues);
+		integer numberOfComponents = SVD_getMinimumNumberOfSingularValues (me, fractionOfSumOfSingularValues);
 		autonumvec t (my numberOfColumns, kTensorInitializationType:: RAW);
 
 		/*  Solve UDV' x = b.
@@ -306,6 +302,27 @@ void SVD_sort (SVD me) {
 	} catch (MelderError) {
 		Melder_throw (me, U": not sorted.");
 	}
+}
+
+double SVD_getConditionNumber (SVD me) {
+	return my d[my numberOfColumns] > 0.0 ? my d[1] / my d[my numberOfColumns] : undefined;
+}
+
+double SVD_getSumOfSingularValuesAsFractionOfTotal (SVD me, integer from, integer to) {
+	double part = SVD_getSumOfSingularValues (me, from, to);
+	double total = SVD_getSumOfSingularValues (me, 1, my numberOfColumns);
+	return part / total;
+}
+
+double SVD_getSumOfSingularValues (SVD me, integer from, integer to) {
+	from = from == 0 ? 1 : from;
+	to = to == 0 ? my numberOfColumns : to;
+	Melder_require (from > 0 && from <= to && to <= my numberOfColumns, U"The range should be within [1,", my numberOfColumns, U"].");
+	real80 sum = 0.0;
+	for (integer i = from; i <= to; i ++) {
+		sum += my d [i];
+	}
+	return (real) sum;
 }
 
 integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {

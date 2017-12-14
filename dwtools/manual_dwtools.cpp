@@ -3516,7 +3516,7 @@ MAN_END
 
 MAN_BEGIN (U"singular value decomposition", U"djmw", 20120510)
 INTRO (U"The %%singular value decomposition% (SVD) is a matrix factorization algorithm.")
-NORMAL (U"For %m > %n, the singular value decomposition of a real %m \\xx %n matrix #A is the "
+NORMAL (U"For %m >= %n, the singular value decomposition of a real %m \\xx %n matrix #A is the "
 	"factorization")
 FORMULA (U"#A = #U #\\Si #V\\'p,")
 NORMAL (U"The matrices in this factorization have the following properties:")
@@ -3527,7 +3527,38 @@ DEFINITION (U"are orthogonal matrices. The columns #u__%i_ of #U =[#u__1_, ..., 
 TAG (U"#\\Si [%n \\xx %n] = diag (%\\si__1_, ..., %\\si__%n_)")
 DEFINITION (U"is a real, nonnegative, and diagonal matrix. Its diagonal contains the so called "
 	"%%singular values% %\\si__%i_, where %\\si__1_ \\>_ ... \\>_ %\\si__%n_ \\>_ 0.")
-NORMAL (U"If %m < %n, the decomposition results in #U [%m \\xx %m] and #V [%n \\xx %m].")
+NORMAL (U"If m < n we store the transposed of ")
+MAN_END
+
+MAN_BEGIN (U"SVD", U"djmw", 20171214)
+INTRO (U"An object of type ##SVD# represents the @@singular value decomposition@ of a matrix.")
+ENTRY (U"SVD internals")
+NORMAL (U"Given #A, an %m \\xx %n matrix with %m >= %n, the decomposition will be #A = #U #\\Si #V\\'p. ")
+NORMAL (U"In the SVD object we store the %m \\xx %n matrix #U, the %n \\xx %n matrix #V and the %%n%-dimensional vector with the singular values. ")
+NORMAL (U"If it happens that for the #A matrix %m < %n, i.e. the number of rows is less than the number of columns, then we store "
+	"the SVD of the transpose of #A and flag this internally. "
+	"In this way we can make sure that for the matrix #U the number of columns never exceeds the number of rows and at the same time that the dimension of the matrix #V never exceeds the dimension of the matrix #U. ")
+NORMAL (U"For example the SVD of a 100 \\xx 20 matrix will result in a 100 \\xx 20 matrix #U, a 20 \\ 20 matrix #V and 20 singular values, "
+	"the SVD of a 20 \\xx 100 matrix will also result in a 100 \\xx 20 matrix #U, a 20 \\ 20 matrix #V and 20 singular values, however it will be internally flagged as being transposed.")
+MAN_END
+
+MAN_BEGIN (U"SVD: Get minimum number of singular values...", U"djmw", 20171214)
+INTRO (U"A command to get the minimum number of singular values (s.v.'s) whose sum, divided by the sum of all singular values, is smaller than the given fraction.")
+ENTRY (U"Examples")
+NORMAL (U"Given an SVD with four s.v's 10.0, 6.0, 3.0 and 1.0. The sum of the s.v's is 20.0.")
+CODE (U"Get minimum number of singular values: 0.5")
+DEFINITION (U"The returned value would be 1. The first s.v. divided by the sum is 0.5 (= 10.0 / 20.0). "
+	"For any fraction lower than 0.5 the query would also return 1, because the first s.v. already covers half of the total sum.")
+CODE (U"Get minimum number of singular values: 0.8")
+DEFINITION (U"The returned value would be 2. The sum of first two s.v.'s divided by the sum is 0.8 (= (10.0 + 6.0) / 20.0). "
+	" For any fraction between 0.5 and 0.8 the query would also return 2.")
+CODE (U"Get minimum number of singular values: 0.95")
+DEFINITION (U"The returned value would be 3. The sum of first three s.v.'s divided by the sum is 0.95 (= (10.0 + 6.0 + 3.0) / 20.0)."
+	" For any fraction between 0.8 and 0.95 the query would also return 3.")
+CODE (U"Get minimum number of singular values: 0.96")
+DEFINITION (U"The returned value would be 4.")
+CODE (U"Get minimum number of singular values: 0.99")
+DEFINITION (U"The returned value would be 4.")
 MAN_END
 
 MAN_BEGIN (U"Sound & Pitch: Change speaker...", U"djmw", 20070722)
