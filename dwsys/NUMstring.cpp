@@ -41,11 +41,11 @@ int NUMstring_containsPrintableCharacter (const char32 *s) {
 
 void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string) {
 	int64 start = 0;
-	while (iswspace ((int) string [start]) != 0) {
+	while (Melder_isWhiteSpace (string [start])) {
 		start ++;
 	}
 	int64 end = str32len (string);
-	while (end != start && iswspace((int) string [end - 1]) != 0) {
+	while (end != start && Melder_isWhiteSpace (string [end - 1])) {
 		end --;
 	}
 	int64 n = end - start;

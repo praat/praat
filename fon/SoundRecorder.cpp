@@ -1061,7 +1061,7 @@ autoSoundRecorder SoundRecorder_create (int numberOfChannels) {
 					break;   // success
 				} catch (MelderError) {
 					if (my nmax < 100000) {
-						throw MelderError ();   // failure, with error message
+						throw;   // failure, with error message
 					} else {
 						Melder_clearError ();
 						my nmax /= 2;   // retry with less application memory

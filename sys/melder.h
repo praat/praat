@@ -38,6 +38,7 @@
 #define __STDC_LIMIT_MACROS
 #define __STDC_CONSTANT_MACROS
 #include <stdint.h>
+typedef unsigned char byte;
 typedef int8_t int8;
 typedef int16_t int16;
 typedef int32_t int32;
@@ -219,6 +220,8 @@ inline static bool islower32 (char32 kar) { return iswlower ((int) kar); }
 inline static bool isupper32 (char32 kar) { return iswupper ((int) kar); }
 inline static char32 tolower32 (char32 kar) { return (char32) towlower ((int) kar); }
 inline static char32 toupper32 (char32 kar) { return (char32) towupper ((int) kar); }
+
+bool Melder_isWhiteSpace (const char32_t kar);
 
 char32 * Melder_tok (char32 *string, const char32 *delimiter);
 
@@ -675,7 +678,7 @@ inline static bool isundef (double x) { return ((* (uint64_t *) & x) & 0x7FF0000
 
 /********** Arrays with one index (NUMarrays.cpp) **********/
 
-char * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero);
+byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero);
 /*
 	Function:
 		create a vector [lo...hi]; if `zero`, then all values are initialized to 0.
@@ -683,7 +686,7 @@ char * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero
 		hi >= lo;
 */
 
-void NUMvector_free_generic (integer elementSize, char *v, integer lo) noexcept;
+void NUMvector_free_generic (integer elementSize, byte *v, integer lo) noexcept;
 /*
 	Function:
 		destroy a vector v that was created with NUMvector.
@@ -691,7 +694,7 @@ void NUMvector_free_generic (integer elementSize, char *v, integer lo) noexcept;
 		lo must have the same values as with the creation of the vector.
 */
 
-char * NUMvector_copy_generic (integer elementSize, char *v, integer lo, integer hi);
+byte * NUMvector_copy_generic (integer elementSize, byte *v, integer lo, integer hi);
 /*
 	Function:
 		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
@@ -699,21 +702,21 @@ char * NUMvector_copy_generic (integer elementSize, char *v, integer lo, integer
 		if v != nullptr, the values v [lo..hi] must exist.
 */
 
-void NUMvector_copyElements_generic (integer elementSize, char *v, char *to, integer lo, integer hi);
+void NUMvector_copyElements_generic (integer elementSize, byte *v, byte *to, integer lo, integer hi);
 /*
 	copy the vector elements v [lo..hi] to those of a vector 'to'.
 	These vectors need not have been created by NUMvector.
 */
 
-bool NUMvector_equal_generic (integer elementSize, char *v1, char *v2, integer lo, integer hi);
+bool NUMvector_equal_generic (integer elementSize, byte *v1, byte *v2, integer lo, integer hi);
 /*
 	return true if the vector elements v1 [lo..hi] are equal
 	to the corresponding elements of the vector v2; otherwise, return false.
 	The vectors need not have been created by NUMvector.
 */
 
-void NUMvector_append_generic (integer elementSize, char **v, integer lo, integer *hi);
-void NUMvector_insert_generic (integer elementSize, char **v, integer lo, integer *hi, integer position);
+void NUMvector_append_generic (integer elementSize, byte **v, integer lo, integer *hi);
+void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, integer *hi, integer position);
 /*
 	add one element to the vector *v.
 	The new element is initialized to zero.
@@ -732,7 +735,7 @@ void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1,
 		col2 >= col1;
 */
 
-void NUMmatrix_free_ (integer elementSize, char **m, integer row1, integer col1) noexcept;
+void NUMmatrix_free_ (integer elementSize, byte **m, integer row1, integer col1) noexcept;
 /*
 	Function:
 		destroy a matrix m created with NUM...matrix.
@@ -984,33 +987,33 @@ T* NUMvector (integer from, integer to, bool initializeToZero) {
 
 template <class T>
 void NUMvector_free (T* ptr, integer from) noexcept {
-	NUMvector_free_generic (sizeof (T), reinterpret_cast <char *> (ptr), from);
+	NUMvector_free_generic (sizeof (T), reinterpret_cast <byte *> (ptr), from);
 }
 
 template <class T>
 T* NUMvector_copy (T* ptr, integer lo, integer hi) {
-	T* result = reinterpret_cast <T*> (NUMvector_copy_generic (sizeof (T), reinterpret_cast <char *> (ptr), lo, hi));
+	T* result = reinterpret_cast <T*> (NUMvector_copy_generic (sizeof (T), reinterpret_cast <byte *> (ptr), lo, hi));
 	return result;
 }
 
 template <class T>
 bool NUMvector_equal (T* v1, T* v2, integer lo, integer hi) {
-	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <char *> (v1), reinterpret_cast <char *> (v2), lo, hi);
+	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <byte *> (v1), reinterpret_cast <byte *> (v2), lo, hi);
 }
 
 template <class T>
 void NUMvector_copyElements (T* vfrom, T* vto, integer lo, integer hi) {
-	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <char *> (vfrom), reinterpret_cast <char *> (vto), lo, hi);
+	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <byte *> (vfrom), reinterpret_cast <byte *> (vto), lo, hi);
 }
 
 template <class T>
 void NUMvector_append (T** v, integer lo, integer *hi) {
-	NUMvector_append_generic (sizeof (T), reinterpret_cast <char **> (v), lo, hi);
+	NUMvector_append_generic (sizeof (T), reinterpret_cast <byte **> (v), lo, hi);
 }
 
 template <class T>
 void NUMvector_insert (T** v, integer lo, integer *hi, integer position) {
-	NUMvector_insert_generic (sizeof (T), reinterpret_cast <char **> (v), lo, hi, position);
+	NUMvector_insert_generic (sizeof (T), reinterpret_cast <byte **> (v), lo, hi, position);
 }
 
 template <class T>
@@ -1074,7 +1077,7 @@ T** NUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero
 
 template <class T>
 void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
-	NUMmatrix_free_ (sizeof (T), reinterpret_cast <char **> (ptr), row1, col1);
+	NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
 }
 
 template <class T>
@@ -1116,7 +1119,7 @@ public:
 	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
 	}
 	~autoNUMmatrix () {
-		if (d_ptr) NUMmatrix_free_ (sizeof (T), reinterpret_cast <char **> (d_ptr), d_row1, d_col1);
+		if (d_ptr) NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 	}
 	T*& operator[] (integer row) {
 		return d_ptr [row];
@@ -1131,7 +1134,7 @@ public:
 	}
 	void reset (integer row1, integer row2, integer col1, integer col2) {
 		if (d_ptr) {
-			NUMmatrix_free_ (sizeof (T), reinterpret_cast <char **> (d_ptr), d_row1, d_col1);
+			NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 			d_ptr = nullptr;
 		}
 		d_row1 = row1;
@@ -1140,7 +1143,7 @@ public:
 	}
 	void reset (integer row1, integer row2, integer col1, integer col2, bool zero) {
 		if (d_ptr) {
-			NUMmatrix_free_ (sizeof (T), reinterpret_cast <char **> (d_ptr), d_row1, d_col1);
+			NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 			d_ptr = nullptr;
 		}
 		d_row1 = row1;
