@@ -106,7 +106,7 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 
 void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, int garnish);
 
-autoBarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1);
+autoBarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, integer nt, double dt, double t1, double fmin, double fmax, integer nf, double df, double f1);
 
 autoBarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me);
 
@@ -119,25 +119,25 @@ Interpretation:
     ny the number of filters.
  */
 
-autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, long nt, double dt, double t1, double fmin, double fmax, long nf, double df, double f1);
+autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, integer nt, double dt, double t1, double fmin, double fmax, integer nf, double df, double f1);
 
 autoMelSpectrogram Matrix_to_MelSpectrogram (Matrix me);
 
 void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, int garnish);
 
-autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, long numberOfCoefficients);
+autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, integer numberOfCoefficients);
 
-autoMelSpectrogram MFCC_to_MelSpectrogram (MFCC me, long first, long last, bool c0);
+autoMelSpectrogram MFCC_to_MelSpectrogram (MFCC me, integer first, integer last, bool c0);
 
-void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA thee, Graphics g, long component, double dblevel,
+void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA thee, Graphics g, integer component, double dblevel,
 	double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax);
 
 autoMatrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double scaleFactor, double floor_dB);
 // dbs = scaleFactor * log10 (value/reference);
 // if (dbs < floor_db) { dbs = floor_dB }
 
-void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, long numberOfCoefficients);
+void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, integer numberOfCoefficients);
 
-void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, long first, long last, bool use_c0);
+void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, integer first, integer last, bool use_c0);
 
 #endif /* _Spectrogram_extensions_h_ */
