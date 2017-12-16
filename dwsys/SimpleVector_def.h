@@ -35,7 +35,7 @@ oo_DEFINE_CLASS (ComplexVector, Daata)
 
 	oo_INTEGER (min)
 	oo_INTEGER (max)
-	oo_DCOMPLEX_VECTOR_FROM (v, min, max)
+	oo_COMPLEX_VECTOR_FROM (v, min, max)
 	
 oo_END_CLASS (ComplexVector)	
 #undef ooSTRUCT
