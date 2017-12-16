@@ -28,11 +28,11 @@
 #include "Sound.h"
 #include "Graphics.h"
 
-autoSpectrum Spectrum_resample (Spectrum me, long numberOfFrequencies);
+autoSpectrum Spectrum_resample (Spectrum me, integer numberOfFrequencies);
 
-autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interpolationDepth, int freqscale, int method);
+autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, integer interpolationDepth, int freqscale, int method);
 
-autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth);
+autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, integer interpolationDepth);
 // Shift will be plusminus dx/2
 
 autoMatrix Spectrum_unwrap (Spectrum me);
