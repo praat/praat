@@ -38,7 +38,7 @@
 
 #include "SpeechSynthesizer_def.h"
 
-autoEspeakVoice EspeakVoice_create (long numberOfFormants);
+autoEspeakVoice EspeakVoice_create (integer numberOfFormants);
 
 void EspeakVoice_setDefaults (EspeakVoice me);
 

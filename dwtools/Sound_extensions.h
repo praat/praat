@@ -137,9 +137,9 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 /* direction is one of the macros's FROM_LEFT_TO_RIGHT... */
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
-	bool garnish, const char32 *method, long numberOfBisections, const char32 *formula, Interpreter interpreter);
+	bool garnish, const char32 *method, integer numberOfBisections, const char32 *formula, Interpreter interpreter);
 
-void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, double level, bool garnish, long numberOfBisections, const char32 *formula, Interpreter interpreter);
+void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, double level, bool garnish, integer numberOfBisections, const char32 *formula, Interpreter interpreter);
 
 void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax,
 	double minimum, double maximum, bool garnish);
@@ -197,6 +197,6 @@ autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges);
 
 autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method);
 
-void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, long precision);
+void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, integer precision);
 
 #endif /* _Sound_extensions_h_ */

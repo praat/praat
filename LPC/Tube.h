@@ -28,13 +28,13 @@
 	            c[nSegments] -> glottis.
 */
 
-void Tube_Frame_init (Tube_Frame me, long nSegments, double length);
+void Tube_Frame_init (Tube_Frame me, integer nSegments, double length);
 
 void Tube_Frame_free (Tube_Frame me);
 
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee);
 
-void Tube_init (Tube me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength);
+void Tube_init (Tube me, double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength);
 
 Thing_define (Area, Tube) {
 };
@@ -44,17 +44,17 @@ Thing_define (Area, Tube) {
 	units in m^2.
 */
 
-void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength);
+void Area_init (Area me, double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength);
 
-autoArea Area_create (double tmin, double tmax, long nt, double dt, double t1, long maxnSegments, double defaultLength);
+autoArea Area_create (double tmin, double tmax, integer nt, double dt, double t1, integer maxnSegments, double defaultLength);
 
 Thing_define (RC, Tube) {
 };
 
 // Reflection Coefficients as a function of time.
 
-void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1, long maxnCoefficients, double defaultLength);
+void RC_init (RC me, double tmin, double tmax, integer nt, double dt, double t1, integer maxnCoefficients, double defaultLength);
 
-autoRC RC_create (double tmin, double tmax, long nt, double dt, double t1, long maxnCoefficients, double defaultLength);
+autoRC RC_create (double tmin, double tmax, integer nt, double dt, double t1, integer maxnCoefficients, double defaultLength);
 
 #endif // _Tube_h_

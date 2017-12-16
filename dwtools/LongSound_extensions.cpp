@@ -132,7 +132,7 @@ static void MelderFile_truncate (MelderFile me, integer size) {
 	fileSize.LowPart = size;
 	fileSize.HighPart = 0; /* Limit the file size to 2^32 - 2 bytes */
 	fPos = SetFilePointer (hFile, fileSize.LowPart, &fileSize.HighPart, FILE_BEGIN);
-	Melder_require (fPos != 0xFFFFFFFF, (U"Can't set the position at size ", size, U"for file ", me, U".");
+	Melder_require (fPos != 0xFFFFFFFF, U"Can't set the position at size ", size, U"for file ", me, U".");
 
 	// Limit the file size as the current position of the file pointer.
 

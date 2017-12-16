@@ -76,7 +76,7 @@ void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 	Interval tiers will have a new (empty) interval at the start or the end.
 */
 
-void TextGrid_setTierName (TextGrid me, long itier, const char32 *newName);
+void TextGrid_setTierName (TextGrid me, integer itier, const char32 *newName);
 
 void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 *search, const char32 *replace, bool use_regexp, integer *nmatches, integer *nstringmatches);
 
@@ -100,7 +100,7 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *m
 
 void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const char32 *mark);
 
-void IntervalTier_moveBoundary (IntervalTier me, long interval, bool atStart, double newTime);
+void IntervalTier_moveBoundary (IntervalTier me, integer interval, bool atStart, double newTime);
 
 void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark);
 

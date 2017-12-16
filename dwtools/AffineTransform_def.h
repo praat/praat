@@ -25,7 +25,7 @@ oo_DEFINE_CLASS (AffineTransform, Daata)
 	oo_DOUBLE_MATRIX (r, n, n)
 
 	#if oo_DECLARING
-		virtual void v_transform (double **in, long nrows, double **out);
+		virtual void v_transform (double **in, integer nrows, double **out);
 		virtual autoAffineTransform v_invert ();
 	#endif
 

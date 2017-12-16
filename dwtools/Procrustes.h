@@ -28,6 +28,6 @@
 
 #include "Procrustes_def.h"
 
-autoProcrustes Procrustes_create (long n);
+autoProcrustes Procrustes_create (integer n);
 
 #endif /* _Procrustes_h_ */

@@ -23,9 +23,9 @@
 
 #include "AffineTransform_def.h"
 
-void AffineTransform_init (AffineTransform me, long n);
+void AffineTransform_init (AffineTransform me, integer n);
 
-autoAffineTransform AffineTransform_create (long n);
+autoAffineTransform AffineTransform_create (integer n);
 
 autoAffineTransform AffineTransform_invert (AffineTransform me);
 /*

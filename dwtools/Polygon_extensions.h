@@ -39,7 +39,7 @@ void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, d
 
 autoPolygon Polygon_createSimple (char32 *xystring);
 
-autoPolygon Polygon_createFromRandomPoints (long numberOfVertices, double xmin, double xmax, double ymin, double ymax);
+autoPolygon Polygon_createFromRandomPoints (integer numberOfVertices, double xmin, double xmax, double ymin, double ymax);
 
 autoPolygon Polygon_simplify (Polygon me);
 
@@ -53,7 +53,7 @@ void Polygon_reverseX (Polygon me);
 
 void Polygon_reverseY (Polygon me);
 
-autoPolygon Polygon_circularPermutation (Polygon me, long nshift);
+autoPolygon Polygon_circularPermutation (Polygon me, integer nshift);
 
 // Is point (x,y) Inside, Outside, Boundary (Edge or Vertex) ?
 int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps);

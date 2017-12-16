@@ -28,7 +28,7 @@
 Thing_define (ClassificationTable, TableOfReal) {
 };
 
-autoClassificationTable ClassificationTable_create (long numberOfRows, long numberOfColumns);
+autoClassificationTable ClassificationTable_create (integer numberOfRows, integer numberOfColumns);
 
 autoCategories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me);
 
