@@ -105,15 +105,15 @@ void Preferences_read (MelderFile file) {
 			if (! value)
 				return;   // OK: we have read past the last key-value pair
 			*value = U'\0', value += 2;
-			long ipref = thePreferences. lookUp (line);
-			if (! ipref) {
+			integer ipref = thePreferences. lookUp (line);
+			if (ipref == 0) {
 				/*
-				 * Recognize some preference names that went obsolete in February 2013.
-				 */
+					Recognize some preference names that went obsolete in February 2013.
+				*/
 				if (Melder_nequ (line, U"FunctionEditor.", 15))
 					ipref = thePreferences. lookUp (Melder_cat (U"TimeSoundAnalysisEditor.", line + 15));
 			}
-			if (! ipref) continue;   // skip unrecognized keys
+			if (ipref == 0) continue;   // skip unrecognized keys
 			Preference pref = thePreferences.at [ipref];
 			switch (pref -> type) {
 				case bytewa: * (signed char *) pref -> value =
@@ -156,7 +156,7 @@ void Preferences_read (MelderFile file) {
 void Preferences_write (MelderFile file) {
 	if (thePreferences.size == 0) return;
 	static MelderString buffer { };
-	for (long ipref = 1; ipref <= thePreferences.size; ipref ++) {
+	for (integer ipref = 1; ipref <= thePreferences.size; ipref ++) {
 		Preference pref = thePreferences.at [ipref];
 		MelderString_append (& buffer, pref -> string, U": ");
 		switch (pref -> type) {

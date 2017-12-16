@@ -40,18 +40,13 @@
 #include "oo_DESCRIPTION.h"
 #include "Net_def.h"
 
-#include "enums_getText.h"
-#include "Net_enums.h"
-#include "enums_getValue.h"
-#include "Net_enums.h"
-
-Thing_implement (Layer, Daata, 0);
+Thing_implement (RBMLayer, Layer, 0);
 
 Thing_implement (Net, Daata, 0);
 
-static autoLayer Layer_createAsRBM (integer numberOfInputNodes, integer numberOfOutputNodes, bool inputsAreBinary) {
+static autoRBMLayer RBMLayer_create (integer numberOfInputNodes, integer numberOfOutputNodes, bool inputsAreBinary) {
 	try {
-		autoLayer me = Thing_new (Layer);
+		autoRBMLayer me = Thing_new (RBMLayer);
 		my numberOfInputNodes = numberOfInputNodes;
 		my inputBiases = NUMvector <double> (1, numberOfInputNodes);
 		my inputActivities = NUMvector <double> (1, numberOfInputNodes);
@@ -73,13 +68,14 @@ void Net_initAsDeepBeliefNet (Net me, numvec numbersOfNodes, bool inputsAreBinar
 	if (numbersOfNodes.size < 2)
 		Melder_throw (U"A deep belief net should have at least two levels of nodes.");
 	integer numberOfLayers = numbersOfNodes.size - 1;
+	my layers = LayerList_create ();
 	for (integer ilayer = 1; ilayer <= numberOfLayers; ilayer ++) {
-		autoLayer layer = Layer_createAsRBM (
+		autoRBMLayer layer = RBMLayer_create (
 			Melder_iround (numbersOfNodes [ilayer]),
 			Melder_iround (numbersOfNodes [ilayer + 1]),
 			ilayer == 1 ? inputsAreBinary : true
 		);
-		my layers. addItem_move (layer.move());
+		my layers -> addItem_move (layer.move());
 	}
 }
 
@@ -104,20 +100,6 @@ inline static double logistic (double excitation) {
 	return 1.0 / (1.0 + exp (- excitation));
 }
 
-static void Layer_spreadUp (Layer me) {
-	integer numberOfOutputNodes = my numberOfOutputNodes;
-	for (integer jnode = 1; jnode <= numberOfOutputNodes; jnode ++) {
-		PAIRWISE_SUM (real80, excitation, integer, my numberOfInputNodes,
- 			double *p_inputActivity = & my inputActivities [0];
- 			double *p_weight = & my weights [1] [jnode] - numberOfOutputNodes,
- 			( p_inputActivity += 1, p_weight += numberOfOutputNodes ),
- 			(real80) *p_inputActivity * (real80) *p_weight
-		);
-		excitation += my outputBiases [jnode];
-		my outputActivities [jnode] = logistic ((real) excitation);
-	}
-}
-
 static void Layer_sampleOutput (Layer me) {
 	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
 		double probability = my outputActivities [jnode];
@@ -125,35 +107,49 @@ static void Layer_sampleOutput (Layer me) {
 	}
 }
 
-void Net_spreadUp (Net me, kNet_activationType activationType) {
-	for (integer ilayer = 1; ilayer <= my layers.size; ilayer ++) {
-		Layer layer = my layers.at [ilayer];
+void structRBMLayer :: v_spreadUp (kLayer_activationType activationType) {
+	integer numberOfOutputNodes = our numberOfOutputNodes;
+	for (integer jnode = 1; jnode <= numberOfOutputNodes; jnode ++) {
+		PAIRWISE_SUM (real80, excitation, integer, our numberOfInputNodes,
+ 			double *p_inputActivity = & our inputActivities [0];
+ 			double *p_weight = & our weights [1] [jnode] - numberOfOutputNodes,
+ 			( p_inputActivity += 1, p_weight += numberOfOutputNodes ),
+ 			(real80) *p_inputActivity * (real80) *p_weight
+		);
+		excitation += our outputBiases [jnode];
+		our outputActivities [jnode] = logistic ((real) excitation);
+	}
+	if (activationType == kLayer_activationType::STOCHASTIC)
+		Layer_sampleOutput (this);
+}
+
+void Net_spreadUp (Net me, kLayer_activationType activationType) {
+	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+		Layer layer = my layers->at [ilayer];
 		if (ilayer > 1)
-			copyOutputsToInputs (my layers.at [ilayer - 1], layer);
-		Layer_spreadUp (layer);
-		if (activationType == kNet_activationType::STOCHASTIC)
-			Layer_sampleOutput (layer);
+			copyOutputsToInputs (my layers->at [ilayer - 1], layer);
+		layer -> v_spreadUp (activationType);
 	}
 }
 
-static void Layer_sampleInput (Layer me) {
-	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		if (my inputsAreBinary) {
-			double probability = my inputActivities [inode];
-			my inputActivities [inode] = (double) NUMrandomBernoulli (probability);
+void structRBMLayer :: v_sampleInput () {
+	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
+		if (our inputsAreBinary) {
+			double probability = our inputActivities [inode];
+			our inputActivities [inode] = (double) NUMrandomBernoulli (probability);
 		} else {   // Gaussian
-			double excitation = my inputActivities [inode];
-			my inputActivities [inode] = NUMrandomGauss (excitation, 1.0);
+			double excitation = our inputActivities [inode];
+			our inputActivities [inode] = NUMrandomGauss (excitation, 1.0);
 		}
 	}
 }
 
 void Net_sampleInput (Net me) {
-	Layer_sampleInput (my layers.at [1]);
+	my layers->at [1] -> v_sampleInput ();
 }
 
 void Net_sampleOutput (Net me) {
-	Layer_sampleOutput (my layers.at [my layers.size]);
+	Layer_sampleOutput (my layers->at [my layers->size]);
 }
 
 static void copyInputsToOutputs (Layer me, Layer you) {
@@ -163,94 +159,94 @@ static void copyInputsToOutputs (Layer me, Layer you) {
 	}
 }
 
-static void Layer_spreadDown (Layer me) {
-	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		PAIRWISE_SUM (real80, excitation, integer, my numberOfOutputNodes,
- 			double *p_weight = & my weights [inode] [0];
- 			double *p_outputActivity = & my outputActivities [0],
+void structRBMLayer :: v_spreadDown (kLayer_activationType activationType) {
+	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
+		PAIRWISE_SUM (real80, excitation, integer, our numberOfOutputNodes,
+ 			double *p_weight = & our weights [inode] [0];
+ 			double *p_outputActivity = & our outputActivities [0],
  			( p_weight += 1, p_outputActivity += 1 ),
  			(real80) *p_weight * (real80) *p_outputActivity
 		);
-		excitation += my inputBiases [inode];
-		if (my inputsAreBinary) {
-			my inputActivities [inode] = logistic ((real) excitation);
+		excitation += our inputBiases [inode];
+		if (our inputsAreBinary) {
+			our inputActivities [inode] = logistic ((real) excitation);
 		} else {   // linear
-			my inputActivities [inode] = (real) excitation;
+			our inputActivities [inode] = (real) excitation;
 		}
 	}
+	if (activationType == kLayer_activationType::STOCHASTIC)
+		our v_sampleInput ();
 }
 
-void Net_spreadDown (Net me, kNet_activationType activationType) {
-	for (integer ilayer = my layers.size; ilayer > 0; ilayer --) {
-		Layer layer = my layers.at [ilayer];
-		if (ilayer < my layers.size)
-			copyInputsToOutputs (my layers.at [ilayer + 1], layer);
-		Layer_spreadDown (layer);
-		if (activationType == kNet_activationType::STOCHASTIC)
-			Layer_sampleInput (layer);
+void Net_spreadDown (Net me, kLayer_activationType activationType) {
+	for (integer ilayer = my layers->size; ilayer > 0; ilayer --) {
+		Layer layer = my layers->at [ilayer];
+		if (ilayer < my layers->size)
+			copyInputsToOutputs (my layers->at [ilayer + 1], layer);
+		layer -> v_spreadDown (activationType);
 	}
 }
 
-static void Layer_spreadDown_reconstruction (Layer me) {
-	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		PAIRWISE_SUM (real80, excitation, integer, my numberOfOutputNodes,
- 			double *p_weight = & my weights [inode] [0];
- 			double *p_outputActivity = & my outputActivities [0],
+void structRBMLayer :: v_spreadDown_reconstruction () {
+	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
+		PAIRWISE_SUM (real80, excitation, integer, our numberOfOutputNodes,
+ 			double *p_weight = & our weights [inode] [0];
+ 			double *p_outputActivity = & our outputActivities [0],
  			( p_weight += 1, p_outputActivity += 1 ),
  			(real80) *p_weight * (real80) *p_outputActivity
 		);
-		excitation += my inputBiases [inode];
-		if (my inputsAreBinary) {
-			my inputReconstruction [inode] = logistic ((real) excitation);
+		excitation += our inputBiases [inode];
+		if (our inputsAreBinary) {
+			our inputReconstruction [inode] = logistic ((real) excitation);
 		} else {   // linear
-			my inputReconstruction [inode] = (real) excitation;
+			our inputReconstruction [inode] = (real) excitation;
 		}
 	}
 }
 
 void Net_spreadDown_reconstruction (Net me) {
-	for (integer ilayer = my layers.size; ilayer > 0; ilayer --) {
-		Layer_spreadDown_reconstruction (my layers.at [ilayer]);
+	for (integer ilayer = my layers->size; ilayer > 0; ilayer --) {
+		my layers->at [ilayer] -> v_spreadDown_reconstruction ();
 	}
 }
 
-static void Layer_spreadUp_reconstruction (Layer me) {
-	integer numberOfOutputNodes = my numberOfOutputNodes;
-	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-		PAIRWISE_SUM (real80, excitation, integer, my numberOfInputNodes,
- 			double *p_inputActivity = & my inputReconstruction [0];
- 			double *p_weight = & my weights [1] [jnode] - numberOfOutputNodes,
+void structRBMLayer :: v_spreadUp_reconstruction () {
+	integer numberOfOutputNodes = our numberOfOutputNodes;
+	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++) {
+		PAIRWISE_SUM (real80, excitation, integer, our numberOfInputNodes,
+ 			double *p_inputActivity = & our inputReconstruction [0];
+ 			double *p_weight = & our weights [1] [jnode] - numberOfOutputNodes,
  			( p_inputActivity += 1, p_weight += numberOfOutputNodes ),
  			(real80) *p_inputActivity * (real80) *p_weight
 		);
-		excitation += my outputBiases [jnode];
-		my outputReconstruction [jnode] = logistic ((real) excitation);
+		excitation += our outputBiases [jnode];
+		our outputReconstruction [jnode] = logistic ((real) excitation);
 	}
 }
 
 void Net_spreadUp_reconstruction (Net me) {
-	for (integer ilayer = 1; ilayer <= my layers.size; ilayer ++) {
-		Layer_spreadUp_reconstruction (my layers.at [ilayer]);
+	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+		my layers->at [ilayer] -> v_spreadUp_reconstruction ();
 	}
 }
 
-static void Layer_update (Layer me, double learningRate) {
-	for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-		my outputBiases [jnode] += learningRate * (my outputActivities [jnode] - my outputReconstruction [jnode]);
+void structRBMLayer :: v_update (double learningRate) {
+	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++) {
+		our outputBiases [jnode] += learningRate * (our outputActivities [jnode] - our outputReconstruction [jnode]);
 	}
-	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		my inputBiases [inode] += learningRate * (my inputActivities [inode] - my inputReconstruction [inode]);
-		for (integer jnode = 1; jnode <= my numberOfOutputNodes; jnode ++) {
-			my weights [inode] [jnode] += learningRate *
-				(my inputActivities [inode] * my outputActivities [jnode] -
-				 my inputReconstruction [inode] * my outputReconstruction [jnode]);
+	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
+		our inputBiases [inode] += learningRate * (our inputActivities [inode] - our inputReconstruction [inode]);
+		for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++) {
+			our weights [inode] [jnode] += learningRate *
+				(our inputActivities [inode] * our outputActivities [jnode] -
+				 our inputReconstruction [inode] * our outputReconstruction [jnode]);
 		}
 	}
 }
 
 void Net_update (Net me, double learningRate) {
-	for (integer ilayer = 1; ilayer <= my layers.size; ilayer ++) {
-		Layer_update (my layers.at [ilayer], learningRate);
+	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+		my layers->at [ilayer] -> v_update (learningRate);
 	}
 }
 
@@ -262,7 +258,7 @@ static void Layer_PatternList_applyToInput (Layer me, PatternList thee, integer 
 }
 
 void Net_PatternList_applyToInput (Net me, PatternList thee, integer rowNumber) {
-	Layer_PatternList_applyToInput (my layers.at [1], thee, rowNumber);
+	Layer_PatternList_applyToInput (my layers->at [1], thee, rowNumber);
 }
 
 static void Layer_PatternList_applyToOutput (Layer me, PatternList thee, integer rowNumber) {
@@ -273,44 +269,42 @@ static void Layer_PatternList_applyToOutput (Layer me, PatternList thee, integer
 }
 
 void Net_PatternList_applyToOutput (Net me, PatternList thee, integer rowNumber) {
-	Layer_PatternList_applyToOutput (my layers.at [my layers.size], thee, rowNumber);
+	Layer_PatternList_applyToOutput (my layers->at [my layers->size], thee, rowNumber);
 }
 
 void Net_PatternList_learn (Net me, PatternList thee, double learningRate) {
 	for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
 		Net_PatternList_applyToInput (me, thee, ipattern);
-		Net_spreadUp (me, kNet_activationType::STOCHASTIC);
-		for (integer ilayer = 1; ilayer <= my layers.size; ilayer ++) {
-			Layer layer = my layers.at [ilayer];
-			Layer_spreadDown_reconstruction (layer);
-			Layer_spreadUp_reconstruction (layer);
-			Layer_update (layer, learningRate);
+		Net_spreadUp (me, kLayer_activationType::STOCHASTIC);
+		for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+			Layer layer = my layers->at [ilayer];
+			layer -> v_spreadDown_reconstruction ();
+			layer -> v_spreadUp_reconstruction ();
+			layer -> v_update (learningRate);
 		}
 	}
 }
 
 void Net_PatternList_learnByLayer (Net me, PatternList thee, double learningRate) {
-	for (integer ilayer = 1; ilayer <= my layers.size; ilayer ++) {
-		Layer layer = my layers.at [ilayer];
+	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+		Layer layer = my layers->at [ilayer];
 		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
-			Layer_PatternList_applyToInput (my layers.at [1], thee, ipattern);
-			Layer_spreadUp (my layers.at [1]);
-			Layer_sampleOutput (my layers.at [1]);
+			Layer_PatternList_applyToInput (my layers->at [1], thee, ipattern);
+			my layers->at [1] -> v_spreadUp (kLayer_activationType::STOCHASTIC);
 			for (integer jlayer = 2; jlayer <= ilayer; jlayer ++) {
-				copyOutputsToInputs (my layers.at [jlayer - 1], my layers.at [jlayer]);
-				Layer_spreadUp (my layers.at [jlayer]);
-				Layer_sampleOutput (my layers.at [jlayer]);
+				copyOutputsToInputs (my layers->at [jlayer - 1], my layers->at [jlayer]);
+				my layers->at [jlayer] -> v_spreadUp (kLayer_activationType::STOCHASTIC);
 			}
-			Layer_spreadDown_reconstruction (layer);
-			Layer_spreadUp_reconstruction (layer);
-			Layer_update (layer, learningRate);
+			layer -> v_spreadDown_reconstruction ();
+			layer -> v_spreadUp_reconstruction ();
+			layer -> v_update (learningRate);
 		}
 	}
 }
 
-autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, kNet_activationType activationType) {
+autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, kLayer_activationType activationType) {
 	try {
-		Layer outputLayer = my layers.at [my layers.size];
+		Layer outputLayer = my layers->at [my layers->size];
 		autoActivationList activations = ActivationList_create (thy ny, outputLayer -> numberOfOutputNodes);
 		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
 			Net_PatternList_applyToInput (me, thee, ipattern);
@@ -334,7 +328,7 @@ static autoMatrix Layer_extractInputActivities (Layer me) {
 }
 
 autoMatrix Net_extractInputActivities (Net me) {
-	return Layer_extractInputActivities (my layers.at [1]);
+	return Layer_extractInputActivities (my layers->at [1]);
 }
 
 static autoMatrix Layer_extractOutputActivities (Layer me) {
@@ -348,82 +342,85 @@ static autoMatrix Layer_extractOutputActivities (Layer me) {
 }
 
 autoMatrix Net_extractOutputActivities (Net me) {
-	return Layer_extractOutputActivities (my layers.at [my layers.size]);
+	return Layer_extractOutputActivities (my layers->at [my layers->size]);
 }
 
-static autoMatrix Layer_extractInputReconstruction (Layer me) {
+autoMatrix structRBMLayer :: v_extractInputReconstruction () {
 	try {
-		autoMatrix thee = Matrix_createSimple (1, my numberOfInputNodes);
-		NUMvector_copyElements <double> (my inputReconstruction, thy z [1], 1, my numberOfInputNodes);
+		autoMatrix thee = Matrix_createSimple (1, our numberOfInputNodes);
+		NUMvector_copyElements <double> (our inputReconstruction, thy z [1], 1, our numberOfInputNodes);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": input reconstruction not extracted.");
+		Melder_throw (this, U": input reconstruction not extracted.");
 	}
 }
 
 autoMatrix Net_extractInputReconstruction (Net me) {
-	return Layer_extractInputReconstruction (my layers.at [1]);
+	return my layers->at [1] -> v_extractInputReconstruction ();
 }
 
-static autoMatrix Layer_extractOutputReconstruction (Layer me) {
+autoMatrix structRBMLayer :: v_extractOutputReconstruction () {
 	try {
-		autoMatrix thee = Matrix_createSimple (1, my numberOfOutputNodes);
-		NUMvector_copyElements <double> (my outputReconstruction, thy z [1], 1, my numberOfOutputNodes);
+		autoMatrix thee = Matrix_createSimple (1, our numberOfOutputNodes);
+		NUMvector_copyElements <double> (our outputReconstruction, thy z [1], 1, our numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": output reconstruction not extracted.");
+		Melder_throw (this, U": output reconstruction not extracted.");
 	}
 }
 
 autoMatrix Net_extractOutputReconstruction (Net me) {
-	return Layer_extractOutputReconstruction (my layers.at [my layers.size]);
+	return my layers->at [my layers->size] -> v_extractOutputReconstruction ();
 }
 
-static autoMatrix Layer_extractInputBiases (Layer me) {
+autoMatrix structRBMLayer :: v_extractInputBiases () {
 	try {
-		autoMatrix thee = Matrix_createSimple (1, my numberOfInputNodes);
-		NUMvector_copyElements <double> (my inputBiases, thy z [1], 1, my numberOfInputNodes);
+		autoMatrix thee = Matrix_createSimple (1, our numberOfInputNodes);
+		NUMvector_copyElements <double> (our inputBiases, thy z [1], 1, our numberOfInputNodes);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": input biases not extracted.");
+		Melder_throw (this, U": input biases not extracted.");
 	}
 }
 
 autoMatrix Net_extractInputBiases (Net me, integer layerNumber) {
-	return Layer_extractInputBiases (my layers.at [layerNumber]);
+	return my layers->at [layerNumber] -> v_extractInputBiases ();
 }
 
-static autoMatrix Layer_extractOutputBiases (Layer me) {
+autoMatrix structRBMLayer :: v_extractOutputBiases () {
 	try {
-		autoMatrix thee = Matrix_createSimple (1, my numberOfOutputNodes);
-		NUMvector_copyElements <double> (my outputBiases, thy z [1], 1, my numberOfOutputNodes);
+		autoMatrix thee = Matrix_createSimple (1, our numberOfOutputNodes);
+		NUMvector_copyElements <double> (our outputBiases, thy z [1], 1, our numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": input biases not extracted.");
+		Melder_throw (this, U": input biases not extracted.");
 	}
 }
 
 autoMatrix Net_extractOutputBiases (Net me, integer layerNumber) {
-	return Layer_extractOutputBiases (my layers.at [layerNumber]);
+	return my layers->at [layerNumber] -> v_extractOutputBiases ();
 }
 
-static autoMatrix Layer_extractWeights (Layer me) {
+autoMatrix structRBMLayer :: v_extractWeights () {
 	try {
-		autoMatrix thee = Matrix_createSimple (my numberOfInputNodes, my numberOfOutputNodes);
-		NUMmatrix_copyElements <double> (my weights, thy z, 1, my numberOfInputNodes, 1, my numberOfOutputNodes);
+		autoMatrix thee = Matrix_createSimple (our numberOfInputNodes, our numberOfOutputNodes);
+		NUMmatrix_copyElements <double> (our weights, thy z, 1, our numberOfInputNodes, 1, our numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": weights not extracted.");
+		Melder_throw (this, U": weights not extracted.");
 	}
 }
 
 autoMatrix Net_extractWeights (Net me, integer layerNumber) {
-	return Layer_extractWeights (my layers.at [layerNumber]);
+	return my layers->at [layerNumber] -> v_extractWeights ();
+}
+
+autonummat structRBMLayer :: v_getWeights_nummat () {
+	return copy_nummat ({ our weights, our numberOfInputNodes, our numberOfOutputNodes });
 }
 
 autonummat Net_getWeights_nummat (Net me, integer layerNumber) {
-	Layer layer = my layers.at [layerNumber];
-	return copy_nummat ({ layer -> weights, layer -> numberOfInputNodes, layer -> numberOfOutputNodes });
+	return my layers->at [layerNumber] -> v_getWeights_nummat ();
 }
 
 /* End of file Net.cpp */
