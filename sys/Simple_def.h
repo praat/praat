@@ -16,12 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define ooSTRUCT SimpleInt
-oo_DEFINE_CLASS (SimpleInt, Daata)
-	oo_INT16 (number)
-oo_END_CLASS (SimpleInt)
-#undef ooSTRUCT
-
 #define ooSTRUCT SimpleInteger
 oo_DEFINE_CLASS (SimpleInteger, Daata)
 	oo_INTEGER (number)

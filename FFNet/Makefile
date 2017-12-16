@@ -1,5 +1,5 @@
 # Makefile of the library "FFNet"
-# David Weenink and Paul Boersma, 8 August 2017
+# David Weenink and Paul Boersma 2017-12-16
 
 include ../makefile.defs
 
@@ -8,7 +8,7 @@ CPPFLAGS = -I ../kar -I ../sys -I ../dwtools -I ../fon -I ../dwsys -I ../stat -I
 OBJECTS = FFNet.o \
 	FFNet_Eigen.o FFNet_Matrix.o FFNet_PatternList.o \
 	FFNet_ActivationList_Categories.o FFNet_PatternList_ActivationList.o \
-	FFNet_PatternList_Categories.o RBM_extensions.o \
+	FFNet_PatternList_Categories.o \
 	praat_FFNet_init.o manual_FFNet.o
 
 .PHONY: all clean

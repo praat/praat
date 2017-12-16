@@ -8,20 +8,20 @@ sigma = 1.8
 numberOfPatterns = 10000
 learningRate = 0.001
 
-my.DeepBeliefNetwork = Create DeepBeliefNetwork: "my", structure#, 0
+my.Net = Create Net as deep belief network: "my", structure#, 0
 
 my.PatternList = Create PatternList: "patterns", structure# [1], numberOfPatterns
 formant# = zero# (numberOfPatterns)
 formant# ~ randomGauss (mean# [randomInteger (1, numberOfVowels)], sigma)
 Formula: ~ 5 * exp (-0.5/sigma^2 * (col - formant# [row]) ^ 2) - 0.5
 
-selectObject: my.DeepBeliefNetwork, my.PatternList
+selectObject: my.Net, my.PatternList
 Learn by layer: learningRate
 
 appendInfoLine: "Trained in ", stopwatch, " seconds"
 
 for ilayer to size (structure#) - 1
-	selectObject: my.DeepBeliefNetwork
+	selectObject: my.Net
 	weight## = Get weights: ilayer
 	appendInfoLine: weight##, newline$
 endfor
@@ -41,9 +41,9 @@ for itest to numberOfTestPatterns
 	#
 	# Spread up and down.
 	#
-	selectObject: my.DeepBeliefNetwork, my.PatternList
+	selectObject: my.Net, my.PatternList
 	Apply to input: patternNumber
-	selectObject: my.DeepBeliefNetwork
+	selectObject: my.Net
 	Spread up: "deterministic"
 	Spread down: "deterministic"
 	#
@@ -56,4 +56,4 @@ for itest to numberOfTestPatterns
 	Draw rows: 0, 0, 0, 0, -5, 5
 	Remove
 endfor
-removeObject: my.PatternList, my.DeepBeliefNetwork
+removeObject: my.PatternList, my.Net

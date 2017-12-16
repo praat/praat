@@ -38,10 +38,8 @@
 #define oo_FLOAT(x)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 #undef oo_DOUBLE
 #define oo_DOUBLE(x)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
-#undef oo_FCOMPLEX
-#define oo_FCOMPLEX(x)  { U"" #x, fcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
-#undef oo_DCOMPLEX
-#define oo_DCOMPLEX(x)  { U"" #x, dcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
+#undef oo_COMPLEX
+#define oo_COMPLEX(x)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 0, nullptr, nullptr, nullptr, nullptr },
 
 #undef oo_BYTE_ARRAY
 #define oo_BYTE_ARRAY(x,cap,n)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
@@ -59,10 +57,8 @@
 #define oo_FLOAT_ARRAY(x,cap,n)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_DOUBLE_ARRAY
 #define oo_DOUBLE_ARRAY(x,cap,n)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_FCOMPLEX_ARRAY
-#define oo_FCOMPLEX_ARRAY(x,cap,n)  { U"" #x, fcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_DCOMPLEX_ARRAY
-#define oo_DCOMPLEX_ARRAY(x,cap,n)  { U"" #x, dcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
+#undef oo_COMPLEX_ARRAY
+#define oo_COMPLEX_ARRAY(x,cap,n)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, - cap, nullptr, U"" #n, nullptr, nullptr },
 
 #undef oo_BYTE_SET
 #define oo_BYTE_SET(x,setType)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr }, /* BUG function pointer to pointer */
@@ -80,10 +76,8 @@
 #define oo_FLOAT_SET(x,setType)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
 #undef oo_DOUBLE_SET
 #define oo_DOUBLE_SET(x,setType)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
-#undef oo_FCOMPLEX_SET
-#define oo_FCOMPLEX_SET(x,setType)  { U"" #x, fcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
-#undef oo_DCOMPLEX_SET
-#define oo_DCOMPLEX_SET(x,setType)  { U"" #x, dcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
+#undef oo_COMPLEX_SET
+#define oo_COMPLEX_SET(x,setType)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
 
 #undef oo_BYTE_VECTOR_FROM
 #define oo_BYTE_VECTOR_FROM(x,min,max)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
@@ -101,10 +95,8 @@
 #define oo_FLOAT_VECTOR_FROM(x,min,max)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 #undef oo_DOUBLE_VECTOR_FROM
 #define oo_DOUBLE_VECTOR_FROM(x,min,max)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_FCOMPLEX_VECTOR_FROM
-#define oo_FCOMPLEX_VECTOR_FROM(x,min,max)  { U"" #x, fcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_DCOMPLEX_VECTOR_FROM
-#define oo_DCOMPLEX_VECTOR_FROM(x,min,max)  { U"" #x, dcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
+#undef oo_COMPLEX_VECTOR_FROM
+#define oo_COMPLEX_VECTOR_FROM(x,min,max)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
 
 #undef oo_BYTE_MATRIX_FROM
 #define oo_BYTE_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
@@ -122,10 +114,8 @@
 #define oo_FLOAT_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
 #undef oo_DOUBLE_MATRIX_FROM
 #define oo_DOUBLE_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
-#undef oo_FCOMPLEX_MATRIX_FROM
-#define oo_FCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, fcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
-#undef oo_DCOMPLEX_MATRIX_FROM
-#define oo_DCOMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, dcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
+#undef oo_COMPLEX_MATRIX_FROM
+#define oo_COMPLEX_MATRIX_FROM(x,r1,r2,c1,c2)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 2, U"" #r1, U"" #r2, U"" #c1, U"" #c2 },
 
 #undef oo_BYTE_VECTOR
 #define oo_BYTE_VECTOR(x,n)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
@@ -143,10 +133,8 @@
 #define oo_FLOAT_VECTOR(x,n)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_DOUBLE_VECTOR
 #define oo_DOUBLE_VECTOR(x,n)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_FCOMPLEX_VECTOR
-#define oo_FCOMPLEX_VECTOR(x,n)  { U"" #x, fcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
-#undef oo_DCOMPLEX_VECTOR
-#define oo_DCOMPLEX_VECTOR(x,n)  { U"" #x, dcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
+#undef oo_COMPLEX_VECTOR
+#define oo_COMPLEX_VECTOR(x,n)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 1, nullptr, U"" #n, nullptr, nullptr },
 
 #undef oo_BYTE_MATRIX
 #define oo_BYTE_MATRIX(x,nrow,ncol)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
@@ -164,10 +152,8 @@
 #define oo_FLOAT_MATRIX(x,nrow,ncol)  { U"" #x, floatwa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
 #undef oo_DOUBLE_MATRIX
 #define oo_DOUBLE_MATRIX(x,nrow,ncol)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
-#undef oo_FCOMPLEX_MATRIX
-#define oo_FCOMPLEX_MATRIX(x,nrow,ncol)  { U"" #x, fcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
-#undef oo_DCOMPLEX_MATRIX
-#define oo_DCOMPLEX_MATRIX(x,nrow,ncol)  { U"" #x, dcomplexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
+#undef oo_COMPLEX_MATRIX
+#define oo_COMPLEX_MATRIX(x,nrow,ncol)  { U"" #x, complexwa, Melder_offsetof (ooSTRUCT, x), sizeof (dcomplex), 0, 0, 2, nullptr, U"" #nrow, (const char32 *) 0, U"" #ncol },
 
 #undef oo_ENUM
 #define oo_ENUM(Type,x)  { U"" #x, enumwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), U"" #Type, (void *) Type##_getText, 0, nullptr, nullptr, nullptr, nullptr },

@@ -49,7 +49,7 @@ void PatternList_normalize (PatternList me, int choice, double pmin, double pmax
 void PatternList_draw (PatternList me, Graphics g, integer pattern, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
 
-autoPatternList Matrix_to_PatternList (Matrix me, int join);
+autoPatternList Matrix_to_PatternList (Matrix me, integer join);
 
 autoMatrix PatternList_to_Matrix (PatternList me);
 

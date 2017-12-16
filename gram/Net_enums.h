@@ -1,4 +1,4 @@
-/* DeepBeliefNetwork_def.h
+/* Net_enums.h
  *
  * Copyright (C) 2017 Paul Boersma
  *
@@ -16,14 +16,9 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+enums_begin (kNet_activationType, 0)
+	enums_add (kNet_activationType, 0, DETERMINISTIC, U"deterministic")
+	enums_add (kNet_activationType, 1, STOCHASTIC, U"stochastic")
+enums_end (kNet_activationType, 1, DETERMINISTIC)
 
-#define ooSTRUCT DeepBeliefNetwork
-oo_DEFINE_CLASS (DeepBeliefNetwork, Daata)
-
-	oo_COLLECTION_OF (OrderedOf, layers, RBM, 0)
-
-oo_END_CLASS (DeepBeliefNetwork)
-#undef ooSTRUCT
-
-
-/* End of file DeepBeliefNetwork_def.h */
+/* End of file Net_enums.h */

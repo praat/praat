@@ -37,14 +37,6 @@
 #include "oo_DESCRIPTION.h"
 #include "Simple_def.h"
 
-Thing_implement (SimpleInt, Daata, 0);
-
-autoSimpleInt SimpleInt_create (int number) {
-	autoSimpleInt me = Thing_new (SimpleInt);
-	my number = number;
-	return me;
-}
-
 Thing_implement (SimpleInteger, Daata, 0);
 
 autoSimpleInteger SimpleInteger_create (integer number) {

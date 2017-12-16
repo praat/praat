@@ -172,9 +172,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (uinteger) Melder_atoi (text); } break;
 				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
 				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
-				case fcomplexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
-					sscanf (Melder_peek32to8 (text), "%lf + %lf i", & x -> re, & x -> im); } break;
-				case dcomplexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
+				case complexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
 					sscanf (Melder_peek32to8 (text), "%lf + %lf i", & x -> re, & x -> im); } break;
 				case enumwa: {
 					if (str32len (text) < 3) goto error;
@@ -366,8 +364,7 @@ static const char32 * singleTypeToText (void *address, int type, void *tagType, 
 		case uintegerwa: MelderString_append (buffer, Melder_integer  (* (uinteger *)       address)); break;
 		case floatwa:    MelderString_append (buffer, Melder_single   (* (double *)         address)); break;
 		case doublewa:   MelderString_append (buffer, Melder_double   (* (double *)         address)); break;
-		case fcomplexwa: MelderString_append (buffer, Melder_scomplex (* (dcomplex *)       address)); break;
-		case dcomplexwa: MelderString_append (buffer, Melder_dcomplex (* (dcomplex *)       address)); break;
+		case complexwa: MelderString_append (buffer, Melder_dcomplex (* (dcomplex *)       address)); break;
 		case enumwa:  MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed char *)  address), U">"); break;
 		case lenumwa: MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed short *) address), U">"); break;
 		case booleanwa:  MelderString_append (buffer, * (bool *) address ? U"<true>" : U"<false>"); break;

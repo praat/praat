@@ -29,7 +29,7 @@
 #include "Eigen.h"
 #include "NUM2.h"
 
-void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, int garnish) {
+void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	integer ix = labs (icx), iy = labs (icy);
 
 	if (ix < 1 || ix > my nx || iy < 1 || iy > my nx) {

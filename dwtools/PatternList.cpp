@@ -90,7 +90,7 @@ void PatternList_draw (PatternList me, Graphics g, integer pattern, double xmin,
 	}
 }
 
-autoPatternList Matrix_to_PatternList (Matrix me, int join) {
+autoPatternList Matrix_to_PatternList (Matrix me, integer join) {
 	try {
 		if (join < 1) {
 			join = 1;
