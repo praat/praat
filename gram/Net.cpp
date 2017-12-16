@@ -312,7 +312,7 @@ autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, 
 	try {
 		Layer outputLayer = my layers.at [my layers.size];
 		autoActivationList activations = ActivationList_create (thy ny, outputLayer -> numberOfOutputNodes);
-		for (long ipattern = 1; ipattern <= thy ny; ipattern ++) {
+		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
 			Net_PatternList_applyToInput (me, thee, ipattern);
 			Net_spreadUp (me, activationType);
 			NUMvector_copyElements <double> (outputLayer -> outputActivities, activations -> z [ipattern], 1, outputLayer -> numberOfOutputNodes);
