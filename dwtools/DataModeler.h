@@ -64,23 +64,23 @@ Thing_define (PitchModeler, DataModeler) {
 	//     override;
 };
 
-void  DataModeler_init (DataModeler me, double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type);
+void  DataModeler_init (DataModeler me, double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, int type);
 
-autoDataModeler DataModeler_create (double xmin, double xmax, long numberOfDataPoints, long numberOfParameters, int type);
+autoDataModeler DataModeler_create (double xmin, double xmax, integer numberOfDataPoints, integer numberOfParameters, int type);
 
-autoDataModeler DataModeler_createSimple (double xmin, double xmax, long numberOfDataPoints, char32 *parameters, double gaussianNoiseStd, int type);
+autoDataModeler DataModeler_createSimple (double xmin, double xmax, integer numberOfDataPoints, char32 *parameters, double gaussianNoiseStd, int type);
 
 void DataModeler_setBasisFunctions (DataModeler me, int type);
 
-void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, long numberOfParameters, int errorbars, int connectPoints, double barWidth_mm, double horizontalOffset_mm, int drawDots);
+void DataModeler_draw_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, integer numberOfParameters, int errorbars, int connectPoints, double barWidth_mm, double horizontalOffset_mm, int drawDots);
 
-void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, long numberOfParameters, int errorbars, double barWidth_mm, double horizontalOffset_mm);
+void DataModeler_speckle_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, integer numberOfParameters, int errorbars, double barWidth_mm, double horizontalOffset_mm);
 
-void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, long numberOfParameters, int errorbars, double barWidth_mm, double horizontalOffset_mm, int garnish);
+void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, integer numberOfParameters, int errorbars, double barWidth_mm, double horizontalOffset_mm, int garnish);
 
-void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, long numberOfParameters, double horizontalOffset_mm, int garnish);
+void DataModeler_drawTrack (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, integer numberOfParameters, double horizontalOffset_mm, int garnish);
 
-void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, long numberOfParameters, double horizontalOffset_mm);
+void DataModeler_drawTrack_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int estimated, integer numberOfParameters, double horizontalOffset_mm);
 
 void DataModeler_drawOutliersMarked_inside (DataModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int useSigmaY, char32 *mark, int marksFontSize, double horizontalOffset_mm);
 
@@ -93,21 +93,21 @@ void DataModeler_fit (DataModeler me);
 // sigmaY used in fit or not.
 void DataModeler_setDataWeighing (DataModeler me, int useSigmaY);
 
-long DataModeler_getNumberOfFixedParameters (DataModeler me);
+integer DataModeler_getNumberOfFixedParameters (DataModeler me);
 
-void DataModeler_setParameterValue (DataModeler me, long index, double value, int status);
+void DataModeler_setParameterValue (DataModeler me, integer index, double value, int status);
 
-void DataModeler_setParameterValueFixed (DataModeler me, long index, double value);
+void DataModeler_setParameterValueFixed (DataModeler me, integer index, double value);
 
-void DataModeler_setParametersFree (DataModeler me, long fromIndex, long toIndex);
+void DataModeler_setParametersFree (DataModeler me, integer fromIndex, integer toIndex);
 
-double DataModeler_getParameterValue (DataModeler me, long index);
+double DataModeler_getParameterValue (DataModeler me, integer index);
 
-int DataModeler_getParameterStatus (DataModeler me, long index);
+int DataModeler_getParameterStatus (DataModeler me, integer index);
 
-double DataModeler_getParameterStandardDeviation (DataModeler me, long index);
+double DataModeler_getParameterStandardDeviation (DataModeler me, integer index);
 
-double DataModeler_getVarianceOfParameters (DataModeler me, long fromIndex, long toIndex, long *numberOfFreeParameters);
+double DataModeler_getVarianceOfParameters (DataModeler me, integer fromIndex, integer toIndex, integer *numberOfFreeParameters);
 
 void DataModeler_setParameterValuesToZero (DataModeler me, double numberOfSigmas);
 
@@ -117,27 +117,27 @@ void DataModeler_getExtremaY (DataModeler me, double *ymin, double *ymax);
 
 double DataModeler_getModelValueAtX (DataModeler me, double x);
 
-double DataModeler_getModelValueAtIndex (DataModeler me, long index);
+double DataModeler_getModelValueAtIndex (DataModeler me, integer index);
 
 double DataModeler_getWeightedMean (DataModeler me);
 
-long DataModeler_getNumberOfInvalidDataPoints (DataModeler me);
+integer DataModeler_getNumberOfInvalidDataPoints (DataModeler me);
 
-double DataModeler_getDataPointXValue (DataModeler me, long index);
-double DataModeler_getDataPointYValue (DataModeler me, long index);
+double DataModeler_getDataPointXValue (DataModeler me, integer index);
+double DataModeler_getDataPointYValue (DataModeler me, integer index);
 
-void DataModeler_setDataPointXValue (DataModeler me, long index, double value);
-void DataModeler_setDataPointYValue (DataModeler me, long index, double value);
-void DataModeler_setDataPointValues (DataModeler me, long index, double xvalue, double yvalue);
+void DataModeler_setDataPointXValue (DataModeler me, integer index, double value);
+void DataModeler_setDataPointYValue (DataModeler me, integer index, double value);
+void DataModeler_setDataPointValues (DataModeler me, integer index, double xvalue, double yvalue);
 
-int DataModeler_getDataPointStatus (DataModeler me, long index);
+int DataModeler_getDataPointStatus (DataModeler me, integer index);
 
-void DataModeler_setDataPointStatus (DataModeler me, long index, int status);
+void DataModeler_setDataPointStatus (DataModeler me, integer index, int status);
 
-void DataModeler_setDataPointYSigma (DataModeler me, long index, double sigma);
+void DataModeler_setDataPointYSigma (DataModeler me, integer index, double sigma);
 
-double DataModeler_getDataPointYSigma (DataModeler me, long index);
-double DataModeler_getResidualSumOfSquares (DataModeler me, long *numberOfDataPoints);
+double DataModeler_getDataPointYSigma (DataModeler me, integer index);
+double DataModeler_getResidualSumOfSquares (DataModeler me, integer *numberOfDataPoints);
 
 void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]);
 
@@ -155,123 +155,123 @@ autoCovariance DataModeler_to_Covariance_parameters (DataModeler me);
 
 autoTable DataModeler_to_Table_zscores (DataModeler me, int useSigmaY);
 
-autoFormantModeler FormantModeler_create (double tmin, double tmax, long numberOfFormants, long numberOfDataPoints, long numberOfParameters);
+autoFormantModeler FormantModeler_create (double tmin, double tmax, integer numberOfFormants, integer numberOfDataPoints, integer numberOfParameters);
 
-double FormantModeler_indexToTime (FormantModeler me, long index);
+double FormantModeler_indexToTime (FormantModeler me, integer index);
 
 void FormantModeler_fit (FormantModeler me);
 
-void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax, long iformant, long iterm, bool scaled, long numberOfPoints, bool garnish);
+void FormantModeler_drawBasisFunction (FormantModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax, integer iformant, integer iterm, bool scaled, integer numberOfPoints, bool garnish);
 
-void FormantModeler_setDataWeighing (FormantModeler me, long fromFormant, long toFormant, int useSigmaY);
+void FormantModeler_setDataWeighing (FormantModeler me, integer fromFormant, integer toFormant, int useSigmaY);
 
-void FormantModeler_setParameterValueFixed (FormantModeler me, long iformant, long index, double value);
+void FormantModeler_setParameterValueFixed (FormantModeler me, integer iformant, integer index, double value);
 
-void FormantModeler_setParametersFree (FormantModeler me, long fromFormant, long toFormant, long fromIndex, long toIndex);
+void FormantModeler_setParametersFree (FormantModeler me, integer fromFormant, integer toFormant, integer fromIndex, integer toIndex);
 
-void FormantModeler_setParameterValuesToZero (FormantModeler me, long fromFormant, long toFormant, double numberOfSigmas);
+void FormantModeler_setParameterValuesToZero (FormantModeler me, integer fromFormant, integer toFormant, double numberOfSigmas);
 
 void FormantModeler_setTolerance (FormantModeler me, double tolerance);
 
 void FormantModeler_speckle (FormantModeler me, Graphics g, double tmin, double tmax, double fmax,
-	long fromTrack, long toTrack, int estimated, long numberOfParameters, int errorBars, double barWidth_mm, double horizontalOffset_mm, int garnish);
+	integer fromTrack, integer toTrack, int estimated, integer numberOfParameters, int errorBars, double barWidth_mm, double horizontalOffset_mm, int garnish);
 
-void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, long fromTrack, long toTrack, int estimated, long numberOfParameters, double horizontalOffset_mm, int garnish);
+void FormantModeler_drawTracks (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, int estimated, integer numberOfParameters, double horizontalOffset_mm, int garnish);
 
-void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, long fromTrack, long toTrack, double numberOfSigmas, int useSigmaY, char32 *mark, int marksFontSize, double horizontalOffset_mm, int garnish);
+void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tmin, double tmax, double fmax, integer fromTrack, integer toTrack, double numberOfSigmas, int useSigmaY, char32 *mark, int marksFontSize, double horizontalOffset_mm, int garnish);
 
 void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int useSigmaY, int garnish);
 
-void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int shiftDirection, long fromFormant, long toFormant, bool garnish);
+void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int shiftDirection, integer fromFormant, integer toFormant, bool garnish);
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, long iformant, int useSigmaY, long numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish);
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish);
 
 autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY);
 
-autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, long iformant);
+autoCovariance FormantModeler_to_Covariance_parameters (FormantModeler me, integer iformant);
 
-double FormantModeler_getChiSquaredQ (FormantModeler me, long fromFormant, long toFormant, int useSigmaY, double *probability, double *ndf);
+double FormantModeler_getChiSquaredQ (FormantModeler me, integer fromFormant, integer toFormant, int useSigmaY, double *probability, double *ndf);
 
-double FormantModeler_getCoefficientOfDetermination (FormantModeler me, long fromFormant, long toFormant);
+double FormantModeler_getCoefficientOfDetermination (FormantModeler me, integer fromFormant, integer toFormant);
 
-double FormantModeler_getStandardDeviation (FormantModeler me, long iformant);
+double FormantModeler_getStandardDeviation (FormantModeler me, integer iformant);
 
-double FormantModeler_getResidualSumOfSquares (FormantModeler me, long iformant, long *numberOfDataPoints);
+double FormantModeler_getResidualSumOfSquares (FormantModeler me, integer iformant, integer *numberOfDataPoints);
 
-double FormantModeler_getEstimatedValueAtTime (FormantModeler me, long iformant, double time);
+double FormantModeler_getEstimatedValueAtTime (FormantModeler me, integer iformant, double time);
 
-long FormantModeler_getNumberOfParameters (FormantModeler me, long iformant);
+integer FormantModeler_getNumberOfParameters (FormantModeler me, integer iformant);
 
-long FormantModeler_getNumberOfFixedParameters (FormantModeler me, long iformant);
+integer FormantModeler_getNumberOfFixedParameters (FormantModeler me, integer iformant);
 
-double FormantModeler_getParameterStandardDeviation ( FormantModeler me, long iformant, long index);
+double FormantModeler_getParameterStandardDeviation ( FormantModeler me, integer iformant, integer index);
 
-double FormantModeler_getVarianceOfParameters (FormantModeler me, long fromFormant, long toFormant, long fromIndex, long toIndex, long *numberOfFreeParameters);
+double FormantModeler_getVarianceOfParameters (FormantModeler me, integer fromFormant, integer toFormant, integer fromIndex, integer toIndex, integer *numberOfFreeParameters);
 
-int FormantModeler_getParameterStatus (FormantModeler me, long iformant, long index);
+int FormantModeler_getParameterStatus (FormantModeler me, integer iformant, integer index);
 
-long FormantModeler_getNumberOfDataPoints (FormantModeler me);
+integer FormantModeler_getNumberOfDataPoints (FormantModeler me);
 
-long FormantModeler_getNumberOfInvalidDataPoints (FormantModeler me, long iformant);
+integer FormantModeler_getNumberOfInvalidDataPoints (FormantModeler me, integer iformant);
 
-void FormantModeler_setDataPointStatus (FormantModeler me, long iformant, long index, int status);
+void FormantModeler_setDataPointStatus (FormantModeler me, integer iformant, integer index, int status);
 
-int FormantModeler_getDataPointStatus (FormantModeler me, long iformant, long index);
+int FormantModeler_getDataPointStatus (FormantModeler me, integer iformant, integer index);
 
-double FormantModeler_getDataPointValue (FormantModeler me, long iformant, long index);
+double FormantModeler_getDataPointValue (FormantModeler me, integer iformant, integer index);
 
-void FormantModeler_setDataPointValue (FormantModeler me, long iformant, long index, double value);
+void FormantModeler_setDataPointValue (FormantModeler me, integer iformant, integer index, double value);
 
-double FormantModeler_getDataPointSigma (FormantModeler me, long iformant, long index);
+double FormantModeler_getDataPointSigma (FormantModeler me, integer iformant, integer index);
 
-void FormantModeler_setDataPointSigma (FormantModeler me, long iformant, long index, double sigma);
+void FormantModeler_setDataPointSigma (FormantModeler me, integer iformant, integer index, double sigma);
 
-double FormantModeler_getDegreesOfFreedom (FormantModeler me, long iformant);
+double FormantModeler_getDegreesOfFreedom (FormantModeler me, integer iformant);
 
-long FormantModeler_getNumberOfTracks (FormantModeler me);
+integer FormantModeler_getNumberOfTracks (FormantModeler me);
 
-double FormantModeler_getModelValueAtTime (FormantModeler me, long iformant, double time);
+double FormantModeler_getModelValueAtTime (FormantModeler me, integer iformant, double time);
 
-double FormantModeler_getModelValueAtIndex (FormantModeler me, long iformant, long index);
+double FormantModeler_getModelValueAtIndex (FormantModeler me, integer iformant, integer index);
 
-double FormantModeler_getWeightedMean (FormantModeler me, long iformant);
+double FormantModeler_getWeightedMean (FormantModeler me, integer iformant);
 
-double FormantModeler_getParameterValue (FormantModeler me, long iformant, long iparameter);
+double FormantModeler_getParameterValue (FormantModeler me, integer iformant, integer iparameter);
 
-autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, long numberOfFormants, long numberOfParametersPerTrack, int bandwidthEstimatesSigma);
+autoFormantModeler Formant_to_FormantModeler (Formant me, double tmin, double tmax, integer numberOfFormants, integer numberOfParametersPerTrack, int bandwidthEstimatesSigma);
 
 autoFormant FormantModeler_to_Formant (FormantModeler me, int estimate, int estimateUndefined);
 
 autoFormantModeler FormantModeler_processOutliers (FormantModeler me, double numberOfSigmas, int useSigmaY);
 
-double FormantModeler_getSmoothnessValue (FormantModeler me, long fromFormant, long toFormant, long numberOfParametersPerTrack, double power);
+double FormantModeler_getSmoothnessValue (FormantModeler me, integer fromFormant, integer toFormant, integer numberOfParametersPerTrack, double power);
 
-double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, long track1, long track2, int type);
+double FormantModeler_getAverageDistanceBetweenTracks (FormantModeler me, integer track1, integer track2, int type);
 
 void FormantModeler_reportChiSquared (FormantModeler me, int weighDataType);
 
-long Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, int useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
+integer Formants_getSmoothestInInterval (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, int useConstraints, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
 double FormantModeler_getFormantsConstraintsFactor (FormantModeler me, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
-autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power);
+autoFormant Formants_extractSmoothestPart (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power);
 
-autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax, long numberOfFormantTracks, long numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
+autoFormant Formants_extractSmoothestPart_withFormantsConstraints (CollectionOf<structFormant>* me, double tmin, double tmax, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int useBandWidthsForTrackEstimation, double numberOfSigmas, double power, double minF1, double maxF1, double minF2, double maxF2, double minF3);
 
-autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, long iformant);
+autoDataModeler FormantModeler_extractDataModeler (FormantModeler me, integer iformant);
 
-autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, long numberOfParameters);
+autoPitchModeler Pitch_to_PitchModeler (Pitch me, double tmin, double tmax, integer numberOfParameters);
 
-void PitchModeler_draw (PitchModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax, long numberOfParameters, int garnish);
+void PitchModeler_draw (PitchModeler me, Graphics g, double tmin, double tmax, double fmin, double fmax, integer numberOfParameters, int garnish);
 
-autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, long xcolumn, long ycolumn, long scolumn, long numberOfParameters, int type);
+autoDataModeler Table_to_DataModeler (Table me, double xmin, double xmax, integer xcolumn, integer ycolumn, integer scolumn, integer numberOfParameters, int type);
 
-autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling);
+autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps, double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling);
 
-autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling);
+autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps, double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling);
 
-double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power);
+double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps, double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power);
 
-autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, double timeStep, double minCeiling, double maxCeiling, long numberOfFrequencySteps, double preemphasisFrequency, double smoothingWindow, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power); 
+autoOptimalCeilingTier Sound_to_OptimalCeilingTier (Sound me, double windowLength, double timeStep, double minCeiling, double maxCeiling, integer numberOfFrequencySteps, double preemphasisFrequency, double smoothingWindow, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power);
 
 #endif /* _DataModeler_h_ */
