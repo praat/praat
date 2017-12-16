@@ -22,7 +22,6 @@
 
 #include "Simple_def.h"
 
-autoSimpleInt SimpleInt_create (int number);
 autoSimpleInteger SimpleInteger_create (integer number);
 autoSimpleDouble SimpleDouble_create (double number);
 autoSimpleString SimpleString_create (const char32 *string);

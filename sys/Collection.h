@@ -677,23 +677,6 @@ struct SortedSetOf : SortedOf <T> {
 _Collection_declare (SortedSet, SortedSetOf, Daata);
 
 
-#pragma mark - class SortedSetOfInt
-
-template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleInt)>
-struct SortedSetOfIntOf : SortedSetOf <T> {
-	SortedSetOfIntOf () {
-	}
-	SortedSetOfIntOf<T>&& move () noexcept { return static_cast <SortedSetOfIntOf<T>&&> (*this); }
-	static int s_compareHook (SimpleInt me, SimpleInt thee) noexcept {
-		if (my number < thy number) return -1;
-		if (my number > thy number) return +1;
-		return 0;
-	}
-	typename SortedOf<T>::CompareHook v_getCompareHook ()
-		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
-};
-
-
 #pragma mark - class SortedSetOfInteger
 
 template <typename T   Melder_ENABLE_IF_ISA (T, structSimpleInteger)>
