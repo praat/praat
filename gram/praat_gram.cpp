@@ -21,7 +21,7 @@
 #include "OTMulti.h"
 #include "OTGrammarEditor.h"
 #include "OTMultiEditor.h"
-#include "DeepBeliefNetwork.h"
+#include "Net.h"
 
 #include "praat_TableOfReal.h"
 
@@ -1505,308 +1505,181 @@ DO
 	END
 }
 
-// MARK: - RBM
+// MARK: - NET
 
 // MARK: New
 
-FORM (NEW1_Create_RBM, U"Create RBM (Restricted Boltzmann Machine)", nullptr) {
-	WORD (name, U"Name", U"network")
-	NATURAL (numberOfInputNodes, U"Number of input nodes", U"50")
-	NATURAL (numberOfOutputNodes, U"Number of output nodes", U"20")
-	BOOLEAN (inputsAreBinary, U"Inputs are binary", true)
-	OK
-DO
-	CREATE_ONE
-		autoRBM result = RBM_create (numberOfInputNodes, numberOfOutputNodes, inputsAreBinary);
-	CREATE_ONE_END (name)
-}
-
-// MARK: Modify
-
-DIRECT (MODIFY_RBM_spreadUp) {
-	MODIFY_EACH (RBM)
-		RBM_spreadUp (me);
-	MODIFY_EACH_END
-}
-
-DIRECT (MODIFY_RBM_spreadDown) {
-	MODIFY_EACH (RBM)
-		RBM_spreadDown (me);
-	MODIFY_EACH_END
-}
-
-DIRECT (MODIFY_RBM_spreadUp_reconstruction) {
-	MODIFY_EACH (RBM)
-		RBM_spreadUp_reconstruction (me);
-	MODIFY_EACH_END
-}
-
-DIRECT (MODIFY_RBM_spreadDown_reconstruction) {
-	MODIFY_EACH (RBM)
-		RBM_spreadDown_reconstruction (me);
-	MODIFY_EACH_END
-}
-
-DIRECT (MODIFY_RBM_sampleInput) {
-	MODIFY_EACH (RBM)
-		RBM_sampleInput (me);
-	MODIFY_EACH_END
-}
-
-DIRECT (MODIFY_RBM_sampleOutput) {
-	MODIFY_EACH (RBM)
-		RBM_sampleOutput (me);
-	MODIFY_EACH_END
-}
-
-FORM (MODIFY_RBM_update, U"RBM: Update", nullptr) {
-	POSITIVE (learningRate, U"Learning rate", U"0.001")
-	OK
-DO
-	MODIFY_EACH (RBM)
-		RBM_update (me, learningRate);
-	MODIFY_EACH_END
-}
-
-// MARK: Extract
-
-DIRECT (NEW_RBM_extractInputActivities) {
-	CONVERT_EACH (RBM)
-		autoMatrix result = RBM_extractInputActivities (me);
-	CONVERT_EACH_END (my name, U"_inputActivities")
-}
-
-DIRECT (NEW_RBM_extractOutputActivities) {
-	CONVERT_EACH (RBM)
-		autoMatrix result = RBM_extractOutputActivities (me);
-	CONVERT_EACH_END (my name, U"_outputActivities")
-}
-
-DIRECT (NEW_RBM_extractInputReconstruction) {
-	CONVERT_EACH (RBM)
-		autoMatrix result = RBM_extractInputReconstruction (me);
-	CONVERT_EACH_END (my name, U"_inputReconstruction")
-}
-
-DIRECT (NEW_RBM_extractOutputReconstruction) {
-	CONVERT_EACH (RBM)
-		autoMatrix result = RBM_extractOutputReconstruction (me);
-	CONVERT_EACH_END (my name, U"_outputReconstruction")
-}
-
-DIRECT (NEW_RBM_extractInputBiases) {
-	CONVERT_EACH (RBM)
-		autoMatrix result = RBM_extractInputBiases (me);
-	CONVERT_EACH_END (my name, U"_inputBiases")
-}
-
-DIRECT (NEW_RBM_extractOutputBiases) {
-	CONVERT_EACH (RBM)
-		autoMatrix result = RBM_extractOutputBiases (me);
-	CONVERT_EACH_END (my name, U"_outputBiases")
-}
-
-DIRECT (NEW_RBM_extractWeights) {
-	CONVERT_EACH (RBM)
-		autoMatrix result = RBM_extractWeights (me);
-	CONVERT_EACH_END (my name, U"_weights")
-}
-
-// MARK: - RBM & PATTERN
-
-FORM (MODIFY_RBM_PatternList_applyToInput, U"RBM & PatternList: Apply to input", nullptr) {
-	NATURAL (rowNumber, U"Row number", U"1")
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (RBM, PatternList)
-		RBM_PatternList_applyToInput (me, you, rowNumber);
-	MODIFY_FIRST_OF_TWO_END
-}
-
-FORM (MODIFY_RBM_PatternList_applyToOutput, U"RBM & PatternList: Apply to output", nullptr) {
-	NATURAL (rowNumber, U"Row number", U"1")
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (RBM, PatternList)
-		RBM_PatternList_applyToOutput (me, you, rowNumber);
-	MODIFY_FIRST_OF_TWO_END
-}
-
-FORM (MODIFY_RBM_PatternList_learn, U"RBM & PatternList: Learn", nullptr) {
-	POSITIVE (learningRate, U"Learning rate", U"0.001")
-	OK
-DO
-	MODIFY_FIRST_OF_TWO (RBM, PatternList)
-		RBM_PatternList_learn (me, you, learningRate);
-	MODIFY_FIRST_OF_TWO_END
-}
-
-// MARK: - DEEP BELIEF NETWORK
-
-// MARK: New
-
-FORM (NEW1_Create_DeepBeliefNetwork, U"Create DeepBeliefNetwork", nullptr) {
+FORM (NEW1_CreateNetAsDeepBeliefNetwork, U"Create Net as DeepBeliefNetwork", nullptr) {
 	WORD (name, U"Name", U"network")
 	NUMVEC (numbersOfNodes, U"Numbers of nodes", U"{ 30, 50, 20 }")
 	BOOLEAN (inputsAreBinary, U"Inputs are binary", false)
 	OK
 DO
 	CREATE_ONE
-		autoDeepBeliefNetwork result = DeepBeliefNetwork_create (numbersOfNodes, inputsAreBinary);
+		autoNet result = Net_createAsDeepBeliefNet (numbersOfNodes, inputsAreBinary);
 	CREATE_ONE_END (name)
 }
 
 // MARK: Modify
 
-FORM (MODIFY_DeepBeliefNetwork_spreadUp, U"DeepBeliefNetwork: Spread up", nullptr) {
-	RADIO_ENUM (activationType, U"Activation type", kDeepBeliefNetwork_activationType, STOCHASTIC)
+FORM (MODIFY_Net_spreadUp, U"Net: Spread up", nullptr) {
+	RADIO_ENUM (activationType, U"Activation type", kNet_activationType, STOCHASTIC)
 	OK
 DO
-	MODIFY_EACH (DeepBeliefNetwork)
-		DeepBeliefNetwork_spreadUp (me, activationType);
+	MODIFY_EACH (Net)
+		Net_spreadUp (me, activationType);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_DeepBeliefNetwork_spreadDown, U"DeepBeliefNetwork: Spread down", nullptr) {
-	RADIO_ENUM (activationType, U"Activation type", kDeepBeliefNetwork_activationType, DETERMINISTIC)
+FORM (MODIFY_Net_spreadDown, U"Net: Spread down", nullptr) {
+	RADIO_ENUM (activationType, U"Activation type", kNet_activationType, DETERMINISTIC)
 	OK
 DO
-	MODIFY_EACH (DeepBeliefNetwork)
-		DeepBeliefNetwork_spreadDown (me, activationType);
+	MODIFY_EACH (Net)
+		Net_spreadDown (me, activationType);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_DeepBeliefNetwork_spreadUp_reconstruction) {
-	MODIFY_EACH (DeepBeliefNetwork)
-		DeepBeliefNetwork_spreadUp_reconstruction (me);
+DIRECT (MODIFY_Net_spreadUp_reconstruction) {
+	MODIFY_EACH (Net)
+		Net_spreadUp_reconstruction (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_DeepBeliefNetwork_spreadDown_reconstruction) {
-	MODIFY_EACH (DeepBeliefNetwork)
-		DeepBeliefNetwork_spreadDown_reconstruction (me);
+DIRECT (MODIFY_Net_spreadDown_reconstruction) {
+	MODIFY_EACH (Net)
+		Net_spreadDown_reconstruction (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_DeepBeliefNetwork_sampleInput) {
-	MODIFY_EACH (DeepBeliefNetwork)
-		DeepBeliefNetwork_sampleInput (me);
+DIRECT (MODIFY_Net_sampleInput) {
+	MODIFY_EACH (Net)
+		Net_sampleInput (me);
 	MODIFY_EACH_END
 }
 
-DIRECT (MODIFY_DeepBeliefNetwork_sampleOutput) {
-	MODIFY_EACH (DeepBeliefNetwork)
-		DeepBeliefNetwork_sampleOutput (me);
+DIRECT (MODIFY_Net_sampleOutput) {
+	MODIFY_EACH (Net)
+		Net_sampleOutput (me);
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_DeepBeliefNetwork_update, U"DeepBeliefNetwork: Update", nullptr) {
+FORM (MODIFY_Net_update, U"Net: Update", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_EACH (DeepBeliefNetwork)
-		DeepBeliefNetwork_update (me, learningRate);
+	MODIFY_EACH (Net)
+		Net_update (me, learningRate);
 	MODIFY_EACH_END
 }
 
 // MARK: Extract
 
-DIRECT (NEW_DeepBeliefNetwork_extractInputActivities) {
-	CONVERT_EACH (DeepBeliefNetwork)
-		autoMatrix result = DeepBeliefNetwork_extractInputActivities (me);
+DIRECT (NEW_Net_extractInputActivities) {
+	CONVERT_EACH (Net)
+		autoMatrix result = Net_extractInputActivities (me);
 	CONVERT_EACH_END (my name, U"_inputActivities")
 }
 
-DIRECT (NEW_DeepBeliefNetwork_extractOutputActivities) {
-	CONVERT_EACH (DeepBeliefNetwork)
-		autoMatrix result = DeepBeliefNetwork_extractOutputActivities (me);
+DIRECT (NEW_Net_extractOutputActivities) {
+	CONVERT_EACH (Net)
+		autoMatrix result = Net_extractOutputActivities (me);
 	CONVERT_EACH_END (my name, U"_outputActivities")
 }
 
-DIRECT (NEW_DeepBeliefNetwork_extractInputReconstruction) {
-	CONVERT_EACH (DeepBeliefNetwork)
-		autoMatrix result = DeepBeliefNetwork_extractInputReconstruction (me);
+DIRECT (NEW_Net_extractInputReconstruction) {
+	CONVERT_EACH (Net)
+		autoMatrix result = Net_extractInputReconstruction (me);
 	CONVERT_EACH_END (my name, U"_inputReconstruction")
 }
 
-DIRECT (NEW_DeepBeliefNetwork_extractOutputReconstruction) {
-	CONVERT_EACH (DeepBeliefNetwork)
-		autoMatrix result = DeepBeliefNetwork_extractOutputReconstruction (me);
+DIRECT (NEW_Net_extractOutputReconstruction) {
+	CONVERT_EACH (Net)
+		autoMatrix result = Net_extractOutputReconstruction (me);
 	CONVERT_EACH_END (my name, U"_outputReconstruction")
 }
 
-FORM (NEW_DeepBeliefNetwork_extractInputBiases, U"DeepBeliefNetwork: Extract input biases", nullptr) {
+FORM (NEW_Net_extractInputBiases, U"Net: Extract input biases", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (DeepBeliefNetwork)
-		autoMatrix result = DeepBeliefNetwork_extractInputBiases (me, layerNumber);
+	CONVERT_EACH (Net)
+		autoMatrix result = Net_extractInputBiases (me, layerNumber);
 	CONVERT_EACH_END (my name, U"_inputBiases")
 }
 
-FORM (NEW_DeepBeliefNetwork_extractOutputBiases, U"DeepBeliefNetwork: Extract output biases", nullptr) {
+FORM (NEW_Net_extractOutputBiases, U"Net: Extract output biases", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (DeepBeliefNetwork)
-		autoMatrix result = DeepBeliefNetwork_extractOutputBiases (me, layerNumber);
+	CONVERT_EACH (Net)
+		autoMatrix result = Net_extractOutputBiases (me, layerNumber);
 	CONVERT_EACH_END (my name, U"_outputBiases")
 }
 
-FORM (NEW_DeepBeliefNetwork_extractWeights, U"DeepBeliefNetwork: Extract weights", nullptr) {
+FORM (NEW_Net_extractWeights, U"Net: Extract weights", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	CONVERT_EACH (DeepBeliefNetwork)
-		autoMatrix result = DeepBeliefNetwork_extractWeights (me, layerNumber);
+	CONVERT_EACH (Net)
+		autoMatrix result = Net_extractWeights (me, layerNumber);
 	CONVERT_EACH_END (my name, U"_weights")
 }
 
-FORM (NUMMAT_DeepBeliefNetwork_getWeights, U"DeepBeliefNetwork: Get weigths", nullptr) {
+FORM (NUMMAT_Net_getWeights, U"Net: Get weigths", nullptr) {
 	NATURAL (layerNumber, U"Layer number", U"1")
 	OK
 DO
-	NUMMAT_ONE (DeepBeliefNetwork)
-		autonummat result = DeepBeliefNetwork_getWeights_nummat (me, layerNumber);
+	NUMMAT_ONE (Net)
+		autonummat result = Net_getWeights_nummat (me, layerNumber);
 	NUMMAT_ONE_END
 }
 
-// MARK: - RBM & PATTERN
+// MARK: - NET & PATTERN
 
-FORM (MODIFY_DeepBeliefNetwork_PatternList_applyToInput, U"DeepBeliefNetwork & PatternList: Apply to input", nullptr) {
+FORM (MODIFY_Net_PatternList_applyToInput, U"Net & PatternList: Apply to input", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
-		DeepBeliefNetwork_PatternList_applyToInput (me, you, rowNumber);
+	MODIFY_FIRST_OF_TWO (Net, PatternList)
+		Net_PatternList_applyToInput (me, you, rowNumber);
 	MODIFY_FIRST_OF_TWO_END
 }
 
-FORM (MODIFY_DeepBeliefNetwork_PatternList_applyToOutput, U"DeepBeliefNetwork & PatternList: Apply to output", nullptr) {
+FORM (MODIFY_Net_PatternList_applyToOutput, U"Net & PatternList: Apply to output", nullptr) {
 	NATURAL (rowNumber, U"Row number", U"1")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
-		DeepBeliefNetwork_PatternList_applyToOutput (me, you, rowNumber);
+	MODIFY_FIRST_OF_TWO (Net, PatternList)
+		Net_PatternList_applyToOutput (me, you, rowNumber);
 	MODIFY_FIRST_OF_TWO_END
 }
 
-FORM (MODIFY_DeepBeliefNetwork_PatternList_learn, U"DeepBeliefNetwork & PatternList: Learn", nullptr) {
+FORM (MODIFY_Net_PatternList_learn, U"Net & PatternList: Learn", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
-		DeepBeliefNetwork_PatternList_learn (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO (Net, PatternList)
+		Net_PatternList_learn (me, you, learningRate);
 	MODIFY_FIRST_OF_TWO_END
 }
 
-FORM (MODIFY_DeepBeliefNetwork_PatternList_learnByLayer, U"DeepBeliefNetwork & PatternList: Learn by layer", nullptr) {
+FORM (MODIFY_Net_PatternList_learnByLayer, U"Net & PatternList: Learn by layer", nullptr) {
 	POSITIVE (learningRate, U"Learning rate", U"0.001")
 	OK
 DO
-	MODIFY_FIRST_OF_TWO (DeepBeliefNetwork, PatternList)
-		DeepBeliefNetwork_PatternList_learnByLayer (me, you, learningRate);
+	MODIFY_FIRST_OF_TWO (Net, PatternList)
+		Net_PatternList_learnByLayer (me, you, learningRate);
 	MODIFY_FIRST_OF_TWO_END
+}
+
+FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To ActivationList", nullptr) {
+	RADIO_ENUM (activationType, U"Activation type", kNet_activationType, DETERMINISTIC)
+	OK
+DO
+	CONVERT_TWO (Net, PatternList)
+		autoActivationList result = Net_PatternList_to_ActivationList (me, you, activationType);
+	CONVERT_TWO_END (my name, U"_", you -> name)
 }
 
 // MARK: - buttons
@@ -1815,7 +1688,7 @@ void praat_uvafon_gram_init ();
 void praat_uvafon_gram_init () {
 	Thing_recognizeClassesByName (classNetwork,
 		classOTGrammar, classOTHistory, classOTMulti,
-		classRBM, classDeepBeliefNetwork,
+		classLayer, classNet,
 		nullptr);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
@@ -1939,8 +1812,7 @@ void praat_uvafon_gram_init () {
 		praat_addMenuCommand (U"Objects", U"New", U"Create empty Network...", nullptr, 1, NEW1_Create_empty_Network);
 		praat_addMenuCommand (U"Objects", U"New", U"Create rectangular Network...", nullptr, 1, NEW1_Create_rectangular_Network);
 		praat_addMenuCommand (U"Objects", U"New", U"Create rectangular Network (vertical)...", nullptr, 1, NEW1_Create_rectangular_Network_vertical);
-		praat_addMenuCommand (U"Objects", U"New", U"Create RBM...", nullptr, 1, NEW1_Create_RBM);
-		praat_addMenuCommand (U"Objects", U"New", U"Create DeepBeliefNetwork...", nullptr, 1, NEW1_Create_DeepBeliefNetwork);
+		praat_addMenuCommand (U"Objects", U"New", U"Create Net as deep belief network...", nullptr, 1, NEW1_CreateNetAsDeepBeliefNetwork);
 
 	praat_addAction1 (classNetwork, 0, U"Draw...", nullptr, 0, GRAPHICS_Network_draw);
 	praat_addAction1 (classNetwork, 1, U"Tabulate -", nullptr, 0, nullptr);
@@ -1969,50 +1841,30 @@ void praat_uvafon_gram_init () {
 		praat_addAction1 (classNetwork, 0, U"Set outstar...", nullptr, 1, MODIFY_Network_setOutstar);
 		praat_addAction1 (classNetwork, 0, U"Set weight leak...", nullptr, 1, MODIFY_Network_setWeightLeak);
 
-	praat_addAction1 (classRBM, 0, U"Modify", nullptr, 0, nullptr);
-		praat_addAction1 (classRBM, 0, U"Spread up", nullptr, 0, MODIFY_RBM_spreadUp);
-		praat_addAction1 (classRBM, 0, U"Spread down", nullptr, 0, MODIFY_RBM_spreadDown);
-		praat_addAction1 (classRBM, 0, U"Spread up (reconstruction)", nullptr, 0, MODIFY_RBM_spreadUp_reconstruction);
-		praat_addAction1 (classRBM, 0, U"Spread down (reconstruction)", nullptr, 0, MODIFY_RBM_spreadDown_reconstruction);
-		praat_addAction1 (classRBM, 0, U"Sample input", nullptr, 0, MODIFY_RBM_sampleInput);
-		praat_addAction1 (classRBM, 0, U"Sample output", nullptr, 0, MODIFY_RBM_sampleOutput);
-		praat_addAction1 (classRBM, 0, U"Update...", nullptr, 0, MODIFY_RBM_update);
-	praat_addAction1 (classRBM, 0, U"Extract", nullptr, 0, nullptr);
-		praat_addAction1 (classRBM, 0, U"Extract input activities", nullptr, 0, NEW_RBM_extractInputActivities);
-		praat_addAction1 (classRBM, 0, U"Extract output activities", nullptr, 0, NEW_RBM_extractOutputActivities);
-		praat_addAction1 (classRBM, 0, U"Extract input reconstruction", nullptr, 0, NEW_RBM_extractInputReconstruction);
-		praat_addAction1 (classRBM, 0, U"Extract output reconstruction", nullptr, 0, NEW_RBM_extractOutputReconstruction);
-		praat_addAction1 (classRBM, 0, U"Extract input biases", nullptr, 0, NEW_RBM_extractInputBiases);
-		praat_addAction1 (classRBM, 0, U"Extract output biases", nullptr, 0, NEW_RBM_extractOutputBiases);
-		praat_addAction1 (classRBM, 0, U"Extract weights", nullptr, 0, NEW_RBM_extractWeights);
+	praat_addAction1 (classNet, 0, U"Query", nullptr, 0, nullptr);
+		praat_addAction1 (classNet, 0, U"Get weights...", nullptr, 0, NUMMAT_Net_getWeights);
+	praat_addAction1 (classNet, 0, U"Modify", nullptr, 0, nullptr);
+		praat_addAction1 (classNet, 0, U"Spread up...", nullptr, 0, MODIFY_Net_spreadUp);
+		praat_addAction1 (classNet, 0, U"Spread down...", nullptr, 0, MODIFY_Net_spreadDown);
+		praat_addAction1 (classNet, 0, U"Spread up (reconstruction)", nullptr, 0, MODIFY_Net_spreadUp_reconstruction);
+		praat_addAction1 (classNet, 0, U"Spread down (reconstruction)", nullptr, 0, MODIFY_Net_spreadDown_reconstruction);
+		praat_addAction1 (classNet, 0, U"Sample input", nullptr, 0, MODIFY_Net_sampleInput);
+		praat_addAction1 (classNet, 0, U"Sample output", nullptr, 0, MODIFY_Net_sampleOutput);
+		praat_addAction1 (classNet, 0, U"Update...", nullptr, 0, MODIFY_Net_update);
+	praat_addAction1 (classNet, 0, U"Extract", nullptr, 0, nullptr);
+		praat_addAction1 (classNet, 0, U"Extract input activities", nullptr, 0, NEW_Net_extractInputActivities);
+		praat_addAction1 (classNet, 0, U"Extract output activities", nullptr, 0, NEW_Net_extractOutputActivities);
+		praat_addAction1 (classNet, 0, U"Extract input reconstruction", nullptr, 0, NEW_Net_extractInputReconstruction);
+		praat_addAction1 (classNet, 0, U"Extract output reconstruction", nullptr, 0, NEW_Net_extractOutputReconstruction);
+		praat_addAction1 (classNet, 0, U"Extract input biases...", nullptr, 0, NEW_Net_extractInputBiases);
+		praat_addAction1 (classNet, 0, U"Extract output biases...", nullptr, 0, NEW_Net_extractOutputBiases);
+		praat_addAction1 (classNet, 0, U"Extract weights...", nullptr, 0, NEW_Net_extractWeights);
 
-	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, MODIFY_RBM_PatternList_applyToInput);
-	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_RBM_PatternList_applyToOutput);
-	praat_addAction2 (classRBM, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_RBM_PatternList_learn);
-
-	praat_addAction1 (classDeepBeliefNetwork, 0, U"Query", nullptr, 0, nullptr);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Get weights...", nullptr, 0, NUMMAT_DeepBeliefNetwork_getWeights);
-	praat_addAction1 (classDeepBeliefNetwork, 0, U"Modify", nullptr, 0, nullptr);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread up...", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadUp);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread down...", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadDown);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread up (reconstruction)", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadUp_reconstruction);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Spread down (reconstruction)", nullptr, 0, MODIFY_DeepBeliefNetwork_spreadDown_reconstruction);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Sample input", nullptr, 0, MODIFY_DeepBeliefNetwork_sampleInput);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Sample output", nullptr, 0, MODIFY_DeepBeliefNetwork_sampleOutput);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Update...", nullptr, 0, MODIFY_DeepBeliefNetwork_update);
-	praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract", nullptr, 0, nullptr);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input activities", nullptr, 0, NEW_DeepBeliefNetwork_extractInputActivities);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output activities", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputActivities);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input reconstruction", nullptr, 0, NEW_DeepBeliefNetwork_extractInputReconstruction);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output reconstruction", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputReconstruction);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract input biases...", nullptr, 0, NEW_DeepBeliefNetwork_extractInputBiases);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract output biases...", nullptr, 0, NEW_DeepBeliefNetwork_extractOutputBiases);
-		praat_addAction1 (classDeepBeliefNetwork, 0, U"Extract weights...", nullptr, 0, NEW_DeepBeliefNetwork_extractWeights);
-
-	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_applyToInput);
-	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_applyToOutput);
-	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_learn);
-	praat_addAction2 (classDeepBeliefNetwork, 1, classPatternList, 1, U"Learn by layer...", nullptr, 0, MODIFY_DeepBeliefNetwork_PatternList_learnByLayer);
+	praat_addAction2 (classNet, 1, classPatternList, 1, U"Apply to input...", nullptr, 0, MODIFY_Net_PatternList_applyToInput);
+	praat_addAction2 (classNet, 1, classPatternList, 1, U"Apply to output...", nullptr, 0, MODIFY_Net_PatternList_applyToOutput);
+	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_Net_PatternList_learn);
+	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn by layer...", nullptr, 0, MODIFY_Net_PatternList_learnByLayer);
+	praat_addAction2 (classNet, 1, classPatternList, 1, U"To ActivationList", nullptr, 0, NEW1_Net_PatternList_to_ActivationList);
 }
 
 /* End of file praat_gram.cpp */

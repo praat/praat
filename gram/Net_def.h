@@ -1,6 +1,6 @@
-/* RBM_def.h
+/* Net_def.h
  *
- * Copyright (C) 2016,2017 Paul Boersma
+ * Copyright (C) 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  */
 
 
-#define ooSTRUCT RBM
-oo_DEFINE_CLASS (RBM, Daata)
+#define ooSTRUCT Layer
+oo_DEFINE_CLASS (Layer, Daata)
 
 	oo_QUESTION (inputsAreBinary)
 	oo_INTEGER (numberOfInputNodes)
@@ -32,13 +32,18 @@ oo_DEFINE_CLASS (RBM, Daata)
 	oo_DOUBLE_VECTOR (inputReconstruction, numberOfInputNodes)
 	oo_DOUBLE_VECTOR (outputReconstruction, numberOfOutputNodes)
 
-	#if oo_DECLARING
-		void v_info ()
-			override;
-	#endif
-
-oo_END_CLASS (RBM)
+oo_END_CLASS (Layer)
 #undef ooSTRUCT
 
 
-/* End of file RBM_def.h */
+
+#define ooSTRUCT Net
+oo_DEFINE_CLASS (Net, Daata)
+
+	oo_COLLECTION_OF (OrderedOf, layers, Layer, 0)
+
+oo_END_CLASS (Net)
+#undef ooSTRUCT
+
+
+/* End of file Net_def.h */

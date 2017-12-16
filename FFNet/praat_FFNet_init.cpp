@@ -39,7 +39,6 @@
 #include "FFNet_ActivationList_Categories.h"
 #include "FFNet_PatternList_ActivationList.h"
 #include "FFNet_PatternList_Categories.h"
-#include "RBM_extensions.h"
 
 #include "praat_FFNet.h"
 
@@ -555,14 +554,6 @@ DO
 	CONVERT_TWO_END (result -> name)
 }
 
-/*********** RBM & PatternList **********************************/
-
-DIRECT (NEW1_RBM_PatternList_to_ActivationList) {
-	CONVERT_TWO (RBM, PatternList)
-		autoActivationList result = RBM_PatternList_to_ActivationList (me, you);
-	CONVERT_TWO_END (my name, U"_", you -> name)
-}
-
 void praat_uvafon_FFNet_init () {
 	Thing_recognizeClassesByName (classFFNet, nullptr);
 
@@ -641,8 +632,6 @@ void praat_uvafon_FFNet_init () {
 	
 	praat_addAction2 (classPatternList, 1, classCategories, 1, U"To FFNet...", nullptr, 0, NEW1_PatternList_Categories_to_FFNet);
 	
-	praat_addAction2 (classRBM, 1, classPatternList, 1, U"To ActivationList", nullptr, 0, NEW1_RBM_PatternList_to_ActivationList);
-		
 	INCLUDE_MANPAGES (manual_FFNet_init)
 }
 
