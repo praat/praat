@@ -1523,7 +1523,7 @@ DO
 // MARK: Modify
 
 FORM (MODIFY_Net_spreadUp, U"Net: Spread up", nullptr) {
-	RADIO_ENUM (activationType, U"Activation type", kNet_activationType, STOCHASTIC)
+	RADIO_ENUM (activationType, U"Activation type", kLayer_activationType, STOCHASTIC)
 	OK
 DO
 	MODIFY_EACH (Net)
@@ -1532,7 +1532,7 @@ DO
 }
 
 FORM (MODIFY_Net_spreadDown, U"Net: Spread down", nullptr) {
-	RADIO_ENUM (activationType, U"Activation type", kNet_activationType, DETERMINISTIC)
+	RADIO_ENUM (activationType, U"Activation type", kLayer_activationType, DETERMINISTIC)
 	OK
 DO
 	MODIFY_EACH (Net)
@@ -1674,7 +1674,7 @@ DO
 }
 
 FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To ActivationList", nullptr) {
-	RADIO_ENUM (activationType, U"Activation type", kNet_activationType, DETERMINISTIC)
+	RADIO_ENUM (activationType, U"Activation type", kLayer_activationType, DETERMINISTIC)
 	OK
 DO
 	CONVERT_TWO (Net, PatternList)

@@ -17,22 +17,45 @@
  */
 
 
-#define ooSTRUCT Layer
-oo_DEFINE_CLASS (Layer, Daata)
+#define ooSTRUCT RBMLayer
+oo_DEFINE_CLASS (RBMLayer, Layer)
 
 	oo_QUESTION (inputsAreBinary)
-	oo_INTEGER (numberOfInputNodes)
-	oo_INTEGER (numberOfOutputNodes)
 	oo_DOUBLE_MATRIX (weights, numberOfInputNodes, numberOfOutputNodes)
 	oo_DOUBLE_VECTOR (inputBiases, numberOfInputNodes)
 	oo_DOUBLE_VECTOR (outputBiases, numberOfOutputNodes)
 
-	oo_DOUBLE_VECTOR (inputActivities, numberOfInputNodes)
-	oo_DOUBLE_VECTOR (outputActivities, numberOfOutputNodes)
 	oo_DOUBLE_VECTOR (inputReconstruction, numberOfInputNodes)
 	oo_DOUBLE_VECTOR (outputReconstruction, numberOfOutputNodes)
 
-oo_END_CLASS (Layer)
+	#if oo_DECLARING
+		virtual void v_spreadUp (kLayer_activationType)
+			override;
+		virtual void v_sampleInput ()
+			override;
+		virtual void v_spreadDown (kLayer_activationType)
+			override;
+		virtual void v_spreadDown_reconstruction ()
+			override;
+		virtual void v_spreadUp_reconstruction ()
+			override;
+		virtual void v_update (double learningRate)
+			override;
+		virtual autoMatrix v_extractInputReconstruction ()
+			override;
+		virtual autoMatrix v_extractOutputReconstruction ()
+			override;
+		virtual autoMatrix v_extractInputBiases ()
+			override;
+		virtual autoMatrix v_extractOutputBiases ()
+			override;
+		virtual autoMatrix v_extractWeights ()
+			override;
+		virtual autonummat v_getWeights_nummat ()
+			override;
+	#endif
+
+oo_END_CLASS (RBMLayer)
 #undef ooSTRUCT
 
 
@@ -40,7 +63,7 @@ oo_END_CLASS (Layer)
 #define ooSTRUCT Net
 oo_DEFINE_CLASS (Net, Daata)
 
-	oo_COLLECTION_OF (OrderedOf, layers, Layer, 0)
+	oo_AUTO_OBJECT (LayerList, 0, layers)
 
 oo_END_CLASS (Net)
 #undef ooSTRUCT

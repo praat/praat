@@ -18,11 +18,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Layer.h"
+
 #include "Table.h"
 #include "PatternList.h"
 #include "ActivationList.h"
 
-#include "Net_enums.h"
 #include "Net_def.h"
 
 void Net_initAsDeepBeliefNet (Net me, numvec numbersOfNodes, bool inputsAreBinary);
@@ -31,8 +32,8 @@ autoNet Net_createAsDeepBeliefNet (numvec numbersOfNodes, bool inputsAreBinary);
 
 void Net_addRBMLayer (Net me, integer numberOfOutputNodes);
 
-void Net_spreadUp (Net me, kNet_activationType activationType);
-void Net_spreadDown (Net me, kNet_activationType activationType);
+void Net_spreadUp (Net me, kLayer_activationType activationType);
+void Net_spreadDown (Net me, kLayer_activationType activationType);
 void Net_spreadDown_reconstruction (Net me);
 void Net_spreadUp_reconstruction (Net me);
 void Net_sampleInput (Net me);
@@ -44,7 +45,7 @@ void Net_PatternList_applyToOutput (Net me, PatternList thee, integer rowNumber)
 void Net_PatternList_learn (Net me, PatternList thee, double learningRate);
 void Net_PatternList_learnByLayer (Net me, PatternList thee, double learningRate);
 
-autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, kNet_activationType activationType);
+autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, kLayer_activationType activationType);
 
 autoMatrix Net_extractInputActivities (Net me);
 autoMatrix Net_extractOutputActivities (Net me);

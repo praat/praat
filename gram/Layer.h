@@ -1,4 +1,6 @@
-/* Net_enums.h
+#ifndef _Layer_h_
+#define _Layer_h_
+/* Layer.h
  *
  * Copyright (C) 2017 Paul Boersma
  *
@@ -16,9 +18,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-enums_begin (kNet_activationType, 0)
-	enums_add (kNet_activationType, 0, DETERMINISTIC, U"deterministic")
-	enums_add (kNet_activationType, 1, STOCHASTIC, U"stochastic")
-enums_end (kNet_activationType, 1, DETERMINISTIC)
+#include "Collection.h"
+#include "Matrix.h"
+#include "Layer_enums.h"
+#include "Layer_def.h"
 
-/* End of file Net_enums.h */
+Collection_define (LayerList, OrderedOf, Layer) {
+};
+
+/* End of file Layer.h */
+#endif
