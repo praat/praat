@@ -44,7 +44,7 @@ autoSimpleString SimpleString_concat_c (SimpleString me, const char32 *str);
 void SimpleString_replace_c (SimpleString me, const char32 *replacement);
 /* replace my value with new string */
 
-long SimpleString_length (SimpleString me);
+integer SimpleString_length (SimpleString me);
 /* return my length */
 
 void SimpleString_draw (SimpleString me, Graphics g, double xWC, double yWC);

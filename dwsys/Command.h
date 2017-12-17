@@ -44,7 +44,7 @@ int Command_undo (Command me);
 #pragma mark - class CommandHistory
 
 Collection_define (CommandHistory, OrderedOf, Command) {
-	long current;
+	integer current;
 };
 
 /* Active data structure. 'current' is position of the cursor in the list */

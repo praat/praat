@@ -30,7 +30,7 @@
 	All drawing outside [ymin, ymax] is clipped.
 */
 
-void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x, double r, double w, double ymin, double ymax) {
+void Graphics_boxAndWhiskerPlot (Graphics g, double data[], integer ndata, double x, double r, double w, double ymin, double ymax) {
 	int lineType = Graphics_inqLineType (g);
 
 	Melder_assert (r > 0.0 && w > 0.0);
@@ -60,7 +60,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 	}
 
 	double mean = 0.0;
-	for (long i = 1; i <= ndata; i++) {
+	for (integer i = 1; i <= ndata; i++) {
 		mean += data[i];
 	}
 	mean /= ndata;
@@ -80,7 +80,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 		First process data from below (data are sorted).
 	*/
 
-	long i = 1, ie = ndata;
+	integer i = 1, ie = ndata;
 	while (i <= ie && data[i] < ymin) {
 		i++;
 	}
@@ -173,7 +173,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 	}
 }
 
-void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double xdata[], long xnumberOfData, double ydata[], long ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel) {
+void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, double xdata[], integer xnumberOfData, double ydata[], integer ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel) {
 	int fontSize = Graphics_inqFontSize (g);
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -183,7 +183,7 @@ void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double x
 	NUMsort_d (xnumberOfData, xsorted.peek());
 	NUMsort_d (ynumberOfData, ysorted.peek());
 
-	long numberOfData = xnumberOfData < ynumberOfData ? xnumberOfData : ynumberOfData;
+	integer numberOfData = xnumberOfData < ynumberOfData ? xnumberOfData : ynumberOfData;
 	numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
 	double un = pow (0.5, 1.0 / numberOfQuantiles);
 	double u1 = 1.0 - un;
@@ -195,7 +195,7 @@ void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double x
 		ymin = NUMquantile (ynumberOfData, ysorted.peek(), u1);
 		ymax = NUMquantile (ynumberOfData, ysorted.peek(), un);
 	}
-	for (long i = 1; i <= numberOfQuantiles; i++) {
+	for (integer i = 1; i <= numberOfQuantiles; i++) {
 		double ui = i == 1 ? u1 : (i == numberOfQuantiles ? un : (i - 0.3175) / (numberOfQuantiles + 0.365));
 		double qx = NUMquantile (xnumberOfData, xsorted.peek(), ui);
 		double qy = NUMquantile (ynumberOfData, ysorted.peek(), ui);
@@ -208,8 +208,8 @@ void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double x
 	Graphics_setFontSize (g, fontSize);
 }
 
-void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, long numberOfColumns, double zmin, double zmax, double cellSizeFactor, bool randomFillOrder) {
-	long numberOfCells = numberOfRows * numberOfColumns;
+void Graphics_matrixAsSquares (Graphics g, double **matrix, integer numberOfRows, integer numberOfColumns, double zmin, double zmax, double cellSizeFactor, bool randomFillOrder) {
+	integer numberOfCells = numberOfRows * numberOfColumns;
 	autoPermutation p = Permutation_create (numberOfCells);
 	if (randomFillOrder) {
 		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
@@ -220,10 +220,10 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 	Graphics_inqWindow (g, &x1WC, &x2WC, &y1WC, &y2WC);
 	double dx = fabs (x2WC - x1WC) / numberOfColumns;
 	double dy = fabs (y2WC - y1WC) / numberOfRows;
-	for (long i = 1; i <= numberOfCells; i++) {
-		long index = Permutation_getValueAtIndex (p.get(), i);
-		long irow = (index - 1) / numberOfColumns + 1;
-		long icol = (index - 1) % numberOfColumns + 1;
+	for (integer i = 1; i <= numberOfCells; i++) {
+		integer index = Permutation_getValueAtIndex (p.get(), i);
+		integer irow = (index - 1) / numberOfColumns + 1;
+		integer icol = (index - 1) % numberOfColumns + 1;
 		double z = matrix[irow][icol];
 		z = z < zmin ? zmin : z;
 		z = z > zmax ? zmax : z;
@@ -247,7 +247,7 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 	}
 }
 
-void Graphics_lagPlot (Graphics g, double data[], long numberOfData, double xmin, double xmax, long lag, int labelSize, const char32 *plotLabel) {
+void Graphics_lagPlot (Graphics g, double data[], integer numberOfData, double xmin, double xmax, integer lag, int labelSize, const char32 *plotLabel) {
 	if (lag < 0 || lag >= numberOfData) {
 		return;
 	}
@@ -255,7 +255,7 @@ void Graphics_lagPlot (Graphics g, double data[], long numberOfData, double xmin
 	Graphics_setFontSize (g, labelSize);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	// plot x[i] vertically and x[i-lag] horizontally
-	for (long i = 1; i <= numberOfData - lag; i++) {
+	for (integer i = 1; i <= numberOfData - lag; i++) {
 		double x = data[i + lag], y = data[i];
 		if (x >= xmin && x <= xmax && y >= xmin && y <= xmax) {
 			Graphics_text (g, x, y, plotLabel);

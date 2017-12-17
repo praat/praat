@@ -73,7 +73,7 @@ static double norm1 (std::complex<double> *x) {
 	return fabs (x -> real()) + fabs (imag(*x));
 }
 
-static void xShiftTerm (std::complex<double> *alpha, std::complex<double> *x, long i, std::complex<double> *p, std::complex<double> *q) {
+static void xShiftTerm (std::complex<double> *alpha, std::complex<double> *x, integer i, std::complex<double> *p, std::complex<double> *q) {
 // Calculate p*q = (-1)^i (1-x^(alpha+i))/(alpha+i)i! 
 	std::complex<double> zero = 0.0;
 	double tol = 3e-7, xlim = 39.0, di = i;
@@ -111,7 +111,7 @@ static void continuedFractionExpansion (std::complex<double> *alpha, std::comple
 	std::complex<double> zero (0.0,0.0);
 	std::complex<double> q0 = 1.0, q1 = 1.0, p0 = *x, p1 = *x + 1.0 - *alpha, r0;
 	double tol1 = 1e10, tol2 = 1e-10, error = 1e-18;
-	for (long i = 1; i <= 100000; i++) {
+	for (integer i = 1; i <= 100000; i++) {
 		double di = i;
 		if (p0 != zero && q0 != zero && q1 != zero) {
 			r0 = p0 / q0;
@@ -144,13 +144,13 @@ static void continuedFractionExpansion (std::complex<double> *alpha, std::comple
 
 static void shiftAlphaByOne (std::complex<double> *alpha, std::complex<double> *x, std::complex<double> *result) {
 	std::complex<double> one (1.0, 0.0);
-	long n = (long) (*alpha - *x).real();
+	integer n = (integer) (*alpha - *x).real();
 	if (n > 0) {
 		std::complex<double> cn = n + 1;
 		std::complex<double> alpha1 = *alpha - cn;
 		std::complex<double> term = one / *x;
 		std::complex<double> sum = term;
-		for (long i = 1; i <= n; i ++) {
+		for (integer i = 1; i <= n; i ++) {
 			cn = n - i + 1;
 			term *= (alpha1 + cn) / *x;
 			sum += term;
@@ -167,13 +167,13 @@ static void shiftAlphaByOne (std::complex<double> *alpha, std::complex<double> *
 void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im, double *result_re, double *result_im) {
 	std::complex<double> alpha (alpha_re, alpha_im), x (x_re, x_im), result;
 	double xlim = 1.0;
-	long ibuf = 34;
+	integer ibuf = 34;
 	std::complex<double> re = 0.36787944117144232, one = 1.0, p, q, r;
 	if (norm1 (& x) < xlim || x.real() < 0.0 && fabs (imag (x)) < xlim) {
 		shiftAlphaByOne (& alpha, & one, & r);
 		result = re / r;
-		long ilim = (long) (x / re).real();
-		for (long i = 0; i <= ibuf - ilim; i++) {
+		integer ilim = (integer) (x / re).real();
+		for (integer i = 0; i <= ibuf - ilim; i++) {
 			xShiftTerm (& alpha, & x, i, & p, & q);
 			result += p * q;
 		}
@@ -229,7 +229,7 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 * (x+I*y)^-n = (r*exp(I theta))^-n, where r = sqrt(x^2+y^2) and theta = ArcTan (y/x)
 * (1+I*a)^-n = (1+a^2)^(-n/2) exp(-I*n*theta)
 */
-void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwidth, long gamma, double initialPhase, double t0, double *response_re, double *response_im) {
+void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwidth, integer gamma, double initialPhase, double t0, double *response_re, double *response_im) {
 	
 	double b = NUM2pi * bandwidth, w0 = NUM2pi * centre_frequency, theta = atan (2.0 * centre_frequency / bandwidth);
 	double gamma_n = exp (NUMlnGamma (gamma)), bpow = pow (b, -gamma);

@@ -49,7 +49,7 @@ void NUMrankColumns (double **m, integer rb, integer re, integer cb, integer ce)
 		}
 		NUMsort2 (nr, v.peek(), index.peek());
 		NUMrank (nr, v.peek());
-		for (long i = 1; i <= nr; i ++) {
+		for (integer i = 1; i <= nr; i ++) {
 			m [rb + index [i] - 1] [j] = v [i];
 		}
 	}

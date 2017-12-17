@@ -446,8 +446,8 @@ double NUMdeterminant_cholesky (double **a, integer n) {
 
 	// Restore lower from upper */
 
-	for (long i = 1; i < n; i ++) {
-		for (long j = i + 1; j <= n; j ++) {
+	for (integer i = 1; i < n; i ++) {
+		for (integer j = i + 1; j <= n; j ++) {
 			a [j] [i] = a [i] [j];
 		}
 	}
@@ -595,7 +595,7 @@ void NUMprincipalComponents (double **a, integer n, integer nComponents, double 
 	for (integer i = 1; i <= n; i ++) {
 		for (integer j = 1; j <= nComponents; j ++) {
 			real80 s = 0.0;
-			for (long k = 1; k <= n; k ++) {
+			for (integer k = 1; k <= n; k ++) {
 				s += a [k] [i] * evec [k] [j]; /* times sqrt(eigenvalue) ?? */
 			}
 			pc [i] [j] = (real) s;
