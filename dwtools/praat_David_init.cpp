@@ -1001,9 +1001,9 @@ FORM (REAL_Covariance_getSignificanceOfOneVariance, U"Covariance: Get significan
 	OK
 DO
 	NUMBER_ONE (Covariance)
-		double result, chisq; integer ndf;
+		double result, chisq, ndf;
 		Covariance_getSignificanceOfOneVariance (me, index, value, & result, & chisq, & ndf);
-	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf)
+	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf, U")")
 }
 
 FORM (REAL_Covariance_getSignificanceOfVariancesRatio, U"Covariance: Get significance of variances ratio", nullptr) {
@@ -1018,7 +1018,7 @@ DO
 	NUMBER_ONE (Covariance)
 		double result, f, df;
 		Covariance_getSignificanceOfVariancesRatio (me, index1, index2, value, & result, & f , & df);
-	NUMBER_ONE_END (U" (= probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df)
+	NUMBER_ONE_END (U" (= probability, based on F = ", f, U" and ndf1 = ", df, U" and ndf2 = ", df, U")")
 }
 
 FORM (REAL_Covariance_getFractionVariance, U"Covariance: Get fraction variance", U"Covariance: Get fraction variance...") {
