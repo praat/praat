@@ -138,17 +138,17 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 	}
 }
 
-int get_int32_le (char *byte) {
-	return (((uint8)byte[0]<<0) | ((uint8)byte[1]<<8) | ((uint8)byte[2]<<16) | ((uint8)byte[3]<<24));
+int get_int32_le (char *ch) {
+	return (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8) | ((uint8)ch[2]<<16) | ((uint8)ch[3]<<24));
 }
 
-short get_int16_le (char *byte) {
-       return (((uint8)byte[0]<<0) | ((uint8)byte[1]<<8));
+short get_int16_le (char *ch) {
+       return (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8));
 }
 
-int get_set_int32_le (char *byte) {
-       int i32 = (((uint8)byte[0]<<0) | ((uint8)byte[1]<<8) | ((uint8)byte[2]<<16) | ((uint8)byte[3]<<24));
-       int *p32 = (int *) byte;
+int get_set_int32_le (char *ch) {
+       int i32 = (((uint8)ch[0]<<0) | ((uint8)ch[1]<<8) | ((uint8)ch[2]<<16) | ((uint8)ch[3]<<24));
+       int *p32 = (int *) ch;
        *p32 = i32;
        return i32;
 }
@@ -159,9 +159,9 @@ int get_set_int32_le (char *byte) {
 	A serious bug in his code for the phontab_to_bigendian procedure has been corrected.
 	A better solution would be:
 		espeak-ng should read a little endian int32 as 4 unsigned bytes:
-			int32 i = (byte[0]<<0) | (byte[1]<<8) | (byte[2]<<16) | (byte[3]<<24);
+			int32 i = (ch[0]<<0) | (ch[1]<<8) | (ch[2]<<16) | (ch[3]<<24);
 		a int16 (short) as 2 unsigned bytes:
-			int16 i = (byte[0]<<0) | (byte[1]<<8);
+			int16 i = (ch[0]<<0) | (ch[1]<<8);
 		Then no conversion of data files would be necessary.
 
 */

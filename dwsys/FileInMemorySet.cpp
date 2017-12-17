@@ -114,7 +114,7 @@ autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemo
 autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
 	try {
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
-		for (long ifile = 1; ifile <= my size; ifile ++) {
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
 			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
 				autoFileInMemory item = Data_copy (fim);
@@ -130,7 +130,7 @@ autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_st
 autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
 	try {
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
-		for (long ifile = 1; ifile <= my size; ifile ++) {
+		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = static_cast<FileInMemory> (my at [ifile]);
 			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
 				thy addItem_ref (fim);
@@ -207,7 +207,7 @@ integer FileInMemorySet_lookUp (FileInMemorySet me, const char32 *path) {
 
 integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
 	integer numberOfMatches = 0;
-	for (long ifile = 1; ifile <= my size; ifile ++) {
+	for (integer ifile = 1; ifile <= my size; ifile ++) {
 		FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
 		if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
 			numberOfMatches ++;

@@ -25,7 +25,7 @@
  */
 void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im, double *result_re, double *result_im);
 
-void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwidth, long gamma, double initialPhase, double t0, double *response_re, double *response_im);
+void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwidth, integer gamma, double initialPhase, double t0, double *response_re, double *response_im);
 
 #endif
 

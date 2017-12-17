@@ -2,7 +2,7 @@
 #define _SSCP_h_
 /* SSCP.h
  *
- * Copyright (C) 1993-2014, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,22 +43,22 @@ Collection_define (CovarianceList, OrderedOf, Covariance) {
 	}
 };
 
-void SSCP_init (SSCP me, long dimension, long storage);
+void SSCP_init (SSCP me, integer dimension, integer storage);
 
-autoSSCP SSCP_create (long dimension);
+autoSSCP SSCP_create (integer dimension);
 
 void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, const char32 *label, int fontSize);
 
 double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence);
 
 void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence,
-	long d1, long d2, double xmin, double xmax, double ymin, double ymax, int garnish);
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int garnish);
 
 void SSCP_setNumberOfObservations (SSCP me, double numberOfObservations);
 
-void SSCP_setCentroid (SSCP me, long component, double value); // only SSCP & Covariance
+void SSCP_setCentroid (SSCP me, integer component, double value); // only SSCP & Covariance
 
-void SSCP_setValue (SSCP me, long row, long col, double value); // only SSCP & Covariance
+void SSCP_setValue (SSCP me, integer row, integer col, double value); // only SSCP & Covariance
 
 double SSCP_getNumberOfObservations (SSCP me);
 
@@ -66,15 +66,15 @@ double SSCP_getDegreesOfFreedom (SSCP me);
 
 double SSCP_getTotalVariance (SSCP me);
 
-double SSCP_getCumulativeContributionOfComponents (SSCP me, long from, long to);
+double SSCP_getCumulativeContributionOfComponents (SSCP me, integer from, integer to);
 
 double SSCP_getLnDeterminant (SSCP me);
 
-double SSCP_getConcentrationEllipseArea(SSCP me, double scale, bool confidence, long d1, long d2);
+double SSCP_getConcentrationEllipseArea(SSCP me, double scale, bool confidence, integer d1, integer d2);
 
-double SSCP_getFractionVariation (SSCP me, long from, long to);
+double SSCP_getFractionVariation (SSCP me, integer from, integer to);
 
-autoSSCP TableOfReal_to_SSCP (TableOfReal me, long rowb, long rowe, long colb, long cole);
+autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole);
 
 autoTableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh);
 
@@ -100,7 +100,7 @@ autoTableOfReal SSCP_to_TableOfReal (SSCP me);
 
 autoTableOfReal SSCP_extractCentroid (SSCP me);
 
-autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, long numberOfData);
+autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer numberOfData);
 /* Generate a table with data based on the covariance matrix */
 
 void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf);
@@ -126,11 +126,11 @@ void SSCP_unExpandPCA (SSCP me);
 
 autoCCA SSCP_to_CCA (SSCP me, integer ny);
 
-autoCovariance Covariance_create (long dimension);
+autoCovariance Covariance_create (integer dimension);
 
-autoCovariance Covariance_createSimple (char32 *covars, char32 *centroid, long numberOfObservations);
+autoCovariance Covariance_createSimple (char32 *covars, char32 *centroid, integer numberOfObservations);
 
-autoCovariance Covariance_create_reduceStorage (long dimension, long storage);
+autoCovariance Covariance_create_reduceStorage (integer dimension, integer storage);
 /*
 	storage 0 or >= dimension: complete matrix
 	storage 1: only diagonal
@@ -141,11 +141,11 @@ autoCovariance Covariance_create_reduceStorage (long dimension, long storage);
     See also SSCP_expand () for usage.
 */
 
-autoCorrelation Correlation_create (long dimension);
+autoCorrelation Correlation_create (integer dimension);
 
-autoCorrelation Correlation_createSimple (char32 *s_correlations, char32 *s_centroid, long numberOfObservations);
+autoCorrelation Correlation_createSimple (char32 *s_correlations, char32 *s_centroid, integer numberOfObservations);
 
-autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, long numberOfTests, int method);
+autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, integer numberOfTests, int method);
 /*
 	if (method == 1)
 		Confidence intervals by Ruben's approximation
@@ -168,27 +168,27 @@ double Covariance_getProbabilityAtPosition_string (Covariance me, char32 *xpos);
 double Covariance_getProbabilityAtPosition (Covariance me, double x[]);
 /* evaluate the pdf(x,mu,Sigma) at x */
 
-autoCovariance SSCP_to_Covariance (SSCP me, long numberOfConstraints);
+autoCovariance SSCP_to_Covariance (SSCP me, integer numberOfConstraints);
 
 autoSSCP Covariance_to_SSCP (Covariance me);
 
-void SSCP_testDiagonality_bartlett (SSCP me, long numberOfContraints, double *chisq, double *prob, double *df);
+void SSCP_testDiagonality_bartlett (SSCP me, integer numberOfContraints, double *chisq, double *prob, double *df);
 
-void Correlation_testDiagonality_bartlett (Correlation me, long numberOfContraints, double *chisq, double *prob, double *df);
+void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContraints, double *chisq, double *prob, double *df);
 /* Test if a Correlation matrix is diagonal, Morrison pp. 116-118 */
 
 autoCorrelation SSCP_to_Correlation (SSCP me);
 
 void Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, double *df);
 
-void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,	double *probability, double *t, double *df);
+void Covariance_getSignificanceOfOneMean (Covariance me, integer index, double mu,	double *probability, double *t, double *df);
 
-void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, long index2, double mu, int paired, int equalVariances,
+void Covariance_getSignificanceOfMeansDifference (Covariance me, integer index1, integer index2, double mu, int paired, int equalVariances,
 	double *probability, double *t, double *ndf);
 
-void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *probability, double *chisq, double *ndf);
+void Covariance_getSignificanceOfOneVariance (Covariance me, integer index, double sigmasq, double *probability, double *chisq, double *ndf);
 
-void Covariance_getSignificanceOfVariancesRatio (Covariance me, long index1, long index2, double ratio, double *probability,
+void Covariance_getSignificanceOfVariancesRatio (Covariance me, integer index1, integer index2, double ratio, double *probability,
 	double *f, double *df);
 
 double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *prob, double *fisher, double *df1, double *df2);
@@ -222,12 +222,12 @@ autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2);
 
 autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double *v1, double *v2);
 
-autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, long d1, long d2);
+autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, integer d1, integer d2);
 
 /* For inheritors */
 
 void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale,
-	bool confidence, const char32 *label, long d1, long d2, double xmin, double xmax,
+	bool confidence, const char32 *label, integer d1, integer d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, bool garnish);
 
 void SSCPList_getEllipsesBoundingBoxCoordinates (SSCPList me, double scale, bool confidence,

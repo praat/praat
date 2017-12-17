@@ -1,6 +1,6 @@
 /* VocalTractTier.cpp
  *
- * Copyright (C) 2012, 2015-2017 David Weenink
+ * Copyright (C) 2012-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ void VocalTract_drawSegments (VocalTract me, Graphics g, double maxLength, doubl
 	Graphics_setInner (g);
 	double maxCrossection = sqrt (maxArea);
 	Graphics_setWindow (g, 0.0, maxLength, -maxCrossection, maxCrossection);
-	for (long isection = 1; isection <= my nx; isection ++) {
+	for (integer isection = 1; isection <= my nx; isection ++) {
 		double x1 = (isection - 1.0) * my dx, x2 = x1 + my dx;
 		double crosssection2 = sqrt (my z [1] [isection]);
 		Graphics_line (g, x1, crosssection2, x2, crosssection2);
@@ -104,7 +104,7 @@ void VocalTractTier_addVocalTract_copy (VocalTractTier me, double time, VocalTra
 		autoVocalTractPoint thee = VocalTract_to_VocalTractPoint (vocaltract, time);
 		if (my d_vocalTracts.size > 0) {
 			VocalTractPoint vtp = my d_vocalTracts.at [1];
-			long numberOfSections = vtp -> d_vocalTract -> nx;
+			integer numberOfSections = vtp -> d_vocalTract -> nx;
 			if (numberOfSections != vocaltract -> nx) {
 				Melder_throw (U"The number of sections should be equal to ", numberOfSections, U".");
 			}
@@ -119,11 +119,11 @@ autoVocalTract VocalTractTier_to_VocalTract (VocalTractTier me, double time) {
 	try {
 		Melder_assert (my d_vocalTracts.size > 0);
 		VocalTractPoint vtp = my d_vocalTracts.at [1];
-		long numberOfSections = vtp -> d_vocalTract -> nx;
+		integer numberOfSections = vtp -> d_vocalTract -> nx;
 		autoVocalTract thee = VocalTract_create (numberOfSections, vtp -> d_vocalTract -> dx);
-		for (long isection = 1; isection <= numberOfSections; isection ++) {
+		for (integer isection = 1; isection <= numberOfSections; isection ++) {
 			autoRealTier section = RealTier_create (my xmin, my xmax);
-			for (long i = 1; i <= my d_vocalTracts.size; i ++) {
+			for (integer i = 1; i <= my d_vocalTracts.size; i ++) {
 				VocalTractPoint vtpi = my d_vocalTracts.at [i];
 				double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (section.get(), vtpi -> number, areai);
@@ -143,29 +143,29 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 		}
 		integer numberOfFrames = Melder_ifloor ((my xmax - my xmin) / timeStep);
 		VocalTractPoint vtp = my d_vocalTracts.at [1];
-		long numberOfSections = vtp -> d_vocalTract -> nx;
+		integer numberOfSections = vtp -> d_vocalTract -> nx;
 		double samplingPeriod = 1.0 / (1000.0 * numberOfSections);
 		autoNUMmatrix<double> area (1, numberOfFrames, 1, numberOfSections + 1);
 		autoNUMvector<double> areavec (1, numberOfSections + 1);
 		autoLPC thee = LPC_create (my xmin, my xmax, numberOfFrames, timeStep, timeStep / 2.0, numberOfSections, samplingPeriod);
 		// interpolate each section
-		for (long isection = 1; isection <= numberOfSections; isection ++) {
+		for (integer isection = 1; isection <= numberOfSections; isection ++) {
 			autoRealTier sectioni = RealTier_create (my xmin, my xmax);
-			for (long i = 1; i <= my d_vocalTracts.size; i ++) {
+			for (integer i = 1; i <= my d_vocalTracts.size; i ++) {
 				VocalTractPoint vtpi = my d_vocalTracts.at [i];
 				double areai = vtpi -> d_vocalTract -> z [1] [isection];
 				RealTier_addPoint (sectioni.get(), vtpi -> number, areai);
 			}
-			for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+			for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 				double time = thy x1 + (iframe - 1) * thy dx;
 				area [iframe] [isection] = RealTier_getValueAtTime (sectioni.get(), time);
 				area [iframe] [numberOfSections + 1] = 0.0001;   // normalisation is area[n+1] = 0.0001
 			}
 		}
-		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
+		for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 			LPC_Frame frame = & thy d_frames [iframe];
 			LPC_Frame_init (frame, numberOfSections);
-			for (long i = 1; i <= numberOfSections + 1; i ++) {
+			for (integer i = 1; i <= numberOfSections + 1; i ++) {
 				areavec [i] = area [iframe] [numberOfSections + 1 - i];
 			}
 			NUMlpc_area_to_lpc (areavec.peek(), numberOfSections + 1, frame -> a);

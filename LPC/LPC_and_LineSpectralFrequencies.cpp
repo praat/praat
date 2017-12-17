@@ -30,7 +30,7 @@
  * From: Joseph Rothweiler (1999), "On Polynomial Reduction in the Computation of LSP Frequencies." 
  * 	IEEE Trans. on ASSP 7, 592--594.
  */
-static void cos2x (double *g, long order) {
+static void cos2x (double *g, integer order) {
 	for (integer i = 2; i <= order; i ++) {
 		for (integer j = order; j > i; j --) {
 			g [j - 2] -= g [j];
