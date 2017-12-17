@@ -111,12 +111,12 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 	you can sometimes use write(fd, "", 0). However, there is no portable
 	solution, nor a way to delete blocks at the beginning.
 */
-static void MelderFile_truncate (MelderFile me, integer size) {
-#if defined(_WIN32)
-
+static void MelderFile_truncate (MelderFile me, integer size)
+{
+#if defined (_WIN32)
 	HANDLE hFile;
 	DWORD fdwAccess = GENERIC_READ | GENERIC_WRITE, fPos;
-	DWORD fdwShareMode = 0; // File cannot be shared
+	DWORD fdwShareMode = 0;   // file cannot be shared
 	LPSECURITY_ATTRIBUTES lpsa = nullptr;
 	DWORD fdwCreate = OPEN_EXISTING;
 	LARGE_INTEGER fileSize;
@@ -125,25 +125,23 @@ static void MelderFile_truncate (MelderFile me, integer size) {
 
 	hFile = CreateFileW (Melder_peek32toW (my path), fdwAccess, fdwShareMode, lpsa, fdwCreate, FILE_ATTRIBUTE_NORMAL, nullptr);
 	
-	Melder_require (hFile != INVALID_HANDLE_VALUE, U"Can't open file ", me, U".");
+	Melder_require (hFile != INVALID_HANDLE_VALUE, U"Cannot open file ", me, U".");
 
 	// Set current file pointer to position 'size'
 
 	fileSize.LowPart = size;
 	fileSize.HighPart = 0; /* Limit the file size to 2^32 - 2 bytes */
-	fPos = SetFilePointer (hFile, fileSize.LowPart, &fileSize.HighPart, FILE_BEGIN);
-	Melder_require (fPos != 0xFFFFFFFF, U"Can't set the position at size ", size, U"for file ", me, U".");
+	fPos = SetFilePointer (hFile, fileSize.LowPart, & fileSize.HighPart, FILE_BEGIN);
+	Melder_require (fPos != 0xFFFFFFFF, U"Can't set the position at size ", size, U" for file ", me, U".");
 
 	// Limit the file size as the current position of the file pointer.
 
 	SetEndOfFile (hFile);
 	CloseHandle (hFile);
-
-#elif defined(linux) || defined(macintosh)
-
+#elif defined (linux) || defined (macintosh)
 	MelderFile_close (me);
 	int succes = truncate (Melder_peek32to8 (my path), size);
-	Melder_require (succes == 0, U"Truncating failed for file ", MelderFile_messageName (me), U" (", Melder_peek8to32 (strerror (errno)), U").");
+	Melder_require (succes == 0, U"Truncating failed for file ", me, U" (", Melder_peek8to32 (strerror (errno)), U").");
 #else
 	Melder_throw (U"Don't know what to do.");
 #endif
