@@ -1732,7 +1732,7 @@ end:
 	}
 }
 
-void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *p_prob, double *p_chisq, integer *p_df) {
+void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *p_prob, double *p_chisq, double *p_df) {
 	double var = my data [index] [index];
 	double prob = undefined, chisq = undefined;
 	double df = my numberOfObservations - 1.0;
@@ -1740,7 +1740,6 @@ void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double 
 	checkOneIndex (me, index);
 
 	if (var > 0.0) {
-
 		chisq = df;
 		if (sigmasq > 0.0) {
 			chisq = df * var / sigmasq;
