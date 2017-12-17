@@ -355,7 +355,7 @@ DIRECT (INTEGER_Categories_difference) {
 	NUMBER_COUPLE (Categories)
 		integer result;
 		double fraction;
-		OrderedOfString_difference (me, you, & result, &fraction);
+		OrderedOfString_difference (me, you, & result, & fraction);
 	NUMBER_COUPLE_END (U" (difference)")
 }
 

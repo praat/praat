@@ -168,14 +168,14 @@ double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString
 	return my size == 0 ? 0.0 : (0.0 + numberOfDifferences) / my size;
 }
 
-int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, long *ndif, double *fraction) {
+int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, integer *ndif, double *fraction) {
 	*ndif = 0;
 	*fraction = 1.0;
 	if (my size != thy size) {
 		Melder_flushError (U"OrderedOfString_difference: the numbers of items differ");
 		return 0;
 	}
-	for (long i = 1; i <= my size; i ++) {
+	for (integer i = 1; i <= my size; i ++) {
 		if (! Data_equal (my at [i], thy at [i])) {
 			(*ndif) ++;
 		}
