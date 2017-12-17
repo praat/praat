@@ -47,7 +47,7 @@ void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, long *
 /* Precondition: count[1..thy size] exists */
 
 /* To be removed Praat 4.2.4 2004040427 */
-int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, long *ndif, double *fraction);
+int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, integer *ndif, double *fraction);
 
 double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString thee);
 
