@@ -680,7 +680,7 @@ static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Alignment settings", nullptr)
 		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
-		for (long i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
+		for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
 			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
 		}
 		BOOLEAN (includeWords,    U"Include words",    my default_align_includeWords ())
