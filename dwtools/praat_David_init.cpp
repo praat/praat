@@ -1001,7 +1001,8 @@ FORM (REAL_Covariance_getSignificanceOfOneVariance, U"Covariance: Get significan
 	OK
 DO
 	NUMBER_ONE (Covariance)
-		double result, chisq; integer ndf;
+		double result, chisq;
+		integer ndf;
 		Covariance_getSignificanceOfOneVariance (me, index, value, & result, & chisq, & ndf);
 	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and ndf = ", ndf)
 }

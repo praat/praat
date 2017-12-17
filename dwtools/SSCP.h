@@ -186,7 +186,7 @@ void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,	
 void Covariance_getSignificanceOfMeansDifference (Covariance me, long index1, long index2, double mu, int paired, int equalVariances,
 	double *probability, double *t, double *ndf);
 
-void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *probability, double *chisq, long *ndf);
+void Covariance_getSignificanceOfOneVariance (Covariance me, long index, double sigmasq, double *probability, double *chisq, integer *ndf);
 
 void Covariance_getSignificanceOfVariancesRatio (Covariance me, long index1, long index2, double ratio, double *probability,
 	double *f, double *df);
