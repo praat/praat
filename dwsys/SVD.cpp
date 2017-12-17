@@ -86,7 +86,7 @@ static void NUMtranspose_d (double **m, integer n) {
 */
 void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
 	if (numberOfRows < numberOfColumns) {
-		my isTransposed = numberOfRows < numberOfColumns;
+		my isTransposed = true;
 		integer tmp = numberOfRows; numberOfRows = numberOfColumns; numberOfColumns = tmp;
 	}
 	my numberOfRows = numberOfRows;
@@ -167,9 +167,9 @@ double SVD_getTolerance (SVD me) {
 	The only thing that we have to do afterwards is transposing the (small) V matrix
 	because the SVD-object has row vectors in v.
 	The sv's are already sorted.
-	int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long *lda,
-		double *s, double *u, long *ldu, double *vt, long *ldvt, double *work,
-		long *lwork, long *info);
+	int NUMlapack_dgesvd (char *jobu, char *jobvt, integer *m, integer *n, double *a, integer *lda,
+		double *s, double *u, integer *ldu, double *vt, integer *ldvt, double *work,
+		integer *lwork, integer *info);
 */
 void SVD_compute (SVD me) {
 	try {

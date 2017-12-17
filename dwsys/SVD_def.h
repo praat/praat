@@ -1,6 +1,6 @@
 /* SVD_def.h
  *
- * Copyright (C) 1994-2008 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,26 @@ oo_DEFINE_CLASS (SVD, Daata)
 
 	oo_DOUBLE (tolerance)
 	oo_INTEGER (numberOfRows)
-	oo_INTEGER (numberOfColumns) // invariant: numberOfRows >= numberOfColumns!
+	oo_INTEGER (numberOfColumns) // new invariant: numberOfRows >= numberOfColumns!
 	oo_FROM (1)
 		oo_QUESTION (isTransposed)
 	oo_ENDFROM
-	oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
-	oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+	#if oo_READING 
+		if (numberOfRows < numberOfColumns) {
+			oo_DOUBLE_MATRIX (v, numberOfRows, numberOfRows)
+			oo_DOUBLE_MATRIX (u, numberOfColumns, numberOfRows)
+			isTransposed = true;
+			integer tmp = numberOfRows; numberOfRows = numberOfColumns; numberOfColumns = tmp;
+		} else {
+			isTransposed = formatVersion < 1 ? false : isTransposed;
+			oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
+			oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+		}
+	#else
+		oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
+		oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+	#endif
 	oo_DOUBLE_VECTOR (d, numberOfColumns)
-
 	#if oo_DECLARING
 		void v_info ()
 			override;
