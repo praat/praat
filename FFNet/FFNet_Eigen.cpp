@@ -52,7 +52,7 @@ void FFNet_Eigen_drawIntersection (FFNet me, Eigen eigen, Graphics g, integer pc
 		integer unitOffset = my nInputs + 1;
 		double c1 = 0.0, c2 = 0.0, bias = my w [my wLast [unitOffset + i]];
 		double x [6], y [6], xs [3], ys [3]; 
-		long ns = 0;
+		integer ns = 0;
 		for (integer j = 1; j <= my nInputs; j ++) {
 			c1 += my w [my wFirst [unitOffset + i] + j - 1] * eigen -> eigenvectors [ix] [j];
 			c2 += my w [my wFirst [unitOffset + i] + j - 1] * eigen -> eigenvectors [iy] [j];

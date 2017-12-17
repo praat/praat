@@ -38,7 +38,7 @@
 #include "FFNet_def.h"
 
 /* Parameters:
- *  long nLayers	    : the #layers in the net (exclusive the inputs)
+ *  integer nLayers	    : the #layers in the net (exclusive the inputs)
  *    nUnitsInLayer	    : array[0..nLayers] the #units in each layer
  *						  nUnitsInLayer[0] : #inputs
  *						  nUnitsInLayer[nLayers] :#outputs
@@ -47,7 +47,7 @@
  *    *activity		    : array[1..nNodes] with activities
  *  outputLabels	    : labels belonging to the outputs
  *  BOOKKEEPING:
- *  long nNodes		    : total #nodes: bias modelled as unit with constant activity)
+ *  integer nNodes		    : total #nodes: bias modelled as unit with constant activity)
  *    *isbias		    : array[1..nNodes] set 1 if node is bias else 0
  *    *nodeFirst	    : array[1..nNodes] first node connected to this unit
  *    *nodeLast:	    : array[1..nNodes] last node connected to this unit
@@ -59,8 +59,8 @@
  *    *error		    : array[1..nNodes] the error at node
  *    *dw		    	: array[1..nWeights] total derivative for weights
  *    *dwi		   		: array[1..nWeights] derivative per pattern
- *  long dimension		: dimension of minimizer space (<= my nWeights)
- *  long nPatterns	    : the #patterns to be learned
+ *  integer dimension		: dimension of minimizer space (<= my nWeights)
+ *  integer nPatterns	    : the #patterns to be learned
  * double **inputPattern: matrix[1..nPatterns][1..nInputs]
  * double **targetActivation: matrix[1..nPatterns][1..nOutputs]
  * double accumulatedCost : accumulated costs of testing/training with patterns
@@ -116,7 +116,7 @@
  *  copy everything except minimizer, patterns and inputs.
  */
 
-void FFNet_init (FFNet me, long numberOfInputs, integer nodesInLayer1, integer nodesInLayer2,
+void FFNet_init (FFNet me, integer numberOfInputs, integer nodesInLayer1, integer nodesInLayer2,
 	integer numberOfOutputs, bool outputsAreLinear);
 
 autoFFNet FFNet_create (integer numberOfInputs, integer numberInLayer1, integer numberInLayer2,

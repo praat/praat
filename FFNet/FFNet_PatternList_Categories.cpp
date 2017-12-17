@@ -48,7 +48,7 @@ double FFNet_PatternList_Categories_getCosts_average (FFNet me, PatternList p, C
 	return ( isundef (costs) ? undefined : costs / p -> ny );
 }
 
-void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c, long maxNumOfEpochs, double tolerance, double learningRate, double momentum, int costFunctionType) {
+void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c, integer maxNumOfEpochs, double tolerance, double learningRate, double momentum, int costFunctionType) {
 	_FFNet_PatternList_Categories_checkDimensions (me, p, c);
 	autoActivationList activation = FFNet_Categories_to_ActivationList (me, c);
 	double min, max;
@@ -56,7 +56,7 @@ void FFNet_PatternList_Categories_learnSD (FFNet me, PatternList p, Categories c
 	FFNet_PatternList_ActivationList_learnSD (me, p, activation.get(), maxNumOfEpochs, tolerance, learningRate, momentum, costFunctionType);
 }
 
-void FFNet_PatternList_Categories_learnSM (FFNet me, PatternList p, Categories c, long maxNumOfEpochs, double tolerance, int costFunctionType) {
+void FFNet_PatternList_Categories_learnSM (FFNet me, PatternList p, Categories c, integer maxNumOfEpochs, double tolerance, int costFunctionType) {
 	_FFNet_PatternList_Categories_checkDimensions (me, p, c);
 	autoActivationList activation = FFNet_Categories_to_ActivationList (me, c);
 	double min, max;
@@ -72,9 +72,9 @@ autoCategories FFNet_PatternList_to_Categories (FFNet me, PatternList thee, int 
 
 		autoCategories him = Categories_create ();
 
-		for (long k = 1; k <= thy ny; k ++) {
+		for (integer k = 1; k <= thy ny; k ++) {
 			FFNet_propagate (me, thy z [k], nullptr);
-			long index = FFNet_getWinningUnit (me, labeling);
+			integer index = FFNet_getWinningUnit (me, labeling);
 			autoSimpleString item = Data_copy (my outputCategories->at [index]);
 			his addItem_move (item.move());
 		}
