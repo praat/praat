@@ -194,7 +194,7 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 /* 
 * We have to scale the amplitude "a" of the gammatone such that the response is 0 dB at the peak (w=w0);
 * 
-* To calculate the spectrum of the finite gammatone 
+* To calculate the spectrum of the truncated gammatone 
 * 		g(t) = t^(n-1)*exp(-b*t)cos(w0*t+phi) for 0 < t <= T
 * 		g(t) = 0 for t > T
 * we can write
@@ -229,20 +229,20 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 * (x+I*y)^-n = (r*exp(I theta))^-n, where r = sqrt(x^2+y^2) and theta = ArcTan (y/x)
 * (1+I*a)^-n = (1+a^2)^(-n/2) exp(-I*n*theta)
 */
-void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwidth, integer gamma, double initialPhase, double t0, double *response_re, double *response_im) {
+void gammaToneFilterResponseAtCentreFrequency (double centre_frequency, double bandwidth, double gamma, double initialPhase, double truncationTime, double *response_re, double *response_im) {
 	
 	double b = NUM2pi * bandwidth, w0 = NUM2pi * centre_frequency, theta = atan (2.0 * centre_frequency / bandwidth);
 	double gamma_n = exp (NUMlnGamma (gamma)), bpow = pow (b, -gamma);
 	std::complex<double> expiphi (cos (initialPhase), sin(initialPhase)), expmiphi = conj (expiphi);
 	std::complex<double> expnitheta (cos (gamma * theta), - sin(gamma * theta));
-	std::complex<double> expiw0t0 (cos (w0 * t0), sin (w0 * t0));
+	std::complex<double> expiw0T (cos (w0 * truncationTime), sin (w0 * truncationTime));
 	std::complex<double> peak = expnitheta * pow (1.0 + 4.0 * (w0 / b) * (w0 / b), - 0.5 * gamma);
 	double result1_re, result1_im, result2_re, result2_im;
-	NUMincompleteGammaFunction (gamma, 0.0, b * t0, 0.0,           & result1_re, & result1_im);
-	NUMincompleteGammaFunction (gamma, 0.0, b * t0, 2.0 * w0 * t0, & result2_re, & result2_im);
+	NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 0.0,           & result1_re, & result1_im);
+	NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 2.0 * w0 * truncationTime, & result2_re, & result2_im);
 	std::complex<double> result1 (result1_re, result1_im), result2 (result2_re, result2_im);
 	std::complex<double> filterResponseAtResonance = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
-		expiw0t0 * (expiphi * result1 + expmiphi * peak * result2));
+		expiw0T * (expiphi * result1 + expmiphi * peak * result2));
 	if (response_re) {
 		*response_re = filterResponseAtResonance.real ();
 	}
@@ -250,6 +250,5 @@ void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwid
 		*response_im = filterResponseAtResonance.imag ();
 	}
 }
-
 
 /* End of file NUMcomplex.cpp */
