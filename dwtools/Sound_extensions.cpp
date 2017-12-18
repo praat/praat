@@ -823,7 +823,7 @@ autoSound Sound_filterByGammaToneFilter (Sound me, double centre_frequency, doub
 		autoSound thee = Sounds_convolve (me, gammaTone.get(), kSounds_convolve_scaling::INTEGRAL, kSounds_convolve_signalOutsideTimeDomain::ZERO);
 		
 		double response_re, response_im;
-		gammaToneFilterResponseAtResonance (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin, & response_re, & response_im);
+		gammaToneFilterResponseAtCentreFrequency (centre_frequency, bandwidth, gamma, initialPhase, my xmax - my xmin, & response_re, & response_im);
 		
 		double scale = 1.0 / sqrt (response_re * response_re + response_im * response_im);
 		for (integer i = 1; i <= thy nx; i ++) {
