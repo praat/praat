@@ -164,7 +164,7 @@ static void shiftAlphaByOne (std::complex<double> *alpha, std::complex<double> *
 }
 
 // Gamma[alpha,x] = integral{x, infty, t^(alpha-1)exp(-t)dt}, Gamma[alpha]= Gamma[alpha,0]
-void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im, double *result_re, double *result_im) {
+dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im) {
 	std::complex<double> alpha (alpha_re, alpha_im), x (x_re, x_im), result;
 	double xlim = 1.0;
 	integer ibuf = 34;
@@ -181,12 +181,7 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 		shiftAlphaByOne (& alpha, & x, & r);
 		result = exp (-x + alpha * log (x)) / r;
 	}
-	if (result_re) {
-		*result_re = result.real();
-	}
-	if (result_im) {
-		*result_im = result.imag();
-	}
+	return {result.real(), result.imag()};
 }
 
 // End of translated fortran code
@@ -229,7 +224,7 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 * (x+I*y)^-n = (r*exp(I theta))^-n, where r = sqrt(x^2+y^2) and theta = ArcTan (y/x)
 * (1+I*a)^-n = (1+a^2)^(-n/2) exp(-I*n*theta)
 */
-void gammaToneFilterResponseAtCentreFrequency (double centre_frequency, double bandwidth, double gamma, double initialPhase, double truncationTime, double *response_re, double *response_im) {
+dcomplex gammaToneFilterResponseAtCentreFrequency (double centre_frequency, double bandwidth, double gamma, double initialPhase, double truncationTime) {
 	
 	double b = NUM2pi * bandwidth, w0 = NUM2pi * centre_frequency, theta = atan (2.0 * centre_frequency / bandwidth);
 	double gamma_n = exp (NUMlnGamma (gamma)), bpow = pow (b, -gamma);
@@ -237,18 +232,13 @@ void gammaToneFilterResponseAtCentreFrequency (double centre_frequency, double b
 	std::complex<double> expnitheta (cos (gamma * theta), - sin(gamma * theta));
 	std::complex<double> expiw0T (cos (w0 * truncationTime), sin (w0 * truncationTime));
 	std::complex<double> peak = expnitheta * pow (1.0 + 4.0 * (w0 / b) * (w0 / b), - 0.5 * gamma);
-	double result1_re, result1_im, result2_re, result2_im;
-	NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 0.0,           & result1_re, & result1_im);
-	NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 2.0 * w0 * truncationTime, & result2_re, & result2_im);
-	std::complex<double> result1 (result1_re, result1_im), result2 (result2_re, result2_im);
-	std::complex<double> filterResponseAtResonance = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
+	dcomplex r1 = NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 0.0);
+	dcomplex r2 = NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 2.0 * w0 * truncationTime);
+	std::complex<double> result1 (r1.re, r1.im), result2 (r2.re, r2.im);
+	//std::complex<double> result1 (result1_re, result1_im), result2 (result2_re, result2_im);
+	std::complex<double> response = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
 		expiw0T * (expiphi * result1 + expmiphi * peak * result2));
-	if (response_re) {
-		*response_re = filterResponseAtResonance.real ();
-	}
-	if (response_im) {
-		*response_im = filterResponseAtResonance.imag ();
-	}
+	return {response.real (), response.imag ()};
 }
 
 /* End of file NUMcomplex.cpp */
