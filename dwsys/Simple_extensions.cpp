@@ -40,7 +40,7 @@ void SimpleString_append_c (SimpleString me, const char32 *str) {
 	if (! str) {
 		return;
 	}
-	long myLength = str32len (my string);
+	integer myLength = str32len (my string);
 	my string = (char32 *) Melder_realloc (my string, (myLength + str32len (str) + 1) * (integer) sizeof (char32));
 	str32cpy (& my string[myLength], str);
 }
@@ -63,7 +63,7 @@ void SimpleString_replace_c (SimpleString me, const char32 *str) {
 	my string = ptr;
 }
 
-long SimpleString_length (SimpleString me) {
+integer SimpleString_length (SimpleString me) {
 	return str32len (my string);
 }
 

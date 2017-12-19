@@ -73,7 +73,7 @@ static double norm1 (std::complex<double> *x) {
 	return fabs (x -> real()) + fabs (imag(*x));
 }
 
-static void xShiftTerm (std::complex<double> *alpha, std::complex<double> *x, long i, std::complex<double> *p, std::complex<double> *q) {
+static void xShiftTerm (std::complex<double> *alpha, std::complex<double> *x, integer i, std::complex<double> *p, std::complex<double> *q) {
 // Calculate p*q = (-1)^i (1-x^(alpha+i))/(alpha+i)i! 
 	std::complex<double> zero = 0.0;
 	double tol = 3e-7, xlim = 39.0, di = i;
@@ -111,7 +111,7 @@ static void continuedFractionExpansion (std::complex<double> *alpha, std::comple
 	std::complex<double> zero (0.0,0.0);
 	std::complex<double> q0 = 1.0, q1 = 1.0, p0 = *x, p1 = *x + 1.0 - *alpha, r0;
 	double tol1 = 1e10, tol2 = 1e-10, error = 1e-18;
-	for (long i = 1; i <= 100000; i++) {
+	for (integer i = 1; i <= 100000; i++) {
 		double di = i;
 		if (p0 != zero && q0 != zero && q1 != zero) {
 			r0 = p0 / q0;
@@ -144,13 +144,13 @@ static void continuedFractionExpansion (std::complex<double> *alpha, std::comple
 
 static void shiftAlphaByOne (std::complex<double> *alpha, std::complex<double> *x, std::complex<double> *result) {
 	std::complex<double> one (1.0, 0.0);
-	long n = (long) (*alpha - *x).real();
+	integer n = (integer) (*alpha - *x).real();
 	if (n > 0) {
 		std::complex<double> cn = n + 1;
 		std::complex<double> alpha1 = *alpha - cn;
 		std::complex<double> term = one / *x;
 		std::complex<double> sum = term;
-		for (long i = 1; i <= n; i ++) {
+		for (integer i = 1; i <= n; i ++) {
 			cn = n - i + 1;
 			term *= (alpha1 + cn) / *x;
 			sum += term;
@@ -164,16 +164,16 @@ static void shiftAlphaByOne (std::complex<double> *alpha, std::complex<double> *
 }
 
 // Gamma[alpha,x] = integral{x, infty, t^(alpha-1)exp(-t)dt}, Gamma[alpha]= Gamma[alpha,0]
-void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im, double *result_re, double *result_im) {
+dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im) {
 	std::complex<double> alpha (alpha_re, alpha_im), x (x_re, x_im), result;
 	double xlim = 1.0;
-	long ibuf = 34;
+	integer ibuf = 34;
 	std::complex<double> re = 0.36787944117144232, one = 1.0, p, q, r;
 	if (norm1 (& x) < xlim || x.real() < 0.0 && fabs (imag (x)) < xlim) {
 		shiftAlphaByOne (& alpha, & one, & r);
 		result = re / r;
-		long ilim = (long) (x / re).real();
-		for (long i = 0; i <= ibuf - ilim; i++) {
+		integer ilim = (integer) (x / re).real();
+		for (integer i = 0; i <= ibuf - ilim; i++) {
 			xShiftTerm (& alpha, & x, i, & p, & q);
 			result += p * q;
 		}
@@ -181,12 +181,7 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 		shiftAlphaByOne (& alpha, & x, & r);
 		result = exp (-x + alpha * log (x)) / r;
 	}
-	if (result_re) {
-		*result_re = result.real();
-	}
-	if (result_im) {
-		*result_im = result.imag();
-	}
+	return {result.real(), result.imag()};
 }
 
 // End of translated fortran code
@@ -194,7 +189,7 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 /* 
 * We have to scale the amplitude "a" of the gammatone such that the response is 0 dB at the peak (w=w0);
 * 
-* To calculate the spectrum of the finite gammatone 
+* To calculate the spectrum of the truncated gammatone 
 * 		g(t) = t^(n-1)*exp(-b*t)cos(w0*t+phi) for 0 < t <= T
 * 		g(t) = 0 for t > T
 * we can write
@@ -229,27 +224,21 @@ void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, 
 * (x+I*y)^-n = (r*exp(I theta))^-n, where r = sqrt(x^2+y^2) and theta = ArcTan (y/x)
 * (1+I*a)^-n = (1+a^2)^(-n/2) exp(-I*n*theta)
 */
-void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwidth, long gamma, double initialPhase, double t0, double *response_re, double *response_im) {
+dcomplex gammaToneFilterResponseAtCentreFrequency (double centre_frequency, double bandwidth, double gamma, double initialPhase, double truncationTime) {
 	
 	double b = NUM2pi * bandwidth, w0 = NUM2pi * centre_frequency, theta = atan (2.0 * centre_frequency / bandwidth);
 	double gamma_n = exp (NUMlnGamma (gamma)), bpow = pow (b, -gamma);
 	std::complex<double> expiphi (cos (initialPhase), sin(initialPhase)), expmiphi = conj (expiphi);
 	std::complex<double> expnitheta (cos (gamma * theta), - sin(gamma * theta));
-	std::complex<double> expiw0t0 (cos (w0 * t0), sin (w0 * t0));
+	std::complex<double> expiw0T (cos (w0 * truncationTime), sin (w0 * truncationTime));
 	std::complex<double> peak = expnitheta * pow (1.0 + 4.0 * (w0 / b) * (w0 / b), - 0.5 * gamma);
-	double result1_re, result1_im, result2_re, result2_im;
-	NUMincompleteGammaFunction (gamma, 0.0, b * t0, 0.0,           & result1_re, & result1_im);
-	NUMincompleteGammaFunction (gamma, 0.0, b * t0, 2.0 * w0 * t0, & result2_re, & result2_im);
-	std::complex<double> result1 (result1_re, result1_im), result2 (result2_re, result2_im);
-	std::complex<double> filterResponseAtResonance = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
-		expiw0t0 * (expiphi * result1 + expmiphi * peak * result2));
-	if (response_re) {
-		*response_re = filterResponseAtResonance.real ();
-	}
-	if (response_im) {
-		*response_im = filterResponseAtResonance.imag ();
-	}
+	dcomplex r1 = NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 0.0);
+	dcomplex r2 = NUMincompleteGammaFunction (gamma, 0.0, b * truncationTime, 2.0 * w0 * truncationTime);
+	std::complex<double> result1 (r1.re, r1.im), result2 (r2.re, r2.im);
+	//std::complex<double> result1 (result1_re, result1_im), result2 (result2_re, result2_im);
+	std::complex<double> response = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
+		expiw0T * (expiphi * result1 + expmiphi * peak * result2));
+	return {response.real (), response.imag ()};
 }
-
 
 /* End of file NUMcomplex.cpp */

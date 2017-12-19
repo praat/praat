@@ -23,9 +23,12 @@
 /* Gamma[alpha,x] = integral{x, infty, t^(alpha-1)exp(-t)dt}, Gamma[alpha]= Gamma[alpha,0]
  * alpha and x are complex numbers with Re(alpha) > 0
  */
-void NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im, double *result_re, double *result_im);
+dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_re, double x_im);
 
-void gammaToneFilterResponseAtResonance (double centre_frequency, double bandwidth, long gamma, double initialPhase, double t0, double *response_re, double *response_im);
+/*
+	Get response of a truncated gammatone filter defined on the interval [0, truncationTime] at the resonance frequency
+*/
+dcomplex gammaToneFilterResponseAtCentreFrequency (double centre_frequency, double bandwidth, double gamma, double initialPhase, double truncationTime);
 
 #endif
 

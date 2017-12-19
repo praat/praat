@@ -26,12 +26,12 @@ autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee
 		autoTableOfReal him = TableOfReal_create (my ny, my nx);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, nullptr, 1, 1);
 
-		for (long i = 1; i <= my ny; i ++) {
+		for (integer i = 1; i <= my ny; i ++) {
 			his rowLabels [i] = Melder_dup (OrderedOfString_itemAtIndex_c (thee, i));
 		}
 
-		for (long i = 1; i <= my ny; i ++) {
-			for (long j = 1; j <= my nx; j ++) {
+		for (integer i = 1; i <= my ny; i ++) {
+			for (integer j = 1; j <= my nx; j ++) {
 				his data [i] [j] = my z [i] [j];
 			}
 		}

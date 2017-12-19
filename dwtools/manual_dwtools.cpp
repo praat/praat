@@ -3514,7 +3514,7 @@ NORMAL (U"A scree plot shows the sorted eigenvalues, from large to "
 	"small, as a function of the eigenvalue index.")
 MAN_END
 
-MAN_BEGIN (U"singular value decomposition", U"djmw", 20120510)
+MAN_BEGIN (U"singular value decomposition", U"djmw", 20171217)
 INTRO (U"The %%singular value decomposition% (SVD) is a matrix factorization algorithm.")
 NORMAL (U"For %m >= %n, the singular value decomposition of a real %m \\xx %n matrix #A is the "
 	"factorization")
@@ -3527,7 +3527,6 @@ DEFINITION (U"are orthogonal matrices. The columns #u__%i_ of #U =[#u__1_, ..., 
 TAG (U"#\\Si [%n \\xx %n] = diag (%\\si__1_, ..., %\\si__%n_)")
 DEFINITION (U"is a real, nonnegative, and diagonal matrix. Its diagonal contains the so called "
 	"%%singular values% %\\si__%i_, where %\\si__1_ \\>_ ... \\>_ %\\si__%n_ \\>_ 0.")
-NORMAL (U"If m < n we store the transposed of ")
 MAN_END
 
 MAN_BEGIN (U"SVD", U"djmw", 20171214)

@@ -103,7 +103,7 @@ integer SortedSetOfLong_Lookup (SortedSetOfLong me, integer number) {
 
 autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFilesOnly) {
 	try {
-		long numberOfRows = openFilesOnly ? my openFiles -> size : my files -> size;
+		integer numberOfRows = openFilesOnly ? my openFiles -> size : my files -> size;
 		autoTable thee = Table_createWithColumnNames (numberOfRows, U"path id size position");
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			FileInMemory fim = static_cast <FileInMemory> (openFilesOnly ? my openFiles -> at [irow] : my files -> at [irow]);
