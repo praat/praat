@@ -44,11 +44,23 @@ for irow to numberOfLines
 	re = Get value: irow, "re"
 	im = Get value: irow, "im"
 	z$ = Get incomplete gamma: i, 0.0, i, i / j
-	pre = number (extractWord$ (z$, ""))
-	pim = number (extractWord$ (z$, "+"))
+	@complex (z$)
+	pre = complex.re
+	pim = complex.im
 	;appendInfoLine: irow, " ", re, " ", im, " ", pre, " ", pim
 	assert abs((pre - re)/pre) < eps && abs ((pim - im)/pim) < eps; 'irow' 'pre' 're' 'pim' 'im' <'z$'>
 endfor
 removeObject: igt
 
+procedure complex: .z$
+	.re = extractNumber (.z$, "")
+	.im = extractNumber (.z$, "+")
+	if .im = undefined
+		; im < 0
+		.index = rindex (.z$, "-")
+		.length = length (.z$)
+		.last$ = mid$ (.z$, .index, .length - .index)
+		.im = number (.last$)
+	endif
+endproc
 appendInfoLine: "test_gammatonefilter.praat OK"
