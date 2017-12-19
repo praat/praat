@@ -383,8 +383,20 @@ autoMatrix structRBMLayer :: v_extractInputBiases () {
 	}
 }
 
+static void Net_checkLayerNumber (Net me, integer layerNumber) {
+	Melder_require (layerNumber >= 1,
+		U"Your layer number (", layerNumber, U") should be positive.");
+	Melder_require (layerNumber <= my layers->size,
+		U"Your layer number (", layerNumber, U") should be at most my number of layers (", my layers->size, U").");
+}
+
 autoMatrix Net_extractInputBiases (Net me, integer layerNumber) {
-	return my layers->at [layerNumber] -> v_extractInputBiases ();
+	try {
+		Net_checkLayerNumber (me, layerNumber);
+		return my layers->at [layerNumber] -> v_extractInputBiases ();
+	} catch (MelderError) {
+		Melder_throw (me, U": input biases not extracted from layer (", layerNumber, U").");
+	}
 }
 
 autoMatrix structRBMLayer :: v_extractOutputBiases () {
@@ -398,7 +410,12 @@ autoMatrix structRBMLayer :: v_extractOutputBiases () {
 }
 
 autoMatrix Net_extractOutputBiases (Net me, integer layerNumber) {
-	return my layers->at [layerNumber] -> v_extractOutputBiases ();
+	try {
+		Net_checkLayerNumber (me, layerNumber);
+		return my layers->at [layerNumber] -> v_extractOutputBiases ();
+	} catch (MelderError) {
+		Melder_throw (me, U": output biases not extracted from layer (", layerNumber, U").");
+	}
 }
 
 autoMatrix structRBMLayer :: v_extractWeights () {
@@ -412,7 +429,12 @@ autoMatrix structRBMLayer :: v_extractWeights () {
 }
 
 autoMatrix Net_extractWeights (Net me, integer layerNumber) {
-	return my layers->at [layerNumber] -> v_extractWeights ();
+	try {
+		Net_checkLayerNumber (me, layerNumber);
+		return my layers->at [layerNumber] -> v_extractWeights ();
+	} catch (MelderError) {
+		Melder_throw (me, U": weights not extracted from layer (", layerNumber, U").");
+	}
 }
 
 autonummat structRBMLayer :: v_getWeights_nummat () {
