@@ -216,7 +216,7 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 			Melder_throw (U"Not a correct Kay file.");
 		int16_t tmp1 = bingeti16LE (f);
 		int16_t tmp2 = bingeti16LE (f);
-		long numberOfChannels = tmp1 == -1 || tmp2 == -1 ? 1 : 2;
+		integer numberOfChannels = tmp1 == -1 || tmp2 == -1 ? 1 : 2;
 		if (chunkSize == 44)
 			if (fread (data, 1, 12, f) < 12) readError ();
 
@@ -236,8 +236,8 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 			Melder_throw (U"Incomplete SD chunk. Please report to paul.boersma@uva.nl.");
 
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / samplingFrequency, samplingFrequency);
-		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-			for (unsigned long i = 1; i <= numberOfSamples; i ++) {
+		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+			for (integer i = 1; i <= numberOfSamples; i ++) {
 				my z [ichan] [i] = (double) bingeti16LE (f) / 32768.0;
 			}
 		}
@@ -253,7 +253,7 @@ autoSound Sound_readFromRawAlawFile (MelderFile file) {
 		double sampleRate = 8000.0;
 		autofile f = Melder_fopen (file, "rb");
 		fseek (f, 0, SEEK_END);
-		long numberOfSamples = ftell (f);
+		integer numberOfSamples = ftell (f);
 		rewind (f);
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); 
 		Melder_readAudioToFloat (f, 1, Melder_ALAW, my z, numberOfSamples);

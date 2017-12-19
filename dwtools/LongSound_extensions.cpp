@@ -160,7 +160,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, integer imin
 		}
 	}
 
-	//  We "have" no samples any integerer.
+	//  We "have" no samples any longer.
 	
 	my imin = 1;
 	my imax = 0;
