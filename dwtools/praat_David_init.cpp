@@ -4859,12 +4859,9 @@ FORM (COMPLEX_Roots_getRoot, U"Roots: Get root", nullptr) {
 	NATURAL (rootNumber, U"Root number", U"1")
 	OK
 DO
-	INFO_ONE (Roots)
-		dcomplex z = Roots_getRoot (me, rootNumber);
-		MelderInfo_open ();
-		MelderInfo_writeLine (z);
-		MelderInfo_close ();
-	INFO_ONE_END
+	NUMBER_ONE (Roots)
+		dcomplex result = Roots_getRoot (me, rootNumber);
+	NUMBER_ONE_END (U"")
 }
 
 FORM (REAL_Roots_getRealPartOfRoot, U"Roots: Get real part", nullptr) {
@@ -4968,7 +4965,7 @@ FORM (COMPLEX_Praat_getIncompleteGamma, U"Get incomplete gamma", U"Get incomplet
 	OK
 DO
 	dcomplex result = NUMincompleteGammaFunction (reAlpha, imAlpha, reX, imX);
-	Melder_information (Melder_dcomplex(result));
+	Melder_information (result);
 END }
 
 /******************** Sound ****************************************/
