@@ -1861,7 +1861,7 @@ DIRECT (NEW_Pitch_to_Matrix) {
 	CONVERT_EACH_END (my name)
 }
 
-DIRECT (NEW_Pitch_to_PitchTier) {
+DIRECT (NEW_Pitch_downto_PitchTier) {
 	CONVERT_EACH (Pitch)
 		autoPitchTier result = Pitch_to_PitchTier (me);
 	CONVERT_EACH_END (my name)
@@ -2746,7 +2746,7 @@ DIRECT (NEW_Strings_to_WordList) {
 
 // MARK: - TABLE; the remainder is in praat_Stat.cpp *****/
 
-DIRECT (NEW_Table_to_Matrix) {
+DIRECT (NEW_Table_downto_Matrix) {
 	CONVERT_EACH (Table)
 		autoMatrix result = Table_to_Matrix (me);
 	CONVERT_EACH_END (my name)
@@ -3212,7 +3212,7 @@ praat_addAction1 (classFormant, 0, U"Hack", nullptr, 0, nullptr);
 		praat_addAction1 (classPitch, 0, U"Hack", nullptr, 1, nullptr);
 		praat_addAction1 (classPitch, 0, U"Kill octave jumps", nullptr, 2, NEW_Pitch_killOctaveJumps);
 		praat_addAction1 (classPitch, 0, U"-- to other types --", nullptr, 1, nullptr);
-		praat_addAction1 (classPitch, 0, U"Down to PitchTier", nullptr, 1, NEW_Pitch_to_PitchTier);
+		praat_addAction1 (classPitch, 0, U"Down to PitchTier", nullptr, 1, NEW_Pitch_downto_PitchTier);
 		praat_addAction1 (classPitch, 0, U"To Matrix", nullptr, 1, NEW_Pitch_to_Matrix);
 
 	praat_addAction1 (classPolygon, 0, U"Polygon help", nullptr, 0, HELP_Polygon_help);
@@ -3328,7 +3328,7 @@ praat_addAction1 (classPolygon, 0, U"Hack -", nullptr, 0, nullptr);
 	praat_addAction1 (classStrings, 0, U"Synthesize", nullptr, 0, nullptr);
 		praat_addAction1 (classStrings, 0, U"To WordList", nullptr, 0, NEW_Strings_to_WordList);
 
-	praat_addAction1 (classTable, 0, U"Down to Matrix", nullptr, 0, NEW_Table_to_Matrix);
+	praat_addAction1 (classTable, 0, U"Down to Matrix", nullptr, 0, NEW_Table_downto_Matrix);
 
 	praat_addAction1 (classTransition, 0, U"Transition help", nullptr, 0, HELP_Transition_help);
 praat_addAction1 (classTransition, 0, U"Draw", nullptr, 0, nullptr);

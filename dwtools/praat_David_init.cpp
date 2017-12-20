@@ -871,7 +871,7 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
-DIRECT (NEW_ComplexSpectrogram_to_Spectrogram) {
+DIRECT (NEW_ComplexSpectrogram_downto_Spectrogram) {
 	CONVERT_EACH (ComplexSpectrogram)
 		autoSpectrogram result = ComplexSpectrogram_to_Spectrogram (me);
 	CONVERT_EACH_END (my name)
@@ -7625,7 +7625,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classComplexSpectrogram, 0, U"ComplexSpectrogram help", nullptr, 0, HELP_ComplexSpectrogram_help);
 	praat_addAction1 (classComplexSpectrogram, 0, DRAW_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classComplexSpectrogram, 0, U"To Sound...", nullptr, 0, NEW_ComplexSpectrogram_to_Sound);
-	praat_addAction1 (classComplexSpectrogram, 0, U"Down to Spectrogram", nullptr, 0, NEW_ComplexSpectrogram_to_Spectrogram);
+	praat_addAction1 (classComplexSpectrogram, 0, U"Down to Spectrogram", nullptr, 0, NEW_ComplexSpectrogram_downto_Spectrogram);
 	praat_addAction1 (classComplexSpectrogram, 0, U"To Spectrum (slice)...", nullptr, 0, NEW_ComplexSpectrogram_to_Spectrum);
 	//praat_addAction1 (classComplexSpectrogram, 0, U"Paint...", 0, 1, DO_Spectrogram_paint);
 

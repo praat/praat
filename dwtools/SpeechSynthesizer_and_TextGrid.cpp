@@ -20,7 +20,6 @@
 	djmw 20111214
 */
 
-//TODO: SpeechSynthesizer crashes on long input strings
 #include "DTW.h"
 #include "Sounds_to_DTW.h"
 #include "Sound_extensions.h"
