@@ -1607,7 +1607,7 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
-DIRECT (NEW_Sound_to_Matrix) {
+DIRECT (NEW_Sound_downto_Matrix) {
 	CONVERT_EACH (Sound)
 		autoMatrix result = Sound_to_Matrix (me);
 	CONVERT_EACH_END (my name)
@@ -2365,7 +2365,7 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 0,   U"Lengthen (PSOLA)...", U"*Lengthen (overlap-add)...", praat_DEPTH_1 | praat_DEPRECATED_2007, NEW_Sound_lengthen_overlapAdd);
 		praat_addAction1 (classSound, 0, U"Deepen band modulation...", nullptr, 1, NEW_Sound_deepenBandModulation);
 		praat_addAction1 (classSound, 0, U"-- cast --", nullptr, 1, nullptr);
-		praat_addAction1 (classSound, 0, U"Down to Matrix", nullptr, 1, NEW_Sound_to_Matrix);
+		praat_addAction1 (classSound, 0, U"Down to Matrix", nullptr, 1, NEW_Sound_downto_Matrix);
 	praat_addAction1 (classSound, 0, U"Filter -", nullptr, 0, nullptr);
 		praat_addAction1 (classSound, 0, U"Filtering tutorial", nullptr, 1, HELP_FilteringTutorial);
 		praat_addAction1 (classSound, 0, U"-- frequency-domain filter --", nullptr, 1, nullptr);
