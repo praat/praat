@@ -571,7 +571,7 @@ void LPC_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer chann
 	Melder_require (frameIndex > 0 && frameIndex <= my nx, U"Frame should be in the range [1, ", my nx, U"].");
 
 	if (channel > 0) {
-		LPC_FrameSound_filter (& (my d_frames [frameIndex]), thee, channel);
+		LPC_Frame_Sound_filter (& (my d_frames [frameIndex]), thee, channel);
 	} else {
 		for (integer ichan = 1; ichan <= thy ny; ichan ++) {
 			LPC_Frame_Sound_filter (& (my d_frames [frameIndex]), thee, ichan);

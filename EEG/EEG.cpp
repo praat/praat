@@ -645,7 +645,7 @@ autoMixingMatrix EEG_to_MixingMatrix (EEG me, integer maxNumberOfIterations, dou
 			TableOfReal_setRowLabel (thee.get(), ichan, my channelNames [ichan]);
 			TableOfReal_setColumnLabel (thee.get(), ichan, Melder_cat (U"ic", ichan));
 		}
-		MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (thee.get(), tables.get(), maxNumberOfIterations, tol, method);
+		MixingMatrix_CrossCorrelationTableList_improveUnmixing (thee.get(), tables.get(), maxNumberOfIterations, tol, method);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MixingMatrix created.");
