@@ -52,18 +52,18 @@ autoPCA Matrix_to_PCA_byColumns (Matrix me);
 void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conservative, double *prob, double *chisq, double *df);
 /* Morrison, Multivariate statistical methods, page 336 */
 
-autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep);
-autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee, integer numberOfDimensions);
+autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep);
+autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, integer numberOfDimensions);
 
-autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, integer numberOfDimensions);
+autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, integer numberOfDimensions);
 
-double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer from, integer to);
+double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer from, integer to);
 /*	Get fraction variance of the table projected in the pca-space.
 	Shorthand for projecting the Covariance of the TableOfReal on the PCA-space
 	and quering the projected Covariance for 'fraction variance'.
 */
 
-autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee);
+autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee);
 /* Reconstruct the original TableOfReal from the PCA and the Configuration */
 
 autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring);

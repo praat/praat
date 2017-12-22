@@ -86,7 +86,7 @@ double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee);
 	Get angle between the eigenplanes, spanned by the first two eigenvectors, .
 */
 
-void Eigen_and_matrix_into_matrix_principalComponents (Eigen me, double **from, integer numberOfRows, integer from_colbegin, double **to, integer numberOfDimensionsToKeep, integer to_colbegin);
+void Eigen_matrix_into_matrix_principalComponents (Eigen me, double **from, integer numberOfRows, integer from_colbegin, double **to, integer numberOfDimensionsToKeep, integer to_colbegin);
 /*
  * Preconditions:
  * 

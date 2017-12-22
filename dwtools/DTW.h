@@ -97,21 +97,21 @@ void DTW_pathQueryRecode (DTW me);
 
 void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, bool garnish);
 
-void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
+void DTW_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, bool garnish);
 
-void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
+void DTW_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double tx, bool garnish);
 
 autoPolygon DTW_to_Polygon (DTW me, double band, int slope);
 
-void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cumulativeDists);
+void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cumulativeDists);
 
 autoMatrix DTW_to_Matrix_distances (DTW me);
 
 autoMatrix DTW_to_Matrix_cumulativeDistances (DTW me, double sakoeChibaBand, int slope);
 
-autoMatrix DTW_and_Polygon_to_Matrix_cumulativeDistances (DTW me, Polygon thee, int localSlope);
+autoMatrix DTW_Polygon_to_Matrix_cumulativeDistances (DTW me, Polygon thee, int localSlope);
 
 autoDTW Matrices_to_DTW (Matrix me, Matrix thee, bool matchStart, bool matchEnd, int slope, double metric);
 
@@ -121,6 +121,6 @@ autoDTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weig
 
 autoDurationTier DTW_to_DurationTier (DTW me);
 
-void DTW_and_Matrix_replace (DTW me, Matrix thee);
+void DTW_Matrix_replace (DTW me, Matrix thee);
 
 #endif /* _DTW_h_ */

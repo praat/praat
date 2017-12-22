@@ -1,6 +1,6 @@
 /* LPC_and_Cepstrumc.cpp
  *
- * Copyright (C) 1994-2011, 2015-2017 David Weenink
+ * Copyright (C) 1994-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
  djmw 20020812 GPL header
  djmw 20080122 float -> double
 */
-/* LPC_and_Cepstrumc.c */
 
 #include "LPC_and_Cepstrumc.h"
 

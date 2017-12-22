@@ -44,7 +44,7 @@ autoPCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 	}
 }
 
-autoSound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer numberOfComponents, integer *channels, integer numberOfChannels) {
+autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer numberOfComponents, integer *channels, integer numberOfChannels) {
 	try {
 		bool channelSelection = channels != 0 && numberOfChannels > 0;
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
@@ -73,11 +73,11 @@ autoSound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, intege
 	}
 }
 
-autoSound Sound_and_PCA_principalComponents (Sound me, PCA thee, integer numberOfComponents) {
-	return Sound_and_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, nullptr, 0);
+autoSound Sound_PCA_principalComponents (Sound me, PCA thee, integer numberOfComponents) {
+	return Sound_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, nullptr, 0);
 }
 
-autoSound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOfComponents, integer *channels, integer numberOfChannels) {
+autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOfComponents, integer *channels, integer numberOfChannels) {
 	try {
 		bool channelSelection = channels != 0 && numberOfChannels > 0;
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
@@ -114,8 +114,8 @@ autoSound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numb
 	}
 }
 
-autoSound Sound_and_PCA_whitenChannels (Sound me, PCA thee, integer numberOfComponents) {
-	return Sound_and_PCA_whitenSelectedChannels (me, thee, numberOfComponents, nullptr, 0);
+autoSound Sound_PCA_whitenChannels (Sound me, PCA thee, integer numberOfComponents) {
+	return Sound_PCA_whitenSelectedChannels (me, thee, numberOfComponents, nullptr, 0);
 }
 
 /* End of file Sound_and_PCA.cpp */

@@ -44,7 +44,7 @@ autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWi
 	double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
 	double minimumPitch, double maximumPitch);
 
-autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee,
+autoSpectrogram Sound_Pitch_to_Spectrogram (Sound me, Pitch thee,
 	double analysisWidth, double dt, double f1_hz, double fmax_hz,
 	double df_hz, double relative_bw);
 

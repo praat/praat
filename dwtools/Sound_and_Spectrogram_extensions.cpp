@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram_extensions.cpp
  *
- * Copyright (C) 1993-2014 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -288,14 +288,14 @@ autoSpectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWi
 		}
 
 		autoPitch thee = Sound_to_Pitch (me, dt, minimumPitch, maximumPitch);
-		autoSpectrogram ff = Sound_and_Pitch_to_Spectrogram (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
+		autoSpectrogram ff = Sound_Pitch_to_Spectrogram (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrogram created.");
 	}
 }
 
-autoSpectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw) {
+autoSpectrogram Sound_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw) {
 	try {
 		double t1, windowDuration = 2.0 * analysisWidth; /* gaussian window */
 		double nyquist = 0.5 / my dx, samplingFrequency = 2.0 * nyquist, fmin_hz = 0.0;

@@ -65,9 +65,9 @@ autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth
  *	tol2 : stop iteration when (E(m)-E(m-1)) / E(m-1) < tol2,
  */
 
-void LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel);
+void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel);
 
-autoSound LPC_and_Sound_filter (LPC me, Sound thee, bool useGain);
+autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain);
 /*
 	E(z) = X(z)A(z),
 	A(z) = 1 + Sum (k=1, k=m, a(k)z^-k);
@@ -78,11 +78,11 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, bool useGain);
 	useGain determines whether the LPC-gain is used in the synthesis.
 */
 
-void LPC_and_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time);
+void LPC_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time);
 
-autoSound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, integer channel, double time);
+autoSound LPC_Sound_filterWithFilterAtTime (LPC me, Sound thee, integer channel, double time);
 
-autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee);
+autoSound LPC_Sound_filterInverse (LPC me, Sound thee);
 /*
 	E(z) = X(z)A(z),
 	A(z) = 1 + Sum (k=1, k=m, a(k)z^-k);
@@ -92,8 +92,8 @@ autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee);
 		e(n) = x(n) + Sum (k=1, m, a(k)x(n-k))
 */
 
-autoSound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, integer channel, double time);
+autoSound LPC_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, integer channel, double time);
 
-void LPC_and_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time);
+void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time);
 
 #endif /* _Sound_and_LPC_h_ */

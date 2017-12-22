@@ -29,7 +29,7 @@
 #include "Simple_extensions.h"
 #include "NUM2.h"
 
-autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutation him) {
+autoCollection Collection_Permutation_permuteItems (Collection me, Permutation him) {
 	try {
 		if (my size != his numberOfElements) {
 			Melder_throw (me, U"The number of elements are not equal.");
@@ -67,7 +67,7 @@ autoCollection Collection_permuteItems (Collection me) {
 	try {
 		autoPermutation p = Permutation_create (my size);
 		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
-		autoCollection thee = Collection_and_Permutation_permuteItems (me, p.get());
+		autoCollection thee = Collection_Permutation_permuteItems (me, p.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": items not permuted.");

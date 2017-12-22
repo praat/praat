@@ -27,14 +27,14 @@
 #include "Eigen_and_TableOfReal.h"
 #include "NUM2.h"
 
-autoTableOfReal Eigen_and_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfReal thee, integer from_col, integer numberOfComponents) {
+autoTableOfReal Eigen_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfReal thee, integer from_col, integer numberOfComponents) {
 	try {
 		if (numberOfComponents <= 0 || numberOfComponents > my numberOfEigenvalues) {
 			numberOfComponents = my numberOfEigenvalues;
 		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfComponents);
-		Eigen_and_TableOfReal_into_TableOfReal_projectRows (me, thee, from_col, him.get(), 1, numberOfComponents);
+		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, from_col, him.get(), 1, numberOfComponents);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		return him;
 	} catch (MelderError) {
@@ -42,7 +42,7 @@ autoTableOfReal Eigen_and_TableOfReal_to_TableOfReal_projectRows (Eigen me, Tabl
 	}
 }
 
-void Eigen_and_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data, integer data_startColumn, TableOfReal to, integer to_startColumn, integer numberOfComponentsToKeep) {
+void Eigen_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data, integer data_startColumn, TableOfReal to, integer to_startColumn, integer numberOfComponentsToKeep) {
 
 	data_startColumn = data_startColumn <= 0 ? 1 : data_startColumn;
 	to_startColumn = to_startColumn <= 0 ? 1 : to_startColumn;

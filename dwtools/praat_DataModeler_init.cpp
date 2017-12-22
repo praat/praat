@@ -163,7 +163,7 @@ DIRECT (REAL_DataModeler_getResidualSumOfSquares) {
 	NUMBER_ONE_END (U"  (for ", n, U" datapoints)")
 }
 
-DIRECT (REAL_DataModeler_getStandardDeviation) {
+DIRECT (REAL_DataModeler_getDataStandardDeviation) {
 	NUMBER_ONE (DataModeler)
 		double result = DataModeler_estimateSigmaY (me);
 	NUMBER_ONE_END (U"")
@@ -556,7 +556,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FormantModeler_drawCumulativeChiScores, U"FormantModeler: Draw cumulative chi scores", nullptr) {
+FORM (GRAPHICS_FormantModeler_drawCumulativeChisqScores, U"FormantModeler: Draw cumulative chi scores", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.0")
 	REAL (fromChisq, U"left Chisq range", U"0.0")
@@ -763,7 +763,7 @@ DO
 	NUMBER_ONE_END (U" Hz^2,  (= residual sum of squares of F", formantNumber, U")")
 }
 
-FORM (REAL_FormantModeler_getStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
+FORM (REAL_FormantModeler_getFormantStandardDeviation, U"FormantModeler: Get formant standard deviation", nullptr) {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
@@ -962,7 +962,7 @@ DO
 	CONVERT_EACH_END (my name, U"_z")
 }
 
-FORM (NEW_FormantModeler_processOutliers, U"", nullptr) {
+FORM (NEW_FormantModeler_to_FormantModeler_processOutliers, U"", nullptr) {
 	POSITIVE (numberOfSigmas, U"Number of sigmas", U"3.0")
 	BOOLEAN (useBandwidth, U"Bandwidths as standard deviation", true)
 	OK
@@ -1200,12 +1200,12 @@ void praat_DataModeler_init () {
 		praat_addAction1 (classDataModeler, 1, U"-- get statistics info --", 0, 1, 0);
 		
 		praat_addAction1 (classDataModeler, 0, U"Get residual sum of squares", 0, 1, REAL_DataModeler_getResidualSumOfSquares);
-		praat_addAction1 (classDataModeler, 0, U"Get data standard deviation", 0, 1, REAL_DataModeler_getStandardDeviation);
+		praat_addAction1 (classDataModeler, 0, U"Get data standard deviation", 0, 1, REAL_DataModeler_getDataStandardDeviation);
 		praat_addAction1 (classDataModeler, 0, U"Get coefficient of determination", 0, 1, REAL_DataModeler_getCoefficientOfDetermination);
 		praat_addAction1 (classDataModeler, 0, U"Report chi squared...", 0, 1, INFO_DataModeler_reportChiSquared);
 		praat_addAction1 (classDataModeler, 0, U"Get degrees of freedom", 0, 1, REAL_DataModeler_getDegreesOfFreedom);
 
-	praat_addAction1 (classDataModeler, 1, U"Modify -", 0, 0, 0);
+		praat_addAction1 (classDataModeler, 1, U"Modify -", 0, 0, 0);
 		praat_addAction1 (classDataModeler, 0, U"Set data weighing...", 0, 1, MODIFY_DataModeler_setDataWeighing);
 		praat_addAction1 (classDataModeler, 0, U"Set tolerance...", 0, 1, MODIFY_DataModeler_setTolerance);
 		praat_addAction1 (classDataModeler, 1, U"-- set parameter values --", 0, 1, 0);
@@ -1233,7 +1233,7 @@ void praat_DataModeler_init () {
 	praat_addAction1 (classFormantModeler, 0, U"Draw estimated tracks...", 0, 1, GRAPHICS_FormantModeler_drawEstimatedTracks);
 	praat_addAction1 (classFormantModeler, 0, U"Draw variances of shifted tracks...", 0, 1, GRAPHICS_FormantModeler_drawVariancesOfShiftedTracks);
 	praat_addAction1 (classFormantModeler, 0, U"Draw outliers marked...", 0, 1, GRAPHICS_FormantModeler_drawOutliersMarked);
-	praat_addAction1 (classFormantModeler, 0, U"Draw cumulative chisq scores...", 0, 1, GRAPHICS_FormantModeler_drawCumulativeChiScores);
+	praat_addAction1 (classFormantModeler, 0, U"Draw cumulative chisq scores...", 0, 1, GRAPHICS_FormantModeler_drawCumulativeChisqScores);
 	praat_addAction1 (classFormantModeler, 0, U"Normal probability plot...", 0, 1, GRAPHICS_FormantModeler_normalProbabilityPlot);
 	praat_addAction1 (classFormantModeler, 0, U"Draw basis function...", 0, 1, GRAPHICS_FormantModeler_drawBasisFunction);
 	
@@ -1256,7 +1256,7 @@ void praat_DataModeler_init () {
 
 		praat_addAction1 (classFormantModeler, 1, U"-- get statistics info --", 0, 1, 0);
 		praat_addAction1 (classFormantModeler, 0, U"Get residual sum of squares...", 0, 1, REAL_FormantModeler_getResidualSumOfSquares);
-		praat_addAction1 (classFormantModeler, 0, U"Get formant standard deviation...", 0, 1, REAL_FormantModeler_getStandardDeviation);
+		praat_addAction1 (classFormantModeler, 0, U"Get formant standard deviation...", 0, 1, REAL_FormantModeler_getFormantStandardDeviation);
 		praat_addAction1 (classFormantModeler, 0, U"Get coefficient of determination...", 0, 1, REAL_FormantModeler_getCoefficientOfDetermination);
 		praat_addAction1 (classFormantModeler, 0, U"Report chi squared...", 0, 1, INFO_FormantModeler_reportChiSquared);
 		praat_addAction1 (classFormantModeler, 0, U"Get degrees of freedom...", 0, 1, REAL_FormantModeler_getDegreesOfFreedom);
@@ -1281,7 +1281,7 @@ void praat_DataModeler_init () {
 	
 	praat_addAction1 (classFormantModeler, 0, U"To Covariance (parameters)...", 0, 0, NEW_FormantModeler_to_Covariance_parameters);
 	praat_addAction1 (classFormantModeler, 0, U"To Table (z-scores)...", 0, 0, NEW_FormantModeler_to_Table_zscores);
-	praat_addAction1 (classFormantModeler, 0, U"To FormantModeler (process outliers)...", 0, 0, NEW_FormantModeler_processOutliers);
+	praat_addAction1 (classFormantModeler, 0, U"To FormantModeler (process outliers)...", 0, 0, NEW_FormantModeler_to_FormantModeler_processOutliers);
 	praat_addAction1 (classFormantModeler, 0, U"Extract DataModeler...", 0, 0, NEW_FormantModeler_extractDataModeler);
 
 	praat_addAction1 (classOptimalCeilingTier, 1, U"View & Edit", 0, praat_ATTRACTIVE | praat_NO_API, WINDOW_OptimalCeilingTier_edit);

@@ -26,9 +26,9 @@
 #include "Eigen.h"
 #include "SSCP.h"
 
-autoSSCP Eigen_and_SSCP_project (Eigen me, SSCP thee);
+autoSSCP Eigen_SSCP_project (Eigen me, SSCP thee);
 
-autoCovariance Eigen_and_Covariance_project (Eigen me, Covariance thee);
+autoCovariance Eigen_Covariance_project (Eigen me, Covariance thee);
 /*
 	Purpose: project the SSCP (thee) on the eigenspace (me): S' = E' S E
 	Returns SSCP-object with square matrix dimension 'my numberOfEigenvalues'

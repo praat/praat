@@ -64,7 +64,7 @@ static void drawPolsF1F2ConcentrationEllipses (Graphics g) {
 static void drawPolsDiscriminantConfiguration (Graphics g) {
 	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.get());
-	autoConfiguration c = Discriminant_and_TableOfReal_to_Configuration (d.get(), me.get(), 2);
+	autoConfiguration c = Discriminant_TableOfReal_to_Configuration (d.get(), me.get(), 2);
 	Configuration_draw (c.get(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, 1, U"", 1);
 }
 

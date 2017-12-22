@@ -182,12 +182,12 @@ static double NUMdmatrix_diagonalityIndex (double **v, integer dimension) {
 	A Fast Algorithm for Joint Diagonalization with Non-orthogonal Transformations and its Application to
 	Blind Source Separation, Journal of Machine Learning Research 5 (2004), 777–800.
 */
-static void Diagonalizer_and_CrossCorrelationTableList_ffdiag (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double delta) {
+static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double delta) {
 	try {
 		integer iter = 0, dimension = my numberOfRows;
 		double **v = my data;
 
-		autoCrossCorrelationTableList ccts = CrossCorrelationTableList_and_Diagonalizer_diagonalize (thee, me);
+		autoCrossCorrelationTableList ccts = CrossCorrelationTableList_Diagonalizer_diagonalize (thee, me);
 		autoNUMmatrix<double> w (1, dimension, 1, dimension);
 		autoNUMmatrix<double> vnew (1, dimension, 1, dimension);
 		autoNUMmatrix<double> cc (1, dimension, 1, dimension);
@@ -297,7 +297,7 @@ static void update_one_column (CrossCorrelationTableList me, double **d, double 
 	}
 }
 
-static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorrelationTableList thee, double *cweights, integer maxNumberOfIterations, double delta) {
+static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorrelationTableList thee, double *cweights, integer maxNumberOfIterations, double delta) {
 	try {
 		CrossCorrelationTable c0 = thy at [1];
 		double **w = my data;
@@ -420,16 +420,16 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 		NUMdmatrices_multiply_VpC (w, wc.peek(), dimension, dimension, p.peek(), dimension); // W = W'*P: final result
 
 		// Calculate the "real" diagonality measure
-	//	double dm = CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
+	//	double dm = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
 
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": no joint diagonalization (qdiag).");
 	}
 }
 
-void MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
+void MixingMatrix_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	autoDiagonalizer him = MixingMatrix_to_Diagonalizer (me);
-	Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (him.get(), thee, maxNumberOfIterations, tol, method);
+	Diagonalizer_CrossCorrelationTableList_improveDiagonality (him.get(), thee, maxNumberOfIterations, tol, method);
 	NUMpseudoInverse (his data, his numberOfRows, his numberOfColumns, my data, 0);
 }
 
@@ -579,7 +579,7 @@ autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, doub
 autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method) {
 	try {
 		autoMixingMatrix him = Sound_to_MixingMatrix (me, startTime, endTime, ncovars, lagStep, maxNumberOfIterations, tol, method);
-		autoSound thee = Sound_and_MixingMatrix_unmix (me, him.get());
+		autoSound thee = Sound_MixingMatrix_unmix (me, him.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not separated.");
@@ -629,9 +629,9 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 	}
 }
 
-void MixingMatrix_and_Sound_improveUnmixing (MixingMatrix me, Sound thee, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method) {
+void MixingMatrix_Sound_improveUnmixing (MixingMatrix me, Sound thee, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method) {
 	autoCrossCorrelationTableList ccs = Sound_to_CrossCorrelationTableList (thee, startTime, endTime, lagStep, ncovars);
-	MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (me, ccs.get(), maxNumberOfIterations, tol, method);
+	MixingMatrix_CrossCorrelationTableList_improveUnmixing (me, ccs.get(), maxNumberOfIterations, tol, method);
 }
 
 autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method) {
@@ -639,7 +639,7 @@ autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTi
 		autoCrossCorrelationTableList ccs = Sound_to_CrossCorrelationTableList (me, startTime, endTime, lagStep, ncovars);
 		autoMixingMatrix thee = MixingMatrix_create (my ny, my ny);
 		MixingMatrix_setRandomGauss (thee.get(), 0.0, 1.0);
-		MixingMatrix_and_CrossCorrelationTableList_improveUnmixing (thee.get(), ccs.get(), maxNumberOfIterations, tol, method);
+		MixingMatrix_CrossCorrelationTableList_improveUnmixing (thee.get(), ccs.get(), maxNumberOfIterations, tol, method);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MixingMatrix created.");
@@ -786,13 +786,13 @@ double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableLis
 
 /************************** CrossCorrelationTables & Diagonalizer *******************************/
 
-double CrossCorrelationTableList_and_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTableList me, Diagonalizer thee, double *w, integer start, integer end) {
-	autoCrossCorrelationTableList him = CrossCorrelationTableList_and_Diagonalizer_diagonalize (me, thee);
+double CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTableList me, Diagonalizer thee, double *w, integer start, integer end) {
+	autoCrossCorrelationTableList him = CrossCorrelationTableList_Diagonalizer_diagonalize (me, thee);
 	double dm = CrossCorrelationTableList_getDiagonalityMeasure (him.get(), w, start, end);
 	return dm;
 }
 
-autoCrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee) {
+autoCrossCorrelationTable CrossCorrelationTable_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee) {
 	try {
 		Melder_require (my numberOfRows == thy numberOfRows, U"The CrossCorrelationTable and the Diagonalizer matrix dimensions should be equal.");
 
@@ -804,12 +804,12 @@ autoCrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (Cr
 	}
 }
 
-autoCrossCorrelationTableList CrossCorrelationTableList_and_Diagonalizer_diagonalize (CrossCorrelationTableList me, Diagonalizer thee) {
+autoCrossCorrelationTableList CrossCorrelationTableList_Diagonalizer_diagonalize (CrossCorrelationTableList me, Diagonalizer thee) {
 	try {
 		autoCrossCorrelationTableList him = CrossCorrelationTableList_create ();
 		for (integer i = 1; i <= my size; i ++) {
 			CrossCorrelationTable item = my at [i];
-			autoCrossCorrelationTable ct = CrossCorrelationTable_and_Diagonalizer_diagonalize (item, thee);
+			autoCrossCorrelationTable ct = CrossCorrelationTable_Diagonalizer_diagonalize (item, thee);
 			his addItem_move (ct.move());
 		}
 		return him;
@@ -823,40 +823,40 @@ autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTabl
 		Melder_assert (my size > 0);
 		CrossCorrelationTable him = my at [1];
 		autoDiagonalizer thee = Diagonalizer_create (his numberOfColumns);
-		Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (thee.get(), me, maxNumberOfIterations, tol, method);
+		Diagonalizer_CrossCorrelationTableList_improveDiagonality (thee.get(), me, maxNumberOfIterations, tol, method);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Diagonalizer not created from CrossCorrelationTableList.");
 	};
 }
 
-void Diagonalizer_and_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
+void Diagonalizer_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	if (method == 1) {
 		autoNUMvector<double> cweights (1, thy size);
 		for (integer i = 1; i <= thy size; i ++) {
 			cweights [i] = 1.0 / thy size;
 		}
-		Diagonalizer_and_CrossCorrelationTable_qdiag (me, thee, cweights.peek(), maxNumberOfIterations, tol);
+		Diagonalizer_CrossCorrelationTable_qdiag (me, thee, cweights.peek(), maxNumberOfIterations, tol);
 	} else {
-		Diagonalizer_and_CrossCorrelationTableList_ffdiag (me, thee, maxNumberOfIterations, tol);
+		Diagonalizer_CrossCorrelationTableList_ffdiag (me, thee, maxNumberOfIterations, tol);
 	}
 }
 
 autoSound Sound_whitenChannels (Sound me, double varianceFraction) {
     try {
         autoCovariance cov = Sound_to_Covariance_channels (me, 0.0, 0.0);
-        autoSound thee = Sound_and_Covariance_whitenChannels (me, cov.get(), varianceFraction);
+        autoSound thee = Sound_Covariance_whitenChannels (me, cov.get(), varianceFraction);
         return thee;
     } catch (MelderError) {
         Melder_throw (me, U": not whitened.");
     }
 }
 
-autoSound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction) {
+autoSound Sound_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction) {
     try {
         autoPCA pca = SSCP_to_PCA (thee);
         integer numberOfComponents = Eigen_getDimensionOfFraction (pca.get(), varianceFraction);
-        autoSound him = Sound_and_PCA_whitenChannels (me, pca.get(), numberOfComponents);
+        autoSound him = Sound_PCA_whitenChannels (me, pca.get(), numberOfComponents);
         return him;
     } catch (MelderError) {
         Melder_throw (me, U": not whitened from ", thee);
@@ -913,7 +913,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 }
 
 #if 0
-static void Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee, integer maxNumberOfIterations, double /* tol */, int /* method */) {
+static void Sound_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee, integer maxNumberOfIterations, double /* tol */, int /* method */) {
 	try {
 		integer iter = 0;
 		Melder_require (my ny == thy numberOfColumns, U"Dimensions should agree.");

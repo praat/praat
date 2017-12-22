@@ -20,24 +20,24 @@
 #include "NUM2.h"
 #include "Sound_and_MixingMatrix.h"
 
-void Sound_and_MixingMatrix_playPart (Sound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback callback, Thing boss) {
+void Sound_MixingMatrix_playPart (Sound me, MixingMatrix thee, double fromTime, double toTime, Sound_PlayCallback callback, Thing boss) {
 	try {
-		autoSound mix = Sound_and_MixingMatrix_mixPart (me, thee, fromTime, toTime);
+		autoSound mix = Sound_MixingMatrix_mixPart (me, thee, fromTime, toTime);
 		Sound_playPart (mix.get(), fromTime, toTime, callback, boss);
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
 }
 
-void Sound_and_MixingMatrix_play (Sound me, MixingMatrix thee, Sound_PlayCallback callback, Thing boss) {
-	Sound_and_MixingMatrix_playPart (me, thee, my xmin, my xmax, callback, boss);
+void Sound_MixingMatrix_play (Sound me, MixingMatrix thee, Sound_PlayCallback callback, Thing boss) {
+	Sound_MixingMatrix_playPart (me, thee, my xmin, my xmax, callback, boss);
 }
 
-autoSound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
-	return Sound_and_MixingMatrix_mixPart (me, thee, my xmin, my xmax);
+autoSound Sound_MixingMatrix_mix (Sound me, MixingMatrix thee) {
+	return Sound_MixingMatrix_mixPart (me, thee, my xmin, my xmax);
 }
 
-autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fromTime, double toTime) {
+autoSound Sound_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fromTime, double toTime) {
 	try {
 		Melder_require (my ny == thy numberOfColumns,
 			U"The number of inputs in the MixingMatrix and the number of channels in the Sound should be equal.");
@@ -106,7 +106,7 @@ autoSound Sound_and_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fr
 	}
 }
 
-autoSound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
+autoSound Sound_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 	try {
 		Melder_require (my ny == thy numberOfColumns,
 			U"The number of inputs in the MixingMatrix and the number of channels in the Sound should be equal.");

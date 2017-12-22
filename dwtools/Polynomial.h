@@ -211,7 +211,7 @@ double Polynomial_findOneSimpleRealRoot_ridders (Polynomial me, double xmin, dou
  * Root will be found by newton-raphson with bisecting
  */
 
-void Roots_and_Polynomial_polish (Roots me, Polynomial thee);
+void Roots_Polynomial_polish (Roots me, Polynomial thee);
 
 autoPolynomial Roots_to_Polynomial (Roots me, bool rootsAreReal);
 
@@ -278,7 +278,7 @@ autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree,
 
 /****************** fit **********************************************/
 
-void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freezeCoefficients[], double tol, int ic, autoCovariance *c);
+void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freezeCoefficients[], double tol, int ic, autoCovariance *c);
 
 autoPolynomial RealTier_to_Polynomial (RealTier me, integer degree, double tol, int ic, autoCovariance *cvm);
 

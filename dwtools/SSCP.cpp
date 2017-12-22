@@ -24,7 +24,7 @@
  djmw 20010906 TableOfReal_to_SSCP.
  djmw 20020212 +getEllipse(s)BoundingBoxCoordinates.
  djmw 20020313 corrected SSCP_Eigen_project.
- djmw 20020327 Moved SSCP_and_Eigen_project to Eigen_and_SSCP.c.
+ djmw 20020327 Moved SSCP_Eigen_project to Eigen_SSCP.c.
  djmw 20020418 Removed some causes for compiler warnings.
  djmw 20020430 Changed explicit calculation of SSCP to svd in
  		TableOfReal_to_SSCP.
@@ -33,7 +33,7 @@
  djmw 20030825 Replaced gsl_sf_beta_inc with NUMincompletebeta.
  djmw 20031104 Added SSCP_to_CCA.
  djmw 20031117 Added SSCP_extractCentroid.
- djmw 20031127 Added Covariance_and_TableOfReal_extractDistanceQuantileRange.
+ djmw 20031127 Added Covariance_TableOfReal_extractDistanceQuantileRange.
  djmw 20040211 Better warnings in TableOfReal_to_SSCPs_byLabel for single cases.
  djmw 20040214 Fixed some compiler warnings.
  djmw 20040219 SSCP_getTraceFraction added.
@@ -42,7 +42,7 @@
  djmw 20060202 Removed a bug in TableOfReal_to_SSCP that could crash Praat (if nrows < ncols).
  djmw 20060503 Covariance_getSignificanceOfMeansDifference: set probability = 0 if
  	var_pooled = 0 and paired.
- djmw 20060811 Removed bug in SSCP_and_TableOfReal_to_MahalanobisDistances that caused column labels always to be copied.
+ djmw 20060811 Removed bug in SSCP_TableOfReal_to_MahalanobisDistances that caused column labels always to be copied.
  djmw 20061214 Corrected possible integer overflow in ellipseScalefactor.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071016 To Melder_error<n>
@@ -51,7 +51,7 @@
  djmw 20081119 TableOfReal_to_SSCP check if numbers are defined
  djmw 20090617 TableOfReal_to_SSCPs_byLabel better warnings for singular cases.
  djmw 20090629 +Covariances_getMultivariateCentroidDifference, Covariances_equality.
- djmw 20100106 +Covariance_and_TableOfReal_mahalanobis.
+ djmw 20100106 +Covariance_TableOfReal_mahalanobis.
  djmw 20101019 Reduced storage Covariance.
   djmw 20110304 Thing_new
 */
@@ -462,7 +462,7 @@ double SSCP_getCumulativeContributionOfComponents (SSCP me, integer from, intege
 }
 
 /* For nxn matrix only ! */
-void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf) {
+void Covariance_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf) {
 	// Generate the multi-normal vector elements N(0,sigma)
 
 	for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -495,7 +495,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 		autoNUMvector<double> buf (1, my numberOfColumns);
 
 		for (integer i = 1; i <= numberOfData; i ++) {
-			Covariance_and_PCA_generateOneVector (me, pca.get(), thy data [i], buf.peek());
+			Covariance_PCA_generateOneVector (me, pca.get(), thy data [i], buf.peek());
 		}
 
 		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
@@ -567,17 +567,17 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 	}
 }
 
-autoTableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh) {
+autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh) {
 	try {
 		autoCovariance cov = SSCP_to_Covariance (me, 1);
-		autoTableOfReal him = Covariance_and_TableOfReal_extractDistanceQuantileRange (cov.get(), thee, qlow, qhigh);
+		autoTableOfReal him = Covariance_TableOfReal_extractDistanceQuantileRange (cov.get(), thee, qlow, qhigh);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no distance quantile ranges created.");
 	}
 }
 
-autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid) {
+autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid) {
 	try {
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
 		autoNUMvector<double> centroid (NUMvector_copy (my centroid, 1, thy numberOfColumns), 1);
@@ -616,9 +616,9 @@ autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, TableOfRe
 	}
 }
 
-autoTableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee, double qlow, double qhigh) {
+autoTableOfReal Covariance_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee, double qlow, double qhigh) {
 	try {
-		autoTableOfReal him = Covariance_and_TableOfReal_mahalanobis (me, thee, false);
+		autoTableOfReal him = Covariance_TableOfReal_mahalanobis (me, thee, false);
 
 		double low = TableOfReal_getColumnQuantile (him.get(), 1, qlow);
 		double high = TableOfReal_getColumnQuantile (him.get(), 1, qhigh);

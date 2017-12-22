@@ -1,6 +1,6 @@
 /* Formant_extensions.cpp
  *
- * Copyright (C) 2012,2015-2017 David Weenink
+ * Copyright (C) 2012-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ void Formant_formula (Formant me, double tmin, double tmax, integer formantmin, 
 	}
 }
 
-autoIntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant) {
+autoIntensityTier Formant_Spectrogram_to_IntensityTier (Formant me, Spectrogram thee, integer iformant) {
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"The start and end times of the Formant and the Spectrogram should be equal.");
 		Melder_require (iformant > 0 && iformant <= my maxnFormants, U"Formant number should be in the range [1, ", my maxnFormants, U"].");

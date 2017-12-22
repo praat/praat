@@ -84,7 +84,7 @@ void structDTW :: v_info () {
 
 static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish, bool inset);
 static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish, bool inset);
-static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x);
+static double _DTW_Sounds_getPartY (Graphics g, double dtw_part_x);
 static void DTW_findPath_special (DTW me, bool matchStart, bool matchEnd, int slope, autoMatrix *cumulativeDists);
 /*
 	Two 'slope lines, lh and ll, start in the lower left corner, the upper/lower has the maximum/minimum allowed slope.
@@ -739,7 +739,7 @@ void DTW_drawWarpY (DTW me, Graphics g, double xmin, double xmax, double ymin, d
 	DTW_drawWarp_raw (me, g, xmin, xmax, ymin, ymax, ty, garnish, true, false);
 }
 
-static void DTW_and_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmin, double *xmax, double *ymin, double *ymax) {
+static void DTW_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmin, double *xmax, double *ymin, double *ymax) {
 	Melder_require ((my ymin == (*y) -> xmin && my ymax == (*y) -> xmax &&
 		my xmin == (*x) -> xmin && my xmax == (*x) -> xmax) ||
 		(my ymin == (*x) -> xmin && my ymax == (*x) -> xmax &&
@@ -769,21 +769,21 @@ static void drawBox (Graphics g) {
   and the "height" of the horizontal Sound t be equal.
   Given the horizontal fraction of the DTW-part, this routine returns the vertical part.
 */
-static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x) {
+static double _DTW_Sounds_getPartY (Graphics g, double dtw_part_x) {
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	return 1.0 - ((1.0 - dtw_part_x) * (x2NDC - x1NDC)) / (y2NDC - y1NDC);
 }
 
-void DTW_and_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish)
+void DTW_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish)
 {
-	DTW_and_Sounds_checkDomains (me, & y, & x, & xmin, & xmax, & ymin, & ymax);
+	DTW_Sounds_checkDomains (me, & y, & x, & xmin, & xmax, & ymin, & ymax);
 
 	Graphics_setInner (g);
 	Graphics_Viewport ovp = g -> outerViewport; // save for unsetInner
 
 	double dtw_part_x = 0.85;
-	double dtw_part_y = _DTW_and_Sounds_getPartY (g, dtw_part_x);
+	double dtw_part_y = _DTW_Sounds_getPartY (g, dtw_part_x);
 
 	// DTW
 
@@ -829,16 +829,16 @@ void DTW_and_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, dou
 	}
 }
 
-void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, bool garnish)
+void DTW_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, bool garnish)
 {
 	Sound y = yy, x = xx;
 	int lineType = Graphics_inqLineType (g);
 
-	DTW_and_Sounds_checkDomains (me, & y, & x, & xmin, & xmax, & ymin, & ymax);
+	DTW_Sounds_checkDomains (me, & y, & x, & xmin, & xmax, & ymin, & ymax);
 
 	Graphics_setInner (g);
 	double dtw_part_x = 0.85;
-	double dtw_part_y = _DTW_and_Sounds_getPartY (g, dtw_part_x);
+	double dtw_part_y = _DTW_Sounds_getPartY (g, dtw_part_x);
 
 	xmin = xmax - (xmax - xmin) / dtw_part_x;
 	ymin = ymax - (ymax - ymin) / dtw_part_y;
@@ -1095,7 +1095,7 @@ autoDurationTier DTW_to_DurationTier (DTW /* me */) {
 	return autoDurationTier();
 }
 
-void DTW_and_Matrix_replace (DTW me, Matrix thee) {
+void DTW_Matrix_replace (DTW me, Matrix thee) {
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax && my ymin == thy ymin && my ymax == thy ymax,
 			U"The X and Y domains of the matrix and the DTW must be equal.");
@@ -1152,7 +1152,7 @@ static void DTW_checkSlopeConstraints (DTW me, double band, int slope) {
     }
 }
 
-static void DTW_and_Polygon_setUnreachableParts (DTW me, Polygon thee, integer **psi) {
+static void DTW_Polygon_setUnreachableParts (DTW me, Polygon thee, integer **psi) {
     try {
         double eps = my dx / 100.0;   // safe enough
         double dtw_slope = (my ymax - my ymin) / (my xmax - my xmin);
@@ -1203,7 +1203,7 @@ static void DTW_findPath_special (DTW me, bool matchStart, bool matchEnd, int sl
     (void) matchEnd;
 	try {
        autoPolygon thee = DTW_to_Polygon (me, 0.0, slope);
-       DTW_and_Polygon_findPathInside (me, thee.get(), slope, cumulativeDists);
+       DTW_Polygon_findPathInside (me, thee.get(), slope, cumulativeDists);
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot find path.");
 	}
@@ -1314,10 +1314,10 @@ autoPolygon DTW_to_Polygon (DTW me, double band, int slope) {
     }
 }
 
-autoMatrix DTW_and_Polygon_to_Matrix_cumulativeDistances (DTW me, Polygon thee, int localSlope) {
+autoMatrix DTW_Polygon_to_Matrix_cumulativeDistances (DTW me, Polygon thee, int localSlope) {
     try {
         autoMatrix cumulativeDistances;
-        DTW_and_Polygon_findPathInside (me, thee, localSlope, & cumulativeDistances);
+        DTW_Polygon_findPathInside (me, thee, localSlope, & cumulativeDistances);
         return cumulativeDistances;
     } catch (MelderError) {
         Melder_throw (me, U": cumulative costs matrix not created from DTW and Polygon.");
@@ -1327,13 +1327,13 @@ autoMatrix DTW_and_Polygon_to_Matrix_cumulativeDistances (DTW me, Polygon thee, 
 void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, autoMatrix *cumulativeDists) {
     try {
         autoPolygon thee = DTW_to_Polygon (me, sakoeChibaBand, localSlope);
-        DTW_and_Polygon_findPathInside (me, thee.get(), localSlope, cumulativeDists);
+        DTW_Polygon_findPathInside (me, thee.get(), localSlope, cumulativeDists);
     } catch (MelderError) {
         Melder_throw (me, U" cannot determine the path.");
     }
 }
 
-void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cumulativeDists) {
+void DTW_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoMatrix *cumulativeDists) {
     try {
         double slopes [5] = { DTW_BIG, DTW_BIG, 3.0, 2.0, 1.5 };
         // if localSlope == 1 start of path is within 10% of minimum duration. Starts farther away
@@ -1372,7 +1372,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoM
                 delta [iy] [1] = delta [iy - 1] [1] + my z [iy] [1];
                 psi [iy] [1] = DTW_Y;
             } else {
-                psi [iy] [1] = DTW_START; // will be adapted by DTW_and_Polygon_setUnreachableParts
+                psi [iy] [1] = DTW_START; // will be adapted by DTW_Polygon_setUnreachableParts
             }
         }
         // Make begin part of first row reachable
@@ -1385,12 +1385,12 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, autoM
                 delta [1] [ix] = delta [1] [ix -1] + my z [1] [ix];
                 psi [1] [ix] = DTW_X;
             } else {
-                psi [1] [ix] = DTW_START; // will be adapted by DTW_and_Polygon_setUnreachableParts
+                psi [1] [ix] = DTW_START; // will be adapted by DTW_Polygon_setUnreachableParts
            }
         }
 
         // Now we can set the unreachable parts from the Polygon
-        DTW_and_Polygon_setUnreachableParts (me, thee, psi.peek());
+        DTW_Polygon_setUnreachableParts (me, thee, psi.peek());
 
         // Forward pass.
         integer numberOfIsolatedPoints = 0;

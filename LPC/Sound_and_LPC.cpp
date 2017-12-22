@@ -46,7 +46,7 @@ for (i=1; i<= m+1+m+1+m;i ++) work [i] = 0;
 
 #define LPC_METHOD_AUTO_WINDOW_CORRECTION 1
 
-static void LPC_Frame_and_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
+static void LPC_Frame_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
 	double *y = thy z [channel], *a = my a;
 
 	for (integer i = 1; i <= thy nx; i ++) {
@@ -57,7 +57,7 @@ static void LPC_Frame_and_Sound_filter (LPC_Frame me, Sound thee, integer channe
 	}
 }
 
-void LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel) {
+void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel) {
 	double *x = thy z [channel];
 	autoNUMvector <double> y ((integer) 0, my nCoefficients);
 	for (integer i = 1; i <= thy nx; i ++) {
@@ -459,7 +459,7 @@ autoLPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth
 	}
 }
 
-autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee) {
+autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 	try {
 		Melder_require (my samplingPeriod == thy dx, U"Sampling frequencies should be equal.");
 		Melder_require (my xmin == thy xmin && thy xmax == my xmax, U"Domains of LPC and Sound should be equal.");
@@ -491,7 +491,7 @@ autoSound LPC_and_Sound_filterInverse (LPC me, Sound thee) {
 	gain used as a constant amplitude multiplyer within a frame of duration my dx.
 	future alternative: convolve gain with a  smoother.
 */
-autoSound LPC_and_Sound_filter (LPC me, Sound thee, bool useGain) {
+autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 	try {
 		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
 		double xmax = my xmax < thy xmax ? my xmax : thy xmax;
@@ -557,7 +557,7 @@ autoSound LPC_and_Sound_filter (LPC me, Sound thee, bool useGain) {
 	}
 }
 
-void LPC_and_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time) {
+void LPC_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time) {
 	integer frameIndex = Sampled_xToNearestIndex (me, time);
 	if (frameIndex < 1) {
 		frameIndex = 1;
@@ -571,25 +571,25 @@ void LPC_and_Sound_filterWithFilterAtTime_inplace (LPC me, Sound thee, integer c
 	Melder_require (frameIndex > 0 && frameIndex <= my nx, U"Frame should be in the range [1, ", my nx, U"].");
 
 	if (channel > 0) {
-		LPC_Frame_and_Sound_filter (& (my d_frames [frameIndex]), thee, channel);
+		LPC_FrameSound_filter (& (my d_frames [frameIndex]), thee, channel);
 	} else {
 		for (integer ichan = 1; ichan <= thy ny; ichan ++) {
-			LPC_Frame_and_Sound_filter (& (my d_frames [frameIndex]), thee, ichan);
+			LPC_Frame_Sound_filter (& (my d_frames [frameIndex]), thee, ichan);
 		}
 	}
 }
 
-autoSound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, integer channel, double time) {
+autoSound LPC_Sound_filterWithFilterAtTime (LPC me, Sound thee, integer channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterWithFilterAtTime_inplace (me, him.get(), channel, time);
+		LPC_Sound_filterWithFilterAtTime_inplace (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not filtered.");
 	}
 }
 
-void LPC_and_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time) {
+void LPC_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, integer channel, double time) {
 	try {
 		integer frameIndex = Sampled_xToNearestIndex (me, time);
 		if (frameIndex < 1) {
@@ -602,10 +602,10 @@ void LPC_and_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, in
 			channel = 1;
 		}
 		if (channel > 0) {
-			LPC_Frame_and_Sound_filterInverse (& (my d_frames [frameIndex]), thee, channel);
+			LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, channel);
 		} else {
 			for (integer ichan = 1; ichan <= thy ny; ichan ++) {
-				LPC_Frame_and_Sound_filterInverse (& (my d_frames [frameIndex]), thee, ichan);
+				LPC_Frame_Sound_filterInverse (& (my d_frames [frameIndex]), thee, ichan);
 			}
 		}
 	} catch (MelderError) {
@@ -613,10 +613,10 @@ void LPC_and_Sound_filterInverseWithFilterAtTime_inplace (LPC me, Sound thee, in
 	}
 }
 
-autoSound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, integer channel, double time) {
+autoSound LPC_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, integer channel, double time) {
 	try {
 		autoSound him = Data_copy (thee);
-		LPC_and_Sound_filterInverseWithFilterAtTime_inplace (me, him.get(), channel, time);
+		LPC_Sound_filterInverseWithFilterAtTime_inplace (me, him.get(), channel, time);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (thee, U": not inverse filtered.");
