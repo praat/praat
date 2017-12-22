@@ -631,14 +631,14 @@ void FilterBank_equalizeIntensities (FilterBank me, double intensity_db) {
 	}
 }
 
-void FilterBank_and_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, integer component, double dblevel, double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
+void FilterBank_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, integer component, double dblevel, double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
 	Melder_require (component > 0 && component <= thy numberOfEigenvalues, U"Component should be in the range [1, ", thy numberOfEigenvalues, U"].");
 	
 	// Scale Intensity
 
 	autoFilterBank fcopy = Data_copy (me);
 	FilterBank_equalizeIntensities (fcopy.get(), dblevel);
-	autoMatrix him = Eigen_and_Matrix_to_Matrix_projectColumns (thee, fcopy.get(), component);
+	autoMatrix him = Eigen_Matrix_to_Matrix_projectColumns (thee, fcopy.get(), component);
 	for (integer j = 1; j <= my nx; j ++) {
 		fcopy -> z [component] [j] = frequencyOffset + scale * fcopy -> z [component] [j];
 	}
@@ -1139,14 +1139,14 @@ autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth, double
 		}
 
 		autoPitch thee = Sound_to_Pitch (me, dt, minimumPitch, maximumPitch);
-		autoFormantFilter ff = Sound_and_Pitch_to_FormantFilter (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
+		autoFormantFilter ff = Sound_Pitch_to_FormantFilter (me, thee.get(), analysisWidth, dt, f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff;
 	} catch (MelderError) {
 		Melder_throw (me, U": no FormantFilter created.");
 	}
 }
 
-autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw) {
+autoFormantFilter Sound_Pitch_to_FormantFilter (Sound me, Pitch thee, double analysisWidth, double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw) {
 	try {
 		double t1, windowDuration = 2 * analysisWidth;   // Gaussian window
 		double nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist, fmin_hz = 0;

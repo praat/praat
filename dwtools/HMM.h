@@ -82,11 +82,11 @@ autoHMMObservationSequence Strings_to_HMMObservationSequence (Strings me);
 
 autoStringsIndex HMMObservationSequence_to_StringsIndex (HMMObservationSequence me);
 
-autoStringsIndex HMM_and_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservationSequence thee);
+autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservationSequence thee);
 
 autoTableOfReal HMMObservationSequence_to_TableOfReal_transitions (HMMObservationSequence me, int probabilities);
 
-autoTableOfReal HMM_and_HMMObservationSequence_to_TableOfReal_transitions (HMM me, HMMObservationSequence thee, int probabilities);
+autoTableOfReal HMM_HMMObservationSequence_to_TableOfReal_transitions (HMM me, HMMObservationSequence thee, int probabilities);
 
 integer HMMObservationSequence_getNumberOfObservations (HMMObservationSequence me);
 
@@ -94,7 +94,7 @@ integer HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag 
 
 autoTableOfReal HMMStateSequence_to_TableOfReal_transitions (HMMStateSequence me);
 
-autoTableOfReal HMM_and_HMMStateSequence_to_TableOfReal_transitions (HMM me, HMMStateSequence thee, int probabilities);
+autoTableOfReal HMM_HMMStateSequence_to_TableOfReal_transitions (HMM me, HMMStateSequence thee, int probabilities);
 
 autoHMMStateSequence HMMStateSequence_create (integer numberOfItems);
 
@@ -162,9 +162,9 @@ double HMM_getExpectedValueOfDurationInState (HMM me, integer istate);
 
 double HMM_getProbabilityOfStayingInState (HMM me, integer istate, integer numberOfTimeUnits);
 
-double HMM_and_HMM_getCrossEntropy (HMM me, HMM thee, integer observationLength, int symmetric);
+double HMM_HMM_getCrossEntropy (HMM me, HMM thee, integer observationLength, int symmetric);
 
-double HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMM thee, HMMObservationSequence him);
+double HMM_HMM_HMMObservationSequence_getCrossEntropy (HMM me, HMM thee, HMMObservationSequence him);
 
 autoTableOfReal HMM_extractTransitionProbabilities (HMM me);
 
@@ -174,19 +174,19 @@ autoTableOfReal HMM_extractEmissionProbabilities (HMM me);
 
 autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer initialState, integer numberOfItems);
 
-autoHMMStateSequence HMM_and_HMMObservationSequence_to_HMMStateSequence (HMM me, HMMObservationSequence thee);
+autoHMMStateSequence HMM_HMMObservationSequence_to_HMMStateSequence (HMM me, HMMObservationSequence thee);
 
-double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee);
+double HMM_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee);
 
-void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee, double delta_lnp, double minProb, int info);
+void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee, double delta_lnp, double minProb, int info);
 
-void HMM_and_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, int connect, int garnish);
+void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, int connect, int garnish);
 
-double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequence thee);
+double HMM_HMMObservationSequence_getProbability (HMM me, HMMObservationSequence thee);
 
-double HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee);
+double HMM_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee);
 
-double HMM_and_HMMObservationSequence_getPerplexity (HMM me, HMMObservationSequence thee);
+double HMM_HMMObservationSequence_getPerplexity (HMM me, HMMObservationSequence thee);
 
 // somewhere else
 void MelderInfo_lnp (double logp);

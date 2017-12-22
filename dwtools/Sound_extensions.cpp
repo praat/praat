@@ -28,8 +28,8 @@
  		(amplitudes were on linear instead of log scale)
  djmw 20060921 Added Sound_to_IntervalTier_detectSilence
  djmw 20061010 Removed crashing bug in Sound_to_IntervalTier_detectSilence.
- djmw 20061201 Interface change: removed minimumPitch parameter from Sound_and_Pitch_changeGender.
- djmw 20061214 Sound_and_Pitch_changeSpeaker removed warning.
+ djmw 20061201 Interface change: removed minimumPitch parameter from Sound_Pitch_changeGender.
+ djmw 20061214 Sound_Pitch_changeSpeaker removed warning.
  djmw 20070103 Sound interface changes
  djmw 20070129 Warning added in changeGender_old.
  djmw 20071022 Possible (bug?) correction in Sound_createShepardToneComplex
@@ -38,7 +38,7 @@
  djmw 20080122 float -> double
  djmw 20080320 +Sound_fade.
  djmw 20080530 +Sound_localAverage
- pb 20090926 Correction in Sound_and_Pitch_changeGender_old
+ pb 20090926 Correction in Sound_Pitch_changeGender_old
  djmw 20091023 Added Sound_drawIntervals
  djmw 20091028 Sound_drawIntervals -> Sound_drawParts + Graphics_function
  djmw 20091126 Sound_drawParts -> Sound_drawWheres
@@ -1206,7 +1206,7 @@ autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, d
 }
 
 /* Internal pitch representation in semitones */
-autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMultiplier, double pitchMultiplier, double pitchRangeMultiplier, double durationMultiplier) {
+autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him, double formantMultiplier, double pitchMultiplier, double pitchRangeMultiplier, double durationMultiplier) {
 	try {
 		double samplingFrequency_old = 1.0 / my dx;
 
@@ -1254,7 +1254,7 @@ autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him, double formantMult
 autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax, double formantMultiplier, double pitchMultiplier,  double pitchRangeMultiplier, double durationMultiplier) { // > 0
 	try {
 		autoPitch pitch = Sound_to_Pitch (me, 0.8 / pitchMin, pitchMin, pitchMax);
-		autoSound thee = Sound_and_Pitch_changeSpeaker (me, pitch.get(), formantMultiplier, pitchMultiplier, pitchRangeMultiplier, durationMultiplier);
+		autoSound thee = Sound_Pitch_changeSpeaker (me, pitch.get(), formantMultiplier, pitchMultiplier, pitchRangeMultiplier, durationMultiplier);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": speaker not changed.");
@@ -1300,7 +1300,7 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 	}
 }
 
-autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match) {
+autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match) {
     try {
         // count samples of the trimmed sound
         integer ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
@@ -1386,7 +1386,7 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
                 TextInterval_setText (ati, copyLabel);
             }
         }
-        autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.get(), trimLabel);
+        autoSound thee = Sound_IntervalTier_cutPartsMatchingLabel (me, itg.get(), trimLabel);
         if (p_tg) {
 			TextGrid_addTier_copy (tg.get(), itg.get());
             *p_tg = tg.move();
@@ -1461,7 +1461,7 @@ static autoPitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 	}
 }
 
-autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor) {
+autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor) {
 	try {
 		double samplingFrequency_old = 1 / my dx;
 
@@ -1513,14 +1513,14 @@ autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantR
 autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor) {
 	try {
 		autoPitch pitch = Sound_to_Pitch (me, 0.8 / fmin, fmin, fmax);
-		autoSound thee = Sound_and_Pitch_changeGender_old (me, pitch.get(), formantRatio, new_pitch, pitchRangeFactor, durationFactor);
+		autoSound thee = Sound_Pitch_changeGender_old (me, pitch.get(), formantRatio, new_pitch, pitchRangeFactor, durationFactor);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Sound not created for gender change.");
 	}
 }
 
-/*  End of compatibility with Sound_changeGender and Sound_and_Pitch_changeGender ***********************************/
+/*  End of compatibility with Sound_changeGender and Sound_Pitch_changeGender ***********************************/
 
 /* Draw a sound vertically, from bottom to top */
 void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double amin, double amax, int direction, bool garnish) {

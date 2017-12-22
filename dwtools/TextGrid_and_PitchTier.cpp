@@ -267,7 +267,7 @@ void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, const cha
 }
 
 
-autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
+autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
 	try {
 		autoPitchTier him = Data_copy (thee);
 		for (integer i = 1; i <= my intervals.size; i ++) {
@@ -284,10 +284,10 @@ autoPitchTier IntervalTier_and_PitchTier_to_PitchTier (IntervalTier me, PitchTie
 	}
 }
 
-static autoPitchTier TextGrid_and_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, integer tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
+static autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, integer tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
-		return IntervalTier_and_PitchTier_to_PitchTier (tier, thee, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status, which, criterion);
+		return IntervalTier_PitchTier_to_PitchTier (tier, thee, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status, which, criterion);
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot create PitchTier.");
 	}

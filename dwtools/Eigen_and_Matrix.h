@@ -25,12 +25,12 @@
 autoMatrix Eigen_extractEigenvector (Eigen me, integer index, integer numberOfRows, integer numberOfColumns);
 /* Extract eigenvector as a (reshaped) matrix */
 
-autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, integer numberOfDimensionsToKeep);
+autoMatrix Eigen_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, integer numberOfDimensionsToKeep);
 /*
 	Purpose: project the rows of the matrix (thee) on the eigenspace (me). 
 */
 
-autoMatrix Eigen_and_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, integer numberOfDimensionsToKeep);
+autoMatrix Eigen_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, integer numberOfDimensionsToKeep);
 /*
 	Purpose: project the columns of the matrix (thee) on the eigenspace (me).
 */

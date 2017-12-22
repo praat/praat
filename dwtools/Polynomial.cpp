@@ -1237,7 +1237,7 @@ autoRoots Polynomial_to_Roots (Polynomial me) {
 			(thy v [i]).re = wr [ioffset + i];
 			(thy v [i]).im = wi [ioffset + i];
 		}
-		Roots_and_Polynomial_polish (thee.get(), me);
+		Roots_Polynomial_polish (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no roots can be calculated.");
@@ -1249,7 +1249,7 @@ void Roots_sort (Roots me) {
 }
 
 // Precondition: complex roots occur in pairs (a,bi), (a,-bi) with b>0
-void Roots_and_Polynomial_polish (Roots me, Polynomial thee) {
+void Roots_Polynomial_polish (Roots me, Polynomial thee) {
 	integer i = my min, maxit = 80;
 	while (i <= my max) {
 		double im = my v [i].im, re = my v [i].re;
@@ -1526,7 +1526,7 @@ autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me) {
 }
 
 
-void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [], double tol, int ic, autoCovariance *c) {
+void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [], double tol, int ic, autoCovariance *c) {
 	try {
 		integer numberOfData = thy points.size;
 		integer numberOfParameters = my numberOfCoefficients;
@@ -1615,7 +1615,7 @@ void FunctionTerms_and_RealTier_fit (FunctionTerms me, RealTier thee, int freeze
 autoPolynomial RealTier_to_Polynomial (RealTier me, integer degree, double tol, int ic, autoCovariance *cvm) {
 	try {
 		autoPolynomial thee = Polynomial_create (my xmin, my xmax, degree);
-		FunctionTerms_and_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
+		FunctionTerms_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Polynomial fitted.");
@@ -1625,7 +1625,7 @@ autoPolynomial RealTier_to_Polynomial (RealTier me, integer degree, double tol, 
 autoLegendreSeries RealTier_to_LegendreSeries (RealTier me, integer degree, double tol, int ic, autoCovariance *cvm) {
 	try {
 		autoLegendreSeries thee = LegendreSeries_create (my xmin, my xmax, degree);
-		FunctionTerms_and_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
+		FunctionTerms_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no LegendreSeries fitted.");
@@ -1635,7 +1635,7 @@ autoLegendreSeries RealTier_to_LegendreSeries (RealTier me, integer degree, doub
 autoChebyshevSeries RealTier_to_ChebyshevSeries (RealTier me, integer degree, double tol, int ic, autoCovariance *cvm) {
 	try {
 		autoChebyshevSeries thee = ChebyshevSeries_create (my xmin, my xmax, degree);
-		FunctionTerms_and_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
+		FunctionTerms_RealTier_fit (thee.get(), me, 0, tol, ic, cvm);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U":no ChebyshevSeries fitted.");

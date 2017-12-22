@@ -34,7 +34,7 @@ autoStrings TableOfReal_extractRowLabels (TableOfReal me);
 
 autoStrings TableOfReal_extractColumnLabels (TableOfReal me);
 
-void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee);
+void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee);
 // !!! Set rowlabels from categories because we need a Table-object with string-columns.
 
 autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me);
@@ -196,7 +196,7 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer 
 /* Henze & Wagner (1997), A new approach to the BHEP tests for multivariate normality, Journal of Multivariate Analysis 62, 1-23. */
 double TableOfReal_normalityTest_BHEP (TableOfReal me, double *beta /* input and output */, double *tnb, double *lnmu, double *lnvar);
 
-autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, bool by_columns, bool center, bool normalize);
+autoTableOfReal TableOfReal_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, bool by_columns, bool center, bool normalize);
 
 
 #pragma mark - class TableOfRealList

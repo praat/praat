@@ -27,6 +27,6 @@
 #include "Categories.h"
 #include "TableOfReal.h"
 
-autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee);
+autoTableOfReal Matrix_Categories_to_TableOfReal (Matrix me, Categories thee);
 
 #endif /* _Matrix_Categories_h_ */

@@ -75,15 +75,15 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me);
 
 void Discriminant_setGroupLabels (Discriminant me, Strings thee);
 
-autoConfiguration Discriminant_and_TableOfReal_to_Configuration	(Discriminant me, TableOfReal thee, integer numberOfDimensions);
+autoConfiguration Discriminant_TableOfReal_to_Configuration	(Discriminant me, TableOfReal thee, integer numberOfDimensions);
 
-autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable
+autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable
 	(Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities);
 
-autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw
+autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw
 	(Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities, double alpha, double minProb, autoTableOfReal *displacements);
 
-autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, integer group, bool poolCovarianceMatrices);
+autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, integer group, bool poolCovarianceMatrices);
 /* Mahalanobis distance with respect to group mean */
 
 autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me);

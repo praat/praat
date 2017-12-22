@@ -2,7 +2,7 @@
 #define _CCA_and_Correlation_h_
 /* CCA_and_Correlation.h
  * 
- * Copyright (C) 1993-2011, 2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,18 +27,18 @@
 #include "CCA.h"
 #include "SSCP.h"
 
-autoTableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee);
+autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee);
 /*
 	Get the canonical factor loadings (also structure correlation coefficients),
 	the correlation of a canonical variable with an original variable.
 */
 
-double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, integer canonicalVariate_from, integer canonicalVariate_to);
+double CCA_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, integer canonicalVariate_from, integer canonicalVariate_to);
 /*
 	Get the fraction of variance extracted from the dependent/independent set by the canonical variate range.
 */
 
-double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, integer canonicalVariate_from, integer canonicalVariate_to);
+double CCA_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, integer canonicalVariate_from, integer canonicalVariate_to);
 /*
 	The Stewart-Love redundancy is the fraction of variance extracted by the canonical variate times
 	the fraction of shared variance between the canonical variate and the corresponding canonical variate

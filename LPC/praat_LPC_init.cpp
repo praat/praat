@@ -579,12 +579,12 @@ DO
 
 /******************** Formant & Spectrogram ************************************/
 
-FORM (NEW1_Formant_and_Spectrogram_to_IntensityTier, U"Formant & Spectrogram: To IntensityTier", U"Formant & Spectrogram: To IntensityTier...") {
+FORM (NEW1_Formant_Spectrogram_to_IntensityTier, U"Formant & Spectrogram: To IntensityTier", U"Formant & Spectrogram: To IntensityTier...") {
 	NATURAL (formantNumber, U"Formant number", U"1")
 	OK
 DO
 	CONVERT_TWO (Formant, Spectrogram)
-		autoIntensityTier result = Formant_and_Spectrogram_to_IntensityTier (me, you, formantNumber);
+		autoIntensityTier result = Formant_Spectrogram_to_IntensityTier (me, you, formantNumber);
 	CONVERT_TWO_END (my name, U"_", formantNumber)
 }
 
@@ -970,16 +970,16 @@ DO
 
 /******************* LPC & Sound *************************************/
 
-FORM (NEW1_LPC_and_Sound_filter, U"LPC & Sound: Filter", U"LPC & Sound: Filter...") {
+FORM (NEW1_LPC_Sound_filter, U"LPC & Sound: Filter", U"LPC & Sound: Filter...") {
 	BOOLEAN (useGain, U"Use LPC gain", false)
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filter (me, you, useGain);
+		autoSound result = LPC_Sound_filter (me, you, useGain);
 	CONVERT_TWO_END (my name)
 }
 
-FORM (NEW1_LPC_and_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filter at time", U"LPC & Sound: Filter with filter at time...") {
+FORM (NEW1_LPC_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filter at time", U"LPC & Sound: Filter with filter at time...") {
 	OPTIONMENU (channel, U"Channel", 2)
 		OPTION (U"Both")
 		OPTION (U"Left")
@@ -988,17 +988,17 @@ FORM (NEW1_LPC_and_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one 
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterWithFilterAtTime (me, you, channel - 1, time);
+		autoSound result = LPC_Sound_filterWithFilterAtTime (me, you, channel - 1, time);
 	CONVERT_TWO_END (my name)
 }
 
-DIRECT (NEW1_LPC_and_Sound_filterInverse) {
+DIRECT (NEW1_LPC_Sound_filterInverse) {
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterInverse (me, you);
+		autoSound result = LPC_Sound_filterInverse (me, you);
 	CONVERT_TWO_END (my name)
 }
 
-FORM (NEW1_LPC_and_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inverse) with filter at time",
+FORM (NEW1_LPC_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inverse) with filter at time",
       U"LPC & Sound: Filter (inverse) with filter at time...") {
 	OPTIONMENU (channel, U"Channel", 2)
 		OPTION (U"Both")
@@ -1008,11 +1008,11 @@ FORM (NEW1_LPC_and_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (i
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoSound result = LPC_and_Sound_filterInverseWithFilterAtTime (me, you, channel - 1, time);
+		autoSound result = LPC_Sound_filterInverseWithFilterAtTime (me, you, channel - 1, time);
 	CONVERT_TWO_END (my name)
 }
 
-FORM (NEW1_LPC_and_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LPC (robust)...") {
+FORM (NEW1_LPC_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LPC (robust)...") {
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (preEmphasisFrequency, U"Pre-emphasis frequency (Hz)", U"50.0")
 	POSITIVE (numberOfStandardDeviations, U"Number of std. dev.", U"1.5")
@@ -1022,7 +1022,7 @@ FORM (NEW1_LPC_and_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: T
 	OK
 DO
 	CONVERT_TWO (LPC, Sound)
-		autoLPC result = LPC_and_Sound_to_LPC_robust (me, you, windowLength, preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, locationVariable);
+		autoLPC result = LPC_Sound_to_LPC_robust (me, you, windowLength, preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, locationVariable);
 	CONVERT_TWO_END (my name, U"_r");
 }
 
@@ -1091,7 +1091,7 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classFormant, 0, U"Analyse", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, U"To LPC...", 0, 0, NEW_Formant_to_LPC);
 	praat_addAction1 (classFormant, 0, U"Formula...", U"Formula (bandwidths)...", 1, MODIFY_Formant_formula);
-	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_and_Spectrogram_to_IntensityTier);
+	praat_addAction2 (classFormant, 1, classSpectrogram, 1, U"To IntensityTier...", 0, 0, NEW1_Formant_Spectrogram_to_IntensityTier);
 
 	
 	
@@ -1130,11 +1130,11 @@ void praat_uvafon_LPC_init () {
 	praat_addAction1 (classLPC, 0, U"To LineSpectralFrequencies...", 0, 0, NEW_LPC_to_LineSpectralFrequencies);
 
 	praat_addAction2 (classLPC, 1, classSound, 1, U"Analyse", 0, 0, 0);
-	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter...", 0, 0, NEW1_LPC_and_Sound_filter);
-	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter (inverse)", 0, 0, NEW1_LPC_and_Sound_filterInverse);
-	praat_addAction2 (classLPC, 1, classSound, 1, U"To LPC (robust)...", 0, praat_HIDDEN + praat_DEPTH_1, NEW1_LPC_and_Sound_to_LPC_robust);
-	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter with filter at time...", 0, 0, NEW1_LPC_and_Sound_filterWithFilterAtTime);
-	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter (inverse) with filter at time...", 0, 0, NEW1_LPC_and_Sound_filterInverseWithFilterAtTime);
+	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter...", 0, 0, NEW1_LPC_Sound_filter);
+	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter (inverse)", 0, 0, NEW1_LPC_Sound_filterInverse);
+	praat_addAction2 (classLPC, 1, classSound, 1, U"To LPC (robust)...", 0, praat_HIDDEN + praat_DEPTH_1, NEW1_LPC_Sound_to_LPC_robust);
+	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter with filter at time...", 0, 0, NEW1_LPC_Sound_filterWithFilterAtTime);
+	praat_addAction2 (classLPC, 1, classSound, 1, U"Filter (inverse) with filter at time...", 0, 0, NEW1_LPC_Sound_filterInverseWithFilterAtTime);
 
 
 	praat_addAction1 (classSound, 0, U"To LPC (autocorrelation)...", U"To Formant (sl)...", 1, NEW_Sound_to_LPC_autocorrelation);

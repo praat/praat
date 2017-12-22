@@ -312,7 +312,7 @@ autoConfiguration Configuration_varimax (Configuration me, bool normalizeRows, b
 autoConfiguration Configuration_congruenceRotation (Configuration me, Configuration thee, integer maximumNumberOfIterations, double tolerance) {
 	try {
 		autoAffineTransform at = Configurations_to_AffineTransform_congruence (me, thee, maximumNumberOfIterations, tolerance);
-		autoConfiguration him = Configuration_and_AffineTransform_to_Configuration (me, at.get());
+		autoConfiguration him = Configuration_AffineTransform_to_Configuration (me, at.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": congruence rotation not performed.");
@@ -428,7 +428,7 @@ autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numb
 		}
 
 		autoPCA pca = TableOfReal_to_PCA_byRows (me);
-		autoConfiguration thee = PCA_and_TableOfReal_to_Configuration (pca.get(), me, numberOfDimensions);
+		autoConfiguration thee = PCA_TableOfReal_to_Configuration (pca.get(), me, numberOfDimensions);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": pca not performed.");

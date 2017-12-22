@@ -68,6 +68,6 @@ autoStrings StringsIndex_to_Strings (StringsIndex me);
 
 autoPermutation Strings_to_Permutation (Strings me, int sort);
 
-autoStrings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee);
+autoStrings Strings_Permutation_permuteStrings (Strings me, Permutation thee);
 
 #endif /* _Strings_extensions_h_ */

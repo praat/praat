@@ -22,7 +22,7 @@
 #include "Graphics.h"
 #include "Permutation.h"
 
-autoCollection Collection_and_Permutation_permuteItems (Collection me, Permutation him);
+autoCollection Collection_Permutation_permuteItems (Collection me, Permutation him);
 
 autoCollection Collection_permuteItems (Collection me);
 /* permute the order of my items */

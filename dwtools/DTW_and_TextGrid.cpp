@@ -25,13 +25,13 @@
 #include "DTW_and_TextGrid.h"
 
 // begin old prototypes for compatibility reasons with the past
-autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee);
-autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee);
-autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee);
+autoTextGrid DTW_TextGrid_to_TextGrid_old (DTW me, TextGrid thee);
+autoIntervalTier DTW_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee);
+autoTextTier DTW_TextTier_to_TextTier_old (DTW me, TextTier thee);
 // end old
 
 /* Get times from TextGrid and substitute new time form the y-times of the DTW. */
-autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precision) {
+autoTextTier DTW_TextTier_to_TextTier (DTW me, TextTier thee, double precision) {
 	try {
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) { // map from Y to X
 			autoTextTier him = Data_copy (thee);
@@ -61,7 +61,7 @@ autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precisi
 	}
 }
 
-autoIntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, double precision) {
+autoIntervalTier DTW_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, double precision) {
 	try {
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) { // map from Y to X
 			autoIntervalTier him = Data_copy (thee);
@@ -95,7 +95,7 @@ autoIntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee
 	}
 }
 
-autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) {
+autoTextGrid DTW_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision) {
 	try {
 		double tmin, tmax;
 		if (fabs (my ymin - thy xmin) <= precision && fabs (my ymax - thy xmax) <= precision) {
@@ -114,10 +114,10 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precisi
 			Function anyTier = thy tiers->at [i];
 
 			if (anyTier -> classInfo == classIntervalTier) {
-				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier, precision);
+				autoIntervalTier tier = DTW_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier, precision);
 				TextGrid_addTier_copy (him.get(), tier.get());
 			} else if (anyTier -> classInfo == classTextTier) {
-				autoTextTier tier = DTW_and_TextTier_to_TextTier (me, (TextTier) anyTier, precision);
+				autoTextTier tier = DTW_TextTier_to_TextTier (me, (TextTier) anyTier, precision);
 				TextGrid_addTier_copy (him.get(), tier.get());
 			} else {
 				Melder_throw (U"Unknown tier.");
@@ -129,7 +129,7 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precisi
 	}
 }
 
-autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision) {
+autoTable DTW_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision) {
 	try {
 		integer numberOfIntervals = thy intervals.size;
 		autoTable him = Table_createWithColumnNames (numberOfIntervals, U"tmin tmax label dist");
@@ -179,7 +179,7 @@ autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double preci
 }
 
 /* Get times from TextGrid and substitute new time form the y-times of the DTW. */
-autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
+autoTextTier DTW_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) {
 			Melder_throw (U"The domain of the TextTier and the DTW should be equal.");
@@ -199,7 +199,7 @@ autoTextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 	}
 }
 
-autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee) {
+autoIntervalTier DTW_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee) {
 	try {
 		if ( (my xmin != thy xmin) || my xmax != thy xmax) Melder_throw
 			(U"The domain of the IntervalTier and the DTW should be equal.");
@@ -222,7 +222,7 @@ autoIntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier 
 	}
 }
 
-autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
+autoTextGrid DTW_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 	try {
 		autoTextGrid him = Thing_new (TextGrid);
 		if (my xmin != thy xmin || my xmax != thy xmax) {
@@ -238,10 +238,10 @@ autoTextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 
 			if (anyTier -> classInfo == classIntervalTier) {
 
-				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
+				autoIntervalTier tier = DTW_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
 				TextGrid_addTier_copy (him.get(), tier.get());
 			} else if (anyTier -> classInfo == classTextTier) {
-				autoTextTier tier = DTW_and_TextTier_to_TextTier_old (me, (TextTier) anyTier);
+				autoTextTier tier = DTW_TextTier_to_TextTier_old (me, (TextTier) anyTier);
 				TextGrid_addTier_copy (him.get(), tier.get());
 			} else {
 				Melder_throw (U"Unknown tier.");

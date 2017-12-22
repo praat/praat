@@ -24,7 +24,7 @@
 
 #include "Eigen_and_SSCP.h"
 
-static void Eigen_and_SSCP_into_SSCP_project (Eigen me, SSCP thee, SSCP him) {
+static void Eigen_SSCP_into_SSCP_project (Eigen me, SSCP thee, SSCP him) {
 	for (integer i = 1; i <= my numberOfEigenvalues; i ++) {
 		for (integer j = i; j <= my numberOfEigenvalues; j ++) {
 			double tmp = 0;
@@ -46,22 +46,22 @@ static void Eigen_and_SSCP_into_SSCP_project (Eigen me, SSCP thee, SSCP him) {
 }
 
 
-autoSSCP Eigen_and_SSCP_project (Eigen me, SSCP thee) {
+autoSSCP Eigen_SSCP_project (Eigen me, SSCP thee) {
 	try {
 		Melder_require (thy numberOfRows == my dimension, U"Dimensions don't agree.");
 		autoSSCP him = SSCP_create (my numberOfEigenvalues);
-		Eigen_and_SSCP_into_SSCP_project (me, thee, him.get());
+		Eigen_SSCP_into_SSCP_project (me, thee, him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"SSCP not projected.");
 	}
 }
 
-autoCovariance Eigen_and_Covariance_project (Eigen me, Covariance thee) {
+autoCovariance Eigen_Covariance_project (Eigen me, Covariance thee) {
 	try {
 		Melder_require (thy numberOfRows == my dimension, U"Dimensions should agree.");
 		autoCovariance him = Covariance_create (my numberOfEigenvalues);
-		Eigen_and_SSCP_into_SSCP_project (me, thee, him.get());
+		Eigen_SSCP_into_SSCP_project (me, thee, him.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Covariance not projected.");

@@ -165,7 +165,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 		double silenceThreshold = -30.0, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
 		autoTextGrid analysis;
 		if (! Melder_equ (interval -> text, U"")) {
-			analysis = SpeechSynthesizer_and_Sound_and_TextInterval_align
+			analysis = SpeechSynthesizer_Sound_TextInterval_align
 				(synthesizer.get(), part.get(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
 		}
 		if (analysis) {

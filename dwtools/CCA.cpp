@@ -1,6 +1,6 @@
 /* CCA.c
  *
- * Copyright (C) 1993-2012, 2015-2016 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  djme 20021008 removed SVD_sort
  djmw 20031023 Removed one argument from CCA_and_TableOfReal_scores
  djmw 20031106 Removed bug from CCA_and_TableOfReal_scores
- djmw 20031221 Removed bug: CCA_and_TableOfReal_scores (wrong dimensions to Eigen_project_into).
+ djmw 20031221 Removed bug: CCA_TableOfReal_scores (wrong dimensions to Eigen_project_into).
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20081119 Check in TableOfReal_to_CCA if TableOfReal_areAllCellsDefined
@@ -206,7 +206,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 	}
 }
 
-autoTableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, integer numberOfFactors) {
+autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer numberOfFactors) {
 	try {
 		integer n = thy numberOfRows;
 		integer nx = my x -> dimension, ny = my y -> dimension;
@@ -222,8 +222,8 @@ autoTableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, integer nu
 		
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
-		Eigen_and_TableOfReal_into_TableOfReal_projectRows (my y.get(), thee, 1, him.get(), 1, numberOfFactors);
-		Eigen_and_TableOfReal_into_TableOfReal_projectRows (my x.get(), thee, ny + 1, him.get(), numberOfFactors + 1, numberOfFactors);
+		Eigen_TableOfReal_into_TableOfReal_projectRows (my y.get(), thee, 1, him.get(), 1, numberOfFactors);
+		Eigen_TableOfReal_into_TableOfReal_projectRows (my x.get(), thee, ny + 1, him.get(), numberOfFactors + 1, numberOfFactors);
 		TableOfReal_setSequentialColumnLabels (him.get(), 1, numberOfFactors, U"y_", 1, 1);
 		TableOfReal_setSequentialColumnLabels (him.get(), numberOfFactors + 1, his numberOfColumns, U"x_", 1, 1);
 		return him;
@@ -232,7 +232,7 @@ autoTableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, integer nu
 	}
 }
 
-autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, integer from) {
+autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from) {
 	try {
 		integer ny = my y -> dimension, nx = my x -> dimension;
 		integer nev = my y -> numberOfEigenvalues;
@@ -252,7 +252,7 @@ autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, integer f
 
 		// ???? dimensions if nx .. ny ??
 
-		autoTableOfReal him = Eigen_and_TableOfReal_to_TableOfReal_projectRows (my x.get(), thee, from, ny);
+		autoTableOfReal him = Eigen_TableOfReal_to_TableOfReal_projectRows (my x.get(), thee, from, ny);
 		autoNUMvector<double> buf (1, ny);
 
 		// u = V a -> a = V'u
@@ -275,10 +275,10 @@ autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, integer f
 	}
 }
 
-autoTableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee) {
+autoTableOfReal CCA_TableOfReal_factorLoadings (CCA me, TableOfReal thee) {
 	try {
 		autoCorrelation c = TableOfReal_to_Correlation (thee);
-		autoTableOfReal him = CCA_and_Correlation_factorLoadings (me, c.get());
+		autoTableOfReal him = CCA_Correlation_factorLoadings (me, c.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no factor loadings created.");

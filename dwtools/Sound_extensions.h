@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2012,2015-2017 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,11 +146,11 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 
 autoSound Sound_changeGender (Sound me, double pitchMin, double pitchMax, double pitchRatio, double formantFrequenciesRatio, double durationRatio);
 
-autoSound Sound_and_Pitch_changeGender (Sound me, Pitch him, double pitchRatio, double formantFrequenciesRatio, double durationRatio);
+autoSound Sound_Pitch_changeGender (Sound me, Pitch him, double pitchRatio, double formantFrequenciesRatio, double durationRatio);
 
 autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor);
 
-autoSound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor);
+autoSound Sound_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor);
 
 autoPointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, double dt);
 /*
@@ -164,7 +164,7 @@ autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 	double pitchRangeMultiplier, // any number
 	double durationMultiplier); // > 0
 
-autoSound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
+autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him,
 	double formantMultiplier, // > 0
 	double pitchMultiplier, // > 0
 	double pitchRangeMultiplier, // any number
@@ -181,7 +181,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 
-autoSound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match);
+autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match);
 /* Cut intervals that match the label from the sound. The starting time of the new sound is
  * (1) my xmin if the first interval is not matching
  * (2) the end time of the first interval if matching

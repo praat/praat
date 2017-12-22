@@ -611,7 +611,7 @@ void BandFilterSpectrogram_equalizeIntensities (BandFilterSpectrogram me, double
 	}
 }
 
-void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA thee, Graphics g, integer component, double dblevel, double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
+void BandFilterSpectrogram_PCA_drawComponent (BandFilterSpectrogram me, PCA thee, Graphics g, integer component, double dblevel, double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax) {
 	Melder_require (component > 0 && component <= thy numberOfEigenvalues, U"Component too large.");
 
 	// Scale Intensity
@@ -619,7 +619,7 @@ void BandFilterSpectrogram_and_PCA_drawComponent (BandFilterSpectrogram me, PCA 
 	autoBandFilterSpectrogram fcopy = Data_copy (me);
 	BandFilterSpectrogram_equalizeIntensities (fcopy.get(), dblevel);
 	autoMatrix mdb = Spectrogram_to_Matrix_dB ((Spectrogram) fcopy.get(), BandFilterSpectrogram_DBREF, BandFilterSpectrogram_DBFAC, BandFilterSpectrogram_DBFLOOR);
-	autoMatrix him = Eigen_and_Matrix_to_Matrix_projectColumns (thee, mdb.get(), component);
+	autoMatrix him = Eigen_Matrix_to_Matrix_projectColumns (thee, mdb.get(), component);
 	for (integer j = 1; j <= my nx; j ++) {
 		his z [component] [j] = frequencyOffset + scale * his z [component] [j];
 	}

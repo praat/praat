@@ -69,8 +69,8 @@
 #define Graphics_TWOWAYARROW 2
 #define Graphics_LINE 3
 
-static autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
-static autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
+static autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
+static autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize);
 
 integer TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, integer rowNumber) {
 	integer columnNumber = 0;
@@ -594,7 +594,7 @@ void TableOfReal_centreColumns (TableOfReal me) {
 	NUMcentreColumns (my data, 1, my numberOfRows, 1, my numberOfColumns, nullptr);
 }
 
-void TableOfReal_and_Categories_setRowLabels (TableOfReal me, Categories thee) {
+void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
 	try {
 		Melder_require (my numberOfRows == thy size,
 			U"The number of items in both objects should be equal.");
@@ -1109,7 +1109,7 @@ autoTableOfReal TableOfReal_randomizeRows (TableOfReal me) {
 	try {
 		autoPermutation p = Permutation_create (my numberOfRows);
 		Permutation_permuteRandomly_inplace (p.get(), 0, 0);
-		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, p.get());
+		autoTableOfReal thee = TableOfReal_Permutation_permuteRows (me, p.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": randomized rows not created");
@@ -1339,7 +1339,7 @@ integer *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
 autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me) {
 	try {
 		autoPermutation index = TableOfReal_to_Permutation_sortRowLabels (me);
-		autoTableOfReal thee = TableOfReal_and_Permutation_permuteRows (me, index.get());
+		autoTableOfReal thee = TableOfReal_Permutation_permuteRows (me, index.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not sorted by row labels.");
@@ -1638,12 +1638,12 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 	}
 }
 
-autoTableOfReal TableOfReal_and_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, bool by_columns, bool center, bool normalize) {
-	return by_columns ? TableOfReal_and_TableOfReal_columnCorrelations (me, thee, center, normalize) :
-	       TableOfReal_and_TableOfReal_rowCorrelations (me, thee, center, normalize);
+autoTableOfReal TableOfReal_TableOfReal_crossCorrelations (TableOfReal me, TableOfReal thee, bool by_columns, bool center, bool normalize) {
+	return by_columns ? TableOfReal_TableOfReal_columnCorrelations (me, thee, center, normalize) :
+	       TableOfReal_TableOfReal_rowCorrelations (me, thee, center, normalize);
 }
 
-autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
+autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
 	try {
 		if (my numberOfColumns != thy numberOfColumns) {
 			Melder_throw (U"Both tables must have the same number of columns.");
@@ -1677,7 +1677,7 @@ autoTableOfReal TableOfReal_and_TableOfReal_rowCorrelations (TableOfReal me, Tab
 	}
 }
 
-autoTableOfReal TableOfReal_and_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
+autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
 	try {
 		if (my numberOfRows != thy numberOfRows) {
 			Melder_throw (U"Both tables must have the same number of rows.");

@@ -4603,7 +4603,7 @@ static integer SSCPList_findIndexOfGroupLabel (SSCPList me, const char32 *label)
 	return 0;
 }
 
-static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee, double numberOfSigmas, kMelder_number which, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
+static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee, double numberOfSigmas, kMelder_number which, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
 	try {
 		integer numberOfGroups = thy size;
 		Melder_assert (numberOfGroups > 0);
@@ -4658,7 +4658,7 @@ static autoTable Table_and_SSCPList_extractMahalanobisWhere (Table me, SSCPList 
 autoTable Table_extractMahalanobisWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, kMelder_number which, const char32 *formula, Interpreter interpreter) {
 	try {
 		autoSSCPList thee = Table_to_SSCPList_where (me, columnLabels, factorColumn, formula, interpreter);
-		autoTable him = Table_and_SSCPList_extractMahalanobisWhere (me, thee.get(), numberOfSigmas, which, factorColumn, formula, interpreter);
+		autoTable him = Table_SSCPList_extractMahalanobisWhere (me, thee.get(), numberOfSigmas, which, factorColumn, formula, interpreter);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U"Table not extracted.");

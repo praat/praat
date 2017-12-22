@@ -2126,7 +2126,7 @@ void structTextGridEditor :: v_play (double tmin, double tmax) {
 			autoSound part = LongSound_extractPart (d_longSound.data, tmin, tmax, true);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
-			Sound_and_MixingMatrix_playPart (part.get(), thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (part.get(), thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
 		} else {
 			LongSound_playPart (d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 		}
@@ -2134,7 +2134,7 @@ void structTextGridEditor :: v_play (double tmin, double tmax) {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
-			Sound_and_MixingMatrix_playPart (d_sound.data, thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (d_sound.data, thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
 			
 		} else {
 			Sound_playPart ((Sound) d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
