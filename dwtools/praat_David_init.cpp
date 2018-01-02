@@ -1558,7 +1558,7 @@ DO
 	GRAPHICS_COUPLE_AND_ONE_END
 }
 
-FORM (GRAPHICS_DTW_Sounds_drawWarpX, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: Draw warp (x)...") {
+FORM (GRAPHICS_DTW_Sounds_drawWarp_x, U"DTW & Sounds: Draw warp (x)", U"DTW & Sounds: Draw warp (x)...") {
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -1617,7 +1617,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_DTW_drawWarpX, U"DTW: Draw warp (x)", U"DTW: Draw warp (x)...") {
+FORM (GRAPHICS_DTW_drawWarp_x, U"DTW: Draw warp (x)", U"DTW: Draw warp (x)...") {
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -1632,7 +1632,7 @@ DO
 }
 
 
-FORM (GRAPHICS_DTW_drawWarpY, U"DTW: Draw warp (y)", U"DTW: Draw warp (y)...") {
+FORM (GRAPHICS_DTW_drawWarp_y, U"DTW: Draw warp (y)", U"DTW: Draw warp (y)...") {
 	REAL (xmin, U"left Horizontal range", U"0.0")
 	REAL (xmax, U"right Horizontal range", U"0.0")
 	REAL (ymin, U"left Vertical range", U"0.0")
@@ -1646,56 +1646,56 @@ DO
 	GRAPHICS_EACH_END
 }
 
-DIRECT (REAL_DTW_getStartTimeX) {
+DIRECT (REAL_DTW_getStartTime_x) {
 	NUMBER_ONE (DTW)
 		double result = my xmin;
 	NUMBER_ONE_END (U" s (= start time along x)")
 }
 
-DIRECT (REAL_DTW_getEndTimeX) {
+DIRECT (REAL_DTW_getEndTime_x) {
 	NUMBER_ONE (DTW)
 		double result = my xmax;
 	NUMBER_ONE_END (U" s (= end time along x)");
 }
 
-DIRECT (REAL_DTW_getTotalDurationX) {
+DIRECT (REAL_DTW_getTotalDuration_x) {
 	NUMBER_ONE (DTW)
 		double result = my xmax - my xmin;
 	NUMBER_ONE_END (U" s (= total duration along x)");
 }
 
-DIRECT (REAL_DTW_getStartTimeY) {
+DIRECT (REAL_DTW_getStartTime_y) {
 	NUMBER_ONE (DTW)
 		double result = my ymin;
 	NUMBER_ONE_END (U" s (= start time along y)");
 }
 
-DIRECT (REAL_DTW_getEndTimeY) {
+DIRECT (REAL_DTW_getEndTime_y) {
 	NUMBER_ONE (DTW)
 		double result = my ymax;
 	NUMBER_ONE_END (U" s (= end time along y)");
 }
 
-DIRECT (REAL_DTW_getTotalDurationY) {
+DIRECT (REAL_DTW_getTotalDuration_y) {
 	NUMBER_ONE (DTW)
 		double result = my ymax - my ymin;
 	NUMBER_ONE_END (U" s (= total duration along y)")
 }
 
-DIRECT (INTEGER_DTW_getNumberOfFramesX) {
+DIRECT (INTEGER_DTW_getNumberOfFrames_x) {
 	INTEGER_ONE (DTW)
 		integer result = my nx;
 	INTEGER_ONE_END (U" (= number of frames along x)")
 }
 
 
-DIRECT (REAL_DTW_getTimeStepX) {
+DIRECT (REAL_DTW_getTimeStep_x) {
 	NUMBER_ONE (DTW)
 		double result = my dx;
 	NUMBER_ONE_END (U" s (= time step along x)")
 }
 
-FORM (REAL_DTW_getTimeFromFrameNumberX, U"DTW: Get time from frame number (x)", nullptr) {
+FORM (REAL_DTW_getTimeFromFrameNumber_x, U"DTW: Get time from frame number (x)", nullptr) {
 	NATURAL (frameNumber, U"Frame number (x)", U"1")
 	OK
 DO
@@ -1704,7 +1704,7 @@ DO
 	NUMBER_ONE_END (U" s (= y time at x frame ", frameNumber, U")")
 }
 
-FORM (INTEGER_DTW_getFrameNumberFromTimeX, U"DTW: Get frame number from time (x)", nullptr) {
+FORM (INTEGER_DTW_getFrameNumberFromTime_x, U"DTW: Get frame number from time (x)", nullptr) {
 	REAL (xTime, U"Time along x (s)", U"0.1")
 	OK
 DO
@@ -1714,20 +1714,20 @@ DO
 	INTEGER_ONE_END (U" (= x frame at y time ", xTime, U")")
 }
 
-DIRECT (INTEGER_DTW_getNumberOfFramesY) {
+DIRECT (INTEGER_DTW_getNumberOfFrames_y) {
 	INTEGER_ONE (DTW)
 		integer result = my ny;
 	INTEGER_ONE_END (U" (= number of frames along y)")
 }
 
-DIRECT (REAL_DTW_getTimeStepY) {
+DIRECT (REAL_DTW_getTimeStep_y) {
 	NUMBER_ONE (DTW)
 		double result = my dy;
 	NUMBER_ONE_END (U" s (= time step along y)")
 }
 
 
-FORM (REAL_DTW_getTimeFromFrameNumberY, U"DTW: Get time from frame number (y)", nullptr) {
+FORM (REAL_DTW_getTimeFromFrameNumber_y, U"DTW: Get time from frame number (y)", nullptr) {
 	NATURAL (frameNumber, U"Frame number (y)", U"1")
 	OK
 DO
@@ -1736,7 +1736,7 @@ DO
 	NUMBER_ONE_END (U" s (= x time at y frame ", frameNumber, U")")
 }
 
-FORM (INTEGER_DTW_getFrameNumberFromTimeY, U"DTW: Get frame number from time (y)", nullptr) {
+FORM (INTEGER_DTW_getFrameNumberFromTime_y, U"DTW: Get frame number from time (y)", nullptr) {
 	REAL (yTime, U"Time along y (s)", U"0.1")
 	OK
 DO
@@ -1787,7 +1787,7 @@ DO
 	INTEGER_ONE_END (U" (= maximum number of consecutive steps in ", direction_string [direction], U" direction)")
 }
 
-DIRECT (REAL_DTW_getWeightedDistance) {
+DIRECT (REAL_DTW_getDistance_weighted) {
 	NUMBER_ONE (DTW)
 		double result = my weightedDistance;
 	NUMBER_ONE_END (U" (weighted distance)")
@@ -1822,7 +1822,7 @@ DIRECT (REAL_DTW_getMaximumDistance) {
 	NUMBER_ONE_END (U" (maximum)")
 }
 
-FORM (MODIFY_DTW_formulaDistances, U"DTW: Formula (distances)", nullptr) {
+FORM (MODIFY_DTW_formula_distances, U"DTW: Formula (distances)", nullptr) {
 	LABEL (U"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (formula, U"Formula:", U"self")
@@ -2031,7 +2031,7 @@ DO
 	INTEGER_ONE_END (U" (source index)")
 }
 
-FORM (REAL_EditCostsTable_getInsertionCost, U"EditCostsTable: Get insertion cost", nullptr) {
+FORM (REAL_EditCostsTable_getInsertionCosts, U"EditCostsTable: Get insertion cost", nullptr) {
 	SENTENCE (target, U"Target", U"")
 	OK
 DO
@@ -2059,7 +2059,7 @@ DO
 	NUMBER_ONE_END (U" (substitution cost)")
 }
 
-FORM (REAL_EditCostsTable_getOthersCost, U"EditCostsTable: Get cost (others)", nullptr) {
+FORM (REAL_EditCostsTable_getCosts_others, U"EditCostsTable: Get cost (others)", nullptr) {
 	RADIO (costTypes, U"Others cost type", 1)
 		RADIOBUTTON (U"Insertion")
 		RADIOBUTTON (U"Deletion")
@@ -2123,7 +2123,7 @@ DO
 	MODIFY_EACH_END
 }
 
-FORM (MODIFY_EditCostsTable_setOthersCosts, U"EditCostsTable: Set costs (others)", nullptr) {
+FORM (MODIFY_EditCostsTable_setCosts_others, U"EditCostsTable: Set costs (others)", nullptr) {
 	LABEL (U"Others costs")
 	REAL (insertionCosts, U"Insertion", U"1.0")
 	REAL (deletionCosts, U"Deletion", U"1.0")
@@ -2320,7 +2320,7 @@ DO
 	STRING_ONE_END
 }
 
-FORM (INTEGER_Index_getClassIndexFromItemIndex, U"Index: Get item index", nullptr) {
+FORM (INTEGER_StringsIndex_getClassIndexFromItemIndex, U"StringsIndex: Get item index", nullptr) {
 	NATURAL (itemIndex, U"Item index", U"1")
 	OK
 DO
@@ -2329,7 +2329,16 @@ DO
 	INTEGER_ONE_END (U" (class index)")
 }
 
-FORM (INTEGER_StringsIndex_getClassIndexFromClassLabel, U"StringsIndex: Get class index from calss label", nullptr) {
+FORM (INTEGER_Index_getIndex, U"Index: Get item index", nullptr) {
+	NATURAL (itemIndex, U"Item index", U"1")
+	OK
+DO
+	INTEGER_ONE (Index)
+		integer result = Index_getClassIndexFromItemIndex (me, itemIndex);
+	INTEGER_ONE_END (U" (class index)")
+}
+
+FORM (INTEGER_StringsIndex_getClassIndex, U"StringsIndex: Get class index from calss label", nullptr) {
 	WORD (klasLabel, U"Class label", U"label")
 	OK
 DO
@@ -2572,7 +2581,7 @@ DIRECT (NEW1_FilesInMemory_to_FileInMemorySet) {
 	CONVERT_LIST_END (U"merged");
 }
 
-DIRECT (MODIFY_FileInMemorySet_addItems) {
+DIRECT (MODIFY_FileInMemorySet_addItemsToSet) {
 	MODIFY_FIRST_OF_TWO (FileInMemorySet, FileInMemory)
 		autoFileInMemory him = Data_copy (you);
 		my addItem_move (him.move());
@@ -2884,7 +2893,7 @@ DO
 	GRAPHICS_EACH_END
 }
 
-FORM (GRAPHICS_FormantFilter_drawSpectrum, U"FormantFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
+FORM (GRAPHICS_FormantFilter_drawSpectrum_slice, U"FormantFilter: Draw spectrum (slice)", U"FilterBank: Draw spectrum (slice)...") {
 	REAL (time, U"Time (s)", U"0.1")
 	REAL (fromFrequency, U"left Frequency range (Hz)", U"0.0")
 	REAL (toFrequency, U"right Frequency range (Hz)", U"0.0")
@@ -3064,7 +3073,7 @@ DO
 
 /***************** Intensity ***************************************************/
 
-FORM (NEW_Intensity_to_TextGrid_detectSilences, U"Intensity: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
+FORM (NEW_Intensity_to_TextGrid_silences, U"Intensity: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
 	REAL (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
 	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
 	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
@@ -3079,7 +3088,7 @@ DO
 
 /***************** IntensityTier ***************************************************/
 
-FORM (NEW_IntensityTier_to_TextGrid_detectSilences, U"IntensityTier: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
+FORM (NEW_IntensityTier_to_TextGrid_silences, U"IntensityTier: To TextGrid (silences)", U"Intensity: To TextGrid (silences)...") {
 	REAL (silenceThreshold, U"Silence threshold (dB)", U"-25.0")
 	POSITIVE (minimumSilenceDuration, U"Minimum silent interval duration (s)", U"0.1")
 	POSITIVE (minimumSoundingDuration, U"Minimum sounding interval duration (s)", U"0.05")
@@ -3361,32 +3370,32 @@ FORM_READ (READ1_LongSounds_appendToExistingSoundFile, U"LongSound: Append to ex
 	LongSounds_appendToExistingSoundFile (& list, file);
 END }
 
-FORM_SAVE (SAVE_LongSounds_writeToStereoAiffFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
+FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFFFile, U"LongSound: Save as AIFF file", 0, U"aiff") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFF, file);
 	END
 }
 
-FORM_SAVE (SAVE_LongSounds_writeToStereoAifcFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
+FORM_SAVE (SAVE_LongSounds_saveAsStereoAIFCFile, U"LongSound: Save as AIFC file", 0, U"aifc") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_AIFC, file);
 	END
 }
 
 
-FORM_SAVE (SAVE_LongSounds_writeToStereoWavFile, U"LongSound: Save as WAV file", 0, U"wav") {
+FORM_SAVE (SAVE_LongSounds_saveAsStereoWAVFile, U"LongSound: Save as WAV file", 0, U"wav") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_WAV, file);
 	END
 }
 
-FORM_SAVE (SAVE_LongSounds_writeToStereoNextSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
+FORM_SAVE (SAVE_LongSounds_saveAsStereoNeXtSunFile, U"LongSound: Save as NeXT/Sun file", 0, U"au") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NEXT_SUN, file);
 	END
 }
 
-FORM_SAVE (SAVE_LongSounds_writeToStereoNistFile, U"LongSound: Save as NIST file", 0, U"nist") {
+FORM_SAVE (SAVE_LongSounds_saveAsStereoNISTFile, U"LongSound: Save as NIST file", 0, U"nist") {
 	FIND_COUPLE (LongSound)
 		LongSounds_writeToStereoAudioFile16 (me, you, Melder_NIST, file);
 	END
@@ -7787,27 +7796,27 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDTW, 0, DRAW_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classDTW, 0, U"Draw path...", nullptr, 1, GRAPHICS_DTW_drawPath);
 	praat_addAction1 (classDTW, 0, U"Paint distances...", nullptr, 1, GRAPHICS_DTW_paintDistances);
-	praat_addAction1 (classDTW, 0, U"Draw warp (x)...", nullptr, 1, GRAPHICS_DTW_drawWarpX);
-	praat_addAction1 (classDTW, 0, U"Draw warp (y)...", nullptr, 1, GRAPHICS_DTW_drawWarpY);
+	praat_addAction1 (classDTW, 0, U"Draw warp (x)...", nullptr, 1, GRAPHICS_DTW_drawWarp_x);
+	praat_addAction1 (classDTW, 0, U"Draw warp (y)...", nullptr, 1, GRAPHICS_DTW_drawWarp_y);
 	praat_addAction1 (classDTW, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classDTW, 1, U"Query time domains", nullptr, 1, 0);
-	praat_addAction1 (classDTW, 1, U"Get start time (x)", nullptr, 2, REAL_DTW_getStartTimeX);
-	praat_addAction1 (classDTW, 1, U"Get end time (x)", nullptr, 2, REAL_DTW_getEndTimeX);
-	praat_addAction1 (classDTW, 1, U"Get total duration (x)", nullptr, 2, REAL_DTW_getTotalDurationX);
+	praat_addAction1 (classDTW, 1, U"Get start time (x)", nullptr, 2, REAL_DTW_getStartTime_x);
+	praat_addAction1 (classDTW, 1, U"Get end time (x)", nullptr, 2, REAL_DTW_getEndTime_x);
+	praat_addAction1 (classDTW, 1, U"Get total duration (x)", nullptr, 2, REAL_DTW_getTotalDuration_x);
 	praat_addAction1 (classDTW, 1, U"-- time domain x from y separator --", nullptr, 2, 0);
-	praat_addAction1 (classDTW, 1, U"Get start time (y)", nullptr, 2, REAL_DTW_getStartTimeY);
-	praat_addAction1 (classDTW, 1, U"Get end time (y)", nullptr, 2, REAL_DTW_getEndTimeY);
-	praat_addAction1 (classDTW, 1, U"Get total duration (y)", nullptr, 2, REAL_DTW_getTotalDurationY);
+	praat_addAction1 (classDTW, 1, U"Get start time (y)", nullptr, 2, REAL_DTW_getStartTime_y);
+	praat_addAction1 (classDTW, 1, U"Get end time (y)", nullptr, 2, REAL_DTW_getEndTime_y);
+	praat_addAction1 (classDTW, 1, U"Get total duration (y)", nullptr, 2, REAL_DTW_getTotalDuration_y);
 	praat_addAction1 (classDTW, 1, U"Query time samplings", nullptr, 1, 0);
-	praat_addAction1 (classDTW, 1, U"Get number of frames (x)", nullptr, 2, INTEGER_DTW_getNumberOfFramesX);
-	praat_addAction1 (classDTW, 1, U"Get time step (x)", nullptr, 2, REAL_DTW_getTimeStepX);
-	praat_addAction1 (classDTW, 1, U"Get time from frame number (x)...", nullptr, 2, REAL_DTW_getTimeFromFrameNumberX);
-	praat_addAction1 (classDTW, 1, U"Get frame number from time (x)...", nullptr, 2, INTEGER_DTW_getFrameNumberFromTimeX);
+	praat_addAction1 (classDTW, 1, U"Get number of frames (x)", nullptr, 2, INTEGER_DTW_getNumberOfFrames_x);
+	praat_addAction1 (classDTW, 1, U"Get time step (x)", nullptr, 2, REAL_DTW_getTimeStep_x);
+	praat_addAction1 (classDTW, 1, U"Get time from frame number (x)...", nullptr, 2, REAL_DTW_getTimeFromFrameNumber_x);
+	praat_addAction1 (classDTW, 1, U"Get frame number from time (x)...", nullptr, 2, INTEGER_DTW_getFrameNumberFromTime_x);
 	praat_addAction1 (classDTW, 1, U"-- time sampling x from y separator --", nullptr, 2, 0);
-	praat_addAction1 (classDTW, 1, U"Get number of frames (y)", nullptr, 2, INTEGER_DTW_getNumberOfFramesY);
-	praat_addAction1 (classDTW, 1, U"Get time step (y)", nullptr, 2, REAL_DTW_getTimeStepY);
-	praat_addAction1 (classDTW, 1, U"Get time from frame number (y)...", nullptr, 2, REAL_DTW_getTimeFromFrameNumberY);
-	praat_addAction1 (classDTW, 1, U"Get frame number from time (y)...", nullptr, 2, INTEGER_DTW_getFrameNumberFromTimeY);
+	praat_addAction1 (classDTW, 1, U"Get number of frames (y)", nullptr, 2, INTEGER_DTW_getNumberOfFrames_y);
+	praat_addAction1 (classDTW, 1, U"Get time step (y)", nullptr, 2, REAL_DTW_getTimeStep_y);
+	praat_addAction1 (classDTW, 1, U"Get time from frame number (y)...", nullptr, 2, REAL_DTW_getTimeFromFrameNumber_y);
+	praat_addAction1 (classDTW, 1, U"Get frame number from time (y)...", nullptr, 2, INTEGER_DTW_getFrameNumberFromTime_y);
 
 	praat_addAction1 (classDTW, 1, U"Get y time from x time...", nullptr, 1, REAL_DTW_getYTimeFromXTime);
 	praat_addAction1 (classDTW, 1, U"Get x time from y time...", nullptr, 1, REAL_DTW_getXTimeFromYTime);
@@ -7819,9 +7828,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDTW, 1, U"Get distance value...", nullptr, 1, REAL_DTW_getDistanceValue);
 	praat_addAction1 (classDTW, 1, U"Get minimum distance", nullptr, 1, REAL_DTW_getMinimumDistance);
 	praat_addAction1 (classDTW, 1, U"Get maximum distance", nullptr, 1, REAL_DTW_getMaximumDistance);
-	praat_addAction1 (classDTW, 1, U"Get distance (weighted)", nullptr, 1, REAL_DTW_getWeightedDistance);
+	praat_addAction1 (classDTW, 1, U"Get distance (weighted)", nullptr, 1, REAL_DTW_getDistance_weighted);
 	praat_addAction1 (classDTW, 0, MODIFY_BUTTON, nullptr, 0, 0);
-	praat_addAction1 (classDTW, 0, U"Formula (distances)...", nullptr, 1, MODIFY_DTW_formulaDistances);
+	praat_addAction1 (classDTW, 0, U"Formula (distances)...", nullptr, 1, MODIFY_DTW_formula_distances);
 	praat_addAction1 (classDTW, 0, U"Set distance value...", nullptr, 1, MODIFY_DTW_setDistanceValue);
 
 	praat_addAction1 (classDTW, 0, U"Analyse", nullptr, 0, 0);
@@ -7839,37 +7848,38 @@ void praat_uvafon_David_init () {
     praat_addAction2 (classDTW, 1, classPolygon, 1, U"Find path inside...", nullptr, 0, MODIFY_DTW_Polygon_findPathInside);
     praat_addAction2 (classDTW, 1, classPolygon, 1, U"To Matrix (cum. distances)...", nullptr, 0, NEW1_DTW_Polygon_to_Matrix_cumulativeDistances);
 	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw...", nullptr, 0, GRAPHICS_DTW_Sounds_draw);
-	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw warp (x)...", nullptr, 0, GRAPHICS_DTW_Sounds_drawWarpX);
+	praat_addAction2 (classDTW, 1, classSound, 2, U"Draw warp (x)...", nullptr, 0, GRAPHICS_DTW_Sounds_drawWarp_x);
 
 	praat_addAction1 (classEditDistanceTable, 1, U"EditDistanceTable help", nullptr, 0, HELP_EditDistanceTable_help);
 	praat_EditDistanceTable_as_TableOfReal_init (classEditDistanceTable);
 	praat_addAction1 (classEditDistanceTable, 1, U"To TableOfReal (directions)...", nullptr, praat_HIDDEN, NEW_EditDistanceTable_to_TableOfReal_directions);
-	praat_addAction2 (classEditDistanceTable, 1, classEditCostsTable, 1, U"Set new edit costs", nullptr, 0, MODIFY_EditDistanceTable_setEditCosts);
+	praat_addAction2 (classEditDistanceTable, 1, classEditCostsTable, 1, U"Set edit costs", nullptr, 0, MODIFY_EditDistanceTable_setEditCosts);
+	praat_addAction2 (classEditDistanceTable, 1, classEditCostsTable, 1, U"Set new edit costs", nullptr, praat_DEPRECATED_2017, MODIFY_EditDistanceTable_setEditCosts);
 
 	praat_addAction1 (classEditCostsTable, 1, U"EditCostsTable help", nullptr, 0, HELP_EditCostsTable_help);
 	praat_addAction1 (classEditCostsTable, 0, QUERY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classEditCostsTable, 1, U"Get target index...", nullptr, 1, INTEGER_EditCostsTable_getTargetIndex);
 	praat_addAction1 (classEditCostsTable, 1, U"Get source index...", nullptr, 1, INTEGER_EditCostsTable_getSourceIndex);
-	praat_addAction1 (classEditCostsTable, 1, U"Get insertion cost...", nullptr, 1, REAL_EditCostsTable_getInsertionCost);
-	praat_addAction1 (classEditCostsTable, 1, U"Get deletion cost...", nullptr, 1, REAL_EditCostsTable_getDeletionCost);
-	praat_addAction1 (classEditCostsTable, 1, U"Get substitution cost...", nullptr, 1, REAL_EditCostsTable_getSubstitutionCost);
-	praat_addAction1 (classEditCostsTable, 1, U"Get cost (others)...", nullptr, 1, REAL_EditCostsTable_getOthersCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get insertion costs...", nullptr, 1, REAL_EditCostsTable_getInsertionCosts);
+	praat_addAction1 (classEditCostsTable, 1, U"Get deletion costs...", nullptr, 1, REAL_EditCostsTable_getDeletionCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get substitution costs...", nullptr, 1, REAL_EditCostsTable_getSubstitutionCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get costs (others)...", nullptr, 1, REAL_EditCostsTable_getCosts_others);
 	praat_addAction1 (classEditCostsTable, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classEditCostsTable, 1, U"Set target symbol (index)...", nullptr, 1, MODIFY_EditCostsTable_setTargetSymbol_index);
 	praat_addAction1 (classEditCostsTable, 1, U"Set source symbol (index)...", nullptr, 1, MODIFY_EditCostsTable_setSourceSymbol_index);
 	praat_addAction1 (classEditCostsTable, 1, U"Set insertion costs...", nullptr, 1, MODIFY_EditCostsTable_setInsertionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Set deletion costs...", nullptr, 1, MODIFY_EditCostsTable_setDeletionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Set substitution costs...", nullptr, 1, MODIFY_EditCostsTable_setSubstitutionCosts);
-	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1, MODIFY_EditCostsTable_setOthersCosts);
+	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1, MODIFY_EditCostsTable_setCosts_others);
 	praat_addAction1 (classEditCostsTable, 1, U"To TableOfReal", nullptr, 0, NEW_EditCostsTable_to_TableOfReal);
 
 	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, U"Index help", nullptr, 0, HELP_Index_help);
 	praat_addAction1 (classStringsIndex, 1, U"Get class label...", nullptr, 0, INFO_StringsIndex_getClassLabelFromClassIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 0, INTEGER_StringsIndex_getClassIndexFromClassLabel);
+	praat_addAction1 (classStringsIndex, 1, U"Get class index...", nullptr, 0, INTEGER_StringsIndex_getClassIndex);
 	praat_addAction1 (classStringsIndex, 1, U"Get label...", nullptr, 0, INFO_StringsIndex_getItemLabelFromItemIndex);
-	praat_addAction1 (classStringsIndex, 1, U"Get class index from item index...", nullptr, 0, INTEGER_Index_getClassIndexFromItemIndex);
-	praat_addAction1 (classIndex, 1, U"Get index...", nullptr, 0, INTEGER_Index_getClassIndexFromItemIndex);
+	praat_addAction1 (classStringsIndex, 1, U"Get class index from item index...", nullptr, 0, INTEGER_StringsIndex_getClassIndexFromItemIndex);
+	praat_addAction1 (classIndex, 1, U"Get index...", nullptr, 0, INTEGER_Index_getIndex);
 	praat_addAction1 (classStringsIndex, 1, U"To Strings", nullptr, 0, NEW_StringsIndex_to_Strings);
 
 	praat_addAction1 (classEigen, 0, U"Eigen help", nullptr, 0, HELP_Eigen_help);
@@ -7919,7 +7929,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFileInMemorySet, 0, U"Merge", nullptr, 0, NEW1_FileInMemorySets_merge);
 	praat_addAction1 (classFileInMemorySet, 0, U"To Strings (id)", nullptr, 0, NEW_FileInMemorySet_to_Strings_id);
 	praat_addAction1 (classFileInMemorySet, 0, U"Extract files...", nullptr, 0, NEW1_FileInMemorySet_extractFiles);
-	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0, MODIFY_FileInMemorySet_addItems);
+	praat_addAction2 (classFileInMemorySet, 1, classFileInMemory, 0, U"Add items to set", nullptr, 0, MODIFY_FileInMemorySet_addItemsToSet);
 
 	praat_addAction1 (classFileInMemoryManager, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classFileInMemoryManager, 1, U"Get number of files", nullptr, 1, INFO_FileInMemoryManager_getNumberOfFiles);
@@ -7931,14 +7941,14 @@ void praat_uvafon_David_init () {
 	
 	praat_addAction1 (classFormantFilter, 0, U"FormantFilter help", nullptr, praat_DEPRECATED_2015, HELP_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
-	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawSpectrum);
+	praat_addAction1 (classFormantFilter, 0, U"Draw spectrum (slice)...", U"Draw filters...", praat_DEPTH_1 | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawSpectrum_slice);
 	praat_addAction1 (classFormantFilter, 0, U"Draw filter functions...", U"Draw filters...",  praat_DEPTH_1  | praat_DEPRECATED_2014, GRAPHICS_FormantFilter_drawFilterFunctions);
 	praat_addAction1 (classFormantFilter, 0, U"To Spectrogram", nullptr, 0, NEW_FormantFilter_to_Spectrogram);
 
 	praat_addAction1 (classFormantGrid, 0, U"Draw...", U"Edit", praat_DEPTH_1 + praat_HIDDEN, GRAPHICS_FormantGrid_draw);
 
-	praat_addAction1 (classIntensity, 0, U"To TextGrid (silences)...", U"To IntensityTier (valleys)", 0, NEW_Intensity_to_TextGrid_detectSilences);
-	praat_addAction1 (classIntensityTier, 0, U"To TextGrid (silences)...", nullptr, 0, NEW_IntensityTier_to_TextGrid_detectSilences);
+	praat_addAction1 (classIntensity, 0, U"To TextGrid (silences)...", U"To IntensityTier (valleys)", 0, NEW_Intensity_to_TextGrid_silences);
+	praat_addAction1 (classIntensityTier, 0, U"To TextGrid (silences)...", nullptr, 0, NEW_IntensityTier_to_TextGrid_silences);
 	praat_addAction1 (classIntensityTier, 0, U"To Intensity...", nullptr, praat_HIDDEN, NEW_IntensityTier_to_Intensity);
 
 	praat_addAction1 (classISpline, 0, U"ISpline help", nullptr, 0, HELP_ISpline_help);
@@ -7957,16 +7967,16 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
 	praat_addAction2 (classLongSound, 0, classSound, 0, U"Append to existing sound file...", nullptr, 0, READ1_LongSounds_appendToExistingSoundFile);
 
-	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFF file...", U"Save as NIST file...", 1, SAVE_LongSounds_writeToStereoAiffFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFF file...", U"Write to NIST file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoAiffFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFC file...", U"Save as stereo AIFF file...", 1, SAVE_LongSounds_writeToStereoAifcFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFC file...", U"Write to stereo AIFF file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoAifcFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo WAV file...", U"Save as stereo AIFC file...", 1, SAVE_LongSounds_writeToStereoWavFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo WAV file...", U"Write to stereo AIFC file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoWavFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo NeXt/Sun file...", U"Save as stereo WAV file...", 1, SAVE_LongSounds_writeToStereoNextSunFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo NeXt/Sun file...", U"Write to stereo WAV file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoNextSunFile);
-	praat_addAction1 (classLongSound, 2, U"Save as stereo NIST file...", U"Save as stereo NeXt/Sun file...", 1, SAVE_LongSounds_writeToStereoNistFile);
-	praat_addAction1 (classLongSound, 2, U"Write to stereo NIST file...", U"Write to stereo NeXt/Sun file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_writeToStereoNistFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFF file...", U"Save as NIST file...", 1, SAVE_LongSounds_saveAsStereoAIFFFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFF file...", U"Write to NIST file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_saveAsStereoAIFFFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo AIFC file...", U"Save as stereo AIFF file...", 1, SAVE_LongSounds_saveAsStereoAIFCFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo AIFC file...", U"Write to stereo AIFF file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_saveAsStereoAIFCFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo WAV file...", U"Save as stereo AIFC file...", 1, SAVE_LongSounds_saveAsStereoWAVFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo WAV file...", U"Write to stereo AIFC file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_saveAsStereoWAVFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo NeXt/Sun file...", U"Save as stereo WAV file...", 1, SAVE_LongSounds_saveAsStereoNeXtSunFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo NeXt/Sun file...", U"Write to stereo WAV file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_saveAsStereoNeXtSunFile);
+	praat_addAction1 (classLongSound, 2, U"Save as stereo NIST file...", U"Save as stereo NeXt/Sun file...", 1, SAVE_LongSounds_saveAsStereoNISTFile);
+	praat_addAction1 (classLongSound, 2, U"Write to stereo NIST file...", U"Write to stereo NeXt/Sun file...", praat_HIDDEN + praat_DEPTH_1, SAVE_LongSounds_saveAsStereoNISTFile);
 
 	praat_addAction1 (classLtas, 0, U"Report spectral tilt...", U"Get slope...", 1, INFO_Ltas_reportSpectralTilt);
 
