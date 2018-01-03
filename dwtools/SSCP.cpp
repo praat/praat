@@ -1867,7 +1867,7 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 	}
 }
 
-void SSCP_testDiagonality_bartlett (SSCP me, integer numberOfContraints, double *chisq, double *prob, double *df) {
+void SSCP_getDiagonality_bartlett (SSCP me, integer numberOfContraints, double *chisq, double *prob, double *df) {
 	autoCorrelation c = SSCP_to_Correlation (me);
 	Correlation_testDiagonality_bartlett (c.get(), numberOfContraints, chisq, prob, df);
 }

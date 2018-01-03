@@ -172,7 +172,7 @@ autoCovariance SSCP_to_Covariance (SSCP me, integer numberOfConstraints);
 
 autoSSCP Covariance_to_SSCP (Covariance me);
 
-void SSCP_testDiagonality_bartlett (SSCP me, integer numberOfContraints, double *chisq, double *prob, double *df);
+void SSCP_getDiagonality_bartlett (SSCP me, integer numberOfContraints, double *chisq, double *prob, double *df);
 
 void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContraints, double *chisq, double *prob, double *df);
 /* Test if a Correlation matrix is diagonal, Morrison pp. 116-118 */
