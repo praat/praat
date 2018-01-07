@@ -60,6 +60,30 @@ oo_END_CLASS (RBMLayer)
 
 
 
+#define ooSTRUCT FullyConnectedLayer
+oo_DEFINE_CLASS (FullyConnectedLayer, Layer)
+
+	oo_DOUBLE_MATRIX (weights, numberOfInputNodes, numberOfOutputNodes)
+	oo_DOUBLE_VECTOR (outputBiases, numberOfOutputNodes)
+
+	#if oo_DECLARING &&0
+		virtual void v_spreadUp (kLayer_activationType)
+			override;
+		virtual void v_update (double learningRate)
+			override;
+		virtual autoMatrix v_extractOutputBiases ()
+			override;
+		virtual autoMatrix v_extractWeights ()
+			override;
+		virtual autonummat v_getWeights_nummat ()
+			override;
+	#endif
+
+oo_END_CLASS (FullyConnectedLayer)
+#undef ooSTRUCT
+
+
+
 #define ooSTRUCT Net
 oo_DEFINE_CLASS (Net, Daata)
 

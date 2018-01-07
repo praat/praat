@@ -42,6 +42,8 @@
 
 Thing_implement (RBMLayer, Layer, 0);
 
+Thing_implement (FullyConnectedLayer, Layer, 0);
+
 Thing_implement (Net, Daata, 0);
 
 static autoRBMLayer RBMLayer_create (integer numberOfInputNodes, integer numberOfOutputNodes, bool inputsAreBinary) {
@@ -61,6 +63,17 @@ static autoRBMLayer RBMLayer_create (integer numberOfInputNodes, integer numberO
 	} catch (MelderError) {
 		Melder_throw (U"RBM layer with ", numberOfInputNodes, U" input nodes and ",
 			numberOfOutputNodes, U" output nodes not created.");
+	}
+}
+
+autoNet Net_createEmpty (integer numberOfInputNodes) {
+	try {
+		autoNet me = Thing_new (Net);
+		
+		//my numberOfInputNodes = numberOfInputNodes;
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Net not created.");
 	}
 }
 
@@ -251,18 +264,26 @@ void Net_update (Net me, double learningRate) {
 }
 
 static void Layer_PatternList_applyToInput (Layer me, PatternList thee, integer rowNumber) {
-	Melder_assert (my numberOfInputNodes == thy nx);
+	Melder_require (my numberOfInputNodes == thy nx,
+		U"The number of elements in each row of ", thee, U" (", thy nx,
+		U") does not match the number of input nodes of ", me, U" (", my numberOfInputNodes, U").");
 	for (integer ifeature = 1; ifeature <= my numberOfInputNodes; ifeature ++) {
 		my inputActivities [ifeature] = thy z [rowNumber] [ifeature];
 	}
 }
 
 void Net_PatternList_applyToInput (Net me, PatternList thee, integer rowNumber) {
-	Layer_PatternList_applyToInput (my layers->at [1], thee, rowNumber);
+	try {
+		Layer_PatternList_applyToInput (my layers->at [1], thee, rowNumber);
+	} catch (MelderError) {
+		Melder_throw (me, U" & ", thee, U": pattern ", rowNumber, U" not applied to input.");
+	}
 }
 
 static void Layer_PatternList_applyToOutput (Layer me, PatternList thee, integer rowNumber) {
-	Melder_assert (my numberOfOutputNodes == thy nx);
+	Melder_require (my numberOfOutputNodes == thy nx,
+		U"The number of elements in each row of ", thee, U" (", thy nx,
+		U") does not match the number of output nodes of ", me, U" (", my numberOfOutputNodes, U").");
 	for (integer icat = 1; icat <= my numberOfOutputNodes; icat ++) {
 		my outputActivities [icat] = thy z [rowNumber] [icat];
 	}
@@ -273,32 +294,40 @@ void Net_PatternList_applyToOutput (Net me, PatternList thee, integer rowNumber)
 }
 
 void Net_PatternList_learn (Net me, PatternList thee, double learningRate) {
-	for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
-		Net_PatternList_applyToInput (me, thee, ipattern);
-		Net_spreadUp (me, kLayer_activationType::STOCHASTIC);
-		for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
-			Layer layer = my layers->at [ilayer];
-			layer -> v_spreadDown_reconstruction ();
-			layer -> v_spreadUp_reconstruction ();
-			layer -> v_update (learningRate);
+	try {
+		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
+			Net_PatternList_applyToInput (me, thee, ipattern);
+			Net_spreadUp (me, kLayer_activationType::STOCHASTIC);
+			for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+				Layer layer = my layers->at [ilayer];
+				layer -> v_spreadDown_reconstruction ();
+				layer -> v_spreadUp_reconstruction ();
+				layer -> v_update (learningRate);
+			}
 		}
+	} catch (MelderError) {
+		Melder_throw (me, U" & ", thee, U": not learned.");
 	}
 }
 
 void Net_PatternList_learnByLayer (Net me, PatternList thee, double learningRate) {
-	for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
-		Layer layer = my layers->at [ilayer];
-		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
-			Layer_PatternList_applyToInput (my layers->at [1], thee, ipattern);
-			my layers->at [1] -> v_spreadUp (kLayer_activationType::STOCHASTIC);
-			for (integer jlayer = 2; jlayer <= ilayer; jlayer ++) {
-				copyOutputsToInputs (my layers->at [jlayer - 1], my layers->at [jlayer]);
-				my layers->at [jlayer] -> v_spreadUp (kLayer_activationType::STOCHASTIC);
+	try {
+		for (integer ilayer = 1; ilayer <= my layers->size; ilayer ++) {
+			Layer layer = my layers->at [ilayer];
+			for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
+				Layer_PatternList_applyToInput (my layers->at [1], thee, ipattern);
+				my layers->at [1] -> v_spreadUp (kLayer_activationType::STOCHASTIC);
+				for (integer jlayer = 2; jlayer <= ilayer; jlayer ++) {
+					copyOutputsToInputs (my layers->at [jlayer - 1], my layers->at [jlayer]);
+					my layers->at [jlayer] -> v_spreadUp (kLayer_activationType::STOCHASTIC);
+				}
+				layer -> v_spreadDown_reconstruction ();
+				layer -> v_spreadUp_reconstruction ();
+				layer -> v_update (learningRate);
 			}
-			layer -> v_spreadDown_reconstruction ();
-			layer -> v_spreadUp_reconstruction ();
-			layer -> v_update (learningRate);
 		}
+	} catch (MelderError) {
+		Melder_throw (me, U" & ", thee, U": not learned.");
 	}
 }
 
