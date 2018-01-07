@@ -28,9 +28,12 @@
 
 void Net_initAsDeepBeliefNet (Net me, numvec numbersOfNodes, bool inputsAreBinary);
 
+autoNet Net_createEmpty (integer numberOfInputNodes);
+
 autoNet Net_createAsDeepBeliefNet (numvec numbersOfNodes, bool inputsAreBinary);
 
 void Net_addRBMLayer (Net me, integer numberOfOutputNodes);
+void Net_addFullyConnectedLayer (Net me, integer numberOfOutputNodes);
 
 void Net_spreadUp (Net me, kLayer_activationType activationType);
 void Net_spreadDown (Net me, kLayer_activationType activationType);

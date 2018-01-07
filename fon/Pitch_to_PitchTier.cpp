@@ -1,6 +1,6 @@
 /* Pitch_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2009-2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,19 @@
 
 autoPitchTier Pitch_to_PitchTier (Pitch me) {
 	try {
-		autoPitchTier thee = PitchTier_create (my xmin, my xmax);
+		autoPitchTier you = PitchTier_create (my xmin, my xmax);
 		for (integer i = 1; i <= my nx; i ++) {
 			double frequency = my frame [i]. candidate [1]. frequency;
 
 			/*
-			 * Count only voiced frames.
-			 */
+				Count only voiced frames.
+			*/
 			if (frequency > 0.0 && frequency < my ceiling) {
 				double time = Sampled_indexToX (me, i);
-				RealTier_addPoint (thee.get(), time, frequency);
+				RealTier_addPoint (you.get(), time, frequency);
 			}
 		}
-		return thee;
+		return you;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PitchTier.");
 	}
@@ -42,8 +42,8 @@ static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double 
 	int nonPeriodicLineType)
 {
 	/*
-	 * f = fleft + (t - tmin) * (fright - fleft) / (tmax - tmin);
-	 */
+		f = fleft + (t - tmin) * (fright - fleft) / (tmax - tmin);
+	*/
 	int lineType = Graphics_inqLineType (g);
 	double lineWidth = Graphics_inqLineWidth (g);
 	double slope = (fright - fleft) / (tmax - tmin);
@@ -118,16 +118,16 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	try {
 		if (tier -> points.size == 0) Melder_throw (U"No pitch points.");
-		autoPitch thee = Data_copy (me);
+		autoPitch you = Data_copy (me);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			Pitch_Frame frame = & thy frame [iframe];
+			Pitch_Frame frame = & your frame [iframe];
 			Pitch_Candidate cand = & frame -> candidate [1];
 			if (cand -> frequency > 0.0 && cand -> frequency <= my ceiling)
 				cand -> frequency = RealTier_getValueAtTime (tier, Sampled_indexToX (me, iframe));
 			cand -> strength = 0.9;
 			frame -> nCandidates = 1;
 		}
-		return thee;
+		return you;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", tier, U": not converted to Pitch.");
 	}

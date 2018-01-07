@@ -1679,7 +1679,7 @@ FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To Activation
 DO
 	CONVERT_TWO (Net, PatternList)
 		autoActivationList result = Net_PatternList_to_ActivationList (me, you, activationType);
-	CONVERT_TWO_END (my name, U"_", you -> name)
+	CONVERT_TWO_END (my name, U"_", your name)
 }
 
 // MARK: - buttons
@@ -1688,7 +1688,7 @@ void praat_uvafon_gram_init ();
 void praat_uvafon_gram_init () {
 	Thing_recognizeClassesByName (classNetwork,
 		classOTGrammar, classOTHistory, classOTMulti,
-		classLayer, classNet,
+		classRBMLayer, classFullyConnectedLayer, classNet,
 		nullptr);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
