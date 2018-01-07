@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2017 Paul Boersma
+ * Copyright (C) 1997-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2547,15 +2547,14 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 	integer savedNumberOfFixedRankings = my numberOfFixedRankings;
 	OTGrammar_save (me);
 	try {
-		integer ifixedRanking, icons, jcons, kcons, lcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
-		integer ilist, jlist, itrial, iform;
-		bool improved;
-		double evaluationNoise = 1e-9;
+		integer ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
+		integer itrial;
+		const double evaluationNoise = 1e-9;
 		/*
 		 * Add room for two more fixed rankings.
 		 */
 		my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings + 2);
-		for (ifixedRanking = 1; ifixedRanking <= my numberOfFixedRankings; ifixedRanking ++) {
+		for (integer ifixedRanking = 1; ifixedRanking <= my numberOfFixedRankings; ifixedRanking ++) {
 			my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
 			my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
 		}
@@ -2567,7 +2566,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			bool grammarHasChangedDuringCycle = false;
 			OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
-			for (iform = 1; iform <= thy pairs.size; iform ++) {
+			for (integer iform = 1; iform <= thy pairs.size; iform ++) {
 				PairProbability prob = thy pairs.at [iform];
 				if (prob -> weight > 0.0) {
 					bool grammarHasChanged = false;
@@ -2593,8 +2592,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		autoNUMmatrix <bool> obligatory (1, my numberOfConstraints, 1, my numberOfConstraints);
 		MelderInfo_open ();
 		autoMelderProgress progress (U"Finding obligatory rankings.");
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-			for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+			for (integer jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
 				my fixedRankings [my numberOfFixedRankings]. higher = icons;
 				my fixedRankings [my numberOfFixedRankings]. lower = jcons;
 				OTGrammar_reset (me, 100.0);
@@ -2605,7 +2604,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					bool grammarHasChangedDuringCycle = false;
 					OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 					OTGrammar_newDisharmonies (me, evaluationNoise);
-					for (iform = 1; iform <= thy pairs.size; iform ++) {
+					for (integer iform = 1; iform <= thy pairs.size; iform ++) {
 						PairProbability prob = thy pairs.at [iform];
 						if (prob -> weight > 0.0) {
 							bool grammarHasChanged = false;
@@ -2631,12 +2630,12 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		Melder_progress (0.0, U"");
 		npair = npair * npair;
 		OrderedOf<structOTGrammar_List4> list;
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-			for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons && ! obligatory [jcons] [icons]) {
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+			for (integer jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons && ! obligatory [jcons] [icons]) {
 				my fixedRankings [my numberOfFixedRankings - 1]. higher = icons;
 				my fixedRankings [my numberOfFixedRankings - 1]. lower = jcons;
-				for (kcons = icons; kcons <= my numberOfConstraints; kcons ++) {
-					for (lcons = 1; lcons <= my numberOfConstraints; lcons ++) if (kcons != lcons && ! obligatory [lcons] [kcons]) {
+				for (integer kcons = icons; kcons <= my numberOfConstraints; kcons ++) {
+					for (integer lcons = 1; lcons <= my numberOfConstraints; lcons ++) if (kcons != lcons && ! obligatory [lcons] [kcons]) {
 						if (icons == kcons && jcons >= lcons) continue;
 						if (icons == lcons && jcons == kcons) continue;
 						if (jcons == kcons && obligatory [lcons] [icons]) continue;
@@ -2651,7 +2650,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							bool grammarHasChangedDuringCycle = false;
 							OTGrammar_honourLocalRankings (me, 1.0, 0.0, & grammarHasChangedDuringCycle);
 							OTGrammar_newDisharmonies (me, evaluationNoise);
-							for (iform = 1; iform <= thy pairs.size; iform ++) {
+							for (integer iform = 1; iform <= thy pairs.size; iform ++) {
 								PairProbability prob = thy pairs.at [iform];
 								if (prob -> weight > 0.0) {
 									bool grammarHasChanged = false;
@@ -2682,11 +2681,11 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		/*
 		 * Improve list.
 		 */
-		improved = true;
+		bool improved = true;
 		while (improved) {
 			improved = false;
-			for (ilist = 1; ilist <= list.size; ilist ++) {
-				for (jlist = 1; jlist <= list.size; jlist ++) if (ilist != jlist) {
+			for (integer ilist = 1; ilist <= list.size; ilist ++) {
+				for (integer jlist = 1; jlist <= list.size; jlist ++) if (ilist != jlist) {
 					OTGrammar_List4 elA = list.at [ilist];
 					OTGrammar_List4 elB = list.at [jlist];
 					integer ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
@@ -2706,8 +2705,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		improved = true;
 		while (improved) {
 			improved = false;
-			for (ilist = 1; ilist <= list.size; ilist ++) {
-				for (jlist = 1; jlist <= list.size; jlist ++) if (ilist != jlist) {
+			for (integer ilist = 1; ilist <= list.size; ilist ++) {
+				for (integer jlist = 1; jlist <= list.size; jlist ++) if (ilist != jlist) {
 					OTGrammar_List4 elA = list.at [ilist];
 					OTGrammar_List4 elB = list.at [jlist];
 					integer ahi1 = elA -> hi1, alo1 = elA -> lo1, ahi2 = elA -> hi2, alo2 = elA -> lo2;
@@ -2724,7 +2723,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 				if (improved) break;
 			}
 		}
-		for (ilist = 1; ilist <= list.size; ilist ++) {
+		for (integer ilist = 1; ilist <= list.size; ilist ++) {
 			OTGrammar_List4 el = list.at [ilist];
 			MelderInfo_write (my constraints [el -> hi1]. name, U" >> ", my constraints [el -> lo1]. name, U" OR ");
 			MelderInfo_writeLine (my constraints [el -> hi2]. name, U" >> ", my constraints [el -> lo2]. name);
@@ -2765,13 +2764,13 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 	my fixedRankings = nullptr;
 	OTGrammar_save (me);
 	try {
-		integer ifixedRanking, icons, jcons, kcons, ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
+		integer ipair = 0, npair = my numberOfConstraints * (my numberOfConstraints - 1);
 		/*
 		 * Add room for one more fixed ranking.
 		 */
 		my numberOfFixedRankings ++;
 		my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings);
-		for (ifixedRanking = 1; ifixedRanking < my numberOfFixedRankings; ifixedRanking ++) {
+		for (integer ifixedRanking = 1; ifixedRanking < my numberOfFixedRankings; ifixedRanking ++) {
 			my fixedRankings [ifixedRanking]. higher = savedFixedRankings [ifixedRanking]. higher;
 			my fixedRankings [ifixedRanking]. lower = savedFixedRankings [ifixedRanking]. lower;
 		}
@@ -2780,8 +2779,8 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 		 */
 		MelderInfo_open ();
 		autoMelderProgress progress (U"Finding obligatory rankings.");
-		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-			for (jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+			for (integer jcons = 1; jcons <= my numberOfConstraints; jcons ++) if (icons != jcons) {
 				my fixedRankings [my numberOfFixedRankings]. higher = icons;
 				my fixedRankings [my numberOfFixedRankings]. lower = jcons;
 				OTGrammar_reset (me, 100.0);
@@ -2793,7 +2792,7 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 					1e-9, kOTGrammar_rerankingStrategy::EDCD, true /* honour fixed rankings; very important */,
 					1.0, 1000, 0.0, 1, 0.0, 1, 0, nullptr, false, false, 0);
 				Melder_progressOn ();
-				for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
+				for (integer kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
 					if (my constraints [kcons]. ranking < 0.0) {
 						MelderInfo_writeLine (my constraints [jcons]. name, U" >> ", my constraints [icons]. name);
 						break;
