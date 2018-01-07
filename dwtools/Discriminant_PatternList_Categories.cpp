@@ -24,9 +24,9 @@
 #include "TableOfReal.h"
 #include "Matrix_Categories.h"
 
-autoDiscriminant PatternList_and_Categories_to_Discriminant (PatternList me, Categories thee) {
+autoDiscriminant PatternList_Categories_to_Discriminant (PatternList me, Categories thee) {
 	try {
-		autoTableOfReal t = Matrix_and_Categories_to_TableOfReal (me, thee);
+		autoTableOfReal t = Matrix_Categories_to_TableOfReal (me, thee);
 		autoDiscriminant him = TableOfReal_to_Discriminant (t.get());
 		return him;
 	} catch (MelderError) {
@@ -34,10 +34,10 @@ autoDiscriminant PatternList_and_Categories_to_Discriminant (PatternList me, Cat
 	}
 }
 
-autoCategories Discriminant_and_PatternList_to_Categories (Discriminant me, PatternList thee, int poolCovarianceMatrices, int useAprioriProbabilities) {
+autoCategories Discriminant_PatternList_to_Categories (Discriminant me, PatternList thee, int poolCovarianceMatrices, int useAprioriProbabilities) {
 	try {
 		autoTableOfReal t = Matrix_to_TableOfReal (thee);
-		autoClassificationTable ct = Discriminant_and_TableOfReal_to_ClassificationTable (me, t.get(), poolCovarianceMatrices, useAprioriProbabilities);
+		autoClassificationTable ct = Discriminant_TableOfReal_to_ClassificationTable (me, t.get(), poolCovarianceMatrices, useAprioriProbabilities);
 		autoCategories him =  ClassificationTable_to_Categories_maximumProbability (ct.get());
 		return him;
 	} catch (MelderError) {

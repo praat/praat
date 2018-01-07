@@ -228,7 +228,7 @@ autoTableOfReal FFNet_extractWeights (FFNet me, integer layer);
 
 void FFNet_drawWeights (FFNet me, Graphics g, integer layer, int garnish);
 
-autoFFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, integer layer);
+autoFFNet FFNet_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, integer layer);
 
 autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, integer numberOfUnits1, integer numberOfUnits2);
 

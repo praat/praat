@@ -166,7 +166,7 @@ autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *chan
 	}
 }
 
-autoEEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
+autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
 	try {
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
 			numberOfComponents = thy numberOfEigenvalues;
@@ -176,7 +176,7 @@ autoEEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents)
 		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels, thy dimension), 1);
 
 		autoEEG him = Data_copy (me);
-		autoSound white = Sound_and_PCA_whitenSelectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
+		autoSound white = Sound_PCA_whitenSelectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
 		for (integer i = 1; i <= thy dimension; i ++) {
 			integer ichannel = channelNumbers [i];
 			NUMvector_copyElements<double> (white -> z [i], his sound -> z [ichannel], 1, his sound -> nx);
@@ -188,7 +188,7 @@ autoEEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents)
 	}
 }
 
-autoEEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfComponents) {
+autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfComponents) {
 	try {
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
 			numberOfComponents = thy numberOfEigenvalues;
@@ -197,7 +197,7 @@ autoEEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer number
 
 		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels, thy dimension), 1);
 		autoEEG him = Data_copy (me);
-		autoSound pc = Sound_and_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
+		autoSound pc = Sound_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
 		for (integer i = 1; i <= thy dimension; i ++) {
 			integer ichannel = channelNumbers [i];
 			NUMvector_copyElements<double> (pc -> z [i], his sound -> z [ichannel], 1, his sound -> nx);
@@ -228,13 +228,13 @@ autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer ncovar
 		if (whiteningMethod != 0) {
 			bool fromCorrelation = ( whiteningMethod == 2 );
 			autoPCA pca = EEG_to_PCA (thee.get(), thy xmin, thy xmax, channelRanges, fromCorrelation);
-			autoEEG white = EEG_and_PCA_to_EEG_whiten (thee.get(), pca.get(), 0);
+			autoEEG white = EEG_PCA_to_EEG_whiten (thee.get(), pca.get(), 0);
 			thee = white.move();
 		}
 		autoMixingMatrix mm = Sound_to_MixingMatrix (thy sound.get(), startTime, endTime, ncovars, lagStep, maxNumberOfIterations, tol, diagonalizerMethod);
 
 		autoEEG him = EEG_copyWithoutSound (me);
-		his sound = Sound_and_MixingMatrix_unmix (my sound.get(), mm.get());
+		his sound = Sound_MixingMatrix_unmix (my sound.get(), mm.get());
 		EEG_setChannelNames_selected (him.get(), U"ic", channelNumbers.peek(), numberOfChannels);
 
 		// Calculate the cross-correlations between eye-channels and the ic's

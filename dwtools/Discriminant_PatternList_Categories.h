@@ -2,7 +2,7 @@
 #define _Discriminant_PatternList_Categories_h_
 /* Discriminant_PatternList_Categories.h
  *
- * Copyright (C) 2004-2011, 2015 David Weenink
+ * Copyright (C) 2004-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@
 #include "Categories.h"
 
 
-autoDiscriminant PatternList_and_Categories_to_Discriminant (PatternList me, Categories thee);
+autoDiscriminant PatternList_Categories_to_Discriminant (PatternList me, Categories thee);
 
-autoCategories Discriminant_and_PatternList_to_Categories (Discriminant me, PatternList thee, int poolCovarianceMatrices, int useAprioriProbabilities);
+autoCategories Discriminant_PatternList_to_Categories (Discriminant me, PatternList thee, int poolCovarianceMatrices, int useAprioriProbabilities);
 
 #endif /* _Discriminant_PatternList_Categories_h_ */

@@ -27,15 +27,15 @@
 #include "TextGrid.h"
 #include "Table.h"
 
-autoTextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee, double precision);
+autoTextTier DTW_TextTier_to_TextTier (DTW me, TextTier thee, double precision);
 
-autoIntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, double precision);
+autoIntervalTier DTW_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee, double precision);
 
-autoTextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision);
+autoTextGrid DTW_TextGrid_to_TextGrid (DTW me, TextGrid thee, double precision);
 /*
 	Purpose: Create the new TextGrid with all times determined by the DTW.
 */
 
-autoTable DTW_and_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision);
+autoTable DTW_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision);
 
 #endif /* _DTW_and_TextGrid_h_ */

@@ -26,7 +26,7 @@
  djmw 20030825 Removed praat_USE_LAPACK external variable.
  djmw 20031101 Documentation
  djmw 20031107 Moved NUMdmatrix_transpose to NUM2.c
- djmw 20031210 Added rowLabels to Eigen_drawEigenvector and Eigen_and_Strings_drawEigenvector
+ djmw 20031210 Added rowLabels to Eigen_drawEigenvector and Eigen_Strings_drawEigenvector
  djmw 20030322 Extra test in Eigen_initFromSquareRootPair.
  djmw 20040329 Added fractionOfTotal  and cumulative parameters in Eigen_drawEigenvalues_scree.
  djmw 20040622 Less horizontal labels in Eigen_drawEigenvector.
@@ -531,7 +531,7 @@ double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee) {
 
 /* Very low level */
 
-void Eigen_and_matrix_into_matrix_principalComponents (Eigen me, double **from, integer numberOfRows, integer from_colbegin, double **to, integer numberOfDimensionsToKeep, integer to_colbegin) {
+void Eigen_matrix_into_matrix_principalComponents (Eigen me, double **from, integer numberOfRows, integer from_colbegin, double **to, integer numberOfDimensionsToKeep, integer to_colbegin) {
 	/*
 	 * Preconditions:
 	 * 

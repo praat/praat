@@ -609,7 +609,7 @@ static autoSound synthesize_pulses_lpc (Manipulation me) {
 		autoSound train = PointProcess_to_Sound_pulseTrain (my pulses.get(), 1.0 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
-		autoSound result = LPC_and_Sound_filter (my lpc.get(), train.get(), true);
+		autoSound result = LPC_Sound_filter (my lpc.get(), train.get(), true);
 		NUMdeemphasize_f (result -> z [1], result -> nx, result -> dx, 50.0);
 		Vector_scale (result.get(), 0.99);
 		return result;
@@ -631,7 +631,7 @@ static autoSound synthesize_pitch_lpc (Manipulation me) {
 		autoSound train = PointProcess_to_Sound_pulseTrain (pulses.get(), 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
 		train -> dx = my lpc -> samplingPeriod;   // to be exact
 		Sound_PointProcess_fillVoiceless (train.get(), my pulses.get());
-		autoSound result = LPC_and_Sound_filter (my lpc.get(), train.get(), true);
+		autoSound result = LPC_Sound_filter (my lpc.get(), train.get(), true);
 		NUMdeemphasize_f (result -> z [1], result -> nx, result -> dx, 50.0);
 		Vector_scale (result.get(), 0.99);
 		return result;

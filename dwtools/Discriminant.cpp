@@ -21,9 +21,9 @@
  djmw 20020313 removed obsolete TableOfReal_sortByLabels method
  djmw 20020314 +Discriminant_extractWithinGroupSSCP,
  	+Discriminant_extractGroupLabels, +Discriminant_setGroupLabels.
- djmw 20020327 modified Discriminant_and_TableOfReal_to_Configuration
+ djmw 20020327 modified Discriminant_TableOfReal_to_Configuration
  djmw 20020418 Removed some causes for compiler warnings
- djmw 20020502 modified call Eigen_and_TableOfReal_project_into
+ djmw 20020502 modified call Eigen_TableOfReal_project_into
  djmw 20030801 Discriminant_drawConcentrationEllipses extra argument
  djmw 20050405 Modified column label: eigenvector->Eigenvector
  djmw 20061212 Changed info to Melder_writeLine<x> format.
@@ -31,7 +31,7 @@
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20081119 Check in TableOfReal_to_Discriminant if TableOfReal_areAllCellsDefined
- djmw 20100107 +Discriminant_and_TableOfReal_mahalanobis
+ djmw 20100107 +Discriminant_TableOfReal_mahalanobis
  djmw 20110304 Thing_new
 */
 
@@ -296,7 +296,7 @@ double Discriminant_getConcentrationEllipseArea (Discriminant me, integer group,
 	}
 
 	if (discriminantDirections) {
-		autoSSCP thee = Eigen_and_SSCP_project (my eigen.get(), my groups->at [group]);
+		autoSSCP thee = Eigen_SSCP_project (my eigen.get(), my groups->at [group]);
 		area = SSCP_getConcentrationEllipseArea (thee.get(), scale, confidence, d1, d2);
 	} else {
 		area = SSCP_getConcentrationEllipseArea (my groups->at [group], scale, confidence, d1, d2);
@@ -474,13 +474,13 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 	}
 }
 
-autoConfiguration Discriminant_and_TableOfReal_to_Configuration (Discriminant me, TableOfReal thee, integer numberOfDimensions) {
+autoConfiguration Discriminant_TableOfReal_to_Configuration (Discriminant me, TableOfReal thee, integer numberOfDimensions) {
 	try {
 		if (numberOfDimensions == 0) {
 			numberOfDimensions = Discriminant_getNumberOfFunctions (me);
 		}
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensions);
-		Eigen_and_TableOfReal_into_TableOfReal_projectRows (my eigen.get(), thee, 1, him.get(), 1, numberOfDimensions);
+		Eigen_TableOfReal_into_TableOfReal_projectRows (my eigen.get(), thee, 1, him.get(), 1, numberOfDimensions);
 		TableOfReal_copyLabels (thee, him.get(), 1, 0);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"Eigenvector ", 1, 1);
 		return him;
@@ -510,7 +510,7 @@ static double mahalanobisDistanceSq (double **li, integer n, double *v, double *
 	return chisq;
 }
 
-autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, integer group, bool poolCovarianceMatrices) {
+autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, integer group, bool poolCovarianceMatrices) {
 	try {
 		Melder_require (group > 0 && group <= my numberOfGroups, U"Group should be in the range [1, ", my numberOfGroups, U"].");
 		
@@ -520,9 +520,9 @@ autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, Table
 		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
 			NUMvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
-			him = Covariance_and_TableOfReal_mahalanobis (covg.get(), thee, false);
+			him = Covariance_TableOfReal_mahalanobis (covg.get(), thee, false);
 		} else {
-			him = Covariance_and_TableOfReal_mahalanobis (cov.get(), thee, false);
+			him = Covariance_TableOfReal_mahalanobis (cov.get(), thee, false);
 		}
 		return him;
 	} catch (MelderError) {
@@ -530,7 +530,7 @@ autoTableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, Table
 	}
 }
 
-autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities) {
+autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities) {
 	try {
 		integer g = Discriminant_getNumberOfGroups (me);   // ppgb wat betekent g?
 		integer p = Eigen_getDimensionOfComponents (my eigen.get());   // ppgb wat betekent p?
@@ -652,7 +652,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Dis
 	}
 }
 
-autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities, double alpha, double minProb, autoTableOfReal *displacements) {
+autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Discriminant me, TableOfReal thee, bool poolCovarianceMatrices, bool useAprioriProbabilities, double alpha, double minProb, autoTableOfReal *displacements) {
 	try {
 		integer g = Discriminant_getNumberOfGroups (me);
 		integer p = Eigen_getDimensionOfComponents (my eigen.get());
@@ -798,7 +798,7 @@ autoClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (
 autoConfiguration TableOfReal_to_Configuration_lda (TableOfReal me, integer numberOfDimensions) {
 	try {
 		autoDiscriminant thee = TableOfReal_to_Discriminant (me);
-		autoConfiguration him = Discriminant_and_TableOfReal_to_Configuration (thee.get(), me, numberOfDimensions);
+		autoConfiguration him = Discriminant_TableOfReal_to_Configuration (thee.get(), me, numberOfDimensions);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": Configuration with lda data not created.");

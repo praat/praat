@@ -19,7 +19,7 @@
 #include "TextGrid_and_DurationTier.h"
 #include "Thing.h"
 
-void IntervalTier_and_DurationTier_scaleTimes (IntervalTier me, DurationTier thee) {
+void IntervalTier_DurationTier_scaleTimes (IntervalTier me, DurationTier thee) {
 	Melder_require (my xmin == thy xmin && my xmax == thy xmax,
 		U"The domains of the IntervalTier and the DurationTier should be equal.");
 	double xmax_new = my xmin + RealTier_getArea (thee, my xmin, my xmax);
@@ -33,7 +33,7 @@ void IntervalTier_and_DurationTier_scaleTimes (IntervalTier me, DurationTier the
 	my xmax = xmax_new;
 }
 
-void TextTier_and_DurationTier_scaleTimes (TextTier me, DurationTier thee) {
+void TextTier_DurationTier_scaleTimes (TextTier me, DurationTier thee) {
 	Melder_require (my xmin == thy xmin && my xmax == thy xmax,
 		U"The domains of the TextTier and the DurationTier should be equal.");
 	double xmax_new = my xmin + RealTier_getArea (thee, my xmin, my xmax);
@@ -45,7 +45,7 @@ void TextTier_and_DurationTier_scaleTimes (TextTier me, DurationTier thee) {
 	my xmax = xmax_new;
 }
 
-autoTextGrid TextGrid_and_DurationTier_scaleTimes (TextGrid me, DurationTier thee) {
+autoTextGrid TextGrid_DurationTier_scaleTimes (TextGrid me, DurationTier thee) {
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax,
 			U"The domains of the TextGrid and the DurationTier should be equal.");
@@ -57,10 +57,10 @@ autoTextGrid TextGrid_and_DurationTier_scaleTimes (TextGrid me, DurationTier the
 			Function anyTier = his tiers->at [itier];
 			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = static_cast <IntervalTier> (anyTier);
-				IntervalTier_and_DurationTier_scaleTimes (tier, thee);
+				IntervalTier_DurationTier_scaleTimes (tier, thee);
 			} else { 
 				TextTier textTier = static_cast <TextTier> (anyTier);
-				TextTier_and_DurationTier_scaleTimes (textTier, thee);
+				TextTier_DurationTier_scaleTimes (textTier, thee);
 			}
 		}
 		his xmax = xmax_new;

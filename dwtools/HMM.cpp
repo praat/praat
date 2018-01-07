@@ -66,7 +66,7 @@ Thing_implement (HMMStateSequence, Strings, 0);
 int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2);
 autoHMMObservation HMMObservation_create (const char32 *label, integer numberOfComponents, integer dimension, integer storage);
 
-integer HMM_and_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, integer symbolNumber);
+integer HMM_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, integer symbolNumber);
 integer StringsIndex_getLongestSequence (StringsIndex me, integer index, integer *pos);
 integer Strings_getLongestSequence (Strings me, char32 *string, integer *pos);
 autoHMMState HMMState_create (const char32 *label);
@@ -75,15 +75,15 @@ autoHMMBaumWelch HMMBaumWelch_create (integer nstates, integer nsymbols, integer
 void HMMBaumWelch_getGamma (HMMBaumWelch me);
 autoHMMBaumWelch HMM_forward (HMM me, integer *obs, integer nt);
 void HMMBaumWelch_reInit (HMMBaumWelch me);
-void HMM_and_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, integer *obs);
-void HMM_and_HMMBaumWelch_reestimate (HMM me, HMMBaumWelch thee);
-void HMM_and_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, integer *obs);
-void HMM_and_HMMBaumWelch_forward (HMM me, HMMBaumWelch thee, integer *obs);
-void HMM_and_HMMBaumWelch_backward (HMM me, HMMBaumWelch thee, integer *obs);
-void HMM_and_HMMViterbi_decode (HMM me, HMMViterbi thee, integer *obs);
+void HMM_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, integer *obs);
+void HMM_HMMBaumWelch_reestimate (HMM me, HMMBaumWelch thee);
+void HMM_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, integer *obs);
+void HMM_HMMBaumWelch_forward (HMM me, HMMBaumWelch thee, integer *obs);
+void HMM_HMMBaumWelch_backward (HMM me, HMMBaumWelch thee, integer *obs);
+void HMM_HMMViterbi_decode (HMM me, HMMViterbi thee, integer *obs);
 double HMM_getProbabilityOfObservations (HMM me, integer *obs, integer numberOfTimes);
 autoTableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int probabilities);
-autoStringsIndex HMM_and_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence thee);
+autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence thee);
 
 
 autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes);
@@ -134,13 +134,13 @@ int NUMget_line_intersection_with_circle (double xc, double yc, double r, double
 }
 
 // D(l_1,l_2)=1/n( log p(O_2|l_1) - log p(O_2|l_2)
-static double HMM_and_HMM_getCrossEntropy_asym (HMM me, HMM thee, integer observationLength) {
+static double HMM_HMM_getCrossEntropy_asym (HMM me, HMM thee, integer observationLength) {
 	autoHMMObservationSequence os = HMM_to_HMMObservationSequence (thee, 0, observationLength);
-	double ce = HMM_and_HMMObservationSequence_getCrossEntropy (me, os.get());
+	double ce = HMM_HMMObservationSequence_getCrossEntropy (me, os.get());
 	if (isundef (ce)) {
 		return ce;
 	}
-	double ce2 = HMM_and_HMMObservationSequence_getCrossEntropy (thee, os.get());
+	double ce2 = HMM_HMMObservationSequence_getCrossEntropy (thee, os.get());
 	if (isundef (ce2)) {
 		return ce2;
 	}
@@ -353,8 +353,8 @@ autoStringsIndex HMMObservationSequence_to_StringsIndex (HMMObservationSequence 
 	}
 }
 
-integer HMM_and_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, integer symbolNumber) {
-	autoStringsIndex si = HMM_and_HMMObservationSequence_to_StringsIndex (me, thee);
+integer HMM_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, integer symbolNumber) {
+	autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, thee);
 	// TODO
 	(void) symbolNumber;
 	return 1;
@@ -671,24 +671,24 @@ double HMM_getProbabilityOfStayingInState (HMM me, integer istate, integer numbe
 	return pow (my transitionProbs [istate] [istate], numberOfTimeUnits - 1.0) * (1.0 - my transitionProbs [istate] [istate]);
 }
 
-double HMM_and_HMM_getCrossEntropy (HMM me, HMM thee, integer observationLength, int symmetric) {
-	double ce1 = HMM_and_HMM_getCrossEntropy_asym (me, thee, observationLength);
+double HMM_HMM_getCrossEntropy (HMM me, HMM thee, integer observationLength, int symmetric) {
+	double ce1 = HMM_HMM_getCrossEntropy_asym (me, thee, observationLength);
 	if (! symmetric || isundef (ce1)) {
 		return ce1;
 	}
-	double ce2 = HMM_and_HMM_getCrossEntropy_asym (thee, me, observationLength);
+	double ce2 = HMM_HMM_getCrossEntropy_asym (thee, me, observationLength);
 	if (isundef (ce2)) {
 		return ce2;
 	}
 	return (ce1 + ce2) / 2.0;
 }
 
-double HMM_and_HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMM thee, HMMObservationSequence him) {
-	double ce1 = HMM_and_HMMObservationSequence_getCrossEntropy (me, him);
+double HMM_HMM_HMMObservationSequence_getCrossEntropy (HMM me, HMM thee, HMMObservationSequence him) {
+	double ce1 = HMM_HMMObservationSequence_getCrossEntropy (me, him);
 	if (isundef (ce1)) {
 		return ce1;
 	}
-	double ce2 = HMM_and_HMMObservationSequence_getCrossEntropy (thee, him);
+	double ce2 = HMM_HMMObservationSequence_getCrossEntropy (thee, him);
 	if (isundef (ce2)) {
 		return ce2;
 	}
@@ -823,7 +823,7 @@ autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startS
 autoHMMBaumWelch HMM_forward (HMM me, integer *obs, integer nt) {
 	try {
 		autoHMMBaumWelch thee = HMMBaumWelch_create (my numberOfStates, my numberOfObservationSymbols, nt);
-		HMM_and_HMMBaumWelch_forward (me, thee.get(), obs);
+		HMM_HMMBaumWelch_forward (me, thee.get(), obs);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no HMMBaumWelch created.");
@@ -833,7 +833,7 @@ autoHMMBaumWelch HMM_forward (HMM me, integer *obs, integer nt) {
 autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes) {
 	try {
 		autoHMMViterbi thee = HMMViterbi_create (my numberOfStates, ntimes);
-		HMM_and_HMMViterbi_decode (me, thee.get(), obs);
+		HMM_HMMViterbi_decode (me, thee.get(), obs);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no HMMViterbi created.");
@@ -864,7 +864,7 @@ void HMMBaumWelch_reInit (HMMBaumWelch me) {
 	}
 }
 
-void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee, double delta_lnp, double minProb, int info) {
+void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee, double delta_lnp, double minProb, int info) {
 	try {
 		// act as if all observation sequences are in memory
 		integer capacity = HMMObservationSequenceBag_getLongestSequence (thee);
@@ -880,7 +880,7 @@ void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag 
 			HMMBaumWelch_reInit (bw.get());
 			for (integer ios = 1; ios <= thy size; ios ++) {
 				HMMObservationSequence hmm_os = thy at [ios];
-				autoStringsIndex si = HMM_and_HMMObservationSequence_to_StringsIndex (me, hmm_os); // TODO outside the loop or more efficiently
+				autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, hmm_os); // TODO outside the loop or more efficiently
 				integer *obs = si -> classIndex, nobs = si -> numberOfItems; // convenience
 
 				// Interpretation of unknowns: end of sequence
@@ -900,17 +900,17 @@ void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag 
 					iend --;
 					bw -> numberOfTimes = iend - istart + 1;
 					bw -> totalNumberOfSequences ++;
-					HMM_and_HMMBaumWelch_forward (me, bw.get(), obs + istart - 1); // get new alphas
-					HMM_and_HMMBaumWelch_backward (me, bw.get(), obs + istart - 1); // get new betas
+					HMM_HMMBaumWelch_forward (me, bw.get(), obs + istart - 1); // get new alphas
+					HMM_HMMBaumWelch_backward (me, bw.get(), obs + istart - 1); // get new betas
 					HMMBaumWelch_getGamma (bw.get());
-					HMM_and_HMMBaumWelch_getXi (me, bw.get(), obs + istart - 1);
-					HMM_and_HMMBaumWelch_addEstimate (me, bw.get(), obs + istart - 1);
+					HMM_HMMBaumWelch_getXi (me, bw.get(), obs + istart - 1);
+					HMM_HMMBaumWelch_addEstimate (me, bw.get(), obs + istart - 1);
 					istart = iend + 1;
 				}
 			}
 			// we have processed all observation sequences, now it is time to estimate new probabilities.
 			iter ++;
-			HMM_and_HMMBaumWelch_reestimate (me, bw.get());
+			HMM_HMMBaumWelch_reestimate (me, bw.get());
 			if (info) { 
 				MelderInfo_writeLine (U"Iteration: ", iter, U" ln(prob): ", bw -> lnProb); 
 			}
@@ -929,9 +929,9 @@ void HMM_and_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag 
 
 
 // xc1 < xc2
-void HMM_and_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, int connect, int garnish) {
+void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g, int connect, int garnish) {
 	integer numberOfTimes = thy numberOfStrings;
-	autoStringsIndex si = HMM_and_HMMStateSequence_to_StringsIndex (me, thee);
+	autoStringsIndex si = HMM_HMMStateSequence_to_StringsIndex (me, thee);
 	double xmin = 0.0, xmax = numberOfTimes + 1.0, ymin = 0.5, ymax = my numberOfStates + 0.5;
 
 	Graphics_setInner (g);
@@ -1129,7 +1129,7 @@ void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garni
 	}
 }
 
-void HMM_and_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, integer *obs) {
+void HMM_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, integer *obs) {
 
 	for (integer it = 1; it <= thy numberOfTimes - 1; it ++) {
 		double sum = 0.0;
@@ -1148,7 +1148,7 @@ void HMM_and_HMMBaumWelch_getXi (HMM me, HMMBaumWelch thee, integer *obs) {
 	}
 }
 
-void HMM_and_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, integer *obs) {
+void HMM_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, integer *obs) {
 	for (integer is = 1; is <= my numberOfStates; is ++) {
 		// only for valid start states with p > 0
 		if (my transitionProbs [0] [is] > 0.0) {
@@ -1203,7 +1203,7 @@ void HMM_and_HMMBaumWelch_addEstimate (HMM me, HMMBaumWelch thee, integer *obs) 
 	}
 }
 
-void HMM_and_HMMBaumWelch_reestimate (HMM me, HMMBaumWelch thee) {
+void HMM_HMMBaumWelch_reestimate (HMM me, HMMBaumWelch thee) {
 	double p;
 	/*
 		If we only have a couple of training sequences and they all happen to start with the same symbol,
@@ -1244,7 +1244,7 @@ void HMM_and_HMMBaumWelch_reestimate (HMM me, HMMBaumWelch thee) {
 	}
 }
 
-void HMM_and_HMMBaumWelch_forward (HMM me, HMMBaumWelch thee, integer *obs) {
+void HMM_HMMBaumWelch_forward (HMM me, HMMBaumWelch thee, integer *obs) {
 	// initialise at t = 1 & scale
 	thy scale [1] = 0.0;
 	for (integer js = 1; js <= my numberOfStates; js ++) {
@@ -1277,7 +1277,7 @@ void HMM_and_HMMBaumWelch_forward (HMM me, HMMBaumWelch thee, integer *obs) {
 	}
 }
 
-void HMM_and_HMMBaumWelch_backward (HMM me, HMMBaumWelch thee, integer *obs) {
+void HMM_HMMBaumWelch_backward (HMM me, HMMBaumWelch thee, integer *obs) {
 	for (integer is = 1; is <= my numberOfStates; is ++) {
 		thy beta [is] [thy numberOfTimes] = 1.0 / thy scale [thy numberOfTimes];
 	}
@@ -1295,7 +1295,7 @@ void HMM_and_HMMBaumWelch_backward (HMM me, HMMBaumWelch thee, integer *obs) {
 /*************************** HMM decoding ***********************************/
 
 // precondition: valid symbols, i.e. 1 <= o [i] <= my numberOfSymbols for i=1..nt
-void HMM_and_HMMViterbi_decode (HMM me, HMMViterbi thee, integer *obs) {
+void HMM_HMMViterbi_decode (HMM me, HMMViterbi thee, integer *obs) {
 	integer ntimes = thy numberOfTimes;
 	// initialisation
 	for (integer is = 1; is <= my numberOfStates; is ++) {
@@ -1331,9 +1331,9 @@ void HMM_and_HMMViterbi_decode (HMM me, HMMViterbi thee, integer *obs) {
 	}
 }
 
-autoHMMStateSequence HMM_and_HMMObservationSequence_to_HMMStateSequence (HMM me, HMMObservationSequence thee) {
+autoHMMStateSequence HMM_HMMObservationSequence_to_HMMStateSequence (HMM me, HMMObservationSequence thee) {
 	try {
-		autoStringsIndex si = HMM_and_HMMObservationSequence_to_StringsIndex (me, thee);
+		autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, thee);
 		integer *obs = si -> classIndex; // convenience
 		integer numberOfUnknowns = StringsIndex_countItems (si.get(), 0);
 		
@@ -1354,8 +1354,8 @@ autoHMMStateSequence HMM_and_HMMObservationSequence_to_HMMStateSequence (HMM me,
 	}
 }
 
-double HMM_and_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
-	autoStringsIndex si = HMM_and_HMMStateSequence_to_StringsIndex (me, thee);
+double HMM_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
+	autoStringsIndex si = HMM_HMMStateSequence_to_StringsIndex (me, thee);
 	integer numberOfUnknowns = StringsIndex_countItems (si.get(), 0);
 	integer *index = si -> classIndex;
 
@@ -1475,8 +1475,8 @@ double HMM_getProbabilityOfObservations (HMM me, integer *obs, integer numberOfT
 	return lnp;
 }
 
-double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequence thee) {
-	autoStringsIndex si = HMM_and_HMMObservationSequence_to_StringsIndex (me, thee);
+double HMM_HMMObservationSequence_getProbability (HMM me, HMMObservationSequence thee) {
+	autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, thee);
 	integer *index = si -> classIndex;
 	integer numberOfUnknowns = StringsIndex_countItems (si.get(), 0);
 	Melder_require (numberOfUnknowns == 0, U"Unknown observations (# = ", numberOfUnknowns, U").");
@@ -1484,14 +1484,14 @@ double HMM_and_HMMObservationSequence_getProbability (HMM me, HMMObservationSequ
 	return HMM_getProbabilityOfObservations (me, index, thy rows.size);
 }
 
-double HMM_and_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee) {
-	double lnp = HMM_and_HMMObservationSequence_getProbability (me, thee);
+double HMM_HMMObservationSequence_getCrossEntropy (HMM me, HMMObservationSequence thee) {
+	double lnp = HMM_HMMObservationSequence_getProbability (me, thee);
 	return isundef (lnp) ? undefined :
 	        -lnp / (NUMln10 * HMMObservationSequence_getNumberOfObservations (thee));
 }
 
-double HMM_and_HMMObservationSequence_getPerplexity (HMM me, HMMObservationSequence thee) {
-	double ce = HMM_and_HMMObservationSequence_getCrossEntropy (me, thee);
+double HMM_HMMObservationSequence_getPerplexity (HMM me, HMMObservationSequence thee) {
+	double ce = HMM_HMMObservationSequence_getCrossEntropy (me, thee);
 	return isundef (ce) ? undefined : pow (2.0, ce);
 }
 
@@ -1538,7 +1538,7 @@ autoTableOfReal HMMObservationSequence_to_TableOfReal_transitions (HMMObservatio
 	}
 }
 
-autoStringsIndex HMM_and_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservationSequence thee) {
+autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservationSequence thee) {
 	try {
 		autoStrings classes = Thing_new (Strings);
 		classes -> strings = NUMvector<char32 *> (1, my numberOfObservationSymbols);
@@ -1555,7 +1555,7 @@ autoStringsIndex HMM_and_HMMObservationSequence_to_StringsIndex (HMM me, HMMObse
 	}
 }
 
-autoStringsIndex HMM_and_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence thee) {
+autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence thee) {
 	try {
 		autoStrings classes = Thing_new (Strings);
 		classes -> strings = NUMvector<char32 *> (1, my numberOfObservationSymbols);
@@ -1572,9 +1572,9 @@ autoStringsIndex HMM_and_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSeque
 	}
 }
 
-autoTableOfReal HMM_and_HMMObservationSequence_to_TableOfReal_transitions (HMM me, HMMObservationSequence thee, int probabilities) {
+autoTableOfReal HMM_HMMObservationSequence_to_TableOfReal_transitions (HMM me, HMMObservationSequence thee, int probabilities) {
 	try {
-		autoStringsIndex si = HMM_and_HMMObservationSequence_to_StringsIndex (me, thee);
+		autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, thee);
 		autoTableOfReal him = StringsIndex_to_TableOfReal_transitions (si.get(), probabilities);
 		return him;
 	} catch (MelderError) {
@@ -1582,9 +1582,9 @@ autoTableOfReal HMM_and_HMMObservationSequence_to_TableOfReal_transitions (HMM m
 	}
 }
 
-autoTableOfReal HMM_and_HMMStateSequence_to_TableOfReal_transitions (HMM me, HMMStateSequence thee, int probabilities) {
+autoTableOfReal HMM_HMMStateSequence_to_TableOfReal_transitions (HMM me, HMMStateSequence thee, int probabilities) {
 	try {
-		autoStringsIndex si = HMM_and_HMMStateSequence_to_StringsIndex (me, thee);
+		autoStringsIndex si = HMM_HMMStateSequence_to_StringsIndex (me, thee);
 		autoTableOfReal him = StringsIndex_to_TableOfReal_transitions (si.get(), probabilities);
 		return him;
 	} catch (MelderError) {

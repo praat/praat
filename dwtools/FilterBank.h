@@ -155,7 +155,7 @@ autoSpectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t);
 
 autoIntensity FilterBank_to_Intensity (FilterBank me);
 
-void FilterBank_and_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, integer component, double dblevel,
+void FilterBank_PCA_drawComponent (FilterBank me, PCA thee, Graphics g, integer component, double dblevel,
 	double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax);
 
 // Convert old types to new types
@@ -195,7 +195,7 @@ autoFormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
 	double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
 	double minimumPitch, double maximumPitch);
 
-autoFormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
+autoFormantFilter Sound_Pitch_to_FormantFilter (Sound me, Pitch thee,
 	double analysisWidth, double dt, double f1_hz, double fmax_hz,
 	double df_hz, double relative_bw);
 

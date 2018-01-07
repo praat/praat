@@ -54,8 +54,8 @@ const char32 *GaussianMixture_criterionText (int criterion) {
 
 void GaussianMixture_removeComponent (GaussianMixture me, integer component);
 void GaussianMixture_removeComponent_bookkeeping (GaussianMixture me, integer component, double **p, integer numberOfRows);
-int GaussianMixture_and_TableOfReal_getProbabilities (GaussianMixture me, TableOfReal thee, integer component, double **p);
-void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee, double **gamma, double *lnp);
+int GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfReal thee, integer component, double **p);
+void GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee, double **gamma, double *lnp);
 double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, integer numberOfRows, int onlyLikelyhood);
 void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, double **p, integer numberOfRows);
 integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me);
@@ -237,7 +237,7 @@ int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **c
 			if (! thy pca) {
 				SSCP_expandPCA (thee);    // on demand expanding
 			}
-			Covariance_and_PCA_generateOneVector (thee, thy pca.get(), c, buf);
+			Covariance_PCA_generateOneVector (thee, thy pca.get(), c, buf);
 		}
 		return 1;
 	} catch (MelderError) {
@@ -445,7 +445,7 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, d
 	GaussianMixture_getIntervalsAlongDirections (me, d, d, nsigmas, xmin, xmax, &ymin, &ymax);
 }
 
-void GaussianMixture_and_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax) {
+void GaussianMixture_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax) {
 	Melder_require (my dimension == thy dimension, U"Dimensions should be equal.");
 	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension, U"Incorrect directions.");
 	
@@ -454,11 +454,11 @@ void GaussianMixture_and_PCA_getIntervalsAlongDirections (GaussianMixture me, PC
 }
 
 
-void GaussianMixture_and_PCA_getIntervalAlongDirection (GaussianMixture me, PCA thee, integer d, double nsigmas, double *xmin, double *xmax) {
-	GaussianMixture_and_PCA_getIntervalsAlongDirections (me, thee, d, d, nsigmas, xmin, xmax, nullptr, nullptr);
+void GaussianMixture_PCA_getIntervalAlongDirection (GaussianMixture me, PCA thee, integer d, double nsigmas, double *xmin, double *xmax) {
+	GaussianMixture_PCA_getIntervalsAlongDirections (me, thee, d, d, nsigmas, xmin, xmax, nullptr, nullptr);
 }
 
-void GaussianMixture_and_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish) {
+void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish) {
 	if (my dimension != thy dimension || d < 1 || d > my dimension) {
 		Melder_warning (U"Dimensions don't agree.");
 		return;
@@ -471,7 +471,7 @@ void GaussianMixture_and_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Grap
 	double nsigmas = 2;
 
 	if (xmax <= xmin) {
-		GaussianMixture_and_PCA_getIntervalAlongDirection (me, thee, d, nsigmas, &xmin, &xmax);
+		GaussianMixture_PCA_getIntervalAlongDirection (me, thee, d, nsigmas, &xmin, &xmax);
 	}
 
 	double pmax = 0.0, dx = (xmax - xmin) / npoints, x1 = xmin + 0.5 * dx;
@@ -549,7 +549,7 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 	}
 }
 
-void GaussianMixture_and_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale, int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
+void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him, Graphics g, double scale, int confidence, char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish) {
 	if (my dimension != his dimension) {
 		Melder_warning (U"Dimensions don't agree.");
 		return;
@@ -607,7 +607,7 @@ void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, 
 
 	autoPCA him = GaussianMixture_to_PCA (me);
 
-	GaussianMixture_and_PCA_drawConcentrationEllipses (me, him.get(), g, scale, confidence, label, d1, d2,
+	GaussianMixture_PCA_drawConcentrationEllipses (me, him.get(), g, scale, confidence, label, d1, d2,
 	        xmin, xmax, ymin, ymax, fontSize, garnish);
 }
 
@@ -649,7 +649,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 
 			// reconstruct the n-dimensional means from the 2-d from the eigenvectors
 
-			autoTableOfReal means = PCA_and_Configuration_to_TableOfReal_reconstruct (pca.get(), means2d.get());
+			autoTableOfReal means = PCA_Configuration_to_TableOfReal_reconstruct (pca.get(), means2d.get());
 
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance covi = my covariances->at [im];
@@ -708,7 +708,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 }
 
 
-autoClassificationTable GaussianMixture_and_TableOfReal_to_ClassificationTable (GaussianMixture me, TableOfReal thee) {
+autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (GaussianMixture me, TableOfReal thee) {
 	try {
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, my numberOfComponents);
 		for (integer im = 1; im <= my numberOfComponents; im ++) {
@@ -748,7 +748,7 @@ autoClassificationTable GaussianMixture_and_TableOfReal_to_ClassificationTable (
 	}
 }
 
-void GaussianMixture_and_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee, double **gamma, double *p_lnp) {
+void GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee, double **gamma, double *p_lnp) {
 	try {
 		for (integer im = 1; im <= my numberOfComponents; im ++) {
 			Covariance cov = my covariances->at [im];
@@ -857,7 +857,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 	}
 }
 
-int GaussianMixture_and_TableOfReal_getProbabilities (GaussianMixture me, TableOfReal thee, integer component, double **p) {
+int GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfReal thee, integer component, double **p) {
 	try {
 		double ln2pid = my dimension * log (NUM2pi);
 
@@ -901,7 +901,7 @@ void GaussianMixture_unExpandPCA (GaussianMixture me) {
 	}
 }
 
-void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, TableOfReal thee, double delta_lnp, integer maxNumberOfIterations, double lambda, int criterion) {
+void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfReal thee, double delta_lnp, integer maxNumberOfIterations, double lambda, int criterion) {
 	try {
 		const char32 *criterionText = GaussianMixture_criterionText (criterion);
 
@@ -911,7 +911,7 @@ void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, Tabl
 		autoCovariance covg = TableOfReal_to_Covariance (thee);
 		autoNUMmatrix<double> pp (1, thy numberOfRows + 1, 1, my numberOfComponents + 1);
 		double *nk = pp [thy numberOfRows + 1]; // last row has the column marginals n(k)
-		if (! GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
+		if (! GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
 			Melder_throw (U"Iteration not started. Too many components?");
 		}
 		double lnp = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
@@ -938,7 +938,7 @@ void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, Tabl
 				for (integer im = 1; im <= my numberOfComponents; im ++) {
 					my mixingProbabilities [im] = nk [im] / thy numberOfRows;
 				}
-				if (! GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
+				if (! GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
 					break;
 				}
 				lnp = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
@@ -1008,10 +1008,10 @@ void GaussianMixture_removeComponent_bookkeeping (GaussianMixture me, integer co
 	GaussianMixture_removeComponent (me, component);
 }
 
-double GaussianMixture_and_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion) {
+double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion) {
 	double value = undefined;
 	autoNUMmatrix<double> pp (1, thy numberOfRows + 1, 1, my numberOfComponents + 1);
-	if (GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
+	if (GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
 		value = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
 	}
 	return value;
@@ -1082,7 +1082,7 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, integ
 	return lnp;
 }
 
-autoGaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture gm, TableOfReal thee, integer minNumberOfComponents, double delta_l, integer maxNumberOfIterations, double lambda, int criterion) {
+autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture gm, TableOfReal thee, integer minNumberOfComponents, double delta_l, integer maxNumberOfIterations, double lambda, int criterion) {
 	try {
 		const char32 *criterionText = GaussianMixture_criterionText (criterion);
 		bool deleteWeakComponents = ( minNumberOfComponents > 0 );
@@ -1098,7 +1098,7 @@ autoGaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gau
 
 		// Initial E-step: Update all p's.
 
-		GaussianMixture_and_TableOfReal_getProbabilities (me.get(), thee, 0, p.peek());
+		GaussianMixture_TableOfReal_getProbabilities (me.get(), thee, 0, p.peek());
 
 		double lnew = GaussianMixture_getLikelihoodValue (me.get(), p.peek(), thy numberOfRows, criterion);
 
@@ -1138,7 +1138,7 @@ autoGaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gau
 						NUMdvector_scaleAsProbabilities (my mixingProbabilities, my numberOfComponents);
 
 						if (my mixingProbabilities [component] > 0.0) { // update p for component
-							GaussianMixture_and_TableOfReal_getProbabilities (me.get(), thee, component, p.peek());
+							GaussianMixture_TableOfReal_getProbabilities (me.get(), thee, component, p.peek());
 							component ++;
 						} else {
 							// "Remove" the component column from p by shifting row values
@@ -1216,18 +1216,18 @@ autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numb
 			return thee;
 		}
 
-		GaussianMixture_and_TableOfReal_improveLikelihood (thee.get(), me, delta_lnp, maxNumberOfIterations, lambda, criterion);
+		GaussianMixture_TableOfReal_improveLikelihood (thee.get(), me, delta_lnp, maxNumberOfIterations, lambda, criterion);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no GaussianMixture created.");
 	}
 }
 
-autoCorrelation GaussianMixture_and_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee) {
+autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee) {
 	try {
 		Melder_require (my dimension == thy numberOfColumns, U"Dimensions should be equal.");
 		
-		autoClassificationTable ct = GaussianMixture_and_TableOfReal_to_ClassificationTable (me, thee);
+		autoClassificationTable ct = GaussianMixture_TableOfReal_to_ClassificationTable (me, thee);
 		autoCorrelation him = ClassificationTable_to_Correlation_columns (ct.get());
 		return him;
 	} catch (MelderError) {
@@ -1267,7 +1267,7 @@ double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *xpo
 	return p;
 }
 
-autoMatrix GaussianMixture_and_PCA_to_Matrix_density (GaussianMixture me, PCA thee, integer d1, integer d2, double xmin, double xmax, integer nx, double ymin, double ymax, integer ny) {
+autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA thee, integer d1, integer d2, double xmin, double xmax, integer nx, double ymin, double ymax, integer ny) {
 	try {
 		Melder_require (my dimension == thy dimension, U"Dimensions should be equal.");
 		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues, U"Direction index too high.");
@@ -1277,7 +1277,7 @@ autoMatrix GaussianMixture_and_PCA_to_Matrix_density (GaussianMixture me, PCA th
 		if (xmax == xmin || ymax == ymin) {
 			double xmind, xmaxd, ymind, ymaxd, nsigmas = 2.0;
 
-			GaussianMixture_and_PCA_getIntervalsAlongDirections (me, thee, d1, d2, nsigmas, &xmind, &xmaxd, &ymind, &ymaxd);
+			GaussianMixture_PCA_getIntervalsAlongDirections (me, thee, d1, d2, nsigmas, &xmind, &xmaxd, &ymind, &ymaxd);
 			if (xmax == xmin) {
 				xmin = xmind;
 				xmax = xmaxd;
@@ -1329,7 +1329,7 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 	}
 }
 
-autoTableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h) {
+autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (GaussianMixture me, TableOfReal thee, double h) {
 	try {
 		integer n = thy numberOfRows, d = thy numberOfColumns, nocp1 = my numberOfComponents + 1;
 		
@@ -1339,7 +1339,7 @@ autoTableOfReal GaussianMixture_and_TableOfReal_to_TableOfReal_BHEPNormalityTest
 
 		autoNUMmatrix<double> p (1, thy numberOfRows + 1, 1, my numberOfComponents + 1);
 
-		GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, p.peek());
+		GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.peek());
 
 		// prob, beta, tnbo, lnmu, lnvar, ndata, ncol
 		autoTableOfReal him = TableOfReal_create (my numberOfComponents, 7);

@@ -2,7 +2,7 @@
 #define _CCA_h_
 /* CCA.h
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny);
 	X2 = V2*inv(D2)*U
 */
 
-autoTableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, integer numberOfFactors);
+autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer numberOfFactors);
 /*
 	Return the factors in a table with 2*numberOfFactors columns.
 	The first 'numberOfFactors' columns are the scores for the dependent part
@@ -106,7 +106,7 @@ autoTableOfReal CCA_and_TableOfReal_scores (CCA me, TableOfReal thee, integer nu
 	independent part.
 */
 
-autoTableOfReal CCA_and_TableOfReal_factorLoadings (CCA me, TableOfReal thee);
+autoTableOfReal CCA_TableOfReal_factorLoadings (CCA me, TableOfReal thee);
 /*
 	Get the canonical factor loadings (also structure correlation coefficients),
 	the correlation of a canonical variable with an original variable.
@@ -116,7 +116,7 @@ double CCA_getCorrelationCoefficient (CCA me, integer index);
 
 void CCA_getZeroCorrelationProbability (CCA me, integer index, double *prob, double *chisq, double *df);
 
-autoTableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, integer from);
+autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from);
 /*
 	Given independent table, predict the dependent one, on the basis of
 	the canonical correlations.

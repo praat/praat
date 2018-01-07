@@ -27,15 +27,15 @@
 #include "Formant.h"
 #include "Sound.h"
 
-void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs);
-/*int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, void *huber);
+void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs);
+/*int LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, void *huber);
 	The gnu c compiler (version 3.3.1) complaints about having two LPC_Frame types
 	in the argument list:
-	error: two or more data types in declaration of `LPC_Frame_and_Sound_into_LPC_Frame_huber
+	error: two or more data types in declaration of `LPC_Frame_Sound_into_LPC_Frame_huber
 	By defining a void pointer we circumvent the complaint.
 */
 
-autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
+autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	double preEmphasisFrequency, double k, int itermax, double tol, bool wantlocation);
 
 autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,

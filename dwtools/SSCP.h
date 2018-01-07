@@ -76,15 +76,15 @@ double SSCP_getFractionVariation (SSCP me, integer from, integer to);
 
 autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole);
 
-autoTableOfReal SSCP_and_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh);
+autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh);
 
-autoTableOfReal Covariance_and_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee, double qlow, double qhigh);
+autoTableOfReal Covariance_TableOfReal_extractDistanceQuantileRange (Covariance me, TableOfReal thee, double qlow, double qhigh);
 /*
 	Select from a TableOfReal the rows whose Mahalanobis distance to the centroid
 	(from the SSCP) is in the quantile [qlow, qhigh].
 */
 
-autoTableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid);
+autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid);
 /*
 	Calculate the Mahalanobis distance: sqrt ((x-m)'S**-1 (x-m))
 	use the m-vector (centroid) from the covariance unless useTableColumnMeans is true.
@@ -103,7 +103,7 @@ autoTableOfReal SSCP_extractCentroid (SSCP me);
 autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer numberOfData);
 /* Generate a table with data based on the covariance matrix */
 
-void Covariance_and_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf);
+void Covariance_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf);
 /*
 	A convenience function to avoid the calculation of the PCA each time we want to generate a random vector
 	The PCA must be the result of a previous SSCP_to_PCA call !
@@ -172,7 +172,7 @@ autoCovariance SSCP_to_Covariance (SSCP me, integer numberOfConstraints);
 
 autoSSCP Covariance_to_SSCP (Covariance me);
 
-void SSCP_testDiagonality_bartlett (SSCP me, integer numberOfContraints, double *chisq, double *prob, double *df);
+void SSCP_getDiagonality_bartlett (SSCP me, integer numberOfContraints, double *chisq, double *prob, double *df);
 
 void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContraints, double *chisq, double *prob, double *df);
 /* Test if a Correlation matrix is diagonal, Morrison pp. 116-118 */

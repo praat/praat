@@ -388,15 +388,15 @@ DIRECT (NEW1_Configuration_Weight_to_Similarity_cc) {
 	CONVERT_ONE_AND_TYPED_LIST_END (U"congruence")
 }
 
-DIRECT (NEW1_Configuration_and_AffineTransform_to_Configuration) {
+DIRECT (NEW1_Configuration_AffineTransform_to_Configuration) {
 	CONVERT_TWO (Configuration, AffineTransform)
-		autoConfiguration result = Configuration_and_AffineTransform_to_Configuration (me, you);
+		autoConfiguration result = Configuration_AffineTransform_to_Configuration (me, you);
 	CONVERT_TWO_END (my name, U"_", your name)
 }
 
-DIRECT (NEW1_Configuration_and_Procrustes_to_Configuration) {
+DIRECT (NEW1_Configuration_Procrustes_to_Configuration) {
 	CONVERT_TWO (Configuration, Procrustes)
-		autoConfiguration result = Configuration_and_AffineTransform_to_Configuration (me, you);
+		autoConfiguration result = Configuration_AffineTransform_to_Configuration (me, you);
 	CONVERT_TWO_END (my name, U"_", your name)
 }
 
@@ -506,7 +506,7 @@ DO
 	NATURAL (numberOfRepetitions, U"Number of repetitions", U"1")
 
 
-#define Dissimilarity_and_Configuration_getStress_addCommonFields(stressMeasure) \
+#define Dissimilarity_Configuration_getStress_addCommonFields(stressMeasure) \
 	RADIO (stressMeasure, U"Stress measure", 1) \
 		RADIOBUTTON (U"Normalized") \
 		RADIOBUTTON (U"Kruskal's stress-1") \
@@ -676,7 +676,7 @@ DO
 }
 
 FORM (REAL_Dissimilarity_Configuration_absolute_stress, U"Dissimilarity & Configuration: Get stress (absolute mds)", U"Dissimilarity & Configuration: Get stress (absolute mds)...") {
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
@@ -685,7 +685,7 @@ DO
 }
 
 FORM (REAL_Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration: Get stress (ratio mds)", U"Dissimilarity & Configuration: Get stress (ratio mds)...") {
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
@@ -694,7 +694,7 @@ DO
 }
 
 FORM (REAL_Dissimilarity_Configuration_interval_stress, U"Dissimilarity & Configuration: Get stress (interval mds)", U"Dissimilarity & Configuration: Get stress (interval mds)...") {
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
@@ -706,7 +706,7 @@ FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Config
 	RADIO (tiesHandling, U"Handling of ties", 1)
 		RADIOBUTTON (U"Primary approach")
 		RADIOBUTTON (U"Secondary approach")
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
@@ -717,7 +717,7 @@ DO
 FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configuration: Get stress (i-spline mds)", U"Dissimilarity & Configuration: Get stress (i-spline mds)...") {
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"3")
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
@@ -726,7 +726,7 @@ DO
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_absolute_stress, U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)", U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)...") {
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
@@ -735,7 +735,7 @@ DO
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ratio_stress, U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)", U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)...") {
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
@@ -744,7 +744,7 @@ DO
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_interval_stress, U"Dissimilarity & Configuration & Weight: Get stress (interval mds)", U"Dissimilarity & Configuration & Weight: Get stress (interval mds)...") {
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
@@ -756,7 +756,7 @@ FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity &
 	RADIO (tiesHandling, U"Handling of ties", 1)
 		RADIOBUTTON (U"Primary approach)")
 		RADIOBUTTON (U"Secondary approach")
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
@@ -767,7 +767,7 @@ DO
 FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)", U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)...") {
 	INTEGER (numberOfInteriorKnots, U"Number of interior knots", U"1")
 	INTEGER (order, U"Order of I-spline", U"3")
-	Dissimilarity_and_Configuration_getStress_addCommonFields (stressMeasure);
+	Dissimilarity_Configuration_getStress_addCommonFields (stressMeasure);
 	OK
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
@@ -1056,7 +1056,7 @@ DO_ALTERNATIVE (NEWMANY_old_Distances_to_Configuration_indscal)
 	END
 }
 
-FORM (GRAPHICS_Distance_and_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram", U"Distance & Configuration: Draw scatter diagram...") {
+FORM (GRAPHICS_Distance_Configuration_drawScatterDiagram, U"Distance & Configuration: Draw scatter diagram", U"Distance & Configuration: Draw scatter diagram...") {
 	REAL (xmin, U"Minimum x-distance", U"0.0")
 	REAL (xmax, U"Maximum x-distance", U"0.0")
 	REAL (ymin, U"Minimum y-distance", U"0.0")
@@ -1067,7 +1067,7 @@ FORM (GRAPHICS_Distance_and_Configuration_drawScatterDiagram, U"Distance & Confi
 	OK
 DO
 	GRAPHICS_TWO (Distance, Configuration)
-		Distance_and_Configuration_drawScatterDiagram (me, you, GRAPHICS, xmin, xmax, ymin, ymax, markSize, markString, garnish);
+		Distance_Configuration_drawScatterDiagram (me, you, GRAPHICS, xmin, xmax, ymin, ymax, markSize, markString, garnish);
 	GRAPHICS_TWO_END
 }
 
@@ -1499,10 +1499,10 @@ void praat_uvafon_MDS_init () {
 
 	/****** 2 classes ********************************************************/
 
-	praat_addAction2 (classConfiguration, 1, classAffineTransform, 1, U"To Configuration", nullptr, 0, NEW1_Configuration_and_AffineTransform_to_Configuration);
-	praat_addAction2 (classConfiguration, 1, classProcrustes, 1, U"To Configuration", nullptr, 0, NEW1_Configuration_and_Procrustes_to_Configuration);
-	//praat_Configuration_and_AffineTransform_init (classAffineTransform);
-	//praat_Configuration_and_AffineTransform_init (classProcrustes);
+	praat_addAction2 (classConfiguration, 1, classAffineTransform, 1, U"To Configuration", nullptr, 0, NEW1_Configuration_AffineTransform_to_Configuration);
+	praat_addAction2 (classConfiguration, 1, classProcrustes, 1, U"To Configuration", nullptr, 0, NEW1_Configuration_Procrustes_to_Configuration);
+	//praat_Configuration_AffineTransform_init (classAffineTransform);
+	//praat_Configuration_AffineTransform_init (classProcrustes);
 
 	praat_addAction2 (classConfiguration, 0, classWeight, 1, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction2 (classConfiguration, 0, classWeight, 1, U"To Similarity (cc)", nullptr, 0, NEW1_Configuration_Weight_to_Similarity_cc);
@@ -1539,7 +1539,7 @@ void praat_uvafon_MDS_init () {
 	praat_addAction2 (classDissimilarity, 1, classConfiguration, 1, U"To Configuration (kruskal)...", nullptr, 1, NEW1_Dissimilarity_Configuration_kruskal);
 
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, DRAW_BUTTON, nullptr, 0, nullptr);
-	praat_addAction2 (classDistance, 1, classConfiguration, 1, U"Draw scatter diagram...", nullptr, 0, GRAPHICS_Distance_and_Configuration_drawScatterDiagram);
+	praat_addAction2 (classDistance, 1, classConfiguration, 1, U"Draw scatter diagram...", nullptr, 0, GRAPHICS_Distance_Configuration_drawScatterDiagram);
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction2 (classDistance, 0, classConfiguration, 1, U"Get VAF...", nullptr, 0, REAL_Distance_Configuration_vaf);
 	praat_addAction2 (classDistance, 1, classConfiguration, 1, ANALYSE_BUTTON, nullptr, 0, nullptr);

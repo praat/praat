@@ -28,13 +28,13 @@
 #include "Eigen.h"
 #include "TableOfReal.h"
 
-autoTableOfReal Eigen_and_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfReal thee, integer from, integer numberOfComponents);
+autoTableOfReal Eigen_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfReal thee, integer from, integer numberOfComponents);
 /*
 	Purpose: project the rows of the TableOfReal (thee) starting at index 'from'
 	on the eigenspace (me).
 */
 
-void Eigen_and_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data, integer data_startColumn, TableOfReal to, integer to_startColumn, integer numberOfComponentsToKeep);
+void Eigen_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data, integer data_startColumn, TableOfReal to, integer to_startColumn, integer numberOfComponentsToKeep);
 /*
 	Purpose: project vectors of length 'me -> dimension' that start at 'data_startColumn' in 'data' on the
 	eigenspace of 'me'. Results are stored from column 'to_startColumn' on in existing TableOfReal (to).

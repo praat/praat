@@ -50,14 +50,14 @@ autoConfusion ClassificationTable_to_Confusion (ClassificationTable me, bool onl
 		autoDistributions d2 = Strings_to_Distributions (s2.get());
 		autoStrings stimuli = TableOfReal_extractRowLabelsAsStrings (d2.get());
 		autoConfusion thee = Confusion_createFromStringses ((onlyClassLabels ? responses.get() : stimuli.get() ), responses.get());
-		Confusion_and_ClassificationTable_increase (thee.get(), me);
+		Confusion_ClassificationTable_increase (thee.get(), me);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": confusions cannot be calculated.");
 	}
 }
 
-void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTable thee) {
+void Confusion_ClassificationTable_increase (Confusion me, ClassificationTable thee) {
 	if (my numberOfColumns != thy numberOfColumns) {
 		Melder_throw (U"The number of columns should be equal.");
 	}

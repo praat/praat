@@ -219,4 +219,4 @@ void DoublyLinkedList_sort (DoublyLinkedList me) {
 	my back = back;
 }
 
-// end of file DoublyLinkedList.cpp
+/* end of file DoublyLinkedList.cpp */

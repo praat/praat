@@ -1,6 +1,6 @@
 /* LPC_and_Tube.cpp
  *
- * Copyright (C) 1993-2012, 2014-2015 David Weenink
+ * Copyright (C) 1993-2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee) {
 	rc -> destroy ();
 }
 
-double VocalTract_and_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, double glottalDamping, bool radiationDamping, bool internalDamping) {
+double VocalTract_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, double glottalDamping, bool radiationDamping, bool internalDamping) {
 	try {
 		// match the average distance between the first two formants in the VocaTract and the LPC spectrum
 		integer numberOfFrequencies = 1000;
@@ -219,7 +219,7 @@ autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bo
 		}
 		LPC_Frame lpc = & my d_frames [iframe];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, 0.17);
-		double length = VocalTract_and_LPC_Frame_getMatchingLength (thee.get(), lpc, glottalDamping, radiationDamping, internalDamping);
+		double length = VocalTract_LPC_Frame_getMatchingLength (thee.get(), lpc, glottalDamping, radiationDamping, internalDamping);
 		VocalTract_setLength (thee.get(), length);
 		return thee;
 	} catch (MelderError) {

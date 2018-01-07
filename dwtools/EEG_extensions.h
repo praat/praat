@@ -29,9 +29,9 @@ autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me, double s
 
 autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *channelRanges, int fromCorrelation);
 
-autoEEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents);
+autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents);
 
-autoEEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfComponents);
+autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfComponents);
 
 autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer ncovars, double lagTime, const char32 *channelRanges, int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol);
 

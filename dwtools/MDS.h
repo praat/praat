@@ -369,7 +369,7 @@ autoConfiguration Correlation_to_Configuration (Correlation me, integer numberOf
 autoDistance Configuration_to_Distance (Configuration me);
 /* Calculates distances between the points */
 
-void Distance_and_Configuration_drawScatterDiagram (Distance me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish);
+void Distance_Configuration_drawScatterDiagram (Distance me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish);
 
 autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDimensions);
 

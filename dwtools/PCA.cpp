@@ -19,12 +19,12 @@
  */
 
 /*
- djmw 20000511 PCA_and_TableOfReal_to_Configuration: added centralize option.
+ djmw 20000511 PCA_TableOfReal_to_Configuration: added centralize option.
  	(later removed)
- djmw 20020327 PCA_and_TableOfReal_to_Configuration modified internals.
+ djmw 20020327 PCA_TableOfReal_to_Configuration modified internals.
  djmw 20020418 Removed some causes for compiler warnings.
- djmw 20020502 modified call Eigen_and_TableOfReal_project_into.
- djmw 20030324 Added PCA_and_TableOfReal_getFractionVariance.
+ djmw 20020502 modified call Eigen_TableOfReal_project_into.
+ djmw 20030324 Added PCA_TableOfReal_getFractionVariance.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
  djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
@@ -229,7 +229,7 @@ autoPCA Matrix_to_PCA_byRows (Matrix me) {
 	}
 }
 
-autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, integer numberOfDimensions) {
+autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, integer numberOfDimensions) {
 	try {
 		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues) {
 			numberOfDimensions = my numberOfEigenvalues;
@@ -253,14 +253,14 @@ autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal 
 	}
 }
 
-autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep) {
+autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep) {
 	try {
 		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
 		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensionsToKeep);
-		Eigen_and_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
+		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
@@ -269,13 +269,13 @@ autoTableOfReal PCA_and_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfR
 	}
 }
 
-autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep) {
+autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, integer numberOfDimensionsToKeep) {
 	try {
 		if (numberOfDimensionsToKeep == 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
 		}
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
-		Eigen_and_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
+		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
@@ -284,7 +284,7 @@ autoConfiguration PCA_and_TableOfReal_to_Configuration (PCA me, TableOfReal thee
 	}
 }
 
-autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee) {
+autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee) {
 	try {
 		integer npc = thy numberOfColumns;
 		Melder_require (thy numberOfColumns <= my dimension,
@@ -313,7 +313,7 @@ autoTableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, Config
 	}
 }
 
-double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer from, integer to) {
+double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer from, integer to) {
 	try {
 		double fraction = undefined;
 
@@ -322,7 +322,7 @@ double PCA_and_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, intege
 		}
 
 		autoSSCP s = TableOfReal_to_SSCP (thee, 0, 0, 0, 0);
-		autoSSCP sp = Eigen_and_SSCP_project (me, s.get());
+		autoSSCP sp = Eigen_SSCP_project (me, s.get());
 		fraction = SSCP_getFractionVariation (sp.get(), from, to);
 		return fraction;
 	} catch (MelderError) {
@@ -339,7 +339,7 @@ autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring) {
 		for (integer j = 1; j <= npc; j ++) {
 			c -> data [1] [j] = pc [j];
 		}
-		autoTableOfReal him = PCA_and_Configuration_to_TableOfReal_reconstruct (me, c.get());
+		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U" not reconstructed.");

@@ -214,10 +214,10 @@ autoPermutation Strings_to_Permutation (Strings me, int sort) {
 	}
 }
 
-autoStrings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee) {
+autoStrings Strings_Permutation_permuteStrings (Strings me, Permutation thee) {
 	try {
 		Melder_require (my numberOfStrings == thy numberOfElements,
-			U"Strings_and_Permutation_permuteStrings: The number of strings and the number of elements in the Permutation should be equal.");
+			U"Strings_Permutation_permuteStrings: The number of strings and the number of elements in the Permutation should be equal.");
 		autoStrings him = Strings_createFixedLength (my numberOfStrings);
 		for (integer i = 1; i <= thy numberOfElements; i ++) {
 			integer index = thy p [i];

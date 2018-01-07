@@ -49,7 +49,7 @@ autoMatrix Eigen_extractEigenvector (Eigen me, integer index, integer numberOfRo
 	}
 }
 
-autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, integer numberOfDimensionsToKeep) {
+autoMatrix Eigen_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, integer numberOfDimensionsToKeep) {
 	try {
 		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
 			numberOfDimensionsToKeep = my numberOfEigenvalues;
@@ -66,7 +66,7 @@ autoMatrix Eigen_and_Matrix_to_Matrix_projectRows (Eigen me, Matrix thee, intege
 	}
 }
 
-autoMatrix Eigen_and_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, integer numberOfDimensionsToKeep) {
+autoMatrix Eigen_Matrix_to_Matrix_projectColumns (Eigen me, Matrix thee, integer numberOfDimensionsToKeep) {
 	try {
 		if (numberOfDimensionsToKeep <= 0 || numberOfDimensionsToKeep > my numberOfEigenvalues) {
 			numberOfDimensionsToKeep = my numberOfEigenvalues;

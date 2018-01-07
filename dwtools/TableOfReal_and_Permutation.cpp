@@ -24,7 +24,7 @@
 #include "TableOfReal_extensions.h"
 #include "NUM2.h"
 
-autoTableOfReal TableOfReal_and_Permutation_permuteRows (TableOfReal me, Permutation thee) {
+autoTableOfReal TableOfReal_Permutation_permuteRows (TableOfReal me, Permutation thee) {
 	try {
 		Melder_require (my numberOfRows == thy numberOfElements,
 			U"The number of rows in the table and the number of elements in the Permutation should be equal.");

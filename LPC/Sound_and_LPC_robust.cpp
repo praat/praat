@@ -127,7 +127,7 @@ static void huber_struct_solvelpc (struct huber_struct *hs) {
 	SVD_solve (me, hs -> c, hs -> a);
 }
 
-void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs) {
+void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs) {
 	integer p = my nCoefficients > his nCoefficients ? his nCoefficients : my nCoefficients;
 	integer n = hs -> e -> nx > thy nx ? thy nx : hs -> e -> nx;
 	double *e = hs -> e -> z [1], *s = thy z [1];
@@ -142,7 +142,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 		for (integer i = 1; i <= thy nx; i ++) {
 			hse -> z [1] [i] = thy z [1] [i];
 		}
-		LPC_Frame_and_Sound_filterInverse (him, hse, 1);
+		LPC_Frame_Sound_filterInverse (him, hse, 1);
 
 		s0 = hs -> scale;
 
@@ -182,7 +182,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 	autoSVD svd;
 #endif
 	
-autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k,
+autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k,
 	int itermax, double tol, bool wantlocation) {
 	struct huber_struct struct_huber { autoSound(), 0.0, 0.0, 0.0, 0, 0, 0, 0, 0.0, 0.0, 0, 0, nullptr, nullptr, nullptr, nullptr, nullptr, autoSVD() };
 	try {
@@ -222,7 +222,7 @@ autoLPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, d
 			Sounds_multiply (sframe.get(), window.get());
 
 			try {
-				LPC_Frames_and_Sound_huber (lpc, sframe.get(), lpcto, & struct_huber);
+				LPC_Frames_Sound_huber (lpc, sframe.get(), lpcto, & struct_huber);
 			} catch (MelderError) {
 				frameErrorCount ++;
 			}
@@ -261,7 +261,7 @@ autoFormant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfForm
 		}
 
 		autoLPC lpc = Sound_to_LPC_auto (sound.get(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
-		autoLPC lpcr = LPC_and_Sound_to_LPC_robust (lpc.get(), sound.get(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
+		autoLPC lpcr = LPC_Sound_to_LPC_robust (lpc.get(), sound.get(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
 		autoFormant thee = LPC_to_Formant (lpcr.get(), safetyMargin);
 		return thee;
 	} catch (MelderError) {

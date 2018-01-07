@@ -19,7 +19,7 @@
 #include "Matrix_Categories.h"
 #include "TableOfReal_extensions.h"
 
-autoTableOfReal Matrix_and_Categories_to_TableOfReal (Matrix me, Categories thee) {
+autoTableOfReal Matrix_Categories_to_TableOfReal (Matrix me, Categories thee) {
 	try {
 		Melder_require (thy size == my ny, U"Number of rows and number of categories should be equal.");
 

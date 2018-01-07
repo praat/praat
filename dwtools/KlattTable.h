@@ -95,7 +95,7 @@ gain  	Overall gain in dB range 0-80.
 
 autoSound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesisModel, int numberOfFormants, double frameDuration, int voicing, double flutter, int outputType);
 
-autoSound KlattTable_and_Sound_to_Sound (KlattTable me, Sound thee);
+autoSound KlattTable_Sound_to_Sound (KlattTable me, Sound thee);
 
 autoKlattTable KlattTable_createExample ();
 
