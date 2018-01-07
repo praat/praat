@@ -366,7 +366,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>
-			<false/>
+			<integer>0</integer>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>Binary</string>
 		</dict>
@@ -380,7 +380,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>
-			<false/>
+			<integer>0</integer>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>Binary</string>
 		</dict>
@@ -407,6 +407,8 @@
 			<string>Praat neural network</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>NSBinaryStoreType</string>
 		</dict>
@@ -419,6 +421,8 @@
 			<string>JPEG image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>NSBinaryStoreType</string>
 		</dict>
@@ -431,6 +435,8 @@
 			<string>PNG image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>NSBinaryStoreType</string>
 		</dict>
@@ -443,6 +449,8 @@
 			<string>TIFF image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>NSBinaryStoreType</string>
 		</dict>
@@ -455,8 +463,22 @@
 			<string>EDF electro-encephalogram</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>NSBinaryStoreType</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Net</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat deep neural network</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
