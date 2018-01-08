@@ -7788,7 +7788,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classDiscriminant, 1, classStrings, 1, U"Set group labels", nullptr, 0, MODIFY_Discriminant_setGroupLabels);
 
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, NEW1_Discriminant_TableOfReal_to_Configuration);
-	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To ClassificationTable...", nullptr, 0, NEW1_Discriminant_TableOfReal_to_ClassificationTable);
+	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1,U"To ClassificationTable...", nullptr, 0, NEW1_Discriminant_TableOfReal_to_ClassificationTable);
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Discriminant_TableOfReal_mahalanobis);
 
 
@@ -7861,13 +7861,18 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEditCostsTable, 1, U"Get target index...", nullptr, 1, INTEGER_EditCostsTable_getTargetIndex);
 	praat_addAction1 (classEditCostsTable, 1, U"Get source index...", nullptr, 1, INTEGER_EditCostsTable_getSourceIndex);
 	praat_addAction1 (classEditCostsTable, 1, U"Get insertion costs...", nullptr, 1, REAL_EditCostsTable_getInsertionCosts);
+	praat_addAction1 (classEditCostsTable, 1, U"Get insertion cost...", nullptr, praat_DEPRECATED_2017, REAL_EditCostsTable_getInsertionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Get deletion costs...", nullptr, 1, REAL_EditCostsTable_getDeletionCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get deletion cost...", nullptr, praat_DEPRECATED_2017, REAL_EditCostsTable_getDeletionCost);
 	praat_addAction1 (classEditCostsTable, 1, U"Get substitution costs...", nullptr, 1, REAL_EditCostsTable_getSubstitutionCost);
+	praat_addAction1 (classEditCostsTable, 1, U"Get substitution cost...", nullptr, praat_DEPRECATED_2017, REAL_EditCostsTable_getSubstitutionCost);
 	praat_addAction1 (classEditCostsTable, 1, U"Get costs (others)...", nullptr, 1, REAL_EditCostsTable_getCosts_others);
+	praat_addAction1 (classEditCostsTable, 1, U"Get cost (others)...", nullptr, praat_DEPRECATED_2017, REAL_EditCostsTable_getCosts_others);
 	praat_addAction1 (classEditCostsTable, 0, MODIFY_BUTTON, nullptr, 0, 0);
 	praat_addAction1 (classEditCostsTable, 1, U"Set target symbol (index)...", nullptr, 1, MODIFY_EditCostsTable_setTargetSymbol_index);
 	praat_addAction1 (classEditCostsTable, 1, U"Set source symbol (index)...", nullptr, 1, MODIFY_EditCostsTable_setSourceSymbol_index);
 	praat_addAction1 (classEditCostsTable, 1, U"Set insertion costs...", nullptr, 1, MODIFY_EditCostsTable_setInsertionCosts);
+	praat_addAction1 (classEditCostsTable, 1, U"Set insertion cost...", nullptr, praat_DEPRECATED_2017, MODIFY_EditCostsTable_setInsertionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Set deletion costs...", nullptr, 1, MODIFY_EditCostsTable_setDeletionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Set substitution costs...", nullptr, 1, MODIFY_EditCostsTable_setSubstitutionCosts);
 	praat_addAction1 (classEditCostsTable, 1, U"Set costs (others)...", nullptr, 1, MODIFY_EditCostsTable_setCosts_others);
