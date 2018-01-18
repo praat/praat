@@ -221,8 +221,11 @@ static void UiField_widgetToValue (UiField me) {
 					GuiText_setString (my text, Melder_integer (my integerValue));
 				}
 			#endif
-			if ((my type == UI_NATURAL || my type == UI_CHANNEL) && my integerValue < 1) {
+			if (my type == UI_NATURAL && my integerValue < 1) {
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number.");
+			}
+			if (my type == UI_CHANNEL && my integerValue < 0) {
+				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number or zero.");
 			}
 			if (my integerVariable) *my integerVariable = my integerValue;
 		} break; case UI_WORD: {
@@ -1138,7 +1141,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			} else if (arg -> which == Stackel_NUMBER) {
 				my integerValue = Melder_iround (arg -> number);
 				if (my type == UI_NATURAL && my integerValue < 1)
-					Melder_throw (U"Argument \"", my name, U"\" must be a positive whole number.");
+					Melder_throw (U"Argument \"", my name, U"\" should be a positive whole number.");
 			} else {
 				Melder_throw (U"Argument \"", my name, U"\" should be a number, not ", Stackel_whichText (arg), U".");
 			}
@@ -1294,7 +1297,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				my integerValue = Melder_iround (realValue);
 			}
 			if (my type == UI_NATURAL && my integerValue < 1)
-				Melder_throw (U"\"", my name, U"\" must be a positive whole number.");
+				Melder_throw (U"\"", my name, U"\" should be a positive whole number.");
 			if (my integerVariable) *my integerVariable = my integerValue;
 		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 			Melder_free (my stringValue);
