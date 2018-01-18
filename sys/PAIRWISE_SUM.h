@@ -2,7 +2,7 @@
 #define _PAIRWISE_SUM_h_
 /* PAIRWISE_SUM.h
  *
- * Copyright (C) 2017 Paul Boersma <paul.boersma@uva.nl>
+ * Copyright (C) 2017,2018 Paul Boersma <paul.boersma@uva.nl>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -208,7 +208,7 @@
 	The three additions in section 5 could therefore be performed in two clock cycles.
 	Indeed, both compilers that I am using in 2017 (Clang on the Mac, and GCC on Windows and Linux)
 	take only 0.30 nanoseconds per addition, which is just over two-thirds of the clock period
-	of the 2.3 GHz processor (which is 43.5 nanoseconds) of my 2014 Macbook Pro.
+	of the 2.3 GHz processor (which is 0.435 nanoseconds) of my 2014 Macbook Pro.
 	On a processor far, far away, which has more than 64 registers, perfect prefetching,
 	and perfectly parallel operations on independent registers, 64 terms may be added
 	within 6 clock cycles: six is the number of times we need to add something to r1,
@@ -441,7 +441,7 @@
 			/*  The maximum value of _powers [58] should also be 6,                             */ \
 			/*  because this can be the situation just before collapsing the top of the stack.  */ \
 			/*  However, if the whole stack is filled up like this, the actual number of        */ \
-			/*  terms is already 2^63 (2^62 + 2^61 + 2^60 + ... 2^6 + 2^6). Therefore, we       */ \
+			/*  terms is already 2^63 (i.e. 2^62 + 2^61 + 2^60 + ... 2^6 + 2^6). Therefore, we  */ \
 			/*  need one element less, so the highest index of _powers [] should be 57.         */ \
 			/*  For 32-bit counters, this highest index is 25.                                  */ \
 			/*                                                                                  */ \
@@ -480,9 +480,9 @@
 /*
 	Note that we don't do the usual trick with `do {...} while (0)` that would allow you to add
 	a semicolon after the `PAIRWISE_SUM()` call. This is to prevent the suggestion that the macro
-	constitutes a single statement. The macro contains a sequence of two things: the definitions
-	of `sum` and the pointer(s), and a long block that usually changes the value of `sum`. Hence,
-	the macro cannot be used as a single statement
+	constitutes a single statement. The macro contains a sequence of two things: the definition
+	of `sumVariableName` and a long block that usually changes the value of `sumVariableName`.
+	Hence, the macro cannot be used as a single statement
 	and e.g. has to be bracketed if used in an `else` clause.
 	You are therefore advised to call `PAIRWISE_SUM()` without appending the misleading semicolon.
 */
