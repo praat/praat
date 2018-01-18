@@ -119,11 +119,11 @@ static keywtab_t k_properties[] = {
 
 	{ "isVelar", 0, CONDITION_IS_PLACE_OF_ARTICULATION | phPLACE_VELAR },
 
-	{ "isDiminished",  0, CONDITION_IS_OTHER | isDiminished },
-	{ "isUnstressed",  0, CONDITION_IS_OTHER | isUnstressed },
-	{ "isNotStressed", 0, CONDITION_IS_OTHER | isNotStressed },
-	{ "isStressed",    0, CONDITION_IS_OTHER | isStressed },
-	{ "isMaxStress",   0, CONDITION_IS_OTHER | isMaxStress },
+	{ "isDiminished",  0, CONDITION_IS_OTHER | STRESS_IS_DIMINISHED },
+	{ "isUnstressed",  0, CONDITION_IS_OTHER | STRESS_IS_UNSTRESSED },
+	{ "isNotStressed", 0, CONDITION_IS_OTHER | STRESS_IS_NOT_STRESSED },
+	{ "isStressed",    0, CONDITION_IS_OTHER | STRESS_IS_SECONDARY },
+	{ "isMaxStress",   0, CONDITION_IS_OTHER | STRESS_IS_PRIMARY },
 
 	{ "isPause2",           0, CONDITION_IS_OTHER | isBreak },
 	{ "isWordStart",        0, CONDITION_IS_OTHER | isWordStart },
@@ -260,10 +260,11 @@ static keywtab_t keywords[] = {
 	{ "InsertPhoneme",       tINSTRN1, i_INSERT_PHONEME },
 	{ "AppendPhoneme",       tINSTRN1, i_APPEND_PHONEME },
 	{ "IfNextVowelAppend",   tINSTRN1, i_APPEND_IFNEXTVOWEL },
-	{ "ChangeIfDiminished",  tINSTRN1, i_CHANGE_IF | isDiminished },
-	{ "ChangeIfUnstressed",  tINSTRN1, i_CHANGE_IF | isUnstressed },
-	{ "ChangeIfNotStressed", tINSTRN1, i_CHANGE_IF | isNotStressed },
-	{ "ChangeIfStressed",    tINSTRN1, i_CHANGE_IF | isStressed },
+	{ "ChangeIfDiminished",  tINSTRN1, i_CHANGE_IF | STRESS_IS_DIMINISHED },
+	{ "ChangeIfUnstressed",  tINSTRN1, i_CHANGE_IF | STRESS_IS_UNSTRESSED },
+	{ "ChangeIfNotStressed", tINSTRN1, i_CHANGE_IF | STRESS_IS_NOT_STRESSED },
+	{ "ChangeIfStressed",    tINSTRN1, i_CHANGE_IF | STRESS_IS_SECONDARY },
+	{ "ChangeIfStressed",    tINSTRN1, i_CHANGE_IF | STRESS_IS_PRIMARY },
 
 	{ "PauseBefore", tINSTRN1, i_PAUSE_BEFORE },
 	{ "PauseAfter",  tINSTRN1, i_PAUSE_AFTER },
@@ -312,6 +313,7 @@ static PHONEME_TAB *phoneme_out;
 static int n_phcodes_list[N_PHONEME_TABS];
 static PHONEME_TAB_LIST phoneme_tab_list2[N_PHONEME_TABS];
 static PHONEME_TAB *phoneme_tab2;
+static int phoneme_flags;
 
 #define N_PROCS 50
 int n_procs;
@@ -1939,6 +1941,8 @@ static void CallPhoneme(void)
 			phoneme_out->end_type = ph->end_type;
 			phoneme_out->std_length = ph->std_length;
 			phoneme_out->length_mod = ph->length_mod;
+
+			phoneme_flags = ph->phflags & ~phARTICULATION;
 		}
 	}
 
@@ -1976,7 +1980,7 @@ static int CompilePhoneme(int compile_phoneme)
 	if_level = 0;
 	if_stack[0].returned = 0;
 	after_if = 0;
-	int phoneme_flags = 0;
+	phoneme_flags = 0;
 
 	NextItem(tSTRING);
 	if (compile_phoneme) {
@@ -2043,10 +2047,11 @@ static int CompilePhoneme(int compile_phoneme)
 			case i_INSERT_PHONEME:
 			case i_REPLACE_NEXT_PHONEME:
 			case i_VOICING_SWITCH:
-			case i_CHANGE_IF | isDiminished:
-			case i_CHANGE_IF | isUnstressed:
-			case i_CHANGE_IF | isNotStressed:
-			case i_CHANGE_IF | isStressed:
+			case i_CHANGE_IF | STRESS_IS_DIMINISHED:
+			case i_CHANGE_IF | STRESS_IS_UNSTRESSED:
+			case i_CHANGE_IF | STRESS_IS_NOT_STRESSED:
+			case i_CHANGE_IF | STRESS_IS_SECONDARY:
+			case i_CHANGE_IF | STRESS_IS_PRIMARY:
 				value = NextItemBrackets(tPHONEMEMNEM, 0);
 				*prog_out++ = (keyword << 8) + value;
 				DecThenCount();

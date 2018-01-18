@@ -34,13 +34,6 @@
 #include "synthesize.h"
 #include "translate.h"
 
-#define L_grc  0x677263 // grc  Ancient Greek
-#define L_jbo  0x6a626f // jbo  Lojban
-#define L_mni  0x627079 // bpy  Manipuri
-#define L_pap  0x706170 // pap  Papiamento]
-#define L_zhy  0x7a6879 // zhy  Chinese (Cantonese)
-#define L_cmn  0x636D6E // cmn  Chinese (Mandarin)
-
 // start of unicode pages for character sets
 #define OFFSET_GREEK    0x380
 #define OFFSET_CYRILLIC 0x420
@@ -118,11 +111,6 @@ ALPHABET *AlphabetFromChar(int c)
 }
 
 static void Translator_Russian(Translator *tr);
-
-static void SetLetterVowel(Translator *tr, int c)
-{
-	tr->letter_bits[c] = (tr->letter_bits[c] & 0x40) | 0x81; // keep value for group 6 (front vowels e,i,y)
-}
 
 static void ResetLetterBits(Translator *tr, int groups)
 {
@@ -481,7 +469,6 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.vowel_pause = 0x30;
 		tr->langopts.param[LOPT_DIERESES] = 1;
 		tr->langopts.param[LOPT_PREFIXES] = 1;
-		SetLetterVowel(tr, 'y'); // add 'y' to vowels
 
 		tr->langopts.numbers = NUM_SWAP_TENS | NUM_HUNDRED_AND | NUM_SINGLE_AND | NUM_ROMAN | NUM_1900;
 		tr->langopts.accents = 1;
@@ -510,7 +497,6 @@ Translator *SelectTranslator(const char *name)
 	case L('b', 'g'): // Bulgarian
 	{
 		SetCyrillicLetters(tr);
-		SetLetterVowel(tr, 0x2a);
 		tr->encoding = ESPEAKNG_ENCODING_ISO_8859_5;
 		tr->langopts.param[LOPT_UNPRONOUNCABLE] = 0x432; // [v]  don't count this character at start of word
 		tr->langopts.param[LOPT_REGRESSIVE_VOICING] = 0x107; // devoice at end of word, and change voicing to match a following consonant (except v)
@@ -522,7 +508,7 @@ Translator *SelectTranslator(const char *name)
 		break;
 	case L('b', 'n'): // Bengali
 	case L('a', 's'): // Assamese
-	case L_mni: // Manipuri  (temporary placement - it's not indo-european)
+	case L3('b', 'p', 'y'): // Manipuri  (temporary placement - it's not indo-european)
 	{
 		static const short stress_lengths_bn[8] = { 180, 180,  210, 210,  0, 0,  230, 240 };
 		static const unsigned char stress_amps_bn[8] = { 18, 18, 18, 18, 20, 20, 22, 22 };
@@ -542,7 +528,7 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.numbers = NUM_SWAP_TENS;
 		tr->langopts.break_numbers = 0x24924aa8; // for languages which have numbers for 100,000 and 100,00,000, eg Hindi
 
-		if (name2 == L_mni) {
+		if (name2 == L3('b', 'p', 'y')) {
 			tr->langopts.numbers = 1;
 			tr->langopts.numbers2 = NUM2_SWAP_THOUSANDS;
 		}
@@ -579,8 +565,6 @@ Translator *SelectTranslator(const char *name)
 
 		tr->langopts.numbers = NUM_OMIT_1_HUNDRED;
 
-		SetLetterVowel(tr, 'w'); // add letter to vowels and remove from consonants
-		SetLetterVowel(tr, 'y');
 	}
 		break;
 	case L('d', 'a'): // Danish
@@ -590,7 +574,6 @@ Translator *SelectTranslator(const char *name)
 
 		tr->langopts.stress_rule = STRESSPOSN_1L;
 		tr->langopts.param[LOPT_PREFIXES] = 1;
-		SetLetterVowel(tr, 'y');
 		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_SWAP_TENS | NUM_HUNDRED_AND | NUM_OMIT_1_HUNDRED | NUM_ORDINAL_DOT | NUM_1900 | NUM_ROMAN | NUM_ROMAN_CAPITALS | NUM_ROMAN_ORDINAL;
 	}
 		break;
@@ -607,11 +590,10 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.param[LOPT_LONG_VOWEL_THRESHOLD] = 175/2;
 
 		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_SWAP_TENS | NUM_ALLOW_SPACE | NUM_ORDINAL_DOT | NUM_ROMAN;
-		SetLetterVowel(tr, 'y');
 		tr->langopts.param[LOPT_UNPRONOUNCABLE] = 2; // use de_rules for unpronouncable rules
 	}
 		break;
-	case L('d', 'v'): // Divehi (Maldives)
+	case L('d', 'v'): // Divehi (Maldives) FIXME: this language code is actually never used
 	{
 		SetupTranslator(tr, stress_lengths_ta, stress_amps_ta);
 		tr->langopts.param[LOPT_UNPRONOUNCABLE] = 1; // disable check for unpronouncable words
@@ -639,7 +621,7 @@ Translator *SelectTranslator(const char *name)
 	}
 		break;
 	case L('e', 'l'): // Greek
-	case L_grc: // Ancient Greek
+	case L3('g', 'r', 'c'): // Ancient Greek
 	{
 		static const short stress_lengths_el[8] = { 155, 180,  210, 210,  0, 0,  270, 300 };
 		static const unsigned char stress_amps_el[8] = { 15, 12, 20, 20, 20, 22, 22, 21 }; // 'diminished' is used to mark a quieter, final unstressed syllable
@@ -674,7 +656,7 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.numbers = NUM_SINGLE_STRESS | NUM_DECIMAL_COMMA;
 		tr->langopts.numbers2 = 0x2 | NUM2_MULTIPLE_ORDINAL | NUM2_ORDINAL_NO_AND; // variant form of numbers before thousands
 
-		if (name2 == L_grc) {
+		if (name2 == L3('g', 'r', 'c')) {
 			// ancient greek
 			tr->langopts.param[LOPT_UNPRONOUNCABLE] = 1;
 		}
@@ -703,7 +685,7 @@ Translator *SelectTranslator(const char *name)
 	case L('a', 'n'): // Aragonese
 	case L('c', 'a'): // Catalan
 	case L('i', 'a'): // Interlingua
-	case L_pap: // Papiamento
+	case L3('p', 'a', 'p'): // Papiamento
 	{
 		static const short stress_lengths_es[8] = { 160, 145,  155, 150,  0, 0,  200, 245 };
 		static const unsigned char stress_amps_es[8] = { 16, 14, 15, 16, 20, 20, 22, 22 }; // 'diminished' is used to mark a quieter, final unstressed syllable
@@ -736,7 +718,7 @@ Translator *SelectTranslator(const char *name)
 			tr->langopts.numbers = NUM_SINGLE_STRESS | NUM_DECIMAL_COMMA | NUM_AND_UNITS | NUM_OMIT_1_HUNDRED | NUM_OMIT_1_THOUSAND | NUM_ROMAN | NUM_ROMAN_ORDINAL;
 			tr->langopts.numbers2 = NUM2_ORDINAL_NO_AND;
 			tr->langopts.roman_suffix = utf8_ordinal;
-		} else if (name2 == L_pap) {
+		} else if (name2 == L3('p', 'a', 'p')) {
 			// stress last syllable unless word ends with a vowel
 			tr->langopts.stress_rule = STRESSPOSN_1R;
 			tr->langopts.stress_flags = S_FINAL_VOWEL_UNSTRESSED | S_FINAL_DIM_ONLY | S_FINAL_NO_2 | S_NO_AUTO_2;
@@ -799,7 +781,6 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.long_stop = 130;
 
 		tr->langopts.numbers = NUM_DECIMAL_COMMA + NUM_ALLOW_SPACE;
-		SetLetterVowel(tr, 'y');
 		tr->langopts.spelling_stress = 1;
 		tr->langopts.intonation_group = 3; // less intonation, don't raise pitch at comma
 	}
@@ -814,9 +795,16 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.accents = 2; // Say "Capital" after the letter.
 
 		tr->langopts.numbers = NUM_SINGLE_STRESS | NUM_DECIMAL_COMMA | NUM_ALLOW_SPACE | NUM_OMIT_1_HUNDRED | NUM_NOPAUSE | NUM_ROMAN | NUM_ROMAN_CAPITALS | NUM_ROMAN_AFTER | NUM_VIGESIMAL | NUM_DFRACTION_4;
-		SetLetterVowel(tr, 'y');
 	}
 		break;
+    case L3('h','a', 'k'): // Hakka Chinese
+    {
+        tr->langopts.stress_flags = S_NO_DIM; // don't automatically set diminished stress (may be set in the intonation module)
+        tr->langopts.tone_language = 1; // Tone language, use  CalcPitches_Tone() rather than CalcPitches()
+        tr->langopts.tone_numbers = 1; // a number after letters indicates a tone number (eg. pinyin or jyutping)
+        tr->langopts.ideographs = 1;
+    }
+        break;
 	case L('g', 'a'): // irish
 	case L('g', 'd'): // scots gaelic
 	{
@@ -898,8 +886,6 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.replace_chars = replace_cyrillic_latin;
 		tr->langopts.our_alphabet = OFFSET_CYRILLIC; // don't say "cyrillic" before letter names
 
-		SetLetterVowel(tr, 'y');
-		SetLetterVowel(tr, 'r');
 	}
 		break;
 	case L('h', 't'): // Haitian Creole
@@ -927,7 +913,6 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.decimal_sep = ',';
 		tr->langopts.max_roman = 899;
 		tr->langopts.min_roman = 1;
-		SetLetterVowel(tr, 'y');
 		tr->langopts.spelling_stress = 1;
 		SetLengthMods(tr, 3); // all equal
 	}
@@ -984,7 +969,6 @@ Translator *SelectTranslator(const char *name)
 		SetLetterBits(tr, 4, "kpst"); // Letter group F
 		SetLetterBits(tr, 3, "jvr"); // Letter group H
 		tr->letter_groups[1] = is_lettergroup_B;
-		SetLetterVowel(tr, 'y');
 		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_SINGLE_AND | NUM_HUNDRED_AND | NUM_AND_UNITS | NUM_1900;
 		tr->langopts.numbers2 = 0x2;
 	}
@@ -1009,10 +993,9 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.numbers2 = NUM2_NO_TEEN_ORDINALS;
 		tr->langopts.roman_suffix = utf8_ordinal;
 		tr->langopts.accents = 2; // Say "Capital" after the letter.
-		SetLetterVowel(tr, 'y');
 	}
 		break;
-	case L_jbo: // Lojban
+	case L3('j', 'b', 'o'): // Lojban
 	{
 		static const short stress_lengths_jbo[8] = { 145, 145, 170, 160, 0, 0, 330, 350 };
 		static const wchar_t jbo_punct_within_word[] = { '.', ',', '\'', 0x2c8, 0 }; // allow period and comma within a word, also stress marker (from LOPT_CAPS_IN_WORD)
@@ -1022,7 +1005,6 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.vowel_pause = 0x20c; // pause before a word which starts with a vowel, or after a word which ends in a consonant
 		tr->punct_within_word = jbo_punct_within_word;
 		tr->langopts.param[LOPT_CAPS_IN_WORD] = 2; // capitals indicate stressed syllables
-		SetLetterVowel(tr, 'y');
 		tr->langopts.max_lengthmod = 368;
 	}
 		break;
@@ -1193,7 +1175,6 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.param[LOPT_DIERESES] = 1;
 		tr->langopts.param[LOPT_PREFIXES] = 1;
 		tr->langopts.param[LOPT_REGRESSIVE_VOICING] = 0x100; // devoice at end of word
-		SetLetterVowel(tr, 'y');
 
 		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_SWAP_TENS | NUM_OMIT_1_HUNDRED | NUM_OMIT_1_THOUSAND | NUM_ALLOW_SPACE | NUM_1900 | NUM_ORDINAL_DOT;
 		tr->langopts.ordinal_indicator = "e";
@@ -1207,7 +1188,6 @@ Translator *SelectTranslator(const char *name)
 
 		SetupTranslator(tr, stress_lengths_no, NULL);
 		tr->langopts.stress_rule = STRESSPOSN_1L;
-		SetLetterVowel(tr, 'y');
 		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_HUNDRED_AND | NUM_ALLOW_SPACE | NUM_1900 | NUM_ORDINAL_DOT;
 	}
 		break;
@@ -1238,7 +1218,6 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_ALLOW_SPACE | NUM_DFRACTION_2;
 		tr->langopts.numbers2 = NUM2_THOUSANDS_VAR3;
 		tr->langopts.param[LOPT_COMBINE_WORDS] = 4 + 0x100; // combine 'nie' (marked with $alt2) with some 1-syllable (and 2-syllable) words (marked with $alt)
-		SetLetterVowel(tr, 'y');
 	}
 		break;
 	case L('p', 't'): // Portuguese
@@ -1254,7 +1233,6 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_DFRACTION_2 | NUM_HUNDRED_AND | NUM_AND_UNITS | NUM_ROMAN_CAPITALS;
 		tr->langopts.numbers2 = NUM2_MULTIPLE_ORDINAL | NUM2_NO_TEEN_ORDINALS | NUM2_ORDINAL_NO_AND;
 		tr->langopts.max_roman = 5000;
-		SetLetterVowel(tr, 'y');
 		ResetLetterBits(tr, 0x2);
 		SetLetterBits(tr, 1, "bcdfgjkmnpqstvxz"); // B  hard consonants, excluding h,l,r,w,y
 		tr->langopts.param[LOPT_ALT] = 2; // call ApplySpecialAttributes2() if a word has $alt or $alt2
@@ -1312,8 +1290,6 @@ Translator *SelectTranslator(const char *name)
 		if (name2 == L('c', 's'))
 			tr->langopts.numbers2 = 0x108; // variant numbers before milliards
 
-		SetLetterVowel(tr, 'y');
-		SetLetterVowel(tr, 'r');
 		ResetLetterBits(tr, 0x20);
 		SetLetterBits(tr, 5, sk_voiced);
 	}
@@ -1366,7 +1342,6 @@ Translator *SelectTranslator(const char *name)
 
 		tr->langopts.stress_rule = STRESSPOSN_1R;
 		tr->langopts.stress_flags =  S_FINAL_DIM_ONLY | S_FINAL_NO_2 | S_FINAL_VOWEL_UNSTRESSED;
-		SetLetterVowel(tr, 'y');
 		tr->langopts.numbers = NUM_DECIMAL_COMMA | NUM_HUNDRED_AND | NUM_AND_UNITS | NUM_DFRACTION_4;
 		tr->langopts.accents = 2; // "capital" after letter name
 	}
@@ -1378,7 +1353,6 @@ Translator *SelectTranslator(const char *name)
 		SetupTranslator(tr, stress_lengths_sv, stress_amps_sv);
 
 		tr->langopts.stress_rule = STRESSPOSN_1L;
-		SetLetterVowel(tr, 'y');
 		tr->langopts.numbers = NUM_SINGLE_STRESS | NUM_DECIMAL_COMMA | NUM_ALLOW_SPACE | NUM_1900;
 		tr->langopts.accents = 1;
 	}
@@ -1521,8 +1495,8 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.stress_rule = STRESSPOSN_1L;
 		tr->langopts.numbers = NUM_AND_UNITS | NUM_HUNDRED_AND | NUM_OMIT_1_HUNDRED | NUM_OMIT_1_THOUSAND | NUM_SINGLE_STRESS;
 		break;
-	case L_cmn: // no break, just go to 'zh' case
-	case L_zhy: // just go to 'zh' case
+	case L3('c', 'm', 'n'): // no break, just go to 'zh' case
+	case L3('z', 'h', 'y'): // just go to 'zh' case
 	case L('z','h'):
 
 	{
@@ -1540,7 +1514,7 @@ Translator *SelectTranslator(const char *name)
 		tr->langopts.ideographs = 1;
 		tr->langopts.our_alphabet = 0x3100;
 		tr->langopts.word_gap = 0x21; // length of a final vowel is less dependent on the next consonant, don't merge consonant with next word
-		if (name2 == L_zhy) {
+		if (name2 == L3('z', 'h', 'y')) {
 			tr->langopts.textmode = 1;
 			tr->langopts.listx = 1; // compile zh_listx after zh_list
 			tr->langopts.numbers = 1;
