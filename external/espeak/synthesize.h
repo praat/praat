@@ -17,9 +17,10 @@
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
+
 #include "phoneme.h"
 #include "voice.h"
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -319,16 +320,15 @@ typedef struct {
 #define CONDITION_IS_OTHER 0x80
 
 // other conditions (stress)
-#define isDiminished   0
-#define isUnstressed   1
-#define isNotStressed  2
-#define isStressed     3
-#define isMaxStress    4
+#define STRESS_IS_DIMINISHED    0       // diminished, unstressed within a word
+#define STRESS_IS_UNSTRESSED    1       // unstressed, weak
+#define STRESS_IS_NOT_STRESSED  2       // default, not stressed
+#define STRESS_IS_SECONDARY     3       // secondary stress
+#define STRESS_IS_PRIMARY       4       // primary (main) stress
+#define STRESS_IS_PRIORITY      5       // replaces primary markers
+#define STRESS_IS_EMPHASIZED	6       // emphasized
 
 // other conditions
-#define isBreak        5 // pause phoneme or (stop/vstop/vfric not followed by vowel or (liquid in same word))
-#define isWordStart    6
-#define isWordEnd      8
 #define isAfterStress  9
 #define isNotVowel    10
 #define isFinalVowel  11
@@ -336,6 +336,9 @@ typedef struct {
 #define isFirstVowel  13
 #define isSecondVowel 14
 #define isTranslationGiven 16 // phoneme translation given in **_list or as [[...]]
+#define isBreak        17 // pause phoneme or (stop/vstop/vfric not followed by vowel or (liquid in same word))
+#define isWordStart    18
+#define isWordEnd      19
 
 #define i_StressLevel  0x800
 
@@ -496,7 +499,7 @@ espeak_ng_STATUS LoadPhData(int *srate, espeak_ng_ERROR_CONTEXT *context);
 void FreePhData(void);
 
 void SynthesizeInit(void);
-int  Generate(PHONEME_LIST *phoneme_list, int *n_ph, int resume);
+int  Generate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume);
 void MakeWave2(PHONEME_LIST *p, int n_ph);
 int  SpeakNextClause(int control);
 void SetSpeed(int control);
@@ -534,9 +537,9 @@ extern SOUND_ICON soundicon_tab[N_SOUNDICON_TAB];
 
 espeak_ng_STATUS LoadMbrolaTable(const char *mbrola_voice, const char *phtrans, int *srate);
 espeak_ng_STATUS SetParameter(int parameter, int value, int relative);
-int MbrolaTranslate(PHONEME_LIST *plist, int n_phonemes, int resume, FILE *f_mbrola);
-int MbrolaGenerate(PHONEME_LIST *phoneme_list, int *n_ph, int resume);
-int MbrolaFill(int length, int resume, int amplitude);
+int MbrolaTranslate(PHONEME_LIST *plist, int n_phonemes, bool resume, FILE *f_mbrola);
+int MbrolaGenerate(PHONEME_LIST *phoneme_list, int *n_ph, bool resume);
+int MbrolaFill(int length, bool resume, int amplitude);
 void MbrolaReset(void);
 void DoEmbedded(int *embix, int sourceix);
 void DoMarker(int type, int char_posn, int length, int value);
