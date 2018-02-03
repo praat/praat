@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
+ * Copyright (C) 1992-2018 Paul Boersma, 2013 Tom Naughton, 2017 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1235,40 +1235,40 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 	const char32 *in = txt;
 	int nquote = 0;
 	_Graphics_widechar *out = & a_widechar [0];
-	unsigned int charSuperscript = 0, charSubscript = 0, charItalic = 0, charBold = 0;
-	unsigned int wordItalic = 0, wordBold = 0, wordCode = 0, wordLink = 0;
-	unsigned int globalSuperscript = 0, globalSubscript = 0, globalItalic = 0, globalBold = 0, globalCode = 0, globalLink = 0;
-	unsigned int globalSmall = 0;
+	bool charSuperscript = false, charSubscript = false, charItalic = false, charBold = false;
+	bool wordItalic = false, wordBold = false, wordCode = false, wordLink = false;
+	bool globalSuperscript = false, globalSubscript = false, globalItalic = false, globalBold = false, globalCode = false, globalLink = false;
+	bool globalSmall = 0;
 	numberOfLinks = 0;
 	while ((kar = *in++) != U'\0') {
 		if (kar == U'^' && my circumflexIsSuperscript) {
 			if (globalSuperscript) globalSuperscript = 0;
 			else if (in [0] == '^') { globalSuperscript = 1; in ++; }
 			else charSuperscript = 1;
-			wordItalic = wordBold = wordCode = 0;
+			wordItalic = wordBold = wordCode = false;
 			continue;
 		} else if (kar == U'_' && my underscoreIsSubscript) {
-			if (globalSubscript) { globalSubscript = 0; wordItalic = wordBold = wordCode = 0; continue; }
-			else if (in [0] == U'_') { globalSubscript = 1; in ++; wordItalic = wordBold = wordCode = 0; continue; }
-			else if (! my dollarSignIsCode) { charSubscript = 1; wordItalic = wordBold = wordCode = 0; continue; }   // not in manuals
+			if (globalSubscript) { globalSubscript = false; wordItalic = wordBold = wordCode = false; continue; }
+			else if (in [0] == U'_') { globalSubscript = true; in ++; wordItalic = wordBold = wordCode = false; continue; }
+			else if (! my dollarSignIsCode) { charSubscript = true; wordItalic = wordBold = wordCode = false; continue; }   // not in manuals
 			else
 				;   // a normal underscore in manuals
 		} else if (kar == U'%' && my percentSignIsItalic) {
-			if (globalItalic) globalItalic = 0;
-			else if (in [0] == U'%') { globalItalic = 1; in ++; }
-			else if (my dollarSignIsCode) wordItalic = 1;   // in manuals
-			else charItalic = 1;
+			if (globalItalic) globalItalic = false;
+			else if (in [0] == U'%') { globalItalic = true; in ++; }
+			else if (my dollarSignIsCode) wordItalic = true;   // in manuals
+			else charItalic = true;
 			continue;
 		} else if (kar == U'#' && my numberSignIsBold) {
-			if (globalBold) globalBold = 0;
-			else if (in [0] == U'#') { globalBold = 1; in ++; }
-			else if (my dollarSignIsCode) wordBold = 1;   // in manuals
-			else charBold = 1;
+			if (globalBold) globalBold = false;
+			else if (in [0] == U'#') { globalBold = true; in ++; }
+			else if (my dollarSignIsCode) wordBold = true;   // in manuals
+			else charBold = true;
 			continue;
 		} else if (kar == U'$' && my dollarSignIsCode) {
-			if (globalCode) globalCode = 0;
-			else if (in [0] == U'$') { globalCode = 1; in ++; }
-			else wordCode = 1;
+			if (globalCode) globalCode = false;
+			else if (in [0] == U'$') { globalCode = true; in ++; }
+			else wordCode = true;
 			continue;
 		} else if (kar == U'@' && my atSignIsLink   // recognize links
 		           && my textRotation == 0.0)   // no links allowed in rotated text, because links are identified by 2-point rectangles
@@ -1290,7 +1290,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 				 * Detected the third '@' in strings like "@@Link with spaces@".
 				 * This closes the link text (which will be shown in blue).
 				 */
-				globalLink = 0;   // close the drawn link text (the normal colour will take over)
+				globalLink = false;   // close the drawn link text (the normal colour will take over)
 				continue;   // the '@' must not be drawn
 			} else if (in [0] == U'@') {
 				/*
@@ -1317,7 +1317,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 				/*
 				 * We are entering the link-text-collection mode.
 				 */
-				globalLink = 1;
+				globalLink = true;
 				/*
 				 * Both '@' must be skipped and must not be drawn.
 				 */
@@ -1340,7 +1340,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 				 * Its characters will be collected during the normal cycles of the loop.
 				 * The link info is equal to the link text, so no skipping is needed.
 				 */
-				wordLink = 1;   // enter the single-word link-text-collection mode
+				wordLink = true;   // enter the single-word link-text-collection mode
 			}
 			continue;
 		} else if (kar == U'\\') {
@@ -1357,7 +1357,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 			 * Catch "\s{", which means: small characters until corresponding '}'.
 			 */
 			} else if (kar2 == U'{') {
-				if (kar1 == U's') globalSmall = 1;
+				if (kar1 == U's') globalSmall = true;
 				in += 2;
 				continue;
 			/*
@@ -1389,9 +1389,9 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 		} else if (kar == U'\t') {
 			out -> kar = U'\t';
 			out -> rightToLeft = false;
-			wordItalic = wordBold = wordCode = wordLink = 0;
-			globalSubscript = globalSuperscript = globalItalic = globalBold = globalCode = globalLink = globalSmall = 0;
-			charItalic = charBold = charSuperscript = charSubscript = 0;
+			wordItalic = wordBold = wordCode = wordLink = false;
+			globalSubscript = globalSuperscript = globalItalic = globalBold = globalCode = globalLink = globalSmall = false;
+			charItalic = charBold = charSuperscript = charSubscript = false;
 			out ++;
 			continue;   // do not draw
 		} else if (kar == U'\n') {
@@ -1399,7 +1399,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 		}
 		if (wordItalic | wordBold | wordCode | wordLink) {
 			if (! isalnum ((int) kar) && kar != U'_')   // FIXME: this test could be more precise.
-				wordItalic = wordBold = wordCode = wordLink = 0;
+				wordItalic = wordBold = wordCode = wordLink = false;
 		}
 		out -> style =
 			(wordLink | globalLink) && my fontStyle != Graphics_CODE ? Graphics_BOLD :
@@ -1425,7 +1425,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 			(kar >= 0x0590 && kar <= 0x06FF) ||
 			(kar >= 0xFE70 && kar <= 0xFEFF) ||
 			(kar >= 0xFB1E && kar <= 0xFDFF);
-		charItalic = charBold = charSuperscript = charSubscript = 0;
+		charItalic = charBold = charSuperscript = charSubscript = false;
 		out ++;
 	}
 	out -> kar = U'\0';   // end of text
