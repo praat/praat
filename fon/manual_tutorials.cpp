@@ -22,10 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20171111)
+MAN_BEGIN (U"What's new?", U"ppgb", 20180203)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.37# (3 February 2018)")
+LIST_ITEM (U"• Graphics: fixed crashing bug with \\bsun trigraph.")
 NORMAL (U"##6.0.36# (11 November 2017)")
 LIST_ITEM (U"• Many more languages for SpeechSynthesizer and automatic alignment (new eSpeak).")
 NORMAL (U"##6.0.35# (16 October 2017)")
