@@ -430,8 +430,8 @@ static struct structLongchar_Info Longchar_database [] = {
 { '.', '3', 1, 0, { "/therefore",      863, 0,   0,   0,    863, 0,    863, 0,   0,   0   },  92,  92,  92,  92, UNICODE_THEREFORE },
 { '=', '~', 1, 0, { "/congruent",      549, 0,   0,   0,    549, 0,    549, 0,   0,   0   },  64,  64,  64,  64, UNICODE_APPROXIMATELY_EQUAL_TO },
 { '~', '~', 1, 0, { "/approxequal",    549, 0,   0,   0,    549, 0,    549, 0,   0,   0   }, 187, 187, 187, 187, UNICODE_ALMOST_EQUAL_TO },
-{ 'u', 'n', 1, 0, { "/underscore",     500, 0,   0,   0,    500, 0,    500, 0,   0,   0   },  95,  95,  95,  95 },
-{ 'o', 'v', 1, 0, { "/radicalex",      500, 0,   0,   0,    500, 0,    500, 0,   0,   0   },  96,  96,  96,  96 },
+{ 'u', 'n', 1, 0, { "/underscore",     500, 0,   0,   0,    500, 0,    500, 0,   0,   0   },  95,  95,  95,  95, UNICODE_LOW_LINE },
+//{ 'o', 'v', 1, 0, { "/radicalex",      500, 0,   0,   0,    500, 0,    500, 0,   0,   0   },  96,  96,  96,  96, UNICODE_GRAVE_ACCENT /* BUG */ },
 { '=', '/', 1, 0, { "/notequal",       549, 0,   0,   0,    549, 0,    549, 0,   0,   0   }, 185, 185, 185, 185, UNICODE_NOT_EQUAL_TO },
 { '=', '3', 1, 0, { "/equivalence",    549, 0,   0,   0,    549, 0,    549, 0,   0,   0   }, 186, 186, 186, 186, UNICODE_IDENTICAL_TO }, /* defined as */
 { '<', '_', 1, 0, { "/lessequal",      549, 0,   0,   0,    549, 0,    549, 0,   0,   0   }, 163, 163, 163, 163, UNICODE_LESS_THAN_OR_EQUAL_TO },
@@ -614,7 +614,7 @@ static struct structLongchar_Info Longchar_database [] = {
 
 static short where [95] [95];
 static short inited = 0;
-#define UNICODE_TOP_GENERICIZABLE  65000
+#define UNICODE_TOP_GENERICIZABLE  65535
 static struct { char first, second; bool isSpace; } genericDigraph [1+UNICODE_TOP_GENERICIZABLE];
 
 void Longchar_init () {
