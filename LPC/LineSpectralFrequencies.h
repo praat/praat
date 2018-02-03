@@ -35,7 +35,7 @@
 
 void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, integer nt, double dt, double t1, integer numberOfFrequencies, double maximumFrequency);
 
-autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, integer nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency);
+autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, integer nt, double dt, double t1, integer numberOfFrequencies, double maximumFrequency);
 
 void LineSpectralFrequencies_drawFrequencies (LineSpectralFrequencies me, Graphics g, double fromTime, double toTime, double fmin, double fmax, bool garnish);
 
@@ -43,8 +43,6 @@ autoMatrix LineSpectralFrequencies_downto_Matrix (LineSpectralFrequencies me);
 
 /******************* Frames ************************************************/
 
-void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, int numberOfFrequencies);
-
-
+void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, integer numberOfFrequencies);
 
 #endif /* _LineSpectralFrequencies_h_ */

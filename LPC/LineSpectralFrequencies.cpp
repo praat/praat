@@ -54,19 +54,19 @@ void structLineSpectralFrequencies :: v_info () {
 	MelderInfo_writeLine (U"First frame at: ", x1, U" (s).");
 }
 
-void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, int numberOfFrequencies) {
+void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, integer numberOfFrequencies) {
 	my frequencies = NUMvector<double> (1, numberOfFrequencies);
 	my numberOfFrequencies = numberOfFrequencies;
 }
 
-static void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, integer nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency) {
+void LineSpectralFrequencies_init (LineSpectralFrequencies me, double tmin, double tmax, integer nt, double dt, double t1, integer numberOfFrequencies, double maximumFrequency) {
 	my maximumFrequency = maximumFrequency;
 	my maximumNumberOfFrequencies = numberOfFrequencies;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my d_frames = NUMvector<structLineSpectralFrequencies_Frame> (1, nt);
 }
 
-autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, integer nt, double dt, double t1, int numberOfFrequencies, double maximumFrequency) {
+autoLineSpectralFrequencies LineSpectralFrequencies_create (double tmin, double tmax, integer nt, double dt, double t1, integer numberOfFrequencies, double maximumFrequency) {
 	try {
 		autoLineSpectralFrequencies me = Thing_new (LineSpectralFrequencies);
 		LineSpectralFrequencies_init (me.get(), tmin, tmax, nt, dt, t1, numberOfFrequencies, maximumFrequency);
