@@ -1,6 +1,6 @@
 /* praat_menuCommands.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -229,7 +229,7 @@ GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, con
 }
 
 void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const char32 *title,
-	const char32 *after, int depth, const char32 *script)
+	const char32 *after, integer depth, const char32 *script)
 {
 	try {
 		Melder_assert (window && menu && title && after && script);
@@ -347,7 +347,12 @@ void praat_showMenuCommand (const char32 *window, const char32 *menu, const char
 	}
 }
 
-void praat_saveMenuCommands (MelderString *buffer) {
+void praat_saveAddedMenuCommands (MelderString *buffer) {
+	/*
+		The procedure as it is now, runs in M*N time,
+		where M is the number of added commands and N is the total number of commands.
+		Sorting first instead runs in N log N time and will therefore be faster if M >> log N ≈ 10.
+	*/
 	integer maxID = 0;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
@@ -363,6 +368,9 @@ void praat_saveMenuCommands (MelderString *buffer) {
 				break;
 			}
 		}
+}
+
+void praat_saveToggledMenuCommands (MelderString *buffer) {
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command me = theCommands.at [i];
 		if (my toggled && my window && my menu && my title && ! my uniqueID && ! my script)
@@ -424,7 +432,7 @@ int praat_doMenuCommand (const char32 *title, const char32 *arguments, Interpret
 	return 1;
 }
 
-int praat_doMenuCommand (const char32 *title, int narg, Stackel args, Interpreter interpreter) {
+int praat_doMenuCommand (const char32 *title, integer narg, Stackel args, Interpreter interpreter) {
 	Praat_Command commandFound = nullptr;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
@@ -500,9 +508,6 @@ void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool
 	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI)
 {
 	integer numberOfApiMenuCommands = 0;
-	#define xstr(s) str(s)
-	#define str(s) #s
-	MelderInfo_writeLine (U"/* C API, version ", U"" xstr (PRAAT_MONTH), U" ", PRAAT_DAY, U", ", PRAAT_YEAR, U" */");
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
 		bool deprecated = ( command -> deprecationYear > 0 );
@@ -516,7 +521,7 @@ void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool
 		bool isDirect = ! str32str (command -> title, U"...");
 		if (isDirect) {
 		} else {
-			command -> callback (0, -1, 0, 0, 0, 0, 0, 0);
+			command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);
 		}
 		if (commandHasFileNameArgument (command)) {
 			MelderInfo_writeLine (U"\tconst char *fileName");

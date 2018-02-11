@@ -1,6 +1,6 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2012,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1997-2005,2007-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ void structScriptEditor :: v_goAway () {
 	}
 }
 
-static void args_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
+static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
 	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (ScriptEditor);
@@ -80,7 +80,7 @@ static void args_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, con
 	Interpreter_run (my interpreter.get(), text.peek());
 }
 
-static void args_ok_selectionOnly (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
+static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
 	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (ScriptEditor);
@@ -112,7 +112,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
-	int npar = Interpreter_readParameters (my interpreter.get(), text.peek());
+	integer npar = Interpreter_readParameters (my interpreter.get(), text.peek());
 	if (npar) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
@@ -139,7 +139,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
-	int npar = Interpreter_readParameters (my interpreter.get(), text.peek());
+	integer npar = Interpreter_readParameters (my interpreter.get(), text.peek());
 	if (npar) {
 		/*
 		 * Pop up a dialog box for querying the arguments.

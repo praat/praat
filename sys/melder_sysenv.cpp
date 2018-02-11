@@ -1,6 +1,6 @@
 /* melder_sysenv.cpp
  *
- * Copyright (C) 1992-2007,2011,2012,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,12 +100,12 @@ void Melder_system (const char32 *command) {
 	#endif
 }
 
-void Melder_execv (const char32 *executableFileName, int narg, char32 ** args) {
+void Melder_execv (const char32 *executableFileName, integer narg, char32 ** args) {
 	#if defined (macintosh) || defined (UNIX)
 		Melder_casual (U"Command: <<", executableFileName, U">>");
 		autostring8vector args8 (0, narg + 1);
 		args8 [0] = Melder_32to8 (executableFileName);
-		for (int i = 1; i <= narg; i ++) {
+		for (integer i = 1; i <= narg; i ++) {
 			Melder_casual (U"Argument ", i, U": <<", args [i], U">>");
 			args8 [i] = Melder_32to8 (args [i]);
 		}

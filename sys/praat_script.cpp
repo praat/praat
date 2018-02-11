@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1993-2018 Paul Boersma
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -437,7 +437,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		/* See if command exists and is available; ignore separators. */
 		/* First try loose commands, then fixed commands. */
 
-		int narg;
+		integer narg;
 		char32 command2 [200];
 		if (hasColon) {
 			narg = parseCommaSeparatedArguments (interpreter, arguments, args);
@@ -555,7 +555,7 @@ void praat_executeScriptFromFile (MelderFile file, const char32 *arguments) {
 	}
 }
 
-void praat_executeScriptFromFileName (const char32 *fileName, int narg, Stackel args) {
+void praat_executeScriptFromFileName (const char32 *fileName, integer narg, Stackel args) {
 	/*
 	 * The argument 'fileName' is unsafe. Duplicate its contents.
 	 */
@@ -636,7 +636,7 @@ void praat_executeScriptFromDialog (UiForm dia) {
 	Interpreter_run (interpreter.get(), text.peek());
 }
 
-static void secondPassThroughScript (UiForm sendingForm, int /* narg */, Stackel /* args */,
+static void secondPassThroughScript (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 	const char32 * /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
 	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
 {
@@ -666,14 +666,14 @@ static void firstPassThroughScript (MelderFile file) {
 	}
 }
 
-static void fileSelectorOkCallback (UiForm dia, int /* narg */, Stackel /* args */,
+static void fileSelectorOkCallback (UiForm dia, integer /* narg */, Stackel /* args */,
 	const char32 * /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
 	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
 {
 	firstPassThroughScript (UiFile_getFile (dia));
 }
 
-void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, int /* narg */, Stackel /* args */,
+void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, integer /* narg */, Stackel /* args */,
 	const char32 *scriptPath, Interpreter /* interpreter */,
 	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
 {

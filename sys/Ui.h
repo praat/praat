@@ -120,7 +120,7 @@ Thing_define (UiField, Thing) {
 };
 
 #define UiCallback_ARGS \
-	UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure
+	UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure
 typedef void (*UiCallback) (UiCallback_ARGS);
 
 #define MAXIMUM_NUMBER_OF_FIELDS  50
@@ -246,7 +246,7 @@ void UiForm_do (UiForm me, bool modified);
 		The form will still appear on the screen,
 		but the `okCallback` will be called immediately.
 */
-void UiForm_info (UiForm me, int narg);
+void UiForm_info (UiForm me, integer narg);
 
 /*
 	The `okCallback` can use the following seven functions to ask arguments.
@@ -263,7 +263,7 @@ integer UiForm_getInteger_check (UiForm me, const char32 *fieldName);
 char32 * UiForm_getString_check (UiForm me, const char32 *fieldName);
 Graphics_Colour UiForm_getColour_check (UiForm me, const char32 *fieldName);
 
-void UiForm_call (UiForm me, int narg, Stackel args, Interpreter interpreter);
+void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter);
 void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpreter);
 
 UiForm UiInfile_create (GuiWindow parent, const char32 *title,

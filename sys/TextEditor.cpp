@@ -1,6 +1,6 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2012,2013,2015,2016,2017 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2018 Paul Boersma, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ static void closeDocument (TextEditor me) {
 	forget (me);
 }
 
-static void cb_open_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
+static void cb_open_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
 	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (TextEditor);
@@ -118,7 +118,7 @@ static void cb_showOpen (EditorCommand cmd) {
 	UiInfile_do (my openDialog.get());
 }
 
-static void cb_saveAs_ok (UiForm sendingForm, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
+static void cb_saveAs_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
 	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (TextEditor);
