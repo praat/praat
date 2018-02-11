@@ -1,6 +1,6 @@
 /* VocalTract_to_Spectrum.h
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,6 @@
 
 autoSpectrum VocalTract_to_Spectrum
     (VocalTract tube, integer numberOfFrequencies, double maximumFrequency,
-     double glottalDamping, int hasRadiationDamping, int hasInternalDamping);
+     double glottalDamping, bool hasRadiationDamping, bool hasInternalDamping);
 
 /* End of file VocalTract_to_Spectrum.h */

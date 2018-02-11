@@ -168,7 +168,8 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
-		OrderedOfString_drawItem (thee, graphics, i, my x [i], my y [i]);
+		SimpleString category = thy at [i];
+		Graphics_text (graphics, my x [i], my y [i], category -> string);
 	}
 	Graphics_unsetInner (graphics);
 	if (garnish) {

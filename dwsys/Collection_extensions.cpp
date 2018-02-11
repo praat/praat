@@ -1,6 +1,6 @@
 /* Collection_extensions.cpp
  *
- * Copyright (C) 1994-2011, 2015-2017 David Weenink
+ * Copyright (C) 1994-2011,2015-2017 David Weenink, 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,7 +106,10 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 		autoOrderedOfString him = Data_copy (me);
 
 		for (integer i = 1; i <= my size; i ++) {
-			SimpleString_append (his at [i], thy at [i]);
+			SimpleString hisCategory = his at [i], thyCategory = thy at [i];
+			integer hisLength = str32len (hisCategory -> string), thyLength = str32len (thyCategory -> string);
+			hisCategory -> string = (char32 *) Melder_realloc (hisCategory -> string, (hisLength + thyLength + 1) * (integer) sizeof (char32));
+			str32cpy (& hisCategory -> string [hisLength], thyCategory -> string);
 		}
 		return him;
 	} catch (MelderError) {
@@ -198,10 +201,6 @@ integer OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
 	return index;
 }
 
-const char32 *OrderedOfString_itemAtIndex_c (OrderedOfString me, integer index) {
-	return index > 0 && index <= my size ? SimpleString_c (my at [index]) : nullptr;
-}
-
 void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, integer n) {
 	for (integer i = 1; i <= n; i ++) {
 		my addItem_move (SimpleString_create (Melder_integer (i)));
@@ -257,12 +256,6 @@ integer OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, in
 			}
 	}
 	return nStrings;
-}
-
-void OrderedOfString_drawItem (OrderedOfString me, Graphics g, integer index, double xWC, double yWC) {
-	if (index > 0 && index <= my size) {
-		SimpleString_draw (my at [index], g, xWC, yWC);
-	}
 }
 
 integer OrderedOfString_getSize (OrderedOfString me) {

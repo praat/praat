@@ -538,7 +538,7 @@ void FunctionTerms_drawBasisFunction (FunctionTerms me, Graphics g, integer inde
 }
 
 void FunctionTerms_setCoefficient (FunctionTerms me, integer index, double value) {
-	Melder_require (index >0 && index <= my numberOfCoefficients, U"Index out of range [1, ", my numberOfCoefficients, U"].");
+	Melder_require (index > 0 && index <= my numberOfCoefficients, U"Index out of range [1, ", my numberOfCoefficients, U"].");
 	Melder_require (value == 0.0 && index < my numberOfCoefficients, U"You should not remove the highest degree term.");
 	my coefficients [index] = value;
 }

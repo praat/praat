@@ -81,10 +81,10 @@ autoActivationList FFNet_Categories_to_ActivationList (FFNet me, Categories thee
 
 		autoActivationList him = ActivationList_create (thy size, my nOutputs);
 		for (integer i = 1; i <= thy size; i ++) {
-			const char32 *citem = OrderedOfString_itemAtIndex_c (thee, i);
-			integer pos = OrderedOfString_indexOfItem_c (my outputCategories.get(), citem);
+			SimpleString category = thy at [i];
+			integer pos = OrderedOfString_indexOfItem_c (my outputCategories.get(), category -> string);
 			if (pos < 1) {
-				Melder_throw (U"The FFNet doesn't know the category ", citem, U".");
+				Melder_throw (U"The FFNet doesn't know the category ", category -> string, U".");
 			}
 			his z [i] [pos] = 1.0;
 		}

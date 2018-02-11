@@ -84,12 +84,13 @@ void Categories_drawItem (Categories me, Graphics g, integer position, double xW
 	if (position < 1 || position > my size) {
 		return;
 	}
-	SimpleString_draw (my at [position], g, xWC, yWC);
+	SimpleString item = my at [position];
+	Graphics_text (g, xWC, yWC, item -> string);
 }
 
 autoCategories OrderedOfString_to_Categories (OrderedOfString me) {
 	try {
-		autoCategories thee = Categories_create();
+		autoCategories thee = Categories_create ();
 
 		for (integer i = 1; i <= my size; i ++) {
 			autoSimpleString item = Data_copy (my at [i]);
