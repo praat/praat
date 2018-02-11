@@ -301,7 +301,7 @@ void Strings_sort (Strings me) {
 
 void Strings_remove (Strings me, integer position) {
 	if (position < 1 || position > my numberOfStrings) {
-		Melder_throw (U"You supplied a position of ", position, U", but for this string it has to be in the range [1, ", my numberOfStrings, U"].");
+		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
 	}
 	Melder_free (my strings [position]);
 	for (integer i = position; i < my numberOfStrings; i ++) {
@@ -312,7 +312,7 @@ void Strings_remove (Strings me, integer position) {
 
 void Strings_replace (Strings me, integer position, const char32 *text) {
 	if (position < 1 || position > my numberOfStrings) {
-		Melder_throw (U"You supplied a position of ", position, U", but for this string it has to be in the range [1, ", my numberOfStrings, U"].");
+		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
 	}
 	if (Melder_equ (my strings [position], text))
 		return;   // nothing to change
@@ -331,7 +331,7 @@ void Strings_insert (Strings me, integer position, const char32 *text) {
 	if (position == 0) {
 		position = my numberOfStrings + 1;
 	} else if (position < 1 || position > my numberOfStrings + 1) {
-		Melder_throw (U"You supplied a position of ", position, U", but for this string it has to be in the range [1, ", my numberOfStrings, U"].");
+		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
 	}
 	/*
 	 * Create without change.
