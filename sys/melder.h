@@ -92,7 +92,7 @@ typedef uint64_t uint64;
 */
 typedef float real32;
 typedef double real64;
-typedef long double real80;   // at least 80 bits ("extended") precision, but stored in 96 or 128 bits
+typedef long double real80;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
 typedef double real;
 #include "complex.h"
 
@@ -2356,7 +2356,7 @@ const char32 * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 
 char32 * Melder_getenv (const char32 *variableName);
 void Melder_system (const char32 *command);   // spawn a system command
-void Melder_execv (const char32 *executableFileName, int narg, char32 **args);   // spawn a subprocess
+void Melder_execv (const char32 *executableFileName, integer narg, char32 **args);   // spawn a subprocess
 double Melder_clock ();   // seconds since 1969
 
 struct autoMelderProgressOff {

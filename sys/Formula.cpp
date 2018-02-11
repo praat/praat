@@ -1,6 +1,6 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1914,7 +1914,7 @@ static void Formula_optimizeFlow ()
 	}
 }
 
-static int praat_findObjectById (int id) {
+static int praat_findObjectById (integer id) {
 	int IOBJECT;
 	WHERE_DOWN (ID == id)
 		return IOBJECT;
@@ -2158,7 +2158,7 @@ static void Stackel_cleanUp (Stackel me) {
 	}
 }
 static Stackel theStack;
-static int w, wmax;   /* w = stack pointer; */
+static integer w, wmax;   /* w = stack pointer; */
 #define pop  & theStack [w --]
 #define topOfStack  & theStack [w]
 inline static void pushNumber (double x) {
@@ -3499,7 +3499,7 @@ static void do_do () {
 	integer numberOfArguments = Melder_iround (narg->number) - 1;
 	#define MAXNUM_FIELDS  40
 	structStackel stack [1+MAXNUM_FIELDS];
-	for (int iarg = numberOfArguments; iarg >= 0; iarg --) {
+	for (integer iarg = numberOfArguments; iarg >= 0; iarg --) {
 		Stackel arg = pop;
 		stack [iarg] = * arg;
 	}
@@ -3595,7 +3595,7 @@ static void do_doStr () {
 	integer numberOfArguments = Melder_iround (narg->number) - 1;
 	#define MAXNUM_FIELDS  40
 	structStackel stack [1+MAXNUM_FIELDS];
-	for (int iarg = numberOfArguments; iarg >= 0; iarg --) {
+	for (integer iarg = numberOfArguments; iarg >= 0; iarg --) {
 		Stackel arg = pop;
 		stack [iarg] = * arg;
 	}
@@ -3631,8 +3631,8 @@ static void do_doStr () {
 	praat_updateSelection ();   // BUG: superfluous? flickering?
 	pushString (Melder_dup (U""));
 }
-static void shared_do_writeInfo (int numberOfArguments) {
-	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+static void shared_do_writeInfo (integer numberOfArguments) {
+	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
 		Stackel arg = & theStack [w + iarg];
 		if (arg->which == Stackel_NUMBER) {
 			MelderInfo_write (arg->number);
@@ -3859,7 +3859,7 @@ static void do_runSystem () {
 	integer numberOfArguments = Melder_iround (narg->number);
 	w -= numberOfArguments;
 	autoMelderString text;
-	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
 		Stackel arg = & theStack [w + iarg];
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
@@ -5355,13 +5355,13 @@ static void do_pauseFormAddReal () {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
-			Melder_throw (U"The second argument of \"real\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"real\" (the default value) should be a string or a number, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_real (label->string, defaultString);
 		} else {
-			Melder_throw (U"The first argument of \"real\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"real\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"real\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5380,13 +5380,13 @@ static void do_pauseFormAddPositive () {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
-			Melder_throw (U"The second argument of \"positive\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"positive\" (the default value) should be a string or a number, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_positive (label->string, defaultString);
 		} else {
-			Melder_throw (U"The first argument of \"positive\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"positive\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"positive\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5405,13 +5405,13 @@ static void do_pauseFormAddInteger () {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
-			Melder_throw (U"The second argument of \"integer\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"integer\" (the default value) should be a string or a number, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_integer (label->string, defaultString);
 		} else {
-			Melder_throw (U"The first argument of \"integer\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"integer\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"integer\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5430,13 +5430,13 @@ static void do_pauseFormAddNatural () {
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
-			Melder_throw (U"The second argument of \"natural\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"natural\" (the default value) should be a string or a number, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_natural (label->string, defaultString);
 		} else {
-			Melder_throw (U"The first argument of \"natural\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"natural\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"natural\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5450,13 +5450,13 @@ static void do_pauseFormAddWord () {
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
-			Melder_throw (U"The second argument of \"word\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"word\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_word (label->string, defaultValue->string);
 		} else {
-			Melder_throw (U"The first argument of \"word\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"word\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"word\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5470,13 +5470,13 @@ static void do_pauseFormAddSentence () {
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
-			Melder_throw (U"The second argument of \"sentence\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"sentence\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_sentence (label->string, defaultValue->string);
 		} else {
-			Melder_throw (U"The first argument of \"sentence\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"sentence\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"sentence\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5490,13 +5490,13 @@ static void do_pauseFormAddText () {
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
-			Melder_throw (U"The second argument of \"text\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"text\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_text (label->string, defaultValue->string);
 		} else {
-			Melder_throw (U"The first argument of \"text\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"text\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"text\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5510,13 +5510,13 @@ static void do_pauseFormAddBoolean () {
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
-			Melder_throw (U"The second argument of \"boolean\" (the default value) must be a number (0 or 1), not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"boolean\" (the default value) should be a number (0 or 1), not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_boolean (label->string, Melder_iround (defaultValue->number));
 		} else {
-			Melder_throw (U"The first argument of \"boolean\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"boolean\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"boolean\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5530,13 +5530,13 @@ static void do_pauseFormAddChoice () {
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
-			Melder_throw (U"The second argument of \"choice\" (the default value) must be a whole number, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"choice\" (the default value) should be a whole number, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_choice (label->string, Melder_iround (defaultValue->number));
 		} else {
-			Melder_throw (U"The first argument of \"choice\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"choice\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"choice\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5550,13 +5550,13 @@ static void do_pauseFormAddOptionMenu () {
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
-			Melder_throw (U"The second argument of \"optionMenu\" (the default value) must be a whole number, not ", Stackel_whichText (defaultValue), U".");
+			Melder_throw (U"The second argument of \"optionMenu\" (the default value) should be a whole number, not ", Stackel_whichText (defaultValue), U".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_optionMenu (label->string, Melder_iround (defaultValue->number));
 		} else {
-			Melder_throw (U"The first argument of \"optionMenu\" (the label) must be a string, not ", Stackel_whichText (label), U".");
+			Melder_throw (U"The first argument of \"optionMenu\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"optionMenu\" requires 2 arguments (a label and a default value), not ", n->number, U".");
@@ -5572,7 +5572,7 @@ static void do_pauseFormAddOption () {
 		if (text->which == Stackel_STRING) {
 			UiPause_option (text->string);
 		} else {
-			Melder_throw (U"The argument of \"option\" must be a string (the text), not ", Stackel_whichText (text), U".");
+			Melder_throw (U"The argument of \"option\" should be a string (the text), not ", Stackel_whichText (text), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"option\" requires 1 argument (a text), not ", n->number, U".");
@@ -5588,7 +5588,7 @@ static void do_pauseFormAddComment () {
 		if (text->which == Stackel_STRING) {
 			UiPause_comment (text->string);
 		} else {
-			Melder_throw (U"The argument of \"comment\" must be a string (the text), not ", Stackel_whichText (text), U".");
+			Melder_throw (U"The argument of \"comment\" should be a string (the text), not ", Stackel_whichText (text), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"comment\" requires 1 argument (a text), not ", n->number, U".");
@@ -5616,7 +5616,7 @@ static void do_endPauseForm () {
 				U" but has to lie between 1 and ", numberOfContinueButtons, U".");
 	}
 	Stackel co [1+10] = { 0 };
-	for (int i = numberOfContinueButtons; i >= 1; i --) {
+	for (integer i = numberOfContinueButtons; i >= 1; i --) {
 		co [i] = cancelContinueButton != 0 || i != numberOfContinueButtons ? pop : ca;
 		if (co[i]->which != Stackel_STRING)
 			Melder_throw (U"Each of the first ", numberOfContinueButtons,
@@ -5647,7 +5647,7 @@ static void do_chooseReadFileStr () {
 				pushString (result.transfer());
 			}
 		} else {
-			Melder_throw (U"The argument of \"chooseReadFile$\" must be a string (the title), not ", Stackel_whichText (title), U".");
+			Melder_throw (U"The argument of \"chooseReadFile$\" should be a string (the title), not ", Stackel_whichText (title), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"chooseReadFile$\" requires 1 argument (a title), not ", n->number, U".");
@@ -5664,7 +5664,7 @@ static void do_chooseWriteFileStr () {
 			}
 			pushString (result.transfer());
 		} else {
-			Melder_throw (U"The arguments of \"chooseWriteFile$\" must be two strings (the title and the default name).");
+			Melder_throw (U"The arguments of \"chooseWriteFile$\" should be two strings (the title and the default name).");
 		}
 	} else {
 		Melder_throw (U"The function \"chooseWriteFile$\" requires 2 arguments (a title and a default name), not ", n->number, U".");
@@ -5681,7 +5681,7 @@ static void do_chooseDirectoryStr () {
 			}
 			pushString (result.transfer());
 		} else {
-			Melder_throw (U"The argument of \"chooseDirectory$\" must be a string (the title).");
+			Melder_throw (U"The argument of \"chooseDirectory$\" should be a string (the title).");
 		}
 	} else {
 		Melder_throw (U"The function \"chooseDirectory$\" requires 1 argument (a title), not ", n->number, U".");
@@ -5694,7 +5694,7 @@ static void do_demoWindowTitle () {
 		if (title->which == Stackel_STRING) {
 			Demo_windowTitle (title->string);
 		} else {
-			Melder_throw (U"The argument of \"demoWindowTitle\" must be a string (the title), not ", Stackel_whichText (title), U".");
+			Melder_throw (U"The argument of \"demoWindowTitle\" should be a string (the title), not ", Stackel_whichText (title), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"demoWindowTitle\" requires 1 argument (a title), not ", n->number, U".");
@@ -5730,7 +5730,7 @@ static void do_demoInput () {
 			bool result = Demo_input (keys->string);
 			pushNumber (result);
 		} else {
-			Melder_throw (U"The argument of \"demoInput\" must be a string (the keys), not ", Stackel_whichText (keys), U".");
+			Melder_throw (U"The argument of \"demoInput\" should be a string (the keys), not ", Stackel_whichText (keys), U".");
 		}
 	} else {
 		Melder_throw (U"The function \"demoInput\" requires 1 argument (keys), not ", n->number, U".");
@@ -5744,7 +5744,7 @@ static void do_demoClickedIn () {
 			bool result = Demo_clickedIn (left->number, right->number, bottom->number, top->number);
 			pushNumber (result);
 		} else {
-			Melder_throw (U"All arguments of \"demoClickedIn\" must be numbers (the x and y ranges).");
+			Melder_throw (U"All arguments of \"demoClickedIn\" should be numbers (the x and y ranges).");
 		}
 	} else {
 		Melder_throw (U"The function \"demoClickedIn\" requires 4 arguments (x and y ranges), not ", n->number, U".");
@@ -5932,7 +5932,7 @@ static void do_toObject () {
 		}
 		thee = (Daata) theCurrentPraatObjects -> list [i]. object;
 	} else {
-		Melder_throw (U"The first argument to \"object\" must be a number (unique ID) or a string (name), not ", Stackel_whichText (object), U".");
+		Melder_throw (U"The first argument to \"object\" should be a number (unique ID) or a string (name), not ", Stackel_whichText (object), U".");
 	}
 	pushObject (thee);
 }

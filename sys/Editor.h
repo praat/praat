@@ -2,7 +2,7 @@
 #define _Editor_h_
 /* Editor.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ Thing_define (EditorMenu, Thing) {
 		override;
 };
 
-typedef MelderCallback <void, structEditor, EditorCommand, UiForm, int /*narg*/, Stackel /*args*/, const char32 *, Interpreter> EditorCommandCallback;
+typedef MelderCallback <void, structEditor, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, const char32 *, Interpreter> EditorCommandCallback;
 
 Thing_define (EditorCommand, Thing) {
 	Editor d_editor;
@@ -240,12 +240,12 @@ void Editor_init (Editor me, int x, int y , int width, int height,
 void Editor_save (Editor me, const char32 *text);   // for Undo
 
 autoUiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
-void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const char32 *arguments, Interpreter interpreter);
+void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, const char32 *arguments, Interpreter interpreter);
 UiForm UiOutfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
 UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
 
 EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle);
-void Editor_doMenuCommand (Editor me, const char32 *command, int narg, Stackel args, const char32 *arguments, Interpreter interpreter);
+void Editor_doMenuCommand (Editor me, const char32 *command, integer narg, Stackel args, const char32 *arguments, Interpreter interpreter);
 
 /*
  * The following two procedures are in praat_picture.cpp.
