@@ -1,6 +1,6 @@
 /* VocalTract_to_Spectrum.cpp
  *
- * Copyright (C) 1991-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1991-2011,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,21 +35,20 @@
 #define eta 1.4
 #define shapeFactor 2.0
 
-static void TUBE_transfer (double area [], int numberOfSections, double sectionLength, double frequency,
+static void TUBE_transfer (double area [], integer numberOfSections, double sectionLength, double frequency,
 	double *re, double *im,   /* Output. */
 	double glottalDamping,   /* 0 or 0.1 */
-	int hasRadiationDamping, int hasInternalDamping)
+	bool hasRadiationDamping, bool hasInternalDamping)
 	/* (Re,Im) := (air current at lips) / (air current at glottis) */
 {
-	int section;
-	double omega = 2 * NUMpi * frequency;
+	double omega = 2.0 * NUMpi * frequency;
 	if (hasInternalDamping) {
 		double bareResistance = sqrt (mu * rho / 2.0) * sqrt (omega);
 		double bareConductance = (eta - 1.0) / (rho * cc * cc) *
 			sqrt (lambda / (2.0 * cp * rho)) * sqrt (omega);
 		dcomplex c { glottalDamping * area [1] / (rho * cc), 0.0 };
 		dcomplex d { 1.0, 0.0 };
-		for (section = 1; section <= numberOfSections; section ++) {
+		for (integer section = 1; section <= numberOfSections; section ++) {
 			double a = area [section];
 			double perimeter = shapeFactor * 2.0 * sqrt (NUMpi * a);
 			double perimeter_by_a2 = perimeter / (a * a);
@@ -85,7 +84,7 @@ static void TUBE_transfer (double area [], int numberOfSections, double sectionL
 		c_im = sinAngle;
 		*re = cosAngle;
 		*im = glottalDamping * sinAngle;
-		for (section = 1; section < numberOfSections; section ++) {
+		for (integer section = 1; section < numberOfSections; section ++) {
 			double k = area [section] / area [section + 1];
 			double reDummy = c_re * k * cosAngle - *im * sinAngle;
 			double imDummy = c_im * k * cosAngle + *re * sinAngle;
@@ -104,16 +103,16 @@ static void TUBE_transfer (double area [], int numberOfSections, double sectionL
 			*im += c_re * radiationReactance + c_im * radiationResistance;
 		}
 	}
-	/* Divide into 1. */
+	/* Divide into 1.0. BUG: this is not division into 1. */
 	{
 		double power = *re * *re + *im * *im;
-		if (power != 0) { *re = *re / power; *im = *im / power; }
+		if (power != 0.0) { *re = *re / power; *im = *im / power; }
 	}
 }
 
 autoSpectrum VocalTract_to_Spectrum
 	(VocalTract me, integer numberOfFrequencies, double maximumFrequency,
-	 double glottalDamping, int hasRadiationDamping, int hasInternalDamping)
+	 double glottalDamping, bool hasRadiationDamping, bool hasInternalDamping)
 {
 	try {
 		autoSpectrum thee = Spectrum_create (maximumFrequency, numberOfFrequencies);
