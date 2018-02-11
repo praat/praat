@@ -26,7 +26,6 @@
 */
 
 #include "Collection_extensions.h"
-#include "Simple_extensions.h"
 #include "NUM2.h"
 
 autoCollection Collection_Permutation_permuteItems (Collection me, Permutation him) {
