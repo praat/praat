@@ -1508,7 +1508,7 @@ void FunctionEditor_init (FunctionEditor me, const char32 *title, Function data)
 	Graphics_setFontSize (my graphics.get(), 12);
 
 // This exdents because it's a hack:
-struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0 };
+struct structGuiDrawingArea_ResizeEvent event { my drawingArea, 0, 0 };
 event. width  = GuiControl_getWidth  (my drawingArea);
 event. height = GuiControl_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
