@@ -109,8 +109,8 @@ static GuiList praatList_objects;
 
 /***** selection *****/
 
-integer praat_idOfSelected (ClassInfo klas, int inplace) {
-	int place = inplace, IOBJECT;
+integer praat_idOfSelected (ClassInfo klas, integer inplace) {
+	integer place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
 		WHERE (SELECTED && (! klas || CLASS == klas)) {
@@ -131,8 +131,8 @@ integer praat_idOfSelected (ClassInfo klas, int inplace) {
 	return 0;
 }
 
-char32 * praat_nameOfSelected (ClassInfo klas, int inplace) {
-	int place = inplace, IOBJECT;
+char32 * praat_nameOfSelected (ClassInfo klas, integer inplace) {
+	integer place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
 		WHERE (SELECTED && (! klas || CLASS == klas)) {
@@ -153,7 +153,7 @@ char32 * praat_nameOfSelected (ClassInfo klas, int inplace) {
 	return 0;   // failure
 }
 
-int praat_numberOfSelected (ClassInfo klas) {
+integer praat_numberOfSelected (ClassInfo klas) {
 	if (! klas) return theCurrentPraatObjects -> totalSelection;
 	integer readableClassId = klas -> sequentialUniqueIdOfReadableClass;
 	if (readableClassId == 0) Melder_fatal (U"No sequential unique ID for class ", klas -> className, U".");
@@ -550,8 +550,10 @@ static void praat_exit (int exit_code) {
 				MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", praatP.title, U" program.\n");
 				MelderString_append (& buffer, U"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
 				MelderString_append (& buffer, U"# and the buttons that you hid or showed.\n\n");
-				praat_saveMenuCommands (& buffer);
+				praat_saveAddedMenuCommands (& buffer);
+				praat_saveToggledMenuCommands (& buffer);
 				praat_saveAddedActions (& buffer);
+				praat_saveToggledActions (& buffer);
 				MelderFile_writeText (& buttonsFile, buffer.string, kMelder_textOutputEncoding::ASCII_THEN_UTF16);
 			} catch (MelderError) {
 				Melder_clearError ();
@@ -1681,7 +1683,7 @@ void praat_run () {
 	}
 	Melder_assert (sizeof (real32) == 4);
 	Melder_assert (sizeof (real64) == 8);
-	Melder_assert (sizeof (real80) >= 12);
+	Melder_assert (sizeof (real80) >= 8);   // this can be 8, 12 or 16
 	Melder_assert (sizeof (integer) == sizeof (void *));
 	if (sizeof (off_t) < 8)
 		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");

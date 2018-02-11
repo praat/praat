@@ -1,6 +1,6 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2011,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1993-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -286,7 +286,7 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 }
 
 UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *path,
-	void (*okCallback) (UiForm, int, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), void *okClosure,
+	void (*okCallback) (UiForm, integer, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), void *okClosure,
 	bool selectionOnly)
 {
 	UiForm form = UiForm_create (parent,

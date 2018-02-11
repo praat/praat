@@ -1,6 +1,6 @@
 /* UiFile.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
 	return me.releaseToAmbiguousOwner();
 }
 
-static void commonOutfileCallback (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString,
+static void commonOutfileCallback (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString,
 	Interpreter interpreter, const char32 * /* invokingButtonTitle */, bool /* modified */, void *closure)
 {
 	EditorCommand command = (EditorCommand) closure;

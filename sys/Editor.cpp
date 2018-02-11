@@ -1,6 +1,6 @@
 /* Editor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2018 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 
 }
 
 static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm /* sendingForm */,
-	int /* narg */, Stackel /* args */, const char32 * /* sendingString */, Interpreter /* interpreter */)
+	integer /* narg */, Stackel /* args */, const char32 * /* sendingString */, Interpreter /* interpreter */)
 {
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
 }
@@ -183,7 +183,7 @@ EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const c
 	Melder_throw (U"Command \"", itemTitle, U"\" not found in menu \"", menuTitle, U"\".");
 }
 
-void Editor_doMenuCommand (Editor me, const char32 *commandTitle, int narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
+void Editor_doMenuCommand (Editor me, const char32 *commandTitle, integer narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
 	integer numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];

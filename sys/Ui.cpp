@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2012,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -533,7 +533,7 @@ void UiForm_setPauseForm (UiForm me,
 	my cancelCallback = cancelCallback;
 }
 
-static void commonOkCallback (UiForm /* dia */, int /* narg */, Stackel /* args */, const char32 * /* sendingString */,
+static void commonOkCallback (UiForm /* dia */, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
 	Interpreter interpreter, const char32 * /* invokingButtonTitle */, bool /* modified */, void *closure)
 {
 	EditorCommand cmd = (EditorCommand) closure;
@@ -1093,7 +1093,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 	MelderInfo_writeLine (U"");
 }
 
-void UiForm_info (UiForm me, int narg) {
+void UiForm_info (UiForm me, integer narg) {
 	if (narg == -1) {
 		/*
 			The C interface.
@@ -1246,11 +1246,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 	}
 }
 
-void UiForm_call (UiForm me, int narg, Stackel args, Interpreter interpreter) {
-	int size = my numberOfFields, iarg = 0;
+void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter) {
+	integer size = my numberOfFields, iarg = 0;
 	//while (size >= 1 && my field [size] -> type == UI_LABEL)
 	//	size --;   // ignore trailing fields without a value
-	for (int i = 1; i <= size; i ++) {
+	for (integer i = 1; i <= size; i ++) {
 		if (my field [i] -> type == UI_LABEL)
 			continue;   // ignore non-trailing fields without a value
 		iarg ++;
@@ -1432,7 +1432,7 @@ void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpr
 	my okCallback (me, 0, nullptr, nullptr, interpreter, nullptr, false, my buttonClosure);
 }
 
-void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
+void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
 	if (args)
 		UiForm_call (cmd -> d_uiform.get(), narg, args, interpreter);
 	else

@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2007,2009-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 #include "praat.h"
 
-void praat_addActionScript (const char32 *className1, int n1, const char32 *className2, int n2, const char32 *className3, int n3,
-	const char32 *title, const char32 *after, int depth, const char32 *script);
+void praat_addActionScript (const char32 *className1, integer n1, const char32 *className2, integer n2, const char32 *className3, integer n3,
+	const char32 *title, const char32 *after, integer depth, const char32 *script);
 /* No strings may be null; unspecify them by giving an empty string. 'title' and 'script' are deep-copied. */
 void praat_removeAction_classNames (const char32 *className1, const char32 *className2,
 	const char32 *className3, const char32 *title);
@@ -34,7 +34,7 @@ void praat_showAction_classNames (const char32 *className1, const char32 *classN
 void praat_sortActions ();
 
 void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const char32 *title,
-	const char32 *after, int depth, const char32 *script);
+	const char32 *after, integer depth, const char32 *script);
 /* All strings are deep-copied and may not be null; unspecify them by giving an empty string. */
 /*
 	For the Praat objects window:
@@ -44,7 +44,8 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 */
 void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
 void praat_showMenuCommand (const char32 *window, const char32 *menu, const char32 *title);
-void praat_saveMenuCommands (MelderString *buffer);
+void praat_saveAddedMenuCommands (MelderString *buffer);
+void praat_saveToggledMenuCommands (MelderString *buffer);
 #define praat_addFixedButtonCommand(p,t,c,x,y)  praat_addFixedButtonCommand_ (p, t, c, U"" #c, x, y)
 void praat_addFixedButtonCommand_ (GuiForm parent, const char32 *title, UiCallback callback, const char32 *nameOfCallback, int x, int y);
 void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive);
@@ -55,7 +56,7 @@ void praat_sortMenuCommands ();
 
 Thing_define (Praat_Command, Thing) {
 	ClassInfo class1, class2, class3, class4;   // selected classes
-	int32 n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
+	integer n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
 	const char32 *title;   // button text = command text
 	UiCallback callback;   // multi-purpose
 		/* If both UiCallback::sendingForm and sendingString are null, this routine is an activate callback;
@@ -78,7 +79,7 @@ Thing_define (Praat_Command, Thing) {
 		attractive,
 		noApi,   // do not include in a library API ("View & Edit", help commands...)
 		forceApi;   // include in a library API even if this button is hidden by default ("Record Sound (fixed time)...")
-	int32 deprecationYear;
+	integer deprecationYear;
 	GuiThing button;
 	const char32 *window, *menu;
 	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
@@ -91,9 +92,9 @@ Thing_define (Praat_Command, Thing) {
 #define praat_READING_BUTTONS  2
 #define praat_HANDLING_EVENTS  3
 
-int praat_numberOfSelected (ClassInfo klas);
-integer praat_idOfSelected (ClassInfo klas, int inplace);
-char32 * praat_nameOfSelected (ClassInfo klas, int inplace);
+integer praat_numberOfSelected (ClassInfo klas);
+integer praat_idOfSelected (ClassInfo klas, integer inplace);
+char32 * praat_nameOfSelected (ClassInfo klas, integer inplace);
 
 /* Used by praat.cpp; defined in praat_picture.cpp.
 */
@@ -131,7 +132,7 @@ void praat_showLogo (bool autoPopDown);
 void praat_menuCommands_init ();
 void praat_menuCommands_exit ();
 int praat_doMenuCommand (const char32 *command, const char32 *arguments, Interpreter interpreter);   // 0 = not found
-int praat_doMenuCommand (const char32 *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
+int praat_doMenuCommand (const char32 *command, integer narg, Stackel args, Interpreter interpreter);   // 0 = not found
 integer praat_getNumberOfMenuCommands ();
 Praat_Command praat_getMenuCommand (integer i);
 
@@ -141,8 +142,9 @@ void praat_actions_createWriteMenu (GuiWindow window);
 void praat_actions_init ();   // creates space for action commands
 void praat_actions_createDynamicMenu (GuiWindow window);
 void praat_saveAddedActions (MelderString *buffer);
+void praat_saveToggledActions (MelderString *buffer);
 int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter);   // 0 = not found
-int praat_doAction (const char32 *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
+int praat_doAction (const char32 *command, integer narg, Stackel args, Interpreter interpreter);   // 0 = not found
 integer praat_getNumberOfActions ();   // for ButtonEditor
 Praat_Command praat_getAction (integer i);   // for ButtonEditor
 
@@ -170,7 +172,7 @@ void praat_library_createC (bool isInHeaderFile, bool includeCreateAPI, bool inc
 	bool includeDemoAPI);
 void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool includeReadAPI,
 	bool includeRecordAPI, bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI);
-void praat_actions_writeAsCHeader (bool includeSaveAPI,
+void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 	bool includeQueryAPI, bool includeModifyAPI, bool includeToAPI,
 	bool includePlayAPI, bool includeDrawAPI, bool includeHelpAPI, bool includeWindowAPI);
 

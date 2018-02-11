@@ -2,7 +2,7 @@
 #define _praat_h_
 /* praat.h
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,13 +67,13 @@ extern "C" void praatlib_init ();   // for use in an application that uses Praat
 #define praat_addAction3(c1,n1,c2,n2,c3,n3,t,a,f,c)  praat_addAction3_ (c1, n1, c2, n2, c3, n3, t, a, f, c, U"" #c)
 #define praat_addAction4(c1,n1,c2,n2,c3,n3,c4,n4,t,a,f,c)  praat_addAction4_ (c1, n1, c2, n2, c3, n3, c4, n4, t, a, f, c, U"" #c)
 
-void praat_addAction1_ (ClassInfo class1, int n1,
+void praat_addAction1_ (ClassInfo class1, integer n1,
 	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
-void praat_addAction2_ (ClassInfo class1, int n1, ClassInfo class2, int n2,
+void praat_addAction2_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2,
 	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
-void praat_addAction3_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
+void praat_addAction3_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3,
 	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
-void praat_addAction4_ (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
+void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3, ClassInfo class4, integer n4,
 	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
 /*
 	'title' is the name that will appear in the dynamic menu,
@@ -258,8 +258,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #ifndef _EditorM_h_
 
 #define FORM(proc,name,helpTitle)  \
-	extern "C" void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
-	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
+	extern "C" void proc (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
+	void proc (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure) { \
 		int IOBJECT = 0; \
 		(void) IOBJECT; \
 		UiField radio = nullptr; \
@@ -477,8 +477,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	}
 
 #define DIRECT(proc)  \
-	extern "C" void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter interpreter, const char32 *dummy4, bool dummy5, void *dummy6); \
-	void proc (UiForm dummy1, int narg, Stackel args, const char32 *dummy2, Interpreter interpreter, const char32 *dummy4, bool dummy5, void *dummy6) { \
+	extern "C" void proc (UiForm dummy1, integer narg, Stackel args, const char32 *dummy2, Interpreter interpreter, const char32 *dummy4, bool dummy5, void *dummy6); \
+	void proc (UiForm dummy1, integer narg, Stackel args, const char32 *dummy2, Interpreter interpreter, const char32 *dummy4, bool dummy5, void *dummy6) { \
 		(void) dummy1; (void) narg; (void) args; (void) dummy2; (void) interpreter; (void) dummy4; (void) dummy5; (void) dummy6; \
 		int IOBJECT = 0; \
 		(void) IOBJECT; \
@@ -486,8 +486,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try {
 
 #define FORM_READ(proc,title,help,allowMult)  \
-	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+	extern "C" void proc (UiForm sendingForm, integer, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
+	void proc (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		{ static UiForm dia; \
 		if (! dia) \
 			dia = UiInfile_create (theCurrentPraatApplication -> topShell, title, proc, okClosure, invokingButtonTitle, help, allowMult); \
@@ -507,8 +507,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				}
 
 #define FORM_SAVE(proc,title,help,ext)  \
-	extern "C" void proc (UiForm sendingForm, int, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void proc (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
+	extern "C" void proc (UiForm sendingForm, integer, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
+	void proc (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure) { \
 		{ static UiForm dia; \
 		if (! dia) \
 			dia = UiOutfile_create (theCurrentPraatApplication -> topShell, title, proc, okClosure, invokingButtonTitle, help); \

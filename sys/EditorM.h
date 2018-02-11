@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2011,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,9 +47,9 @@
 #undef SET_ENUM
 #undef GET_FILE
 
-#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter
-#define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, int, Stackel, const char32 *, Interpreter
-#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, int, Stackel, const char32 *, Interpreter
+#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter
+#define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, const char32 *, Interpreter
+#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, const char32 *, Interpreter
 
 #define EDITOR_FORM(title,helpTitle)  \
 	UiField _radio_ = nullptr; \

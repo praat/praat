@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see: <http://www.gnu.org/licenses/>.
  */
-
+#include "melder.h"
 #include "config.h"
 
 #include <assert.h>
@@ -341,6 +341,7 @@ ESPEAK_NG_API espeak_ng_STATUS espeak_ng_Initialize(espeak_ng_ERROR_CONTEXT *con
 				setlocale(LC_CTYPE, "");
 		}
 	}
+	fprintf (stderr, "Locale: %s\n", setlocale (LC_ALL, nullptr));
 
 	espeak_ng_STATUS result = LoadPhData(&srate, context);
 	if (result != ENS_OK)
