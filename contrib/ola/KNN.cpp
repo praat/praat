@@ -1,6 +1,6 @@
 /* KNN.cpp
  *
- * Copyright (C) 2008 Ola So"der, 2010-2012,2016,2017 Paul Boersma
+ * Copyright (C) 2008 Ola So"der, 2010-2012,2016-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -408,7 +408,7 @@ autoTableOfReal KNN_classifyToTableOfReal
     autoTableOfReal output = TableOfReal_create(ps->ny, ncategories);
 
     for (integer i = 1; i <= ncategories; i ++)
-        TableOfReal_setColumnLabel (output.get(), i, SimpleString_c (uniqueCategories->at [i]));
+        TableOfReal_setColumnLabel (output.get(), i, uniqueCategories->at [i] -> string);
 
     for (int i = 0; i < nthreads; i ++)
     {

@@ -2,7 +2,7 @@
 #define _Collection_extensions_h_
 /* Collection_extensions.h
  *
- * Copyright (C) 1994-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1994-2017 David Weenink, 2015,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,10 +53,7 @@ double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString
 
 integer OrderedOfString_getNumberOfDifferences (OrderedOfString me, OrderedOfString thee);
 
-const char32 *OrderedOfString_itemAtIndex_c (OrderedOfString me, integer index);
 integer OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str);
-
-void OrderedOfString_drawItem (OrderedOfString me, Graphics g, integer index, double xWC, double yWC);
 
 void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, integer n);
 

@@ -1,6 +1,6 @@
 /* Matrix_Categories.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2017 David Weenink, 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@ autoTableOfReal Matrix_Categories_to_TableOfReal (Matrix me, Categories thee) {
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, nullptr, 1, 1);
 
 		for (integer i = 1; i <= my ny; i ++) {
-			his rowLabels [i] = Melder_dup (OrderedOfString_itemAtIndex_c (thee, i));
+			SimpleString category = thy at [i];
+			his rowLabels [i] = Melder_dup (category -> string);
 		}
 
 		for (integer i = 1; i <= my ny; i ++) {

@@ -127,7 +127,7 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 		}
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString myi = my at [i], thyi = thy at [i];
-			Confusion_increase (him.get(), SimpleString_c (myi), SimpleString_c (thyi));
+			Confusion_increase (him.get(), myi -> string, thyi -> string);
 		}
 		return him;
 	} catch (MelderError) {
