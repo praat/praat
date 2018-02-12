@@ -1,6 +1,6 @@
 /* CategoriesEditor.cpp
  *
- * Copyright (C) 1993-2013 David Weenink, 2008,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1993-2013 David Weenink, 2008,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,8 +193,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 		if (posCount == 1) {
 			insert = true;
 			//if (posList[1] == size) insertAtEnd = true;
-			if (size == 1 && ! str32cmp (CategoriesEditor_EMPTYLABEL,
-			                           OrderedOfString_itemAtIndex_c ((OrderedOfString) my data, 1))) {
+			if (size == 1 && str32equ (CategoriesEditor_EMPTYLABEL, data->at [1] -> string)) {
 				remove = false;
 			}
 		}
@@ -239,9 +238,10 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 		autostring32vector table (from, to);
 		integer itemCount = GuiList_getNumberOfItems (my list);
 		for (integer i = from; i <= to; i++) {
+			SimpleString category = data->at [i];
 			char wcindex[20];
 			snprintf (wcindex,20, "%5ld ", i);
-			table[i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), OrderedOfString_itemAtIndex_c ((OrderedOfString) my data, i)));
+			table[i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), category -> string));
 		}
 		if (itemCount > size) { // some items have been removed from Categories?
 			for (integer j = itemCount; j > size; j --) {
@@ -270,15 +270,16 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 
 	GuiList_deselectAllItems (my list);
 	if (size == 1) { /* the only item is always selected */
-		const char32 *catg = OrderedOfString_itemAtIndex_c ((OrderedOfString) my data, 1);
+		SimpleString category = data->at [1];
 		GuiList_selectItem (my list, 1);
 		updateWidgets (me);   // instead of "notify". BUG?
-		GuiText_setString (my text, catg);
+		GuiText_setString (my text, category -> string);
 	} else if (nSelect > 0) {
-		// Select but postpone highlighting
-
-		for (integer i = 1; i <= nSelect; i++) {
-			GuiList_selectItem (my list, select[i] > size ? size : select[i]);
+		/*
+			Select, but postpone highlighting.
+		*/
+		for (integer i = 1; i <= nSelect; i ++) {
+			GuiList_selectItem (my list, select [i] > size ? size : select [i]);
 		}
 	}
 
@@ -658,6 +659,7 @@ static void gui_list_cb_selectionChanged (CategoriesEditor me, GuiList_Selection
 
 static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEvent event) {
 	Melder_assert (event -> list == my list);
+	Categories data = (Categories) my data;
 
 	//  `my position` should just have been updated by the selectionChanged callback.
 
@@ -666,10 +668,8 @@ static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEve
 	if (posCount == 1   // often or even usually true when double-clicking?
 	    && posList [1] == my position)   // should be true, but we don't crash if it's false
 	{
-		const char32 *catg = OrderedOfString_itemAtIndex_c ((OrderedOfString) my data, my position);
-		if (catg) {   // should be non-null, but we don't crash if not
-			GuiText_setString (my text, catg);
-		}
+		SimpleString category = data->at [my position];
+		GuiText_setString (my text, category -> string ? category -> string : U"");
 	}
 }
 

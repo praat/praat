@@ -1,6 +1,6 @@
 # makefile for library "dwsys".
 # David Weenink 20171019
-# Paul Boersma 2017-08-08
+# Paul Boersma 2018-02-11
 
 include ../makefile.defs
 
@@ -16,7 +16,7 @@ OBJECTS = Collection_extensions.o Command.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMcomplex.o NUMfft_d.o NUMsort2.o \
 	NUMmathlib.o NUMstring.o \
 	Permutation.o Permutation_and_Index.o \
-	regularExp.o SimpleVector.o Simple_extensions.o \
+	regularExp.o SimpleVector.o \
 	SVD.o
 
 .PHONY: all clean

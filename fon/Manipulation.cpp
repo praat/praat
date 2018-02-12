@@ -1,6 +1,6 @@
 /* Manipulation.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ autoManipulation Sound_PointProcess_to_Manipulation (Sound sound, PointProcess p
 	}
 }
 
-int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method) {
+void Manipulation_playPart (Manipulation me, double tmin, double tmax, int method) {
 	try {
 		if (method == Manipulation_OVERLAPADD) {
 			if (! my sound)
@@ -181,17 +181,15 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 			autoSound sound = Manipulation_to_Sound (me, method);
 			Sound_playPart (sound.get(), tmin, tmax, nullptr, nullptr);
 		}
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}
 }
 
-int Manipulation_play (Manipulation me, int method) {
+void Manipulation_play (Manipulation me, int method) {
 	try {
 		autoSound sound = Manipulation_to_Sound (me, method);
 		Sound_play (sound.get(), nullptr, nullptr);
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, U": not played.");
 	}

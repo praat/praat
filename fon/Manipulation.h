@@ -2,7 +2,7 @@
 #define _Manipulation_h_
 /* Manipulation.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2015,2016,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +69,8 @@ autoSound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProces
 /*void Sound_Formant_Intensity_filter (Sound me, FormantTier formant, IntensityTier intensity);*/
 
 autoSound Manipulation_to_Sound (Manipulation me, int method);
-int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method);
-int Manipulation_play (Manipulation me, int method);
+void Manipulation_playPart (Manipulation me, double tmin, double tmax, int method);
+void Manipulation_play (Manipulation me, int method);
 void Manipulation_writeToTextFileWithoutSound (Manipulation me, MelderFile file);
 void Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile file);
 
