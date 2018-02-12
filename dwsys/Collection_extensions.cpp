@@ -102,7 +102,7 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 		if (my size != thy size) {
 			Melder_throw (U"sizes should be equal.");
 		}
-		autoOrderedOfString him = Data_copy (me);
+		autoOrderedOfString him = Data_copy (me);   // FIXME: this copies *all* the data from me, and only the strings from thee
 
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString hisCategory = his at [i], thyCategory = thy at [i];
@@ -112,15 +112,18 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 		}
 		return him;
 	} catch (MelderError) {
-		Melder_throw (U"Items not joinmed.");
+		Melder_throw (U"Items not joined.");
 	}
 }
 
 autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me) {
 	try {
 		autoStringSet thee = StringSet_create ();
+		/*
+			FIXME: the complexity of this implementation is N-squared instead of N log N (should first sort, then unicize).
+		*/
 		for (integer i = 1; i <= my size; i ++) {
-			if (! thy hasItem (my at [i])) {   // FIXME: first sort, then unicize
+			if (! thy hasItem (my at [i])) {   // FIXME: this unicizes on the string only...
 				autoSimpleString item = Data_copy (my at [i]);
 				thy addItem_move (item.move());
 			}
@@ -137,10 +140,13 @@ autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me) {
 }
 
 void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, integer *count) {
+	/*
+		FIXME: the complexity of this implementation is N-squared instead of N log N.
+	*/
 	for (integer i = 1; i <= my size; i ++) {
 		for (integer j = 1; j <= thy size; j ++) {
-			if (Data_equal (my at [i], thy at [j])) {
-				count[j]++;
+			if (Data_equal (my at [i], thy at [j])) {   // FIXME: ...whereas this unicizes on the whole object.
+				count [j] ++;
 				break;
 			}
 		}
@@ -149,13 +155,12 @@ void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, intege
 
 integer OrderedOfString_getNumberOfDifferences (OrderedOfString me, OrderedOfString thee) {
 	integer numberOfDifferences = 0;
-
 	if (my size != thy size) {
-		return -1;
+		return -1;   // FIXME: this is arbitrary and unexpected
 	}
 	for (integer i = 1; i <= my size; i ++) {
-		if (! Data_equal (my at [i], thy at [i])) {
-			numberOfDifferences++;
+		if (! Data_equal (my at [i], thy at [i])) {   // FIXME: this compares all the data, instead of just the strings
+			numberOfDifferences ++;
 		}
 	}
 	return numberOfDifferences;
@@ -163,28 +168,10 @@ integer OrderedOfString_getNumberOfDifferences (OrderedOfString me, OrderedOfStr
 
 double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString thee) {
 	integer numberOfDifferences = OrderedOfString_getNumberOfDifferences (me, thee);
-
 	if (numberOfDifferences < 0) {
 		return undefined;
 	}
-	return my size == 0 ? 0.0 : (0.0 + numberOfDifferences) / my size;
-}
-
-int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, integer *ndif, double *fraction) {
-	*ndif = 0;
-	*fraction = 1.0;
-	if (my size != thy size) {
-		Melder_flushError (U"OrderedOfString_difference: the numbers of items differ");
-		return 0;
-	}
-	for (integer i = 1; i <= my size; i ++) {
-		if (! Data_equal (my at [i], thy at [i])) {
-			(*ndif) ++;
-		}
-	}
-	*fraction = *ndif;
-	*fraction /= my size;
-	return 1;
+	return my size == 0 ? 0.0 : (double) numberOfDifferences / my size;
 }
 
 integer OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
@@ -255,10 +242,6 @@ integer OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, in
 			}
 	}
 	return nStrings;
-}
-
-integer OrderedOfString_getSize (OrderedOfString me) {
-	return my size;
 }
 
 void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, bool use_regexp) {
