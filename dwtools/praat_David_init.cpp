@@ -345,18 +345,11 @@ DIRECT (INTEGER_Categories_getNumberOfDifferences) {
 		integer result = OrderedOfString_getNumberOfDifferences (me, you);
 	NUMBER_COUPLE_END (U" differences")
 }
+
 DIRECT (REAL_Categories_getFractionDifferent) {
 	NUMBER_COUPLE (Categories)
 		double result = OrderedOfString_getFractionDifferent (me, you);
 	NUMBER_COUPLE_END (U" (fraction different)")
-}
-
-DIRECT (INTEGER_Categories_difference) {
-	NUMBER_COUPLE (Categories)
-		integer result;
-		double fraction;
-		OrderedOfString_difference (me, you, & result, & fraction);
-	NUMBER_COUPLE_END (U" (difference)")
 }
 
 DIRECT (NEW_Categories_selectUniqueItems) {
@@ -7608,7 +7601,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015 | praat_NO_API, WINDOW_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
 	praat_addAction1 (classCategories, 1, U"Get number of categories", QUERY_BUTTON, 1, INTEGER_Categories_getNumberOfCategories);
-	praat_addAction1 (classCategories, 2, U"Get difference", QUERY_BUTTON, praat_HIDDEN | praat_DEPTH_1, INTEGER_Categories_difference);
 	praat_addAction1 (classCategories, 2, U"Get number of differences", QUERY_BUTTON, 1, INTEGER_Categories_getNumberOfDifferences);
 	praat_addAction1 (classCategories, 2, U"Get fraction different", QUERY_BUTTON, 1, REAL_Categories_getFractionDifferent);
 	praat_addAction1 (classCategories, 0, MODIFY_BUTTON, nullptr, 0, nullptr);

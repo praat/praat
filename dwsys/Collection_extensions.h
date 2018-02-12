@@ -46,9 +46,6 @@ void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, intege
 /* count how often the items in 'thee' occur in 'me' */
 /* Precondition: count[1..thy size] exists */
 
-/* To be removed Praat 4.2.4 2004040427 */
-int OrderedOfString_difference (OrderedOfString me, OrderedOfString thee, integer *ndif, double *fraction);
-
 double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString thee);
 
 integer OrderedOfString_getNumberOfDifferences (OrderedOfString me, OrderedOfString thee);
@@ -72,8 +69,5 @@ integer OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, in
  *	if (translation[i] > 0) my label[i] = thy label[ translation[i] ];
  *	else if (translation[i] == 0) my label[i] not in thy labels.
  */
-
-integer OrderedOfString_getSize (OrderedOfString me);
-/* return my size */
 
 #endif /* _Collection_extensions_h_ */
