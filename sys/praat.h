@@ -502,6 +502,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
+					Melder_require (! args || narg == 1, U"Command requires exactly 1 argument, the name of the file to read, instead of the given ", narg, U" arguments."); \
+					Melder_require (! args || args [1]. which == Stackel_STRING, U"The file name argument should be a string, not ", Stackel_whichText (& args [1]), U"."); \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & _file2); \
 					file = & _file2; \
 				}
@@ -523,6 +525,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				if (! args && ! sendingString) { \
 					file = UiFile_getFile (dia); \
 				} else { \
+					Melder_require (! args || narg == 1, U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", narg, U" arguments."); \
+					Melder_require (! args || args [1]. which == Stackel_STRING, U"The file name argument should be a string, not ", Stackel_whichText (& args [1]), U"."); \
 					Melder_relativePathToFile (args ? args [1]. string : sendingString, & _file2); \
 					file = & _file2; \
 				}
