@@ -26,8 +26,8 @@
 void structCategories :: v_info () {
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Number of strings: ", our size);
-	autoStringList uStrings = OrderedOfString_selectUniqueItems (this);
-	MelderInfo_writeLine (U"Number of unique categories: ", uStrings->size);   // FIXME: "categories"?, and why mention a Set property?
+	autoStringSet set = StringList_to_StringSet (this);
+	MelderInfo_writeLine (U"Number of unique categories: ", set->size);
 }
 
 void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
@@ -79,8 +79,12 @@ autoCategories Categories_createWithSequentialNumbers (integer n) {
 
 autoCategories Categories_selectUniqueItems (Categories me) {
 	try {
-		autoStringList s = OrderedOfString_selectUniqueItems (me);
-		autoCategories thee = OrderedOfString_to_Categories (s.get());
+		autoStringSet set = StringList_to_StringSet (me);
+		autoCategories thee = Categories_create ();
+		for (integer i = 1; i <= set->size; i ++) {
+			autoSimpleString item = Data_copy (set->at [i]);
+			thy addItem_move (item.move());
+		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no unique categories created.");
@@ -93,24 +97,6 @@ void Categories_drawItem (Categories me, Graphics g, integer position, double xW
 	}
 	SimpleString item = my at [position];
 	Graphics_text (g, xWC, yWC, item -> string);
-}
-
-autoCategories OrderedOfString_to_Categories (StringList me) {
-	try {
-		autoCategories thee = Categories_create ();
-
-		for (integer i = 1; i <= my size; i ++) {
-			autoSimpleString item = Data_copy (my at [i]);
-			thy addItem_move (item.move());
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": not converted to Categories.");
-	}
-}
-
-integer Categories_getSize (Categories me) {
-	return my size;
 }
 
 /* TableOfReal_Rowlabels_to_Categories  ??? */

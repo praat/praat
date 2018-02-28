@@ -382,7 +382,7 @@ autoTableOfReal KNN_classifyToTableOfReal
     int nthreads = KNN_getNumberOfCPUs();
     integer chunksize =  ps->ny / nthreads;
     autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get());
-    integer ncategories = Categories_getSize (uniqueCategories.get());
+    integer ncategories = uniqueCategories->size;
    
     Melder_assert (nthreads > 0);
     Melder_assert (ncategories > 0);
@@ -447,7 +447,7 @@ autoTableOfReal KNN_classifyToTableOfReal
         }
     }
  
-    enum KNN_thread_status * error = (enum KNN_thread_status *) KNN_threadDistribution(KNN_classifyToTableOfRealAux, (void **) input, nthreads);
+    enum KNN_thread_status * error = (enum KNN_thread_status *) KNN_threadDistribution (KNN_classifyToTableOfRealAux, (void **) input, nthreads);
     for (int i = 0; i < nthreads; i ++)
         free (input [i]);
   
@@ -467,80 +467,63 @@ void * KNN_classifyToTableOfRealAux
     // Parameters                //
     ///////////////////////////////
 
-    void * input
+    void * void_input
 
 )
 
 {
-    integer ncategories = Categories_getSize (((KNN_input_ToTableOfReal_t *) input)->uniqueCategories);
-    autoNUMvector <integer> indices ((integer) 0, ((KNN_input_ToTableOfReal_t *) input)->k);
-    autoNUMvector <double> distances ((integer) 0, ((KNN_input_ToTableOfReal_t *) input)->k);
+	KNN_input_ToTableOfReal_t *input = (KNN_input_ToTableOfReal_t *) void_input;
+    integer ncategories = input -> uniqueCategories->size;
+    autoNUMvector <integer> indices ((integer) 0, input -> k);
+    autoNUMvector <double> distances ((integer) 0, input -> k);
 
-    for (integer y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
-    {
-        KNN_kNeighbours(((KNN_input_ToTableOfReal_t *) input)->ps, 
-                        ((KNN_input_ToTableOfReal_t *) input)->me->input.get(),
-                        ((KNN_input_ToTableOfReal_t *) input)->fws, y, 
-                        ((KNN_input_ToTableOfReal_t *) input)->k, indices.peek(), distances.peek());
-
-        for (integer i = 0; i < ((KNN_input_ToTableOfReal_t *) input)->k; ++i)
-        {
-            for (integer j = 1; j <= ncategories; ++j) {
-                if (FeatureWeights_areFriends (((KNN_input_ToTableOfReal_t *) input) -> me -> output->at [indices [i]],
-											   ((KNN_input_ToTableOfReal_t *) input) -> uniqueCategories->at [j]))
-				{
-                    ++((KNN_input_ToTableOfReal_t *) input) -> output -> data [y] [j];
+	for (integer y = input -> istart; y <= input -> istop; y ++) {
+		KNN_kNeighbours (input -> ps, input -> me -> input.get(), input -> fws, y, input -> k, indices.peek(), distances.peek());
+		for (integer i = 0; i < input -> k; i ++) {
+			for (integer j = 1; j <= ncategories; j ++) {
+				if (FeatureWeights_areFriends (input -> me -> output->at [indices [i]], input -> uniqueCategories->at [j])){
+					input -> output -> data [y] [j] += 1.0;
 				}
 			}
-        }
-    }
- 
-    switch (((KNN_input_ToTableOfReal_t *) input)->dist)
-    {
-        case kOla_DISTANCE_WEIGHTED_VOTING:
-            for (integer y = ((KNN_input_ToTableOfReal_t *) input) -> istart; y <= ((KNN_input_ToTableOfReal_t *) input) -> istop; y ++)
-            {
-                real80 sum = 0.0;
-                for (integer c = 1; c <= ncategories; c ++)
-                {
-                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] *= 1 / OlaMAX(distances[c], kOla_MINFLOAT);
-                    sum += ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c];
-                } 
-                
-                for (integer c = 1; c <= ncategories; c ++)
-                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] /= sum;
-
-            }
-            break;
-
-        case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-            for (integer y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
-            {
-                real80 sum = 0.0;
-                for (integer c = 1; c <= ncategories; c ++)
-                {
-                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] *= 1 / OlaMAX(OlaSQUARE(distances[c]), kOla_MINFLOAT);
-                    sum += ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c];
-                } 
-
-                for (integer c = 1; c <= ncategories; c ++)
-                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] /= sum;
-            }
-            break;
-
-        case kOla_FLAT_VOTING: 
-            for (integer y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
-            {
-                real80 sum = 0.0;
-                for (integer c = 1; c <= ncategories; c ++)
-                    sum += ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c];
-
-                for (integer c = 1; c <= ncategories; c ++)
-                    ((KNN_input_ToTableOfReal_t *) input)->output->data[y][c] /= sum;
-            }
-
-    }
-    return nullptr;
+		}
+	}
+	switch (input -> dist) {
+		case kOla_DISTANCE_WEIGHTED_VOTING:
+			for (integer y = input -> istart; y <= input -> istop; y ++) {
+				real80 sum = 0.0;
+				for (integer c = 1; c <= ncategories; c ++) {
+					input -> output -> data [y] [c] *= 1.0 / OlaMAX (distances [c], kOla_MINFLOAT);
+					sum += input -> output -> data [y] [c];
+				}
+				for (integer c = 1; c <= ncategories; c ++) {
+					input -> output -> data [y] [c] /= sum;
+				}
+			}
+			break;
+		case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
+			for (integer y = input -> istart; y <= input -> istop; y ++) {
+				real80 sum = 0.0;
+				for (integer c = 1; c <= ncategories; c ++) {
+					input -> output -> data [y] [c] *= 1.0 / OlaMAX (OlaSQUARE (distances [c]), kOla_MINFLOAT);
+					sum += input -> output -> data [y] [c];
+				}
+				for (integer c = 1; c <= ncategories; c ++) {
+					input -> output -> data [y] [c] /= sum;
+				}
+			}
+			break;
+		case kOla_FLAT_VOTING:
+			for (integer y = input -> istart; y <= input -> istop; y ++) {
+				real80 sum = 0.0;
+				for (integer c = 1; c <= ncategories; c ++) {
+					sum += input -> output -> data [y] [c];
+				}
+				for (integer c = 1; c <= ncategories; c ++) {
+					input -> output -> data [y] [c] /= sum;
+				}
+			}
+	}
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

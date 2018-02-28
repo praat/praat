@@ -39,11 +39,6 @@ autoCategories Categories_selectUniqueItems (Categories me);
 
 void Categories_drawItem (Categories me, Graphics g, integer position, double xWC, double yWC);
 
-autoCategories OrderedOfString_to_Categories (StringList me);
-
-integer Categories_getSize (Categories me);
-/* return my size */
-
 autoCategories TableOfReal_to_CategoriesRow (TableOfReal me);
 
 autoCategories TableOfReal_to_CategoriesColumn (TableOfReal me);
