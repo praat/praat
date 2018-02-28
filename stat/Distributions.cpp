@@ -110,7 +110,6 @@ static void unicize (Distributions me) {
 			 * Move row 'ifrom' to 'nrow'. May be the same row.
 			 */
 			if (ifrom != nrow) {
-				Melder_free (my rowLabels [nrow]);
 				my rowLabels [nrow] = my rowLabels [ifrom];   // surface copy
 				my rowLabels [ifrom] = nullptr;   // undangle
 				for (integer icol = 1; icol <= my numberOfColumns; icol ++)
