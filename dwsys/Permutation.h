@@ -2,7 +2,7 @@
 #define _Permutation_h_
 /* Permutation.h
  *
- * Copyright (C) 2005-2011, 2015-2017 David Weenink
+ * Copyright (C) 2005-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
 */
 
 void Permutation_init (Permutation me, integer numberOfElements);
+
+void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first);
 
 autoPermutation Permutation_create (integer numberOfElements);
 /*
