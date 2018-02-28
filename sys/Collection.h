@@ -647,18 +647,18 @@ struct SortedSetOf : SortedOf <T> {
 				/*
 				 * Move item 'ifrom' to 'n'.
 				 */
+				Melder_assert (ifrom >= n);
 				if (ifrom != n) {
-                    if (our _ownItems) {
-                        _Thing_forget (our at [n]);
-                    }
 					our at [n] = our at [ifrom];   // surface copy
 					our at [ifrom] = nullptr;   // undangle
 				}
 				/*
 				 * Purge items from 'ifrom'+1 to 'ito'.
 				 */
-                for (integer j = ifrom + 1; j <= ito; j ++) {
-                    _Thing_forget (our at [j]);
+				if (our _ownItems) {
+					for (integer j = ifrom + 1; j <= ito; j ++) {
+						_Thing_forget (our at [j]);
+					}
 				}
 				ifrom = ito + 1;
 			}
