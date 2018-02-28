@@ -1,11 +1,11 @@
 writeInfoLine: "Training a DBN with a three-peaked distribution"
 stopwatch
 
-structure# = { 30, 50, 20 }
+structure# = { 30, 20 }
 numberOfVowels = 3
 mean# = { 8, 16, 23 }
 sigma = 1.8
-numberOfPatterns = 10000
+numberOfPatterns = 3000
 learningRate = 0.001
 
 my.Net = Create Net as deep belief network: "my", structure#, 0
