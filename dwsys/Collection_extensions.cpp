@@ -122,20 +122,6 @@ autoStringSet StringList_to_StringSet (StringList me) {
 	}
 }
 
-autoStringList OrderedOfString_selectUniqueItems (StringList me) {
-	try {
-		autoStringSet you = StringList_to_StringSet (me);
-		autoStringList him = Thing_new (StringList);
-		for (integer i = 1; i <= your size; i ++) {
-			autoSimpleString item = Data_copy (your at [i]);
-			his addItem_move (item.move());
-		}
-		return him;
-	} catch (MelderError) {
-		Melder_throw (me, U": unique items not selected.");
-	}
-}
-
 integer OrderedOfString_getNumberOfDifferences (StringList me, StringList thee) {
 	integer numberOfDifferences = 0;
 	if (my size != thy size) {

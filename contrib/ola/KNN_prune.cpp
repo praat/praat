@@ -39,7 +39,7 @@ integer KNN_prune_prune
 )
 {
 	autoCategories uniqueCategories = Categories_selectUniqueItems (my output.get());
-	if (Categories_getSize (uniqueCategories.get()) == my nInstances)
+	if (uniqueCategories->size == my nInstances)
 		return 0;
 	integer removals = 0;
 	integer ncandidates = 0;

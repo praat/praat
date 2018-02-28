@@ -34,9 +34,6 @@ autoStringList OrderedOfString_joinItems (StringList me, StringList thee);
 
 autoStringSet StringList_to_StringSet (StringList me);
 
-autoStringList OrderedOfString_selectUniqueItems (StringList me);
-/* Postcondition: thy size <= my size */
-
 double OrderedOfString_getFractionDifferent (StringList me, StringList thee);
 
 integer OrderedOfString_getNumberOfDifferences (StringList me, StringList thee);
