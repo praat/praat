@@ -372,7 +372,7 @@ DIRECT (NEW_Categories_to_Strings) {
 
 DIRECT (NEW1_Categories_join) {
 	CONVERT_COUPLE (Categories)
-		autoOrderedOfString result = OrderedOfString_joinItems (me, you);
+		autoStringList result = OrderedOfString_joinItems (me, you);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 

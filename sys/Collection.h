@@ -647,18 +647,18 @@ struct SortedSetOf : SortedOf <T> {
 				/*
 				 * Move item 'ifrom' to 'n'.
 				 */
+				Melder_assert (ifrom >= n);
 				if (ifrom != n) {
-					if (our _ownItems) {
-						_Thing_forget (our at [n]);
-					}
 					our at [n] = our at [ifrom];   // surface copy
 					our at [ifrom] = nullptr;   // undangle
 				}
 				/*
 				 * Purge items from 'ifrom'+1 to 'ito'.
 				 */
-				for (integer j = ifrom + 1; j <= ito; j ++) {
-					_Thing_forget (our at [j]);
+				if (our _ownItems) {
+					for (integer j = ifrom + 1; j <= ito; j ++) {
+						_Thing_forget (our at [j]);
+					}
 				}
 				ifrom = ito + 1;
 			}
@@ -748,32 +748,6 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 		return 0;
 	}
 
-	/**
-		Add a SimpleString to the set.
-
-		@note one can create a class that specializes SortedSetOfStringOf
-		with an element class <i>derived</i> from SimpleString.
-		Trying to call @c addString_copy() for an object of that class
-		would lead to a compile-time type mismatch error,
-		because a SimpleString cannot be inserted where a derived object is expected.
-		This is correct behaviour, because a SimpleString object has no place
-		in a homogeneous set of derived-class objects.
-
-		@param string   a C-string
-	*/
-	void addString_copy (const char32 *string) {
-		static autoSimpleString simp;
-		if (! simp) {
-			simp = SimpleString_create (U"");
-			Melder_free (simp -> string);
-		}
-		simp -> string = (char32 *) string;   // reference copy
-		integer index = our _v_position (simp.get());
-		simp -> string = nullptr;   // otherwise Praat will crash at shutdown
-		if (index == 0) return;   // OK: already there: do not add
-		autoSimpleString newSimp = SimpleString_create (string);
-		our _insertItem_move (newSimp.move(), index);
-	}
 };
 
 
@@ -786,17 +760,30 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 
 #pragma mark class DaataList
 
-Collection_define (DaataList, OrderedOf, Daata) {
+Collection_define (DaataList, OrderedOf, /* generic */ Daata) {
 };
 
 #pragma mark class StringList
 
-Collection_define (StringList, OrderedOf, SimpleString) {
+Collection_define (StringList, OrderedOf, /* final */ SimpleString) {
 };
 
 #pragma mark class StringSet
 
-Collection_define (StringSet, SortedSetOfStringOf, SimpleString) {
+Collection_define (StringSet, SortedSetOfStringOf, /* final */ SimpleString) {
+	void addString_copy (const char32 *string) {
+		static autoSimpleString simp;
+		if (! simp) {
+			simp = SimpleString_create (U"");   // here we see that the class of the elements is final (if homogeneous)
+			Melder_free (simp -> string);
+		}
+		simp -> string = (char32 *) string;   // reference copy
+		integer index = our _v_position (simp.get());
+		simp -> string = nullptr;   // otherwise Praat will crash at shutdown
+		if (index == 0) return;   // OK: already there: do not add
+		autoSimpleString newSimp = SimpleString_create (string);
+		our _insertItem_move (newSimp.move(), index);
+	}
 };
 
 /* End of file Collection.h */

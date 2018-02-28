@@ -75,16 +75,7 @@ autoCollection Collection_permuteItems (Collection me) {
 
 /****************** class OrderedOfString ******************/
 
-void structOrderedOfString :: v_info () {
-	structDaata :: v_info ();
-	MelderInfo_writeLine (U"Number of strings: ", our size);
-	autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems (this);
-	MelderInfo_writeLine (U"Number of unique categories: ", uStrings->size);   // FIXME: "categories"?, and why mention a Set property?
-}
-
-Thing_implement (OrderedOfString, Ordered, 0);
-
-int OrderedOfString_append (OrderedOfString me, const char32 *append) {
+int OrderedOfString_append (StringList me, const char32 *append) {
 	try {
 		if (! append) {
 			return 1;    // BUG: lege string appenden??
@@ -97,12 +88,12 @@ int OrderedOfString_append (OrderedOfString me, const char32 *append) {
 	}
 }
 
-autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee) {
+autoStringList OrderedOfString_joinItems (StringList me, StringList thee) {
 	try {
 		if (my size != thy size) {
 			Melder_throw (U"sizes should be equal.");
 		}
-		autoOrderedOfString him = Data_copy (me);   // FIXME: this copies *all* the data from me, and only the strings from thee
+		autoStringList him = Data_copy (me);   // FIXME: this copies *all* the data from me, and only the strings from thee
 
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString hisCategory = his at [i], thyCategory = thy at [i];
@@ -116,21 +107,27 @@ autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfStri
 	}
 }
 
-autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me) {
+autoStringSet StringList_to_StringSet (StringList me) {
 	try {
-		autoStringSet thee = StringSet_create ();
-		/*
-			FIXME: the complexity of this implementation is N-squared instead of N log N (should first sort, then unicize).
-		*/
+		autoStringSet you = StringSet_create ();
 		for (integer i = 1; i <= my size; i ++) {
-			if (! thy hasItem (my at [i])) {   // FIXME: this unicizes on the string only...
-				autoSimpleString item = Data_copy (my at [i]);
-				thy addItem_move (item.move());
-			}
+			autoSimpleString item = SimpleString_create (my at [i] -> string);
+			your addItem_unsorted_move (item.move());
 		}
-		autoOrderedOfString him = OrderedOfString_create ();
-		for (integer i = 1; i <= thy size; i ++) {
-			autoSimpleString item = Data_copy (thy at [i]);
+		your sort ();
+		your unicize ();
+		return you;
+	} catch (MelderError) {
+		Melder_throw (me, U": not converted to StringSet.");
+	}
+}
+
+autoStringList OrderedOfString_selectUniqueItems (StringList me) {
+	try {
+		autoStringSet you = StringList_to_StringSet (me);
+		autoStringList him = Thing_new (StringList);
+		for (integer i = 1; i <= your size; i ++) {
+			autoSimpleString item = Data_copy (your at [i]);
 			his addItem_move (item.move());
 		}
 		return him;
@@ -139,21 +136,7 @@ autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me) {
 	}
 }
 
-void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, integer *count) {
-	/*
-		FIXME: the complexity of this implementation is N-squared instead of N log N.
-	*/
-	for (integer i = 1; i <= my size; i ++) {
-		for (integer j = 1; j <= thy size; j ++) {
-			if (Data_equal (my at [i], thy at [j])) {   // FIXME: ...whereas this unicizes on the whole object.
-				count [j] ++;
-				break;
-			}
-		}
-	}
-}
-
-integer OrderedOfString_getNumberOfDifferences (OrderedOfString me, OrderedOfString thee) {
+integer OrderedOfString_getNumberOfDifferences (StringList me, StringList thee) {
 	integer numberOfDifferences = 0;
 	if (my size != thy size) {
 		return -1;   // FIXME: this is arbitrary and unexpected
@@ -166,7 +149,7 @@ integer OrderedOfString_getNumberOfDifferences (OrderedOfString me, OrderedOfStr
 	return numberOfDifferences;
 }
 
-double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString thee) {
+double OrderedOfString_getFractionDifferent (StringList me, StringList thee) {
 	integer numberOfDifferences = OrderedOfString_getNumberOfDifferences (me, thee);
 	if (numberOfDifferences < 0) {
 		return undefined;
@@ -174,7 +157,7 @@ double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString
 	return my size == 0 ? 0.0 : (double) numberOfDifferences / my size;
 }
 
-integer OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
+integer OrderedOfString_indexOfItem_c (StringList me, const char32 *str) {
 	integer index = 0;
 	autoSimpleString s = SimpleString_create (str);
 
@@ -187,13 +170,13 @@ integer OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str) {
 	return index;
 }
 
-void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, integer n) {
+void OrderedOfString_initWithSequentialNumbers (StringList me, integer n) {
 	for (integer i = 1; i <= n; i ++) {
 		my addItem_move (SimpleString_create (Melder_integer (i)));
 	}
 }
 
-void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
+void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	regexp *compiled_search = nullptr;
 	try {
 		Melder_require (search, U"The search string should not be empty.");
@@ -226,7 +209,7 @@ void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *
 	}
 }
 
-integer OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, integer *translation) { // ?? test and give number
+integer OrderedOfString_isSubsetOf (StringList me, StringList thee, integer *translation) { // ?? test and give number
 	integer nStrings = 0;
 
 	for (integer i = 1; i <= my size; i ++) {
@@ -244,7 +227,7 @@ integer OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, in
 	return nStrings;
 }
 
-void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, bool use_regexp) {
+void OrderedOfString_removeOccurrences (StringList me, const char32 *search, bool use_regexp) {
 	if (! search) {
 		return;
 	}

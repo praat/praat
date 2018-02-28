@@ -1587,7 +1587,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bo
 	double t1 = t, t2 = t1 + fadeTime;
 	const char32 *fade_inout = inout > 0 ? U"out" : U"in";
 	
-	Melder_require (channel > 0 && channel <= my ny, U"Invalid channel number.");
+	Melder_require (channel >= 0 && channel <= my ny, U"Invalid channel number: ", channel, U".");
 	
 	if (t > my xmax) {
 		t = my xmax;
@@ -1597,7 +1597,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bo
 		}
 	} else if (t < my xmin) {
 		t = my xmin;
-		if (inout > 0) { // fade  out
+		if (inout > 0) { // fade out
 			Melder_warning (U"The start time of the fade-out is before the start time of the sound. The fade-out will not happen.");
 			return;
 		}
@@ -1609,7 +1609,7 @@ void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bo
 		t1 = t;
 		t2 = t + fadeTime;
 	} else {
-		Melder_warning (U"You have given a \"Fade time\" of zero seconds. The fade-", fade_inout, U"will not happen.");
+		Melder_warning (U"You have given a \"Fade time\" of zero seconds. The fade-", fade_inout, U" will not happen.");
 		return;
 	}
 	integer i0 = 0, iystart, iyend;

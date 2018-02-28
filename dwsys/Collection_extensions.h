@@ -27,39 +27,30 @@ autoCollection Collection_Permutation_permuteItems (Collection me, Permutation h
 autoCollection Collection_permuteItems (Collection me);
 /* permute the order of my items */
 
-/****************** class OrderedOfString ******************/
+int OrderedOfString_append (StringList me, const char32 *append);
 
-Collection_define (OrderedOfString, OrderedOf, SimpleString) {
-	void v_info ()
-		override;
-};
-
-int OrderedOfString_append (OrderedOfString me, const char32 *append);
-
-autoOrderedOfString OrderedOfString_joinItems (OrderedOfString me, OrderedOfString thee);
+autoStringList OrderedOfString_joinItems (StringList me, StringList thee);
 /* Join each item */
 
-autoOrderedOfString OrderedOfString_selectUniqueItems (OrderedOfString me);
+autoStringSet StringList_to_StringSet (StringList me);
+
+autoStringList OrderedOfString_selectUniqueItems (StringList me);
 /* Postcondition: thy size <= my size */
 
-void OrderedOfString_frequency (OrderedOfString me, OrderedOfString thee, integer *count);
-/* count how often the items in 'thee' occur in 'me' */
-/* Precondition: count[1..thy size] exists */
+double OrderedOfString_getFractionDifferent (StringList me, StringList thee);
 
-double OrderedOfString_getFractionDifferent (OrderedOfString me, OrderedOfString thee);
+integer OrderedOfString_getNumberOfDifferences (StringList me, StringList thee);
 
-integer OrderedOfString_getNumberOfDifferences (OrderedOfString me, OrderedOfString thee);
+integer OrderedOfString_indexOfItem_c (StringList me, const char32 *str);
 
-integer OrderedOfString_indexOfItem_c (OrderedOfString me, const char32 *str);
+void OrderedOfString_initWithSequentialNumbers (StringList me, integer n);
 
-void OrderedOfString_initWithSequentialNumbers (OrderedOfString me, integer n);
+void OrderedOfString_removeOccurrences (StringList me, const char32 *search, bool use_regexp);
 
-void OrderedOfString_removeOccurrences (OrderedOfString me, const char32 *search, bool use_regexp);
-
-void OrderedOfString_changeStrings (OrderedOfString me, char32 *search, char32 *replace,
+void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *replace,
 	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);
 
-integer OrderedOfString_isSubsetOf (OrderedOfString me, OrderedOfString thee, integer *translation);
+integer OrderedOfString_isSubsetOf (StringList me, StringList thee, integer *translation);
 /* Check whether my items are (a subset of)|(in) thy items.
  * Preconditions:
  *	if (translation) translation[1..my size] exists.
