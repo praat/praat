@@ -357,15 +357,19 @@ autoPermutation Permutation_invert (Permutation me) {
 	}
 }
 
+void Permutation_reverse_inline (Permutation me, integer from, integer to) {
+	integer n = Permutation_checkRange (me, & from, & to);
+	for (integer i = 1; i <= n / 2; i ++) {
+		SWAP (my p [from + i - 1], my p [to - i + 1] )
+	}
+}
+
 autoPermutation Permutation_reverse (Permutation me, integer from, integer to) {
 	try {
 		integer n = Permutation_checkRange (me, & from, & to);
 		autoPermutation thee = Data_copy (me);
-		for (integer i = 1; i <= n; i ++) {
-			thy p [from + i - 1] = my p [to - i + 1];
-		}
+		Permutation_reverse_inline (thee.get(), from, to);
 		return thee;
-
 	} catch (MelderError) {
 		Melder_throw (me, U": not reversed.");
 	}

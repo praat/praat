@@ -76,6 +76,7 @@ integer Permutation_getIndexAtValue (Permutation me, integer value);
 autoPermutation Permutation_invert (Permutation me);
 /*  */
 
+void Permutation_reverse_inline (Permutation me, integer from, integer to);
 autoPermutation Permutation_reverse (Permutation me, integer from, integer to);
 /* (n1,n2,...nn) to (nn,...n2,n1) */
 
