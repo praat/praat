@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1993-2018 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2986,6 +2986,18 @@ double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer n, doub
 		result += w [i] * d * (0.5 * log (d) - 1.0);
 	}
 	return (double) result;
+}
+
+void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex) {
+	if (*highIndex < *lowIndex) {
+		*lowIndex = lowerLimit; *highIndex = upperLimit;
+	}
+	if (*lowIndex < lowerLimit) {
+		*lowIndex = lowerLimit;
+	}
+	if (*highIndex > upperLimit) {
+		*highIndex = upperLimit;
+	}
 }
 
 /* End of file NUM2.cpp */
