@@ -57,29 +57,24 @@ static const char32 *CONFIGURATION_BUTTON = U"To Configuration -";
 	Sort row 1 and move row 2 along and store in rows 4 and 5 respectively
 	Make an index for row 1 and store in row 6
 */
-static void TabelOfReal_testSorting (TableOfReal me, integer rowtoindex) {
+static void TabelOfReal_testSorting (TableOfReal me) {
 	try {
-		integer nc = my numberOfColumns;
-
-		autoNUMvector <integer> index (1, nc);
-		if (my numberOfRows < 6) {
-			Melder_throw (U"TabelOfReal_sort2: we want at least 6 rows!!");
-		}
-		if (rowtoindex < 1 || rowtoindex > 2) {
-			Melder_throw (U"TabelOfReal_sort2: rowtoindex <= 2");
-		}
-
+		integer rowtoindex = 1;
+		
+		Melder_require (my numberOfRows >= 6, U"TabelOfReal_sort2: we want at least 6 rows!!");
+		
+		autoNUMvector <integer> index (1, my numberOfColumns);
 		// Copy 1->3 and sort 3 inplace
-		NUMvector_copyElements (my data[1], my data[3], 1, nc);
-		NUMsort_d (nc, my data[3]);
+		NUMvector_copyElements (my data [1], my data [3], 1, my numberOfColumns);
+		NUMsort_d (my numberOfColumns, my data [3]);
 
 		// Copy 1->4 and 2->5, sort 4+5 in parallel
-		NUMvector_copyElements (my data[1], my data[4], 1, nc);
-		NUMvector_copyElements (my data[2], my data[5], 1, nc);
-		NUMsort2 (nc, my data[4], my data[5]);
+		NUMvector_copyElements (my data [1], my data [4], 1, my numberOfColumns);
+		NUMvector_copyElements (my data [2], my data [5], 1, my numberOfColumns);
+		NUMsort2 (my numberOfColumns, my data [4], my data [5]);
 
-		NUMindexx (my data[rowtoindex], nc, index.peek());
-		for (integer i = 1; i <= nc; i ++) {
+		NUMindexx (my data [rowtoindex], my numberOfColumns, index.peek());
+		for (integer i = 1; i <= my numberOfColumns; i ++) {
 			my data [6] [i] = index [i];
 		}
 	} catch (MelderError) {
@@ -90,12 +85,9 @@ static void TabelOfReal_testSorting (TableOfReal me, integer rowtoindex) {
 #undef iam
 #define iam iam_LOOP
 
-FORM (MODIFY_TabelOfReal_testSorting, U"TabelOfReal: Sort and index", U"") {
-	NATURAL (rowIndex, U"Row to index", U"1")
-	OK
-DO
+DIRECT(MODIFY_TabelOfReal_testSorting) {
 	MODIFY_EACH (TableOfReal)
-		TabelOfReal_testSorting (me, rowIndex);
+		TabelOfReal_testSorting (me);
 	MODIFY_EACH_END
 }
 
