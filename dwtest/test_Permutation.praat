@@ -9,6 +9,7 @@ appendInfoLine: "test_Permutation.praat"
 @swap
 @invertp
 @multiply
+@jump
 
 appendInfoLine: "test_Permutation OK"
 
@@ -139,4 +140,41 @@ procedure swap
 	endfor
 	removeObject: .p
 	appendInfoLine: "o.k."
+endproc
+
+procedure jump
+	appendInfo: tab$, "Jump"
+	.p1 = Create Permutation: "id", 10, "yes"
+	Jump: 3, 1
+	for .i to 10
+		.p [.i] = Get value: .i
+	endfor
+	assert .p [1] = 1
+	assert .p [2] = 4
+	assert .p [3] = 7
+	assert .p [4] = 10
+	assert .p [5] = 2
+	assert .p [6] = 5
+	assert .p [7] = 8
+	assert .p [8] = 3
+	assert .p [9] = 6
+	assert .p [10] = 9
+	appendInfo: "." 
+	.p2 = Create Permutation: "id", 10, "yes"
+	Jump: 3, 2
+	for .i to 10
+		.p [.i] = Get value: .i
+	endfor
+	assert .p [1] = 2
+	assert .p [2] = 5
+	assert .p [3] = 8
+	assert .p [4] = 3
+	assert .p [5] = 6
+	assert .p [6] = 9
+	assert .p [7] = 1
+	assert .p [8] = 4
+	assert .p [9] = 7
+	assert .p [10] = 10
+	removeObject: .p1, .p2
+	appendInfoLine: ".o.k." 
 endproc
