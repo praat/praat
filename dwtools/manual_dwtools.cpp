@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4842,6 +4842,31 @@ TAG (U"##From row#, ##To row#, ##From column#, ##To column#")
 DEFINITION (U"determine the part of the table that you want to analyse.")
 TAG (U"%Ymin and %Ymax")
 DEFINITION (U"determine the drawing boundaries.")
+MAN_END
+
+MAN_BEGIN (U"TableOfReal: Draw as scalable squares...", U"djmw", 20180304)
+INTRO (U"A command to draw the cells of the table as squares whose areas conform to the cell's value. ")
+ENTRY (U"Settings")
+TAG (U"##From row#, ##To row#")
+DEFINITION (U"determine the rows to be drawn.")
+TAG (U"##From column#, ##To column#")
+DEFINITION (U"determine the columns to be drawn.")
+TAG (U"##Origin")
+DEFINITION (U"determines the drawing orientation. For a table with %%nrow% rows and %%ncol% columns:")
+TAG1 (U"%%top-left%: cel [1][1] will be at the top left position in the drawing, cell [%%nrow%][%%ncol%] will be at bottom right position.")
+TAG1 (U"%%top-right%: cel [1][1] will be at the top right position in the drawing, cell [%%nrow%][%%ncol%] will be at bottom left position.")
+TAG1 (U"%%bottom-left%: cel [1][1] will be at the bottom left position in the drawing, cell [%%nrow%][%%ncol%] will be at top right position.")
+TAG1 (U"%%bottom-right%: cel [1][1] will be at the bottom right position in the drawing, cell [%%nrow%][%%ncol%] will be at top left position.")
+TAG (U"##Cell area scale factor#")
+DEFINITION (U"multiplies the area of each cell's square. If this factor is larger than 1.0 some of the squares might overlap.")
+TAG (U"##Filling order#")
+DEFINITION (U"determines in what order the squares will be drawn. The order is only important if some of the squares overlap, "
+	"i.e. if the cell area scale factor is larger than 1.0.")
+TAG1 (U"%%rows%: start with the first row, cell [1][1] to cell [1][%%ncol%], next the second row, etc...")
+TAG1 (U"%%columns% start with column 1, cell [1][1] to cell [%%nrow%][1], next column 2 etc...")
+TAG1 (U"%%increasing-values%: first sort the cell values in increasing order and then start drawing them, the cell with the smallest value first. ")
+TAG1 (U"%%decreasing-values%: first sort the cell values in decreasing order and then start drawing them, the cell with the largest value first.")
+TAG1 (U"%%random%: draw cells in random order. If the cell area scale factor is larger than 1.0 this may result in a different graph of the same table for each successive call.")
 MAN_END
 
 MAN_BEGIN (U"TableOfReal: Draw rows as histogram...", U"djmw", 20030619)

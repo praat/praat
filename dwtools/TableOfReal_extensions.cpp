@@ -843,16 +843,16 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb
 	Graphics_unsetInner (g);
 }
 
-void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, bool randomFillOrder, bool garnish) {
+void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowmin, integer rowmax, integer colmin, integer colmax, kGraphicsMatrixOrigin origin, double cellSizeFactor, kGraphicsMatrixCellDrawingOrder fillOrder, bool garnish) {
 	try {
-		cellSizeFactor = cellSizeFactor <= 0.0 ? 1.0 : cellSizeFactor;
-		if (zmin == 0 && zmax == 0) {
-			NUMmatrix_extrema<double> (my data, 1, my numberOfRows, 1, my numberOfColumns, &zmin, &zmax);
-		}
-		double xmin = 0.0, xmax = my numberOfColumns + 1.0, ymin = 0.0, ymax = my numberOfRows + 1.0;
-		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		//cellSizeFactor = cellSizeFactor <= 0.0 ? 1.0 : cellSizeFactor;
+		NUMfixIndicesInRange (1, my numberOfRows, & rowmin, & rowmax);
+		NUMfixIndicesInRange (1, my numberOfColumns, & colmin, & colmax);
+		autoMatrix thee = TableOfReal_to_Matrix (me);
+		double extremum = NUMmatrix_extremum<double> (my data, 1, my numberOfRows, 1, my numberOfColumns);
+		Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, rowmin - 0.5, rowmax + 0.5);
 		Graphics_setInner (g);
-		Graphics_matrixAsSquares (g, my data, my numberOfRows, my numberOfColumns, zmin, zmax, cellSizeFactor, randomFillOrder);
+		Matrix_drawAsSquares_inside (thee.get(), g, colmin - 0.5, colmax + 0.5, rowmin - 0.5, rowmax + 0.5, origin, cellSizeFactor, fillOrder);
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);

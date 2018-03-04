@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2017 David Weenink
+ * Copyright (C) 1997-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ void NUMmatrix_extrema (T **x, integer rb, integer re, integer cb, integer ce, d
 	T min = x[rb][cb], max = min;
 	for (integer i = rb; i <= re; i++) {
 		for (integer j = cb; j <= ce; j++) {
-			T t = x[i][j];
+			T t = x[i] [j];
 			if (t < min) min = t;
 			else if (t > max) max = t;
 		}
@@ -175,7 +175,12 @@ void NUMmatrix_extrema (T **x, integer rb, integer re, integer cb, integer ce, d
 	}
 }
 
-
+template <class T>
+double NUMmatrix_extremum (T **x, integer rb, integer re, integer cb, integer ce) {
+	double min, max;
+	NUMmatrix_extrema (x, rb, re, cb, ce, & min, & max);
+	return fabs (max) > fabs (min) ? max : min;
+}
 
 /* NUMvector_clip
 	Clip array values.
@@ -312,24 +317,24 @@ void NUMsort2 (integer n, T1 *a, T2 *b) {
 		return;   /* Already sorted. */
 	}
 	if (n == 2) {
-		if (a[1] > a[2]) {
-			min = a[2]; a[2] = a[1]; a[1] = min;
-			min2 = b[2]; b[2] = b[1]; b[1] = min2;
+		if (a [1] > a [2]) {
+			min = a [2]; a [2] = a [1]; a [1] = min;
+			min2 = b [2]; b [2] = b [1]; b [1] = min2;
 		}
 		return;
 	}
 	if (n <= 12) {
-		for (i = 1; i < n; i++) {
-			min = a[i];
+		for (i = 1; i < n; i ++) {
+			min = a [i];
 			imin = i;
-			for (j = i + 1; j <= n; j++) {
-				if (a[j] < min) {
+			for (j = i + 1; j <= n; j ++) {
+				if (a [j] < min) {
 					min = a [j];
 					imin = j;
 				}
 			}
-			a[imin] = a[i]; a[i] = min;
-			min2 = b[imin]; b[imin] = b[i]; b[i] = min2;
+			a [imin] = a [i]; a [i] = min;
+			min2 = b [imin]; b [imin] = b [i]; b [i] = min2;
 		}
 		return;
 	}
@@ -338,14 +343,14 @@ void NUMsort2 (integer n, T1 *a, T2 *b) {
 	r = n;
 	for (;;) {
 		if (l > 1) {
-			l--;
-			k = a[l]; kb = b[l];
+			l --;
+			k = a [l]; kb = b [l];
 		} else /* l == 1 */ {
-			k = a[r]; kb = b[r];
-			a[r] = a[1]; b[r] = b[1];
-			r--;
+			k = a [r]; kb = b [r];
+			a [r] = a [1]; b [r] = b [1];
+			r --;
 			if (r == 1) {
-				a[1] = k; b[1] = kb; return;
+				a [1] = k; b [1] = kb; return;
 			}
 		}
 		/* H3 */
@@ -354,19 +359,19 @@ void NUMsort2 (integer n, T1 *a, T2 *b) {
 			i = j;
 			j = j << 1;
 			if (j > r) break;
-			if (j < r && a[j] < a[j + 1]) j++; /* H5 */
+			if (j < r && a [j] < a [j + 1]) j ++; /* H5 */
 			/* if (k >= a[j]) break; H6 */
-			a[i] = a[j]; b[i] = b[j]; /* H7 */
+			a [i] = a [j]; b [i] = b [j]; /* H7 */
 		}
 		/* a[i] = k; b[i] = kb; H8 */
 		for (;;) { /*H8' */
 			j = i;
 			i = j >> 1;
 			/* H9' */
-			if (j == l || k <= a[i]) {
-				a[j] = k; b[j] = kb; break;
+			if (j == l || k <= a [i]) {
+				a [j] = k; b [j] = kb; break;
 			}
-			a[j] = a[i]; b[j] = b[i];
+			a [j] = a [i]; b [j] = b [i];
 		}
 	}
 }
@@ -1344,5 +1349,10 @@ void NUMlpc_area_to_lpc (double *area, integer n, double *lpc);
 
 // lpc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
 void NUMlpc_lpc_to_area (double *lpc, integer m, double *area);
+
+/*
+ Fix indices to be in the range [lowerLimit, upperLimit].
+*/
+void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex);
 
 #endif // _NUM2_h_

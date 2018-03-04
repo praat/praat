@@ -1,6 +1,6 @@
 /* Permutation.cpp
  *
- * Copyright (C) 2005-2012, 2015-2017 David Weenink
+ * Copyright (C) 2005-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,14 +86,35 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 }
 
 void Permutation_init (Permutation me, integer numberOfElements) {
-	my numberOfElements = numberOfElements;
 	my p = NUMvector<integer> (1, numberOfElements);
 	Permutation_sort (me);
+}
+
+void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {
+	if (jumpSize >= my numberOfElements || first > my numberOfElements) {
+		return;
+	}
+	autoNUMvector<integer> p_copy (NUMvector_copy<integer> (my p, 1, my numberOfElements), 1);
+	integer index = first, column = 1;
+	if (first > 1) {
+		column = (first - 1) % jumpSize + 1;
+	}
+	for (integer i = 1; i <= my numberOfElements; i ++) {
+		my p [i] = p_copy [index];
+		index += jumpSize;
+		if (index > my numberOfElements) {
+			if (++ column > jumpSize) {
+				column = 1;
+			}
+			index = column;
+		}
+	}
 }
 
 autoPermutation Permutation_create (integer numberOfElements) {
 	try {
 		autoPermutation me = Thing_new (Permutation);
+		my numberOfElements = numberOfElements;
 		Permutation_init (me.get(), numberOfElements);
 		return me;
 	} catch (MelderError) {
@@ -336,15 +357,19 @@ autoPermutation Permutation_invert (Permutation me) {
 	}
 }
 
+void Permutation_reverse_inline (Permutation me, integer from, integer to) {
+	integer n = Permutation_checkRange (me, & from, & to);
+	for (integer i = 1; i <= n / 2; i ++) {
+		SWAP (my p [from + i - 1], my p [to - i + 1] )
+	}
+}
+
 autoPermutation Permutation_reverse (Permutation me, integer from, integer to) {
 	try {
 		integer n = Permutation_checkRange (me, & from, & to);
 		autoPermutation thee = Data_copy (me);
-		for (integer i = 1; i <= n; i ++) {
-			thy p [from + i - 1] = my p [to - i + 1];
-		}
+		Permutation_reverse_inline (thee.get(), from, to);
 		return thee;
-
 	} catch (MelderError) {
 		Melder_throw (me, U": not reversed.");
 	}

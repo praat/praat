@@ -1,6 +1,6 @@
 /* Graphics_extensions.cpp
  *
- * Copyright (C) 2012-2015 David Weenink
+ * Copyright (C) 2012-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
  djmw 20120727 latest modification
 */
 
-#include "Graphics_extensions.h"
 #include "NUM2.h"
 #include "Permutation.h"
+#include "Graphics_extensions.h"
 
 /*
 	Draw a box plot of data[1..ndata]. The vertical center line of the plot
@@ -206,45 +206,6 @@ void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, doubl
 	Graphics_line (g, xmin, ymin, xmax, ymax);
 	Graphics_setLineType (g, Graphics_DRAWN);
 	Graphics_setFontSize (g, fontSize);
-}
-
-void Graphics_matrixAsSquares (Graphics g, double **matrix, integer numberOfRows, integer numberOfColumns, double zmin, double zmax, double cellSizeFactor, bool randomFillOrder) {
-	integer numberOfCells = numberOfRows * numberOfColumns;
-	autoPermutation p = Permutation_create (numberOfCells);
-	if (randomFillOrder) {
-		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
-	}
-	double zAbsMax = fabs (zmax) > fabs (zmin) ? fabs (zmax) : fabs (zmin);
-	Graphics_Colour colour = Graphics_inqColour (g);
-	double x1WC, x2WC, y1WC, y2WC;
-	Graphics_inqWindow (g, &x1WC, &x2WC, &y1WC, &y2WC);
-	double dx = fabs (x2WC - x1WC) / numberOfColumns;
-	double dy = fabs (y2WC - y1WC) / numberOfRows;
-	for (integer i = 1; i <= numberOfCells; i++) {
-		integer index = Permutation_getValueAtIndex (p.get(), i);
-		integer irow = (index - 1) / numberOfColumns + 1;
-		integer icol = (index - 1) % numberOfColumns + 1;
-		double z = matrix[irow][icol];
-		z = z < zmin ? zmin : z;
-		z = z > zmax ? zmax : z;
-		double zweight = sqrt (fabs (z) / zAbsMax); // Area length^2)
-		double xcenter = (icol - 0.5) * dx;
-		double ycenter = (irow - 0.5) * dy;
-		double x1 = x1WC + xcenter - zweight * 0.5 * dx * cellSizeFactor;
-		x1 = x1 < x1WC ? x1WC : x1;
-		double x2 = x1WC + xcenter + zweight * 0.5 * dx * cellSizeFactor;
-		x2 = x2 > x2WC ? x2WC : x2;
-		double y1 = y1WC + ycenter - zweight * 0.5 * dy * cellSizeFactor;
-		y1 = y1 < y1WC ? y1WC : y1;
-		double y2 = y1WC + ycenter + zweight * 0.5 * dy * cellSizeFactor;
-		y2 = y2 > y2WC ? y2WC : y2;
-		if (z > 0.0) {
-			Graphics_setColour (g, Graphics_WHITE);
-		}
-		Graphics_fillRectangle (g, x1, x2, y1, y2);
-		Graphics_setColour (g, colour);
-		Graphics_rectangle (g, x1, x2 , y1, y2);
-	}
 }
 
 void Graphics_lagPlot (Graphics g, double data[], integer numberOfData, double xmin, double xmax, integer lag, int labelSize, const char32 *plotLabel) {
