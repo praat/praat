@@ -372,7 +372,7 @@ DIRECT (NEW_Categories_to_Strings) {
 
 DIRECT (NEW1_Categories_join) {
 	CONVERT_COUPLE (Categories)
-		autoOrderedOfString result = OrderedOfString_joinItems (me, you);
+		autoStringList result = OrderedOfString_joinItems (me, you);
 	CONVERT_COUPLE_END (my name, U"_", your name)
 }
 
@@ -7610,7 +7610,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classBarkSpectrogram, 2, U"Cross-correlate...", nullptr, 0, NEW1_BandFilterSpectrograms_crossCorrelate);
 	praat_addAction1 (classBarkSpectrogram, 2, U"Convolve...", nullptr, 0, NEW1_BandFilterSpectrograms_convolve);
 
-
 	praat_addAction1 (classCategories, 0, U"View & Edit", nullptr, praat_NO_API, WINDOW_Categories_edit);
 	praat_addAction1 (classCategories, 0,   U"Edit", U"*View & Edit", praat_DEPRECATED_2015 | praat_NO_API, WINDOW_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, nullptr, 0, nullptr);
@@ -7647,7 +7646,6 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"To TableOfReal (loadings)", nullptr, 0, NEW1_CCA_Correlation_to_TableOfReal_loadings);
 	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get variance fraction...", nullptr, 0, REAL_CCA_Correlation_getVarianceFraction);
 	praat_addAction2 (classCCA, 1, classCorrelation, 1, U"Get redundancy (sl)...", nullptr, 0, REAL_CCA_Correlation_getRedundancy_sl);
-
 
 	praat_addAction1 (classComplexSpectrogram, 0, U"ComplexSpectrogram help", nullptr, 0, HELP_ComplexSpectrogram_help);
 	praat_addAction1 (classComplexSpectrogram, 0, DRAW_BUTTON, nullptr, 0, nullptr);
@@ -7698,12 +7696,9 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCovariance, 2, U"Report multivariate mean difference...", U"Get fraction variance...", 1, INFO_Covariances_reportMultivariateMeanDifference);
 	praat_addAction1 (classCovariance, 2, U"Difference", U"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, INFO_Covariances_reportEquality);
 	praat_addAction1 (classCovariance, 0, U"Report equality of covariances", U"Report multivariate mean difference...", praat_DEPTH_1 | praat_HIDDEN, INFO_Covariances_reportEquality);
-
 	praat_addAction1 (classCovariance, 0, U"To TableOfReal (random sampling)...", nullptr, 0, NEW_Covariance_to_TableOfReal_randomSampling);
-
 	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, NEW_Covariance_to_Correlation);
 	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, NEW_Covariance_to_PCA);
-
 	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, NEW1_Covariances_pool);
 
 	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Covariance_TableOfReal_mahalanobis);
@@ -7796,7 +7791,6 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, NEW1_Discriminant_TableOfReal_to_Configuration);
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1,U"To ClassificationTable...", nullptr, 0, NEW1_Discriminant_TableOfReal_to_ClassificationTable);
 	praat_addAction2 (classDiscriminant, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Discriminant_TableOfReal_mahalanobis);
-
 
 	praat_addAction1 (classDTW, 0, U"DTW help", nullptr, 0, HELP_DTW_help);
 	praat_addAction1 (classDTW, 0, DRAW_BUTTON, nullptr, 0, 0);
@@ -8226,7 +8220,9 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classSound, 1, classPitch, 1, U"Change gender...", nullptr, 0, NEW1_Sound_Pitch_changeGender);
 	praat_addAction2 (classSound, 1, classPitch, 1, U"Change speaker...", nullptr, praat_HIDDEN, NEW1_Sound_Pitch_changeSpeaker);
 	praat_addAction2 (classSound, 1, classIntervalTier, 1, U"Cut parts matching label...", nullptr, 0, NEW1_Sound_IntervalTier_cutPartsMatchingLabel);
+
 	praat_addAction1 (classSpectrogram, 2, U"To DTW...", U"To Spectrum (slice)...", 1, NEW1_Spectrograms_to_DTW);
+
 	praat_addAction1 (classSpectrum, 0, U"Draw phases...", U"Draw (log freq)...", praat_DEPTH_1 | praat_HIDDEN, GRAPHICS_Spectrum_drawPhases);
 	praat_addAction1 (classSpectrum, 0, U"Set real value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Spectrum_setRealValueInBin);
 	praat_addAction1 (classSpectrum, 0, U"Set imaginary value in bin...", U"Formula...", praat_HIDDEN | praat_DEPTH_1, MODIFY_Spectrum_setImaginaryValueInBin);

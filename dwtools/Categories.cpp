@@ -1,6 +1,6 @@
 /* Categories.cpp
  *
- * Copyright (C) 1993-2013, 2015 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 1993-2013,2015 David Weenink, 2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,13 @@
  */
 
 #include "Categories.h"
+
+void structCategories :: v_info () {
+	structDaata :: v_info ();
+	MelderInfo_writeLine (U"Number of strings: ", our size);
+	autoStringSet set = StringList_to_StringSet (this);
+	MelderInfo_writeLine (U"Number of unique categories: ", set->size);
+}
 
 void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
 	integer l_size = texgeti32 (a_text);
@@ -49,7 +56,7 @@ void structCategories :: v_writeText (MelderFile file) {
 	}
 }
 
-Thing_implement (Categories, OrderedOfString, 0);
+Thing_implement (Categories, StringList, 0);
 
 autoCategories Categories_create () {
 	try {
@@ -72,8 +79,12 @@ autoCategories Categories_createWithSequentialNumbers (integer n) {
 
 autoCategories Categories_selectUniqueItems (Categories me) {
 	try {
-		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me);
-		autoCategories thee = OrderedOfString_to_Categories (s.get());
+		autoStringSet set = StringList_to_StringSet (me);
+		autoCategories thee = Categories_create ();
+		for (integer i = 1; i <= set->size; i ++) {
+			autoSimpleString item = Data_copy (set->at [i]);
+			thy addItem_move (item.move());
+		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no unique categories created.");
@@ -86,24 +97,6 @@ void Categories_drawItem (Categories me, Graphics g, integer position, double xW
 	}
 	SimpleString item = my at [position];
 	Graphics_text (g, xWC, yWC, item -> string);
-}
-
-autoCategories OrderedOfString_to_Categories (OrderedOfString me) {
-	try {
-		autoCategories thee = Categories_create ();
-
-		for (integer i = 1; i <= my size; i ++) {
-			autoSimpleString item = Data_copy (my at [i]);
-			thy addItem_move (item.move());
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": not converted to Categories.");
-	}
-}
-
-integer Categories_getSize (Categories me) {
-	return my size;
 }
 
 /* TableOfReal_Rowlabels_to_Categories  ??? */

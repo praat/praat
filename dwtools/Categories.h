@@ -22,7 +22,9 @@
 #include "TableOfReal.h"
 #include "Graphics.h"
 
-Thing_define (Categories, OrderedOfString) {
+Thing_define (Categories, StringList) {
+	void v_info ()
+		override;
 	void v_readText (MelderReadText text, int formatVersion)
 		override;
 	void v_writeText (MelderFile file)
@@ -36,11 +38,6 @@ autoCategories Categories_createWithSequentialNumbers (integer n);
 autoCategories Categories_selectUniqueItems (Categories me);
 
 void Categories_drawItem (Categories me, Graphics g, integer position, double xWC, double yWC);
-
-autoCategories OrderedOfString_to_Categories (OrderedOfString me);
-
-integer Categories_getSize (Categories me);
-/* return my size */
 
 autoCategories TableOfReal_to_CategoriesRow (TableOfReal me);
 
