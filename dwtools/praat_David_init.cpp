@@ -4269,6 +4269,16 @@ DO
 	INTEGER_ONE_END (U" (index, at value = ", value, U")")
 }
 
+FORM (MODIFY_Permutation_tableJump, U"Permutation: Table jump", U"Permutation: Table jump...") {
+	NATURAL (jumpSize, U"Jump size", U"4")
+	NATURAL (first, U"First", U"1")
+	OK
+DO
+	MODIFY_EACH (Permutation)
+		Permutation_tableJump_inline (me, jumpSize, first);
+	MODIFY_EACH_END
+}
+
 DIRECT (MODIFY_Permutation_sort) {
 	MODIFY_EACH (Permutation)
 		Permutation_sort (me);
@@ -6808,17 +6818,21 @@ DIRECT (NEW_Table_create_sandwell1987) {
 	CREATE_ONE_END (U"Sandwell1987");
 }
 
-FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalable squares", 0)
-	REAL (zmin, U"left Value range", U"0.0");
-	REAL (zmax, U"right Value range", U"0.0");
-	POSITIVE (scaleFactor, U"Cell size scale factor", U"0.95")
-	BOOLEAN (randomFill, U"Random fill", false)
+FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalable squares", U"TableOfReal: Draw as scalable squares...") {
+	NATURAL (rowmin, U"From row", U"1");
+	INTEGER (rowmax, U"To row", U"0 (=all)");
+	NATURAL (colmin, U"From column", U"1");
+	INTEGER (colmax, U"To column", U"0 (=all)");
+	OPTIONMENU_ENUM (origin, U"Origin", kGraphicsMatrixOrigin, DEFAULT)
+	POSITIVE (scaleFactor, U"Cell area scale factor", U"0.95")
+	OPTIONMENU_ENUM (drawingOrder, U"Filling order", kGraphicsMatrixCellDrawingOrder, DEFAULT)
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawAsScalableSquares (me, GRAPHICS, zmin, zmax, scaleFactor, randomFill, garnish);
+		TableOfReal_drawAsScalableSquares (me, GRAPHICS, rowmin, rowmax, colmin, colmax, origin, scaleFactor, drawingOrder, garnish);
 	GRAPHICS_EACH_END
+}
 
 FORM (GRAPHICS_TableOfReal_drawScatterPlot, U"TableOfReal: Draw scatter plot", U"TableOfReal: Draw scatter plot...") {
 	LABEL (U"Select the part of the table")
@@ -8092,6 +8106,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classPermutation, 1, U"Get value...", nullptr, 1, INTEGER_Permutation_getValueAtIndex);
 	praat_addAction1 (classPermutation, 1, U"Get index...", nullptr, 1, INTEGER_Permutation_getIndexAtValue);
 	praat_addAction1 (classPermutation, 0, MODIFY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classPermutation, 1, U"Jump...", nullptr, 1, MODIFY_Permutation_tableJump);
 	praat_addAction1 (classPermutation, 1, U"Sort", nullptr, 1, MODIFY_Permutation_sort);
 	praat_addAction1 (classPermutation, 1, U"Swap blocks...", nullptr, 1, MODIFY_Permutation_swapBlocks);
 	praat_addAction1 (classPermutation, 1, U"Swap numbers...", nullptr, 1, MODIFY_Permutation_swapNumbers);

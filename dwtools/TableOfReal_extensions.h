@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "TableOfReal.h"
-#include "Collection.h"
-#include "PatternList.h"
 #include "Categories.h"
+#include "Collection.h"
+#include "Graphics_extensions.h"
+#include "Matrix_extensions.h"
+#include "PatternList.h"
 #include "Strings_.h"
 #include "SSCP.h"
+#include "TableOfReal.h"
 
 void TableOfReal_to_PatternList_and_Categories(TableOfReal me, integer fromrow, integer torow, integer fromcol, integer tocol,
 	autoPatternList *p, autoCategories *c);
@@ -69,7 +71,7 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integ
 	integer rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, bool useRowLabels, const char32 *label, bool garnish);
 
-void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, bool randomFillOrder, bool garnish);
+void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowmin, integer rowmax, integer colmin, integer colmax, kGraphicsMatrixOrigin origin, double cellSizeFactor, kGraphicsMatrixCellDrawingOrder fillOrder, bool garnish);
 
 void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb, integer cole, double fractionWhite);
 
