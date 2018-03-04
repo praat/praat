@@ -1,6 +1,6 @@
 /* Matrix_extensions.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,37 @@
  djmw 20080122 float -> double
 */
 
+#include "Graphics_extensions.h"
 #include "Matrix_extensions.h"
 #include "Eigen.h"
 #include "NUM2.h"
+#include "Permutation.h"
+
+#include "enums_getText.h"
+#include "Matrix_extensions_enums.h"
+#include "enums_getValue.h"
+#include "Graphics_extensions_enums.h"
+
+autonumvec nummat_vectorize (nummat m, integer rowmin, integer rowmax, integer colmin, integer colmax, bool byColumns) {
+	NUMfixIndicesInRange (1, m.nrow, & rowmin, & rowmax);
+	NUMfixIndicesInRange (1, m.ncol, & colmin, & colmax);
+	integer numberOfElements = (rowmax  - rowmin + 1) * (colmax - colmin + 1), index = 0;
+	autonumvec result (numberOfElements, kTensorInitializationType::RAW);
+	if (byColumns) {
+		for (integer icol = colmin; icol <= colmax; icol++) {
+			for (integer irow = rowmin; irow <= rowmax; irow++) {
+				result [++ index] = m [irow] [icol];
+			}
+		}
+	} else {
+		for (integer irow = rowmin; irow <= rowmax; irow ++) {
+			for (integer icol = colmin; icol <= colmax; icol++) {
+				result [++ index] = m [irow] [icol];
+			}
+		}
+	}
+	return result;
+}
 
 void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
 	integer ix = labs (icx), iy = labs (icy);
@@ -80,43 +108,86 @@ void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy, double
 	}
 }
 
+void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, kGraphicsMatrixOrigin origin, double cellAreaScaleFactor, kGraphicsMatrixCellDrawingOrder drawingOrder) {
+	integer colmin, colmax, rowmin, rowmax;
+	integer numberOfColumns = Matrix_getWindowSamplesX (me, xmin, xmax, & colmin, & colmax);
+	integer numberOfRows = Matrix_getWindowSamplesY (me, ymin, ymax, & rowmin, & rowmax);
+
+	integer numberOfCells = numberOfRows * numberOfColumns;
+	autoPermutation p = Permutation_create (numberOfCells);
+	
+	if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Rows) {
+		// identity permutation
+	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Random) {
+		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
+	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::IncreasingValues || drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
+		autonumvec v = nummat_vectorize ({my z, my ny, my nx}, rowmin, rowmax, colmin, colmax, false);
+		NUMsort2<double, integer> (numberOfCells, v.at, p -> p);
+		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
+			Permutation_reverse_inline (p.get(), 1, numberOfCells);
+		}
+	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Columns) {
+		Permutation_tableJump_inline (p.get(), numberOfColumns, 1);
+	}
+	
+	double extremum = NUMmatrix_extremum<double> (my z, 1, my ny, 1, my nx);
+
+	extremum = fabs (extremum);
+	Graphics_Colour colour = Graphics_inqColour (g);
+	double scaleFactor = sqrt (cellAreaScaleFactor);
+	for (integer i = 1; i <= numberOfCells; i++) {
+		integer index = Permutation_getValueAtIndex (p.get(), i);
+		integer irow = rowmin + (index - 1) / numberOfColumns;
+		integer icol = colmin + (index - 1) % numberOfColumns;
+		double z = my z [irow] [icol];
+		double xfraction = sqrt (fabs (z) / extremum), yfraction = xfraction;
+		double halfCellWidth = xfraction * 0.5 * my dx * scaleFactor;
+		double halfCellHeight = yfraction * 0.5 * my dy * scaleFactor;
+		double cellLeft, cellTop;
+		if (origin == kGraphicsMatrixOrigin::TopLeft) {
+			cellLeft = Matrix_columnToX (me, icol) - halfCellWidth;
+			cellTop = Matrix_rowToY (me, rowmax - irow + rowmin) + halfCellHeight;
+		} else if (origin == kGraphicsMatrixOrigin::TopRight) {
+			cellLeft = Matrix_columnToX (me, colmax - icol + colmin) - halfCellWidth;
+			cellTop = Matrix_rowToY (me, rowmax - irow + rowmin) + halfCellHeight;
+		} else if (origin == kGraphicsMatrixOrigin::BottomLeft) {
+			cellLeft = Matrix_columnToX (me, icol) - halfCellWidth;
+			cellTop = Matrix_rowToY (me, irow) + halfCellHeight;
+		} else { // origin == kGraphicsMatrixOrigin::BottomRight
+			cellLeft = Matrix_columnToX (me, colmax - icol + colmin) - halfCellWidth;
+			cellTop = Matrix_rowToY (me, irow) + halfCellHeight;
+		}
+		double cellRight = cellLeft + 2.0 * halfCellWidth;
+		double cellBottom = cellTop - 2.0 * halfCellHeight;
+		cellLeft = cellLeft < xmin ? xmin : cellLeft;
+		cellRight = cellRight > xmax ? xmax : cellRight;
+		cellTop = cellTop > ymax ? ymax : cellTop;
+		cellBottom = cellBottom < ymin ? ymin : cellBottom;
+		if (z > 0.0) {
+			Graphics_setColour (g, Graphics_WHITE);
+		}
+		Graphics_fillRectangle (g, cellRight, cellLeft, cellBottom, cellTop);
+		Graphics_setColour (g, colour);
+		Graphics_rectangle (g, cellRight, cellLeft, cellBottom, cellTop);
+	}
+}
+
 void Matrix_drawAsSquares (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	Graphics_Colour colour = Graphics_inqColour (g);
-	integer ixmin, ixmax, iymin, iymax;
 
 	if (xmax <= xmin) {
 		xmin = my xmin;
 		xmax = my xmax;
 	}
-	integer nx = Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 	if (ymax <= ymin) {
 		ymin = my ymin;
 		ymax = my ymax;
 	}
-	integer ny = Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
-	double min, max = nx > ny ? nx : ny;
-	double dx = (xmax - xmin) / max, dy = (ymax - ymin) / max;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & min, & max);
-	double wAbsMax = fabs (max) > fabs (min) ? fabs (max) : fabs (min);
-	for (integer i = iymin; i <= iymax; i ++) {
-		double y = Matrix_rowToY (me, i);
-		for (integer j = ixmin; j <= ixmax; j ++) {
-			double x = Matrix_columnToX (me, j);
-			double d = 0.95 * sqrt (fabs (my z [i] [j]) / wAbsMax);
-			if (d > 0) {
-				double x1WC = x - d * dx / 2.0, x2WC = x + d * dx / 2.0;
-				double y1WC = y - d * dy / 2.0, y2WC = y + d * dy / 2.0;
-				if (my z [i] [j] > 0.0) {
-					Graphics_setColour (g, Graphics_WHITE);
-				}
-				Graphics_fillRectangle (g, x1WC, x2WC, y1WC, y2WC);
-				Graphics_setColour (g, colour);
-				Graphics_rectangle (g, x1WC, x2WC , y1WC, y2WC);
-			}
-		}
-	}
+	
+	Matrix_drawAsSquares_inside (me, g, xmin, xmax, ymin, ymax, kGraphicsMatrixOrigin::BottomLeft, 0.95 * 0.95, kGraphicsMatrixCellDrawingOrder::Rows);
+	
 	Graphics_setGrey (g, 0.0);
 	Graphics_unsetInner (g);
 	if (garnish) {
@@ -469,9 +540,9 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 		autofile f = Melder_fopen (file, "r");
 		unsigned int b1 = bingetu8 (f);   // 0
 		unsigned int b2 = bingetu8 (f);   // 0
-		if (b1 != 0 || b2 != 0) {
-			Melder_throw (U"Starting two bytes should be zero.");
-		}
+		
+		Melder_require (b1 == 0 && b2 == 0, U"Starting two bytes should be zero.");
+
 		unsigned int b3 = bingetu8 (f);   // data type
 		unsigned int b4 = bingetu8 (f);   // number of dimensions
 		integer ncols = bingeti32 (f), nrows = 1;   // ok if vector

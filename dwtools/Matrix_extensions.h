@@ -2,7 +2,7 @@
 #define _Matrix_extensions_h_
 /* Matrix_extensions.h
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink
+ * Copyright (C) 1993-2011, 2015-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 
 #include "Matrix.h"
 #include "Graphics.h"
+#include "Matrix_extensions_enums.h"
 
 autoMatrix Matrix_readFromIDXFormatFile (MelderFile file);
 autoDaata IDXFormattedMatrixFileRecognizer (integer numberOfBytesRead, const char *header, MelderFile file);
@@ -33,6 +34,8 @@ void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
     double xmin, double xmax, double ymin, double ymax,
     double size_mm, const char32 *mark, bool garnish);
 /* Draw my columns ix and iy as a scatterplot (with squares)				*/
+
+void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, kGraphicsMatrixOrigin origin, double cellAreaScaleFactor, kGraphicsMatrixCellDrawingOrder drawingOrder);
 
 void Matrix_drawAsSquares (Matrix me, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnished);
 /* Draw a Matrix as small squares whose area correspond to the matrix element */
