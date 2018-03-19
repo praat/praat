@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,77 +38,85 @@ autoSound Sound_clipboard;
 
 void structSound :: v_info () {
 	structDaata :: v_info ();
-	const double rho_c = 400;   /* rho = 1.14 kg m-3; c = 353 m s-1; [rho c] = kg m-2 s-1 */
-	double minimum = z [1] [1], maximum = minimum;
-	MelderInfo_writeLine (U"Number of channels: ", ny, ny == 1 ? U" (mono)" : ny == 2 ? U" (stereo)" : U"");
+	MelderInfo_writeLine (U"Number of channels: ", our ny, our ny == 1 ? U" (mono)" : our ny == 2 ? U" (stereo)" : U"");
 	MelderInfo_writeLine (U"Time domain:");
-	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
-	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
-	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", our xmax - our xmin, U" seconds");
 	MelderInfo_writeLine (U"Time sampling:");
-	MelderInfo_writeLine (U"   Number of samples: ", nx);
-	MelderInfo_writeLine (U"   Sampling period: ", dx, U" seconds");
-	MelderInfo_writeLine (U"   Sampling frequency: ", Melder_single (1.0 / dx), U" Hz");
-	MelderInfo_writeLine (U"   First sample centred at: ", x1, U" seconds");
-	{// scope
-		real80 sum = 0.0, sumOfSquares = 0.0;
-		for (integer channel = 1; channel <= ny; channel ++) {
-			double *amplitude = z [channel];
-			for (integer i = 1; i <= nx; i ++) {
-				double value = amplitude [i];
-				sum += value;
-				sumOfSquares += value * value;
-				if (value < minimum) minimum = value;
-				if (value > maximum) maximum = value;
+	MelderInfo_writeLine (U"   Number of samples: ", our nx);
+	MelderInfo_writeLine (U"   Sampling period: ", our dx, U" seconds");
+	MelderInfo_writeLine (U"   Sampling frequency: ", Melder_single (1.0 / our dx), U" Hz");
+	MelderInfo_writeLine (U"   First sample centred at: ", our x1, U" seconds");
+	integer numberOfCells = our nx * our ny;
+	bool thereAreEnoughObservationsToComputeFirstOrderOverallStatistics = ( numberOfCells >= 1 );
+	if (thereAreEnoughObservationsToComputeFirstOrderOverallStatistics) {
+		double minimum_Pa = our z [1] [1], maximum_Pa = minimum_Pa;
+		real80 sum_Pa = 0.0, sumOfSquares_Pa2 = 0.0;
+		for (integer channel = 1; channel <= our ny; channel ++) {
+			double *waveform_Pa = our z [channel];
+			for (integer i = 1; i <= our nx; i ++) {
+				double value_Pa = waveform_Pa [i];
+				sum_Pa += value_Pa;
+				sumOfSquares_Pa2 += value_Pa * value_Pa;
+				if (value_Pa < minimum_Pa) minimum_Pa = value_Pa;
+				if (value_Pa > maximum_Pa) maximum_Pa = value_Pa;
 			}
 		}
 		MelderInfo_writeLine (U"Amplitude:");
-		MelderInfo_writeLine (U"   Minimum: ", Melder_single (minimum), U" Pascal");
-		MelderInfo_writeLine (U"   Maximum: ", Melder_single (maximum), U" Pascal");
-		double mean = (real) sum / (nx * ny);
-		MelderInfo_writeLine (U"   Mean: ", Melder_single (mean), U" Pascal");
-		MelderInfo_writeLine (U"   Root-mean-square: ", Melder_single (sqrt ((real) sumOfSquares / (nx * ny))), U" Pascal");
-		double penergy = (real) sumOfSquares * dx / ny;   /* Pa2 s = kg2 m-2 s-3 */
-		MelderInfo_write (U"Total energy: ", Melder_single (penergy), U" Pascal\u00B2 sec");
-		double energy = penergy / rho_c;   /* kg s-2 = Joule m-2 */
-		MelderInfo_writeLine (U" (energy in air: ", Melder_single (energy), U" Joule/m\u00B2)");
-		double power = energy / (dx * nx);   /* kg s-3 = Watt/m2 */
-		MelderInfo_write (U"Mean power (intensity) in air: ", Melder_single (power), U" Watt/m\u00B2");
-		if (power != 0.0) {
-			MelderInfo_writeLine (U" = ", Melder_half (10 * log10 (power / 1e-12)), U" dB");
+		MelderInfo_writeLine (U"   Minimum: ", Melder_single (minimum_Pa), U" Pascal");
+		MelderInfo_writeLine (U"   Maximum: ", Melder_single (maximum_Pa), U" Pascal");
+		double mean_Pa = (real) sum_Pa / numberOfCells;
+		MelderInfo_writeLine (U"   Mean: ", Melder_single (mean_Pa), U" Pascal");
+		double meanSquare_Pa2 = (real) sumOfSquares_Pa2 / numberOfCells;
+		double rootMeanSquare_Pa = sqrt (meanSquare_Pa2);
+		MelderInfo_writeLine (U"   Root-mean-square: ", Melder_single (rootMeanSquare_Pa), U" Pascal");
+		double energy_Pa2s = (real) sumOfSquares_Pa2 * our dx / our ny;   // Pa2 s = kg2 m-2 s-3
+		MelderInfo_write (U"Total energy: ", Melder_single (energy_Pa2s), U" Pascal\u00B2 sec");
+		const double rho_c = 400.0;   // rho = 1.14 kg m-3; c = 353 m s-1; [rho c] = kg m-2 s-1
+		double energy_J_m2 = energy_Pa2s / rho_c;   // kg s-2 = Joule m-2
+		MelderInfo_writeLine (U" (energy in air: ", Melder_single (energy_J_m2), U" Joule/m\u00B2)");
+		const double physicalDuration_s = our dx * our nx;
+		double power_W_m2 = energy_J_m2 / physicalDuration_s;   // kg s-3 = Watt/m2
+		MelderInfo_write (U"Mean power (intensity) in air: ", Melder_single (power_W_m2), U" Watt/m\u00B2");
+		if (power_W_m2 != 0.0) {
+			const double referencePower_W_m2 = 1.0e-12;   // this equals the square of 2.0e-5 Pa, divided by rho c
+			double power_dB = 10.0 * log10 (power_W_m2 / referencePower_W_m2);
+			MelderInfo_writeLine (U" = ", Melder_half (power_dB), U" dB");
 		} else {
 			MelderInfo_writeLine (U"");
 		}
 	}
-	if (nx > 1) {
-		for (integer channel = 1; channel <= ny; channel ++) {
-			double stdev = stdev_scalar ({ z [channel], our nx });
+	bool thereAreEnoughObservationsToComputeSecondOrderChannelStatistics = ( our nx >= 2 );
+	if (thereAreEnoughObservationsToComputeSecondOrderChannelStatistics) {
+		for (integer channel = 1; channel <= our ny; channel ++) {
+			double stdev = stdev_scalar ({ our z [channel], our nx });
 			MelderInfo_writeLine (U"Standard deviation in channel ", channel, U": ", Melder_single (stdev), U" Pascal");
 		}
 	}
 }
 
 double structSound :: v_getMatrix (integer irow, integer icol) {
-	if (irow < 1 || irow > ny) {
+	if (irow < 1 || irow > our ny) {
 		if (irow == 0) {
 			if (icol < 1 || icol > nx) return 0.0;
-			if (ny == 1) return z [1] [icol];   // optimization
-			if (ny == 2) return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
+			if (our ny == 1) return our z [1] [icol];   // optimization
+			if (our ny == 2) return 0.5 * (our z [1] [icol] + our z [2] [icol]);   // optimization
 			real80 sum = 0.0;
 			for (integer channel = 1; channel <= ny; channel ++) {
-				sum += z [channel] [icol];
+				sum += our z [channel] [icol];
 			}
-			return (real) sum / ny;
+			return (real) sum / our ny;
 		}
 		return 0.0;
 	}
 	if (icol < 1 || icol > nx) return 0.0;
-	return z [irow] [icol];
+	return our z [irow] [icol];
 }
 
 double structSound :: v_getFunction2 (double x, double y) {
 	integer channel = Melder_ifloor (y);
-	if (channel < 0 || channel > ny || y != (double) channel) return 0.0;
+	if (channel < 0 || channel > our ny || y != (double) channel) return 0.0;
 	return v_getFunction1 (channel, x);
 }
 
@@ -136,7 +144,7 @@ autoSound Sound_convertToMono (Sound me) {
 	if (my ny == 1) return Data_copy (me);   // optimization
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		if (my ny == 2) {   // Optimization.
+		if (my ny == 2) {   // optimization
 			for (integer i = 1; i <= my nx; i ++) {
 				thy z [1] [i] = 0.5 * (my z [1] [i] + my z [2] [i]);
 			}
@@ -182,7 +190,7 @@ autoSound Sounds_combineToStereo (OrderedOf<structSound>* me) {
 			if (sharedSamplingPeriod == 0.0) {
 				sharedSamplingPeriod = sound -> dx;
 			} else if (sound -> dx != sharedSamplingPeriod) {
-				Melder_throw (U"To combine sounds, their sampling frequencies must be equal.\n"
+				Melder_throw (U"To combine sounds, their sampling frequencies should be equal.\n"
 						U"You could resample one or more of the sounds before combining.");
 			}
 		}
@@ -288,7 +296,7 @@ double Sound_getIntensity_dB (Sound me) {
 double Sound_getPowerInAir (Sound me) {
 	integer n;
 	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return ( isdefined (sum2) ? sum2 / (n * my ny) / 400 : undefined );
+	return ( isdefined (sum2) ? sum2 / (n * my ny) / 400.0 : undefined );
 }
 
 autoSound Matrix_to_Sound_mono (Matrix me, integer row) {
@@ -359,7 +367,8 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 		if (numberOfSamples < 1)
 			Melder_throw (U"The resampled Sound would have no samples.");
 		autoSound filtered;
-		if (upfactor < 1.0) {   // need anti-aliasing filter?
+		bool weNeedAnAntiAliasingFilter = ( upfactor < 1.0 );
+		if (weNeedAnAntiAliasingFilter) {
 			integer nfft = 1, antiTurnAround = 1000;
 			while (nfft < my nx + antiTurnAround * 2) nfft *= 2;
 			autonumvec data (nfft, kTensorInitializationType::RAW);   // will be zeroed in every turn of the loop
@@ -438,12 +447,12 @@ autoSound Sounds_concatenate (OrderedOf<structSound>& list, double overlapTime) 
 			if (numberOfChannels == 0) {
 				numberOfChannels = sound -> ny;
 			} else if (sound -> ny != numberOfChannels) {
-				Melder_throw (U"To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
+				Melder_throw (U"To concatenate sounds, their numbers of channels (mono, stereo) should be equal.");
 			}
 			if (dx == 0.0) {
 				dx = sound -> dx;
 			} else if (sound -> dx != dx) {
-				Melder_throw (U"To concatenate sounds, their sampling frequencies must be equal.\n"
+				Melder_throw (U"To concatenate sounds, their sampling frequencies should be equal.\n"
 						U"You could resample one or more of the sounds before concatenating.");
 			}
 			nx += sound -> nx;
@@ -913,26 +922,26 @@ autoSound Sound_createAsToneComplex (double startTime, double endTime, double sa
 		if (frequencyStep == 0.0)
 			Melder_throw (U"The frequency step should not be zero.");
 		/*
-		 * Translate default firstFrequency.
-		 */
+			Translate default firstFrequency.
+		*/
 		if (firstFrequency <= 0.0) firstFrequency = frequencyStep;
 		double firstOmega = 2 * NUMpi * firstFrequency;
 		/*
-		 * Translate default ceiling.
-		 */
+			Translate default ceiling.
+		*/
 		double omegaStep = 2 * NUMpi * frequencyStep, nyquistFrequency = 0.5 * samplingFrequency;
 		if (ceiling <= 0.0 || ceiling > nyquistFrequency) ceiling = nyquistFrequency;
 		/*
-		 * Translate number of components.
-		 */
+			Translate number of components.
+		*/
 		integer maximumNumberOfComponents = Melder_ifloor ((ceiling - firstFrequency) / frequencyStep) + 1;
 		if (numberOfComponents <= 0 || numberOfComponents > maximumNumberOfComponents)
 			numberOfComponents = maximumNumberOfComponents;
 		if (numberOfComponents < 1)
 			Melder_throw (U"There would be zero sine waves.");
 		/*
-		 * Generate the Sound.
-		 */
+			Generate the Sound.
+		*/
 		double factor = 0.99 / numberOfComponents;
 		autoSound me = Sound_create (1, startTime, endTime, Melder_iround ((endTime - startTime) * samplingFrequency),
 			1.0 / samplingFrequency, startTime + 0.5 / samplingFrequency);
@@ -1032,44 +1041,44 @@ void Sound_overrideSamplingFrequency (Sound me, double rate) {
 autoSound Sound_extractPart (Sound me, double t1, double t2, kSound_windowShape windowShape, double relativeWidth, bool preserveTimes) {
 	try {
 		/*
-		 * We do not clip to the Sound's time domain.
-		 * Any samples outside it are taken to be zero.
-		 */
+			We do not clip to the Sound's time domain.
+			Any samples outside it are taken to be zero.
+		*/
 
 		/*
-		 * Autowindow.
-		 */
+			Autowindow.
+		*/
 		if (t1 == t2) { t1 = my xmin; t2 = my xmax; };
 		/*
-		 * Allow window tails outside specified domain.
-		 */
+			Allow window tails outside specified domain.
+		*/
 		if (relativeWidth != 1.0) {
 			double margin = 0.5 * (relativeWidth - 1) * (t2 - t1);
 			t1 -= margin;
 			t2 += margin;
 		}
 		/*
-		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
-		 */
+			Determine index range. We use all the real or virtual samples that fit within [t1..t2].
+		*/
 		integer ix1 = 1 + Melder_iceiling ((t1 - my x1) / my dx);
 		integer ix2 = 1 + Melder_ifloor   ((t2 - my x1) / my dx);
 		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
 		/*
-		 * Create sound, optionally shifted to [0..t2-t1].
-		 */
+			Create sound, optionally shifted to [0..t2-t1].
+		*/
 		autoSound thee = Sound_create (my ny, t1, t2, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx);
 		if (! preserveTimes) { thy xmin = 0.0; thy xmax -= t1; thy x1 -= t1; }
 		/*
-		 * Copy only *real* samples into the new sound.
-		 * The *virtual* samples will remain at zero.
-		 */
+			Copy only *real* samples into the new sound.
+			The *virtual* samples will remain at zero.
+		*/
 		for (integer channel = 1; channel <= my ny; channel ++) {
 			NUMvector_copyElements (my z [channel], thy z [channel] + 1 - ix1,
 					( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
 		}
 		/*
-		 * Multiply by a window that extends throughout the target domain.
-		 */
+			Multiply by a window that extends throughout the target domain.
+		*/
 		Sound_multiplyByWindow (thee.get(), windowShape);
 		return thee;
 	} catch (MelderError) {
@@ -1088,22 +1097,22 @@ autoSound Sound_extractPartForOverlap (Sound me, double t1, double t2, double ov
 		if (t1 < my xmin) t1 = my xmin;   // clip to my time domain
 		if (t2 > my xmax) t2 = my xmax;
 		/*
-		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
-		 */
+			Determine index range. We use all the real or virtual samples that fit within [t1..t2].
+		*/
 		integer ix1 = 1 + Melder_iceiling ((t1 - my x1) / my dx);
 		integer ix2 = 1 + Melder_ifloor   ((t2 - my x1) / my dx);
 		if (ix2 < ix1) Melder_throw (U"Extracted Sound would contain no samples.");
 		/*
-		 * Create sound.
-		 */
+			Create sound.
+		*/
 		autoSound thee = Sound_create (my ny, t1, t2, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx);
 		thy xmin = 0.0;
 		thy xmax -= t1;
 		thy x1 -= t1;
 		/*
-		 * Copy only *real* samples into the new sound.
-		 * The *virtual* samples will remain at zero.
-		 */
+			Copy only *real* samples into the new sound.
+			The *virtual* samples will remain at zero.
+		*/
 		for (integer channel = 1; channel <= my ny; channel ++) {
 			NUMvector_copyElements (my z [channel], thy z [channel] + 1 - ix1,
 					( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
