@@ -708,7 +708,7 @@ NORMAL (U"##Integer division# operators (#div and #mod) have the same precedence
 CODE (U"54 div 5 \\-> 10       (division rounded down)")                             //@praat assert 54 div 5 = 10
 CODE (U"54 mod 5 \\-> 4        (the remainder)")                                     //@praat assert 54 mod 5 = 4
 CODE (U"54.3 div 5.1 \\-> 10   (works for real numbers as well)")                    //@praat assert 54.3 div 5.1 = 10
-CODE (U"54.3 mod 5.1 \\-> 3.3  (the remainder)")                                     //@praat assert 54.3 mod 5.1 = 3.3
+CODE (U"54.3 mod 5.1 \\-> 3.3  (the remainder)")                                     //@praat assert abs ((54.3 mod 5.1) - 3.3) < 1e-14
 CODE (U"-54 div 5 \\-> -11     (division rounded down; negation before division)")   //@praat assert -54 div 5 = -11
 CODE (U"-54 mod 5 \\-> 1       (the remainder)")                                     //@praat assert -54 mod 5 = 1
 CODE (U"-(54 div 5) \\-> -10   (use parentheses to change the order)")               //@praat assert -(54 div 5) = -10
@@ -950,7 +950,7 @@ DEFINITION (U"the variable %length contains the number 8 (by the way, from this 
 /*@praat
 	head$ = left$ ("hallo", 3)
 	assert head$ = "hal"
-*/
+@*/
 TAG (U"##left\\$  (a\\$ , n)")
 DEFINITION (U"gives a string consisting of the first %n characters of %%a\\$ %. After")
 		CODE2 (U"head\\$  = left\\$  (\"hallo\", 3)")
@@ -964,7 +964,7 @@ DEFINITION (U"gives a string consisting of the last %n characters of %%a\\$ %. A
 		CODE2 (U"english\\$  = \"he\" + right\\$  (\"hallo\", 3)")
 DEFINITION (U"the variable %%english\\$ % contains the string \"hello\".")
 /*@praat
-	mid$ ("hello", 3, 2) = "ll"
+	assert mid$ ("hello", 3, 2) = "ll"
 @*/
 TAG (U"##mid\\$  (\"hello\" , 3, 2)")
 DEFINITION (U"gives a string consisting of 2 characters from \"hello\", starting at the third character. Outcome: ll.")

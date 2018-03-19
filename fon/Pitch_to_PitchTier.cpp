@@ -27,7 +27,7 @@ autoPitchTier Pitch_to_PitchTier (Pitch me) {
 			/*
 				Count only voiced frames.
 			*/
-			if (frequency > 0.0 && frequency < my ceiling) {
+			if (Pitch_util_frequencyIsVoiced (frequency, my ceiling)) {
 				double time = Sampled_indexToX (me, i);
 				RealTier_addPoint (you.get(), time, frequency);
 			}
@@ -122,7 +122,7 @@ autoPitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & your frame [iframe];
 			Pitch_Candidate cand = & frame -> candidate [1];
-			if (cand -> frequency > 0.0 && cand -> frequency <= my ceiling)
+			if (Pitch_util_frequencyIsVoiced (cand -> frequency, my ceiling))
 				cand -> frequency = RealTier_getValueAtTime (tier, Sampled_indexToX (me, iframe));
 			cand -> strength = 0.9;
 			frame -> nCandidates = 1;

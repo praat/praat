@@ -1,6 +1,6 @@
 /* Matrix_and_Pitch.cpp
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ autoMatrix Pitch_to_Matrix (Pitch me) {
 		for (integer i = 1; i <= my nx; i ++) {
 			double value = my frame [i]. candidate [1]. frequency;
 			your z [1] [i] =
-				value > 0.0 && value < my ceiling ? my frame [i]. candidate [1]. frequency : 0.0;
+				Pitch_util_frequencyIsVoiced (value, my ceiling) ? my frame [i]. candidate [1]. frequency : 0.0;
 		}
 		return you;
 	} catch (MelderError) {
