@@ -1,6 +1,6 @@
 /* Speaker_to_Delta.cpp
  *
- * Copyright (C) 1992-2005,2006,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2006,2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 autoDelta Speaker_to_Delta (Speaker me) {
 	double f = my relativeSize * 1e-3;   // we shall use millimetres and grams
 	double xe [30], ye [30], xi [30], yi [30], xmm [30], ymm [30], dx, dy;
-	int closed [40];
 	autoDelta thee = Delta_create (89);
 	Melder_assert (my cord.numberOfMasses == 1 || my cord.numberOfMasses == 2 || my cord.numberOfMasses == 10);
 
@@ -212,6 +211,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 	}
 
 	/* Vocal tract from neutral articulation. */
+	bool closed [40];
 	{
 		autoArt art = Art_create ();
 		Art_Speaker_meshVocalTract (art.get(), me, xi, yi, xe, ye, xmm, ymm, closed);
