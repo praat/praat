@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2011,2012,2013,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +80,26 @@ Thing_define (UiOption, Thing) {
 	GuiObject menuItem;
 };
 
+enum class _kUiField_type {
+	REAL = 1,
+	REAL_OR_UNDEFINED = 2,
+	POSITIVE = 3,
+	INTEGER = 4,
+	NATURAL = 5,
+	WORD = 6,
+	SENTENCE = 7,
+	COLOUR = 8,
+	CHANNEL = 9,
+	LABEL = 10,
+	TEXT = 11,
+	NUMVEC = 12,
+	NUMMAT = 13,
+	BOOLEAN = 14,
+	RADIO = 15,
+	OPTIONMENU = 16,
+	LIST = 17
+};
+
 Thing_define (UiField, Thing) {
 	int type;
 	const char32 *formLabel;
@@ -89,7 +109,6 @@ Thing_define (UiField, Thing) {
 	autonumvec numericVectorValue;
 	autonummat numericMatrixValue;
 	Graphics_Colour colourValue;
-	char *stringValueA;
 	OrderedOf<structUiOption> options;
 	integer numberOfStrings;
 	const char32 **strings;
@@ -134,14 +153,14 @@ Thing_define (UiForm, Thing) {
 	void *buttonClosure;
 
 	/*
-	 * In case the validity of the form depends on the selected objects.
-	 */
+		In case the validity of the form depends on the selected objects.
+	*/
 	bool (*allowExecutionHook) (void *closure);
 	void *allowExecutionClosure;
 
 	/*
-	 * In case the form is built by specifying buttons (rather than a system-built-in file dialog).
-	 */
+		In case the form is built by specifying buttons (rather than a system-built-in file dialog).
+	*/
 	GuiDialog d_dialogForm;
 	void (*applyCallback) (UiForm dia, void *closure);
 	void (*cancelCallback) (UiForm dia, void *closure);
@@ -153,8 +172,8 @@ Thing_define (UiForm, Thing) {
 	bool destroyWhenUnmanaged, isPauseForm;
 
 	/*
-	 * In case the form contains a file.
-	 */
+		In case the form contains a file.
+	*/
 	structMelderFile file;
 	int shiftKeyPressed;
 	bool allowMultipleFiles;   // for input
