@@ -1,6 +1,6 @@
 /* Art_Speaker.h
  *
- * Copyright (C) 1992-2005,2011,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2016-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ void Art_Speaker_fillInnerContour (Art art, Speaker speaker, Graphics g);
 
 void Art_Speaker_meshVocalTract (Art art, Speaker speaker,
 	double xi [], double yi [], double xe [], double ye [],
-	double xmm [], double ymm [], int closed []);
+	double xmm [], double ymm [], bool closed []);
 
 void Art_Speaker_drawMesh (Art art, Speaker speaker, Graphics g);
 

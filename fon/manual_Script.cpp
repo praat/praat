@@ -708,7 +708,7 @@ NORMAL (U"##Integer division# operators (#div and #mod) have the same precedence
 CODE (U"54 div 5 \\-> 10       (division rounded down)")                             //@praat assert 54 div 5 = 10
 CODE (U"54 mod 5 \\-> 4        (the remainder)")                                     //@praat assert 54 mod 5 = 4
 CODE (U"54.3 div 5.1 \\-> 10   (works for real numbers as well)")                    //@praat assert 54.3 div 5.1 = 10
-CODE (U"54.3 mod 5.1 \\-> 3.3  (the remainder)")                                     //@praat assert 54.3 mod 5.1 = 3.3
+CODE (U"54.3 mod 5.1 \\-> 3.3  (the remainder)")                                     //@praat assert abs ((54.3 mod 5.1) - 3.3) < 1e-14
 CODE (U"-54 div 5 \\-> -11     (division rounded down; negation before division)")   //@praat assert -54 div 5 = -11
 CODE (U"-54 mod 5 \\-> 1       (the remainder)")                                     //@praat assert -54 mod 5 = 1
 CODE (U"-(54 div 5) \\-> -10   (use parentheses to change the order)")               //@praat assert -(54 div 5) = -10
@@ -931,41 +931,75 @@ TAG (U"##besselK (%n, %x)")
 NORMAL (U"For functions with arrays, see @@Scripting 5.7. Vectors and matrices@.")
 MAN_END
 
-MAN_BEGIN (U"Formulas 6. String functions", U"ppgb", 20140223)
+MAN_BEGIN (U"Formulas 6. String functions", U"ppgb", 20180318)
 INTRO (U"String functions are functions that either return a text string or have at least one text string as an argument. "
 	"Since string computations are not very useful in the @calculator, in settings windows, or in creation and "
 	"modification formulas, this page only gives examples of strings in scripts, so that the example may contain "
 	"string variables.")
+/*@praat
+	string$ = "hallo"
+	length = length (string$ + "dag")
+	assert length = 8
+@*/
 TAG (U"##length (a\\$ )")
 DEFINITION (U"gives the length of the string. After")
 		CODE2 (U"string\\$  = \"hallo\"")
 		CODE2 (U"length = length (string\\$  + \"dag\")")
 DEFINITION (U"the variable %length contains the number 8 (by the way, from this example "
 	"you see that variables can have the same names as functions, without any danger of confusing the interpreter).")
+/*@praat
+	head$ = left$ ("hallo", 3)
+	assert head$ = "hal"
+@*/
 TAG (U"##left\\$  (a\\$ , n)")
 DEFINITION (U"gives a string consisting of the first %n characters of %%a\\$ %. After")
 		CODE2 (U"head\\$  = left\\$  (\"hallo\", 3)")
 DEFINITION (U"the variable %%head\\$ % contains the string \"hal\".")
+/*@praat
+	english$ = "he" + right$ ("hallo", 3)
+	assert english$ = "hello"
+@*/
 TAG (U"##right\\$  (a\\$ , n)")
 DEFINITION (U"gives a string consisting of the last %n characters of %%a\\$ %. After")
 		CODE2 (U"english\\$  = \"he\" + right\\$  (\"hallo\", 3)")
 DEFINITION (U"the variable %%english\\$ % contains the string \"hello\".")
+/*@praat
+	assert mid$ ("hello", 3, 2) = "ll"
+@*/
 TAG (U"##mid\\$  (\"hello\" , 3, 2)")
 DEFINITION (U"gives a string consisting of 2 characters from \"hello\", starting at the third character. Outcome: ll.")
+/*@praat
+	where = index ("hallo allemaal", "al")
+	assert where = 2
+	assert index ("hallo allemaal", "fhjgfhj") = 0
+@*/
 TAG (U"##index (a\\$ , b\\$ )")
 DEFINITION (U"gives the index of the first occurrence of the string %%b\\$ % in the string %%a\\$ %. After")
 		CODE2 (U"where = index (\"hallo allemaal\", \"al\")")
 DEFINITION (U"the variable %where contains the number 2, because the first \"al\" starts at the second character of the longer string. "
 	"If the first string does not contain the second string, %index returns 0.")
+/*@praat
+	where = rindex ("hallo allemaal", "al")
+	assert where = 13
+	assert rindex ("hallo allemaal", "fhjgfhj") = 0
+@*/
 TAG (U"##rindex (a\\$ , b\\$ )")
 DEFINITION (U"gives the index of the last occurrence of the string %%b\\$ % in the string %%a\\$ %. After")
 		CODE2 (U"where = rindex (\"hallo allemaal\", \"al\")")
 DEFINITION (U"the variable %where contains the number 13, because the last \"al\" starts at the 13th character. "
 	"If the first string does not contain the second string, %rindex returns 0.")
+/*@praat
+	where = startsWith ("internationalization", "int")
+	assert where = 1
+@*/
 TAG (U"##startsWith (a\\$ , b\\$ )")
 DEFINITION (U"determines whether the string %%a\\$ % starts with the string %%b\\$ %. After")
 		CODE2 (U"where = startsWith (\"internationalization\", \"int\")")
 DEFINITION (U"the variable %where contains the number 1 (true).")
+/*@praat
+	where = endsWith ("internationalization", "nation")
+	assert where = 0
+@*/
 TAG (U"##endsWith (a\\$ , b\\$ )")
 DEFINITION (U"determines whether the string %%a\\$ % ends with the string %%b\\$ %. After")
 		CODE2 (U"where = endsWith (\"internationalization\", \"nation\")")
@@ -1007,11 +1041,15 @@ TAG (U"##percent\\$  (number, precision)")
 DEFINITION (U"the same as ##fixed\\$ #, but with a percent sign. For instance, $$percent\\$ (0.157, 3)$ becomes $$15.700\\% $, "
 	"$$percent\\$ (0.000157, 3)$ becomes $$0.016\\% $, and $$percent\\$  (0.000000157, 3)$ becomes $$0.00002\\% $. "
 	"The number 0 always becomes the string $0.")
+/*@praat
+	string$ = "5e6"
+	assert 3 + number (string$) = 5000003
+@*/
 TAG (U"##number (a\\$ )")
-DEFINITION (U"interprets a string as a number.")
+DEFINITION (U"interprets a string as a number. After")
 		CODE2 (U"string\\$  = \"5e6\"")
 		CODE2 (U"writeInfoLine: 3 + number (string\\$ )")
-DEFINITION (U"the Info window contains the number 500003.")
+DEFINITION (U"the Info window contains the number 5000003.")
 TAG (U"##date\\$  ( )")
 DEFINITION (U"gives the date and time in the following format:")
 		CODE2 (U"Mon Jun 24 17:11:21 2002")

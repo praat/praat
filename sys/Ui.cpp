@@ -54,7 +54,6 @@ Thing_implement (UiField, Thing, 0);
 void structUiField :: v_destroy () noexcept {
 	Melder_free (our formLabel);
 	Melder_free (our stringValue);
-	Melder_free (our stringValueA);
 	Melder_free (our stringDefaultValue);
 	if (our owned) {
 		our numericVectorVariable -> reset();
@@ -71,8 +70,8 @@ static UiField UiField_create (int type, const char32 *name) {
 	str32ncpy (shortName, name, 100);
 	shortName [100] = U'\0';
 	/*
-	 * Strip parentheses and colon off parameter name.
-	 */
+		Strip parentheses and colon off parameter name.
+	*/
 	if (!! (p = (char32 *) str32chr (shortName, U'('))) {
 		*p = U'\0';
 		if (p - shortName > 0 && p [-1] == U' ') p [-1] = U'\0';
@@ -341,15 +340,15 @@ void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void 
 }
 
 void structUiForm :: v_destroy () noexcept {
-	for (int ifield = 1; ifield <= numberOfFields; ifield ++)
-		forget (field [ifield]);
-	if (d_dialogForm) {
-		trace (U"invoking button title ", invokingButtonTitle);
-		GuiObject_destroy (d_dialogForm -> d_widget);   // BUG: make sure this destroys the shell
+	for (int ifield = 1; ifield <= our numberOfFields; ifield ++)
+		forget (our field [ifield]);
+	if (our d_dialogForm) {
+		trace (U"invoking button title ", our invokingButtonTitle);
+		GuiObject_destroy (our d_dialogForm -> d_widget);   // BUG: make sure this destroys the shell
 	}
-	Melder_free (invokingButtonTitle);
-	Melder_free (helpTitle);
-	UiForm_Parent :: v_destroy ();
+	Melder_free (our invokingButtonTitle);
+	Melder_free (our helpTitle);
+	our UiForm_Parent :: v_destroy ();
 }
 
 static void gui_button_cb_revert (UiForm me, GuiButtonEvent /* event */) {
@@ -399,13 +398,13 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 		}
 	}
 	/*
-	 * Keep the gate for error handling.
-	 */
+		Keep the gate for error handling.
+	*/
 	try {
 		my okCallback (me, 0, nullptr, nullptr, nullptr, nullptr, false, my buttonClosure);
 		/*
-		 * Write everything to history. Before destruction!
-		 */
+			Write everything to history. Before destruction!
+		*/
 		if (! my isPauseForm) {
 			UiHistory_write (U"\n");
 			UiHistory_write_colonize (my invokingButtonTitle);
@@ -454,14 +453,14 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 		}
 	} catch (MelderError) {
 		/*
-		 * If a solution has already been suggested, or the "error" was actually a conscious user action, do not add anything more.
-		 */
+			If a solution has already been suggested, or the "error" was actually a conscious user action, do not add anything more.
+		*/
 		if (! str32str (Melder_getError (), U"Please ") && ! str32str (Melder_getError (), U"You could ") &&
 			! str32str (Melder_getError (), U"You interrupted ") && ! str32str (Melder_getError (), U"Interrupted!"))
 		{
 			/*
-			 * Otherwise, show a generic message.
-			 */
+				Otherwise, show a generic message.
+			*/
 			if (str32str (Melder_getError (), U"Selection changed!")) {
 				Melder_appendError (U"Please change the selection in the object list, or click Cancel in the command window " U_LEFT_DOUBLE_QUOTE,
 					my name, U_RIGHT_DOUBLE_QUOTE U".");
@@ -1195,15 +1194,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			}
 			if (my integerValue == 0) {
 				/*
-				 * Retry with different case.
-				 */
+					Retry with different case.
+				*/
 				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
-					char32 name2 [100];
-					str32cpy (name2, b -> name);
-					if (islower32 (name2 [0])) name2 [0] = toupper32 (name2 [0]);
-					else if (isupper32 (name2 [0])) name2 [0] = tolower32 (name2 [0]);
-					if (str32equ (arg -> string, name2))
+					if (Melder_equ_firstCharacterCaseInsensitive (arg -> string, b -> name))
 						my integerValue = i;
 				}
 			}
@@ -1322,11 +1317,8 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				*/
 				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
-					char32 name2 [100];
-					str32cpy (name2, b -> name);
-					if (islower32 (name2 [0])) name2 [0] = toupper32 (name2 [0]);
-					else if (isupper32 (name2 [0])) name2 [0] = tolower32 (name2 [0]);
-					if (str32equ (string, name2))
+					if (
+					 (string, b -> name))
 						my integerValue = i;
 				}
 			}
@@ -1373,6 +1365,8 @@ void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpr
 			Create Sound from formula... sineWithNoise 1 0 1 44100 0.5 * sin (2*pi*377*x)
 		This was deprecated with the advent of the colon-based scripting style
 			Create Sound from formula: "sineWithNoise", 1, 0, 1, 44100, "0.5 * sin (2*pi*377*x)"
+		or
+			Create Sound from formula: "sineWithNoise", 1, 0, 1, 44100, ~ 0.5 * sin (2*pi*377*x)
 		in 2014, i.e. 22 years after Praat started.
 		If we want to conservatively support old scripts, we will have
 		to continue to support the dots-based scripting style until 2036.
@@ -1386,18 +1380,18 @@ void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpr
 		if (my field [i] -> type == UI_LABEL)
 			continue;   // ignore non-trailing fields without a value
 		/*
-		 * Skip spaces until next argument.
-		 */
+			Skip spaces until next argument.
+		*/
 		while (*arguments == U' ' || *arguments == U'\t') arguments ++;
 		/*
-		 * The argument is everything up to the next space, or, if that starts with a double quote,
-		 * everything between this quote and the matching double quote;
-		 * in this case, the argument can represent a double quote by a sequence of two double quotes.
-		 * Example: the string
-		 *     "I said ""hello"""
-		 * will be passed to the dialog as a single argument containing the text
-		 *     I said "hello"
-		 */
+			The argument is everything up to the next space, or, if that starts with a double quote,
+			everything between this quote and the matching double quote;
+			in this case, the argument can represent a double quote by a sequence of two double quotes.
+			Example: the string
+				"I said ""hello"""
+			will be passed to the dialog as a single argument containing the text
+				I said "hello"
+		*/
 		if (*arguments == U'\"') {
 			arguments ++;   // do not include leading double quote
 			for (;;) {
@@ -1418,9 +1412,9 @@ void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpr
 		}
 	}
 	/*
-	 * The last item is handled separately, because it consists of the rest of the line.
-	 * Leading spaces are skipped, but trailing spaces are included.
-	 */
+		The last item is handled separately, because it consists of the rest of the line.
+		Leading spaces are skipped, but trailing spaces are included.
+	*/
 	if (size > 0) {
 		while (*arguments == U' ' || *arguments == U'\t') arguments ++;
 		try {
@@ -1766,8 +1760,8 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 		UiField field = my field [ifield];
 		MelderString_copy (& lowerCaseFieldName, field -> name);
 		/*
-		 * Change e.g. "Number of people" to "number_of_people".
-		 */
+			Change e.g. "Number of people" to "number_of_people".
+		*/
 		lowerCaseFieldName.string [0] = tolower32 (lowerCaseFieldName.string [0]);   // BUG for non-BMP characters
 		for (char32 *p = & lowerCaseFieldName.string [0]; *p != U'\0'; p ++) {
 			if (*p == U' ') *p = U'_';

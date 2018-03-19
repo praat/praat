@@ -1,6 +1,6 @@
 /* Art_Speaker.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,51 +50,51 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 	/* does not follow completely the horizontal movements.		*/
 
 	/* Anterior larynx. */
-	intX [1] = -14 * f + 0.5 * hyoid.dx;		intY [1] = -53 * f + hyoid.dy;
+	intX [1] = -14.0 * f + 0.5 * hyoid.dx;	intY [1] = -53.0 * f + hyoid.dy;
 	/* Top of larynx. */
-	intX [2] = -20 * f + hyoid.dx;		intY [2] = -33 * f + hyoid.dy;
+	intX [2] = -20.0 * f + hyoid.dx;		intY [2] = -33.0 * f + hyoid.dy;
 	/* Epiglottis. */
-	intX [3] = -20 * f + hyoid.dx;		intY [3] = -26 * f + hyoid.dy;
+	intX [3] = -20.0 * f + hyoid.dx;		intY [3] = -26.0 * f + hyoid.dy;
 	/* Hyoid bone. */
-	intX [4] = -16 * f + hyoid.dx;		intY [4] = -26 * f + hyoid.dy;
+	intX [4] = -16.0 * f + hyoid.dx;		intY [4] = -26.0 * f + hyoid.dy;
 	/* Posterior larynx. */
-	extX [1] = -22 * f + hyoid.dx;		extY [1] = -53 * f + hyoid.dy;
+	extX [1] = -22.0 * f + hyoid.dx;		extY [1] = -53.0 * f + hyoid.dy;
 	/* Esophagus. */
-	extX [2] = -26 * f + hyoid.dx;		extY [2] = -40 * f + hyoid.dy;
+	extX [2] = -26.0 * f + hyoid.dx;		extY [2] = -40.0 * f + hyoid.dy;
 
 	/* The lower pharynx moves up and down with the hyoid bone.			*/
 	/* The lower constrictor muscle pulls the rear pharyngeal wall forwards.	*/
 
-	extX [3] = -34 * f + art [(int) kArt_muscle::SPHINCTER] * 5 * f;	extY [3] = extY [2];
+	extX [3] = -34.0 * f + art [(int) kArt_muscle::SPHINCTER] * (5.0 * f);
+	extY [3] = extY [2];
 
 	/* The upper pharynx is fixed at the height of the velum. */
 	/* The upper constrictor muscle pulls the rear pharyngeal wall forwards. */
 
-	extX [5] = -34 * f + art [(int) kArt_muscle::SPHINCTER] * 5 * f;
+	extX [5] = -34.0 * f + art [(int) kArt_muscle::SPHINCTER] * (5.0 * f);
 	extY [5] = speaker -> velum.y;
 
 	/* The height of the middle pharynx is in between the lower and upper pharynx. */
 	/* The middle constrictor muscle pulls the rear pharyngeal wall forwards. */
 
-	extX [4] = -34 * f + art [(int) kArt_muscle::SPHINCTER] * 5 * f;
+	extX [4] = -34.0 * f + art [(int) kArt_muscle::SPHINCTER] * (5.0 * f);
 	extY [4] = 0.5 * (extY [3] + extY [5]);
 
 	/* Tongue root. */
 
-	jaw.x = -75 * f, jaw.y = 53 * f;   /* Position of the condyle. */
+	jaw.x = -75.0 * f, jaw.y = 53.0 * f;   // position of the condyle
 	jaw.da = art [(int) kArt_muscle::MASSETER] * 0.15
 		- art [(int) kArt_muscle::MYLOHYOID] * 0.20;
-	body.x = jaw.x + 81 * f * cos (-0.60 + jaw.da)
-		- art [(int) kArt_muscle::STYLOGLOSSUS] * 10 * f
-		+ art [(int) kArt_muscle::GENIOGLOSSUS] * 10 * f;
-	body.y = jaw.y + 81 * f * sin (-0.60 + jaw.da)
-		- art [(int) kArt_muscle::HYOGLOSSUS] * 10 * f
-		+ art [(int) kArt_muscle::STYLOGLOSSUS] * 5 * f;
+	body.x = jaw.x + 81.0 * f * cos (-0.60 + jaw.da)
+		- art [(int) kArt_muscle::STYLOGLOSSUS] * (10.0 * f)
+		+ art [(int) kArt_muscle::GENIOGLOSSUS] * (10.0 * f);
+	body.y = jaw.y + 81.0 * f * sin (-0.60 + jaw.da)
+		- art [(int) kArt_muscle::HYOGLOSSUS] * (10.0 * f)
+		+ art [(int) kArt_muscle::STYLOGLOSSUS] * (5.0 * f);
 	*bodyX = body.x;
 	*bodyY = body.y;
-	body.r = sqrt ((jaw.x - body.x) * (jaw.x - body.x)
-					 + (jaw.y - body.y) * (jaw.y - body.y));
-	body.radius = 20 * f;
+	body.r = sqrt ((jaw.x - body.x) * (jaw.x - body.x) + (jaw.y - body.y) * (jaw.y - body.y));
+	body.radius = 20.0 * f;
 	HBody_x = body.x - intX [4];
 	HBody_y = body.y - intY [4];
 	HC = sqrt (HBody_x * HBody_x + HBody_y * HBody_y);
@@ -191,7 +191,6 @@ void Art_Speaker_draw (Art art, Speaker speaker, Graphics g) {
 	double f = speaker -> relativeSize * 1e-3;
 	double intX [1 + 16], intY [1 + 16], extX [1 + 11], extY [1 + 11];
 	double bodyX, bodyY;
-	int i;
 	Graphics_Viewport previous;
 
 	Art_Speaker_toVocalTract (art, speaker, intX, intY, extX, extY, & bodyX, & bodyY);
@@ -200,22 +199,22 @@ void Art_Speaker_draw (Art art, Speaker speaker, Graphics g) {
 
 	/* Draw inner contour. */
 
-	for (i = 1; i <= 5; i ++)
+	for (integer i = 1; i <= 5; i ++)
 		Graphics_line (g, intX [i], intY [i], intX [i + 1], intY [i + 1]);
-	Graphics_arc (g, bodyX, bodyY, 20 * f,
-		atan2 (intY [7] - bodyY, intX [7] - bodyX) * 180 / NUMpi,
-		atan2 (intY [6] - bodyY, intX [6] - bodyX) * 180 / NUMpi);
-	for (i = 7; i <= 15; i ++)
+	Graphics_arc (g, bodyX, bodyY, 20.0 * f,
+		atan2 (intY [7] - bodyY, intX [7] - bodyX) * (180.0 / NUMpi),
+		atan2 (intY [6] - bodyY, intX [6] - bodyX) * (180.0 / NUMpi));
+	for (integer i = 7; i <= 15; i ++)
 		Graphics_line (g, intX [i], intY [i], intX [i + 1], intY [i + 1]);
 
 	/* Draw outer contour. */
 
-	for (i = 1; i <= 5; i ++)
+	for (integer i = 1; i <= 5; i ++)
 		Graphics_line (g, extX [i], extY [i], extX [i + 1], extY [i + 1]);
-	Graphics_arc (g, 0, 0, speaker -> palate.radius,
-		speaker -> alveoli.a * 180 / NUMpi,
-		speaker -> velum.a * 180 / NUMpi);
-	for (i = 7; i <= 10; i ++)
+	Graphics_arc (g, 0.0, 0.0, speaker -> palate.radius,
+		speaker -> alveoli.a * (180.0 / NUMpi),
+		speaker -> velum.a * (180.0 / NUMpi));
+	for (integer i = 7; i <= 10; i ++)
 		Graphics_line (g, extX [i], extY [i], extX [i + 1], extY [i + 1]);
 	Graphics_resetViewport (g, previous);
 }
@@ -225,32 +224,34 @@ void Art_Speaker_fillInnerContour (Art art, Speaker speaker, Graphics g) {
 	double intX [1 + 16], intY [1 + 16], extX [1 + 11], extY [1 + 11];
 	double x [1 + 16], y [1 + 16];
 	double bodyX, bodyY;
-	int i;
 	Graphics_Viewport previous;
 
 	Art_Speaker_toVocalTract (art, speaker, intX, intY, extX, extY, & bodyX, & bodyY);
 	previous = Graphics_insetViewport (g, 0.1, 0.9, 0.1, 0.9);
 	Graphics_setWindow (g, -0.05, 0.05, -0.05, 0.05);
-	for (i = 1; i <= 16; i ++) { x [i] = intX [i]; y [i] = intY [i]; }
+	for (integer i = 1; i <= 16; i ++) {
+		x [i] = intX [i];
+		y [i] = intY [i];
+	}
 	Graphics_setGrey (g, 0.8);
 	Graphics_fillArea (g, 16, & x [1], & y [1]);
-	Graphics_fillCircle (g, bodyX, bodyY, 20 * f);
+	Graphics_fillCircle (g, bodyX, bodyY, 20.0 * f);
 	Graphics_setGrey (g, 0.0);
 	Graphics_resetViewport (g, previous);
 }
 
 static double arcLength (double from, double to) {
 	double result = to - from;
-	while (result > 0.0) result -= 2 * NUMpi;
-	while (result < 0.0) result += 2 * NUMpi;
+	while (result > 0.0) result -= 2.0 * NUMpi;
+	while (result < 0.0) result += 2.0 * NUMpi;
 	return result;
 }
 
 static int Art_Speaker_meshCount = 27;
 static double bodyX, bodyY, bodyRadius;
 
-static double toLine (double x, double y, const double intX [], const double intY [], int i) {
-	int nearby;
+static double toLine (double x, double y, const double intX [], const double intY [], integer i) {
+	integer nearby;
 	if (i == 6) {
 		double a7 = atan2 (intY [7] - bodyY, intX [7] - bodyX);
 		double a6 = atan2 (intY [6] - bodyY, intX [6] - bodyX);
@@ -280,8 +281,8 @@ static double toLine (double x, double y, const double intX [], const double int
 static int inside (double x, double y,
 	const double intX [], const double intY [])
 {
-	int i, up = 0;
-	for (i = 1; i <= 16 - 1; i ++)
+	integer up = 0;
+	for (integer i = 1; i <= 16 - 1; i ++)
 		if ((y > intY [i]) != (y > intY [i + 1])) {
 			double slope = (intX [i + 1] - intX [i]) / (intY [i + 1] - intY [i]);
 			if (x > intX [i] + (y - intY [i]) * slope)
@@ -293,23 +294,22 @@ static int inside (double x, double y,
 
 void Art_Speaker_meshVocalTract (Art art, Speaker speaker,
 	double xi [], double yi [], double xe [], double ye [],
-	double xmm [], double ymm [], int closed [])
+	double xmm [], double ymm [], bool closed [])
 {
 	double f = speaker -> relativeSize * 1e-3;
 	double intX [1 + 16], intY [1 + 16], extX [1 + 11], extY [1 + 11], d_angle;
 	double xm [40], ym [40];
-	int i;
 
 	Art_Speaker_toVocalTract (art, speaker, intX, intY, extX, extY, & bodyX, & bodyY);
-	bodyRadius = 20 * f;
+	bodyRadius = 20.0 * f;
 
-	xe [1] = extX [1];   /* Eq. 5.45 */
+	xe [1] = extX [1];   // eq. 5.45
 	ye [1] = extY [1];
 	xe [2] = 0.2 * extX [2] + 0.8 * extX [1];
 	ye [2] = 0.2 * extY [2] + 0.8 * extY [1];
 	xe [3] = 0.6 * extX [2] + 0.4 * extX [1];
 	ye [3] = 0.6 * extY [2] + 0.4 * extY [1];
-	xe [4] = 0.9 * extX [3] + 0.1 * extX [4];   /* Eq. 5.46 */
+	xe [4] = 0.9 * extX [3] + 0.1 * extX [4];   // eq. 5.46
 	ye [4] = 0.9 * extY [3] + 0.1 * extY [4];
 	xe [5] = 0.7 * extX [3] + 0.3 * extX [4];
 	ye [5] = 0.7 * extY [3] + 0.3 * extY [4];
@@ -329,8 +329,8 @@ void Art_Speaker_meshVocalTract (Art art, Speaker speaker,
 	ye [12] = 0.3 * extY [4] + 0.7 * extY [5];
 	xe [13] = 0.1 * extX [4] + 0.9 * extX [5];
 	ye [13] = 0.1 * extY [4] + 0.9 * extY [5];
-	d_angle = (atan2 (ye [13], xe [13]) - 0.5 * NUMpi) / 6;   /* Eq. 5.47 */
-	for (i = 14; i <= 18; i ++) {
+	d_angle = (atan2 (ye [13], xe [13]) - 0.5 * NUMpi) / 6;   // eq. 5.47
+	for (integer i = 14; i <= 18; i ++) {
 		double a = 0.5 * NUMpi + (19 - i) * d_angle;
 		xe [i] = speaker -> palate.radius * cos (a);
 		ye [i] = speaker -> palate.radius * sin (a);
@@ -340,7 +340,7 @@ void Art_Speaker_meshVocalTract (Art art, Speaker speaker,
 	xe [20] = 0.25 * extX [7];
 	xe [21] = 0.50 * extX [7];
 	xe [22] = 0.75 * extX [7];
-	for (i = 20; i <= 22; i ++) {
+	for (integer i = 20; i <= 22; i ++) {
 		ye [i] = speaker -> palate.radius * sqrt (1.0 - xe [i] * xe [i] /
 			(speaker -> palate.radius * speaker -> palate.radius));
 	}
@@ -354,69 +354,66 @@ void Art_Speaker_meshVocalTract (Art art, Speaker speaker,
 	xe [27] = 0.75 * extX [11] + 0.25 * extX [9];
 	ye [26] = extY [10];
 	ye [27] = 0.5 * (extY [10] + extY [11]);
-	for (i = 1; i <= 27; i ++) {   /* Every mesh point. */
-		double minimum = 100000;
-		int j;
-		for (j = 1; j <= 15 - 1; j ++) {   /* Every internal segment. */
+	for (integer i = 1; i <= 27; i ++) {   // every mesh point
+		double minimum = 100000.0;
+		for (integer j = 1; j <= 15 - 1; j ++) {   // every internal segment
 			double d = toLine (xe [i], ye [i], intX, intY, j);
 			if (d < minimum) minimum = d;
 		}
-		if ((closed [i] = inside (xe [i], ye [i], intX, intY)) != 0)
+		if (( closed [i] = inside (xe [i], ye [i], intX, intY) ))
 			minimum = - minimum;
-		if (xe [i] >= 0.0) {   /* Vertical line pieces. */
+		if (xe [i] >= 0.0) {   // vertical line pieces
 			xi [i] = xe [i];
 			yi [i] = ye [i] - minimum;
-		} else if (ye [i] <= 0.0) {   /* Horizontal line pieces. */
+		} else if (ye [i] <= 0.0) {   // horizontal line pieces
 			xi [i] = xe [i] + minimum;
 			yi [i] = ye [i];
-		} else {   /* Radial line pieces, centre = centre of palate arc. */
+		} else {   // radial line pieces, centre = centre of palate arc
 			double angle = atan2 (ye [i], xe [i]);
 			xi [i] = xe [i] - minimum * cos (angle);
 			yi [i] = ye [i] - minimum * sin (angle);
 		}
 	}
-	for (i = 1; i <= Art_Speaker_meshCount; i ++) {
+	for (integer i = 1; i <= Art_Speaker_meshCount; i ++) {
 		xm [i] = 0.5 * (xe [i] + xi [i]);
 		ym [i] = 0.5 * (ye [i] + yi [i]);
 	}
-	for (i = 2; i <= Art_Speaker_meshCount; i ++) {
+	for (integer i = 2; i <= Art_Speaker_meshCount; i ++) {
 		xmm [i] = 0.5 * (xm [i - 1] + xm [i]);
 		ymm [i] = 0.5 * (ym [i - 1] + ym [i]);
 	}
-	xmm [1] = 2 * xm [1] - xmm [2];
-	ymm [1] = 2 * ym [1] - ymm [2];
-	xmm [Art_Speaker_meshCount + 1] = 2 * xm [Art_Speaker_meshCount]
+	xmm [1] = 2.0 * xm [1] - xmm [2];
+	ymm [1] = 2.0 * ym [1] - ymm [2];
+	xmm [Art_Speaker_meshCount + 1] = 2.0 * xm [Art_Speaker_meshCount]
 		- xmm [Art_Speaker_meshCount];
-	ymm [Art_Speaker_meshCount + 1] = 2 * ym [Art_Speaker_meshCount]
+	ymm [Art_Speaker_meshCount + 1] = 2.0 * ym [Art_Speaker_meshCount]
 		- ymm [Art_Speaker_meshCount];
 }
 
 void Art_Speaker_drawMesh (Art art, Speaker speaker, Graphics graphics) {
 	double xi [40], yi [40], xe [40], ye [40], xmm [40], ymm [40];
-	int closed [40];
-	int i;
-	Graphics_Viewport previous;
+	bool closed [40];
 	int oldLineType = Graphics_inqLineType (graphics);
 	Art_Speaker_meshVocalTract (art, speaker, xi, yi, xe, ye, xmm, ymm, closed);
-	previous = Graphics_insetViewport (graphics, 0.1, 0.9, 0.1, 0.9);   /* Must be square. */
+	Graphics_Viewport previous = Graphics_insetViewport (graphics, 0.1, 0.9, 0.1, 0.9);   // must be square
 	Graphics_setWindow (graphics, -0.05, 0.05, -0.05, 0.05);
 
 	/* Mesh lines. */
-	for (i = 1; i <= Art_Speaker_meshCount; i ++)
+	for (integer i = 1; i <= Art_Speaker_meshCount; i ++)
 		Graphics_line (graphics, xi [i], yi [i], xe [i], ye [i]);
 
 	/* Radii. */
 	Graphics_setLineType (graphics, Graphics_DOTTED);
-	for (i = 1; i <= Art_Speaker_meshCount; i ++)
+	for (integer i = 1; i <= Art_Speaker_meshCount; i ++)
 		if (xe [i] <= 0.0 && ye [i] >= 0.0)
 			Graphics_line (graphics, 0.0, 0.0, 0.9 * xi [i], 0.9 * yi [i]);
 	Graphics_setLineType (graphics, oldLineType);
 
 	/* Lengths. */
-	for (i = 1; i <= Art_Speaker_meshCount; i ++)
+	for (integer i = 1; i <= Art_Speaker_meshCount; i ++)
 		Graphics_line (graphics, xmm [i], ymm [i], xmm [i + 1], ymm [i + 1]);
 
-	for (i = 1; i <= Art_Speaker_meshCount + 1; i ++)
+	for (integer i = 1; i <= Art_Speaker_meshCount + 1; i ++)
 		Graphics_speckle (graphics, xmm [i], ymm [i]);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
 	Graphics_text (graphics, 0.0, 0.0, U"O");   // origin

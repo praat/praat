@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,34 +47,33 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 	try {
 		double nyquist = 0.5 / my dx;
 		double physicalAnalysisWidth =
-			windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? 2 * effectiveAnalysisWidth : effectiveAnalysisWidth;
+			windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? 2.0 * effectiveAnalysisWidth : effectiveAnalysisWidth;
 		double effectiveTimeWidth = effectiveAnalysisWidth / sqrt (NUMpi);
-		double effectiveFreqWidth = 1 / effectiveTimeWidth;
+		double effectiveFreqWidth = 1.0 / effectiveTimeWidth;
 		double minimumTimeStep2 = effectiveTimeWidth / maximumTimeOversampling;
 		double minimumFreqStep2 = effectiveFreqWidth / maximumFreqOversampling;
 		double timeStep = minimumTimeStep1 > minimumTimeStep2 ? minimumTimeStep1 : minimumTimeStep2;
 		double freqStep = minimumFreqStep1 > minimumFreqStep2 ? minimumFreqStep1 : minimumFreqStep2;
-		double duration = my dx * (double) my nx, windowssq = 0.0;
+		double physicalDuration = my dx * my nx, windowssq = 0.0;
 
 		/*
-		 * Compute the time sampling.
-		 */
+			Compute the time sampling.
+		*/
 		integer nsamp_window = Melder_ifloor (physicalAnalysisWidth / my dx);
 		integer halfnsamp_window = nsamp_window / 2 - 1;
 		nsamp_window = halfnsamp_window * 2;
 		if (nsamp_window < 1)
 			Melder_throw (U"Your analysis window is too short: less than two samples.");
-		if (physicalAnalysisWidth > duration)
+		if (physicalAnalysisWidth > physicalDuration)
 			Melder_throw (U"Your sound is too short:\n"
 				U"it should be at least as long as ",
 				windowType == kSound_to_Spectrogram_windowShape::GAUSSIAN ? U"two window lengths." : U"one window length.");
-		integer numberOfTimes = 1 + Melder_ifloor ((duration - physicalAnalysisWidth) / timeStep);   // >= 1
-		double t1 = my x1 + 0.5 * ((double) (my nx - 1) * my dx - (double) (numberOfTimes - 1) * timeStep);
-			/* Centre of first frame. */
+		integer numberOfTimes = 1 + Melder_ifloor ((physicalDuration - physicalAnalysisWidth) / timeStep);   // >= 1
+		double t1 = my x1 + 0.5 * ((my nx - 1) * my dx - (numberOfTimes - 1) * timeStep);   // centre of first frame
 
 		/*
-		 * Compute the frequency sampling of the FFT spectrum.
-		 */
+			Compute the frequency sampling of the FFT spectrum.
+		*/
 		if (fmax <= 0.0 || fmax > nyquist) fmax = nyquist;
 		integer numberOfFreqs = Melder_ifloor (fmax / freqStep);
 		if (numberOfFreqs < 1) return autoSpectrogram ();
@@ -84,8 +83,8 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		integer half_nsampFFT = nsampFFT / 2;
 
 		/*
-		 * Compute the frequency sampling of the spectrogram.
-		 */
+			Compute the frequency sampling of the spectrogram.
+		*/
 		integer binWidth_samples = Melder_ifloor (freqStep * my dx * nsampFFT);
 		if (binWidth_samples < 1) binWidth_samples = 1;
 		double binWidth_hertz = 1.0 / (my dx * nsampFFT);
@@ -121,14 +120,14 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 				break; case kSound_to_Spectrogram_windowShape::GAUSSIAN:
 				{
 					double imid = 0.5 * (double) (nsamp_window + 1), edge = exp (-12.0);
-					phase = ((double) i - imid) / nSamplesPerWindow_f;   /* -0.5 .. +0.5 */
+					phase = ((double) i - imid) / nSamplesPerWindow_f;   // -0.5 .. +0.5
 					value = (exp (-48.0 * phase * phase) - edge) / (1.0 - edge);
 					break;
 				}
 				break; default:
 					value = 1.0;
 			}
-			window [i] = (float) value;
+			window [i] = value;
 			windowssq += value * value;
 		}
 		double oneByBinWidth = 1.0 / windowssq / binWidth_samples;
@@ -152,12 +151,14 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 				Melder_progress (iframe / (numberOfTimes + 1.0),
 					U"Sound to Spectrogram: analysis of frame ", iframe, U" out of ", numberOfTimes);
 
-				/* Compute Fast Fourier Transform of the frame. */
-
+				/*
+					Compute the Fast Fourier Transform of the frame.
+				*/
 				NUMfft_forward (& fftTable, frame.peek());   // complex spectrum
 
-				/* Put power spectrum in frame [1..half_nsampFFT + 1]. */
-
+				/*
+					Put the power spectrum in frame [1..half_nsampFFT + 1].
+				*/
 				spec [1] += frame [1] * frame [1];   // DC component
 				for (integer i = 2; i <= half_nsampFFT; i ++)
 					spec [i] += frame [i + i - 2] * frame [i + i - 2] + frame [i + i - 1] * frame [i + i - 1];
@@ -167,12 +168,14 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 				spec [i] /= my ny;
 			}
 
-			/* Bin into frame [1..nBands]. */
+			/*
+				Bin into frame [1..nBands].
+			*/
 			for (integer iband = 1; iband <= numberOfFreqs; iband ++) {
 				integer leftsample = (iband - 1) * binWidth_samples + 1, rightsample = leftsample + binWidth_samples;
-				float power = 0.0f;
+				long double power = 0.0;
 				for (integer i = leftsample; i < rightsample; i ++) power += spec [i];
-				thy z [iband] [iframe] = power * oneByBinWidth;
+				thy z [iband] [iframe] = (double) power * oneByBinWidth;
 			}
 		}
 		return thee;
@@ -186,21 +189,23 @@ autoSound Spectrogram_to_Sound (Spectrogram me, double fsamp) {
 		double dt = 1.0 / fsamp;
 		integer n = Melder_ifloor ((my xmax - my xmin) / dt);
 		if (n < 0) return autoSound ();
-		autoSound thee = Sound_create (1, my xmin, my xmax, n, dt, 0.5 * dt);
+		autoSound you = Sound_create (1, my xmin, my xmax, n, dt, 0.5 * dt);
 		for (integer i = 1; i <= n; i ++) {
-			double t = Sampled_indexToX (thee.get(), i);
-			double rframe = Sampled_xToIndex (me, t), phase, value = 0.0;
-			integer leftFrame, rightFrame;
+			double t = Sampled_indexToX (you.get(), i);
+			double rframe = Sampled_xToIndex (me, t);
 			if (rframe < 1 || rframe >= my nx) continue;
-			leftFrame = Melder_ifloor (rframe), rightFrame = leftFrame + 1, phase = rframe - leftFrame;
+			integer leftFrame = Melder_ifloor (rframe);
+			integer rightFrame = leftFrame + 1;
+			double phase = rframe - leftFrame;
+			long double value = 0.0;
 			for (integer j = 1; j <= my ny; j ++) {
 				double f = Matrix_rowToY (me, j);
 				double power = my z [j] [leftFrame] * (1 - phase) + my z [j] [rightFrame] * phase;
 				value += sqrt (power) * sin (2 * NUMpi * f * t);
 			}
-			thy z [1] [i] = value;
+			your z [1] [i] = (double) value;
 		}
-		return thee;
+		return you;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
 	}
