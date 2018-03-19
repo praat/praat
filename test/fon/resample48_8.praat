@@ -45,4 +45,4 @@ for i to depth*2
 endfor
 appendInfoLine: "};"
 
-;removeObject: filter_mat, filter, sweep_low, sweep, sweep_8k, mooi
+removeObject: filter_mat, filter, sweep_low, sweep, sweep_8k, mooi
