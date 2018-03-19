@@ -71,7 +71,7 @@
 		
 	This is *sequential summation*: a single *accumulator*, namely the variable `sum`,
 	accumulates every element sequentially. Note that even though the array `x` will
-	typically of type `double`, the accumulator is of type `long double` in this example:
+	typically be of type `double`, the accumulator is of type `long double` in this example:
 	using 80 bits for summing is much better than using 64 bits (1000 times more precise),
 	and on modern computers it is usually equally fast.
 
