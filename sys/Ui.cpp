@@ -1317,8 +1317,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				*/
 				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
-					if (
-					 (string, b -> name))
+					if (Melder_equ_firstCharacterCaseInsensitive (string, b -> name))
 						my integerValue = i;
 				}
 			}
