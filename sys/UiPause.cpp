@@ -86,7 +86,7 @@ void UiPause_text (const char32 *label, const char32 *defaultValue) {
 		Melder_throw (U"The function \"text\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addText (thePauseForm, nullptr, nullptr, label, defaultValue);
 }
-void UiPause_boolean (const char32 *label, int defaultValue) {
+void UiPause_boolean (const char32 *label, bool defaultValue) {
 	if (! thePauseForm)
 		Melder_throw (U"The function \"boolean\" has to be between a \"beginPause\" and an \"endPause\".");
 	UiForm_addBoolean (thePauseForm, nullptr, nullptr, label, defaultValue);

@@ -2,7 +2,7 @@
 #define _UiPause_h_
 /* UiPause.h
  *
- * Copyright (C) 2009-2011,2012,2015 Paul Boersma
+ * Copyright (C) 2009-2012,2015,2016,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ void UiPause_natural    (const char32 *label, const char32 *defaultValue);
 void UiPause_word       (const char32 *label, const char32 *defaultValue);
 void UiPause_sentence   (const char32 *label, const char32 *defaultValue);
 void UiPause_text       (const char32 *label, const char32 *defaultValue);
-void UiPause_boolean    (const char32 *label, int defaultValue);
+void UiPause_boolean    (const char32 *label, bool defaultValue);
 void UiPause_choice     (const char32 *label, int defaultValue);
 void UiPause_optionMenu (const char32 *label, int defaultValue);
 void UiPause_option     (const char32 *label);

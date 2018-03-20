@@ -615,7 +615,7 @@ UiField UiForm_addLabel (UiForm me, char32 **variable, const char32 *label) {
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addBoolean (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue) {
+UiField UiForm_addBoolean (UiForm me, bool *variable, const char32 *variableName, const char32 *label, bool defaultValue) {
 	autoUiField thee (UiForm_addField (me, UI_BOOLEAN, label));
 	thy integerDefaultValue = defaultValue;
 	thy boolVariable = variable;
