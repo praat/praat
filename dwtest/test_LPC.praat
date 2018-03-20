@@ -1,5 +1,5 @@
 # test_LPC.praat
-# djmw 20080122, 20110528
+# djmw 20080122, 20110528, 20180318
 
 printline test_LPC
 
@@ -7,31 +7,32 @@ printline test_LPC
 
 # formants of straigth tube
 
+fb5$ = ""
+space$ = ""
 for i to 5
 	f[i] = (2*i-1)*500
 	b[i] = i * 50
+	fb5$ = fb5$ + space$ +  string$ (f[i] ) + " " + string$ (b[i]) 
+	space$ = " "
 endfor
 
 debug = 0
 
-pt = Create PitchTier... empty 0 0.5
-Add point... 0 150
-source = To Sound (pulse train)... 44100 1 0.05 2000 no
-ft = Create FormantTier... empty 0 0.5
-Add point... 0  'f[1]' 'b[1]' 'f[2]' 'b[2]' 'f[3]' 'b[3]' 'f[4]' 'b[4]' 'f[5]' 'b[5]'
-plus source
+pt = Create PitchTier: "pt", 0, 0.5
+Add point: 0, 150
+source = To Sound (pulse train): 44100, 1, 0.05, 2000, "no"
+ft = Create FormantTier: "ft", 0, 0.5
+Add point: 0,  fb5$
+
+selectObject: ft, source
 soundpre = Filter
 
-sound = Resample... 10000 50
+sound = Resample: 10000, 50
 
-select pt
-plus source
-plus ft
-plus soundpre
-Remove
+removeObject:  pt, source, ft, soundpre
 
 for imethod to 4
-	select sound
+	selectObject: sound
 	if imethod = 1
 		method$ = "auto"
 		lpc = To LPC (autocorrelation)... 10 0.025 0.005 50
@@ -67,17 +68,17 @@ Remove
 
 printline test_LPC OK
 
-procedure get_formants .lpc .method$
-	select .lpc
+procedure get_formants: .lpc, .method$
+	selectObject: .lpc
 	.formant = To Formant (keep all)
 	deltaf = 0
 	deltab = 0
 	for .nf to 5
-		.f[.nf] = Get quantile... .nf 0 0 Hertz 0.5
-		.b[.nf] = Get quantile of bandwidth... .nf 0 0 Hertz 0.5
+		.f[.nf] = Get quantile: .nf, 0, 0, "Hertz", 0.5
+		.b[.nf] = Get quantile of bandwidth: .nf, 0, 0, "Hertz", 0.5
 		if .nf <= 3
-			deltaf += abs(f[.nf]- .f[.nf]) / f[.nf]
-			deltab += abs(b[.nf]- .b[.nf]) / b[.nf]
+			deltaf += abs (f[.nf] - .f[.nf]) / f[.nf]
+			deltab += abs (b[.nf]- .b[.nf]) / b[.nf]
 		endif
 	endfor
 	deltaf /= 3
