@@ -2989,14 +2989,19 @@ double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer n, doub
 }
 
 void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex) {
+	Melder_require (lowerLimit <= upperLimit, U"The lower limit should not exceed the upper limit.");
 	if (*highIndex < *lowIndex) {
 		*lowIndex = lowerLimit; *highIndex = upperLimit;
-	}
-	if (*lowIndex < lowerLimit) {
-		*lowIndex = lowerLimit;
-	}
-	if (*highIndex > upperLimit) {
-		*highIndex = upperLimit;
+	} else if (*highIndex == *lowIndex) {
+		Melder_require (*lowIndex >= lowerLimit && *highIndex <= upperLimit, U"Both lower and upper indices are out of range.");
+	} else { // low < high
+		Melder_require (*lowIndex < upperLimit && *highIndex > lowerLimit, U"Both lower and upper indices are out of range.");
+		if (*lowIndex < lowerLimit) {
+			*lowIndex = lowerLimit;
+		}
+		if (*highIndex > upperLimit) {
+			*highIndex = upperLimit;
+		}
 	}
 }
 
