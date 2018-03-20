@@ -86,6 +86,7 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 }
 
 void Permutation_init (Permutation me, integer numberOfElements) {
+	my numberOfElements = numberOfElements;
 	my p = NUMvector<integer> (1, numberOfElements);
 	Permutation_sort (me);
 }
@@ -114,7 +115,6 @@ void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer fir
 autoPermutation Permutation_create (integer numberOfElements) {
 	try {
 		autoPermutation me = Thing_new (Permutation);
-		my numberOfElements = numberOfElements;
 		Permutation_init (me.get(), numberOfElements);
 		return me;
 	} catch (MelderError) {
