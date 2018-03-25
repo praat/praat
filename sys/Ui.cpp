@@ -609,7 +609,7 @@ UiField UiForm_addSentence (UiForm me, char32 **variable, const char32 *variable
 }
 
 UiField UiForm_addLabel (UiForm me, char32 **variable, const char32 *label) {
-	autoUiField thee (UiForm_addField (me, UI_LABEL, label));
+	autoUiField thee (UiForm_addField (me, UI_LABEL, U""));   // this field gets no name; so that the user can give it any title
 	thy stringVariable = variable;
 	thy stringValue = Melder_dup (label);
 	return thee.releaseToAmbiguousOwner();
