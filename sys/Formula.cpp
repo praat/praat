@@ -5514,7 +5514,7 @@ static void do_pauseFormAddBoolean () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_boolean (label->string, Melder_iround (defaultValue->number));
+			UiPause_boolean (label->string, defaultValue->number != 0.0);
 		} else {
 			Melder_throw (U"The first argument of \"boolean\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}

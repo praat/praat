@@ -194,7 +194,7 @@ UiField UiForm_addNatural (UiForm me, integer *variable, const char32 *variableN
 UiField UiForm_addWord (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addSentence (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addLabel (UiForm me, char32 **variable, const char32 *label);
-UiField UiForm_addBoolean (UiForm me, bool *variable, const char32 *variableName, const char32 *label, int defaultValue);
+UiField UiForm_addBoolean (UiForm me, bool *variable, const char32 *variableName, const char32 *label, bool defaultValue);
 UiField UiForm_addText (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addNumvec (UiForm me, numvec *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
 UiField UiForm_addNummat (UiForm me, nummat *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue);
