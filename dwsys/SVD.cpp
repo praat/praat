@@ -120,26 +120,7 @@ autoSVD SVD_create_d (double **m, integer numberOfRows, integer numberOfColumns)
 	}
 }
 
-autoSVD SVD_create_f (float **m, integer numberOfRows, integer numberOfColumns) {
-	try {
-		autoSVD me = SVD_create (numberOfRows, numberOfColumns);
-		SVD_svd_f (me.get(), m);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"SVD not created from vector.");
-	}
-}
-
 void SVD_svd_d (SVD me, double **m) {
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];
-		}
-	}
-	SVD_compute (me);
-}
-
-void SVD_svd_f (SVD me, float **m) {
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];

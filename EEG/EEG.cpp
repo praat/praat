@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -571,6 +571,26 @@ autoEEG EEG_extractChannel (EEG me, const char32 *channelName) {
 	}
 }
 
+autoEEG EEG_extractChannels (EEG me, numvec channelNumbers) {
+	try {
+		integer numberOfChannels = channelNumbers.size;
+		Melder_require (numberOfChannels > 0,
+			U"The number of channels should be greater than 0.");
+		autoEEG you = EEG_create (my xmin, my xmax);
+		your sound = Sound_extractChannels (my sound.get(), channelNumbers);
+		your numberOfChannels = numberOfChannels;
+		your channelNames = NUMvector <char32 *> (1, numberOfChannels);
+		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+			integer originalChannelNumber = Melder_iround (channelNumbers [ichan]);
+			your channelNames [ichan] = Melder_dup (my channelNames [originalChannelNumber]);
+		}
+		your textgrid = Data_copy (my textgrid.get());
+		return you;
+	} catch (MelderError) {
+		Melder_throw (me, U": channels not extracted.");
+	}
+}
+
 autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 	try {
 		if (my size < 1)
@@ -636,11 +656,14 @@ void EEG_replaceTextGrid (EEG me, TextGrid textgrid) {
 	}
 }
 
-autoMixingMatrix EEG_to_MixingMatrix (EEG me, integer maxNumberOfIterations, double tol, int method) {
+autoMixingMatrix EEG_to_MixingMatrix (EEG me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double tol, int method)
+{
 	try {
-		autoCrossCorrelationTableList tables = Sound_to_CrossCorrelationTableList (my sound.get(), 0.0, 0.0, 0.002, 1);
+		autoCrossCorrelationTableList tables = Sound_to_CrossCorrelationTableList (my sound.get(), startTime, endTime, numberOfCrossCorrelations, lagStep);
 		autoMixingMatrix thee = MixingMatrix_create (my sound -> ny, my sound -> ny);
-		MixingMatrix_setRandomGauss ( thee.get(), 0.0, 1.0);
+		MixingMatrix_setRandomGauss (thee.get(), 0.0, 1.0);
 		for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			TableOfReal_setRowLabel (thee.get(), ichan, my channelNames [ichan]);
 			TableOfReal_setColumnLabel (thee.get(), ichan, Melder_cat (U"ic", ichan));

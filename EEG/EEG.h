@@ -2,7 +2,7 @@
 #define _EEG_h_
 /* EEG.h
  *
- * Copyright (C) 2011-2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2011-2012,2014,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,11 +53,15 @@ void EEG_setChannelToZero (EEG me, const char32 *channelName);
 void EEG_removeTriggers (EEG me, kMelder_string which, const char32 *criterion);
 autoEEG EEG_extractChannel (EEG me, integer channelNumber);
 autoEEG EEG_extractChannel (EEG me, const char32 *channelName);
+autoEEG EEG_extractChannels (EEG me, numvec channelNumbers);
 static inline autoSound EEG_extractSound (EEG me) { return Data_copy (my sound.get()); }
 static inline autoTextGrid EEG_extractTextGrid (EEG me) { return Data_copy (my textgrid.get()); }
 autoEEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes);
 void EEG_replaceTextGrid (EEG me, TextGrid textgrid);
-autoMixingMatrix EEG_to_MixingMatrix (EEG me, integer maxNumberOfIterations, double tol, int method);
+
+autoMixingMatrix EEG_to_MixingMatrix (EEG me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double tol, int method);
 
 /* End of file EEG.h */
 #endif

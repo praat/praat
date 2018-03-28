@@ -688,6 +688,15 @@ DO
 	CONVERT_EACH_END (my name, U"_ch", channel)
 }
 
+FORM (NEW_Sound_extractChannels, U"Sound: Extract channels", nullptr) {
+	NUMVEC (channels, U"Channel numbers", U"to# (64)")
+	OK
+DO
+	CONVERT_EACH (Sound)
+		autoSound result = Sound_extractChannels (me, channels);
+	CONVERT_EACH_END (my name, U"_ch")
+}
+
 DIRECT (NEW_Sound_extractLeftChannel) {
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_extractChannel (me, 1);
@@ -2357,6 +2366,7 @@ void praat_Sound_init () {
 		praat_addAction1 (classSound, 0, U"Extract one channel...", nullptr, 1, NEW_Sound_extractChannel);
 		praat_addAction1 (classSound, 0,   U"Extract left channel", U"*Extract one channel...", praat_DEPTH_1 | praat_DEPRECATED_2010, NEW_Sound_extractLeftChannel);
 		praat_addAction1 (classSound, 0,   U"Extract right channel", U"*Extract one channel...", praat_DEPTH_1 | praat_DEPRECATED_2010, NEW_Sound_extractRightChannel);
+		praat_addAction1 (classSound, 0, U"Extract channels...", nullptr, 1, NEW_Sound_extractChannels);
 		praat_addAction1 (classSound, 0, U"Extract part...", nullptr, 1, NEW_Sound_extractPart);
 		praat_addAction1 (classSound, 0, U"Extract part for overlap...", nullptr, 1, NEW_Sound_extractPartForOverlap);
 		praat_addAction1 (classSound, 0, U"Resample...", nullptr, 1, NEW_Sound_resample);

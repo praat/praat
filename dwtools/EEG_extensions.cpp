@@ -1,6 +1,6 @@
 /* EEG_extensions.cpp
  *
- * Copyright (C) 2012-2017 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 2012-2017 David Weenink, 2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +126,9 @@ autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, cons
 	}
 }
 
-autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me, double startTime, double endTime, double lagStep, integer ncovars, const char32 *channelRanges) {
+autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, const char32 *channelRanges)
+{
 	try {
 		// autowindow
 		if (startTime == endTime) {
@@ -143,7 +145,8 @@ autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me, double s
 		integer numberOfChannels;
 		autoNUMvector <integer> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, nullptr, U"channel", true), 1);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound.get(), channelRanges);
-		autoCrossCorrelationTableList him = Sound_to_CrossCorrelationTableList (soundPart.get(), startTime, endTime, lagStep, ncovars);
+		autoCrossCorrelationTableList him = Sound_to_CrossCorrelationTableList (soundPart.get(),
+			startTime, endTime, numberOfCrossCorrelations, lagStep);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no CrossCorrelationTables calculated.");
@@ -209,7 +212,10 @@ autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfCo
 	}
 }
 
-autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer ncovars, double lagStep, const char32 *channelRanges, int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol) {
+void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, const char32 *channelRanges,
+	int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
+	autoEEG *p_resultingEEG, autoMixingMatrix *p_resultingMixingMatrix)
+{
 	try {
 		// autowindow
 		if (startTime == endTime) {
@@ -231,7 +237,9 @@ autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer ncovar
 			autoEEG white = EEG_PCA_to_EEG_whiten (thee.get(), pca.get(), 0);
 			thee = white.move();
 		}
-		autoMixingMatrix mm = Sound_to_MixingMatrix (thy sound.get(), startTime, endTime, ncovars, lagStep, maxNumberOfIterations, tol, diagonalizerMethod);
+		autoMixingMatrix mm = Sound_to_MixingMatrix (thy sound.get(),
+			startTime, endTime, numberOfCrossCorrelations, lagStep,
+			maxNumberOfIterations, tol, diagonalizerMethod);
 
 		autoEEG him = EEG_copyWithoutSound (me);
 		his sound = Sound_MixingMatrix_unmix (my sound.get(), mm.get());
@@ -239,8 +247,8 @@ autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer ncovar
 
 		// Calculate the cross-correlations between eye-channels and the ic's
 
-		return him;
-
+		*p_resultingEEG = thee.move();
+		*p_resultingMixingMatrix = mm.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": no independent components determined.");
 	}

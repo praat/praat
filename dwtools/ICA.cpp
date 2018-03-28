@@ -466,7 +466,9 @@ static void NUMcrossCorrelate_rows (double **x, integer nrows, integer icol1, in
 	The cross-correlation between channel i and channel j is defined as
 		sum(k=1..nsamples, (z [i] [k] - mean [i])(z [j] [k + tau] - mean [j]))*samplingTime
 */
-autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime, double endTime, double lagStep) {
+autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me,
+	double startTime, double endTime, double lagStep)
+{
 	try {
 		if (endTime <= startTime) {
 			startTime = my xmin;
@@ -502,7 +504,9 @@ autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double start
  * Both sounds are treated as if their domain runs from 0 to duration.
  * Outside the chosen interval the sounds are assumed to be zero
  */
-autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagStep) {
+autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee,
+	double relativeStartTime, double relativeEndTime, double lagStep)
+{
 	try {
 		Melder_require (my dx == thy dx, U"Sampling frequencies should be equal.");
 		if (relativeEndTime <= relativeStartTime) {
@@ -553,7 +557,9 @@ autoCovariance Sound_to_Covariance_channels (Sound me, double startTime, double 
     }
 }
 
-autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, double startTime, double endTime, double lagStep, integer ncovars) {
+autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep)
+{
 	try {
 		if (lagStep < my dx) {
 			lagStep = my dx;
@@ -562,10 +568,10 @@ autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, doub
 			startTime = my xmin;
 			endTime = my xmax;
 		}
-		Melder_require (startTime + ncovars * lagStep <= endTime, U"Lag time is too large.");
+		Melder_require (startTime + numberOfCrossCorrelations * lagStep <= endTime, U"Lag time is too large.");
 		
 		autoCrossCorrelationTableList thee = CrossCorrelationTableList_create ();
-		for (integer i = 1; i <= ncovars; i ++) {
+		for (integer i = 1; i <= numberOfCrossCorrelations; i ++) {
 			double lag = (i - 1) * lagStep;
 			autoCrossCorrelationTable ct = Sound_to_CrossCorrelationTable (me, startTime, endTime, lag);
 			thy addItem_move (ct.move());
@@ -576,9 +582,14 @@ autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, doub
 	}
 }
 
-autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method) {
+autoSound Sound_to_Sound_BSS (Sound me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double tol, int method)
+{
 	try {
-		autoMixingMatrix him = Sound_to_MixingMatrix (me, startTime, endTime, ncovars, lagStep, maxNumberOfIterations, tol, method);
+		autoMixingMatrix him = Sound_to_MixingMatrix (me,
+			startTime, endTime, numberOfCrossCorrelations, lagStep,
+			maxNumberOfIterations, tol, method);
 		autoSound thee = Sound_MixingMatrix_unmix (me, him.get());
 		return thee;
 	} catch (MelderError) {
@@ -629,14 +640,20 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 	}
 }
 
-void MixingMatrix_Sound_improveUnmixing (MixingMatrix me, Sound thee, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method) {
-	autoCrossCorrelationTableList ccs = Sound_to_CrossCorrelationTableList (thee, startTime, endTime, lagStep, ncovars);
+void MixingMatrix_Sound_improveUnmixing (MixingMatrix me, Sound thee,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double tol, int method)
+{
+	autoCrossCorrelationTableList ccs = Sound_to_CrossCorrelationTableList (thee, startTime, endTime, numberOfCrossCorrelations, lagStep);
 	MixingMatrix_CrossCorrelationTableList_improveUnmixing (me, ccs.get(), maxNumberOfIterations, tol, method);
 }
 
-autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method) {
+autoMixingMatrix Sound_to_MixingMatrix (Sound me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double tol, int method)
+{
 	try {
-		autoCrossCorrelationTableList ccs = Sound_to_CrossCorrelationTableList (me, startTime, endTime, lagStep, ncovars);
+		autoCrossCorrelationTableList ccs = Sound_to_CrossCorrelationTableList (me, startTime, endTime, numberOfCrossCorrelations, lagStep);
 		autoMixingMatrix thee = MixingMatrix_create (my ny, my ny);
 		MixingMatrix_setRandomGauss (thee.get(), 0.0, 1.0);
 		MixingMatrix_CrossCorrelationTableList_improveUnmixing (thee.get(), ccs.get(), maxNumberOfIterations, tol, method);

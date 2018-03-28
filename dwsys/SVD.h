@@ -37,15 +37,11 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns);
 */
 
 autoSVD SVD_create_d (double **m, integer numberOfRows, integer numberOfColumns);
-
-autoSVD SVD_create_f (float **m, integer numberOfRows, integer numberOfColumns);
 /*
 	Copy matrix into svd->u and calculate U D V'
 */
 
 void SVD_svd_d (SVD me, double **m);
-
-void SVD_svd_f (SVD me, float **m);
 /*
 	Perform SVD analysis on matrix M, i.e., decompose M as M = UDV'.
 	Watch out: dataType contains V, not V' !!
