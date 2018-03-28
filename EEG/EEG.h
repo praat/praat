@@ -2,7 +2,7 @@
 #define _EEG_h_
 /* EEG.h
  *
- * Copyright (C) 2011-2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2011-2012,2014,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,10 @@ static inline autoSound EEG_extractSound (EEG me) { return Data_copy (my sound.g
 static inline autoTextGrid EEG_extractTextGrid (EEG me) { return Data_copy (my textgrid.get()); }
 autoEEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes);
 void EEG_replaceTextGrid (EEG me, TextGrid textgrid);
-autoMixingMatrix EEG_to_MixingMatrix (EEG me, integer maxNumberOfIterations, double tol, int method);
+
+autoMixingMatrix EEG_to_MixingMatrix (EEG me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double tol, int method);
 
 /* End of file EEG.h */
 #endif

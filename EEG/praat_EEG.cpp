@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,6 +281,9 @@ DIRECT (NEW1_EEGs_concatenate) {
 }
 
 FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
+	praat_TimeFunction_RANGE (startTime, endTime)
+	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
+	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	POSITIVE (tolerance, U"Tolerance", U"0.001")
 	OPTIONMENUx (diagonalizationMethod, U"Diagonalization method", 2, 1)
@@ -290,6 +293,7 @@ FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
 DO
 	CONVERT_EACH (EEG)
 		autoMixingMatrix result = EEG_to_MixingMatrix (me,
+			startTime, endTime, numberOfCrossCorrelations, lagStep,
 			maximumNumberOfIterations, tolerance, diagonalizationMethod);
 	CONVERT_EACH_END (my name)
 }

@@ -2,7 +2,7 @@
 #define _EEG_extensions_h_
 /* EEG_extensions.h
  *
- * Copyright (C) 2012-2017 David Weenink
+ * Copyright (C) 2012-2017 David Weenink, 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,15 @@
 #include "ICA.h"
 #include "EEG.h"
 
-autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagTime, const char32 *channelRanges);
+autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me,
+	double startTime, double endTime, double lagTime,
+	const char32 *channelRanges);
 
 autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, const char32 *channelRanges);
 
-autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me, double startTime, double endTime, double lagTime, integer ncovars, const char32 *channelRanges);
+autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	const char32 *channelRanges);
 
 autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *channelRanges, int fromCorrelation);
 
@@ -33,7 +37,11 @@ autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents);
 
 autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfComponents);
 
-autoEEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer ncovars, double lagTime, const char32 *channelRanges, int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol);
+void EEG_to_EEG_bss (EEG me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	const char32 *channelRanges,
+	int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
+	autoEEG *p_resultingEEG, autoMixingMatrix *p_resultingMixingMatrix);
 
 autoSound EEG_to_Sound_frequencyShifted (EEG me, integer channel, double frequencyShift, double samplingFrequency, double maxAmp);
 
