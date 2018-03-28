@@ -571,6 +571,26 @@ autoEEG EEG_extractChannel (EEG me, const char32 *channelName) {
 	}
 }
 
+autoEEG EEG_extractChannels (EEG me, numvec channelNumbers) {
+	try {
+		integer numberOfChannels = channelNumbers.size;
+		Melder_require (numberOfChannels > 0,
+			U"The number of channels should be greater than 0.");
+		autoEEG you = EEG_create (my xmin, my xmax);
+		your sound = Sound_extractChannels (my sound.get(), channelNumbers);
+		your numberOfChannels = numberOfChannels;
+		your channelNames = NUMvector <char32 *> (1, numberOfChannels);
+		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+			integer originalChannelNumber = Melder_iround (channelNumbers [ichan]);
+			your channelNames [ichan] = Melder_dup (my channelNames [originalChannelNumber]);
+		}
+		your textgrid = Data_copy (my textgrid.get());
+		return you;
+	} catch (MelderError) {
+		Melder_throw (me, U": channels not extracted.");
+	}
+}
+
 autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 	try {
 		if (my size < 1)

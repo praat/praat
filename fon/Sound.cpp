@@ -247,6 +247,32 @@ autoSound Sound_extractChannel (Sound me, integer ichan) {
 	}
 }
 
+autoSound Sound_extractChannels (Sound me, numvec channelNumbers) {
+	try {
+		integer numberOfChannels = channelNumbers.size;
+		Melder_require (numberOfChannels > 0,
+			U"The number of channels should be greater than 0.");
+		autoSound you = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
+		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+			integer originalChannelNumber = Melder_iround (channelNumbers [ichan]);
+			Melder_require (originalChannelNumber > 0,
+				U"Your channel number is ", originalChannelNumber,
+				U", but it should be positive.");
+			Melder_require (originalChannelNumber <= my ny,
+				U"Your channel number is ", originalChannelNumber,
+				U", but it should not be greater than my number of channels, which is ",
+				my ny, U".");
+			double *from = my z [originalChannelNumber], *to = your z [ichan];
+			for (integer isamp = 1; isamp <= my nx; isamp ++) {
+				to [isamp] = from [isamp];
+			}
+		}
+		return you;
+	} catch (MelderError) {
+		Melder_throw (me, U": channels not extracted.");
+	}
+}
+
 static double getSumOfSquares (Sound me, double xmin, double xmax, integer *n) {
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	integer imin, imax;

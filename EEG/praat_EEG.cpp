@@ -198,6 +198,15 @@ DO
 	CONVERT_EACH_END (my name, U"_", channelName)
 }
 
+FORM (NEW_EEG_extractChannels, U"EEG: Extract channels", nullptr) {
+	NUMVEC (channels, U"Channel numbers", U"to# (64)")
+	OK
+DO
+	CONVERT_EACH (EEG)
+		autoEEG result = EEG_extractChannels (me, channels);
+	CONVERT_EACH_END (my name, U"_ch")
+}
+
 FORM (NEW_EEG_extractPart, U"EEG: Extract part", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"1.0")
@@ -734,6 +743,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classEEG, 0, U"Set channel to zero...", nullptr, 1, MODIFY_EEG_setChannelToZero);
 	praat_addAction1 (classEEG, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"Extract channel...", nullptr, 0, NEW_EEG_extractChannel);
+		praat_addAction1 (classEEG, 0, U"Extract channels...", nullptr, 0, NEW_EEG_extractChannels);
 		praat_addAction1 (classEEG, 0, U"Extract part...", nullptr, 0, NEW_EEG_extractPart);
 		praat_addAction1 (classEEG, 0, U"To ERPTier -", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"To ERPTier (bit)...", nullptr, 1, NEW_EEG_to_ERPTier_bit);
