@@ -158,6 +158,14 @@ inline static autonummat sub_nummat (nummat x, nummat y) {
 	return result;
 }
 
+inline static autonumvec to_numvec (integer to) {
+	autonumvec result (to, kTensorInitializationType::RAW);
+	for (integer i = 1; i <= to; i ++) {
+		result [i] = (double) i;
+	}
+	return result;
+}
+
 autonumvec mul_numvec (numvec x, nummat y);
 autonumvec mul_numvec (nummat x, numvec y);
 

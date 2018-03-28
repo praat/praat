@@ -143,7 +143,7 @@ enum { GEENSYMBOOL_,
 		DEMO_CLICKED_, DEMO_X_, DEMO_Y_, DEMO_KEY_PRESSED_, DEMO_KEY_,
 		DEMO_SHIFT_KEY_PRESSED_, DEMO_COMMAND_KEY_PRESSED_, DEMO_OPTION_KEY_PRESSED_, DEMO_EXTRA_CONTROL_KEY_PRESSED_,
 		ZERO_NUMVEC_, ZERO_NUMMAT_,
-		LINEAR_NUMVEC_, LINEAR_NUMMAT_,
+		LINEAR_NUMVEC_, LINEAR_NUMMAT_, TO_NUMVEC_,
 		RANDOM_UNIFORM_NUMVEC_, RANDOM_UNIFORM_NUMMAT_,
 		RANDOM_INTEGER_NUMVEC_, RANDOM_INTEGER_NUMMAT_,
 		RANDOM_GAUSS_NUMVEC_, RANDOM_GAUSS_NUMMAT_,
@@ -258,7 +258,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"demoClicked", U"demoX", U"demoY", U"demoKeyPressed", U"demoKey$",
 	U"demoShiftKeyPressed", U"demoCommandKeyPressed", U"demoOptionKeyPressed", U"demoExtraControlKeyPressed",
 	U"zero#", U"zero##",
-	U"linear#", U"linear##",
+	U"linear#", U"linear##", U"to#",
 	U"randomUniform#", U"randomUniform##",
 	U"randomInteger#", U"randomInteger##",
 	U"randomGauss#", U"randomGauss##",
@@ -4132,6 +4132,19 @@ static void do_linearNumvec () {
 	if (! excludeEdges) result [numberOfSteps] = maximum;   // remove rounding problems
 	pushNumericVector (result.move());
 }
+static void do_toNumvec () {
+	Stackel stackel_narg = pop;
+	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
+	integer narg = (integer) stackel_narg -> number;
+	if (narg != 1)
+		Melder_throw (U"The function to#() requires one argument.");
+	Stackel stack_to = pop;
+	if (stack_to -> which != Stackel_NUMBER)
+		Melder_throw (U"In the function \"to#\", the argument has to be a number, not ", Stackel_whichText (stack_to), U".");
+	integer to = Melder_iround (stack_to -> number);
+	autonumvec result = to_numvec (to);
+	pushNumericVector (result.move());
+}
 static void do_peaksNummat () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
@@ -6538,6 +6551,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case ZERO_NUMVEC_: { do_zeroNumvec ();
 } break; case ZERO_NUMMAT_: { do_zeroNummat ();
 } break; case LINEAR_NUMVEC_: { do_linearNumvec ();
+} break; case TO_NUMVEC_: { do_toNumvec ();
 } break; case RANDOM_UNIFORM_NUMVEC_: { do_function_dd_d_numvec (NUMrandomUniform);
 } break; case RANDOM_UNIFORM_NUMMAT_: { do_function_dd_d_nummat (NUMrandomUniform);
 } break; case RANDOM_INTEGER_NUMVEC_: { do_function_ll_l_numvec (NUMrandomInteger);
