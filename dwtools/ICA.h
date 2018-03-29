@@ -70,20 +70,25 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 
 autoDiagonalizer Diagonalizer_create (integer dimension);
 
-autoSound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double delta_w, int method);
+autoSound Sound_to_Sound_BSS (Sound me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double delta_w, int method);
 
 autoSound Sound_whitenChannels (Sound me, double varianceFraction);
 autoSound Sound_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction);
 
 void MixingMatrix_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method);
 
-void MixingMatrix_Sound_improveUnmixing (MixingMatrix me, Sound thee, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method);
+void MixingMatrix_Sound_improveUnmixing (MixingMatrix me, Sound thee,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double tol, int method);
 /*
 	Determine the matrix that diagonalizes a series of CrossCorrelationTables as well as possible.
 */
 autoDiagonalizer CrossCorrelationTableList_to_Diagonalizer (CrossCorrelationTableList me, integer maxNumberOfIterations, double tol, int method);
 
-void Diagonalizer_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method);
+void Diagonalizer_CrossCorrelationTableList_improveDiagonality (Diagonalizer me, CrossCorrelationTableList thee,
+	integer maxNumberOfIterations, double tol, int method);
 
 autoCrossCorrelationTableList CrossCorrelationTables_to_CrossCorrelationTableList (OrderedOf<structCrossCorrelationTable> *me);
 /*
@@ -101,20 +106,24 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me);
 	The cross-correlation between channel i and channel j is defined as
 		sum(k=1..nsamples; (z[i][k] - mean[i])(z[j][k + lag] - mean[j])) / (nsamples - 1).
 */
-autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime, double endTime, double lagStep);
+autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me,
+	double startTime, double endTime, double lagStep);
 
-autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagStep);
+autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee,
+	double relativeStartTime, double relativeEndTime, double lagStep);
 
 // The covariance is the cross-correlation with lag 0.
 autoCovariance Sound_to_Covariance_channels (Sound me, double startTime, double endTime);
 /*
 	Determine a CrossCorrelationTable for lags (k-1)*lagStep, where k = 1...n.
 */
-autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me, double startTime, double endTime, double lagStep, integer n);
+autoCrossCorrelationTableList Sound_to_CrossCorrelationTableList (Sound me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep);
 
 autoMixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
 
-autoMixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, integer ncovars, double lagStep, integer maxNumberOfIterations, double tol, int method);
-
+autoMixingMatrix Sound_to_MixingMatrix (Sound me,
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
+	integer maxNumberOfIterations, double tol, int method);
 
 #endif /*_ICA_h_ */

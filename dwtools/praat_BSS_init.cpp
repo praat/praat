@@ -1,6 +1,6 @@
 /* praat_BSS_init.cpp
  *
- * Copyright (C) 2010-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2010-2017 David Weenink, 2015,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ void praat_TableOfReal_init3 (ClassInfo klas);
 /******************** EEG ********************************************/
 
 FORM (NEW_EEG_to_CrossCorrelationTable, U"EEG: To CrossCorrelationTable", U"EEG: To CrossCorrelationTable...") {
-	praat_TimeFunction_RANGE (fromTime,toTime)
-	REAL (lagTime, U"Lag step (s)", U"0.05")
+	praat_TimeFunction_RANGE (fromTime, toTime)
+	REAL (lagTime, U"Lag time (s)", U"0.05")
 	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
@@ -44,7 +44,7 @@ DO
 }
 
 FORM (NEW_EEG_to_Covariance, U"EEG: To Covariance", U"EEG: To Covariance...") {
-	praat_TimeFunction_RANGE (fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
@@ -55,23 +55,23 @@ DO
 }
 
 FORM (NEW_EEG_to_CrossCorrelationTableList, U"EEG: To CrossCorrelationTableList", U"EEG: To CrossCorrelationTableList...") {
-	praat_TimeFunction_RANGE (fromTime,toTime)
-	POSITIVE (lagTime, U"Lag step (s)", U"0.02")
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
+	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
 	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	CONVERT_EACH (EEG)
 		autoCrossCorrelationTableList result = EEG_to_CrossCorrelationTableList (me, fromTime, toTime,
-			lagTime, numberOfCrossCorrelations, channels);
+			numberOfCrossCorrelations, lagStep, channels);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (NEW_EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
-	praat_TimeFunction_RANGE (fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
-	POSITIVE (lagTime, U"Lag step (s)", U"0.002")
+	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
 	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	LABEL (U"Pre-whitening parameters")
@@ -87,14 +87,22 @@ FORM (NEW_EEG_to_EEG_bss, U"EEG: To EEG (bss)", U"EEG: To EEG (bss)...") {
 		OPTION (U"ffdiag")
 	OK
 DO
-	CONVERT_EACH (EEG)
-		autoEEG result = EEG_to_EEG_bss (me, fromTime, toTime, numberOfCrossCorrelations, lagTime, channels, whiteningMethod, diagonalizationMethod, maximumNumberOfIterations, tolerance);
-	CONVERT_EACH_END (my name, U"_bss")
+	LOOP {
+		iam_LOOP (EEG);
+		autoEEG resultingEEG;
+		autoMixingMatrix resultingMixingMatrix;
+		EEG_to_EEG_bss (me, fromTime, toTime, numberOfCrossCorrelations, lagStep, channels,
+			whiteningMethod, diagonalizationMethod, maximumNumberOfIterations, tolerance,
+			& resultingEEG, & resultingMixingMatrix);
+		praat_new (resultingEEG.move(), my name, U"_bss");
+		praat_new (resultingMixingMatrix.move(), my name);
+	}
+	END
 }
 
 
 FORM (NEW_EEG_to_PCA, U"EEG: To PCA", U"EEG: To PCA...") {
-	praat_TimeFunction_RANGE (fromTime,toTime)
+	praat_TimeFunction_RANGE (fromTime, toTime)
 	TEXTFIELD (channels, U"Channels:", U"1:64")
 	LABEL (U"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OPTIONMENU (method, U"Method", 1)
@@ -371,7 +379,7 @@ DIRECT (NEW1_MixingMatrix_to_Diagonalizer) {
 FORM (NEW_Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
-	POSITIVE (lagTime, U"Lag step (s)", U"0.002")
+	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
 	LABEL (U"Iteration parameters")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	POSITIVE (tolerance, U"Tolerance", U"0.001")
@@ -381,14 +389,16 @@ FORM (NEW_Sound_to_MixingMatrix, U"Sound: To MixingMatrix", nullptr) {
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoMixingMatrix result = Sound_to_MixingMatrix (me, fromTime, toTime, numberOfCrossCorrelations, lagTime, maximumNumberOfIterations, tolerance, diagonalizationMethod);
+		autoMixingMatrix result = Sound_to_MixingMatrix (me,
+			fromTime, toTime, numberOfCrossCorrelations, lagStep,
+			maximumNumberOfIterations, tolerance, diagonalizationMethod);
 	CONVERT_EACH_END (my name)
 }
 
 FORM (MODIFY_Sound_MixingMatrix_improveUnmixing, U"", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
-	POSITIVE (lagTime, U"Lag step (s)", U"0.002")
+	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
 	LABEL (U"Iteration parameters")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	POSITIVE (tolerance, U"Tolerance", U"0.001")
@@ -398,18 +408,21 @@ FORM (MODIFY_Sound_MixingMatrix_improveUnmixing, U"", nullptr) {
 	OK
 DO
 		MODIFY_FIRST_OF_TWO (MixingMatrix, Sound)
-		MixingMatrix_Sound_improveUnmixing (me, you, fromTime, toTime, numberOfCrossCorrelations, lagTime, maximumNumberOfIterations, tolerance, diagonalizationMethod);
+		MixingMatrix_Sound_improveUnmixing (me, you,
+			fromTime, toTime, numberOfCrossCorrelations, lagStep,
+			maximumNumberOfIterations, tolerance, diagonalizationMethod);
 		MODIFY_FIRST_OF_TWO_END
 }
 
 FORM (NEW_Sound_to_CrossCorrelationTableList, U"Sound: To CrossCorrelationTableList", nullptr) {
 	praat_TimeFunction_RANGE (fromTime, toTime)
 	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
-	POSITIVE (lagTime, U"Lag step (s)", U"0.002")
+	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoCrossCorrelationTableList result = Sound_to_CrossCorrelationTableList (me, fromTime, toTime, lagTime, numberOfCrossCorrelations);
+		autoCrossCorrelationTableList result = Sound_to_CrossCorrelationTableList (me,
+			fromTime, toTime, numberOfCrossCorrelations, lagStep);
 	CONVERT_EACH_END (my name)
 }
 
@@ -426,7 +439,9 @@ FORM (NEW_Sound_to_Sound_bss, U"Sound: To Sound (blind source separation)", U"So
 	OK
 DO
 	CONVERT_EACH (Sound)
-		autoSound result = Sound_to_Sound_BSS (me, fromTime, toTime, numberOfCrossCorrelations, lagStep, maximumNumberOfIterations, tolerance, diagonalizationMethod);
+		autoSound result = Sound_to_Sound_BSS (me,
+			fromTime, toTime, numberOfCrossCorrelations, lagStep,
+			maximumNumberOfIterations, tolerance, diagonalizationMethod);
 	CONVERT_EACH_END (my name, U"_bss")
 }
 
@@ -510,7 +525,7 @@ void praat_BSS_init () {
 	praat_addAction1 (classEEG, 0, U"To CrossCorrelationTableList...", U"To PCA...", praat_HIDDEN, NEW_EEG_to_CrossCorrelationTableList);
 
 	praat_addAction1 (classEEG, 0, U"To Covariance...", U"To CrossCorrelationTable...", praat_HIDDEN, NEW_EEG_to_Covariance);
-	praat_addAction1 (classEEG, 0, U"To EEG (bss)...", U"To CrossCorrelationTable...", praat_HIDDEN, NEW_EEG_to_EEG_bss);
+	praat_addAction1 (classEEG, 0, U"To EEG (bss)...", U"To CrossCorrelationTable...", 0, NEW_EEG_to_EEG_bss);
 
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (principal components)...", 0, 0, NEW1_EEG_PCA_to_EEG_principalComponents);
 	praat_addAction2 (classEEG, 1, classPCA, 1, U"To EEG (whiten)...", 0, 0, NEW1_EEG_PCA_to_EEG_whiten);

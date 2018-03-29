@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,6 +198,15 @@ DO
 	CONVERT_EACH_END (my name, U"_", channelName)
 }
 
+FORM (NEW_EEG_extractChannels, U"EEG: Extract channels", nullptr) {
+	NUMVEC (channels, U"Channel numbers", U"to# (64)")
+	OK
+DO
+	CONVERT_EACH (EEG)
+		autoEEG result = EEG_extractChannels (me, channels);
+	CONVERT_EACH_END (my name, U"_ch")
+}
+
 FORM (NEW_EEG_extractPart, U"EEG: Extract part", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"1.0")
@@ -281,6 +290,9 @@ DIRECT (NEW1_EEGs_concatenate) {
 }
 
 FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
+	praat_TimeFunction_RANGE (startTime, endTime)
+	NATURAL (numberOfCrossCorrelations, U"Number of cross-correlations", U"40")
+	POSITIVE (lagStep, U"Lag step (s)", U"0.002")
 	NATURAL (maximumNumberOfIterations, U"Maximum number of iterations", U"100")
 	POSITIVE (tolerance, U"Tolerance", U"0.001")
 	OPTIONMENUx (diagonalizationMethod, U"Diagonalization method", 2, 1)
@@ -290,6 +302,7 @@ FORM (NEW_EEG_to_MixingMatrix, U"To MixingMatrix", nullptr) {
 DO
 	CONVERT_EACH (EEG)
 		autoMixingMatrix result = EEG_to_MixingMatrix (me,
+			startTime, endTime, numberOfCrossCorrelations, lagStep,
 			maximumNumberOfIterations, tolerance, diagonalizationMethod);
 	CONVERT_EACH_END (my name)
 }
@@ -730,6 +743,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classEEG, 0, U"Set channel to zero...", nullptr, 1, MODIFY_EEG_setChannelToZero);
 	praat_addAction1 (classEEG, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"Extract channel...", nullptr, 0, NEW_EEG_extractChannel);
+		praat_addAction1 (classEEG, 0, U"Extract channels...", nullptr, 0, NEW_EEG_extractChannels);
 		praat_addAction1 (classEEG, 0, U"Extract part...", nullptr, 0, NEW_EEG_extractPart);
 		praat_addAction1 (classEEG, 0, U"To ERPTier -", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"To ERPTier (bit)...", nullptr, 1, NEW_EEG_to_ERPTier_bit);
