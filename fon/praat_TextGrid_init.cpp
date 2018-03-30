@@ -838,10 +838,11 @@ DO
 FORM (NEW_TextGrid_tabulateOccurrences, U"TextGrid: Tabulate occurrences", nullptr) {
 	NUMVEC (searchTiers, U"Search tiers:", U"{ 1, 2 }")
 	TEXTFIELD (searchString, U"Search string:", U"hi")
+	BOOLEAN (caseSensitive, U"Case-sensitive", false)
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoTable result = TextGrid_tabulateOccurrences (me, searchTiers, searchString);
+		autoTable result = TextGrid_tabulateOccurrences (me, searchTiers, searchString, caseSensitive);
 	CONVERT_EACH_END (my name, U"_", searchString)
 }
 

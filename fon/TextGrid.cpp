@@ -1725,7 +1725,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 	return thee;
 }
 
-autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const char32 *searchString) {
+autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const char32 *searchString, bool caseSensitive) {
 	const int timeDecimals = 6;
 	integer numberOfRows = 0;
 	for (integer itier = 1; itier <= searchTiers.size; itier ++) {
@@ -1736,7 +1736,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
-				if (interval -> text && str32str (interval -> text, searchString)) {
+				if (interval -> text && str32str_optionallyCaseSensitive (interval -> text, searchString, caseSensitive)) {
 					numberOfRows ++;
 				}
 			}
@@ -1744,7 +1744,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 			TextTier tier = static_cast <TextTier> (anyTier);
 			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
-				if (point -> mark && str32str (point -> mark, searchString)) {
+				if (point -> mark && str32str_optionallyCaseSensitive (point -> mark, searchString, caseSensitive)) {
 					numberOfRows ++;
 				}
 			}
@@ -1759,7 +1759,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
-				if (interval -> text && str32str (interval -> text, searchString)) {
+				if (interval -> text && str32str_optionallyCaseSensitive (interval -> text, searchString, caseSensitive)) {
 					++ rowNumber;
 					Melder_assert (rowNumber <= numberOfRows);
 					double time = 0.5 * (interval -> xmin + interval -> xmax);
@@ -1772,7 +1772,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 			TextTier tier = static_cast <TextTier> (anyTier);
 			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
-				if (point -> mark && str32str (point -> mark, searchString)) {
+				if (point -> mark && str32str_optionallyCaseSensitive (point -> mark, searchString, caseSensitive)) {
 					++ rowNumber;
 					Melder_assert (rowNumber <= numberOfRows);
 					double time = point -> number;

@@ -1,6 +1,6 @@
 /* melder_alloc.cpp
  *
- * Copyright (C) 1992-2007,2009,2011,2012,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2007,2009,2011,2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,10 +292,22 @@ int Melder_cmp (const char32 *string1, const char32 *string2) {
 	return str32cmp (string1, string2);
 }
 
+int Melder_cmp_caseInsensitive (const char32 *string1, const char32 *string2) {
+	if (! string1) string1 = U"";
+	if (! string2) string2 = U"";
+	return str32cmp_caseInsensitive (string1, string2);
+}
+
 int Melder_ncmp (const char32 *string1, const char32 *string2, integer n) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp (string1, string2, n);
+}
+
+int Melder_ncmp_caseInsensitive (const char32 *string1, const char32 *string2, integer n) {
+	if (! string1) string1 = U"";
+	if (! string2) string2 = U"";
+	return str32ncmp_caseInsensitive (string1, string2, n);
 }
 
 bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2) {
