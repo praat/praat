@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20180203)
+MAN_BEGIN (U"What's new?", U"ppgb", 20180329)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.38# (29 March 2018)")
+LIST_ITEM (U"• Concordance: ##TextGrid: Tabulate occurrences...#.")
+LIST_ITEM (U"• Some @@Independent Component Analysis on EEG@.")
+LIST_ITEM (U"• Removed many small bugs.")
 NORMAL (U"##6.0.37# (3 February 2018)")
 LIST_ITEM (U"• Graphics: fixed crashing bug with \\bsun trigraph.")
 NORMAL (U"##6.0.36# (11 November 2017)")

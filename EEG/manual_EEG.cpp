@@ -21,7 +21,7 @@
 void manual_EEG_init (ManPages me);
 void manual_EEG_init (ManPages me) {
 
-MAN_BEGIN (U"EEG", U"ppgb", 20120511)
+MAN_BEGIN (U"EEG", U"ppgb", 20180329)
 INTRO (U"EEG means electro-encephalography: brain potentials recorded via e.g. 32 or 64 electrodes on the scalp. "
 	"In Praat, an EEG object looks like a combination of a Sound object with e.g. 32 or 64 channels "
 	"and a TextGrid object that marks the events.")
@@ -86,6 +86,27 @@ NORMAL (U"Once you have an ERPTier, you can extract each of the 150 ERPs from it
 NORMAL (U"Once you have an ERP object, you can look into it with ##View & Edit#. "
 	"If you want to see in the ERP window the scalp distribution at the time of the cursor, or the average scalp distribution in the selected time stretch, "
 	"you have to switch on ##Show selection viewer# in the #Preferences window (available from the #File menu).")
+ENTRY (U"See also")
+LIST_ITEM (U"\\bu @@Independent Component Analysis on EEG@")
+MAN_END
+
+MAN_BEGIN (U"Independent Component Analysis on EEG", U"ppgb", 20180329)
+INTRO (U"Independent Component Analysis (ICA) is often used to improve @EEG signals. "
+	"See @@blind source separation@ for the algorithm.")
+ENTRY (U"1. Selecting your channels")
+NORMAL (U"You typically will not want to do ICA on all 80 channels of your signal, "
+	"some of which may not even be EEG channels. To create a smaller EEG with e.g. only the 64 scalp channels, "
+	"use ##EEG: Extract channels...#. From here on we will assume that your reduced EEG has 64 channels.")
+ENTRY (U"2. How to get a MixingMatrix")
+NORMAL (U"Once you have your reduced EEG, you can start to do ICA on it. "
+	"This starts by creating a @MixingMatrix: select your EEG object and choose ##To MixingMatrix...#. "
+	"The resulting MixingMatrix has one row for each of your 64 EEG channels, and columns called \"ic1\" through \"ic64\".")
+ENTRY (U"3. How to see the independent components")
+NORMAL (U"Select you EEG and your MixingMatrix together and choose ##Unmix#. "
+	"The resulting ICA-EEG will have 64 channels called \"ic1\" through \"ic64\".")
+ENTRY (U"4. Just checking back")
+NORMAL (U"If you select your ICA-EEG together with your MixingMatrix choose ##Mix#, "
+	"the resulting EEG should be very similar to your original 64-channel EEG.")
 MAN_END
 
 }

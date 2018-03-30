@@ -1725,6 +1725,69 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 	return thee;
 }
 
+autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const char32 *searchString) {
+	const int timeDecimals = 6;
+	integer numberOfRows = 0;
+	for (integer itier = 1; itier <= searchTiers.size; itier ++) {
+		integer tierNumber = Melder_iround (searchTiers [itier]);
+		Melder_require (tierNumber > 0 && tierNumber <= my tiers->size, U"Tier number out of range.");
+		Function anyTier = my tiers->at [tierNumber];
+		if (anyTier -> classInfo == classIntervalTier) {
+			IntervalTier tier = static_cast <IntervalTier> (anyTier);
+			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
+				TextInterval interval = tier -> intervals.at [iinterval];
+				if (interval -> text && str32str (interval -> text, searchString)) {
+					numberOfRows ++;
+				}
+			}
+		} else {
+			TextTier tier = static_cast <TextTier> (anyTier);
+			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+				TextPoint point = tier -> points.at [ipoint];
+				if (point -> mark && str32str (point -> mark, searchString)) {
+					numberOfRows ++;
+				}
+			}
+		}
+	}
+	autoTable thee = Table_createWithColumnNames (numberOfRows, U"time tier text");
+	integer rowNumber = 0;
+	for (integer itier = 1; itier <= searchTiers.size; itier ++) {
+		integer tierNumber = Melder_iround (searchTiers [itier]);
+		Function anyTier = my tiers->at [tierNumber];
+		if (anyTier -> classInfo == classIntervalTier) {
+			IntervalTier tier = static_cast <IntervalTier> (anyTier);
+			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
+				TextInterval interval = tier -> intervals.at [iinterval];
+				if (interval -> text && str32str (interval -> text, searchString)) {
+					++ rowNumber;
+					Melder_assert (rowNumber <= numberOfRows);
+					double time = 0.5 * (interval -> xmin + interval -> xmax);
+					Table_setStringValue (thee.get(), rowNumber, 1, Melder_fixed (time, timeDecimals));
+					Table_setStringValue (thee.get(), rowNumber, 2, tier -> name);
+					Table_setStringValue (thee.get(), rowNumber, 3, interval -> text);
+				}
+			}
+		} else {
+			TextTier tier = static_cast <TextTier> (anyTier);
+			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+				TextPoint point = tier -> points.at [ipoint];
+				if (point -> mark && str32str (point -> mark, searchString)) {
+					++ rowNumber;
+					Melder_assert (rowNumber <= numberOfRows);
+					double time = point -> number;
+					Table_setStringValue (thee.get(), rowNumber, 1, Melder_fixed (time, timeDecimals));
+					Table_setStringValue (thee.get(), rowNumber, 2, tier -> name);
+					Table_setStringValue (thee.get(), rowNumber, 3, point -> mark);
+				}
+			}
+		}
+	}
+	integer columns [1+1] = { 0, 1 };   // sort by time
+	Table_sortRows_Assert (thee.get(), columns, 1);
+	return thee;
+}
+
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
 	try {
 		autoTable table = TextGrid_downto_Table (me, includeLineNumbers, timeDecimals, includeTierNames, includeEmptyIntervals);

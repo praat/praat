@@ -675,4 +675,48 @@ autoMixingMatrix EEG_to_MixingMatrix (EEG me,
 	}
 }
 
+autoEEG EEG_MixingMatrix_to_EEG_unmix (EEG me, MixingMatrix you) {
+	Melder_require (my numberOfChannels == your numberOfRows,
+		U"To be able to unmix, the number of channels in ", me, U" (", my numberOfChannels, U")",
+		U" should be equal to the number of rows in ", you, U"(", your numberOfRows, U").");
+	for (integer ichan = 1; ichan <= your numberOfRows; ichan ++) {
+		Melder_require (Melder_equ (my channelNames [ichan], your rowLabels [ichan]),
+			U"To be able to unmix, the name of channel ", ichan,
+			U" should be the same in ", me, U" (where it is ", my channelNames [ichan], U")",
+			U" as in ", you, U" (where it is ", your rowLabels [ichan], U").");
+	}
+	autoEEG him = EEG_create (my xmin, my xmax);
+	his sound = Sound_MixingMatrix_unmix (my sound.get(), you);
+	his textgrid = Data_copy (my textgrid.get());
+	his numberOfChannels = your numberOfColumns;
+	his channelNames = NUMvector <char32 *> (1, his numberOfChannels);
+	//his channelNames = NUMstrings_copy (your columnLabels, 1, his numberOfChannels);
+	for (integer ichan = 1; ichan <= his numberOfChannels; ichan ++) {
+		his channelNames [ichan] = Melder_dup (your columnLabels [ichan]);
+	}
+	return him;
+}
+
+autoEEG EEG_MixingMatrix_to_EEG_mix (EEG me, MixingMatrix you) {
+	Melder_require (my numberOfChannels == your numberOfColumns,
+		U"To be able to mix, the number of channels in ", me, U" (", my numberOfChannels, U")",
+		U" should be equal to the number of columns in ", you, U"(", your numberOfColumns, U").");
+	for (integer ichan = 1; ichan <= your numberOfColumns; ichan ++) {
+		Melder_require (Melder_equ (my channelNames [ichan], your columnLabels [ichan]),
+			U"To be able to mix, the name of channel ", ichan,
+			U" should be the same in ", me, U" (where it is ", my channelNames [ichan], U")",
+			U" as in ", you, U" (where it is ", your columnLabels [ichan], U").");
+	}
+	autoEEG him = EEG_create (my xmin, my xmax);
+	his sound = Sound_MixingMatrix_mix (my sound.get(), you);
+	his textgrid = Data_copy (my textgrid.get());
+	his numberOfChannels = your numberOfRows;
+	his channelNames = NUMvector <char32 *> (1, his numberOfChannels);
+	//his channelNames = NUMstrings_copy (your rowLabels, 1, his numberOfChannels);
+	for (integer ichan = 1; ichan <= his numberOfChannels; ichan ++) {
+		his channelNames [ichan] = Melder_dup (your rowLabels [ichan]);
+	}
+	return him;
+}
+
 /* End of file EEG.cpp */
