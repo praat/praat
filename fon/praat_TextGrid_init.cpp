@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -835,6 +835,16 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
+FORM (NEW_TextGrid_tabulateOccurrences, U"TextGrid: Tabulate occurrences", nullptr) {
+	NUMVEC (searchTiers, U"Search tiers:", U"{ 1, 2 }")
+	TEXTFIELD (searchString, U"Search string:", U"hi")
+	OK
+DO
+	CONVERT_EACH (TextGrid)
+		autoTable result = TextGrid_tabulateOccurrences (me, searchTiers, searchString);
+	CONVERT_EACH_END (my name, U"_", searchString)
+}
+
 // MARK: Query
 
 DIRECT (INTEGER_TextGrid_getNumberOfTiers) {
@@ -1569,8 +1579,10 @@ void praat_uvafon_TextGrid_init () {
 	praat_addAction1 (classTextGrid, 0, U"Draw...", nullptr, 1, GRAPHICS_TextGrid_draw);
 	praat_addAction1 (classTextGrid, 1, U"Draw with Sound?", nullptr, 1, HINT_TextGrid_Sound_draw);
 	praat_addAction1 (classTextGrid, 1, U"Draw with Pitch?", nullptr, 1, HINT_TextGrid_Pitch_draw);
-	praat_addAction1 (classTextGrid, 1, U"List...", nullptr, 0, LIST_TextGrid_list);
-	praat_addAction1 (classTextGrid, 0, U"Down to Table...", nullptr, 0, NEW_TextGrid_downto_Table);
+	praat_addAction1 (classTextGrid, 1, U"Tabulate -", nullptr, 0, nullptr);
+		praat_addAction1 (classTextGrid, 0, U"Down to Table...", nullptr, 1, NEW_TextGrid_downto_Table);
+		praat_addAction1 (classTextGrid, 1, U"List...", nullptr, 1, LIST_TextGrid_list);
+		praat_addAction1 (classTextGrid, 0, U"Tabulate occurrences...", nullptr, 1, NEW_TextGrid_tabulateOccurrences);
 	praat_addAction1 (classTextGrid, 0, U"Query -", nullptr, 0, nullptr);
 		praat_TimeFunction_query_init (classTextGrid);
 		praat_addAction1 (classTextGrid, 1, U"-- query textgrid --", nullptr, 1, nullptr);

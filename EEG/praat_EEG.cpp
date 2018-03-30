@@ -307,6 +307,18 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
+DIRECT (NEW_EEG_MixingMatrix_to_EEG_unmix) {
+	CONVERT_TWO (EEG, MixingMatrix)
+		autoEEG result = EEG_MixingMatrix_to_EEG_unmix (me, you);
+	CONVERT_TWO_END (my name, U"_", your name)
+}
+
+DIRECT (NEW_EEG_MixingMatrix_to_EEG_mix) {
+	CONVERT_TWO (EEG, MixingMatrix)
+		autoEEG result = EEG_MixingMatrix_to_EEG_mix (me, you);
+	CONVERT_TWO_END (my name, U"_", your name)
+}
+
 // MARK: - EEG & TextGrid
 
 DIRECT (MODIFY_EEG_TextGrid_replaceTextGrid) {
@@ -804,6 +816,8 @@ void praat_EEG_init () {
 		praat_addAction1 (classERPTier, 0, U"Extract ERP...", nullptr, 0, NEW_ERPTier_to_ERP);
 		praat_addAction1 (classERPTier, 0, U"To ERP (mean)", nullptr, 0, NEW_ERPTier_to_ERP_mean);
 
+	praat_addAction2 (classEEG, 1, classMixingMatrix, 1, U"To EEG (unmix)", nullptr, 0, NEW_EEG_MixingMatrix_to_EEG_unmix);
+	praat_addAction2 (classEEG, 1, classMixingMatrix, 1, U"To EEG (mix)", nullptr, 0, NEW_EEG_MixingMatrix_to_EEG_mix);
 	praat_addAction2 (classEEG, 1, classTextGrid, 1, U"Replace TextGrid", nullptr, 0, MODIFY_EEG_TextGrid_replaceTextGrid);
 	praat_addAction2 (classERPTier, 1, classTable, 1, U"Extract -", nullptr, 0, nullptr);
 	praat_addAction2 (classERPTier, 1, classTable, 1, U"Extract events where column (number)...", nullptr, 1, NEW1_ERPTier_Table_extractEventsWhereColumn_number);

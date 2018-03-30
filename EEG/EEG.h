@@ -63,5 +63,8 @@ autoMixingMatrix EEG_to_MixingMatrix (EEG me,
 	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep,
 	integer maxNumberOfIterations, double tol, int method);
 
+autoEEG EEG_MixingMatrix_to_EEG_unmix (EEG me, MixingMatrix you);
+autoEEG EEG_MixingMatrix_to_EEG_mix (EEG me, MixingMatrix you);
+
 /* End of file EEG.h */
 #endif
