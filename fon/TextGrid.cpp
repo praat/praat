@@ -1728,17 +1728,12 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const char32 *searchString) {
 	const int timeDecimals = 6;
 	integer numberOfRows = 0;
-	Melder_casual (U"Search tiers: ", searchTiers);
-	Melder_casual (U"Search string: ", searchString);
 	for (integer itier = 1; itier <= searchTiers.size; itier ++) {
 		integer tierNumber = Melder_iround (searchTiers [itier]);
-		Melder_casual (U"Tier number: ", tierNumber);
 		Melder_require (tierNumber > 0 && tierNumber <= my tiers->size, U"Tier number out of range.");
 		Function anyTier = my tiers->at [tierNumber];
 		if (anyTier -> classInfo == classIntervalTier) {
-			Melder_casual (U"Interval tier");
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
-			Melder_casual (U"size ", tier -> intervals.size);
 			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
 				if (interval -> text && str32str (interval -> text, searchString)) {
@@ -1746,9 +1741,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 				}
 			}
 		} else {
-			Melder_casual (U"Point tier");
 			TextTier tier = static_cast <TextTier> (anyTier);
-			Melder_casual (U"size ", tier -> points.size);
 			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
 				if (point -> mark && str32str (point -> mark, searchString)) {

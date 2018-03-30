@@ -836,7 +836,7 @@ DO
 }
 
 FORM (NEW_TextGrid_tabulateOccurrences, U"TextGrid: Tabulate occurrences", nullptr) {
-	NUMVEC (searchTiers, U"Search tiers", U"{ 1, 2 }")
+	NUMVEC (searchTiers, U"Search tiers:", U"{ 1, 2 }")
 	TEXTFIELD (searchString, U"Search string:", U"hi")
 	OK
 DO
