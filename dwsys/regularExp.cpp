@@ -4070,20 +4070,20 @@ int SubstituteRE (const regexp *prog, const char32 *source, char32 *dest, int ma
 	int   paren_no;
 	int   len;
 	char32 chgcase;
-	int anyWarnings = FALSE;
+	bool anyWarnings = false;
 
 	*errorType = 0;
 	if (prog == NULL || source == NULL || dest == NULL) {
 		reg_error (U"NULL parm to `SubstituteRE\'");
 		*errorType = 2;
-		return FALSE;
+		return false;
 	}
 
 	if (U_CHAR_AT (prog->program) != MAGIC) {
 		*errorType = 3;
 		reg_error (U"damaged regexp passed to `SubstituteRE\'");
 
-		return FALSE;
+		return false;
 	}
 
 	src = source;
@@ -4141,7 +4141,7 @@ int SubstituteRE (const regexp *prog, const char32 *source, char32 *dest, int ma
 			if ( (dst - dest) >= (max - 1)) {
 				*errorType = 1;
 				reg_error (U"replacing expression in `SubstituteRE\' too long; truncating");
-				anyWarnings = TRUE;
+				anyWarnings = true;
 				break;
 			} else {
 				*dst++ = c;
@@ -4154,7 +4154,7 @@ int SubstituteRE (const regexp *prog, const char32 *source, char32 *dest, int ma
 			if ( (dst + len - dest) >= max - 1) {
 				*errorType = 1;
 				reg_error (U"replacing expression in `SubstituteRE\' too long; truncating");
-				anyWarnings = TRUE;
+				anyWarnings = true;
 				len = max - (dst - dest) - 1;
 			}
 
@@ -4169,14 +4169,14 @@ int SubstituteRE (const regexp *prog, const char32 *source, char32 *dest, int ma
 			if (len != 0 && * (dst - 1) == '\0') { /* strncpy hit NUL. */
 				*errorType = 3;
 				reg_error (U"damaged match string in `SubstituteRE\'");
-				anyWarnings = TRUE;
+				anyWarnings = true;
 			}
 		}
 	}
 
 	*dst = '\0';
 
-	return !anyWarnings;
+	return ! anyWarnings;
 }
 
 static void adjustcase (char32 *str, int len, char32 chgcase) {
