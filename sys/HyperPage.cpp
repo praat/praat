@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1996-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -635,7 +635,7 @@ extern "C" void GRAPHICS_PostScript_settings (UiForm sendingForm, int narg, Stac
 static void menu_cb_postScriptSettings (HyperPage me, EDITOR_ARGS_FORM) {
 	(void) me;
 	(void) cmd;
-	GRAPHICS_PostScript_settings (sendingForm, narg, args, sendingString, interpreter, nullptr, false, nullptr);
+	GRAPHICS_PostScript_settings (_sendingForm_, _narg_, _args_, _sendingString_, interpreter, nullptr, false, nullptr);
 }
 
 #ifdef macintosh

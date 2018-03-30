@@ -141,7 +141,7 @@ Thing_define (UiField, Thing) {
 };
 
 #define UiCallback_ARGS \
-	UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure
+	UiForm _sendingForm, integer _narg, Stackel _args, const char32 *_sendingString, Interpreter interpreter, const char32 *_invokingButtonTitle, bool _modified, void *_closure
 typedef void (*UiCallback) (UiCallback_ARGS);
 
 #define MAXIMUM_NUMBER_OF_FIELDS  50
