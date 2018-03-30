@@ -28,27 +28,6 @@
 
 /***** class UiField: the things that have values in an UiForm dialog *****/
 
-/* Values for 'type'. */
-#define UI_REAL  1
-#define UI_REAL_OR_UNDEFINED  2
-#define UI_POSITIVE  3
-#define UI_INTEGER  4
-#define UI_NATURAL  5
-#define UI_WORD  6
-#define UI_SENTENCE  7
-#define UI_COLOUR  8
-#define UI_CHANNEL  9
-	#define UI_LABELLEDTEXT_MIN  UI_REAL
-	#define UI_LABELLEDTEXT_MAX  UI_CHANNEL
-#define UI_LABEL  10
-#define UI_TEXT  11
-#define UI_NUMVEC  12
-#define UI_NUMMAT  13
-#define UI_BOOLEAN  14
-#define UI_RADIO  15
-#define UI_OPTIONMENU  16
-#define UI_LIST  17
-
 Thing_implement (UiField, Thing, 0);
 
 void structUiField :: v_destroy () noexcept {
@@ -62,7 +41,7 @@ void structUiField :: v_destroy () noexcept {
 	our UiField_Parent :: v_destroy ();
 }
 
-static UiField UiField_create (int type, const char32 *name) {
+static UiField UiField_create (_kUiField_type type, const char32 *name) {
 	autoUiField me = Thing_new (UiField);
 	char32 shortName [1+100], *p;
 	my type = type;
@@ -94,14 +73,14 @@ static autoUiOption UiOption_create (const char32 *label) {
 
 UiOption UiRadio_addButton (UiField me, const char32 *label) {
 	if (! me) return nullptr;
-	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
+	Melder_assert (my type == _kUiField_type::RADIO_ || my type == _kUiField_type::OPTIONMENU_);
 	autoUiOption thee = UiOption_create (label);
 	return my options. addItem_move (thee.move());
 }
 
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label) {
 	if (! me) return nullptr;
-	Melder_assert (my type == UI_RADIO || my type == UI_OPTIONMENU);
+	Melder_assert (my type == _kUiField_type::RADIO_ || my type == _kUiField_type::OPTIONMENU_);
 	autoUiOption thee = UiOption_create (label);
 	return my options. addItem_move (thee.move());
 }
@@ -110,23 +89,44 @@ UiOption UiOptionMenu_addButton (UiField me, const char32 *label) {
 
 static void UiField_setDefault (UiField me) {
 	switch (my type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: case UI_INTEGER: case UI_NATURAL:
-			case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_CHANNEL: case UI_TEXT:
-			case UI_NUMVEC: case UI_NUMMAT:
+		case _kUiField_type::REAL_:
+		case _kUiField_type::REAL_OR_UNDEFINED_:
+		case _kUiField_type::POSITIVE_:
+		case _kUiField_type::INTEGER_:
+		case _kUiField_type::NATURAL_:
+		case _kUiField_type::WORD_:
+		case _kUiField_type::SENTENCE_:
+		case _kUiField_type::COLOUR_:
+		case _kUiField_type::CHANNEL_:
+		case _kUiField_type::TEXT_:
+		case _kUiField_type::NUMVEC_:
+		case _kUiField_type::NUMMAT_:
 		{
 			GuiText_setString (my text, my stringDefaultValue);
-		} break; case UI_BOOLEAN: {
+		}
+		break;
+		case _kUiField_type::BOOLEAN_:
+		{
 			GuiCheckButton_setValue (my checkButton, my integerDefaultValue);
-		} break; case UI_RADIO: {
+		}
+		break;
+		case _kUiField_type::RADIO_:
+		{
 			for (int i = 1; i <= my options.size; i ++) {
 				if (i == my integerDefaultValue) {
 					UiOption b = my options.at [i];
 					GuiRadioButton_set (b -> radioButton);
 				}
 			}
-		} break; case UI_OPTIONMENU: {
+		}
+		break;
+		case _kUiField_type::OPTIONMENU_:
+		{
 			GuiOptionMenu_setValue (my optionMenu, my integerDefaultValue);
-		} break; case UI_LIST: {
+		}
+		break;
+		case _kUiField_type::LIST_:
+		{
 			GuiList_selectItem (my list, my integerDefaultValue);
 		}
 	}
@@ -172,8 +172,12 @@ static int colourToValue (UiField me, char32 *string) {
 
 #define EVALUATE_WIDGET_REPRESENTATIONS  0
 static void UiField_widgetToValue (UiField me) {
-	switch (my type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+	switch (my type)
+	{
+		case _kUiField_type::REAL_:
+		case _kUiField_type::REAL_OR_UNDEFINED_:
+		case _kUiField_type::POSITIVE_:
+		{
 			autostring32 dirty = GuiText_getString (my text);   // the text as typed by the user
 			Interpreter_numericExpression (nullptr, dirty.peek(), & my realValue);
 			#if EVALUATE_WIDGET_REPRESENTATIONS
@@ -197,16 +201,21 @@ static void UiField_widgetToValue (UiField me) {
 					GuiText_setString (my text, clean);
 				}
 			#endif
-			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
+			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" has the value \"undefined\".");
-			if (my type == UI_POSITIVE && my realValue <= 0.0)
+			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be greater than 0.0.");
 			if (my realVariable) *my realVariable = my realValue;
-		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+		}
+		break;
+		case _kUiField_type::INTEGER_:
+		case _kUiField_type::NATURAL_:
+		case _kUiField_type::CHANNEL_:
+		{
 			autostring32 dirty = GuiText_getString (my text);
-			if (my type == UI_CHANNEL && (str32equ (dirty.peek(), U"Left") || str32equ (dirty.peek(), U"Mono"))) {
+			if (my type == _kUiField_type::CHANNEL_ && (str32equ (dirty.peek(), U"Left") || str32equ (dirty.peek(), U"Mono"))) {
 				my integerValue = 1;
-			} else if (my type == UI_CHANNEL && (str32equ (dirty.peek(), U"Right") || str32equ (dirty.peek(), U"Stereo"))) {
+			} else if (my type == _kUiField_type::CHANNEL_ && (str32equ (dirty.peek(), U"Right") || str32equ (dirty.peek(), U"Stereo"))) {
 				my integerValue = 2;
 			} else {
 				double realValue;
@@ -220,14 +229,17 @@ static void UiField_widgetToValue (UiField me) {
 					GuiText_setString (my text, Melder_integer (my integerValue));
 				}
 			#endif
-			if (my type == UI_NATURAL && my integerValue < 1) {
+			if (my type == _kUiField_type::NATURAL_ && my integerValue < 1) {
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number.");
 			}
-			if (my type == UI_CHANNEL && my integerValue < 0) {
+			if (my type == _kUiField_type::CHANNEL_ && my integerValue < 0) {
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number or zero.");
 			}
 			if (my integerVariable) *my integerVariable = my integerValue;
-		} break; case UI_WORD: {
+		}
+		break;
+		case _kUiField_type::WORD_:
+		{
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 			#if EVALUATE_WIDGET_REPRESENTATIONS
@@ -240,28 +252,44 @@ static void UiField_widgetToValue (UiField me) {
 				}
 			#endif
 			if (my stringVariable) *my stringVariable = my stringValue;
-		} break; case UI_SENTENCE: case UI_TEXT: {
+		}
+		break;
+		case _kUiField_type::SENTENCE_:
+		case _kUiField_type::TEXT_:
+		{
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 			if (my stringVariable) *my stringVariable = my stringValue;
-		} break; case UI_NUMVEC: {
+		}
+		break;
+		case _kUiField_type::NUMVEC_:
+		{
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 			if (my numericVectorVariable) {
 				if (my owned) my numericVectorVariable -> reset();
 				Interpreter_numericVectorExpression (nullptr, my stringValue, my numericVectorVariable, & my owned);
 			}
-		} break; case UI_NUMMAT: {
+		}
+		break;
+		case _kUiField_type::NUMMAT_:
+		{
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 			if (my numericMatrixVariable) {
 				if (my owned) my numericMatrixVariable -> reset();
 				Interpreter_numericMatrixExpression (nullptr, my stringValue, my numericMatrixVariable, & my owned);
 			}
-		} break; case UI_BOOLEAN: {
+		}
+		break;
+		case _kUiField_type::BOOLEAN_:
+		{
 			my integerValue = GuiCheckButton_getValue (my checkButton);
 			if (my boolVariable) *my boolVariable = my integerValue;
-		} break; case UI_RADIO: {
+		}
+		break;
+		case _kUiField_type::RADIO_:
+		{
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
@@ -272,13 +300,19 @@ static void UiField_widgetToValue (UiField me) {
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
 			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
-		} break; case UI_OPTIONMENU: {
+		}
+		break;
+		case _kUiField_type::OPTIONMENU_:
+		{
 			my integerValue = GuiOptionMenu_getValue (my optionMenu);
 			if (my integerValue == 0)
 				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U".");
 			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
-		} break; case UI_LIST: {
+		}
+		break;
+		case _kUiField_type::LIST_:
+		{
 			integer numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
 			if (! selected) {
 				Melder_warning (U"No items selected.");
@@ -290,7 +324,10 @@ static void UiField_widgetToValue (UiField me) {
 			}
 			if (my integerVariable) *my integerVariable = my integerValue;
 			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
-		} break; case UI_COLOUR: {
+		}
+		break;
+		case _kUiField_type::COLOUR_:
+		{
 			autostring32 string = GuiText_getString (my text);
 			if (colourToValue (me, string.peek())) {
 				// do nothing
@@ -409,34 +446,61 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 			UiHistory_write (U"\n");
 			UiHistory_write_colonize (my invokingButtonTitle);
 			int size = my numberOfFields;
-			while (size >= 1 && my field [size] -> type == UI_LABEL)
+			while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
 				size --;   // ignore trailing fields without a value
 			int next = 0;
 			for (int ifield = 1; ifield <= size; ifield ++) {
 				UiField field = my field [ifield];
-				switch (field -> type) {
-					case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+				switch (field -> type)
+				{
+					case _kUiField_type::REAL_:
+					case _kUiField_type::REAL_OR_UNDEFINED_:
+					case _kUiField_type::POSITIVE_:
+					{
 						UiHistory_write (next -- ? U", " : U" ");
 						UiHistory_write (Melder_double (field -> realValue));
-					} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+					}
+					break;
+					case _kUiField_type::INTEGER_:
+					case _kUiField_type::NATURAL_:
+					case _kUiField_type::CHANNEL_:
+					{
 						UiHistory_write (next -- ? U", " : U" ");
 						UiHistory_write (Melder_integer (field -> integerValue));
-					} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+					}
+					break;
+					case _kUiField_type::WORD_:
+					case _kUiField_type::SENTENCE_:
+					case _kUiField_type::TEXT_:
+					{
 						UiHistory_write (next -- ? U", \"" : U" \"");
 						UiHistory_write_expandQuotes (field -> stringValue);
 						UiHistory_write (U"\"");
-					} break; case UI_BOOLEAN: {
+					}
+					break;
+					case _kUiField_type::BOOLEAN_:
+					{
 						UiHistory_write (field -> integerValue ? (next -- ? U", \"yes\"" : U" \"yes\"") : (next -- ? U", \"no\"" : U" \"no\""));
-					} break; case UI_RADIO: case UI_OPTIONMENU: {
+					}
+					break;
+					case _kUiField_type::RADIO_:
+					case _kUiField_type::OPTIONMENU_:
+					{
 						UiOption b = field -> options.at [field -> integerValue];
 						UiHistory_write (next -- ? U", \"" : U" \"");
 						UiHistory_write_expandQuotes (b -> name);
 						UiHistory_write (U"\"");
-					} break; case UI_LIST: {
+					}
+					break;
+					case _kUiField_type::LIST_:
+					{
 						UiHistory_write (next -- ? U", \"" : U" \"");
 						UiHistory_write_expandQuotes (field -> strings [field -> integerValue]);
 						UiHistory_write (U"\"");
-					} break; case UI_COLOUR: {
+					}
+					break;
+					case _kUiField_type::COLOUR_:
+					{
 						UiHistory_write (next -- ? U", \"" : U" \"");
 						UiHistory_write (Graphics_Colour_name (field -> colourValue));
 						UiHistory_write (U"\"");
@@ -546,14 +610,14 @@ autoUiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 
 	return dia;
 }
 
-static UiField UiForm_addField (UiForm me, int type, const char32 *label) {
+static UiField UiForm_addField (UiForm me, _kUiField_type type, const char32 *label) {
 	if (my numberOfFields == MAXIMUM_NUMBER_OF_FIELDS)
 		Melder_throw (U"Cannot have more than ", MAXIMUM_NUMBER_OF_FIELDS, U"fields in a form.");
 	return my field [++ my numberOfFields] = UiField_create (type, label);
 }
 
 UiField UiForm_addReal (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_REAL, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::REAL_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
@@ -561,7 +625,7 @@ UiField UiForm_addReal (UiForm me, double *variable, const char32 *variableName,
 }
 
 UiField UiForm_addRealOrUndefined (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_REAL_OR_UNDEFINED, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::REAL_OR_UNDEFINED_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
@@ -569,7 +633,7 @@ UiField UiForm_addRealOrUndefined (UiForm me, double *variable, const char32 *va
 }
 
 UiField UiForm_addPositive (UiForm me, double *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_POSITIVE, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::POSITIVE_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy realVariable = variable;
 	thy variableName = variableName;
@@ -577,7 +641,7 @@ UiField UiForm_addPositive (UiForm me, double *variable, const char32 *variableN
 }
 
 UiField UiForm_addInteger (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_INTEGER, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::INTEGER_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
@@ -585,7 +649,7 @@ UiField UiForm_addInteger (UiForm me, integer *variable, const char32 *variableN
 }
 
 UiField UiForm_addNatural (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_NATURAL, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::NATURAL_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
@@ -593,7 +657,7 @@ UiField UiForm_addNatural (UiForm me, integer *variable, const char32 *variableN
 }
 
 UiField UiForm_addWord (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_WORD, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::WORD_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -601,7 +665,7 @@ UiField UiForm_addWord (UiForm me, char32 **variable, const char32 *variableName
 }
 
 UiField UiForm_addSentence (UiForm me, char32 **variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_SENTENCE, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::SENTENCE_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -609,14 +673,14 @@ UiField UiForm_addSentence (UiForm me, char32 **variable, const char32 *variable
 }
 
 UiField UiForm_addLabel (UiForm me, char32 **variable, const char32 *label) {
-	autoUiField thee (UiForm_addField (me, UI_LABEL, U""));   // this field gets no name; so that the user can give it any title
+	autoUiField thee (UiForm_addField (me, _kUiField_type::LABEL_, U""));   // this field gets no name; so that the user can give it any title
 	thy stringVariable = variable;
 	thy stringValue = Melder_dup (label);
 	return thee.releaseToAmbiguousOwner();
 }
 
 UiField UiForm_addBoolean (UiForm me, bool *variable, const char32 *variableName, const char32 *label, bool defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_BOOLEAN, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::BOOLEAN_, label));
 	thy integerDefaultValue = defaultValue;
 	thy boolVariable = variable;
 	thy variableName = variableName;
@@ -624,7 +688,7 @@ UiField UiForm_addBoolean (UiForm me, bool *variable, const char32 *variableName
 }
 
 UiField UiForm_addText (UiForm me, char32 **variable, const char32 *variableName, const char32 *name, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_TEXT, name));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::TEXT_, name));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
 	thy variableName = variableName;
@@ -632,7 +696,7 @@ UiField UiForm_addText (UiForm me, char32 **variable, const char32 *variableName
 }
 
 UiField UiForm_addNumvec (UiForm me, numvec *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_NUMVEC, name));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::NUMVEC_, name));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
 	thy variableName = variableName;
@@ -640,7 +704,7 @@ UiField UiForm_addNumvec (UiForm me, numvec *variable, const char32 *variableNam
 }
 
 UiField UiForm_addNummat (UiForm me, nummat *variable, const char32 *variableName, const char32 *name, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_NUMMAT, name));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::NUMMAT_, name));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericMatrixVariable = variable;
 	thy variableName = variableName;
@@ -648,7 +712,7 @@ UiField UiForm_addNummat (UiForm me, nummat *variable, const char32 *variableNam
 }
 
 UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base) {
-	autoUiField thee (UiForm_addField (me, UI_RADIO, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::RADIO_, label));
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
@@ -658,7 +722,7 @@ UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, c
 }
 
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base) {
-	autoUiField thee (UiForm_addField (me, UI_OPTIONMENU, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::OPTIONMENU_, label));
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
 	thy stringVariable = stringVariable;
@@ -668,7 +732,7 @@ UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariab
 }
 
 UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_LIST, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::LIST_, label));
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
 	thy integerDefaultValue = defaultValue;
@@ -679,7 +743,7 @@ UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVari
 }
 
 UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_COLOUR, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::COLOUR_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy colourVariable = colourVariable;
 	thy variableName = variableName;
@@ -687,7 +751,7 @@ UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, const char
 }
 
 UiField UiForm_addChannel (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue) {
-	autoUiField thee (UiForm_addField (me, UI_CHANNEL, label));
+	autoUiField thee (UiForm_addField (me, _kUiField_type::CHANNEL_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy integerVariable = variable;
 	thy variableName = variableName;
@@ -731,18 +795,18 @@ void UiForm_finish (UiForm me) {
 		UiField thee = my field [ifield], previous = my field [ifield - 1];
 		dialogHeight +=
 			ifield == 1 ? Gui_TOP_DIALOG_SPACING :
-			thy type == UI_RADIO || previous -> type == UI_RADIO ? Gui_VERTICAL_DIALOG_SPACING_DIFFERENT :
-			thy type >= UI_LABELLEDTEXT_MIN && thy type <= UI_LABELLEDTEXT_MAX && str32nequ (thy name, U"right ", 6) &&
-			previous -> type >= UI_LABELLEDTEXT_MIN && previous -> type <= UI_LABELLEDTEXT_MAX &&
+			thy type == _kUiField_type::RADIO_ || previous -> type == _kUiField_type::RADIO_ ? Gui_VERTICAL_DIALOG_SPACING_DIFFERENT :
+			thy type >= _kUiField_type::LABELLED_TEXT_MIN_ && thy type <= _kUiField_type::LABELLED_TEXT_MAX_ && str32nequ (thy name, U"right ", 6) &&
+			previous -> type >= _kUiField_type::LABELLED_TEXT_MIN_ && previous -> type <= _kUiField_type::LABELLED_TEXT_MAX_ &&
 			str32nequ (previous -> name, U"left ", 5) ? - textFieldHeight : Gui_VERTICAL_DIALOG_SPACING_SAME;
 		thy y = dialogHeight;
 		dialogHeight +=
-			thy type == UI_BOOLEAN ? Gui_CHECKBUTTON_HEIGHT :
-			thy type == UI_RADIO ? thy options.size * Gui_RADIOBUTTON_HEIGHT +
+			thy type == _kUiField_type::BOOLEAN_ ? Gui_CHECKBUTTON_HEIGHT :
+			thy type == _kUiField_type::RADIO_ ? thy options.size * Gui_RADIOBUTTON_HEIGHT +
 				(thy options.size - 1) * Gui_RADIOBUTTON_SPACING :
-			thy type == UI_OPTIONMENU ? Gui_OPTIONMENU_HEIGHT :
-			thy type == UI_LIST ? LIST_HEIGHT :
-			thy type == UI_LABEL && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue) - 1] != U'.' &&
+			thy type == _kUiField_type::OPTIONMENU_ ? Gui_OPTIONMENU_HEIGHT :
+			thy type == _kUiField_type::LIST_ ? LIST_HEIGHT :
+			thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue) - 1] != U'.' &&
 				ifield != my numberOfFields ? textFieldHeight
 				#ifdef _WIN32
 					- 6 :
@@ -759,16 +823,17 @@ void UiForm_finish (UiForm me) {
 	for (integer ifield = 1; ifield <= size; ifield ++) {
 		UiField field = my field [ifield];
 		y = field -> y;
-		switch (field -> type) {
-			case UI_REAL:
-			case UI_REAL_OR_UNDEFINED:
-			case UI_POSITIVE:
-			case UI_INTEGER:
-			case UI_NATURAL:
-			case UI_WORD:
-			case UI_SENTENCE:
-			case UI_COLOUR:
-			case UI_CHANNEL:
+		switch (field -> type)
+		{
+			case _kUiField_type::REAL_:
+			case _kUiField_type::REAL_OR_UNDEFINED_:
+			case _kUiField_type::POSITIVE_:
+			case _kUiField_type::INTEGER_:
+			case _kUiField_type::NATURAL_:
+			case _kUiField_type::WORD_:
+			case _kUiField_type::SENTENCE_:
+			case _kUiField_type::COLOUR_:
+			case _kUiField_type::CHANNEL_:
 			{
 				int ylabel = y;
 				#if defined (macintosh)
@@ -792,22 +857,25 @@ void UiForm_finish (UiForm me) {
 					field -> text = GuiText_createShown (form, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
 						y, y + Gui_TEXTFIELD_HEIGHT, 0);
 				}
-			} break;
-			case UI_TEXT:
-			case UI_NUMVEC:
-			case UI_NUMMAT:
+			}
+			break;
+			case _kUiField_type::TEXT_:
+			case _kUiField_type::NUMVEC_:
+			case _kUiField_type::NUMMAT_:
 			{
 				field -> text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
 					y, y + Gui_TEXTFIELD_HEIGHT, 0);
-			} break;
-			case UI_LABEL:
+			}
+			break;
+			case _kUiField_type::LABEL_:
 			{
 				MelderString_copy (& theFinishBuffer, field -> stringValue);
 				field -> label = GuiLabel_createShown (form,
 					x, dialogWidth /* allow to extend into the margin */, y + 5, y + 5 + textFieldHeight,
 					theFinishBuffer.string, 0);
-			} break;
-			case UI_RADIO:
+			}
+			break;
+			case _kUiField_type::RADIO_:
 			{
 				int ylabel = y;
 				#if defined (macintosh)
@@ -828,8 +896,9 @@ void UiForm_finish (UiForm me) {
 						theFinishBuffer.string, nullptr, nullptr, 0);
 				}
 				GuiRadioGroup_end ();
-			} break; 
-			case UI_OPTIONMENU:
+			}
+			break;
+			case _kUiField_type::OPTIONMENU_:
 			{
 				int ylabel = y;
 				#if defined (macintosh)
@@ -845,8 +914,9 @@ void UiForm_finish (UiForm me) {
 					MelderString_copy (& theFinishBuffer, button -> name);
 					GuiOptionMenu_addOption (field -> optionMenu, theFinishBuffer.string);
 				}
-			} break;
-			case UI_BOOLEAN:
+			}
+			break;
+			case _kUiField_type::BOOLEAN_:
 			{
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
 				/*field -> label = GuiLabel_createShown (form, x, x + labelWidth, y, y + Gui_CHECKBUTTON_HEIGHT,
@@ -854,8 +924,9 @@ void UiForm_finish (UiForm me) {
 				field -> checkButton = GuiCheckButton_createShown (form,
 					fieldX, dialogWidth /* allow to extend into the margin */, y, y + Gui_CHECKBUTTON_HEIGHT,
 					theFinishBuffer.string, nullptr, nullptr, 0);
-			} break;
-			case UI_LIST:
+			}
+			break;
+			case _kUiField_type::LIST_:
 			{
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
 				MelderString_copy (& theFinishBuffer, field -> formLabel);
@@ -867,7 +938,8 @@ void UiForm_finish (UiForm me) {
 					GuiList_insertItem (field -> list, field -> strings [i], 0);
 				}
 				GuiThing_show (field -> list);
-			} break;
+			}
+			break;
 		}
 	}
 	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++)
@@ -880,7 +952,7 @@ void UiForm_finish (UiForm me) {
 	}
 	bool commentsOnly = true;
 	for (integer ifield = 1; ifield <= my numberOfFields; ifield ++) {
-		if (my field [ifield] -> type != UI_LABEL) {
+		if (my field [ifield] -> type != _kUiField_type::LABEL_) {
 			commentsOnly = false;
 			break;
 		}
@@ -921,7 +993,7 @@ void UiForm_finish (UiForm me) {
 		my cancelButton = GuiButton_createShown (form, x, x + Gui_CANCEL_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
 			U"Cancel", gui_button_cb_cancel, me, GuiButton_CANCEL);
 		x = dialogWidth - Gui_RIGHT_DIALOG_SPACING - Gui_OK_BUTTON_WIDTH - Gui_HORIZONTAL_DIALOG_SPACING - Gui_APPLY_BUTTON_WIDTH;
-		if (my numberOfFields > 1 || my field [1] -> type != UI_LABEL) {
+		if (my numberOfFields > 1 || my field [1] -> type != _kUiField_type::LABEL_) {
 			my applyButton = GuiButton_createShown (form, x, x + Gui_APPLY_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
 				U"Apply", gui_button_cb_apply, me, 0);
 		}
@@ -946,9 +1018,9 @@ void UiForm_do (UiForm me, bool modified) {
 }
 
 static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelField) {
-	if (my type == UI_LABEL) {
+	if (my type == _kUiField_type::LABEL_) {
 		bool weAreFollowedByAWideField =
-			next && (next -> type == UI_TEXT || next -> type == UI_NUMVEC || next -> type == UI_NUMMAT);
+			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_);
 		bool weLabelTheFollowingField =
 			weAreFollowedByAWideField &&
 			Melder_stringMatchesCriterion (my stringValue, kMelder_string::ENDS_WITH, U":");
@@ -963,24 +1035,50 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 		Write the type of the field.
 	*/
 	bool isText = false, isBoolean = false, isEnum = false, isPositive = false;
-	switch (my type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+	switch (my type)
+	{
+		case _kUiField_type::REAL_:
+		case _kUiField_type::REAL_OR_UNDEFINED_:
+		case _kUiField_type::POSITIVE_:
+		{
 			MelderInfo_write (U"\tdouble ");
-			isPositive = ( my type == UI_POSITIVE);
-		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+			isPositive = ( my type == _kUiField_type::POSITIVE_);
+		}
+		break;
+		case _kUiField_type::INTEGER_:
+		case _kUiField_type::NATURAL_:
+		case _kUiField_type::CHANNEL_:
+		{
 			MelderInfo_write (U"\tint64_t ");
-			isPositive = ( my type == UI_NATURAL);
-		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: case UI_COLOUR: case UI_LIST: {
+			isPositive = ( my type == _kUiField_type::NATURAL_);
+		}
+		break;
+		case _kUiField_type::WORD_:
+		case _kUiField_type::SENTENCE_:
+		case _kUiField_type::TEXT_:
+		case _kUiField_type::COLOUR_:
+		case _kUiField_type::LIST_:
+		{
 			MelderInfo_write (U"\tconst char *");
 			isText = true;
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
+		}
+		break;
+		case _kUiField_type::RADIO_:
+		case _kUiField_type::OPTIONMENU_:
+		{
 			MelderInfo_write (U"\tconst char *");
 			isText = true;
 			isEnum = true;
-		} break; case UI_BOOLEAN: {
+		}
+		break;
+		case _kUiField_type::BOOLEAN_:
+		{
 			MelderInfo_write (U"\tint32_t ");
 			isBoolean = true;
-		} break; default: {
+		}
+		break;
+		default:
+		{
 		}
 	}
 
@@ -1099,7 +1197,7 @@ void UiForm_info (UiForm me, integer narg) {
 		*/
 		int lastNonLabelFieldNumber = 0;
 		for (int ifield = my numberOfFields; ifield > 0; ifield --) {
-			if (my field [ifield] -> type != UI_LABEL) {
+			if (my field [ifield] -> type != _kUiField_type::LABEL_) {
 				lastNonLabelFieldNumber = ifield;
 				break;
 			}
@@ -1111,19 +1209,28 @@ void UiForm_info (UiForm me, integer narg) {
 }
 
 static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpreter */) {
-	switch (my type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+	switch (my type)
+	{
+		case _kUiField_type::REAL_:
+		case _kUiField_type::REAL_OR_UNDEFINED_:
+		case _kUiField_type::POSITIVE_:
+		{
 			if (arg -> which != Stackel_NUMBER)
 				Melder_throw (U"Argument \"", my name, U"\" should be a number, not ", Stackel_whichText (arg), U".");
 			my realValue = arg -> number;
-			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
+			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
 				Melder_throw (U"Argument \"", my name, U"\" has the value \"undefined\".");
-			if (my type == UI_POSITIVE && my realValue <= 0.0)
+			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
 				Melder_throw (U"Argument \"", my name, U"\" must be greater than 0.");
 			if (my realVariable) *my realVariable = my realValue;
-		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+		}
+		break;
+		case _kUiField_type::INTEGER_:
+		case _kUiField_type::NATURAL_:
+		case _kUiField_type::CHANNEL_:
+		{
 			if (arg -> which == Stackel_STRING) {
-				if (my type == UI_CHANNEL) {
+				if (my type == _kUiField_type::CHANNEL_) {
 					if (str32equ (arg -> string, U"All") || str32equ (arg -> string, U"Average")) {
 						my integerValue = 0;
 					} else if (str32equ (arg -> string, U"Left") || str32equ (arg -> string, U"Mono")) {
@@ -1139,19 +1246,27 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				}
 			} else if (arg -> which == Stackel_NUMBER) {
 				my integerValue = Melder_iround (arg -> number);
-				if (my type == UI_NATURAL && my integerValue < 1)
+				if (my type == _kUiField_type::NATURAL_ && my integerValue < 1)
 					Melder_throw (U"Argument \"", my name, U"\" should be a positive whole number.");
 			} else {
 				Melder_throw (U"Argument \"", my name, U"\" should be a number, not ", Stackel_whichText (arg), U".");
 			}
 			if (my integerVariable) *my integerVariable = my integerValue;
-		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+		}
+		break;
+		case _kUiField_type::WORD_:
+		case _kUiField_type::SENTENCE_:
+		case _kUiField_type::TEXT_:
+		{
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name, U"\" should be a string, not ", Stackel_whichText (arg), U".");
 			Melder_free (my stringValue);
 			my stringValue = Melder_dup (arg -> string);
 			if (my stringVariable) *my stringVariable = my stringValue;
-		} break; case UI_NUMVEC: {
+		}
+		break;
+		case _kUiField_type::NUMVEC_:
+		{
 			if (arg -> which != Stackel_NUMERIC_VECTOR)
 				Melder_throw (U"Argument \"", my name, U"\" should be a numeric vector, not ", Stackel_whichText (arg), U".");
 			if (my numericVectorVariable) {
@@ -1159,7 +1274,10 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				*my numericVectorVariable = arg -> numericVector;
 				my owned = arg -> owned;
 			}
-		} break; case UI_NUMMAT: {
+		}
+		break;
+		case _kUiField_type::NUMMAT_:
+		{
 			if (arg -> which != Stackel_NUMERIC_MATRIX)
 				Melder_throw (U"Argument \"", my name, U"\" should be a numeric matrix, not ", Stackel_whichText (arg), U".");
 			if (my numericMatrixVariable) {
@@ -1167,7 +1285,10 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				*my numericMatrixVariable = arg -> numericMatrix;
 				my owned = arg -> owned;
 			}
-		} break; case UI_BOOLEAN: {
+		}
+		break;
+		case _kUiField_type::BOOLEAN_:
+		{
 			if (arg -> which == Stackel_STRING) {
 				if (str32equ (arg -> string, U"no") || str32equ (arg -> string, U"off")) {
 					my integerValue = 0;
@@ -1183,7 +1304,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"Boolean argument \"", my name, U"\" should be a number (0 or 1), not ", Stackel_whichText (arg), U".");
 			}
 			if (my boolVariable) *my boolVariable = my integerValue;
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
+		}
+		break;
+		case _kUiField_type::RADIO_:
+		case _kUiField_type::OPTIONMENU_:
+		{
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Option argument \"", my name, U"\" should be a string, not ", Stackel_whichText (arg), U".");
 			my integerValue = 0;
@@ -1212,7 +1337,10 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			}
 			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
-		} break; case UI_LIST: {
+		}
+		break;
+		case _kUiField_type::LIST_:
+		{
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"List argument \"", my name, U"\" should be a string, not ", Stackel_whichText(arg), U".");
 			integer i = 1;
@@ -1223,7 +1351,10 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			my integerValue = i;
 			if (my integerVariable) *my integerVariable = my integerValue;
 			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
-		} break; case UI_COLOUR: {
+		}
+		break;
+		case _kUiField_type::COLOUR_:
+		{
 			if (arg -> which == Stackel_NUMBER) {
 				if (arg -> number < 0.0 || arg -> number > 1.0)
 					Melder_throw (U"Grey colour argument \"", my name, U"\" has to lie between 0.0 and 1.0.");
@@ -1235,18 +1366,21 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				}
 			}
 			if (my colourVariable) *my colourVariable = my colourValue;
-		} break; default: {
-			Melder_throw (U"Unknown field type ", my type, U".");
+		}
+		break;
+		default:
+		{
+			Melder_throw (U"Unknown field type ", (int) my type, U".");
 		}
 	}
 }
 
 void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter) {
 	integer size = my numberOfFields, iarg = 0;
-	//while (size >= 1 && my field [size] -> type == UI_LABEL)
+	//while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
 	//	size --;   // ignore trailing fields without a value
 	for (integer i = 1; i <= size; i ++) {
-		if (my field [i] -> type == UI_LABEL)
+		if (my field [i] -> type == _kUiField_type::LABEL_)
 			continue;   // ignore non-trailing fields without a value
 		iarg ++;
 		if (iarg > narg)
@@ -1267,44 +1401,64 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 		This is included for backward compatibility (until 2036),
 		but does not support newer expression types such as numeric vectors and matrices.
 	*/
-	switch (my type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+	switch (my type)
+	{
+		case _kUiField_type::REAL_:
+		case _kUiField_type::REAL_OR_UNDEFINED_:
+		case _kUiField_type::POSITIVE_:
+		{
 			if (str32spn (string, U" \t") == str32len (string))
 				Melder_throw (U"Argument “", my name, U"” empty.");
 			Interpreter_numericExpression (interpreter, string, & my realValue);
-			if (isundef (my realValue) && my type != UI_REAL_OR_UNDEFINED)
+			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
 				Melder_throw (U"\"", my name, U"\" has the value \"undefined\".");
-			if (my type == UI_POSITIVE && my realValue <= 0.0)
+			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
 				Melder_throw (U"\"", my name, U"\" must be greater than 0.");
 			if (my realVariable) *my realVariable = my realValue;
-		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+		}
+		break;
+		case _kUiField_type::INTEGER_:
+		case _kUiField_type::NATURAL_:
+		case _kUiField_type::CHANNEL_: {
 			if (str32spn (string, U" \t") == str32len (string))
 				Melder_throw (U"Argument “", my name, U"” empty.");
-			if (my type == UI_CHANNEL && (str32equ (string, U"All") || str32equ (string, U"Average"))) {
+			if (my type == _kUiField_type::CHANNEL_ && (str32equ (string, U"All") || str32equ (string, U"Average"))) {
 				my integerValue = 0;
-			} else if (my type == UI_CHANNEL && (str32equ (string, U"Left") || str32equ (string, U"Mono"))) {
+			} else if (my type == _kUiField_type::CHANNEL_ && (str32equ (string, U"Left") || str32equ (string, U"Mono"))) {
 				my integerValue = 1;
-			} else if (my type == UI_CHANNEL && (str32equ (string, U"Right") || str32equ (string, U"Stereo"))) {
+			} else if (my type == _kUiField_type::CHANNEL_ && (str32equ (string, U"Right") || str32equ (string, U"Stereo"))) {
 				my integerValue = 2;
 			} else {
 				double realValue;
 				Interpreter_numericExpression (interpreter, string, & realValue);
 				my integerValue = Melder_iround (realValue);
 			}
-			if (my type == UI_NATURAL && my integerValue < 1)
+			if (my type == _kUiField_type::NATURAL_ && my integerValue < 1)
 				Melder_throw (U"\"", my name, U"\" should be a positive whole number.");
 			if (my integerVariable) *my integerVariable = my integerValue;
-		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+		}
+		break;
+		case _kUiField_type::WORD_:
+		case _kUiField_type::SENTENCE_:
+		case _kUiField_type::TEXT_:
+		{
 			Melder_free (my stringValue);
 			my stringValue = Melder_dup_f (string);
 			if (my stringVariable) *my stringVariable = my stringValue;
-		} break; case UI_BOOLEAN: {
+		}
+		break;
+		case _kUiField_type::BOOLEAN_:
+		{
 			if (! string [0])
 				Melder_throw (U"Empty argument for toggle button.");
 			my integerValue = string [0] == U'1' || string [0] == U'y' || string [0] == U'Y' ||
 				string [0] == U't' || string [0] == U'T';
 			if (my boolVariable) *my boolVariable = my integerValue;
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
+		}
+		break;
+		case _kUiField_type::RADIO_:
+		case _kUiField_type::OPTIONMENU_:
+		{
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
@@ -1326,7 +1480,10 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			}
 			if (my intVariable) *my intVariable = my integerValue - my subtract;
 			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name;
-		} break; case UI_LIST: {
+		}
+		break;
+		case _kUiField_type::LIST_:
+		{
 			integer i = 1;
 			for (; i <= my numberOfStrings; i ++)
 				if (str32equ (string, my strings [i])) break;
@@ -1335,7 +1492,10 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 			my integerValue = i;
 			if (my integerVariable) *my integerVariable = my integerValue;
 			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
-		} break; case UI_COLOUR: {
+		}
+		break;
+		case _kUiField_type::COLOUR_:
+		{
 			autostring32 string2 = Melder_dup_f (string);
 			if (colourToValue (me, string2.peek())) {
 				/* OK */
@@ -1349,8 +1509,11 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 				}
 			}
 			if (my colourVariable) *my colourVariable = my colourValue;
-		} break; default: {
-			Melder_throw (U"Unknown field type ", my type, U".");
+		}
+		break;
+		default:
+		{
+			Melder_throw (U"Unknown field type ", (int) my type, U".");
 		}
 	}
 }
@@ -1371,12 +1534,12 @@ void UiForm_parseString (UiForm me, const char32 *arguments, Interpreter interpr
 		to continue to support the dots-based scripting style until 2036.
 	*/
 	int size = my numberOfFields;
-	while (size >= 1 && my field [size] -> type == UI_LABEL)
+	while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
 		size --;   // ignore trailing fields without a value
 	for (int i = 1; i < size; i ++) {
 		static char32 stringValue [3000];
 		int ichar = 0;
-		if (my field [i] -> type == UI_LABEL)
+		if (my field [i] -> type == _kUiField_type::LABEL_)
 			continue;   // ignore non-trailing fields without a value
 		/*
 			Skip spaces until next argument.
@@ -1440,8 +1603,12 @@ void UiForm_setReal (UiForm me, double *p_variable, double value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> realVariable == p_variable) {
-			switch (field -> type) {
-				case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+			switch (field -> type)
+			{
+				case _kUiField_type::REAL_:
+				case _kUiField_type::REAL_OR_UNDEFINED_:
+				case _kUiField_type::POSITIVE_:
+				{
 					if (value == Melder_atof (field -> stringDefaultValue)) {
 						GuiText_setString (field -> text, field -> stringDefaultValue);
 					} else {
@@ -1457,7 +1624,10 @@ void UiForm_setReal (UiForm me, double *p_variable, double value) {
 						}
 						GuiText_setString (field -> text, s);
 					}
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1471,10 +1641,17 @@ void UiForm_setRealAsString (UiForm me, double *p_variable, const char32 *string
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> realVariable == p_variable) {
-			switch (field -> type) {
-				case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+			switch (field -> type)
+			{
+				case _kUiField_type::REAL_:
+				case _kUiField_type::REAL_OR_UNDEFINED_:
+				case _kUiField_type::POSITIVE_:
+				{
 					GuiText_setString (field -> text, stringValue);
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1488,17 +1665,27 @@ void UiForm_setInteger (UiForm me, integer *p_variable, integer value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> integerVariable == p_variable) {
-			switch (field -> type) {
-				case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+			switch (field -> type)
+			{
+				case _kUiField_type::INTEGER_:
+				case _kUiField_type::NATURAL_:
+				case _kUiField_type::CHANNEL_:
+				{
 					if (value == Melder_atoi (field -> stringDefaultValue)) {
 						GuiText_setString (field -> text, field -> stringDefaultValue);
 					} else {
 						GuiText_setString (field -> text, Melder_integer (value));
 					}
-				} break; case UI_LIST: {
+				}
+				break;
+				case _kUiField_type::LIST_:
+				{
 					if (value < 1 || value > field -> numberOfStrings) value = 1;   // guard against incorrect prefs file
 					GuiList_selectItem (field -> list, value);
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1512,16 +1699,26 @@ void UiForm_setIntegerAsString (UiForm me, integer *p_variable, const char32 *st
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> integerVariable == p_variable) {
-			switch (field -> type) {
-				case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+			switch (field -> type)
+			{
+				case _kUiField_type::INTEGER_:
+				case _kUiField_type::NATURAL_:
+				case _kUiField_type::CHANNEL_:
+				{
 					GuiText_setString (field -> text, stringValue);
-				} break; case UI_LIST: {
+				}
+				break;
+				case _kUiField_type::LIST_:
+				{
 					integer i = 1;
 					for (; i <= field -> numberOfStrings; i ++)
 						if (str32equ (stringValue, field -> strings [i])) break;
 					if (i > field -> numberOfStrings) i = 1;   // guard against incorrect prefs file
 					GuiList_selectItem (field -> list, i);
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1535,10 +1732,15 @@ void UiForm_setBoolean (UiForm me, bool *p_variable, bool value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> boolVariable == p_variable) {
-			switch (field -> type) {
-				case UI_BOOLEAN: {
+			switch (field -> type)
+			{
+				case _kUiField_type::BOOLEAN_:
+				{
 					GuiCheckButton_setValue (field -> checkButton, value);
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1552,15 +1754,23 @@ void UiForm_setOption (UiForm me, int *p_variable, int value) {
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> intVariable == p_variable) {
-			switch (field -> type) {
-				case UI_RADIO: {
+			switch (field -> type)
+			{
+				case _kUiField_type::RADIO_:
+				{
 					if (value < 1 || value > field -> options.size) value = 1;   // guard against incorrect prefs file
 					UiOption option = field -> options.at [value];
 					GuiRadioButton_set (option -> radioButton);
-				} break; case UI_OPTIONMENU: {
+				}
+				break;
+				case _kUiField_type::OPTIONMENU_:
+				{
 					if (value < 1 || value > field -> options.size) value = 1;   // guard against incorrect prefs file
 					GuiOptionMenu_setValue (field -> optionMenu, value);
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1574,8 +1784,10 @@ void UiForm_setOptionAsString (UiForm me, int *p_variable, const char32 *stringV
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> intVariable == p_variable) {
-			switch (field -> type) {
-				case UI_RADIO: {
+			switch (field -> type)
+			{
+				case _kUiField_type::RADIO_:
+				{
 					for (int i = 1; i <= field -> options.size; i ++) {
 						UiOption b = field -> options.at [i];
 						if (str32equ (stringValue, b -> name)) {
@@ -1583,7 +1795,10 @@ void UiForm_setOptionAsString (UiForm me, int *p_variable, const char32 *stringV
 						}
 					}
 					/* If not found: do nothing (guard against incorrect prefs file). */
-				} break; case UI_OPTIONMENU: {
+				}
+				break;
+				case _kUiField_type::OPTIONMENU_:
+				{
 					int optionValue = 0;
 					for (int i = 1; i <= field -> options.size; i ++) {
 						UiOption b = field -> options.at [i];
@@ -1594,7 +1809,10 @@ void UiForm_setOptionAsString (UiForm me, int *p_variable, const char32 *stringV
 					}
 					GuiOptionMenu_setValue (field -> optionMenu, optionValue);
 					/* If not found: do nothing (guard against incorrect prefs file). */
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1609,12 +1827,23 @@ void UiForm_setString (UiForm me, char32 **p_variable, const char32 *value /* ca
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> stringVariable == p_variable) {
-			switch (field -> type) {
-				case UI_WORD: case UI_SENTENCE: case UI_COLOUR: case UI_TEXT: {
+			switch (field -> type)
+			{
+				case _kUiField_type::WORD_:
+				case _kUiField_type::SENTENCE_:
+				case _kUiField_type::COLOUR_:
+				case _kUiField_type::TEXT_:
+				{
 					GuiText_setString (field -> text, value);
-				} break; case UI_LABEL: {
+				}
+				break;
+				case _kUiField_type::LABEL_:
+				{
 					GuiLabel_setText (field -> label, value);
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1628,10 +1857,15 @@ void UiForm_setColourAsGreyValue (UiForm me, Graphics_Colour *p_variable, double
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];
 		if (field -> colourVariable == p_variable) {
-			switch (field -> type) {
-				case UI_COLOUR: {
+			switch (field -> type)
+			{
+				case _kUiField_type::COLOUR_:
+				{
 					GuiText_setString (field -> text, Melder_double (greyValue));
-				} break; default: {
+				}
+				break;
+				default:
+				{
 					fatalField (me);
 				}
 			}
@@ -1659,10 +1893,17 @@ static UiField findField_check (UiForm me, const char32 *fieldName) {
 
 double UiForm_getReal_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
-	switch (field -> type) {
-		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+	switch (field -> type)
+	{
+		case _kUiField_type::REAL_:
+		case _kUiField_type::REAL_OR_UNDEFINED_:
+		case _kUiField_type::POSITIVE_:
+		{
 			return field -> realValue;
-		} break; default: {
+		}
+		break;
+		default:
+		{
 			Melder_throw (U"Cannot find a real value in field \"", fieldName, U"\" in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
@@ -1674,12 +1915,21 @@ double UiForm_getReal_check (UiForm me, const char32 *fieldName) {
 integer UiForm_getInteger (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
 	if (! field) Melder_fatal (U"(UiForm_getInteger:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
-	switch (field -> type) {
-		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: case UI_RADIO:
-			case UI_OPTIONMENU: case UI_LIST:
+	switch (field -> type)
+	{
+		case _kUiField_type::INTEGER_:
+		case _kUiField_type::NATURAL_:
+		case _kUiField_type::CHANNEL_:
+		case _kUiField_type::BOOLEAN_:
+		case _kUiField_type::RADIO_:
+		case _kUiField_type::OPTIONMENU_:
+		case _kUiField_type::LIST_:
 		{
 			return field -> integerValue;
-		} break; default: {
+		}
+		break;
+		default:
+		{
 			fatalField (me);
 		}
 	}
@@ -1688,12 +1938,21 @@ integer UiForm_getInteger (UiForm me, const char32 *fieldName) {
 
 integer UiForm_getInteger_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
-	switch (field -> type) {
-		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: case UI_RADIO:
-			case UI_OPTIONMENU: case UI_LIST:
+	switch (field -> type)
+	{
+		case _kUiField_type::INTEGER_:
+		case _kUiField_type::NATURAL_:
+		case _kUiField_type::CHANNEL_:
+		case _kUiField_type::BOOLEAN_:
+		case _kUiField_type::RADIO_:
+		case _kUiField_type::OPTIONMENU_:
+		case _kUiField_type::LIST_:
 		{
 			return field -> integerValue;
-		} break; default: {
+		}
+		break;
+		default:
+		{
 			Melder_throw (U"Cannot find an integer value in field \"", fieldName, U"\" in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
@@ -1705,15 +1964,29 @@ integer UiForm_getInteger_check (UiForm me, const char32 *fieldName) {
 char32 * UiForm_getString (UiForm me, const char32 *fieldName) {
 	UiField field = findField (me, fieldName);
 	if (! field) Melder_fatal (U"(UiForm_getString:) No field \"", fieldName, U"\" in command window \"", my name, U"\".");
-	switch (field -> type) {
-		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+	switch (field -> type)
+	{
+		case _kUiField_type::WORD_:
+		case _kUiField_type::SENTENCE_:
+		case _kUiField_type::TEXT_:
+		{
 			return field -> stringValue;
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
+		}
+		break;
+		case _kUiField_type::RADIO_:
+		case _kUiField_type::OPTIONMENU_:
+		{
 			UiOption b = field -> options.at [field -> integerValue];
 			return b -> name;
-		} break; case UI_LIST: {
+		}
+		break;
+		case _kUiField_type::LIST_:
+		{
 			return (char32 *) field -> strings [field -> integerValue];
-		} break; default: {
+		}
+		break;
+		default:
+		{
 			fatalField (me);
 		}
 	}
@@ -1722,15 +1995,29 @@ char32 * UiForm_getString (UiForm me, const char32 *fieldName) {
 
 char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
-	switch (field -> type) {
-		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+	switch (field -> type)
+	{
+		case _kUiField_type::WORD_:
+		case _kUiField_type::SENTENCE_:
+		case _kUiField_type::TEXT_:
+		{
 			return field -> stringValue;
-		} break; case UI_RADIO: case UI_OPTIONMENU: {
+		}
+		break;
+		case _kUiField_type::RADIO_:
+		case _kUiField_type::OPTIONMENU_:
+		{
 			UiOption b = field -> options.at [field -> integerValue];
 			return b -> name;
-		} break; case UI_LIST: {
+		}
+		break;
+		case _kUiField_type::LIST_:
+		{
 			return (char32 *) field -> strings [field -> integerValue];
-		} break; default: {
+		}
+		break;
+		default:
+		{
 			Melder_throw (U"Cannot find a string in field \"", fieldName, U"\" in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
@@ -1741,10 +2028,14 @@ char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
 
 Graphics_Colour UiForm_getColour_check (UiForm me, const char32 *fieldName) {
 	UiField field = findField_check (me, fieldName);
-	switch (field -> type) {
-		case UI_COLOUR: {
+	switch (field -> type)
+	{
+		case _kUiField_type::COLOUR_: {
 			return field -> colourValue;
-		} break; default: {
+		}
+		break;
+		default:
+		{
 			Melder_throw (U"Cannot find a real value in field \"", fieldName, U"\" in the form.\n"
 				U"The script may have changed while the form was open.\n"
 				U"Please click Cancel in the form and try again.");
@@ -1765,14 +2056,28 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 		for (char32 *p = & lowerCaseFieldName.string [0]; *p != U'\0'; p ++) {
 			if (*p == U' ') *p = U'_';
 		}
-		switch (field -> type) {
-			case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: {
+		switch (field -> type)
+		{
+			case _kUiField_type::INTEGER_:
+			case _kUiField_type::NATURAL_:
+			case _kUiField_type::CHANNEL_:
+			case _kUiField_type::BOOLEAN_:
+			{
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> numericValue = field -> integerValue;
-			} break; case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+			}
+			break;
+			case _kUiField_type::REAL_:
+			case _kUiField_type::REAL_OR_UNDEFINED_:
+			case _kUiField_type::POSITIVE_:
+			{
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> numericValue = field -> realValue;
-			} break; case UI_RADIO: case UI_OPTIONMENU: {
+			}
+			break;
+			case _kUiField_type::RADIO_:
+			case _kUiField_type::OPTIONMENU_:
+			{
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> numericValue = field -> integerValue;
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
@@ -1780,21 +2085,35 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				Melder_free (var -> stringValue);
 				UiOption b = field -> options.at [field -> integerValue];
 				var -> stringValue = Melder_dup (b -> name);
-			} break; case UI_LIST: {
+			}
+			break;
+			case _kUiField_type::LIST_:
+			{
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> numericValue = field -> integerValue;
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				Melder_free (var -> stringValue);
 				var -> stringValue = Melder_dup (field -> strings [field -> integerValue]);
-			} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+			}
+			break;
+			case _kUiField_type::WORD_:
+			case _kUiField_type::SENTENCE_:
+			case _kUiField_type::TEXT_:
+			{
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				Melder_free (var -> stringValue);
 				var -> stringValue = Melder_dup (field -> stringValue);
-			} break; case UI_COLOUR: {
+			}
+			break;
+			case _kUiField_type::COLOUR_:
+			{
 				// to be implemented
-			} break; default: {
+			}
+			break;
+			default:
+			{
 			}
 		}
 	}

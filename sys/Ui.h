@@ -97,11 +97,13 @@ enum class _kUiField_type {
 	BOOLEAN_ = 14,
 	RADIO_ = 15,
 	OPTIONMENU_ = 16,
-	LIST_ = 17
+	LIST_ = 17,
+	LABELLED_TEXT_MIN_ = 1,
+	LABELLED_TEXT_MAX_ = 9
 };
 
 Thing_define (UiField, Thing) {
-	int type;
+	_kUiField_type type;
 	const char32 *formLabel;
 	double realValue;
 	integer integerValue, integerDefaultValue;
