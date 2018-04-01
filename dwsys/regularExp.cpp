@@ -2674,19 +2674,12 @@ typedef struct brace_counts {
 
 static struct brace_counts *Brace;
 
-/* Default table for determining whether a character is a word delimiter. */
-
-static char32 Default_Delimiters [UCHAR_MAX] = {0};
-
-static char32 *Current_Delimiters;  /* Current delimiter table */
-
 /* Forward declarations of functions used by `ExecRE' */
 
 static int             attempt (regexp *, char32 *);
 static int             match (char32 *, int *);
 static unsigned long   greedy (char32 *, long);
 static void            adjustcase (char32 *, int, char32);
-static char32 *        makeDelimiterTable (const char32 *, char32 *);
 
 /*
  * ExecRE - match a `regexp' structure against a string
@@ -2698,10 +2691,7 @@ static char32 *        makeDelimiterTable (const char32 *, char32 *);
  * beginning to find whether there was a newline before).  Likewise, "isbow"
  * asks whether the string is preceded by a word delimiter.  End of string is
  * always treated as a word and line boundary (there may be cases where it
- * shouldn't be, in which case, this should be changed).  "delimit" (if
- * non-null) specifies a null-terminated string of characters to be considered
- * word delimiters matching "<" and ">".  if "delimit" is NULL, the default
- * delimiters (as set in SetREDefaultWordDelimiters) are used.
+ * shouldn't be, in which case, this should be changed).
  * Look_behind_to indicates the position till where it is safe to
  * perform look-behind matches. If set, it should be smaller than or equal
  * to the start position of the search (pointed at by string). If it is NULL,
@@ -2721,7 +2711,7 @@ int ExecRE (
     int     reverse,
     char32    prev_char,
     char32    succ_char,
-    const char32   *delimiters,
+    const char32   *delimiters_dummy,   // ignored; a fixed set of Unicode delimiters is always used
     const char32   *look_behind_to,
     const char32   *match_to) {
 
@@ -2729,7 +2719,6 @@ int ExecRE (
 	char32 **s_ptr;
 	char32 **e_ptr;
 	int    ret_val = 0;
-	char32 tempDelimitTable [256];
 	int    i;
 	(void) cross_regex_backref;
 
@@ -2748,14 +2737,6 @@ int ExecRE (
 	if (U_CHAR_AT (prog->program) != MAGIC) {
 		reg_error (U"corrupted program");
 		goto SINGLE_RETURN;
-	}
-
-	/* If caller has supplied delimiters, make a delimiter table */
-
-	if (delimiters == NULL) {
-		Current_Delimiters = Default_Delimiters;
-	} else {
-		Current_Delimiters = makeDelimiterTable (delimiters, tempDelimitTable);
 	}
 
 	/* Remember the logical end of the string. */
@@ -2784,8 +2765,8 @@ int ExecRE (
 
 	Prev_Is_BOL        = ( (prev_char == '\n') || (prev_char == '\0') ? 1 : 0);
 	Succ_Is_EOL        = ( (succ_char == '\n') || (succ_char == '\0') ? 1 : 0);
-	Prev_Is_Delim      = (Current_Delimiters [prev_char] ? 1 : 0);
-	Succ_Is_Delim      = (Current_Delimiters [succ_char] ? 1 : 0);
+	Prev_Is_Delim      = Melder_isWordDelimiter (prev_char);
+	Succ_Is_Delim      = Melder_isWordDelimiter (succ_char);
 
 	Total_Paren        = (int) (prog->program [1]);
 	Num_Braces         = (int) (prog->program [2]);
@@ -3186,14 +3167,14 @@ static int match (char32 *prog, int *branch_index_param) {
 				if (Reg_Input == Start_Of_String) {
 					prev_is_delim = Prev_Is_Delim;
 				} else {
-					prev_is_delim = Current_Delimiters [ * (Reg_Input - 1) ];
+					prev_is_delim = Melder_isWordDelimiter (*(Reg_Input - 1));
 				}
 				if (prev_is_delim) {
 					int current_is_delim;
 					if (AT_END_OF_STRING (Reg_Input)) {
 						current_is_delim = Succ_Is_Delim;
 					} else {
-						current_is_delim = Current_Delimiters [ *Reg_Input ];
+						current_is_delim = Melder_isWordDelimiter (*Reg_Input);
 					}
 					if (!current_is_delim) {
 						break;
@@ -3211,14 +3192,14 @@ static int match (char32 *prog, int *branch_index_param) {
 				if (Reg_Input == Start_Of_String) {
 					prev_is_delim = Prev_Is_Delim;
 				} else {
-					prev_is_delim = Current_Delimiters [ * (Reg_Input - 1) ];
+					prev_is_delim = Melder_isWordDelimiter (*(Reg_Input - 1));
 				}
 				if (!prev_is_delim) {
 					int current_is_delim;
 					if (AT_END_OF_STRING (Reg_Input)) {
 						current_is_delim = Succ_Is_Delim;
 					} else {
-						current_is_delim = Current_Delimiters [ *Reg_Input ];
+						current_is_delim = Melder_isWordDelimiter (*Reg_Input);
 					}
 					if (current_is_delim) {
 						break;
@@ -3234,12 +3215,12 @@ static int match (char32 *prog, int *branch_index_param) {
 				if (Reg_Input == Start_Of_String) {
 					prev_is_delim = Prev_Is_Delim;
 				} else {
-					prev_is_delim = Current_Delimiters [ * (Reg_Input - 1) ];
+					prev_is_delim = Melder_isWordDelimiter (*(Reg_Input - 1));
 				}
 				if (AT_END_OF_STRING (Reg_Input)) {
 					current_is_delim = Succ_Is_Delim;
 				} else {
-					current_is_delim = Current_Delimiters [ *Reg_Input ];
+					current_is_delim = Melder_isWordDelimiter (*Reg_Input);
 				}
 				if (! (prev_is_delim ^ current_is_delim)) {
 					break;
@@ -3249,7 +3230,7 @@ static int match (char32 *prog, int *branch_index_param) {
 			MATCH_RETURN (0);
 
 			case IS_DELIM: /* \y (A word delimiter character.) */
-				if (Current_Delimiters [ *Reg_Input ] &&
+				if (Melder_isWordDelimiter (*Reg_Input) &&
 				        !AT_END_OF_STRING (Reg_Input)) {
 					Reg_Input++; break;
 				}
@@ -3257,7 +3238,7 @@ static int match (char32 *prog, int *branch_index_param) {
 				MATCH_RETURN (0);
 
 			case NOT_DELIM: /* \Y (NOT a word delimiter character.) */
-				if (!Current_Delimiters [ *Reg_Input ] &&
+				if (! Melder_isWordDelimiter (*Reg_Input) &&
 				        !AT_END_OF_STRING (Reg_Input)) {
 					Reg_Input++; break;
 				}
@@ -3886,7 +3867,7 @@ static unsigned long greedy (char32 *p, long max) {
                          NOTE: '\n' and '\0' are always word delimiters. */
 
 			while (count < max_cmp                   &&
-			        Current_Delimiters [ *input_str ] &&
+			        Melder_isWordDelimiter (*input_str) &&
 			        !AT_END_OF_STRING (input_str)) {
 				count++; input_str++;
 			}
@@ -3897,7 +3878,7 @@ static unsigned long greedy (char32 *p, long max) {
                          NOTE: '\n' and '\0' are always word delimiters. */
 
 			while (count < max_cmp                    &&
-			        !Current_Delimiters [ *input_str ] &&
+			        ! Melder_isWordDelimiter (*input_str) &&
 			        !AT_END_OF_STRING (input_str)) {
 				count++; input_str++;
 			}
@@ -4216,48 +4197,6 @@ static void adjustcase (char32 *str, int len, char32 chgcase) {
 
 static void reg_error (const char32 *str) {
 	Melder_appendError (U"Internal error processing regular expression: ", str);
-}
-
-/*----------------------------------------------------------------------*
- * makeDelimiterTable
- *
- * Translate a null-terminated string of delimiters into a 256 byte
- * lookup table for determining whether a character is a delimiter or
- * not.
- *
- * Table should be allocated by the caller.
- *
- * Return value is a pointer to the table.
- *----------------------------------------------------------------------*/
-
-static char32 *makeDelimiterTable (
-    const char32 *delimiters,
-    char32 *table) {
-
-	const char32 *c;
-
-	memset (table, 0, 256);
-
-	for (c = delimiters; *c != '\0'; c++) {
-		table [*c] = 1;
-	}
-
-	table [ (int) '\0'] = 1; /* These       */
-	table [ (int) '\t'] = 1; /* characters  */
-	table [ (int) '\n'] = 1; /* are always  */
-	table [ (int) ' ' ] = 1; /* delimiters. */
-
-	return table;
-}
-
-/*----------------------------------------------------------------------*
- * SetREDefaultWordDelimiters
- *
- * Builds a default delimiter table that persists across `ExecRE' calls.
- *----------------------------------------------------------------------*/
-
-void SetREDefaultWordDelimiters (char32 *delimiters) {
-	makeDelimiterTable (delimiters, Default_Delimiters);
 }
 
 void EnableCountingQuantifier (int is_enabled) {

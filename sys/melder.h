@@ -270,6 +270,7 @@ cont:
 }
 
 bool Melder_isWhiteSpace (const char32_t kar);
+bool Melder_isWordDelimiter (const char32_t kar);
 
 char32 * Melder_tok (char32 *string, const char32 *delimiter);
 
