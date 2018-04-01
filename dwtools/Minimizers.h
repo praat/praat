@@ -2,7 +2,7 @@
 #define _Minimizers_h_
 /* Minimizers.h
  *
- * Copyright (C) 1993-2017 David Weenink, 2015,2017,2018 Paul Boersma
+ * Copyright (C) 1993-2017 David Weenink, 2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
-
-/*
- djmw 20020813 GPL header
- djmw 20030701 Removed non-GPL minimizations
- djmw 20110414 Latest modification.
-*/
 
 #include "Data.h"
 #include "Graphics.h"
