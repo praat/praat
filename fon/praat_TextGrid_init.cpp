@@ -843,7 +843,7 @@ FORM (NEW_TextGrid_tabulateOccurrences, U"TextGrid: Tabulate occurrences", nullp
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoTable result = TextGrid_tabulateOccurrences (me, searchTiers, listLabelsThat___, ___theText, caseSensitive);
+		autoTable result = TextGrid_tabulateOccurrences (me, searchTiers, listEveryLabelThat___, ___theText, caseSensitive);
 	CONVERT_EACH_END (my name, U"_", ___theText)
 }
 
