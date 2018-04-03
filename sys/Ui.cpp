@@ -1023,7 +1023,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_);
 		bool weLabelTheFollowingField =
 			weAreFollowedByAWideField &&
-			Melder_stringMatchesCriterion (my stringValue, kMelder_string::ENDS_WITH, U":");
+			Melder_stringMatchesCriterion (my stringValue, kMelder_string::ENDS_WITH, U":", true);
 		bool weAreAComment = ! weLabelTheFollowingField;
 		if (weAreAComment) {
 			MelderInfo_writeLine (U"\t/* ", my stringValue, U" */");

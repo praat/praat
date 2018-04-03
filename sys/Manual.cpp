@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1996-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ static void print (void *void_me, Graphics graphics) {
 	for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = manPages -> pages.at [ipage];
 		if (my printPagesStartingWith == nullptr ||
-		    Melder_stringMatchesCriterion (page -> title, kMelder_string::STARTS_WITH, my printPagesStartingWith))
+		    Melder_stringMatchesCriterion (page -> title, kMelder_string::STARTS_WITH, my printPagesStartingWith, true))
 		{
 			ManPage_Paragraph par;
 			my path = ipage;

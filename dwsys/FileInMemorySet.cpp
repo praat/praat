@@ -116,7 +116,7 @@ autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_st
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
-			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion, true)) {
 				autoFileInMemory item = Data_copy (fim);
 				thy addItem_move (item.move());
 			}
@@ -132,7 +132,7 @@ autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_strin
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = static_cast<FileInMemory> (my at [ifile]);
-			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion, true)) {
 				thy addItem_ref (fim);
 			}
 		}
@@ -209,7 +209,7 @@ integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_st
 	integer numberOfMatches = 0;
 	for (integer ifile = 1; ifile <= my size; ifile ++) {
 		FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
-		if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion)) {
+		if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion, true)) {
 			numberOfMatches ++;
 		}
 	}
@@ -222,7 +222,7 @@ bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name) {
 	for (integer i = 1; i <= my size; i ++) {
 		FileInMemory fim = (FileInMemory) my at [i];
 		MelderString_append (& regex, U".*/", name, U"/.*"); 
-		if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: MATCH_REGEXP, regex.string)) {
+		if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: MATCH_REGEXP, regex.string, true)) {
 			match = true;
 			break;
 		}

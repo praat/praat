@@ -168,6 +168,9 @@ inline static int str32cmp_caseInsensitive (const char32 *string1, const char32 
 		if (*string1 == U'\0') return 0;
 	}
 }
+inline static int str32cmp_optionallyCaseSensitive (const char32 *string1, const char32 *string2, bool caseSensitive) noexcept {
+	return caseSensitive ? str32cmp (string1, string2) : str32cmp_caseInsensitive (string1, string2);
+}
 inline static int str32ncmp (const char32 *string1, const char32 *string2, integer n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
@@ -184,6 +187,10 @@ inline static int str32ncmp_caseInsensitive (const char32 *string1, const char32
 	}
 	return 0;
 }
+inline static int str32ncmp_optionallyCaseSensitive (const char32 *string1, const char32 *string2, integer n, bool caseSensitive) noexcept {
+	return caseSensitive ? str32ncmp (string1, string2, n) : str32ncmp_caseInsensitive (string1, string2, n);
+}
+
 int Melder_cmp (const char32 *string1, const char32 *string2);   // regards null string as empty string
 int Melder_cmp_caseInsensitive (const char32 *string1, const char32 *string2);
 int Melder_ncmp (const char32 *string1, const char32 *string2, integer n);
@@ -195,6 +202,8 @@ int Melder_ncmp_caseInsensitive (const char32 *string1, const char32 *string2, i
 #define str32equ_caseInsensitive  ! str32cmp_caseInsensitive
 #define str32nequ_caseInsensitive  ! str32ncmp_caseInsensitive
 #define Melder_equ_caseInsensitive  ! Melder_cmp_caseInsensitive
+#define str32equ_optionallyCaseSensitive  ! str32cmp_optionallyCaseSensitive
+#define str32nequ_optionallyCaseSensitive  ! str32ncmp_optionallyCaseSensitive
 bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2);
 #define Melder_nequ  ! Melder_ncmp
 #define Melder_nequ_caseInsensitive  ! Melder_ncmp_caseInsensitive
@@ -270,6 +279,9 @@ cont:
 }
 
 bool Melder_isWhiteSpace (const char32_t kar);
+bool Melder_isLetter (const char32_t kar);
+bool Melder_isDigit (const char32_t kar);
+bool Melder_isWordCharacter (const char32_t kar);
 bool Melder_isWordDelimiter (const char32_t kar);
 
 char32 * Melder_tok (char32 *string, const char32 *delimiter);
@@ -1772,7 +1784,7 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_16_TO_19_ARGS);
 /********** NUMBER AND STRING COMPARISON **********/
 
 bool Melder_numberMatchesCriterion (double value, kMelder_number which, double criterion);
-bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, const char32 *criterion);
+bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, const char32 *criterion, bool caseSensitive);
 
 /********** STRING PARSING **********/
 

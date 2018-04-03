@@ -152,7 +152,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
 				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
@@ -191,7 +191,7 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
 				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");

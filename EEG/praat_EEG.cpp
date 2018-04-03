@@ -721,10 +721,8 @@ DO
 
 static autoDaata bdfFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	bool isBdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".bdf") ||
-	                 Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".BDF");
-	bool isEdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".edf") ||
-	                 Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".EDF");
+	bool isBdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".bdf", false);
+	bool isEdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".edf", false);
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return autoDaata ();
 	return EEG_readFromBdfFile (file);
 }

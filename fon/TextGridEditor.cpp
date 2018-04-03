@@ -1,6 +1,6 @@
 /* TextGridEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1336,7 +1336,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
 			int intervalIsSelected = iinterval == selectedInterval;
-			int labelMatches = Melder_stringMatchesCriterion (interval -> text, my p_greenMethod, my p_greenString);
+			int labelMatches = Melder_stringMatchesCriterion (interval -> text, my p_greenMethod, my p_greenString, true);
 			if (tmin < my startWindow) tmin = my startWindow;
 			if (tmax > my endWindow) tmax = my endWindow;
 			if (labelMatches) {

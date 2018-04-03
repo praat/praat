@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -471,7 +471,7 @@ integer TextGrid_countIntervalsWhere (TextGrid me, integer tierNumber, kMelder_s
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			if (Melder_stringMatchesCriterion (interval -> text, which, criterion)) {
+			if (Melder_stringMatchesCriterion (interval -> text, which, criterion, true)) {
 				count ++;
 			}
 		}
@@ -487,7 +487,7 @@ integer TextGrid_countPointsWhere (TextGrid me, integer tierNumber, kMelder_stri
 		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
 		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 			TextPoint point = tier -> points.at [ipoint];
-			if (Melder_stringMatchesCriterion (point -> mark, which, criterion)) {
+			if (Melder_stringMatchesCriterion (point -> mark, which, criterion, true)) {
 				count ++;
 			}
 		}
@@ -696,7 +696,7 @@ autoPointProcess TextGrid_getStartingPoints (TextGrid me, integer tierNumber, kM
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			if (Melder_stringMatchesCriterion (interval -> text, which, criterion)) {
+			if (Melder_stringMatchesCriterion (interval -> text, which, criterion, true)) {
 				PointProcess_addPoint (thee.get(), interval -> xmin);
 			}
 		}
@@ -712,7 +712,7 @@ autoPointProcess TextGrid_getEndPoints (TextGrid me, integer tierNumber, kMelder
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			if (Melder_stringMatchesCriterion (interval -> text, which, criterion)) {
+			if (Melder_stringMatchesCriterion (interval -> text, which, criterion, true)) {
 				PointProcess_addPoint (thee.get(), interval -> xmax);
 			}
 		}
@@ -728,7 +728,7 @@ autoPointProcess TextGrid_getCentrePoints (TextGrid me, integer tierNumber, kMel
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			if (Melder_stringMatchesCriterion (interval -> text, which, criterion)) {
+			if (Melder_stringMatchesCriterion (interval -> text, which, criterion, true)) {
 				PointProcess_addPoint (thee.get(), 0.5 * (interval -> xmin + interval -> xmax));
 			}
 		}
@@ -744,7 +744,7 @@ autoPointProcess TextGrid_getPoints (TextGrid me, integer tierNumber, kMelder_st
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 			TextPoint point = tier -> points.at [ipoint];
-			if (Melder_stringMatchesCriterion (point -> mark, which, criterion)) {
+			if (Melder_stringMatchesCriterion (point -> mark, which, criterion, true)) {
 				PointProcess_addPoint (thee.get(), point -> number);
 			}
 		}
@@ -763,9 +763,9 @@ autoPointProcess TextGrid_getPoints_preceded (TextGrid me, integer tierNumber,
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 			TextPoint point = tier -> points.at [ipoint];
-			if (Melder_stringMatchesCriterion (point -> mark, which, criterion)) {
+			if (Melder_stringMatchesCriterion (point -> mark, which, criterion, true)) {
 				TextPoint preceding = ( ipoint <= 1 ? nullptr : tier -> points.at [ipoint - 1] );
-				if (Melder_stringMatchesCriterion (preceding -> mark, precededBy, criterion_precededBy)) {
+				if (Melder_stringMatchesCriterion (preceding -> mark, precededBy, criterion_precededBy, true)) {
 					PointProcess_addPoint (thee.get(), point -> number);
 				}
 			}
@@ -785,9 +785,9 @@ autoPointProcess TextGrid_getPoints_followed (TextGrid me, integer tierNumber,
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 			TextPoint point = tier -> points.at [ipoint];
-			if (Melder_stringMatchesCriterion (point -> mark, which, criterion)) {
+			if (Melder_stringMatchesCriterion (point -> mark, which, criterion, true)) {
 				TextPoint following = ( ipoint >= tier -> points.size ? nullptr : tier -> points.at [ipoint + 1] );
-				if (Melder_stringMatchesCriterion (following -> mark, followedBy, criterion_followedBy)) {
+				if (Melder_stringMatchesCriterion (following -> mark, followedBy, criterion_followedBy, true)) {
 					PointProcess_addPoint (thee.get(), point -> number);
 				}
 			}
@@ -1236,7 +1236,7 @@ void TextTier_removePoint (TextTier me, integer ipoint) {
 
 void TextTier_removePoints (TextTier me, kMelder_string which, const char32 *criterion) {
 	for (integer i = my points.size; i > 0; i --)
-		if (Melder_stringMatchesCriterion (my points.at [i] -> mark, which, criterion))
+		if (Melder_stringMatchesCriterion (my points.at [i] -> mark, which, criterion, true))
 			my points. removeItem (i);
 }
 
@@ -1725,7 +1725,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 	return thee;
 }
 
-autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const char32 *searchString, bool caseSensitive) {
+autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, kMelder_string which, const char32 *criterion, bool caseSensitive) {
 	const int timeDecimals = 6;
 	integer numberOfRows = 0;
 	for (integer itier = 1; itier <= searchTiers.size; itier ++) {
@@ -1736,7 +1736,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
-				if (interval -> text && str32str_optionallyCaseSensitive (interval -> text, searchString, caseSensitive)) {
+				if (Melder_stringMatchesCriterion (interval -> text, which, criterion, caseSensitive)) {
 					numberOfRows ++;
 				}
 			}
@@ -1744,7 +1744,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 			TextTier tier = static_cast <TextTier> (anyTier);
 			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
-				if (point -> mark && str32str_optionallyCaseSensitive (point -> mark, searchString, caseSensitive)) {
+				if (Melder_stringMatchesCriterion (point -> mark, which, criterion, caseSensitive)) {
 					numberOfRows ++;
 				}
 			}
@@ -1759,7 +1759,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 			IntervalTier tier = static_cast <IntervalTier> (anyTier);
 			for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
 				TextInterval interval = tier -> intervals.at [iinterval];
-				if (interval -> text && str32str_optionallyCaseSensitive (interval -> text, searchString, caseSensitive)) {
+				if (Melder_stringMatchesCriterion (interval -> text, which, criterion, caseSensitive)) {
 					++ rowNumber;
 					Melder_assert (rowNumber <= numberOfRows);
 					double time = 0.5 * (interval -> xmin + interval -> xmax);
@@ -1772,7 +1772,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, const c
 			TextTier tier = static_cast <TextTier> (anyTier);
 			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
 				TextPoint point = tier -> points.at [ipoint];
-				if (point -> mark && str32str_optionallyCaseSensitive (point -> mark, searchString, caseSensitive)) {
+				if (Melder_stringMatchesCriterion (point -> mark, which, criterion, caseSensitive)) {
 					++ rowNumber;
 					Melder_assert (rowNumber <= numberOfRows);
 					double time = point -> number;
