@@ -3326,7 +3326,7 @@ LIST_ITEM1 (U"Example: \"\\^ .*\\$ \" matches an entire line. ")
 TAG (U"##+#    the plus sign is the match-one-or-more quantifier.")
 TAG (U"##?#    the question mark is the match-zero-or-one "
 	"quantifier. The question mark is also used in  "
-	"@@Regular expressions 4. Special constructs with parenthesis|special "
+	"@@Regular expressions 4. Special constructs with parentheses|special "
 	"constructs with parentheses@ and in @@Regular expressions 2. "
 	"Quantifiers|changing match behaviour@.")
 TAG (U"##\\| #    the vertical pipe separates a series of alternatives.")

@@ -185,7 +185,7 @@ call replace_re "" ".*" "aaa" 0 aaa
 call replace_re "" ".*" "aaa" 1 aaa
 call replace_re "" ".*" "aaa" 10 aaa
 
-# special constructs with parenthesis
+# special constructs with parentheses
 
 # special control characters
 
