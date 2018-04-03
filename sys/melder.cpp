@@ -267,7 +267,65 @@ bool Melder_numberMatchesCriterion (double value, kMelder_number which, double c
 		(which == kMelder_number::GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, const char32 *criterion) {
+inline static char32 * str32str_word (const char32 *string, const char32 *find, bool startFree, bool endFree) noexcept {
+	integer length = str32len (find);
+	if (length == 0) return (char32 *) string;
+	const char32* movingString = string;
+	do {
+		char32 firstCharacter = * find ++;   // optimization
+		do {
+			char32 kar;
+			do {
+				kar = * movingString ++;
+				if (kar == U'\0') return nullptr;
+			} while (kar != firstCharacter);
+		} while (str32ncmp (movingString, find, length - 1));
+		/*
+			We found a match.
+		*/
+		movingString --;
+		if ((startFree || movingString == string || Melder_isWordDelimiter (movingString [-1])) &&
+			(endFree || movingString [length] == U'\0' || Melder_isWordDelimiter (movingString [length])))
+		{
+			return (char32 *) movingString;
+		} else {
+			movingString ++;
+		}
+	} while (true);
+	return nullptr;   // can never occur
+}
+inline static char32 * str32str_word_caseInsensitive (const char32 *string, const char32 *find, bool startFree, bool endFree) noexcept {
+	integer length = str32len (find);
+	if (length == 0) return (char32 *) string;
+	const char32* movingString = string;
+	do {
+		char32 firstCharacter = tolower32 (* find ++);   // optimization
+		do {
+			char32 kar;
+			do {
+				kar = tolower32 (* movingString ++);
+				if (kar == U'\0') return nullptr;
+			} while (kar != firstCharacter);
+		} while (str32ncmp_caseInsensitive (movingString, find, length - 1));
+		/*
+			We found a match.
+		*/
+		movingString --;
+		if ((startFree || movingString == string || Melder_isWordDelimiter (movingString [-1])) &&
+			(endFree || movingString [length] == U'\0' || Melder_isWordDelimiter (movingString [length])))
+		{
+			return (char32 *) movingString;
+		} else {
+			movingString ++;
+		}
+	} while (true);
+	return nullptr;   // can never occur
+}
+inline static char32 * str32str_word_optionallyCaseSensitive (const char32 *string, const char32 *find, bool caseSensitive, bool startFree, bool endFree) noexcept {
+	return caseSensitive ? str32str_word (string, find, startFree, endFree) : str32str_word_caseInsensitive (string, find, startFree, endFree);
+}
+
+bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, const char32 *criterion, bool caseSensitive) {
 	if (! value) {
 		value = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
@@ -275,25 +333,37 @@ bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, c
 		criterion = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
 	if (which <= kMelder_string::NOT_EQUAL_TO) {
-		bool matchPositiveCriterion = str32equ (value, criterion);
+		bool matchPositiveCriterion = str32equ_optionallyCaseSensitive (value, criterion, caseSensitive);
 		return ( which == kMelder_string::EQUAL_TO ) == matchPositiveCriterion;
 	}
 	if (which <= kMelder_string::DOES_NOT_CONTAIN) {
-		bool matchPositiveCriterion = !! str32str (value, criterion);
+		bool matchPositiveCriterion = !! str32str_optionallyCaseSensitive (value, criterion, caseSensitive);
 		return ( which == kMelder_string::CONTAINS ) == matchPositiveCriterion;
 	}
 	if (which <= kMelder_string::DOES_NOT_START_WITH) {
-		bool matchPositiveCriterion = str32nequ (value, criterion, str32len (criterion));
+		bool matchPositiveCriterion = str32nequ_optionallyCaseSensitive (value, criterion, str32len (criterion), caseSensitive);
 		return ( which == kMelder_string::STARTS_WITH ) == matchPositiveCriterion;
 	}
 	if (which <= kMelder_string::DOES_NOT_END_WITH) {
-		int criterionLength = str32len (criterion), valueLength = str32len (value);
-		bool matchPositiveCriterion = ( criterionLength <= valueLength && str32equ (value + valueLength - criterionLength, criterion) );
+		integer criterionLength = str32len (criterion), valueLength = str32len (value);
+		bool matchPositiveCriterion = ( criterionLength <= valueLength && str32equ_optionallyCaseSensitive (value + valueLength - criterionLength, criterion, caseSensitive) );
 		return (which == kMelder_string::ENDS_WITH) == matchPositiveCriterion;
+	}
+	if (which <= kMelder_string::DOES_NOT_CONTAIN_WORD) {
+		bool matchPositiveCriterion = !! str32str_word_optionallyCaseSensitive (value, criterion, caseSensitive, false, false);
+		return ( which == kMelder_string::CONTAINS_WORD ) == matchPositiveCriterion;
+	}
+	if (which <= kMelder_string::DOES_NOT_CONTAIN_WORD_STARTING_WITH) {
+		bool matchPositiveCriterion = !! str32str_word_optionallyCaseSensitive (value, criterion, caseSensitive, false, true);
+		return ( which == kMelder_string::CONTAINS_WORD_STARTING_WITH ) == matchPositiveCriterion;
+	}
+	if (which <= kMelder_string::DOES_NOT_CONTAIN_WORD_ENDING_WITH) {
+		bool matchPositiveCriterion = !! str32str_word_optionallyCaseSensitive (value, criterion, caseSensitive, true, false);
+		return ( which == kMelder_string::CONTAINS_WORD_ENDING_WITH ) == matchPositiveCriterion;
 	}
 	if (which == kMelder_string::MATCH_REGEXP) {
 		char32 *place = nullptr;
-		regexp *compiled_regexp = CompileRE_throwable (criterion, 0);
+		regexp *compiled_regexp = CompileRE_throwable (criterion, ! REDFLT_CASE_INSENSITIVE);
 		if (ExecRE (compiled_regexp, nullptr, value, nullptr, 0, '\0', '\0', nullptr, nullptr, nullptr))
 			place = compiled_regexp -> startp [0];
 		free (compiled_regexp);

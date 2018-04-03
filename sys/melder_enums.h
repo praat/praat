@@ -1,6 +1,6 @@
 /* melder_enums.h
  *
- * Copyright (C) 2007,2013,2015 Paul Boersma
+ * Copyright (C) 2007,2013,2015,2016,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,14 @@ enums_begin (kMelder_string, 1)
 	enums_add (kMelder_string, 6, DOES_NOT_START_WITH, U"does not start with")
 	enums_add (kMelder_string, 7, ENDS_WITH, U"ends with")
 	enums_add (kMelder_string, 8, DOES_NOT_END_WITH, U"does not end with")
-	enums_add (kMelder_string, 9, MATCH_REGEXP, U"matches (regex)")
-enums_end (kMelder_string, 9, EQUAL_TO)
+	enums_add (kMelder_string, 9, CONTAINS_WORD, U"contains a word equal to")
+	enums_add (kMelder_string, 10, DOES_NOT_CONTAIN_WORD, U"does not contain a word equal to")
+	enums_add (kMelder_string, 11, CONTAINS_WORD_STARTING_WITH, U"contains a word starting with")
+	enums_add (kMelder_string, 12, DOES_NOT_CONTAIN_WORD_STARTING_WITH, U"does not contain a word starting with")
+	enums_add (kMelder_string, 13, CONTAINS_WORD_ENDING_WITH, U"contains a word ending with")
+	enums_add (kMelder_string, 14, DOES_NOT_CONTAIN_WORD_ENDING_WITH, U"does not contain a word ending with")
+	enums_add (kMelder_string, 15, MATCH_REGEXP, U"matches (regex)")
+enums_end (kMelder_string, 15, EQUAL_TO)
 
 enums_begin (kMelder_textInputEncoding, 1)
 	enums_add (kMelder_textInputEncoding, 1, UTF8, U"UTF-8")

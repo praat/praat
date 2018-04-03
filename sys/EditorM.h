@@ -47,7 +47,7 @@
 #undef SET_ENUM
 #undef GET_FILE
 
-#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter
+#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm _sendingForm_, integer _narg_, Stackel _args_, const char32 *_sendingString_, Interpreter interpreter
 #define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, const char32 *, Interpreter
 #define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, const char32 *, Interpreter
 
@@ -60,12 +60,12 @@
 #define EDITOR_OK  \
 	UiForm_finish (cmd -> d_uiform.get()); \
 _form_inited_: \
-	if (! args && ! sendingForm && ! sendingString) {
+	if (! _args_ && ! _sendingForm_ && ! _sendingString_) {
 
 #define EDITOR_DO  \
 		UiForm_do (cmd -> d_uiform.get(), false); \
-	} else if (! sendingForm) { \
-		UiForm_parseStringE (cmd, narg, args, sendingString, interpreter); \
+	} else if (! _sendingForm_) { \
+		UiForm_parseStringE (cmd, _narg_, _args_, _sendingString_, interpreter); \
 	} else {
 
 #define EDITOR_END  \
@@ -332,20 +332,24 @@ _form_inited_: \
 #define EDITOR_FORM_SAVE(title,helpTitle) \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = autoUiForm (UiOutfile_createE (cmd, title, cmd -> itemTitle, helpTitle)); \
-		} if (! args && ! sendingForm && ! sendingString) { char32 defaultName [300]; defaultName [0] = U'\0';
+		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
 #define EDITOR_DO_SAVE \
-	UiOutfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile file2 { }; \
-		if (! args && ! sendingString) file = UiFile_getFile (sendingForm); \
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+	(void) _narg_; \
+	(void) interpreter; \
+	UiOutfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile _file2 { }; \
+		if (! _args_ && ! _sendingString_) file = UiFile_getFile (_sendingForm_); \
+		else { Melder_relativePathToFile (_args_ ? _args_ [1]. string : _sendingString_, & _file2); file = & _file2; }
 
 #define EDITOR_FORM_READ(title,helpTitle) \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = autoUiForm (UiInfile_createE (cmd, title, cmd -> itemTitle, helpTitle)); \
-		} if (! args && ! sendingForm && ! sendingString) {
+		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) {
 #define EDITOR_DO_READ \
-	UiInfile_do (cmd -> d_uiform.get()); } else { MelderFile file; structMelderFile file2 { }; \
-		if (! args && ! sendingString) file = UiFile_getFile (sendingForm); \
-		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+	(void) _narg_; \
+	(void) interpreter; \
+	UiInfile_do (cmd -> d_uiform.get()); } else { MelderFile file; structMelderFile _file2 { }; \
+		if (! _args_ && ! _sendingString_) file = UiFile_getFile (_sendingForm_); \
+		else { Melder_relativePathToFile (_args_ ? _args_ [1]. string : _sendingString_, & _file2); file = & _file2; }
 
 #define GET_FILE  UiForm_getFile (cmd -> d_uiform.get())
 

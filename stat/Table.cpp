@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2002-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -668,7 +668,7 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 		}
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which, criterion)) {
+			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which, criterion, true)) {
 				autoTableRow newRow = Data_copy (row);
 				thy rows. addItem_move (newRow.move());
 			}

@@ -77,7 +77,7 @@ autoDurationTier TextGrid_to_DurationTier (TextGrid me, integer tierNumber, doub
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		for (integer i = 1; i <= tier ->intervals.size; i ++) {
 			TextInterval segment = tier -> intervals.at [i];
-			if (Melder_stringMatchesCriterion (segment -> text, which, criterion)) {
+			if (Melder_stringMatchesCriterion (segment -> text, which, criterion, true)) {
 				double xmin = segment -> xmin, xmax = segment -> xmax;
 				RealTier_addPoint (him.get(), xmin, 1.0);
 				RealTier_addPoint (him.get(), xmin + leftTransitionDuration, timeScalefactor);

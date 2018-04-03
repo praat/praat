@@ -1,6 +1,6 @@
 /* TableOfReal.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -389,7 +389,7 @@ autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_strin
 	try {
 		integer n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion)) {
+			if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion, true)) {
 				n ++;
 			}
 		}
@@ -399,7 +399,7 @@ autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_strin
 		copyColumnLabels (me, thee.get());
 		n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
-			if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion))
+			if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion, true))
 				copyRow (me, irow, thee.get(), ++ n);
 		return thee;
 	} catch (MelderError) {
@@ -435,7 +435,7 @@ autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_st
 	try {
 		integer n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion)) {
+			if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion, true)) {
 				n ++;
 			}
 		}
@@ -445,7 +445,7 @@ autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_st
 		copyRowLabels (me, thee.get());
 		n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion)) {
+			if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion, true)) {
 				copyColumn (me, icol, thee.get(), ++ n);
 			}
 		}

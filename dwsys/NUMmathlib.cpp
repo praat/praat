@@ -568,7 +568,7 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
 
     /* Find prob(value < x0) */
 
-    valx0 = ptukey (x0, rr, cc, df, /*LOWER*/TRUE, /*LOG_P*/FALSE) - p;
+    valx0 = ptukey (x0, rr, cc, df, /*LOWER*/true, /*LOG_P*/false) - p;
 
     /* Find the second iterate and prob(value < x1). */
     /* If the first iterate has probability value */
@@ -579,7 +579,7 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
 		x1 = ( x0 > 1.0 ? x0 - 1.0 : 0.0 ); // djmw: fmax2 (0.0, x0 - 1.0);
     else
 		x1 = x0 + 1.0;
-    valx1 = ptukey (x1, rr, cc, df, /*LOWER*/TRUE, /*LOG_P*/FALSE) - p;
+    valx1 = ptukey (x1, rr, cc, df, /*LOWER*/true, /*LOG_P*/false) - p;
 
     /* Find new iterate */
 
@@ -596,7 +596,7 @@ static double qtukey(double p, double rr, double cc, double df, int lower_tail, 
 		}
 		/* Find prob(value < new iterate) */
 
-		valx1 = ptukey (ans, rr, cc, df, /*LOWER*/TRUE, /*LOG_P*/FALSE) - p;
+		valx1 = ptukey (ans, rr, cc, df, /*LOWER*/true, /*LOG_P*/false) - p;
 		x1 = ans;
 
 		/* If the difference between two successive */

@@ -41,7 +41,7 @@ DO
 FORM (WINDOW_Art_viewAndEdit, U"View & Edit Articulation", nullptr) {
 	static double muscles [1 + (int) kArt_muscle::MAX];
 	for (kArt_muscle muscle = (kArt_muscle) 1; muscle <= kArt_muscle::MAX; ++ muscle)
-		UiForm_addReal (dia, & muscles [(int) muscle], nullptr /* GUI-only */, kArt_muscle_getText (muscle), U"0.0");
+		UiForm_addReal (_dia_, & muscles [(int) muscle], nullptr /* GUI-only */, kArt_muscle_getText (muscle), U"0.0");
 OK
 	FIND_ONE (Art)
 	for (int i = 1; i <= (int) kArt_muscle::MAX; i ++)

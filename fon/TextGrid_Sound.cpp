@@ -1,6 +1,6 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -482,7 +482,7 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, in
 		integer count = 0;
 		for (integer iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
-			if (Melder_stringMatchesCriterion (segment -> text, which, text)) {
+			if (Melder_stringMatchesCriterion (segment -> text, which, text, true)) {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.get(), Melder_cat (sound -> name ? sound -> name : U"", U"_", text, U"_", ++ count));
 				list -> addItem_move (interval.move());

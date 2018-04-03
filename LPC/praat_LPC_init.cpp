@@ -817,15 +817,14 @@ DO
 	CONVERT_EACH_END (my name)
 }
 
-static void Sound_to_LPC_addWarning (UiForm dia) {
-	LABEL (U"Warning 1:  for formant analysis, use \"To Formant\" instead.")
-	LABEL (U"Warning 2:  if you do use \"To LPC\", you may want to resample first.")
-	LABEL (U"Click Help for more details.")
+#define Sound_to_LPC_addWarning \
+	LABEL (U"Warning 1:  for formant analysis, use \"To Formant\" instead.") \
+	LABEL (U"Warning 2:  if you do use \"To LPC\", you may want to resample first.") \
+	LABEL (U"Click Help for more details.") \
 	LABEL (U"")
-}
 
 FORM (NEW_Sound_to_LPC_autocorrelation, U"Sound: To LPC (autocorrelation)", U"Sound: To LPC (autocorrelation)...") {
-	Sound_to_LPC_addWarning (dia);
+	Sound_to_LPC_addWarning
 	NATURAL (predictionOrder, U"Prediction order", U"16")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (timeStep, U"Time step (s)", U"0.005")
@@ -839,7 +838,7 @@ DO
 }
 
 FORM (NEW_Sound_to_LPC_covariance, U"Sound: To LPC (covariance)", U"Sound: To LPC (covariance)...") {
-	Sound_to_LPC_addWarning (dia);
+	Sound_to_LPC_addWarning
 	NATURAL (predictionOrder, U"Prediction order", U"16")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (timeStep, U"Time step (s)", U"0.005")
@@ -853,7 +852,7 @@ DO
 }
 
 FORM (NEW_Sound_to_LPC_burg, U"Sound: To LPC (burg)", U"Sound: To LPC (burg)...") {
-	Sound_to_LPC_addWarning (dia);
+	Sound_to_LPC_addWarning
 	NATURAL (predictionOrder, U"Prediction order", U"16")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (timeStep, U"Time step (s)", U"0.005")
@@ -867,7 +866,7 @@ DO
 }
 
 FORM (NEW_Sound_to_LPC_marple, U"Sound: To LPC (marple)", U"Sound: To LPC (marple)...") {
-	Sound_to_LPC_addWarning (dia);
+	Sound_to_LPC_addWarning
 	NATURAL (predictionOrder, U"Prediction order", U"16")
 	POSITIVE (windowLength, U"Window length (s)", U"0.025")
 	POSITIVE (timeStep, U"Time step (s)", U"0.005")

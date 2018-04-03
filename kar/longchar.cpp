@@ -1,6 +1,6 @@
 /* longchar.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -615,7 +615,18 @@ static struct structLongchar_Info Longchar_database [] = {
 static short where [95] [95];
 static short inited = 0;
 #define UNICODE_TOP_GENERICIZABLE  65535
-static struct { char first, second; bool isSpace; } genericDigraph [1+UNICODE_TOP_GENERICIZABLE];
+static struct { char first, second; bool isSpace, isLetter, isDigit, isWordCharacter; } genericDigraph [1+UNICODE_TOP_GENERICIZABLE];
+
+inline static void makeLetters (char32 from, char32 to) {
+	for (char32 kar = from; kar <= to; kar ++) {
+		genericDigraph [kar]. isLetter = true;
+	}
+}
+inline static void makeDigits (char32 from, char32 to) {
+	for (char32 kar = from; kar <= to; kar ++) {
+		genericDigraph [kar]. isDigit = true;
+	}
+}
 
 void Longchar_init () {
 	Longchar_Info data;
@@ -657,6 +668,419 @@ void Longchar_init () {
 	genericDigraph [UNICODE_PARAGRAPH_SEPARATOR]. isSpace = true;   // ISO 30112
 	genericDigraph [UNICODE_MEDIUM_MATHEMATICAL_SPACE]. isSpace = true;   // ISO 30112
 	genericDigraph [UNICODE_IDEOGRAPHIC_SPACE]. isSpace = true;   // ISO 30112; occurs on Japanese computers
+	makeLetters (U'\u0041', U'\u005A');
+	makeLetters (U'\u0061', U'\u007A');
+	makeLetters (U'\u00C0', U'\u00D6');
+	makeLetters (U'\u00D8', U'\u00F6');
+	makeLetters (U'\u00F8', U'\u02C1');
+	makeLetters (U'\u02C6', U'\u02D1');
+	makeLetters (U'\u02E0', U'\u02E4');
+	genericDigraph [U'\u02EC']. isLetter = true;
+	genericDigraph [U'\u02EE']. isLetter = true;
+	makeLetters (U'\u0370', U'\u0374');
+	genericDigraph [U'\u0376']. isLetter = true;
+	genericDigraph [U'\u0377']. isLetter = true;
+	makeLetters (U'\u037A', U'\u037D');
+	genericDigraph [U'\u0386']. isLetter = true;
+	makeLetters (U'\u0388', U'\u038A');
+	genericDigraph [U'\u038C']. isLetter = true;
+	makeLetters (U'\u038E', U'\u03A1');
+	makeLetters (U'\u03A3', U'\u03F5');
+	makeLetters (U'\u03F7', U'\u0481');
+	makeLetters (U'\u048A', U'\u0527');
+	makeLetters (U'\u0531', U'\u0556');
+	genericDigraph [U'\u0559']. isLetter = true;
+	makeLetters (U'\u0561', U'\u0587');
+	makeLetters (U'\u05D0', U'\u05EA');
+	makeLetters (U'\u05F0', U'\u05F2');
+	makeLetters (U'\u0620', U'\u064A');
+	genericDigraph [U'\u066E']. isLetter = true;
+	genericDigraph [U'\u066F']. isLetter = true;
+	makeLetters (U'\u0671', U'\u06D3');
+	genericDigraph [U'\u06D5']. isLetter = true;
+	genericDigraph [U'\u06E5']. isLetter = true;
+	genericDigraph [U'\u06E6']. isLetter = true;
+	genericDigraph [U'\u06EE']. isLetter = true;
+	genericDigraph [U'\u06EF']. isLetter = true;
+	makeLetters (U'\u06FA', U'\u06FC');
+	genericDigraph [U'\u06FF']. isLetter = true;
+	genericDigraph [U'\u0710']. isLetter = true;
+	makeLetters (U'\u0712', U'\u072F');
+	makeLetters (U'\u074D', U'\u07A5');
+	genericDigraph [U'\u07B1']. isLetter = true;
+	makeLetters (U'\u07CA', U'\u07EA');
+	genericDigraph [U'\u07F4']. isLetter = true;
+	genericDigraph [U'\u07F5']. isLetter = true;
+	genericDigraph [U'\u07FA']. isLetter = true;
+	makeLetters (U'\u0800', U'\u0815');
+	genericDigraph [U'\u081A']. isLetter = true;
+	genericDigraph [U'\u0824']. isLetter = true;
+	genericDigraph [U'\u0828']. isLetter = true;
+	makeLetters (U'\u0840', U'\u0858');
+	genericDigraph [U'\u08A0']. isLetter = true;
+	makeLetters (U'\u08A2', U'\u08AC');
+	makeLetters (U'\u0904', U'\u0939');
+	genericDigraph [U'\u093D']. isLetter = true;
+	genericDigraph [U'\u0950']. isLetter = true;
+	makeLetters (U'\u0958', U'\u0961');
+	makeLetters (U'\u0971', U'\u0977');
+	makeLetters (U'\u0979', U'\u097F');
+	makeLetters (U'\u0985', U'\u098C');
+	genericDigraph [U'\u098F']. isLetter = true;
+	genericDigraph [U'\u0990']. isLetter = true;
+	makeLetters (U'\u0993', U'\u09A8');
+	makeLetters (U'\u09AA', U'\u09B0');
+	genericDigraph [U'\u09B2']. isLetter = true;
+	makeLetters (U'\u09B6', U'\u09B9');
+	genericDigraph [U'\u09BD']. isLetter = true;
+	genericDigraph [U'\u09CE']. isLetter = true;
+	genericDigraph [U'\u09DC']. isLetter = true;
+	genericDigraph [U'\u09DD']. isLetter = true;
+	makeLetters (U'\u09DF', U'\u09E1');
+	genericDigraph [U'\u09F0']. isLetter = true;
+	genericDigraph [U'\u09F1']. isLetter = true;
+	makeLetters (U'\u0A05', U'\u0A0A');
+	genericDigraph [U'\u0A0F']. isLetter = true;
+	genericDigraph [U'\u0A10']. isLetter = true;
+	makeLetters (U'\u0A13', U'\u0A28');
+	makeLetters (U'\u0A2A', U'\u0A30');
+	genericDigraph [U'\u0A32']. isLetter = true;
+	genericDigraph [U'\u0A33']. isLetter = true;
+	genericDigraph [U'\u0A35']. isLetter = true;
+	genericDigraph [U'\u0A36']. isLetter = true;
+	genericDigraph [U'\u0A38']. isLetter = true;
+	genericDigraph [U'\u0A39']. isLetter = true;
+	makeLetters (U'\u0A59', U'\u0A5C');
+	genericDigraph [U'\u0A5E']. isLetter = true;
+	makeLetters (U'\u0A72', U'\u0A74');
+	makeLetters (U'\u0A85', U'\u0A8D');
+	makeLetters (U'\u0A8F', U'\u0A91');
+	makeLetters (U'\u0A93', U'\u0AA8');
+	makeLetters (U'\u0AAA', U'\u0AB0');
+	genericDigraph [U'\u0AB2']. isLetter = true;
+	genericDigraph [U'\u0AB3']. isLetter = true;
+	makeLetters (U'\u0AB5', U'\u0AB9');
+	genericDigraph [U'\u0ABD']. isLetter = true;
+	genericDigraph [U'\u0AD0']. isLetter = true;
+	genericDigraph [U'\u0AE0']. isLetter = true;
+	genericDigraph [U'\u0AE1']. isLetter = true;
+	makeLetters (U'\u0B05', U'\u0B0C');
+	genericDigraph [U'\u0B0F']. isLetter = true;
+	genericDigraph [U'\u0B10']. isLetter = true;
+	makeLetters (U'\u0B13', U'\u0B28');
+	makeLetters (U'\u0B2A', U'\u0B30');
+	genericDigraph [U'\u0B32']. isLetter = true;
+	genericDigraph [U'\u0B33']. isLetter = true;
+	makeLetters (U'\u0B35', U'\u0B39');
+	genericDigraph [U'\u0B3D']. isLetter = true;
+	genericDigraph [U'\u0B5C']. isLetter = true;
+	genericDigraph [U'\u0B5D']. isLetter = true;
+	makeLetters (U'\u0B5F', U'\u0B61');
+	genericDigraph [U'\u0B71']. isLetter = true;
+	genericDigraph [U'\u0B83']. isLetter = true;
+	makeLetters (U'\u0B85', U'\u0B8A');
+	makeLetters (U'\u0B8E', U'\u0B90');
+	makeLetters (U'\u0B92', U'\u0B95');
+	genericDigraph [U'\u0B99']. isLetter = true;
+	genericDigraph [U'\u0B9A']. isLetter = true;
+	genericDigraph [U'\u0B9C']. isLetter = true;
+	genericDigraph [U'\u0B9E']. isLetter = true;
+	genericDigraph [U'\u0B9F']. isLetter = true;
+	genericDigraph [U'\u0BA3']. isLetter = true;
+	genericDigraph [U'\u0BA4']. isLetter = true;
+	makeLetters (U'\u0BA8', U'\u0BAA');
+	makeLetters (U'\u0BAE', U'\u0BB9');
+	genericDigraph [U'\u0BD0']. isLetter = true;
+	makeLetters (U'\u0C05', U'\u0C0C');
+	makeLetters (U'\u0C0E', U'\u0C10');
+	makeLetters (U'\u0C12', U'\u0C28');
+	makeLetters (U'\u0C2A', U'\u0C33');
+	makeLetters (U'\u0C35', U'\u0C39');
+	genericDigraph [U'\u0C3D']. isLetter = true;
+	genericDigraph [U'\u0C58']. isLetter = true;
+	genericDigraph [U'\u0C59']. isLetter = true;
+	genericDigraph [U'\u0C60']. isLetter = true;
+	genericDigraph [U'\u0C61']. isLetter = true;
+	makeLetters (U'\u0C85', U'\u0C8C');
+	makeLetters (U'\u0C8E', U'\u0C90');
+	makeLetters (U'\u0C92', U'\u0CA8');
+	makeLetters (U'\u0CAA', U'\u0CB3');
+	makeLetters (U'\u0CB5', U'\u0CB9');
+	genericDigraph [U'\u0CBD']. isLetter = true;
+	genericDigraph [U'\u0CDE']. isLetter = true;
+	genericDigraph [U'\u0CE0']. isLetter = true;
+	genericDigraph [U'\u0CE1']. isLetter = true;
+	genericDigraph [U'\u0CF1']. isLetter = true;
+	genericDigraph [U'\u0CF2']. isLetter = true;
+	makeLetters (U'\u0D05', U'\u0D0C');
+	makeLetters (U'\u0D0E', U'\u0D10');
+	makeLetters (U'\u0D12', U'\u0D3A');
+	genericDigraph [U'\u0D3D']. isLetter = true;
+	genericDigraph [U'\u0D4E']. isLetter = true;
+	genericDigraph [U'\u0D60']. isLetter = true;
+	genericDigraph [U'\u0D61']. isLetter = true;
+	makeLetters (U'\u0D7A', U'\u0D7F');
+	makeLetters (U'\u0D85', U'\u0D96');
+	makeLetters (U'\u0D9A', U'\u0DB1');
+	makeLetters (U'\u0DB3', U'\u0DBB');
+	genericDigraph [U'\u0DBD']. isLetter = true;
+	makeLetters (U'\u0DC0', U'\u0DC6');
+	makeLetters (U'\u0E01', U'\u0E30');
+	genericDigraph [U'\u0E32']. isLetter = true;
+	genericDigraph [U'\u0E33']. isLetter = true;
+	makeLetters (U'\u0E40', U'\u0E46');
+	genericDigraph [U'\u0E81']. isLetter = true;
+	genericDigraph [U'\u0E82']. isLetter = true;
+	genericDigraph [U'\u0E84']. isLetter = true;
+	genericDigraph [U'\u0E87']. isLetter = true;
+	genericDigraph [U'\u0E88']. isLetter = true;
+	genericDigraph [U'\u0E8A']. isLetter = true;
+	genericDigraph [U'\u0E8D']. isLetter = true;
+	makeLetters (U'\u0E94', U'\u0E97');
+	makeLetters (U'\u0E99', U'\u0E9F');
+	makeLetters (U'\u0EA1', U'\u0EA3');
+	genericDigraph [U'\u0EA5']. isLetter = true;
+	genericDigraph [U'\u0EA7']. isLetter = true;
+	genericDigraph [U'\u0EAA']. isLetter = true;
+	genericDigraph [U'\u0EAB']. isLetter = true;
+	makeLetters (U'\u0EAD', U'\u0EB0');
+	genericDigraph [U'\u0EB2']. isLetter = true;
+	genericDigraph [U'\u0EB3']. isLetter = true;
+	genericDigraph [U'\u0EBD']. isLetter = true;
+	makeLetters (U'\u0EC0', U'\u0EC4');
+	genericDigraph [U'\u0EC6']. isLetter = true;
+	makeLetters (U'\u0EDC', U'\u0EDF');
+	genericDigraph [U'\u0F00']. isLetter = true;
+	makeLetters (U'\u0F40', U'\u0F47');
+	makeLetters (U'\u0F49', U'\u0F6C');
+	makeLetters (U'\u0F88', U'\u0F8C');
+	makeLetters (U'\u1000', U'\u102A');
+	genericDigraph [U'\u103F']. isLetter = true;
+	makeLetters (U'\u1050', U'\u1055');
+	makeLetters (U'\u105A', U'\u105D');
+	genericDigraph [U'\u1061']. isLetter = true;
+	genericDigraph [U'\u1065']. isLetter = true;
+	genericDigraph [U'\u1066']. isLetter = true;
+	makeLetters (U'\u106E', U'\u1070');
+	makeLetters (U'\u1075', U'\u1081');
+	genericDigraph [U'\u108E']. isLetter = true;
+	makeLetters (U'\u10A0', U'\u10C5');
+	genericDigraph [U'\u10C7']. isLetter = true;
+	genericDigraph [U'\u10CD']. isLetter = true;
+	makeLetters (U'\u10D0', U'\u10FA');
+	makeLetters (U'\u10FC', U'\u1248');
+	makeLetters (U'\u124A', U'\u124D');
+	makeLetters (U'\u1250', U'\u1256');
+	genericDigraph [U'\u1258']. isLetter = true;
+	makeLetters (U'\u125A', U'\u125D');
+	makeLetters (U'\u1260', U'\u1288');
+	makeLetters (U'\u128A', U'\u128D');
+	makeLetters (U'\u1290', U'\u12B0');
+	makeLetters (U'\u12B2', U'\u12B5');
+	makeLetters (U'\u12B8', U'\u12BE');
+	genericDigraph [U'\u12C0']. isLetter = true;
+	makeLetters (U'\u12C2', U'\u12C5');
+	makeLetters (U'\u12C8', U'\u12D6');
+	makeLetters (U'\u12D8', U'\u1310');
+	makeLetters (U'\u1312', U'\u1315');
+	makeLetters (U'\u1318', U'\u135A');
+	makeLetters (U'\u1380', U'\u138F');
+	makeLetters (U'\u13A0', U'\u13F4');
+	makeLetters (U'\u1401', U'\u166C');
+	makeLetters (U'\u166F', U'\u167F');
+	makeLetters (U'\u1681', U'\u169A');
+	makeLetters (U'\u16A0', U'\u16EA');
+	makeLetters (U'\u1700', U'\u170C');
+	makeLetters (U'\u170E', U'\u1711');
+	makeLetters (U'\u1720', U'\u1731');
+	makeLetters (U'\u1740', U'\u1751');
+	makeLetters (U'\u1760', U'\u176C');
+	makeLetters (U'\u176E', U'\u1770');
+	makeLetters (U'\u1780', U'\u17B3');
+	genericDigraph [U'\u17D7']. isLetter = true;
+	genericDigraph [U'\u17DC']. isLetter = true;
+	makeLetters (U'\u1820', U'\u1877');
+	makeLetters (U'\u1880', U'\u18A8');
+	genericDigraph [U'\u18AA']. isLetter = true;
+	makeLetters (U'\u18B0', U'\u18F5');
+	makeLetters (U'\u1900', U'\u191C');
+	makeLetters (U'\u1950', U'\u196D');
+	makeLetters (U'\u1970', U'\u1974');
+	makeLetters (U'\u1980', U'\u19AB');
+	makeLetters (U'\u19C1', U'\u19C7');
+	makeLetters (U'\u1A00', U'\u1A16');
+	makeLetters (U'\u1A20', U'\u1A54');
+	genericDigraph [U'\u1AA7']. isLetter = true;
+	makeLetters (U'\u1B05', U'\u1B33');
+	makeLetters (U'\u1B45', U'\u1B4B');
+	makeLetters (U'\u1B83', U'\u1BA0');
+	genericDigraph [U'\u1BAE']. isLetter = true;
+	genericDigraph [U'\u1BAF']. isLetter = true;
+	makeLetters (U'\u1BBA', U'\u1BE5');
+	makeLetters (U'\u1C00', U'\u1C23');
+	makeLetters (U'\u1C4D', U'\u1C4F');
+	makeLetters (U'\u1C5A', U'\u1C7D');
+	makeLetters (U'\u1CE9', U'\u1CEC');
+	makeLetters (U'\u1CEE', U'\u1CF1');
+	genericDigraph [U'\u1CF5']. isLetter = true;
+	genericDigraph [U'\u1CF6']. isLetter = true;
+	makeLetters (U'\u1D00', U'\u1DBF');
+	makeLetters (U'\u1E00', U'\u1F15');
+	makeLetters (U'\u1F18', U'\u1F1D');
+	makeLetters (U'\u1F20', U'\u1F45');
+	makeLetters (U'\u1F48', U'\u1F4D');
+	makeLetters (U'\u1F50', U'\u1F57');
+	genericDigraph [U'\u1F59']. isLetter = true;
+	genericDigraph [U'\u1F5B']. isLetter = true;
+	genericDigraph [U'\u1F5D']. isLetter = true;
+	makeLetters (U'\u1F5F', U'\u1F7D');
+	makeLetters (U'\u1F80', U'\u1FB4');
+	makeLetters (U'\u1FB6', U'\u1FBC');
+	genericDigraph [U'\u1FBE']. isLetter = true;
+	makeLetters (U'\u1FC2', U'\u1FC4');
+	makeLetters (U'\u1FC6', U'\u1FCC');
+	makeLetters (U'\u1FD0', U'\u1FD3');
+	makeLetters (U'\u1FD6', U'\u1FDB');
+	makeLetters (U'\u1FE0', U'\u1FEC');
+	makeLetters (U'\u1FF2', U'\u1FF4');
+	makeLetters (U'\u1FF6', U'\u1FFC');
+	genericDigraph [U'\u2071']. isLetter = true;
+	genericDigraph [U'\u207F']. isLetter = true;
+	makeLetters (U'\u2090', U'\u209C');
+	genericDigraph [U'\u2102']. isLetter = true;
+	genericDigraph [U'\u2107']. isLetter = true;
+	makeLetters (U'\u210A', U'\u2113');
+	genericDigraph [U'\u2115']. isLetter = true;
+	makeLetters (U'\u2119', U'\u211D');
+	genericDigraph [U'\u2124']. isLetter = true;
+	genericDigraph [U'\u2126']. isLetter = true;
+	genericDigraph [U'\u2128']. isLetter = true;
+	makeLetters (U'\u212A', U'\u212D');
+	makeLetters (U'\u212F', U'\u2139');
+	makeLetters (U'\u213C', U'\u213F');
+	makeLetters (U'\u2145', U'\u2149');
+	genericDigraph [U'\u214E']. isLetter = true;
+	genericDigraph [U'\u2183']. isLetter = true;
+	genericDigraph [U'\u2184']. isLetter = true;
+	makeLetters (U'\u2C00', U'\u2C2E');
+	makeLetters (U'\u2C30', U'\u2C5E');
+	makeLetters (U'\u2C60', U'\u2CE4');
+	makeLetters (U'\u2CEB', U'\u2CEE');
+	genericDigraph [U'\u2CF2']. isLetter = true;
+	genericDigraph [U'\u2CF3']. isLetter = true;
+	makeLetters (U'\u2D00', U'\u2D25');
+	genericDigraph [U'\u2D27']. isLetter = true;
+	genericDigraph [U'\u2D2D']. isLetter = true;
+	makeLetters (U'\u2D30', U'\u2D67');
+	genericDigraph [U'\u2D6F']. isLetter = true;
+	makeLetters (U'\u2D80', U'\u2D96');
+	makeLetters (U'\u2DA0', U'\u2DA6');
+	makeLetters (U'\u2DA8', U'\u2DAE');
+	makeLetters (U'\u2DB0', U'\u2DB6');
+	makeLetters (U'\u2DB8', U'\u2DBE');
+	makeLetters (U'\u2DC0', U'\u2DC6');
+	makeLetters (U'\u2DC8', U'\u2DCE');
+	makeLetters (U'\u2DD0', U'\u2DD6');
+	makeLetters (U'\u2DD8', U'\u2DDE');
+	genericDigraph [U'\u2E2F']. isLetter = true;
+	genericDigraph [U'\u3005']. isLetter = true;
+	genericDigraph [U'\u3006']. isLetter = true;
+	makeLetters (U'\u3031', U'\u3035');
+	genericDigraph [U'\u303B']. isLetter = true;
+	genericDigraph [U'\u303C']. isLetter = true;
+	makeLetters (U'\u3041', U'\u3096');
+	makeLetters (U'\u309D', U'\u309F');
+	makeLetters (U'\u30A1', U'\u30FA');
+	makeLetters (U'\u30FC', U'\u30FF');
+	makeLetters (U'\u3105', U'\u312D');
+	makeLetters (U'\u3131', U'\u318E');
+	makeLetters (U'\u31A0', U'\u31BA');
+	makeLetters (U'\u31F0', U'\u31FF');
+	makeLetters (U'\u3400', U'\u4DB5');
+	makeLetters (U'\u4E00', U'\u9FCC');
+	makeLetters (U'\uA000', U'\uA48C');
+	makeLetters (U'\uA4D0', U'\uA4FD');
+	makeLetters (U'\uA500', U'\uA60C');
+	makeLetters (U'\uA610', U'\uA61F');
+	genericDigraph [U'\uA62A']. isLetter = true;
+	genericDigraph [U'\uA62B']. isLetter = true;
+	makeLetters (U'\uA640', U'\uA66E');
+	makeLetters (U'\uA67F', U'\uA697');
+	makeLetters (U'\uA6A0', U'\uA6E5');
+	makeLetters (U'\uA717', U'\uA71F');
+	makeLetters (U'\uA722', U'\uA788');
+	makeLetters (U'\uA78B', U'\uA78E');
+	makeLetters (U'\uA790', U'\uA793');
+	makeLetters (U'\uA7A0', U'\uA7AA');
+	makeLetters (U'\uA7F8', U'\uA801');
+	makeLetters (U'\uA803', U'\uA805');
+	makeLetters (U'\uA807', U'\uA80A');
+	makeLetters (U'\uA80C', U'\uA822');
+	makeLetters (U'\uA840', U'\uA873');
+	makeLetters (U'\uA882', U'\uA8B3');
+	makeLetters (U'\uA8F2', U'\uA8F7');
+	genericDigraph [U'\uA8FB']. isLetter = true;
+	makeLetters (U'\uA90A', U'\uA925');
+	makeLetters (U'\uA930', U'\uA946');
+	makeLetters (U'\uA960', U'\uA97C');
+	makeLetters (U'\uA984', U'\uA9B2');
+	genericDigraph [U'\uA9CF']. isLetter = true;
+	makeLetters (U'\uAA00', U'\uAA28');
+	makeLetters (U'\uAA40', U'\uAA42');
+	makeLetters (U'\uAA44', U'\uAA4B');
+	makeLetters (U'\uAA60', U'\uAA76');
+	genericDigraph [U'\uAA7A']. isLetter = true;
+	makeLetters (U'\uAA80', U'\uAAAF');
+	genericDigraph [U'\uAAB1']. isLetter = true;
+	genericDigraph [U'\uAAB5']. isLetter = true;
+	genericDigraph [U'\uAAB6']. isLetter = true;
+	makeLetters (U'\uAAB9', U'\uAABD');
+	genericDigraph [U'\uAAC0']. isLetter = true;
+	genericDigraph [U'\uAAC2']. isLetter = true;
+	makeLetters (U'\uAADB', U'\uAADD');
+	makeLetters (U'\uAAE0', U'\uAAEA');
+	makeLetters (U'\uAAF2', U'\uAAF4');
+	makeLetters (U'\uAB01', U'\uAB06');
+	makeLetters (U'\uAB09', U'\uAB0E');
+	makeLetters (U'\uAB11', U'\uAB16');
+	makeLetters (U'\uAB20', U'\uAB26');
+	makeLetters (U'\uAB28', U'\uAB2E');
+	makeLetters (U'\uABC0', U'\uABE2');
+	makeLetters (U'\uAC00', U'\uD7A3');
+	makeLetters (U'\uD7B0', U'\uD7C6');
+	makeLetters (U'\uD7CB', U'\uD7FB');
+	makeLetters (U'\uF900', U'\uFA6D');
+	makeLetters (U'\uFA70', U'\uFAD9');
+	makeLetters (U'\uFB00', U'\uFB06');
+	makeLetters (U'\uFB13', U'\uFB17');
+	genericDigraph [U'\uFB1D']. isLetter = true;
+	makeLetters (U'\uFB1F', U'\uFB28');
+	makeLetters (U'\uFB2A', U'\uFB36');
+	makeLetters (U'\uFB38', U'\uFB3C');
+	genericDigraph [U'\uFB3E']. isLetter = true;
+	genericDigraph [U'\uFB40']. isLetter = true;
+	genericDigraph [U'\uFB41']. isLetter = true;
+	genericDigraph [U'\uFB43']. isLetter = true;
+	genericDigraph [U'\uFB44']. isLetter = true;
+	makeLetters (U'\uFB46', U'\uFBB1');
+	makeLetters (U'\uFBD3', U'\uFD3D');
+	makeLetters (U'\uFD50', U'\uFD8F');
+	makeLetters (U'\uFD92', U'\uFDC7');
+	makeLetters (U'\uFDF0', U'\uFDFB');
+	makeLetters (U'\uFE70', U'\uFE74');
+	makeLetters (U'\uFE76', U'\uFEFC');
+	makeLetters (U'\uFF21', U'\uFF3A');
+	makeLetters (U'\uFF41', U'\uFF5A');
+	makeLetters (U'\uFF66', U'\uFFBE');
+	makeLetters (U'\uFFC2', U'\uFFC7');
+	makeLetters (U'\uFFCA', U'\uFFCF');
+	makeLetters (U'\uFFD2', U'\uFFD7');
+	makeLetters (U'\uFFDA', U'\uFFDC');
+	makeDigits (U'0', U'9');
+	for (char32 kar = 1; kar <= UNICODE_TOP_GENERICIZABLE; kar ++) {
+		genericDigraph [kar]. isWordCharacter = genericDigraph [kar]. isLetter || genericDigraph [kar]. isDigit;
+	}
+	genericDigraph [U'_']. isWordCharacter = true;
 	inited = 1;
 }
 
@@ -692,7 +1116,7 @@ char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int e
 			*native++ = kar;
 		}
 	}
-	*native++ = '\0';
+	*native++ = U'\0';
 	return native;
 }
 
@@ -708,7 +1132,7 @@ char32_t *Longchar_genericize32 (const char32_t *native, char32_t *g) {
 			*g++ = kar;
 		}
 	}
-	*g++ = '\0';
+	*g++ = U'\0';
 	return g;
 }
 
@@ -728,6 +1152,22 @@ Longchar_Info Longchar_getInfoFromNative (char32_t kar) {
 bool Melder_isWhiteSpace (const char32_t kar) {
 	if (! inited) Longchar_init ();
 	return kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isSpace;
+}
+bool Melder_isLetter (const char32_t kar) {
+	if (! inited) Longchar_init ();
+	return kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isLetter;
+}
+bool Melder_isDigit (const char32_t kar) {
+	if (! inited) Longchar_init ();
+	return kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isDigit;
+}
+bool Melder_isWordCharacter (const char32_t kar) {
+	if (! inited) Longchar_init ();
+	return kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isWordCharacter;
+}
+bool Melder_isWordDelimiter (const char32_t kar) {
+	if (! inited) Longchar_init ();
+	return ! ( kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isWordCharacter );
 }
 
 /* End of file longchar.cpp */

@@ -81,27 +81,29 @@ Thing_define (UiOption, Thing) {
 };
 
 enum class _kUiField_type {
-	REAL = 1,
-	REAL_OR_UNDEFINED = 2,
-	POSITIVE = 3,
-	INTEGER = 4,
-	NATURAL = 5,
-	WORD = 6,
-	SENTENCE = 7,
-	COLOUR = 8,
-	CHANNEL = 9,
-	LABEL = 10,
-	TEXT = 11,
-	NUMVEC = 12,
-	NUMMAT = 13,
-	BOOLEAN = 14,
-	RADIO = 15,
-	OPTIONMENU = 16,
-	LIST = 17
+	REAL_ = 1,
+	REAL_OR_UNDEFINED_ = 2,
+	POSITIVE_ = 3,
+	INTEGER_ = 4,
+	NATURAL_ = 5,
+	WORD_ = 6,
+	SENTENCE_ = 7,
+	COLOUR_ = 8,
+	CHANNEL_ = 9,
+	LABEL_ = 10,
+	TEXT_ = 11,
+	NUMVEC_ = 12,
+	NUMMAT_ = 13,
+	BOOLEAN_ = 14,
+	RADIO_ = 15,
+	OPTIONMENU_ = 16,
+	LIST_ = 17,
+	LABELLED_TEXT_MIN_ = 1,
+	LABELLED_TEXT_MAX_ = 9
 };
 
 Thing_define (UiField, Thing) {
-	int type;
+	_kUiField_type type;
 	const char32 *formLabel;
 	double realValue;
 	integer integerValue, integerDefaultValue;
@@ -139,7 +141,7 @@ Thing_define (UiField, Thing) {
 };
 
 #define UiCallback_ARGS \
-	UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure
+	UiForm _sendingForm, integer _narg, Stackel _args, const char32 *_sendingString, Interpreter interpreter, const char32 *_invokingButtonTitle, bool _modified, void *_closure
 typedef void (*UiCallback) (UiCallback_ARGS);
 
 #define MAXIMUM_NUMBER_OF_FIELDS  50

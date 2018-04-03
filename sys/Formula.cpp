@@ -4520,7 +4520,7 @@ static void do_rindex () {
 static void do_stringMatchesCriterion (kMelder_string criterion) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		int result = Melder_stringMatchesCriterion (s->string, criterion, t->string);
+		int result = Melder_stringMatchesCriterion (s->string, criterion, t->string, true);
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"", Formula_instructionNames [parse [programPointer]. symbol],

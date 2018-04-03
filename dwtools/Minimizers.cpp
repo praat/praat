@@ -1,6 +1,6 @@
 /* Minimizers.cpp
  *
- * Copyright (C) 2001-2013, 2015-2016 David Weenink
+ * Copyright (C) 2001-2013,2015-2016 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
-/*
- David Weenink, 20011016
- djmw 20011016 removed some causes for compiler warnings
- djmw 20030205 Latest modification
- djmw 20030701 Removed non-GPL minimizations
- djmw 20040421 Bug removed: delayed message when learning was interrupted by user.
- djmw 20080122 float -> double
-  djmw 20110304 Thing_new
-*/
 
 #include "NUM2.h"
 #include "Graphics.h"
@@ -53,11 +44,9 @@ void structMinimizer :: v_destroy () noexcept {
 }
 
 static void classMinimizer_afterHook (Minimizer me, Thing /* boss */) {
-
 	if (my success || ! my gmonitor) {
 		return;
 	}
-
 	if (my start == 1) {
 		Minimizer_drawHistory (me, my gmonitor, 0, my maxNumOfIterations, 0.0, 1.1 * my history [1], 1);
 		Graphics_textTop (my gmonitor, false, Melder_cat (U"Dimension of search space: ", my nParameters));
@@ -73,9 +62,9 @@ static void classMinimizer_afterHook (Minimizer me, Thing /* boss */) {
 
 void Minimizer_init (Minimizer me, integer nParameters, Daata object) {
 	my nParameters = nParameters;
-	my p = NUMvector<double> (1, nParameters);
+	my p = NUMvector <double> (1, nParameters);
 	my object = object;
-	my minimum = 1.0e30;
+	my minimum = 1e308;
 	my afterHook = classMinimizer_afterHook;
 	Minimizer_reset (me, nullptr);   // added 27/11/97
 }
@@ -177,7 +166,8 @@ void Minimizer_reset (Minimizer me, const double guess []) {
 
 	NUMvector_free<double> (my history, 1);
 	my history = nullptr;
-	my maxNumOfIterations = my success = my funcCalls = my iteration = 0;
+	my maxNumOfIterations = my funcCalls = my iteration = 0;
+	my success = false;
 	my minimum = 1.0e38;
 	my v_reset ();
 }
@@ -234,7 +224,7 @@ void structSteepestDescentMinimizer :: v_minimize () {
 			p [i] += dpp [i];
 		}
 		history [ ++iteration] = minimum = func (object, p);
-		success = 2.0 * fabs (fret - minimum) < tolerance * (fabs (fret) + fabs (minimum));
+		success = ( 2.0 * fabs (fret - minimum) < tolerance * (fabs (fret) + fabs (minimum)) );
 		if (our afterHook) {
 			try {
 				our afterHook (this, our afterBoss);
@@ -287,7 +277,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 		one_up = flag = 0;
 		gcg0 = gopt_sq = 0.0;
 	}
-	restart_flag = 1;
+	restart_flag = true;
 	while ( ++ this -> iteration <= maxNumOfIterations) {
 		if (flag & 1) {
 			if (one_up) {
@@ -405,13 +395,13 @@ void structVDSmagtMinimizer :: v_minimize () {
 					history [this -> iteration] = minimum = fc;
 					tmp = p; p = pc; pc = tmp;
 					tmp = dp; dp = gc; gc = tmp;
-					if (grc *gropt <= 0) {
+					if (grc * gropt <= 0) {
 						alplim = alphamin;
 					}
 					alphamin = alpha;
 					gropt = grc;
 					dalpha = - dalpha;
-					success = gsq < tolerance;
+					success = ( gsq < tolerance );
 					if (our afterHook) {
 						try {
 							our afterHook (this, our afterBoss);
@@ -461,7 +451,7 @@ void structVDSmagtMinimizer :: v_minimize () {
 		this -> iteration = maxNumOfIterations;
 	}
 	if (decrease_direction_found) {
-		restart_flag = 0;
+		restart_flag = false;
 	}
 }
 
@@ -477,7 +467,7 @@ void structVDSmagtMinimizer :: v_destroy () noexcept {
 }
 
 void structVDSmagtMinimizer :: v_reset () {
-	restart_flag = 1;
+	restart_flag = true;
 }
 
 autoVDSmagtMinimizer VDSmagtMinimizer_create (integer nParameters, Daata object, double (*func) (Daata object, const double x []), void (*dfunc) (Daata object, const double x [], double dx [])) {
@@ -519,4 +509,4 @@ void LineMinimizer_init (LineMinimizer me, integer nParameters, Daata object, do
 	my maxLineStep = 100;
 }
 
-/* End of file Minimizers.c 657*/
+/* End of file Minimizers.cpp */

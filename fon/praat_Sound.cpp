@@ -1,6 +1,6 @@
 /* praat_Sound_init.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2016,8 +2016,7 @@ static autoDaata soundFileRecognizer (integer nread, const char *header, MelderF
 	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
-	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string::ENDS_WITH, U".mp3") ||
-	     Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string::ENDS_WITH, U".MP3"))
+	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string::ENDS_WITH, U".mp3", false))
 		&& mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
 	return autoDaata ();
 }
@@ -2028,18 +2027,15 @@ static autoDaata movieFileRecognizer (integer nread, const char * /* header */, 
 		header [1], header [2], header [3],
 		header [4], header [5], header [6],
 		header [7], header [8], header [9]);*/
-	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".mov") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".MOV") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".avi") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".AVI"))) return autoDaata ();
+	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".mov", false) &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".avi", false))) return autoDaata ();
 	Melder_throw (U"This Praat version cannot open movie files.");
 	return autoDaata ();
 }
 
 static autoDaata sesamFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".sdf") &&
-	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".SDF"))) return autoDaata ();
+	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".sdf", false))) return autoDaata ();
 	return Sound_readFromSesamFile (file);
 }
 
