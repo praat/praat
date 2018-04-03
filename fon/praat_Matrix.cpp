@@ -1,6 +1,6 @@
 /* praat_Matrix.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -769,16 +769,11 @@ DIRECT (WINDOW_Movie_viewAndEdit) {
 
 static autoDaata imageFileRecognizer (integer /* nread */, const char * /* header */, MelderFile file) {
 	const char32 *fileName = MelderFile_name (file);
-	if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpg") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".JPG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpeg") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".JPEG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".png") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".PNG") ||
-	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tiff") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".TIFF") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tif") ||
-		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".TIF"))
+	if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpg", false) ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpeg", false) ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".png", false) ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tiff", false) ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".tif", false))
 	{
 		return Photo_readFromImageFile (file);
 	}

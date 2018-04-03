@@ -15,6 +15,8 @@
 #include "NUMcblas.h"
 #include "NUM2.h"
 #include "melder.h"
+#define FALSE  0
+#define TRUE  1
 
 /* Table of constant values */
 

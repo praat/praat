@@ -12,6 +12,7 @@
  djmw 20020813 GPL header
  djmw 20071201 Latest modification
  pb 20100120 dlamc3_: declare volatile double ret_val to prevent optimization!
+ pb 2018 logicals -> bools
 */
 
 
@@ -24,12 +25,12 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
-static int dlamc1_ (integer *beta, integer *t, integer *rnd, integer *ieee1);
-static int dlamc2_ (integer *beta, integer *t, integer *rnd, double *eps, integer *emin, double *rmin, integer *emax,
+static int dlamc1_ (integer *beta, integer *t, bool *rnd, bool *ieee1);
+static int dlamc2_ (integer *beta, integer *t, bool *rnd, double *eps, integer *emin, double *rmin, integer *emax,
                     double *rmax);
 static double dlamc3_ (double *, double *);
 static int dlamc4_ (integer *emin, double *start, integer *base);
-static int dlamc5_ (integer *beta, integer *p, integer *emin, integer *ieee, integer *emax, double *rmax);
+static int dlamc5_ (integer *beta, integer *p, integer *emin, bool *ieee, integer *emax, double *rmax);
 
 int NUMblas_daxpy (integer *n, double *da, double *dx, integer *incx, double *dy, integer *incy) {
 	/* System generated locals */
@@ -698,7 +699,7 @@ int NUMblas_dgemv (const char *trans, integer *m, integer *n, double *alpha, dou
 
 double NUMblas_dlamch (const char *cmach) {
 	/* Initialized data */
-	static integer first = TRUE;
+	static bool first = true;
 
 	/* System generated locals */
 	integer i__1;
@@ -710,14 +711,14 @@ double NUMblas_dlamch (const char *cmach) {
 	static integer beta;
 	static double emin, prec, emax;
 	static integer imin, imax;
-	static integer lrnd;
+	static bool lrnd;
 	static double rmin, rmax, t, rmach;
 	static double smal, sfmin;
 	static integer it;
 	static double rnd, eps;
 
 	if (first) {
-		first = FALSE;
+		first = false;
 		dlamc2_ (&beta, &it, &lrnd, &eps, &imin, &rmin, &imax, &rmax);
 		base = (double) beta;
 		t = (double) it;
@@ -770,7 +771,7 @@ double NUMblas_dlamch (const char *cmach) {
 	return ret_val;
 }								/* NUMblas_dlamch */
 
-static int dlamc1_ (integer *beta, integer *t, integer *rnd, integer *ieee1) {
+static int dlamc1_ (integer *beta, integer *t, bool *rnd, bool *ieee1) {
 	/* -- LAPACK auxiliary routine (version 3.0) -- Univ. of Tennessee, Univ.
 	   of California Berkeley, NAG Ltd., Courant Institute, Argonne National
 	   Lab, and Rice University October 31, 1992
@@ -810,23 +811,23 @@ static int dlamc1_ (integer *beta, integer *t, integer *rnd, integer *ieee1) {
 
 	   ===================================================================== */
 	/* Initialized data */
-	static integer first = TRUE;
+	static bool first = true;
 
 	/* System generated locals */
 	double d__1, d__2;
 
 	/* Local variables */
-	static integer lrnd;
+	static bool lrnd;
 	static double a, b, c, f;
 	static integer lbeta;
 	static double savec;
-	static integer lieee1;
+	static bool lieee1;
 	static double t1, t2;
 	static integer lt;
 	static double one, qtr;
 
 	if (first) {
-		first = FALSE;
+		first = false;
 		one = 1.;
 
 		/* LBETA, LIEEE1, LT and LRND are the local values of BETA, IEEE1, T
@@ -886,16 +887,16 @@ L20:
 		f = dlamc3_ (&d__1, &d__2);
 		c = dlamc3_ (&f, &a);
 		if (c == a) {
-			lrnd = TRUE;
+			lrnd = true;
 		} else {
-			lrnd = FALSE;
+			lrnd = false;
 		}
 		d__1 = b / 2;
 		d__2 = b / 100;
 		f = dlamc3_ (&d__1, &d__2);
 		c = dlamc3_ (&f, &a);
 		if (lrnd && c == a) {
-			lrnd = FALSE;
+			lrnd = false;
 		}
 
 		/* Try and decide whether rounding is done in the IEEE 'round to
@@ -940,7 +941,7 @@ L30:
 	return 0;
 }								/* dlamc1_ */
 
-static int dlamc2_ (integer *beta, integer *t, integer *rnd, double *eps, integer *emin, double *rmin, integer *emax,
+static int dlamc2_ (integer *beta, integer *t, bool *rnd, double *eps, integer *emin, double *rmin, integer *emax,
                     double *rmax) {
 	/* -- LAPACK auxiliary routine (version 3.0) -- Univ. of Tennessee, Univ.
 	   of California Berkeley, NAG Ltd., Courant Institute, Argonne National
@@ -986,8 +987,8 @@ static int dlamc2_ (integer *beta, integer *t, integer *rnd, double *eps, intege
 	   ===================================================================== */
 	/* Table of constant values */
 	/* Initialized data */
-	static integer first = TRUE;
-	static integer iwarn = FALSE;
+	static bool first = true;
+	static bool iwarn = false;
 
 	/* System generated locals */
 	integer i__1;
@@ -995,9 +996,9 @@ static int dlamc2_ (integer *beta, integer *t, integer *rnd, double *eps, intege
 
 	/* Builtin functions */
 	/* Local variables */
-	static integer ieee;
+	static bool ieee;
 	static double half;
-	static integer lrnd;
+	static bool lrnd;
 	static double leps, zero, a, b, c;
 	static integer i, lbeta;
 	static double rbase;
@@ -1005,12 +1006,12 @@ static int dlamc2_ (integer *beta, integer *t, integer *rnd, double *eps, intege
 	static double smal;
 	static integer gpmin;
 	static double third, lrmin, lrmax, sixth;
-	static integer lieee1;
+	static bool lieee1;
 	static integer lt, ngnmin, ngpmin;
 	static double one, two;
 
 	if (first) {
-		first = FALSE;
+		first = false;
 		zero = 0.;
 		one = 1.;
 		two = 2.;
@@ -1091,7 +1092,7 @@ L10:
 		dlamc4_ (&gpmin, &a, &lbeta);
 		d__1 = -a;
 		dlamc4_ (&gnmin, &d__1, &lbeta);
-		ieee = FALSE;
+		ieee = false;
 
 		if (ngpmin == ngnmin && gpmin == gnmin) {
 			if (ngpmin == gpmin) {
@@ -1100,13 +1101,13 @@ L10:
 				   e.g., VAX ) */
 			} else if (gpmin - ngpmin == 3) {
 				lemin = ngpmin - 1 + lt;
-				ieee = TRUE;
+				ieee = true;
 				/* ( Non twos-complement machines, with gradual underflow;
 				   e.g., IEEE standard followers ) */
 			} else {
 				lemin = MIN (ngpmin, gpmin);
 				/* ( A guess; no known machine ) */
-				iwarn = TRUE;
+				iwarn = true;
 			}
 
 		} else if (ngpmin == gpmin && ngnmin == gnmin) {
@@ -1117,7 +1118,7 @@ L10:
 			} else {
 				lemin = MIN (ngpmin, ngnmin);
 				/* ( A guess; no known machine ) */
-				iwarn = TRUE;
+				iwarn = true;
 			}
 
 		} else if ( (i__1 = ngpmin - ngnmin, labs (i__1)) == 1 && gpmin == gnmin) {
@@ -1128,7 +1129,7 @@ L10:
 			} else {
 				lemin = MIN (ngpmin, ngnmin);
 				/* ( A guess; no known machine ) */
-				iwarn = TRUE;
+				iwarn = true;
 			}
 
 		} else {
@@ -1136,11 +1137,11 @@ L10:
 			i__1 = MIN (ngpmin, ngnmin), i__1 = MIN (i__1, gpmin);
 			lemin = MIN (i__1, gnmin);
 			/* ( A guess; no known machine ) */
-			iwarn = TRUE;
+			iwarn = true;
 		}
 		/* Comment out this if block if EMIN is ok */
 		if (iwarn) {
-			first = TRUE;
+			first = true;
 			Melder_warning (U"\n\n WARNING. The value EMIN may be incorrect:- " "EMIN = ", lemin,
 			                U"\nIf, after inspection, the value EMIN looks acceptable"
 			                "please comment out \n the IF block as marked within the"
@@ -1278,7 +1279,7 @@ L10:
 	return 0;
 }								/* dlamc4_ */
 
-static int dlamc5_ (integer *beta, integer *p, integer *emin, integer *ieee, integer *emax, double *rmax) {
+static int dlamc5_ (integer *beta, integer *p, integer *emin, bool *ieee, integer *emax, double *rmax) {
 	/*
 	   First compute LEXP and UEXP, two powers of 2 that bound abs(EMIN). We
 	   then assume that EMAX + abs(EMIN) will sum approximately to the bound

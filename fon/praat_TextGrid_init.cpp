@@ -837,13 +837,16 @@ DO
 
 FORM (NEW_TextGrid_tabulateOccurrences, U"TextGrid: Tabulate occurrences", nullptr) {
 	NUMVEC (searchTiers, U"Search tiers:", U"{ 1, 2 }")
-	TEXTFIELD (searchString, U"Search string:", U"hi")
+	OPTIONMENU_ENUM (listEveryLabelThat___, U"List every label that...", kMelder_string, DEFAULT)
+	SENTENCE (___theText, U"...the text", U"hello")
+	BOOLEAN (caseSensitive, U"Case-sensitive", false)
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoTable result = TextGrid_tabulateOccurrences (me, searchTiers, searchString);
-	CONVERT_EACH_END (my name, U"_", searchString)
+		autoTable result = TextGrid_tabulateOccurrences (me, searchTiers, listLabelsThat___, ___theText, caseSensitive);
+	CONVERT_EACH_END (my name, U"_", ___theText)
 }
+
 
 // MARK: Query
 
@@ -1092,7 +1095,7 @@ FORM (INTEGER_TextGrid_countPointsWhere, U"Count points", U"TextGrid: Count poin
 	OK
 DO
 	NUMBER_ONE (TextGrid)
-		integer result = TextGrid_countPointsWhere (me, tierNumber, (kMelder_string) countPointsWhoseLabel___, ___theText);
+		integer result = TextGrid_countPointsWhere (me, tierNumber, countPointsWhoseLabel___, ___theText);
 	NUMBER_ONE_END (U" points containing ", ___theText);
 }
 

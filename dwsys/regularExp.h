@@ -106,13 +106,6 @@ int SubstituteRE (
    int     max,
    int *errorType); // djmw 20080110 0: ok; 1: is not enough memory
 
-/* Builds a default delimiter table that persists across `ExecRE' calls that
-   is identical to `delimiters'.  Pass NULL for "default default" set of
-   delimiters. */
-
-void SetREDefaultWordDelimiters (
-   char32 *delimiters);
-
 /* Enable (or disable) brace counting quantifiers, e.g. `(foo){0,3}'. */
 
 void EnableCountingQuantifier (int is_enabled);

@@ -3221,24 +3221,24 @@ INTRO (U"A command to project the @SSCP object onto the eigenspace of "
 NORMAL (U"Further details can be found in @@Eigen & SSCP: Project@.")
 MAN_END
 
-MAN_BEGIN (U"Regular expressions", U"djmw", 20010706)
-INTRO (U"This tutorial describes the %syntax of regular expressions in P\\s{RAAT} ")
+MAN_BEGIN (U"Regular expressions", U"David Weenink & Paul Boersma", 20180401)
+INTRO (U"This tutorial describes the syntax of regular expressions in Praat. ")
 ENTRY (U"Introduction")
-NORMAL (U"A %%regular expression% is a text string that describes a %set "
-	"of strings. Regular expressions (regex) are useful as a way to search "
+NORMAL (U"A %%regular expression% (regex) is a text string that describes a %set "
+	"of strings. Regular expressions are useful as a way to search "
 	"for patterns in text strings and, optionally, replace them by another "
 	"pattern.")
-NORMAL (U"Some regex match only one string, i.e., the set they describe has "
+NORMAL (U"Some regular expressions match only one string, i.e., the set they describe has "
 	"only one member. For example, the regex \"ab\" matches the string \"ab\" "
-	"and no others. Other regex match more than one string, i.e., the set "
+	"and no others. Other regular expressions match more than one string, i.e., the set "
 	"they describe has more than one member. For example, the regex \"a*\" "
 	"matches the string made up of any number (including zero) of \"a\"s. "
 	"As you can see, some characters match themselves (such as \"a\" and "
-	"\"b\") and these characters are called %ordinary characters. The "
-	"characters that don't match themselves, such as \"*\", are called "
-	"%special characters or %meta characters. Many special characters are only "
+	"\"b\"), and these characters are called %ordinary characters. The "
+	"characters that do not match themselves, such as \"*\", are called "
+	"%special characters or %metacharacters. Many special characters are only "
 	"special characters in the %search regex and are ordinary characters in "
-	"the substitution regex. ")
+	"the substitution regex.")
 NORMAL (U"You can read the rest of this tutorial sequentially with the help of "
 	"the \"<1\" and \">1\" buttons.")
 LIST_ITEM (U"1. @@Regular expressions 1. Special characters|Special characters@ "
@@ -3246,8 +3246,8 @@ LIST_ITEM (U"1. @@Regular expressions 1. Special characters|Special characters@ 
 LIST_ITEM (U"2. @@Regular expressions 2. Quantifiers|Quantifiers@ "
 	"(how often do we match).")
 LIST_ITEM (U"3. @@Regular expressions 3. Anchors|Anchors@ (where do we match)")
-LIST_ITEM (U"4. @@Regular expressions 4. Special constructs with parenthesis|"
-	"Special constructs with parenthesis@ (grouping constructs)")
+LIST_ITEM (U"4. @@Regular expressions 4. Special constructs with parentheses|"
+	"Special constructs with parentheses@ (grouping constructs)")
 LIST_ITEM (U"5. @@Regular expressions 5. Special control characters|"
 	"Special control characters@ (difficult-to-type characters like \\bsn)")
 LIST_ITEM (U"6. @@Regular expressions 6. Convenience escape sequences|"
@@ -3279,67 +3279,67 @@ LIST_ITEM1 (U"Example: The regex \"aa\\bsn\" tries to match two consecutive "
 	"\"a\"s at the end of a line, inclusive the newline character itself.")
 LIST_ITEM1 (U"Example: \"a\\bs+\" matches \"a+\" and not a series of one or "
 	"\"a\"s.")
-TAG (U"##\\^ #    the caret is the start of line @@Regular expressions 3. "
-	"Anchors|anchor@ or the negate symbol.")
-LIST_ITEM1 (U"Example: \"\\^ a\" matches \"a\" at the start of a line.")
+TAG (U"##\\^ #    the caret is the @@Regular expressions 3. "
+	"Anchors|anchor@ for the start of the string, or the negation symbol.")
+LIST_ITEM1 (U"Example: \"\\^ a\" matches \"a\" at the start of the string.")
 LIST_ITEM1 (U"Example: \"[\\^ 0-9]\" matches any non digit.")
-TAG (U"##\\$ #    the dollar is the end of line @@Regular expressions 3. "
-	"Anchors|anchor@.")
+TAG (U"##\\$ #    the dollar sign is the @@Regular expressions 3. "
+	"Anchors|anchor@ for the end of the string.")
 LIST_ITEM1 (U"Example: \"b\\$ \" matches a \"b\" at the end of a line.")
-LIST_ITEM1 (U"Example: \"\\^ b\\$ \" matches the empty line.")
-TAG (U"##{ }#    the open and close curly bracket are used as range @@Regular "
+LIST_ITEM1 (U"Example: \"\\^ \\$ \" matches the empty string.")
+TAG (U"##{ }#    the opening and closing curly brackets are used as range @@Regular "
 	"expressions 2. Quantifiers|quantifiers@.")
 LIST_ITEM1 (U"Example: \"a{2,3}\" matches \"aa\" or \"aaa\".")
-TAG (U"##[ ]#    the open and close square bracket define a character class to "
+TAG (U"##[ ]#    the opening and closing square brackets define a character class to "
 	"match a %single character.")
-DEFINITION (U"The \"\\^ \" as the first character following the \"[\" negates "
+DEFINITION (U"The \"\\^ \" as the first character following the \"[\" negates, "
 	"and the match is for the characters %not listed. "
 	"The \"-\" denotes a range of characters. Inside a \"[  ]\" character "
-	"class construction most special characters are interpreted as ordinary "
-	"characters. ")
+	"class construction, most special characters are interpreted as ordinary "
+	"characters.")
 LIST_ITEM1 (U"Example: \"[d-f]\" is the same as \"[def]\" and matches \"d\", "
 	"\"e\" or \"f\".")
-LIST_ITEM1 (U"Example: \"[a-z]\" matches any lowercase characters in the "
-	"alfabet.")
-LIST_ITEM1 (U"Example: \"[\\^ 0-9]\" matches any character that is not a digit.")
-LIST_ITEM1 (U"Example: A search for \"[][()?<>$^.*?^]\" in the string "
-	"\"[]()?<>$^.*?^\" followed by a replace string \"r\" has the result "
+LIST_ITEM1 (U"Example: \"[a-z]\" matches any lower-case characters in the "
+	"alphabet.")
+LIST_ITEM1 (U"Example: \"[\\^ 0-9]\" matches any character that is not an ASCII digit.")
+LIST_ITEM1 (U"Example: A search for \"[][()?<>\\$ \\^ .*?\\^ ]\" in the string "
+	"\"[]()?<>\\$ \\^ .*?\\^ \" followed by a replace string \"r\" has the result "
 	"\"rrrrrrrrrrrrr\". Here the search string is %one character class and "
 	"all the meta characters are interpreted as ordinary characters without "
 	"the need to escape them.")
-TAG (U"##( )#    the open and close parenthesis are used for grouping "
-	"characters (or other regex).")
+TAG (U"##( )#    the opening and closing parenthes3s are used for grouping "
+	"characters (or other regexes).")
 DEFINITION (U"The groups can be referenced in "
 	"both the search and the @@Regular expressions 8. Substitution special "
 	"characters|substitution@ phase. There also exist some @@Regular "
-	"expressions 4. Special constructs with parenthesis|special constructs "
-	"with parenthesis@.")
+	"expressions 4. Special constructs with parentheses|special constructs "
+	"with parentheses@.")
 LIST_ITEM1 (U"Example: \"(ab)\\bs1\" matches \"abab\".")
-TAG (U"##.#    the dot matches any character except the newline.")
+TAG (U"##.#    the dot matches any character except the newline symbol.")
 LIST_ITEM1 (U"Example: \".a\" matches two consecutive characters where "
 	"the last one is \"a\".")
 LIST_ITEM1 (U"Example: \".*\\bs.txt\\$ \" matches all strings that end in "
 	"\".txt\".")
-TAG (U"##*#    the star is the match-zero-or-more @@Regular expressions 2. "
+TAG (U"##*#    the asterisk is the match-zero-or-more @@Regular expressions 2. "
 	"Quantifiers|quantifier@.")
 LIST_ITEM1 (U"Example: \"\\^ .*\\$ \" matches an entire line. ")
-TAG (U"##+#    the plus is the match-one-or-more quantifier.")
+TAG (U"##+#    the plus sign is the match-one-or-more quantifier.")
 TAG (U"##?#    the question mark is the match-zero-or-one "
 	"quantifier. The question mark is also used in  "
 	"@@Regular expressions 4. Special constructs with parenthesis|special "
-	"constructs with parenthesis@ and in @@Regular expressions 2. "
+	"constructs with parentheses@ and in @@Regular expressions 2. "
 	"Quantifiers|changing match behaviour@.")
 TAG (U"##\\| #    the vertical pipe separates a series of alternatives.")
 LIST_ITEM1 (U"Example: \"(a|b|c)a\" matches \"aa\" or \"ba\" or \"ca\".")
 TAG (U"##< >#    the smaller and greater signs are @@Regular expressions 3. "
 	"Anchors|anchors@ that specify a left or right word boundary.")
-TAG (U"##-#    the minus indicates a range in a character class (when it is "
+TAG (U"##-#    the minus sign indicates a range in a character class (when it is "
 	"not at the first position after the \"[\" opening bracket or the last "
 	"position before the \"]\" closing bracket.")
 LIST_ITEM1 (U"Example: \"[A-Z]\" matches any uppercase character.")
 LIST_ITEM1 (U"Example: \"[A-Z-]\" or \"[-A-Z]\" match any uppercase character "
 	"or \"-\".")
-TAG (U"##&#    the and is the \"substitute complete match\" symbol.")
+TAG (U"##&#    the ampersand is the \"substitute complete match\" symbol.")
 MAN_END
 
 MAN_BEGIN (U"Regular expressions 2. Quantifiers", U"djmw", 20010708)
@@ -3371,25 +3371,24 @@ LIST_ITEM1 (U"Example: In the string \"cabddde\", the search \"abd+\" "
 	"matches \"abddd\", while the search for \"abd+?\" matches \"abd\".")
 MAN_END
 
-MAN_BEGIN (U"Regular expressions 3. Anchors", U"djmw", 20010708)
+MAN_BEGIN (U"Regular expressions 3. Anchors", U"DAvid Weenink & Paul Boersma", 20180401)
 INTRO (U"Anchors let you specify a very specific position within the search "
 	"text.")
-TAG (U"##\\^ #   Try to match the (following) regex at the beginning of a line.")
+TAG (U"##\\^ #   Try to match the (following) regex at the beginning of the string.")
 LIST_ITEM1 (U"Example: \"\\^ ab\" matches \"ab\" only at the beginning of a "
 	"line and not, for example, in the line \"cab\".")
-TAG (U"##\\$ #   Try to match the (following) regex at the end of a line.")
+TAG (U"##\\$ #   Try to match the (following) regex at the end of the string.")
 TAG (U"##<#    Try to match the regex at the %start of a word.")
 DEFINITION (U"The character class that defines a %word can be found at the "
 	"@@Regular expressions 6. Convenience escape sequences|convenience escape "
 	"sequences@ page.")
 TAG (U"##>#    Try to match the regex at the %end of a word.")
 TAG (U"##\\bsB#   Not a word boundary")
-DEFINITION (U"")
 MAN_END
 
-MAN_BEGIN (U"Regular expressions 4. Special constructs with parenthesis", U"djmw",
+MAN_BEGIN (U"Regular expressions 4. Special constructs with parentheses", U"djmw",
 	20010710)
-INTRO (U"Some special constructs exist with parenthesis. ")
+INTRO (U"Some special constructs exist with parentheses. ")
 TAG (U"##(?:#%regex#)#   is a grouping-only construct.")
 DEFINITION (U"They exist merely for efficiency reasons and facilitate grouping.")
 TAG (U"##(?=#%regex#)#   is a positive look-ahead.")
@@ -3409,9 +3408,9 @@ LIST_ITEM1 (U"Example: \"(?iaa)\" matches \"aa\", \"aA\", \"Aa\" and \"AA\".")
 TAG (U"##(?n#%regex#)#   matches newlines.")
 TAG (U"##(?N#%regex#)#   doesn't match newlines.")
 NORMAL (U"All the constructs above do not capture text and cannot be "
-	"referenced, i.e., the parenthesis are not counted. However, you "
+	"referenced, i.e., the parentheses are not counted. However, you "
 	"can make them capture text by surrounding them with %ordinary "
-	"parenthesis.")
+	"parentheses.")
 MAN_END
 
 MAN_BEGIN (U"Regular expressions 5. Special control characters", U"djmw", 20010708)

@@ -242,8 +242,8 @@ NORMAL (U"To hide a built-in command from a fixed or dynamic menu, or to make a 
 	"you typically use the @ButtonEditor.")
 ENTRY (U"Where is the buttons file?")
 NORMAL (U"The buttons file is in your Praat @@preferences directory@.")
-NORMAL (U"On Windows the file is called ##Buttons5.ini#, "
-	"for instance ##C:\\bsUsers\\bsMiep\\bsPraat\\bsButtons5.ini#.")
+NORMAL (UR"(On Windows the file is called ##Buttons5.ini#,
+for instance ##C:\bsUsers\bsMiep\bsPraat\bsButtons5.ini#.)")
 NORMAL (U"On MacOS it is called #Buttons5, "
 	"for instance ##/Users/miep/Library/Preferences/Praat Prefs/Buttons5#.")
 NORMAL (U"On Linux it is called #buttons5, "
@@ -1704,7 +1704,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), U""
 )
 NORMAL (U"According to section 4 above, and according to @@Formulas 2.2. Representation of strings@, "
 	"you would have to write this in the following way in a script:")
-CODE (U"Formula: \"correct\", \"self\\$  [\"\"response\"\"] = self\\$  [\"\"stimulus\"\"]\"")
+CODE (UR"(Formula: "correct", "self\$  [""response""] = self\$  [""stimulus""]")")
 NORMAL (U"The required doubling of string-internal double quotes is awkward. "
 	"Therefore, there exists a special way for typing formula arguments, namely with the tilde (\"~\"):")
 CODE (U"Formula: \"correct\", ~ self\\$  [\"response\"] = self\\$  [\"stimulus\"]")
