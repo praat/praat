@@ -614,24 +614,53 @@ static struct structLongchar_Info Longchar_database [] = {
 
 static short where [95] [95];
 static short inited = 0;
-#define UNICODE_TOP_GENERICIZABLE  65535
-static struct { char first, second; bool isSpace, isLetter, isDigit, isWordCharacter; } genericDigraph [1+UNICODE_TOP_GENERICIZABLE];
+#define kUCD_TOP_OF_LIST  65535
+#define kUCD_UNASSIGNED  0
+#define mUCD_LETTER  (1 << 0)
+#define mUCD_LOWER  (1 << 1)
+#define mUCD_UPPER  (1 << 2)
+#define mUCD_ASCII_LETTER  (1 << 3)
+#define mUCD_ASCII_DIGIT  (1 << 4)
+#define mUCD_DIGIT  (1 << 5)
+#define mUCD_MARK  (1 << 6)
+#define mUCD_MODIFIER  (1 << 7)
+#define mUCD_VISIBLE_SPACE  (1 << 8)
+#define mUCD_VISIBLE_SPACE_OR_NEWLINE  (1 << 9)
+#define mUCD_BREAKING_SPACE  (1 << 10)
+#define mUCD_BREAKING_SPACE_OR_NEWLINE  (1 << 11)
+#define mUCD_ASCII_SPACE  (1 << 12)
+#define mUCD_ASCII_SPACE_OR_NEWLINE  (1 << 13)
+#define mUCD_ASCII_CONNECTOR_PUNCTUATION  (1 << 14)
+#define mUCD_CONNECTOR_PUNCTUATION  (1 << 15)
+#define mUCD_WORD_CHARACTER  (1 << 16)
+
+struct UCD_CodePointInfo {
+	uint64 features;
+	char first, second;
+};
+
+static UCD_CodePointInfo genericDigraph [1+kUCD_TOP_OF_LIST];
 
 inline static void makeLetters (char32 from, char32 to) {
 	for (char32 kar = from; kar <= to; kar ++) {
-		genericDigraph [kar]. isLetter = true;
+		genericDigraph [kar]. features |= mUCD_LETTER;
 	}
 }
 inline static void makeDigits (char32 from, char32 to) {
 	for (char32 kar = from; kar <= to; kar ++) {
-		genericDigraph [kar]. isDigit = true;
+		genericDigraph [kar]. features |= mUCD_DIGIT;
+	}
+}
+inline static void makeMarks (char32 from, char32 to) {
+	for (char32 kar = from; kar <= to; kar ++) {
+		genericDigraph [kar]. features |= mUCD_MARK;
 	}
 }
 
 void Longchar_init () {
-	Longchar_Info data;
-	short i;
-	for (i = 0, data = & Longchar_database [0]; data -> first != '\0'; i ++, data ++) {
+	Longchar_Info data = & Longchar_database [0];
+	short i = 0;
+	for (; data -> first != '\0'; i ++, data ++) {
 		short *location = & where [data -> first - 32] [data -> second - 32];
 		if (*location) {
 			/* Doubly defined symbol; an error! */
@@ -639,35 +668,35 @@ void Longchar_init () {
 			fprintf (stderr, "Longchar init: symbol \"%c%c\" doubly defined.\n", data -> first, data -> second);
 		}
 		*location = i;
-		if (data -> unicode <= UNICODE_TOP_GENERICIZABLE) {
+		if (data -> unicode <= kUCD_TOP_OF_LIST) {
 			genericDigraph [data -> unicode]. first = data -> first;
 			genericDigraph [data -> unicode]. second = data -> second;
 		}
 	}
-	genericDigraph [' ']. isSpace = true;
-	genericDigraph ['\r']. isSpace = true;
-	genericDigraph ['\n']. isSpace = true;
-	genericDigraph ['\t']. isSpace = true;
-	genericDigraph ['\f']. isSpace = true;
-	genericDigraph ['\v']. isSpace = true;
-	genericDigraph [UNICODE_OGHAM_SPACE_MARK]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_MONGOLIAN_VOWEL_SEPARATOR]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_EN_QUAD]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_EM_QUAD]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_EN_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_EM_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_THREE_PER_EM_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_FOUR_PER_EM_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_SIX_PER_EM_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_FIGURE_SPACE]. isSpace = true;   // questionable
-	genericDigraph [UNICODE_PUNCTUATION_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_THIN_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_HAIR_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_ZERO_WIDTH_SPACE]. isSpace = true;   // questionable
-	genericDigraph [UNICODE_LINE_SEPARATOR]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_PARAGRAPH_SEPARATOR]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_MEDIUM_MATHEMATICAL_SPACE]. isSpace = true;   // ISO 30112
-	genericDigraph [UNICODE_IDEOGRAPHIC_SPACE]. isSpace = true;   // ISO 30112; occurs on Japanese computers
+	genericDigraph [' ']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
+	genericDigraph ['\r']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
+	genericDigraph ['\n']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
+	genericDigraph ['\t']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
+	genericDigraph ['\f']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
+	genericDigraph ['\v']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
+	genericDigraph [UNICODE_OGHAM_SPACE_MARK]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_MONGOLIAN_VOWEL_SEPARATOR]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_EN_QUAD]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_EM_QUAD]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_EN_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_EM_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_THREE_PER_EM_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_FOUR_PER_EM_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_SIX_PER_EM_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_FIGURE_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // questionable
+	genericDigraph [UNICODE_PUNCTUATION_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_THIN_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_HAIR_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_ZERO_WIDTH_SPACE]. features |= mUCD_BREAKING_SPACE;   // questionable
+	genericDigraph [UNICODE_LINE_SEPARATOR]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_PARAGRAPH_SEPARATOR]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_MEDIUM_MATHEMATICAL_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
+	genericDigraph [UNICODE_IDEOGRAPHIC_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112; occurs on Japanese computers
 	makeLetters (U'\u0041', U'\u005A');
 	makeLetters (U'\u0061', U'\u007A');
 	makeLetters (U'\u00C0', U'\u00D6');
@@ -675,210 +704,210 @@ void Longchar_init () {
 	makeLetters (U'\u00F8', U'\u02C1');
 	makeLetters (U'\u02C6', U'\u02D1');
 	makeLetters (U'\u02E0', U'\u02E4');
-	genericDigraph [U'\u02EC']. isLetter = true;
-	genericDigraph [U'\u02EE']. isLetter = true;
+	genericDigraph [U'\u02EC']. features |= mUCD_LETTER;
+	genericDigraph [U'\u02EE']. features |= mUCD_LETTER;
 	makeLetters (U'\u0370', U'\u0374');
-	genericDigraph [U'\u0376']. isLetter = true;
-	genericDigraph [U'\u0377']. isLetter = true;
+	genericDigraph [U'\u0376']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0377']. features |= mUCD_LETTER;
 	makeLetters (U'\u037A', U'\u037D');
-	genericDigraph [U'\u0386']. isLetter = true;
+	genericDigraph [U'\u0386']. features |= mUCD_LETTER;
 	makeLetters (U'\u0388', U'\u038A');
-	genericDigraph [U'\u038C']. isLetter = true;
+	genericDigraph [U'\u038C']. features |= mUCD_LETTER;
 	makeLetters (U'\u038E', U'\u03A1');
 	makeLetters (U'\u03A3', U'\u03F5');
 	makeLetters (U'\u03F7', U'\u0481');
 	makeLetters (U'\u048A', U'\u0527');
 	makeLetters (U'\u0531', U'\u0556');
-	genericDigraph [U'\u0559']. isLetter = true;
+	genericDigraph [U'\u0559']. features |= mUCD_LETTER;
 	makeLetters (U'\u0561', U'\u0587');
 	makeLetters (U'\u05D0', U'\u05EA');
 	makeLetters (U'\u05F0', U'\u05F2');
 	makeLetters (U'\u0620', U'\u064A');
-	genericDigraph [U'\u066E']. isLetter = true;
-	genericDigraph [U'\u066F']. isLetter = true;
+	genericDigraph [U'\u066E']. features |= mUCD_LETTER;
+	genericDigraph [U'\u066F']. features |= mUCD_LETTER;
 	makeLetters (U'\u0671', U'\u06D3');
-	genericDigraph [U'\u06D5']. isLetter = true;
-	genericDigraph [U'\u06E5']. isLetter = true;
-	genericDigraph [U'\u06E6']. isLetter = true;
-	genericDigraph [U'\u06EE']. isLetter = true;
-	genericDigraph [U'\u06EF']. isLetter = true;
+	genericDigraph [U'\u06D5']. features |= mUCD_LETTER;
+	genericDigraph [U'\u06E5']. features |= mUCD_LETTER;
+	genericDigraph [U'\u06E6']. features |= mUCD_LETTER;
+	genericDigraph [U'\u06EE']. features |= mUCD_LETTER;
+	genericDigraph [U'\u06EF']. features |= mUCD_LETTER;
 	makeLetters (U'\u06FA', U'\u06FC');
-	genericDigraph [U'\u06FF']. isLetter = true;
-	genericDigraph [U'\u0710']. isLetter = true;
+	genericDigraph [U'\u06FF']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0710']. features |= mUCD_LETTER;
 	makeLetters (U'\u0712', U'\u072F');
 	makeLetters (U'\u074D', U'\u07A5');
-	genericDigraph [U'\u07B1']. isLetter = true;
+	genericDigraph [U'\u07B1']. features |= mUCD_LETTER;
 	makeLetters (U'\u07CA', U'\u07EA');
-	genericDigraph [U'\u07F4']. isLetter = true;
-	genericDigraph [U'\u07F5']. isLetter = true;
-	genericDigraph [U'\u07FA']. isLetter = true;
+	genericDigraph [U'\u07F4']. features |= mUCD_LETTER;
+	genericDigraph [U'\u07F5']. features |= mUCD_LETTER;
+	genericDigraph [U'\u07FA']. features |= mUCD_LETTER;
 	makeLetters (U'\u0800', U'\u0815');
-	genericDigraph [U'\u081A']. isLetter = true;
-	genericDigraph [U'\u0824']. isLetter = true;
-	genericDigraph [U'\u0828']. isLetter = true;
+	genericDigraph [U'\u081A']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0824']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0828']. features |= mUCD_LETTER;
 	makeLetters (U'\u0840', U'\u0858');
-	genericDigraph [U'\u08A0']. isLetter = true;
+	genericDigraph [U'\u08A0']. features |= mUCD_LETTER ;
 	makeLetters (U'\u08A2', U'\u08AC');
 	makeLetters (U'\u0904', U'\u0939');
-	genericDigraph [U'\u093D']. isLetter = true;
-	genericDigraph [U'\u0950']. isLetter = true;
+	genericDigraph [U'\u093D']. features |= mUCD_LETTER ;
+	genericDigraph [U'\u0950']. features |= mUCD_LETTER ;
 	makeLetters (U'\u0958', U'\u0961');
 	makeLetters (U'\u0971', U'\u0977');
 	makeLetters (U'\u0979', U'\u097F');
 	makeLetters (U'\u0985', U'\u098C');
-	genericDigraph [U'\u098F']. isLetter = true;
-	genericDigraph [U'\u0990']. isLetter = true;
+	genericDigraph [U'\u098F']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0990']. features |= mUCD_LETTER;
 	makeLetters (U'\u0993', U'\u09A8');
 	makeLetters (U'\u09AA', U'\u09B0');
-	genericDigraph [U'\u09B2']. isLetter = true;
+	genericDigraph [U'\u09B2']. features |= mUCD_LETTER;
 	makeLetters (U'\u09B6', U'\u09B9');
-	genericDigraph [U'\u09BD']. isLetter = true;
-	genericDigraph [U'\u09CE']. isLetter = true;
-	genericDigraph [U'\u09DC']. isLetter = true;
-	genericDigraph [U'\u09DD']. isLetter = true;
+	genericDigraph [U'\u09BD']. features |= mUCD_LETTER;
+	genericDigraph [U'\u09CE']. features |= mUCD_LETTER;
+	genericDigraph [U'\u09DC']. features |= mUCD_LETTER;
+	genericDigraph [U'\u09DD']. features |= mUCD_LETTER;
 	makeLetters (U'\u09DF', U'\u09E1');
-	genericDigraph [U'\u09F0']. isLetter = true;
-	genericDigraph [U'\u09F1']. isLetter = true;
+	genericDigraph [U'\u09F0']. features |= mUCD_LETTER;
+	genericDigraph [U'\u09F1']. features |= mUCD_LETTER;
 	makeLetters (U'\u0A05', U'\u0A0A');
-	genericDigraph [U'\u0A0F']. isLetter = true;
-	genericDigraph [U'\u0A10']. isLetter = true;
+	genericDigraph [U'\u0A0F']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0A10']. features |= mUCD_LETTER;
 	makeLetters (U'\u0A13', U'\u0A28');
 	makeLetters (U'\u0A2A', U'\u0A30');
-	genericDigraph [U'\u0A32']. isLetter = true;
-	genericDigraph [U'\u0A33']. isLetter = true;
-	genericDigraph [U'\u0A35']. isLetter = true;
-	genericDigraph [U'\u0A36']. isLetter = true;
-	genericDigraph [U'\u0A38']. isLetter = true;
-	genericDigraph [U'\u0A39']. isLetter = true;
+	genericDigraph [U'\u0A32']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0A33']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0A35']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0A36']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0A38']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0A39']. features |= mUCD_LETTER;
 	makeLetters (U'\u0A59', U'\u0A5C');
-	genericDigraph [U'\u0A5E']. isLetter = true;
+	genericDigraph [U'\u0A5E']. features |= mUCD_LETTER;
 	makeLetters (U'\u0A72', U'\u0A74');
 	makeLetters (U'\u0A85', U'\u0A8D');
 	makeLetters (U'\u0A8F', U'\u0A91');
 	makeLetters (U'\u0A93', U'\u0AA8');
 	makeLetters (U'\u0AAA', U'\u0AB0');
-	genericDigraph [U'\u0AB2']. isLetter = true;
-	genericDigraph [U'\u0AB3']. isLetter = true;
+	genericDigraph [U'\u0AB2']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0AB3']. features |= mUCD_LETTER;
 	makeLetters (U'\u0AB5', U'\u0AB9');
-	genericDigraph [U'\u0ABD']. isLetter = true;
-	genericDigraph [U'\u0AD0']. isLetter = true;
-	genericDigraph [U'\u0AE0']. isLetter = true;
-	genericDigraph [U'\u0AE1']. isLetter = true;
+	genericDigraph [U'\u0ABD']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0AD0']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0AE0']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0AE1']. features |= mUCD_LETTER;
 	makeLetters (U'\u0B05', U'\u0B0C');
-	genericDigraph [U'\u0B0F']. isLetter = true;
-	genericDigraph [U'\u0B10']. isLetter = true;
+	genericDigraph [U'\u0B0F']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B10']. features |= mUCD_LETTER;
 	makeLetters (U'\u0B13', U'\u0B28');
 	makeLetters (U'\u0B2A', U'\u0B30');
-	genericDigraph [U'\u0B32']. isLetter = true;
-	genericDigraph [U'\u0B33']. isLetter = true;
+	genericDigraph [U'\u0B32']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B33']. features |= mUCD_LETTER;
 	makeLetters (U'\u0B35', U'\u0B39');
-	genericDigraph [U'\u0B3D']. isLetter = true;
-	genericDigraph [U'\u0B5C']. isLetter = true;
-	genericDigraph [U'\u0B5D']. isLetter = true;
+	genericDigraph [U'\u0B3D']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B5C']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B5D']. features |= mUCD_LETTER;
 	makeLetters (U'\u0B5F', U'\u0B61');
-	genericDigraph [U'\u0B71']. isLetter = true;
-	genericDigraph [U'\u0B83']. isLetter = true;
+	genericDigraph [U'\u0B71']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B83']. features |= mUCD_LETTER;
 	makeLetters (U'\u0B85', U'\u0B8A');
 	makeLetters (U'\u0B8E', U'\u0B90');
 	makeLetters (U'\u0B92', U'\u0B95');
-	genericDigraph [U'\u0B99']. isLetter = true;
-	genericDigraph [U'\u0B9A']. isLetter = true;
-	genericDigraph [U'\u0B9C']. isLetter = true;
-	genericDigraph [U'\u0B9E']. isLetter = true;
-	genericDigraph [U'\u0B9F']. isLetter = true;
-	genericDigraph [U'\u0BA3']. isLetter = true;
-	genericDigraph [U'\u0BA4']. isLetter = true;
+	genericDigraph [U'\u0B99']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B9A']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B9C']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B9E']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0B9F']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0BA3']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0BA4']. features |= mUCD_LETTER;
 	makeLetters (U'\u0BA8', U'\u0BAA');
 	makeLetters (U'\u0BAE', U'\u0BB9');
-	genericDigraph [U'\u0BD0']. isLetter = true;
+	genericDigraph [U'\u0BD0']. features |= mUCD_LETTER;
 	makeLetters (U'\u0C05', U'\u0C0C');
 	makeLetters (U'\u0C0E', U'\u0C10');
 	makeLetters (U'\u0C12', U'\u0C28');
 	makeLetters (U'\u0C2A', U'\u0C33');
 	makeLetters (U'\u0C35', U'\u0C39');
-	genericDigraph [U'\u0C3D']. isLetter = true;
-	genericDigraph [U'\u0C58']. isLetter = true;
-	genericDigraph [U'\u0C59']. isLetter = true;
-	genericDigraph [U'\u0C60']. isLetter = true;
-	genericDigraph [U'\u0C61']. isLetter = true;
+	genericDigraph [U'\u0C3D']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0C58']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0C59']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0C60']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0C61']. features |= mUCD_LETTER;
 	makeLetters (U'\u0C85', U'\u0C8C');
 	makeLetters (U'\u0C8E', U'\u0C90');
 	makeLetters (U'\u0C92', U'\u0CA8');
 	makeLetters (U'\u0CAA', U'\u0CB3');
 	makeLetters (U'\u0CB5', U'\u0CB9');
-	genericDigraph [U'\u0CBD']. isLetter = true;
-	genericDigraph [U'\u0CDE']. isLetter = true;
-	genericDigraph [U'\u0CE0']. isLetter = true;
-	genericDigraph [U'\u0CE1']. isLetter = true;
-	genericDigraph [U'\u0CF1']. isLetter = true;
-	genericDigraph [U'\u0CF2']. isLetter = true;
+	genericDigraph [U'\u0CBD']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0CDE']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0CE0']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0CE1']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0CF1']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0CF2']. features |= mUCD_LETTER;
 	makeLetters (U'\u0D05', U'\u0D0C');
 	makeLetters (U'\u0D0E', U'\u0D10');
 	makeLetters (U'\u0D12', U'\u0D3A');
-	genericDigraph [U'\u0D3D']. isLetter = true;
-	genericDigraph [U'\u0D4E']. isLetter = true;
-	genericDigraph [U'\u0D60']. isLetter = true;
-	genericDigraph [U'\u0D61']. isLetter = true;
+	genericDigraph [U'\u0D3D']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0D4E']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0D60']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0D61']. features |= mUCD_LETTER;
 	makeLetters (U'\u0D7A', U'\u0D7F');
 	makeLetters (U'\u0D85', U'\u0D96');
 	makeLetters (U'\u0D9A', U'\u0DB1');
 	makeLetters (U'\u0DB3', U'\u0DBB');
-	genericDigraph [U'\u0DBD']. isLetter = true;
+	genericDigraph [U'\u0DBD']. features |= mUCD_LETTER;
 	makeLetters (U'\u0DC0', U'\u0DC6');
 	makeLetters (U'\u0E01', U'\u0E30');
-	genericDigraph [U'\u0E32']. isLetter = true;
-	genericDigraph [U'\u0E33']. isLetter = true;
+	genericDigraph [U'\u0E32']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0E33']. features |= mUCD_LETTER;
 	makeLetters (U'\u0E40', U'\u0E46');
-	genericDigraph [U'\u0E81']. isLetter = true;
-	genericDigraph [U'\u0E82']. isLetter = true;
-	genericDigraph [U'\u0E84']. isLetter = true;
-	genericDigraph [U'\u0E87']. isLetter = true;
-	genericDigraph [U'\u0E88']. isLetter = true;
-	genericDigraph [U'\u0E8A']. isLetter = true;
-	genericDigraph [U'\u0E8D']. isLetter = true;
+	genericDigraph [U'\u0E81']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0E82']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0E84']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0E87']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0E88']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0E8A']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0E8D']. features |= mUCD_LETTER;
 	makeLetters (U'\u0E94', U'\u0E97');
 	makeLetters (U'\u0E99', U'\u0E9F');
 	makeLetters (U'\u0EA1', U'\u0EA3');
-	genericDigraph [U'\u0EA5']. isLetter = true;
-	genericDigraph [U'\u0EA7']. isLetter = true;
-	genericDigraph [U'\u0EAA']. isLetter = true;
-	genericDigraph [U'\u0EAB']. isLetter = true;
+	genericDigraph [U'\u0EA5']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0EA7']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0EAA']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0EAB']. features |= mUCD_LETTER;
 	makeLetters (U'\u0EAD', U'\u0EB0');
-	genericDigraph [U'\u0EB2']. isLetter = true;
-	genericDigraph [U'\u0EB3']. isLetter = true;
-	genericDigraph [U'\u0EBD']. isLetter = true;
+	genericDigraph [U'\u0EB2']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0EB3']. features |= mUCD_LETTER;
+	genericDigraph [U'\u0EBD']. features |= mUCD_LETTER;
 	makeLetters (U'\u0EC0', U'\u0EC4');
-	genericDigraph [U'\u0EC6']. isLetter = true;
+	genericDigraph [U'\u0EC6']. features |= mUCD_LETTER;
 	makeLetters (U'\u0EDC', U'\u0EDF');
-	genericDigraph [U'\u0F00']. isLetter = true;
+	genericDigraph [U'\u0F00']. features |= mUCD_LETTER;
 	makeLetters (U'\u0F40', U'\u0F47');
 	makeLetters (U'\u0F49', U'\u0F6C');
 	makeLetters (U'\u0F88', U'\u0F8C');
 	makeLetters (U'\u1000', U'\u102A');
-	genericDigraph [U'\u103F']. isLetter = true;
+	genericDigraph [U'\u103F']. features |= mUCD_LETTER;
 	makeLetters (U'\u1050', U'\u1055');
 	makeLetters (U'\u105A', U'\u105D');
-	genericDigraph [U'\u1061']. isLetter = true;
-	genericDigraph [U'\u1065']. isLetter = true;
-	genericDigraph [U'\u1066']. isLetter = true;
+	genericDigraph [U'\u1061']. features |= mUCD_LETTER;
+	genericDigraph [U'\u1065']. features |= mUCD_LETTER;
+	genericDigraph [U'\u1066']. features |= mUCD_LETTER;
 	makeLetters (U'\u106E', U'\u1070');
 	makeLetters (U'\u1075', U'\u1081');
-	genericDigraph [U'\u108E']. isLetter = true;
+	genericDigraph [U'\u108E']. features |= mUCD_LETTER;
 	makeLetters (U'\u10A0', U'\u10C5');
-	genericDigraph [U'\u10C7']. isLetter = true;
-	genericDigraph [U'\u10CD']. isLetter = true;
+	genericDigraph [U'\u10C7']. features |= mUCD_LETTER;
+	genericDigraph [U'\u10CD']. features |= mUCD_LETTER;
 	makeLetters (U'\u10D0', U'\u10FA');
 	makeLetters (U'\u10FC', U'\u1248');
 	makeLetters (U'\u124A', U'\u124D');
 	makeLetters (U'\u1250', U'\u1256');
-	genericDigraph [U'\u1258']. isLetter = true;
+	genericDigraph [U'\u1258']. features |= mUCD_LETTER;
 	makeLetters (U'\u125A', U'\u125D');
 	makeLetters (U'\u1260', U'\u1288');
 	makeLetters (U'\u128A', U'\u128D');
 	makeLetters (U'\u1290', U'\u12B0');
 	makeLetters (U'\u12B2', U'\u12B5');
 	makeLetters (U'\u12B8', U'\u12BE');
-	genericDigraph [U'\u12C0']. isLetter = true;
+	genericDigraph [U'\u12C0']. features |= mUCD_LETTER;
 	makeLetters (U'\u12C2', U'\u12C5');
 	makeLetters (U'\u12C8', U'\u12D6');
 	makeLetters (U'\u12D8', U'\u1310');
@@ -897,11 +926,11 @@ void Longchar_init () {
 	makeLetters (U'\u1760', U'\u176C');
 	makeLetters (U'\u176E', U'\u1770');
 	makeLetters (U'\u1780', U'\u17B3');
-	genericDigraph [U'\u17D7']. isLetter = true;
-	genericDigraph [U'\u17DC']. isLetter = true;
+	genericDigraph [U'\u17D7']. features |= mUCD_LETTER;
+	genericDigraph [U'\u17DC']. features |= mUCD_LETTER;
 	makeLetters (U'\u1820', U'\u1877');
 	makeLetters (U'\u1880', U'\u18A8');
-	genericDigraph [U'\u18AA']. isLetter = true;
+	genericDigraph [U'\u18AA']. features |= mUCD_LETTER;
 	makeLetters (U'\u18B0', U'\u18F5');
 	makeLetters (U'\u1900', U'\u191C');
 	makeLetters (U'\u1950', U'\u196D');
@@ -910,33 +939,33 @@ void Longchar_init () {
 	makeLetters (U'\u19C1', U'\u19C7');
 	makeLetters (U'\u1A00', U'\u1A16');
 	makeLetters (U'\u1A20', U'\u1A54');
-	genericDigraph [U'\u1AA7']. isLetter = true;
+	genericDigraph [U'\u1AA7']. features |= mUCD_LETTER;
 	makeLetters (U'\u1B05', U'\u1B33');
 	makeLetters (U'\u1B45', U'\u1B4B');
 	makeLetters (U'\u1B83', U'\u1BA0');
-	genericDigraph [U'\u1BAE']. isLetter = true;
-	genericDigraph [U'\u1BAF']. isLetter = true;
+	genericDigraph [U'\u1BAE']. features |= mUCD_LETTER;
+	genericDigraph [U'\u1BAF']. features |= mUCD_LETTER;
 	makeLetters (U'\u1BBA', U'\u1BE5');
 	makeLetters (U'\u1C00', U'\u1C23');
 	makeLetters (U'\u1C4D', U'\u1C4F');
 	makeLetters (U'\u1C5A', U'\u1C7D');
 	makeLetters (U'\u1CE9', U'\u1CEC');
 	makeLetters (U'\u1CEE', U'\u1CF1');
-	genericDigraph [U'\u1CF5']. isLetter = true;
-	genericDigraph [U'\u1CF6']. isLetter = true;
+	genericDigraph [U'\u1CF5']. features |= mUCD_LETTER;
+	genericDigraph [U'\u1CF6']. features |= mUCD_LETTER;
 	makeLetters (U'\u1D00', U'\u1DBF');
 	makeLetters (U'\u1E00', U'\u1F15');
 	makeLetters (U'\u1F18', U'\u1F1D');
 	makeLetters (U'\u1F20', U'\u1F45');
 	makeLetters (U'\u1F48', U'\u1F4D');
 	makeLetters (U'\u1F50', U'\u1F57');
-	genericDigraph [U'\u1F59']. isLetter = true;
-	genericDigraph [U'\u1F5B']. isLetter = true;
-	genericDigraph [U'\u1F5D']. isLetter = true;
+	genericDigraph [U'\u1F59']. features |= mUCD_LETTER;
+	genericDigraph [U'\u1F5B']. features |= mUCD_LETTER;
+	genericDigraph [U'\u1F5D']. features |= mUCD_LETTER;
 	makeLetters (U'\u1F5F', U'\u1F7D');
 	makeLetters (U'\u1F80', U'\u1FB4');
 	makeLetters (U'\u1FB6', U'\u1FBC');
-	genericDigraph [U'\u1FBE']. isLetter = true;
+	genericDigraph [U'\u1FBE']. features |= mUCD_LETTER;
 	makeLetters (U'\u1FC2', U'\u1FC4');
 	makeLetters (U'\u1FC6', U'\u1FCC');
 	makeLetters (U'\u1FD0', U'\u1FD3');
@@ -944,35 +973,35 @@ void Longchar_init () {
 	makeLetters (U'\u1FE0', U'\u1FEC');
 	makeLetters (U'\u1FF2', U'\u1FF4');
 	makeLetters (U'\u1FF6', U'\u1FFC');
-	genericDigraph [U'\u2071']. isLetter = true;
-	genericDigraph [U'\u207F']. isLetter = true;
+	genericDigraph [U'\u2071']. features |= mUCD_LETTER;
+	genericDigraph [U'\u207F']. features |= mUCD_LETTER;
 	makeLetters (U'\u2090', U'\u209C');
-	genericDigraph [U'\u2102']. isLetter = true;
-	genericDigraph [U'\u2107']. isLetter = true;
+	genericDigraph [U'\u2102']. features |= mUCD_LETTER;
+	genericDigraph [U'\u2107']. features |= mUCD_LETTER;
 	makeLetters (U'\u210A', U'\u2113');
-	genericDigraph [U'\u2115']. isLetter = true;
+	genericDigraph [U'\u2115']. features |= mUCD_LETTER;
 	makeLetters (U'\u2119', U'\u211D');
-	genericDigraph [U'\u2124']. isLetter = true;
-	genericDigraph [U'\u2126']. isLetter = true;
-	genericDigraph [U'\u2128']. isLetter = true;
+	genericDigraph [U'\u2124']. features |= mUCD_LETTER;
+	genericDigraph [U'\u2126']. features |= mUCD_LETTER;
+	genericDigraph [U'\u2128']. features |= mUCD_LETTER;
 	makeLetters (U'\u212A', U'\u212D');
 	makeLetters (U'\u212F', U'\u2139');
 	makeLetters (U'\u213C', U'\u213F');
 	makeLetters (U'\u2145', U'\u2149');
-	genericDigraph [U'\u214E']. isLetter = true;
-	genericDigraph [U'\u2183']. isLetter = true;
-	genericDigraph [U'\u2184']. isLetter = true;
+	genericDigraph [U'\u214E']. features |= mUCD_LETTER;
+	genericDigraph [U'\u2183']. features |= mUCD_LETTER;
+	genericDigraph [U'\u2184']. features |= mUCD_LETTER;
 	makeLetters (U'\u2C00', U'\u2C2E');
 	makeLetters (U'\u2C30', U'\u2C5E');
 	makeLetters (U'\u2C60', U'\u2CE4');
 	makeLetters (U'\u2CEB', U'\u2CEE');
-	genericDigraph [U'\u2CF2']. isLetter = true;
-	genericDigraph [U'\u2CF3']. isLetter = true;
+	genericDigraph [U'\u2CF2']. features |= mUCD_LETTER;
+	genericDigraph [U'\u2CF3']. features |= mUCD_LETTER;
 	makeLetters (U'\u2D00', U'\u2D25');
-	genericDigraph [U'\u2D27']. isLetter = true;
-	genericDigraph [U'\u2D2D']. isLetter = true;
+	genericDigraph [U'\u2D27']. features |= mUCD_LETTER;
+	genericDigraph [U'\u2D2D']. features |= mUCD_LETTER;
 	makeLetters (U'\u2D30', U'\u2D67');
-	genericDigraph [U'\u2D6F']. isLetter = true;
+	genericDigraph [U'\u2D6F']. features |= mUCD_LETTER;
 	makeLetters (U'\u2D80', U'\u2D96');
 	makeLetters (U'\u2DA0', U'\u2DA6');
 	makeLetters (U'\u2DA8', U'\u2DAE');
@@ -982,12 +1011,12 @@ void Longchar_init () {
 	makeLetters (U'\u2DC8', U'\u2DCE');
 	makeLetters (U'\u2DD0', U'\u2DD6');
 	makeLetters (U'\u2DD8', U'\u2DDE');
-	genericDigraph [U'\u2E2F']. isLetter = true;
-	genericDigraph [U'\u3005']. isLetter = true;
-	genericDigraph [U'\u3006']. isLetter = true;
+	genericDigraph [U'\u2E2F']. features |= mUCD_LETTER;
+	genericDigraph [U'\u3005']. features |= mUCD_LETTER;
+	genericDigraph [U'\u3006']. features |= mUCD_LETTER;
 	makeLetters (U'\u3031', U'\u3035');
-	genericDigraph [U'\u303B']. isLetter = true;
-	genericDigraph [U'\u303C']. isLetter = true;
+	genericDigraph [U'\u303B']. features |= mUCD_LETTER;
+	genericDigraph [U'\u303C']. features |= mUCD_LETTER;
 	makeLetters (U'\u3041', U'\u3096');
 	makeLetters (U'\u309D', U'\u309F');
 	makeLetters (U'\u30A1', U'\u30FA');
@@ -1002,8 +1031,8 @@ void Longchar_init () {
 	makeLetters (U'\uA4D0', U'\uA4FD');
 	makeLetters (U'\uA500', U'\uA60C');
 	makeLetters (U'\uA610', U'\uA61F');
-	genericDigraph [U'\uA62A']. isLetter = true;
-	genericDigraph [U'\uA62B']. isLetter = true;
+	genericDigraph [U'\uA62A']. features |= mUCD_LETTER;
+	genericDigraph [U'\uA62B']. features |= mUCD_LETTER;
 	makeLetters (U'\uA640', U'\uA66E');
 	makeLetters (U'\uA67F', U'\uA697');
 	makeLetters (U'\uA6A0', U'\uA6E5');
@@ -1019,24 +1048,24 @@ void Longchar_init () {
 	makeLetters (U'\uA840', U'\uA873');
 	makeLetters (U'\uA882', U'\uA8B3');
 	makeLetters (U'\uA8F2', U'\uA8F7');
-	genericDigraph [U'\uA8FB']. isLetter = true;
+	genericDigraph [U'\uA8FB']. features |= mUCD_LETTER;
 	makeLetters (U'\uA90A', U'\uA925');
 	makeLetters (U'\uA930', U'\uA946');
 	makeLetters (U'\uA960', U'\uA97C');
 	makeLetters (U'\uA984', U'\uA9B2');
-	genericDigraph [U'\uA9CF']. isLetter = true;
+	genericDigraph [U'\uA9CF']. features |= mUCD_LETTER;
 	makeLetters (U'\uAA00', U'\uAA28');
 	makeLetters (U'\uAA40', U'\uAA42');
 	makeLetters (U'\uAA44', U'\uAA4B');
 	makeLetters (U'\uAA60', U'\uAA76');
-	genericDigraph [U'\uAA7A']. isLetter = true;
+	genericDigraph [U'\uAA7A']. features |= mUCD_LETTER;
 	makeLetters (U'\uAA80', U'\uAAAF');
-	genericDigraph [U'\uAAB1']. isLetter = true;
-	genericDigraph [U'\uAAB5']. isLetter = true;
-	genericDigraph [U'\uAAB6']. isLetter = true;
+	genericDigraph [U'\uAAB1']. features |= mUCD_LETTER;
+	genericDigraph [U'\uAAB5']. features |= mUCD_LETTER;
+	genericDigraph [U'\uAAB6']. features |= mUCD_LETTER;
 	makeLetters (U'\uAAB9', U'\uAABD');
-	genericDigraph [U'\uAAC0']. isLetter = true;
-	genericDigraph [U'\uAAC2']. isLetter = true;
+	genericDigraph [U'\uAAC0']. features |= mUCD_LETTER;
+	genericDigraph [U'\uAAC2']. features |= mUCD_LETTER;
 	makeLetters (U'\uAADB', U'\uAADD');
 	makeLetters (U'\uAAE0', U'\uAAEA');
 	makeLetters (U'\uAAF2', U'\uAAF4');
@@ -1053,15 +1082,15 @@ void Longchar_init () {
 	makeLetters (U'\uFA70', U'\uFAD9');
 	makeLetters (U'\uFB00', U'\uFB06');
 	makeLetters (U'\uFB13', U'\uFB17');
-	genericDigraph [U'\uFB1D']. isLetter = true;
+	genericDigraph [U'\uFB1D']. features |= mUCD_LETTER;
 	makeLetters (U'\uFB1F', U'\uFB28');
 	makeLetters (U'\uFB2A', U'\uFB36');
 	makeLetters (U'\uFB38', U'\uFB3C');
-	genericDigraph [U'\uFB3E']. isLetter = true;
-	genericDigraph [U'\uFB40']. isLetter = true;
-	genericDigraph [U'\uFB41']. isLetter = true;
-	genericDigraph [U'\uFB43']. isLetter = true;
-	genericDigraph [U'\uFB44']. isLetter = true;
+	genericDigraph [U'\uFB3E']. features |= mUCD_LETTER;
+	genericDigraph [U'\uFB40']. features |= mUCD_LETTER;
+	genericDigraph [U'\uFB41']. features |= mUCD_LETTER;
+	genericDigraph [U'\uFB43']. features |= mUCD_LETTER;
+	genericDigraph [U'\uFB44']. features |= mUCD_LETTER;
 	makeLetters (U'\uFB46', U'\uFBB1');
 	makeLetters (U'\uFBD3', U'\uFD3D');
 	makeLetters (U'\uFD50', U'\uFD8F');
@@ -1076,15 +1105,44 @@ void Longchar_init () {
 	makeLetters (U'\uFFCA', U'\uFFCF');
 	makeLetters (U'\uFFD2', U'\uFFD7');
 	makeLetters (U'\uFFDA', U'\uFFDC');
+	/*
+		Digits.
+	*/
 	makeDigits (U'0', U'9');
-	for (char32 kar = 1; kar <= UNICODE_TOP_GENERICIZABLE; kar ++) {
-		genericDigraph [kar]. isWordCharacter = genericDigraph [kar]. isLetter || genericDigraph [kar]. isDigit;
+	/*
+		Non-spacing marks (Mn).
+	*/
+	makeMarks (U'\u0300', U'\u036F');   // combining diacritics
+	makeMarks (U'\u0483', U'\u0487');   // Cyrillic
+	makeMarks (U'\u0591', U'\u05BD');   // Hebrew
+	genericDigraph [U'\u05BF']. features |= mUCD_MARK;
+	genericDigraph [U'\u05C1']. features |= mUCD_MARK;
+	genericDigraph [U'\u05C2']. features |= mUCD_MARK;
+	genericDigraph [U'\u05C4']. features |= mUCD_MARK;
+	genericDigraph [U'\u05C5']. features |= mUCD_MARK;
+	genericDigraph [U'\u05C7']. features |= mUCD_MARK;
+	makeMarks (U'\u0610', U'\u061A');   // Arabic
+	makeMarks (U'\u064B', U'\u065F');
+	genericDigraph [U'\u0670']. features |= mUCD_MARK;
+	makeMarks (U'\u06D6', U'\u06DC');
+	makeMarks (U'\u06DF', U'\u06E4');
+	genericDigraph [U'\u06E7']. features |= mUCD_MARK;
+	genericDigraph [U'\u06E8']. features |= mUCD_MARK;
+	makeMarks (U'\u06EA', U'\u06ED');
+	/*
+		Word characters.
+	*/
+	for (char32 kar = 1; kar <= kUCD_TOP_OF_LIST; kar ++) {
+		constexpr uint64 proMask = mUCD_LETTER | mUCD_DIGIT | mUCD_MARK;
+		// to be added: marks (Mn, Mc, Me?), connector punctuation (Pc), InEnclosedAlphanumerics, Other Symbols, other digits, modifier symbols (Sk)?
+		if (genericDigraph [kar]. features & proMask)
+			genericDigraph [kar]. features |= mUCD_WORD_CHARACTER;
 	}
-	genericDigraph [U'_']. isWordCharacter = true;
+	genericDigraph [U'_']. features |= mUCD_WORD_CHARACTER;
 	inited = 1;
 }
 
-char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int educateQuotes) {
+char32 * Longchar_nativize32 (const char32 *generic, char32 *native, int educateQuotes) {
 	integer nquote = 0;
 	char32_t kar, kar1, kar2;
 	if (! inited) Longchar_init ();
@@ -1120,11 +1178,11 @@ char32_t * Longchar_nativize32 (const char32_t *generic, char32_t *native, int e
 	return native;
 }
 
-char32_t *Longchar_genericize32 (const char32_t *native, char32_t *g) {
+char32_t *Longchar_genericize32 (const char32 *native, char32 *g) {
 	char32_t kar;
 	if (! inited) Longchar_init ();
 	while ((kar = *native++) != U'\0') {
-		if (kar > 128 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. first != U'\0') {
+		if (kar > 128 && kar <= kUCD_TOP_OF_LIST && genericDigraph [kar]. first != U'\0') {
 			*g++ = '\\';
 			*g++ = genericDigraph [kar]. first;
 			*g++ = genericDigraph [kar]. second;
@@ -1136,7 +1194,7 @@ char32_t *Longchar_genericize32 (const char32_t *native, char32_t *g) {
 	return g;
 }
 
-Longchar_Info Longchar_getInfo (char32_t kar1, char32_t kar2) {
+Longchar_Info Longchar_getInfo (char32 kar1, char32 kar2) {
 	if (! inited) Longchar_init ();
 	short position = kar1 < 32 || kar1 > 126 || kar2 < 32 || kar2 > 126 ?
 		0 :   /* Return the 'space' character. */
@@ -1144,30 +1202,30 @@ Longchar_Info Longchar_getInfo (char32_t kar1, char32_t kar2) {
 	return & Longchar_database [position];
 }
 
-Longchar_Info Longchar_getInfoFromNative (char32_t kar) {
+Longchar_Info Longchar_getInfoFromNative (char32 kar) {
 	if (! inited) Longchar_init ();
-	return kar > UNICODE_TOP_GENERICIZABLE ? Longchar_getInfo (U' ', U' ') : Longchar_getInfo (genericDigraph [kar]. first, genericDigraph [kar]. second);
+	return kar > kUCD_TOP_OF_LIST ? Longchar_getInfo (U' ', U' ') : Longchar_getInfo (genericDigraph [kar]. first, genericDigraph [kar]. second);
 }
 
-bool Melder_isWhiteSpace (const char32_t kar) {
+bool Melder_isWhiteSpace (const char32 kar) {
 	if (! inited) Longchar_init ();
-	return kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isSpace;
+	return kar <= kUCD_TOP_OF_LIST && (genericDigraph [kar]. features & mUCD_BREAKING_SPACE) != 0;
 }
-bool Melder_isLetter (const char32_t kar) {
+bool Melder_isLetter (const char32 kar) {
 	if (! inited) Longchar_init ();
-	return kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isLetter;
+	return kar <= kUCD_TOP_OF_LIST && (genericDigraph [kar]. features & mUCD_LETTER) != 0;
 }
-bool Melder_isDigit (const char32_t kar) {
+bool Melder_isDigit (const char32 kar) {
 	if (! inited) Longchar_init ();
-	return kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isDigit;
+	return kar <= kUCD_TOP_OF_LIST && (genericDigraph [kar]. features & mUCD_DIGIT) != 0;
 }
-bool Melder_isWordCharacter (const char32_t kar) {
+bool Melder_isWordCharacter (const char32 kar) {
 	if (! inited) Longchar_init ();
-	return kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isWordCharacter;
+	return kar <= kUCD_TOP_OF_LIST && (genericDigraph [kar]. features & mUCD_WORD_CHARACTER) != 0;
 }
-bool Melder_isWordDelimiter (const char32_t kar) {
+bool Melder_isWordDelimiter (const char32 kar) {
 	if (! inited) Longchar_init ();
-	return ! ( kar >= 0 && kar <= UNICODE_TOP_GENERICIZABLE && genericDigraph [kar]. isWordCharacter );
+	return ! ( kar <= kUCD_TOP_OF_LIST && (genericDigraph [kar]. features & mUCD_WORD_CHARACTER) != 0 );
 }
 
 /* End of file longchar.cpp */
