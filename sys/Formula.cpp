@@ -377,22 +377,43 @@ static void Formula_lexan () {
 		} else if (kar == U'\0') {
 			nieuwtok (END_)
 		} else if (kar >= U'0' && kar <= U'9') {
-			stokaan;
-			do stokkar while (kar >= U'0' && kar <= U'9');
-			if (kar == U'.') do stokkar while (kar >= U'0' && kar <= U'9');
-			if (kar == U'e' || kar == U'E') {
-				kar = U'e'; stokkar
-				if (kar == U'-') stokkar
-				else if (kar == U'+') nieuwkar;
-				if (! (kar >= U'0' && kar <= U'9'))
-					formulefout (U"Missing exponent", ikar);
-				do stokkar while (kar >= U'0' && kar <= U'9');
+			char32 saveKar = kar;
+			bool isHexadecimal = false;
+			if (kar == U'0') {
+				nieuwkar;
+				if (kar == U'x') {
+					isHexadecimal = true;
+					nieuwkar;
+				} else {
+					oudkar;
+				}
 			}
-			if (kar == U'%') stokkar
-			stokuit;
-			oudkar;
-			nieuwtok (NUMBER_)
-			tokgetal (Melder_atof (token.string));
+			if (isHexadecimal) {
+				stokaan;
+				do stokkar while (kar >= U'0' && kar <= U'9' || kar >= U'A' && kar <= U'F' || kar >= U'a' && kar <= U'f');
+				stokuit;
+				oudkar;
+				nieuwtok (NUMBER_)
+				tokgetal (strtoull (Melder_peek32to8 (token.string), nullptr, 16));
+			} else {
+				kar = saveKar;
+				stokaan;
+				do stokkar while (kar >= U'0' && kar <= U'9');
+				if (kar == U'.') do stokkar while (kar >= U'0' && kar <= U'9');
+				if (kar == U'e' || kar == U'E') {
+					kar = U'e'; stokkar
+					if (kar == U'-') stokkar
+					else if (kar == U'+') nieuwkar;
+					if (! (kar >= U'0' && kar <= U'9'))
+						formulefout (U"Missing exponent", ikar);
+					do stokkar while (kar >= U'0' && kar <= U'9');
+				}
+				if (kar == U'%') stokkar
+				stokuit;
+				oudkar;
+				nieuwtok (NUMBER_)
+				tokgetal (Melder_atof (token.string));
+			}
 		} else if ((kar >= U'a' && kar <= U'z') || kar >= 192 || (kar == U'.' &&
 				((theExpression [ikar + 1] >= U'a' && theExpression [ikar + 1] <= U'z') || theExpression [ikar + 1] >= 192)
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_
