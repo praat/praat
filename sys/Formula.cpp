@@ -106,8 +106,8 @@ enum { GEENSYMBOOL_,
 		ERB_, HERTZ_TO_ERB_, ERB_TO_HERTZ_,
 		SUM_, MEAN_, STDEV_, CENTER_,
 		EVALUATE_, EVALUATE_NOCHECK_, EVALUATE_STR_, EVALUATE_NOCHECK_STR_,
-		STRINGSTR_, SLEEP_,
-	#define HIGH_FUNCTION_1  SLEEP_
+		STRINGSTR_, SLEEP_, UNICODE_, UNICODESTR_,
+	#define HIGH_FUNCTION_1  UNICODESTR_
 
 	/* Functions of 2 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_2  ARCTAN2_
@@ -161,8 +161,8 @@ enum { GEENSYMBOOL_,
 		INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
 		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
-		FIXEDSTR_, PERCENTSTR_,
-	#define HIGH_STRING_FUNCTION  PERCENTSTR_
+		FIXEDSTR_, PERCENTSTR_, HEXADECIMALSTR_,
+	#define HIGH_STRING_FUNCTION  HEXADECIMALSTR_
 
 	/* Range functions. */
 	#define LOW_RANGE_FUNCTION  SUM_OVER_
@@ -233,7 +233,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"erb", U"hertzToErb", U"erbToHertz",
 	U"sum", U"mean", U"stdev", U"center",
 	U"evaluate", U"evaluate_nocheck", U"evaluate$", U"evaluate_nocheck$",
-	U"string$", U"sleep",
+	U"string$", U"sleep", U"unicode", U"unicode$",
 	U"arctan2", U"randomUniform", U"randomInteger", U"randomGauss", U"randomBinomial",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
@@ -271,7 +271,7 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"index", U"rindex",
 	U"startsWith", U"endsWith", U"replace$", U"index_regex", U"rindex_regex", U"replace_regex$",
 	U"extractNumber", U"extractWord$", U"extractLine$",
-	U"fixed$", U"percent$",
+	U"fixed$", U"percent$", U"hexadecimal$",
 	U"sumOver",
 	U".",
 	U"_true", U"_false",
@@ -1506,7 +1506,7 @@ static void parsePowerFactor () {
 			pas (KOMMA_);
 			parseExpression ();
 			if (isParenthesis) pas (HAAKJESLUITEN_);
-		} else if (symbol == FIXEDSTR_ || symbol == PERCENTSTR_) {
+		} else if (symbol == FIXEDSTR_ || symbol == PERCENTSTR_ || symbol == HEXADECIMALSTR_) {
             bool isParenthesis = pasArguments ();
 			parseExpression ();
 			pas (KOMMA_);
@@ -5200,6 +5200,28 @@ static void do_sleep () {
 		Melder_throw (U"The function \"sleep\" requires a number, not ", Stackel_whichText (value), U".");
 	}
 }
+static void do_unicode () {
+	Stackel value = pop;
+	if (value->which == Stackel_STRING) {
+		pushNumber (value->string [0]);
+	} else {
+		Melder_throw (U"The function \"unicode\" requires a character, not ", Stackel_whichText (value), U".");
+	}
+}
+static void do_unicodeStr () {
+	Stackel value = pop;
+	if (value->which == Stackel_NUMBER) {
+		Melder_require (value->number >= 0.0 && value->number < (double) (1 << 21),
+			U"A unicode number cannot be greater than ", (1 << 21) - 1, U".");
+		Melder_require (value->number < 0xD800 || value->number > 0xDFFF,
+			U"A unicode number cannot lie between 0xD800 and 0xDFFF. Those are \"surrogates\".");
+		char32 string [2] = { U'\0', U'\0' };
+		string [0] = (char32) value->number;
+		pushString (Melder_dup (string));
+	} else {
+		Melder_throw (U"The function \"unicode$\" requires a number, not ", Stackel_whichText (value), U".");
+	}
+}
 static void do_fixedStr () {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
@@ -5216,6 +5238,15 @@ static void do_percentStr () {
 		pushString (result.transfer());
 	} else {
 		Melder_throw (U"The function \"percent$\" requires two numbers (value and precision), not ", Stackel_whichText (value), U" and ", Stackel_whichText (precision), U".");
+	}
+}
+static void do_hexadecimalStr () {
+	Stackel precision = pop, value = pop;
+	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
+		autostring32 result = Melder_dup (Melder_hexadecimal (Melder_iround (value->number), Melder_iround (precision->number)));
+		pushString (result.transfer());
+	} else {
+		Melder_throw (U"The function \"hexadecimal$\" requires two numbers (value and precision), not ", Stackel_whichText (value), U" and ", Stackel_whichText (precision), U".");
 	}
 }
 static void do_deleteFile () {
@@ -6629,8 +6660,11 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case OBJECT_COLSTR_: { do_object_colstr ();
 } break; case STRINGSTR_: { do_stringStr ();
 } break; case SLEEP_: { do_sleep ();
+} break; case UNICODE_: { do_unicode ();
+} break; case UNICODESTR_: { do_unicodeStr ();
 } break; case FIXEDSTR_: { do_fixedStr ();
 } break; case PERCENTSTR_: { do_percentStr ();
+} break; case HEXADECIMALSTR_: { do_hexadecimalStr ();
 } break; case DELETE_FILE_: { do_deleteFile ();
 } break; case CREATE_DIRECTORY_: { do_createDirectory ();
 } break; case VARIABLE_EXISTS_: { do_variableExists ();

@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2008,2010-2012,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -178,7 +178,7 @@ const char32 * Melder_half (double value) noexcept {
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_fixed (double value, int precision) noexcept {
+const char * Melder8_fixed (double value, integer precision) noexcept {
 	int minimumPrecision;
 	if (isundef (value)) return "--undefined--";
 	if (value == 0.0) return "0";
@@ -186,17 +186,17 @@ const char * Melder8_fixed (double value, int precision) noexcept {
 	if (precision > 60) precision = 60;
 	minimumPrecision = - (int) floor (log10 (fabs (value)));
 	int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*f",
-		minimumPrecision > precision ? minimumPrecision : precision, value);
+		(int) (minimumPrecision > precision ? minimumPrecision : precision), value);
 	Melder_assert (n > 0);
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_fixed (double value, int precision) noexcept {
+const char32 * Melder_fixed (double value, integer precision) noexcept {
 	const char *p = Melder8_fixed (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_fixedExponent (double value, int exponent, int precision) noexcept {
+const char * Melder8_fixedExponent (double value, integer exponent, integer precision) noexcept {
 	double factor = pow (10, exponent);
 	int minimumPrecision;
 	if (isundef (value)) return "--undefined--";
@@ -206,17 +206,17 @@ const char * Melder8_fixedExponent (double value, int exponent, int precision) n
 	value /= factor;
 	minimumPrecision = - (int) floor (log10 (fabs (value)));
 	int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*fE%d",
-		minimumPrecision > precision ? minimumPrecision : precision, value, exponent);
+		(int) (minimumPrecision > precision ? minimumPrecision : precision), value, (int) exponent);
 	Melder_assert (n > 0);
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_fixedExponent (double value, int exponent, int precision) noexcept {
+const char32 * Melder_fixedExponent (double value, integer exponent, integer precision) noexcept {
 	const char *p = Melder8_fixedExponent (value, exponent, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_percent (double value, int precision) noexcept {
+const char * Melder8_percent (double value, integer precision) noexcept {
 	int minimumPrecision;
 	if (isundef (value)) return "--undefined--";
 	if (value == 0.0) return "0";
@@ -225,13 +225,29 @@ const char * Melder8_percent (double value, int precision) noexcept {
 	value *= 100.0;
 	minimumPrecision = - (int) floor (log10 (fabs (value)));
 	int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*f%%",
-		minimumPrecision > precision ? minimumPrecision : precision, value);
+		(int) (minimumPrecision > precision ? minimumPrecision : precision), value);
 	Melder_assert (n > 0);
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_percent (double value, int precision) noexcept {
+const char32 * Melder_percent (double value, integer precision) noexcept {
 	const char *p = Melder8_percent (value, precision);
+	CONVERT_BUFFER_TO_CHAR32
+}
+
+const char * Melder8_hexadecimal (integer value, integer precision) noexcept {
+	if (value < 0) return "--undefined--";
+	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
+	if (precision > 60) precision = 60;
+	integer integerValue = Melder_iround (value);
+	int n = snprintf (buffers8 [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH + 1, "%.*llX",
+		(int) precision, (unsigned long long) integerValue);
+	Melder_assert (n > 0);
+	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
+	return buffers8 [ibuffer];
+}
+const char32 * Melder_hexadecimal (integer value, integer precision) noexcept {
+	const char *p = Melder8_hexadecimal (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
 

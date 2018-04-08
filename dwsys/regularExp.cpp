@@ -3233,15 +3233,13 @@ static int match (char32 *prog, int *branch_index_param) {
 				MATCH_RETURN (0);
 
 			case WORD_CHAR: /* \w (word character; alpha-numeric or underscore) */
-				if (Melder_isWordCharacter (*Reg_Input) &&
-				        ! AT_END_OF_STRING (Reg_Input)) {
+				if (Melder_isWordCharacter (*Reg_Input) && ! AT_END_OF_STRING (Reg_Input)) {
 					Reg_Input++; break;
 				}
 				MATCH_RETURN (0);
 
 			case NOT_WORD_CHAR:/* \W (NOT a word character) */
-				if (Melder_isWordCharacter (*Reg_Input) ||
-				        *Reg_Input == '\n' || AT_END_OF_STRING (Reg_Input)) {
+				if (Melder_isWordCharacter (*Reg_Input) || *Reg_Input == '\n' || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
@@ -3258,61 +3256,51 @@ static int match (char32 *prog, int *branch_index_param) {
 				}
 				Reg_Input++; break;
 
-			case DIGIT: /* \d, same as [0123456789] */
-				if (!isdigit ( (int) *Reg_Input) ||
+			case DIGIT: /* \d; for ASCII, use [0-9] */
+				if (! Melder_isDecimalNumber (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
+					MATCH_RETURN (0);
+				}
+				Reg_Input++; break;
+
+			case NOT_DIGIT: /* \D; for ASCII, use [^0-9] */
+				if (Melder_isDecimalNumber (*Reg_Input) || *Reg_Input == '\n' || AT_END_OF_STRING (Reg_Input)) {
+					MATCH_RETURN (0);
+				}
+				Reg_Input++; break;
+
+			case LETTER: /* \l; for ASCII, use [a-zA-Z] */
+				if (! Melder_isLetter (*Reg_Input) ||
 				        AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
-			case NOT_DIGIT: /* \D, same as [^0123456789] */
-				if (isdigit ( (int) *Reg_Input) ||
-				        *Reg_Input == '\n'         ||
-				        AT_END_OF_STRING (Reg_Input)) {
+			case NOT_LETTER: /* \L; for ASCII, use [^a-zA-Z] */
+				if (Melder_isLetter (*Reg_Input) || *Reg_Input == '\n' || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
-			case LETTER: /* \l, same as [a-zA-Z] */
-				if (! isalpha ( (int) *Reg_Input) ||
-				        AT_END_OF_STRING (Reg_Input)) {
+			case SPACE: /* \s; for ASCII, use [ \t] */
+				if (! Melder_isSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
-			case NOT_LETTER: /* \L, same as [^a-zA-Z] */
-				if (isalpha ( (int) *Reg_Input)  ||
-				        *Reg_Input == '\n' ||
-				        AT_END_OF_STRING (Reg_Input)) {
+			case SPACE_NL: /* \s; for ASCII, use [\n \t\r\f\v] */
+				if (! Melder_isSpaceOrNewline (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
-			case SPACE: /* \s, same as [ \t\r\f\v] */
-				if (!isspace ( (int) *Reg_Input) ||
-				        *Reg_Input == '\n'          ||
-				        AT_END_OF_STRING (Reg_Input)) {
+			case NOT_SPACE: /* \S; for ASCII, use [^\n \t\r\f\v] */
+				if (Melder_isSpaceOrNewline (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
-			case SPACE_NL: /* \s, same as [\n \t\r\f\v] */
-				if (!isspace ( (int) *Reg_Input) ||
-				        AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
-			case NOT_SPACE: /* \S, same as [^\n \t\r\f\v] */
-				if (isspace ( (int) *Reg_Input) ||
-				        AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
-			case NOT_SPACE_NL: /* \S, same as [^ \t\r\f\v] */
-				if ( (isspace ( (int) *Reg_Input) && *Reg_Input != '\n') ||
-				        AT_END_OF_STRING (Reg_Input)) {
+			case NOT_SPACE_NL: /* \S; for ASCII, use [^ \t\r\f\v] */
+				if (Melder_isSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
