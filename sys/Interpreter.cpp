@@ -1437,7 +1437,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 			str32cpy (parameter, my parameters [ipar]);
 			parameterToVariable (me, my types [ipar], parameter, ipar);
 			if (parameter [0] >= U'A' && parameter [0] <= U'Z') {
-				parameter [0] = (char32) tolower ((int) parameter [0]);
+				parameter [0] = Melder_toLowerCase (parameter [0]);
 				parameterToVariable (me, my types [ipar], parameter, ipar);
 			}
 		}
@@ -1510,7 +1510,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 					 * Found a left quote. Search for a matching right quote.
 					 */
 					char32 *q = p + 1, varName [300], *r, *s, *colon;
-					int precision = -1;
+					integer precision = -1;
 					bool percent = false;
 					while (*q != U'\0' && *q != U'\'' && q - p < 299) q ++;
 					if (*q == U'\0') break;   // no matching right quote? done with this line!
@@ -1532,12 +1532,12 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						/*
 						 * Found a variable (p points to the left quote, q to the right quote). Substitute.
 						 */
-						int headlen = p - command2.string;
+						integer headlen = p - command2.string;
 						const char32 *string = var -> stringValue ? var -> stringValue :
 							percent ? Melder_percent (var -> numericValue, precision) :
 							precision >= 0 ?  Melder_fixed (var -> numericValue, precision) :
 							Melder_double (var -> numericValue);
-						int arglen = str32len (string);
+						integer arglen = str32len (string);
 						MelderString_ncopy (& buffer, command2.string, headlen);
 						MelderString_append (& buffer, string, q + 1);
 						MelderString_copy (& command2, buffer.string);   // This invalidates p!! (really bad bug 20070203)
@@ -1741,7 +1741,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (value == 0.0) dojump = false;
 							}
 							if (dojump) {
-								int ilabel = lookupLabel (me, labelName);
+								integer ilabel = lookupLabel (me, labelName);
 								lineNumber = my labelLines [ilabel];   // loop will add 1
 							}
 						} else fail = true;
@@ -1948,35 +1948,44 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							p ++;   // skip closing bracket
 						}
 						while (Melder_isblank (*p)) p ++;   // go to first token after (perhaps indexed) variable name
-						int withFile;   // 0, 1, 2 or 3
+						int typeOfAssignment;   // 0, 1, 2, 3 or 4
 						if (*p == U'=') {
-							withFile = 0;   // assignment
+							typeOfAssignment = 0;   // assignment
+						} else if (*p == U'+') {
+							if (p [1] == U'=') {
+								typeOfAssignment = 1;   // adding assignment
+								p ++;
+							} else {
+								Melder_throw (U"Missing \"=\", \"+=\", \"<\", or \">\" after variable ", variableName, U".");
+							}
 						} else if (*p == U'<') {
-							withFile = 1;   // read from file
+							typeOfAssignment = 2;   // read from file
 						} else if (*p == U'>') {
-							if (p [1] == U'>')
-								withFile = 2, p ++;   // append to file
-							else
-								withFile = 3;   // save to file
-						} else Melder_throw (U"Missing '=', '<', or '>' after variable ", variableName, U".");
+							if (p [1] == U'>') {
+								typeOfAssignment = 3;   // append to file
+								p ++;
+							} else {
+								typeOfAssignment = 4;   // save to file
+							}
+						} else Melder_throw (U"Missing \"=\", \"+=\", \"<\", or \">\" after variable ", variableName, U".");
 						*endOfVariable = U'\0';
 						p ++;
 						while (Melder_isblank (*p)) p ++;   // go to first token after assignment or I/O symbol
 						if (*p == U'\0') {
-							if (withFile != 0)
+							if (typeOfAssignment >= 2)
 								Melder_throw (U"Missing file name after variable ", variableName, U".");
 							else
 								Melder_throw (U"Missing expression after variable ", variableName, U".");
 						}
-						if (withFile) {
+						if (typeOfAssignment >= 2) {
 							structMelderFile file { };
 							Melder_relativePathToFile (p, & file);
-							if (withFile == 1) {
+							if (typeOfAssignment == 2) {
 								char32 *stringValue = MelderFile_readText (& file);
 								InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 								Melder_free (var -> stringValue);
 								var -> stringValue = stringValue;   /* var becomes owner */
-							} else if (withFile == 2) {
+							} else if (typeOfAssignment == 3) {
 								if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Commands that write to a file are not available inside pictures.");
 								InterpreterVariable var = Interpreter_hasVariable (me, variableName);
 								if (! var) Melder_throw (U"Variable ", variableName, U" undefined.");
@@ -2010,9 +2019,23 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							trace (U"evaluating string expression");
 							Interpreter_stringExpression (me, p, & stringValue);
 							trace (U"assigning to string variable ", variableName);
-							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
-							Melder_free (var -> stringValue);
-							var -> stringValue = stringValue;   // var becomes owner
+							if (typeOfAssignment == 1) {
+								InterpreterVariable var = Interpreter_hasVariable (me, variableName);
+								if (! var)
+									Melder_throw (U"The string ", variableName, U" does not exist.\n"
+									              U"You can increment (+=) only existing strings.");
+								integer oldLength = str32len (var -> stringValue), extraLength = str32len (stringValue);
+								char32 *newString = Melder_malloc (char32, oldLength + extraLength + 1);
+								str32cpy (newString, var -> stringValue);
+								str32cpy (newString + oldLength, stringValue);
+								Melder_free (var -> stringValue);
+								var -> stringValue = newString;
+								Melder_free (stringValue);
+							} else {
+								InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
+								Melder_free (var -> stringValue);
+								var -> stringValue = stringValue;   // var becomes owner
+							}
 						}
 					} else if (*p == U'#') {
 						if (p [1] == U'#') {

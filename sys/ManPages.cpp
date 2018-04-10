@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1996-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					 * Second try: with upper case.
 					 */
 					Melder_clearError ();
-					link [0] = toupper32 (link [0]);
+					link [0] = Melder_toUpperCase (link [0]);
 					Melder_sprint (fileName,256, link, U".man");
 					MelderDir_getFile (& my rootDirectory, fileName, & file2);
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
@@ -259,10 +259,10 @@ static int pageCompare (const void *first, const void *second) {
 	ManPage me = * (ManPage *) first, thee = * (ManPage *) second;
 	const char32 *p = my title, *q = thy title;
 	for (;;) {
-		char32 plower = tolower32 (*p), qlower = tolower32 (*q);
+		char32 plower = Melder_toLowerCase (*p), qlower = Melder_toLowerCase (*q);
 		if (plower < qlower) return -1;
 		if (plower > qlower) return 1;
-		if (plower == '\0') return str32cmp (my title, thy title);
+		if (plower == U'\0') return str32cmp (my title, thy title);
 		p ++, q ++;
 	}
 	return 0;   // should not occur
@@ -279,10 +279,10 @@ static integer lookUp_unsorted (ManPages me, const char32 *title) {
 	/*
 		If that fails, try to find the upper-case variant.
 	*/
-	if (islower32 (title [0])) {
+	if (Melder_isLowerCaseLetter (title [0])) {
 		char32 upperTitle [300];
 		Melder_sprint (upperTitle,300, title);
-		upperTitle [0] = toupper32 (upperTitle [0]);
+		upperTitle [0] = Melder_toUpperCase (upperTitle [0]);
 		for (integer i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
 			if (str32equ (page -> title, upperTitle)) return i;
@@ -299,10 +299,10 @@ static integer lookUp_sorted (ManPages me, const char32 *title) {
 	page = (ManPage *) bsearch (& dummy, & my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);   // noexcept
 	dummy -> title = nullptr;   // undangle
 	if (page) return (page - & my pages.at [1]) + 1;
-	if (islower32 (title [0]) || isupper32 (title [0])) {
+	if (Melder_isLowerCaseLetter (title [0]) || Melder_isUpperCaseLetter (title [0])) {
 		char32 caseSwitchedTitle [300];
 		Melder_sprint (caseSwitchedTitle,300, title);
-		caseSwitchedTitle [0] = islower32 (title [0]) ? toupper32 (caseSwitchedTitle [0]) : tolower32 (caseSwitchedTitle [0]);
+		caseSwitchedTitle [0] = Melder_isLowerCaseLetter (title [0]) ? Melder_toUpperCase (caseSwitchedTitle [0]) : Melder_toLowerCase (caseSwitchedTitle [0]);
 		dummy -> title = caseSwitchedTitle;
 		page = (ManPage *) bsearch (& dummy, & my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);   // noexcept
 		dummy -> title = nullptr;   // undangle
@@ -697,7 +697,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 				} else {
 					char32 *q = link.string;
 					if (! ManPages_lookUp_caseSensitive (me, link.string)) {
-						MelderString_appendCharacter (buffer, toupper32 (link.string [0]));
+						MelderString_appendCharacter (buffer, Melder_toUpperCase (link.string [0]));
 						if (*q) q ++;   // first letter already written
 					}
 					while (*q && q - link.string < LONGEST_FILE_NAME) {

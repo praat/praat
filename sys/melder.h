@@ -119,6 +119,128 @@ typedef char32_t char32;
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
 
+#pragma mark - CHARACTER PROPERTIES
+
+#define kUCD_TOP_OF_ASCII  127
+#define kUCD_TOP_OF_LIST  0x2FA1D
+
+#define mUCD_UPPERCASE_LETTER  (1 << 0)
+#define mUCD_LOWERCASE_LETTER  (1 << 1)
+#define mUCD_TITLECASE_LETTER  (1 << 2)
+#define mUCD_CASED_LETTER  (mUCD_UPPERCASE_LETTER | mUCD_LOWERCASE_LETTER | mUCD_TITLECASE_LETTER)
+#define mUCD_MODIFIER_LETTER  (1 << 3)
+#define mUCD_OTHER_LETTER  (1 << 4)
+#define mUCD_LETTER  (mUCD_CASED_LETTER | mUCD_MODIFIER_LETTER | mUCD_OTHER_LETTER)
+
+#define mUCD_NONSPACING_MARK  (1 << 5)
+#define mUCD_SPACING_MARK  (1 << 6)
+#define mUCD_ENCLOSING_MARK  (1 << 7)
+#define mUCD_MARK  (mUCD_NONSPACING_MARK | mUCD_SPACING_MARK | mUCD_ENCLOSING_MARK)
+
+#define mUCD_DECIMAL_NUMBER  (1 << 8)
+#define mUCD_LETTER_NUMBER  (1 << 9)
+#define mUCD_OTHER_NUMBER  (1 << 10)
+#define mUCD_NUMBER  (mUCD_DECIMAL_NUMBER | mUCD_LETTER_NUMBER | mUCD_OTHER_NUMBER)
+
+#define mUCD_CONNECTOR_PUNCTUATION  (1 << 11)
+#define mUCD_DASH_PUNCTUATION  (1 << 12)
+#define mUCD_OPEN_PUNCTUATION  (1 << 13)
+#define mUCD_CLOSE_PUNCTUATION  (1 << 14)
+#define mUCD_INITIAL_PUNCTUATION  (1 << 15)
+#define mUCD_FINAL_PUNCTUATION  (1 << 16)
+#define mUCD_OTHER_PUNCTUATION  (1 << 17)
+#define mUCD_PUNCTUATION  (mUCD_CONNECTOR_PUNCTUATION | mUCD_DASH_PUNCTUATION | mUCD_OPEN_PUNCTUATION | mUCD_CLOSE_PUNCTUATION | mUCD_INITIAL_PUNCTUATION | mUCD_FINAL_PUNCTUATION | mUCD_OTHER_PUNCTUATION)
+
+#define mUCD_MATH_SYMBOL  (1 << 18)
+#define mUCD_CURRENCY_SYMBOL  (1 << 19)
+#define mUCD_MODIFIER_SYMBOL  (1 << 20)
+#define mUCD_OTHER_SYMBOL  (1 << 21)
+#define mUCD_SYMBOL  (mUCD_MATH_SYMBOL | mUCD_CURRENCY_SYMBOL | mUCD_MODIFIER_SYMBOL | mUCD_OTHER_SYMBOL)
+
+#define mUCD_SPACE_SEPARATOR  (1 << 22)
+#define mUCD_LINE_SEPARATOR  (1 << 23)
+#define mUCD_PARAGRAPH_SEPARATOR  (1 << 24)
+#define mUCD_NEWLINE  (mUCD_LINE_SEPARATOR | mUCD_PARAGRAPH_SEPARATOR)
+#define mUCD_SEPARATOR  (mUCD_SPACE_SEPARATOR | mUCD_NEWLINE)
+
+#define mUCD_CONTROL  (1 << 25)
+#define mUCD_FORMAT  (1 << 26)
+#define mUCD_SURROGATE  (1 << 27)
+#define mUCD_PRIVATE_USE  (1 << 28)
+#define mUCD_UNASSIGNED  (1 << 29)
+#define mUCD_OTHER  (mUCD_CONTROL | mUCD_FORMAT | mUCD_SURROGATE | mUCD_PRIVATE_USE | mUCD_UNASSIGNED)
+
+#define mUCD_VISIBLE_SPACE  (1 << 30)
+#define mUCD_BREAKING_SPACE  (1 << 31)
+#define mUCD_WORD_CHARACTER  (mUCD_LETTER | mUCD_MARK | mUCD_NUMBER | mUCD_CONNECTOR_PUNCTUATION)
+
+struct UCD_CodePointInfo {
+	uint32 features;
+	char32 upperCase, lowerCase, titleCase;
+	char first, second;
+};
+extern UCD_CodePointInfo theUnicodeDatabase [1+kUCD_TOP_OF_LIST];
+enum class kMelder_charset { ASCII_, UNICODE_ };
+
+inline static bool Melder_isSpace (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SPACE_SEPARATOR) != 0;
+}
+inline static bool Melder_isAsciiSpace (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SPACE_SEPARATOR) != 0;
+}
+inline static bool Melder_isNewline (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_NEWLINE) != 0;
+}
+inline static bool Melder_isAsciiNewline (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_NEWLINE) != 0;
+}
+inline static bool Melder_isSpaceOrNewline (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
+}
+inline static bool Melder_isSpaceOrNewline (const char32 kar, kMelder_charset charset) {
+	const char32 top = charset == kMelder_charset::ASCII_ ? kUCD_TOP_OF_ASCII : kUCD_TOP_OF_LIST;
+	return kar <= top && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
+}
+inline static bool Melder_isAsciiSpaceOrNewline (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
+}
+inline static bool Melder_isLetter (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_LETTER) != 0;
+}
+inline static bool Melder_isAsciiLetter (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_LETTER) != 0;
+}
+inline static bool Melder_isUpperCaseLetter (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_UPPERCASE_LETTER) != 0;
+}
+inline static bool Melder_isLowerCaseLetter (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_LOWERCASE_LETTER) != 0;
+}
+inline static bool Melder_isTitleCaseLetter (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_TITLECASE_LETTER) != 0;
+}
+inline static bool Melder_isDecimalNumber (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_DECIMAL_NUMBER) != 0;
+}
+inline static bool Melder_isAsciiDecimalNumber (const char32 kar) {
+	return kar >= U'0' && kar <= U'9';
+}
+inline static bool Melder_isWordCharacter (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
+}
+inline static bool Melder_isAsciiWordCharacter (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
+}
+inline static char32 Melder_toUpperCase (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. upperCase : kar;
+}
+inline static char32 Melder_toLowerCase (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. lowerCase : kar;
+}
+inline static char32 Melder_toTitleCase (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. titleCase : kar;
+}
+
 inline static integer str16len (const char16 *string) noexcept {
 	const char16 *p = string;
 	while (*p != u'\0') ++ p;
@@ -149,11 +271,6 @@ inline static char32 * str32ncpy (char32 *target, const char32 *source, integer 
 	return target;
 }
 
-inline static bool islower32 (char32 kar) { return iswlower ((int) kar); }
-inline static bool isupper32 (char32 kar) { return iswupper ((int) kar); }
-inline static char32 tolower32 (char32 kar) { return (char32) towlower ((int) kar); }
-inline static char32 toupper32 (char32 kar) { return (char32) towupper ((int) kar); }
-
 inline static int str32cmp (const char32 *string1, const char32 *string2) noexcept {
 	for (;; ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
@@ -163,7 +280,7 @@ inline static int str32cmp (const char32 *string1, const char32 *string2) noexce
 }
 inline static int str32cmp_caseInsensitive (const char32 *string1, const char32 *string2) noexcept {
 	for (;; ++ string1, ++ string2) {
-		int32 diff = (int32) tolower32 (*string1) - (int32) tolower32 (*string2);
+		int32 diff = (int32) Melder_toLowerCase (*string1) - (int32) Melder_toLowerCase (*string2);
 		if (diff) return (int) diff;
 		if (*string1 == U'\0') return 0;
 	}
@@ -181,7 +298,7 @@ inline static int str32ncmp (const char32 *string1, const char32 *string2, integ
 }
 inline static int str32ncmp_caseInsensitive (const char32 *string1, const char32 *string2, integer n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
-		int32 diff = (int32) tolower32 (*string1) - (int32) tolower32 (*string2);
+		int32 diff = (int32) Melder_toLowerCase (*string1) - (int32) Melder_toLowerCase (*string2);
 		if (diff) return (int) diff;
 		if (*string1 == U'\0') return 0;
 	}
@@ -216,8 +333,8 @@ inline static char32 * str32chr (const char32 *string, char32 kar) noexcept {
 	return (char32 *) string;
 }
 inline static char32 * str32chr_caseInsensitive (const char32 *string, char32 kar) noexcept {
-	kar = tolower32 (kar);
-	for (; tolower32 (*string) != kar; ++ string) {
+	kar = Melder_toLowerCase (kar);
+	for (; Melder_toLowerCase (*string) != kar; ++ string) {
 		if (*string == U'\0')
 			return nullptr;
 	}
@@ -231,10 +348,10 @@ inline static char32 * str32rchr (const char32 *string, char32 kar) noexcept {
 	return result;
 }
 inline static char32 * str32rchr_caseInsensitive (const char32 *string, char32 kar) noexcept {
-	kar = tolower32 (kar);
+	kar = Melder_toLowerCase (kar);
 	char32 *result = nullptr;
 	for (; *string != U'\0'; ++ string) {
-		if (tolower32 (*string) == kar) result = (char32 *) string;
+		if (Melder_toLowerCase (*string) == kar) result = (char32 *) string;
 	}
 	return result;
 }
@@ -254,11 +371,11 @@ inline static char32 * str32str (const char32 *string, const char32 *find) noexc
 inline static char32 * str32str_caseInsensitive (const char32 *string, const char32 *find) noexcept {
 	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
-	char32 firstCharacter = tolower32 (* find ++);   // optimization
+	char32 firstCharacter = Melder_toLowerCase (* find ++);   // optimization
 	do {
 		char32 kar;
 		do {
-			kar = tolower32 (* string ++);
+			kar = Melder_toLowerCase (* string ++);
 			if (kar == U'\0') return nullptr;
 		} while (kar != firstCharacter);
 	} while (str32ncmp_caseInsensitive (string, find, length - 1));
@@ -277,12 +394,6 @@ cont:
 			goto cont;
 	return p - 1 - string1;
 }
-
-bool Melder_isWhiteSpace (const char32_t kar);
-bool Melder_isLetter (const char32_t kar);
-bool Melder_isDigit (const char32_t kar);
-bool Melder_isWordCharacter (const char32_t kar);
-bool Melder_isWordDelimiter (const char32_t kar);
 
 char32 * Melder_tok (char32 *string, const char32 *delimiter);
 
@@ -337,20 +448,26 @@ const char   * Melder8_half (double value) noexcept;
 /**
 	Format a double value as "--undefined--" or something in the "%.*f" format.
 */
-const char32 * Melder_fixed  (double value, int precision) noexcept;
-const char   * Melder8_fixed (double value, int precision) noexcept;
+const char32 * Melder_fixed  (double value, integer precision) noexcept;
+const char   * Melder8_fixed (double value, integer precision) noexcept;
 
 /**
 	Format a double value with a specified precision. If exponent is -2 and precision is 2, you get things like 67E-2 or 0.00024E-2.
 */
-const char32 * Melder_fixedExponent  (double value, int exponent, int precision) noexcept;
-const char   * Melder8_fixedExponent (double value, int exponent, int precision) noexcept;
+const char32 * Melder_fixedExponent  (double value, integer exponent, integer precision) noexcept;
+const char   * Melder8_fixedExponent (double value, integer exponent, integer precision) noexcept;
 
 /**
 	Format a double value as a percentage. If precision is 3, you get things like "0" or "34.400%" or "0.014%" or "0.001%" or "0.0000007%".
 */
-const char32 * Melder_percent  (double value, int precision) noexcept;
-const char   * Melder8_percent (double value, int precision) noexcept;
+const char32 * Melder_percent  (double value, integer precision) noexcept;
+const char   * Melder8_percent (double value, integer precision) noexcept;
+
+/**
+	Format an integer as a hexadecimal number. If precision is 4, you get things like "0000" or "1A3C" or "107FFFF".
+*/
+const char * Melder8_hexadecimal (integer value, integer precision) noexcept;
+const char32 * Melder_hexadecimal (integer value, integer precision) noexcept;
 
 /**
 	Format a dcomplex value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats,

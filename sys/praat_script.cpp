@@ -296,7 +296,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		} else if (str32nequ (command, U"editor", 6)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw (U"The script command \"editor\" is not available inside manuals.");
-			if (command [6] == U' ' && isalpha ((int) command [7])) {
+			if (command [6] == U' ' && Melder_isLetter (command [7])) {
 				praatP. editor = praat_findEditorFromString (command + 7);
 			} else if (command [6] == U'\0') {
 				if (interpreter && interpreter -> editorClass) {

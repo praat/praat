@@ -256,7 +256,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
 			my d_widget -> motiff.pushButton.acceleratorModifiers = modifiers;
 			NativeMenuItem_setText (my d_widget);
 		#elif cocoa
-			accelerator = tolower (accelerator);   // otherwise, a Shift key is introduced in the mask
+			accelerator = Melder_toLowerCase (accelerator);   // otherwise, a Shift key is introduced in the mask
 			NSUInteger mask = 0;
 			if (flags & GuiMenu_COMMAND) mask |= NSCommandKeyMask;
 			if (flags & GuiMenu_SHIFT)   mask |= NSShiftKeyMask;
