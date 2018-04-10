@@ -1437,7 +1437,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 			str32cpy (parameter, my parameters [ipar]);
 			parameterToVariable (me, my types [ipar], parameter, ipar);
 			if (parameter [0] >= U'A' && parameter [0] <= U'Z') {
-				parameter [0] = (char32) tolower ((int) parameter [0]);
+				parameter [0] = Melder_toLowerCase (parameter [0]);
 				parameterToVariable (me, my types [ipar], parameter, ipar);
 			}
 		}

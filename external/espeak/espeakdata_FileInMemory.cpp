@@ -160,8 +160,9 @@ autoTable Table_createAsEspeakVoicesProperties () {
 				if (name) { 
 					autoMelderString capitalFirst;
 					MelderString_copy (& capitalFirst, name); // we cannot modify original
-					char32 capital = toupper32 (*name);  *(capitalFirst . string) = capital;
-					Table_setStringValue (thee.get(), irow, 2, capitalFirst . string);
+					char32 capital = Melder_toUpperCase (*name);
+					*(capitalFirst. string) = capital;
+					Table_setStringValue (thee.get(), irow, 2, capitalFirst. string);
 				} else {
 					Table_setStringValue (thee.get(), irow, 2, fim -> d_id);
 				}

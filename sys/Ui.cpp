@@ -135,7 +135,7 @@ static void UiField_setDefault (UiField me) {
 static int colourToValue (UiField me, char32 *string) {
 	char32 *p = string;
 	while (*p == U' ' || *p == U'\t') p ++;
-	*p = (char32) tolower ((int) *p);
+	*p = Melder_toLowerCase (*p);
 	char32 first = *p;
 	if (first == U'{') {
 		my colourValue. red = Melder_atof (++ p);
@@ -146,7 +146,7 @@ static int colourToValue (UiField me, char32 *string) {
 		if (! p) return 0;
 		my colourValue. blue = Melder_atof (++ p);
 	} else {
-		*p = (char32) tolower ((int) *p);
+		*p = Melder_toLowerCase (*p);
 		if (str32equ (p, U"black")) my colourValue = Graphics_BLACK;
 		else if (str32equ (p, U"white")) my colourValue = Graphics_WHITE;
 		else if (str32equ (p, U"red")) my colourValue = Graphics_RED;
@@ -1088,7 +1088,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 	char32 cName [100], *q = & cName [0];
 	Melder_assert (my formLabel);
 	const char32 *p = & my formLabel [0];
-	*q ++ = tolower32 (*p ++);
+	*q ++ = Melder_toLowerCase (*p ++);
 	bool up = false;
 	for (; *p != U'\0'; p ++) {
 		if (*p == U'(') {
@@ -1104,7 +1104,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			*q ++ = U'a';
 			*q ++ = U'r';
 		} else if (up) {
-			*q ++ = toupper32 (*p);
+			*q ++ = Melder_toUpperCase (*p);
 			up = false;
 		} else {
 			*q ++ = *p;
@@ -2052,7 +2052,7 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 		/*
 			Change e.g. "Number of people" to "number_of_people".
 		*/
-		lowerCaseFieldName.string [0] = tolower32 (lowerCaseFieldName.string [0]);   // BUG for non-BMP characters
+		lowerCaseFieldName.string [0] = Melder_toLowerCase (lowerCaseFieldName.string [0]);
 		for (char32 *p = & lowerCaseFieldName.string [0]; *p != U'\0'; p ++) {
 			if (*p == U' ') *p = U'_';
 		}

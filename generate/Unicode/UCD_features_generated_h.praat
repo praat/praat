@@ -1,12 +1,12 @@
 # UCD_features_generated_h.praat
-# Paul Boersma 20180408
+# Paul Boersma 20180410
 
 table = Read Table from semicolon-separated file: "UnicodeData.txt"
 numberOfRows = Get number of rows
 
 stopwatch
 outfile$ = "../../kar/UCD_features_generated.h"
-writeFile: outfile$, ""
+writeFileLine: outfile$, "/* This file was generated automatically by generate/Unicode/UCS_features_generated_h.praat */"
 
 previousLineCodePoint = -1
 for irow from 1 to numberOfRows
@@ -45,110 +45,103 @@ for irow from 1 to numberOfRows
 	majorCategoryCode$ = mid$ (categoryCode$, 1, 1)
 	minorCategoryCode$ = mid$ (categoryCode$, 2, 1)
 	if majorCategoryCode$ = "L"
-		categoryFeature$ = "mUCD_LETTER"
 		if minorCategoryCode$ = "u"
-			categoryFeature$ += " | mUCD_CASED_LETTER | mUCD_UPPERCASE_LETTER"
+			categoryFeature$ = "mUCD_UPPERCASE_LETTER"
 		elsif minorCategoryCode$ = "l"
-			categoryFeature$ += " | mUCD_CASED_LETTER | mUCD_LOWERCASE_LETTER"
+			categoryFeature$ = "mUCD_LOWERCASE_LETTER"
 		elsif minorCategoryCode$ = "t"
-			categoryFeature$ += " | mUCD_CASED_LETTER | mUCD_TITLECASE_LETTER"
+			categoryFeature$ = "mUCD_TITLECASE_LETTER"
 		elsif minorCategoryCode$ = "m"
-			categoryFeature$ += " | mUCD_MODIFIER_LETTER"
+			categoryFeature$ = "mUCD_MODIFIER_LETTER"
 		elsif minorCategoryCode$ = "o"
-			categoryFeature$ += " | mUCD_OTHER_LETTER"
+			categoryFeature$ = "mUCD_OTHER_LETTER"
 		else
 			exitScript: "Unknown letter category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "M"
-		categoryFeature$ = "mUCD_MARK"
 		if minorCategoryCode$ = "n"
-			categoryFeature$ += " | mUCD_NONSPACING_MARK"
+			categoryFeature$ = "mUCD_NONSPACING_MARK"
 		elsif minorCategoryCode$ = "c"
-			categoryFeature$ += " | mUCD_SPACING_MARK"
+			categoryFeature$ = "mUCD_SPACING_MARK"
 		elsif minorCategoryCode$ = "e"
-			categoryFeature$ += " | mUCD_ENCLOSING_MARK"
+			categoryFeature$ = "mUCD_ENCLOSING_MARK"
 		else
 			exitScript: "Unknown mark category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "N"
-		categoryFeature$ = "mUCD_NUMBER"
 		if minorCategoryCode$ = "d"
-			categoryFeature$ += " | mUCD_DECIMAL_NUMBER"
+			categoryFeature$ = "mUCD_DECIMAL_NUMBER"
 		elsif minorCategoryCode$ = "l"
-			categoryFeature$ += " | mUCD_LETTER_NUMBER"
+			categoryFeature$ = "mUCD_LETTER_NUMBER"
 		elsif minorCategoryCode$ = "o"
-			categoryFeature$ += " | mUCD_OTHER_NUMBER"
+			categoryFeature$ = "mUCD_OTHER_NUMBER"
 		else
 			exitScript: "Unknown number category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "P"
-		categoryFeature$ = "mUCD_PUNCTUATION"
 		if minorCategoryCode$ = "c"
-			categoryFeature$ += " | mUCD_CONNECTOR_PUNCTUATION"
+			categoryFeature$ = "mUCD_CONNECTOR_PUNCTUATION"
 		elsif minorCategoryCode$ = "d"
-			categoryFeature$ += " | mUCD_DASH_PUNCTUATION"
+			categoryFeature$ = "mUCD_DASH_PUNCTUATION"
 		elsif minorCategoryCode$ = "s"
-			categoryFeature$ += " | mUCD_OPEN_PUNCTUATION"
+			categoryFeature$ = "mUCD_OPEN_PUNCTUATION"
 		elsif minorCategoryCode$ = "e"
-			categoryFeature$ += " | mUCD_CLOSE_PUNCTUATION"
+			categoryFeature$ = "mUCD_CLOSE_PUNCTUATION"
 		elsif minorCategoryCode$ = "i"
-			categoryFeature$ += " | mUCD_INITIAL_PUNCTUATION"
+			categoryFeature$ = "mUCD_INITIAL_PUNCTUATION"
 		elsif minorCategoryCode$ = "f"
-			categoryFeature$ += " | mUCD_FINAL_PUNCTUATION"
+			categoryFeature$ = "mUCD_FINAL_PUNCTUATION"
 		elsif minorCategoryCode$ = "o"
-			categoryFeature$ += " | mUCD_OTHER_PUNCTUATION"
+			categoryFeature$ = "mUCD_OTHER_PUNCTUATION"
 		else
 			exitScript: "Unknown punctuation category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "S"
-		categoryFeature$ = "mUCD_SYMBOL"
 		if minorCategoryCode$ = "m"
-			categoryFeature$ += " | mUCD_MATH_SYMBOL"
+			categoryFeature$ = "mUCD_MATH_SYMBOL"
 		elsif minorCategoryCode$ = "c"
-			categoryFeature$ += " | mUCD_CURRENCY_SYMBOL"
+			categoryFeature$ = "mUCD_CURRENCY_SYMBOL"
 		elsif minorCategoryCode$ = "k"
-			categoryFeature$ += " | mUCD_MODIFIER_SYMBOL"
+			categoryFeature$ = "mUCD_MODIFIER_SYMBOL"
 		elsif minorCategoryCode$ = "o"
-			categoryFeature$ += " | mUCD_OTHER_SYMBOL"
+			categoryFeature$ = "mUCD_OTHER_SYMBOL"
 		else
 			exitScript: "Unknown symbol category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "Z"
-		categoryFeature$ = "mUCD_SEPARATOR"
 		if minorCategoryCode$ = "s"
-			categoryFeature$ += " | mUCD_SPACE_SEPARATOR"
+			categoryFeature$ = "mUCD_SPACE_SEPARATOR"
 		elsif minorCategoryCode$ = "l"
-			categoryFeature$ += " | mUCD_LINE_SEPARATOR"
+			categoryFeature$ = "mUCD_LINE_SEPARATOR"
 		elsif minorCategoryCode$ = "p"
-			categoryFeature$ += " | mUCD_PARAGRAPH_SEPARATOR"
+			categoryFeature$ = "mUCD_PARAGRAPH_SEPARATOR"
 		else
 			exitScript: "Unknown separator category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "C"
-		categoryFeature$ = "mUCD_OTHER"
 		if minorCategoryCode$ = "c"
-			categoryFeature$ += " | mUCD_CONTROL"
+			categoryFeature$ = "mUCD_CONTROL"
+			#
+			# Special cases that diverge from UnicodeData.txt.
+			#
 			if lineCodePoint = 9   ; tab
-				categoryFeature$ += " | mUCD_SEPARATOR | mUDC_SPACE_SEPARATOR"
-			elsif lineCodePoint >= 10 and lineCodePoint <= 13   ; line feed, vertical tab, form feed, carriage return
-				categoryFeature$ += " | mUCD_SEPARATOR | mUDC_LINE_SEPARATOR"
+				categoryFeature$ += " | mUCD_SPACE_SEPARATOR"
+			elsif lineCodePoint >= 10 and lineCodePoint <= 13 or lineCodePoint = 0x0085   ; line feed, vertical tab, form feed, carriage return, next line
+				categoryFeature$ += " | mUCD_LINE_SEPARATOR"
 			endif
 		elsif minorCategoryCode$ = "f"
-			categoryFeature$ += " | mUCD_FORMAT"
+			categoryFeature$ = "mUCD_FORMAT"
 		elsif minorCategoryCode$ = "s"
-			categoryFeature$ += " | mUCD_SURROGATE"
+			categoryFeature$ = "mUCD_SURROGATE"
 		elsif minorCategoryCode$ = "o"
-			categoryFeature$ += " | mUCD_PRIVATE_USE"
+			categoryFeature$ = "mUCD_PRIVATE_USE"
 		elsif minorCategoryCode$ = "n"
-			categoryFeature$ += " | mUCD_UNASSIGNED"
+			categoryFeature$ = "mUCD_UNASSIGNED"
 		else
 			exitScript: "Unknown other category code in row ", irow, "."
 		endif
 	else
 		categoryFeature$ = "0"
-	endif
-	if index ("LNM", majorCategoryCode$) or categoryCode$ = "Pc"
-		categoryFeature$ += " | mUCD_WORD_CHARACTER"
 	endif
 	lower$ = if lower$ = "" then code$ else lower$ fi
 	upper$ = if upper$ = "" then code$ else upper$ fi

@@ -264,7 +264,7 @@ static double searchToken (ManPages me, integer ipage, char32 *token) {
 	 */
 	static MelderString buffer { };
 	MelderString_copy (& buffer, page -> title);
-	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = tolower32 (*p);
+	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = Melder_toLowerCase (*p);
 	if (str32str (buffer.string, token)) {
 		goodness += 300.0;   // lots of points for a match in the title!
 		if (str32equ (buffer.string, token))
@@ -277,7 +277,7 @@ static double searchToken (ManPages me, integer ipage, char32 *token) {
 		if (par -> text) {
 			char32 *ptoken;
 			MelderString_copy (& buffer, par -> text);
-			for (char32 *p = & buffer.string [0]; *p != '\0'; p ++) *p = tolower32 (*p);
+			for (char32 *p = & buffer.string [0]; *p != '\0'; p ++) *p = Melder_toLowerCase (*p);
 			ptoken = str32str (buffer.string, token);
 			if (ptoken) {
 				goodness += 10.0;   // ten points for every paragraph with a match!
@@ -298,7 +298,7 @@ static void search (Manual me, const char32 *query) {
 	MelderString_copy (& searchText, query);
 	for (char32 *p = & searchText.string [0]; *p != U'\0'; p ++) {
 		if (*p == U'\n') *p = U' ';
-		*p = tolower32 (*p);
+		*p = Melder_toLowerCase (*p);
 	}
 	if (! goodnessOfMatch)
 		goodnessOfMatch = NUMvector <double> (1, numberOfPages);
