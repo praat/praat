@@ -270,22 +270,23 @@ bool Melder_numberMatchesCriterion (double value, kMelder_number which, double c
 inline static char32 * str32str_word (const char32 *string, const char32 *find, bool startFree, bool endFree) noexcept {
 	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
-	const char32* movingString = string;
+	const char32 *movingString = string;
 	do {
-		char32 firstCharacter = * find ++;   // optimization
+		const char32 *movingFind = find;
+		char32 firstCharacter = * movingFind ++;   // optimization
 		do {
 			char32 kar;
 			do {
 				kar = * movingString ++;
 				if (kar == U'\0') return nullptr;
 			} while (kar != firstCharacter);
-		} while (str32ncmp (movingString, find, length - 1));
+		} while (str32ncmp (movingString, movingFind, length - 1));
 		/*
 			We found a match.
 		*/
 		movingString --;
-		if ((startFree || movingString == string || Melder_isWordDelimiter (movingString [-1])) &&
-			(endFree || movingString [length] == U'\0' || Melder_isWordDelimiter (movingString [length])))
+		if ((startFree || movingString == string || ! Melder_isWordCharacter (movingString [-1])) &&
+			(endFree || movingString [length] == U'\0' || ! Melder_isWordCharacter (movingString [length])))
 		{
 			return (char32 *) movingString;
 		} else {
@@ -297,22 +298,23 @@ inline static char32 * str32str_word (const char32 *string, const char32 *find, 
 inline static char32 * str32str_word_caseInsensitive (const char32 *string, const char32 *find, bool startFree, bool endFree) noexcept {
 	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
-	const char32* movingString = string;
+	const char32 *movingString = string;
 	do {
-		char32 firstCharacter = tolower32 (* find ++);   // optimization
+		const char32 *movingFind = find;
+		char32 firstCharacter = Melder_toLowerCase (* movingFind ++);   // optimization
 		do {
 			char32 kar;
 			do {
-				kar = tolower32 (* movingString ++);
+				kar = Melder_toLowerCase (* movingString ++);
 				if (kar == U'\0') return nullptr;
 			} while (kar != firstCharacter);
-		} while (str32ncmp_caseInsensitive (movingString, find, length - 1));
+		} while (str32ncmp_caseInsensitive (movingString, movingFind, length - 1));
 		/*
 			We found a match.
 		*/
 		movingString --;
-		if ((startFree || movingString == string || Melder_isWordDelimiter (movingString [-1])) &&
-			(endFree || movingString [length] == U'\0' || Melder_isWordDelimiter (movingString [length])))
+		if ((startFree || movingString == string || ! Melder_isWordCharacter (movingString [-1])) &&
+			(endFree || movingString [length] == U'\0' || ! Melder_isWordCharacter (movingString [length])))
 		{
 			return (char32 *) movingString;
 		} else {

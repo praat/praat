@@ -1172,7 +1172,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	/*
 	 * Construct a main-window title like "MyProg 3.2".
 	 */
-	programName [0] = (char32) tolower ((int) programName [0]);
+	programName [0] = Melder_toLowerCase (programName [0]);
 
 	/*
 	 * Get home directory, e.g. "/home/miep/", or "/Users/miep/", or just "/".
@@ -1535,49 +1535,49 @@ void praat_run () {
 		Check the locale, to ensure identical behaviour on all computers.
 	*/
 	Melder_assert (str32equ (Melder_double (1.5), U"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
-	Melder_assert (Melder_isWhiteSpace (' '));
-	Melder_assert (Melder_isWhiteSpace ('\r'));
-	Melder_assert (Melder_isWhiteSpace ('\n'));
-	Melder_assert (Melder_isWhiteSpace ('\t'));
-	Melder_assert (Melder_isWhiteSpace ('\f'));
-	Melder_assert (Melder_isWhiteSpace ('\v'));
-	Melder_assert (Melder_isWhiteSpace (UNICODE_OGHAM_SPACE_MARK));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_MONGOLIAN_VOWEL_SEPARATOR));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_EN_QUAD));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_EM_QUAD));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_EN_SPACE));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_EM_SPACE));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_THREE_PER_EM_SPACE));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_FOUR_PER_EM_SPACE));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_SIX_PER_EM_SPACE));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_FIGURE_SPACE));   // questionable
-	Melder_assert (Melder_isWhiteSpace (UNICODE_PUNCTUATION_SPACE));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_THIN_SPACE));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_HAIR_SPACE));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_ZERO_WIDTH_SPACE));   // questionable
+	Melder_assert (Melder_isSpaceOrNewline (' '));
+	Melder_assert (Melder_isSpaceOrNewline ('\r'));
+	Melder_assert (Melder_isSpaceOrNewline ('\n'));
+	Melder_assert (Melder_isSpaceOrNewline ('\t'));
+	Melder_assert (Melder_isSpaceOrNewline ('\f'));
+	Melder_assert (Melder_isSpaceOrNewline ('\v'));
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_OGHAM_SPACE_MARK));   // ISO 30112
+	//Melder_assert (Melder_isSpaceOrNewline (UNICODE_MONGOLIAN_VOWEL_SEPARATOR));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_EN_QUAD));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_EM_QUAD));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_EN_SPACE));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_EM_SPACE));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_THREE_PER_EM_SPACE));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_FOUR_PER_EM_SPACE));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_SIX_PER_EM_SPACE));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_FIGURE_SPACE));   // questionable
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_PUNCTUATION_SPACE));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_THIN_SPACE));   // ISO 30112
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_HAIR_SPACE));   // ISO 30112
+	//Melder_assert (Melder_isSpaceOrNewline (UNICODE_ZERO_WIDTH_SPACE));   // questionable
 	//Melder_assert (iswspace (UNICODE_ZERO_WIDTH_NON_JOINER));
 	//Melder_assert (iswspace (UNICODE_ZERO_WIDTH_JOINER));
 	//Melder_assert (iswspace (UNICODE_LEFT_TO_RIGHT_MARK));
 	//Melder_assert (iswspace (UNICODE_RIGHT_TO_LEFT_MARK));
-	Melder_assert (Melder_isWhiteSpace (UNICODE_LINE_SEPARATOR));   // ISO 30112
-	Melder_assert (Melder_isWhiteSpace (UNICODE_PARAGRAPH_SEPARATOR));   // ISO 30112
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_LEFT_TO_RIGHT_EMBEDDING));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_RIGHT_TO_LEFT_EMBEDDING));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_POP_DIRECTIONAL_FORMATTING));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_LEFT_TO_RIGHT_OVERRIDE));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_RIGHT_TO_LEFT_OVERRIDE));
-	Melder_assert (Melder_isWhiteSpace (UNICODE_MEDIUM_MATHEMATICAL_SPACE));   // ISO 30112
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_WORD_JOINER));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_FUNCTION_APPLICATION));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_INVISIBLE_TIMES));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_INVISIBLE_SEPARATOR));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_INHIBIT_SYMMETRIC_SWAPPING));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_ACTIVATE_SYMMETRIC_SWAPPING));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_INHIBIT_ARABIC_FORM_SHAPING));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_ACTIVATE_ARABIC_FORM_SHAPING));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_NATIONAL_DIGIT_SHAPES));
-	Melder_assert (! Melder_isWhiteSpace (UNICODE_NOMINAL_DIGIT_SHAPES));
-	Melder_assert (Melder_isWhiteSpace (UNICODE_IDEOGRAPHIC_SPACE));   // ISO 30112; occurs on Japanese computers
+	//Melder_assert (Melder_isSpaceOrNewline (UNICODE_LINE_SEPARATOR));   // ISO 30112
+	//Melder_assert (Melder_isSpaceOrNewline (UNICODE_PARAGRAPH_SEPARATOR));   // ISO 30112
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_LEFT_TO_RIGHT_EMBEDDING));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_RIGHT_TO_LEFT_EMBEDDING));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_POP_DIRECTIONAL_FORMATTING));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_LEFT_TO_RIGHT_OVERRIDE));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_RIGHT_TO_LEFT_OVERRIDE));
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_MEDIUM_MATHEMATICAL_SPACE));   // ISO 30112
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_WORD_JOINER));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_FUNCTION_APPLICATION));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_INVISIBLE_TIMES));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_INVISIBLE_SEPARATOR));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_INHIBIT_SYMMETRIC_SWAPPING));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_ACTIVATE_SYMMETRIC_SWAPPING));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_INHIBIT_ARABIC_FORM_SHAPING));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_ACTIVATE_ARABIC_FORM_SHAPING));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_NATIONAL_DIGIT_SHAPES));
+	Melder_assert (! Melder_isSpaceOrNewline (UNICODE_NOMINAL_DIGIT_SHAPES));
+	Melder_assert (Melder_isSpaceOrNewline (UNICODE_IDEOGRAPHIC_SPACE));   // ISO 30112; occurs on Japanese computers
 
 	{ unsigned char dummy = 200;
 		Melder_assert ((int) dummy == 200);

@@ -1,6 +1,6 @@
 /* abcio.cpp
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ static int64 getInteger (MelderReadText me) {
 	/*
 	 * Look for the first numeric character.
 	 */
-	for (c = MelderReadText_getChar (me); c != U'-' && ! isdigit ((int) c) && c != U'+'; c = MelderReadText_getChar (me)) {
+	for (c = MelderReadText_getChar (me); c != U'-' && ! Melder_isAsciiDecimalNumber (c) && c != U'+'; c = MelderReadText_getChar (me)) {
 		if (c == U'\0')
 			Melder_throw (U"Early end of text detected while looking for an integer (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'!') {   // end-of-line comment?
@@ -60,7 +60,7 @@ static int64 getInteger (MelderReadText me) {
 			Melder_throw (U"Found a string while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'<')
 			Melder_throw (U"Found an enumerated value while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
-		while (! Melder_isWhiteSpace (c)) {
+		while (! Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), U").");
 			c = MelderReadText_getChar (me);
@@ -73,7 +73,7 @@ static int64 getInteger (MelderReadText me) {
 		buffer [i] = (char) (char8) c;   // guarded conversion down
 		c = MelderReadText_getChar (me);
 		if (c == U'\0') { break; }   // this may well be OK here
-		if (Melder_isWhiteSpace (c)) break;
+		if (Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_)) break;
 	}
 	if (i >= 40)
 		Melder_throw (U"Found long text while looking for an integer in text (line ", MelderReadText_getLineNumber (me), U").");
@@ -84,7 +84,7 @@ static int64 getInteger (MelderReadText me) {
 static uint64 getUnsigned (MelderReadText me) {
 	char buffer [41];
 	char32 c;
-	for (c = MelderReadText_getChar (me); ! isdigit ((int) c) && c != U'+'; c = MelderReadText_getChar (me)) {
+	for (c = MelderReadText_getChar (me); ! Melder_isAsciiDecimalNumber (c) && c != U'+'; c = MelderReadText_getChar (me)) {
 		if (c == U'\0')
 			Melder_throw (U"Early end of text detected while looking for an unsigned integer (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'!') {   // end-of-line comment?
@@ -99,7 +99,7 @@ static uint64 getUnsigned (MelderReadText me) {
 			Melder_throw (U"Found an enumerated value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'-')
 			Melder_throw (U"Found a negative value while looking for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
-		while (! Melder_isWhiteSpace (c)) {
+		while (! Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected in comment (line ", MelderReadText_getLineNumber (me), U").");
 			c = MelderReadText_getChar (me);
@@ -112,7 +112,7 @@ static uint64 getUnsigned (MelderReadText me) {
 		buffer [i] = (char) (char8) c;   // guarded conversion down
 		c = MelderReadText_getChar (me);
 		if (c == U'\0') { break; }   // this may well be OK here
-		if (Melder_isWhiteSpace (c)) break;
+		if (Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_)) break;
 	}
 	if (i >= 40)
 		Melder_throw (U"Found long text while searching for an unsigned integer in text (line ", MelderReadText_getLineNumber (me), U").");
@@ -125,7 +125,7 @@ static double getReal (MelderReadText me) {
 	char buffer [41], *slash;
 	char32 c;
 	do {
-		for (c = MelderReadText_getChar (me); c != U'-' && ! isdigit ((int) c) && c != U'+'; c = MelderReadText_getChar (me)) {
+		for (c = MelderReadText_getChar (me); c != U'-' && ! Melder_isAsciiDecimalNumber (c) && c != U'+'; c = MelderReadText_getChar (me)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected while looking for a real number (line ", MelderReadText_getLineNumber (me), U").");
 			if (c == U'!') {   // end-of-line comment?
@@ -138,7 +138,7 @@ static double getReal (MelderReadText me) {
 				Melder_throw (U"Found a string while looking for a real number in text (line ", MelderReadText_getLineNumber (me), U").");
 			if (c == U'<')
 				Melder_throw (U"Found an enumerated value while looking for a real number in text (line ", MelderReadText_getLineNumber (me), U").");
-			while (! Melder_isWhiteSpace (c)) {
+			while (! Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_)) {
 				if (c == U'\0')
 					Melder_throw (U"Early end of text detected in comment while looking for a real number (line ", MelderReadText_getLineNumber (me), U").");
 				c = MelderReadText_getChar (me);
@@ -150,7 +150,7 @@ static double getReal (MelderReadText me) {
 			buffer [i] = (char) (char8) c;   // guarded conversion down
 			c = MelderReadText_getChar (me);
 			if (c == U'\0') { break; }   // this may well be OK here
-			if (Melder_isWhiteSpace (c)) break;
+			if (Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_)) break;
 		}
 		if (i >= 40)
 			Melder_throw (U"Found long text while searching for a real number in text (line ", MelderReadText_getLineNumber (me), U").");
@@ -179,11 +179,11 @@ static int getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
 					Melder_throw (U"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
 			}
 		}
-		if (c == U'-' || isdigit ((int) c) || c == U'+')
+		if (c == U'-' || Melder_isAsciiDecimalNumber (c) || c == U'+')
 			Melder_throw (U"Found a number while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'\"')
 			Melder_throw (U"Found a string while looking for an enumerated value in text (line ", MelderReadText_getLineNumber (me), U").");
-		while (! Melder_isWhiteSpace (c)) {
+		while (! Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected in comment while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
 			c = MelderReadText_getChar (me);
@@ -194,7 +194,7 @@ static int getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
 		c = MelderReadText_getChar (me);   // read past first '<'
 		if (c == U'\0')
 			Melder_throw (U"Early end of text detected while reading an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
-		if (Melder_isWhiteSpace (c))
+		if (Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_))
 			Melder_throw (U"No matching '>' while reading an enumerated value (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'>')
 			break;   // the expected closing bracket; not added to the buffer
@@ -221,11 +221,11 @@ static char32 * getString (MelderReadText me) {
 					Melder_throw (U"Early end of text detected in comment while looking for a string (line ", MelderReadText_getLineNumber (me), U").");
 			}
 		}
-		if (c == U'-' || isdigit ((int) c) || c == U'+')
+		if (c == U'-' || Melder_isAsciiDecimalNumber (c) || c == U'+')
 			Melder_throw (U"Found a number while looking for a string in text (line ", MelderReadText_getLineNumber (me), U").");
 		if (c == U'<')
 			Melder_throw (U"Found an enumerated value while looking for a string in text (line ", MelderReadText_getLineNumber (me), U").");
-		while (! Melder_isWhiteSpace (c)) {
+		while (! Melder_isSpaceOrNewline (c, kMelder_charset::UNICODE_)) {
 			if (c == U'\0')
 				Melder_throw (U"Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), U").");
 			c = MelderReadText_getChar (me);
@@ -239,7 +239,7 @@ static char32 * getString (MelderReadText me) {
 			char32 next = MelderReadText_getChar (me);
 			if (next == U'\0') { break; }   // closing quote is last character in file: OK
 			if (next != U'\"') {
-				if (Melder_isWhiteSpace (next)) {
+				if (Melder_isSpaceOrNewline (next, kMelder_charset::UNICODE_)) {
 					// closing quote is followed by whitespace: it is OK to skip this whitespace (no need to "ungetChar")
 				} else {
 					char32 kar2 [2] = { next, U'\0' };

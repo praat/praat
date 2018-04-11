@@ -4209,7 +4209,7 @@ static Graphics_Colour Strings_colourToValue  (Strings me, integer index) {
 	Graphics_Colour colourValue;
 	char32 *p = my strings [index];
 	while (*p == U' ' || *p == U'\t') p ++;
-	*p = (char32) tolower ((int) *p);
+	*p = Melder_toLowerCase (*p);
 	char32 first = *p;
 	if (first == U'{') {
 		colourValue.red = Melder_atof ( ++ p);
@@ -4220,7 +4220,7 @@ static Graphics_Colour Strings_colourToValue  (Strings me, integer index) {
 		if (! p) return Graphics_GREY;
 		colourValue.blue = Melder_atof ( ++ p);
 	} else {
-		*p = (char32) tolower ((int) *p);
+		*p = Melder_toLowerCase (*p);
 		if (str32equ (p, U"black")) colourValue = Graphics_BLACK;
 		else if (str32equ (p, U"white")) colourValue = Graphics_WHITE;
 		else if (str32equ (p, U"red")) colourValue = Graphics_RED;
