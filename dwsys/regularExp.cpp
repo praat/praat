@@ -258,7 +258,7 @@
 
       Implements shortcut escapes \d, \D, \l, \L, \s, \S, \w, \W.
       The Unicode-aware functions Melder_isDecimalNumber(), Melder_isLetter(),
-      Melder_isSpace(), and Melder_isWordCharacter are
+      Melder_isHorizontalSpace(), and Melder_isWordCharacter are
       used to implement these in the hopes of increasing portability.
 
    NOT_BOUNDARY
@@ -3164,25 +3164,25 @@ static int match (char32 *prog, int *branch_index_param) {
 				Reg_Input++; break;
 
 			case SPACE: /* \s; for ASCII, use [ \t] */
-				if (! Melder_isSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
+				if (! Melder_isHorizontalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
 			case SPACE_NL: /* \s; for ASCII, use [\n \t\r\f\v] */
-				if (! Melder_isSpaceOrNewline (*Reg_Input, kMelder_charset::UNICODE_) || AT_END_OF_STRING (Reg_Input)) {
+				if (! Melder_isHorizontalOrVerticalSpace (*Reg_Input, kMelder_charset::UNICODE_) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
 			case NOT_SPACE: /* \S; for ASCII, use [^\n \t\r\f\v] */
-				if (Melder_isSpaceOrNewline (*Reg_Input, kMelder_charset::UNICODE_) || AT_END_OF_STRING (Reg_Input)) {
+				if (Melder_isHorizontalOrVerticalSpace (*Reg_Input, kMelder_charset::UNICODE_) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
 			case NOT_SPACE_NL: /* \S; for ASCII, use [^ \t\r\f\v] */
-				if (Melder_isSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
+				if (Melder_isHorizontalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
@@ -3727,28 +3727,28 @@ static unsigned long greedy (char32 *p, long max) {
 			break;
 
 		case SPACE: /* for ASCII, use [ \t\r\f\v]-- doesn't match newline. */
-			while (count < max_cmp && Melder_isSpace (*input_str) && ! AT_END_OF_STRING (input_str)) {
+			while (count < max_cmp && Melder_isHorizontalSpace (*input_str) && ! AT_END_OF_STRING (input_str)) {
 				count ++;
 				input_str ++;
 			}
 			break;
 
 		case SPACE_NL: /* for ASCII, use [\n \t\r\f\v]-- matches newline. */
-			while (count < max_cmp && Melder_isSpaceOrNewline (*input_str, kMelder_charset::UNICODE_) && ! AT_END_OF_STRING (input_str)) {
+			while (count < max_cmp && Melder_isHorizontalOrVerticalSpace (*input_str, kMelder_charset::UNICODE_) && ! AT_END_OF_STRING (input_str)) {
 				count ++;
 				input_str ++;
 			}
 			break;
 
 		case NOT_SPACE: /* for ASCII, use [^\n \t\r\f\v]-- doesn't match newline. */
-			while (count < max_cmp && ! Melder_isSpaceOrNewline (*input_str, kMelder_charset::UNICODE_) && ! AT_END_OF_STRING (input_str)) {
+			while (count < max_cmp && ! Melder_isHorizontalOrVerticalSpace (*input_str, kMelder_charset::UNICODE_) && ! AT_END_OF_STRING (input_str)) {
 				count ++;
 				input_str ++;
 			}
 			break;
 
 		case NOT_SPACE_NL: /* for ASCII, use [^ \t\r\f\v]-- matches newline. */
-			while (count < max_cmp && ! Melder_isSpace (*input_str) && ! AT_END_OF_STRING (input_str)) {
+			while (count < max_cmp && ! Melder_isHorizontalSpace (*input_str) && ! AT_END_OF_STRING (input_str)) {
 				count ++;
 				input_str ++;
 			}

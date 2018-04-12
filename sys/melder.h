@@ -123,6 +123,7 @@ typedef char32_t char32;
 
 #define kUCD_TOP_OF_ASCII  127
 #define kUCD_TOP_OF_LIST  0x2FA1D
+#define kUCD_UNASSIGNED  0
 
 #define mUCD_UPPERCASE_LETTER  (1 << 0)
 #define mUCD_LOWERCASE_LETTER  (1 << 1)
@@ -157,21 +158,19 @@ typedef char32_t char32;
 #define mUCD_OTHER_SYMBOL  (1 << 21)
 #define mUCD_SYMBOL  (mUCD_MATH_SYMBOL | mUCD_CURRENCY_SYMBOL | mUCD_MODIFIER_SYMBOL | mUCD_OTHER_SYMBOL)
 
-#define mUCD_SPACE_SEPARATOR  (1 << 22)
-#define mUCD_LINE_SEPARATOR  (1 << 23)
-#define mUCD_PARAGRAPH_SEPARATOR  (1 << 24)
+#define mUCD_BREAKING_SPACE  (1 << 22)
+#define mUCD_NON_BREAKING_SPACE  (1 << 23)
+#define mUCD_SPACE_SEPARATOR  (mUCD_BREAKING_SPACE | mUCD_NON_BREAKING_SPACE)
+#define mUCD_LINE_SEPARATOR  (1 << 24)
+#define mUCD_PARAGRAPH_SEPARATOR  (1 << 25)
 #define mUCD_NEWLINE  (mUCD_LINE_SEPARATOR | mUCD_PARAGRAPH_SEPARATOR)
 #define mUCD_SEPARATOR  (mUCD_SPACE_SEPARATOR | mUCD_NEWLINE)
 
-#define mUCD_CONTROL  (1 << 25)
-#define mUCD_FORMAT  (1 << 26)
-#define mUCD_SURROGATE  (1 << 27)
+#define mUCD_CONTROL  (1 << 26)
+#define mUCD_FORMAT  (1 << 27)
 #define mUCD_PRIVATE_USE  (1 << 28)
-#define mUCD_UNASSIGNED  (1 << 29)
-#define mUCD_OTHER  (mUCD_CONTROL | mUCD_FORMAT | mUCD_SURROGATE | mUCD_PRIVATE_USE | mUCD_UNASSIGNED)
 
-#define mUCD_VISIBLE_SPACE  (1 << 30)
-#define mUCD_BREAKING_SPACE  (1 << 31)
+#define mUCD_ALPHANUMERIC  (mUCD_LETTER | mUCD_NUMBER)
 #define mUCD_WORD_CHARACTER  (mUCD_LETTER | mUCD_MARK | mUCD_NUMBER | mUCD_CONNECTOR_PUNCTUATION)
 
 struct UCD_CodePointInfo {
@@ -182,55 +181,151 @@ struct UCD_CodePointInfo {
 extern UCD_CodePointInfo theUnicodeDatabase [1+kUCD_TOP_OF_LIST];
 enum class kMelder_charset { ASCII_, UNICODE_ };
 
-inline static bool Melder_isSpace (const char32 kar) {
+/*
+	Internationalize std::isblank ():
+*/
+inline static bool Melder_isHorizontalSpace (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SPACE_SEPARATOR) != 0;
 }
-inline static bool Melder_isAsciiSpace (const char32 kar) {
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SPACE_SEPARATOR) != 0;
+inline static bool Melder_isAsciiHorizontalSpace (const char32 kar) {
+	return kar == U'\t' || kar == U' ';
 }
-inline static bool Melder_isNewline (const char32 kar) {
+
+inline static bool Melder_isVerticalSpace (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_NEWLINE) != 0;
 }
-inline static bool Melder_isAsciiNewline (const char32 kar) {
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_NEWLINE) != 0;
+inline static bool Melder_isAsciiVerticalSpace (const char32 kar) {
+	return kar >= 10 && kar <= 13;   // \n, \v, \f, \r
 }
-inline static bool Melder_isSpaceOrNewline (const char32 kar) {
+
+/*
+	Internationalize std::isspace ():
+*/
+inline static bool Melder_isHorizontalOrVerticalSpace (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
-inline static bool Melder_isSpaceOrNewline (const char32 kar, kMelder_charset charset) {
+inline static bool Melder_isHorizontalOrVerticalSpace (const char32 kar, kMelder_charset charset) {
 	const char32 top = charset == kMelder_charset::ASCII_ ? kUCD_TOP_OF_ASCII : kUCD_TOP_OF_LIST;
 	return kar <= top && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
-inline static bool Melder_isAsciiSpaceOrNewline (const char32 kar) {
+inline static bool Melder_isAsciiHorizontalOrVerticalSpace (const char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
+
+/*
+	Internationalize std::isalpha ():
+*/
 inline static bool Melder_isLetter (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_LETTER) != 0;
 }
 inline static bool Melder_isAsciiLetter (const char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_LETTER) != 0;
 }
+
+/*
+	Internationalize std::isupper ():
+*/
 inline static bool Melder_isUpperCaseLetter (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_UPPERCASE_LETTER) != 0;
 }
+inline static bool Melder_isAsciiUpperCaseLetter (const char32 kar) {
+	return kar >= U'A' && kar <= U'Z';
+}
+
+/*
+	Internationalize std::islower ():
+*/
 inline static bool Melder_isLowerCaseLetter (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_LOWERCASE_LETTER) != 0;
 }
+inline static bool Melder_isAsciiLowerCaseLetter (const char32 kar) {
+	return kar >= U'a' && kar <= U'z';
+}
+
 inline static bool Melder_isTitleCaseLetter (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_TITLECASE_LETTER) != 0;
 }
+inline static bool Melder_isAsciiTitleCaseLetter (const char32 kar) {
+	return kar >= U'A' && kar <= U'Z';
+}
+
+/*
+	Internationalize std::isdigit ():
+*/
 inline static bool Melder_isDecimalNumber (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_DECIMAL_NUMBER) != 0;
 }
 inline static bool Melder_isAsciiDecimalNumber (const char32 kar) {
 	return kar >= U'0' && kar <= U'9';
 }
+
+/*
+	We cannot really internationalize std::isxdigit ():
+*/
+inline static bool Melder_isHexadecimalDigit (const char32 kar) {
+	return kar >= U'0' && kar <= U'9' || kar >= U'A' && kar <= U'Z' || kar >= U'a' && kar <= U'z';
+}
+
+/*
+	Internationalize std::isalnum ():
+*/
+inline static bool Melder_isAlphanumeric (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_ALPHANUMERIC) != 0;
+}
+inline static bool Melder_isAsciiAlphanumeric (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_ALPHANUMERIC) != 0;
+}
+
+/*
+	Internationalize std::ispunct ():
+*/
+inline static bool Melder_isPunctuationOrSymbol (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
+}
+inline static bool Melder_isAsciiPunctuationOrSymbol (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
+}
+
 inline static bool Melder_isWordCharacter (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
 }
 inline static bool Melder_isAsciiWordCharacter (const char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
 }
+
+/*
+	Internationalize std::iscntrl ():
+*/
+inline static bool Melder_isControl (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
+}
+inline static bool Melder_isAsciiControl (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
+}
+
+/*
+	Internationalize std::isprint ():
+*/
+inline static bool Melder_isPrintable (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
+}
+inline static bool Melder_isAsciiPrintable (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
+}
+
+/*
+	Internationalize std::isgraph ():
+*/
+inline static bool Melder_hasInk (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
+}
+inline static bool Melder_isAsciiHasInk (const char32 kar) {
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
+}
+
+/*
+	Internationalize std::toupper () and std::tolower ():
+*/
 inline static char32 Melder_toUpperCase (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. upperCase : kar;
 }
