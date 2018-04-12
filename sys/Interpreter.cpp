@@ -667,13 +667,13 @@ static bool isCommand (const char32 *p) {
 	/*
 	 * Otherwise, things that start with lower case are formulas.
 	 */
-	if (! isupper ((int) *p)) return false;
+	if (! Melder_isUpperCaseLetter (*p)) return false;
 	/*
 	 * The remaining possibility is things that start with upper case.
 	 * If they contain an underscore, they are object names, hence we must have a formula.
 	 * Otherwise, we have a command.
 	 */
-	while (isalnum ((int) *p)) p ++;
+	while (Melder_isAlphanumeric (*p)) p ++;
 	return *p != '_';
 }
 
