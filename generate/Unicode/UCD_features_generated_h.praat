@@ -1,5 +1,7 @@
 # UCD_features_generated_h.praat
-# Paul Boersma 20180410
+# Paul Boersma 20180411
+
+Text writing preferences: "UTF-8"
 
 table = Read Table from semicolon-separated file: "UnicodeData.txt"
 numberOfRows = Get number of rows
@@ -22,7 +24,7 @@ for irow from 1 to numberOfRows
 			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", '\0', '\0' }," + newline$
 		else
 			line$ = "/* " + hexadecimal$ (previousLineCodePoint, 4) + " UNASSIGNED */" + newline$
-			line$ += tab$ + "{ mUCD_UNASSIGNED " +
+			line$ += tab$ + "{ kUCD_UNASSIGNED " +
 			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", 0x" + hexadecimal$ (previousLineCodePoint, 4) +
 			... ", 0x" + hexadecimal$ (previousLineCodePoint, 4) + ", '\0', '\0' }," + newline$
 		endif
@@ -110,7 +112,11 @@ for irow from 1 to numberOfRows
 		endif
 	elsif majorCategoryCode$ = "Z"
 		if minorCategoryCode$ = "s"
-			categoryFeature$ = "mUCD_SPACE_SEPARATOR"
+			if lineCodePoint = 0x00A0 or lineCodePoint = 0x202F
+				categoryFeature$ = "mUCD_NON_BREAKING_SPACE"
+			else
+				categoryFeature$ = "mUCD_BREAKING_SPACE"
+			endif
 		elsif minorCategoryCode$ = "l"
 			categoryFeature$ = "mUCD_LINE_SEPARATOR"
 		elsif minorCategoryCode$ = "p"
@@ -125,18 +131,18 @@ for irow from 1 to numberOfRows
 			# Special cases that diverge from UnicodeData.txt.
 			#
 			if lineCodePoint = 9   ; tab
-				categoryFeature$ += " | mUCD_SPACE_SEPARATOR"
+				categoryFeature$ += " | mUCD_BREAKING_SPACE"
 			elsif lineCodePoint >= 10 and lineCodePoint <= 13 or lineCodePoint = 0x0085   ; line feed, vertical tab, form feed, carriage return, next line
 				categoryFeature$ += " | mUCD_LINE_SEPARATOR"
 			endif
 		elsif minorCategoryCode$ = "f"
 			categoryFeature$ = "mUCD_FORMAT"
 		elsif minorCategoryCode$ = "s"
-			categoryFeature$ = "mUCD_SURROGATE"
+			categoryFeature$ = "kUCD_UNASSIGNED"
 		elsif minorCategoryCode$ = "o"
 			categoryFeature$ = "mUCD_PRIVATE_USE"
 		elsif minorCategoryCode$ = "n"
-			categoryFeature$ = "mUCD_UNASSIGNED"
+			categoryFeature$ = "kUCD_UNASSIGNED"
 		else
 			exitScript: "Unknown other category code in row ", irow, "."
 		endif
