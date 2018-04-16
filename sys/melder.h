@@ -125,53 +125,59 @@ typedef char32_t char32;
 #define kUCD_TOP_OF_LIST  0x2FA1D
 #define kUCD_UNASSIGNED  0
 
-#define mUCD_UPPERCASE_LETTER  (1 << 0)
-#define mUCD_LOWERCASE_LETTER  (1 << 1)
-#define mUCD_TITLECASE_LETTER  (1 << 2)
-#define mUCD_CASED_LETTER  (mUCD_UPPERCASE_LETTER | mUCD_LOWERCASE_LETTER | mUCD_TITLECASE_LETTER)
-#define mUCD_MODIFIER_LETTER  (1 << 3)
-#define mUCD_OTHER_LETTER  (1 << 4)
-#define mUCD_LETTER  (mUCD_CASED_LETTER | mUCD_MODIFIER_LETTER | mUCD_OTHER_LETTER)
+enum {
+	mUCD_UPPERCASE_LETTER = (1 << 0),
+	mUCD_LOWERCASE_LETTER = (1 << 1),
+	mUCD_TITLECASE_LETTER = (1 << 2),
+	mUCD_CASED_LETTER = (mUCD_UPPERCASE_LETTER | mUCD_LOWERCASE_LETTER | mUCD_TITLECASE_LETTER),
+	mUCD_MODIFIER_LETTER = (1 << 3),
+	mUCD_OTHER_LETTER = (1 << 4),
+	mUCD_LETTER = (mUCD_CASED_LETTER | mUCD_MODIFIER_LETTER | mUCD_OTHER_LETTER),
 
-#define mUCD_NONSPACING_MARK  (1 << 5)
-#define mUCD_SPACING_MARK  (1 << 6)
-#define mUCD_ENCLOSING_MARK  (1 << 7)
-#define mUCD_MARK  (mUCD_NONSPACING_MARK | mUCD_SPACING_MARK | mUCD_ENCLOSING_MARK)
+	mUCD_NONSPACING_MARK = (1 << 5),
+	mUCD_SPACING_MARK = (1 << 6),
+	mUCD_ENCLOSING_MARK = (1 << 7),
+	mUCD_MARK = (mUCD_NONSPACING_MARK | mUCD_SPACING_MARK | mUCD_ENCLOSING_MARK),
 
-#define mUCD_DECIMAL_NUMBER  (1 << 8)
-#define mUCD_LETTER_NUMBER  (1 << 9)
-#define mUCD_OTHER_NUMBER  (1 << 10)
-#define mUCD_NUMBER  (mUCD_DECIMAL_NUMBER | mUCD_LETTER_NUMBER | mUCD_OTHER_NUMBER)
+	mUCD_DECIMAL_NUMBER = (1 << 8),
+	mUCD_LETTER_NUMBER = (1 << 9),
+	mUCD_OTHER_NUMBER = (1 << 10),
+	mUCD_NUMBER = (mUCD_DECIMAL_NUMBER | mUCD_LETTER_NUMBER | mUCD_OTHER_NUMBER),
 
-#define mUCD_CONNECTOR_PUNCTUATION  (1 << 11)
-#define mUCD_DASH_PUNCTUATION  (1 << 12)
-#define mUCD_OPEN_PUNCTUATION  (1 << 13)
-#define mUCD_CLOSE_PUNCTUATION  (1 << 14)
-#define mUCD_INITIAL_PUNCTUATION  (1 << 15)
-#define mUCD_FINAL_PUNCTUATION  (1 << 16)
-#define mUCD_OTHER_PUNCTUATION  (1 << 17)
-#define mUCD_PUNCTUATION  (mUCD_CONNECTOR_PUNCTUATION | mUCD_DASH_PUNCTUATION | mUCD_OPEN_PUNCTUATION | mUCD_CLOSE_PUNCTUATION | mUCD_INITIAL_PUNCTUATION | mUCD_FINAL_PUNCTUATION | mUCD_OTHER_PUNCTUATION)
+	mUCD_CONNECTOR_PUNCTUATION = (1 << 11),
+	mUCD_DASH_PUNCTUATION = (1 << 12),
+	mUCD_OPEN_PUNCTUATION = (1 << 13),
+	mUCD_CLOSE_PUNCTUATION = (1 << 14),
+	mUCD_INITIAL_PUNCTUATION = (1 << 15),
+	mUCD_FINAL_PUNCTUATION = (1 << 16),
+	mUCD_OTHER_PUNCTUATION = (1 << 17),
+	mUCD_PUNCTUATION = (mUCD_CONNECTOR_PUNCTUATION | mUCD_DASH_PUNCTUATION | mUCD_OPEN_PUNCTUATION | mUCD_CLOSE_PUNCTUATION | mUCD_INITIAL_PUNCTUATION | mUCD_FINAL_PUNCTUATION | mUCD_OTHER_PUNCTUATION),
 
-#define mUCD_MATH_SYMBOL  (1 << 18)
-#define mUCD_CURRENCY_SYMBOL  (1 << 19)
-#define mUCD_MODIFIER_SYMBOL  (1 << 20)
-#define mUCD_OTHER_SYMBOL  (1 << 21)
-#define mUCD_SYMBOL  (mUCD_MATH_SYMBOL | mUCD_CURRENCY_SYMBOL | mUCD_MODIFIER_SYMBOL | mUCD_OTHER_SYMBOL)
+	mUCD_MATH_SYMBOL = (1 << 18),
+	mUCD_CURRENCY_SYMBOL = (1 << 19),
+	mUCD_MODIFIER_SYMBOL = (1 << 20),
+	mUCD_OTHER_SYMBOL = (1 << 21),
+	mUCD_SYMBOL = (mUCD_MATH_SYMBOL | mUCD_CURRENCY_SYMBOL | mUCD_MODIFIER_SYMBOL | mUCD_OTHER_SYMBOL),
 
-#define mUCD_BREAKING_SPACE  (1 << 22)
-#define mUCD_NON_BREAKING_SPACE  (1 << 23)
-#define mUCD_SPACE_SEPARATOR  (mUCD_BREAKING_SPACE | mUCD_NON_BREAKING_SPACE)
-#define mUCD_LINE_SEPARATOR  (1 << 24)
-#define mUCD_PARAGRAPH_SEPARATOR  (1 << 25)
-#define mUCD_NEWLINE  (mUCD_LINE_SEPARATOR | mUCD_PARAGRAPH_SEPARATOR)
-#define mUCD_SEPARATOR  (mUCD_SPACE_SEPARATOR | mUCD_NEWLINE)
+	mUCD_BREAKING_SPACE = (1 << 22),
+	mUCD_NON_BREAKING_SPACE = (1 << 23),
+	mUCD_SPACE_SEPARATOR = (mUCD_BREAKING_SPACE | mUCD_NON_BREAKING_SPACE),
+	mUCD_LINE_SEPARATOR = (1 << 24),
+	mUCD_PARAGRAPH_SEPARATOR = (1 << 25),
+	mUCD_NEWLINE = (mUCD_LINE_SEPARATOR | mUCD_PARAGRAPH_SEPARATOR),
+	mUCD_SEPARATOR = (mUCD_SPACE_SEPARATOR | mUCD_NEWLINE),
 
-#define mUCD_CONTROL  (1 << 26)
-#define mUCD_FORMAT  (1 << 27)
-#define mUCD_PRIVATE_USE  (1 << 28)
+	mUCD_CONTROL = (1 << 26),
+	mUCD_FORMAT = (1 << 27),
+	mUCD_PRIVATE_USE = (1 << 28),
 
-#define mUCD_ALPHANUMERIC  (mUCD_LETTER | mUCD_NUMBER)
-#define mUCD_WORD_CHARACTER  (mUCD_LETTER | mUCD_MARK | mUCD_NUMBER | mUCD_CONNECTOR_PUNCTUATION)
+	mUCD_WORD_CHARACTER = (1 << 29),
+	mUCD_NULL = (1 << 30),
+
+	mUCD_ALPHANUMERIC = (mUCD_LETTER | mUCD_NUMBER),
+	mUCD_END_OF_INK = (mUCD_SEPARATOR | mUCD_NULL),
+	mUCD_END_OF_LINE = (mUCD_NEWLINE | mUCD_NULL),
+};
 
 struct UCD_CodePointInfo {
 	uint32 features;
@@ -182,11 +188,33 @@ extern UCD_CodePointInfo theUnicodeDatabase [1+kUCD_TOP_OF_LIST];
 enum class kMelder_charset { ASCII_, UNICODE_ };
 
 /*
+	Praat is an internationalized program, which means it has to work in the same way
+	wherever on earth it is used. This means that Praat has to be blind to localized settings,
+	such as what counts as a space and what combinations of characters
+	count as pairs of lower case and upper case.
+
+	To be able to use Praat all over the world, we therefore define one single
+	"international locale", which is simply based on the Unicode features of each code point.
+*/
+
+/*
 	Internationalize std::isblank ():
 */
 inline static bool Melder_isHorizontalSpace (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SPACE_SEPARATOR) != 0;
 }
+inline static void Melder_skipHorizontalSpace (char32 **p_text) {
+	while (Melder_isHorizontalSpace (**p_text)) (*p_text) ++;
+}
+inline static char32 * Melder_findEndOfHorizontalSpace (char32 *p) {
+	while (Melder_isHorizontalSpace (*p)) p ++;
+	return p;
+}
+inline static const char32 * Melder_findEndOfHorizontalSpace (const char32 *p) {
+	while (Melder_isHorizontalSpace (*p)) p ++;
+	return p;
+}
+
 inline static bool Melder_isAsciiHorizontalSpace (const char32 kar) {
 	return kar == U'\t' || kar == U' ';
 }
@@ -210,6 +238,24 @@ inline static bool Melder_isHorizontalOrVerticalSpace (const char32 kar, kMelder
 }
 inline static bool Melder_isAsciiHorizontalOrVerticalSpace (const char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
+}
+
+inline static bool Melder_staysWithinInk (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_INK) == 0;
+}
+inline static bool Melder_staysWithinLine (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_LINE) == 0;
+}
+inline static void Melder_skipToEndOfLine (char32 **p_text) {
+	while (Melder_staysWithinLine (**p_text)) (*p_text) ++;
+}
+inline static char32 * Melder_findEndOfLine (char32 *p) {
+	while (Melder_staysWithinLine (*p)) p ++;
+	return p;
+}
+inline static const char32 * Melder_findEndOfLine (const char32 *p) {
+	while (Melder_staysWithinLine (*p)) p ++;
+	return p;
 }
 
 /*
@@ -276,16 +322,6 @@ inline static bool Melder_isAsciiAlphanumeric (const char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_ALPHANUMERIC) != 0;
 }
 
-/*
-	Internationalize std::ispunct ():
-*/
-inline static bool Melder_isPunctuationOrSymbol (const char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
-}
-inline static bool Melder_isAsciiPunctuationOrSymbol (const char32 kar) {
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
-}
-
 inline static bool Melder_isWordCharacter (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
 }
@@ -294,32 +330,34 @@ inline static bool Melder_isAsciiWordCharacter (const char32 kar) {
 }
 
 /*
-	Internationalize std::iscntrl ():
+	The standard library further contains std::ispunct (), std::iscntrl (), std::isprint (), std::isgraph ().
+	These have very little use nowadays, so only for completeness do we include versions of them here,
+	which are correct at least for ASCII arguments.
+	Of these four functions, Melder_hasInk () is not yet correct for all Unicode points,
+	as approximately one half of the mUCD_FORMAT points are inkless as well.
 */
+inline static bool Melder_isPunctuationOrSymbol (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
+}
+inline static bool Melder_isAsciiPunctuationOrSymbol (const char32 kar) {   // same as std::ispunct() with default C locale
+	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
+}
 inline static bool Melder_isControl (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
 }
-inline static bool Melder_isAsciiControl (const char32 kar) {
+inline static bool Melder_isAsciiControl (const char32 kar) {   // same as std::iscntrl() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
 }
-
-/*
-	Internationalize std::isprint ():
-*/
 inline static bool Melder_isPrintable (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
-inline static bool Melder_isAsciiPrintable (const char32 kar) {
+inline static bool Melder_isAsciiPrintable (const char32 kar) {   // same as std::isprint() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
-
-/*
-	Internationalize std::isgraph ():
-*/
 inline static bool Melder_hasInk (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
-inline static bool Melder_isAsciiHasInk (const char32 kar) {
+inline static bool Melder_isAsciiHasInk (const char32 kar) {   // same as std::isgraph() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
 
