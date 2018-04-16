@@ -186,7 +186,7 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 				Invariant here: we are at the beginning of a line.
 			*/
 			Melder_skipHorizontalSpace (& p);
-			if (str32nequ (p, U"form", 4) && Melder_isHorizontalSpace (p [4])) {
+			if (str32nequ (p, U"form", 4) && ! Melder_staysWithinInk (p [4])) {
 				formLocation = p;
 				break;
 			}
@@ -199,7 +199,7 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 		If there is no "form" line, there are no parameters.
 	*/
 	if (formLocation) {
-		char32 *dialogTitle = Melder_findEndOfHorizontalSpace (formLocation + 5);
+		char32 *dialogTitle = Melder_findEndOfHorizontalSpace (formLocation + 4);
 		char32 *endOfLine = Melder_findEndOfLine (dialogTitle);
 		if (*endOfLine == U'\0')
 			Melder_throw (U"Unfinished form (only a \"form\" line).");
@@ -1720,7 +1720,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (iline > numberOfLines) Melder_throw (U"Unmatched 'for'.");
 							}
-						} else if (str32nequ (command2.string, U"form ", 5)) {
+						} else if (str32nequ (command2.string, U"form", 4) && ! Melder_staysWithinInk (command2.string [4])) {
 							integer iline;
 							for (iline = lineNumber + 1; iline <= numberOfLines; iline ++)
 								if (str32nequ (lines [iline], U"endform", 7))
