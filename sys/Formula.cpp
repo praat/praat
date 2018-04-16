@@ -372,11 +372,11 @@ static void Formula_lexan () {
 	ilexan = iparse = ilabel = numberOfStringConstants = 0;
 	do {
 		nieuwkar;
-		if (kar == U' ' || kar == U'\t') {
+		if (Melder_isHorizontalOrVerticalSpace (kar)) {
 			;   // ignore spaces and tabs
 		} else if (kar == U'\0') {
 			nieuwtok (END_)
-		} else if (kar >= U'0' && kar <= U'9') {
+		} else if (Melder_isAsciiDecimalNumber (kar)) {
 			char32 saveKar = kar;
 			bool isHexadecimal = false;
 			if (kar == U'0') {
@@ -390,7 +390,7 @@ static void Formula_lexan () {
 			}
 			if (isHexadecimal) {
 				stokaan;
-				do stokkar while (kar >= U'0' && kar <= U'9' || kar >= U'A' && kar <= U'F' || kar >= U'a' && kar <= U'f');
+				do stokkar while (Melder_isHexadecimalDigit (kar));
 				stokuit;
 				oudkar;
 				nieuwtok (NUMBER_)
@@ -398,15 +398,15 @@ static void Formula_lexan () {
 			} else {
 				kar = saveKar;
 				stokaan;
-				do stokkar while (kar >= U'0' && kar <= U'9');
-				if (kar == U'.') do stokkar while (kar >= U'0' && kar <= U'9');
+				do stokkar while (Melder_isAsciiDecimalNumber (kar));
+				if (kar == U'.') do stokkar while (Melder_isAsciiDecimalNumber (kar));
 				if (kar == U'e' || kar == U'E') {
 					kar = U'e'; stokkar
 					if (kar == U'-') stokkar
 					else if (kar == U'+') nieuwkar;
-					if (! (kar >= U'0' && kar <= U'9'))
+					if (! Melder_isAsciiDecimalNumber (kar))
 						formulefout (U"Missing exponent", ikar);
-					do stokkar while (kar >= U'0' && kar <= U'9');
+					do stokkar while (Melder_isAsciiDecimalNumber (kar));
 				}
 				if (kar == U'%') stokkar
 				stokuit;
@@ -414,15 +414,14 @@ static void Formula_lexan () {
 				nieuwtok (NUMBER_)
 				tokgetal (Melder_atof (token.string));
 			}
-		} else if ((kar >= U'a' && kar <= U'z') || kar >= 192 || (kar == U'.' &&
-				((theExpression [ikar + 1] >= U'a' && theExpression [ikar + 1] <= U'z') || theExpression [ikar + 1] >= 192)
+		} else if (Melder_isLowerCaseLetter (kar) || (kar == U'.' && Melder_isLowerCaseLetter (theExpression [ikar + 1])
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_
 					&& lexan [itok]. symbol != RECHTEHAAKSLUITEN_)))) {
 			int tok;
 			bool isString = false;
 			int rank = 0;
 			stokaan;
-			do stokkar while ((kar >= U'A' && kar <= U'Z') || (kar >= U'a' && kar <= U'z') || kar >= 192 || (kar >= U'0' && kar <= U'9') || kar == U'_' || kar == U'.');
+			do stokkar while (Melder_isWordCharacter (kar) || kar == U'.');
 			if (kar == '$') {
 				stokkar
 				isString = true;
@@ -482,7 +481,7 @@ static void Formula_lexan () {
 					 */
 					int jkar;
 					jkar = ikar + 1;
-					while (theExpression [jkar] == U' ' || theExpression [jkar] == U'\t') jkar ++;
+					while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 					if (theExpression [jkar] == U'(' || theExpression [jkar] == U':') {
 						nieuwtok (tok)   // this must be a function name
 					} else if (theExpression [jkar] == U'[' && rank == 0) {
@@ -565,7 +564,7 @@ static void Formula_lexan () {
 						 * This must be a variable, since there is no "current object" here.
 						 */
 						int jkar = ikar + 1;
-						while (theExpression [jkar] == U' ' || theExpression [jkar] == U'\t') jkar ++;
+						while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 						if (theExpression [jkar] == U'[' && rank == 0) {
 							if (isString) {
 								nieuwtok (INDEXED_STRING_VARIABLE_)
@@ -616,7 +615,7 @@ static void Formula_lexan () {
 				 * token.string is not a language name
 				 */
 				int jkar = ikar + 1;
-				while (theExpression [jkar] == U' ' || theExpression [jkar] == U'\t') jkar ++;
+				while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 				if (theExpression [jkar] == U'(' || theExpression [jkar] == U':') {
 					Melder_throw (
 						U"Unknown function " U_LEFT_GUILLEMET, token.string, U_RIGHT_GUILLEMET U" in formula.");
@@ -779,9 +778,9 @@ static void Formula_lexan () {
 		} else if (kar == U'@') {
 			do {
 				nieuwkar;
-			} while (kar == U' ' || kar == U'\t');
+			} while (Melder_isHorizontalSpace (kar));
 			stokaan;
-			do stokkar while ((kar >= U'A' && kar <= U'Z') || (kar >= U'a' && kar <= U'z') || kar >= 192 || (kar >= U'0' && kar <= U'9') || kar == U'_' || kar == U'.');
+			do stokkar while (Melder_isWordCharacter (kar) || kar == U'.');
 			stokuit;
 			oudkar;
 			nieuwtok (CALL_)
@@ -4609,7 +4608,7 @@ static void do_extractNumber () {
 			/* Skip the prompt. */
 			substring += str32len (t->string);
 			/* Skip white space. */
-			while (*substring == U' ' || *substring == U'\t' || *substring == U'\n' || *substring == U'\r') substring ++;
+			while (Melder_isHorizontalOrVerticalSpace (*substring)) substring ++;
 			if (substring [0] == U'\0' || str32nequ (substring, U"--undefined--", 13)) {
 				pushNumber (undefined);
 			} else {
@@ -4618,7 +4617,7 @@ static void do_extractNumber () {
 				for (; i < 100; i ++) {
 					buffer [i] = *substring;
 					substring ++;
-					if (*substring == U'\0' || *substring == U' ' || *substring == U'\t' || *substring == U'\n' || *substring == U'\r') break;
+					if (*substring == U'\0' || Melder_isHorizontalOrVerticalSpace (*substring)) break;
 				}
 				if (i >= 100) {
 					buffer [100] = U'\0';
@@ -4655,15 +4654,15 @@ static void do_extractTextStr (bool singleWord) {
 			substring += str32len (t->string);
 			if (singleWord) {
 				/* Skip white space. */
-				while (*substring == U' ' || *substring == U'\t' || *substring == U'\n' || *substring == U'\r') substring ++;
+				while (Melder_isHorizontalOrVerticalSpace (*substring)) substring ++;
 			}
 			char32 *p = substring;
 			if (singleWord) {
 				/* Proceed until next white space. */
-				while (*p != U'\0' && *p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\r') p ++;
+				while (Melder_staysWithinInk (*p)) p ++;
 			} else {
 				/* Proceed until end of line. */
-				while (*p != U'\0' && *p != U'\n' && *p != U'\r') p ++;
+				while (Melder_staysWithinLine (*p)) p ++;
 			}
 			length = p - substring;
 			result.reset (Melder_malloc (char32, length + 1));

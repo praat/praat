@@ -47,42 +47,45 @@ for irow from 1 to numberOfRows
 	majorCategoryCode$ = mid$ (categoryCode$, 1, 1)
 	minorCategoryCode$ = mid$ (categoryCode$, 2, 1)
 	if majorCategoryCode$ = "L"
+		categoryFeature$ = "mUCD_WORD_CHARACTER"
 		if minorCategoryCode$ = "u"
-			categoryFeature$ = "mUCD_UPPERCASE_LETTER"
+			categoryFeature$ += " | mUCD_UPPERCASE_LETTER"
 		elsif minorCategoryCode$ = "l"
-			categoryFeature$ = "mUCD_LOWERCASE_LETTER"
+			categoryFeature$ += " | mUCD_LOWERCASE_LETTER"
 		elsif minorCategoryCode$ = "t"
-			categoryFeature$ = "mUCD_TITLECASE_LETTER"
+			categoryFeature$ += " | mUCD_TITLECASE_LETTER"
 		elsif minorCategoryCode$ = "m"
-			categoryFeature$ = "mUCD_MODIFIER_LETTER"
+			categoryFeature$ += " | mUCD_MODIFIER_LETTER"
 		elsif minorCategoryCode$ = "o"
-			categoryFeature$ = "mUCD_OTHER_LETTER"
+			categoryFeature$ += " | mUCD_OTHER_LETTER"
 		else
 			exitScript: "Unknown letter category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "M"
+		categoryFeature$ = "mUCD_WORD_CHARACTER"
 		if minorCategoryCode$ = "n"
-			categoryFeature$ = "mUCD_NONSPACING_MARK"
+			categoryFeature$ += " | mUCD_NONSPACING_MARK"
 		elsif minorCategoryCode$ = "c"
-			categoryFeature$ = "mUCD_SPACING_MARK"
+			categoryFeature$ += " | mUCD_SPACING_MARK"
 		elsif minorCategoryCode$ = "e"
-			categoryFeature$ = "mUCD_ENCLOSING_MARK"
+			categoryFeature$ += " | mUCD_ENCLOSING_MARK"
 		else
 			exitScript: "Unknown mark category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "N"
+		categoryFeature$ = "mUCD_WORD_CHARACTER"
 		if minorCategoryCode$ = "d"
-			categoryFeature$ = "mUCD_DECIMAL_NUMBER"
+			categoryFeature$ += " | mUCD_DECIMAL_NUMBER"
 		elsif minorCategoryCode$ = "l"
-			categoryFeature$ = "mUCD_LETTER_NUMBER"
+			categoryFeature$ += " | mUCD_LETTER_NUMBER"
 		elsif minorCategoryCode$ = "o"
-			categoryFeature$ = "mUCD_OTHER_NUMBER"
+			categoryFeature$ += " | mUCD_OTHER_NUMBER"
 		else
 			exitScript: "Unknown number category code in row ", irow, "."
 		endif
 	elsif majorCategoryCode$ = "P"
 		if minorCategoryCode$ = "c"
-			categoryFeature$ = "mUCD_CONNECTOR_PUNCTUATION"
+			categoryFeature$ = "mUCD_WORD_CHARACTER | mUCD_CONNECTOR_PUNCTUATION"
 		elsif minorCategoryCode$ = "d"
 			categoryFeature$ = "mUCD_DASH_PUNCTUATION"
 		elsif minorCategoryCode$ = "s"
@@ -130,7 +133,9 @@ for irow from 1 to numberOfRows
 			#
 			# Special cases that diverge from UnicodeData.txt.
 			#
-			if lineCodePoint = 9   ; tab
+			if lineCodePoint = 0
+				categoryFeature$ += " | mUCD_NULL"
+			elsif lineCodePoint = 9   ; tab
 				categoryFeature$ += " | mUCD_BREAKING_SPACE"
 			elsif lineCodePoint >= 10 and lineCodePoint <= 13 or lineCodePoint = 0x0085   ; line feed, vertical tab, form feed, carriage return, next line
 				categoryFeature$ += " | mUCD_LINE_SEPARATOR"

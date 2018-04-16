@@ -636,32 +636,6 @@ void Longchar_init () {
 			theUnicodeDatabase [data -> unicode]. second = data -> second;
 		}
 	}
-	/*
-	genericDigraph [' ']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
-	genericDigraph ['\r']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
-	genericDigraph ['\n']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
-	genericDigraph ['\t']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
-	genericDigraph ['\f']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
-	genericDigraph ['\v']. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE | mUCD_ASCII_SPACE;
-	genericDigraph [UNICODE_OGHAM_SPACE_MARK]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_MONGOLIAN_VOWEL_SEPARATOR]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_EN_QUAD]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_EM_QUAD]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_EN_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_EM_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_THREE_PER_EM_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_FOUR_PER_EM_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_SIX_PER_EM_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_FIGURE_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // questionable
-	genericDigraph [UNICODE_PUNCTUATION_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_THIN_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_HAIR_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_ZERO_WIDTH_SPACE]. features |= mUCD_BREAKING_SPACE;   // questionable
-	genericDigraph [UNICODE_LINE_SEPARATOR]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_PARAGRAPH_SEPARATOR]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_MEDIUM_MATHEMATICAL_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112
-	genericDigraph [UNICODE_IDEOGRAPHIC_SPACE]. features |= mUCD_VISIBLE_SPACE | mUCD_BREAKING_SPACE;   // ISO 30112; occurs on Japanese computers
-	*/
 	inited = 1;
 }
 

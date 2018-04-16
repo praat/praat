@@ -285,15 +285,15 @@ double Eigen_getSumOfEigenvalues (Eigen me, integer from, integer to) {
 	if (to > my numberOfEigenvalues || from > to) {
 		return undefined;
 	}
-	double sum = 0.0;
+	real80 sum = 0.0;
 	for (integer i = from; i <= to; i++) {
 		sum += my eigenvalues[i];
 	}
-	return sum;
+	return (double) sum;
 }
 
 double Eigen_getCumulativeContributionOfComponents (Eigen me, integer from, integer to) {
-	double partial = 0.0, sum = 0.0;
+	real80 partial = 0.0, sum = 0.0;
 
 	if (to == 0) {
 		to = my numberOfEigenvalues;
@@ -318,7 +318,7 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 	}
 
 	integer n = 1;
-	double p = my eigenvalues[1];
+	real80 p = my eigenvalues [1];
 	while (p / sum < fraction && n < my numberOfEigenvalues) {
 		p += my eigenvalues [++ n];
 	}
