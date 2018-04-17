@@ -129,10 +129,10 @@ void Melder_includeIncludeFiles (char32 **text) {
 				Separate out the name of the include file.
 			 */
 			includeFileName = includeLocation + 8;
-			while (*includeFileName == U' ' || *includeFileName == U'\t') includeFileName ++;
+			while (Melder_isHorizontalSpace (*includeFileName)) includeFileName ++;
 			tail = includeFileName;
-			while (*tail != U'\n' && *tail != U'\0') tail ++;
-			if (*tail == U'\n') {
+			while (Melder_staysWithinLine (*tail)) tail ++;
+			if (*tail != U'\0') {
 				*tail = U'\0';
 				tail += 1;
 			}
@@ -172,73 +172,72 @@ void Melder_includeIncludeFiles (char32 **text) {
 	}
 }
 
-inline static bool Melder_isblank (char32 kar) {
-	return kar == U' ' || kar == U'\t';
-}
-
 integer Interpreter_readParameters (Interpreter me, char32 *text) {
 	char32 *formLocation = nullptr;
 	integer npar = 0;
 	my dialogTitle [0] = U'\0';
 	/*
-	 * Look for a "form" line.
-	 */
+		Look for a "form" line.
+	*/
 	{// scope
 		char32 *p = text;
 		for (;;) {
-			while (Melder_isblank (*p)) p ++;
-			if (str32nequ (p, U"form ", 5)) {
+			/*
+				Invariant here: we are at the beginning of a line.
+			*/
+			Melder_skipHorizontalSpace (& p);
+			if (str32nequ (p, U"form", 4) && ! Melder_staysWithinInk (p [4])) {
 				formLocation = p;
 				break;
 			}
-			while (*p != '\0' && *p != '\n') p ++;
-			if (*p == '\0') break;
-			p ++;   /* Skip newline symbol. */
+			Melder_skipToEndOfLine (& p);
+			if (*p == U'\0') break;
+			p ++;   // skip newline symbol
 		}
 	}
 	/*
-	 * If there is no "form" line, there are no parameters.
-	 */
+		If there is no "form" line, there are no parameters.
+	*/
 	if (formLocation) {
-		char32 *dialogTitle = formLocation + 5, *newLine;
-		while (*dialogTitle == U' ' || *dialogTitle == U'\t') dialogTitle ++;
-		newLine = str32chr (dialogTitle, U'\n');
-		if (newLine) *newLine = U'\0';
-		str32cpy (my dialogTitle, dialogTitle);
-		if (newLine) *newLine = U'\n';
+		char32 *dialogTitle = Melder_findEndOfHorizontalSpace (formLocation + 4);
+		char32 *endOfLine = Melder_findEndOfLine (dialogTitle);
+		if (*endOfLine == U'\0')
+			Melder_throw (U"Unfinished form (only a \"form\" line).");
+		*endOfLine = U'\0';   // destroy input temporarily in order to limit copying of dialog title
+		str32ncpy (my dialogTitle, dialogTitle, Interpreter_MAX_DIALOG_TITLE_LENGTH);
+		*endOfLine = U'\n';   // restore input
 		my numberOfParameters = 0;
-		while (newLine) {
-			char32 *line = newLine + 1, *p;
+		while ((true)) {
 			int type = 0;
-			while (Melder_isblank (*line)) line ++;
-			while (*line == U'#' || *line == U';' || *line == U'!' || *line == U'\n') {
-				newLine = str32chr (line, U'\n');
-				if (! newLine)
-					Melder_throw (U"Unfinished form.");
-				line = newLine + 1;
-				while (Melder_isblank (*line)) line ++;
+			char32 *line = Melder_findEndOfHorizontalSpace (endOfLine + 1);
+			/*
+				Skip empty lines and lines with comments.
+			*/
+			while (*line == U'#' || *line == U';' || *line == U'!' || ! Melder_staysWithinLine (*line)) {
+				endOfLine = Melder_findEndOfLine (line);
+				if (*endOfLine == U'\0')
+					Melder_throw (U"Unfinished form (missing \"endform\").");
+				line = Melder_findEndOfHorizontalSpace (endOfLine + 1);
 			}
 			if (str32nequ (line, U"endform", 7)) break;
-			if (str32nequ (line, U"word ", 5)) { type = Interpreter_WORD; p = line + 5; }
-			else if (str32nequ (line, U"real ", 5)) { type = Interpreter_REAL; p = line + 5; }
-			else if (str32nequ (line, U"positive ", 9)) { type = Interpreter_POSITIVE; p = line + 9; }
-			else if (str32nequ (line, U"integer ", 8)) { type = Interpreter_INTEGER; p = line + 8; }
-			else if (str32nequ (line, U"natural ", 8)) { type = Interpreter_NATURAL; p = line + 8; }
-			else if (str32nequ (line, U"boolean ", 8)) { type = Interpreter_BOOLEAN; p = line + 8; }
-			else if (str32nequ (line, U"sentence ", 9)) { type = Interpreter_SENTENCE; p = line + 9; }
-			else if (str32nequ (line, U"text ", 5)) { type = Interpreter_TEXT; p = line + 5; }
-			else if (str32nequ (line, U"choice ", 7)) { type = Interpreter_CHOICE; p = line + 7; }
-			else if (str32nequ (line, U"optionmenu ", 11)) { type = Interpreter_OPTIONMENU; p = line + 11; }
-			else if (str32nequ (line, U"button ", 7)) { type = Interpreter_BUTTON; p = line + 7; }
-			else if (str32nequ (line, U"option ", 7)) { type = Interpreter_OPTION; p = line + 7; }
-			else if (str32nequ (line, U"comment ", 8)) { type = Interpreter_COMMENT; p = line + 8; }
+			char32 *parameterLocation;
+			if (str32nequ (line, U"word", 4) && ! Melder_staysWithinInk (line [4])) { type = Interpreter_WORD; parameterLocation = line + 4; }
+			else if (str32nequ (line, U"real", 4) && ! Melder_staysWithinInk (line [4])) { type = Interpreter_REAL; parameterLocation = line + 4; }
+			else if (str32nequ (line, U"positive", 8) && ! Melder_staysWithinInk (line [8])) { type = Interpreter_POSITIVE; parameterLocation = line + 8; }
+			else if (str32nequ (line, U"integer", 7) && ! Melder_staysWithinInk (line [7])) { type = Interpreter_INTEGER; parameterLocation = line + 7; }
+			else if (str32nequ (line, U"natural", 7) && ! Melder_staysWithinInk (line [7])) { type = Interpreter_NATURAL; parameterLocation = line + 7; }
+			else if (str32nequ (line, U"boolean", 7) && ! Melder_staysWithinInk (line [7])) { type = Interpreter_BOOLEAN; parameterLocation = line + 7; }
+			else if (str32nequ (line, U"sentence", 8) && ! Melder_staysWithinInk (line [8])) { type = Interpreter_SENTENCE; parameterLocation = line + 8; }
+			else if (str32nequ (line, U"text", 4) && ! Melder_staysWithinInk (line [4])) { type = Interpreter_TEXT; parameterLocation = line + 4; }
+			else if (str32nequ (line, U"choice", 6) && ! Melder_staysWithinInk (line [6])) { type = Interpreter_CHOICE; parameterLocation = line + 6; }
+			else if (str32nequ (line, U"optionmenu", 10) && ! Melder_staysWithinInk (line [10])) { type = Interpreter_OPTIONMENU; parameterLocation = line + 10; }
+			else if (str32nequ (line, U"button", 6) && ! Melder_staysWithinInk (line [6])) { type = Interpreter_BUTTON; parameterLocation = line + 6; }
+			else if (str32nequ (line, U"option", 6) && ! Melder_staysWithinInk (line [6])) { type = Interpreter_OPTION; parameterLocation = line + 6; }
+			else if (str32nequ (line, U"comment", 7) && ! Melder_staysWithinInk (line [7])) { type = Interpreter_COMMENT; parameterLocation = line + 7; }
 			else {
-				newLine = str32chr (line, U'\n');
-				if (newLine) *newLine = U'\0';
-				Melder_appendError (U"Unknown parameter type:\n\"", line, U"\".");
-				if (newLine) *newLine = U'\n';
-				throw MelderError ();
-				return 0;
+				endOfLine = Melder_findEndOfLine (line);
+				*endOfLine = U'\0';   // destroy input in order to limit printing of parameter type
+				Melder_throw (U"Unknown parameter type:\n\"", line, U"\".");
 			}
 			/*
 				Example:
@@ -261,22 +260,26 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 				my arguments [5] := "Blue"
 			*/
 			if (type <= Interpreter_OPTIONMENU) {
-				while (Melder_isblank (*p)) p ++;
-				if (*p == U'\n' || *p == U'\0')
+				Melder_skipHorizontalSpace (& parameterLocation);
+				if (! Melder_staysWithinLine (*parameterLocation)) {
+					*parameterLocation = U'\0';   // destroy input in order to limit printing of line
 					Melder_throw (U"Missing parameter:\n\"", line, U"\".");
+				}
 				char32 *q = my parameters [++ my numberOfParameters];
-				while (*p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\0') * (q ++) = * (p ++);
+				while (Melder_staysWithinInk (*parameterLocation)) * (q ++) = * (parameterLocation ++);
 				*q = U'\0';
 				npar ++;
 			} else {
 				my parameters [++ my numberOfParameters] [0] = U'\0';
 			}
-			while (Melder_isblank (*p)) p ++;
-			newLine = str32chr (p, U'\n');
-			if (newLine) *newLine = U'\0';
+			char32 *argumentLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
+			endOfLine = Melder_findEndOfLine (argumentLocation);
+			if (*endOfLine == U'\0')
+				Melder_throw (U"Unfinished form (missing \"endform\").");
+			*endOfLine = U'\0';   // destroy input temporarily in order to limit copying of argument
 			Melder_free (my arguments [my numberOfParameters]);
-			my arguments [my numberOfParameters] = Melder_dup_f (p);
-			if (newLine) *newLine = U'\n';
+			my arguments [my numberOfParameters] = Melder_dup_f (argumentLocation);
+			*endOfLine = U'\n';   // restore input
 			my types [my numberOfParameters] = type;
 		}
 	} else {
@@ -440,7 +443,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments
 		/*
 		 * Skip spaces until next argument.
 		 */
-		while (*arguments == U' ' || *arguments == U'\t') arguments ++;
+		while (Melder_isHorizontalSpace (*arguments)) arguments ++;
 		/*
 		 * The argument is everything up to the next space, or, if that starts with a double quote,
 		 * everything between this quote and the matching double quote;
@@ -459,7 +462,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments
 				my arguments [ipar] [ichar ++] = *arguments ++;
 			}
 		} else {
-			while (*arguments != U' ' && *arguments != U'\t' && *arguments != U'\0')
+			while (Melder_staysWithinInk (*arguments))
 				my arguments [ipar] [ichar ++] = *arguments ++;
 		}
 		my arguments [ipar] [ichar] = U'\0';   // trailing null byte
@@ -468,7 +471,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments
 	 * Leading spaces are skipped, but trailing spaces are included.
 	 */
 	if (size > 0) {
-		while (Melder_isblank (*arguments)) arguments ++;
+		while (Melder_isHorizontalSpace (*arguments)) arguments ++;
 		Melder_free (my arguments [size]);
 		my arguments [size] = Melder_dup_f (arguments);
 	}
@@ -929,9 +932,9 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 		We just passed the `@` sign, so we continue by looking for a procedure name at the call site.
 	*/
 	char32 *p = command;
-	while (Melder_isblank (*p)) p ++;   // skip whitespace
+	while (Melder_isHorizontalSpace (*p)) p ++;   // skip whitespace
 	char32 *callName = p;
-	while (*p != U'\0' && *p != U' ' && *p != U'\t' && *p != U'(' && *p != U':') p ++;
+	while (Melder_staysWithinInk (*p) && *p != U'(' && *p != U':') p ++;
 	if (p == callName) Melder_throw (U"Missing procedure name after \"@\".");
 	bool hasArguments = ( *p != U'\0' );
 	if (hasArguments) {
@@ -939,7 +942,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 		*p = U'\0';   // close procedure name
 		if (! parenthesisOrColonFound) {
 			p ++;   // step over first white space
-			while (Melder_isblank (*p)) p ++;   // skip more whitespace
+			while (Melder_isHorizontalSpace (*p)) p ++;   // skip more whitespace
 			hasArguments = ( *p != U'\0' );
 			parenthesisOrColonFound = ( *p == U'(' || *p == U':' );
 			if (hasArguments && ! parenthesisOrColonFound)
@@ -952,9 +955,9 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 	for (; iline <= numberOfLines; iline ++) {
 		if (! str32nequ (lines [iline], U"procedure ", 10)) continue;
 		char32 *q = lines [iline] + 10;
-		while (Melder_isblank (*q)) q ++;   // skip whitespace before procedure name
+		while (Melder_isHorizontalSpace (*q)) q ++;   // skip whitespace before procedure name
 		char32 *procName = q;
-		while (*q != U'\0' && ! Melder_isblank (*q) && *q != U'(' && *q != U':') q ++;
+		while (Melder_staysWithinInk (*q) && *q != U'(' && *q != U':') q ++;
 		if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
 		if (q - procName == callLength && str32nequ (procName, callName, callLength)) {
 			/*
@@ -966,16 +969,16 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 			bool parenthesisOrColonFound = ( *q == U'(' || *q == U':' );
 			if (*q) q ++;   // step over parenthesis or colon or first white space
 			if (! parenthesisOrColonFound) {
-				while (Melder_isblank (*q)) q ++;   // skip more whitespace
+				while (Melder_isHorizontalSpace (*q)) q ++;   // skip more whitespace
 				if (*q == U'(' || *q == U':') q ++;   // step over parenthesis or colon
 			}
 			while (*q && *q != U')') {
 				static MelderString argument { };
 				MelderString_empty (& argument);
-				while (Melder_isblank (*p)) p ++;
-				while (Melder_isblank (*q)) q ++;
+				while (Melder_isHorizontalSpace (*p)) p ++;
+				while (Melder_isHorizontalSpace (*q)) q ++;
 				char32 *parameterName = q;
-				while (*q != U'\0' && ! Melder_isblank (*q) && *q != U',' && *q != U')') q ++;   // collect parameter name
+				while (Melder_staysWithinInk (*q) && *q != U',' && *q != U')') q ++;   // collect parameter name
 				int expressionDepth = 0;
 				for (; *p; p ++) {
 					if (*p == U',') {
@@ -1071,9 +1074,9 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 		Old type of procedure calls, with space separation, unquoted strings, and no array support.
 	*/
 	char32 *p = command;
-	while (Melder_isblank (*p)) p ++;   // skip whitespace
+	while (Melder_isHorizontalSpace (*p)) p ++;   // skip whitespace
 	char32 *callName = p;
-	while (*p != U'\0' && *p != U' ' && *p != U'\t' && *p != U'(' && *p != U':') p ++;
+	while (*p != U'\0' && ! Melder_isHorizontalSpace (*p) && *p != U'(' && *p != U':') p ++;
 	if (p == callName) Melder_throw (U"Missing procedure name after 'call'.");
 	bool hasArguments = *p != U'\0';
 	*p = U'\0';   // close procedure name
@@ -1082,9 +1085,9 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 	for (; iline <= numberOfLines; iline ++) {
 		if (! str32nequ (lines [iline], U"procedure ", 10)) continue;
 		char32 *q = lines [iline] + 10;
-		while (Melder_isblank (*q)) q ++;
+		while (Melder_isHorizontalSpace (*q)) q ++;
 		char32 *procName = q;
-		while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U'(' && *q != U':') q ++;
+		while (*q != U'\0' && ! Melder_isHorizontalSpace (*q) && *q != U'(' && *q != U':') q ++;
 		if (q == procName) Melder_throw (U"Missing procedure name after 'procedure'.");
 		bool hasParameters = ( *q != U'\0' );
 		if (q - procName == callLength && str32nequ (procName, callName, callLength)) {
@@ -1099,7 +1102,7 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 				bool parenthesisOrColonFound = ( *q == U'(' || *q == U':' );
 				q ++;   // step over parenthesis or colon or first white space
 				if (! parenthesisOrColonFound) {
-					while (Melder_isblank (*q)) q ++;   // skip more whitespace
+					while (Melder_isHorizontalSpace (*q)) q ++;   // skip more whitespace
 					if (*q == U'(' || *q == U':') q ++;   // step over parenthesis or colon
 				}
 				++ p;   // first argument
@@ -1107,10 +1110,10 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 					char32 *par, save;
 					static MelderString arg { };
 					MelderString_empty (& arg);
-					while (Melder_isblank (*p)) p ++;
-					while (*q == U' ' || *q == U'\t' || *q == U',' || *q == U')') q ++;
+					while (Melder_isHorizontalSpace (*p)) p ++;
+					while (Melder_isHorizontalSpace (*q) || *q == U',' || *q == U')') q ++;
 					par = q;
-					while (*q != U'\0' && *q != U' ' && *q != U'\t' && *q != U',' && *q != U')') q ++;   // collect parameter name
+					while (*q != U'\0' && ! Melder_isHorizontalSpace (*q) && *q != U',' && *q != U')') q ++;   // collect parameter name
 					if (*q) {   // does anything follow the parameter name?
 						if (*p == U'\"') {
 							p ++;   // skip initial quote
@@ -1127,7 +1130,7 @@ static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
 								}
 							}
 						} else {
-							while (*p != U'\0' && *p != U' ' && *p != U'\t')
+							while (*p != U'\0' && ! Melder_isHorizontalSpace (*p))
 								MelderString_appendCharacter (& arg, *p ++);   // white space separates
 						}
 						if (*p) { *p = U'\0'; p ++; }
@@ -1167,7 +1170,7 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 	MelderString_empty (& index);
 	int depth = 0;
 	bool inString = false;
-	while ((depth > 0 || *p != U']' || inString) && *p != U'\n' && *p != U'\0') {
+	while ((depth > 0 || *p != U']' || inString) && Melder_staysWithinLine (*p)) {
 		MelderString_appendCharacter (& index, *p);
 		if (*p == U'[') {
 			if (! inString) depth ++;
@@ -1177,7 +1180,7 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 		if (*p == U'"') inString = ! inString;
 		p ++;
 	}
-	if (*p == U'\n' || *p == U'\0')
+	if (! Melder_staysWithinLine (*p))
 		Melder_throw (U"Missing closing bracket (]) in array element.");
 	Formula_Result result;
 	Interpreter_anyExpression (me, index.string, & result);
@@ -1187,11 +1190,11 @@ static void assignToNumericVectorElement (Interpreter me, char32 *& p, const cha
 		Melder_throw (U"Element index should be numeric.");
 	}
 	p ++;   // step over closing bracket
-	while (Melder_isblank (*p)) p ++;
+	while (Melder_isHorizontalSpace (*p)) p ++;
 	if (*p != U'=')
 		Melder_throw (U"Missing '=' after vector element ", vectorName, U" [", index.string, U"].");
 	p ++;   // step over equals sign
-	while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+	while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment
 	if (*p == U'\0') {
 		Melder_throw (U"Missing expression after vector element ", vectorName, U" [", index.string, U"].");
 	}
@@ -1245,7 +1248,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 	MelderString_empty (& rowFormula);
 	int depth = 0;
 	bool inString = false;
-	while ((depth > 0 || *p != U',' || inString) && *p != U'\n' && *p != U'\0') {
+	while ((depth > 0 || *p != U',' || inString) && Melder_staysWithinLine (*p)) {
 		MelderString_appendCharacter (& rowFormula, *p);
 		if (*p == U'[' || *p == U'(') {
 			if (! inString) depth ++;
@@ -1255,7 +1258,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 		if (*p == U'"') inString = ! inString;
 		p ++;
 	}
-	if (*p == U'\n' || *p == U'\0')
+	if (! Melder_staysWithinLine (*p))
 		Melder_throw (U"Missing comma in matrix indexing.");
 	Formula_Result result;
 	Interpreter_anyExpression (me, rowFormula.string, & result);
@@ -1272,7 +1275,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 	MelderString_empty (& columnFormula);
 	depth = 0;
 	inString = false;
-	while ((depth > 0 || *p != U']' || inString) && *p != U'\n' && *p != U'\0') {
+	while ((depth > 0 || *p != U']' || inString) && Melder_staysWithinLine (*p)) {
 		MelderString_appendCharacter (& columnFormula, *p);
 		if (*p == U'[') {
 			if (! inString) depth ++;
@@ -1282,7 +1285,7 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 		if (*p == U'"') inString = ! inString;
 		p ++;
 	}
-	if (*p == U'\n' || *p == U'\0')
+	if (! Melder_staysWithinLine (*p))
 		Melder_throw (U"Missing closing bracket (]) in matrix indexing.");
 	Interpreter_anyExpression (me, columnFormula.string, & result);
 	if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
@@ -1291,12 +1294,12 @@ static void assignToNumericMatrixElement (Interpreter me, char32 *& p, const cha
 		Melder_throw (U"Column number should be numeric.");
 	}
 	p ++;   // step over closing bracket
-	while (Melder_isblank (*p)) p ++;
+	while (Melder_isHorizontalSpace (*p)) p ++;
 	if (*p != U'=')
 		Melder_throw (U"Missing '=' after matrix element ", matrixName, U" [",
 			rowFormula.string, U",", columnFormula.string, U"].");
 	p ++;   // step over equals sign
-	while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+	while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment
 	if (*p == U'\0') {
 		Melder_throw (U"Missing expression after matrix element ", matrixName, U" [",
 			rowFormula.string, U",", columnFormula.string, U"].");
@@ -1375,7 +1378,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		 */
 		while (! atLastLine) {
 			char32 *endOfLine = command;
-			while (*endOfLine != U'\n' && *endOfLine != U'\0') endOfLine ++;
+			while (Melder_staysWithinLine (*endOfLine)) endOfLine ++;
 			if (*endOfLine == U'\0') atLastLine = true;
 			*endOfLine = U'\0';
 			numberOfLines ++;
@@ -1386,14 +1389,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		 */
 		lines.reset (1, numberOfLines);
 		for (lineNumber = 1, command = text; lineNumber <= numberOfLines; lineNumber ++, command += str32len (command) + 1 + chopped) {
-			while (Melder_isblank (*command) || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
+			while (Melder_isHorizontalSpace (*command) || *command == UNICODE_NO_BREAK_SPACE) command ++;   // nbsp can occur for scripts copied from the manual
 			/*
 			 * Chop trailing spaces?
 			 */
 			#if 0
 				chopped = 0;
 				int length = str32len (command);
-				while (length > 0) { char kar = command [-- length]; if (kar != ' ' && kar != '\t') break; command [length] = '\0'; chopped ++; }
+				while (length > 0) { char kar = command [-- length]; if (! Melder_isHorizontalSpace (kar)) break; command [length] = '\0'; chopped ++; }
 			#endif
 			lines [lineNumber] = command;
 			if (str32nequ (command, U"label ", 6)) {
@@ -1484,7 +1487,6 @@ void Interpreter_run (Interpreter me, char32 *text) {
 		/*
 		 * Execute commands.
 		 */
-		#define wordEnd(c)  (c == U'\0' || c == U' ' || c == U'\t')
 		trace (U"going to handle ", numberOfLines, U" lines");
 		//for (lineNumber = 1; lineNumber <= numberOfLines; lineNumber ++) {
 			//trace (U"line ", lineNumber, U": ", lines [lineNumber]);
@@ -1590,9 +1592,9 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						break;
 					case U'e':
 						if (command2.string [1] == 'n' && command2.string [2] == 'd') {
-							if (str32nequ (command2.string, U"endif", 5) && wordEnd (command2.string [5])) {
+							if (str32nequ (command2.string, U"endif", 5) && ! Melder_staysWithinInk (command2.string [5])) {
 								/* Ignore. */
-							} else if (str32nequ (command2.string, U"endfor", 6) && wordEnd (command2.string [6])) {
+							} else if (str32nequ (command2.string, U"endfor", 6) && ! Melder_staysWithinInk (command2.string [6])) {
 								int depth = 0;
 								integer iline;
 								for (iline = lineNumber - 1; iline > 0; iline --) {
@@ -1600,33 +1602,33 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									if (line [0] == U'f' && line [1] == U'o' && line [2] == U'r' && line [3] == U' ') {
 										if (depth == 0) { lineNumber = iline - 1; fromendfor = true; break; }   // go before 'for'
 										else depth --;
-									} else if (str32nequ (lines [iline], U"endfor", 6) && wordEnd (lines [iline] [6])) {
+									} else if (str32nequ (lines [iline], U"endfor", 6) && ! Melder_staysWithinInk (lines [iline] [6])) {
 										depth ++;
 									}
 								}
 								if (iline <= 0) Melder_throw (U"Unmatched 'endfor'.");
-							} else if (str32nequ (command2.string, U"endwhile", 8) && wordEnd (command2.string [8])) {
+							} else if (str32nequ (command2.string, U"endwhile", 8) && ! Melder_staysWithinInk (command2.string [8])) {
 								int depth = 0;
 								integer iline;
 								for (iline = lineNumber - 1; iline > 0; iline --) {
 									if (str32nequ (lines [iline], U"while ", 6)) {
 										if (depth == 0) { lineNumber = iline - 1; break; }   // go before 'while'
 										else depth --;
-									} else if (str32nequ (lines [iline], U"endwhile", 8) && wordEnd (lines [iline] [8])) {
+									} else if (str32nequ (lines [iline], U"endwhile", 8) && ! Melder_staysWithinInk (lines [iline] [8])) {
 										depth ++;
 									}
 								}
 								if (iline <= 0) Melder_throw (U"Unmatched 'endwhile'.");
-							} else if (str32nequ (command2.string, U"endproc", 7) && wordEnd (command2.string [7])) {
+							} else if (str32nequ (command2.string, U"endproc", 7) && ! Melder_staysWithinInk (command2.string [7])) {
 								if (callDepth == 0) Melder_throw (U"Unmatched 'endproc'.");
 								lineNumber = callStack [callDepth --];
 								-- my callDepth;
 							} else fail = true;
-						} else if (str32nequ (command2.string, U"else", 4) && wordEnd (command2.string [4])) {
+						} else if (str32nequ (command2.string, U"else", 4) && ! Melder_staysWithinInk (command2.string [4])) {
 							int depth = 0;
 							integer iline;
 							for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
-								if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
+								if (str32nequ (lines [iline], U"endif", 5) && ! Melder_staysWithinInk (lines [iline] [5])) {
 									if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 									else depth --;
 								} else if (str32nequ (lines [iline], U"if ", 3)) {
@@ -1643,13 +1645,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									int depth = 0;
 									integer iline;
 									for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
-										if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
+										if (str32nequ (lines [iline], U"endif", 5) && ! Melder_staysWithinInk (lines [iline] [5])) {
 											if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 											else depth --;
-										} else if (str32nequ (lines [iline], U"else", 4) && wordEnd (lines [iline] [4])) {
+										} else if (str32nequ (lines [iline], U"else", 4) && ! Melder_staysWithinInk (lines [iline] [4])) {
 											if (depth == 0) { lineNumber = iline; break; }   // go after `else`
-										} else if ((str32nequ (lines [iline], U"elsif", 5) && wordEnd (lines [iline] [5]))
-											|| (str32nequ (lines [iline], U"elif", 4) && wordEnd (lines [iline] [4]))) {
+										} else if ((str32nequ (lines [iline], U"elsif", 5) && ! Melder_staysWithinInk (lines [iline] [5]))
+											|| (str32nequ (lines [iline], U"elif", 4) && ! Melder_staysWithinInk (lines [iline] [4]))) {
 											if (depth == 0) { lineNumber = iline - 1; fromif = true; break; }   // go at next 'elsif' or 'elif'
 										} else if (str32nequ (lines [iline], U"if ", 3)) {
 											depth ++;
@@ -1661,7 +1663,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								int depth = 0;
 								integer iline;
 								for (iline = lineNumber + 1; iline <= numberOfLines; iline ++) {
-									if (str32nequ (lines [iline], U"endif", 5) && wordEnd (lines [iline] [5])) {
+									if (str32nequ (lines [iline], U"endif", 5) && ! Melder_staysWithinInk (lines [iline] [5])) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after `endif`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"if ", 3)) {
@@ -1718,7 +1720,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (iline > numberOfLines) Melder_throw (U"Unmatched 'for'.");
 							}
-						} else if (str32nequ (command2.string, U"form ", 5)) {
+						} else if (str32nequ (command2.string, U"form", 4) && ! Melder_staysWithinInk (command2.string [4])) {
 							integer iline;
 							for (iline = lineNumber + 1; iline <= numberOfLines; iline ++)
 								if (str32nequ (lines [iline], U"endform", 7))
@@ -1801,7 +1803,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						if (str32nequ (command2.string, U"procedure ", 10)) {
 							integer iline = lineNumber + 1;
 							for (; iline <= numberOfLines; iline ++) {
-								if (str32nequ (lines [iline], U"endproc", 7) && wordEnd (lines [iline] [7])) {
+								if (str32nequ (lines [iline], U"endproc", 7) && ! Melder_staysWithinInk (lines [iline] [7])) {
 									lineNumber = iline;
 									break;
 								}   // go after `endproc`
@@ -1820,12 +1822,12 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						fail = true;
 						break;
 					case U'r':
-						if (str32nequ (command2.string, U"repeat", 6) && wordEnd (command2.string [6])) {
+						if (str32nequ (command2.string, U"repeat", 6) && ! Melder_staysWithinInk (command2.string [6])) {
 							/* Ignore. */
 						} else fail = true;
 						break;
 					case U's':
-						if (str32nequ (command2.string, U"stopwatch", 9) && wordEnd (command2.string [9])) {
+						if (str32nequ (command2.string, U"stopwatch", 9) && ! Melder_staysWithinInk (command2.string [9])) {
 							(void) Melder_stopwatch ();   // reset stopwatch
 						} else fail = true;
 						break;
@@ -1840,7 +1842,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								int depth = 0;
 								integer iline = lineNumber - 1;
 								for (; iline > 0; iline --) {
-									if (str32nequ (lines [iline], U"repeat", 6) && wordEnd (lines [iline] [6])) {
+									if (str32nequ (lines [iline], U"repeat", 6) && ! Melder_staysWithinInk (lines [iline] [6])) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after `repeat`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"until ", 6)) {
@@ -1862,7 +1864,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								int depth = 0;
 								integer iline = lineNumber + 1;
 								for (; iline <= numberOfLines; iline ++) {
-									if (str32nequ (lines [iline], U"endwhile", 8) && wordEnd (lines [iline] [8])) {
+									if (str32nequ (lines [iline], U"endwhile", 8) && ! Melder_staysWithinInk (lines [iline] [8])) {
 										if (depth == 0) { lineNumber = iline; break; }   // go after `endwhile`
 										else depth --;
 									} else if (str32nequ (lines [iline], U"while ", 6)) {
@@ -1896,7 +1898,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						optionally preceded by a period and optionally followed by a $ and/or #.
 					*/
 					if (*p == U'.') p ++;
-					while (isalnum ((int) *p) || *p == U'_' || *p == U'.')  p ++;
+					while (Melder_isWordCharacter (*p) || *p == U'.') p ++;
 					if (*p == U'$') {
 						/*
 							Assign to a string variable.
@@ -1904,7 +1906,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						trace (U"detected an assignment to a string variable");
 						char32 *endOfVariable = ++ p;
 						char32 *variableName = command2.string;
-						while (Melder_isblank (*p)) p ++;   // go to first token after variable name
+						while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after variable name
 						if (*p == U'[') {
 							/*
 								This must be an assignment to an indexed string variable.
@@ -1918,7 +1920,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								MelderString_empty (& index);
 								int depth = 0;
 								bool inString = false;
-								while ((depth > 0 || (*p != U',' && *p != U']') || inString) && *p != U'\n' && *p != U'\0') {
+								while ((depth > 0 || (*p != U',' && *p != U']') || inString) && Melder_staysWithinLine (*p)) {
 									MelderString_appendCharacter (& index, *p);
 									if (*p == U'[') {
 										if (! inString) depth ++;
@@ -1928,7 +1930,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									if (*p == U'"') inString = ! inString;
 									p ++;
 								}
-								if (*p == U'\n' || *p == U'\0')
+								if (! Melder_staysWithinLine (*p))
 									Melder_throw (U"Missing closing bracket (]) in indexed variable.");
 								Formula_Result result;
 								Interpreter_anyExpression (me, index.string, & result);
@@ -1947,7 +1949,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							variableName = indexedVariableName.string;
 							p ++;   // skip closing bracket
 						}
-						while (Melder_isblank (*p)) p ++;   // go to first token after (perhaps indexed) variable name
+						while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after (perhaps indexed) variable name
 						int typeOfAssignment;   // 0, 1, 2, 3 or 4
 						if (*p == U'=') {
 							typeOfAssignment = 0;   // assignment
@@ -1970,7 +1972,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						} else Melder_throw (U"Missing \"=\", \"+=\", \"<\", or \">\" after variable ", variableName, U".");
 						*endOfVariable = U'\0';
 						p ++;
-						while (Melder_isblank (*p)) p ++;   // go to first token after assignment or I/O symbol
+						while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment or I/O symbol
 						if (*p == U'\0') {
 							if (typeOfAssignment >= 2)
 								Melder_throw (U"Missing file name after variable ", variableName, U".");
@@ -2048,13 +2050,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							MelderString_copy (& matrixName, command2.string, U'#');
 							*p = U'#';   // put the number sign back
 							p ++;   // step over last number sign
-							while (Melder_isblank (*p)) p ++;   // go to first token after matrix name
+							while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after matrix name
 							if (*p == U'=') {
 								/*
 									This must be an assignment to a matrix variable.
 								*/
 								p ++;   // step over equals sign
-								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to matrix ", matrixName.string, U".");
 								if (isCommand (p)) {
@@ -2135,7 +2137,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									This must be a formula assignment to a matrix variable.
 								*/
 								p ++;   // step over tilde
-								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing formula expression for matrix ", matrixName.string, U".");
 								InterpreterVariable var = Interpreter_hasVariable (me, matrixName.string);
@@ -2163,13 +2165,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							MelderString_copy (& vectorName, command2.string, U"#");
 							*p = U'#';   // put the number sign back
 							p ++;   // step over number sign
-							while (Melder_isblank (*p)) p ++;   // go to first token after array name
+							while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after array name
 							if (*p == U'=') {
 								/*
 									This must be an assignment to a vector variable.
 								*/
 								p ++;   // step over equals sign
-								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing right-hand expression in assignment to vector ", vectorName.string, U".");
 								if (isCommand (p)) {
@@ -2250,7 +2252,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									This must be a formula assignment to a vector variable.
 								*/
 								p ++;   // step over tilde
-								while (Melder_isblank (*p)) p ++;   // go to first token after assignment
+								while (Melder_isHorizontalSpace (*p)) p ++;   // go to first token after assignment
 								if (*p == U'\0')
 									Melder_throw (U"Missing formula expression for vector ", vectorName.string, U".");
 								InterpreterVariable var = Interpreter_hasVariable (me, vectorName.string);
@@ -2283,7 +2285,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							continue;   // next line
 						}
 						char32 *endOfVariable = p;
-						while (Melder_isblank (*p)) p ++;
+						while (Melder_isHorizontalSpace (*p)) p ++;
 						if (*p == U'=' || ((*p == U'+' || *p == U'-' || *p == U'*' || *p == U'/') && p [1] == U'=')) {
 							/*
 								This must be an assignment (though: "echo = ..." ???)
@@ -2303,7 +2305,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								MelderString_empty (& index);
 								int depth = 0;
 								bool inString = false;
-								while ((depth > 0 || (*p != U',' && *p != U']') || inString) && *p != U'\n' && *p != U'\0') {
+								while ((depth > 0 || (*p != U',' && *p != U']') || inString) && Melder_staysWithinLine (*p)) {
 									MelderString_appendCharacter (& index, *p);
 									if (*p == U'[') {
 										if (! inString) depth ++;
@@ -2313,7 +2315,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									if (*p == U'"') inString = ! inString;
 									p ++;
 								}
-								if (*p == U'\n' || *p == U'\0')
+								if (! Melder_staysWithinLine (*p))
 									Melder_throw (U"Missing closing bracket (]) in indexed variable.");
 								Formula_Result result;
 								Interpreter_anyExpression (me, index.string, & result);
@@ -2331,7 +2333,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							}
 							variableName = indexedVariableName.string;
 							p ++;   // skip closing bracket
-							while (Melder_isblank (*p)) p ++;
+							while (Melder_isHorizontalSpace (*p)) p ++;
 							if (*p == U'=' || ((*p == U'+' || *p == U'-' || *p == U'*' || *p == U'/') && p [1] == U'=')) {
 								typeOfAssignment = *p == U'+' ? 1 : *p == U'-' ? 2 : *p == U'*' ? 3 : *p == U'/' ? 4 : 0;
 							}
@@ -2343,7 +2345,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							continue;   // next line
 						}
 						p += typeOfAssignment == 0 ? 1 : 2;
-						while (*p == U' ' || *p == U'\t') p ++;
+						while (Melder_isHorizontalSpace (*p)) p ++;
 						if (*p == U'\0') Melder_throw (U"Missing expression after variable ", variableName, U".");
 						/*
 							Three classes of assignments:
