@@ -134,7 +134,7 @@ static void UiField_setDefault (UiField me) {
 
 static int colourToValue (UiField me, char32 *string) {
 	char32 *p = string;
-	while (*p == U' ' || *p == U'\t') p ++;
+	Melder_skipHorizontalSpace (& p);
 	*p = Melder_toLowerCase (*p);
 	char32 first = *p;
 	if (first == U'{') {
@@ -170,7 +170,6 @@ static int colourToValue (UiField me, char32 *string) {
 	return 1;
 }
 
-#define EVALUATE_WIDGET_REPRESENTATIONS  0
 static void UiField_widgetToValue (UiField me) {
 	switch (my type)
 	{
@@ -178,29 +177,8 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::REAL_OR_UNDEFINED_:
 		case _kUiField_type::POSITIVE_:
 		{
-			autostring32 dirty = GuiText_getString (my text);   // the text as typed by the user
-			Interpreter_numericExpression (nullptr, dirty.peek(), & my realValue);
-			#if EVALUATE_WIDGET_REPRESENTATIONS
-				/*
-					Put a clean version of the new value in the form.
-					If the value is equal to the default value, make sure that any default comments are included.
-				*/
-				if (my realValue == Melder_atof (my stringDefaultValue)) {
-					GuiText_setString (my text, my stringDefaultValue);
-				} else {
-					char32 clean [40];
-					str32cpy (clean, Melder_double (my realValue));
-					/*
-						If the default value is overtly real (rather than integer), the shown value must be overtly real as well.
-					*/
-					if ((str32chr (my stringDefaultValue, U'.') || str32chr (my stringDefaultValue, U'e')) &&
-						! (str32chr (clean, U'.') || str32chr (clean, U'e')))
-					{
-						str32cpy (clean + str32len (clean), U".0");
-					}
-					GuiText_setString (my text, clean);
-				}
-			#endif
+			autostring32 text = GuiText_getString (my text);   // the text as typed by the user
+			Interpreter_numericExpression (nullptr, text.peek(), & my realValue);
 			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" has the value \"undefined\".");
 			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
@@ -212,28 +190,25 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::NATURAL_:
 		case _kUiField_type::CHANNEL_:
 		{
-			autostring32 dirty = GuiText_getString (my text);
-			if (my type == _kUiField_type::CHANNEL_ && (str32equ (dirty.peek(), U"Left") || str32equ (dirty.peek(), U"Mono"))) {
+			autostring32 text = GuiText_getString (my text);
+			if (my type == _kUiField_type::CHANNEL_ && (str32equ (text.peek(), U"Left") || str32equ (text.peek(), U"Mono"))) {
 				my integerValue = 1;
-			} else if (my type == _kUiField_type::CHANNEL_ && (str32equ (dirty.peek(), U"Right") || str32equ (dirty.peek(), U"Stereo"))) {
+			} else if (my type == _kUiField_type::CHANNEL_ && (str32equ (text.peek(), U"Right") || str32equ (text.peek(), U"Stereo"))) {
 				my integerValue = 2;
 			} else {
 				double realValue;
-				Interpreter_numericExpression (nullptr, dirty.peek(), & realValue);
+				Interpreter_numericExpression (nullptr, text.peek(), & realValue);
 				my integerValue = Melder_iround (realValue);
+				Melder_require (my integerValue == realValue,
+					U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a whole number.");
 			}
-			#if EVALUATE_WIDGET_REPRESENTATIONS
-				if (my integerValue == Melder_atoi (my stringDefaultValue)) {
-					GuiText_setString (my text, my stringDefaultValue);
-				} else {
-					GuiText_setString (my text, Melder_integer (my integerValue));
-				}
-			#endif
-			if (my type == _kUiField_type::NATURAL_ && my integerValue < 1) {
-				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number.");
+			if (my type == _kUiField_type::NATURAL_) {
+				Melder_require (my integerValue >= 1,
+					U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number.");
 			}
-			if (my type == _kUiField_type::CHANNEL_ && my integerValue < 0) {
-				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number or zero.");
+			if (my type == _kUiField_type::CHANNEL_) {
+				Melder_require (my integerValue >= 0,
+					U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number or zero.");
 			}
 			if (my integerVariable) *my integerVariable = my integerValue;
 		}
@@ -242,15 +217,8 @@ static void UiField_widgetToValue (UiField me) {
 		{
 			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
-			#if EVALUATE_WIDGET_REPRESENTATIONS
-				char32 *p = my stringValue;
-				while (*p != '\0') { if (*p == U' ' || *p == U'\t') *p = U'\0'; p ++; }
-				GuiText_setString (my text, my stringValue);
-			#else
-				if (str32chr (my stringValue, U' ') || str32chr (my stringValue, U'\t')) {
-					Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a single word and cannot contain a space.");
-				}
-			#endif
+			Melder_require (*Melder_findEndOfInk (my stringValue) == U'\0',
+				U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a single ink-word and cannot contain a space.");
 			if (my stringVariable) *my stringVariable = my stringValue;
 		}
 		break;

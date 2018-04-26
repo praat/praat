@@ -32,8 +32,8 @@ oo_DEFINE_CLASS (CCA, Daata)
 	oo_INTEGER (numberOfObservations)
 	oo_AUTO_OBJECT (Strings, 0, yLabels)
 	oo_AUTO_OBJECT (Strings, 0, xLabels)
-	oo_AUTO_OBJECT(Eigen, 0, y)
-	oo_AUTO_OBJECT(Eigen, 0, x)
+	oo_AUTO_OBJECT (Eigen, 0, y)
+	oo_AUTO_OBJECT (Eigen, 0, x)
 
 	#if oo_DECLARING
 		void v_info ()

@@ -3750,7 +3750,7 @@ static void do_writeFileLine () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
+		Melder_throw (U"The first argument of \"writeFileLine\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
 	}
 	autoMelderString text;
 	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
@@ -3775,7 +3775,7 @@ static void do_appendFile () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
+		Melder_throw (U"The first argument of \"appendFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
 	}
 	autoMelderString text;
 	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
@@ -3799,7 +3799,7 @@ static void do_appendFileLine () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
+		Melder_throw (U"The first argument of \"appendFileLine\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
 	}
 	autoMelderString text;
 	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {

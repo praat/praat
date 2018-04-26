@@ -258,6 +258,14 @@ inline static bool Melder_staysWithinLine (const char32 kar) {
 inline static void Melder_skipToEndOfLine (char32 **p_text) {
 	while (Melder_staysWithinLine (**p_text)) (*p_text) ++;
 }
+inline static char32 * Melder_findEndOfInk (char32 *p) {
+	while (Melder_staysWithinInk (*p)) p ++;
+	return p;
+}
+inline static const char32 * Melder_findEndOfInk (const char32 *p) {
+	while (Melder_staysWithinInk (*p)) p ++;
+	return p;
+}
 inline static char32 * Melder_findEndOfLine (char32 *p) {
 	while (Melder_staysWithinLine (*p)) p ++;
 	return p;
@@ -266,7 +274,6 @@ inline static const char32 * Melder_findEndOfLine (const char32 *p) {
 	while (Melder_staysWithinLine (*p)) p ++;
 	return p;
 }
-
 /*
 	Internationalize std::isalpha ():
 */
