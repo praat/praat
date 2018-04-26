@@ -2853,7 +2853,7 @@ NORMAL (U"You can use any number of array and dictionary variables in a script, 
 	"or to use Matrix or Sound objects.")
 MAN_END
 
-MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20170916)
+MAN_BEGIN (U"Scripting 5.7. Vectors and matrices", U"ppgb", 20180426)
 ENTRY (U"1. What is a vector?")
 NORMAL (U"A ##numeric vector# is an array of numbers, regarded as a single object. "
 	"For instance, the squares of the first five integers can be collected in the vector { 1, 4, 9, 16, 25 }. "
@@ -2920,10 +2920,10 @@ CODE (U"center (squares\\# )")
 NORMAL (U"which gives 4.090909090909091 (for a vector with five elements, the result will always be "
 	"a number between 1.0 and 5.0). You compute the ##inner product# of two equally long vectors as follows:")
 CODE (U"other\\#  = { 2, 1.5, 1, 0.5, 0 }")
-CODE (U"result\\#  = inner (squares\\# , other\\# )")
+CODE (U"result = inner (squares\\# , other\\# )")
 NORMAL (U"which gives 1*2 + 4*1.5 + 9*1 + 16*0.5 + 25*0 = 25. "
 	"The formula for this is \\su__%i=1_^5 squares[i] * other[i], so that an alternative piece of code could be")
-CODE (U"result\\#  = sumOver (i to 5, squares\\#  [i] * other\\#  [i])")
+CODE (U"result = sumOver (i to 5, squares\\#  [i] * other\\#  [i])")
 ENTRY (U"4. Converting vectors to vectors")
 CODE (U"a\\#  = squares\\#  + 5   ; adding a number to each element of a vector")
 NORMAL (U"causes a\\#  to become the vector { 6, 9, 14, 21, 30 }.")
