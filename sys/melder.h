@@ -240,6 +240,15 @@ inline static bool Melder_isAsciiHorizontalOrVerticalSpace (const char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
 
+inline static bool Melder_isEndOfInk (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_INK) != 0;
+}
+inline static bool Melder_isEndOfLine (const char32 kar) {
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_LINE) != 0;
+}
+inline static bool Melder_isEndOfText (const char32 kar) {
+	return kar == U'\0';
+}
 inline static bool Melder_staysWithinInk (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_INK) == 0;
 }
@@ -249,6 +258,14 @@ inline static bool Melder_staysWithinLine (const char32 kar) {
 inline static void Melder_skipToEndOfLine (char32 **p_text) {
 	while (Melder_staysWithinLine (**p_text)) (*p_text) ++;
 }
+inline static char32 * Melder_findEndOfInk (char32 *p) {
+	while (Melder_staysWithinInk (*p)) p ++;
+	return p;
+}
+inline static const char32 * Melder_findEndOfInk (const char32 *p) {
+	while (Melder_staysWithinInk (*p)) p ++;
+	return p;
+}
 inline static char32 * Melder_findEndOfLine (char32 *p) {
 	while (Melder_staysWithinLine (*p)) p ++;
 	return p;
@@ -257,7 +274,6 @@ inline static const char32 * Melder_findEndOfLine (const char32 *p) {
 	while (Melder_staysWithinLine (*p)) p ++;
 	return p;
 }
-
 /*
 	Internationalize std::isalpha ():
 */
@@ -357,7 +373,7 @@ inline static bool Melder_isAsciiPrintable (const char32 kar) {   // same as std
 inline static bool Melder_hasInk (const char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
-inline static bool Melder_isAsciiHasInk (const char32 kar) {   // same as std::isgraph() with default C locale
+inline static bool Melder_hasAsciiInk (const char32 kar) {   // same as std::isgraph() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
 
@@ -1978,7 +1994,7 @@ inline static void MelderString_append (MelderString *me, Melder_1_ARG) {
 	str32cpy (me -> string + me -> length, s1);   me -> length += length1;
 }
 /*void MelderString_append (MelderString *me, Melder_1_ARG);*/
-void MelderString_append (MelderString *me, Melder_2_ARGS);
+/*void MelderString_append (MelderString *me, Melder_2_ARGS);
 void MelderString_append (MelderString *me, Melder_3_ARGS);
 void MelderString_append (MelderString *me, Melder_4_ARGS);
 void MelderString_append (MelderString *me, Melder_5_ARGS);
@@ -1991,6 +2007,12 @@ void MelderString_append (MelderString *me, Melder_11_ARGS);
 void MelderString_append (MelderString *me, Melder_12_OR_13_ARGS);
 void MelderString_append (MelderString *me, Melder_14_OR_15_ARGS);
 void MelderString_append (MelderString *me, Melder_16_TO_19_ARGS);
+*/
+template <typename... Args>
+void MelderString_append (MelderString *me, const MelderArg& first, Args... rest) {
+	MelderString_append (me, first);
+	MelderString_append (me, rest...);
+}
 void MelderString16_appendCharacter (MelderString16 *me, char32 character);
 void MelderString_appendCharacter (MelderString *me, char32 character);
 void MelderString_get (MelderString *me, char32 *destination);   // performs no boundary checking

@@ -480,6 +480,18 @@
 			<key>LSTypeIsPackage</key>
 			<integer>0</integer>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>NoulliGrid</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat multinoulli distributions</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<integer>0</integer>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Praat</string>

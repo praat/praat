@@ -1,5 +1,5 @@
 # Makefile of the library "gram"
-# Paul Boersma 2017-12-16
+# Paul Boersma 2018-04-24
 
 include ../makefile.defs
 
@@ -8,7 +8,8 @@ CPPFLAGS = -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
 OBJECTS = Network.o \
    OTGrammar.o OTGrammarEditor.o manual_gram.o praat_gram.o OTMulti.o OTMultiEditor.o \
    OTGrammar_ex_metrics.o OTGrammar_ex_NoCoda.o OTGrammar_ex_NPA.o OTGrammar_ex_tongueRoot.o \
-   OTMulti_ex_metrics.o Layer.o Net.o
+   OTMulti_ex_metrics.o Layer.o Net.o \
+   NoulliGrid.o NoulliGridEditor.o
 
 .PHONY: all clean
 

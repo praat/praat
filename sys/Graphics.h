@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -242,6 +242,8 @@ const char32 * Graphics_Colour_name (Graphics_Colour colour);
 static inline bool Graphics_Colour_equal (Graphics_Colour colour1, Graphics_Colour colour2) {
 	return colour1. red == colour2. red && colour1. green == colour2. green && colour1. blue == colour2. blue;
 }
+Graphics_Colour Graphics_cyclingBackgroundColour (integer category);
+Graphics_Colour Graphics_cyclingTextColour (integer category);
 void Graphics_setColour (Graphics me, Graphics_Colour colour);
 void Graphics_setGrey (Graphics me, double grey);
 

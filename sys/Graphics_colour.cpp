@@ -1,6 +1,6 @@
 /* Graphics_colour.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2005,2007-2018 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,22 @@ const char32 * Graphics_Colour_name (Graphics_Colour colour) {
 		Graphics_Colour_equal (colour, Graphics_SILVER) ? U"silver" :
 		Graphics_Colour_equal (colour, Graphics_GREY) ? U"grey" :
 		rgbColourName (colour);
+}
+
+constexpr int theNumberOfCyclingColours = 10;
+static Graphics_Colour theCyclingBackgroundColours [theNumberOfCyclingColours] = {
+	Graphics_GREEN, Graphics_SILVER, Graphics_BLUE, Graphics_YELLOW, Graphics_RED,
+	Graphics_CYAN, Graphics_MAROON, Graphics_LIME, Graphics_TEAL, Graphics_MAGENTA
+};
+static Graphics_Colour theCyclingTextColours [theNumberOfCyclingColours] = {
+	Graphics_WHITE, Graphics_BLACK, Graphics_WHITE, Graphics_BLACK, Graphics_WHITE,
+	Graphics_BLACK, Graphics_WHITE, Graphics_BLACK, Graphics_WHITE, Graphics_BLACK
+};
+Graphics_Colour Graphics_cyclingBackgroundColour (integer category) {
+	return theCyclingBackgroundColours [(category - 1) % theNumberOfCyclingColours];
+}
+Graphics_Colour Graphics_cyclingTextColour (integer category) {
+	return theCyclingTextColours [(category - 1) % theNumberOfCyclingColours];
 }
 
 #if quartz

@@ -3373,8 +3373,8 @@ static void do_function_dd_d_numvec (double (*f) (double, double)) {
 	if (n -> number != 3)
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
-	if (a->which == Stackel_NUMERIC_VECTOR && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		integer numberOfElements = a->numericVector.size;
+	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
+		integer numberOfElements = ( a->which == Stackel_NUMBER ? a->number : a->numericVector.size );
 		autonumvec newData (numberOfElements, kTensorInitializationType::RAW);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (x->number, y->number);
@@ -3382,7 +3382,7 @@ static void do_function_dd_d_numvec (double (*f) (double, double)) {
 		pushNumericVector (newData.move());
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
-			U" requires one vector argument and two numeric arguments, not ",
+			U" requires either three numeric arguments, or one vector argument and two numeric arguments, not ",
 			Stackel_whichText (a), U", ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
@@ -3414,8 +3414,8 @@ static void do_function_ll_l_numvec (integer (*f) (integer, integer)) {
 	if (n -> number != 3)
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
-	if (a->which == Stackel_NUMERIC_VECTOR && x->which == Stackel_NUMBER) {
-		integer numberOfElements = a->numericVector.size;
+	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER) {
+		integer numberOfElements = ( a->which == Stackel_NUMBER ? a->number : a->numericVector.size );
 		autonumvec newData (numberOfElements, kTensorInitializationType::RAW);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (Melder_iround (x->number), Melder_iround (y->number));
@@ -3423,7 +3423,7 @@ static void do_function_ll_l_numvec (integer (*f) (integer, integer)) {
 		pushNumericVector (newData.move());
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
-			U" requires one vector argument and two numeric arguments, not ",
+			U" requires either three numeric arguments, or one vector argument and two numeric arguments, not ",
 			Stackel_whichText (a), U", ", Stackel_whichText (x), U" and ", Stackel_whichText (y), U".");
 	}
 }
@@ -3750,7 +3750,7 @@ static void do_writeFileLine () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
+		Melder_throw (U"The first argument of \"writeFileLine\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
 	}
 	autoMelderString text;
 	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
@@ -3775,7 +3775,7 @@ static void do_appendFile () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
+		Melder_throw (U"The first argument of \"appendFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
 	}
 	autoMelderString text;
 	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
@@ -3799,7 +3799,7 @@ static void do_appendFileLine () {
 	w -= numberOfArguments;
 	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
-		Melder_throw (U"The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
+		Melder_throw (U"The first argument of \"appendFileLine\" has to be a string (a file name), not ", Stackel_whichText (fileName), U".");
 	}
 	autoMelderString text;
 	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
