@@ -186,7 +186,7 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 				Invariant here: we are at the beginning of a line.
 			*/
 			Melder_skipHorizontalSpace (& p);
-			if (str32nequ (p, U"form", 4) && ! Melder_staysWithinInk (p [4])) {
+			if (str32nequ (p, U"form", 4) && Melder_isEndOfInk (p [4])) {
 				formLocation = p;
 				break;
 			}
@@ -207,37 +207,50 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 		str32ncpy (my dialogTitle, dialogTitle, Interpreter_MAX_DIALOG_TITLE_LENGTH);
 		*endOfLine = U'\n';   // restore input
 		my numberOfParameters = 0;
-		while ((true)) {
+		while (true) {
 			int type = 0;
-			char32 *line = Melder_findEndOfHorizontalSpace (endOfLine + 1);
+			char32 *startOfLine = Melder_findEndOfHorizontalSpace (endOfLine + 1);
 			/*
 				Skip empty lines and lines with comments.
 			*/
-			while (*line == U'#' || *line == U';' || *line == U'!' || ! Melder_staysWithinLine (*line)) {
-				endOfLine = Melder_findEndOfLine (line);
-				if (*endOfLine == U'\0')
+			while (*startOfLine == U'#' || *startOfLine == U';' || *startOfLine == U'!' || Melder_isEndOfLine (*startOfLine)) {
+				endOfLine = Melder_findEndOfLine (startOfLine);
+				if (Melder_isEndOfText (*endOfLine))
 					Melder_throw (U"Unfinished form (missing \"endform\").");
-				line = Melder_findEndOfHorizontalSpace (endOfLine + 1);
+				startOfLine = Melder_findEndOfHorizontalSpace (endOfLine + 1);
 			}
-			if (str32nequ (line, U"endform", 7)) break;
+			if (str32nequ (startOfLine, U"endform", 7) && Melder_isEndOfInk (startOfLine [7])) break;
 			char32 *parameterLocation;
-			if (str32nequ (line, U"word", 4) && ! Melder_staysWithinInk (line [4])) { type = Interpreter_WORD; parameterLocation = line + 4; }
-			else if (str32nequ (line, U"real", 4) && ! Melder_staysWithinInk (line [4])) { type = Interpreter_REAL; parameterLocation = line + 4; }
-			else if (str32nequ (line, U"positive", 8) && ! Melder_staysWithinInk (line [8])) { type = Interpreter_POSITIVE; parameterLocation = line + 8; }
-			else if (str32nequ (line, U"integer", 7) && ! Melder_staysWithinInk (line [7])) { type = Interpreter_INTEGER; parameterLocation = line + 7; }
-			else if (str32nequ (line, U"natural", 7) && ! Melder_staysWithinInk (line [7])) { type = Interpreter_NATURAL; parameterLocation = line + 7; }
-			else if (str32nequ (line, U"boolean", 7) && ! Melder_staysWithinInk (line [7])) { type = Interpreter_BOOLEAN; parameterLocation = line + 7; }
-			else if (str32nequ (line, U"sentence", 8) && ! Melder_staysWithinInk (line [8])) { type = Interpreter_SENTENCE; parameterLocation = line + 8; }
-			else if (str32nequ (line, U"text", 4) && ! Melder_staysWithinInk (line [4])) { type = Interpreter_TEXT; parameterLocation = line + 4; }
-			else if (str32nequ (line, U"choice", 6) && ! Melder_staysWithinInk (line [6])) { type = Interpreter_CHOICE; parameterLocation = line + 6; }
-			else if (str32nequ (line, U"optionmenu", 10) && ! Melder_staysWithinInk (line [10])) { type = Interpreter_OPTIONMENU; parameterLocation = line + 10; }
-			else if (str32nequ (line, U"button", 6) && ! Melder_staysWithinInk (line [6])) { type = Interpreter_BUTTON; parameterLocation = line + 6; }
-			else if (str32nequ (line, U"option", 6) && ! Melder_staysWithinInk (line [6])) { type = Interpreter_OPTION; parameterLocation = line + 6; }
-			else if (str32nequ (line, U"comment", 7) && ! Melder_staysWithinInk (line [7])) { type = Interpreter_COMMENT; parameterLocation = line + 7; }
+			if (str32nequ (startOfLine, U"word", 4) && Melder_isEndOfInk (startOfLine [4]))
+				{ type = Interpreter_WORD; parameterLocation = startOfLine + 4; }
+			else if (str32nequ (startOfLine, U"real", 4) && Melder_isEndOfInk (startOfLine [4]))
+				{ type = Interpreter_REAL; parameterLocation = startOfLine + 4; }
+			else if (str32nequ (startOfLine, U"positive", 8) && Melder_isEndOfInk (startOfLine [8]))
+				{ type = Interpreter_POSITIVE; parameterLocation = startOfLine + 8; }
+			else if (str32nequ (startOfLine, U"integer", 7) && Melder_isEndOfInk (startOfLine [7]))
+				{ type = Interpreter_INTEGER; parameterLocation = startOfLine + 7; }
+			else if (str32nequ (startOfLine, U"natural", 7) && Melder_isEndOfInk (startOfLine [7]))
+				{ type = Interpreter_NATURAL; parameterLocation = startOfLine + 7; }
+			else if (str32nequ (startOfLine, U"boolean", 7) && Melder_isEndOfInk (startOfLine [7]))
+				{ type = Interpreter_BOOLEAN; parameterLocation = startOfLine + 7; }
+			else if (str32nequ (startOfLine, U"sentence", 8) && Melder_isEndOfInk (startOfLine [8]))
+				{ type = Interpreter_SENTENCE; parameterLocation = startOfLine + 8; }
+			else if (str32nequ (startOfLine, U"text", 4) && Melder_isEndOfInk (startOfLine [4]))
+				{ type = Interpreter_TEXT; parameterLocation = startOfLine + 4; }
+			else if (str32nequ (startOfLine, U"choice", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_CHOICE; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"optionmenu", 10) && Melder_isEndOfInk (startOfLine [10]))
+				{ type = Interpreter_OPTIONMENU; parameterLocation = startOfLine + 10; }
+			else if (str32nequ (startOfLine, U"button", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_BUTTON; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"option", 6) && Melder_isEndOfInk (startOfLine [6]))
+				{ type = Interpreter_OPTION; parameterLocation = startOfLine + 6; }
+			else if (str32nequ (startOfLine, U"comment", 7) && Melder_isEndOfInk (startOfLine [7]))
+				{ type = Interpreter_COMMENT; parameterLocation = startOfLine + 7; }
 			else {
-				endOfLine = Melder_findEndOfLine (line);
+				endOfLine = Melder_findEndOfLine (startOfLine);
 				*endOfLine = U'\0';   // destroy input in order to limit printing of parameter type
-				Melder_throw (U"Unknown parameter type:\n\"", line, U"\".");
+				Melder_throw (U"Unknown parameter type:\n\"", startOfLine, U"\".");
 			}
 			/*
 				Example:
@@ -261,9 +274,9 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 			*/
 			if (type <= Interpreter_OPTIONMENU) {
 				Melder_skipHorizontalSpace (& parameterLocation);
-				if (! Melder_staysWithinLine (*parameterLocation)) {
+				if (Melder_isEndOfLine (*parameterLocation)) {
 					*parameterLocation = U'\0';   // destroy input in order to limit printing of line
-					Melder_throw (U"Missing parameter:\n\"", line, U"\".");
+					Melder_throw (U"Missing parameter:\n\"", startOfLine, U"\".");
 				}
 				char32 *q = my parameters [++ my numberOfParameters];
 				while (Melder_staysWithinInk (*parameterLocation)) * (q ++) = * (parameterLocation ++);
@@ -274,7 +287,7 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 			}
 			char32 *argumentLocation = Melder_findEndOfHorizontalSpace (parameterLocation);
 			endOfLine = Melder_findEndOfLine (argumentLocation);
-			if (*endOfLine == U'\0')
+			if (Melder_isEndOfText (*endOfLine))
 				Melder_throw (U"Unfinished form (missing \"endform\").");
 			*endOfLine = U'\0';   // destroy input temporarily in order to limit copying of argument
 			Melder_free (my arguments [my numberOfParameters]);
@@ -1720,10 +1733,10 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								}
 								if (iline > numberOfLines) Melder_throw (U"Unmatched 'for'.");
 							}
-						} else if (str32nequ (command2.string, U"form", 4) && ! Melder_staysWithinInk (command2.string [4])) {
+						} else if (str32nequ (command2.string, U"form", 4) && Melder_isEndOfInk (command2.string [4])) {
 							integer iline;
 							for (iline = lineNumber + 1; iline <= numberOfLines; iline ++)
-								if (str32nequ (lines [iline], U"endform", 7))
+								if (str32nequ (lines [iline], U"endform", 7) && Melder_isEndOfInk (lines [iline] [7]))
 									{ lineNumber = iline; break; }   // go after 'endform'
 							if (iline > numberOfLines) Melder_throw (U"Unmatched 'form'.");
 						} else fail = true;

@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2017 Paul Boersma
+ * Copyright (C) 1997-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "OTGrammarEditor.h"
 #include "OTMultiEditor.h"
 #include "Net.h"
+#include "NoulliGridEditor.h"
 
 #include "praat_TableOfReal.h"
 
@@ -1682,6 +1683,19 @@ DO
 	CONVERT_TWO_END (my name, U"_", your name)
 }
 
+// MARK: - NOULLIGRID
+
+// MARK: View & Edit
+
+DIRECT (WINDOW_NoulliGrid_viewAndEdit) {
+	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot edit a NoulliGrid from batch.");
+	FIND_TWO_WITH_IOBJECT (NoulliGrid, Sound)   // Sound may be null
+		autoNoulliGridEditor editor = NoulliGridEditor_create (ID_AND_FULL_NAME, me, you, true);
+		praat_installEditor (editor.get(), IOBJECT);
+		editor.releaseToUser();
+	END
+}
+
 // MARK: - buttons
 
 void praat_uvafon_gram_init ();
@@ -1689,6 +1703,7 @@ void praat_uvafon_gram_init () {
 	Thing_recognizeClassesByName (classNetwork,
 		classOTGrammar, classOTHistory, classOTMulti,
 		classRBMLayer, classFullyConnectedLayer, classNet,
+		classNoulliTier, classNoulliGrid,
 		nullptr);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
@@ -1865,6 +1880,9 @@ void praat_uvafon_gram_init () {
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn...", nullptr, 0, MODIFY_Net_PatternList_learn);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"Learn by layer...", nullptr, 0, MODIFY_Net_PatternList_learnByLayer);
 	praat_addAction2 (classNet, 1, classPatternList, 1, U"To ActivationList", nullptr, 0, NEW1_Net_PatternList_to_ActivationList);
+
+	praat_addAction1 (classNoulliGrid, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_NoulliGrid_viewAndEdit);
+	praat_addAction2 (classNoulliGrid, 1, classSound, 1, U"View & Edit", nullptr, praat_ATTRACTIVE, WINDOW_NoulliGrid_viewAndEdit);
 }
 
 /* End of file praat_gram.cpp */
