@@ -133,7 +133,8 @@ enum { GEENSYMBOOL_,
 		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_NOCHECK_, RUN_SUBPROCESS_,
 		MIN_, MAX_, IMIN_, IMAX_, NORM_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_,
-		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_, SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
+		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_, SELECTED_NUMVEC_,
+		SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
 		BEGIN_PAUSE_FORM_, PAUSE_FORM_ADD_REAL_, PAUSE_FORM_ADD_POSITIVE_, PAUSE_FORM_ADD_INTEGER_, PAUSE_FORM_ADD_NATURAL_,
 		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
@@ -248,7 +249,8 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"pauseScript", U"exitScript", U"runScript", U"runSystem", U"runSystem_nocheck", U"runSubprocess",
 	U"min", U"max", U"imin", U"imax", U"norm",
 	U"left$", U"right$", U"mid$",
-	U"selected", U"selected$", U"numberOfSelected", U"selectObject", U"plusObject", U"minusObject", U"removeObject",
+	U"selected", U"selected$", U"numberOfSelected", U"selected#",
+	U"selectObject", U"plusObject", U"minusObject", U"removeObject",
 	U"beginPause", U"real", U"positive", U"integer", U"natural",
 	U"word", U"sentence", U"text", U"boolean",
 	U"choice", U"optionMenu", U"option",
@@ -4780,6 +4782,24 @@ static void do_numberOfSelected () {
 	}
 	pushNumber (result);
 }
+static void do_selected_numvec () {
+	Stackel n = pop;
+	autonumvec result;
+	if (n->number == 0) {
+		result = praat_idsOfAllSelected (nullptr);
+	} else if (n->number == 1) {
+		Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			ClassInfo klas = Thing_classFromClassName (s->string, nullptr);
+			result = praat_idsOfAllSelected (klas);
+		} else {
+			Melder_throw (U"The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), U".");
+		}
+	} else {
+		Melder_throw (U"The function \"numberOfSelected\" requires 0 or 1 arguments, not ", n->number, U".");
+	}
+	pushNumericVector (result.move());
+}
 static void do_selectObject () {
 	Stackel n = pop;
 	praat_deselectAll ();
@@ -6641,6 +6661,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SELECTED_: { do_selected ();
 } break; case SELECTEDSTR_: { do_selectedStr ();
 } break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();
+} break; case SELECTED_NUMVEC_: { do_selected_numvec ();
 } break; case SELECT_OBJECT_: { do_selectObject ();
 } break; case PLUS_OBJECT_  : { do_plusObject   ();
 } break; case MINUS_OBJECT_ : { do_minusObject  ();
