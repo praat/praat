@@ -1,8 +1,8 @@
 #ifndef _Corpus_h_
 #define _Corpus_h_
-/* AnyTier.h
+/* Corpus.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,9 @@
 #include "Table.h"
 
 #include "Corpus_def.h"
+
+autoCorpus Corpus_create (const char32 *folderWithSoundFiles, const char32 *soundFileExtension,
+	const char32 *folderWithAnnotationFiles, const char32 *annotationFileExtension);
 
 #endif
 /* End of file Corpus.h */

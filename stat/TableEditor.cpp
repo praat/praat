@@ -184,6 +184,13 @@ void structTableEditor :: v_draw () {
 	 */
 	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		for (integer icol = colmin; icol <= colmax; icol ++) {
+			if (irow == selectedRow && icol == selectedColumn) {
+				Graphics_setColour (graphics.get(), Graphics_YELLOW);
+				double dx = Graphics_dxMMtoWC (graphics.get(), 0.3);
+				Graphics_fillRectangle (graphics.get(),
+					columnLeft [icol - colmin] + dx, columnRight [icol - colmin] - dx, irow - 0.45, irow + 0.55);
+				Graphics_setColour (graphics.get(), Graphics_BLACK);
+			}
 			double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
 			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
@@ -193,8 +200,22 @@ void structTableEditor :: v_draw () {
 	}
 }
 
-bool structTableEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
+bool structTableEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	Table table = static_cast<Table> (our data);
+	Melder_casual (U"TableEditor::v_click: ", xWC, U" ", yWC,
+		U" ", our columnLeft [1], U" ", our columnRight [1]);
+	integer rowmin = our topRow, rowmax = rowmin + 197;
+	integer colmin = our leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
+	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
+	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
+	if (yWC < rowmin - 0.45 || yWC > rowmax + 0.55)
+		return false;
+	for (integer icol = colmin; icol <= colmax; icol ++) {
+		if (xWC > columnLeft [icol - colmin] && xWC < columnRight [icol - colmin]) {
+			our selectedRow = Melder_iround (yWC);
+			our selectedColumn = icol;
+		}
+	}
 	return true;
 }
 
@@ -208,10 +229,17 @@ static void gui_drawingarea_cb_expose (TableEditor me, GuiDrawingArea_ExposeEven
 }
 
 static void gui_drawingarea_cb_click (TableEditor me, GuiDrawingArea_ClickEvent event) {
-	if (! my graphics) return;
+	Table table = static_cast<Table> (my data);
+	if (! my graphics) return;   // could be the case in the very beginning
+	integer rowmin = my topRow, rowmax = rowmin + 197;
+	integer colmin = my leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
+	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
+	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
+	//Graphics_setWindow (my graphics.get(), 0.0, Graphics_dxWCtoMM (my graphics.get(), 1.0), rowmin + 197.5, rowmin - 2.5);
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
-	// TODO: implement selection
+	if (my v_click (xWC, yWC, event -> shiftKeyPressed))
+		Graphics_updateWs (my graphics.get());
 }
 
 static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEvent /* event */) {

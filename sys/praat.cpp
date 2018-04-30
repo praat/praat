@@ -131,6 +131,15 @@ integer praat_idOfSelected (ClassInfo klas, integer inplace) {
 	return 0;
 }
 
+autonumvec praat_idsOfAllSelected (ClassInfo klas) {
+	autonumvec result (praat_numberOfSelected (klas), kTensorInitializationType::RAW);
+	integer selectedObjectNumber = 0, IOBJECT;
+	WHERE (SELECTED && (! klas || CLASS == klas)) {
+		result.at [++ selectedObjectNumber] = ID;
+	}
+	return result;
+}
+
 char32 * praat_nameOfSelected (ClassInfo klas, integer inplace) {
 	integer place = inplace, IOBJECT;
 	if (place == 0) place = 1;

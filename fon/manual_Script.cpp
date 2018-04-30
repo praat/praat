@@ -2218,7 +2218,7 @@ LIST_ITEM (U"@@Scripting 4.2. Removing objects")
 LIST_ITEM (U"@@Scripting 4.3. Querying objects")
 MAN_END
 
-MAN_BEGIN (U"Scripting 4.1. Selecting objects", U"ppgb", 20140223)
+MAN_BEGIN (U"Scripting 4.1. Selecting objects", U"ppgb", 20180428)
 NORMAL (U"To simulate the mouse-clicked and dragged selection in the list of objects, "
 	"you have the commands #selectObject, #plusObject and #minusObject.")
 NORMAL (U"Suppose you start Praat and use ##Create Sound as tone...# to create a Sound called %tone. "
@@ -2249,6 +2249,9 @@ NORMAL (U"or")
 CODE (U"#selectObject: \"Sound tone\", \"Spectrum tone\"")
 NORMAL (U"or even")
 CODE (U"#selectObject: 1, \"Spectrum tone\"")
+NORMAL (U"or, using a numeric vector:")
+CODE (U"myObjects\\#  = { 1, 2 }")
+CODE (U"#selectObject: myObjects\\# ")
 ENTRY (U"How to refer to objects created in your script")
 NORMAL (U"In a script, you typically don't know whether the IDs of the objects are 1 and 2, or much higher numbers. "
 	"Fortunately, commands that create a new object give you the ID of the object that is created, "
@@ -2307,7 +2310,7 @@ NORMAL (U"This selects all objects in the list and then removes them. "
 	"even if the script is for your own use (because if it is a nice script, others will want to use it).")
 MAN_END
 
-MAN_BEGIN (U"Scripting 4.3. Querying objects", U"ppgb", 20140111)
+MAN_BEGIN (U"Scripting 4.3. Querying objects", U"ppgb", 20180427)
 NORMAL (U"You can get the name of a selected object into a string variable. "
 	"For instance, the following reads the name of the second selected Sound "
 	"(as counted from the top of the list of objects) into the variable %name\\$ :")
@@ -2348,23 +2351,17 @@ CODE (U"numberOfSelectedSounds = #numberOfSelected (\"Sound\")")
 NORMAL (U"To get the number of selected objects into a variable, use")
 CODE (U"numberOfSelectedObjects = #numberOfSelected ()")
 ENTRY (U"Example: doing something to every selected Sound")
-CODE (U"n = #numberOfSelected (\"Sound\")")
-CODE (U"#for i to n")
-	CODE1 (U"sound [i] = #selected (\"Sound\", i)")
-CODE (U"#endfor")
+CODE (U"sounds\\#  = ##selected\\# # (\"Sound\")")
 CODE (U"\\#  Median pitches of all selected sounds:")
-CODE (U"#for i to n")
-	CODE1 (U"#selectObject: sound [i]")
+CODE (U"#for i to length (sounds\\# )")
+	CODE1 (U"#selectObject: sounds\\#  [i]")
 	CODE1 (U"To Pitch: 0.0, 75, 600")
 	CODE1 (U"f0 = Get quantile: 0, 0, 0.50, \"Hertz\"")
 	CODE1 (U"appendInfoLine: f0")
 	CODE1 (U"Remove")
 CODE (U"#endfor")
 CODE (U"\\#  Restore selection:")
-CODE (U"#selectObject ( )   ; deselect all objects")
-CODE (U"#for i from 1 to n")
-	CODE1 (U"#plusObject: sound [i]")
-CODE (U"#endfor")
+CODE (U"#selectObject (sounds\\# )")
 MAN_END
 
 MAN_BEGIN (U"Scripting 5. Language elements reference", U"ppgb", 20170718)
