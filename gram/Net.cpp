@@ -123,14 +123,14 @@ static void Layer_sampleOutput (Layer me) {
 void structRBMLayer :: v_spreadUp (kLayer_activationType activationType) {
 	integer numberOfOutputNodes = our numberOfOutputNodes;
 	for (integer jnode = 1; jnode <= numberOfOutputNodes; jnode ++) {
-		PAIRWISE_SUM (real80, excitation, integer, our numberOfInputNodes,
+		PAIRWISE_SUM (longdouble, excitation, integer, our numberOfInputNodes,
  			double *p_inputActivity = & our inputActivities [0];
  			double *p_weight = & our weights [1] [jnode] - numberOfOutputNodes,
  			( p_inputActivity += 1, p_weight += numberOfOutputNodes ),
- 			(real80) *p_inputActivity * (real80) *p_weight
+ 			(longdouble) *p_inputActivity * (longdouble) *p_weight
 		);
 		excitation += our outputBiases [jnode];
-		our outputActivities [jnode] = logistic ((real) excitation);
+		our outputActivities [jnode] = logistic ((double) excitation);
 	}
 	if (activationType == kLayer_activationType::STOCHASTIC)
 		Layer_sampleOutput (this);
@@ -174,17 +174,17 @@ static void copyInputsToOutputs (Layer me, Layer you) {
 
 void structRBMLayer :: v_spreadDown (kLayer_activationType activationType) {
 	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
-		PAIRWISE_SUM (real80, excitation, integer, our numberOfOutputNodes,
+		PAIRWISE_SUM (longdouble, excitation, integer, our numberOfOutputNodes,
  			double *p_weight = & our weights [inode] [0];
  			double *p_outputActivity = & our outputActivities [0],
  			( p_weight += 1, p_outputActivity += 1 ),
- 			(real80) *p_weight * (real80) *p_outputActivity
+ 			(longdouble) *p_weight * (longdouble) *p_outputActivity
 		);
 		excitation += our inputBiases [inode];
 		if (our inputsAreBinary) {
-			our inputActivities [inode] = logistic ((real) excitation);
+			our inputActivities [inode] = logistic ((double) excitation);
 		} else {   // linear
-			our inputActivities [inode] = (real) excitation;
+			our inputActivities [inode] = (double) excitation;
 		}
 	}
 	if (activationType == kLayer_activationType::STOCHASTIC)
@@ -202,17 +202,17 @@ void Net_spreadDown (Net me, kLayer_activationType activationType) {
 
 void structRBMLayer :: v_spreadDown_reconstruction () {
 	for (integer inode = 1; inode <= our numberOfInputNodes; inode ++) {
-		PAIRWISE_SUM (real80, excitation, integer, our numberOfOutputNodes,
+		PAIRWISE_SUM (longdouble, excitation, integer, our numberOfOutputNodes,
  			double *p_weight = & our weights [inode] [0];
  			double *p_outputActivity = & our outputActivities [0],
  			( p_weight += 1, p_outputActivity += 1 ),
- 			(real80) *p_weight * (real80) *p_outputActivity
+ 			(longdouble) *p_weight * (longdouble) *p_outputActivity
 		);
 		excitation += our inputBiases [inode];
 		if (our inputsAreBinary) {
-			our inputReconstruction [inode] = logistic ((real) excitation);
+			our inputReconstruction [inode] = logistic ((double) excitation);
 		} else {   // linear
-			our inputReconstruction [inode] = (real) excitation;
+			our inputReconstruction [inode] = (double) excitation;
 		}
 	}
 }
@@ -226,14 +226,14 @@ void Net_spreadDown_reconstruction (Net me) {
 void structRBMLayer :: v_spreadUp_reconstruction () {
 	integer numberOfOutputNodes = our numberOfOutputNodes;
 	for (integer jnode = 1; jnode <= our numberOfOutputNodes; jnode ++) {
-		PAIRWISE_SUM (real80, excitation, integer, our numberOfInputNodes,
+		PAIRWISE_SUM (longdouble, excitation, integer, our numberOfInputNodes,
  			double *p_inputActivity = & our inputReconstruction [0];
  			double *p_weight = & our weights [1] [jnode] - numberOfOutputNodes,
  			( p_inputActivity += 1, p_weight += numberOfOutputNodes ),
- 			(real80) *p_inputActivity * (real80) *p_weight
+ 			(longdouble) *p_inputActivity * (longdouble) *p_weight
 		);
 		excitation += our outputBiases [jnode];
-		our outputReconstruction [jnode] = logistic ((real) excitation);
+		our outputReconstruction [jnode] = logistic ((double) excitation);
 	}
 }
 

@@ -500,12 +500,12 @@ double Table_getMean (Table me, integer columnNumber) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			return undefined;
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			sum += row -> cells [columnNumber]. number;
 		}
-		return (real) sum / my rows.size;
+		return (double) sum / my rows.size;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute mean of column ", columnNumber, U".");
 	}
@@ -554,7 +554,7 @@ double Table_getGroupMean (Table me, integer columnNumber, integer groupColumnNu
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		Table_numericize_checkDefined (me, columnNumber);
 		integer n = 0;
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			if (Melder_equ (row -> cells [groupColumnNumber]. string, group)) {
@@ -563,7 +563,7 @@ double Table_getGroupMean (Table me, integer columnNumber, integer groupColumnNu
 			}
 		}
 		if (n < 1) return undefined;
-		real mean = (real) sum / n;
+		double mean = (double) sum / n;
 		return mean;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute mean of column ", columnNumber, U" for group \"", group, U"\" of column ", groupColumnNumber, U".");
@@ -593,13 +593,13 @@ double Table_getStdev (Table me, integer columnNumber) {
 		double mean = Table_getMean (me, columnNumber);   // already checks for columnNumber and undefined cells
 		if (my rows.size < 2)
 			return undefined;
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			double d = row -> cells [columnNumber]. number - mean;
 			sum += d * d;
 		}
-		return sqrt ((real) sum / (my rows.size - 1));
+		return sqrt ((double) sum / (my rows.size - 1));
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute the standard deviation of column ", columnNumber, U".");
 	}
@@ -611,7 +611,7 @@ integer Table_drawRowFromDistribution (Table me, integer columnNumber) {
 		Table_numericize_checkDefined (me, columnNumber);
 		if (my rows.size < 1)
 			Melder_throw (me, U": no rows.");
-		real80 total = 0.0;
+		longdouble total = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			total += row -> cells [columnNumber]. number;
@@ -620,8 +620,8 @@ integer Table_drawRowFromDistribution (Table me, integer columnNumber) {
 			Melder_throw (me, U": the total weight of column ", columnNumber, U" is not positive.");
 		integer irow;
 		do {
-			double rand = NUMrandomUniform (0, (real) total);
-			real80 sum = 0.0;
+			double rand = NUMrandomUniform (0, (double) total);
+			longdouble sum = 0.0;
 			for (irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
 				sum += row -> cells [columnNumber]. number;
@@ -848,11 +848,11 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 				}
 				for (integer i = 1; i <= numberToSum; i ++) {
 					++ icol;
-					real80 sum = 0.0;
+					longdouble sum = 0.0;
 					for (integer jrow = rowmin; jrow <= rowmax; jrow ++) {
 						sum += my rows.at [jrow] -> cells [columns [icol]]. number;
 					}
-					Table_setNumericValue (thee.get(), thy rows.size, icol, (real) sum);
+					Table_setNumericValue (thee.get(), thy rows.size, icol, (double) sum);
 				}
 				for (integer i = 1; i <= numberToAverage; i ++) {
 					++ icol;
@@ -873,7 +873,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 				}
 				for (integer i = 1; i <= numberToAverageLogarithmically; i ++) {
 					++ icol;
-					real80 sum = 0.0;
+					longdouble sum = 0.0;
 					for (integer jrow = rowmin; jrow <= rowmax; jrow ++) {
 						double value = my rows.at [jrow] -> cells [columns [icol]]. number;
 						if (value <= 0.0)
@@ -883,7 +883,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 								U" is not positive.\nCannot average logarithmically.");
 						sum += log (value);
 					}
-					Table_setNumericValue (thee.get(), thy rows.size, icol, exp (real (sum / (rowmax - rowmin + 1))));
+					Table_setNumericValue (thee.get(), thy rows.size, icol, exp (double (sum / (rowmax - rowmin + 1))));
 				}
 				for (integer i = 1; i <= numberToMedianizeLogarithmically; i ++) {
 					++ icol;
@@ -1470,22 +1470,22 @@ double Table_getDifference_studentT (Table me, integer column1, integer column2,
 	if (column2 < 1 || column2 > my numberOfColumns) return undefined;
 	Table_numericize_Assert (me, column1);
 	Table_numericize_Assert (me, column2);
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows.at [irow];
 		sum += row -> cells [column1]. number - row -> cells [column2]. number;
 	}
-	real meanDifference = (real) sum / n;
+	double meanDifference = (double) sum / n;
 	integer degreesOfFreedom = n - 1;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	if (degreesOfFreedom >= 1 && (out_t || out_significance || out_lowerLimit || out_upperLimit)) {
-		real80 sumOfSquares = 0.0;
+		longdouble sumOfSquares = 0.0;
 		for (integer irow = 1; irow <= n; irow ++) {
 			TableRow row = my rows.at [irow];
-			real diff = (row -> cells [column1]. number - row -> cells [column2]. number) - meanDifference;
+			double diff = (row -> cells [column1]. number - row -> cells [column2]. number) - meanDifference;
 			sumOfSquares += diff * diff;
 		}
-		real standardError = sqrt ((real) sumOfSquares / degreesOfFreedom / n);
+		double standardError = sqrt ((double) sumOfSquares / degreesOfFreedom / n);
 		if (out_t && standardError != 0.0 ) *out_t = meanDifference / standardError;
 		if (out_significance) *out_significance =
 			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (meanDifference) / standardError, degreesOfFreedom);
@@ -1511,20 +1511,20 @@ double Table_getMean_studentT (Table me, integer column, double significanceLeve
 	integer degreesOfFreedom = n - 1;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	Table_numericize_Assert (me, column);
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows.at [irow];
 		sum += row -> cells [column]. number;
 	}
-	real mean = real (sum / n);
+	double mean = double (sum / n);
 	if (n >= 2 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
-		real80 sumOfSquares = 0.0;
+		longdouble sumOfSquares = 0.0;
 		for (integer irow = 1; irow <= n; irow ++) {
 			TableRow row = my rows.at [irow];
-			real diff = row -> cells [column]. number - mean;
+			double diff = row -> cells [column]. number - mean;
 			sumOfSquares += diff * diff;
 		}
-		real standardError = sqrt ((real) sumOfSquares / degreesOfFreedom / n);
+		double standardError = sqrt ((double) sumOfSquares / degreesOfFreedom / n);
 		if (out_tFromZero && standardError != 0.0 ) *out_tFromZero = mean / standardError;
 		if (out_significanceFromZero) *out_significanceFromZero =
 			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (mean) / standardError, degreesOfFreedom);
@@ -1547,7 +1547,7 @@ double Table_getGroupMean_studentT (Table me, integer column, integer groupColum
 	if (column < 1 || column > my numberOfColumns) return undefined;
 	Table_numericize_Assert (me, column);
 	integer n = 0;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		if (row -> cells [groupColumn]. string) {
@@ -1558,21 +1558,21 @@ double Table_getGroupMean_studentT (Table me, integer column, integer groupColum
 		}
 	}
 	if (n < 1) return undefined;
-	real mean = (real) sum / n;
+	double mean = (double) sum / n;
 	integer degreesOfFreedom = n - 1;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
 	if (degreesOfFreedom >= 1 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
-		real80 sumOfSquares = 0.0;
+		longdouble sumOfSquares = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			if (row -> cells [groupColumn]. string) {
 				if (str32equ (row -> cells [groupColumn]. string, group)) {
-					real diff = row -> cells [column]. number - mean;
+					double diff = row -> cells [column]. number - mean;
 					sumOfSquares += diff * diff;
 				}
 			}
 		}
-		real standardError = sqrt ((real) sumOfSquares / degreesOfFreedom / n);
+		double standardError = sqrt ((double) sumOfSquares / degreesOfFreedom / n);
 		if (out_tFromZero && standardError != 0.0 ) *out_tFromZero = mean / standardError;
 		if (out_significanceFromZero) *out_significanceFromZero =
 			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (mean) / standardError, degreesOfFreedom);
@@ -1596,7 +1596,7 @@ double Table_getGroupDifference_studentT (Table me, integer column, integer grou
 	if (groupColumn < 1 || groupColumn > my numberOfColumns) return undefined;
 	Table_numericize_Assert (me, column);
 	integer n1 = 0, n2 = 0;
-	real80 sum1 = 0.0, sum2 = 0.0;
+	longdouble sum1 = 0.0, sum2 = 0.0;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		if (row -> cells [groupColumn]. string) {
@@ -1612,24 +1612,24 @@ double Table_getGroupDifference_studentT (Table me, integer column, integer grou
 	if (n1 < 1 || n2 < 1) return undefined;
 	integer degreesOfFreedom = n1 + n2 - 2;
 	if (out_numberOfDegreesOfFreedom) *out_numberOfDegreesOfFreedom = degreesOfFreedom;
-	real mean1 = (real) sum1 / n1;
-	real mean2 = (real) sum2 / n2;
-	real difference = mean1 - mean2;
+	double mean1 = (double) sum1 / n1;
+	double mean2 = (double) sum2 / n2;
+	double difference = mean1 - mean2;
 	if (degreesOfFreedom >= 1 && (out_tFromZero || out_significanceFromZero || out_lowerLimit || out_upperLimit)) {
-		real80 sumOfSquares = 0.0;
+		longdouble sumOfSquares = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			if (row -> cells [groupColumn]. string) {
 				if (str32equ (row -> cells [groupColumn]. string, group1)) {
-					real diff = row -> cells [column]. number - mean1;
+					double diff = row -> cells [column]. number - mean1;
 					sumOfSquares += diff * diff;
 				} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
-					real diff = row -> cells [column]. number - mean2;
+					double diff = row -> cells [column]. number - mean2;
 					sumOfSquares += diff * diff;
 				}
 			}
 		}
-		real standardError = sqrt ((real) sumOfSquares / degreesOfFreedom * (1.0 / n1 + 1.0 / n2));
+		double standardError = sqrt ((double) sumOfSquares / degreesOfFreedom * (1.0 / n1 + 1.0 / n2));
 		if (out_tFromZero && standardError != 0.0 ) *out_tFromZero = difference / standardError;
 		if (out_significanceFromZero) *out_significanceFromZero =
 			standardError == 0.0 ? 0.0 : NUMstudentQ (fabs (difference) / standardError, degreesOfFreedom);
@@ -1700,16 +1700,16 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	}
 	Table_numericize_Assert (ranks.get(), 3);
 	double maximumRankSum = (double) n1 * (double) n2;
-	real80 rankSum = 0.0;
+	longdouble rankSum = 0.0;
 	for (integer irow = 1; irow <= ranks -> rows.size; irow ++) {
 		TableRow row = ranks -> rows.at [irow];
 		if (row -> cells [1]. number == 1.0) rankSum += row -> cells [3]. number;
 	}
 	rankSum -= 0.5 * (double) n1 * ((double) n1 + 1.0);
 	double stdev = sqrt (maximumRankSum * ((double) n + 1.0 - totalNumberOfTies3 / n / (n - 1)) / 12.0);
-	if (out_rankSum) *out_rankSum = (real) rankSum;
-	if (out_significanceFromZero) *out_significanceFromZero = NUMgaussQ (fabs ((real) rankSum - 0.5 * maximumRankSum) / stdev);
-	return (real) rankSum / maximumRankSum;
+	if (out_rankSum) *out_rankSum = (double) rankSum;
+	if (out_significanceFromZero) *out_significanceFromZero = NUMgaussQ (fabs ((double) rankSum - 0.5 * maximumRankSum) / stdev);
+	return (double) rankSum / maximumRankSum;
 }
 
 double Table_getFisherF (Table me, integer col1, integer col2);

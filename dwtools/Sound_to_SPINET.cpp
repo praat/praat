@@ -104,14 +104,14 @@ autoSPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration, do
 
 		for (integer j = 1; j <= numberOfFrames; j ++)
 			for (integer i = 1; i <= nFilters; i ++) {
-				real80 a = 0.0;
+				longdouble a = 0.0;
 				for (integer k = 1; k <= nFilters; k ++) {
 					double fr = (f [k] - f [i]) / bw [i];
 					double hexsq = fgamma (fr / thy excitationErbProportion, thy gamma);
 					double hinsq = fgamma (fr / thy inhibitionErbProportion, thy gamma);
 					a += thy y [k] [j] * (hexsq / aex [i] - hinsq / ain [i]);
 				}
-				thy s [i] [j] = a > 0.0 ? (real) a : 0.0;
+				thy s [i] [j] = a > 0.0 ? (double) a : 0.0;
 			}
 		return thee;
 	} catch (MelderError) {

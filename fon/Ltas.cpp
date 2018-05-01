@@ -183,12 +183,12 @@ autoLtas Ltas_computeTrendLine (Ltas me, double fmin, double fmax) {
 		/*
 		 * Compute average amplitude and frequency.
 		 */
-		real80 sum = 0.0, numerator = 0.0, denominator = 0.0;
+		longdouble sum = 0.0, numerator = 0.0, denominator = 0.0;
 		for (integer i = imin; i <= imax; i ++) {
 			sum += thy z [1] [i];
 		}
-		real amean = real (sum / n);
-		real fmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
+		double amean = double (sum / n);
+		double fmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
 		/*
 		 * Compute slope.
 		 */
@@ -197,7 +197,7 @@ autoLtas Ltas_computeTrendLine (Ltas me, double fmin, double fmax) {
 			numerator += da * df;
 			denominator += df * df;
 		}
-		real slope = real (numerator / denominator);
+		double slope = double (numerator / denominator);
 		/*
 		 * Modify bins.
 		 */
@@ -223,22 +223,22 @@ autoLtas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 		/*
 		 * Compute average amplitude and frequency.
 		 */
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer i = imin; i <= imax; i ++) {
 			sum += thy z [1] [i];
 		}
-		real amean = (real) sum / n;
-		real fmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
+		double amean = (double) sum / n;
+		double fmean = thy x1 + (0.5 * (imin + imax) - 1) * thy dx;
 		/*
 		 * Compute slope.
 		 */
-		real80 numerator = 0.0, denominator = 0.0;
+		longdouble numerator = 0.0, denominator = 0.0;
 		for (integer i = imin; i <= imax; i ++) {
 			double da = thy z [1] [i] - amean, df = thy x1 + (i - 1) * thy dx - fmean;
 			numerator += da * df;
 			denominator += df * df;
 		}
-		real slope = (real) (numerator / denominator);
+		double slope = (double) (numerator / denominator);
 		/*
 		 * Modify bins.
 		 */

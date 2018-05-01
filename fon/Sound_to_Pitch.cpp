@@ -88,12 +88,12 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	/*
 	 * Compute the local peak; look half a longest period to both sides.
 	 */
-	real localPeak = 0.0;
+	double localPeak = 0.0;
 	if ((startSample = halfnsamp_window + 1 - halfnsamp_period) < 1) startSample = 1;
 	if ((endSample = halfnsamp_window + halfnsamp_period) > nsamp_window) endSample = nsamp_window;
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		for (integer j = startSample; j <= endSample; j ++) {
-			real value = fabs (frame [channel] [j]);
+			double value = fabs (frame [channel] [j]);
 			if (value > localPeak) localPeak = value;
 		}
 	}
@@ -104,36 +104,36 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	 * Compute the correlation into the array 'r'.
 	 */
 	if (method >= FCC_NORMAL) {
-		real startTime = t - 0.5 * (1.0 / minimumPitch + dt_window);
+		double startTime = t - 0.5 * (1.0 / minimumPitch + dt_window);
 		integer localSpan = maximumLag + nsamp_window, localMaximumLag, offset;
 		if ((startSample = Sampled_xToLowIndex (me, startTime)) < 1) startSample = 1;
 		if (localSpan > my nx + 1 - startSample) localSpan = my nx + 1 - startSample;
 		localMaximumLag = localSpan - nsamp_window;
 		offset = startSample - 1;
-		real80 sumx2 = 0.0;   // sum of squares
+		longdouble sumx2 = 0.0;   // sum of squares
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			real *amp = my z [channel] + offset;
+			double *amp = my z [channel] + offset;
 			for (integer i = 1; i <= nsamp_window; i ++) {
-				real x = amp [i] - localMean [channel];
+				double x = amp [i] - localMean [channel];
 				sumx2 += x * x;
 			}
 		}
-		real80 sumy2 = sumx2;   // at zero lag, these are still equal
+		longdouble sumy2 = sumx2;   // at zero lag, these are still equal
 		r [0] = 1.0;
 		for (integer i = 1; i <= localMaximumLag; i ++) {
-			real80 product = 0.0;
+			longdouble product = 0.0;
 			for (integer channel = 1; channel <= my ny; channel ++) {
-				real *amp = my z [channel] + offset;
-				real y0 = amp [i] - localMean [channel];
-				real yZ = amp [i + nsamp_window] - localMean [channel];
+				double *amp = my z [channel] + offset;
+				double y0 = amp [i] - localMean [channel];
+				double yZ = amp [i + nsamp_window] - localMean [channel];
 				sumy2 += yZ * yZ - y0 * y0;
 				for (integer j = 1; j <= nsamp_window; j ++) {
-					real x = amp [j] - localMean [channel];
-					real y = amp [i + j] - localMean [channel];
+					double x = amp [j] - localMean [channel];
+					double y = amp [i + j] - localMean [channel];
 					product += x * y;
 				}
 			}
-			r [- i] = r [i] = (real) product / sqrt ((real) sumx2 * (real) sumy2);
+			r [- i] = r [i] = (double) product / sqrt ((double) sumx2 * (double) sumy2);
 		}
 	} else {
 
@@ -384,7 +384,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 				interpolation_depth = 1.0;
 				break;
 		}
-		real duration = my dx * my nx;
+		double duration = my dx * my nx;
 		if (minimumPitch < periodsPerWindow / duration)
 			Melder_throw (U"To analyse this Sound, ", U_LEFT_DOUBLE_QUOTE, U"minimum pitch", U_RIGHT_DOUBLE_QUOTE, U" must not be less than ", periodsPerWindow / duration, U" Hz.");
 
@@ -401,7 +401,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		/*
 		 * Determine window length in seconds and in samples.
 		 */
-		real dt_window = periodsPerWindow / minimumPitch;
+		double dt_window = periodsPerWindow / minimumPitch;
 		integer nsamp_window = Melder_ifloor (dt_window / my dx);
 		integer halfnsamp_window = nsamp_window / 2 - 1;
 		if (halfnsamp_window < 2)
@@ -446,11 +446,11 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		 */
 		globalPeak = 0.0;
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer i = 1; i <= my nx; i ++) {
 				sum += my z [channel] [i];
 			}
-			real mean = real (sum / my nx);
+			double mean = double (sum / my nx);
 			for (integer i = 1; i <= my nx; i ++) {
 				double value = fabs (my z [channel] [i] - mean);
 				if (value > globalPeak) globalPeak = value;

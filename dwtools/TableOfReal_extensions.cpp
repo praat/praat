@@ -314,7 +314,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 		U"Invalid columns");
 
 	integer nrows;
-	autoNUMvector <real> irows (NUMstring_to_numbers (rows, & nrows), 1);
+	autoNUMvector <double> irows (NUMstring_to_numbers (rows, & nrows), 1);
 	for (integer i = 1; i <= nrows; i ++) {
 		integer irow = Melder_ifloor (irows [i]);
 		if (irow < 0 || irow > my numberOfRows) {
@@ -337,7 +337,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *
 		}
 	}
 	integer ngreys;
-	autoNUMvector <real> igreys (NUMstring_to_numbers (greys, & ngreys), 1);
+	autoNUMvector <double> igreys (NUMstring_to_numbers (greys, & ngreys), 1);
 
 	Graphics_setWindow (g, 0.0, 1.0, ymin, ymax);
 	Graphics_setInner (g);
@@ -639,11 +639,11 @@ double TableOfReal_getRowSum (TableOfReal me, integer index) {
 	Melder_require (index > 0 && index <= my numberOfRows,
 		U"Index not in valid range.");
 	
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer j = 1; j <= my numberOfColumns; j ++) {
 		sum += my data [index] [j];
 	}
-	return (real) sum;
+	return (double) sum;
 }
 
 double TableOfReal_getColumnSumByLabel (TableOfReal me, const char32 *label) {
@@ -663,11 +663,11 @@ double TableOfReal_getRowSumByLabel (TableOfReal me, const char32 *label) {
 double TableOfReal_getColumnSum (TableOfReal me, integer index) {
 	Melder_require (index > 0 && index <= my numberOfRows,
 		U"Index not in valid range.");
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		sum += my data [i] [index];
 	}
-	return (real) sum;
+	return (double) sum;
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
@@ -707,7 +707,7 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		nummat mat { my data, my numberOfRows, my numberOfColumns };
-		real mean, stdev;
+		double mean, stdev;
 		sum_mean_sumsq_variance_stdev_scalar (mat, icol, nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
@@ -726,7 +726,7 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		numvec vec { my data [irow], my numberOfColumns };
-		real mean, stdev;
+		double mean, stdev;
 		sum_mean_sumsq_variance_stdev_scalar (vec, nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
@@ -739,13 +739,13 @@ void TableOfReal_normalizeTable (TableOfReal me, double norm) {
 }
 
 double TableOfReal_getTableNorm (TableOfReal me) {
-	real80 sumsq = 0.0;
+	longdouble sumsq = 0.0;
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			sumsq += my data [i] [j] * my data [i] [j];
 		}
 	}
-	return sqrt ((real) sumsq);
+	return sqrt ((double) sumsq);
 }
 
 bool TableOfReal_checkPositive (TableOfReal me) {

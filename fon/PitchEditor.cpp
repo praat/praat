@@ -165,8 +165,8 @@ void structPitchEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 	Graphics_rectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 
-	real dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
-	real dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
+	double dyUnv = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_UNV);
+	double dyIntens = Graphics_dyMMtoWC (our graphics.get(), HEIGHT_INTENS);
 
 	integer it1, it2;
 	Sampled_getWindowSamples (pitch, our startWindow, our endWindow, & it1, & it2);
@@ -175,7 +175,7 @@ void structPitchEditor :: v_draw () {
 		Show pitch.
 	*/
 	{
-		real df =
+		double df =
 			pitch -> ceiling > 10000.0 ? 2000.0 :
 			pitch -> ceiling > 5000.0 ? 1000.0 :
 			pitch -> ceiling > 2000.0 ? 500.0 :
@@ -205,7 +205,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_setColour (our graphics.get(), Graphics_BLUE);
 		Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 		Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_HALF);
-		for (real frequency = df; frequency <= pitch -> ceiling; frequency += df) {
+		for (double frequency = df; frequency <= pitch -> ceiling; frequency += df) {
 			Graphics_line (our graphics.get(), our startWindow, frequency, our endWindow, frequency);
 			Graphics_text (our graphics.get(), our endWindow + 0.5 * radius, frequency,   frequency, U" Hz");
 		}

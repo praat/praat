@@ -2443,12 +2443,12 @@ inline static void moveNumericMatrix (Stackel from, Stackel to) {
 	to -> numericMatrix = from -> numericMatrix;
 	to -> owned = true;
 }
-inline static void numvec_addScalar (numvec x, real number) {
+inline static void numvec_addScalar (numvec x, double number) {
 	for (integer i = 1; i <= x.size; i ++) {
 		x [i] += number;
 	}
 }
-inline static void nummat_addScalar (nummat x, real number) {
+inline static void nummat_addScalar (nummat x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
 			x [irow] [icol] += number;
@@ -2467,26 +2467,26 @@ inline static void nummat_addNummat (nummat x, nummat y) {
 		}
 	}
 }
-inline static void numvec_multiplyByScalar (numvec x, real factor) {
+inline static void numvec_multiplyByScalar (numvec x, double factor) {
 	for (integer i = 1; i <= x.size; i ++) {
 		x [i] *= factor;
 	}
 }
-inline static void nummat_multiplyByScalar (nummat x, real factor) {
+inline static void nummat_multiplyByScalar (nummat x, double factor) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
 			x [irow] [icol] *= factor;
 		}
 	}
 }
-inline static autonumvec add_numvec (numvec x, real addend) {
+inline static autonumvec add_numvec (numvec x, double addend) {
 	autonumvec result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] + addend;
 	}
 	return result;
 }
-inline static autonummat add_nummat (nummat x, real addend) {
+inline static autonummat add_nummat (nummat x, double addend) {
 	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
@@ -2701,24 +2701,24 @@ static void do_add () {
 	}
 	Melder_throw (U"Cannot add ", Stackel_whichText (y), U" to ", Stackel_whichText (x), U".");
 }
-inline static void numvec_subtractScalar (numvec x, real number) {
+inline static void numvec_subtractScalar (numvec x, double number) {
 	for (integer i = 1; i <= x.size; i ++) {
 		x [i] -= number;
 	}
 }
-inline static void numvec_subtractScalarReversed (numvec x, real number) {
+inline static void numvec_subtractScalarReversed (numvec x, double number) {
 	for (integer i = 1; i <= x.size; i ++) {
 		x [i] = number - x [i];
 	}
 }
-inline static void nummat_subtractScalar (nummat x, real number) {
+inline static void nummat_subtractScalar (nummat x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
 			x [irow] [icol] -= number;
 		}
 	}
 }
-inline static void nummat_subtractScalarReversed (nummat x, real number) {
+inline static void nummat_subtractScalarReversed (nummat x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
 			x [irow] [icol] = number - x [irow] [icol];
@@ -2749,21 +2749,21 @@ inline static void nummat_subtractNummatReversed (nummat x, nummat y) {
 		}
 	}
 }
-inline static autonumvec sub_numvec (numvec x, real y) {
+inline static autonumvec sub_numvec (numvec x, double y) {
 	autonumvec result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] - y;
 	}
 	return result;
 }
-inline static autonumvec sub_numvec (real x, numvec y) {
+inline static autonumvec sub_numvec (double x, numvec y) {
 	autonumvec result (y.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= y.size; i ++) {
 		result [i] = x - y [i];
 	}
 	return result;
 }
-inline static autonummat sub_nummat (nummat x, real y) {
+inline static autonummat sub_nummat (nummat x, double y) {
 	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
@@ -2772,7 +2772,7 @@ inline static autonummat sub_nummat (nummat x, real y) {
 	}
 	return result;
 }
-inline static autonummat sub_nummat (real x, nummat y) {
+inline static autonummat sub_nummat (double x, nummat y) {
 	autonummat result (y.nrow, y.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= y.nrow; irow ++) {
 		for (integer icol = 1; icol <= y.ncol; icol ++) {
@@ -3079,7 +3079,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 	Stackel x = & theStack [w];
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer n = x->numericVector.size;
-		real *at = x->numericVector.at;
+		double *at = x->numericVector.at;
 		if (x->owned) {
 			for (integer i = 1; i <= n; i ++) {
 				at [i] = f (at [i]);
@@ -3114,13 +3114,13 @@ static void do_softmax () {
 		for (integer i = 1; i <= nelm; i ++) {
 			x->numericVector [i] -= maximum;
 		}
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer i = 1; i <= nelm; i ++) {
 			x->numericVector [i] = exp (x->numericVector [i]);
 			sum += x->numericVector [i];
 		}
 		for (integer i = 1; i <= nelm; i ++) {
-			x->numericVector [i] /= (real) sum;
+			x->numericVector [i] /= (double) sum;
 		}
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
@@ -4051,7 +4051,7 @@ static void do_norm () {
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->number < 1 || n->number > 2)
 		Melder_throw (U"The function \"norm\" requires one or two arguments.");
-	real powerNumber = 2.0;
+	double powerNumber = 2.0;
 	if (n->number == 2) {
 		Stackel power = pop;
 		if (power->which != Stackel_NUMBER)

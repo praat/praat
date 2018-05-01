@@ -78,8 +78,8 @@ the behaviour of Praat will temporarily change in the following ways:
 45: tracing structMatrix :: read ()
 46: trace GTK parent sizes in _GuiObject_position ()
 47: force resampling in OTGrammar RIP
-48: compute sum, mean, stdev with naive implementation in real64
-49: compute sum, mean, stdev with naive implementation in real80
+48: compute sum, mean, stdev with naive implementation in double (64 bits)
+49: compute sum, mean, stdev with naive implementation in longdouble (80 bits)
 50: compute sum, mean, stdev with first-element offset (80 bits)
 51: compute sum, mean, stdev with two cycles, as in R (80 bits)
 (other numbers than 48-51: compute sum, mean, stdev with simple pairwise algorithm, base case 64 [80 bits])

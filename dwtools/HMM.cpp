@@ -96,7 +96,7 @@ static double *NUMwstring_to_probs (char32 *s, integer nwanted) {
 	if (numbers_found != nwanted) {
 		Melder_throw (U"You supplied ", numbers_found, U", while ", nwanted, U" numbers needed.");
 	}
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = 1; i <= numbers_found; i ++) {
 		if (numbers [i] < 0) {
 			Melder_throw (U"Numbers have to be positive.");
@@ -1283,7 +1283,7 @@ void HMM_HMMBaumWelch_backward (HMM me, HMMBaumWelch thee, integer *obs) {
 	}
 	for (integer it = thy numberOfTimes - 1; it >= 1; it --) {
 		for (integer is = 1; is <= my numberOfStates; is ++) {
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer js = 1; js <= my numberOfStates; js ++) {
 				sum += thy beta [js] [it + 1] * my transitionProbs [is] [js] * my emissionProbs [js] [obs [it + 1]];
 			}
@@ -1399,7 +1399,7 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 		}
 
 		for (integer js = 1; js <= my numberOfStates; js ++) {
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer is = 1; is <= my numberOfStates; is ++) {
 				sum += alpha_tm1 [is] * my transitionProbs [is] [js];
 			}
@@ -1412,7 +1412,7 @@ double HMM_getProbabilityAtTimeBeingInState (HMM me, integer itime, integer ista
 		}
 	}
 
-	real80 lnp = 0.0;
+	longdouble lnp = 0.0;
 	for (integer it = 1; it <= itime; it ++) {
 		lnp += log (scale [it]);
 	}
@@ -1453,7 +1453,7 @@ double HMM_getProbabilityOfObservations (HMM me, integer *obs, integer numberOfT
 		}
 
 		for (integer js = 1; js <= my numberOfStates; js ++) {
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer is = 1; is <= my numberOfStates; is ++) {
 				sum += alpha_tm1 [is] * my transitionProbs [is] [js];
 			}
@@ -1607,7 +1607,7 @@ autoTableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int pr
 				thy data [my classIndex [i-1]] [my classIndex [i]] ++;
 			}
 		}
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer i = 1; i <= numberOfTypes; i ++) {
 			double rowSum = 0.0, colSum = 0.0;
 			for (integer j = 1; j <= numberOfTypes; j ++) {

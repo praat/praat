@@ -228,11 +228,11 @@ void Network_normalizeActivities (Network me, integer nodeMin, integer nodeMax) 
 	if (nodeMin < 1) nodeMin = 1;
 	if (nodeMax > my numberOfNodes) nodeMax = my numberOfNodes;
 	if (nodeMax < nodeMin) return;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer inode = nodeMin; inode <= nodeMax; inode ++) {
 		sum += my nodes [inode]. activity;
 	}
-	double average = (real) sum / (nodeMax - nodeMin + 1);
+	double average = (double) sum / (nodeMax - nodeMin + 1);
 	for (integer inode = nodeMin; inode <= nodeMax; inode ++) {
 		my nodes [inode]. activity -= average;
 	}	
@@ -257,7 +257,7 @@ void Network_normalizeWeights (Network me, integer nodeMin, integer nodeMax, int
 	if (nodeMax > my numberOfNodes) nodeMax = my numberOfNodes;
 	if (nodeMax < nodeMin) return;
 	for (integer inode = nodeMin; inode <= nodeMax; inode ++) {
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer iconn = 1; iconn <= my numberOfConnections; iconn ++) {
 			NetworkConnection connection = & my connections [iconn];
 			if (connection -> nodeTo == inode && connection -> nodeFrom >= nodeFromMin && connection -> nodeFrom <= nodeFromMax) {
@@ -265,7 +265,7 @@ void Network_normalizeWeights (Network me, integer nodeMin, integer nodeMax, int
 			}
 		}
 		if (sum != 0.0) {
-			double factor = newSum / (real) sum;
+			double factor = newSum / (double) sum;
 			for (integer iconn = 1; iconn <= my numberOfConnections; iconn ++) {
 				NetworkConnection connection = & my connections [iconn];
 				if (connection -> nodeTo == inode && connection -> nodeFrom >= nodeFromMin && connection -> nodeFrom <= nodeFromMax) {

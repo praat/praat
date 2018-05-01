@@ -116,11 +116,11 @@ autoSound Sound_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 		autoSound him = Sound_create (thy numberOfColumns, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer i = 1; i <= thy numberOfColumns; i ++) {
 			for (integer j = 1; j <= my nx; j ++) {
-				real80 s = 0.0;
+				longdouble s = 0.0;
 				for (integer k = 1; k <= my ny; k ++) {
 					s += minv [i] [k] * my z [k] [j];
 				}
-				his z [i] [j] = (real) s;
+				his z [i] [j] = (double) s;
 			}
 		}
 		return him;

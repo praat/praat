@@ -1653,7 +1653,7 @@ void praat_run () {
 	}
 	Melder_assert (isdefined (0.0));
 	Melder_assert (isdefined (1e300));
-	Melder_assert (isundef ((real) 1e320L));
+	Melder_assert (isundef ((double) 1e320L));
 	Melder_assert (isundef (pow (10.0, 330)));
 	Melder_assert (isundef (0.0 / 0.0));
 	Melder_assert (isundef (1.0 / 0.0));
@@ -1693,9 +1693,9 @@ void praat_run () {
 		autonumvec b { x };
 		//autonumvec c = x;   // implicit construction not OK
 	}
-	Melder_assert (sizeof (real32) == 4);
-	Melder_assert (sizeof (real64) == 8);
-	Melder_assert (sizeof (real80) >= 8);   // this can be 8, 12 or 16
+	Melder_assert (sizeof (float) == 4);
+	Melder_assert (sizeof (double) == 8);
+	Melder_assert (sizeof (longdouble) >= 8);   // this can be 8, 12 or 16
 	Melder_assert (sizeof (integer) == sizeof (void *));
 	if (sizeof (off_t) < 8)
 		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");

@@ -47,16 +47,16 @@ void Distributions_peek (Distributions me, integer column, char32 **string, inte
 	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
 	if (my numberOfRows < 1)
 		Melder_throw (me, U": I have no candidates.");
-	real80 total = 0.0;
+	longdouble total = 0.0;
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		total += (real80) my data [irow] [column];
+		total += (longdouble) my data [irow] [column];
 	}
 	if (total <= 0.0)
 		Melder_throw (me, U": the total weight of column ", column, U" is not positive.");
 	integer irow;
 	do {
-		double rand = NUMrandomUniform (0, (real) total);
-		real80 sum = 0.0;
+		double rand = NUMrandomUniform (0, (double) total);
+		longdouble sum = 0.0;
 		for (irow = 1; irow <= my numberOfRows; irow ++) {
 			sum += my data [irow] [column];
 			if (rand <= sum) break;
@@ -72,7 +72,7 @@ void Distributions_peek (Distributions me, integer column, char32 **string, inte
 
 double Distributions_getProbability (Distributions me, const char32 *string, integer column) {
 	integer row, rowOfString = 0;
-	real80 total = 0.0;
+	longdouble total = 0.0;
 	if (column < 1 || column > my numberOfColumns) return undefined;
 	for (row = 1; row <= my numberOfRows; row ++) {
 		total += my data [row] [column];
@@ -81,17 +81,17 @@ double Distributions_getProbability (Distributions me, const char32 *string, int
 	}
 	if (total <= 0.0) return undefined;
 	if (rowOfString == 0) return 0.0;
-	return my data [rowOfString] [column] / (real) total;
+	return my data [rowOfString] [column] / (double) total;
 }
 
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, integer column) {
 	if (column < 1 || column > my numberOfColumns || column > thy numberOfColumns ||
 	    my numberOfRows != thy numberOfRows) return undefined;
-	real80 total = 0.0;
+	longdouble total = 0.0;
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		total += (real80) fabs (my data [irow] [column] - thy data [irow] [column]);
+		total += (longdouble) fabs (my data [irow] [column] - thy data [irow] [column]);
 	}
-	return (real) total / my numberOfRows;
+	return (double) total / my numberOfRows;
 }
 
 static void unicize (Distributions me) {

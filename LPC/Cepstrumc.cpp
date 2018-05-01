@@ -133,7 +133,7 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 			regression (me, i, ri.peek(), nr);
 			for (integer j = 1; j <= thy nx; j ++) {
 				Cepstrumc_Frame fj = & thy frame [j];
-				real80 d, dist = 0, distr = 0;
+				longdouble d, dist = 0.0, distr = 0.0;
 				if (wc != 0) { /* cepstral distance */
 					for (integer k = 1; k <= fj -> nCoefficients; k ++) {
 						d = fi -> c [k] - fj -> c [k];
@@ -160,7 +160,7 @@ autoDTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle, d
 					dist += wer * d * d;
 				}
 				dist /= wc + wle + wr + wer;
-				his z [i] [j] = sqrt ((real) dist);   // prototype along y-direction
+				his z [i] [j] = sqrt ((double) dist);   // prototype along y-direction
 			}
 			Melder_progress ( (double) i / my nx, U"Calculate distances: frame ",
 			                   i, U" from ", my nx, U".");
