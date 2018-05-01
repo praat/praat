@@ -45,7 +45,7 @@ Thing_define (TableEditor, Editor) {
 		override;
 
 	virtual void v_draw ();
-	virtual bool v_click (double xWC, double yWC, bool shiftKeyPressed);
+	virtual bool v_clickCell (integer row, integer column, bool shiftKeyPressed);
 
 	#include "TableEditor_prefs.h"
 };

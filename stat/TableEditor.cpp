@@ -203,21 +203,10 @@ void structTableEditor :: v_draw () {
 	}
 }
 
-bool structTableEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+bool structTableEditor :: v_clickCell (integer row, integer column, bool /* shiftKeyPressed */) {
 	Table table = static_cast<Table> (our data);
-	//Melder_casual (U"TableEditor::v_click: ", xWC, U" ", yWC, U" ", our columnLeft [1], U" ", our columnRight [1]);
-	integer rowmin = our topRow, rowmax = rowmin + 197;
-	integer colmin = our leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
-	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
-	if (yWC < rowmin - 0.45 || yWC > rowmax + 0.55)
-		return false;
-	for (integer icol = colmin; icol <= colmax; icol ++) {
-		if (xWC > columnLeft [icol - colmin] && xWC < columnRight [icol - colmin]) {
-			our selectedRow = Melder_iround (yWC);
-			our selectedColumn = icol;
-		}
-	}
+	our selectedRow = row;
+	our selectedColumn = column;
 	return true;
 }
 
@@ -239,8 +228,17 @@ static void gui_drawingarea_cb_click (TableEditor me, GuiDrawingArea_ClickEvent 
 	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
-	if (my v_click (xWC, yWC, event -> shiftKeyPressed))
-		Graphics_updateWs (my graphics.get());
+	if (yWC < rowmin - 0.45 || yWC > rowmax + 0.55)
+		return;
+	for (integer icol = colmin; icol <= colmax; icol ++) {
+		if (xWC > my columnLeft [icol - colmin] && xWC < my columnRight [icol - colmin]) {
+			integer selectedRow = Melder_iround (yWC);
+			integer selectedColumn = icol;
+			if (my v_clickCell (selectedRow, selectedColumn, event -> shiftKeyPressed))
+				Graphics_updateWs (my graphics.get());
+			return;
+		}
+	}
 }
 
 static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEvent /* event */) {
@@ -249,7 +247,7 @@ static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEven
 }
 
 static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
-	int value = GuiScrollBar_getValue (event -> scrollBar);
+	integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my leftColumn) {
 		my leftColumn = value;
 		#if cocoa || gtk || motif
@@ -262,7 +260,7 @@ static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
 }
 
 static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
-	int value = GuiScrollBar_getValue (event -> scrollBar);
+	integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my topRow) {
 		my topRow = value;
 		#if cocoa || gtk || motif
