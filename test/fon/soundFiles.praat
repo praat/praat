@@ -1,7 +1,7 @@
 echo Sound files...
 procedure test .type$ .extension$ .duration
 	printline Testing '.type$' files...
-	for numberOfChannels from 1 to 8
+	for numberOfChannels from 1 to if .type$ = "Kay sound" then 2 else 8 fi
 		print 'numberOfChannels' channels:
 		sound = Create Sound from formula... sound numberOfChannels 0 .duration/numberOfChannels 44100 1/4 * sin(2*pi*377*x) + randomGauss(0,0.05)
 		Formula: ~ round (self * 32768) / 32768
@@ -65,6 +65,7 @@ call test AIFF aiff 3
 call test AIFC aifc 3
 call test Next/Sun au 3
 call test NIST nist 3
+@test: "Kay sound", "nsp", 3
 call test FLAC flac 3
 Debug... no 18
 call test WAV wav 30

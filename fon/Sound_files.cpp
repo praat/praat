@@ -222,25 +222,33 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 
 		/* SD chunk */
 
-		if (fread (data, 1, 4, f) < 4) readError ();
-		while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
-			if (feof ((FILE *) f))
-				Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
-			chunkSize = bingetu32LE (f);
-			if (chunkSize & 1) ++ chunkSize;
-			if (fread (data, 1, chunkSize, f) < chunkSize) readError ();
-			if (fread (data, 1, 4, f) < 4) readError ();
-		}
-		chunkSize = bingetu32LE (f);
-		if (chunkSize != numberOfSamples * 2)
-			Melder_throw (U"Incomplete SD chunk. Please report to paul.boersma@uva.nl.");
-
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / samplingFrequency, samplingFrequency);
 		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+			if (fread (data, 1, 4, f) < 4) readError ();
+			while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
+				if (feof ((FILE *) f))
+					Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
+				chunkSize = bingetu32LE (f);
+				if (chunkSize & 1) ++ chunkSize;
+				Melder_casual (U"Chunk ",
+					data [0], U" ", data [1], U" ", data [2], U" ", data [3], U" ", chunkSize);
+				fseek (f, chunkSize, SEEK_CUR);
+				if (fread (data, 1, 4, f) < 4) readError ();
+			}
+			chunkSize = bingetu32LE (f);
+			integer residual = chunkSize - numberOfSamples * 2;
+			if (residual < 0)
+				Melder_throw (U"Incomplete SD chunk: attested size ", chunkSize, U" bytes,"
+					U" announced size ", numberOfSamples * 2, U" bytes. Please report to paul.boersma@uva.nl.");
+
 			for (integer i = 1; i <= numberOfSamples; i ++) {
 				my z [ichan] [i] = (double) bingeti16LE (f) / 32768.0;
 			}
+			for (integer i = 1; i <= residual; i ++) {
+				fread (data, 1, 1, f);
+			}
 		}
+		Melder_casual (ftell (f));
 		f.close (file);
 		return me;
 	} catch (MelderError) {
@@ -342,10 +350,12 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 		}
 		fwrite ("SDA_", 1, 4, file -> filePointer);
 		binputi32LE (my nx * 2, file -> filePointer);   // chunk size
-
 		MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z, my nx, true);
-		if (my ny > 1)
+		if (my ny > 1) {
+			fwrite ("SD_B", 1, 4, file -> filePointer);
+			binputi32LE (my nx * 2, file -> filePointer);   // chunk size
 			MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z + 1, my nx, true);
+		}
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw (me, U": not written to Kay sound file ", file, U".");
