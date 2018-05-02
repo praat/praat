@@ -689,7 +689,7 @@ DO
 }
 
 FORM (NEW_Sound_extractChannels, U"Sound: Extract channels", nullptr) {
-	NUMVEC (channels, U"Channel numbers", U"to# (64)")
+	NUMVEC (channels, U"Channel numbers:", U"to# (64)")
 	OK
 DO
 	CONVERT_EACH (Sound)

@@ -87,7 +87,7 @@ autoExcitation Excitation_create (double frequencyStep, integer numberOfFrequenc
 }
 
 double Excitation_getDistance (Excitation me, Excitation thee) {
-	real80 distance = 0.0, mean = 0.0;
+	longdouble distance = 0.0, mean = 0.0;
 	Melder_assert (my nx == thy nx);
 	for (integer i = 1; i <= my nx; i ++) {
 		double dper = my z [1] [i] - thy z [1] [i];
@@ -97,15 +97,15 @@ double Excitation_getDistance (Excitation me, Excitation thee) {
 	mean /= my nx;
 	distance /= my nx;
 	/* distance -= mean * mean; */
-	return sqrt ((real) distance);
+	return sqrt ((double) distance);
 }
 
 double Excitation_getLoudness (Excitation me) {
-	real80 loudness = 0.0;
+	longdouble loudness = 0.0;
 	for (integer i = 1; i <= my nx; i ++)
 		/*  Sones = 2 ** ((Phones - 40) / 10)  */
 		loudness += pow (2.0, (my z [1] [i] - 40.0) / 10.0);
-	return my dx * (real) loudness;
+	return my dx * (double) loudness;
 }
 
 void Excitation_draw (Excitation me, Graphics g,

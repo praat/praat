@@ -3414,7 +3414,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 
 		// Get correctionfactor for ties
 		// Hayes pg. 831
-		real80 c = 0.0;
+		longdouble c = 0.0;
 		integer jt, j = 1;
 		while (j < numberOfData) {
         	for (jt = j + 1; jt <= numberOfData && data [jt] == data [j]; jt ++) { }
@@ -3424,7 +3424,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 			}
         	j = jt;
 		}
-		double tiesCorrection = 1.0 - (real) c / (numberOfData * (numberOfData * numberOfData - 1.0));
+		double tiesCorrection = 1.0 - (double) c / (numberOfData * (numberOfData * numberOfData - 1.0));
 
 		autoNUMvector <integer> factorLevelSizes (1, numberOfLevels);
 		autoNUMvector <double> factorLevelSums (1, numberOfLevels);
@@ -3435,7 +3435,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 			factorLevelSums [index] += data [i];
 		}
 
-		real80 kruskalWallis = 0.0;
+		longdouble kruskalWallis = 0.0;
 		for (j = 1; j <= numberOfLevels; j ++) {
 			if (factorLevelSizes [j] < 2) {
 				SimpleString ss = (SimpleString) levels -> classes->at [j];   // FIXME cast
@@ -3450,10 +3450,10 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 			*p_df = df;
 		}
 		if (p_kruskalWallis) {
-			*p_kruskalWallis = (real) kruskalWallis;
+			*p_kruskalWallis = (double) kruskalWallis;
 		}
 		if (prob) {
-			*prob = NUMchiSquareQ ((real) kruskalWallis, df);
+			*prob = NUMchiSquareQ ((double) kruskalWallis, df);
 		}
 		autoTable him = Table_createWithColumnNames (numberOfLevels, U"Group(R) Sums(R) Cases");
 		for (integer irow = 1; irow <= numberOfLevels; irow ++) {

@@ -285,7 +285,7 @@ double Eigen_getSumOfEigenvalues (Eigen me, integer from, integer to) {
 	if (to > my numberOfEigenvalues || from > to) {
 		return undefined;
 	}
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = from; i <= to; i++) {
 		sum += my eigenvalues[i];
 	}
@@ -293,7 +293,7 @@ double Eigen_getSumOfEigenvalues (Eigen me, integer from, integer to) {
 }
 
 double Eigen_getCumulativeContributionOfComponents (Eigen me, integer from, integer to) {
-	real80 partial = 0.0, sum = 0.0;
+	longdouble partial = 0.0, sum = 0.0;
 
 	if (to == 0) {
 		to = my numberOfEigenvalues;
@@ -318,7 +318,7 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 	}
 
 	integer n = 1;
-	real80 p = my eigenvalues [1];
+	longdouble p = my eigenvalues [1];
 	while (p / sum < fraction && n < my numberOfEigenvalues) {
 		p += my eigenvalues [++ n];
 	}
@@ -546,12 +546,12 @@ void Eigen_matrix_into_matrix_principalComponents (Eigen me, double **from, inte
 	
 	for (integer irow = 1; irow <= numberOfRows; irow ++) {
 		for (integer icol = 1; icol <= numberOfDimensionsToKeep; icol ++) {
-			real80 r = 0.0;
+			longdouble r = 0.0;
 			for (integer k = 1; k <= my dimension; k ++) {
 				// eigenvector[icol] is in row[icol] of my eigenvectors
 				r += my eigenvectors  [icol] [k] * from [irow] [from_colbegin + k - 1];
 			}
-			to [irow] [to_colbegin + icol - 1] = (real) r;
+			to [irow] [to_colbegin + icol - 1] = (double) r;
 		}
 	}
 }

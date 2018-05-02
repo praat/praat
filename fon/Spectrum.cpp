@@ -400,7 +400,7 @@ double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double 
 
 double Spectrum_getCentreOfGravity (Spectrum me, double power) {
 	double halfpower = 0.5 * power;
-	real80 sumenergy = 0.0, sumfenergy = 0.0;
+	longdouble sumenergy = 0.0, sumfenergy = 0.0;
 	for (integer i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
@@ -415,7 +415,7 @@ double Spectrum_getCentralMoment (Spectrum me, double moment, double power) {
 	double fmean = Spectrum_getCentreOfGravity (me, power);
 	if (isundef (fmean)) return undefined;
 	double halfpower = 0.5 * power;
-	real80 sumenergy = 0.0, sumfenergy = 0.0;
+	longdouble sumenergy = 0.0, sumfenergy = 0.0;
 	for (integer i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;

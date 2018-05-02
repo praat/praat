@@ -180,7 +180,7 @@ void SVD_compute (SVD me) {
 void SVD_getSquared (SVD me, double **m, bool inverse) {
 	for (integer i = 1; i <= my numberOfColumns; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			real80 val = 0.0;
+			longdouble val = 0.0;
 			for (integer k = 1; k <= my numberOfColumns; k ++) {
 				if (my d [k] > 0.0) {
 					double dsq = my d [k] * my d [k];
@@ -188,7 +188,7 @@ void SVD_getSquared (SVD me, double **m, bool inverse) {
 					val += my v [i] [k] * my v [j] [k] * factor;
 				}
 			}
-			m [i] [j] = (real) val;
+			m [i] [j] = (double) val;
 		}
 	}
 }
@@ -201,22 +201,22 @@ void SVD_solve (SVD me, double b [], double x []) {
 			Solution: x = V D^-1 U' b */
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			real80 tmp = 0.0;
+			longdouble tmp = 0.0;
 			if (my d [j] > 0.0) {
 				for (integer i = 1; i <= my numberOfRows; i ++) {
 					tmp += my u [i] [j] * b [i];
 				}
 				tmp /= my d [j];
 			}
-			t [j] = (real) tmp;
+			t [j] = (double) tmp;
 		}
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			real80 tmp = 0.0;
+			longdouble tmp = 0.0;
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
 				tmp += my v [j] [i] * t [i];
 			}
-			x [j] = (real) tmp;
+			x [j] = (double) tmp;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not solved.");
@@ -227,7 +227,7 @@ integer SVD_getMinimumNumberOfSingularValues (SVD me, double fractionOfSumOfSing
 	double sumOfSingularValues = SVD_getSumOfSingularValues (me, 1, my numberOfColumns);
 	double criterion = sumOfSingularValues * fractionOfSumOfSingularValues;
 	integer j = 1;
-	real80 sum = my d [1];
+	longdouble sum = my d [1];
 	while (sum < criterion && j < my numberOfColumns) {
 		sum += my d [++ j];
 	}
@@ -250,7 +250,7 @@ void SVD_solve2 (SVD me, double b [], double x [], double fractionOfSumOfSingula
 		}
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			for (integer i = 1; i <= numberOfComponents; i ++) {
-				real80 inproduct = 0.0; // column [i] from U 
+				longdouble inproduct = 0.0; // column [i] from U 
 				for (integer k = 1; k <= my numberOfRows; k ++) {
 					inproduct += my u [k] [i] * b [k];
 				}
@@ -299,11 +299,11 @@ double SVD_getSumOfSingularValues (SVD me, integer from, integer to) {
 	from = from == 0 ? 1 : from;
 	to = to == 0 ? my numberOfColumns : to;
 	Melder_require (from > 0 && from <= to && to <= my numberOfColumns, U"The range should be within [1,", my numberOfColumns, U"].");
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = from; i <= to; i ++) {
 		sum += my d [i];
 	}
-	return (real) sum;
+	return (double) sum;
 }
 
 integer SVD_zeroSmallSingularValues (SVD me, double tolerance) {

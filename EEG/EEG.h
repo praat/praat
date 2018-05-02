@@ -54,6 +54,8 @@ void EEG_removeTriggers (EEG me, kMelder_string which, const char32 *criterion);
 autoEEG EEG_extractChannel (EEG me, integer channelNumber);
 autoEEG EEG_extractChannel (EEG me, const char32 *channelName);
 autoEEG EEG_extractChannels (EEG me, numvec channelNumbers);
+void EEG_removeChannel (EEG me, integer channelNumber);
+void EEG_removeChannel (EEG me, const char32 *channelName);
 static inline autoSound EEG_extractSound (EEG me) { return Data_copy (my sound.get()); }
 static inline autoTextGrid EEG_extractTextGrid (EEG me) { return Data_copy (my textgrid.get()); }
 autoEEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes);

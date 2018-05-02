@@ -52,7 +52,7 @@ void structSound :: v_info () {
 	bool thereAreEnoughObservationsToComputeFirstOrderOverallStatistics = ( numberOfCells >= 1 );
 	if (thereAreEnoughObservationsToComputeFirstOrderOverallStatistics) {
 		double minimum_Pa = our z [1] [1], maximum_Pa = minimum_Pa;
-		real80 sum_Pa = 0.0, sumOfSquares_Pa2 = 0.0;
+		longdouble sum_Pa = 0.0, sumOfSquares_Pa2 = 0.0;
 		for (integer channel = 1; channel <= our ny; channel ++) {
 			double *waveform_Pa = our z [channel];
 			for (integer i = 1; i <= our nx; i ++) {
@@ -66,12 +66,12 @@ void structSound :: v_info () {
 		MelderInfo_writeLine (U"Amplitude:");
 		MelderInfo_writeLine (U"   Minimum: ", Melder_single (minimum_Pa), U" Pascal");
 		MelderInfo_writeLine (U"   Maximum: ", Melder_single (maximum_Pa), U" Pascal");
-		double mean_Pa = (real) sum_Pa / numberOfCells;
+		double mean_Pa = (double) sum_Pa / numberOfCells;
 		MelderInfo_writeLine (U"   Mean: ", Melder_single (mean_Pa), U" Pascal");
-		double meanSquare_Pa2 = (real) sumOfSquares_Pa2 / numberOfCells;
+		double meanSquare_Pa2 = (double) sumOfSquares_Pa2 / numberOfCells;
 		double rootMeanSquare_Pa = sqrt (meanSquare_Pa2);
 		MelderInfo_writeLine (U"   Root-mean-square: ", Melder_single (rootMeanSquare_Pa), U" Pascal");
-		double energy_Pa2s = (real) sumOfSquares_Pa2 * our dx / our ny;   // Pa2 s = kg2 m-2 s-3
+		double energy_Pa2s = (double) sumOfSquares_Pa2 * our dx / our ny;   // Pa2 s = kg2 m-2 s-3
 		MelderInfo_write (U"Total energy: ", Melder_single (energy_Pa2s), U" Pascal\u00B2 sec");
 		const double rho_c = 400.0;   // rho = 1.14 kg m-3; c = 353 m s-1; [rho c] = kg m-2 s-1
 		double energy_J_m2 = energy_Pa2s / rho_c;   // kg s-2 = Joule m-2
@@ -102,11 +102,11 @@ double structSound :: v_getMatrix (integer irow, integer icol) {
 			if (icol < 1 || icol > nx) return 0.0;
 			if (our ny == 1) return our z [1] [icol];   // optimization
 			if (our ny == 2) return 0.5 * (our z [1] [icol] + our z [2] [icol]);   // optimization
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer channel = 1; channel <= ny; channel ++) {
 				sum += our z [channel] [icol];
 			}
-			return (real) sum / our ny;
+			return (double) sum / our ny;
 		}
 		return 0.0;
 	}
@@ -278,7 +278,7 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, integer *n) {
 	integer imin, imax;
 	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
 	if (*n < 1) return undefined;
-	real80 sum2 = 0.0;
+	longdouble sum2 = 0.0;
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		double *amplitude = my z [channel];
 		for (integer i = imin; i <= imax; i ++) {
@@ -286,7 +286,7 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, integer *n) {
 			sum2 += value * value;
 		}
 	}
-	return (real) sum2;
+	return (double) sum2;
 }
 
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax) {
@@ -1010,34 +1010,34 @@ void Sound_multiplyByWindow (Sound me, kSound_windowShape windowShape) {
 				for (integer i = 1; i <= n; i ++) { double phase = (double) i / n;
 					amp [i] *= 0.54 - 0.46 * cos (2.0 * NUMpi * phase); }
 			} break; case kSound_windowShape::GAUSSIAN_1: {
-				real imid = 0.5 * (n + 1), edge = exp (-3.0), onebyedge1 = 1.0 / (1.0 - edge);   // -0.5..+0.5
+				double imid = 0.5 * (n + 1), edge = exp (-3.0), onebyedge1 = 1.0 / (1.0 - edge);   // -0.5..+0.5
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-12.0 * phase * phase) - edge) * onebyedge1; }
 			} break; case kSound_windowShape::GAUSSIAN_2: {
-				real imid = 0.5 * (double) (n + 1), edge = exp (-12.0), onebyedge1 = 1.0 / (1.0 - edge);
+				double imid = 0.5 * (double) (n + 1), edge = exp (-12.0), onebyedge1 = 1.0 / (1.0 - edge);
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-48.0 * phase * phase) - edge) * onebyedge1; }
 			} break; case kSound_windowShape::GAUSSIAN_3: {
-				real imid = 0.5 * (double) (n + 1), edge = exp (-27.0), onebyedge1 = 1.0 / (1.0 - edge);
+				double imid = 0.5 * (double) (n + 1), edge = exp (-27.0), onebyedge1 = 1.0 / (1.0 - edge);
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-108.0 * phase * phase) - edge) * onebyedge1; }
 			} break; case kSound_windowShape::GAUSSIAN_4: {
-				real imid = 0.5 * (double) (n + 1), edge = exp (-48.0), onebyedge1 = 1.0 / (1.0 - edge);
+				double imid = 0.5 * (double) (n + 1), edge = exp (-48.0), onebyedge1 = 1.0 / (1.0 - edge);
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-192.0 * phase * phase) - edge) * onebyedge1; }
 			} break; case kSound_windowShape::GAUSSIAN_5: {
-				real imid = 0.5 * (double) (n + 1), edge = exp (-75.0), onebyedge1 = 1.0 / (1.0 - edge);
+				double imid = 0.5 * (double) (n + 1), edge = exp (-75.0), onebyedge1 = 1.0 / (1.0 - edge);
 				for (integer i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
 					amp [i] *= (exp (-300.0 * phase * phase) - edge) * onebyedge1; }
 			} break; case kSound_windowShape::KAISER_1: {
-				real imid = 0.5 * (double) (n + 1);
-				real factor = 1.0 / NUMbessel_i0_f (2 * NUMpi);
+				double imid = 0.5 * (double) (n + 1);
+				double factor = 1.0 / NUMbessel_i0_f (2 * NUMpi);
 				for (integer i = 1; i <= n; i ++) { double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
 					double root = 1.0 - phase * phase;
 					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2.0 * NUMpi * sqrt (root)); }
 			} break; case kSound_windowShape::KAISER_2: {
-				real imid = 0.5 * (double) (n + 1);
-				real factor = 1.0 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
+				double imid = 0.5 * (double) (n + 1);
+				double factor = 1.0 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
 				for (integer i = 1; i <= n; i ++) { double phase = 2.0 * ((double) i - imid) / n;   // -1..+1
 					double root = 1.0 - phase * phase;
 					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2.0 * NUMpi * NUMpi + 0.5) * sqrt (root)); }

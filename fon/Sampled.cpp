@@ -164,7 +164,7 @@ static void Sampled_getSumAndDefinitionRange
 		Outside [x1-dx/2, xN+dx/2], the curve is undefined and neither times nor values are counted.
 		In [x1-dx/2,x1] and [xN,xN+dx/2], the curve is linearly extrapolated.
 	*/
-	real80 sum = 0.0, definitionRange = 0.0;
+	longdouble sum = 0.0, definitionRange = 0.0;
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
 		if (interpolate) {
@@ -287,8 +287,8 @@ static void Sampled_getSumAndDefinitionRange
 			}
 		}
 	}
-	if (return_sum) *return_sum = (real) sum;
-	if (return_definitionRange) *return_definitionRange = (real) definitionRange;
+	if (return_sum) *return_sum = (double) sum;
+	if (return_definitionRange) *return_definitionRange = (double) definitionRange;
 }
 
 double Sampled_getMean (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {
@@ -319,7 +319,7 @@ static void Sampled_getSum2AndDefinitionRange
 		Outside [x1-dx/2, xN+dx/2], the curve is undefined and neither times nor values are counted.
 		In [x1-dx/2,x1] and [xN,xN+dx/2], the curve is linearly extrapolated.
 	*/
-	real80 sum2 = 0.0, definitionRange = 0.0;
+	longdouble sum2 = 0.0, definitionRange = 0.0;
 	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	if (Function_intersectRangeWithDomain (me, & xmin, & xmax)) {
 		if (interpolate) {
@@ -470,8 +470,8 @@ static void Sampled_getSum2AndDefinitionRange
 			}
 		}
 	}
-	if (return_sum2) *return_sum2 = (real) sum2;
-	if (return_definitionRange) *return_definitionRange = (real) definitionRange;
+	if (return_sum2) *return_sum2 = (double) sum2;
+	if (return_definitionRange) *return_definitionRange = (double) definitionRange;
 }
 
 double Sampled_getStandardDeviation (Sampled me, double xmin, double xmax, integer ilevel, int unit, bool interpolate) {

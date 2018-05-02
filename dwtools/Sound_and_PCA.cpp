@@ -90,7 +90,7 @@ autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOf
 		// W = E D^(-1/2) E' from http://cis.legacy.ics.tkk.fi/aapo/papers/IJCNN99_tutorialweb/node26.html
         for (integer i = 1; i <= thy dimension; i ++) {
             for (integer j = i; j <= thy dimension; j ++) {
-                real80 wij = 0.0;
+                longdouble wij = 0.0;
                 for (integer k = 1; k <= numberOfComponents; k ++) {
                     wij += thy eigenvectors [k] [i] * thy eigenvectors [k] [j] / sqrt (thy eigenvalues [k]);
                 }

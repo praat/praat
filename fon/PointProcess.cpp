@@ -457,7 +457,7 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return undefined;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
 			sum += my t [i + 1] - my t [i];   // this interval counts as a period
@@ -465,7 +465,7 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 			numberOfPeriods --;   // this interval does not count as a period
 		}
 	}
-	return numberOfPeriods > 0 ? real (sum / numberOfPeriods) : undefined;
+	return numberOfPeriods > 0 ? double (sum / numberOfPeriods) : undefined;
 }
 
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
@@ -478,7 +478,7 @@ double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	/*
 	 * Compute mean.
 	 */
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
 			sum += my t [i + 1] - my t [i];   // this interval counts as a period
@@ -487,11 +487,11 @@ double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 		}
 	}
 	if (numberOfPeriods < 2) return undefined;
-	double mean = real (sum / numberOfPeriods);
+	double mean = double (sum / numberOfPeriods);
 	/*
 	 * Compute variance.
 	 */
-	real80 sum2 = 0.0;
+	longdouble sum2 = 0.0;
 	for (integer i = imin; i < imax; i ++) {
 		if (PointProcess_isPeriod (me, i, minimumPeriod, maximumPeriod, maximumPeriodFactor)) {
 			double dperiod = my t [i + 1] - my t [i] - mean;
@@ -501,7 +501,7 @@ double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	/*
 	 * Compute standard deviation.
 	 */
-	return sqrt (real (sum2 / (numberOfPeriods - 1)));
+	return sqrt (double (sum2 / (numberOfPeriods - 1)));
 }
 
 /* End of file PointProcess.cpp */

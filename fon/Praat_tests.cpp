@@ -302,7 +302,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				x [i] = NUMrandomGauss (0.0, 1.0);
 				y [i] = NUMrandomGauss (0.0, 1.0);
 			}
-			real z = 0.0;
+			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				z += inner_scalar (x.get(), y.get());
 			}
@@ -355,7 +355,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				real sum = sum_scalar (x.get());
+				double sum = sum_scalar (x.get());
 				z += sum;
 			}
 			t = Melder_stopwatch () / size;   // for size == 100: 0.31 ns
@@ -368,7 +368,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				real sum = mean_scalar (x.get());
+				double sum = mean_scalar (x.get());
 				z += sum;
 			}
 			t = Melder_stopwatch () / size;   // for size == 100: 0.34 ns
@@ -381,7 +381,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				real stdev = stdev_scalar (x.get());
+				double stdev = stdev_scalar (x.get());
 				z += stdev;
 			}
 			t = Melder_stopwatch () / size;
@@ -407,7 +407,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				for (integer i = 1; i <= size; i ++) {
-					result [i] = (real) i;
+					result [i] = (double) i;
 				}
 				z += result [size - 1];
 			}
@@ -420,7 +420,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) malloc (sizeof (double) * (size_t) size);
 				for (integer i = 0; i < size; i ++) {
-					result [i] = (real) i;
+					result [i] = (double) i;
 				}
 				z += result [size - 1];
 				free (result);
@@ -434,7 +434,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) calloc (sizeof (double), (size_t) size);
 				for (integer i = 0; i < size; i ++) {
-					result [i] = (real) i;
+					result [i] = (double) i;
 				}
 				z += result [size - 1];
 				free (result);

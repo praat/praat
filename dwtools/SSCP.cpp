@@ -866,11 +866,11 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		for (integer i = 1; i <= ny; i ++) {
 			for (integer j = 1; j <= nx; j ++) {
-				real80 t = 0.0;
+				longdouble t = 0.0;
 				for (integer k = 1; k <= j; k ++) {
 					t += syx [i] [k] * sxx [k] [j];
 				}
-				a [j] [i] = (real) t;
+				a [j] [i] = (double) t;
 			}
 		}
 
@@ -1163,8 +1163,8 @@ autoCovariance Covariance_create_reduceStorage (integer dimension, integer stora
 autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroid, integer numberOfObservations) {
 	try {
 		integer dimension, numberOfCovariances;
-		autoNUMvector <real> centroid (NUMstring_to_numbers (s_centroid, & dimension), 1);
-		autoNUMvector <real> covariances (NUMstring_to_numbers (s_covariances, & numberOfCovariances), 1);
+		autoNUMvector <double> centroid (NUMstring_to_numbers (s_centroid, & dimension), 1);
+		autoNUMvector <double> covariances (NUMstring_to_numbers (s_covariances, & numberOfCovariances), 1);
 		integer numberOfCovariances_wanted = dimension * (dimension + 1) / 2;
 		Melder_require (numberOfCovariances == numberOfCovariances_wanted,
 			U"The number of covariance matrix elements and the number of centroid elements should agree. "

@@ -34,7 +34,7 @@ int NUMstring_containsPrintableCharacter (const char32 *s);
 
 void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string);
 
-real * NUMstring_to_numbers (const char32 *s, integer *numbers_found);
+double * NUMstring_to_numbers (const char32 *s, integer *numbers_found);
 /* return array with the number of numbers found */
 
 /*

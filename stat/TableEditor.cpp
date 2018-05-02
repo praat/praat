@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2011,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2006-2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,16 +80,19 @@ static void menu_cb_preferences (TableEditor me, EDITOR_ARGS_FORM) {
 /********** EDIT MENU **********/
 
 #ifndef macintosh
-static void menu_cb_Cut (TableEditor me, EDITOR_ARGS_DIRECT) {   // BUG: why only on Mac?
+/*
+	On macOS, Cut/Copy/Paste are already available in the Praat:Edit menu.
+*/
+static void menu_cb_CutText (TableEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_cut (my text);
 }
-static void menu_cb_Copy (TableEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_CopyText (TableEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_copy (my text);
 }
-static void menu_cb_Paste (TableEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_PasteText (TableEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_paste (my text);
 }
-static void menu_cb_Erase (TableEditor me, EDITOR_ARGS_DIRECT) {
+static void menu_cb_EraseText (TableEditor me, EDITOR_ARGS_DIRECT) {
 	GuiText_remove (my text);
 }
 #endif
@@ -200,22 +203,10 @@ void structTableEditor :: v_draw () {
 	}
 }
 
-bool structTableEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+bool structTableEditor :: v_clickCell (integer row, integer column, bool /* shiftKeyPressed */) {
 	Table table = static_cast<Table> (our data);
-	Melder_casual (U"TableEditor::v_click: ", xWC, U" ", yWC,
-		U" ", our columnLeft [1], U" ", our columnRight [1]);
-	integer rowmin = our topRow, rowmax = rowmin + 197;
-	integer colmin = our leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
-	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
-	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
-	if (yWC < rowmin - 0.45 || yWC > rowmax + 0.55)
-		return false;
-	for (integer icol = colmin; icol <= colmax; icol ++) {
-		if (xWC > columnLeft [icol - colmin] && xWC < columnRight [icol - colmin]) {
-			our selectedRow = Melder_iround (yWC);
-			our selectedColumn = icol;
-		}
-	}
+	our selectedRow = row;
+	our selectedColumn = column;
 	return true;
 }
 
@@ -235,11 +226,19 @@ static void gui_drawingarea_cb_click (TableEditor me, GuiDrawingArea_ClickEvent 
 	integer colmin = my leftColumn, colmax = colmin + (kTableEditor_MAXNUM_VISIBLE_COLUMNS - 1);
 	if (rowmax > table -> rows.size) rowmax = table -> rows.size;
 	if (colmax > table -> numberOfColumns) colmax = table -> numberOfColumns;
-	//Graphics_setWindow (my graphics.get(), 0.0, Graphics_dxWCtoMM (my graphics.get(), 1.0), rowmin + 197.5, rowmin - 2.5);
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics.get(), event -> x, event -> y, & xWC, & yWC);
-	if (my v_click (xWC, yWC, event -> shiftKeyPressed))
-		Graphics_updateWs (my graphics.get());
+	if (yWC < rowmin - 0.45 || yWC > rowmax + 0.55)
+		return;
+	for (integer icol = colmin; icol <= colmax; icol ++) {
+		if (xWC > my columnLeft [icol - colmin] && xWC < my columnRight [icol - colmin]) {
+			integer selectedRow = Melder_iround (yWC);
+			integer selectedColumn = icol;
+			if (my v_clickCell (selectedRow, selectedColumn, event -> shiftKeyPressed))
+				Graphics_updateWs (my graphics.get());
+			return;
+		}
+	}
 }
 
 static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEvent /* event */) {
@@ -248,7 +247,7 @@ static void gui_drawingarea_cb_resize (TableEditor me, GuiDrawingArea_ResizeEven
 }
 
 static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
-	int value = GuiScrollBar_getValue (event -> scrollBar);
+	integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my leftColumn) {
 		my leftColumn = value;
 		#if cocoa || gtk || motif
@@ -261,7 +260,7 @@ static void gui_cb_scrollHorizontal (TableEditor me, GuiScrollBarEvent event) {
 }
 
 static void gui_cb_scrollVertical (TableEditor me, GuiScrollBarEvent event) {
-	int value = GuiScrollBar_getValue (event -> scrollBar);
+	integer value = GuiScrollBar_getValue (event -> scrollBar);
 	if (value != my topRow) {
 		my topRow = value;
 		#if cocoa || gtk || motif
@@ -300,15 +299,11 @@ void structTableEditor :: v_createMenus () {
 	Editor_addCommand (this, U"File", U"-- before scripting --", 0, nullptr);
 
 	#ifndef macintosh
-	Editor_addCommand (this, U"Edit", U"-- cut copy paste --", 0, nullptr);
-	Editor_addCommand (this, U"Edit", U"Cut text", 'X', menu_cb_Cut);
-	Editor_addCommand (this, U"Edit", U"Cut", Editor_HIDDEN, menu_cb_Cut);
-	Editor_addCommand (this, U"Edit", U"Copy text", 'C', menu_cb_Copy);
-	Editor_addCommand (this, U"Edit", U"Copy", Editor_HIDDEN, menu_cb_Copy);
-	Editor_addCommand (this, U"Edit", U"Paste text", 'V', menu_cb_Paste);
-	Editor_addCommand (this, U"Edit", U"Paste", Editor_HIDDEN, menu_cb_Paste);
-	Editor_addCommand (this, U"Edit", U"Erase text", 0, menu_cb_Erase);
-	Editor_addCommand (this, U"Edit", U"Erase", Editor_HIDDEN, menu_cb_Erase);
+	Editor_addCommand (this, U"Edit", U"-- cut copy paste text --", 0, nullptr);
+	Editor_addCommand (this, U"Edit", U"Cut text", 'X', menu_cb_CutText);
+	Editor_addCommand (this, U"Edit", U"Copy text", 'C', menu_cb_CopyText);
+	Editor_addCommand (this, U"Edit", U"Paste text", 'V', menu_cb_PasteText);
+	Editor_addCommand (this, U"Edit", U"Erase text", 0, menu_cb_EraseText);
 	#endif
 }
 

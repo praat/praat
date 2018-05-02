@@ -771,7 +771,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, num
 	}
 }
 
-inline static void NumericVectorVariable_add (InterpreterVariable variable, real scalar) {
+inline static void NumericVectorVariable_add (InterpreterVariable variable, double scalar) {
 	numvec variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] += scalar;
@@ -795,7 +795,7 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, numv
 		(void) 0;
 	}
 }
-inline static void NumericVectorVariable_subtract (InterpreterVariable variable, real scalar) {
+inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
 	numvec variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] -= scalar;
@@ -819,7 +819,7 @@ inline static void NumericVectorVariable_subtract (InterpreterVariable variable,
 		(void) 0;
 	}
 }
-inline static void NumericVectorVariable_multiply (InterpreterVariable variable, real scalar) {
+inline static void NumericVectorVariable_multiply (InterpreterVariable variable, double scalar) {
 	numvec variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] *= scalar;
@@ -843,7 +843,7 @@ inline static void NumericVectorVariable_multiply (InterpreterVariable variable,
 		(void) 0;
 	}
 }
-inline static void NumericVectorVariable_divide (InterpreterVariable variable, real scalar) {
+inline static void NumericVectorVariable_divide (InterpreterVariable variable, double scalar) {
 	numvec variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] /= scalar;
@@ -867,7 +867,7 @@ inline static void NumericVectorVariable_divide (InterpreterVariable variable, n
 		(void) 0;
 	}
 }
-inline static void NumericMatrixVariable_add (InterpreterVariable variable, real scalar) {
+inline static void NumericMatrixVariable_add (InterpreterVariable variable, double scalar) {
 	nummat variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
@@ -884,7 +884,7 @@ inline static void NumericMatrixVariable_add (InterpreterVariable variable, numm
 	if (owned)
 		NUMmatrix_free (matrix.at, 1, 1);
 }
-inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, real scalar) {
+inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, double scalar) {
 	nummat variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
@@ -901,7 +901,7 @@ inline static void NumericMatrixVariable_subtract (InterpreterVariable variable,
 	if (owned)
 		NUMmatrix_free (matrix.at, 1, 1);
 }
-inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, real scalar) {
+inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, double scalar) {
 	nummat variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
@@ -918,7 +918,7 @@ inline static void NumericMatrixVariable_multiply (InterpreterVariable variable,
 	if (owned)
 		NUMmatrix_free (matrix.at, 1, 1);
 }
-inline static void NumericMatrixVariable_divide (InterpreterVariable variable, real scalar) {
+inline static void NumericMatrixVariable_divide (InterpreterVariable variable, double scalar) {
 	nummat variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)

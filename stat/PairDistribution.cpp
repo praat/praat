@@ -128,7 +128,7 @@ void PairDistribution_swapInputsAndOutputs (PairDistribution me) {
 }
 
 static double PairDistributions_getTotalWeight_checkPositive (PairDistribution me) throw (MelderError) {
-	real80 totalWeight = 0.0;
+	longdouble totalWeight = 0.0;
 	for (integer ipair = 1; ipair <= my pairs.size; ipair ++) {
 		PairProbability prob = my pairs.at [ipair];
 		totalWeight += prob -> weight;
@@ -136,7 +136,7 @@ static double PairDistributions_getTotalWeight_checkPositive (PairDistribution m
 	if (totalWeight <= 0.0) {
 		Melder_throw (me, U": the total probability weight is ", Melder_half (totalWeight), U" but should be greater than zero for this operation.");
 	}
-	return (real) totalWeight;
+	return (double) totalWeight;
 }
 
 void PairDistribution_to_Stringses (PairDistribution me, integer nout, autoStrings *strings1_out, autoStrings *strings2_out) {
