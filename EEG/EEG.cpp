@@ -611,11 +611,11 @@ void EEG_removeChannel (EEG me, integer channelNumber) {
 	try {
 		if (channelNumber < 1 || channelNumber > my numberOfChannels)
 			Melder_throw (U"No channel ", channelNumber, U".");
-		my numberOfChannels -= 1;
 		Melder_free (my channelNames [channelNumber]);
 		for (integer ichan = channelNumber; ichan < my numberOfChannels; ichan ++) {
 			my channelNames [ichan] = my channelNames [ichan + 1];
 		}
+		my numberOfChannels -= 1;
 		Sound_removeChannel (my sound.get(), channelNumber);
 	} catch (MelderError) {
 		Melder_throw (me, U": channel ", channelNumber, U" not removed.");
