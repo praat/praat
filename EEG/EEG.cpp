@@ -591,6 +591,48 @@ autoEEG EEG_extractChannels (EEG me, numvec channelNumbers) {
 	}
 }
 
+static void Sound_removeChannel (Sound me, integer channelNumber) {
+	try {
+		Melder_require (channelNumber >= 1 && channelNumber <= my ny,
+			U"No channel ", channelNumber, U".");
+		Melder_require (my ny > 1,
+			U"Cannot remove last remaining channel.");
+		for (integer ichan = channelNumber; ichan < my ny; ichan ++) {
+			NUMvector_copyElements (my z [ichan + 1], my z [ichan], 1, my nx);
+		}
+		my ymax -= 1.0;
+		my ny -= 1;
+	} catch (MelderError) {
+		Melder_throw (me, U": channel ", channelNumber, U" not removed.");
+	}
+}
+
+void EEG_removeChannel (EEG me, integer channelNumber) {
+	try {
+		if (channelNumber < 1 || channelNumber > my numberOfChannels)
+			Melder_throw (U"No channel ", channelNumber, U".");
+		my numberOfChannels -= 1;
+		Melder_free (my channelNames [channelNumber]);
+		for (integer ichan = channelNumber; ichan < my numberOfChannels; ichan ++) {
+			my channelNames [ichan] = my channelNames [ichan + 1];
+		}
+		Sound_removeChannel (my sound.get(), channelNumber);
+	} catch (MelderError) {
+		Melder_throw (me, U": channel ", channelNumber, U" not removed.");
+	}
+}
+
+void EEG_removeChannel (EEG me, const char32 *channelName) {
+	try {
+		integer channelNumber = EEG_getChannelNumber (me, channelName);
+		if (channelNumber == 0)
+			Melder_throw (U"No channel named \"", channelName, U"\".");
+		EEG_removeChannel (me, channelNumber);
+	} catch (MelderError) {
+		Melder_throw (me, U": channel ", channelName, U" not removed.");
+	}
+}
+
 autoEEG EEGs_concatenate (OrderedOf<structEEG>* me) {
 	try {
 		if (my size < 1)
@@ -678,7 +720,7 @@ autoMixingMatrix EEG_to_MixingMatrix (EEG me,
 autoEEG EEG_MixingMatrix_to_EEG_unmix (EEG me, MixingMatrix you) {
 	Melder_require (my numberOfChannels == your numberOfRows,
 		U"To be able to unmix, the number of channels in ", me, U" (", my numberOfChannels, U")",
-		U" should be equal to the number of rows in ", you, U"(", your numberOfRows, U").");
+		U" should be equal to the number of rows in ", you, U" (", your numberOfRows, U").");
 	for (integer ichan = 1; ichan <= your numberOfRows; ichan ++) {
 		Melder_require (Melder_equ (my channelNames [ichan], your rowLabels [ichan]),
 			U"To be able to unmix, the name of channel ", ichan,
@@ -700,7 +742,7 @@ autoEEG EEG_MixingMatrix_to_EEG_unmix (EEG me, MixingMatrix you) {
 autoEEG EEG_MixingMatrix_to_EEG_mix (EEG me, MixingMatrix you) {
 	Melder_require (my numberOfChannels == your numberOfColumns,
 		U"To be able to mix, the number of channels in ", me, U" (", my numberOfChannels, U")",
-		U" should be equal to the number of columns in ", you, U"(", your numberOfColumns, U").");
+		U" should be equal to the number of columns in ", you, U" (", your numberOfColumns, U").");
 	for (integer ichan = 1; ichan <= your numberOfColumns; ichan ++) {
 		Melder_require (Melder_equ (my channelNames [ichan], your columnLabels [ichan]),
 			U"To be able to mix, the name of channel ", ichan,

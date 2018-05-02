@@ -90,7 +90,7 @@ ENTRY (U"See also")
 LIST_ITEM (U"\\bu @@Independent Component Analysis on EEG@")
 MAN_END
 
-MAN_BEGIN (U"Independent Component Analysis on EEG", U"ppgb", 20180329)
+MAN_BEGIN (U"Independent Component Analysis on EEG", U"ppgb", 20180502)
 INTRO (U"Independent Component Analysis (ICA) is often used to improve @EEG signals. "
 	"See @@blind source separation@ for the algorithm.")
 ENTRY (U"1. Selecting your channels")
@@ -102,10 +102,10 @@ NORMAL (U"Once you have your reduced EEG, you can start to do ICA on it. "
 	"This starts by creating a @MixingMatrix: select your EEG object and choose ##To MixingMatrix...#. "
 	"The resulting MixingMatrix has one row for each of your 64 EEG channels, and columns called \"ic1\" through \"ic64\".")
 ENTRY (U"3. How to see the independent components")
-NORMAL (U"Select you EEG and your MixingMatrix together and choose ##Unmix#. "
+NORMAL (U"Select your EEG and your MixingMatrix together and choose ##Unmix#. "
 	"The resulting ICA-EEG will have 64 channels called \"ic1\" through \"ic64\".")
 ENTRY (U"4. Just checking back")
-NORMAL (U"If you select your ICA-EEG together with your MixingMatrix choose ##Mix#, "
+NORMAL (U"If you select your ICA-EEG together with your MixingMatrix and choose ##Mix#, "
 	"the resulting EEG should be very similar to your original 64-channel EEG.")
 MAN_END
 
