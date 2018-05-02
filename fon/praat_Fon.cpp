@@ -160,11 +160,16 @@ DIRECT (NEW_Cochleagram_to_Matrix) {
 
 FORM (NEW1_Corpus_create, U"Create Corpus", U"Create Corpus...") {
 	WORD (name, U"Name", U"myCorpus")
-	TEXTFIELD (folderWithSoundFiles, U"Folder with sound files:", U"")
+	TEXTFIELD (folderWithSoundFiles, U"Folder with sound files:", U"/Users/pboersma/Dropbox/www/bpep/data/*.wav")
+	WORD (soundFileExtension, U"Sound file extension", U"wav")
 	TEXTFIELD (folderWithAnnotationFiles, U"Folder with annotation files:", U"")
+	WORD (annotationFileExtension, U"Annotation file extension", U"TextGrid")
 	OK
 DO
-END }
+	CREATE_ONE
+		autoCorpus result = Corpus_create (folderWithSoundFiles, soundFileExtension, folderWithAnnotationFiles, annotationFileExtension);
+	CREATE_ONE_END (name)
+}
 
 // MARK: View & Edit
 
@@ -2930,7 +2935,7 @@ void praat_uvafon_init () {
 
 	praat_addMenuCommand (U"Objects", U"New", U"-- new textgrid --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create TextGrid...", nullptr, 0, NEW1_TextGrid_create);
-	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", nullptr, praat_HIDDEN, NEW1_Corpus_create);
+	praat_addMenuCommand (U"Objects", U"New", U"Create Corpus...", nullptr, 0, NEW1_Corpus_create);
 	praat_addMenuCommand (U"Objects", U"New", U"Strings", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as file list...", nullptr, 1, NEW1_Strings_createAsFileList);
 	praat_addMenuCommand (U"Objects", U"New", U"Create Strings as directory list...", nullptr, 1, NEW1_Strings_createAsDirectoryList);

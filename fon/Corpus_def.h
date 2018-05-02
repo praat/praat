@@ -1,6 +1,6 @@
 /* Corpus_def.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 
 #define ooSTRUCT Corpus
 oo_DEFINE_CLASS (Corpus, Table)
+
+	oo_STRING (folderWithSoundFiles)
+	oo_STRING (folderWithAnnotationFiles)
 
 oo_END_CLASS (Corpus)
 #undef ooSTRUCT

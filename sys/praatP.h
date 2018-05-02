@@ -94,6 +94,7 @@ Thing_define (Praat_Command, Thing) {
 
 integer praat_numberOfSelected (ClassInfo klas);
 integer praat_idOfSelected (ClassInfo klas, integer inplace);
+autonumvec praat_idsOfAllSelected (ClassInfo klas);
 char32 * praat_nameOfSelected (ClassInfo klas, integer inplace);
 
 /* Used by praat.cpp; defined in praat_picture.cpp.
