@@ -1,7 +1,7 @@
 echo Sound files...
 procedure test .type$ .extension$ .duration
 	printline Testing '.type$' files...
-	for numberOfChannels from 1 to if .type$ = "Kay sound" then 2 else 8 fi
+	for numberOfChannels from 1 to 8
 		print 'numberOfChannels' channels:
 		sound = Create Sound from formula... sound numberOfChannels 0 .duration/numberOfChannels 44100 1/4 * sin(2*pi*377*x) + randomGauss(0,0.05)
 		Formula: ~ round (self * 32768) / 32768
