@@ -1,6 +1,6 @@
 /* Sound_files.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015,2016,2017 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2018 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,9 +122,6 @@ autoSound Sound_readFromSesamFile (MelderFile file) {
 
 autoSound Sound_readFromBellLabsFile (MelderFile file) {
 	try {
-		/*
-		 * Check existence and permissions of file.
-		 */
 		autofile f = Melder_fopen (file, "rb");
 
 		/*
@@ -297,7 +294,7 @@ void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int nu
 void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
-		integer header [1 + 128], tail;
+		integer header [1 + 128];
 		for (integer i = 1; i <= 128; i ++) header [i] = 0;
 		/* ILS header. */
 			header [6] = ((my nx - 1) >> 8) + 1;   // number of disk blocks
@@ -314,7 +311,7 @@ void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 			header [127] = my nx;   // number of samples
 		for (integer i = 1; i <= 128; i ++) binputi32LE (header [i], f);
 		for (integer i = 1; i <= my nx; i ++) binputi16LE (Melder_iround_tieDown (my z [1] [i] * 2048.0), f);
-		tail = 256 - my nx % 256;
+		integer tail = 256 - my nx % 256;
 		if (tail == 256) tail = 0;
 		for (integer i = 1; i <= tail; i ++) binputi16LE (0, f);   // pad last block with zeroes
 		f.close (file);

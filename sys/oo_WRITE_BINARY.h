@@ -1,6 +1,6 @@
 /* oo_WRITE_BINARY.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1994-2009,2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,14 +93,14 @@
 		Data_writeBinary (our x.get(), f);
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	binputinteger (our x.size, f); \
+	binputinteger32BE (our x.size, f); \
 	for (integer i = 1; i <= our x.size; i ++) { \
 		ItemClass data = our x.at [i]; \
 		data -> struct##ItemClass :: v_writeBinary (f); \
 	}
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
-	binputinteger (our x ? our x->size : 0, f); \
+	binputinteger32BE (our x ? our x->size : 0, f); \
 	if (our x) { \
 		for (integer i = 1; i <= our x->size; i ++) { \
 			ItemClass data = our x->at [i]; \
