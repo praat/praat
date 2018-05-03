@@ -74,7 +74,7 @@ static void NUMdmatrices_multiply_VC (double **r, double **v, integer nrv, integ
 	for (integer i = 1; i <= nrv; i ++) {
 		for (integer j = 1; j <= ncc; j ++) {
 			// V_ik C_kj
-			real80 vc = 0.0;
+			longdouble vc = 0.0;
 			for (integer k = 1; k <= ncv; k ++) {
 				vc += v [i] [k] * c [k] [j];
 			}
@@ -88,7 +88,7 @@ static void NUMdmatrices_multiply_VpC (double **r, double **v, integer nrv, inte
 	for (integer i = 1; i <= ncv; i ++) {
 		for (integer j = 1; j <= ncc; j ++) {
 			// V'_ik C_kj
-			real80 vc = 0.0;
+			longdouble vc = 0.0;
 			for (integer k = 1; k <= nrv; k ++) {
 				vc += v [k] [i] * c [k] [j];
 			}
@@ -102,7 +102,7 @@ static void NUMdmatrices_multiplyScaleAdd (double **r, double **m, integer nrm, 
 	for (integer i = 1; i <= nrm; i ++) {
 		for (integer j = 1; j <= nrm; j ++) {
 			// M_ik M'_kj = M_ik M_jk
-			real80 mm = 0.0;
+			longdouble mm = 0.0;
 			for (integer k = 1; k <= ncm; k ++) {
 				mm += m [i] [k] * m [j] [k];
 			}
@@ -119,7 +119,7 @@ static void NUMdmatrices_multiplyScaleAdd (double **r, double **m, integer nrm, 
 */
 static void NUMdmatrix_normalizeColumnVectors (double **w, integer nrw, integer ncw, double **c) {
 	for (integer i = 1; i <= ncw; i ++) {
-		real80 di = 0.0;
+		longdouble di = 0.0;
 		for (integer k = 1; k <= ncw; k ++)
 			for (integer l = 1; l <= nrw; l ++) {
 				di += w [k] [i] * c [k] [l] * w [l] [i];
@@ -132,7 +132,7 @@ static void NUMdmatrix_normalizeColumnVectors (double **w, integer nrw, integer 
 }
 
 static double NUMdmatrix_diagonalityMeasure (double **v, integer dimension) {
-	real80 dmsq = 0;
+	longdouble dmsq = 0.0;
 	if (dimension < 2) {
 		return 0.0;
 	}
@@ -197,14 +197,14 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 		}
 
 		autoMelderProgress progress (U"Simultaneous diagonalization of many CrossCorrelationTables...");
-		real80 dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
+		longdouble dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
 		try {
-			real80 dm_old, theta = 1.0, dm_start = dm_new;
+			longdouble dm_old, theta = 1.0, dm_start = dm_new;
 			do {
 				dm_old = dm_new;
 				for (integer i = 1; i <= dimension; i ++) {
 					for (integer j = i + 1; j <= dimension; j ++) {
-						real80 zii = 0.0, zij = 0.0, zjj = 0.0, yij = 0.0, yji = 0.0;   // zij == zji
+						longdouble zii = 0.0, zij = 0.0, zjj = 0.0, yij = 0.0, yji = 0.0;   // zij == zji
 						for (integer k = 1; k <= ccts -> size; k ++) {
 							CrossCorrelationTable ct = ccts -> at [k];
 							zii += ct -> data [i] [i] * ct -> data [i] [i];
@@ -213,16 +213,16 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 							yij += ct -> data [j] [j] * ct -> data [i] [j];
 							yji += ct -> data [i] [i] * ct -> data [i] [j];
 						}
-						real80 denom = zjj * zii - zij * zij;
+						longdouble denom = zjj * zii - zij * zij;
 						if (denom != 0.0) {
 							w [i] [j] = (zij * yji - zii * yij) / denom;
 							w [j] [i] = (zij * yij - zjj * yji) / denom;
 						}
 					}
 				}
-				real80 norma = 0.0;
+				longdouble norma = 0.0;
 				for (integer i = 1; i <= dimension; i ++) {
-					real80 normai = 0.0;
+					longdouble normai = 0.0;
 					for (integer j = 1; j <= dimension; j ++) {
 						if (i != j) {
 							normai += fabs (w [i] [j]);
@@ -234,13 +234,13 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 				}
 				// evaluate the norm
 				if (norma > theta) {
-					real80 normf = 0.0;
+					longdouble normf = 0.0;
 					for (integer i = 1; i <= dimension; i ++)
 						for (integer j = 1; j <= dimension; j ++)
 							if (i != j) {
 								normf += w [i] [j] * w [i] [j];
 							}
-					real80 scalef = theta / sqrt (normf);
+					longdouble scalef = theta / sqrt (normf);
 					for (integer i = 1; i <= dimension; i ++) {
 						for (integer j = 1; j <= dimension; j ++) {
 							if (i != j) {

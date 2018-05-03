@@ -84,7 +84,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 
 			for (integer j = 1; j <= thy nx; j ++) {
 				CC_Frame fj = & thy frame [j];
-				real80 dist = 0.0, distr = 0.0;
+				longdouble dist = 0.0, distr = 0.0;
 
 				/* Cepstral distance. */
 
@@ -125,7 +125,7 @@ autoDTW CCs_to_DTW (CC me, CC thee, double wc, double wle, double wr, double wer
 				}
 
 				dist /= wc + wle + wr + wer;
-				his z [i] [j] = sqrt ((real) dist);   // prototype along y-direction
+				his z [i] [j] = sqrt ((double) dist);   // prototype along y-direction
 			}
 
 			if (i % 10 == 1) {

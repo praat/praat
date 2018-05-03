@@ -26,16 +26,16 @@ double Harmonicity_getMean (Harmonicity me, double tmin, double tmax) {
 	integer imin, imax;
 	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (n < 1) return undefined;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	integer nSounding = 0;
 	for (integer i = imin; i <= imax; i ++) {
 		if (my z [1] [i] != -200.0) {
 			nSounding ++;
-			sum += (real80) my z [1] [i];
+			sum += (longdouble) my z [1] [i];
 		}
 	}
 	if (nSounding < 1) return undefined;
-	return (real) sum / nSounding;
+	return (double) sum / nSounding;
 }
 
 double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tmax) {
@@ -43,24 +43,24 @@ double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tma
 	integer imin, imax;
 	integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (n < 1) return undefined;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	integer nSounding = 0;
 	for (integer i = imin; i <= imax; i ++) {
 		if (my z [1] [i] != -200.0) {
 			nSounding ++;
-			sum += (real80) my z [1] [i];
+			sum += (longdouble) my z [1] [i];
 		}
 	}
 	if (nSounding < 2) return undefined;
-	real80 mean = sum / nSounding;
-	real80 sumOfSquares = 0.0;
+	longdouble mean = sum / nSounding;
+	longdouble sumOfSquares = 0.0;
 	for (integer i = imin; i <= imax; i ++) {
 		if (my z [1] [i] != -200.0) {
-			real80 d = (real80) my z [1] [i] - mean;
+			longdouble d = (longdouble) my z [1] [i] - mean;
 			sumOfSquares += d * d;
 		}
 	}
-	return sqrt ((real) sumOfSquares / (nSounding - 1));
+	return sqrt ((double) sumOfSquares / (nSounding - 1));
 }
 
 double Harmonicity_getQuantile (Harmonicity me, double quantile) {
@@ -104,16 +104,16 @@ void structHarmonicity :: v_info () {
 			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.75)), U" dB");
 		MelderInfo_writeLine (U"Minimum: ", Melder_single (strengths [1]), U" dB");
 		MelderInfo_writeLine (U"Maximum: ", Melder_single (strengths [nSounding]), U" dB");
-		real80 sum = 0.0, sumOfSquares = 0.0;
+		longdouble sum = 0.0, sumOfSquares = 0.0;
 		for (integer i = 1; i <= nSounding; i ++) {
 			double f = strengths [i];
 			sum += f;
 			sumOfSquares += f * f;
 		}
-		MelderInfo_writeLine (U"Average: ", Melder_single ((real) sum / nSounding), U" dB");
+		MelderInfo_writeLine (U"Average: ", Melder_single ((double) sum / nSounding), U" dB");
 		if (nSounding > 1) {
-			real80 var = (sumOfSquares - sum * sum / nSounding) / (nSounding - 1);
-			MelderInfo_writeLine (U"Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt ((real) var)), U" dB");
+			longdouble var = (sumOfSquares - sum * sum / nSounding) / (nSounding - 1);
+			MelderInfo_writeLine (U"Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt ((double) var)), U" dB");
 		}
 	}
 }

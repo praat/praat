@@ -70,7 +70,7 @@
 */
 
 static double norm1 (std::complex<double> *x) {
-	return fabs (x -> real()) + fabs (imag(*x));
+	return fabs (real (*x)) + fabs (imag (*x));
 }
 
 static void xShiftTerm (std::complex<double> *alpha, std::complex<double> *x, integer i, std::complex<double> *p, std::complex<double> *q) {
@@ -92,7 +92,7 @@ static void xShiftTerm (std::complex<double> *alpha, std::complex<double> *x, in
 	std::complex<double> cdlx = log (*x);
 	// If (1-x**alphai) = -x**alphai,
 	// then change the inductive scheme to avoid overflow.
-	if ((alphai * cdlx).real() > xlim && i != 0) {
+	if (real (alphai * cdlx) > xlim && i != 0) {
 			*p *= (alphai - 1.0) / alphai;
 			*q *= - *x / di;
 		return;
@@ -144,7 +144,7 @@ static void continuedFractionExpansion (std::complex<double> *alpha, std::comple
 
 static void shiftAlphaByOne (std::complex<double> *alpha, std::complex<double> *x, std::complex<double> *result) {
 	std::complex<double> one (1.0, 0.0);
-	integer n = (integer) (*alpha - *x).real();
+	integer n = (integer) (real (*alpha) - real (*x));
 	if (n > 0) {
 		std::complex<double> cn = n + 1;
 		std::complex<double> alpha1 = *alpha - cn;
@@ -169,10 +169,10 @@ dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_
 	double xlim = 1.0;
 	integer ibuf = 34;
 	std::complex<double> re = 0.36787944117144232, one = 1.0, p, q, r;
-	if (norm1 (& x) < xlim || x.real() < 0.0 && fabs (imag (x)) < xlim) {
+	if (norm1 (& x) < xlim || real (x) < 0.0 && fabs (imag (x)) < xlim) {
 		shiftAlphaByOne (& alpha, & one, & r);
 		result = re / r;
-		integer ilim = (integer) (x / re).real();
+		integer ilim = (integer) real (x / re);
 		for (integer i = 0; i <= ibuf - ilim; i++) {
 			xShiftTerm (& alpha, & x, i, & p, & q);
 			result += p * q;
@@ -181,7 +181,7 @@ dcomplex NUMincompleteGammaFunction (double alpha_re, double alpha_im, double x_
 		shiftAlphaByOne (& alpha, & x, & r);
 		result = exp (-x + alpha * log (x)) / r;
 	}
-	return {result.real(), result.imag()};
+	return { real (result), imag (result) };
 }
 
 // End of translated fortran code
@@ -238,7 +238,7 @@ dcomplex gammaToneFilterResponseAtCentreFrequency (double centre_frequency, doub
 	//std::complex<double> result1 (result1_re, result1_im), result2 (result2_re, result2_im);
 	std::complex<double> response = 0.5 * bpow * ((expiphi + expmiphi * peak) * gamma_n -
 		expiw0T * (expiphi * result1 + expmiphi * peak * result2));
-	return {response.real (), response.imag ()};
+	return { real (response), imag (response) };
 }
 
 /* End of file NUMcomplex.cpp */

@@ -84,10 +84,7 @@ typedef uint64_t uint64;
 /*
 	The following are checked in praat.h.
 */
-typedef float real32;
-typedef double real64;
-typedef long double real80;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
-typedef double real;
+typedef long double longdouble;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
 #include "complex.h"
 
 #pragma mark - LAW OF DEMETER FOR CLASS FUNCTIONS DEFINED OUTSIDE CLASS DEFINITION

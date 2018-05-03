@@ -61,7 +61,7 @@ void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, double **p,
 integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me);
 
 static void NUMdvector_scaleAsProbabilities (double *v, integer n) {
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = 1; i <= n; i ++) {
 		sum += v [i];
 	}

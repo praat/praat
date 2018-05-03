@@ -53,12 +53,12 @@ void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string) {
 	string [n] = 0;
 }
 
-real *NUMstring_to_numbers (const char32 *s, integer *p_numbers_found) {
+double *NUMstring_to_numbers (const char32 *s, integer *p_numbers_found) {
 	integer numbers_found = Melder_countTokens (s);
 	if (numbers_found < 1) {
 		Melder_throw (U"Empty string.");
 	}
-	autoNUMvector <real> numbers (1, numbers_found);
+	autoNUMvector <double> numbers (1, numbers_found);
 	integer inum = 1;
 	for (char32 *token = Melder_firstToken (s); token; token = Melder_nextToken (), inum ++) {
 		Interpreter_numericExpression (0, token, & numbers [inum]);

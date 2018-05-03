@@ -132,8 +132,8 @@ void NUMcentreRows_old (double **a, integer rb, integer re, integer cb, integer 
 }
 
 
-void numvec_centre_inplace (numvec x, real *p_mean) {
-	real xmean;
+void numvec_centre_inplace (numvec x, double *p_mean) {
+	double xmean;
 	sum_mean_scalar (x, nullptr, & xmean);
 	for (integer i = 1; i <= x.size; i ++) {
 		x [i] -= xmean;
@@ -155,7 +155,7 @@ void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer c
 		for (integer i = rb; i <= re; i ++) {
 			colvec [i - rb + 1] = a [i] [j];
 		}
-		real colmean;
+		double colmean;
 		numvec_centre_inplace (colvec.get(), & colmean);
 		for (integer i = rb; i <= re; i ++) {
 			a [i] [j] = colvec [i - rb + 1];
@@ -174,14 +174,14 @@ void NUMdoubleCentre (double **a, integer rb, integer re, integer cb, integer ce
 void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm) {
 	Melder_assert (norm > 0.0);
 	for (integer j = 1; j <= nc; j ++) {
-		real80 s = 0.0;
+		longdouble s = 0.0;
 		for (integer i = 1; i <= nr; i ++) {
 			s += a [i] [j] * a [i] [j];
 		}
 		if (s <= 0.0) {
 			continue;
 		}
-		s = sqrt (norm / (real) s);
+		s = sqrt (norm / (double) s);
 		for (integer i = 1; i <= nr; i ++) {
 			a [i] [j] *= s;
 		}
@@ -191,14 +191,14 @@ void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm) {
 void NUMnormalizeRows (double **a, integer nr, integer nc, double norm) {
 	Melder_assert (norm > 0);
 	for (integer i = 1; i <= nr; i ++) {
-		real80 s = 0.0;
+		longdouble s = 0.0;
 		for (integer j = 1; j <= nc; j ++) {
 			s += a [i] [j] * a [i] [j];
 		}
 		if (s <= 0.0) {
 			continue;
 		}
-		s = sqrt (norm / (real) s);
+		s = sqrt (norm / (double) s);
 		for (integer j = 1; j <= nc; j ++) {
 			a [i] [j] *= s;
 		}
@@ -207,7 +207,7 @@ void NUMnormalizeRows (double **a, integer nr, integer nc, double norm) {
 
 void NUMnormalize (double **a, integer nr, integer nc, double norm) {
 	Melder_assert (norm > 0);
-	real80 sq = 0.0;
+	longdouble sq = 0.0;
 	for (integer i = 1; i <= nr; i ++) {
 		for (integer j = 1; j <= nc; j ++) {
 			sq += a [i] [j] * a [i] [j];
@@ -216,7 +216,7 @@ void NUMnormalize (double **a, integer nr, integer nc, double norm) {
 	if (sq <= 0.0) {
 		return;
 	}
-	norm = sqrt (norm / (real) sq);
+	norm = sqrt (norm / (double) sq);
 	for (integer i = 1; i <= nr; i ++) {
 		for (integer j = 1; j <= nc; j ++) {
 			a [i] [j] *= norm;
@@ -263,11 +263,11 @@ void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer nc
 
 	for (integer i = 1; i <= ncols; i ++) {
 		for (integer j = i; j <= ncols; j ++) {
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer k = 1; k <= nrows; k ++) {
 				sum += x [k] [i] * x [k] [j];
 			}
-			covar [i] [j] = covar [j] [i] = (real) sum / (nrows - ndf);
+			covar [i] [j] = covar [j] [i] = (double) sum / (nrows - ndf);
 		}
 	}
 }
@@ -367,57 +367,57 @@ void NUMmonotoneRegression (const double x [], integer n, double xs []) {
 }
 
 double NUMvector_getNorm1 (const double v [], integer n) {
-	real80 norm = 0.0;
+	longdouble norm = 0.0;
 	for (integer i = 1; i <= n; i ++) {
 		norm += fabs (v [i]);
 	}
-	return (real) norm;
+	return (double) norm;
 }
 
 double NUMvector_getNorm2 (const double v [], integer n) {
-	real80 norm = 0.0;
+	longdouble norm = 0.0;
 	for (integer i = 1; i <= n; i ++) {
 		norm += v [i] * v [i];
 	}
-	return sqrt ((real) norm);
+	return sqrt ((double) norm);
 }
 
 double NUMvector_normalize1 (double v [], integer n) {
-	real80 norm = NUMvector_getNorm1 (v, n);
+	longdouble norm = NUMvector_getNorm1 (v, n);
 	if (norm > 0.0) {
 		for (integer i = 1; i <= n; i ++) {
 			v [i] /= norm;
 		}
 	}
-	return (real) norm;
+	return (double) norm;
 }
 
 double NUMvector_normalize2 (double v [], integer n) {
-	real80 norm = NUMvector_getNorm2 (v, n);
+	longdouble norm = NUMvector_getNorm2 (v, n);
 	if (norm > 0) {
 		for (integer i = 1; i <= n; i ++) {
 			v [i] /= norm;
 		}
 	}
-	return (real) norm;
+	return (double) norm;
 }
 
 #undef TINY
 
 void NUMcholeskySolve (double **a, integer n, double d [], double b [], double x []) {
 	for (integer i = 1; i <= n; i++) { /* Solve L.y=b */
-		real80 sum = b [i];
+		longdouble sum = b [i];
 		for (integer k = i - 1; k >= 1; k--) {
 			sum -= a [i] [k] * x [k];
 		}
-		x [i] = (real) sum / d [i];
+		x [i] = (double) sum / d [i];
 	}
 	for (integer i = n; i >= 1; i --) { /* Solve L^T.x=y */
-		real80 sum = x [i];
+		longdouble sum = x [i];
 		for (integer k = i + 1; k <= n; k ++) {
 			sum -= a [k] [i] * x [k];
 		}
-		x [i] = (real) sum / d [i];
+		x [i] = (double) sum / d [i];
 	}
 }
 
@@ -437,7 +437,7 @@ double NUMdeterminant_cholesky (double **a, integer n) {
 
 	// Determinant from diagonal, restore diagonal
 
-	real80 lnd = 0.0;
+	longdouble lnd = 0.0;
 	for (integer i = 1; i <= n; i ++) {
 		lnd += log (a [i] [i]);
 		a [i] [i] = d [i];
@@ -451,7 +451,7 @@ double NUMdeterminant_cholesky (double **a, integer n) {
 			a [j] [i] = a [i] [j];
 		}
 	}
-	return (real) lnd;
+	return (double) lnd;
 }
 
 void NUMlowerCholeskyInverse (double **a, integer n, double *p_lnd) {
@@ -485,18 +485,18 @@ double **NUMinverseFromLowerCholesky (double **m, integer n) {
 	autoNUMmatrix<double> r (1, n, 1, n);
 	for (integer i = 1; i <= n; i ++) {
 		for (integer j = 1; j <= i; j ++) {
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer k = i; k <= n; k ++) {
 				sum += m [k] [i] * m [k] [j];
 			}
-			r [i] [j] = r [j] [i] = (real) sum;
+			r [i] [j] = r [j] [i] = (double) sum;
 		}
 	}
 	return r.transfer();
 }
 
 double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, integer nr, integer n) {
-	real80 chisq = 0.0;
+	longdouble chisq = 0.0;
 	if (nr == 1) { // 1xn matrix
 		for (integer j = 1; j <= n; j ++) {
 			double t = linv [1] [j] * (v [j] - m [j]);
@@ -511,25 +511,25 @@ double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, integer 
 			chisq += t * t;
 		}
 	}
-	return (real) chisq;
+	return (double) chisq;
 }
 
 double NUMtrace (double **a, integer n) {
-	real80 trace = 0.0;
+	longdouble trace = 0.0;
 	for (integer i = 1; i <= n; i ++) {
 		trace += a [i] [i];
 	}
-	return (real) trace;
+	return (double) trace;
 }
 
 double NUMtrace2 (double **a1, double **a2, integer n) {
-	real80 trace = 0.0;
+	longdouble trace = 0.0;
 	for (integer i = 1; i <= n; i ++) {
 		for (integer k = 1; k <= n; k ++) {
 			trace += a1 [i] [k] * a2 [k] [i];
 		}
 	}
-	return (real) trace;
+	return (double) trace;
 }
 
 void NUMeigensystem (double **a, integer n, double **evec, double eval []) {
@@ -547,7 +547,7 @@ void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambd
 	autoNUMvector<double> z (1, n);
 
 	double lambda0;
-	real80 lambda = 0.0;
+	longdouble lambda = 0.0;
 	for (integer k = 1; k <= n; k ++) {
 		for (integer l = 1; l <= n; l ++) {
 			lambda += q [k] * mns [k] [l] * q [l];
@@ -574,7 +574,7 @@ void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambd
 			q [k] = z [k] / znorm2;
 		}
 
-		lambda0 = (real) lambda;
+		lambda0 = (double) lambda;
 		
 		lambda = 0.0;
 		for (integer k = 1; k <= n; k ++) {
@@ -583,9 +583,9 @@ void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambd
 			}
 		}
 
-	} while (fabs ((real) lambda - lambda0) > tolerance || ++ iter < 30);
+	} while (fabs ((double) lambda - lambda0) > tolerance || ++ iter < 30);
 	if (p_lambda) {
-		*p_lambda = (real) lambda;
+		*p_lambda = (double) lambda;
 	}
 }
 
@@ -594,11 +594,11 @@ void NUMprincipalComponents (double **a, integer n, integer nComponents, double 
 	NUMeigensystem (a, n, evec.peek(), NULL);
 	for (integer i = 1; i <= n; i ++) {
 		for (integer j = 1; j <= nComponents; j ++) {
-			real80 s = 0.0;
+			longdouble s = 0.0;
 			for (integer k = 1; k <= n; k ++) {
 				s += a [k] [i] * evec [k] [j]; /* times sqrt(eigenvalue) ?? */
 			}
-			pc [i] [j] = (real) s;
+			pc [i] [j] = (double) s;
 		}
 	}
 }
@@ -620,11 +620,11 @@ void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, in
 
 	for (integer irow = 1; irow <= numberOfRows; irow ++) {
 		for (integer icol = 1; icol <= numberOfEigenvectors; icol ++) {
-			real80 r = 0.0;
+			longdouble r = 0.0;
 			for (integer k = 1; k <= dimension; k ++) {
 				r += eigenvectors [icol] [k] * data [irow] [from_col + k - 1];
 			}
-			projection [irow] [to_col + icol - 1] = (real) r;
+			projection [irow] [to_col + icol - 1] = (double) r;
 		}
 	}
 }
@@ -644,11 +644,11 @@ void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColum
 
 	for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 		for (integer irow = 1; irow <= numberOfEigenvectors; irow ++) {
-			real80 r = 0.0;
+			longdouble r = 0.0;
 			for (integer k = 1; k <= dimension; k ++) {
 				r += eigenvectors [irow] [k] * data [k] [icol];
 			}
-			projection [irow] [icol] = (real) r;
+			projection [irow] [icol] = (double) r;
 		}
 	}
 }
@@ -661,11 +661,11 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 	autoSVD svd = SVD_create_d (mc.peek(), nrows, ncols);
 	for (integer i = 1; i <= nrows; i ++) {
 		for (integer j = 1; j <= numberOfComponents; j ++) {
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer k = 1; k <= ncols; k ++) {
 				sum += svd -> v [k] [j] * m [i] [k];
 			}
-			pc [i] [j] = (real) sum;
+			pc [i] [j] = (double) sum;
 		}
 	}
 }
@@ -676,7 +676,7 @@ void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
 	for (integer i = 1; i <= nc; i ++) {
 		for (integer j = 1; j <= nr; j ++) {
-			real80 s = 0.0;
+			longdouble s = 0.0;
 			for (integer k = 1; k <= nc; k ++) {
 				if (my d [k] != 0.0) {
 					s += my v [i] [k] * my u [j] [k] / my d [k];
@@ -2979,7 +2979,7 @@ void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double
 }
 
 double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer n, double *w, double xp, double yp) {
-	real80 result = 0.0;
+	longdouble result = 0.0;
 	for (integer i = 1; i <= n; i ++) {
 		double dx = xp - x [i], dy = yp - y [i];
 		double d = dx * dx + dy * dy;

@@ -22,7 +22,7 @@
 double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	double pmin, double pmax, double maximumPeriodFactor)
 {
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   /* Autowindowing. */
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
@@ -37,7 +37,7 @@ double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 		}
 	}
 	if (numberOfPeriods < 2) return undefined;
-	return real (sum / (numberOfPeriods - 1)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+	return double (sum / (numberOfPeriods - 1)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
 double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, double tmax,
@@ -47,7 +47,7 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return undefined;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = imin + 1; i < imax; i ++) {
 		double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];
 		double intervalFactor = p1 > p2 ? p1 / p2 : p2 / p1;
@@ -58,7 +58,7 @@ double PointProcess_getJitter_local_absolute (PointProcess me, double tmin, doub
 		}
 	}
 	if (numberOfPeriods < 2) return undefined;
-	return real (sum / (numberOfPeriods - 1));
+	return double (sum / (numberOfPeriods - 1));
 }
 
 double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
@@ -68,7 +68,7 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 3) return undefined;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = imin + 2; i < imax; i ++) {
 		double p1 = my t [i - 1] - my t [i - 2], p2 = my t [i] - my t [i - 1], p3 = my t [i + 1] - my t [i];
 		double intervalFactor1 = p1 > p2 ? p1 / p2 : p2 / p1, intervalFactor2 = p2 > p3 ? p2 / p3 : p3 / p2;
@@ -81,7 +81,7 @@ double PointProcess_getJitter_rap (PointProcess me, double tmin, double tmax,
 		}
 	}
 	if (numberOfPeriods < 3) return undefined;
-	return real (sum / (numberOfPeriods - 2)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+	return double (sum / (numberOfPeriods - 2)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
 double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
@@ -91,7 +91,7 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 5) return undefined;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer i = imin + 5; i <= imax; i ++) {
 		double
 			p1 = my t [i - 4] - my t [i - 5],
@@ -114,7 +114,7 @@ double PointProcess_getJitter_ppq5 (PointProcess me, double tmin, double tmax,
 		}
 	}
 	if (numberOfPeriods < 5) return undefined;
-	return real (sum / (numberOfPeriods - 4)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
+	return double (sum / (numberOfPeriods - 4)) / PointProcess_getMeanPeriod (me, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 }
 
 double PointProcess_getJitter_ddp (PointProcess me, double tmin, double tmax,

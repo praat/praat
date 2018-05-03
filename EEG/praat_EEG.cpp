@@ -153,6 +153,15 @@ DO
 	MODIFY_EACH_END
 }
 
+FORM (MODIFY_EEG_removeChannel, U"Remove channel", nullptr) {
+	SENTENCE (channel, U"Channel", U"Iz")
+	OK
+DO
+	MODIFY_EACH (EEG)
+		EEG_removeChannel (me, channel);
+	MODIFY_EACH_END
+}
+
 FORM (MODIFY_EEG_subtractMeanChannel, U"Subtract mean channel", nullptr) {
 	LABEL (U"Range of reference channels:")
 	NATURAL (fromChannel, U"From channel", U"1")
@@ -199,7 +208,7 @@ DO
 }
 
 FORM (NEW_EEG_extractChannels, U"EEG: Extract channels", nullptr) {
-	NUMVEC (channels, U"Channel numbers", U"to# (64)")
+	NUMVEC (channels, U"Channel numbers:", U"to# (64)")
 	OK
 DO
 	CONVERT_EACH (EEG)
@@ -751,6 +760,7 @@ void praat_EEG_init () {
 		praat_addAction1 (classEEG, 0, U"Filter...", nullptr, 1, MODIFY_EEG_filter);
 		praat_addAction1 (classEEG, 0, U"Remove triggers...", nullptr, 1, MODIFY_EEG_removeTriggers);
 		praat_addAction1 (classEEG, 0, U"Set channel to zero...", nullptr, 1, MODIFY_EEG_setChannelToZero);
+		praat_addAction1 (classEEG, 0, U"Remove channel...", nullptr, 1, MODIFY_EEG_removeChannel);
 	praat_addAction1 (classEEG, 0, U"Analyse", nullptr, 0, nullptr);
 		praat_addAction1 (classEEG, 0, U"Extract channel...", nullptr, 0, NEW_EEG_extractChannel);
 		praat_addAction1 (classEEG, 0, U"Extract channels...", nullptr, 0, NEW_EEG_extractChannels);

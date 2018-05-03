@@ -490,7 +490,7 @@ void * KNN_classifyToTableOfRealAux
 	switch (input -> dist) {
 		case kOla_DISTANCE_WEIGHTED_VOTING:
 			for (integer y = input -> istart; y <= input -> istop; y ++) {
-				real80 sum = 0.0;
+				longdouble sum = 0.0;
 				for (integer c = 1; c <= ncategories; c ++) {
 					input -> output -> data [y] [c] *= 1.0 / OlaMAX (distances [c], kOla_MINFLOAT);
 					sum += input -> output -> data [y] [c];
@@ -502,7 +502,7 @@ void * KNN_classifyToTableOfRealAux
 			break;
 		case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
 			for (integer y = input -> istart; y <= input -> istop; y ++) {
-				real80 sum = 0.0;
+				longdouble sum = 0.0;
 				for (integer c = 1; c <= ncategories; c ++) {
 					input -> output -> data [y] [c] *= 1.0 / OlaMAX (OlaSQUARE (distances [c]), kOla_MINFLOAT);
 					sum += input -> output -> data [y] [c];
@@ -514,7 +514,7 @@ void * KNN_classifyToTableOfRealAux
 			break;
 		case kOla_FLAT_VOTING:
 			for (integer y = input -> istart; y <= input -> istop; y ++) {
-				real80 sum = 0.0;
+				longdouble sum = 0.0;
 				for (integer c = 1; c <= ncategories; c ++) {
 					sum += input -> output -> data [y] [c];
 				}
@@ -833,10 +833,10 @@ double KNN_distanceManhattan
 )
 
 {
-    real80 distance = 0.0;
+    longdouble distance = 0.0;
     for (integer x = 1; x <= ps->nx; x ++)
         distance += fabs (ps->z[rows][x] - pt->z[rowt][x]);
-    return (real) distance;
+    return (double) distance;
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -1414,7 +1414,7 @@ void KNN_normalizeFloatArray
 
 {
     integer c = 0;
-    real80 sum = 0.0;
+    longdouble sum = 0.0;
 
     while (c < n)
         sum += array [c ++];   // this sums over array [0 .. n-1]

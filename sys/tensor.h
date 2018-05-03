@@ -27,69 +27,69 @@ inline static double sqrt_scalar (double x) {
 	return sqrt (x);
 }
 
-void sum_mean_scalar (numvec x, real *p_sum, real *p_mean) noexcept;
-void sum_mean_sumsq_variance_stdev_scalar (numvec x, real *p_sum, real *p_mean, real *p_sumsq, real *p_variance, real *p_stdev) noexcept;
-void sum_mean_sumsq_variance_stdev_scalar (nummat x, integer columnNumber, real *p_sum, real *p_mean, real *p_sumsq, real *p_variance, real *p_stdev) noexcept;
+void sum_mean_scalar (numvec x, double *p_sum, double *p_mean) noexcept;
+void sum_mean_sumsq_variance_stdev_scalar (numvec x, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
+void sum_mean_sumsq_variance_stdev_scalar (nummat x, integer columnNumber, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
 
-inline static real sum_scalar (numvec x) noexcept {
+inline static double sum_scalar (numvec x) noexcept {
 	integer n = x.size;
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
 		if (n <= 4) return n == 3 ?
-			(real) ((real80) x [1] + (real80) x [2] + (real80) x [3]) :
-			(real) (((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4]));
+			(double) ((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) :
+			(double) (((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4]));
 		if (n <= 6) return n == 5 ?
-			(real) (((real80) x [1] + (real80) x [2] + (real80) x [3]) + ((real80) x [4] + (real80) x [5])) :
-			(real) (((real80) x [1] + (real80) x [2] + (real80) x [3]) + ((real80) x [4] + (real80) x [5] + (real80) x [6]));
+			(double) (((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) + ((longdouble) x [4] + (longdouble) x [5])) :
+			(double) (((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) + ((longdouble) x [4] + (longdouble) x [5] + (longdouble) x [6]));
 		return n == 7 ?
-			(real) ((((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])) + ((real80) x [5] + (real80) x [6] + (real80) x [7])) :
-			(real) ((((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])) + (((real80) x [5] + (real80) x [6]) + ((real80) x [7] + (real80) x [8])));
+			(double) ((((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])) + ((longdouble) x [5] + (longdouble) x [6] + (longdouble) x [7])) :
+			(double) ((((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])) + (((longdouble) x [5] + (longdouble) x [6]) + ((longdouble) x [7] + (longdouble) x [8])));
 	}
-	real sum;
+	double sum;
 	sum_mean_scalar (x, & sum, nullptr);
 	return sum;
 }
 
-inline static real mean_scalar (numvec x) noexcept {
+inline static double mean_scalar (numvec x) noexcept {
 	integer n = x.size;
 	if (n <= 8) {
-		if (n <= 2) return n <= 0 ? undefined : n == 1 ? x [1] : (real) (0.5 * ((real80) x [1] + (real80) x [2]));
+		if (n <= 2) return n <= 0 ? undefined : n == 1 ? x [1] : (double) (0.5 * ((longdouble) x [1] + (longdouble) x [2]));
 		if (n <= 4) return n == 3 ?
-			(real) ((1.0 / (real80) 3.0) * ((real80) x [1] + (real80) x [2] + (real80) x [3])) :
-			(real) (0.25 * (((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])));
+			(double) ((1.0 / (longdouble) 3.0) * ((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3])) :
+			(double) (0.25 * (((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])));
 		if (n <= 6) return n == 5 ?
-			(real) ((1.0 / (real80) 5.0) * (((real80) x [1] + (real80) x [2] + (real80) x [3]) + ((real80) x [4] + (real80) x [5]))) :
-			(real) ((1.0 / (real80) 6.0) * (((real80) x [1] + (real80) x [2] + (real80) x [3]) + ((real80) x [4] + (real80) x [5] + (real80) x [6])));
+			(double) ((1.0 / (longdouble) 5.0) * (((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) + ((longdouble) x [4] + (longdouble) x [5]))) :
+			(double) ((1.0 / (longdouble) 6.0) * (((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) + ((longdouble) x [4] + (longdouble) x [5] + (longdouble) x [6])));
 		return n == 7 ?
-			(real) ((1.0 / (real80) 7.0) * ((((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])) + ((real80) x [5] + (real80) x [6] + (real80) x [7]))) :
-			(real) (0.125 * ((((real80) x [1] + (real80) x [2]) + ((real80) x [3] + (real80) x [4])) + (((real80) x [5] + (real80) x [6]) + ((real80) x [7] + (real80) x [8]))));
+			(double) ((1.0 / (longdouble) 7.0) * ((((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])) + ((longdouble) x [5] + (longdouble) x [6] + (longdouble) x [7]))) :
+			(double) (0.125 * ((((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])) + (((longdouble) x [5] + (longdouble) x [6]) + ((longdouble) x [7] + (longdouble) x [8]))));
 	}
-	real mean;
+	double mean;
 	sum_mean_scalar (x, nullptr, & mean);
 	return mean;
 }
 
-real sumsq_scalar (numvec x) noexcept;
-real variance_scalar (numvec x) noexcept;
-real stdev_scalar (numvec x) noexcept;
-real norm_scalar (numvec x, real power) noexcept;
-real center_scalar (numvec x) noexcept;
+double sumsq_scalar (numvec x) noexcept;
+double variance_scalar (numvec x) noexcept;
+double stdev_scalar (numvec x) noexcept;
+double norm_scalar (numvec x, double power) noexcept;
+double center_scalar (numvec x) noexcept;
 
-real _inner_scalar (numvec x, numvec y);
-inline static real inner_scalar (numvec x, numvec y) {
+double _inner_scalar (numvec x, numvec y);
+inline static double inner_scalar (numvec x, numvec y) {
 	integer n = x.size;
 	if (y.size != n) return undefined;
 	if (n <= 8) {
-		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] * y [1] : (real) ((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2]);
+		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] * y [1] : (double) ((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2]);
 		if (n <= 4) return n == 3 ?
-			(real) ((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2] + (real80) x [3] * (real80) y [3]) :
-			(real) (((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2]) + ((real80) x [3] * (real80) y [3] + (real80) x [4] * (real80) y [4]));
+			(double) ((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2] + (longdouble) x [3] * (longdouble) y [3]) :
+			(double) (((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2]) + ((longdouble) x [3] * (longdouble) y [3] + (longdouble) x [4] * (longdouble) y [4]));
 		if (n <= 6) return n == 5 ?
-			(real) (((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2] + (real80) x [3] * (real80) y [3]) + ((real80) x [4] * (real80) y [4] + (real80) x [5] * (real80) y [5])) :
-			(real) (((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2] + (real80) x [3] * (real80) y [3]) + ((real80) x [4] * (real80) y [4] + (real80) x [5] * (real80) y [5] + (real80) x [6] * (real80) y [6]));
+			(double) (((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2] + (longdouble) x [3] * (longdouble) y [3]) + ((longdouble) x [4] * (longdouble) y [4] + (longdouble) x [5] * (longdouble) y [5])) :
+			(double) (((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2] + (longdouble) x [3] * (longdouble) y [3]) + ((longdouble) x [4] * (longdouble) y [4] + (longdouble) x [5] * (longdouble) y [5] + (longdouble) x [6] * (longdouble) y [6]));
 		return n == 7 ?
-			(real) ((((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2]) + ((real80) x [3] * (real80) y [3] + (real80) x [4] * (real80) y [4])) + ((real80) x [5] * (real80) y [5] + (real80) x [6] * (real80) y [6] + (real80) x [7] * (real80) y [7])) :
-			(real) ((((real80) x [1] * (real80) y [1] + (real80) x [2] * (real80) y [2]) + ((real80) x [3] * (real80) y [3] + (real80) x [4] * (real80) y [4])) + (((real80) x [5] * (real80) y [5] + (real80) x [6] * (real80) y [6]) + ((real80) x [7] * (real80) y [7] + (real80) x [8] * (real80) y [8])));
+			(double) ((((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2]) + ((longdouble) x [3] * (longdouble) y [3] + (longdouble) x [4] * (longdouble) y [4])) + ((longdouble) x [5] * (longdouble) y [5] + (longdouble) x [6] * (longdouble) y [6] + (longdouble) x [7] * (longdouble) y [7])) :
+			(double) ((((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2]) + ((longdouble) x [3] * (longdouble) y [3] + (longdouble) x [4] * (longdouble) y [4])) + (((longdouble) x [5] * (longdouble) y [5] + (longdouble) x [6] * (longdouble) y [6]) + ((longdouble) x [7] * (longdouble) y [7] + (longdouble) x [8] * (longdouble) y [8])));
 	}
 	return _inner_scalar (x, y);
 }
@@ -175,7 +175,7 @@ inline static numvec as_numvec (nummat x) {
 	return numvec (x [1], x.nrow * x.ncol);
 }
 
-inline static real norm_scalar (nummat x, real power) noexcept {
+inline static double norm_scalar (nummat x, double power) noexcept {
 	return norm_scalar (as_numvec (x), power);
 }
 

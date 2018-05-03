@@ -205,8 +205,8 @@ integer Matrix_getWindowExtrema (Matrix me, integer ixmin, integer ixmax, intege
 }
 
 double Matrix_getValueAtXY (Matrix me, double x, double y) {
-	real row_real = (y - my y1) / my dy + 1.0;
-	real col_real = (x - my x1) / my dx + 1.0;
+	double row_real = (y - my y1) / my dy + 1.0;
+	double col_real = (x - my x1) / my dx + 1.0;
 	/*
 	 * We imagine a unit square around every (xi, yi) point in the matrix.
 	 * For (x, y) values outside the union of these squares, the z value is undefined.
@@ -220,8 +220,8 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	integer topRow = bottomRow + 1;         // 1 <= topRow <= my ny + 1
 	integer leftCol = Melder_ifloor (col_real);     // 0 <= leftCol <= my nx
 	integer rightCol = leftCol + 1;         // 1 <= rightCol <= my nx + 1
-	real drow = row_real - bottomRow;    // 0.0 <= drow < 1.0
-	real dcol = col_real - leftCol;      // 0.0 <= dcol < 1.0
+	double drow = row_real - bottomRow;    // 0.0 <= drow < 1.0
+	double dcol = col_real - leftCol;      // 0.0 <= dcol < 1.0
 	/*
 	 * If adjacent points exist
 	 * (i.e., both row numbers are between 1 and my ny,
@@ -241,19 +241,19 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 }
 
 double Matrix_getSum (Matrix me) {
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= my ny; irow ++)
 		for (integer icol = 1; icol <= my nx; icol ++)
 			sum += my z [irow] [icol];
-	return (real) sum;
+	return (double) sum;
 }
 
 double Matrix_getNorm (Matrix me) {
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= my ny; irow ++)
 		for (integer icol = 1; icol <= my nx; icol ++)
 			sum += my z [irow] [icol] * my z [irow] [icol];
-	return sqrt ((real) sum);
+	return sqrt ((double) sum);
 }
 
 void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,

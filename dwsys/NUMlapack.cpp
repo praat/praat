@@ -60,7 +60,7 @@ double NUMnorm2 (integer n, double *x, integer incx) {
 	}
 
 	double scale = 0.0;
-	real80 ssq = 1.0;
+	longdouble ssq = 1.0;
 	for (integer i = 1; i <= 1 + (n - 1) * incx; i += incx) {
 		if (x[i] != 0.0) {
 			double absxi = fabs (x[i]);
@@ -74,7 +74,7 @@ double NUMnorm2 (integer n, double *x, integer incx) {
 			}
 		}
 	}
-	return scale * sqrt ((real) ssq);
+	return scale * sqrt ((double) ssq);
 }
 
 
@@ -84,7 +84,7 @@ double NUMfrobeniusnorm (integer m, integer n, double **x) {
 	}
 
 	double scale = 0.0;
-	real80 ssq = 1.0;
+	longdouble ssq = 1.0;
 	for (integer i = 1; i <= m; i ++) {
 		for (integer j = 1; j <= n; j ++) {
 			if (x [i] [j] != 0.0) {
@@ -100,7 +100,7 @@ double NUMfrobeniusnorm (integer m, integer n, double **x) {
 			}
 		}
 	}
-	return scale * sqrt ((real) ssq);
+	return scale * sqrt ((double) ssq);
 }
 
 

@@ -152,22 +152,22 @@ integer TableOfReal_columnLabelToIndex (TableOfReal me, const char32 *label) {
 double TableOfReal_getColumnMean (TableOfReal me, integer columnNumber) {
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return undefined;
 	if (my numberOfRows < 1) return undefined;
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= my numberOfRows; irow ++)
 		sum += my data [irow] [columnNumber];
-	return (real) sum / my numberOfRows;
+	return (double) sum / my numberOfRows;
 }
 
 double TableOfReal_getColumnStdev (TableOfReal me, integer columnNumber) {
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return undefined;
 	if (my numberOfRows < 2) return undefined;
 	double mean = TableOfReal_getColumnMean (me, columnNumber);
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		real d = my data [irow] [columnNumber] - mean;
+		double d = my data [irow] [columnNumber] - mean;
 		sum += d * d;
 	}
-	return sqrt ((real) sum / (my numberOfRows - 1));
+	return sqrt ((double) sum / (my numberOfRows - 1));
 }
 
 /***** MODIFY *****/

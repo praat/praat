@@ -85,7 +85,7 @@ static void NUMdvector_into_matrix (const double *v, double **m, integer r1, int
 
 static void NUMdmatrix_normalizeRows (double **m, integer nr, integer nc) {
 	for (integer i = 1; i <= nr; i ++) {
-		real80 rowSum = 0.0;
+		longdouble rowSum = 0.0;
 		for (integer j = 1; j <= nc; j ++) {
 			rowSum += m [i] [j];
 		}
@@ -450,7 +450,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 			Get row and column marginals
 		*/
 
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer i = 1; i <= nr; i ++) {
 			for (integer j = 1; j <= nc; j ++) {
 				rowsum [i] += my data [i] [j];
@@ -470,7 +470,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		for (integer i = 1; i <= nr; i ++) {
 			for (integer j = 1; j <= nc; j ++) {
 				double rc = sqrt (rowsum [i] * colsum [j]);
-				h [i] [j] = h [i] [j] / rc - rc / (real) sum;
+				h [i] [j] = h [i] [j] / rc - rc / (double) sum;
 			}
 		}
 
@@ -603,11 +603,11 @@ autoConfiguration SSCP_to_Configuration (SSCP me, integer numberOfDimensions) {
 
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
-				real80 s = 0.0;
+				longdouble s = 0.0;
 				for (integer k = 1; k <= my numberOfRows; k ++) {
 					s += my data [k] [i] * a -> eigenvectors [k] [j];
 				}
-				thy data [i] [j] = (real) s;
+				thy data [i] [j] = (double) s;
 			}
 		}
 		return thee;
@@ -835,7 +835,7 @@ autoDissimilarity Dissimilarity_create (integer numberOfPoints) {
 }
 
 static double Dissimilarity_getAverage (Dissimilarity me) {
-	real80 sum = 0.0;
+	longdouble sum = 0.0;
 	integer numberOfPositives = 0;
 	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
 		for (integer j = i + 1; j <= my numberOfRows; j ++) {
@@ -846,7 +846,7 @@ static double Dissimilarity_getAverage (Dissimilarity me) {
 			}
 		}
 	}
-	return numberOfPositives > 0 ? (real) sum / numberOfPositives : undefined;
+	return numberOfPositives > 0 ? (double) sum / numberOfPositives : undefined;
 }
 
 double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
@@ -1500,7 +1500,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
-				real80 wt = 0.0;
+				longdouble wt = 0.0;
 				for (integer k = 1; k <= numberOfDimensions; k ++) {
 					if (K [k] [j] != 0.0) {
 						for (integer l = 1; l <= numberOfDimensions; l ++) {
@@ -1508,7 +1508,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 						}
 					}
 				}
-				mdsw -> data [i] [j] = (real) wt;
+				mdsw -> data [i] [j] = (double) wt;
 			}
 		}
 		
@@ -1567,7 +1567,7 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 	// compute B(Z) (eq. 8.25)
 
 	for (integer i = 1; i <= nPoints; i ++) {
-		real80 sum = 0.0;
+		longdouble sum = 0.0;
 		for (integer j = 1; j <= nPoints; j ++) {
 			double dzij = distZ -> data [i] [j];
 			if (i == j || dzij == 0.0) {
@@ -1576,20 +1576,20 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 			b [i] [j] = - weight -> data [i] [j] * disp -> data [i] [j] / dzij;
 			sum += b [i] [j];
 		}
-		b [i] [i] = - (real) sum;
+		b [i] [i] = - (double) sum;
 	}
 
 	// Guttman transform: Xu = (V+)B(Z)Z (eq. 8.29)
 
 	for (integer i = 1; i <= nPoints; i ++) {
 		for (integer j = 1; j <= nDimensions; j ++) {
-			real80 xij = 0.0;
+			longdouble xij = 0.0;
 			for (integer k = 1;  k <= nPoints; k ++) {
 				for (integer l = 1; l <= nPoints; l ++) {
 					xij += vplus [i] [k] * b [k] [l] * z [l] [j];
 				}
 			}
-			cx -> data [i] [j] = (real) xij;
+			cx -> data [i] [j] = (double) xij;
 		}
 	}
 }
@@ -1792,7 +1792,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		// Get V (eq. 8.19).
 
 		for (integer i = 1; i <= nPoints; i ++) {
-			real80 wsum = 0.0;
+			longdouble wsum = 0.0;
 			for (integer j = 1; j <= nPoints; j ++) {
 				if (i == j) {
 					continue;
@@ -1800,7 +1800,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 				v [i] [j] = - w [i] [j];
 				wsum += w [i] [j];
 			}
-			v [i] [i] = (real) wsum;
+			v [i] [i] = (double) wsum;
 		}
 
 		/*
@@ -2334,7 +2334,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		// normalize the solution: centre and x'x = 1
 
-		real80 mean = 0.0;
+		longdouble mean = 0.0;
 		for (integer k = 1; k <= nPoints; k ++) {
 			mean += solution [k];
 		}
@@ -2344,14 +2344,14 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			continue;
 		}
 
-		real80 scale = 0.0;
+		longdouble scale = 0.0;
 		for (integer k = 1; k <= nPoints; k ++) {
 			solution [k] -= mean;
 			scale += solution [k] * solution [k];
 		}
 
 		for (integer k = 1; k <= nPoints; k ++) {
-			x [k] [h] = solution [k] / sqrt ((real) scale);
+			x [k] [h] = solution [k] / sqrt ((double) scale);
 		}
 
 		// update weights. Make negative weights zero.

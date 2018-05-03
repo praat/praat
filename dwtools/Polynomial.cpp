@@ -59,7 +59,7 @@
 	c [1..n] -> degree n-1 !!
 */
 void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *f, double *df) {
-	real80 p = my coefficients [my numberOfCoefficients], dp = 0.0, xc = x;
+	longdouble p = my coefficients [my numberOfCoefficients], dp = 0.0, xc = x;
 
 	for (integer i = my numberOfCoefficients - 1; i > 0; i --) {
 		dp = dp * xc + p;
@@ -71,11 +71,11 @@ void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *f, doub
 
 /* Get value and derivative */
 static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *z, dcomplex *p, dcomplex *dp) {
-	real80 pr = my coefficients [my numberOfCoefficients], pi = 0.0;
-	real80 dpr = 0.0, dpi = 0.0, x = z -> re, y = z -> im;
+	longdouble pr = my coefficients [my numberOfCoefficients], pi = 0.0;
+	longdouble dpr = 0.0, dpi = 0.0, x = z -> re, y = z -> im;
 
 	for (integer i = my numberOfCoefficients - 1; i > 0; i --) {
-		real80 tr   = dpr;
+		longdouble tr   = dpr;
 		dpr  =  dpr * x -  dpi * y + pr;
 		dpi  =   tr * y +  dpi * x + pi;
 		tr   = pr;
@@ -240,7 +240,7 @@ static void svdcvm (double **v, integer mfit, integer ma, int *frozen, double *w
 	}
 	for (integer i = 1; i <= mfit; i ++) {
 		for (integer j = 1; j <= i; j ++) {
-			real80 sum = 0.0;
+			longdouble sum = 0.0;
 			for (integer k = 1; k <= mfit; k ++) {
 				sum += v [i] [k] * v [j] [k] * wti [k];
 			}
@@ -352,7 +352,7 @@ autoFunctionTerms FunctionTerms_create (double xmin, double xmax, integer number
 
 void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, bool allowTrailingZeros) {
 	integer numberOfCoefficients;
-	autoNUMvector <real> numbers (NUMstring_to_numbers (s, & numberOfCoefficients), 1);
+	autoNUMvector <double> numbers (NUMstring_to_numbers (s, & numberOfCoefficients), 1);
 	if (! allowTrailingZeros) {
 		while (numbers [numberOfCoefficients] == 0 && numberOfCoefficients > 1) {
 			numberOfCoefficients --;
@@ -548,7 +548,7 @@ void FunctionTerms_setCoefficient (FunctionTerms me, integer index, double value
 Thing_implement (Polynomial, FunctionTerms, 1);
 
 double structPolynomial :: v_evaluate (double x) {
-	real80 p = coefficients [numberOfCoefficients];
+	longdouble p = coefficients [numberOfCoefficients];
 
 	for (integer i = numberOfCoefficients - 1; i > 0; i--) {
 		p = p * x + coefficients [i];
@@ -557,12 +557,12 @@ double structPolynomial :: v_evaluate (double x) {
 }
 
 dcomplex structPolynomial :: v_evaluate_z (dcomplex z) {
-	real80 x = z.re, y = z.im;
+	longdouble x = z.re, y = z.im;
 
-	real80 pr = coefficients [numberOfCoefficients];
-	real80 pi = 0.0;
+	longdouble pr = coefficients [numberOfCoefficients];
+	longdouble pi = 0.0;
 	for (integer i = numberOfCoefficients - 1; i > 0; i --) {
-		real80 prtmp = pr;
+		longdouble prtmp = pr;
 		pr =  pr * x - pi * y + coefficients [i];
 		pi = prtmp * y + pi * x;
 	}
@@ -832,7 +832,7 @@ autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
 		integer numberOfTerms;
-		autoNUMvector <real> a (NUMstring_to_numbers (s, & numberOfTerms), 1);
+		autoNUMvector <double> a (NUMstring_to_numbers (s, & numberOfTerms), 1);
 		FunctionTerms_init (me.get(), xmin, xmax, 2 * numberOfTerms + 1);
 		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.peek(), numberOfTerms);
 		return me;
@@ -1773,7 +1773,7 @@ static void Spline_initKnotsFromString (Spline me, integer degree, const char32 
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
 	integer numberOfInteriorKnots;
-	autoNUMvector <real> numbers (NUMstring_to_numbers (interiorKnots, & numberOfInteriorKnots), 1);
+	autoNUMvector <double> numbers (NUMstring_to_numbers (interiorKnots, & numberOfInteriorKnots), 1);
 	if (numberOfInteriorKnots > 0) {
 		NUMsort_d (numberOfInteriorKnots, numbers.peek());
 		if (numbers [1] <= my xmin || numbers [numberOfInteriorKnots] > my xmax) {
