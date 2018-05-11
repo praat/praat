@@ -1043,7 +1043,7 @@ static void gui_drawingarea_cb_click (FunctionEditor me, GuiDrawingArea_ClickEve
 		updateGroup (me);
 	}
 	else if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   // in signal region?
-		int needsUpdate;
+		bool needsUpdate;
 		Graphics_setViewport (my graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, 1.0);
@@ -1417,12 +1417,6 @@ bool structFunctionEditor :: v_clickE (double xWC, double /* yWC */) {
 void structFunctionEditor :: v_clickSelectionViewer (double /* xWC */, double /* yWC */) {
 }
 
-void FunctionEditor_insetViewport (FunctionEditor me) {
-	Graphics_setViewport (my graphics.get(), my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
-		BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
-	Graphics_setWindow (my graphics.get(), my startWindow, my endWindow, 0.0, 1.0);
-}
-
 int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, double a_tmax, double t) {
 	/*
 	 * This callback will often be called by the Melder workproc during playback.
@@ -1432,7 +1426,10 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 	 */
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (our graphics.get(), & x1NDC, & x2NDC, & y1NDC, & y2NDC);
-	FunctionEditor_insetViewport (this);
+	Graphics_setViewport (our graphics.get(),
+		our functionViewerLeft + MARGIN, our functionViewerRight - MARGIN,
+		BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
+	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
 	Graphics_xorOn (our graphics.get(), Graphics_MAROON);
 	/*
 	 * Undraw the play cursor at its old location.
@@ -1452,6 +1449,12 @@ int structFunctionEditor :: v_playCallback (int phase, double /* a_tmin */, doub
 		Graphics_setLineWidth (our graphics.get(), 1.0);
 	}
 	Graphics_xorOff (our graphics.get());
+	if (our p_showSelectionViewer) {
+		Graphics_setViewport (our graphics.get(),
+			our selectionViewerLeft + MARGIN, our selectionViewerRight - MARGIN,
+			BOTTOM_MARGIN + space * 3, our height - (TOP_MARGIN + space));
+		our v_drawRealTimeSelectionViewer (phase, t);
+	}
 	/*
 	 * Usually, there will be an event test after each invocation of this callback,
 	 * because the asynchronicity is kMelder_asynchronicityLevel_INTERRUPTABLE or kMelder_asynchronicityLevel_ASYNCHRONOUS.

@@ -80,6 +80,7 @@ Thing_define (FunctionEditor, Editor) {
 		 * Message: "draw your part of the data between startWindow and endWindow."
 		 */
 	virtual void v_drawSelectionViewer () { }
+	virtual void v_drawRealTimeSelectionViewer (int phase, double time) { }
 	virtual void v_prepareDraw () { }   // for less flashing
 	virtual const char32 * v_format_domain () { return U"Time domain:"; }
 	virtual const char * v_format_short () { return u8"%.3f"; }
@@ -248,8 +249,6 @@ void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, cons
 void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, double minimum, double maximum);
 void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units);
 void FunctionEditor_drawGridLine (FunctionEditor me, double yWC);
-
-void FunctionEditor_insetViewport (FunctionEditor me);
 
 void FunctionEditor_garnish (FunctionEditor me);   // Optionally selection times and selection hairs.
 
