@@ -21,7 +21,7 @@
 
 Thing_implement (NoulliGridEditor, TimeSoundEditor, 0);
 
-#define SOUND_HEIGHT  0.382
+#define SOUND_HEIGHT  0.2
 
 /********** DRAWING AREA **********/
 
@@ -72,6 +72,48 @@ void structNoulliGridEditor :: v_draw () {
 void structNoulliGridEditor :: v_play (double a_tmin, double a_tmax) {
 	if (our d_sound.data)
 		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+}
+
+static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax, double tmin, double tmax, const char32 *header) {
+	NoulliGrid grid = (NoulliGrid) my data;
+	for (integer itier = 1; itier <= grid -> tiers.size; itier ++) {
+		Graphics_Viewport vp = Graphics_insetViewport (my graphics.get(), xmin, xmax,
+			(grid -> tiers.size - itier + 0.0) / grid -> tiers.size * (1.0 - SOUND_HEIGHT),
+			(grid -> tiers.size - itier + 1.0) / grid -> tiers.size * (1.0 - SOUND_HEIGHT));
+		if (itier == 1) {
+			Graphics_setColour (my graphics.get(), Graphics_BLACK);
+			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_BOTTOM);
+			Graphics_text (my graphics.get(), 0.0, 1.0, header);
+		}
+		autoNoulliPoint average = NoulliGrid_average (grid, itier, tmin, tmax);
+		integer winningCategory = NoulliPoint_getWinningCategory (average.get());
+		if (winningCategory != 0 && average -> probabilities [winningCategory] > 1.0/3.0) {
+			Graphics_setColour (my graphics.get(), Graphics_cyclingBackgroundColour (winningCategory));
+			Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
+			Graphics_setColour (my graphics.get(), Graphics_cyclingTextColour (winningCategory));
+			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
+			Graphics_text (my graphics.get(), 0.0, 0.0, grid -> categoryNames [winningCategory]);
+		} else {
+			Graphics_setColour (my graphics.get(), Graphics_WHITE);
+			Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
+		}
+		Graphics_resetViewport (my graphics.get(), vp);
+	}
+	Graphics_setColour (my graphics.get(), Graphics_BLACK);
+}
+
+void structNoulliGridEditor :: v_drawSelectionViewer () {
+	Graphics_setWindow (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
+	Graphics_setColour (our graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
+	Graphics_fillRectangle (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
+	drawSelectionOrWindow (this, 0.0, 0.5, our startSelection, our endSelection,
+		our tmin == our tmax ? U"Cursor" : U"Selection");
+	drawSelectionOrWindow (this, 0.5, 1.0, our startWindow, our endWindow, U"Window");
+}
+
+void structNoulliGridEditor :: v_drawRealTimeSelectionViewer (int phase, double time) {
+	Graphics_setWindow (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
+	drawSelectionOrWindow (this, 0.0, 0.5, time - 2.0, time + 2.0, U"");
 }
 
 void NoulliGridEditor_init (NoulliGridEditor me, const char32 *title, NoulliGrid data, Sound sound, bool ownSound) {

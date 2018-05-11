@@ -81,7 +81,7 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 	numberOfElements = texgeti32 (text);
 	Melder_require (numberOfElements > 0, U"Number of elements should be greater than zero.");
 	
-	p = NUMvector_readText_integer (1, numberOfElements, text, "p");
+	p = NUMvector_readText_integer32BE (1, numberOfElements, text, "p");
 	Permutation_checkInvariant (this);
 }
 

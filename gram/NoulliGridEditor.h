@@ -26,6 +26,10 @@ Thing_define (NoulliGridEditor, TimeSoundEditor) {
 		override;
 	void v_play (double tmin, double tmax)
 		override;
+	void v_drawSelectionViewer ()
+		override;
+	void v_drawRealTimeSelectionViewer (int phase, double time)
+		override;
 };
 
 void NoulliGridEditor_init (NoulliGridEditor me, const char32 *title, NoulliGrid data, Sound sound, bool ownSound);

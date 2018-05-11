@@ -1243,7 +1243,7 @@ void NUMautoscale (double x [], integer n, double scale);
 FUNCTION (signed char, i8)
 FUNCTION (int, i16)
 FUNCTION (long, i32)
-FUNCTION (integer, integer)
+FUNCTION (integer, integer32BE)
 FUNCTION (unsigned char, u8)
 FUNCTION (unsigned int, u16)
 FUNCTION (unsigned long, u32)

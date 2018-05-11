@@ -1,6 +1,6 @@
 /* oo_undef.h
  *
- * Copyright (C) 1994-2011,2013,2015,2017 Paul Boersma
+ * Copyright (C) 1994-2005,2007,2011,2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -160,7 +160,7 @@ DIRECT (NEW_Cochleagram_to_Matrix) {
 
 FORM (NEW1_Corpus_create, U"Create Corpus", U"Create Corpus...") {
 	WORD (name, U"Name", U"myCorpus")
-	TEXTFIELD (folderWithSoundFiles, U"Folder with sound files:", U"/Users/pboersma/Dropbox/www/bpep/data/*.wav")
+	TEXTFIELD (folderWithSoundFiles, U"Folder with sound files:", U"")
 	WORD (soundFileExtension, U"Sound file extension", U"wav")
 	TEXTFIELD (folderWithAnnotationFiles, U"Folder with annotation files:", U"")
 	WORD (annotationFileExtension, U"Annotation file extension", U"TextGrid")

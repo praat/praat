@@ -43,5 +43,52 @@ Thing_implement (NoulliTier, Function, 0);
 
 Thing_implement (NoulliGrid, Function, 0);
 
+integer NoulliPoint_getWinningCategory (NoulliPoint me) {
+	integer winningCategory = 0;
+	double maximumProbability = 0.0;
+	for (integer icat = 1; icat <= my numberOfCategories; icat ++) {
+		if (my probabilities [icat] > maximumProbability) {   // NaN-safe comparison
+			maximumProbability = my probabilities [icat];
+			winningCategory = icat;
+		}
+	}
+	return winningCategory;
+}
+
+autoNoulliPoint NoulliGrid_average (NoulliGrid me, integer tierNumber, double tmin, double tmax) {
+	try {
+		Melder_require (tierNumber >= 1, U"Tier number should be positive");
+		Melder_require (tierNumber <= my tiers.size,
+			U"Tier number (", tierNumber, U") should not be higher than the number of tiers (", my tiers.size, U").");
+		NoulliTier tier = my tiers.at [tierNumber];
+		autoNoulliPoint you = Thing_new (NoulliPoint);
+		your numberOfCategories = my numberOfCategories;
+		your probabilities = NUMvector <double> (1, my numberOfCategories);
+		double numberOfSeconds = 0.0;
+		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+			NoulliPoint inpoint = tier -> points.at [ipoint];
+			if (inpoint -> xmax > tmin && inpoint -> xmin < tmax) {
+				double duration = inpoint -> xmax - inpoint -> xmin;
+				for (integer icat = 1; icat <= my numberOfCategories; icat ++) {
+					your probabilities [icat] += inpoint -> probabilities [icat] * duration;
+				}
+				numberOfSeconds += duration;
+			}
+		}
+		if (numberOfSeconds == 0.0) {
+			for (integer icat = 1; icat <= my numberOfCategories; icat ++) {
+				your probabilities [icat] = undefined;
+			}
+		} else {
+			for (integer icat = 1; icat <= my numberOfCategories; icat ++) {
+				your probabilities [icat] /= numberOfSeconds;
+			}
+		}
+		return you;
+	} catch (MelderError) {
+		Melder_throw (me, U": average not computed.");
+	}
+}
+
 /* End of file NoulliGrid.cpp */
 

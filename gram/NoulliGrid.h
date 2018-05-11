@@ -23,6 +23,10 @@
 
 #include "NoulliGrid_def.h"
 
+integer NoulliPoint_getWinningCategory (NoulliPoint me);
+
+autoNoulliPoint NoulliGrid_average (NoulliGrid me, integer tierNumber, double tmin, double tmax);
+
 /* End of file NoulliGrid.h */
 #endif
 
