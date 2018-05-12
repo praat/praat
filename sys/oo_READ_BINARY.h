@@ -1,6 +1,6 @@
 /* oo_READ_BINARY.h
  *
- * Copyright (C) 1994-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1994-2009,2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
 	{ \
-		integer n = bingetinteger (f); \
+		integer n = bingetinteger32BE (f); \
 		for (integer i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \
 			item -> v_readBinary (f, formatVersion); \
@@ -135,7 +135,7 @@
 
 #define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
-		integer n = bingetinteger (f); \
+		integer n = bingetinteger32BE (f); \
 		our x = Class##_create (); \
 		for (integer i = 1; i <= n; i ++) { \
 			auto##ItemClass item = Thing_new (ItemClass); \

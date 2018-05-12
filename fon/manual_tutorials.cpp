@@ -22,10 +22,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20180403)
+MAN_BEGIN (U"What's new?", U"ppgb", 20180511)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.40# (11 May 2018)")
+LIST_ITEM (U"• Scripting: @@Scripting 4.3. Querying objects|selected\\#  ()@.")
+LIST_ITEM (U"• Table window: cell selection.")
+LIST_ITEM (U"• Unicode-savvy regular expressions.")
 NORMAL (U"##6.0.39# (3 April 2018)")
 LIST_ITEM (U"• More string matching (case-insensive, word-level).")
 NORMAL (U"##6.0.38# (29 March 2018)")

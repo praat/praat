@@ -1,6 +1,6 @@
 /* Sound_files.cpp
  *
- * Copyright (C) 1992-2011,2012,2014,2015,2016,2017 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2018 Paul Boersma & David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,9 +122,6 @@ autoSound Sound_readFromSesamFile (MelderFile file) {
 
 autoSound Sound_readFromBellLabsFile (MelderFile file) {
 	try {
-		/*
-		 * Check existence and permissions of file.
-		 */
 		autofile f = Melder_fopen (file, "rb");
 
 		/*
@@ -217,15 +214,27 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 		int16_t tmp1 = bingeti16LE (f);
 		int16_t tmp2 = bingeti16LE (f);
 		integer numberOfChannels = tmp1 == -1 || tmp2 == -1 ? 1 : 2;
-		if (chunkSize == 44)
-			if (fread (data, 1, 12, f) < 12) readError ();
+		if (chunkSize == 44) {
+			int16_t tmp3 = bingeti16LE (f);
+			if (tmp3 != -1) numberOfChannels ++;
+			int16_t tmp4 = bingeti16LE (f);
+			if (tmp4 != -1) numberOfChannels ++;
+			int16_t tmp5 = bingeti16LE (f);
+			if (tmp5 != -1) numberOfChannels ++;
+			int16_t tmp6 = bingeti16LE (f);
+			if (tmp6 != -1) numberOfChannels ++;
+			int16_t tmp7 = bingeti16LE (f);
+			if (tmp7 != -1) numberOfChannels ++;
+			int16_t tmp8 = bingeti16LE (f);
+			if (tmp8 != -1) numberOfChannels ++;
+		}
 
 		/* SD chunk */
 
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / samplingFrequency, samplingFrequency);
 		for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
 			if (fread (data, 1, 4, f) < 4) readError ();
-			while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
+			while (! strnequ (data, "SD", 2)) {
 				if (feof ((FILE *) f))
 					Melder_throw (U"Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
 				chunkSize = bingetu32LE (f);
@@ -244,9 +253,7 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 			for (integer i = 1; i <= numberOfSamples; i ++) {
 				my z [ichan] [i] = (double) bingeti16LE (f) / 32768.0;
 			}
-			for (integer i = 1; i <= residual; i ++) {
-				fread (data, 1, 1, f);
-			}
+			fseek (f, residual, SEEK_CUR);
 		}
 		Melder_casual (ftell (f));
 		f.close (file);
@@ -287,7 +294,7 @@ void Sound_saveAsAudioFile (Sound me, MelderFile file, int audioFileType, int nu
 void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
-		integer header [1 + 128], tail;
+		integer header [1 + 128];
 		for (integer i = 1; i <= 128; i ++) header [i] = 0;
 		/* ILS header. */
 			header [6] = ((my nx - 1) >> 8) + 1;   // number of disk blocks
@@ -304,7 +311,7 @@ void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 			header [127] = my nx;   // number of samples
 		for (integer i = 1; i <= 128; i ++) binputi32LE (header [i], f);
 		for (integer i = 1; i <= my nx; i ++) binputi16LE (Melder_iround_tieDown (my z [1] [i] * 2048.0), f);
-		tail = 256 - my nx % 256;
+		integer tail = 256 - my nx % 256;
 		if (tail == 256) tail = 0;
 		for (integer i = 1; i <= tail; i ++) binputi16LE (0, f);   // pad last block with zeroes
 		f.close (file);
@@ -315,13 +322,16 @@ void Sound_saveAsSesamFile (Sound me, MelderFile file) {
 
 void Sound_saveAsKayFile (Sound me, MelderFile file) {
 	try {
+		if (my ny > 8)
+			Melder_throw (U"Cannot write more than 8 channels into a Kay sound file.");
+
 		autoMelderFile mfile = MelderFile_create (file);
 
 		/* Form Chunk: contains all other chunks. */
 		fwrite ("FORMDS16", 1, 8, file -> filePointer);
 		binputi32LE (48 + my nx * 2, file -> filePointer);   // size of Form Chunk
-		fwrite ("HEDR", 1, 4, file -> filePointer);
-		binputi32LE (32, file -> filePointer);
+		fwrite (my ny > 2 ? "HDR8" : "HEDR", 1, 4, file -> filePointer);
+		binputi32LE (my ny > 2 ? 44 : 32, file -> filePointer);
 
 		char date [100];
 		time_t today = time (nullptr);
@@ -340,13 +350,20 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 		if (my ny == 1) {
 			binputi16LE (-1, file -> filePointer);
 		} else {
-			int maximumB = 0;
-			for (integer i = 1; i <= my nx; i ++) {
-				integer value = Melder_iround_tieDown (my z [2] [i] * 32768.0);
-				if (value < - maximumB) maximumB = - value;
-				if (value > maximumB) maximumB = value;
+			for (integer ichannel = 2; ichannel <= my ny; ichannel ++) {
+				int maximum = 0;
+				for (integer i = 1; i <= my nx; i ++) {
+					integer value = Melder_iround_tieDown (my z [ichannel] [i] * 32768.0);
+					if (value < - maximum) maximum = - value;
+					if (value > maximum) maximum = value;
+				}
+				binputi16LE (maximum, file -> filePointer);   // absolute maximum window B
 			}
-			binputi16LE (maximumB, file -> filePointer);   // absolute maximum window B
+			if (my ny > 2) {
+				for (integer ichannel = my ny + 1; ichannel <= 8; ichannel ++) {
+					binputi16LE (-1, file -> filePointer);
+				}
+			}
 		}
 		fwrite ("SDA_", 1, 4, file -> filePointer);
 		binputi32LE (my nx * 2, file -> filePointer);   // chunk size
@@ -355,6 +372,11 @@ void Sound_saveAsKayFile (Sound me, MelderFile file) {
 			fwrite ("SD_B", 1, 4, file -> filePointer);
 			binputi32LE (my nx * 2, file -> filePointer);   // chunk size
 			MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z + 1, my nx, true);
+		}
+		for (integer ichannel = 3; ichannel <= my ny; ichannel ++) {
+			fwrite (Melder_peek32to8 (Melder_cat (U"SD_", ichannel)), 1, 4, file -> filePointer);
+			binputi32LE (my nx * 2, file -> filePointer);   // chunk size
+			MelderFile_writeFloatToAudio (file, 1, Melder_LINEAR_16_LITTLE_ENDIAN, my z + ichannel - 1, my nx, true);
 		}
 		mfile.close ();
 	} catch (MelderError) {

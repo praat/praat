@@ -917,7 +917,7 @@ int32 bingeti32LE (FILE *f) {
 	}
 }
 
-integer bingetinteger (FILE *f) {
+integer bingetinteger32BE (FILE *f) {
 	try {
 		if (binario_32bitBE && Melder_debug != 18) {
 			int32 l;
@@ -1269,7 +1269,7 @@ void binputi32LE (int32 i, FILE *f) {
 	}
 }
 
-void binputinteger (integer i, FILE *f) {
+void binputinteger32BE (integer i, FILE *f) {
 	try {
 		if (i < INT32_MIN || i > INT32_MAX)
 			Melder_throw (U"The number ", i, U" is too big to fit into 32 bits.");   // this will change in the future
