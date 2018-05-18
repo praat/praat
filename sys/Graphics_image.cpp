@@ -328,7 +328,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 								*pixelAddress ++ = red          * 255.0;
 								*pixelAddress ++ = green        * 255.0;
 								*pixelAddress ++ = blue         * 255.0;
-								*pixelAddress ++ = transparency * 255.0;
+								*pixelAddress ++ = (1.0 - transparency) * 255.0;
 							#endif
 						}
 					} else {
@@ -411,7 +411,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 				);
 				Melder_assert (dataProvider != nullptr);
 				image = CGImageCreate (clipx2 - clipx1, numberOfRows,
-					8, 32, bytesPerRow, colourSpace, kCGImageAlphaNone, dataProvider, nullptr, false, kCGRenderingIntentDefault);
+					8, 32, bytesPerRow, colourSpace, kCGImageAlphaLast, dataProvider, nullptr, false, kCGRenderingIntentDefault);
 				CGDataProviderRelease (dataProvider);
 			} else if (0) {
 				Melder_assert (CGBitmapContextCreate != nullptr);
