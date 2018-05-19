@@ -19,7 +19,19 @@
 #include "NoulliGridEditor.h"
 #include "EditorM.h"
 
+#include "enums_getText.h"
+#include "NoulliGridEditor_enums.h"
+#include "enums_getValue.h"
+#include "NoulliGridEditor_enums.h"
+
 Thing_implement (NoulliGridEditor, TimeSoundEditor, 0);
+
+#include "prefs_define.h"
+#include "NoulliGridEditor_prefs.h"
+#include "prefs_install.h"
+#include "NoulliGridEditor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "NoulliGridEditor_prefs.h"
 
 #define SOUND_HEIGHT  0.2
 
@@ -106,14 +118,28 @@ void structNoulliGridEditor :: v_drawSelectionViewer () {
 	Graphics_setWindow (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
 	Graphics_setColour (our graphics.get(), Graphics_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
-	drawSelectionOrWindow (this, 0.0, 0.5, our startSelection, our endSelection,
-		our tmin == our tmax ? U"Cursor" : U"Selection");
-	drawSelectionOrWindow (this, 0.5, 1.0, our startWindow, our endWindow, U"Window");
+	drawSelectionOrWindow (this, 0.0, 1.0, our startSelection, our endSelection, U"");
+	//drawSelectionOrWindow (this, 0.0, 0.5, our startSelection, our endSelection,
+	//	our tmin == our tmax ? U"Cursor" : U"Selection");
+	//drawSelectionOrWindow (this, 0.5, 1.0, our startWindow, our endWindow, U"Window");
 }
 
-void structNoulliGridEditor :: v_drawRealTimeSelectionViewer (int phase, double time) {
+void structNoulliGridEditor :: v_drawRealTimeSelectionViewer (int /* phase */, double time) {
 	Graphics_setWindow (our graphics.get(), -1.0, +1.0, -1.0, +1.0);
-	drawSelectionOrWindow (this, 0.0, 0.5, time - 2.0, time + 2.0, U"");
+	drawSelectionOrWindow (this, 0.0, 1.0, time - 1.0, time + 1.0, U"");
+}
+
+OPTIONMENU_ENUM_VARIABLE (kNoulliGridEditor_showCategoryInSelectionViewerAs, v_prefs_addFields_showCategoryInSelectionViewerAs)
+void structNoulliGridEditor :: v_prefs_addFields (EditorCommand cmd) {
+	OPTIONMENU_ENUM_FIELD (v_prefs_addFields_showCategoryInSelectionViewerAs, U"Show category in selection viewer as",
+		kNoulliGridEditor_showCategoryInSelectionViewerAs, kNoulliGridEditor_showCategoryInSelectionViewerAs::DEFAULT)
+}
+void structNoulliGridEditor :: v_prefs_setValues (EditorCommand cmd) {
+	SET_ENUM (v_prefs_addFields_showCategoryInSelectionViewerAs, kNoulliGridEditor_showCategoryInSelectionViewerAs, our p_showCategoryInSelectionViewerAs)
+}
+void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
+	our pref_showCategoryInSelectionViewerAs () = our p_showCategoryInSelectionViewerAs = v_prefs_addFields_showCategoryInSelectionViewerAs;
+	FunctionEditor_redraw (this);
 }
 
 void NoulliGridEditor_init (NoulliGridEditor me, const char32 *title, NoulliGrid data, Sound sound, bool ownSound) {
