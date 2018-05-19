@@ -1707,6 +1707,8 @@ void praat_uvafon_gram_init () {
 		nullptr);
 	Thing_recognizeClassByOtherName (classOTGrammar, U"OTCase");
 
+	structNoulliGridEditor :: f_preferences ();
+
 	praat_addMenuCommand (U"Objects", U"New", U"Constraint grammars", nullptr, 0, nullptr);
 		praat_addMenuCommand (U"Objects", U"New", U"OT learning tutorial", nullptr, praat_DEPTH_1 | praat_NO_API, HELP_OT_learning_tutorial);
 		praat_addMenuCommand (U"Objects", U"New", U"-- tableau grammars --", nullptr, 1, nullptr);

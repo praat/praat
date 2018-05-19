@@ -21,15 +21,25 @@
 #include "TimeSoundEditor.h"
 #include "NoulliGrid.h"
 
+#include "NoulliGridEditor_enums.h"
+
 Thing_define (NoulliGridEditor, TimeSoundEditor) {
 	void v_draw ()
 		override;
 	void v_play (double tmin, double tmax)
 		override;
+	void v_prefs_addFields (EditorCommand cmd)
+		override;
+	void v_prefs_setValues (EditorCommand cmd)
+		override;
+	void v_prefs_getValues (EditorCommand cmd)
+		override;
 	void v_drawSelectionViewer ()
 		override;
 	void v_drawRealTimeSelectionViewer (int phase, double time)
 		override;
+
+	#include "NoulliGridEditor_prefs.h"
 };
 
 void NoulliGridEditor_init (NoulliGridEditor me, const char32 *title, NoulliGrid data, Sound sound, bool ownSound);
