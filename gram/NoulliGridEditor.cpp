@@ -100,14 +100,89 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 		autoNoulliPoint average = NoulliGrid_average (grid, itier, tmin, tmax);
 		integer winningCategory = NoulliPoint_getWinningCategory (average.get());
 		if (winningCategory != 0 && average -> probabilities [winningCategory] > 1.0/3.0) {
-			Graphics_setColour (my graphics.get(), Graphics_cyclingBackgroundColour (winningCategory));
-			Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
-			Graphics_setColour (my graphics.get(), Graphics_cyclingTextColour (winningCategory));
-			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
-			Graphics_text (my graphics.get(), 0.0, 0.0, grid -> categoryNames [winningCategory]);
+			bool shouldDrawPicture =
+				(my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE ||
+				 my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT)
+				&&
+				(Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"happy") ||
+				 Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"neutral") ||
+				 Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"sad") ||
+				 Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"scared") ||
+				 Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"angry"));
+			if (shouldDrawPicture) {
+				Graphics_setColour (my graphics.get(), Graphics_cyclingBackgroundColour (winningCategory));
+				Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
+				Graphics_setColour (my graphics.get(), Graphics_cyclingTextColour (winningCategory));
+				/*
+					Draw the eyes.
+				*/
+				if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"happy")) {
+					Graphics_setLineWidth (my graphics.get(), 15.0);
+					const double dx = 0.375, y = 0.10, radius = 0.18, angle = 85.0;
+					Graphics_arc (my graphics.get(), - dx, y, radius, 90.0 - angle, 90.0 + angle);   // left eye
+					Graphics_arc (my graphics.get(), + dx, y, radius, 90.0 - angle, 90.0 + angle);   // right eye
+				} else {
+					const double dx = 0.375, y = 0.1875, radius = 0.125;
+					Graphics_fillCircle (my graphics.get(), - dx, y, radius);   // left eye
+					Graphics_fillCircle (my graphics.get(), + dx, y, radius);   // right eye
+				}
+				/*
+					Draw the mouth.
+				*/
+				Graphics_setLineWidth (my graphics.get(), 8.0);
+				if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"happy")) {
+					const double y = -0.20, radius = 0.35, angle = 55.0;
+					Graphics_arc (my graphics.get(), 0.0, y, radius, 270.0 - angle, 270.0 + angle);
+				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"neutral")) {
+					Graphics_setLineWidth (my graphics.get(), 13.0);
+					const double dx = 0.20, y = -0.50;
+					Graphics_line (my graphics.get(), - dx, y, + dx, y);
+				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"sad")) {
+					const double y = -0.80, radius = 0.35, angle = 55.0;
+					Graphics_arc (my graphics.get(), 0.0, y, radius, 90.0 - angle, 90.0 + angle);
+				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"scared")) {
+					const double y = -0.50, dx = 0.10, dy = 0.25;
+					Graphics_fillEllipse (my graphics.get(), - dx, + dx, y - dy, y + dy);
+				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"angry")) {
+					const double y = -0.80, radius = 0.35, angle = 55.0;
+					Graphics_arc (my graphics.get(), 0.0, y, radius, 90.0 - angle, 90.0 + angle);
+				}
+				/*
+					Draw the eyebrows.
+				*/
+				Graphics_setLineWidth (my graphics.get(), 12.0);
+				if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"sad")) {
+					const double dx1 = 0.60, dx2 = 0.30, y1 = 0.40, y2 = 0.60;
+					Graphics_line (my graphics.get(), - dx2, y2, - dx1, y1);   // left eyebrow
+					Graphics_line (my graphics.get(), + dx1, y1, + dx2, y2);   // right eyebrow
+				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"scared")) {
+					const double dx1 = 0.60, dx2 = 0.30, y1 = 0.45, y2 = 0.60;
+					Graphics_line (my graphics.get(), - dx2, y2, - dx1, y1);   // left eyebrow
+					Graphics_line (my graphics.get(), + dx1, y1, + dx2, y2);   // right eyebrow
+				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"angry")) {
+					const double dx1 = 0.25, dx2 = 0.55, y1 = 0.40, y2 = 0.60;
+					Graphics_line (my graphics.get(), - dx2, y2, - dx1, y1);   // left eyebrow
+					Graphics_line (my graphics.get(), + dx1, y1, + dx2, y2);   // right eyebrow
+				}
+				Graphics_setLineWidth (my graphics.get(), 1.0);
+			} else {
+				Graphics_setColour (my graphics.get(), Graphics_cyclingBackgroundColour (winningCategory));
+				Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
+			}
+			if (my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::COLOUR_AND_TEXT ||
+				my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT ||
+				my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE && ! shouldDrawPicture)
+			{
+				Graphics_setColour (my graphics.get(), Graphics_cyclingTextColour (winningCategory));
+				Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
+				Graphics_text (my graphics.get(), 0.0, 0.0, grid -> categoryNames [winningCategory]);
+			}
 		} else {
 			Graphics_setColour (my graphics.get(), Graphics_WHITE);
 			Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
+			Graphics_setColour (my graphics.get(), Graphics_BLACK);
+			Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
+			Graphics_text (my graphics.get(), 0.0, 0.0, U"?");
 		}
 		Graphics_resetViewport (my graphics.get(), vp);
 	}

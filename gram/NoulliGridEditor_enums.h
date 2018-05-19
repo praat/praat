@@ -18,7 +18,9 @@
 
 enums_begin (kNoulliGridEditor_showCategoryInSelectionViewerAs, 1)
 	enums_add (kNoulliGridEditor_showCategoryInSelectionViewerAs, 1, COLOUR, U"colour")
-	enums_add (kNoulliGridEditor_showCategoryInSelectionViewerAs, 2, PICTURE_IF_AVAILABLE, U"picture (if available)")
-enums_end (kNoulliGridEditor_showCategoryInSelectionViewerAs, 2, PICTURE_IF_AVAILABLE)
+	enums_add (kNoulliGridEditor_showCategoryInSelectionViewerAs, 2, COLOUR_AND_TEXT, U"colour and text")
+	enums_add (kNoulliGridEditor_showCategoryInSelectionViewerAs, 3, PICTURE, U"picture")
+	enums_add (kNoulliGridEditor_showCategoryInSelectionViewerAs, 4, PICTURE_AND_TEXT, U"picture and text")
+enums_end (kNoulliGridEditor_showCategoryInSelectionViewerAs, 4, PICTURE)
 
 /* End of file NoulliGridEditor_enums.h */
