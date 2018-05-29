@@ -1545,7 +1545,7 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setFontSize (our graphics.get(), oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
-				p_showNumberOf == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
+				our p_showNumberOf == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
 			Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name);
 		}
 		if (our p_showNumberOf != kTextGridEditor_showNumberOf::NOTHING) {
