@@ -52,28 +52,46 @@ void structNoulliGridEditor :: v_draw () {
 	Graphics_setColour (our graphics.get(), Graphics_WHITE);
 	Graphics_setWindow (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
 	Graphics_fillRectangle (our graphics.get(), 0.0, 1.0, 0.0, 1.0);
-	Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, data -> tiers.size);
-	for (integer itier = 1; itier <= data -> tiers.size; itier ++) {
-		NoulliTier tier = data -> tiers.at [itier];
-		double ymin = data -> tiers.size - itier, ymax = ymin + 1;
-		for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
-			NoulliPoint point = tier -> points.at [ipoint];
-			if (point -> xmax > our startWindow && point -> xmin < our endWindow) {
-				double xmin = point -> xmin > our startWindow ? point -> xmin : our startWindow;
-				double xmax = point -> xmax < our endWindow ? point -> xmax : our endWindow;
-				double prob1 = 1.0, prob2;
-				for (integer icategory = 1; icategory <= point -> numberOfCategories; icategory ++) {
-					prob2 = prob1;
-					prob1 -= point -> probabilities [icategory];
-					Graphics_setColour (our graphics.get(), Graphics_cyclingBackgroundColour (icategory));
-					Graphics_fillRectangle (our graphics.get(), xmin, xmax, ymin + prob1 * (ymax - ymin), ymin + prob2 * (ymax - ymin));
+	if (data -> numberOfCategories == 2) {
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, 1.0);
+		Graphics_setLineWidth (our graphics.get(), 3.0);
+		for (integer itier = 1; itier <= data -> tiers.size; itier ++) {
+			NoulliTier tier = data -> tiers.at [itier];
+			for (integer ipoint = 1; ipoint < tier -> points.size; ipoint ++) {
+				NoulliPoint point = tier -> points.at [ipoint], nextPoint = tier -> points.at [ipoint + 1];
+				double time = 0.5 * (point -> xmin + point -> xmax), nextTime = 0.5 * (nextPoint -> xmin + nextPoint -> xmax);
+				if (time > our startWindow && nextTime < our endWindow) {
+					double prob = point -> probabilities [1], nextProb = nextPoint -> probabilities [1];
+					Graphics_setColour (our graphics.get(), Graphics_cyclingBackgroundColour (itier));
+					Graphics_line (our graphics.get(), time, prob, nextTime, nextProb);
 				}
 			}
+			Graphics_setColour (our graphics.get(), Graphics_BLACK);
 		}
-		Graphics_setColour (our graphics.get(), Graphics_BLACK);
-		if (itier > 1) {
-			Graphics_setLineWidth (our graphics.get(), 1.0);
-			Graphics_line (our graphics.get(), our startWindow, ymax, our endWindow, ymax);
+	} else {
+		Graphics_setWindow (our graphics.get(), our startWindow, our endWindow, 0.0, data -> tiers.size);
+		for (integer itier = 1; itier <= data -> tiers.size; itier ++) {
+			NoulliTier tier = data -> tiers.at [itier];
+			double ymin = data -> tiers.size - itier, ymax = ymin + 1;
+			for (integer ipoint = 1; ipoint <= tier -> points.size; ipoint ++) {
+				NoulliPoint point = tier -> points.at [ipoint];
+				if (point -> xmax > our startWindow && point -> xmin < our endWindow) {
+					double xmin = point -> xmin > our startWindow ? point -> xmin : our startWindow;
+					double xmax = point -> xmax < our endWindow ? point -> xmax : our endWindow;
+					double prob1 = 1.0, prob2;
+					for (integer icategory = 1; icategory <= point -> numberOfCategories; icategory ++) {
+						prob2 = prob1;
+						prob1 -= point -> probabilities [icategory];
+						Graphics_setColour (our graphics.get(), Graphics_cyclingBackgroundColour (icategory));
+						Graphics_fillRectangle (our graphics.get(), xmin, xmax, ymin + prob1 * (ymax - ymin), ymin + prob2 * (ymax - ymin));
+					}
+				}
+			}
+			Graphics_setColour (our graphics.get(), Graphics_BLACK);
+			if (itier > 1) {
+				Graphics_setLineWidth (our graphics.get(), 1.0);
+				Graphics_line (our graphics.get(), our startWindow, ymax, our endWindow, ymax);
+			}
 		}
 	}
 	Graphics_setLineWidth (our graphics.get(), 1.0);
