@@ -136,7 +136,7 @@ autoSound Sound_createSimple (integer numberOfChannels, double duration, double 
 	double numberOfSamples_f = round (duration * samplingFrequency);
 	if (numberOfSamples_f > (double) INT32_MAX)
 		Melder_throw (U"Cannot create sounds with more than ", Melder_bigInteger (INT32_MAX), U" samples, because they cannot be saved to disk.");
-	return Sound_create (numberOfChannels, 0.0, duration, (integer) (int32_t) numberOfSamples_f,
+	return Sound_create (numberOfChannels, 0.0, duration, (integer) (int32) numberOfSamples_f,
 		1.0 / samplingFrequency, 0.5 / samplingFrequency);
 }
 

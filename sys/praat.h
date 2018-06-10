@@ -499,11 +499,18 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				(void) IOBJECT; \
 				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persist into the outer scope */ \
-				if (! _args_ && ! _sendingString_) { \
-					file = UiFile_getFile (_dia_); \
-				} else { \
-					Melder_relativePathToFile (_args_ ? _args_ [1]. string : _sendingString_, & _file2); \
+				if (_args_) { \
+					Melder_require (_narg_ == 1, \
+						U"Command requires exactly 1 argument, the name of the file to read, instead of the given ", _narg_, U" arguments."); \
+					Melder_require (_args_ [1]. which == Stackel_STRING, \
+						U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
+					Melder_relativePathToFile (_args_ [1]. string, & _file2); \
 					file = & _file2; \
+				} else if (_sendingString_) { \
+					Melder_relativePathToFile (_sendingString_, & _file2); \
+					file = & _file2; \
+				} else { \
+					file = UiFile_getFile (_dia_); \
 				}
 
 #define FORM_SAVE(proc,title,help,ext)  \
@@ -520,14 +527,19 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				int IOBJECT = 0; \
 				(void) IOBJECT; \
 				structMelderFile _file2 { };  /* don't move this into an inner scope, because the contents of a local variable don't persist into the outer scope */ \
-				if (! _args_ && ! _sendingString_) { \
-					file = UiFile_getFile (_dia_); \
-				} else { \
-					Melder_relativePathToFile (_args_ ? _args_ [1]. string : _sendingString_, & _file2); \
+				if (_args_) { \
+					Melder_require (_narg_ == 1, \
+						U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \
+					Melder_require (_args_ [1]. which == Stackel_STRING, \
+						U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
+					Melder_relativePathToFile (_args_ [1]. string, & _file2); \
 					file = & _file2; \
+				} else if (_sendingString_) { \
+					Melder_relativePathToFile (_sendingString_, & _file2); \
+					file = & _file2; \
+				} else { \
+					file = UiFile_getFile (_dia_); \
 				}
-
-#define GET_FILE(name)  UiForm_getFile (_dia_, name)
 
 #endif // _EditorM_h_
 

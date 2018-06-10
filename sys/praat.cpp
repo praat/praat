@@ -1609,25 +1609,25 @@ void praat_run () {
 		Melder_assert ((double) (unsigned char) dummy == 200.0);
 	}
 	{ uint16 dummy = 40000;
-		Melder_assert ((int) (int16_t) dummy == -25536);   // bingeti16 relies on this
-		Melder_assert ((short) (int16_t) dummy == -25536);   // bingete16 relies on this
+		Melder_assert ((int) (int16) dummy == -25536);   // bingeti16 relies on this
+		Melder_assert ((short) (int16) dummy == -25536);   // bingete16 relies on this
 		Melder_assert ((integer) dummy == 40000);   // Melder_integer relies on this
 		Melder_assert ((double) dummy == 40000.0);
-		Melder_assert ((double) (int16_t) dummy == -25536.0);
+		Melder_assert ((double) (int16) dummy == -25536.0);
 	}
 	{ unsigned int dummy = 40000;
-		Melder_assert ((int) (int16_t) dummy == -25536);
-		Melder_assert ((short) (int16_t) dummy == -25536);
+		Melder_assert ((int) (int16) dummy == -25536);
+		Melder_assert ((short) (int16) dummy == -25536);
 		Melder_assert ((integer) dummy == 40000);   // Melder_integer relies on this
 		Melder_assert ((double) dummy == 40000.0);
-		Melder_assert ((double) (int16_t) dummy == -25536.0);
+		Melder_assert ((double) (int16) dummy == -25536.0);
 	}
 	{
 		int64 dummy = 1000000000000;
 		if (! str32equ (Melder_integer (dummy), U"1000000000000"))
 			Melder_fatal (U"The number 1000000000000 is mistakenly written on this machine as ", dummy, U".");
 	}
-	{ uint32_t dummy = 0xffffffff;
+	{ uint32 dummy = 0xffffffff;
 		Melder_assert ((int64) dummy == 4294967295LL);
 		Melder_assert (str32equ (Melder_integer (dummy), U"4294967295"));
 		Melder_assert (double (dummy) == 4294967295.0);

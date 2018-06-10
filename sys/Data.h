@@ -2,7 +2,7 @@
 #define _Data_h_
 /* Data.h
  *
- * Copyright (C) 1992-2012,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2013-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,7 +259,7 @@ autoDaata Data_readFromBinaryFile (MelderFile file);
 		(plus those from Data_readBinary)
 */
 
-typedef autoDaata (*Data_FileTypeRecognizer) (integer numberOfBytesRead, const char *header, MelderFile file);
+using Data_FileTypeRecognizer = autoDaata (*) (integer numberOfBytesRead, const char *header, MelderFile file);
 
 void Data_recognizeFileType (Data_FileTypeRecognizer recognizer);
 /*

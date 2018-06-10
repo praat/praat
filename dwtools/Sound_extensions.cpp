@@ -158,7 +158,7 @@ static void u1read (Sound me, FILE *f) {
 
 static void i2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 	double *s = my z [1], min = -32768, max = 32767;
-	void (*put) (int16_t, FILE *) = littleEndian ? binputi16LE : binputi16;
+	void (*put) (int16, FILE *) = littleEndian ? binputi16LE : binputi16;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
 		double sample = round (s [i] * 32768);
@@ -175,7 +175,7 @@ static void i2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 
 static void i2read (Sound me, FILE *f, bool littleEndian) {
 	double *s = my z [1];
-	int16_t (*get) (FILE *) = littleEndian ? bingeti16LE : bingeti16;
+	int16 (*get) (FILE *) = littleEndian ? bingeti16LE : bingeti16;
 	for (integer i = 1; i <= my nx; i ++) {
 		s [i] = get (f) / 32768.;
 	}
@@ -183,7 +183,7 @@ static void i2read (Sound me, FILE *f, bool littleEndian) {
 
 static void u2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 	double *s = my z [1], min = 0, max = 65535;
-	void (*put) (uint16_t, FILE *) = littleEndian ? binputu16LE : binputu16;
+	void (*put) (uint16, FILE *) = littleEndian ? binputu16LE : binputu16;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
 		double sample = round ( (s [i] + 1) * 65535 / 2);
@@ -200,7 +200,7 @@ static void u2write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 
 static void u2read (Sound me, FILE *f, bool littleEndian) {
 	double *s = my z [1];
-	uint16_t (*get) (FILE *) = littleEndian ? bingetu16LE : bingetu16;
+	uint16 (*get) (FILE *) = littleEndian ? bingetu16LE : bingetu16;
 	for (integer i = 1; i <= my nx; i ++) {
 		s [i] = get (f) / 32768.0 - 1.0;
 	}
@@ -208,7 +208,7 @@ static void u2read (Sound me, FILE *f, bool littleEndian) {
 
 static void i4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 	double *s = my z [1]; double min = -2147483648.0, max = 2147483647.0;
-	void (*put) (int32_t, FILE *) = littleEndian ? binputi32LE : binputi32;
+	void (*put) (int32, FILE *) = littleEndian ? binputi32LE : binputi32;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
 		double sample = round (s [i] * 2147483648.0);
@@ -225,7 +225,7 @@ static void i4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 
 static void i4read (Sound me, FILE *f, bool littleEndian) {
 	double *s = my z [1];
-	int32_t (*get) (FILE *) = littleEndian ? bingeti32LE : bingeti32;
+	int32 (*get) (FILE *) = littleEndian ? bingeti32LE : bingeti32;
 	for (integer i = 1; i <= my nx; i ++) {
 		s [i] = get (f) / 2147483648.0;
 	}
@@ -234,7 +234,7 @@ static void i4read (Sound me, FILE *f, bool littleEndian) {
 
 static void u4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 	double *s = my z [1]; double min = 0.0, max = 4294967295.0;
-	void (*put) (uint32_t, FILE *) = littleEndian ? binputu32LE : binputu32;
+	void (*put) (uint32, FILE *) = littleEndian ? binputu32LE : binputu32;
 	*nClip = 0;
 	for (integer i = 1; i <= my nx; i ++) {
 		double sample = Melder_round_tieUp (s [i] * 4294967295.0);
@@ -251,7 +251,7 @@ static void u4write (Sound me, FILE *f, bool littleEndian, integer *nClip) {
 
 static void u4read (Sound me, FILE *f, bool littleEndian) {
 	double *s = my z [1];
-	int32_t (*get) (FILE *) = littleEndian ? bingeti32LE : bingeti32;
+	int32 (*get) (FILE *) = littleEndian ? bingeti32LE : bingeti32;
 	for (integer i = 1; i <= my nx; i ++) {
 		s [i] = get (f) / 2147483648.0 - 1.0;
 	}

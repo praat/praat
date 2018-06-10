@@ -51,9 +51,10 @@ void structTextGridEditor :: v_info () {
 
 static double _TextGridEditor_computeSoundY (TextGridEditor me) {
 	TextGrid grid = (TextGrid) my data;
-	int numberOfTiers = grid -> tiers->size;
+	integer numberOfTiers = grid -> tiers->size;
 	bool showAnalysis = my v_hasAnalysis () && (my p_spectrogram_show || my p_pitch_show || my p_intensity_show || my p_formant_show) && (my d_longSound.data || my d_sound.data);
-	int numberOfVisibleChannels = my d_sound.data ? (my d_sound.data -> ny > 8 ? 8 : my d_sound.data -> ny) :
+	integer numberOfVisibleChannels =
+		my d_sound.data ? (my d_sound.data -> ny > 8 ? 8 : my d_sound.data -> ny) :
 		my d_longSound.data ? (my d_longSound.data -> numberOfChannels > 8 ? 8 : my d_longSound.data -> numberOfChannels) : 1;
 	return my d_sound.data || my d_longSound.data ? numberOfTiers / (2.0 * numberOfVisibleChannels + numberOfTiers * (showAnalysis ? 1.8 : 1.3)) : 1.0;
 }
@@ -68,18 +69,21 @@ static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier
 	}
 }
 
-static int _TextGridEditor_yWCtoTier (TextGridEditor me, double yWC) {
+static integer _TextGridEditor_yWCtoTier (TextGridEditor me, double yWC) {
 	TextGrid grid = (TextGrid) my data;
-	int ntier = grid -> tiers->size;
+	integer numberOfTiers = grid -> tiers->size;
 	double soundY = _TextGridEditor_computeSoundY (me);
-	int itier = ntier - Melder_ifloor (yWC / soundY * (double) ntier);
-	if (itier < 1) itier = 1; if (itier > ntier) itier = ntier;
-	return itier;
+	integer tierNumber = numberOfTiers - Melder_ifloor (yWC / soundY * (double) numberOfTiers);
+	if (tierNumber < 1) tierNumber = 1;
+	if (tierNumber > numberOfTiers) tierNumber = numberOfTiers;
+	return tierNumber;
 }
 
-static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int itier, double *tmin, double *tmax) {
+static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, integer tierNumber,
+	double *tmin, double *tmax)
+{
 	TextGrid grid = (TextGrid) my data;
-	Function tier = grid -> tiers->at [itier];
+	Function tier = grid -> tiers->at [tierNumber];
 	IntervalTier intervalTier;
 	TextTier textTier;
 	_AnyTier_identifyClass (tier, & intervalTier, & textTier);
@@ -523,12 +527,12 @@ static void menu_cb_DrawTextGridAndPitch (TextGridEditor me, EDITOR_ARGS_FORM) {
 
 /***** INTERVAL MENU *****/
 
-static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, double t2, bool insertSecond) {
+static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, double t2, bool insertSecond) {
 	TextGrid grid = (TextGrid) my data;
 	IntervalTier intervalTier;
 	TextTier textTier;
-	int ntiers = grid -> tiers->size;
-	if (itier < 1 || itier > ntiers)
+	integer numberOfTiers = grid -> tiers->size;
+	if (itier < 1 || itier > numberOfTiers)
 		Melder_throw (U"No tier ", itier, U".");
 	_AnyTier_identifyClass (grid -> tiers->at [itier], & intervalTier, & textTier);
 	Melder_assert (t1 <= t2);
@@ -602,12 +606,12 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			if (t1 != t2) intervalTier -> intervals.addItem_move (midNewInterval.move());
 		}
 		intervalTier -> intervals.addItem_move (rightNewInterval.move());
-		if (insertSecond && ntiers >= 2 && t1 == t2) {
+		if (insertSecond && numberOfTiers >= 2 && t1 == t2) {
 			/*
 			 * Find the last time before t on another tier.
 			 */
 			double tlast = interval -> xmin, tmin, tmax;
-			for (int jtier = 1; jtier <= ntiers; jtier ++) if (jtier != itier) {
+			for (int jtier = 1; jtier <= numberOfTiers; jtier ++) if (jtier != itier) {
 				_TextGridEditor_timeToInterval (me, t1, jtier, & tmin, & tmax);
 				if (tmin > tlast) {
 					tlast = tmin;
@@ -1312,14 +1316,14 @@ void structTextGridEditor :: v_prepareDraw () {
 	}
 }
 
-static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier) {
+static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer itier) {
 	#if gtk || defined (macintosh)
 		bool platformUsesAntiAliasing = true;
 	#else
 		bool platformUsesAntiAliasing = false;
 	#endif
 	integer x1DC, x2DC, yDC;
-	int selectedInterval = itier == my selectedTier ? getSelectedInterval (me) : 0, iinterval, ninterval = tier -> intervals.size;
+	integer selectedInterval = itier == my selectedTier ? getSelectedInterval (me) : 0, iinterval, ninterval = tier -> intervals.size;
 	Graphics_WCtoDC (my graphics.get(), my startWindow, 0.0, & x1DC, & yDC);
 	Graphics_WCtoDC (my graphics.get(), my endWindow, 0.0, & x2DC, & yDC);
 	Graphics_setPercentSignIsItalic (my graphics.get(), my p_useTextStyles);
@@ -1422,13 +1426,13 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	Graphics_setUnderscoreIsSubscript (my graphics.get(), true);
 }
 
-static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
+static void do_drawTextTier (TextGridEditor me, TextTier tier, integer itier) {
 	#if gtk || defined (macintosh)
 		bool platformUsesAntiAliasing = true;
 	#else
 		bool platformUsesAntiAliasing = false;
 	#endif
-	int ipoint, npoint = tier -> points.size;
+	integer ipoint, npoint = tier -> points.size;
 	Graphics_setPercentSignIsItalic (my graphics.get(), my p_useTextStyles);
 	Graphics_setNumberSignIsBold (my graphics.get(), my p_useTextStyles);
 	Graphics_setCircumflexIsSuperscript (my graphics.get(), my p_useTextStyles);
@@ -1675,9 +1679,9 @@ static void do_drawWhileDragging (TextGridEditor me, double numberOfTiers, bool 
 	Graphics_text (my graphics.get(), x, 1.01, Melder_fixed (x, 6));
 }
 
-static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier, int shiftKeyPressed) {
+static void do_dragBoundary (TextGridEditor me, double xbegin, integer iClickedTier, int shiftKeyPressed) {
 	TextGrid grid = (TextGrid) my data;
-	int numberOfTiers = grid -> tiers->size, itierDrop;
+	integer numberOfTiers = grid -> tiers->size, itierDrop;
 	double xWC = xbegin, yWC;
 	double leftDraggingBoundary = my tmin, rightDraggingBoundary = my tmax;   // initial dragging range
 	bool selectedTier [1000];
@@ -1852,7 +1856,7 @@ bool structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPr
 	TextGrid grid = (TextGrid) our data;
 	double tmin, tmax, x, y;
 	integer ntiers = grid -> tiers->size, iClickedTier, iClickedInterval, iClickedPoint;
-	int clickedLeftBoundary = 0;
+	integer clickedLeftBoundary = 0;
 	bool nearBoundaryOrPoint, nearCursorCircle, drag = false;
 	IntervalTier intervalTier;
 	TextTier textTier;
@@ -2014,7 +2018,7 @@ bool structTextGridEditor :: v_clickB (double t, double yWC) {
 			return structTimeSoundEditor :: v_clickB (t, yWC);
 		}
 	}
-	int itier = _TextGridEditor_yWCtoTier (this, yWC);
+	integer itier = _TextGridEditor_yWCtoTier (this, yWC);
 	double tmin, tmax;
 	_TextGridEditor_timeToInterval (this, t, itier, & tmin, & tmax);
 	our startSelection = t - tmin < tmax - t ? tmin : tmax;   // to nearest boundary
@@ -2038,7 +2042,7 @@ bool structTextGridEditor :: v_clickE (double t, double yWC) {
 		}
 		return FunctionEditor_UPDATE_NEEDED;
 	}
-	int itier = _TextGridEditor_yWCtoTier (this, yWC);
+	integer itier = _TextGridEditor_yWCtoTier (this, yWC);
 	double tmin, tmax;
 	_TextGridEditor_timeToInterval (this, t, itier, & tmin, & tmax);
 	our endSelection = t - tmin < tmax - t ? tmin : tmax;
@@ -2109,6 +2113,8 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 }
 
 void structTextGridEditor :: v_play (double tmin, double tmax) {
+	if (! d_sound.data && ! d_longSound.data)
+		return;
 	integer numberOfChannels = d_longSound.data ? d_longSound.data -> numberOfChannels : d_sound.data -> ny;
 	integer numberOfMuteChannels = 0;
 	bool *muteChannels = d_sound . muteChannels;
@@ -2212,7 +2218,7 @@ void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
 	SET_ENUM (v_prefs_addFields_paintIntervalsGreenWhoseLabel, kMelder_string, our p_greenMethod)
 	SET_STRING (v_prefs_addFields_theText, our p_greenString)
 }
-void structTextGridEditor :: v_prefs_getValues (EditorCommand cmd) {
+void structTextGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	our pref_useTextStyles () = our p_useTextStyles = v_prefs_addFields_useTextStyles - 1;
 	our pref_fontSize () = our p_fontSize = v_prefs_addFields_fontSize;
 	our pref_alignment () = our p_alignment = v_prefs_addFields_textAlignmentInIntervals;

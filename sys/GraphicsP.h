@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2018 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ Thing_define (GraphicsScreen, Graphics) {
 		int d_macFont, d_macStyle;
 		int d_depth;
 		RGBColor d_macColour;
-		uint8_t *d_bits;
+		uint8 *d_bits;
 		CGContextRef d_macGraphicsContext;
 	#endif
 

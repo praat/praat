@@ -117,7 +117,7 @@ autoERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int mark
 	}
 }
 
-static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16_t number) {
+static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16 number) {
 	try {
 		autoPointProcess thee;
 		int numberOfBits = my tiers->size;
@@ -148,7 +148,7 @@ static autoPointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, ui
 	}
 }
 
-autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16_t marker) {
+autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16 marker) {
 	try {
 		autoPointProcess events = TextGrid_getStartingPoints_multiNumeric (my textgrid.get(), marker);
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.get(), fromTime, toTime);

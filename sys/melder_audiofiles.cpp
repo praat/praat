@@ -122,7 +122,7 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, intege
 					int64 sizeOfRiffChunk_i64 = 4 + (12 + formatSize) + (4 + dataSize);
 					if (sizeOfRiffChunk_i64 > UINT32_MAX)
 						Melder_throw (U"Cannot save a WAV file with more than ", UINT32_MAX, U" bytes.");
-					uint32_t sizeOfRiffChunk_u32 = (uint32_t) sizeOfRiffChunk_i64;
+					uint32 sizeOfRiffChunk_u32 = (uint32) sizeOfRiffChunk_i64;
 					binputu32LE (sizeOfRiffChunk_u32, f);
 					if (fwrite ("WAVE", 1, 4, f) != 4) Melder_throw (U"Error in file while trying to write the WAV file type.");
 
@@ -438,7 +438,7 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 	char data [14], chunkID [4];
 	bool formatChunkPresent = false, dataChunkPresent = false;
 	int numberOfBitsPerSamplePoint = -1;
-	uint32_t dataChunkSize = 0xffffffff;
+	uint32 dataChunkSize = 0xffffffff;
 
 	if (fread (data, 1, 4, f) < 4)   Melder_throw (U"File too small: no RIFF statement.");
 	if (! strnequ (data, "RIFF", 4)) Melder_throw (U"Not a WAV file (RIFF statement expected).");
@@ -450,7 +450,7 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 	/* Search for Format Chunk and Data Chunk. */
 
 	while (fread (chunkID, 1, 4, f) == 4) {
-		uint32_t chunkSize = bingetu32LE (f);
+		uint32 chunkSize = bingetu32LE (f);
 		if (Melder_debug == 23) {
 			Melder_warning (chunkID [0], U" ", chunkID [1], U" ",
 				chunkID [2], U" ", chunkID [3], U" ", chunkSize);
@@ -459,7 +459,7 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 			/*
 			 * Found a Format Chunk.
 			 */
-			uint16_t winEncoding = bingetu16LE (f);
+			uint16 winEncoding = bingetu16LE (f);
 			formatChunkPresent = true;			
 			*numberOfChannels = bingeti16LE (f);
 			if (*numberOfChannels < 1) Melder_throw (U"Too few sound channels (", *numberOfChannels, U").");
@@ -502,7 +502,7 @@ static void Melder_checkWavFile (FILE *f, integer *numberOfChannels, int *encodi
 					(void) bingeti16LE (f);   // extensionSize
 					(void) bingeti16LE (f);   // validBitsPerSample
 					(void) bingeti32LE (f);   // channelMask
-					uint16_t winEncoding2 = bingetu16LE (f);   // override
+					uint16 winEncoding2 = bingetu16LE (f);   // override
 					switch (winEncoding2) {
 						case WAVE_FORMAT_PCM:
 							*encoding =
@@ -916,14 +916,14 @@ void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, d
 						case Melder_LINEAR_16_BIG_ENDIAN: {
 							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++;
-								int value = (int) (int16_t) (((uint16_t) byte1 << 8) | (uint16_t) byte2);   // extend sign
+								int value = (int) (int16) (((uint16) byte1 << 8) | (uint16) byte2);   // extend sign
 								buffer [1] [isamp] = value * (1.0 / 32768);
 							}
 						} break;
 						case Melder_LINEAR_16_LITTLE_ENDIAN: {
 							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++;
-								int value = (int) (int16_t) (((uint16_t) byte2 << 8) | (uint16_t) byte1);   // extend sign
+								int value = (int) (int16) (((uint16) byte2 << 8) | (uint16) byte1);   // extend sign
 								buffer [1] [isamp] = value * (1.0 / 32768);
 							}
 						} break;
@@ -999,7 +999,7 @@ void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, d
 										(uint32) ((uint32) byte2 << 8) |
 												  (uint32) byte3;
 									if ((byte1 & 128) != 0) unsignedValue |= 0xFF000000;   // extend sign
-									buffer [ichan] [isamp] = (int32_t) unsignedValue * (1.0 / 8388608);
+									buffer [ichan] [isamp] = (int32) unsignedValue * (1.0 / 8388608);
 								}
 							}
 						} break;
@@ -1042,7 +1042,7 @@ void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, d
 					}
 				} else {
 					Melder_assert (sizeof (double) == 8);
-					int32_t *ints = (int32_t *) & buffer [1] [1];
+					int32 *ints = (int32 *) & buffer [1] [1];
 					switch (encoding) {
 						case Melder_LINEAR_16_BIG_ENDIAN: {
 							for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
@@ -1126,13 +1126,13 @@ void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, d
 					double *doubles = & buffer [1] [1];
 					integer n = numberOfSamples * numberOfChannels;
 					for (integer i = 0; i < n; i ++) {
-						int32_t *valuePosition = (int32_t *) & doubles [i];
-						int32_t *markerPosition = valuePosition + 1;
+						int32 *valuePosition = (int32 *) & doubles [i];
+						int32 *markerPosition = valuePosition + 1;
 						if (! *markerPosition) {
-							int32_t value = *valuePosition;
+							int32 value = *valuePosition;
 							integer ichan = i / numberOfSamples, isamp = i % numberOfSamples;
 							for (integer other = isamp * numberOfChannels + ichan; other != i; ) {
-								int32_t *otherValuePosition = (int32_t *) & doubles [other];
+								int32 *otherValuePosition = (int32 *) & doubles [other];
 								*valuePosition = *otherValuePosition;
 								*markerPosition = 1;
 								valuePosition = otherValuePosition;
@@ -1146,7 +1146,7 @@ void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, d
 					}
 					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = * (int32_t *) & buffer [ichan] [isamp] * (1.0 / 32768 / 65536);
+							buffer [ichan] [isamp] = * (int32 *) & buffer [ichan] [isamp] * (1.0 / 32768 / 65536);
 						}
 					}
 				}

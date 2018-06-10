@@ -433,7 +433,7 @@ void Matrix_movie (Matrix me, Graphics g) {
 autoMatrix Matrix_readAP (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
-		int16_t header [256];
+		int16 header [256];
 		for (integer i = 0; i < 256; i ++)
 			header [i] = bingeti16LE (f);
 		double samplingFrequency = header [100];   // converting up (from 16 to 54 bytes)

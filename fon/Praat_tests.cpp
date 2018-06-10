@@ -103,7 +103,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests::TIME_FLOAT_TO_UNSIGNED_BUILTIN: {
-			uint64_t sum = 0;
+			uint64 sum = 0;
 			double fn = n;
 			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += (uint32) fi;
@@ -111,7 +111,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests::TIME_FLOAT_TO_UNSIGNED_EXTERN: {
-			uint64_t sum = 0;
+			uint64 sum = 0;
 			double fn = n;
 			for (double fi = 1.0; fi <= fn; fi += 1.0)
 				sum += (uint32) ((int32) (fi - 2147483648.0) + 2147483647L + 1);
@@ -290,7 +290,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			double x = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				x += (double) i;
-				isAllDefined &= ((* (uint64_t *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000;
+				isAllDefined &= ((* (uint64 *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000;
 			}
 			t = Melder_stopwatch ();   // 0.90 ns
 			MelderInfo_writeLine (isAllDefined, U" ", x);
