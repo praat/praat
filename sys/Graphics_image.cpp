@@ -226,38 +226,38 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
-					*pixelAddress ++ = 0; \
+					*pixelAddress ++ = 255; \
 				} else if (my colourScale == kGraphics_colourScale::BLUE_TO_RED) { \
 					if (value < 0.0) { \
 						*pixelAddress ++ = 0; \
 						*pixelAddress ++ = 0; \
 						*pixelAddress ++ = 63; \
-						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 255; \
 					} else if (value < 64.0) { \
 						*pixelAddress ++ = 0; \
 						*pixelAddress ++ = 0; \
 						*pixelAddress ++ = (int) (value * 3 + 63.999); \
-						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 255; \
 					} else if (value < 128.0) { \
 						*pixelAddress ++ = (int) (value * 4 - 256.0); \
 						*pixelAddress ++ = (int) (value * 4 - 256.0); \
 						*pixelAddress ++ = 255; \
-						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 255; \
 					} else if (value < 192.0) { \
 						*pixelAddress ++ = 255; \
 						*pixelAddress ++ = (int) ((256.0 - value) * 4 - 256.0); \
 						*pixelAddress ++ = (int) ((256.0 - value) * 4 - 256.0); \
-						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 255; \
 					} else if (value < 256.0) { \
 						*pixelAddress ++ = (int) ((256.0 - value) * 3 + 63.999); \
 						*pixelAddress ++ = 0; \
 						*pixelAddress ++ = 0; \
-						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 255; \
 					} else { \
 						*pixelAddress ++ = 63; \
 						*pixelAddress ++ = 0; \
 						*pixelAddress ++ = 0; \
-						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 255; \
 					} \
 				}
 		#else

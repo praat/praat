@@ -45,7 +45,6 @@
 #undef SET_BOOLEAN
 #undef SET_STRING
 #undef SET_ENUM
-#undef GET_FILE
 
 #define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm _sendingForm_, integer _narg_, Stackel _args_, const char32 *_sendingString_, Interpreter interpreter
 #define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, const char32 *, Interpreter
@@ -334,24 +333,42 @@ _form_inited_: \
 		cmd -> d_uiform = autoUiForm (UiOutfile_createE (cmd, title, cmd -> itemTitle, helpTitle)); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
 #define EDITOR_DO_SAVE \
-	(void) _narg_; \
 	(void) interpreter; \
 	UiOutfile_do (cmd -> d_uiform.get(), defaultName); } else { MelderFile file; structMelderFile _file2 { }; \
-		if (! _args_ && ! _sendingString_) file = UiFile_getFile (_sendingForm_); \
-		else { Melder_relativePathToFile (_args_ ? _args_ [1]. string : _sendingString_, & _file2); file = & _file2; }
+	if (_args_) { \
+		Melder_require (_narg_ == 1, \
+			U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \
+		Melder_require (_args_ [1]. which == Stackel_STRING, \
+			U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
+		Melder_relativePathToFile (_args_ [1]. string, & _file2); \
+		file = & _file2; \
+	} else if (_sendingString_) { \
+		Melder_relativePathToFile (_sendingString_, & _file2); \
+		file = & _file2; \
+	} else { \
+		file = UiFile_getFile (cmd -> d_uiform.get()); \
+	}
 
 #define EDITOR_FORM_READ(title,helpTitle) \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = autoUiForm (UiInfile_createE (cmd, title, cmd -> itemTitle, helpTitle)); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) {
 #define EDITOR_DO_READ \
-	(void) _narg_; \
 	(void) interpreter; \
 	UiInfile_do (cmd -> d_uiform.get()); } else { MelderFile file; structMelderFile _file2 { }; \
-		if (! _args_ && ! _sendingString_) file = UiFile_getFile (_sendingForm_); \
-		else { Melder_relativePathToFile (_args_ ? _args_ [1]. string : _sendingString_, & _file2); file = & _file2; }
-
-#define GET_FILE  UiForm_getFile (cmd -> d_uiform.get())
+	if (_args_) { \
+		Melder_require (_narg_ == 1, \
+			U"Command requires exactly 1 argument, the name of the file to read, instead of the given ", _narg_, U" arguments."); \
+		Melder_require (_args_ [1]. which == Stackel_STRING, \
+			U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
+		Melder_relativePathToFile (_args_ [1]. string, & _file2); \
+		file = & _file2; \
+	} else if (_sendingString_) { \
+		Melder_relativePathToFile (_sendingString_, & _file2); \
+		file = & _file2; \
+	} else { \
+		file = UiFile_getFile (cmd -> d_uiform.get()); \
+	}
 
 /* End of file EditorM.h */
 #endif
