@@ -33,12 +33,12 @@
 #include <mach/mach_time.h>
 #include <unistd.h>
 
-uint64_t GetPIDTimeInNanoseconds(void)
+uint64 GetPIDTimeInNanoseconds(void)
 {
-    uint64_t        start;
-    uint64_t        end;
-    uint64_t        elapsed;
-    uint64_t        elapsedNano;
+    uint64        start;
+    uint64        end;
+    uint64        elapsed;
+    uint64        elapsedNano;
     static mach_timebase_info_data_t    sTimebaseInfo;
 
     // Start the clock.

@@ -1,6 +1,6 @@
 /* melder_writetext.cpp
  *
- * Copyright (C) 2007,2008,2010-2013,2015-2017 Paul Boersma
+ * Copyright (C) 2007,2008,2010-2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ void Melder_fwrite32to8 (const char32 *string, FILE *f) {
 			#ifdef _WIN32
 				if (kar == U'\n') fputc (13, f);
 			#endif
-			fputc ((int) kar, f);   // because fputc wants an int instead of an uint8_t (guarded conversion)
+			fputc ((int) kar, f);   // because fputc wants an int instead of an uint8 (guarded conversion)
 		} else if (kar <= 0x0007FF) {
 			fputc (0xC0 | (kar >> 6), f);
 			fputc (0x80 | (kar & 0x00003F), f);

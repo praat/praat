@@ -164,15 +164,15 @@ typedef struct pulseAudio {
 	const pa_channel_map *channel_map = nullptr;
 	pa_usec_t r_usec;
 	pa_buffer_attr buffer_attr;
-	uint32_t latency = 0; // in bytes of buffer
-	int32_t latency_msec = 20;
+	uint32 latency = 0; // in bytes of buffer
+	int32 latency_msec = 20;
 	bool pulseAudioInitialized = false;
 	unsigned int occupation = PA_WRITING;
 } pulseAudioStruct;
 #endif
 
 static struct MelderPlay {
-	int16_t *buffer;
+	int16 *buffer;
 	integer sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
 	kMelder_asynchronicityLevel asynchronicity;
 	int numberOfChannels;
@@ -818,7 +818,7 @@ void stream_write_cb (pa_stream *stream, size_t length, void *userdata) {
 				my samplesLeft = 0;
 				flush ();
 			} else {
-				int16_t *pa_buffer; // an internal pa buffer to minimize the number of memory transfers between client and server
+				int16 *pa_buffer; // an internal pa buffer to minimize the number of memory transfers between client and server
 				size_t nbytes_left = my samplesLeft * my numberOfChannels * 2; // how many bytes do we still need to write ?
 				size_t nbytes = nbytes_left;
 				// returns the address of an internal buffer and the number of bytes that can maximally be written to it.
@@ -928,12 +928,12 @@ void prepare_and_play (struct MelderPlay *me) {
 	my pulseAudio.stream_flags = (pa_stream_flags_t) (PA_STREAM_ADJUST_LATENCY | PA_STREAM_INTERPOLATE_TIMING | PA_STREAM_AUTO_TIMING_UPDATE);
 	my pulseAudio.latency = pa_usec_to_bytes (1000 * my pulseAudio.latency_msec, & my pulseAudio.sample_spec);
 	
-	my pulseAudio.buffer_attr.maxlength = (uint32_t) -1;
-	my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
-	my pulseAudio.buffer_attr.minreq = (uint32_t) -1;
-	my pulseAudio.buffer_attr.prebuf = (uint32_t) -1;
+	my pulseAudio.buffer_attr.maxlength = (uint32) -1;
+	my pulseAudio.buffer_attr.prebuf = (uint32) -1;
+	my pulseAudio.buffer_attr.minreq = (uint32) -1;
+	my pulseAudio.buffer_attr.prebuf = (uint32) -1;
 	my pulseAudio.buffer_attr.tlength = my pulseAudio.latency;
-	my pulseAudio.buffer_attr.fragsize = (uint32_t) -1;
+	my pulseAudio.buffer_attr.fragsize = (uint32) -1;
 
 	pa_stream_set_state_callback (my pulseAudio.stream, stream_state_cb, me);
 	pa_stream_set_write_callback (my pulseAudio.stream, stream_write_cb, me);
@@ -997,7 +997,7 @@ void context_state_cb (pa_context *context, void *userdata) {
 }
 #endif
 
-void MelderAudio_play16 (int16_t *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
+void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
 	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed), void *playClosure)
 {
 	struct MelderPlay *me = & thePlay;
@@ -1062,14 +1062,14 @@ void MelderAudio_play16 (int16_t *buffer, integer sampleRate, integer numberOfSa
 			 * Redistribute the in channels over the out channels.
 			 */
 			if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
-				int16_t *in = & my buffer [0], *out = & my buffer [0];
+				int16 *in = & my buffer [0], *out = & my buffer [0];
 				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 					integer in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
 					*out ++ = (in1 + in2) / 2;
 					*out ++ = (in3 + in4) / 2;
 				}
 			} else {
-				int16_t *in = & my buffer [0], *out = & my buffer [0];
+				int16 *in = & my buffer [0], *out = & my buffer [0];
 				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 					for (integer iout = 1; iout <= my numberOfChannels; iout ++) {
 						integer outValue = 0;
@@ -1196,14 +1196,14 @@ void MelderAudio_play16 (int16_t *buffer, integer sampleRate, integer numberOfSa
 			 * Redistribute the in channels over the out channels. TODO make channelmap
 			 */
 			if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
-				int16_t *in = & my buffer [0], *out = & my buffer [0];
+				int16 *in = & my buffer [0], *out = & my buffer [0];
 				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 					integer in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
 					*out ++ = (in1 + in2) / 2;
 					*out ++ = (in3 + in4) / 2;
 				}
 			} else {
-				int16_t *in = & my buffer [0], *out = & my buffer [0];
+				int16 *in = & my buffer [0], *out = & my buffer [0];
 				for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 					for (integer iout = 1; iout <= my numberOfChannels; iout ++) {
 						integer outValue = 0;
@@ -1290,7 +1290,7 @@ void MelderAudio_play16 (int16_t *buffer, integer sampleRate, integer numberOfSa
 					 */
 					if (my numberOfChannels == 1 && my val == 2) {
 						my fakeMono = true;
-						int16_t *newBuffer = NUMvector <int16_t> (0, 2 * numberOfSamples - 1);
+						int16 *newBuffer = NUMvector <int16> (0, 2 * numberOfSamples - 1);
 						for (integer isamp = 0; isamp < numberOfSamples; isamp ++) {
 							newBuffer [isamp + isamp] = newBuffer [isamp + isamp + 1] = buffer [isamp];
 						}
@@ -1393,14 +1393,14 @@ void MelderAudio_play16 (int16_t *buffer, integer sampleRate, integer numberOfSa
 					 * Redistribute the in channels over the out channels.
 					 */
 					if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
-						int16_t *in = & my buffer [0], *out = & my buffer [0];
+						int16 *in = & my buffer [0], *out = & my buffer [0];
 						for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 							integer in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
 							*out ++ = (in1 + in2) / 2;
 							*out ++ = (in3 + in4) / 2;
 						}
 					} else {
-						int16_t *in = & my buffer [0], *out = & my buffer [0];
+						int16 *in = & my buffer [0], *out = & my buffer [0];
 						for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
 							for (integer iout = 1; iout <= my numberOfChannels; iout ++) {
 								integer outValue = 0;

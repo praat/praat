@@ -943,18 +943,18 @@ void Graphics_function (Graphics me, double yWC [], integer ix1, integer ix2, do
 	if (my recording) { op (FUNCTION, 3 + n); put (n); put (x1WC); put (x2WC); mput (n, & yWC [ix1]) }
 }
 
-void Graphics_function16 (Graphics me, int16_t yWC [], int stagger, integer ix1, integer ix2, double x1WC, double x2WC) {
+void Graphics_function16 (Graphics me, int16 yWC [], int stagger, integer ix1, integer ix2, double x1WC, double x2WC) {
 	if (stagger == 1) {
 		#define STAGGER(i)  ((i) + (i))
-		MACRO_Graphics_function (int16_t)
+		MACRO_Graphics_function (int16)
 		#undef STAGGER
 	} else if (stagger > 1) {
 		#define STAGGER(i)  ((stagger + 1) * (i))
-		MACRO_Graphics_function (int16_t)
+		MACRO_Graphics_function (int16)
 		#undef STAGGER
 	} else {
 		#define STAGGER(i)  (i)
-		MACRO_Graphics_function (int16_t)
+		MACRO_Graphics_function (int16)
 		#undef STAGGER
 	}
 }

@@ -38,18 +38,18 @@
 #define __STDC_LIMIT_MACROS
 #define __STDC_CONSTANT_MACROS
 #include <stdint.h>
-typedef unsigned char byte;
-typedef int8_t int8;
-typedef int16_t int16;
-typedef int32_t int32;
-typedef int64_t int64;
-typedef intptr_t integer;   // the default size of an integer (a "long" is only 32 bits on 64-bit Windows)
-typedef long long_not_integer;   // for cases where we explicitly need the type "long", such as when printfing to %ld
-typedef uintptr_t uinteger;
-typedef uint8_t uint8;
-typedef uint16_t uint16;
-typedef uint32_t uint32;
-typedef uint64_t uint64;
+using byte = unsigned char;
+using int8 = int8_t;
+using int16 = int16_t;
+using int32 = int32_t;
+using int64 = int64_t;
+using integer = intptr_t;   // the default size of an integer (a "long" is only 32 bits on 64-bit Windows)
+using long_not_integer = long;   // for cases where we explicitly need the type "long", such as when printfing to %ld
+using uinteger = uintptr_t;
+using uint8 = uint8_t;
+using uint16 = uint16_t;
+using uint32 = uint32_t;
+using uint64 = uint64_t;
 #ifndef INT12_MAX
 	#define INT12_MAX   2047
 	#define INT12_MIN  -2048
@@ -84,7 +84,7 @@ typedef uint64_t uint64;
 /*
 	The following are checked in praat.h.
 */
-typedef long double longdouble;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
+using longdouble = long double;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
 #include "complex.h"
 
 #pragma mark - LAW OF DEMETER FOR CLASS FUNCTIONS DEFINED OUTSIDE CLASS DEFINITION
@@ -109,9 +109,9 @@ extern bool Melder_isTracing;
 
 #pragma mark - STRINGS
 
-typedef unsigned char char8;
-typedef char16_t char16;
-typedef char32_t char32;
+using char8 = unsigned char;
+using char16 = char16_t;
+using char32 = char32_t;
 
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
@@ -997,8 +997,8 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 	as in dwsys/NUMcomplex.cpp.
 */
 //inline static bool isdefined (double x) { return ! isinf (x) && ! isnan (x); }   /* portable */
-inline static bool isdefined (double x) { return ((* (uint64_t *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000; }
-inline static bool isundef (double x) { return ((* (uint64_t *) & x) & 0x7FF0000000000000) == 0x7FF0000000000000; }
+inline static bool isdefined (double x) { return ((* (uint64 *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000; }
+inline static bool isundef (double x) { return ((* (uint64 *) & x) & 0x7FF0000000000000) == 0x7FF0000000000000; }
 
 /********** Arrays with one index (NUMarrays.cpp) **********/
 
@@ -2603,7 +2603,7 @@ enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity ();
 integer MelderAudio_getOutputBestSampleRate (integer fsamp);
 
 extern bool MelderAudio_isPlaying;
-void MelderAudio_play16 (int16_t *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
+void MelderAudio_play16 (int16 *buffer, integer sampleRate, integer numberOfSamples, int numberOfChannels,
 	bool (*playCallback) (void *playClosure, integer numberOfSamplesPlayed),   // return true to continue, false to stop
 	void *playClosure);
 bool MelderAudio_stopPlaying (bool isExplicit);   // returns true if sound was playing

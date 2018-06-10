@@ -216,7 +216,7 @@ void Graphics_fillRectangle (Graphics me, double x1, double x2, double y1, doubl
 void Graphics_roundedRectangle (Graphics me, double x1, double x2, double y1, double y2, double r_mm);
 void Graphics_fillRoundedRectangle (Graphics me, double x1, double x2, double y1, double y2, double r_mm);
 void Graphics_function (Graphics me, double y [], integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2]
-void Graphics_function16 (Graphics me, int16_t y [], int stagger, integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2] or y [ix1*2..ix2*2]
+void Graphics_function16 (Graphics me, int16 y [], int stagger, integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2] or y [ix1*2..ix2*2]
 void Graphics_circle (Graphics me, double x, double y, double r);
 void Graphics_fillCircle (Graphics me, double x, double y, double r);
 void Graphics_circle_mm (Graphics me, double x, double y, double d);

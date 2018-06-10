@@ -156,7 +156,7 @@ void * _Melder_calloc (int64 nelem, int64 elsize) {
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem), U" elements.");
 	if (elsize <= 0)
 		Melder_throw (U"Can never allocate elements whose size is ", Melder_bigInteger (elsize), U" bytes.");
-	if ((uint64_t) nelem > SIZE_MAX / (uint64_t) elsize)   // guarded casts to unsigned
+	if ((uint64) nelem > SIZE_MAX / (uint64) elsize)   // guarded casts to unsigned
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ", Melder_bigInteger (elsize), U" bytes each.",
 			sizeof (size_t) < 8 ? U" Use a 64-bit edition of Praat instead?" : nullptr);
 	void *result = calloc ((size_t) nelem, (size_t) elsize);
@@ -174,7 +174,7 @@ void * _Melder_calloc_f (int64 nelem, int64 elsize) {
 		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", Melder_bigInteger (nelem), U" elements.");
 	if (elsize <= 0)
 		Melder_fatal (U"(Melder_calloc_f:) Can never allocate elements whose size is ", Melder_bigInteger (elsize), U" bytes.");
-	if ((uint64_t) nelem > SIZE_MAX / (uint64_t) elsize)
+	if ((uint64) nelem > SIZE_MAX / (uint64) elsize)
 		Melder_fatal (U"(Melder_calloc_f:) Can never allocate ", Melder_bigInteger (nelem), U" elements whose sizes are ", Melder_bigInteger (elsize), U" bytes each.");
 	void *result = calloc ((size_t) nelem, (size_t) elsize);
 	if (! result) {

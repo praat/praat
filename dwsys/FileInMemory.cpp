@@ -59,7 +59,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 		my d_id = Melder_dup (MelderFile_name (file));
 		my d_numberOfBytes = length;
 		my _dontOwnData = false;
-		my d_data = NUMvector <unsigned char> (0, my d_numberOfBytes);   // includes room for a final null byte in case the file happens to contain text
+		my d_data = NUMvector <uint8> (0, my d_numberOfBytes);   // includes room for a final null byte in case the file happens to contain text
 		MelderFile_open (file);
 		for (integer i = 0; i < my d_numberOfBytes; i++) {
 			unsigned int number = bingetu8 (file -> filePointer);
