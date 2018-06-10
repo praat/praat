@@ -87,7 +87,7 @@ class NUMrandom_State { public:
 
 	/** The state vector.
 	 */
-	uint64_t array [NN];
+	uint64 array [NN];
 
 	/** The pointer into the state vector.
 		Equals NN + 1 iff the array has not been initialized.
@@ -106,24 +106,24 @@ class NUMrandom_State { public:
 		This can be used for testing whether our implementation is correct (i.e. predicts the correct published sequence)
 		and perhaps for generating reproducible sequences.
 	 */
-	void init_genrand64 (uint64_t seed) {
+	void init_genrand64 (uint64 seed) {
 		array [0] = seed;
 		for (index = 1; index < NN; index ++) {
 			array [index] =
 				(UINT64_C (6364136223846793005) * (array [index - 1] ^ (array [index - 1] >> 62))
-				+ (uint64_t) index);
+				+ (uint64) index);
 		}
 	}
 
 	/* initialize by an array with array-length */
 	/* init_key is the array for initializing keys */
 	/* key_length is its length */
-	void init_by_array64 (uint64_t init_key[], unsigned int key_length);
+	void init_by_array64 (uint64 init_key[], unsigned int key_length);
 
 } states [17];
 
 /* initialize the array with a number of seeds */
-void NUMrandom_State :: init_by_array64 (uint64_t init_key [], unsigned int key_length)
+void NUMrandom_State :: init_by_array64 (uint64 init_key [], unsigned int key_length)
 {
 	init_genrand64 (UINT64_C (19650218));   // warm it up
 
@@ -131,14 +131,14 @@ void NUMrandom_State :: init_by_array64 (uint64_t init_key [], unsigned int key_
 	unsigned int k = ( NN > key_length ? NN : key_length );
 	for (; k; k --) {
 		array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (3935559000370003845)))
-		  + init_key [j] + (uint64_t) j;   // non-linear
+		  + init_key [j] + (uint64) j;   // non-linear
 		i ++, j ++;
 		if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
 		if (j >= key_length) j = 0;
 	}
 	for (k = NN - 1; k; k --) {
 		array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (2862933555777941757)))
-		  - (uint64_t) i;   // non-linear
+		  - (uint64) i;   // non-linear
 		i ++;
 		if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
 	}
@@ -150,9 +150,9 @@ static bool theInited = false;
 void NUMrandom_init () {
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
 		const int numberOfKeys = 6;
-		uint64_t keys [numberOfKeys];
-		keys [0] = (uint64_t) llround (1e6 * Melder_clock ());   // unique between boots of the same computer
-		keys [1] = UINT64_C (7320321686725470078) + (uint64_t) threadNumber;   // unique between threads in the same process
+		uint64 keys [numberOfKeys];
+		keys [0] = (uint64) llround (1e6 * Melder_clock ());   // unique between boots of the same computer
+		keys [1] = UINT64_C (7320321686725470078) + (uint64) threadNumber;   // unique between threads in the same process
 		switch (threadNumber) {
 			case  0: keys [2] = UINT64_C  (4492812493098689432), keys [3] = UINT64_C  (8902321878452586268); break;
 			case  1: keys [2] = UINT64_C  (1875086582568685862), keys [3] = UINT64_C (12243257483652989599); break;
@@ -173,9 +173,9 @@ void NUMrandom_init () {
 			case 16: keys [2] = UINT64_C  (1081237546238975884), keys [3] = UINT64_C  (2939783238574293882); break;
 			default: Melder_fatal (U"Thread number too high.");
 		}
-		keys [4] = (uint64_t) (int64) getpid ();   // unique between processes that run simultaneously on the same computer
+		keys [4] = (uint64) (int64) getpid ();   // unique between processes that run simultaneously on the same computer
 		#ifndef _WIN32
-		//keys [5] = (uint64_t) (int64) gethostid ();   // unique between computers; but can be SLOW because it could have to access the internet
+		//keys [5] = (uint64) (int64) gethostid ();   // unique between computers; but can be SLOW because it could have to access the internet
 		#endif
 		states [threadNumber]. init_by_array64 (keys, numberOfKeys);
 	}
@@ -191,13 +191,13 @@ void NUMrandom_init () {
 #elif ZERO_OR_MAGIC_VERSION == 2
 	#define ZERO_OR_MAGIC  ( (x & UINT64_C (1)) * MATRIX_A )
 #else   // M&N 2014
-	constexpr uint64_t mag01 [2] { UINT64_C (0), MATRIX_A };
+	constexpr uint64 mag01 [2] { UINT64_C (0), MATRIX_A };
 	#define ZERO_OR_MAGIC  mag01 [(int) (x & UINT64_C (1))]
 #endif
 
 double NUMrandomFraction () {
 	NUMrandom_State *me = & states [0];
-	uint64_t x;
+	uint64 x;
 
 	if (my index >= NN) {   // generate NN words at a time
 
@@ -230,7 +230,7 @@ double NUMrandomFraction () {
 
 double NUMrandomFraction_mt (int threadNumber) {
 	NUMrandom_State *me = & states [threadNumber];
-	uint64_t x;
+	uint64 x;
 
 	if (my index >= NN) {   // generate NN words at a time
 

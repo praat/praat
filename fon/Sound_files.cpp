@@ -92,14 +92,14 @@ autoSound Sound_readFromSoundFile (MelderFile file) {
 autoSound Sound_readFromSesamFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
-		int32_t header [1 + 128];
+		int32 header [1 + 128];
 		for (integer i = 1; i <= 128; i ++)
 			header [i] = bingeti32LE (f);
 		/*
 		 * Try SESAM header.
 		 */
 		double samplingFrequency = header [126];   // converting up (from 32 to 54 bits)
-		int32_t numberOfSamples = header [127];
+		int32 numberOfSamples = header [127];
 		if (samplingFrequency == 0.0 || numberOfSamples == 0) {
 			/*
 			 * Try LVS header.
@@ -110,7 +110,7 @@ autoSound Sound_readFromSesamFile (MelderFile file) {
 		if (numberOfSamples < 1 || numberOfSamples > 1000000000 || samplingFrequency < 10.0 || samplingFrequency > 100000000.0)
 			Melder_throw (U"Not a correct SESAM or LVS file.");
 		autoSound me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
-		for (int32_t i = 1; i <= numberOfSamples; i ++) {
+		for (int32 i = 1; i <= numberOfSamples; i ++) {
 			my z [1] [i] = (double) bingeti16LE (f) * (1.0 / 2048);   // 12 bits
 		}
 		f.close (file);
@@ -202,30 +202,30 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 		if (fread (data, 1, 4, f) < 4) readError ();
 		if (! strnequ (data, "HEDR", 4) && ! strnequ (data, "HDR8", 4))
 			Melder_throw (U"Missing HEDR or HDR8 chunk. Please report to paul.boersma@uva.nl.");
-		uint32_t chunkSize = bingetu32LE (f);
+		uint32 chunkSize = bingetu32LE (f);
 		if (chunkSize & 1) ++ chunkSize;
 		if (chunkSize != 32 && chunkSize != 44)
 			Melder_throw (U"Unknown chunk size ", chunkSize, U". Please report to paul.boersma@uva.nl.");
 		if (fread (data, 1, 20, f) < 20) readError ();
 		double samplingFrequency = bingetu32LE (f);   // converting up (from 32 to 53 bits)
-		uint32_t numberOfSamples = bingetu32LE (f);
+		uint32 numberOfSamples = bingetu32LE (f);
 		if (samplingFrequency <= 0 || samplingFrequency > 1e7 || numberOfSamples >= 1000000000)
 			Melder_throw (U"Not a correct Kay file.");
-		int16_t tmp1 = bingeti16LE (f);
-		int16_t tmp2 = bingeti16LE (f);
+		int16 tmp1 = bingeti16LE (f);
+		int16 tmp2 = bingeti16LE (f);
 		integer numberOfChannels = tmp1 == -1 || tmp2 == -1 ? 1 : 2;
 		if (chunkSize == 44) {
-			int16_t tmp3 = bingeti16LE (f);
+			int16 tmp3 = bingeti16LE (f);
 			if (tmp3 != -1) numberOfChannels ++;
-			int16_t tmp4 = bingeti16LE (f);
+			int16 tmp4 = bingeti16LE (f);
 			if (tmp4 != -1) numberOfChannels ++;
-			int16_t tmp5 = bingeti16LE (f);
+			int16 tmp5 = bingeti16LE (f);
 			if (tmp5 != -1) numberOfChannels ++;
-			int16_t tmp6 = bingeti16LE (f);
+			int16 tmp6 = bingeti16LE (f);
 			if (tmp6 != -1) numberOfChannels ++;
-			int16_t tmp7 = bingeti16LE (f);
+			int16 tmp7 = bingeti16LE (f);
 			if (tmp7 != -1) numberOfChannels ++;
-			int16_t tmp8 = bingeti16LE (f);
+			int16 tmp8 = bingeti16LE (f);
 			if (tmp8 != -1) numberOfChannels ++;
 		}
 
@@ -255,7 +255,7 @@ autoSound Sound_readFromKayFile (MelderFile file) {
 			}
 			fseek (f, residual, SEEK_CUR);
 		}
-		Melder_casual (ftell (f));
+		//Melder_casual (ftell (f));
 		f.close (file);
 		return me;
 	} catch (MelderError) {

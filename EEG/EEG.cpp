@@ -193,26 +193,26 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		his numberOfChannels = numberOfChannels;
 		autoSound me = Sound_createSimple (numberOfChannels, duration, samplingFrequency);
 		Melder_assert (my nx == numberOfSamplesPerDataRecord * numberOfDataRecords);
-		autoNUMvector <unsigned char> dataBuffer ((integer) 0, 3 * numberOfSamplesPerDataRecord - 1);
+		autoNUMvector <uint8> dataBuffer ((integer) 0, 3 * numberOfSamplesPerDataRecord - 1);
 		for (integer record = 1; record <= numberOfDataRecords; record ++) {
 			for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel];
 				if (channel < numberOfChannels - EEG_getNumberOfExtraSensors (him.get())) factor /= 1000000.0;
 				if (is24bit) {
 					fread (& dataBuffer [0], 3, (size_t) numberOfSamplesPerDataRecord, f);
-					unsigned char *p = & dataBuffer [0];
+					uint8 *p = & dataBuffer [0];
 					for (integer i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 						integer sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 						Melder_assert (sample <= my nx);
-						uint8_t lowByte = *p ++, midByte = *p ++, highByte = *p ++;
-						uint32_t externalValue = ((uint32_t) highByte << 16) | ((uint32_t) midByte << 8) | (uint32_t) lowByte;
+						uint8 lowByte = *p ++, midByte = *p ++, highByte = *p ++;
+						uint32 externalValue = ((uint32) highByte << 16) | ((uint32) midByte << 8) | (uint32) lowByte;
 						if ((highByte & 128) != 0)   // is the 24-bit sign bit on?
 							externalValue |= 0xFF000000;   // extend negative sign to 32 bits
-						my z [channel] [sample] = (int32_t) externalValue * factor;
+						my z [channel] [sample] = (int32) externalValue * factor;
 					}
 				} else {
 					fread (& dataBuffer [0], 2, (size_t) numberOfSamplesPerDataRecord, f);
-					unsigned char *p = & dataBuffer [0];
+					uint8 *p = & dataBuffer [0];
 					for (integer i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 						integer sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 						Melder_assert (sample <= my nx);

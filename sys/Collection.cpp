@@ -131,9 +131,9 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			}
 		}
 	} else {
-		int32_t l_size = texgeti32 (text);
+		int32 l_size = texgeti32 (text);
 		my _grow (l_size);
-		for (int32_t i = 1; i <= l_size; i ++) {
+		for (int32 i = 1; i <= l_size; i ++) {
 			autostring32 className = texgetw16 (text);
 			int elementFormatVersion;
 			my at [i] = (Daata) Thing_newFromClassName (className.peek(), & elementFormatVersion).releaseToAmbiguousOwner();
@@ -167,7 +167,7 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 		if (l_size < 0)
 			Melder_throw (U"Empty collection.");
 		my _grow (l_size);
-		for (int32_t i = 1; i <= l_size; i ++) {
+		for (int32 i = 1; i <= l_size; i ++) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%199s%1999s", klas, name) < 2)
 				Melder_throw (U"Cannot read class and name.");
@@ -182,11 +182,11 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 				Thing_setName (my at [i], Melder_peek8to32 (name));
 		}
 	} else {
-		int32_t l_size = bingeti32 (f);
+		int32 l_size = bingeti32 (f);
 		if (Melder_debug == 44)
 			Melder_casual (U"structCollection :: v_readBinary: Reading ", l_size, U" objects");
 		my _grow (l_size);
-		for (int32_t i = 1; i <= l_size; i ++) {
+		for (int32 i = 1; i <= l_size; i ++) {
 			autostring8 klas = bingets8 (f);
 			if (Melder_debug == 44)
 				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.peek()));
