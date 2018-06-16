@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,33 +97,44 @@ const char32 * structStrings :: v_getVectorStr (integer icol) {
 #define Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY  1
 static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* cattable */, int type) {
 	#if USE_STAT
-		/*
-		 * Initialize.
-		 */
 		DIR *d = nullptr;
 		try {
-			autoMelderString filePath, searchDirectory, left, right;
 			/*
-			 * Parse the path.
-			 * Example: in /Users/paul/sounds/h*.wav",
-			 * the search directory is "/Users/paul/sounds",
-			 * the left environment is "h", and the right environment is ".wav".
-			 */
+				Parse the path.
+				This can be either a directory name such as "/Users/paul/sounds"
+				or a wildcarded path such as "/Users/paul/sounds/h*.wav".
+				Example: in "/Users/paul/sounds/h*llo.*av",
+				the search directory is "/Users/paul/sounds",
+				the left environment is "h", the middle environment is "llo.", and the right environment is "av".
+			*/
+			autoMelderString searchDirectory, left, middle, right, filePath;
 			MelderString_copy (& searchDirectory, path);
-			char32 *asterisk = str32rchr (searchDirectory. string, '*');
-			if (asterisk) {
-				*asterisk = '\0';
-				searchDirectory. length = asterisk - searchDirectory. string;   // probably superfluous, but correct
+			char32 *asterisk1 = str32chr (searchDirectory. string, U'*');
+			char32 *asterisk2 = str32rchr (searchDirectory. string, U'*');
+			if (asterisk1) {
+				/*
+					The path is a wildcarded path.
+				*/
+				*asterisk1 = U'\0';
+				*asterisk2 = U'\0';
+				searchDirectory. length = asterisk1 - searchDirectory. string;   // probably superfluous, but correct
 				char32 *lastSlash = str32rchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
 				if (lastSlash) {
-					*lastSlash = '\0';   // This fixes searchDirectory.
+					*lastSlash = U'\0';   // this fixes searchDirectory
 					searchDirectory. length = lastSlash - searchDirectory. string;   // probably superfluous, but correct
 					MelderString_copy (& left, lastSlash + 1);
 				} else {
 					MelderString_copy (& left, searchDirectory. string);   // quickly save...
 					MelderString_empty (& searchDirectory);   // ...before destruction
 				}
-				MelderString_copy (& right, asterisk + 1);
+				if (asterisk1 != asterisk2) {
+					MelderString_copy (& middle, asterisk1 + 1);
+				}
+				MelderString_copy (& right, asterisk2 + 1);
+			} else {
+				/*
+					We're finished. No asterisk, hence the path is a directory name.
+				*/
 			}
 			char buffer8 [kMelder_MAXPATH+1];
 			Melder_str32To8bitFileRepresentation_inplace (searchDirectory. string, buffer8);
@@ -153,10 +164,27 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 				{
 					Melder_8bitFileRepresentationToStr32_inplace (entry -> d_name, buffer32);
 					int64 length = str32len (buffer32);
-					if (buffer32 [0] != U'.' &&
-						(left. length == 0 || str32nequ (buffer32, left. string, left. length)) &&
-						(right. length == 0 || (length >= right. length && str32equ (buffer32 + (length - right. length), right. string))))
-					{
+					integer numberOfMatchedCharacters = 0;
+					bool doesTheLeftMatch = true;
+					if (left. length != 0) {
+						doesTheLeftMatch = str32nequ (buffer32, left. string, left. length);
+						if (doesTheLeftMatch)
+							numberOfMatchedCharacters = left.length;
+					}
+					bool doesTheMiddleMatch = true;
+					if (middle. length != 0) {
+						char32 *position = str32str (buffer32 + numberOfMatchedCharacters, middle. string);
+						doesTheMiddleMatch = !! position;
+						if (doesTheMiddleMatch)
+							numberOfMatchedCharacters = position - buffer32 + middle.length;
+					}
+					bool doesTheRightMatch = true;
+					if (right. length != 0) {
+						int64 startOfRight = length - right. length;
+						doesTheRightMatch = startOfRight >= numberOfMatchedCharacters &&
+							str32equ (buffer32 + startOfRight, right. string);
+					}
+					if (buffer32 [0] != U'.' && doesTheLeftMatch && doesTheMiddleMatch && doesTheRightMatch) {
 						Strings_insert (me.get(), 0, buffer32);
 					}
 				}
