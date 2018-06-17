@@ -1,6 +1,6 @@
 /* Sound_and_Spectrum.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@
 #include "Sound_and_Spectrum.h"
 #include "NUM2.h"
 
-autoSpectrum Sound_to_Spectrum (Sound me, int fast) {
+autoSpectrum Sound_to_Spectrum (Sound me, bool fast) {
 	try {
 		integer numberOfSamples = my nx;
 		const integer numberOfChannels = my ny;

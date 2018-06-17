@@ -298,7 +298,7 @@ autoPowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, dou
 			Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
 			Vector_subtractMean (sframe.get());
 			Sounds_multiply (sframe.get(), window.get());
-			autoSpectrum spec = Sound_to_Spectrum (sframe.get(), 1); // FFT yes
+			autoSpectrum spec = Sound_to_Spectrum (sframe.get(), true);   // FFT yes
 			autoPowerCepstrum cepstrum = Spectrum_to_PowerCepstrum (spec.get());
 			for (integer i = 1; i <= nq; i ++) {
 				thy z [i] [iframe] = cepstrum -> z [1] [i];

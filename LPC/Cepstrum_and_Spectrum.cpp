@@ -102,7 +102,7 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 		for (integer i = 2; i <= cepstrum -> nx; i ++) {
 			cepstrum -> z [1] [i] = 2 * my z [1] [i];
 		}
-		autoSpectrum thee = Sound_to_Spectrum ((Sound) cepstrum.get(), 1);
+		autoSpectrum thee = Sound_to_Spectrum ((Sound) cepstrum.get(), true);
 
 		double *re = thy z [1], *im = thy z [2];
 		for (integer i = 1; i <= thy nx; i ++) {
