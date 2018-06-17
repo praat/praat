@@ -162,7 +162,7 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 
 			// Get the Fourier spectrum.
 
-			autoSpectrum spec = Sound_to_Spectrum (frame.get(), 1);
+			autoSpectrum spec = Sound_to_Spectrum (frame.get(), true);
 			Melder_assert (spec->nx == nfft2);
 
 			// From complex spectrum to amplitude spectrum.

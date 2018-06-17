@@ -266,7 +266,7 @@ autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBa
 			integer ichannel = channelNumbers [i];
 			double fbase = baseFrequency;// + (ichannel - 1) * channelBandwidth;
 			autoSound si = Sound_extractChannel (my sound.get(), ichannel);
-			autoSpectrum spi = Sound_to_Spectrum (si.get(), 1);
+			autoSpectrum spi = Sound_to_Spectrum (si.get(), true);
 			Spectrum_passHannBand (spi.get(), 0.5, channelBandwidth - 0.5, 0.5);
 			autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.get(), fbase, samplingFrequency / 2.0, 30);
 			autoSound resampled = Spectrum_to_Sound (spi_shifted.get());
@@ -285,7 +285,7 @@ autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBa
 autoSound EEG_to_Sound_frequencyShifted (EEG me, integer channel, double frequencyShift, double samplingFrequency, double maxAmp) {
 	try {
 		autoSound si = Sound_extractChannel (my sound.get(), channel);
-		autoSpectrum spi = Sound_to_Spectrum (si.get(), 1);
+		autoSpectrum spi = Sound_to_Spectrum (si.get(), true);
 		autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.get(), frequencyShift, samplingFrequency / 2.0, 30);
 		autoSound thee = Spectrum_to_Sound (spi_shifted.get());
 		if (maxAmp > 0) {
