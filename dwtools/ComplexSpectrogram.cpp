@@ -90,7 +90,7 @@ autoComplexSpectrogram Sound_to_ComplexSpectrogram (Sound me, double windowLengt
 				analysisWindow -> z [1] [j] = my z [1] [startSample - 1 + j];
 			}
 			// window ?
-			autoSpectrum spec = Sound_to_Spectrum (analysisWindow.get(), 0);
+			autoSpectrum spec = Sound_to_Spectrum (analysisWindow.get(), false);
 			
 			thy z [1] [iframe] = spec -> z [1] [1] * spec -> z [1] [1];
 			thy phase[1][iframe] = 0.0;

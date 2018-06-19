@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,8 +225,8 @@ static void stopRecording (SoundRecorder me) {
 }
 
 void structSoundRecorder :: v_destroy () noexcept {
-	stopRecording (this);   // must occur before freeing my buffer
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // must also occur before freeing my buffer
+	stopRecording (this);   // must occur before freeing our buffer
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // must also occur before freeing our buffer
 	#if cocoa
 		if (our d_cocoaTimer) CFRunLoopTimerInvalidate (our d_cocoaTimer);
 	#elif gtk
@@ -234,7 +234,7 @@ void structSoundRecorder :: v_destroy () noexcept {
 	#elif motif
 		if (our workProcId) XtRemoveWorkProc (our workProcId);
 	#endif
-	NUMvector_free (buffer, 0);
+	NUMvector_free (our buffer, 0);
 
 	if (our inputUsesPortAudio) {
 		if (our portaudioStream) Pa_StopStream (our portaudioStream);
@@ -251,7 +251,7 @@ void structSoundRecorder :: v_destroy () noexcept {
 			if (our fd != -1) close (our fd);
 		#endif
 	}
-	SoundRecorder_Parent :: v_destroy ();
+	our SoundRecorder_Parent :: v_destroy ();
 }
 
 static void showMaximum (SoundRecorder me, int channel, double maximum) {

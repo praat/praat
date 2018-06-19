@@ -2114,7 +2114,7 @@ static autoSound Sound_removeNoiseBySpectralSubtraction_mono (Sound me, Sound no
 			for (integer j = nsamples + 1; j <= windowSamples; j ++) {
 				analysisWindow -> z [1] [j] = 0;
 			}
-			autoSpectrum analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), 0);
+			autoSpectrum analysisSpectrum = Sound_to_Spectrum (analysisWindow.get(), false);
 
 			// Suppress noise in the analysisSpectrum by subtracting the noise spectrum
 
@@ -2187,7 +2187,7 @@ autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, doubl
 
 void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, integer precision) {
 	try {
-		autoSpectrum spectrum = Sound_to_Spectrum (me, 1);
+		autoSpectrum spectrum = Sound_to_Spectrum (me, true);
 		autoSpectrum shifted = Spectrum_shiftFrequencies (spectrum.get(), shiftBy, newSamplingFrequency / 2, precision);
 		autoSound thee = Spectrum_to_Sound (shifted.get());
 		Sound_playPart (thee.get(), my xmin, my xmax, nullptr, nullptr);

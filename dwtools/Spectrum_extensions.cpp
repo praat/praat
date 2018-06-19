@@ -203,7 +203,7 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 		for (integer i = 1; i <= x -> nx; i ++) {
 			nx -> z [1] [i] *= (i - 1);
 		}
-		autoSpectrum snx = Sound_to_Spectrum (nx.get(), 1);
+		autoSpectrum snx = Sound_to_Spectrum (nx.get(), true);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1);
 
 		// Common variables.

@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2008,2010-2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2008,2010-2018 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,6 @@
  * pb 2008/11/01 warn after finding final tabs (not just spaces) in file names
  * pb 2010/12/14 more high Unicode compatibility
  * pb 2011/04/05 C++
- * pb 2012/10/07 
  */
 
 #if defined (UNIX)
@@ -336,24 +335,22 @@ static void Melder_getDesktop (MelderDir dir) {
 void MelderFile_getParentDir (MelderFile file, MelderDir parent) {
 	#if defined (UNIX)
 		/*
-		 * The parent of /usr/hello.txt is /usr.
-		 * The parent of /hello.txt is /.
-		 */
-		char32 *slash;
+			The parent of /usr/hello.txt is /usr.
+			The parent of /hello.txt is /.
+		*/
 		str32cpy (parent -> path, file -> path);
-		slash = str32rchr (parent -> path, U'/');
+		char32 *slash = str32rchr (parent -> path, U'/');
 		if (slash) *slash = U'\0';
 		if (parent -> path [0] == U'\0') str32cpy (parent -> path, U"/");
 	#elif defined (_WIN32)
 		/*
-		 * The parent of C:\WINDOWS\CTRL.DLL is C:\WINDOWS.
-		 * The parent of E:\Praat.exe is E:\.
-		 * The parent of \\Swine\Apps\init.txt is \\Swine\Apps.
-		 * The parent of \\Swine\init.txt is \\Swine\.   (BUG ?)
-		 */
-		char32 *colon;
+			The parent of C:\WINDOWS\CTRL.DLL is C:\WINDOWS.
+			The parent of E:\Praat.exe is E:\.
+			The parent of \\Swine\Apps\init.txt is \\Swine\Apps.
+			The parent of \\Swine\init.txt is \\Swine\.   (BUG ?)
+		*/
 		str32cpy (parent -> path, file -> path);
-		colon = str32chr (parent -> path, U':');
+		char32 *colon = str32chr (parent -> path, U':');
 		if (colon) {
 			char32 *backslash = str32rchr (parent -> path, U'\\');
 			if (backslash) {   //   C:\WINDOWS\CTRL.DLL or C:\AUTOEXEC.BAT
@@ -370,7 +367,7 @@ void MelderFile_getParentDir (MelderFile file, MelderDir parent) {
 			if (backslash) {   //   \\Swine\Apps\init.txt or \\Swine\init.txt
 				char32 *leftBackslash = str32chr (parent -> path + 2, U'\\');
 				if (backslash - leftBackslash == 0) {   //   \\Swine\init.txt
-					* (backslash + 1) = U'\0';   //   \\Swine\   -
+					* (backslash + 1) = U'\0';   //   \\Swine\   -   !!! dear developer, don't delete this hyphen, lest the line ends in a backslash
 				} else {   //   \\Swine\Apps\init.txt
 					*backslash = U'\0';   //   \\Swine\Apps
 				}
@@ -386,13 +383,12 @@ void MelderFile_getParentDir (MelderFile file, MelderDir parent) {
 void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 	#if defined (UNIX)
 		/*
-		 * The parent of /usr/local is /usr.
-		 * The parent of /usr is /.
-		 * The parent of / is "".
-		 */
-		char32 *slash;
+			The parent of /usr/local is /usr.
+			The parent of /usr is /.
+			The parent of / is "".
+		*/
 		str32cpy (parent -> path, dir -> path);
-		slash = str32rchr (parent -> path, U'/');
+		char32 *slash = str32rchr (parent -> path, U'/');
 		if (slash) {
 			if (slash - parent -> path == 0) {
 				if (slash [1] == U'\0') {   // child is "/"
@@ -408,13 +404,12 @@ void MelderDir_getParentDir (MelderDir dir, MelderDir parent) {
 		}
 	#elif defined (_WIN32)
 		/*
-		 * The parent of C:\WINDOWS is C:\.
-		 * The parent of E:\ is the desktop.
-		 * The parent of \\Swine\ is the desktop.   (BUG ?)
-		 */
-		char32 *colon;
+			The parent of C:\WINDOWS is C:\.
+			The parent of E:\ is the desktop.
+			The parent of \\Swine\ is the desktop.   (BUG ?)
+		*/
 		str32cpy (parent -> path, dir -> path);
-		colon = str32chr (parent -> path, U':');
+		char32 *colon = str32chr (parent -> path, U':');
 		if (colon) {
 			int length = str32len (parent -> path);
 			char32 *backslash = str32rchr (parent -> path, U'\\');
