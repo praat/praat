@@ -1000,7 +1000,7 @@ void GuiText_setFontSize (GuiText me, int size) {
 		} else {
 			SetWindowFont (my d_widget -> window, font24, false);
 		}
-		GuiText_setString (me, text.peek());
+		GuiText_setString (me, text.get());
 		GuiText_setSelection (me, first, last);
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
@@ -1040,7 +1040,7 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 		autostring32 text = GuiText_getString (me);
 		if (first < 0) first = 0;
 		if (last < 0) last = 0;
-		integer length = str32len (text.peek());
+		integer length = str32len (text.get());
 		if (first >= length) first = length;
 		if (last >= length) last = length;
 		/*

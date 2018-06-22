@@ -4486,7 +4486,7 @@ static void do_backslashTrigraphsToUnicodeStr () {
 	if (s->which == Stackel_STRING) {
 		integer length = str32len (s->string);
 		//autostring32 unicode = Melder_calloc (char32, length + 1);
-		//Longchar_nativize32 (s->string, unicode.peek(), false);
+		//Longchar_nativize32 (s->string, unicode.get(), false);
 		//pushString (unicode.transfer());
 		char32 *unicode = Melder_calloc (char32, length + 1);   // OPTIMIZE
 		Longchar_nativize32 (s->string, unicode, false);   // noexcept
