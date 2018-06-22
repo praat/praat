@@ -1546,7 +1546,7 @@ char * bingets8 (FILE *f) {
 	try {
 		unsigned int length = bingetu8 (f);
 		autostring8 result = Melder_malloc (char, length + 1);
-		if (fread (result.peek(), sizeof (char), length, f) != length)
+		if (fread (result.get(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
 		result [length] = 0;   // trailing null byte
 		return result.transfer();
@@ -1559,7 +1559,7 @@ char * bingets16 (FILE *f) {
 	try {
 		uint16 length = bingetu16 (f);
 		autostring8 result = Melder_malloc (char, (int64) length + 1);
-		if (fread (result.peek(), sizeof (char), length, f) != length)
+		if (fread (result.get(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
 		result [length] = 0;   // trailing null byte
 		return result.transfer();
@@ -1572,7 +1572,7 @@ char * bingets32 (FILE *f) {
 	try {
 		uint32 length = bingetu32 (f);
 		autostring8 result = Melder_malloc (char, (int64) length + 1);
-		if (fread (result.peek(), sizeof (char), length, f) != length)
+		if (fread (result.get(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
 		result [length] = 0;   // trailing null byte
 		return result.transfer();

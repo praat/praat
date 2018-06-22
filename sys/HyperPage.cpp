@@ -795,7 +795,7 @@ static void do_back (HyperPage me) {
 	if (my historyPointer <= 0) return;
 	autostring32 page = Melder_dup_f (my history [-- my historyPointer]. page);   // temporary, because pointer will be moved
 	int top = my history [my historyPointer]. top;
-	if (my v_goToPage (page.peek())) {
+	if (my v_goToPage (page.get())) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
@@ -814,7 +814,7 @@ static void do_forth (HyperPage me) {
 	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page) return;
 	autostring32 page = Melder_dup_f (my history [++ my historyPointer]. page);
 	int top = my history [my historyPointer]. top;
-	if (my v_goToPage (page.peek())) {
+	if (my v_goToPage (page.get())) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);

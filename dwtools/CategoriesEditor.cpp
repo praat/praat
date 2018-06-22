@@ -587,8 +587,8 @@ static void gui_button_cb_remove (CategoriesEditor me, GuiButtonEvent /* event *
 
 static void insert (CategoriesEditor me, int position) {
 	autostring32 text = GuiText_getString (my text);
-	if (str32len (text.peek()) != 0) {
-		autoSimpleString str = SimpleString_create (text.peek());
+	if (str32len (text.get()) != 0) {
+		autoSimpleString str = SimpleString_create (text.get());
 		autoCategoriesEditorInsert command = CategoriesEditorInsert_create (me, str.move(), position);
 		Command_do (command.get());
 		if (my history) {
@@ -613,8 +613,8 @@ static void gui_button_cb_replace (CategoriesEditor me, GuiButtonEvent /* event 
 	autoNUMvector <integer> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
 	if (posCount > 0) {
 		autostring32 text = GuiText_getString (my text);
-		if (str32len (text.peek()) != 0) {
-			autoSimpleString str = SimpleString_create (text.peek());
+		if (str32len (text.get()) != 0) {
+			autoSimpleString str = SimpleString_create (text.get());
 			autoCategoriesEditorReplace command = CategoriesEditorReplace_create (me, str.move(), posList.peek(), posCount);
 			Command_do (command.get());
 			if (my history) {

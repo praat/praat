@@ -80,7 +80,7 @@ autoStrings Strings_createAsTokens (const char32 *token_string, const char32 *se
 		}
 		const char32 *separators = (separator_string == nullptr || str32len (separator_string) == 0) ? U" " : separator_string;
 		autostring32 copy = Melder_dup (token_string);
-		char32 *index, *tokens = copy.peek();
+		char32 *index, *tokens = copy.get();
 		const char32 *indexs;
 		integer numberOfTokens = 0;
 		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs ++, index ++) {

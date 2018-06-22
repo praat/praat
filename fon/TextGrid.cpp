@@ -1078,13 +1078,13 @@ void TextGrid_convertToBackslashTrigraphs (TextGrid me) {
 				IntervalTier tier = static_cast <IntervalTier> (anyTier);
 				for (integer i = 1; i <= tier -> intervals.size; i ++) {
 					TextInterval interval = tier -> intervals.at [i];
-					genericize (& interval -> text, buffer.peek());
+					genericize (& interval -> text, buffer.get());
 				}
 			} else {
 				TextTier tier = static_cast <TextTier> (anyTier);
 				for (integer i = 1; i <= tier -> points.size; i ++) {
 					TextPoint point = tier -> points.at [i];
-					genericize (& point -> mark, buffer.peek());
+					genericize (& point -> mark, buffer.get());
 				}
 			}
 		}
@@ -1103,8 +1103,8 @@ void TextGrid_convertToUnicode (TextGrid me) {
 				for (integer i = 1; i <= tier -> intervals.size; i ++) {
 					TextInterval interval = tier -> intervals.at [i];
 					if (interval -> text) {
-						Longchar_nativize32 (interval -> text, buffer.peek(), false);
-						str32cpy (interval -> text, buffer.peek());
+						Longchar_nativize32 (interval -> text, buffer.get(), false);
+						str32cpy (interval -> text, buffer.get());
 					}
 				}
 			} else {
@@ -1112,8 +1112,8 @@ void TextGrid_convertToUnicode (TextGrid me) {
 				for (integer i = 1; i <= tier -> points.size; i ++) {
 					TextPoint point = tier -> points.at [i];
 					if (point -> mark) {
-						Longchar_nativize32 (point -> mark, buffer.peek(), false);
-						str32cpy (point -> mark, buffer.peek());
+						Longchar_nativize32 (point -> mark, buffer.get(), false);
+						str32cpy (point -> mark, buffer.get());
 					}
 				}
 			}
@@ -1318,7 +1318,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		int formatVersion = 0;
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		autostring32 tag = texgetw16 (text.peek());
-		if (! str32equ (tag.peek(), U"Praat chronological TextGrid text file"))
+		if (! str32equ (tag.get(), U"Praat chronological TextGrid text file"))
 			Melder_throw (U"This is not a chronological TextGrid text file.");
 		autoTextGrid me = Thing_new (TextGrid);
 		my structFunction :: v_readText (text.peek(), formatVersion);
@@ -1326,18 +1326,18 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		integer numberOfTiers = texgeti32 (text.peek());
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
 			autostring32 klas = texgetw16 (text.peek());
-			if (str32equ (klas.peek(), U"IntervalTier")) {
+			if (str32equ (klas.get(), U"IntervalTier")) {
 				autoIntervalTier tier = Thing_new (IntervalTier);
 				tier -> name = texgetw16 (text.peek());
 				tier -> structFunction :: v_readText (text.peek(), formatVersion);
 				my tiers -> addItem_move (tier.move());
-			} else if (str32equ (klas.peek(), U"TextTier")) {
+			} else if (str32equ (klas.get(), U"TextTier")) {
 				autoTextTier tier = Thing_new (TextTier);
 				tier -> name = texgetw16 (text.peek());
 				tier -> structFunction :: v_readText (text.peek(), formatVersion);
 				my tiers -> addItem_move (tier.move());
 			} else {
-				Melder_throw (U"Unknown tier class \"", klas.peek(), U"\".");
+				Melder_throw (U"Unknown tier class \"", klas.get(), U"\".");
 			}
 		}
 		for (;;) {

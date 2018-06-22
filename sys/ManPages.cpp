@@ -564,7 +564,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 					}
 					try {
 						autostring32 text = Melder_dup (p);
-						Interpreter_run (interpreter.get(), text.peek());
+						Interpreter_run (interpreter.get(), text.get());
 					} catch (MelderError) {
 						trace (U"interpreter fails on ", pdfFile. path);
 						Melder_flushError ();
@@ -897,8 +897,8 @@ void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath) {
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
-		if (! oldText.peek()   // doesn't the file exist yet?
-			|| str32cmp (buffer.string, oldText.peek()))   // isn't the old file identical to the new text?
+		if (! oldText.get()   // doesn't the file exist yet?
+			|| str32cmp (buffer.string, oldText.get()))   // isn't the old file identical to the new text?
 		{
 			MelderFile_writeText (& file, buffer.string, kMelder_textOutputEncoding::UTF8);   // then write the new text
 		}

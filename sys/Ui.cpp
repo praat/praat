@@ -178,7 +178,7 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::POSITIVE_:
 		{
 			autostring32 text = GuiText_getString (my text);   // the text as typed by the user
-			Interpreter_numericExpression (nullptr, text.peek(), & my realValue);
+			Interpreter_numericExpression (nullptr, text.get(), & my realValue);
 			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
 				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" has the value \"undefined\".");
 			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
@@ -191,13 +191,13 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::CHANNEL_:
 		{
 			autostring32 text = GuiText_getString (my text);
-			if (my type == _kUiField_type::CHANNEL_ && (str32equ (text.peek(), U"Left") || str32equ (text.peek(), U"Mono"))) {
+			if (my type == _kUiField_type::CHANNEL_ && (str32equ (text.get(), U"Left") || str32equ (text.get(), U"Mono"))) {
 				my integerValue = 1;
-			} else if (my type == _kUiField_type::CHANNEL_ && (str32equ (text.peek(), U"Right") || str32equ (text.peek(), U"Stereo"))) {
+			} else if (my type == _kUiField_type::CHANNEL_ && (str32equ (text.get(), U"Right") || str32equ (text.get(), U"Stereo"))) {
 				my integerValue = 2;
 			} else {
 				double realValue;
-				Interpreter_numericExpression (nullptr, text.peek(), & realValue);
+				Interpreter_numericExpression (nullptr, text.get(), & realValue);
 				my integerValue = Melder_iround (realValue);
 				Melder_require (my integerValue == realValue,
 					U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a whole number.");
@@ -297,10 +297,10 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::COLOUR_:
 		{
 			autostring32 string = GuiText_getString (my text);
-			if (colourToValue (me, string.peek())) {
+			if (colourToValue (me, string.get())) {
 				// do nothing
 			} else {
-				Interpreter_numericExpression (nullptr, string.peek(), & my colourValue. red);
+				Interpreter_numericExpression (nullptr, string.get(), & my colourValue. red);
 				my colourValue. green = my colourValue. blue = my colourValue. red;
 			}
 			if (my colourVariable) *my colourVariable = my colourValue;
@@ -1329,8 +1329,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				my colourValue. red = my colourValue. green = my colourValue. blue = arg -> number;
 			} else if (arg -> which == Stackel_STRING) {
 				autostring32 string2 = Melder_dup (arg -> string);
-				if (! colourToValue (me, string2.peek())) {
-					Melder_throw (U"Cannot compute a colour from \"", string2.peek(), U"\".");
+				if (! colourToValue (me, string2.get())) {
+					Melder_throw (U"Cannot compute a colour from \"", string2.get(), U"\".");
 				}
 			}
 			if (my colourVariable) *my colourVariable = my colourValue;
@@ -1465,15 +1465,15 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 		case _kUiField_type::COLOUR_:
 		{
 			autostring32 string2 = Melder_dup_f (string);
-			if (colourToValue (me, string2.peek())) {
+			if (colourToValue (me, string2.get())) {
 				/* OK */
 			} else {
 				try {
-					Interpreter_numericExpression (interpreter, string2.peek(), & my colourValue. red);
+					Interpreter_numericExpression (interpreter, string2.get(), & my colourValue. red);
 					my colourValue. green = my colourValue. blue = my colourValue. red;
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_throw (U"Cannot compute a colour from \"", string2.peek(), U"\".");
+					Melder_throw (U"Cannot compute a colour from \"", string2.get(), U"\".");
 				}
 			}
 			if (my colourVariable) *my colourVariable = my colourValue;

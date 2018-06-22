@@ -296,11 +296,11 @@ void Strings_genericize (Strings me) {
 		const char32 *p = (const char32 *) my strings [i];
 		while (*p) {
 			if (*p > 126) {   // backslashes are not converted, i.e. genericize^2 == genericize
-				Longchar_genericize32 (my strings [i], buffer.peek());
-				autostring32 newString = Melder_dup (buffer.peek());
+				Longchar_genericize32 (my strings [i], buffer.get());
+				autostring32 newString = Melder_dup (buffer.get());
 				/*
-				 * Replace string only if copying was OK.
-				 */
+					Replace string only if copying was OK.
+				*/
 				Melder_free (my strings [i]);
 				my strings [i] = newString.transfer();
 				break;
@@ -313,11 +313,11 @@ void Strings_genericize (Strings me) {
 void Strings_nativize (Strings me) {
 	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) + 1);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		Longchar_nativize32 (my strings [i], buffer.peek(), false);
-		autostring32 newString = Melder_dup (buffer.peek());
+		Longchar_nativize32 (my strings [i], buffer.get(), false);
+		autostring32 newString = Melder_dup (buffer.get());
 		/*
-		 * Replace string only if copying was OK.
-		 */
+			Replace string only if copying was OK.
+		*/
 		Melder_free (my strings [i]);
 		my strings [i] = newString.transfer();
 	}

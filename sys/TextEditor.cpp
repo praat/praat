@@ -75,7 +75,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 		}
 	}
 	autostring32 text = MelderFile_readText (file);
-	GuiText_setString (my textWidget, text.peek());
+	GuiText_setString (my textWidget, text.get());
 	/*
 	 * GuiText_setString has invoked the changeCallback,
 	 * which has set `my dirty` to `true`. Fix this.
@@ -93,7 +93,7 @@ static void newDocument (TextEditor me) {
 
 static void saveDocument (TextEditor me, MelderFile file) {
 	autostring32 text = GuiText_getString (my textWidget);
-	MelderFile_writeText (file, text.peek(), Melder_getOutputEncoding ());
+	MelderFile_writeText (file, text.get(), Melder_getOutputEncoding ());
 	my dirty = false;
 	MelderFile_copy (file, & my file);
 	if (my v_fileBased ()) Thing_setName (me, Melder_fileToPath (file));
@@ -399,8 +399,8 @@ static void menu_cb_erase (TextEditor me, EDITOR_ARGS_DIRECT) {
 
 static bool getSelectedLines (TextEditor me, integer *firstLine, integer *lastLine) {
 	integer left, right;
-	char32 *text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
-	integer textLength = str32len (text);
+	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
+	integer textLength = str32len (text.get());
 	Melder_assert (left >= 0);
 	Melder_assert (left <= right);
 	Melder_assert (right <= textLength);
@@ -421,7 +421,6 @@ static bool getSelectedLines (TextEditor me, integer *firstLine, integer *lastLi
 			(*lastLine) ++;
 		}
 	}
-	Melder_free (text);
 	return true;
 }
 
@@ -432,7 +431,7 @@ static void do_find (TextEditor me) {
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
 	char32 *location = str32str (& text [right], theFindString);
 	if (location) {
-		integer index = location - text.peek();
+		integer index = location - text.get();
 		GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
@@ -440,9 +439,9 @@ static void do_find (TextEditor me) {
 		#endif
 	} else {
 		/* Try from the start of the document. */
-		location = str32str (text.peek(), theFindString);
+		location = str32str (text.get(), theFindString);
 		if (location) {
-			integer index = location - text.peek();
+			integer index = location - text.get();
 			GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32
@@ -457,7 +456,7 @@ static void do_find (TextEditor me) {
 static void do_replace (TextEditor me) {
 	if (! theReplaceString) return;   // e.g. when the user does "Replace again" before having done any "Replace"
 	autostring32 selection = GuiText_getSelection (my textWidget);
-	if (! Melder_equ (selection.peek(), theFindString)) {
+	if (! Melder_equ (selection.get(), theFindString)) {
 		do_find (me);
 		return;
 	}
@@ -548,7 +547,7 @@ static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
 				}
 			}
 		}
-		if (left == str32len (text.peek())) {
+		if (left == str32len (text.get())) {
 			right = left;
 		} else if (text [right] == U'\n') {
 			right ++;

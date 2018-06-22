@@ -151,11 +151,11 @@ void Melder_includeIncludeFiles (char32 **text) {
 				Construct the new text.
 			 */
 			headLength = (head - *text) + str32len (head);
-			includeTextLength = str32len (includeText.peek());
+			includeTextLength = str32len (includeText.get());
 			newLength = headLength + includeTextLength + 1 + str32len (tail);
 			newText = Melder_malloc (char32, newLength + 1);
 			str32cpy (newText, *text);
-			str32cpy (newText + headLength, includeText.peek());
+			str32cpy (newText + headLength, includeText.get());
 			str32cpy (newText + headLength + includeTextLength, U"\n");
 			str32cpy (newText + headLength + includeTextLength + 1, tail);
 			/*
@@ -2455,7 +2455,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 						autostring32 errorCopy = errorCopy_nothrow;   // UGLY but necessary (2)
 						Melder_throw (U"Script assertion fails in line ", assertErrorLineNumber,
 							U": error « ", assertErrorString.string, U" » not raised. Instead:\n",
-							errorCopy.peek());
+							errorCopy.get());
 					}
 				}
 			}

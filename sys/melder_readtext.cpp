@@ -183,8 +183,8 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 				rewind (f);   // length and type already set correctly.
 			}
 			autostring8 text8bit = Melder_malloc (char, length + 1);
-			Melder_assert (text8bit.peek());
-			size_t numberOfBytesRead = fread_multi (text8bit.peek(), (size_t) length, f);
+			Melder_assert (text8bit);
+			size_t numberOfBytesRead = fread_multi (text8bit.get(), (size_t) length, f);
 			if ((int64) numberOfBytesRead < length)
 				Melder_throw (U"The file contains ", length, U" bytes", type == -1 ? U" after the byte-order mark" : U"",
 					U", but we could read only ", numberOfBytesRead, U" of them.");
@@ -194,13 +194,13 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 			 */
 			if (length > 0) {
 				int64 numberOfNullBytes = 0;
-				for (char *p = & text8bit [length - 1]; (int64) (p - text8bit.peek()) >= 0; p --) {
+				for (char *p = & text8bit [length - 1]; (int64) (p - text8bit.get()) >= 0; p --) {
 					if (*p == '\0') {
 						numberOfNullBytes += 1;
 						/*
 						 * Shift.
 						 */
-						for (char *q = p; (int64) (q - text8bit.peek()) < length; q ++) {
+						for (char *q = p; (int64) (q - text8bit.get()) < length; q ++) {
 							*q = q [1];
 						}
 					}
@@ -214,7 +214,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 				(void) Melder_killReturns_inplace (*string8);
 				return nullptr;   // OK
 			} else {
-				text.reset (Melder_8to32 (text8bit.peek(), kMelder_textInputEncoding::UNDEFINED));
+				text.reset (Melder_8to32 (text8bit.get(), kMelder_textInputEncoding::UNDEFINED));
 			}
 		} else {
 			length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes
@@ -265,7 +265,7 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 				}
 			}
 			text [length] = '\0';
-			(void) Melder_killReturns_inplace (text.peek());
+			(void) Melder_killReturns_inplace (text.get());
 		}
 		f.close (file);
 		return text.transfer();

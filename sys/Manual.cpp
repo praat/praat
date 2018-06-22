@@ -378,9 +378,8 @@ static void gui_button_cb_publish (Manual /* me */, GuiButtonEvent /* event */) 
 }
 
 static void do_search (Manual me) {
-	char32 *query = GuiText_getString (my searchText);
-	search (me, query);
-	Melder_free (query);
+	autostring32 query = GuiText_getString (my searchText);
+	search (me, query.get());
 }
 
 static void gui_button_cb_search (Manual me, GuiButtonEvent /* event */) {
@@ -488,7 +487,7 @@ int structManual :: v_goToPage (const char32 *title) {
 		autoPraatBackground background;
 		try {
 			autostring32 fileNameWithArguments = Melder_dup (title + 3);
-			praat_executeScriptFromFileNameWithArguments (fileNameWithArguments.peek());
+			praat_executeScriptFromFileNameWithArguments (fileNameWithArguments.get());
 		} catch (MelderError) {
 			Melder_flushError ();
 		}

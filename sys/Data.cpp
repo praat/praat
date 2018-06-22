@@ -200,7 +200,7 @@ autoDaata Data_readFromTextFile (MelderFile file) {
 		int formatVersion;
 		if (end) {
 			autostring32 klas = texgetw16 (text.peek());
-			me = Thing_newFromClassName (klas.peek(), & formatVersion).static_cast_move <structDaata> ();
+			me = Thing_newFromClassName (klas.get(), & formatVersion).static_cast_move <structDaata> ();
 		} else {
 			end = str32str (line, U"TextFile");
 			if (! end)
@@ -255,7 +255,7 @@ autoDaata Data_readFromBinaryFile (MelderFile file) {
 		if (end) {
 			fseek (f, strlen ("ooBinaryFile"), 0);
 			autostring8 klas = bingets8 (f);
-			me = Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & formatVersion).static_cast_move <structDaata> ();
+			me = Thing_newFromClassName (Melder_peek8to32 (klas.get()), & formatVersion).static_cast_move <structDaata> ();
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {

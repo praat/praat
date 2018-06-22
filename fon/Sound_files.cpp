@@ -143,7 +143,7 @@ autoSound Sound_readFromBellLabsFile (MelderFile file) {
 		 * Use defaults if necessary.
 		 */
 		autostring8 lines = Melder_calloc (char, headerLength + 1);
-		if ((int64) fread (lines.peek(), 1, (size_t) headerLength, f) < headerLength)
+		if ((int64) fread (lines.get(), 1, (size_t) headerLength, f) < headerLength)
 			Melder_throw (U"Header too short.");
 		integer numberOfSamples = 0;
 		char *psamples = & lines [-1];
