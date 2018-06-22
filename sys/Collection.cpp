@@ -97,7 +97,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 	if (formatVersion < 0) {
 		long_not_integer l_size;
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
-		if (! line.peek() || ! sscanf (line.peek(), "%ld", & l_size) || l_size < 0)
+		if (! line.get() || ! sscanf (line.get(), "%ld", & l_size) || l_size < 0)
 			Melder_throw (U"Collection::readText: cannot read size.");
 		my _grow (l_size);
 		for (integer i = 1; i <= l_size; i ++) {
@@ -106,10 +106,10 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			char klas [200], nameTag [2000];
 			do {
 				line.reset (Melder_32to8 (MelderReadText_readLine (text)));
-				if (! line.peek())
+				if (! line.get())
 					Melder_throw (U"Missing object line.");
-			} while (strncmp (line.peek(), "Object ", 7));
-			stringsRead = sscanf (line.peek(), "Object %ld: class %199s %1999s%n", & itemNumberRead, klas, nameTag, & n);
+			} while (strncmp (line.get(), "Object ", 7));
+			stringsRead = sscanf (line.get(), "Object %ld: class %199s %1999s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)
 				Melder_throw (U"Collection::readText: cannot read header of object ", i, U".");
 			if (itemNumberRead != i)
@@ -124,10 +124,10 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			Data_readText (my at [i], text, -1);
 			if (stringsRead == 3) {
 				if (line [n] == U' ') n ++;   // skip space character
-				length = strlen (line.peek()+n);
-				if (length > 0 && (line.peek()+n) [length - 1] == '\n')
-					(line.peek()+n) [length - 1] = '\0';
-				Thing_setName (my at [i], Melder_peek8to32 (line.peek()+n));
+				length = strlen (line.get()+n);
+				if (length > 0 && (line.get()+n) [length - 1] == '\n')
+					(line.get()+n) [length - 1] = '\0';
+				Thing_setName (my at [i], Melder_peek8to32 (line.get()+n));
 			}
 		}
 	} else {
@@ -136,12 +136,12 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 		for (int32 i = 1; i <= l_size; i ++) {
 			autostring32 className = texgetw16 (text);
 			int elementFormatVersion;
-			my at [i] = (Daata) Thing_newFromClassName (className.peek(), & elementFormatVersion).releaseToAmbiguousOwner();
+			my at [i] = (Daata) Thing_newFromClassName (className.get(), & elementFormatVersion).releaseToAmbiguousOwner();
 			my size ++;
 			if (! Thing_isa (my at [i], classDaata) || ! Data_canReadText (my at [i]))
 				Melder_throw (U"Cannot read item of class ", Thing_className (my at [i]), U" in collection.");
 			autostring32 objectName = texgetw16 (text);
-			Thing_setName (my at [i], objectName.peek());
+			Thing_setName (my at [i], objectName.get());
 			Data_readText (my at [i], text, elementFormatVersion);
 		}
 	}
@@ -189,16 +189,16 @@ void _CollectionOfDaata_v_readBinary (_CollectionOfDaata* me, FILE *f, int forma
 		for (int32 i = 1; i <= l_size; i ++) {
 			autostring8 klas = bingets8 (f);
 			if (Melder_debug == 44)
-				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.peek()));
+				Melder_casual (U"structCollection :: v_readBinary: Reading object of type ", Melder_peek8to32 (klas.get()));
 			int elementFormatVersion;
-			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas.peek()), & elementFormatVersion).releaseToAmbiguousOwner();
+			my at [i] = (Daata) Thing_newFromClassName (Melder_peek8to32 (klas.get()), & elementFormatVersion).releaseToAmbiguousOwner();
 			my size ++;
 			if (! Thing_isa (my at [i], classDaata) || ! Data_canReadBinary (my at [i]))
 				Melder_throw (U"Objects of class ", Thing_className (my at [i]), U" cannot be read.");
 			autostring32 name = bingetw16 (f);
 			if (Melder_debug == 44)
-				Melder_casual (U"structCollection :: v_readBinary: Reading object with name ", name.peek());
-			Thing_setName (my at [i], name.peek());
+				Melder_casual (U"structCollection :: v_readBinary: Reading object with name ", name.get());
+			Thing_setName (my at [i], name.get());
 			Data_readBinary (my at [i], f, elementFormatVersion);
 		}
 	}

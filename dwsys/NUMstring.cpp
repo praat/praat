@@ -278,7 +278,7 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, cons
 				buf_size *= 2;
 				buf.resize (buf_size);
 			}
-			str32ncpy (buf.peek() + buf_nchar, posp, nchar);
+			str32ncpy (buf.get() + buf_nchar, posp, nchar);
 			buf_nchar += nchar;
 		}
 
@@ -289,7 +289,7 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, cons
 			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
 
-		if ( (SubstituteRE (compiledSearchRE, replaceRE, buf.peek() + buf_nchar, buf_size - buf_nchar, &errorType)) == false) {
+		if ( (SubstituteRE (compiledSearchRE, replaceRE, buf.get() + buf_nchar, buf_size - buf_nchar, &errorType)) == false) {
 			if (errorType == 1) { // not enough memory
 				buf_size *= 2;
 				buf.resize (buf_size);
@@ -302,7 +302,7 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, cons
 
 		// Buffer is not full, get number of characters added;
 
-		nchar = str32len (buf.peek() + buf_nchar);
+		nchar = str32len (buf.get() + buf_nchar);
 		buf_nchar += nchar;
 
 		// Update next start position in search string.
@@ -328,7 +328,7 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, cons
 	buf_size = buf_nchar + nchar + 1;
 	buf.resize (buf_size);
 
-	str32ncpy (buf.peek() + buf_nchar, pos, nchar);
+	str32ncpy (buf.get() + buf_nchar, pos, nchar);
 	buf[buf_size - 1] = '\0';
 	return buf.transfer();
 }

@@ -919,7 +919,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			AEGetParamPtr (theAppleEvent, 1, typeUTF8Text, nullptr, & buffer [0], actualSize, nullptr);
 			if (theUserMessageCallback) {
 				autostring32 buffer32 = Melder_8to32 (buffer);
-				theUserMessageCallback (buffer32.peek());
+				theUserMessageCallback (buffer32.get());
 			}
 			free (buffer);
 			duringAppleEvent = false;
@@ -941,7 +941,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			AEGetParamPtr (theAppleEvent, 1, typeUTF16ExternalRepresentation, nullptr, & buffer [0], actualSize, nullptr);
 			if (theUserMessageCallback) {
 				autostring32 buffer32 = Melder_16to32 (buffer);
-				theUserMessageCallback (buffer32.peek());
+				theUserMessageCallback (buffer32.get());
 			}
 			free (buffer);
 			duringAppleEvent = false;
@@ -1766,8 +1766,8 @@ void praat_run () {
 				} catch (MelderError) {
 					Melder_clearError ();
 				}
-				if (buttons.peek()) {
-					char32 *line = buttons.peek();
+				if (buttons.get()) {
+					char32 *line = buttons.get();
 					for (;;) {
 						char32 *newline = str32chr (line, U'\n');
 						if (newline) *newline = U'\0';
@@ -1796,7 +1796,7 @@ void praat_run () {
 				autostring32 text = Melder_dup (Melder_cat (U"Read from file... ",
 															Melder_peek8to32 (praatP.argv [praatP.argumentNumber])));
 				try {
-					praat_executeScriptFromText (text.peek());
+					praat_executeScriptFromText (text.get());
 				} catch (MelderError) {
 					Melder_flushError ();
 				}

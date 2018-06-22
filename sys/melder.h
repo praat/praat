@@ -2865,42 +2865,59 @@ public:
 	}
 	~_autostring () {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: entering destructor ptr = ", Melder_pointer (ptr));
-		if (ptr) Melder_free (ptr);
+		if (our ptr) Melder_free (our ptr);
 		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving destructor");
 	}
 	#if 0
 	void operator= (T *string) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: entering assignment from C-string; old = ", Melder_pointer (ptr));
-		if (ptr) Melder_free (ptr);
-		ptr = string;
+		if (our ptr) Melder_free (our ptr);
+		our ptr = string;
 		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving assignment from C-string; new = ", Melder_pointer (ptr));
 	}
 	#endif
 	template <class U> T& operator[] (U i) {
 		return ptr [i];
 	}
-	T * peek () const {
-		return ptr;
+	T * get () const {
+		return our ptr;
 	}
 	T ** operator& () {
-		return & ptr;
+		return & our ptr;
 	}
 	T * transfer () {
-		T *tmp = ptr;
-		ptr = nullptr;
+		T *tmp = our ptr;
+		our ptr = nullptr;
 		return tmp;
 	}
 	void reset (T *string) {
-		if (ptr) Melder_free (ptr);
-		ptr = string;
+		if (our ptr) Melder_free (our ptr);
+		our ptr = string;
 	}
 	void resize (int64 new_size) {
-		T *tmp = (T *) Melder_realloc (ptr, new_size * (int64) sizeof (T));
-		ptr = tmp;
+		T *tmp = (T *) Melder_realloc (our ptr, new_size * (int64) sizeof (T));
+		our ptr = tmp;
 	}
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
 	//_autostring (_autostring &) = delete;   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
+	explicit operator bool () const { return !! ptr; }
+	/*
+		Enable moving.
+	*/
+	_autostring (_autostring&& other) noexcept {   // enable move constructor
+		our ptr = other.ptr;
+		other.ptr = nullptr;
+	}
+	_autostring& operator= (_autostring&& other) noexcept {   // enable move assignment
+		if (& other != this) {
+			if (our ptr) Melder_free (our ptr);
+			our ptr = other.ptr;
+			other.ptr = nullptr;
+		}
+		return *this;
+	}
+	_autostring&& move () noexcept { return static_cast <_autostring&&> (*this); }
 };
 
 typedef _autostring <char> autostring8;

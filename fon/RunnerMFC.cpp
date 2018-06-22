@@ -85,7 +85,7 @@ static void drawNow (RunnerMFC me) {
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
 		const char32 *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
 		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
-		char32 *visibleText_p = visibleText_dup.peek();
+		char32 *visibleText_p = visibleText_dup.get();
 		Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (my graphics.get(), 10);
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);

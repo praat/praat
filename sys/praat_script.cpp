@@ -532,7 +532,7 @@ void praat_executeCommandFromStandardInput (const char32 *programName) {
 		if (newLine) *newLine = '\0';
 		autostring32 command32 = Melder_8to32 (command8);
 		try {
-			praat_executeCommand (nullptr, command32.peek());
+			praat_executeCommand (nullptr, command32.get());
 		} catch (MelderError) {
 			Melder_flushError (programName, U": command \"", Melder_peek8to32 (command8), U"\" not executed.");
 		}
@@ -546,10 +546,10 @@ void praat_executeScriptFromFile (MelderFile file, const char32 *arguments) {
 		Melder_includeIncludeFiles (& text);
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (arguments) {
-			Interpreter_readParameters (interpreter.get(), text.peek());
+			Interpreter_readParameters (interpreter.get(), text.get());
 			Interpreter_getArgumentsFromString (interpreter.get(), arguments);
 		}
-		Interpreter_run (interpreter.get(), text.peek());
+		Interpreter_run (interpreter.get(), text.get());
 	} catch (MelderError) {
 		Melder_throw (U"Script ", file, U" not completed.");
 	}
@@ -566,9 +566,9 @@ void praat_executeScriptFromFileName (const char32 *fileName, integer narg, Stac
 		autoMelderFileSetDefaultDir dir (& file);   // so that relative file names can be used inside the script
 		Melder_includeIncludeFiles (& text);
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-		Interpreter_readParameters (interpreter.get(), text.peek());
+		Interpreter_readParameters (interpreter.get(), text.get());
 		Interpreter_getArgumentsFromArgs (interpreter.get(), narg, args);
-		Interpreter_run (interpreter.get(), text.peek());
+		Interpreter_run (interpreter.get(), text.get());
 	} catch (MelderError) {
 		Melder_throw (U"Script ", & file, U" not completed.");   // don't refer to 'fileName', because its contents may have changed
 	}
@@ -606,7 +606,7 @@ extern "C" void praatlib_executeScript (const char *text8) {
 	try {
 		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
 		autostring32 string = Melder_8to32 (text8);
-		Interpreter_run (interpreter.get(), string.peek());
+		Interpreter_run (interpreter.get(), string.get());
 	} catch (MelderError) {
 		Melder_throw (U"Script not completed.");
 	}
@@ -616,7 +616,7 @@ void praat_executeScriptFromText (const char32 *text) {
 	try {
 		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
 		autostring32 string = Melder_dup (text);   // copy, because Interpreter will change it (UGLY)
-		Interpreter_run (interpreter.get(), string.peek());
+		Interpreter_run (interpreter.get(), string.get());
 	} catch (MelderError) {
 		Melder_throw (U"Script not completed.");
 	}
@@ -630,10 +630,10 @@ void praat_executeScriptFromDialog (UiForm dia) {
 	autoMelderFileSetDefaultDir dir (& file);
 	Melder_includeIncludeFiles (& text);
 	autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-	Interpreter_readParameters (interpreter.get(), text.peek());
+	Interpreter_readParameters (interpreter.get(), text.get());
 	Interpreter_getArgumentsFromDialog (interpreter.get(), dia);
 	autoPraatBackground background;
-	Interpreter_run (interpreter.get(), text.peek());
+	Interpreter_run (interpreter.get(), text.get());
 }
 
 static void secondPassThroughScript (UiForm sendingForm, integer /* narg */, Stackel /* args */,
@@ -651,7 +651,7 @@ static void firstPassThroughScript (MelderFile file) {
 			Melder_includeIncludeFiles (& text);
 		}
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-		if (Interpreter_readParameters (interpreter.get(), text.peek()) > 0) {
+		if (Interpreter_readParameters (interpreter.get(), text.get()) > 0) {
 			UiForm form = Interpreter_createForm (interpreter.get(),
 				praatP.editor ? praatP.editor -> windowForm : theCurrentPraatApplication -> topShell,
 				Melder_fileToPath (file), secondPassThroughScript, NULL, false);

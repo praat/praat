@@ -756,7 +756,7 @@ char32 * GuiText_getSelection (GuiText me) {
 		if (length > 0) {
 			char32 *result = Melder_malloc_f (char32, length + 1);
 			memcpy (result, & selection [start], length * sizeof (char32));
-			result [length] = '\0';
+			result [length] = U'\0';
 			(void) Melder_killReturns_inplace (result);
 			return result;
 		}
@@ -986,7 +986,7 @@ void GuiText_setFontSize (GuiText me, int size) {
 	#elif motif
 		// a trick to update the window. BUG: why doesn't UpdateWindow seem to suffice?
 		integer first, last;
-		char32 *text = GuiText_getStringAndSelectionPosition (me, & first, & last);
+		autostring32 text = GuiText_getStringAndSelectionPosition (me, & first, & last);
 		GuiText_setString (me, U"");   // erase all
 		UpdateWindow (my d_widget -> window);
 		if (size <= 10) {
@@ -1000,8 +1000,7 @@ void GuiText_setFontSize (GuiText me, int size) {
 		} else {
 			SetWindowFont (my d_widget -> window, font24, false);
 		}
-		GuiText_setString (me, text);
-		Melder_free (text);
+		GuiText_setString (me, text.peek());
 		GuiText_setSelection (me, first, last);
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
@@ -1038,10 +1037,10 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 			gtk_text_buffer_select_range (buffer, & from_it, & to_it);
 		}
 	#elif motif
-		char32 *text = GuiText_getString (me);
+		autostring32 text = GuiText_getString (me);
 		if (first < 0) first = 0;
 		if (last < 0) last = 0;
-		integer length = str32len (text);
+		integer length = str32len (text.peek());
 		if (first >= length) first = length;
 		if (last >= length) last = length;
 		/*
@@ -1052,8 +1051,8 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 		for (integer i = 0; i < first; i ++) if (text [i] == U'\n') numberOfLeadingLineBreaks ++;
 		for (integer i = first; i < last; i ++) if (text [i] == U'\n') numberOfSelectedLineBreaks ++;
 		/*
-		 * On Windows, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
-		 */
+			On Windows, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
+		*/
 		integer numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
 		for (integer i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
 		for (integer i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
@@ -1062,21 +1061,19 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 		last += numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
 		first += numberOfLeadingHighUnicodeValues;
 		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
-		Melder_free (text);
 
 		Edit_SetSel (my d_widget -> window, first, last);
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		/*
-		 * On Cocoa, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
-		 */
-		char32 *text = GuiText_getString (me);
+			On Cocoa, characters are counted in UTF-16 units, whereas 'first' and 'last' are in UTF-32 units. Convert.
+		*/
+		autostring32 text = GuiText_getString (me);
 		integer numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
 		for (integer i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
 		for (integer i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
 		first += numberOfLeadingHighUnicodeValues;
 		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
-		Melder_free (text);
 
 		if (my d_cocoaTextView) {
 			[my d_cocoaTextView   setSelectedRange: NSMakeRange (first, last - first)];

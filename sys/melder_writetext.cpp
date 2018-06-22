@@ -147,7 +147,7 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 			autostring32 oldText = MelderFile_readText (file);
 			autofile f2 = Melder_fopen (file, "wb");
 			binputu16 (0xfeff, f2);
-			int64 n = str32len (oldText.peek());
+			int64 n = str32len (oldText.get());
 			for (int64 i = 0; i < n; i ++) {
 				char32 kar = oldText [i];
 				#ifdef _WIN32
