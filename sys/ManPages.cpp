@@ -39,8 +39,6 @@ void structManPages :: v_destroy () noexcept {
 	if (our dynamic) {
 		for (integer ipage = 1; ipage <= our pages.size; ipage ++) {
 			ManPage page = our pages.at [ipage];
-			Melder_free (page -> title);
-			Melder_free (page -> author);
 			if (page -> paragraphs) {
 				ManPage_Paragraph par;
 				for (par = page -> paragraphs; (int) par -> type != 0; par ++)
@@ -99,7 +97,7 @@ static const char32 *extractLink (const char32 *text, const char32 *p, char32 *l
 }
 
 static void readOnePage (ManPages me, MelderReadText text) {
-	char32 *title;
+	autostring32 title;
 	try {
 		title = texgetw16 (text);
 	} catch (MelderError) {
@@ -107,21 +105,19 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	}
 
 	/*
-	 * Check whether a page with this title is already present.
-	 */
-	if (lookUp_unsorted (me, title)) {
-		Melder_free (title);   // memory leak repaired, ppgb 20061228
+		Check whether a page with this title is already present.
+	*/
+	if (lookUp_unsorted (me, title.get())) {
 		return;
 	}
 
 	autoManPage autopage = Thing_new (ManPage);
-	autopage -> title = title;
-	ManPage page = autopage.get();
+	autopage -> title = title.move();
 
 	/*
-	 * Add the page early, so that lookUp can find it.
-	 */
-	my pages. addItem_move (autopage.move());
+		Add the page early, so that lookUp can find it.
+	*/
+	ManPage page = my pages. addItem_move (autopage.move());
 
 	try {
 		page -> author = texgetw16 (text);
@@ -248,21 +244,21 @@ void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, i
 	struct structManPage_Paragraph paragraphs [])
 {
 	autoManPage page = Thing_new (ManPage);
-	page -> title = title;
+	page -> title = Melder_dup (title);
 	page -> paragraphs = & paragraphs [0];
-	page -> author = author;
+	page -> author = Melder_dup (author);
 	page -> date = date;
 	my pages. addItem_move (page.move());
 }
 
 static int pageCompare (const void *first, const void *second) {
 	ManPage me = * (ManPage *) first, thee = * (ManPage *) second;
-	const char32 *p = my title, *q = thy title;
+	const char32 *p = my title.get(), *q = thy title.get();
 	for (;;) {
 		char32 plower = Melder_toLowerCase (*p), qlower = Melder_toLowerCase (*q);
 		if (plower < qlower) return -1;
 		if (plower > qlower) return 1;
-		if (plower == U'\0') return str32cmp (my title, thy title);
+		if (plower == U'\0') return str32cmp (my title.get(), thy title.get());
 		p ++, q ++;
 	}
 	return 0;   // should not occur
@@ -274,7 +270,7 @@ static integer lookUp_unsorted (ManPages me, const char32 *title) {
 	*/
 	for (integer i = 1; i <= my pages.size; i ++) {
 		ManPage page = my pages.at [i];
-		if (str32equ (page -> title, title)) return i;
+		if (str32equ (page -> title.get(), title)) return i;
 	}
 	/*
 		If that fails, try to find the upper-case variant.
@@ -285,7 +281,7 @@ static integer lookUp_unsorted (ManPages me, const char32 *title) {
 		upperTitle [0] = Melder_toUpperCase (upperTitle [0]);
 		for (integer i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
-			if (str32equ (page -> title, upperTitle)) return i;
+			if (str32equ (page -> title.get(), upperTitle)) return i;
 		}
 	}
 	return 0;
@@ -295,17 +291,15 @@ static integer lookUp_sorted (ManPages me, const char32 *title) {
 	static autoManPage dummy;
 	ManPage *page;
 	if (! dummy) dummy = Thing_new (ManPage);
-	dummy -> title = title;
-	page = (ManPage *) bsearch (& dummy, & my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);   // noexcept
-	dummy -> title = nullptr;   // undangle
+	dummy -> title = Melder_dup (title);
+	page = (ManPage *) bsearch (& dummy, & my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);   // noexcept
 	if (page) return (page - & my pages.at [1]) + 1;
 	if (Melder_isLowerCaseLetter (title [0]) || Melder_isUpperCaseLetter (title [0])) {
 		char32 caseSwitchedTitle [300];
 		Melder_sprint (caseSwitchedTitle,300, title);
 		caseSwitchedTitle [0] = Melder_isLowerCaseLetter (title [0]) ? Melder_toUpperCase (caseSwitchedTitle [0]) : Melder_toLowerCase (caseSwitchedTitle [0]);
-		dummy -> title = caseSwitchedTitle;
-		page = (ManPage *) bsearch (& dummy, & my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);   // noexcept
-		dummy -> title = nullptr;   // undangle
+		dummy -> title = Melder_dup (caseSwitchedTitle);
+		page = (ManPage *) bsearch (& dummy, & my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);   // noexcept
 		if (page) return (page - & my pages.at [1]) + 1;
 	}
 	return 0;
@@ -315,7 +309,7 @@ static void grind (ManPages me) {
 	integer ndangle = 0, jpage, grandNlinks, ilinkHither, ilinkThither;
 	integer *grandLinksHither, *grandLinksThither;
 
-	qsort (& my pages.at [1], my pages.size, sizeof (ManPage), pageCompare);
+	qsort (& my pages.at [1], integer_to_uinteger (my pages.size), sizeof (ManPage), pageCompare);
 
 	/*
 	 * First pass: count and check links: fill in nlinksHither and nlinksThither.
@@ -334,7 +328,7 @@ static void grind (ManPages me) {
 					my pages.at [jpage] -> nlinksHither ++;
 					grandNlinks ++;
 				} else {
-					MelderInfo_writeLine (U"Page \"", page -> title, U"\" contains a dangling link to \"", link, U"\".");
+					MelderInfo_writeLine (U"Page \"", page -> title.get(), U"\" contains a dangling link to \"", link, U"\".");
 					ndangle ++;
 				}
 			}
@@ -420,7 +414,7 @@ static integer ManPages_lookUp_caseSensitive (ManPages me, const char32 *title) 
 	if (! my ground) grind (me);
 	for (integer i = 1; i <= my pages.size; i ++) {
 		ManPage page = my pages.at [i];
-		if (str32equ (page -> title, title)) return i;
+		if (str32equ (page -> title.get(), title)) return i;
 	}
 	return 0;
 }
@@ -431,7 +425,7 @@ const char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles) {
 		my titles = NUMvector <const char32 *> (1, my pages.size);   // TODO
 		for (integer i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
-			my titles [i] = Melder_dup_f (page -> title);
+			my titles [i] = Melder_dup_f (page -> title.get());
 		}
 	}
 	*numberOfTitles = my pages.size;
@@ -441,7 +435,7 @@ const char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles) {
 static struct stylesInfo {
 	const char32 *htmlIn, *htmlOut;
 } stylesInfo [] = {
-{ 0 },
+{ nullptr, nullptr },
 /* INTRO: */ { U"<p>", U"</p>" },
 /* ENTRY: */ { U"<h3>", U"</h3>" },
 /* NORMAL: */ { U"<p>", U"</p>" },
@@ -813,11 +807,11 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 	ManPage_Paragraph paragraphs = page -> paragraphs;
 	MelderString_append (buffer, U"<html><head><meta name=\"robots\" content=\"index,follow\">"
 		U"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"
-		U"<title>", page -> title, U"</title></head><body bgcolor=\"#FFFFFF\">\n\n");
+		U"<title>", page -> title.get(), U"</title></head><body bgcolor=\"#FFFFFF\">\n\n");
 	MelderString_append (buffer, U"<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor=\"#CCCC00\">"
 		U"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
 		U"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
-		page -> title, U"\n</b></font></table></table>\n");
+		page -> title.get(), U"\n</b></font></table></table>\n");
 	writeParagraphsAsHtml (me, file, paragraphs, buffer);
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		integer ilink, jlink, lastParagraph = 0;
@@ -835,7 +829,8 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = true;
 			if (! alreadyShown) {
-				const char32 *title = my pages.at [page -> linksHither [ilink]] -> title, *p;
+				ManPage linkingPage = my pages.at [page -> linksHither [ilink]];
+				const char32 *title = linkingPage -> title.get(), *p;
 				MelderString_append (buffer, U"<li><a href=\"");
 				for (p = title; *p; p ++) {
 					if (p - title >= LONGEST_FILE_NAME) break;
@@ -848,7 +843,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		}
 		MelderString_append (buffer, U"</ul>\n");
 	}
-	MelderString_append (buffer, U"<hr>\n<address>\n\t<p>&copy; ", page -> author);
+	MelderString_append (buffer, U"<hr>\n<address>\n\t<p>&copy; ", page -> author.get());
 	if (page -> date) {
 		integer date = page -> date;
 		int imonth = date % 10000 / 100;
@@ -872,9 +867,9 @@ void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath) {
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
 		char32 fileName [256];
-		Melder_assert (str32len (page -> title) < 256 - 100);
-		trace (U"page ", ipage, U": ", page -> title);
-		Melder_sprint (fileName,256,  page -> title);
+		Melder_assert (str32len (page -> title.get()) < 256 - 100);
+		trace (U"page ", ipage, U": ", page -> title.get());
+		Melder_sprint (fileName,256,  page -> title.get());
 		for (char32 *p = fileName; *p; p ++)
 			if (! isAllowedFileNameCharacter (*p))
 				*p = U'_';
@@ -893,11 +888,11 @@ void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath) {
 		 */
 		autostring32 oldText;
 		try {
-			oldText.reset (MelderFile_readText (& file));
+			oldText = MelderFile_readText (& file);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
-		if (! oldText.get()   // doesn't the file exist yet?
+		if (! oldText   // doesn't the file exist yet?
 			|| str32cmp (buffer.string, oldText.get()))   // isn't the old file identical to the new text?
 		{
 			MelderFile_writeText (& file, buffer.string, kMelder_textOutputEncoding::UTF8);   // then write the new text

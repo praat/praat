@@ -32,8 +32,6 @@ Thing_implement (UiField, Thing, 0);
 
 void structUiField :: v_destroy () noexcept {
 	Melder_free (our formLabel);
-	Melder_free (our stringValue);
-	Melder_free (our stringDefaultValue);
 	if (our owned) {
 		our numericVectorVariable -> reset();
 		our numericMatrixVariable -> reset();
@@ -102,7 +100,7 @@ static void UiField_setDefault (UiField me) {
 		case _kUiField_type::NUMVEC_:
 		case _kUiField_type::NUMMAT_:
 		{
-			GuiText_setString (my text, my stringDefaultValue);
+			GuiText_setString (my text, my stringDefaultValue.get());
 		}
 		break;
 		case _kUiField_type::BOOLEAN_:
@@ -215,38 +213,34 @@ static void UiField_widgetToValue (UiField me) {
 		break;
 		case _kUiField_type::WORD_:
 		{
-			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
-			Melder_require (*Melder_findEndOfInk (my stringValue) == U'\0',
+			Melder_require (*Melder_findEndOfInk (my stringValue.get()) == U'\0',
 				U_LEFT_DOUBLE_QUOTE, my name, U_RIGHT_DOUBLE_QUOTE U" should be a single ink-word and cannot contain a space.");
-			if (my stringVariable) *my stringVariable = my stringValue;
+			if (my stringVariable) *my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
 		{
-			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
-			if (my stringVariable) *my stringVariable = my stringValue;
+			if (my stringVariable) *my stringVariable = my stringValue.get();
 		}
 		break;
 		case _kUiField_type::NUMVEC_:
 		{
-			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 			if (my numericVectorVariable) {
 				if (my owned) my numericVectorVariable -> reset();
-				Interpreter_numericVectorExpression (nullptr, my stringValue, my numericVectorVariable, & my owned);
+				Interpreter_numericVectorExpression (nullptr, my stringValue.get(), my numericVectorVariable, & my owned);
 			}
 		}
 		break;
 		case _kUiField_type::NUMMAT_:
 		{
-			Melder_free (my stringValue);
 			my stringValue = GuiText_getString (my text);
 			if (my numericMatrixVariable) {
 				if (my owned) my numericMatrixVariable -> reset();
-				Interpreter_numericMatrixExpression (nullptr, my stringValue, my numericMatrixVariable, & my owned);
+				Interpreter_numericMatrixExpression (nullptr, my stringValue.get(), my numericMatrixVariable, & my owned);
 			}
 		}
 		break;
@@ -442,7 +436,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 					case _kUiField_type::TEXT_:
 					{
 						UiHistory_write (next -- ? U", \"" : U" \"");
-						UiHistory_write_expandQuotes (field -> stringValue);
+						UiHistory_write_expandQuotes (field -> stringValue.get());
 						UiHistory_write (U"\"");
 					}
 					break;
@@ -774,7 +768,7 @@ void UiForm_finish (UiForm me) {
 				(thy options.size - 1) * Gui_RADIOBUTTON_SPACING :
 			thy type == _kUiField_type::OPTIONMENU_ ? Gui_OPTIONMENU_HEIGHT :
 			thy type == _kUiField_type::LIST_ ? LIST_HEIGHT :
-			thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue) - 1] != U'.' &&
+			thy type == _kUiField_type::LABEL_ && thy stringValue [0] != U'\0' && thy stringValue [str32len (thy stringValue.get()) - 1] != U'.' &&
 				ifield != my numberOfFields ? textFieldHeight
 				#ifdef _WIN32
 					- 6 :
@@ -837,7 +831,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::LABEL_:
 			{
-				MelderString_copy (& theFinishBuffer, field -> stringValue);
+				MelderString_copy (& theFinishBuffer, field -> stringValue.get());
 				field -> label = GuiLabel_createShown (form,
 					x, dialogWidth /* allow to extend into the margin */, y + 5, y + 5 + textFieldHeight,
 					theFinishBuffer.string, 0);
@@ -991,10 +985,10 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			next && (next -> type == _kUiField_type::TEXT_ || next -> type == _kUiField_type::NUMVEC_ || next -> type == _kUiField_type::NUMMAT_);
 		bool weLabelTheFollowingField =
 			weAreFollowedByAWideField &&
-			Melder_stringMatchesCriterion (my stringValue, kMelder_string::ENDS_WITH, U":", true);
+			Melder_stringMatchesCriterion (my stringValue.get(), kMelder_string::ENDS_WITH, U":", true);
 		bool weAreAComment = ! weLabelTheFollowingField;
 		if (weAreAComment) {
-			MelderInfo_writeLine (U"\t/* ", my stringValue, U" */");
+			MelderInfo_writeLine (U"\t/* ", my stringValue.get(), U" */");
 		}
 		return;
 	}
@@ -1105,7 +1099,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 	/*
 		Get the example.
 	*/
-	const char32 *example = my stringDefaultValue;
+	const char32 *example = my stringDefaultValue.get();   // BUG dangle
 	bool exampleIsAvailable = ( example && example [0] != U'\0' );
 
 	if (exampleIsAvailable) {
@@ -1113,7 +1107,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 			Split up the default string.
 		*/
 		char32 defaultValue [100], defaultComment [100];
-		str32cpy (defaultValue, my stringDefaultValue);
+		str32cpy (defaultValue, my stringDefaultValue.get());
 		str32cpy (defaultComment, U"");
 		if (unitsAreAvailable) {
 			char32 *parenthesis = str32chr (defaultValue, U'(');
@@ -1230,7 +1224,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"Argument \"", my name, U"\" should be a string, not ", Stackel_whichText (arg), U".");
 			Melder_free (my stringValue);
 			my stringValue = Melder_dup (arg -> string);
-			if (my stringVariable) *my stringVariable = my stringValue;
+			if (my stringVariable) *my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
 		case _kUiField_type::NUMVEC_:
@@ -1412,7 +1406,7 @@ static void UiField_stringToValue (UiField me, const char32 *string, Interpreter
 		{
 			Melder_free (my stringValue);
 			my stringValue = Melder_dup_f (string);
-			if (my stringVariable) *my stringVariable = my stringValue;
+			if (my stringVariable) *my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
 		case _kUiField_type::BOOLEAN_:
@@ -1577,15 +1571,15 @@ void UiForm_setReal (UiForm me, double *p_variable, double value) {
 				case _kUiField_type::REAL_OR_UNDEFINED_:
 				case _kUiField_type::POSITIVE_:
 				{
-					if (value == Melder_atof (field -> stringDefaultValue)) {
-						GuiText_setString (field -> text, field -> stringDefaultValue);
+					if (value == Melder_atof (field -> stringDefaultValue.get())) {
+						GuiText_setString (field -> text, field -> stringDefaultValue.get());
 					} else {
 						char32 s [40];
 						str32cpy (s, Melder_double (value));
 						/*
 							If the default is overtly real, the shown value should be as well.
 						*/
-						if ((str32chr (field -> stringDefaultValue, U'.') || str32chr (field -> stringDefaultValue, U'e')) &&
+						if ((str32chr (field -> stringDefaultValue.get(), U'.') || str32chr (field -> stringDefaultValue.get(), U'e')) &&
 							! (str32chr (s, U'.') || str32chr (s, U'e')))
 						{
 							str32cpy (s + str32len (s), U".0");
@@ -1639,8 +1633,8 @@ void UiForm_setInteger (UiForm me, integer *p_variable, integer value) {
 				case _kUiField_type::NATURAL_:
 				case _kUiField_type::CHANNEL_:
 				{
-					if (value == Melder_atoi (field -> stringDefaultValue)) {
-						GuiText_setString (field -> text, field -> stringDefaultValue);
+					if (value == Melder_atoi (field -> stringDefaultValue.get())) {
+						GuiText_setString (field -> text, field -> stringDefaultValue.get());
 					} else {
 						GuiText_setString (field -> text, Melder_integer (value));
 					}
@@ -1938,7 +1932,7 @@ char32 * UiForm_getString (UiForm me, const char32 *fieldName) {
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
 		{
-			return field -> stringValue;
+			return field -> stringValue.get();   // BUG dangle
 		}
 		break;
 		case _kUiField_type::RADIO_:
@@ -1969,7 +1963,7 @@ char32 * UiForm_getString_check (UiForm me, const char32 *fieldName) {
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
 		{
-			return field -> stringValue;
+			return field -> stringValue.get();
 		}
 		break;
 		case _kUiField_type::RADIO_:
@@ -2072,7 +2066,7 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				Melder_free (var -> stringValue);
-				var -> stringValue = Melder_dup (field -> stringValue);
+				var -> stringValue = Melder_dup (field -> stringValue.get());
 			}
 			break;
 			case _kUiField_type::COLOUR_:

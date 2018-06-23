@@ -105,11 +105,11 @@ int64 MelderReadText_getNumberOfLines (MelderReadText me) {
 	if (my string32) {
 		char32 *p = & my string32 [0];
 		for (; *p != U'\0'; p ++) if (*p == U'\n') n ++;
-		if (p - my string32 > 1 && p [-1] != U'\n') n ++;
+		if (p - & my string32 [0] > 1 && p [-1] != U'\n') n ++;
 	} else {
 		char *p = & my string8 [0];
 		for (; *p != '\0'; p ++) if (*p == '\n') n ++;
-		if (p - my string8 > 1 && p [-1] != '\n') n ++;
+		if (p - & my string8 [0] > 1 && p [-1] != '\n') n ++;
 	}
 	return n;
 }
@@ -117,13 +117,13 @@ int64 MelderReadText_getNumberOfLines (MelderReadText me) {
 const char32 * MelderReadText_getLineNumber (MelderReadText me) {
 	int64 result = 1;
 	if (my string32) {
-		char32 *p = my string32;
+		char32 *p = & my string32 [0];
 		while (my readPointer32 - p > 0) {
 			if (*p == U'\0' || *p == U'\n') result ++;
 			p ++;
 		}
 	} else {
-		char *p = my string8;
+		char *p = & my string8 [0];
 		while (my readPointer8 - p > 0) {
 			if (*p == '\0' || *p == '\n') result ++;
 			p ++;
@@ -151,7 +151,7 @@ static size_t fread_multi (char *buffer, size_t numberOfBytes, FILE *f) {
 	return numberOfBytesRead;
 }
 
-static char32 * _MelderFile_readText (MelderFile file, char **string8) {
+static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8) {
 	try {
 		int type = 0;   // 8-bit
 		autostring32 text;
@@ -210,11 +210,11 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 				}
 			}
 			if (string8) {
-				*string8 = text8bit.transfer();
-				(void) Melder_killReturns_inplace (*string8);
-				return nullptr;   // OK
+				*string8 = text8bit.move();
+				(void) Melder_killReturns_inplace (string8->get());
+				return autostring32();   // OK
 			} else {
-				text.reset (Melder_8to32 (text8bit.get(), kMelder_textInputEncoding::UNDEFINED));
+				text = Melder_8to32 (text8bit.get(), kMelder_textInputEncoding::UNDEFINED);
 			}
 		} else {
 			length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes
@@ -264,17 +264,17 @@ static char32 * _MelderFile_readText (MelderFile file, char **string8) {
 					}
 				}
 			}
-			text [length] = '\0';
+			text [length] = U'\0';
 			(void) Melder_killReturns_inplace (text.get());
 		}
 		f.close (file);
-		return text.transfer();
+		return text;
 	} catch (MelderError) {
 		Melder_throw (U"Error reading file ", file, U".");
 	}
 }
 
-char32 * MelderFile_readText (MelderFile file) {
+autostring32 MelderFile_readText (MelderFile file) {
 	return _MelderFile_readText (file, nullptr);
 }
 
@@ -292,7 +292,7 @@ MelderReadText MelderReadText_createFromFile (MelderFile file) {
 			my input8Encoding == kMelder_textInputEncoding::UTF8_THEN_WINDOWS_LATIN1 ||
 			my input8Encoding == kMelder_textInputEncoding::UTF8_THEN_MACROMAN)
 		{
-			if (Melder_str8IsValidUtf8 (my string8)) {
+			if (Melder_str8IsValidUtf8 (my string8.get())) {
 				my input8Encoding = kMelder_textInputEncoding::UTF8;
 			} else if (my input8Encoding == kMelder_textInputEncoding::UTF8) {
 				Melder_throw (U"Text is not valid UTF-8; please try a different text input encoding.");
@@ -312,8 +312,6 @@ MelderReadText MelderReadText_createFromString (const char32 *string);
 
 void MelderReadText_delete (MelderReadText me) {
 	if (! me) return;
-	Melder_free (my string32);
-	Melder_free (my string8);
 	Melder_free (me);
 }
 

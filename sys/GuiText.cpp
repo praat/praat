@@ -705,7 +705,7 @@ void GuiText_cut (GuiText me) {
 	#endif
 }
 
-char32 * GuiText_getSelection (GuiText me) {
+autostring32 GuiText_getSelection (GuiText me) {
 	#if gtk
 		// first = gtk_text_iter_get_offset (& start);
 		// last = gtk_text_iter_get_offset (& end);
@@ -755,7 +755,7 @@ char32 * GuiText_getSelection (GuiText me) {
 		integer length = end - start;
 		if (length > 0) {
 			char32 *result = Melder_malloc_f (char32, length + 1);
-			memcpy (result, & selection [start], length * sizeof (char32));
+			memcpy (result, & selection [start], integer_to_uinteger (length) * sizeof (char32));
 			result [length] = U'\0';
 			(void) Melder_killReturns_inplace (result);
 			return result;
@@ -764,12 +764,12 @@ char32 * GuiText_getSelection (GuiText me) {
 	return nullptr;   // zero characters selected
 }
 
-char32 * GuiText_getString (GuiText me) {
+autostring32 GuiText_getString (GuiText me) {
 	integer first, last;
 	return GuiText_getStringAndSelectionPosition (me, & first, & last);
 }
 
-char32 * GuiText_getStringAndSelectionPosition (GuiText me, integer *first, integer *last) {
+autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, integer *last) {
 	#if gtk
 		if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_ENTRY) {
 			gint first_gint, last_gint;
@@ -822,8 +822,8 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, integer *first, inte
 			char32 *result = Melder_8to32 ([nsString UTF8String]);
 			trace (U"string ", result);
 			NSRange nsRange = [my d_cocoaTextView   selectedRange];
-			*first = nsRange. location;
-			*last = *first + nsRange. length;
+			*first = uinteger_to_integer (nsRange. location);
+			*last = *first + uinteger_to_integer (nsRange. length);
 			for (integer i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
 			for (integer i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
 			return result;
@@ -832,8 +832,8 @@ char32 * GuiText_getStringAndSelectionPosition (GuiText me, integer *first, inte
 			char32 *result = Melder_8to32 ([nsString UTF8String]);
 			trace (U"string ", result);
 			NSRange nsRange = [[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] selectedRange];
-			*first = nsRange. location;
-			*last = *first + nsRange. length;
+			*first = uinteger_to_integer (nsRange. location);
+			*last = *first + uinteger_to_integer (nsRange. length);
 			for (integer i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
 			for (integer i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
 			return result;
@@ -939,7 +939,7 @@ void GuiText_replace (GuiText me, integer from_pos, integer to_pos, const char32
 			}
 			from_pos += numberOfLeadingHighUnicodeValues;
 			to_pos += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
-			NSRange nsRange = NSMakeRange (from_pos, to_pos - from_pos);
+			NSRange nsRange = NSMakeRange (integer_to_uinteger (from_pos), integer_to_uinteger (to_pos - from_pos));
 			NSString *nsString = (NSString *) Melder_peek32toCfstring (text);
 			[my d_cocoaTextView   shouldChangeTextInRange: nsRange   replacementString: nsString];   // ignore the returned BOOL: only interested in the side effect of having undo support
 			[[my d_cocoaTextView   textStorage] replaceCharactersInRange: nsRange   withString: nsString];
@@ -1076,7 +1076,7 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
 
 		if (my d_cocoaTextView) {
-			[my d_cocoaTextView   setSelectedRange: NSMakeRange (first, last - first)];
+			[my d_cocoaTextView   setSelectedRange: NSMakeRange (integer_to_uinteger (first), integer_to_uinteger (last - first))];
 		}
 	#endif
 	}
