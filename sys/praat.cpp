@@ -1762,11 +1762,11 @@ void praat_run () {
 			{// scope
 				autostring32 buttons;
 				try {
-					buttons.reset (MelderFile_readText (& buttonsFile));
+					buttons = MelderFile_readText (& buttonsFile);
 				} catch (MelderError) {
 					Melder_clearError ();
 				}
-				if (buttons.get()) {
+				if (buttons) {
 					char32 *line = buttons.get();
 					for (;;) {
 						char32 *newline = str32chr (line, U'\n');

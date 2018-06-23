@@ -107,7 +107,7 @@ Thing_define (UiField, Thing) {
 	const char32 *formLabel;
 	double realValue;
 	integer integerValue, integerDefaultValue;
-	char32 *stringValue; const char32 *stringDefaultValue;
+	autostring32 stringValue, stringDefaultValue;
 	autonumvec numericVectorValue;
 	autonummat numericMatrixValue;
 	Graphics_Colour colourValue;

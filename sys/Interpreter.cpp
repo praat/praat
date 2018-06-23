@@ -105,9 +105,9 @@ autoInterpreter Interpreter_createFromEnvironment (Editor editor) {
 	return Interpreter_create (editor -> name, editor -> classInfo);
 }
 
-void Melder_includeIncludeFiles (char32 **text) {
+void Melder_includeIncludeFiles (autostring32 *text) {
 	for (int depth = 0; ; depth ++) {
-		char32 *head = *text;
+		char32 *head = text->get();
 		integer numberOfIncludes = 0;
 		if (depth > 10)
 			Melder_throw (U"Include files nested too deep. Probably cyclic.");
@@ -143,30 +143,29 @@ void Melder_includeIncludeFiles (char32 **text) {
 			Melder_relativePathToFile (includeFileName, & includeFile);
 			autostring32 includeText;
 			try {
-				includeText.reset (MelderFile_readText (& includeFile));
+				includeText = MelderFile_readText (& includeFile);
 			} catch (MelderError) {
 				Melder_throw (U"Include file ", & includeFile, U" not read.");
 			}
 			/*
 				Construct the new text.
 			 */
-			headLength = (head - *text) + str32len (head);
+			headLength = (head - text->get()) + str32len (head);
 			includeTextLength = str32len (includeText.get());
 			newLength = headLength + includeTextLength + 1 + str32len (tail);
 			newText = Melder_malloc (char32, newLength + 1);
-			str32cpy (newText, *text);
+			str32cpy (newText, text->get());
 			str32cpy (newText + headLength, includeText.get());
 			str32cpy (newText + headLength + includeTextLength, U"\n");
 			str32cpy (newText + headLength + includeTextLength + 1, tail);
 			/*
 				Replace the old text with the new. This will work even within an autostring.
 			 */
-			Melder_free (*text);
-			*text = newText;
+			text->reset (newText);
 			/*
 				Cycle.
 			 */
-			head = *text + headLength + includeTextLength + 1;
+			head = text->get() + headLength + includeTextLength + 1;
 		}
 		if (numberOfIncludes == 0) break;
 	}
@@ -1996,10 +1995,10 @@ void Interpreter_run (Interpreter me, char32 *text) {
 							structMelderFile file { };
 							Melder_relativePathToFile (p, & file);
 							if (typeOfAssignment == 2) {
-								char32 *stringValue = MelderFile_readText (& file);
+								autostring32 stringValue = MelderFile_readText (& file);
 								InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 								Melder_free (var -> stringValue);
-								var -> stringValue = stringValue;   /* var becomes owner */
+								var -> stringValue = stringValue.transfer();   /* var becomes owner */
 							} else if (typeOfAssignment == 3) {
 								if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw (U"Commands that write to a file are not available inside pictures.");
 								InterpreterVariable var = Interpreter_hasVariable (me, variableName);

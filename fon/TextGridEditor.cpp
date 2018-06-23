@@ -837,12 +837,12 @@ static void findInTier (TextGridEditor me) {
 			TextInterval interval = tier -> intervals.at [iinterval];
 			char32 *text = interval -> text;
 			if (text) {
-				char32 *position = str32str (text, my findString);
+				char32 *position = str32str (text, my findString.get());
 				if (position) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
 					scrollToView (me, my startSelection);
-					GuiText_setSelection (my text, position - text, position - text + str32len (my findString));
+					GuiText_setSelection (my text, position - text, position - text + str32len (my findString.get()));
 					return;
 				}
 			}
@@ -857,11 +857,11 @@ static void findInTier (TextGridEditor me) {
 			TextPoint point = tier->points.at [ipoint];
 			char32 *text = point -> mark;
 			if (text) {
-				char32 *position = str32str (text, my findString);
+				char32 *position = str32str (text, my findString.get());
 				if (position) {
 					my startSelection = my endSelection = point -> number;
 					scrollToView (me, point -> number);
-					GuiText_setSelection (my text, position - text, position - text + str32len (my findString));
+					GuiText_setSelection (my text, position - text, position - text + str32len (my findString.get()));
 					return;
 				}
 			}
@@ -876,9 +876,9 @@ static void do_find (TextGridEditor me) {
 	if (my findString) {
 		integer left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
-		char32 *position = str32str (label.get() + right, my findString);   // CRLF BUG?
+		char32 *position = str32str (label.get() + right, my findString.get());   // CRLF BUG?
 		if (position) {
-			GuiText_setSelection (my text, position - label.get(), position - label.get() + str32len (my findString));
+			GuiText_setSelection (my text, position - label.get(), position - label.get() + str32len (my findString.get()));
 		} else {
 			findInTier (me);
 		}
@@ -890,8 +890,7 @@ static void menu_cb_Find (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TEXTFIELD (findString, U"Text:", U"")
 	EDITOR_OK
 	EDITOR_DO
-		Melder_free (my findString);
-		my findString = Melder_dup_f (findString);
+		my findString = Melder_dup (findString);
 		do_find (me);
 	EDITOR_END
 }
@@ -1276,7 +1275,7 @@ static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 				TextPoint point = textTier -> points.at [selectedPoint];
 				Melder_free (point -> mark);
 				if (str32spn (text.get(), U" \n\t") != str32len (text.get()))   // any visible characters?
-				point -> mark = Melder_dup_f (text.get());
+					point -> mark = Melder_dup_f (text.get());
 				FunctionEditor_redraw (me);
 				Editor_broadcastDataChanged (me);
 			}

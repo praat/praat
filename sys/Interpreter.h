@@ -66,7 +66,7 @@ Thing_define (Interpreter, Thing) {
 autoInterpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass);
 autoInterpreter Interpreter_createFromEnvironment (Editor editor);
 
-void Melder_includeIncludeFiles (char32 **text);
+void Melder_includeIncludeFiles (autostring32 *text);
 integer Interpreter_readParameters (Interpreter me, char32 *text);
 Thing_declare (UiForm);
 UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *fileName,

@@ -93,11 +93,9 @@ static void menu_cb_learnOne (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 	EDITOR_DO
 		Editor_save (me, U"Learn one");
-		Melder_free (my form1);
-		Melder_free (my form2);
 		my form1 = GuiText_getString (my form1Text);
 		my form2 = GuiText_getString (my form2Text);
-		OTMulti_learnOne ((OTMulti) my data, my form1, my form2,
+		OTMulti_learnOne ((OTMulti) my data, my form1.get(), my form2.get(),
 			updateRule, direction,
 			plasticity, relativePlasticitySpreading);
 		Graphics_updateWs (my graphics.get());
@@ -133,8 +131,6 @@ static void menu_cb_OTLearningTutorial (OTMultiEditor, EDITOR_ARGS_DIRECT) {
 }
 
 static void do_limit (OTMultiEditor me) {
-	Melder_free (my form1);
-	Melder_free (my form2);
 	my form1 = GuiText_getString (my form1Text);
 	my form2 = GuiText_getString (my form2Text);
 	Graphics_updateWs (my graphics.get());
@@ -203,12 +199,12 @@ void structOTMultiEditor :: v_draw () {
 	Graphics_setAtSignIsLink (graphics.get(), false);
 	drawTableau_grammar = grammar;
 	for (integer icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
-		if (OTMulti_candidateMatches (grammar, icand, form1, form2)) {
+		if (OTMulti_candidateMatches (grammar, icand, our form1.get(), our form2.get())) {
 			tableauHeight += rowHeight;
 		}
 	}
-	drawTableau_form1 = form1;
-	drawTableau_form2 = form2;
+	drawTableau_form1 = our form1.get();   // BUG: dangle
+	drawTableau_form2 = our form2.get();
 	drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
 	HyperPage_picture (this, 20, tableauHeight, drawTableau);
 	Graphics_setAtSignIsLink (graphics.get(), true);

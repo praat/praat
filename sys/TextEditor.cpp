@@ -424,25 +424,25 @@ static bool getSelectedLines (TextEditor me, integer *firstLine, integer *lastLi
 	return true;
 }
 
-static char32 *theFindString = nullptr, *theReplaceString = nullptr;
+static autostring32 theFindString, theReplaceString;
 static void do_find (TextEditor me) {
 	if (! theFindString) return;   // e.g. when the user does "Find again" before having done any "Find"
 	integer left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
-	char32 *location = str32str (& text [right], theFindString);
+	char32 *location = str32str (& text [right], theFindString.get());
 	if (location) {
 		integer index = location - text.get();
-		GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
+		GuiText_setSelection (my textWidget, index, index + str32len (theFindString.get()));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
 			GuiThing_show (my windowForm);
 		#endif
 	} else {
 		/* Try from the start of the document. */
-		location = str32str (text.get(), theFindString);
+		location = str32str (text.get(), theFindString.get());
 		if (location) {
 			integer index = location - text.get();
-			GuiText_setSelection (my textWidget, index, index + str32len (theFindString));
+			GuiText_setSelection (my textWidget, index, index + str32len (theFindString.get()));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32
 				GuiThing_show (my windowForm);
@@ -456,14 +456,14 @@ static void do_find (TextEditor me) {
 static void do_replace (TextEditor me) {
 	if (! theReplaceString) return;   // e.g. when the user does "Replace again" before having done any "Replace"
 	autostring32 selection = GuiText_getSelection (my textWidget);
-	if (! Melder_equ (selection.get(), theFindString)) {
+	if (! Melder_equ (selection.get(), theFindString.get())) {
 		do_find (me);
 		return;
 	}
 	integer left, right;
 	autostring32 text = GuiText_getStringAndSelectionPosition (my textWidget, & left, & right);
-	GuiText_replace (my textWidget, left, right, theReplaceString);
-	GuiText_setSelection (my textWidget, left, left + str32len (theReplaceString));
+	GuiText_replace (my textWidget, left, right, theReplaceString.get());
+	GuiText_setSelection (my textWidget, left, left + str32len (theReplaceString.get()));
 	GuiText_scrollToSelection (my textWidget);
 	#ifdef _WIN32
 		GuiThing_show (my windowForm);
@@ -474,10 +474,9 @@ static void menu_cb_find (TextEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Find", nullptr)
 		TEXTFIELD (findString, U"Find:", U"")
 	EDITOR_OK
-		if (theFindString) SET_STRING (findString, theFindString);
+		if (theFindString) SET_STRING (findString, theFindString.get());
 	EDITOR_DO
-		Melder_free (theFindString);
-		theFindString = Melder_dup_f (findString);
+		theFindString = Melder_dup (findString);
 		do_find (me);
 	EDITOR_END
 }
@@ -496,12 +495,10 @@ static void menu_cb_replace (TextEditor me, EDITOR_ARGS_FORM) {
 		TEXTFIELD (findString, U"Find:", U"")
 		TEXTFIELD (replaceString, U"Replace with:", U"")
 	EDITOR_OK
-		if (theFindString) SET_STRING (findString, theFindString);
-		if (theReplaceString) SET_STRING (replaceString, theReplaceString);
+		if (theFindString) SET_STRING (findString, theFindString.get());
+		if (theReplaceString) SET_STRING (replaceString, theReplaceString.get());
 	EDITOR_DO
-		Melder_free (theFindString);
 		theFindString = Melder_dup (findString);
-		Melder_free (theReplaceString);
 		theReplaceString = Melder_dup (replaceString);
 		do_replace (me);
 	EDITOR_END
