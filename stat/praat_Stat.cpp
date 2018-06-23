@@ -903,7 +903,7 @@ FORM (NEW_Table_collapseRows, U"Table: Collapse rows", nullptr) {
 	TEXTFIELD (columnsToSum, U"Columns to sum:", U"number cost")
 	TEXTFIELD (columnsToAverage, U"Columns to average:", U"price")
 	TEXTFIELD (columnsToMedianize, U"Columns to medianize:", U"vot")
-	TEXTFIELD (columnsToAverageLogarithmically, U"olumns to average logarithmically:", U"duration")
+	TEXTFIELD (columnsToAverageLogarithmically, U"Columns to average logarithmically:", U"duration")
 	TEXTFIELD (columnsToMedianizeLogarithmically, U"Columns to medianize logarithmically:", U"F0 F1 F2 F3")
 	LABEL (U"Columns not mentioned above will be ignored.")
 	OK
