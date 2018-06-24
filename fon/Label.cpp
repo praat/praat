@@ -1,6 +1,6 @@
 /* Label.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ Thing_implement (Autosegment, Function, 0);
 void structAutosegment :: v_copy (Daata thee_Daata) {
 	Autosegment thee = static_cast <Autosegment> (thee_Daata);
 	Autosegment_Parent :: v_copy (thee);
-	if (name) Thing_setName (thee, name);
+	if (name) Thing_setName (thee, name.get());
 }
 
 bool structAutosegment :: v_equal (Daata thee_Daata) {
@@ -31,7 +31,7 @@ bool structAutosegment :: v_equal (Daata thee_Daata) {
 	if (! Autosegment_Parent :: v_equal (thee)) return false;
 	if (! our name && ! thy name) return true;   // shortcut: no names
 	if (! our name || ! thy name) return false;
-	return str32equ (name, thy name);
+	return str32equ (our name.get(), thy name.get());
 }
 
 static struct structData_Description theAutosegment_description [] = {

@@ -1,6 +1,6 @@
 /* ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2011,2013,2016,2017 Paul Boersma
+ * Copyright (C) 2001-2009,2011-2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -443,7 +443,7 @@ autoTable ResultsMFCs_to_Table (OrderedOf<structResultsMFC>* me) {
 			ResultsMFC results = my at [iresults];
 			for (integer itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
-				Table_setStringValue (thee.get(), irow, 1, results -> name);
+				Table_setStringValue (thee.get(), irow, 1, results -> name.get());
 				Table_setStringValue (thee.get(), irow, 2, results -> result [itrial]. stimulus);
 				Table_setStringValue (thee.get(), irow, 3, results -> result [itrial]. response);
 				if (hasGoodnesses) {

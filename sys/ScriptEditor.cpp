@@ -68,7 +68,7 @@ static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 	autostring32 text = GuiText_getString (my textWidget);
 	structMelderFile file { };
 	if (my name [0]) {
-		Melder_pathToFile (my name, & file);
+		Melder_pathToFile (my name.get(), & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
@@ -89,7 +89,7 @@ static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stack
 		Melder_throw (U"No text is selected any longer.\nPlease reselect or click Cancel.");
 	structMelderFile file { };
 	if (my name [0]) {
-		Melder_pathToFile (my name, & file);
+		Melder_pathToFile (my name.get(), & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
@@ -108,7 +108,7 @@ static void menu_cb_run (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	trace (U"Running the following script (1):\n", text.get());
 	structMelderFile file { };
 	if (my name [0]) {
-		Melder_pathToFile (my name, & file);
+		Melder_pathToFile (my name.get(), & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
@@ -135,7 +135,7 @@ static void menu_cb_runSelection (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 		Melder_throw (U"No text selected.");
 	structMelderFile file { };
 	if (my name [0]) {
-		Melder_pathToFile (my name, & file);
+		Melder_pathToFile (my name.get(), & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
@@ -164,7 +164,7 @@ static void menu_cb_addToMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_OK
 		if (my editorClass) SET_STRING (window, my editorClass -> className)
 		if (my name [0])
-			SET_STRING (scriptFile, my name)
+			SET_STRING (scriptFile, my name.get())
 		else
 			SET_STRING (scriptFile, U"(please save your script first)")
 	EDITOR_DO
@@ -185,7 +185,7 @@ static void menu_cb_addToFixedMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 		TEXTFIELD (scriptFile, U"Script file:", U"")
 	EDITOR_OK
 		if (my name [0])
-			SET_STRING (scriptFile, my name)
+			SET_STRING (scriptFile, my name.get())
 		else
 			SET_STRING (scriptFile, U"(please save your script first)")
 	EDITOR_DO
@@ -208,7 +208,7 @@ static void menu_cb_addToDynamicMenu (ScriptEditor me, EDITOR_ARGS_FORM) {
 		TEXTFIELD (scriptFile, U"Script file:", U"")
 	EDITOR_OK
 		if (my name [0])
-			SET_STRING (scriptFile, my name)
+			SET_STRING (scriptFile, my name.get())
 		else
 			SET_STRING (scriptFile, U"(please save your script first)")
 	EDITOR_DO
@@ -246,7 +246,7 @@ static void menu_cb_expandIncludeFiles (ScriptEditor me, EDITOR_ARGS_DIRECT) {
 	structMelderFile file { };
 	autostring32 text = GuiText_getString (my textWidget);
 	if (my name [0]) {
-		Melder_pathToFile (my name, & file);
+		Melder_pathToFile (my name.get(), & file);
 		MelderFile_setDefaultDir (& file);
 	}
 	Melder_includeIncludeFiles (& text);
@@ -301,7 +301,7 @@ void structScriptEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initialText) {
 	if (environment) {
-		my environmentName = Melder_dup (environment -> name);
+		my environmentName = Melder_dup (environment -> name.get());
 		my editorClass = environment -> classInfo;
 	}
 	TextEditor_init (me, initialText);

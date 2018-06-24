@@ -576,7 +576,7 @@ static autoTextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
 			autoTextInterval textInterval = TextInterval_create (
 				iinterval == 1 ? tmin : autosegment -> xmin,
 				iinterval == tier->size ? tmax : autosegment -> xmax,
-				autosegment -> name);
+				autosegment -> name.get());
 			intervalTier -> intervals. addItem_move (textInterval.move());
 		}
 	}
@@ -1401,7 +1401,7 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 			MelderFile_write (file, U"\n");
 			writeQuotedString (file, Thing_className (anyTier));
 			MelderFile_write (file, U" ");
-			writeQuotedString (file, anyTier -> name);
+			writeQuotedString (file, anyTier -> name.get());
 			MelderFile_write (file, U" ", anyTier -> xmin, U" ", anyTier -> xmax);
 		}
 		for (;;) {
@@ -1446,13 +1446,13 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 				if (anyTier -> classInfo == classIntervalTier) {
 					IntervalTier tier = static_cast <IntervalTier> (anyTier);
 					TextInterval interval = tier -> intervals.at [firstRemainingElement];
-					if (tier -> name) MelderFile_write (file, U"\n\n! ", tier -> name, U":");
+					if (tier -> name) MelderFile_write (file, U"\n\n! ", tier -> name.get(), U":");
 					MelderFile_write (file, U"\n", firstRemainingTier, U" ", interval -> xmin, U" ", interval -> xmax);
 					texputw32 (file, interval -> text, U"", 0,0,0,0,0);
 				} else {
 					TextTier tier = static_cast <TextTier> (anyTier);
 					TextPoint point = tier -> points.at [firstRemainingElement];
-					if (tier -> name) MelderFile_write (file, U"\n\n! ", tier -> name, U":");
+					if (tier -> name) MelderFile_write (file, U"\n\n! ", tier -> name.get(), U":");
 					MelderFile_write (file, U"\n", firstRemainingTier, U" ", point -> number, U" ");
 					texputw32 (file, point -> mark, U"", 0,0,0,0,0);
 				}
@@ -1523,7 +1523,7 @@ autoTextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 				 */
 				for (integer itier = 1; itier <= my tiers->size; itier ++) {
 					IntervalTier tier = static_cast <IntervalTier> (my tiers->at [itier]);
-					if (str32equ (tier -> name, Melder_peek8to32 (speakerName))) {
+					if (str32equ (tier -> name.get(), Melder_peek8to32 (speakerName))) {
 						speakerTier = itier;
 						break;
 					}
@@ -1699,7 +1699,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 						Table_setNumericValue (thee.get(), irow, ++ icol, irow);
 					Table_setStringValue (thee.get(), irow, ++ icol, Melder_fixed (interval -> xmin, timeDecimals));
 					if (includeTierNames)
-						Table_setStringValue (thee.get(), irow, ++ icol, tier -> name);
+						Table_setStringValue (thee.get(), irow, ++ icol, tier -> name.get());
 					Table_setStringValue (thee.get(), irow, ++ icol, interval -> text);
 					Table_setStringValue (thee.get(), irow, ++ icol, Melder_fixed (interval -> xmax, timeDecimals));
 				}
@@ -1714,7 +1714,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 					Table_setNumericValue (thee.get(), irow, ++ icol, irow);
 				Table_setStringValue (thee.get(), irow, ++ icol, Melder_fixed (point -> number, timeDecimals));
 				if (includeTierNames)
-					Table_setStringValue (thee.get(), irow, ++ icol, tier -> name);
+					Table_setStringValue (thee.get(), irow, ++ icol, tier -> name.get());
 				Table_setStringValue (thee.get(), irow, ++ icol, point -> mark);
 				Table_setStringValue (thee.get(), irow, ++ icol, Melder_fixed (point -> number, timeDecimals));
 			}
@@ -1764,7 +1764,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, kMelder
 					Melder_assert (rowNumber <= numberOfRows);
 					double time = 0.5 * (interval -> xmin + interval -> xmax);
 					Table_setStringValue (thee.get(), rowNumber, 1, Melder_fixed (time, timeDecimals));
-					Table_setStringValue (thee.get(), rowNumber, 2, tier -> name);
+					Table_setStringValue (thee.get(), rowNumber, 2, tier -> name.get());
 					Table_setStringValue (thee.get(), rowNumber, 3, interval -> text);
 				}
 			}
@@ -1777,7 +1777,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, numvec searchTiers, kMelder
 					Melder_assert (rowNumber <= numberOfRows);
 					double time = point -> number;
 					Table_setStringValue (thee.get(), rowNumber, 1, Melder_fixed (time, timeDecimals));
-					Table_setStringValue (thee.get(), rowNumber, 2, tier -> name);
+					Table_setStringValue (thee.get(), rowNumber, 2, tier -> name.get());
 					Table_setStringValue (thee.get(), rowNumber, 3, point -> mark);
 				}
 			}

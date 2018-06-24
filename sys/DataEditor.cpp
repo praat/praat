@@ -1,6 +1,6 @@
 /* DataEditor.cpp
  *
- * Copyright (C) 1995-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1995-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -511,7 +511,7 @@ static void showStructMembers (DataSubEditor me, void *structAddress, Data_Descr
 }
 
 void structStructEditor :: v_showMembers () {
-	showStructMembers (this, d_address, d_description, d_topField, name);
+	showStructMembers (this, our d_address, our d_description, our d_topField, our name.get());
 }
 
 static void StructEditor_init (StructEditor me, DataEditor root, const char32 *title, void *address, Data_Description description) {
@@ -541,28 +541,28 @@ integer structVectorEditor :: v_countFields () {
 }
 
 void structVectorEditor :: v_showMembers () {
-	int type = d_description -> type, isSingleType = type <= maxsingletypewa;
+	int type = our d_description -> type, isSingleType = type <= maxsingletypewa;
 	int elementSize = type == structwa ?
 		Data_Description_countMembers (* (Data_Description *) d_description -> tagType) + 1 : 1;
 	integer firstElement = d_minimum + (d_topField - 1) / elementSize;
 
 	for (integer ielement = firstElement; ielement <= d_maximum; ielement ++) {
-		unsigned char *elementAddress = (unsigned char *) d_address + ielement * d_description -> size;
-		int skip = ielement == firstElement ? (d_topField - 1) % elementSize : 0;
+		unsigned char *elementAddress = (unsigned char *) our d_address + ielement * our d_description -> size;
+		int skip = ielement == firstElement ? (our d_topField - 1) % elementSize : 0;
 
-		if (++ d_irow > kDataSubEditor_MAXNUM_ROWS) return;
-		DataSubEditor_FieldData fieldData = & d_fieldData [d_irow];
+		if (++ our d_irow > kDataSubEditor_MAXNUM_ROWS) return;
+		DataSubEditor_FieldData fieldData = & our d_fieldData [d_irow];
 
 		if (isSingleType) {
 			GuiControl_move (fieldData -> label, 0, fieldData -> y);
 			GuiLabel_setText (fieldData -> label,
-				Melder_cat (strip_d (d_description -> name), U" [",
-					( d_description -> rank == 3 ? ((const char32 * (*) (int)) d_description -> min1) (ielement) : Melder_integer (ielement) ),
+				Melder_cat (strip_d (our d_description -> name), U" [",
+					( our d_description -> rank == 3 ? ((const char32 * (*) (int)) our d_description -> min1) (ielement) : Melder_integer (ielement) ),
 					U"]"));
 			GuiThing_show (fieldData -> label);
 
 			autoMelderString buffer;
-			const char32 *text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
+			const char32 *text = singleTypeToText (elementAddress, type, our d_description -> tagType, & buffer);
 			#if motif
 				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, 60, nullptr);   // TODO: change to GuiObject_size
 			#endif
@@ -572,7 +572,7 @@ void structVectorEditor :: v_showMembers () {
 			fieldData -> description = d_description;
 		} else if (type == structwa) {
 			static MelderString history { };
-			MelderString_copy (& history, name);
+			MelderString_copy (& history, our name.get());
 
 			/* Replace things like [1..100] by things like [19]. */
 
@@ -585,7 +585,7 @@ void structVectorEditor :: v_showMembers () {
 			MelderString_append (& history, U"[", ielement, U"]");
 
 			if (skip) {
-				d_irow --;
+				our d_irow --;
 			} else {
 				GuiControl_move (fieldData -> label, 0, fieldData -> y);
 				GuiLabel_setText (fieldData -> label,
@@ -595,7 +595,7 @@ void structVectorEditor :: v_showMembers () {
 			showStructMembers (this, elementAddress, * (Data_Description *) d_description -> tagType, skip, history.string);
 		} else if (type == objectwa || type == autoobjectwa) {
 			static MelderString history { };
-			MelderString_copy (& history, name);
+			MelderString_copy (& history, our name.get());
 			if (history.string [history.length - 1] == U']') {
 				char32 *openingBracket = str32rchr (history.string, U'[');
 				Melder_assert (openingBracket != nullptr);
@@ -605,7 +605,7 @@ void structVectorEditor :: v_showMembers () {
 			MelderString_append (& history, U"[", ielement, U"]");
 
 			GuiControl_move (fieldData -> label, 0, fieldData -> y);
-			GuiLabel_setText (fieldData -> label, Melder_cat (strip_d (d_description -> name), U" [", ielement, U"]"));
+			GuiLabel_setText (fieldData -> label, Melder_cat (strip_d (our d_description -> name), U" [", ielement, U"]"));
 			GuiThing_show (fieldData -> label);
 
 			Daata object = * (Daata *) elementAddress;
@@ -711,7 +711,7 @@ static void ClassEditor_showMembers_recursive (ClassEditor me, ClassInfo klas) {
 		classFieldsTraversed = Data_Description_countMembers (Class_getDescription (parentClass));
 		//Melder_casual (U"ClassEditor_showMembers_recursive: classFieldsTraversed = ", classFieldsTraversed);
 	}
-	showStructMembers (me, my d_address, description, my d_irow ? 1 : my d_topField - classFieldsTraversed, my name);
+	showStructMembers (me, my d_address, description, my d_irow ? 1 : my d_topField - classFieldsTraversed, my name.get());
 }
 
 void structClassEditor :: v_showMembers () {

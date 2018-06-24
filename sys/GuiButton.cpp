@@ -1,6 +1,6 @@
 /* GuiButton.cpp
  *
- * Copyright (C) 1993-2012,2015,2016,2017 Paul Boersma,
+ * Copyright (C) 1993-2008,2010-2018 Paul Boersma,
  *               2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
@@ -105,7 +105,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Your click on button \"", my name, U"\" was not completely handled.");
+				Melder_flushError (U"Your click on button \"", my name.get(), U"\" was not completely handled.");
 			}
 		}
 	}

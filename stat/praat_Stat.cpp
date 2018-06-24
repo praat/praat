@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ FORM (NEW_Distributions_to_Strings, U"To Strings", nullptr) {
 DO
 	CONVERT_EACH (Distributions)
 		autoStrings result = Distributions_to_Strings (me, columnNumber, numberOfStrings);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Distributions_to_Strings_exact, U"To Strings (exact)", nullptr) {
@@ -85,7 +85,7 @@ FORM (NEW_Distributions_to_Strings_exact, U"To Strings (exact)", nullptr) {
 DO
 	CONVERT_EACH (Distributions)
 		autoStrings result = Distributions_to_Strings_exact (me, columnNumber);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 // MARK: - LOGISTICREGRESSION
@@ -200,7 +200,7 @@ DO
 DIRECT (NEW_PairDistribution_to_Table) {
 	CONVERT_EACH (PairDistribution)
 		autoTable result = PairDistribution_to_Table (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 // MARK: - PAIRDISTRIBUTION & DISTRIBUTIONS
@@ -911,7 +911,7 @@ DO
 	CONVERT_EACH (Table)
 		autoTable result = Table_collapseRows (me, factors, columnsToSum, columnsToAverage,
 			columnsToMedianize, columnsToAverageLogarithmically, columnsToMedianizeLogarithmically);
-	CONVERT_EACH_END (my name, U"_pooled")
+	CONVERT_EACH_END (my name.get(), U"_pooled")
 }
 
 DIRECT (NEW1_Tables_append) {
@@ -929,7 +929,7 @@ DO
 	CONVERT_EACH (Table)
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_number (me, columnNumber, (kMelder_number) ___is___, ___theNumber);
-	CONVERT_EACH_END (my name, U"_", Table_messageColumn (me, columnNumber), U"_",
+	CONVERT_EACH_END (my name.get(), U"_", Table_messageColumn (me, columnNumber), U"_",
 		isdefined (___theNumber) ? Melder_integer (Melder_iround (___theNumber)) : U"undefined")
 }
 
@@ -942,13 +942,13 @@ DO
 	CONVERT_EACH (Table)
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
 		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, (kMelder_string) ___, ___theText);
-	CONVERT_EACH_END (my name, U"_", ___theText)
+	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 DIRECT (NEW_Table_transpose) {
 	CONVERT_EACH (Table)
 		autoTable result = Table_transpose (me);
-	CONVERT_EACH_END (my name, U"_transposed");
+	CONVERT_EACH_END (my name.get(), U"_transposed");
 }
 
 FORM (NEW_Table_rowsToColumns, U"Table: Rows to columns", nullptr) {
@@ -961,13 +961,13 @@ DO
 	CONVERT_EACH (Table)
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnToTranspose);
 		autoTable result = Table_rowsToColumns (me, factors, columnNumber, columnsToExpand);
-	CONVERT_EACH_END (my name, U"_nested")
+	CONVERT_EACH_END (my name.get(), U"_nested")
 }
 
 DIRECT (NEW_Table_to_LinearRegression) {
 	CONVERT_EACH (Table)
 		autoLinearRegression result = Table_to_LinearRegression (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr) {
@@ -978,7 +978,7 @@ FORM (NEW_Table_to_LogisticRegression, U"Table: To LogisticRegression", nullptr)
 DO
 	CONVERT_EACH (Table)
 		autoLogisticRegression result = Table_to_LogisticRegression (me, factors, dependent1, dependent2);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Table_downto_TableOfReal, U"Table: Down to TableOfReal", nullptr) {
@@ -988,7 +988,7 @@ DO
 	CONVERT_EACH (Table)
 		integer columnNumber = Table_findColumnIndexFromColumnLabel (me, columnForRowLabels);
 		autoTableOfReal result = Table_to_TableOfReal (me, columnNumber);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW1_TableOfReal_create, U"Create TableOfReal", nullptr) {

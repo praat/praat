@@ -152,7 +152,7 @@ DO
 		autoTable result = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
 			includeClamped, includeActivity, includeExcitation, activityDecimals);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 // MARK: Query
@@ -650,20 +650,20 @@ FORM (NEW_OTGrammar_generateInputs, U"Generate inputs", U"OTGrammar: Generate in
 DO
 	CONVERT_EACH (OTGrammar)
 		autoStrings result = OTGrammar_generateInputs (me, numberOfTrials);
-	CONVERT_EACH_END (my name, U"_in")
+	CONVERT_EACH_END (my name.get(), U"_in")
 }
 
 DIRECT (NEW_OTGrammar_getInputs) {
 	CONVERT_EACH (OTGrammar)
 		autoStrings result = OTGrammar_getInputs (me);
-	CONVERT_EACH_END (my name, U"_in")
+	CONVERT_EACH_END (my name.get(), U"_in")
 }
 
 DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
 	LOOP try {
 		iam (OTGrammar);
 		autoDistributions thee = OTGrammar_measureTypology_WEAK (me);
-		praat_new (thee.move(), my name, U"_out");
+		praat_new (thee.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
@@ -703,7 +703,7 @@ FORM (NEW1_MODIFY_OTGrammar_inputToOutputs, U"OTGrammar: Input to outputs", U"OT
 DO
 	FIND_ONE (OTGrammar)
 		autoStrings thee = OTGrammar_inputToOutputs (me, inputForm, trials, evaluationNoise);
-		praat_new (thee.move(), my name, U"_out");
+		praat_new (thee.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
 	END
 }
@@ -717,7 +717,7 @@ DO
 		iam (OTGrammar);
 		try {
 			autoDistributions thee = OTGrammar_to_Distribution (me, trialsPerInput, evaluationNoise);
-			praat_new (thee.move(), my name, U"_out");
+			praat_new (thee.move(), my name.get(), U"_out");
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -734,7 +734,7 @@ DO
 	LOOP try {
 		iam (OTGrammar);
 		autoPairDistribution thee = OTGrammar_to_PairDistribution (me, trialsPerInput, evaluationNoise);
-		praat_new (thee.move(), my name, U"_out");
+		praat_new (thee.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
@@ -881,7 +881,7 @@ FORM (NEW1_MODIFY_OTGrammar_Strings_inputsToOutputs, U"OTGrammar: Inputs to outp
 DO
 	FIND_TWO (OTGrammar, Strings)
 		autoStrings result = OTGrammar_inputsToOutputs (me, you, evaluationNoise);
-		praat_new (result.move(), my name, U"_out");
+		praat_new (result.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
 	END
 }
@@ -935,7 +935,7 @@ DO
 			Melder_flushError ();
 			// trickle down to save history
 		}
-		if (history) praat_new (history.move(), my name);
+		if (history) praat_new (history.move(), my name.get());
 	END
 }
 
@@ -981,7 +981,7 @@ DO
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name);
+		if (history) praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1011,7 +1011,7 @@ DO
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name);
+		if (history) praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1041,7 +1041,7 @@ DO
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name);
+		if (history) praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1071,7 +1071,7 @@ DO
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name);
+		if (history) praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1348,7 +1348,7 @@ DO
 	FIND_ONE (OTMulti)
 		autoStrings thee = OTMulti_generateOptimalForms (me, partialForm1, partialForm2,
 			numberOfTrials, evaluationNoise);
-		praat_new (thee.move(), my name, U"_out");
+		praat_new (thee.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
 	END
 }
@@ -1365,7 +1365,7 @@ DO
 		try {
 			autoDistributions result = OTMulti_to_Distribution (me, partialForm1, partialForm2,
 				numberOfTrials, evaluationNoise);
-			praat_new (result.move(), my name, U"_out");
+			praat_new (result.move(), my name.get(), U"_out");
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -1489,7 +1489,7 @@ DO
 			Melder_flushError ();
 			// trickle down to save history
 		}
-		if (history) praat_new (history.move(), my name);
+		if (history) praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1501,7 +1501,7 @@ FORM (NEW1_MODIFY_OTMulti_Strings_generateOptimalForms, U"OTGrammar: Inputs to o
 DO
 	FIND_TWO (OTMulti, Strings)
 		autoStrings result = OTMulti_Strings_generateOptimalForms (me, you, evaluationNoide);
-		praat_new (result.move(), my name, U"_out");
+		praat_new (result.move(), my name.get(), U"_out");
 		praat_dataChanged (me);
 	END
 }
@@ -1579,25 +1579,25 @@ DO
 DIRECT (NEW_Net_extractInputActivities) {
 	CONVERT_EACH (Net)
 		autoMatrix result = Net_extractInputActivities (me);
-	CONVERT_EACH_END (my name, U"_inputActivities")
+	CONVERT_EACH_END (my name.get(), U"_inputActivities")
 }
 
 DIRECT (NEW_Net_extractOutputActivities) {
 	CONVERT_EACH (Net)
 		autoMatrix result = Net_extractOutputActivities (me);
-	CONVERT_EACH_END (my name, U"_outputActivities")
+	CONVERT_EACH_END (my name.get(), U"_outputActivities")
 }
 
 DIRECT (NEW_Net_extractInputReconstruction) {
 	CONVERT_EACH (Net)
 		autoMatrix result = Net_extractInputReconstruction (me);
-	CONVERT_EACH_END (my name, U"_inputReconstruction")
+	CONVERT_EACH_END (my name.get(), U"_inputReconstruction")
 }
 
 DIRECT (NEW_Net_extractOutputReconstruction) {
 	CONVERT_EACH (Net)
 		autoMatrix result = Net_extractOutputReconstruction (me);
-	CONVERT_EACH_END (my name, U"_outputReconstruction")
+	CONVERT_EACH_END (my name.get(), U"_outputReconstruction")
 }
 
 FORM (NEW_Net_extractInputBiases, U"Net: Extract input biases", nullptr) {
@@ -1606,7 +1606,7 @@ FORM (NEW_Net_extractInputBiases, U"Net: Extract input biases", nullptr) {
 DO
 	CONVERT_EACH (Net)
 		autoMatrix result = Net_extractInputBiases (me, layerNumber);
-	CONVERT_EACH_END (my name, U"_inputBiases")
+	CONVERT_EACH_END (my name.get(), U"_inputBiases")
 }
 
 FORM (NEW_Net_extractOutputBiases, U"Net: Extract output biases", nullptr) {
@@ -1615,7 +1615,7 @@ FORM (NEW_Net_extractOutputBiases, U"Net: Extract output biases", nullptr) {
 DO
 	CONVERT_EACH (Net)
 		autoMatrix result = Net_extractOutputBiases (me, layerNumber);
-	CONVERT_EACH_END (my name, U"_outputBiases")
+	CONVERT_EACH_END (my name.get(), U"_outputBiases")
 }
 
 FORM (NEW_Net_extractWeights, U"Net: Extract weights", nullptr) {
@@ -1624,7 +1624,7 @@ FORM (NEW_Net_extractWeights, U"Net: Extract weights", nullptr) {
 DO
 	CONVERT_EACH (Net)
 		autoMatrix result = Net_extractWeights (me, layerNumber);
-	CONVERT_EACH_END (my name, U"_weights")
+	CONVERT_EACH_END (my name.get(), U"_weights")
 }
 
 FORM (NUMMAT_Net_getWeights, U"Net: Get weigths", nullptr) {
@@ -1680,7 +1680,7 @@ FORM (NEW1_Net_PatternList_to_ActivationList, U"Net & PatternList: To Activation
 DO
 	CONVERT_TWO (Net, PatternList)
 		autoActivationList result = Net_PatternList_to_ActivationList (me, you, activationType);
-	CONVERT_TWO_END (my name, U"_", your name)
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - NOULLIGRID

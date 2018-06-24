@@ -150,7 +150,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 		TextInterval interval = headTier -> intervals.at [intervalNumber];
 		if (! includeWords && ! includePhonemes)
 			Melder_throw (U"Nothing to be done, because you asked neither for word alignment nor for phoneme alignment.");
-		if (str32str (headTier -> name, U"/") )
+		if (str32str (headTier -> name.get(), U"/") )
 			Melder_throw (U"The current tier already has a slash (\"/\") in its name. Cannot create a word or phoneme tier from it.");
 		autoSound part =
 			anySound -> classInfo == classLongSound ? 
@@ -224,12 +224,12 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 			 * Make sure that the word tier exists.
 			 */
 			autoMelderString newWordTierName;
-			MelderString_copy (& newWordTierName, headTier -> name, U"/word");
+			MelderString_copy (& newWordTierName, headTier -> name.get(), U"/word");
 			for (integer itier = 1; itier <= my tiers->size; itier ++) {
 				Function tier = my tiers->at [itier];
-				if (Melder_equ (newWordTierName.string, tier -> name)) {
+				if (Melder_equ (newWordTierName.string, tier -> name.get())) {
 					if (tier -> classInfo != classIntervalTier)
-						Melder_throw (U"A tier with the prospective word tier name (", tier -> name, U") already exists, but it is not an interval tier."
+						Melder_throw (U"A tier with the prospective word tier name (", tier -> name.get(), U") already exists, but it is not an interval tier."
 							U"\nPlease change its name or remove it.");
 					wordTierNumber = itier;
 					break;
@@ -286,12 +286,12 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 			 * Make sure that the phoneme tier exists.
 			 */
 			autoMelderString newPhonemeTierName;
-			MelderString_copy (& newPhonemeTierName, headTier -> name, U"/phon");
+			MelderString_copy (& newPhonemeTierName, headTier -> name.get(), U"/phon");
 			for (integer itier = 1; itier <= my tiers->size; itier ++) {
 				Function tier = my tiers->at [itier];
-				if (Melder_equ (newPhonemeTierName.string, tier -> name)) {
+				if (Melder_equ (newPhonemeTierName.string, tier -> name.get())) {
 					if (tier -> classInfo != classIntervalTier)
-						Melder_throw (U"A tier with the prospective phoneme tier name (", tier -> name, U") already exists, but it is not an interval tier."
+						Melder_throw (U"A tier with the prospective phoneme tier name (", tier -> name.get(), U") already exists, but it is not an interval tier."
 							U"\nPlease change its name or remove it.");
 					phonemeTierNumber = itier;
 					break;
@@ -484,7 +484,7 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, in
 			TextInterval segment = tier -> intervals.at [iseg];
 			if (Melder_stringMatchesCriterion (segment -> text, which, text, true)) {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
-				Thing_setName (interval.get(), Melder_cat (sound -> name ? sound -> name : U"", U"_", text, U"_", ++ count));
+				Thing_setName (interval.get(), Melder_cat (sound -> name ? sound -> name.get() : U"", U"_", text, U"_", ++ count));
 				list -> addItem_move (interval.move());
 			}
 		}

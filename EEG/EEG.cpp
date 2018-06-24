@@ -536,7 +536,7 @@ void EEG_setChannelToZero (EEG me, const char32 *channelName) {
 
 void EEG_removeTriggers (EEG me, kMelder_string which, const char32 *criterion) {
 	try {
-		if (my textgrid -> tiers->size < 2 || ! Melder_equ (my textgrid -> tiers->at [2] -> name, U"Trigger"))
+		if (my textgrid -> tiers->size < 2 || ! Melder_equ (my textgrid -> tiers->at [2] -> name.get(), U"Trigger"))
 			Melder_throw (me, U" does not have a Trigger channel.");
 		TextGrid_removePoints (my textgrid.get(), 2, which, criterion);
 	} catch (MelderError) {
