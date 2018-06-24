@@ -111,12 +111,11 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 		#endif
 		if (visible) {
 			int type = my d_fieldData [irow]. description -> type;
-			char32 *text;
 			if (type > maxsingletypewa) continue;
-			text = GuiText_getString (my d_fieldData [irow]. text);
+			autostring32 text = GuiText_getString (my d_fieldData [irow]. text);
 			switch (type) {
 				case bytewa: {
-					signed char oldValue = * (signed char *) my d_fieldData [irow]. address, newValue = (signed char) Melder_atoi (text);
+					signed char oldValue = * (signed char *) my d_fieldData [irow]. address, newValue = (signed char) Melder_atoi (text.get());
 					if (newValue != oldValue) {
 						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
 						if (numberUse) {
@@ -129,7 +128,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				} break;
 				case int16wa: {
 					int16 oldValue = * (int16 *) my d_fieldData [irow]. address;
-					int64 newValue = Melder_atoi (text);
+					int64 newValue = Melder_atoi (text.get());
 					if (newValue != oldValue) {
 						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
 						if (numberUse) {
@@ -144,7 +143,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 					}
 				} break;
 				case intwa: {
-					int oldValue = * (int *) my d_fieldData [irow]. address, newValue = Melder_atoi (text);
+					int oldValue = * (int *) my d_fieldData [irow]. address, newValue = Melder_atoi (text.get());
 					if (newValue != oldValue) {
 						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
 						if (numberUse) {
@@ -156,7 +155,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 					}
 				} break;
 				case integerwa: {
-					integer oldValue = * (integer *) my d_fieldData [irow]. address, newValue = Melder_atoi (text);
+					integer oldValue = * (integer *) my d_fieldData [irow]. address, newValue = Melder_atoi (text.get());
 					if (newValue != oldValue) {
 						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
 						if (numberUse) {
@@ -167,32 +166,32 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 						}
 					}
 				} break;
-				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text); } break;
-				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = Melder_atoi (text); } break;
-				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (uinteger) Melder_atoi (text); } break;
-				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
-				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
+				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = (uint8) Melder_atoi (text.get()); } break;
+				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = Melder_atoi (text.get()); } break;
+				case uintegerwa: { * (uinteger *) my d_fieldData [irow]. address = (uinteger) Melder_atoi (text.get()); } break;
+				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text.get()); } break;
+				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text.get()); } break;
 				case complexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
-					sscanf (Melder_peek32to8 (text), "%lf + %lf i", & x -> re, & x -> im); } break;
+					sscanf (Melder_peek32to8 (text.get()), "%lf + %lf i", & x -> re, & x -> im); } break;
 				case enumwa: {
-					if (str32len (text) < 3) goto error;
-					text [str32len (text) - 1] = '\0';   // remove trailing ">"
-					int value = ((int (*) (const char32 *)) (my d_fieldData [irow]. description -> tagType)) (text + 1);   // skip leading "<"
+					if (str32len (text.get()) < 3) goto error;
+					text [str32len (text.get()) - 1] = '\0';   // remove trailing ">"
+					int value = ((int (*) (const char32 *)) (my d_fieldData [irow]. description -> tagType)) (text.get() + 1);   // skip leading "<"
 					if (value < 0) goto error;
 					* (signed char *) my d_fieldData [irow]. address = (signed char) value;
 				} break;
 				case lenumwa: {
-					if (str32len (text) < 3) goto error;
-					text [str32len (text) - 1] = '\0';   // remove trailing ">"
-					int value = ((int (*) (const char32 *)) (my d_fieldData [irow]. description -> tagType)) (text + 1);   // skip leading "<"
+					if (str32len (text.get()) < 3) goto error;
+					text [str32len (text.get()) - 1] = '\0';   // remove trailing ">"
+					int value = ((int (*) (const char32 *)) (my d_fieldData [irow]. description -> tagType)) (text.get() + 1);   // skip leading "<"
 					if (value < 0) goto error;
 					* (signed short *) my d_fieldData [irow]. address = (signed short) value;
 				} break;
 				case booleanwa: {
 					bool value;
-					if (str32nequ (text, U"<true>", 6)) {
+					if (str32nequ (text.get(), U"<true>", 6)) {
 						value = true;
-					} else if (str32nequ (text, U"<false>", 7)) {
+					} else if (str32nequ (text.get(), U"<false>", 7)) {
 						value = false;
 					} else {
 						goto error;
@@ -201,9 +200,9 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				} break;
 				case questionwa: {
 					bool value;
-					if (str32nequ (text, U"<yes>", 5)) {
+					if (str32nequ (text.get(), U"<yes>", 5)) {
 						value = true;
-					} else if (str32nequ (text, U"<no>", 4)) {
+					} else if (str32nequ (text.get(), U"<no>", 4)) {
 						value = false;
 					} else {
 						goto error;
@@ -214,11 +213,10 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				case lstringwa: {
 					char32 *old = * (char32 **) my d_fieldData [irow]. address;
 					Melder_free (old);
-					* (char32 **) my d_fieldData [irow]. address = Melder_dup_f (text);
+					* (char32 **) my d_fieldData [irow]. address = Melder_dup_f (text.get());
 				} break;
 				default: break;
 			}
-			Melder_free (text);
 		}
 	}
 	/* Several collaborators have to be notified of this change:

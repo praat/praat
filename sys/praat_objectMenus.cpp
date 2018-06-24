@@ -415,7 +415,7 @@ static void readFromFile (MelderFile file) {
 	if (Thing_isa (object.get(), classManPages) && ! Melder_batch) {
 		ManPages manPages = (ManPages) object.get();
 		ManPage firstPage = manPages -> pages.at [1];
-		autoManual manual = Manual_create (firstPage -> title, object.releaseToAmbiguousOwner(), true);
+		autoManual manual = Manual_create (firstPage -> title.get(), object.releaseToAmbiguousOwner(), true);
 		if (manPages -> executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
@@ -495,7 +495,7 @@ DIRECT (WINDOW_ManPages_view) {
 	LOOP {
 		iam (ManPages);
 		ManPage firstPage = my pages.at [1];
-		autoManual manual = Manual_create (firstPage -> title, me, false);
+		autoManual manual = Manual_create (firstPage -> title.get(), me, false);
 		if (my executable)
 			Melder_warning (U"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");

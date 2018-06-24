@@ -55,14 +55,12 @@ static void gui_button_cb_removeTarget (ArtwordEditor me, GuiButtonEvent /* even
 
 static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event */) {
 	Artword artword = (Artword) my data;
-	char32 *timeText = GuiText_getString (my time);
-	double tim = Melder_atof (timeText);
-	char32 *valueText = GuiText_getString (my value);
-	double value = Melder_atof (valueText);
+	autostring32 timeText = GuiText_getString (my time);
+	double tim = Melder_atof (timeText.get());
+	autostring32 valueText = GuiText_getString (my value);
+	double value = Melder_atof (valueText.get());
 	ArtwordData a = & artword -> data [(int) my muscle];
 	int i = 1, oldCount = a -> numberOfTargets;
-	Melder_free (timeText);
-	Melder_free (valueText);
 	Artword_setTarget (artword, my muscle, tim, value);
 
 	/* Optimization instead of "updateList (me)". */

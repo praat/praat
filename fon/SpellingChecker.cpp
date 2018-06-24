@@ -188,8 +188,8 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {
 	try {
 		autostring32 generic = Melder_calloc (char32, 3 * str32len (word) + 1);
-		Longchar_genericize32 (word, generic.peek());
-		my userDictionary -> addString_copy (generic.peek());
+		Longchar_genericize32 (word, generic.get());
+		my userDictionary -> addString_copy (generic.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": word \"", word, U"\" not added.");
 	}

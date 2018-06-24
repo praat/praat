@@ -899,9 +899,9 @@ GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int b
 
 void GuiText_copy (GuiText me);
 void GuiText_cut (GuiText me);
-char32 * GuiText_getSelection (GuiText me);
-char32 * GuiText_getString (GuiText me);
-char32 * GuiText_getStringAndSelectionPosition (GuiText me, integer *first, integer *last);
+autostring32 GuiText_getSelection (GuiText me);
+autostring32 GuiText_getString (GuiText me);
+autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, integer *last);
 void GuiText_paste (GuiText me);
 void GuiText_redo (GuiText me);
 void GuiText_remove (GuiText me);

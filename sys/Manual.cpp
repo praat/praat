@@ -40,7 +40,7 @@ static void menu_cb_writeOneToHtmlFile (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as HTML file", nullptr)
 		ManPages manPages = (ManPages) my data;
 		autoMelderString buffer;
-		MelderString_copy (& buffer, manPages -> pages.at [my path] -> title);
+		MelderString_copy (& buffer, manPages -> pages.at [my path] -> title.get());
 		char32 *p = buffer.string;
 		while (*p) { if (! isalnum ((int) *p) && *p != U'_') *p = U'_'; p ++; }
 		MelderString_append (& buffer, U".html");
@@ -86,14 +86,14 @@ void structManual :: v_draw () {
 		for (int i = 1; i <= our numberOfMatches; i ++) {
 			char32 link [300];
 			page = manPages -> pages.at [matches [i]];
-			Melder_sprint (link,300, U"• @@", page -> title);
+			Melder_sprint (link,300, U"• @@", page -> title.get());
 			HyperPage_listItem (this, link);
 		}
 		return;
 	}
 	page = manPages -> pages.at [path];
 	if (! our paragraphs) return;
-	HyperPage_pageTitle (this, page -> title);
+	HyperPage_pageTitle (this, page -> title.get());
 	for (ManPage_Paragraph paragraph = & page -> paragraphs [0]; (int) paragraph -> type != 0; paragraph ++) {
 		switch (paragraph -> type) {
 			case  kManPage_type::INTRO: HyperPage_intro (this, paragraph -> text); break;
@@ -146,7 +146,7 @@ void structManual :: v_draw () {
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = true;
 			if (! alreadyShown) {
-				const char32 *title = manPages -> pages.at [page -> linksHither [ilink]] -> title;
+				const char32 *title = manPages -> pages.at [page -> linksHither [ilink]] -> title.get();
 				char32 linkText [304];
 				Melder_sprint (linkText, 304, U"@@", title, U"@");
 				HyperPage_listItem (this, linkText);
@@ -159,8 +159,8 @@ void structManual :: v_draw () {
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
 		Melder_sprint (signature,100,
-			U"© ", str32equ (page -> author, U"ppgb") ? U"Paul Boersma" :
-			       str32equ (page -> author, U"djmw") ? U"David Weenink" : page -> author,
+			U"© ", str32equ (page -> author.get(), U"ppgb") ? U"Paul Boersma" :
+			       str32equ (page -> author.get(), U"djmw") ? U"David Weenink" : page -> author.get(),
 			U", ", date % 100,
 			U" ", month [imonth],
 			U" ", date / 10000);
@@ -185,7 +185,7 @@ static void print (void *void_me, Graphics graphics) {
 	for (integer ipage = 1; ipage <= numberOfPages; ipage ++) {
 		ManPage page = manPages -> pages.at [ipage];
 		if (my printPagesStartingWith == nullptr ||
-		    Melder_stringMatchesCriterion (page -> title, kMelder_string::STARTS_WITH, my printPagesStartingWith, true))
+		    Melder_stringMatchesCriterion (page -> title.get(), kMelder_string::STARTS_WITH, my printPagesStartingWith, true))
 		{
 			ManPage_Paragraph par;
 			my path = ipage;
@@ -194,7 +194,7 @@ static void print (void *void_me, Graphics graphics) {
 			par = my paragraphs;
 			while ((int) (par ++) -> type != 0) my numberOfParagraphs ++;
 			Melder_free (my currentPageTitle);
-			my currentPageTitle = Melder_dup_f (page -> title);
+			my currentPageTitle = Melder_dup_f (page -> title.get());
 			my v_goToPage_i (ipage);
 			my v_draw ();
 			my v_goToPage_i (savePage);
@@ -233,7 +233,7 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		if (my d_printingPageNumber) SET_INTEGER (firstPageNumber, my d_printingPageNumber + 1)
 		if (my path >= 1 && my path <= manPages -> pages.size) {
 			ManPage page = manPages -> pages.at [my path];
-			SET_STRING (printAllPagesWhoseTitleStartsWith, page -> title);
+			SET_STRING (printAllPagesWhoseTitleStartsWith, page -> title.get());
 		}
 	EDITOR_DO
 		my insideHeader = leftOrInsideHeader;
@@ -260,10 +260,10 @@ static double searchToken (ManPages me, integer ipage, char32 *token) {
 	struct structManPage_Paragraph *par = & page -> paragraphs [0];
 	if (! token [0]) return 1.0;
 	/*
-	 * Try to find a match in the title, case insensitively.
+	 * Try to find a match in the title, case-insensitively.
 	 */
 	static MelderString buffer { };
-	MelderString_copy (& buffer, page -> title);
+	MelderString_copy (& buffer, page -> title.get());
 	for (char32 *p = & buffer.string [0]; *p != U'\0'; p ++) *p = Melder_toLowerCase (*p);
 	if (str32str (buffer.string, token)) {
 		goodness += 300.0;   // lots of points for a match in the title!
@@ -378,9 +378,8 @@ static void gui_button_cb_publish (Manual /* me */, GuiButtonEvent /* event */) 
 }
 
 static void do_search (Manual me) {
-	char32 *query = GuiText_getString (my searchText);
-	search (me, query);
-	Melder_free (query);
+	autostring32 query = GuiText_getString (my searchText);
+	search (me, query.get());
 }
 
 static void gui_button_cb_search (Manual me, GuiButtonEvent /* event */) {
@@ -439,8 +438,8 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
 		ManPage page = manPages -> pages.at [my path];
 		integer date = page -> date;
-		SET_STRING (my outsideHeader, page -> title)
-		SET_STRING (my insideFooter, page -> author)
+		SET_STRING (my outsideHeader, page -> title.get())
+		SET_STRING (my insideFooter, page -> author.get())
 		if (date) {
 			Melder_sprint (string,400, shortMonth [date % 10000 / 100 - 1], U" ", date % 100, U", ", date / 10000);
 			SET_STRING (my insideHeader, string)
@@ -473,7 +472,7 @@ void structManual :: v_goToPage_i (integer pageNumber) {
 	ManPage_Paragraph par = paragraphs;
 	while ((int) (par ++) -> type != 0) our numberOfParagraphs ++;
 	Melder_free (our currentPageTitle);
-	our currentPageTitle = Melder_dup_f (page -> title);
+	our currentPageTitle = Melder_dup_f (page -> title.get());
 }
 
 int structManual :: v_goToPage (const char32 *title) {
@@ -488,7 +487,7 @@ int structManual :: v_goToPage (const char32 *title) {
 		autoPraatBackground background;
 		try {
 			autostring32 fileNameWithArguments = Melder_dup (title + 3);
-			praat_executeScriptFromFileNameWithArguments (fileNameWithArguments.peek());
+			praat_executeScriptFromFileNameWithArguments (fileNameWithArguments.get());
 		} catch (MelderError) {
 			Melder_flushError ();
 		}

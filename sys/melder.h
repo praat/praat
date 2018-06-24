@@ -31,6 +31,17 @@
 #include <stdbool.h>
 #include <functional>
 
+#pragma mark - ASSERTION
+
+void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
+	/* Call Melder_fatal with a message based on the following template: */
+	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
+#ifdef NDEBUG
+	#define Melder_assert(x)   ((void) 0)
+#else
+	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
+#endif
+
 #pragma mark - INTEGERS
 /*
  * The following two lines are for obsolete (i.e. C99) versions of stdint.h
@@ -74,6 +85,21 @@ using uint64 = uint64_t;
 	#define INT54_MIN  -9007199254740991LL
 #endif
 
+/*
+	We assume that the types "integer" and "uinteger" are both large enough to contain
+	any possible value that Praat wants to assign to them.
+	This entails that we assume that these types can be converted to each other without bounds checking.
+	We therefore crash Praat if this second assumption is not met.
+*/
+inline static uinteger integer_to_uinteger (integer n) {
+	Melder_assert (n >= 0);
+	return (uinteger) n;
+}
+inline static integer uinteger_to_integer (uinteger n) {
+	Melder_assert (n <= INTEGER_MAX);
+	return (integer) n;
+}
+
 #pragma mark - NULL
 
 #ifndef NULL
@@ -98,14 +124,59 @@ using longdouble = long double;   // typically 80 bits ("extended") precision, b
 #define her  she ->
 #define iam(klas)  klas me = (klas) void_me
 
-#pragma mark - DEBUGGING
+#pragma mark - MEMORY ALLOCATION
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
+/* These routines call malloc, free, realloc, and calloc. */
+/* If out of memory, the non-f versions throw an error message (like "Out of memory"); */
+/* the f versions open up a rainy day fund or crash Praat. */
+/* These routines also maintain a count of the total number of blocks allocated. */
 
-void Melder_setTracing (bool tracing);
-extern bool Melder_isTracing;
+void Melder_alloc_init ();   // to be called around program start-up
+void Melder_message_init ();   // to be called around program start-up
+void * _Melder_malloc (int64 size);
+#define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * (int64) sizeof (type))
+void * _Melder_malloc_f (int64 size);
+#define Melder_malloc_f(type,numberOfElements)  (type *) _Melder_malloc_f ((numberOfElements) * (int64) sizeof (type))
+void * Melder_realloc (void *pointer, int64 size);
+void * Melder_realloc_f (void *pointer, int64 size);
+void * _Melder_calloc (int64 numberOfElements, int64 elementSize);
+#define Melder_calloc(type,numberOfElements)  (type *) _Melder_calloc (numberOfElements, sizeof (type))
+void * _Melder_calloc_f (int64 numberOfElements, int64 elementSize);
+#define Melder_calloc_f(type,numberOfElements)  (type *) _Melder_calloc_f (numberOfElements, sizeof (type))
+char * Melder_strdup (const char *string);
+char * Melder_strdup_f (const char *string);
+
+#define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
+void _Melder_free (void **pointer) noexcept;
+/*
+	Preconditions:
+		none (*pointer may be null).
+	Postconditions:
+		*pointer == nullptr;
+*/
+
+int64 Melder_allocationCount ();
+/*
+	Returns the total number of successful calls to
+	Melder_malloc, Melder_realloc (if 'ptr' is null), Melder_calloc, and Melder_strdup,
+	since the start of the process. Mainly for debugging purposes.
+*/
+
+int64 Melder_deallocationCount ();
+/*
+	Returns the total number of successful calls to Melder_free,
+	since the start of the process. Mainly for debugging purposes.
+*/
+
+int64 Melder_allocationSize ();
+/*
+	Returns the total number of bytes allocated in calls to
+	Melder_malloc, Melder_realloc (if moved), Melder_calloc, and Melder_strdup,
+	since the start of the process. Mainly for debugging purposes.
+*/
+
+int64 Melder_reallocationsInSituCount ();
+int64 Melder_movingReallocationsCount ();
 
 #pragma mark - STRINGS
 
@@ -115,6 +186,77 @@ using char32 = char32_t;
 
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
+
+template <class T>
+class _autostring {
+	T *ptr;
+public:
+	_autostring (T *string) : ptr (string) {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: constructor from C-string ", Melder_pointer (ptr));
+	}
+	_autostring () : ptr (nullptr) {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
+	}
+	~_autostring () {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: entering destructor ptr = ", Melder_pointer (ptr));
+		if (our ptr) Melder_free (our ptr);
+		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving destructor");
+	}
+	#if 0
+	void operator= (T *string) {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: entering assignment from C-string; old = ", Melder_pointer (ptr));
+		if (our ptr) Melder_free (our ptr);
+		our ptr = string;
+		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving assignment from C-string; new = ", Melder_pointer (ptr));
+	}
+	#endif
+	template <class U> T& operator[] (U i) {
+		return our ptr [i];
+	}
+	T * get () const {
+		return our ptr;
+	}
+	/*T ** operator& () {
+		return & our ptr;
+	}*/
+	T * transfer () {
+		T *tmp = our ptr;
+		our ptr = nullptr;
+		return tmp;
+	}
+	void reset (T *string = nullptr) {
+		if (our ptr) Melder_free (our ptr);
+		our ptr = string;
+	}
+	void resize (int64 new_size) {
+		T *tmp = (T *) Melder_realloc (our ptr, new_size * (int64) sizeof (T));
+		our ptr = tmp;
+	}
+	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
+	//_autostring (_autostring &) = delete;   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
+	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
+	explicit operator bool () const { return !! ptr; }
+	/*
+		Enable moving.
+	*/
+	_autostring (_autostring&& other) noexcept {   // enable move constructor
+		our ptr = other.ptr;
+		other.ptr = nullptr;
+	}
+	_autostring& operator= (_autostring&& other) noexcept {   // enable move assignment
+		if (& other != this) {
+			if (our ptr) Melder_free (our ptr);
+			our ptr = other.ptr;
+			other.ptr = nullptr;
+		}
+		return *this;
+	}
+	_autostring&& move () noexcept { return static_cast <_autostring&&> (*this); }
+};
+
+typedef _autostring <char> autostring8;
+typedef _autostring <char16> autostring16;
+typedef _autostring <char32> autostring32;
 
 #pragma mark - CHARACTER PROPERTIES
 
@@ -659,60 +801,6 @@ const char32 * Melder_padOrTruncate (const char32 *string, int64 width);   // wi
 
 void Melder_writeToConsole (const char32 *message, bool useStderr);
 
-#pragma mark - MEMORY ALLOCATION
-
-/* These routines call malloc, free, realloc, and calloc. */
-/* If out of memory, the non-f versions throw an error message (like "Out of memory"); */
-/* the f versions open up a rainy day fund or crash Praat. */
-/* These routines also maintain a count of the total number of blocks allocated. */
-
-void Melder_alloc_init ();   // to be called around program start-up
-void Melder_message_init ();   // to be called around program start-up
-void * _Melder_malloc (int64 size);
-#define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * (int64) sizeof (type))
-void * _Melder_malloc_f (int64 size);
-#define Melder_malloc_f(type,numberOfElements)  (type *) _Melder_malloc_f ((numberOfElements) * (int64) sizeof (type))
-void * Melder_realloc (void *pointer, int64 size);
-void * Melder_realloc_f (void *pointer, int64 size);
-void * _Melder_calloc (int64 numberOfElements, int64 elementSize);
-#define Melder_calloc(type,numberOfElements)  (type *) _Melder_calloc (numberOfElements, sizeof (type))
-void * _Melder_calloc_f (int64 numberOfElements, int64 elementSize);
-#define Melder_calloc_f(type,numberOfElements)  (type *) _Melder_calloc_f (numberOfElements, sizeof (type))
-char * Melder_strdup (const char *string);
-char * Melder_strdup_f (const char *string);
-
-#define Melder_free(pointer)  _Melder_free ((void **) & (pointer))
-void _Melder_free (void **pointer) noexcept;
-/*
-	Preconditions:
-		none (*pointer may be null).
-	Postconditions:
-		*pointer == nullptr;
-*/
-
-int64 Melder_allocationCount ();
-/*
-	Returns the total number of successful calls to
-	Melder_malloc, Melder_realloc (if 'ptr' is null), Melder_calloc, and Melder_strdup,
-	since the start of the process. Mainly for debugging purposes.
-*/
-
-int64 Melder_deallocationCount ();
-/*
-	Returns the total number of successful calls to Melder_free,
-	since the start of the process. Mainly for debugging purposes.
-*/
-
-int64 Melder_allocationSize ();
-/*
-	Returns the total number of bytes allocated in calls to
-	Melder_malloc, Melder_realloc (if moved), Melder_calloc, and Melder_strdup,
-	since the start of the process. Mainly for debugging purposes.
-*/
-
-int64 Melder_reallocationsInSituCount ();
-int64 Melder_movingReallocationsCount ();
-
 /**
  * Text encodings.
  */
@@ -868,8 +956,10 @@ char32 * Melder_peekExpandBackslashes (const char32 *message);
 const char32 * MelderFile_messageName (MelderFile file);   // calls Melder_peekExpandBackslashes ()
 
 struct structMelderReadText {
-	char32 *string32, *readPointer32;
-	char *string8, *readPointer8;
+	autostring32 string32;
+	char32 *readPointer32;
+	autostring8 string8;
+	char *readPointer8;
 	kMelder_textInputEncoding input8Encoding;
 };
 typedef struct structMelderReadText *MelderReadText;
@@ -1886,12 +1976,12 @@ void Melder_trace (const char *fileName, int lineNumber, const char *functionNam
 void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_14_OR_15_ARGS);
 void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_16_TO_19_ARGS);
 #ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
 	#define trace(x)   ((void) 0)
 #else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
 	#define trace(...)   (! Melder_isTracing ? (void) 0 : Melder_trace (__FILE__, __LINE__, __FUNCTION__, __VA_ARGS__))
 #endif
+void Melder_setTracing (bool tracing);
+extern bool Melder_isTracing;
 
 /* So these will be the future replacements for the above, as soon as we rid of text files: */
 MelderFile MelderFile_open (MelderFile file);
@@ -1922,7 +2012,7 @@ void MelderFile_close (MelderFile file);
 void MelderFile_close_nothrow (MelderFile file);
 
 /* Read and write whole text files. */
-char32 * MelderFile_readText (MelderFile file);
+autostring32 MelderFile_readText (MelderFile file);
 void MelderFile_writeText (MelderFile file, const char32 *text, kMelder_textOutputEncoding outputEncoding);
 void MelderFile_appendText (MelderFile file, const char32 *text);
 
@@ -2852,60 +2942,6 @@ public:
 		tokens = Melder_getTokens (string, & numberOfTokens);
 	}
 };
-
-template <class T>
-class _autostring {
-	T *ptr;
-public:
-	_autostring (T *string) : ptr (string) {
-		//if (Melder_debug == 39) Melder_casual (U"autostring: constructor from C-string ", Melder_pointer (ptr));
-	}
-	_autostring () : ptr (nullptr) {
-		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
-	}
-	~_autostring () {
-		//if (Melder_debug == 39) Melder_casual (U"autostring: entering destructor ptr = ", Melder_pointer (ptr));
-		if (ptr) Melder_free (ptr);
-		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving destructor");
-	}
-	#if 0
-	void operator= (T *string) {
-		//if (Melder_debug == 39) Melder_casual (U"autostring: entering assignment from C-string; old = ", Melder_pointer (ptr));
-		if (ptr) Melder_free (ptr);
-		ptr = string;
-		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving assignment from C-string; new = ", Melder_pointer (ptr));
-	}
-	#endif
-	template <class U> T& operator[] (U i) {
-		return ptr [i];
-	}
-	T * peek () const {
-		return ptr;
-	}
-	T ** operator& () {
-		return & ptr;
-	}
-	T * transfer () {
-		T *tmp = ptr;
-		ptr = nullptr;
-		return tmp;
-	}
-	void reset (T *string) {
-		if (ptr) Melder_free (ptr);
-		ptr = string;
-	}
-	void resize (int64 new_size) {
-		T *tmp = (T *) Melder_realloc (ptr, new_size * (int64) sizeof (T));
-		ptr = tmp;
-	}
-	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
-	//_autostring (_autostring &) = delete;   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
-	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
-};
-
-typedef _autostring <char> autostring8;
-typedef _autostring <char16> autostring16;
-typedef _autostring <char32> autostring32;
 
 class autoMelderAudioSaveMaximumAsynchronicity {
 	bool _disowned;

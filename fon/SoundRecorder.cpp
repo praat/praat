@@ -620,7 +620,7 @@ static void publish (SoundRecorder me) {
 	}
 	if (my soundName) {
 		autostring32 name = GuiText_getString (my soundName);
-		Thing_setName (sound.get(), name.peek());
+		Thing_setName (sound.get(), name.get());
 	}
 	Editor_broadcastPublication (me, sound.move());
 }
@@ -914,9 +914,8 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 
 static void menu_cb_writeWav (SoundRecorder me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as WAV file", nullptr)
-		char32 *name = GuiText_getString (my soundName);
-		Melder_sprint (defaultName,300, name, U".wav");
-		Melder_free (name);
+		autostring32 name = GuiText_getString (my soundName);
+		Melder_sprint (defaultName,300, name.get(), U".wav");
 	EDITOR_DO_SAVE
 		writeAudioFile (me, file, Melder_WAV);
 	EDITOR_END
@@ -924,9 +923,8 @@ static void menu_cb_writeWav (SoundRecorder me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_writeAifc (SoundRecorder me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as AIFC file", nullptr)
-		char32 *name = GuiText_getString (my soundName);
-		Melder_sprint (defaultName,300, name, U".aifc");
-		Melder_free (name);
+		autostring32 name = GuiText_getString (my soundName);
+		Melder_sprint (defaultName,300, name.get(), U".aifc");
 	EDITOR_DO_SAVE
 		writeAudioFile (me, file, Melder_AIFC);
 	EDITOR_END
@@ -934,9 +932,8 @@ static void menu_cb_writeAifc (SoundRecorder me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_writeNextSun (SoundRecorder me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as NeXT/Sun file", nullptr)
-		char32 *name = GuiText_getString (my soundName);
-		Melder_sprint (defaultName,300, name, U".au");
-		Melder_free (name);
+		autostring32 name = GuiText_getString (my soundName);
+		Melder_sprint (defaultName,300, name.get(), U".au");
 	EDITOR_DO_SAVE
 		writeAudioFile (me, file, Melder_NEXT_SUN);
 	EDITOR_END
@@ -944,9 +941,8 @@ static void menu_cb_writeNextSun (SoundRecorder me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_writeNist (SoundRecorder me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as NIST file", nullptr)
-		char32 *name = GuiText_getString (my soundName);
-		Melder_sprint (defaultName,300, name, U".nist");
-		Melder_free (name);
+		autostring32 name = GuiText_getString (my soundName);
+		Melder_sprint (defaultName,300, name.get(), U".nist");
 	EDITOR_DO_SAVE
 		writeAudioFile (me, file, Melder_NIST);
 	EDITOR_END

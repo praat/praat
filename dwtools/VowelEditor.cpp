@@ -257,14 +257,13 @@ static void appendF1F2F0 (MelderString *statusInfo, const char32 *intro, double 
 
 static double getRealFromTextWidget (GuiText me) {
 	double value = undefined;
-	char32 *dirty = GuiText_getString (me);
+	autostring32 dirty = GuiText_getString (me);
 	try {
-		Interpreter_numericExpression (nullptr, dirty, & value);
+		Interpreter_numericExpression (nullptr, dirty.get(), & value);
 	} catch (MelderError) {
 		Melder_clearError ();
 		value = undefined;
 	}
-	Melder_free (dirty);
 	return value;
 }
 

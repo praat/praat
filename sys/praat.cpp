@@ -65,43 +65,48 @@ PraatPicture theCurrentPraatPicture = & theForegroundPraatPicture;
 struct PraatP praatP;
 static char32 programName [64];
 static structMelderDir homeDir { };
+
 /*
- * praatDirectory: preferences file, buttons file, message files, tracing file, plugins.
- *    Unix:   /u/miep/.myProg-dir   (without slash)
- *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg
- *                    or:   C:\Users\Miep\MyProg
- *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
+ * praatDir: a folder containing preferences file, buttons file, message files, tracing file, plugins.
+ *    Unix:   /home/miep/.praat-dir   (without slash)
+ *    Windows XP/Vista/7/8/10:   \\myserver\myshare\Miep\Praat
+ *                         or:   C:\Users\Miep\Praat
+ *    MacOS:   /Users/Miep/Library/Preferences/Praat Prefs
  */
 extern structMelderDir praatDir;
 structMelderDir praatDir { };
+
 /*
  * prefsFile: preferences file.
- *    Unix:   /u/miep/.myProg-dir/prefs5
- *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Preferences5.ini
- *                       or:   C:\Users\Miep\MyProg\Preferences5.ini
- *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs5
+ *    Unix:   /home/miep/.praat-dir/prefs5
+ *    Windows XP/Vista/7/8/10:   \\myserver\myshare\Miep\Praat\Preferences5.ini
+ *                         or:   C:\Users\Miep\Praat\Preferences5.ini
+ *    MacOS:   /Users/Miep/Library/Preferences/Praat Prefs/Prefs5
  */
 static structMelderFile prefsFile { };
+
 /*
  * buttonsFile: buttons file.
- *    Unix:   /u/miep/.myProg-dir/buttons
- *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Buttons5.ini
- *                    or:   C:\Users\Miep\MyProg\Buttons5.ini
- *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons5
+ *    Unix:   /home/miep/.praat-dir/buttons
+ *    Windows XP/Vista/7/8/10:   \\myserver\myshare\Miep\Praat\Buttons5.ini
+ *                         or:   C:\Users\Miep\Praat\Buttons5.ini
+ *    MacOS:   /Users/Miep/Library/Preferences/Praat Prefs/Buttons5
  */
 static structMelderFile buttonsFile { };
+
 #if defined (UNIX)
-	static structMelderFile pidFile { };   // like /u/miep/.myProg-dir/pid
-	static structMelderFile messageFile { };   // like /u/miep/.myProg-dir/message
+	static structMelderFile pidFile { };   // like /home/miep/.praat-dir/pid
+	static structMelderFile messageFile { };   // like /home/miep/.praat-dir/message
 #elif defined (_WIN32)
-	static structMelderFile messageFile { };   // like C:\Users\Miep\myProg\Message.txt
+	static structMelderFile messageFile { };   // like C:\Users\Miep\Praat\Message.txt
 #endif
+
 /*
  * tracingFile: tracing file.
- *    Unix:   /u/miep/.myProg-dir/tracing
- *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Tracing.txt
- *                    or:   C:\Users\Miep\MyProg\Tracing.txt
- *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Tracing.txt
+ *    Unix:   /home/miep/.praat-dir/tracing
+ *    Windows XP/Vista/7/8/10:   \\myserver\myshare\Miep\Praat\Tracing.txt
+ *                         or:   C:\Users\Miep\Praat\Tracing.txt
+ *    MacOS:   /Users/Miep/Library/Preferences/Praat Prefs/Tracing.txt
  */
 static structMelderFile tracingFile { };
 
@@ -914,7 +919,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			AEGetParamPtr (theAppleEvent, 1, typeUTF8Text, nullptr, & buffer [0], actualSize, nullptr);
 			if (theUserMessageCallback) {
 				autostring32 buffer32 = Melder_8to32 (buffer);
-				theUserMessageCallback (buffer32.peek());
+				theUserMessageCallback (buffer32.get());
 			}
 			free (buffer);
 			duringAppleEvent = false;
@@ -936,7 +941,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 			AEGetParamPtr (theAppleEvent, 1, typeUTF16ExternalRepresentation, nullptr, & buffer [0], actualSize, nullptr);
 			if (theUserMessageCallback) {
 				autostring32 buffer32 = Melder_16to32 (buffer);
-				theUserMessageCallback (buffer32.peek());
+				theUserMessageCallback (buffer32.get());
 			}
 			free (buffer);
 			duringAppleEvent = false;
@@ -1174,12 +1179,12 @@ void praat_init (const char32 *title, int argc, char **argv)
 	theCurrentPraatApplication -> batch = Melder_batch;
 
 	/*
-	 * Construct a program name like "myProg" for file and directory names.
+	 * Construct a program name like "Praat" for file and directory names.
 	 */
 	str32cpy (programName, praatP.title);
 
 	/*
-	 * Construct a main-window title like "MyProg 3.2".
+	 * Construct a main-window title like "Praat 6.1".
 	 */
 	programName [0] = Melder_toLowerCase (programName [0]);
 
@@ -1190,18 +1195,18 @@ void praat_init (const char32 *title, int argc, char **argv)
 
 	/*
 	 * Get the program's private directory (if not yet set by the --prefdir option):
-	 *    "/u/miep/.myProg-dir" (Unix)
-	 *    "/Users/miep/Library/Preferences/MyProg Prefs" (Macintosh)
-	 *    "C:\Users\Miep\MyProg" (Windows)
+	 *    "/home/miep/.praat-dir" (Unix)
+	 *    "/Users/miep/Library/Preferences/Praat Prefs" (MacOS)
+	 *    "C:\Users\Miep\Praat" (Windows)
 	 * and construct a preferences-file name and a script-buttons-file name like
-	 *    /u/miep/.myProg-dir/prefs5
-	 *    /u/miep/.myProg-dir/buttons5
+	 *    /home/miep/.praat-dir/prefs5
+	 *    /home/miep/.praat-dir/buttons5
 	 * or
-	 *    /Users/miep/Library/Preferences/MyProg Prefs/Prefs5
-	 *    /Users/miep/Library/Preferences/MyProg Prefs/Buttons5
+	 *    /Users/miep/Library/Preferences/Praat Prefs/Prefs5
+	 *    /Users/miep/Library/Preferences/Praat Prefs/Buttons5
 	 * or
-	 *    C:\Users\Miep\MyProg\Preferences5.ini
-	 *    C:\Users\Miep\MyProg\Buttons5.ini
+	 *    C:\Users\Miep\Praat\Preferences5.ini
+	 *    C:\Users\Miep\Praat\Buttons5.ini
 	 * Also create names for message and tracing files.
 	 */
 	if (MelderDir_isNull (& praatDir)) {   // not yet set by the --prefdir option?
@@ -1213,11 +1218,11 @@ void praat_init (const char32 *title, int argc, char **argv)
 		 */
 		char32 name [256];
 		#if defined (UNIX)
-			Melder_sprint (name,256, U".", programName, U"-dir");   // for example .myProg-dir
+			Melder_sprint (name,256, U".", programName, U"-dir");   // for example .praat-dir
 		#elif defined (macintosh)
-			Melder_sprint (name,256, praatP.title, U" Prefs");   // for example MyProg Prefs
+			Melder_sprint (name,256, praatP.title, U" Prefs");   // for example Praat Prefs
 		#elif defined (_WIN32)
-			Melder_sprint (name,256, praatP.title);   // for example MyProg
+			Melder_sprint (name,256, praatP.title);   // for example Praat
 		#endif
 		try {
 			#if defined (UNIX) || defined (macintosh)
@@ -1264,7 +1269,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	#if defined (UNIX)
 		if (! Melder_batch) {
 			/*
-			 * Make sure that the directory /u/miep/.myProg-dir exists,
+			 * Make sure that the directory /home/miep/.praat-dir exists,
 			 * and write our process id into the pid file.
 			 * Messages from "sendpraat" are caught very early this way,
 			 * though they will be responded to much later.
@@ -1550,9 +1555,29 @@ void praat_run () {
 	Melder_assert (Melder_isHorizontalOrVerticalSpace ('\t'));
 	Melder_assert (Melder_isHorizontalOrVerticalSpace ('\f'));
 	Melder_assert (Melder_isHorizontalOrVerticalSpace ('\v'));
+
+	/*
+		According to ISO 30112, a non-breaking space is not a space.
+		We do not agree, as long as spaces are assumed to be word breakers:
+		non-breaking spaces are used to prevent line breaks, not to prevent word breaks.
+		For instance, in English it's possible to insert a non-breaking space
+		after "e.g." in "...take drastic measures, e.g. pose a ban on...",
+		just because otherwise a line would end in a period that does not signal end of sentence;
+		this use does not mean that "e.g." and "pose" aren't separate words.
+	*/
 	Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_NO_BREAK_SPACE));
+
 	Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_OGHAM_SPACE_MARK));   // ISO 30112
-	//Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_MONGOLIAN_VOWEL_SEPARATOR));   // ISO 30112
+
+	/*
+		According to ISO 30112, a Mongolian vowel separator is a space.
+		However, this character is used to separate vowels *within* a word,
+		so it should not be a word breaker.
+		This means that as long as all spaces are assumed to be word breakers,
+		this character cannot be a space.
+	*/
+	Melder_assert (! Melder_isHorizontalOrVerticalSpace (UNICODE_MONGOLIAN_VOWEL_SEPARATOR));
+
 	Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_EN_QUAD));   // ISO 30112
 	Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_EM_QUAD));   // ISO 30112
 	Melder_assert (Melder_isHorizontalOrVerticalSpace (UNICODE_EN_SPACE));   // ISO 30112
@@ -1737,12 +1762,12 @@ void praat_run () {
 			{// scope
 				autostring32 buttons;
 				try {
-					buttons.reset (MelderFile_readText (& buttonsFile));
+					buttons = MelderFile_readText (& buttonsFile);
 				} catch (MelderError) {
 					Melder_clearError ();
 				}
-				if (buttons.peek()) {
-					char32 *line = buttons.peek();
+				if (buttons) {
+					char32 *line = buttons.get();
 					for (;;) {
 						char32 *newline = str32chr (line, U'\n');
 						if (newline) *newline = U'\0';
@@ -1771,7 +1796,7 @@ void praat_run () {
 				autostring32 text = Melder_dup (Melder_cat (U"Read from file... ",
 															Melder_peek8to32 (praatP.argv [praatP.argumentNumber])));
 				try {
-					praat_executeScriptFromText (text.peek());
+					praat_executeScriptFromText (text.get());
 				} catch (MelderError) {
 					Melder_flushError ();
 				}

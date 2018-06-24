@@ -353,7 +353,7 @@ public:
 	 * but the semantics of this statement has to be, confusingly, *move* semantics
 	 * (i.e., pitch.ptr should be set to null),
 	 * because if the semantics were copy semantics instead,
-	 * a destructor would be called at some point for both pitch and pitch 2,
+	 * a destructor would be called at some point for both pitch and pitch2,
 	 * twice deleting the same object, which is a run-time error.
 	 */
 	_Thing_auto<T> (const _Thing_auto<T>&) = delete;   // disable copy constructor from an l-value of class T*
@@ -365,7 +365,7 @@ public:
 	 * but the semantics of this statement has to be, confusingly, *move* semantics
 	 * (i.e., pitch.ptr should be set to null),
 	 * because if the semantics were copy semantics instead,
-	 * a destructor would be called at some point for both pitch and pitch 2,
+	 * a destructor would be called at some point for both pitch and pitch2,
 	 * twice deleting the same object, which is a run-time error.
 	 */
 	_Thing_auto<T>& operator= (const _Thing_auto<T>&) = delete;   // disable copy assignment from an l-value of class T*

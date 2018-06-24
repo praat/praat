@@ -710,7 +710,7 @@ autoCollection FFNet_createIrisExample (integer numberOfHidden1, integer numberO
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, false);
 		FFNet_setOutputCategories (me.get(), uniq.get());
 		autostring32 name = FFNet_createNameFromTopology (me.get());
-		Thing_setName (me.get(), name.peek());
+		Thing_setName (me.get(), name.get());
 		collection -> addItem_move (me.move());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 
@@ -781,7 +781,7 @@ autoFFNet PatternList_Categories_to_FFNet (PatternList me, Categories you, integ
 		autoFFNet result = FFNet_create (my nx, numberOfUnits1, numberOfUnits2, numberOfOutputs, false);
 		FFNet_setOutputCategories (result.get(), uniq.get());
 		autostring32 ffnetName = FFNet_createNameFromTopology (result.get());
-		Thing_setName (result.get(), ffnetName.peek());
+		Thing_setName (result.get(), ffnetName.get());
 		return result;
 	} catch (MelderError) {
 		Melder_throw (me, you, U": no FFNet created.");

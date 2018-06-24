@@ -30,7 +30,7 @@ typedef struct structManPage_Paragraph {
 } *ManPage_Paragraph;
 
 Thing_define (ManPage, Thing) {
-	const char32 *title, *author;
+	autostring32 title, author;
 	integer date;
 	struct structManPage_Paragraph *paragraphs;
 	integer nlinksHither, nlinksThither;

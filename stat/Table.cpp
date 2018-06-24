@@ -2012,9 +2012,9 @@ autoTable Table_readFromCharacterSeparatedTextFile (MelderFile file, char32 sepa
 		/*
 			Kill final new-line symbols.
 	 	*/
-		for (int64 length = str32len (string.peek());
+		for (int64 length = str32len (string.get());
 		     length > 0 && string [length - 1] == U'\n';
-			 length = str32len (string.peek()))
+			 length = str32len (string.get()))
 		{
 			string [length - 1] = U'\0';
 		}

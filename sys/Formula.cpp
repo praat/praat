@@ -3533,7 +3533,7 @@ static void do_do () {
 		MelderString_appendCharacter (& valueString, 1);   // TODO: check whether this is needed at all, or is just MelderString_empty enough?
 		autoMelderDivertInfo divert (& valueString);
 		autostring32 command2 = Melder_dup (command);   // allow the menu command to reuse the stack (?)
-		Editor_doMenuCommand (praatP. editor, command2.peek(), numberOfArguments, & stack [0], nullptr, theInterpreter);
+		Editor_doMenuCommand (praatP. editor, command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
 		pushNumber (Melder_atof (valueString.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
@@ -3545,8 +3545,8 @@ static void do_do () {
 		MelderString_appendCharacter (& valueString, 1);   // a semaphor to check whether praat_doAction or praat_doMenuCommand wrote anything with MelderInfo
 		autoMelderDivertInfo divert (& valueString);
 		autostring32 command2 = Melder_dup (command);   // allow the menu command to reuse the stack (?)
-		if (! praat_doAction (command2.peek(), numberOfArguments, & stack [0], theInterpreter) &&
-		    ! praat_doMenuCommand (command2.peek(), numberOfArguments, & stack [0], theInterpreter))
+		if (! praat_doAction (command2.get(), numberOfArguments, & stack [0], theInterpreter) &&
+		    ! praat_doMenuCommand (command2.get(), numberOfArguments, & stack [0], theInterpreter))
 		{
 			Melder_throw (U"Command \"", command, U"\" not available for current selection.");
 		}
@@ -3629,7 +3629,7 @@ static void do_doStr () {
 		MelderString_empty (& info);
 		autoMelderDivertInfo divert (& info);
 		autostring32 command2 = Melder_dup (command);
-		Editor_doMenuCommand (praatP. editor, command2.peek(), numberOfArguments, & stack [0], nullptr, theInterpreter);
+		Editor_doMenuCommand (praatP. editor, command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
 		pushString (Melder_dup (info.string));
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
@@ -3641,8 +3641,8 @@ static void do_doStr () {
 		MelderString_empty (& info);
 		autoMelderDivertInfo divert (& info);
 		autostring32 command2 = Melder_dup (command);
-		if (! praat_doAction (command2.peek(), numberOfArguments, & stack [0], theInterpreter) &&
-		    ! praat_doMenuCommand (command2.peek(), numberOfArguments, & stack [0], theInterpreter))
+		if (! praat_doAction (command2.get(), numberOfArguments, & stack [0], theInterpreter) &&
+		    ! praat_doMenuCommand (command2.get(), numberOfArguments, & stack [0], theInterpreter))
 		{
 			Melder_throw (U"Command \"", command, U"\" not available for current selection.");
 		}
@@ -4415,7 +4415,7 @@ static void do_leftStr () {
 				s1 = s2;
 			#endif
 			autostring32 result = Melder_malloc (char32, newlength + 1);
-			str32ncpy (result.peek(), s->string, newlength);
+			str32ncpy (result.get(), s->string, newlength);
 			result [newlength] = U'\0';
 			pushString (result.transfer());
 		} else {
@@ -4457,7 +4457,7 @@ static void do_midStr () {
 			newlength = finish - start + 1;
 			if (newlength > 0) {
 				result.reset (Melder_malloc (char32, newlength + 1));
-				str32ncpy (result.peek(), s->string + start - 1, newlength);
+				str32ncpy (result.get(), s->string + start - 1, newlength);
 				result [newlength] = U'\0';
 			} else {
 				result.reset (Melder_dup (U""));
@@ -4475,7 +4475,7 @@ static void do_unicodeToBackslashTrigraphsStr () {
 	if (s->which == Stackel_STRING) {
 		integer length = str32len (s->string);
 		autostring32 trigraphs = Melder_calloc (char32, 3 * length + 1);
-		Longchar_genericize32 (s->string, trigraphs.peek());
+		Longchar_genericize32 (s->string, trigraphs.get());
 		pushString (trigraphs.transfer());
 	} else {
 		Melder_throw (U"The function \"unicodeToBackslashTrigraphs$\" requires a string, not ", Stackel_whichText (s), U".");
@@ -4486,7 +4486,7 @@ static void do_backslashTrigraphsToUnicodeStr () {
 	if (s->which == Stackel_STRING) {
 		integer length = str32len (s->string);
 		//autostring32 unicode = Melder_calloc (char32, length + 1);
-		//Longchar_nativize32 (s->string, unicode.peek(), false);
+		//Longchar_nativize32 (s->string, unicode.get(), false);
 		//pushString (unicode.transfer());
 		char32 *unicode = Melder_calloc (char32, length + 1);   // OPTIMIZE
 		Longchar_nativize32 (s->string, unicode, false);   // noexcept
@@ -4668,7 +4668,7 @@ static void do_extractTextStr (bool singleWord) {
 			}
 			length = p - substring;
 			result.reset (Melder_malloc (char32, length + 1));
-			str32ncpy (result.peek(), substring, length);
+			str32ncpy (result.get(), substring, length);
 			result [length] = U'\0';
 		}
 		pushString (result.transfer());
@@ -5134,7 +5134,7 @@ static void do_object_rowstr () {
 			if (index -> which == Stackel_NUMBER) {
 				integer number = Melder_iround (index->number);
 				autostring32 result = Melder_dup (data -> v_getRowStr (number));
-				if (! result.peek())
+				if (! result)
 					Melder_throw (U"Row index out of bounds.");
 				pushString (result.transfer());
 			} else {
@@ -5149,7 +5149,7 @@ static void do_object_rowstr () {
 			if (index -> which == Stackel_NUMBER) {
 				integer number = Melder_iround (index->number);
 				autostring32 result = Melder_dup (data -> v_getRowStr (number));
-				if (! result.peek())
+				if (! result)
 					Melder_throw (U"Row index out of bounds.");
 				pushString (result.transfer());
 			} else {
@@ -5173,7 +5173,7 @@ static void do_object_colstr () {
 			if (index -> which == Stackel_NUMBER) {
 				integer number = Melder_iround (index->number);
 				autostring32 result = Melder_dup (data -> v_getColStr (number));
-				if (! result.peek())
+				if (! result)
 					Melder_throw (U"Column index out of bounds.");
 				pushString (result.transfer());
 			} else {
@@ -5188,7 +5188,7 @@ static void do_object_colstr () {
 			if (index -> which == Stackel_NUMBER) {
 				integer number = Melder_iround (index->number);
 				autostring32 result = Melder_dup (data -> v_getColStr (number));
-				if (! result.peek())
+				if (! result)
 					Melder_throw (U"Column index out of bounds.");
 				pushString (result.transfer());
 			} else {
@@ -5313,7 +5313,7 @@ static void do_readFile () {
 		structMelderFile file { };
 		Melder_relativePathToFile (f->string, & file);
 		autostring32 text = MelderFile_readText (& file);
-		pushNumber (Melder_atof (text.peek()));
+		pushNumber (Melder_atof (text.get()));
 	} else {
 		Melder_throw (U"The function \"readFile\" requires a string (a file name), not ", Stackel_whichText (f), U".");
 	}
@@ -5743,7 +5743,7 @@ static void do_chooseWriteFileStr () {
 		Stackel defaultName = pop, title = pop;
 		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
 			autostring32 result = GuiFileSelect_getOutfileName (nullptr, title->string, defaultName->string);
-			if (! result.peek()) {
+			if (! result) {
 				result.reset (Melder_dup (U""));
 			}
 			pushString (result.transfer());
@@ -5760,7 +5760,7 @@ static void do_chooseDirectoryStr () {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
 			autostring32 result = GuiFileSelect_getDirectoryName (nullptr, title->string);
-			if (! result.peek()) {
+			if (! result) {
 				result.reset (Melder_dup (U""));
 			}
 			pushString (result.transfer());
@@ -6442,7 +6442,7 @@ static void do_rowStr () {
 	Stackel row = pop;
 	integer irow = Stackel_getRowNumber (row, thee);
 	autostring32 result = Melder_dup (thy v_getRowStr (irow));
-	if (! result.peek())
+	if (! result)
 		Melder_throw (U"Row index out of bounds.");
 	pushString (result.transfer());
 }
@@ -6451,7 +6451,7 @@ static void do_colStr () {
 	Stackel col = pop;
 	integer icol = Stackel_getColumnNumber (col, thee);
 	autostring32 result = Melder_dup (thy v_getColStr (icol));
-	if (! result.peek())
+	if (! result)
 		Melder_throw (U"Column index out of bounds.");
 	pushString (result.transfer());
 }

@@ -29,7 +29,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	SpellingChecker spellingChecker;
 	integer selectedTier;
 	bool suppressRedraw;
-	char32 *findString;
+	autostring32 findString;
 	GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 
 	void v_info ()
