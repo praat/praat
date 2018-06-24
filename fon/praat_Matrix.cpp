@@ -403,7 +403,7 @@ FORM (NEW_Matrix_power, U"Matrix: Power...", nullptr) {
 DO
 	CONVERT_EACH (Matrix)
 		autoMatrix result = Matrix_power (me, power);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 // MARK: Combine
@@ -411,7 +411,7 @@ DO
 DIRECT (NEW1_Matrix_appendRows) {
 	CONVERT_COUPLE (Matrix)
 		autoMatrix result = Matrix_appendRows (me, you, classMatrix);
-	CONVERT_COUPLE_END (my name, U"_", your name)
+	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: Cast
@@ -419,55 +419,55 @@ DIRECT (NEW1_Matrix_appendRows) {
 DIRECT (NEW_Matrix_to_Cochleagram) {
 	CONVERT_EACH (Matrix)
 		autoCochleagram result = Matrix_to_Cochleagram (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Excitation) {
 	CONVERT_EACH (Matrix)
 		autoExcitation result = Matrix_to_Excitation (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Harmonicity) {
 	CONVERT_EACH (Matrix)
 		autoHarmonicity result = Matrix_to_Harmonicity (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Intensity) {
 	CONVERT_EACH (Matrix)
 		autoIntensity result = Matrix_to_Intensity (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Ltas) {
 	CONVERT_EACH (Matrix)
 		autoLtas result = Matrix_to_Ltas (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Pitch) {
 	CONVERT_EACH (Matrix)
 		autoPitch result = Matrix_to_Pitch (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_PointProcess) {
 	CONVERT_EACH (Matrix)
 		autoPointProcess result = Matrix_to_PointProcess (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Polygon) {
 	CONVERT_EACH (Matrix)
 		autoPolygon result = Matrix_to_Polygon (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Sound) {
 	CONVERT_EACH (Matrix)
 		autoSound result = Matrix_to_Sound (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
@@ -477,44 +477,44 @@ FORM (NEW_Matrix_to_Sound_mono, U"Matrix: To Sound (mono)", 0) {
 DO
 	CONVERT_EACH (Matrix)
 		autoSound result = Matrix_to_Sound_mono (me, rowNumber);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Spectrogram) {
 	CONVERT_EACH (Matrix)
 		autoSpectrogram result = Matrix_to_Spectrogram (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Spectrum) {
 	CONVERT_EACH (Matrix)
 		autoSpectrum result = Matrix_to_Spectrum (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_TableOfReal) {
 	CONVERT_EACH (Matrix)
 		autoTableOfReal result = Matrix_to_TableOfReal (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_Transition) {
 	CONVERT_EACH (Matrix)
 		autoTransition result = Matrix_to_Transition (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Matrix_to_VocalTract) {
 	CONVERT_EACH (Matrix)
 		autoVocalTract result = Matrix_to_VocalTract (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW1_Matrix_to_ParamCurve) {
 	CONVERT_COUPLE (Matrix)
 		autoSound sound1 = Matrix_to_Sound (me), sound2 = Matrix_to_Sound (you);
 		autoParamCurve result = ParamCurve_create (sound1.get(), sound2.get());
-	CONVERT_COUPLE_END (my name, U"_", your name);
+	CONVERT_COUPLE_END (my name.get(), U"_", your name.get());
 }
 
 // MARK: - PHOTO
@@ -572,25 +572,25 @@ DO
 DIRECT (NEW_Photo_extractBlue) {
 	CONVERT_EACH (Photo)
 		autoMatrix result = Data_copy (my d_blue.get());
-	CONVERT_EACH_END (my name, U"_blue");
+	CONVERT_EACH_END (my name.get(), U"_blue");
 }
 
 DIRECT (NEW_Photo_extractGreen) {
 	CONVERT_EACH (Photo)
 		autoMatrix result = Data_copy (my d_green.get());
-	CONVERT_EACH_END (my name, U"_green");
+	CONVERT_EACH_END (my name.get(), U"_green");
 }
 
 DIRECT (NEW_Photo_extractRed) {
 	CONVERT_EACH (Photo)
 		autoMatrix result = Data_copy (my d_red.get());
-	CONVERT_EACH_END (my name, U"_red");
+	CONVERT_EACH_END (my name.get(), U"_red");
 }
 
 DIRECT (NEW_Photo_extractTransparency) {
 	CONVERT_EACH (Photo)
 		autoMatrix result = Data_copy (my d_transparency.get());
-	CONVERT_EACH_END (my name, U"_transparency");
+	CONVERT_EACH_END (my name.get(), U"_transparency");
 }
 
 FORM (MODIFY_Photo_formula_red, U"Photo Formula (red)", U"Formula (red)...") {

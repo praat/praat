@@ -102,7 +102,7 @@ autoInterpreter Interpreter_create (char32 *environmentName, ClassInfo editorCla
 
 autoInterpreter Interpreter_createFromEnvironment (Editor editor) {
 	if (! editor) return Interpreter_create (nullptr, nullptr);
-	return Interpreter_create (editor -> name, editor -> classInfo);
+	return Interpreter_create (editor -> name.get(), editor -> classInfo);
 }
 
 void Melder_includeIncludeFiles (autostring32 *text) {

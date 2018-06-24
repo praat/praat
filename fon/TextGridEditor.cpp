@@ -189,7 +189,7 @@ void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 
 static void menu_cb_WriteToTextFile (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM_SAVE (U"Save as TextGrid text file", nullptr)
-		Melder_sprint (defaultName,300, my data -> name, U".TextGrid");
+		Melder_sprint (defaultName,300, my data -> name.get(), U".TextGrid");
 	EDITOR_DO_SAVE
 		Data_writeToTextFile (my data, file);
 	EDITOR_END
@@ -990,7 +990,7 @@ static void menu_cb_RenameTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"rename a tier");
 		Daata tier = grid -> tiers->at [my selectedTier];
-		SET_STRING (newName, tier -> name ? tier -> name : U"")
+		SET_STRING (newName, tier -> name ? tier -> name.get() : U"")
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;
 		checkTierSelection (me, U"rename a tier");
@@ -1011,7 +1011,7 @@ static void menu_cb_PublishTier (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	Function tier = grid -> tiers->at [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
 	TextGrid_addTier_copy (publish.get(), tier);
-	Thing_setName (publish.get(), tier -> name);
+	Thing_setName (publish.get(), tier -> name.get());
 	Editor_broadcastPublication (me, publish.move());
 }
 
@@ -1110,7 +1110,7 @@ static void menu_cb_DuplicateTier (TextGridEditor me, EDITOR_ARGS_FORM) {
 		TextGrid grid = (TextGrid) my data;
 		if (my selectedTier) {
 			SET_INTEGER (position, my selectedTier + 1)
-			SET_STRING (name, grid -> tiers->at [my selectedTier] -> name)
+			SET_STRING (name, grid -> tiers->at [my selectedTier] -> name.get())
 		}
 	EDITOR_DO
 		TextGrid grid = (TextGrid) my data;
@@ -1547,7 +1547,7 @@ void structTextGridEditor :: v_draw () {
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT,
 				our p_showNumberOf == kTextGridEditor_showNumberOf::NOTHING ? Graphics_HALF : Graphics_BOTTOM);
-			Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name);
+			Graphics_text (our graphics.get(), our endWindow, 0.5, anyTier -> name.get());
 		}
 		if (our p_showNumberOf != kTextGridEditor_showNumberOf::NOTHING) {
 			Graphics_setTextAlignment (our graphics.get(), Graphics_LEFT, Graphics_TOP);

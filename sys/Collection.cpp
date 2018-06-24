@@ -66,7 +66,7 @@ bool _CollectionOfDaata_v_equal (_CollectionOfDaata* me, _CollectionOfDaata* the
 bool _CollectionOfDaata_v_canWriteAsEncoding (_CollectionOfDaata* me, int encoding) {
 	for (integer i = 1; i <= my size; i ++) {
 		Daata data = my at [i];
-		if (data -> name && ! Melder_isEncodable (data -> name, encoding)) return false;
+		if (data -> name && ! Melder_isEncodable (data -> name.get(), encoding)) return false;
 		if (! Data_canWriteAsEncoding (data, encoding)) return false;
 	}
 	return true;
@@ -86,7 +86,7 @@ void _CollectionOfDaata_v_writeText (_CollectionOfDaata* me, MelderFile file) {
 				Melder_cat (classInfo -> className, U" ", classInfo -> version) :
 				classInfo -> className,
 			U"class", 0,0,0,0,0);
-		texputw16 (file, thing -> name, U"name", 0,0,0,0,0);
+		texputw16 (file, thing -> name.get(), U"name", 0,0,0,0,0);
 		Data_writeText (thing, file);
 		texexdent (file);
 	}
@@ -97,7 +97,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 	if (formatVersion < 0) {
 		long_not_integer l_size;
 		autostring8 line = Melder_32to8 (MelderReadText_readLine (text));
-		if (! line.get() || ! sscanf (line.get(), "%ld", & l_size) || l_size < 0)
+		if (! line || ! sscanf (line.get(), "%ld", & l_size) || l_size < 0)
 			Melder_throw (U"Collection::readText: cannot read size.");
 		my _grow (l_size);
 		for (integer i = 1; i <= l_size; i ++) {
@@ -106,7 +106,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			char klas [200], nameTag [2000];
 			do {
 				line.reset (Melder_32to8 (MelderReadText_readLine (text)));
-				if (! line.get())
+				if (! line)
 					Melder_throw (U"Missing object line.");
 			} while (strncmp (line.get(), "Object ", 7));
 			stringsRead = sscanf (line.get(), "Object %ld: class %199s %1999s%n", & itemNumberRead, klas, nameTag, & n);
@@ -123,10 +123,11 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 				Melder_throw (U"Cannot read item of class ", Thing_className (my at [i]), U" in collection.");
 			Data_readText (my at [i], text, -1);
 			if (stringsRead == 3) {
-				if (line [n] == U' ') n ++;   // skip space character
-				length = strlen (line.get()+n);
-				if (length > 0 && (line.get()+n) [length - 1] == '\n')
-					(line.get()+n) [length - 1] = '\0';
+				char *location = & line [n];
+				if (*location == U' ') n ++;   // skip space character
+				length = strlen (location);
+				if (length > 0 && location [length - 1] == '\n')
+					location [length - 1] = '\0';
 				Thing_setName (my at [i], Melder_peek8to32 (line.get()+n));
 			}
 		}
@@ -156,7 +157,7 @@ void _CollectionOfDaata_v_writeBinary (_CollectionOfDaata* me, FILE *f) {
 			Melder_throw (U"Objects of class ", classInfo -> className, U" cannot be written.");
 		binputw8 (classInfo -> version > 0 ?
 			Melder_cat (classInfo -> className, U" ", classInfo -> version) : classInfo -> className, f);
-		binputw16 (thing -> name, f);
+		binputw16 (thing -> name.get(), f);
 		Data_writeBinary ((Daata) thing, f);
 	}
 }

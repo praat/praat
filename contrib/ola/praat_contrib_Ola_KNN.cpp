@@ -1,6 +1,6 @@
 /* praat_contrib_Ola_KNN.cpp
  *
- * Copyright (C) 2007-2009 Ola Söder, 2010-2011,2015,2016 Paul Boersma
+ * Copyright (C) 2007-2009 Ola Söder, 2010-2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ DIRECT (NEW_KNN_extractInputPatterns) {
 		if (my nInstances <= 0)
 			Melder_throw (U"Instance base is empty.");
 		autoPatternList result = Data_copy (my input.get());
-	CONVERT_EACH_END (my name, U"_input")
+	CONVERT_EACH_END (my name.get(), U"_input")
 }
 
 DIRECT (NEW_KNN_extractOutputCategories) {
@@ -224,7 +224,7 @@ DIRECT (NEW_KNN_extractOutputCategories) {
 		if (my nInstances <= 0)
 			Melder_throw (U"Instance base is empty.");
 		autoCategories result = Data_copy (my output.get());
-	CONVERT_EACH_END (my name, U"_output");
+	CONVERT_EACH_END (my name.get(), U"_output");
 }
 
 FORM (MODIFY_KNN_reset, U"Reset", U"KNN: Reset...") {
@@ -412,7 +412,7 @@ DO
 			Melder_throw (U"The dimensionality of PatternList should match that of the instance base.");
 		autoFeatureWeights fws = FeatureWeights_create (your nx);
 		autoCategories result = KNN_classifyToCategories (me, you, fws.get(), kNeighbours, voteWeighting);
-	CONVERT_TWO_END (my name, U"_", your name)
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_KNN_PatternList_to_TableOfReal, U"Classification", U"KNN & PatternList: To TabelOfReal...") {
@@ -561,7 +561,7 @@ DIRECT (NEW_PatternList_to_Dissimilarity) {
 	CONVERT_EACH (PatternList)
 		autoFeatureWeights fws = FeatureWeights_create (my nx);
 		autoDissimilarity result = KNN_patternToDissimilarity (me, fws.get());
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW1_PatternList_FeatureWeights_to_Dissimilarity) {
@@ -589,7 +589,7 @@ DO
 	CONVERT_EACH (KNN)
 		autoPermutation result = KNN_SA_ToPermutation (me, numberOfTriesPerStep, numberOfIterations,
 			stepSize, boltzmannConstant, initialTemperature, dampingFactor, finalTemperature);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -689,7 +689,7 @@ DO
 			Melder_throw (U"Please select a value of k such that 0 < k < ", my nInstances + 1, U".");
 		autoFeatureWeights result = FeatureWeights_computeWrapperInt (me, kNeighbours, voteWeighting, numberOfSeeds, learningRate,
 			stopAt, optimization, evaluationMethod);
-	CONVERT_EACH_END (my name, U"_output")
+	CONVERT_EACH_END (my name.get(), U"_output")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

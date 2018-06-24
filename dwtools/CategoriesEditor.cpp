@@ -240,7 +240,7 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 		for (integer i = from; i <= to; i++) {
 			SimpleString category = data->at [i];
 			char wcindex[20];
-			snprintf (wcindex,20, "%5ld ", i);
+			snprintf (wcindex,20, "%5ld ", (long_not_integer) i);   // BUG
 			table[i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), category -> string));
 		}
 		if (itemCount > size) { // some items have been removed from Categories?

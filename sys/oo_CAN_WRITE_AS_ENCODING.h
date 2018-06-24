@@ -38,29 +38,16 @@
 
 #define oo_STRINGx(storage,x)  \
 	if (our x && ! Melder_isEncodable (our x, encoding)) return false;
-#define oo_STRING32x(storage,x)  \
-	if (our x && ! Melder_isEncodable (our x, encoding)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
-#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType::MAX; i ++) \
 		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
-#define oo_STRING32x_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (our x) { \
-		for (integer i = min; i <= max; i ++) \
-			if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false; \
-	}
-#define oo_STRING32x_VECTOR(storage,x,min,max)  \
 	if (our x) { \
 		for (integer i = min; i <= max; i ++) \
 			if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false; \

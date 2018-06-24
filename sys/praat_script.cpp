@@ -41,7 +41,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			char32 *className = & buffer.string [0], *givenName = space + 1;
 			WHERE_DOWN (1) {
 				Daata object = (Daata) OBJECT;
-				if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
+				if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name.get()))
 					return IOBJECT;
 			}
 			/*
@@ -50,7 +50,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 			ClassInfo klas = Thing_classFromClassName (className, NULL);
 			WHERE_DOWN (1) {
 				Daata object = (Daata) OBJECT;
-				if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
+				if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name.get()))
 					return IOBJECT;
 			}
 			Melder_throw (U"No object with that name.");
@@ -79,7 +79,7 @@ Editor praat_findEditorFromString (const char32 *string) {
 				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
 				if (editor) {
 					Melder_assert (editor -> name);
-					const char32 *space = str32chr (editor -> name, U' ');   // editors tend to be called like "3. Sound kanweg"
+					const char32 *space = str32chr (editor -> name.get(), U' ');   // editors tend to be called like "3. Sound kanweg"
 					if (space) {   // but not all
 						const char32 *name = space + 1;
 						if (str32equ (name, string)) return editor;
@@ -91,7 +91,7 @@ Editor praat_findEditorFromString (const char32 *string) {
 		WHERE_DOWN (1) {
 			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor editor = theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
-				if (editor && str32equ (editor -> name, string)) return editor;
+				if (editor && str32equ (editor -> name.get(), string)) return editor;
 			}
 		}
 	}

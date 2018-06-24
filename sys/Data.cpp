@@ -1,6 +1,6 @@
 /* Data.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2006,2008-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ autoDaata _Data_copy (Daata me) {
 		if (! me) return autoDaata();
 		autoDaata thee = Thing_newFromClass (my classInfo).static_cast_move <structDaata> ();
 		my v_copy (thee.get());
-		Thing_setName (thee.get(), my name);
+		Thing_setName (thee.get(), my name.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");

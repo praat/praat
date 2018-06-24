@@ -1,6 +1,6 @@
 /* Praat_tests.cpp
  *
- * Copyright (C) 2001-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,13 +37,13 @@
 #include <string>
 
 static void testAutoData (autoDaata data) {
-	fprintf (stderr, "testAutoData: %p %p\n", data.get(), data -> name);
+	fprintf (stderr, "testAutoData: %p %p\n", data.get(), data -> name.get());
 }
 static void testAutoDataRef (autoDaata& data) {
-	fprintf (stderr, "testAutoDataRef: %p %p\n", data.get(), data -> name);
+	fprintf (stderr, "testAutoDataRef: %p %p\n", data.get(), data -> name.get());
 }
 static void testData (Daata data) {
-	fprintf (stderr, "testData: %p %s\n", data, Melder_peek32to8 (data -> name));
+	fprintf (stderr, "testData: %p %s\n", data, Melder_peek32to8 (data -> name.get()));
 }
 static autoDaata newAutoData () {
 	autoDaata data (Thing_new (Daata));

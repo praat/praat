@@ -71,7 +71,7 @@ void praat_TimeFrameSampled_query_init (ClassInfo klas);
 DIRECT (NEW_Cepstrum_downto_PowerCepstrum) {
 	CONVERT_EACH (Cepstrum)
 		autoPowerCepstrum result = Cepstrum_downto_PowerCepstrum (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (HELP_PowerCepstrum_help) {
@@ -278,7 +278,7 @@ FORM (NEW_PowerCepstrum_smooth, U"PowerCepstrum: Smooth", nullptr) {
 DO
 	CONVERT_EACH (PowerCepstrum)
 		autoPowerCepstrum result = PowerCepstrum_smooth (me, quefrencySmoothingWindowDuration, numberOfIterations);
-	CONVERT_EACH_END (my name, U"_smooth")
+	CONVERT_EACH_END (my name.get(), U"_smooth")
 }
 
 FORM (NEW_PowerCepstrum_subtractTilt, U"PowerCepstrum: Subtract tilt", nullptr) {
@@ -294,19 +294,19 @@ FORM (NEW_PowerCepstrum_subtractTilt, U"PowerCepstrum: Subtract tilt", nullptr) 
 DO
 	CONVERT_EACH (PowerCepstrum)
 		autoPowerCepstrum result = PowerCepstrum_subtractTilt (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
-	CONVERT_EACH_END (my name, U"_minusTilt")
+	CONVERT_EACH_END (my name.get(), U"_minusTilt")
 }
 
 DIRECT (NEW_Cepstrum_to_Spectrum) {
 	CONVERT_EACH (Cepstrum)
 		autoSpectrum result = Cepstrum_to_Spectrum (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_PowerCepstrum_to_Matrix) {
 	CONVERT_EACH (PowerCepstrum)
 		autoMatrix result = PowerCepstrum_to_Matrix (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 /********************** Cepstrogram  ****************************************/
@@ -350,7 +350,7 @@ FORM (NEW_PowerCepstrogram_smooth, U"PowerCepstrogram: Smooth", U"PowerCepstrogr
 DO
 	CONVERT_EACH (PowerCepstrogram)
 		autoPowerCepstrogram result = PowerCepstrogram_smooth (me, smoothingWindowDuration, quefrencySmoothingWindowDuration);
-	CONVERT_EACH_END (my name, U"_smoothed")
+	CONVERT_EACH_END (my name.get(), U"_smoothed")
 }
 
 DIRECT (REAL_PowerCepstrogram_getStartQuefrency) {
@@ -390,7 +390,7 @@ FORM (NEW_PowerCepstrogram_subtractTilt, U"PowerCepstrogram: Subtract tilt", nul
 DO
 	CONVERT_EACH (PowerCepstrogram)
 		autoPowerCepstrogram result = PowerCepstrogram_subtractTilt (me, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
-	CONVERT_EACH_END (my name, U"_minusTilt")
+	CONVERT_EACH_END (my name.get(), U"_minusTilt")
 }
 
 FORM (MODIFY_PowerCepstrogram_subtractTilt_inplace, U"PowerCepstrogram: Subtract tilt (in-place)", nullptr) {
@@ -473,7 +473,7 @@ FORM (NEW_PowerCepstrogram_to_PowerCepstrum_slice, U"PowerCepstrogram: To PowerC
 DO
 	CONVERT_EACH (PowerCepstrogram)
 		autoPowerCepstrum result = PowerCepstrogram_to_PowerCepstrum_slice (me, time);
-	CONVERT_EACH_END (my name, NUMstring_timeNoDot (time));
+	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time));
 }
 
 FORM (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prominence)", U"PowerCepstrogram: To Table (peak prominence)...") {
@@ -497,7 +497,7 @@ FORM (NEW_PowerCepstrogram_to_Table_cpp, U"PowerCepstrogram: To Table (peak prom
 DO
 	CONVERT_EACH (PowerCepstrogram)
 		autoTable result = PowerCepstrogram_to_Table_cpp (me, fromPitch, toPitch, tolerance, interpolationMethod - 1, fromQuefrency_tiltLine, toQuefrency_tiltLine, lineType, fitMethod);
-	CONVERT_EACH_END (my name, U"_cpp");
+	CONVERT_EACH_END (my name.get(), U"_cpp");
 }
 
 FORM (NEW_PowerCepstrogram_to_Table_hillenbrand, U"PowerCepstrogram: To Table (hillenbrand)", U"PowerCepstrogram: To Table (peak prominence...") {
@@ -507,13 +507,13 @@ FORM (NEW_PowerCepstrogram_to_Table_hillenbrand, U"PowerCepstrogram: To Table (h
 DO
 	CONVERT_EACH (PowerCepstrogram)
 		autoTable result = PowerCepstrogram_to_Table_hillenbrand (me,fromPitch, toPitch);
-	CONVERT_EACH_END (my name, U"_cpp")
+	CONVERT_EACH_END (my name.get(), U"_cpp")
 }
 
 DIRECT (NEW_PowerCepstrogram_to_Matrix) {
 	CONVERT_EACH (PowerCepstrogram)
 		autoMatrix result = PowerCepstrogram_to_Matrix (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 /********************** Cepstrumc  ****************************************/
@@ -521,7 +521,7 @@ DIRECT (NEW_PowerCepstrogram_to_Matrix) {
 DIRECT (NEW_Cepstrumc_to_LPC) {
 	CONVERT_EACH (Cepstrumc)
 		autoLPC result = Cepstrumc_to_LPC (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW1_Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: To DTW...") {
@@ -543,13 +543,13 @@ FORM (NEW1_Cepstrumc_to_DTW, U"Cepstrumc: To DTW", U"Cepstrumc: To DTW...") {
 DO
 	CONVERT_COUPLE (Cepstrumc)
 		autoDTW result = Cepstrumc_to_DTW (me, you, cepstralWeight, logEnergyWeight, regressionWeight, regressionLogEnergyWeight, windowDuration, matchBeginPositions, matchEndPositions, slopeConstraintType);
-	CONVERT_COUPLE_END (my name, U"_", your name)
+	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
 }
 
 DIRECT (NEW_Cepstrumc_to_Matrix) {
 	CONVERT_EACH (Cepstrumc)
 		autoMatrix result = Cepstrumc_to_Matrix (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 /******************** Formant ********************************************/
@@ -560,7 +560,7 @@ FORM (NEW_Formant_to_LPC, U"Formant: To LPC", nullptr) {
 DO
 	CONVERT_EACH (Formant)
 		autoLPC result = Formant_to_LPC (me, 1.0 / samplingFrequency);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (MODIFY_Formant_formula, U"Formant: Formula", nullptr) {
@@ -585,7 +585,7 @@ FORM (NEW1_Formant_Spectrogram_to_IntensityTier, U"Formant & Spectrogram: To Int
 DO
 	CONVERT_TWO (Formant, Spectrogram)
 		autoIntensityTier result = Formant_Spectrogram_to_IntensityTier (me, you, formantNumber);
-	CONVERT_TWO_END (my name, U"_", formantNumber)
+	CONVERT_TWO_END (my name.get(), U"_", formantNumber)
 }
 
 /********************LFCC ********************************************/
@@ -601,7 +601,7 @@ DO
 	Melder_require (numberOfCoefficients >= 0, U"Number of coefficients should not be less than zero.");
 	CONVERT_EACH (LFCC)
 		autoLPC result = LFCC_to_LPC (me, numberOfCoefficients);
-	CONVERT_EACH_END (my name);
+	CONVERT_EACH_END (my name.get());
 }
 
 /********************LineSpectralFrequencies ********************************************/
@@ -625,7 +625,7 @@ DO
 DIRECT (NEW_LineSpectralFrequencies_to_LPC) {
 	CONVERT_EACH (LineSpectralFrequencies)
 		autoLPC result = LineSpectralFrequencies_to_LPC (me);
-	CONVERT_EACH_END (my name);
+	CONVERT_EACH_END (my name.get());
 }
 
 /********************LPC ********************************************/
@@ -676,13 +676,13 @@ DO
 DIRECT (NEW_LPC_to_Formant) {
 	CONVERT_EACH (LPC)
 		autoFormant result = LPC_to_Formant (me, 50.0);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_LPC_to_Formant_keep_all) {
 	CONVERT_EACH (LPC)
 		autoFormant result = LPC_to_Formant (me, 0.0);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_LPC_to_LFCC, U"LPC: To LFCC", U"LPC: To LFCC...") {
@@ -692,7 +692,7 @@ DO
 	Melder_require (numberOfCoefficients >= 0, U"The number of coefficients should not be less than zero.");
 	CONVERT_EACH (LPC)
 		autoLFCC result = LPC_to_LFCC (me, numberOfCoefficients);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_LPC_to_LineSpectralFrequencies, U"LPC: To LineSpectralFrequencies", nullptr) {
@@ -701,7 +701,7 @@ FORM (NEW_LPC_to_LineSpectralFrequencies, U"LPC: To LineSpectralFrequencies", nu
 DO
 	CONVERT_EACH (LPC)
 		autoLineSpectralFrequencies result = LPC_to_LineSpectralFrequencies (me, gridSize);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_LPC_to_Polynomial_slice, U"LPC: To Polynomial", U"LPC: To Polynomial (slice)...") {
@@ -710,7 +710,7 @@ FORM (NEW_LPC_to_Polynomial_slice, U"LPC: To Polynomial", U"LPC: To Polynomial (
 DO
 	CONVERT_EACH (LPC)
 		autoPolynomial result = LPC_to_Polynomial (me, time);
-	CONVERT_EACH_END (my name, NUMstring_timeNoDot (time))
+	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 FORM (NEW_LPC_to_Spectrum_slice, U"LPC: To Spectrum", U"LPC: To Spectrum (slice)...") {
@@ -722,7 +722,7 @@ FORM (NEW_LPC_to_Spectrum_slice, U"LPC: To Spectrum", U"LPC: To Spectrum (slice)
 DO
 	CONVERT_EACH (LPC)
 		autoSpectrum result = LPC_to_Spectrum (me, time, minimumFrequencyResolution, bandwidthReduction, deemphasisFrequency);
-	CONVERT_EACH_END (my name, NUMstring_timeNoDot (time))
+	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 FORM (NEW_LPC_to_Spectrogram, U"LPC: To Spectrogram", U"LPC: To Spectrogram...") {
@@ -733,7 +733,7 @@ FORM (NEW_LPC_to_Spectrogram, U"LPC: To Spectrogram", U"LPC: To Spectrogram...")
 DO
 	CONVERT_EACH (LPC)
 		autoSpectrogram result = LPC_to_Spectrogram (me, minimumFrequencyResolution, bandwidthReduction, deemphasisFrequency);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_LPC_to_VocalTract_slice_special, U"LPC: To VocalTract", U"LPC: To VocalTract (slice, special)...") {
@@ -745,7 +745,7 @@ FORM (NEW_LPC_to_VocalTract_slice_special, U"LPC: To VocalTract", U"LPC: To Voca
 DO
 	CONVERT_EACH (LPC)
 		autoVocalTract result = LPC_to_VocalTract (me, time, glottalDamping, radiationDamping, internalDamping);
-	CONVERT_EACH_END (my name, NUMstring_timeNoDot (time))
+	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 FORM (NEW_LPC_to_VocalTract_slice, U"LPC: To VocalTract", U"LPC: To VocalTract (slice)...") {
@@ -755,25 +755,25 @@ FORM (NEW_LPC_to_VocalTract_slice, U"LPC: To VocalTract", U"LPC: To VocalTract (
 DO
 	CONVERT_EACH (LPC)
 		autoVocalTract result = LPC_to_VocalTract (me, time, lenght);
-	CONVERT_EACH_END (my name, NUMstring_timeNoDot (time))
+	CONVERT_EACH_END (my name.get(), NUMstring_timeNoDot (time))
 }
 
 DIRECT (NEW_LPC_downto_Matrix_lpc) {
 	CONVERT_EACH (LPC)
 		autoMatrix result = LPC_downto_Matrix_lpc (me);
-	CONVERT_EACH_END (my name, U"_lpc")
+	CONVERT_EACH_END (my name.get(), U"_lpc")
 }
 
 DIRECT (NEW_LPC_downto_Matrix_rc) {
 	CONVERT_EACH (LPC)
 		autoMatrix result = LPC_downto_Matrix_rc (me);
-	CONVERT_EACH_END (my name, U"_rc");
+	CONVERT_EACH_END (my name.get(), U"_rc");
 }
 
 DIRECT (NEW_LPC_downto_Matrix_area) {
 	CONVERT_EACH (LPC)
 		autoMatrix result = LPC_downto_Matrix_area (me);
-	CONVERT_EACH_END (my name, U"_area");
+	CONVERT_EACH_END (my name.get(), U"_area");
 }
 
 /********************** Sound *******************************************/
@@ -787,7 +787,7 @@ FORM (NEW_Sound_to_PowerCepstrogram, U"Sound: To PowerCepstrogram", U"Sound: To 
 DO
 	CONVERT_EACH (Sound)
 		autoPowerCepstrogram result = Sound_to_PowerCepstrogram (me, pitchFloor, timeStep, maximumFrequency, preEmphasisFrequency);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 
@@ -798,7 +798,7 @@ FORM (NEW_Sound_to_PowerCepstrogram_hillenbrand, U"Sound: To PowerCepstrogram (h
 DO
 	CONVERT_EACH (Sound)
 		autoPowerCepstrogram result = Sound_to_PowerCepstrogram_hillenbrand (me, pitchFloor, timeStep);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 	
 FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Formant (robust)...") {
@@ -814,7 +814,7 @@ FORM (NEW_Sound_to_Formant_robust, U"Sound: To Formant (robust)", U"Sound: To Fo
 DO
 	CONVERT_EACH (Sound)
 		autoFormant result = Sound_to_Formant_robust (me, timeStep, maximumNumberOfFormants, maximumFormantFrequency, windowLength, preEmphasisFrequency, 50.0, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, 1);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 #define Sound_to_LPC_addWarning \
@@ -834,7 +834,7 @@ DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH (Sound)
 		autoLPC result = Sound_to_LPC_auto (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Sound_to_LPC_covariance, U"Sound: To LPC (covariance)", U"Sound: To LPC (covariance)...") {
@@ -848,7 +848,7 @@ DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH (Sound)
 		autoLPC result = Sound_to_LPC_covar (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Sound_to_LPC_burg, U"Sound: To LPC (burg)", U"Sound: To LPC (burg)...") {
@@ -862,7 +862,7 @@ DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH (Sound)
 		autoLPC result = Sound_to_LPC_burg (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Sound_to_LPC_marple, U"Sound: To LPC (marple)", U"Sound: To LPC (marple)...") {
@@ -878,7 +878,7 @@ DO
 	preEmphasisFrequency = preEmphasisFrequency < 0.0 ? 0.0 : preEmphasisFrequency;
 	CONVERT_EACH (Sound)
 		autoLPC result = Sound_to_LPC_marple (me, predictionOrder, windowLength, timeStep, preEmphasisFrequency, tolerance1, tolerance2);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_Sound_to_MFCC, U"Sound: To MFCC", U"Sound: To MFCC...") {
@@ -894,7 +894,7 @@ DO
 	Melder_require (numberOfCoefficients < 25, U"The number of coefficients should be less than 25.");
 	CONVERT_EACH (Sound)
 		autoMFCC result = Sound_to_MFCC (me, numberOfCoefficients, windowLength, timeStep, firstFilterFrequency, maximumFrequency, distancBetweenFilters);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (GRAPHICS_VocalTract_drawSegments, U"VocalTract: Draw segments", nullptr) {
@@ -933,7 +933,7 @@ DO
 	Melder_require (time >= fromTime && time <= toTime, U"Your insert time should be between your start and end times.");
 	CONVERT_EACH (VocalTract)
 		autoVocalTractTier result = VocalTract_to_VocalTractTier (me, fromTime, toTime, time);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (HELP_VocalTractTier_help) {
@@ -946,7 +946,7 @@ FORM (NEW_VocalTractTier_to_LPC, U"VocalTractTier: To LPC", nullptr) {
 DO
 	CONVERT_EACH (VocalTractTier)
 		autoLPC result = VocalTractTier_to_LPC (me, timeStep);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_VocalTractTier_to_VocalTract, U"", nullptr) {
@@ -955,7 +955,7 @@ FORM (NEW_VocalTractTier_to_VocalTract, U"", nullptr) {
 DO
 	CONVERT_EACH (VocalTractTier)
 		autoVocalTract result = VocalTractTier_to_VocalTract (me, time);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (MODIFY_VocalTractTier_addVocalTract, U"VocalTractTier: Add VocalTract", nullptr) {
@@ -975,7 +975,7 @@ FORM (NEW1_LPC_Sound_filter, U"LPC & Sound: Filter", U"LPC & Sound: Filter...") 
 DO
 	CONVERT_TWO (LPC, Sound)
 		autoSound result = LPC_Sound_filter (me, you, useGain);
-	CONVERT_TWO_END (my name)
+	CONVERT_TWO_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filter at time", U"LPC & Sound: Filter with filter at time...") {
@@ -988,13 +988,13 @@ FORM (NEW1_LPC_Sound_filterWithFilterAtTime, U"LPC & Sound: Filter with one filt
 DO
 	CONVERT_TWO (LPC, Sound)
 		autoSound result = LPC_Sound_filterWithFilterAtTime (me, you, channel - 1, time);
-	CONVERT_TWO_END (my name)
+	CONVERT_TWO_END (my name.get())
 }
 
 DIRECT (NEW1_LPC_Sound_filterInverse) {
 	CONVERT_TWO (LPC, Sound)
 		autoSound result = LPC_Sound_filterInverse (me, you);
-	CONVERT_TWO_END (my name)
+	CONVERT_TWO_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inverse) with filter at time",
@@ -1008,7 +1008,7 @@ FORM (NEW1_LPC_Sound_filterInverseWithFilterAtTime, U"LPC & Sound: Filter (inver
 DO
 	CONVERT_TWO (LPC, Sound)
 		autoSound result = LPC_Sound_filterInverseWithFilterAtTime (me, you, channel - 1, time);
-	CONVERT_TWO_END (my name)
+	CONVERT_TWO_END (my name.get())
 }
 
 FORM (NEW1_LPC_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LPC (robust)...") {
@@ -1022,7 +1022,7 @@ FORM (NEW1_LPC_Sound_to_LPC_robust, U"Robust LPC analysis", U"LPC & Sound: To LP
 DO
 	CONVERT_TWO (LPC, Sound)
 		autoLPC result = LPC_Sound_to_LPC_robust (me, you, windowLength, preEmphasisFrequency, numberOfStandardDeviations, maximumNumberOfIterations, tolerance, locationVariable);
-	CONVERT_TWO_END (my name, U"_r");
+	CONVERT_TWO_END (my name.get(), U"_r");
 }
 
 extern void praat_TimeTier_query_init (ClassInfo klas);

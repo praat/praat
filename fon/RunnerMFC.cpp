@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2011,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2001-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 	my data = my experiments->at [my iexperiment];
 	Melder_assert (my data -> classInfo == classExperimentMFC);
 	ExperimentMFC_start ((ExperimentMFC) my data);
-	Thing_setName (me, ((ExperimentMFC) my data) -> name);
+	Thing_setName (me, ((ExperimentMFC) my data) -> name.get());
 	Editor_broadcastDataChanged (me);
 	Graphics_updateWs (my graphics.get());
 	return 1;

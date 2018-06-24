@@ -1147,7 +1147,7 @@ autoScalarProduct Distance_to_ScalarProduct (Distance me, bool normalize) {
 		}
 		TableOfReal_doubleCentre (thee.get());
 		if (my name) {
-			Thing_setName (thee.get(), my name);
+			Thing_setName (thee.get(), my name.get());
 		}
 		if (normalize) {
 			TableOfReal_normalizeTable (thee.get(), 1.0);

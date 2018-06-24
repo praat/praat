@@ -228,7 +228,7 @@ int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **c
 		double p = NUMrandomUniform (0.0, 1.0);
 		integer im = NUMgetIndexFromProbability (my mixingProbabilities, my numberOfComponents, p);
 		Covariance thee = my covariances->at [im];
-		*covname = thy name;
+		*covname = thy name.get();   // BUG dangle
 		if (thy numberOfRows == 1) { // 1xn reduced form
 			for (integer i = 1; i <= my dimension; i ++) {
 				c [i] = NUMrandomGauss (thy centroid [i], sqrt (thy data [1] [i]));

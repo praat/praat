@@ -229,7 +229,7 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		char32 *date = Melder_peek8to32 (dateA), *newline;
 		newline = str32chr (date, U'\n'); if (newline) *newline = U'\0';
 		SET_STRING (leftOrInsideHeader, date)
-		SET_STRING (rightOrOutsideHeader, my name)
+		SET_STRING (rightOrOutsideHeader, my name.get())
 		if (my d_printingPageNumber) SET_INTEGER (firstPageNumber, my d_printingPageNumber + 1)
 		if (my path >= 1 && my path <= manPages -> pages.size) {
 			ManPage page = manPages -> pages.at [my path];

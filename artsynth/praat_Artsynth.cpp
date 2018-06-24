@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2009,2011,2012,2014-2017 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ FORM (NEW_Artword_to_Art, U"From Artword to Art", nullptr) {
 DO
 	CONVERT_EACH (Artword)
 		autoArt result = Artword_to_Art (me, time);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 // MARK: - ART & SPEAKER
@@ -150,7 +150,7 @@ DIRECT (GRAPHICS_Art_Speaker_drawMesh) {
 DIRECT (NEW1_Art_Speaker_to_VocalTract) {
 	CONVERT_TWO (Art, Speaker)
 		autoVocalTract result = Art_Speaker_to_VocalTract (me, you);
-	CONVERT_TWO_END (my name, U"_", your name)
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
 // MARK: - ARTWORD & SPEAKER
@@ -185,7 +185,7 @@ DO
 			& w1, width1, & w2, width2, & w3, width3,
 			& p1, pressure1, & p2, pressure2, & p3, pressure3,
 			& v1, velocity1, & v2, velocity2, & v3, velocity3);
-		praat_new (result.move(), my name, U"_", your name);
+		praat_new (result.move(), my name.get(), U"_", your name.get());
 		if (width1) praat_new (w1.move(), U"width", width1);
 		if (width2) praat_new (w2.move(), U"width", width2);
 		if (width3) praat_new (w3.move(), U"width", width3);
@@ -292,7 +292,7 @@ DIRECT (HELP_VocalTract_help) {
 DIRECT (NEW_VocalTract_to_Matrix) {
 	CONVERT_EACH (VocalTract)
 		autoMatrix result = VocalTract_to_Matrix (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_VocalTract_to_Spectrum, U"From Vocal Tract to Spectrum", nullptr) {
@@ -307,7 +307,7 @@ DO
 	CONVERT_EACH (VocalTract)
 		autoSpectrum result = VocalTract_to_Spectrum (me, numberOfFequencies,
 			maximumFrequency, glottalDamping, radiationDamping, internalDamping);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (HELP_ArticulatorySynthesisTutorial) {
