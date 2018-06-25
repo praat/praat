@@ -24,7 +24,7 @@
 #define ooSTRUCT Index
 oo_DEFINE_CLASS (Index, Daata)
 
-	oo_AUTO_OBJECT (Ordered, 0, classes)
+	oo_OBJECT (Ordered, 0, classes)
 	oo_INTEGER (numberOfItems)
 	oo_INTEGER_VECTOR (classIndex, numberOfItems)
 

@@ -22,7 +22,7 @@ oo_DEFINE_CLASS (GaussianMixture, Daata)
 	oo_INTEGER (numberOfComponents)
 	oo_INTEGER (dimension)
 	oo_DOUBLE_VECTOR (mixingProbabilities, numberOfComponents)
-	oo_AUTO_OBJECT (CovarianceList, 0, covariances)
+	oo_OBJECT (CovarianceList, 0, covariances)
 
 	#if oo_DECLARING
 		void v_info ()

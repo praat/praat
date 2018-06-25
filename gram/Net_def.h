@@ -87,7 +87,7 @@ oo_END_CLASS (FullyConnectedLayer)
 #define ooSTRUCT Net
 oo_DEFINE_CLASS (Net, Daata)
 
-	oo_AUTO_OBJECT (LayerList, 0, layers)
+	oo_OBJECT (LayerList, 0, layers)
 
 oo_END_CLASS (Net)
 #undef ooSTRUCT

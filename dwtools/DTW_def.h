@@ -34,8 +34,8 @@ oo_DEFINE_STRUCT (DTW_Path_Query)
 	oo_INTEGER (nx)
 	oo_INTEGER (ny)
 	oo_INTEGER (nxy)
-	oo_AUTO_OBJECT (RealTier, 0, yfromx)
-	oo_AUTO_OBJECT (RealTier, 0, xfromy)
+	oo_OBJECT (RealTier, 0, yfromx)
+	oo_OBJECT (RealTier, 0, xfromy)
 oo_END_STRUCT (DTW_Path_Query) 
 #undef ooSTRUCT
 

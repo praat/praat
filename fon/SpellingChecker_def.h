@@ -32,8 +32,8 @@ oo_DEFINE_CLASS (SpellingChecker, Daata)           // CGN:
 	oo_STRING (allowAllWordsContaining)       // * xxx
 	oo_STRING (allowAllWordsStartingWith)
 	oo_STRING (allowAllWordsEndingIn)         // -
-	oo_AUTO_OBJECT (WordList, 0, wordList)
-	oo_AUTO_COLLECTION (StringSet, userDictionary, SimpleString, 0)
+	oo_OBJECT (WordList, 0, wordList)
+	oo_COLLECTION (StringSet, userDictionary, SimpleString, 0)
 
 oo_END_CLASS (SpellingChecker)
 #undef ooSTRUCT

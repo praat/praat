@@ -27,7 +27,7 @@ oo_DEFINE_CLASS (FileInMemory, Daata)
 	oo_INT32 (ungetChar)
 	#if oo_DESTROYING
 		if (_dontOwnData) {
-			oo_POINTER(d_data)
+			oo_POINTER (d_data)
 		} else {
 			oo_UBYTE_VECTOR_FROM (d_data, 0, d_numberOfBytes)
 		}

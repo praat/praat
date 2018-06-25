@@ -19,8 +19,10 @@
 
 #define ooSTRUCT Vowel
 oo_DEFINE_CLASS (Vowel, Function)
-	oo_AUTO_OBJECT (PitchTier, 0, pt)
-	oo_AUTO_OBJECT (FormantTier, 0, ft)
+
+	oo_OBJECT (PitchTier, 0, pt)
+	oo_OBJECT (FormantTier, 0, ft)
+
 oo_END_CLASS (Vowel)
 #undef ooSTRUCT
 

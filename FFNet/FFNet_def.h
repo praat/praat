@@ -36,7 +36,7 @@ oo_DEFINE_CLASS (FFNet, Daata)
 
 	oo_INT (costFunctionType)
 
-	oo_AUTO_COLLECTION (Categories, outputCategories, SimpleString, 0)
+	oo_COLLECTION (Categories, outputCategories, SimpleString, 0)
 
 	oo_INTEGER (nWeights)	/* number of weights */
 
@@ -62,7 +62,7 @@ oo_DEFINE_CLASS (FFNet, Daata)
 			double **inputPattern, **targetActivation;
 		#endif
 		#if oo_DECLARING || oo_DESTROYING
-			oo_AUTO_OBJECT (Minimizer, 0, minimizer)
+			oo_OBJECT (Minimizer, 0, minimizer)
 		#endif
 
 		oo_DOUBLE_VECTOR (activity, nNodes)
@@ -86,10 +86,10 @@ oo_DEFINE_CLASS (FFNet, Daata)
 	#endif
 
 	#if oo_COPYING
-		thy nonLinearity = nonLinearity;
-    	thy nlClosure = nlClosure;
-    	thy costFunction = costFunction;
-		thy cfClosure = cfClosure;
+		thy nonLinearity = our nonLinearity;
+    	thy nlClosure = our nlClosure;
+    	thy costFunction = our costFunction;
+		thy cfClosure = our cfClosure;
 	#endif
 
 	#if oo_DECLARING

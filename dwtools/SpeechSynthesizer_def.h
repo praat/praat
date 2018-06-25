@@ -68,6 +68,7 @@ oo_END_CLASS (EspeakVoice)
 
 #define ooSTRUCT SpeechSynthesizer
 oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
+
 	oo_FROM (1)
 		oo_STRING (d_synthesizerVersion)
 	oo_ENDFROM
@@ -111,16 +112,17 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_QUESTION (d_estimateSpeechRate)
 	#endif
 
-	#if !oo_READING && !oo_WRITING
+	#if ! oo_READING && ! oo_WRITING
 		// Filled by the call back
-		oo_AUTO_OBJECT (Table, 0, d_events)
+		oo_OBJECT (Table, 0, d_events)
 		oo_DOUBLE (d_internalSamplingFrequency)
 		oo_INTEGER (d_numberOfSamples)
 		oo_INTEGER (d_wavCapacity)
 		oo_INT_VECTOR (d_wav, d_wavCapacity)
 	#endif
 	#if oo_DECLARING
-		void v_info () override;
+		void v_info ()
+			override;
 	#endif
 
 oo_END_CLASS (SpeechSynthesizer)
