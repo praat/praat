@@ -20,10 +20,10 @@
 #define ooSTRUCT Photo
 oo_DEFINE_CLASS (Photo, SampledXY)
 
-	oo_AUTO_OBJECT (Matrix, 2, d_red)
-	oo_AUTO_OBJECT (Matrix, 2, d_green)
-	oo_AUTO_OBJECT (Matrix, 2, d_blue)
-	oo_AUTO_OBJECT (Matrix, 2, d_transparency)
+	oo_OBJECT (Matrix, 2, d_red)
+	oo_OBJECT (Matrix, 2, d_green)
+	oo_OBJECT (Matrix, 2, d_blue)
+	oo_OBJECT (Matrix, 2, d_transparency)
 
 	#if oo_DECLARING
 		void v_info ()

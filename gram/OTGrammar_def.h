@@ -33,7 +33,7 @@ oo_DEFINE_STRUCT (OTGrammarConstraint)
 		}
 	#endif
 
-	#if !oo_READING && !oo_WRITING
+	#if ! oo_READING && ! oo_WRITING
 		oo_INT16 (tiedToTheLeft)
 		oo_INT16 (tiedToTheRight)
 	#endif
@@ -59,7 +59,7 @@ oo_DEFINE_STRUCT (OTGrammarCandidate)
 	oo_INTEGER (numberOfConstraints)
 	oo_INT_VECTOR (marks, numberOfConstraints)
 
-	#if !oo_READING && !oo_WRITING
+	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (harmony)
 		oo_DOUBLE (probability)
 		oo_INTEGER (numberOfPotentialPartialOutputsMatching)

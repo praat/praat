@@ -25,7 +25,7 @@ oo_DEFINE_CLASS (Sampled, Function)
 	oo_DOUBLE (x1)
 
 	#if oo_READING
-		if (xmin > xmax) {
+		if (xmin >= xmax) {
 			Melder_throw (U"xmax should be greater than xmin.");
 		}
 		if (nx < 1) {

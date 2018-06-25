@@ -1,6 +1,6 @@
 /* ExperimentMFC_def.h
  *
- * Copyright (C) 2001-2011,2013,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2001-2007,2009,2011,2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +37,9 @@
 oo_DEFINE_STRUCT (SoundMFC)
 
 	oo_STRING (name)
-	#if !oo_READING && !oo_WRITING
-		oo_AUTO_OBJECT (Sound, 0, sound)
-	#endif
-		
-	#if oo_DESTROYING
-		sound.reset();
+
+	#if ! oo_READING && ! oo_WRITING
+		oo_OBJECT (Sound, 0, sound)
 	#endif
 
 oo_END_STRUCT (SoundMFC)
@@ -56,12 +53,9 @@ oo_DEFINE_STRUCT (StimulusMFC)
 	oo_FROM (4)
 		oo_STRING (visibleText)
 	oo_ENDFROM
-	#if !oo_READING && !oo_WRITING
-		oo_AUTO_OBJECT (Sound, 0, sound)
-	#endif
 
-	#if oo_DESTROYING
-		sound.reset();
+	#if ! oo_READING && ! oo_WRITING
+		oo_OBJECT (Sound, 0, sound)
 	#endif
 
 oo_END_STRUCT (StimulusMFC)
@@ -83,12 +77,9 @@ oo_DEFINE_STRUCT (ResponseMFC)
 		oo_STRING (key)
 	oo_ENDFROM
 	oo_STRING (name)
-	#if !oo_READING && !oo_WRITING
-		oo_AUTO_OBJECT (Sound, 0, sound)
-	#endif
 
-	#if oo_DESTROYING
-		sound.reset();
+	#if ! oo_READING && ! oo_WRITING
+		oo_OBJECT (Sound, 0, sound)
 	#endif
 
 oo_END_STRUCT (ResponseMFC)
@@ -180,7 +171,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 		oo_INTEGER (numberOfGoodnessCategories)
 		oo_STRUCT_VECTOR (GoodnessMFC, goodness, numberOfGoodnessCategories)
 	oo_ENDFROM
-	#if !oo_READING && !oo_WRITING
+	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (samplePeriod)
 		oo_INT16 (numberOfChannels)
 		oo_BOOLEAN (pausing)
@@ -191,7 +182,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 		oo_DOUBLE_VECTOR (goodnesses, numberOfTrials)
 		oo_DOUBLE (startingTime)
 		oo_DOUBLE_VECTOR (reactionTimes, numberOfTrials)
-		oo_AUTO_OBJECT (Sound, 0, playBuffer)
+		oo_OBJECT (Sound, 0, playBuffer)
 	#endif
 	oo_DIR (rootDirectory)
 	#if oo_READING

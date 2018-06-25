@@ -84,24 +84,31 @@
 		NUMmatrix_free <struct##Type> (our x, row1, col1); \
 	}
 
-#define oo_AUTO_OBJECT(Class,version,x)
+#define oo_OBJECT(Class,version,x)  \
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		x. reset (); \
+	}
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)
 
-#define oo_AUTO_COLLECTION(Class,x,ItemClass,version)
+#define oo_COLLECTION(Class,x,ItemClass,version)
 
 #define oo_FILE(x)
 
 #define oo_DIR(x)
 
 #define oo_DEFINE_STRUCT(Struct)  \
-	void struct##Struct :: destroy () {
+	void struct##Struct :: destroy () { \
+		constexpr bool _thisStructCanAutodestroyItsMembers_ = false; \
+		(void) _thisStructCanAutodestroyItsMembers_;
 
 #define oo_END_STRUCT(Type)  \
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
 	void struct##Class :: v_destroy () noexcept { \
+		constexpr bool _thisStructCanAutodestroyItsMembers_ = true; \
+		(void) _thisStructCanAutodestroyItsMembers_;
 
 #define oo_END_CLASS(Class)  \
 		Class##_Parent :: v_destroy (); \

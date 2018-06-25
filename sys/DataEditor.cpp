@@ -278,9 +278,8 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 		StructEditor_create (my root, name.string, fieldData -> address,
 			* (Data_Description *) fieldData -> description -> tagType);
 	} else if (fieldData -> description -> type == objectwa ||
-	           fieldData -> description -> type == autoobjectwa ||
 	           fieldData -> description -> type == collectionofwa ||
-			   fieldData -> description -> type == autocollectionwa) {
+			   fieldData -> description -> type == collectionwa) {
 		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name));
 		ClassEditor_create (my root, name.string, fieldData -> address,
 			Class_getDescription ((ClassInfo) fieldData -> description -> tagType));
@@ -362,9 +361,9 @@ static const char32 * singleTypeToText (void *address, int type, void *tagType, 
 		case uintegerwa: MelderString_append (buffer, Melder_integer  (* (uinteger *)       address)); break;
 		case floatwa:    MelderString_append (buffer, Melder_single   (* (double *)         address)); break;
 		case doublewa:   MelderString_append (buffer, Melder_double   (* (double *)         address)); break;
-		case complexwa: MelderString_append (buffer, Melder_dcomplex (* (dcomplex *)       address)); break;
-		case enumwa:  MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed char *)  address), U">"); break;
-		case lenumwa: MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed short *) address), U">"); break;
+		case complexwa:  MelderString_append (buffer, Melder_dcomplex (* (dcomplex *)       address)); break;
+		case enumwa:     MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed char *)  address), U">"); break;
+		case lenumwa:    MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed short *) address), U">"); break;
 		case booleanwa:  MelderString_append (buffer, * (bool *) address ? U"<true>" : U"<false>"); break;
 		case questionwa: MelderString_append (buffer, * (bool *) address ? U"<yes>"  : U"<no>"   ); break;
 		case stringwa:
@@ -480,7 +479,7 @@ static void showStructMember (
 		fieldData -> rank = 0;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
-	} else if (type == objectwa || type == autoobjectwa || type == autocollectionwa) {
+	} else if (type == objectwa || type == collectionwa) {
 		fieldData -> address = * (Daata *) memberAddress;   // indirect  // FIXME: not guaranteed for auto objects
 		if (! fieldData -> address) return;   // no button if no object
 		fieldData -> description = memberDescription;
@@ -593,7 +592,7 @@ void structVectorEditor :: v_showMembers () {
 				GuiThing_show (fieldData -> label);
 			}
 			showStructMembers (this, elementAddress, * (Data_Description *) d_description -> tagType, skip, history.string);
-		} else if (type == objectwa || type == autoobjectwa) {
+		} else if (type == objectwa) {
 			static MelderString history { };
 			MelderString_copy (& history, our name.get());
 			if (history.string [history.length - 1] == U']') {

@@ -77,7 +77,7 @@ oo_END_CLASS (IntervalTier)
 #define ooSTRUCT TextGrid
 oo_DEFINE_CLASS (TextGrid, Function)
 
-	oo_AUTO_OBJECT (FunctionList, 0, tiers)   // TextTier and IntervalTier objects
+	oo_OBJECT (FunctionList, 0, tiers)   // TextTier and IntervalTier objects
 
 	#if oo_DECLARING
 		void v_info ()

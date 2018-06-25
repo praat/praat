@@ -19,128 +19,128 @@
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	our x = binget##storage (f);
+	our x = binget##storage (_f_);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-	for (int i = 0; i < n; i ++) { \
-		our x [i] = binget##storage (f); \
+	for (int _i = 0; _i < n; _i ++) { \
+		our x [_i] = binget##storage (_f_); \
 	}
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) { \
-		our x [i] = binget##storage (f); \
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		our x [_i] = binget##storage (_f_); \
 	}
 
 #define oo_VECTOR(type,storage,x,min,max)  \
 	if (max >= min) { \
-		our x = NUMvector_readBinary_##storage (min, max, f); \
+		our x = NUMvector_readBinary_##storage (min, max, _f_); \
 	}
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1) { \
-	    our x = NUMmatrix_readBinary_##storage (row1, row2, col1, col2, f); \
+	    our x = NUMmatrix_readBinary_##storage (row1, row2, col1, col2, _f_); \
 	}
 
 #define oo_ENUMx(kType,storage,x)  \
-	our x = (kType) binget##storage (f, (int) kType::MIN, (int) kType::MAX, U"" #kType);
+	our x = (kType) binget##storage (_f_, (int) kType::MIN, (int) kType::MAX, U"" #kType);
 
 //#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
 //	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-//	for (int i = 0; i < n; i ++) { \
-//		our x [i] = (kType) binget##storage (f, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
+//	for (int _i = 0; _i < n; _i ++) { \
+//		our x [_i] = (kType) binget##storage (_f_, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
 //	}
 
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
-//	for (int i = 0; i <= (int) setType::MAX; i ++) { \
-//		our x [i] = (kType) binget##storage (f, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
+//	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+//		our x [_i] = (kType) binget##storage (_f_, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
 //	}
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
 //	if (max >= min) { \
-//		our x = NUMvector <type> (min, max); \
-//		for (integer i = min; i <= max; i ++) { \
-//			our x [i] = (kType) binget##storage (f, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
+//		our x = NUMvector <kType> (min, max); \
+//		for (integer _i = min; _i <= max; _i ++) { \
+//			our x [_i] = (kType) binget##storage (_f_, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
 //	}
 
 #define oo_STRINGx(storage,x)  \
-	our x = binget##storage (f);
+	our x = binget##storage (_f_);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-	for (int i = 0; i < n; i ++) { \
-		our x [i] = binget##storage (f); \
+	for (int _i = 0; _i < n; _i ++) { \
+		our x [_i] = binget##storage (_f_); \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) { \
-		our x [i] = binget##storage (f); \
+	for (int _i = 0; _i <= setType::MAX; _i ++) { \
+		our x [_i] = binget##storage (_f_); \
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
 		our x = NUMvector <char32 *> (min, max); \
-		for (integer i = min; i <= max; i ++) { \
-			our x [i] = binget##storage (f); \
+		for (integer _i = min; _i <= max; _i ++) { \
+			our x [_i] = binget##storage (_f_); \
 		} \
 	}
 
 #define oo_STRUCT(Type,x)  \
-	our x. readBinary (f, formatVersion);
+	our x. readBinary (_f_, formatVersion);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
 	if (n > cap) Melder_throw (U"Number of \"", #x, U"\" (", n, U") greater than ", cap, U"."); \
-	for (int i = 0; i < n; i ++) { \
-		our x [i]. readBinary (f, formatVersion); \
+	for (int _i = 0; _i < n; _i ++) { \
+		our x [_i]. readBinary (_f_, formatVersion); \
 	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
-	for (int i = 0; i <= (int) setType::MAX; i ++) { \
-		our x [i]. readBinary (f, formatVersion); \
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		our x [_i]. readBinary (_f_, formatVersion); \
 	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
 		our x = NUMvector <struct##Type> (min, max); \
-		for (integer i = min; i <= max; i ++) { \
-			our x [i]. readBinary (f, formatVersion); \
+		for (integer _i = min; _i <= max; _i ++) { \
+			our x [_i]. readBinary (_f_, formatVersion); \
 		} \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1) { \
 		our x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
-		for (integer i = row1; i <= row2; i ++) { \
-			for (integer j = col1; j <= col2; j ++) { \
-				our x [i] [j]. readBinary (f, formatVersion); \
+		for (integer _irow = row1; _irow <= row2; _irow ++) { \
+			for (integer _icol = col1; _icol <= col2; _icol ++) { \
+				our x [_irow] [_icol]. readBinary (_f_, formatVersion); \
 			} \
 		} \
 	}
 
-#define oo_AUTO_OBJECT(Class,formatVersion,x)  \
-	if (bingetex (f)) { \
+#define oo_OBJECT(Class,formatVersion,x)  \
+	if (bingetex (_f_)) { \
 		our x = Thing_new (Class); \
-		our x -> v_readBinary (f, formatVersion); \
+		our x -> v_readBinary (_f_, formatVersion); \
 	}
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
 	{ \
-		integer n = bingetinteger32BE (f); \
-		for (integer i = 1; i <= n; i ++) { \
-			auto##ItemClass item = Thing_new (ItemClass); \
-			item -> v_readBinary (f, formatVersion); \
-			our x.addItem_move (item.move()); \
+		integer _n = bingetinteger32BE (_f_); \
+		for (integer _i = 1; _i <= _n; _i ++) { \
+			auto##ItemClass _item = Thing_new (ItemClass); \
+			_item -> v_readBinary (_f_, formatVersion); \
+			our x.addItem_move (_item.move()); \
 		} \
 	}
 
-#define oo_AUTO_COLLECTION(Class,x,ItemClass,formatVersion)  \
+#define oo_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
-		integer n = bingetinteger32BE (f); \
+		integer _n = bingetinteger32BE (_f_); \
 		our x = Class##_create (); \
-		for (integer i = 1; i <= n; i ++) { \
-			auto##ItemClass item = Thing_new (ItemClass); \
-			item -> v_readBinary (f, formatVersion); \
-			our x -> addItem_move (item.move()); \
+		for (integer _i = 1; _i <= _n; _i ++) { \
+			auto##ItemClass _item = Thing_new (ItemClass); \
+			_item -> v_readBinary (_f_, formatVersion); \
+			our x -> addItem_move (_item.move()); \
 		} \
 	}
 
@@ -149,17 +149,17 @@
 #define oo_DIR(x)
 
 #define oo_DEFINE_STRUCT(Type)  \
-	void struct##Type :: readBinary (FILE *f, int formatVersion) { \
+	void struct##Type :: readBinary (FILE *_f_, int formatVersion) { \
 		(void) formatVersion;
 
 #define oo_END_STRUCT(Type)  \
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	void struct##Class :: v_readBinary (FILE *f, int formatVersion) { \
+	void struct##Class :: v_readBinary (FILE *_f_, int formatVersion) { \
 		if (formatVersion > our classInfo -> version) \
 			Melder_throw (U"The format of this file is too new. Download a newer version of Praat."); \
-		Class##_Parent :: v_readBinary (f, formatVersion);
+		Class##_Parent :: v_readBinary (_f_, formatVersion);
 
 #define oo_END_CLASS(Class)  \
 	}

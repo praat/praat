@@ -91,7 +91,7 @@
 				our x [i] [j]. copy (& thy x [i] [j]); \
 	}
 
-#define oo_AUTO_OBJECT(Class,version,x)  \
+#define oo_OBJECT(Class,version,x)  \
 	if (our x) thy x = Data_copy (our x.get());
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
@@ -107,7 +107,7 @@
 		if (our x.at [i]) thy x.at [i] = Data_copy (our x.at [i]).releaseToAmbiguousOwner(); \
 	}
 
-#define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
 	if (our x) thy x = Data_copy (our x.get());
 
 #define oo_FILE(x)  \

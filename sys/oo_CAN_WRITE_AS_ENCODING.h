@@ -77,7 +77,7 @@
 				if (! our x [i] [j]. canWriteAsEncoding (encoding)) return false; \
 	}
 
-#define oo_AUTO_OBJECT(Class,version,x)  \
+#define oo_OBJECT(Class,version,x)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
@@ -85,7 +85,7 @@
 		if (our x.at [i] && ! Data_canWriteAsEncoding (our x.at [i], encoding)) return false; \
 	}
 
-#define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 
 #define oo_FILE(x)  \

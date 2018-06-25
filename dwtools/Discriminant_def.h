@@ -20,7 +20,7 @@
 #define ooSTRUCT Discriminant
 oo_DEFINE_CLASS (Discriminant, Daata)
 	oo_FROM (1)
-		oo_AUTO_OBJECT (Eigen, 0, eigen)
+		oo_OBJECT (Eigen, 0, eigen)
 	oo_ENDFROM
 
 	#if oo_READING
@@ -34,8 +34,8 @@ oo_DEFINE_CLASS (Discriminant, Daata)
 	#endif
 	
 	oo_INTEGER (numberOfGroups)
-	oo_AUTO_OBJECT (SSCPList, 0, groups)
-	oo_AUTO_OBJECT (SSCP, 0, total)
+	oo_OBJECT (SSCPList, 0, groups)
+	oo_OBJECT (SSCP, 0, total)
 	oo_DOUBLE_VECTOR (aprioriProbabilities, numberOfGroups)
 	oo_DOUBLE_MATRIX (costs, numberOfGroups, numberOfGroups)
 
