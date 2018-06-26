@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2011,2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2009,2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ extern ClassInfo classThing;
 extern struct structClassInfo theClassInfo_Thing;
 struct structThing {
 	ClassInfo classInfo;   // the Praat class pointer (every object also has a C++ class pointer initialized by C++ "new")
-	char32 *name;
+	autostring32 name;
 	void * operator new (size_t size) { return Melder_calloc (char, (int64) size); }
 	void operator delete (void *ptr, size_t /* size */) { Melder_free (ptr); }
 

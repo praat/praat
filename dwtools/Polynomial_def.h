@@ -27,7 +27,7 @@ oo_DEFINE_CLASS (FunctionTerms, Function)
 	oo_INTEGER (numberOfCoefficients)
 	oo_DOUBLE_VECTOR (coefficients, numberOfCoefficients)
 	
-	#if !oo_READING && !oo_WRITING
+	#if ! oo_READING && ! oo_WRITING
 		oo_INTEGER (_capacity)
 	#endif
 		
@@ -57,8 +57,10 @@ oo_DEFINE_CLASS (Spline, FunctionTerms)
 	
 	#if oo_DECLARING
 		// overridden methods:
-			virtual double v_evaluate (double x) override;
-			virtual integer v_getDegree () override;
+			virtual double v_evaluate (double x)
+				override;
+			virtual integer v_getDegree ()
+				override;
 		// new methods:
 			virtual integer v_getOrder ();
 	#endif

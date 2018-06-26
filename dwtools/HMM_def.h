@@ -30,7 +30,7 @@ oo_END_CLASS (HMMState)
 oo_DEFINE_CLASS (HMMObservation, Daata)
 
 	oo_STRING (label)
-	oo_AUTO_OBJECT (GaussianMixture, 1, gm)
+	oo_OBJECT (GaussianMixture, 1, gm)
 
 oo_END_CLASS (HMMObservation)
 #undef ooSTRUCT
@@ -48,8 +48,8 @@ oo_DEFINE_CLASS (HMM, Daata)
 	oo_INT (componentStorage)
 	oo_DOUBLE_MATRIX_FROM (transitionProbs, 0, numberOfStates, 1, numberOfStates + 1) // row 0: initial probabilities
 	oo_DOUBLE_MATRIX (emissionProbs, numberOfStates, numberOfObservationSymbols)
-	oo_AUTO_OBJECT (HMMStateList, 1, states)
-	oo_AUTO_OBJECT (HMMObservationList, 1, observationSymbols)
+	oo_OBJECT (HMMStateList, 1, states)
+	oo_OBJECT (HMMObservationList, 1, observationSymbols)
 
 	#if oo_DECLARING
 		void v_info ()

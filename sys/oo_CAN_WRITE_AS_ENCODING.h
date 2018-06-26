@@ -38,29 +38,16 @@
 
 #define oo_STRINGx(storage,x)  \
 	if (our x && ! Melder_isEncodable (our x, encoding)) return false;
-#define oo_STRING32x(storage,x)  \
-	if (our x && ! Melder_isEncodable (our x, encoding)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
-#define oo_STRING32x_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
 		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType::MAX; i ++) \
 		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
-#define oo_STRING32x_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (our x) { \
-		for (integer i = min; i <= max; i ++) \
-			if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false; \
-	}
-#define oo_STRING32x_VECTOR(storage,x,min,max)  \
 	if (our x) { \
 		for (integer i = min; i <= max; i ++) \
 			if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false; \
@@ -90,7 +77,7 @@
 				if (! our x [i] [j]. canWriteAsEncoding (encoding)) return false; \
 	}
 
-#define oo_AUTO_OBJECT(Class,version,x)  \
+#define oo_OBJECT(Class,version,x)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
@@ -98,7 +85,7 @@
 		if (our x.at [i] && ! Data_canWriteAsEncoding (our x.at [i], encoding)) return false; \
 	}
 
-#define oo_AUTO_COLLECTION(Class,x,ItemClass,version)  \
+#define oo_COLLECTION(Class,x,ItemClass,version)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 
 #define oo_FILE(x)  \

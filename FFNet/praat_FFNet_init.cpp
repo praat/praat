@@ -313,7 +313,7 @@ FORM (NEW_FFNet_extractWeights, U"FFNet: Extract weights", U"FFNet: Extract weig
 DO
 	CONVERT_EACH (FFNet)
 		autoTableOfReal result = FFNet_extractWeights (me, layer);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
@@ -323,7 +323,7 @@ FORM (NEW_FFNet_weightsToMatrix, U"FFNet: Weights to Matrix ", nullptr) {
 DO
 	CONVERT_EACH (FFNet)
 		autoMatrix result = FFNet_weightsToMatrix (me, layer, false);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (HINT_hint_FFNet_PatternList_classify) {
@@ -346,7 +346,7 @@ FORM (NEW1_FFNet_ActivationList_to_Categories, U"FFNet & ActivationList: To Cate
 DO
 	CONVERT_TWO (FFNet, ActivationList)
 		autoCategories result = FFNet_ActivationList_to_Categories (me, you, categorizationgMethod);
-	CONVERT_TWO_END (my name, U"_", you -> name)
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
 /******************* FFNet && Eigen ******************************************/
@@ -370,7 +370,7 @@ DO
 DIRECT (NEW1_FFNet_Categories_to_ActivationList) {
 	CONVERT_TWO (FFNet, Categories)
 		autoActivationList result = FFNet_Categories_to_ActivationList (me, you);
-	CONVERT_TWO_END (my name);
+	CONVERT_TWO_END (my name.get());
 }
 
 /************************* FFNet && Matrix **********************************/
@@ -381,7 +381,7 @@ FORM (NEW1_FFNet_weightsFromMatrix, U"Replace weights by values from Matrix", nu
 DO
 	CONVERT_TWO (FFNet, Matrix)
 		autoFFNet result = FFNet_weightsFromMatrix (me, you, layer);
-	CONVERT_TWO_END (my name);
+	CONVERT_TWO_END (my name.get());
 }
 
 /************************* FFNet && PatternList **********************************/
@@ -403,7 +403,7 @@ FORM (NEW1_FFNet_PatternList_to_Categories, U"FFNet & PatternList: To Categories
 DO
 	GRAPHICS_TWO (FFNet, PatternList)
 		autoCategories result = FFNet_PatternList_to_Categories (me, you, categorizationgMethod);
-	CONVERT_TWO_END (my name, U"_", you -> name)
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
 FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", nullptr) {
@@ -412,7 +412,7 @@ FORM (NEW1_FFNet_PatternList_to_ActivationList, U"To activations in layer", null
 DO
 	GRAPHICS_TWO (FFNet, PatternList)
 		autoActivationList result = FFNet_PatternList_to_ActivationList (me, you, layer);
-	CONVERT_TWO_END (my name, U"_", you -> name)
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
 /*********** FFNet & PatternList & ActivationList **********************************/
@@ -551,7 +551,8 @@ FORM (NEW1_PatternList_Categories_to_FFNet, U"PatternList & Categories: To FFNet
 DO
 	CONVERT_TWO (PatternList, Categories)
 		autoFFNet result = PatternList_Categories_to_FFNet (me, you, numberOfUnitsInHiddenLayer1, numberOfUnitsInHiddenLayer2);
-	CONVERT_TWO_END (result -> name)
+		autostring32 name = result -> name.move();
+	CONVERT_TWO_END (name.get())
 }
 
 void praat_uvafon_FFNet_init () {

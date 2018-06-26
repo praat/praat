@@ -236,18 +236,18 @@ void structEditor :: v_destroy () noexcept {
 
 void structEditor :: v_info () {
 	MelderInfo_writeLine (U"Editor type: ", Thing_className (this));
-	MelderInfo_writeLine (U"Editor name: ", our name ? our name : U"<no name>");
+	MelderInfo_writeLine (U"Editor name: ", our name ? our name.get() : U"<no name>");
 	time_t today = time (nullptr);
 	MelderInfo_writeLine (U"Date: ", Melder_peek8to32 (ctime (& today)));   // includes a newline
 	if (our data) {
 		MelderInfo_writeLine (U"Data type: ", our data -> classInfo -> className);
-		MelderInfo_writeLine (U"Data name: ", our data -> name);
+		MelderInfo_writeLine (U"Data name: ", our data -> name.get());
 	}
 }
 
 void structEditor :: v_nameChanged () {
 	if (our name)
-		GuiShell_setTitle (our windowForm, our name);
+		GuiShell_setTitle (our windowForm, our name.get());
 }
 
 void structEditor :: v_saveData () {
@@ -266,7 +266,7 @@ static void menu_cb_sendBackToCallingProgram (Editor me, EDITOR_ARGS_DIRECT) {
 		structMelderFile file { };
 		MelderDir_getFile (& praatDir, U"praat_backToCaller.Data", & file);
 		Data_writeToTextFile (my data, & file);
-		sendsocket (my callbackSocket, Melder_peek32to8 (my data -> name));
+		sendsocket (my callbackSocket, Melder_peek32to8 (my data -> name.get()));
 	}
 	my v_goAway ();
 }
@@ -513,7 +513,7 @@ void Editor_closePraatPicture (Editor me) {
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
 			my pref_picture_writeNameAtTop () == kEditor_writeNameAtTop::FAR_,
-			my data -> name);
+			my data -> name.get());
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, true);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, true);

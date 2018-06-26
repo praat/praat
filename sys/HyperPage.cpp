@@ -621,7 +621,7 @@ static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent ev
 		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {
 			saveHistory (me, my currentPageTitle);
 			try {
-				HyperPage_goToPage (me, link -> name);
+				HyperPage_goToPage (me, link -> name.get());
 			} catch (MelderError) {
 				Melder_flushError ();
 			}

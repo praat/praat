@@ -1958,13 +1958,13 @@ static int praat_findObjectFromString (const char32 *name) {
 		char32 *className = & buffer.string [0], *givenName = space + 1;
 		WHERE_DOWN (1) {
 			Daata object = OBJECT;
-			if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
+			if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name.get()))
 				return IOBJECT;
 		}
 		ClassInfo klas = Thing_classFromClassName (className, nullptr);
 		WHERE_DOWN (1) {
 			Daata object = OBJECT;
-			if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name))
+			if (str32equ (klas -> className, Thing_className (OBJECT)) && str32equ (givenName, object -> name.get()))
 				return IOBJECT;
 		}
 	}
@@ -2094,7 +2094,7 @@ static void Formula_print (FormulaInstruction f) {
 		{
 			Thing object = f [i]. content.object;
 			if (object) {
-				Melder_casual (i, U" ", instructionName, U" ", Thing_className (object), U" ", object -> name);
+				Melder_casual (i, U" ", instructionName, U" ", Thing_className (object), U" ", object -> name.get());
 			} else {
 				Melder_casual (i, U" ", instructionName);
 			}
@@ -5908,7 +5908,7 @@ static integer Stackel_getRowNumber (Stackel row, Daata thee) {
 			Melder_throw (U"Objects of type ", Thing_className (thee), U" do not have row labels, so row indexes have to be numbers.");
 		result = Melder_iround (thy v_getRowIndex (row->string));
 		if (result == 0)
-			Melder_throw (U"Object \"", thy name, U"\" has no row labelled \"", row->string, U"\".");
+			Melder_throw (U"Object \"", thy name.get(), U"\" has no row labelled \"", row->string, U"\".");
 	} else {
 		Melder_throw (U"A row index should be a number or a string, not ", Stackel_whichText (row), U".");
 	}

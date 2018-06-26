@@ -65,19 +65,19 @@ oo_END_CLASS (PhonationGridPlayOptions)
 #define ooSTRUCT PhonationGrid
 oo_DEFINE_CLASS (PhonationGrid, Function)
 
-	oo_AUTO_OBJECT (PitchTier, 0, pitch)
-	oo_AUTO_OBJECT (RealTier, 0, flutter) // [0,1]
-	oo_AUTO_OBJECT (IntensityTier, 0, voicingAmplitude) // dB
-	oo_AUTO_OBJECT (RealTier, 0, doublePulsing) // [0,1]
-	oo_AUTO_OBJECT (RealTier, 0, openPhase) // (0,1)
-	oo_AUTO_OBJECT (RealTier, 0, collisionPhase) //
-	oo_AUTO_OBJECT (RealTier, 0, power1) // 2,3..
-	oo_AUTO_OBJECT (RealTier, 0, power2) // 3,4.. power2>power1
-	oo_AUTO_OBJECT (IntensityTier, 0, spectralTilt) // dB
-	oo_AUTO_OBJECT (IntensityTier, 0, aspirationAmplitude) // dB
-	oo_AUTO_OBJECT (IntensityTier, 0, breathinessAmplitude) // dB
-	#if !oo_READING && !oo_WRITING
-		oo_AUTO_OBJECT (PhonationGridPlayOptions, 0, options)
+	oo_OBJECT (PitchTier, 0, pitch)
+	oo_OBJECT (RealTier, 0, flutter) // [0,1]
+	oo_OBJECT (IntensityTier, 0, voicingAmplitude) // dB
+	oo_OBJECT (RealTier, 0, doublePulsing) // [0,1]
+	oo_OBJECT (RealTier, 0, openPhase) // (0,1)
+	oo_OBJECT (RealTier, 0, collisionPhase) //
+	oo_OBJECT (RealTier, 0, power1) // 2,3..
+	oo_OBJECT (RealTier, 0, power2) // 3,4.. power2>power1
+	oo_OBJECT (IntensityTier, 0, spectralTilt) // dB
+	oo_OBJECT (IntensityTier, 0, aspirationAmplitude) // dB
+	oo_OBJECT (IntensityTier, 0, breathinessAmplitude) // dB
+	#if ! oo_READING && ! oo_WRITING
+		oo_OBJECT (PhonationGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
 		options = PhonationGridPlayOptions_create ();
@@ -110,15 +110,15 @@ oo_END_CLASS (VocalTractGridPlayOptions)
 #define ooSTRUCT VocalTractGrid
 oo_DEFINE_CLASS (VocalTractGrid, Function)
 
-	oo_AUTO_OBJECT (FormantGrid, 0, oral_formants)
-	oo_AUTO_OBJECT (FormantGrid, 0, nasal_formants)
-	oo_AUTO_OBJECT (FormantGrid, 0, nasal_antiformants)
+	oo_OBJECT (FormantGrid, 0, oral_formants)
+	oo_OBJECT (FormantGrid, 0, nasal_formants)
+	oo_OBJECT (FormantGrid, 0, nasal_antiformants)
 	// for parallel synthesis
 	oo_COLLECTION_OF (OrderedOf, oral_formants_amplitudes, IntensityTier, 0)
 	oo_COLLECTION_OF (OrderedOf, nasal_formants_amplitudes, IntensityTier, 0)
 
-	#if !oo_READING && !oo_WRITING
-		oo_AUTO_OBJECT (VocalTractGridPlayOptions, 0, options)
+	#if ! oo_READING && ! oo_WRITING
+		oo_OBJECT (VocalTractGridPlayOptions, 0, options)
 	#endif
 
 	#if oo_READING
@@ -156,14 +156,14 @@ oo_END_CLASS (CouplingGridPlayOptions)
 #define ooSTRUCT CouplingGrid
 oo_DEFINE_CLASS (CouplingGrid, Function)
 
-	oo_AUTO_OBJECT (FormantGrid, 0, tracheal_formants)
-	oo_AUTO_OBJECT (FormantGrid, 0, tracheal_antiformants)
+	oo_OBJECT (FormantGrid, 0, tracheal_formants)
+	oo_OBJECT (FormantGrid, 0, tracheal_antiformants)
 	oo_COLLECTION_OF (OrderedOf, tracheal_formants_amplitudes, IntensityTier, 0)
-	oo_AUTO_OBJECT (FormantGrid, 0, delta_formants)
+	oo_OBJECT (FormantGrid, 0, delta_formants)
 
-	#if !oo_READING && !oo_WRITING
-		oo_AUTO_OBJECT (PhonationTier, 0, glottis)
-		oo_AUTO_OBJECT (CouplingGridPlayOptions, 0, options)
+	#if ! oo_READING && ! oo_WRITING
+		oo_OBJECT (PhonationTier, 0, glottis)
+		oo_OBJECT (CouplingGridPlayOptions, 0, options)
 	#endif
 
 	#if oo_READING
@@ -195,13 +195,13 @@ oo_END_CLASS (FricationGridPlayOptions)
 #define ooSTRUCT FricationGrid
 oo_DEFINE_CLASS (FricationGrid, Function)
 
-	oo_AUTO_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
-	oo_AUTO_OBJECT (FormantGrid, 0, frication_formants)
+	oo_OBJECT (IntensityTier, 0, fricationAmplitude) // dB
+	oo_OBJECT (FormantGrid, 0, frication_formants)
 	oo_COLLECTION_OF (OrderedOf, frication_formants_amplitudes, IntensityTier, 0)
-	oo_AUTO_OBJECT (IntensityTier, 0, bypass) // dB
+	oo_OBJECT (IntensityTier, 0, bypass) // dB
 
-	#if !oo_READING && !oo_WRITING
-		oo_AUTO_OBJECT (FricationGridPlayOptions, 0, options)
+	#if ! oo_READING && ! oo_WRITING
+		oo_OBJECT (FricationGridPlayOptions, 0, options)
 	#endif
 
 	#if oo_READING
@@ -233,14 +233,14 @@ oo_END_CLASS (KlattGridPlayOptions)
 #define ooSTRUCT KlattGrid
 oo_DEFINE_CLASS (KlattGrid, Function)
 
-	oo_AUTO_OBJECT (PhonationGrid, 0, phonation)   // glottal source
-	oo_AUTO_OBJECT (VocalTractGrid, 0, vocalTract) // filter
-	oo_AUTO_OBJECT (CouplingGrid, 0, coupling)     // coupling between source and filter
-	oo_AUTO_OBJECT (FricationGrid, 0, frication)   // frication source
-	oo_AUTO_OBJECT (IntensityTier, 0, gain)        // final scaling
+	oo_OBJECT (PhonationGrid, 0, phonation)   // glottal source
+	oo_OBJECT (VocalTractGrid, 0, vocalTract) // filter
+	oo_OBJECT (CouplingGrid, 0, coupling)     // coupling between source and filter
+	oo_OBJECT (FricationGrid, 0, frication)   // frication source
+	oo_OBJECT (IntensityTier, 0, gain)        // final scaling
 
 	#if !oo_READING && !oo_WRITING
-		oo_AUTO_OBJECT (KlattGridPlayOptions, 0, options)
+		oo_OBJECT (KlattGridPlayOptions, 0, options)
 	#endif
 
 	#if oo_READING

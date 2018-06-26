@@ -1,6 +1,6 @@
 /* Data.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2006,2008-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ autoDaata _Data_copy (Daata me) {
 		if (! me) return autoDaata();
 		autoDaata thee = Thing_newFromClass (my classInfo).static_cast_move <structDaata> ();
 		my v_copy (thee.get());
-		Thing_setName (thee.get(), my name);
+		Thing_setName (thee.get(), my name.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
@@ -421,10 +421,9 @@ int64 Data_Description_integer (void *address, Data_Description description) {
 		case uintwa:           return * (unsigned int *)     ((char *) address + description -> offset);
 		case uintegerwa:       return (int64) * (uinteger *) ((char *) address + description -> offset);   // ignore numbers above 2^63 - 1
 		case questionwa:       return * (bool *)             ((char *) address + description -> offset);
-		case objectwa:         return (* (Collection *)      ((char *) address + description -> offset))->size;
-		case autoobjectwa:     return (* (Collection *)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
+		case objectwa:         return (* (Collection *)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
 		case collectionofwa:   return (  (Collection)        ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
-		case autocollectionwa: return (* (Collection *)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
+		case collectionwa:     return (* (Collection *)      ((char *) address + description -> offset))->size;   // FIXME: alignment not guaranteed
 		default: return 0;
 	}
 }

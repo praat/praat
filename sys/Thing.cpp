@@ -1,6 +1,6 @@
 /* Thing.cpp
  *
- * Copyright (C) 1992-2012,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2012,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ integer theTotalNumberOfThings;
 void structThing :: v_info ()
 {
 	MelderInfo_writeLine (U"Object type: ", Thing_className (this));
-	MelderInfo_writeLine (U"Object name: ", this -> name ? this -> name : U"<no name>");
+	MelderInfo_writeLine (U"Object name: ", this -> name ? this -> name.get() : U"<no name>");
 	time_t today = time (nullptr);
 	MelderInfo_writeLine (U"Date: ", Melder_peek8to32 (ctime (& today)));   // includes a newline
 }
@@ -51,7 +51,7 @@ autoThing Thing_newFromClass (ClassInfo classInfo) {
 	trace (U"created ", classInfo -> className);
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo;
-	Melder_assert (my name == nullptr);   // confirm that _new called calloc, so that we see null pointers
+	Melder_assert (! my name);   // confirm that _new called calloc, so that we see null pointers
 	if (Melder_debug == 40) Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me.get(), U")");
 	return me;
 }
@@ -214,14 +214,14 @@ void Thing_info (Thing me) {
 	Thing_infoWithIdAndFile (me, 0, nullptr);
 }
 
-const char32 * Thing_getName (Thing me) { return my name; }
+const char32 * Thing_getName (Thing me) { return my name.get(); }
 
 const char32 * Thing_messageName (Thing me) {
 	static MelderString buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
 	if (my name) {
-		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U" \"", my name, U"\"");
+		MelderString_copy (& buffers [ibuffer], my classInfo -> className, U" \"", my name.get(), U"\"");
 	} else {
 		MelderString_copy (& buffers [ibuffer], my classInfo -> className);
 	}
@@ -229,15 +229,7 @@ const char32 * Thing_messageName (Thing me) {
 }
 
 void Thing_setName (Thing me, const char32 *name /* cattable */) {
-	/*
-	 * First check without change.
-	 */
-	autostring32 newName = Melder_dup_f (name);   // BUG: that's no checking
-	/*
-	 * Then change without error.
-	 */
-	Melder_free (my name);
-	my name = newName.transfer();
+	my name = Melder_dup_f (name);   // BUG: that's no checking
 	my v_nameChanged ();
 }
 

@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,7 +260,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		} else if (str32equ (varName, U"tab$")) {
 			stringValue = U"\t";
 		} else if (str32equ (varName, U"editor$")) {
-			stringValue = my name;
+			stringValue = my name.get();
 		} else if (str32equ (varName, U"f0")) {
 			if (! my p_pitch_show)
 				Melder_throw (U"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
@@ -567,7 +567,7 @@ static void menu_cb_viewSpectralSlice (TimeSoundAnalysisEditor me, EDITOR_ARGS_D
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::HANNING ? kSound_windowShape::HANNING :
 		my p_spectrogram_windowShape == kSound_to_Spectrogram_windowShape::GAUSSIAN ? kSound_windowShape::GAUSSIAN_2 : kSound_windowShape::RECTANGULAR);
 	autoSpectrum publish = Sound_to_Spectrum (sound.get(), true);
-	Thing_setName (publish.get(), Melder_cat (( my data == nullptr ? U"untitled" : my data -> name ),
+	Thing_setName (publish.get(), Melder_cat (( my data ? my data -> name.get() : U"untitled" ),
 		U"_", Melder_fixed (0.5 * (my startSelection + my endSelection), 3)));
 	Editor_broadcastPublication (me, publish.move());
 }
@@ -1298,7 +1298,7 @@ static void menu_cb_voiceReport (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT)
 	}
 	autoSound sound = extractSound (me, tmin, tmax);
 	MelderInfo_open ();
-	MelderInfo_writeLine (U"-- Voice report for ", my name, U" --\nDate: ", Melder_peek8to32 (ctime (& today)));
+	MelderInfo_writeLine (U"-- Voice report for ", my name.get(), U" --\nDate: ", Melder_peek8to32 (ctime (& today)));
 	if (my p_pitch_method != kTimeSoundAnalysisEditor_pitch_analysisMethod::CROSS_CORRELATION)
 		MelderInfo_writeLine (U"WARNING: some of the following measurements may be imprecise.\n"
 			"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");

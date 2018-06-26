@@ -361,7 +361,7 @@ DO
 DIRECT (NEW_TableOfReal_extractColumnLabelsAsStrings) {
 	CONVERT_EACH (TableOfReal)
 		autoStrings result = TableOfReal_extractColumnLabelsAsStrings (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
@@ -371,7 +371,7 @@ FORM (NEW_TableOfReal_extractColumnRanges, U"Extract column ranges", nullptr) {
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnRanges (me, ranges);
-	CONVERT_EACH_END (my name, U"_cols")
+	CONVERT_EACH_END (my name.get(), U"_cols")
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
@@ -380,7 +380,7 @@ FORM (NEW_TableOfReal_extractColumnsWhere, U"Extract columns where", nullptr) {
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhere (me, condition, interpreter);
-	CONVERT_EACH_END (my name, U"_cols")
+	CONVERT_EACH_END (my name.get(), U"_cols")
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", nullptr) {
@@ -390,7 +390,7 @@ FORM (NEW_TableOfReal_extractColumnsWhereLabel, U"Extract column where label", n
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhereLabel (me, (kMelder_string) extractAllColumnsWhoseLabel, ___theText);
-	CONVERT_EACH_END (my name, U"_", ___theText)
+	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", nullptr) {
@@ -401,13 +401,13 @@ FORM (NEW_TableOfReal_extractColumnsWhereRow, U"Extract columns where row", null
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractColumnsWhereRow (me, extractAllColumnsWhereRow, (kMelder_number) ___is___, ___theValue);
-	CONVERT_EACH_END (my name, U"_", extractAllColumnsWhereRow, U"_", Melder_iround (___theValue))
+	CONVERT_EACH_END (my name.get(), U"_", extractAllColumnsWhereRow, U"_", Melder_iround (___theValue))
 }
 
 DIRECT (NEW_TableOfReal_extractRowLabelsAsStrings) {
 	CONVERT_EACH (TableOfReal)
 		autoStrings result = TableOfReal_extractRowLabelsAsStrings (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
@@ -417,7 +417,7 @@ FORM (NEW_TableOfReal_extractRowRanges, U"Extract row ranges", nullptr) {
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowRanges (me, ranges);
-	CONVERT_EACH_END (my name, U"_rows")
+	CONVERT_EACH_END (my name.get(), U"_rows")
 }
 
 FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
@@ -426,7 +426,7 @@ FORM (NEW_TableOfReal_extractRowsWhere, U"Extract rows where", nullptr) {
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhere (me, condition, interpreter);
-	CONVERT_EACH_END (my name, U"_rows")
+	CONVERT_EACH_END (my name.get(), U"_rows")
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", nullptr) {
@@ -437,7 +437,7 @@ FORM (NEW_TableOfReal_extractRowsWhereColumn, U"Extract rows where column", null
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhereColumn (me, extractAllRowsWhereColumn, (kMelder_number) ___is___, ___theValue);
-	CONVERT_EACH_END (my name, U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
+	CONVERT_EACH_END (my name.get(), U"_", extractAllRowsWhereColumn, U"_", Melder_iround (___theValue))
 }
 
 FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullptr) {
@@ -447,7 +447,7 @@ FORM (NEW_TableOfReal_extractRowsWhereLabel, U"Extract rows where label", nullpt
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_extractRowsWhereLabel (me, (kMelder_string) extractAllRowsWhoseLabel, ___theText);
-	CONVERT_EACH_END (my name, U"_", ___theText)
+	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 // MARK: Convert
@@ -462,7 +462,7 @@ DIRECT (NEW1_TablesOfReal_append) {
 DIRECT (NEW_TableOfReal_to_Matrix) {
 	CONVERT_EACH (TableOfReal)
 		autoMatrix result = TableOfReal_to_Matrix (me);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM (NEW_TableOfReal_to_Table, U"TableOfReal: To Table", nullptr) {
@@ -471,7 +471,7 @@ FORM (NEW_TableOfReal_to_Table, U"TableOfReal: To Table", nullptr) {
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTable result = TableOfReal_to_Table (me, labelOfFirstColumn);
-	CONVERT_EACH_END (my name)
+	CONVERT_EACH_END (my name.get())
 }
 
 FORM_SAVE (SAVE_TableOfReal_writeToHeaderlessSpreadsheetFile, U"Save TableOfReal as spreadsheet", 0, U"txt") {

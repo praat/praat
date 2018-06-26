@@ -46,7 +46,7 @@ UiForm UiInfile_create (GuiWindow parent, const char32 *title,
 
 void UiInfile_do (UiForm me) {
 	try {
-		autoStringSet infileNames = GuiFileSelect_getInfileNames (my d_dialogParent, my name, my allowMultipleFiles);
+		autoStringSet infileNames = GuiFileSelect_getInfileNames (my d_dialogParent, my name.get(), my allowMultipleFiles);
 		for (integer ifile = 1; ifile <= infileNames->size; ifile ++) {
 			SimpleString infileName = infileNames->at [ifile];
 			Melder_pathToFile (infileName -> string, & my file);
@@ -106,10 +106,10 @@ UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *i
 }
 
 void UiOutfile_do (UiForm me, const char32 *defaultName) {
-	char32 *outfileName = GuiFileSelect_getOutfileName (nullptr, my name, defaultName);
+	char32 *outfileName = GuiFileSelect_getOutfileName (nullptr, my name.get(), defaultName);
 	if (! outfileName) return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
-		Melder_flushError (U"Dialog \"", my name, U"\" cancelled.");
+		Melder_flushError (U"Dialog \"", my name.get(), U"\" cancelled.");
 		return;
 	}
 	Melder_pathToFile (outfileName, & my file);

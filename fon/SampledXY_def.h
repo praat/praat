@@ -27,7 +27,7 @@ oo_DEFINE_CLASS (SampledXY, Sampled)
 	oo_DOUBLE (y1)
 
 	#if oo_READING
-		if (ymin > ymax) {
+		if (ymin >= ymax) {
 			Melder_throw (U"ymax should be greater than ymin.");
 		}
 		if (ny < 1) {

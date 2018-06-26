@@ -247,7 +247,7 @@ void praat_write_do (UiForm dia, const char32 *extension) {
 		Daata data = nullptr;
 		WHERE (SELECTED) { if (! data) data = (Daata) OBJECT; found += 1; }
 		if (found == 1) {
-			MelderString_copy (& defaultFileName, data -> name);
+			MelderString_copy (& defaultFileName, data -> name.get());
 			if (defaultFileName.length > 200) { defaultFileName.string [200] = U'\0'; defaultFileName.length = 200; }
 			MelderString_append (& defaultFileName, U".", extension ? extension : Thing_className (data));
 		} else if (! extension) {
@@ -325,7 +325,7 @@ static void praat_new_unpackCollection (autoCollection me, const char32* myName)
 	for (integer idata = 1; idata <= my size; idata ++) {
 		autoDaata object = autoDaata ((Daata) my at [idata]);
 		my at [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
-		const char32 *name = object -> name ? object -> name : myName;
+		const char32 *name = object -> name ? object -> name.get() : myName;
 		Melder_assert (name);
 		praat_new (object.move(), name);   // recurse
 	}
@@ -349,7 +349,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 		char32 *p = str32rchr (givenName.string, U'.');
 		if (p) *p = U'\0';
 	} else {
-		MelderString_copy (& givenName, my name && my name [0] ? my name : U"untitled");
+		MelderString_copy (& givenName, my name && my name [0] ? my name.get() : U"untitled");
 	}
 	praat_cleanUpName (givenName.string);
 	MelderString_append (& name, Thing_className (me.get()), U" ", givenName.string);
