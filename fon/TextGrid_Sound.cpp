@@ -314,7 +314,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 			 */
 			integer phonemeIntervalNumber = IntervalTier_hasTime (phonemeTier, interval -> xmin);
 			Melder_assert (phonemeIntervalNumber != 0);
-			if (analysis.get()) {
+			if (analysis) {
 				IntervalTier analysisPhonemeTier = analysis -> intervalTier_cast (4);
 				for (integer ianalysisInterval = 1; ianalysisInterval <= analysisPhonemeTier -> intervals.size; ianalysisInterval ++) {
 					TextInterval analysisInterval = analysisPhonemeTier -> intervals.at [ianalysisInterval];

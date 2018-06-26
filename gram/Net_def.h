@@ -29,29 +29,29 @@ oo_DEFINE_CLASS (RBMLayer, Layer)
 	oo_DOUBLE_VECTOR (outputReconstruction, numberOfOutputNodes)
 
 	#if oo_DECLARING
-		virtual void v_spreadUp (kLayer_activationType)
+		void v_spreadUp (kLayer_activationType)
 			override;
-		virtual void v_sampleInput ()
+		void v_sampleInput ()
 			override;
-		virtual void v_spreadDown (kLayer_activationType)
+		void v_spreadDown (kLayer_activationType)
 			override;
-		virtual void v_spreadDown_reconstruction ()
+		void v_spreadDown_reconstruction ()
 			override;
-		virtual void v_spreadUp_reconstruction ()
+		void v_spreadUp_reconstruction ()
 			override;
-		virtual void v_update (double learningRate)
+		void v_update (double learningRate)
 			override;
-		virtual autoMatrix v_extractInputReconstruction ()
+		autoMatrix v_extractInputReconstruction ()
 			override;
-		virtual autoMatrix v_extractOutputReconstruction ()
+		autoMatrix v_extractOutputReconstruction ()
 			override;
-		virtual autoMatrix v_extractInputBiases ()
+		autoMatrix v_extractInputBiases ()
 			override;
-		virtual autoMatrix v_extractOutputBiases ()
+		autoMatrix v_extractOutputBiases ()
 			override;
-		virtual autoMatrix v_extractWeights ()
+		autoMatrix v_extractWeights ()
 			override;
-		virtual autonummat v_getWeights_nummat ()
+		autonummat v_getWeights_nummat ()
 			override;
 	#endif
 
@@ -67,15 +67,15 @@ oo_DEFINE_CLASS (FullyConnectedLayer, Layer)
 	oo_DOUBLE_VECTOR (outputBiases, numberOfOutputNodes)
 
 	#if oo_DECLARING &&0
-		virtual void v_spreadUp (kLayer_activationType)
+		void v_spreadUp (kLayer_activationType)
 			override;
-		virtual void v_update (double learningRate)
+		void v_update (double learningRate)
 			override;
-		virtual autoMatrix v_extractOutputBiases ()
+		autoMatrix v_extractOutputBiases ()
 			override;
-		virtual autoMatrix v_extractWeights ()
+		autoMatrix v_extractWeights ()
 			override;
-		virtual autonummat v_getWeights_nummat ()
+		autonummat v_getWeights_nummat ()
 			override;
 	#endif
 

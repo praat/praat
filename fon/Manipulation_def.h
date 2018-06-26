@@ -21,13 +21,15 @@
 oo_DEFINE_CLASS (Manipulation, Function)
 
 	#if oo_READING
-		if (formatVersion >= 5 || (Melder_debug == 25 && formatVersion == 4)) {
-			oo_OBJECT (Sound, 2, sound)
-		} else {
+		if (formatVersion < 4) {
 			oo_OBJECT (Sound, 0, sound)
+		} else if (formatVersion < 5) {
+			oo_OBJECT (Sound, Melder_debug == 25 ? 2 : 0, sound)
+		} else {
+			oo_OBJECT (Sound, 2, sound)
 		}
 	#else
-		oo_OBJECT (Sound, 0, sound)
+		oo_OBJECT (Sound, 2, sound)
 	#endif
 	oo_OBJECT (PointProcess, 0, pulses)
 	oo_OBJECT (PitchTier, 0, pitch)

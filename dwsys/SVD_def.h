@@ -41,6 +41,7 @@ oo_DEFINE_CLASS (SVD, Daata)
 		oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
 	#endif
 	oo_DOUBLE_VECTOR (d, numberOfColumns)
+
 	#if oo_DECLARING
 		void v_info ()
 			override;

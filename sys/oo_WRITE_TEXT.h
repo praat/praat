@@ -174,8 +174,6 @@
 
 #define oo_ENDFROM
 
-#define oo_IF(condition)  if (condition) {
-#define oo_ENDIF  }
 #define oo_DECLARING  0
 #define oo_DESTROYING  0
 #define oo_COPYING  0

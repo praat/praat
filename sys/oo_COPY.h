@@ -130,12 +130,6 @@
 #define oo_END_CLASS(Class)  \
 	}
 
-#define oo_IF(condition)  \
-	if (condition) {
-
-#define oo_ENDIF  \
-	}
-
 #define oo_FROM(from)
 
 #define oo_ENDFROM
