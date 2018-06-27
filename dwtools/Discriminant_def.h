@@ -22,17 +22,16 @@ oo_DEFINE_CLASS (Discriminant, Daata)
 	oo_FROM (1)
 		oo_OBJECT (Eigen, 0, eigen)
 	oo_ENDFROM
-
 	#if oo_READING
-		if (formatVersion < 1) {
+		oo_VERSION_UNTIL (1)
 			eigen = Thing_new (Eigen);
 			oo_INTEGER (eigen -> numberOfEigenvalues)
 			oo_INTEGER (eigen -> dimension)
 			oo_DOUBLE_VECTOR (eigen -> eigenvalues, eigen -> numberOfEigenvalues)
 			oo_DOUBLE_MATRIX (eigen -> eigenvectors, eigen -> numberOfEigenvalues, eigen -> dimension)
-		}
+		oo_VERSION_END
 	#endif
-	
+
 	oo_INTEGER (numberOfGroups)
 	oo_OBJECT (SSCPList, 0, groups)
 	oo_OBJECT (SSCP, 0, total)

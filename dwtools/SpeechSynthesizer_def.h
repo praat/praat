@@ -76,17 +76,18 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	// sythesizers language /voice
 	oo_STRING (d_languageName)
 	oo_STRING (d_voiceName)
+
 	oo_FROM (1)
 		oo_STRING (d_phonemeSet)
 	oo_ENDFROM
 	#if oo_READING
-		if (formatVersion < 1) {
+		oo_VERSION_UNTIL (1)
 			d_phonemeSet = Melder_dup (d_languageName);
 			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
 			oo_INTEGER (d_wordsPerMinute)
-		} else {
+		oo_VERSION_ELSE
 			oo_DOUBLE (d_wordsPerMinute)
-		}
+		oo_VERSION_END
 	#else
 		oo_DOUBLE (d_wordsPerMinute)
 	#endif
@@ -103,17 +104,17 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	oo_INT (d_outputPhonemeCoding)
 
 	#if oo_READING_TEXT
-		if (formatVersion < 1) {
+		oo_VERSION_UNTIL (1)
 			oo_INT (d_estimateSpeechRate)   // this used to be oo_BOOL, which was written in text as 0 or 1, which is inappropriate for boolean text
-		} else {
+		oo_VERSION_ELSE
 			oo_QUESTION (d_estimateSpeechRate)
-		}
+		oo_VERSION_END
 	#else
 		oo_QUESTION (d_estimateSpeechRate)
 	#endif
 
 	#if ! oo_READING && ! oo_WRITING
-		// Filled by the call back
+		// Filled by the callback
 		oo_OBJECT (Table, 0, d_events)
 		oo_DOUBLE (d_internalSamplingFrequency)
 		oo_INTEGER (d_numberOfSamples)

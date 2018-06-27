@@ -285,6 +285,15 @@
 #define oo_FROM(from)
 #define oo_ENDFROM
 
+#define oo_VERSION_UNTIL(version)  \
+	if (_formatVersion_ < version) {
+#define oo_VERSION_ELSE_UNTIL(version)  \
+	} else if (_formatVersion_ < version) {
+#define oo_VERSION_ELSE  \
+	} else {
+#define oo_VERSION_END  \
+	}
+
 /* Examples of the usage of the following macros:
 	For code that should only appear in reading methods (consistency checks etc.),
 		use:  #if oo_READING

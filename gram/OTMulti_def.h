@@ -1,6 +1,6 @@
 /* OTMulti_def.h
  *
- * Copyright (C) 2005,2007,2009-2011,2015-2017 Paul Boersma
+ * Copyright (C) 2005,2007,2009-2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@ oo_DEFINE_STRUCT (OTConstraint)
 	oo_STRING (name)
 	oo_DOUBLE (ranking)
 	oo_DOUBLE (disharmony)
+
 	oo_FROM (2)
 		oo_DOUBLE (plasticity)
 	oo_ENDFROM
-
 	#if oo_READING
-		if (formatVersion < 2) {
-			plasticity = 1.0;
-		}
+		oo_VERSION_UNTIL (2)
+			our plasticity = 1.0;
+		oo_VERSION_END
 	#endif
 
 	#if ! oo_READING && ! oo_WRITING
