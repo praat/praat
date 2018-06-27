@@ -558,19 +558,19 @@ static void autoMarks_logarithmic (Graphics g, double ymin, double ymax, bool ha
 
 static void autoMarks_semitones (Graphics g, double ymin, double ymax, bool haveDottedLines) {
 	double dy = ymax - ymin;
-	if (dy < 16) {
+	if (dy < 16.0) {
 		integer imin = Melder_iroundUp ((ymin + 1.2) / 3.0), imax = Melder_ifloor ((ymax - 1.2) / 3.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 3.0, true, true, haveDottedLines, nullptr);
-	} else if (dy < 32) {
+	} else if (dy < 32.0) {
 		integer imin = Melder_iroundUp ((ymin + 2.4) / 6.0), imax = Melder_ifloor ((ymax - 2.4) / 6.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 6.0, true, true, haveDottedLines, nullptr);
-	} else if (dy < 64) {
+	} else if (dy < 64.0) {
 		integer imin = Melder_iroundUp ((ymin + 4.8) / 12.0), imax = Melder_ifloor ((ymax - 4.8) / 12.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 12.0, true, true, haveDottedLines, nullptr);
-	} else if (dy < 128) {
+	} else if (dy < 128.0) {
 		integer imin = Melder_iroundUp ((ymin + 9.6) / 24.0), imax = Melder_ifloor ((ymax - 9.6) / 24.0);
 		for (integer i = imin; i <= imax; i ++)
 			Graphics_markLeft (g, i * 24.0, true, true, haveDottedLines, nullptr);
@@ -580,21 +580,21 @@ static void autoMarks_semitones (Graphics g, double ymin, double ymax, bool have
 void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
 	double fmin, double fmax, bool showBoundaries, bool useTextStyles, bool garnish, bool speckle, kPitch_unit unit)
 {
-	int ntier = grid -> tiers->size;
+	integer numberOfTiers = grid -> tiers->size;
 	if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
 	if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, (int) unit)) {
 		fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, (int) unit);
 		fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, (int) unit);
 	}
 	if (unit == kPitch_unit::HERTZ_LOGARITHMIC)
-		Pitch_draw (pitch, g, tmin, tmax, pow (10.0, fmin - 0.25 * (fmax - fmin) * ntier), pow (10.0, fmax), false, speckle, unit);
+		Pitch_draw (pitch, g, tmin, tmax, pow (10.0, fmin - 0.25 * (fmax - fmin) * numberOfTiers), pow (10.0, fmax), false, speckle, unit);
 	else
-		Pitch_draw (pitch, g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax, false, speckle, unit);
+		Pitch_draw (pitch, g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * numberOfTiers, fmax, false, speckle, unit);
 	TextGrid_Sound_draw (grid, nullptr, g, tmin, tmax, showBoundaries, useTextStyles, false);
 	/*
 	 * Restore window for the sake of margin drawing.
 	 */
-	Graphics_setWindow (g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * ntier, fmax);
+	Graphics_setWindow (g, tmin, tmax, fmin - 0.25 * (fmax - fmin) * numberOfTiers, fmax);
 	if (unit == kPitch_unit::HERTZ_LOGARITHMIC)
 		fmin = pow (10, fmin), fmax = pow (10.0, fmax);
 	if (garnish) {

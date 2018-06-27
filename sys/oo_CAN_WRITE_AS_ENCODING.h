@@ -40,49 +40,71 @@
 	if (our x && ! Melder_isEncodable (our x, encoding)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
+	{ \
+		integer _n = (n); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			if (our x [_i] && ! Melder_isEncodable (our x [_i], encoding)) return false; \
+		} \
+	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
+	for (int _i = 0; _i <= setType::MAX; _i ++) \
+		if (our x [_i] && ! Melder_isEncodable (our x [_i], encoding)) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (our x) { \
-		for (integer i = min; i <= max; i ++) \
-			if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false; \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (our x) { \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				if (our x [_i] && ! Melder_isEncodable (our x [_i], encoding)) return false; \
+			} \
+		} \
 	}
 
 #define oo_STRUCT(Type,x)  \
 	if (! our x. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (! our x [i]. canWriteAsEncoding (encoding)) return false;
+	{ \
+		integer _n = (n); \
+		for (int _i = 0; _i < _n; _i ++) { \
+			if (! our x [_i]. canWriteAsEncoding (encoding)) return false; \
+		} \
+	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		if (! our x [i]. canWriteAsEncoding (encoding)) return false;
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		if (! our x [_i]. canWriteAsEncoding (encoding)) return false; \
+	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (our x) { \
-		for (integer i = min; i <= max; i ++) \
-			if (! our x [i]. canWriteAsEncoding (encoding)) return false; \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (our x) { \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				if (! our x [_i]. canWriteAsEncoding (encoding)) return false; \
+			} \
+		} \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (our x) { \
-		for (integer i = row1; i <= row2; i ++) \
-			for (integer j = col1; j <= col2; j ++) \
-				if (! our x [i] [j]. canWriteAsEncoding (encoding)) return false; \
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (our x) { \
+			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
+				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
+					if (! our x [_irow] [_icol]. canWriteAsEncoding (encoding)) return false; \
+				} \
+			} \
+		} \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
 	if (our x && ! Data_canWriteAsEncoding (our x.get(), encoding)) return false;
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	for (integer i = 1; i <= x.size; i ++) { \
-		if (our x.at [i] && ! Data_canWriteAsEncoding (our x.at [i], encoding)) return false; \
+	for (integer _i = 1; _i <= x.size; _i ++) { \
+		if (our x.at [_i] && ! Data_canWriteAsEncoding (our x.at [_i], encoding)) return false; \
 	}
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
