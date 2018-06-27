@@ -22,84 +22,123 @@
 	if (our x != thy x) return false;
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (our x [i] != thy x [i]) return false; \
+	{ \
+		integer _n = (n); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			if (our x [_i] != thy x [_i]) return false; \
+		} \
+	}
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		if (our x [i] != thy x [i]) return false; \
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		if (our x [_i] != thy x [_i]) return false; \
+	}
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	if (! our x != ! thy x || \
-		(our x && ! NUMvector_equal <type> (our x, thy x, min, max))) return false;
+	{ \
+		integer _min = (min), _max = (max); \
+		if (! our x != ! thy x || \
+			(our x && ! NUMvector_equal <type> (our x, thy x, _min, _max))) return false; \
+	}
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	if (! our x != ! thy x || \
-		(our x && ! NUMmatrix_equal <type> (our x, thy x, row1, row2, col1, col2))) return false;
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (! our x != ! thy x || \
+			(our x && ! NUMmatrix_equal <type> (our x, thy x, _row1, _row2, _col1, _col2))) return false; \
+	}
 
 #define oo_ENUMx(kType,storage,x)  \
 	if (our x != thy x) return false;
 
 //#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	for (int i = 0; i < n; i ++) if (our x [i] != thy x [i]) return false;
+//	{ \
+//		integer _n = (n); \
+//		for (int _i = 0; _i < _n; _i ++) if (our x [_i] != thy x [_i]) return false; \
+// }
 
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
-//	for (int i = 0; i <= (int) setType::MAX; i ++) if (our x [i] != thy x [i]) return false;
+//	for (int _i = 0; _i <= (int) setType::MAX; _i ++) if (our x [_i] != thy x [_i]) return false;
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
-//	if (! our x != ! thy x || \
-//		(our x && ! NUMvector_equal <type> (our x, thy x, min, max))) return false;
+//	{ \
+//		integer _min = (min), _max = (max); \
+//		if (! our x != ! thy x || \
+//			(our x && ! NUMvector_equal <type> (our x, thy x, _min, _max))) return false; \
+//	}
 
 #define oo_STRINGx(storage,x)  \
 	if (! Melder_equ (our x, thy x)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (! Melder_equ (our x [i], thy x [i])) return false;
+	{ \
+		integer _n = (n); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			if (! Melder_equ (our x [_i], thy x [_i])) return false; \
+		} \
+	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		if (! Melder_equ (our x [i], thy x [i])) return false;
+	for (int _i = 0; _i <= setType::MAX; _i ++) \
+		if (! Melder_equ (our x [_i], thy x [_i])) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (! our x != ! thy x) return false; \
-	if (our x) { \
-		for (integer i = min; i <= max; i ++) \
-			if (! Melder_equ (our x [i], thy x [i])) return false; \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (! our x != ! thy x) return false; \
+		if (our x) { \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				if (! Melder_equ (our x [_i], thy x [_i])) return false; \
+			} \
+		} \
 	}
 
 #define oo_STRUCT(Type,x)  \
 	if (! our x. equal (& thy x)) return false;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (! our x [i]. equal (& thy x [i])) return false;
+	{ \
+		integer _n = (n); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			if (! our x [_i]. equal (& thy x [_i])) return false; \
+		} \
+	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		if (! our x [i]. equal (& thy x [i])) return false;
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		if (! our x [_i]. equal (& thy x [_i])) return false; \
+	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (! our x != ! thy x) return false; \
-	if (our x) { \
-		for (integer i = min; i <= max; i ++) \
-			if (! our x [i]. equal (& thy x [i])) return false; \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (! our x != ! thy x) return false; \
+		if (our x) { \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				if (! our x [_i]. equal (& thy x [_i])) return false; \
+			} \
+		} \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (! our x != ! thy x) return false; \
-	if (our x) { \
-		for (integer i = row1; i <= row2; i ++) \
-			for (integer j = col1; j <= col2; j ++) \
-				if (! our x [i] [j]. equal (& thy x [i] [j])) return false; \
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (! our x != ! thy x) return false; \
+		if (our x) { \
+			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
+				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
+					if (! our x [_irow] [_icol]. equal (& thy x [_irow] [_icol])) return false; \
+				} \
+			} \
+		} \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
 	if (! our x != ! thy x || (our x && ! Data_equal (our x.get(), thy x.get()))) return false;
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
-	for (integer i = 1; i <= our x.size; i ++) { \
-		if (! our x.at [i] != ! thy x.at [i] || (our x.at [i] && ! Data_equal (our x.at [i], thy x.at [i]))) return false; \
+	for (integer _i = 1; _i <= our x.size; _i ++) { \
+		if (! our x.at [_i] != ! thy x.at [_i] || (our x.at [_i] && ! Data_equal (our x.at [_i], thy x.at [_i]))) return false; \
 	}
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
@@ -119,18 +158,12 @@
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	bool struct##Class :: v_equal (Daata thee_Daata) { \
-		Class thee = static_cast <Class> (thee_Daata); \
+	bool struct##Class :: v_equal (Daata _thee_Daata) { \
+		Class thee = static_cast <Class> (_thee_Daata); \
 		if (! Class##_Parent :: v_equal (thee)) return false;
 
 #define oo_END_CLASS(Class)  \
 		return true; \
-	}
-
-#define oo_IF(condition)  \
-	if (condition) {
-
-#define oo_ENDIF  \
 	}
 
 #define oo_FROM(from)

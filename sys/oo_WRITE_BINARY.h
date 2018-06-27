@@ -22,88 +22,134 @@
 	binput##storage (our x, f);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		binput##storage (our x [i], f);
+	{ \
+		integer _n = (n); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			binput##storage (our x [_i], f); \
+		} \
+	}
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		binput##storage (our x [i], f);
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		binput##storage (our x [_i], f); \
+	}
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	if (our x) \
-		NUMvector_writeBinary_##storage (our x, min, max, f);
+	{ \
+		integer _min = (min), _max = (max); \
+		if (our x) { \
+			NUMvector_writeBinary_##storage (our x, _min, _max, f); \
+		} \
+	}
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	if (our x) \
-		NUMmatrix_writeBinary_##storage (our x, row1, row2, col1, col2, f);
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (our x) { \
+			NUMmatrix_writeBinary_##storage (our x, _row1, _row2, _col1, _col2, f); \
+		} \
+	}
 
 #define oo_ENUMx(kType,storage,x)  \
 	binput##storage ((int) our x, f);
 
 //#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	for (int i = 0; i < n; i ++) \
-//		binput##storage ((int) our x [i], f);
+//	{ \
+//		integer _n = (n); \
+//		for (int _i = 0; _i < _n; _i ++) { \
+//			binput##storage ((int) our x [_i], f); \
+//		} \
+//	{
 
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
-//	for (int i = 0; i <= setType::MAX; i ++) \
-//		binput##storage ((int) our x [i], f);
+//	for (int _i = 0; _i <= setType::MAX; _i ++) { \
+//		binput##storage ((int) our x [_i], f); \
+//	}
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
-//	if (our x) \
-//		NUMvector_writeBinary_##storage ((int) our x, min, max, f);
+//	{ \
+//		integer _min = (min), _max = (max); \
+//		if (our x) { \
+//			NUMvector_writeBinary_##storage ((int) our x, _min, _max, f); \
+//		} \
+//	{
 
 #define oo_STRINGx(storage,x)  \
 	binput##storage (our x, f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		binput##storage (our x [i], f);
+	{ \
+		integer _n = (n); \
+		for (int _i = 0; _i < _n; _i ++) { \
+			binput##storage (our x [_i], f); \
+		} \
+	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		binput##storage (our x [i], f);
+	for (int _i = 0; _i <= setType::MAX; _i ++) { \
+		binput##storage (our x [_i], f); \
+	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	for (integer i = min; i <= max; i ++) \
-		binput##storage (our x [i], f);
+	{ \
+		integer _min = (min), _max = (max); \
+		for (integer _i = _min; _i <= _max; _i ++) { \
+			binput##storage (our x [_i], f); \
+		} \
+	}
 
 #define oo_STRUCT(Type,x)  \
 	our x. writeBinary (f);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		our x [i]. writeBinary (f);
+	{ \
+		integer _n = (n); \
+		for (int _i = 0; _i < _n; _i ++) { \
+			our x [_i]. writeBinary (f); \
+		} \
+	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		our x [i]. writeBinary (f);
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		our x [_i]. writeBinary (f); \
+	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	for (integer i = min; i <= max; i ++) \
-		our x [i]. writeBinary (f);
+	{ \
+		integer _min = (min), _max = (max); \
+		for (integer _i = _min; _i <= _max; _i ++) { \
+			our x [_i]. writeBinary (f); \
+		} \
+	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	for (integer i = row1; i <= row2; i ++) \
-		for (integer j = col1; j <= col2; j ++) \
-			our x [i] [j]. writeBinary (f);
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
+			for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
+				our x [_irow] [_icol]. writeBinary (f); \
+			} \
+		} \
+	}
 
 #define oo_OBJECT(Class,version,x)  \
 	binputex ((bool) our x, f); \
-	if (our x) \
-		Data_writeBinary (our x.get(), f);
+	if (our x) { \
+		Data_writeBinary (our x.get(), f); \
+	}
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,version)  \
 	binputinteger32BE (our x.size, f); \
-	for (integer i = 1; i <= our x.size; i ++) { \
-		ItemClass data = our x.at [i]; \
+	for (integer _i = 1; _i <= our x.size; _i ++) { \
+		ItemClass data = our x.at [_i]; \
 		data -> struct##ItemClass :: v_writeBinary (f); \
 	}
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	binputinteger32BE (our x ? our x->size : 0, f); \
 	if (our x) { \
-		for (integer i = 1; i <= our x->size; i ++) { \
-			ItemClass data = our x->at [i]; \
+		for (integer _i = 1; _i <= our x->size; _i ++) { \
+			ItemClass data = our x->at [_i]; \
 			data -> struct##ItemClass :: v_writeBinary (f); \
 		} \
 	}
@@ -123,12 +169,6 @@
 		Class##_Parent :: v_writeBinary (f);
 
 #define oo_END_CLASS(Class)  \
-	}
-
-#define oo_IF(condition)  \
-	if (condition) {
-
-#define oo_ENDIF  \
 	}
 
 #define oo_FROM(from)

@@ -26,12 +26,15 @@
 	}
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-	for (integer _i = 0; _i < n; _i ++) { \
-		try { \
-			our x [_i] = texget##storage (_textSource_); \
-		} catch (MelderError) { \
-			Melder_throw (U"Element ", _i+1, U" of \"" #x U"\" not read."); \
+	{ \
+		integer _cap = (cap), _n = (n); \
+		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			try { \
+				our x [_i] = texget##storage (_textSource_); \
+			} catch (MelderError) { \
+				Melder_throw (U"Element ", _i+1, U" of \"" #x U"\" not read."); \
+			} \
 		} \
 	}
 
@@ -45,22 +48,31 @@
 	}
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	if (max >= min) { \
-		our x = NUMvector_readText_##storage (min, max, _textSource_, #x); \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (_max >= _min) { \
+			our x = NUMvector_readText_##storage (_min, _max, _textSource_, #x); \
+		} \
 	}
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	if (row2 >= row1 && col2 >= col1) { \
-	    our x = NUMmatrix_readText_##storage (row1, row2, col1, col2, _textSource_, #x); \
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (_row2 >= _row1 && _col2 >= _col1) { \
+	    	our x = NUMmatrix_readText_##storage (_row1, _row2, _col1, _col2, _textSource_, #x); \
+		} \
 	}
 
 #define oo_ENUMx(kType,storage,x)  \
 	our x = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue);
 
 //#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-//	for (integer _i = 0; _i < n; _i ++) { \
-//		our x [_i] = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue); \
+//	{ \
+//		integer _cap = (cap), _n = (n); \
+//		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
+//		for (integer _i = 0; _i < _n; _i ++) { \
+//			our x [_i] = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue); \
+//		} \
 //	}
 
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
@@ -69,10 +81,13 @@
 //	}
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
-//	if (max >= min) { \
-//		our x = NUMvector <kType> (min, max); \
-//		for (integer _i = min; _i <= max; _i ++) { \
-//			our x [_i] = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue); \
+//	{ \
+//		integer _min = (min), _max = (max); \
+//		if (_max >= _min) { \
+//			our x = NUMvector <kType> (_min, _max); \
+//			for (integer _i = _min; _i <= _max; _i ++) { \
+//				our x [_i] = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue); \
+//			} \
 //		} \
 //	}
 
@@ -84,9 +99,12 @@
 	}
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-	for (integer _i = 0; _i < n; _i ++) { \
-		our x [i] = texget##storage (_textSource_); \
+	{ \
+		integer _cap = (cap), _n = (n); \
+		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			our x [i] = texget##storage (_textSource_); \
+		} \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
@@ -95,13 +113,16 @@
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) { \
-		our x = NUMvector <char32*> (min, max); \
-		for (integer _i = min; _i <= max; _i ++) { \
-			try { \
-				our x [_i] = texget##storage (_textSource_); \
-			} catch (MelderError) { \
-				Melder_throw (U"Element ", _i, U" of \"" #x U"\" not read."); \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (_max >= _min) { \
+			our x = NUMvector <char32*> (_min, _max); \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				try { \
+					our x [_i] = texget##storage (_textSource_); \
+				} catch (MelderError) { \
+					Melder_throw (U"Element ", _i, U" of \"" #x U"\" not read."); \
+				} \
 			} \
 		} \
 	}
@@ -110,9 +131,12 @@
 	our x. readText (_textSource_, formatVersion);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
-	if (n > cap) Melder_throw (U"Number of \"" #x U"\" (", n, U") greater than ", cap, U"."); \
-	for (integer _i = 0; _i < n; _i ++) { \
-		our x [_i]. readText (_textSource_, formatVersion); \
+	{ \
+		integer _cap = (cap), _n = (n); \
+		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			our x [_i]. readText (_textSource_, formatVersion); \
+		} \
 	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
@@ -121,46 +145,57 @@
 	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (max >= min) { \
-		our x = NUMvector <struct##Type> (min, max); \
-		for (integer _i = min; _i <= max; _i ++) { \
-			our x [_i]. readText (_textSource_, formatVersion); \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (_max >= _min) { \
+			our x = NUMvector <struct##Type> (_min, _max); \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				our x [_i]. readText (_textSource_, formatVersion); \
+			} \
 		} \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (row2 >= row1 && col2 >= col1) { \
-		our x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
-		for (integer _irow = row1; _irow <= row2; _irow ++) { \
-			for (integer _icol = col1; _icol <= col2; _icol ++) { \
-				our x [_irow] [_icol]. readText (_textSource_, formatVersion); \
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (_row2 >= _row1 && _col2 >= _col1) { \
+			our x = NUMmatrix <struct##Type> (_row1, _row2, _col1, _col2); \
+			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
+				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
+					our x [_irow] [_icol]. readText (_textSource_, formatVersion); \
+				} \
 			} \
 		} \
 	}
 
 #define oo_OBJECT(Class,formatVersion,x)  \
-	if (texgetex (_textSource_) == 1) { \
-		our x = Thing_new (Class); \
-		our x -> v_readText (_textSource_, formatVersion); \
+	{ \
+		int _formatVersion = (formatVersion); \
+		if (texgetex (_textSource_) == 1) { \
+			our x = Thing_new (Class); \
+			our x -> v_readText (_textSource_, _formatVersion); \
+		} \
 	}
 
 #define oo_COLLECTION_OF(Class,x,ItemClass,formatVersion)  \
 	{ \
+		int _formatVersion = (formatVersion); \
 		integer _n = texgetinteger (_textSource_); \
 		for (integer _i = 1; _i <= _n; _i ++) { \
 			auto##ItemClass _item = Thing_new (ItemClass); \
-			_item -> v_readText (_textSource_, formatVersion); \
+			_item -> v_readText (_textSource_, _formatVersion); \
 			our x.addItem_move (_item.move()); \
 		} \
 	}
 
 #define oo_COLLECTION(Class,x,ItemClass,formatVersion)  \
 	{ \
+		int _formatVersion = (formatVersion); \
 		integer _n = texgetinteger (_textSource_); \
 		our x = Class##_create (); \
 		for (integer _i = 1; _i <= _n; _i ++) { \
 			auto##ItemClass _item = Thing_new (ItemClass); \
-			_item -> v_readText (_textSource_, formatVersion); \
+			_item -> v_readText (_textSource_, _formatVersion); \
 			our x -> addItem_move (_item.move()); \
 		} \
 	}
@@ -185,16 +220,13 @@
 #define oo_END_CLASS(Class)  \
 	}
 
-#define oo_IF(condition)  \
-	if (condition) {
-
-#define oo_ENDIF  \
-	}
-
 #define oo_FROM(from)  \
-	if (formatVersion >= from) {
+	{ \
+		int _from = (from); \
+		if (formatVersion >= _from) {
 
 #define oo_ENDFROM  \
+		} \
 	}
 
 #define oo_DECLARING  0

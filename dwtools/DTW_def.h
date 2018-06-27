@@ -24,40 +24,51 @@
 
 #define ooSTRUCT DTW_Path
 oo_DEFINE_STRUCT (DTW_Path)
+
 	oo_INTEGER (x)
 	oo_INTEGER (y)
-oo_END_STRUCT (DTW_Path) 
+
+oo_END_STRUCT (DTW_Path)
 #undef ooSTRUCT
+
 
 #define ooSTRUCT DTW_Path_Query
 oo_DEFINE_STRUCT (DTW_Path_Query)
+
 	oo_INTEGER (nx)
 	oo_INTEGER (ny)
 	oo_INTEGER (nxy)
 	oo_OBJECT (RealTier, 0, yfromx)
 	oo_OBJECT (RealTier, 0, xfromy)
-oo_END_STRUCT (DTW_Path_Query) 
+
+oo_END_STRUCT (DTW_Path_Query)
 #undef ooSTRUCT
+
 
 #define ooSTRUCT DTW
 oo_DEFINE_CLASS (DTW, Matrix)
+
 	oo_DOUBLE (weightedDistance)
 	oo_INTEGER (pathLength)
 	oo_STRUCT_VECTOR (DTW_Path, path, pathLength)
+
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (wx)
 		oo_DOUBLE (wy)
 		oo_DOUBLE (wd)
 		oo_STRUCT (DTW_Path_Query, pathQuery)
 	#endif
+
 	#if oo_READING
 		DTW_Path_Query_init (& pathQuery, ny, nx);
 		DTW_Path_recode (this);
 	#endif
+
 	#if oo_DECLARING
 		void v_info ()
 			override;
 	#endif
+
 oo_END_CLASS (DTW)
 #undef ooSTRUCT
 

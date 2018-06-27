@@ -60,8 +60,8 @@
 
 /* Arrays with compile-time allocation of capacity. Declarations like: int x [cap]; */
 /* 'cap' is a compile-time expression evaluating to a positive integer (e.g., 3). */
-/* First index is always 0, last index is 'n' - 1. */
-/* Actual number of elements 'n' may vary during run-time and while structure exists, */
+/* The first index is always 0, the last index is 'n' - 1. */
+/* The actual number of elements 'n' may vary during run-time and while structure exists, */
 /* but must never be greater than 'cap'. */
 
 //#define oo_BYTE_ARRAY(x,cap,n)  oo_ARRAY (signed char, i8, x, cap, n)
@@ -76,8 +76,8 @@
 //#define oo_COMPLEX_ARRAY(x,cap,n)  oo_ARRAY (dcomplex, c128, x, cap, n)
 #define oo_POINTER_ARRAY(x,cap,n)  oo_ARRAY (void *, dummy, x, cap, n)
 
-/* Sets with compile-time allocation of capacity. Declarations like: int x [1 + setType_MAX]; */
-/* First index is always 0, last index is setType_MAX. */
+/* Sets with compile-time allocation of capacity. Declarations like: int x [1 + setType::MAX]; */
+/* The first index is always 0, the last index is setType::MAX. */
 
 //#define oo_BYTE_SET(x,setType)  oo_SET (signed char, i8, x, setType)
 //#define oo_INT_SET(x,setType)  oo_SET (int, i16, x, setType)
@@ -92,8 +92,9 @@
 #define oo_POINTER_SET(x,setType)  oo_SET (void *, dummy, x, setType)
 
 /* Arrays with run-time allocation of size. Declarations like: int *x; */
-/* First index is 'min', last index is 'max'. */
-/* While the structure exists, 'max' may become less than the value it had at the time of allocation. */
+/* The first index is 'min', the last index is 'max'. */
+/* While the structure exists, 'min' and 'max' may change in any direction if the pointer changes; */
+/* if the pointer does not change, 'min' cannot change, but 'max' may become lower than the original value. */
 
 //#define oo_BYTE_VECTOR_FROM(x,min,max)  oo_VECTOR (signed char, i8, x, min, max)
 #define oo_INT_VECTOR_FROM(x,min,max)  oo_VECTOR (int, i16, x, min, max)
@@ -207,7 +208,7 @@
 
 /********** Definitions for header files only. **********/
 /* These are undef'ed and redefined in the header files that implement methods, */
-/* like oo_DESTROY.h, oo_COPY.h, oo_EQUAL.h, oo_WRITE_TEXT.h, etc. */
+/* such as oo_DESTROY.h, oo_COPY.h, oo_EQUAL.h, oo_WRITE_TEXT.h, etc. */
 
 /* Types. */
 
@@ -279,10 +280,6 @@
 	};
 
 /*** Miscellaneous. ***/
-
-/* For fields that should only be destroyed, copied, compared, read, or written if 'condition': */
-#define oo_IF(condition)
-#define oo_ENDIF
 
 /* For fields that should not be read in older versions: */
 #define oo_FROM(from)
