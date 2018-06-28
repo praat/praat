@@ -25,11 +25,16 @@
 #define oo_SET(type,storage,x,setType)
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	NUMvector_free <type> (our x, min);
+	{ \
+		integer _min = (min); \
+		NUMvector_free <type> (our x, _min); \
+	}
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	NUMmatrix_free <type> (our x, row1, col1);
-
+	{ \
+		integer _row1 = (row1), _col1 = (col1); \
+		NUMmatrix_free <type> (our x, _row1, _col1); \
+	}
 
 #define oo_ENUMx(kType,storage,x)
 
@@ -38,50 +43,74 @@
 //#define oo_ENUMx_SET(kType,storage,x,setType)
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
-//	NUMvector_free <type> (our x, min);
+//	{ \
+//		integer _min = (min); \
+//		NUMvector_free <type> (our x, _min); \
+//	}
 
 #define oo_STRINGx(storage,x)  \
 	Melder_free (our x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		Melder_free (our x [i]);
+	{ \
+		integer _n = (n); \
+		for (int _i = 0; _i < _n; _i ++) { \
+			Melder_free (our x [_i]); \
+		} \
+	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType::MAX; i ++) \
 		Melder_free (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (our x) { \
-		for (integer i = min; i <= max; i ++) \
-			Melder_free (our x [i]); \
-		NUMvector_free <char32*> (our x, min); \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (our x) { \
+			for (integer _i = _min; _i <= _max; _i ++) \
+				Melder_free (our x [_i]); \
+			NUMvector_free <char32*> (our x, _min); \
+		} \
 	}
 
 #define oo_STRUCT(Type,x)  \
 	our x. destroy ();
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		our x [i]. destroy ();
+	{ \
+		integer _n = (n); \
+		for (int _i = 0; _i < _n; _i ++) { \
+			our x [_i]. destroy (); \
+		} \
+	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		our x [i]. destroy ();
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		our x [_i]. destroy (); \
+	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (our x) { \
-		for (integer i = min; i <= max; i ++) \
-			our x [i]. destroy (); \
-		NUMvector_free <struct##Type> (our x, min); \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (our x) { \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				our x [_i]. destroy (); \
+			} \
+			NUMvector_free <struct##Type> (our x, _min); \
+		} \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (our x) { \
-		for (integer i = row1; i <= row2; i ++) \
-			for (integer j = col1; j <= col2; j ++) \
-				our x [i] [j]. destroy (); \
-		NUMmatrix_free <struct##Type> (our x, row1, col1); \
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (our x) { \
+			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
+				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
+					our x [_irow] [_icol]. destroy (); \
+				} \
+			} \
+			NUMmatrix_free <struct##Type> (our x, _row1, _col1); \
+		} \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
@@ -112,12 +141,6 @@
 
 #define oo_END_CLASS(Class)  \
 		Class##_Parent :: v_destroy (); \
-	}
-
-#define oo_IF(condition)  \
-	if (condition) {
-
-#define oo_ENDIF  \
 	}
 
 #define oo_FROM(from)

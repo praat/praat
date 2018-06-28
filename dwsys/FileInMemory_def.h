@@ -35,9 +35,11 @@ oo_DEFINE_CLASS (FileInMemory, Daata)
 		oo_UBYTE_VECTOR_FROM (d_data, 0, d_numberOfBytes) // final null byte possible
 	#endif
 	oo_UBYTE (writable)
+
 	#if oo_DECLARING || oo_DESCRIBING
 		oo_UBYTE (_dontOwnData)
 	#endif
+
 	#if oo_DECLARING
 		void v_info () override; 
 	#endif

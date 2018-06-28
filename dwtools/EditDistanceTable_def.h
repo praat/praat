@@ -22,21 +22,28 @@
 
 #define ooSTRUCT PairOfInteger
 oo_DEFINE_STRUCT (PairOfInteger)
+
 	oo_INTEGER (x)
 	oo_INTEGER (y)
+
 oo_END_STRUCT (PairOfInteger)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT WarpingPath
 oo_DEFINE_CLASS (WarpingPath, Daata)
+
 	oo_INTEGER (_capacity)
 	oo_INTEGER (pathLength)
 	oo_STRUCT_VECTOR (PairOfInteger, path, pathLength)
+
 oo_END_CLASS (WarpingPath)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT EditCostsTable
 oo_DEFINE_CLASS (EditCostsTable, TableOfReal)
+
 	#if oo_DECLARING
 		void v_info ()
 			override;
@@ -45,18 +52,23 @@ oo_DEFINE_CLASS (EditCostsTable, TableOfReal)
 		virtual bool v_matchSourceSymbol (const char32 *sourceSymbol, const char32 *symbol);
 		virtual bool v_matchTargetWithSourceSymbol (const char32 *targetSymbol, const char32 *sourceSymbol);
 	#endif
+
 oo_END_CLASS (EditCostsTable)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT EditDistanceTable
 oo_DEFINE_CLASS (EditDistanceTable, TableOfReal)
+
 	oo_OBJECT (WarpingPath, 0, warpingPath)
+
 	#if oo_DECLARING
 		oo_OBJECT (EditCostsTable, 0, editCostsTable)
 
 		void v_info ()
 			override;
 	#endif
+
 oo_END_CLASS (EditDistanceTable)
 #undef ooSTRUCT
 

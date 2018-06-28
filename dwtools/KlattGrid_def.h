@@ -76,13 +76,16 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 	oo_OBJECT (IntensityTier, 0, spectralTilt) // dB
 	oo_OBJECT (IntensityTier, 0, aspirationAmplitude) // dB
 	oo_OBJECT (IntensityTier, 0, breathinessAmplitude) // dB
+
 	#if ! oo_READING && ! oo_WRITING
 		oo_OBJECT (PhonationGridPlayOptions, 0, options)
 	#endif
+
 	#if oo_READING
 		options = PhonationGridPlayOptions_create ();
 		PhonationGrid_setNames (this);
 	#endif
+
 	#if oo_DECLARING
 		void v_info ()
 			override;

@@ -120,6 +120,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 		oo_INTEGER (d_wavCapacity)
 		oo_INT_VECTOR (d_wav, d_wavCapacity)
 	#endif
+
 	#if oo_DECLARING
 		void v_info ()
 			override;

@@ -50,9 +50,6 @@
 #undef oo_DEFINE_CLASS
 #undef oo_END_CLASS
 
-#undef oo_IF
-#undef oo_ENDIF
-
 #undef oo_FROM
 #undef oo_ENDFROM
 

@@ -22,73 +22,113 @@
 	thy x = our x;
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		thy x [i] = our x [i];
+	{ \
+		integer _n = (n); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			thy x [_i] = our x [_i]; \
+		} \
+	}
 
 #define oo_SET(type,storage,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		thy x [i] = our x [i];
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		thy x [_i] = our x [_i]; \
+	}
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	if (our x) thy x = NUMvector_copy (our x, min, max);
+	{ \
+		integer _min = (min), _max = (max); \
+		if (our x) thy x = NUMvector_copy (our x, _min, _max); \
+	}
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	if (our x) thy x = NUMmatrix_copy (our x, row1, row2, col1, col2);
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (our x) thy x = NUMmatrix_copy (our x, _row1, _row2, _col1, _col2); \
+	}
 
 #define oo_ENUMx(kType,storage,x)  \
 	thy x = our x;
 
 //#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	for (int i = 0; i < n; i ++) thy x [i] = our x [i];
+//	{ \
+//		integer _n = (n); \
+//		for (int _i = 0; _i < _n; i ++) thy x [_i] = our x [_i]; \
+//	}
 
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
-//	for (int i = 0; i <= (int) setType::MAX; i ++) thy x [i] = our x [i];
+//	for (int _i = 0; _i <= (int) setType::MAX; _i ++) thy x [_i] = our x [_i];
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
-//	if (our x) thy x = NUMvector_copy (our x, min, max);
+//	{ \
+//		integer _min = (min), _max = (max); \
+//		if (our x) thy x = NUMvector_copy (our x, _min, _max); \
+//	}
 
 #define oo_STRINGx(storage,x)  \
 	if (our x) thy x = Melder_dup (our x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (our x [i]) thy x [i] = Melder_dup (our x [i]);
+	{ \
+		integer _n = (n); \
+		for (int _i = 0; _i < _n; _i ++) { \
+			if (our x [_i]) thy x [_i] = Melder_dup (our x [_i]); \
+		} \
+	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		if (our x [i]) thy x [i] = Melder_dup (our x [i]);
+	for (int _i = 0; _i <= setType::MAX; _i ++) { \
+		if (our x [_i]) thy x [_i] = Melder_dup (our x [_i]); \
+	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (our x) { \
-		thy x = NUMvector <char32*> (min, max); \
-		for (integer i = min; i <= max; i ++) \
-			if (our x [i]) thy x [i] = Melder_dup (our x [i]); \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (our x) { \
+			thy x = NUMvector <char32*> (_min, _max); \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				if (our x [_i]) thy x [_i] = Melder_dup (our x [_i]); \
+			} \
+		} \
 	}
 
 #define oo_STRUCT(Type,x)  \
 	our x. copy (& thy x);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		our x [i]. copy (& thy x [i]);
+	{ \
+		integer _n = (n); \
+		for (integer _i = 0; _i < _n; _i ++) { \
+			our x [_i]. copy (& thy x [_i]); \
+		} \
+	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
-	for (int i = 0; i <= (int) setType::MAX; i ++) \
-		our x [i]. copy (& thy x [i]);
+	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
+		our x [_i]. copy (& thy x [_i]); \
+	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (x) { \
-		thy x = NUMvector <struct##Type> (min, max); \
-		for (integer i = min; i <= max; i ++) \
-			our x [i]. copy (& thy x [i]); \
+	{ \
+		integer _min = (min), _max = (max); \
+		if (our x) { \
+			thy x = NUMvector <struct##Type> (_min, _max); \
+			for (integer _i = _min; _i <= _max; _i ++) { \
+				our x [_i]. copy (& thy x [_i]); \
+			} \
+		} \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (our x) { \
-		thy x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
-		for (integer i = row1; i <= row2; i ++) \
-			for (integer j = col1; j <= col2; j ++) \
-				our x [i] [j]. copy (& thy x [i] [j]); \
+	{ \
+		integer _row1 = (row1), _row2 = (row2), _col1 = (col1), _col2 = (col2); \
+		if (our x) { \
+			thy x = NUMmatrix <struct##Type> (_row1, _row2, _col1, _col2); \
+			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
+				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
+					our x [_irow] [_icol]. copy (& thy x [_irow] [_icol]); \
+				} \
+			} \
+		} \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
@@ -103,8 +143,8 @@
 	thy x._capacity = our x._capacity; \
 	thy x._ownItems = our x._ownItems; \
 	thy x._ownershipInitialized = our x._ownershipInitialized; \
-	for (integer i = 1; i <= our x.size; i ++) { \
-		if (our x.at [i]) thy x.at [i] = Data_copy (our x.at [i]).releaseToAmbiguousOwner(); \
+	for (integer _i = 1; _i <= our x.size; _i ++) { \
+		if (our x.at [_i]) thy x.at [_i] = Data_copy (our x.at [_i]).releaseToAmbiguousOwner(); \
 	}
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
@@ -123,17 +163,11 @@
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	void struct##Class :: v_copy (Daata thee_Daata) { \
-		Class thee = static_cast <Class> (thee_Daata); \
+	void struct##Class :: v_copy (Daata _thee_Daata) { \
+		Class thee = static_cast <Class> (_thee_Daata); \
 		Class##_Parent :: v_copy (thee);
 
 #define oo_END_CLASS(Class)  \
-	}
-
-#define oo_IF(condition)  \
-	if (condition) {
-
-#define oo_ENDIF  \
 	}
 
 #define oo_FROM(from)

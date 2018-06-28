@@ -1,6 +1,6 @@
 /* SampledXY_def.h
  *
- * Copyright (C) 1992-2011,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2008,2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ oo_DEFINE_CLASS (SampledXY, Sampled)
 	oo_DOUBLE (y1)
 
 	#if oo_READING
-		if (ymin >= ymax) {
-			Melder_throw (U"ymax should be greater than ymin.");
+		if (ymin > ymax) {
+			Melder_throw (U"ymax should be at least as great as ymin.");
 		}
 		if (ny < 1) {
 			Melder_throw (U"ny should be at least 1.");
