@@ -27,11 +27,11 @@ oo_DEFINE_STRUCT (Cepstrumc_Frame)
 	oo_INT (nCoefficients)
 
 	#if oo_READING_BINARY
-		if (formatVersion == 0) {
+		oo_VERSION_UNTIL (1)
 			oo_FLOAT_VECTOR_FROM (c, 0, nCoefficients)
-		} else {
+		oo_VERSION_ELSE
 			oo_DOUBLE_VECTOR_FROM (c, 0, nCoefficients)
-		}
+		oo_VERSION_END
 	#else
 		oo_DOUBLE_VECTOR_FROM (c, 0, nCoefficients)
 	#endif

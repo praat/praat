@@ -278,8 +278,8 @@ autostring32 MelderFile_readText (MelderFile file) {
 	return _MelderFile_readText (file, nullptr);
 }
 
-MelderReadText MelderReadText_createFromFile (MelderFile file) {
-	autoMelderReadText me = Melder_calloc (struct structMelderReadText, 1);
+autoMelderReadText MelderReadText_createFromFile (MelderFile file) {
+	autoMelderReadText me;
 	my string32 = _MelderFile_readText (file, & my string8);
 	if (my string32) {
 		my readPointer32 = & my string32 [0];
@@ -305,14 +305,7 @@ MelderReadText MelderReadText_createFromFile (MelderFile file) {
 			}
 		}
 	}
-	return me.transfer();
-}
-
-MelderReadText MelderReadText_createFromString (const char32 *string);
-
-void MelderReadText_delete (MelderReadText me) {
-	if (! me) return;
-	Melder_free (me);
+	return me;
 }
 
 /* End of file melder_readtext.cpp */

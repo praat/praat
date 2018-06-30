@@ -251,7 +251,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 		/*
 		 * Count number of strings.
 		 */
-		int64 n = MelderReadText_getNumberOfLines (text.peek());
+		int64 n = MelderReadText_getNumberOfLines (text.get());
 
 		/*
 		 * Create.
@@ -264,7 +264,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 		 * Read strings.
 		 */
 		for (integer i = 1; i <= n; i ++) {
-			char32 *line = MelderReadText_readLine (text.peek());
+			char32 *line = MelderReadText_readLine (text.get());
 			my strings [i] = Melder_dup (line);
 		}
 		return me;

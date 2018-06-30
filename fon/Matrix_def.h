@@ -1,6 +1,6 @@
 /* Matrix_def.h
  *
- * Copyright (C) 1992-2011,2013,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2008,2011-2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ oo_DEFINE_CLASS (Matrix, SampledXY)
 	#if oo_READING
 		if (Melder_debug == 45)
 			Melder_casual (U"structMatrix :: read:"
-				U" Going to read ", ny, U" rows"
-				U" of ", nx, U" columns.");
-		if (formatVersion >= 2) {
-			oo_DOUBLE_MATRIX (z, ny, nx)
-		} else {
+				U" Going to read ", our ny, U" rows"
+				U" of ", our nx, U" columns.");
+		oo_VERSION_UNTIL (2)
 			oo_FLOAT_MATRIX (z, ny, nx)
-		}
+		oo_VERSION_ELSE
+			oo_DOUBLE_MATRIX (z, ny, nx)
+		oo_VERSION_END
 	#else
 		oo_DOUBLE_MATRIX (z, ny, nx)
 	#endif

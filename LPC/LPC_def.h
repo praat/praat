@@ -22,16 +22,13 @@ oo_DEFINE_STRUCT (LPC_Frame)
 
 	oo_INT (nCoefficients)
 	#if oo_READING_BINARY
-		if (formatVersion == 0)
-		{
+		oo_VERSION_UNTIL (1)
 			oo_FLOAT_VECTOR (a, nCoefficients)
 			oo_FLOAT (gain)
-		}
-		else
-		{
+		oo_VERSION_ELSE
 			oo_DOUBLE_VECTOR (a, nCoefficients)
 			oo_DOUBLE (gain)
-		}
+		oo_VERSION_END
 	#else
 		oo_DOUBLE_VECTOR (a, nCoefficients)
 		oo_DOUBLE (gain)
