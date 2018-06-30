@@ -88,7 +88,7 @@ struct structThing {
 	 */
 	virtual ~structThing () noexcept { }
 
-	virtual void v_destroy () noexcept { Melder_free (name); };
+	virtual void v_destroy () noexcept { };
 		/*
 		 * derived::v_destroy calls base::v_destroy at end
 		 */

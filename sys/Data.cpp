@@ -185,7 +185,7 @@ void Data_readText (Daata me, MelderReadText text, int formatVersion) {
 autoDaata Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
-		char32 *line = MelderReadText_readLine (text.peek());
+		char32 *line = MelderReadText_readLine (text.get());
 		if (! line)
 			Melder_throw (U"No lines.");
 		/*
@@ -199,7 +199,7 @@ autoDaata Data_readFromTextFile (MelderFile file) {
 		autoDaata me;
 		int formatVersion;
 		if (end) {
-			autostring32 klas = texgetw16 (text.peek());
+			autostring32 klas = texgetw16 (text.get());
 			me = Thing_newFromClassName (klas.get(), & formatVersion).static_cast_move <structDaata> ();
 		} else {
 			end = str32str (line, U"TextFile");
@@ -210,7 +210,7 @@ autoDaata Data_readFromTextFile (MelderFile file) {
 			formatVersion = -1;   // old version
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readText (me.get(), text.peek(), formatVersion);
+		Data_readText (me.get(), text.get(), formatVersion);
 		file -> format = structMelderFile :: Format :: text;
 		return me;
 	} catch (MelderError) {

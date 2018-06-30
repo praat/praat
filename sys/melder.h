@@ -955,24 +955,6 @@ void Melder_files_cleanUp ();
 char32 * Melder_peekExpandBackslashes (const char32 *message);
 const char32 * MelderFile_messageName (MelderFile file);   // calls Melder_peekExpandBackslashes ()
 
-struct structMelderReadText {
-	autostring32 string32;
-	char32 *readPointer32;
-	autostring8 string8;
-	char *readPointer8;
-	kMelder_textInputEncoding input8Encoding;
-};
-typedef struct structMelderReadText *MelderReadText;
-
-MelderReadText MelderReadText_createFromFile (MelderFile file);
-MelderReadText MelderReadText_createFromString (const char32 *string);
-char32 MelderReadText_getChar (MelderReadText text);
-char32 * MelderReadText_readLine (MelderReadText text);
-wchar_t * MelderReadText_readLineW (MelderReadText text);
-int64 MelderReadText_getNumberOfLines (MelderReadText me);
-const char32 * MelderReadText_getLineNumber (MelderReadText text);
-void MelderReadText_delete (MelderReadText text);
-
 /* "NUM" = "NUMerics" */
 /* More mathematical and numerical things than there are in <math.h>. */
 
@@ -1001,7 +983,6 @@ void MelderReadText_delete (MelderReadText text);
 #endif
 #include <stdio.h>
 #include <wchar.h>
-#include "../sys/abcio.h"
 #define NUMlog2(x)  (log (x) * NUMlog2e)
 
 void NUMinit ();
@@ -1319,64 +1300,6 @@ void NUMdeemphasize_a (double x [], integer n, double preemphasis);
 void NUMpreemphasize_f (double x [], integer n, double dt, double frequency);
 void NUMdeemphasize_f (double x [], integer n, double dt, double frequency);
 void NUMautoscale (double x [], integer n, double scale);
-
-/* The following ANSI-C power trick generates the declarations of 156 functions. */
-#define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, const char32 *name); \
-	void NUMvector_writeBinary_##storage (const type *v, integer lo, integer hi, FILE *f); \
-	type * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name); \
-	type * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f); \
-	void NUMmatrix_writeText_##storage (type **v, integer r1, integer r2, integer c1, integer c2, MelderFile file, const char32 *name); \
-	void NUMmatrix_writeBinary_##storage (type **v, integer r1, integer r2, integer c1, integer c2, FILE *f); \
-	type ** NUMmatrix_readText_##storage (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name); \
-	type ** NUMmatrix_readBinary_##storage (integer r1, integer r2, integer c1, integer c2, FILE *f);
-FUNCTION (signed char, i8)
-FUNCTION (int, i16)
-FUNCTION (long, i32)
-FUNCTION (integer, integer32BE)
-FUNCTION (unsigned char, u8)
-FUNCTION (unsigned int, u16)
-FUNCTION (unsigned long, u32)
-FUNCTION (double, r32)
-FUNCTION (double, r64)
-FUNCTION (dcomplex, c64)
-FUNCTION (dcomplex, c128)
-#undef FUNCTION
-
-/*
-void NUMvector_writeBinary_r64 (const double *v, integer lo, integer hi, FILE *f);   // etc
-	write the vector elements v [lo..hi] as machine-independent
-	binary data to the stream f.
-	Throw an error message if anything went wrong.
-	The vectors need not have been created by NUM...vector.
-double * NUMvector_readText_r64 (integer lo, integer hi, MelderReadText text, const char *name);   // etc
-	create and read a vector as text.
-	Throw an error message if anything went wrong.
-	Every element is supposed to be on the beginning of a line.
-double * NUMvector_readBinary_r64 (integer lo, integer hi, FILE *f);   // etc
-	create and read a vector as machine-independent binary data from the stream f.
-	Throw an error message if anything went wrong.
-void NUMvector_writeText_r64 (const double *v, integer lo, integer hi, MelderFile file, const char32 *name);   // etc
-	write the vector elements v [lo..hi] as text to the open file,
-	each element on its own line, preceded by "name [index]: ".
-	Throw an error message if anything went wrong.
-	The vectors need not have been created by NUMvector.
-void NUMmatrix_writeText_r64 (double **m, integer r1, integer r2, integer c1, integer c2, MelderFile file, const char32 *name);   // etc
-	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
-	Throw an error message if anything went wrong.
-	The matrices need not have been created by NUMmatrix.
-void NUMmatrix_writeBinary_r64 (double **m, integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
-	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
-	binary data to the stream f.
-	Throw an error message if anything went wrong.
-	The matrices need not have been created by NUMmatrix.
-double ** NUMmatrix_readText_r64 (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name);   // etc
-	create and read a matrix as text.
-	Throw an error message if anything went wrong.
-double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
-	create and read a matrix as machine-independent binary data from the stream f.
-	Throw an error message if anything went wrong.
-*/
 
 typedef struct structNUMlinprog *NUMlinprog;
 void NUMlinprog_delete (NUMlinprog me);
@@ -2759,7 +2682,7 @@ void Melder_readAudioToShort (FILE *f, integer numberOfChannels, int encoding, s
 void MelderFile_writeFloatToAudio (MelderFile file, integer numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped);
 void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, int encoding, const short *buffer, integer numberOfSamples);
 
-/********** QUANTITY **********/
+#pragma mark - QUANTITY
 
 #define MelderQuantity_NONE  0
 #define MelderQuantity_TIME_SECONDS  1
@@ -2772,7 +2695,124 @@ const char32 * MelderQuantity_getWithUnitText (int quantity);   // e.g. "Time (s
 const char32 * MelderQuantity_getLongUnitText (int quantity);   // e.g. "seconds"
 const char32 * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 
-/********** MISCELLANEOUS **********/
+#pragma mark - READING TEXT
+
+struct structMelderReadText {
+	autostring32 string32;
+	char32 *readPointer32;
+	autostring8 string8;
+	char *readPointer8;
+	kMelder_textInputEncoding input8Encoding;
+	structMelderReadText () : readPointer32 (nullptr), readPointer8 (nullptr) {
+		/*
+			Check that C++ default initialization has worked.
+		*/
+		Melder_assert (! our string32);
+		Melder_assert (! our string8);
+	}
+};
+typedef struct structMelderReadText *MelderReadText;
+
+struct autoMelderReadText {
+	MelderReadText text;
+	autoMelderReadText () {
+		our text = new structMelderReadText;
+	}
+	~ autoMelderReadText () {
+		delete (our text);
+	}
+	MelderReadText operator-> () const {   // as r-value
+		return our text;
+	}
+	MelderReadText get () const {
+		return our text;
+	}
+	autoMelderReadText (const autoMelderReadText&) = delete;   // disable copy constructor
+	autoMelderReadText (autoMelderReadText&& other) noexcept {   // enable move constructor
+		our text = other.text;
+		other.text = nullptr;
+	}
+	autoMelderReadText& operator= (const autoMelderReadText&) = delete;   // disable copy assignment
+	autoMelderReadText& operator= (autoMelderReadText&& other) noexcept {   // enable move assignment
+		if (& other != this) {
+			delete (our text);
+			our text = other.text;
+			other.text = nullptr;
+		}
+		return *this;
+	}
+	autoMelderReadText&& move () noexcept { return static_cast <autoMelderReadText&&> (*this); }
+	explicit operator bool () const { return !! our text; }
+};
+
+autoMelderReadText MelderReadText_createFromFile (MelderFile file);
+char32 MelderReadText_getChar (MelderReadText text);
+char32 * MelderReadText_readLine (MelderReadText text);
+wchar_t * MelderReadText_readLineW (MelderReadText text);
+int64 MelderReadText_getNumberOfLines (MelderReadText me);
+const char32 * MelderReadText_getLineNumber (MelderReadText text);
+
+#include "../sys/abcio.h"
+
+/* The following ANSI-C power trick generates the declarations of 156 functions. */
+#define FUNCTION(type,storage)  \
+	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, const char32 *name); \
+	void NUMvector_writeBinary_##storage (const type *v, integer lo, integer hi, FILE *f); \
+	type * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name); \
+	type * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f); \
+	void NUMmatrix_writeText_##storage (type **v, integer r1, integer r2, integer c1, integer c2, MelderFile file, const char32 *name); \
+	void NUMmatrix_writeBinary_##storage (type **v, integer r1, integer r2, integer c1, integer c2, FILE *f); \
+	type ** NUMmatrix_readText_##storage (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name); \
+	type ** NUMmatrix_readBinary_##storage (integer r1, integer r2, integer c1, integer c2, FILE *f);
+FUNCTION (signed char, i8)
+FUNCTION (int, i16)
+FUNCTION (long, i32)
+FUNCTION (integer, integer32BE)
+FUNCTION (unsigned char, u8)
+FUNCTION (unsigned int, u16)
+FUNCTION (unsigned long, u32)
+FUNCTION (double, r32)
+FUNCTION (double, r64)
+FUNCTION (dcomplex, c64)
+FUNCTION (dcomplex, c128)
+#undef FUNCTION
+
+/*
+void NUMvector_writeBinary_r64 (const double *v, integer lo, integer hi, FILE *f);   // etc
+	write the vector elements v [lo..hi] as machine-independent
+	binary data to the stream f.
+	Throw an error message if anything went wrong.
+	The vectors need not have been created by NUM...vector.
+double * NUMvector_readText_r64 (integer lo, integer hi, MelderReadText text, const char *name);   // etc
+	create and read a vector as text.
+	Throw an error message if anything went wrong.
+	Every element is supposed to be on the beginning of a line.
+double * NUMvector_readBinary_r64 (integer lo, integer hi, FILE *f);   // etc
+	create and read a vector as machine-independent binary data from the stream f.
+	Throw an error message if anything went wrong.
+void NUMvector_writeText_r64 (const double *v, integer lo, integer hi, MelderFile file, const char32 *name);   // etc
+	write the vector elements v [lo..hi] as text to the open file,
+	each element on its own line, preceded by "name [index]: ".
+	Throw an error message if anything went wrong.
+	The vectors need not have been created by NUMvector.
+void NUMmatrix_writeText_r64 (double **m, integer r1, integer r2, integer c1, integer c2, MelderFile file, const char32 *name);   // etc
+	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
+	Throw an error message if anything went wrong.
+	The matrices need not have been created by NUMmatrix.
+void NUMmatrix_writeBinary_r64 (double **m, integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
+	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
+	binary data to the stream f.
+	Throw an error message if anything went wrong.
+	The matrices need not have been created by NUMmatrix.
+double ** NUMmatrix_readText_r64 (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name);   // etc
+	create and read a matrix as text.
+	Throw an error message if anything went wrong.
+double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
+	create and read a matrix as machine-independent binary data from the stream f.
+	Throw an error message if anything went wrong.
+*/
+
+#pragma mark - MISCELLANEOUS
 
 char32 * Melder_getenv (const char32 *variableName);
 void Melder_system (const char32 *command);   // spawn a system command
@@ -2787,26 +2827,6 @@ struct autoMelderProgressOff {
 struct autoMelderString : MelderString {
 	autoMelderString () { length = 0; bufferSize = 0; string = nullptr; }
 	~autoMelderString () { MelderString_free (this); }
-};
-
-struct autoMelderReadText {
-	MelderReadText text;
-	autoMelderReadText (MelderReadText a_text) : text (a_text) {
-	}
-	~autoMelderReadText () {
-		if (text) MelderReadText_delete (text);
-	}
-	MelderReadText operator-> () const {   // as r-value
-		return text;
-	}
-	MelderReadText peek () const {
-		return text;
-	}
-	MelderReadText transfer () {
-		MelderReadText tmp = text;
-		text = nullptr;
-		return tmp;
-	}
 };
 
 class autofile {
