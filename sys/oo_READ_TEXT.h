@@ -128,20 +128,20 @@
 	}
 
 #define oo_STRUCT(Type,x)  \
-	our x. readText (_textSource_, formatVersion);
+	our x. readText (_textSource_, _formatVersion_);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
 	{ \
 		integer _cap = (cap), _n = (n); \
 		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
 		for (integer _i = 0; _i < _n; _i ++) { \
-			our x [_i]. readText (_textSource_, formatVersion); \
+			our x [_i]. readText (_textSource_, _formatVersion_); \
 		} \
 	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
 	for (integer _i = 0; _i <= (int) setType::MAX; _i ++) { \
-		our x [_i]. readText (_textSource_, formatVersion); \
+		our x [_i]. readText (_textSource_, _formatVersion_); \
 	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
@@ -150,7 +150,7 @@
 		if (_max >= _min) { \
 			our x = NUMvector <struct##Type> (_min, _max); \
 			for (integer _i = _min; _i <= _max; _i ++) { \
-				our x [_i]. readText (_textSource_, formatVersion); \
+				our x [_i]. readText (_textSource_, _formatVersion_); \
 			} \
 		} \
 	}
@@ -162,7 +162,7 @@
 			our x = NUMmatrix <struct##Type> (_row1, _row2, _col1, _col2); \
 			for (integer _irow = _row1; _irow <= _row2; _irow ++) { \
 				for (integer _icol = _col1; _icol <= _col2; _icol ++) { \
-					our x [_irow] [_icol]. readText (_textSource_, formatVersion); \
+					our x [_irow] [_icol]. readText (_textSource_, _formatVersion_); \
 				} \
 			} \
 		} \
@@ -205,17 +205,17 @@
 #define oo_DIR(x)
 
 #define oo_DEFINE_STRUCT(Type)  \
-	void struct##Type :: readText (MelderReadText _textSource_, int formatVersion) { \
-		(void) formatVersion;
+	void struct##Type :: readText (MelderReadText _textSource_, int _formatVersion_) { \
+		(void) _formatVersion_;
 
 #define oo_END_STRUCT(Type)  \
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	void struct##Class :: v_readText (MelderReadText _textSource_, int formatVersion) { \
-		if (formatVersion > our classInfo -> version) \
-			Melder_throw (U"The format of this file is too new. Download a newer version of Praat."); \
-		Class##_Parent :: v_readText (_textSource_, formatVersion);
+	void struct##Class :: v_readText (MelderReadText _textSource_, int _formatVersion_) { \
+		Melder_require (_formatVersion_ <= our classInfo -> version, \
+			U"The format of this file is too new. Download a newer version of Praat."); \
+		Class##_Parent :: v_readText (_textSource_, _formatVersion_);
 
 #define oo_END_CLASS(Class)  \
 	}
@@ -223,7 +223,7 @@
 #define oo_FROM(from)  \
 	{ \
 		int _from = (from); \
-		if (formatVersion >= _from) {
+		if (_formatVersion_ >= _from) {
 
 #define oo_ENDFROM  \
 		} \

@@ -203,7 +203,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 				try {
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 					try {
-						readOnePage (me, text2.peek());
+						readOnePage (me, text2.get());
 					} catch (MelderError) {
 						Melder_throw (U"File ", & file2, U".");
 					}
@@ -217,7 +217,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					MelderDir_getFile (& my rootDirectory, fileName, & file2);
 					autoMelderReadText text2 = MelderReadText_createFromFile (& file2);
 					try {
-						readOnePage (me, text2.peek());
+						readOnePage (me, text2.get());
 					} catch (MelderError) {
 						Melder_throw (U"File ", & file2, U".");
 					}

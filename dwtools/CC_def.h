@@ -22,16 +22,13 @@ oo_DEFINE_STRUCT (CC_Frame)
 
 	oo_INTEGER (numberOfCoefficients)
 	#if oo_READING_BINARY
-		if (formatVersion == 0)
-		{
+		oo_VERSION_UNTIL (1)
 			oo_FLOAT (c0)
 			oo_FLOAT_VECTOR (c, numberOfCoefficients)
-		}
-		else
-		{
+		oo_VERSION_ELSE
 			oo_DOUBLE (c0)
 			oo_DOUBLE_VECTOR (c, numberOfCoefficients)
-		}
+		oo_VERSION_END
 	#else
 		oo_DOUBLE (c0)
 		oo_DOUBLE_VECTOR (c, numberOfCoefficients)

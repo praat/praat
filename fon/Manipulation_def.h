@@ -1,6 +1,6 @@
 /* Manipulation_def.h
  *
- * Copyright (C) 1992-2008,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2006,2008,2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
 oo_DEFINE_CLASS (Manipulation, Function)
 
 	#if oo_READING
-		if (formatVersion < 4) {
+		oo_VERSION_UNTIL (4)
 			oo_OBJECT (Sound, 0, sound)
-		} else if (formatVersion < 5) {
+		oo_VERSION_ELSE_UNTIL (5)
 			oo_OBJECT (Sound, Melder_debug == 25 ? 2 : 0, sound)
-		} else {
+		oo_VERSION_ELSE
 			oo_OBJECT (Sound, 2, sound)
-		}
+		oo_VERSION_END
 	#else
 		oo_OBJECT (Sound, 2, sound)
 	#endif

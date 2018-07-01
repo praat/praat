@@ -25,17 +25,24 @@ oo_DEFINE_CLASS (SVD, Daata)
 	oo_FROM (1)
 		oo_QUESTION (isTransposed)
 	oo_ENDFROM
-	#if oo_READING 
-		if (numberOfRows < numberOfColumns) {
-			oo_DOUBLE_MATRIX (v, numberOfRows, numberOfRows)
-			oo_DOUBLE_MATRIX (u, numberOfColumns, numberOfRows)
-			isTransposed = true;
-			integer tmp = numberOfRows; numberOfRows = numberOfColumns; numberOfColumns = tmp;
-		} else {
-			isTransposed = formatVersion < 1 ? false : isTransposed;
+	#if oo_READING
+		oo_VERSION_UNTIL (1)
+			if (our numberOfRows < our numberOfColumns) {
+				integer tmp = our numberOfRows;
+				our numberOfRows = our numberOfColumns;
+				our numberOfColumns = tmp;
+				our isTransposed = true;
+				oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+				oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
+			} else {
+				our isTransposed = false;
+				oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
+				oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
+			}
+		oo_VERSION_ELSE
 			oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
 			oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)
-		}
+		oo_VERSION_END
 	#else
 		oo_DOUBLE_MATRIX (u, numberOfRows, numberOfColumns)
 		oo_DOUBLE_MATRIX (v, numberOfColumns, numberOfColumns)

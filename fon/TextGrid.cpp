@@ -1317,24 +1317,24 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 	try {
 		int formatVersion = 0;
 		autoMelderReadText text = MelderReadText_createFromFile (file);
-		autostring32 tag = texgetw16 (text.peek());
+		autostring32 tag = texgetw16 (text.get());
 		if (! str32equ (tag.get(), U"Praat chronological TextGrid text file"))
 			Melder_throw (U"This is not a chronological TextGrid text file.");
 		autoTextGrid me = Thing_new (TextGrid);
-		my structFunction :: v_readText (text.peek(), formatVersion);
+		my structFunction :: v_readText (text.get(), formatVersion);
 		my tiers = FunctionList_create ();
-		integer numberOfTiers = texgeti32 (text.peek());
+		integer numberOfTiers = texgeti32 (text.get());
 		for (integer itier = 1; itier <= numberOfTiers; itier ++) {
-			autostring32 klas = texgetw16 (text.peek());
+			autostring32 klas = texgetw16 (text.get());
 			if (str32equ (klas.get(), U"IntervalTier")) {
 				autoIntervalTier tier = Thing_new (IntervalTier);
-				tier -> name = texgetw16 (text.peek());
-				tier -> structFunction :: v_readText (text.peek(), formatVersion);
+				tier -> name = texgetw16 (text.get());
+				tier -> structFunction :: v_readText (text.get(), formatVersion);
 				my tiers -> addItem_move (tier.move());
 			} else if (str32equ (klas.get(), U"TextTier")) {
 				autoTextTier tier = Thing_new (TextTier);
-				tier -> name = texgetw16 (text.peek());
-				tier -> structFunction :: v_readText (text.peek(), formatVersion);
+				tier -> name = texgetw16 (text.get());
+				tier -> structFunction :: v_readText (text.get(), formatVersion);
 				my tiers -> addItem_move (tier.move());
 			} else {
 				Melder_throw (U"Unknown tier class \"", klas.get(), U"\".");
@@ -1343,7 +1343,7 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		for (;;) {
 			integer tierNumber;
 			try {
-				tierNumber = texgeti32 (text.peek());
+				tierNumber = texgeti32 (text.get());
 			} catch (MelderError) {
 				if (str32str (Melder_getError (), U"Early end of text")) {
 					Melder_clearError ();
@@ -1356,12 +1356,12 @@ autoTextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = static_cast <IntervalTier> (anyTier);
 				autoTextInterval interval = Thing_new (TextInterval);
-				interval -> v_readText (text.peek(), formatVersion);
+				interval -> v_readText (text.get(), formatVersion);
 				tier -> intervals. addItem_move (interval.move());   // not earlier: sorting depends on contents of interval
 			} else {
 				TextTier tier = static_cast <TextTier> (anyTier);
 				autoTextPoint point = Thing_new (TextPoint);
-				point -> v_readText (text.peek(), formatVersion);
+				point -> v_readText (text.get(), formatVersion);
 				tier -> points. addItem_move (point.move());   // not earlier: sorting depends on contents of point
 			}
 		}
