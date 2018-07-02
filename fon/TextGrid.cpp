@@ -18,6 +18,7 @@
 
 #include "TextGrid.h"
 #include "longchar.h"
+#include "Feature.h"
 
 #include "oo_DESTROY.h"
 #include "TextGrid_def.h"
@@ -1217,6 +1218,24 @@ void TextGrid_setIntervalText (TextGrid me, integer tierNumber, integer interval
 	}
 }
 
+
+void TextGrid_setIntervalHeadText (TextGrid me, integer tierNumber, integer intervalNumber, const char32 *text) {
+	try {
+		IntervalTier intervalTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
+		if (intervalNumber < 1 || intervalNumber > intervalTier -> intervals.size)
+			Melder_throw (U"Interval ", intervalNumber, U" does not exist on tier ", tierNumber, U".");
+		TextInterval interval = intervalTier -> intervals.at [intervalNumber];
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		TierFeatures_replaceHeadText(features, text);
+		autoMelderString result;
+		TierFeatures_generateText(features, &result);
+		TextInterval_setText (interval, result.string);
+		delete features;
+	} catch (MelderError) {
+		Melder_throw (me, U": interval head text not set.");
+	}
+}
+
 void TextGrid_insertPoint (TextGrid me, integer tierNumber, double time, const char32 *mark) {
 	try {
 		TextTier textTier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
@@ -1258,6 +1277,23 @@ void TextGrid_setPointText (TextGrid me, integer tierNumber, integer pointNumber
 		TextPoint_setText (point, text);
 	} catch (MelderError) {
 		Melder_throw (me, U": point text not set.");
+	}
+}
+
+void TextGrid_setPointHeadText (TextGrid me, integer tierNumber, integer pointNumber, const char32 *text) {
+	try {
+		TextTier textTier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
+		if (pointNumber < 1 || pointNumber > textTier -> points.size)
+			Melder_throw (U"Point ", pointNumber, U" does not exist on tier ", tierNumber, U".");
+		TextPoint point = textTier -> points.at [pointNumber];
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		TierFeatures_replaceHeadText(features, text);
+		autoMelderString result;
+		TierFeatures_generateText(features, &result);
+		TextPoint_setText (point, result.string);
+		delete features;
+	} catch (MelderError) {
+		Melder_throw (me, U": point head text not set.");
 	}
 }
 

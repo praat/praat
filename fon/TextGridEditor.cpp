@@ -657,6 +657,218 @@ static void menu_cb_InsertIntervalOnTier6 (TextGridEditor me, EDITOR_ARGS_DIRECT
 static void menu_cb_InsertIntervalOnTier7 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 7); }
 static void menu_cb_InsertIntervalOnTier8 (TextGridEditor me, EDITOR_ARGS_DIRECT) { do_insertIntervalOnTier (me, 8); }
 
+#define LABEL_INSERT_DATA U"Insert feature"
+#define LABEL_SHOW_DATA U"Show features"
+#define LABEL_DELETE_DATA U"Delete feature"
+#define LABEL_GET_DATA U"Get feature"
+static void menu_cb_InsertFeature (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (LABEL_INSERT_DATA, nullptr)
+		SENTENCE (labelVar, U"Label", U"")
+		SENTENCE (valueVar, U"Value", U"")
+	EDITOR_OK
+		SET_STRING (labelVar, U"")
+		SET_STRING (valueVar, U"")
+	EDITOR_DO
+		TextGrid grid = (TextGrid) my data;
+		checkTierSelection (me, LABEL_INSERT_DATA);
+
+		if (my selectedTier) {
+			IntervalTier intervalTier;
+			TextTier textTier;
+			_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
+			Editor_save (me, LABEL_INSERT_DATA);
+
+			autoMelderString label;
+			autoMelderString value;
+			MelderString_copy(&label, labelVar);
+			MelderString_copy(&value, valueVar);
+
+			if(MelderString_isEmptyAfterTrim(&label) || MelderString_isEmptyAfterTrim(&value)){
+				Melder_throw (U"Neither label nor value can be empty. Please fill the fields.");
+			}
+
+			if(intervalTier != nullptr){
+				long selectedInterval = getSelectedInterval (me);
+				if (selectedInterval) {
+					TextInterval interval = intervalTier -> intervals.at [selectedInterval];
+
+					autoMelderString newText;
+					Feature_addFeatureToText(interval->text, &label, &value, &newText);
+					TextInterval_setText (interval, newText.string);
+					FunctionEditor_updateText (me);
+					FunctionEditor_redraw (me);
+					Editor_broadcastDataChanged (me);
+
+				}else{
+					Melder_throw (U"Selected tier is not a valid tier. Please select an interval or a point in a valid tier by clicking it.");
+				}
+			} else {
+				long selectedPoint = getSelectedPoint (me);
+				if (selectedPoint) {
+					TextPoint point = textTier -> points.at [selectedPoint];
+
+					autoMelderString newText;
+					Feature_addFeatureToText(point -> mark, &label, &value, &newText);
+					TextPoint_setText (point, newText.string);
+					FunctionEditor_updateText (me);
+					FunctionEditor_redraw (me);
+					Editor_broadcastDataChanged (me);
+				}
+				else{
+					Melder_throw (U"Selected tier is not a valid tier. Please select an interval or a point in a valid tier by clicking it.");
+				}
+			}
+
+		}
+	EDITOR_END
+}
+
+static void menu_cb_ShowFeatures (TextGridEditor me, EDITOR_ARGS_FORM) {
+	TextGrid grid = (TextGrid) my data;
+	checkTierSelection (me, LABEL_INSERT_DATA);
+	if (my selectedTier) {
+		IntervalTier intervalTier;
+		TextTier textTier;
+		_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
+		if(intervalTier != nullptr){
+			long selectedInterval = getSelectedInterval (me);
+			if (selectedInterval) {
+				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
+				TierFeatures* features = TierFeatures_extractFromText(interval->text);
+				autoMelderString output;
+				TierFeatures_getFeaturesString(features, &output);
+				Melder_clearInfo ();
+				MelderInfo_open ();
+				MelderInfo_writeLine (output.string);
+				MelderInfo_close ();
+				delete features;
+			}
+		} else {
+			long selectedPoint = getSelectedPoint (me);
+			if (selectedPoint) {
+				TextPoint point = textTier -> points.at [selectedPoint];
+				TierFeatures* features = TierFeatures_extractFromText(point->mark);
+				autoMelderString output;
+				TierFeatures_getFeaturesString(features, &output);
+				Melder_clearInfo ();
+				MelderInfo_open ();
+				MelderInfo_writeLine (output.string);
+				MelderInfo_close ();
+				delete features;
+			}
+			else{
+				Melder_throw (U"Selected tier is not a valid tier. Please select an interval or a point in a valid tier by clicking it.");
+			}
+		}
+	}
+}
+
+static void menu_cb_DeleteFeature (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (LABEL_DELETE_DATA, nullptr)
+		SENTENCE (labelVar, U"Label", U"")
+	EDITOR_OK
+		SET_STRING (labelVar, U"")
+	EDITOR_DO
+	TextGrid grid = (TextGrid) my data;
+	checkTierSelection (me, LABEL_DELETE_DATA);
+	if (my selectedTier) {
+		IntervalTier intervalTier;
+		TextTier textTier;
+		_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
+		Editor_save (me, LABEL_DELETE_DATA);
+
+		autoMelderString label;
+		MelderString_copy(&label, labelVar);
+		if(MelderString_isEmptyAfterTrim(&label)){
+			Melder_throw (U"Label cannot be empty. Please fill the field.");
+		}
+
+		if(intervalTier != nullptr){
+			long selectedInterval = getSelectedInterval (me);
+			if (selectedInterval) {
+				TextInterval interval = intervalTier -> intervals.at [selectedInterval];
+				autoMelderString newText;
+				Feature_deleteFeatureFromText(interval->text, &label, &newText);
+				TextInterval_setText (interval, newText.string);
+				FunctionEditor_updateText (me);
+				FunctionEditor_redraw (me);
+				Editor_broadcastDataChanged (me);
+			}
+		}else {
+			long selectedPoint = getSelectedPoint (me);
+			if (selectedPoint) {
+				TextPoint point = textTier -> points.at [selectedPoint];
+				autoMelderString newText;
+				Feature_deleteFeatureFromText(point->mark, &label, &newText);
+				TextPoint_setText (point, newText.string);
+				FunctionEditor_updateText (me);
+				FunctionEditor_redraw (me);
+				Editor_broadcastDataChanged (me);
+			}
+			else{
+				Melder_throw (U"Selected tier is not a valid tier. Please select an interval or a point in a valid tier by clicking it.");
+			}
+		}
+	}
+	EDITOR_END
+}
+
+static void menu_cb_GetFeature (TextGridEditor me, EDITOR_ARGS_FORM) {
+	EDITOR_FORM (LABEL_GET_DATA, nullptr)
+		SENTENCE (labelVar, U"Label", U"")
+	EDITOR_OK
+		SET_STRING (labelVar, U"")
+	EDITOR_DO
+		TextGrid grid = (TextGrid) my data;
+		checkTierSelection (me, LABEL_GET_DATA);
+		if (my selectedTier) {
+			IntervalTier intervalTier;
+			TextTier textTier;
+			_AnyTier_identifyClass (grid -> tiers->at [my selectedTier], & intervalTier, & textTier);
+
+			autoMelderString label;
+			MelderString_copy(&label, labelVar);
+			MelderString_trim(&label);
+			Feature_encodeText(&label);
+
+			if(intervalTier != nullptr){
+				long selectedInterval = getSelectedInterval (me);
+				if (selectedInterval) {
+					TextInterval interval = intervalTier -> intervals.at [selectedInterval];
+					TierFeatures* result = TierFeatures_extractFromText(interval->text);
+					Feature* ann = TierFeatures_getExistentFeature(result, label.string);
+					if(ann != nullptr){
+						Melder_clearInfo ();
+						MelderInfo_open ();
+						Feature_decodeText(&ann->value);
+						MelderInfo_writeLine (ann->value.string);
+						MelderInfo_close ();
+					}
+					delete result;
+				}
+			} else {
+				long selectedPoint = getSelectedPoint (me);
+				if (selectedPoint) {
+					TextPoint point = textTier -> points.at [selectedPoint];
+					TierFeatures* result = TierFeatures_extractFromText(point->mark);
+					Feature* ann = TierFeatures_getExistentFeature(result, label.string);
+					if(ann != nullptr){
+						Melder_clearInfo ();
+						MelderInfo_open ();
+						Feature_decodeText(&ann->value);
+						MelderInfo_writeLine (ann->value.string);
+						MelderInfo_close ();
+					}
+					delete result;
+				}
+				else{
+					Melder_throw (U"Selected tier is not a valid tier. Please select an interval or a point in a valid tier by clicking it.");
+				}
+			}
+		}
+	EDITOR_END
+}
+
 static void menu_cb_AlignInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	TextGrid grid = (TextGrid) my data;
 	checkTierSelection (me, U"align words");
@@ -1221,6 +1433,11 @@ void structTextGridEditor :: v_createMenus () {
 	EditorMenu_addCommand (menu, U"-- extract tier --", 0, nullptr);
 	EditorMenu_addCommand (menu, U"Extract to list of objects:", GuiMenu_INSENSITIVE, menu_cb_PublishTier /* dummy */);
 	EditorMenu_addCommand (menu, U"Extract entire selected tier", 0, menu_cb_PublishTier);
+	EditorMenu_addCommand (menu, U"-- annotations --", 0, nullptr);
+	EditorMenu_addCommand (menu, LABEL_INSERT_DATA, 0, menu_cb_InsertFeature);
+	EditorMenu_addCommand (menu, LABEL_DELETE_DATA, 0, menu_cb_DeleteFeature);
+	EditorMenu_addCommand (menu, LABEL_GET_DATA, 0, menu_cb_GetFeature);
+	EditorMenu_addCommand (menu, LABEL_SHOW_DATA, 0, menu_cb_ShowFeatures);
 
 	if (spellingChecker) {
 		menu = Editor_addMenu (this, U"Spell", 0);
@@ -1412,7 +1629,9 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 			double t1 = my startWindow > tmin ? my startWindow : tmin;
 			double t2 = my endWindow < tmax ? my endWindow : tmax;
 			Graphics_setColour (my graphics.get(), intervalIsSelected ? Graphics_RED : Graphics_BLACK);
-			Graphics_textRect (my graphics.get(), t1, t2, 0.0, 1.0, interval -> text);
+			TierFeatures* ttd = TierFeatures_extractFromText(interval -> text);
+			Graphics_textRect (my graphics.get(), t1, t2, 0.0, 1.0, ttd->headText.string);
+			delete ttd;
 			Graphics_setColour (my graphics.get(), Graphics_BLACK);
 		}
 
@@ -1484,7 +1703,11 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, integer itier) {
 				Graphics_setLineWidth (my graphics.get(), 1.0);
 			}
 			Graphics_setColour (my graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
-			if (point -> mark) Graphics_text (my graphics.get(), t, 0.5, point -> mark);
+			if (point -> mark){
+				TierFeatures* ttd = TierFeatures_extractFromText(point -> mark);
+				Graphics_text (my graphics.get(), t, 0.5, ttd->headText.string);
+				delete ttd;
+			}
 		}
 	}
 	Graphics_setPercentSignIsItalic (my graphics.get(), true);

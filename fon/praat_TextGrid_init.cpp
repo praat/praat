@@ -34,6 +34,7 @@ static const char32 *STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
 static const char32 *STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
 static const char32 *STRING_TIER_NUMBER = U"Tier number";
 static const char32 *STRING_INTERVAL_NUMBER = U"Interval number";
+static const char32 *STRING_FEATURE_NUMBER = U"Feature number";
 static const char32 *STRING_POINT_NUMBER = U"Point number";
 
 // MARK: - ANYTIER (generic)
@@ -1055,6 +1056,306 @@ DO
 	STRING_ONE_END
 }
 
+FORM (MODIFY_TextGrid_insertFeatureToInterval, U"TextGrid: Insert feature to interval", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	SENTENCE (labelText, U"Label", U"")
+	SENTENCE (valueText, U"Value", U"")
+	OK
+DO
+	MODIFY_EACH (TextGrid)
+		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
+
+		MelderString label { 0 };
+		MelderString value { 0 };
+		MelderString_copy(&label, labelText);
+		MelderString_copy(&value, valueText);
+
+		if(MelderString_isEmptyAfterTrim(&label) || MelderString_isEmptyAfterTrim(&value)){
+			Melder_throw (U"Neither label nor value can be empty. Please fill the fields.");
+		}
+
+		autoMelderString newText;
+		Feature_addFeatureToText(interval->text, &label, &value, &newText);
+		TextInterval_setText(interval, newText.string);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGrid_deleteFeatureFromInterval, U"TextGrid: Remove feature from interval", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	SENTENCE (labelText, U"Label", U"")
+	OK
+DO
+	MODIFY_EACH (TextGrid)
+		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
+
+		MelderString label { 0 };
+		MelderString_copy(&label, labelText);
+
+		if(MelderString_isEmptyAfterTrim(&label)){
+			Melder_throw (U"Label cannot be empty. Please fill the field.");
+		}
+		autoMelderString newText;
+		Feature_deleteFeatureFromText(interval->text, &label, &newText);
+		TextInterval_setText (interval, newText.string);
+	MODIFY_EACH_END
+}
+
+FORM (STRING_TextGrid_getFeatureFromInterval, U"TextGrid: Get feature from interval", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	SENTENCE (labelText, U"Label", U"")
+	OK
+DO
+	STRING_ONE (TextGrid)
+		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
+
+		MelderString label { 0 };
+		MelderString_copy(&label, labelText);
+
+		if(MelderString_isEmptyAfterTrim(&label)){
+			Melder_throw (U"Label cannot be empty. Please fill the field.");
+		}
+
+		Feature_encodeText(&label);
+
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		Feature* ann = TierFeatures_getExistentFeature(features, label.string);
+
+		autoMelderString value;
+		if(ann != nullptr){
+			MelderString_copy(&value, ann->value.string);
+			Feature_decodeText(&value);
+		}
+		const char32* result = value.string;
+
+		delete features;
+	STRING_ONE_END
+}
+
+FORM (STRING_TextGrid_showFeaturesInInterval, U"TextGrid: Show features in interval", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	OK
+DO
+	STRING_ONE (TextGrid)
+		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		autoMelderString output;
+		TierFeatures_getFeaturesString(features, &output);
+		const char32* result = output.string;
+		delete features;
+	STRING_ONE_END
+}
+
+FORM (INTEGER_TextGrid_numberFeaturesInInterval, U"TextGrid: Get number of features in interval", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	OK
+DO
+	INTEGER_ONE(TextGrid)
+		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		int result = TierFeatures_getNumberOfFeatures(features);
+		delete features;
+	INTEGER_ONE_END(U"")
+}
+
+FORM (STRING_TextGrid_labelFeaturesInInterval, U"TextGrid: Get label of feature in interval", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	NATURAL (featureNumber, STRING_FEATURE_NUMBER, U"1")
+	OK
+DO
+	STRING_ONE(TextGrid)
+		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		Feature* feature = TierFeatures_getFeature(features, featureNumber);
+		autoMelderString label;
+		MelderString_copy(&label, feature->label.string);
+		Feature_decodeText(&label);
+		const char32* result = label.string;
+
+		delete features;
+	STRING_ONE_END
+}
+
+FORM (STRING_TextGrid_headOfInterval, U"TextGrid: Get head of interval", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	OK
+DO
+	STRING_ONE(TextGrid)
+		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
+		TierFeatures* features = TierFeatures_extractFromText(interval->text);
+		autoMelderString head;
+		MelderString_copy(&head, features->headText.string);
+		const char32* result = head.string;
+		delete features;
+	STRING_ONE_END
+}
+
+FORM (MODIFY_TextGrid_setIntervalHeadText, U"TextGrid: Set interval head text", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (intervalNumber, STRING_INTERVAL_NUMBER, U"1")
+	TEXTFIELD (text, U"Text:", U"")
+	OK
+DO
+	MODIFY_EACH (TextGrid)
+		TextGrid_setIntervalHeadText (me, tierNumber, intervalNumber, text);
+		praat_dataChanged (me);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGrid_setPointHeadText, U"TextGrid: Set point head text", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
+	TEXTFIELD (text, U"Text:", U"")
+	OK
+DO
+	MODIFY_EACH (TextGrid)
+		TextGrid_setPointHeadText (me, tierNumber, pointNumber, text);
+		praat_dataChanged (me);
+	MODIFY_EACH_END
+}
+
+FORM (STRING_TextGrid_headOfPoint, U"TextGrid: Get head of point", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
+	OK
+DO
+	STRING_ONE(TextGrid)
+		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		autoMelderString head;
+		MelderString_copy(&head, features->headText.string);
+		const char32* result = head.string;
+		delete features;
+
+	STRING_ONE_END
+}
+
+FORM (INTEGER_TextGrid_numberFeaturesInPoint, U"TextGrid: Get number of features in point", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
+	OK
+DO
+	INTEGER_ONE(TextGrid)
+		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		int result = TierFeatures_getNumberOfFeatures(features);
+		delete features;
+	INTEGER_ONE_END(U"")
+}
+
+FORM (STRING_TextGrid_labelFeaturesInPoint, U"TextGrid: Get label of feature in point", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
+	NATURAL (featureNumber, STRING_FEATURE_NUMBER, U"1")
+	OK
+DO
+	STRING_ONE(TextGrid)
+		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		Feature* feature = TierFeatures_getFeature(features, featureNumber);
+		autoMelderString label;
+		MelderString_copy(&label, feature->label.string);
+		Feature_decodeText(&label);
+		const char32* result = label.string;
+
+		delete features;
+	STRING_ONE_END
+}
+
+FORM (MODIFY_TextGrid_insertFeatureToPoint, U"TextGrid: Insert feature to point", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
+	SENTENCE (labelText, U"Label", U"")
+	SENTENCE (valueText, U"Value", U"")
+	OK
+DO
+	MODIFY_EACH (TextGrid)
+	TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
+		MelderString label { 0 };
+		MelderString value { 0 };
+		MelderString_copy(&label, labelText);
+		MelderString_copy(&value, valueText);
+
+		if(MelderString_isEmptyAfterTrim(&label) || MelderString_isEmptyAfterTrim(&value)){
+			Melder_throw (U"Neither label nor value can be empty. Please fill the fields.");
+		}
+		autoMelderString newText;
+		Feature_addFeatureToText(point->mark, &label, &value, &newText);
+		TextPoint_setText(point, newText.string);
+	MODIFY_EACH_END
+}
+
+FORM (MODIFY_TextGrid_deleteFeatureFromPoint, U"TextGrid: Remove feature from point", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
+	SENTENCE (labelText, U"Label", U"")
+	OK
+DO
+	MODIFY_EACH (TextGrid)
+		TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
+		MelderString label { 0 };
+		MelderString_copy(&label, labelText);
+
+		if(MelderString_isEmptyAfterTrim(&label)){
+			Melder_throw (U"Label cannot be empty. Please fill the field.");
+		}
+		autoMelderString newText;
+		Feature_deleteFeatureFromText(point->mark, &label, &newText);
+		TextPoint_setText (point, newText.string);
+	MODIFY_EACH_END
+}
+
+FORM (STRING_TextGrid_getFeatureFromPoint, U"TextGrid: Get feature from point", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
+	SENTENCE (labelText, U"Label", U"")
+	OK
+DO
+	STRING_ONE(TextGrid)
+		TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
+		MelderString label { 0 };
+		MelderString_copy(&label, labelText);
+
+		if(MelderString_isEmptyAfterTrim(&label)){
+			Melder_throw (U"Label cannot be empty. Please fill the field.");
+		}
+		Feature_encodeText(&label);
+
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		Feature* ann = TierFeatures_getExistentFeature(features, label.string);
+
+		autoMelderString value;
+		if(ann != nullptr){
+			MelderString_copy(&value, ann->value.string);
+			Feature_decodeText(&value);
+		}
+		const char32* result = value.string;
+
+		delete features;
+	STRING_ONE_END
+}
+
+FORM (STRING_TextGrid_showFeaturesInPoint, U"TextGrid: Show features in point", nullptr) {
+	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
+	NATURAL (pointNumber, STRING_POINT_NUMBER, U"1")
+	OK
+DO
+	STRING_ONE(TextGrid)
+		TextPoint point = pr_TextGrid_peekPoint(me, tierNumber, pointNumber);
+		TierFeatures* features = TierFeatures_extractFromText(point->mark);
+		autoMelderString output;
+		TierFeatures_getFeaturesString(features, &output);
+		const char32* result = output.string;
+		delete features;
+	STRING_ONE_END
+}
+
 FORM (INTEGER_TextGrid_getLowIndexFromTime, U"Get low index", U"AnyTier: Get low index from time...") {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
 	REAL (time, U"Time (s)", U"0.5")
@@ -1601,24 +1902,36 @@ void praat_uvafon_TextGrid_init () {
 			praat_addAction1 (classTextGrid, 1, U"Get end time of interval...", nullptr, praat_DEPTH_2, REAL_TextGrid_getEndTimeOfInterval);
 			praat_addAction1 (classTextGrid, 1,   U"Get end point...", U"*Get end time of interval...", praat_DEPTH_2 | praat_DEPRECATED_2016, REAL_TextGrid_getEndTimeOfInterval);
 			praat_addAction1 (classTextGrid, 1, U"Get label of interval...", nullptr, praat_DEPTH_2, STRING_TextGrid_getLabelOfInterval);
+			praat_addAction1 (classTextGrid, 1, U"Get head of interval...", nullptr, praat_DEPTH_2, STRING_TextGrid_headOfInterval);
 			praat_addAction1 (classTextGrid, 1, U"-- query interval from time --", nullptr, praat_DEPTH_2, nullptr);
-			praat_addAction1 (classTextGrid, 1, U"Get interval at time...", nullptr, 2, INTEGER_TextGrid_getIntervalAtTime);
-			praat_addAction1 (classTextGrid, 1, U"Get low interval at time...", nullptr, 2, INTEGER_TextGrid_getLowIntervalAtTime);
-			praat_addAction1 (classTextGrid, 1, U"Get high interval at time...", nullptr, 2, INTEGER_TextGrid_getHighIntervalAtTime);
-			praat_addAction1 (classTextGrid, 1, U"Get interval edge from time...", nullptr, 2, INTEGER_TextGrid_getIntervalEdgeFromTime);
-			praat_addAction1 (classTextGrid, 1, U"Get interval boundary from time...", nullptr, 2, INTEGER_TextGrid_getIntervalBoundaryFromTime);
-			praat_addAction1 (classTextGrid, 1, U"-- query interval labels --", nullptr, 2, nullptr);
-			praat_addAction1 (classTextGrid, 1, U"Count intervals where...", nullptr, 2, INTEGER_TextGrid_countIntervalsWhere);
+			praat_addAction1 (classTextGrid, 1, U"Get interval at time...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getIntervalAtTime);
+			praat_addAction1 (classTextGrid, 1, U"Get low interval at time...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getLowIntervalAtTime);
+			praat_addAction1 (classTextGrid, 1, U"Get high interval at time...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getHighIntervalAtTime);
+			praat_addAction1 (classTextGrid, 1, U"Get interval edge from time...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getIntervalEdgeFromTime);
+			praat_addAction1 (classTextGrid, 1, U"Get interval boundary from time...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getIntervalBoundaryFromTime);
+			praat_addAction1 (classTextGrid, 1, U"-- query interval labels --", nullptr, praat_DEPTH_2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Count intervals where...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_countIntervalsWhere);
+			praat_addAction1 (classTextGrid, 1, U"-- --", nullptr, praat_DEPTH_2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Get number of features in interval...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_numberFeaturesInInterval);
+			praat_addAction1 (classTextGrid, 1, U"Get label of feature in interval...", nullptr, praat_DEPTH_2, STRING_TextGrid_labelFeaturesInInterval);
+			praat_addAction1 (classTextGrid, 1, U"Get feature from interval...", nullptr, praat_DEPTH_2, STRING_TextGrid_getFeatureFromInterval);
+			praat_addAction1 (classTextGrid, 1, U"Show features in interval...", nullptr, praat_DEPTH_2, STRING_TextGrid_showFeaturesInInterval);
 		praat_addAction1 (classTextGrid, 1, U"Query point tier", nullptr, 1, nullptr);
-			praat_addAction1 (classTextGrid, 1, U"Get number of points...", nullptr, 2, INTEGER_TextGrid_getNumberOfPoints);
-			praat_addAction1 (classTextGrid, 1, U"Get time of point...", nullptr, 2, REAL_TextGrid_getTimeOfPoint);
-			praat_addAction1 (classTextGrid, 1, U"Get label of point...", nullptr, 2, STRING_TextGrid_getLabelOfPoint);
-			praat_addAction1 (classTextGrid, 1, U"-- query point from time --", nullptr, 2, nullptr);
-			praat_addAction1 (classTextGrid, 1, U"Get low index from time...", nullptr, 2, INTEGER_TextGrid_getLowIndexFromTime);
-			praat_addAction1 (classTextGrid, 1, U"Get high index from time...", nullptr, 2, INTEGER_TextGrid_getHighIndexFromTime);
-			praat_addAction1 (classTextGrid, 1, U"Get nearest index from time...", nullptr, 2, INTEGER_TextGrid_getNearestIndexFromTime);
-			praat_addAction1 (classTextGrid, 1, U"-- query point labels --", nullptr, 2, nullptr);
-			praat_addAction1 (classTextGrid, 1, U"Count points where...", nullptr, 2, INTEGER_TextGrid_countPointsWhere);
+			praat_addAction1 (classTextGrid, 1, U"Get number of points...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getNumberOfPoints);
+			praat_addAction1 (classTextGrid, 1, U"Get time of point...", nullptr, praat_DEPTH_2, REAL_TextGrid_getTimeOfPoint);
+			praat_addAction1 (classTextGrid, 1, U"Get label of point...", nullptr, praat_DEPTH_2, STRING_TextGrid_getLabelOfPoint);
+			praat_addAction1 (classTextGrid, 1, U"Get head of point...", nullptr, praat_DEPTH_2, STRING_TextGrid_headOfPoint);
+			praat_addAction1 (classTextGrid, 1, U"-- query point from time --", nullptr, praat_DEPTH_2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Get low index from time...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getLowIndexFromTime);
+			praat_addAction1 (classTextGrid, 1, U"Get high index from time...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getHighIndexFromTime);
+			praat_addAction1 (classTextGrid, 1, U"Get nearest index from time...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_getNearestIndexFromTime);
+			praat_addAction1 (classTextGrid, 1, U"-- query point labels --", nullptr, praat_DEPTH_2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Count points where...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_countPointsWhere);
+			praat_addAction1 (classTextGrid, 1, U"-- --", nullptr, praat_DEPTH_2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Get number of features in point...", nullptr, praat_DEPTH_2, INTEGER_TextGrid_numberFeaturesInPoint);
+			praat_addAction1 (classTextGrid, 1, U"Get label of feature in point...", nullptr, praat_DEPTH_2, STRING_TextGrid_labelFeaturesInPoint);
+			praat_addAction1 (classTextGrid, 1, U"Get feature from point...", nullptr, praat_DEPTH_2, STRING_TextGrid_getFeatureFromPoint);
+			praat_addAction1 (classTextGrid, 1, U"Show features in point...", nullptr, praat_DEPTH_2, STRING_TextGrid_showFeaturesInPoint);
 		praat_addAction1 (classTextGrid, 1, U"-- query labels --", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2015, nullptr);
 		praat_addAction1 (classTextGrid, 1, U"Count labels...", nullptr, praat_DEPTH_1 | praat_DEPRECATED_2015, INTEGER_TextGrid_countLabels);
 	praat_addAction1 (classTextGrid, 0, U"Modify -", nullptr, 0, nullptr);
@@ -1637,11 +1950,19 @@ void praat_uvafon_TextGrid_init () {
 			praat_addAction1 (classTextGrid, 0, U"Remove right boundary...", nullptr, 2, MODIFY_TextGrid_removeRightBoundary);
 			praat_addAction1 (classTextGrid, 0, U"Remove boundary at time...", nullptr, 2, MODIFY_TextGrid_removeBoundaryAtTime);
 			praat_addAction1 (classTextGrid, 0, U"Set interval text...", nullptr, 2, MODIFY_TextGrid_setIntervalText);
+			praat_addAction1 (classTextGrid, 0, U"Set interval head text...", nullptr, praat_DEPTH_2, MODIFY_TextGrid_setIntervalHeadText);
+			praat_addAction1 (classTextGrid, 1, U"-- --", nullptr, 2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Insert feature to interval...", nullptr, praat_DEPTH_2, MODIFY_TextGrid_insertFeatureToInterval);
+			praat_addAction1 (classTextGrid, 1, U"Remove feature from interval...", nullptr, praat_DEPTH_2, MODIFY_TextGrid_deleteFeatureFromInterval);
 		praat_addAction1 (classTextGrid, 0, U"Modify point tier", nullptr, 1, nullptr);
 			praat_addAction1 (classTextGrid, 0, U"Insert point...", nullptr, 2, MODIFY_TextGrid_insertPoint);
 			praat_addAction1 (classTextGrid, 0, U"Remove point...", nullptr, 2, MODIFY_TextGrid_removePoint);
 			praat_addAction1 (classTextGrid, 0, U"Remove points...", nullptr, 2, MODIFY_TextGrid_removePoints);
 			praat_addAction1 (classTextGrid, 0, U"Set point text...", nullptr, 2, MODIFY_TextGrid_setPointText);
+			praat_addAction1 (classTextGrid, 0, U"Set point head text...", nullptr, praat_DEPTH_2, MODIFY_TextGrid_setPointHeadText);
+			praat_addAction1 (classTextGrid, 1, U"-- --", nullptr, 2, nullptr);
+			praat_addAction1 (classTextGrid, 1, U"Insert feature to point...", nullptr, praat_DEPTH_2, MODIFY_TextGrid_insertFeatureToPoint);
+			praat_addAction1 (classTextGrid, 1, U"Remove feature from point...", nullptr, praat_DEPTH_2, MODIFY_TextGrid_deleteFeatureFromPoint);
 praat_addAction1 (classTextGrid, 0, U"Analyse", nullptr, 0, nullptr);
 	praat_addAction1 (classTextGrid, 0, U"Extract one tier...", nullptr, 0, NEW1_TextGrid_extractOneTier);
 	praat_addAction1 (classTextGrid, 0,   U"Extract tier...", U"*Extract one tier...", praat_DEPRECATED_2010, NEW1_TextGrid_extractTier);

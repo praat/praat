@@ -21,7 +21,8 @@
 #include "TimeSoundAnalysisEditor.h"
 #include "TextGrid.h"
 #include "SpellingChecker.h"
-#include "Preferences.h"
+//#include "Preferences.h"
+#include "Feature.h"
 
 #include "TextGridEditor_enums.h"
 

@@ -38,7 +38,8 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    manual_glossary.o manual_Sampling.o manual_exampleSound.o \
    manual_sound.o manual_pitch.o manual_spectrum.o manual_formant.o manual_annotation.o \
    praat_TimeFunction.o praat_TimeTier.o praat_TimeFrameSampled.o \
-   praat_Sound.o praat_Matrix.o praat_Tiers.o praat_TextGrid_init.o praat_Fon.o
+   praat_Sound.o praat_Matrix.o praat_Tiers.o praat_TextGrid_init.o praat_Fon.o \
+   Feature.o
 
 .PHONY: all clean
 
