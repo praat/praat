@@ -202,14 +202,6 @@ public:
 		if (our ptr) Melder_free (our ptr);
 		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving destructor");
 	}
-	#if 0
-	void operator= (T *string) {
-		//if (Melder_debug == 39) Melder_casual (U"autostring: entering assignment from C-string; old = ", Melder_pointer (ptr));
-		if (our ptr) Melder_free (our ptr);
-		our ptr = string;
-		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving assignment from C-string; new = ", Melder_pointer (ptr));
-	}
-	#endif
 	template <class U> T& operator[] (U i) {
 		return our ptr [i];
 	}
@@ -235,7 +227,7 @@ public:
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
 	//_autostring (_autostring &) = delete;   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
-	explicit operator bool () const { return !! ptr; }
+	explicit operator bool () const { return !! our ptr; }
 	/*
 		Enable moving.
 	*/
@@ -2713,6 +2705,10 @@ struct structMelderReadText {
 };
 typedef struct structMelderReadText *MelderReadText;
 
+#if 1
+	#include <memory>
+	using autoMelderReadText = std::unique_ptr<structMelderReadText>;
+#else
 struct autoMelderReadText {
 	MelderReadText text;
 	autoMelderReadText () {
@@ -2744,6 +2740,7 @@ struct autoMelderReadText {
 	autoMelderReadText&& move () noexcept { return static_cast <autoMelderReadText&&> (*this); }
 	explicit operator bool () const { return !! our text; }
 };
+#endif
 
 autoMelderReadText MelderReadText_createFromFile (MelderFile file);
 char32 MelderReadText_getChar (MelderReadText text);

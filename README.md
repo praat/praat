@@ -36,7 +36,7 @@ Consult the manual page on [Programming](http://www.fon.hum.uva.nl/praat/manual/
 ### 1.4. The programming language
 
 Most of the source code is written in C++, but some parts are written in C.
-The code requires that your compiler supports C99 and C++11 (for e.g. `char32_t` and rvalue references).
+The code requires that your compiler supports C99 and C++14 (for e.g. `char32_t`, rvalue references, and `make_unique`).
 
 ### 1.5. Compiling for Windows
 
@@ -56,16 +56,6 @@ or if you want to build Praat's 64-bit edition, type
 
 Then type `make` to build `Praat.exe`
 (use `make -j4` to speed this up, i.e. to use 4 processors in parallel).
-
-Cross-compiling for Windows on a Mac or Linux computer is slightly more difficult, but not impossible.
-You can use the [MinGW](http://www.mingw.org) compiler,
-for which you can find 32- and 64-bit toolchains
-[here](http://sourceforge.net/projects/mingw-w64/files/) (look for Automated Builds).
-Install the GDI+ headers and the GDI+ library ([32-bit](http://www.fon.hum.uva.nl/praat/libgdiplus.a-32.zip);
-for 64-bit Windows just extract a GDI+ DLL from somewhere).
-Then copy the file `makefiles/makefile.defs.darmin32` or `makefiles/makefile.defs.darmin64`
-to the sources directory and rename it to `makefile.defs`.
-Then type `make`.
 
 ### 1.6. Compiling for Macintosh
 
