@@ -442,17 +442,15 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					UiForm_parseString (_dia_, _sendingString_, interpreter); \
 				} \
 			} catch (MelderError) { \
-				char32 *_parkedError = Melder_dup_f (Melder_getError ()); \
+				autostring32 _parkedError = Melder_dup_f (Melder_getError ()); \
 				Melder_clearError (); \
 				try { \
 					alternative (nullptr, _narg_, _args_, _sendingString_, interpreter, _invokingButtonTitle_, _modified_, _buttonClosure_); \
 				} catch (MelderError) { \
 					Melder_clearError (); \
-					Melder_appendError (_parkedError); \
-					Melder_free (_parkedError); \
+					Melder_appendError (_parkedError.get()); \
 					throw; \
 				} \
-				Melder_free (_parkedError); \
 			} \
 		} else { \
 			try { \

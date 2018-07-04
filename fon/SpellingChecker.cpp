@@ -1,6 +1,6 @@
 /* SpellingChecker.cpp
  *
- * Copyright (C) 1999-2011,2015 Paul Boersma
+ * Copyright (C) 1999-2007,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,14 +212,14 @@ char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *s
 					p ++;
 				}
 			}
-		} else if (*p == U' ' || (my separatingCharacters && str32chr (my separatingCharacters, *p))) {
+		} else if (*p == U' ' || (my separatingCharacters && str32chr (my separatingCharacters.get(), *p))) {
 			p ++;
 		} else {
 			static char32 word [100];
 			char32 *q = & word [0];
 			*start = p - sentence;
 			for (;;) {
-				if (*p == U'\0' || *p == U' ' || (my separatingCharacters && str32chr (my separatingCharacters, *p))) {
+				if (*p == U'\0' || *p == U' ' || (my separatingCharacters && str32chr (my separatingCharacters.get(), *p))) {
 					*q ++ = U'\0';
 					if (SpellingChecker_isWordAllowed (me, word)) {
 						/* Don't increment p (may contain a zero or a parenthesis). */

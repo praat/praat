@@ -97,9 +97,9 @@ autoStringList OrderedOfString_joinItems (StringList me, StringList thee) {
 
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString hisCategory = his at [i], thyCategory = thy at [i];
-			integer hisLength = str32len (hisCategory -> string), thyLength = str32len (thyCategory -> string);
-			hisCategory -> string = (char32 *) Melder_realloc (hisCategory -> string, (hisLength + thyLength + 1) * (integer) sizeof (char32));
-			str32cpy (& hisCategory -> string [hisLength], thyCategory -> string);
+			integer hisLength = str32len (hisCategory -> string.get()), thyLength = str32len (thyCategory -> string.get());
+			hisCategory -> string = (char32 *) Melder_realloc (hisCategory -> string.get(), (hisLength + thyLength + 1) * (integer) sizeof (char32));
+			str32cpy (& hisCategory -> string [hisLength], thyCategory -> string.get());
 		}
 		return him;
 	} catch (MelderError) {
@@ -111,7 +111,7 @@ autoStringSet StringList_to_StringSet (StringList me) {
 	try {
 		autoStringSet you = StringSet_create ();
 		for (integer i = 1; i <= my size; i ++) {
-			autoSimpleString item = SimpleString_create (my at [i] -> string);
+			autoSimpleString item = SimpleString_create (my at [i] -> string.get());
 			your addItem_unsorted_move (item.move());
 		}
 		your sort ();
@@ -174,7 +174,7 @@ void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *repla
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString ss = my at [i];
 			integer nmatches_sub;
-			char32 *r = use_regexp ? str_replace_regexp (ss -> string, compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) : str_replace_literal (ss -> string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
+			char32 *r = use_regexp ? str_replace_regexp (ss -> string.get(), compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) : str_replace_literal (ss -> string.get(), search, replace, maximumNumberOfReplaces, & nmatches_sub);
 
 			// Change without error:
 			Melder_free (ss -> string);
@@ -219,8 +219,8 @@ void OrderedOfString_removeOccurrences (StringList me, const char32 *search, boo
 	}
 	for (integer i = my size; i >= 1; i --) {
 		SimpleString ss = my at [i];
-		if ( (use_regexp && strstr_regexp (ss -> string, search)) ||
-		        (!use_regexp && str32str (ss -> string, search))) {
+		if ( (use_regexp && strstr_regexp (ss -> string.get(), search)) ||
+		        (!use_regexp && str32str (ss -> string.get(), search))) {
 			my removeItem (i);
 		}
 	}

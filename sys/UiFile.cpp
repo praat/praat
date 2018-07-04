@@ -49,11 +49,11 @@ void UiInfile_do (UiForm me) {
 		autoStringSet infileNames = GuiFileSelect_getInfileNames (my d_dialogParent, my name.get(), my allowMultipleFiles);
 		for (integer ifile = 1; ifile <= infileNames->size; ifile ++) {
 			SimpleString infileName = infileNames->at [ifile];
-			Melder_pathToFile (infileName -> string, & my file);
+			Melder_pathToFile (infileName -> string.get(), & my file);
 			UiHistory_write (U"\n");
 			UiHistory_write_colonize (my invokingButtonTitle);
 			UiHistory_write (U" \"");
-			UiHistory_write_expandQuotes (infileName -> string);
+			UiHistory_write_expandQuotes (infileName -> string.get());
 			UiHistory_write (U"\"");
 			structMelderFile file { };
 			MelderFile_copy (& my file, & file);

@@ -44,7 +44,7 @@ integer Table_findStringInColumn (Table me, const char32 *string, integer icol) 
 	if (icol > 0 && icol <= my numberOfColumns) {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow myRow = my rows.at [irow];
-			if (Melder_equ (myRow -> cells [icol]. string, string)) {
+			if (Melder_equ (myRow -> cells [icol]. string.get(), string)) {
 				return irow;
 			}
 		}
@@ -152,9 +152,9 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
-				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
+				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
 				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
 				// The first character of name must be upper case
 				if (name) { 
@@ -164,7 +164,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 					*(capitalFirst. string) = capital;
 					Table_setStringValue (thee.get(), irow, 2, capitalFirst. string);
 				} else {
-					Table_setStringValue (thee.get(), irow, 2, fim -> d_id);
+					Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
 				}
 				Table_setNumericValue (thee.get(), irow, 3, ifile); 
 				const char32 *word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
@@ -192,11 +192,11 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
-				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
+				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
 				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
-				Table_setStringValue (thee.get(), irow, 2, (word ? word : fim -> d_id));
+				Table_setStringValue (thee.get(), irow, 2, ( word ? word : fim -> d_id.get() ));
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
 			}
 		}

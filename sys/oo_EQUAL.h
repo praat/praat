@@ -68,7 +68,7 @@
 //	}
 
 #define oo_STRINGx(storage,x)  \
-	if (! Melder_equ (our x, thy x)) return false;
+	if (! Melder_equ (our x.get(), thy x.get())) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \

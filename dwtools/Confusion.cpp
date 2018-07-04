@@ -119,15 +119,15 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 
 		for (integer i = 1; i <= ul1->size; i ++) {
 			SimpleString s = ul1->at [i];
-			TableOfReal_setRowLabel (him.get(), i, s -> string);
+			TableOfReal_setRowLabel (him.get(), i, s -> string.get());
 		}
 		for (integer i = 1; i <= ul2->size; i ++) {
 			SimpleString s = ul2->at [i];
-			TableOfReal_setColumnLabel (him.get(), i, s -> string);
+			TableOfReal_setColumnLabel (him.get(), i, s -> string.get());
 		}
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString myi = my at [i], thyi = thy at [i];
-			Confusion_increase (him.get(), myi -> string, thyi -> string);
+			Confusion_increase (him.get(), myi -> string.get(), thyi -> string.get());
 		}
 		return him;
 	} catch (MelderError) {

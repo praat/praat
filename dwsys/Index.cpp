@@ -108,7 +108,7 @@ integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex) {
 int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *klasLabel) {
 	for (integer i = 1; i <= my classes->size; i ++) {
 		SimpleString ss = (SimpleString) my classes->at [i];   // FIXME cast
-		if (Melder_equ (ss -> string, klasLabel)) {
+		if (Melder_equ (ss -> string.get(), klasLabel)) {
 			return i;
 		}
 	}
@@ -119,7 +119,7 @@ const char32 *StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer
 	const char32 *result = undefinedClassLabel;
 	if (klasIndex > 0 && klasIndex <= my classes -> size) {
 		SimpleString ss = (SimpleString) my classes->at [klasIndex];   // FIXME cast
-		result = ss -> string;
+		result = ss -> string.get();
 	}
 	return result;
 }
@@ -129,7 +129,7 @@ const char32 *StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer i
 	if (itemNumber > 0 && itemNumber <= my numberOfItems) {
 		integer klas = my classIndex [itemNumber];
 		SimpleString ss = (SimpleString) my classes->at [klas];   // FIXME cast
-		result = ss -> string;
+		result = ss -> string.get();
 	}
 	return result;
 }

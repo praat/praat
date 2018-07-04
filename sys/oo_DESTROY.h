@@ -49,7 +49,9 @@
 //	}
 
 #define oo_STRINGx(storage,x)  \
-	Melder_free (our x);
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		our x. reset (); \
+	}
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \

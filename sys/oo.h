@@ -223,7 +223,7 @@
 //#define oo_ENUMx_SET(kType,storage,x,setType)  kType x [1 + (int) setType::MAX];
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  kType *x;
 
-#define oo_STRINGx(storage,x)  char32 *x;
+#define oo_STRINGx(storage,x)  autostring32 x;
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  char32 *x [cap];
 #define oo_STRINGx_SET(storage,x,setType)  char32 *x [1 + setType::MAX];
 #define oo_STRINGx_VECTOR(storage,x,min,max)  char32 **x;

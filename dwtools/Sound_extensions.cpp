@@ -1148,7 +1148,7 @@ IntervalTier Sound_PointProcess_to_IntervalTier (Sound me, PointProcess thee, do
 	if (t2 > my xmax) t2 = my xmax;
 	autoIntervalTier him = IntervalTier_create (my xmin, my xmax);
 	autoTextInterval interval = TextInterval_create (t1, t2, "yes");
-	Collection_addItem_move (his intervals, interval.move());
+	his intervals -> addItem_move (interval.move());
 
 	for (integer i = 2; i <= thy nt; i ++)
 	{
@@ -1284,14 +1284,14 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 		TextInterval interval = tier -> intervals.at [1];
 		if (t1) {
 			*t1 = my xmin;
-			if (Melder_equ (interval -> text, silentLabel)) {
+			if (Melder_equ (interval -> text.get(), silentLabel)) {
 				*t1 = interval -> xmax;
 			}
 		}
 		if (t2) {
 			*t2 = my xmax;
 			interval = tier -> intervals.at [tier -> intervals.size];
-			if (Melder_equ (interval -> text, silentLabel)) {
+			if (Melder_equ (interval -> text.get(), silentLabel)) {
 				*t2 = interval -> xmin;
 			}
 		}
@@ -1307,7 +1307,7 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
 		double xmin = my xmin; // start time of output sound is start time of input sound
         for (integer iint = 1; iint <= thy intervals.size; iint ++) {
             TextInterval interval = thy intervals.at [iint];
-            if (! Melder_equ (interval -> text, match)) {
+            if (! Melder_equ (interval -> text.get(), match)) {
                 numberOfSamples += Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
                 // if two contiguous intervals have to be copied then the last sample of previous interval
                 // and first sample of current interval might sometimes be equal
@@ -1327,7 +1327,7 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
 		previous_ixmax = 0;
         for (integer iint = 1; iint <= thy intervals.size; iint ++) {
             TextInterval interval = thy intervals.at [iint];
-            if (! Melder_equ (interval -> text, match)) {
+            if (! Melder_equ (interval -> text.get(), match)) {
                 Sampled_getWindowSamples (me, interval -> xmin, interval -> xmax, & ixmin, & ixmax);
 				if (ixmin == previous_ixmax) {
 					ixmin ++;
@@ -1363,8 +1363,8 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
             TextInterval ti = tier -> intervals.at [iint];
             TextInterval ati = itg -> intervals.at [iint];
             double duration = ti -> xmax - ti -> xmin;
-            if (duration > trimDuration && Melder_equ (ti -> text, silentLabel)) {   // silent
-				const char32 * label = trimLabel;
+            if (duration > trimDuration && Melder_equ (ti -> text.get(), silentLabel)) {   // silent
+				const char32 *label = trimLabel;
                 if (iint == 1) { // first is special
                     double trim_t = ti -> xmax - trimDuration;
                     IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
@@ -1373,7 +1373,7 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
                     IntervalTier_moveBoundary (itg.get(), iint, true, trim_t);
                 } else {
 					if (onlyAtStartAndEnd) {
-						label = ati -> text;
+						label = ati -> text.get();
 					} else {
                     	double trim_t = ti -> xmin + 0.5 * trimDuration;
 						IntervalTier_moveBoundary (itg.get(), iint, true, trim_t);
@@ -1406,14 +1406,14 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 		TextInterval ti1 = trim -> intervals.at [1];
 		if (t1) {
 			*t1 = my xmin;
-			if (Melder_equ (ti1 -> text, U"trimmed")) {
+			if (Melder_equ (ti1 -> text.get(), U"trimmed")) {
 				*t1 = ti1 -> xmax;
 			}
 		}
 		TextInterval ti2 = trim -> intervals.at [trim -> intervals.size];
 		if (t2) {
 			*t2 = my xmax;
-			if (Melder_equ (ti2 -> text, U"trimmed")) {
+			if (Melder_equ (ti2 -> text.get(), U"trimmed")) {
 				*t2 = ti2 -> xmin;
 			}
 		}
@@ -1433,7 +1433,7 @@ static void PitchTier_modifyRange_old (PitchTier me, double tmin, double tmax, d
 			continue;
 		}
 		f = fmid + (f - fmid) * factor;
-		point -> value = f < 0 ? 0 : f;
+		point -> value = f < 0.0 ? 0.0 : f;
 	}
 }
 
@@ -1452,7 +1452,7 @@ static autoPitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 			thy frame [i].candidate [1].strength = my frame [i].candidate [1].strength;
 			f /= scaleFactor;
 			if (f < my ceiling) {
-				thy frame [i].candidate [1].frequency = f;
+				thy frame [i]. candidate [1]. frequency = f;
 			}
 		}
 		return thee;

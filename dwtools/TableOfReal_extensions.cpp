@@ -611,7 +611,7 @@ void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
 				The modification of my rowLabels is implemented as a swap
 				with the contents of the SimpleStrings in the copied Categories.
 			*/
-			char32 *tmp = categories_copy->at [i] -> string;
+			char32 *tmp = categories_copy->at [i] -> string.get();   // DANGEROUS: swapping an autostring with a char32*
 			categories_copy->at [i] -> string = my rowLabels [i];
 			my rowLabels [i] = tmp;
 		}
@@ -1047,19 +1047,19 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool inc
 
 		for (integer i = 1; i <= nrows; i ++) {
 			TableRow row = table -> rows.at [ib + i - 1];
-			TableOfReal_setRowLabel (thee.get(), i, row -> cells [4]. string);
+			TableOfReal_setRowLabel (thee.get(), i, row -> cells [4]. string.get());
 			for (integer j = 1; j <= 3; j ++) {
-				thy data [i] [j] = Melder_atof (row -> cells [4 + j]. string);
+				thy data [i] [j] = Melder_atof (row -> cells [4 + j]. string.get());
 				if (include_levels) {
-					thy data [i] [3 + j] = Melder_atof (row -> cells [7 + j]. string);
+					thy data [i] [3 + j] = Melder_atof (row -> cells [7 + j]. string.get());
 				}
 			}
 		}
 		for (integer j = 1; j <= 3; j ++) {
-			const char32 *label = table -> columnHeaders [4 + j]. label;
+			const char32 *label = table -> columnHeaders [4 + j]. label.get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 			if (include_levels) {
-				label = table -> columnHeaders [7 + j].label;
+				label = table -> columnHeaders [7 + j]. label.get();
 				TableOfReal_setColumnLabel (thee.get(), 3 + j, label);
 			}
 		}
@@ -1090,13 +1090,13 @@ autoTableOfReal TableOfReal_create_weenink1983 (int option) {
 
 		for (integer i = 1; i <= nrows; i ++) {
 			TableRow row = table -> rows.at [ib + i - 1];
-			TableOfReal_setRowLabel (thee.get(), i, row -> cells [5]. string);
+			TableOfReal_setRowLabel (thee.get(), i, row -> cells [5]. string.get());
 			for (integer j = 1; j <= 3; j ++) {
-				thy data [i] [j] = Melder_atof (row -> cells [6 + j]. string); /* Skip F0 */
+				thy data [i] [j] = Melder_atof (row -> cells [6 + j]. string.get()); /* Skip F0 */
 			}
 		}
 		for (integer j = 1; j <= 3; j ++)  {
-			const char32 *label = table -> columnHeaders [6 + j]. label;
+			const char32 *label = table -> columnHeaders [6 + j]. label.get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 		}
 		return thee;

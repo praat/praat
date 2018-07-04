@@ -85,7 +85,7 @@
 //	}
 
 #define oo_STRINGx(storage,x)  \
-	texput##storage (file, our x, U""#x, 0,0,0,0,0);
+	texput##storage (file, our x.get(), U""#x, 0,0,0,0,0);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \

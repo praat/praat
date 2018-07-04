@@ -334,7 +334,7 @@ static void menu_cb_GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection);
 		const char32 *label = iinterval < 1 || iinterval > tier -> intervals.size ? U"" :
-			tier -> intervals.at [iinterval] -> text;
+			tier -> intervals.at [iinterval] -> text.get();
 		Melder_information (label);
 	} else {
 		Melder_throw (U"The selected tier is not an interval tier.");
@@ -588,7 +588,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, 
 			if (interval -> xmin != t1)
 				Melder_fatal (U"Boundary unequal: ", interval -> xmin, U" versus ", t1, U".");
 			interval -> xmax = t2;
-			TextInterval_setText (interval, Melder_cat (interval -> text, midNewInterval -> text));
+			TextInterval_setText (interval, Melder_cat (interval -> text.get(), midNewInterval -> text.get()));
 		} else if (t2IsABoundary) {
 			/*
 			 * Merge mid and right interval.
@@ -599,7 +599,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, 
 			Melder_assert (rightNewInterval -> xmin == t2);
 			Melder_assert (rightNewInterval -> xmax == t2);
 			rightNewInterval -> xmin = t1;
-			TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text, rightNewInterval -> text));
+			TextInterval_setText (rightNewInterval.get(), Melder_cat (midNewInterval -> text.get(), rightNewInterval -> text.get()));
 		} else {
 			interval -> xmax = t1;
 			if (t1 != t2) intervalTier -> intervals.addItem_move (midNewInterval.move());
@@ -835,7 +835,7 @@ static void findInTier (TextGridEditor me) {
 		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
 		while (iinterval <= tier -> intervals.size) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			char32 *text = interval -> text;
+			char32 *text = interval -> text.get();
 			if (text) {
 				char32 *position = str32str (text, my findString.get());
 				if (position) {
@@ -855,7 +855,7 @@ static void findInTier (TextGridEditor me) {
 		integer ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection) + 1;
 		while (ipoint <= tier -> points.size) {
 			TextPoint point = tier->points.at [ipoint];
-			char32 *text = point -> mark;
+			char32 *text = point -> mark.get();
 			if (text) {
 				char32 *position = str32str (text, my findString.get());
 				if (position) {
@@ -908,7 +908,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
 		while (iinterval <= tier -> intervals.size) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			char32 *text = interval -> text;
+			char32 *text = interval -> text.get();
 			if (text) {
 				integer position = 0;
 				char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
@@ -929,7 +929,7 @@ static void checkSpellingInTier (TextGridEditor me) {
 		integer ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection) + 1;
 		while (ipoint <= tier -> points.size) {
 			TextPoint point = tier -> points.at [ipoint];
-			char32 *text = point -> mark;
+			char32 *text = point -> mark.get();
 			if (text) {
 				integer position = 0;
 				char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
@@ -1337,7 +1337,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my startWindow && tmin < my endWindow) {   // interval visible?
 			int intervalIsSelected = iinterval == selectedInterval;
-			int labelMatches = Melder_stringMatchesCriterion (interval -> text, my p_greenMethod, my p_greenString, true);
+			int labelMatches = Melder_stringMatchesCriterion (interval -> text.get(), my p_greenMethod, my p_greenString, true);
 			if (tmin < my startWindow) tmin = my startWindow;
 			if (tmax > my endWindow) tmax = my endWindow;
 			if (labelMatches) {
@@ -1412,7 +1412,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, integer i
 			double t1 = my startWindow > tmin ? my startWindow : tmin;
 			double t2 = my endWindow < tmax ? my endWindow : tmax;
 			Graphics_setColour (my graphics.get(), intervalIsSelected ? Graphics_RED : Graphics_BLACK);
-			Graphics_textRect (my graphics.get(), t1, t2, 0.0, 1.0, interval -> text);
+			Graphics_textRect (my graphics.get(), t1, t2, 0.0, 1.0, interval -> text.get());
 			Graphics_setColour (my graphics.get(), Graphics_BLACK);
 		}
 
@@ -1484,7 +1484,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, integer itier) {
 				Graphics_setLineWidth (my graphics.get(), 1.0);
 			}
 			Graphics_setColour (my graphics.get(), pointIsSelected ? Graphics_RED : Graphics_BLUE);
-			if (point -> mark) Graphics_text (my graphics.get(), t, 0.5, point -> mark);
+			if (point -> mark) Graphics_text (my graphics.get(), t, 0.5, point -> mark.get());
 		}
 	}
 	Graphics_setPercentSignIsItalic (my graphics.get(), true);
@@ -2092,7 +2092,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 					TextPoint point = textTier -> points.at [selectedPoint];
 					Melder_free (point -> mark);
 					if (str32spn (newText.string, U" \n\t") != str32len (newText.string))   // any visible characters?
-					point -> mark = Melder_dup_f (newText.string);
+						point -> mark = Melder_dup_f (newText.string);
 
 					our suppressRedraw = true;   // prevent valueChangedCallback from redrawing
 					trace (U"setting new text ", newText.string);
@@ -2157,7 +2157,7 @@ void structTextGridEditor :: v_updateText () {
 			if (iinterval) {
 				TextInterval interval = intervalTier -> intervals.at [iinterval];
 				if (interval -> text) {
-					newText = interval -> text;
+					newText = interval -> text.get();
 				}
 			}
 		} else {
@@ -2165,7 +2165,7 @@ void structTextGridEditor :: v_updateText () {
 			if (ipoint) {
 				TextPoint point = textTier -> points.at [ipoint];
 				if (point -> mark) {
-					newText = point -> mark;
+					newText = point -> mark.get();
 				}
 			}
 		}

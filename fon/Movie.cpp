@@ -90,7 +90,7 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, integer frameNumber
 		Melder_assert (my d_fileNames);
 		Melder_assert (my d_fileNames -> numberOfStrings == my nx);
 		structMelderDir folder { };
-		Melder_pathToDir (my d_folderName, & folder);
+		Melder_pathToDir (my d_folderName.get(), & folder);
 		structMelderFile file { };
 		MelderDir_getFile (& folder, my d_fileNames -> strings [frameNumber], & file);
 		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), xmin, xmax, ymin, ymax);

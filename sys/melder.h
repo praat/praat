@@ -220,6 +220,9 @@ public:
 		if (our ptr) Melder_free (our ptr);
 		our ptr = string;
 	}
+	void dangerousAbnormalOptimizingTemporaryShallowConstAssignment_pleaseDoTwice (const T *string) {
+		our ptr = (T *) string;
+	}
 	void resize (int64 new_size) {
 		T *tmp = (T *) Melder_realloc (our ptr, new_size * (int64) sizeof (T));
 		our ptr = tmp;

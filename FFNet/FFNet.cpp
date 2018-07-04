@@ -306,7 +306,7 @@ const char32* FFNet_getCategoryOfOutputUnit (FFNet me, integer outputUnit) {
 	const char32 *result = U"-- undefined --";
 	if (my outputCategories && outputUnit <= my outputCategories -> size) {
 		SimpleString ss = my outputCategories->at [outputUnit];
-		result = ss -> string;
+		result = ss -> string.get();
 	}
 	return result;
 }
@@ -316,7 +316,7 @@ integer FFNet_getOutputUnitOfCategory (FFNet me, const char32* category) {
 	if (my outputCategories) {
 		for (integer i = 1; i <= my outputCategories -> size; i ++) {
 			SimpleString s = my outputCategories->at [i];
-			if (Melder_equ (s -> string, category)) {
+			if (Melder_equ (s -> string.get(), category)) {
 				result = i;
 				break;
 			}

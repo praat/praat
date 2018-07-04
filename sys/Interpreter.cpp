@@ -47,7 +47,6 @@ autonummat theInterpreterNummat;
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
 void structInterpreterVariable :: v_destroy () noexcept {
-	Melder_free (our string);
 	Melder_free (our stringValue);
 	NUMvector_free (our numericVectorValue.at, 1);
 	NUMmatrix_free (our numericMatrixValue.at, 1, 1);

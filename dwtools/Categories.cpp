@@ -96,7 +96,7 @@ void Categories_drawItem (Categories me, Graphics g, integer position, double xW
 		return;
 	}
 	SimpleString item = my at [position];
-	Graphics_text (g, xWC, yWC, item -> string);
+	Graphics_text (g, xWC, yWC, item -> string.get());
 }
 
 /* TableOfReal_Rowlabels_to_Categories  ??? */

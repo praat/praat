@@ -193,7 +193,7 @@ static void updateWidgets (CategoriesEditor me) {   // all buttons except undo &
 		if (posCount == 1) {
 			insert = true;
 			//if (posList[1] == size) insertAtEnd = true;
-			if (size == 1 && str32equ (CategoriesEditor_EMPTYLABEL, data->at [1] -> string)) {
+			if (size == 1 && str32equ (CategoriesEditor_EMPTYLABEL, data->at [1] -> string.get())) {
 				remove = false;
 			}
 		}
@@ -241,7 +241,7 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 			SimpleString category = data->at [i];
 			char wcindex[20];
 			snprintf (wcindex,20, "%5ld ", (long_not_integer) i);   // BUG
-			table[i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), category -> string));
+			table[i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), category -> string.get()));
 		}
 		if (itemCount > size) { // some items have been removed from Categories?
 			for (integer j = itemCount; j > size; j --) {
@@ -273,7 +273,7 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 		SimpleString category = data->at [1];
 		GuiList_selectItem (my list, 1);
 		updateWidgets (me);   // instead of "notify". BUG?
-		GuiText_setString (my text, category -> string);
+		GuiText_setString (my text, category -> string.get());
 	} else if (nSelect > 0) {
 		/*
 			Select, but postpone highlighting.
@@ -669,7 +669,7 @@ static void gui_list_cb_doubleClick (CategoriesEditor me, GuiList_DoubleClickEve
 	    && posList [1] == my position)   // should be true, but we don't crash if it's false
 	{
 		SimpleString category = data->at [my position];
-		GuiText_setString (my text, category -> string ? category -> string : U"");
+		GuiText_setString (my text, category -> string ? category -> string.get() : U"");
 	}
 }
 

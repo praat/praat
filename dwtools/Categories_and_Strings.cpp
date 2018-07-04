@@ -33,7 +33,7 @@ autoStrings Categories_to_Strings (Categories me) {
 
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString s = my at [i];
-			thy strings [i] = Melder_dup (s -> string);
+			thy strings [i] = Melder_dup (s -> string.get());
 		}
 		return thee;
 	} catch (MelderError) {

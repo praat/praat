@@ -1061,14 +1061,14 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 		}
 		if (labelColumn) {
 			for (integer icol = 1; icol < labelColumn; icol ++) {
-				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label.get());
 			}
 			for (integer icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.get(), icol - 1, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol - 1, my columnHeaders [icol]. label.get());
 			}
 			for (integer irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
-				char32 *string = row -> cells [labelColumn]. string;
+				char32 *string = row -> cells [labelColumn]. string.get();
 				TableOfReal_setRowLabel (thee.get(), irow, string ? string : U"");
 				for (integer icol = 1; icol < labelColumn; icol ++) {
 					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
@@ -1081,7 +1081,7 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 			}
 		} else {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label.get());
 			}
 			for (integer irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];

@@ -302,7 +302,7 @@ public:
 	 *    *out_pitch = pitch.move();
 	 *    *out_pulses = pulses.move();
 	 * and
-	 *    Collection_addItem_move (me, pitch.move());
+	 *    my addItem_move (pitch.move());
 	 * and
 	 *    praat_new (pitch.move(), my name);
 	 */
@@ -449,9 +449,8 @@ public:
 	 * returns a moved `thee` in `pitch`. This works because return values from automatic (i.e. non-static) variables are r-values.
 	 *
 	 * In function arguments, transfer of ownership works only explicitly:
-	 *    extern void Collection_addItem_move (Collection me, autoDaata item);
 	 *    autoPitch pitch = Pitch_create (...);
-	 *    Collection_addItem_move (collection, pitch.move());   // compiler error if you don't call move()
+	 *    collection -> addItem_move (pitch.move());   // compiler error if you don't call move()
 	 */
 	template <class Y> _Thing_auto<Y> static_cast_move () noexcept {
 		return _Thing_auto<Y> (static_cast<Y*> (our releaseToAmbiguousOwner()));

@@ -3213,15 +3213,15 @@ static void print_means (Table me) {
 		return;
 	}
 	MelderInfo_writeLine (
-		Melder_padOrTruncate (15, my columnHeaders[1].label), U"\t",
-		Melder_padOrTruncate (15, my columnHeaders[2].label), U"\t",
-		Melder_padOrTruncate (15, my columnHeaders[3].label));
+		Melder_padOrTruncate (15, my columnHeaders[1]. label.get()), U"\t",
+		Melder_padOrTruncate (15, my columnHeaders[2]. label.get()), U"\t",
+		Melder_padOrTruncate (15, my columnHeaders[3]. label.get()));
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		MelderInfo_writeLine (
-			Melder_padOrTruncate (15, row -> cells[1].string), U"\t",
-			Melder_padOrTruncate (15, Melder_double (row -> cells[2].number)), U"\t",
-			Melder_padOrTruncate (15, Melder_double (row -> cells[3].number)));
+			Melder_padOrTruncate (15, row -> cells[1]. string.get()), U"\t",
+			Melder_padOrTruncate (15, Melder_double (row -> cells[2]. number)), U"\t",
+			Melder_padOrTruncate (15, Melder_double (row -> cells[3]. number)));
 	}
 }
 
@@ -5727,7 +5727,6 @@ FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify pho
 	SET_OPTION (phoneneSetIndex, prefPhonemeSet)*/
 DO
 	MODIFY_EACH (SpeechSynthesizer)
-		Melder_free (my d_phonemeSet);
 		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phoneneSetIndex]);
 	MODIFY_EACH_END
 }
@@ -5765,19 +5764,19 @@ DO
 
 DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_languageName;
+		const char32 *result = my d_languageName.get();
 	STRING_ONE_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_voiceName;
+		const char32 *result = my d_voiceName.get();
 	STRING_ONE_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getPhonemeSetName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_phonemeSet;
+		const char32 *result = my d_phonemeSet.get();
 	STRING_ONE_END
 }
 

@@ -221,7 +221,6 @@ autoHMMState HMMState_create (const char32 *label) {
 }
 
 void HMMState_setLabel (HMMState me, char32 *label) {
-	Melder_free (my label);
 	my label = Melder_dup (label);
 }
 
@@ -399,12 +398,12 @@ void structHMM :: v_info () {
 	MelderInfo_writeLine (U"Number of states: ", numberOfStates);
 	for (integer i = 1; i <= numberOfStates; i ++) {
 		HMMState hmms = our states->at [i];
-		MelderInfo_writeLine (U"  ", hmms -> label);
+		MelderInfo_writeLine (U"  ", hmms -> label.get());
 	}
 	MelderInfo_writeLine (U"Number of symbols: ", numberOfObservationSymbols);
 	for (integer i = 1; i <= numberOfObservationSymbols; i ++) {
 		HMMObservation hmms = our observationSymbols->at [i];
-		MelderInfo_writeLine (U"  ", hmms -> label);
+		MelderInfo_writeLine (U"  ", hmms -> label.get());
 	}
 }
 
@@ -619,8 +618,8 @@ autoTableOfReal HMM_extractTransitionProbabilities (HMM me) {
 		autoTableOfReal thee = TableOfReal_create (my numberOfStates + 1, my numberOfStates + 1);
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			HMMState hmms = my states->at [is];
-			TableOfReal_setRowLabel (thee.get(), is + 1, hmms -> label);
-			TableOfReal_setColumnLabel (thee.get(), is, hmms -> label);
+			TableOfReal_setRowLabel (thee.get(), is + 1, hmms -> label.get());
+			TableOfReal_setColumnLabel (thee.get(), is, hmms -> label.get());
 			for (integer js = 1; js <= my numberOfStates; js ++) {
 				thy data [is + 1] [js] = my transitionProbs [is] [js];
 			}
@@ -642,11 +641,11 @@ autoTableOfReal HMM_extractEmissionProbabilities (HMM me) {
 		autoTableOfReal thee = TableOfReal_create (my numberOfStates, my numberOfObservationSymbols);
 		for (integer js = 1; js <= my numberOfObservationSymbols; js ++) {
 			HMMObservation hmms = my observationSymbols->at [js];
-			TableOfReal_setColumnLabel (thee.get(), js, hmms -> label);
+			TableOfReal_setColumnLabel (thee.get(), js, hmms -> label.get());
 		}
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			HMMState hmms = my states->at [is];
-			TableOfReal_setRowLabel (thee.get(), is, hmms -> label);
+			TableOfReal_setRowLabel (thee.get(), is, hmms -> label.get());
 			for (integer js = 1; js <= my numberOfObservationSymbols; js ++) {
 				thy data [is] [js] = my emissionProbs [is] [js];
 			}
@@ -721,9 +720,9 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	double max_width = 0.0;
 	for (integer is = 1; is <= my numberOfStates; is ++) {
 		HMMState hmms = my states->at [is];
-		double w = ( hmms -> label == nullptr ? 0.0 : Graphics_textWidth (g, hmms -> label) );
+		double w = ( hmms -> label ? Graphics_textWidth (g, hmms -> label.get()) : 0.0 );
 		if (w > max_width) {
-			widest_label = hmms -> label;
+			widest_label = hmms -> label.get();
 			max_width = w;
 		}
 	}
@@ -738,7 +737,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	for (integer is = 1; is <= my numberOfStates; is ++) {
 		HMMState hmms = my states->at [is];
 		Graphics_circle (g, xs [is], ys [is], rstate);
-		Graphics_text (g, xs [is], ys [is], hmms -> label);
+		Graphics_text (g, xs [is], ys [is], hmms -> label.get());
 	}
 
 	// draw connections from is to js
@@ -800,7 +799,7 @@ autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startS
 				}
 			}
 
-			Table_setStringValue (thee.get(), i, 1, s -> label);
+			Table_setStringValue (thee.get(), i, 1, s -> label.get());
 
 			// get next state
 
@@ -968,7 +967,7 @@ void HMM_HMMStateSequence_drawTrellis (HMM me, HMMStateSequence thee, Graphics g
 		Graphics_drawInnerBox (g);
 		for (integer js = 1; js <= my numberOfStates; js ++) {
 			HMMState hmms = my states->at [js];
-			Graphics_markLeft (g, js, false, false, false, hmms -> label);
+			Graphics_markLeft (g, js, false, false, false, hmms -> label.get());
 		}
 		Graphics_marksBottomEvery (g, 1.0, 1.0, true, true, false);
 		Graphics_textBottom (g, true, U"Time index");
@@ -1345,7 +1344,7 @@ autoHMMStateSequence HMM_HMMObservationSequence_to_HMMStateSequence (HMM me, HMM
 		// trace the path and get states
 		for (integer it = 1; it <= numberOfTimes; it ++) {
 			HMMState hmms = my states->at [v -> path [it]];
-			his strings [it] = Melder_dup (hmms -> label);
+			his strings [it] = Melder_dup (hmms -> label.get());
 			his numberOfStrings ++;
 		}
 		return him;
@@ -1544,7 +1543,7 @@ autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservat
 		classes -> strings = NUMvector<char32 *> (1, my numberOfObservationSymbols);
 		for (integer is = 1; is <= my numberOfObservationSymbols; is ++) {
 			HMMObservation hmmo = my observationSymbols->at [is];
-			classes -> strings [is] = Melder_dup (hmmo -> label);
+			classes -> strings [is] = Melder_dup (hmmo -> label.get());
 			classes -> numberOfStrings ++;
 		}
 		autoStrings obs = HMMObservationSequence_to_Strings (thee);
@@ -1561,7 +1560,7 @@ autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence 
 		classes -> strings = NUMvector<char32 *> (1, my numberOfObservationSymbols);
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			HMMState hmms = my states->at [is];
-			classes -> strings [is] = Melder_dup (hmms -> label);
+			classes -> strings [is] = Melder_dup (hmms -> label.get());
 			classes -> numberOfStrings ++;
 		}
 		autoStrings sts = HMMStateSequence_to_Strings (thee);
@@ -1599,8 +1598,8 @@ autoTableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int pr
 		autoTableOfReal thee = TableOfReal_create (numberOfTypes + 1, numberOfTypes + 1);
 		for (integer i = 1; i <= numberOfTypes; i ++) {
 			SimpleString s = (SimpleString) my classes->at [i];
-			TableOfReal_setRowLabel (thee.get(), i, s -> string);
-			TableOfReal_setColumnLabel (thee.get(), i, s -> string);
+			TableOfReal_setRowLabel (thee.get(), i, s -> string.get());
+			TableOfReal_setColumnLabel (thee.get(), i, s -> string.get());
 		}
 		for (integer i = 2; i <= my numberOfItems; i ++) {
 			if (my classIndex [i - 1] > 0 && my classIndex [i] > 0) { // a zero is a restart!

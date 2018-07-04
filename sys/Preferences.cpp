@@ -33,7 +33,6 @@ Thing_define (Preference, SimpleString) {
 Thing_implement (Preference, SimpleString, 0);
 
 void structPreference :: v_destroy () noexcept {
-	Melder_free (string);
 	Preference_Parent :: v_destroy ();
 }
 
@@ -158,7 +157,7 @@ void Preferences_write (MelderFile file) {
 	static MelderString buffer { };
 	for (integer ipref = 1; ipref <= thePreferences.size; ipref ++) {
 		Preference pref = thePreferences.at [ipref];
-		MelderString_append (& buffer, pref -> string, U": ");
+		MelderString_append (& buffer, pref -> string.get(), U": ");
 		switch (pref -> type) {
 			case bytewa:     MelderString_append (& buffer, (int) (* (signed char *)    pref -> value)); break;
 			case int16wa:    MelderString_append (& buffer,       (* (int16 *)          pref -> value)); break;

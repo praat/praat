@@ -148,7 +148,7 @@ autoTable DTW_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision
 				}
 				Table_setNumericValue (him.get(), i, 1, textinterval -> xmin);
 				Table_setNumericValue (him.get(), i, 2, textinterval -> xmax);
-				Table_setStringValue  (him.get(), i, 3, textinterval -> text);
+				Table_setStringValue  (him.get(), i, 3, textinterval -> text.get());
 				Table_setNumericValue (him.get(), i, 4, sumOfDistances / numberOfFrames);
 			}
 		} else if (fabs (my xmin - thy xmin) <= precision && fabs (my xmax - thy xmax) <= precision) {  // map from X to Y
@@ -166,7 +166,7 @@ autoTable DTW_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision
 				}
 				Table_setNumericValue (him.get(), i, 1, textinterval -> xmin);
 				Table_setNumericValue (him.get(), i, 2, textinterval -> xmax);
-				Table_setStringValue  (him.get(), i, 3, textinterval -> text);
+				Table_setStringValue  (him.get(), i, 3, textinterval -> text.get());
 				Table_setNumericValue (him.get(), i, 4, sumOfDistances / numberOfFrames);
 			}
 		} else {

@@ -37,7 +37,7 @@
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)
 
 #define oo_STRINGx(storage,x)  \
-	if (our x && ! Melder_isEncodable (our x, encoding)) return false;
+	if (our x && ! Melder_isEncodable (our x.get(), encoding)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \

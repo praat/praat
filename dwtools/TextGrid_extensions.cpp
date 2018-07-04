@@ -193,7 +193,7 @@ static void IntervalTier_add (IntervalTier me, double xmin, double xmax, const c
 	my intervals. addItem_move (newti.move());
 	// extra interval when xmax's are not the same
 	if (xmax < xmaxi) {
-		autoTextInterval newti2 = TextInterval_create (xmax, xmaxi, interval -> text);
+		autoTextInterval newti2 = TextInterval_create (xmax, xmaxi, interval -> text.get());
 		my intervals. addItem_move (newti2.move());
 	}
 }
@@ -257,7 +257,7 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 				interval = timit -> intervals.at [i];
 
 				TextInterval_setText (ipa -> intervals.at [i],
-					Melder_peek8to32 (timitLabelToIpaLabel (Melder_peek32to8 (interval -> text))));
+					Melder_peek8to32 (timitLabelToIpaLabel (Melder_peek32to8 (interval -> text.get()))));
 			}
 			my tiers -> addItem_move (ipa.move()); // Then: add to collection
 			Thing_setName (timit, U"phn");  // rename wrd
@@ -544,9 +544,9 @@ void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTi
     try {
 		for (integer iinterval = my intervals.size; iinterval > 1; iinterval --) {
 			TextInterval thisInterval = my intervals.at [iinterval];
-			if (Melder_equ (thisInterval -> text, label)) {
+			if (Melder_equ (thisInterval -> text.get(), label)) {
 				TextInterval previousInterval = my intervals.at [iinterval - 1];
-				if (Melder_equ (previousInterval -> text, label)) {
+				if (Melder_equ (previousInterval -> text.get(), label)) {
 					Melder_free (previousInterval -> text);
 					IntervalTier_removeLeftBoundary (me, iinterval);
 				}
@@ -561,7 +561,7 @@ void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *l
 	integer iinterval = 1;
 	while (iinterval <= my intervals.size) {
 		TextInterval interval = my intervals.at [iinterval];
-		if ((! label || (interval -> text && str32equ (interval -> text, label))) &&
+		if ((! label || (interval -> text && str32equ (interval -> text.get(), label))) &&
 			interval -> xmax - interval -> xmin < minimumDuration)
 		{
 			IntervalTier_cutInterval (me, iinterval, 0);
@@ -576,8 +576,8 @@ void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label
 	while (iinterval < my intervals.size) {
 		TextInterval thisInterval = my intervals.at [iinterval];
 		TextInterval nextInterval = my intervals.at [iinterval + 1];
-		if ( (! label || (thisInterval -> text && str32equ (thisInterval -> text, label))) &&
-			Melder_equ (thisInterval -> text, nextInterval -> text))
+		if ( (! label || (thisInterval -> text && str32equ (thisInterval -> text.get(), label))) &&
+			Melder_equ (thisInterval -> text.get(), nextInterval -> text.get()))
 		{
 			IntervalTier_cutInterval (me, iinterval, 1);
 		} else {
@@ -606,14 +606,14 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const
 
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
-			labels[i - from + 1] = interval -> text;   // Shallow copy.
+			labels [i - from + 1] = interval -> text.get();   // Shallow copy.
 		}
 		autostring32vector newlabels (strs_replace (labels.peek(), 1, nlabels, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nlabels);
 
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
 			Melder_free (interval -> text);
-			interval -> text = newlabels [i - from + 1];   // Transfer of ownership.
+			interval -> text = newlabels [i - from + 1];   // Transfer of ownership. DANGEROUS
 			newlabels [i - from + 1] = nullptr;
 		}
 	} catch (MelderError) {
@@ -640,14 +640,14 @@ void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 
 
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
-			marks [i - from + 1] = point -> mark;   // reference copy
+			marks [i - from + 1] = point -> mark.get();   // reference copy
 		}
 		autostring32vector newMarks (strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nmarks);
 
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
 			Melder_free (point -> mark);   // this discards the original mark, and dangles its reference copy in `marks`, which will not be used
-			point -> mark = newMarks [i - from + 1];   // move the new mark; this consists of a copy from A to B...
+			point -> mark = newMarks [i - from + 1];   // move the new mark; this consists of a copy from A to B... DANGEROUS
 			newMarks [i - from + 1] = nullptr;   // ...followed by zeroing A
 		}
 	} catch (MelderError) {

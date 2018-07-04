@@ -245,7 +245,7 @@ autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 			char32 *stringsj = my strings [j];
 			for (integer i = 1; i <= numberOfClasses; i ++) {
 				SimpleString ss = (SimpleString) his classes->at [i];   // FIXME cast
-				if (Melder_equ (stringsj, ss -> string)) {
+				if (Melder_equ (stringsj, ss -> string.get())) {
 					index = i;
 					break;
 				}
@@ -286,7 +286,7 @@ autoStrings StringsIndex_to_Strings (StringsIndex me) {
 		autoStrings thee = Strings_createFixedLength (my numberOfItems);
 		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			SimpleString s = (SimpleString) my classes->at [my classIndex [i]];   // FIXME cast, FIXME classIndex
-			thy strings [i] = Melder_dup (s -> string);
+			thy strings [i] = Melder_dup (s -> string.get());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -302,7 +302,7 @@ autoStringsIndex Table_to_StringsIndex_column (Table me, integer column) {
 		Table_numericize_Assert (me, column);
 		autoNUMvector<char32 *> groupLabels (1, numberOfRows);
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
-			groupLabels [irow] = my rows.at [irow] -> cells [column] .string;
+			groupLabels [irow] = my rows.at [irow] -> cells [column]. string.get();
 		}
 		autoStrings thee = strings_to_Strings (groupLabels.peek(), 1, numberOfRows);
 		autoStringsIndex him = Strings_to_StringsIndex (thee.get());

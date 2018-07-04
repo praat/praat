@@ -344,7 +344,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 		for (integer ievent = 1; ievent <= my points.size; ievent ++) {
 			ERPPoint oldEvent = my points.at [ievent];
 			TableRow row = table -> rows.at [ievent];
-			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string.get(), which, criterion, true)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
 				thy points. addItem_move (newEvent.move());
 			}

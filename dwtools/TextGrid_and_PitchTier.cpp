@@ -272,7 +272,7 @@ autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier th
 		autoPitchTier him = Data_copy (thee);
 		for (integer i = 1; i <= my intervals.size; i ++) {
 			TextInterval segment = my intervals.at [i];
-			if (Melder_stringMatchesCriterion (segment -> text, which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (segment -> text.get(), which, criterion, true)) {
 				double xmin = segment -> xmin, xmax = segment -> xmax;
 				autoPitchTier modified = PitchTier_createAsModifiedPart (thee, xmin, xmax, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status);
 				PitchTiers_replacePoints (him.get(), modified.get());

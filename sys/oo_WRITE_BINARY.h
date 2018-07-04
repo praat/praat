@@ -75,7 +75,7 @@
 //	{
 
 #define oo_STRINGx(storage,x)  \
-	binput##storage (our x, f);
+	binput##storage (our x.get(), f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \

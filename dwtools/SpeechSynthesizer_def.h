@@ -82,7 +82,7 @@ oo_DEFINE_CLASS (SpeechSynthesizer, Daata)
 	oo_ENDFROM
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
-			d_phonemeSet = Melder_dup (d_languageName);
+			d_phonemeSet = Melder_dup (d_languageName.get());
 			d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
 			oo_INTEGER (d_wordsPerMinute)
 		oo_VERSION_ELSE

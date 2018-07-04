@@ -169,7 +169,7 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
 		SimpleString category = thy at [i];
-		Graphics_text (graphics, my x [i], my y [i], category -> string);
+		Graphics_text (graphics, my x [i], my y [i], category -> string.get());
 	}
 	Graphics_unsetInner (graphics);
 	if (garnish) {

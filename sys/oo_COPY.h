@@ -65,7 +65,7 @@
 //	}
 
 #define oo_STRINGx(storage,x)  \
-	if (our x) thy x = Melder_dup (our x);
+	if (our x) thy x = Melder_dup (our x.get());
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \
