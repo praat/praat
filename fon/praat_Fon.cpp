@@ -2660,7 +2660,7 @@ FORM (STRING_Strings_getString, U"Get string", nullptr) {
 	OK
 DO
 	STRING_ONE (Strings)
-		const char32 *result = position > my numberOfStrings ? U"" : my strings [position];   // TODO
+		const char32 *result = position > my numberOfStrings ? U"" : my strings [position].get();   // TODO
 	STRING_ONE_END
 }
 

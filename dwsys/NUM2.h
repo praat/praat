@@ -48,8 +48,6 @@ char32 * NUMstring_timeNoDot (double time);
 
 int NUMstrings_equal (const char32 **s1, const char32 **s2, integer lo, integer hi);
 
-void NUMstrings_copyElements (char32 **from, char32**to, integer lo, integer hi);
-
 void NUMstrings_free (char32 **s, integer lo, integer hi);
 
 int NUMstrings_setSequentialNumbering (char32 **s, integer lo, integer hi, const char32 *precursor, integer number, integer increment, int asArray);
@@ -59,8 +57,6 @@ int NUMstrings_setSequentialNumbering (char32 **s, integer lo, integer hi, const
 	...
 	s[hi]   = precursor<number+hi-lo>
 */
-
-char32 **NUMstrings_copy (char32 **from, integer lo, integer hi);
 
 regexp *NUMregexp_compile (const char32 *regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
@@ -73,7 +69,7 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp);
 	no match is found.
 */
 
-char32 **strs_replace (char32 **from, integer lo, integer hi, const char32 *search,
+autostring32vector strs_replace (char32 **from, integer lo, integer hi, const char32 *search,
 	const char32 *replace, int maximumNumberOfReplaces, integer *nmatches,
 	integer *nstringmatches, bool use_regexp);
 /*

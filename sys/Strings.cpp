@@ -64,7 +64,7 @@ Thing_implement (Strings, Daata, 0);
 static integer Strings_totalLength (Strings me) {
 	integer totalLength = 0;
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		totalLength += str32len (my strings [i]);
+		totalLength += str32len (my strings [i].get());
 	}
 	return totalLength;
 }
@@ -72,7 +72,7 @@ static integer Strings_totalLength (Strings me) {
 static integer Strings_maximumLength (Strings me) {
 	integer maximumLength = 0;
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		integer length = str32len (my strings [i]);
+		integer length = str32len (my strings [i].get());
 		if (length > maximumLength) {
 			maximumLength = length;
 		}
@@ -89,7 +89,7 @@ void structStrings :: v_info () {
 
 const char32 * structStrings :: v_getVectorStr (integer icol) {
 	if (icol < 1 || icol > our numberOfStrings) return U"";
-	char32 *stringValue = strings [icol];
+	char32 *stringValue = strings [icol].get();
 	return stringValue ? stringValue : U"";
 }
 
@@ -257,7 +257,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 		 * Create.
 		 */
 		autoStrings me = Thing_new (Strings);
-		if (n > 0) my strings = NUMvector <char32 *> (1, n);
+		if (n > 0) my strings = autostring32vector (1, n);
 		my numberOfStrings = n;
 
 		/*
@@ -276,7 +276,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 void Strings_writeToRawTextFile (Strings me, MelderFile file) {
 	autoMelderString buffer;
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		MelderString_append (& buffer, my strings [i], U"\n");
+		MelderString_append (& buffer, my strings [i].get(), U"\n");
 	}
 	MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
 }
@@ -284,19 +284,17 @@ void Strings_writeToRawTextFile (Strings me, MelderFile file) {
 void Strings_randomize (Strings me) {
 	for (integer i = 1; i < my numberOfStrings; i ++) {
 		integer other = NUMrandomInteger (i, my numberOfStrings);
-		char32 *dummy = my strings [other];
-		my strings [other] = my strings [i];
-		my strings [i] = dummy;
+		std::swap (my strings [other], my strings [i]);
 	}
 }
 
 void Strings_genericize (Strings me) {
 	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) * 3 + 1);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		const char32 *p = (const char32 *) my strings [i];
+		const char32 *p = (const char32 *) my strings [i].get();
 		while (*p) {
 			if (*p > 126) {   // backslashes are not converted, i.e. genericize^2 == genericize
-				Longchar_genericize32 (my strings [i], buffer.get());
+				Longchar_genericize32 (my strings [i].get(), buffer.get());
 				autostring32 newString = Melder_dup (buffer.get());
 				/*
 					Replace string only if copying was OK.
@@ -313,7 +311,7 @@ void Strings_genericize (Strings me) {
 void Strings_nativize (Strings me) {
 	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) + 1);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		Longchar_nativize32 (my strings [i], buffer.get(), false);
+		Longchar_nativize32 (my strings [i].get(), buffer.get(), false);
 		autostring32 newString = Melder_dup (buffer.get());
 		/*
 			Replace string only if copying was OK.
@@ -324,17 +322,17 @@ void Strings_nativize (Strings me) {
 }
 
 void Strings_sort (Strings me) {
-	NUMsort_str (my numberOfStrings, my strings);
+	NUMsort_str (my numberOfStrings, my strings.peek2());
 }
 
 void Strings_remove (Strings me, integer position) {
 	if (position < 1 || position > my numberOfStrings) {
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
 	}
-	Melder_free (my strings [position]);
 	for (integer i = position; i < my numberOfStrings; i ++) {
-		my strings [i] = my strings [i + 1];
+		my strings [i] = std::move (my strings [i + 1]);
 	}
+	my strings [my numberOfStrings]. reset();
 	my numberOfStrings --;
 }
 
@@ -342,7 +340,7 @@ void Strings_replace (Strings me, integer position, const char32 *text) {
 	if (position < 1 || position > my numberOfStrings) {
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
 	}
-	if (Melder_equ (my strings [position], text))
+	if (Melder_equ (my strings [position].get(), text))
 		return;   // nothing to change
 	/*
 	 * Create without change.
@@ -351,8 +349,7 @@ void Strings_replace (Strings me, integer position, const char32 *text) {
 	/*
 	 * Change without error.
 	 */
-	Melder_free (my strings [position]);
-	my strings [position] = newString.transfer();
+	my strings [position] = std::move (newString);
 }
 
 void Strings_insert (Strings me, integer position, const char32 *text) {
@@ -365,20 +362,19 @@ void Strings_insert (Strings me, integer position, const char32 *text) {
 	 * Create without change.
 	 */
 	autostring32 newString = Melder_dup (text);
-	autoNUMvector <char32 *> newStrings (1, my numberOfStrings + 1);
+	autostring32vector newStrings (1, my numberOfStrings + 1);
 	/*
 	 * Change without error.
 	 */
 	for (integer i = 1; i < position; i ++) {
-		newStrings [i] = my strings [i];
+		newStrings [i] = std::move (my strings [i]);
 	}
-	newStrings [position] = newString.transfer();
+	newStrings [position] = std::move (newString);
 	my numberOfStrings ++;
 	for (integer i = position + 1; i <= my numberOfStrings; i ++) {
-		newStrings [i] = my strings [i - 1];
+		newStrings [i] = std::move (my strings [i - 1]);
 	}
-	NUMvector_free (my strings, 1);
-	my strings = newStrings.transfer();
+	my strings = std::move (newStrings);
 }
 
 /* End of file Strings.cpp */

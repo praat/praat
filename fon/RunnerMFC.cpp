@@ -72,20 +72,21 @@ static void drawNow (RunnerMFC me) {
 	if (experiment -> trial == 0) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics.get(), 24);
-		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> startText);
+		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> startText.get());
 	} else if (experiment -> pausing) {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics.get(), 24);
-		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> pauseText);
+		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> pauseText.get());
 		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
 			drawControlButton (me,
 				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
-				experiment -> oops_label);
+				experiment -> oops_label.get()
+			);
 		}
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
-		const char32 *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText;
+		const char32 *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText.get();
 		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
-		char32 *visibleText_p = visibleText_dup.get();
+		const char32 *visibleText_p = visibleText_dup.get();
 		Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (my graphics.get(), 10);
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
@@ -99,15 +100,15 @@ static void drawNow (RunnerMFC me) {
 		if (visibleText_p [0] != U'\0') {
 			char32 *visibleText_q = str32chr (visibleText_p, U'|');
 			if (visibleText_q) *visibleText_q = '\0';
-			Graphics_text (my graphics.get(), 0.5, 1.0, visibleText_p [0] != U'\0' ? visibleText_p : experiment -> runText);
+			Graphics_text (my graphics.get(), 0.5, 1.0, visibleText_p [0] != U'\0' ? visibleText_p : experiment -> runText.get());
 			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
 		} else {
-			Graphics_text (my graphics.get(), 0.5, 1.0, experiment -> runText);
+			Graphics_text (my graphics.get(), 0.5, 1.0, experiment -> runText.get());
 		}
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 			ResponseMFC response = & experiment -> response [iresponse];
-			char32 *textToDraw = response -> label;   // can be overridden
+			const char32 *textToDraw = response -> label.get();   // can be overridden
 			if (visibleText_p [0] != U'\0') {
 				char32 *visibleText_q = str32chr (visibleText_p, U'|');
 				if (visibleText_q) *visibleText_q = U'\0';
@@ -123,7 +124,8 @@ static void drawNow (RunnerMFC me) {
 					response -> name [0] == U'\0' ? Graphics_SILVER :
 					experiment -> responses [experiment -> trial] == iresponse ? Graphics_RED :
 					experiment -> ok_right > experiment -> ok_left || experiment -> responses [experiment -> trial] == 0 ?
-					Graphics_YELLOW : Graphics_SILVER);
+					Graphics_YELLOW : Graphics_SILVER
+				);
 				Graphics_setLineWidth (my graphics.get(), 3.0);
 				Graphics_fillRectangle (my graphics.get(), response -> left, response -> right, response -> bottom, response -> top);
 				Graphics_setColour (my graphics.get(), Graphics_MAROON);
@@ -143,13 +145,18 @@ static void drawNow (RunnerMFC me) {
 			Graphics_setColour (my graphics.get(), Graphics_MAROON);
 			Graphics_rectangle (my graphics.get(), goodness -> left, goodness -> right, goodness -> bottom, goodness -> top);
 			Graphics_setFontSize (my graphics.get(), goodness -> fontSize ? goodness -> fontSize : 24);
-			Graphics_text (my graphics.get(), 0.5 * (goodness -> left + goodness -> right), 0.5 * (goodness -> bottom + goodness -> top), goodness -> label);
+			Graphics_text (my graphics.get(),
+				0.5 * (goodness -> left + goodness -> right),
+				0.5 * (goodness -> bottom + goodness -> top),
+				goodness -> label.get()
+			);
 			Graphics_setFontSize (my graphics.get(), 24);
 		}
 		if (experiment -> replay_right > experiment -> replay_left && my numberOfReplays < experiment -> maximumNumberOfReplays) {
 			drawControlButton (me,
 				experiment -> replay_left, experiment -> replay_right, experiment -> replay_bottom, experiment -> replay_top,
-				experiment -> replay_label);
+				experiment -> replay_label.get()
+			);
 		}
 		if (experiment -> ok_right > experiment -> ok_left &&
 		    experiment -> responses [experiment -> trial] != 0 &&
@@ -157,21 +164,24 @@ static void drawNow (RunnerMFC me) {
 		{
 			drawControlButton (me,
 				experiment -> ok_left, experiment -> ok_right, experiment -> ok_bottom, experiment -> ok_top,
-				experiment -> ok_label);
+				experiment -> ok_label.get()
+			);
 		}
 		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
 			drawControlButton (me,
 				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
-				experiment -> oops_label);
+				experiment -> oops_label.get()
+			);
 		}
 	} else {
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		Graphics_setFontSize (my graphics.get(), 24);
-		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> endText);
+		Graphics_text (my graphics.get(), 0.5, 0.5, experiment -> endText.get());
 		if (experiment -> oops_right > experiment -> oops_left && experiment -> trial > 1) {
 			drawControlButton (me,
 				experiment -> oops_left, experiment -> oops_right, experiment -> oops_bottom, experiment -> oops_top,
-				experiment -> oops_label);
+				experiment -> oops_label.get()
+			);
 		}
 	}
 }

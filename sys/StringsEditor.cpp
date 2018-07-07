@@ -39,7 +39,7 @@ static void updateList (StringsEditor me) {
 	Strings strings = (Strings) my data;
 	GuiList_deleteAllItems (my list);
 	for (integer i = 1; i <= strings -> numberOfStrings; i ++)
-		GuiList_insertItem (my list, strings -> strings [i], 0);
+		GuiList_insertItem (my list, strings -> strings [i].get(), 0);
 }
 
 static void gui_button_cb_insert (StringsEditor me, GuiButtonEvent /* event */) {

@@ -99,7 +99,7 @@
 	{ \
 		integer _min = (min), _max = (max); \
 		if (_max >= _min) { \
-			our x = NUMvector <char32 *> (_min, _max); \
+			our x = autostring32vector (_min, _max); \
 			for (integer _i = _min; _i <= _max; _i ++) { \
 				our x [_i] = binget##storage (_filePointer_); \
 			} \

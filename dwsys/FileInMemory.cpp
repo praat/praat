@@ -43,8 +43,8 @@ Thing_implement (FileInMemory, Daata, 0);
 
 void structFileInMemory :: v_info () {
 	our structDaata :: v_info ();
-	MelderInfo_writeLine (U"File name: ", our d_path);
-	MelderInfo_writeLine (U"Id: ", our d_id);
+	MelderInfo_writeLine (U"File name: ", our d_path.get());
+	MelderInfo_writeLine (U"Id: ", our d_id.get());
 	MelderInfo_writeLine (U"Number of bytes: ", our d_numberOfBytes);
 }
 
@@ -94,7 +94,6 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 }
 
 void FileInMemory_setId (FileInMemory me, const char32 *newId) {
-	Melder_free (my d_id);
 	my d_id = Melder_dup (newId);
 }
 
@@ -107,11 +106,12 @@ void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numbe
 	for (integer i = 0; i < my d_numberOfBytes; i++) {
 		unsigned char number = my d_data [i];
 		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? U"\t\t\t" : U""), number, U",",
-			((i % numberOfBytesPerLine == (numberOfBytesPerLine - 1)) ? U"\n" : U" "));
+			i % numberOfBytesPerLine == numberOfBytesPerLine - 1 ? U"\n" : U" ");
 	}
 	MelderInfo_writeLine ((my d_numberOfBytes - 1) % numberOfBytesPerLine == (numberOfBytesPerLine - 1) ? U"\t\t\t0};" : U"0};");
 	MelderInfo_write (U"\t\tautoFileInMemory ", name, U" = FileInMemory_createWithData (");
-	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (&", name, U"_data), true, \n\t\t\tU\"", my d_path, U"\", \n\t\t\tU\"", my d_id, U"\");");
+	MelderInfo_writeLine (my d_numberOfBytes, U", reinterpret_cast<const char *> (&",
+		name, U"_data), true, \n\t\t\tU\"", my d_path.get(), U"\", \n\t\t\tU\"", my d_id.get(), U"\");");
 }
 
 /* End of file FileInMemory.cpp */

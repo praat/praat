@@ -578,32 +578,32 @@ FORM (WINDOW_SpellingChecker_viewAndEdit, U"Edit spelling checker", U"SpellingCh
 	SENTENCE (allowAllWordsEndingIn, U"Allow all words ending in", U"")
 OK
 	FIND_ONE (SpellingChecker)
-		SET_STRING (forbiddenStrings, my forbiddenStrings)
+		SET_STRING (forbiddenStrings, my forbiddenStrings.get())
 		SET_BOOLEAN (checkMatchingParentheses, my checkMatchingParentheses)
-		SET_STRING (separatingCharacters, my separatingCharacters)
+		SET_STRING (separatingCharacters, my separatingCharacters.get())
 		SET_BOOLEAN (allowAllParenthesized, my allowAllParenthesized)
 		SET_BOOLEAN (allowAllNames, my allowAllNames)
-		SET_STRING (namePrefixes, my namePrefixes)
+		SET_STRING (namePrefixes, my namePrefixes.get())
 		SET_BOOLEAN (allowAllAbbreviations, my allowAllAbbreviations)
 		SET_BOOLEAN (allowCapsSentenceInitially, my allowCapsSentenceInitially)
 		SET_BOOLEAN (allowCapsAfterColon, my allowCapsAfterColon)
-		SET_STRING (allowAllWordsContaining, my allowAllWordsContaining)
-		SET_STRING (allowAllWordsStartingWith, my allowAllWordsStartingWith)
-		SET_STRING (allowAllWordsEndingIn, my allowAllWordsEndingIn)
+		SET_STRING (allowAllWordsContaining, my allowAllWordsContaining.get())
+		SET_STRING (allowAllWordsStartingWith, my allowAllWordsStartingWith.get())
+		SET_STRING (allowAllWordsEndingIn, my allowAllWordsEndingIn.get())
 DO
 	MODIFY_EACH (SpellingChecker)
-		Melder_free (my forbiddenStrings); my forbiddenStrings = Melder_dup_f (forbiddenStrings);
+		my forbiddenStrings = Melder_dup_f (forbiddenStrings);
 		my checkMatchingParentheses = checkMatchingParentheses;
-		Melder_free (my separatingCharacters); my separatingCharacters = Melder_dup_f (separatingCharacters);
+		my separatingCharacters = Melder_dup_f (separatingCharacters);
 		my allowAllParenthesized = allowAllParenthesized;
 		my allowAllNames = allowAllNames;
-		Melder_free (my namePrefixes); my namePrefixes = Melder_dup_f (namePrefixes);
+		my namePrefixes = Melder_dup_f (namePrefixes);
 		my allowAllAbbreviations = allowAllAbbreviations;
 		my allowCapsSentenceInitially = allowCapsSentenceInitially;
 		my allowCapsAfterColon = allowCapsAfterColon;
-		Melder_free (my allowAllWordsContaining); my allowAllWordsContaining = Melder_dup_f (allowAllWordsContaining);
-		Melder_free (my allowAllWordsStartingWith); my allowAllWordsStartingWith = Melder_dup_f (allowAllWordsStartingWith);
-		Melder_free (my allowAllWordsEndingIn); my allowAllWordsEndingIn = Melder_dup_f (allowAllWordsEndingIn);
+		my allowAllWordsContaining = Melder_dup_f (allowAllWordsContaining);
+		my allowAllWordsStartingWith = Melder_dup_f (allowAllWordsStartingWith);
+		my allowAllWordsEndingIn = Melder_dup_f (allowAllWordsEndingIn);
 	MODIFY_EACH_END
 }
 
@@ -940,7 +940,7 @@ FORM (STRING_TextGrid_getLabelOfInterval, U"TextGrid: Get label of interval", nu
 DO
 	STRING_ONE (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
-		const char32 *result = interval -> text;
+		const char32 *result = interval -> text.get();
 	STRING_ONE_END
 }
 
@@ -1051,7 +1051,7 @@ FORM (STRING_TextGrid_getLabelOfPoint, U"TextGrid: Get label of point", nullptr)
 DO
 	STRING_ONE (TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
-		const char32 *result = point -> mark;
+		const char32 *result = point -> mark.get();
 	STRING_ONE_END
 }
 
@@ -1498,7 +1498,7 @@ DO
 	STRING_ONE (TextTier)
 		if (pointNumber > my points.size) Melder_throw (U"No such point.");
 		TextPoint point = my points.at [pointNumber];
-		const char32 *result = point -> mark;
+		const char32 *result = point -> mark.get();
 	STRING_ONE_END
 }
 

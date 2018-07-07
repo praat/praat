@@ -126,8 +126,8 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 	autoFileInMemorySet fileList = FileInMemorySet_listFiles (my files.get(), kMelder_string :: CONTAINS, criterion);
 	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
 		FileInMemory fim = static_cast<FileInMemory> (fileList -> at [ifile]);
-		FILE *f_voice = FileInMemoryManager_fopen (me, Melder_peek32to8 (fim -> d_path), "r");
-		char *fname = Melder_peek32to8 (fim -> d_path);
+		FILE *f_voice = FileInMemoryManager_fopen (me, Melder_peek32to8 (fim -> d_path.get()), "r");
+		char *fname = Melder_peek32to8 (fim -> d_path.get());
 		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
 		FileInMemoryManager_fclose (me, f_voice);
 		if (voice_data) {
@@ -184,8 +184,8 @@ int get_set_int32_le (char *ch) {
 static autoFileInMemory phondata_to_bigendian (FileInMemory me, FileInMemory manifest) {
 	try {
 		autoFileInMemory thee = Data_copy (me);
-		FILE *phondataf = fopen (Melder_peek32to8 (my d_path), "r");
-		FILE *manifestf = fopen (Melder_peek32to8 (manifest -> d_path), "r");
+		FILE *phondataf = fopen (Melder_peek32to8 (my d_path.get()), "r");
+		FILE *manifestf = fopen (Melder_peek32to8 (manifest -> d_path.get()), "r");
 		char line [1024];
 		// copy 4 bytes: version number
 		// copy 4 bytes: sample rate

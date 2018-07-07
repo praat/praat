@@ -43,7 +43,7 @@ typedef MelderCallback <void, structEditor, EditorCommand, UiForm, integer /*nar
 Thing_define (EditorCommand, Thing) {
 	Editor d_editor;
 	EditorMenu menu;
-	const char32 *itemTitle;
+	autostring32 itemTitle;
 	GuiMenuItem itemWidget;
 	EditorCommandCallback commandCallback;
 	const char32 *script;

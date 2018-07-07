@@ -1,0 +1,1628 @@
+File type = "ooTextFile"
+Object class = "PairDistribution"
+
+pairs: size = 117 
+pairs [1]:
+    string1 = "|cv.cv|" 
+    string2 = "[cv1.cv] \-> /(cV1.cV)/" 
+    weight = 100 
+pairs [2]:
+    string1 = "|cv.cv:|" 
+    string2 = "[cv.cv:1] \-> /(cV.cV1V)/" 
+    weight = 100 
+pairs [3]:
+    string1 = "|cv.cvc|" 
+    string2 = "[cv1.cvc] \-> /(cV1.cVc)/" 
+    weight = 100 
+pairs [4]:
+    string1 = "|cv:.cv|" 
+    string2 = "[cv:1.cv] \-> /(cV1V.cV)/" 
+    weight = 100 
+pairs [5]:
+    string1 = "|cv:.cv:|" 
+    string2 = "[cv:1.cv:] \-> /(cV1V.cVV)/" 
+    weight = 100 
+pairs [6]:
+    string1 = "|cv:.cvc|" 
+    string2 = "[cv:1.cvc] \-> /(cV1V.cVc)/" 
+    weight = 100 
+pairs [7]:
+    string1 = "|cvc.cv|" 
+    string2 = "[cvc1.cv] \-> /(cV1C.cV)/" 
+    weight = 100 
+pairs [8]:
+    string1 = "|cvc.cv:|" 
+    string2 = "[cvc.cv:1] \-> /(cVc.cV1V)/" 
+    weight = 100 
+pairs [9]:
+    string1 = "|cvc.cvc|" 
+    string2 = "[cvc1.cvc] \-> /(cV1C.cVc)/" 
+    weight = 100 
+pairs [10]:
+    string1 = "|cv.cv.cv|" 
+    string2 = "[cv1.cv.cv] \-> /(cV1.cV).cV/" 
+    weight = 100 
+pairs [11]:
+    string1 = "|cv.cv.cv:|" 
+    string2 = "[cv1.cv.cv:2] \-> /(cV1.cV).(cV2V)/" 
+    weight = 100 
+pairs [12]:
+    string1 = "|cv.cv.cvc|" 
+    string2 = "[cv1.cv.cvc] \-> /(cV1.cV).cVc/" 
+    weight = 100 
+pairs [13]:
+    string1 = "|cv.cv:.cv|" 
+    string2 = "[cv.cv:1.cv] \-> /(cV.cV1V).cV/" 
+    weight = 100 
+pairs [14]:
+    string1 = "|cv.cv:.cv:|" 
+    string2 = "[cv1.cv:.cv:2] \-> /(cV1.cVV).(cV2V)/" 
+    weight = 100 
+pairs [15]:
+    string1 = "|cv.cv:.cvc|" 
+    string2 = "[cv.cv:1.cvc] \-> /(cV.cV1V).cVc/" 
+    weight = 100 
+pairs [16]:
+    string1 = "|cv.cvc.cv|" 
+    string2 = "[cv1.cvc.cv] \-> /(cV1.cVc).cV/" 
+    weight = 100 
+pairs [17]:
+    string1 = "|cv.cvc.cv:|" 
+    string2 = "[cv1.cvc.cv:2] \-> /(cV1.cVc).(cV2V)/" 
+    weight = 100 
+pairs [18]:
+    string1 = "|cv.cvc.cvc|" 
+    string2 = "[cv1.cvc.cvc] \-> /(cV1.cVc).cVc/" 
+    weight = 100 
+pairs [19]:
+    string1 = "|cv:.cv.cv|" 
+    string2 = "[cv:1.cv.cv] \-> /(cV1V.cV).cV/" 
+    weight = 100 
+pairs [20]:
+    string1 = "|cv:.cv.cv:|" 
+    string2 = "[cv:1.cv.cv:2] \-> /(cV1V.cV).(cV2V)/" 
+    weight = 100 
+pairs [21]:
+    string1 = "|cv:.cv.cvc|" 
+    string2 = "[cv:1.cv.cvc] \-> /(cV1V.cV).cVc/" 
+    weight = 100 
+pairs [22]:
+    string1 = "|cv:.cv:.cv|" 
+    string2 = "[cv:1.cv:.cv] \-> /(cV1V.cVV).cV/" 
+    weight = 100 
+pairs [23]:
+    string1 = "|cv:.cv:.cv:|" 
+    string2 = "[cv:1.cv:.cv:2] \-> /(cV1V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [24]:
+    string1 = "|cv:.cv:.cvc|" 
+    string2 = "[cv:1.cv:.cvc] \-> /(cV1V.cVV).cVc/" 
+    weight = 100 
+pairs [25]:
+    string1 = "|cv:.cvc.cv|" 
+    string2 = "[cv:1.cvc.cv] \-> /(cV1V.cVc).cV/" 
+    weight = 100 
+pairs [26]:
+    string1 = "|cv:.cvc.cv:|" 
+    string2 = "[cv:1.cvc.cv:2] \-> /(cV1V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [27]:
+    string1 = "|cv:.cvc.cvc|" 
+    string2 = "[cv:1.cvc.cvc] \-> /(cV1V.cVc).cVc/" 
+    weight = 100 
+pairs [28]:
+    string1 = "|cvc.cv.cv|" 
+    string2 = "[cvc1.cv.cv] \-> /(cV1C.cV).cV/" 
+    weight = 100 
+pairs [29]:
+    string1 = "|cvc.cv.cv:|" 
+    string2 = "[cvc1.cv.cv:2] \-> /(cV1C.cV).(cV2V)/" 
+    weight = 100 
+pairs [30]:
+    string1 = "|cvc.cv.cvc|" 
+    string2 = "[cvc1.cv.cvc] \-> /(cV1C.cV).cVc/" 
+    weight = 100 
+pairs [31]:
+    string1 = "|cvc.cv:.cv|" 
+    string2 = "[cvc.cv:1.cv] \-> /(cVc.cV1V).cV/" 
+    weight = 100 
+pairs [32]:
+    string1 = "|cvc.cv:.cv:|" 
+    string2 = "[cvc1.cv:.cv:2] \-> /(cV1C.cVV).(cV2V)/" 
+    weight = 100 
+pairs [33]:
+    string1 = "|cvc.cv:.cvc|" 
+    string2 = "[cvc.cv:1.cvc] \-> /(cVc.cV1V).cVc/" 
+    weight = 100 
+pairs [34]:
+    string1 = "|cvc.cvc.cv|" 
+    string2 = "[cvc1.cvc.cv] \-> /(cV1C.cVc).cV/" 
+    weight = 100 
+pairs [35]:
+    string1 = "|cvc.cvc.cv:|" 
+    string2 = "[cvc1.cvc.cv:2] \-> /(cV1C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [36]:
+    string1 = "|cvc.cvc.cvc|" 
+    string2 = "[cvc1.cvc.cvc] \-> /(cV1C.cVc).cVc/" 
+    weight = 100 
+pairs [37]:
+    string1 = "|cv.cv.cv.cv|" 
+    string2 = "[cv1.cv.cv2.cv] \-> /(cV1.cV).(cV2.cV)/" 
+    weight = 100 
+pairs [38]:
+    string1 = "|cv.cv.cv.cv:|" 
+    string2 = "[cv1.cv.cv.cv:2] \-> /(cV1.cV).(cV.cV2V)/" 
+    weight = 100 
+pairs [39]:
+    string1 = "|cv.cv.cv.cvc|" 
+    string2 = "[cv1.cv.cv2.cvc] \-> /(cV1.cV).(cV2.cVc)/" 
+    weight = 100 
+pairs [40]:
+    string1 = "|cv.cv.cv:.cv|" 
+    string2 = "[cv1.cv.cv:2.cv] \-> /(cV1.cV).(cV2V.cV)/" 
+    weight = 100 
+pairs [41]:
+    string1 = "|cv.cv.cv:.cv:|" 
+    string2 = "[cv1.cv.cv:2.cv:] \-> /(cV1.cV).(cV2V.cVV)/" 
+    weight = 100 
+pairs [42]:
+    string1 = "|cv.cv.cv:.cvc|" 
+    string2 = "[cv1.cv.cv:2.cvc] \-> /(cV1.cV).(cV2V.cVc)/" 
+    weight = 100 
+pairs [43]:
+    string1 = "|cv.cv.cvc.cv|" 
+    string2 = "[cv1.cv.cvc2.cv] \-> /(cV1.cV).(cV2C.cV)/" 
+    weight = 100 
+pairs [44]:
+    string1 = "|cv.cv.cvc.cv:|" 
+    string2 = "[cv1.cv.cvc.cv:2] \-> /(cV1.cV).(cVc.cV2V)/" 
+    weight = 100 
+pairs [45]:
+    string1 = "|cv.cv.cvc.cvc|" 
+    string2 = "[cv1.cv.cvc2.cvc] \-> /(cV1.cV).(cV2C.cVc)/" 
+    weight = 100 
+pairs [46]:
+    string1 = "|cv.cv:.cv.cv|" 
+    string2 = "[cv1.cv:.cv2.cv] \-> /(cV1.cVV).(cV2.cV)/" 
+    weight = 100 
+pairs [47]:
+    string1 = "|cv.cv:.cv.cv:|" 
+    string2 = "[cv.cv:1.cv.cv:2] \-> /(cV.cV1V).(cV.cV2V)/" 
+    weight = 100 
+pairs [48]:
+    string1 = "|cv.cv:.cv.cvc|" 
+    string2 = "[cv1.cv:.cv2.cvc] \-> /(cV1.cVV).(cV2.cVc)/" 
+    weight = 100 
+pairs [49]:
+    string1 = "|cv.cv:.cv:.cv|" 
+    string2 = "[cv1.cv:.cv:2.cv] \-> /(cV1.cVV).(cV2V.cV)/" 
+    weight = 100 
+pairs [50]:
+    string1 = "|cv.cv:.cv:.cv:|" 
+    string2 = "[cv1.cv:.cv:2.cv:] \-> /(cV1.cVV).(cV2V.cVV)/" 
+    weight = 100 
+pairs [51]:
+    string1 = "|cv.cv:.cv:.cvc|" 
+    string2 = "[cv1.cv:.cv:2.cvc] \-> /(cV1.cVV).(cV2V.cVc)/" 
+    weight = 100 
+pairs [52]:
+    string1 = "|cv.cv:.cvc.cv|" 
+    string2 = "[cv1.cv:.cvc2.cv] \-> /(cV1.cVV).(cV2C.cV)/" 
+    weight = 100 
+pairs [53]:
+    string1 = "|cv.cv:.cvc.cv:|" 
+    string2 = "[cv.cv:1.cvc.cv:2] \-> /(cV.cV1V).(cVc.cV2V)/" 
+    weight = 100 
+pairs [54]:
+    string1 = "|cv.cv:.cvc.cvc|" 
+    string2 = "[cv1.cv:.cvc2.cvc] \-> /(cV1.cVV).(cV2C.cVc)/" 
+    weight = 100 
+pairs [55]:
+    string1 = "|cv.cvc.cv.cv|" 
+    string2 = "[cv1.cvc.cv2.cv] \-> /(cV1.cVc).(cV2.cV)/" 
+    weight = 100 
+pairs [56]:
+    string1 = "|cv.cvc.cv.cv:|" 
+    string2 = "[cv1.cvc.cv.cv:2] \-> /(cV1.cVc).(cV.cV2V)/" 
+    weight = 100 
+pairs [57]:
+    string1 = "|cv.cvc.cv.cvc|" 
+    string2 = "[cv1.cvc.cv2.cvc] \-> /(cV1.cVc).(cV2.cVc)/" 
+    weight = 100 
+pairs [58]:
+    string1 = "|cv.cvc.cv:.cv|" 
+    string2 = "[cv1.cvc.cv:2.cv] \-> /(cV1.cVc).(cV2V.cV)/" 
+    weight = 100 
+pairs [59]:
+    string1 = "|cv.cvc.cv:.cv:|" 
+    string2 = "[cv1.cvc.cv:2.cv:] \-> /(cV1.cVc).(cV2V.cVV)/" 
+    weight = 100 
+pairs [60]:
+    string1 = "|cv.cvc.cv:.cvc|" 
+    string2 = "[cv1.cvc.cv:2.cvc] \-> /(cV1.cVc).(cV2V.cVc)/" 
+    weight = 100 
+pairs [61]:
+    string1 = "|cv.cvc.cvc.cv|" 
+    string2 = "[cv1.cvc.cvc2.cv] \-> /(cV1.cVc).(cV2C.cV)/" 
+    weight = 100 
+pairs [62]:
+    string1 = "|cv.cvc.cvc.cv:|" 
+    string2 = "[cv1.cvc.cvc.cv:2] \-> /(cV1.cVc).(cVc.cV2V)/" 
+    weight = 100 
+pairs [63]:
+    string1 = "|cv.cvc.cvc.cvc|" 
+    string2 = "[cv1.cvc.cvc2.cvc] \-> /(cV1.cVc).(cV2C.cVc)/" 
+    weight = 100 
+pairs [64]:
+    string1 = "|cv:.cv.cv.cv|" 
+    string2 = "[cv:1.cv.cv2.cv] \-> /(cV1V.cV).(cV2.cV)/" 
+    weight = 100 
+pairs [65]:
+    string1 = "|cv:.cv.cv.cv:|" 
+    string2 = "[cv:1.cv.cv.cv:2] \-> /(cV1V.cV).(cV.cV2V)/" 
+    weight = 100 
+pairs [66]:
+    string1 = "|cv:.cv.cv.cvc|" 
+    string2 = "[cv:1.cv.cv2.cvc] \-> /(cV1V.cV).(cV2.cVc)/" 
+    weight = 100 
+pairs [67]:
+    string1 = "|cv:.cv.cv:.cv|" 
+    string2 = "[cv:1.cv.cv:2.cv] \-> /(cV1V.cV).(cV2V.cV)/" 
+    weight = 100 
+pairs [68]:
+    string1 = "|cv:.cv.cv:.cv:|" 
+    string2 = "[cv:1.cv.cv:2.cv:] \-> /(cV1V.cV).(cV2V.cVV)/" 
+    weight = 100 
+pairs [69]:
+    string1 = "|cv:.cv.cv:.cvc|" 
+    string2 = "[cv:1.cv.cv:2.cvc] \-> /(cV1V.cV).(cV2V.cVc)/" 
+    weight = 100 
+pairs [70]:
+    string1 = "|cv:.cv.cvc.cv|" 
+    string2 = "[cv:1.cv.cvc2.cv] \-> /(cV1V.cV).(cV2C.cV)/" 
+    weight = 100 
+pairs [71]:
+    string1 = "|cv:.cv.cvc.cv:|" 
+    string2 = "[cv:1.cv.cvc.cv:2] \-> /(cV1V.cV).(cVc.cV2V)/" 
+    weight = 100 
+pairs [72]:
+    string1 = "|cv:.cv.cvc.cvc|" 
+    string2 = "[cv:1.cv.cvc2.cvc] \-> /(cV1V.cV).(cV2C.cVc)/" 
+    weight = 100 
+pairs [73]:
+    string1 = "|cv:.cv:.cv.cv|" 
+    string2 = "[cv:1.cv:.cv2.cv] \-> /(cV1V.cVV).(cV2.cV)/" 
+    weight = 100 
+pairs [74]:
+    string1 = "|cv:.cv:.cv.cv:|" 
+    string2 = "[cv:1.cv:.cv.cv:2] \-> /(cV1V.cVV).(cV.cV2V)/" 
+    weight = 100 
+pairs [75]:
+    string1 = "|cv:.cv:.cv.cvc|" 
+    string2 = "[cv:1.cv:.cv2.cvc] \-> /(cV1V.cVV).(cV2.cVc)/" 
+    weight = 100 
+pairs [76]:
+    string1 = "|cv:.cv:.cv:.cv|" 
+    string2 = "[cv:1.cv:.cv:2.cv] \-> /(cV1V.cVV).(cV2V.cV)/" 
+    weight = 100 
+pairs [77]:
+    string1 = "|cv:.cv:.cv:.cv:|" 
+    string2 = "[cv:1.cv:.cv:2.cv:] \-> /(cV1V.cVV).(cV2V.cVV)/" 
+    weight = 100 
+pairs [78]:
+    string1 = "|cv:.cv:.cv:.cvc|" 
+    string2 = "[cv:1.cv:.cv:2.cvc] \-> /(cV1V.cVV).(cV2V.cVc)/" 
+    weight = 100 
+pairs [79]:
+    string1 = "|cv:.cv:.cvc.cv|" 
+    string2 = "[cv:1.cv:.cvc2.cv] \-> /(cV1V.cVV).(cV2C.cV)/" 
+    weight = 100 
+pairs [80]:
+    string1 = "|cv:.cv:.cvc.cv:|" 
+    string2 = "[cv:1.cv:.cvc.cv:2] \-> /(cV1V.cVV).(cVc.cV2V)/" 
+    weight = 100 
+pairs [81]:
+    string1 = "|cv:.cv:.cvc.cvc|" 
+    string2 = "[cv:1.cv:.cvc2.cvc] \-> /(cV1V.cVV).(cV2C.cVc)/" 
+    weight = 100 
+pairs [82]:
+    string1 = "|cv:.cvc.cv.cv|" 
+    string2 = "[cv:1.cvc.cv2.cv] \-> /(cV1V.cVc).(cV2.cV)/" 
+    weight = 100 
+pairs [83]:
+    string1 = "|cv:.cvc.cv.cv:|" 
+    string2 = "[cv:1.cvc.cv.cv:2] \-> /(cV1V.cVc).(cV.cV2V)/" 
+    weight = 100 
+pairs [84]:
+    string1 = "|cv:.cvc.cv.cvc|" 
+    string2 = "[cv:1.cvc.cv2.cvc] \-> /(cV1V.cVc).(cV2.cVc)/" 
+    weight = 100 
+pairs [85]:
+    string1 = "|cv:.cvc.cv:.cv|" 
+    string2 = "[cv:1.cvc.cv:2.cv] \-> /(cV1V.cVc).(cV2V.cV)/" 
+    weight = 100 
+pairs [86]:
+    string1 = "|cv:.cvc.cv:.cv:|" 
+    string2 = "[cv:1.cvc.cv:2.cv:] \-> /(cV1V.cVc).(cV2V.cVV)/" 
+    weight = 100 
+pairs [87]:
+    string1 = "|cv:.cvc.cv:.cvc|" 
+    string2 = "[cv:1.cvc.cv:2.cvc] \-> /(cV1V.cVc).(cV2V.cVc)/" 
+    weight = 100 
+pairs [88]:
+    string1 = "|cv:.cvc.cvc.cv|" 
+    string2 = "[cv:1.cvc.cvc2.cv] \-> /(cV1V.cVc).(cV2C.cV)/" 
+    weight = 100 
+pairs [89]:
+    string1 = "|cv:.cvc.cvc.cv:|" 
+    string2 = "[cv:1.cvc.cvc.cv:2] \-> /(cV1V.cVc).(cVc.cV2V)/" 
+    weight = 100 
+pairs [90]:
+    string1 = "|cv:.cvc.cvc.cvc|" 
+    string2 = "[cv:1.cvc.cvc2.cvc] \-> /(cV1V.cVc).(cV2C.cVc)/" 
+    weight = 100 
+pairs [91]:
+    string1 = "|cvc.cv.cv.cv|" 
+    string2 = "[cvc1.cv.cv2.cv] \-> /(cV1C.cV).(cV2.cV)/" 
+    weight = 100 
+pairs [92]:
+    string1 = "|cvc.cv.cv.cv:|" 
+    string2 = "[cvc1.cv.cv.cv:2] \-> /(cV1C.cV).(cV.cV2V)/" 
+    weight = 100 
+pairs [93]:
+    string1 = "|cvc.cv.cv.cvc|" 
+    string2 = "[cvc1.cv.cv2.cvc] \-> /(cV1C.cV).(cV2.cVc)/" 
+    weight = 100 
+pairs [94]:
+    string1 = "|cvc.cv.cv:.cv|" 
+    string2 = "[cvc1.cv.cv:2.cv] \-> /(cV1C.cV).(cV2V.cV)/" 
+    weight = 100 
+pairs [95]:
+    string1 = "|cvc.cv.cv:.cv:|" 
+    string2 = "[cvc1.cv.cv:2.cv:] \-> /(cV1C.cV).(cV2V.cVV)/" 
+    weight = 100 
+pairs [96]:
+    string1 = "|cvc.cv.cv:.cvc|" 
+    string2 = "[cvc1.cv.cv:2.cvc] \-> /(cV1C.cV).(cV2V.cVc)/" 
+    weight = 100 
+pairs [97]:
+    string1 = "|cvc.cv.cvc.cv|" 
+    string2 = "[cvc1.cv.cvc2.cv] \-> /(cV1C.cV).(cV2C.cV)/" 
+    weight = 100 
+pairs [98]:
+    string1 = "|cvc.cv.cvc.cv:|" 
+    string2 = "[cvc1.cv.cvc.cv:2] \-> /(cV1C.cV).(cVc.cV2V)/" 
+    weight = 100 
+pairs [99]:
+    string1 = "|cvc.cv.cvc.cvc|" 
+    string2 = "[cvc1.cv.cvc2.cvc] \-> /(cV1C.cV).(cV2C.cVc)/" 
+    weight = 100 
+pairs [100]:
+    string1 = "|cvc.cv:.cv.cv|" 
+    string2 = "[cvc1.cv:.cv2.cv] \-> /(cV1C.cVV).(cV2.cV)/" 
+    weight = 100 
+pairs [101]:
+    string1 = "|cvc.cv:.cv.cv:|" 
+    string2 = "[cvc.cv:1.cv.cv:2] \-> /(cVc.cV1V).(cV.cV2V)/" 
+    weight = 100 
+pairs [102]:
+    string1 = "|cvc.cv:.cv.cvc|" 
+    string2 = "[cvc1.cv:.cv2.cvc] \-> /(cV1C.cVV).(cV2.cVc)/" 
+    weight = 100 
+pairs [103]:
+    string1 = "|cvc.cv:.cv:.cv|" 
+    string2 = "[cvc1.cv:.cv:2.cv] \-> /(cV1C.cVV).(cV2V.cV)/" 
+    weight = 100 
+pairs [104]:
+    string1 = "|cvc.cv:.cv:.cv:|" 
+    string2 = "[cvc1.cv:.cv:2.cv:] \-> /(cV1C.cVV).(cV2V.cVV)/" 
+    weight = 100 
+pairs [105]:
+    string1 = "|cvc.cv:.cv:.cvc|" 
+    string2 = "[cvc1.cv:.cv:2.cvc] \-> /(cV1C.cVV).(cV2V.cVc)/" 
+    weight = 100 
+pairs [106]:
+    string1 = "|cvc.cv:.cvc.cv|" 
+    string2 = "[cvc1.cv:.cvc2.cv] \-> /(cV1C.cVV).(cV2C.cV)/" 
+    weight = 100 
+pairs [107]:
+    string1 = "|cvc.cv:.cvc.cv:|" 
+    string2 = "[cvc.cv:1.cvc.cv:2] \-> /(cVc.cV1V).(cVc.cV2V)/" 
+    weight = 100 
+pairs [108]:
+    string1 = "|cvc.cv:.cvc.cvc|" 
+    string2 = "[cvc1.cv:.cvc2.cvc] \-> /(cV1C.cVV).(cV2C.cVc)/" 
+    weight = 100 
+pairs [109]:
+    string1 = "|cvc.cvc.cv.cv|" 
+    string2 = "[cvc1.cvc.cv2.cv] \-> /(cV1C.cVc).(cV2.cV)/" 
+    weight = 100 
+pairs [110]:
+    string1 = "|cvc.cvc.cv.cv:|" 
+    string2 = "[cvc1.cvc.cv.cv:2] \-> /(cV1C.cVc).(cV.cV2V)/" 
+    weight = 100 
+pairs [111]:
+    string1 = "|cvc.cvc.cv.cvc|" 
+    string2 = "[cvc1.cvc.cv2.cvc] \-> /(cV1C.cVc).(cV2.cVc)/" 
+    weight = 100 
+pairs [112]:
+    string1 = "|cvc.cvc.cv:.cv|" 
+    string2 = "[cvc1.cvc.cv:2.cv] \-> /(cV1C.cVc).(cV2V.cV)/" 
+    weight = 100 
+pairs [113]:
+    string1 = "|cvc.cvc.cv:.cv:|" 
+    string2 = "[cvc1.cvc.cv:2.cv:] \-> /(cV1C.cVc).(cV2V.cVV)/" 
+    weight = 100 
+pairs [114]:
+    string1 = "|cvc.cvc.cv:.cvc|" 
+    string2 = "[cvc1.cvc.cv:2.cvc] \-> /(cV1C.cVc).(cV2V.cVc)/" 
+    weight = 100 
+pairs [115]:
+    string1 = "|cvc.cvc.cvc.cv|" 
+    string2 = "[cvc1.cvc.cvc2.cv] \-> /(cV1C.cVc).(cV2C.cV)/" 
+    weight = 100 
+pairs [116]:
+    string1 = "|cvc.cvc.cvc.cv:|" 
+    string2 = "[cvc1.cvc.cvc.cv:2] \-> /(cV1C.cVc).(cVc.cV2V)/" 
+    weight = 100 
+pairs [117]:
+    string1 = "|cvc.cvc.cvc.cvc|" 
+    string2 = "[cvc1.cvc.cvc2.cvc] \-> /(cV1C.cVc).(cV2C.cVc)/" 
+    weight = 100 
+pairs [118]:
+    string1 = "|cv.cv.cv.cv.cv|" 
+    string2 = "[cv1.cv.cv.cv2.cv] \-> /(cV1.cV).cV.(cV2.cV)/" 
+    weight = 51 
+pairs [119]:
+    string1 = "|cv.cv.cv.cv.cv|" 
+    string2 = "[cv1.cv.cv2.cv.cv] \-> /(cV1.cV).(cV2.cV).cV/" 
+    weight = 49 
+pairs [120]:
+    string1 = "|cv.cv.cv.cv.cv:|" 
+    string2 = "[cv1.cv.cv2.cv.cv:2] \-> /(cV1.cV).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [121]:
+    string1 = "|cv.cv.cv.cv.cvc|" 
+    string2 = "[cv1.cv.cv.cv2.cvc] \-> /(cV1.cV).cV.(cV2.cVc)/" 
+    weight = 52 
+pairs [122]:
+    string1 = "|cv.cv.cv.cv.cvc|" 
+    string2 = "[cv1.cv.cv2.cv.cvc] \-> /(cV1.cV).(cV2.cV).cVc/" 
+    weight = 48 
+pairs [123]:
+    string1 = "|cv.cv.cv.cv:.cv|" 
+    string2 = "[cv1.cv.cv.cv:2.cv] \-> /(cV1.cV).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [124]:
+    string1 = "|cv.cv.cv.cv:.cv:|" 
+    string2 = "[cv1.cv.cv.cv:2.cv:] \-> /(cV1.cV).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [125]:
+    string1 = "|cv.cv.cv.cv:.cvc|" 
+    string2 = "[cv1.cv.cv.cv:2.cvc] \-> /(cV1.cV).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [126]:
+    string1 = "|cv.cv.cv.cvc.cv|" 
+    string2 = "[cv1.cv.cv.cvc2.cv] \-> /(cV1.cV).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [127]:
+    string1 = "|cv.cv.cv.cvc.cv:|" 
+    string2 = "[cv1.cv.cv2.cvc.cv:2] \-> /(cV1.cV).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [128]:
+    string1 = "|cv.cv.cv.cvc.cvc|" 
+    string2 = "[cv1.cv.cv.cvc2.cvc] \-> /(cV1.cV).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [129]:
+    string1 = "|cv.cv.cv:.cv.cv|" 
+    string2 = "[cv1.cv.cv:2.cv.cv] \-> /(cV1.cV).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [130]:
+    string1 = "|cv.cv.cv:.cv.cv:|" 
+    string2 = "[cv1.cv.cv:2.cv.cv:2] \-> /(cV1.cV).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [131]:
+    string1 = "|cv.cv.cv:.cv.cvc|" 
+    string2 = "[cv1.cv.cv:2.cv.cvc] \-> /(cV1.cV).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [132]:
+    string1 = "|cv.cv.cv:.cv:.cv|" 
+    string2 = "[cv1.cv.cv:.cv:2.cv] \-> /(cV1.cV).cVV.(cV2V.cV)/" 
+    weight = 54 
+pairs [133]:
+    string1 = "|cv.cv.cv:.cv:.cv|" 
+    string2 = "[cv1.cv.cv:2.cv:.cv] \-> /(cV1.cV).(cV2V.cVV).cV/" 
+    weight = 46 
+pairs [134]:
+    string1 = "|cv.cv.cv:.cv:.cv:|" 
+    string2 = "[cv1.cv.cv:2.cv:.cv:2] \-> /(cV1.cV).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [135]:
+    string1 = "|cv.cv.cv:.cv:.cvc|" 
+    string2 = "[cv1.cv.cv:.cv:2.cvc] \-> /(cV1.cV).cVV.(cV2V.cVc)/" 
+    weight = 54 
+pairs [136]:
+    string1 = "|cv.cv.cv:.cv:.cvc|" 
+    string2 = "[cv1.cv.cv:2.cv:.cvc] \-> /(cV1.cV).(cV2V.cVV).cVc/" 
+    weight = 46 
+pairs [137]:
+    string1 = "|cv.cv.cv:.cvc.cv|" 
+    string2 = "[cv1.cv.cv:2.cvc.cv] \-> /(cV1.cV).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [138]:
+    string1 = "|cv.cv.cv:.cvc.cv:|" 
+    string2 = "[cv1.cv.cv:2.cvc.cv:2] \-> /(cV1.cV).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [139]:
+    string1 = "|cv.cv.cv:.cvc.cvc|" 
+    string2 = "[cv1.cv.cv:2.cvc.cvc] \-> /(cV1.cV).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [140]:
+    string1 = "|cv.cv.cvc.cv.cv|" 
+    string2 = "[cv1.cv.cvc2.cv.cv] \-> /(cV1.cV).(cV2C.cV).cV/" 
+    weight = 100 
+pairs [141]:
+    string1 = "|cv.cv.cvc.cv.cv:|" 
+    string2 = "[cv1.cv.cvc2.cv.cv:2] \-> /(cV1.cV).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [142]:
+    string1 = "|cv.cv.cvc.cv.cvc|" 
+    string2 = "[cv1.cv.cvc2.cv.cvc] \-> /(cV1.cV).(cV2C.cV).cVc/" 
+    weight = 100 
+pairs [143]:
+    string1 = "|cv.cv.cvc.cv:.cv|" 
+    string2 = "[cv1.cv.cvc.cv:2.cv] \-> /(cV1.cV).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [144]:
+    string1 = "|cv.cv.cvc.cv:.cv:|" 
+    string2 = "[cv1.cv.cvc.cv:2.cv:] \-> /(cV1.cV).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [145]:
+    string1 = "|cv.cv.cvc.cv:.cvc|" 
+    string2 = "[cv1.cv.cvc.cv:2.cvc] \-> /(cV1.cV).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [146]:
+    string1 = "|cv.cv.cvc.cvc.cv|" 
+    string2 = "[cv1.cv.cvc.cvc2.cv] \-> /(cV1.cV).cVc.(cV2C.cV)/" 
+    weight = 48 
+pairs [147]:
+    string1 = "|cv.cv.cvc.cvc.cv|" 
+    string2 = "[cv1.cv.cvc2.cvc.cv] \-> /(cV1.cV).(cV2C.cVc).cV/" 
+    weight = 52 
+pairs [148]:
+    string1 = "|cv.cv.cvc.cvc.cv:|" 
+    string2 = "[cv1.cv.cvc2.cvc.cv:2] \-> /(cV1.cV).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [149]:
+    string1 = "|cv.cv.cvc.cvc.cvc|" 
+    string2 = "[cv1.cv.cvc.cvc2.cvc] \-> /(cV1.cV).cVc.(cV2C.cVc)/" 
+    weight = 53 
+pairs [150]:
+    string1 = "|cv.cv.cvc.cvc.cvc|" 
+    string2 = "[cv1.cv.cvc2.cvc.cvc] \-> /(cV1.cV).(cV2C.cVc).cVc/" 
+    weight = 47 
+pairs [151]:
+    string1 = "|cv.cv:.cv.cv.cv|" 
+    string2 = "[cv.cv:1.cv.cv2.cv] \-> /(cV.cV1V).cV.(cV2.cV)/" 
+    weight = 100 
+pairs [152]:
+    string1 = "|cv.cv:.cv.cv.cv:|" 
+    string2 = "[cv1.cv:.cv2.cv.cv:2] \-> /(cV1.cVV).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [153]:
+    string1 = "|cv.cv:.cv.cv.cvc|" 
+    string2 = "[cv.cv:1.cv.cv2.cvc] \-> /(cV.cV1V).cV.(cV2.cVc)/" 
+    weight = 100 
+pairs [154]:
+    string1 = "|cv.cv:.cv.cv:.cv|" 
+    string2 = "[cv.cv:1.cv.cv:2.cv] \-> /(cV.cV1V).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [155]:
+    string1 = "|cv.cv:.cv.cv:.cv:|" 
+    string2 = "[cv.cv:1.cv.cv:2.cv:] \-> /(cV.cV1V).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [156]:
+    string1 = "|cv.cv:.cv.cv:.cvc|" 
+    string2 = "[cv.cv:1.cv.cv:2.cvc] \-> /(cV.cV1V).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [157]:
+    string1 = "|cv.cv:.cv.cvc.cv|" 
+    string2 = "[cv.cv:1.cv.cvc2.cv] \-> /(cV.cV1V).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [158]:
+    string1 = "|cv.cv:.cv.cvc.cv:|" 
+    string2 = "[cv1.cv:.cv2.cvc.cv:2] \-> /(cV1.cVV).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [159]:
+    string1 = "|cv.cv:.cv.cvc.cvc|" 
+    string2 = "[cv.cv:1.cv.cvc2.cvc] \-> /(cV.cV1V).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [160]:
+    string1 = "|cv.cv:.cv:.cv.cv|" 
+    string2 = "[cv1.cv:.cv:2.cv.cv] \-> /(cV1.cVV).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [161]:
+    string1 = "|cv.cv:.cv:.cv.cv:|" 
+    string2 = "[cv1.cv:.cv:2.cv.cv:2] \-> /(cV1.cVV).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [162]:
+    string1 = "|cv.cv:.cv:.cv.cvc|" 
+    string2 = "[cv1.cv:.cv:2.cv.cvc] \-> /(cV1.cVV).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [163]:
+    string1 = "|cv.cv:.cv:.cv:.cv|" 
+    string2 = "[cv.cv:1.cv:.cv:2.cv] \-> /(cV.cV1V).cVV.(cV2V.cV)/" 
+    weight = 100 
+pairs [164]:
+    string1 = "|cv.cv:.cv:.cv:.cv:|" 
+    string2 = "[cv1.cv:.cv:2.cv:.cv:2] \-> /(cV1.cVV).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [165]:
+    string1 = "|cv.cv:.cv:.cv:.cvc|" 
+    string2 = "[cv.cv:1.cv:.cv:2.cvc] \-> /(cV.cV1V).cVV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [166]:
+    string1 = "|cv.cv:.cv:.cvc.cv|" 
+    string2 = "[cv1.cv:.cv:2.cvc.cv] \-> /(cV1.cVV).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [167]:
+    string1 = "|cv.cv:.cv:.cvc.cv:|" 
+    string2 = "[cv1.cv:.cv:2.cvc.cv:2] \-> /(cV1.cVV).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [168]:
+    string1 = "|cv.cv:.cv:.cvc.cvc|" 
+    string2 = "[cv1.cv:.cv:2.cvc.cvc] \-> /(cV1.cVV).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [169]:
+    string1 = "|cv.cv:.cvc.cv.cv|" 
+    string2 = "[cv.cv:1.cvc.cv2.cv] \-> /(cV.cV1V).cVc.(cV2.cV)/" 
+    weight = 100 
+pairs [170]:
+    string1 = "|cv.cv:.cvc.cv.cv:|" 
+    string2 = "[cv1.cv:.cvc2.cv.cv:2] \-> /(cV1.cVV).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [171]:
+    string1 = "|cv.cv:.cvc.cv.cvc|" 
+    string2 = "[cv.cv:1.cvc.cv2.cvc] \-> /(cV.cV1V).cVc.(cV2.cVc)/" 
+    weight = 100 
+pairs [172]:
+    string1 = "|cv.cv:.cvc.cv:.cv|" 
+    string2 = "[cv.cv:1.cvc.cv:2.cv] \-> /(cV.cV1V).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [173]:
+    string1 = "|cv.cv:.cvc.cv:.cv:|" 
+    string2 = "[cv.cv:1.cvc.cv:2.cv:] \-> /(cV.cV1V).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [174]:
+    string1 = "|cv.cv:.cvc.cv:.cvc|" 
+    string2 = "[cv.cv:1.cvc.cv:2.cvc] \-> /(cV.cV1V).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [175]:
+    string1 = "|cv.cv:.cvc.cvc.cv|" 
+    string2 = "[cv.cv:1.cvc.cvc2.cv] \-> /(cV.cV1V).cVc.(cV2C.cV)/" 
+    weight = 100 
+pairs [176]:
+    string1 = "|cv.cv:.cvc.cvc.cv:|" 
+    string2 = "[cv1.cv:.cvc2.cvc.cv:2] \-> /(cV1.cVV).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [177]:
+    string1 = "|cv.cv:.cvc.cvc.cvc|" 
+    string2 = "[cv.cv:1.cvc.cvc2.cvc] \-> /(cV.cV1V).cVc.(cV2C.cVc)/" 
+    weight = 100 
+pairs [178]:
+    string1 = "|cv.cvc.cv.cv.cv|" 
+    string2 = "[cv1.cvc.cv.cv2.cv] \-> /(cV1.cVc).cV.(cV2.cV)/" 
+    weight = 42 
+pairs [179]:
+    string1 = "|cv.cvc.cv.cv.cv|" 
+    string2 = "[cv1.cvc.cv2.cv.cv] \-> /(cV1.cVc).(cV2.cV).cV/" 
+    weight = 58 
+pairs [180]:
+    string1 = "|cv.cvc.cv.cv.cv:|" 
+    string2 = "[cv1.cvc.cv2.cv.cv:2] \-> /(cV1.cVc).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [181]:
+    string1 = "|cv.cvc.cv.cv.cvc|" 
+    string2 = "[cv1.cvc.cv.cv2.cvc] \-> /(cV1.cVc).cV.(cV2.cVc)/" 
+    weight = 54 
+pairs [182]:
+    string1 = "|cv.cvc.cv.cv.cvc|" 
+    string2 = "[cv1.cvc.cv2.cv.cvc] \-> /(cV1.cVc).(cV2.cV).cVc/" 
+    weight = 46 
+pairs [183]:
+    string1 = "|cv.cvc.cv.cv:.cv|" 
+    string2 = "[cv1.cvc.cv.cv:2.cv] \-> /(cV1.cVc).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [184]:
+    string1 = "|cv.cvc.cv.cv:.cv:|" 
+    string2 = "[cv1.cvc.cv.cv:2.cv:] \-> /(cV1.cVc).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [185]:
+    string1 = "|cv.cvc.cv.cv:.cvc|" 
+    string2 = "[cv1.cvc.cv.cv:2.cvc] \-> /(cV1.cVc).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [186]:
+    string1 = "|cv.cvc.cv.cvc.cv|" 
+    string2 = "[cv1.cvc.cv.cvc2.cv] \-> /(cV1.cVc).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [187]:
+    string1 = "|cv.cvc.cv.cvc.cv:|" 
+    string2 = "[cv1.cvc.cv2.cvc.cv:2] \-> /(cV1.cVc).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [188]:
+    string1 = "|cv.cvc.cv.cvc.cvc|" 
+    string2 = "[cv1.cvc.cv.cvc2.cvc] \-> /(cV1.cVc).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [189]:
+    string1 = "|cv.cvc.cv:.cv.cv|" 
+    string2 = "[cv1.cvc.cv:2.cv.cv] \-> /(cV1.cVc).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [190]:
+    string1 = "|cv.cvc.cv:.cv.cv:|" 
+    string2 = "[cv1.cvc.cv:2.cv.cv:2] \-> /(cV1.cVc).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [191]:
+    string1 = "|cv.cvc.cv:.cv.cvc|" 
+    string2 = "[cv1.cvc.cv:2.cv.cvc] \-> /(cV1.cVc).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [192]:
+    string1 = "|cv.cvc.cv:.cv:.cv|" 
+    string2 = "[cv1.cvc.cv:.cv:2.cv] \-> /(cV1.cVc).cVV.(cV2V.cV)/" 
+    weight = 49 
+pairs [193]:
+    string1 = "|cv.cvc.cv:.cv:.cv|" 
+    string2 = "[cv1.cvc.cv:2.cv:.cv] \-> /(cV1.cVc).(cV2V.cVV).cV/" 
+    weight = 51 
+pairs [194]:
+    string1 = "|cv.cvc.cv:.cv:.cv:|" 
+    string2 = "[cv1.cvc.cv:2.cv:.cv:2] \-> /(cV1.cVc).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [195]:
+    string1 = "|cv.cvc.cv:.cv:.cvc|" 
+    string2 = "[cv1.cvc.cv:.cv:2.cvc] \-> /(cV1.cVc).cVV.(cV2V.cVc)/" 
+    weight = 55 
+pairs [196]:
+    string1 = "|cv.cvc.cv:.cv:.cvc|" 
+    string2 = "[cv1.cvc.cv:2.cv:.cvc] \-> /(cV1.cVc).(cV2V.cVV).cVc/" 
+    weight = 45 
+pairs [197]:
+    string1 = "|cv.cvc.cv:.cvc.cv|" 
+    string2 = "[cv1.cvc.cv:2.cvc.cv] \-> /(cV1.cVc).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [198]:
+    string1 = "|cv.cvc.cv:.cvc.cv:|" 
+    string2 = "[cv1.cvc.cv:2.cvc.cv:2] \-> /(cV1.cVc).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [199]:
+    string1 = "|cv.cvc.cv:.cvc.cvc|" 
+    string2 = "[cv1.cvc.cv:2.cvc.cvc] \-> /(cV1.cVc).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [200]:
+    string1 = "|cv.cvc.cvc.cv.cv|" 
+    string2 = "[cv1.cvc.cvc2.cv.cv] \-> /(cV1.cVc).(cV2C.cV).cV/" 
+    weight = 100 
+pairs [201]:
+    string1 = "|cv.cvc.cvc.cv.cv:|" 
+    string2 = "[cv1.cvc.cvc2.cv.cv:2] \-> /(cV1.cVc).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [202]:
+    string1 = "|cv.cvc.cvc.cv.cvc|" 
+    string2 = "[cv1.cvc.cvc2.cv.cvc] \-> /(cV1.cVc).(cV2C.cV).cVc/" 
+    weight = 100 
+pairs [203]:
+    string1 = "|cv.cvc.cvc.cv:.cv|" 
+    string2 = "[cv1.cvc.cvc.cv:2.cv] \-> /(cV1.cVc).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [204]:
+    string1 = "|cv.cvc.cvc.cv:.cv:|" 
+    string2 = "[cv1.cvc.cvc.cv:2.cv:] \-> /(cV1.cVc).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [205]:
+    string1 = "|cv.cvc.cvc.cv:.cvc|" 
+    string2 = "[cv1.cvc.cvc.cv:2.cvc] \-> /(cV1.cVc).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [206]:
+    string1 = "|cv.cvc.cvc.cvc.cv|" 
+    string2 = "[cv1.cvc.cvc.cvc2.cv] \-> /(cV1.cVc).cVc.(cV2C.cV)/" 
+    weight = 52 
+pairs [207]:
+    string1 = "|cv.cvc.cvc.cvc.cv|" 
+    string2 = "[cv1.cvc.cvc2.cvc.cv] \-> /(cV1.cVc).(cV2C.cVc).cV/" 
+    weight = 48 
+pairs [208]:
+    string1 = "|cv.cvc.cvc.cvc.cv:|" 
+    string2 = "[cv1.cvc.cvc2.cvc.cv:2] \-> /(cV1.cVc).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [209]:
+    string1 = "|cv.cvc.cvc.cvc.cvc|" 
+    string2 = "[cv1.cvc.cvc.cvc2.cvc] \-> /(cV1.cVc).cVc.(cV2C.cVc)/" 
+    weight = 51 
+pairs [210]:
+    string1 = "|cv.cvc.cvc.cvc.cvc|" 
+    string2 = "[cv1.cvc.cvc2.cvc.cvc] \-> /(cV1.cVc).(cV2C.cVc).cVc/" 
+    weight = 49 
+pairs [211]:
+    string1 = "|cv:.cv.cv.cv.cv|" 
+    string2 = "[cv:1.cv.cv.cv2.cv] \-> /(cV1V.cV).cV.(cV2.cV)/" 
+    weight = 45 
+pairs [212]:
+    string1 = "|cv:.cv.cv.cv.cv|" 
+    string2 = "[cv:1.cv.cv2.cv.cv] \-> /(cV1V.cV).(cV2.cV).cV/" 
+    weight = 55 
+pairs [213]:
+    string1 = "|cv:.cv.cv.cv.cv:|" 
+    string2 = "[cv:1.cv.cv2.cv.cv:2] \-> /(cV1V.cV).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [214]:
+    string1 = "|cv:.cv.cv.cv.cvc|" 
+    string2 = "[cv:1.cv.cv.cv2.cvc] \-> /(cV1V.cV).cV.(cV2.cVc)/" 
+    weight = 54 
+pairs [215]:
+    string1 = "|cv:.cv.cv.cv.cvc|" 
+    string2 = "[cv:1.cv.cv2.cv.cvc] \-> /(cV1V.cV).(cV2.cV).cVc/" 
+    weight = 46 
+pairs [216]:
+    string1 = "|cv:.cv.cv.cv:.cv|" 
+    string2 = "[cv:1.cv.cv.cv:2.cv] \-> /(cV1V.cV).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [217]:
+    string1 = "|cv:.cv.cv.cv:.cv:|" 
+    string2 = "[cv:1.cv.cv.cv:2.cv:] \-> /(cV1V.cV).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [218]:
+    string1 = "|cv:.cv.cv.cv:.cvc|" 
+    string2 = "[cv:1.cv.cv.cv:2.cvc] \-> /(cV1V.cV).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [219]:
+    string1 = "|cv:.cv.cv.cvc.cv|" 
+    string2 = "[cv:1.cv.cv.cvc2.cv] \-> /(cV1V.cV).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [220]:
+    string1 = "|cv:.cv.cv.cvc.cv:|" 
+    string2 = "[cv:1.cv.cv2.cvc.cv:2] \-> /(cV1V.cV).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [221]:
+    string1 = "|cv:.cv.cv.cvc.cvc|" 
+    string2 = "[cv:1.cv.cv.cvc2.cvc] \-> /(cV1V.cV).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [222]:
+    string1 = "|cv:.cv.cv:.cv.cv|" 
+    string2 = "[cv:1.cv.cv:2.cv.cv] \-> /(cV1V.cV).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [223]:
+    string1 = "|cv:.cv.cv:.cv.cv:|" 
+    string2 = "[cv:1.cv.cv:2.cv.cv:2] \-> /(cV1V.cV).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [224]:
+    string1 = "|cv:.cv.cv:.cv.cvc|" 
+    string2 = "[cv:1.cv.cv:2.cv.cvc] \-> /(cV1V.cV).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [225]:
+    string1 = "|cv:.cv.cv:.cv:.cv|" 
+    string2 = "[cv:1.cv.cv:.cv:2.cv] \-> /(cV1V.cV).cVV.(cV2V.cV)/" 
+    weight = 50 
+pairs [226]:
+    string1 = "|cv:.cv.cv:.cv:.cv|" 
+    string2 = "[cv:1.cv.cv:2.cv:.cv] \-> /(cV1V.cV).(cV2V.cVV).cV/" 
+    weight = 50 
+pairs [227]:
+    string1 = "|cv:.cv.cv:.cv:.cv:|" 
+    string2 = "[cv:1.cv.cv:2.cv:.cv:2] \-> /(cV1V.cV).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [228]:
+    string1 = "|cv:.cv.cv:.cv:.cvc|" 
+    string2 = "[cv:1.cv.cv:.cv:2.cvc] \-> /(cV1V.cV).cVV.(cV2V.cVc)/" 
+    weight = 65 
+pairs [229]:
+    string1 = "|cv:.cv.cv:.cv:.cvc|" 
+    string2 = "[cv:1.cv.cv:2.cv:.cvc] \-> /(cV1V.cV).(cV2V.cVV).cVc/" 
+    weight = 35 
+pairs [230]:
+    string1 = "|cv:.cv.cv:.cvc.cv|" 
+    string2 = "[cv:1.cv.cv:2.cvc.cv] \-> /(cV1V.cV).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [231]:
+    string1 = "|cv:.cv.cv:.cvc.cv:|" 
+    string2 = "[cv:1.cv.cv:2.cvc.cv:2] \-> /(cV1V.cV).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [232]:
+    string1 = "|cv:.cv.cv:.cvc.cvc|" 
+    string2 = "[cv:1.cv.cv:2.cvc.cvc] \-> /(cV1V.cV).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [233]:
+    string1 = "|cv:.cv.cvc.cv.cv|" 
+    string2 = "[cv:1.cv.cvc2.cv.cv] \-> /(cV1V.cV).(cV2C.cV).cV/" 
+    weight = 100 
+pairs [234]:
+    string1 = "|cv:.cv.cvc.cv.cv:|" 
+    string2 = "[cv:1.cv.cvc2.cv.cv:2] \-> /(cV1V.cV).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [235]:
+    string1 = "|cv:.cv.cvc.cv.cvc|" 
+    string2 = "[cv:1.cv.cvc2.cv.cvc] \-> /(cV1V.cV).(cV2C.cV).cVc/" 
+    weight = 100 
+pairs [236]:
+    string1 = "|cv:.cv.cvc.cv:.cv|" 
+    string2 = "[cv:1.cv.cvc.cv:2.cv] \-> /(cV1V.cV).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [237]:
+    string1 = "|cv:.cv.cvc.cv:.cv:|" 
+    string2 = "[cv:1.cv.cvc.cv:2.cv:] \-> /(cV1V.cV).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [238]:
+    string1 = "|cv:.cv.cvc.cv:.cvc|" 
+    string2 = "[cv:1.cv.cvc.cv:2.cvc] \-> /(cV1V.cV).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [239]:
+    string1 = "|cv:.cv.cvc.cvc.cv|" 
+    string2 = "[cv:1.cv.cvc.cvc2.cv] \-> /(cV1V.cV).cVc.(cV2C.cV)/" 
+    weight = 45 
+pairs [240]:
+    string1 = "|cv:.cv.cvc.cvc.cv|" 
+    string2 = "[cv:1.cv.cvc2.cvc.cv] \-> /(cV1V.cV).(cV2C.cVc).cV/" 
+    weight = 55 
+pairs [241]:
+    string1 = "|cv:.cv.cvc.cvc.cv:|" 
+    string2 = "[cv:1.cv.cvc2.cvc.cv:2] \-> /(cV1V.cV).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [242]:
+    string1 = "|cv:.cv.cvc.cvc.cvc|" 
+    string2 = "[cv:1.cv.cvc.cvc2.cvc] \-> /(cV1V.cV).cVc.(cV2C.cVc)/" 
+    weight = 54 
+pairs [243]:
+    string1 = "|cv:.cv.cvc.cvc.cvc|" 
+    string2 = "[cv:1.cv.cvc2.cvc.cvc] \-> /(cV1V.cV).(cV2C.cVc).cVc/" 
+    weight = 46 
+pairs [244]:
+    string1 = "|cv:.cv:.cv.cv.cv|" 
+    string2 = "[cv:1.cv:.cv.cv2.cv] \-> /(cV1V.cVV).cV.(cV2.cV)/" 
+    weight = 49 
+pairs [245]:
+    string1 = "|cv:.cv:.cv.cv.cv|" 
+    string2 = "[cv:1.cv:.cv2.cv.cv] \-> /(cV1V.cVV).(cV2.cV).cV/" 
+    weight = 51 
+pairs [246]:
+    string1 = "|cv:.cv:.cv.cv.cv:|" 
+    string2 = "[cv:1.cv:.cv2.cv.cv:2] \-> /(cV1V.cVV).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [247]:
+    string1 = "|cv:.cv:.cv.cv.cvc|" 
+    string2 = "[cv:1.cv:.cv.cv2.cvc] \-> /(cV1V.cVV).cV.(cV2.cVc)/" 
+    weight = 58 
+pairs [248]:
+    string1 = "|cv:.cv:.cv.cv.cvc|" 
+    string2 = "[cv:1.cv:.cv2.cv.cvc] \-> /(cV1V.cVV).(cV2.cV).cVc/" 
+    weight = 42 
+pairs [249]:
+    string1 = "|cv:.cv:.cv.cv:.cv|" 
+    string2 = "[cv:1.cv:.cv.cv:2.cv] \-> /(cV1V.cVV).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [250]:
+    string1 = "|cv:.cv:.cv.cv:.cv:|" 
+    string2 = "[cv:1.cv:.cv.cv:2.cv:] \-> /(cV1V.cVV).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [251]:
+    string1 = "|cv:.cv:.cv.cv:.cvc|" 
+    string2 = "[cv:1.cv:.cv.cv:2.cvc] \-> /(cV1V.cVV).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [252]:
+    string1 = "|cv:.cv:.cv.cvc.cv|" 
+    string2 = "[cv:1.cv:.cv.cvc2.cv] \-> /(cV1V.cVV).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [253]:
+    string1 = "|cv:.cv:.cv.cvc.cv:|" 
+    string2 = "[cv:1.cv:.cv2.cvc.cv:2] \-> /(cV1V.cVV).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [254]:
+    string1 = "|cv:.cv:.cv.cvc.cvc|" 
+    string2 = "[cv:1.cv:.cv.cvc2.cvc] \-> /(cV1V.cVV).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [255]:
+    string1 = "|cv:.cv:.cv:.cv.cv|" 
+    string2 = "[cv:1.cv:.cv:2.cv.cv] \-> /(cV1V.cVV).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [256]:
+    string1 = "|cv:.cv:.cv:.cv.cv:|" 
+    string2 = "[cv:1.cv:.cv:2.cv.cv:2] \-> /(cV1V.cVV).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [257]:
+    string1 = "|cv:.cv:.cv:.cv.cvc|" 
+    string2 = "[cv:1.cv:.cv:2.cv.cvc] \-> /(cV1V.cVV).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [258]:
+    string1 = "|cv:.cv:.cv:.cv:.cv|" 
+    string2 = "[cv:1.cv:.cv:.cv:2.cv] \-> /(cV1V.cVV).cVV.(cV2V.cV)/" 
+    weight = 51 
+pairs [259]:
+    string1 = "|cv:.cv:.cv:.cv:.cv|" 
+    string2 = "[cv:1.cv:.cv:2.cv:.cv] \-> /(cV1V.cVV).(cV2V.cVV).cV/" 
+    weight = 49 
+pairs [260]:
+    string1 = "|cv:.cv:.cv:.cv:.cv:|" 
+    string2 = "[cv:1.cv:.cv:2.cv:.cv:2] \-> /(cV1V.cVV).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [261]:
+    string1 = "|cv:.cv:.cv:.cv:.cvc|" 
+    string2 = "[cv:1.cv:.cv:.cv:2.cvc] \-> /(cV1V.cVV).cVV.(cV2V.cVc)/" 
+    weight = 54 
+pairs [262]:
+    string1 = "|cv:.cv:.cv:.cv:.cvc|" 
+    string2 = "[cv:1.cv:.cv:2.cv:.cvc] \-> /(cV1V.cVV).(cV2V.cVV).cVc/" 
+    weight = 46 
+pairs [263]:
+    string1 = "|cv:.cv:.cv:.cvc.cv|" 
+    string2 = "[cv:1.cv:.cv:2.cvc.cv] \-> /(cV1V.cVV).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [264]:
+    string1 = "|cv:.cv:.cv:.cvc.cv:|" 
+    string2 = "[cv:1.cv:.cv:2.cvc.cv:2] \-> /(cV1V.cVV).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [265]:
+    string1 = "|cv:.cv:.cv:.cvc.cvc|" 
+    string2 = "[cv:1.cv:.cv:2.cvc.cvc] \-> /(cV1V.cVV).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [266]:
+    string1 = "|cv:.cv:.cvc.cv.cv|" 
+    string2 = "[cv:1.cv:.cvc2.cv.cv] \-> /(cV1V.cVV).(cV2C.cV).cV/" 
+    weight = 100 
+pairs [267]:
+    string1 = "|cv:.cv:.cvc.cv.cv:|" 
+    string2 = "[cv:1.cv:.cvc2.cv.cv:2] \-> /(cV1V.cVV).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [268]:
+    string1 = "|cv:.cv:.cvc.cv.cvc|" 
+    string2 = "[cv:1.cv:.cvc2.cv.cvc] \-> /(cV1V.cVV).(cV2C.cV).cVc/" 
+    weight = 100 
+pairs [269]:
+    string1 = "|cv:.cv:.cvc.cv:.cv|" 
+    string2 = "[cv:1.cv:.cvc.cv:2.cv] \-> /(cV1V.cVV).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [270]:
+    string1 = "|cv:.cv:.cvc.cv:.cv:|" 
+    string2 = "[cv:1.cv:.cvc.cv:2.cv:] \-> /(cV1V.cVV).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [271]:
+    string1 = "|cv:.cv:.cvc.cv:.cvc|" 
+    string2 = "[cv:1.cv:.cvc.cv:2.cvc] \-> /(cV1V.cVV).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [272]:
+    string1 = "|cv:.cv:.cvc.cvc.cv|" 
+    string2 = "[cv:1.cv:.cvc.cvc2.cv] \-> /(cV1V.cVV).cVc.(cV2C.cV)/" 
+    weight = 47 
+pairs [273]:
+    string1 = "|cv:.cv:.cvc.cvc.cv|" 
+    string2 = "[cv:1.cv:.cvc2.cvc.cv] \-> /(cV1V.cVV).(cV2C.cVc).cV/" 
+    weight = 53 
+pairs [274]:
+    string1 = "|cv:.cv:.cvc.cvc.cv:|" 
+    string2 = "[cv:1.cv:.cvc2.cvc.cv:2] \-> /(cV1V.cVV).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [275]:
+    string1 = "|cv:.cv:.cvc.cvc.cvc|" 
+    string2 = "[cv:1.cv:.cvc.cvc2.cvc] \-> /(cV1V.cVV).cVc.(cV2C.cVc)/" 
+    weight = 54 
+pairs [276]:
+    string1 = "|cv:.cv:.cvc.cvc.cvc|" 
+    string2 = "[cv:1.cv:.cvc2.cvc.cvc] \-> /(cV1V.cVV).(cV2C.cVc).cVc/" 
+    weight = 46 
+pairs [277]:
+    string1 = "|cv:.cvc.cv.cv.cv|" 
+    string2 = "[cv:1.cvc.cv.cv2.cv] \-> /(cV1V.cVc).cV.(cV2.cV)/" 
+    weight = 56 
+pairs [278]:
+    string1 = "|cv:.cvc.cv.cv.cv|" 
+    string2 = "[cv:1.cvc.cv2.cv.cv] \-> /(cV1V.cVc).(cV2.cV).cV/" 
+    weight = 44 
+pairs [279]:
+    string1 = "|cv:.cvc.cv.cv.cv:|" 
+    string2 = "[cv:1.cvc.cv2.cv.cv:2] \-> /(cV1V.cVc).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [280]:
+    string1 = "|cv:.cvc.cv.cv.cvc|" 
+    string2 = "[cv:1.cvc.cv.cv2.cvc] \-> /(cV1V.cVc).cV.(cV2.cVc)/" 
+    weight = 43 
+pairs [281]:
+    string1 = "|cv:.cvc.cv.cv.cvc|" 
+    string2 = "[cv:1.cvc.cv2.cv.cvc] \-> /(cV1V.cVc).(cV2.cV).cVc/" 
+    weight = 57 
+pairs [282]:
+    string1 = "|cv:.cvc.cv.cv:.cv|" 
+    string2 = "[cv:1.cvc.cv.cv:2.cv] \-> /(cV1V.cVc).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [283]:
+    string1 = "|cv:.cvc.cv.cv:.cv:|" 
+    string2 = "[cv:1.cvc.cv.cv:2.cv:] \-> /(cV1V.cVc).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [284]:
+    string1 = "|cv:.cvc.cv.cv:.cvc|" 
+    string2 = "[cv:1.cvc.cv.cv:2.cvc] \-> /(cV1V.cVc).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [285]:
+    string1 = "|cv:.cvc.cv.cvc.cv|" 
+    string2 = "[cv:1.cvc.cv.cvc2.cv] \-> /(cV1V.cVc).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [286]:
+    string1 = "|cv:.cvc.cv.cvc.cv:|" 
+    string2 = "[cv:1.cvc.cv2.cvc.cv:2] \-> /(cV1V.cVc).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [287]:
+    string1 = "|cv:.cvc.cv.cvc.cvc|" 
+    string2 = "[cv:1.cvc.cv.cvc2.cvc] \-> /(cV1V.cVc).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [288]:
+    string1 = "|cv:.cvc.cv:.cv.cv|" 
+    string2 = "[cv:1.cvc.cv:2.cv.cv] \-> /(cV1V.cVc).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [289]:
+    string1 = "|cv:.cvc.cv:.cv.cv:|" 
+    string2 = "[cv:1.cvc.cv:2.cv.cv:2] \-> /(cV1V.cVc).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [290]:
+    string1 = "|cv:.cvc.cv:.cv.cvc|" 
+    string2 = "[cv:1.cvc.cv:2.cv.cvc] \-> /(cV1V.cVc).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [291]:
+    string1 = "|cv:.cvc.cv:.cv:.cv|" 
+    string2 = "[cv:1.cvc.cv:.cv:2.cv] \-> /(cV1V.cVc).cVV.(cV2V.cV)/" 
+    weight = 57 
+pairs [292]:
+    string1 = "|cv:.cvc.cv:.cv:.cv|" 
+    string2 = "[cv:1.cvc.cv:2.cv:.cv] \-> /(cV1V.cVc).(cV2V.cVV).cV/" 
+    weight = 43 
+pairs [293]:
+    string1 = "|cv:.cvc.cv:.cv:.cv:|" 
+    string2 = "[cv:1.cvc.cv:2.cv:.cv:2] \-> /(cV1V.cVc).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [294]:
+    string1 = "|cv:.cvc.cv:.cv:.cvc|" 
+    string2 = "[cv:1.cvc.cv:.cv:2.cvc] \-> /(cV1V.cVc).cVV.(cV2V.cVc)/" 
+    weight = 48 
+pairs [295]:
+    string1 = "|cv:.cvc.cv:.cv:.cvc|" 
+    string2 = "[cv:1.cvc.cv:2.cv:.cvc] \-> /(cV1V.cVc).(cV2V.cVV).cVc/" 
+    weight = 52 
+pairs [296]:
+    string1 = "|cv:.cvc.cv:.cvc.cv|" 
+    string2 = "[cv:1.cvc.cv:2.cvc.cv] \-> /(cV1V.cVc).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [297]:
+    string1 = "|cv:.cvc.cv:.cvc.cv:|" 
+    string2 = "[cv:1.cvc.cv:2.cvc.cv:2] \-> /(cV1V.cVc).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [298]:
+    string1 = "|cv:.cvc.cv:.cvc.cvc|" 
+    string2 = "[cv:1.cvc.cv:2.cvc.cvc] \-> /(cV1V.cVc).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [299]:
+    string1 = "|cv:.cvc.cvc.cv.cv|" 
+    string2 = "[cv:1.cvc.cvc2.cv.cv] \-> /(cV1V.cVc).(cV2C.cV).cV/" 
+    weight = 100 
+pairs [300]:
+    string1 = "|cv:.cvc.cvc.cv.cv:|" 
+    string2 = "[cv:1.cvc.cvc2.cv.cv:2] \-> /(cV1V.cVc).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [301]:
+    string1 = "|cv:.cvc.cvc.cv.cvc|" 
+    string2 = "[cv:1.cvc.cvc2.cv.cvc] \-> /(cV1V.cVc).(cV2C.cV).cVc/" 
+    weight = 100 
+pairs [302]:
+    string1 = "|cv:.cvc.cvc.cv:.cv|" 
+    string2 = "[cv:1.cvc.cvc.cv:2.cv] \-> /(cV1V.cVc).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [303]:
+    string1 = "|cv:.cvc.cvc.cv:.cv:|" 
+    string2 = "[cv:1.cvc.cvc.cv:2.cv:] \-> /(cV1V.cVc).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [304]:
+    string1 = "|cv:.cvc.cvc.cv:.cvc|" 
+    string2 = "[cv:1.cvc.cvc.cv:2.cvc] \-> /(cV1V.cVc).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [305]:
+    string1 = "|cv:.cvc.cvc.cvc.cv|" 
+    string2 = "[cv:1.cvc.cvc.cvc2.cv] \-> /(cV1V.cVc).cVc.(cV2C.cV)/" 
+    weight = 51 
+pairs [306]:
+    string1 = "|cv:.cvc.cvc.cvc.cv|" 
+    string2 = "[cv:1.cvc.cvc2.cvc.cv] \-> /(cV1V.cVc).(cV2C.cVc).cV/" 
+    weight = 49 
+pairs [307]:
+    string1 = "|cv:.cvc.cvc.cvc.cv:|" 
+    string2 = "[cv:1.cvc.cvc2.cvc.cv:2] \-> /(cV1V.cVc).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [308]:
+    string1 = "|cv:.cvc.cvc.cvc.cvc|" 
+    string2 = "[cv:1.cvc.cvc.cvc2.cvc] \-> /(cV1V.cVc).cVc.(cV2C.cVc)/" 
+    weight = 48 
+pairs [309]:
+    string1 = "|cv:.cvc.cvc.cvc.cvc|" 
+    string2 = "[cv:1.cvc.cvc2.cvc.cvc] \-> /(cV1V.cVc).(cV2C.cVc).cVc/" 
+    weight = 52 
+pairs [310]:
+    string1 = "|cvc.cv.cv.cv.cv|" 
+    string2 = "[cvc1.cv.cv.cv2.cv] \-> /(cV1C.cV).cV.(cV2.cV)/" 
+    weight = 47 
+pairs [311]:
+    string1 = "|cvc.cv.cv.cv.cv|" 
+    string2 = "[cvc1.cv.cv2.cv.cv] \-> /(cV1C.cV).(cV2.cV).cV/" 
+    weight = 53 
+pairs [312]:
+    string1 = "|cvc.cv.cv.cv.cv:|" 
+    string2 = "[cvc1.cv.cv2.cv.cv:2] \-> /(cV1C.cV).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [313]:
+    string1 = "|cvc.cv.cv.cv.cvc|" 
+    string2 = "[cvc1.cv.cv.cv2.cvc] \-> /(cV1C.cV).cV.(cV2.cVc)/" 
+    weight = 58 
+pairs [314]:
+    string1 = "|cvc.cv.cv.cv.cvc|" 
+    string2 = "[cvc1.cv.cv2.cv.cvc] \-> /(cV1C.cV).(cV2.cV).cVc/" 
+    weight = 42 
+pairs [315]:
+    string1 = "|cvc.cv.cv.cv:.cv|" 
+    string2 = "[cvc1.cv.cv.cv:2.cv] \-> /(cV1C.cV).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [316]:
+    string1 = "|cvc.cv.cv.cv:.cv:|" 
+    string2 = "[cvc1.cv.cv.cv:2.cv:] \-> /(cV1C.cV).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [317]:
+    string1 = "|cvc.cv.cv.cv:.cvc|" 
+    string2 = "[cvc1.cv.cv.cv:2.cvc] \-> /(cV1C.cV).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [318]:
+    string1 = "|cvc.cv.cv.cvc.cv|" 
+    string2 = "[cvc1.cv.cv.cvc2.cv] \-> /(cV1C.cV).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [319]:
+    string1 = "|cvc.cv.cv.cvc.cv:|" 
+    string2 = "[cvc1.cv.cv2.cvc.cv:2] \-> /(cV1C.cV).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [320]:
+    string1 = "|cvc.cv.cv.cvc.cvc|" 
+    string2 = "[cvc1.cv.cv.cvc2.cvc] \-> /(cV1C.cV).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [321]:
+    string1 = "|cvc.cv.cv:.cv.cv|" 
+    string2 = "[cvc1.cv.cv:2.cv.cv] \-> /(cV1C.cV).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [322]:
+    string1 = "|cvc.cv.cv:.cv.cv:|" 
+    string2 = "[cvc1.cv.cv:2.cv.cv:2] \-> /(cV1C.cV).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [323]:
+    string1 = "|cvc.cv.cv:.cv.cvc|" 
+    string2 = "[cvc1.cv.cv:2.cv.cvc] \-> /(cV1C.cV).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [324]:
+    string1 = "|cvc.cv.cv:.cv:.cv|" 
+    string2 = "[cvc1.cv.cv:.cv:2.cv] \-> /(cV1C.cV).cVV.(cV2V.cV)/" 
+    weight = 52 
+pairs [325]:
+    string1 = "|cvc.cv.cv:.cv:.cv|" 
+    string2 = "[cvc1.cv.cv:2.cv:.cv] \-> /(cV1C.cV).(cV2V.cVV).cV/" 
+    weight = 48 
+pairs [326]:
+    string1 = "|cvc.cv.cv:.cv:.cv:|" 
+    string2 = "[cvc1.cv.cv:2.cv:.cv:2] \-> /(cV1C.cV).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [327]:
+    string1 = "|cvc.cv.cv:.cv:.cvc|" 
+    string2 = "[cvc1.cv.cv:.cv:2.cvc] \-> /(cV1C.cV).cVV.(cV2V.cVc)/" 
+    weight = 52 
+pairs [328]:
+    string1 = "|cvc.cv.cv:.cv:.cvc|" 
+    string2 = "[cvc1.cv.cv:2.cv:.cvc] \-> /(cV1C.cV).(cV2V.cVV).cVc/" 
+    weight = 48 
+pairs [329]:
+    string1 = "|cvc.cv.cv:.cvc.cv|" 
+    string2 = "[cvc1.cv.cv:2.cvc.cv] \-> /(cV1C.cV).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [330]:
+    string1 = "|cvc.cv.cv:.cvc.cv:|" 
+    string2 = "[cvc1.cv.cv:2.cvc.cv:2] \-> /(cV1C.cV).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [331]:
+    string1 = "|cvc.cv.cv:.cvc.cvc|" 
+    string2 = "[cvc1.cv.cv:2.cvc.cvc] \-> /(cV1C.cV).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [332]:
+    string1 = "|cvc.cv.cvc.cv.cv|" 
+    string2 = "[cvc1.cv.cvc2.cv.cv] \-> /(cV1C.cV).(cV2C.cV).cV/" 
+    weight = 100 
+pairs [333]:
+    string1 = "|cvc.cv.cvc.cv.cv:|" 
+    string2 = "[cvc1.cv.cvc2.cv.cv:2] \-> /(cV1C.cV).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [334]:
+    string1 = "|cvc.cv.cvc.cv.cvc|" 
+    string2 = "[cvc1.cv.cvc2.cv.cvc] \-> /(cV1C.cV).(cV2C.cV).cVc/" 
+    weight = 100 
+pairs [335]:
+    string1 = "|cvc.cv.cvc.cv:.cv|" 
+    string2 = "[cvc1.cv.cvc.cv:2.cv] \-> /(cV1C.cV).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [336]:
+    string1 = "|cvc.cv.cvc.cv:.cv:|" 
+    string2 = "[cvc1.cv.cvc.cv:2.cv:] \-> /(cV1C.cV).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [337]:
+    string1 = "|cvc.cv.cvc.cv:.cvc|" 
+    string2 = "[cvc1.cv.cvc.cv:2.cvc] \-> /(cV1C.cV).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [338]:
+    string1 = "|cvc.cv.cvc.cvc.cv|" 
+    string2 = "[cvc1.cv.cvc.cvc2.cv] \-> /(cV1C.cV).cVc.(cV2C.cV)/" 
+    weight = 46 
+pairs [339]:
+    string1 = "|cvc.cv.cvc.cvc.cv|" 
+    string2 = "[cvc1.cv.cvc2.cvc.cv] \-> /(cV1C.cV).(cV2C.cVc).cV/" 
+    weight = 54 
+pairs [340]:
+    string1 = "|cvc.cv.cvc.cvc.cv:|" 
+    string2 = "[cvc1.cv.cvc2.cvc.cv:2] \-> /(cV1C.cV).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [341]:
+    string1 = "|cvc.cv.cvc.cvc.cvc|" 
+    string2 = "[cvc1.cv.cvc.cvc2.cvc] \-> /(cV1C.cV).cVc.(cV2C.cVc)/" 
+    weight = 53 
+pairs [342]:
+    string1 = "|cvc.cv.cvc.cvc.cvc|" 
+    string2 = "[cvc1.cv.cvc2.cvc.cvc] \-> /(cV1C.cV).(cV2C.cVc).cVc/" 
+    weight = 47 
+pairs [343]:
+    string1 = "|cvc.cv:.cv.cv.cv|" 
+    string2 = "[cvc.cv:1.cv.cv2.cv] \-> /(cVc.cV1V).cV.(cV2.cV)/" 
+    weight = 100 
+pairs [344]:
+    string1 = "|cvc.cv:.cv.cv.cv:|" 
+    string2 = "[cvc1.cv:.cv2.cv.cv:2] \-> /(cV1C.cVV).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [345]:
+    string1 = "|cvc.cv:.cv.cv.cvc|" 
+    string2 = "[cvc.cv:1.cv.cv2.cvc] \-> /(cVc.cV1V).cV.(cV2.cVc)/" 
+    weight = 100 
+pairs [346]:
+    string1 = "|cvc.cv:.cv.cv:.cv|" 
+    string2 = "[cvc.cv:1.cv.cv:2.cv] \-> /(cVc.cV1V).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [347]:
+    string1 = "|cvc.cv:.cv.cv:.cv:|" 
+    string2 = "[cvc.cv:1.cv.cv:2.cv:] \-> /(cVc.cV1V).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [348]:
+    string1 = "|cvc.cv:.cv.cv:.cvc|" 
+    string2 = "[cvc.cv:1.cv.cv:2.cvc] \-> /(cVc.cV1V).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [349]:
+    string1 = "|cvc.cv:.cv.cvc.cv|" 
+    string2 = "[cvc.cv:1.cv.cvc2.cv] \-> /(cVc.cV1V).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [350]:
+    string1 = "|cvc.cv:.cv.cvc.cv:|" 
+    string2 = "[cvc1.cv:.cv2.cvc.cv:2] \-> /(cV1C.cVV).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [351]:
+    string1 = "|cvc.cv:.cv.cvc.cvc|" 
+    string2 = "[cvc.cv:1.cv.cvc2.cvc] \-> /(cVc.cV1V).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [352]:
+    string1 = "|cvc.cv:.cv:.cv.cv|" 
+    string2 = "[cvc1.cv:.cv:2.cv.cv] \-> /(cV1C.cVV).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [353]:
+    string1 = "|cvc.cv:.cv:.cv.cv:|" 
+    string2 = "[cvc1.cv:.cv:2.cv.cv:2] \-> /(cV1C.cVV).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [354]:
+    string1 = "|cvc.cv:.cv:.cv.cvc|" 
+    string2 = "[cvc1.cv:.cv:2.cv.cvc] \-> /(cV1C.cVV).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [355]:
+    string1 = "|cvc.cv:.cv:.cv:.cv|" 
+    string2 = "[cvc.cv:1.cv:.cv:2.cv] \-> /(cVc.cV1V).cVV.(cV2V.cV)/" 
+    weight = 100 
+pairs [356]:
+    string1 = "|cvc.cv:.cv:.cv:.cv:|" 
+    string2 = "[cvc1.cv:.cv:2.cv:.cv:2] \-> /(cV1C.cVV).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [357]:
+    string1 = "|cvc.cv:.cv:.cv:.cvc|" 
+    string2 = "[cvc.cv:1.cv:.cv:2.cvc] \-> /(cVc.cV1V).cVV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [358]:
+    string1 = "|cvc.cv:.cv:.cvc.cv|" 
+    string2 = "[cvc1.cv:.cv:2.cvc.cv] \-> /(cV1C.cVV).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [359]:
+    string1 = "|cvc.cv:.cv:.cvc.cv:|" 
+    string2 = "[cvc1.cv:.cv:2.cvc.cv:2] \-> /(cV1C.cVV).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [360]:
+    string1 = "|cvc.cv:.cv:.cvc.cvc|" 
+    string2 = "[cvc1.cv:.cv:2.cvc.cvc] \-> /(cV1C.cVV).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [361]:
+    string1 = "|cvc.cv:.cvc.cv.cv|" 
+    string2 = "[cvc.cv:1.cvc.cv2.cv] \-> /(cVc.cV1V).cVc.(cV2.cV)/" 
+    weight = 100 
+pairs [362]:
+    string1 = "|cvc.cv:.cvc.cv.cv:|" 
+    string2 = "[cvc1.cv:.cvc2.cv.cv:2] \-> /(cV1C.cVV).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [363]:
+    string1 = "|cvc.cv:.cvc.cv.cvc|" 
+    string2 = "[cvc.cv:1.cvc.cv2.cvc] \-> /(cVc.cV1V).cVc.(cV2.cVc)/" 
+    weight = 100 
+pairs [364]:
+    string1 = "|cvc.cv:.cvc.cv:.cv|" 
+    string2 = "[cvc.cv:1.cvc.cv:2.cv] \-> /(cVc.cV1V).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [365]:
+    string1 = "|cvc.cv:.cvc.cv:.cv:|" 
+    string2 = "[cvc.cv:1.cvc.cv:2.cv:] \-> /(cVc.cV1V).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [366]:
+    string1 = "|cvc.cv:.cvc.cv:.cvc|" 
+    string2 = "[cvc.cv:1.cvc.cv:2.cvc] \-> /(cVc.cV1V).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [367]:
+    string1 = "|cvc.cv:.cvc.cvc.cv|" 
+    string2 = "[cvc.cv:1.cvc.cvc2.cv] \-> /(cVc.cV1V).cVc.(cV2C.cV)/" 
+    weight = 100 
+pairs [368]:
+    string1 = "|cvc.cv:.cvc.cvc.cv:|" 
+    string2 = "[cvc1.cv:.cvc2.cvc.cv:2] \-> /(cV1C.cVV).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [369]:
+    string1 = "|cvc.cv:.cvc.cvc.cvc|" 
+    string2 = "[cvc.cv:1.cvc.cvc2.cvc] \-> /(cVc.cV1V).cVc.(cV2C.cVc)/" 
+    weight = 100 
+pairs [370]:
+    string1 = "|cvc.cvc.cv.cv.cv|" 
+    string2 = "[cvc1.cvc.cv.cv2.cv] \-> /(cV1C.cVc).cV.(cV2.cV)/" 
+    weight = 52 
+pairs [371]:
+    string1 = "|cvc.cvc.cv.cv.cv|" 
+    string2 = "[cvc1.cvc.cv2.cv.cv] \-> /(cV1C.cVc).(cV2.cV).cV/" 
+    weight = 48 
+pairs [372]:
+    string1 = "|cvc.cvc.cv.cv.cv:|" 
+    string2 = "[cvc1.cvc.cv2.cv.cv:2] \-> /(cV1C.cVc).(cV2.cV).(cV2V)/" 
+    weight = 100 
+pairs [373]:
+    string1 = "|cvc.cvc.cv.cv.cvc|" 
+    string2 = "[cvc1.cvc.cv.cv2.cvc] \-> /(cV1C.cVc).cV.(cV2.cVc)/" 
+    weight = 55 
+pairs [374]:
+    string1 = "|cvc.cvc.cv.cv.cvc|" 
+    string2 = "[cvc1.cvc.cv2.cv.cvc] \-> /(cV1C.cVc).(cV2.cV).cVc/" 
+    weight = 45 
+pairs [375]:
+    string1 = "|cvc.cvc.cv.cv:.cv|" 
+    string2 = "[cvc1.cvc.cv.cv:2.cv] \-> /(cV1C.cVc).cV.(cV2V.cV)/" 
+    weight = 100 
+pairs [376]:
+    string1 = "|cvc.cvc.cv.cv:.cv:|" 
+    string2 = "[cvc1.cvc.cv.cv:2.cv:] \-> /(cV1C.cVc).cV.(cV2V.cVV)/" 
+    weight = 100 
+pairs [377]:
+    string1 = "|cvc.cvc.cv.cv:.cvc|" 
+    string2 = "[cvc1.cvc.cv.cv:2.cvc] \-> /(cV1C.cVc).cV.(cV2V.cVc)/" 
+    weight = 100 
+pairs [378]:
+    string1 = "|cvc.cvc.cv.cvc.cv|" 
+    string2 = "[cvc1.cvc.cv.cvc2.cv] \-> /(cV1C.cVc).cV.(cV2C.cV)/" 
+    weight = 100 
+pairs [379]:
+    string1 = "|cvc.cvc.cv.cvc.cv:|" 
+    string2 = "[cvc1.cvc.cv2.cvc.cv:2] \-> /(cV1C.cVc).(cV2.cVc).(cV2V)/" 
+    weight = 100 
+pairs [380]:
+    string1 = "|cvc.cvc.cv.cvc.cvc|" 
+    string2 = "[cvc1.cvc.cv.cvc2.cvc] \-> /(cV1C.cVc).cV.(cV2C.cVc)/" 
+    weight = 100 
+pairs [381]:
+    string1 = "|cvc.cvc.cv:.cv.cv|" 
+    string2 = "[cvc1.cvc.cv:2.cv.cv] \-> /(cV1C.cVc).(cV2V.cV).cV/" 
+    weight = 100 
+pairs [382]:
+    string1 = "|cvc.cvc.cv:.cv.cv:|" 
+    string2 = "[cvc1.cvc.cv:2.cv.cv:2] \-> /(cV1C.cVc).(cV2V.cV).(cV2V)/" 
+    weight = 100 
+pairs [383]:
+    string1 = "|cvc.cvc.cv:.cv.cvc|" 
+    string2 = "[cvc1.cvc.cv:2.cv.cvc] \-> /(cV1C.cVc).(cV2V.cV).cVc/" 
+    weight = 100 
+pairs [384]:
+    string1 = "|cvc.cvc.cv:.cv:.cv|" 
+    string2 = "[cvc1.cvc.cv:.cv:2.cv] \-> /(cV1C.cVc).cVV.(cV2V.cV)/" 
+    weight = 50 
+pairs [385]:
+    string1 = "|cvc.cvc.cv:.cv:.cv|" 
+    string2 = "[cvc1.cvc.cv:2.cv:.cv] \-> /(cV1C.cVc).(cV2V.cVV).cV/" 
+    weight = 50 
+pairs [386]:
+    string1 = "|cvc.cvc.cv:.cv:.cv:|" 
+    string2 = "[cvc1.cvc.cv:2.cv:.cv:2] \-> /(cV1C.cVc).(cV2V.cVV).(cV2V)/" 
+    weight = 100 
+pairs [387]:
+    string1 = "|cvc.cvc.cv:.cv:.cvc|" 
+    string2 = "[cvc1.cvc.cv:.cv:2.cvc] \-> /(cV1C.cVc).cVV.(cV2V.cVc)/" 
+    weight = 48 
+pairs [388]:
+    string1 = "|cvc.cvc.cv:.cv:.cvc|" 
+    string2 = "[cvc1.cvc.cv:2.cv:.cvc] \-> /(cV1C.cVc).(cV2V.cVV).cVc/" 
+    weight = 52 
+pairs [389]:
+    string1 = "|cvc.cvc.cv:.cvc.cv|" 
+    string2 = "[cvc1.cvc.cv:2.cvc.cv] \-> /(cV1C.cVc).(cV2V.cVc).cV/" 
+    weight = 100 
+pairs [390]:
+    string1 = "|cvc.cvc.cv:.cvc.cv:|" 
+    string2 = "[cvc1.cvc.cv:2.cvc.cv:2] \-> /(cV1C.cVc).(cV2V.cVc).(cV2V)/" 
+    weight = 100 
+pairs [391]:
+    string1 = "|cvc.cvc.cv:.cvc.cvc|" 
+    string2 = "[cvc1.cvc.cv:2.cvc.cvc] \-> /(cV1C.cVc).(cV2V.cVc).cVc/" 
+    weight = 100 
+pairs [392]:
+    string1 = "|cvc.cvc.cvc.cv.cv|" 
+    string2 = "[cvc1.cvc.cvc2.cv.cv] \-> /(cV1C.cVc).(cV2C.cV).cV/" 
+    weight = 100 
+pairs [393]:
+    string1 = "|cvc.cvc.cvc.cv.cv:|" 
+    string2 = "[cvc1.cvc.cvc2.cv.cv:2] \-> /(cV1C.cVc).(cV2C.cV).(cV2V)/" 
+    weight = 100 
+pairs [394]:
+    string1 = "|cvc.cvc.cvc.cv.cvc|" 
+    string2 = "[cvc1.cvc.cvc2.cv.cvc] \-> /(cV1C.cVc).(cV2C.cV).cVc/" 
+    weight = 100 
+pairs [395]:
+    string1 = "|cvc.cvc.cvc.cv:.cv|" 
+    string2 = "[cvc1.cvc.cvc.cv:2.cv] \-> /(cV1C.cVc).cVc.(cV2V.cV)/" 
+    weight = 100 
+pairs [396]:
+    string1 = "|cvc.cvc.cvc.cv:.cv:|" 
+    string2 = "[cvc1.cvc.cvc.cv:2.cv:] \-> /(cV1C.cVc).cVc.(cV2V.cVV)/" 
+    weight = 100 
+pairs [397]:
+    string1 = "|cvc.cvc.cvc.cv:.cvc|" 
+    string2 = "[cvc1.cvc.cvc.cv:2.cvc] \-> /(cV1C.cVc).cVc.(cV2V.cVc)/" 
+    weight = 100 
+pairs [398]:
+    string1 = "|cvc.cvc.cvc.cvc.cv|" 
+    string2 = "[cvc1.cvc.cvc.cvc2.cv] \-> /(cV1C.cVc).cVc.(cV2C.cV)/" 
+    weight = 48 
+pairs [399]:
+    string1 = "|cvc.cvc.cvc.cvc.cv|" 
+    string2 = "[cvc1.cvc.cvc2.cvc.cv] \-> /(cV1C.cVc).(cV2C.cVc).cV/" 
+    weight = 52 
+pairs [400]:
+    string1 = "|cvc.cvc.cvc.cvc.cv:|" 
+    string2 = "[cvc1.cvc.cvc2.cvc.cv:2] \-> /(cV1C.cVc).(cV2C.cVc).(cV2V)/" 
+    weight = 100 
+pairs [401]:
+    string1 = "|cvc.cvc.cvc.cvc.cvc|" 
+    string2 = "[cvc1.cvc.cvc.cvc2.cvc] \-> /(cV1C.cVc).cVc.(cV2C.cVc)/" 
+    weight = 48 
+pairs [402]:
+    string1 = "|cvc.cvc.cvc.cvc.cvc|" 
+    string2 = "[cvc1.cvc.cvc2.cvc.cvc] \-> /(cV1C.cVc).(cV2C.cVc).cVc/" 
+    weight = 52 
+pairs [403]:
+    string1 = "|cv.cv.cv.cv.cv.cv|" 
+    string2 = "[cv1.cv.cv2.cv.cv2.cv] \-> /(cV1.cV).(cV2.cV).(cV2.cV)/" 
+    weight = 100 
+pairs [404]:
+    string1 = "|cv.cv.cv.cv.cv.cv.cv|" 
+    string2 = "[cv1.cv.cv.cv2.cv.cv2.cv] \-> /(cV1.cV).cV.(cV2.cV).(cV2.cV)/" 
+    weight = 43 
+pairs [405]:
+    string1 = "|cv.cv.cv.cv.cv.cv.cv|" 
+    string2 = "[cv1.cv.cv2.cv.cv.cv2.cv] \-> /(cV1.cV).(cV2.cV).cV.(cV2.cV)/" 
+    weight = 33 
+pairs [406]:
+    string1 = "|cv.cv.cv.cv.cv.cv.cv|" 
+    string2 = "[cv1.cv.cv2.cv.cv2.cv.cv] \-> /(cV1.cV).(cV2.cV).(cV2.cV).cV/" 
+    weight = 24 

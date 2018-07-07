@@ -374,7 +374,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	Graphics_setFontSize (g, labelSize);
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {
-			const char32 *plotLabel = ( useRowLabels ? my rowLabels [i] : label );
+			const char32 *plotLabel = ( useRowLabels ? my rowLabels [i].get() : label );
 			if (NUMstring_containsPrintableCharacter (plotLabel)) {
 				Graphics_text (g, x [i], y [i], plotLabel);
 			} else {
@@ -391,10 +391,10 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		if (numberOfDimensions > 1) {
 			Graphics_marksLeft (g, 2, true, true, false);
 			if (my columnLabels[xCoordinate]) {
-				Graphics_textBottom (g, true, my columnLabels[xCoordinate]);
+				Graphics_textBottom (g, true, my columnLabels [xCoordinate].get());
 			}
 			if (my columnLabels[yCoordinate]) {
-				Graphics_textLeft (g, true, my columnLabels[yCoordinate]);
+				Graphics_textLeft (g, true, my columnLabels [yCoordinate].get());
 			}
 		}
 	}

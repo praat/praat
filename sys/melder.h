@@ -184,6 +184,9 @@ using char8 = unsigned char;
 using char16 = char16_t;
 using char32 = char32_t;
 
+char32 * Melder_dup (const char32 *string /* cattable */);
+char32 * Melder_dup_f (const char32 *string /* cattable */);
+
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
 
@@ -202,14 +205,6 @@ public:
 		if (our ptr) Melder_free (our ptr);
 		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving destructor");
 	}
-	#if 0
-	void operator= (T *string) {
-		//if (Melder_debug == 39) Melder_casual (U"autostring: entering assignment from C-string; old = ", Melder_pointer (ptr));
-		if (our ptr) Melder_free (our ptr);
-		our ptr = string;
-		//if (Melder_debug == 39) Melder_casual (U"autostring: leaving assignment from C-string; new = ", Melder_pointer (ptr));
-	}
-	#endif
 	template <class U> T& operator[] (U i) {
 		return our ptr [i];
 	}
@@ -235,7 +230,7 @@ public:
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
 	//_autostring (_autostring &) = delete;   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
-	explicit operator bool () const { return !! ptr; }
+	explicit operator bool () const { return !! our ptr; }
 	/*
 		Enable moving.
 	*/
@@ -1490,64 +1485,95 @@ public:
 };
 
 template <class T>
-class autodatavector {
-	T* d_ptr;
-	integer d_from, d_to;
+class _autostringvector {
+	_autostring <T> * _ptr;
 public:
-	autodatavector<T> (integer from, integer to) : d_from (from), d_to (to) {
-		d_ptr = NUMvector<T> (from, to, true);
+	integer _from, _to;
+	_autostringvector<T> (integer from, integer to) : _from (from), _to (to) {
+		our _ptr = NUMvector <_autostring <T>> (from, to, true);
 	}
-	autodatavector<T> (integer from, integer to, bool zero) : d_from (from), d_to (to) {
-		d_ptr = NUMvector<T> (from, to, zero);
+	_autostringvector<T> (integer from, integer to, bool zero) : _from (from), _to (to) {
+		our _ptr = NUMvector <_autostring <T>> (from, to, zero);
 	}
-	autodatavector (T *ptr, integer from, integer to) : d_ptr (ptr), d_from (from), d_to (to) {
+	_autostringvector (T **ptr, integer from, integer to) : _ptr ((_autostring<T>*) ptr), _from (from), _to (to) {
 	}
-	autodatavector () : d_ptr (nullptr), d_from (1), d_to (0) {
+	_autostringvector () : _ptr (nullptr), _from (1), _to (0) {
 	}
-	~autodatavector<T> () {
-		if (d_ptr) {
-			for (integer i = d_from; i <= d_to; i ++)
-				Melder_free (d_ptr [i]);
-			NUMvector_free (d_ptr, d_from);
+	_autostringvector (const _autostringvector &) = delete;
+	_autostringvector (_autostringvector&& other) {
+		our _ptr = other. _ptr;
+		other. _ptr = nullptr;
+	}
+	_autostringvector& operator= (const _autostringvector &) = delete;   // disable copy assignment
+	_autostringvector& operator= (_autostringvector&& other) noexcept {   // enable move assignment
+		if (& other != this) {
+			our reset ();
+			our _ptr = other. _ptr;
+			our _from = other. _from;
+			our _to = other. _to;
+			other. _ptr = nullptr;
+		}
+		return *this;
+	}
+	~ _autostringvector<T> () {
+		our reset ();
+	}
+	explicit operator bool () const { return !! our _ptr; }
+	_autostring <T> & operator[] (integer i) {
+		return our _ptr [i];
+	}
+	_autostring <T> * peek () const {
+		return our _ptr;
+	}
+	T** peek2 () const {
+		return (T**) our _ptr;
+	}
+	_autostring <T> * transfer () {
+		_autostring <T> * tmp = our _ptr;
+		our _ptr = nullptr;   // make the pointer non-automatic again
+		return tmp;
+	}
+	T** transfer2 () {
+		T** tmp = (T**) our _ptr;
+		our _ptr = nullptr;   // make the pointer non-automatic again
+		return tmp;
+	}
+	void reset () {
+		if (our _ptr) {
+			for (integer i = our _from; i <= our _to; i ++) {
+				our _ptr [i]. reset ();
+			}
+			NUMvector_free (our _ptr, our _from);
+			our _ptr = nullptr;
+			our _from = 1;
+			our _to = 0;
 		}
 	}
-	T& operator[] (integer i) {
-		return d_ptr [i];
-	}
-	T* peek () const {
-		return d_ptr;
-	}
-	T* transfer () {
-		T* temp = d_ptr;
-		d_ptr = nullptr;   // make the pointer non-automatic again
-		return temp;
-	}
-	void reset (integer from, integer to) {
-		if (d_ptr) {
-			for (integer i = d_from; i <= d_to; i ++)
-				Melder_free (d_ptr [i]);
-			NUMvector_free (d_ptr, d_from);
-			d_ptr = nullptr;
+	void copyFrom (_autostringvector& other) {
+		our reset ();
+		our _ptr = NUMvector <_autostring <T>> (other._from, other._to, true);
+		our _from = other._from;
+		our _to = other._to;
+		for (integer i = our _from; i <= our _to; i ++) {
+			our _ptr [i] = Melder_dup (other. _ptr [i].get());
 		}
-		d_from = from;   // this assignment is safe, because d_ptr is null
-		d_to = to;
-		d_ptr = NUMvector<T> (from, to, true);
 	}
-	void reset (integer from, integer to, bool zero) {
-		if (d_ptr) {
-			for (integer i = d_from; i <= d_to; i ++)
-				Melder_free (d_ptr [i]);
-			NUMvector_free (d_ptr, d_from);
-			d_ptr = nullptr;
+	void copyElementsFrom (_autostringvector& other) {
+		Melder_assert (other. _from == our _from && other. _to == our _to);
+		for (integer i = our _from; i <= our _to; i ++) {
+			our _ptr [i] = Melder_dup (other. _ptr [i].get());
 		}
-		d_from = from;   // this assignment is safe, because d_ptr is null
-		d_to = to;
-		d_ptr = NUMvector<T> (from, to, zero);
+	}
+	void copyElementsFrom_upTo (_autostringvector& other, integer to) {
+		Melder_assert (other. _from == our _from && to <= other. _to && to <= our _to);
+		for (integer i = our _from; i <= to; i ++) {
+			our _ptr [i] = Melder_dup (other. _ptr [i].get());
+		}
 	}
 };
 
-typedef autodatavector <char32 *> autostring32vector;
-typedef autodatavector <char *> autostring8vector;
+typedef _autostringvector <char32> autostring32vector;
+typedef _autostringvector <char> autostring8vector;
 
 #pragma mark - TENSOR
 /*
@@ -2045,9 +2071,6 @@ const char32 * Melder_cat (Melder_12_OR_13_ARGS);
 const char32 * Melder_cat (Melder_14_OR_15_ARGS);
 const char32 * Melder_cat (Melder_16_TO_19_ARGS);
 
-char32 * Melder_dup (const char32 *string /* cattable */);
-char32 * Melder_dup_f (const char32 *string /* cattable */);
-
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_1_ARG);
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_2_ARGS);
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_3_ARGS);
@@ -2109,6 +2132,8 @@ void Melder_casual (Melder_11_ARGS);
 void Melder_casual (Melder_12_OR_13_ARGS);
 void Melder_casual (Melder_14_OR_15_ARGS);
 void Melder_casual (Melder_16_TO_19_ARGS);
+
+void MelderCasual_memoryUse (integer message = 0);
 
 /**
 	Give information to stdout (batch), or to an "Info" window (interactive), or to a diverted string.
@@ -2713,6 +2738,10 @@ struct structMelderReadText {
 };
 typedef struct structMelderReadText *MelderReadText;
 
+#if 1
+	#include <memory>
+	using autoMelderReadText = std::unique_ptr<structMelderReadText>;
+#else
 struct autoMelderReadText {
 	MelderReadText text;
 	autoMelderReadText () {
@@ -2744,6 +2773,7 @@ struct autoMelderReadText {
 	autoMelderReadText&& move () noexcept { return static_cast <autoMelderReadText&&> (*this); }
 	explicit operator bool () const { return !! our text; }
 };
+#endif
 
 autoMelderReadText MelderReadText_createFromFile (MelderFile file);
 char32 MelderReadText_getChar (MelderReadText text);

@@ -405,7 +405,7 @@ DO
 	STRING_ONE (Table)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (U"Your column number should not be greater than the number of columns.");
-		const char32 *result = my columnHeaders [columnNumber]. label;
+		const char32 *result = my columnHeaders [columnNumber]. label.get();
 	STRING_ONE_END
 }
 
@@ -493,7 +493,7 @@ DO
 	STRING_ONE (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		const char32 *result = my rows.at [rowNumber] -> cells [columnNumber]. string;
+		const char32 *result = my rows.at [rowNumber] -> cells [columnNumber]. string.get();
 	STRING_ONE_END
 }
 

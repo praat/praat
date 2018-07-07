@@ -66,7 +66,7 @@ static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS_FORM) {
 		if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
 			Melder_throw (U"Select a constraint first.");
 		constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
-		SET_STRING (constraintLabel, constraint -> name)
+		SET_STRING (constraintLabel, constraint -> name.get())
 		SET_REAL (rankingValue, constraint -> ranking)
 		SET_REAL (disharmony, constraint -> disharmony)
 	EDITOR_DO
@@ -109,7 +109,7 @@ static void menu_cb_removeConstraint (OTMultiEditor me, EDITOR_ARGS_DIRECT) {
 		Melder_throw (U"Select a constraint first.");
 	OTConstraint constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
 	Editor_save (me, U"Remove constraint");
-	OTMulti_removeConstraint (grammar, constraint -> name);
+	OTMulti_removeConstraint (grammar, constraint -> name.get());
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
@@ -190,7 +190,7 @@ void structOTMultiEditor :: v_draw () {
 	for (integer icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
 		MelderString_copy (& buffer, U"\t", ( icons == selectedConstraint ? U"♠︎ " : U"   " ), U"@@", icons,
-			U"|", constraint -> name, U"@\t      ", Melder_fixed (constraint -> ranking, 3),
+			U"|", constraint -> name.get(), U"@\t      ", Melder_fixed (constraint -> ranking, 3),
 			U"\t      ", Melder_fixed (constraint -> disharmony, 3),
 			U"\t      ", Melder_fixed (constraint -> plasticity, 6)
 		);

@@ -37,26 +37,26 @@
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)
 
 #define oo_STRINGx(storage,x)  \
-	if (our x && ! Melder_isEncodable (our x, encoding)) return false;
+	if (our x && ! Melder_isEncodable (our x.get(), encoding)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \
 		integer _n = (n); \
 		for (integer _i = 0; _i < _n; _i ++) { \
-			if (our x [_i] && ! Melder_isEncodable (our x [_i], encoding)) return false; \
+			if (our x [_i] && ! Melder_isEncodable (our x [_i].get(), encoding)) return false; \
 		} \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) \
-		if (our x [_i] && ! Melder_isEncodable (our x [_i], encoding)) return false;
+		if (our x [_i] && ! Melder_isEncodable (our x [_i].get(), encoding)) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	{ \
 		integer _min = (min), _max = (max); \
 		if (our x) { \
 			for (integer _i = _min; _i <= _max; _i ++) { \
-				if (our x [_i] && ! Melder_isEncodable (our x [_i], encoding)) return false; \
+				if (our x [_i] && ! Melder_isEncodable (our x [_i].get(), encoding)) return false; \
 			} \
 		} \
 	}

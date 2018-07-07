@@ -160,7 +160,7 @@ static void GaussianMixture_setLabelsFromTableOfReal (GaussianMixture me, TableO
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		Covariance cov = my covariances->at [im];
 		for (integer j = 1; j <= my dimension; j ++) {
-			TableOfReal_setColumnLabel (cov, j, thy columnLabels [j]);
+			TableOfReal_setColumnLabel (cov, j, thy columnLabels [j].get());
 		}
 	}
 }
@@ -176,10 +176,10 @@ static void Covariance_into_Covariance (Covariance me, Covariance thee) {
 	for (integer ic = 1; ic <= my numberOfColumns; ic ++) {
 		thy centroid [ic] = my centroid [ic];
 	}
-	NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, thy numberOfColumns);
+	thy columnLabels. copyElementsFrom (my columnLabels);
 	// Are the matrix sizes equal
 	if (my numberOfRows == thy numberOfRows) {
-		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, thy numberOfRows);
+		thy rowLabels. copyElementsFrom (my rowLabels);
 		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return;
 	} else {
@@ -256,10 +256,10 @@ autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me
 		GaussianMixture_setLabelsFromTableOfReal (thee.get(), me);
 
 		for (integer i = 1; i <= numberOfComponents; i ++) {
-			autoTableOfReal tab = TableOfReal_extractRowsWhereLabel (me, kMelder_string::EQUAL_TO, dist -> rowLabels [i]);
+			autoTableOfReal tab = TableOfReal_extractRowsWhereLabel (me, kMelder_string::EQUAL_TO, dist -> rowLabels [i].get());
 			autoCovariance cov = TableOfReal_to_Covariance (tab.get());
 			Covariance_into_Covariance (cov.get(), thy covariances->at [i]);
-			Thing_setName (thy covariances->at [i], dist -> rowLabels [i]);
+			Thing_setName (thy covariances->at [i], dist -> rowLabels [i].get());
 		}
 		for (integer im = 1; im <= numberOfComponents; im ++) {
 			thy mixingProbabilities [im] = dist -> data [im] [1] / my numberOfRows;
@@ -292,8 +292,8 @@ autoCovariance GaussianMixture_to_Covariance_between (GaussianMixture me) {
 		Covariance cov = my covariances->at [1];
 		for (integer i = 1; i <= thy numberOfColumns; i ++) {
 			if (cov -> columnLabels [i]) {
-				TableOfReal_setColumnLabel (thee.get(), i, cov -> columnLabels [i]);
-				TableOfReal_setRowLabel (thee.get(), i, cov -> columnLabels [i]); // if diagonal !
+				TableOfReal_setColumnLabel (thee.get(), i, cov -> columnLabels [i].get());
+				TableOfReal_setRowLabel (thee.get(), i, cov -> columnLabels [i].get()); // if diagonal !
 			}
 		}
 
@@ -408,7 +408,7 @@ autoTableOfReal GaussianMixture_extractCentroids (GaussianMixture me) {
 			Covariance cov = my covariances->at [im];
 			if (im == 1) {
 				for (integer j = 1; j <= my dimension; j ++) {
-					TableOfReal_setColumnLabel (thee.get(), j, cov -> columnLabels [j]);
+					TableOfReal_setColumnLabel (thee.get(), j, cov -> columnLabels [j].get());
 				}
 			}
 			TableOfReal_setRowLabel (thee.get(), im, Thing_getName (cov));
@@ -740,7 +740,7 @@ autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (Gaus
 
 			// for (integer im = 1; im <= my numberOfComponents; im++) { his data [i] [im] /= psum; }
 
-			TableOfReal_setRowLabel (him.get(), i, thy rowLabels [i]);
+			TableOfReal_setRowLabel (him.get(), i, thy rowLabels [i].get());
 		}
 		return him;
 	} catch (MelderError) {
@@ -1315,7 +1315,8 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 		Covariance cov = my covariances->at [1];
 		autoTableOfReal thee = TableOfReal_create (numberOfPoints, my dimension);
 		autoNUMvector<double> buf (1, my dimension);
-		NUMstrings_copyElements (cov -> columnLabels, thy columnLabels, 1, my dimension);
+		thy columnLabels. copyElementsFrom_upTo (cov -> columnLabels, my dimension);
+			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			char32 *covname;
 			GaussianMixture_generateOneVector (me, thy data [i], &covname, buf.peek());

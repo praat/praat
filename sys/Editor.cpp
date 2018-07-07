@@ -42,7 +42,6 @@ Thing_implement (Editor, Thing, 0);
 Thing_implement (EditorCommand, Thing, 0);
 
 void structEditorCommand :: v_destroy () noexcept {
-	Melder_free (our itemTitle);
 	Melder_free (our script);
 	EditorCommand_Parent :: v_destroy ();
 }
@@ -59,15 +58,15 @@ void structEditorMenu :: v_destroy () noexcept {
 /********** functions **********/
 
 static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
-	if (my d_editor && my d_editor -> v_scriptable () && ! str32str (my itemTitle, U"...")) {
+	if (my d_editor && my d_editor -> v_scriptable () && ! str32str (my itemTitle.get(), U"...")) {
 		UiHistory_write (U"\n");
-		UiHistory_write_colonize (my itemTitle);
+		UiHistory_write_colonize (my itemTitle.get());
 	}
 	try {
 		my commandCallback (my d_editor, me, nullptr, 0, nullptr, nullptr, nullptr);
 	} catch (MelderError) {
 		if (! Melder_hasError (U"Script exited.")) {
-			Melder_appendError (U"Menu command \"", my itemTitle, U"\" not completed.");
+			Melder_appendError (U"Menu command \"", my itemTitle.get(), U"\" not completed.");
 		}
 		Melder_flushError ();
 	}
@@ -175,7 +174,7 @@ EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const c
 			integer numberOfCommands = menu -> commands.size, icommand;
 			for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
 				EditorCommand command = menu -> commands.at [icommand];
-				if (str32equ (itemTitle, command -> itemTitle))
+				if (str32equ (itemTitle, command -> itemTitle.get()))
 					return command;
 			}
 		}
@@ -190,7 +189,7 @@ void Editor_doMenuCommand (Editor me, const char32 *commandTitle, integer narg, 
 		integer numberOfCommands = menu -> commands.size;
 		for (integer icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = menu -> commands.at [icommand];
-			if (str32equ (commandTitle, command -> itemTitle)) {
+			if (str32equ (commandTitle, command -> itemTitle.get())) {
 				command -> commandCallback (me, command, nullptr, narg, args, arguments, interpreter);
 				return;
 			}

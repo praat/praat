@@ -52,13 +52,13 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 	if (numberOfColumns < 1) MelderFile_write (file, U"(empty)");
 	MelderFile_write (file, U"\n");
 	for (integer i = 1; i <= numberOfColumns; i ++) {
-		fprintquotedstring (file, columnLabels [i]);
+		fprintquotedstring (file, columnLabels [i].get());
 		MelderFile_writeCharacter (file, U'\t');
 	}
 	texputi32 (file, numberOfRows, U"numberOfRows", 0,0,0,0,0);
 	for (integer i = 1; i <= numberOfRows; i ++) {
 		MelderFile_write (file, U"\nrow [", i, U"]: ");
-		fprintquotedstring (file, rowLabels [i]);
+		fprintquotedstring (file, rowLabels [i].get());
 		for (integer j = 1; j <= numberOfColumns; j ++) {
 			double x = data [i] [j];
 			MelderFile_write (file, U"\t", x);
@@ -69,13 +69,13 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
 	numberOfColumns = texgeti32 (a_text);
 	if (numberOfColumns >= 1) {
-		columnLabels = NUMvector <char32*> (1, numberOfColumns);
+		columnLabels = autostring32vector (1, numberOfColumns);
 		for (integer i = 1; i <= numberOfColumns; i ++)
 			columnLabels [i] = texgetw16 (a_text);
 	}
 	numberOfRows = texgeti32 (a_text);
 	if (numberOfRows >= 1) {
-		rowLabels = NUMvector <char32*> (1, numberOfRows);
+		rowLabels = autostring32vector (1, numberOfRows);
 	}
 	if (numberOfRows >= 1 && numberOfColumns >= 1) {
 		data = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
@@ -95,11 +95,11 @@ void structTableOfReal :: v_info () {
 
 const char32 * structTableOfReal :: v_getRowStr (integer irow) {
 	if (irow < 1 || irow > numberOfRows) return nullptr;
-	return rowLabels [irow] ? rowLabels [irow] : U"";
+	return rowLabels [irow] ? rowLabels [irow].get() : U"";
 }
 const char32 * structTableOfReal :: v_getColStr (integer icol) {
 	if (icol < 1 || icol > numberOfColumns) return nullptr;
-	return columnLabels [icol] ? columnLabels [icol] : U"";
+	return columnLabels [icol] ? columnLabels [icol].get() : U"";
 }
 double structTableOfReal :: v_getMatrix (integer irow, integer icol) {
 	if (irow < 1 || irow > numberOfRows) return undefined;
@@ -118,8 +118,10 @@ void TableOfReal_init (TableOfReal me, integer numberOfRows, integer numberOfCol
 		Melder_throw (U"Cannot create cell-less table.");
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
-	my rowLabels = NUMvector <char32*> (1, numberOfRows);
-	my columnLabels = NUMvector <char32*> (1, numberOfColumns);
+	Melder_assert (my rowLabels. _from == 1);   // probably captured by a test script
+	my rowLabels = autostring32vector (1, numberOfRows);
+	Melder_assert (my rowLabels. _to == numberOfRows);   // probably captured by test script
+	my columnLabels = autostring32vector (1, numberOfColumns);
 	my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
 }
 
@@ -137,14 +139,14 @@ autoTableOfReal TableOfReal_create (integer numberOfRows, integer numberOfColumn
 
 integer TableOfReal_rowLabelToIndex (TableOfReal me, const char32 *label) {
 	for (integer irow = 1; irow <= my numberOfRows; irow ++)
-		if (my rowLabels [irow] && str32equ (my rowLabels [irow], label))
+		if (my rowLabels [irow] && str32equ (my rowLabels [irow].get(), label))
 			return irow;
 	return 0;
 }
 
 integer TableOfReal_columnLabelToIndex (TableOfReal me, const char32 *label) {
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-		if (my columnLabels [icol] && str32equ (my columnLabels [icol], label))
+		if (my columnLabels [icol] && str32equ (my columnLabels [icol].get(), label))
 			return icol;
 	return 0;
 }
@@ -188,9 +190,9 @@ void TableOfReal_removeRow (TableOfReal me, integer rowNumber) {
 		/*
 			Change without error.
 		*/
-		Melder_free (my rowLabels [rowNumber]);
 		for (integer irow = rowNumber; irow < my numberOfRows; irow ++)
-			my rowLabels [irow] = my rowLabels [irow + 1];
+			my rowLabels [irow] = std::move (my rowLabels [irow + 1]);
+		my rowLabels [my numberOfRows]. reset();
 		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfRows --;
@@ -203,23 +205,25 @@ void TableOfReal_insertRow (TableOfReal me, integer rowNumber) {
 	try {
 		if (rowNumber < 1 || rowNumber > my numberOfRows + 1)
 			Melder_throw (U"Cannot create row ", rowNumber, U".");
+		/*
+			Create without change.
+		*/
 		autoNUMmatrix <double> data (1, my numberOfRows + 1, 1, my numberOfColumns);
-		autoNUMvector <char32 *> rowLabels (1, my numberOfRows + 1);   // not autostringvector...
+		autostring32vector newRowLabels (1, my numberOfRows + 1);
 		for (integer irow = 1; irow < rowNumber; irow ++)	{
-			rowLabels [irow] = my rowLabels [irow];   // ...because this is a dangling copy
+			newRowLabels [irow] = std::move (my rowLabels [irow]);
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 				data [irow] [icol] = my data [irow] [icol];
 		}
 		for (integer irow = my numberOfRows + 1; irow > rowNumber; irow --) {
-			rowLabels [irow] = my rowLabels [irow - 1];
+			newRowLabels [irow] = std::move (my rowLabels [irow - 1]);
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 				data [irow] [icol] = my data [irow - 1] [icol];
 		}
 		/*
 			Change without error.
 		*/
-		NUMvector_free (my rowLabels, 1);
-		my rowLabels = rowLabels.transfer();
+		my rowLabels = std::move (newRowLabels);
 		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfRows ++;
@@ -234,6 +238,9 @@ void TableOfReal_removeColumn (TableOfReal me, integer columnNumber) {
 			Melder_throw (U"Cannot remove the only column.");
 		if (columnNumber < 1 || columnNumber > my numberOfColumns)
 			Melder_throw (U"No column ", columnNumber, U".");
+		/*
+			Create without change.
+		*/
 		autoNUMmatrix <double> data (1, my numberOfRows, 1, my numberOfColumns - 1);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol < columnNumber; icol ++)
@@ -244,9 +251,9 @@ void TableOfReal_removeColumn (TableOfReal me, integer columnNumber) {
 		/*
 			Change without error.
 		*/
-		Melder_free (my columnLabels [columnNumber]);
 		for (integer icol = columnNumber; icol < my numberOfColumns; icol ++)
-			my columnLabels [icol] = my columnLabels [icol + 1];
+			my columnLabels [icol] = std::move (my columnLabels [icol + 1]);
+		my columnLabels [my numberOfColumns]. reset();
 		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfColumns --;
@@ -259,21 +266,23 @@ void TableOfReal_insertColumn (TableOfReal me, integer columnNumber) {
 	try {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns + 1)
 			Melder_throw (U"Cannot create column ", columnNumber, U".");
+		/*
+			Create without change.
+		*/
 		autoNUMmatrix <double> data (1, my numberOfRows, 1, my numberOfColumns + 1);
-		autoNUMvector <char32*> columnLabels (1, my numberOfColumns + 1);   // not autostringvector...
+		autostring32vector newColumnLabels (1, my numberOfColumns + 1);
 		for (integer j = 1; j < columnNumber; j ++) {
-			columnLabels [j] = my columnLabels [j];   // ...because this is a dangling copy
+			newColumnLabels [j] = std::move (my columnLabels [j]);
 			for (integer i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j];
 		}
 		for (integer j = my numberOfColumns + 1; j > columnNumber; j --) {
-			columnLabels [j] = my columnLabels [j - 1];
+			newColumnLabels [j] = std::move (my columnLabels [j - 1]);
 			for (integer i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j - 1];
 		}
 		/*
 			Change without error.
 		*/
-		NUMvector_free (my columnLabels, 1);
-		my columnLabels = columnLabels.transfer();
+		my columnLabels = std::move (newColumnLabels);
 		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfColumns ++;
@@ -332,7 +341,7 @@ static void copyRowLabels (TableOfReal me, TableOfReal thee) {
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfRows == thy numberOfRows);
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		thy rowLabels [irow] = Melder_dup (my rowLabels [irow]);
+		thy rowLabels [irow] = Melder_dup (my rowLabels [irow].get());
 	}
 }
 
@@ -340,14 +349,14 @@ static void copyColumnLabels (TableOfReal me, TableOfReal thee) {
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfColumns == thy numberOfColumns);
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		thy columnLabels [icol] = Melder_dup (my columnLabels [icol]);
+		thy columnLabels [icol] = Melder_dup (my columnLabels [icol].get());
 	}
 }
 
 static void copyRow (TableOfReal me, integer myRow, TableOfReal thee, integer thyRow) {
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfColumns == thy numberOfColumns);
-	thy rowLabels [thyRow] = Melder_dup (my rowLabels [myRow]);
+	thy rowLabels [thyRow] = Melder_dup (my rowLabels [myRow].get());
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		thy data [thyRow] [icol] = my data [myRow] [icol];
 	}
@@ -356,7 +365,7 @@ static void copyRow (TableOfReal me, integer myRow, TableOfReal thee, integer th
 static void copyColumn (TableOfReal me, integer myCol, TableOfReal thee, integer thyCol) {
 	Melder_assert (me != thee);
 	Melder_assert (my numberOfRows == thy numberOfRows);
-	thy columnLabels [thyCol] = Melder_dup (my columnLabels [myCol]);
+	thy columnLabels [thyCol] = Melder_dup (my columnLabels [myCol].get());
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		thy data [irow] [thyCol] = my data [irow] [myCol];
 	}
@@ -389,7 +398,7 @@ autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_strin
 	try {
 		integer n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (my rowLabels [irow].get(), which, criterion, true)) {
 				n ++;
 			}
 		}
@@ -399,7 +408,7 @@ autoTableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, kMelder_strin
 		copyColumnLabels (me, thee.get());
 		n = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
-			if (Melder_stringMatchesCriterion (my rowLabels [irow], which, criterion, true))
+			if (Melder_stringMatchesCriterion (my rowLabels [irow].get(), which, criterion, true))
 				copyRow (me, irow, thee.get(), ++ n);
 		return thee;
 	} catch (MelderError) {
@@ -435,7 +444,7 @@ autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_st
 	try {
 		integer n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (my columnLabels [icol].get(), which, criterion, true)) {
 				n ++;
 			}
 		}
@@ -445,7 +454,7 @@ autoTableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, kMelder_st
 		copyRowLabels (me, thee.get());
 		n = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (Melder_stringMatchesCriterion (my columnLabels [icol], which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (my columnLabels [icol].get(), which, criterion, true)) {
 				copyColumn (me, icol, thee.get(), ++ n);
 			}
 		}
@@ -660,10 +669,10 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my numberOfRows);
+		thy strings = autostring32vector (1, my numberOfRows);
 		thy numberOfStrings = my numberOfRows;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			thy strings [irow] = Melder_dup (my rowLabels [irow] ? my rowLabels [irow] : U"");
+			thy strings [irow] = Melder_dup (my rowLabels [irow] ? my rowLabels [irow].get() : U"");
 		}
 		return thee;
 	} catch (MelderError) {
@@ -674,10 +683,10 @@ autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 autoStrings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my numberOfColumns);
+		thy strings = autostring32vector (1, my numberOfColumns);
 		thy numberOfStrings = my numberOfColumns;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy strings [icol] = Melder_dup (my columnLabels [icol] ? my columnLabels [icol] : U"");
+			thy strings [icol] = Melder_dup (my columnLabels [icol] ? my columnLabels [icol].get() : U"");
 		}
 		return thee;
 	} catch (MelderError) {
@@ -733,7 +742,7 @@ static double getMaxRowLabelWidth (TableOfReal me, Graphics graphics, integer ro
 	if (! my rowLabels) return 0.0;
 	fixRows (me, & rowmin, & rowmax);
 	for (integer irow = rowmin; irow <= rowmax; irow ++) if (my rowLabels [irow] && my rowLabels [irow] [0]) {
-		double textWidth = Graphics_textWidth_ps (graphics, my rowLabels [irow], true);   // SILIPA is bigger than XIPA
+		double textWidth = Graphics_textWidth_ps (graphics, my rowLabels [irow].get(), true);   // SILIPA is bigger than XIPA
 		if (textWidth > maxWidth) maxWidth = textWidth;
 	}
 	return maxWidth;
@@ -766,13 +775,13 @@ void TableOfReal_drawAsNumbers (TableOfReal me, Graphics graphics, integer rowmi
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (my columnLabels && my columnLabels [icol] && my columnLabels [icol] [0])
-			Graphics_text (graphics, icol, 1, my columnLabels [icol]);
+			Graphics_text (graphics, icol, 1, my columnLabels [icol].get());
 	}
 	for (integer irow = rowmin; irow <= rowmax; irow ++) {
 		double y = 1.0 - lineSpacing * (irow - rowmin + 0.6);
 		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
 		if (my rowLabels && my rowLabels [irow] && my rowLabels [irow] [0])
-			Graphics_text (graphics, 0.5 - leftMargin, y, my rowLabels [irow]);
+			Graphics_text (graphics, 0.5 - leftMargin, y, my rowLabels [irow].get());
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			char text [40];
@@ -806,13 +815,13 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, integer ro
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			if (my columnLabels && my columnLabels [icol] && my columnLabels [icol] [0])
-				Graphics_text (graphics, icol, 1, my columnLabels [icol]);
+				Graphics_text (graphics, icol, 1, my columnLabels [icol].get());
 		}
 		for (integer irow = rowmin; irow <= rowmax; irow ++) {
 			double y = 1.0 - lineSpacing * (irow - rowmin + 0.6);
 			Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
 			if (my rowLabels && my rowLabels [irow] && my rowLabels [irow] [0])
-				Graphics_text (graphics, 0.5 - leftMargin, y, my rowLabels [irow]);
+				Graphics_text (graphics, 0.5 - leftMargin, y, my rowLabels [irow].get());
 			Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) if (conditions -> z [irow] [icol] != 0.0) {
 				char text [40];
@@ -938,9 +947,9 @@ void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, integer rowmi
 	Graphics_unsetInner (graphics);
 	if (garnish) {
 		for (integer irow = rowmin; irow <= rowmax; irow ++) if (my rowLabels [irow])
-			Graphics_markLeft (graphics, rowmax + rowmin - irow, false, false, false, my rowLabels [irow]);
+			Graphics_markLeft (graphics, rowmax + rowmin - irow, false, false, false, my rowLabels [irow].get());
 		for (integer icol = colmin; icol <= colmax; icol ++) if (my columnLabels [icol])
-			Graphics_markTop (graphics, icol, false, false, false, my columnLabels [icol]);
+			Graphics_markTop (graphics, icol, false, false, false, my columnLabels [icol].get());
 	}
 }
 
@@ -952,16 +961,16 @@ autoTableOfReal TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 		TableOfReal_init (him.get(), my numberOfRows + thy numberOfRows, my numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (him.get(), icol, my columnLabels [icol]);
+			TableOfReal_setColumnLabel (him.get(), icol, my columnLabels [icol].get());
 		}
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			TableOfReal_setRowLabel (him.get(), irow, my rowLabels [irow]);
+			TableOfReal_setRowLabel (him.get(), irow, my rowLabels [irow].get());
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 				his data [irow] [icol] = my data [irow] [icol];
 		}
 		for (integer irow = 1; irow <= thy numberOfRows; irow ++) {
 			integer hisRow = irow + my numberOfRows;
-			TableOfReal_setRowLabel (him.get(), hisRow, thy rowLabels [irow]);
+			TableOfReal_setRowLabel (him.get(), hisRow, thy rowLabels [irow].get());
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 				his data [hisRow] [icol] = thy data [irow] [icol];
 		}
@@ -986,14 +995,14 @@ autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me) {
 		TableOfReal_init (him.get(), totalNumberOfRows, numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (him.get(), icol, thy columnLabels [icol]);
+			TableOfReal_setColumnLabel (him.get(), icol, thy columnLabels [icol].get());
 		}
 		totalNumberOfRows = 0;
 		for (integer itab = 1; itab <= my size; itab ++) {
 			thee = my at [itab];
 			for (integer irow = 1; irow <= thy numberOfRows; irow ++) {
 				totalNumberOfRows ++;
-				TableOfReal_setRowLabel (him.get(), totalNumberOfRows, thy rowLabels [irow]);
+				TableOfReal_setRowLabel (him.get(), totalNumberOfRows, thy rowLabels [irow].get());
 				for (integer icol = 1; icol <= numberOfColumns; icol ++)
 					his data [totalNumberOfRows] [icol] = thy data [irow] [icol];
 			}
@@ -1007,11 +1016,10 @@ autoTableOfReal TablesOfReal_appendMany (OrderedOf<structTableOfReal>* me) {
 
 static void TableOfReal_sort (TableOfReal me, bool useLabels, integer column1, integer column2) {
 	for (integer irow = 1; irow < my numberOfRows; irow ++) for (integer jrow = irow + 1; jrow <= my numberOfRows; jrow ++) {
-		char32 *tmpString;
 		if (useLabels) {
 			if (my rowLabels [irow]) {
 				if (my rowLabels [jrow]) {
-					int compare = str32cmp (my rowLabels [irow], my rowLabels [jrow]);
+					int compare = str32cmp (my rowLabels [irow].get(), my rowLabels [jrow].get());
 					if (compare < 0) continue;
 					if (compare > 0) goto swap;
 				} else goto swap;
@@ -1033,9 +1041,7 @@ static void TableOfReal_sort (TableOfReal me, bool useLabels, integer column1, i
 		 */
 		continue;
 	swap:
-		tmpString = my rowLabels [irow];
-		my rowLabels [irow] = my rowLabels [jrow];
-		my rowLabels [jrow] = tmpString;
+		std::swap (my rowLabels [irow], my rowLabels [jrow]);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			double tmpValue = my data [irow] [icol];
 			my data [irow] [icol] = my data [jrow] [icol];
@@ -1061,14 +1067,14 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 		}
 		if (labelColumn) {
 			for (integer icol = 1; icol < labelColumn; icol ++) {
-				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label.get());
 			}
 			for (integer icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.get(), icol - 1, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol - 1, my columnHeaders [icol]. label.get());
 			}
 			for (integer irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
-				char32 *string = row -> cells [labelColumn]. string;
+				char32 *string = row -> cells [labelColumn]. string.get();
 				TableOfReal_setRowLabel (thee.get(), irow, string ? string : U"");
 				for (integer icol = 1; icol < labelColumn; icol ++) {
 					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
@@ -1081,7 +1087,7 @@ autoTableOfReal Table_to_TableOfReal (Table me, integer labelColumn) {
 			}
 		} else {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label);
+				TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [icol]. label.get());
 			}
 			for (integer irow = 1; irow <= my rows.size; irow ++) {
 				TableRow row = my rows.at [irow];
@@ -1102,11 +1108,11 @@ autoTable TableOfReal_to_Table (TableOfReal me, const char32 *labelOfFirstColumn
 		autoTable thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1);
 		Table_setColumnLabel (thee.get(), 1, labelOfFirstColumn);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			char32 *columnLabel = my columnLabels [icol];
+			const char32 *columnLabel = my columnLabels [icol].get();
 			thy columnHeaders [icol + 1]. label = Melder_dup (columnLabel && columnLabel [0] ? columnLabel : U"?");
 		}
 		for (integer irow = 1; irow <= thy rows.size; irow ++) {
-			char32 *stringValue = my rowLabels [irow];
+			const char32 *stringValue = my rowLabels [irow].get();
 			TableRow row = thy rows.at [irow];
 			row -> cells [1]. string = Melder_dup (stringValue && stringValue [0] ? stringValue : U"?");
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1126,12 +1132,12 @@ void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile fi
 		MelderString_copy (& buffer, U"rowLabel");
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			MelderString_appendCharacter (& buffer, U'\t');
-			char32 *s = my columnLabels [icol];
+			const char32 *s = my columnLabels [icol].get();
 			MelderString_append (& buffer, ( s && s [0] != U'\0' ? s : U"?" ));
 		}
 		MelderString_appendCharacter (& buffer, U'\n');
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			char32 *s = my rowLabels [irow];
+			const char32 *s = my rowLabels [irow].get();
 			MelderString_append (& buffer, ( s && s [0] != U'\0' ? s : U"?" ));
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				MelderString_appendCharacter (& buffer, U'\t');

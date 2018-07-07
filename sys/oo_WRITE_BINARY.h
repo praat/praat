@@ -75,26 +75,26 @@
 //	{
 
 #define oo_STRINGx(storage,x)  \
-	binput##storage (our x, f);
+	binput##storage (our x.get(), f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \
 		integer _n = (n); \
 		for (int _i = 0; _i < _n; _i ++) { \
-			binput##storage (our x [_i], f); \
+			binput##storage (our x [_i].get(), f); \
 		} \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) { \
-		binput##storage (our x [_i], f); \
+		binput##storage (our x [_i].get(), f); \
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	{ \
 		integer _min = (min), _max = (max); \
 		for (integer _i = _min; _i <= _max; _i ++) { \
-			binput##storage (our x [_i], f); \
+			binput##storage (our x [_i].get(), f); \
 		} \
 	}
 

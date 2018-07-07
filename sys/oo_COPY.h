@@ -65,28 +65,28 @@
 //	}
 
 #define oo_STRINGx(storage,x)  \
-	if (our x) thy x = Melder_dup (our x);
+	if (our x) thy x = Melder_dup (our x.get());
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \
 		integer _n = (n); \
 		for (int _i = 0; _i < _n; _i ++) { \
-			if (our x [_i]) thy x [_i] = Melder_dup (our x [_i]); \
+			if (our x [_i]) thy x [_i] = Melder_dup (our x [_i].get()); \
 		} \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) { \
-		if (our x [_i]) thy x [_i] = Melder_dup (our x [_i]); \
+		if (our x [_i]) thy x [_i] = Melder_dup (our x [_i].get()); \
 	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	{ \
 		integer _min = (min), _max = (max); \
 		if (our x) { \
-			thy x = NUMvector <char32*> (_min, _max); \
+			thy x = autostring32vector (_min, _max); \
 			for (integer _i = _min; _i <= _max; _i ++) { \
-				if (our x [_i]) thy x [_i] = Melder_dup (our x [_i]); \
+				if (our x [_i]) thy x [_i] = Melder_dup (our x [_i].get()); \
 			} \
 		} \
 	}

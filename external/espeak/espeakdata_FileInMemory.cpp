@@ -44,7 +44,7 @@ integer Table_findStringInColumn (Table me, const char32 *string, integer icol) 
 	if (icol > 0 && icol <= my numberOfColumns) {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow myRow = my rows.at [irow];
-			if (Melder_equ (myRow -> cells [icol]. string, string)) {
+			if (Melder_equ (myRow -> cells [icol]. string.get(), string)) {
 				return irow;
 			}
 		}
@@ -152,9 +152,9 @@ autoTable Table_createAsEspeakVoicesProperties () {
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
-				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
+				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
 				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
 				// The first character of name must be upper case
 				if (name) { 
@@ -164,7 +164,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 					*(capitalFirst. string) = capital;
 					Table_setStringValue (thee.get(), irow, 2, capitalFirst. string);
 				} else {
-					Table_setStringValue (thee.get(), irow, 2, fim -> d_id);
+					Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
 				}
 				Table_setNumericValue (thee.get(), irow, 3, ifile); 
 				const char32 *word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
@@ -192,11 +192,11 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		integer irow = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
-			if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: CONTAINS, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: CONTAINS, criterion, true)) {
 				irow ++;
-				Table_setStringValue (thee.get(), irow, 1, fim -> d_id);
+				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
 				const char32 *word = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
-				Table_setStringValue (thee.get(), irow, 2, (word ? word : fim -> d_id));
+				Table_setStringValue (thee.get(), irow, 2, ( word ? word : fim -> d_id.get() ));
 				Table_setNumericValue (thee.get(), irow, 3, ifile);
 			}
 		}
@@ -214,7 +214,7 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 			Melder_throw (U"Illegal columnn.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my rows.size);
+		thy strings = autostring32vector (1, my rows.size);
 		thy numberOfStrings = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
@@ -232,7 +232,8 @@ void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *
 		if (languageIndex == 0) {
 			if (Melder_equ (language_string, U"Default") || Melder_equ (language_string, U"English")) {
 				languageIndex = Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
-				Melder_casual (U"Language \"", language_string, U"\" is deprecated. Please use \"", espeakdata_languages_names -> strings [languageIndex], U"\".");
+				Melder_casual (U"Language \"", language_string, U"\" is deprecated. Please use \"",
+					espeakdata_languages_names -> strings [languageIndex].get(), U"\".");
 			} else {
 				languageIndex = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 1, language_string);
 				if (languageIndex == 0) {
@@ -260,7 +261,8 @@ void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *
 		}
 		if (voiceIndex != *p_voiceIndex) {
 			*p_voiceIndex = voiceIndex;
-			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. Please use \"", espeakdata_voices_names -> strings [*p_voiceIndex], U"\".");
+			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. Please use \"",
+				espeakdata_voices_names -> strings [*p_voiceIndex].get(), U"\".");
 		} else {
 			// unknown voice, handled by interface
 		}

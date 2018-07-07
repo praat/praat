@@ -87,7 +87,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 		autoFileInMemorySet me = FileInMemorySet_create ();
 		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			structMelderFile file { };
-			MelderDir_getFile (& parent, thy strings [i], & file);
+			MelderDir_getFile (& parent, thy strings [i].get(), & file);
 			autoFileInMemory fim = FileInMemory_create (& file);
 			my addItem_move (fim.move());
 		}
@@ -116,7 +116,7 @@ autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_st
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
-			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path.get(), which, criterion, true)) {
 				autoFileInMemory item = Data_copy (fim);
 				thy addItem_move (item.move());
 			}
@@ -132,7 +132,7 @@ autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_strin
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = static_cast<FileInMemory> (my at [ifile]);
-			if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (fim -> d_path.get(), which, criterion, true)) {
 				thy addItem_ref (fim);
 			}
 		}
@@ -185,7 +185,7 @@ integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id) {
 	integer index = 0;
 	for (integer i = 1; i <= my size; i ++) {
 		FileInMemory fim = (FileInMemory) my at [i];
-		if (Melder_equ (id, fim -> d_id)) {
+		if (Melder_equ (id, fim -> d_id.get())) {
 			index = i;
 			break;
 		}
@@ -197,7 +197,7 @@ integer FileInMemorySet_lookUp (FileInMemorySet me, const char32 *path) {
 	integer index = 0;
 	for (integer i = 1; i <= my size; i ++) {
 		FileInMemory fim = (FileInMemory) my at [i];
-		if (Melder_equ (path, fim -> d_path)) {
+		if (Melder_equ (path, fim -> d_path.get())) {
 			index = i;
 			break;
 		}
@@ -209,7 +209,7 @@ integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_st
 	integer numberOfMatches = 0;
 	for (integer ifile = 1; ifile <= my size; ifile ++) {
 		FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
-		if (Melder_stringMatchesCriterion (fim -> d_path, which, criterion, true)) {
+		if (Melder_stringMatchesCriterion (fim -> d_path.get(), which, criterion, true)) {
 			numberOfMatches ++;
 		}
 	}
@@ -222,7 +222,7 @@ bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name) {
 	for (integer i = 1; i <= my size; i ++) {
 		FileInMemory fim = (FileInMemory) my at [i];
 		MelderString_append (& regex, U".*/", name, U"/.*"); 
-		if (Melder_stringMatchesCriterion (fim -> d_path, kMelder_string :: MATCH_REGEXP, regex.string, true)) {
+		if (Melder_stringMatchesCriterion (fim -> d_path.get(), kMelder_string :: MATCH_REGEXP, regex.string, true)) {
 			match = true;
 			break;
 		}
@@ -234,11 +234,11 @@ bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name) {
 autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my size);
+		thy strings = autostring32vector (1, my size);
 		thy numberOfStrings = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];
-			thy strings [ifile] = Melder_dup_f (fim -> d_id);
+			thy strings [ifile] = Melder_dup_f (fim -> d_id.get());
 			thy numberOfStrings ++;
 		}
 		return thee;

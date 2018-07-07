@@ -28,7 +28,7 @@ autoTableOfReal Matrix_Categories_to_TableOfReal (Matrix me, Categories thee) {
 
 		for (integer i = 1; i <= my ny; i ++) {
 			SimpleString category = thy at [i];
-			his rowLabels [i] = Melder_dup (category -> string);
+			his rowLabels [i] = Melder_dup (category -> string.get());
 		}
 
 		for (integer i = 1; i <= my ny; i ++) {

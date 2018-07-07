@@ -408,7 +408,7 @@ autoTableOfReal KNN_classifyToTableOfReal
     autoTableOfReal output = TableOfReal_create(ps->ny, ncategories);
 
     for (integer i = 1; i <= ncategories; i ++)
-        TableOfReal_setColumnLabel (output.get(), i, uniqueCategories->at [i] -> string);
+        TableOfReal_setColumnLabel (output.get(), i, uniqueCategories->at [i] -> string.get());
 
     for (int i = 0; i < nthreads; i ++)
     {

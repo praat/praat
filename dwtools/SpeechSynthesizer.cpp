@@ -137,10 +137,10 @@ void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice) {
 void EspeakVoice_into_voice (EspeakVoice me, voice_t *voice) {
 
 	if (my v_name) {
-		strncpy (voice -> v_name, Melder_peek32to8 (my v_name), 40);
+		strncpy (voice -> v_name, Melder_peek32to8 (my v_name.get()), 40);
 	}
 	if (my language_name) {
-		strncpy (voice -> language_name, Melder_peek32to8 (my language_name), 20);
+		strncpy (voice -> language_name, Melder_peek32to8 (my language_name.get()), 20);
 	}
 	voice -> phoneme_tab_ix = my phoneme_tab_ix;
 	voice -> pitch_base = my pitch_base;
@@ -184,21 +184,24 @@ void EspeakVoice_into_voice (EspeakVoice me, voice_t *voice) {
 Thing_implement (SpeechSynthesizer, Daata, 1);
 
 void structSpeechSynthesizer :: v_info () {
-	SpeechSynthesizer_Parent :: v_info ();
-	MelderInfo_writeLine (U"Synthesizer version: espeak-ng ", d_synthesizerVersion);
-	MelderInfo_writeLine (U"Language: ", d_languageName);
-	MelderInfo_writeLine (U"Voice: ", d_voiceName);
-	MelderInfo_writeLine (U"Phoneme set: ", d_phonemeSet);
-	MelderInfo_writeLine (U"Input text format: ", (d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? U"text only" :
+	our SpeechSynthesizer_Parent :: v_info ();
+	MelderInfo_writeLine (U"Synthesizer version: espeak-ng ", our d_synthesizerVersion.get());
+	MelderInfo_writeLine (U"Language: ", our d_languageName.get());
+	MelderInfo_writeLine (U"Voice: ", our d_voiceName.get());
+	MelderInfo_writeLine (U"Phoneme set: ", our d_phonemeSet.get());
+	MelderInfo_writeLine (U"Input text format: ", (our d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? U"text only" :
 		d_inputTextFormat == SpeechSynthesizer_INPUT_PHONEMESONLY ? U"phonemes only" : U"tagged text"));
-	MelderInfo_writeLine (U"Input phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : U"???"));
-	MelderInfo_writeLine (U"Sampling frequency: ", d_samplingFrequency, U" Hz");
-	MelderInfo_writeLine (U"Word gap: ", d_wordgap, U" s");
-	MelderInfo_writeLine (U"Pitch multiplier: ", d_pitchAdjustment, U" (0.5-2.0)");
-	MelderInfo_writeLine (U"Pitch range multiplier: ", d_pitchRange, U" (0.0-2.0)");
-	MelderInfo_writeLine (U"Speaking rate: ", d_wordsPerMinute, U" words per minute", (d_estimateSpeechRate ? U" (but estimated from speech if possible)" : U" (fixed)"));
-
-	MelderInfo_writeLine (U"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? U"IPA" : U"???"));
+	MelderInfo_writeLine (U"Input phoneme coding: ", (our d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" : U"???"));
+	MelderInfo_writeLine (U"Sampling frequency: ", our d_samplingFrequency, U" Hz");
+	MelderInfo_writeLine (U"Word gap: ", our d_wordgap, U" s");
+	MelderInfo_writeLine (U"Pitch multiplier: ", our d_pitchAdjustment, U" (0.5-2.0)");
+	MelderInfo_writeLine (U"Pitch range multiplier: ", our d_pitchRange, U" (0.0-2.0)");
+	MelderInfo_writeLine (U"Speaking rate: ", our d_wordsPerMinute, U" words per minute",
+		our d_estimateSpeechRate ? U" (but estimated from speech if possible)" : U" (fixed)");
+	MelderInfo_writeLine (U"Output phoneme coding: ",
+		our d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? U"Kirshenbaum" :
+		our d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? U"IPA" : U"???"
+	);
 }
 
 static void NUMvector_extendNumberOfElements (integer elementSize, void **v, integer lo, integer *hi, integer extraDemand)
@@ -288,9 +291,9 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 
 const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	try {
-		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_languageName);
+		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_languageName.get());
 		if (irow == 0) {
-			Melder_throw (U"Cannot find language \"", my d_languageName, U"\".");
+			Melder_throw (U"Cannot find language \"", my d_languageName.get(), U"\".");
 		}
 		return Table_getStringValue_Assert (espeakdata_languages_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
@@ -300,9 +303,9 @@ const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 
 const char32 *SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
 	try {
-		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_phonemeSet);
+		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_phonemeSet.get());
 		if (irow == 0) {
-			Melder_throw (U"Cannot find phoneme set \"", my d_phonemeSet, U"\".");
+			Melder_throw (U"Cannot find phoneme set \"", my d_phonemeSet.get(), U"\".");
 		}
 		return Table_getStringValue_Assert (espeakdata_languages_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
@@ -312,9 +315,9 @@ const char32 *SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
 
 const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
-		integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName);
+		integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName.get());
 		if (irow == 0) {
-			Melder_throw (U": Cannot find voice variant \"", my d_voiceName, U"\".");
+			Melder_throw (U": Cannot find voice variant \"", my d_voiceName.get(), U"\".");
 		}
 		return Table_getStringValue_Assert (espeakdata_voices_propertiesTable.get(), irow, 1);
 	} catch (MelderError) {
@@ -444,11 +447,11 @@ static void IntervalTier_mergeSpecialIntervals (IntervalTier me) {
 	integer intervalIndex = my intervals.size;
 	TextInterval right = my intervals.at [intervalIndex];
 	integer labelLength_right = TextInterval_labelLength (right);
-	bool isEmptyInterval_right = labelLength_right == 0 || (labelLength_right == 1 && Melder_equ (right -> text, U"\001"));
+	bool isEmptyInterval_right = labelLength_right == 0 || (labelLength_right == 1 && Melder_equ (right -> text.get(), U"\001"));
 	while (intervalIndex > 1) {
 		TextInterval left = my intervals.at [intervalIndex - 1];
 		integer labelLength_left = TextInterval_labelLength (left);
-		bool isEmptyInterval_left = labelLength_left == 0 || (labelLength_left == 1 && Melder_equ (left -> text, U"\001"));
+		bool isEmptyInterval_left = labelLength_left == 0 || (labelLength_left == 1 && Melder_equ (left -> text.get(), U"\001"));
 		if (isEmptyInterval_right && isEmptyInterval_left) {
 			// remove right interval and empty left interval
 			left -> xmax = right -> xmax;
@@ -700,7 +703,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		
 		status =  espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
-		if (! Melder_equ (my d_phonemeSet, my d_languageName)) {
+		if (! Melder_equ (my d_phonemeSet.get(), my d_languageName.get())) {
 			const char32 *phonemeCode = SpeechSynthesizer_getPhonemeCode (me);
 			int index_phon_table_list = LookupPhonemeTable (Melder_32to8 (phonemeCode));
 			if (index_phon_table_list > 0) {
