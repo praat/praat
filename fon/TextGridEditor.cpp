@@ -684,7 +684,7 @@ static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Alignment settings", nullptr)
 		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 		for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
+			OPTION ((const char32 *) espeakdata_languages_names -> strings [i].get());
 		}
 		BOOLEAN (includeWords,    U"Include words",    my default_align_includeWords ())
 		BOOLEAN (includePhonemes, U"Include phonemes", my default_align_includePhonemes ())
@@ -697,7 +697,7 @@ static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 		SET_BOOLEAN (includePhonemes, my p_align_includePhonemes)
 		SET_BOOLEAN (allowSilences, my p_align_allowSilences)
 	EDITOR_DO
-		pref_str32cpy2 (my pref_align_language (), my p_align_language, espeakdata_languages_names -> strings [language]);
+		pref_str32cpy2 (my pref_align_language (), my p_align_language, espeakdata_languages_names -> strings [language].get());
 		my pref_align_includeWords    () = my p_align_includeWords    = includeWords;
 		my pref_align_includePhonemes () = my p_align_includePhonemes = includePhonemes;
 		my pref_align_allowSilences   () = my p_align_allowSilences   = allowSilences;

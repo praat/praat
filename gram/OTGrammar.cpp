@@ -652,7 +652,7 @@ bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const char32 *partialOu
 
 bool OTGrammar_areAllPartialOutputsGrammatical (OTGrammar me, Strings thee) {
 	for (integer ioutput = 1; ioutput <= thy numberOfStrings; ioutput ++) {
-		const char32 *partialOutput = thy strings [ioutput];
+		const char32 *partialOutput = thy strings [ioutput].get();
 		if (! OTGrammar_isPartialOutputGrammatical (me, partialOutput)) {
 			return false;
 		}
@@ -687,7 +687,7 @@ bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const char32 *par
 
 bool OTGrammar_areAllPartialOutputsSinglyGrammatical (OTGrammar me, Strings thee) {
 	for (integer ioutput = 1; ioutput <= thy numberOfStrings; ioutput ++) {
-		const char32 *partialOutput = thy strings [ioutput];
+		const char32 *partialOutput = thy strings [ioutput].get();
 		if (! OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput)) {
 			return false;
 		}
@@ -985,7 +985,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const char3
 autoStrings OTGrammar_generateInputs (OTGrammar me, integer numberOfTrials) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, thy numberOfStrings = numberOfTrials);
+		thy strings = autostring32vector (1, thy numberOfStrings = numberOfTrials);
 		for (integer i = 1; i <= numberOfTrials; i ++) {
 			integer itab = NUMrandomInteger (1, my numberOfTableaus);
 			thy strings [i] = Melder_dup (my tableaus [itab]. input.get());
@@ -999,7 +999,7 @@ autoStrings OTGrammar_generateInputs (OTGrammar me, integer numberOfTrials) {
 autoStrings OTGrammar_getInputs (OTGrammar me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, thy numberOfStrings = my numberOfTableaus);
+		thy strings = autostring32vector (1, thy numberOfStrings = my numberOfTableaus);
 		for (integer i = 1; i <= my numberOfTableaus; i ++) {
 			thy strings [i] = Melder_dup (my tableaus [i]. input.get());
 		}
@@ -1027,10 +1027,10 @@ autoStrings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double eval
 		autoStrings him = Thing_new (Strings);
 		integer n = inputs -> numberOfStrings;
 		his numberOfStrings = n;
-		his strings = NUMvector <char32 *> (1, n);
+		his strings = autostring32vector (1, n);
 		for (integer i = 1; i <= n; i ++) {
 			char32 output [100];
-			OTGrammar_inputToOutput (me, inputs -> strings [i], output, evaluationNoise);
+			OTGrammar_inputToOutput (me, inputs -> strings [i].get(), output, evaluationNoise);
 			his strings [i] = Melder_dup (output);
 		}
 		return him;
@@ -1043,7 +1043,7 @@ autoStrings OTGrammar_inputToOutputs (OTGrammar me, const char32 *input, integer
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = n;
-		thy strings = NUMvector <char32 *> (1, n);
+		thy strings = autostring32vector (1, n);
 		for (integer i = 1; i <= n; i ++) {
 			char32 output [100];
 			OTGrammar_inputToOutput (me, input, output, evaluationNoise);
@@ -1719,7 +1719,7 @@ void OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 			Melder_throw (U"Numbers of strings in input and output are not equal.");
 		for (integer i = 1; i <= n; i ++) {
 			for (integer ichew = 1; ichew <= numberOfChews; ichew ++) {
-				OTGrammar_learnOne (me, inputs -> strings [i], outputs -> strings [i],
+				OTGrammar_learnOne (me, inputs -> strings [i].get(), outputs -> strings [i].get(),
 					evaluationNoise, updateRule, honourLocalRankings,
 					plasticity, relativePlasticityNoise, true, true, nullptr);
 			}
@@ -2130,17 +2130,17 @@ void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 		try {
 			for (integer idatum = 1; idatum <= partialOutputs -> numberOfStrings; idatum ++) {
 				try {
-					OTGrammar_learnOneFromPartialOutput (me, partialOutputs -> strings [idatum],
+					OTGrammar_learnOneFromPartialOutput (me, partialOutputs -> strings [idatum].get(),
 						evaluationNoise, updateRule, honourLocalRankings,
 						plasticity, relativePlasticityNoise, numberOfChews, false);
 				} catch (MelderError) {
 					if (history) {
-						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);   // so that we can inspect
+						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum].get());   // so that we can inspect
 					}
 					throw;
 				}
 				if (history) {
-					OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);
+					OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum].get());
 				}
 			}
 			if (history) {
@@ -2184,7 +2184,7 @@ static void OTGrammar_Distributions_opt_createOutputMatching (OTGrammar me, Dist
 		}
 		for (integer ipartialOutput = 1; ipartialOutput <= thy numberOfRows; ipartialOutput ++) {
 			if (thy data [ipartialOutput] [columnNumber] > 0.0) {
-				char32 *partialOutput = thy rowLabels [ipartialOutput];
+				const char32 *partialOutput = thy rowLabels [ipartialOutput].get();
 				bool foundPartialOutput = false;
 				for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 					OTGrammarTableau tab = & my tableaus [itab];
@@ -2245,7 +2245,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 					}
 					Melder_monitor ((double) idatum / numberOfData,
 						U"Processing partial output ", idatum, U" out of ", numberOfData, U": ",
-						thy rowLabels [ipartialOutput]);
+						thy rowLabels [ipartialOutput].get());
 					try {
 						OTGrammar_learnOneFromPartialOutput_opt (me, partialOutput, ipartialOutput,
 							evaluationNoise, updateRule, honourLocalRankings,
@@ -2253,12 +2253,12 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 							resampleForVirtualProduction, compareOnlyPartialOutput, resampleForCorrectForm);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
 						if (history) {
-							OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
+							OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput].get());
 						}
 						throw;
 					}
 					if (history) {
-						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
+						OTGrammar_updateHistory (me, history.get(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput].get());
 					}
 				}
 				plasticity *= plasticityDecrement;

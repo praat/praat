@@ -85,7 +85,7 @@ void CCA_drawEigenvector (CCA me, Graphics g, int x_or_y, integer ivec, integer 
 		e = my y.get();
 		labels = my yLabels.get();
 	}
-	Eigen_drawEigenvector (e, g, ivec, first, last, ymin, ymax, weigh, size_mm, mark, connect, labels -> strings, garnish);
+	Eigen_drawEigenvector (e, g, ivec, first, last, ymin, ymax, weigh, size_mm, mark, connect, labels -> strings.peek2(), garnish);
 }
 
 double CCA_getEigenvectorElement (CCA me, int x_or_y, integer ivec, integer element) {
@@ -158,8 +158,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		integer numberOfCoefficients = ny - numberOfZeroedc;
 
 		autoCCA thee = CCA_create (numberOfCoefficients, ny, nx);
-		thy yLabels = strings_to_Strings (my columnLabels, 1, ny);
-		thy xLabels = strings_to_Strings (my columnLabels, ny + 1, my numberOfColumns);
+		thy yLabels = strings_to_Strings (my columnLabels.peek2(), 1, ny);
+		thy xLabels = strings_to_Strings (my columnLabels.peek2(), ny + 1, my numberOfColumns);
 
 		double **evecy = thy y -> eigenvectors;
 		double **evecx = thy x -> eigenvectors;
@@ -221,7 +221,7 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 			U"The number of factors should be in interval [1, ", my numberOfCoefficients, U"].");
 		
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
-		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
+		his rowLabels. copyElementsFrom (thy rowLabels);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (my y.get(), thee, 1, him.get(), 1, numberOfFactors);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (my x.get(), thee, ny + 1, him.get(), numberOfFactors + 1, numberOfFactors);
 		TableOfReal_setSequentialColumnLabels (him.get(), 1, numberOfFactors, U"y_", 1, 1);

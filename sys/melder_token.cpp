@@ -54,7 +54,7 @@ char32 ** Melder_getTokens (const char32 *string, integer *n) {
 	for (token = Melder_firstToken (string); token != nullptr; token = Melder_nextToken ()) {
 		result [++ itoken] = Melder_dup (token);
 	}
-	return result.transfer();
+	return result.transfer2();
 }
 
 void Melder_freeTokens (char32 ***tokens) {

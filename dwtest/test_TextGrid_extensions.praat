@@ -1,5 +1,6 @@
 # test_TextGrid_extensions.praat
 # djmw 20110523, 20140904
+# ppgb 20180705 corrected regexp
 
 appendInfoLine: "test_TextGrid_extensions"
 
@@ -18,10 +19,10 @@ assert nints = ns
 for i to ns
 	selectObject: s
 	string$ = Get string: i
-	slabel$ = replace_regex$ (string$, "[0-9\s]", "", 0)
+	slabel$ = replace_regex$ (string$, "([0-9]|\s)*", "", 0)
 	selectObject: tg
 	tglabel$ = Get label of interval: 1, i
-	assert slabel$ = tglabel$
+	assert slabel$ = tglabel$  ; 'i'
 endfor
 removeObject: s, tg
 

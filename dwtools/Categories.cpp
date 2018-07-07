@@ -106,7 +106,7 @@ autoCategories TableOfReal_to_CategoriesRow (TableOfReal me) {
 
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			if (my rowLabels [i]) {
-				autoSimpleString s = SimpleString_create (my rowLabels [i]);
+				autoSimpleString s = SimpleString_create (my rowLabels [i].get());
 				thy addItem_move (s.move());
 			}
 		}
@@ -122,7 +122,7 @@ autoCategories TableOfReal_to_CategoriesColumn (TableOfReal me) {
 
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
 			if (my columnLabels [i]) {
-				autoSimpleString s = SimpleString_create (my columnLabels [i]);
+				autoSimpleString s = SimpleString_create (my columnLabels [i].get());
 				thy addItem_move (s.move());
 			}
 		}

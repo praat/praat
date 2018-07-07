@@ -54,25 +54,23 @@
 	}
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
+	if (! _thisStructCanAutodestroyItsMembers_) { \
 		integer _n = (n); \
 		for (int _i = 0; _i < _n; _i ++) { \
-			Melder_free (our x [_i]); \
+			our x [_i]. reset (); \
 		} \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
-	for (int i = 0; i <= setType::MAX; i ++) \
-		Melder_free (our x [i]);
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		for (int _i = 0; _i <= setType::MAX; _i ++) { \
+			our x [_i]. reset (); \
+		} \
+	}
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	{ \
-		integer _min = (min), _max = (max); \
-		if (our x) { \
-			for (integer _i = _min; _i <= _max; _i ++) \
-				Melder_free (our x [_i]); \
-			NUMvector_free <char32*> (our x, _min); \
-		} \
+	if (! _thisStructCanAutodestroyItsMembers_) { \
+		our x. reset (); \
 	}
 
 #define oo_STRUCT(Type,x)  \

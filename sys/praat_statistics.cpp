@@ -184,4 +184,13 @@ void praat_reportMemoryUse () {
 	MelderInfo_close ();
 }
 
+void MelderCasual_memoryUse (integer message) {
+	integer numberOfStrings = MelderString_allocationCount () - MelderString_deallocationCount ();
+	integer numberOfArrays = NUM_getTotalNumberOfArrays ();
+	integer numberOfThings = theTotalNumberOfThings;
+	integer numberOfOther = Melder_allocationCount () - Melder_deallocationCount () - numberOfStrings - numberOfArrays - numberOfThings;
+	Melder_casual (U"Memory ", message, U": ",
+		numberOfStrings, U" strings, ", numberOfArrays, U" arrays, ", numberOfThings, U" things, ", numberOfOther, U" other.");
+}
+
 /* End of file praat_statistics.cpp */

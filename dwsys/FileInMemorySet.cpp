@@ -87,7 +87,7 @@ autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *d
 		autoFileInMemorySet me = FileInMemorySet_create ();
 		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			structMelderFile file { };
-			MelderDir_getFile (& parent, thy strings [i], & file);
+			MelderDir_getFile (& parent, thy strings [i].get(), & file);
 			autoFileInMemory fim = FileInMemory_create (& file);
 			my addItem_move (fim.move());
 		}
@@ -234,7 +234,7 @@ bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name) {
 autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my size);
+		thy strings = autostring32vector (1, my size);
 		thy numberOfStrings = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];

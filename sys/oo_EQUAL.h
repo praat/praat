@@ -74,13 +74,13 @@
 	{ \
 		integer _n = (n); \
 		for (integer _i = 0; _i < _n; _i ++) { \
-			if (! Melder_equ (our x [_i], thy x [_i])) return false; \
+			if (! Melder_equ (our x [_i].get(), thy x [_i].get())) return false; \
 		} \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) \
-		if (! Melder_equ (our x [_i], thy x [_i])) return false;
+		if (! Melder_equ (our x [_i].get(), thy x [_i].get())) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	{ \
@@ -88,7 +88,7 @@
 		if (! our x != ! thy x) return false; \
 		if (our x) { \
 			for (integer _i = _min; _i <= _max; _i ++) { \
-				if (! Melder_equ (our x [_i], thy x [_i])) return false; \
+				if (! Melder_equ (our x [_i].get(), thy x [_i].get())) return false; \
 			} \
 		} \
 	}

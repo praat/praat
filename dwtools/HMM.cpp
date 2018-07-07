@@ -167,7 +167,7 @@ autoHMMObservation HMMObservation_create (const char32 *label, integer numberOfC
 integer Strings_getLongestSequence (Strings me, char32 *string, integer *pos) {
 	integer length = 0, longest = 0, lpos = 0;
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		if (Melder_equ (my strings [i], string)) {
+		if (Melder_equ (my strings [i].get(), string)) {
 			if (length == 0) {
 				lpos = i;
 			}
@@ -319,7 +319,7 @@ autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me) {
 	try {
 		integer numberOfStrings = my rows.size;
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<char32 *> (1, numberOfStrings);
+		thy strings = autostring32vector (1, numberOfStrings);
 		for (integer i = 1; i <= numberOfStrings; i ++) {
 			thy strings [i] = Melder_dup_f (Table_getStringValue_Assert ( (Table) me, i, 1));
 			(thy numberOfStrings) ++;
@@ -334,7 +334,7 @@ autoHMMObservationSequence Strings_to_HMMObservationSequence (Strings me) {
 	try {
 		autoHMMObservationSequence thee = HMMObservationSequence_create (my numberOfStrings, 0);
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
-			Table_setStringValue ( (Table) thee.get(), i, 1, my strings [i]);
+			Table_setStringValue (thee.get(), i, 1, my strings [i].get());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -373,7 +373,7 @@ integer HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag 
 autoHMMStateSequence HMMStateSequence_create (integer numberOfItems) {
 	try {
 		autoHMMStateSequence me = Thing_new (HMMStateSequence);
-		my strings = NUMvector<char32 *> (1, numberOfItems);
+		my strings = autostring32vector (1, numberOfItems);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"HMMStateSequence not created.");
@@ -1507,7 +1507,7 @@ autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, integer
 		HMM_init (thee.get(), numberOfStates, numberOfObservationSymbols, leftToRight);
 
 		for (integer i = 1; i <= numberOfObservationSymbols; i ++) {
-			const char32 *label = d -> rowLabels [i];
+			const char32 *label = d -> rowLabels [i].get();
 			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, 0);
 			HMM_addObservation_move (thee.get(), hmmo.move());
 			if (thy notHidden) {
@@ -1540,7 +1540,7 @@ autoTableOfReal HMMObservationSequence_to_TableOfReal_transitions (HMMObservatio
 autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservationSequence thee) {
 	try {
 		autoStrings classes = Thing_new (Strings);
-		classes -> strings = NUMvector<char32 *> (1, my numberOfObservationSymbols);
+		classes -> strings = autostring32vector (1, my numberOfObservationSymbols);
 		for (integer is = 1; is <= my numberOfObservationSymbols; is ++) {
 			HMMObservation hmmo = my observationSymbols->at [is];
 			classes -> strings [is] = Melder_dup (hmmo -> label.get());
@@ -1557,7 +1557,7 @@ autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservat
 autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence thee) {
 	try {
 		autoStrings classes = Thing_new (Strings);
-		classes -> strings = NUMvector<char32 *> (1, my numberOfObservationSymbols);
+		classes -> strings = autostring32vector (1, my numberOfObservationSymbols);
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			HMMState hmms = my states->at [is];
 			classes -> strings [is] = Melder_dup (hmms -> label.get());
@@ -1620,7 +1620,7 @@ autoTableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int pr
 			sum += colSum;
 		}
 		thy data [numberOfTypes + 1] [numberOfTypes + 1] = sum;
-		if (probabilities && sum > 0) {
+		if (probabilities && sum > 0.0) {
 			for (integer i = 1; i <= numberOfTypes; i ++) {
 				if (thy data [i] [numberOfTypes + 1] > 0.0) {
 					for (integer j = 1; j <= numberOfTypes; j ++) {

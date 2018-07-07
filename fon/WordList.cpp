@@ -139,12 +139,12 @@ autoWordList Strings_to_WordList (Strings me) {
 		 * Check whether the strings are generic and sorted.
 		 */
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
-			char32 *string = my strings [i], *p;
+			char32 *string = my strings [i].get(), *p;
 			for (p = & string [0]; *p; p ++) {
 				if (*p > 126)
 					Melder_throw (U"String \"", string, U"\" not generic.\nPlease convert to backslash trigraphs first.");
 			}
-			if (i > 1 && str32cmp (my strings [i - 1], string) > 0) {
+			if (i > 1 && str32cmp (my strings [i - 1].get(), string) > 0) {
 				Melder_throw (U"String \"", string, U"\" not sorted.\nPlease sort first.");
 			}
 			totalLength += str32len (string);
@@ -157,8 +157,8 @@ autoWordList Strings_to_WordList (Strings me) {
 		 */
 		char32 *q = & thy string [0];
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
-			integer length = str32len (my strings [i]);
-			str32cpy (q, my strings [i]);
+			integer length = str32len (my strings [i].get());
+			str32cpy (q, my strings [i].get());
 			q += length;
 			*q ++ = '\n';
 		}
@@ -176,14 +176,14 @@ autoStrings WordList_to_Strings (WordList me) {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = WordList_count (me);
 		if (thy numberOfStrings > 0) {
-			thy strings = NUMvector <char32 *> (1, thy numberOfStrings);
+			thy strings = autostring32vector (1, thy numberOfStrings);
 		}
 		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			unsigned char *kar = word;
 			for (; *kar != '\n'; kar ++) { }
 			integer length = kar - word;
 			thy strings [i] = Melder_calloc (char32, length + 1);
-			str32ncpy (thy strings [i], Melder_peek8to32 ((const char *) word), length);
+			str32ncpy (thy strings [i].get(), Melder_peek8to32 ((const char *) word), length);
 			thy strings [i] [length] = U'\0';
 			word += length + 1;
 		}

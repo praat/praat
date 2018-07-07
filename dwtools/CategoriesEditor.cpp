@@ -230,18 +230,20 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 		to = size;
 	}
 	if (from > to) {
-		integer ti = from; from = to; to = ti;
+		integer tmp = from;
+		from = to;
+		to = tmp;
 	}
 
 	// Begin optimization: add the items from a table instead of separately.
 	try {
 		autostring32vector table (from, to);
 		integer itemCount = GuiList_getNumberOfItems (my list);
-		for (integer i = from; i <= to; i++) {
+		for (integer i = from; i <= to; i ++) {
 			SimpleString category = data->at [i];
 			char wcindex[20];
 			snprintf (wcindex,20, "%5ld ", (long_not_integer) i);   // BUG
-			table[i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), category -> string.get()));
+			table [i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), category -> string.get()));
 		}
 		if (itemCount > size) { // some items have been removed from Categories?
 			for (integer j = itemCount; j > size; j --) {
@@ -251,13 +253,13 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 		}
 		if (to > itemCount) {
 			for (integer j = 1; j <= to - itemCount; j ++) {
-				GuiList_insertItem (my list, table [itemCount + j], 0);
+				GuiList_insertItem (my list, table [itemCount + j].get(), 0);
 			}
 		}
 		if (from <= itemCount) {
 			integer n = (to < itemCount ? to : itemCount);
-			for (integer j = from; j <= n; j++) {
-				GuiList_replaceItem (my list, table[j], j);
+			for (integer j = from; j <= n; j ++) {
+				GuiList_replaceItem (my list, table [j].get(), j);
 			}
 		}
 	} catch (MelderError) {
@@ -290,18 +292,18 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 		integer visible = bottom - top + 1;
 		if (nSelect == 0) {
 			top = my position - visible / 2;
-		} else if (select[nSelect] < top) {
+		} else if (select [nSelect] < top) {
 			// selection above visible area
-			top = select[1];
-		} else if (select[1] > bottom) {
+			top = select [1];
+		} else if (select [1] > bottom) {
 			// selection below visible area
-			top = select[nSelect] - visible + 1;
+			top = select [nSelect] - visible + 1;
 		} else {
 			integer deltaTopPos = -1, nUpdate = to - from + 1;
-			if ( (from == select[1] && to == select[nSelect]) || // Replace
+			if ( (from == select [1] && to == select [nSelect]) || // Replace
 			        (nUpdate > 2 && nSelect == 1) /* Inserts */) {
 				deltaTopPos = 0;
-			} else if (nUpdate == nSelect + 1 && select[1] == from + 1) { // down
+			} else if (nUpdate == nSelect + 1 && select [1] == from + 1) { // down
 				deltaTopPos = 1;
 			}
 			top += deltaTopPos;

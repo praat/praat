@@ -117,16 +117,17 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 		}
 		autoNoulliPoint average = NoulliGrid_average (grid, itier, tmin, tmax);
 		integer winningCategory = NoulliPoint_getWinningCategory (average.get());
+		const char32 *winningCategoryName = grid -> categoryNames [winningCategory].get();
 		if (winningCategory != 0 && average -> probabilities [winningCategory] > 1.0/3.0) {
 			bool shouldDrawPicture =
 				(my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE ||
 				 my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE_AND_TEXT)
 				&&
-				(Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"happy") ||
-				 Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"neutral") ||
-				 Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"sad") ||
-				 Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"scared") ||
-				 Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"angry"));
+				(Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"happy") ||
+				 Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"neutral") ||
+				 Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"sad") ||
+				 Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"scared") ||
+				 Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"angry"));
 			if (shouldDrawPicture) {
 				Graphics_setColour (my graphics.get(), Graphics_cyclingBackgroundColour (winningCategory));
 				Graphics_fillEllipse (my graphics.get(), -0.985, +0.985, -0.985, +0.985);
@@ -134,7 +135,7 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 				/*
 					Draw the eyes.
 				*/
-				if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"happy")) {
+				if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"happy")) {
 					Graphics_setLineWidth (my graphics.get(), 15.0);
 					const double dx = 0.375, y = 0.10, radius = 0.18, angle = 85.0;
 					Graphics_arc (my graphics.get(), - dx, y, radius, 90.0 - angle, 90.0 + angle);   // left eye
@@ -148,20 +149,20 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 					Draw the mouth.
 				*/
 				Graphics_setLineWidth (my graphics.get(), 8.0);
-				if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"happy")) {
+				if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"happy")) {
 					const double y = -0.20, radius = 0.35, angle = 55.0;
 					Graphics_arc (my graphics.get(), 0.0, y, radius, 270.0 - angle, 270.0 + angle);
-				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"neutral")) {
+				} else if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"neutral")) {
 					Graphics_setLineWidth (my graphics.get(), 13.0);
 					const double dx = 0.20, y = -0.50;
 					Graphics_line (my graphics.get(), - dx, y, + dx, y);
-				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"sad")) {
+				} else if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"sad")) {
 					const double y = -0.80, radius = 0.35, angle = 55.0;
 					Graphics_arc (my graphics.get(), 0.0, y, radius, 90.0 - angle, 90.0 + angle);
-				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"scared")) {
+				} else if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"scared")) {
 					const double y = -0.50, dx = 0.10, dy = 0.25;
 					Graphics_fillEllipse (my graphics.get(), - dx, + dx, y - dy, y + dy);
-				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"angry")) {
+				} else if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"angry")) {
 					const double y = -0.80, radius = 0.35, angle = 55.0;
 					Graphics_arc (my graphics.get(), 0.0, y, radius, 90.0 - angle, 90.0 + angle);
 				}
@@ -169,15 +170,15 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 					Draw the eyebrows.
 				*/
 				Graphics_setLineWidth (my graphics.get(), 12.0);
-				if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"sad")) {
+				if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"sad")) {
 					const double dx1 = 0.60, dx2 = 0.30, y1 = 0.40, y2 = 0.60;
 					Graphics_line (my graphics.get(), - dx2, y2, - dx1, y1);   // left eyebrow
 					Graphics_line (my graphics.get(), + dx1, y1, + dx2, y2);   // right eyebrow
-				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"scared")) {
+				} else if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"scared")) {
 					const double dx1 = 0.60, dx2 = 0.30, y1 = 0.45, y2 = 0.60;
 					Graphics_line (my graphics.get(), - dx2, y2, - dx1, y1);   // left eyebrow
 					Graphics_line (my graphics.get(), + dx1, y1, + dx2, y2);   // right eyebrow
-				} else if (Melder_equ_firstCharacterCaseInsensitive (grid -> categoryNames [winningCategory], U"angry")) {
+				} else if (Melder_equ_firstCharacterCaseInsensitive (winningCategoryName, U"angry")) {
 					const double dx1 = 0.25, dx2 = 0.55, y1 = 0.40, y2 = 0.60;
 					Graphics_line (my graphics.get(), - dx2, y2, - dx1, y1);   // left eyebrow
 					Graphics_line (my graphics.get(), + dx1, y1, + dx2, y2);   // right eyebrow
@@ -193,7 +194,7 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 			{
 				Graphics_setColour (my graphics.get(), Graphics_cyclingTextColour (winningCategory));
 				Graphics_setTextAlignment (my graphics.get(), kGraphics_horizontalAlignment::CENTRE, Graphics_HALF);
-				Graphics_text (my graphics.get(), 0.0, 0.0, grid -> categoryNames [winningCategory]);
+				Graphics_text (my graphics.get(), 0.0, 0.0, winningCategoryName);
 			}
 		} else {
 			Graphics_setColour (my graphics.get(), Graphics_WHITE);

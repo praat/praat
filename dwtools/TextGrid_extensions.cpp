@@ -576,7 +576,7 @@ void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label
 	while (iinterval < my intervals.size) {
 		TextInterval thisInterval = my intervals.at [iinterval];
 		TextInterval nextInterval = my intervals.at [iinterval + 1];
-		if ( (! label || (thisInterval -> text && str32equ (thisInterval -> text.get(), label))) &&
+		if ((! label || (thisInterval -> text && str32equ (thisInterval -> text.get(), label))) &&
 			Melder_equ (thisInterval -> text.get(), nextInterval -> text.get()))
 		{
 			IntervalTier_cutInterval (me, iinterval, 1);
@@ -606,15 +606,14 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const
 
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
-			labels [i - from + 1] = interval -> text.get();   // Shallow copy.
+			labels [i - from + 1] = interval -> text.get();   // shallow copy
 		}
-		autostring32vector newlabels (strs_replace (labels.peek(), 1, nlabels, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nlabels);
+		autostring32vector newLabels =
+			strs_replace (labels.peek(), 1, nlabels, search, replace, 0, nmatches, nstringmatches, use_regexp);
 
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
-			Melder_free (interval -> text);
-			interval -> text = newlabels [i - from + 1];   // Transfer of ownership. DANGEROUS
-			newlabels [i - from + 1] = nullptr;
+			interval -> text = std::move (newLabels [i - from + 1]);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": labels not changed.");
@@ -633,7 +632,7 @@ void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 
 			Melder_throw (U"Incorrect specification of where to act.");
 		}
 		if (use_regexp && str32len (search) == 0) {
-			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
+			Melder_throw (U"The regex search string cannot be empty.\nTo search for an empty string, use the expression \"^$\" instead.");
 		}
 		integer nmarks = to - from + 1;
 		autoNUMvector<char32 *> marks (1, nmarks);   // a non-owning vector of strings
@@ -642,13 +641,12 @@ void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 
 			TextPoint point = my points.at [i];
 			marks [i - from + 1] = point -> mark.get();   // reference copy
 		}
-		autostring32vector newMarks (strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nmarks);
+		autostring32vector newMarks =
+			strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp);
 
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
-			Melder_free (point -> mark);   // this discards the original mark, and dangles its reference copy in `marks`, which will not be used
-			point -> mark = newMarks [i - from + 1];   // move the new mark; this consists of a copy from A to B... DANGEROUS
-			newMarks [i - from + 1] = nullptr;   // ...followed by zeroing A
+			point -> mark = std::move (newMarks [i - from + 1]);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no labels changed.");

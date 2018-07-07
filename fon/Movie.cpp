@@ -92,7 +92,7 @@ void Movie_paintOneImageInside (Movie me, Graphics graphics, integer frameNumber
 		structMelderDir folder { };
 		Melder_pathToDir (my d_folderName.get(), & folder);
 		structMelderFile file { };
-		MelderDir_getFile (& folder, my d_fileNames -> strings [frameNumber], & file);
+		MelderDir_getFile (& folder, my d_fileNames -> strings [frameNumber].get(), & file);
 		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), xmin, xmax, ymin, ymax);
 	} catch (MelderError) {
 		Melder_throw (me, U": image ", frameNumber, U" not painted.");

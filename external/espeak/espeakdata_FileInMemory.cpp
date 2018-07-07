@@ -214,7 +214,7 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 			Melder_throw (U"Illegal columnn.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <char32 *> (1, my rows.size);
+		thy strings = autostring32vector (1, my rows.size);
 		thy numberOfStrings = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
@@ -232,7 +232,8 @@ void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *
 		if (languageIndex == 0) {
 			if (Melder_equ (language_string, U"Default") || Melder_equ (language_string, U"English")) {
 				languageIndex = Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)");
-				Melder_casual (U"Language \"", language_string, U"\" is deprecated. Please use \"", espeakdata_languages_names -> strings [languageIndex], U"\".");
+				Melder_casual (U"Language \"", language_string, U"\" is deprecated. Please use \"",
+					espeakdata_languages_names -> strings [languageIndex].get(), U"\".");
 			} else {
 				languageIndex = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 1, language_string);
 				if (languageIndex == 0) {
@@ -260,7 +261,8 @@ void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *
 		}
 		if (voiceIndex != *p_voiceIndex) {
 			*p_voiceIndex = voiceIndex;
-			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. Please use \"", espeakdata_voices_names -> strings [*p_voiceIndex], U"\".");
+			Melder_casual (U"Voice \"", voice_string, U"\" is deprecated. Please use \"",
+				espeakdata_voices_names -> strings [*p_voiceIndex].get(), U"\".");
 		} else {
 			// unknown voice, handled by interface
 		}

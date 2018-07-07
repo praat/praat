@@ -644,10 +644,8 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		autoTable thee = Table_create (0, my numberOfColumns);
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			autostring32 newLabel = Melder_dup (my columnHeaders [icol]. label.get());
-			thy columnHeaders [icol]. label = newLabel.transfer();
-		}
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string.get(), which, criterion, true)) {
@@ -894,7 +892,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 	}
 }
 
-static char32 ** _Table_getLevels (Table me, integer column, integer *numberOfLevels) {
+static autostring32vector Table_getLevels_ (Table me, integer column) {
 	try {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
@@ -902,23 +900,23 @@ static char32 ** _Table_getLevels (Table me, integer column, integer *numberOfLe
 		}
 		integer columns [2] = { 0, column };
 		Table_sortRows_Assert (me, columns, 1);
-		*numberOfLevels = 0;
+		integer numberOfLevels = 0;
 		integer irow = 1;
 		while (irow <= my rows.size) {
 			double value = my rows.at [irow] -> cells [column]. number;
-			(*numberOfLevels) ++;
+			numberOfLevels ++;
 			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value) { }
 		}
-		autostring32vector result (1, *numberOfLevels);
-		*numberOfLevels = 0;
+		autostring32vector result (1, numberOfLevels);
+		numberOfLevels = 0;
 		irow = 1;
 		while (irow <= my rows.size) {
 			double value = my rows.at [irow] -> cells [column]. number;
-			result [++ *numberOfLevels] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
+			result [++ numberOfLevels] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
 			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value) { }
 		}
 		sortRowsByIndex_NoError (me);   // unsort the original table
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		sortRowsByIndex_NoError (me);   // unsort the original table   // UGLY
 		throw;
@@ -932,25 +930,24 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, integer c
 
 		bool warned = false;
 		/*
-		 * Parse the two strings of tokens.
-		 */
+			Parse the two strings of tokens.
+		*/
 		autoMelderTokens factors_names (factors_string);
 		integer numberOfFactors = factors_names.count();
 		if (numberOfFactors < 1)
-			Melder_throw (U"In order to nest table data, you must supply at least one independent variable.");
+			Melder_throw (U"In order to nest table data, you should supply at least one independent variable.");
 		Table_columns_checkExist (me, factors_names.peek(), numberOfFactors);
 		autoMelderTokens columnsToExpand_names (columnsToExpand_string);
 		integer numberToExpand = columnsToExpand_names.count();
 		if (numberToExpand < 1)
-			Melder_throw (U"In order to nest table data, you must supply at least one dependent variable (to expand).");
+			Melder_throw (U"In order to nest table data, you should supply at least one dependent variable (to expand).");
 		Table_columns_checkExist (me, columnsToExpand_names.peek(), numberToExpand);
 		Table_columns_checkCrossSectionEmpty (factors_names.peek(), numberOfFactors, columnsToExpand_names.peek(), numberToExpand);
-		integer numberOfLevels = 0;
-		char32 ** dummy = _Table_getLevels (me, columnToTranspose, & numberOfLevels);
-		autostring32vector levels_names (dummy, 1, numberOfLevels);
+		autostring32vector levels_names = Table_getLevels_ (me, columnToTranspose);
+		integer numberOfLevels = levels_names._to;
 		/*
-		 * Get the column numbers for the factors.
-		 */
+			Get the column numbers for the factors.
+		*/
 		autoNUMvector <integer> factorColumns (1, numberOfFactors);
 		for (integer ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
 			factorColumns [ifactor] = Table_findColumnIndexFromColumnLabel (me, factors_names [ifactor]);
@@ -981,7 +978,8 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, integer c
 				//Melder_casual (U"Level: ", ilevel, U" out of ", numberOfLevels);
 				integer columnNumber = numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel;
 				//Melder_casual (U"Column number: ", columnNumber);
-				Table_setColumnLabel (thee.get(), columnNumber, Melder_cat (columnsToExpand_names [iexpand], U".", levels_names [ilevel]));
+				Table_setColumnLabel (thee.get(), columnNumber,
+					Melder_cat (columnsToExpand_names [iexpand], U".", levels_names [ilevel].get()));
 			}
 		}
 		/*

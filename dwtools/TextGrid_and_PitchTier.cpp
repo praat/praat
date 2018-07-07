@@ -166,7 +166,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 			U"The number of items in the times and the pitches string have to be equal.");
 		autoNUMvector<double> pitchesraw (1, numberOfPitches);
 		for (integer i = 1; i <= numberOfPitches; i ++) {
-			const char32 *token = items -> strings [i];
+			const char32 *token = items -> strings [i].get();
 			if (pitch_as == PITCH_VALUE_AS_MUSIC_NOTE) {
 				pitchesraw [i] = note_to_frequency (token, 440.0);
 			} else {

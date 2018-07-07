@@ -42,7 +42,6 @@ Thing_implement (Editor, Thing, 0);
 Thing_implement (EditorCommand, Thing, 0);
 
 void structEditorCommand :: v_destroy () noexcept {
-	// Melder_free (our itemTitle);   // CHECK: is this removed automatically?
 	Melder_free (our script);
 	EditorCommand_Parent :: v_destroy ();
 }

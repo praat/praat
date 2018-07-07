@@ -148,10 +148,10 @@ void PairDistribution_to_Stringses (PairDistribution me, integer nout, autoStrin
 		double total = PairDistributions_getTotalWeight_checkPositive (me);
 		autoStrings strings1 = Thing_new (Strings);
 		strings1 -> numberOfStrings = nout;
-		strings1 -> strings = NUMvector <char32 *> (1, nout);
+		strings1 -> strings = autostring32vector (1, nout);
 		autoStrings strings2 = Thing_new (Strings);
 		strings2 -> numberOfStrings = nout;
-		strings2 -> strings = NUMvector <char32 *> (1, nout);
+		strings2 -> strings = autostring32vector (1, nout);
 		for (integer iout = 1; iout <= nout; iout ++) {
 			do {
 				double rand = NUMrandomUniform (0, total), sum = 0.0;
@@ -280,7 +280,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 				double p = prob -> weight / total, pout = 0.0;
 				Melder_sprint (string, 1000, prob -> string1.get(), U" \\-> ", prob -> string2.get());
 				for (integer idist = 1; idist <= dist -> numberOfRows; idist ++) {
-					if (str32equ (string, dist -> rowLabels [idist])) {
+					if (str32equ (string, dist -> rowLabels [idist].get())) {
 						pout = dist -> data [idist] [column];
 						break;
 					}
@@ -290,7 +290,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 			Melder_sprint (string, 1000, firstInput, U" \\-> ");
 			length = str32len (string);
 			for (integer idist = 1; idist <= dist -> numberOfRows; idist ++) {
-				if (str32nequ (string, dist -> rowLabels [idist], length)) {
+				if (str32nequ (string, dist -> rowLabels [idist].get(), length)) {
 					sumDist += dist -> data [idist] [column];
 				}
 			}

@@ -22,7 +22,7 @@ autoStrings Distributions_to_Strings (Distributions me, integer column, integer 
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = numberOfStrings;
-		thy strings = NUMvector <char32*> (1, numberOfStrings);
+		thy strings = autostring32vector (1, numberOfStrings);
 		for (integer istring = 1; istring <= numberOfStrings; istring ++) {
 			char32 *string;
 			Distributions_peek (me, column, & string, nullptr);
@@ -54,10 +54,10 @@ autoStrings Distributions_to_Strings_exact (Distributions me, integer column) {
 			Melder_throw (U"Column total not positive.");
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = total;
-		thy strings = NUMvector <char32*> (1, total);
+		thy strings = autostring32vector (1, total);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			integer number = my data [irow] [column];
-			char32 *string = my rowLabels [irow];
+			const char32 *string = my rowLabels [irow].get();
 			if (! string)
 				Melder_throw (U"No string in row ", irow, U".");
 			for (integer i = 1; i <= number; i ++) {
@@ -76,11 +76,11 @@ autoDistributions Strings_to_Distributions (Strings me) {
 		autoDistributions thee = Distributions_create (my numberOfStrings, 1);
 		integer idist = 0;
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
-			char32 *string = my strings [i];
+			const char32 *string = my strings [i].get();
 			integer where = 0;
 			integer j = 1;
 			for (; j <= idist; j ++)
-				if (str32equ (thy rowLabels [j], string))
+				if (str32equ (thy rowLabels [j].get(), string))
 					{ where = j; break; }
 			if (where) {
 				thy data [j] [1] += 1.0;

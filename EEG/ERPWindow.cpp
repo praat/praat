@@ -174,8 +174,8 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	//Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
 	//Graphics_setColour (graphics, Graphics_BLACK);
 	integer numberOfDrawableChannels =
-			my ny >= 64 && Melder_equ (my channelNames [64], U"O2") ? 64 :
-			my ny >= 32 && Melder_equ (my channelNames [32], U"Cz") ? 32 :
+			my ny >= 64 && Melder_equ (my channelNames [64].get(), U"O2") ? 64 :
+			my ny >= 32 && Melder_equ (my channelNames [32].get(), U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
@@ -277,8 +277,8 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_fillRectangle (our graphics.get(), -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (our graphics.get(), Graphics_BLACK);
 	integer numberOfDrawableChannels =
-			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64], U"O2") ? 64 :
-			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32], U"Cz") ? 32 :
+			erp -> ny >= 64 && Melder_equ (erp -> channelNames [64].get(), U"O2") ? 64 :
+			erp -> ny >= 32 && Melder_equ (erp -> channelNames [32].get(), U"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {

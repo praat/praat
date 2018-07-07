@@ -51,7 +51,7 @@ void structTransition :: v_writeText (MelderFile file) {
 	MelderFile_write (file, U"\n");
 	for (integer i = 1; i <= numberOfStates; i ++) {
 		MelderFile_write (file, U"\"");
-		if (stateLabels [i]) MelderFile_write (file, stateLabels [i]);
+		if (stateLabels [i]) MelderFile_write (file, stateLabels [i].get());
 		MelderFile_write (file, U"\"\t");
 	}
 	for (integer i = 1; i <= numberOfStates; i ++) {
@@ -66,7 +66,7 @@ void Transition_init (Transition me, integer numberOfStates) {
 	if (numberOfStates < 1)
 		Melder_throw (U"Cannot create empty matrix.");
 	my numberOfStates = numberOfStates;
-	my stateLabels = NUMvector <char32 *> (1, numberOfStates);
+	my stateLabels = autostring32vector (1, numberOfStates);
 	my data = NUMmatrix <double> (1, my numberOfStates, 1, my numberOfStates);
 }
 
@@ -119,7 +119,7 @@ void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int preci
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 	for (integer col = 1; col <= my numberOfStates; col ++) {
 		if (my stateLabels && my stateLabels [col] && my stateLabels [col] [0]) {
-			Graphics_text (g, col, 1, my stateLabels [col]);
+			Graphics_text (g, col, 1, my stateLabels [col].get());
 			if (maxTextHeight == 0.0) maxTextHeight = lineSpacing;
 		}
 	}
@@ -127,9 +127,9 @@ void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int preci
 		double y = 1 - lineSpacing * (row - 1 + 0.7);
 		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
 		if (my stateLabels && my stateLabels [row]) {
-			double textWidth = Graphics_textWidth (g, my stateLabels [row]);
+			double textWidth = Graphics_textWidth (g, my stateLabels [row].get());
 			if (textWidth > maxTextWidth) maxTextWidth = textWidth;
-			Graphics_text (g, 0.5 - leftMargin, y, my stateLabels [row]);
+			Graphics_text (g, 0.5 - leftMargin, y, my stateLabels [row].get());
 		}
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		for (integer col = 1; col <= my numberOfStates; col ++) {

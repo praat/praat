@@ -41,7 +41,7 @@ void structEEGWindow :: v_createHelpMenuItems (EditorMenu menu) {
 
 const char32 * structEEGWindow :: v_getChannelName (integer channelNumber) {
 	Melder_assert (our eeg != nullptr);
-	return our eeg -> channelNames [channelNumber];
+	return our eeg -> channelNames [channelNumber].get();
 }
 
 static void menu_cb_ExtractSelectedEEG_preserveTimes (EEGWindow me, EDITOR_ARGS_DIRECT) {

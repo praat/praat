@@ -35,7 +35,6 @@
  djmw 20030830 Corrected a bug in NUMtriangularfilter_amplitude
  djmw 20031111 Added NUMdmatrix_transpose, NUMdmatrix_printMatlabForm
  djmw 20040105 Added NUMmahalanobisDistance_chi
- djmw 20040211 Modified NUMstrings_copyElements: if (form [i]==NULL) then {to [i]= NULL}.
  djmw 20040303 Added NUMstring_containsPrintableCharacter.
  djmw 20050406 NUMprocrutus->NUMprocrustes
  djmw 20060319 NUMinverse_cholesky: calculation of determinant is made optional

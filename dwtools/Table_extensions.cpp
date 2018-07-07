@@ -4207,7 +4207,7 @@ static Graphics_Colour Strings_colourToValue  (Strings me, integer index) {
 		return Graphics_GREY;
 	}
 	Graphics_Colour colourValue;
-	char32 *p = my strings [index];
+	char32 *p = my strings [index].get();
 	while (*p == U' ' || *p == U'\t') p ++;
 	*p = Melder_toLowerCase (*p);
 	char32 first = *p;
@@ -4296,11 +4296,12 @@ void Table_barPlotWhere (Table me, Graphics g,
 		integer numberOfColumns, numberOfRowMatches = 0;
 		autoNUMvector <integer> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, & numberOfColumns), 1);
 		integer labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
-		autoStrings colour = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
+		autoStrings colourText = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
 		
 		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfRowMatches), 1);
 		if (ymax <= ymin) {   // autoscaling
-			ymin = 1e308; ymax= - ymin;
+			ymin = 1e308;
+			ymax = - ymin;
 			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 				double cmin, cmax;
 				Table_columnExtremesFromSelectedRows (me, columnIndex [icol], selectedRows.peek(), numberOfRowMatches, & cmin, & cmax);
@@ -4321,16 +4322,16 @@ void Table_barPlotWhere (Table me, Graphics g,
 		for (integer icol = 1; icol <= groupSize; icol ++) {
 			double xb = xoffsetFraction * bar_width + (icol - 1) * (1 + interbarFraction) * bar_width;
 			double x1 = xb;
-			Graphics_Colour color = Strings_colourToValue  (colour.get(), icol);
+			Graphics_Colour colour = Strings_colourToValue (colourText.get(), icol);
 			for (integer irow = 1; irow <= numberOfRowMatches; irow ++) {
 				double x2 = x1 + bar_width;
 				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndex [icol]);
 				y2 = y2 > ymax ? ymax : (y2 < ymin ? ymin : y2);
 				double y1 = ymin < 0 ? 0 : ymin;
 				
-				Graphics_setColour (g, color);
+				Graphics_setColour (g, colour);
 				Graphics_fillRectangle (g, x1, x2, y1, y2);
-				Graphics_setGrey (g, 0);   // black
+				Graphics_setGrey (g, 0.0);   // black
 				Graphics_rectangle (g, x1, x2, y1, y2);
 
 				x1 += dx;
@@ -4615,7 +4616,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		autoNUMvector <double> vector (1, numberOfColumns);
 		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol]);   // throw if not present
+			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get());   // throw if not present
 		}
 		autoTable him = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {

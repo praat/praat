@@ -680,7 +680,7 @@ autoTextGrid SpeechSynthesizer_Sound_TextGrid_align2 (SpeechSynthesizer me, Soun
 static autoStrings IntervalTier_to_Strings_withOriginData (IntervalTier me, integer *from) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<char32 *> (1, my intervals.size);
+		thy strings = autostring32vector (1, my intervals.size);
 		for (integer i = 1; i <= my intervals.size; i ++) {
 			TextInterval ti = my intervals.at [i];
 			if (ti -> text && ti -> text [0] != U'\0') {

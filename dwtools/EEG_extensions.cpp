@@ -31,11 +31,7 @@ static autoEEG EEG_copyWithoutSound (EEG me) {
  		autoEEG thee = EEG_create (my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
 		thy textgrid = Data_copy (my textgrid.get());
-		autostring32vector channelNames (1, my numberOfChannels);
-		for (integer i = 1; i <= my numberOfChannels; i ++) {
-			channelNames [i] = Melder_dup (my channelNames [i]);
-		}
-		thy channelNames = channelNames.transfer();
+		thy channelNames. copyFrom (my channelNames);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");
@@ -47,7 +43,7 @@ static integer *EEG_channelNames_to_channelNumbers (EEG me, char32 **channelName
 		autoNUMvector<integer> channelNumbers (1, numberOfChannelNames);
 		for (integer i = 1; i <= numberOfChannelNames; i ++) {
 			for (integer j = 1; j <= my numberOfChannels; j ++) {
-				if (Melder_equ (channelNames [i], my channelNames [j])) {
+				if (Melder_equ (channelNames [i], my channelNames [j].get())) {
 					channelNumbers [i] = j;
 				}
 			}
@@ -103,7 +99,7 @@ autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime
 		// assign channel names
 		for (integer i = 1; i <= numberOfChannels; i ++) {
 			integer ichannel = channels [i];
-			char32 *label = my channelNames [ichannel];
+			const char32 *label = my channelNames [ichannel].get();
 			TableOfReal_setRowLabel (him.get(), i, label);
 			TableOfReal_setColumnLabel (him.get(), i, label);
 		}
@@ -176,7 +172,7 @@ autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
 		}
 		numberOfComponents = ( numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents );
 
-		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels, thy dimension), 1);
+		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels.peek2(), thy dimension), 1);
 
 		autoEEG him = Data_copy (me);
 		autoSound white = Sound_PCA_whitenSelectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
@@ -198,7 +194,7 @@ autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfCo
 		}
 		numberOfComponents = numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents;
 
-		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels, thy dimension), 1);
+		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels.peek2(), thy dimension), 1);
 		autoEEG him = Data_copy (me);
 		autoSound pc = Sound_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
 		for (integer i = 1; i <= thy dimension; i ++) {

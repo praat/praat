@@ -5698,25 +5698,28 @@ DO
 FORM (NEW1_SpeechSynthesizer_create, U"Create SpeechSynthesizer", U"Create SpeechSynthesizer...") {
 	OPTIONMENUSTR (language_string, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-		OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
+		OPTION (espeakdata_languages_names -> strings [i].get());
 	}
 	OPTIONMENUSTR (voice_string, U"Voice variant", (int) Strings_findString (espeakdata_voices_names.get(), U"Female1"))
 	for (integer i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
-		OPTION ((const char32 *) espeakdata_voices_names -> strings [i]);
+		OPTION (espeakdata_voices_names -> strings [i].get());
 	}
 	OK
 DO
 	CREATE_ONE
 		int languageIndex, voiceIndex;
 		espeakdata_getIndices (language_string, voice_string, & languageIndex, & voiceIndex);
-		autoSpeechSynthesizer result = SpeechSynthesizer_create (espeakdata_languages_names -> strings [languageIndex], espeakdata_voices_names -> strings [voiceIndex]);
-    CREATE_ONE_END (espeakdata_languages_names -> strings [languageIndex], U"_", espeakdata_voices_names -> strings [voiceIndex])
+		autoSpeechSynthesizer result = SpeechSynthesizer_create (
+			espeakdata_languages_names -> strings [languageIndex].get(),
+			espeakdata_voices_names -> strings [voiceIndex].get()
+		);
+    CREATE_ONE_END (espeakdata_languages_names -> strings [languageIndex].get(), U"_", espeakdata_voices_names -> strings [voiceIndex].get())
 }
 
 FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify phoneme set", nullptr) {
 	OPTIONMENU (phoneneSetIndex, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 	for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-			OPTION ((const char32 *) espeakdata_languages_names -> strings [i]);
+			OPTION (espeakdata_languages_names -> strings [i].get());
 	}
 	OK
 /*	Does not work because me is not defined here.
@@ -5727,7 +5730,7 @@ FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify pho
 	SET_OPTION (phoneneSetIndex, prefPhonemeSet)*/
 DO
 	MODIFY_EACH (SpeechSynthesizer)
-		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phoneneSetIndex]);
+		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phoneneSetIndex].get());
 	MODIFY_EACH_END
 }
 

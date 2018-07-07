@@ -35,7 +35,7 @@ autoTableOfReal Eigen_TableOfReal_to_TableOfReal_projectRows (Eigen me, TableOfR
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfComponents);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, from_col, him.get(), 1, numberOfComponents);
-		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
+		his rowLabels. copyElementsFrom (thy rowLabels);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not created from projection.");
