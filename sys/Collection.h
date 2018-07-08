@@ -238,8 +238,7 @@ struct CollectionOf : structDaata {
 
 		You transfer ownership of 'thing' to the Collection.
 
-		You cannot call both
-		Collection_addItem_move() and Collection_addItem_ref() on the same Collection.
+		You cannot call both addItem_move() and addItem_ref() on the same Collection.
 		For a SortedSet, this may mean that the Collection immediately disposes of 'item',
 		if that item already occurred in the Collection.
 	*/
@@ -719,7 +718,7 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 	}
 	SortedSetOfStringOf<T>&& move () noexcept { return static_cast <SortedSetOfStringOf<T>&&> (*this); }
 	static int s_compareHook (SimpleString me, SimpleString thee) noexcept {
-		return str32cmp (my string, thy string);
+		return str32cmp (my string.get(), thy string.get());
 	}
 	typename SortedOf<T>::CompareHook v_getCompareHook ()
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
@@ -730,17 +729,17 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 		int atStart, atEnd;
 		if (numberOfItems == 0) return 0;
 
-		atEnd = str32cmp (string, our at [numberOfItems] -> string);
+		atEnd = str32cmp (string, our at [numberOfItems] -> string.get());
 		if (atEnd > 0) return 0;
 		if (atEnd == 0) return numberOfItems;
 
-		atStart = str32cmp (string, our at [1] -> string);
+		atStart = str32cmp (string, our at [1] -> string.get());
 		if (atStart < 0) return 0;
 		if (atStart == 0) return 1;
 
 		while (left < right - 1) {
 			integer mid = (left + right) / 2;
-			int here = str32cmp (string, our at [mid] -> string);
+			int here = str32cmp (string, our at [mid] -> string.get());
 			if (here == 0) return mid;
 			if (here > 0) left = mid; else right = mid;
 		}
@@ -772,17 +771,8 @@ Collection_define (StringList, OrderedOf, /* final */ SimpleString) {
 
 Collection_define (StringSet, SortedSetOfStringOf, /* final */ SimpleString) {
 	void addString_copy (const char32 *string) {
-		static autoSimpleString simp;
-		if (! simp) {
-			simp = SimpleString_create (U"");   // here we see that the class of the elements is final (if homogeneous)
-			Melder_free (simp -> string);
-		}
-		simp -> string = (char32 *) string;   // reference copy
-		integer index = our _v_position (simp.get());
-		simp -> string = nullptr;   // otherwise Praat will crash at shutdown
-		if (index == 0) return;   // OK: already there: do not add
 		autoSimpleString newSimp = SimpleString_create (string);
-		our _insertItem_move (newSimp.move(), index);
+		our addItem_move (newSimp.move());
 	}
 };
 

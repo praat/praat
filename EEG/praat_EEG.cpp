@@ -71,7 +71,7 @@ DO
 	STRING_ONE (EEG)
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
-		const char32 *result = my channelNames [channelNumber];
+		const char32 *result = my channelNames [channelNumber].get();
 	STRING_ONE_END
 }
 
@@ -105,14 +105,14 @@ OK
 	FIND_ONE (EEG)
 		if (EEG_getNumberOfExternalElectrodes (me) == 8) {
 			const integer offsetExternalElectrode = EEG_getNumberOfCapElectrodes (me);
-			SET_STRING (externalElectrode1, my channelNames [offsetExternalElectrode + 1])
-			SET_STRING (externalElectrode2, my channelNames [offsetExternalElectrode + 2])
-			SET_STRING (externalElectrode3, my channelNames [offsetExternalElectrode + 3])
-			SET_STRING (externalElectrode4, my channelNames [offsetExternalElectrode + 4])
-			SET_STRING (externalElectrode5, my channelNames [offsetExternalElectrode + 5])
-			SET_STRING (externalElectrode6, my channelNames [offsetExternalElectrode + 6])
-			SET_STRING (externalElectrode7, my channelNames [offsetExternalElectrode + 7])
-			SET_STRING (externalElectrode8, my channelNames [offsetExternalElectrode + 8])
+			SET_STRING (externalElectrode1, my channelNames [offsetExternalElectrode + 1].get())
+			SET_STRING (externalElectrode2, my channelNames [offsetExternalElectrode + 2].get())
+			SET_STRING (externalElectrode3, my channelNames [offsetExternalElectrode + 3].get())
+			SET_STRING (externalElectrode4, my channelNames [offsetExternalElectrode + 4].get())
+			SET_STRING (externalElectrode5, my channelNames [offsetExternalElectrode + 5].get())
+			SET_STRING (externalElectrode6, my channelNames [offsetExternalElectrode + 6].get())
+			SET_STRING (externalElectrode7, my channelNames [offsetExternalElectrode + 7].get())
+			SET_STRING (externalElectrode8, my channelNames [offsetExternalElectrode + 8].get())
 		}
 DO
 	MODIFY_EACH (EEG)
@@ -452,7 +452,7 @@ DO
 	STRING_ONE (ERP)
 		if (channelNumber > my ny)
 			Melder_throw (me, U": there are only ", my ny, U" channels.");
-		const char32 *result = my channelNames [channelNumber];
+		const char32 *result = my channelNames [channelNumber].get();
 	STRING_ONE_END
 }
 
@@ -627,7 +627,7 @@ DO
 	STRING_ONE (ERPTier)
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
-		const char32 *result = my channelNames [channelNumber];
+		const char32 *result = my channelNames [channelNumber].get();
 	STRING_ONE_END
 }
 

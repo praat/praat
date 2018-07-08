@@ -63,7 +63,7 @@ void Confusion_ClassificationTable_increase (Confusion me, ClassificationTable t
 	}
 	for (integer irow = 1; irow <= thy numberOfRows; irow ++) {
 		integer index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
-		Confusion_increase (me, thy rowLabels [irow], my columnLabels [index]);
+		Confusion_increase (me, thy rowLabels [irow].get(), my columnLabels [index].get());
 	}
 }
 
@@ -81,7 +81,7 @@ autoStrings ClassificationTable_to_Strings_maximumProbability (ClassificationTab
 				}
 			}
 			if (my columnLabels [col]) {
-				Strings_replace (thee.get(), i, my columnLabels [col]);
+				Strings_replace (thee.get(), i, my columnLabels [col].get());
 			}
 		}
 		return thee;
@@ -103,7 +103,7 @@ autoCategories ClassificationTable_to_Categories_maximumProbability (Classificat
 					col = j;
 				}
 			}
-			OrderedOfString_append (thee.get(), my columnLabels [col]);
+			OrderedOfString_append (thee.get(), my columnLabels [col].get());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -115,7 +115,7 @@ autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable 
 	try {
 		autoCorrelation thee = Correlation_create (my numberOfColumns);
 		for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-			char32 *label = my columnLabels [icol];
+			const char32 *label = my columnLabels [icol].get();
 			TableOfReal_setRowLabel (thee.get(), icol, label);
 			TableOfReal_setColumnLabel (thee.get(), icol, label);
 		}

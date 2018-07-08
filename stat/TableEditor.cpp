@@ -143,7 +143,7 @@ void structTableEditor :: v_draw () {
 	 * Determine the width of the columns.
 	 */
 	for (integer icol = colmin; icol <= colmax; icol ++) {
-		const char32 *columnLabel = table -> columnHeaders [icol]. label;
+		const char32 *columnLabel = table -> columnHeaders [icol]. label.get();
 		columnWidth = Graphics_textWidth (graphics.get(), Melder_integer (icol));
 		if (! columnLabel) columnLabel = U"";
 		cellWidth = Graphics_textWidth (graphics.get(), columnLabel);
@@ -177,7 +177,7 @@ void structTableEditor :: v_draw () {
 	 */
 	for (integer icol = colmin; icol <= colmax; icol ++) {
 		double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
-		const char32 *columnLabel = table -> columnHeaders [icol]. label;
+		const char32 *columnLabel = table -> columnHeaders [icol]. label.get();
 		if (! columnLabel || columnLabel [0] == U'\0') columnLabel = U"?";
 		Graphics_text (graphics.get(), mid, rowmin - 2, icol);
 		Graphics_text (graphics.get(), mid, rowmin - 1, columnLabel);

@@ -72,7 +72,7 @@ static void menu_cb_editConstraint (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 		if (my selected < 1 || my selected > ot -> numberOfConstraints)
 			Melder_throw (U"Select a constraint first.");
 		constraint = & ot -> constraints [ot -> index [my selected]];
-		SET_STRING (constraintLabel, constraint -> name)
+		SET_STRING (constraintLabel, constraint -> name.get())
 		SET_REAL (rankingValue, constraint -> ranking)
 		SET_REAL (disharmony, constraint -> disharmony)
 		SET_REAL (plasticity, constraint -> plasticity)
@@ -141,7 +141,7 @@ static void menu_cb_removeConstraint (OTGrammarEditor me, EDITOR_ARGS_DIRECT) {
 		Melder_throw (U"Select a constraint first.");
 	constraint = & ot -> constraints [ot -> index [my selected]];
 	Editor_save (me, U"Remove constraint");
-	OTGrammar_removeConstraint (ot, constraint -> name);
+	OTGrammar_removeConstraint (ot, constraint -> name.get());
 	Graphics_updateWs (my graphics.get());
 	Editor_broadcastDataChanged (me);
 }
@@ -210,7 +210,7 @@ void structOTGrammarEditor :: v_draw () {
 			Melder_sprint (text,1000,
 				U"\t", icons == selected ? U"♠︎ " : U"   ",
 				U"@@", icons,
-				U"|", constraint -> name,
+				U"|", constraint -> name.get(),
 				U"@\t      ", Melder_fixed (constraint -> ranking, 3),
 				U"\t      ", Melder_fixed (constraint -> disharmony, 3),
 				U"\t      ", Melder_fixed (constraint -> plasticity, 6),
@@ -219,7 +219,7 @@ void structOTGrammarEditor :: v_draw () {
 			Melder_sprint (text,1000,
 				U"\t", icons == selected ? U"♠︎ " : U"   ",
 				U"@@", icons,
-				U"|", constraint -> name,
+				U"|", constraint -> name.get(),
 				U"@\t      ", Melder_fixed (constraint -> ranking, 3),
 				U"\t      ", Melder_fixed (constraint -> disharmony, 3),
 				U"\t      ", Melder_fixed (constraint -> plasticity, 6));
@@ -232,7 +232,7 @@ void structOTGrammarEditor :: v_draw () {
 		double rowHeight = 0.25;
 		double tableauHeight = rowHeight * (tableau -> numberOfCandidates + 2);
 		drawTableau_ot = ot;
-		drawTableau_input = tableau -> input;
+		drawTableau_input = tableau -> input.get();
 		drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
 		HyperPage_picture (this, 20, tableauHeight, drawTableau);
 	}

@@ -453,7 +453,7 @@ DO
 	STRING_ONE (OTGrammar)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
-		const char32 *result = my constraints [constraintNumber]. name;
+		const char32 *result = my constraints [constraintNumber]. name.get();
 	STRING_ONE_END
 }
 
@@ -492,7 +492,7 @@ DO
 	STRING_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		const char32 *result = my tableaus [tableauNumber]. input;
+		const char32 *result = my tableaus [tableauNumber]. input.get();
 	STRING_ONE_END
 }
 
@@ -518,7 +518,7 @@ DO
 		OTGrammarTableau tableau = & my tableaus [tableauNumber];
 		if (candidateNumber > tableau -> numberOfCandidates)
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		const char32 *result = tableau -> candidates [candidateNumber]. output;
+		const char32 *result = tableau -> candidates [candidateNumber]. output.get();
 	STRING_ONE_END
 }
 
@@ -619,8 +619,8 @@ DO
 	FIND_ONE (OTGrammar)
 		integer bestInput, bestOutput;
 		OTGrammar_getInterpretiveParse (me, partialOutput, & bestInput, & bestOutput);
-		Melder_information (U"Best input = ", bestInput, U": ", my tableaus [bestInput]. input,
-			U"\nBest output = ", bestOutput, U": ", my tableaus [bestInput]. candidates [bestOutput]. output);
+		Melder_information (U"Best input = ", bestInput, U": ", my tableaus [bestInput]. input.get(),
+			U"\nBest output = ", bestOutput, U": ", my tableaus [bestInput]. candidates [bestOutput]. output.get());
 	END
 }
 
@@ -1237,7 +1237,7 @@ DO
 	STRING_ONE (OTMulti)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
-		const char32 *result = my constraints [constraintNumber]. name;
+		const char32 *result = my constraints [constraintNumber]. name.get();
 	STRING_ONE_END
 }
 
@@ -1285,7 +1285,7 @@ DO
 	STRING_ONE (OTMulti)
 		if (candidateNumber > my numberOfCandidates)
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
-		const char32 *result = my candidates [candidateNumber]. string;
+		const char32 *result = my candidates [candidateNumber]. string.get();
 	STRING_ONE_END
 }
 

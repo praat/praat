@@ -52,7 +52,7 @@ autoCorpus Corpus_create (const char32 *folderWithSoundFiles, const char32 *soun
 	Table_initWithColumnNames (me.get(), fileList -> numberOfStrings, U"Sound Annotation");
 	autoMelderString annotationFileName;
 	for (integer ifile = 1; ifile <= fileList -> numberOfStrings; ifile ++) {
-		const char32 *soundFileName = fileList -> strings [ifile];
+		const char32 *soundFileName = fileList -> strings [ifile].get();
 		Table_setStringValue (me.get(), ifile, 1, soundFileName);
 		const char32 *dotLocation = str32rchr (soundFileName, U'.');
 		Melder_assert (!! dotLocation);

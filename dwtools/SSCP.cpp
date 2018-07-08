@@ -187,10 +187,10 @@ static autoSSCP _SSCP_extractTwoDimensions (SSCP me, integer d1, integer d2) {
 	thy centroid [2] = my centroid [d2];
 	thy numberOfObservations = my numberOfObservations;
 
-	TableOfReal_setColumnLabel (thee.get(), 1, my columnLabels [d1]);
-	TableOfReal_setColumnLabel (thee.get(), 2, my columnLabels [d2]);
-	TableOfReal_setRowLabel (thee.get(), 1, my columnLabels [d1]);
-	TableOfReal_setRowLabel (thee.get(), 2, my columnLabels [d2]);
+	TableOfReal_setColumnLabel (thee.get(), 1, my columnLabels [d1].get());
+	TableOfReal_setColumnLabel (thee.get(), 2, my columnLabels [d2].get());
+	TableOfReal_setRowLabel (thee.get(), 1, my columnLabels [d1].get());
+	TableOfReal_setRowLabel (thee.get(), 2, my columnLabels [d2].get());
 	return thee;
 }
 
@@ -498,7 +498,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 			Covariance_PCA_generateOneVector (me, pca.get(), thy data [i], buf.peek());
 		}
 
-		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
+		thy columnLabels. copyElementsFrom (my columnLabels);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not random sampled.");
@@ -557,7 +557,7 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 			}
 		}
 		for (integer j = 1; j <= numberOfColumns; j ++) {
-			char32 *label = my columnLabels [colb + j - 1];
+			const char32 *label = my columnLabels [colb + j - 1].get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 			TableOfReal_setRowLabel (thee.get(), j, label);
 		}
@@ -606,7 +606,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 		for (integer k = 1; k <= thy numberOfRows; k ++) {
 			his data [k] [1] = sqrt (NUMmahalanobisDistance_chi (covari.peek(), thy data [k], centroid.peek(), my numberOfRows, my numberOfRows));
 			if (thy rowLabels [k]) {
-				TableOfReal_setRowLabel (him.get(), k, thy rowLabels [k]);
+				TableOfReal_setRowLabel (him.get(), k, thy rowLabels [k].get());
 			}
 		}
 		TableOfReal_setColumnLabel (him.get(), 1, U"d");
@@ -636,8 +636,7 @@ autoTableOfReal Covariance_TableOfReal_extractDistanceQuantileRange (Covariance 
 		Melder_require (nsel > 0, U"Not enough data in quantile interval.");
 		
 		autoTableOfReal r = TableOfReal_create (nsel, thy numberOfColumns);
-		NUMstrings_copyElements (thy columnLabels, r -> columnLabels, 1, thy numberOfColumns);
-		//((r -> columnLabels = NUMstrings_copy (thy columnLabels, 1, thy numberOfColumns)) == nullptr)) goto end;
+		r -> columnLabels. copyElementsFrom (thy columnLabels);
 
 		integer k = 0;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
@@ -689,10 +688,10 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 
 		Melder_warningOff ();
 		integer lastrow = 0, numberOfMatrices = 0, numberOfSingularMatrices = 0, index = 1;
-		const char32 *label = mew -> rowLabels [1];
+		const char32 *label = mew -> rowLabels [1].get();
 		for (integer i = 2; i <= my numberOfRows; i ++) {
 			integer numberOfRowsInCurrent = 0;
-			const char32 *currentLabel = mew -> rowLabels [i];
+			const char32 *currentLabel = mew -> rowLabels [i].get();
 			if (Melder_cmp (currentLabel, label) != 0) {
 				// current label different from previous one(s)
 				numberOfRowsInCurrent = i - index;
@@ -712,7 +711,7 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 					numberOfSingularMatrices ++;
 				}
 				autoSSCP t = TableOfReal_to_SSCP (mew.get(), index, lastrow, 0, 0);
-				if (! (label = mew -> rowLabels [index])) {
+				if (! (label = mew -> rowLabels [index].get())) {
 					label = U"?";
 				}
 				Thing_setName (t.get(), label);
@@ -750,7 +749,8 @@ autoPCA SSCP_to_PCA (SSCP me) {
 			}
 			data = adata.peek();
 		}
-		NUMstrings_copyElements (my columnLabels, thy labels, 1, my numberOfColumns);
+		thy labels. copyElementsFrom_upTo (my columnLabels, my numberOfColumns);
+			// ppgb FIXME: the number of thy labels could be equal to my numberOfColumns; if so, assert; it not, explain.
 		Eigen_initFromSymmetricMatrix (thee.get(), data, my numberOfColumns);
 		NUMvector_copyElements (my centroid, thy centroid, 1, my numberOfColumns);
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
@@ -763,14 +763,14 @@ autoPCA SSCP_to_PCA (SSCP me) {
 void SSCP_setValue (SSCP me, integer row, integer col, double value) {
 	Melder_require (col > 0 && col <= my numberOfColumns, U"Illegal column number.");
 	Melder_require (row > 0 && row <= my numberOfRows, U"Illegal row number.");
-	Melder_require (! (row == col && value <= 0), U"Diagonal element should always be a positive number.");
+	Melder_require (! (row == col && value <= 0.0), U"Diagonal element should always be a positive number.");
 	
 	if (my numberOfRows == 1) { // diagonal
 		Melder_require (row == col, U"Row and column number should be equal for a diagonal matrix.");
 		my data [1] [row] = value;
 	} else {
-		Melder_require (!(row != col && (fabs (value) > my data [row] [row] || fabs (value) > my data [row] [row])),
-			U"The off-diagonal should not be larger than the diagonal values. Input diagonal elements first, or change this value.");
+		Melder_require (! (row != col && (fabs (value) > my data [row] [row] || fabs (value) > my data [col] [col])),
+			U"The off-diagonal values should not be larger than the diagonal values. Input diagonal elements first, or change this value.");
 		my data [row] [col] = my data [col] [row] = value;
 	}
 }
@@ -1108,9 +1108,9 @@ void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, 
 		t = my at [1];
 		Graphics_drawInnerBox (g);
 		Graphics_marksLeft (g, 2, true, true, false);
-		Graphics_textLeft (g, true, t -> columnLabels [d2] ? t -> columnLabels [d2] : Melder_cat (U"Dimension ", d2));
+		Graphics_textLeft (g, true, t -> columnLabels [d2] ? t -> columnLabels [d2].get() : Melder_cat (U"Dimension ", d2));
 		Graphics_marksBottom (g, 2, true, true, false);
-		Graphics_textBottom (g, true, t -> columnLabels [d1] ? t -> columnLabels [d1] : Melder_cat (U"Dimension ", d1));
+		Graphics_textBottom (g, true, t -> columnLabels [d1] ? t -> columnLabels [d1].get() : Melder_cat (U"Dimension ", d1));
 	}
 }
 
@@ -1128,7 +1128,7 @@ autoTableOfReal SSCP_extractCentroid (SSCP me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
 		NUMvector_copyElements (my centroid, thy data [1], 1, my numberOfColumns);
-		thy columnLabels = NUMstrings_copy (my columnLabels, 1, my numberOfColumns);
+		thy columnLabels. copyElementsFrom (my columnLabels);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": centroid not extracted.");

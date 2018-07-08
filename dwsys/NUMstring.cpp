@@ -69,15 +69,6 @@ double *NUMstring_to_numbers (const char32 *s, integer *p_numbers_found) {
 	return numbers.transfer();
 }
 
-void NUMstrings_copyElements (char32 **from, char32 **to, integer lo, integer hi) {
-	for (integer i = lo; i <= hi; i ++) {
-		Melder_free (to [i]);
-		if (from [i]) {
-			to [i] = Melder_dup (from [i]);
-		}
-	}
-}
-
 void NUMstrings_free (char32 **s, integer lo, integer hi) {
 	if (! s) {
 		return;
@@ -86,12 +77,6 @@ void NUMstrings_free (char32 **s, integer lo, integer hi) {
 		Melder_free (s [i]);
 	}
 	NUMvector_free <char32 *> (s, lo);
-}
-
-char32 **NUMstrings_copy (char32 **from, integer lo, integer hi) {
-	autoNUMvector <char32 *> to (lo, hi);
-	NUMstrings_copyElements (from, to.peek(), lo, hi);
-	return to.transfer();
 }
 
 static char32 *appendNumberToString (const char32 *s, integer number, int asArray) {
@@ -333,11 +318,10 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, cons
 	return buf.transfer();
 }
 
-static char32 **strs_replace_literal (char32 **from, integer lo, integer hi, const char32 *search,
+static autostring32vector strs_replace_literal (char32 **from, integer lo, integer hi, const char32 *search,
 	const char32 *replace, int maximumNumberOfReplaces, integer *p_nmatches, integer *p_nstringmatches) {
-	if (search == NULL || replace == NULL) {
-		return NULL;
-	}
+	if (! search || ! replace)
+		return autostring32vector();
 	autostring32vector result (lo, hi);
 
 	integer nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
@@ -356,21 +340,20 @@ static char32 **strs_replace_literal (char32 **from, integer lo, integer hi, con
 	if (p_nstringmatches) {
 		*p_nstringmatches = nstringmatches;
 	}
-	return result.transfer();
+	return result;
 }
 
-static char32 **strs_replace_regexp (char32 **from, integer lo, integer hi, const char32 *searchRE,
+static autostring32vector strs_replace_regexp (char32 **from, integer lo, integer hi, const char32 *searchRE,
 	const char32 *replaceRE, int maximumNumberOfReplaces, integer *p_nmatches, integer *p_nstringmatches) {
-	if (searchRE == NULL || replaceRE == NULL) {
-		return NULL;
+	if (! searchRE || ! replaceRE) {
+		return autostring32vector();
 	}
-	autostring32vector result;
 
 	integer nmatches_sub = 0;
 
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 
-	result.reset (lo, hi);
+	autostring32vector result (lo, hi);
 
 	integer nmatches = 0, nstringmatches = 0;
 	for (integer i = lo; i <= hi; i ++) {
@@ -388,14 +371,13 @@ static char32 **strs_replace_regexp (char32 **from, integer lo, integer hi, cons
 	if (p_nstringmatches) {
 		*p_nstringmatches = nstringmatches;
 	}
-	return result.transfer();
+	return result;
 }
 
-char32 **strs_replace (char32 **from, integer lo, integer hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
+autostring32vector strs_replace (char32 **from, integer lo, integer hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	return use_regexp ? strs_replace_regexp (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches) :
 		strs_replace_literal (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches);
 }
-
 
 /*
  * Acceptable ranges e.g. "1 4 2 3:7 4:3 3:5:2" -->

@@ -85,14 +85,14 @@
 //	}
 
 #define oo_STRINGx(storage,x)  \
-	texput##storage (file, our x, U""#x, 0,0,0,0,0);
+	texput##storage (file, our x.get(), U""#x, 0,0,0,0,0);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	{ \
 		integer _n = (n); \
 		texputintro (file, U"" #x U" []: ", _n ? nullptr : U"(empty)", 0,0,0,0); \
 		for (integer _i = 0; _i < _n; _i ++) { \
-			texput##storage (file, our x [_i], U"" #x U" [", Melder_integer (_i), U"]", 0,0,0); \
+			texput##storage (file, our x [_i].get(), U"" #x U" [", Melder_integer (_i), U"]", 0,0,0); \
 		} \
 		texexdent (file); \
 	}
@@ -100,7 +100,7 @@
 #define oo_STRINGx_SET(storage,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
-		texput##storage (file, our x [_i], U"" #x U" [", setType##_getText ((setType) _i), U"]", 0,0,0); \
+		texput##storage (file, our x [_i].get(), U"" #x U" [", setType##_getText ((setType) _i), U"]", 0,0,0); \
 	} \
 	texexdent (file);
 
@@ -109,7 +109,7 @@
 		integer _min = (min), _max = (max); \
 		texputintro (file, U"" #x U" []: ", _max >= _min ? nullptr : U"(empty)", 0,0,0,0); \
 		for (integer _i = _min; _i <= _max; _i ++) { \
-			texput##storage (file, our x [_i], U"" #x U" [", Melder_integer (_i), U"]", 0,0,0); \
+			texput##storage (file, our x [_i].get(), U"" #x U" [", Melder_integer (_i), U"]", 0,0,0); \
 		} \
 		texexdent (file); \
 	}

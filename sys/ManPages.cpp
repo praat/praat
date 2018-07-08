@@ -53,7 +53,7 @@ void structManPages :: v_destroy () noexcept {
 	}
 	if (our titles)
 		for (integer ipage = 1; ipage <= our pages.size; ipage ++) {
-			Melder_free (titles [ipage]);
+			Melder_free (our titles [ipage]);
 		}
 	NUMvector_free <const char32 *> (titles, 1);
 	ManPages_Parent :: v_destroy ();

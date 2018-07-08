@@ -112,7 +112,7 @@ void Melder_execv (const char32 *executableFileName, integer narg, char32 ** arg
 		args8 [narg + 1] = nullptr;
 		pid_t processID = fork ();
 		if (processID == 0) {   // we are in the child process
-			execvp (Melder_peek32to8 (executableFileName), args8.peek());
+			execvp (Melder_peek32to8 (executableFileName), args8.peek2());
 			/* if we arrive here, some error occurred */
 			fprintf (stderr, "Some error occurred");
 			_exit (EXIT_FAILURE);

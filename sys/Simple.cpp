@@ -62,7 +62,7 @@ autoSimpleString SimpleString_create (const char32 *string) {
 }
 
 int SimpleString_compare (SimpleString me, SimpleString thee) noexcept {
-	return str32cmp (my string, thy string);
+	return str32cmp (my string.get(), thy string.get());
 }
 
 /* End of file Simple.cpp */

@@ -54,8 +54,8 @@ static inline const char32 * strip_d (const char32 *s) {
 Thing_implement (DataSubEditor, Editor, 0);
 
 void structDataSubEditor :: v_destroy () noexcept {
-	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
-		Melder_free (d_fieldData [i]. history);
+	//for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
+	//	Melder_free (d_fieldData [i]. history);
 	if (our root)
 		for (int i = our root -> children.size; i > 0; i --)
 			if (our root -> children.at [i] == this)
@@ -263,28 +263,28 @@ static void gui_button_cb_open (DataSubEditor me, GuiButtonEvent event) {
 	}
 
 	if (fieldData -> description -> rank == 1 || fieldData -> description -> rank == 3 || fieldData -> description -> rank < 0) {
-		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name),
+		MelderString_append (& name, fieldData -> history.get(), U". ", strip_d (fieldData -> description -> name),
 			U" [", fieldData -> minimum, U"..", fieldData -> maximum, U"]");
 		VectorEditor_create (my root, name.string, fieldData -> address,
 			fieldData -> description, fieldData -> minimum, fieldData -> maximum);
 	} else if (fieldData -> description -> rank == 2) {
-		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name),
+		MelderString_append (& name, fieldData -> history.get(), U". ", strip_d (fieldData -> description -> name),
 			U" [", fieldData -> minimum, U"..", fieldData -> maximum, U"]");
 		MelderString_append (& name, U" [", fieldData -> min2, U"..", fieldData -> max2, U"]");
 		MatrixEditor_create (my root, name.string, fieldData -> address, fieldData -> description,
 			fieldData -> minimum, fieldData -> maximum, fieldData -> min2, fieldData -> max2);
 	} else if (fieldData -> description -> type == structwa) {
-		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name));
+		MelderString_append (& name, fieldData -> history.get(), U". ", strip_d (fieldData -> description -> name));
 		StructEditor_create (my root, name.string, fieldData -> address,
 			* (Data_Description *) fieldData -> description -> tagType);
 	} else if (fieldData -> description -> type == objectwa ||
 	           fieldData -> description -> type == collectionofwa ||
 			   fieldData -> description -> type == collectionwa) {
-		MelderString_append (& name, fieldData -> history, U". ", strip_d (fieldData -> description -> name));
+		MelderString_append (& name, fieldData -> history.get(), U". ", strip_d (fieldData -> description -> name));
 		ClassEditor_create (my root, name.string, fieldData -> address,
 			Class_getDescription ((ClassInfo) fieldData -> description -> tagType));
 	} else /*if (fieldData -> description -> type == inheritwa)*/ {
-		ClassEditor_create (my root, fieldData -> history, fieldData -> address,
+		ClassEditor_create (my root, fieldData -> history.get(), fieldData -> address,
 			fieldData -> description);
 /*	} else {
 		Melder_casual (
@@ -423,7 +423,7 @@ static void showStructMember (
 		fieldData -> minimum = minimum;   // normally 1
 		fieldData -> maximum = maximum;
 		fieldData -> rank = 1;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
+		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	} else if (rank < 0) {
 		/*
@@ -438,7 +438,7 @@ static void showStructMember (
 		fieldData -> minimum = 0;   /* In-line arrays start with index 0. */
 		fieldData -> maximum = maximum;   /* Probably between -1 and capacity - 1. */
 		fieldData -> rank = rank;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
+		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	} else if (rank == 3) {
 		/*
@@ -449,7 +449,7 @@ static void showStructMember (
 		fieldData -> minimum = str32equ (((const char32 * (*) (int)) memberDescription -> min1) (0), U"_") ? 1 : 0;
 		fieldData -> maximum = ((int (*) (const char32 *)) memberDescription -> max1) (U"\n");
 		fieldData -> rank = rank;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
+		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	} else if (rank == 2) {
 		void *arrayAddress = * (void **) memberAddress;
@@ -471,20 +471,20 @@ static void showStructMember (
 		fieldData -> min2 = min2;
 		fieldData -> max2 = max2;
 		fieldData -> rank = 2;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
+		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	} else if (type == structwa) {   // in-line struct
 		fieldData -> address = memberAddress;   // direct
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
+		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	} else if (type == objectwa || type == collectionwa) {
 		fieldData -> address = * (Daata *) memberAddress;   // indirect  // FIXME: not guaranteed for auto objects
 		if (! fieldData -> address) return;   // no button if no object
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
+		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	} else if (type == collectionofwa) {
 		fieldData -> address = (Daata) memberAddress;   // direct  // FIXME: not guaranteed for auto objects
@@ -493,7 +493,7 @@ static void showStructMember (
 		if (! fieldData -> address) return;   // no button if no object
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
-		Melder_free (fieldData -> history); fieldData -> history = Melder_dup_f (history);
+		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
 	}
 }
@@ -613,7 +613,6 @@ void structVectorEditor :: v_showMembers () {
 			fieldData -> address = object;
 			fieldData -> description = Class_getDescription (object -> classInfo);
 			fieldData -> rank = 0;
-			if (fieldData -> history) Melder_free (fieldData -> history);
 			fieldData -> history = Melder_dup_f (history.string);
 			GuiThing_show (fieldData -> button);
 		}

@@ -65,7 +65,7 @@ void Distributions_peek (Distributions me, integer column, char32 **string, inte
 	if (! my rowLabels [irow])
 		Melder_throw (me, U": no string in row ", irow, U".");
 	if (string)
-		*string = my rowLabels [irow];
+		*string = my rowLabels [irow].get();
 	if (number)
 		*number = irow;
 }
@@ -76,7 +76,7 @@ double Distributions_getProbability (Distributions me, const char32 *string, int
 	if (column < 1 || column > my numberOfColumns) return undefined;
 	for (row = 1; row <= my numberOfRows; row ++) {
 		total += my data [row] [column];
-		if (my rowLabels [row] && str32equ (my rowLabels [row], string))
+		if (my rowLabels [row] && str32equ (my rowLabels [row].get(), string))
 			rowOfString = row;
 	}
 	if (total <= 0.0) return undefined;
@@ -98,28 +98,27 @@ static void unicize (Distributions me) {
 	/* Must have been sorted beforehand. */
 	integer nrow = 0, ifrom = 1;
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		if (irow == my numberOfRows || (my rowLabels [irow] == nullptr) != (my rowLabels [irow + 1] == nullptr) ||
-		    (my rowLabels [irow] != nullptr && ! str32equ (my rowLabels [irow], my rowLabels [irow + 1])))
+		if (irow == my numberOfRows || !! my rowLabels [irow] != !! my rowLabels [irow + 1] ||
+		    my rowLabels [irow] && ! str32equ (my rowLabels [irow].get(), my rowLabels [irow + 1].get()))
 		{
 			/*
-			 * Detected a change.
-			 */
+				Detected a change.
+			*/
 			nrow ++;
 			integer ito = irow;
 			/*
-			 * Move row 'ifrom' to 'nrow'. May be the same row.
-			 */
+				Move row 'ifrom' to 'nrow'. May be the same row.
+			*/
 			if (ifrom != nrow) {
-				my rowLabels [nrow] = my rowLabels [ifrom];   // surface copy
-				my rowLabels [ifrom] = nullptr;   // undangle
+				my rowLabels [nrow] = std::move (my rowLabels [ifrom]);
 				for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 					my data [nrow] [icol] = my data [ifrom] [icol];
 			}
 			/*
-			 * Purge rows from 'ifrom'+1 to 'ito'.
-			 */
+				Purge rows from 'ifrom'+1 to 'ito'.
+			*/
 			for (integer j = ifrom + 1; j <= ito; j ++) {
-				Melder_free (my rowLabels [j]);
+				my rowLabels [j]. reset();
 				for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 					my data [nrow] [icol] += my data [j] [icol];
 			}

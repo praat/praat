@@ -46,18 +46,18 @@ void structRegression :: v_info () {
 	MelderInfo_writeLine (U"   Number of factors: ", our parameters.size);
 	for (integer ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
-		MelderInfo_writeLine (U"   Factor ", ivar, U": ", parm -> label);
+		MelderInfo_writeLine (U"   Factor ", ivar, U": ", parm -> label.get());
 	}
 	MelderInfo_writeLine (U"Fitted coefficients:");
 	MelderInfo_writeLine (U"   Intercept: ", intercept);
 	for (integer ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
-		MelderInfo_writeLine (U"   Coefficient of factor ", parm -> label, U": ", parm -> value);
+		MelderInfo_writeLine (U"   Coefficient of factor ", parm -> label.get(), U": ", parm -> value);
 	}
 	MelderInfo_writeLine (U"Ranges of values:");
 	for (integer ivar = 1; ivar <= our parameters.size; ivar ++) {
 		RegressionParameter parm = our parameters.at [ivar];
-		MelderInfo_writeLine (U"   Range of factor ", parm -> label, U": minimum ",
+		MelderInfo_writeLine (U"   Range of factor ", parm -> label.get(), U": minimum ",
 			parm -> minimum, U", maximum ", parm -> maximum);
 	}
 }
@@ -84,7 +84,7 @@ void Regression_addParameter (Regression me, const char32 *label, double minimum
 integer Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName) {
 	for (integer iparm = 1; iparm <= my parameters.size; iparm ++) {
 		RegressionParameter parm = my parameters.at [iparm];
-		if (Melder_equ (factorName, parm -> label)) return iparm;
+		if (Melder_equ (factorName, parm -> label.get())) return iparm;
 	}
 	Melder_throw (me, U" has no parameter named \"", factorName, U"\".");
 }
@@ -119,7 +119,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 		for (integer ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			double minimum = Table_getMinimum (me, ivar);
 			double maximum = Table_getMaximum (me, ivar);
-			Regression_addParameter (thee.get(), my columnHeaders [ivar]. label, minimum, maximum, 0.0);
+			Regression_addParameter (thee.get(), my columnHeaders [ivar]. label.get(), minimum, maximum, 0.0);
 		}
 		for (integer icell = 1; icell <= numberOfCells; icell ++) {
 			for (integer ivar = 1; ivar < numberOfParameters; ivar ++) {

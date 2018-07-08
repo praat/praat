@@ -136,7 +136,7 @@ const char32 * MelderReadText_getLineNumber (MelderReadText me) {
 static size_t fread_multi (char *buffer, size_t numberOfBytes, FILE *f) {
 	off_t offset = 0;
 	size_t numberOfBytesRead = 0;
-	const size_t chunkSize = 1000000000;
+	const size_t chunkSize = 1'000'000'000;
 	while (numberOfBytes > chunkSize) {
 		size_t numberOfBytesReadInChunk = fread (buffer + offset, sizeof (char), chunkSize, f);
 		numberOfBytesRead += numberOfBytesReadInChunk;
@@ -279,7 +279,7 @@ autostring32 MelderFile_readText (MelderFile file) {
 }
 
 autoMelderReadText MelderReadText_createFromFile (MelderFile file) {
-	autoMelderReadText me;
+	autoMelderReadText me = std::make_unique <structMelderReadText> ();
 	my string32 = _MelderFile_readText (file, & my string8);
 	if (my string32) {
 		my readPointer32 = & my string32 [0];

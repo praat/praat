@@ -512,10 +512,10 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		}
 
 		TableOfReal_setSequentialColumnLabels (thee.get(), 0, 0, nullptr, 1, 1);
-		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, nr);
+		thy rowLabels. copyElementsFrom_upTo (my rowLabels, nr);
 		for (integer i = 1; i <= nc; i ++) {
 			if (my columnLabels [i]) {
-				TableOfReal_setRowLabel (thee.get(), nr + i, my columnLabels [i]);
+				TableOfReal_setRowLabel (thee.get(), nr + i, my columnLabels [i].get());
 			}
 		}
 		return thee;
@@ -706,7 +706,7 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, bool garnish) {
 
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (my rowLabels [i]) {
-			Graphics_text (g, my data [i] [ix], my data [i] [iy], my rowLabels [i]);
+			Graphics_text (g, my data [i] [ix], my data [i] [iy], my rowLabels [i].get());
 		}
 	}
 
@@ -718,10 +718,10 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, bool garnish) {
 
 	if (garnish) {
 		if (my columnLabels [ix]) {
-			Graphics_textBottom (g, false, my columnLabels [ix]);
+			Graphics_textBottom (g, false, my columnLabels [ix].get());
 		}
 		if (my columnLabels [iy]) {
-			Graphics_textLeft (g, false, my columnLabels [iy]);
+			Graphics_textLeft (g, false, my columnLabels [iy].get());
 		}
 	}
 }
@@ -2836,7 +2836,7 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 					dissim -> data [i] [j] = (dissim -> data [j] [i] += NUMrandomUniform (0.0, noiseRange));
 				}
 			}
-			Thing_setName (dissim.get(), s -> rowLabels [l]);
+			Thing_setName (dissim.get(), s -> rowLabels [l].get());
 			my addItem_move (dissim.move());
 		}
 		Thing_setName (me.get(), U"CarrollWish");

@@ -43,7 +43,7 @@ Thing_implement (ERP, Sound, 2);
 
 integer ERP_getChannelNumber (ERP me, const char32 *channelName) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++) {
-		if (Melder_equ (my channelNames [ichan], channelName)) {
+		if (Melder_equ (my channelNames [ichan].get(), channelName)) {
 			return ichan;
 		}
 	}
@@ -83,7 +83,7 @@ void ERP_drawChannel_number (ERP me, Graphics graphics, integer channelNumber, d
 	Graphics_unsetInner (graphics);
 	if (garnish) {
 		Graphics_drawInnerBox (graphics);
-		Graphics_textTop (graphics, true, Melder_cat (U"Channel ", my channelNames [channelNumber]));
+		Graphics_textTop (graphics, true, Melder_cat (U"Channel ", my channelNames [channelNumber].get()));
 		Graphics_textBottom (graphics, true, U"Time (s)");
 		Graphics_marksBottom (graphics, 2, true, true, false);
 		if (0.0 > tmin && 0.0 < tmax)
@@ -116,7 +116,7 @@ autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int
 		if (includeSampleNumbers) Table_setColumnLabel (thee.get(), ++ icol, U"sample");
 		if (includeTime) Table_setColumnLabel (thee.get(), ++ icol, U"time(s)");
 		for (integer ichan = 1; ichan <= my ny; ichan ++) {
-			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (my channelNames [ichan], unitText));
+			Table_setColumnLabel (thee.get(), ++ icol, Melder_cat (my channelNames [ichan].get(), unitText));
 		}
 		for (integer isamp = 1; isamp <= my nx; isamp ++) {
 			icol = 0;

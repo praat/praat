@@ -53,20 +53,20 @@ void structTable :: v_info () {
 
 const char32 * structTable :: v_getColStr (integer columnNumber) {
 	if (columnNumber < 1 || columnNumber > our numberOfColumns) return nullptr;
-	return our columnHeaders [columnNumber]. label ? our columnHeaders [columnNumber]. label : U"";
+	return our columnHeaders [columnNumber]. label ? our columnHeaders [columnNumber]. label.get() : U"";
 }
 
 double structTable :: v_getMatrix (integer rowNumber, integer columnNumber) {
 	if (rowNumber < 1 || rowNumber > our rows.size) return undefined;
 	if (columnNumber < 1 || columnNumber > our numberOfColumns) return undefined;
-	char32 *stringValue = our rows.at [rowNumber] -> cells [columnNumber]. string;
+	const char32 *stringValue = our rows.at [rowNumber] -> cells [columnNumber]. string.get();
 	return stringValue ? Melder_atof (stringValue) : undefined;
 }
 
 const char32 * structTable :: v_getMatrixStr (integer rowNumber, integer columnNumber) {
 	if (rowNumber < 1 || rowNumber > our rows.size) return U"";
 	if (columnNumber < 1 || columnNumber > our numberOfColumns) return U"";
-	char32 *stringValue = our rows.at [rowNumber] -> cells [columnNumber]. string;
+	const char32 *stringValue = our rows.at [rowNumber] -> cells [columnNumber]. string.get();
 	return stringValue ? stringValue : U"";
 }
 
@@ -103,7 +103,7 @@ autoTable Table_createWithoutColumnNames (integer numberOfRows, integer numberOf
 
 const char32 * Table_messageColumn (Table me, integer column) {
 	if (column >= 1 && column <= my numberOfColumns && my columnHeaders [column]. label && my columnHeaders [column]. label [0] != U'\0')
-		return Melder_cat (U"\"", my columnHeaders [column]. label, U"\"");
+		return Melder_cat (U"\"", my columnHeaders [column]. label.get(), U"\"");
 	else
 		return Melder_integer (column);
 }
@@ -177,16 +177,16 @@ void Table_removeColumn (Table me, integer columnNumber) {
 			Melder_throw (me, U": cannot remove my only column.");
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		/*
-		 * Changes without error.
-		 */
-		Melder_free (my columnHeaders [columnNumber]. label);
+			Changes without error.
+		*/
 		for (integer icol = columnNumber; icol < my numberOfColumns; icol ++)
-			my columnHeaders [icol] = my columnHeaders [icol + 1];
+			my columnHeaders [icol] = std::move (my columnHeaders [icol + 1]);
+		my columnHeaders [my numberOfColumns]. destroy ();
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			Melder_free (row -> cells [columnNumber]. string);
 			for (integer icol = columnNumber; icol < row -> numberOfColumns; icol ++)
-				row -> cells [icol] = row -> cells [icol + 1];
+				row -> cells [icol] = std::move (row -> cells [icol + 1]);
+			row -> cells [row -> numberOfColumns]. destroy ();
 			row -> numberOfColumns --;
 		}
 		my numberOfColumns --;
@@ -237,16 +237,12 @@ void Table_insertColumn (Table me, integer columnNumber, const char32 *label /* 
 		 * Transfer column headers to larger structure.
 		 */
 		for (integer icol = 1; icol < columnNumber; icol ++) {
-			Melder_assert (! thy columnHeaders [icol]. label);   // make room...
-			thy columnHeaders [icol] = my columnHeaders [icol];   // ...fill in and dangle...
-			my columnHeaders [icol]. label = nullptr;   // ...undangle
+			thy columnHeaders [icol] = std::move (my columnHeaders [icol]);
 		}
-		thy columnHeaders [columnNumber]. label = newLabel.transfer();
+		thy columnHeaders [columnNumber]. label = newLabel.move();
 		thy columnHeaders [columnNumber]. numericized = false;
 		for (integer icol = my numberOfColumns + 1; icol > columnNumber; icol --) {
-			Melder_assert (! thy columnHeaders [icol]. label);   // make room...
-			thy columnHeaders [icol] = my columnHeaders [icol - 1];   // ...fill in and dangle...
-			my columnHeaders [icol - 1]. label = nullptr;   // ...undangle
+			thy columnHeaders [icol] = std::move (my columnHeaders [icol - 1]);
 		}
 		/*
 		 * Transfer rows to larger structure.
@@ -255,16 +251,12 @@ void Table_insertColumn (Table me, integer columnNumber, const char32 *label /* 
 			TableRow myRow = my rows.at [irow];
 			TableRow thyRow = thy rows.at [irow];
 			for (integer icol = 1; icol < columnNumber; icol ++) {
-				Melder_assert (! thyRow -> cells [icol]. string);   // make room...
-				thyRow -> cells [icol] = myRow -> cells [icol];   // ...fill in and dangle...
-				myRow -> cells [icol]. string = nullptr;   // ...undangle
+				thyRow -> cells [icol] = std::move (myRow -> cells [icol]);
 			}
 			Melder_assert (! thyRow -> cells [columnNumber]. string);
 			Melder_assert (thyRow -> cells [columnNumber]. number == 0.0);
 			for (integer icol = myRow -> numberOfColumns + 1; icol > columnNumber; icol --) {
-				Melder_assert (! thyRow -> cells [icol]. string);   // make room...
-				thyRow -> cells [icol] = myRow -> cells [icol - 1];   // ...fill in and dangle...
-				myRow -> cells [icol - 1]. string = nullptr;   // ...undangle
+				thyRow -> cells [icol] = std::move (myRow -> cells [icol - 1]);
 			}
 		}
 		/*
@@ -288,16 +280,8 @@ void Table_insertColumn (Table me, integer columnNumber, const char32 *label /* 
 
 void Table_setColumnLabel (Table me, integer columnNumber, const char32 *label /* cattable */) {
 	try {
-		/*
-		 * Check without changes.
-		 */
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		autostring32 newLabel = Melder_dup (label);
-		/*
-		 * Changes without error.
-		 */
-		Melder_free (my columnHeaders [columnNumber]. label);
-		my columnHeaders [columnNumber]. label = newLabel.transfer();
+		my columnHeaders [columnNumber]. label = Melder_dup (label);
 	} catch (MelderError) {
 		Melder_throw (me, U": column label not set.");
 	}
@@ -305,7 +289,7 @@ void Table_setColumnLabel (Table me, integer columnNumber, const char32 *label /
 
 integer Table_findColumnIndexFromColumnLabel (Table me, const char32 *label) noexcept {
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++)
-		if (my columnHeaders [icol]. label && str32equ (my columnHeaders [icol]. label, label))
+		if (my columnHeaders [icol]. label && str32equ (my columnHeaders [icol]. label.get(), label))
 			return icol;
 	return 0;
 }
@@ -332,7 +316,7 @@ integer * Table_getColumnIndicesFromColumnLabelString (Table me, const char32 *s
 integer Table_searchColumn (Table me, integer columnNumber, const char32 *value) noexcept {
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
-		if (row -> cells [columnNumber]. string && str32equ (row -> cells [columnNumber]. string, value))
+		if (row -> cells [columnNumber]. string && str32equ (row -> cells [columnNumber]. string.get(), value))
 			return irow;
 	}
 	return 0;
@@ -341,17 +325,16 @@ integer Table_searchColumn (Table me, integer columnNumber, const char32 *value)
 void Table_setStringValue (Table me, integer rowNumber, integer columnNumber, const char32 *value /* cattable */) {
 	try {
 		/*
-		 * Check without changes.
-		 */
+			Check without changes.
+		*/
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		autostring32 newValue = Melder_dup (value);
+		autostring32 newLabel = Melder_dup (value);
 		/*
-		 * Change without errors.
-		 */
+			Change without errors.
+		*/
 		TableRow row = my rows.at [rowNumber];
-		Melder_free (row -> cells [columnNumber]. string);
-		row -> cells [columnNumber]. string = newValue.transfer();
+		row -> cells [columnNumber]. string = newLabel.move();
 		my columnHeaders [columnNumber]. numericized = false;
 	} catch (MelderError) {
 		Melder_throw (me, U": string value not set.");
@@ -361,17 +344,16 @@ void Table_setStringValue (Table me, integer rowNumber, integer columnNumber, co
 void Table_setNumericValue (Table me, integer rowNumber, integer columnNumber, double value) {
 	try {
 		/*
-		 * Check without changes.
-		 */
+			Check without changes.
+		*/
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
-		autostring32 newValue = Melder_dup (Melder_double (value));
+		autostring32 newLabel = Melder_dup (Melder_double (value));
 		/*
-		 * Change without errors.
-		 */
+			Change without errors.
+		*/
 		TableRow row = my rows.at [rowNumber];
-		Melder_free (row -> cells [columnNumber]. string);
-		row -> cells [columnNumber]. string = newValue.transfer();
+		row -> cells [columnNumber]. string = newLabel.move();
 		my columnHeaders [columnNumber]. numericized = false;
 	} catch (MelderError) {
 		Melder_throw (me, U": numeric value not set.");
@@ -382,7 +364,7 @@ bool Table_isCellNumeric_ErrorFalse (Table me, integer rowNumber, integer column
 	if (rowNumber < 1 || rowNumber > my rows.size) return false;
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return false;
 	TableRow row = my rows.at [rowNumber];
-	const char32 *cell = row -> cells [columnNumber]. string;
+	const char32 *cell = row -> cells [columnNumber]. string.get();
 	if (! cell) return true;   // the value --undefined--
 	/*
 	 * Skip leading white space, in order to separately detect "?" and "--undefined--".
@@ -412,8 +394,8 @@ static integer stringCompare_column;
 
 static int stringCompare_NoError (const void *first, const void *second) {
 	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	char32 *firstString = my cells [stringCompare_column]. string;
-	char32 *secondString = thy cells [stringCompare_column]. string;
+	const char32 *firstString = my cells [stringCompare_column]. string.get();
+	const char32 *secondString = thy cells [stringCompare_column]. string.get();
 	return str32cmp (firstString ? firstString : U"", secondString ? secondString : U"");
 }
 
@@ -440,7 +422,7 @@ void Table_numericize_Assert (Table me, integer columnNumber) {
 	if (Table_isColumnNumeric_ErrorFalse (me, columnNumber)) {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			const char32 *string = row -> cells [columnNumber]. string;
+			const char32 *string = row -> cells [columnNumber]. string.get();
 			row -> cells [columnNumber]. number =
 				! string || string [0] == U'\0' || (string [0] == U'?' && string [1] == U'\0') ? undefined :
 				Melder_atof (string);
@@ -455,7 +437,7 @@ void Table_numericize_Assert (Table me, integer columnNumber) {
 		sortRowsByStrings_Assert (me, columnNumber);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			const char32 *string = row -> cells [columnNumber]. string;
+			const char32 *string = row -> cells [columnNumber]. string.get();
 			if (! string) string = U"";
 			if (! previousString || ! str32equ (string, previousString)) {
 				iunique ++;
@@ -474,7 +456,7 @@ static void Table_numericize_checkDefined (Table me, integer columnNumber) {
 		TableRow row = my rows.at [irow];
 		if (isundef (row -> cells [columnNumber]. number))
 			Melder_throw (me, U": the cell in row ", irow,
-				U" of column \"", my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label : Melder_integer (columnNumber),
+				U" of column \"", my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label.get() : Melder_integer (columnNumber),
 				U"\" is undefined.");
 	}
 }
@@ -483,7 +465,7 @@ const char32 * Table_getStringValue_Assert (Table me, integer rowNumber, integer
 	Melder_assert (rowNumber >= 1 && rowNumber <= my rows.size);
 	Melder_assert (columnNumber >= 1 && columnNumber <= my numberOfColumns);
 	TableRow row = my rows.at [rowNumber];
-	return row -> cells [columnNumber]. string ? row -> cells [columnNumber]. string : U"";
+	return row -> cells [columnNumber]. string ? row -> cells [columnNumber]. string.get() : U"";
 }
 
 double Table_getNumericValue_Assert (Table me, integer rowNumber, integer columnNumber) {
@@ -557,7 +539,7 @@ double Table_getGroupMean (Table me, integer columnNumber, integer groupColumnNu
 		longdouble sum = 0.0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			if (Melder_equ (row -> cells [groupColumnNumber]. string, group)) {
+			if (Melder_equ (row -> cells [groupColumnNumber]. string.get(), group)) {
 				n += 1;
 				sum += row -> cells [columnNumber]. number;
 			}
@@ -640,7 +622,7 @@ autoTable Table_extractRowsWhereColumn_number (Table me, integer columnNumber, k
 		Table_numericize_Assert (me, columnNumber);   // extraction should work even if cells are not defined
 		autoTable thee = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label);
+			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
 		}
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
@@ -662,13 +644,11 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
 		autoTable thee = Table_create (0, my numberOfColumns);
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			autostring32 newLabel = Melder_dup (my columnHeaders [icol]. label);
-			thy columnHeaders [icol]. label = newLabel.transfer();
-		}
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
-			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string.get(), which, criterion, true)) {
 				autoTableRow newRow = Data_copy (row);
 				thy rows. addItem_move (newRow.move());
 			}
@@ -844,7 +824,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 				for (integer i = 1; i <= numberOfFactors; i ++) {
 					++ icol;
 					Table_setStringValue (thee.get(), thy rows.size, icol,
-						my rows.at [rowmin] -> cells [columns [icol]]. string);
+						my rows.at [rowmin] -> cells [columns [icol]]. string.get());
 				}
 				for (integer i = 1; i <= numberToSum; i ++) {
 					++ icol;
@@ -912,7 +892,7 @@ autoTable Table_collapseRows (Table me, const char32 *factors_string, const char
 	}
 }
 
-static char32 ** _Table_getLevels (Table me, integer column, integer *numberOfLevels) {
+static autostring32vector Table_getLevels_ (Table me, integer column) {
 	try {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
@@ -920,23 +900,23 @@ static char32 ** _Table_getLevels (Table me, integer column, integer *numberOfLe
 		}
 		integer columns [2] = { 0, column };
 		Table_sortRows_Assert (me, columns, 1);
-		*numberOfLevels = 0;
+		integer numberOfLevels = 0;
 		integer irow = 1;
 		while (irow <= my rows.size) {
 			double value = my rows.at [irow] -> cells [column]. number;
-			(*numberOfLevels) ++;
+			numberOfLevels ++;
 			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value) { }
 		}
-		autostring32vector result (1, *numberOfLevels);
-		*numberOfLevels = 0;
+		autostring32vector result (1, numberOfLevels);
+		numberOfLevels = 0;
 		irow = 1;
 		while (irow <= my rows.size) {
 			double value = my rows.at [irow] -> cells [column]. number;
-			result [++ *numberOfLevels] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
+			result [++ numberOfLevels] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
 			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value) { }
 		}
 		sortRowsByIndex_NoError (me);   // unsort the original table
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		sortRowsByIndex_NoError (me);   // unsort the original table   // UGLY
 		throw;
@@ -950,25 +930,24 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, integer c
 
 		bool warned = false;
 		/*
-		 * Parse the two strings of tokens.
-		 */
+			Parse the two strings of tokens.
+		*/
 		autoMelderTokens factors_names (factors_string);
 		integer numberOfFactors = factors_names.count();
 		if (numberOfFactors < 1)
-			Melder_throw (U"In order to nest table data, you must supply at least one independent variable.");
+			Melder_throw (U"In order to nest table data, you should supply at least one independent variable.");
 		Table_columns_checkExist (me, factors_names.peek(), numberOfFactors);
 		autoMelderTokens columnsToExpand_names (columnsToExpand_string);
 		integer numberToExpand = columnsToExpand_names.count();
 		if (numberToExpand < 1)
-			Melder_throw (U"In order to nest table data, you must supply at least one dependent variable (to expand).");
+			Melder_throw (U"In order to nest table data, you should supply at least one dependent variable (to expand).");
 		Table_columns_checkExist (me, columnsToExpand_names.peek(), numberToExpand);
 		Table_columns_checkCrossSectionEmpty (factors_names.peek(), numberOfFactors, columnsToExpand_names.peek(), numberToExpand);
-		integer numberOfLevels = 0;
-		char32 ** dummy = _Table_getLevels (me, columnToTranspose, & numberOfLevels);
-		autostring32vector levels_names (dummy, 1, numberOfLevels);
+		autostring32vector levels_names = Table_getLevels_ (me, columnToTranspose);
+		integer numberOfLevels = levels_names._to;
 		/*
-		 * Get the column numbers for the factors.
-		 */
+			Get the column numbers for the factors.
+		*/
 		autoNUMvector <integer> factorColumns (1, numberOfFactors);
 		for (integer ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
 			factorColumns [ifactor] = Table_findColumnIndexFromColumnLabel (me, factors_names [ifactor]);
@@ -999,7 +978,8 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, integer c
 				//Melder_casual (U"Level: ", ilevel, U" out of ", numberOfLevels);
 				integer columnNumber = numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel;
 				//Melder_casual (U"Column number: ", columnNumber);
-				Table_setColumnLabel (thee.get(), columnNumber, Melder_cat (columnsToExpand_names [iexpand], U".", levels_names [ilevel]));
+				Table_setColumnLabel (thee.get(), columnNumber,
+					Melder_cat (columnsToExpand_names [iexpand], U".", levels_names [ilevel].get()));
 			}
 		}
 		/*
@@ -1049,7 +1029,7 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, integer c
 			TableRow thyRow = thy rows.at [thy rows.size];
 			for (integer ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
 				Table_setStringValue (thee.get(), thy rows.size, ifactor,
-					my rows.at [rowmin] -> cells [factorColumns [ifactor]]. string);
+					my rows.at [rowmin] -> cells [factorColumns [ifactor]]. string.get());
 			}
 			for (integer iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 				for (integer jrow = rowmin; jrow <= rowmax; jrow ++) {
@@ -1079,7 +1059,7 @@ autoTable Table_transpose (Table me) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my numberOfColumns, 1 + my rows.size);
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				Table_setStringValue (thee.get(), icol, 1, my columnHeaders [icol]. label);
+				Table_setStringValue (thee.get(), icol, 1, my columnHeaders [icol]. label.get());
 			}
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1161,15 +1141,15 @@ autoTable Tables_append (OrderedOf<structTable>* me) {
 			if (thy numberOfColumns != ncol)
 				Melder_throw (U"Numbers of columns do not match.");
 			for (integer icol = 1; icol <= ncol; icol ++) {
-				if (! Melder_equ (thy columnHeaders [icol]. label, firstTable -> columnHeaders [icol]. label))
+				if (! Melder_equ (thy columnHeaders [icol]. label.get(), firstTable -> columnHeaders [icol]. label.get()))
 					Melder_throw (U"The label of column ", icol, U" of ", thee,
-						U" (", thy columnHeaders [icol]. label, U") does not match the label of column ", icol,
-						U" of ", firstTable, U" (", firstTable -> columnHeaders [icol]. label, U").");
+						U" (", thy columnHeaders [icol]. label.get(), U") does not match the label of column ", icol,
+						U" of ", firstTable, U" (", firstTable -> columnHeaders [icol]. label.get(), U").");
 			}
 		}
 		autoTable him = Table_createWithoutColumnNames (nrow, ncol);
 		for (integer icol = 1; icol <= ncol; icol ++) {
-			Table_setColumnLabel (him.get(), icol, thy columnHeaders [icol]. label);
+			Table_setColumnLabel (him.get(), icol, thy columnHeaders [icol]. label.get());
 		}
 		nrow = 0;
 		for (integer itab = 1; itab <= my size; itab ++) {
@@ -1213,9 +1193,7 @@ void Table_appendSumColumn (Table me, integer column1, integer column2, const ch
 			TableRow thyRow = thy rows.at [irow];
 			TableCell myCell = & myRow -> cells [my numberOfColumns];
 			TableCell thyCell = & thyRow -> cells [1];
-			Melder_assert (! myCell -> string);   // make room...
-			myCell -> string = thyCell -> string;   // ...fill in and dangle...
-			thyCell -> string = nullptr;   // ...undangle
+			myCell -> string = std::move (thyCell -> string);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": sum column not appended.");
@@ -1248,9 +1226,7 @@ void Table_appendDifferenceColumn (Table me, integer column1, integer column2, c
 			TableRow thyRow = thy rows.at [irow];
 			TableCell myCell = & myRow -> cells [my numberOfColumns];
 			TableCell thyCell = & thyRow -> cells [1];
-			Melder_assert (! myCell -> string);   // make room...
-			myCell -> string = thyCell -> string;   // ...fill in and dangle...
-			thyCell -> string = nullptr;   // ...undangle
+			myCell -> string = std::move (thyCell -> string);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": difference column not appended.");
@@ -1283,9 +1259,7 @@ void Table_appendProductColumn (Table me, integer column1, integer column2, cons
 			TableRow thyRow = thy rows.at [irow];
 			TableCell myCell = & myRow -> cells [my numberOfColumns];
 			TableCell thyCell = & thyRow -> cells [1];
-			Melder_assert (! myCell -> string);   // make room...
-			myCell -> string = thyCell -> string;   // ...fill in and dangle...
-			thyCell -> string = nullptr;   // ...undangle
+			myCell -> string = std::move (thyCell -> string);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": product column not appended.");
@@ -1320,9 +1294,7 @@ void Table_appendQuotientColumn (Table me, integer column1, integer column2, con
 			TableRow thyRow = thy rows.at [irow];
 			TableCell myCell = & myRow -> cells [my numberOfColumns];
 			TableCell thyCell = & thyRow -> cells [1];
-			Melder_assert (! myCell -> string);   // make room...
-			myCell -> string = thyCell -> string;   // ...fill in and dangle...
-			thyCell -> string = nullptr;   // ...undangle
+			myCell -> string = std::move (thyCell -> string);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": quotient column not appended.");
@@ -1551,7 +1523,7 @@ double Table_getGroupMean_studentT (Table me, integer column, integer groupColum
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		if (row -> cells [groupColumn]. string) {
-			if (str32equ (row -> cells [groupColumn]. string, group)) {
+			if (str32equ (row -> cells [groupColumn]. string.get(), group)) {
 				n += 1;
 				sum += row -> cells [column]. number;
 			}
@@ -1566,7 +1538,7 @@ double Table_getGroupMean_studentT (Table me, integer column, integer groupColum
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			if (row -> cells [groupColumn]. string) {
-				if (str32equ (row -> cells [groupColumn]. string, group)) {
+				if (str32equ (row -> cells [groupColumn]. string.get(), group)) {
 					double diff = row -> cells [column]. number - mean;
 					sumOfSquares += diff * diff;
 				}
@@ -1600,10 +1572,10 @@ double Table_getGroupDifference_studentT (Table me, integer column, integer grou
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		if (row -> cells [groupColumn]. string) {
-			if (str32equ (row -> cells [groupColumn]. string, group1)) {
+			if (str32equ (row -> cells [groupColumn]. string.get(), group1)) {
 				n1 ++;
 				sum1 += row -> cells [column]. number;
-			} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
+			} else if (str32equ (row -> cells [groupColumn]. string.get(), group2)) {
 				n2 ++;
 				sum2 += row -> cells [column]. number;
 			}
@@ -1620,10 +1592,10 @@ double Table_getGroupDifference_studentT (Table me, integer column, integer grou
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			if (row -> cells [groupColumn]. string) {
-				if (str32equ (row -> cells [groupColumn]. string, group1)) {
+				if (str32equ (row -> cells [groupColumn]. string.get(), group1)) {
 					double diff = row -> cells [column]. number - mean1;
 					sumOfSquares += diff * diff;
-				} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
+				} else if (str32equ (row -> cells [groupColumn]. string.get(), group2)) {
 					double diff = row -> cells [column]. number - mean2;
 					sumOfSquares += diff * diff;
 				}
@@ -1653,9 +1625,9 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		if (row -> cells [groupColumn]. string) {
-			if (str32equ (row -> cells [groupColumn]. string, group1)) {
+			if (str32equ (row -> cells [groupColumn]. string.get(), group1)) {
 				n1 ++;
-			} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
+			} else if (str32equ (row -> cells [groupColumn]. string.get(), group2)) {
 				n2 ++;
 			}
 		}
@@ -1666,10 +1638,10 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, integer column, integ
 	for (integer irow = 1, jrow = 0; irow <= my rows.size; irow ++) {
 		TableRow row = my rows.at [irow];
 		if (row -> cells [groupColumn]. string) {
-			if (str32equ (row -> cells [groupColumn]. string, group1)) {
+			if (str32equ (row -> cells [groupColumn]. string.get(), group1)) {
 				Table_setNumericValue (ranks.get(), ++ jrow, 1, 1.0);
 				Table_setNumericValue (ranks.get(), jrow, 2, row -> cells [column]. number);
-			} else if (str32equ (row -> cells [groupColumn]. string, group2)) {
+			} else if (str32equ (row -> cells [groupColumn]. string.get(), group2)) {
 				Table_setNumericValue (ranks.get(), ++ jrow, 1, 2.0);
 				Table_setNumericValue (ranks.get(), jrow, 2, row -> cells [column]. number);
 			}
@@ -1761,10 +1733,10 @@ void Table_scatterPlot_mark (Table me, Graphics g, integer xcolumn, integer ycol
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		if (my columnHeaders [xcolumn]. label)
-			Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label);
+			Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label.get());
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (my columnHeaders [ycolumn]. label)
-			Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label);
+			Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label.get());
 	}
 }
 
@@ -1791,7 +1763,7 @@ void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
 	integer n = my rows.size;
 	for (integer irow = 1; irow <= n; irow ++) {
 		TableRow row = my rows.at [irow];
-		const char32 *mark = row -> cells [markColumn]. string;
+		const char32 *mark = row -> cells [markColumn]. string.get();
 		if (mark)
 			Graphics_text (g, row -> cells [xcolumn]. number, row -> cells [ycolumn]. number, mark);
 	}
@@ -1801,10 +1773,10 @@ void Table_scatterPlot (Table me, Graphics g, integer xcolumn, integer ycolumn,
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		if (my columnHeaders [xcolumn]. label)
-			Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label);
+			Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label.get());
 		Graphics_marksLeft (g, 2, true, true, false);
 		if (my columnHeaders [ycolumn]. label)
-			Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label);
+			Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label.get());
 	}
 }
 
@@ -1847,7 +1819,7 @@ void Table_list (Table me, bool includeRowNumbers) {
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (icol > 1) MelderInfo_write (U"\t");
-		MelderInfo_write (visibleString (my columnHeaders [icol]. label));
+		MelderInfo_write (visibleString (my columnHeaders [icol]. label.get()));
 	}
 	MelderInfo_write (U"\n");
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
@@ -1858,7 +1830,7 @@ void Table_list (Table me, bool includeRowNumbers) {
 		TableRow row = my rows.at [irow];
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			if (icol > 1) MelderInfo_write (U"\t");
-			MelderInfo_write (visibleString (row -> cells [icol]. string));
+			MelderInfo_write (visibleString (row -> cells [icol]. string.get()));
 		}
 		MelderInfo_write (U"\n");
 	}
@@ -1869,7 +1841,7 @@ static void writeToCharacterSeparatedFile (Table me, MelderFile file, char32 sep
 	autoMelderString buffer;
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (icol != 1) MelderString_appendCharacter (& buffer, separator);
-		const char32 *s = my columnHeaders [icol]. label;
+		const char32 *s = my columnHeaders [icol]. label.get();
 		MelderString_append (& buffer, ( s && s [0] != U'\0' ? s : U"?" ));
 	}
 	MelderString_appendCharacter (& buffer, U'\n');
@@ -1877,7 +1849,7 @@ static void writeToCharacterSeparatedFile (Table me, MelderFile file, char32 sep
 		TableRow row = my rows.at [irow];
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			if (icol != 1) MelderString_appendCharacter (& buffer, separator);
-			const char32 *s = row -> cells [icol]. string;
+			const char32 *s = row -> cells [icol]. string.get();
 			if (! s) s = U"";
 			if (s [0] == U'\0') {
 				bool separatorIsInvisible = ( separator == U'\t' );

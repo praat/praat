@@ -25,7 +25,7 @@ Thing_define (ERPWindow, SoundEditor) {
 	const char32 * v_getChannelName (integer channelNumber)
 		override {
 			ERP erp = (ERP) our data;
-			return erp -> channelNames [channelNumber];
+			return erp -> channelNames [channelNumber].get();
 		}
 	void v_drawSelectionViewer ()
 		override;

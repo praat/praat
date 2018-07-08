@@ -22,7 +22,7 @@ oo_DEFINE_CLASS (FileInMemorySet, SortedSet)
 	#if oo_DECLARING
 		static int s_compareHook (Daata f1, Daata f2) noexcept {
 			FileInMemory me = static_cast<FileInMemory> (f1), thee = static_cast<FileInMemory> (f2);
-			return Melder_cmp (my d_path, thy d_path);
+			return Melder_cmp (my d_path.get(), thy d_path.get());
 		}
 		CompareHook v_getCompareHook () override { return s_compareHook; }
 

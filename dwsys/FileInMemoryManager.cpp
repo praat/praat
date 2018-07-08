@@ -107,8 +107,8 @@ autoTable FileInMemoryManager_downto_Table (FileInMemoryManager me, bool openFil
 		autoTable thee = Table_createWithColumnNames (numberOfRows, U"path id size position");
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			FileInMemory fim = static_cast <FileInMemory> (openFilesOnly ? my openFiles -> at [irow] : my files -> at [irow]);
-			Table_setStringValue (thee.get(), irow, 1, fim -> d_path);
-			Table_setStringValue (thee.get(), irow, 2, fim -> d_id);
+			Table_setStringValue (thee.get(), irow, 1, fim -> d_path.get());
+			Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
 			Table_setNumericValue (thee.get(), irow, 3, fim -> d_numberOfBytes);
 			Table_setNumericValue (thee.get(), irow, 4, fim -> d_position);
 		}
@@ -136,7 +136,7 @@ static integer _FileInMemoryManager_getIndexInOpenFiles (FileInMemoryManager me,
 	Melder_require (filesIndex > 0 && filesIndex <= my files -> size, U": Invalid file index: ", filesIndex);
 
 	FileInMemory fim = static_cast<FileInMemory> (my files -> at [filesIndex]);
-	integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path);
+	integer openFilesIndex = FileInMemorySet_lookUp (my openFiles.get(), fim -> d_path.get());
 	return openFilesIndex;
 }
 

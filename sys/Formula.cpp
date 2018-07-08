@@ -2084,9 +2084,9 @@ static void Formula_print (FormulaInstruction f) {
 		else if (symbol == GOTO_ || symbol == IFFALSE_ || symbol == IFTRUE_ || symbol == LABEL_ || symbol == INCREMENT_GREATER_GOTO_)
 			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.label);
 		else if (symbol == NUMERIC_VARIABLE_)
-			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.variable -> string, U" ", f [i]. content.variable -> numericValue);
+			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.variable -> string.get(), U" ", f [i]. content.variable -> numericValue);
 		else if (symbol == STRING_VARIABLE_)
-			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.variable -> string, U" ", f [i]. content.variable -> stringValue);
+			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.variable -> string.get(), U" ", f [i]. content.variable -> stringValue);
 		else if (symbol == STRING_ || symbol == VARIABLE_NAME_ || symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_)
 			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.string);
 		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
@@ -3937,7 +3937,7 @@ static void do_runSubprocess () {
 			arguments [iarg] = Melder_dup (arg->string);
 	}
 	try {
-		Melder_execv (commandFile->string, numberOfArguments - 1, arguments.peek());
+		Melder_execv (commandFile->string, numberOfArguments - 1, arguments.peek2());
 	} catch (MelderError) {
 		Melder_throw (U"Command \"", commandFile->string, U"\" returned error status.");
 	}
@@ -5727,7 +5727,7 @@ static void do_chooseReadFileStr () {
 				pushString (result.transfer());
 			} else {
 				SimpleString fileName = fileNames->at [1];
-				autostring32 result = Melder_dup (fileName -> string);
+				autostring32 result = Melder_dup (fileName -> string.get());
 				pushString (result.transfer());
 			}
 		} else {

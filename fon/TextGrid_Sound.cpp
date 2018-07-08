@@ -114,18 +114,18 @@ static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier bos
 	IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (me, U"");
 	if (my intervals.size < 2) return;
 	TextInterval firstInterval = my intervals.at [1];
-	if (Melder_equ (firstInterval -> text, U"")) {
+	if (Melder_equ (firstInterval -> text.get(), U"")) {
 		IntervalTier_removeLeftBoundary (me, 2);
 	}
 	if (my intervals.size < 2) return;
 	TextInterval lastInterval = my intervals.at [my intervals.size];
-	if (Melder_equ (lastInterval -> text, U"")) {
+	if (Melder_equ (lastInterval -> text.get(), U"")) {
 		IntervalTier_removeLeftBoundary (me, my intervals.size);
 	}
 	if (my intervals.size < 3) return;
 	for (integer iinterval = my intervals.size - 1; iinterval >= 2; iinterval --) {
 		TextInterval interval = my intervals.at [iinterval];
-		if (Melder_equ (interval -> text, U"")) {
+		if (Melder_equ (interval -> text.get(), U"")) {
 			/*
 			 * Distribute the empty interval between its neigbours.
 			 */
@@ -164,7 +164,7 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 		);
 		double silenceThreshold = -30.0, minSilenceDuration = 0.1, minSoundingDuration = 0.1;
 		autoTextGrid analysis;
-		if (! Melder_equ (interval -> text, U"")) {
+		if (! Melder_equ (interval -> text.get(), U"")) {
 			analysis = SpeechSynthesizer_Sound_TextInterval_align
 				(synthesizer.get(), part.get(), interval, silenceThreshold, minSilenceDuration, minSoundingDuration);
 		}
@@ -263,10 +263,10 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 					double tmin = analysisInterval -> xmin, tmax = analysisInterval -> xmax;
 					if (tmax == analysis -> xmax) {
 						wordInterval = wordTier -> intervals.at [wordIntervalNumber];
-						TextInterval_setText (wordInterval, analysisInterval -> text);
+						TextInterval_setText (wordInterval, analysisInterval -> text.get());
 					} else {
 						wordInterval = wordTier -> intervals.at [wordIntervalNumber];
-						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text);
+						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text.get());
 						wordInterval -> xmin = tmax;
 						wordTier -> intervals. addItem_move (newInterval.move());
 						wordIntervalNumber ++;
@@ -322,10 +322,10 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer ti
 					double tmin = analysisInterval -> xmin, tmax = analysisInterval -> xmax;
 					if (tmax == analysis -> xmax) {
 						phonemeInterval = phonemeTier -> intervals.at [phonemeIntervalNumber];
-						TextInterval_setText (phonemeInterval, analysisInterval -> text);
+						TextInterval_setText (phonemeInterval, analysisInterval -> text.get());
 					} else {
 						phonemeInterval = phonemeTier -> intervals.at [phonemeIntervalNumber];
-						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text);
+						autoTextInterval newInterval = TextInterval_create (tmin, tmax, analysisInterval -> text.get());
 						phonemeInterval -> xmin = tmax;
 						phonemeTier -> intervals. addItem_move (newInterval.move());
 						phonemeIntervalNumber ++;
@@ -401,7 +401,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 				if (interval -> text && intmax >= tmin && intmin <= tmax) {
 					double t1 = tmin > intmin ? tmin : intmin;
 					double t2 = tmax < intmax ? tmax : intmax;
-					Graphics_text (g, 0.5 * (t1 + t2), 0.5 * (ymin + ymax), interval -> text);
+					Graphics_text (g, 0.5 * (t1 + t2), 0.5 * (ymin + ymax), interval -> text.get());
 				}
 			}
 		} else {
@@ -419,7 +419,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 					Graphics_line (g, t, ymin, t, 0.8 * ymin + 0.2 * ymax);
 					Graphics_line (g, t, 0.2 * ymin + 0.8 * ymax, t, ymax);
 					if (point -> mark)
-						Graphics_text (g, t, 0.5 * (ymin + ymax), point -> mark);
+						Graphics_text (g, t, 0.5 * (ymin + ymax), point -> mark.get());
 				}
 			}
 		}
@@ -443,7 +443,7 @@ autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, inte
 		for (integer iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
 			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
-			Thing_setName (interval.get(), segment -> text ? segment -> text : U"untitled");
+			Thing_setName (interval.get(), segment -> text ? segment -> text.get() : U"untitled");
 			list -> addItem_move (interval.move());
 		}
 		return list;
@@ -462,7 +462,7 @@ autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound,
 			TextInterval segment = tier -> intervals.at [iseg];
 			if (segment -> text && segment -> text [0] != U'\0') {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
-				Thing_setName (interval.get(), segment -> text ? segment -> text : U"untitled");
+				Thing_setName (interval.get(), segment -> text ? segment -> text.get() : U"untitled");
 				list -> addItem_move (interval.move());
 			}
 		}
@@ -482,7 +482,7 @@ autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, in
 		integer count = 0;
 		for (integer iseg = 1; iseg <= tier -> intervals.size; iseg ++) {
 			TextInterval segment = tier -> intervals.at [iseg];
-			if (Melder_stringMatchesCriterion (segment -> text, which, text, true)) {
+			if (Melder_stringMatchesCriterion (segment -> text.get(), which, text, true)) {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape::RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.get(), Melder_cat (sound -> name ? sound -> name.get() : U"", U"_", text, U"_", ++ count));
 				list -> addItem_move (interval.move());
@@ -653,7 +653,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				if (f0 < fmin || f0 > fmax) continue;
 				Graphics_text (g,
 					horizontalAlignment == (int) Graphics_LEFT ? tleft : horizontalAlignment == (int) Graphics_RIGHT ? tright : tmid,
-					f0, interval -> text);
+					f0, interval -> text.get());
 			}
 		} else {
 			TextTier tier = static_cast <TextTier> (anyTier);
@@ -664,7 +664,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				if (t < tmin || t > tmax) continue;
 				double f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.get(), t), Pitch_LEVEL_FREQUENCY, (int) unit);
 				if (f0 < fmin || f0 > fmax) continue;
-				Graphics_text (g, t, f0, point -> mark);
+				Graphics_text (g, t, f0, point -> mark.get());
 			}
 		}
 		Graphics_setPercentSignIsItalic (g, true);

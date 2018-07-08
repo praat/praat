@@ -166,7 +166,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 			U"The number of items in the times and the pitches string have to be equal.");
 		autoNUMvector<double> pitchesraw (1, numberOfPitches);
 		for (integer i = 1; i <= numberOfPitches; i ++) {
-			const char32 *token = items -> strings [i];
+			const char32 *token = items -> strings [i].get();
 			if (pitch_as == PITCH_VALUE_AS_MUSIC_NOTE) {
 				pitchesraw [i] = note_to_frequency (token, 440.0);
 			} else {
@@ -272,7 +272,7 @@ autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier th
 		autoPitchTier him = Data_copy (thee);
 		for (integer i = 1; i <= my intervals.size; i ++) {
 			TextInterval segment = my intervals.at [i];
-			if (Melder_stringMatchesCriterion (segment -> text, which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (segment -> text.get(), which, criterion, true)) {
 				double xmin = segment -> xmin, xmax = segment -> xmax;
 				autoPitchTier modified = PitchTier_createAsModifiedPart (thee, xmin, xmax, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status);
 				PitchTiers_replacePoints (him.get(), modified.get());

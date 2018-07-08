@@ -135,19 +135,15 @@ void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
 	Melder_require (my numberOfGroups == thy numberOfStrings, U"The number of strings should equal the number of groups.");
 
 	for (integer i = 1; i <= my numberOfGroups; i ++) {
-		const char32 *noname = U"", *name;
-		name = thy strings [i];
-		if (name == 0) {
-			name = noname;
-		}
-		Thing_setName (my groups->at [i], name);
+		const char32 *name = thy strings [i].get();
+		Thing_setName (my groups->at [i], name ? name : U"");
 	}
 }
 
 autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<char32 *> (1, my numberOfGroups);
+		thy strings = autostring32vector (1, my numberOfGroups);
 		thy numberOfStrings = my numberOfGroups;
 		for (integer i = 1; i <= my numberOfGroups; i ++) {
 			const char32 *name = Thing_getName (my groups->at [i]);
@@ -169,7 +165,8 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
 			NUMvector_copyElements (sscp -> centroid, thy data [i], 1, n);
 		}
-		NUMstrings_copyElements (my groups->at [m] -> columnLabels, thy columnLabels, 1, n);
+		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels, n);
+			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group centroids not extracted.");
@@ -189,7 +186,8 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 				thy data [i] [j] = ( numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
 		}
-		NUMstrings_copyElements (my groups->at [m] -> columnLabels, thy columnLabels, 1, n);
+		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels, n);
+			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": group standard deviations not extracted.");
@@ -219,7 +217,8 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 
 		SSCP total = my total.get();
 		autoTableOfReal thee = TableOfReal_create (ny, nx + 1);
-		NUMstrings_copyElements (my total -> columnLabels, thy columnLabels, 1, nx);
+		thy columnLabels. copyElementsFrom_upTo (my total -> columnLabels, nx);
+			// ppgb FIXME: that other number of columns should be at least nx (is it nx?), but that is not documented; if so, add an assert above
 
 		autoSSCP within;
 		if (standardized) {
@@ -232,15 +231,16 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 		double scale = sqrt (total -> numberOfObservations - my numberOfGroups);
 		double *centroid = my total -> centroid;
 		for (integer i = 1; i <= ny; i ++) {
-			double u0 = 0.0, ui;
+			longdouble u0 = 0.0;
 			for (integer j = 1; j <= nx; j ++) {
 				if (standardized) {
 					scale = sqrt (within -> data [j] [j]);
 				}
-				thy data [i] [j] = ui = scale * my eigen -> eigenvectors [i] [j];;
+				double ui = scale * my eigen -> eigenvectors [i] [j];
+				thy data [i] [j] = ui;
 				u0 += ui * centroid [j];
 			}
-			thy data [i] [nx + 1] = raw ? 0.0 : -u0;
+			thy data [i] [nx + 1] = ( raw ? 0.0 : - (double) u0 );
 		}
 		return thee;
 	} catch (MelderError) {
@@ -545,7 +545,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
-		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, m);
+		his rowLabels. copyElementsFrom (thy rowLabels);
 
 		// Scale the sscp to become a covariance matrix.
 
@@ -669,7 +669,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
-		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, m);
+		his rowLabels. copyElementsFrom (thy rowLabels);
 		autoTableOfReal adisplacements = Data_copy (thee);
 
 		// Scale the sscp to become a covariance matrix.

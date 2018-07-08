@@ -1527,7 +1527,7 @@ void praat_run () {
 				for (integer i = 1; i <= directoryNames -> numberOfStrings; i ++) {
 					structMelderDir pluginDir { };
 					structMelderFile plugin { };
-					MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
+					MelderDir_getSubdir (& praatDir, directoryNames -> strings [i].get(), & pluginDir);
 					MelderDir_getFile (& pluginDir, U"setup.praat", & plugin);
 					if (MelderFile_readable (& plugin)) {
 						Melder_backgrounding = true;

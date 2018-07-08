@@ -73,7 +73,7 @@ autoPCA PCA_create (integer numberOfComponents, integer dimension) {
 	try {
 		autoPCA me = Thing_new (PCA);
 		Eigen_init (me.get(), numberOfComponents, dimension);
-		my labels = NUMvector<char32 *> (1, dimension);
+		my labels = autostring32vector (1, dimension);
 		my centroid = NUMvector<double> (1, dimension);
 		return me;
 	} catch (MelderError) {
@@ -182,7 +182,7 @@ static autoPCA NUMdmatrix_to_PCA (double **m, integer numberOfRows, integer numb
 		thy centroid = NUMvector<double> (1, numberOfColumns2);
 		NUMcentreColumns (mcopy.peek(), 1, numberOfRows2, 1, numberOfColumns2, thy centroid);
 		Eigen_initFromSquareRoot (thee.get(), mcopy.peek(), numberOfRows2, numberOfColumns2);
-		thy labels = NUMvector<char32 *> (1, numberOfColumns2);
+		thy labels = autostring32vector (1, numberOfColumns2);
 
 		PCA_setNumberOfObservations (thee.get(), numberOfRows2);
 
@@ -204,7 +204,8 @@ static autoPCA NUMdmatrix_to_PCA (double **m, integer numberOfRows, integer numb
 autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 	try {
 		autoPCA thee = NUMdmatrix_to_PCA (my data, my numberOfRows, my numberOfColumns, false);
-		NUMstrings_copyElements (my columnLabels, thy labels, 1, my numberOfColumns);
+		Melder_assert (thy labels._to == my numberOfColumns);
+		thy labels. copyElementsFrom (my columnLabels);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
@@ -245,7 +246,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 				his data[i][j] = r;
 			}
 		}
-		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
+		his rowLabels. copyElementsFrom (thy rowLabels);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -261,7 +262,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal 
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensionsToKeep);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
-		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
+		his rowLabels. copyElementsFrom (thy rowLabels);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -276,7 +277,7 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 		}
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
-		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
+		his rowLabels. copyElementsFrom (thy rowLabels);
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -295,15 +296,16 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
-		NUMstrings_copyElements (my labels, his columnLabels, 1, my dimension);
-		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
+		Melder_assert (my labels._to == my dimension);
+		his columnLabels. copyElementsFrom (my labels);
+		his rowLabels. copyElementsFrom (thy rowLabels);
 
-		for (integer i = 1; i <= thy numberOfRows; i++) {
-			double *hisdata = his data[i];
-			for (integer k = 1; k <= npc; k++) {
-				double *evec = my eigenvectors[k], pc = thy data[i][k];
-				for (integer j = 1; j <= my dimension; j++) {
-					hisdata[j] += pc * evec[j];
+		for (integer i = 1; i <= thy numberOfRows; i ++) {
+			double *hisdata = his data [i];
+			for (integer k = 1; k <= npc; k ++) {
+				double *evec = my eigenvectors [k], pc = thy data [i] [k];
+				for (integer j = 1; j <= my dimension; j ++) {
+					hisdata [j] += pc * evec [j];
 				}
 			}
 		}

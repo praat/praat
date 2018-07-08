@@ -28,12 +28,12 @@ autoStrings Categories_to_Strings (Categories me) {
 		Melder_require (my size > 0, U"There should be at least one category present.");
 		
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<char32 *> (1, my size);
+		thy strings = autostring32vector (1, my size);
 		thy numberOfStrings = my size;
 
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString s = my at [i];
-			thy strings [i] = Melder_dup (s -> string);
+			thy strings [i] = Melder_dup (s -> string.get());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -49,7 +49,7 @@ autoCategories Strings_to_Categories (Strings me) {
 		thy _grow (my numberOfStrings);
 
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
-			autoSimpleString s = SimpleString_create (my strings [i]);
+			autoSimpleString s = SimpleString_create (my strings [i].get());
 			thy addItem_move (s.move());
 		}
 		return thee;

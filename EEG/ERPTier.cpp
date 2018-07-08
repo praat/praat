@@ -47,7 +47,7 @@ Thing_implement (ERPTier, AnyTier, 0);
 
 integer ERPTier_getChannelNumber (ERPTier me, const char32 *channelName) {
 	for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-		if (Melder_equ (my channelNames [ichan], channelName)) {
+		if (Melder_equ (my channelNames [ichan].get(), channelName)) {
 			return ichan;
 		}
 	}
@@ -71,10 +71,7 @@ static autoERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, dou
 		Function_init (thee.get(), fromTime, toTime);
 		thy numberOfChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
 		Melder_assert (thy numberOfChannels > 0);
-		thy channelNames = NUMvector <char32 *> (1, thy numberOfChannels);
-		for (integer ichan = 1; ichan <= thy numberOfChannels; ichan ++) {
-			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
-		}
+		thy channelNames. copyFrom (my channelNames);
 		integer numberOfEvents = events -> nt;
 		double soundDuration = toTime - fromTime;
 		double samplingPeriod = my sound -> dx;
@@ -238,6 +235,7 @@ autoERP ERPTier_extractERP (ERPTier me, integer eventNumber) {
 		ERPTier_checkEventNumber (me, eventNumber);
 		ERPPoint event = my points.at [eventNumber];
 		integer numberOfChannels = event -> erp -> ny;
+		Melder_assert (numberOfChannels == my numberOfChannels);
 		integer numberOfSamples = event -> erp -> nx;
 		autoERP thee = Thing_new (ERP);
 		event -> erp -> structSound :: v_copy (thee.get());
@@ -248,10 +246,7 @@ autoERP ERPTier_extractERP (ERPTier me, integer eventNumber) {
 				newChannel [isample] = oldChannel [isample];
 			}
 		}
-		thy channelNames = NUMvector <char32 *> (1, thy ny);
-		for (integer ichan = 1; ichan <= thy ny; ichan ++) {
-			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
-		}
+		thy channelNames. copyFrom (my channelNames);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": ERP not extracted.");
@@ -285,10 +280,8 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 				meanChannel [isample] *= factor;
 			}
 		}
-		mean -> channelNames = NUMvector <char32 *> (1, mean -> ny);
-		for (integer ichan = 1; ichan <= mean -> ny; ichan ++) {
-			mean -> channelNames [ichan] = Melder_dup (my channelNames [ichan]);
-		}
+		Melder_assert (mean -> ny == my numberOfChannels);
+		mean -> channelNames. copyFrom (my channelNames);
 		return mean;
 	} catch (MelderError) {
 		Melder_throw (me, U": mean not computed.");
@@ -305,10 +298,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, in
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.get(), my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
-		thy channelNames = NUMvector <char32 *> (1, thy numberOfChannels);
-		for (integer ichan = 1; ichan <= thy numberOfChannels; ichan ++) {
-			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
-		}
+		thy channelNames. copyFrom (my channelNames);
 		for (integer ievent = 1; ievent <= my points.size; ievent ++) {
 			ERPPoint oldEvent = my points.at [ievent];
 			TableRow row = table -> rows.at [ievent];
@@ -337,14 +327,11 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.get(), my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
-		thy channelNames = NUMvector <char32 *> (1, thy numberOfChannels);
-		for (integer ichan = 1; ichan <= thy numberOfChannels; ichan ++) {
-			thy channelNames [ichan] = Melder_dup (my channelNames [ichan]);
-		}
+		thy channelNames. copyFrom (my channelNames);
 		for (integer ievent = 1; ievent <= my points.size; ievent ++) {
 			ERPPoint oldEvent = my points.at [ievent];
 			TableRow row = table -> rows.at [ievent];
-			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which, criterion, true)) {
+			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string.get(), which, criterion, true)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
 				thy points. addItem_move (newEvent.move());
 			}

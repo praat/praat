@@ -103,7 +103,7 @@
 		integer _cap = (cap), _n = (n); \
 		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
 		for (integer _i = 0; _i < _n; _i ++) { \
-			our x [i] = texget##storage (_textSource_); \
+			our x [_i] = texget##storage (_textSource_); \
 		} \
 	}
 
@@ -116,7 +116,7 @@
 	{ \
 		integer _min = (min), _max = (max); \
 		if (_max >= _min) { \
-			our x = NUMvector <char32*> (_min, _max); \
+			our x = autostring32vector (_min, _max); \
 			for (integer _i = _min; _i <= _max; _i ++) { \
 				try { \
 					our x [_i] = texget##storage (_textSource_); \

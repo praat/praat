@@ -462,7 +462,7 @@ if (! my printing) {
 				autoHyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
 					paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
 					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
-				Collection_addItem_move (my links, link.move());
+				my links -> addItem_move (link.move());
 			}*/
 			theCurrentPraatApplication = & theForegroundPraatApplication;
 			theCurrentPraatObjects = & theForegroundPraatObjects;
