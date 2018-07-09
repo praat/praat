@@ -40,7 +40,7 @@ autoStrings Strings_createFixedLength (integer numberOfStrings) {
 		Melder_require (numberOfStrings > 0, U"The number of strings should be positive.");
 		
 		autoStrings me = Thing_new (Strings);
-		my strings = autostring32vector (1, numberOfStrings);
+		my strings = autostring32vector (numberOfStrings);
 		my numberOfStrings = numberOfStrings;
 		return me;
 	} catch (MelderError) {
@@ -52,7 +52,7 @@ autoStrings Strings_createAsCharacters (const char32 *string) {
 	try {
 		autoStrings me = Thing_new (Strings);
 		my numberOfStrings = str32len (string);
-		my strings = autostring32vector (1, my numberOfStrings);
+		my strings = autostring32vector (my numberOfStrings);
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
 			my strings [i] = Melder_dup (Melder_character (*string ++));
 		}
@@ -98,7 +98,7 @@ autoStrings Strings_createAsTokens (const char32 *token_string, const char32 *se
 			numberOfTokens ++;
 		}
 		my numberOfStrings = numberOfTokens;
-		my strings = autostring32vector (1, my numberOfStrings);
+		my strings = autostring32vector (my numberOfStrings);
 		numberOfTokens = 0;
 		char32 *start = tokens;
 		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs ++, index ++) {

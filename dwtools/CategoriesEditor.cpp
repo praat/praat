@@ -238,7 +238,7 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 	// Begin optimization: add the items from a table instead of separately.
 	try {
 		integer offset = from - 1, numberOfElements = to - offset;
-		autostring32vector table (1, numberOfElements);
+		autostring32vector table (numberOfElements);
 		integer itemCount = GuiList_getNumberOfItems (my list);
 		for (integer i = from; i <= to; i ++) {
 			SimpleString category = data->at [i];

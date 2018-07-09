@@ -195,7 +195,7 @@ autoStrings TableOfReal_extractRowLabels (TableOfReal me) {
 		autoStrings thee = Thing_new (Strings);
 
 		if (my numberOfRows > 0) {
-			thy strings = autostring32vector (1, my numberOfRows);
+			thy strings = autostring32vector (my numberOfRows);
 
 			thy numberOfStrings = my numberOfRows;
 
@@ -215,7 +215,7 @@ autoStrings TableOfReal_extractColumnLabels (TableOfReal me) {
 		autoStrings thee = Thing_new (Strings);
 
 		if (my numberOfColumns > 0) {
-			thy strings = autostring32vector (1, my numberOfColumns);
+			thy strings = autostring32vector (my numberOfColumns);
 			thy numberOfStrings = my numberOfColumns;
 
 			for (integer i = 1; i <= my numberOfColumns; i ++) {

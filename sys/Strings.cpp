@@ -257,7 +257,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 		 * Create.
 		 */
 		autoStrings me = Thing_new (Strings);
-		if (n > 0) my strings = autostring32vector (1, n);
+		if (n > 0) my strings = autostring32vector (n);
 		my numberOfStrings = n;
 
 		/*
@@ -352,7 +352,7 @@ void Strings_insert (Strings me, integer position, const char32 *text) {
 	 * Create without change.
 	 */
 	autostring32 newString = Melder_dup (text);
-	autostring32vector newStrings (1, my numberOfStrings + 1);
+	autostring32vector newStrings (my numberOfStrings + 1);
 	/*
 	 * Change without error.
 	 */

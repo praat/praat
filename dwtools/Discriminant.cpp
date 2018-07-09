@@ -143,7 +143,7 @@ void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
 autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, my numberOfGroups);
+		thy strings = autostring32vector (my numberOfGroups);
 		thy numberOfStrings = my numberOfGroups;
 		for (integer i = 1; i <= my numberOfGroups; i ++) {
 			const char32 *name = Thing_getName (my groups->at [i]);

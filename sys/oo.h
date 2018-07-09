@@ -195,11 +195,8 @@
 //#define oo_STRING_SET(x,setType)  oo_STRINGx_SET (w16, x, setType)
 //#define oo_LSTRING_SET(x,setType)  oo_STRINGx_SET (w32, x, setType)
 
-//#define oo_STRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w16, x, min, max)
-//#define oo_LSTRING_VECTOR_FROM(x,min,max)  oo_STRINGx_VECTOR (w32, x, min, max)
-
-#define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w16, x, 1, n)
-//#define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w32, x, 1, n)
+#define oo_STRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w16, x, n)
+//#define oo_LSTRING_VECTOR(x,n)  oo_STRINGx_VECTOR (w32, x, n)
 
 /*** Structs. ***/
 
@@ -226,7 +223,7 @@
 #define oo_STRINGx(storage,x)  autostring32 x;
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  autostring32 x [cap];
 #define oo_STRINGx_SET(storage,x,setType)  autostring32 x [1 + setType::MAX];
-#define oo_STRINGx_VECTOR(storage,x,min,max)  autostring32vector x;
+#define oo_STRINGx_VECTOR(storage,x,size)  autostring32vector x;
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  struct struct##Type x [cap];

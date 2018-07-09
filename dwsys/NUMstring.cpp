@@ -287,7 +287,7 @@ static autostring32vector strs_replace_literal (char32 **from, integer size, con
 	const char32 *replace, int maximumNumberOfReplaces, integer *p_nmatches, integer *p_nstringmatches) {
 	if (! search || ! replace)
 		return autostring32vector();
-	autostring32vector result (1, size);
+	autostring32vector result (size);
 
 	integer nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= size; i ++) {
@@ -318,7 +318,7 @@ static autostring32vector strs_replace_regexp (char32 **from, integer size, cons
 
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 
-	autostring32vector result (1, size);
+	autostring32vector result (size);
 
 	integer nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= size; i ++) {

@@ -319,7 +319,7 @@ autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me) {
 	try {
 		integer numberOfStrings = my rows.size;
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, numberOfStrings);
+		thy strings = autostring32vector (numberOfStrings);
 		for (integer i = 1; i <= numberOfStrings; i ++) {
 			thy strings [i] = Melder_dup_f (Table_getStringValue_Assert ( (Table) me, i, 1));
 			(thy numberOfStrings) ++;
@@ -373,7 +373,7 @@ integer HMMObservationSequenceBag_getLongestSequence (HMMObservationSequenceBag 
 autoHMMStateSequence HMMStateSequence_create (integer numberOfItems) {
 	try {
 		autoHMMStateSequence me = Thing_new (HMMStateSequence);
-		my strings = autostring32vector (1, numberOfItems);
+		my strings = autostring32vector (numberOfItems);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"HMMStateSequence not created.");
@@ -1540,7 +1540,7 @@ autoTableOfReal HMMObservationSequence_to_TableOfReal_transitions (HMMObservatio
 autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservationSequence thee) {
 	try {
 		autoStrings classes = Thing_new (Strings);
-		classes -> strings = autostring32vector (1, my numberOfObservationSymbols);
+		classes -> strings = autostring32vector (my numberOfObservationSymbols);
 		for (integer is = 1; is <= my numberOfObservationSymbols; is ++) {
 			HMMObservation hmmo = my observationSymbols->at [is];
 			classes -> strings [is] = Melder_dup (hmmo -> label.get());
@@ -1557,7 +1557,7 @@ autoStringsIndex HMM_HMMObservationSequence_to_StringsIndex (HMM me, HMMObservat
 autoStringsIndex HMM_HMMStateSequence_to_StringsIndex (HMM me, HMMStateSequence thee) {
 	try {
 		autoStrings classes = Thing_new (Strings);
-		classes -> strings = autostring32vector (1, my numberOfObservationSymbols);
+		classes -> strings = autostring32vector (my numberOfObservationSymbols);
 		for (integer is = 1; is <= my numberOfStates; is ++) {
 			HMMState hmms = my states->at [is];
 			classes -> strings [is] = Melder_dup (hmms -> label.get());

@@ -69,13 +69,13 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 void structTableOfReal :: v_readText (MelderReadText a_text, int /*formatVersion*/) {
 	numberOfColumns = texgeti32 (a_text);
 	if (numberOfColumns >= 1) {
-		columnLabels = autostring32vector (1, numberOfColumns);
+		columnLabels = autostring32vector (numberOfColumns);
 		for (integer i = 1; i <= numberOfColumns; i ++)
 			columnLabels [i] = texgetw16 (a_text);
 	}
 	numberOfRows = texgeti32 (a_text);
 	if (numberOfRows >= 1) {
-		rowLabels = autostring32vector (1, numberOfRows);
+		rowLabels = autostring32vector (numberOfRows);
 	}
 	if (numberOfRows >= 1 && numberOfColumns >= 1) {
 		data = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
@@ -118,10 +118,9 @@ void TableOfReal_init (TableOfReal me, integer numberOfRows, integer numberOfCol
 		Melder_throw (U"Cannot create cell-less table.");
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
-	Melder_assert (my rowLabels. _from == 1);   // probably captured by a test script
-	my rowLabels = autostring32vector (1, numberOfRows);
-	Melder_assert (my rowLabels. _to == numberOfRows);   // probably captured by test script
-	my columnLabels = autostring32vector (1, numberOfColumns);
+	my rowLabels = autostring32vector (numberOfRows);
+	Melder_assert (my rowLabels. size == numberOfRows);   // probably captured by test script
+	my columnLabels = autostring32vector (numberOfColumns);
 	my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
 }
 
@@ -209,7 +208,7 @@ void TableOfReal_insertRow (TableOfReal me, integer rowNumber) {
 			Create without change.
 		*/
 		autoNUMmatrix <double> data (1, my numberOfRows + 1, 1, my numberOfColumns);
-		autostring32vector newRowLabels (1, my numberOfRows + 1);
+		autostring32vector newRowLabels (my numberOfRows + 1);
 		for (integer irow = 1; irow < rowNumber; irow ++)	{
 			newRowLabels [irow] = std::move (my rowLabels [irow]);
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
@@ -270,7 +269,7 @@ void TableOfReal_insertColumn (TableOfReal me, integer columnNumber) {
 			Create without change.
 		*/
 		autoNUMmatrix <double> data (1, my numberOfRows, 1, my numberOfColumns + 1);
-		autostring32vector newColumnLabels (1, my numberOfColumns + 1);
+		autostring32vector newColumnLabels (my numberOfColumns + 1);
 		for (integer j = 1; j < columnNumber; j ++) {
 			newColumnLabels [j] = std::move (my columnLabels [j]);
 			for (integer i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j];
@@ -659,7 +658,7 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const char32 *c
 autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, my numberOfRows);
+		thy strings = autostring32vector (my numberOfRows);
 		thy numberOfStrings = my numberOfRows;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			thy strings [irow] = Melder_dup (my rowLabels [irow] ? my rowLabels [irow].get() : U"");
@@ -673,7 +672,7 @@ autoStrings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 autoStrings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, my numberOfColumns);
+		thy strings = autostring32vector (my numberOfColumns);
 		thy numberOfStrings = my numberOfColumns;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			thy strings [icol] = Melder_dup (my columnLabels [icol] ? my columnLabels [icol].get() : U"");

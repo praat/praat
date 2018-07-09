@@ -90,10 +90,10 @@
 		binput##storage (our x [_i].get(), f); \
 	}
 
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,size)  \
 	{ \
-		integer _min = (min), _max = (max); \
-		for (integer _i = _min; _i <= _max; _i ++) { \
+		integer _size = (size); \
+		for (integer _i = 1; _i <= _size; _i ++) { \
 			binput##storage (our x [_i].get(), f); \
 		} \
 	}

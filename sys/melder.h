@@ -1487,40 +1487,51 @@ public:
 	}
 };
 
+template <typename T>
+class _stringvector {
+public:
+	T** at;
+	integer size;
+};
+typedef _stringvector <char32> string32vector;
+typedef _stringvector <char> string8vector;
+
 template <class T>
 class _autostringvector {
 	_autostring <T> * _ptr;
 public:
-	integer _from, _to;
-	_autostringvector<T> (integer from, integer to) : _from (from), _to (to) {
-		our _ptr = NUMvector <_autostring <T>> (from, to, true);
+	integer size;
+	_autostringvector () {
+		our _ptr = nullptr;
+		our size = 0;
 	}
-	_autostringvector<T> (integer from, integer to, bool zero) : _from (from), _to (to) {
-		our _ptr = NUMvector <_autostring <T>> (from, to, zero);
+	_autostringvector<T> (integer initialSize) {
+		our _ptr = NUMvector <_autostring <T>> (1, initialSize, true);
+		our size = initialSize;
 	}
-	_autostringvector (T **ptr, integer from, integer to) : _ptr ((_autostring<T>*) ptr), _from (from), _to (to) {
+	_autostringvector<T> (integer dummy, integer initialSize, bool zero) {
+		our _ptr = NUMvector <_autostring <T>> (1, initialSize, zero);
+		our size = initialSize;
 	}
-	_autostringvector () : _ptr (nullptr), _from (1), _to (0) {
+	_autostringvector (T **ptr, integer initialSize) {
+		our _ptr = (_autostring<T>*) ptr;
+		our size = initialSize;
 	}
 	_autostringvector (const _autostringvector &) = delete;
-	_autostringvector (_autostringvector&& other) {   // no "_from (other._from)" yet
+	_autostringvector (_autostringvector&& other) {
 		our _ptr = other. _ptr;
-		our _from = other. _from;
-		our _to = other. _to;
+		our size = other. size;
 		other. _ptr = nullptr;
-		other. _from = 1;   // only now: not in declaration list!
-		other. _to = 0;
+		other. size = 0;
 	}
 	_autostringvector& operator= (const _autostringvector &) = delete;   // disable copy assignment
 	_autostringvector& operator= (_autostringvector&& other) noexcept {   // enable move assignment
 		if (& other != this) {
 			our reset ();
 			our _ptr = other. _ptr;
-			our _from = other. _from;
-			our _to = other. _to;
+			our size = other. size;
 			other. _ptr = nullptr;
-			other. _from = 1;
-			other. _to = 0;
+			other. size = 0;
 		}
 		return *this;
 	}
@@ -1540,46 +1551,42 @@ public:
 	_autostring <T> * transfer () {
 		_autostring <T> * tmp = our _ptr;
 		our _ptr = nullptr;   // make the pointer non-automatic again
-		our _from = 1;
-		our _to = 0;
+		our size = 0;
 		return tmp;
 	}
 	T** transfer2 () {
 		T** tmp = (T**) our _ptr;
 		our _ptr = nullptr;   // make the pointer non-automatic again
-		our _from = 1;
-		our _to = 0;
+		our size = 0;
 		return tmp;
 	}
 	void reset () {
 		if (our _ptr) {
-			for (integer i = our _from; i <= our _to; i ++) {
+			for (integer i = 1; i <= our size; i ++) {
 				our _ptr [i]. reset ();
 			}
-			NUMvector_free (our _ptr, our _from);
+			NUMvector_free (our _ptr, 1);
 			our _ptr = nullptr;
-			our _from = 1;
-			our _to = 0;
+			our size = 0;
 		}
 	}
 	void copyFrom (_autostringvector& other) {
 		our reset ();
-		our _ptr = NUMvector <_autostring <T>> (other._from, other._to, true);
-		our _from = other._from;
-		our _to = other._to;
-		for (integer i = our _from; i <= our _to; i ++) {
+		our _ptr = NUMvector <_autostring <T>> (1, other. size, true);
+		our size = other. size;
+		for (integer i = 1; i <= our size; i ++) {
 			our _ptr [i] = Melder_dup (other. _ptr [i].get());
 		}
 	}
 	void copyElementsFrom (_autostringvector& other) {
-		Melder_assert (other. _from == our _from && other. _to == our _to);
-		for (integer i = our _from; i <= our _to; i ++) {
+		Melder_assert (other. size == our size);
+		for (integer i = 1; i <= our size; i ++) {
 			our _ptr [i] = Melder_dup (other. _ptr [i].get());
 		}
 	}
 	void copyElementsFrom_upTo (_autostringvector& other, integer to) {
-		Melder_assert (other. _from == our _from && to <= other. _to && to <= our _to);
-		for (integer i = our _from; i <= to; i ++) {
+		Melder_assert (to <= other. size && to <= our size);
+		for (integer i = 1; i <= to; i ++) {
 			our _ptr [i] = Melder_dup (other. _ptr [i].get());
 		}
 	}
