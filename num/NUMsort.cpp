@@ -93,7 +93,9 @@ void NUMsort_integer (integer n, integer a []) {
 	MACRO_NUMsort (integer, a, integer, n)
 }
 
-void NUMsort_str (integer n, char32 *a []) {
+void NUMsort_str (string32vector array) {
+	char32 **a = array.at;
+	integer n = array.size;
 	integer l, r, j, i;
 	char32 *k;
 	if (n < 2) return;

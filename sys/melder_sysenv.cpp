@@ -103,16 +103,16 @@ void Melder_system (const char32 *command) {
 void Melder_execv (const char32 *executableFileName, integer narg, char32 ** args) {
 	#if defined (macintosh) || defined (UNIX)
 		Melder_casual (U"Command: <<", executableFileName, U">>");
-		autostring8vector args8 (0, narg + 1);
-		args8 [0] = Melder_32to8 (executableFileName);
+		autostring8vector args8 (narg + 2);
+		args8 [1] = Melder_32to8 (executableFileName);
 		for (integer i = 1; i <= narg; i ++) {
 			Melder_casual (U"Argument ", i, U": <<", args [i], U">>");
-			args8 [i] = Melder_32to8 (args [i]);
+			args8 [1 + i] = Melder_32to8 (args [i]);
 		}
-		args8 [narg + 1] = nullptr;
+		args8 [narg + 2] = nullptr;
 		pid_t processID = fork ();
 		if (processID == 0) {   // we are in the child process
-			execvp (Melder_peek32to8 (executableFileName), args8.peek2());
+			execvp (Melder_peek32to8 (executableFileName), & args8.peek2() [1]);
 			/* if we arrive here, some error occurred */
 			fprintf (stderr, "Some error occurred");
 			_exit (EXIT_FAILURE);

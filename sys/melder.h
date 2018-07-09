@@ -183,6 +183,8 @@ int64 Melder_movingReallocationsCount ();
 using char8 = unsigned char;
 using char16 = char16_t;
 using char32 = char32_t;
+using string32 = char32 *;
+using conststring32 = const char32 *;
 
 char32 * Melder_dup (const char32 *string /* cattable */);
 char32 * Melder_dup_f (const char32 *string /* cattable */);
@@ -231,7 +233,7 @@ public:
 		our ptr = tmp;
 	}
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
-	//_autostring (_autostring &) = delete;   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
+	//_autostring (_autostring &) = delete;   // disable copy constructor (temporarily, until all new-string-returning functions return an autostring)
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
 	explicit operator bool () const { return !! our ptr; }
 	/*
@@ -1202,23 +1204,6 @@ double NUMerb (double f);
 double NUMhertzToErb (double hertz);
 double NUMerbToHertz (double erb);
 
-/********** Sorting (NUMsort.cpp) **********/
-
-void NUMsort_d (integer n, double ra []);   // heap sort
-void NUMsort_i (integer n, int ra []);
-void NUMsort_integer (integer n, integer ra []);
-void NUMsort_str (integer n, char32 *a []);
-void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
-
-double NUMquantile (integer n, double a [], double factor);
-/*
-	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
-	from which the set 'a [1..n]' is a sorted array of random samples.
-	For instance, if 'factor' is 0.5, this function returns an estimate of
-	the median of the distribution underlying the sorted set a [].
-	If your array has not been sorted, first sort it with NUMsort (n, a).
-*/
-
 /********** Interpolation and optimization (NUM.cpp) **********/
 
 // Special values for interpolationDepth:
@@ -1492,6 +1477,9 @@ class _stringvector {
 public:
 	T** at;
 	integer size;
+	T* & operator[] (integer i) {
+		return our at [i];
+	}
 };
 typedef _stringvector <char32> string32vector;
 typedef _stringvector <char> string8vector;
@@ -1507,14 +1495,6 @@ public:
 	}
 	_autostringvector<T> (integer initialSize) {
 		our _ptr = NUMvector <_autostring <T>> (1, initialSize, true);
-		our size = initialSize;
-	}
-	_autostringvector<T> (integer dummy, integer initialSize, bool zero) {
-		our _ptr = NUMvector <_autostring <T>> (1, initialSize, zero);
-		our size = initialSize;
-	}
-	_autostringvector (T **ptr, integer initialSize) {
-		our _ptr = (_autostring<T>*) ptr;
 		our size = initialSize;
 	}
 	_autostringvector (const _autostringvector &) = delete;
@@ -1542,8 +1522,8 @@ public:
 	_autostring <T> & operator[] (integer i) {
 		return our _ptr [i];
 	}
-	_autostring <T> * peek () const {
-		return our _ptr;
+	_stringvector<T> get () const {
+		return _stringvector<T> { (T**) our _ptr, our size };
 	}
 	T** peek2 () const {
 		return (T**) our _ptr;
@@ -1784,6 +1764,23 @@ public:
 	}
 	autonummat&& move () noexcept { return static_cast <autonummat&&> (*this); }
 };
+
+/********** Sorting (NUMsort.cpp) **********/
+
+void NUMsort_d (integer n, double ra []);   // heap sort
+void NUMsort_i (integer n, int ra []);
+void NUMsort_integer (integer n, integer ra []);
+void NUMsort_str (string32vector a);
+void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
+
+double NUMquantile (integer n, double a [], double factor);
+/*
+	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
+	from which the set 'a [1..n]' is a sorted array of random samples.
+	For instance, if 'factor' is 0.5, this function returns an estimate of
+	the median of the distribution underlying the sorted set a [].
+	If your array has not been sorted, first sort it with NUMsort (n, a).
+*/
 
 #pragma mark - ARGUMENTS
 

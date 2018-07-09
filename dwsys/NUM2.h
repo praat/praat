@@ -59,9 +59,9 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp);
 	no match is found.
 */
 
-autostring32vector strs_replace (char32 **from, integer hi, const char32 *search,
-	const char32 *replace, int maximumNumberOfReplaces, integer *nmatches,
-	integer *nstringmatches, bool use_regexp);
+autostring32vector string32vector_searchAndReplace (string32vector me,
+	const char32 *search, const char32 *replace, int maximumNumberOfReplaces,
+	integer *nmatches, integer *nstringmatches, bool use_regexp);
 /*
 	Searches and replaces in string array of strings.
 	If use_regexp != 0, 'search' and 'replace' will be interpreted
@@ -367,7 +367,7 @@ void NUMindexx_s (char32 *a[], integer n, integer indx[]);
 /*
 	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
 	a[ indx[i] ] is in ascending order for i=1..n;
-	No preservation of order amoung equals (see NUMsort2_...)
+	No preservation of order among equals (see NUMsort2_...)
 */
 
 

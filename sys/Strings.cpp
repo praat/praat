@@ -312,7 +312,7 @@ void Strings_nativize (Strings me) {
 }
 
 void Strings_sort (Strings me) {
-	NUMsort_str (my numberOfStrings, my strings.peek2());
+	NUMsort_str (my strings.get());
 }
 
 void Strings_remove (Strings me, integer position) {
