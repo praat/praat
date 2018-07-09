@@ -547,7 +547,7 @@ void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTi
 			if (Melder_equ (thisInterval -> text.get(), label)) {
 				TextInterval previousInterval = my intervals.at [iinterval - 1];
 				if (Melder_equ (previousInterval -> text.get(), label)) {
-					Melder_free (previousInterval -> text);
+					previousInterval -> text. reset();
 					IntervalTier_removeLeftBoundary (me, iinterval);
 				}
 			}

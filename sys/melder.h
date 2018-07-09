@@ -211,6 +211,9 @@ public:
 	T * get () const {
 		return our ptr;
 	}
+	operator T* () const {
+		return our ptr;
+	}
 	/*T ** operator& () {
 		return & our ptr;
 	}*/
@@ -1500,9 +1503,13 @@ public:
 	_autostringvector () : _ptr (nullptr), _from (1), _to (0) {
 	}
 	_autostringvector (const _autostringvector &) = delete;
-	_autostringvector (_autostringvector&& other) {
+	_autostringvector (_autostringvector&& other) {   // no "_from (other._from)" yet
 		our _ptr = other. _ptr;
+		our _from = other. _from;
+		our _to = other. _to;
 		other. _ptr = nullptr;
+		other. _from = 1;   // only now: not in declaration list!
+		other. _to = 0;
 	}
 	_autostringvector& operator= (const _autostringvector &) = delete;   // disable copy assignment
 	_autostringvector& operator= (_autostringvector&& other) noexcept {   // enable move assignment
@@ -1512,6 +1519,8 @@ public:
 			our _from = other. _from;
 			our _to = other. _to;
 			other. _ptr = nullptr;
+			other. _from = 1;
+			other. _to = 0;
 		}
 		return *this;
 	}
@@ -1531,11 +1540,15 @@ public:
 	_autostring <T> * transfer () {
 		_autostring <T> * tmp = our _ptr;
 		our _ptr = nullptr;   // make the pointer non-automatic again
+		our _from = 1;
+		our _to = 0;
 		return tmp;
 	}
 	T** transfer2 () {
 		T** tmp = (T**) our _ptr;
 		our _ptr = nullptr;   // make the pointer non-automatic again
+		our _from = 1;
+		our _to = 0;
 		return tmp;
 	}
 	void reset () {
@@ -1614,10 +1627,6 @@ public:
 public:
 	numvec () = default;   // for use in a union
 	numvec (double *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
-	numvec (integer givenSize, kTensorInitializationType initializationType) {
-		our _initAt (givenSize, initializationType);
-		our size = givenSize;
-	}
 	numvec (const numvec& other) = default;
 	numvec (const autonumvec& other) = delete;
 	numvec& operator= (const numvec&) = default;
@@ -1625,7 +1634,7 @@ public:
 	double& operator[] (integer i) {
 		return our at [i];
 	}
-	void reset () noexcept {
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autonumvec)
 		if (our at) {
 			our _freeAt ();
 			our at = nullptr;
@@ -1649,9 +1658,10 @@ protected:
 class autonumvec : public numvec {
 public:
 	autonumvec (): numvec (nullptr, 0) { }   // come into existence without a payload
-	autonumvec (integer givenSize, kTensorInitializationType initializationType): numvec (givenSize, initializationType) { }   // come into existence and manufacture a payload
-	autonumvec (double *givenAt, integer givenSize): numvec (givenAt, givenSize) { }   // come into existence and buy a payload from a non-autonumvec
-	explicit autonumvec (numvec x): numvec (x.at, x.size) { }   // come into existence and buy a payload from a non-autonumvec (disable implicit conversion)
+	autonumvec (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+		our _initAt (givenSize, initializationType);
+		our size = givenSize;
+	}
 	~autonumvec () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
 	}
@@ -1695,11 +1705,6 @@ public:
 public:
 	nummat () = default;   // for use in a union
 	nummat (double **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	nummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {
-		our _initAt (givenNrow, givenNcol, initializationType);
-		our nrow = givenNrow;
-		our ncol = givenNcol;
-	}
 	nummat (const nummat& other) = default;
 	nummat (const autonummat& other) = delete;
 	nummat& operator= (const nummat&) = default;
@@ -1707,7 +1712,7 @@ public:
 	double *& operator[] (integer i) {
 		return our at [i];
 	}
-	void reset () noexcept {
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autonummat)
 		if (our at) {
 			our _freeAt ();
 			our at = nullptr;
@@ -1732,9 +1737,11 @@ protected:
 class autonummat : public nummat {
 public:
 	autonummat (): nummat { nullptr, 0, 0 } { }   // come into existence without a payload
-	autonummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType): nummat { givenNrow, givenNcol, initializationType } { }   // come into existence and manufacture a payload
-	autonummat (double **givenAt, integer givenNrow, integer givenNcol): nummat (givenAt, givenNrow, givenNcol) { }   // come into existence and buy a payload from a non-autonummat
-	explicit autonummat (nummat x): nummat (x.at, x.nrow, x.ncol) { }   // come into existence and buy a payload from a non-autonummat (disable implicit conversion)
+	autonummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+		our _initAt (givenNrow, givenNcol, initializationType);
+		our nrow = givenNrow;
+		our ncol = givenNcol;
+	}
 	~autonummat () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
 	}

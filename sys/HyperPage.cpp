@@ -376,7 +376,7 @@ if (! my printing) {
 }
 
 void HyperPage_script (HyperPage me, double width_inches, double height_inches, const char32 *script) {
-	char32 *text = Melder_dup (script);
+	autostring32 text = Melder_dup (script);
 	autoInterpreter interpreter = Interpreter_createFromEnvironment (nullptr);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
 	kGraphics_font font = my p_font;
@@ -441,7 +441,7 @@ if (! my printing) {
 					Melder_setDefaultDir (& my rootDirectory);
 				}
 				try {
-					Interpreter_run (interpreter.get(), text);
+					Interpreter_run (interpreter.get(), text.get());
 				} catch (MelderError) {
 					if (my scriptErrorHasBeenNotified) {
 						Melder_clearError ();
@@ -542,7 +542,7 @@ if (! my printing) {
 				Melder_setDefaultDir (& my rootDirectory);
 			}
 			try {
-				Interpreter_run (interpreter.get(), text);
+				Interpreter_run (interpreter.get(), text.get());
 			} catch (MelderError) {
 				Melder_clearError ();
 			}
@@ -563,7 +563,6 @@ if (! my printing) {
 	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 }
 	my previousBottomSpacing = bottomSpacing;
-	Melder_free (text);
 }
 
 static void print (void *void_me, Graphics graphics) {

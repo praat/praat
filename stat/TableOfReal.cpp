@@ -294,12 +294,7 @@ void TableOfReal_insertColumn (TableOfReal me, integer columnNumber) {
 void TableOfReal_setRowLabel (TableOfReal me, integer rowNumber, const char32 *label) {
 	try {
 		if (rowNumber < 1 || rowNumber > my numberOfRows) return;
-		autostring32 newLabel = Melder_dup (label);
-		/*
-			Change without error.
-		*/
-		Melder_free (my rowLabels [rowNumber]);
-		my rowLabels [rowNumber] = newLabel.transfer();
+		my rowLabels [rowNumber] = Melder_dup (label);
 	} catch (MelderError) {
 		Melder_throw (me, U": label of row ", rowNumber, U" not set.");
 	}
@@ -308,12 +303,7 @@ void TableOfReal_setRowLabel (TableOfReal me, integer rowNumber, const char32 *l
 void TableOfReal_setColumnLabel (TableOfReal me, integer columnNumber, const char32 *label) {
 	try {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns) return;
-		autostring32 newLabel = Melder_dup (label);
-		/*
-			Change without error.
-		*/
-		Melder_free (my columnLabels [columnNumber]);
-		my columnLabels [columnNumber] = newLabel.transfer();
+		my columnLabels [columnNumber] = Melder_dup (label);
 	} catch (MelderError) {
 		Melder_throw (me, U": label of column ", columnNumber, U" not set.");
 	}

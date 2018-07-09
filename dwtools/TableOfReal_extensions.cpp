@@ -1413,23 +1413,28 @@ autoTableOfReal TableOfReal_rankColumns (TableOfReal me) {
 	}
 }
 
+/*
+	s[lo]   = precursor<number>
+	s[lo+1] = precursor<number+1>
+	...
+	s[hi]   = precursor<number+hi-lo>
+*/
 void TableOfReal_setSequentialColumnLabels (TableOfReal me, integer from, integer to, const char32 *precursor, integer number, integer increment) {
-	from = from == 0 ? 1 : from;
-	to = to == 0 ? my numberOfColumns : to;
-	
+	from = ( from == 0 ? 1 : from );
+	to = ( to == 0 ? my numberOfColumns : to );
 	Melder_require (from > 0 && from <= to && to <= my numberOfColumns,
 		U"Wrong column indices.");
-	NUMstrings_setSequentialNumbering (my columnLabels.peek2(), from, to, precursor, number, increment, (int) 0);
+	for (integer i = from; i <= to; i ++, number += increment)
+		my columnLabels [i] = Melder_dup (Melder_cat (precursor, number));
 }
 
 void TableOfReal_setSequentialRowLabels (TableOfReal me, integer from, integer to, const char32 *precursor, integer number, integer increment) {
-	from = from == 0 ? 1 : from;
-	to = to == 0 ? my numberOfColumns : to;
-	
-	Melder_require (from > 0 && from <= to && to <= my numberOfColumns,
+	from = ( from == 0 ? 1 : from );
+	to = ( to == 0 ? my numberOfRows : to );
+	Melder_require (from > 0 && from <= to && to <= my numberOfRows,
 		U"Wrong row indices.");
-	
-	NUMstrings_setSequentialNumbering (my rowLabels.peek2(), from, to, precursor, number, increment, (int) 0);
+	for (integer i = from; i <= to; i ++, number += increment)
+		my rowLabels [i] = Melder_dup (Melder_cat (precursor, number));
 }
 
 /* For the inheritors */

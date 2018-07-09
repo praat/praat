@@ -1273,7 +1273,7 @@ static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 			integer selectedPoint = getSelectedPoint (me);
 			if (selectedPoint) {
 				TextPoint point = textTier -> points.at [selectedPoint];
-				Melder_free (point -> mark);
+				point -> mark. reset();
 				if (str32spn (text.get(), U" \n\t") != str32len (text.get()))   // any visible characters?
 					point -> mark = Melder_dup_f (text.get());
 				FunctionEditor_redraw (me);
@@ -2090,7 +2090,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 				integer selectedPoint = getSelectedPoint (this);
 				if (selectedPoint) {
 					TextPoint point = textTier -> points.at [selectedPoint];
-					Melder_free (point -> mark);
+					point -> mark. reset();
 					if (str32spn (newText.string, U" \n\t") != str32len (newText.string))   // any visible characters?
 						point -> mark = Melder_dup_f (newText.string);
 

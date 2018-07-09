@@ -69,35 +69,6 @@ double *NUMstring_to_numbers (const char32 *s, integer *p_numbers_found) {
 	return numbers.transfer();
 }
 
-void NUMstrings_free (char32 **s, integer lo, integer hi) {
-	if (! s) {
-		return;
-	}
-	for (integer i = lo; i <= hi; i ++) {
-		Melder_free (s [i]);
-	}
-	NUMvector_free <char32 *> (s, lo);
-}
-
-static char32 *appendNumberToString (const char32 *s, integer number, int asArray) {
-	return Melder_dup (
-		asArray == 0 ? Melder_cat (s, number) :
-		asArray == 1 ? Melder_cat (s, U"[", number, U"]") :
-		Melder_cat (s, U"(", number, U")"));
-}
-
-int NUMstrings_setSequentialNumbering (char32 **s, integer lo, integer hi, const char32 *pre, integer number, integer increment, int asArray) {
-	for (integer i = lo; i <= hi; i ++, number += increment) {
-		char32 *newc = appendNumberToString (pre, number, asArray);
-		if (newc == NULL) {
-			return 0;
-		}
-		Melder_free (s [i]);
-		s [i] = newc;
-	}
-	return 1;
-}
-
 #define HIGHBYTE(x) ((unsigned char) ((x) & 0xFF))
 #define LOWBYTE(x)  ((unsigned char) ((x) >> 8 & 0xFF))
 
@@ -125,7 +96,7 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp) {
 	return charp;
 }
 
-char32 *str_replace_literal (const char32 *string, const char32 *search, const char32 *replace,
+autostring32 str_replace_literal (const char32 *string, const char32 *search, const char32 *replace,
                               integer maximumNumberOfReplaces, integer *nmatches) {
 	if (string == 0 || search == 0 || replace == 0) {
 		return NULL;
@@ -166,8 +137,8 @@ char32 *str_replace_literal (const char32 *string, const char32 *search, const c
 
 	integer len_replace = str32len (replace);
 	integer len_result = len_string + *nmatches * (len_replace - len_search);
-	char32 *result = Melder_malloc (char32, (len_result + 1) * (integer) sizeof (char32));
-	result[len_result] = '\0';
+	autostring32 result = Melder_malloc (char32, (len_result + 1) * (integer) sizeof (char32));
+	result [len_result] = U'\0';
 
 	const char32 *posp = pos = string;
 	integer nchar = 0, result_nchar = 0;
@@ -177,24 +148,21 @@ char32 *str_replace_literal (const char32 *string, const char32 *search, const c
 		/*
 			Copy gap between end of previous match and start of current.
 		*/
-
 		nchar = (pos - posp);
 		if (nchar > 0) {
-			str32ncpy (result + result_nchar, posp, nchar);
+			str32ncpy (& result [result_nchar], posp, nchar);
 			result_nchar += nchar;
 		}
 
 		/*
 			Insert the replace string in result.
 		*/
-
-		str32ncpy (result + result_nchar, replace, len_replace);
+		str32ncpy (& result [result_nchar], replace, len_replace);
 		result_nchar += len_replace;
 
 		/*
 			Next search starts after the match.
 		*/
-
 		pos += len_search;
 		posp = pos;
 	}
@@ -202,16 +170,15 @@ char32 *str_replace_literal (const char32 *string, const char32 *search, const c
 	/*
 		Copy gap between end of match and end of string.
 	*/
-
 	pos = string + len_string;
 	nchar = pos - posp;
 	if (nchar > 0) {
-		str32ncpy (result + result_nchar, posp, nchar);
+		str32ncpy (& result [result_nchar], posp, nchar);
 	}
 	return result;
 }
 
-char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, const char32 *replaceRE, integer maximumNumberOfReplaces, integer *nmatches) {
+autostring32 str_replace_regexp (const char32 *string, regexp *compiledSearchRE, const char32 *replaceRE, integer maximumNumberOfReplaces, integer *nmatches) {
 	int buf_nchar = 0;				/* # characters in 'buf' */
 	int gap_copied = 0;
 	int nchar, reverse = 0;
@@ -255,7 +222,6 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, cons
 			of the current match.
 			Check buffer overflow. pos == posp ? '\0' : pos[-1],
 		*/
-
 		pos = compiledSearchRE -> startp[0];
 		nchar = pos - posp;
 		if (nchar > 0 && ! gap_copied) {
@@ -273,7 +239,6 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, cons
 			Do the substitution. We can only check afterwards for buffer
 			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
-
 		if ( (SubstituteRE (compiledSearchRE, replaceRE, buf.get() + buf_nchar, buf_size - buf_nchar, &errorType)) == false) {
 			if (errorType == 1) { // not enough memory
 				buf_size *= 2;
@@ -314,8 +279,8 @@ char32 *str_replace_regexp (const char32 *string, regexp *compiledSearchRE, cons
 	buf.resize (buf_size);
 
 	str32ncpy (buf.get() + buf_nchar, pos, nchar);
-	buf[buf_size - 1] = '\0';
-	return buf.transfer();
+	buf [buf_size - 1] = U'\0';
+	return buf;
 }
 
 static autostring32vector strs_replace_literal (char32 **from, integer lo, integer hi, const char32 *search,
@@ -375,7 +340,8 @@ static autostring32vector strs_replace_regexp (char32 **from, integer lo, intege
 }
 
 autostring32vector strs_replace (char32 **from, integer lo, integer hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
-	return use_regexp ? strs_replace_regexp (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches) :
+	return use_regexp ?
+		strs_replace_regexp (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches) :
 		strs_replace_literal (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches);
 }
 

@@ -4521,7 +4521,7 @@ static void do_rindex () {
 	Stackel part = pop, whole = pop;
 	if (whole->which == Stackel_STRING && part->which == Stackel_STRING) {
 		char32 *lastSubstring = str32str (whole->string, part->string);
-		if (part->string [0] == '\0') {
+		if (part->string [0] == U'\0') {
 			integer result = str32len (whole->string);
 			pushNumber (result);
 		} else if (lastSubstring) {
@@ -4574,10 +4574,8 @@ static void do_replaceStr () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		integer numberOfMatches;
-		//autostring32 result = str_replace_literal (s->string, t->string, u->string, Melder_iround (x->number), & numberOfMatches);
-		//pushString (result.transfer());
-		char32 *result = str_replace_literal (s->string, t->string, u->string, Melder_iround (x->number), & numberOfMatches);
-		pushString (result);
+		autostring32 result = str_replace_literal (s->string, t->string, u->string, Melder_iround (x->number), & numberOfMatches);
+		pushString (result.transfer());
 	} else {
 		Melder_throw (U"The function \"replace$\" requires three strings and a number.");
 	}
@@ -4591,10 +4589,8 @@ static void do_replace_regexStr () {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
 			integer numberOfMatches;
-			//autostring32 result = str_replace_regexp (s->string, compiled_regexp, u->string, Melder_iround (x->number), & numberOfMatches);
-			//pushString (result.transfer());
-			char32 *result = str_replace_regexp (s->string, compiled_regexp, u->string, Melder_iround (x->number), & numberOfMatches);
-			pushString (result);
+			autostring32 result = str_replace_regexp (s->string, compiled_regexp, u->string, Melder_iround (x->number), & numberOfMatches);
+			pushString (result.transfer());
 		}
 	} else {
 		Melder_throw (U"The function \"replace_regex$\" requires three strings and a number.");

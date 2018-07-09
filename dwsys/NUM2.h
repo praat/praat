@@ -48,16 +48,6 @@ char32 * NUMstring_timeNoDot (double time);
 
 int NUMstrings_equal (const char32 **s1, const char32 **s2, integer lo, integer hi);
 
-void NUMstrings_free (char32 **s, integer lo, integer hi);
-
-int NUMstrings_setSequentialNumbering (char32 **s, integer lo, integer hi, const char32 *precursor, integer number, integer increment, int asArray);
-/*
-	Set s[lo]   = precursor<number>
-	s[lo+1] = precursor<number+1>
-	...
-	s[hi]   = precursor<number+hi-lo>
-*/
-
 regexp *NUMregexp_compile (const char32 *regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
 
@@ -85,14 +75,14 @@ autostring32vector strs_replace (char32 **from, integer lo, integer hi, const ch
 	'nstringmatches'.
 */
 
-char32 *str_replace_literal (const char32 *string, const char32 *search,
+autostring32 str_replace_literal (const char32 *string, const char32 *search,
 	const char32 *replace, integer maximumNumberOfReplaces, integer *nmatches);
 /*
 	Search and replace in 'string'.
 	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
 */
 
-char32 *str_replace_regexp (const char32 *string, regexp *search_compiled,
+autostring32 str_replace_regexp (const char32 *string, regexp *search_compiled,
 	const char32 *replace_regexp, integer maximumNumberOfReplaces, integer *nmatches);
 /*
 	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on

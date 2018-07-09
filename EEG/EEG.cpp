@@ -449,10 +449,8 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 	}
 }
 
-void EEG_setChannelName (EEG me, integer channelNumber, const char32 *a_name) {
-	autostring32 l_name = Melder_dup (a_name);
-	Melder_free (my channelNames [channelNumber]);
-	my channelNames [channelNumber] = l_name.transfer();
+void EEG_setChannelName (EEG me, integer channelNumber, const char32 *newName) {
+	my channelNames [channelNumber] = Melder_dup (newName);
 }
 
 void EEG_setExternalElectrodeNames (EEG me,
