@@ -234,7 +234,7 @@ bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name) {
 autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, my size);
+		thy strings = autostring32vector (my size);
 		thy numberOfStrings = 0;
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
 			FileInMemory fim = (FileInMemory) my at [ifile];

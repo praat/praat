@@ -68,7 +68,7 @@
 		} \
 	}
 
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,size)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		our x. reset (); \
 	}

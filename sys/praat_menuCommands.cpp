@@ -401,7 +401,7 @@ void praat_addFixedButtonCommand_ (GuiForm parent, const char32 *title, UiCallba
 	theCommands. addItemAtPosition_move (me.move(), 0);
 }
 
-void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive) {
+void praat_sensitivizeFixedButtonCommand (const char32 *title, bool sensitive) {
 	Praat_Command commandFound = nullptr;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];

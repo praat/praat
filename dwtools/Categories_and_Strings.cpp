@@ -28,7 +28,7 @@ autoStrings Categories_to_Strings (Categories me) {
 		Melder_require (my size > 0, U"There should be at least one category present.");
 		
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, my size);
+		thy strings = autostring32vector (my size);
 		thy numberOfStrings = my size;
 
 		for (integer i = 1; i <= my size; i ++) {

@@ -38,10 +38,10 @@ static autoEEG EEG_copyWithoutSound (EEG me) {
 	}
 }
 
-static integer *EEG_channelNames_to_channelNumbers (EEG me, char32 **channelNames, integer numberOfChannelNames) {
+static integer *EEG_channelNames_to_channelNumbers (EEG me, string32vector channelNames) {
 	try {
-		autoNUMvector<integer> channelNumbers (1, numberOfChannelNames);
-		for (integer i = 1; i <= numberOfChannelNames; i ++) {
+		autoNUMvector<integer> channelNumbers (1, channelNames.size);
+		for (integer i = 1; i <= channelNames.size; i ++) {
 			for (integer j = 1; j <= my numberOfChannels; j ++) {
 				if (Melder_equ (channelNames [i], my channelNames [j].get())) {
 					channelNumbers [i] = j;
@@ -61,7 +61,7 @@ static void EEG_setChannelNames_selected (EEG me, const char32 *precursor, integ
 	autoMelderString name;
 	const char32 *zero = U"0";
 	for (integer i = 1; i <= numberOfChannels; i ++) {
-		MelderString_copy (&name, precursor);
+		MelderString_copy (& name, precursor);
 		if (my numberOfChannels > 100) {
 			if (i < 10) {
 				MelderString_append (& name, zero);
@@ -172,7 +172,8 @@ autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
 		}
 		numberOfComponents = ( numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents );
 
-		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels.peek2(), thy dimension), 1);
+		Melder_assert (thy labels.size == thy dimension);
+		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels.get()), 1);
 
 		autoEEG him = Data_copy (me);
 		autoSound white = Sound_PCA_whitenSelectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
@@ -194,7 +195,8 @@ autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfCo
 		}
 		numberOfComponents = numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents;
 
-		autoNUMvector <integer> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels.peek2(), thy dimension), 1);
+		Melder_assert (thy labels.size == thy dimension);
+		autoNUMvector <integer> channelNumbers ( EEG_channelNames_to_channelNumbers (me, thy labels.get()), 1);
 		autoEEG him = Data_copy (me);
 		autoSound pc = Sound_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.peek(), thy dimension);
 		for (integer i = 1; i <= thy dimension; i ++) {

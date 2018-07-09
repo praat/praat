@@ -985,7 +985,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const char3
 autoStrings OTGrammar_generateInputs (OTGrammar me, integer numberOfTrials) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, thy numberOfStrings = numberOfTrials);
+		thy strings = autostring32vector (thy numberOfStrings = numberOfTrials);
 		for (integer i = 1; i <= numberOfTrials; i ++) {
 			integer itab = NUMrandomInteger (1, my numberOfTableaus);
 			thy strings [i] = Melder_dup (my tableaus [itab]. input.get());
@@ -999,7 +999,7 @@ autoStrings OTGrammar_generateInputs (OTGrammar me, integer numberOfTrials) {
 autoStrings OTGrammar_getInputs (OTGrammar me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, thy numberOfStrings = my numberOfTableaus);
+		thy strings = autostring32vector (thy numberOfStrings = my numberOfTableaus);
 		for (integer i = 1; i <= my numberOfTableaus; i ++) {
 			thy strings [i] = Melder_dup (my tableaus [i]. input.get());
 		}
@@ -1027,7 +1027,7 @@ autoStrings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double eval
 		autoStrings him = Thing_new (Strings);
 		integer n = inputs -> numberOfStrings;
 		his numberOfStrings = n;
-		his strings = autostring32vector (1, n);
+		his strings = autostring32vector (n);
 		for (integer i = 1; i <= n; i ++) {
 			char32 output [100];
 			OTGrammar_inputToOutput (me, inputs -> strings [i].get(), output, evaluationNoise);
@@ -1043,7 +1043,7 @@ autoStrings OTGrammar_inputToOutputs (OTGrammar me, const char32 *input, integer
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = n;
-		thy strings = autostring32vector (1, n);
+		thy strings = autostring32vector (n);
 		for (integer i = 1; i <= n; i ++) {
 			char32 output [100];
 			OTGrammar_inputToOutput (me, input, output, evaluationNoise);

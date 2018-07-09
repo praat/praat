@@ -525,8 +525,10 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 				autonumvec b = a.move();
 				const autonumvec c;
 				const autonumvec d { };
+				#if 0
 				double *e;
 				const autonumvec f { e, 10 };
+				#endif
 				const autonumvec g { 100, kTensorInitializationType::ZERO };
 				//return f;   // call to deleted constructor
 				numvec h;

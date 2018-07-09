@@ -66,7 +66,7 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g,
 void Spectrogram_paint (Spectrogram me, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, double maximum, int autoscaling,
 	double dynamicRange, double preemphasis, double dynamicCompression,
-	int garnish);
+	bool garnish);
 /*
 	Function:
 		Draw me to a Graphics.

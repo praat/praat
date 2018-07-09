@@ -66,7 +66,7 @@ void Transition_init (Transition me, integer numberOfStates) {
 	if (numberOfStates < 1)
 		Melder_throw (U"Cannot create empty matrix.");
 	my numberOfStates = numberOfStates;
-	my stateLabels = autostring32vector (1, numberOfStates);
+	my stateLabels = autostring32vector (numberOfStates);
 	my data = NUMmatrix <double> (1, my numberOfStates, 1, my numberOfStates);
 }
 

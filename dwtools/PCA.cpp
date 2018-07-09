@@ -73,7 +73,7 @@ autoPCA PCA_create (integer numberOfComponents, integer dimension) {
 	try {
 		autoPCA me = Thing_new (PCA);
 		Eigen_init (me.get(), numberOfComponents, dimension);
-		my labels = autostring32vector (1, dimension);
+		my labels = autostring32vector (dimension);
 		my centroid = NUMvector<double> (1, dimension);
 		return me;
 	} catch (MelderError) {
@@ -182,7 +182,7 @@ static autoPCA NUMdmatrix_to_PCA (double **m, integer numberOfRows, integer numb
 		thy centroid = NUMvector<double> (1, numberOfColumns2);
 		NUMcentreColumns (mcopy.peek(), 1, numberOfRows2, 1, numberOfColumns2, thy centroid);
 		Eigen_initFromSquareRoot (thee.get(), mcopy.peek(), numberOfRows2, numberOfColumns2);
-		thy labels = autostring32vector (1, numberOfColumns2);
+		thy labels = autostring32vector (numberOfColumns2);
 
 		PCA_setNumberOfObservations (thee.get(), numberOfRows2);
 
@@ -204,7 +204,7 @@ static autoPCA NUMdmatrix_to_PCA (double **m, integer numberOfRows, integer numb
 autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 	try {
 		autoPCA thee = NUMdmatrix_to_PCA (my data, my numberOfRows, my numberOfColumns, false);
-		Melder_assert (thy labels._to == my numberOfColumns);
+		Melder_assert (thy labels.size == my numberOfColumns);
 		thy labels. copyElementsFrom (my columnLabels);
 		return thee;
 	} catch (MelderError) {
@@ -296,7 +296,7 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
-		Melder_assert (my labels._to == my dimension);
+		Melder_assert (my labels.size == my dimension);
 		his columnLabels. copyElementsFrom (my labels);
 		his rowLabels. copyElementsFrom (thy rowLabels);
 

@@ -30,12 +30,9 @@ Thing_declare (Editor);
 
 Thing_define (EditorMenu, Thing) {
 	Editor d_editor;
-	const char32 *menuTitle;
+	autostring32 menuTitle;
 	GuiMenu menuWidget;
 	OrderedOf<structEditorCommand> commands;
-
-	void v_destroy () noexcept
-		override;
 };
 
 typedef MelderCallback <void, structEditor, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, const char32 *, Interpreter> EditorCommandCallback;
@@ -46,11 +43,8 @@ Thing_define (EditorCommand, Thing) {
 	autostring32 itemTitle;
 	GuiMenuItem itemWidget;
 	EditorCommandCallback commandCallback;
-	const char32 *script;
+	autostring32 script;
 	autoUiForm d_uiform;
-
-	void v_destroy () noexcept
-		override;
 };
 
 typedef MelderCallback <void, structEditor> Editor_DataChangedCallback;
@@ -123,7 +117,7 @@ GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags, EditorCommandCallback commandCallback);
 GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags,
 	const char32 *script);
-void Editor_setMenuSensitive (Editor me, const char32 *menu, int sensitive);
+void Editor_setMenuSensitive (Editor me, const char32 *menu, bool sensitive);
 
 inline static void Editor_raise (Editor me)
 	/*

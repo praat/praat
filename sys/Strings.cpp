@@ -257,7 +257,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 		 * Create.
 		 */
 		autoStrings me = Thing_new (Strings);
-		if (n > 0) my strings = autostring32vector (1, n);
+		if (n > 0) my strings = autostring32vector (n);
 		my numberOfStrings = n;
 
 		/*
@@ -295,12 +295,7 @@ void Strings_genericize (Strings me) {
 		while (*p) {
 			if (*p > 126) {   // backslashes are not converted, i.e. genericize^2 == genericize
 				Longchar_genericize32 (my strings [i].get(), buffer.get());
-				autostring32 newString = Melder_dup (buffer.get());
-				/*
-					Replace string only if copying was OK.
-				*/
-				Melder_free (my strings [i]);
-				my strings [i] = newString.transfer();
+				my strings [i] = Melder_dup (buffer.get());
 				break;
 			}
 			p ++;
@@ -312,17 +307,12 @@ void Strings_nativize (Strings me) {
 	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) + 1);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		Longchar_nativize32 (my strings [i].get(), buffer.get(), false);
-		autostring32 newString = Melder_dup (buffer.get());
-		/*
-			Replace string only if copying was OK.
-		*/
-		Melder_free (my strings [i]);
-		my strings [i] = newString.transfer();
+		my strings [i] = Melder_dup (buffer.get());
 	}
 }
 
 void Strings_sort (Strings me) {
-	NUMsort_str (my numberOfStrings, my strings.peek2());
+	NUMsort_str (my strings.get());
 }
 
 void Strings_remove (Strings me, integer position) {
@@ -362,7 +352,7 @@ void Strings_insert (Strings me, integer position, const char32 *text) {
 	 * Create without change.
 	 */
 	autostring32 newString = Melder_dup (text);
-	autostring32vector newStrings (1, my numberOfStrings + 1);
+	autostring32vector newStrings (my numberOfStrings + 1);
 	/*
 	 * Change without error.
 	 */

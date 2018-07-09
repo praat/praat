@@ -48,7 +48,7 @@ void praat_saveAddedMenuCommands (MelderString *buffer);
 void praat_saveToggledMenuCommands (MelderString *buffer);
 #define praat_addFixedButtonCommand(p,t,c,x,y)  praat_addFixedButtonCommand_ (p, t, c, U"" #c, x, y)
 void praat_addFixedButtonCommand_ (GuiForm parent, const char32 *title, UiCallback callback, const char32 *nameOfCallback, int x, int y);
-void praat_sensitivizeFixedButtonCommand (const char32 *title, int sensitive);
+void praat_sensitivizeFixedButtonCommand (const char32 *title, bool sensitive);
 void praat_sortMenuCommands ();
 
 #define praat_MAXNUM_MENUS 20   /* Maximum number of added New, Open, Save, or Help menus. */

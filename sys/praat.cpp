@@ -1712,10 +1712,15 @@ void praat_run () {
 		Melder_assert (! y.at);
 		Melder_assert (y.nrow == 0);
 		Melder_assert (y.ncol == 0);
-		autonummat z {y.at,y.nrow,y.ncol};   // OK
-		autonummat a;
-		a = z.move();
-		autonumvec b { x };
+		//autonummat z {y.at,y.nrow,y.ncol};   // explicit construction not OK
+		autonummat a = autonummat { };
+		Melder_assert (! a.at);
+		Melder_assert (a.nrow == 0);
+		Melder_assert (a.ncol == 0);
+		//a = z.move();
+		//double q [11];
+		//autonumvec s { & q [1], 10 };
+		//autonumvec b { x };   // explicit construction not OK
 		//autonumvec c = x;   // implicit construction not OK
 	}
 	Melder_assert (sizeof (float) == 4);
