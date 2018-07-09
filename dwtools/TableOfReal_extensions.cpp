@@ -195,7 +195,7 @@ autoStrings TableOfReal_extractRowLabels (TableOfReal me) {
 		autoStrings thee = Thing_new (Strings);
 
 		if (my numberOfRows > 0) {
-			thy strings = autostring32vector (1, my numberOfRows);
+			thy strings = autostring32vector (my numberOfRows);
 
 			thy numberOfStrings = my numberOfRows;
 
@@ -215,7 +215,7 @@ autoStrings TableOfReal_extractColumnLabels (TableOfReal me) {
 		autoStrings thee = Thing_new (Strings);
 
 		if (my numberOfColumns > 0) {
-			thy strings = autostring32vector (1, my numberOfColumns);
+			thy strings = autostring32vector (my numberOfColumns);
 			thy numberOfStrings = my numberOfColumns;
 
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
@@ -1139,20 +1139,26 @@ autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 	}
 }
 
-void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const char32 *replace, integer maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
+void TableOfReal_changeRowLabels (TableOfReal me,
+	const char32 *search, const char32 *replace, integer maximumNumberOfReplaces,
+	integer *nmatches, integer *nstringmatches, bool use_regexp)
+{
 	try {
-		autostring32vector rowLabels =
-			strs_replace (my rowLabels.peek2(), 1, my numberOfRows, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+		autostring32vector rowLabels = string32vector_searchAndReplace (my rowLabels.get(),
+			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my rowLabels = std::move (rowLabels);
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not changed.");
 	}
 }
 
-void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const char32 *replace, integer maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
+void TableOfReal_changeColumnLabels (TableOfReal me,
+	const char32 *search, const char32 *replace, integer maximumNumberOfReplaces,
+	integer *nmatches, integer *nstringmatches, bool use_regexp)
+{
 	try {
-		autostring32vector columnLabels =
-			strs_replace (my columnLabels.peek2(), 1, my numberOfColumns, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+		autostring32vector columnLabels = string32vector_searchAndReplace (my columnLabels.get(),
+			search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my columnLabels = std::move (columnLabels);
 	} catch (MelderError) {
 		Melder_throw (me, U": column labels not changed.");
@@ -1413,23 +1419,28 @@ autoTableOfReal TableOfReal_rankColumns (TableOfReal me) {
 	}
 }
 
+/*
+	s[lo]   = precursor<number>
+	s[lo+1] = precursor<number+1>
+	...
+	s[hi]   = precursor<number+hi-lo>
+*/
 void TableOfReal_setSequentialColumnLabels (TableOfReal me, integer from, integer to, const char32 *precursor, integer number, integer increment) {
-	from = from == 0 ? 1 : from;
-	to = to == 0 ? my numberOfColumns : to;
-	
+	from = ( from == 0 ? 1 : from );
+	to = ( to == 0 ? my numberOfColumns : to );
 	Melder_require (from > 0 && from <= to && to <= my numberOfColumns,
 		U"Wrong column indices.");
-	NUMstrings_setSequentialNumbering (my columnLabels.peek2(), from, to, precursor, number, increment, (int) 0);
+	for (integer i = from; i <= to; i ++, number += increment)
+		my columnLabels [i] = Melder_dup (Melder_cat (precursor, number));
 }
 
 void TableOfReal_setSequentialRowLabels (TableOfReal me, integer from, integer to, const char32 *precursor, integer number, integer increment) {
-	from = from == 0 ? 1 : from;
-	to = to == 0 ? my numberOfColumns : to;
-	
-	Melder_require (from > 0 && from <= to && to <= my numberOfColumns,
+	from = ( from == 0 ? 1 : from );
+	to = ( to == 0 ? my numberOfRows : to );
+	Melder_require (from > 0 && from <= to && to <= my numberOfRows,
 		U"Wrong row indices.");
-	
-	NUMstrings_setSequentialNumbering (my rowLabels.peek2(), from, to, precursor, number, increment, (int) 0);
+	for (integer i = from; i <= to; i ++, number += increment)
+		my rowLabels [i] = Melder_dup (Melder_cat (precursor, number));
 }
 
 /* For the inheritors */

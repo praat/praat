@@ -112,12 +112,12 @@
 		our x [_i] = texget##storage (_textSource_); \
 	}
 
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,size)  \
 	{ \
-		integer _min = (min), _max = (max); \
-		if (_max >= _min) { \
-			our x = autostring32vector (_min, _max); \
-			for (integer _i = _min; _i <= _max; _i ++) { \
+		integer _size = (size); \
+		if (_size >= 1) { \
+			our x = autostring32vector (_size); \
+			for (integer _i = 1; _i <= _size; _i ++) { \
 				try { \
 					our x [_i] = texget##storage (_textSource_); \
 				} catch (MelderError) { \

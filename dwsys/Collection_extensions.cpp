@@ -174,11 +174,15 @@ void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *repla
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString ss = my at [i];
 			integer nmatches_sub;
-			char32 *r = use_regexp ? str_replace_regexp (ss -> string.get(), compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) : str_replace_literal (ss -> string.get(), search, replace, maximumNumberOfReplaces, & nmatches_sub);
+			autostring32 r = use_regexp ?
+				str_replace_regexp (ss -> string.get(), compiled_search, replace, maximumNumberOfReplaces, & nmatches_sub) :
+				str_replace_literal (ss -> string.get(), search, replace, maximumNumberOfReplaces, & nmatches_sub);
 
-			// Change without error:
-			Melder_free (ss -> string);
-			ss -> string = r;
+			/*
+				Change without error.
+			*/
+			ss -> string = r.move();
+
 			if (nmatches_sub > 0) {
 				*nmatches += nmatches_sub;
 				(*nstringmatches) ++;

@@ -422,14 +422,14 @@ inline static void mul_inplace (numvec target, nummat mat, numvec vec) {
 }
 
 autonumvec mul_numvec (numvec vec, nummat mat) {
-	if (mat.nrow != vec.size) return autonumvec { nullptr, 0 };
+	if (mat.nrow != vec.size) return autonumvec { };
 	autonumvec result { mat.ncol, kTensorInitializationType::RAW };
 	mul_inplace (result.get(), vec, mat);
 	return result;
 }
 
 autonumvec mul_numvec (nummat mat, numvec vec) {
-	if (vec.size != mat.ncol) return autonumvec { nullptr, 0 };
+	if (vec.size != mat.ncol) return autonumvec { };
 	autonumvec result { mat.nrow, kTensorInitializationType::RAW };
 	mul_inplace (result.get(), mat, vec);
 	return result;

@@ -104,11 +104,11 @@
 	} \
 	texexdent (file);
 
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
+#define oo_STRINGx_VECTOR(storage,x,size)  \
 	{ \
-		integer _min = (min), _max = (max); \
-		texputintro (file, U"" #x U" []: ", _max >= _min ? nullptr : U"(empty)", 0,0,0,0); \
-		for (integer _i = _min; _i <= _max; _i ++) { \
+		integer _size = (size); \
+		texputintro (file, U"" #x U" []: ", _size >= 1 ? nullptr : U"(empty)", 0,0,0,0); \
+		for (integer _i = 1; _i <= _size; _i ++) { \
 			texput##storage (file, our x [_i].get(), U"" #x U" [", Melder_integer (_i), U"]", 0,0,0); \
 		} \
 		texexdent (file); \

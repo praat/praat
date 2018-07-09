@@ -179,18 +179,18 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 			double ccc = svdc -> d [i];
 			thy y -> eigenvalues [i] = thy x -> eigenvalues [i] = ccc * ccc;
 			for (integer j = 1; j <= ny; j ++) {
-				double t = 0.0;
+				longdouble t = 0.0;
 				for (integer q = 1; q <= ny - numberOfZeroedy; q ++) {
 					t += vc [q] [i] * vy [j] [q] / svdy -> d [q];
 				}
-				evecy [i] [j] = t;
+				evecy [i] [j] = (double) t;
 			}
 			for (integer j = 1; j <= nx; j ++) {
-				double t = 0.0;
+				longdouble t = 0.0;
 				for (integer q = 1; q <= nx - numberOfZeroedx; q ++) {
 					t += uc [q] [i] * vx [j] [q] / svdx -> d [q];
 				}
-				evecx [i] [j] = t;
+				evecx [i] [j] = (double) t;
 			}
 		}
 

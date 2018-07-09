@@ -211,11 +211,6 @@
 #undef oo_LSTRING_SET
 #define oo_LSTRING_SET(x,setType)  { U"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 3, (const char32 *) setType##_getText, (const char32 *) setType##_getValue, nullptr, nullptr },
 
-#undef oo_STRING_VECTOR_FROM
-#define oo_STRING_VECTOR_FROM(x,min,max)  { U"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
-#undef oo_LSTRING_VECTOR_FROM
-#define oo_LSTRING_VECTOR_FROM(x,min,max)  { U"" #x, lstringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, U"" #min, U"" #max, nullptr, nullptr },
-
 #undef oo_STRING_VECTOR
 #define oo_STRING_VECTOR(x,n)  { U"" #x, stringwa, Melder_offsetof (ooSTRUCT, x), sizeof (char32 *), 0, 0, 1, (const char32 *) 0, U"" #n, nullptr, nullptr },
 #undef oo_LSTRING_VECTOR

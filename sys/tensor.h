@@ -122,7 +122,7 @@ inline static void nummat_copyElements_nocheck (nummat from, nummat to) {
 }
 
 inline static autonumvec add_numvec (numvec x, numvec y) {
-	if (x.size != y.size) return autonumvec { nullptr, 0 };
+	if (x.size != y.size) return autonumvec { };
 	autonumvec result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] + y [i];
@@ -130,7 +130,7 @@ inline static autonumvec add_numvec (numvec x, numvec y) {
 	return result;
 }
 inline static autonummat add_nummat (nummat x, nummat y) {
-	if (x.nrow != y.nrow || x.ncol != y.ncol) return autonummat { nullptr, 0, 0 };
+	if (x.nrow != y.nrow || x.ncol != y.ncol) return autonummat { };
 	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
@@ -140,7 +140,7 @@ inline static autonummat add_nummat (nummat x, nummat y) {
 	return result;
 }
 inline static autonumvec sub_numvec (numvec x, numvec y) {
-	if (x.size != y.size) return autonumvec { nullptr, 0 };
+	if (x.size != y.size) return autonumvec { };
 	autonumvec result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] - y [i];
@@ -148,7 +148,7 @@ inline static autonumvec sub_numvec (numvec x, numvec y) {
 	return result;
 }
 inline static autonummat sub_nummat (nummat x, nummat y) {
-	if (x.nrow != y.nrow || x.ncol != y.ncol) return autonummat { nullptr, 0, 0 };
+	if (x.nrow != y.nrow || x.ncol != y.ncol) return autonummat { };
 	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {

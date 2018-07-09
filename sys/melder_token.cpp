@@ -50,7 +50,7 @@ char32 ** Melder_getTokens (const char32 *string, integer *n) {
 	integer itoken = 0;
 	*n = Melder_countTokens (string);
 	if (*n == 0) return nullptr;
-	autostring32vector result (1, *n);
+	autostring32vector result (*n);
 	for (token = Melder_firstToken (string); token != nullptr; token = Melder_nextToken ()) {
 		result [++ itoken] = Melder_dup (token);
 	}

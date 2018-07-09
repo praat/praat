@@ -907,7 +907,7 @@ static autostring32vector Table_getLevels_ (Table me, integer column) {
 			numberOfLevels ++;
 			while (++ irow <= my rows.size && my rows.at [irow] -> cells [column]. number == value) { }
 		}
-		autostring32vector result (1, numberOfLevels);
+		autostring32vector result (numberOfLevels);
 		numberOfLevels = 0;
 		irow = 1;
 		while (irow <= my rows.size) {
@@ -944,7 +944,7 @@ autoTable Table_rowsToColumns (Table me, const char32 *factors_string, integer c
 		Table_columns_checkExist (me, columnsToExpand_names.peek(), numberToExpand);
 		Table_columns_checkCrossSectionEmpty (factors_names.peek(), numberOfFactors, columnsToExpand_names.peek(), numberToExpand);
 		autostring32vector levels_names = Table_getLevels_ (me, columnToTranspose);
-		integer numberOfLevels = levels_names._to;
+		integer numberOfLevels = levels_names.size;
 		/*
 			Get the column numbers for the factors.
 		*/

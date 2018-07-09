@@ -547,7 +547,7 @@ void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTi
 			if (Melder_equ (thisInterval -> text.get(), label)) {
 				TextInterval previousInterval = my intervals.at [iinterval - 1];
 				if (Melder_equ (previousInterval -> text.get(), label)) {
-					Melder_free (previousInterval -> text);
+					previousInterval -> text. reset();
 					IntervalTier_removeLeftBoundary (me, iinterval);
 				}
 			}
@@ -601,19 +601,19 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const
 			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 		}
 
-		integer nlabels = to - from + 1;
+		integer offset = from - 1, nlabels = to - offset;
 		autoNUMvector<char32 *> labels (1, nlabels);
 
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
-			labels [i - from + 1] = interval -> text.get();   // shallow copy
+			labels [i - offset] = interval -> text.get();   // shallow copy
 		}
-		autostring32vector newLabels =
-			strs_replace (labels.peek(), 1, nlabels, search, replace, 0, nmatches, nstringmatches, use_regexp);
+		autostring32vector newLabels = string32vector_searchAndReplace ({ labels.peek(), nlabels },
+			search, replace, 0, nmatches, nstringmatches, use_regexp);
 
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
-			interval -> text = std::move (newLabels [i - from + 1]);
+			interval -> text = std::move (newLabels [i - offset]);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": labels not changed.");
@@ -634,19 +634,19 @@ void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 
 		if (use_regexp && str32len (search) == 0) {
 			Melder_throw (U"The regex search string cannot be empty.\nTo search for an empty string, use the expression \"^$\" instead.");
 		}
-		integer nmarks = to - from + 1;
+		integer offset = from - 1, nmarks = to - offset;
 		autoNUMvector<char32 *> marks (1, nmarks);   // a non-owning vector of strings
 
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
-			marks [i - from + 1] = point -> mark.get();   // reference copy
+			marks [i - offset] = point -> mark.get();   // reference copy
 		}
-		autostring32vector newMarks =
-			strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp);
+		autostring32vector newMarks = string32vector_searchAndReplace ({ marks.peek(), nmarks },
+			search, replace, 0, nmatches, nstringmatches, use_regexp);
 
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
-			point -> mark = std::move (newMarks [i - from + 1]);
+			point -> mark = std::move (newMarks [i - offset]);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no labels changed.");

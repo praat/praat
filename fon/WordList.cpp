@@ -176,7 +176,7 @@ autoStrings WordList_to_Strings (WordList me) {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = WordList_count (me);
 		if (thy numberOfStrings > 0) {
-			thy strings = autostring32vector (1, thy numberOfStrings);
+			thy strings = autostring32vector (thy numberOfStrings);
 		}
 		for (integer i = 1; i <= thy numberOfStrings; i ++) {
 			unsigned char *kar = word;

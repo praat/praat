@@ -45,7 +45,7 @@ autoSpectrogram Spectrogram_create (double tmin, double tmax, integer nt, double
 {
 	try {
 		autoSpectrogram me = Thing_new (Spectrogram);
-		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me, tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrogram not created.");
@@ -59,7 +59,7 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 	if (fmax <= fmin) { fmin = my ymin; fmax = my ymax; }
 	integer itmin, itmax, ifmin, ifmax;
 	if (! Matrix_getWindowSamplesX (me, tmin - 0.49999 * my dx, tmax + 0.49999 * my dx, & itmin, & itmax) ||
-		 ! Matrix_getWindowSamplesY (me, fmin - 0.49999 * my dy, fmax + 0.49999 * my dy, & ifmin, & ifmax))
+			! Matrix_getWindowSamplesY (me, fmin - 0.49999 * my dy, fmax + 0.49999 * my dy, & ifmin, & ifmax))
 		return;
 	Graphics_setWindow (g, tmin, tmax, fmin, fmax);
 	autoNUMvector <double> preemphasisFactor (ifmin, ifmax);
@@ -93,7 +93,8 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 		ifmin, ifmax,
 		Matrix_rowToY (me, ifmin - 0.5),
 		Matrix_rowToY (me, ifmax + 0.5),
-		maximum - dynamic, maximum);
+		maximum - dynamic, maximum
+	);
 	for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++)
 		for (integer itime = itmin; itime <= itmax; itime ++) {
 			double value = 4.0e-10 * exp ((my z [ifreq] [itime] - dynamicFactor [itime]
@@ -105,7 +106,7 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 void Spectrogram_paint (Spectrogram me, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, double maximum, int autoscaling,
 	double dynamic, double preemphasis, double dynamicCompression,
-	int garnish)
+	bool garnish)
 {
 	Graphics_setInner (g);
 	Spectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, maximum, autoscaling, dynamic, preemphasis, dynamicCompression);

@@ -214,7 +214,7 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 			Melder_throw (U"Illegal columnn.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (1, my rows.size);
+		thy strings = autostring32vector (my rows.size);
 		thy numberOfStrings = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));

@@ -41,19 +41,9 @@ Thing_implement (Editor, Thing, 0);
 
 Thing_implement (EditorCommand, Thing, 0);
 
-void structEditorCommand :: v_destroy () noexcept {
-	Melder_free (our script);
-	EditorCommand_Parent :: v_destroy ();
-}
-
 /********** class EditorMenu **********/
 
 Thing_implement (EditorMenu, Thing, 0);
-
-void structEditorMenu :: v_destroy () noexcept {
-	Melder_free (our menuTitle);
-	EditorMenu_Parent :: v_destroy ();
-}
 
 /********** functions **********/
 
@@ -106,7 +96,7 @@ GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 
 		integer numberOfMenus = my menus.size;
 		for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
 			EditorMenu menu = my menus.at [imenu];
-			if (str32equ (menuTitle, menu -> menuTitle))
+			if (str32equ (menuTitle, menu -> menuTitle.get()))
 				return EditorMenu_addCommand (menu, itemTitle, flags, commandCallback);
 		}
 		Melder_throw (U"Menu \"", menuTitle, U"\" does not exist.");
@@ -118,7 +108,7 @@ GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 
 static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm /* sendingForm */,
 	integer /* narg */, Stackel /* args */, const char32 * /* sendingString */, Interpreter /* interpreter */)
 {
-	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
+	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script.get());
 }
 
 GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags,
@@ -127,7 +117,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 	integer numberOfMenus = my menus.size;
 	for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
-		if (str32equ (menuTitle, menu -> menuTitle)) {
+		if (str32equ (menuTitle, menu -> menuTitle.get())) {
 			autoEditorCommand cmd = Thing_new (EditorCommand);
 			cmd -> d_editor = me;
 			cmd -> menu = menu;
@@ -155,11 +145,11 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 	return nullptr;
 }
 
-void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, int sensitive) {
+void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, bool sensitive) {
 	integer numberOfMenus = my menus.size;
 	for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
-		if (str32equ (menuTitle, menu -> menuTitle)) {
+		if (str32equ (menuTitle, menu -> menuTitle.get())) {
 			GuiThing_setSensitive (menu -> menuWidget, sensitive);
 			return;
 		}
@@ -170,7 +160,7 @@ EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const c
 	integer numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
-		if (str32equ (menuTitle, menu -> menuTitle)) {
+		if (str32equ (menuTitle, menu -> menuTitle.get())) {
 			integer numberOfCommands = menu -> commands.size, icommand;
 			for (icommand = 1; icommand <= numberOfCommands; icommand ++) {
 				EditorCommand command = menu -> commands.at [icommand];

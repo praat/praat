@@ -183,6 +183,8 @@ int64 Melder_movingReallocationsCount ();
 using char8 = unsigned char;
 using char16 = char16_t;
 using char32 = char32_t;
+using string32 = char32 *;
+using conststring32 = const char32 *;
 
 char32 * Melder_dup (const char32 *string /* cattable */);
 char32 * Melder_dup_f (const char32 *string /* cattable */);
@@ -211,6 +213,9 @@ public:
 	T * get () const {
 		return our ptr;
 	}
+	operator T* () const {
+		return our ptr;
+	}
 	/*T ** operator& () {
 		return & our ptr;
 	}*/
@@ -228,7 +233,7 @@ public:
 		our ptr = tmp;
 	}
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
-	//_autostring (_autostring &) = delete;   // disable copy constructor (trying it this way also disables good things like autostring s1 = str32dup(U"hello");)
+	//_autostring (_autostring &) = delete;   // disable copy constructor (temporarily, until all new-string-returning functions return an autostring)
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
 	explicit operator bool () const { return !! our ptr; }
 	/*
@@ -1199,23 +1204,6 @@ double NUMerb (double f);
 double NUMhertzToErb (double hertz);
 double NUMerbToHertz (double erb);
 
-/********** Sorting (NUMsort.cpp) **********/
-
-void NUMsort_d (integer n, double ra []);   // heap sort
-void NUMsort_i (integer n, int ra []);
-void NUMsort_integer (integer n, integer ra []);
-void NUMsort_str (integer n, char32 *a []);
-void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
-
-double NUMquantile (integer n, double a [], double factor);
-/*
-	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
-	from which the set 'a [1..n]' is a sorted array of random samples.
-	For instance, if 'factor' is 0.5, this function returns an estimate of
-	the median of the distribution underlying the sorted set a [].
-	If your array has not been sorted, first sort it with NUMsort (n, a).
-*/
-
 /********** Interpolation and optimization (NUM.cpp) **********/
 
 // Special values for interpolationDepth:
@@ -1484,34 +1472,46 @@ public:
 	}
 };
 
+template <typename T>
+class _stringvector {
+public:
+	T** at;
+	integer size;
+	T* & operator[] (integer i) {
+		return our at [i];
+	}
+};
+typedef _stringvector <char32> string32vector;
+typedef _stringvector <char> string8vector;
+
 template <class T>
 class _autostringvector {
 	_autostring <T> * _ptr;
 public:
-	integer _from, _to;
-	_autostringvector<T> (integer from, integer to) : _from (from), _to (to) {
-		our _ptr = NUMvector <_autostring <T>> (from, to, true);
+	integer size;
+	_autostringvector () {
+		our _ptr = nullptr;
+		our size = 0;
 	}
-	_autostringvector<T> (integer from, integer to, bool zero) : _from (from), _to (to) {
-		our _ptr = NUMvector <_autostring <T>> (from, to, zero);
-	}
-	_autostringvector (T **ptr, integer from, integer to) : _ptr ((_autostring<T>*) ptr), _from (from), _to (to) {
-	}
-	_autostringvector () : _ptr (nullptr), _from (1), _to (0) {
+	_autostringvector<T> (integer initialSize) {
+		our _ptr = NUMvector <_autostring <T>> (1, initialSize, true);
+		our size = initialSize;
 	}
 	_autostringvector (const _autostringvector &) = delete;
 	_autostringvector (_autostringvector&& other) {
 		our _ptr = other. _ptr;
+		our size = other. size;
 		other. _ptr = nullptr;
+		other. size = 0;
 	}
 	_autostringvector& operator= (const _autostringvector &) = delete;   // disable copy assignment
 	_autostringvector& operator= (_autostringvector&& other) noexcept {   // enable move assignment
 		if (& other != this) {
 			our reset ();
 			our _ptr = other. _ptr;
-			our _from = other. _from;
-			our _to = other. _to;
+			our size = other. size;
 			other. _ptr = nullptr;
+			other. size = 0;
 		}
 		return *this;
 	}
@@ -1522,8 +1522,8 @@ public:
 	_autostring <T> & operator[] (integer i) {
 		return our _ptr [i];
 	}
-	_autostring <T> * peek () const {
-		return our _ptr;
+	_stringvector<T> get () const {
+		return _stringvector<T> { (T**) our _ptr, our size };
 	}
 	T** peek2 () const {
 		return (T**) our _ptr;
@@ -1531,42 +1531,42 @@ public:
 	_autostring <T> * transfer () {
 		_autostring <T> * tmp = our _ptr;
 		our _ptr = nullptr;   // make the pointer non-automatic again
+		our size = 0;
 		return tmp;
 	}
 	T** transfer2 () {
 		T** tmp = (T**) our _ptr;
 		our _ptr = nullptr;   // make the pointer non-automatic again
+		our size = 0;
 		return tmp;
 	}
 	void reset () {
 		if (our _ptr) {
-			for (integer i = our _from; i <= our _to; i ++) {
+			for (integer i = 1; i <= our size; i ++) {
 				our _ptr [i]. reset ();
 			}
-			NUMvector_free (our _ptr, our _from);
+			NUMvector_free (our _ptr, 1);
 			our _ptr = nullptr;
-			our _from = 1;
-			our _to = 0;
+			our size = 0;
 		}
 	}
 	void copyFrom (_autostringvector& other) {
 		our reset ();
-		our _ptr = NUMvector <_autostring <T>> (other._from, other._to, true);
-		our _from = other._from;
-		our _to = other._to;
-		for (integer i = our _from; i <= our _to; i ++) {
+		our _ptr = NUMvector <_autostring <T>> (1, other. size, true);
+		our size = other. size;
+		for (integer i = 1; i <= our size; i ++) {
 			our _ptr [i] = Melder_dup (other. _ptr [i].get());
 		}
 	}
 	void copyElementsFrom (_autostringvector& other) {
-		Melder_assert (other. _from == our _from && other. _to == our _to);
-		for (integer i = our _from; i <= our _to; i ++) {
+		Melder_assert (other. size == our size);
+		for (integer i = 1; i <= our size; i ++) {
 			our _ptr [i] = Melder_dup (other. _ptr [i].get());
 		}
 	}
 	void copyElementsFrom_upTo (_autostringvector& other, integer to) {
-		Melder_assert (other. _from == our _from && to <= other. _to && to <= our _to);
-		for (integer i = our _from; i <= to; i ++) {
+		Melder_assert (to <= other. size && to <= our size);
+		for (integer i = 1; i <= to; i ++) {
 			our _ptr [i] = Melder_dup (other. _ptr [i].get());
 		}
 	}
@@ -1614,10 +1614,6 @@ public:
 public:
 	numvec () = default;   // for use in a union
 	numvec (double *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
-	numvec (integer givenSize, kTensorInitializationType initializationType) {
-		our _initAt (givenSize, initializationType);
-		our size = givenSize;
-	}
 	numvec (const numvec& other) = default;
 	numvec (const autonumvec& other) = delete;
 	numvec& operator= (const numvec&) = default;
@@ -1625,7 +1621,7 @@ public:
 	double& operator[] (integer i) {
 		return our at [i];
 	}
-	void reset () noexcept {
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autonumvec)
 		if (our at) {
 			our _freeAt ();
 			our at = nullptr;
@@ -1649,9 +1645,10 @@ protected:
 class autonumvec : public numvec {
 public:
 	autonumvec (): numvec (nullptr, 0) { }   // come into existence without a payload
-	autonumvec (integer givenSize, kTensorInitializationType initializationType): numvec (givenSize, initializationType) { }   // come into existence and manufacture a payload
-	autonumvec (double *givenAt, integer givenSize): numvec (givenAt, givenSize) { }   // come into existence and buy a payload from a non-autonumvec
-	explicit autonumvec (numvec x): numvec (x.at, x.size) { }   // come into existence and buy a payload from a non-autonumvec (disable implicit conversion)
+	autonumvec (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+		our _initAt (givenSize, initializationType);
+		our size = givenSize;
+	}
 	~autonumvec () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
 	}
@@ -1695,11 +1692,6 @@ public:
 public:
 	nummat () = default;   // for use in a union
 	nummat (double **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	nummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {
-		our _initAt (givenNrow, givenNcol, initializationType);
-		our nrow = givenNrow;
-		our ncol = givenNcol;
-	}
 	nummat (const nummat& other) = default;
 	nummat (const autonummat& other) = delete;
 	nummat& operator= (const nummat&) = default;
@@ -1707,7 +1699,7 @@ public:
 	double *& operator[] (integer i) {
 		return our at [i];
 	}
-	void reset () noexcept {
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autonummat)
 		if (our at) {
 			our _freeAt ();
 			our at = nullptr;
@@ -1732,9 +1724,11 @@ protected:
 class autonummat : public nummat {
 public:
 	autonummat (): nummat { nullptr, 0, 0 } { }   // come into existence without a payload
-	autonummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType): nummat { givenNrow, givenNcol, initializationType } { }   // come into existence and manufacture a payload
-	autonummat (double **givenAt, integer givenNrow, integer givenNcol): nummat (givenAt, givenNrow, givenNcol) { }   // come into existence and buy a payload from a non-autonummat
-	explicit autonummat (nummat x): nummat (x.at, x.nrow, x.ncol) { }   // come into existence and buy a payload from a non-autonummat (disable implicit conversion)
+	autonummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+		our _initAt (givenNrow, givenNcol, initializationType);
+		our nrow = givenNrow;
+		our ncol = givenNcol;
+	}
 	~autonummat () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
 	}
@@ -1770,6 +1764,23 @@ public:
 	}
 	autonummat&& move () noexcept { return static_cast <autonummat&&> (*this); }
 };
+
+/********** Sorting (NUMsort.cpp) **********/
+
+void NUMsort_d (integer n, double ra []);   // heap sort
+void NUMsort_i (integer n, int ra []);
+void NUMsort_integer (integer n, integer ra []);
+void NUMsort_str (string32vector a);
+void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
+
+double NUMquantile (integer n, double a [], double factor);
+/*
+	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
+	from which the set 'a [1..n]' is a sorted array of random samples.
+	For instance, if 'factor' is 0.5, this function returns an estimate of
+	the median of the distribution underlying the sorted set a [].
+	If your array has not been sorted, first sort it with NUMsort (n, a).
+*/
 
 #pragma mark - ARGUMENTS
 
