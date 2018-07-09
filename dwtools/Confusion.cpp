@@ -419,10 +419,10 @@ autoConfusion Confusion_condense (Confusion me, const char32 *search, const char
 		integer nmatches, nstringmatches;
 		Melder_require (my rowLabels && my columnLabels, U"Both row and column labels should be present.");
 		
-		autostring32vector rowLabels = strs_replace (my rowLabels.peek2(), 1, my numberOfRows, search, replace,
+		autostring32vector rowLabels = strs_replace (my rowLabels.peek2(), my numberOfRows, search, replace,
 			maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
 
-		autostring32vector columnLabels = strs_replace (my columnLabels.peek2(), 1, my numberOfColumns, search, replace,
+		autostring32vector columnLabels = strs_replace (my columnLabels.peek2(), my numberOfColumns, search, replace,
 			maximumNumberOfReplaces, & nmatches, & nstringmatches, use_regexp);
 
 		autoStrings srow = Thing_new (Strings);

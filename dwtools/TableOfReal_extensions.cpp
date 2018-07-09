@@ -1142,7 +1142,7 @@ autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const char32 *replace, integer maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	try {
 		autostring32vector rowLabels =
-			strs_replace (my rowLabels.peek2(), 1, my numberOfRows, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+			strs_replace (my rowLabels.peek2(), my numberOfRows, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my rowLabels = std::move (rowLabels);
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not changed.");
@@ -1152,7 +1152,7 @@ void TableOfReal_changeRowLabels (TableOfReal me, const char32 *search, const ch
 void TableOfReal_changeColumnLabels (TableOfReal me, const char32 *search, const char32 *replace, integer maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	try {
 		autostring32vector columnLabels =
-			strs_replace (my columnLabels.peek2(), 1, my numberOfColumns, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+			strs_replace (my columnLabels.peek2(), my numberOfColumns, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		my columnLabels = std::move (columnLabels);
 	} catch (MelderError) {
 		Melder_throw (me, U": column labels not changed.");

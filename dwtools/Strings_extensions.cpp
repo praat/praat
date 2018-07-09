@@ -153,7 +153,7 @@ autoStrings Strings_append (OrderedOf<structStrings>* me) {
 autoStrings Strings_change (Strings me, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		autostring32vector strings = strs_replace (my strings.peek2(), 1, my numberOfStrings, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
+		autostring32vector strings = strs_replace (my strings.peek2(), my numberOfStrings, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp);
 		thy numberOfStrings = my numberOfStrings;
 		thy strings = std::move (strings);
 		return thee;

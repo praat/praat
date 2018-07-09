@@ -59,7 +59,7 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp);
 	no match is found.
 */
 
-autostring32vector strs_replace (char32 **from, integer lo, integer hi, const char32 *search,
+autostring32vector strs_replace (char32 **from, integer hi, const char32 *search,
 	const char32 *replace, int maximumNumberOfReplaces, integer *nmatches,
 	integer *nstringmatches, bool use_regexp);
 /*

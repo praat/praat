@@ -237,11 +237,12 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 
 	// Begin optimization: add the items from a table instead of separately.
 	try {
-		autostring32vector table (from, to);
+		integer offset = from - 1, numberOfElements = to - offset;
+		autostring32vector table (1, numberOfElements);
 		integer itemCount = GuiList_getNumberOfItems (my list);
 		for (integer i = from; i <= to; i ++) {
 			SimpleString category = data->at [i];
-			table [i] = Melder_dup_f (Melder_cat (i, U" ", category -> string.get()));
+			table [i - offset] = Melder_dup_f (Melder_cat (i, U" ", category -> string.get()));
 		}
 		if (itemCount > size) {   // have any items been removed from the Categories?
 			for (integer j = itemCount; j > size; j --) {
@@ -251,13 +252,13 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 		}
 		if (to > itemCount) {
 			for (integer j = 1; j <= to - itemCount; j ++) {
-				GuiList_insertItem (my list, table [itemCount + j].get(), 0);
+				GuiList_insertItem (my list, table [itemCount + j - offset].get(), 0);
 			}
 		}
 		if (from <= itemCount) {
 			integer n = (to < itemCount ? to : itemCount);
 			for (integer j = from; j <= n; j ++) {
-				GuiList_replaceItem (my list, table [j].get(), j);
+				GuiList_replaceItem (my list, table [j - offset].get(), j);
 			}
 		}
 	} catch (MelderError) {
@@ -298,10 +299,11 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 			top = select [nSelect] - visible + 1;
 		} else {
 			integer deltaTopPos = -1, nUpdate = to - from + 1;
-			if ( (from == select [1] && to == select [nSelect]) || // Replace
-			        (nUpdate > 2 && nSelect == 1) /* Inserts */) {
+			if ((from == select [1] && to == select [nSelect]) ||   // replace
+			    (nUpdate > 2 && nSelect == 1))   // insert
+			{
 				deltaTopPos = 0;
-			} else if (nUpdate == nSelect + 1 && select [1] == from + 1) { // down
+			} else if (nUpdate == nSelect + 1 && select [1] == from + 1) {   // down
 				deltaTopPos = 1;
 			}
 			top += deltaTopPos;

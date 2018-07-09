@@ -283,14 +283,14 @@ autostring32 str_replace_regexp (const char32 *string, regexp *compiledSearchRE,
 	return buf;
 }
 
-static autostring32vector strs_replace_literal (char32 **from, integer lo, integer hi, const char32 *search,
+static autostring32vector strs_replace_literal (char32 **from, integer size, const char32 *search,
 	const char32 *replace, int maximumNumberOfReplaces, integer *p_nmatches, integer *p_nstringmatches) {
 	if (! search || ! replace)
 		return autostring32vector();
-	autostring32vector result (lo, hi);
+	autostring32vector result (1, size);
 
 	integer nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
-	for (integer i = lo; i <= hi; i ++) {
+	for (integer i = 1; i <= size; i ++) {
 		const char32 *string = ( from [i] ? from [i] : U"" );   // treat null as an empty string
 
 		result [i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
@@ -308,7 +308,7 @@ static autostring32vector strs_replace_literal (char32 **from, integer lo, integ
 	return result;
 }
 
-static autostring32vector strs_replace_regexp (char32 **from, integer lo, integer hi, const char32 *searchRE,
+static autostring32vector strs_replace_regexp (char32 **from, integer size, const char32 *searchRE,
 	const char32 *replaceRE, int maximumNumberOfReplaces, integer *p_nmatches, integer *p_nstringmatches) {
 	if (! searchRE || ! replaceRE) {
 		return autostring32vector();
@@ -318,10 +318,10 @@ static autostring32vector strs_replace_regexp (char32 **from, integer lo, intege
 
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 
-	autostring32vector result (lo, hi);
+	autostring32vector result (1, size);
 
 	integer nmatches = 0, nstringmatches = 0;
-	for (integer i = lo; i <= hi; i ++) {
+	for (integer i = 1; i <= size; i ++) {
 		const char32 *string = ( from [i] ? from [i] : U"" );   // treat null as an empty string
 
 		result [i] = str_replace_regexp (string, compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
@@ -339,10 +339,10 @@ static autostring32vector strs_replace_regexp (char32 **from, integer lo, intege
 	return result;
 }
 
-autostring32vector strs_replace (char32 **from, integer lo, integer hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
+autostring32vector strs_replace (char32 **from, integer hi, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	return use_regexp ?
-		strs_replace_regexp (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches) :
-		strs_replace_literal (from, lo, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches);
+		strs_replace_regexp (from, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches) :
+		strs_replace_literal (from, hi, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches);
 }
 
 /*
