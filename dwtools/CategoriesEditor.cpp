@@ -241,11 +241,9 @@ static void update (CategoriesEditor me, integer from, integer to, const integer
 		integer itemCount = GuiList_getNumberOfItems (my list);
 		for (integer i = from; i <= to; i ++) {
 			SimpleString category = data->at [i];
-			char wcindex [20];
-			snprintf (wcindex,20, "%5ld ", (long_not_integer) i);   // BUG
-			table [i] = Melder_dup_f (Melder_cat (Melder_peek8to32 (wcindex), category -> string.get()));
+			table [i] = Melder_dup_f (Melder_cat (i, U" ", category -> string.get()));
 		}
-		if (itemCount > size) { // some items have been removed from Categories?
+		if (itemCount > size) {   // have any items been removed from the Categories?
 			for (integer j = itemCount; j > size; j --) {
 				GuiList_deleteItem (my list, j);
 			}
