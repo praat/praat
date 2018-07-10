@@ -521,8 +521,8 @@ void GuiDrawingArea_setResizeCallback (GuiDrawingArea me, GuiDrawingArea_ResizeC
 /********** GuiFileSelect **********/
 
 autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles);
-char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, const char32 *defaultName);
-char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title);
+autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, const char32 *defaultName);
+autostring32 GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title);
 
 /********** GuiForm **********/
 

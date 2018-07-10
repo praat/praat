@@ -342,7 +342,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			int64 sumOfLengths = 0;
 			for (int64 i = 1; i <= n; i ++) {
 				int istring = i % 6;
-				char32 *s = Melder_dup (strings [istring]);
+				char32 *s = Melder_dup (strings [istring]).transfer();
 				sumOfLengths += length (s);
 			}
 			t = Melder_stopwatch ();   // 72 ns

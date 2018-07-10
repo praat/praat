@@ -57,7 +57,7 @@ void praat_sortMenuCommands ();
 Thing_define (Praat_Command, Thing) {
 	ClassInfo class1, class2, class3, class4;   // selected classes
 	integer n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
-	const char32 *title;   // button text = command text
+	autostring32 title;   // button text = command text
 	UiCallback callback;   // multi-purpose
 		/* If both UiCallback::sendingForm and sendingString are null, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
@@ -81,9 +81,9 @@ Thing_define (Praat_Command, Thing) {
 		forceApi;   // include in a library API even if this button is hidden by default ("Record Sound (fixed time)...")
 	integer deprecationYear;
 	GuiThing button;
-	const char32 *window, *menu;
-	const char32 *script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
-	const char32 *after;   // title of previous command, often null; if starting with an asterisk (deprecation), then a reference to the replacement
+	autostring32 window, menu;
+	autostring32 script;   // if 'callback' equals DO_RunTheScriptFromAnyAddedMenuCommand
+	autostring32 after;   // title of previous command, often null; if starting with an asterisk (deprecation), then a reference to the replacement
 	integer uniqueID;   // for sorting the added commands
 	integer sortingTail;
 };
@@ -188,7 +188,7 @@ extern struct PraatP {
 	bool dontUsePictureWindow;   // see praat_dontUsePictureWindow ()
 	bool ignorePreferenceFiles, ignorePlugins;
 	bool hasCommandLineInput;
-	char32 *title;
+	autostring32 title;
 	GuiWindow menuBar;
 	int phase;
 	Editor editor;   // scripting environment

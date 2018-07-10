@@ -43,10 +43,10 @@ int texgete16 (MelderReadText text, enum_generic_getValue getValue);
 bool texgeteb (MelderReadText text);
 bool texgeteq (MelderReadText text);
 bool texgetex (MelderReadText text);
-char *texgets16 (MelderReadText text);
-char *texgets32 (MelderReadText text);
-char32 *texgetw16 (MelderReadText text);
-char32 *texgetw32 (MelderReadText text);
+autostring8 texgets16 (MelderReadText text);
+autostring8 texgets32 (MelderReadText text);
+autostring32 texgetw16 (MelderReadText text);
+autostring32 texgetw32 (MelderReadText text);
 
 void texindent (MelderFile file);
 void texexdent (MelderFile file);

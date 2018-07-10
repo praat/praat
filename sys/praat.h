@@ -153,7 +153,7 @@ GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, con
 typedef struct {
 	ClassInfo klas;   // the class
 	Daata object;   // the instance
-	char32 *name;   // the name of the object as it appears in the List
+	autostring32 name;   // the name of the object as it appears in the List
 	structMelderFile file;   // is this Object associated with a file?
 	integer id;   // the unique number of the object
 	bool isSelected;   // is the name of the object inverted in the list?
@@ -549,7 +549,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraatPicture -> graphics
-#define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name)
+#define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name.get())
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)

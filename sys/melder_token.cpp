@@ -33,12 +33,12 @@ integer Melder_countTokens (const char32 *string) {
 	return 0;   // should not occur
 }
 
-static char32 *theMelderToken;
+static autostring32 theMelderToken;
 
 char32 *Melder_firstToken (const char32 *string) {
 	Melder_free (theMelderToken);
 	theMelderToken = Melder_dup_f (string);
-	return Melder_tok (theMelderToken, U" \t\n\r");
+	return Melder_tok (theMelderToken.get(), U" \t\n\r");
 }
 
 char32 *Melder_nextToken () {

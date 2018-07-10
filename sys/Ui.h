@@ -104,7 +104,7 @@ enum class _kUiField_type {
 
 Thing_define (UiField, Thing) {
 	_kUiField_type type;
-	const char32 *formLabel;
+	autostring32 formLabel;
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
@@ -113,7 +113,7 @@ Thing_define (UiField, Thing) {
 	Graphics_Colour colourValue;
 	OrderedOf<structUiOption> options;
 	integer numberOfStrings;
-	const char32 **strings;
+	char32 **strings;
 	GuiLabel label;
 	GuiText text;
 	GuiCheckButton checkButton;
@@ -150,7 +150,7 @@ typedef void (*UiCallback) (UiCallback_ARGS);
 Thing_define (UiForm, Thing) {
 	EditorCommand command;
 	GuiWindow d_dialogParent;
-	const char32 *invokingButtonTitle, *helpTitle;
+	autostring32 invokingButtonTitle, helpTitle;
 	UiCallback okCallback;
 	void *buttonClosure;
 
@@ -204,7 +204,7 @@ UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, c
 UiOption UiRadio_addButton (UiField me, const char32 *label);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, const char32 *label);
-UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue);
+UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, char32 **strings, integer defaultValue);
 UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 UiField UiForm_addChannel (UiForm me, integer *variable, const char32 *variableName, const char32 *label, const char32 *defaultValue);
 void UiForm_finish (UiForm me);

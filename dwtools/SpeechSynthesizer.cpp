@@ -688,9 +688,9 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 			pitchRange_0_99 = my d_pitchRange * 49.5,
 			where 0 <= my d_pitchRange <= 2
 		*/
-		int pitchAdjustment_0_99 = (int) ((49.5 / log10(2.0)) * log10 (my d_pitchAdjustment) + 49.5);
+		int pitchAdjustment_0_99 = (int) ((49.5 / log10(2.0)) * log10 (my d_pitchAdjustment) + 49.5);   // rounded towards zero
 		espeak_ng_SetParameter (espeakPITCH, pitchAdjustment_0_99, 0);
-		int pitchRange_0_99 = (int) (my d_pitchRange * 49.5);
+		int pitchRange_0_99 = (int) (my d_pitchRange * 49.5);   // rounded towards zero
 		espeak_ng_SetParameter (espeakRANGE, pitchRange_0_99, 0);
 		const char32 *languageCode = SpeechSynthesizer_getLanguageCode (me);
 		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
@@ -705,7 +705,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		espeak_SetSynthCallback (synthCallback);
 		if (! Melder_equ (my d_phonemeSet.get(), my d_languageName.get())) {
 			const char32 *phonemeCode = SpeechSynthesizer_getPhonemeCode (me);
-			int index_phon_table_list = LookupPhonemeTable (Melder_32to8 (phonemeCode));
+			int index_phon_table_list = LookupPhonemeTable (Melder_peek32to8 (phonemeCode));
 			if (index_phon_table_list > 0) {
 				voice -> phoneme_tab_ix = index_phon_table_list;
 				DoVoiceChange(voice);

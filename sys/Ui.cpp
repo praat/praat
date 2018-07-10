@@ -31,7 +31,6 @@
 Thing_implement (UiField, Thing, 0);
 
 void structUiField :: v_destroy () noexcept {
-	Melder_free (our formLabel);
 	if (our owned) {
 		our numericVectorVariable -> reset();
 		our numericMatrixVariable -> reset();
@@ -342,11 +341,9 @@ void structUiForm :: v_destroy () noexcept {
 	for (int ifield = 1; ifield <= our numberOfFields; ifield ++)
 		forget (our field [ifield]);
 	if (our d_dialogForm) {
-		trace (U"invoking button title ", our invokingButtonTitle);
+		trace (U"invoking button title ", our invokingButtonTitle.get());
 		GuiObject_destroy (our d_dialogForm -> d_widget);   // BUG: make sure this destroys the shell
 	}
-	Melder_free (our invokingButtonTitle);
-	Melder_free (our helpTitle);
 	our UiForm_Parent :: v_destroy ();
 }
 
@@ -406,7 +403,7 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 		*/
 		if (! my isPauseForm) {
 			UiHistory_write (U"\n");
-			UiHistory_write_colonize (my invokingButtonTitle);
+			UiHistory_write_colonize (my invokingButtonTitle.get());
 			int size = my numberOfFields;
 			while (size >= 1 && my field [size] -> type == _kUiField_type::LABEL_)
 				size --;   // ignore trailing fields without a value
@@ -516,7 +513,7 @@ static void gui_button_cb_apply (UiForm me, GuiButtonEvent event) {
 }
 
 static void gui_button_cb_help (UiForm me, GuiButtonEvent /* event */) {
-	Melder_help (my helpTitle);
+	Melder_help (my helpTitle.get());
 }
 
 UiForm UiForm_create (GuiWindow parent, const char32 *title,
@@ -693,7 +690,7 @@ UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariab
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, const char32 **strings, integer defaultValue) {
+UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, const char32 *variableName, const char32 *label, integer numberOfStrings, char32 **strings, integer defaultValue) {
 	autoUiField thee (UiForm_addField (me, _kUiField_type::LIST_, label));
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
@@ -802,7 +799,7 @@ void UiForm_finish (UiForm me) {
 					ylabel += 3;
 				#endif
 				if (str32nequ (field -> name.get(), U"left ", 5)) {
-					MelderString_copy (& theFinishBuffer, field -> formLabel + 5);
+					MelderString_copy (& theFinishBuffer, field -> formLabel.get() + 5);
 					appendColon ();
 					field -> label = GuiLabel_createShown (form, 0, x + labelWidth, ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
@@ -811,7 +808,7 @@ void UiForm_finish (UiForm me) {
 					field -> text = GuiText_createShown (form, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
 						y, y + Gui_TEXTFIELD_HEIGHT, 0);
 				} else {
-					MelderString_copy (& theFinishBuffer, field -> formLabel);
+					MelderString_copy (& theFinishBuffer, field -> formLabel.get());
 					appendColon ();
 					field -> label = GuiLabel_createShown (form, 0, x + labelWidth,
 						ylabel, ylabel + textFieldHeight,
@@ -843,7 +840,7 @@ void UiForm_finish (UiForm me) {
 				#if defined (macintosh)
 					ylabel += 1;
 				#endif
-				MelderString_copy (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel.get());
 				appendColon ();
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
@@ -866,7 +863,7 @@ void UiForm_finish (UiForm me) {
 				#if defined (macintosh)
 					ylabel += 2;
 				#endif
-				MelderString_copy (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel.get());
 				appendColon ();
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
@@ -880,7 +877,7 @@ void UiForm_finish (UiForm me) {
 			break;
 			case _kUiField_type::BOOLEAN_:
 			{
-				MelderString_copy (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel.get());
 				/*field -> label = GuiLabel_createShown (form, x, x + labelWidth, y, y + Gui_CHECKBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT); */
 				field -> checkButton = GuiCheckButton_createShown (form,
@@ -891,7 +888,7 @@ void UiForm_finish (UiForm me) {
 			case _kUiField_type::LIST_:
 			{
 				int listWidth = my numberOfFields == 1 ? dialogWidth - fieldX : fieldWidth;
-				MelderString_copy (& theFinishBuffer, field -> formLabel);
+				MelderString_copy (& theFinishBuffer, field -> formLabel.get());
 				appendColon ();
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
@@ -1074,7 +1071,7 @@ static void UiField_api_header_C (UiField me, UiField next, bool isLastNonLabelF
 	}
 	*q = U'\0';
 	if (! my variableName)
-		Melder_warning (U"Missing variable name for field label: ", my formLabel);
+		Melder_warning (U"Missing variable name for field label: ", my formLabel.get());
 	MelderInfo_write (my variableName ? my variableName : cName);
 	if (! isLastNonLabelField) MelderInfo_write (U",");
 

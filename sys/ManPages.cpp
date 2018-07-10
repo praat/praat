@@ -51,11 +51,6 @@ void structManPages :: v_destroy () noexcept {
 			}
 		}
 	}
-	if (our titles)
-		for (integer ipage = 1; ipage <= our pages.size; ipage ++) {
-			Melder_free (our titles [ipage]);
-		}
-	NUMvector_free <const char32 *> (titles, 1);
 	ManPages_Parent :: v_destroy ();
 }
 
@@ -154,7 +149,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 			par -> height = texgetr64 (text);
 		}
 		try {
-			par -> text = texgetw16 (text);
+			par -> text = texgetw16 (text).transfer();
 		} catch (MelderError) {
 			Melder_throw (U"Cannot find text.");
 		}
@@ -419,17 +414,17 @@ static integer ManPages_lookUp_caseSensitive (ManPages me, const char32 *title) 
 	return 0;
 }
 
-const char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles) {
+char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles) {
 	if (! my ground) grind (me);
 	if (! my titles) {
-		my titles = NUMvector <const char32 *> (1, my pages.size);   // TODO
+		my titles = autostring32vector (my pages.size);
 		for (integer i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
 			my titles [i] = Melder_dup_f (page -> title.get());
 		}
 	}
 	*numberOfTitles = my pages.size;
-	return my titles;
+	return my titles.peek2();
 }
 
 static struct stylesInfo {

@@ -349,10 +349,10 @@ int texgete16 (MelderReadText text, enum_generic_getValue getValue) { return get
 bool texgeteb (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kBoolean_getValue); }
 bool texgeteq (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kQuestion_getValue); }
 bool texgetex (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kExistence_getValue); }
-char *texgets16 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
-char *texgets32 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
-char32 *texgetw16 (MelderReadText text) { return Melder_dup   (getString (text)); }
-char32 *texgetw32 (MelderReadText text) { return Melder_dup   (getString (text)); }
+autostring8 texgets16 (MelderReadText text) { return Melder_32to8 (getString (text)); }
+autostring8 texgets32 (MelderReadText text) { return Melder_32to8 (getString (text)); }
+autostring32 texgetw16 (MelderReadText text) { return Melder_dup (getString (text)); }
+autostring32 texgetw32 (MelderReadText text) { return Melder_dup (getString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }

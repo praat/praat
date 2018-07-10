@@ -64,7 +64,7 @@ static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
 		static ManPages manPages;
 		static integer numberOfPages;
-		static const char32 **pages;
+		static char32 **pages;
 		manPages = (ManPages) my data;
 		pages = ManPages_getTitles (manPages, & numberOfPages);
 		LIST (page, U"Page", manPages -> pages.size, pages, 1)
@@ -193,7 +193,6 @@ static void print (void *void_me, Graphics graphics) {
 			my numberOfParagraphs = 0;
 			par = my paragraphs;
 			while ((int) (par ++) -> type != 0) my numberOfParagraphs ++;
-			Melder_free (my currentPageTitle);
 			my currentPageTitle = Melder_dup_f (page -> title.get());
 			my v_goToPage_i (ipage);
 			my v_draw ();
@@ -461,7 +460,7 @@ void structManual :: v_goToPage_i (integer pageNumber) {
 	if (pageNumber < 1 || pageNumber > manPages -> pages.size) {
 		if (pageNumber == SEARCH_PAGE) {
 			our path = SEARCH_PAGE;
-			Melder_free (our currentPageTitle);
+			our currentPageTitle. reset();
 			return;
 		} else Melder_throw (U"Page ", pageNumber, U" not found.");
 	}
@@ -471,7 +470,6 @@ void structManual :: v_goToPage_i (integer pageNumber) {
 	our numberOfParagraphs = 0;
 	ManPage_Paragraph par = paragraphs;
 	while ((int) (par ++) -> type != 0) our numberOfParagraphs ++;
-	Melder_free (our currentPageTitle);
 	our currentPageTitle = Melder_dup_f (page -> title.get());
 }
 

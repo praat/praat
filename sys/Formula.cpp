@@ -492,7 +492,7 @@ static void Formula_lexan () {
 						} else {
 							nieuwtok (INDEXED_NUMERIC_VARIABLE_)
 						}
-						lexan [itok]. content.string = Melder_dup_f (token.string);
+						lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 						numberOfStringConstants ++;
 					} else {
 						/*
@@ -501,7 +501,7 @@ static void Formula_lexan () {
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 						if (! var) {
 							nieuwtok (VARIABLE_NAME_)
-							lexan [itok]. content.string = Melder_dup_f (token.string);
+							lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 							numberOfStringConstants ++;
 						} else {
 							if (rank == 0) {
@@ -573,13 +573,13 @@ static void Formula_lexan () {
 							} else {
 								nieuwtok (INDEXED_NUMERIC_VARIABLE_)
 							}
-							lexan [itok]. content.string = Melder_dup_f (token.string);
+							lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 							numberOfStringConstants ++;
 						} else {
 							InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 							if (! var) {
 								nieuwtok (VARIABLE_NAME_)
-								lexan [itok]. content.string = Melder_dup_f (token.string);
+								lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 								numberOfStringConstants ++;
 							} else {
 								if (rank == 0) {
@@ -627,13 +627,13 @@ static void Formula_lexan () {
 					} else {
 						nieuwtok (INDEXED_NUMERIC_VARIABLE_)
 					}
-					lexan [itok]. content.string = Melder_dup_f (token.string);
+					lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 					numberOfStringConstants ++;
 				} else {
 					InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 					if (! var) {
 						nieuwtok (VARIABLE_NAME_)
-						lexan [itok]. content.string = Melder_dup_f (token.string);
+						lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 						numberOfStringConstants ++;
 					} else {
 						if (rank == 0) {
@@ -702,7 +702,7 @@ static void Formula_lexan () {
 				int i = theCurrentPraatObjects -> n;
 				*underscore = ' ';
 				if (endsInDollarSign) token.string [-- token.length] = '\0';
-				while (i > 0 && ! str32equ (token.string, theCurrentPraatObjects -> list [i]. name))
+				while (i > 0 && ! str32equ (token.string, theCurrentPraatObjects -> list [i]. name.get()))
 					i --;
 				if (i == 0)
 					formulefout (U"No such object (note: variables start with lower case)", ikar);
@@ -786,7 +786,7 @@ static void Formula_lexan () {
 			stokuit;
 			oudkar;
 			nieuwtok (CALL_)
-			lexan [itok]. content.string = Melder_dup_f (token.string);
+			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 			numberOfStringConstants ++;
 		} else if (kar == U'\"') {
 			/*
@@ -808,7 +808,7 @@ static void Formula_lexan () {
 			stokuit;
 			oudkar;
 			nieuwtok (STRING_)
-			lexan [itok]. content.string = Melder_dup_f (token.string);
+			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 			numberOfStringConstants ++;
 		} else if (kar == U'~') {
 			/*
@@ -825,7 +825,7 @@ static void Formula_lexan () {
 			stokuit;
 			oudkar;
 			nieuwtok (STRING_)
-			lexan [itok]. content.string = Melder_dup_f (token.string);
+			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 			numberOfStringConstants ++;
 		} else if (kar == U'|') {
 			nieuwtok (OR_)   /* "|" = "or" */
@@ -2012,7 +2012,7 @@ static void Formula_evaluateConstants () {
 				improved = true;
 			} else if (parse [i]. symbol == STRING_VARIABLE_) {
 				parse [i]. symbol = STRING_;
-				parse [i]. content.string = parse [i]. content.variable -> stringValue;   // again a reference copy (lexan is still the owner)
+				parse [i]. content.string = parse [i]. content.variable -> stringValue.get();   // again a reference copy (lexan is still the owner)
 				gain = 0;
 				improved = true;
 			#if 0
@@ -2086,7 +2086,7 @@ static void Formula_print (FormulaInstruction f) {
 		else if (symbol == NUMERIC_VARIABLE_)
 			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.variable -> string.get(), U" ", f [i]. content.variable -> numericValue);
 		else if (symbol == STRING_VARIABLE_)
-			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.variable -> string.get(), U" ", f [i]. content.variable -> stringValue);
+			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.variable -> string.get(), U" ", f [i]. content.variable -> stringValue.get());
 		else if (symbol == STRING_ || symbol == VARIABLE_NAME_ || symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_)
 			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.string);
 		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
@@ -2113,10 +2113,6 @@ void Formula_compile (Interpreter interpreter, Daata data, const char32 *express
 			theLocalInterpreter = Interpreter_create (nullptr, nullptr);
 		}
 		theInterpreter = theLocalInterpreter.get();
-		for (std::unordered_map<std::u32string, InterpreterVariable>::iterator it = theInterpreter -> variablesMap. begin(); it != theInterpreter -> variablesMap. end(); it ++) {
-			InterpreterVariable var = it -> second;
-			forget (var);
-		}
 		theInterpreter -> variablesMap. clear ();
 	}
 	theSource = data;
@@ -2903,7 +2899,7 @@ static void do_sub () {
 			str32ncpy (result, x->string, newlength);
 			result [newlength] = U'\0';
 		} else {
-			result = Melder_dup (x->string);
+			result = Melder_dup (x->string).transfer();
 		}
 		Melder_free (x->string);
 		x->string = result;
@@ -3605,7 +3601,7 @@ static void do_evaluate_nocheckStr () {
 			pushString (result);
 		} catch (MelderError) {
 			Melder_clearError ();
-			pushString (Melder_dup (U""));
+			pushString (Melder_dup (U"").transfer());
 		}
 	} else Melder_throw (U"The argument of the function \"evaluate_nocheck$\" should be a string with a string expression, not ", Stackel_whichText (expression));
 }
@@ -3630,7 +3626,7 @@ static void do_doStr () {
 		autoMelderDivertInfo divert (& info);
 		autostring32 command2 = Melder_dup (command);
 		Editor_doMenuCommand (praatP. editor, command2.get(), numberOfArguments, & stack [0], nullptr, theInterpreter);
-		pushString (Melder_dup (info.string));
+		pushString (Melder_dup (info.string).transfer());
 		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		(str32nequ (command, U"Save ", 5) || str32nequ (command, U"Write ", 6) || str32nequ (command, U"Append ", 7) || str32equ (command, U"Quit")))
@@ -3647,11 +3643,11 @@ static void do_doStr () {
 			Melder_throw (U"Command \"", command, U"\" not available for current selection.");
 		}
 		praat_updateSelection ();
-		pushString (Melder_dup (info.string));
+		pushString (Melder_dup (info.string).transfer());
 		return;
 	}
 	praat_updateSelection ();   // BUG: superfluous? flickering?
-	pushString (Melder_dup (U""));
+	pushString (Melder_dup (U"").transfer());
 }
 static void shared_do_writeInfo (integer numberOfArguments) {
 	for (integer iarg = 1; iarg <= numberOfArguments; iarg ++) {
@@ -4233,7 +4229,7 @@ static void do_editor () {
 	Melder_assert (n->which == Stackel_NUMBER);
 	if (n->number == 0) {
 		if (theInterpreter && theInterpreter -> editorClass) {
-			praatP. editor = praat_findEditorFromString (theInterpreter -> environmentName);
+			praatP. editor = praat_findEditorFromString (theInterpreter -> environmentName.get());
 		} else {
 			Melder_throw (U"The function \"editor\" requires an argument when called from outside an editor.");
 		}
@@ -4356,7 +4352,7 @@ static void do_indexedStringVariable () {
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (! var)
 		Melder_throw (U"Undefined indexed variable " U_LEFT_GUILLEMET, totalVariableName.string, U_RIGHT_GUILLEMET U".");
-	autostring32 result = Melder_dup (var -> stringValue);
+	autostring32 result = Melder_dup (var -> stringValue.get());
 	pushString (result.transfer());
 }
 static void do_length () {
@@ -4389,15 +4385,15 @@ static void do_fileReadable () {
 }
 static void do_dateStr () {
 	time_t today = time (nullptr);
-	char32 *date, *newline;
-	date = Melder_8to32 (ctime (& today));
-	newline = str32chr (date, U'\n');
+	string32 newline;
+	autostring32 date = Melder_8to32 (ctime (& today));
+	newline = str32chr (date.get(), U'\n');
 	if (newline) *newline = U'\0';
-	pushString (date);
+	pushString (date.transfer());
 }
 static void do_infoStr () {
-	char32 *info = Melder_dup (Melder_getInfo ());
-	pushString (info);
+	autostring32 info = Melder_dup (Melder_getInfo ());
+	pushString (info.transfer());
 }
 static void do_leftStr () {
 	trace (U"enter");
@@ -4435,7 +4431,7 @@ static void do_rightStr () {
 			integer length = str32len (s->string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
-			pushString (Melder_dup (s->string + length - newlength));
+			pushString (Melder_dup (s->string + length - newlength).transfer());
 		} else {
 			Melder_throw (U"The function \"right$\" requires a string, or a string and a number.");
 		}
@@ -4460,7 +4456,7 @@ static void do_midStr () {
 				str32ncpy (result.get(), s->string + start - 1, newlength);
 				result [newlength] = U'\0';
 			} else {
-				result.reset (Melder_dup (U""));
+				result = Melder_dup (U"");
 			}
 			pushString (result.transfer());
 		} else {
@@ -4499,9 +4495,8 @@ static void do_environmentStr () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		char32 *value = Melder_getenv (s->string);
-		//autostring32 result = Melder_dup (value ? value : U"");
-		//pushString (result.transfer());
-		pushString (Melder_dup (value ? value : U""));
+		autostring32 result = Melder_dup (value ? value : U"");
+		pushString (result.transfer());
 	} else {
 		Melder_throw (U"The function \"environment$\" requires a string, not ", Stackel_whichText (s), U".");
 	}
@@ -4645,7 +4640,7 @@ static void do_extractTextStr (bool singleWord) {
 		char32 *substring = str32str (s->string, t->string);
 		autostring32 result;
 		if (! substring) {
-			result.reset (Melder_dup (U""));
+			result = Melder_dup (U"");
 		} else {
 			integer length;
 			/* Skip the prompt. */
@@ -4706,14 +4701,14 @@ static void do_selectedStr () {
 	Stackel n = pop;
 	autostring32 result;
 	if (n->number == 0) {
-		result.reset (Melder_dup (praat_nameOfSelected (nullptr, 0)));
+		result = Melder_dup (praat_nameOfSelected (nullptr, 0));
 	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
 			ClassInfo klas = Thing_classFromClassName (a->string, nullptr);
-			result.reset (Melder_dup (praat_nameOfSelected (klas, 0)));
+			result = Melder_dup (praat_nameOfSelected (klas, 0));
 		} else if (a->which == Stackel_NUMBER) {
-			result.reset (Melder_dup (praat_nameOfSelected (nullptr, Melder_iround (a->number))));
+			result = Melder_dup (praat_nameOfSelected (nullptr, Melder_iround (a->number)));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and/or a number.");
 		}
@@ -4721,7 +4716,7 @@ static void do_selectedStr () {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 			ClassInfo klas = Thing_classFromClassName (s->string, nullptr);
-			result.reset (Melder_dup (praat_nameOfSelected (klas, Melder_iround (x->number))));
+			result = Melder_dup (praat_nameOfSelected (klas, Melder_iround (x->number)));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and a number.");
 		}
@@ -4757,7 +4752,7 @@ static void do_selectedStr () {
 	} else {
 		Melder_throw (U"The function \"selected$\" requires 0, 1, or 2 arguments, not ", n->number, U".");
 	}
-	pushString (Melder_dup (resultSource));
+	pushString (Melder_dup (resultSource).transfer());
 }
 #endif
 static void do_numberOfSelected () {
@@ -5200,8 +5195,8 @@ static void do_object_colstr () {
 static void do_stringStr () {
 	Stackel value = pop;
 	if (value->which == Stackel_NUMBER) {
-		//autostring32 result = Melder_dup (Melder_double (value->number));
-		pushString (Melder_dup (Melder_double (value->number)));
+		autostring32 result = Melder_dup (Melder_double (value->number));
+		pushString (result.transfer());
 	} else {
 		Melder_throw (U"The function \"string$\" requires a number, not ", Stackel_whichText (value), U".");
 	}
@@ -5232,7 +5227,7 @@ static void do_unicodeStr () {
 			U"A unicode number cannot lie between 0xD800 and 0xDFFF. Those are \"surrogates\".");
 		char32 string [2] = { U'\0', U'\0' };
 		string [0] = (char32) value->number;
-		pushString (Melder_dup (string));
+		pushString (Melder_dup (string).transfer());
 	} else {
 		Melder_throw (U"The function \"unicode$\" requires a number, not ", Stackel_whichText (value), U".");
 	}
@@ -5240,8 +5235,8 @@ static void do_unicodeStr () {
 static void do_fixedStr () {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		//autostring32 result = Melder_dup (Melder_fixed (value->number, Melder_iround (precision->number)));
-		pushString (Melder_dup (Melder_fixed (value->number, Melder_iround (precision->number))));
+		autostring32 result = Melder_dup (Melder_fixed (value->number, Melder_iround (precision->number)));
+		pushString (result.transfer());
 	} else {
 		Melder_throw (U"The function \"fixed$\" requires two numbers (value and precision), not ", Stackel_whichText (value), U" and ", Stackel_whichText (precision), U".");
 	}
@@ -5739,9 +5734,8 @@ static void do_chooseWriteFileStr () {
 		Stackel defaultName = pop, title = pop;
 		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
 			autostring32 result = GuiFileSelect_getOutfileName (nullptr, title->string, defaultName->string);
-			if (! result) {
-				result.reset (Melder_dup (U""));
-			}
+			if (! result)
+				result = Melder_dup (U"");
 			pushString (result.transfer());
 		} else {
 			Melder_throw (U"The arguments of \"chooseWriteFile$\" should be two strings (the title and the default name).");
@@ -5756,9 +5750,8 @@ static void do_chooseDirectoryStr () {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
 			autostring32 result = GuiFileSelect_getDirectoryName (nullptr, title->string);
-			if (! result) {
-				result.reset (Melder_dup (U""));
-			}
+			if (! result)
+				result = Melder_dup (U"");
 			pushString (result.transfer());
 		} else {
 			Melder_throw (U"The argument of \"chooseDirectory$\" should be a string (the title).");
@@ -6005,7 +5998,7 @@ static void do_toObject () {
 		thee = (Daata) theCurrentPraatObjects -> list [i]. object;
 	} else if (object->which == Stackel_STRING) {
 		int i = theCurrentPraatObjects -> n;
-		while (i > 0 && ! Melder_equ (object->string, theCurrentPraatObjects -> list [i]. name))
+		while (i > 0 && ! Melder_equ (object->string, theCurrentPraatObjects -> list [i]. name.get()))
 			i --;
 		if (i == 0) {
 			Melder_throw (U"No such object: ", object->string);
@@ -6834,7 +6827,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	pushNumericMatrixReference (var -> numericMatrixValue);
 } break; case STRING_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	autostring32 string = Melder_dup (var -> stringValue);
+	autostring32 string = Melder_dup (var -> stringValue.get());
 	pushString (string.transfer());
 } break; default: Melder_throw (U"Symbol \"", Formula_instructionNames [parse [programPointer]. symbol], U"\" without action.");
 			} // endswitch

@@ -23,7 +23,7 @@
 
 Thing_define (ManPages, Daata) {
 	OrderedOf<structManPage> pages;
-	const char32 **titles;
+	autostring32vector titles;
 	bool ground, dynamic, executable;
 	structMelderDir rootDirectory;
 
@@ -48,7 +48,7 @@ void ManPages_writeOneToHtmlFile (ManPages me, integer ipage, MelderFile file);
 void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath);
 
 integer ManPages_uniqueLinksHither (ManPages me, integer ipage);
-const char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles);
+char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles);
 
 /* End of file ManPages.h */
 #endif

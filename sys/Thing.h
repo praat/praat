@@ -277,9 +277,11 @@ public:
 	T* get () const noexcept {
 		return our ptr;
 	}
+	#if 0
 	operator T* () const noexcept {
 		return our ptr;
 	}
+	#endif
 	/*
 		The expression
 			pitch.d_ptr -> xmin

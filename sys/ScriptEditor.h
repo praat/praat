@@ -23,7 +23,7 @@
 #include "Interpreter.h"
 
 Thing_define (ScriptEditor, TextEditor) {
-	char32 *environmentName;
+	autostring32 environmentName;
 	ClassInfo editorClass;
 	autoInterpreter interpreter;
 	autoUiForm argsDialog;

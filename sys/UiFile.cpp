@@ -38,7 +38,7 @@ UiForm UiInfile_create (GuiWindow parent, const char32 *title,
 	my okCallback = okCallback;
 	my buttonClosure = okClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);
-	my helpTitle = helpTitle;
+	my helpTitle = Melder_dup (helpTitle);
 	my allowMultipleFiles = allowMultipleFiles;
 	UiFile_init (me.get(), parent, title);
 	return me.releaseToAmbiguousOwner();
@@ -51,14 +51,14 @@ void UiInfile_do (UiForm me) {
 			SimpleString infileName = infileNames->at [ifile];
 			Melder_pathToFile (infileName -> string.get(), & my file);
 			UiHistory_write (U"\n");
-			UiHistory_write_colonize (my invokingButtonTitle);
+			UiHistory_write_colonize (my invokingButtonTitle.get());
 			UiHistory_write (U" \"");
 			UiHistory_write_expandQuotes (infileName -> string.get());
 			UiHistory_write (U"\"");
 			structMelderFile file { };
 			MelderFile_copy (& my file, & file);
 			try {
-				my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my buttonClosure);
+				my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure);
 			} catch (MelderError) {
 				Melder_throw (U"File ", & file, U" not finished.");
 			}
@@ -77,7 +77,7 @@ UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
 	my okCallback = okCallback;
 	my buttonClosure = okClosure;
 	my invokingButtonTitle = Melder_dup (invokingButtonTitle);
-	my helpTitle = helpTitle;
+	my helpTitle = Melder_dup (helpTitle);
 	UiFile_init (me.get(), parent, title);
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
@@ -105,27 +105,26 @@ UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *i
 	return dia;
 }
 
-void UiOutfile_do (UiForm me, const char32 *defaultName) {
-	char32 *outfileName = GuiFileSelect_getOutfileName (nullptr, my name.get(), defaultName);
+void UiOutfile_do (UiForm me, conststring32 defaultName) {
+	autostring32 outfileName = GuiFileSelect_getOutfileName (nullptr, my name.get(), defaultName);
 	if (! outfileName) return;   // cancelled
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
 		Melder_flushError (U"Dialog \"", my name.get(), U"\" cancelled.");
 		return;
 	}
-	Melder_pathToFile (outfileName, & my file);
+	Melder_pathToFile (outfileName.get(), & my file);
 	structMelderFile file { };
 	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
 	UiHistory_write (U"\n");
-	UiHistory_write_colonize (my invokingButtonTitle);
+	UiHistory_write_colonize (my invokingButtonTitle.get());
 	try {
-		my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle, false, my buttonClosure);
+		my okCallback (me, 0, nullptr, nullptr, nullptr, my invokingButtonTitle.get(), false, my buttonClosure);
 	} catch (MelderError) {
 		Melder_flushError (U"File ", & file, U" not finished.");
 	}
 	UiHistory_write (U" \"");
-	UiHistory_write (outfileName);
+	UiHistory_write (outfileName.get());
 	UiHistory_write (U"\"");
-	Melder_free (outfileName);
 }
 
 /* End of file UiFile.cpp */

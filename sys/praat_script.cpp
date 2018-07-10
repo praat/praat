@@ -300,7 +300,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 				praatP. editor = praat_findEditorFromString (command + 7);
 			} else if (command [6] == U'\0') {
 				if (interpreter && interpreter -> editorClass) {
-					praatP. editor = praat_findEditorFromString (interpreter -> environmentName);
+					praatP. editor = praat_findEditorFromString (interpreter -> environmentName.get());
 				} else {
 					Melder_throw (U"The function \"editor\" requires an argument when called from outside an editor.");
 				}

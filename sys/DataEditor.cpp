@@ -213,7 +213,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				case lstringwa: {
 					char32 *old = * (char32 **) my d_fieldData [irow]. address;
 					Melder_free (old);
-					* (char32 **) my d_fieldData [irow]. address = Melder_dup_f (text.get());
+					* (char32 **) my d_fieldData [irow]. address = Melder_dup_f (text.get()).transfer();
 				} break;
 				default: break;
 			}

@@ -55,7 +55,7 @@ DO
 	static MelderString fullName { };
 	MelderString_copy (& fullName, Thing_className (OBJECT), U" ", string.string);
 	if (! str32equ (fullName.string, FULL_NAME)) {
-		Melder_free (FULL_NAME), FULL_NAME = Melder_dup_f (fullName.string);
+		theCurrentPraatObjects -> list [IOBJECT]. name = Melder_dup_f (fullName.string);
 		autoMelderString listName;
 		MelderString_append (& listName, ID, U". ", fullName.string);
 		praat_list_renameAndSelect (IOBJECT, listName.string);
@@ -519,7 +519,7 @@ END }
 
 FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
 	static integer numberOfPages;
-	static const char32 **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
+	static char32 **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
 	LIST (pageNumber, U"Page", numberOfPages, pages, 1)
 	OK
 DO
@@ -639,7 +639,7 @@ void praat_addMenus (GuiWindow window) {
 		helpMenu = GuiMenu_createInWindow (window, U"Help", 0);
 	}
 	
-	MelderString_append (& itemTitle_about, U"About ", praatP.title, U"...");
+	MelderString_append (& itemTitle_about, U"About ", praatP.title.get(), U"...");
 	#ifdef macintosh
 		praat_addMenuCommand (U"Objects", U"Praat", itemTitle_about.string, nullptr, praat_UNHIDABLE, WINDOW_About);
 		#if cocoa
@@ -713,7 +713,7 @@ void praat_addMenus2 () {
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Go to manual page...", nullptr, 0, HELP_GoToManualPage);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp", U"Write manual to HTML directory...", nullptr, praat_HIDDEN, HELP_WriteManualToHtmlDirectory);
 	praat_addMenuCommand (U"Objects", U"ApplicationHelp",
-		Melder_cat (U"Search ", praatP.title, U" manual..."),
+		Melder_cat (U"Search ", praatP.title.get(), U" manual..."),
 		nullptr, 'M' | praat_NO_API, HELP_SearchManual);
 	#ifdef _WIN32
 		praat_addMenuCommand (U"Objects", U"Help", U"-- about --", nullptr, 0, nullptr);

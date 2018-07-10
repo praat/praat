@@ -31,7 +31,7 @@ static void logo_defaultDraw (Graphics g) {
 	Graphics_setFontSize (g, 24);
 	Graphics_setFontStyle (g, Graphics_ITALIC);
 	Graphics_setUnderscoreIsSubscript (g, false);   // because program names may contain underscores
-	Graphics_text (g, 0.5, 0.6, praatP.title);
+	Graphics_text (g, 0.5, 0.6, praatP.title.get());
 	Graphics_setFontStyle (g, 0);
 	Graphics_setFontSize (g, 12);
 	Graphics_text (g, 0.5, 0.25, U"\\s{Built on the} %%Praat shell%\\s{,© Paul Boersma, 1992-2017");

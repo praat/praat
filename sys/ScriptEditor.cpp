@@ -34,7 +34,6 @@ bool ScriptEditors_dirty () {
 }
 
 void structScriptEditor :: v_destroy () noexcept {
-	Melder_free (our environmentName);
 	our argsDialog.reset();   // don't delay till delete
 	theReferencesToAllOpenScriptEditors. undangleItem (this);
 	ScriptEditor_Parent :: v_destroy ();
@@ -45,7 +44,7 @@ void structScriptEditor :: v_nameChanged () {
 	static MelderString buffer { };
 	MelderString_copy (& buffer, name [0] ? U"Script" : U"untitled script");
 	if (editorClass)
-		MelderString_append (& buffer, U" [", environmentName, U"]");
+		MelderString_append (& buffer, U" [", environmentName.get(), U"]");
 	if (name [0])
 		MelderString_append (& buffer, U" ", MelderFile_messageName (& file));
 	if (dirty && ! dirtinessAlreadyShown)

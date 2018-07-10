@@ -122,10 +122,10 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *titl
 	return me;
 }
 
-char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, const char32 *defaultName) {
+autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title, conststring32 defaultName) {
 	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
-	char32 *outfileName = nullptr;
+	autostring32 outfileName;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
@@ -162,9 +162,8 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 		openFileName. lpstrTitle = Melder_peek32toW (title);
 		openFileName. Flags = OFN_LONGNAMES | OFN_OVERWRITEPROMPT | OFN_EXPLORER | OFN_HIDEREADONLY;
 		openFileName. lpstrDefExt = nullptr;
-		if (GetSaveFileNameW (& openFileName)) {
+		if (GetSaveFileNameW (& openFileName))
 			outfileName = Melder_Wto32 (fullFileNameW);
-		}
 		setlocale (LC_ALL, "C");
 	#elif cocoa
 		(void) parent;
@@ -176,7 +175,7 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 			if (path == nil)
 				Melder_throw (U"Don't understand where you want to save (1).");
 			const char *outfileName_utf8 = [path UTF8String];
-			if (outfileName_utf8 == nullptr)
+			if (! outfileName_utf8)
 				Melder_throw (U"Don't understand where you want to save (2).");
 			structMelderFile file { };
 			Melder_8bitFileRepresentationToStr32_inplace (outfileName_utf8, file. path);   // BUG: unsafe buffer
@@ -188,10 +187,10 @@ char32 * GuiFileSelect_getOutfileName (GuiWindow parent, const char32 *title, co
 	return outfileName;
 }
 
-char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) {
+autostring32 GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) {
 	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
-	char32 *directoryName = nullptr;
+	autostring32 directoryName;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
@@ -204,7 +203,7 @@ char32 * GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) 
 			char *directoryName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 			directoryName = Melder_8to32 (directoryName_utf8);
 			g_free (directoryName_utf8);
-			Melder_pathToFile (directoryName, & file);
+			Melder_pathToFile (directoryName.get(), & file);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		setlocale (LC_ALL, "C");

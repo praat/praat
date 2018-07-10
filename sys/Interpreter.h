@@ -26,7 +26,7 @@
 #include <unordered_map>
 
 Thing_define (InterpreterVariable, SimpleString) {
-	char32 *stringValue;
+	autostring32 stringValue;
 	double numericValue;
 	numvec numericVectorValue;
 	nummat numericMatrixValue;
@@ -46,24 +46,21 @@ Thing_declare (UiForm);
 Thing_declare (Editor);
 
 Thing_define (Interpreter, Thing) {
-	char32 *environmentName;
+	autostring32 environmentName;
 	ClassInfo editorClass;
 	int numberOfParameters, numberOfLabels, callDepth;
 	char32 parameters [1+Interpreter_MAXNUM_PARAMETERS] [100];
 	int types [1+Interpreter_MAXNUM_PARAMETERS];
-	char32 *arguments [1+Interpreter_MAXNUM_PARAMETERS];
+	autostring32 arguments [1+Interpreter_MAXNUM_PARAMETERS];
 	char32 choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100];
 	char32 labelNames [1+Interpreter_MAXNUM_LABELS] [1+Interpreter_MAX_LABEL_LENGTH];
 	integer labelLines [1+Interpreter_MAXNUM_LABELS];
 	char32 dialogTitle [1+Interpreter_MAX_DIALOG_TITLE_LENGTH], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
-	std::unordered_map <std::u32string, InterpreterVariable> variablesMap;
+	std::unordered_map <std::u32string, autoInterpreterVariable> variablesMap;
 	bool running, stopped;
-
-	void v_destroy () noexcept
-		override;
 };
 
-autoInterpreter Interpreter_create (char32 *environmentName, ClassInfo editorClass);
+autoInterpreter Interpreter_create (const char32 *environmentName, ClassInfo editorClass);
 autoInterpreter Interpreter_createFromEnvironment (Editor editor);
 
 void Melder_includeIncludeFiles (autostring32 *text);
@@ -73,7 +70,7 @@ UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *f
 	void (*okCallback) (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure), void *okClosure,
 	bool selectionOnly);
 void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog);
-void Interpreter_getArgumentsFromString (Interpreter me, const char32 *arguments);
+void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments);
 void Interpreter_getArgumentsFromArgs (Interpreter me, int nargs, Stackel args);
 void Interpreter_run (Interpreter me, char32 *text);   // destroys 'text'
 void Interpreter_stop (Interpreter me);   // can be called from any procedure called deep-down by the interpreter; will stop before next line

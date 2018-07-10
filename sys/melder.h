@@ -186,9 +186,6 @@ using char32 = char32_t;
 using string32 = char32 *;
 using conststring32 = const char32 *;
 
-char32 * Melder_dup (const char32 *string /* cattable */);
-char32 * Melder_dup_f (const char32 *string /* cattable */);
-
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
 
@@ -196,11 +193,15 @@ template <class T>
 class _autostring {
 	T *ptr;
 public:
-	_autostring (T *string) : ptr (string) {
-		//if (Melder_debug == 39) Melder_casual (U"autostring: constructor from C-string ", Melder_pointer (ptr));
-	}
 	_autostring () : ptr (nullptr) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
+	}
+	_autostring (integer length, bool f) {
+		our ptr = ( f ? Melder_malloc_f (T, length + 1) : Melder_malloc (T, length + 1) );
+		our ptr [0] = 0;
+	}
+	_autostring (T *string) : ptr (string) {
+		//if (Melder_debug == 39) Melder_casual (U"autostring: constructor from C-string ", Melder_pointer (ptr));
 	}
 	~_autostring () {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: entering destructor ptr = ", Melder_pointer (ptr));
@@ -213,9 +214,11 @@ public:
 	T * get () const {
 		return our ptr;
 	}
+	#if 0
 	operator T* () const {
 		return our ptr;
 	}
+	#endif
 	/*T ** operator& () {
 		return & our ptr;
 	}*/
@@ -256,7 +259,11 @@ public:
 
 typedef _autostring <char> autostring8;
 typedef _autostring <char16> autostring16;
+typedef _autostring <wchar_t> autostringW;
 typedef _autostring <char32> autostring32;
+
+autostring32 Melder_dup (conststring32 string /* cattable */);
+autostring32 Melder_dup_f (conststring32 string /* cattable */);
 
 #pragma mark - CHARACTER PROPERTIES
 
@@ -840,28 +847,28 @@ size_t str32len_utf16 (const char32 *string, bool nativizeNewlines);
 extern "C" char32 * Melder_peek8to32 (const char *string);
 void Melder_8to32_inplace (const char *source, char32 *target, kMelder_textInputEncoding inputEncoding);
 	// errors: Text is not valid UTF-8.
-char32 * Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding);
+autostring32 Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding);
 	// errors: Out of memory; Text is not valid UTF-8.
-char32 * Melder_8to32 (const char *string);
+autostring32 Melder_8to32 (const char *string);
 	// errors: Out of memory; Text is not valid UTF-8.
 
 char32 * Melder_peek16to32 (const char16 *text);
-char32 * Melder_16to32 (const char16 *text);
+autostring32 Melder_16to32 (const char16 *text);
 
 extern "C" char * Melder_peek32to8 (const char32 *string);
 void Melder_32to8_inplace (const char32 *string, char *utf8);
-char * Melder_32to8 (const char32 *string);
-char16 * Melder_32to16 (const char32 *string);
+autostring8 Melder_32to8 (const char32 *string);
+autostring16 Melder_32to16 (const char32 *string);
 	// errors: Out of memory.
 
 char16 * Melder_peek32to16 (const char32 *text, bool nativizeNewlines);
 extern "C" char16 * Melder_peek32to16 (const char32 *string);
 
 #ifdef _WIN32
-	inline static wchar_t * Melder_peek32toW (const char32 *string) { return (wchar_t *) Melder_peek32to16 (string); }
-	inline static wchar_t * Melder_32toW (const char32 *string) { return (wchar_t *) Melder_32to16 (string); }
-	inline static char32 * Melder_peekWto32 (const wchar_t *string) { return Melder_peek16to32 ((const char16 *) string); }
-	inline static char32 * Melder_Wto32 (const wchar_t *string) { return Melder_16to32 ((const char16 *) string); }
+	inline static autostringW Melder_peek32toW (const char32 *string) { return (autostringW) Melder_peek32to16 (string); }
+	inline static autostringW Melder_32toW (const char32 *string) { return (autostringW) Melder_32to16 (string); }
+	inline static autostring32 Melder_peekWto32 (const wchar_t *string) { return Melder_peek16to32 ((const char16 *) string); }
+	inline static autostring32 Melder_Wto32 (const wchar_t *string) { return Melder_16to32 ((const char16 *) string); }
 #endif
 
 void Melder_str32To8bitFileRepresentation_inplace (const char32 *string, char *utf8);

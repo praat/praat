@@ -819,8 +819,8 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			NSString *nsString = [my d_cocoaTextView   string];
-			char32 *result = Melder_8to32 ([nsString UTF8String]);
-			trace (U"string ", result);
+			autostring32 result = Melder_8to32 ([nsString UTF8String]);
+			trace (U"string ", result.get());
 			NSRange nsRange = [my d_cocoaTextView   selectedRange];
 			*first = uinteger_to_integer (nsRange. location);
 			*last = *first + uinteger_to_integer (nsRange. length);
@@ -829,8 +829,8 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 			return result;
 		} else {
 			NSString *nsString = [(NSTextField *) my d_widget   stringValue];
-			char32 *result = Melder_8to32 ([nsString UTF8String]);
-			trace (U"string ", result);
+			autostring32 result = Melder_8to32 ([nsString UTF8String]);
+			trace (U"string ", result.get());
 			NSRange nsRange = [[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] selectedRange];
 			*first = uinteger_to_integer (nsRange. location);
 			*last = *first + uinteger_to_integer (nsRange. length);

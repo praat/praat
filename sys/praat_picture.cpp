@@ -1634,7 +1634,7 @@ void praat_picture_init () {
 			y = screenY + 0;
 			width += margin * 2;
 		#endif
-		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title, U" Picture"), nullptr, nullptr, 0);
+		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title.get(), U" Picture"), nullptr, nullptr, 0);
 		GuiWindow_addMenuBar (dialog);
 	}
 	if (! theCurrentPraatApplication -> batch) {
@@ -1825,7 +1825,7 @@ void praat_picture_init () {
 	praat_addMenuCommand (U"Picture", U"Help", U"Phonetic symbols", nullptr, 0, HELP_PhoneticSymbols);
 	praat_addMenuCommand (U"Picture", U"Help", U"-- manual --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Help",
-		Melder_cat (U"Search ", praatP.title, U" manual..."),
+		Melder_cat (U"Search ", praatP.title.get(), U" manual..."),
 		nullptr, 'M', HELP_SearchManual_Picture);
 
 	if (! theCurrentPraatApplication -> batch) {

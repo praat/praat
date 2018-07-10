@@ -66,8 +66,8 @@ static void saveHistory (HyperPage me, const char32 *title) {
 	 * If the page title to be saved is already at the top, ignore it.
 	 */	
 	if (my history [my historyPointer]. page) {
-		if (str32equ (my history [my historyPointer]. page, title)) return;
-	} else if (my historyPointer > 0 && str32equ (my history [my historyPointer - 1]. page, title)) {
+		if (str32equ (my history [my historyPointer]. page.get(), title)) return;
+	} else if (my historyPointer > 0 && str32equ (my history [my historyPointer - 1]. page.get(), title)) {
 		my historyPointer --;
 		return;
 	}
@@ -76,9 +76,9 @@ static void saveHistory (HyperPage me, const char32 *title) {
 	 * If the history buffer is full, shift it.
 	 */
 	if (my historyPointer == 19 && my history [my historyPointer]. page) {
-		int i;
-		Melder_free (my history [0]. page);
-		for (i = 0; i < 19; i ++) my history [i] = my history [i + 1];
+		for (int i = 0; i < 19; i ++)
+			my history [i] = std::move (my history [i + 1]);
+		my history [19]. page. reset();
 	}
 
 	/*
@@ -154,7 +154,7 @@ void HyperPage_any (HyperPage me, const char32 *text, kGraphics_font font, int s
 if (! my printing) {
 	Graphics_Link *paragraphLinks;
 	int numberOfParagraphLinks, ilink;
-	if (my entryHint && (method & HyperPage_USE_ENTRY_HINT) && str32equ (text, my entryHint)) {
+	if (my entryHint && (method & HyperPage_USE_ENTRY_HINT) && str32equ (text, my entryHint.get())) {
 		my entryPosition = my d_y;
 	}
 	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
@@ -579,9 +579,6 @@ static void print (void *void_me, Graphics graphics) {
 /********** class HyperPage **********/
 
 void structHyperPage :: v_destroy () noexcept {
-	Melder_free (our entryHint);
-	for (int i = 0; i < 20; i ++) Melder_free (our history [i]. page);
-	Melder_free (our currentPageTitle);
 	if (our praatApplication) {
 		for (int iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
 			Melder_free (((PraatObjects) our praatObjects) -> list [iobject]. name);
@@ -601,7 +598,7 @@ static void gui_drawingarea_cb_expose (HyperPage me, GuiDrawingArea_ExposeEvent 
 	trace (U"going to draw");
 	my v_draw ();
 	if (my entryHint && my entryPosition != 0.0) {
-		Melder_free (my entryHint);
+		my entryHint. reset();
 		my top = (int) floor (5.0 * (PAGE_HEIGHT - my entryPosition));
 		if (my top < 0) my top = 0;
 		Graphics_clearWs (my graphics.get());
@@ -618,7 +615,7 @@ static void gui_drawingarea_cb_click (HyperPage me, GuiDrawingArea_ClickEvent ev
 		if (! link)
 			Melder_fatal (U"gui_drawingarea_cb_click: empty link ", ilink, U"/", my links.size, U".");
 		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {
-			saveHistory (me, my currentPageTitle);
+			saveHistory (me, my currentPageTitle.get());
 			try {
 				HyperPage_goToPage (me, link -> name.get());
 			} catch (MelderError) {
@@ -792,7 +789,7 @@ static void menu_cb_pageDown (HyperPage me, EDITOR_ARGS_DIRECT) {
 
 static void do_back (HyperPage me) {
 	if (my historyPointer <= 0) return;
-	autostring32 page = Melder_dup_f (my history [-- my historyPointer]. page);   // temporary, because pointer will be moved
+	autostring32 page = Melder_dup_f (my history [-- my historyPointer]. page.get());   // temporary, because pointer will be moved
 	int top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.get())) {
 		my top = top;
@@ -811,7 +808,7 @@ static void gui_button_cb_back (HyperPage me, GuiButtonEvent /* event */) {
 
 static void do_forth (HyperPage me) {
 	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page) return;
-	autostring32 page = Melder_dup_f (my history [++ my historyPointer]. page);
+	autostring32 page = Melder_dup_f (my history [++ my historyPointer]. page.get());
 	int top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.get())) {
 		my top = top;
@@ -941,7 +938,7 @@ void HyperPage_clear (HyperPage me) {
 
 void structHyperPage :: v_dataChanged () {
 	int oldError = Melder_hasError ();   // this method can be called during error time
-	(void) our v_goToPage (our currentPageTitle);
+	(void) our v_goToPage (our currentPageTitle.get());
 	if (Melder_hasError () && ! oldError) Melder_flushError ();
 	HyperPage_clear (this);
 	updateVerticalScrollBar (this);
@@ -953,7 +950,6 @@ int HyperPage_goToPage (HyperPage me, const char32 *title) {
 		case 0: HyperPage_clear (me); return 0;
 	}
 	saveHistory (me, title);   // last chance: HyperPage_clear will destroy "title" !!!
-	Melder_free (my currentPageTitle);
 	my currentPageTitle = Melder_dup_f (title);
 	my top = 0;
 	HyperPage_clear (me);
@@ -969,7 +965,6 @@ void HyperPage_goToPage_i (HyperPage me, integer i) {
 }
 
 void HyperPage_setEntryHint (HyperPage me, const char32 *hint) {
-	Melder_free (my entryHint);
 	my entryHint = Melder_dup_f (hint);
 }
 

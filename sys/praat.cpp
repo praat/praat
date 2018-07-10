@@ -304,7 +304,7 @@ static void praat_remove (int iobject, bool removeVisibly) {
 	}
 	MelderFile_setToNull (& theCurrentPraatObjects -> list [iobject]. file);
 	trace (U"free name");
-	Melder_free (theCurrentPraatObjects -> list [iobject]. name);
+	theCurrentPraatObjects -> list [iobject]. name. reset();
 	trace (U"forget object");
 	forget (theCurrentPraatObjects -> list [iobject]. object);   // note: this might save a file-based object to file
 	trace (U"forgotten object");
@@ -361,7 +361,7 @@ void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
 		
 	int IOBJECT = ++ theCurrentPraatObjects -> n;
 	Melder_assert (FULL_NAME == nullptr);
-	FULL_NAME = Melder_dup_f (name.string);   // all right to crash if out of memory
+	theCurrentPraatObjects -> list [IOBJECT]. name = Melder_dup_f (name.string);   // all right to crash if out of memory
 	++ theCurrentPraatObjects -> uniqueId;
 
 	if (! theCurrentPraatApplication -> batch) {   // put a new object on the screen, at the bottom of the list
@@ -484,8 +484,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2) {
 	while (theCurrentPraatObjects -> list [i1]. isSelected == 0 || theCurrentPraatObjects -> list [i1]. klas != klas1) i1 ++;
 	int i2 = 1;
 	while (theCurrentPraatObjects -> list [i2]. isSelected == 0 || theCurrentPraatObjects -> list [i2]. klas != klas2) i2 ++;
-	char32 *name1 = str32chr (theCurrentPraatObjects -> list [i1]. name, U' ') + 1;
-	char32 *name2 = str32chr (theCurrentPraatObjects -> list [i2]. name, U' ') + 1;
+	char32 *name1 = str32chr (theCurrentPraatObjects -> list [i1]. name.get(), U' ') + 1;
+	char32 *name2 = str32chr (theCurrentPraatObjects -> list [i2]. name.get(), U' ') + 1;
 	if (str32equ (name1, name2))
 		Melder_sprint (name,200, name1);
 	else
@@ -495,8 +495,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2) {
 void praat_removeObject (int i) {
 	praat_remove (i, true);   // dangle
 	for (int j = i; j < theCurrentPraatObjects -> n; j ++)
-		theCurrentPraatObjects -> list [j] = theCurrentPraatObjects -> list [j + 1];   // undangle but create second references
-	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. name = nullptr;   // undangle or remove second reference
+		theCurrentPraatObjects -> list [j] = std::move (theCurrentPraatObjects -> list [j + 1]);   // undangle but create second references
+	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. name. reset ();
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. object = nullptr;   // undangle or remove second reference
 	theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. isSelected = 0;
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
@@ -561,7 +561,7 @@ static void praat_exit (int exit_code) {
 			try {
 				autoMelderString buffer;
 				MelderString_append (& buffer, U"# Buttons (1).\n");
-				MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", praatP.title, U" program.\n");
+				MelderString_append (& buffer, U"# This file is generated automatically when you quit the ", praatP.title.get(), U" program.\n");
 				MelderString_append (& buffer, U"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
 				MelderString_append (& buffer, U"# and the buttons that you hid or showed.\n\n");
 				praat_saveAddedMenuCommands (& buffer);
@@ -752,7 +752,7 @@ void praat_dataChanged (Daata object) {
 	/*
 	 * This function can be called at error time, which is weird.
 	 */
-	char32 *saveError = nullptr;
+	autostring32 saveError;
 	bool duringError = Melder_hasError ();
 	if (duringError) {
 		saveError = Melder_dup_f (Melder_getError ());
@@ -768,8 +768,8 @@ void praat_dataChanged (Daata object) {
 		}
 	}
 	if (duringError) {
-		Melder_appendError (saveError);   // BUG: this appends an empty newline to the original error message
-		Melder_free (saveError);   // BUG: who will catch the error?
+		Melder_appendError (saveError.get());   // BUG: this appends an empty newline to the original error message
+		// BUG: who will catch the error?
 	}
 }
 
@@ -805,12 +805,12 @@ FORM (DO_Quit, U"Confirm Quit", U"Quit") {
 	char32 prompt [300];
 	if (ScriptEditors_dirty ()) {
 		if (theCurrentPraatObjects -> n)
-			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", praatP.title, U"?");
+			Melder_sprint (prompt,300, U"You have objects and unsaved scripts! Do you still want to quit ", praatP.title.get(), U"?");
 		else
-			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", praatP.title, U"?");
+			Melder_sprint (prompt,300, U"You have unsaved scripts! Do you still want to quit ", praatP.title.get(), U"?");
 		SET_STRING (label, prompt)
 	} else if (theCurrentPraatObjects -> n) {
-		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", praatP.title, U"?");
+		Melder_sprint (prompt,300, U"You have objects in your list! Do you still want to quit ", praatP.title.get(), U"?");
 		SET_STRING (label, prompt)
 	} else {
 		praat_exit (0);
@@ -868,7 +868,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 				try {
 					praat_executeScriptFromFile (& messageFile, nullptr);
 				} catch (MelderError) {
-					Melder_flushError (praatP.title, U": message not completely handled.");
+					Melder_flushError (praatP.title.get(), U": message not completely handled.");
 				}
 			}
 			if (narg && pid) kill (pid, SIGUSR2);
@@ -881,7 +881,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		try {
 			praat_executeScriptFromFile (& messageFile, nullptr);
 		} catch (MelderError) {
-			Melder_flushError (praatP.title, U": message not completely handled.");
+			Melder_flushError (praatP.title.get(), U": message not completely handled.");
 		}
 		return 0;
 	}
@@ -894,9 +894,9 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		 */
 		Melder_sprint (text,500, U"Read from file... ", file -> path);
 		#ifdef __CYGWIN__
-			sendpraat (nullptr, Melder_peek32to8 (praatP.title), 0, Melder_peek32to8 (text));
+			sendpraat (nullptr, Melder_peek32to8 (praatP.title.get()), 0, Melder_peek32to8 (text));
 		#else
-			sendpraatW (nullptr, Melder_peek32toW (praatP.title), 0, Melder_peek32toW (text));
+			sendpraatW (nullptr, Melder_peek32toW (praatP.title.get()), 0, Melder_peek32toW (text));
 		#endif
 	}
 #elif macintosh
@@ -953,7 +953,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 		try {
 			praat_executeScriptFromText (message);
 		} catch (MelderError) {
-			Melder_flushError (praatP.title, U": message not completely handled.");
+			Melder_flushError (praatP.title.get(), U": message not completely handled.");
 		}
 		return 0;
 	}
@@ -1083,7 +1083,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	praatP.argc = argc;
 	praatP.argv = argv;
 	praatP.argumentNumber = 1;
-	const char32 *unknownCommandLineOption = nullptr;
+	autostring32 unknownCommandLineOption;
 
 	/*
 	 * Running Praat from the command line.
@@ -1181,7 +1181,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	/*
 	 * Construct a program name like "Praat" for file and directory names.
 	 */
-	str32cpy (programName, praatP.title);
+	str32cpy (programName, praatP.title.get());
 
 	/*
 	 * Construct a main-window title like "Praat 6.1".
@@ -1220,9 +1220,9 @@ void praat_init (const char32 *title, int argc, char **argv)
 		#if defined (UNIX)
 			Melder_sprint (name,256, U".", programName, U"-dir");   // for example .praat-dir
 		#elif defined (macintosh)
-			Melder_sprint (name,256, praatP.title, U" Prefs");   // for example Praat Prefs
+			Melder_sprint (name,256, praatP.title.get(), U" Prefs");   // for example Praat Prefs
 		#elif defined (_WIN32)
-			Melder_sprint (name,256, praatP.title);   // for example Praat
+			Melder_sprint (name,256, praatP.title.get());   // for example Praat
 		#endif
 		try {
 			#if defined (UNIX) || defined (macintosh)
@@ -1331,7 +1331,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 
 		trace (U"creating and installing the Objects window");
 		char32 objectWindowTitle [100];
-		Melder_sprint (objectWindowTitle,100, praatP.title, U" Objects");
+		Melder_sprint (objectWindowTitle,100, praatP.title.get(), U" Objects");
 		double x, y;
 		trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		Gui_getWindowPositioningBounds (& x, & y, nullptr, nullptr);
@@ -1412,7 +1412,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	trace (U"after picture window shows: locale is ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 
 	if (unknownCommandLineOption) {
-		Melder_fatal (U"Unrecognized command line option ", unknownCommandLineOption);
+		Melder_fatal (U"Unrecognized command line option ", unknownCommandLineOption.get());
 	}
 }
 
@@ -1427,7 +1427,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNa
 		try {
 			praat_executeScriptFromFile (& startUp, nullptr);
 		} catch (MelderError) {
-			Melder_flushError (praatP.title, U": start-up file ", & startUp, U" not completed.");
+			Melder_flushError (praatP.title.get(), U": start-up file ", & startUp, U" not completed.");
 		}
 	}
 }
@@ -1534,7 +1534,7 @@ void praat_run () {
 						try {
 							praat_executeScriptFromFile (& plugin, nullptr);
 						} catch (MelderError) {
-							Melder_flushError (praatP.title, U": plugin ", & plugin, U" contains an error.");
+							Melder_flushError (praatP.title.get(), U": plugin ", & plugin, U" contains an error.");
 						}
 						Melder_backgrounding = false;
 					}
@@ -1736,15 +1736,15 @@ void praat_run () {
 				praat_executeScriptFromText (thePraatStandAloneScriptText);
 				praat_exit (0);
 			} catch (MelderError) {
-				Melder_flushError (praatP.title, U": stand-alone script session interrupted.");
+				Melder_flushError (praatP.title.get(), U": stand-alone script session interrupted.");
 				praat_exit (-1);
 			}
 		} else if (praatP.hasCommandLineInput) {
 			try {
-				praat_executeCommandFromStandardInput (praatP.title);
+				praat_executeCommandFromStandardInput (praatP.title.get());
 				praat_exit (0);
 			} catch (MelderError) {
-				Melder_flushError (praatP.title, U": command line session interrupted.");
+				Melder_flushError (praatP.title.get(), U": command line session interrupted.");
 				praat_exit (-1);
 			}
 		} else {
@@ -1753,7 +1753,7 @@ void praat_run () {
 				praat_executeScriptFromFileNameWithArguments (theCurrentPraatApplication -> batchName.string);
 				praat_exit (0);
 			} catch (MelderError) {
-				Melder_flushError (praatP.title, U": script command <<",
+				Melder_flushError (praatP.title.get(), U": script command <<",
 					theCurrentPraatApplication -> batchName.string, U">> not completed.");
 				praat_exit (-1);
 			}

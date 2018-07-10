@@ -41,10 +41,10 @@ Thing_define (HyperPage, Editor) {
 	int top;
 	char32 *insideHeader, *middleHeader, *outsideHeader;
 	char32 *insideFooter, *middleFooter, *outsideFooter;
-	char32 *entryHint; double entryPosition;
-	struct { char32 *page; int top; } history [20];
+	autostring32 entryHint; double entryPosition;
+	struct { autostring32 page; int top; } history [20];
 	int historyPointer;
-	char32 *currentPageTitle;
+	autostring32 currentPageTitle;
 	GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 	void *praatApplication, *praatObjects, *praatPicture;
 	bool scriptErrorHasBeenNotified;
