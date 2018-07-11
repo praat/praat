@@ -350,7 +350,7 @@ autoFunctionTerms FunctionTerms_create (double xmin, double xmax, integer number
 	}
 }
 
-void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, bool allowTrailingZeros) {
+void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, conststring32 s, bool allowTrailingZeros) {
 	integer numberOfCoefficients;
 	autoNUMvector <double> numbers (NUMstring_to_numbers (s, & numberOfCoefficients), 1);
 	if (! allowTrailingZeros) {
@@ -633,7 +633,7 @@ autoPolynomial Polynomial_create (double xmin, double xmax, integer degree) {
 	}
 }
 
-autoPolynomial Polynomial_createFromString (double lxmin, double lxmax, const char32 *s) {
+autoPolynomial Polynomial_createFromString (double lxmin, double lxmax, conststring32 s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
 		FunctionTerms_initFromString (me.get(), lxmin, lxmax, s, 0);
@@ -791,7 +791,7 @@ void Polynomial_initFromRealRoots (Polynomial me, double *roots, integer numberO
 	}
 }
 
-autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, const char32 *s) {
+autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, conststring32 s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
 		integer numberOfRoots;
@@ -828,7 +828,7 @@ void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, int
 	my numberOfCoefficients = numberOfCoefficients;
 }
 
-autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, const char32 *s) {
+autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, conststring32 s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
 		integer numberOfTerms;
@@ -1010,7 +1010,7 @@ autoLegendreSeries LegendreSeries_create (double xmin, double xmax, integer numb
 	}
 }
 
-autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const char32 *s) {
+autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, conststring32 s) {
 	try {
 		autoLegendreSeries me = Thing_new (LegendreSeries);
 		FunctionTerms_initFromString (me.get(), xmin, xmax, s, 0);
@@ -1127,7 +1127,9 @@ static void NUMdcvector_extrema_im (dcomplex v [], integer lo, integer hi, doubl
 	}
 }
 
-void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax, const char32 *symbol, int fontSize, int garnish) {
+void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
+	conststring32 symbol, int fontSize, bool garnish)
+{
 	int oldFontSize = Graphics_inqFontSize (g);
 	double eps = 1e-6;
 
@@ -1470,7 +1472,7 @@ autoChebyshevSeries ChebyshevSeries_create (double lxmin, double lxmax, integer 
 	}
 }
 
-autoChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax, const char32 *s) {
+autoChebyshevSeries ChebyshevSeries_createFromString (double lxmin, double lxmax, conststring32 s) {
 	try {
 		autoChebyshevSeries me = Thing_new (ChebyshevSeries);
 		FunctionTerms_initFromString (me.get(), lxmin, lxmax, s, 0);
@@ -1768,7 +1770,7 @@ integer structSpline :: v_getOrder () {
 }
 
 /* Precondition: FunctionTerms part inited + degree */
-static void Spline_initKnotsFromString (Spline me, integer degree, const char32 *interiorKnots) {
+static void Spline_initKnotsFromString (Spline me, integer degree, conststring32 interiorKnots) {
 
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
@@ -1921,7 +1923,7 @@ autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer nu
 	}
 }
 
-autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, const char32 *coef, const char32 *interiorKnots) {
+autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots) {
 	try {
 		Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 		
@@ -1974,7 +1976,7 @@ autoISpline ISpline_create (double xmin, double xmax, integer degree, integer nu
 	}
 }
 
-autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, const char32 *coef, const char32 *interiorKnots) {
+autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots) {
 	try {
 		if (degree > Spline_MAXIMUM_DEGREE) {
 			Melder_throw (U"Degree should be <= 20.");

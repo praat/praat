@@ -75,7 +75,7 @@ autoCollection Collection_permuteItems (Collection me) {
 
 /****************** class OrderedOfString ******************/
 
-int OrderedOfString_append (StringList me, const char32 *append) {
+int OrderedOfString_append (StringList me, conststring32 append) {
 	try {
 		if (! append) {
 			return 1;    // BUG: lege string appenden??
@@ -143,7 +143,7 @@ double OrderedOfString_getFractionDifferent (StringList me, StringList thee) {
 	return my size == 0 ? 0.0 : (double) numberOfDifferences / my size;
 }
 
-integer OrderedOfString_indexOfItem_c (StringList me, const char32 *str) {
+integer OrderedOfString_indexOfItem_c (StringList me, conststring32 str) {
 	integer index = 0;
 	autoSimpleString s = SimpleString_create (str);
 
@@ -217,7 +217,7 @@ integer OrderedOfString_isSubsetOf (StringList me, StringList thee, integer *tra
 	return nStrings;
 }
 
-void OrderedOfString_removeOccurrences (StringList me, const char32 *search, bool use_regexp) {
+void OrderedOfString_removeOccurrences (StringList me, conststring32 search, bool use_regexp) {
 	if (! search) {
 		return;
 	}

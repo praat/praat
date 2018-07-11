@@ -41,6 +41,6 @@ Thing_define (CategoriesEditor, Editor) {
 		override;
 };
 
-autoCategoriesEditor CategoriesEditor_create (const char32 *title, Categories data);
+autoCategoriesEditor CategoriesEditor_create (conststring32 title, Categories data);
 
 #endif /* _CategoriesEditor_h_ */

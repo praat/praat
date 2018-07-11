@@ -184,7 +184,7 @@ void FormantModeler_drawCumulativeChiScores (FormantModeler me, Graphics g, doub
 
 void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g, double xmin, double xmax, double ymin, double ymax, int shiftDirection, integer fromFormant, integer toFormant, bool garnish);
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish);
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish);
 
 autoTable FormantModeler_to_Table_zscores (FormantModeler me, int useSigmaY);
 

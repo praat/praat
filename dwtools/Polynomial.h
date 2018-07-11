@@ -41,7 +41,7 @@
 
 void FunctionTerms_init (FunctionTerms me, double xmin, double xmax, integer numberOfCoefficients);
 
-void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, const char32 *s, bool allowTrailingZeros);
+void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, conststring32 s, bool allowTrailingZeros);
 
 autoFunctionTerms FunctionTerms_create (double xmin, double xmax, integer numberOfCoefficients);
 
@@ -95,7 +95,7 @@ Thing_define (Polynomial, FunctionTerms) {
 
 autoPolynomial Polynomial_create (double xmin, double xmax, integer degree);
 
-autoPolynomial Polynomial_createFromString (double xmin, double xmax, const char32 *s);
+autoPolynomial Polynomial_createFromString (double xmin, double xmax, conststring32 s);
 
 void Polynomial_scaleCoefficients_monic (Polynomial me);
 /* Make coefficent of leading term 1.0 */
@@ -112,10 +112,10 @@ dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z);
  * 	Polynomial is uses as a "buffer". We define it one and reuse it 
  */
 void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, integer numberOfTerms);
-autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, const char32 *s);
+autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, conststring32 s);
 
 void Polynomial_initFromRealRoots (Polynomial me, double *roots, integer numberOfRoots);
-autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, const char32 *s);
+autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, conststring32 s);
 
 double Polynomial_getArea (Polynomial me, double xmin, double xmax);
 
@@ -171,7 +171,7 @@ Thing_define (LegendreSeries, FunctionTerms) {
 
 autoLegendreSeries LegendreSeries_create (double xmin, double xmax, integer numberOfPolynomials);
 
-autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const char32 *s);
+autoLegendreSeries LegendreSeries_createFromString (double xmin, double xmax, conststring32 s);
 
 autoLegendreSeries LegendreSeries_getDerivative (LegendreSeries me);
 
@@ -194,7 +194,7 @@ autoRoots Polynomial_to_Roots_ev (Polynomial me);
 integer Roots_getNumberOfRoots (Roots me);
 
 void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
-	const char32 *symbol, int fontSize, int garnish);
+	conststring32 symbol, int fontSize, bool garnish);
 
 dcomplex Roots_getRoot (Roots me, integer index);
 
@@ -240,7 +240,7 @@ Thing_define (ChebyshevSeries, FunctionTerms) {
 
 autoChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, integer numberOfPolynomials);
 
-autoChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, const char32 *s);
+autoChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, conststring32 s);
 
 autoPolynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 
@@ -262,7 +262,7 @@ Thing_define (MSpline, Spline) {
 
 autoMSpline MSpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
 
-autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, const char32 *coef, const char32 *interiorKnots);
+autoMSpline MSpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots);
 
 Thing_define (ISpline, Spline) {
 	// overridden methods:
@@ -274,7 +274,7 @@ Thing_define (ISpline, Spline) {
 
 autoISpline ISpline_create (double xmin, double xmax, integer degree, integer numberOfInteriorKnots);
 
-autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, const char32 *coef, const char32 *interiorKnots);
+autoISpline ISpline_createFromStrings (double xmin, double xmax, integer degree, conststring32 coef, conststring32 interiorKnots);
 
 /****************** fit **********************************************/
 

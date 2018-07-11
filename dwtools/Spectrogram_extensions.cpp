@@ -235,7 +235,7 @@ double BandFilterSpectrogram_getFrequencyInHertz (BandFilterSpectrogram me, doub
 }
 
 // xmin, xmax in hz versus bark/mel or lin
-void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
+void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish) {
 	if (xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0) {
 		Melder_warning (U"Frequencies should be >= 0.");
 		return;
@@ -280,7 +280,9 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 	}
 }
 
-void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, int garnish) {
+void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g,
+	double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish)
+{
 	if (xmax <= xmin) {
 		xmin = my xmin; xmax = my xmax; 
 	}
@@ -317,7 +319,9 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, dou
 	}
 }
 
-void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram me, Graphics g, double time, double fmin, double fmax, double dBmin, double dBmax, int garnish) {
+void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram me, Graphics g,
+	double time, double fmin, double fmax, double dBmin, double dBmax, bool garnish)
+{
 	if (time < my xmin || time > my xmax) {
 		return;
 	}
@@ -375,7 +379,9 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 	}
 }
 
-void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, int garnish) {
+void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter,
+	double zmin, double zmax, bool yscale_dB, double ymin, double ymax, bool garnish)
+{
 	double xmin = zmin, xmax = zmax;
 	if (zmin >= zmax) {
 		zmin = my ymin;
@@ -454,7 +460,9 @@ autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, integer nt, 
 	}
 }
 
-void BandFilterSpectrogram_drawTimeSlice (BandFilterSpectrogram me, Graphics g, double t, double fmin, double fmax, double min, double max, const char32 *xlabel, int garnish) {
+void BandFilterSpectrogram_drawTimeSlice (BandFilterSpectrogram me, Graphics g,
+	double t, double fmin, double fmax, double min, double max, conststring32 xlabel, bool garnish)
+{
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -466,7 +474,9 @@ void BandFilterSpectrogram_drawTimeSlice (BandFilterSpectrogram me, Graphics g, 
 	}
 }
 
-void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, int garnish) {
+void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g,
+	bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, bool garnish)
+{
 	double xmin = zmin, xmax = zmax;
 	if (zmin >= zmax) {
 		zmin = my ymin; zmax = my ymax; // mel
@@ -514,7 +524,7 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 				for (integer iz = 1; iz <= n; iz ++) {
 					double x2 = xIsHertz ? xhz [iz] : xz [iz], y2 = y [iz];
 					if (isdefined (y2)) {
-						if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, &xo1, &yo1, &xo2, &yo2)) {
+						if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
 							Graphics_line (g, xo1, yo1, xo2, yo2);
 						}
 					}
@@ -524,11 +534,11 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 		} else {
 			double x1 = xIsHertz ? my v_frequencyToHertz (zl) : zl;
 			double x2 = xIsHertz ? my v_frequencyToHertz (zc) : zc;
-			if (NUMclipLineWithinRectangle (x1, 0, x2, 1, xmin, ymin, xmax, ymax, &xo1, &yo1, &xo2, &yo2)) {
+			if (NUMclipLineWithinRectangle (x1, 0, x2, 1, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
 				Graphics_line (g, xo1, yo1, xo2, yo2);
 			}
 			double x3 = xIsHertz ? my v_frequencyToHertz (zh) : zh;
-			if (NUMclipLineWithinRectangle (x2, 1, x3, 0, xmin, ymin, xmax, ymax, &xo1, &yo1, &xo2, &yo2)) {
+			if (NUMclipLineWithinRectangle (x2, 1, x3, 0, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
 				Graphics_line (g, xo1, yo1, xo2, yo2);
 			}
 		}

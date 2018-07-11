@@ -67,7 +67,7 @@ static void fixSelectionSpecification (ClassInfo *class1, integer *n1, ClassInfo
 	}
 }
 
-static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, ClassInfo class4, const char32 *title) {
+static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, ClassInfo class4, conststring32 title) {
 /*
  * An action command is fully specified by its environment (the selected classes) and its title.
  * Precondition:
@@ -83,19 +83,19 @@ static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassIn
 }
 
 void praat_addAction1_ (ClassInfo class1, integer n1,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 { praat_addAction4_ (class1, n1, nullptr, 0, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction2_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 { praat_addAction4_ (class1, n1, class2, n2, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction3_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 { praat_addAction4_ (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3, ClassInfo class4, integer n4,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 {
 	try {
 		int depth = flags, key = 0;
@@ -219,8 +219,8 @@ static void updateDynamicMenu () {
 	praat_show ();
 }
 
-void praat_addActionScript (const char32 *className1, integer n1, const char32 *className2, integer n2, const char32 *className3, integer n3,
-	const char32 *title, const char32 *after, integer depth, const char32 *script)
+void praat_addActionScript (conststring32 className1, integer n1, conststring32 className2, integer n2, conststring32 className3, integer n3,
+	conststring32 title, conststring32 after, integer depth, conststring32 script)
 {
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
@@ -305,7 +305,7 @@ void praat_addActionScript (const char32 *className1, integer n1, const char32 *
 	}
 }
 
-void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title) {
+void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title) {
 	try {
 		integer n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
@@ -322,8 +322,8 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 	}
 }
 
-void praat_removeAction_classNames (const char32 *className1, const char32 *className2,
-	const char32 *className3, const char32 *title)
+void praat_removeAction_classNames (conststring32 className1, conststring32 className2,
+	conststring32 className3, conststring32 title)
 {
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
@@ -344,7 +344,7 @@ void praat_removeAction_classNames (const char32 *className1, const char32 *clas
 	}
 }
 
-void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title) {
+void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title) {
 	try {
 		integer n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
@@ -366,8 +366,8 @@ void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 	}
 }
 
-void praat_hideAction_classNames (const char32 *className1, const char32 *className2,
-	const char32 *className3, const char32 *title)
+void praat_hideAction_classNames (conststring32 className1, conststring32 className2,
+	conststring32 className3, conststring32 title)
 {
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
@@ -387,7 +387,7 @@ void praat_hideAction_classNames (const char32 *className1, const char32 *classN
 	}
 }
 
-void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title) {
+void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title) {
 	try {
 		integer n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
@@ -409,8 +409,8 @@ void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 	}
 }
 
-void praat_showAction_classNames (const char32 *className1, const char32 *className2,
-	const char32 *className3, const char32 *title)
+void praat_showAction_classNames (conststring32 className1, conststring32 className2,
+	conststring32 className3, conststring32 title)
 {
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
@@ -457,13 +457,13 @@ void praat_sortActions () {
 	qsort (& theActions.at [1], theActions.size, sizeof (Praat_Command), compareActions);
 }
 
-static const char32 *numberString (int number) {
+static conststring32 numberString (int number) {
 	return number == 1 ? U"one" : number == 2 ? U"two" : number == 3 ? U"three" : U"any number of";
 }
-static const char32 *classString (ClassInfo klas) {
+static conststring32 classString (ClassInfo klas) {
 	return klas == classDaata ? U"" : klas -> className;
 }
-static const char32 *objectString (int number) {
+static conststring32 objectString (int number) {
 	return number == 1 ? U"object" : U"objects";
 }
 static bool allowExecutionHook (void *closure) {
@@ -713,7 +713,7 @@ void praat_saveToggledActions (MelderString *buffer) {
 	}
 }
 
-int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter) {
+int praat_doAction (conststring32 command, conststring32 arguments, Interpreter interpreter) {
 	integer i = 1;
 	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title.get(), command))) i ++;
 	if (i > theActions.size) return 0;   // not found
@@ -721,7 +721,7 @@ int praat_doAction (const char32 *command, const char32 *arguments, Interpreter 
 	return 1;
 }
 
-int praat_doAction (const char32 *command, integer narg, Stackel args, Interpreter interpreter) {
+int praat_doAction (conststring32 command, integer narg, Stackel args, Interpreter interpreter) {
 	integer i = 1;
 	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title.get(), command))) i ++;
 	if (i > theActions.size) return 0;   // not found
@@ -779,8 +779,8 @@ static bool actionHasFileNameArgument (Praat_Command command) {
 	return hasFileNameArgument;
 }
 
-static const char32 * getReturnType (Praat_Command command) {
-	const char32 *returnType =
+static conststring32 getReturnType (Praat_Command command) {
+	const conststring32 returnType =
 		Melder_nequ (command -> nameOfCallback, U"NEW1_", 5) ? U"PraatObject" :
 		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ? U"PraatObject" :
 		Melder_nequ (command -> nameOfCallback, U"REAL_", 5) ? U"double" :

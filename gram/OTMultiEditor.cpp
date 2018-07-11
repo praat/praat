@@ -175,7 +175,7 @@ void structOTMultiEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 static OTMulti drawTableau_grammar;
-static const char32 *drawTableau_form1, *drawTableau_form2;
+static conststring32 drawTableau_form1, drawTableau_form2;
 static bool drawTableau_constraintsAreDrawnVertically;
 static void drawTableau (Graphics g) {
 	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2, drawTableau_constraintsAreDrawnVertically, true);
@@ -210,13 +210,13 @@ void structOTMultiEditor :: v_draw () {
 	Graphics_setAtSignIsLink (graphics.get(), true);
 }
 
-int structOTMultiEditor :: v_goToPage (const char32 *title) {
+int structOTMultiEditor :: v_goToPage (conststring32 title) {
 	if (! title) return 1;
 	selectedConstraint = Melder_atoi (title);
 	return 1;
 }
 
-autoOTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar) {
+autoOTMultiEditor OTMultiEditor_create (conststring32 title, OTMulti grammar) {
 	try {
 		autoOTMultiEditor me = Thing_new (OTMultiEditor);
 		my data = grammar;

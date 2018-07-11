@@ -57,7 +57,7 @@ autoStrings Distributions_to_Strings_exact (Distributions me, integer column) {
 		thy strings = autostring32vector (total);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			integer number = my data [irow] [column];
-			const char32 *string = my rowLabels [irow].get();
+			conststring32 string = my rowLabels [irow].get();
 			if (! string)
 				Melder_throw (U"No string in row ", irow, U".");
 			for (integer i = 1; i <= number; i ++) {
@@ -76,7 +76,7 @@ autoDistributions Strings_to_Distributions (Strings me) {
 		autoDistributions thee = Distributions_create (my numberOfStrings, 1);
 		integer idist = 0;
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
-			const char32 *string = my strings [i].get();
+			conststring32 string = my strings [i].get();
 			integer where = 0;
 			integer j = 1;
 			for (; j <= idist; j ++)

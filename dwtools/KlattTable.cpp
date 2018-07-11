@@ -392,8 +392,8 @@ typedef struct structKlattFrame {
 	integer Gain0;	/* Overall gain, 60 dB is unity,    0 to   60 */
 } *KlattFrame;
 
-static const char32 *columnNames = U"f0 av f1 b1 f2 b2 f3 b3 f4 b4 f5 b5 f6 b6 fnz bnz fnp bnp ah kopen aturb tilt af skew a1 b1p a2 b2p a3 b3p a4 b4p a5 b5p a6 b6p anp ab avp gain";
-static const char32 *columnNamesA [KlattTable_NPAR + 1] = {U"", U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6", U"fnz", U"bnz", U"fnp", U"bnp", U"ah", U"kopen", U"aturb", U"tilt", U"af", U"skew", U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain"};
+static conststring32 columnNames = U"f0 av f1 b1 f2 b2 f3 b3 f4 b4 f5 b5 f6 b6 fnz bnz fnp bnp ah kopen aturb tilt af skew a1 b1p a2 b2p a3 b3p a4 b4p a5 b5p a6 b6p anp ab avp gain";
+static conststring32 columnNamesA [KlattTable_NPAR + 1] = {U"", U"f0", U"av", U"f1", U"b1", U"f2", U"b2", U"f3", U"b3", U"f4", U"b4", U"f5", U"b5", U"f6", U"b6", U"fnz", U"bnz", U"fnp", U"bnp", U"ah", U"kopen", U"aturb", U"tilt", U"af", U"skew", U"a1", U"b1p", U"a2", U"b2p", U"a3", U"b3p", U"a4", U"b4p", U"a5", U"b5p", U"a6", U"b6p", U"anp", U"ab", U"avp", U"gain"};
 
 static double DBtoLIN (integer dB) {
 	static double amptable [88] = {

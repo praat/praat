@@ -49,7 +49,7 @@ static autoDaata newAutoData () {
 	autoDaata data (Thing_new (Daata));
 	return data;
 }
-static int length (const char32 *s) {
+static int length (conststring32 s) {
 	int result = str32len (s);
 	Melder_free (s);
 	return result;
@@ -327,7 +327,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			MelderInfo_writeLine (NUMinvFisherQ (0.003, 1, 100000));
 		} break;
 		case kPraatTests::TIME_AUTOSTRING: {
-			const char32 *strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
+			conststring32 strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
 			int64 sumOfLengths = 0;
 			for (int64 i = 1; i <= n; i ++) {
 				int istring = i % 6;
@@ -338,7 +338,7 @@ int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, ch
 			MelderInfo_writeLine (sumOfLengths);
 		} break;
 		case kPraatTests::TIME_CHAR32: {
-			const char32 *strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
+			conststring32 strings [6] = { U"ghdg", U"jhd", U"hkfjjd", U"fhfj", U"jhksfd", U"hfjs" };
 			int64 sumOfLengths = 0;
 			for (int64 i = 1; i <= n; i ++) {
 				int istring = i % 6;

@@ -624,7 +624,7 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 	}
 }
 
-void Matrix_formula (Matrix me, const char32 *expression, Interpreter interpreter, Matrix target) {
+void Matrix_formula (Matrix me, conststring32 expression, Interpreter interpreter, Matrix target) {
 	try {
 		Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
@@ -641,7 +641,7 @@ void Matrix_formula (Matrix me, const char32 *expression, Interpreter interprete
 }
 
 void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
-	const char32 *expression, Interpreter interpreter, Matrix target)
+	conststring32 expression, Interpreter interpreter, Matrix target)
 {
 	try {
 		if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }

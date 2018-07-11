@@ -183,8 +183,14 @@ int64 Melder_movingReallocationsCount ();
 using char8 = unsigned char;
 using char16 = char16_t;
 using char32 = char32_t;
-using string32 = char32 *;
-using conststring32 = const char32 *;
+using mutablestring8 = char *;
+using mutablestring16 = char16 *;
+using mutablestringW = wchar_t *;
+using mutablestring32 = char32 *;
+using conststring8 = const char *;
+using conststring16 = const char16 *;
+using conststringW = const wchar_t *;
+using conststring32 = const char32 *;   // use this for whole null-terminated strings; use "const char32 *" for a pointer into a string
 
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
@@ -841,47 +847,47 @@ integer Melder_killReturns_inplace (char *text);
 	 Returns new length of string (equal to or less than old length).
 */
 
-size_t str32len_utf8  (const char32 *string, bool nativizeNewlines);
-size_t str32len_utf16 (const char32 *string, bool nativizeNewlines);
+size_t str32len_utf8  (conststring32 string, bool nativizeNewlines);
+size_t str32len_utf16 (conststring32 string, bool nativizeNewlines);
 
 extern "C" char32 * Melder_peek8to32 (const char *string);
-void Melder_8to32_inplace (const char *source, char32 *target, kMelder_textInputEncoding inputEncoding);
+void Melder_8to32_inplace (conststring8 source, mutablestring32 target, kMelder_textInputEncoding inputEncoding);
 	// errors: Text is not valid UTF-8.
-autostring32 Melder_8to32 (const char *string, kMelder_textInputEncoding inputEncoding);
+autostring32 Melder_8to32 (conststring8 string, kMelder_textInputEncoding inputEncoding);
 	// errors: Out of memory; Text is not valid UTF-8.
-autostring32 Melder_8to32 (const char *string);
+autostring32 Melder_8to32 (conststring8 string);
 	// errors: Out of memory; Text is not valid UTF-8.
 
-char32 * Melder_peek16to32 (const char16 *text);
-autostring32 Melder_16to32 (const char16 *text);
+conststring32 Melder_peek16to32 (conststring16 text);
+autostring32 Melder_16to32 (conststring16 text);
 
-extern "C" char * Melder_peek32to8 (const char32 *string);
-void Melder_32to8_inplace (const char32 *string, char *utf8);
-autostring8 Melder_32to8 (const char32 *string);
-autostring16 Melder_32to16 (const char32 *string);
+extern "C" conststring8 Melder_peek32to8 (conststring32 string);
+void Melder_32to8_inplace (conststring32 string, mutablestring8 utf8);
+autostring8 Melder_32to8 (conststring32 string);
+autostring16 Melder_32to16 (conststring32 string);
 	// errors: Out of memory.
 
-char16 * Melder_peek32to16 (const char32 *text, bool nativizeNewlines);
-extern "C" char16 * Melder_peek32to16 (const char32 *string);
+conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines);
+extern "C" conststring16 Melder_peek32to16 (conststring32 string);
 
 #ifdef _WIN32
-	inline static autostringW Melder_peek32toW (const char32 *string) { return (autostringW) Melder_peek32to16 (string); }
-	inline static autostringW Melder_32toW (const char32 *string) { return (autostringW) Melder_32to16 (string); }
-	inline static autostring32 Melder_peekWto32 (const wchar_t *string) { return Melder_peek16to32 ((const char16 *) string); }
-	inline static autostring32 Melder_Wto32 (const wchar_t *string) { return Melder_16to32 ((const char16 *) string); }
+	inline static autostringW Melder_peek32toW (conststring32 string) { return (autostringW) Melder_peek32to16 (string); }
+	inline static autostringW Melder_32toW (conststring32 string) { return (autostringW) Melder_32to16 (string); }
+	inline static autostring32 Melder_peekWto32 (conststringW string) { return Melder_peek16to32 ((conststring16) string); }
+	inline static autostring32 Melder_Wto32 (conststringW string) { return Melder_16to32 ((conststring16) string); }
 #endif
 
-void Melder_str32To8bitFileRepresentation_inplace (const char32 *string, char *utf8);
-void Melder_8bitFileRepresentationToStr32_inplace (const char *utf8, char32 *string);
-const void * Melder_peek32toCfstring (const char32 *string);
-void Melder_fwrite32to8 (const char32 *ptr, FILE *f);
+void Melder_str32To8bitFileRepresentation_inplace (conststring32 string, mutablestring8 utf8);
+void Melder_8bitFileRepresentationToStr32_inplace (conststring8 utf8, mutablestring32 string);
+const void * Melder_peek32toCfstring (conststring32 string);
+void Melder_fwrite32to8 (conststring32 string, FILE *f);
 
 #pragma mark - STRING TO NUMBER CONVERSION
 
-bool Melder_isStringNumeric (const char32 *string) noexcept;
-double Melder_a8tof (const char *string) noexcept;
-double Melder_atof (const char32 *string) noexcept;
-int64 Melder_atoi (const char32 *string) noexcept;
+bool Melder_isStringNumeric (conststring32 string) noexcept;
+double Melder_a8tof (conststring8 string) noexcept;
+double Melder_atof (conststring32 string) noexcept;
+int64 Melder_atoi (conststring32 string) noexcept;
 	/*
 	 * "3.14e-3" -> 3.14e-3
 	 * "15.6%" -> 0.156

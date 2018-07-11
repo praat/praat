@@ -30,7 +30,7 @@ autoDistributions Distributions_create (integer numberOfRows, integer numberOfCo
 
 void Distributions_peek (Distributions me, integer column, char32 **string, integer *row);
 
-double Distributions_getProbability (Distributions me, const char32 *string, integer column);
+double Distributions_getProbability (Distributions me, conststring32 string, integer column);
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, integer column);
 
 autoDistributions Distributions_addTwo (Distributions me, Distributions thee);

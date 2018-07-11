@@ -117,7 +117,7 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, integer
 	if (*tmax > my tmax) *tmax = my tmax;
 }
 
-static void checkTierSelection (TextGridEditor me, const char32 *verbPhrase) {
+static void checkTierSelection (TextGridEditor me, conststring32 verbPhrase) {
 	TextGrid grid = (TextGrid) my data;
 	if (my selectedTier < 1 || my selectedTier > grid -> tiers->size)
 		Melder_throw (U"To ", verbPhrase, U", first select a tier by clicking anywhere inside it.");
@@ -333,7 +333,7 @@ static void menu_cb_GetLabelOfInterval (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
 		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection);
-		const char32 *label = iinterval < 1 || iinterval > tier -> intervals.size ? U"" :
+		conststring32 label = iinterval < 1 || iinterval > tier -> intervals.size ? U"" :
 			tier -> intervals.at [iinterval] -> text.get();
 		Melder_information (label);
 	} else {
@@ -684,7 +684,7 @@ static void menu_cb_AlignmentSettings (TextGridEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Alignment settings", nullptr)
 		OPTIONMENU (language, U"Language", (int) Strings_findString (espeakdata_languages_names.get(), U"English (Great Britain)"))
 		for (integer i = 1; i <= espeakdata_languages_names -> numberOfStrings; i ++) {
-			OPTION ((const char32 *) espeakdata_languages_names -> strings [i].get());
+			OPTION ((conststring32) espeakdata_languages_names -> strings [i].get());
 		}
 		BOOLEAN (includeWords,    U"Include words",    my default_align_includeWords ())
 		BOOLEAN (includePhonemes, U"Include phonemes", my default_align_includePhonemes ())
@@ -738,7 +738,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 	Function anyTier = grid -> tiers->at [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
 		IntervalTier tier = (IntervalTier) anyTier;
-		static const char32 *boundarySaveText [3] { U"Move boundary to zero crossing", U"Move boundary to B", U"Move boundary to E" };
+		static const conststring32 boundarySaveText [3] { U"Move boundary to zero crossing", U"Move boundary to B", U"Move boundary to E" };
 		TextInterval left, right;
 		integer selectedLeftBoundary = getSelectedLeftBoundary (me);
 		if (! selectedLeftBoundary)
@@ -757,7 +757,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 		left -> xmax = right -> xmin = my startSelection = my endSelection = position;
 	} else {
 		TextTier tier = (TextTier) anyTier;
-		static const char32 *pointSaveText [3] { U"Move point to zero crossing", U"Move point to B", U"Move point to E" };
+		static const conststring32 pointSaveText [3] { U"Move point to zero crossing", U"Move point to B", U"Move point to E" };
 		TextPoint point;
 		integer selectedPoint = getSelectedPoint (me);
 		if (! selectedPoint)
@@ -1630,7 +1630,7 @@ void structTextGridEditor :: v_draw () {
 	v_updateMenuItems_file ();
 }
 
-static const char32 *characters [12] [10] = {
+static const conststring32 characters [12] [10] = {
 	{ U"ɑ", U"ɐ", U"ɒ", U"æ", U"ʙ", U"ɓ", U"β", U"ç", U"ɕ", U"ð" },
 	{ U"ɗ", U"ɖ", U"ɛ", U"ɜ", U"ə", U"ɢ", U"ɠ", U"ʛ", U"ɣ", U"ɤ" },
 	{ U"ˠ", U"ʜ", U"ɦ", U"ħ", U"ʰ", U"ɧ", U"ɪ", U"ɨ", U"ı", U"ɟ" },
@@ -2057,7 +2057,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 	int columnNumber = 1 + (int) (xWC * 10.0);
 	if (rowNumber < 1 || rowNumber > 12) return;
 	if (columnNumber < 1 || columnNumber > 10) return;
-	const char32 *character = characters [rowNumber-1] [columnNumber-1];
+	conststring32 character = characters [rowNumber-1] [columnNumber-1];
 	character += str32len (character) - 1;
 	if (our text) {
 		integer first = 0, last = 0;
@@ -2146,7 +2146,7 @@ void structTextGridEditor :: v_play (double tmin, double tmax) {
 
 void structTextGridEditor :: v_updateText () {
 	TextGrid grid = (TextGrid) our data;
-	const char32 *newText = U"";
+	conststring32 newText = U"";
 	trace (U"selected tier ", our selectedTier);
 	if (our selectedTier) {
 		IntervalTier intervalTier;
@@ -2276,7 +2276,7 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void TextGridEditor_init (TextGridEditor me, const char32 *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket)
+void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket)
 {
 	my spellingChecker = spellingChecker;   // set in time
 	my callbackSocket = Melder_strdup (callbackSocket);
@@ -2301,7 +2301,7 @@ void TextGridEditor_init (TextGridEditor me, const char32 *title, TextGrid grid,
 			U"to shift the starting time of the TextGrid to zero.");
 }
 
-autoTextGridEditor TextGridEditor_create (const char32 *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket) {
+autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		TextGridEditor_init (me.get(), title, grid, sound, ownSound, spellingChecker, callbackSocket);

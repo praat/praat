@@ -61,7 +61,7 @@ int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps);
 void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnish);
 /* reverse axis when min > max */
 
-void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark);
+void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark);
 
 autoPolygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, double ymin, double ymax, double level);
 /*

@@ -222,7 +222,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 #endif
 
 #if defined (linux) && ! defined (NO_GRAPHICS)
-	static void _lin_saveAsImageFile (Photo me, MelderFile file, const char32 *which) {
+	static void _lin_saveAsImageFile (Photo me, MelderFile file, conststring32 which) {
 		cairo_format_t format = CAIRO_FORMAT_ARGB32;
 		integer bytesPerRow = cairo_format_stride_for_width (format, my nx);   // likely to be my nx * 4
 		integer numberOfRows = my ny;
@@ -244,7 +244,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 #endif
 
 #ifdef _WIN32
-	static void _win_saveAsImageFile (Photo me, MelderFile file, const char32 *mimeType) {
+	static void _win_saveAsImageFile (Photo me, MelderFile file, conststring32 mimeType) {
 		Gdiplus::Bitmap gdiplusBitmap (my nx, my ny, PixelFormat32bppARGB);
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			for (integer icol = 1; icol <= my nx; icol ++) {

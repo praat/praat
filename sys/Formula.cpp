@@ -4385,7 +4385,7 @@ static void do_fileReadable () {
 }
 static void do_dateStr () {
 	time_t today = time (nullptr);
-	string32 newline;
+	mutablestring32 newline;
 	autostring32 date = Melder_8to32 (ctime (& today));
 	newline = str32chr (date.get(), U'\n');
 	if (newline) *newline = U'\0';

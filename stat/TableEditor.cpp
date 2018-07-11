@@ -143,13 +143,13 @@ void structTableEditor :: v_draw () {
 	 * Determine the width of the columns.
 	 */
 	for (integer icol = colmin; icol <= colmax; icol ++) {
-		const char32 *columnLabel = table -> columnHeaders [icol]. label.get();
+		conststring32 columnLabel = table -> columnHeaders [icol]. label.get();
 		columnWidth = Graphics_textWidth (graphics.get(), Melder_integer (icol));
 		if (! columnLabel) columnLabel = U"";
 		cellWidth = Graphics_textWidth (graphics.get(), columnLabel);
 		if (cellWidth > columnWidth) columnWidth = cellWidth;
 		for (integer irow = rowmin; irow <= rowmax; irow ++) {
-			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
+			conststring32 cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
 			cellWidth = Graphics_textWidth (graphics.get(), cell);
@@ -177,7 +177,7 @@ void structTableEditor :: v_draw () {
 	 */
 	for (integer icol = colmin; icol <= colmax; icol ++) {
 		double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
-		const char32 *columnLabel = table -> columnHeaders [icol]. label.get();
+		conststring32 columnLabel = table -> columnHeaders [icol]. label.get();
 		if (! columnLabel || columnLabel [0] == U'\0') columnLabel = U"?";
 		Graphics_text (graphics.get(), mid, rowmin - 2, icol);
 		Graphics_text (graphics.get(), mid, rowmin - 1, columnLabel);
@@ -195,7 +195,7 @@ void structTableEditor :: v_draw () {
 				Graphics_setColour (graphics.get(), Graphics_BLACK);
 			}
 			double mid = (columnLeft [icol - colmin] + columnRight [icol - colmin]) / 2;
-			const char32 *cell = Table_getStringValue_Assert (table, irow, icol);
+			conststring32 cell = Table_getStringValue_Assert (table, irow, icol);
 			Melder_assert (cell);
 			if (cell [0] == U'\0') cell = U"?";
 			Graphics_text (graphics.get(), mid, irow, cell);
@@ -312,7 +312,7 @@ void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"TableEditor help", U'?', menu_cb_TableEditorHelp);
 }
 
-autoTableEditor TableEditor_create (const char32 *title, Table table) {
+autoTableEditor TableEditor_create (conststring32 title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
 		Editor_init (me.get(), 0, 0, 700, 500, title, table);

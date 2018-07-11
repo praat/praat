@@ -73,8 +73,8 @@
 
 Thing_implement (ExperimentMFC, Daata, 7);
 
-static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char32 *fileNameTail,
-	double medialSilenceDuration, const char32 *name, autoSound *sound)
+static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring32 fileNameTail,
+	double medialSilenceDuration, conststring32 name, autoSound *sound)
 {
 	char32 fileNameBuffer [256], *fileNames = & fileNameBuffer [0];
 	Melder_sprint (fileNameBuffer,256, name);
@@ -495,13 +495,13 @@ void Categories_sort (Categories me) {
 
 double Categories_getEntropy (Categories me) {
 	integer numberOfTokens = 0;
-	const char32 *previousString = nullptr;
+	conststring32 previousString = nullptr;
 	double entropy = 0.0;
 	autoCategories thee = Data_copy (me);
 	Categories_sort (thee.get());
 	for (integer i = 1; i <= thy size; i ++) {
 		SimpleString s = thy at [i];
-		const char32 *string = s -> string.get();
+		conststring32 string = s -> string.get();
 		if (previousString && ! str32equ (string, previousString)) {
 			double p = (double) numberOfTokens / thy size;
 			entropy -= p * NUMlog2 (p);

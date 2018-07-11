@@ -29,7 +29,7 @@ Collection_define (SoundList, OrderedOf, Sound) {
 autoSoundList TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, integer tierNumber, bool preserveTimes);
 autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, integer tierNumber, bool preserveTimes);
 autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,
-	integer tierNumber, kMelder_string which, const char32 *text, bool preserveTimes);
+	integer tierNumber, kMelder_string which, conststring32 text, bool preserveTimes);
 
 void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	integer tierNumber, double tmin, double tmax, double fmin, double fmax,
@@ -38,6 +38,6 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 	double fmin, double fmax, bool showBoundaries, bool useTextStyles, bool garnish, bool speckle, kPitch_unit unit);
 
 void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer tierNumber, integer intervalNumber,
-	const char32 *languageName, bool includeWords, bool includePhonemes);
+	conststring32 languageName, bool includeWords, bool includePhonemes);
 
 /* End of file TextGrid_Sound.h */

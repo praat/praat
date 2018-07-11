@@ -40,7 +40,7 @@ static struct structData_Description theAutosegment_description [] = {
 	{ } };
 Data_Description structAutosegment :: s_description = & theAutosegment_description [0];
 
-autoAutosegment Autosegment_create (double tmin, double tmax, const char32 *label) {
+autoAutosegment Autosegment_create (double tmin, double tmax, conststring32 label) {
 	try {
 		autoAutosegment me = Thing_new (Autosegment);
 		Function_init (me.get(), tmin, tmax);

@@ -472,7 +472,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 	*/
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		if (my types [ipar] == Interpreter_BOOLEAN) {
-			string32 arg = & my arguments [ipar] [0];
+			mutablestring32 arg = & my arguments [ipar] [0];
 			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
 			    str32equ (arg, U"Yes") || str32equ (arg, U"On") || str32equ (arg, U"YES") || str32equ (arg, U"ON"))
 			{
@@ -486,7 +486,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 			}
 		} else if (my types [ipar] == Interpreter_CHOICE) {
 			int jpar;
-			string32 arg = & my arguments [ipar] [0];
+			mutablestring32 arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
 				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
 					Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
@@ -500,7 +500,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 				Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
 		} else if (my types [ipar] == Interpreter_OPTIONMENU) {
 			int jpar;
-			string32 arg = & my arguments [ipar] [0];
+			mutablestring32 arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
 				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)
 					Melder_throw (U"Unknown value \"", arg, U"\" for option menu \"", my parameters [ipar], U"\".");
@@ -522,7 +522,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 	while (size >= 1 && my parameters [size] [0] == '\0')
 		size --;   // ignore trailing fields without a variable name (button, comment)
 	for (int ipar = 1; ipar <= size; ipar ++) {
-		string32 p = my parameters [ipar];
+		mutablestring32 p = my parameters [ipar];
 		/*
 		 * Ignore buttons and comments again.
 		 */
@@ -565,7 +565,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 	 */
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		if (my types [ipar] == Interpreter_BOOLEAN) {
-			string32 arg = & my arguments [ipar] [0];
+			mutablestring32 arg = & my arguments [ipar] [0];
 			if (str32equ (arg, U"1") || str32equ (arg, U"yes") || str32equ (arg, U"on") ||
 			    str32equ (arg, U"Yes") || str32equ (arg, U"On") || str32equ (arg, U"YES") || str32equ (arg, U"ON"))
 			{
@@ -579,7 +579,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 			}
 		} else if (my types [ipar] == Interpreter_CHOICE) {
 			int jpar;
-			string32 arg = & my arguments [ipar] [0];
+			mutablestring32 arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
 				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
 					Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
@@ -593,7 +593,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 				Melder_throw (U"Unknown value \"", arg, U"\" for choice \"", my parameters [ipar], U"\".");
 		} else if (my types [ipar] == Interpreter_OPTIONMENU) {
 			int jpar;
-			string32 arg = & my arguments [ipar] [0];
+			mutablestring32 arg = & my arguments [ipar] [0];
 			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
 				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)
 					Melder_throw (U"Unknown value \"", arg, U"\" for option menu \"", my parameters [ipar], U"\".");
@@ -609,21 +609,21 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 	}
 }
 
-static void Interpreter_addNumericVariable (Interpreter me, const char32 *key, double value) {
+static void Interpreter_addNumericVariable (Interpreter me, conststring32 key, double value) {
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
 	my variablesMap [key] = variable.move();
 	variable.releaseToAmbiguousOwner();
 }
 
-static void Interpreter_addStringVariable (Interpreter me, const char32 *key, conststring32 value) {
+static void Interpreter_addStringVariable (Interpreter me, conststring32 key, conststring32 value) {
 	autoInterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_dup (value);
 	my variablesMap [key] = variable.move();
 	variable.releaseToAmbiguousOwner();
 }
 
-InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) {
+InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key) {
 	Melder_assert (key);
 	auto it = my variablesMap. find (key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key);
 	if (it != my variablesMap. end()) {
@@ -633,7 +633,7 @@ InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key) 
 	}
 }
 
-InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *key) {
+InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key) {
 	Melder_assert (key);
 	const char32 *variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
@@ -921,7 +921,7 @@ inline static void NumericMatrixVariable_divide (InterpreterVariable variable, n
 }
 
 static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
-	char32 **lines, integer numberOfLines, integer& lineNumber, integer callStack [], int& callDepth)
+	char32 * const *lines, integer numberOfLines, integer& lineNumber, integer callStack [], int& callDepth)
 {
 	/*
 		Modern type of procedure calls, with comma separation, quoted strings, and array support.
@@ -974,7 +974,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 				MelderString_empty (& argument);
 				while (Melder_isHorizontalSpace (*p)) p ++;
 				while (Melder_isHorizontalSpace (*q)) q ++;
-				char32 *parameterName = q;
+				const char32 *parameterName = q;
 				while (Melder_staysWithinInk (*q) && *q != U',' && *q != U')') q ++;   // collect parameter name
 				int expressionDepth = 0;
 				for (; *p; p ++) {
@@ -1064,7 +1064,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 	if (iline > numberOfLines) Melder_throw (U"Procedure \"", callName, U"\" not found.");
 }
 static void Interpreter_do_oldProcedureCall (Interpreter me, char32 *command,
-	char32 **lines, integer numberOfLines, integer& lineNumber, integer callStack [], int& callDepth)
+	char32 * const *lines, integer numberOfLines, integer& lineNumber, integer callStack [], int& callDepth)
 {
 	/*
 		Old type of procedure calls, with space separation, unquoted strings, and no array support.

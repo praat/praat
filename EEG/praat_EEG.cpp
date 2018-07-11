@@ -71,7 +71,7 @@ DO
 	STRING_ONE (EEG)
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
-		const char32 *result = my channelNames [channelNumber].get();
+		conststring32 result = my channelNames [channelNumber].get();
 	STRING_ONE_END
 }
 
@@ -452,7 +452,7 @@ DO
 	STRING_ONE (ERP)
 		if (channelNumber > my ny)
 			Melder_throw (me, U": there are only ", my ny, U" channels.");
-		const char32 *result = my channelNames [channelNumber].get();
+		conststring32 result = my channelNames [channelNumber].get();
 	STRING_ONE_END
 }
 
@@ -627,7 +627,7 @@ DO
 	STRING_ONE (ERPTier)
 		if (channelNumber > my numberOfChannels)
 			Melder_throw (me, U": there are only ", my numberOfChannels, U" channels.");
-		const char32 *result = my channelNames [channelNumber].get();
+		conststring32 result = my channelNames [channelNumber].get();
 	STRING_ONE_END
 }
 
@@ -728,8 +728,8 @@ DO
 
 // MARK: - file recognizers
 
-static autoDaata bdfFileRecognizer (integer nread, const char * /* header */, MelderFile file) {
-	const char32 *fileName = MelderFile_name (file);
+static autoDaata bdfFileRecognizer (integer nread, const char [] /* header */, MelderFile file) {
+	conststring32 fileName = MelderFile_name (file);
 	bool isBdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".bdf", false);
 	bool isEdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".edf", false);
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return autoDaata ();

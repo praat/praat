@@ -515,8 +515,8 @@ static char32 *shortcut_escape (char32 c, int *flag_param, int emit);
  * some of the structure of the compiled regexp.
  *----------------------------------------------------------------------*/
 
-regexp *CompileRE_throwable (const char32 *exp, int defaultFlags) {
-	const char32 *compileMessage;
+regexp *CompileRE_throwable (conststring32 exp, int defaultFlags) {
+	conststring32 compileMessage;
 	regexp *compiledRE = CompileRE (exp, & compileMessage, defaultFlags);
 	if (compiledRE == NULL) {
 		Melder_throw (U"Regular expression: ", compileMessage, U".");
@@ -524,7 +524,7 @@ regexp *CompileRE_throwable (const char32 *exp, int defaultFlags) {
 	return compiledRE;
 }
 
-regexp *CompileRE (const char32 *exp, const char32 **errorText, int defaultFlags) {
+regexp *CompileRE (conststring32 exp, conststring32 *errorText, int defaultFlags) {
 
 	regexp *comp_regex = NULL;
 	char32 *scan;
@@ -2254,9 +2254,9 @@ static char32 *shortcut_escape (
     int            emit) {
 
 	char32 *klas   = NULL;
-	static const char32 *codes = U"ByYwWdDlLsS";
+	static conststring32 codes = U"ByYwWdDlLsS";
 	char32 *ret_val = (char32 *) 1; /* Assume success. */
-	const char32 *valid_codes;
+	conststring32 valid_codes;
 
 	if (emit == CHECK_CLASS_ESCAPE) {
 		valid_codes = codes + 5; /* \B, \y, \Y, \w and \W are not allowed in classes */
@@ -3819,7 +3819,7 @@ static char32 *next_ptr (char32 *ptr) {
 **  To give the caller a chance to react to this the function returns False
 **  on any error. The substitution will still be executed.
 */
-int SubstituteRE (const regexp *prog, const char32 *source, char32 *dest, int max, int *errorType) {
+int SubstituteRE (const regexp *prog, conststring32 source, char32 *dest, int max, int *errorType) {
 
 	const char32 *src;
 	const char32 *src_alias;
@@ -3970,7 +3970,7 @@ static void adjustcase (char32 *str, int len, char32 chgcase) {
  * reg_error
  *----------------------------------------------------------------------*/
 
-static void reg_error (const char32 *str) {
+static void reg_error (conststring32 str) {
 	Melder_appendError (U"Internal error processing regular expression: ", str);
 }
 

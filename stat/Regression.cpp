@@ -68,7 +68,7 @@ void Regression_init (Regression me) {
 	//my parameters = Ordered_create ();
 }
 
-void Regression_addParameter (Regression me, const char32 *label, double minimum, double maximum, double value) {
+void Regression_addParameter (Regression me, conststring32 label, double minimum, double maximum, double value) {
 	try {
 		autoRegressionParameter thee = Thing_new (RegressionParameter);
 		thy label = Melder_dup (label);
@@ -81,7 +81,7 @@ void Regression_addParameter (Regression me, const char32 *label, double minimum
 	}
 }
 
-integer Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName) {
+integer Regression_getFactorIndexFromFactorName_e (Regression me, conststring32 factorName) {
 	for (integer iparm = 1; iparm <= my parameters.size; iparm ++) {
 		RegressionParameter parm = my parameters.at [iparm];
 		if (Melder_equ (factorName, parm -> label.get())) return iparm;

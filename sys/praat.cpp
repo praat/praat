@@ -229,7 +229,7 @@ autoCollection praat_getSelectedObjects () {
 
 char32 *praat_name (int IOBJECT) { return str32chr (FULL_NAME, U' ') + 1; }
 
-void praat_write_do (UiForm dia, const char32 *extension) {
+void praat_write_do (UiForm dia, conststring32 extension) {
 	static MelderString defaultFileName { };
 	if (extension && str32chr (extension, '.')) {
 		/*
@@ -325,13 +325,13 @@ static void praat_new_unpackCollection (autoCollection me, const char32* myName)
 	for (integer idata = 1; idata <= my size; idata ++) {
 		autoDaata object = autoDaata ((Daata) my at [idata]);
 		my at [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
-		const char32 *name = object -> name ? object -> name.get() : myName;
+		conststring32 name = object -> name ? object -> name.get() : myName;
 		Melder_assert (name);
 		praat_new (object.move(), name);   // recurse
 	}
 }
 
-void praat_newWithFile (autoDaata me, MelderFile file, const char32 *myName) {
+void praat_newWithFile (autoDaata me, MelderFile file, conststring32 myName) {
 	if (! me)
 		Melder_throw (U"No object was put into the list.");
 
@@ -469,7 +469,7 @@ static void gui_cb_list_selectionChanged (Thing /* boss */, GuiList_SelectionCha
 	praat_show ();
 }
 
-void praat_list_renameAndSelect (int position, const char32 *name) {
+void praat_list_renameAndSelect (int position, conststring32 name) {
 	if (! theCurrentPraatApplication -> batch) {
 		GuiList_replaceItem (praatList_objects, name, position);   // void if name equal
 		if (! Melder_backgrounding)
@@ -773,7 +773,7 @@ void praat_dataChanged (Daata object) {
 	}
 }
 
-static void helpProc (const char32 *query) {
+static void helpProc (conststring32 query) {
 	if (theCurrentPraatApplication -> batch) {
 		Melder_flushError (U"Cannot view manual from batch.");
 		return;
@@ -963,7 +963,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 	}
 #endif
 
-static const char32 * thePraatStandAloneScriptText = nullptr;
+static conststring32 thePraatStandAloneScriptText = nullptr;
 
 void praat_setStandAloneScriptText (const char32 *text) {
 	thePraatStandAloneScriptText = text;
@@ -1416,7 +1416,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	}
 }
 
-static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNameHead, const char32 *fileNameTail) {
+static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNameHead, conststring32 fileNameTail) {
 	char32 name [256];
 	Melder_sprint (name,256, fileNameHead, programName, fileNameTail);
 	if (! MelderDir_isNull (startUpDirectory)) {   // should not occur on modern systems

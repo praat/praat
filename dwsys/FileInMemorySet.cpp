@@ -76,7 +76,7 @@ autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& li
 	}
 }
 
-autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *fileGlobber) {
+autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 fileGlobber) {
 	try {
 		structMelderDir parent { };
 		Melder_pathToDir (dirpath, & parent);
@@ -111,7 +111,7 @@ autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemo
 	
 }
 
-autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
+autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
 	try {
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
@@ -127,7 +127,7 @@ autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_st
 	}
 }
 
-autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
+autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
 	try {
 		autoFileInMemorySet thee = Thing_new (FileInMemorySet);
 		for (integer ifile = 1; ifile <= my size; ifile ++) {
@@ -142,7 +142,7 @@ autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_strin
 	}
 }
 
-void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer numberOfBytesPerLine) {
+void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer numberOfBytesPerLine) {
 	autoMelderString one_fim;
 	MelderInfo_writeLine (U"#include \"FileInMemorySet.h\"");
 	MelderInfo_writeLine (U"#include \"melder.h\"\n");
@@ -162,7 +162,7 @@ void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer
 	MelderInfo_writeLine (U"}\n\n");
 }
 
-void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const char32 *name, integer numberOfBytesPerLine)
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, conststring32 name, integer numberOfBytesPerLine)
 {
 	if (index < 1 || index > my size) return;
 	MelderInfo_writeLine (U"#include \"FileInMemory.h\"");
@@ -181,7 +181,7 @@ void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const
 	MelderInfo_writeLine (U"autoFileInMemory ", name, U" = create_new_object ();");
 }
 
-integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id) {
+integer FileInMemorySet_getIndexFromId (FileInMemorySet me, conststring32 id) {
 	integer index = 0;
 	for (integer i = 1; i <= my size; i ++) {
 		FileInMemory fim = (FileInMemory) my at [i];
@@ -193,7 +193,7 @@ integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id) {
 	return index;
 }
 
-integer FileInMemorySet_lookUp (FileInMemorySet me, const char32 *path) {
+integer FileInMemorySet_lookUp (FileInMemorySet me, conststring32 path) {
 	integer index = 0;
 	for (integer i = 1; i <= my size; i ++) {
 		FileInMemory fim = (FileInMemory) my at [i];
@@ -205,7 +205,7 @@ integer FileInMemorySet_lookUp (FileInMemorySet me, const char32 *path) {
 	return index;
 }
 
-integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, const char32 *criterion) {
+integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion) {
 	integer numberOfMatches = 0;
 	for (integer ifile = 1; ifile <= my size; ifile ++) {
 		FileInMemory fim = static_cast <FileInMemory> (my at [ifile]);
@@ -216,7 +216,7 @@ integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_st
 	return numberOfMatches;
 }
 
-bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name) {
+bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name) {
 	bool match = false;
 	autoMelderString regex;
 	for (integer i = 1; i <= my size; i ++) {
@@ -247,7 +247,7 @@ autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me) {
 	}
 }
 
-char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, integer *numberOfBytes) {
+char * FileInMemorySet_getCopyOfData (FileInMemorySet me, conststring32 id, integer *numberOfBytes) {
 	*numberOfBytes = 0;
 	integer index = FileInMemorySet_getIndexFromId (me, id);
 	if (index == 0) {
@@ -264,7 +264,7 @@ char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, inte
 	return data;
 }
 
-const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, integer *numberOfBytes) {
+const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, integer *numberOfBytes) {
 	*numberOfBytes = 0;
 	integer index = FileInMemorySet_getIndexFromId (me, id);
 	if (index == 0) {

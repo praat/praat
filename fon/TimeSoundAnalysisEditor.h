@@ -74,7 +74,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 };
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me,
-	const char32 *title, Function data, Sampled sound, bool ownSound);
+	conststring32 title, Function data, Sampled sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);

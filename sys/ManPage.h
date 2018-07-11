@@ -24,7 +24,7 @@
 
 typedef struct structManPage_Paragraph {
 	enum kManPage_type type;
-	const char32 *text;
+	conststring32 text;
 	double width, height;
 	void (*draw) (Graphics g);
 } *ManPage_Paragraph;

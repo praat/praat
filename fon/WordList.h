@@ -25,7 +25,7 @@
 autoWordList Strings_to_WordList (Strings me);
 autoStrings WordList_to_Strings (WordList me);
 
-bool WordList_hasWord (WordList me, const char32 *word);
+bool WordList_hasWord (WordList me, conststring32 word);
 
 /* End of file WordList.h */
 #endif

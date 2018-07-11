@@ -108,8 +108,8 @@ FORM (INFO_DataModeler_getParameterStatus, U"DataModeler: Get parameter status",
 DO
 	STRING_ONE (DataModeler)
 		int status = DataModeler_getParameterStatus (me, parameterNumber);
-		const char32 *result = status == DataModeler_PARAMETER_FREE ? U"Free" : (status == DataModeler_PARAMETER_FIXED ? U"Fixed" :
-		U"Undefined");
+		conststring32 result = ( status == DataModeler_PARAMETER_FREE ? U"Free" :
+			status == DataModeler_PARAMETER_FIXED ? U"Fixed" : U"Undefined" );
 	STRING_ONE_END
 }
 
@@ -202,7 +202,7 @@ FORM (INFO_DataModeler_getDataPointStatus, U"DataModeler: Get data point status"
 DO
 	STRING_ONE (DataModeler)
 		int status = DataModeler_getDataPointStatus (me, index);
-		const char32 *result = status == DataModeler_DATA_INVALID ? U"Invalid" : U"Valid";
+		conststring32 result = ( status == DataModeler_DATA_INVALID ? U"Invalid" : U"Valid" );
 	STRING_ONE_END
 }
 
@@ -651,7 +651,7 @@ FORM (INFO_FormantModeler_getDataPointStatus, U"FormantModeler: Get data point s
 DO
 	INTEGER_ONE (FormantModeler)
 		int status = FormantModeler_getDataPointStatus (me, formantNumber, index);
-		const char32 *result = status == DataModeler_DATA_INVALID ? U"Invalid" : U"Valid";
+		conststring32 result = ( status == DataModeler_DATA_INVALID ? U"Invalid" : U"Valid" );
 	INTEGER_ONE_END (U"")
 }
 
@@ -713,8 +713,10 @@ FORM (INFO_FormantModeler_getParameterStatus, U"FormantModeler: Get parameter st
 DO
 	STRING_ONE (FormantModeler)
 		int status = FormantModeler_getParameterStatus (me, formantNumber, parameterNumber);
-		const char32 *result = Melder_cat (status == DataModeler_PARAMETER_FREE ? U"Free" : (status == DataModeler_PARAMETER_FIXED ? U"Fixed" :
-		U"Undefined"), U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")");
+		conststring32 result = Melder_cat (
+			status == DataModeler_PARAMETER_FREE ? U"Free" : status == DataModeler_PARAMETER_FIXED ? U"Fixed" : U"Undefined",
+			U" (= status of parameter ", parameterNumber, U" for F", formantNumber, U")"
+		);
 	STRING_ONE_END
 }
 

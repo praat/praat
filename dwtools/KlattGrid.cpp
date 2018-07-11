@@ -438,7 +438,7 @@ static void alternatingSummer_drawConnections (Graphics g, double x, double y, d
 }
 
 static void draw_oneSection (Graphics g, double xmin, double xmax, double ymin, double ymax,
-                             const char32 *line1, const char32 *line2, const char32 *line3)
+	conststring32 line1, conststring32 line2, conststring32 line3)
 {
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	integer numberOfTextLines = 0;
@@ -661,7 +661,7 @@ Thing_implement (PhonationGrid, Function, 0);
 
 void structPhonationGrid :: v_info () {
 	structDaata :: v_info ();
-	const char32 *in1 = U"  ", *in2 = U"    ";
+	conststring32 in1 = U"  ", in2 = U"    ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
 	MelderInfo_writeLine (in2, U"End time:       ", xmax, U" seconds");
@@ -1276,7 +1276,7 @@ static integer Ordered_getNumberOfAmplitudePoints (OrderedOf<structIntensityTier
 	return t -> points.size;
 }
 
-static void FormantGrid_info (FormantGrid me, OrderedOf<structIntensityTier>* amplitudes, const char32 *in1, const char32 *in2) {
+static void FormantGrid_info (FormantGrid me, OrderedOf<structIntensityTier>* amplitudes, conststring32 in1, conststring32 in2) {
 	integer nformants = my formants.size;
 	integer namplitudes = ( amplitudes ? amplitudes->size : 0 );
 	integer nmax = MAX (nformants, namplitudes);
@@ -1298,7 +1298,7 @@ static void FormantGrid_info (FormantGrid me, OrderedOf<structIntensityTier>* am
 
 void structVocalTractGrid :: v_info () {
 	our structDaata :: v_info ();
-	const char32 *in1 = U"  ", *in2 = U"    ", *in3 = U"      ";
+	conststring32 in1 = U"  ", in2 = U"    ", in3 = U"      ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", our xmin, U" seconds");
 	MelderInfo_writeLine (in2, U"End time:       ", our xmax, U" seconds");
@@ -1346,7 +1346,7 @@ static void VocalTractGrid_CouplingGrid_drawCascade_inplace (VocalTractGrid me, 
 	integer numberOfTrachealFormants = thee ? thy tracheal_formants -> formants.size : 0;
 	integer numberOfTrachealAntiFormants = thee ? thy tracheal_antiformants -> formants.size : 0;
 	double x1, y1 = ymin, x2, y2 = ymax, dx, ddx = 0.2, ymid = (y1 + y2) / 2.0;
-	const char32 *text [6] = { 0, U"TF", U"TAF", U"NF", U"NAF", U""};
+	conststring32 text [6] = { 0, U"TF", U"TAF", U"NF", U"NAF", U""};
 	integer nf [6] = { 0, numberOfTrachealFormants, numberOfTrachealAntiFormants, numberOfNasalFormants, numberOfNasalAntiFormants, numberOfOralFormants };
 	integer numberOfXSections = 5, nsx = 0;
 	autoMelderString ff, fb;
@@ -1415,7 +1415,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 	integer numberOfUpperPartFormants = numberOfNasalFormants + ( numberOfOralFormants > 0 ? 1 : 0 );
 	integer numberOfLowerPartFormants = numberOfFormants - numberOfUpperPartFormants;
 	double ddy = dy < 0 ? 0 : dy, x1, y1, x2, y2, x3, r, ymid;
-	const char32 *text [5] = { nullptr, U"Nasal", U"", U"", U"Tracheal" };
+	conststring32 text [5] = { nullptr, U"Nasal", U"", U"", U"Tracheal" };
 	integer nffrom [5] = { 0, 1, 1, 2, 1 };
 	integer nfto [5] = { 0, numberOfNasalFormants, ( numberOfOralFormants > 0 ? 1 : 0 ), numberOfOralFormants, numberOfTrachealFormants };
 	autoMelderString fba;
@@ -1450,7 +1450,7 @@ static void VocalTractGrid_CouplingGrid_drawParallel_inplace (VocalTractGrid me,
 		for (integer i = ifrom; i <= ito; i ++) {
 			y1 = y2 - dy;
 			ymid = (y1 + y2) / 2.0;
-			const char32 *fi = Melder_integer (i);
+			conststring32 fi = Melder_integer (i);
 			MelderString_copy (&fba, U"A", fi, U" F", fi, U" B", fi);
 			draw_oneSection (g, x1, x2, y1, y2, text [isection], fba.string, nullptr);
 			Graphics_line (g, x3, ymid, x1, ymid); // to the left
@@ -1784,7 +1784,7 @@ Thing_implement (CouplingGrid, Function, 0);
 
 void structCouplingGrid :: v_info () {
 	structDaata :: v_info ();
-	const char32 *in1 = U"  ", *in2 = U"    ", *in3 = U"      ";
+	conststring32 in1 = U"  ", in2 = U"    ", in3 = U"      ";
 	MelderInfo_writeLine (in1, U"Time domain:");
 	MelderInfo_writeLine (in2, U"Start time:     ", xmin, U" seconds");
 	MelderInfo_writeLine (in2, U"End time:       ", xmax, U" seconds");
@@ -1948,7 +1948,7 @@ static void FricationGrid_draw_inside (FricationGrid me, Graphics g, double xmin
 	y2 = ymax;
 	autoMelderString fba;
 	for (integer i = 1; i <= numberOfParts; i ++) {
-		const char32 *fi = Melder_integer (i + 1);
+		conststring32 fi = Melder_integer (i + 1);
 		y1 = y2 - dy;
 		if (i < numberOfParts) {
 			MelderString_copy (&fba, U"A", fi, U" F", fi, U" B", fi);
@@ -2427,17 +2427,17 @@ void KlattGrid_remove##Name##Points (KlattGrid me, int formantType, integer ifor
 KlattGrid_QUERY_ADD_REMOVE (Formant)
 KlattGrid_QUERY_ADD_REMOVE (Bandwidth)
 
-void KlattGrid_formula_frequencies (KlattGrid me, int formantType, const char32 *expression, Interpreter interpreter) {
+void KlattGrid_formula_frequencies (KlattGrid me, int formantType, conststring32 expression, Interpreter interpreter) {
 	autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
 	FormantGrid_formula_frequencies (fg->get(), expression, interpreter, nullptr);
 }
 
-void KlattGrid_formula_bandwidths (KlattGrid me, int formantType, const char32 *expression, Interpreter interpreter) {
+void KlattGrid_formula_bandwidths (KlattGrid me, int formantType, conststring32 expression, Interpreter interpreter) {
 	autoFormantGrid* fg = KlattGrid_getAddressOfFormantGrid (me, formantType);
 	FormantGrid_formula_bandwidths (fg->get(), expression, interpreter, nullptr);
 }
 
-void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, const char32 *expression, Interpreter interpreter) {
+void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, conststring32 expression, Interpreter interpreter) {
 	try {
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		for (integer irow = 1; irow <= ordered->size; irow ++) {

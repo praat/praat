@@ -42,7 +42,7 @@ autoPitchTier PitchTier_create (double tmin, double tmax) {
 }
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, bool garnish, const char32 *method)
+	double fmin, double fmax, bool garnish, conststring32 method)
 {
 	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method, U"Frequency (Hz)");
 }

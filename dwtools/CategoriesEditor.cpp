@@ -41,7 +41,7 @@
 
 Thing_implement (CategoriesEditor, Editor, 0);
 
-const char32 *CategoriesEditor_EMPTYLABEL = U"(empty)";
+static conststring32 CategoriesEditor_EMPTYLABEL = U"(empty)";
 
 static void menu_cb_help (CategoriesEditor /* me */, EDITOR_ARGS_DIRECT) {
 	Melder_help (U"CategoriesEditor");
@@ -147,9 +147,8 @@ static void notifyNumberOfSelected (CategoriesEditor me) {
 	if (tmp.string) GuiLabel_setText (my outOfView, tmp.string);
 }
 
-static void updateUndoAndRedoMenuItems (CategoriesEditor me)
-{
-	const char32 *commandName;
+static void updateUndoAndRedoMenuItems (CategoriesEditor me) {
+	conststring32 commandName;
 
 	/*
 	 * Menu item `Undo`.
@@ -336,9 +335,9 @@ void structCategoriesEditorCommand :: v_destroy () noexcept {
 	CategoriesEditorCommand_Parent :: v_destroy ();
 }
 
-static void CategoriesEditorCommand_init (CategoriesEditorCommand me, const char32 *name, Thing boss,
-        Command_Callback execute, Command_Callback undo, integer /*nCategories*/, integer nSelected) {
-
+static void CategoriesEditorCommand_init (CategoriesEditorCommand me, conststring32 name, Thing boss,
+	Command_Callback execute, Command_Callback undo, integer /*nCategories*/, integer nSelected)
+{
 	my nSelected = nSelected;
 	Command_init (me, name, boss, execute, undo);
 	my categories = Categories_create();
@@ -764,7 +763,7 @@ void structCategoriesEditor :: v_dataChanged () {
 
 #pragma mark -
 
-autoCategoriesEditor CategoriesEditor_create (const char32 *title, Categories data) {
+autoCategoriesEditor CategoriesEditor_create (conststring32 title, Categories data) {
 	try {
 		autoCategoriesEditor me = Thing_new (CategoriesEditor);
 		Editor_init (me.get(), 20, 40, 600, 600, title, data);

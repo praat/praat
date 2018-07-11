@@ -43,11 +43,11 @@ Thing_implement (TimeSoundAnalysisEditor, TimeSoundEditor, 0);
 #include "prefs_copyToInstance.h"
 #include "TimeSoundAnalysisEditor_prefs.h"
 
-static const char32 * theMessage_Cannot_compute_spectrogram = U"The spectrogram is not defined at the edge of the sound.";
-static const char32 * theMessage_Cannot_compute_pitch = U"The pitch contour is not defined at the edge of the sound.";
-static const char32 * theMessage_Cannot_compute_formant = U"The formants are not defined at the edge of the sound.";
-static const char32 * theMessage_Cannot_compute_intensity = U"The intensity curve is not defined at the edge of the sound.";
-static const char32 * theMessage_Cannot_compute_pulses = U"The pulses are not defined at the edge of the sound.";
+static const conststring32 theMessage_Cannot_compute_spectrogram = U"The spectrogram is not defined at the edge of the sound.";
+static const conststring32 theMessage_Cannot_compute_pitch = U"The pitch contour is not defined at the edge of the sound.";
+static const conststring32 theMessage_Cannot_compute_formant = U"The formants are not defined at the edge of the sound.";
+static const conststring32 theMessage_Cannot_compute_intensity = U"The intensity curve is not defined at the edge of the sound.";
+static const conststring32 theMessage_Cannot_compute_pulses = U"The pulses are not defined at the edge of the sound.";
 
 void structTimeSoundAnalysisEditor :: v_destroy () noexcept {
 	TimeSoundAnalysisEditor_Parent :: v_destroy ();
@@ -138,13 +138,13 @@ enum {
 	TimeSoundAnalysisEditor_PART_SELECTION = 2
 };
 
-static const char32 *TimeSoundAnalysisEditor_partString (int part) {
-	static const char32 *strings [] = { U"", U"CURSOR", U"SELECTION" };
+static const conststring32 TimeSoundAnalysisEditor_partString (int part) {
+	static const conststring32 strings [] = { U"", U"CURSOR", U"SELECTION" };
 	return strings [part];
 }
 
-static const char32 *TimeSoundAnalysisEditor_partString_locative (int part) {
-	static const char32 *strings [] = { U"", U"at CURSOR", U"in SELECTION" };
+static const conststring32 TimeSoundAnalysisEditor_partString_locative (int part) {
+	static const conststring32 strings [] = { U"", U"at CURSOR", U"in SELECTION" };
 	return strings [part];
 }
 
@@ -233,7 +233,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 		char32 *q = p + 1, varName [300], *r, *s, *colon;
 		int precision = -1;
 		double value = undefined;
-		const char32 *stringValue = nullptr;
+		conststring32 stringValue = nullptr;
 		while (*q != U'\0' && *q != U'\'') q ++;
 		if (*q == U'\0') break;   /* No matching right quote: done with this line. */
 		if (q - p == 1) continue;   /* Ignore empty variable names. */
@@ -988,7 +988,7 @@ static void menu_cb_getIntensity (TimeSoundAnalysisEditor me, EDITOR_ARGS_DIRECT
 	if (part == TimeSoundAnalysisEditor_PART_CURSOR) {
 		Melder_information (Vector_getValueAtX (my d_intensity.get(), tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR), U" dB (intensity at CURSOR)");
 	} else {
-		static const char32 *methodString [] = { U"median", U"mean-energy", U"mean-sones", U"mean-dB" };
+		static const conststring32 methodString [] = { U"median", U"mean-energy", U"mean-sones", U"mean-dB" };
 		Melder_information (Intensity_getAverage (my d_intensity.get(), tmin, tmax, (int) my p_intensity_averagingMethod),
 			U" dB (", methodString [(int) my p_intensity_averagingMethod], U" intensity ", TimeSoundAnalysisEditor_partString_locative (part), U")");
 	}
@@ -1820,7 +1820,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 			bool intensityCursorVisible = isdefined (intensityCursor) &&
 				intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo;
 			if (intensityCursorVisible) {
-				static const char32 *methodString [] = { U" (.5)", U" (μE)", U" (μS)", U" (μ)" };
+				static const conststring32 methodString [] = { U" (.5)", U" (μE)", U" (μS)", U" (μ)" };
 				Graphics_setTextAlignment (my graphics.get(), alignment, Graphics_HALF);
 				Graphics_text (my graphics.get(), y, intensityCursor,
 					Melder_float (Melder_half (intensityCursor)), U" dB",
@@ -1921,7 +1921,7 @@ bool structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, boo
 	return TimeSoundAnalysisEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);
 }
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, const char32 *title, Function data, Sampled sound, bool ownSound) {
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
 	if (my v_hasAnalysis ()) {
 		if (my p_log1_toLogFile == false && my p_log1_toInfoWindow == false) {

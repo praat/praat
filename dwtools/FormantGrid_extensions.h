@@ -26,9 +26,9 @@
 #include "FormantGrid.h"
 #include "Graphics.h"
 
-void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, const char32 *method);
+void FormantGrid_draw (FormantGrid me, Graphics g, double xmin, double xmax, double ymin, double ymax, bool bandwidths, bool garnish, conststring32 method);
 
-void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, int position);
-void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position);
+void FormantGrid_removeFormantAndBandwidthTiers (FormantGrid me, integer position);
+void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, integer position);
 
 #endif /* _FormantGrid_extensions_h_ */

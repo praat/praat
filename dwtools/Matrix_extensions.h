@@ -32,7 +32,7 @@ autoDaata IDXFormattedMatrixFileRecognizer (integer numberOfBytesRead, const cha
 
 void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
     double xmin, double xmax, double ymin, double ymax,
-    double size_mm, const char32 *mark, bool garnish);
+    double size_mm, conststring32 mark, bool garnish);
 /* Draw my columns ix and iy as a scatterplot (with squares)				*/
 
 void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax, kGraphicsMatrixOrigin origin, double cellAreaScaleFactor, kGraphicsMatrixCellDrawingOrder drawingOrder);

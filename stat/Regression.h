@@ -23,8 +23,8 @@
 #include "Regression_def.h"
 
 void Regression_init (Regression me);
-void Regression_addParameter (Regression me, const char32 *label, double minimum, double maximum, double value);
-integer Regression_getFactorIndexFromFactorName_e (Regression me, const char32 *factorName);
+void Regression_addParameter (Regression me, conststring32 label, double minimum, double maximum, double value);
+integer Regression_getFactorIndexFromFactorName_e (Regression me, conststring32 factorName);
 
 Thing_define (LinearRegression, Regression) {
 };

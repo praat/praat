@@ -70,7 +70,7 @@ void Distributions_peek (Distributions me, integer column, char32 **string, inte
 		*number = irow;
 }
 
-double Distributions_getProbability (Distributions me, const char32 *string, integer column) {
+double Distributions_getProbability (Distributions me, conststring32 string, integer column) {
 	integer row, rowOfString = 0;
 	longdouble total = 0.0;
 	if (column < 1 || column > my numberOfColumns) return undefined;

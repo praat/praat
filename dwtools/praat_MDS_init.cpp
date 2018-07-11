@@ -45,10 +45,10 @@
 
 void praat_TableOfReal_init2 (ClassInfo klas);
 
-static const char32 *QUERY_BUTTON   = U"Query -";
-static const char32 *DRAW_BUTTON    = U"Draw -";
-static const char32 *ANALYSE_BUTTON = U"Analyse -";
-static const char32 *CONFIGURATION_BUTTON = U"To Configuration -";
+static conststring32 QUERY_BUTTON   = U"Query -";
+static conststring32 DRAW_BUTTON    = U"Draw -";
+static conststring32 ANALYSE_BUTTON = U"Analyse -";
+static conststring32 CONFIGURATION_BUTTON = U"To Configuration -";
 
 /* Tests */
 

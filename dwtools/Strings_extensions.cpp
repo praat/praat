@@ -48,7 +48,7 @@ autoStrings Strings_createFixedLength (integer numberOfStrings) {
 	}
 }
 
-autoStrings Strings_createAsCharacters (const char32 *string) {
+autoStrings Strings_createAsCharacters (conststring32 string) {
 	try {
 		autoStrings me = Thing_new (Strings);
 		my numberOfStrings = str32len (string);
@@ -62,7 +62,7 @@ autoStrings Strings_createAsCharacters (const char32 *string) {
 	}
 }
 	
-autoStrings Strings_createAsTokens (const char32 *token_string, const char32 *separator_string) {	
+autoStrings Strings_createAsTokens (conststring32 token_string, conststring32 separator_string) {
 	try {
 		autoStrings me = Thing_new (Strings);
 		/*
@@ -78,18 +78,17 @@ autoStrings Strings_createAsTokens (const char32 *token_string, const char32 *se
 		if (! token_string || str32len (token_string) == 0)
 			return me;
 
-		const char32 *separators = ( separator_string && str32len (separator_string) > 0 ? separator_string : U" " );
+		conststring32 separators = ( separator_string && str32len (separator_string) > 0 ? separator_string : U" " );
 		autostring32 copy = Melder_dup (token_string);
-		char32 *index, *tokens = copy.get();
-		const char32 *indexs;
+		mutablestring32 tokens = copy.get();
+		char32 *index = & tokens [0];
 		integer numberOfTokens = 0;
-		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs ++, index ++) {
-			for (const char32 *s = separators; *s != U'\0'; s ++) {
+		for (const char32 *indexs = & token_string [0]; *indexs != U'\0'; indexs ++, index ++) {
+			for (const char32 *s = & separators [0]; *s != U'\0'; s ++) {
 				if (*index == *s) {
 					*index = U'\0';
-					if (index > tokens && *(index - 1) != U'\0') {
+					if (index > tokens && *(index - 1) != U'\0')
 						numberOfTokens ++;
-					}
 					break;
 				}
 			}
@@ -101,24 +100,22 @@ autoStrings Strings_createAsTokens (const char32 *token_string, const char32 *se
 		my strings = autostring32vector (my numberOfStrings);
 		numberOfTokens = 0;
 		char32 *start = tokens;
-		for (index = tokens, indexs = token_string; *indexs != U'\0'; indexs ++, index ++) {
-			if (*index == U'\0' && index > tokens && *(index - 1) != U'\0') {
+		index = & tokens [0];
+		for (const char32 *indexs = & token_string [0]; *indexs != U'\0'; indexs ++, index ++) {
+			if (*index == U'\0' && index > tokens && *(index - 1) != U'\0')
 				my strings [++ numberOfTokens] = Melder_dup (start);
-			}
-			if (*index != U'\0' && index > tokens && *(index - 1) == U'\0') {
+			if (*index != U'\0' && index > tokens && *(index - 1) == U'\0')
 				start = index;
-			}
 		}
-		if (*(index - 1) != U'\0') {
+		if (*(index - 1) != U'\0')
 			my strings [++ numberOfTokens] = Melder_dup (start);
-		}
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Strings as tokens not created.");
 	}
 }
 
-integer Strings_findString (Strings me, const char32 *string) {
+integer Strings_findString (Strings me, conststring32 string) {
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		if (Melder_equ (my strings [i].get(), string)) {
 			return i;
@@ -130,19 +127,15 @@ integer Strings_findString (Strings me, const char32 *string) {
 autoStrings Strings_append (OrderedOf<structStrings>* me) {
 	try {
 		integer index = 1, numberOfStrings = 0;
-
 		for (integer i = 1; i <= my size; i ++) {
 			Strings s = my at [i];
 			numberOfStrings += s -> numberOfStrings;
 		}
-
 		autoStrings thee = Strings_createFixedLength (numberOfStrings);
-
 		for (integer i = 1; i <= my size; i ++) {
 			Strings s = my at [i];
-			for (integer j = 1; j <= s -> numberOfStrings; j ++, index ++) {
+			for (integer j = 1; j <= s -> numberOfStrings; j ++, index ++)
 				thy strings [index] = Melder_dup (s -> strings [j].get());
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -150,7 +143,7 @@ autoStrings Strings_append (OrderedOf<structStrings>* me) {
 	}
 }
 
-autoStrings Strings_change (Strings me, const char32 *search, const char32 *replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
+autoStrings Strings_change (Strings me, conststring32 search, conststring32 replace, int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		autostring32vector strings = string32vector_searchAndReplace (my strings.get(),
@@ -243,7 +236,7 @@ autoStringsIndex Stringses_to_StringsIndex (Strings me, Strings classes) {
 		}
 		for (integer j = 1; j <= my numberOfStrings; j ++) {
 			integer index = 0;
-			const char32 *stringsj = my strings [j].get();
+			conststring32 stringsj = my strings [j].get();
 			for (integer i = 1; i <= numberOfClasses; i ++) {
 				SimpleString ss = (SimpleString) his classes->at [i];   // FIXME cast
 				if (Melder_equ (stringsj, ss -> string.get())) {
@@ -264,10 +257,10 @@ autoStringsIndex Strings_to_StringsIndex (Strings me) {
 		autoStringsIndex thee = StringsIndex_create (my numberOfStrings);
 		autoPermutation sorted = Strings_to_Permutation (me, 1);
 		integer numberOfClasses = 0;
-		const char32 *strings = nullptr;
+		conststring32 strings = nullptr;
 		for (integer i = 1; i <= sorted -> numberOfElements; i ++) {
 			integer index = sorted -> p [i];
-			const char32 *stringsi = my strings [index].get();
+			conststring32 stringsi = my strings [index].get();
 			if (i == 1 || ! Melder_equ (strings, stringsi)) {
 				numberOfClasses ++;
 				autoSimpleString him = SimpleString_create (stringsi);

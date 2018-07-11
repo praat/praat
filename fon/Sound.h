@@ -190,7 +190,7 @@ autoSound Sound_filter_deemphasis (Sound me, double frequency);
 void Sound_reverse (Sound me, double tmin, double tmax);
 
 void Sound_draw (Sound me, Graphics g,
-	double tmin, double tmax, double minimum, double maximum, bool garnish, const char32 *method);
+	double tmin, double tmax, double minimum, double maximum, bool garnish, conststring32 method);
 /* For method, see Vector_draw. */
 
 autoMatrix Sound_to_Matrix (Sound me);

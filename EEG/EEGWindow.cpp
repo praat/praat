@@ -39,7 +39,7 @@ void structEEGWindow :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"EEGWindow help", '?', menu_cb_EEGWindowHelp);
 }
 
-const char32 * structEEGWindow :: v_getChannelName (integer channelNumber) {
+conststring32 structEEGWindow :: v_getChannelName (integer channelNumber) {
 	Melder_assert (our eeg != nullptr);
 	return our eeg -> channelNames [channelNumber].get();
 }
@@ -70,12 +70,12 @@ void structEEGWindow :: v_updateMenuItems_file () {
 	GuiThing_setSensitive (our extractSelectedEEGTimeFromZeroButton,  our endSelection > our startSelection);
 }
 
-void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg) {
+void EEGWindow_init (EEGWindow me, conststring32 title, EEG eeg) {
 	my eeg = eeg;   // before initing, because initing will already draw!
 	TextGridEditor_init (me, title, eeg -> textgrid.get(), eeg -> sound.get(), false, nullptr, nullptr);
 }
 
-autoEEGWindow EEGWindow_create (const char32 *title, EEG eeg) {
+autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg) {
 	try {
 		autoEEGWindow me = Thing_new (EEGWindow);
 		EEGWindow_init (me.get(), title, eeg);

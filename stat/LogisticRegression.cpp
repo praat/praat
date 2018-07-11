@@ -63,7 +63,7 @@ void structLogisticRegression :: v_info () {
 	}
 }
 
-autoLogisticRegression LogisticRegression_create (const char32 *dependent1, const char32 *dependent2) {
+autoLogisticRegression LogisticRegression_create (conststring32 dependent1, conststring32 dependent2) {
 	try {
 		autoLogisticRegression me = Thing_new (LogisticRegression);
 		Regression_init (me.get());
@@ -262,8 +262,8 @@ static autoLogisticRegression _Table_to_LogisticRegression (Table me, integer *f
 	return thee;
 }
 
-autoLogisticRegression Table_to_LogisticRegression (Table me, const char32 *factors_columnLabelString,
-	const char32 *dependent1_columnLabel, const char32 *dependent2_columnLabel)
+autoLogisticRegression Table_to_LogisticRegression (Table me, conststring32 factors_columnLabelString,
+	conststring32 dependent1_columnLabel, conststring32 dependent2_columnLabel)
 {
 	try {
 		integer numberOfFactors;

@@ -30,11 +30,11 @@
 #undef iam
 #define iam iam_LOOP
 
-static const char32 *STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
-static const char32 *STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
-static const char32 *STRING_TIER_NUMBER = U"Tier number";
-static const char32 *STRING_INTERVAL_NUMBER = U"Interval number";
-static const char32 *STRING_POINT_NUMBER = U"Point number";
+static conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
+static conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
+static conststring32 STRING_TIER_NUMBER = U"Tier number";
+static conststring32 STRING_INTERVAL_NUMBER = U"Interval number";
+static conststring32 STRING_POINT_NUMBER = U"Point number";
 
 // MARK: - ANYTIER (generic)
 
@@ -638,7 +638,7 @@ DO
 			Melder_throw (U"Your starting character should be 0 or positive.");
 		if (startingCharacter > (int) str32len (sentence))
 			Melder_throw (U"Your starting character should not exceed the end of the sentence.");
-		const char32 *result = SpellingChecker_nextNotAllowedWord (me, sentence, & startingCharacter);
+		conststring32 result = SpellingChecker_nextNotAllowedWord (me, sentence, & startingCharacter);
 	STRING_ONE_END
 }
 
@@ -873,7 +873,7 @@ FORM (STRING_TextGrid_getTierName, U"TextGrid: Get tier name", nullptr) {
 DO
 	STRING_ONE (TextGrid)
 		Function tier = pr_TextGrid_peekTier (me, tierNumber);
-		const char32 *result = tier -> name.get();
+		conststring32 result = tier -> name.get();
 	STRING_ONE_END
 }
 
@@ -940,7 +940,7 @@ FORM (STRING_TextGrid_getLabelOfInterval, U"TextGrid: Get label of interval", nu
 DO
 	STRING_ONE (TextGrid)
 		TextInterval interval = pr_TextGrid_peekInterval (me, tierNumber, intervalNumber);
-		const char32 *result = interval -> text.get();
+		conststring32 result = interval -> text.get();
 	STRING_ONE_END
 }
 
@@ -1051,7 +1051,7 @@ FORM (STRING_TextGrid_getLabelOfPoint, U"TextGrid: Get label of point", nullptr)
 DO
 	STRING_ONE (TextGrid)
 		TextPoint point = pr_TextGrid_peekPoint (me, tierNumber, pointNumber);
-		const char32 *result = point -> mark.get();
+		conststring32 result = point -> mark.get();
 	STRING_ONE_END
 }
 
@@ -1498,7 +1498,7 @@ DO
 	STRING_ONE (TextTier)
 		if (pointNumber > my points.size) Melder_throw (U"No such point.");
 		TextPoint point = my points.at [pointNumber];
-		const char32 *result = point -> mark.get();
+		conststring32 result = point -> mark.get();
 	STRING_ONE_END
 }
 

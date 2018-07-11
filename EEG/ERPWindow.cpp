@@ -1,6 +1,6 @@
 /* ERPWindow.cpp
  *
- * Copyright (C) 2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 2012-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -403,7 +403,7 @@ void structERPWindow :: v_prefs_getValues (EditorCommand /* cmd */) {
 	FunctionEditor_redraw (this);
 }
 
-autoERPWindow ERPWindow_create (const char32 *title, ERP data) {
+autoERPWindow ERPWindow_create (conststring32 title, ERP data) {
 	Melder_assert (data);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);

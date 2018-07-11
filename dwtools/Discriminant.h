@@ -28,7 +28,7 @@
 
 autoDiscriminant Discriminant_create (integer numberOfGroups, integer numberOfEigenvalues, integer dimension);
 
-integer Discriminant_groupLabelToIndex (Discriminant me, const char32 *label);
+integer Discriminant_groupLabelToIndex (Discriminant me, conststring32 label);
 
 void Discriminant_setAprioriProbability (Discriminant me, integer group, double p);
 

@@ -1536,7 +1536,7 @@ static void _Graphics_text (Graphics me, double xWC, double yWC, const char32 *t
 	drawCells (me, xWC, yWC, theWidechar);
 	exitText (me);
 	if (my recording) {
-		char *txt_utf8 = Melder_peek32to8 (txt);
+		conststring8 txt_utf8 = Melder_peek32to8 (txt);
 		int length = strlen (txt_utf8) / sizeof (double) + 1;
 		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
 	}

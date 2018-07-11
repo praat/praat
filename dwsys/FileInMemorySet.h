@@ -27,33 +27,33 @@
 
 autoFileInMemorySet FileInMemorySet_create (); 
 
-autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (const char32 *dirpath, const char32 *file);
+autoFileInMemorySet FileInMemorySet_createFromDirectoryContents (conststring32 dirpath, conststring32 file);
 
 autoFileInMemorySet FilesInMemory_to_FileInMemorySet (OrderedOf<structFileInMemory>& list);
 
-autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion);
+autoFileInMemorySet FileInMemorySet_extractFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion);
 
 /* Only creates references to files in memory. Once me is deleted, the references are not valid any more!! */
-autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, const char32 *criterion);
+autoFileInMemorySet FileInMemorySet_listFiles (FileInMemorySet me, kMelder_string which, conststring32 criterion);
 
 integer FileInMemorySet_getTotalNumberOfBytes (FileInMemorySet me);
 
 autoFileInMemorySet FileInMemorySets_merge (OrderedOf<structFileInMemorySet>& list);
 
-void FileInMemorySet_showAsCode (FileInMemorySet me, const char32 *name, integer numberOfBytesPerLine);
+void FileInMemorySet_showAsCode (FileInMemorySet me, conststring32 name, integer numberOfBytesPerLine);
 
-void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, const char32 *name, integer numberOfBytesPerLine);
+void FileInMemorySet_showOneFileAsCode (FileInMemorySet me, integer index, conststring32 name, integer numberOfBytesPerLine);
 
-char * FileInMemorySet_getCopyOfData (FileInMemorySet me, const char32 *id, integer *numberOfBytes);
-const char * FileInMemorySet_getData (FileInMemorySet me, const char32 *id, integer *numberOfBytes);
+char * FileInMemorySet_getCopyOfData (FileInMemorySet me, conststring32 id, integer *numberOfBytes);
+const char * FileInMemorySet_getData (FileInMemorySet me, conststring32 id, integer *numberOfBytes);
 
-integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, const char32 *criterion);
+integer FileInMemorySet_findNumberOfMatches_path (FileInMemorySet me, kMelder_string which, conststring32 criterion);
 
-integer FileInMemorySet_getIndexFromId (FileInMemorySet me, const char32 *id);
+integer FileInMemorySet_getIndexFromId (FileInMemorySet me, conststring32 id);
 
-integer FileInMemorySet_lookUp (FileInMemorySet me, const char32 *path);
+integer FileInMemorySet_lookUp (FileInMemorySet me, conststring32 path);
 
-bool FileInMemorySet_hasDirectory (FileInMemorySet me, const char32 *name);
+bool FileInMemorySet_hasDirectory (FileInMemorySet me, conststring32 name);
 
 autoStrings FileInMemorySet_to_Strings_id (FileInMemorySet me);
 

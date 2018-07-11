@@ -44,7 +44,7 @@ void PitchTier_shiftFrequencies (PitchTier me, double tmin, double tmax, double 
 void PitchTier_multiplyFrequencies (PitchTier me, double tmin, double tmax, double factor);
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, bool garnish, const char32 *method);
+	double fmin, double fmax, bool garnish, conststring32 method);
 
 autoPitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency);
 void PitchTier_stylize (PitchTier me, double frequencyResolution, bool useSemitones);

@@ -1,6 +1,6 @@
 /* OTGrammar_ex_tongueRoot.cpp
  *
- * Copyright (C) 1997-2005,2007,2009,2011-2013,2015-2017 Paul Boersma
+ * Copyright (C) 1997-2005,2007,2009,2011-2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "OTGrammar.h"
 
-static const char32 *vowels [] = { U"i", U"e", U"\\sw", U"\\ic", U"\\ef", U"a" };
+static conststring32 vowels [] = { U"i", U"e", U"\\sw", U"\\ic", U"\\ef", U"a" };
 #define i  0
 #define e  1
 #define schwa  2

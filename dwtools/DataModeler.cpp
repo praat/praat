@@ -711,7 +711,7 @@ autoTable DataModeler_to_Table_zscores (DataModeler me, int useSigmaY) {
 	}	
 }
 
-static void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish) {
+static void DataModeler_normalProbabilityPlot (DataModeler me, Graphics g, int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish) {
 	try {
 		autoTable thee = DataModeler_to_Table_zscores (me, useSigmaY);
 		Table_normalProbabilityPlot (thee.get(), g, 2, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);
@@ -1338,7 +1338,7 @@ void FormantModeler_drawOutliersMarked (FormantModeler me, Graphics g, double tm
 	}
 }
 
-void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish) {
+void FormantModeler_normalProbabilityPlot (FormantModeler me, Graphics g, integer iformant, int useSigmaY, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish) {
 	if (iformant > 0 || iformant <= my trackmodelers.size) {
 		DataModeler ff = my trackmodelers.at [iformant];
 		DataModeler_normalProbabilityPlot (ff, g, useSigmaY, numberOfQuantiles, numberOfSigmas, labelSize, label, garnish);

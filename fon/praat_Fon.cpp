@@ -79,8 +79,8 @@
 #undef iam
 #define iam iam_LOOP
 
-static const char32 *STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
-static const char32 *STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
+static conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
+static conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
 
 // MARK: - COCHLEAGRAM
 
@@ -1648,7 +1648,7 @@ DO
 		kPitch_unit::ERB;
 	NUMBER_ONE (Pitch)
 		double result = Pitch_getStandardDeviation (me, fromTime, toTime, unit);
-		const char32 *unitText =
+		conststring32 unitText =
 			unit == kPitch_unit::HERTZ ? U"Hz" :
 			unit == kPitch_unit::MEL ? U"mel" :
 			unit == kPitch_unit::LOG_HERTZ ? U"logHz" :
@@ -2564,7 +2564,7 @@ FORM (NEW1_Strings_createAsFileList, U"Create Strings as file list", U"Create St
 	SENTENCE (name, U"Name", U"fileList")
 	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
-	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
+	static conststring32 homeDirectory = Melder_dirToPath (& defaultDir);
 	static char32 defaultPath [kMelder_MAXPATH+1];
 	#if defined (UNIX)
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*.wav");
@@ -2588,7 +2588,7 @@ FORM (NEW1_Strings_createAsDirectoryList, U"Create Strings as directory list", U
 	SENTENCE (name, U"Name", U"directoryList")
 	static structMelderDir defaultDir { };
 	Melder_getHomeDir (& defaultDir);
-	static const char32 *homeDirectory = Melder_dirToPath (& defaultDir);
+	static conststring32 homeDirectory = Melder_dirToPath (& defaultDir);
 	static char32 defaultPath [kMelder_MAXPATH+1];
 	#if defined (UNIX)
 		Melder_sprint (defaultPath,kMelder_MAXPATH+1, homeDirectory, U"/*");
@@ -2660,7 +2660,7 @@ FORM (STRING_Strings_getString, U"Get string", nullptr) {
 	OK
 DO
 	STRING_ONE (Strings)
-		const char32 *result = position > my numberOfStrings ? U"" : my strings [position].get();   // TODO
+		conststring32 result = position > my numberOfStrings ? U"" : my strings [position].get();   // TODO
 	STRING_ONE_END
 }
 

@@ -30,11 +30,11 @@
 /* machine precision */
 #define NUMeps 2.2e-16
 
-int NUMstring_containsPrintableCharacter (const char32 *s);
+bool NUMstring_containsPrintableCharacter (conststring32 s);
 
-void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string);
+void NUMstring_chopWhiteSpaceAtExtremes_inplace (mutablestring32 string);
 
-double * NUMstring_to_numbers (const char32 *s, integer *numbers_found);
+double * NUMstring_to_numbers (conststring32 s, integer *numbers_found);
 /* return array with the number of numbers found */
 
 /*
@@ -42,17 +42,15 @@ double * NUMstring_to_numbers (const char32 *s, integer *numbers_found);
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-integer *NUMstring_getElementsOfRanges (const char32 *ranges, integer maximumElement, integer *numberOfElements, integer *numberOfMultiples, const char32 *elementType, bool sortedUniques);
+integer *NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement,
+	integer *numberOfElements, integer *numberOfMultiples, conststring32 elementType, bool sortedUniques);
 
 char32 * NUMstring_timeNoDot (double time);
 
-int NUMstrings_equal (const char32 **s1, const char32 **s2, integer lo, integer hi);
-
-regexp *NUMregexp_compile (const char32 *regexp);
+regexp *NUMregexp_compile (conststring32 regexp);
 /* Compiles a regular expression to a datastructure used by the regexp engine */
 
-
-char32 *strstr_regexp (const char32 *string, const char32 *search_regexp);
+char32 *strstr_regexp (conststring32 string, conststring32 search_regexp);
 /*
 	Returns a pointer to the first occurrence in 'string' of the
 	regular expression 'searchRE'. It returns a null pointer if
@@ -60,7 +58,7 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp);
 */
 
 autostring32vector string32vector_searchAndReplace (string32vector me,
-	const char32 *search, const char32 *replace, int maximumNumberOfReplaces,
+	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp);
 /*
 	Searches and replaces in string array of strings.
@@ -75,15 +73,15 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
 	'nstringmatches'.
 */
 
-autostring32 str_replace_literal (const char32 *string, const char32 *search,
-	const char32 *replace, integer maximumNumberOfReplaces, integer *nmatches);
+autostring32 str_replace_literal (conststring32 string, conststring32 search,
+	conststring32 replace, integer maximumNumberOfReplaces, integer *nmatches);
 /*
 	Search and replace in 'string'.
 	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
 */
 
-autostring32 str_replace_regexp (const char32 *string, regexp *search_compiled,
-	const char32 *replace_regexp, integer maximumNumberOfReplaces, integer *nmatches);
+autostring32 str_replace_regexp (conststring32 string, regexp *search_compiled,
+	conststring32 replace_regexp, integer maximumNumberOfReplaces, integer *nmatches);
 /*
 	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on
 	the basis of regular expressions (RE).
@@ -96,7 +94,7 @@ autostring32 str_replace_regexp (const char32 *string, regexp *search_compiled,
 */
 
 
-void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, const char32 *name);
+void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring32 name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 							1 2 3

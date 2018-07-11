@@ -1263,7 +1263,7 @@ autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax, doubl
 
 autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
-	const char32 *silentLabel, const char32 *soundingLabel) {
+	conststring32 silentLabel, conststring32 soundingLabel) {
 	try {
 		bool subtractMeanPressure = true;
 		autoSound filtered = Sound_filter_passHannBand (me, 80.0, 8000.0, 80.0);
@@ -1277,7 +1277,7 @@ autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double
 
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
 	try {
-		const char32 *silentLabel = U"-", *soundingLabel = U"+";
+		conststring32 silentLabel = U"-", soundingLabel = U"+";
 		autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		IntervalTier tier = (IntervalTier) dbs -> tiers->at [1];
 		Melder_assert (tier -> intervals.size > 0);
@@ -1300,7 +1300,7 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 	}
 }
 
-autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match) {
+autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, conststring32 match) {
     try {
         // count samples of the trimmed sound
         integer ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
@@ -1350,12 +1350,12 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
     }
 }
 
-autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, const char32 *trimLabel) {
+autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *p_tg, conststring32 trimLabel) {
     try {
 		Melder_require (my ny == 1, U"The sound should be a mono sound.");
 		
-        const char32 *silentLabel = U"silent", *soundingLabel = U"sounding";
-        const char32 *copyLabel = U"";
+        conststring32 silentLabel = U"silent", soundingLabel = U"sounding";
+        conststring32 copyLabel = U"";
         autoTextGrid tg = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
         autoIntervalTier itg = Data_copy ((IntervalTier) tg -> tiers->at [1]);
         IntervalTier tier = (IntervalTier) tg -> tiers->at [1];
@@ -1364,7 +1364,7 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
             TextInterval ati = itg -> intervals.at [iint];
             double duration = ti -> xmax - ti -> xmin;
             if (duration > trimDuration && Melder_equ (ti -> text.get(), silentLabel)) {   // silent
-				const char32 *label = trimLabel;
+				conststring32 label = trimLabel;
                 if (iint == 1) { // first is special
                     double trim_t = ti -> xmax - trimDuration;
                     IntervalTier_moveBoundary (itg.get(), iint, false, trim_t);
@@ -1585,7 +1585,7 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 void Sound_fade (Sound me, int channel, double t, double fadeTime, int inout, bool fadeGlobal) {
 	integer numberOfSamples = Melder_ifloor (fabs (fadeTime) / my dx);
 	double t1 = t, t2 = t1 + fadeTime;
-	const char32 *fade_inout = inout > 0 ? U"out" : U"in";
+	conststring32 fade_inout = inout > 0 ? U"out" : U"in";
 	
 	Melder_require (channel >= 0 && channel <= my ny, U"Invalid channel number: ", channel, U".");
 	
@@ -1784,8 +1784,9 @@ static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, doubl
 	 It is essential that the intermediate interpolated y-values are always between the values at samples ileft and ileft+1.
 	 We cannot use a sinc-interpolation because at strong amplitude changes high-frequency oscillations may occur.
 */
-static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer ileft, bool left, bool right, const char32 *formula, Interpreter interpreter, integer numberOfBisections, double *x, double *y) {
-	
+static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer ileft, bool left, bool right,
+	conststring32 formula, Interpreter interpreter, integer numberOfBisections, double *x, double *y)
+{
 	Melder_require (left != right, U"Invalid situation.");
 	
 	if (left) {
@@ -1796,9 +1797,8 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 		*y = my z [ichannel] [ileft + 1];
 	}
 
-	if (numberOfBisections < 1) {
+	if (numberOfBisections < 1)
 		return;
-	}
 	
 	/*
 		For the bisection we create a Sound with only 3 samples in it which is sufficient for doing linear interpolation.
@@ -1815,7 +1815,6 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 		thy z [channel] [1] = my z [channel] [ileft];
 		thy z [channel] [3] = my z [channel] [ileft + 1];
 	}
-
 	integer istep = 1;
 	double xright = xleft + my dx, xmid; // !!
 	do {
@@ -1850,7 +1849,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 }
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
-	bool garnish, const char32 *method, integer numberOfBisections, const char32 *formula, Interpreter interpreter) {
+	bool garnish, conststring32 method, integer numberOfBisections, conststring32 formula, Interpreter interpreter) {
 	
 	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
@@ -1968,7 +1967,10 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	}
 }
 
-void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, double level, bool garnish, integer numberOfBisections, const char32 *formula, Interpreter interpreter) {
+void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
+	double minimum, double maximum, double level, bool garnish,
+	integer numberOfBisections, conststring32 formula, Interpreter interpreter)
+{
 	try {
 		Formula_Result result;
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
@@ -2063,7 +2065,7 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 	}
 }
 
-autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges) {
+autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges) {
 	try {
 		integer numberOfChannels;
 		autoNUMvector <integer> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, nullptr, U"channel", true), 1);

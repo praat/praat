@@ -56,7 +56,7 @@ autoPitch Matrix_to_Pitch (Matrix me) {
 	}
 }
 
-void Pitch_formula (Pitch me, const char32 *formula, Interpreter interpreter) {
+void Pitch_formula (Pitch me, conststring32 formula, Interpreter interpreter) {
 	try {
 		autoMatrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, my maxnCandidates, my maxnCandidates, 1.0, 1.0);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {

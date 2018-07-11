@@ -36,7 +36,7 @@ void structOptimalCeilingTierEditor :: v_play (double fromTime, double toTime) {
 	}
 }
 
-autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (const char32 *title, OptimalCeilingTier octier, Sound sound, bool ownSound) {
+autoOptimalCeilingTierEditor OptimalCeilingTierEditor_create (conststring32 title, OptimalCeilingTier octier, Sound sound, bool ownSound) {
 	try {
 		autoOptimalCeilingTierEditor me = Thing_new (OptimalCeilingTierEditor);
 		RealTierEditor_init (me.get(), title, (RealTier) octier, sound, ownSound);

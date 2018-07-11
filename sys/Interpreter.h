@@ -75,15 +75,15 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int nargs, Stackel args);
 void Interpreter_run (Interpreter me, char32 *text);   // destroys 'text'
 void Interpreter_stop (Interpreter me);   // can be called from any procedure called deep-down by the interpreter; will stop before next line
 
-void Interpreter_voidExpression (Interpreter me, const char32 *expression);
-void Interpreter_numericExpression (Interpreter me, const char32 *expression, double *p_value);
-void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, numvec *p_value, bool *p_owned);
-void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, nummat *p_value, bool *p_owned);
-void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **p_value);
-void Interpreter_anyExpression (Interpreter me, const char32 *expression, Formula_Result *p_result);
+void Interpreter_voidExpression (Interpreter me, conststring32 expression);
+void Interpreter_numericExpression (Interpreter me, conststring32 expression, double *p_value);
+void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, numvec *p_value, bool *p_owned);
+void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, nummat *p_value, bool *p_owned);
+void Interpreter_stringExpression (Interpreter me, conststring32 expression, char32 **p_value);
+void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *p_result);
 
-InterpreterVariable Interpreter_hasVariable (Interpreter me, const char32 *key);
-InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const char32 *key);
+InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);
+InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key);
 
 extern autonumvec theInterpreterNumvec;
 extern autonummat theInterpreterNummat;

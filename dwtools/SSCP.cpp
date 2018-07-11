@@ -208,7 +208,7 @@ autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, integer d1, integer d2)
 	}
 }
 
-void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, const char32 *label, int fontSize) {
+void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, conststring32 label, int fontSize) {
 	try {
 		integer nsteps = 100;
 		autoNUMvector <double> x ((integer) 0, nsteps);
@@ -249,7 +249,7 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 
 static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale, int fontSize) {
 	integer nsteps = 100;
-	const char32 *name;
+	conststring32 name;
 
 	autoNUMvector <double> x ((integer) 0, nsteps);
 	autoNUMvector <double> y ((integer) 0, nsteps);
@@ -557,7 +557,7 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 			}
 		}
 		for (integer j = 1; j <= numberOfColumns; j ++) {
-			const char32 *label = my columnLabels [colb + j - 1].get();
+			conststring32 label = my columnLabels [colb + j - 1].get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 			TableOfReal_setRowLabel (thee.get(), j, label);
 		}
@@ -688,10 +688,10 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 
 		Melder_warningOff ();
 		integer lastrow = 0, numberOfMatrices = 0, numberOfSingularMatrices = 0, index = 1;
-		const char32 *label = mew -> rowLabels [1].get();
+		conststring32 label = mew -> rowLabels [1].get();
 		for (integer i = 2; i <= my numberOfRows; i ++) {
 			integer numberOfRowsInCurrent = 0;
-			const char32 *currentLabel = mew -> rowLabels [i].get();
+			conststring32 currentLabel = mew -> rowLabels [i].get();
 			if (Melder_cmp (currentLabel, label) != 0) {
 				// current label different from previous one(s)
 				numberOfRowsInCurrent = i - index;
@@ -1064,7 +1064,11 @@ autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double v1 [], double v2 []) 
 }
 
 
-void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g, double scale, bool confidence, const char32 *label, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish) {
+void SSCPList_drawConcentrationEllipses (SSCPList me, Graphics g,
+	double scale, bool confidence, conststring32 label,
+	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax,
+	int fontSize, bool garnish)
+{
 	SSCP t = my at [1];
 
 	Melder_require (d1 > 0 && d1 <= t -> numberOfColumns && d2 > 0 && d2 <= t -> numberOfColumns && d1 != d2, U"Incorrect axes.");

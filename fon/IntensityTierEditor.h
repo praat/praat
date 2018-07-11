@@ -27,27 +27,27 @@ Thing_define (IntensityTierEditor, RealTierEditor) {
 		override;
 	void v_play (double tmin, double tmax)
 		override;
-	const char32 * v_quantityText ()
+	conststring32  v_quantityText ()
 		override { return U"Intensity (dB)"; }
-	const char32 * v_rightTickUnits ()
+	conststring32  v_rightTickUnits ()
 		override { return U" dB"; }
 	double v_defaultYmin ()
 		override { return 50.0; }
 	double v_defaultYmax ()
 		override { return 100.0; }
-	const char32 * v_setRangeTitle ()
+	conststring32  v_setRangeTitle ()
 		override { return U"Set intensity range..."; }
-	const char32 * v_defaultYminText ()
+	conststring32  v_defaultYminText ()
 		override { return U"50.0"; }
-	const char32 * v_defaultYmaxText ()
+	conststring32  v_defaultYmaxText ()
 		override { return U"100.0"; }
-	const char32 * v_yminText ()
+	conststring32  v_yminText ()
 		override { return U"Minimum intensity (dB)"; }
-	const char32 * v_ymaxText ()
+	conststring32  v_ymaxText ()
 		override { return U"Maximum intensity (dB)"; }
 };
 
-autoIntensityTierEditor IntensityTierEditor_create (const char32 *title,
+autoIntensityTierEditor IntensityTierEditor_create (conststring32 title,
 	IntensityTier intensity, Sound sound, bool ownSound);
 /*
 	'sound' may be null.

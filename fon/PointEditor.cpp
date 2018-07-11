@@ -196,7 +196,7 @@ void structPointEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-autoPointEditor PointEditor_create (const char32 *title, PointProcess point, Sound sound) {
+autoPointEditor PointEditor_create (conststring32 title, PointProcess point, Sound sound) {
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
 		if (sound) {

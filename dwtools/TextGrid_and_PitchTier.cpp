@@ -85,7 +85,7 @@ static autoPitchTier PitchTier_createFromPoints (double xmin, double xmax, doubl
 	} 
 }
 
-static double * getTimesFromRelativeTimesString (double tmin, double tmax, const char32 *times_string, int time_offset, integer *numberOfTimes) {
+static double * getTimesFromRelativeTimesString (double tmin, double tmax, conststring32 times_string, int time_offset, integer *numberOfTimes) {
 	autoNUMvector<double> times (NUMstring_to_numbers (times_string, numberOfTimes), 1);
 	/*
 		translate the "times" to real time
@@ -107,7 +107,7 @@ static double * getTimesFromRelativeTimesString (double tmin, double tmax, const
 /*
 	a1, a#1, b1, b#1, ... g#1, a2, a#2, b2, c2, ....; a a# b c c# d d# e f f# g g#
 */
-static double note_to_frequency (const char32 *token, double a4) {
+static double note_to_frequency (conststring32 token, double a4) {
 	double base = a4 / 8.0;
 	integer octave, index;
 	const char32 note = *token++, char2 = *token++;
@@ -145,7 +145,9 @@ static double note_to_frequency (const char32 *token, double a4) {
 	return frequency;
 }
 
-static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, double tmax, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status) {
+static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, double tmax,
+	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status)
+{
 	(void) pitch_unit;
 	try {
 		if (tmin >= tmax) {
@@ -166,7 +168,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 			U"The number of items in the times and the pitches string have to be equal.");
 		autoNUMvector<double> pitchesraw (1, numberOfPitches);
 		for (integer i = 1; i <= numberOfPitches; i ++) {
-			const char32 *token = items -> strings [i].get();
+			conststring32 token = items -> strings [i].get();
 			if (pitch_as == PITCH_VALUE_AS_MUSIC_NOTE) {
 				pitchesraw [i] = note_to_frequency (token, 440.0);
 			} else {
@@ -257,7 +259,9 @@ static void PitchTiers_replacePoints (PitchTier me, PitchTier thee) {
 	}
 }
 
-void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status) {
+void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax,
+	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status)
+{
 	try {
 		autoPitchTier thee = PitchTier_createAsModifiedPart (me, tmin, tmax, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status);
 		PitchTiers_replacePoints (me, thee.get());
@@ -267,7 +271,10 @@ void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, const cha
 }
 
 
-autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
+autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee,
+	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status,
+	kMelder_string which, conststring32 criterion)
+{
 	try {
 		autoPitchTier him = Data_copy (thee);
 		for (integer i = 1; i <= my intervals.size; i ++) {
@@ -284,7 +291,10 @@ autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier th
 	}
 }
 
-static autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, integer tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion) {
+static autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, PitchTier thee, integer tierNumber,
+	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status,
+	kMelder_string which, conststring32 criterion)
+{
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		return IntervalTier_PitchTier_to_PitchTier (tier, thee, times_string, time_offset, pitches_string, pitch_unit, pitch_as, pitchAnchor_status, which, criterion);
@@ -297,7 +307,10 @@ static autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, PitchTier the
 	We specify pitches as tone levels (1 - numberOfToneLevels). These levels are relative to the pitch range of a speaker.
 	(normally in Mandarin Chinese they count 5 levels).
 */
-static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
+static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me,
+	double tmin, double tmax, double fmin, double fmax,
+	integer numberOfToneLevels, conststring32 times_string, int time_offset, conststring32 pitches_string)
+{
 	try {
 		if (tmin >= tmax) {
 			tmin = my xmin; tmax = my xmax;
@@ -323,7 +336,8 @@ static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, do
 	}
 }
 
-void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string) {
+void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax,
+	integer numberOfToneLevels, conststring32 times_string, int time_offset, conststring32 pitches_string) {
 	try {
 		autoPitchTier thee = PitchTier_createAsModifiedPart_toneLevels (me, tmin, tmax, fmin, fmax, numberOfToneLevels, times_string, time_offset, pitches_string);
 		PitchTiers_replacePoints (me, thee.get());

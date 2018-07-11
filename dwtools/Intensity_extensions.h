@@ -29,7 +29,7 @@
 #include "TextGrid.h"
 
 autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration,
-	double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel);
+	double minSoundingDuration, conststring32 silenceLabel, conststring32 soundingLabel);
 /*
 	Marks "silence" intervals in a sound as intervals in a TextGrid.
 	silenceThreshold_dB: silence-to-speech and speech-to-silence threshold as dB's below maximum intensity
@@ -43,6 +43,9 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceT
 
 autoIntensity IntensityTier_to_Intensity (IntensityTier me, double dt);
 
-autoTextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt, double silenceThreshold_dB, double minSilenceDuration, double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel);
+autoTextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt,
+	double silenceThreshold_dB, double minSilenceDuration, double minSoundingDuration,
+	conststring32 silenceLabel, conststring32 soundingLabel
+);
 
 #endif /* _Intensity_extensions_h_ */

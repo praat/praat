@@ -91,7 +91,7 @@ oo_DEFINE_CLASS (Pitch, Sampled)
 			override;
 		int v_getMaximumUnit (integer level)
 			override;
-		const char32 * v_getUnitText (integer level, int unit, uint32 flags)
+		conststring32  v_getUnitText (integer level, int unit, uint32 flags)
 			override;
 		bool v_isUnitLogarithmic (integer level, int unit)
 			override;

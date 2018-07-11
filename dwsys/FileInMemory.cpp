@@ -73,7 +73,7 @@ autoFileInMemory FileInMemory_create (MelderFile file) {
 	}
 }
 
-autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, const char32 *path, const char32 *id) {
+autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char *data, bool isStaticData, conststring32 path, conststring32 id) {
 	try {
 		autoFileInMemory me = Thing_new (FileInMemory);
 		my d_path = Melder_dup (path);
@@ -93,11 +93,11 @@ autoFileInMemory FileInMemory_createWithData (integer numberOfBytes, const char 
 	}
 }
 
-void FileInMemory_setId (FileInMemory me, const char32 *newId) {
+void FileInMemory_setId (FileInMemory me, conststring32 newId) {
 	my d_id = Melder_dup (newId);
 }
 
-void FileInMemory_showAsCode (FileInMemory me, const char32 *name, integer numberOfBytesPerLine)
+void FileInMemory_showAsCode (FileInMemory me, conststring32 name, integer numberOfBytesPerLine)
 {
 	if (numberOfBytesPerLine < 1) {
 		numberOfBytesPerLine = 20;

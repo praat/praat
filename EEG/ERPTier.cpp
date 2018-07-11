@@ -45,7 +45,7 @@ Thing_implement (ERPPoint, AnyPoint, 0);
 
 Thing_implement (ERPTier, AnyTier, 0);
 
-integer ERPTier_getChannelNumber (ERPTier me, const char32 *channelName) {
+integer ERPTier_getChannelNumber (ERPTier me, conststring32 channelName) {
 	for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 		if (Melder_equ (my channelNames [ichan].get(), channelName)) {
 			return ichan;
@@ -61,7 +61,7 @@ double ERPTier_getMean (ERPTier me, integer pointNumber, integer channelNumber, 
 	return Vector_getMean (point -> erp.get(), tmin, tmax, channelNumber);
 }
 
-double ERPTier_getMean (ERPTier me, integer pointNumber, const char32 *channelName, double tmin, double tmax) {
+double ERPTier_getMean (ERPTier me, integer pointNumber, conststring32 channelName, double tmin, double tmax) {
 	return ERPTier_getMean (me, pointNumber, ERPTier_getChannelNumber (me, channelName), tmin, tmax);
 }
 
@@ -156,7 +156,7 @@ autoERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint1
 }
 
 autoERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
-	kMelder_string which, const char32 *criterion)
+	kMelder_string which, conststring32 criterion)
 {
 	try {
 		autoPointProcess events = TextGrid_getPoints (my textgrid.get(), 2, which, criterion);
@@ -168,8 +168,8 @@ autoERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
 }
 
 autoERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
-	kMelder_string which, const char32 *criterion,
-	kMelder_string precededBy, const char32 *criterion_precededBy)
+	kMelder_string which, conststring32 criterion,
+	kMelder_string precededBy, conststring32 criterion_precededBy)
 {
 	try {
 		autoPointProcess events = TextGrid_getPoints_preceded (my textgrid.get(), 2,
@@ -317,7 +317,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, in
 }
 
 autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
-	integer columnNumber, kMelder_string which, const char32 *criterion)
+	integer columnNumber, kMelder_string which, conststring32 criterion)
 {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);

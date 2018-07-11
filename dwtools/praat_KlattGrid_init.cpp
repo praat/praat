@@ -32,7 +32,7 @@
 
 /******************* KlattGrid  *********************************/
 
-static const char32 *formant_names[] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
+static conststring32 formant_names[] = { U"", U"oral ", U"nasal ", U"frication ", U"tracheal ", U"nasal anti", U"tracheal anti", U"delta "};
 
 #define KlattGrid_4formants_addCommonField(formantType) \
 	OPTIONMENU (formantType, U"Formant type", 1) \
@@ -206,7 +206,7 @@ DIRECT (WINDOW_KlattGrid_edit##Name##FormantGrid) { \
 	if (theCurrentPraatApplication -> batch) { Melder_throw (U"Cannot edit a KlattGrid from batch."); } \
 	LOOP { \
 		iam (KlattGrid); \
-		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names [formantType], U" formant grid"); \
+		conststring32 id_and_name = Melder_cat (ID, U". ", formant_names [formantType], U" formant grid"); \
 		autoKlattGrid_FormantGridEditor editor = KlattGrid_FormantGridEditor_create (id_and_name, me, formantType); \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \
@@ -234,7 +234,7 @@ DO \
 		OrderedOf<structIntensityTier>* amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
 		if (! amp) Melder_throw (U"Unknown formant type"); \
 		if (formantNumber > amp->size) Melder_throw (U"Formant number does not exist."); \
-		const char32 *id_and_name = Melder_cat (ID, U". ", formant_names [formantType], U" formant amplitude tier"); \
+		conststring32 id_and_name = Melder_cat (ID, U". ", formant_names [formantType], U" formant amplitude tier"); \
 		autoKlattGrid_DecibelTierEditor editor = KlattGrid_DecibelTierEditor_create (id_and_name, me, amp->at [formantNumber]); \
 		praat_installEditor (editor.get(), IOBJECT); \
 		editor.releaseToUser(); \

@@ -36,9 +36,9 @@
 #undef iam
 #define iam iam_LOOP
 
-static const char32 *QUERY_BUTTON   = U"Query -";
-static const char32 *MODIFY_BUTTON  = U"Modify -";
-static const char32 *EXTRACT_BUTTON = U"Extract -";
+static const conststring32 QUERY_BUTTON   = U"Query -";
+static const conststring32 MODIFY_BUTTON  = U"Modify -";
+static const conststring32 EXTRACT_BUTTON = U"Extract -";
 
 /////////////////////////////////////////////////////////////////////////////////////////
 // KNN creations                                                                      //

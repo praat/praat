@@ -31,7 +31,7 @@ Thing_define (IntensityTier, RealTier) {
 autoIntensityTier IntensityTier_create (double tmin, double tmax);
 
 void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const char32 *method, int garnish);
+	double ymin, double ymax, conststring32 method, int garnish);
 
 autoIntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity);
 autoIntensityTier Intensity_downto_IntensityTier (Intensity me);

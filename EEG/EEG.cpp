@@ -85,11 +85,10 @@ autoEEG EEG_create (double tmin, double tmax) {
 	}
 }
 
-integer EEG_getChannelNumber (EEG me, const char32 *channelName) {
+integer EEG_getChannelNumber (EEG me, conststring32 channelName) {
 	for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-		if (Melder_equ (my channelNames [ichan].get(), channelName)) {
+		if (Melder_equ (my channelNames [ichan].get(), channelName))
 			return ichan;
-		}
 	}
 	return 0;
 }
@@ -449,13 +448,13 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 	}
 }
 
-void EEG_setChannelName (EEG me, integer channelNumber, const char32 *newName) {
+void EEG_setChannelName (EEG me, integer channelNumber, conststring32 newName) {
 	my channelNames [channelNumber] = Melder_dup (newName);
 }
 
 void EEG_setExternalElectrodeNames (EEG me,
-	const char32 *nameExg1, const char32 *nameExg2, const char32 *nameExg3, const char32 *nameExg4,
-	const char32 *nameExg5, const char32 *nameExg6, const char32 *nameExg7, const char32 *nameExg8)
+	conststring32 nameExg1, conststring32 nameExg2, conststring32 nameExg3, conststring32 nameExg4,
+	conststring32 nameExg5, conststring32 nameExg6, conststring32 nameExg7, conststring32 nameExg8)
 {
 	if (EEG_getNumberOfExternalElectrodes (me) != 8)
 		Melder_throw (U"There aren't 8 external electrodes.");
@@ -470,13 +469,13 @@ void EEG_setExternalElectrodeNames (EEG me,
 	EEG_setChannelName (me, firstExternalElectrode + 7, nameExg8);
 }
 
-void EEG_subtractReference (EEG me, const char32 *channelNumber1_text, const char32 *channelNumber2_text) {
-	integer channelNumber1 = EEG_getChannelNumber (me, channelNumber1_text);
+void EEG_subtractReference (EEG me, conststring32 channelName1, conststring32 channelName2) {
+	integer channelNumber1 = EEG_getChannelNumber (me, channelName1);
 	if (channelNumber1 == 0)
-		Melder_throw (me, U": no channel named \"", channelNumber1_text, U"\".");
-	integer channelNumber2 = EEG_getChannelNumber (me, channelNumber2_text);
-	if (channelNumber2 == 0 && channelNumber2_text [0] != '\0')
-		Melder_throw (me, U": no channel named \"", channelNumber2_text, U"\".");
+		Melder_throw (me, U": no channel named \"", channelName1, U"\".");
+	integer channelNumber2 = EEG_getChannelNumber (me, channelName2);
+	if (channelNumber2 == 0 && channelName2 [0] != '\0')
+		Melder_throw (me, U": no channel named \"", channelName2, U"\".");
 	const integer numberOfElectrodeChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
 	for (integer isamp = 1; isamp <= my sound -> nx; isamp ++) {
 		double referenceValue = channelNumber2 == 0 ? my sound -> z [channelNumber1] [isamp] :
@@ -521,7 +520,7 @@ void EEG_setChannelToZero (EEG me, integer channelNumber) {
 	}
 }
 
-void EEG_setChannelToZero (EEG me, const char32 *channelName) {
+void EEG_setChannelToZero (EEG me, conststring32 channelName) {
 	try {
 		integer channelNumber = EEG_getChannelNumber (me, channelName);
 		if (channelNumber == 0)
@@ -532,7 +531,7 @@ void EEG_setChannelToZero (EEG me, const char32 *channelName) {
 	}
 }
 
-void EEG_removeTriggers (EEG me, kMelder_string which, const char32 *criterion) {
+void EEG_removeTriggers (EEG me, kMelder_string which, conststring32 criterion) {
 	try {
 		if (my textgrid -> tiers->size < 2 || ! Melder_equ (my textgrid -> tiers->at [2] -> name.get(), U"Trigger"))
 			Melder_throw (me, U" does not have a Trigger channel.");
@@ -558,7 +557,7 @@ autoEEG EEG_extractChannel (EEG me, integer channelNumber) {
 	}
 }
 
-autoEEG EEG_extractChannel (EEG me, const char32 *channelName) {
+autoEEG EEG_extractChannel (EEG me, conststring32 channelName) {
 	try {
 		integer channelNumber = EEG_getChannelNumber (me, channelName);
 		if (channelNumber == 0)
@@ -620,7 +619,7 @@ void EEG_removeChannel (EEG me, integer channelNumber) {
 	}
 }
 
-void EEG_removeChannel (EEG me, const char32 *channelName) {
+void EEG_removeChannel (EEG me, conststring32 channelName) {
 	try {
 		integer channelNumber = EEG_getChannelNumber (me, channelName);
 		if (channelNumber == 0)

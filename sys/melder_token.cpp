@@ -36,7 +36,6 @@ integer Melder_countTokens (const char32 *string) {
 static autostring32 theMelderToken;
 
 char32 *Melder_firstToken (const char32 *string) {
-	Melder_free (theMelderToken);
 	theMelderToken = Melder_dup_f (string);
 	return Melder_tok (theMelderToken.get(), U" \t\n\r");
 }

@@ -32,7 +32,7 @@ Thing_define (OptimalCeilingTier, RealTier) {
 autoOptimalCeilingTier OptimalCeilingTier_create (double tmin, double tmax);
 
 void OptimalCeilingTier_draw (OptimalCeilingTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const char32 *method, int garnish);
+	double ymin, double ymax, conststring32 method, bool garnish);
 
 autoTableOfReal OptimalCeilingTier_downto_TableOfReal (OptimalCeilingTier me);
 

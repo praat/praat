@@ -90,18 +90,18 @@ are type 1 (men), type 2 (women) and type 3 (children)."
 
 autoTable Table_create_petersonBarney1952 () {
 	integer nrows = 1520, ncols = 9;
-	const char32 *columnLabels [9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
-	const char32 *type [3] = {U"m", U"w", U"c"};
+	conststring32 columnLabels [9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
+	conststring32 type [3] = {U"m", U"w", U"c"};
 	// Wrong order before 20080125
 	//	char32 *vowel [10] = {U"iy", U"ih", U"eh", U"ae", U"aa", U"ao", U"uh", U"uw", U"ah", U"er"};
 	//	char32 *ipa [10] = {U"i", U"\\ic", U"\\ep", U"\\ae", U"\\as", U"\\ct", U"\\hs", U"u",
 	//		U"\\vt", U"\\er\\hr"};
-	const char32 *vowel [10] = {U"iy", U"ih", U"eh", U"ae", U"ah", U"aa", U"ao", U"uh", U"uw", U"er"};
+	conststring32 vowel [10] = {U"iy", U"ih", U"eh", U"ae", U"ah", U"aa", U"ao", U"uh", U"uw", U"er"};
 	// Watrous IPA symbols
 	//	char32 *ipa [10] = {U"i", U"\\ic", U"e", U"\\ae", U"\\vt", U"\\as", U"o", U"\\hs", U"u", U"\\er"};
 	// P& B IPA symbols
-	const char32 *ipa [10] = {U"i", U"\\ic", U"\\ef", U"\\ae", U"\\vt", U"\\as", U"\\ct", U"\\hs", U"u", U"\\er\\hr"};
-	const char32 *sex [2] = {U"m", U"f"};
+	conststring32 ipa [10] = {U"i", U"\\ic", U"\\ef", U"\\ae", U"\\vt", U"\\as", U"\\ct", U"\\hs", U"u", U"\\er\\hr"};
+	conststring32 sex [2] = {U"m", U"f"};
 	struct pbdatum {
 		short star; /* was there a * in front of the vowel-type? */
 		short f [4];	/* f0, f1, f2, f3 */
@@ -1671,10 +1671,10 @@ autoTable Table_create_petersonBarney1952 () {
 
 autoTable Table_create_polsVanNierop1973 () {
 	integer nrows = 900, ncols = 10;
-	const char32 *columnLabels [10] = {U"Sex", U"Speaker", U"Vowel", U"IPA", U"F1", U"F2", U"F3", U"L1", U"L2", U"L3"};
-	const char32 *vowel [12] = {U"oe", U"aa", U"oo", U"a", U"eu", U"ie", U"uu", U"ee", U"u", U"e", U"o", U"i"};
-	const char32 *ipa [12] = {U"u", U"a", U"o", U"\\as", U"\\o/", U"i", U"y", U"e", U"\\yc", U"\\ep", U"\\ct", U"\\ic"};
-	const char32 *sex [2] = {U"m", U"f"};
+	conststring32 columnLabels [10] = {U"Sex", U"Speaker", U"Vowel", U"IPA", U"F1", U"F2", U"F3", U"L1", U"L2", U"L3"};
+	conststring32 vowel [12] = {U"oe", U"aa", U"oo", U"a", U"eu", U"ie", U"uu", U"ee", U"u", U"e", U"o", U"i"};
+	conststring32 ipa [12] = {U"u", U"a", U"o", U"\\as", U"\\o/", U"i", U"y", U"e", U"\\yc", U"\\ep", U"\\ct", U"\\ic"};
+	conststring32 sex [2] = {U"m", U"f"};
 	struct polsdatum {
 		short f [3]; /* frequency F1, F2, F3 */
 		short l [3];	/* level f1, f2, f3 */
@@ -2687,14 +2687,14 @@ autoTable Table_create_polsVanNierop1973 () {
 
 autoTable Table_create_weenink1983 () {
 	integer nrows = 360, ncols = 9;
-	const char32 *columnLabels [9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
-	const char32 *type [3] = {U"m", U"w", U"c"};
+	conststring32 columnLabels [9] = {U"Type", U"Sex", U"Speaker", U"Vowel", U"IPA", U"F0", U"F1", U"F2", U"F3"};
+	conststring32 type [3] = {U"m", U"w", U"c"};
 	/* Our order: "oe", "o", "oo", "a", "aa", "u", "eu", "uu", "ie", "i", "ee", "e"
 		to Pols & van Nierop order */
 	int order [13] = { 0, 1, 5, 3, 4, 7, 9, 8, 11, 6, 12, 2, 10};
-	const char32 *vowel [13] = {U"", U"oe", U"aa", U"oo", U"a", U"eu", U"ie", U"uu", U"ee", U"u", U"e", U"o", U"i"};
-	const char32 *ipa [13] = {U"", U"u", U"a", U"o", U"\\as", U"\\o/", U"i", U"y", U"e", U"\\yc", U"\\ep", U"\\ct", U"\\ic"};
-	const char32 *sex [2] = {U"m", U"f"};
+	conststring32 vowel [13] = {U"", U"oe", U"aa", U"oo", U"a", U"eu", U"ie", U"uu", U"ee", U"u", U"e", U"o", U"i"};
+	conststring32 ipa [13] = {U"", U"u", U"a", U"o", U"\\as", U"\\o/", U"i", U"y", U"e", U"\\yc", U"\\ep", U"\\ct", U"\\ic"};
+	conststring32 sex [2] = {U"m", U"f"};
 	struct weeninkdatum {
 		short f [4];	  // f0, f1, f2, f3
 	} weeninkdata [] = {
@@ -3220,7 +3220,7 @@ static bool intervalsIntersect (double x1, double x2, double xmin, double xmax, 
 }
 
 void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, integer ycolumn, double xmin, double xmax, 
-	double ymin, double ymax, integer xci_min, integer xci_max, double bar_mm, bool garnish, const char32 *formula, Interpreter interpreter)
+	double ymin, double ymax, integer xci_min, integer xci_max, double bar_mm, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
 		integer nrows = my rows.size;
@@ -3295,7 +3295,7 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, 
 void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 	integer xcolumn, integer ycolumn, double xmin, double xmax,
 	double ymin, double ymax, integer yci_min, integer yci_max,
-	double bar_mm, bool garnish, const char32 *formula, Interpreter interpreter)
+	double bar_mm, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
 		integer nrows = my rows.size;
@@ -3909,7 +3909,8 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 	}
 }
 
-void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer numberOfQuantiles, double numberOfSigmas, int labelSize, const char32 *label, bool garnish)
+void Table_normalProbabilityPlot (Table me, Graphics g,
+	integer column, integer numberOfQuantiles, double numberOfSigmas, int labelSize, conststring32 label, bool garnish)
 {
 	try {
 		if (column < 1 || column > my numberOfColumns) return;
@@ -3961,8 +3962,9 @@ void Table_normalProbabilityPlot (Table me, Graphics g, integer column, integer 
 	}
 }
 
-void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, integer dataColumn, integer factorColumn, const char32 *xlevel, const char32 *ylevel, integer numberOfQuantiles,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel, bool garnish)
+void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
+	integer dataColumn, integer factorColumn, conststring32 xlevel, conststring32 ylevel, integer numberOfQuantiles,
+	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 plotLabel, bool garnish)
 {
 	try {
 		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
@@ -4014,7 +4016,7 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, integer dat
 }
 
 void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer ycolumn, integer numberOfQuantiles,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, const char32 *plotLabel, bool garnish)
+	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 plotLabel, bool garnish)
 {
 	try {
 		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
@@ -4103,8 +4105,8 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 }
 
 void Table_boxPlotsWhere (Table me, Graphics g,
-	const char32 *dataColumns_string, integer factorColumn, double ymin, double ymax,
-	bool garnish, const char32 *formula, Interpreter interpreter)
+	conststring32 dataColumns_string, integer factorColumn, double ymin, double ymax,
+	bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
 		integer numberOfSelectedColumns;
@@ -4170,7 +4172,7 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 
 void Table_distributionPlotWhere (Table me, Graphics g,
 	integer dataColumn, double minimum, double maximum, integer nBins, double freqMin, double freqMax,
-	bool garnish, const char32 *formula, Interpreter interpreter)
+	bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
 		if (dataColumn < 1 || dataColumn > my numberOfColumns) return;
@@ -4191,9 +4193,9 @@ void Table_distributionPlotWhere (Table me, Graphics g,
 	}
 }
 
-static autoStrings itemizeColourString (const char32 *colourString) {
+static autoStrings itemizeColourString (conststring32 colourString) {
 	// remove all spaces within { } so each {1,2,3} can be itemized
-	const char32 * const searchRE = U"\\{\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*\\}";
+	conststring32  const searchRE = U"\\{\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*\\}";
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 	integer nmatches_sub = 0;
 	autostring32 colourStringWithoutSpaces = str_replace_regexp (colourString, compiledRE, U"{\\1,\\2,\\3}", 0, & nmatches_sub);
@@ -4246,7 +4248,7 @@ static Graphics_Colour Strings_colourToValue  (Strings me, integer index) {
 	return colourValue;
 }
 
-integer Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter interpreter) {
+integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter interpreter) {
 	integer numberOfRows = 0;
 	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
@@ -4259,7 +4261,7 @@ integer Table_getNumberOfRowsWhere (Table me, const char32 *formula, Interpreter
 	return numberOfRows;
 }
 
-integer *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Interpreter interpreter, integer *p_numberOfMatches) {
+integer *Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter, integer *p_numberOfMatches) {
 	try {
 		integer numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
 		if (numberOfMatches < 1) {
@@ -4287,9 +4289,9 @@ integer *Table_findRowsMatchingCriterion (Table me, const char32 *formula, Inter
 
 
 void Table_barPlotWhere (Table me, Graphics g,
-	const char32 *columnLabels, double ymin, double ymax, const char32 *factorColumn,
-	double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *colours,
-	double angle, bool garnish, const char32 *formula, Interpreter interpreter)
+	conststring32 columnLabels, double ymin, double ymax, conststring32 factorColumn,
+	double xoffsetFraction, double interbarFraction, double interbarsFraction, conststring32 colours,
+	double angle, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
 		integer numberOfColumns, numberOfRowMatches = 0;
@@ -4359,7 +4361,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 					Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
 				}
 				for (integer irow = 1; irow <= numberOfGroups; irow ++) {
-					const char32 *label = Table_getStringValue_Assert (me, selectedRows [irow], labelIndex);
+					conststring32 label = Table_getStringValue_Assert (me, selectedRows [irow], labelIndex);
 					if (label) {
 						//Graphics_markBottom (g, xb, false, false, false, label);
 						Graphics_text (g, xb, ymin - g -> vertTick, label); // was y
@@ -4384,7 +4386,11 @@ void Table_barPlotWhere (Table me, Graphics g,
 	}
 }
 
-static int Graphics_getConnectingLine (Graphics g, const char32 *text1, double x1, double y1, const char32 *text2, double x2, double y2, double *x3, double *y3, double *x4, double *y4) {
+static int Graphics_getConnectingLine (Graphics g,
+	conststring32 text1, double x1, double y1,
+	conststring32 text2, double x2, double y2,
+	double *x3, double *y3, double *x4, double *y4)
+{
 	int drawLine = 0;
 	double width1 = Graphics_textWidth (g, text1), width2 = Graphics_textWidth (g, text2);
 	double h = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72) / 1.5;
@@ -4406,7 +4412,7 @@ static int Graphics_getConnectingLine (Graphics g, const char32 *text1, double x
 // take the xcolumn as labels if non-numeric column else as numbers and arrange distances accordingly.
 void Table_lineGraphWhere (Table me, Graphics g,
 	integer xcolumn, double xmin, double xmax, integer ycolumn, double ymin, double ymax,
-	const char32 *symbol, double angle, bool garnish, const char32 *formula, Interpreter interpreter)
+	conststring32 symbol, double angle, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
 		if (ycolumn < 1 || ycolumn > my numberOfColumns) return;
@@ -4473,7 +4479,7 @@ void Table_lineGraphWhere (Table me, Graphics g,
 			for (integer i = 1; i <= numberOfSelectedRows; i ++) {
 				double x2 = i;
 				if (x2 >= xmin && x2 <= xmax) {
-					const char32 *label = Table_getStringValue_Assert (me, selectedRows [i], xcolumn);
+					conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], xcolumn);
 					if (label) {
 						//Graphics_markBottom (g, xb, false, false, false, label);
 						Graphics_text (g, x2 + dx, ymin - g -> vertTick, label); // was y
@@ -4498,8 +4504,8 @@ void Table_lineGraphWhere (Table me, Graphics g,
 }
 
 void Table_lagPlotWhere (Table me, Graphics g,
-	integer column, integer lag, double xmin, double xmax, const char32 *symbol, int labelSize,
-	bool garnish, const char32 *formula, Interpreter interpreter)
+	integer column, integer lag, double xmin, double xmax, conststring32 symbol, int labelSize,
+	bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
 		if (column < 1 || column > my rows.size) {
@@ -4532,7 +4538,7 @@ void Table_lagPlotWhere (Table me, Graphics g,
 	}
 }
 
-autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter interpreter) {
+autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter interpreter) {
 	try {
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 		autoTable thee = Table_create (0, my numberOfColumns);
@@ -4558,7 +4564,9 @@ autoTable Table_extractRowsWhere (Table me, const char32 *formula, Interpreter i
 	}
 }
 
-static autoTableOfReal Table_to_TableOfReal_where (Table me, const char32 *columnLabels, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
+static autoTableOfReal Table_to_TableOfReal_where (Table me,
+	conststring32 columnLabels, conststring32 factorColumn, conststring32 formula, Interpreter interpreter)
+{
 	try {
 		integer numberOfColumns, numberOfSelectedRows = 0;
 		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
@@ -4571,7 +4579,7 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me, const char32 *colum
 				thy data [i] [icol] = value;
 			}
 			if (factorColIndex > 0) { // if no factorColumn given labels may be empty
-				const char32 *label = Table_getStringValue_Assert (me, selectedRows [i], factorColIndex);
+				conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], factorColIndex);
 				TableOfReal_setRowLabel (thee.get(), i, label);
 			}
 		}
@@ -4584,7 +4592,9 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me, const char32 *colum
 	}
 }
 
-static autoSSCPList Table_to_SSCPList_where (Table me, const char32 *columnLabels, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
+static autoSSCPList Table_to_SSCPList_where (Table me,
+	conststring32 columnLabels, conststring32 factorColumn, conststring32 formula, Interpreter interpreter)
+{
 	try {
 		autoTableOfReal thee = Table_to_TableOfReal_where (me, columnLabels, factorColumn, formula, interpreter);
 		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.get());
@@ -4594,7 +4604,7 @@ static autoSSCPList Table_to_SSCPList_where (Table me, const char32 *columnLabel
 	}
 }
 
-static integer SSCPList_findIndexOfGroupLabel (SSCPList me, const char32 *label) {
+static integer SSCPList_findIndexOfGroupLabel (SSCPList me, conststring32 label) {
 	for (integer i = 1; i <= my size; i ++) {
 		if (Melder_equ (Thing_getName (my at [i]), label)) {
 			return i;
@@ -4603,7 +4613,9 @@ static integer SSCPList_findIndexOfGroupLabel (SSCPList me, const char32 *label)
 	return 0;
 }
 
-static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee, double numberOfSigmas, kMelder_number which, const char32 *factorColumn, const char32 *formula, Interpreter interpreter) {
+static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee,
+	double numberOfSigmas, kMelder_number which, conststring32 factorColumn, conststring32 formula, Interpreter interpreter)
+{
 	try {
 		integer numberOfGroups = thy size;
 		Melder_assert (numberOfGroups > 0);
@@ -4632,7 +4644,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			integer irow = selectedRows [i];
 			integer igroup = 1; // if factorColIndex == 0 we don't need labels
 			if (factorColIndex > 0) {
-				const char32 *label = Table_getStringValue_Assert (me, irow, factorColIndex);
+				conststring32 label = Table_getStringValue_Assert (me, irow, factorColIndex);
 				igroup = SSCPList_findIndexOfGroupLabel (thee, label);
 				if (igroup == 0) {
 					Melder_throw (U"The label \"", label, U"\" in row ", irow, U" is not valid in this context.");
@@ -4655,7 +4667,10 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 	}
 }
 
-autoTable Table_extractMahalanobisWhere (Table me, const char32 *columnLabels, const char32 *factorColumn, double numberOfSigmas, kMelder_number which, const char32 *formula, Interpreter interpreter) {
+autoTable Table_extractMahalanobisWhere (Table me,
+	conststring32 columnLabels, conststring32 factorColumn, double numberOfSigmas,
+	kMelder_number which, conststring32 formula, Interpreter interpreter)
+{
 	try {
 		autoSSCPList thee = Table_to_SSCPList_where (me, columnLabels, factorColumn, formula, interpreter);
 		autoTable him = Table_SSCPList_extractMahalanobisWhere (me, thee.get(), numberOfSigmas, which, factorColumn, formula, interpreter);
@@ -4665,7 +4680,11 @@ autoTable Table_extractMahalanobisWhere (Table me, const char32 *columnLabels, c
 	}
 }
 
-void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer ycolumn, integer factorColumn, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, integer labelSize, bool garnish, const char32 *formula, Interpreter interpreter) {
+void Table_drawEllipsesWhere (Table me, Graphics g,
+	integer xcolumn, integer ycolumn, integer factorColumn,
+	double xmin, double xmax, double ymin, double ymax,
+	double numberOfSigmas, integer labelSize, bool garnish, conststring32 formula, Interpreter interpreter)
+{
 	try {
 		integer numberOfSelectedRows = 0;
 		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
@@ -4673,7 +4692,7 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 		for (integer i = 1; i <= numberOfSelectedRows; i ++) {
 			double x = Table_getNumericValue_Assert (me, selectedRows [i], xcolumn);
 			double y = Table_getNumericValue_Assert (me, selectedRows [i], ycolumn);
-			const char32 *label = Table_getStringValue_Assert (me, selectedRows [i], factorColumn);
+			conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], factorColumn);
 			thy data [i] [1] = x;
 			thy data [i] [2] = y;
 			TableOfReal_setRowLabel (thee.get(), i, label);
@@ -4710,7 +4729,7 @@ void Table_drawEllipsesWhere (Table me, Graphics g, integer xcolumn, integer yco
 	}
 }
 
-autoTable Table_extractColumnRanges (Table me, const char32 *ranges) {
+autoTable Table_extractColumnRanges (Table me, conststring32 ranges) {
 	try {
 		integer numberOfSelectedColumns, numberOfRows = my rows.size;
 		autoNUMvector <integer> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);
@@ -4721,7 +4740,7 @@ autoTable Table_extractColumnRanges (Table me, const char32 *ranges) {
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			//TableRow row = thy rows -> items [irow];
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
-				const char32 *value = Table_getStringValue_Assert (me, irow, columnRanges [icol]);
+				conststring32 value = Table_getStringValue_Assert (me, irow, columnRanges [icol]);
 				Table_setStringValue (thee.get(), irow, icol, value);
 			}
 		}

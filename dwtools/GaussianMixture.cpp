@@ -47,8 +47,8 @@
 
 Thing_implement (GaussianMixture, Daata, 0);
 
-const char32 *GaussianMixture_criterionText (int criterion) {
-	const char32 *criterionText [6] =  { U"(1/n)*LLH", U"(1/n)*MML", U"(1/n)*BIC", U"(1/n)*AIC", U"(1/n)*AICc", U"(1/n)*CD_LLH" };
+conststring32 GaussianMixture_criterionText (int criterion) {
+	conststring32 criterionText [6] =  { U"(1/n)*LLH", U"(1/n)*MML", U"(1/n)*BIC", U"(1/n)*AIC", U"(1/n)*AICc", U"(1/n)*CD_LLH" };
 	return criterion >= 0 && criterion < 7 ? criterionText [criterion] : U"(1/n)*ln(p)";
 }
 
@@ -903,7 +903,7 @@ void GaussianMixture_unExpandPCA (GaussianMixture me) {
 
 void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfReal thee, double delta_lnp, integer maxNumberOfIterations, double lambda, int criterion) {
 	try {
-		const char32 *criterionText = GaussianMixture_criterionText (criterion);
+		conststring32 criterionText = GaussianMixture_criterionText (criterion);
 
 		// The global covariance matrix is added with scaling coefficient lambda during updating the
 		// mixture covariances to prevent numerical instabilities.
@@ -1084,7 +1084,7 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, double **p, integ
 
 autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (GaussianMixture gm, TableOfReal thee, integer minNumberOfComponents, double delta_l, integer maxNumberOfIterations, double lambda, int criterion) {
 	try {
-		const char32 *criterionText = GaussianMixture_criterionText (criterion);
+		conststring32 criterionText = GaussianMixture_criterionText (criterion);
 		bool deleteWeakComponents = ( minNumberOfComponents > 0 );
 		autoGaussianMixture me = Data_copy (gm);
 		autoNUMmatrix<double> p (1, thy numberOfRows + 2, 1, my numberOfComponents + 1);
@@ -1235,11 +1235,11 @@ autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, 
 	}
 }
 
-double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, const char32 *vector) {
+double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector) {
 	autoNUMvector<double> v (1, my dimension);
 
 	integer i = 0;
-	for (char32 *token = Melder_firstToken (vector); token != nullptr; token = Melder_nextToken ()) {
+	for (conststring32 token = Melder_firstToken (vector); token != nullptr; token = Melder_nextToken ()) {
 		v [++ i] = Melder_atof (token);
 		if (i == my dimension) {
 			break;
@@ -1348,7 +1348,7 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 		// labels
 
 		integer iprob = 1, ih = 2, itnb = 3, ilnmu = 4, ilnvar = 5, indata = 6, id = 7;
-		const char32 *label [8] = { U"", U"p", U"h", U"tnb", U"lnmu", U"lnvar", U"ndata", U"d" };
+		conststring32 label [8] = { U"", U"p", U"h", U"tnb", U"lnmu", U"lnvar", U"ndata", U"d" };
 		for (integer icol = 1; icol <= 7; icol ++) {
 			TableOfReal_setColumnLabel (him.get(), icol, label [icol]);
 		}

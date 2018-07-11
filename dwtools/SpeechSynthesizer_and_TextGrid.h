@@ -42,7 +42,7 @@ autoTable IntervalTiers__to_Table_textAlignmentment (IntervalTier target, Interv
 autoTable TextGrids_to_Table_textAlignmentment (TextGrid target, integer ttier, TextGrid source, integer stier, EditCostsTable costs);
 
 /* For testing purposes only */
-autoTextGrid TextGrid_IntervalTier_patch (TextGrid me, IntervalTier thee, const char32 *patchLabel, double precision);
-autoTextGrid TextGrid_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision);
+autoTextGrid TextGrid_IntervalTier_patch (TextGrid me, IntervalTier thee, conststring32 patchLabel, double precision);
+autoTextGrid TextGrid_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, conststring32 label, double precision);
 
 #endif // _SpeechSynthesizer_and_TextGrid_h_
