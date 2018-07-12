@@ -723,7 +723,7 @@ struct SortedSetOfStringOf : SortedSetOf <T> {
 	typename SortedOf<T>::CompareHook v_getCompareHook ()
 		override { return (typename SortedOf<T>::CompareHook) our s_compareHook; }
 
-	integer lookUp (const char32 *string) {
+	integer lookUp (conststring32 string) {
 		integer numberOfItems = our size;
 		integer left = 1, right = numberOfItems;
 		int atStart, atEnd;
@@ -770,7 +770,7 @@ Collection_define (StringList, OrderedOf, /* final */ SimpleString) {
 #pragma mark class StringSet
 
 Collection_define (StringSet, SortedSetOfStringOf, /* final */ SimpleString) {
-	void addString_copy (const char32 *string) {
+	void addString_copy (conststring32 string) {
 		autoSimpleString newSimp = SimpleString_create (string);
 		our addItem_move (newSimp.move());
 	}

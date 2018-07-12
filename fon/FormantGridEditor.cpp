@@ -436,7 +436,7 @@ void structFormantGridEditor :: v_play (double tmin, double tmax) {
 		theFunctionEditor_playCallback, this);
 }
 
-void FormantGridEditor_init (FormantGridEditor me, const char32 *title, FormantGrid data) {
+void FormantGridEditor_init (FormantGridEditor me, conststring32 title, FormantGrid data) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classFormantGrid));
 	FunctionEditor_init (me, title, data);
@@ -444,7 +444,7 @@ void FormantGridEditor_init (FormantGridEditor me, const char32 *title, FormantG
 	my selectedFormant = 1;
 }
 
-autoFormantGridEditor FormantGridEditor_create (const char32 *title, FormantGrid data) {
+autoFormantGridEditor FormantGridEditor_create (conststring32 title, FormantGrid data) {
 	try {
 		autoFormantGridEditor me = Thing_new (FormantGridEditor);
 		FormantGridEditor_init (me.get(), title, data);

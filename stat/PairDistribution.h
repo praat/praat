@@ -24,20 +24,20 @@
 
 #include "PairDistribution_def.h"
 
-autoPairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight);
+autoPairProbability PairProbability_create (conststring32 string1, conststring32 string2, double weight);
 
 int PairProbability_compare (PairProbability me, PairProbability thee) noexcept;
 
 autoPairDistribution PairDistribution_create ();
 
-const char32 * PairDistribution_getString1 (PairDistribution me, integer pairNumber);
-const char32 * PairDistribution_getString2 (PairDistribution me, integer pairNumber);
+conststring32 PairDistribution_getString1 (PairDistribution me, integer pairNumber);
+conststring32 PairDistribution_getString2 (PairDistribution me, integer pairNumber);
 double PairDistribution_getWeight (PairDistribution me, integer pairNumber);
 
-void PairDistribution_add (PairDistribution me, const char32 *string1, const char32 *string2, double weight);
+void PairDistribution_add (PairDistribution me, conststring32 string1, conststring32 string2, double weight);
 void PairDistribution_removeZeroWeights (PairDistribution me);
 void PairDistribution_to_Stringses (PairDistribution me, integer nout, autoStrings *strings1, autoStrings *strings2);
-void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **string2);
+void PairDistribution_peekPair (PairDistribution me, conststring32 *out_string1, conststring32 *out_string2);
 
 void PairDistribution_swapInputsAndOutputs (PairDistribution me);
 

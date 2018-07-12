@@ -42,7 +42,7 @@ bool Melder_backgrounding;   // are we running a script?- Set and unset dynamica
 bool Melder_asynchronous;
 int32 Melder_systemVersion;
 
-static void defaultHelp (const char32 *query) {
+static void defaultHelp (conststring32 query) {
 	Melder_flushError (U"Don't know how to find help on \"", query, U"\".");
 }
 
@@ -50,20 +50,20 @@ static void defaultSearch () {
 	Melder_flushError (U"Do not know how to search.");
 }
 
-static void defaultProgress (double progress, const char32 *message) {
+static void defaultProgress (double progress, conststring32 message) {
 }
 
-static void * defaultMonitor (double progress, const char32 *message) {
+static void * defaultMonitor (double progress, conststring32 message) {
 	return NULL;
 }
 
-static void defaultWarning (const char32 *message) {
+static void defaultWarning (conststring32 message) {
 	Melder_writeToConsole (U"Warning: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (U"\n", true);
 }
 
-static void defaultFatal (const char32 *message) {
+static void defaultFatal (conststring32 message) {
 	Melder_writeToConsole (U"Fatal error: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (U"\n", true);
@@ -90,12 +90,12 @@ static int defaultPublishPlayed () {
 /********** Current message methods: initialize to default (batch) behaviour. **********/
 
 static struct {
-	void (*help) (const char32 *query);
+	void (*help) (conststring32 query);
 	void (*search) ();
-	void (*progress) (double progress, const char32 *message);
-	void * (*monitor) (double progress, const char32 *message);
-	void (*warning) (const char32 *message);
-	void (*fatal) (const char32 *message);
+	void (*progress) (double progress, conststring32 message);
+	void * (*monitor) (double progress, conststring32 message);
+	void (*warning) (conststring32 message);
+	void (*fatal) (conststring32 message);
 	int (*record) (double duration);
 	int (*recordFromFile) (MelderFile file);
 	void (*play) ();
@@ -115,7 +115,7 @@ static int theProgressDepth = 0;
 void Melder_progressOff () { theProgressDepth --; }
 void Melder_progressOn () { theProgressDepth ++; }
 
-static void _Melder_progress (double progress, const char32 *message) {
+static void _Melder_progress (double progress, conststring32 message) {
 	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
 		theMelder. progress (progress, message);
 	}
@@ -183,7 +183,7 @@ void Melder_progress (double progress, Melder_19_ARGS) {
 	_Melder_progress (progress, theProgressBuffer.string);
 }
 
-static void * _Melder_monitor (double progress, const char32 *message) {
+static void * _Melder_monitor (double progress, conststring32 message) {
 	if (! Melder_batch && theProgressDepth >= 0) {
 		void *result = theMelder. monitor (progress, message);
 		if (result) return result;
@@ -263,14 +263,14 @@ bool Melder_numberMatchesCriterion (double value, kMelder_number which, double c
 		(which == kMelder_number::GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-inline static char32 * str32str_word_optionallyCaseSensitive (const char32 *string, const char32 *find,
+inline static char32 * str32str_word_optionallyCaseSensitive (conststring32 string, conststring32 find,
 	bool ink, bool caseSensitive, bool startFree, bool endFree) noexcept
 {
 	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
-	const char32 *movingString = string;
+	conststring32 movingString = string;
 	do {
-		const char32 *movingFind = find;
+		conststring32 movingFind = find;
 		char32 firstCharacter = ( caseSensitive ? * movingFind ++ : Melder_toLowerCase (* movingFind ++) );   // optimization
 		do {
 			char32 kar;
@@ -294,7 +294,7 @@ inline static char32 * str32str_word_optionallyCaseSensitive (const char32 *stri
 	return nullptr;   // can never occur
 }
 
-bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, const char32 *criterion, bool caseSensitive) {
+bool Melder_stringMatchesCriterion (conststring32 value, kMelder_string which, conststring32 criterion, bool caseSensitive) {
 	if (! value) {
 		value = U"";   // regard null strings as empty strings, as is usual in Praat
 	}
@@ -382,7 +382,7 @@ bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, c
 	//return false;   // should not occur
 }
 
-void Melder_help (const char32 *query) {
+void Melder_help (conststring32 query) {
 	theMelder. help (query);
 }
 
@@ -488,11 +488,11 @@ void Melder_message_init () {
 
 constexpr int Melder_FATAL_BUFFER_SIZE { 2000 };
 static char32 theFatalBuffer [Melder_FATAL_BUFFER_SIZE];
-static const char32 *theCrashMessage { U"Praat will crash. Notify the author (paul.boersma@uva.nl) with the following information:\n" };
+static const conststring32 theCrashMessage { U"Praat will crash. Notify the author (paul.boersma@uva.nl) with the following information:\n" };
 
 int Melder_fatal (Melder_1_ARG) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -503,8 +503,8 @@ int Melder_fatal (Melder_1_ARG) {
 }
 int Melder_fatal (Melder_2_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2 = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2 = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -516,9 +516,9 @@ int Melder_fatal (Melder_2_ARGS) {
 }
 int Melder_fatal (Melder_3_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2 = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3 = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2 = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3 = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -531,10 +531,10 @@ int Melder_fatal (Melder_3_ARGS) {
 }
 int Melder_fatal (Melder_4_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg  ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg  ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg  ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg  ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s1  = arg1. _arg  ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg  ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg  ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg  ? arg4. _arg : U"";   int64 length4  = str32len (s4);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -548,11 +548,11 @@ int Melder_fatal (Melder_4_ARGS) {
 }
 int Melder_fatal (Melder_5_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -567,12 +567,12 @@ int Melder_fatal (Melder_5_ARGS) {
 }
 int Melder_fatal (Melder_6_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -588,13 +588,13 @@ int Melder_fatal (Melder_6_ARGS) {
 }
 int Melder_fatal (Melder_7_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	const char32 *s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -611,14 +611,14 @@ int Melder_fatal (Melder_7_ARGS) {
 }
 int Melder_fatal (Melder_8_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	const char32 *s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	const char32 *s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
+	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -636,15 +636,15 @@ int Melder_fatal (Melder_8_ARGS) {
 }
 int Melder_fatal (Melder_9_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	const char32 *s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	const char32 *s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	const char32 *s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
+	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
+	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -663,16 +663,16 @@ int Melder_fatal (Melder_9_ARGS) {
 }
 int Melder_fatal (Melder_10_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	const char32 *s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	const char32 *s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	const char32 *s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
+	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
+	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -692,17 +692,17 @@ int Melder_fatal (Melder_10_ARGS) {
 }
 int Melder_fatal (Melder_11_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	const char32 *s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	const char32 *s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	const char32 *s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
+	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
+	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -723,19 +723,19 @@ int Melder_fatal (Melder_11_ARGS) {
 }
 int Melder_fatal (Melder_13_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	const char32 *s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	const char32 *s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	const char32 *s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
+	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
+	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -758,21 +758,21 @@ int Melder_fatal (Melder_13_ARGS) {
 }
 int Melder_fatal (Melder_15_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	const char32 *s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	const char32 *s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	const char32 *s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
-	const char32 *s14 = arg14._arg ? arg14._arg : U"";   int64 length14 = str32len (s14);
-	const char32 *s15 = arg15._arg ? arg15._arg : U"";   int64 length15 = str32len (s15);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
+	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
+	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
+	conststring32 s14 = arg14._arg ? arg14._arg : U"";   int64 length14 = str32len (s14);
+	conststring32 s15 = arg15._arg ? arg15._arg : U"";   int64 length15 = str32len (s15);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -797,25 +797,25 @@ int Melder_fatal (Melder_15_ARGS) {
 }
 int Melder_fatal (Melder_19_ARGS) {
 	MelderThread_LOCK (theMelder_fatal_mutex);
-	const char32 *s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	const char32 *s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	const char32 *s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	const char32 *s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	const char32 *s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	const char32 *s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	const char32 *s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	const char32 *s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	const char32 *s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
-	const char32 *s14 = arg14._arg ? arg14._arg : U"";   int64 length14 = str32len (s14);
-	const char32 *s15 = arg15._arg ? arg15._arg : U"";   int64 length15 = str32len (s15);
-	const char32 *s16 = arg16._arg ? arg16._arg : U"";   int64 length16 = str32len (s16);
-	const char32 *s17 = arg17._arg ? arg17._arg : U"";   int64 length17 = str32len (s17);
-	const char32 *s18 = arg18._arg ? arg18._arg : U"";   int64 length18 = str32len (s18);
-	const char32 *s19 = arg19._arg ? arg19._arg : U"";   int64 length19 = str32len (s19);
+	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
+	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
+	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
+	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
+	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
+	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
+	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
+	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
+	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
+	conststring32 s14 = arg14._arg ? arg14._arg : U"";   int64 length14 = str32len (s14);
+	conststring32 s15 = arg15._arg ? arg15._arg : U"";   int64 length15 = str32len (s15);
+	conststring32 s16 = arg16._arg ? arg16._arg : U"";   int64 length16 = str32len (s16);
+	conststring32 s17 = arg17._arg ? arg17._arg : U"";   int64 length17 = str32len (s17);
+	conststring32 s18 = arg18._arg ? arg18._arg : U"";   int64 length18 = str32len (s18);
+	conststring32 s19 = arg19._arg ? arg19._arg : U"";   int64 length19 = str32len (s19);
 	str32cpy (theFatalBuffer, theCrashMessage);
 	int64 length = str32len (theFatalBuffer);
 	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
@@ -891,22 +891,22 @@ int Melder_publishPlayed () {
 
 /********** Procedures to override message methods (e.g., to enforce interactive behaviour). **********/
 
-void Melder_setHelpProc (void (*help) (const char32 *query))
+void Melder_setHelpProc (void (*help) (conststring32 query))
 	{ theMelder. help = help ? help : defaultHelp; }
 
 void Melder_setSearchProc (void (*search) (void))
 	{ theMelder. search = search ? search : defaultSearch; }
 
-void Melder_setWarningProc (void (*warning) (const char32 *))
+void Melder_setWarningProc (void (*warning) (conststring32))
 	{ theMelder. warning = warning ? warning : defaultWarning; }
 
-void Melder_setProgressProc (void (*progress) (double, const char32 *))
+void Melder_setProgressProc (void (*progress) (double, conststring32))
 	{ theMelder. progress = progress ? progress : defaultProgress; }
 
-void Melder_setMonitorProc (void * (*monitor) (double, const char32 *))
+void Melder_setMonitorProc (void * (*monitor) (double, conststring32))
 	{ theMelder. monitor = monitor ? monitor : defaultMonitor; }
 
-void Melder_setFatalProc (void (*fatal) (const char32 *))
+void Melder_setFatalProc (void (*fatal) (conststring32))
 	{ theMelder. fatal = fatal ? fatal : defaultFatal; }
 
 void Melder_setRecordProc (int (*record) (double))

@@ -142,7 +142,7 @@ static void IntervalTier_removeEmptyIntervals (IntervalTier me, IntervalTier bos
 	}
 }
 
-void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer tierNumber, integer intervalNumber, const char32 *languageName, bool includeWords, bool includePhonemes) {
+void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, integer tierNumber, integer intervalNumber, conststring32 languageName, bool includeWords, bool includePhonemes) {
 	try {
 		IntervalTier headTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		if (intervalNumber < 1 || intervalNumber > headTier -> intervals.size)
@@ -474,7 +474,7 @@ autoSoundList TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound,
 }
 
 autoSoundList TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, integer tierNumber,
-	kMelder_string which, const char32 *text, bool preserveTimes)
+	kMelder_string which, conststring32 text, bool preserveTimes)
 {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);

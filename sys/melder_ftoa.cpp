@@ -69,7 +69,7 @@ const char * Melder8_integer (int64 value) noexcept {
 	}
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_integer (int64 value) noexcept {
+conststring32 Melder_integer (int64 value) noexcept {
 	const char *p = Melder8_integer (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -123,7 +123,7 @@ const char * Melder8_bigInteger (int64 value) noexcept {
 	sprintf (text + strlen (text), firstDigitPrinted ? "%03d" : "%d", units);
 	return text;
 }
-const char32 * Melder_bigInteger (int64 value) noexcept {
+conststring32 Melder_bigInteger (int64 value) noexcept {
 	const char *p = Melder8_bigInteger (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -131,7 +131,7 @@ const char32 * Melder_bigInteger (int64 value) noexcept {
 const char * Melder8_boolean (bool value) noexcept {
 	return value ? "yes" : "no";
 }
-const char32 * Melder_boolean (bool value) noexcept {
+conststring32 Melder_boolean (bool value) noexcept {
 	return value ? U"yes" : U"no";
 }
 
@@ -151,7 +151,7 @@ const char * Melder8_double (double value) noexcept {
 	}
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_double (double value) noexcept {
+conststring32 Melder_double (double value) noexcept {
 	const char *p = Melder8_double (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -162,7 +162,7 @@ const char * Melder8_single (double value) noexcept {
 	sprintf (buffers8 [ibuffer], "%.9g", value);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_single (double value) noexcept {
+conststring32 Melder_single (double value) noexcept {
 	const char *p = Melder8_single (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -173,7 +173,7 @@ const char * Melder8_half (double value) noexcept {
 	sprintf (buffers8 [ibuffer], "%.4g", value);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_half (double value) noexcept {
+conststring32 Melder_half (double value) noexcept {
 	const char *p = Melder8_half (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -191,7 +191,7 @@ const char * Melder8_fixed (double value, integer precision) noexcept {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_fixed (double value, integer precision) noexcept {
+conststring32 Melder_fixed (double value, integer precision) noexcept {
 	const char *p = Melder8_fixed (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -211,7 +211,7 @@ const char * Melder8_fixedExponent (double value, integer exponent, integer prec
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_fixedExponent (double value, integer exponent, integer precision) noexcept {
+conststring32 Melder_fixedExponent (double value, integer exponent, integer precision) noexcept {
 	const char *p = Melder8_fixedExponent (value, exponent, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -230,7 +230,7 @@ const char * Melder8_percent (double value, integer precision) noexcept {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_percent (double value, integer precision) noexcept {
+conststring32 Melder_percent (double value, integer precision) noexcept {
 	const char *p = Melder8_percent (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -246,7 +246,7 @@ const char * Melder8_hexadecimal (integer value, integer precision) noexcept {
 	Melder_assert (n <= MAXIMUM_NUMERIC_STRING_LENGTH);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_hexadecimal (integer value, integer precision) noexcept {
+conststring32 Melder_hexadecimal (integer value, integer precision) noexcept {
 	const char *p = Melder8_hexadecimal (value, precision);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -275,7 +275,7 @@ const char * Melder8_dcomplex (dcomplex value) noexcept {
 	strcat (buffers8 [ibuffer], "i");
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_dcomplex (dcomplex value) noexcept {
+conststring32 Melder_dcomplex (dcomplex value) noexcept {
 	const char *p = Melder8_dcomplex (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -290,18 +290,18 @@ const char * Melder8_scomplex (dcomplex value) noexcept {
 	strcat (buffers8 [ibuffer], "i");
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_scomplex (dcomplex value) noexcept {
+conststring32 Melder_scomplex (dcomplex value) noexcept {
 	const char *p = Melder8_scomplex (value);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char32 * Melder_float (const char32 *number) noexcept {
+conststring32 Melder_float (conststring32 number) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (! str32chr (number, 'e')) {
 		str32cpy (buffers32 [ibuffer], number);
 	} else {
 		char32 *b = buffers32 [ibuffer];
-		const char32 *n = number;
+		const char32 *n = & number [0];
 		while (*n != U'e') *(b++) = *(n++); *b = U'\0';
 		if (number [0] == '1' && number [1] == 'e') {
 			str32cpy (buffers32 [ibuffer], U"10^^"); b = buffers32 [ibuffer] + 4;
@@ -344,7 +344,7 @@ const char * Melder8_naturalLogarithm (double lnNumber) noexcept {
 	}
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_naturalLogarithm (double lnNumber) noexcept {
+conststring32 Melder_naturalLogarithm (double lnNumber) noexcept {
 	const char *p = Melder8_naturalLogarithm (lnNumber);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -354,12 +354,12 @@ const char * Melder8_pointer (void *pointer) noexcept {
 	sprintf (buffers8 [ibuffer], "%p", pointer);
 	return buffers8 [ibuffer];
 }
-const char32 * Melder_pointer (void *pointer) noexcept {
+conststring32 Melder_pointer (void *pointer) noexcept {
 	const char *p = Melder8_pointer (pointer);
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char32 * Melder_character (char32 kar) noexcept {
+conststring32 Melder_character (char32 kar) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	buffers32 [ibuffer] [0] = kar;
 	buffers32 [ibuffer] [1] = U'\0';
@@ -372,7 +372,7 @@ const char32 * Melder_character (char32 kar) noexcept {
 static MelderString theTensorBuffers [NUMBER_OF_TENSOR_BUFFERS] { };
 static int iTensorBuffer { 0 };
 
-const char32 * Melder_numvec (numvec value) {
+conststring32 Melder_numvec (numvec value) {
 	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS) iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
@@ -383,7 +383,7 @@ const char32 * Melder_numvec (numvec value) {
 	}
 	return string -> string;
 }
-const char32 * Melder_nummat (nummat value) {
+conststring32 Melder_nummat (nummat value) {
 	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS) iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
@@ -404,7 +404,7 @@ const char32 * Melder_nummat (nummat value) {
 static MelderString thePadBuffers [NUMBER_OF_BUFFERS];
 static int iPadBuffer { 0 };
 
-const char32 * Melder_pad (int64 width, const char32 *string) {
+conststring32 Melder_pad (int64 width, conststring32 string) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS) iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooShort = width - length;
@@ -416,7 +416,7 @@ const char32 * Melder_pad (int64 width, const char32 *string) {
 	return thePadBuffers [iPadBuffer]. string;
 }
 
-const char32 * Melder_pad (const char32 *string, int64 width) {
+conststring32 Melder_pad (conststring32 string, int64 width) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS) iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooShort = width - length;
@@ -427,7 +427,7 @@ const char32 * Melder_pad (const char32 *string, int64 width) {
 	return thePadBuffers [iPadBuffer]. string;
 }
 
-const char32 * Melder_truncate (int64 width, const char32 *string) {
+conststring32 Melder_truncate (int64 width, conststring32 string) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS) iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooLong = length - width;
@@ -436,7 +436,7 @@ const char32 * Melder_truncate (int64 width, const char32 *string) {
 	return thePadBuffers [iPadBuffer]. string;
 }
 
-const char32 * Melder_truncate (const char32 *string, int64 width) {
+conststring32 Melder_truncate (conststring32 string, int64 width) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS) iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooLong = length - width;
@@ -445,7 +445,7 @@ const char32 * Melder_truncate (const char32 *string, int64 width) {
 	return thePadBuffers [iPadBuffer]. string;
 }
 
-const char32 * Melder_padOrTruncate (int64 width, const char32 *string) {
+conststring32 Melder_padOrTruncate (int64 width, conststring32 string) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS) iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooLong = length - width;
@@ -462,7 +462,7 @@ const char32 * Melder_padOrTruncate (int64 width, const char32 *string) {
 	return thePadBuffers [iPadBuffer]. string;
 }
 
-const char32 * Melder_padOrTruncate (const char32 *string, int64 width) {
+conststring32 Melder_padOrTruncate (conststring32 string, int64 width) {
 	if (++ iPadBuffer == NUMBER_OF_BUFFERS) iPadBuffer = 0;
 	int64 length = str32len (string);
 	int64 tooLong = length - width;

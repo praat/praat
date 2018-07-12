@@ -294,7 +294,7 @@ void GuiMenu_empty (GuiMenu me) {
 	@end
 #endif
 
-GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 flags) {
+GuiMenu GuiMenu_createInWindow (GuiWindow window, conststring32 title, uint32 flags) {
 	autoGuiMenu me = Thing_new (GuiMenu);
 	my d_shell = window;
 	my d_parent = window;
@@ -411,7 +411,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const char32 *title, uint32 fl
 	return me.releaseToAmbiguousOwner();
 }
 
-GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 flags) {
+GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, conststring32 title, uint32 flags) {
 	autoGuiMenu me = Thing_new (GuiMenu);
 	my d_shell = supermenu -> d_shell;
 	my d_parent = supermenu;
@@ -502,7 +502,7 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const char32 *title, uint32 fla
 	}
 #endif
 
-GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, const char32 *title, uint32 flags) {
+GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, conststring32 title, uint32 flags) {
 	autoGuiMenu me = Thing_new (GuiMenu);
 	my d_shell = form -> d_shell;
 	my d_parent = form;

@@ -178,7 +178,7 @@ void structSpectrumEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Spectrum help", 0, menu_cb_help_Spectrum);
 }
 
-autoSpectrumEditor SpectrumEditor_create (const char32 *title, Spectrum data) {
+autoSpectrumEditor SpectrumEditor_create (conststring32 title, Spectrum data) {
 	try {
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
 		FunctionEditor_init (me.get(), title, data);

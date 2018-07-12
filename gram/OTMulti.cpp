@@ -1,6 +1,6 @@
 /* OTMulti.cpp
  *
- * Copyright (C) 2005-2017 Paul Boersma
+ * Copyright (C) 2005-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 
 Thing_implement (OTMulti, Daata, 2);
 
-integer OTMulti_getConstraintIndexFromName (OTMulti me, const char32 *name) {
+integer OTMulti_getConstraintIndexFromName (OTMulti me, conststring32 name) {
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		if (Melder_equ (my constraints [icons]. name.get(), name)) {
 			return icons;
@@ -259,12 +259,12 @@ int OTMulti_compareCandidates (OTMulti me, integer icand1, integer icand2) {
 	return 0;   /* None of the comparisons found a difference between the two candidates. Hence, they are equally good. */
 }
 
-int OTMulti_candidateMatches (OTMulti me, integer icand, const char32 *form1, const char32 *form2) {
-	const char32 *string = my candidates [icand]. string.get();
-	return (form1 [0] == '\0' || str32str (string, form1)) && (form2 [0] == '\0' || str32str (string, form2));
+int OTMulti_candidateMatches (OTMulti me, integer icand, conststring32 form1, conststring32 form2) {
+	conststring32 string = my candidates [icand]. string.get();
+	return (form1 [0] == U'\0' || str32str (string, form1)) && (form2 [0] == U'\0' || str32str (string, form2));
 }
 
-static void _OTMulti_fillInHarmonies (OTMulti me, const char32 *form1, const char32 *form2) {
+static void _OTMulti_fillInHarmonies (OTMulti me, conststring32 form1, conststring32 form2) {
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) return;
 	for (integer icand = 1; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
 		OTCandidate candidate = & my candidates [icand];
@@ -300,7 +300,7 @@ static void _OTMulti_fillInHarmonies (OTMulti me, const char32 *form1, const cha
 	}
 }
 
-static void _OTMulti_fillInProbabilities (OTMulti me, const char32 *form1, const char32 *form2) {
+static void _OTMulti_fillInProbabilities (OTMulti me, conststring32 form1, conststring32 form2) {
 	double maximumHarmony = -1e308;
 	for (integer icand = 1; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
 		OTCandidate candidate = & my candidates [icand];
@@ -327,7 +327,7 @@ static void _OTMulti_fillInProbabilities (OTMulti me, const char32 *form1, const
 
 class MelderError_OTMulti_NoMatchingCandidate: public MelderError {};
 
-integer OTMulti_getWinner (OTMulti me, const char32 *form1, const char32 *form2) {
+integer OTMulti_getWinner (OTMulti me, conststring32 form1, conststring32 form2) {
 	try {
 		integer icand_best = 0;
 		if (my decisionStrategy == kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY ||
@@ -825,7 +825,7 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 	}
 }
 
-int OTMulti_learnOne (OTMulti me, const char32 *form1, const char32 *form2,
+int OTMulti_learnOne (OTMulti me, conststring32 form1, conststring32 form2,
 	enum kOTGrammar_rerankingStrategy updateRule, int direction, double plasticity, double relativePlasticityNoise)
 {
 	integer iloser = OTMulti_getWinner (me, form1, form2);
@@ -867,7 +867,7 @@ static autoTable OTMulti_createHistory (OTMulti me, integer storeHistoryEvery, i
 	}
 }
 
-static int OTMulti_updateHistory (OTMulti me, Table thee, integer storeHistoryEvery, integer idatum, const char32 *form1, const char32 *form2)
+static int OTMulti_updateHistory (OTMulti me, Table thee, integer storeHistoryEvery, integer idatum, conststring32 form1, conststring32 form2)
 {
 	try {
 		if (idatum % storeHistoryEvery == 0) {
@@ -903,7 +903,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 		}
 		for (integer iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (integer ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
-				char32 *form1, *form2;
+				conststring32 form1, form2;
 				PairDistribution_peekPair (thee, & form1, & form2);
 				++ idatum;
 				if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
@@ -957,7 +957,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 	}
 }
 
-static integer OTMulti_crucialCell (OTMulti me, integer icand, integer iwinner, integer numberOfOptimalCandidates, const char32 *form1, const char32 *form2)
+static integer OTMulti_crucialCell (OTMulti me, integer icand, integer iwinner, integer numberOfOptimalCandidates, conststring32 form1, conststring32 form2)
 {
 	if (my numberOfCandidates < 2) return 0;   // if there is only one candidate, all cells can be greyed
 	if (OTMulti_compareCandidates (me, icand, iwinner) == 0) {   // candidate equally good as winner?
@@ -1010,7 +1010,7 @@ static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, bool
 	return maximumWidth;
 }
 
-void OTMulti_drawTableau (OTMulti me, Graphics g, const char32 *form1, const char32 *form2, bool vertical, bool showDisharmonies) {
+void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststring32 form2, bool vertical, bool showDisharmonies) {
 	integer winner, winner1 = 0, winner2 = 0;
 	double x, y, fontSize = Graphics_inqFontSize (g);
 	Graphics_Colour colour = Graphics_inqColour (g);
@@ -1340,7 +1340,7 @@ void OTMulti_setConstraintPlasticity (OTMulti me, integer constraint, double pla
 	}
 }
 
-void OTMulti_removeConstraint (OTMulti me, const char32 *constraintName) {
+void OTMulti_removeConstraint (OTMulti me, conststring32 constraintName) {
 	try {
 		integer removed = 0;
 
@@ -1387,11 +1387,11 @@ void OTMulti_removeConstraint (OTMulti me, const char32 *constraintName) {
 	}
 }
 
-void OTMulti_generateOptimalForm (OTMulti me, const char32 *form1, const char32 *form2, char32 *optimalForm, double evaluationNoise) {
+autostring32 OTMulti_generateOptimalForm (OTMulti me, conststring32 form1, conststring32 form2, double evaluationNoise) {
 	try {
 		OTMulti_newDisharmonies (me, evaluationNoise);
 		integer winner = OTMulti_getWinner (me, form1, form2);
-		str32cpy (optimalForm, my candidates [winner]. string.get());
+		return Melder_dup (my candidates [winner]. string.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": optimal form not generated.");
 	}
@@ -1403,34 +1403,28 @@ autoStrings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings thee, doub
 		integer n = thy numberOfStrings;
 		outputs -> numberOfStrings = n;
 		outputs -> strings = autostring32vector (n);
-		for (integer i = 1; i <= n; i ++) {
-			char32 output [100];
-			OTMulti_generateOptimalForm (me, thy strings [i].get(), U"", output, evaluationNoise);
-			outputs -> strings [i] = Melder_dup (output);
-		}
+		for (integer i = 1; i <= n; i ++)
+			outputs -> strings [i] = OTMulti_generateOptimalForm (me, thy strings [i].get(), U"", evaluationNoise);
 		return outputs;
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": optimal forms not generated.");
 	}
 }
 
-autoStrings OTMulti_generateOptimalForms (OTMulti me, const char32 *form1, const char32 *form2, integer numberOfTrials, double evaluationNoise) {
+autoStrings OTMulti_generateOptimalForms (OTMulti me, conststring32 form1, conststring32 form2, integer numberOfTrials, double evaluationNoise) {
 	try {
 		autoStrings outputs = Thing_new (Strings);
 		outputs -> numberOfStrings = numberOfTrials;
 		outputs -> strings = autostring32vector (numberOfTrials);
-		for (integer i = 1; i <= numberOfTrials; i ++) {
-			char32 output [100];
-			OTMulti_generateOptimalForm (me, form1, form2, output, evaluationNoise);
-			outputs -> strings [i] = Melder_dup (output);
-		}
+		for (integer i = 1; i <= numberOfTrials; i ++)
+			outputs -> strings [i] = OTMulti_generateOptimalForm (me, form1, form2, evaluationNoise);
 		return outputs;
 	} catch (MelderError) {
 		Melder_throw (me, U": optimal forms not generated.");
 	}
 }
 
-autoDistributions OTMulti_to_Distribution (OTMulti me, const char32 *form1, const char32 *form2,
+autoDistributions OTMulti_to_Distribution (OTMulti me, conststring32 form1, conststring32 form2,
 	integer numberOfTrials, double evaluationNoise)
 {
 	try {

@@ -18,21 +18,21 @@
 
 #include "melder.h"
 
-static void defaultError (const char32 *message) {
+static void defaultError (conststring32 message) {
 	Melder_writeToConsole (str32str (message, U"You interrupted ") ? U"User interrupt: " : U"Error: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (U"\n", true);
 }
 
-static void (*theError) (const char32 *) = defaultError;   // initial setting after start-up; will stay if program is run from batch
+static void (*theError) (conststring32) = defaultError;   // initial setting after start-up; will stay if program is run from batch
 
-void Melder_setErrorProc (void (*error) (const char32 *)) {
+void Melder_setErrorProc (void (*error) (conststring32)) {
 	theError = error ? error : defaultError;
 }
 
 static char32 errors [2000+1];   // safe in low-memory situations
 
-static void appendError (const char32 *message) {
+static void appendError (conststring32 message) {
 	if (! message) return;
 	int length = str32len (errors), messageLength = str32len (message);
 	if (length + messageLength > 2000) return;
@@ -41,7 +41,7 @@ static void appendError (const char32 *message) {
 
 bool Melder_hasError () { return errors [0] != U'\0'; }
 
-bool Melder_hasError (const char32 *partialError) { return !! str32str (errors, partialError); }
+bool Melder_hasError (conststring32 partialError) { return !! str32str (errors, partialError); }
 
 void Melder_clearError () { errors [0] = U'\0'; }
 

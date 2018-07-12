@@ -36,7 +36,7 @@ void structDurationTierEditor :: v_play (double fromTime, double toTime) {
 	}
 }
 
-autoDurationTierEditor DurationTierEditor_create (const char32 *title, DurationTier duration, Sound sound, bool ownSound) {
+autoDurationTierEditor DurationTierEditor_create (conststring32 title, DurationTier duration, Sound sound, bool ownSound) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
 		RealTierEditor_init (me.get(), title, (RealTier) duration, sound, ownSound);

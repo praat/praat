@@ -57,9 +57,9 @@ To make any class string-readable, use Thing_recognizeClassesByName ().
 String-readable classes are known by Thing_newFromClassName () and can therefore
 be read by Data_readFromTextFile () and Data_readFromBinaryFile ().
 */
-void praat_init (const char32 *title, int argc, char **argv);
+void praat_init (conststring32 title, int argc, char **argv);
 void praat_run ();
-void praat_setStandAloneScriptText (const char32 *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
+void praat_setStandAloneScriptText (conststring32 text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 extern "C" void praatlib_init ();   // for use in an application that uses Praatlib
 
 #define praat_addAction1(c1,n1,t,a,f,c)  praat_addAction1_ (c1, n1, t, a, f, c, U"" #c)
@@ -68,19 +68,19 @@ extern "C" void praatlib_init ();   // for use in an application that uses Praat
 #define praat_addAction4(c1,n1,c2,n2,c3,n3,c4,n4,t,a,f,c)  praat_addAction4_ (c1, n1, c2, n2, c3, n3, c4, n4, t, a, f, c, U"" #c)
 
 void praat_addAction1_ (ClassInfo class1, integer n1,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback);
 void praat_addAction2_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback);
 void praat_addAction3_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback);
 void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3, ClassInfo class4, integer n4,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback);
 /*
 	'title' is the name that will appear in the dynamic menu,
 		and also the command that is used in command files;
 		this title is reference-copied.
 	'callback' refers to a function prototyped like this:
-		static int DO_Class_action (UiForm sendingForm, int narg, Stackel args, const char32 *sendingString, Interpreter interpreter, void *closure);
+		static int DO_Class_action (UiForm sendingForm, int narg, Stackel args, conststring32 sendingString, Interpreter interpreter, void *closure);
 		this function should throw an exception if the command failed,
 		and return 1 if the command was executed successfully;
 		this function will be called by 'praat' when the user clicks a menu command,
@@ -139,13 +139,13 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 //#define GuiMenu_OPTION  (1 << 24)
 //#define GuiMenu_SHIFT  (1 << 25)
 //#define GuiMenu_COMMAND  (1 << 26)
-void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title);
+void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title);
 	/* 'class2' and 'class3' may be null. */
 	/* 'title' may be null; reference-copied. */
 
 #define praat_addMenuCommand(w,m,t,a,f,c)  praat_addMenuCommand_ (w, m, t, a, f, c, U"" #c)
-GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback);
+GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, conststring32 title /* cattable */,
+	conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback);
 /* All strings are reference-copied; 'title', 'after', and 'callback' may be null. */
 
 #define praat_MAXNUM_EDITORS 5
@@ -153,7 +153,7 @@ GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, con
 typedef struct {
 	ClassInfo klas;   // the class
 	Daata object;   // the instance
-	char32 *name;   // the name of the object as it appears in the List
+	autostring32 name;   // the name of the object as it appears in the List
 	structMelderFile file;   // is this Object associated with a file?
 	integer id;   // the unique number of the object
 	bool isSelected;   // is the name of the object inverted in the list?
@@ -191,7 +191,7 @@ extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
 char32 *praat_name (int iobject);
-void praat_write_do (UiForm dia, const char32 *extension);
+void praat_write_do (UiForm dia, conststring32 extension);
 void praat_new (autoDaata me);
 void praat_new (autoDaata me, Melder_1_ARG);
 void praat_new (autoDaata me, Melder_2_ARGS);
@@ -202,7 +202,7 @@ void praat_new (autoDaata me, Melder_6_ARGS);
 void praat_new (autoDaata me, Melder_7_ARGS);
 void praat_new (autoDaata me, Melder_8_ARGS);
 void praat_new (autoDaata me, Melder_9_ARGS);
-void praat_newWithFile (autoDaata me, MelderFile file, const char32 *name);
+void praat_newWithFile (autoDaata me, MelderFile file, conststring32 name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
 /* Macros for description of forms (dialog boxes, setting windows).
@@ -258,8 +258,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #ifndef _EditorM_h_
 
 #define FORM(proc,name,helpTitle)  \
-	extern "C" void proc (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *buttonClosure); \
-	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, const char32 *_sendingString_, Interpreter interpreter, const char32 *_invokingButtonTitle_, bool _modified_, void *_buttonClosure_) { \
+	extern "C" void proc (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool modified, void *buttonClosure); \
+	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter interpreter, conststring32 _invokingButtonTitle_, bool _modified_, void *_buttonClosure_) { \
 		int IOBJECT = 0; \
 		(void) IOBJECT; \
 		UiField _radio_ = nullptr; \
@@ -475,8 +475,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	}
 
 #define DIRECT(proc)  \
-	extern "C" void proc (UiForm, integer, Stackel, const char32 *, Interpreter interpreter, const char32 *, bool, void *); \
-	void proc (UiForm, integer, Stackel, const char32 *, Interpreter interpreter, const char32 *, bool, void *) { \
+	extern "C" void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *); \
+	void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *) { \
 		(void) interpreter; \
 		int IOBJECT = 0; \
 		(void) IOBJECT; \
@@ -484,8 +484,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try {
 
 #define FORM_READ(proc,title,help,allowMult)  \
-	extern "C" void proc (UiForm sendingForm, integer, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, const char32 *_sendingString_, Interpreter, const char32 *_invokingButtonTitle_, bool, void *_okClosure_) { \
+	extern "C" void proc (UiForm sendingForm, integer, Stackel args, conststring32 sendingString, Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure); \
+	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_) { \
 		{ static UiForm _dia_; \
 		if (! _dia_) \
 			_dia_ = UiInfile_create (theCurrentPraatApplication -> topShell, title, proc, _okClosure_, _invokingButtonTitle_, help, allowMult); \
@@ -512,8 +512,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				}
 
 #define FORM_SAVE(proc,title,help,ext)  \
-	extern "C" void proc (UiForm sendingForm, integer, Stackel args, const char32 *sendingString, Interpreter, const char32 *invokingButtonTitle, bool, void *okClosure); \
-	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, const char32 *_sendingString_, Interpreter, const char32 *_invokingButtonTitle_, bool, void *_okClosure_) { \
+	extern "C" void proc (UiForm sendingForm, integer, Stackel args, conststring32 sendingString, Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure); \
+	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_) { \
 		{ static UiForm _dia_; \
 		if (! _dia_) \
 			_dia_ = UiOutfile_create (theCurrentPraatApplication -> topShell, title, proc, _okClosure_, _invokingButtonTitle_, help); \
@@ -549,7 +549,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define CLASS  (theCurrentPraatObjects -> list [IOBJECT]. klas)
 #define OBJECT  (theCurrentPraatObjects -> list [IOBJECT]. object)
 #define GRAPHICS  theCurrentPraatPicture -> graphics
-#define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name)
+#define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name.get())
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
 #define ID_AND_FULL_NAME  Melder_cat (ID, U". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)

@@ -194,7 +194,7 @@ autoSimilarity DistanceList_to_Similarity_cc (DistanceList me, Weight w) {
 
 		for (integer i = 1; i <= my size; i ++) {
 			Distance di = my at [i];
-			const char32 *name = Thing_getName (di);
+			conststring32 name = Thing_getName (di);
 			TableOfReal_setRowLabel (thee.get(), i, name);
 			TableOfReal_setColumnLabel (thee.get(), i, name);
 			thy data [i] [i] = 1;
@@ -1103,7 +1103,7 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 	}
 }
 
-void Distance_Configuration_drawScatterDiagram (Distance me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Distance_Configuration_drawScatterDiagram (Distance me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark, bool garnish) {
 	autoDistance dist = Configuration_to_Distance (him);
 	Proximity_Distance_drawScatterDiagram (me, dist.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
@@ -1197,7 +1197,10 @@ autoDistance Configuration_to_Distance (Configuration me) {
 	}
 }
 
-void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphics g,
+	double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	integer n = my numberOfRows * (my numberOfRows - 1) / 2;
 	double **x = my data, **y = thy data;
 
@@ -1528,7 +1531,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 	try {
 		autoDissimilarityList thee = DissimilarityList_create ();
 		for (integer i = 1; i <= my size; i ++) {
-			const char32 *name = Thing_getName (my at [i]);
+			conststring32 name = Thing_getName (my at [i]);
 			autoDissimilarity him = Distance_to_Dissimilarity (my at [i]);
 			Thing_setName (him.get(), name ? name : U"untitled");
 			thy addItem_move (him.move());
@@ -1545,7 +1548,7 @@ autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int me
 
 		for (integer i = 1; i <= my size; i ++) {
 			autoDistance him = Dissimilarity_to_Distance (my at [i], measurementLevel == MDS_ORDINAL);
-			const char32 *name = Thing_getName (my at [i]);
+			conststring32 name = Thing_getName (my at [i]);
 			Thing_setName (him.get(), name ? name : U"untitled");
 			thy addItem_move (him.move());
 		}
@@ -2135,7 +2138,10 @@ autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, inte
 	}
 }
 
-void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, Configuration him, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, Configuration him, Graphics g,
+	double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	autoDistance dist = Configuration_to_Distance (him);
 	Proximity_Distance_drawScatterDiagram (me, dist.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
@@ -2164,36 +2170,54 @@ autoDistanceList DissimilarityList_Configuration_monotoneRegression (Dissimilari
 	}
 }
 
-void Dissimilarity_Configuration_drawMonotoneRegression (Dissimilarity me, Configuration him, Graphics g, int tiesHandling, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Dissimilarity_Configuration_drawMonotoneRegression (Dissimilarity me, Configuration him, Graphics g,
+	int tiesHandling, double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	/* obsolete replace by transformator */
 	autoDistance fit = Dissimilarity_Configuration_monotoneRegression (me, him, tiesHandling);
 	Proximity_Distance_drawScatterDiagram (me, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawAbsoluteRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Dissimilarity_Configuration_Weight_drawAbsoluteRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
+	double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	autoTransformator t = Transformator_create (d -> numberOfRows);
 	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.get(), w);
 	Proximity_Distance_drawScatterDiagram (d, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawRatioRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Dissimilarity_Configuration_Weight_drawRatioRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
+	double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	autoRatioTransformator t = RatioTransformator_create (d -> numberOfRows);
 	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.get(), w);
 	Proximity_Distance_drawScatterDiagram (d, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
+	double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	Dissimilarity_Configuration_Weight_drawISplineRegression (d, c, w, g, 0.0, 1.0, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, int tiesHandling, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
+	int tiesHandling, double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	autoMonotoneTransformator t = MonotoneTransformator_create (d->numberOfRows);
 	MonotoneTransformator_setTiesProcessing (t.get(), tiesHandling);
 	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.get(), w);
 	Proximity_Distance_drawScatterDiagram (d, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawISplineRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, integer numberOfInternalKnots, integer order, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Dissimilarity_Configuration_Weight_drawISplineRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
+	integer numberOfInternalKnots, integer order, double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	autoISplineTransformator t = ISplineTransformator_create (d->numberOfRows, numberOfInternalKnots, order);
 	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.get(), w);
 	Proximity_Distance_drawScatterDiagram (d, fit.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
@@ -2806,7 +2830,7 @@ autoSalience Salience_createCarrollWishExample () {
 		integer numberOfSources = 8;
 		double wx [9] = {0, 1.0, 0.866, 0.707, 0.5,   0.1, 0.5, 0.354, 0.1};
 		double wy [9] = {0, 0.1, 0.5,   0.707, 0.866,   1, 0.1, 0.354, 0.5};
-		const char32 *name [] = { U"", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8"};
+		conststring32 name [] = { U"", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8"};
 		autoSalience me = Salience_create (numberOfSources, 2);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
@@ -2846,7 +2870,9 @@ autoCollection INDSCAL_createCarrollWishExample (double noiseRange) {
 	}
 }
 
-void drawSplines (Graphics g, double low, double high, double ymin, double ymax, int splineType, integer order, const char32 *interiorKnots, bool garnish) {
+void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
+	int splineType, integer order, conststring32 interiorKnots, bool garnish)
+{
 	integer k = order, numberOfKnots, numberOfInteriorKnots = 0;
 	integer nSplines, n = 1000;
 	double knot [101], y [1001];
@@ -2860,9 +2886,10 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	numberOfKnots = k;
 
 	{ // scope
-		char *start = Melder_peek32to8 (interiorKnots), *end;   // UGLY; because of non-availability of str32tod
+		conststring8 start = Melder_peek32to8 (interiorKnots);   // UGLY; because of non-availability of str32tod
+		mutablestring8 end;   // this is not actually mutated, but strtod's signature requires this
 		while (*start) {
-			double value = strtod (start, &end);
+			double value = strtod (start, & end);
 			start = end;
 			if (value < low || value > high) {
 				Melder_warning (U"drawSplines: knots should be in interval (", low, U", ", high, U")");
@@ -2948,7 +2975,7 @@ void drawMDSClassRelations (Graphics g) {
 	double x1, x2, xm, x23, x13, y1, y2, ym, y23, y13;
 	double x [7] = {0.0, 0.2, 0.2, 0.7, 0.2, 0.7, 0.2}; /* left */
 	double y [7] = {0.0, 0.9, 0.6, 0.6, 0.3, 0.3, 0.0}; /* bottom */
-	const char32 *text [7] = {U"", U"Confusion", U"Dissimilarity  %\\de__%%ij%_",  U"Similarity", U"Distance  %d__%%ij%_, %d\\'p__%%ij%_", U"ScalarProduct", U"Configuration" };
+	conststring32 text [7] = {U"", U"Confusion", U"Dissimilarity  %\\de__%%ij%_",  U"Similarity", U"Distance  %d__%%ij%_, %d\\'p__%%ij%_", U"ScalarProduct", U"Configuration" };
 
 	Graphics_setWindow (g, -0.05, 1.05, -0.05, 1.05);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);

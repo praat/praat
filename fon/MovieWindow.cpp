@@ -121,12 +121,12 @@ void structMovieWindow :: v_play (double tmin, double tmax) {
 	Movie_play (movie, our graphics.get(), tmin, tmax, theFunctionEditor_playCallback, this);
 }
 
-void MovieWindow_init (MovieWindow me, const char32 *title, Movie movie) {
+void MovieWindow_init (MovieWindow me, conststring32 title, Movie movie) {
 	Melder_assert (movie);
 	TimeSoundAnalysisEditor_init (me, title, movie, movie -> d_sound.get(), false);
 }
 
-autoMovieWindow MovieWindow_create (const char32 *title, Movie movie) {
+autoMovieWindow MovieWindow_create (conststring32 title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
 		MovieWindow_init (me.get(), title, movie);

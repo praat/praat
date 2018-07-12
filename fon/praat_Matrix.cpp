@@ -122,7 +122,7 @@ static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEv
 	Graphics_play (theMovieGraphics.get(), theMovieGraphics.get());
 }
 
-extern "C" Graphics Movie_create (const char32 *title, int width, int height) {
+extern "C" Graphics Movie_create (conststring32 title, int width, int height) {
 	static GuiDialog dialog;
 	static GuiDrawingArea drawingArea;
 	if (! theMovieGraphics) {
@@ -768,7 +768,7 @@ DIRECT (WINDOW_Movie_viewAndEdit) {
 // MARK: file recognizers
 
 static autoDaata imageFileRecognizer (integer /* nread */, const char * /* header */, MelderFile file) {
-	const char32 *fileName = MelderFile_name (file);
+	conststring32 fileName = MelderFile_name (file);
 	if (Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpg", false) ||
 	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".jpeg", false) ||
 	    Melder_stringMatchesCriterion (fileName, kMelder_string::ENDS_WITH, U".png", false) ||

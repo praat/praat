@@ -34,10 +34,10 @@ Thing_implement (ButtonEditor, HyperPage, 0);
 
 static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, integer i) {
 	static MelderString text { };
-	bool isAdded = cmd -> uniqueID != 0 || cmd -> script != nullptr;
+	bool isAdded = cmd -> uniqueID != 0 || !! cmd -> script;
 	bool isHidden = cmd -> hidden;
 	bool isToggled = cmd -> toggled;
-	const char32 *clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
+	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	MelderString_empty (& text);
 	if (cmd -> unhidable) {
@@ -45,24 +45,24 @@ static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, integer i) {
 	} else {
 		MelderString_append (& text, U"@@m", i, U"|", clickText, U"@ ");
 	}
-	MelderString_append (& text, cmd -> window, U": ");
+	MelderString_append (& text, cmd -> window.get(), U": ");
 	if (cmd -> menu) {
-		MelderString_append (& text, cmd -> menu, U": ");
+		MelderString_append (& text, cmd -> menu.get(), U": ");
 	}
 	if (cmd -> title) {
 		if (cmd -> executable) {
-			MelderString_append (& text, U"@@p", i, U"|", cmd -> title, U"@");
+			MelderString_append (& text, U"@@p", i, U"|", cmd -> title.get(), U"@");
 		} else {
-			MelderString_append (& text, cmd -> title);
+			MelderString_append (& text, cmd -> title.get());
 		}
 	} else {
 		MelderString_append (& text, U"---------");
 	}
 	if (cmd -> after) {
-		MelderString_append (& text, U", %%%%after \"", cmd -> after, U"\"%%");
+		MelderString_append (& text, U", %%%%after \"", cmd -> after.get(), U"\"%%");
 	}
 	if (cmd -> script) {
-		MelderString_append (& text, U", script \"", Melder_peekExpandBackslashes (cmd -> script), U"\"");
+		MelderString_append (& text, U", script \"", Melder_peekExpandBackslashes (cmd -> script.get()), U"\"");
 	}
 	HyperPage_any (me, text.string, my p_font, my p_fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
@@ -70,9 +70,9 @@ static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, integer i) {
 
 static void drawAction (ButtonEditor me, Praat_Command cmd, integer i) {
 	static MelderString text { };
-	bool isAdded = cmd -> uniqueID != 0 || cmd -> script != nullptr;
+	bool isAdded = cmd -> uniqueID != 0 || !! cmd -> script;
 	bool isHidden = cmd -> hidden, isToggled = cmd -> toggled;
-	const char32 *clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
+	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	int n1 = cmd -> n1;
 	MelderString_empty (& text);
@@ -109,18 +109,18 @@ static void drawAction (ButtonEditor me, Praat_Command cmd, integer i) {
 	MelderString_append (& text, U": ");
 	if (cmd -> title) {
 		if (cmd -> executable) {
-			MelderString_append (& text, U"@@e", i, U"|", cmd -> title, U"@");
+			MelderString_append (& text, U"@@e", i, U"|", cmd -> title.get(), U"@");
 		} else {
-			MelderString_append (& text, cmd -> title);
+			MelderString_append (& text, cmd -> title.get());
 		}
 	} else {
 		MelderString_append (& text, U"---------");
 	}
 	if (cmd -> after) {
-		MelderString_append (& text, U", %%%%after \"", cmd -> after, U"\"%%");
+		MelderString_append (& text, U", %%%%after \"", cmd -> after.get(), U"\"%%");
 	}
 	if (cmd -> script) {
-		MelderString_append (& text, U", script \"", Melder_peekExpandBackslashes (cmd -> script), U"\"");
+		MelderString_append (& text, U", script \"", Melder_peekExpandBackslashes (cmd -> script.get()), U"\"");
 	}
 	HyperPage_any (me, text.string, my p_font, my p_fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
@@ -132,28 +132,28 @@ void structButtonEditor :: v_draw () {
 		case 1:
 			for (integer i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				Praat_Command cmd = praat_getMenuCommand (i);
-				if (str32equ (cmd -> window, U"Objects"))
+				if (str32equ (cmd -> window.get(), U"Objects"))
 					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 2:
 			for (integer i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				Praat_Command cmd = praat_getMenuCommand (i);
-				if (str32equ (cmd -> window, U"Picture"))
+				if (str32equ (cmd -> window.get(), U"Picture"))
 					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 3:
 			for (integer i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				Praat_Command cmd = praat_getMenuCommand (i);
-				if (! str32equ (cmd -> window, U"Objects") && ! str32equ (cmd -> window, U"Picture"))
+				if (! str32equ (cmd -> window.get(), U"Objects") && ! str32equ (cmd -> window.get(), U"Picture"))
 					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 4:
 			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				Praat_Command cmd = praat_getAction (i);
-				const char32 *klas = cmd -> class1 -> className;
+				conststring32 klas = cmd -> class1 -> className;
 				if (str32cmp (klas, U"N") < 0)
 					drawAction (this, praat_getAction (i), i);
 			}
@@ -161,7 +161,7 @@ void structButtonEditor :: v_draw () {
 		case 5:
 			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				Praat_Command cmd = praat_getAction (i);
-				const char32 *klas = cmd -> class1 -> className;
+				conststring32 klas = cmd -> class1 -> className;
 				if (str32cmp (klas, U"N") >= 0)
 					drawAction (this, praat_getAction (i), i);
 			}
@@ -169,7 +169,7 @@ void structButtonEditor :: v_draw () {
 	}
 }
 
-int structButtonEditor :: v_goToPage (const char32 *title) {
+int structButtonEditor :: v_goToPage (conststring32 title) {
 	if (! title || ! title [0]) return 0;
 	if (str32equ (title, U"Buttons")) return 1;
 	switch (title [0]) {
@@ -178,18 +178,18 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 			Praat_Command action = praat_getAction (i);
 			if (! action) return 0;
 			if (action -> hidden)
-				praat_showAction (action -> class1, action -> class2, action -> class3, action -> title);
+				praat_showAction (action -> class1, action -> class2, action -> class3, action -> title.get());
 			else
-				praat_hideAction (action -> class1, action -> class2, action -> class3, action -> title);
+				praat_hideAction (action -> class1, action -> class2, action -> class3, action -> title.get());
 		} break;
 		case 'm': {   // toggle visibility of menu command
 			integer i = Melder_atoi (& title [1]);
 			Praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand) return 0;
 			if (menuCommand -> hidden)
-				praat_showMenuCommand (menuCommand -> window, menuCommand -> menu, menuCommand -> title);
+				praat_showMenuCommand (menuCommand -> window.get(), menuCommand -> menu.get(), menuCommand -> title.get());
 			else
-				praat_hideMenuCommand (menuCommand -> window, menuCommand -> menu, menuCommand -> title);
+				praat_hideMenuCommand (menuCommand -> window.get(), menuCommand -> menu.get(), menuCommand -> title.get());
 		} break;
 		case 'e': {   // execute action
 			integer i = Melder_atoi (& title [1]);
@@ -197,11 +197,11 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 			if (! action || ! action -> callback) return 0;
 			if (action -> title) {
 				UiHistory_write (U"\n");
-				UiHistory_write_colonize (action -> title);
+				UiHistory_write_colonize (action -> title.get());
 			}
 			if (action -> script) {
 				try {
-					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, action -> script, nullptr, nullptr, false, nullptr);
+					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, action -> script.get(), nullptr, nullptr, false, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}
@@ -220,11 +220,11 @@ int structButtonEditor :: v_goToPage (const char32 *title) {
 			if (! menuCommand || ! menuCommand -> callback) return 0;
 			if (menuCommand -> title) {
 				UiHistory_write (U"\n");
-				UiHistory_write_colonize (menuCommand -> title);
+				UiHistory_write_colonize (menuCommand -> title.get());
 			}
 			if (menuCommand -> script) {
 				try {
-					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, menuCommand -> script, nullptr, nullptr, false, nullptr);
+					DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, menuCommand -> script.get(), nullptr, nullptr, false, nullptr);
 				} catch (MelderError) {
 					Melder_flushError (U"Command not executed.");
 				}

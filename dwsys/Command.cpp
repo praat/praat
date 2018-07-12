@@ -22,7 +22,7 @@
 
 Thing_implement (Command, Thing, 0);
 
-void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo) {
+void Command_init (Command me, conststring32 name, Thing boss, Command_Callback execute, Command_Callback undo) {
 	Melder_assert (execute && undo);
 	Thing_setName (me, name);
 	my boss = boss;
@@ -78,7 +78,7 @@ int CommandHistory_offright (CommandHistory me) {
 	return my size == 0 || my current == my size + 1;
 }
 
-const char32 *CommandHistory_commandName (CommandHistory me, integer offsetFromCurrent) {
+conststring32 CommandHistory_commandName (CommandHistory me, integer offsetFromCurrent) {
 	integer pos = my current + offsetFromCurrent;
 	return pos >= 1 && pos <= my size ? Thing_getName (my at [pos]) : nullptr;
 }

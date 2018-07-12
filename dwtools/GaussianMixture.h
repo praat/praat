@@ -73,7 +73,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 #define GaussianMixture_AICC 4
 #define GaussianMixture_CD_LIKELIHOOD 5
 
-const char32 *GaussianMixture_criterionText (int criterion);
+conststring32 GaussianMixture_criterionText (int criterion);
 
 autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numberOfComponents, double delta_lnp, integer maxNumberOfIterations, double lambda, int storage, int criterion);
 
@@ -91,7 +91,7 @@ double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, Table
 
 double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *vector);
 
-double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, const char32 *vector);
+double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector);
 
 double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x);
 

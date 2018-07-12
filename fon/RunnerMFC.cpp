@@ -51,7 +51,7 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 	return 1;
 }
 
-static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const char32 *visibleText) {
+static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, conststring32 visibleText) {
 	Graphics_setColour (my graphics.get(), Graphics_MAROON);
 	Graphics_setLineWidth (my graphics.get(), 3.0);
 	Graphics_fillRectangle (my graphics.get(), left, right, bottom, top);
@@ -84,9 +84,9 @@ static void drawNow (RunnerMFC me) {
 			);
 		}
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {
-		const char32 *visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText.get();
+		conststring32 visibleText = experiment -> stimulus [experiment -> stimuli [experiment -> trial]]. visibleText.get();
 		autostring32 visibleText_dup = Melder_dup_f (visibleText ? visibleText : U"");
-		const char32 *visibleText_p = visibleText_dup.get();
+		conststring32 visibleText_p = visibleText_dup.get();
 		Graphics_setFont (my graphics.get(), kGraphics_font::TIMES);
 		Graphics_setFontSize (my graphics.get(), 10);
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
@@ -99,16 +99,20 @@ static void drawNow (RunnerMFC me) {
 		 */
 		if (visibleText_p [0] != U'\0') {
 			char32 *visibleText_q = str32chr (visibleText_p, U'|');
-			if (visibleText_q) *visibleText_q = '\0';
+			if (visibleText_q)
+				*visibleText_q = U'\0';
 			Graphics_text (my graphics.get(), 0.5, 1.0, visibleText_p [0] != U'\0' ? visibleText_p : experiment -> runText.get());
-			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
+			if (visibleText_q)
+				visibleText_p = visibleText_q + 1;
+			else
+				visibleText_p += str32len (visibleText_p);
 		} else {
 			Graphics_text (my graphics.get(), 0.5, 1.0, experiment -> runText.get());
 		}
 		Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
 		for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 			ResponseMFC response = & experiment -> response [iresponse];
-			const char32 *textToDraw = response -> label.get();   // can be overridden
+			conststring32 textToDraw = response -> label.get();   // can be overridden
 			if (visibleText_p [0] != U'\0') {
 				char32 *visibleText_q = str32chr (visibleText_p, U'|');
 				if (visibleText_q) *visibleText_q = U'\0';
@@ -472,7 +476,7 @@ void structRunnerMFC :: v_createChildren () {
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
-autoRunnerMFC RunnerMFC_create (const char32 *title, autoExperimentMFCList experiments) {
+autoRunnerMFC RunnerMFC_create (conststring32 title, autoExperimentMFCList experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
 		Editor_init (me.get(), 0, 0, 2000, 2000, title, nullptr);

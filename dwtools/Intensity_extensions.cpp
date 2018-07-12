@@ -26,10 +26,9 @@
 #include "Intensity_extensions.h"
 #include "TextGrid_extensions.h"
 
-static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval, double time, const char32 *leftLabel) {
-	if (time <= my xmin || time >= my xmax) {
+static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval, double time, conststring32 leftLabel) {
+	if (time <= my xmin || time >= my xmax)
 		Melder_throw (U"Time is outside interval.");
-	}
 
 	/*
 		Find interval to split.
@@ -49,7 +48,10 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval
 	my intervals. addItem_unsorted_move (ti_new.move());
 }
 
-autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration, double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel) {
+autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me,
+	double silenceThreshold_dB, double minSilenceDuration, double minSoundingDuration,
+	conststring32 silenceLabel, conststring32 soundingLabel)
+{
 	try {
 		double duration = my xmax - my xmin, time;
 
@@ -78,7 +80,7 @@ autoTextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceT
 
 		bool inSilenceInterval = my z [1] [1] < intensityThreshold;
 		integer iinterval = 1;
-		const char32 *label;
+		conststring32 label;
 		for (integer i = 2; i <= my nx; i ++) {
 			bool addBoundary = false;
 			if (my z [1] [i] < intensityThreshold) {
@@ -143,7 +145,7 @@ autoIntensity IntensityTier_to_Intensity (IntensityTier me, double dt) {
 }
 
 autoTextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt, double silenceThreshold_dB, double minSilenceDuration,
-	double minSoundingDuration, const char32 *silenceLabel, const char32 *soundingLabel)
+	double minSoundingDuration, conststring32 silenceLabel, conststring32 soundingLabel)
 {
 	try {
 		autoIntensity intensity = IntensityTier_to_Intensity (me, dt);

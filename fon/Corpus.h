@@ -22,8 +22,8 @@
 
 #include "Corpus_def.h"
 
-autoCorpus Corpus_create (const char32 *folderWithSoundFiles, const char32 *soundFileExtension,
-	const char32 *folderWithAnnotationFiles, const char32 *annotationFileExtension);
+autoCorpus Corpus_create (conststring32 folderWithSoundFiles, conststring32 soundFileExtension,
+	conststring32 folderWithAnnotationFiles, conststring32 annotationFileExtension);
 
 #endif
 /* End of file Corpus.h */

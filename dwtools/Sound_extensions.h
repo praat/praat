@@ -137,9 +137,12 @@ void Sound_draw_btlr (Sound me, Graphics g, double tmin, double tmax, double ami
 /* direction is one of the macros's FROM_LEFT_TO_RIGHT... */
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
-	bool garnish, const char32 *method, integer numberOfBisections, const char32 *formula, Interpreter interpreter);
+	bool garnish, conststring32 method, integer numberOfBisections, conststring32 formula, Interpreter interpreter);
 
-void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax, double minimum, double maximum, double level, bool garnish, integer numberOfBisections, const char32 *formula, Interpreter interpreter);
+void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
+	double minimum, double maximum, double level, bool garnish,
+	integer numberOfBisections, conststring32 formula, Interpreter interpreter
+);
 
 void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax,
 	double minimum, double maximum, bool garnish);
@@ -162,13 +165,15 @@ autoSound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 	double formantMultiplier, // > 0
 	double pitchMultiplier, // > 0
 	double pitchRangeMultiplier, // any number
-	double durationMultiplier); // > 0
+	double durationMultiplier // > 0
+);
 
 autoSound Sound_Pitch_changeSpeaker (Sound me, Pitch him,
 	double formantMultiplier, // > 0
 	double pitchMultiplier, // > 0
 	double pitchRangeMultiplier, // any number
-	double durationMultiplier); // > 0
+	double durationMultiplier // > 0
+);
 
 /* Outphased */
 autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
@@ -176,12 +181,12 @@ autoSound Sound_changeGender_old (Sound me, double fmin, double fmax, double for
 
 autoTextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
-	const char32 *silentLabel, const char32 *soundingLabel);
+	conststring32 silentLabel, conststring32 soundingLabel);
 
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 
-autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const char32 *match);
+autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, conststring32 match);
 /* Cut intervals that match the label from the sound. The starting time of the new sound is
  * (1) my xmin if the first interval is not matching
  * (2) the end time of the first interval if matching
@@ -191,9 +196,9 @@ autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 
 autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep,
-    double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *tg, const char32 *trimLabel);
+    double silenceThreshold, double minSilenceDuration, double minSoundingDuration, autoTextGrid *tg, conststring32 trimLabel);
 
-autoSound Sound_copyChannelRanges (Sound me, const char32 *ranges);
+autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges);
 
 autoSound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method);
 

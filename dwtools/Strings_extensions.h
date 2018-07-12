@@ -35,15 +35,15 @@
 
 autoStrings Strings_createFixedLength (integer numberOfStrings);
 
-autoStrings Strings_createAsCharacters (const char32 *string);
+autoStrings Strings_createAsCharacters (conststring32 string);
 
-autoStrings Strings_createAsTokens (const char32 *string, const char32 *separators);
+autoStrings Strings_createAsTokens (conststring32 string, conststring32 separators);
 
-integer Strings_findString (Strings me, const char32 *string);
+integer Strings_findString (Strings me, conststring32 string);
 
 autoStrings Strings_append (OrderedOf<structStrings>* me);
 
-autoStrings Strings_change (Strings me, const char32 *search, const char32 *replace,
+autoStrings Strings_change (Strings me, conststring32 search, conststring32 replace,
 	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);
 
 autoStrings strings_to_Strings (char32 **strings, integer from, integer to);

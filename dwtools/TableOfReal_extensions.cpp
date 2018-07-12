@@ -87,7 +87,7 @@ integer TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, integer rowNum
 	return columnNumber;
 }
 
-const char32 *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, integer rowNumber) {
+conststring32 TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, integer rowNumber) {
 	integer columnNumber = TableOfReal_getColumnIndexAtMaximumInRow (me, rowNumber);
 	return my v_getColStr (columnNumber);
 }
@@ -200,7 +200,7 @@ autoStrings TableOfReal_extractRowLabels (TableOfReal me) {
 			thy numberOfStrings = my numberOfRows;
 
 			for (integer i = 1; i <= my numberOfRows; i ++) {
-				const char32 *label = my rowLabels [i] ? my rowLabels [i].get() : U"?";
+				conststring32 label = my rowLabels [i] ? my rowLabels [i].get() : U"?";
 				thy strings [i] = Melder_dup (label);
 			}
 		}
@@ -219,7 +219,7 @@ autoStrings TableOfReal_extractColumnLabels (TableOfReal me) {
 			thy numberOfStrings = my numberOfColumns;
 
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
-				const char32 *label = my columnLabels [i] ? my columnLabels [i].get() : U"?";
+				conststring32 label = my columnLabels [i] ? my columnLabels [i].get() : U"?";
 				thy strings [i] = Melder_dup (label);
 			}
 		}
@@ -303,8 +303,8 @@ void TableOfReal_getColumnExtrema (TableOfReal me, integer col, double *p_min, d
 	}
 }
 
-void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, const char32 *rows, integer colb, integer cole, double ymin,
-	double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, const char32 *greys, bool garnish)
+void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 rows, integer colb, integer cole, double ymin,
+	double ymax, double xoffsetFraction, double interbarFraction, double interbarsFraction, conststring32 greys, bool garnish)
 {
 	colb = colb == 0 ? 1 : colb;
 	cole = cole == 0 ? my numberOfColumns : cole;
@@ -573,14 +573,14 @@ void TableOfReal_setLabelsFromCollectionItemNames (TableOfReal me, Collection th
 		if (setRowLabels) {
 			Melder_assert (my numberOfRows == thy size);
 			for (integer i = 1; i <= my numberOfRows; i ++) {
-				const char32 *name = Thing_getName (thy at [i]);
+				conststring32 name = Thing_getName (thy at [i]);
 				TableOfReal_setRowLabel (me, i, name);
 			}
 		}
 		if (setColumnLabels) {
 			Melder_assert (my numberOfColumns == thy size);
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
-				const char32 *name = Thing_getName (thy at [i]);
+				conststring32 name = Thing_getName (thy at [i]);
 				TableOfReal_setColumnLabel (me, i, name);
 			}
 		}
@@ -614,11 +614,10 @@ void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
 }
 
 void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
-	const char32 *label = my rowLabels [1].get();
+	conststring32 label = my rowLabels [1].get();
 	integer index = 1;
-
 	for (integer i = 2; i <= my numberOfRows; i ++) {
-		const char32 *li = my rowLabels [i].get();
+		conststring32 li = my rowLabels [i].get();
 		if (! Melder_equ (li, label)) {
 			NUMcentreColumns (my data, index, i - 1, 1, my numberOfColumns, 0);
 			label = li;
@@ -631,22 +630,21 @@ void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
 double TableOfReal_getRowSum (TableOfReal me, integer index) {
 	Melder_require (index > 0 && index <= my numberOfRows,
 		U"Index not in valid range.");
-	
+
 	longdouble sum = 0.0;
-	for (integer j = 1; j <= my numberOfColumns; j ++) {
+	for (integer j = 1; j <= my numberOfColumns; j ++)
 		sum += my data [index] [j];
-	}
 	return (double) sum;
 }
 
-double TableOfReal_getColumnSumByLabel (TableOfReal me, const char32 *label) {
+double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 label) {
 	integer index = TableOfReal_columnLabelToIndex (me, label);
 	Melder_require (index > 0,
 		U"There is no \"", label, U"\" column label.");
 	return TableOfReal_getColumnSum (me, index);
 }
 
-double TableOfReal_getRowSumByLabel (TableOfReal me, const char32 *label) {
+double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 label) {
 	integer index = TableOfReal_rowLabelToIndex (me, label);
 	Melder_require (index > 0,
 		U"There is no \"", label, U"\" column label.");
@@ -810,14 +808,13 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb
 
 	for (integer i = 1; i <= n; i ++) {
 		integer xcol, ycol = colb + i - 1;
-		const char32 *mark;
-		char32 label [40];
 		Graphics_line (g, 0.0, n - i, n, n - i);
 		Graphics_line (g, i, n, i, 0.0);
 		for (integer j = 1; j <= n; j ++) {
 			xcol = colb + j - 1;
 			if (i == j) {
-				mark = my columnLabels [xcol].get();
+				conststring32 mark = my columnLabels [xcol].get();
+				char32 label [40];
 				if (! mark) {
 					Melder_sprint (label,40, U"Column ", xcol);
 					mark = label;
@@ -827,7 +824,7 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb
 				for (integer k = 1; k <= m; k ++) {
 					double x = j - 1 + (my data [k] [xcol] - xmin [xcol]) / (xmax [xcol] - xmin [xcol]);
 					double y = n - i + (my data [k] [ycol] - xmin [ycol]) / (xmax [ycol] - xmin [ycol]);
-					mark = EMPTY_STRING (my rowLabels [k]) ? U"+" : my rowLabels [k].get();
+					conststring32 mark = EMPTY_STRING (my rowLabels [k]) ? U"+" : my rowLabels [k].get();
 					Graphics_text (g, x, y, mark);
 				}
 			}
@@ -857,24 +854,23 @@ void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowm
 	}
 }
 
-void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integer icy, integer rowb, integer rowe, double xmin, double xmax, double ymin, double ymax, int labelSize, bool useRowLabels, const char32 *label, bool garnish) {
+void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
+	integer icx, integer icy, integer rowb, integer rowe, double xmin, double xmax, double ymin, double ymax,
+	int labelSize, bool useRowLabels, conststring32 label, bool garnish)
+{
 	double m = my numberOfRows, n = my numberOfColumns;
 	int fontSize = Graphics_inqFontSize (g);
 
-	if (icx < 1 || icx > n || icy < 1 || icy > n) {
+	if (icx < 1 || icx > n || icy < 1 || icy > n)
 		return;
-	}
-	if (rowb < 1) {
+	if (rowb < 1)
 		rowb = 1;
-	}
-	if (rowe > m) {
+	if (rowe > m)
 		rowe = Melder_ifloor (m);
-	}
 	if (rowe <= rowb) {
 		rowb = 1;
 		rowe = Melder_ifloor (m);
 	}
-
 	if (xmax == xmin) {
 		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icx, & xmin, & xmax);
 		double tmp = xmax - xmin == 0.0 ? 0.5 : 0.0;
@@ -885,7 +881,6 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integ
 		double tmp = ymax - ymin == 0.0 ? 0.5 : 0.0;
 		ymin -= tmp; ymax += tmp;
 	}
-
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -894,10 +889,10 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g, integer icx, integ
 	integer noLabel = 0;
 	for (integer i = rowb; i <= rowe; i ++) {
 		double x = my data [i] [icx], y = my data [i] [icy];
-
 		if (((xmin < xmax && x >= xmin && x <= xmax) || (xmin > xmax && x <= xmin && x >= xmax)) &&
-		        ((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax))) {
-			const char32 *plotLabel = useRowLabels ? my rowLabels [i].get() : label;
+		    ((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax)))
+		{
+			conststring32 plotLabel = useRowLabels ? my rowLabels [i].get() : label;
 			if (! NUMstring_containsPrintableCharacter (plotLabel)) {
 				noLabel ++;
 				continue;
@@ -1049,7 +1044,7 @@ static autoTableOfReal TableOfReal_createPolsVanNieropData (int choice, bool inc
 			}
 		}
 		for (integer j = 1; j <= 3; j ++) {
-			const char32 *label = table -> columnHeaders [4 + j]. label.get();
+			conststring32 label = table -> columnHeaders [4 + j]. label.get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 			if (include_levels) {
 				label = table -> columnHeaders [7 + j]. label.get();
@@ -1088,7 +1083,7 @@ autoTableOfReal TableOfReal_create_weenink1983 (int option) {
 			}
 		}
 		for (integer j = 1; j <= 3; j ++)  {
-			const char32 *label = table -> columnHeaders [6 + j]. label.get();
+			conststring32 label = table -> columnHeaders [6 + j]. label.get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 		}
 		return thee;
@@ -1140,7 +1135,7 @@ autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 }
 
 void TableOfReal_changeRowLabels (TableOfReal me,
-	const char32 *search, const char32 *replace, integer maximumNumberOfReplaces,
+	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp)
 {
 	try {
@@ -1153,7 +1148,7 @@ void TableOfReal_changeRowLabels (TableOfReal me,
 }
 
 void TableOfReal_changeColumnLabels (TableOfReal me,
-	const char32 *search, const char32 *replace, integer maximumNumberOfReplaces,
+	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp)
 {
 	try {
@@ -1165,7 +1160,7 @@ void TableOfReal_changeColumnLabels (TableOfReal me,
 	}
 }
 
-integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, const char32 *search, bool columnLabels, bool use_regexp) {
+integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 search, bool columnLabels, bool use_regexp) {
 	integer nmatches = 0, numberOfLabels = my numberOfRows;
 	char32 **labels = my rowLabels.peek2();
 	regexp *compiled_regexp = nullptr;
@@ -1252,7 +1247,7 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer
 		double y1 = my data [i] [coly1];
 		double x2 = my data [i] [colx2];
 		double y2 = my data [i] [coly2];
-		const char32 *mark = EMPTY_STRING (my rowLabels [i]) ? U"" : my rowLabels [i].get();
+		conststring32 mark = EMPTY_STRING (my rowLabels [i]) ? U"" : my rowLabels [i].get();
 		if (vectype == Graphics_LINE) {
 			Graphics_line (g, x1, y1, x2, y2);
 		} else if (vectype == Graphics_TWOWAYARROW) {
@@ -1300,7 +1295,7 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index [], b
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			integer myindex = reverse ? i : index [i];
 			integer thyindex = reverse ? index [i] : i;
-			const char32 *mylabel = my rowLabels [myindex].get();
+			conststring32 mylabel = my rowLabels [myindex].get();
 			double *mydata = my data [myindex];
 			double *thydata = thy data [thyindex];
 
@@ -1371,9 +1366,9 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 		autoTableOfReal sorted = TableOfReal_sortRowsByIndex (me, index.peek(), false);
 
 		integer indexi = 1, indexr = 0;
-		const char32 *label = sorted -> rowLabels [1].get();
+		conststring32 label = sorted -> rowLabels [1].get();
 		for (integer i = 2; i <= my numberOfRows; i ++) {
-			const char32 *li = sorted -> rowLabels [i].get();
+			conststring32 li = sorted -> rowLabels [i].get();
 			if (Melder_cmp (li, label) != 0) {
 				NUMstatsColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns, useMedians);
 
@@ -1425,7 +1420,7 @@ autoTableOfReal TableOfReal_rankColumns (TableOfReal me) {
 	...
 	s[hi]   = precursor<number+hi-lo>
 */
-void TableOfReal_setSequentialColumnLabels (TableOfReal me, integer from, integer to, const char32 *precursor, integer number, integer increment) {
+void TableOfReal_setSequentialColumnLabels (TableOfReal me, integer from, integer to, conststring32 precursor, integer number, integer increment) {
 	from = ( from == 0 ? 1 : from );
 	to = ( to == 0 ? my numberOfColumns : to );
 	Melder_require (from > 0 && from <= to && to <= my numberOfColumns,
@@ -1434,7 +1429,7 @@ void TableOfReal_setSequentialColumnLabels (TableOfReal me, integer from, intege
 		my columnLabels [i] = Melder_dup (Melder_cat (precursor, number));
 }
 
-void TableOfReal_setSequentialRowLabels (TableOfReal me, integer from, integer to, const char32 *precursor, integer number, integer increment) {
+void TableOfReal_setSequentialRowLabels (TableOfReal me, integer from, integer to, conststring32 precursor, integer number, integer increment) {
 	from = ( from == 0 ? 1 : from );
 	to = ( to == 0 ? my numberOfRows : to );
 	Melder_require (from > 0 && from <= to && to <= my numberOfRows,

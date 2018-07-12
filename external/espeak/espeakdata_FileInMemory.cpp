@@ -39,7 +39,7 @@ autoTable espeakdata_voices_propertiesTable;
 autoStrings espeakdata_voices_names;
 autoStrings espeakdata_languages_names;
 
-integer Table_findStringInColumn (Table me, const char32 *string, integer icol) {
+integer Table_findStringInColumn (Table me, conststring32 string, integer icol) {
 	integer row = 0;
 	if (icol > 0 && icol <= my numberOfColumns) {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
@@ -94,14 +94,14 @@ const char * espeakdata_get_voicedata (const char *data, integer ndata, char *bu
 }
 
 
-static const char32 * get_wordAfterPrecursor_u8 (const unsigned char *text8, const char32 *precursor) {
+static conststring32 get_wordAfterPrecursor_u8 (const unsigned char *text8, conststring32 precursor) {
 	static char32 word [100];
 	/*
 		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
 		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;
-	const char32 *text = Melder_peek8to32 (reinterpret_cast<const char *> (text8));
+	conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8));
 	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
@@ -117,14 +117,14 @@ static const char32 * get_wordAfterPrecursor_u8 (const unsigned char *text8, con
 	return p;
 }
 
-static const char32 * get_stringAfterPrecursor_u8 (const unsigned char *text8, const char32 *precursor) {
+static conststring32 get_stringAfterPrecursor_u8 (const unsigned char *text8, conststring32 precursor) {
 	static char32 word [100];
 	/*
 		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
 		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;
-	const char32 *text = Melder_peek8to32 (reinterpret_cast<const char *> (text8));
+	conststring32 text = Melder_peek8to32 (reinterpret_cast<const char *> (text8));
 	MelderString_append (& regex, U"^\\s*", precursor, U"\\s+");
 	char32 *p = nullptr;
 	const char32 *pmatch = strstr_regexp (text, regex.string);
@@ -145,7 +145,7 @@ static const char32 * get_stringAfterPrecursor_u8 (const unsigned char *text8, c
 
 autoTable Table_createAsEspeakVoicesProperties () {
 	try {
-		const char32 *criterion = U"/voices/!v/";
+		static const conststring32 criterion = U"/voices/!v/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
 		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index gender age variant");
@@ -157,7 +157,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
 				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
 				// The first character of name must be upper case
-				if (name) { 
+				if (name) {
 					autoMelderString capitalFirst;
 					MelderString_copy (& capitalFirst, name); // we cannot modify original
 					char32 capital = Melder_toUpperCase (*name);
@@ -166,8 +166,8 @@ autoTable Table_createAsEspeakVoicesProperties () {
 				} else {
 					Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
 				}
-				Table_setNumericValue (thee.get(), irow, 3, ifile); 
-				const char32 *word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
+				Table_setNumericValue (thee.get(), irow, 3, ifile);
+				conststring32 word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
 				Table_setStringValue (thee.get(), irow, 4, (word ? word : U"0"));
 				word = get_wordAfterPrecursor_u8 (fim -> d_data, U"age");
 				Table_setStringValue (thee.get(), irow, 5, (word ? word : U"0"));
@@ -185,7 +185,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 
 autoTable Table_createAsEspeakLanguagesProperties () {
 	try {
-		const char32 *criterion = U"/lang/";
+		static const conststring32 criterion = U"/lang/";
 		FileInMemorySet me = espeak_ng_FileInMemoryManager -> files.get();
 		integer numberOfMatches = FileInMemorySet_findNumberOfMatches_path (me, kMelder_string :: CONTAINS, criterion);
 		autoTable thee = Table_createWithColumnNames (numberOfMatches, U"id name index"); // old: Default English
@@ -210,9 +210,8 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 
 autoStrings Table_column_to_Strings (Table me, integer column) {
 	try {
-		if (column < 0 || column > 2) {
+		if (column < 0 || column > 2)
 			Melder_throw (U"Illegal columnn.");
-		}
 		autoStrings thee = Thing_new (Strings);
 		thy strings = autostring32vector (my rows.size);
 		thy numberOfStrings = 0;

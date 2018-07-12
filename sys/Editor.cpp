@@ -62,7 +62,7 @@ static void commonCallback (EditorCommand me, GuiMenuItemEvent /* event */) {
 	}
 }
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, uint32 flags, EditorCommandCallback commandCallback)
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags, EditorCommandCallback commandCallback)
 {
 	autoEditorCommand thee = Thing_new (EditorCommand);
 	thy d_editor = my d_editor;
@@ -80,7 +80,7 @@ GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cat
 
 /*GuiObject EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
 
-EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, uint32 flags) {
+EditorMenu Editor_addMenu (Editor me, conststring32 menuTitle, uint32 flags) {
 	autoEditorMenu thee = Thing_new (EditorMenu);
 	thy d_editor = me;
 	thy menuTitle = Melder_dup (menuTitle);
@@ -90,7 +90,7 @@ EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, uint32 flags) {
 
 /*GuiObject EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
-GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags, EditorCommandCallback commandCallback)
+GuiMenuItem Editor_addCommand (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags, EditorCommandCallback commandCallback)
 {
 	try {
 		integer numberOfMenus = my menus.size;
@@ -106,13 +106,13 @@ GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 
 }
 
 static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm /* sendingForm */,
-	integer /* narg */, Stackel /* args */, const char32 * /* sendingString */, Interpreter /* interpreter */)
+	integer /* narg */, Stackel /* args */, conststring32 /* sendingString */, Interpreter /* interpreter */)
 {
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script.get());
 }
 
-GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags,
-	const char32 *script)
+GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags,
+	conststring32 script)
 {
 	integer numberOfMenus = my menus.size;
 	for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
@@ -145,7 +145,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const c
 	return nullptr;
 }
 
-void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, bool sensitive) {
+void Editor_setMenuSensitive (Editor me, conststring32 menuTitle, bool sensitive) {
 	integer numberOfMenus = my menus.size;
 	for (integer imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
@@ -156,7 +156,7 @@ void Editor_setMenuSensitive (Editor me, const char32 *menuTitle, bool sensitive
 	}
 }
 
-EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle) {
+EditorCommand Editor_getMenuCommand (Editor me, conststring32 menuTitle, conststring32 itemTitle) {
 	integer numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
@@ -172,7 +172,7 @@ EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const c
 	Melder_throw (U"Command \"", itemTitle, U"\" not found in menu \"", menuTitle, U"\".");
 }
 
-void Editor_doMenuCommand (Editor me, const char32 *commandTitle, integer narg, Stackel args, const char32 *arguments, Interpreter interpreter) {
+void Editor_doMenuCommand (Editor me, conststring32 commandTitle, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter) {
 	integer numberOfMenus = my menus.size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = my menus.at [imenu];
@@ -374,7 +374,7 @@ static void gui_window_cb_goAway (Editor me) {
 }
 
 void praat_addCommandsToEditor (Editor me);
-void Editor_init (Editor me, int x, int y, int width, int height, const char32 *title, Daata data) {
+void Editor_init (Editor me, int x, int y, int width, int height, conststring32 title, Daata data) {
 	double xmin, ymin, widthmax, heightmax;
 	Gui_getWindowPositioningBounds (& xmin, & ymin, & widthmax, & heightmax);
 	/*
@@ -476,7 +476,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const char32 *
 	GuiThing_show (my windowForm);
 }
 
-void Editor_save (Editor me, const char32 *text) {
+void Editor_save (Editor me, conststring32 text) {
 	my v_saveData ();
 	if (! my undoButton) return;
 	GuiThing_setSensitive (my undoButton, true);

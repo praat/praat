@@ -22,8 +22,8 @@
 
 #include "Strings_def.h"
 
-autoStrings Strings_createAsFileList (const char32 *path /* cattable */);
-autoStrings Strings_createAsDirectoryList (const char32 *path /* cattable */);
+autoStrings Strings_createAsFileList (conststring32 path /* cattable */);
+autoStrings Strings_createAsDirectoryList (conststring32 path /* cattable */);
 autoStrings Strings_readFromRawTextFile (MelderFile file);
 void Strings_writeToRawTextFile (Strings me, MelderFile file);
 
@@ -33,8 +33,8 @@ void Strings_nativize (Strings me);
 void Strings_sort (Strings me);
 
 void Strings_remove (Strings me, integer position);
-void Strings_replace (Strings me, integer position, const char32 *text);
-void Strings_insert (Strings me, integer position, const char32 *text);
+void Strings_replace (Strings me, integer position, conststring32 text);
+void Strings_insert (Strings me, integer position, conststring32 text);
 
 /* End of file Strings.h */
 #endif

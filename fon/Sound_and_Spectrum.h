@@ -29,6 +29,6 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 
 autoSound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth);
 autoSound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smooth);
-autoSound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpreter);
+autoSound Sound_filter_formula (Sound me, conststring32 formula, Interpreter interpreter);
 
 /* End of file Sound_and_Spectrum.h */

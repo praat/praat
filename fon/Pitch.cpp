@@ -55,7 +55,7 @@ int structPitch :: v_getMaximumUnit (integer level) {
 	return level == Pitch_LEVEL_FREQUENCY ? (int) kPitch_unit::MAX : Pitch_STRENGTH_UNIT_max;
 }
 
-const char32 * structPitch :: v_getUnitText (integer level, int unit, uint32 flags) {
+conststring32 structPitch :: v_getUnitText (integer level, int unit, uint32 flags) {
 	if (level == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == (int) kPitch_unit::HERTZ ?

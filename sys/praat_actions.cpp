@@ -67,7 +67,7 @@ static void fixSelectionSpecification (ClassInfo *class1, integer *n1, ClassInfo
 	}
 }
 
-static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, ClassInfo class4, const char32 *title) {
+static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, ClassInfo class4, conststring32 title) {
 /*
  * An action command is fully specified by its environment (the selected classes) and its title.
  * Precondition:
@@ -77,25 +77,25 @@ static integer lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassIn
 		Praat_Command action = theActions.at [i];
 		if (class1 == action -> class1 && class2 == action -> class2 &&
 		    class3 == action -> class3 && class4 == action -> class4 &&
-		    title && action -> title && str32equ (action -> title, title)) return i;
+		    title && action -> title && str32equ (action -> title.get(), title)) return i;
 	}
 	return 0;   // not found
 }
 
 void praat_addAction1_ (ClassInfo class1, integer n1,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 { praat_addAction4_ (class1, n1, nullptr, 0, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction2_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 { praat_addAction4_ (class1, n1, class2, n2, nullptr, 0, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction3_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 { praat_addAction4_ (class1, n1, class2, n2, class3, n3, nullptr, 0, title, after, flags, callback, nameOfCallback); }
 
 void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer n2, ClassInfo class3, integer n3, ClassInfo class4, integer n4,
-	const char32 *title, const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+	conststring32 title, conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 {
 	try {
 		int depth = flags, key = 0;
@@ -174,7 +174,7 @@ static void deleteDynamicMenu () {
 	for (integer i = 1; i <= theActions.size; i ++) {
 		Praat_Command action = theActions.at [i];
 		if (action -> button) {
-			trace (U"trying to destroy action ", i, U" of ", theActions.size, U": ", action -> title);
+			trace (U"trying to destroy action ", i, U" of ", theActions.size, U": ", action -> title.get());
 			#if gtk || cocoa
 				if (action -> button -> d_parent == praat_form) {
 					trace (U"destroy a label or a push button or a cascade button");
@@ -219,8 +219,8 @@ static void updateDynamicMenu () {
 	praat_show ();
 }
 
-void praat_addActionScript (const char32 *className1, integer n1, const char32 *className2, integer n2, const char32 *className3, integer n3,
-	const char32 *title, const char32 *after, integer depth, const char32 *script)
+void praat_addActionScript (conststring32 className1, integer n1, conststring32 className2, integer n2, conststring32 className3, integer n3,
+	conststring32 title, conststring32 after, integer depth, conststring32 script)
 {
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
@@ -305,7 +305,7 @@ void praat_addActionScript (const char32 *className1, integer n1, const char32 *
 	}
 }
 
-void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title) {
+void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title) {
 	try {
 		integer n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
@@ -322,8 +322,8 @@ void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, c
 	}
 }
 
-void praat_removeAction_classNames (const char32 *className1, const char32 *className2,
-	const char32 *className3, const char32 *title)
+void praat_removeAction_classNames (conststring32 className1, conststring32 className2,
+	conststring32 className3, conststring32 title)
 {
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
@@ -344,7 +344,7 @@ void praat_removeAction_classNames (const char32 *className1, const char32 *clas
 	}
 }
 
-void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title) {
+void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title) {
 	try {
 		integer n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
@@ -366,8 +366,8 @@ void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 	}
 }
 
-void praat_hideAction_classNames (const char32 *className1, const char32 *className2,
-	const char32 *className3, const char32 *title)
+void praat_hideAction_classNames (conststring32 className1, conststring32 className2,
+	conststring32 className3, conststring32 title)
 {
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
@@ -387,7 +387,7 @@ void praat_hideAction_classNames (const char32 *className1, const char32 *classN
 	}
 }
 
-void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const char32 *title) {
+void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, conststring32 title) {
 	try {
 		integer n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
@@ -409,8 +409,8 @@ void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, con
 	}
 }
 
-void praat_showAction_classNames (const char32 *className1, const char32 *className2,
-	const char32 *className3, const char32 *title)
+void praat_showAction_classNames (conststring32 className1, conststring32 className2,
+	conststring32 className3, conststring32 title)
 {
 	try {
 		ClassInfo class1 = nullptr, class2 = nullptr, class3 = nullptr;
@@ -457,13 +457,13 @@ void praat_sortActions () {
 	qsort (& theActions.at [1], theActions.size, sizeof (Praat_Command), compareActions);
 }
 
-static const char32 *numberString (int number) {
+static conststring32 numberString (int number) {
 	return number == 1 ? U"one" : number == 2 ? U"two" : number == 3 ? U"three" : U"any number of";
 }
-static const char32 *classString (ClassInfo klas) {
+static conststring32 classString (ClassInfo klas) {
 	return klas == classDaata ? U"" : klas -> className;
 }
-static const char32 *objectString (int number) {
+static conststring32 objectString (int number) {
 	return number == 1 ? U"object" : U"objects";
 }
 static bool allowExecutionHook (void *closure) {
@@ -505,21 +505,21 @@ static void do_menu (Praat_Command me, bool modified) {
 	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		UiHistory_write (U"\nrunScript: ");
 		try {
-			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
+			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script.get(), nullptr, nullptr, false, nullptr);
 		} catch (MelderError) {
-			Melder_flushError (U"Command \"", my title, U"\" not executed.");
+			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
 		praat_updateSelection (); return;
 	} else {
-		if (my title && ! str32str (my title, U"...")) {
+		if (my title && ! str32str (my title.get(), U"...")) {
 			UiHistory_write (U"\n");
-			UiHistory_write (my title);
+			UiHistory_write (my title.get());
 		}
 		Ui_setAllowExecutionHook (allowExecutionHook, (void *) my callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 		try {
-			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title, modified, nullptr);
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), modified, nullptr);
 		} catch (MelderError) {
-			Melder_flushError (U"Command \"", my title, U"\" not executed.");
+			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
 		Ui_setAllowExecutionHook (nullptr, nullptr);
 		praat_updateSelection (); return;
@@ -603,23 +603,23 @@ void praat_actions_show () {
 				 */
 				GuiMenu parentMenu = my depth > 1 && currentSubmenu2 ? currentSubmenu2 : my depth > 0 && currentSubmenu1 ? currentSubmenu1 : nullptr;
 
-				if (str32nequ (my title, U"Save ", 5) || str32nequ (my title, U"Write ", 6) || str32nequ (my title, U"Append to ", 10)) {
+				if (str32nequ (my title.get(), U"Save ", 5) || str32nequ (my title.get(), U"Write ", 6) || str32nequ (my title.get(), U"Append to ", 10)) {
 					parentMenu = praat_writeMenu;
 					if (! praat_writeMenuSeparator) {
 						if (writeMenuGoingToSeparate)
 							praat_writeMenuSeparator = GuiMenu_addSeparator (parentMenu);
-						else if (str32equ (my title, U"Save as binary file..."))
+						else if (str32equ (my title.get(), U"Save as binary file..."))
 							writeMenuGoingToSeparate = true;
 					}
 				}
 				if (parentMenu) {
-					my button = GuiMenu_addItem (parentMenu, my title,
+					my button = GuiMenu_addItem (parentMenu, my title.get(),
 						( my executable ? 0 : GuiMenu_INSENSITIVE ),
 						cb_menu, me);
 				} else {
 					my button = GuiButton_createShown (praat_form,
 						BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
-						my title, gui_button_cb_menu,
+						my title.get(), gui_button_cb_menu,
 						me,
 							( my executable ? 0 : GuiButton_INSENSITIVE ) | ( my attractive ? GuiButton_ATTRACTIVE : 0 ));
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
@@ -632,7 +632,7 @@ void praat_actions_show () {
 				/*
 				 * Apparently a labelled separator.
 				 */
-				my button = GuiLabel_createShown (praat_form, BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_LABEL_HEIGHT, my title, 0);
+				my button = GuiLabel_createShown (praat_form, BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_LABEL_HEIGHT, my title.get(), 0);
 				y += Gui_LABEL_HEIGHT + BUTTON_VSPACING;
 			} else if (! my title || my title [0] == U'-') {
 				/*
@@ -649,11 +649,11 @@ void praat_actions_show () {
 				if (my depth == 0 || ! currentSubmenu1) {
 					currentSubmenu1 = GuiMenu_createInForm (praat_form,
 						BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
-						my title, 0);
+						my title.get(), 0);
 					y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
 					my button = currentSubmenu1 -> d_cascadeButton.get();
 				} else {
-					currentSubmenu2 = GuiMenu_createInMenu (currentSubmenu1, my title, 0);
+					currentSubmenu2 = GuiMenu_createInMenu (currentSubmenu1, my title.get(), 0);
 					my button = currentSubmenu2 -> d_menuItem.get();
 				}
 				GuiThing_show (my button);
@@ -693,8 +693,8 @@ void praat_saveAddedActions (MelderString *buffer) {
 					U" ", my class1 -> className, U" ", my n1,
 					U" ", ( my class2 ? my class2 -> className : U"\"\"" ), U" ", my n2,
 					U" ", ( my class3 ? my class3 -> className : U"\"\"" ), U" ", my n3,
-					U" \"", my title, U"\" \"", ( my after ? my after : U"" ), U"\" ", my depth);
-				MelderString_append (buffer, U" ", my script ? my script : U"", U"\n");
+					U" \"", my title.get(), U"\" \"", ( my after ? my after.get() : U"" ), U"\" ", my depth);
+				MelderString_append (buffer, U" ", my script ? my script.get() : U"", U"\n");
 				break;
 			}
 		}
@@ -708,22 +708,22 @@ void praat_saveToggledActions (MelderString *buffer) {
 				U" ", my class1 -> className,
 				U" ", ( my class2 ? my class2 -> className : U"\"\"" ),
 				U" ", ( my class3 ? my class3 -> className : U"\"\"" ),
-				U" ", my title, U"\n");
+				U" ", my title.get(), U"\n");
 		}
 	}
 }
 
-int praat_doAction (const char32 *command, const char32 *arguments, Interpreter interpreter) {
+int praat_doAction (conststring32 command, conststring32 arguments, Interpreter interpreter) {
 	integer i = 1;
-	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title, command))) i ++;
+	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title.get(), command))) i ++;
 	if (i > theActions.size) return 0;   // not found
 	theActions.at [i] -> callback (nullptr, 0, nullptr, arguments, interpreter, command, false, nullptr);
 	return 1;
 }
 
-int praat_doAction (const char32 *command, integer narg, Stackel args, Interpreter interpreter) {
+int praat_doAction (conststring32 command, integer narg, Stackel args, Interpreter interpreter) {
 	integer i = 1;
-	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title, command))) i ++;
+	while (i <= theActions.size && (! theActions.at [i] -> executable || str32cmp (theActions.at [i] -> title.get(), command))) i ++;
 	if (i > theActions.size) return 0;   // not found
 	theActions.at [i] -> callback (nullptr, narg, args, nullptr, interpreter, command, false, nullptr);
 	return 1;
@@ -779,8 +779,8 @@ static bool actionHasFileNameArgument (Praat_Command command) {
 	return hasFileNameArgument;
 }
 
-static const char32 * getReturnType (Praat_Command command) {
-	const char32 *returnType =
+static conststring32 getReturnType (Praat_Command command) {
+	const conststring32 returnType =
 		Melder_nequ (command -> nameOfCallback, U"NEW1_", 5) ? U"PraatObject" :
 		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ? U"PraatObject" :
 		Melder_nequ (command -> nameOfCallback, U"REAL_", 5) ? U"double" :
@@ -804,12 +804,12 @@ void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 		bool deprecated = ( command -> deprecationYear > 0 );
 		if (! actionIsToBeIncluded (command, deprecated, includeSaveAPI, includeQueryAPI, includeModifyAPI,
 			includeToAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI)) continue;
-		MelderInfo_writeLine (U"\n/* Action command \"", command -> title, U"\"",
+		MelderInfo_writeLine (U"\n/* Action command \"", command -> title.get(), U"\"",
 			deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
 			U" */");
-		const char32 *returnType = getReturnType (command);
+		conststring32 returnType = getReturnType (command);
 		MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
-		bool isDirect = ! str32str (command -> title, U"...");
+		bool isDirect = ! str32str (command -> title.get(), U"...");
 		if (isDirect) {
 		} else {
 			command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);

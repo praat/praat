@@ -39,7 +39,7 @@ void structPitchTierEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-autoPitchTierEditor PitchTierEditor_create (const char32 *title, PitchTier pitch, Sound sound, bool ownSound) {
+autoPitchTierEditor PitchTierEditor_create (conststring32 title, PitchTier pitch, Sound sound, bool ownSound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
 		RealTierEditor_init (me.get(), title, pitch, sound, ownSound);

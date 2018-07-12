@@ -42,7 +42,7 @@ autoSpectrumTier SpectrumTier_create (double fmin, double fmax) {
 }
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, int garnish, const char32 *method)
+	double pmin, double pmax, int garnish, conststring32 method)
 {
 	RealTier_draw (me, g, fmin, fmax, pmin, pmax, garnish, method, U"Power spectral density (dB)");
 }

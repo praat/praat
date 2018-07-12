@@ -30,12 +30,12 @@ static int compareMenuCommands (const void *void_me, const void *void_thee) {
 	Praat_Command me = * (Praat_Command *) void_me, thee = * (Praat_Command *) void_thee;
 	if (my window) {
 		if (! thy window) return 1;
-		int compare = str32cmp (my window, thy window);
+		int compare = str32cmp (my window.get(), thy window.get());
 		if (compare) return compare;
 	} else if (thy window) return -1;
 	if (my menu) {
 		if (! thy menu) return 1;
-		int compare = str32cmp (my menu, thy menu);
+		int compare = str32cmp (my menu.get(), thy menu.get());
 		if (compare) return compare;
 	} else if (thy menu) return -1;
 	if (my sortingTail < thy sortingTail) return -1;
@@ -50,15 +50,15 @@ void praat_sortMenuCommands () {
 	qsort (& theCommands.at [1], theCommands.size, sizeof (Praat_Command), compareMenuCommands);
 }
 
-static integer lookUpMatchingMenuCommand (const char32 *window, const char32 *menu, const char32 *title) {
+static integer lookUpMatchingMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
 /*
  * A menu command is fully specified by its environment (window + menu) and its title.
  */
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
-		const char32 *tryWindow = command -> window;
-		const char32 *tryMenu = command -> menu;
-		const char32 *tryTitle = command -> title;
+		conststring32 tryWindow = command -> window.get();
+		conststring32 tryMenu = command -> menu.get();
+		conststring32 tryTitle = command -> title.get();
 		if ((window == tryWindow || (window && tryWindow && str32equ (window, tryWindow))) &&
 		    (menu == tryMenu || (menu && tryMenu && str32equ (menu, tryMenu))) &&
 		    (title == tryTitle || (title && tryTitle && str32equ (title, tryTitle)))) return i;
@@ -70,22 +70,22 @@ static void do_menu (Praat_Command me, uint32 modified) {
 	if (my callback == DO_RunTheScriptFromAnyAddedMenuCommand) {
 		UiHistory_write (U"\nrunScript: ");
 		try {
-			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script, nullptr, nullptr, false, nullptr);
+			DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, my script.get(), nullptr, nullptr, false, nullptr);
 		} catch (MelderError) {
-			Melder_flushError (U"Command \"", my title, U"\" not executed.");
+			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
-		praat_updateSelection (); return;
+		praat_updateSelection ();
 	} else {
-		if (my title && ! str32str (my title, U"...")) {
+		if (my title && ! str32str (my title.get(), U"...")) {
 			UiHistory_write (U"\n");
-			UiHistory_write (my title);
+			UiHistory_write (my title.get());
 		}
 		try {
-			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title, modified, nullptr);
+			my callback (nullptr, 0, nullptr, nullptr, nullptr, my title.get(), modified, nullptr);
 		} catch (MelderError) {
-			Melder_flushError (U"Command \"", my title, U"\" not executed.");
+			Melder_flushError (U"Command \"", my title.get(), U"\" not executed.");
 		}
-		praat_updateSelection (); return;
+		praat_updateSelection ();
 	}
 }
 
@@ -98,14 +98,14 @@ static void gui_cb_menu (Praat_Command me, GuiMenuItemEvent event) {
 	do_menu (me, modified);
 }
 
-static GuiMenu windowMenuToWidget (const char32 *window, const char32 *menu) {
+static GuiMenu windowMenuToWidget (conststring32 window, conststring32 menu) {
 	return
 		str32equ (window, U"Picture") ? praat_picture_resolveMenu (menu) :
 		str32equ (window, U"Objects") ? praat_objects_resolveMenu (menu) : nullptr;
 }
 
-GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, conststring32 title /* cattable */,
+	conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 {
 	integer position;
 	int depth = flags, key = 0;
@@ -228,8 +228,8 @@ GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, con
 	return button_as_GuiMenuItem;
 }
 
-void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const char32 *title,
-	const char32 *after, integer depth, const char32 *script)
+void praat_addMenuCommandScript (conststring32 window, conststring32 menu, conststring32 title,
+	conststring32 after, integer depth, conststring32 script)
 {
 	try {
 		Melder_assert (window && menu && title && after && script);
@@ -323,7 +323,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 	}
 }
 
-void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char32 *title) {
+void praat_hideMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
 	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
 	integer found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return;
@@ -335,7 +335,7 @@ void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char
 	}
 }
 
-void praat_showMenuCommand (const char32 *window, const char32 *menu, const char32 *title) {
+void praat_showMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
 	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
 	integer found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return;
@@ -363,8 +363,8 @@ void praat_saveAddedMenuCommands (MelderString *buffer) {
 		for (integer i = 1; i <= theCommands.size; i ++) {
 			Praat_Command me = theCommands.at [i];
 			if (my uniqueID == id && ! my hidden && my window && my menu && my title) {
-				MelderString_append (buffer, U"Add menu command... \"", my window, U"\" \"", my menu, U"\" \"", my title, U"\" \"",
-					( my after ? my after : U"" ), U"\" ", my depth, U" ", ( my script ? my script : U"" ), U"\n");
+				MelderString_append (buffer, U"Add menu command... \"", my window.get(), U"\" \"", my menu.get(), U"\" \"", my title.get(), U"\" \"",
+					( my after ? my after.get() : U"" ), U"\" ", my depth, U" ", ( my script ? my script.get() : U"" ), U"\n");
 				break;
 			}
 		}
@@ -375,16 +375,16 @@ void praat_saveToggledMenuCommands (MelderString *buffer) {
 		Praat_Command me = theCommands.at [i];
 		if (my toggled && my window && my menu && my title && ! my uniqueID && ! my script)
 			MelderString_append (buffer, my hidden ? U"Hide" : U"Show", U" menu command... \"",
-				my window, U"\" \"", my menu, U"\" ", my title, U"\n");
+				my window.get(), U"\" \"", my menu.get(), U"\" ", my title.get(), U"\n");
 	}
 }
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand_ (GuiForm parent, const char32 *title, UiCallback callback, const char32 *nameOfCallback, int x, int y) {
+void praat_addFixedButtonCommand_ (GuiForm parent, conststring32 title, UiCallback callback, conststring32 nameOfCallback, int x, int y) {
 	autoPraat_Command me = Thing_new (Praat_Command);
 	my window = Melder_dup_f (U"Objects");
-	my title = title;
+	my title = Melder_dup_f (title);
 	my callback = callback;
 	my nameOfCallback = nameOfCallback;
 	my unhidable = true;
@@ -401,11 +401,11 @@ void praat_addFixedButtonCommand_ (GuiForm parent, const char32 *title, UiCallba
 	theCommands. addItemAtPosition_move (me.move(), 0);
 }
 
-void praat_sensitivizeFixedButtonCommand (const char32 *title, bool sensitive) {
+void praat_sensitivizeFixedButtonCommand (conststring32 title, bool sensitive) {
 	Praat_Command commandFound = nullptr;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
-		if (str32equ (command -> title, title)) {
+		if (str32equ (command -> title.get(), title)) {
 			commandFound = command;
 			break;
 		}
@@ -416,12 +416,12 @@ void praat_sensitivizeFixedButtonCommand (const char32 *title, bool sensitive) {
 		GuiThing_setSensitive (commandFound -> button, sensitive);
 }
 
-int praat_doMenuCommand (const char32 *title, const char32 *arguments, Interpreter interpreter) {
+int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpreter interpreter) {
 	Praat_Command commandFound = nullptr;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
-		if (command -> executable && str32equ (command -> title, title) &&
-			(str32equ (command -> window, U"Objects") || str32equ (command -> window, U"Picture")))
+		if (command -> executable && str32equ (command -> title.get(), title) &&
+			(str32equ (command -> window.get(), U"Objects") || str32equ (command -> window.get(), U"Picture")))
 		{
 			commandFound = command;
 			break;
@@ -432,12 +432,12 @@ int praat_doMenuCommand (const char32 *title, const char32 *arguments, Interpret
 	return 1;
 }
 
-int praat_doMenuCommand (const char32 *title, integer narg, Stackel args, Interpreter interpreter) {
+int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interpreter interpreter) {
 	Praat_Command commandFound = nullptr;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
-		if (command -> executable && str32equ (command -> title, title) &&
-			(str32equ (command -> window, U"Objects") || str32equ (command -> window, U"Picture")))
+		if (command -> executable && str32equ (command -> title.get(), title) &&
+			(str32equ (command -> window.get(), U"Objects") || str32equ (command -> window.get(), U"Picture")))
 		{
 			commandFound = command;
 			break;
@@ -454,11 +454,11 @@ Praat_Command praat_getMenuCommand (integer i)
 	{ return i < 1 || i > theCommands.size ? nullptr : theCommands.at [i]; }
 
 void praat_addCommandsToEditor (Editor me) {
-	const char32 *windowName = my classInfo -> className;
+	conststring32 windowName = my classInfo -> className;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
-		if (str32equ (command -> window, windowName)) {
-			Editor_addCommandScript (me, command -> menu, command -> title, 0, command -> script);
+		if (str32equ (command -> window.get(), windowName)) {
+			Editor_addCommandScript (me, command -> menu.get(), command -> title.get(), 0, command -> script.get());
 		}
 	}
 }
@@ -489,8 +489,8 @@ static bool commandHasFileNameArgument (Praat_Command command) {
 	return hasFileNameArgument;
 }
 
-static const char32 * getReturnType (Praat_Command command) {
-	const char32 *returnType =
+static conststring32 getReturnType (Praat_Command command) {
+	const conststring32 returnType =
 		Melder_nequ (command -> nameOfCallback, U"NEW1_", 5) ? U"PraatObject" :
 		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ? U"PraatObject" :
 		Melder_nequ (command -> nameOfCallback, U"REAL_", 5) ? U"double" :
@@ -513,12 +513,12 @@ void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool
 		bool deprecated = ( command -> deprecationYear > 0 );
 		if (! commandIsToBeIncluded (command, deprecated, includeCreateAPI, includeReadAPI,
 			includeRecordAPI, includePlayAPI, includeDrawAPI, includeHelpAPI, includeWindowAPI)) continue;
-		MelderInfo_writeLine (U"\n/* Menu command \"", command -> title, U"\"",
+		MelderInfo_writeLine (U"\n/* Menu command \"", command -> title.get(), U"\"",
 			deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
 			U" */");
-		const char32 *returnType = getReturnType (command);
+		conststring32 returnType = getReturnType (command);
 		MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
-		bool isDirect = ! str32str (command -> title, U"...");
+		bool isDirect = ! str32str (command -> title.get(), U"...");
 		if (isDirect) {
 		} else {
 			command -> callback (nullptr, -1, nullptr, nullptr, nullptr, nullptr, false, nullptr);

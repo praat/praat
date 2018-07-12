@@ -2,7 +2,7 @@
 #define _ManPagesM_h_
 /* ManPagesM.h
  *
- * Copyright (C) 1996-2011,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1996-2005,2007,2009,2011,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 	#include "ManPages.h"
 #endif
 
-#define MAN_BEGIN(t,a,d)  { const char32 *title = t, *author = a; integer date = d; \
+#define MAN_BEGIN(t,a,d)  { conststring32 title = t, author = a; integer date = d; \
 	static struct structManPage_Paragraph page [] = {
 #define INTRO(text)  { kManPage_type::INTRO, text, 0.0, 0.0, nullptr },
 #define ENTRY(text)  { kManPage_type::ENTRY, text, 0.0, 0.0, nullptr },

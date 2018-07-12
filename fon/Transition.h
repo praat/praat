@@ -26,7 +26,7 @@
 void Transition_init (Transition me, integer numberOfStates);
 autoTransition Transition_create (integer numberOfStates);
 
-void Transition_formula (Transition me, const char32 *formula);
+void Transition_formula (Transition me, conststring32 formula);
 void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int precision);
 
 void Transition_eigen (Transition me, autoMatrix *eigenvectors, autoMatrix *eigenvalues);

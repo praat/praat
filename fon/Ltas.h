@@ -63,7 +63,7 @@ autoLtas Ltas_create (integer nx, double dx);
  */
 
 void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax,
-	double minimum, double maximum, bool garnish, const char32 *method);
+	double minimum, double maximum, bool garnish, conststring32 method);
 
 autoMatrix Ltas_to_Matrix (Ltas me);
 autoLtas Matrix_to_Ltas (Matrix me);

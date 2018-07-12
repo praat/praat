@@ -40,8 +40,8 @@
 
 Thing_implement (Corpus, Table, 0);
 
-autoCorpus Corpus_create (const char32 *folderWithSoundFiles, const char32 *soundFileExtension,
-	const char32 *folderWithAnnotationFiles, const char32 *annotationFileExtension)
+autoCorpus Corpus_create (conststring32 folderWithSoundFiles, conststring32 soundFileExtension,
+	conststring32 folderWithAnnotationFiles, conststring32 annotationFileExtension)
 {
 	autoCorpus me = Thing_new (Corpus);
 	my folderWithSoundFiles = Melder_dup (folderWithSoundFiles);
@@ -52,7 +52,7 @@ autoCorpus Corpus_create (const char32 *folderWithSoundFiles, const char32 *soun
 	Table_initWithColumnNames (me.get(), fileList -> numberOfStrings, U"Sound Annotation");
 	autoMelderString annotationFileName;
 	for (integer ifile = 1; ifile <= fileList -> numberOfStrings; ifile ++) {
-		const char32 *soundFileName = fileList -> strings [ifile].get();
+		conststring32 soundFileName = fileList -> strings [ifile].get();
 		Table_setStringValue (me.get(), ifile, 1, soundFileName);
 		const char32 *dotLocation = str32rchr (soundFileName, U'.');
 		Melder_assert (!! dotLocation);

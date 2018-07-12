@@ -92,13 +92,11 @@ autoDiscriminant Discriminant_create (integer numberOfGroups, integer numberOfEi
 	}
 }
 
-integer Discriminant_groupLabelToIndex (Discriminant me, const char32 *label) {
-	const char32 *name;
-
+integer Discriminant_groupLabelToIndex (Discriminant me, conststring32 label) {
 	for (integer i = 1; i <= my numberOfGroups; i ++) {
-		if (!! (name = Thing_getName (my groups -> at [i])) && str32equ (name, label)) {
+		conststring32 name = Thing_getName (my groups -> at [i]);
+		if (name && str32equ (name, label))
 			return i;
-		}
 	}
 	return 0;
 }
@@ -132,10 +130,10 @@ integer Discriminant_getNumberOfFunctions (Discriminant me) {
 }
 
 void Discriminant_setGroupLabels (Discriminant me, Strings thee) {
-	Melder_require (my numberOfGroups == thy numberOfStrings, U"The number of strings should equal the number of groups.");
-
+	Melder_require (my numberOfGroups == thy numberOfStrings,
+		U"The number of strings should equal the number of groups.");
 	for (integer i = 1; i <= my numberOfGroups; i ++) {
-		const char32 *name = thy strings [i].get();
+		conststring32 name = thy strings [i].get();
 		Thing_setName (my groups->at [i], name ? name : U"");
 	}
 }
@@ -146,7 +144,7 @@ autoStrings Discriminant_extractGroupLabels (Discriminant me) {
 		thy strings = autostring32vector (my numberOfGroups);
 		thy numberOfStrings = my numberOfGroups;
 		for (integer i = 1; i <= my numberOfGroups; i ++) {
-			const char32 *name = Thing_getName (my groups->at [i]);
+			conststring32 name = Thing_getName (my groups->at [i]);
 			thy strings [i] = Melder_dup (name);
 		}
 		return thee;
@@ -609,10 +607,9 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		// Labels for columns in ClassificationTable
 
 		for (integer j = 1; j <= g; j ++) {
-			const char32 *name = Thing_getName (my groups->at [j]);
-			if (! name) {
+			conststring32 name = Thing_getName (my groups->at [j]);
+			if (! name)
 				name = U"?";
-			}
 			TableOfReal_setColumnLabel (him.get(), j, name);
 		}
 
@@ -733,10 +730,9 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		// Labels for columns in ClassificationTable
 
 		for (integer j = 1; j <= g; j ++) {
-			const char32 *name = Thing_getName (my groups->at [j]);
-			if (! name) {
+			conststring32 name = Thing_getName (my groups->at [j]);
+			if (! name)
 				name = U"?";
-			}
 			TableOfReal_setColumnLabel (him.get(), j, name);
 		}
 

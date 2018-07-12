@@ -2,7 +2,7 @@
 #define _ERP_h_
 /* ERP.h
  *
- * Copyright (C) 2011,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2011,2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 /**
 	Look up the channel number from its name.
 */
-integer ERP_getChannelNumber (ERP me, const char32 *channelName);
+integer ERP_getChannelNumber (ERP me, conststring32 channelName);
 
 /**
  * Draw the scalp distribution.
@@ -38,7 +38,7 @@ void ERP_drawScalp (ERP me,
 void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kGraphics_colourScale colourScale);
 
 void ERP_drawChannel_number (ERP me, Graphics graphics, integer channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish);
-void ERP_drawChannel_name (ERP me, Graphics graphics, const char32 *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish);
+void ERP_drawChannel_name (ERP me, Graphics graphics, conststring32 channelName, double tmin, double tmax, double vmin, double vmax, bool garnish);
 
 autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units);
 

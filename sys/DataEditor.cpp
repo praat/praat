@@ -35,17 +35,17 @@ static Data_Description Class_getDescription (ClassInfo table) {
 	return ((Daata) _Thing_dummyObject (table)) -> v_description ();
 }
 
-static void VectorEditor_create (DataEditor root, const char32 *title, void *address,
+static void VectorEditor_create (DataEditor root, conststring32 title, void *address,
 	Data_Description description, integer minimum, integer maximum);
 
-static void MatrixEditor_create (DataEditor root, const char32 *title, void *address,
+static void MatrixEditor_create (DataEditor root, conststring32 title, void *address,
 	Data_Description description, integer min1, integer max1, integer min2, integer max2);
 
-static void StructEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description);
+static void StructEditor_create (DataEditor root, conststring32 title, void *address, Data_Description description);
 
-static void ClassEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description);
+static void ClassEditor_create (DataEditor root, conststring32 title, void *address, Data_Description description);
 
-static inline const char32 * strip_d (const char32 *s) {
+static inline conststring32 strip_d (conststring32 s) {
 	return s && s [0] == U'd' && s [1] == U'_' ? & s [2] : & s [0];
 }
 
@@ -79,7 +79,7 @@ static void update (DataSubEditor me) {
 	my v_showMembers ();
 }
 
-static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, const char32 *number) {
+static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, conststring32 number) {
 	Data_Description structDescription, result;
 	char32 string [100];
 	if (my classInfo == classMatrixEditor) return nullptr;   // no structs inside
@@ -176,14 +176,14 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				case enumwa: {
 					if (str32len (text.get()) < 3) goto error;
 					text [str32len (text.get()) - 1] = '\0';   // remove trailing ">"
-					int value = ((int (*) (const char32 *)) (my d_fieldData [irow]. description -> tagType)) (text.get() + 1);   // skip leading "<"
+					int value = ((int (*) (conststring32)) (my d_fieldData [irow]. description -> tagType)) (text.get() + 1);   // skip leading "<"
 					if (value < 0) goto error;
 					* (signed char *) my d_fieldData [irow]. address = (signed char) value;
 				} break;
 				case lenumwa: {
 					if (str32len (text.get()) < 3) goto error;
 					text [str32len (text.get()) - 1] = '\0';   // remove trailing ">"
-					int value = ((int (*) (const char32 *)) (my d_fieldData [irow]. description -> tagType)) (text.get() + 1);   // skip leading "<"
+					int value = ((int (*) (conststring32)) (my d_fieldData [irow]. description -> tagType)) (text.get() + 1);   // skip leading "<"
 					if (value < 0) goto error;
 					* (signed short *) my d_fieldData [irow]. address = (signed short) value;
 				} break;
@@ -213,7 +213,7 @@ static void gui_button_cb_change (DataSubEditor me, GuiButtonEvent /* event */) 
 				case lstringwa: {
 					char32 *old = * (char32 **) my d_fieldData [irow]. address;
 					Melder_free (old);
-					* (char32 **) my d_fieldData [irow]. address = Melder_dup_f (text.get());
+					* (char32 **) my d_fieldData [irow]. address = Melder_dup_f (text.get()).transfer();
 				} break;
 				default: break;
 			}
@@ -329,7 +329,7 @@ void structDataSubEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"DataEditor help", '?', menu_cb_help);
 }
 
-static void DataSubEditor_init (DataSubEditor me, DataEditor root, const char32 *title, void *address, Data_Description description) {
+static void DataSubEditor_init (DataSubEditor me, DataEditor root, conststring32 title, void *address, Data_Description description) {
 	my root = root;
 	if (me != root) {
 		root -> children.addItem_ref (me);
@@ -350,7 +350,7 @@ integer structStructEditor :: v_countFields () {
 	return Data_Description_countMembers (d_description);
 }
 
-static const char32 * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
+static conststring32 singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
 	switch (type) {
 		case bytewa:     MelderString_append (buffer, Melder_integer  (* (signed char *)    address)); break;
 		case int16wa:    MelderString_append (buffer, Melder_integer  (* (int16 *)          address)); break;
@@ -362,8 +362,8 @@ static const char32 * singleTypeToText (void *address, int type, void *tagType, 
 		case floatwa:    MelderString_append (buffer, Melder_single   (* (double *)         address)); break;
 		case doublewa:   MelderString_append (buffer, Melder_double   (* (double *)         address)); break;
 		case complexwa:  MelderString_append (buffer, Melder_dcomplex (* (dcomplex *)       address)); break;
-		case enumwa:     MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed char *)  address), U">"); break;
-		case lenumwa:    MelderString_append (buffer, U"<", ((const char32 * (*) (int)) tagType) (* (signed short *) address), U">"); break;
+		case enumwa:     MelderString_append (buffer, U"<", ((conststring32 (*) (int)) tagType) (* (signed char *)  address), U">"); break;
+		case lenumwa:    MelderString_append (buffer, U"<", ((conststring32 (*) (int)) tagType) (* (signed short *) address), U">"); break;
 		case booleanwa:  MelderString_append (buffer, * (bool *) address ? U"<true>" : U"<false>"); break;
 		case questionwa: MelderString_append (buffer, * (bool *) address ? U"<yes>"  : U"<no>"   ); break;
 		case stringwa:
@@ -403,7 +403,7 @@ static void showStructMember (
 			XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, 60, nullptr);   // TODO: change to GuiObject_size
 		#endif
 		autoMelderString buffer;
-		const char32 *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
+		conststring32 text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
 		GuiText_setString (fieldData -> text, text);
 		GuiThing_show (fieldData -> text);
 		fieldData -> address = memberAddress;
@@ -446,8 +446,8 @@ static void showStructMember (
 		 */
 		fieldData -> address = memberAddress;   /* Direct. */
 		fieldData -> description = memberDescription;
-		fieldData -> minimum = str32equ (((const char32 * (*) (int)) memberDescription -> min1) (0), U"_") ? 1 : 0;
-		fieldData -> maximum = ((int (*) (const char32 *)) memberDescription -> max1) (U"\n");
+		fieldData -> minimum = str32equ (((conststring32 (*) (int)) memberDescription -> min1) (0), U"_") ? 1 : 0;
+		fieldData -> maximum = ((int (*) (conststring32)) memberDescription -> max1) (U"\n");
 		fieldData -> rank = rank;
 		fieldData -> history = Melder_dup_f (history);
 		GuiThing_show (fieldData -> button);
@@ -513,11 +513,11 @@ void structStructEditor :: v_showMembers () {
 	showStructMembers (this, our d_address, our d_description, our d_topField, our name.get());
 }
 
-static void StructEditor_init (StructEditor me, DataEditor root, const char32 *title, void *address, Data_Description description) {
+static void StructEditor_init (StructEditor me, DataEditor root, conststring32 title, void *address, Data_Description description) {
 	DataSubEditor_init (me, root, title, address, description);
 }
 
-static void StructEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description) {
+static void StructEditor_create (DataEditor root, conststring32 title, void *address, Data_Description description) {
 	try {
 		autoStructEditor me = Thing_new (StructEditor);
 		StructEditor_init (me.get(), root, title, address, description);
@@ -556,12 +556,12 @@ void structVectorEditor :: v_showMembers () {
 			GuiControl_move (fieldData -> label, 0, fieldData -> y);
 			GuiLabel_setText (fieldData -> label,
 				Melder_cat (strip_d (our d_description -> name), U" [",
-					( our d_description -> rank == 3 ? ((const char32 * (*) (int)) our d_description -> min1) (ielement) : Melder_integer (ielement) ),
+					( our d_description -> rank == 3 ? ((conststring32 (*) (int)) our d_description -> min1) (ielement) : Melder_integer (ielement) ),
 					U"]"));
 			GuiThing_show (fieldData -> label);
 
 			autoMelderString buffer;
-			const char32 *text = singleTypeToText (elementAddress, type, our d_description -> tagType, & buffer);
+			conststring32 text = singleTypeToText (elementAddress, type, our d_description -> tagType, & buffer);
 			#if motif
 				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, 60, nullptr);   // TODO: change to GuiObject_size
 			#endif
@@ -619,7 +619,7 @@ void structVectorEditor :: v_showMembers () {
 	}
 }
 
-static void VectorEditor_create (DataEditor root, const char32 *title, void *address,
+static void VectorEditor_create (DataEditor root, conststring32 title, void *address,
 	Data_Description description, integer minimum, integer maximum)
 {
 	try {
@@ -666,7 +666,7 @@ void structMatrixEditor :: v_showMembers () {
 			GuiThing_show (fieldData -> label);
 
 			autoMelderString buffer;
-			const char32 *text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
+			conststring32 text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
 			#if motif
 				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, 60, nullptr);   // TODO: change to GuiObject_size
 			#endif
@@ -678,7 +678,7 @@ void structMatrixEditor :: v_showMembers () {
 	}
 }
 
-static void MatrixEditor_create (DataEditor root, const char32 *title, void *address,
+static void MatrixEditor_create (DataEditor root, conststring32 title, void *address,
 	Data_Description description, integer min1, integer max1, integer min2, integer max2)
 {
 	try {
@@ -716,13 +716,13 @@ void structClassEditor :: v_showMembers () {
 	ClassEditor_showMembers_recursive (this, ((Daata) d_address) -> classInfo);
 }
 
-static void ClassEditor_init (ClassEditor me, DataEditor root, const char32 *title, void *address, Data_Description description) {
+static void ClassEditor_init (ClassEditor me, DataEditor root, conststring32 title, void *address, Data_Description description) {
 	if (! description)
 		Melder_throw (U"Class ", Thing_className ((Thing) address), U" cannot be inspected.");
 	StructEditor_init (me, root, title, address, description);
 }
 
-static void ClassEditor_create (DataEditor root, const char32 *title, void *address, Data_Description description) {
+static void ClassEditor_create (DataEditor root, conststring32 title, void *address, Data_Description description) {
 	try {
 		autoClassEditor me = Thing_new (ClassEditor);
 		ClassEditor_init (me.get(), root, title, address, description);
@@ -806,7 +806,7 @@ void structDataEditor :: v_dataChanged () {
 	DataEditor_destroyAllChildren (this);
 }
 
-autoDataEditor DataEditor_create (const char32 *title, Daata data) {
+autoDataEditor DataEditor_create (conststring32 title, Daata data) {
 	try {
 		ClassInfo klas = data -> classInfo;
 		if (Class_getDescription (klas) == nullptr)

@@ -277,7 +277,7 @@ bool NUMmatrix_equal (integer elementSize, void *m1, void *m2, integer row1, int
 /*** Typed I/O routines for vectors and matrices. ***/
 
 #define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, const char32 *name) { \
+	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, conststring32 name) { \
 		texputintro (file, name, U" []: ", hi >= lo ? nullptr : U"(empty)", 0,0,0); \
 		for (integer i = lo; i <= hi; i ++) \
 			texput##storage (file, v [i], name, U" [", Melder_integer (i), U"]", 0,0); \
@@ -319,7 +319,7 @@ bool NUMmatrix_equal (integer elementSize, void *m1, void *m2, integer row1, int
 			throw; \
 		} \
 	} \
-	void NUMmatrix_writeText_##storage (type **m, integer row1, integer row2, integer col1, integer col2, MelderFile file, const char32 *name) { \
+	void NUMmatrix_writeText_##storage (type **m, integer row1, integer row2, integer col1, integer col2, MelderFile file, conststring32 name) { \
 		texputintro (file, name, U" [] []: ", row2 >= row1 ? nullptr : U"(empty)", 0,0,0); \
 		if (row2 >= row1) { \
 			for (integer irow = row1; irow <= row2; irow ++) { \

@@ -372,7 +372,7 @@ void structRealTierEditor :: v_play (double a_tmin, double a_tmax) {
 		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
-void RealTierEditor_init (RealTierEditor me, const char32 *title, RealTier data, Sound sound, bool ownSound) {
+void RealTierEditor_init (RealTierEditor me, conststring32 title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classRealTier));
 	TimeSoundEditor_init (me, title, data, sound, ownSound);

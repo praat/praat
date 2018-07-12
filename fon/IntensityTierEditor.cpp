@@ -36,7 +36,7 @@ void structIntensityTierEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-autoIntensityTierEditor IntensityTierEditor_create (const char32 *title, IntensityTier intensity, Sound sound, bool ownSound) {
+autoIntensityTierEditor IntensityTierEditor_create (conststring32 title, IntensityTier intensity, Sound sound, bool ownSound) {
 	try {
 		autoIntensityTierEditor me = Thing_new (IntensityTierEditor);
 		RealTierEditor_init (me.get(), title, (RealTier) intensity, sound, ownSound);

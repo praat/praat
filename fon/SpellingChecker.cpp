@@ -84,11 +84,11 @@ void SpellingChecker_replaceUserDictionary (SpellingChecker me, StringSet userDi
 	}
 }
 
-static int startsWithCapital (const char32 *word) {
+static int startsWithCapital (conststring32 word) {
 	return iswupper ((int) word [0]) || (word [0] == '\\' && iswupper ((int) word [1]));
 }
 
-bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
+bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 	int wordLength = str32len (word);
 	if (my allowAllWordsContaining && my allowAllWordsContaining [0]) {
 		char32 *p = & my allowAllWordsContaining [0];
@@ -146,7 +146,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 		}
 	}
 	if (my allowAllWordsStartingWith && my allowAllWordsStartingWith [0]) {
-		char32 *p = & my allowAllWordsStartingWith [0];
+		const char32 *p = & my allowAllWordsStartingWith [0];
 		while (*p) {
 			char32 token [100], *q = & token [0];
 			int tokenLength;
@@ -160,7 +160,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 		}
 	}
 	if (my allowAllWordsEndingIn && my allowAllWordsEndingIn [0]) {
-		char32 *p = & my allowAllWordsEndingIn [0];
+		const char32 *p = & my allowAllWordsEndingIn [0];
 		while (*p) {
 			char32 token [100], *q = & token [0];
 			int tokenLength;
@@ -185,7 +185,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word) {
 	return false;
 }
 
-void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {
+void SpellingChecker_addNewWord (SpellingChecker me, conststring32 word) {
 	try {
 		autostring32 generic = Melder_calloc (char32, 3 * str32len (word) + 1);
 		Longchar_genericize32 (word, generic.get());
@@ -195,8 +195,8 @@ void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word) {
 	}
 }
 
-char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, integer *start) {
-	const char32 *p = sentence + *start;
+char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, conststring32 sentence, integer *start) {
+	const char32 *p = & sentence [*start];
 	for (;;) {
 		if (*p == U'\0') {
 			return nullptr;   // all words allowed

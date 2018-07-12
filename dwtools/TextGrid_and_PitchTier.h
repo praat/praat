@@ -21,12 +21,18 @@
 #include "TextGrid.h"
 #include "PitchTier.h"
 
-void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitch_is);
+void PitchTier_modifyInterval (PitchTier me, double tmin, double tmax,
+	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitch_is);
 
-void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax, integer numberOfToneLevels, const char32 *times_string, int time_offset, const char32 *pitches_string);
+void PitchTier_modifyInterval_toneLevels (PitchTier me, double tmin, double tmax, double fmin, double fmax,
+	integer numberOfToneLevels, conststring32 times_string, int time_offset, conststring32 pitches_string);
 
-autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion);
+autoPitchTier IntervalTier_PitchTier_to_PitchTier (IntervalTier me, PitchTier thee,
+	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status,
+	kMelder_string which, conststring32 criterion);
 
-autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, integer tierNumber, const char32 *times_string, int time_offset, const char32 *pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status, kMelder_string which, const char32 *criterion);
+autoPitchTier TextGrid_PitchTier_to_PitchTier (TextGrid me, integer tierNumber,
+	conststring32 times_string, int time_offset, conststring32 pitches_string, int pitch_unit, int pitch_as, int pitchAnchor_status,
+	kMelder_string which, conststring32 criterion);
 
 #endif

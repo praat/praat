@@ -132,7 +132,7 @@ GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, in
 	}
 #endif
 
-void GuiOptionMenu_addOption (GuiOptionMenu me, const char32 *text) {
+void GuiOptionMenu_addOption (GuiOptionMenu me, conststring32 text) {
 	#if gtk
 		gtk_combo_box_append_text (GTK_COMBO_BOX (my d_widget), Melder_peek32to8 (text));
 	#elif motif

@@ -124,7 +124,7 @@ class GuiControlBlockValueChangedCallbacks {
 	void _Gui_callCallbacks (GuiObject w, XtCallbackList *callbacks, XtPointer call);
 	char32 * _GuiWin_getDrawingAreaClassName (void);
 
-	GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32 *name);
+	GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, conststring32 name);
 	void _Gui_invalidateWidget (GuiObject me);
 	void _Gui_validateWidget (GuiObject me);
 	void _Gui_manageScrolledWindow (GuiObject me);
@@ -134,7 +134,7 @@ class GuiControlBlockValueChangedCallbacks {
 	void _GuiNativeControl_show (GuiObject me);
 	void _GuiNativeControl_hide (GuiObject me);
 	void _GuiNativeControl_setSensitive (GuiObject me);
-	char32 * _GuiWin_expandAmpersands (const char32 *title);
+	char32 * _GuiWin_expandAmpersands (conststring32 title);
 
 	/********** GuiButton.cpp **********/
 	void _GuiWinButton_destroy (GuiObject widget);

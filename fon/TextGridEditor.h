@@ -92,9 +92,9 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	#include "TextGridEditor_prefs.h"
 };
 
-void TextGridEditor_init (TextGridEditor me, const char32 *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket);
+void TextGridEditor_init (TextGridEditor me, conststring32 title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket);
 
-autoTextGridEditor TextGridEditor_create (const char32 *title, TextGrid grid,
+autoTextGridEditor TextGridEditor_create (conststring32 title, TextGrid grid,
 	Sampled sound,   // either a Sound or a LongSound, or null
 	bool ownSound,
 	SpellingChecker spellingChecker,

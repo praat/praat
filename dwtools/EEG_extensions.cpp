@@ -57,9 +57,9 @@ static integer *EEG_channelNames_to_channelNumbers (EEG me, string32vector chann
 	}
 }
 
-static void EEG_setChannelNames_selected (EEG me, const char32 *precursor, integer *channelNumbers, integer numberOfChannels) {
+static void EEG_setChannelNames_selected (EEG me, conststring32 precursor, integer *channelNumbers, integer numberOfChannels) {
 	autoMelderString name;
-	const char32 *zero = U"0";
+	conststring32 zero = U"0";
 	for (integer i = 1; i <= numberOfChannels; i ++) {
 		MelderString_copy (& name, precursor);
 		if (my numberOfChannels > 100) {
@@ -77,7 +77,7 @@ static void EEG_setChannelNames_selected (EEG me, const char32 *precursor, integ
 	}
 }
 
-autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagStep, const char32 *channelRanges)
+autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagStep, conststring32 channelRanges)
 {
 	try {
 		// autowindow
@@ -99,7 +99,7 @@ autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime
 		// assign channel names
 		for (integer i = 1; i <= numberOfChannels; i ++) {
 			integer ichannel = channels [i];
-			const char32 *label = my channelNames [ichannel].get();
+			conststring32 label = my channelNames [ichannel].get();
 			TableOfReal_setRowLabel (him.get(), i, label);
 			TableOfReal_setColumnLabel (him.get(), i, label);
 		}
@@ -109,7 +109,7 @@ autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime
 	}
 }
 
-autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, const char32 *channelRanges)
+autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, conststring32 channelRanges)
 {
 	try {
 		double lagStep = 0.0;
@@ -123,7 +123,7 @@ autoCovariance EEG_to_Covariance (EEG me, double startTime, double endTime, cons
 }
 
 autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me,
-	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, const char32 *channelRanges)
+	double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, conststring32 channelRanges)
 {
 	try {
 		// autowindow
@@ -149,7 +149,7 @@ autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me,
 	}
 }
 
-autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, const char32 *channelRanges, int fromCorrelation) {
+autoPCA EEG_to_PCA (EEG me, double startTime, double endTime, conststring32 channelRanges, int fromCorrelation) {
 	try {
 		autoCovariance cov = EEG_to_Covariance (me, startTime, endTime, channelRanges);
 		autoPCA him;
@@ -210,7 +210,7 @@ autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfCo
 	}
 }
 
-void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, const char32 *channelRanges,
+void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfCrossCorrelations, double lagStep, conststring32 channelRanges,
 	int whiteningMethod, int diagonalizerMethod, integer maxNumberOfIterations, double tol,
 	autoEEG *p_resultingEEG, autoMixingMatrix *p_resultingMixingMatrix)
 {
@@ -252,7 +252,7 @@ void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfC
 	}
 }
 
-autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, const char32 *channelRanges) {
+autoSound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, conststring32 channelRanges) {
 	try {
 		integer numberOfChannels;
 		autoNUMvector <integer> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, nullptr, U"channel", true), 1);

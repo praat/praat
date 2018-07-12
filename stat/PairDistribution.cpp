@@ -46,7 +46,7 @@ void structPairDistribution :: v_info () {
 	MelderInfo_writeLine (U"Number of pairs: ", pairs.size);
 }
 
-autoPairProbability PairProbability_create (const char32 *string1, const char32 *string2, double weight) {
+autoPairProbability PairProbability_create (conststring32 string1, conststring32 string2, double weight) {
 	autoPairProbability me = Thing_new (PairProbability);
 	my string1 = Melder_dup (string1);
 	my string2 = Melder_dup (string2);
@@ -74,7 +74,7 @@ static void PairDistribution_checkSpecifiedPairNumber (PairDistribution me, inte
 		Melder_throw (me, U": the specified pair number is ", pairNumber, U", but should be at most my number of pairs (", my pairs.size, U").");
 }
 
-const char32 * PairDistribution_getString1 (PairDistribution me, integer pairNumber) {
+conststring32 PairDistribution_getString1 (PairDistribution me, integer pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = my pairs.at [pairNumber];
@@ -84,7 +84,7 @@ const char32 * PairDistribution_getString1 (PairDistribution me, integer pairNum
 	}
 }
 
-const char32 * PairDistribution_getString2 (PairDistribution me, integer pairNumber) {
+conststring32 PairDistribution_getString2 (PairDistribution me, integer pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = my pairs.at [pairNumber];
@@ -104,7 +104,7 @@ double PairDistribution_getWeight (PairDistribution me, integer pairNumber) {
 	}
 }
 
-void PairDistribution_add (PairDistribution me, const char32 *string1, const char32 *string2, double weight) {
+void PairDistribution_add (PairDistribution me, conststring32 string1, conststring32 string2, double weight) {
 	autoPairProbability pair = PairProbability_create (string1, string2, weight);
 	my pairs.addItem_move (pair.move());
 }
@@ -117,7 +117,6 @@ void PairDistribution_removeZeroWeights (PairDistribution me) {
 		}
 	}
 }
-
 
 void PairDistribution_swapInputsAndOutputs (PairDistribution me) {
 	for (integer ipair = my pairs.size; ipair > 0; ipair --) {
@@ -174,9 +173,9 @@ void PairDistribution_to_Stringses (PairDistribution me, integer nout, autoStrin
 	}
 }
 
-void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **string2) {
+void PairDistribution_peekPair (PairDistribution me, conststring32 *out_string1, conststring32 *out_string2) {
 	try {
-		*string1 = *string2 = nullptr;
+		*out_string1 = *out_string2 = nullptr;
 		double total = 0.0;
 		integer nin = my pairs.size, iin;
 		PairProbability prob;
@@ -195,8 +194,8 @@ void PairDistribution_peekPair (PairDistribution me, char32 **string1, char32 **
 		} while (iin > nin);   // guard against rounding errors
 		prob = my pairs.at [iin];
 		if (! prob -> string1 || ! prob -> string2) Melder_throw (U"No string in probability pair ", iin, U".");
-		*string1 = prob -> string1.get();
-		*string2 = prob -> string2.get();
+		*out_string1 = prob -> string1.get();
+		*out_string2 = prob -> string2.get();
 	} catch (MelderError) {
 		Melder_throw (me, U": pair not peeked.");
 	}
@@ -211,7 +210,7 @@ static double PairDistribution_getFractionCorrect (PairDistribution me, int whic
 		double total = PairDistributions_getTotalWeight_checkPositive (thee.get());
 		do {
 			integer pairmax = pairmin;
-			const char32 *firstInput = thy pairs.at [pairmin] -> string1.get();
+			const conststring32 firstInput = thy pairs.at [pairmin] -> string1.get();
 			for (ipair = pairmin + 1; ipair <= thy pairs.size; ipair ++) {
 				PairProbability prob = thy pairs.at [ipair];
 				if (! str32equ (prob -> string1.get(), firstInput)) {
@@ -266,7 +265,7 @@ double PairDistribution_Distributions_getFractionCorrect (PairDistribution me, D
 		do {
 			integer pairmax = pairmin, length, ipair;
 			double sum = 0.0, sumDist = 0.0;
-			const char32 *firstInput = thy pairs.at [pairmin] -> string1.get();
+			const conststring32 firstInput = thy pairs.at [pairmin] -> string1.get();
 			for (ipair = pairmin + 1; ipair <= thy pairs.size; ipair ++) {
 				PairProbability prob = thy pairs.at [ipair];
 				if (! str32equ (prob -> string1.get(), firstInput)) {

@@ -53,8 +53,8 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
 	Sound_PlayCallback playCallback, Thing playBoss);
 
-void FormantGrid_formula_frequencies (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee);
-void FormantGrid_formula_bandwidths (FormantGrid me, const char32 *expression, Interpreter interpreter, FormantGrid thee);
+void FormantGrid_formula_frequencies (FormantGrid me, conststring32 expression, Interpreter interpreter, FormantGrid thee);
+void FormantGrid_formula_bandwidths (FormantGrid me, conststring32 expression, Interpreter interpreter, FormantGrid thee);
 
 autoFormantGrid Formant_downto_FormantGrid (Formant me);
 autoFormant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);

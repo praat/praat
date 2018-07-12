@@ -190,7 +190,9 @@ int FilterBank_getFrequencyScale (FilterBank me) {
 	return my v_getFrequencyScale ();
 }
 
-void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalScale, double xmin, double xmax, int verticalScale, double ymin, double ymax, int garnish) {
+void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalScale, double xmin, double xmax,
+	int verticalScale, double ymin, double ymax, bool garnish)
+{
 	int myFreqScale = FilterBank_getFrequencyScale (me);
 
 	if (xmin < 0 || xmax < 0 || ymin < 0 || ymax < 0) {
@@ -245,32 +247,28 @@ void FilterBank_drawFrequencyScales (FilterBank me, Graphics g, int horizontalSc
 	}
 }
 
-void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, int garnish) {
-	if (xmax <= xmin) {
-		xmin = my xmin; xmax = my xmax; 
-	}
-	if (ymax <= ymin) {
-		ymin = my ymin; ymax = my ymax;
-	}
+void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax,
+	double ymin, double ymax, double minimum, double maximum, bool garnish)
+{
+	if (xmax <= xmin)
+		xmin = my xmin, xmax = my xmax;
+	if (ymax <= ymin)
+		ymin = my ymin, ymax = my ymax;
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, & ixmin, & ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, & iymin, & iymax);
-	if (maximum <= minimum) {
-		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, &minimum, &maximum);
-	}
-	if (maximum <= minimum) { 
-		minimum -= 1.0; maximum += 1.0;
-	}
-	if (xmin >= xmax || ymin >= ymax) {
+	if (maximum <= minimum)
+		(void) Matrix_getWindowExtrema (me, ixmin, ixmax, iymin, iymax, & minimum, & maximum);
+	if (maximum <= minimum)
+		minimum -= 1.0, maximum += 1.0;
+	if (xmin >= xmax || ymin >= ymax)
 		return;
-	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_image (g, my z,
 			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
 			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
-
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -281,17 +279,16 @@ void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax, doub
 	}
 }
 
-void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, int dbScale, double ymin, double ymax, int garnish) {
-	if (! checkLimits (me, FilterBank_BARK, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax)) {
+void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int toFreqScale, int fromFilter, int toFilter,
+	double zmin, double zmax, int dbScale, double ymin, double ymax, bool garnish)
+{
+	if (! checkLimits (me, FilterBank_BARK, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax))
 		return;
-	}
-
 	integer n = 1000;
 	autoNUMvector<double> a (1, n);
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
-
 	for (integer j = fromFilter; j <= toFilter; j ++) {
 		double df = (zmax - zmin) / (n - 1);
 		double zMid = Matrix_rowToY (me, j);
@@ -304,12 +301,10 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 			} else {
 				z -= zMid + 0.215;
 				a [i] = 7.0 - 7.5 * z - 17.5 * sqrt (0.196 + z * z);
-				if (! dbScale) {
+				if (! dbScale)
 					a [i] = pow (10.0, a [i]);
-				}
 			}
 		}
-
 		integer ibegin, iend;
 		setDrawingLimits (a.peek(), n, ymin, ymax, & ibegin, & iend);
 		if (ibegin <= iend) {
@@ -318,13 +313,10 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 			Graphics_function (g, a.peek(), ibegin, iend, fmin, fmax);
 		}
 	}
-
-
 	Graphics_unsetInner (g);
-
 	if (garnish) {
 		double distance = dbScale ? 10.0 : 1.0;
-		const char32 *ytext = dbScale ? U"Amplitude (dB)" : U"Amplitude";
+		conststring32 ytext = dbScale ? U"Amplitude (dB)" : U"Amplitude";
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeftEvery (g, 1.0, distance, true, true, false);
@@ -335,7 +327,9 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g, int t
 
 Thing_implement (MelFilter, FilterBank, 2);
 
-autoMelFilter MelFilter_create (double tmin, double tmax, integer nt, double dt, double t1, double fmin, double fmax, integer nf, double df, double f1) {
+autoMelFilter MelFilter_create (double tmin, double tmax, integer nt, double dt, double t1,
+	double fmin, double fmax, integer nf, double df, double f1)
+{
 	try {
 		autoMelFilter me = Thing_new (MelFilter);
 		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
@@ -356,7 +350,9 @@ void FilterBank_drawFilters (I, Graphics g, integer fromf, integer tof,
 
 }*/
 
-void FilterBank_drawTimeSlice (FilterBank me, Graphics g, double t, double fmin, double fmax, double min, double max, const char32 *xlabel, int garnish) {
+void FilterBank_drawTimeSlice (FilterBank me, Graphics g, double t,
+	double fmin, double fmax, double min, double max, conststring32 xlabel, bool garnish)
+{
 	Matrix_drawSliceY (me, g, t, fmin, fmax, min, max);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -368,7 +364,9 @@ void FilterBank_drawTimeSlice (FilterBank me, Graphics g, double t, double fmin,
 	}
 }
 
-void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, int dbScale, double ymin, double ymax, int garnish) {
+void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, int fromFilter, int toFilter,
+	double zmin, double zmax, int dbScale, double ymin, double ymax, bool garnish)
+{
 	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax)) {
 		return;
 	}
@@ -425,7 +423,7 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g, int toFreqScale, i
 /*
 void MelFilter_drawFilters (MelFilter me, Graphics g, integer from, integer to,
 	double fmin, double fmax, double ymin, double ymax, int dbscale,
-	int garnish)
+	bool garnish)
 {
 	integer i;
 	double df = my dy;
@@ -499,7 +497,9 @@ autoFormantFilter FormantFilter_create (double tmin, double tmax, integer nt, do
 	}
 }
 
-void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double bandwidth, int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, int dbScale, double ymin, double ymax, int garnish) {
+void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double bandwidth, int toFreqScale, int fromFilter, int toFilter,
+	double zmin, double zmax, int dbScale, double ymin, double ymax, bool garnish)
+{
 	if (! checkLimits (me, FilterBank_HERTZ, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax)) {
 		return;
 	}

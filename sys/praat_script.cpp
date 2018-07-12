@@ -24,7 +24,7 @@
 #include "UiPause.h"
 #include "DemoEditor.h"
 
-static int praat_findObjectFromString (Interpreter interpreter, const char32 *string) {
+static int praat_findObjectFromString (Interpreter interpreter, conststring32 string) {
 	try {
 		int IOBJECT;
 		while (*string == U' ') string ++;
@@ -70,7 +70,7 @@ static int praat_findObjectFromString (Interpreter interpreter, const char32 *st
 	}
 }
 
-Editor praat_findEditorFromString (const char32 *string) {
+Editor praat_findEditorFromString (conststring32 string) {
 	int IOBJECT;
 	while (*string == U' ') string ++;
 	if (*string >= U'A' && *string <= U'Z') {
@@ -81,7 +81,7 @@ Editor praat_findEditorFromString (const char32 *string) {
 					Melder_assert (editor -> name);
 					const char32 *space = str32chr (editor -> name.get(), U' ');   // editors tend to be called like "3. Sound kanweg"
 					if (space) {   // but not all
-						const char32 *name = space + 1;
+						conststring32 name = space + 1;
 						if (str32equ (name, string)) return editor;
 					}
 				}
@@ -300,7 +300,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 				praatP. editor = praat_findEditorFromString (command + 7);
 			} else if (command [6] == U'\0') {
 				if (interpreter && interpreter -> editorClass) {
-					praatP. editor = praat_findEditorFromString (interpreter -> environmentName);
+					praatP. editor = praat_findEditorFromString (interpreter -> environmentName.get());
 				} else {
 					Melder_throw (U"The function \"editor\" requires an argument when called from outside an editor.");
 				}
@@ -519,7 +519,7 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 	return 1;
 }
 
-void praat_executeCommandFromStandardInput (const char32 *programName) {
+void praat_executeCommandFromStandardInput (conststring32 programName) {
 	char command8 [1000];   // can be recursive
 	/*
 	 * FIXME: implement for Windows.
@@ -539,7 +539,7 @@ void praat_executeCommandFromStandardInput (const char32 *programName) {
 	}
 }
 
-void praat_executeScriptFromFile (MelderFile file, const char32 *arguments) {
+void praat_executeScriptFromFile (MelderFile file, conststring32 arguments) {
 	try {
 		autostring32 text = MelderFile_readText (file);
 		autoMelderFileSetDefaultDir dir (file);   // so that relative file names can be used inside the script
@@ -555,7 +555,7 @@ void praat_executeScriptFromFile (MelderFile file, const char32 *arguments) {
 	}
 }
 
-void praat_executeScriptFromFileName (const char32 *fileName, integer narg, Stackel args) {
+void praat_executeScriptFromFileName (conststring32 fileName, integer narg, Stackel args) {
 	/*
 	 * The argument 'fileName' is unsafe. Duplicate its contents.
 	 */
@@ -574,7 +574,7 @@ void praat_executeScriptFromFileName (const char32 *fileName, integer narg, Stac
 	}
 }
 
-void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArguments) {
+void praat_executeScriptFromFileNameWithArguments (conststring32 nameAndArguments) {
 	char32 path [256];
 	const char32 *p, *arguments;
 	structMelderFile file { };
@@ -612,7 +612,7 @@ extern "C" void praatlib_executeScript (const char *text8) {
 	}
 }
 
-void praat_executeScriptFromText (const char32 *text) {
+void praat_executeScriptFromText (conststring32 text) {
 	try {
 		autoInterpreter interpreter = Interpreter_create (nullptr, nullptr);
 		autostring32 string = Melder_dup (text);   // copy, because Interpreter will change it (UGLY)
@@ -637,8 +637,8 @@ void praat_executeScriptFromDialog (UiForm dia) {
 }
 
 static void secondPassThroughScript (UiForm sendingForm, integer /* narg */, Stackel /* args */,
-	const char32 * /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
-	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
+	conststring32 /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
+	conststring32 /* invokingButtonTitle */, bool /* modified */, void *)
 {
 	praat_executeScriptFromDialog (sendingForm);
 }
@@ -667,22 +667,22 @@ static void firstPassThroughScript (MelderFile file) {
 }
 
 static void fileSelectorOkCallback (UiForm dia, integer /* narg */, Stackel /* args */,
-	const char32 * /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
-	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
+	conststring32 /* sendingString_dummy */, Interpreter /* interpreter_dummy */,
+	conststring32 /* invokingButtonTitle */, bool /* modified */, void *)
 {
 	firstPassThroughScript (UiFile_getFile (dia));
 }
 
 void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm /* sendingForm_dummy */, integer /* narg */, Stackel /* args */,
-	const char32 *scriptPath, Interpreter /* interpreter */,
-	const char32 * /* invokingButtonTitle */, bool /* modified */, void *)
+	conststring32 scriptPath, Interpreter /* interpreter */,
+	conststring32 /* invokingButtonTitle */, bool /* modified */, void *)
 {
 	structMelderFile file { };
 	Melder_relativePathToFile (scriptPath, & file);
 	firstPassThroughScript (& file);
 }
 
-void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const char32 *script) {
+void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, conststring32 script) {
 	praatP.editor = editor;
 	DO_RunTheScriptFromAnyAddedMenuCommand (nullptr, 0, nullptr, script, nullptr, nullptr, false, nullptr);
 	/*praatP.editor = nullptr;*/

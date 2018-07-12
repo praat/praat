@@ -43,7 +43,7 @@ oo_DEFINE_CLASS (Function, Daata)
 		virtual int v_domainQuantity () { return 0; }
 		virtual int v_getMinimumUnit (integer /* level */) { return 0; }
 		virtual int v_getMaximumUnit (integer /* level */) { return 0; }
-		virtual const char32 * v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
+		virtual conststring32 v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
 			{ return U""; }
 		virtual bool v_isUnitLogarithmic (integer /* level */, int /* unit */)
 			{ return false; }

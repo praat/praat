@@ -27,27 +27,27 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 		override;
 	void v_play (double fromTime, double toTime)
 		override;
-	const char32 * v_quantityText ()
+	conststring32 v_quantityText ()
 		override { return U"Sound pressure (Pa)"; }
-	const char32 * v_rightTickUnits ()
+	conststring32 v_rightTickUnits ()
 		override { return U" Pa"; }
 	double v_defaultYmin ()
 		override { return -1.0; }
 	double v_defaultYmax ()
 		override { return +1.0; }
-	const char32 * v_setRangeTitle ()
+	conststring32 v_setRangeTitle ()
 		override { return U"Set amplitude range..."; }
-	const char32 * v_defaultYminText ()
+	conststring32 v_defaultYminText ()
 		override { return U"-1.0"; }
-	const char32 * v_defaultYmaxText ()
+	conststring32 v_defaultYmaxText ()
 		override { return U"+1.0"; }
-	const char32 * v_yminText ()
+	conststring32 v_yminText ()
 		override { return U"Minimum amplitude (Pa)"; }
-	const char32 * v_ymaxText ()
+	conststring32 v_ymaxText ()
 		override { return U"Maximum amplitude (Pa)"; }
 };
 
-autoAmplitudeTierEditor AmplitudeTierEditor_create (const char32 *title,
+autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title,
 	AmplitudeTier amplitude,
 	Sound sound,   // may be null
 	bool ownSound);

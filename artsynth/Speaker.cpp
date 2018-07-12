@@ -1,6 +1,6 @@
 /* Speaker.cpp
  *
- * Copyright (C) 1992-2005,2007,2011,2012,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@
 
 Thing_implement (Speaker, Daata, 0);
 
-autoSpeaker Speaker_create (const char32 *kindOfSpeaker, int16 numberOfVocalCordMasses) {
+autoSpeaker Speaker_create (conststring32 kindOfSpeaker, int16 numberOfVocalCordMasses) {
 	autoSpeaker me = Thing_new (Speaker);
 
 	/* Supralaryngeal dimensions are taken from P. Mermelstein (1973):		*/

@@ -114,7 +114,7 @@ int64 MelderReadText_getNumberOfLines (MelderReadText me) {
 	return n;
 }
 
-const char32 * MelderReadText_getLineNumber (MelderReadText me) {
+conststring32 MelderReadText_getLineNumber (MelderReadText me) {
 	int64 result = 1;
 	if (my string32) {
 		char32 *p = & my string32 [0];

@@ -765,7 +765,7 @@ autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSoun
 }
 
 void Sound_draw (Sound me, Graphics g,
-	double tmin, double tmax, double minimum, double maximum, bool garnish, const char32 *method)
+	double tmin, double tmax, double minimum, double maximum, bool garnish, conststring32 method)
 {
 	bool treversed = tmin > tmax;
 	if (treversed) { double temp = tmin; tmin = tmax; tmax = temp; }

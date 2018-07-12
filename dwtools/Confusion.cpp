@@ -63,11 +63,11 @@ autoConfusion Confusion_createFromStringses (Strings me, Strings thee) {
 		
 		autoConfusion him = Confusion_create (my numberOfStrings, thy numberOfStrings);
 		for (integer irow = 1; irow <= my numberOfStrings; irow ++) {
-			const char32 *label = my strings [irow].get();
+			conststring32 label = my strings [irow].get();
 			TableOfReal_setRowLabel (him.get(), irow, label);
 		}
 		for (integer icol = 1; icol <= thy numberOfStrings; icol ++) {
-			const char32 *label = thy strings [icol].get();
+			conststring32 label = thy strings [icol].get();
 			TableOfReal_setColumnLabel (him.get(), icol, label);
 		}
 		return him;
@@ -86,7 +86,7 @@ autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfRespons
 	}
 }
 
-autoConfusion Confusion_createSimple (const char32 *labels) {
+autoConfusion Confusion_createSimple (conststring32 labels) {
 	try {
 		integer numberOfLabels = Melder_countTokens (labels);
 		Melder_require (numberOfLabels > 0, U"There should be at least one label.");
@@ -137,122 +137,104 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 
 #define TINY 1.0e-30
 
-void Confusion_getEntropies (Confusion me, double *p_h, double *p_hx, double *p_hy, double *p_hygx, double *p_hxgy, double *p_uygx, double *p_uxgy, double *p_uxy) {
-	double h = 0.0, hx = 0.0, hy = 0.0, hxgy = 0.0, hygx = 0.0, uygx = 0.0, uxgy = 0.0, uxy = 0.0;
-
-	autoNUMvector<double> rowSum (1, my numberOfRows);
-	autoNUMvector<double> colSum (1, my numberOfColumns);
-
-	double sum = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			rowSum [i] += my data [i] [j];
-			colSum [j] += my data [i] [j];
-			sum += my data [i] [j];
+void Confusion_getEntropies (Confusion me, double *p_h, double *p_hx, double *p_hy,
+	double *p_hygx, double *p_hxgy, double *p_uygx, double *p_uxgy, double *p_uxy)
+{
+	autonumvec rowSum (my numberOfRows, kTensorInitializationType::ZERO);
+	autonumvec colSum (my numberOfColumns, kTensorInitializationType::ZERO);
+	double totalSum = 0.0;
+	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+			double cellValue = my data [irow] [icol];
+			rowSum [irow] += cellValue;
+			colSum [icol] += cellValue;
+			totalSum += cellValue;
 		}
 	}
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		if (rowSum [i] > 0.0) {
-			hy -= rowSum [i] / sum * NUMlog2 (rowSum [i] / sum);
+	double h = 0.0, hx = 0.0, hy = 0.0;
+	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+		if (rowSum [irow] > 0.0) {
+			double prob = rowSum [irow] / totalSum;
+			hy -= prob * NUMlog2 (prob);
 		}
 	}
-	for (integer j = 1; j <= my numberOfColumns; j ++) {
-		if (colSum [j] > 0.0) {
-			hx -= colSum [j] / sum * NUMlog2 (colSum [j] / sum);
+	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+		if (colSum [icol] > 0.0) {
+			double prob = colSum [icol] / totalSum;
+			hx -= prob * NUMlog2 (prob);
 		}
 	}
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			if (my data [i] [j] > 0.0) {
-				h -= my data [i] [j] / sum * NUMlog2 (my data [i] [j] / sum);
+	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+			if (my data [irow] [icol] > 0.0) {
+				double prob = my data [irow] [icol] / totalSum;
+				h -= prob * NUMlog2 (prob);
 			}
 		}
 	}
+	double hygx = h - hx;
+	double hxgy = h - hy;
+	double uygx = (hy - hygx) / (hy + TINY);
+	double uxgy = (hx - hxgy) / (hx + TINY);
+	double uxy = 2.0 * (hx + hy - h) / (hx + hy + TINY);
 
-	hygx = h - hx;
-	hxgy = h - hy;
-	uygx = (hy - hygx) / (hy + TINY);
-	uxgy = (hx - hxgy) / (hx + TINY);
-	uxy = 2.0 * (hx + hy - h) / (hx + hy + TINY);
-	if (p_h) {
-		*p_h  = h;
-	}
-	if (p_hx) {
-		*p_hx  = hx;
-	}
-	if (p_hy) {
-		*p_hy  = hy;
-	}
-	if (p_hygx) {
-		*p_hygx  = hygx;
-	}
-	if (p_hxgy) {
-		*p_hxgy  = hxgy;
-	}
-	if (p_uygx) {
-		*p_uygx  = uygx;
-	}
-	if (p_uxgy) {
-		*p_uxgy  = uxgy;
-	}
-	if (p_uxy) {
-		*p_uxy  = uxy;
-	}
+	if (p_h)    *p_h = h;
+	if (p_hx)   *p_hx = hx;
+	if (p_hy)   *p_hy = hy;
+	if (p_hygx) *p_hygx = hygx;
+	if (p_hxgy) *p_hxgy = hxgy;
+	if (p_uygx) *p_uygx = uygx;
+	if (p_uxgy) *p_uxgy = uxgy;
+	if (p_uxy)  *p_uxy = uxy;
 }
 
-void Confusion_increase (Confusion me, const char32 *stim, const char32 *resp) {
+void Confusion_increase (Confusion me, conststring32 stimulus, conststring32 response) {
 	try {
-		integer stimIndex = TableOfReal_rowLabelToIndex (me, stim);
-		Melder_require (stimIndex > 0, U"The stimulus name should be valid.");
+		integer stimulusIndex = TableOfReal_rowLabelToIndex (me, stimulus);
+		Melder_require (stimulusIndex > 0, U"The stimulus name should be valid.");
 		
-		integer respIndex = TableOfReal_columnLabelToIndex (me, resp);
-		Melder_require (respIndex > 0, U"The response name should be valid.");
+		integer responseIndex = TableOfReal_columnLabelToIndex (me, response);
+		Melder_require (responseIndex > 0, U"The response name should be valid.");
 
-		my data [stimIndex] [respIndex] += 1.0;
+		my data [stimulusIndex] [responseIndex] += 1.0;
 	} catch (MelderError) {
 		Melder_throw (me, U": not increased.");
 	}
 }
 
-double Confusion_getValue (Confusion me, const char32 *stim, const char32 *resp) {
-	integer stimIndex = TableOfReal_rowLabelToIndex (me, stim);
+double Confusion_getValue (Confusion me, conststring32 stimulus, conststring32 response) {
+	integer stimulusIndex = TableOfReal_rowLabelToIndex (me, stimulus);
 	
-	Melder_require (stimIndex > 0, U"The stimulus should be valid.");
+	Melder_require (stimulusIndex > 0, U"The stimulus name should be valid.");
 	
-	integer respIndex = TableOfReal_columnLabelToIndex (me, resp);
+	integer responseIndex = TableOfReal_columnLabelToIndex (me, response);
 	
-	Melder_require (respIndex > 0, U"The response should be valid.");
+	Melder_require (responseIndex > 0, U"The response name should be valid.");
 	
-	return my data [stimIndex] [respIndex];
+	return my data [stimulusIndex] [responseIndex];
 }
 
-void Confusion_getFractionCorrect (Confusion me, double *p_fraction, integer *p_numberOfCorrect) {
+void Confusion_getFractionCorrect (Confusion me, double *out_fraction, integer *out_numberOfCorrect) {
 	double fraction = undefined;
 	integer numberOfCorrect = -1;
 
 	double c = 0.0, ct = 0.0;
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			if (! my rowLabels [i] || ! my columnLabels [j]) {
+			if (! my rowLabels [i] || ! my columnLabels [j])
 				return;
-			}
-			ct += my data[i][j];
-			if (str32equ (my rowLabels [i].get(), my columnLabels [j].get())) {
+			ct += my data [i] [j];
+			if (str32equ (my rowLabels [i].get(), my columnLabels [j].get()))
 				c += my data [i] [j];
-			}
 		}
 	}
-
-	if (ct != 0.0) {
+	if (ct != 0.0)
 		fraction = c / ct;
-	}
-	if (p_fraction) {
-		*p_fraction = fraction;
-	}
+	if (out_fraction)
+		*out_fraction = fraction;
 	numberOfCorrect = Melder_ifloor (c);
-	if (p_numberOfCorrect) {
-		*p_numberOfCorrect = numberOfCorrect;
-	}
+	if (out_numberOfCorrect)
+		*out_numberOfCorrect = numberOfCorrect;
 }
 
 /*************** Confusion_Matrix_draw ****************************************/
@@ -265,7 +247,8 @@ static autoPolygon Polygon_createPointer () {
 		double y [NPOINTS + 1] = { 0.0, 0.0, 0.0, 0.5, 1.0, 1.0, 0.0 };
 		autoPolygon me = Polygon_create (NPOINTS);
 		for (integer i = 1; i <= NPOINTS; i ++) {
-			my x [i] = x [i]; my y [i] = y [i];
+			my x [i] = x [i];
+			my y [i] = y [i];
 		}
 		return me;
 	} catch (MelderError) {
@@ -284,21 +267,15 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 	}
 	Melder_require (thy ny == my numberOfRows, U"The number of stimuli should equal the number of rows in the matrix.");
 
-	if (xmax <= xmin) {
-		(void) Matrix_getWindowExtrema (thee, 1, 1, 1, thy ny, &xmin, &xmax);
-	}
-
-	if (xmax <= xmin) {
+	if (xmax <= xmin)
+		(void) Matrix_getWindowExtrema (thee, 1, 1, 1, thy ny, & xmin, & xmax);
+	if (xmax <= xmin)
 		return;
-	}
-
-	if (ymax <= ymin) {
-		(void) Matrix_getWindowExtrema (thee, 2, 2, 1, thy ny, &ymin, &ymax);
-	}
-
-	if (ymax <= ymin) {
+	if (ymax <= ymin)
+		(void) Matrix_getWindowExtrema (thee, 2, 2, 1, thy ny, & ymin, & ymax);
+	if (ymax <= ymin)
 		return;
-	}
+
 	double rmax = fabs (xmax - xmin) / 10.0;
 	double rmin = rmax / 10;
 
@@ -313,11 +290,9 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			xSum += my data [i] [j];
 		}
-
 		if (xSum <= 0.0) {
 			continue;    /* no confusions */
 		}
-
 		double x1 = thy z [i] [1];
 		double y1 = thy z [i] [2];
 		double r = rmax * my data [i] [i] / xSum;
@@ -333,20 +308,16 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 			if (perc == 0.0 || perc < lowerPercentage || j == i) {
 				continue;
 			}
-
-			xmin = x1; xmax = x2;
-			if (x2 < x1) {
-				xmin = x2; xmax = x1;
-			}
-			ymin = y1; xmax = y2;
-			if (y2 < y1) {
-				ymin = y2; ymax = y1;
-			}
+			xmin = x1, xmax = x2;
+			if (x2 < x1)
+				xmin = x2, xmax = x1;
+			ymin = y1, xmax = y2;
+			if (y2 < y1)
+				ymin = y2, ymax = y1;
 			autoPolygon p = Polygon_createPointer();
 			double xs = sqrt (dx * dx + dy * dy) - 2.2 * r;
-			if (xs < 0.0) {
+			if (xs < 0.0)
 				xs = 0.0;
-			}
 			double ys = perc * rmax / 100.0;
 			Polygon_scale (p.get(), xs, ys);
 			Polygon_translate (p.get(), x1, y1 - ys / 2);
@@ -355,9 +326,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 			Polygon_drawInside (p.get(), g);
 		}
 	}
-
 	Graphics_unsetInner (g);
-
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_marksBottom (g, 2, true, true, false);
@@ -391,19 +360,19 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee) {
 }
 
 integer Confusion_getNumberOfEntries (Confusion me) {
-	double total = 0.0;
+	longdouble total = 0.0;
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			total += my data [i] [j];
 		}
 	}
-	return Melder_ifloor (total);
+	return Melder_ifloor ((double) total);
 }
 
-static void create_index (char32 **s, integer sb, integer se, char32 **ref, integer rb, integer re, integer *index) {
-	for (integer i = sb; i <= se; i ++) {
+static void create_index (string32vector s, string32vector ref, integer index []) {
+	for (integer i = 1; i <= s.size; i ++) {
 		integer indxj = 0;
-		for (integer j = rb; j <= re; j ++) {
+		for (integer j = 1; j <= ref.size; j ++) {
 			if (str32equ (s [i], ref [j])) {
 				indxj = j;
 				break;
@@ -413,7 +382,7 @@ static void create_index (char32 **s, integer sb, integer se, char32 **ref, inte
 	}
 }
 
-autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace,
+autoConfusion Confusion_condense (Confusion me, conststring32 search, conststring32 replace,
 	integer maximumNumberOfReplaces, bool use_regexp) {
 	try {
 		integer nmatches, nstringmatches;
@@ -446,9 +415,9 @@ autoConfusion Confusion_condense (Confusion me, const char32 *search, const char
 		thy columnLabels. copyElementsFrom (dcol -> rowLabels);
 
 		autoNUMvector<integer> rowIndex (1, my numberOfRows);
-		create_index (srow -> strings.peek2(), 1, my numberOfRows, drow -> rowLabels.peek2(), 1, nstim, rowIndex.peek());
+		create_index (srow -> strings.get(), drow -> rowLabels.get(), rowIndex.peek());
 		autoNUMvector<integer> columnIndex (1, my numberOfColumns);
-		create_index (scol -> strings.peek2(), 1, my numberOfColumns, dcol -> rowLabels.peek2(), 1, nresp, columnIndex.peek());
+		create_index (scol -> strings.get(), dcol -> rowLabels.get(), columnIndex.peek());
 
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -473,7 +442,7 @@ autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 	}
 }
 
-autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos) {
+autoConfusion Confusion_group (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos) {
 	try {
 		autoConfusion stim = Confusion_groupStimuli (me, labels, newLabel, newpos);
 		autoConfusion thee = Confusion_groupResponses (stim.get(), labels, newLabel, newpos);
@@ -483,15 +452,13 @@ autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 
 	}
 }
 
-autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos) {
+autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos) {
 	try {
 		integer ncondense = Melder_countTokens (labels);
 		autoNUMvector<integer> irow (1, my numberOfRows);
 
-		for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer i = 1; i <= my numberOfRows; i ++)
 			irow [i] = i;
-		}
-
 		for (char32 *token = Melder_firstToken (labels); token != nullptr; token = Melder_nextToken ()) {
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				if (Melder_equ (token, my rowLabels [i].get())) {
@@ -502,22 +469,18 @@ autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const 
 		}
 		integer nfound = 0;
 		for (integer i = 1; i <= my numberOfRows; i ++) {
-			if (irow [i] == 0) {
+			if (irow [i] == 0)
 				nfound ++;
-			}
 		}
 		Melder_require (nfound > 0, U"The stimulus labels are invalid.");
 		
-		if (nfound != ncondense) {
+		if (nfound != ncondense)
 			Melder_warning (U"One or more of the given stimulus labels are suspect.");
-		}
 		integer newnstim = my numberOfRows - nfound + 1;
-		if (newpos < 1) {
+		if (newpos < 1)
 			newpos = 1;
-		}
-		if (newpos > newnstim) {
+		if (newpos > newnstim)
 			newpos = newnstim;
-		}
 		autoConfusion thee = Confusion_create (newnstim, my numberOfColumns);
 		thy columnLabels. copyElementsFrom (my columnLabels);
 
@@ -526,16 +489,14 @@ autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const 
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			integer rowpos = newpos;
 			if (irow [i] > 0) {
-				if (inewrow == newpos) {
+				if (inewrow == newpos)
 					inewrow ++;
-				}
 				rowpos = inewrow;
 				inewrow ++;
 				TableOfReal_setRowLabel (thee.get(), rowpos, my rowLabels [i].get());
 			}
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
+			for (integer j = 1; j <= my numberOfColumns; j ++)
 				thy data [rowpos] [j] += my data [i] [j];
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -543,15 +504,13 @@ autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const 
 	}
 }
 
-autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos) {
+autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos) {
 	try {
 		integer ncondense = Melder_countTokens (labels);
 		autoNUMvector<integer> icol (1, my numberOfColumns);
 
-		for (integer i = 1; i <= my numberOfColumns; i ++) {
+		for (integer i = 1; i <= my numberOfColumns; i ++)
 			icol [i] = i;
-		}
-
 		for (char32 *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
 				if (Melder_equ (token, my columnLabels [i].get())) {
@@ -562,23 +521,18 @@ autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, cons
 		}
 		integer nfound = 0;
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
-			if (icol [i] == 0) {
+			if (icol [i] == 0)
 				nfound ++;
-			}
 		}
-		
 		Melder_require (nfound > 0, U"The response labels are invalid.");
 		
-		if (nfound != ncondense) {
+		if (nfound != ncondense)
 			Melder_warning (U"One or more of the given response labels are suspect.");
-		}
 		integer newnresp = my numberOfColumns - nfound + 1;
-		if (newpos < 1) {
+		if (newpos < 1)
 			newpos = 1;
-		}
-		if (newpos > newnresp) {
+		if (newpos > newnresp)
 			newpos = newnresp;
-		}
 		autoConfusion thee = Confusion_create (my numberOfRows, newnresp);
 		thy rowLabels. copyElementsFrom (my rowLabels);
 		TableOfReal_setColumnLabel (thee.get(), newpos, newLabel);
@@ -586,16 +540,14 @@ autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, cons
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
 			integer colpos = newpos;
 			if (icol [i] > 0) {
-				if (inewcol == newpos) {
+				if (inewcol == newpos)
 					inewcol ++;
-				}
 				colpos = inewcol;
 				inewcol ++;
 				TableOfReal_setColumnLabel (thee.get(), colpos, my columnLabels [i].get());
 			}
-			for (integer j = 1; j <= my numberOfRows; j ++) {
+			for (integer j = 1; j <= my numberOfRows; j ++)
 				thy data [j] [colpos] += my data [j] [i];
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -622,9 +574,8 @@ autoTableOfReal Confusion_to_TableOfReal_marginals (Confusion me) {
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			longdouble columnSum = 0.0;
-			for (integer i = 1; i <= my numberOfRows; i ++) {
+			for (integer i = 1; i <= my numberOfRows; i ++)
 				columnSum += my data [i] [j];
-			}
 			thy data [my numberOfRows + 1] [j] = (double) columnSum;
 		}
 

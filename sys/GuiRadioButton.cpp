@@ -140,7 +140,7 @@ void GuiRadioGroup_end () {
 }
 
 GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, GuiRadioButtonCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
+	conststring32 buttonText, GuiRadioButtonCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
 	trace (U"begin: text %", buttonText);
 	autoGuiRadioButton me = Thing_new (GuiRadioButton);
@@ -238,7 +238,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 }
 
 GuiRadioButton GuiRadioButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, GuiRadioButtonCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
+	conststring32 buttonText, GuiRadioButtonCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
 	GuiRadioButton me = GuiRadioButton_create (parent, left, right, top, bottom, buttonText, valueChangedCallback, valueChangedBoss, flags);
 	GuiThing_show (me);

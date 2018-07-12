@@ -22,10 +22,10 @@
 
 #include "LogisticRegression_def.h"
 
-autoLogisticRegression LogisticRegression_create (const char32 *dependent1, const char32 *dependent2);
+autoLogisticRegression LogisticRegression_create (conststring32 dependent1, conststring32 dependent2);
 
-autoLogisticRegression Table_to_LogisticRegression (Table me, const char32 *columnsWithFactors_string,
-	const char32 *columnWithDependent1_string, const char32 *columnWithDependent2_string);
+autoLogisticRegression Table_to_LogisticRegression (Table me, conststring32 columnsWithFactors_string,
+	conststring32 columnWithDependent1_string, conststring32 columnWithDependent2_string);
 
 void LogisticRegression_drawBoundary (LogisticRegression me, Graphics graphics, integer colx, double xmin, double xmax,
 	integer coly, double ymin, double ymax, bool garnish);

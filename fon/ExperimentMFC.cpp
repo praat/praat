@@ -73,8 +73,8 @@
 
 Thing_implement (ExperimentMFC, Daata, 7);
 
-static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char32 *fileNameTail,
-	double medialSilenceDuration, const char32 *name, autoSound *sound)
+static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring32 fileNameTail,
+	double medialSilenceDuration, conststring32 name, autoSound *sound)
 {
 	char32 fileNameBuffer [256], *fileNames = & fileNameBuffer [0];
 	Melder_sprint (fileNameBuffer,256, name);
@@ -98,7 +98,7 @@ static void readSound (ExperimentMFC me, const char32 *fileNameHead, const char3
 		 * Determine partial file name.
 		 */
 		char32 *comma = str32chr (fileNames, U',');
-		if (comma) *comma = '\0';
+		if (comma) *comma = U'\0';
 		/*
 		 * Determine complete (relative) file name.
 		 */
@@ -376,7 +376,7 @@ autoResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 			Melder_warning (U"The experiment was not finished. Only the first ", my trial - 1 + my pausing, U" responses are valid.");
 		autoResultsMFC thee = ResultsMFC_create (my numberOfTrials);
 		for (integer trial = 1; trial <= my numberOfTrials; trial ++) {
-			char32 *pipe = my stimulus [my stimuli [trial]]. visibleText ?
+			const char32 *pipe = my stimulus [my stimuli [trial]]. visibleText ?
 				str32chr (my stimulus [my stimuli [trial]]. visibleText.get(), U'|') : nullptr;
 			thy result [trial]. stimulus = Melder_dup (Melder_cat (my stimulus [my stimuli [trial]]. name.get(), pipe));
 			//if (my responses [trial] < 1) Melder_throw (U"No response for trial ", trial, U".")
@@ -495,13 +495,13 @@ void Categories_sort (Categories me) {
 
 double Categories_getEntropy (Categories me) {
 	integer numberOfTokens = 0;
-	const char32 *previousString = nullptr;
+	conststring32 previousString = nullptr;
 	double entropy = 0.0;
 	autoCategories thee = Data_copy (me);
 	Categories_sort (thee.get());
 	for (integer i = 1; i <= thy size; i ++) {
 		SimpleString s = thy at [i];
-		const char32 *string = s -> string.get();
+		conststring32 string = s -> string.get();
 		if (previousString && ! str32equ (string, previousString)) {
 			double p = (double) numberOfTokens / thy size;
 			entropy -= p * NUMlog2 (p);

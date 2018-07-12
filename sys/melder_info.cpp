@@ -18,13 +18,13 @@
 
 #include "melder.h"
 
-static void defaultInformation (const char32 *message) {
+static void defaultInformation (conststring32 message) {
 	Melder_writeToConsole (message, false);
 }
 
-static void (*theInformation) (const char32 *) = defaultInformation;
+static void (*theInformation) (conststring32) = defaultInformation;
 
-void Melder_setInformationProc (void (*information) (const char32 *)) {
+void Melder_setInformationProc (void (*information) (conststring32)) {
 	theInformation = information ? information : defaultInformation;
 }
 
@@ -458,7 +458,7 @@ void MelderInfo_drain () {
 	}
 }
 
-void Melder_informationReal (double value, const char32 *units) {
+void Melder_informationReal (double value, conststring32 units) {
 	MelderInfo_open ();
 	if (! units) {
 		MelderInfo_write (value);
@@ -481,7 +481,7 @@ void Melder_clearInfo () {
 	}
 }
 
-const char32 * Melder_getInfo () {
+conststring32 Melder_getInfo () {
 	return theInfos -> string ? theInfos -> string : U"";
 }
 

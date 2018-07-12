@@ -80,7 +80,7 @@ static const T *findEndOfNumericString (const T *string) noexcept {
 	return p;
 }
 
-bool Melder_isStringNumeric (const char32 *string) noexcept {
+bool Melder_isStringNumeric (conststring32 string) noexcept {
 	if (! string) return false;
 	const char32 *p = findEndOfNumericString (string);
 	if (! p) return false;
@@ -100,11 +100,11 @@ double Melder_a8tof (const char *string) noexcept {
 	return p [-1] == '%' ? 0.01 * strtod (string, nullptr) : strtod (string, nullptr);
 }
 
-double Melder_atof (const char32 *string) noexcept {
+double Melder_atof (conststring32 string) noexcept {
 	return Melder_a8tof (Melder_peek32to8 (string));
 }
 
-int64 Melder_atoi (const char32 *string) noexcept {
+int64 Melder_atoi (conststring32 string) noexcept {
 	return strtoll (Melder_peek32to8 (string), nullptr, 10);
 }
 

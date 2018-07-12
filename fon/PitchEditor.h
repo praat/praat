@@ -34,7 +34,7 @@ Thing_define (PitchEditor, FunctionEditor) {
 		override;
 };
 
-autoPitchEditor PitchEditor_create (const char32 *title, Pitch pitch);
+autoPitchEditor PitchEditor_create (conststring32 title, Pitch pitch);
 
 /* End of file PitchEditor.h */
 #endif

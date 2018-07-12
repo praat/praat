@@ -47,7 +47,7 @@ Thing_implement (ManipulationEditor, FunctionEditor, 0);
  * 5. create the button in createMenus and update updateMenus;
  */
 
-static const char32 *units_strings [] = { 0, U"Hz", U"st" };
+static const conststring32 units_strings [] = { 0, U"Hz", U"st" };
 
 static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
 
@@ -669,7 +669,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
 	double minimumFrequency = YLIN (50);
 	int rangePrecisions [] = { 0, 1, 2 };
-	const char32 *rangeUnits [] = { U"", U" Hz", U" st" };
+	static const conststring32 rangeUnits [] = { U"", U" Hz", U" st" };
 
 	/*
 	 * Pitch contours.
@@ -1206,7 +1206,7 @@ void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-autoManipulationEditor ManipulationEditor_create (const char32 *title, Manipulation ana) {
+autoManipulationEditor ManipulationEditor_create (conststring32 title, Manipulation ana) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		FunctionEditor_init (me.get(), title, ana);

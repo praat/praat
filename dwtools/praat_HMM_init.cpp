@@ -208,7 +208,7 @@ FORM (REAL_GaussianMixture_TableOfReal_getLikelihoodValue, U"GaussianMixture & T
 	OK
 DO
 	NUMBER_TWO (GaussianMixture, TableOfReal)
-		const char32 *criterionText = GaussianMixture_criterionText (criterion);
+		conststring32 criterionText = GaussianMixture_criterionText (criterion);
 		double lnpdn = GaussianMixture_TableOfReal_getLikelihoodValue (me, you, criterion - 1);
 		double result = lnpdn / you -> numberOfRows;
 	NUMBER_TWO_END (U" (= ", criterionText, U", n = ", you -> numberOfRows, U")")
@@ -388,7 +388,7 @@ DO
 	STRING_ONE (HMM)
 		Melder_require (symbolNumber <= my numberOfObservationSymbols, U"Symbol number too high.");
 		HMMObservation observation = my observationSymbols->at [symbolNumber];
-		const char32 *result = observation -> label.get();
+		conststring32 result = observation -> label.get();
 	STRING_ONE_END
 }
 
@@ -399,7 +399,7 @@ DO
 	STRING_ONE (HMM)
 		Melder_require (stateNumber <= my numberOfStates, U"State number too high.");
 		HMMState state = my states->at [stateNumber];
-		const char32 *result = state -> label.get();
+		conststring32 result = state -> label.get();
 	STRING_ONE_END
 }
 

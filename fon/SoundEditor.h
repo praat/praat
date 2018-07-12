@@ -45,12 +45,12 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 };
 
 void SoundEditor_init (SoundEditor me,
-	const char32 *title,
+	conststring32 title,
 	Sampled data
 );
 
 autoSoundEditor SoundEditor_create (
-	const char32 *title,
+	conststring32 title,
 	Sampled data   // either a Sound or a LongSound
 );
 

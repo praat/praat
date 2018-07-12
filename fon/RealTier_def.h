@@ -61,7 +61,7 @@ oo_DEFINE_CLASS (RealTier, Function)   // syntactic inheritance
 			override { return true; }
 		double v_getFunction1 (integer irow, double x)
 			override;
-		const char32 * v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
+		conststring32 v_getUnitText (integer /* level */, int /* unit */, uint32 /* flags */)
 			override { return U"Time (s)"; }
 	#endif
 

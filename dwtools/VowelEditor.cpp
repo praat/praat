@@ -251,7 +251,7 @@ static void VowelEditor_getF1F2FromXY (VowelEditor me, double x, double y, doubl
 }
 
 #define REPRESENTNUMBER(x,i) (isundef (x) ? U" undef" : Melder_pad (6, Melder_fixed (x, 1)))
-static void appendF1F2F0 (MelderString *statusInfo, const char32 *intro, double f1, double f2, double f0, const char32 *ending) {
+static void appendF1F2F0 (MelderString *statusInfo, conststring32 intro, double f1, double f2, double f0, conststring32 ending) {
 	MelderString_append (statusInfo, intro, REPRESENTNUMBER (f1, 1), U", ", REPRESENTNUMBER (f2, 2), U", ", REPRESENTNUMBER (f0, 3), ending);
 }
 
@@ -648,8 +648,8 @@ static void Table_addColumn_size (Table me, int size) {
 
 static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerType, int fontSize) {
 	autoTable te;
-	const char32 *Type [4] = { U"", U"m", U"w", U"c" };
-	const char32 *Sex [3] = { U"", U"m", U"f"};
+	conststring32 Type [4] = { U"", U"m", U"w", U"c" };
+	conststring32 Sex [3] = { U"", U"m", U"f"};
 	if (marksDataset == 1) {   // American-English
 		autoTable thee = Table_create_petersonBarney1952 ();
 		te = Table_extractRowsWhereColumn_string (thee.get(), 1, kMelder_string::EQUAL_TO, Type [speakerType]);
@@ -771,7 +771,7 @@ static void VowelEditor_drawBackground (VowelEditor me, Graphics g) {
 		integer col_f2 = Table_getColumnIndexFromColumnLabel (my marks.get(), U"F2");
 		integer col_fs = Table_findColumnIndexFromColumnLabel (my marks.get(), U"Size");
 		for (integer i = 1; i <= my marks -> rows.size; i ++) {
-			const char32 *label = Table_getStringValue_Assert (my marks.get(), i, col_vowel);
+			conststring32 label = Table_getStringValue_Assert (my marks.get(), i, col_vowel);
 			f1 = Table_getNumericValue_Assert (my marks.get(), i, col_f1);
 			f2 = Table_getNumericValue_Assert (my marks.get(), i, col_f2);
 			if (f1 >= my f1min && f1 <= my f1max && f2 >= my f2min && f2 <= my f2max) {
@@ -1422,7 +1422,7 @@ void structVowelEditor :: v_createChildren ()
 	height = GuiControl_getHeight (drawingArea);
 }
 
-autoVowelEditor VowelEditor_create (const char32 *title, Daata data) {
+autoVowelEditor VowelEditor_create (conststring32 title, Daata data) {
 	try {
 		trace (U"enter");
 		autoVowelEditor me = Thing_new (VowelEditor);

@@ -215,7 +215,7 @@ static integer gotoPrevious (WordList me, integer p) {
 	return p + 1;
 }
 
-static int compare (const char32 *word, const char32 *p) {
+static int compare (conststring32 word, conststring32 p) {
 	for (;;) {
 		if (*word == U'\0') {
 			if (*p == U'\n') return 0;
@@ -231,7 +231,7 @@ static int compare (const char32 *word, const char32 *p) {
 
 static char32 buffer [3333+1];
 
-bool WordList_hasWord (WordList me, const char32 *word) {
+bool WordList_hasWord (WordList me, conststring32 word) {
 	if (str32len (word) > 3333) return false;
 	Longchar_genericize32 (word, buffer);
 	if (! my length) my length = str32len (my string.get());

@@ -136,7 +136,7 @@ DO
 	STRING_ONE (TableOfReal)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (me, U": your column number should not be greater than the number of columns.");
-		const char32 *result = my columnLabels ? my columnLabels [columnNumber].get() : U"";
+		conststring32 result = my columnLabels ? my columnLabels [columnNumber].get() : U"";
 	STRING_ONE_END
 }
 	
@@ -212,7 +212,7 @@ DO
 	STRING_ONE (TableOfReal)
 		if (rowNumber > my numberOfRows)
 			Melder_throw (me, U": your row number should not be greater than the number of rows.");
-		const char32 *result = my rowLabels ? my rowLabels [rowNumber].get() : U"";
+		conststring32 result = my rowLabels ? my rowLabels [rowNumber].get() : U"";
 	STRING_ONE_END
 }
 

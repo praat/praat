@@ -37,11 +37,11 @@ Thing_define (OTMultiEditor, HyperPage) {
 		override;
 	void v_draw ()
 		override;
-	int v_goToPage (const char32 *title)
+	int v_goToPage (conststring32 title)
 		override;
 };
 
-autoOTMultiEditor OTMultiEditor_create (const char32 *title, OTMulti grammar);
+autoOTMultiEditor OTMultiEditor_create (conststring32 title, OTMulti grammar);
 
 /* End of file OTMultiEditor.h */
 #endif

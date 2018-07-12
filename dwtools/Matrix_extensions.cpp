@@ -57,7 +57,10 @@ autonumvec nummat_vectorize (nummat m, integer rowmin, integer rowmax, integer c
 	return result;
 }
 
-void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark, bool garnish) {
+void Matrix_scatterPlot (Matrix me, Graphics g, integer icx, integer icy,
+	double xmin, double xmax, double ymin, double ymax,
+	double size_mm, conststring32 mark, bool garnish)
+{
 	integer ix = labs (icx), iy = labs (icy);
 
 	if (ix < 1 || ix > my nx || iy < 1 || iy > my nx) {

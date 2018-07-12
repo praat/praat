@@ -42,9 +42,9 @@ autoStringsIndex StringsIndex_create (integer numberOfItems);
 
 int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *classLabel);
 
-const char32 *StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer classNumber);
+conststring32 StringsIndex_getClassLabelFromClassIndex (StringsIndex me, integer classNumber);
 
-const char32 *StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer itemNumber);
+conststring32 StringsIndex_getItemLabelFromItemIndex (StringsIndex me, integer itemNumber);
 
 integer StringsIndex_countItems (StringsIndex me, int iclas);
 

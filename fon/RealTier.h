@@ -65,18 +65,18 @@ double RealTier_getStandardDeviation_points (RealTier me, double tmin, double tm
 
 void RealTier_addPoint (RealTier me, double t, double value);
 void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, int garnish, const char32 *method, const char32 *quantity);
-autoTableOfReal RealTier_downto_TableOfReal (RealTier me, const char32 *timeLabel, const char32 *valueLabel);
+	double ymin, double ymax, int garnish, conststring32 method, conststring32 quantity);
+autoTableOfReal RealTier_downto_TableOfReal (RealTier me, conststring32 timeLabel, conststring32 valueLabel);
 
 void RealTier_interpolateQuadratically (RealTier me, integer numberOfPointsPerParabola, int logarithmically);
 
-autoTable RealTier_downto_Table (RealTier me, const char32 *indexText, const char32 *timeText, const char32 *valueText);
+autoTable RealTier_downto_Table (RealTier me, conststring32 indexText, conststring32 timeText, conststring32 valueText);
 autoRealTier Vector_to_RealTier (Vector me, integer channel, ClassInfo klas);
 autoRealTier Vector_to_RealTier_peaks (Vector me, integer channel, ClassInfo klas);
 autoRealTier Vector_to_RealTier_valleys (Vector me, integer channel, ClassInfo klas);
 autoRealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo klas);
 
-void RealTier_formula (RealTier me, const char32 *expression, Interpreter interpreter, RealTier thee);
+void RealTier_formula (RealTier me, conststring32 expression, Interpreter interpreter, RealTier thee);
 void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor);
 void RealTier_removePointsBelow (RealTier me, double level);
 

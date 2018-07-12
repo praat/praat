@@ -37,7 +37,7 @@ static GuiWindow Melder_topShell;
 
 static bool theProgressCancelled = false;
 
-static bool waitWhileProgress (double progress, const char32 *message, GuiDialog dia,
+static bool waitWhileProgress (double progress, conststring32 message, GuiDialog dia,
 	GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton)
 {
 	#if gtk
@@ -182,7 +182,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 	trace (U"end");
 }
 
-static void gui_progress (double progress, const char32 *message) {
+static void gui_progress (double progress, conststring32 message) {
 	static clock_t lastTime;
 	static GuiDialog dia = nullptr;
 	static GuiProgressBar scale = nullptr;
@@ -206,7 +206,7 @@ static void gui_drawingarea_cb_expose (Thing /* boss */, GuiDrawingArea_ExposeEv
 	Graphics_play (graphics.get(), graphics.get());
 }
 
-static void * gui_monitor (double progress, const char32 *message) {
+static void * gui_monitor (double progress, conststring32 message) {
 	static clock_t lastTime;
 	static GuiDialog dia = nullptr;
 	static GuiProgressBar scale = nullptr;
@@ -235,7 +235,7 @@ static void * gui_monitor (double progress, const char32 *message) {
 }
 
 #if cocoa
-	static void mac_message (NSAlertStyle macAlertType, const char32 *message32) {
+	static void mac_message (NSAlertStyle macAlertType, conststring32 message32) {
 		static char16 message16 [4000];
 		int messageLength = str32len (message32);
 		uinteger j = 0;
@@ -304,7 +304,7 @@ static void * gui_monitor (double progress, const char32 *message) {
 #define theMessageFund_SIZE  100000
 static char * theMessageFund = nullptr;
 
-static void gui_fatal (const char32 *message) {
+static void gui_fatal (conststring32 message) {
 	free (theMessageFund);
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -319,7 +319,7 @@ static void gui_fatal (const char32 *message) {
 	#endif
 }
 
-static void gui_error (const char32 *message) {
+static void gui_error (conststring32 message) {
 	bool memoryIsLow = str32str (message, U"Out of memory");
 	if (memoryIsLow) {
 		free (theMessageFund);
@@ -354,7 +354,7 @@ static void gui_error (const char32 *message) {
 	}
 }
 
-static void gui_warning (const char32 *message) {
+static void gui_warning (conststring32 message) {
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", Melder_peek32to8 (message));
@@ -367,7 +367,7 @@ static void gui_warning (const char32 *message) {
 	#endif
 }
 
-void gui_information (const char32 *);   // BUG: no prototype
+void gui_information (conststring32);   // BUG: no prototype
 void MelderGui_create (void *parent) {
 	theMessageFund = (char *) malloc (theMessageFund_SIZE);
 	assert (theMessageFund);
