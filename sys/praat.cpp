@@ -965,7 +965,7 @@ void praat_dontUsePictureWindow () { praatP.dontUsePictureWindow = true; }
 
 static conststring32 thePraatStandAloneScriptText = nullptr;
 
-void praat_setStandAloneScriptText (const char32 *text) {
+void praat_setStandAloneScriptText (conststring32 text) {
 	thePraatStandAloneScriptText = text;
 }
 
@@ -1062,7 +1062,7 @@ extern "C" void praatlib_init () {
 	praat_addMenus2 ();
 }
 
-void praat_init (const char32 *title, int argc, char **argv)
+void praat_init (conststring32 title, int argc, char **argv)
 {
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
 
@@ -1416,7 +1416,7 @@ void praat_init (const char32 *title, int argc, char **argv)
 	}
 }
 
-static void executeStartUpFile (MelderDir startUpDirectory, const char32 *fileNameHead, conststring32 fileNameTail) {
+static void executeStartUpFile (MelderDir startUpDirectory, conststring32 fileNameHead, conststring32 fileNameTail) {
 	char32 name [256];
 	Melder_sprint (name,256, fileNameHead, programName, fileNameTail);
 	if (! MelderDir_isNull (startUpDirectory)) {   // should not occur on modern systems

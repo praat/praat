@@ -117,15 +117,15 @@ void MelderString_empty (MelderString *me) {
 
 void MelderString_copy (MelderString *me, Melder_1_ARG) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
 	int64 sizeNeeded = length1 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string, s1);  my length = length1;
 }
 void MelderString_copy (MelderString *me, Melder_2_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
 	int64 sizeNeeded = length1 + length2 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string, s1);  my length = length1;
@@ -133,9 +133,9 @@ void MelderString_copy (MelderString *me, Melder_2_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_3_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
 	int64 sizeNeeded = length1 + length2 + length3 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string, s1);  my length = length1;
@@ -144,10 +144,10 @@ void MelderString_copy (MelderString *me, Melder_3_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_4_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string, s1);  my length = length1;
@@ -157,11 +157,11 @@ void MelderString_copy (MelderString *me, Melder_4_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_5_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string, s1);  my length = length1;
@@ -172,12 +172,12 @@ void MelderString_copy (MelderString *me, Melder_5_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_6_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string, s1);  my length = length1;
@@ -189,13 +189,13 @@ void MelderString_copy (MelderString *me, Melder_6_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_7_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + length7 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string, s1);  my length = length1;
@@ -208,14 +208,14 @@ void MelderString_copy (MelderString *me, Melder_7_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_8_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string, s1);  my length = length1;
@@ -229,15 +229,15 @@ void MelderString_copy (MelderString *me, Melder_8_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_9_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -253,16 +253,16 @@ void MelderString_copy (MelderString *me, Melder_9_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_10_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -279,17 +279,17 @@ void MelderString_copy (MelderString *me, Melder_10_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_11_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -307,19 +307,19 @@ void MelderString_copy (MelderString *me, Melder_11_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_13_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -339,21 +339,21 @@ void MelderString_copy (MelderString *me, Melder_13_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_15_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
-	const char32 *s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
-	const char32 *s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
+	conststring32 s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13 + length14 + length15 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -375,25 +375,25 @@ void MelderString_copy (MelderString *me, Melder_15_ARGS) {
 }
 void MelderString_copy (MelderString *me, Melder_19_ARGS) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
-	const char32 *s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
-	const char32 *s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
-	const char32 *s16 = arg16._arg ? arg16._arg : U"";  int64 length16 = str32len (s16);
-	const char32 *s17 = arg17._arg ? arg17._arg : U"";  int64 length17 = str32len (s17);
-	const char32 *s18 = arg18._arg ? arg18._arg : U"";  int64 length18 = str32len (s18);
-	const char32 *s19 = arg19._arg ? arg19._arg : U"";  int64 length19 = str32len (s19);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
+	conststring32 s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
+	conststring32 s16 = arg16._arg ? arg16._arg : U"";  int64 length16 = str32len (s16);
+	conststring32 s17 = arg17._arg ? arg17._arg : U"";  int64 length17 = str32len (s17);
+	conststring32 s18 = arg18._arg ? arg18._arg : U"";  int64 length18 = str32len (s18);
+	conststring32 s19 = arg19._arg ? arg19._arg : U"";  int64 length19 = str32len (s19);
 	int64 sizeNeeded = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13 + length14 + length15 + length16 + length17 + length18 + length19 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -418,7 +418,7 @@ void MelderString_copy (MelderString *me, Melder_19_ARGS) {
 	str32cpy (my string + my length, s19);  my length += length19;
 }
 
-void MelderString_ncopy (MelderString *me, const char32 *source, int64 n) {
+void MelderString_ncopy (MelderString *me, conststring32 source, int64 n) {
 	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	if (! source) source = U"";
@@ -432,23 +432,23 @@ void MelderString_ncopy (MelderString *me, const char32 *source, int64 n) {
 }
 
 /*void MelderString_append (MelderString *me, Melder_1_ARG) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = _str32len (s1);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = _str32len (s1);
 	int64 sizeNeeded = my length + length1 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	_str32cpy (my string + my length, s1);   my length += length1;
 }*/
 void MelderString_append (MelderString *me, Melder_2_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
 	int64 sizeNeeded = my length + length1 + length2 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string + my length, s1);   my length += length1;
 	str32cpy (my string + my length, s2);   my length += length2;
 }
 void MelderString_append (MelderString *me, Melder_3_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string + my length, s1);   my length += length1;
@@ -456,10 +456,10 @@ void MelderString_append (MelderString *me, Melder_3_ARGS) {
 	str32cpy (my string + my length, s3);   my length += length3;
 }
 void MelderString_append (MelderString *me, Melder_4_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string + my length, s1);   my length += length1;
@@ -468,11 +468,11 @@ void MelderString_append (MelderString *me, Melder_4_ARGS) {
 	str32cpy (my string + my length, s4);   my length += length4;
 }
 void MelderString_append (MelderString *me, Melder_5_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string + my length, s1);   my length += length1;
@@ -482,12 +482,12 @@ void MelderString_append (MelderString *me, Melder_5_ARGS) {
 	str32cpy (my string + my length, s5);   my length += length5;
 }
 void MelderString_append (MelderString *me, Melder_6_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string + my length, s1);   my length += length1;
@@ -498,13 +498,13 @@ void MelderString_append (MelderString *me, Melder_6_ARGS) {
 	str32cpy (my string + my length, s6);   my length += length6;
 }
 void MelderString_append (MelderString *me, Melder_7_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string + my length, s1);   my length += length1;
@@ -516,14 +516,14 @@ void MelderString_append (MelderString *me, Melder_7_ARGS) {
 	str32cpy (my string + my length, s7);   my length += length7;
 }
 void MelderString_append (MelderString *me, Melder_8_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (my string + my length, s1);   my length += length1;
@@ -536,15 +536,15 @@ void MelderString_append (MelderString *me, Melder_8_ARGS) {
 	str32cpy (my string + my length, s8);   my length += length8;
 }
 void MelderString_append (MelderString *me, Melder_9_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -559,16 +559,16 @@ void MelderString_append (MelderString *me, Melder_9_ARGS) {
 	str32cpy (my string + my length, s9);   my length += length9;
 }
 void MelderString_append (MelderString *me, Melder_10_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -584,17 +584,17 @@ void MelderString_append (MelderString *me, Melder_10_ARGS) {
 	str32cpy (my string + my length, s10);  my length += length10;
 }
 void MelderString_append (MelderString *me, Melder_11_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -611,19 +611,19 @@ void MelderString_append (MelderString *me, Melder_11_ARGS) {
 	str32cpy (my string + my length, s11);  my length += length11;
 }
 void MelderString_append (MelderString *me, Melder_13_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -642,21 +642,21 @@ void MelderString_append (MelderString *me, Melder_13_ARGS) {
 	str32cpy (my string + my length, s13);  my length += length13;
 }
 void MelderString_append (MelderString *me, Melder_15_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
-	const char32 *s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
-	const char32 *s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
+	conststring32 s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13 + length14 + length15 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -677,25 +677,25 @@ void MelderString_append (MelderString *me, Melder_15_ARGS) {
 	str32cpy (my string + my length, s15);  my length += length15;
 }
 void MelderString_append (MelderString *me, Melder_19_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
-	const char32 *s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
-	const char32 *s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
-	const char32 *s16 = arg16._arg ? arg16._arg : U"";  int64 length16 = str32len (s16);
-	const char32 *s17 = arg17._arg ? arg17._arg : U"";  int64 length17 = str32len (s17);
-	const char32 *s18 = arg18._arg ? arg18._arg : U"";  int64 length18 = str32len (s18);
-	const char32 *s19 = arg19._arg ? arg19._arg : U"";  int64 length19 = str32len (s19);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
+	conststring32 s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
+	conststring32 s16 = arg16._arg ? arg16._arg : U"";  int64 length16 = str32len (s16);
+	conststring32 s17 = arg17._arg ? arg17._arg : U"";  int64 length17 = str32len (s17);
+	conststring32 s18 = arg18._arg ? arg18._arg : U"";  int64 length18 = str32len (s18);
+	conststring32 s19 = arg19._arg ? arg19._arg : U"";  int64 length19 = str32len (s19);
 	int64 sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13 + length14 + length15 + length16 + length17 + length18 + length19 + 1;
 	if (sizeNeeded > my bufferSize) MelderString_expand (me, sizeNeeded);
@@ -775,67 +775,67 @@ int64 MelderString_deallocationSize () {
 static MelderString theCatBuffers [NUMBER_OF_CAT_BUFFERS] { };
 static int iCatBuffer = 0;
 
-const char32 * Melder_cat (Melder_2_ARGS) {
+conststring32 Melder_cat (Melder_2_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_2_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_3_ARGS) {
+conststring32 Melder_cat (Melder_3_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_3_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_4_ARGS) {
+conststring32 Melder_cat (Melder_4_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_4_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_5_ARGS) {
+conststring32 Melder_cat (Melder_5_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_5_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_6_ARGS) {
+conststring32 Melder_cat (Melder_6_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_6_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_7_ARGS) {
+conststring32 Melder_cat (Melder_7_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_7_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_8_ARGS) {
+conststring32 Melder_cat (Melder_8_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_8_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_9_ARGS) {
+conststring32 Melder_cat (Melder_9_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_9_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_10_ARGS) {
+conststring32 Melder_cat (Melder_10_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_10_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_11_ARGS) {
+conststring32 Melder_cat (Melder_11_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_11_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_13_ARGS) {
+conststring32 Melder_cat (Melder_13_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_13_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_15_ARGS) {
+conststring32 Melder_cat (Melder_15_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_15_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
 }
-const char32 * Melder_cat (Melder_19_ARGS) {
+conststring32 Melder_cat (Melder_19_ARGS) {
 	if (++ iCatBuffer == NUMBER_OF_CAT_BUFFERS) iCatBuffer = 0;
 	MelderString_copy (& theCatBuffers [iCatBuffer], Melder_19_ARGS_CALL);
 	return theCatBuffers [iCatBuffer].string;
@@ -850,23 +850,23 @@ const char32 * Melder_cat (Melder_19_ARGS) {
 	}
 
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_1_ARG) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";
 	int64 totalLength = str32len (s1);
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_2_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";
 	int64 totalLength = length1 + str32len (s2);
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);
 	str32cpy (buffer + length1, s2);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_3_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
 	int64 totalLength = length1 + length2 + length3;
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);  int64 length = length1;
@@ -874,10 +874,10 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_3_ARGS) {
 	str32cpy (buffer + length, s3);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_4_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
 	int64 totalLength = length1 + length2 + length3 + length4;
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);  int64 length = length1;
@@ -886,11 +886,11 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_4_ARGS) {
 	str32cpy (buffer + length, s4);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_5_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5;
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);  int64 length = length1;
@@ -900,12 +900,12 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_5_ARGS) {
 	str32cpy (buffer + length, s5);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_6_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6;
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);  int64 length = length1;
@@ -916,13 +916,13 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_6_ARGS) {
 	str32cpy (buffer + length, s6);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_7_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6 + length7;
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);  int64 length = length1;
@@ -934,14 +934,14 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_7_ARGS) {
 	str32cpy (buffer + length, s7);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_8_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8;
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);  int64 length = length1;
@@ -954,15 +954,15 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_8_ARGS) {
 	str32cpy (buffer + length, s8);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_9_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9;
 	Melder_sprint_HANDLE_OVERFLOW
 	str32cpy (buffer, s1);  int64 length = length1;
@@ -976,16 +976,16 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_9_ARGS) {
 	str32cpy (buffer + length, s9);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_10_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10;
 	Melder_sprint_HANDLE_OVERFLOW
@@ -1001,17 +1001,17 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_10_ARGS) {
 	str32cpy (buffer + length, s10);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_11_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11;
 	Melder_sprint_HANDLE_OVERFLOW
@@ -1028,19 +1028,19 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_11_ARGS) {
 	str32cpy (buffer + length, s11);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_13_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13;
 	Melder_sprint_HANDLE_OVERFLOW
@@ -1059,21 +1059,21 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_13_ARGS) {
 	str32cpy (buffer + length, s13);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_15_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
-	const char32 *s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
-	const char32 *s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
+	conststring32 s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13 + length14 + length15;
 	Melder_sprint_HANDLE_OVERFLOW
@@ -1094,25 +1094,25 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_15_ARGS) {
 	str32cpy (buffer + length, s15);
 }
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_19_ARGS) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
-	const char32 *s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
-	const char32 *s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
-	const char32 *s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
-	const char32 *s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
-	const char32 *s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
-	const char32 *s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
-	const char32 *s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
-	const char32 *s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
-	const char32 *s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
-	const char32 *s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
-	const char32 *s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
-	const char32 *s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
-	const char32 *s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
-	const char32 *s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
-	const char32 *s16 = arg16._arg ? arg16._arg : U"";  int64 length16 = str32len (s16);
-	const char32 *s17 = arg17._arg ? arg17._arg : U"";  int64 length17 = str32len (s17);
-	const char32 *s18 = arg18._arg ? arg18._arg : U"";  int64 length18 = str32len (s18);
-	const char32 *s19 = arg19._arg ? arg19._arg : U"";  int64 length19 = str32len (s19);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  int64 length1  = str32len (s1);
+	conststring32 s2  = arg2._arg  ? arg2._arg  : U"";  int64 length2  = str32len (s2);
+	conststring32 s3  = arg3._arg  ? arg3._arg  : U"";  int64 length3  = str32len (s3);
+	conststring32 s4  = arg4._arg  ? arg4._arg  : U"";  int64 length4  = str32len (s4);
+	conststring32 s5  = arg5._arg  ? arg5._arg  : U"";  int64 length5  = str32len (s5);
+	conststring32 s6  = arg6._arg  ? arg6._arg  : U"";  int64 length6  = str32len (s6);
+	conststring32 s7  = arg7._arg  ? arg7._arg  : U"";  int64 length7  = str32len (s7);
+	conststring32 s8  = arg8._arg  ? arg8._arg  : U"";  int64 length8  = str32len (s8);
+	conststring32 s9  = arg9._arg  ? arg9._arg  : U"";  int64 length9  = str32len (s9);
+	conststring32 s10 = arg10._arg ? arg10._arg : U"";  int64 length10 = str32len (s10);
+	conststring32 s11 = arg11._arg ? arg11._arg : U"";  int64 length11 = str32len (s11);
+	conststring32 s12 = arg12._arg ? arg12._arg : U"";  int64 length12 = str32len (s12);
+	conststring32 s13 = arg13._arg ? arg13._arg : U"";  int64 length13 = str32len (s13);
+	conststring32 s14 = arg14._arg ? arg14._arg : U"";  int64 length14 = str32len (s14);
+	conststring32 s15 = arg15._arg ? arg15._arg : U"";  int64 length15 = str32len (s15);
+	conststring32 s16 = arg16._arg ? arg16._arg : U"";  int64 length16 = str32len (s16);
+	conststring32 s17 = arg17._arg ? arg17._arg : U"";  int64 length17 = str32len (s17);
+	conststring32 s18 = arg18._arg ? arg18._arg : U"";  int64 length18 = str32len (s18);
+	conststring32 s19 = arg19._arg ? arg19._arg : U"";  int64 length19 = str32len (s19);
 	int64 totalLength = length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9
 		+ length10 + length11 + length12 + length13 + length14 + length15 + length16 + length17 + length18 + length19;
 	Melder_sprint_HANDLE_OVERFLOW

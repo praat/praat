@@ -37,7 +37,7 @@ static void drawMenuCommand (ButtonEditor me, Praat_Command cmd, integer i) {
 	bool isAdded = cmd -> uniqueID != 0 || !! cmd -> script;
 	bool isHidden = cmd -> hidden;
 	bool isToggled = cmd -> toggled;
-	const char32 *clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
+	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	MelderString_empty (& text);
 	if (cmd -> unhidable) {
@@ -72,7 +72,7 @@ static void drawAction (ButtonEditor me, Praat_Command cmd, integer i) {
 	static MelderString text { };
 	bool isAdded = cmd -> uniqueID != 0 || !! cmd -> script;
 	bool isHidden = cmd -> hidden, isToggled = cmd -> toggled;
-	const char32 *clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
+	conststring32 clickText = isHidden ? (isToggled ? (isAdded ? U"REMOVED" : U"HIDDEN") : U"hidden") :
 		(isToggled ? U"SHOWN" :  (isAdded ? (cmd -> uniqueID ? U"ADDED" : U"START-UP") : U"shown"));
 	int n1 = cmd -> n1;
 	MelderString_empty (& text);
@@ -153,7 +153,7 @@ void structButtonEditor :: v_draw () {
 		case 4:
 			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				Praat_Command cmd = praat_getAction (i);
-				const char32 *klas = cmd -> class1 -> className;
+				conststring32 klas = cmd -> class1 -> className;
 				if (str32cmp (klas, U"N") < 0)
 					drawAction (this, praat_getAction (i), i);
 			}
@@ -161,7 +161,7 @@ void structButtonEditor :: v_draw () {
 		case 5:
 			for (integer i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				Praat_Command cmd = praat_getAction (i);
-				const char32 *klas = cmd -> class1 -> className;
+				conststring32 klas = cmd -> class1 -> className;
 				if (str32cmp (klas, U"N") >= 0)
 					drawAction (this, praat_getAction (i), i);
 			}
@@ -169,7 +169,7 @@ void structButtonEditor :: v_draw () {
 	}
 }
 
-int structButtonEditor :: v_goToPage (const char32 *title) {
+int structButtonEditor :: v_goToPage (conststring32 title) {
 	if (! title || ! title [0]) return 0;
 	if (str32equ (title, U"Buttons")) return 1;
 	switch (title [0]) {

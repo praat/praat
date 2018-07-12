@@ -19,7 +19,7 @@
 #include "UiP.h"
 #include "Editor.h"
 
-static void UiFile_init (UiForm me, GuiWindow parent, const char32 *title) {
+static void UiFile_init (UiForm me, GuiWindow parent, conststring32 title) {
 	my d_dialogParent = parent;
 	Thing_setName (me, title);
 }
@@ -30,9 +30,9 @@ MelderFile UiFile_getFile (UiForm me) {
 
 /********** READING A FILE **********/
 
-UiForm UiInfile_create (GuiWindow parent, const char32 *title,
+UiForm UiInfile_create (GuiWindow parent, conststring32 title,
 	UiCallback okCallback, void *okClosure,
-	const char32 *invokingButtonTitle, const char32 *helpTitle, bool allowMultipleFiles)
+	conststring32 invokingButtonTitle, conststring32 helpTitle, bool allowMultipleFiles)
 {
 	autoUiForm me = Thing_new (UiForm);
 	my okCallback = okCallback;
@@ -70,8 +70,8 @@ void UiInfile_do (UiForm me) {
 
 /********** WRITING A FILE **********/
 
-UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
-	UiCallback okCallback, void *okClosure, const char32 *invokingButtonTitle, const char32 *helpTitle)
+UiForm UiOutfile_create (GuiWindow parent, conststring32 title,
+	UiCallback okCallback, void *okClosure, conststring32 invokingButtonTitle, conststring32 helpTitle)
 {
 	autoUiForm me = Thing_new (UiForm);
 	my okCallback = okCallback;
@@ -84,21 +84,21 @@ UiForm UiOutfile_create (GuiWindow parent, const char32 *title,
 	return me.releaseToAmbiguousOwner();
 }
 
-static void commonOutfileCallback (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString,
-	Interpreter interpreter, const char32 * /* invokingButtonTitle */, bool /* modified */, void *closure)
+static void commonOutfileCallback (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString,
+	Interpreter interpreter, conststring32 /* invokingButtonTitle */, bool /* modified */, void *closure)
 {
 	EditorCommand command = (EditorCommand) closure;
 	command -> commandCallback (command -> d_editor, command, sendingForm, narg, args, sendingString, interpreter);
 }
 
-UiForm UiOutfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
+UiForm UiOutfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle) {
 	Editor editor = cmd -> d_editor;
 	UiForm dia = UiOutfile_create (editor -> windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return dia;
 }
 
-UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle) {
+UiForm UiInfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle) {
 	Editor editor = cmd -> d_editor;
 	UiForm dia = UiInfile_create (editor -> windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
 	dia -> command = cmd;

@@ -385,7 +385,7 @@ int Data_Description_countMembers (Data_Description structDescription) {
 	return count;
 }
 
-Data_Description Data_Description_findMatch (Data_Description structDescription, const char32 *name) {
+Data_Description Data_Description_findMatch (Data_Description structDescription, conststring32 name) {
 	for (Data_Description desc = structDescription; desc -> name; desc ++)
 		if (str32equ (name, desc -> name)) return desc;
 	if (structDescription [0]. type == inheritwa) {
@@ -396,7 +396,7 @@ Data_Description Data_Description_findMatch (Data_Description structDescription,
 	return nullptr;   // not found
 }
 
-Data_Description Data_Description_findNumberUse (Data_Description structDescription, const char32 *string) {
+Data_Description Data_Description_findNumberUse (Data_Description structDescription, conststring32 string) {
 	for (Data_Description desc = structDescription; desc -> name; desc ++) {
 		if (desc -> max1 && str32equ (desc -> max1, string)) return desc;
 		if (desc -> max2 && str32equ (desc -> max2, string)) return desc;
@@ -429,7 +429,7 @@ int64 Data_Description_integer (void *address, Data_Description description) {
 }
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const char32 *formula, integer *result)
+	conststring32 formula, integer *result)
 {
 	if (! formula) {   // this was a VECTOR_FROM array
 		*result = 1;

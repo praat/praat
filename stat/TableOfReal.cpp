@@ -40,7 +40,7 @@
 Thing_implement (TableOfReal, Daata, 0);
 Thing_implement (TableOfRealList, Ordered, 0);
 
-static void fprintquotedstring (MelderFile file, const char32 *s) {
+static void fprintquotedstring (MelderFile file, conststring32 s) {
 	MelderFile_writeCharacter (file, U'\"');
 	if (s) { char32 c; while ((c = *s ++) != U'\0') { MelderFile_writeCharacter (file, c); if (c == U'\"') MelderFile_writeCharacter (file, c); } }
 	MelderFile_writeCharacter (file, U'\"');

@@ -35,7 +35,7 @@ Thing_define (EditorMenu, Thing) {
 	OrderedOf<structEditorCommand> commands;
 };
 
-typedef MelderCallback <void, structEditor, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, const char32 *, Interpreter> EditorCommandCallback;
+typedef MelderCallback <void, structEditor, EditorCommand, UiForm, integer /*narg*/, Stackel /*args*/, conststring32, Interpreter> EditorCommandCallback;
 
 Thing_define (EditorCommand, Thing) {
 	Editor d_editor;
@@ -107,17 +107,17 @@ Thing_define (Editor, Thing) {
 	#include "Editor_prefs.h"
 };
 
-GuiMenuItem EditorMenu_addCommand (EditorMenu me, const char32 *itemTitle /* cattable */, uint32 flags, EditorCommandCallback commandCallback);
+GuiMenuItem EditorMenu_addCommand (EditorMenu me, conststring32 itemTitle /* cattable */, uint32 flags, EditorCommandCallback commandCallback);
 GuiMenuItem EditorCommand_getItemWidget (EditorCommand me);
 
-EditorMenu Editor_addMenu (Editor me, const char32 *menuTitle, uint32 flags);
+EditorMenu Editor_addMenu (Editor me, conststring32 menuTitle, uint32 flags);
 GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
 #define Editor_HIDDEN  (1 << 14)
-GuiMenuItem Editor_addCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags, EditorCommandCallback commandCallback);
-GuiMenuItem Editor_addCommandScript (Editor me, const char32 *menuTitle, const char32 *itemTitle, uint32 flags,
-	const char32 *script);
-void Editor_setMenuSensitive (Editor me, const char32 *menu, bool sensitive);
+GuiMenuItem Editor_addCommand (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags, EditorCommandCallback commandCallback);
+GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, conststring32 itemTitle, uint32 flags,
+	conststring32 script);
+void Editor_setMenuSensitive (Editor me, conststring32 menu, bool sensitive);
 
 inline static void Editor_raise (Editor me)
 	/*
@@ -210,7 +210,7 @@ inline static void Editor_broadcastPublication (Editor me, autoDaata publication
 /***** For inheritors. *****/
 
 void Editor_init (Editor me, int x, int y , int width, int height,
-	const char32 *title, Daata data);
+	conststring32 title, Daata data);
 /*
 	This creates my shell and my windowForm,
 	calls the v_createMenus and v_createChildren methods,
@@ -231,15 +231,15 @@ void Editor_init (Editor me, int x, int y , int width, int height,
 	and the Editor will not destroy 'data' when the Editor itself is destroyed.
 */
 
-void Editor_save (Editor me, const char32 *text);   // for Undo
+void Editor_save (Editor me, conststring32 text);   // for Undo
 
-autoUiForm UiForm_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
-void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, const char32 *arguments, Interpreter interpreter);
-UiForm UiOutfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
-UiForm UiInfile_createE (EditorCommand cmd, const char32 *title, const char32 *invokingButtonTitle, const char32 *helpTitle);
+autoUiForm UiForm_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
+void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter);
+UiForm UiOutfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
+UiForm UiInfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
 
-EditorCommand Editor_getMenuCommand (Editor me, const char32 *menuTitle, const char32 *itemTitle);
-void Editor_doMenuCommand (Editor me, const char32 *command, integer narg, Stackel args, const char32 *arguments, Interpreter interpreter);
+EditorCommand Editor_getMenuCommand (Editor me, conststring32 menuTitle, conststring32 itemTitle);
+void Editor_doMenuCommand (Editor me, conststring32 command, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter);
 
 /*
  * The following two procedures are in praat_picture.cpp.

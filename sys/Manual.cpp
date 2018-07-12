@@ -32,7 +32,7 @@ Thing_implement (Manual, HyperPage, 0);
 
 #define SEARCH_PAGE  0
 
-static const char32 *month [] =
+static const conststring32 month [] =
 	{ U"", U"January", U"February", U"March", U"April", U"May", U"June",
 	  U"July", U"August", U"September", U"October", U"November", U"December" };
 
@@ -131,7 +131,7 @@ void structManual :: v_draw () {
 		bool goAhead = true;
 		while ((int) page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
-			const char32 *text = page -> paragraphs [lastParagraph - 1]. text;
+			conststring32 text = page -> paragraphs [lastParagraph - 1]. text;
 			if (! text || text [0] == U'\0' || text [str32len (text) - 1] != U':') {
 				if (our printing && our suppressLinksHither)
 					goAhead = false;
@@ -146,7 +146,7 @@ void structManual :: v_draw () {
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = true;
 			if (! alreadyShown) {
-				const char32 *title = manPages -> pages.at [page -> linksHither [ilink]] -> title.get();
+				conststring32 title = manPages -> pages.at [page -> linksHither [ilink]] -> title.get();
 				char32 linkText [304];
 				Melder_sprint (linkText, 304, U"@@", title, U"@");
 				HyperPage_listItem (this, linkText);
@@ -290,7 +290,7 @@ static double searchToken (ManPages me, integer ipage, char32 *token) {
 	return goodness;
 }
 
-static void search (Manual me, const char32 *query) {
+static void search (Manual me, conststring32 query) {
 	ManPages manPages = (ManPages) my data;
 	integer numberOfPages = manPages -> pages.size;
 	static MelderString searchText { };
@@ -333,7 +333,7 @@ static void search (Manual me, const char32 *query) {
 	HyperPage_goToPage_i (me, SEARCH_PAGE);
 }
 
-void Manual_search (Manual me, const char32 *query) {
+void Manual_search (Manual me, conststring32 query) {
 	GuiText_setString (my searchText, query);
 	search (me, query);
 }
@@ -433,7 +433,7 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 	ManPages manPages = (ManPages) my data;
 	if (my path) {
 		char32 string [400];
-		static const char32 *shortMonth [] =
+		static const conststring32 shortMonth [] =
 			{ U"Jan", U"Feb", U"Mar", U"Apr", U"May", U"Jun", U"Jul", U"Aug", U"Sep", U"Oct", U"Nov", U"Dec" };
 		ManPage page = manPages -> pages.at [my path];
 		integer date = page -> date;
@@ -473,7 +473,7 @@ void structManual :: v_goToPage_i (integer pageNumber) {
 	our currentPageTitle = Melder_dup_f (page -> title.get());
 }
 
-int structManual :: v_goToPage (const char32 *title) {
+int structManual :: v_goToPage (conststring32 title) {
 	ManPages manPages = (ManPages) our data;
 	if (title [0] == U'\\' && title [1] == U'F' && title [2] == U'I') {
 		structMelderFile file { };
@@ -499,7 +499,7 @@ int structManual :: v_goToPage (const char32 *title) {
 	}
 }
 
-void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
+void Manual_init (Manual me, conststring32 title, Daata data, bool ownData) {
 	ManPages manPages = (ManPages) data;
 	integer i;
 	if ((i = ManPages_lookUp (manPages, title)) == 0)
@@ -524,7 +524,7 @@ void Manual_init (Manual me, const char32 *title, Daata data, bool ownData) {
 	my history [0]. page = Melder_dup_f (title);   // BAD
 }
 
-autoManual Manual_create (const char32 *title, Daata data, bool ownData) {
+autoManual Manual_create (conststring32 title, Daata data, bool ownData) {
 	try {
 		autoManual me = Thing_new (Manual);
 		Manual_init (me.get(), title, data, ownData);

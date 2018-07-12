@@ -226,11 +226,11 @@ void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, integ
 		binputi8 (0, file -> filePointer);
 }
 
-static const char32 *audioFileTypeString [] = { U"none", U"AIFF", U"AIFC", U"WAV", U"NeXT/Sun", U"NIST", U"FLAC", U"MP3" };
-const char32 * Melder_audioFileTypeString (int audioFileType) { return audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? U"unknown" : audioFileTypeString [audioFileType]; }
-static const char32 *macAudioFileType [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
+static const conststring32 audioFileTypeString [] = { U"none", U"AIFF", U"AIFC", U"WAV", U"NeXT/Sun", U"NIST", U"FLAC", U"MP3" };
+conststring32 Melder_audioFileTypeString (int audioFileType) { return audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? U"unknown" : audioFileTypeString [audioFileType]; }
+static const conststring32 macAudioFileType [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 	= { U"", U"AIFF", U"AIFC", U"WAVE", U"ULAW", U"NIST", U"FLAC", U"MP3" };
-static const char32 *winAudioFileExtension [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
+static const conststring32 winAudioFileExtension [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 	= { U"", U".aiff", U".aifc", U".wav", U".au", U".nist", U".flac", U".mp3" };
 static int defaultAudioFileEncoding16 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 	= { 0, Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_LITTLE_ENDIAN,

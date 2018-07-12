@@ -192,10 +192,10 @@ void Graphics_text (Graphics me, double x, double y, Melder_11_ARGS);
 void Graphics_text (Graphics me, double x, double y, Melder_12_OR_13_ARGS);
 void Graphics_text (Graphics me, double x, double y, Melder_14_OR_15_ARGS);
 void Graphics_text (Graphics me, double x, double y, Melder_16_TO_19_ARGS);
-void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, const char32 *text /* cattable */);
-double Graphics_textWidth       (Graphics me, const char32 *text /* cattable */);
-double Graphics_textWidth_ps    (Graphics me, const char32 *text /* cattable */, bool useSilipaPS);
-double Graphics_textWidth_ps_mm (Graphics me, const char32 *text /* cattable */, bool useSilipaPS);
+void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, conststring32 text /* cattable */);
+double Graphics_textWidth       (Graphics me, conststring32 text /* cattable */);
+double Graphics_textWidth_ps    (Graphics me, conststring32 text /* cattable */, bool useSilipaPS);
+double Graphics_textWidth_ps_mm (Graphics me, conststring32 text /* cattable */, bool useSilipaPS);
 void Graphics_fillArea (Graphics me, integer numberOfPoints, double *x, double *y);
 void Graphics_cellArray (Graphics me, double **z, integer ix1, integer ix2, double x1, double x2,
 	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
@@ -209,7 +209,7 @@ void Graphics_image_colour (Graphics me, double_rgbt **z, integer ix1, integer i
 	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
 void Graphics_image8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1, double x2,
 	integer iy1, integer iy2, double y1, double y2, uint8 minimum, uint8 maximum);
-void Graphics_imageFromFile (Graphics me, const char32 *relativeFileName, double x1, double x2, double y1, double y2);
+void Graphics_imageFromFile (Graphics me, conststring32 relativeFileName, double x1, double x2, double y1, double y2);
 void Graphics_line (Graphics me, double x1, double y1, double x2, double y2);
 void Graphics_rectangle (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_fillRectangle (Graphics me, double x1, double x2, double y1, double y2);
@@ -231,14 +231,14 @@ void Graphics_fillEllipse (Graphics me, double x1, double x2, double y1, double 
 void Graphics_arrow (Graphics me, double x1, double y1, double x2, double y2);
 void Graphics_doubleArrow (Graphics me, double x1, double y1, double x2, double y2);
 void Graphics_arcArrow (Graphics me, double x, double y, double r, double fromAngle, double toAngle, int arrowAtStart, int arrowAtEnd);
-void Graphics_mark (Graphics me, double x, double y, double size_mm, const char32 *markString /* cattable */);
+void Graphics_mark (Graphics me, double x, double y, double size_mm, conststring32 markString /* cattable */);
 void Graphics_button (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_innerRectangle (Graphics me, double x1, double x2, double y1, double y2);
 
 extern Graphics_Colour Graphics_BLACK, Graphics_WHITE, Graphics_RED, Graphics_GREEN, Graphics_BLUE,
 	Graphics_CYAN, Graphics_MAGENTA, Graphics_YELLOW, Graphics_MAROON, Graphics_LIME, Graphics_NAVY, Graphics_TEAL,
 	Graphics_PURPLE, Graphics_OLIVE, Graphics_PINK, Graphics_SILVER, Graphics_GREY, Graphics_WINDOW_BACKGROUND_COLOUR;
-const char32 * Graphics_Colour_name (Graphics_Colour colour);
+conststring32 Graphics_Colour_name (Graphics_Colour colour);
 static inline bool Graphics_Colour_equal (Graphics_Colour colour1, Graphics_Colour colour2) {
 	return colour1. red == colour2. red && colour1. green == colour2. green && colour1. blue == colour2. blue;
 }
@@ -331,10 +331,10 @@ void Graphics_surface (Graphics me, double **z, integer ix1, integer ix2, double
 void Graphics_setInner (Graphics me);
 void Graphics_unsetInner (Graphics me);
 void Graphics_drawInnerBox (Graphics me);
-void Graphics_textLeft   (Graphics me, bool farr, const char32 *text /* cattable */);
-void Graphics_textRight  (Graphics me, bool farr, const char32 *text /* cattable */);
-void Graphics_textBottom (Graphics me, bool farr, const char32 *text /* cattable */);
-void Graphics_textTop    (Graphics me, bool farr, const char32 *text /* cattable */);
+void Graphics_textLeft   (Graphics me, bool farr, conststring32 text /* cattable */);
+void Graphics_textRight  (Graphics me, bool farr, conststring32 text /* cattable */);
+void Graphics_textBottom (Graphics me, bool farr, conststring32 text /* cattable */);
+void Graphics_textTop    (Graphics me, bool farr, conststring32 text /* cattable */);
 void Graphics_marksLeft   (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksRight  (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksBottom (Graphics me, int numberOfMarks, bool haveNumbers, bool haveTicks, bool haveDottedLines);
@@ -343,14 +343,14 @@ void Graphics_marksLeftLogarithmic   (Graphics me, int numberOfMarksPerDecade, b
 void Graphics_marksRightLogarithmic  (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksBottomLogarithmic (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksTopLogarithmic    (Graphics me, int numberOfMarksPerDecade, bool haveNumbers, bool haveTicks, bool haveDottedLines);
-void Graphics_markLeft   (Graphics me, double yWC, bool hasNumber, bool hasTick, bool hasDottedLine, const char32 *text /* cattable */);
-void Graphics_markRight  (Graphics me, double yWC, bool hasNumber, bool hasTick, bool hasDottedLine, const char32 *text /* cattable */);
-void Graphics_markBottom (Graphics me, double xWC, bool hasNumber, bool hasTick, bool hasDottedLine, const char32 *text /* cattable */);
-void Graphics_markTop    (Graphics me, double xWC, bool hasNumber, bool hasTick, bool hasDottedLine, const char32 *text /* cattable */);
-void Graphics_markLeftLogarithmic   (Graphics me, double y, bool hasNumber, bool hasTick, bool hasDottedLine, const char32 *text /* cattable */);   // y > 0
-void Graphics_markRightLogarithmic  (Graphics me, double y, bool hasNumber, bool hasTick, bool hasDottedLine, const char32 *text /* cattable */);
-void Graphics_markBottomLogarithmic (Graphics me, double x, bool hasNumber, bool hasTick, bool hasDottedLine, const char32 *text /* cattable */);
-void Graphics_markTopLogarithmic    (Graphics me, double x, bool hasNumber, bool hasTick, bool hasDottedLine, const char32 *text /* cattable */);
+void Graphics_markLeft   (Graphics me, double yWC, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
+void Graphics_markRight  (Graphics me, double yWC, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
+void Graphics_markBottom (Graphics me, double xWC, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
+void Graphics_markTop    (Graphics me, double xWC, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
+void Graphics_markLeftLogarithmic   (Graphics me, double y, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);   // y > 0
+void Graphics_markRightLogarithmic  (Graphics me, double y, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
+void Graphics_markBottomLogarithmic (Graphics me, double x, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
+void Graphics_markTopLogarithmic    (Graphics me, double x, bool hasNumber, bool hasTick, bool hasDottedLine, conststring32 text /* cattable */);
 void Graphics_marksLeftEvery   (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksRightEvery  (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines);
 void Graphics_marksBottomEvery (Graphics me, double units, double distance, bool haveNumbers, bool haveTicks, bool haveDottedLines);

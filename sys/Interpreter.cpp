@@ -52,7 +52,7 @@ void structInterpreterVariable :: v_destroy () noexcept {
 	InterpreterVariable_Parent :: v_destroy ();
 }
 
-static autoInterpreterVariable InterpreterVariable_create (const char32 *key) {
+static autoInterpreterVariable InterpreterVariable_create (conststring32 key) {
 	try {
 		if (key [0] == U'e' && key [1] == U'\0')
 			Melder_throw (U"You cannot use 'e' as the name of a variable (e is the constant 2.71...).");
@@ -71,7 +71,7 @@ static autoInterpreterVariable InterpreterVariable_create (const char32 *key) {
 
 Thing_implement (Interpreter, Thing, 0);
 
-autoInterpreter Interpreter_create (const char32 *environmentName, ClassInfo editorClass) {
+autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo editorClass) {
 	try {
 		autoInterpreter me = Thing_new (Interpreter);
 		my variablesMap. max_load_factor (0.65f);
@@ -282,8 +282,8 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 	return npar;
 }
 
-UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *path,
-	void (*okCallback) (UiForm, integer, Stackel, const char32 *, Interpreter, const char32 *, bool, void *), void *okClosure,
+UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 path,
+	void (*okCallback) (UiForm, integer, Stackel, conststring32, Interpreter, conststring32, bool, void *), void *okClosure,
 	bool selectionOnly)
 {
 	UiForm form = UiForm_create (parent,
@@ -635,7 +635,7 @@ InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key) 
 
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key) {
 	Melder_assert (key);
-	const char32 *variableNameIncludingProcedureName =
+	conststring32 variableNameIncludingProcedureName =
 		key [0] == U'.' ? Melder_cat (my procedureNames [my callDepth], key) : key;
 	auto it = my variablesMap. find (variableNameIncludingProcedureName);
 	if (it != my variablesMap. end()) {
@@ -650,14 +650,15 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 ke
 	return variable_ref;
 }
 
-static integer lookupLabel (Interpreter me, const char32 *labelName) {
+static integer lookupLabel (Interpreter me, conststring32 labelName) {
 	for (integer ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
 		if (str32equ (labelName, my labelNames [ilabel]))
 			return ilabel;
 	Melder_throw (U"Unknown label \"", labelName, U"\".");
 }
 
-static bool isCommand (const char32 *p) {
+static bool isCommand (conststring32 string) {
+	const char32 *p = & string [0];
 	/*
 	 * Things that start with "nowarn", "noprogress", or "nocheck" are commands.
 	 */
@@ -677,7 +678,7 @@ static bool isCommand (const char32 *p) {
 	return *p != '_';
 }
 
-static void parameterToVariable (Interpreter me, int type, const char32 *in_parameter, int ipar) {
+static void parameterToVariable (Interpreter me, int type, conststring32 in_parameter, int ipar) {
 	char32 parameter [200];
 	Melder_assert (type != 0);
 	str32cpy (parameter, in_parameter);
@@ -974,7 +975,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 				MelderString_empty (& argument);
 				while (Melder_isHorizontalSpace (*p)) p ++;
 				while (Melder_isHorizontalSpace (*q)) q ++;
-				const char32 *parameterName = q;
+				conststring32 parameterName = q;
 				while (Melder_staysWithinInk (*q) && *q != U',' && *q != U')') q ++;   // collect parameter name
 				int expressionDepth = 0;
 				for (; *p; p ++) {
@@ -2464,13 +2465,13 @@ void Interpreter_stop (Interpreter me) {
 //Melder_casual (U"Interpreter_stop out: ", Melder_pointer (me));
 }
 
-void Interpreter_voidExpression (Interpreter me, const char32 *expression) {
+void Interpreter_voidExpression (Interpreter me, conststring32 expression) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
 }
 
-void Interpreter_numericExpression (Interpreter me, const char32 *expression, double *p_value) {
+void Interpreter_numericExpression (Interpreter me, conststring32 expression, double *p_value) {
 	Melder_assert (p_value);
 	if (str32str (expression, U"(=")) {
 		*p_value = Melder_atof (expression);
@@ -2482,7 +2483,7 @@ void Interpreter_numericExpression (Interpreter me, const char32 *expression, do
 	}
 }
 
-void Interpreter_numericVectorExpression (Interpreter me, const char32 *expression, numvec *p_value, bool *p_owned) {
+void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, numvec *p_value, bool *p_owned) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
@@ -2490,7 +2491,7 @@ void Interpreter_numericVectorExpression (Interpreter me, const char32 *expressi
 	*p_owned = result. owned;
 }
 
-void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expression, nummat *p_value, bool *p_owned) {
+void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, nummat *p_value, bool *p_owned) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
@@ -2498,14 +2499,14 @@ void Interpreter_numericMatrixExpression (Interpreter me, const char32 *expressi
 	*p_owned = result. owned;
 }
 
-void Interpreter_stringExpression (Interpreter me, const char32 *expression, char32 **p_value) {
+void Interpreter_stringExpression (Interpreter me, conststring32 expression, char32 **p_value) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_STRING, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
 	*p_value = result. stringResult;
 }
 
-void Interpreter_anyExpression (Interpreter me, const char32 *expression, Formula_Result *p_result) {
+void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *p_result) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, false);
 	Formula_run (0, 0, p_result);
 }

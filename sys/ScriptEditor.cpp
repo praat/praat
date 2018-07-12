@@ -60,8 +60,8 @@ void structScriptEditor :: v_goAway () {
 	}
 }
 
-static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
-	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
+static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
+	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (ScriptEditor);
 	autostring32 text = GuiText_getString (my textWidget);
@@ -79,8 +79,8 @@ static void args_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */,
 	Interpreter_run (my interpreter.get(), text.get());
 }
 
-static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
-	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
+static void args_ok_selectionOnly (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
+	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (ScriptEditor);
 	autostring32 text = GuiText_getSelection (my textWidget);
@@ -298,7 +298,7 @@ void structScriptEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, U"Adding to a dynamic menu", 0, menu_cb_AddingToADynamicMenu);
 }
 
-void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initialText) {
+void ScriptEditor_init (ScriptEditor me, Editor environment, conststring32 initialText) {
 	if (environment) {
 		my environmentName = Melder_dup (environment -> name.get());
 		my editorClass = environment -> classInfo;
@@ -308,7 +308,7 @@ void ScriptEditor_init (ScriptEditor me, Editor environment, const char32 *initi
 	theReferencesToAllOpenScriptEditors. addItem_ref (me);
 }
 
-autoScriptEditor ScriptEditor_createFromText (Editor environment, const char32 *initialText) {
+autoScriptEditor ScriptEditor_createFromText (Editor environment, conststring32 initialText) {
 	try {
 		autoScriptEditor me = Thing_new (ScriptEditor);
 		ScriptEditor_init (me.get(), environment, initialText);

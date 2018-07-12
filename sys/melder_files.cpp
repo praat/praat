@@ -77,11 +77,11 @@ void Melder_rememberShellDirectory () {
 	Melder_getDefaultDir (& shellDir);
 	str32cpy (theShellDirectory, Melder_dirToPath (& shellDir));
 }
-const char32 * Melder_getShellDirectory () {
+conststring32 Melder_getShellDirectory () {
 	return & theShellDirectory [0];
 }
 
-void Melder_str32To8bitFileRepresentation_inplace (const char32 *string, char *utf8) {
+void Melder_str32To8bitFileRepresentation_inplace (conststring32 string, char *utf8) {
 	#if defined (macintosh)
 		/*
 			On the Mac, the POSIX path name is stored in canonically decomposed UTF-8 encoding.
@@ -158,7 +158,7 @@ void Melder_8bitFileRepresentationToStr32_inplace (const char *path8, char32 *pa
 }
 #endif
 
-const char32 * MelderFile_name (MelderFile file) {
+conststring32 MelderFile_name (MelderFile file) {
 	#if defined (UNIX)
 		char32 *slash = str32rchr (file -> path, U'/');
 		return slash ? slash + 1 : file -> path;
@@ -170,7 +170,7 @@ const char32 * MelderFile_name (MelderFile file) {
 	#endif
 }
 
-const char32 * MelderDir_name (MelderDir dir) {
+conststring32 MelderDir_name (MelderDir dir) {
 	#if defined (UNIX)
 		char32 *slash = str32rchr (dir -> path, U'/');
 		return slash ? slash + 1 : dir -> path;
@@ -182,11 +182,11 @@ const char32 * MelderDir_name (MelderDir dir) {
 	#endif
 }
 
-void Melder_pathToDir (const char32 *path, MelderDir dir) {
+void Melder_pathToDir (conststring32 path, MelderDir dir) {
 	str32cpy (dir -> path, path);
 }
 
-void Melder_pathToFile (const char32 *path, MelderFile file) {
+void Melder_pathToFile (conststring32 path, MelderFile file) {
 	/*
 	 * This handles complete path names only.
 	 *
@@ -196,7 +196,7 @@ void Melder_pathToFile (const char32 *path, MelderFile file) {
 	str32cpy (file -> path, path);
 }
 
-void Melder_relativePathToFile (const char32 *path, MelderFile file) {
+void Melder_relativePathToFile (conststring32 path, MelderFile file) {
 	/*
 	 * This handles complete and partial path names,
 	 * and translates slashes to native directory separators.
@@ -262,11 +262,11 @@ void Melder_relativePathToFile (const char32 *path, MelderFile file) {
 	#endif
 }
 
-const char32 * Melder_dirToPath (MelderDir dir) {
+conststring32 Melder_dirToPath (MelderDir dir) {
 	return & dir -> path [0];
 }
 
-const char32 * Melder_fileToPath (MelderFile file) {
+conststring32 Melder_fileToPath (MelderFile file) {
 	return & file -> path [0];
 }
 
@@ -302,7 +302,7 @@ bool MelderDir_isNull (MelderDir dir) {
 	return dir -> path [0] == U'\0';
 }
 
-void MelderDir_getFile (MelderDir parent, const char32 *fileName, MelderFile file) {
+void MelderDir_getFile (MelderDir parent, conststring32 fileName, MelderFile file) {
 	#if defined (UNIX)
 		if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
 			Melder_sprint (file -> path,kMelder_MAXPATH+1, U"/", fileName);
@@ -318,7 +318,7 @@ void MelderDir_getFile (MelderDir parent, const char32 *fileName, MelderFile fil
 	#endif
 }
 
-void MelderDir_relativePathToFile (MelderDir dir, const char32 *path, MelderFile file) {
+void MelderDir_relativePathToFile (MelderDir dir, conststring32 path, MelderFile file) {
 	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
 	Melder_setDefaultDir (dir);
@@ -451,7 +451,7 @@ bool MelderDir_isDesktop (MelderDir dir) {
 	return dir -> path [0] == U'\0';
 }
 
-void MelderDir_getSubdir (MelderDir parent, const char32 *subdirName, MelderDir subdir) {
+void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir subdir) {
 	#if defined (UNIX)
 		if (parent -> path [0] == U'/' && parent -> path [1] == U'\0') {
 			Melder_sprint (subdir -> path,kMelder_MAXPATH+1, U"/", subdirName);
@@ -736,13 +736,12 @@ void MelderFile_delete (MelderFile file) {
 	#endif
 }
 
-char32 * Melder_peekExpandBackslashes (const char32 *message) {
+char32 * Melder_peekExpandBackslashes (conststring32 message) {
 	static char32 names [11] [kMelder_MAXPATH+1];
 	static int index = 0;
-	const char32 *from;
-	char32 *to;
 	if (++ index == 11) index = 0;
-	for (from = & message [0], to = & names [index] [0]; *from != '\0'; from ++, to ++) {
+	char32 *to = & names [index] [0];
+	for (const char32 *from = & message [0]; *from != '\0'; from ++, to ++) {
 		*to = *from;
 		if (*from == U'\\') { * ++ to = U'b'; * ++ to = U's'; }
 	}
@@ -750,7 +749,7 @@ char32 * Melder_peekExpandBackslashes (const char32 *message) {
 	return & names [index] [0];
 }
 
-const char32 * MelderFile_messageName (MelderFile file) {
+conststring32 MelderFile_messageName (MelderFile file) {
 	return Melder_cat (U_LEFT_DOUBLE_QUOTE, file -> path, U_RIGHT_DOUBLE_QUOTE);   // BUG: is cat allowed here?
 }
 
@@ -780,7 +779,7 @@ void MelderFile_setDefaultDir (MelderFile file) {
 	Melder_setDefaultDir (& dir);
 }
 
-void Melder_createDirectory (MelderDir parent, const char32 *dirName, int mode) {
+void Melder_createDirectory (MelderDir parent, conststring32 dirName, int mode) {
 #if defined (UNIX)
 	structMelderFile file { };
 	if (dirName [0] == U'/') {

@@ -87,7 +87,7 @@ void structStrings :: v_info () {
 	MelderInfo_writeLine (U"Longest string: ", Strings_maximumLength (this), U" characters");
 }
 
-const char32 * structStrings :: v_getVectorStr (integer icol) {
+conststring32 structStrings :: v_getVectorStr (integer icol) {
 	if (icol < 1 || icol > our numberOfStrings) return U"";
 	char32 *stringValue = strings [icol].get();
 	return stringValue ? stringValue : U"";
@@ -95,7 +95,7 @@ const char32 * structStrings :: v_getVectorStr (integer icol) {
 
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
 #define Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY  1
-static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* cattable */, int type) {
+static autoStrings Strings_createAsFileOrDirectoryList (conststring32 path /* cattable */, int type) {
 	#if USE_STAT
 		DIR *d = nullptr;
 		try {
@@ -228,7 +228,7 @@ static autoStrings Strings_createAsFileOrDirectoryList (const char32 *path /* ca
 	#endif
 }
 
-autoStrings Strings_createAsFileList (const char32 *path /* cattable */) {
+autoStrings Strings_createAsFileList (conststring32 path /* cattable */) {
 	try {
 		return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_FILE);
 	} catch (MelderError) {
@@ -236,7 +236,7 @@ autoStrings Strings_createAsFileList (const char32 *path /* cattable */) {
 	}
 }
 
-autoStrings Strings_createAsDirectoryList (const char32 *path /* cattable */) {
+autoStrings Strings_createAsDirectoryList (conststring32 path /* cattable */) {
 	try {
 		return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY);
 	} catch (MelderError) {
@@ -291,10 +291,11 @@ void Strings_randomize (Strings me) {
 void Strings_genericize (Strings me) {
 	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) * 3 + 1);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		const char32 *p = (const char32 *) my strings [i].get();
+		const conststring32 string = my strings [i].get();
+		const char32 *p = & string [0];
 		while (*p) {
 			if (*p > 126) {   // backslashes are not converted, i.e. genericize^2 == genericize
-				Longchar_genericize32 (my strings [i].get(), buffer.get());
+				Longchar_genericize32 (string, buffer.get());
 				my strings [i] = Melder_dup (buffer.get());
 				break;
 			}
@@ -326,7 +327,7 @@ void Strings_remove (Strings me, integer position) {
 	my numberOfStrings --;
 }
 
-void Strings_replace (Strings me, integer position, const char32 *text) {
+void Strings_replace (Strings me, integer position, conststring32 text) {
 	if (position < 1 || position > my numberOfStrings) {
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
 	}
@@ -342,7 +343,7 @@ void Strings_replace (Strings me, integer position, const char32 *text) {
 	my strings [position] = std::move (newString);
 }
 
-void Strings_insert (Strings me, integer position, const char32 *text) {
+void Strings_insert (Strings me, integer position, conststring32 text) {
 	if (position == 0) {
 		position = my numberOfStrings + 1;
 	} else if (position < 1 || position > my numberOfStrings + 1) {

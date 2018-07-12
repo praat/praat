@@ -46,11 +46,11 @@
 #undef SET_STRING
 #undef SET_ENUM
 
-#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm _sendingForm_, integer _narg_, Stackel _args_, const char32 *_sendingString_, Interpreter interpreter
-#define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, const char32 *, Interpreter
-#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, const char32 *, Interpreter
+#define EDITOR_ARGS_FORM  EditorCommand cmd, UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter interpreter
+#define EDITOR_ARGS_CMD  EditorCommand cmd, UiForm, integer, Stackel, conststring32, Interpreter
+#define EDITOR_ARGS_DIRECT  EditorCommand, UiForm, integer, Stackel, conststring32, Interpreter
 
-#define EDITOR_FORM(title,helpTitle)  \
+#define EDITOR_FORM(title, helpTitle)  \
 	UiField _radio_ = nullptr; \
 	(void) _radio_; \
 	if (cmd -> d_uiform) goto _form_inited_; \
@@ -328,7 +328,7 @@ _form_inited_: \
 
 #define DIALOG  cmd -> d_uiform
 
-#define EDITOR_FORM_SAVE(title,helpTitle) \
+#define EDITOR_FORM_SAVE(title, helpTitle) \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = autoUiForm (UiOutfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle)); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
@@ -349,7 +349,7 @@ _form_inited_: \
 		file = UiFile_getFile (cmd -> d_uiform.get()); \
 	}
 
-#define EDITOR_FORM_READ(title,helpTitle) \
+#define EDITOR_FORM_READ(title, helpTitle) \
 	if (! cmd -> d_uiform) { \
 		cmd -> d_uiform = autoUiForm (UiInfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle)); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) {

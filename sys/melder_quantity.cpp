@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-static const char32 * texts [1+MelderQuantity_NUMBER_OF_QUANTITIES] [4] = {
+static const conststring32 texts [1+MelderQuantity_NUMBER_OF_QUANTITIES] [4] = {
 	{ U"", U"", U"", U"" },
 	{ U"Time", U"Time (s)", U"seconds", U"s" },
 	{ U"Frequency", U"Frequency (Hz)", U"Hertz", U"Hz" },
@@ -26,9 +26,9 @@ static const char32 * texts [1+MelderQuantity_NUMBER_OF_QUANTITIES] [4] = {
 	{ U"Distance from glottis", U"Distance from glottis (m)", U"metres", U"m" },	
 };
 
-const char32 * MelderQuantity_getText (int quantity) { return texts [quantity] [0]; }
-const char32 * MelderQuantity_getWithUnitText (int quantity) { return texts [quantity] [1]; }
-const char32 * MelderQuantity_getLongUnitText (int quantity) { return texts [quantity] [2]; }
-const char32 * MelderQuantity_getShortUnitText (int quantity) { return texts [quantity] [3]; }
+conststring32 MelderQuantity_getText (int quantity) { return texts [quantity] [0]; }
+conststring32 MelderQuantity_getWithUnitText (int quantity) { return texts [quantity] [1]; }
+conststring32 MelderQuantity_getLongUnitText (int quantity) { return texts [quantity] [2]; }
+conststring32 MelderQuantity_getShortUnitText (int quantity) { return texts [quantity] [3]; }
 
 /* End of file melder_quantity.cpp */

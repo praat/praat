@@ -19,7 +19,7 @@
  */
 
 char32 *Site_getPrintCommand ();
-void Site_setPrintCommand (const char32 *text);
+void Site_setPrintCommand (conststring32 text);
 
 void Site_prefs ();
 

@@ -96,7 +96,7 @@ int GuiShell_getShellHeight (GuiShell me) {
 	return height;
 }
 
-void GuiShell_setTitle (GuiShell me, const char32 *title /* cattable */) {
+void GuiShell_setTitle (GuiShell me, conststring32 title /* cattable */) {
 	#if gtk
 		gtk_window_set_title (my d_gtkWindow, Melder_peek32to8 (title));
 	#elif motif

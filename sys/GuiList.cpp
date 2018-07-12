@@ -176,7 +176,7 @@ Thing_implement (GuiList, GuiControl, 0);
 	};
 #endif
 
-GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header) {
+GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, conststring32 header) {
 	autoGuiList me = Thing_new (GuiList);
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
@@ -274,7 +274,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 	return me.releaseToAmbiguousOwner();
 }
 
-GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const char32 *header) {
+GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, conststring32 header) {
 	GuiList me = GuiList_create (parent, left, right, top, bottom, allowMultipleSelection, header);
 	GuiThing_show (me);
 	return me;
@@ -467,7 +467,7 @@ integer GuiList_getTopPosition (GuiList me) {
 	#endif
 }
 
-void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, integer position_base1) {
+void GuiList_insertItem (GuiList me, conststring32 itemText /* cattable */, integer position_base1) {
 	bool explicitlyInsertAtEnd = ( position_base1 <= 0 );
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
@@ -499,7 +499,7 @@ void GuiList_insertItem (GuiList me, const char32 *itemText /* cattable */, inte
 	#endif
 }
 
-void GuiList_replaceItem (GuiList me, const char32 *itemText, integer position) {
+void GuiList_replaceItem (GuiList me, conststring32 itemText, integer position) {
 	GuiControlBlockValueChangedCallbacks block (me);
 	#if gtk
 		GtkTreeIter iter;

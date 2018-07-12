@@ -183,14 +183,50 @@ int64 Melder_movingReallocationsCount ();
 using char8 = unsigned char;
 using char16 = char16_t;
 using char32 = char32_t;
+
+/* USAGE: Constant strings.
+
+	For whole null-terminated strings whose contents will not be changed, use conststring32:
+		void writeString (conststring32 text);
+
+	For a pointer to a character in a conststring32, use "const char32 *".
+	This is appropriate if you need to cycle later:
+		const char32 *p = & text [0];
+		...
+		p ++;
+	This is also appropriate for character searches:
+		const char32 *semicolonLocation = str32chr (text, U';');
+
+	For an array of characters, use "const char32 []":
+		void displayCharacters (const char32 characters []);
+	Such an array may or may not be null-terminated.
+*/
+using conststring8 = const char *;
+using conststring16 = const char16 *;
+using conststringW = const wchar_t *;
+using conststring32 = const char32 *;
+
+/* USAGE: Mutable strings.
+
+	For whole null-terminated strings whose contents will be changed, use mutablestring32:
+		void changeCase (mutablestring32 string);
+
+	For a pointer to a character in a mutablestring32, use "char32 *".
+	This is appropriate if you need to cycle later:
+		char32 *p = & string [0];
+		...
+		p ++;
+	This is also appropriate for character searches:
+		char32 *semicolonLocation = str32chr (string, U';');
+
+	For an array of characters that will be changed, use "char32 []":
+		void modifyCodes (char32 codes []);
+	Such an array may or may not be null-terminated.
+*/
 using mutablestring8 = char *;
 using mutablestring16 = char16 *;
 using mutablestringW = wchar_t *;
 using mutablestring32 = char32 *;
-using conststring8 = const char *;
-using conststring16 = const char16 *;
-using conststringW = const wchar_t *;
-using conststring32 = const char32 *;   // use this for whole null-terminated strings; use "const char32 *" for a pointer into a string
 
 #define strequ  ! strcmp
 #define strnequ  ! strncmp
@@ -362,7 +398,7 @@ inline static char32 * Melder_findEndOfHorizontalSpace (char32 *p) {
 	while (Melder_isHorizontalSpace (*p)) p ++;
 	return p;
 }
-inline static const char32 * Melder_findEndOfHorizontalSpace (const char32 *p) {
+inline static const char32 * Melder_findEndOfHorizontalSpace (conststring32 p) {
 	while (Melder_isHorizontalSpace (*p)) p ++;
 	return p;
 }
@@ -414,7 +450,7 @@ inline static char32 * Melder_findEndOfInk (char32 *p) {
 	while (Melder_staysWithinInk (*p)) p ++;
 	return p;
 }
-inline static const char32 * Melder_findEndOfInk (const char32 *p) {
+inline static const char32 * Melder_findEndOfInk (conststring32 p) {
 	while (Melder_staysWithinInk (*p)) p ++;
 	return p;
 }
@@ -422,7 +458,7 @@ inline static char32 * Melder_findEndOfLine (char32 *p) {
 	while (Melder_staysWithinLine (*p)) p ++;
 	return p;
 }
-inline static const char32 * Melder_findEndOfLine (const char32 *p) {
+inline static const char32 * Melder_findEndOfLine (conststring32 p) {
 	while (Melder_staysWithinLine (*p)) p ++;
 	return p;
 }
@@ -554,42 +590,42 @@ inline static char16 * str16cpy (char16 *target, const char16 *source) noexcept 
 	return target;
 }
 
-inline static integer str32len (const char32 *string) noexcept {
-	const char32 *p = string;
+inline static integer str32len (conststring32 string) noexcept {
+	const char32 *p = & string [0];
 	while (*p != U'\0') ++ p;
 	return p - string;
 }
-inline static char32 * str32cpy (char32 *target, const char32 *source) noexcept {
-	char32 *p = target;
+inline static char32 * str32cpy (char32 *target, conststring32 source) noexcept {
+	char32 *p = & target [0];
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return target;
 }
-inline static char32 * str32ncpy (char32 *target, const char32 *source, integer n) noexcept {
+inline static char32 * str32ncpy (char32 *target, conststring32 source, integer n) noexcept {
 	char32 *p = target;
 	for (; n > 0 && *source != U'\0'; -- n) * p ++ = * source ++;
 	for (; n > 0; -- n) * p ++ = U'\0';
 	return target;
 }
 
-inline static int str32cmp (const char32 *string1, const char32 *string2) noexcept {
+inline static int str32cmp (conststring32 string1, conststring32 string2) noexcept {
 	for (;; ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
 		if (diff) return (int) diff;
 		if (*string1 == U'\0') return 0;
 	}
 }
-inline static int str32cmp_caseInsensitive (const char32 *string1, const char32 *string2) noexcept {
+inline static int str32cmp_caseInsensitive (conststring32 string1, conststring32 string2) noexcept {
 	for (;; ++ string1, ++ string2) {
 		int32 diff = (int32) Melder_toLowerCase (*string1) - (int32) Melder_toLowerCase (*string2);
 		if (diff) return (int) diff;
 		if (*string1 == U'\0') return 0;
 	}
 }
-inline static int str32cmp_optionallyCaseSensitive (const char32 *string1, const char32 *string2, bool caseSensitive) noexcept {
+inline static int str32cmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, bool caseSensitive) noexcept {
 	return caseSensitive ? str32cmp (string1, string2) : str32cmp_caseInsensitive (string1, string2);
 }
-inline static int str32ncmp (const char32 *string1, const char32 *string2, integer n) noexcept {
+inline static int str32ncmp (conststring32 string1, conststring32 string2, integer n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) *string1 - (int32) *string2;
 		if (diff) return (int) diff;
@@ -597,7 +633,7 @@ inline static int str32ncmp (const char32 *string1, const char32 *string2, integ
 	}
 	return 0;
 }
-inline static int str32ncmp_caseInsensitive (const char32 *string1, const char32 *string2, integer n) noexcept {
+inline static int str32ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) noexcept {
 	for (; n > 0; -- n, ++ string1, ++ string2) {
 		int32 diff = (int32) Melder_toLowerCase (*string1) - (int32) Melder_toLowerCase (*string2);
 		if (diff) return (int) diff;
@@ -605,14 +641,14 @@ inline static int str32ncmp_caseInsensitive (const char32 *string1, const char32
 	}
 	return 0;
 }
-inline static int str32ncmp_optionallyCaseSensitive (const char32 *string1, const char32 *string2, integer n, bool caseSensitive) noexcept {
+inline static int str32ncmp_optionallyCaseSensitive (conststring32 string1, conststring32 string2, integer n, bool caseSensitive) noexcept {
 	return caseSensitive ? str32ncmp (string1, string2, n) : str32ncmp_caseInsensitive (string1, string2, n);
 }
 
-int Melder_cmp (const char32 *string1, const char32 *string2);   // regards null string as empty string
-int Melder_cmp_caseInsensitive (const char32 *string1, const char32 *string2);
-int Melder_ncmp (const char32 *string1, const char32 *string2, integer n);
-int Melder_ncmp_caseInsensitive (const char32 *string1, const char32 *string2, integer n);
+int Melder_cmp (conststring32 string1, conststring32 string2);   // regards null string as empty string
+int Melder_cmp_caseInsensitive (conststring32 string1, conststring32 string2);
+int Melder_ncmp (conststring32 string1, conststring32 string2, integer n);
+int Melder_ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n);
 
 #define str32equ  ! str32cmp
 #define str32nequ  ! str32ncmp
@@ -622,18 +658,18 @@ int Melder_ncmp_caseInsensitive (const char32 *string1, const char32 *string2, i
 #define Melder_equ_caseInsensitive  ! Melder_cmp_caseInsensitive
 #define str32equ_optionallyCaseSensitive  ! str32cmp_optionallyCaseSensitive
 #define str32nequ_optionallyCaseSensitive  ! str32ncmp_optionallyCaseSensitive
-bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2);
+bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststring32 string2);
 #define Melder_nequ  ! Melder_ncmp
 #define Melder_nequ_caseInsensitive  ! Melder_ncmp_caseInsensitive
 
-inline static char32 * str32chr (const char32 *string, char32 kar) noexcept {
+inline static char32 * str32chr (conststring32 string, char32 kar) noexcept {
 	for (; *string != kar; ++ string) {
 		if (*string == U'\0')
 			return nullptr;
 	}
 	return (char32 *) string;
 }
-inline static char32 * str32chr_caseInsensitive (const char32 *string, char32 kar) noexcept {
+inline static char32 * str32chr_caseInsensitive (conststring32 string, char32 kar) noexcept {
 	kar = Melder_toLowerCase (kar);
 	for (; Melder_toLowerCase (*string) != kar; ++ string) {
 		if (*string == U'\0')
@@ -641,14 +677,14 @@ inline static char32 * str32chr_caseInsensitive (const char32 *string, char32 ka
 	}
 	return (char32 *) string;
 }
-inline static char32 * str32rchr (const char32 *string, char32 kar) noexcept {
+inline static char32 * str32rchr (conststring32 string, char32 kar) noexcept {
 	char32 *result = nullptr;
 	for (; *string != U'\0'; ++ string) {
 		if (*string == kar) result = (char32 *) string;
 	}
 	return result;
 }
-inline static char32 * str32rchr_caseInsensitive (const char32 *string, char32 kar) noexcept {
+inline static char32 * str32rchr_caseInsensitive (conststring32 string, char32 kar) noexcept {
 	kar = Melder_toLowerCase (kar);
 	char32 *result = nullptr;
 	for (; *string != U'\0'; ++ string) {
@@ -656,7 +692,7 @@ inline static char32 * str32rchr_caseInsensitive (const char32 *string, char32 k
 	}
 	return result;
 }
-inline static char32 * str32str (const char32 *string, const char32 *find) noexcept {
+inline static char32 * str32str (conststring32 string, conststring32 find) noexcept {
 	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
 	char32 firstCharacter = * find ++;   // optimization
@@ -669,7 +705,7 @@ inline static char32 * str32str (const char32 *string, const char32 *find) noexc
 	} while (str32ncmp (string, find, length - 1));
 	return (char32 *) (string - 1);
 }
-inline static char32 * str32str_caseInsensitive (const char32 *string, const char32 *find) noexcept {
+inline static char32 * str32str_caseInsensitive (conststring32 string, conststring32 find) noexcept {
 	integer length = str32len (find);
 	if (length == 0) return (char32 *) string;
 	char32 firstCharacter = Melder_toLowerCase (* find ++);   // optimization
@@ -682,21 +718,21 @@ inline static char32 * str32str_caseInsensitive (const char32 *string, const cha
 	} while (str32ncmp_caseInsensitive (string, find, length - 1));
 	return (char32 *) (string - 1);
 }
-inline static char32 * str32str_optionallyCaseSensitive (const char32 *string, const char32 *find, bool caseSensitive) noexcept {
+inline static char32 * str32str_optionallyCaseSensitive (conststring32 string, conststring32 find, bool caseSensitive) noexcept {
 	return caseSensitive ? str32str (string, find) : str32str_caseInsensitive (string, find);
 }
-inline static integer str32spn (const char32 *string1, const char32 *string2) noexcept {
-	const char32 *p = string1;
+inline static integer str32spn (conststring32 string1, conststring32 string2) noexcept {
+	const char32 *p = & string1 [0];
 	char32 kar1, kar2;
 cont:
 	kar1 = * p ++;
-	for (const char32 * q = string2; (kar2 = * q ++) != U'\0';)
+	for (const char32 *q = & string2 [0]; (kar2 = * q ++) != U'\0';)
 		if (kar2 == kar1)
 			goto cont;
 	return p - 1 - string1;
 }
 
-char32 * Melder_tok (char32 *string, const char32 *delimiter);
+char32 * Melder_tok (char32 *string, conststring32 delimiter);
 
 #pragma mark - ENUMERATED TYPES
 
@@ -718,101 +754,101 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 	You can call at most 32 of them in one Melder_casual call, for instance.
 */
 
-const char32 * Melder_integer  (int64 value) noexcept;
-const char   * Melder8_integer (int64 value) noexcept;
+conststring32 Melder_integer  (int64 value) noexcept;
+const char * Melder8_integer (int64 value) noexcept;
 
-const char32 * Melder_bigInteger  (int64 value) noexcept;
-const char   * Melder8_bigInteger (int64 value) noexcept;
+conststring32 Melder_bigInteger  (int64 value) noexcept;
+const char * Melder8_bigInteger (int64 value) noexcept;
 
-const char32 * Melder_boolean  (bool value) noexcept;
-const char   * Melder8_boolean (bool value) noexcept;
+conststring32 Melder_boolean  (bool value) noexcept;
+const char * Melder8_boolean (bool value) noexcept;
 	// "yes" or "no"
 
 /**
 	Format a double value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats.
 */
-const char32 * Melder_double  (double value) noexcept;
-const char   * Melder8_double (double value) noexcept;
+conststring32 Melder_double  (double value) noexcept;
+const char * Melder8_double (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.9g" format.
 */
-const char32 * Melder_single  (double value) noexcept;
-const char   * Melder8_single (double value) noexcept;
+conststring32 Melder_single  (double value) noexcept;
+const char * Melder8_single (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.4g" format.
 */
-const char32 * Melder_half  (double value) noexcept;
-const char   * Melder8_half (double value) noexcept;
+conststring32 Melder_half  (double value) noexcept;
+const char * Melder8_half (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.*f" format.
 */
-const char32 * Melder_fixed  (double value, integer precision) noexcept;
-const char   * Melder8_fixed (double value, integer precision) noexcept;
+conststring32 Melder_fixed  (double value, integer precision) noexcept;
+const char * Melder8_fixed (double value, integer precision) noexcept;
 
 /**
 	Format a double value with a specified precision. If exponent is -2 and precision is 2, you get things like 67E-2 or 0.00024E-2.
 */
-const char32 * Melder_fixedExponent  (double value, integer exponent, integer precision) noexcept;
-const char   * Melder8_fixedExponent (double value, integer exponent, integer precision) noexcept;
+conststring32 Melder_fixedExponent  (double value, integer exponent, integer precision) noexcept;
+const char * Melder8_fixedExponent (double value, integer exponent, integer precision) noexcept;
 
 /**
 	Format a double value as a percentage. If precision is 3, you get things like "0" or "34.400%" or "0.014%" or "0.001%" or "0.0000007%".
 */
-const char32 * Melder_percent  (double value, integer precision) noexcept;
-const char   * Melder8_percent (double value, integer precision) noexcept;
+conststring32 Melder_percent  (double value, integer precision) noexcept;
+const char * Melder8_percent (double value, integer precision) noexcept;
 
 /**
 	Format an integer as a hexadecimal number. If precision is 4, you get things like "0000" or "1A3C" or "107FFFF".
 */
 const char * Melder8_hexadecimal (integer value, integer precision) noexcept;
-const char32 * Melder_hexadecimal (integer value, integer precision) noexcept;
+conststring32 Melder_hexadecimal (integer value, integer precision) noexcept;
 
 /**
 	Format a dcomplex value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats,
 	separated without spaces by "+" or "-" and followed by "i".
 */
-const char32 * Melder_dcomplex  (dcomplex value) noexcept;
-const char   * Melder8_dcomplex (dcomplex value) noexcept;
+conststring32 Melder_dcomplex  (dcomplex value) noexcept;
+const char * Melder8_dcomplex (dcomplex value) noexcept;
 
 /**
 	Format a dcomplex value as "--undefined--" or something in the "%.9g" format,
 	separated without spaces by "+" or "-" and followed by "i".
 */
-const char32 * Melder_scomplex  (dcomplex value) noexcept;
-const char   * Melder8_scomplex (dcomplex value) noexcept;
+conststring32 Melder_scomplex  (dcomplex value) noexcept;
+const char * Melder8_scomplex (dcomplex value) noexcept;
 
 /**
 	Convert a formatted floating-point string to something suitable for visualization with the Graphics library.
 	For instance, "1e+4" is turned into "10^^4", and "-1.23456e-78" is turned into "-1.23456\.c10^^-78".
 */
-const char32 * Melder_float (const char32 *number) noexcept;
+conststring32 Melder_float (conststring32 number) noexcept;
 
 /**
 	Format the number that is specified by its natural logarithm.
 	For instance, -10000 is formatted as "1.135483865315339e-4343", which is a floating-point representation of exp(-10000).
 */
-const  char32 * Melder_naturalLogarithm  (double lnNumber) noexcept;
-const  char   * Melder8_naturalLogarithm (double lnNumber) noexcept;
+conststring32 Melder_naturalLogarithm  (double lnNumber) noexcept;
+const char * Melder8_naturalLogarithm (double lnNumber) noexcept;
 
-const  char32 * Melder_pointer  (void *pointer) noexcept;
-const  char   * Melder8_pointer (void *pointer) noexcept;
+conststring32 Melder_pointer  (void *pointer) noexcept;
+const char * Melder8_pointer (void *pointer) noexcept;
 
-const  char32 * Melder_character  (char32_t kar) noexcept;
-const  char   * Melder8_character (char32_t kar) noexcept;
+conststring32 Melder_character  (char32_t kar) noexcept;
+const char * Melder8_character (char32_t kar) noexcept;
 
-const char32 * Melder_pad (int64 width, const char32 *string);   // will append spaces to the left of 'string' until 'width' is reached; no truncation
-const char32 * Melder_pad (const char32 *string, int64 width);   // will append spaces to the right of 'string' until 'width' is reached; no truncation
-const char32 * Melder_truncate (int64 width, const char32 *string);   // will cut away the left of 'string' until 'width' is reached; no padding
-const char32 * Melder_truncate (const char32 *string, int64 width);   // will cut away the right of 'string' until 'width' is reached; no padding
-const char32 * Melder_padOrTruncate (int64 width, const char32 *string);   // will cut away, or append spaces to, the left of 'string' until 'width' is reached
-const char32 * Melder_padOrTruncate (const char32 *string, int64 width);   // will cut away, or append spaces to, the right of 'string' until 'width' is reached
+conststring32 Melder_pad (int64 width, conststring32 string);   // will append spaces to the left of 'string' until 'width' is reached; no truncation
+conststring32 Melder_pad (conststring32 string, int64 width);   // will append spaces to the right of 'string' until 'width' is reached; no truncation
+conststring32 Melder_truncate (int64 width, conststring32 string);   // will cut away the left of 'string' until 'width' is reached; no padding
+conststring32 Melder_truncate (conststring32 string, int64 width);   // will cut away the right of 'string' until 'width' is reached; no padding
+conststring32 Melder_padOrTruncate (int64 width, conststring32 string);   // will cut away, or append spaces to, the left of 'string' until 'width' is reached
+conststring32 Melder_padOrTruncate (conststring32 string, int64 width);   // will cut away, or append spaces to, the right of 'string' until 'width' is reached
 
 #pragma mark - CONSOLE
 
-void Melder_writeToConsole (const char32 *message, bool useStderr);
+void Melder_writeToConsole (conststring32 message, bool useStderr);
 
 /**
  * Text encodings.
@@ -833,9 +869,9 @@ const uint32 kMelder_textOutputEncoding_ASCII = 0x41534349;
 const uint32 kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C415401;
 const uint32 kMelder_textOutputEncoding_FLAC = 0x464C4143;
 
-bool Melder_isValidAscii (const char32 *string);
+bool Melder_isValidAscii (conststring32 string);
 bool Melder_str8IsValidUtf8 (const char *string);
-bool Melder_isEncodable (const char32 *string, int outputEncoding);
+bool Melder_isEncodable (conststring32 string, int outputEncoding);
 extern char32 Melder_decodeMacRoman [256];
 extern char32 Melder_decodeWindowsLatin1 [256];
 
@@ -923,14 +959,14 @@ struct structMelderDir {
 };
 typedef struct structMelderDir *MelderDir;
 
-const char32 * MelderFile_name (MelderFile file);
-const char32 * MelderDir_name (MelderDir dir);
-void Melder_pathToDir (const char32 *path, MelderDir dir);
-void Melder_pathToFile (const char32 *path, MelderFile file);
-void Melder_relativePathToFile (const char32 *path, MelderFile file);
-const char32 * Melder_dirToPath (MelderDir dir);
+conststring32 MelderFile_name (MelderFile file);
+conststring32 MelderDir_name (MelderDir dir);
+void Melder_pathToDir (conststring32 path, MelderDir dir);
+void Melder_pathToFile (conststring32 path, MelderFile file);
+void Melder_relativePathToFile (conststring32 path, MelderFile file);
+conststring32 Melder_dirToPath (MelderDir dir);
 	/* Returns a pointer internal to 'dir', like "/u/paul/praats" or "D:\Paul\Praats" */
-const char32 * Melder_fileToPath (MelderFile file);
+conststring32 Melder_fileToPath (MelderFile file);
 void MelderFile_copy (MelderFile file, MelderFile copy);
 void MelderDir_copy (MelderDir dir, MelderDir copy);
 bool MelderFile_equal (MelderFile file1, MelderFile file2);
@@ -939,14 +975,14 @@ void MelderFile_setToNull (MelderFile file);
 bool MelderFile_isNull (MelderFile file);
 void MelderDir_setToNull (MelderDir dir);
 bool MelderDir_isNull (MelderDir dir);
-void MelderDir_getFile (MelderDir parent, const char32 *fileName, MelderFile file);
-void MelderDir_relativePathToFile (MelderDir dir, const char32 *path, MelderFile file);
+void MelderDir_getFile (MelderDir parent, conststring32 fileName, MelderFile file);
+void MelderDir_relativePathToFile (MelderDir dir, conststring32 path, MelderFile file);
 void MelderFile_getParentDir (MelderFile file, MelderDir parent);
 void MelderDir_getParentDir (MelderDir file, MelderDir parent);
 bool MelderDir_isDesktop (MelderDir dir);
-void MelderDir_getSubdir (MelderDir parent, const char32 *subdirName, MelderDir subdir);
+void MelderDir_getSubdir (MelderDir parent, conststring32 subdirName, MelderDir subdir);
 void Melder_rememberShellDirectory ();
-const char32 * Melder_getShellDirectory ();
+conststring32 Melder_getShellDirectory ();
 void Melder_getHomeDir (MelderDir homeDir);
 void Melder_getPrefDir (MelderDir prefDir);
 void Melder_getTempDir (MelderDir tempDir);
@@ -965,8 +1001,8 @@ void Melder_files_cleanUp ();
 /* Backslashes are replaced by "\bs". */
 /* The trick is that they return one of 11 cyclically used static strings, */
 /* so you can use up to 11 strings in a single Melder_* call. */
-char32 * Melder_peekExpandBackslashes (const char32 *message);
-const char32 * MelderFile_messageName (MelderFile file);   // calls Melder_peekExpandBackslashes ()
+char32 * Melder_peekExpandBackslashes (conststring32 message);
+conststring32 MelderFile_messageName (MelderFile file);   // calls Melder_peekExpandBackslashes ()
 
 /* "NUM" = "NUMerics" */
 /* More mathematical and numerical things than there are in <math.h>. */
@@ -1285,7 +1321,7 @@ double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviatio
 
 double NUMrandomPoisson (double mean);
 
-uint32 NUMhashString (const char32 *string);
+uint32 NUMhashString (conststring32 string);
 
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2);
 void NUMfilterSecondOrderSection_a (double x [], integer n, double a1, double a2);
@@ -1797,16 +1833,16 @@ double NUMquantile (integer n, double a [], double factor);
 
 #pragma mark - ARGUMENTS
 
-const  char32 * Melder_numvec  (numvec value);
-const  char32 * Melder_nummat  (nummat value);
+conststring32 Melder_numvec (numvec value);
+conststring32 Melder_nummat (nummat value);
 typedef class structThing *Thing;   // forward declaration
-const char32 * Thing_messageName (Thing me);
+conststring32 Thing_messageName (Thing me);
 struct MelderArg {
-	const char32 *_arg;
+	conststring32 _arg;
 	/*
 		The types of arguments that never involve memory allocation:
 	*/
-	MelderArg (const char32 *            arg) : _arg (arg) { }
+	MelderArg (conststring32             arg) : _arg (arg) { }
 	MelderArg (const double              arg) : _arg (Melder_double          (arg)) { }
 	MelderArg (const          long long  arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const unsigned long long  arg) : _arg (Melder_integer         ((int64) arg)) { }
@@ -1986,10 +2022,10 @@ void MelderFile_close_nothrow (MelderFile file);
 
 /* Read and write whole text files. */
 autostring32 MelderFile_readText (MelderFile file);
-void MelderFile_writeText (MelderFile file, const char32 *text, kMelder_textOutputEncoding outputEncoding);
-void MelderFile_appendText (MelderFile file, const char32 *text);
+void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutputEncoding outputEncoding);
+void MelderFile_appendText (MelderFile file, conststring32 text);
 
-void Melder_createDirectory (MelderDir parent, const char32 *subdirName, int mode);
+void Melder_createDirectory (MelderDir parent, conststring32 subdirName, int mode);
 
 void Melder_getDefaultDir (MelderDir dir);
 void Melder_setDefaultDir (MelderDir dir);
@@ -2045,10 +2081,10 @@ void MelderString_copy (MelderString *me, Melder_11_ARGS);
 void MelderString_copy (MelderString *me, Melder_12_OR_13_ARGS);
 void MelderString_copy (MelderString *me, Melder_14_OR_15_ARGS);
 void MelderString_copy (MelderString *me, Melder_16_TO_19_ARGS);
-void MelderString_ncopy (MelderString *me, const char32 *source, int64 n);
+void MelderString_ncopy (MelderString *me, conststring32 source, int64 n);
 
 inline static void MelderString_append (MelderString *me, Melder_1_ARG) {
-	const char32 *s1  = arg1._arg  ? arg1._arg  : U"";  integer length1  = str32len (s1);
+	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  integer length1  = str32len (s1);
 	integer sizeNeeded = me -> length + length1 + 1;
 	if (sizeNeeded > me -> bufferSize) MelderString_expand (me, sizeNeeded);
 	str32cpy (me -> string + me -> length, s1);   me -> length += length1;
@@ -2081,19 +2117,19 @@ int64 MelderString_deallocationCount ();
 int64 MelderString_allocationSize ();
 int64 MelderString_deallocationSize ();
 
-const char32 * Melder_cat (Melder_2_ARGS);
-const char32 * Melder_cat (Melder_3_ARGS);
-const char32 * Melder_cat (Melder_4_ARGS);
-const char32 * Melder_cat (Melder_5_ARGS);
-const char32 * Melder_cat (Melder_6_ARGS);
-const char32 * Melder_cat (Melder_7_ARGS);
-const char32 * Melder_cat (Melder_8_ARGS);
-const char32 * Melder_cat (Melder_9_ARGS);
-const char32 * Melder_cat (Melder_10_ARGS);
-const char32 * Melder_cat (Melder_11_ARGS);
-const char32 * Melder_cat (Melder_12_OR_13_ARGS);
-const char32 * Melder_cat (Melder_14_OR_15_ARGS);
-const char32 * Melder_cat (Melder_16_TO_19_ARGS);
+conststring32 Melder_cat (Melder_2_ARGS);
+conststring32 Melder_cat (Melder_3_ARGS);
+conststring32 Melder_cat (Melder_4_ARGS);
+conststring32 Melder_cat (Melder_5_ARGS);
+conststring32 Melder_cat (Melder_6_ARGS);
+conststring32 Melder_cat (Melder_7_ARGS);
+conststring32 Melder_cat (Melder_8_ARGS);
+conststring32 Melder_cat (Melder_9_ARGS);
+conststring32 Melder_cat (Melder_10_ARGS);
+conststring32 Melder_cat (Melder_11_ARGS);
+conststring32 Melder_cat (Melder_12_OR_13_ARGS);
+conststring32 Melder_cat (Melder_14_OR_15_ARGS);
+conststring32 Melder_cat (Melder_16_TO_19_ARGS);
 
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_1_ARG);
 void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_2_ARGS);
@@ -2113,7 +2149,7 @@ void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_16_TO_19_ARGS);
 /********** NUMBER AND STRING COMPARISON **********/
 
 bool Melder_numberMatchesCriterion (double value, kMelder_number which, double criterion);
-bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, const char32 *criterion, bool caseSensitive);
+bool Melder_stringMatchesCriterion (conststring32 value, kMelder_string which, conststring32 criterion, bool caseSensitive);
 
 /********** STRING PARSING **********/
 
@@ -2127,12 +2163,12 @@ bool Melder_stringMatchesCriterion (const char32 *value, kMelder_string which, c
 		}
 */
 
-integer Melder_countTokens (const char32 *string);
-char32 *Melder_firstToken (const char32 *string);
+integer Melder_countTokens (conststring32 string);
+char32 *Melder_firstToken (conststring32 string);
 char32 *Melder_nextToken ();
-char32 ** Melder_getTokens (const char32 *string, integer *n);
+char32 ** Melder_getTokens (conststring32 string, integer *n);
 void Melder_freeTokens (char32 ***tokens);
-integer Melder_searchToken (const char32 *string, char32 **tokens, integer n);
+integer Melder_searchToken (conststring32 string, char32 **tokens, integer n);
 
 /********** MESSAGING ROUTINES **********/
 
@@ -2212,7 +2248,7 @@ void Melder_information (Melder_12_OR_13_ARGS);
 void Melder_information (Melder_14_OR_15_ARGS);
 void Melder_information (Melder_16_TO_19_ARGS);
 
-void Melder_informationReal (double value, const char32 *units);   // %.17g or --undefined--; units may be null
+void Melder_informationReal (double value, conststring32 units);   // %.17g or --undefined--; units may be null
 
 void Melder_divertInfo (MelderString *buffer);   // nullptr = back to normal
 
@@ -2223,8 +2259,8 @@ class autoMelderDivertInfo {
 };
 
 void Melder_clearInfo ();   // clear the Info window
-const char32 * Melder_getInfo ();
-void Melder_help (const char32 *query);
+conststring32 Melder_getInfo ();
+void Melder_help (conststring32 query);
 
 void Melder_search ();
 	
@@ -2294,7 +2330,7 @@ void Melder_flushError (Melder_16_TO_19_ARGS);
 	/* including, if there are arguments, the error message generated by this routine. */
 
 bool Melder_hasError ();
-bool Melder_hasError (const char32 *partialError);
+bool Melder_hasError (conststring32 partialError);
 	/* Returns 1 if there is an error message in store, otherwise 0. */
 
 void Melder_clearError ();
@@ -2402,7 +2438,7 @@ void Melder_progressOn ();
 */
 class autoMelderProgress {
 public:
-	autoMelderProgress (const char32 *message) {
+	autoMelderProgress (conststring32 message) {
 		Melder_progress (0.0, message);
 	}
 	~autoMelderProgress () {
@@ -2472,7 +2508,7 @@ typedef class structGraphics *Graphics;
 class autoMelderMonitor {
 	Graphics _graphics;
 public:
-	autoMelderMonitor (const char32 *message) {
+	autoMelderMonitor (conststring32 message) {
 		_graphics = (Graphics) Melder_monitor (0.0, message);
 	}
 	~autoMelderMonitor () {
@@ -2608,17 +2644,17 @@ extern bool Melder_asynchronous;   // true if specified by the "asynchronous" di
 /* They may chage the string arguments. */
 /* Many of these routines are called by MelderMotif_create and MelderXvt_create. */
 
-void Melder_setCasualProc (void (*casualProc) (const char32 *message));
-void Melder_setProgressProc (int (*progressProc) (double progress, const char32 *message));
-void Melder_setMonitorProc (void * (*monitorProc) (double progress, const char32 *message));
-void Melder_setInformationProc (void (*informationProc) (const char32 *message));
-void Melder_setHelpProc (void (*help) (const char32 *query));
+void Melder_setCasualProc (void (*casualProc) (conststring32 message));
+void Melder_setProgressProc (int (*progressProc) (double progress, conststring32 message));
+void Melder_setMonitorProc (void * (*monitorProc) (double progress, conststring32 message));
+void Melder_setInformationProc (void (*informationProc) (conststring32 message));
+void Melder_setHelpProc (void (*help) (conststring32 query));
 void Melder_setSearchProc (void (*search) ());
-void Melder_setWarningProc (void (*warningProc) (const char32 *message));
-void Melder_setProgressProc (void (*progress) (double, const char32 *));
-void Melder_setMonitorProc (void * (*monitor) (double, const char32 *));
-void Melder_setErrorProc (void (*errorProc) (const char32 *message));
-void Melder_setFatalProc (void (*fatalProc) (const char32 *message));
+void Melder_setWarningProc (void (*warningProc) (conststring32 message));
+void Melder_setProgressProc (void (*progress) (double, conststring32));
+void Melder_setMonitorProc (void * (*monitor) (double, conststring32));
+void Melder_setErrorProc (void (*errorProc) (conststring32 message));
+void Melder_setFatalProc (void (*fatalProc) (conststring32 message));
 void Melder_setRecordProc (int (*record) (double));
 void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile));
 void Melder_setPlayProc (void (*play) ());
@@ -2687,7 +2723,7 @@ void Melder_audio_prefs ();   // in init file
 #define Melder_FLAC 6
 #define Melder_MP3 7
 #define Melder_NUMBER_OF_AUDIO_FILE_TYPES  7
-const char32 * Melder_audioFileTypeString (int audioFileType);   // "AIFF", "AIFC", "WAV", "NeXT/Sun", "NIST", "FLAC", "MP3"
+conststring32 Melder_audioFileTypeString (int audioFileType);   // "AIFF", "AIFC", "WAV", "NeXT/Sun", "NIST", "FLAC", "MP3"
 /* Audio encodings. */
 #define Melder_LINEAR_8_SIGNED  1
 #define Melder_LINEAR_8_UNSIGNED  2
@@ -2739,10 +2775,10 @@ void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, in
 #define MelderQuantity_FREQUENCY_BARK  3
 #define MelderQuantity_DISTANCE_FROM_GLOTTIS_METRES  4
 #define MelderQuantity_NUMBER_OF_QUANTITIES  4
-const char32 * MelderQuantity_getText (int quantity);   // e.g. "Time"
-const char32 * MelderQuantity_getWithUnitText (int quantity);   // e.g. "Time (s)"
-const char32 * MelderQuantity_getLongUnitText (int quantity);   // e.g. "seconds"
-const char32 * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
+conststring32 MelderQuantity_getText (int quantity);   // e.g. "Time"
+conststring32 MelderQuantity_getWithUnitText (int quantity);   // e.g. "Time (s)"
+conststring32 MelderQuantity_getLongUnitText (int quantity);   // e.g. "seconds"
+conststring32 MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 
 #pragma mark - READING TEXT
 
@@ -2804,17 +2840,17 @@ char32 MelderReadText_getChar (MelderReadText text);
 char32 * MelderReadText_readLine (MelderReadText text);
 wchar_t * MelderReadText_readLineW (MelderReadText text);
 int64 MelderReadText_getNumberOfLines (MelderReadText me);
-const char32 * MelderReadText_getLineNumber (MelderReadText text);
+conststring32 MelderReadText_getLineNumber (MelderReadText text);
 
 #include "../sys/abcio.h"
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
 #define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, const char32 *name); \
+	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, conststring32 name); \
 	void NUMvector_writeBinary_##storage (const type *v, integer lo, integer hi, FILE *f); \
 	type * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name); \
 	type * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f); \
-	void NUMmatrix_writeText_##storage (type **v, integer r1, integer r2, integer c1, integer c2, MelderFile file, const char32 *name); \
+	void NUMmatrix_writeText_##storage (type **v, integer r1, integer r2, integer c1, integer c2, MelderFile file, conststring32 name); \
 	void NUMmatrix_writeBinary_##storage (type **v, integer r1, integer r2, integer c1, integer c2, FILE *f); \
 	type ** NUMmatrix_readText_##storage (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name); \
 	type ** NUMmatrix_readBinary_##storage (integer r1, integer r2, integer c1, integer c2, FILE *f);
@@ -2844,12 +2880,12 @@ double * NUMvector_readText_r64 (integer lo, integer hi, MelderReadText text, co
 double * NUMvector_readBinary_r64 (integer lo, integer hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
 	Throw an error message if anything went wrong.
-void NUMvector_writeText_r64 (const double *v, integer lo, integer hi, MelderFile file, const char32 *name);   // etc
+void NUMvector_writeText_r64 (const double *v, integer lo, integer hi, MelderFile file, conststring32 name);   // etc
 	write the vector elements v [lo..hi] as text to the open file,
 	each element on its own line, preceded by "name [index]: ".
 	Throw an error message if anything went wrong.
 	The vectors need not have been created by NUMvector.
-void NUMmatrix_writeText_r64 (double **m, integer r1, integer r2, integer c1, integer c2, MelderFile file, const char32 *name);   // etc
+void NUMmatrix_writeText_r64 (double **m, integer r1, integer r2, integer c1, integer c2, MelderFile file, conststring32 name);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
 	Throw an error message if anything went wrong.
 	The matrices need not have been created by NUMmatrix.
@@ -2868,9 +2904,9 @@ double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer 
 
 #pragma mark - MISCELLANEOUS
 
-char32 * Melder_getenv (const char32 *variableName);
-void Melder_system (const char32 *command);   // spawn a system command
-void Melder_execv (const char32 *executableFileName, integer narg, char32 **args);   // spawn a subprocess
+char32 * Melder_getenv (conststring32 variableName);
+void Melder_system (conststring32 command);   // spawn a system command
+void Melder_execv (conststring32 executableFileName, integer narg, char32 **args);   // spawn a subprocess
 double Melder_clock ();   // seconds since 1969
 
 struct autoMelderProgressOff {
@@ -2988,7 +3024,7 @@ public:
 	autoMelderTokens () {
 		tokens = nullptr;
 	}
-	autoMelderTokens (const char32 *string) {
+	autoMelderTokens (conststring32 string) {
 		tokens = Melder_getTokens (string, & numberOfTokens);
 	}
 	~autoMelderTokens () {
@@ -3007,7 +3043,7 @@ public:
 	integer count () const {
 		return numberOfTokens;
 	}
-	void reset (const char32 *string) {
+	void reset (conststring32 string) {
 		if (tokens) {
 			for (integer itoken = 1; itoken <= numberOfTokens; itoken ++)
 				Melder_free (tokens [itoken]);

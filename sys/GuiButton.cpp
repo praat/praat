@@ -113,7 +113,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 #endif
 
 GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, GuiButton_ActivateCallback activateCallback, Thing activateBoss, uint32 flags)
+	conststring32 buttonText, GuiButton_ActivateCallback activateCallback, Thing activateBoss, uint32 flags)
 {
 	autoGuiButton me = Thing_new (GuiButton);
 	my d_shell = parent -> d_shell;
@@ -195,14 +195,14 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 }
 
 GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, GuiButton_ActivateCallback activateCallback, Thing activateBoss, uint32 flags)
+	conststring32 buttonText, GuiButton_ActivateCallback activateCallback, Thing activateBoss, uint32 flags)
 {
 	GuiButton me = GuiButton_create (parent, left, right, top, bottom, buttonText, activateCallback, activateBoss, flags);
 	GuiThing_show (me);
 	return me;
 }
 
-void GuiButton_setText (GuiButton me, const char32 *text /* cattable */) {
+void GuiButton_setText (GuiButton me, conststring32 text /* cattable */) {
 	#if gtk
 		gtk_button_set_label (GTK_BUTTON (my d_widget), Melder_peek32to8 (text));
 	#elif motif

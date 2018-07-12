@@ -1598,7 +1598,7 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 	Graphics_text (my graphics.get(), textX, textY, text.string);
 }
 
-void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, const char32 *yWC_string, conststring32 units) {
+void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units) {
 	Graphics_setColour (my graphics.get(), Graphics_RED);
 	Graphics_line (my graphics.get(), my startWindow, yWC, my endWindow, yWC);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);

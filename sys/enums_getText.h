@@ -24,7 +24,7 @@
 #undef enums_add
 #undef enums_alt
 #undef enums_end
-#define enums_begin(kType,minimum)  const char32 * kType##_getText (kType testValue) { return
+#define enums_begin(kType,minimum)  conststring32 kType##_getText (kType testValue) { return
 #define enums_add(kType,value,which,text)  testValue == kType::which ? text :
 #define enums_alt(kType,which,text)
 #define enums_end(kType,maximum,def) kType##_getText (kType::DEFAULT); }

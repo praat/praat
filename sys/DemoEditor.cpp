@@ -170,7 +170,7 @@ void Demo_close () {
 	theCurrentPraatPicture = & theForegroundPraatPicture;
 }
 
-int Demo_windowTitle (const char32 *title) {
+int Demo_windowTitle (conststring32 title) {
 	autoDemoOpen demo;
 	Thing_setName (theReferenceToTheOnlyDemoEditor, title);
 	return 1;
@@ -422,7 +422,7 @@ bool Demo_extraControlKeyPressed () {
 	return theReferenceToTheOnlyDemoEditor -> extraControlKeyPressed;
 }
 
-bool Demo_input (const char32 *keys) {
+bool Demo_input (conststring32 keys) {
 	if (! theReferenceToTheOnlyDemoEditor) return false;
 	if (theReferenceToTheOnlyDemoEditor -> waitingForInput) {
 		Melder_throw (U"You cannot work with the Demo window while it is waiting for input. "

@@ -33,7 +33,7 @@ static bool isSingleWordCharacter (char32 c) {
 	return isalnum ((int) c) || c == U'_';
 }
 
-static integer lookUp_unsorted (ManPages me, const char32 *title);
+static integer lookUp_unsorted (ManPages me, conststring32 title);
 
 void structManPages :: v_destroy () noexcept {
 	if (our dynamic) {
@@ -54,7 +54,7 @@ void structManPages :: v_destroy () noexcept {
 	ManPages_Parent :: v_destroy ();
 }
 
-static const char32 *extractLink (const char32 *text, const char32 *p, char32 *link) {
+static conststring32 extractLink (conststring32 text, const char32 *p, char32 *link) {
 	char32 *to = link, *max = link + 300;
 	if (! p) p = text;
 	/*
@@ -235,7 +235,7 @@ autoManPages ManPages_create () {
 	return me;
 }
 
-void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, integer date,
+void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, integer date,
 	struct structManPage_Paragraph paragraphs [])
 {
 	autoManPage page = Thing_new (ManPage);
@@ -248,9 +248,9 @@ void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, i
 
 static int pageCompare (const void *first, const void *second) {
 	ManPage me = * (ManPage *) first, thee = * (ManPage *) second;
-	const char32 *p = my title.get(), *q = thy title.get();
+	const char32 *p = & my title [0], *q = & thy title [0];
 	for (;;) {
-		char32 plower = Melder_toLowerCase (*p), qlower = Melder_toLowerCase (*q);
+		const char32 plower = Melder_toLowerCase (*p), qlower = Melder_toLowerCase (*q);
 		if (plower < qlower) return -1;
 		if (plower > qlower) return 1;
 		if (plower == U'\0') return str32cmp (my title.get(), thy title.get());
@@ -259,7 +259,7 @@ static int pageCompare (const void *first, const void *second) {
 	return 0;   // should not occur
 }
 
-static integer lookUp_unsorted (ManPages me, const char32 *title) {
+static integer lookUp_unsorted (ManPages me, conststring32 title) {
 	/*
 		First try to match an unaltered 'title' with the titles of the man pages.
 	*/
@@ -282,7 +282,7 @@ static integer lookUp_unsorted (ManPages me, const char32 *title) {
 	return 0;
 }
 
-static integer lookUp_sorted (ManPages me, const char32 *title) {
+static integer lookUp_sorted (ManPages me, conststring32 title) {
 	static autoManPage dummy;
 	ManPage *page;
 	if (! dummy) dummy = Thing_new (ManPage);
@@ -313,7 +313,8 @@ static void grind (ManPages me) {
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
 		for (integer ipar = 0; (int) page -> paragraphs [ipar]. type != 0; ipar ++) {
-			const char32 *text = page -> paragraphs [ipar]. text, *p;
+			conststring32 text = page -> paragraphs [ipar]. text;
+			const char32 *p;
 			char32 link [301];
 			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
 				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
@@ -363,7 +364,8 @@ static void grind (ManPages me) {
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {
 		ManPage page = my pages.at [ipage];
 		for (int ipar = 0; (int) page -> paragraphs [ipar]. type != 0; ipar ++) {
-			const char32 *text = page -> paragraphs [ipar]. text, *p;
+			conststring32 text = page -> paragraphs [ipar]. text;
+			const char32 *p;
 			char32 link [301];
 			if (text) for (p = extractLink (text, nullptr, link); p != nullptr; p = extractLink (text, p, link)) {
 				if (link [0] == U'\\' && ((link [1] == U'F' && link [2] == U'I') || (link [1] == U'S' && link [2] == U'C')))
@@ -400,12 +402,12 @@ integer ManPages_uniqueLinksHither (ManPages me, integer ipage) {
 	return result;
 }
 
-integer ManPages_lookUp (ManPages me, const char32 *title) {
+integer ManPages_lookUp (ManPages me, conststring32 title) {
 	if (! my ground) grind (me);
 	return lookUp_sorted (me, title);
 }
 
-static integer ManPages_lookUp_caseSensitive (ManPages me, const char32 *title) {
+static integer ManPages_lookUp_caseSensitive (ManPages me, conststring32 title) {
 	if (! my ground) grind (me);
 	for (integer i = 1; i <= my pages.size; i ++) {
 		ManPage page = my pages.at [i];
@@ -427,8 +429,8 @@ char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles) {
 	return my titles.peek2();
 }
 
-static struct stylesInfo {
-	const char32 *htmlIn, *htmlOut;
+static const struct stylesInfo {
+	conststring32 htmlIn, htmlOut;
 } stylesInfo [] = {
 { nullptr, nullptr },
 /* INTRO: */ { U"<p>", U"</p>" },
@@ -464,7 +466,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 	bool inSub = false, inCode = false, inSuper = false, ul = false, inSmall = false;
 	bool wordItalic = false, wordBold = false, wordCode = false, letterSuper = false;
 	for (ManPage_Paragraph paragraph = paragraphs; (int) paragraph -> type != 0; paragraph ++) {
-		const char32 *p = paragraph -> text;
+		const char32 *p = & paragraph -> text [0];
 		bool inTable, inPromptedTable;
 		bool isListItem = paragraph -> type == kManPage_type::LIST_ITEM ||
 			(paragraph -> type >= kManPage_type::LIST_ITEM1 && paragraph -> type <= kManPage_type::LIST_ITEM3);
@@ -793,7 +795,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 	if (inList) { MelderString_append (buffer, ul ? U"</ul>\n" : U"</dl>\n"); inList = false; }
 }
 
-static const char32 *month [] =
+static const conststring32 month [] =
 	{ U"", U"January", U"February", U"March", U"April", U"May", U"June",
 	  U"July", U"August", U"September", U"October", U"November", U"December" };
 
@@ -812,7 +814,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		integer ilink, jlink, lastParagraph = 0;
 		while ((int) page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
-			const char32 *text = page -> paragraphs [lastParagraph - 1]. text;
+			conststring32 text = page -> paragraphs [lastParagraph - 1]. text;
 			if (text && text [0] && text [str32len (text) - 1] != U':')
 				MelderString_append (buffer, U"<h3>Links to this page</h3>\n");
 		}
@@ -825,9 +827,10 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 					alreadyShown = true;
 			if (! alreadyShown) {
 				ManPage linkingPage = my pages.at [page -> linksHither [ilink]];
-				const char32 *title = linkingPage -> title.get(), *p;
+				conststring32 title = linkingPage -> title.get();
+				const char32 *p;
 				MelderString_append (buffer, U"<li><a href=\"");
-				for (p = title; *p; p ++) {
+				for (p = & title [0]; *p; p ++) {
 					if (p - title >= LONGEST_FILE_NAME) break;
 					if (! isAllowedFileNameCharacter (*p)) MelderString_append (buffer, U"_");
 					else MelderString_appendCharacter (buffer, *p);
@@ -856,7 +859,7 @@ void ManPages_writeOneToHtmlFile (ManPages me, integer ipage, MelderFile file) {
 	MelderFile_writeText (file, buffer.string, kMelder_textOutputEncoding::UTF8);
 }
 
-void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath) {
+void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath) {
 	structMelderDir dir { };
 	Melder_pathToDir (dirPath, & dir);
 	for (integer ipage = 1; ipage <= my pages.size; ipage ++) {

@@ -44,14 +44,14 @@ void Melder_textEncoding_prefs () {
 	Preferences_addEnum (U"TextEncoding.outputEncoding", & preferences. outputEncoding, kMelder_textOutputEncoding, kMelder_textOutputEncoding::DEFAULT);
 }
 
-bool Melder_isValidAscii (const char32 *text) {
+bool Melder_isValidAscii (conststring32 text) {
 	for (; *text != '\0'; text ++) {
 		if (*text > 127) return false;
 	}
 	return true;
 }
 
-bool Melder_isEncodable (const char32 *text, int outputEncoding) {
+bool Melder_isEncodable (conststring32 text, int outputEncoding) {
 	switch (outputEncoding) {
 		case kMelder_textOutputEncoding_ASCII: {
 			for (; *text != '\0'; text ++) {
@@ -144,7 +144,7 @@ integer Melder_killReturns_inplace (char32 *text) {
 	return Melder_killReturns_inplaceCHAR <char32> (text);
 }
 
-size_t str32len_utf8 (const char32 *string, bool nativizeNewlines) {
+size_t str32len_utf8 (conststring32 string, bool nativizeNewlines) {
 	size_t length = 0;
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++) {
 		char32 kar = *p;
@@ -167,7 +167,7 @@ size_t str32len_utf8 (const char32 *string, bool nativizeNewlines) {
 	return length;
 }
 
-size_t str32len_utf16 (const char32 *string, bool nativizeNewlines) {
+size_t str32len_utf16 (conststring32 string, bool nativizeNewlines) {
 	size_t length = 0;
 	for (const char32 *p = & string [0]; *p != U'\0'; p ++) {
 		char32 kar = *p;

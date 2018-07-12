@@ -50,15 +50,15 @@ void praat_sortMenuCommands () {
 	qsort (& theCommands.at [1], theCommands.size, sizeof (Praat_Command), compareMenuCommands);
 }
 
-static integer lookUpMatchingMenuCommand (const char32 *window, const char32 *menu, const char32 *title) {
+static integer lookUpMatchingMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
 /*
  * A menu command is fully specified by its environment (window + menu) and its title.
  */
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
-		const char32 *tryWindow = command -> window.get();
-		const char32 *tryMenu = command -> menu.get();
-		const char32 *tryTitle = command -> title.get();
+		conststring32 tryWindow = command -> window.get();
+		conststring32 tryMenu = command -> menu.get();
+		conststring32 tryTitle = command -> title.get();
 		if ((window == tryWindow || (window && tryWindow && str32equ (window, tryWindow))) &&
 		    (menu == tryMenu || (menu && tryMenu && str32equ (menu, tryMenu))) &&
 		    (title == tryTitle || (title && tryTitle && str32equ (title, tryTitle)))) return i;
@@ -98,14 +98,14 @@ static void gui_cb_menu (Praat_Command me, GuiMenuItemEvent event) {
 	do_menu (me, modified);
 }
 
-static GuiMenu windowMenuToWidget (const char32 *window, const char32 *menu) {
+static GuiMenu windowMenuToWidget (conststring32 window, conststring32 menu) {
 	return
 		str32equ (window, U"Picture") ? praat_picture_resolveMenu (menu) :
 		str32equ (window, U"Objects") ? praat_objects_resolveMenu (menu) : nullptr;
 }
 
-GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, const char32 *title /* cattable */,
-	const char32 *after, uint32 flags, UiCallback callback, const char32 *nameOfCallback)
+GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, conststring32 title /* cattable */,
+	conststring32 after, uint32 flags, UiCallback callback, conststring32 nameOfCallback)
 {
 	integer position;
 	int depth = flags, key = 0;
@@ -228,8 +228,8 @@ GuiMenuItem praat_addMenuCommand_ (const char32 *window, const char32 *menu, con
 	return button_as_GuiMenuItem;
 }
 
-void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const char32 *title,
-	const char32 *after, integer depth, const char32 *script)
+void praat_addMenuCommandScript (conststring32 window, conststring32 menu, conststring32 title,
+	conststring32 after, integer depth, conststring32 script)
 {
 	try {
 		Melder_assert (window && menu && title && after && script);
@@ -323,7 +323,7 @@ void praat_addMenuCommandScript (const char32 *window, const char32 *menu, const
 	}
 }
 
-void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char32 *title) {
+void praat_hideMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
 	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
 	integer found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return;
@@ -335,7 +335,7 @@ void praat_hideMenuCommand (const char32 *window, const char32 *menu, const char
 	}
 }
 
-void praat_showMenuCommand (const char32 *window, const char32 *menu, const char32 *title) {
+void praat_showMenuCommand (conststring32 window, conststring32 menu, conststring32 title) {
 	if (theCurrentPraatApplication -> batch || ! window || ! menu || ! title) return;
 	integer found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return;
@@ -381,7 +381,7 @@ void praat_saveToggledMenuCommands (MelderString *buffer) {
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand_ (GuiForm parent, conststring32 title, UiCallback callback, const char32 *nameOfCallback, int x, int y) {
+void praat_addFixedButtonCommand_ (GuiForm parent, conststring32 title, UiCallback callback, conststring32 nameOfCallback, int x, int y) {
 	autoPraat_Command me = Thing_new (Praat_Command);
 	my window = Melder_dup_f (U"Objects");
 	my title = Melder_dup_f (title);
@@ -416,7 +416,7 @@ void praat_sensitivizeFixedButtonCommand (conststring32 title, bool sensitive) {
 		GuiThing_setSensitive (commandFound -> button, sensitive);
 }
 
-int praat_doMenuCommand (conststring32 title, const char32 *arguments, Interpreter interpreter) {
+int praat_doMenuCommand (conststring32 title, conststring32 arguments, Interpreter interpreter) {
 	Praat_Command commandFound = nullptr;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
@@ -432,7 +432,7 @@ int praat_doMenuCommand (conststring32 title, const char32 *arguments, Interpret
 	return 1;
 }
 
-int praat_doMenuCommand (const char32 *title, integer narg, Stackel args, Interpreter interpreter) {
+int praat_doMenuCommand (conststring32 title, integer narg, Stackel args, Interpreter interpreter) {
 	Praat_Command commandFound = nullptr;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
@@ -454,7 +454,7 @@ Praat_Command praat_getMenuCommand (integer i)
 	{ return i < 1 || i > theCommands.size ? nullptr : theCommands.at [i]; }
 
 void praat_addCommandsToEditor (Editor me) {
-	const char32 *windowName = my classInfo -> className;
+	conststring32 windowName = my classInfo -> className;
 	for (integer i = 1; i <= theCommands.size; i ++) {
 		Praat_Command command = theCommands.at [i];
 		if (str32equ (command -> window.get(), windowName)) {
@@ -489,8 +489,8 @@ static bool commandHasFileNameArgument (Praat_Command command) {
 	return hasFileNameArgument;
 }
 
-static const char32 * getReturnType (Praat_Command command) {
-	const char32 *returnType =
+static conststring32 getReturnType (Praat_Command command) {
+	const conststring32 returnType =
 		Melder_nequ (command -> nameOfCallback, U"NEW1_", 5) ? U"PraatObject" :
 		Melder_nequ (command -> nameOfCallback, U"READ1_", 6) ? U"PraatObject" :
 		Melder_nequ (command -> nameOfCallback, U"REAL_", 5) ? U"double" :
@@ -516,7 +516,7 @@ void praat_menuCommands_writeC (bool isInHeaderFile, bool includeCreateAPI, bool
 		MelderInfo_writeLine (U"\n/* Menu command \"", command -> title.get(), U"\"",
 			deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
 			U" */");
-		const char32 *returnType = getReturnType (command);
+		conststring32 returnType = getReturnType (command);
 		MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
 		bool isDirect = ! str32str (command -> title.get(), U"...");
 		if (isDirect) {

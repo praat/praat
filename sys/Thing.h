@@ -35,7 +35,7 @@ struct structClassInfo {
 	/*
 	 * The following five fields are statically initialized by the Thing_implement() macro.
 	 */
-	const char32 *className;
+	conststring32 className;
 	ClassInfo semanticParent;
 	integer size;
 	Thing (* _new) ();   // objects have to be constructed via this function, because it calls C++ "new", which initializes the C++ class pointer
@@ -129,7 +129,7 @@ struct structThing {
 
 /* All functions with 'Thing me' as the first argument assume that it is not null. */
 
-const char32 * Thing_className (Thing me);
+conststring32 Thing_className (Thing me);
 /* Return your class name. */
 
 bool Thing_isa (Thing me, ClassInfo klas);
@@ -167,10 +167,10 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 		or with Data_readText () or Data_readBinary () if the object is a Collection.
 		Calls to this routine should preferably be put in the beginning of main ().
 */
-void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName);
+void Thing_recognizeClassByOtherName (ClassInfo readableClass, conststring32 otherName);
 integer Thing_listReadableClasses ();
 
-ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion);
+ClassInfo Thing_classFromClassName (conststring32 className, int *formatVersion);
 /*
 	Function:
 		Return the class info table of class 'className', or null if it is not recognized.
@@ -185,11 +185,11 @@ ClassInfo Thing_classFromClassName (const char32 *className, int *formatVersion)
 	((klas) _Thing_dummyObject (class##klas))
 Thing _Thing_dummyObject (ClassInfo classInfo);
 
-const char32 * Thing_getName (Thing me);
+conststring32 Thing_getName (Thing me);
 /* Return a pointer to your internal name (which can be null). */
-const char32 * Thing_messageName (Thing me);
+conststring32 Thing_messageName (Thing me);
 
-void Thing_setName (Thing me, const char32 *name /* cattable */);
+void Thing_setName (Thing me, conststring32 name /* cattable */);
 /*
 	Function:
 		remember that you are called 'name'.
@@ -482,7 +482,7 @@ autoThing Thing_newFromClass (ClassInfo klas);
 		other members are 0.
 */
 
-autoThing Thing_newFromClassName (const char32 *className, int *p_formatVersion);
+autoThing Thing_newFromClassName (conststring32 className, int *out_formatVersion);
 /*
 	Function:
 		return a new object of class 'className', or null if the class name is not recognized.

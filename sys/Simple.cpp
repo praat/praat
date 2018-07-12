@@ -55,7 +55,7 @@ autoSimpleDouble SimpleDouble_create (double number) {
 
 Thing_implement (SimpleString, Daata, 0);
 
-autoSimpleString SimpleString_create (const char32 *string) {
+autoSimpleString SimpleString_create (conststring32 string) {
 	autoSimpleString me = Thing_new (SimpleString);
 	my string = Melder_dup (string);
 	return me;

@@ -21,7 +21,7 @@
 #include "UnicodeData.h"
 #include "abcio.h"
 
-void Melder_fwrite32to8 (const char32 *string, FILE *f) {
+void Melder_fwrite32to8 (conststring32 string, FILE *f) {
 	/*
 	 * Precondition:
 	 *    the string's encoding is UTF-32.
@@ -52,7 +52,7 @@ void Melder_fwrite32to8 (const char32 *string, FILE *f) {
 	}
 }
 
-void MelderFile_writeText (MelderFile file, const char32 *text, kMelder_textOutputEncoding outputEncoding) {
+void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutputEncoding outputEncoding) {
 	if (! text) text = U"";
 	autofile f = Melder_fopen (file, "wb");
 	if (outputEncoding == kMelder_textOutputEncoding::UTF8) {
@@ -97,7 +97,7 @@ void MelderFile_writeText (MelderFile file, const char32 *text, kMelder_textOutp
 	f.close (file);
 }
 
-void MelderFile_appendText (MelderFile file, const char32 *text) {
+void MelderFile_appendText (MelderFile file, conststring32 text) {
 	if (! text) text = U"";
 	autofile f1;
 	try {
@@ -219,7 +219,7 @@ void MelderFile_appendText (MelderFile file, const char32 *text) {
 	}
 }
 
-static void _MelderFile_write (MelderFile file, const char32 *string) {
+static void _MelderFile_write (MelderFile file, conststring32 string) {
 	if (! string) return;
 	int64 length = str32len (string);
 	FILE *f = file -> filePointer;

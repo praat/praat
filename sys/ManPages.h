@@ -35,17 +35,17 @@ Thing_define (ManPages, Daata) {
 
 autoManPages ManPages_create ();
 
-void ManPages_addPage (ManPages me, const char32 *title, const char32 *author, integer date,
+void ManPages_addPage (ManPages me, conststring32 title, conststring32 author, integer date,
 	struct structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
 	and not change after adding them to the ManPages.
 */
 
-integer ManPages_lookUp (ManPages me, const char32 *title);
+integer ManPages_lookUp (ManPages me, conststring32 title);
 
 void ManPages_writeOneToHtmlFile (ManPages me, integer ipage, MelderFile file);
-void ManPages_writeAllToHtmlDir (ManPages me, const char32 *dirPath);
+void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath);
 
 integer ManPages_uniqueLinksHither (ManPages me, integer ipage);
 char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles);

@@ -60,14 +60,14 @@ Thing_define (Interpreter, Thing) {
 	bool running, stopped;
 };
 
-autoInterpreter Interpreter_create (const char32 *environmentName, ClassInfo editorClass);
+autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo editorClass);
 autoInterpreter Interpreter_createFromEnvironment (Editor editor);
 
 void Melder_includeIncludeFiles (autostring32 *text);
 integer Interpreter_readParameters (Interpreter me, char32 *text);
 Thing_declare (UiForm);
-UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const char32 *fileName,
-	void (*okCallback) (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter, const char32 *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 fileName,
+	void (*okCallback) (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool modified, void *closure), void *okClosure,
 	bool selectionOnly);
 void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog);
 void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments);

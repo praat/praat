@@ -36,7 +36,7 @@
 static Interpreter theInterpreter;
 static autoInterpreter theLocalInterpreter;
 static Daata theSource;
-static const char32 *theExpression;
+static conststring32 theExpression;
 static int theLevel = 1;
 #define MAXIMUM_NUMBER_OF_LEVELS  20
 static int theExpressionType [1 + MAXIMUM_NUMBER_OF_LEVELS];
@@ -209,7 +209,7 @@ enum { GEENSYMBOOL_,
 /* The names that start with an underscore (_) do not occur in the formula text: */
 /* they are used in error messages and in debugging (see Formula_print). */
 
-static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
+static const conststring32 Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 	U"if", U"then", U"else", U"(", U"[", U"{", U",", U":", U"from", U"to",
 	U"or", U"and", U"not", U"=", U"<>", U"<=", U"<", U">=", U">",
 	U"+", U"-", U"*", U"/", U"div", U"mod", U"^", U"_call", U"_neg",
@@ -303,13 +303,13 @@ static const char32 *Formula_instructionNames [1 + hoogsteSymbool] = { U"",
 #define nieuwlees (lexan [++ ilexan]. symbol)
 #define oudlees  (-- ilexan)
 
-static void formulefout (const char32 *message, int position) {
+static void formulefout (conststring32 message, int position) {
 	static MelderString truncatedExpression { };
 	MelderString_ncopy (& truncatedExpression, theExpression, position + 1);
 	Melder_throw (message, U":\n" U_LEFT_GUILLEMET U" ", truncatedExpression.string);
 }
 
-static const char32 *languageNameCompare_searchString;
+static conststring32 languageNameCompare_searchString;
 
 static int languageNameCompare (const void *first, const void *second) {
 	int i = * (int *) first, j = * (int *) second;
@@ -317,7 +317,7 @@ static int languageNameCompare (const void *first, const void *second) {
 		j == 0 ? languageNameCompare_searchString : Formula_instructionNames [j]);
 }
 
-static int Formula_hasLanguageName (const char32 *f) {
+static int Formula_hasLanguageName (conststring32 f) {
 	static int *index;
 	if (! index) {
 		index = NUMvector <int> (1, hoogsteInvoersymbool);
@@ -859,10 +859,10 @@ static void pas (int symbol) {
 	if (symbol == nieuwlees) {
 		return;   // success
 	} else {
-		const char32 *symbolName1 = Formula_instructionNames [symbol];
-		const char32 *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
-		bool needQuotes1 = ! str32chr (symbolName1, U' ');
-		bool needQuotes2 = ! str32chr (symbolName2, U' ');
+		const conststring32 symbolName1 = Formula_instructionNames [symbol];
+		const conststring32 symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
+		const bool needQuotes1 = ! str32chr (symbolName1, U' ');
+		const bool needQuotes2 = ! str32chr (symbolName2, U' ');
 		static MelderString melding { };
 		MelderString_copy (& melding,
 			U"Expected ", ( needQuotes1 ? U"\"" : nullptr ), symbolName1, ( needQuotes1 ? U"\"" : nullptr ),
@@ -875,7 +875,7 @@ static bool pasArguments () {
     int symbol = nieuwlees;
     if (symbol == HAAKJEOPENEN_) return true;   // success: a function call like: myFunction (...)
     if (symbol == COLON_) return false;   // success: a function call like: myFunction: ...
-    const char32 *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
+    const conststring32 symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
     bool needQuotes2 = ! str32chr (symbolName2, U' ');
     static MelderString melding { };
     MelderString_copy (& melding,
@@ -1943,7 +1943,7 @@ static int praat_findObjectById (integer id) {
 	Melder_throw (U"No object with number ", id, U".");
 }
 
-static int praat_findObjectFromString (const char32 *name) {
+static int praat_findObjectFromString (conststring32 name) {
 	int IOBJECT;
 	if (*name >= U'A' && *name <= U'Z') {
 		/*
@@ -2076,7 +2076,7 @@ static void Formula_removeLabels () {
 static void Formula_print (FormulaInstruction f) {
 	int i = 0, symbol;
 	do {
-		const char32 *instructionName;
+		conststring32 instructionName;
 		symbol = f [++ i]. symbol;
 		instructionName = Formula_instructionNames [symbol];
 		if (symbol == NUMBER_)
@@ -2106,7 +2106,7 @@ static void Formula_print (FormulaInstruction f) {
 	} while (symbol != END_);
 }
 
-void Formula_compile (Interpreter interpreter, Daata data, const char32 *expression, int expressionType, bool optimize) {
+void Formula_compile (Interpreter interpreter, Daata data, conststring32 expression, int expressionType, bool optimize) {
 	theInterpreter = interpreter;
 	if (! theInterpreter) {
 		if (! theLocalInterpreter) {
@@ -2251,7 +2251,7 @@ static void pushVariable (InterpreterVariable var) {
 	stackel -> variable = var;
 	//stackel -> owned = false;
 }
-const char32 *Stackel_whichText (Stackel me) {
+conststring32 Stackel_whichText (Stackel me) {
 	return
 		my which == Stackel_NUMBER ? U"a number" :
 		my which == Stackel_NUMERIC_VECTOR ? U"a numeric vector" :
@@ -3523,7 +3523,7 @@ static void do_do () {
 	}
 	if (stack [0]. which != Stackel_STRING)
 		Melder_throw (U"The first argument of the function \"do\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), U".");
-	const char32 *command = stack [0]. string;
+	conststring32 command = stack [0]. string;
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != nullptr) {
 		autoMelderString valueString;
 		MelderString_appendCharacter (& valueString, 1);   // TODO: check whether this is needed at all, or is just MelderString_empty enough?
@@ -3619,7 +3619,7 @@ static void do_doStr () {
 	}
 	if (stack [0]. which != Stackel_STRING)
 		Melder_throw (U"The first argument of the function \"do$\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), U".");
-	const char32 *command = stack [0]. string;
+	conststring32 command = stack [0]. string;
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != nullptr) {
 		static MelderString info;
 		MelderString_empty (& info);
@@ -4547,7 +4547,7 @@ static void do_stringMatchesCriterion (kMelder_string criterion) {
 static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		const char32 *errorMessage;
+		conststring32 errorMessage;
 		regexp *compiled_regexp = CompileRE (t->string, & errorMessage, 0);
 		if (! compiled_regexp) {
 			Melder_throw (U"index_regex(): ", errorMessage, U".");
@@ -4578,7 +4578,7 @@ static void do_replaceStr () {
 static void do_replace_regexStr () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		const char32 *errorMessage;
+		conststring32 errorMessage;
 		regexp *compiled_regexp = CompileRE (t->string, & errorMessage, 0);
 		if (! compiled_regexp) {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
@@ -5424,7 +5424,7 @@ static void do_pauseFormAddReal () {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		const char32 *defaultString = nullptr;
+		conststring32 defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -5449,7 +5449,7 @@ static void do_pauseFormAddPositive () {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		const char32 *defaultString = nullptr;
+		conststring32 defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -5474,7 +5474,7 @@ static void do_pauseFormAddInteger () {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		const char32 *defaultString = nullptr;
+		conststring32 defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -5499,7 +5499,7 @@ static void do_pauseFormAddNatural () {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		const char32 *defaultString = nullptr;
+		conststring32 defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {

@@ -44,7 +44,7 @@ struct structClassInfo theClassInfo_Thing = {
 };
 ClassInfo classThing = & theClassInfo_Thing;
 
-const char32 * Thing_className (Thing me) { return my classInfo -> className; }
+conststring32 Thing_className (Thing me) { return my classInfo -> className; }
 
 autoThing Thing_newFromClass (ClassInfo classInfo) {
 	autoThing me (classInfo -> _new ());
@@ -90,24 +90,24 @@ integer Thing_listReadableClasses () {
 static integer theNumberOfAliases = 0;
 static struct {
 	ClassInfo readableClass;
-	const char32 *otherName;
+	conststring32 otherName;
 } theAliases [1 + 100];
 
-void Thing_recognizeClassByOtherName (ClassInfo readableClass, const char32 *otherName) {
+void Thing_recognizeClassByOtherName (ClassInfo readableClass, conststring32 otherName) {
 	theAliases [++ theNumberOfAliases]. readableClass = readableClass;
 	theAliases [theNumberOfAliases]. otherName = otherName;
 }
 
-ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
+ClassInfo Thing_classFromClassName (conststring32 klas, int *out_formatVersion) {
 	static char32 buffer [1+100];
 	str32ncpy (buffer, klas ? klas : U"", 100);
 	buffer [100] = U'\0';
 	char32 *space = str32chr (buffer, U' ');
 	if (space) {
 		*space = U'\0';   // strip version number
-		if (p_formatVersion) *p_formatVersion = Melder_atoi (space + 1);
+		if (out_formatVersion) *out_formatVersion = Melder_atoi (space + 1);
 	} else {
-		if (p_formatVersion) *p_formatVersion = 0;
+		if (out_formatVersion) *out_formatVersion = 0;
 	}
 
 	/*
@@ -133,9 +133,9 @@ ClassInfo Thing_classFromClassName (const char32 *klas, int *p_formatVersion) {
 	Melder_throw (U"Class \"", buffer, U"\" not recognized.");
 }
 
-autoThing Thing_newFromClassName (const char32 *className, int *p_formatVersion) {
+autoThing Thing_newFromClassName (conststring32 className, int *out_formatVersion) {
 	try {
-		ClassInfo classInfo = Thing_classFromClassName (className, p_formatVersion);
+		ClassInfo classInfo = Thing_classFromClassName (className, out_formatVersion);
 		return Thing_newFromClass (classInfo);
 	} catch (MelderError) {
 		Melder_throw (className, U" not created.");
@@ -214,9 +214,9 @@ void Thing_info (Thing me) {
 	Thing_infoWithIdAndFile (me, 0, nullptr);
 }
 
-const char32 * Thing_getName (Thing me) { return my name.get(); }
+conststring32 Thing_getName (Thing me) { return my name.get(); }
 
-const char32 * Thing_messageName (Thing me) {
+conststring32 Thing_messageName (Thing me) {
 	static MelderString buffers [19] { };
 	static int ibuffer = 0;
 	if (++ ibuffer == 19) ibuffer = 0;
@@ -228,7 +228,7 @@ const char32 * Thing_messageName (Thing me) {
 	return buffers [ibuffer]. string;
 }
 
-void Thing_setName (Thing me, const char32 *name /* cattable */) {
+void Thing_setName (Thing me, conststring32 name /* cattable */) {
 	my name = Melder_dup_f (name);   // BUG: that's no checking
 	my v_nameChanged ();
 }

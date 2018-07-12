@@ -1029,7 +1029,7 @@ integer TextGrid_maximumLabelLength (TextGrid me) {
 
 static void genericize (autostring32& stringRef, char32 *buffer) {
 	if (stringRef) {
-		const char32 *p = stringRef.get();
+		const char32 *p = & stringRef [0];
 		while (*p) {
 			if (*p > 126) {   // only if necessary
 				Longchar_genericize32 (stringRef.get(), buffer);

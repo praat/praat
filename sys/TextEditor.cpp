@@ -103,8 +103,8 @@ static void closeDocument (TextEditor me) {
 	forget (me);
 }
 
-static void cb_open_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
-	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
+static void cb_open_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
+	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (TextEditor);
 	MelderFile file = UiFile_getFile (sendingForm);
@@ -118,8 +118,8 @@ static void cb_showOpen (EditorCommand cmd) {
 	UiInfile_do (my openDialog.get());
 }
 
-static void cb_saveAs_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, const char32 * /* sendingString */,
-	Interpreter /* interpreter */, const char32 * /* invokingButtonTitle */, bool /* modified */, void *void_me)
+static void cb_saveAs_ok (UiForm sendingForm, integer /* narg */, Stackel /* args */, conststring32 /* sendingString */,
+	Interpreter /* interpreter */, conststring32 /* invokingButtonTitle */, bool /* modified */, void *void_me)
 {
 	iam (TextEditor);
 	MelderFile file = UiFile_getFile (sendingForm);
@@ -557,7 +557,7 @@ static void menu_cb_goToLine (TextEditor me, EDITOR_ARGS_FORM) {
 static void menu_cb_convertToCString (TextEditor me, EDITOR_ARGS_DIRECT) {
 	autostring32 text = GuiText_getString (my textWidget);
 	char32 buffer [2] = U" ";
-	const char32 *hex [16] = { U"0", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8", U"9", U"A", U"B", U"C", U"D", U"E", U"F" };
+	const conststring32 hex [16] = { U"0", U"1", U"2", U"3", U"4", U"5", U"6", U"7", U"8", U"9", U"A", U"B", U"C", U"D", U"E", U"F" };
 	MelderInfo_open ();
 	MelderInfo_write (U"\"");
 	for (char32 *p = & text [0]; *p != U'\0'; p ++) {
@@ -675,7 +675,7 @@ void structTextEditor :: v_createMenus () {
 	fontSizeButton_24 = Editor_addCommand (this, U"Font", U"24", GuiMenu_CHECKBUTTON, menu_cb_24);
 }
 
-void TextEditor_init (TextEditor me, const char32 *initialText) {
+void TextEditor_init (TextEditor me, conststring32 initialText) {
 	Editor_init (me, 0, 0, 600, 400, U"", nullptr);
 	setFontSize (me, my p_fontSize);
 	if (initialText) {
@@ -686,7 +686,7 @@ void TextEditor_init (TextEditor me, const char32 *initialText) {
 	theReferencesToAllOpenTextEditors. addItem_ref (me);
 }
 
-autoTextEditor TextEditor_create (const char32 *initialText) {
+autoTextEditor TextEditor_create (conststring32 initialText) {
 	try {
 		autoTextEditor me = Thing_new (TextEditor);
 		TextEditor_init (me.get(), initialText);

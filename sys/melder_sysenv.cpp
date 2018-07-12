@@ -40,7 +40,7 @@
 #endif
 #include "melder.h"
 
-char32 * Melder_getenv (const char32 *variableName) {
+char32 * Melder_getenv (conststring32 variableName) {
 	#if defined (macintosh) || defined (UNIX) || defined (__MINGW32__) || defined (__CYGWIN__)
 		return Melder_peek8to32 (getenv (Melder_peek32to8 (variableName)));
 	#elif defined (_WIN32)
@@ -55,7 +55,7 @@ char32 * Melder_getenv (const char32 *variableName) {
 	#endif
 }
 
-void Melder_system (const char32 *command) {
+void Melder_system (conststring32 command) {
 	if (! command) command = U"";
 	#if defined (macintosh) || defined (UNIX)
 		if (system (Melder_peek32to8 (command)) != 0)
@@ -100,7 +100,7 @@ void Melder_system (const char32 *command) {
 	#endif
 }
 
-void Melder_execv (const char32 *executableFileName, integer narg, char32 ** args) {
+void Melder_execv (conststring32 executableFileName, integer narg, char32 ** args) {
 	#if defined (macintosh) || defined (UNIX)
 		Melder_casual (U"Command: <<", executableFileName, U">>");
 		autostring8vector args8 (narg + 2);

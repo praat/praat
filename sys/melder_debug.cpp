@@ -102,7 +102,7 @@ the behaviour of Praat will temporarily change in the following ways:
  * which can call Melder_realloc() and Melder_free();
  * also, we need no newline nativization, as Melder_32to8_inplace() does.
  */
-static const char * peek32to8 (const char32 *string) {
+static const char * peek32to8 (conststring32 string) {
 	if (! string) return "";
 	static char *buffer { nullptr };
 	static int64 bufferSize { 0 };
@@ -145,7 +145,7 @@ static const char * peek32to8 (const char32 *string) {
 	return buffer;
 }
 #ifdef _WIN32
-static const char16 * peek32to16 (const char32 *string) {
+static const char16 * peek32to16 (conststring32 string) {
 	if (! string) return u"";
 	static char16 *buffer { nullptr };
 	static int64 bufferSize { 0 };
@@ -189,7 +189,7 @@ static const char16 * peek32to16 (const char32 *string) {
 bool Melder_consoleIsAnsi = false;
 
 //extern FILE *winstdout;
-void Melder_writeToConsole (const char32 *message, bool useStderr) {
+void Melder_writeToConsole (conststring32 message, bool useStderr) {
 	if (! message) return;
 	#if defined (_WIN32)
 		(void) useStderr;

@@ -22,7 +22,7 @@
 	#include <Shlobj.h>
 #endif
 
-autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, const char32 *title, bool allowMultipleFiles) {
+autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 title, bool allowMultipleFiles) {
 	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
 	autoStringSet me = StringSet_create ();
@@ -187,7 +187,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 	return outfileName;
 }
 
-autostring32 GuiFileSelect_getDirectoryName (GuiWindow parent, const char32 *title) {
+autostring32 GuiFileSelect_getDirectoryName (GuiWindow parent, conststring32 title) {
 	structMelderDir saveDir { };
 	Melder_getDefaultDir (& saveDir);
 	autostring32 directoryName;

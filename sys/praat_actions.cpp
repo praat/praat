@@ -807,7 +807,7 @@ void praat_actions_writeC (bool isInHeaderFile, bool includeSaveAPI,
 		MelderInfo_writeLine (U"\n/* Action command \"", command -> title.get(), U"\"",
 			deprecated ? U", deprecated " : U"", deprecated ? Melder_integer (command -> deprecationYear) : U"",
 			U" */");
-		const char32 *returnType = getReturnType (command);
+		conststring32 returnType = getReturnType (command);
 		MelderInfo_writeLine (returnType, U" Praat", str32chr (command -> nameOfCallback, U'_'), U" (");
 		bool isDirect = ! str32str (command -> title.get(), U"...");
 		if (isDirect) {

@@ -271,31 +271,31 @@ int64 Melder_movingReallocationsCount () {
 	return totalNumberOfMovingReallocs;
 }
 
-int Melder_cmp (const char32 *string1, const char32 *string2) {
+int Melder_cmp (conststring32 string1, conststring32 string2) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32cmp (string1, string2);
 }
 
-int Melder_cmp_caseInsensitive (const char32 *string1, const char32 *string2) {
+int Melder_cmp_caseInsensitive (conststring32 string1, conststring32 string2) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32cmp_caseInsensitive (string1, string2);
 }
 
-int Melder_ncmp (const char32 *string1, const char32 *string2, integer n) {
+int Melder_ncmp (conststring32 string1, conststring32 string2, integer n) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp (string1, string2, n);
 }
 
-int Melder_ncmp_caseInsensitive (const char32 *string1, const char32 *string2, integer n) {
+int Melder_ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp_caseInsensitive (string1, string2, n);
 }
 
-bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2) {
+bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststring32 string2) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	if (*string1 == U'\0') return *string2 == U'\0';
@@ -304,7 +304,7 @@ bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char
 	return ! str32cmp (string1 + 1, string2 + 1);
 }
 
-char32 * Melder_tok (char32 *string, const char32 *delimiter) {
+char32 * Melder_tok (char32 *string, conststring32 delimiter) {
 	const char32 *spanp;
 	char32 c, sc;
 	char32 *tok;

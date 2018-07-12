@@ -515,7 +515,7 @@ static void charSize (void *void_me, _Graphics_widechar *lc) {
 }
 
 static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
-	const char32 *codes, int nchars, int width)
+	const char32 codes [], int nchars, int width)
 {
 	iam (Graphics);
 	//Melder_casual (U"nchars ", nchars, U" first ", (int) lc->kar, U" ", (char32) lc -> kar, U" rightToLeft ", lc->rightToLeft);
@@ -540,7 +540,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 					my d_printf (my d_file, "[1 0 0.25 1 0 0] concat 0 0 M\n");
 			}
 			my d_printf (my d_file, "(");
-			const char32 *p = codes;
+			const char32 *p = & codes [0];
 			while (*p) {
 				if (*p == U'(' || *p == U')' || *p == U'\\') {
 					my d_printf (my d_file, "\\%c", (unsigned char) *p);
@@ -826,7 +826,7 @@ static void exitText (void *void_me) {
 static integer bufferSize;
 static _Graphics_widechar *theWidechar;
 static char32 *charCodes;
-static int initBuffer (const char32 *txt) {
+static int initBuffer (conststring32 txt) {
 	try {
 		integer sizeNeeded = str32len (txt) + 1;
 		if (sizeNeeded > bufferSize) {
@@ -1230,9 +1230,9 @@ static void drawCells (Graphics me, double xWC, double yWC, _Graphics_widechar l
 	my wrapWidth = saveWrapWidth;
 }
 
-static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* cattable */, _Graphics_widechar a_widechar []) {
+static void parseTextIntoCellsLinesRuns (Graphics me, conststring32 txt /* cattable */, _Graphics_widechar a_widechar []) {
 	char32 kar;
-	const char32 *in = txt;
+	const char32 *in = & txt [0];
 	int nquote = 0;
 	_Graphics_widechar *out = & a_widechar [0];
 	bool charSuperscript = false, charSubscript = false, charItalic = false, charBold = false;
@@ -1434,7 +1434,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const char32 *txt /* catta
 	out -> rightToLeft = false;
 }
 
-double Graphics_textWidth (Graphics me, const char32 *txt) {
+double Graphics_textWidth (Graphics me, conststring32 txt) {
 	if (! initBuffer (txt)) return 0.0;
 	initText (me);
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
@@ -1444,7 +1444,7 @@ double Graphics_textWidth (Graphics me, const char32 *txt) {
 	return width / my scaleX;
 }
 
-void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, const char32 *txt) {
+void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, conststring32 txt) {
 	_Graphics_widechar *plc, *startOfLine;
 	double width = 0.0, lineHeight = (1.1 / 72) * my fontSize * my resolution;
 	integer x1DC = x1 * my scaleX + my deltaX + 2, x2DC = x2 * my scaleX + my deltaX - 2;
@@ -1502,7 +1502,7 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 	exitText (me);
 }
 
-static void _Graphics_text (Graphics me, double xWC, double yWC, const char32 *txt) {
+static void _Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 	if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {
 		double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
 		integer numberOfLines = 1;
@@ -1671,13 +1671,13 @@ static double psTextWidth (_Graphics_widechar string [], bool useSilipaPS) {
 	return textWidth;
 }
 
-double Graphics_textWidth_ps_mm (Graphics me, const char32 *txt, bool useSilipaPS) {
+double Graphics_textWidth_ps_mm (Graphics me, conststring32 txt, bool useSilipaPS) {
 	if (! initBuffer (txt)) return 0.0;
 	parseTextIntoCellsLinesRuns (me, txt, theWidechar);
 	return psTextWidth (theWidechar, useSilipaPS) * (double) my fontSize * (25.4 / 72.0);
 }
 
-double Graphics_textWidth_ps (Graphics me, const char32 *txt, bool useSilipaPS) {
+double Graphics_textWidth_ps (Graphics me, conststring32 txt, bool useSilipaPS) {
 	return Graphics_dxMMtoWC (me, Graphics_textWidth_ps_mm (me, txt, useSilipaPS));
 }
 

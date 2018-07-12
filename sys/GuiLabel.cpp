@@ -61,7 +61,7 @@ Thing_implement (GuiLabel, GuiControl, 0);
 #endif
 
 GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *labelText, uint32 flags)
+	conststring32 labelText, uint32 flags)
 {
 	autoGuiLabel me = Thing_new (GuiLabel);
 	my d_shell = parent -> d_shell;
@@ -111,14 +111,14 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 }
 
 GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *labelText, uint32 flags)
+	conststring32 labelText, uint32 flags)
 {
 	GuiLabel me = GuiLabel_create (parent, left, right, top, bottom, labelText, flags);
 	GuiThing_show (me);
 	return me;
 }
 
-void GuiLabel_setText (GuiLabel me, const char32 *text /* cattable */) {
+void GuiLabel_setText (GuiLabel me, conststring32 text /* cattable */) {
 	#if gtk
 		gtk_label_set_text (GTK_LABEL (my d_widget), Melder_peek32to8 (text));
 	#elif motif

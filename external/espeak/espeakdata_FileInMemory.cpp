@@ -157,7 +157,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 				Table_setStringValue (thee.get(), irow, 1, fim -> d_id.get());
 				const char32 *name = get_stringAfterPrecursor_u8 (fim -> d_data, U"name");
 				// The first character of name must be upper case
-				if (name) { 
+				if (name) {
 					autoMelderString capitalFirst;
 					MelderString_copy (& capitalFirst, name); // we cannot modify original
 					char32 capital = Melder_toUpperCase (*name);
@@ -166,7 +166,7 @@ autoTable Table_createAsEspeakVoicesProperties () {
 				} else {
 					Table_setStringValue (thee.get(), irow, 2, fim -> d_id.get());
 				}
-				Table_setNumericValue (thee.get(), irow, 3, ifile); 
+				Table_setNumericValue (thee.get(), irow, 3, ifile);
 				conststring32 word = get_wordAfterPrecursor_u8 (fim -> d_data, U"gender");
 				Table_setStringValue (thee.get(), irow, 4, (word ? word : U"0"));
 				word = get_wordAfterPrecursor_u8 (fim -> d_data, U"age");
