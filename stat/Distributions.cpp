@@ -43,7 +43,7 @@ void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, inte
 		Melder_throw (me, U": the specified column number is ", columnNumber, U", but should be at most my number of columns (", my numberOfColumns, U").");
 }
 
-void Distributions_peek (Distributions me, integer column, char32 **string, integer *number) {
+void Distributions_peek (Distributions me, integer column, conststring32 *out_string, integer *out_number) {
 	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
 	if (my numberOfRows < 1)
 		Melder_throw (me, U": I have no candidates.");
@@ -64,10 +64,10 @@ void Distributions_peek (Distributions me, integer column, char32 **string, inte
 	} while (irow > my numberOfRows);   // guard against rounding errors
 	if (! my rowLabels [irow])
 		Melder_throw (me, U": no string in row ", irow, U".");
-	if (string)
-		*string = my rowLabels [irow].get();
-	if (number)
-		*number = irow;
+	if (out_string)
+		*out_string = my rowLabels [irow].get();
+	if (out_number)
+		*out_number = irow;
 }
 
 double Distributions_getProbability (Distributions me, conststring32 string, integer column) {

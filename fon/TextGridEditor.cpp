@@ -835,9 +835,9 @@ static void findInTier (TextGridEditor me) {
 		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
 		while (iinterval <= tier -> intervals.size) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			char32 *text = interval -> text.get();
+			conststring32 text = interval -> text.get();
 			if (text) {
-				char32 *position = str32str (text, my findString.get());
+				const char32 *position = str32str (text, my findString.get());
 				if (position) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
@@ -855,9 +855,9 @@ static void findInTier (TextGridEditor me) {
 		integer ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection) + 1;
 		while (ipoint <= tier -> points.size) {
 			TextPoint point = tier->points.at [ipoint];
-			char32 *text = point -> mark.get();
+			conststring32 text = point -> mark.get();
 			if (text) {
-				char32 *position = str32str (text, my findString.get());
+				const char32 *position = str32str (text, my findString.get());
 				if (position) {
 					my startSelection = my endSelection = point -> number;
 					scrollToView (me, point -> number);
@@ -876,7 +876,7 @@ static void do_find (TextGridEditor me) {
 	if (my findString) {
 		integer left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
-		char32 *position = str32str (label.get() + right, my findString.get());   // CRLF BUG?
+		const char32 *position = str32str (& label [right], my findString.get());   // CRLF BUG?
 		if (position) {
 			GuiText_setSelection (my text, position - label.get(), position - label.get() + str32len (my findString.get()));
 		} else {
@@ -908,10 +908,10 @@ static void checkSpellingInTier (TextGridEditor me) {
 		integer iinterval = IntervalTier_timeToIndex (tier, my startSelection) + 1;
 		while (iinterval <= tier -> intervals.size) {
 			TextInterval interval = tier -> intervals.at [iinterval];
-			char32 *text = interval -> text.get();
+			conststring32 text = interval -> text.get();
 			if (text) {
 				integer position = 0;
-				char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
+				conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = interval -> xmin;
 					my endSelection = interval -> xmax;
@@ -929,10 +929,10 @@ static void checkSpellingInTier (TextGridEditor me) {
 		integer ipoint = AnyTier_timeToLowIndex (tier->asAnyTier(), my startSelection) + 1;
 		while (ipoint <= tier -> points.size) {
 			TextPoint point = tier -> points.at [ipoint];
-			char32 *text = point -> mark.get();
+			conststring32 text = point -> mark.get();
 			if (text) {
 				integer position = 0;
-				char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
+				conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, text, & position);
 				if (notAllowed) {
 					my startSelection = my endSelection = point -> number;
 					scrollToView (me, point -> number);
@@ -952,7 +952,7 @@ static void menu_cb_CheckSpelling (TextGridEditor me, EDITOR_ARGS_DIRECT) {
 		integer left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		integer position = right;
-		char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.get(), & position);
+		conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.get(), & position);
 		if (notAllowed) {
 			GuiText_setSelection (my text, position, position + str32len (notAllowed));
 		} else {
@@ -966,10 +966,9 @@ static void menu_cb_CheckSpellingInInterval (TextGridEditor me, EDITOR_ARGS_DIRE
 		integer left, right;
 		autostring32 label = GuiText_getStringAndSelectionPosition (my text, & left, & right);
 		integer position = right;
-		char32 *notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.get(), & position);
-		if (notAllowed) {
+		conststring32 notAllowed = SpellingChecker_nextNotAllowedWord (my spellingChecker, label.get(), & position);
+		if (notAllowed)
 			GuiText_setSelection (my text, position, position + str32len (notAllowed));
-		}
 	}
 }
 

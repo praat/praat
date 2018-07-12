@@ -28,7 +28,7 @@ Thing_define (Distributions, TableOfReal) {
 
 autoDistributions Distributions_create (integer numberOfRows, integer numberOfColumns);
 
-void Distributions_peek (Distributions me, integer column, char32 **string, integer *row);
+void Distributions_peek (Distributions me, integer column, conststring32 *out_string, integer *out_row);
 
 double Distributions_getProbability (Distributions me, conststring32 string, integer column);
 double Distributionses_getMeanAbsoluteDifference (Distributions me, Distributions thee, integer column);

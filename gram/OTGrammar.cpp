@@ -2212,17 +2212,15 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 		autoOTHistory history;
 		OTGrammar_Distributions_opt_createOutputMatching (me, thee, columnNumber);
 		autoMelderMonitor monitor (U"Learning with limited knowledge...");
-		if (monitor.graphics()) {
+		if (monitor.graphics())
 			Graphics_clearWs (monitor.graphics());
-		}
-		if (storeHistoryEvery) {
+		if (storeHistoryEvery)
 			history = OTGrammar_createHistory (me, storeHistoryEvery, numberOfData);
-		}
 		try {
 			double plasticity = initialPlasticity;
 			for (integer iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 				for (integer ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
-					char32 *partialOutput;
+					conststring32 partialOutput;
 					integer ipartialOutput;
 					Distributions_peek (thee, columnNumber, & partialOutput, & ipartialOutput);
 					++ idatum;

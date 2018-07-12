@@ -459,7 +459,6 @@ static float dialogic_adpcm_decode (struct dialogic_adpcm *adpcm) {
 	if (adpcm -> index > 48) {
 		adpcm -> index = 48;
 	}
-
 	return scale * s;
 }
 
@@ -500,17 +499,13 @@ autoSound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate) {
 }
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
-	if (preEmphasisFrequency >= 0.5 / my dx) {
+	if (preEmphasisFrequency >= 0.5 / my dx)
 		return;    // above Nyquist?
-	}
-
 	double preEmphasis = exp (- 2.0 * NUMpi * preEmphasisFrequency * my dx);
-
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		double *s = my z [channel];
-		for (integer i = my nx; i >= 2; i --) {
+		for (integer i = my nx; i >= 2; i --)
 			s [i] -= preEmphasis * s [i - 1];
-		}
 	}
 }
 
@@ -564,9 +559,8 @@ static autoSound Sound_create2 (double minimumTime, double maximumTime, double s
 		sin(a+dx) = sin(a) - (alpha . sin(a) - beta . sin(a))
 	where alpha and beta are precomputed coefficients
 		alpha = 2 sin^2(dx/2) and beta = sin(dx)
-	In this way aplha and beta do not loose significance if the increment
+	In this way aplha and beta do not lose significance if the increment
 	dx is small.
-
 */
 
 static autoSound Sound_createToneComplex (double minimumTime, double maximumTime, double samplingFrequency, double firstFrequency, integer numberOfComponents, double frequencyDistance, integer mistunedComponent, double mistuningFraction, bool scaleAmplitudes) {

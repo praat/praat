@@ -319,7 +319,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames,
 		 */
 		if (tierNames && tierNames [0]) {
 			str32cpy (nameBuffer, tierNames);
-			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
+			for (conststring32 tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
 				autoIntervalTier tier = IntervalTier_create (tmin, tmax);
 				Thing_setName (tier.get(), tierName);
 				my tiers -> addItem_move (tier.move());
@@ -331,7 +331,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames,
 		 */
 		if (pointTiers && pointTiers [0]) {
 			str32cpy (nameBuffer, pointTiers);
-			for (char32 *tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
+			for (conststring32 tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
 				for (integer itier = 1; itier <= my tiers->size; itier ++) {
 					if (str32equ (tierName, Thing_getName (my tiers->at [itier]))) {
 						autoTextTier tier = TextTier_create (tmin, tmax);
@@ -1027,7 +1027,7 @@ integer TextGrid_maximumLabelLength (TextGrid me) {
 	return maximum;
 }
 
-static void genericize (autostring32& stringRef, char32 *buffer) {
+static void genericize (autostring32& stringRef, mutablestring32 buffer) {
 	if (stringRef) {
 		const char32 *p = & stringRef [0];
 		while (*p) {

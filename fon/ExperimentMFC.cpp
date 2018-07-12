@@ -98,7 +98,7 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 		 * Determine partial file name.
 		 */
 		char32 *comma = str32chr (fileNames, U',');
-		if (comma) *comma = '\0';
+		if (comma) *comma = U'\0';
 		/*
 		 * Determine complete (relative) file name.
 		 */
@@ -376,7 +376,7 @@ autoResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 			Melder_warning (U"The experiment was not finished. Only the first ", my trial - 1 + my pausing, U" responses are valid.");
 		autoResultsMFC thee = ResultsMFC_create (my numberOfTrials);
 		for (integer trial = 1; trial <= my numberOfTrials; trial ++) {
-			char32 *pipe = my stimulus [my stimuli [trial]]. visibleText ?
+			const char32 *pipe = my stimulus [my stimuli [trial]]. visibleText ?
 				str32chr (my stimulus [my stimuli [trial]]. visibleText.get(), U'|') : nullptr;
 			thy result [trial]. stimulus = Melder_dup (Melder_cat (my stimulus [my stimuli [trial]]. name.get(), pipe));
 			//if (my responses [trial] < 1) Melder_throw (U"No response for trial ", trial, U".")

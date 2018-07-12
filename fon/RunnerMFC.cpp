@@ -99,9 +99,13 @@ static void drawNow (RunnerMFC me) {
 		 */
 		if (visibleText_p [0] != U'\0') {
 			char32 *visibleText_q = str32chr (visibleText_p, U'|');
-			if (visibleText_q) *visibleText_q = '\0';
+			if (visibleText_q)
+				*visibleText_q = U'\0';
 			Graphics_text (my graphics.get(), 0.5, 1.0, visibleText_p [0] != U'\0' ? visibleText_p : experiment -> runText.get());
-			if (visibleText_q) visibleText_p = visibleText_q + 1; else visibleText_p += str32len (visibleText_p);
+			if (visibleText_q)
+				visibleText_p = visibleText_q + 1;
+			else
+				visibleText_p += str32len (visibleText_p);
 		} else {
 			Graphics_text (my graphics.get(), 0.5, 1.0, experiment -> runText.get());
 		}
