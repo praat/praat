@@ -18,7 +18,7 @@
 
 #include "OTGrammar.h"
 
-static conststring32 vowels [] = { U"i", U"e", U"\\sw", U"\\ic", U"\\ef", U"a" };
+static const conststring32 vowels [] = { U"i", U"e", U"\\sw", U"\\ic", U"\\ef", U"a" };
 #define i  0
 #define e  1
 #define schwa  2

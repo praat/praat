@@ -2254,7 +2254,7 @@ static char32 *shortcut_escape (
     int            emit) {
 
 	char32 *klas   = NULL;
-	static conststring32 codes = U"ByYwWdDlLsS";
+	static const conststring32 codes = U"ByYwWdDlLsS";
 	char32 *ret_val = (char32 *) 1; /* Assume success. */
 	conststring32 valid_codes;
 

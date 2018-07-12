@@ -82,13 +82,13 @@ Thing_define (FunctionEditor, Editor) {
 	virtual void v_drawSelectionViewer () { }
 	virtual void v_drawRealTimeSelectionViewer (int phase, double time) { }
 	virtual void v_prepareDraw () { }   // for less flashing
-	virtual conststring32  v_format_domain () { return U"Time domain:"; }
-	virtual const char * v_format_short () { return u8"%.3f"; }
-	virtual const char * v_format_long () { return u8"%f"; }
-	virtual conststring32  v_format_units () { return U"seconds"; }
-	virtual const char * v_format_totalDuration () { return u8"Total duration %f seconds"; }
-	virtual const char * v_format_window () { return u8"Visible part %f seconds"; }
-	virtual const char * v_format_selection () { return u8"%f (%.3f / s)"; }
+	virtual conststring32 v_format_domain () { return U"Time domain:"; }
+	virtual const char *v_format_short () { return u8"%.3f"; }
+	virtual const char *v_format_long () { return u8"%f"; }
+	virtual conststring32 v_format_units () { return U"seconds"; }
+	virtual const char *v_format_totalDuration () { return u8"Total duration %f seconds"; }
+	virtual const char *v_format_window () { return u8"Visible part %f seconds"; }
+	virtual const char *v_format_selection () { return u8"%f (%.3f / s)"; }
 	virtual int v_fixedPrecision_long () { return 6; }
 	virtual bool v_hasText () { return false; }
 	virtual void v_play (double /* timeFrom */, double /* timeTo */) { }

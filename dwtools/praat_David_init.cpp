@@ -141,10 +141,10 @@
 #undef iam
 #define iam iam_LOOP
 
-static conststring32 QUERY_BUTTON   = U"Query -";
-static conststring32 DRAW_BUTTON    = U"Draw -";
-static conststring32 MODIFY_BUTTON  = U"Modify -";
-static conststring32 EXTRACT_BUTTON = U"Extract -";
+static const conststring32 QUERY_BUTTON   = U"Query -";
+static const conststring32 DRAW_BUTTON    = U"Draw -";
+static const conststring32 MODIFY_BUTTON  = U"Modify -";
+static const conststring32 EXTRACT_BUTTON = U"Extract -";
 
 void praat_TableOfReal_init2 (ClassInfo klas);
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);

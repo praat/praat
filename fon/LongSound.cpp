@@ -79,7 +79,7 @@ void structLongSound :: v_destroy () noexcept {
 }
 
 void structLongSound :: v_info () {
-	static conststring32 encodingStrings [1+20] = { U"none",
+	static const conststring32 encodingStrings [1+20] = { U"none",
 		U"linear 8 bit signed", U"linear 8 bit unsigned",
 		U"linear 16 bit big-endian", U"linear 16 bit little-endian",
 		U"linear 24 bit big-endian", U"linear 24 bit little-endian",

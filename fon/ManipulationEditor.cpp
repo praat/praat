@@ -47,7 +47,7 @@ Thing_implement (ManipulationEditor, FunctionEditor, 0);
  * 5. create the button in createMenus and update updateMenus;
  */
 
-static conststring32 units_strings [] = { 0, U"Hz", U"st" };
+static const conststring32 units_strings [] = { 0, U"Hz", U"st" };
 
 static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
 

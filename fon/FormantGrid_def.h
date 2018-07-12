@@ -31,7 +31,7 @@ oo_DEFINE_CLASS (FormantGrid, Function)
 			override { return true; }
 		double v_getFunction1 (integer irow, double x)
 			override;
-		conststring32  v_getUnitText (integer ilevel, int /* unit */, uint32 /* flags */)
+		conststring32 v_getUnitText (integer ilevel, int /* unit */, uint32 /* flags */)
 			override { return ilevel & 1 ? U"Formant (Hz)" : U"Bandwidth (Hz)"; }
 		void v_shiftX (double xfrom, double xto)
 			override;

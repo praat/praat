@@ -61,7 +61,7 @@
 
 #define NUMBER_OF_CONSTRAINTS  22
 
-static conststring32 constraintNames [1+NUMBER_OF_CONSTRAINTS] = { 0,
+static const conststring32 constraintNames [1+NUMBER_OF_CONSTRAINTS] = { 0,
 	U"WSP", U"FtNonfinal", U"Iambic", U"Parse", U"FootBin", U"WFL", U"WFR", U"Main-L", U"Main-R", U"AFL", U"AFR", U"Nonfinal",
 	U"Trochaic", U"FtBimor", U"FtBisyl", U"Peripheral", U"MainNonfinal", U"HeadNonfinal", U"*Clash", U"*Lapse", U"WeightByPosition", U"*C\\mu" };
 
@@ -69,8 +69,8 @@ static void addCandidate (OTGrammarTableau me, integer numberOfSyllables, int st
 	bool footedToTheLeft [], bool footedToTheRight [], int surfaceWeightPattern [],
 	int overtFormsHaveSecondaryStress)
 {
-	static conststring32 syllable [] = { U"L", U"L1", U"L2", U"H", U"H1", U"H2", U"K", U"K1", U"K2", U"J", U"J1", U"J2" };
-	static conststring32 syllableWithoutSecondaryStress [] = { U"L", U"L1", U"L", U"H", U"H1", U"H", U"K", U"K1", U"K", U"J", U"J1", U"J" };
+	static const conststring32 syllable [] = { U"L", U"L1", U"L2", U"H", U"H1", U"H2", U"K", U"K1", U"K2", U"J", U"J1", U"J2" };
+	static const conststring32 syllableWithoutSecondaryStress [] = { U"L", U"L1", U"L", U"H", U"H1", U"H", U"K", U"K1", U"K", U"J", U"J1", U"J" };
 	char32 output [100];
 	str32cpy (output, U"[");
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
@@ -178,8 +178,8 @@ static void fillTableau (OTGrammarTableau me, integer numberOfSyllables, int und
 	static int numberOfCandidates_codas [1+7] = { 0, 1, 24, 192, 1408, 9600, 984, 3136 };
 	str32cpy (input, U"|");
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-		static conststring32 syllable_noCodas [] = { U"", U"L", U"H" };
-		static conststring32 syllable_codas [] = { U"", U"cv", U"cv:", U"cvc" };
+		static const conststring32 syllable_noCodas [] = { U"", U"L", U"H" };
+		static const conststring32 syllable_codas [] = { U"", U"cv", U"cv:", U"cvc" };
 		if (isyll > 1) str32cpy (input + str32len (input), includeCodas ? U"." : U" ");
 		str32cpy (input + str32len (input), ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
 	}

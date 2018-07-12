@@ -59,9 +59,9 @@
 	REAL (fromQuefrency, U"left Quefrency range (s)", U"0.0") \
 	REAL (toQuefrency, U"right Quefrency range (s)", U"0.0 (= all)")
 
-static conststring32 DRAW_BUTTON    = U"Draw -";
-static conststring32 QUERY_BUTTON   = U"Query -";
-static conststring32 MODIFY_BUTTON   = U"Modify -";
+static const conststring32 DRAW_BUTTON    = U"Draw -";
+static const conststring32 QUERY_BUTTON   = U"Query -";
+static const conststring32 MODIFY_BUTTON   = U"Modify -";
 
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);

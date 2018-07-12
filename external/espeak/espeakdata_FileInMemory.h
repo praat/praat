@@ -41,7 +41,7 @@ void espeakdata_praat_init ();
 autoTable Table_createAsEspeakLanguagesProperties ();
 autoTable Table_createAsEspeakVoicesProperties ();
 
-integer Table_findStringInColumn (Table me, const char32 *string, integer icol);
+integer Table_findStringInColumn (Table me, conststring32 string, integer icol);
 
 const char * espeakdata_get_voicedata (const char *data, long ndata, char *buf, long nbuf, long *index);
 

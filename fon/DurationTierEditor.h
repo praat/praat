@@ -29,23 +29,23 @@ Thing_define (DurationTierEditor, RealTierEditor) {
 		override;
 	double v_minimumLegalValue ()
 		override { return 0.0; }
-	conststring32  v_quantityText ()
+	conststring32 v_quantityText ()
 		override { return U"Relative duration"; }
-	conststring32  v_rightTickUnits ()
+	conststring32 v_rightTickUnits ()
 		override { return U""; }
 	double v_defaultYmin ()
 		override { return 0.25; }
 	double v_defaultYmax ()
 		override { return 3.0; }
-	conststring32  v_setRangeTitle ()
+	conststring32 v_setRangeTitle ()
 		override { return U"Set duration range..."; }
-	conststring32  v_defaultYminText ()
+	conststring32 v_defaultYminText ()
 		override { return U"0.25"; }
-	conststring32  v_defaultYmaxText ()
+	conststring32 v_defaultYmaxText ()
 		override { return U"3.0"; }
-	conststring32  v_yminText ()
+	conststring32 v_yminText ()
 		override { return U"Minimum duration"; }
-	conststring32  v_ymaxText ()
+	conststring32 v_ymaxText ()
 		override { return U"Maximum duration"; }
 };
 

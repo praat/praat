@@ -475,8 +475,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 	}
 
 #define DIRECT(proc)  \
-	extern "C" void proc (UiForm, integer, Stackel, conststring32 , Interpreter interpreter, conststring32 , bool, void *); \
-	void proc (UiForm, integer, Stackel, conststring32 , Interpreter interpreter, conststring32 , bool, void *) { \
+	extern "C" void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *); \
+	void proc (UiForm, integer, Stackel, conststring32, Interpreter interpreter, conststring32, bool, void *) { \
 		(void) interpreter; \
 		int IOBJECT = 0; \
 		(void) IOBJECT; \

@@ -79,8 +79,8 @@
 #undef iam
 #define iam iam_LOOP
 
-static conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
-static conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
+static const conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
+static const conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
 
 // MARK: - COCHLEAGRAM
 

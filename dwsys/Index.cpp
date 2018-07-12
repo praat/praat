@@ -47,7 +47,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Index_def.h"
 
-static conststring32 undefinedClassLabel = U"";
+static const conststring32 undefinedClassLabel = U"";
 Thing_implement (Index, Daata, 0);
 
 void structIndex :: v_info () {

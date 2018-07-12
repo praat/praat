@@ -27,23 +27,23 @@ Thing_define (OptimalCeilingTierEditor, RealTierEditor) {
 		override;
 	void v_play (double fromTime, double toTime)
 		override;
-	conststring32  v_quantityText ()
+	conststring32 v_quantityText ()
 		override { return U"Frequency (Hz)"; }
-	conststring32  v_rightTickUnits ()
+	conststring32 v_rightTickUnits ()
 		override { return U" Hz"; }
 	double v_defaultYmin ()
 		override { return 4000.0; }
 	double v_defaultYmax ()
 		override { return +6000.0; }
-	conststring32  v_setRangeTitle ()
+	conststring32 v_setRangeTitle ()
 		override { return U"Set frequency range..."; }
-	conststring32  v_defaultYminText ()
+	conststring32 v_defaultYminText ()
 		override { return U"4000.0"; }
-	conststring32  v_defaultYmaxText ()
+	conststring32 v_defaultYmaxText ()
 		override { return U"6000.0"; }
-	conststring32  v_yminText ()
+	conststring32 v_yminText ()
 		override { return U"Minimum frequency (Hz)"; }
-	conststring32  v_ymaxText ()
+	conststring32 v_ymaxText ()
 		override { return U"Maximum frequency (Hz)"; }
 };
 

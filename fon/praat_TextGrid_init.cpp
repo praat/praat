@@ -30,11 +30,11 @@
 #undef iam
 #define iam iam_LOOP
 
-static conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
-static conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
-static conststring32 STRING_TIER_NUMBER = U"Tier number";
-static conststring32 STRING_INTERVAL_NUMBER = U"Interval number";
-static conststring32 STRING_POINT_NUMBER = U"Point number";
+static const conststring32 STRING_FROM_FREQUENCY_HZ = U"left Frequency range (Hz)";
+static const conststring32 STRING_TO_FREQUENCY_HZ = U"right Frequency range (Hz)";
+static const conststring32 STRING_TIER_NUMBER = U"Tier number";
+static const conststring32 STRING_INTERVAL_NUMBER = U"Interval number";
+static const conststring32 STRING_POINT_NUMBER = U"Point number";
 
 // MARK: - ANYTIER (generic)
 

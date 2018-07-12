@@ -77,7 +77,7 @@ oo_DEFINE_CLASS (Table, Daata)
 			override { return numberOfColumns; }
 		bool v_hasGetColStr ()
 			override { return true; }
-		conststring32  v_getColStr (integer columnNumber)
+		conststring32 v_getColStr (integer columnNumber)
 			override;
 		bool v_hasGetMatrix ()
 			override { return true; }
@@ -85,7 +85,7 @@ oo_DEFINE_CLASS (Table, Daata)
 			override;
 		bool v_hasGetMatrixStr ()
 			override { return true; }
-		conststring32  v_getMatrixStr (integer rowNumber, integer columnNumber)
+		conststring32 v_getMatrixStr (integer rowNumber, integer columnNumber)
 			override;
 		bool v_hasGetColIndex ()
 			override { return true; }

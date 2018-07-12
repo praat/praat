@@ -39,11 +39,11 @@ oo_DEFINE_CLASS (TableOfReal, Daata)
 			override { return numberOfColumns; }
 		bool v_hasGetRowStr ()
 			override { return true; }
-		conststring32  v_getRowStr (integer irow)
+		conststring32 v_getRowStr (integer irow)
 			override;
 		bool v_hasGetColStr ()
 			override { return true; }
-		conststring32  v_getColStr (integer icol)
+		conststring32 v_getColStr (integer icol)
 			override;
 		bool v_hasGetMatrix ()
 			override { return true; }
