@@ -4494,7 +4494,7 @@ static void do_backslashTrigraphsToUnicodeStr () {
 static void do_environmentStr () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		char32 *value = Melder_getenv (s->string);
+		conststring32 value = Melder_getenv (s->string);
 		autostring32 result = Melder_dup (value ? value : U"");
 		pushString (result.transfer());
 	} else {

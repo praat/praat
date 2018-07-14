@@ -2,7 +2,7 @@
 #define _FormantTier_h_
 /* FormantTier.h
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,16 +26,16 @@
 
 #include "FormantTier_def.h"
 
-autoFormantPoint FormantPoint_create (double time);
+autoFormantPoint FormantPoint_create (double time, integer numberOfFormants);
 autoFormantTier FormantTier_create (double tmin, double tmax);
-double FormantTier_getValueAtTime (FormantTier me, int iformant, double t);
-double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t);
-int FormantTier_getMinNumFormants (FormantTier me);
-int FormantTier_getMaxNumFormants (FormantTier me);
-void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, double fmax, int garnish);
+double FormantTier_getValueAtTime (FormantTier me, integer iformant, double t);
+double FormantTier_getBandwidthAtTime (FormantTier me, integer iformant, double t);
+integer FormantTier_getMinNumFormants (FormantTier me);
+integer FormantTier_getMaxNumFormants (FormantTier me);
+void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, double fmax, bool garnish);
 autoFormantTier Formant_downto_FormantTier (Formant me);
 autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp);
-autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths);
+autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, bool includeFormants, bool includeBandwidths);
 
 void Sound_FormantTier_filter_inplace (Sound me, FormantTier formantTier);
 autoSound Sound_FormantTier_filter (Sound me, FormantTier formantTier);

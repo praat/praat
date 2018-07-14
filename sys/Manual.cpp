@@ -225,9 +225,11 @@ static void menu_cb_printRange (Manual me, EDITOR_ARGS_FORM) {
 		#else
 			strcpy (dateA, ctime (& today));
 		#endif
-		char32 *date = Melder_peek8to32 (dateA), *newline;
-		newline = str32chr (date, U'\n'); if (newline) *newline = U'\0';
-		SET_STRING (leftOrInsideHeader, date)
+		autostring32 date = Melder_8to32 (dateA);
+		char32 *newline = str32chr (date.get(), U'\n');
+		if (newline)
+			*newline = U'\0';
+		SET_STRING (leftOrInsideHeader, date.get())
 		SET_STRING (rightOrOutsideHeader, my name.get())
 		if (my d_printingPageNumber) SET_INTEGER (firstPageNumber, my d_printingPageNumber + 1)
 		if (my path >= 1 && my path <= manPages -> pages.size) {

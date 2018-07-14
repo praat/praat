@@ -5,7 +5,7 @@ printline test_LPC
 
 @testLPCInterface
 
-# formants of straigth tube
+# formants of straight tube
 
 fb5$ = ""
 space$ = ""

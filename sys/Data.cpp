@@ -185,7 +185,7 @@ void Data_readText (Daata me, MelderReadText text, int formatVersion) {
 autoDaata Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
-		char32 *line = MelderReadText_readLine (text.get());
+		const mutablestring32 line = MelderReadText_readLine (text.get());
 		if (! line)
 			Melder_throw (U"No lines.");
 		/*

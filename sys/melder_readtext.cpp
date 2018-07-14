@@ -56,7 +56,7 @@ char32 MelderReadText_getChar (MelderReadText me) {
 	}
 }
 
-char32 * MelderReadText_readLine (MelderReadText me) {
+mutablestring32 MelderReadText_readLine (MelderReadText me) {
 	if (my string32) {
 		Melder_assert (my readPointer32);
 		Melder_assert (! my readPointer8);

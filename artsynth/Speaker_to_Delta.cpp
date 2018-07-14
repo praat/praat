@@ -239,7 +239,7 @@ autoDelta Speaker_to_Delta (Speaker me) {
 	for (integer itube = 65; itube <= 78; itube ++) {
 		Delta_Tube t = thy tube + itube;
 		t -> Dx = t -> Dxeq = my nose.Dx;
-		t -> Dy = t -> Dyeq = my nose.weq [itube - 65];
+		t -> Dy = t -> Dyeq = my nose.weq [itube - 64];
 		t -> Dz = t -> Dzeq = my nose.Dz;
 		t -> mass = 0.006;
 		t -> k1 = 100.0;

@@ -154,7 +154,7 @@ void Melder_includeIncludeFiles (autostring32 *text) {
 	}
 }
 
-integer Interpreter_readParameters (Interpreter me, char32 *text) {
+integer Interpreter_readParameters (Interpreter me, mutablestring32 text) {
 	char32 *formLocation = nullptr;
 	integer npar = 0;
 	my dialogTitle [0] = U'\0';
@@ -162,7 +162,7 @@ integer Interpreter_readParameters (Interpreter me, char32 *text) {
 		Look for a "form" line.
 	*/
 	{// scope
-		char32 *p = text;
+		char32 *p = & text [0];
 		for (;;) {
 			/*
 				Invariant here: we are at the beginning of a line.

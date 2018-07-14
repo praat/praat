@@ -20,8 +20,6 @@
 
 #define oo_SIMPLE(type,storage,x)
 
-#define oo_ARRAY(type,storage,x,cap,n)
-
 #define oo_SET(type,storage,x,setType)
 
 #define oo_VECTOR(type,storage,x,min,max)  \
@@ -38,8 +36,6 @@
 
 #define oo_ENUMx(kType,storage,x)
 
-//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)
-
 //#define oo_ENUMx_SET(kType,storage,x,setType)
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  \
@@ -51,14 +47,6 @@
 #define oo_STRINGx(storage,x)  \
 	if (! _thisStructCanAutodestroyItsMembers_) { \
 		our x. reset (); \
-	}
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	if (! _thisStructCanAutodestroyItsMembers_) { \
-		integer _n = (n); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			our x [_i]. reset (); \
-		} \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
@@ -75,14 +63,6 @@
 
 #define oo_STRUCT(Type,x)  \
 	our x. destroy ();
-
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			our x [_i]. destroy (); \
-		} \
-	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \

@@ -58,24 +58,6 @@
 //#define oo_COMPLEX(x)  oo_SIMPLE (dcomplex, c128, x)
 //#define oo_POINTER(x)  oo_SIMPLE (void *, dummy, x)
 
-/* Arrays with compile-time allocation of capacity. Declarations like: int x [cap]; */
-/* 'cap' is a compile-time expression evaluating to a positive integer (e.g., 3). */
-/* The first index is always 0, the last index is 'n' - 1. */
-/* The actual number of elements 'n' may vary during run-time and while structure exists, */
-/* but must never be greater than 'cap'. */
-
-//#define oo_BYTE_ARRAY(x,cap,n)  oo_ARRAY (signed char, i8, x, cap, n)
-//#define oo_INT_ARRAY(x,cap,n)  oo_ARRAY (int, i16, x, cap, n)
-//#define oo_INTEGER_ARRAY(x,cap,n)  oo_ARRAY (integer, integer32BE, x, cap, n)
-//#define oo_UBYTE_ARRAY(x,cap,n)  oo_ARRAY (unsigned char, u8, x, cap, n)
-//#define oo_UINT_ARRAY(x,cap,n)  oo_ARRAY (unsigned int, u16, x, cap, n)
-//#define oo_UINTEGER_ARRAY(x,cap,n)  oo_ARRAY (uinteger, u32, x, cap, n)
-//#define oo_BOOL_ARRAY(x,cap,n)  oo_ARRAY (unsigned char, u8, x, cap, n)
-//#define oo_FLOAT_ARRAY(x,cap,n)  oo_ARRAY (double, r32, x, cap, n)
-#define oo_DOUBLE_ARRAY(x,cap,n)  oo_ARRAY (double, r64, x, cap, n)
-//#define oo_COMPLEX_ARRAY(x,cap,n)  oo_ARRAY (dcomplex, c128, x, cap, n)
-//#define oo_POINTER_ARRAY(x,cap,n)  oo_ARRAY (void *, dummy, x, cap, n)
-
 /* Sets with compile-time allocation of capacity. Declarations like: int x [1 + setType::MAX]; */
 /* The first index is always 0, the last index is setType::MAX. */
 
@@ -159,8 +141,6 @@
 
 #define oo_ENUM(kType,x)  oo_ENUMx (kType, e8, x)
 //#define oo_LENUM(Type,x)  oo_ENUMx (short, e16, Type, x)
-//#define oo_ENUM_ARRAY(Type,x,cap,n)  oo_ENUMx_ARRAY (signed char, e8, Type, x, cap, n)
-//#define oo_LENUM_ARRAY(Type,x,cap,n)  oo_ENUMx_ARRAY (short, e16, Type, x, cap, n)
 //#define oo_ENUM_SET(Type,x,setType)  oo_ENUMx_SET (signed char, e8, Type, x, setType)
 //#define oo_LENUM_SET(Type,x,setType)  oo_ENUMx_SET (short, e16, Type, x, setType)
 //#define oo_ENUM_VECTOR_FROM(Type,x,min,max)  oo_ENUMx_VECTOR (signed char, e8, Type, x, min, max)
@@ -168,13 +148,9 @@
 //#define oo_ENUM_VECTOR(Type,x,n)  oo_ENUMx_VECTOR (signed char, e8, Type, x, 1, n)
 //#define oo_LENUM_VECTOR(Type,x,n)  oo_ENUMx_VECTOR (short, e16, Type, x, 1, n)
 #define oo_BOOLEAN(x)  oo_SIMPLE (bool, eb, x)
-//#define oo_BOOLEAN_ARRAY(x,cap,n)  oo_ARRAY (bool, eb, x, cap, n)
-//#define oo_BOOLEAN_SET(x,setType)  oo_ARRAY (bool, eb, x, setType)
 //#define oo_BOOLEAN_VECTOR_FROM(x,min,max)  oo_VECTOR (bool, eb, x, min, max)
 #define oo_BOOLEAN_VECTOR(x,n)  oo_VECTOR (bool, eb, x, 1, n)
 #define oo_QUESTION(x)  oo_SIMPLE (bool, eq, x)
-//#define oo_QUESTION_ARRAY(x,cap,n)  oo_ARRAY (bool, eq, x, cap, n)
-//#define oo_QUESTION_SET(x,setType)  oo_ARRAY (bool, eq, x, setType)
 //#define oo_QUESTION_VECTOR_FROM(x,min,max)  oo_VECTOR (bool, eq, x, min, max)
 //#define oo_QUESTION_VECTOR(x,n)  oo_VECTOR (bool, eq, x, 1, n)
 
@@ -188,9 +164,6 @@
 
 #define oo_STRING(x)  oo_STRINGx (w16, x)
 #define oo_LSTRING(x)  oo_STRINGx (w32, x)
-
-//#define oo_STRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (w16, x, cap, n)
-//#define oo_LSTRING_ARRAY(x,cap,n)  oo_STRINGx_ARRAY (w32, x, cap, n)
 
 //#define oo_STRING_SET(x,setType)  oo_STRINGx_SET (w16, x, setType)
 //#define oo_LSTRING_SET(x,setType)  oo_STRINGx_SET (w32, x, setType)
@@ -210,23 +183,19 @@
 /* Types. */
 
 #define oo_SIMPLE(type,storage,x)  type x;
-#define oo_ARRAY(type,storage,x,cap,n)  type x [cap];
 #define oo_SET(type,storage,x,setType)  type x [1 + (int) setType::MAX];
 #define oo_VECTOR(type,storage,x,min,max)  type *x;
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  type **x;
 
 #define oo_ENUMx(kType,storage,x)  kType x;
-//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  kType x [cap];
 //#define oo_ENUMx_SET(kType,storage,x,setType)  kType x [1 + (int) setType::MAX];
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)  kType *x;
 
 #define oo_STRINGx(storage,x)  autostring32 x;
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  autostring32 x [cap];
 #define oo_STRINGx_SET(storage,x,setType)  autostring32 x [1 + setType::MAX];
 #define oo_STRINGx_VECTOR(storage,x,size)  autostring32vector x;
 
 #define oo_STRUCT(Type,x)  struct struct##Type x;
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  struct struct##Type x [cap];
 #define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + (int) setType::MAX];
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  Type x;
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  struct struct##Type **x;

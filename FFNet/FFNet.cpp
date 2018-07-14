@@ -62,15 +62,14 @@ static void bookkeeping (FFNet me);
 
 Thing_implement (FFNet, Daata, 0);
 
-char32 * FFNet_createNameFromTopology (FFNet me) {
+autostring32 FFNet_createNameFromTopology (FFNet me) {
 	autoMelderString name;
 	MelderString_copy (& name, my nUnitsInLayer [0]);
 	for (integer i = 1; i <= my nLayers; i ++) {
 		MelderString_appendCharacter (& name, U'-');
 		MelderString_append (& name, my nUnitsInLayer [i]);
 	}
-	autostring32 naam = Melder_dup (name.string);
-	return naam.transfer();
+	return Melder_dup (name.string);
 }
 
 /****** non-linearities ****************************************************/

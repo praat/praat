@@ -135,7 +135,7 @@ oo_DEFINE_STRUCT (Speaker_Nose)
 
 	oo_DOUBLE (Dx)
 	oo_DOUBLE (Dz)
-	oo_DOUBLE_ARRAY (weq, 14, 14)
+	oo_DOUBLE_VECTOR (weq, 14)
 
 oo_END_STRUCT (Speaker_Nose)
 #undef ooSTRUCT
