@@ -47,11 +47,11 @@ void EspeakVoice_initFromEspeakVoice (EspeakVoice me, voice_t *voice);
 
 void SpeechSynthesizer_initEspeak ();
 
-autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName);
+autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, conststring32 voiceName);
 
-const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me);
+conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me);
 
-const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me);
+conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me);
 
 void SpeechSynthesizer_changeLanguageNameToCurrent (SpeechSynthesizer me);
 
@@ -61,9 +61,9 @@ void SpeechSynthesizer_setEstimateSpeechRateFromSpeech (SpeechSynthesizer me, bo
 
 void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double samplingFrequency, double wordgap, double pitchAdjustment, double pitchRange, double wordsPerMinute, int outputPhonemeCodes);
 
-autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, autoTextGrid *tg, autoTable *events);
+autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, autoTextGrid *tg, autoTable *events);
 
-void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text);
+void SpeechSynthesizer_playText (SpeechSynthesizer me, conststring32 text);
 
 /* End of file SpeechSynthesizer.h */
 #endif

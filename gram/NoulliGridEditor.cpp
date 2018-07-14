@@ -104,7 +104,7 @@ void structNoulliGridEditor :: v_play (double a_tmin, double a_tmax) {
 		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
-static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax, double tmin, double tmax, const char32 *header) {
+static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax, double tmin, double tmax, conststring32 header) {
 	NoulliGrid grid = (NoulliGrid) my data;
 	for (integer itier = 1; itier <= grid -> tiers.size; itier ++) {
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics.get(), xmin, xmax,
@@ -117,7 +117,7 @@ static void drawSelectionOrWindow (NoulliGridEditor me, double xmin, double xmax
 		}
 		autoNoulliPoint average = NoulliGrid_average (grid, itier, tmin, tmax);
 		integer winningCategory = NoulliPoint_getWinningCategory (average.get());
-		const char32 *winningCategoryName = grid -> categoryNames [winningCategory].get();
+		conststring32 winningCategoryName = grid -> categoryNames [winningCategory].get();
 		if (winningCategory != 0 && average -> probabilities [winningCategory] > 1.0/3.0) {
 			bool shouldDrawPicture =
 				(my p_showCategoryInSelectionViewerAs == kNoulliGridEditor_showCategoryInSelectionViewerAs::PICTURE ||
@@ -236,13 +236,13 @@ void structNoulliGridEditor :: v_prefs_getValues (EditorCommand /* cmd */) {
 	FunctionEditor_redraw (this);
 }
 
-void NoulliGridEditor_init (NoulliGridEditor me, const char32 *title, NoulliGrid data, Sound sound, bool ownSound) {
+void NoulliGridEditor_init (NoulliGridEditor me, conststring32 title, NoulliGrid data, Sound sound, bool ownSound) {
 	Melder_assert (data);
 	Melder_assert (Thing_isa (data, classNoulliGrid));
 	TimeSoundEditor_init (me, title, data, sound, ownSound);
 }
 
-autoNoulliGridEditor NoulliGridEditor_create (const char32 *title, NoulliGrid grid, Sound sound, bool ownSound) {
+autoNoulliGridEditor NoulliGridEditor_create (conststring32 title, NoulliGrid grid, Sound sound, bool ownSound) {
 	try {
 		autoNoulliGridEditor me = Thing_new (NoulliGridEditor);
 		NoulliGridEditor_init (me.get(), title, grid, sound, ownSound);

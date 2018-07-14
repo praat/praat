@@ -41,7 +41,7 @@ Thing_define (RunnerMFC, Editor) {
 		override;
 };
 
-autoRunnerMFC RunnerMFC_create (const char32 *title, autoExperimentMFCList experiments);
+autoRunnerMFC RunnerMFC_create (conststring32 title, autoExperimentMFCList experiments);
 
 /* End of file RunnerMFC.h */
 #endif

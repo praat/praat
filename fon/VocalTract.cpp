@@ -39,7 +39,7 @@ autoVocalTract VocalTract_create (integer nx, double dx) {
 
 namespace theVocalTract {
 	constexpr double minimumWidth { 0.0001 };
-	struct { const char32 *phone; int numberOfSections; double area [40]; }
+	struct { conststring32 phone; int numberOfSections; double area [40]; }
 		data [] = {
 	{ U"a", 34, { 1.7, 1.2, 1.6, 3.39, 2.1, 1.4, 1, 0.8, 0.8, 0.8, 1, 1.4,
 		2.1, 2.9, 3.09, 2.1, 2.5, 4, 5.3, 6.16, 7, 7.6, 8.15, 8.5, 8.6,
@@ -118,7 +118,7 @@ namespace theVocalTract {
 	{ nullptr, 0, { 0 } } };
 }
 
-autoVocalTract VocalTract_createFromPhone (const char32 *phone) {
+autoVocalTract VocalTract_createFromPhone (conststring32 phone) {
 	try {
 		int i = 0;
 		for (;; i ++) {

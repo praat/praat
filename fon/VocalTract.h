@@ -55,7 +55,7 @@ autoVocalTract VocalTract_create (integer nx, double dx);
 		my z [1] [1..nx] == 1e-4; // straight tube, area 1 cm2.
  */
 
-autoVocalTract VocalTract_createFromPhone (const char32 *phone);
+autoVocalTract VocalTract_createFromPhone (conststring32 phone);
 /* 'phone' is one of the following: a e i o u y1 y2 y3 jery p t k x pa ta ka pi ti ki pu tu ku */
 
 void VocalTract_draw (VocalTract me, Graphics g);   /* Draw a VocalTract into a Graphics. */

@@ -249,17 +249,17 @@ static void drawNow (FunctionEditor me) {
 				Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 			} else if (format == my v_format_long ()) {
 				snprintf (text8, 100, my v_format_short (), value);
-				text.reset (Melder_8to32 (text8));
+				text = Melder_8to32 (text8);
 				if (Graphics_textWidth (my graphics.get(), text.get()) < right - left)
 					Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 			} else {
 				snprintf (text8, 100, my v_format_long (), value);
-				text.reset (Melder_8to32 (text8));
+				text = Melder_8to32 (text8);
 				if (Graphics_textWidth (my graphics.get(), text.get()) < right - left) {
 						Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 				} else {
 					snprintf (text8, 100, my v_format_short (), my endSelection - my startSelection);
-					text.reset (Melder_8to32 (text8));
+					text = Melder_8to32 (text8);
 					if (Graphics_textWidth (my graphics.get(), text.get()) < right - left)
 						Graphics_text (my graphics.get(), 0.5 * (left + right), 0.5 * (bottom + top) - verticalCorrection, text.get());
 				}
@@ -1496,7 +1496,7 @@ void structFunctionEditor :: v_unhighlightSelection (double left, double right, 
 	Graphics_unhighlight (our graphics.get(), left, right, bottom, top);
 }
 
-void FunctionEditor_init (FunctionEditor me, const char32 *title, Function data) {
+void FunctionEditor_init (FunctionEditor me, conststring32 title, Function data) {
 	my tmin = data -> xmin;   // set before adding children (see group button)
 	my tmax = data -> xmax;
 	Editor_init (me, 0, 0, my pref_shellWidth (), my pref_shellHeight (), title, data);
@@ -1555,7 +1555,7 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 	Graphics_updateWs (my graphics.get());   // for setting buttons in v_draw() method
 }
 
-void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, int verticalAlignment) {
+void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, int verticalAlignment) {
 	static MelderString text { };
 	MelderString_copy (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics.get(), text.string) + Graphics_dxMMtoWC (my graphics.get(), 0.5);
@@ -1566,7 +1566,7 @@ void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const char32 *
 	Graphics_text (my graphics.get(), my endWindow, yWC, text.string);
 }
 
-void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units) {
+void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units) {
 	Graphics_setColour (my graphics.get(), Graphics_CYAN);
 	Graphics_line (my graphics.get(), my startWindow, yWC, 0.99 * my startWindow + 0.01 * my endWindow, yWC);
 	Graphics_fillCircle_mm (my graphics.get(), 0.5 * (my startSelection + my endSelection), yWC, 1.5);
@@ -1575,7 +1575,7 @@ void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, cons
 	Graphics_text (my graphics.get(), my startWindow, yWC,   yWC_string, units);
 }
 
-void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units, double minimum, double maximum) {
+void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units, double minimum, double maximum) {
 	double textX = my endWindow, textY = yWC;
 	int tooHigh = Graphics_dyWCtoMM (my graphics.get(), maximum - textY) < 5.0;
 	int tooLow = Graphics_dyWCtoMM (my graphics.get(), textY - minimum) < 5.0;
@@ -1598,7 +1598,7 @@ void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, co
 	Graphics_text (my graphics.get(), textX, textY, text.string);
 }
 
-void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, const char32 *yWC_string, const char32 *units) {
+void FunctionEditor_drawHorizontalHair (FunctionEditor me, double yWC, conststring32 yWC_string, conststring32 units) {
 	Graphics_setColour (my graphics.get(), Graphics_RED);
 	Graphics_line (my graphics.get(), my startWindow, yWC, my endWindow, yWC);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_RIGHT, Graphics_HALF);

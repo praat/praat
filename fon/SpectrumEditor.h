@@ -39,7 +39,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		override;
 	void v_createMenuItems_view (EditorMenu menu)
 		override;
-	const char32 * v_format_domain ()
+	conststring32 v_format_domain ()
 		override { return U"Frequency domain:"; }
 	const char * v_format_short ()
 		override { return "%.0f"; }
@@ -47,7 +47,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		override { return "%.2f"; }
 	int v_fixedPrecision_long ()
 		override { return 2; }
-	const char32 * v_format_units ()
+	conststring32 v_format_units ()
 		override { return U"hertz"; }
 	const char * v_format_totalDuration ()
 		override { return u8"Total bandwidth %.2f hertz"; }
@@ -59,7 +59,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 	#include "SpectrumEditor_prefs.h"
 };
 
-autoSpectrumEditor SpectrumEditor_create (const char32 *title, Spectrum data);
+autoSpectrumEditor SpectrumEditor_create (conststring32 title, Spectrum data);
 
 /* End of file SpectrumEditor.h */
 #endif

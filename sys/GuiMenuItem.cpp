@@ -42,7 +42,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 		if (acc == 0) {
 			MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
 		} else {
-			static const char32 *keyStrings [256] = {
+			static const conststring32 keyStrings [256] = {
 				0, U"<-", U"->", U"Up", U"Down", U"PAUSE", U"Del", U"Ins", U"Backspace", U"Tab", U"LineFeed", U"Home", U"End", U"Enter", U"PageUp", U"PageDown",
 				U"Esc", U"F1", U"F2", U"F3", U"F4", U"F5", U"F6", U"F7", U"F8", U"F9", U"F10", U"F11", U"F12", 0, 0, 0,
 				U"Space", U"!", U"\"", U"#", U"$", U"%", U"&", U"\'", U"(", U")", U"*", U"+", U",", U"-", U".", U"/",
@@ -59,7 +59,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"-", U"`", U"=", U"\'", 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			const char32 *keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
+			const conststring32 keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
 			MelderString_copy (& title, _GuiWin_expandAmpersands (my name), U"\t",
 				modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : nullptr,
 				modifiers & _motif_OPTION_MASK ? U"Alt-" : nullptr,
@@ -138,7 +138,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 	@end
 #endif
 
-GuiMenuItem GuiMenu_addItem (GuiMenu menu, const char32 *title, uint32 flags,
+GuiMenuItem GuiMenu_addItem (GuiMenu menu, conststring32 title, uint32 flags,
 	GuiMenuItemCallback commandCallback, Thing boss)
 {
 	autoGuiMenuItem me = Thing_new (GuiMenuItem);

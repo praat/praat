@@ -52,7 +52,7 @@ void structMovie :: v_info ()
 	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
 }
 
-void Movie_init (Movie me, autoSound sound, const char32 *folderName, autoStrings fileNames)
+void Movie_init (Movie me, autoSound sound, conststring32 folderName, autoStrings fileNames)
 {
 	Sampled_init (me, sound -> xmin, sound -> xmax, fileNames ? fileNames -> numberOfStrings : 0, 0.04, 0.0);
 	my d_sound = sound.move();

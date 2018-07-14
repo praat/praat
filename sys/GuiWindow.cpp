@@ -114,7 +114,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 #endif
 
 GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
-	const char32 *title /* cattable */, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags)
+	conststring32 title /* cattable */, GuiShell_GoAwayCallback goAwayCallback, Thing goAwayBoss, uint32 flags)
 {
 	autoGuiWindow me = Thing_new (GuiWindow);
 	my d_parent = nullptr;

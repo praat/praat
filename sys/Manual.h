@@ -49,7 +49,7 @@ Thing_define (Manual, HyperPage) {
 		override;
 	integer v_getCurrentPageNumber ()
 		override;
-	int v_goToPage (const char32 *title)
+	int v_goToPage (conststring32 title)
 		override;
 	void v_goToPage_i (integer pageNumber)
 		override;
@@ -59,10 +59,10 @@ Thing_define (Manual, HyperPage) {
 		override { return true; }
 };
 
-void Manual_init (Manual me, const char32 *title, Daata data, bool ownData);
-autoManual Manual_create (const char32 *title, Daata data, bool ownData);
+void Manual_init (Manual me, conststring32 title, Daata data, bool ownData);
+autoManual Manual_create (conststring32 title, Daata data, bool ownData);
 
-void Manual_search (Manual me, const char32 *query);
+void Manual_search (Manual me, conststring32 query);
 
 /* End of file Manual.h */
 #endif

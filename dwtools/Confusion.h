@@ -35,16 +35,16 @@ Thing_define (Confusion, TableOfReal) {
 
 autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfResponses);
 
-autoConfusion Confusion_createSimple (const char32 *labels);
+autoConfusion Confusion_createSimple (conststring32 labels);
 
 autoConfusion Confusion_createFromStringses (Strings stimulusLabels, Strings responseLabels);
 
 autoConfusion Categories_to_Confusion (Categories me, Categories thee);
 
-void Confusion_increase (Confusion me, const char32 *stimulus, const char32 *response);
+void Confusion_increase (Confusion me, conststring32 stimulus, conststring32 response);
 /* Increase the confusion count by one: data['stim']['resp'] += 1; */
 
-double Confusion_getValue (Confusion me, const char32 *stim, const char32 *resp);
+double Confusion_getValue (Confusion me, conststring32 stimulus, conststring32 response);
 /* data['stim']['resp'] ; */
 
 void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
@@ -82,13 +82,13 @@ autoMatrix Confusion_difference (Confusion me, Confusion thee);
 
 integer Confusion_getNumberOfEntries (Confusion me);
 
-autoConfusion Confusion_groupStimuli (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos);
+autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos);
 
-autoConfusion Confusion_groupResponses (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos);
+autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos);
 
-autoConfusion Confusion_group (Confusion me, const char32 *labels, const char32 *newLabel, integer newpos);
+autoConfusion Confusion_group (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos);
 
-autoConfusion Confusion_condense (Confusion me, const char32 *search, const char32 *replace, integer maximumNumberOfReplaces, bool use_regexp);
+autoConfusion Confusion_condense (Confusion me, conststring32 search, conststring32 replace, integer maximumNumberOfReplaces, bool use_regexp);
 /* 
 	Group row and column labels according to search and replace.
 */

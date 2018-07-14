@@ -129,7 +129,7 @@ void structStringsEditor :: v_dataChanged () {
 	updateList (this);
 }
 
-autoStringsEditor StringsEditor_create (const char32 *title, Strings data) {
+autoStringsEditor StringsEditor_create (conststring32 title, Strings data) {
 	try {
 		autoStringsEditor me = Thing_new (StringsEditor);
 		Editor_init (me.get(), 20, 40, 600, 600, title, data);

@@ -54,7 +54,7 @@ Thing_define (BandFilterSpectrogram, Matrix) {
 
 	virtual double v_frequencyToHertz (double f) { return f; }
 	virtual double v_hertzToFrequency (double hertz) { return hertz; }
-	virtual const char32 *v_getFrequencyUnit () { return U"Hz"; }
+	virtual conststring32 v_getFrequencyUnit () { return U"Hz"; }
 };
 
 Thing_define (BarkSpectrogram, BandFilterSpectrogram) {
@@ -64,7 +64,7 @@ Thing_define (BarkSpectrogram, BandFilterSpectrogram) {
 		override { return NUMbarkToHertz2 (f); }
 	double v_hertzToFrequency (double hertz)
 		override { return NUMhertzToBark2 (hertz); }
-	const char32 *v_getFrequencyUnit ()
+	conststring32 v_getFrequencyUnit ()
 		override { return U"bark"; }
 };
 
@@ -75,7 +75,7 @@ Thing_define (MelSpectrogram, BandFilterSpectrogram) {
 		override { return NUMmelToHertz2 (f); }
 	double v_hertzToFrequency (double hertz)
 		override { return NUMhertzToMel2 (hertz); }
-	const char32 *v_getFrequencyUnit ()
+	conststring32 v_getFrequencyUnit ()
 		override { return U"mel"; }
 };
 
@@ -96,17 +96,23 @@ autoMatrix BandFilterSpectrogram_to_Matrix (BandFilterSpectrogram me, int to_dB)
 
 autoIntensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me);
 
-void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish);
+void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphics g,
+	double xmin, double xmax, double ymin, double ymax, bool garnish);
 
-void BandFilterSpectrogram_drawTimeSlice (BandFilterSpectrogram me, Graphics g, double t, double fmin, double fmax, double min, double max, const char32 *xlabel, int garnish);
+void BandFilterSpectrogram_drawTimeSlice (BandFilterSpectrogram me, Graphics g, double t, double fmin, double fmax,
+	double min, double max, conststring32 xlabel, bool garnish);
 
-void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, int garnish);
+void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter,
+	double zmin, double zmax, bool yscale_dB, double ymin, double ymax, bool garnish);
 
-void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram me, Graphics g, double time, double fmin, double fmax, double dBmin, double dBmax, int garnish);
+void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram me, Graphics g,
+	double time, double fmin, double fmax, double dBmin, double dBmax, bool garnish);
 
-void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, int garnish);
+void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g,
+	double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish);
 
-autoBarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, integer nt, double dt, double t1, double fmin, double fmax, integer nf, double df, double f1);
+autoBarkSpectrogram BarkSpectrogram_create (double tmin, double tmax, integer nt, double dt, double t1,
+	double fmin, double fmax, integer nf, double df, double f1);
 
 autoBarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me);
 
@@ -118,12 +124,13 @@ Interpretation:
     dy distance between filters (mel).
     ny the number of filters.
  */
-
-autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, integer nt, double dt, double t1, double fmin, double fmax, integer nf, double df, double f1);
+autoMelSpectrogram MelSpectrogram_create (double tmin, double tmax, integer nt, double dt, double t1,
+	double fmin, double fmax, integer nf, double df, double f1);
 
 autoMelSpectrogram Matrix_to_MelSpectrogram (Matrix me);
 
-void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter, double zmin, double zmax, bool yscale_dB, double ymin, double ymax, int garnish);
+void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g, bool xIsHertz, int fromFilter, int toFilter,
+	double zmin, double zmax, bool yscale_dB, double ymin, double ymax, bool garnish);
 
 autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, integer numberOfCoefficients);
 

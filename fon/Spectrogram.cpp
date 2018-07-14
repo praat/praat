@@ -45,7 +45,7 @@ autoSpectrogram Spectrogram_create (double tmin, double tmax, integer nt, double
 {
 	try {
 		autoSpectrogram me = Thing_new (Spectrogram);
-		Matrix_init (me, tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
+		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Spectrogram not created.");

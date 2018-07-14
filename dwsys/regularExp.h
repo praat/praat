@@ -66,11 +66,11 @@ typedef enum {
 /* Compiles a regular expression into the internal format used by `ExecRE'. */
 
 regexp * CompileRE (
-   const char32  *exp,         /* String containing the regex specification. */
-   const char32 **errorText,   /* Text of any error message produced. */
+   conststring32 exp,         /* String containing the regex specification. */
+   conststring32 * errorText,   /* Text of any error message produced. */
    int  defaultFlags); /* Flags for default RE-operation */
 
-regexp *CompileRE_throwable (const char32 *exp, int defaultFlags);
+regexp *CompileRE_throwable (conststring32 exp, int defaultFlags);
 
 /* Match a `regexp' structure against a string. */
 

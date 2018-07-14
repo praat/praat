@@ -41,11 +41,10 @@
 
 Thing_implement (ERP, Sound, 2);
 
-integer ERP_getChannelNumber (ERP me, const char32 *channelName) {
+integer ERP_getChannelNumber (ERP me, conststring32 channelName) {
 	for (integer ichan = 1; ichan <= my ny; ichan ++) {
-		if (Melder_equ (my channelNames [ichan].get(), channelName)) {
+		if (Melder_equ (my channelNames [ichan].get(), channelName))
 			return ichan;
-		}
 	}
 	return 0;
 }
@@ -98,13 +97,13 @@ void ERP_drawChannel_number (ERP me, Graphics graphics, integer channelNumber, d
 
 }
 
-void ERP_drawChannel_name (ERP me, Graphics graphics, const char32 *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish) {
+void ERP_drawChannel_name (ERP me, Graphics graphics, conststring32 channelName, double tmin, double tmax, double vmin, double vmax, bool garnish) {
 	ERP_drawChannel_number (me, graphics, ERP_getChannelNumber (me, channelName), tmin, tmax, vmin, vmax, garnish);
 }
 
 autoTable ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units) {
 	double voltageScaling = 1.0;
-	const char32 *unitText = U"(V)";
+	conststring32 unitText = U"(V)";
 	if (units == 2) {
 		voltageDecimals -= 6;
 		voltageScaling = 1000000.0;

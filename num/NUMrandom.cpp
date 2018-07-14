@@ -397,7 +397,7 @@ double NUMrandomPoisson (double mean) {
 	}
 }
 
-uint32 NUMhashString (const char32 *string) {
+uint32 NUMhashString (conststring32 string) {
 	/*
 	 * Jenkins' one-at-a-time hash.
 	 */

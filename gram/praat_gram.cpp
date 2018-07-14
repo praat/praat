@@ -453,7 +453,7 @@ DO
 	STRING_ONE (OTGrammar)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"The specified constraint number should not exceed the number of constraints.");
-		const char32 *result = my constraints [constraintNumber]. name.get();
+		const conststring32 result = my constraints [constraintNumber]. name.get();
 	STRING_ONE_END
 }
 
@@ -492,7 +492,7 @@ DO
 	STRING_ONE (OTGrammar)
 		if (tableauNumber > my numberOfTableaus)
 			Melder_throw (U"The specified tableau number should not exceed the number of tableaus.");
-		const char32 *result = my tableaus [tableauNumber]. input.get();
+		const conststring32 result = my tableaus [tableauNumber]. input.get();
 	STRING_ONE_END
 }
 
@@ -518,7 +518,7 @@ DO
 		OTGrammarTableau tableau = & my tableaus [tableauNumber];
 		if (candidateNumber > tableau -> numberOfCandidates)
 			Melder_throw (U"The specified candidate should not exceed the number of candidates.");
-		const char32 *result = tableau -> candidates [candidateNumber]. output.get();
+		const conststring32 result = tableau -> candidates [candidateNumber]. output.get();
 	STRING_ONE_END
 }
 
@@ -688,9 +688,8 @@ FORM (STRING_MODIFY_OTGrammar_inputToOutput, U"OTGrammar: Input to output", U"OT
 	OK
 DO
 	FIND_ONE (OTGrammar)
-		char32 output [100];
-		OTGrammar_inputToOutput (me, inputForm, output, evaluationNoise);
-		Melder_information (output);
+		autostring32 output = OTGrammar_inputToOutput (me, inputForm, evaluationNoise);
+		Melder_information (output.get());
 		praat_dataChanged (me);
 	END
 }
@@ -1237,7 +1236,7 @@ DO
 	STRING_ONE (OTMulti)
 		if (constraintNumber > my numberOfConstraints)
 			Melder_throw (U"Your constraint number should not exceed the number of constraints.");
-		const char32 *result = my constraints [constraintNumber]. name.get();
+		const conststring32 result = my constraints [constraintNumber]. name.get();
 	STRING_ONE_END
 }
 
@@ -1285,7 +1284,7 @@ DO
 	STRING_ONE (OTMulti)
 		if (candidateNumber > my numberOfCandidates)
 			Melder_throw (U"Your candidate number should not exceed the number of candidates.");
-		const char32 *result = my candidates [candidateNumber]. string.get();
+		const conststring32 result = my candidates [candidateNumber]. string.get();
 	STRING_ONE_END
 }
 
@@ -1331,9 +1330,8 @@ FORM (STRING_MODIFY_OTMulti_generateOptimalForm, U"OTMulti: Generate optimal for
 	OK
 DO
 	FIND_ONE (OTMulti)
-		char32 output [100];
-		OTMulti_generateOptimalForm (me, partialForm1, partialForm2, output, evaluationNoise);
-		Melder_information (output);
+		autostring32 output = OTMulti_generateOptimalForm (me, partialForm1, partialForm2, evaluationNoise);
+		Melder_information (output.get());
 		praat_dataChanged (me);
 	END
 }

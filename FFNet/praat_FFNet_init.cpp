@@ -214,7 +214,7 @@ FORM (INFO_FFNet_getCategoryOfOutputUnit, U"FFNet: Get category of output unit",
 	OK
 DO
 	STRING_ONE (FFNet)
-		const char32 *result = FFNet_getCategoryOfOutputUnit (me, outputUnit);
+		conststring32 result = FFNet_getCategoryOfOutputUnit (me, outputUnit);
 	STRING_ONE_END
 }
 

@@ -48,9 +48,9 @@ oo_DEFINE_CLASS (EditCostsTable, TableOfReal)
 		void v_info ()
 			override;
 
-		virtual bool v_matchTargetSymbol (const char32 *targetSymbol, const char32 *symbol);
-		virtual bool v_matchSourceSymbol (const char32 *sourceSymbol, const char32 *symbol);
-		virtual bool v_matchTargetWithSourceSymbol (const char32 *targetSymbol, const char32 *sourceSymbol);
+		virtual bool v_matchTargetSymbol (conststring32 targetSymbol, conststring32 symbol);
+		virtual bool v_matchSourceSymbol (conststring32 sourceSymbol, conststring32 symbol);
+		virtual bool v_matchTargetWithSourceSymbol (conststring32 targetSymbol, conststring32 sourceSymbol);
 	#endif
 
 oo_END_CLASS (EditCostsTable)

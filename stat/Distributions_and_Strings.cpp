@@ -24,7 +24,7 @@ autoStrings Distributions_to_Strings (Distributions me, integer column, integer 
 		thy numberOfStrings = numberOfStrings;
 		thy strings = autostring32vector (numberOfStrings);
 		for (integer istring = 1; istring <= numberOfStrings; istring ++) {
-			char32 *string;
+			conststring32 string;
 			Distributions_peek (me, column, & string, nullptr);
 			thy strings [istring] = Melder_dup (string);
 		}
@@ -57,12 +57,11 @@ autoStrings Distributions_to_Strings_exact (Distributions me, integer column) {
 		thy strings = autostring32vector (total);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			integer number = my data [irow] [column];
-			const char32 *string = my rowLabels [irow].get();
+			conststring32 string = my rowLabels [irow].get();
 			if (! string)
 				Melder_throw (U"No string in row ", irow, U".");
-			for (integer i = 1; i <= number; i ++) {
+			for (integer i = 1; i <= number; i ++)
 				thy strings [++ istring] = Melder_dup (string);
-			}
 		}
 		Strings_randomize (thee.get());
 		return thee;
@@ -76,12 +75,15 @@ autoDistributions Strings_to_Distributions (Strings me) {
 		autoDistributions thee = Distributions_create (my numberOfStrings, 1);
 		integer idist = 0;
 		for (integer i = 1; i <= my numberOfStrings; i ++) {
-			const char32 *string = my strings [i].get();
+			conststring32 string = my strings [i].get();
 			integer where = 0;
 			integer j = 1;
-			for (; j <= idist; j ++)
-				if (str32equ (thy rowLabels [j].get(), string))
-					{ where = j; break; }
+			for (; j <= idist; j ++) {
+				if (str32equ (thy rowLabels [j].get(), string)) {
+					where = j;
+					break;
+				}
+			}
 			if (where) {
 				thy data [j] [1] += 1.0;
 			} else {

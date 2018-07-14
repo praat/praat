@@ -39,7 +39,7 @@ Graphics_Colour
 	Graphics_GREY = { 0.5, 0.5, 0.5 },
 	Graphics_WINDOW_BACKGROUND_COLOUR = { 0.90, 0.90, 0.85 };
 
-inline static const char32 * rgbColourName (Graphics_Colour colour) {
+inline static conststring32 rgbColourName (Graphics_Colour colour) {
 	static MelderString buffer { };
 	MelderString_copy (& buffer,
 		U"{", Melder_fixed (colour. red, 6),
@@ -49,7 +49,7 @@ inline static const char32 * rgbColourName (Graphics_Colour colour) {
 	);
 	return buffer.string;
 }
-const char32 * Graphics_Colour_name (Graphics_Colour colour) {
+conststring32 Graphics_Colour_name (Graphics_Colour colour) {
 	return
 		Graphics_Colour_equal (colour, Graphics_BLACK) ? U"black" :
 		Graphics_Colour_equal (colour, Graphics_WHITE) ? U"white" :

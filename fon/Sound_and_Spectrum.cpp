@@ -164,7 +164,7 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 	}
 }
 
-autoSound Sound_filter_formula (Sound me, const char32 *formula, Interpreter interpreter) {
+autoSound Sound_filter_formula (Sound me, conststring32 formula, Interpreter interpreter) {
 	try {
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {

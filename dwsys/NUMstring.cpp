@@ -25,18 +25,15 @@
 #include "Interpreter.h"
 #include "NUM2.h"
 
-
-int NUMstring_containsPrintableCharacter (const char32 *s) {
-	integer len;
-	if (s == NULL || ( (len = str32len (s)) == 0)) {
-		return 0;
-	}
+bool NUMstring_containsPrintableCharacter (conststring32 s) {
+	if (! s) return false;
+	integer len = str32len (s);
+	if (len == 0) return false;
 	for (integer i = 0; i < len; i ++) {
-		if (isgraph ((int) s [i])) {
-			return 1;
-		}
+		if (isgraph ((int) s [i]))
+			return true;
 	}
-	return 0;
+	return false;
 }
 
 void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string) {
@@ -53,7 +50,7 @@ void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string) {
 	string [n] = 0;
 }
 
-double *NUMstring_to_numbers (const char32 *s, integer *p_numbers_found) {
+double *NUMstring_to_numbers (conststring32 s, integer *p_numbers_found) {
 	integer numbers_found = Melder_countTokens (s);
 	if (numbers_found < 1) {
 		Melder_throw (U"Empty string.");
@@ -69,7 +66,7 @@ double *NUMstring_to_numbers (const char32 *s, integer *p_numbers_found) {
 	return numbers.transfer();
 }
 
-char32 *strstr_regexp (const char32 *string, const char32 *search_regexp) {
+char32 *strstr_regexp (conststring32 string, conststring32 search_regexp) {
 	char32 *charp = nullptr;
 	regexp *compiled_regexp = CompileRE_throwable (search_regexp, 0);
 
@@ -82,7 +79,7 @@ char32 *strstr_regexp (const char32 *string, const char32 *search_regexp) {
 }
 
 autostring32 str_replace_literal (conststring32 string,
-	const char32 *search, const char32 *replace, integer maximumNumberOfReplaces,
+	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
 	integer *nmatches)
 {
 	if (string == 0 || search == 0 || replace == 0)
@@ -101,18 +98,17 @@ autostring32 str_replace_literal (conststring32 string,
 		matches will occur.
 	*/
 
-	const char32 *pos = string; //current position / start of current match
+	const char32 *pos = & string [0];   // current position / start of current match
 	*nmatches = 0;
 	if (maximumNumberOfReplaces <= 0)
 		maximumNumberOfReplaces = INTEGER_MAX;
 
 	if (len_search == 0) { /* Search is empty string... */
-		if (len_string == 0) {
+		if (len_string == 0)
 			*nmatches = 1;    /* ...only matches empty string */
-		}
 	} else {
 		if (len_string != 0) { /* Because empty string always matches */
-			while ( (pos = str32str (pos, search)) && *nmatches < maximumNumberOfReplaces) {
+			while (!! (pos = str32str (pos, search)) && *nmatches < maximumNumberOfReplaces) {
 				pos += len_search;
 				(*nmatches) ++;
 			}
@@ -124,7 +120,7 @@ autostring32 str_replace_literal (conststring32 string,
 	autostring32 result = Melder_malloc (char32, (len_result + 1) * (integer) sizeof (char32));
 	result [len_result] = U'\0';
 
-	const char32 *posp = pos = string;
+	const char32 *posp = pos = & string [0];
 	integer nchar = 0, result_nchar = 0;
 	for (integer i = 1; i <= *nmatches; i ++) {
 		pos = str32str (pos, search);
@@ -156,9 +152,8 @@ autostring32 str_replace_literal (conststring32 string,
 	*/
 	pos = string + len_string;
 	nchar = pos - posp;
-	if (nchar > 0) {
+	if (nchar > 0)
 		str32ncpy (& result [result_nchar], posp, nchar);
-	}
 	return result;
 }
 
@@ -166,14 +161,14 @@ autostring32 str_replace_regexp (conststring32 string,
 	regexp *compiledSearchRE, conststring32 replaceRE, integer maximumNumberOfReplaces,
 	integer *nmatches)
 {
-	integer buf_nchar = 0;				/* # characters in 'buf' */
+	integer buf_nchar = 0;   // number of characters in 'buf'
 	integer gap_copied = 0;
 	integer nchar;
 	bool reverse = false;
 	int errorType;
 	char32 prev_char = U'\0';
-	const char32 *pos; 	/* current position in 'string' / start of current match */
-	const char32 *posp; /* end of previous match */
+	const char32 *pos;   // current position in 'string' / start of current match
+	const char32 *posp;   // end of previous match
 	autostring32 buf;
 
 	*nmatches = 0;
@@ -227,12 +222,12 @@ autostring32 str_replace_regexp (conststring32 string,
 			Do the substitution. We can only check afterwards for buffer
 			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
 		*/
-		if ( (SubstituteRE (compiledSearchRE, replaceRE, buf.get() + buf_nchar, buf_size - buf_nchar, &errorType)) == false) {
-			if (errorType == 1) { // not enough memory
+		if (! SubstituteRE (compiledSearchRE, replaceRE, buf.get() + buf_nchar, buf_size - buf_nchar, & errorType)) {
+			if (errorType == 1) {   // not enough memory
 				buf_size *= 2;
 				buf.resize (buf_size);
 				Melder_clearError ();
-				i--; // retry
+				i--;   // retry
 				continue;
 			}
 			Melder_throw (U"Error during substitution.");
@@ -272,7 +267,7 @@ autostring32 str_replace_regexp (conststring32 string,
 }
 
 static autostring32vector string32vector_searchAndReplace_literal (string32vector me,
-	const char32 *search, const char32 *replace, int maximumNumberOfReplaces,
+	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *p_nmatches, integer *p_nstringmatches)
 {
 	if (! search || ! replace)
@@ -281,7 +276,7 @@ static autostring32vector string32vector_searchAndReplace_literal (string32vecto
 
 	integer nmatches_sub = 0, nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
-		const char32 *string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
+		conststring32 string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
 
 		result [i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
@@ -299,7 +294,7 @@ static autostring32vector string32vector_searchAndReplace_literal (string32vecto
 }
 
 static autostring32vector string32vector_searchAndReplace_regexp (string32vector me,
-	const char32 *searchRE, const char32 *replaceRE, int maximumNumberOfReplaces,
+	conststring32 searchRE, conststring32 replaceRE, int maximumNumberOfReplaces,
 	integer *p_nmatches, integer *p_nstringmatches)
 {
 	if (! searchRE || ! replaceRE)
@@ -313,7 +308,7 @@ static autostring32vector string32vector_searchAndReplace_regexp (string32vector
 
 	integer nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
-		const char32 *string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
+		conststring32 string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
 		result [i] = str_replace_regexp (string, compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
@@ -330,7 +325,7 @@ static autostring32vector string32vector_searchAndReplace_regexp (string32vector
 }
 
 autostring32vector string32vector_searchAndReplace (string32vector me,
-	const char32 *search, const char32 *replace, int maximumNumberOfReplaces,
+	conststring32 search, conststring32 replace, int maximumNumberOfReplaces,
 	integer *nmatches, integer *nstringmatches, bool use_regexp)
 {
 	return use_regexp ?
@@ -343,7 +338,7 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-static integer *getElementsOfRanges (const char32 *ranges, integer maximumElement, integer *numberOfElements, const char32 *elementType) {
+static integer *getElementsOfRanges (conststring32 ranges, integer maximumElement, integer *numberOfElements, conststring32 elementType) {
 	/*
 		Count the elements.
 	*/
@@ -426,29 +421,28 @@ static integer *getElementsOfRanges (const char32 *ranges, integer maximumElemen
 	return elements.transfer();
 }
 
-static void NUMlvector_getUniqueNumbers (integer *numbers, integer *numberOfElements, integer *p_numberOfMultiples) {
-	Melder_assert (numberOfElements);
-	autoNUMvector< integer> sorted (NUMvector_copy <integer> (numbers, 1, *numberOfElements), 1);
-	NUMsort_integer (*numberOfElements, sorted.peek());
+static void NUMlvector_getUniqueNumbers (integer numbers[], integer *inout_numberOfElements, integer *out_numberOfMultiples) {
+	Melder_assert (inout_numberOfElements);
+	autoNUMvector< integer> sorted (NUMvector_copy <integer> (numbers, 1, *inout_numberOfElements), 1);
+	NUMsort_integer (*inout_numberOfElements, sorted.peek());
 	integer numberOfMultiples = 0;
 	
 	numbers [1] = sorted [1];
 	integer numberOfUniques = 1;
-	for (integer i = 2; i <= *numberOfElements; i ++) {
+	for (integer i = 2; i <= *inout_numberOfElements; i ++) {
 		if (sorted [i] != sorted [i - 1]) {
-			numbers [++numberOfUniques] = sorted [i];
+			numbers [++ numberOfUniques] = sorted [i];
 		} else {
 			numberOfMultiples ++;
 		}
 	}
-	*numberOfElements = numberOfUniques;
-	if (p_numberOfMultiples) {
-		*p_numberOfMultiples = numberOfMultiples;
-	}
+	*inout_numberOfElements = numberOfUniques;
+	if (out_numberOfMultiples)
+		*out_numberOfMultiples = numberOfMultiples;
 }
 
-integer *NUMstring_getElementsOfRanges (const char32 *ranges, integer maximumElement,
-	integer *numberOfElements, integer *numberOfMultiples, const char32 *elementType, bool sortedUniques)
+integer *NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement,
+	integer *numberOfElements, integer *numberOfMultiples, conststring32 elementType, bool sortedUniques)
 {
 	autoNUMvector<integer> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
 	if (sortedUniques && *numberOfElements > 0) {

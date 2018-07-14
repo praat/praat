@@ -105,7 +105,7 @@ void HMMState_setLabel (HMMState me, char32 *label);
 
 autoHMM HMM_create (int leftToRight, integer numberOfStates, integer numberOfObservationSymbols);
 
-autoHMM HMM_createSimple (int leftToRight, const char32 *states_string, const char32 *symbols_string);
+autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststring32 symbols_string);
 
 autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, integer numberOfObservationSymbols,
 	integer numberOfMixtureComponentsPerSymbol, integer componentDimension, integer componentStorage);

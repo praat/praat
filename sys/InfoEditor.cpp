@@ -42,8 +42,8 @@ InfoEditor InfoEditor_getTheReferenceToTheOnlyInstance () {
 	return theReferenceToTheOnlyInfoEditor;
 }
 
-void gui_information (const char32 *message);   // BUG
-void gui_information (const char32 *message) {
+void gui_information (conststring32 message);   // BUG
+void gui_information (conststring32 message) {
 	InfoEditor editor = InfoEditor_getTheReferenceToTheOnlyInstance ();
 	GuiText_setString (editor -> textWidget, message);
 	GuiThing_show (editor -> windowForm);

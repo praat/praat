@@ -181,7 +181,7 @@ static int NativeButton_preferredHeight (GuiObject me) {
 
 /***** WIDGET *****/
 
-GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const char32 *name) {
+GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, conststring32 name) {
 	GuiObject me = Melder_calloc_f (struct structGuiObject, 1);
 	if (Melder_debug == 34)
 		Melder_casual (U"from _Gui_initializeWidget\t", Melder_pointer (me), U"\t1\t", sizeof (struct structGuiObject));
@@ -374,9 +374,9 @@ void _GuiNativeControl_setSensitive (GuiObject me) {
 	EnableWindow (my window, ! my insensitive);
 }
 
-char32 * _GuiWin_expandAmpersands (const char32 *title) {
+char32 * _GuiWin_expandAmpersands (conststring32 title) {
 	static char32 buffer [300];
-	const char32 *from = title;
+	const char32 *from = & title [0];
 	char32 *to = & buffer [0];
 	while (*from) { if (*from == U'&') * to ++ = U'&'; * to ++ = * from ++; } * to = U'\0';
 	return buffer;
@@ -473,7 +473,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 	if (acc == 0) {
 		MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
 	} else {
-		static const char32 *keyStrings [256] = {
+		static const conststring32 keyStrings [256] = {
 			0, U"<-", U"->", U"Up", U"Down", U"PAUSE", U"Del", U"Ins", U"Backspace", U"Tab", U"LineFeed", U"Home", U"End", U"Enter", U"PageUp", U"PageDown",
 			U"Esc", U"F1", U"F2", U"F3", U"F4", U"F5", U"F6", U"F7", U"F8", U"F9", U"F10", U"F11", U"F12", 0, 0, 0,
 			U"Space", U"!", U"\"", U"#", U"$", U"%", U"&", U"\'", U"(", U")", U"*", U"+", U",", U"-", U".", U"/",
@@ -490,7 +490,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, U"-", U"`", U"=", U"\'", 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		const char32 *keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
+		const conststring32 keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
 		MelderString_copy (& title, _GuiWin_expandAmpersands (my name), U"\t",
 			modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : NULL,
 			modifiers & _motif_OPTION_MASK ? U"Alt-" : NULL,

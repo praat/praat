@@ -38,7 +38,7 @@ void structAmplitudeTierEditor :: v_play (double fromTime, double toTime) {
 	}
 }
 
-autoAmplitudeTierEditor AmplitudeTierEditor_create (const char32 *title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
+autoAmplitudeTierEditor AmplitudeTierEditor_create (conststring32 title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
 		RealTierEditor_init (me.get(), title, (RealTier) amplitude, sound, ownSound);

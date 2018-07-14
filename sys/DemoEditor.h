@@ -57,7 +57,7 @@ struct autoDemoOpen {
 	~autoDemoOpen () { Demo_close (); }
 };
 
-int Demo_windowTitle (const char32 *title);
+int Demo_windowTitle (conststring32 title);
 int Demo_show ();
 void Demo_waitForInput (Interpreter interpreter);
 void Demo_peekInput (Interpreter interpreter);
@@ -71,7 +71,7 @@ bool Demo_commandKeyPressed ();
 bool Demo_optionKeyPressed ();
 bool Demo_extraControlKeyPressed ();
 /* Shortcuts: */
-bool Demo_input (const char32 *keys);
+bool Demo_input (conststring32 keys);
 bool Demo_clickedIn (double left, double right, double bottom, double top);
 void Demo_timer (double duration);
 

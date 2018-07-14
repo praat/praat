@@ -70,7 +70,7 @@ autoLtas Ltas_create (integer nx, double dx) {
 	}
 }
 
-void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish, const char32 *method) {
+void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, double maximum, bool garnish, conststring32 method) {
 	Vector_draw (me, g, & fmin, & fmax, & minimum, & maximum, 1.0, method);
 	if (garnish) {
 		Graphics_drawInnerBox (g);

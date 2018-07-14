@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-integer Melder_countTokens (const char32 *string) {
+integer Melder_countTokens (conststring32 string) {
 	integer numberOfTokens = 0;
 	const char32 *p = & string [0];
 	for (;;) {
@@ -33,19 +33,18 @@ integer Melder_countTokens (const char32 *string) {
 	return 0;   // should not occur
 }
 
-static char32 *theMelderToken;
+static autostring32 theMelderToken;
 
-char32 *Melder_firstToken (const char32 *string) {
-	Melder_free (theMelderToken);
+char32 *Melder_firstToken (conststring32 string) {
 	theMelderToken = Melder_dup_f (string);
-	return Melder_tok (theMelderToken, U" \t\n\r");
+	return Melder_tok (theMelderToken.get(), U" \t\n\r");
 }
 
 char32 *Melder_nextToken () {
 	return Melder_tok (nullptr, U" \t\n\r");
 }
 
-char32 ** Melder_getTokens (const char32 *string, integer *n) {
+char32 ** Melder_getTokens (conststring32 string, integer *n) {
 	char32 *token;
 	integer itoken = 0;
 	*n = Melder_countTokens (string);
@@ -62,7 +61,7 @@ void Melder_freeTokens (char32 ***tokens) {
 	*tokens = nullptr;
 }
 
-integer Melder_searchToken (const char32 *string, char32 **tokens, integer n) {
+integer Melder_searchToken (conststring32 string, char32 **tokens, integer n) {
 	for (integer i = 1; i <= n; i ++) {
 		if (str32equ (string, tokens [i])) return i;
 	}

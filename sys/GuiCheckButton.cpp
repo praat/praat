@@ -86,7 +86,7 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 #endif
 
 GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, GuiCheckButton_ValueChangedCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
+	conststring32 buttonText, GuiCheckButton_ValueChangedCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
 	autoGuiCheckButton me = Thing_new (GuiCheckButton);
 	my d_shell = parent -> d_shell;
@@ -137,7 +137,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 }
 
 GuiCheckButton GuiCheckButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
-	const char32 *buttonText, GuiCheckButton_ValueChangedCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
+	conststring32 buttonText, GuiCheckButton_ValueChangedCallback valueChangedCallback, Thing valueChangedBoss, uint32 flags)
 {
 	GuiCheckButton me = GuiCheckButton_create (parent, left, right, top, bottom, buttonText, valueChangedCallback, valueChangedBoss, flags);
 	GuiThing_show (me);

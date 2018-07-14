@@ -24,7 +24,7 @@
 #undef enums_add
 #undef enums_alt
 #undef enums_end
-#define enums_begin(kType,minimum)  kType kType##_getValue (const char32 *testText) {
+#define enums_begin(kType,minimum)  kType kType##_getValue (conststring32 testText) {
 #define enums_add(kType,value,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return kType::which;
 #define enums_alt(kType,which,text)  if (Melder_equ_firstCharacterCaseInsensitive (testText, text)) return kType::which;
 #define enums_end(kType,maximum,def) \

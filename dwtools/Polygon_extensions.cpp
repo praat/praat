@@ -221,7 +221,7 @@ static void setWindow (Polygon me, Graphics graphics, double xmin, double xmax, 
 	Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
 }
 
-void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, const char32 *mark) {
+void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark) {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	for (integer i = 1; i <= my numberOfPoints; i ++) {
@@ -778,11 +778,17 @@ static void Vertices_print (Vertices me, Vertices thee) {
 	MelderInfo_writeLine (U"");
 	while (n != 0) {
 		double x = VERTEX (n) -> x, y = VERTEX (n) -> y, alpha = VERTEX (n) -> alpha;
-		const char32 *type = 0, *itype;
+		conststring32 type, itype;
 		if (VERTEX (n) -> intersect == 0) {
-			type = U"S"; ns ++; nt = ns; itype = U"-"; nt2 = 0;
+			type = U"S";
+			ns ++;
+			nt = ns;
+			itype = U"-";
+			nt2 = 0;
 		} else {
-			type = U"I"; nt = VERTEX (n) -> id; nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
+			type = U"I";
+			nt = VERTEX (n) -> id;
+			nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
 			itype = Melder_integer (VERTEX (n) -> intersect);
 		}
 		MelderInfo_write (type, nt, U" I", itype, U", (", x, U", ", y, U"), ");
@@ -793,11 +799,17 @@ static void Vertices_print (Vertices me, Vertices thee) {
 	n = thy front;
 	while (n != 0) {
 		double x = VERTEX (n) -> x, y = VERTEX (n) -> y, alpha = VERTEX (n) -> alpha;
-		const char32 *type = 0, *itype;
+		conststring32 type, itype;
 		if (VERTEX (n) -> intersect == 0) {
-			type = U"C"; nc ++; nt = nc; itype = U"-"; nt2 = 0;
+			type = U"C";
+			nc ++;
+			nt = nc;
+			itype = U"-";
+			nt2 = 0;
 		} else {
-			type = U"I"; nt = VERTEX (n) -> id; nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
+			type = U"I";
+			nt = VERTEX (n) -> id;
+			nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
 			itype = Melder_integer (VERTEX (n) -> intersect);
 		}
 		MelderInfo_write (type, nt, U" I", itype, U", (", x, U", ", y, U"), ");

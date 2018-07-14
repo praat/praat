@@ -122,12 +122,12 @@ void espeak_io_GetVoices (const char *path, int len_path_voices, int is_language
 		We know our voices are in /voices/!v/ and our languages in /lang/
 	*/
 	FileInMemoryManager me = ESPEAK_FILEINMEMORYMANAGER;
-	const char32 *criterion = is_language_file ? U"/lang/" : U"/voices/";
+	conststring32 criterion = is_language_file ? U"/lang/" : U"/voices/";
 	autoFileInMemorySet fileList = FileInMemorySet_listFiles (my files.get(), kMelder_string :: CONTAINS, criterion);
 	for (long ifile = 1; ifile <= fileList -> size; ifile ++) {
 		FileInMemory fim = static_cast<FileInMemory> (fileList -> at [ifile]);
 		FILE *f_voice = FileInMemoryManager_fopen (me, Melder_peek32to8 (fim -> d_path.get()), "r");
-		char *fname = Melder_peek32to8 (fim -> d_path.get());
+		conststring8 fname = Melder_peek32to8 (fim -> d_path.get());
 		espeak_VOICE *voice_data = ReadVoiceFile (f_voice, fname + len_path_voices, is_language_file);
 		FileInMemoryManager_fclose (me, f_voice);
 		if (voice_data) {

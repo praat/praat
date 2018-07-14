@@ -838,7 +838,7 @@ int gsl_sf_zeta_e(const double s, gsl_sf_result * result)
        * overflow here. But we have no easy way
        * to calculate it when the prefactor(s)
        * overflow. Trying to use log's and exp
-       * is no good because we loose a couple
+       * is no good because we lose a couple
        * digits to the exp error amplification.
        * When we gather a little more patience,
        * we can implement something here. Until

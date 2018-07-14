@@ -440,7 +440,7 @@ void structSoundEditor :: v_unhighlightSelection (double left, double right, dou
 		Graphics_unhighlight (our graphics.get(), left, right, bottom, top);
 }
 
-void SoundEditor_init (SoundEditor me, const char32 *title, Sampled data) {
+void SoundEditor_init (SoundEditor me, conststring32 title, Sampled data) {
 	/*
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
 	 * because createMenus expects that one of them is not null.
@@ -454,7 +454,7 @@ void SoundEditor_init (SoundEditor me, const char32 *title, Sampled data) {
 	}
 }
 
-autoSoundEditor SoundEditor_create (const char32 *title, Sampled data) {
+autoSoundEditor SoundEditor_create (conststring32 title, Sampled data) {
 	Melder_assert (data);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);

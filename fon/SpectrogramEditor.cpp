@@ -76,7 +76,7 @@ bool structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	return our SpectrogramEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 
-autoSpectrogramEditor SpectrogramEditor_create (const char32 *title, Spectrogram data) {
+autoSpectrogramEditor SpectrogramEditor_create (conststring32 title, Spectrogram data) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
 		FunctionEditor_init (me.get(), title, data);

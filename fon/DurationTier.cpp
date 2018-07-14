@@ -42,7 +42,7 @@ autoDurationTier DurationTier_create (double tmin, double tmax) {
 }
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const char32 *method, int garnish)
+	double ymin, double ymax, conststring32 method, int garnish)
 {
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Relative duration");
 }

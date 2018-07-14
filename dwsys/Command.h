@@ -34,7 +34,7 @@ Thing_define (Command, Thing) {
 	Command_Callback undo;
 };
 
-void Command_init (Command me, const char32 *name, Thing boss, Command_Callback execute, Command_Callback undo);
+void Command_init (Command me, conststring32 name, Thing boss, Command_Callback execute, Command_Callback undo);
 
 int Command_do (Command me);
 
@@ -77,7 +77,7 @@ int CommandHistory_offleft (CommandHistory me);
 int CommandHistory_offright (CommandHistory me);
 /*	return my size == 0 || my current == my size + 1; */
 
-const char32 * CommandHistory_commandName (CommandHistory me, integer offsetFromCurrent);
+conststring32 CommandHistory_commandName (CommandHistory me, integer offsetFromCurrent);
 /* offsetFromCurrent may be zero, positive or negative. */
 /* References outside the list will return nullptr. */
 

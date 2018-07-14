@@ -141,10 +141,10 @@
 #undef iam
 #define iam iam_LOOP
 
-static const char32 *QUERY_BUTTON   = U"Query -";
-static const char32 *DRAW_BUTTON    = U"Draw -";
-static const char32 *MODIFY_BUTTON  = U"Modify -";
-static const char32 *EXTRACT_BUTTON = U"Extract -";
+static const conststring32 QUERY_BUTTON   = U"Query -";
+static const conststring32 DRAW_BUTTON    = U"Draw -";
+static const conststring32 MODIFY_BUTTON  = U"Modify -";
+static const conststring32 EXTRACT_BUTTON = U"Extract -";
 
 void praat_TableOfReal_init2 (ClassInfo klas);
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
@@ -658,7 +658,7 @@ FORM (INTEGER_ClassificationTable_getClassLabelAtMaximumInRow, U"ClassificationT
 	OK
 DO
 	STRING_ONE (ClassificationTable)
-		const char32 *result = TableOfReal_getColumnLabelAtMaximumInRow (me, rowNumber);
+		conststring32 result = TableOfReal_getColumnLabelAtMaximumInRow (me, rowNumber);
 	STRING_ONE_END
 }
 
@@ -1774,7 +1774,7 @@ FORM (INTEGER_DTW_getMaximumConsecutiveSteps, U"DTW: Get maximum consecutive ste
 	OK
 DO
 	int direction_code [] = { DTW_START, DTW_X, DTW_Y, DTW_XANDY };
-	const char32 *direction_string [] = { U"", U"x", U"y", U"diagonal" };
+	conststring32 direction_string [] = { U"", U"x", U"y", U"diagonal" };
 	INTEGER_ONE (DTW)
 		integer result = DTW_getMaximumConsecutiveSteps (me, direction_code [direction]);
 	INTEGER_ONE_END (U" (= maximum number of consecutive steps in ", direction_string [direction], U" direction)")
@@ -2309,7 +2309,7 @@ FORM (INFO_StringsIndex_getItemLabelFromItemIndex, U"StringsIndex: Get item labe
 	OK
 DO
 	STRING_ONE (StringsIndex)
-		const char32 *result = StringsIndex_getItemLabelFromItemIndex (me, itemIndex);
+		conststring32 result = StringsIndex_getItemLabelFromItemIndex (me, itemIndex);
 	STRING_ONE_END
 }
 
@@ -4558,7 +4558,7 @@ DO
 	Melder_require (eps >= 0.0, U"The precision cannot be negative.");
 	STRING_ONE (Polygon)
 		int loc = Polygon_getLocationOfPoint (me, x, y, eps);
-		const char32 * result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
+		conststring32 result = ( loc == Polygon_INSIDE ? U"I" : loc == Polygon_OUTSIDE ? U"O" :
 			loc == Polygon_EDGE ? U"E" : U"V" );
 	STRING_ONE_END
 }
@@ -5685,7 +5685,7 @@ FORM (NEW1_ExtractEspeakData, U"SpeechSynthesizer: Extract espeak data", nullptr
 DO
 	CREATE_ONE
 		autoTable result;
-		const char32 *name = U"languages";
+		conststring32 name = U"languages";
 		if (which == 1) {
 			result = Data_copy (espeakdata_languages_propertiesTable.get());
 		} else if (which == 2) {
@@ -5767,19 +5767,19 @@ DO
 
 DIRECT (INFO_SpeechSynthesizer_getLanguageName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_languageName.get();
+		conststring32 result = my d_languageName.get();
 	STRING_ONE_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getVoiceName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_voiceName.get();
+		conststring32 result = my d_voiceName.get();
 	STRING_ONE_END
 }
 
 DIRECT (INFO_SpeechSynthesizer_getPhonemeSetName) {
 	STRING_ONE (SpeechSynthesizer)
-		const char32 *result = my d_phonemeSet.get();
+		conststring32 result = my d_phonemeSet.get();
 	STRING_ONE_END
 }
 

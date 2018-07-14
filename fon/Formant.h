@@ -75,12 +75,12 @@ void Formant_drawSpeckles (Formant me, Graphics graphics, double tmin, double tm
 	double suppress_dB, bool garnish);
 void Formant_scatterPlot (Formant me, Graphics graphics, double tmin, double tmax,
 	integer iformant1, double fmin1, double fmax1, integer iformant2, double fmin2, double fmax2,
-	double size_mm, const char32 *mark, bool garnish);
+	double size_mm, conststring32 mark, bool garnish);
 
 autoMatrix Formant_to_Matrix (Formant me, integer iformant);
 autoMatrix Formant_to_Matrix_bandwidths (Formant me, integer iformant);
-void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter interpreter);
-void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter interpreter);
+void Formant_formula_frequencies (Formant me, conststring32 formula, Interpreter interpreter);
+void Formant_formula_bandwidths (Formant me, conststring32 formula, Interpreter interpreter);
 
 autoFormant Formant_tracker (Formant me, integer numberOfTracks,
 	double refF1, double refF2, double refF3, double refF4, double refF5,

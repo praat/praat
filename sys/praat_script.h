@@ -21,16 +21,16 @@
 #include "Interpreter.h"
 
 int praat_executeCommand (Interpreter me, char32 *command);
-void praat_executeCommandFromStandardInput (const char32 *programName);
-void praat_executeScriptFromFile (MelderFile file, const char32 *arguments);
-void praat_executeScriptFromFileName (const char32 *fileName, integer narg, Stackel args);
-void praat_executeScriptFromFileNameWithArguments (const char32 *nameAndArguments);
-void praat_executeScriptFromText (const char32 *text);
+void praat_executeCommandFromStandardInput (conststring32 programName);
+void praat_executeScriptFromFile (MelderFile file, conststring32 arguments);
+void praat_executeScriptFromFileName (conststring32 fileName, integer narg, Stackel args);
+void praat_executeScriptFromFileNameWithArguments (conststring32 nameAndArguments);
+void praat_executeScriptFromText (conststring32 text);
 void praat_executeScriptFromDialog (UiForm dia);
 extern "C" void praatlib_executeScript (const char *text8);
-void DO_praat_runScript (UiForm sendingForm, integer narg, Stackel args, const char32 *sendingString, Interpreter interpreter_dummy, const char32 *invokingButtonTitle, bool modified, void *dummy);
-void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, integer narg, Stackel args, const char32 *scriptPath, Interpreter interpreter_dummy, const char32 *invokingButtonTitle, bool modified, void *dummy);
-void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const char32 *script);
+void DO_praat_runScript (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter_dummy, conststring32 invokingButtonTitle, bool modified, void *dummy);
+void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, integer narg, Stackel args, conststring32 scriptPath, Interpreter interpreter_dummy, conststring32 invokingButtonTitle, bool modified, void *dummy);
+void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, conststring32 script);
 
 /* End of file praat_script.h */
 #endif

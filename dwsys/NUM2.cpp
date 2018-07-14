@@ -95,7 +95,7 @@ struct pdf2_struct {
 	double df2;
 };
 
-void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, const char32 *name) {
+void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring32 name) {
 	integer npc = 5;
 	ldiv_t n = ldiv (nc, npc);
 

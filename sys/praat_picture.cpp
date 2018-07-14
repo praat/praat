@@ -639,11 +639,13 @@ DO
 		Graphics_setInner (GRAPHICS);
 		Graphics_setFont (GRAPHICS, (kGraphics_font) font);
 		Graphics_setFontSize (GRAPHICS, fontSize);
-		const char32 *semicolon;
-		if (!! (semicolon = str32chr (rotation, ';')))
-			Graphics_setTextRotation_vector (GRAPHICS, Melder_atof (rotation), Melder_atof (semicolon + 1));
-		else
+		const char32 *semicolon = str32chr (rotation, ';');
+		if (semicolon) {
+			conststring32 dx = rotation, dy = semicolon + 1;
+			Graphics_setTextRotation_vector (GRAPHICS, Melder_atof (dx), Melder_atof (dy));
+		} else {
 			Graphics_setTextRotation (GRAPHICS, Melder_atof (rotation));
+		}
 		Graphics_text (GRAPHICS, horizontalPosition, verticalPosition, text);
 		Graphics_setFont (GRAPHICS, currentFont);
 		Graphics_setFontSize (GRAPHICS, currentSize);
@@ -1413,7 +1415,7 @@ DIRECT (HELP_AboutTextStyles) { HELP (U"Text styles") }
 DIRECT (HELP_PhoneticSymbols) { HELP (U"Phonetic symbols") }
 DIRECT (GRAPHICS_Picture_settings_report) {
 	MelderInfo_open ();
-	const char32 *units = theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"";
+	const conststring32 units = theCurrentPraatPicture == & theForegroundPraatPicture ? U" inches" : U"";
 	MelderInfo_writeLine (U"Outer viewport left: ", theCurrentPraatPicture -> x1NDC, units);
 	MelderInfo_writeLine (U"Outer viewport right: ", theCurrentPraatPicture -> x2NDC, units);
 	MelderInfo_writeLine (U"Outer viewport top: ",
@@ -1516,7 +1518,7 @@ static GuiWindow dialog;
 
 static GuiMenu fileMenu, editMenu, marginsMenu, worldMenu, selectMenu, fontMenu, penMenu, helpMenu;
 
-GuiMenu praat_picture_resolveMenu (const char32 *menu) {
+GuiMenu praat_picture_resolveMenu (conststring32 menu) {
 	return
 		str32equ (menu, U"File") ? fileMenu :
 		str32equ (menu, U"Edit") ? editMenu :
@@ -1634,7 +1636,7 @@ void praat_picture_init () {
 			y = screenY + 0;
 			width += margin * 2;
 		#endif
-		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title, U" Picture"), nullptr, nullptr, 0);
+		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_cat (praatP.title.get(), U" Picture"), nullptr, nullptr, 0);
 		GuiWindow_addMenuBar (dialog);
 	}
 	if (! theCurrentPraatApplication -> batch) {
@@ -1825,7 +1827,7 @@ void praat_picture_init () {
 	praat_addMenuCommand (U"Picture", U"Help", U"Phonetic symbols", nullptr, 0, HELP_PhoneticSymbols);
 	praat_addMenuCommand (U"Picture", U"Help", U"-- manual --", nullptr, 0, nullptr);
 	praat_addMenuCommand (U"Picture", U"Help",
-		Melder_cat (U"Search ", praatP.title, U" manual..."),
+		Melder_cat (U"Search ", praatP.title.get(), U" manual..."),
 		nullptr, 'M', HELP_SearchManual_Picture);
 
 	if (! theCurrentPraatApplication -> batch) {

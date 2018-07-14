@@ -302,8 +302,8 @@ void FFNet_reset (FFNet me, double weightRange) {
 	my minimizer.reset();
 }
 
-const char32* FFNet_getCategoryOfOutputUnit (FFNet me, integer outputUnit) {
-	const char32 *result = U"-- undefined --";
+conststring32 FFNet_getCategoryOfOutputUnit (FFNet me, integer outputUnit) {
+	conststring32 result = U"-- undefined --";
 	if (my outputCategories && outputUnit <= my outputCategories -> size) {
 		SimpleString ss = my outputCategories->at [outputUnit];
 		result = ss -> string.get();

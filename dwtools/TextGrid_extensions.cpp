@@ -170,7 +170,7 @@ autoDaata TextGrid_TIMITLabelFileRecognizer (integer nread, const char *header, 
 	return thee.move();
 }
 
-static void IntervalTier_add (IntervalTier me, double xmin, double xmax, const char32 *label) {
+static void IntervalTier_add (IntervalTier me, double xmin, double xmax, conststring32 label) {
 	integer i = IntervalTier_timeToIndex (me, xmin); // xmin is in interval i
 	Melder_require (i > 0, U"Index too low.");
 
@@ -305,7 +305,7 @@ autoTextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
 	}
 }
 
-void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *mark) {
+void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, conststring32 mark) {
 	try {
 		if (xmax <= my xmax) return; // nothing to be done
 		Melder_assert (my intervals.size > 0);
@@ -324,7 +324,7 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const char32 *m
 	}
 }
 
-void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const char32 *mark) {
+void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, conststring32 mark) {
 	try {
 		if (xmin >= my xmin) {
 			return;
@@ -373,7 +373,7 @@ void IntervalTier_moveBoundary (IntervalTier me, integer iint, bool atStart, dou
 }
 
 
-void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark) {
+void TextTier_setLaterEndTime (TextTier me, double xmax, conststring32 mark) {
 	try {
 		if (xmax <= my xmax) {
 			return;
@@ -388,7 +388,7 @@ void TextTier_setLaterEndTime (TextTier me, double xmax, const char32 *mark) {
 	}
 }
 
-void TextTier_setEarlierStartTime (TextTier me, double xmin, const char32 *mark) {
+void TextTier_setEarlierStartTime (TextTier me, double xmin, conststring32 mark) {
 	try {
 		if (xmin >= my xmin) {
 			return;
@@ -403,17 +403,16 @@ void TextTier_setEarlierStartTime (TextTier me, double xmin, const char32 *mark)
 	}
 }
 
-void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const char32 *imark, const char32 *pmark) {
+void TextGrid_setEarlierStartTime (TextGrid me, double xmin, conststring32 intervalMark, conststring32 pointMark) {
 	try {
-		if (xmin >= my xmin) {
+		if (xmin >= my xmin)
 			return;
-		}
 		for (integer tierNumber = 1 ; tierNumber <= my tiers->size; tierNumber ++) {
 			Function tier = my tiers->at [tierNumber];
 			if (tier -> classInfo == classIntervalTier) {
-				IntervalTier_setEarlierStartTime ((IntervalTier) tier, xmin, imark);
+				IntervalTier_setEarlierStartTime ((IntervalTier) tier, xmin, intervalMark);
 			} else {
-				TextTier_setEarlierStartTime ((TextTier) tier, xmin, pmark);
+				TextTier_setEarlierStartTime ((TextTier) tier, xmin, pointMark);
 			}
 		}
 		my xmin = xmin;
@@ -422,7 +421,7 @@ void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const char32 *imark
 	}
 }
 
-void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, const char32 *pmark) {
+void TextGrid_setLaterEndTime (TextGrid me, double xmax, conststring32 intervalMark, conststring32 pointMark) {
 	try {
 		if (xmax <= my xmax) {
 			return;
@@ -430,9 +429,9 @@ void TextGrid_setLaterEndTime (TextGrid me, double xmax, const char32 *imark, co
 		for (integer tierNumber = 1 ; tierNumber <= my tiers->size; tierNumber ++) {
 			Function tier = my tiers->at [tierNumber];
 			if (tier -> classInfo == classIntervalTier) {
-				IntervalTier_setLaterEndTime ((IntervalTier) tier, xmax, imark);
+				IntervalTier_setLaterEndTime ((IntervalTier) tier, xmax, intervalMark);
 			} else {
-				TextTier_setLaterEndTime ((TextTier) tier, xmax, pmark);
+				TextTier_setLaterEndTime ((TextTier) tier, xmax, pointMark);
 			}
 		}
 		my xmax = xmax;
@@ -485,12 +484,11 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 	}
 }
 
-void TextGrid_setTierName (TextGrid me, integer itier, const char32 *newName) {
+void TextGrid_setTierName (TextGrid me, integer itier, conststring32 newName) {
 	try {
 		integer ntiers = my tiers->size;
-		if (itier < 1 || itier > ntiers) {
+		if (itier < 1 || itier > ntiers)
 			Melder_throw (U"Tier number (", itier, U") should not be larger than the number of tiers (", ntiers, U").");
-		}
 		Thing_setName (my tiers->at [itier], newName);
 	} catch (MelderError) {
 		Melder_throw (me, U": tier name not set.");
@@ -503,9 +501,8 @@ static void IntervalTier_cutInterval (IntervalTier me, integer index, int extend
 	/*
 	 * There always should be at least one interval
 	 */
-	if (size_pre == 1 || index > size_pre || index < 1) {
+	if (size_pre == 1 || index > size_pre || index < 1)
 		return;
-	}
 
 	TextInterval ti = my intervals.at [index];
 	double xmin = ti -> xmin;
@@ -540,7 +537,7 @@ static void IntervalTier_cutInterval (IntervalTier me, integer index, int extend
 	}
 }
 
-void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const char32 *label) {
+void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, conststring32 label) {
     try {
 		for (integer iinterval = my intervals.size; iinterval > 1; iinterval --) {
 			TextInterval thisInterval = my intervals.at [iinterval];
@@ -557,7 +554,7 @@ void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTi
 	}
 }
 
-void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *label, double minimumDuration) {
+void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, conststring32 label, double minimumDuration) {
 	integer iinterval = 1;
 	while (iinterval <= my intervals.size) {
 		TextInterval interval = my intervals.at [iinterval];
@@ -571,7 +568,7 @@ void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const char32 *l
 	}
 }
 
-void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label) {
+void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, conststring32 label) {
 	integer iinterval = 1;
 	while (iinterval < my intervals.size) {
 		TextInterval thisInterval = my intervals.at [iinterval];
@@ -586,31 +583,26 @@ void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const char32 *label
 	}
 }
 
-void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const char32 *search, const char32 *replace, bool use_regexp, integer *nmatches, integer *nstringmatches) {
+void IntervalTier_changeLabels (IntervalTier me, integer from, integer to,
+	conststring32 search, conststring32 replace, bool use_regexp, integer *nmatches, integer *nstringmatches)
+{
 	try {
-		if (from == 0) {
+		if (from == 0)
 			from = 1;
-		}
-		if (to == 0) {
+		if (to == 0)
 			to = my intervals.size;
-		}
-		if (from > to || from < 1 || to > my intervals.size) {
+		if (from > to || from < 1 || to > my intervals.size)
 			Melder_throw (U"Incorrect specification of where to act.");
-		}
-		if (use_regexp && str32len (search) == 0) {
+		if (use_regexp && str32len (search) == 0)
 			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
-		}
-
 		integer offset = from - 1, nlabels = to - offset;
 		autoNUMvector<char32 *> labels (1, nlabels);
-
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
 			labels [i - offset] = interval -> text.get();   // shallow copy
 		}
 		autostring32vector newLabels = string32vector_searchAndReplace ({ labels.peek(), nlabels },
 			search, replace, 0, nmatches, nstringmatches, use_regexp);
-
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
 			interval -> text = std::move (newLabels [i - offset]);
@@ -620,30 +612,26 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to, const
 	}
 }
 
-void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 *search, const char32 *replace, bool use_regexp, integer *nmatches, integer *nstringmatches) {
+void TextTier_changeLabels (TextTier me, integer from, integer to,
+	conststring32 search, conststring32 replace, bool use_regexp, integer *nmatches, integer *nstringmatches)
+{
 	try {
-		if (from == 0) {
+		if (from == 0)
 			from = 1;
-		}
-		if (to == 0) {
+		if (to == 0)
 			to = my points.size;
-		}
-		if (from > to || from < 1 || to > my points.size) {
+		if (from > to || from < 1 || to > my points.size)
 			Melder_throw (U"Incorrect specification of where to act.");
-		}
-		if (use_regexp && str32len (search) == 0) {
+		if (use_regexp && str32len (search) == 0)
 			Melder_throw (U"The regex search string cannot be empty.\nTo search for an empty string, use the expression \"^$\" instead.");
-		}
 		integer offset = from - 1, nmarks = to - offset;
 		autoNUMvector<char32 *> marks (1, nmarks);   // a non-owning vector of strings
-
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
 			marks [i - offset] = point -> mark.get();   // reference copy
 		}
 		autostring32vector newMarks = string32vector_searchAndReplace ({ marks.peek(), nmarks },
 			search, replace, 0, nmatches, nstringmatches, use_regexp);
-
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
 			point -> mark = std::move (newMarks [i - offset]);
@@ -653,7 +641,9 @@ void TextTier_changeLabels (TextTier me, integer from, integer to, const char32 
 	}
 }
 
-void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to, const char32 *search, const char32 *replace, bool use_regexp, integer *nmatches, integer *nstringmatches) {
+void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to,
+	conststring32 search, conststring32 replace, bool use_regexp, integer *nmatches, integer *nstringmatches)
+{
 	try {
 		integer ntiers = my tiers->size;
 		Melder_require (tier > 0 && tier <= ntiers,

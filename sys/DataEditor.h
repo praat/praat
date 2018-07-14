@@ -101,7 +101,7 @@ Thing_define (DataEditor, ClassEditor) {
 		override;
 };
 
-autoDataEditor DataEditor_create (const char32 *title, Daata data);
+autoDataEditor DataEditor_create (conststring32 title, Daata data);
 
 /* End of file DataEditor.h */
 #endif

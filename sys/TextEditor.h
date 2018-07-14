@@ -48,10 +48,10 @@ Thing_define (TextEditor, Editor) {
 };
 
 void TextEditor_init (TextEditor me,
-	const char32 *initialText
+	conststring32 initialText
 );
 autoTextEditor TextEditor_create (
-	const char32 *initialText   // may be null
+	conststring32 initialText   // may be null
 );
 
 void TextEditor_showOpen (TextEditor me);

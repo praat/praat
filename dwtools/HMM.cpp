@@ -64,12 +64,12 @@ Thing_implement (HMMStateSequence, Strings, 0);
 
 // helpers
 int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2);
-autoHMMObservation HMMObservation_create (const char32 *label, integer numberOfComponents, integer dimension, integer storage);
+autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, integer storage);
 
 integer HMM_HMMObservationSequence_getLongestSequence (HMM me, HMMObservationSequence thee, integer symbolNumber);
 integer StringsIndex_getLongestSequence (StringsIndex me, integer index, integer *pos);
 integer Strings_getLongestSequence (Strings me, char32 *string, integer *pos);
-autoHMMState HMMState_create (const char32 *label);
+autoHMMState HMMState_create (conststring32 label);
 
 autoHMMBaumWelch HMMBaumWelch_create (integer nstates, integer nsymbols, integer capacity);
 void HMMBaumWelch_getGamma (HMMBaumWelch me);
@@ -149,12 +149,12 @@ static double HMM_HMM_getCrossEntropy_asym (HMM me, HMM thee, integer observatio
 
 /**************** HMMObservation ******************************/
 
-static void HMMObservation_init (HMMObservation me, const char32 *label, integer numberOfComponents, integer dimension, integer storage) {
+static void HMMObservation_init (HMMObservation me, conststring32 label, integer numberOfComponents, integer dimension, integer storage) {
 	my label = Melder_dup (label);
 	my gm = GaussianMixture_create (numberOfComponents, dimension, storage);
 }
 
-autoHMMObservation HMMObservation_create (const char32 *label, integer numberOfComponents, integer dimension, integer storage) {
+autoHMMObservation HMMObservation_create (conststring32 label, integer numberOfComponents, integer dimension, integer storage) {
 	try {
 		autoHMMObservation me = Thing_new (HMMObservation);
 		HMMObservation_init (me.get(), label, numberOfComponents, dimension, storage);
@@ -206,11 +206,11 @@ integer StringsIndex_getLongestSequence (StringsIndex me, integer index, integer
 
 /**************** HMMState ******************************/
 
-static void HMMState_init (HMMState me, const char32 *label) {
+static void HMMState_init (HMMState me, conststring32 label) {
 	my label = Melder_dup (label);
 }
 
-autoHMMState HMMState_create (const char32 *label) {
+autoHMMState HMMState_create (conststring32 label) {
 	try {
 		autoHMMState me = Thing_new (HMMState);
 		HMMState_init (me.get(), label);
@@ -476,11 +476,11 @@ autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, inte
 }
 
 // for a simple non-hidden model leave either states empty or symbols empty !!!
-autoHMM HMM_createSimple (int leftToRight, const char32 *states_string, const char32 *symbols_string) {
+autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststring32 symbols_string) {
 	try {
 		autoHMM me = Thing_new (HMM);
-		const char32 *states = states_string;
-		const char32 *symbols = symbols_string;
+		conststring32 states = states_string;
+		conststring32 symbols = symbols_string;
 		integer numberOfStates = Melder_countTokens (states_string);
 		integer numberOfObservationSymbols = Melder_countTokens (symbols_string);
 
@@ -518,7 +518,7 @@ autoHMM HMM_createSimple (int leftToRight, const char32 *states_string, const ch
 }
 
 void HMM_setDefaultObservations (HMM me) {
-	const char32 *def = my notHidden ? U"S" : U"s";
+	conststring32 def = my notHidden ? U"S" : U"s";
 	for (integer i = 1; i <= my numberOfObservationSymbols; i ++) {
 		autoHMMObservation hmms = HMMObservation_create (Melder_cat (def, i), 0, 0, 0);
 		HMM_addObservation_move (me, hmms.move());
@@ -716,7 +716,7 @@ void HMM_draw (HMM me, Graphics g, int garnish) {
 	// ...
 	// find fontsize
 	int fontSize = Graphics_inqFontSize (g);
-	const char32 *widest_label = U"";
+	conststring32 widest_label = U"";
 	double max_width = 0.0;
 	for (integer is = 1; is <= my numberOfStates; is ++) {
 		HMMState hmms = my states->at [is];
@@ -1507,7 +1507,7 @@ autoHMM HMM_createFromHMMObservationSequence (HMMObservationSequence me, integer
 		HMM_init (thee.get(), numberOfStates, numberOfObservationSymbols, leftToRight);
 
 		for (integer i = 1; i <= numberOfObservationSymbols; i ++) {
-			const char32 *label = d -> rowLabels [i].get();
+			conststring32 label = d -> rowLabels [i].get();
 			autoHMMObservation hmmo = HMMObservation_create (label, 0, 0, 0);
 			HMM_addObservation_move (thee.get(), hmmo.move());
 			if (thy notHidden) {

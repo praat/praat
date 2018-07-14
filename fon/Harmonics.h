@@ -26,7 +26,7 @@
 autoHarmonics Harmonics_create (integer numberOfHarmonics);
 
 void Harmonics_draw (Harmonics me, Graphics g, double fmin, double fmax,
-	double minimum, double maximum, int garnish, const char32 *method);
+	double minimum, double maximum, int garnish, conststring32 method);
 
 autoMatrix Harmonics_to_Matrix (Harmonics me);
 autoHarmonics Matrix_to_Harmonics (Matrix me);

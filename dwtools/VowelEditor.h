@@ -77,7 +77,7 @@ Thing_define (VowelEditor, Editor) {
 		override;
 };
 
-autoVowelEditor VowelEditor_create (const char32 *title, Daata data);
+autoVowelEditor VowelEditor_create (conststring32 title, Daata data);
 
 void VowelEditor_prefs ();
 

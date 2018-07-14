@@ -289,7 +289,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	return 0;
 }
 
-const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
+conststring32 SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	try {
 		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_languageName.get());
 		if (irow == 0) {
@@ -301,7 +301,7 @@ const char32 *SpeechSynthesizer_getLanguageCode (SpeechSynthesizer me) {
 	}
 }
 
-const char32 *SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
+conststring32 SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
 	try {
 		integer irow = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 2, my d_phonemeSet.get());
 		if (irow == 0) {
@@ -313,7 +313,7 @@ const char32 *SpeechSynthesizer_getPhonemeCode (SpeechSynthesizer me) {
 	}
 }
 
-const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
+conststring32 SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	try {
 		integer irow = Table_searchColumn (espeakdata_voices_propertiesTable.get(), 2, my d_voiceName.get());
 		if (irow == 0) {
@@ -325,7 +325,7 @@ const char32 *SpeechSynthesizer_getVoiceCode (SpeechSynthesizer me) {
 	}
 }
 
-autoSpeechSynthesizer SpeechSynthesizer_create (const char32 *languageName, const char32 *voiceName) {
+autoSpeechSynthesizer SpeechSynthesizer_create (conststring32 languageName, conststring32 voiceName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
 		my d_synthesizerVersion = Melder_dup (ESPEAK_NG_VERSION);
@@ -368,7 +368,7 @@ void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double sam
 	my d_outputPhonemeCoding = outputPhonemeCoding;
 }
 
-void SpeechSynthesizer_playText (SpeechSynthesizer me, const char32 *text) {
+void SpeechSynthesizer_playText (SpeechSynthesizer me, conststring32 text) {
 	autoSound thee = SpeechSynthesizer_to_Sound (me, text, nullptr, nullptr);
 	Sound_play (thee.get(), nullptr, nullptr);
 }
@@ -388,7 +388,7 @@ static autoSound buffer_to_Sound (int *wav, integer numberOfSamples, double samp
 	}
 }
 
-static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval, double time, const char32 *newLabel, bool isNewleftLabel) {
+static void IntervalTier_addBoundaryUnsorted (IntervalTier me, integer iinterval, double time, conststring32 newLabel, bool isNewleftLabel) {
 	if (time <= my xmin || time >= my xmax) {
 		Melder_throw (U"Time is outside interval domains.");
 	}
@@ -411,7 +411,7 @@ static void Table_setEventTypeString (Table me) {
 	try {
 		for (integer i = 1; i <= my rows.size; i ++) {
 			int type = Table_getNumericValue_Assert (me, i, 2);
-			const char32 *label = U"0";
+			conststring32 label = U"0";
 			if (type == espeakEVENT_WORD) {
 				label = U"word";
 			} else if (type == espeakEVENT_SENTENCE) {
@@ -537,7 +537,7 @@ static void IntervalTier_removeVeryShortIntervals (IntervalTier me) {
 	}
 }
 
-static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin, double xmax) {
+static autoTextGrid Table_to_TextGrid (Table me, conststring32 text, double xmin, double xmax) {
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	try {
 		integer length, textLength = str32len (text);
@@ -612,7 +612,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 				wordEnd = true;
 				p1w = pos;
 			} else if (type == espeakEVENT_PHONEME) {
-				const char32 *id = Table_getStringValue_Assert (me, i, idColumnIndex);
+				conststring32 id = Table_getStringValue_Assert (me, i, idColumnIndex);
 				if (time > time_phon_p) {
 					// Insert new boudary and label interval with the id
 					// TODO: Translate the id to the correct notation
@@ -647,7 +647,7 @@ static autoTextGrid Table_to_TextGrid (Table me, const char32 *text, double xmin
 	}
 }
 
-static void espeakdata_SetVoiceByName (const char32 *languageName, const char32 *voiceName)
+static void espeakdata_SetVoiceByName (conststring32 languageName, conststring32 voiceName)
 {
 	espeak_VOICE voice_selector;
 
@@ -661,7 +661,7 @@ static void espeakdata_SetVoiceByName (const char32 *languageName, const char32 
 	}
 }
 
-autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, autoTextGrid *tg, autoTable *events) {
+autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, autoTextGrid *tg, autoTable *events) {
 	try {
 		espeak_ng_InitializePath (nullptr); // PATH_ESPEAK_DATA
 		espeak_ng_ERROR_CONTEXT context = { 0 };
@@ -688,12 +688,12 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 			pitchRange_0_99 = my d_pitchRange * 49.5,
 			where 0 <= my d_pitchRange <= 2
 		*/
-		int pitchAdjustment_0_99 = (int) ((49.5 / log10(2.0)) * log10 (my d_pitchAdjustment) + 49.5);
+		int pitchAdjustment_0_99 = (int) ((49.5 / log10(2.0)) * log10 (my d_pitchAdjustment) + 49.5);   // rounded towards zero
 		espeak_ng_SetParameter (espeakPITCH, pitchAdjustment_0_99, 0);
-		int pitchRange_0_99 = (int) (my d_pitchRange * 49.5);
+		int pitchRange_0_99 = (int) (my d_pitchRange * 49.5);   // rounded towards zero
 		espeak_ng_SetParameter (espeakRANGE, pitchRange_0_99, 0);
-		const char32 *languageCode = SpeechSynthesizer_getLanguageCode (me);
-		const char32 *voiceCode = SpeechSynthesizer_getVoiceCode (me);
+		conststring32 languageCode = SpeechSynthesizer_getLanguageCode (me);
+		conststring32 voiceCode = SpeechSynthesizer_getVoiceCode (me);
 		
 		espeak_ng_SetVoiceByName(Melder_peek32to8 (Melder_cat (languageCode, U"+", voiceCode)));
 		int wordgap_10ms = my d_wordgap * 100; // espeak wordgap is in units of 10 ms
@@ -704,8 +704,8 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const char32 *text, 
 		status =  espeak_ng_InitializeOutput (ENOUTPUT_MODE_SYNCHRONOUS, 2048, nullptr);
 		espeak_SetSynthCallback (synthCallback);
 		if (! Melder_equ (my d_phonemeSet.get(), my d_languageName.get())) {
-			const char32 *phonemeCode = SpeechSynthesizer_getPhonemeCode (me);
-			int index_phon_table_list = LookupPhonemeTable (Melder_32to8 (phonemeCode));
+			conststring32 phonemeCode = SpeechSynthesizer_getPhonemeCode (me);
+			int index_phon_table_list = LookupPhonemeTable (Melder_peek32to8 (phonemeCode));
 			if (index_phon_table_list > 0) {
 				voice -> phoneme_tab_ix = index_phon_table_list;
 				DoVoiceChange(voice);

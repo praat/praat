@@ -73,7 +73,7 @@ int Function_getDomainQuantity (Function me) {
 	return my v_domainQuantity ();
 }
 
-const char32 * Function_getUnitText (Function me, integer level, int unit, uint32 flags) {
+conststring32 Function_getUnitText (Function me, integer level, int unit, uint32 flags) {
 	Melder_assert (unit >= my v_getMinimumUnit (level) && unit <= my v_getMaximumUnit (level));
 	return my v_getUnitText (level, unit, flags);
 }

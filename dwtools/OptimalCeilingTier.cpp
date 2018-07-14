@@ -31,7 +31,7 @@ autoOptimalCeilingTier OptimalCeilingTier_create (double tmin, double tmax) {
 }
 
 void OptimalCeilingTier_draw (OptimalCeilingTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const char32 *method, int garnish)
+	double ymin, double ymax, conststring32 method, bool garnish)
 {
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, U"Sound pressure (Pa)");
 }

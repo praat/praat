@@ -168,15 +168,15 @@ void structEditCostsTable :: v_info () {
 	MelderInfo_writeLine (U"Source:", numberOfColumns - 2, U" symbols.");
 }
 
-bool structEditCostsTable :: v_matchTargetSymbol (const char32 *targetSymbol, const char32 *symbol) {
+bool structEditCostsTable :: v_matchTargetSymbol (conststring32 targetSymbol, conststring32 symbol) {
 	return Melder_equ (targetSymbol, symbol);
 }
 
-bool structEditCostsTable :: v_matchSourceSymbol (const char32 *sourceSymbol, const char32 *symbol) {
+bool structEditCostsTable :: v_matchSourceSymbol (conststring32 sourceSymbol, conststring32 symbol) {
 	return Melder_equ (sourceSymbol, symbol);
 }
 
-bool structEditCostsTable :: v_matchTargetWithSourceSymbol (const char32 *targetSymbol, const char32 *sourceSymbol) {
+bool structEditCostsTable :: v_matchTargetWithSourceSymbol (conststring32 targetSymbol, conststring32 sourceSymbol) {
 	return Melder_equ (targetSymbol, sourceSymbol);
 }
 
@@ -210,7 +210,7 @@ void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, d
 	my data [my numberOfRows - 1] [my numberOfColumns] = insertionCosts;
 }
 
-integer EditCostsTable_getTargetIndex (EditCostsTable me, const char32 *symbol) {
+integer EditCostsTable_getTargetIndex (EditCostsTable me, conststring32 symbol) {
 	for (integer i = 1; i <= my numberOfRows - 2; i ++) {
 		if (my v_matchTargetSymbol (my rowLabels [i].get(), symbol)) {
 			return i;
@@ -219,7 +219,7 @@ integer EditCostsTable_getTargetIndex (EditCostsTable me, const char32 *symbol) 
 	return 0;
 }
 
-integer EditCostsTable_getSourceIndex (EditCostsTable me, const char32 *symbol) {
+integer EditCostsTable_getSourceIndex (EditCostsTable me, conststring32 symbol) {
 	for (integer j = 1; j <= my numberOfColumns - 2; j ++) {
 		if (my v_matchSourceSymbol (my columnLabels [j].get(), symbol)) {
 			return j;
@@ -228,7 +228,7 @@ integer EditCostsTable_getSourceIndex (EditCostsTable me, const char32 *symbol) 
 	return 0;
 }
 
-void EditCostsTable_setInsertionCosts (EditCostsTable me, char32 *targets, double cost) {
+void EditCostsTable_setInsertionCosts (EditCostsTable me, conststring32 targets, double cost) {
 	for (char32 *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
 		integer irow = EditCostsTable_getTargetIndex (me, token);
 		irow = irow > 0 ? irow : my numberOfRows - 1; // nomatch condition to penultimate row
@@ -236,7 +236,7 @@ void EditCostsTable_setInsertionCosts (EditCostsTable me, char32 *targets, doubl
 	}
 }
 
-void EditCostsTable_setDeletionCosts (EditCostsTable me, char32 *sources, double cost) {
+void EditCostsTable_setDeletionCosts (EditCostsTable me, conststring32 sources, double cost) {
 	for (char32 *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
 		integer icol = EditCostsTable_getSourceIndex (me, token);
 		icol = icol > 0 ? icol : my numberOfColumns - 1; // nomatch condition to penultimate column
@@ -258,7 +258,7 @@ double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
 		 my data [my numberOfRows - 1] [my numberOfColumns -1]; // inequality
 }
 
-void EditCostsTable_setSubstitutionCosts (EditCostsTable me, char32 *targets, char32 *sources, double cost) {
+void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targets, conststring32 sources, double cost) {
 	try {
 		autoNUMvector<integer> targetIndex (1, my numberOfRows);
 		autoNUMvector<integer> sourceIndex (1, my numberOfRows);
@@ -293,19 +293,19 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, char32 *targets, ch
 	}
 }
 
-double EditCostsTable_getInsertionCost (EditCostsTable me, const char32 *symbol) {
+double EditCostsTable_getInsertionCost (EditCostsTable me, conststring32 symbol) {
 	integer irow = EditCostsTable_getTargetIndex (me, symbol);
 	irow = irow == 0 ? my numberOfRows - 1 : irow; // others is penultimate row
 	return my data [irow] [my numberOfColumns];
 }
 
-double EditCostsTable_getDeletionCost (EditCostsTable me, const char32 *sourceSymbol) {
+double EditCostsTable_getDeletionCost (EditCostsTable me, conststring32 sourceSymbol) {
 	integer icol = EditCostsTable_getSourceIndex (me, sourceSymbol);
 	icol = icol == 0 ? my numberOfColumns - 1 : icol; // others is penultimate column
 	return my data [my numberOfRows] [icol];
 }
 
-double EditCostsTable_getSubstitutionCost (EditCostsTable me, const char32 *symbol, const char32 *replacement) {
+double EditCostsTable_getSubstitutionCost (EditCostsTable me, conststring32 symbol, conststring32 replacement) {
 	integer irow = EditCostsTable_getTargetIndex (me, symbol);
 	integer icol = EditCostsTable_getSourceIndex (me, replacement);
 	if (irow == 0 && icol == 0) { // nomatch
@@ -377,7 +377,7 @@ void EditDistanceTable_setEditCosts (EditDistanceTable me, EditCostsTable thee) 
 	}
 }
 
-autoEditDistanceTable EditDistanceTable_createFromCharacterStrings (const char32 *chars1, const char32 *chars2) {
+autoEditDistanceTable EditDistanceTable_createFromCharacterStrings (const char32 chars1 [], const char32 chars2 []) {
 	try {
 		autoStrings s1 = Strings_createAsCharacters (chars1);
 		autoStrings s2 = Strings_createAsCharacters (chars2);
@@ -509,7 +509,7 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 }
 
 void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphics) {
-	const char32 *oinsertion = U"i", *insertion = U"*", *odeletion = U"d", *deletion = U"*", *osubstitution = U"s", *oequal = U"";
+	conststring32 oinsertion = U"i", insertion = U"*", odeletion = U"d", deletion = U"*", osubstitution = U"s", oequal = U"";
 	Graphics_setWindow (graphics, 0.5, my warpingPath -> pathLength - 0.5, 0, 1); // pathLength-1 symbols
 	double lineSpacing = getLineSpacing (graphics);
 	double ytarget = 1 - lineSpacing, ysource = ytarget - 2 * lineSpacing, yoper = ysource - lineSpacing;

@@ -145,7 +145,7 @@ FORM (STRING_PairDistribution_getString1, U"Get string1", nullptr) {
 	OK
 DO
 	STRING_ONE (PairDistribution)
-		const char32 *result = PairDistribution_getString1 (me, pairNumber);
+		conststring32 result = PairDistribution_getString1 (me, pairNumber);
 	STRING_ONE_END
 }
 
@@ -154,7 +154,7 @@ FORM (STRING_PairDistribution_getString2, U"Get string2", nullptr) {
 	OK
 DO
 	STRING_ONE (PairDistribution)
-		const char32 *result = PairDistribution_getString2 (me, pairNumber);
+		conststring32 result = PairDistribution_getString2 (me, pairNumber);
 	STRING_ONE_END
 }
 
@@ -405,7 +405,7 @@ DO
 	STRING_ONE (Table)
 		if (columnNumber > my numberOfColumns)
 			Melder_throw (U"Your column number should not be greater than the number of columns.");
-		const char32 *result = my columnHeaders [columnNumber]. label.get();
+		conststring32 result = my columnHeaders [columnNumber]. label.get();
 	STRING_ONE_END
 }
 
@@ -493,7 +493,7 @@ DO
 	STRING_ONE (Table)
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, columnLabel);
-		const char32 *result = my rows.at [rowNumber] -> cells [columnNumber]. string.get();
+		conststring32 result = my rows.at [rowNumber] -> cells [columnNumber]. string.get();
 	STRING_ONE_END
 }
 

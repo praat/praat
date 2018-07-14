@@ -19,7 +19,7 @@
 #include "ManPagesM.h"
 #include "UnicodeData.h"
 
-static void drawOneIpaSymbol (Graphics g, double x, double y, const char32 *symbol) {
+static void drawOneIpaSymbol (Graphics g, double x, double y, conststring32 symbol) {
 	char32 buffer [30], *p = & buffer [0];
 	int fontSize = Graphics_inqFontSize (g);
 	Graphics_rectangle (g, x - 0.5, x + 0.5, y - 0.5, y + 0.5);
@@ -76,7 +76,7 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 	Graphics_text (graphics, 3.3, 7, U"click");
 	Graphics_setFontStyle (graphics, Graphics_NORMAL);
 	{
-		static struct { double x, y; const char32 *string; } symbols [] = {
+		static const struct { double x, y; conststring32 string; } symbols [] = {
 { 4, 17, U"p" }, { 4, 16, U"b" }, { 4, 15, U"m" }, { 4, 14, U"\\ff" }, { 4, 13, U"\\bf" }, { 4, 11, U"\\bc" }, { 4, 8, U"\\b^" }, { 4, 7, U"\\O." },
 { 5, 15, U"\\mj" }, { 5, 14, U"f" }, { 5, 13, U"v" }, { 5, 12, U"\\vs" },
 { 6, 14, U"\\tf" }, { 6, 13, U"\\dh" }, { 6, 7, U"\\|1" },
@@ -116,7 +116,7 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 	Graphics_text (graphics, 3.3, 0, U"open");
 	Graphics_setFontStyle (graphics, Graphics_NORMAL);
 	{
-		static struct { double x, y; const char32 *string; } symbols [] = {
+		static const struct { double x, y; conststring32 string; } symbols [] = {
 { 4, 6, U"i" }, { 5, 6, U"y" }, { 6.5, 6, U"\\i-" }, { 7.5, 6, U"\\u-" }, { 9, 6, U"\\mt" }, { 10, 6, U"u" },
 { 4.2, 5, U"\\ic" }, { 5.2, 5, U"\\yc" }, { 9.8, 5, U"\\hs" },
 { 4, 4, U"e" }, { 5, 4, U"\\o/" }, { 6.5, 4, U"\\e-" }, { 7.5, 4, U"\\o-" }, { 9, 4, U"\\rh" }, { 10, 4, U"o" },

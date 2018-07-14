@@ -54,7 +54,7 @@ int Function_getMaximumUnit (Function me, integer ilevel);
 #define Function_UNIT_TEXT_SHORT            0x00000001
 #define Function_UNIT_TEXT_GRAPHICAL        0x00000002
 #define Function_UNIT_TEXT_MENU             0x00000004
-const char32 * Function_getUnitText (Function me, integer level, int unit, uint32 flags);
+conststring32 Function_getUnitText (Function me, integer level, int unit, uint32 flags);
 
 bool Function_isUnitLogarithmic (Function me, integer level, int unit);
 

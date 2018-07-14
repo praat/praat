@@ -185,7 +185,7 @@ void structOTGrammarEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 static OTGrammar drawTableau_ot;
-static const char32 *drawTableau_input;
+static conststring32 drawTableau_input;
 static bool drawTableau_constraintsAreDrawnVertically;
 static void drawTableau (Graphics g) {
 	OTGrammar_drawTableau (drawTableau_ot, g, drawTableau_constraintsAreDrawnVertically, drawTableau_input);
@@ -239,13 +239,13 @@ void structOTGrammarEditor :: v_draw () {
 	Graphics_setAtSignIsLink (graphics.get(), true);
 }
 
-int structOTGrammarEditor :: v_goToPage (const char32 *title) {
+int structOTGrammarEditor :: v_goToPage (conststring32 title) {
 	if (! title) return 1;
 	selected = Melder_atoi (title);
 	return 1;
 }
 
-autoOTGrammarEditor OTGrammarEditor_create (const char32 *title, OTGrammar ot) {
+autoOTGrammarEditor OTGrammarEditor_create (conststring32 title, OTGrammar ot) {
 	try {
 		autoOTGrammarEditor me = Thing_new (OTGrammarEditor);
 		my data = ot;

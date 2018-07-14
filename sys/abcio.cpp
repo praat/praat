@@ -168,7 +168,7 @@ static double getReal (MelderReadText me) {
 	return Melder_a8tof (buffer);
 }
 
-static int getEnum (MelderReadText me, int (*getValue) (const char32 *)) {
+static int getEnum (MelderReadText me, int (*getValue) (conststring32)) {
 	char32 buffer [41], c;
 	for (c = MelderReadText_getChar (me); c != U'<'; c = MelderReadText_getChar (me)) {
 		if (c == U'\0')
@@ -349,16 +349,16 @@ int texgete16 (MelderReadText text, enum_generic_getValue getValue) { return get
 bool texgeteb (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kBoolean_getValue); }
 bool texgeteq (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kQuestion_getValue); }
 bool texgetex (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kExistence_getValue); }
-char *texgets16 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
-char *texgets32 (MelderReadText text) { return (char *) Melder_32to8 (getString (text)); }
-char32 *texgetw16 (MelderReadText text) { return Melder_dup   (getString (text)); }
-char32 *texgetw32 (MelderReadText text) { return Melder_dup   (getString (text)); }
+autostring8 texgets16 (MelderReadText text) { return Melder_32to8 (getString (text)); }
+autostring8 texgets32 (MelderReadText text) { return Melder_32to8 (getString (text)); }
+autostring32 texgetw16 (MelderReadText text) { return Melder_dup (getString (text)); }
+autostring32 texgetw32 (MelderReadText text) { return Melder_dup (getString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }
 void texresetindent (MelderFile file) { file -> indent = 0; }
 
-void texputintro (MelderFile file, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputintro (MelderFile file, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	if (file -> verbose) {
 		MelderFile_write (file, U"\n");
 		for (int iindent = 1; iindent <= file -> indent; iindent ++) {
@@ -390,71 +390,71 @@ void texputintro (MelderFile file, const char32 *s1, const char32 *s2, const cha
 			s6 && s6 [0] == U'd' && s6 [1] == U'_' ? & s6 [2] : & s6 [0]); \
 	}
 
-void texputi8 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputi8 (MelderFile file, int i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputi16 (MelderFile file, int i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputi16 (MelderFile file, int i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputi32 (MelderFile file, long i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputi32 (MelderFile file, long i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i, file -> verbose ? U" " : nullptr);
 }
-void texputinteger (MelderFile file, integer number, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputinteger (MelderFile file, integer number, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, number, file -> verbose ? U" " : nullptr);
 }
-void texputu8 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputu8 (MelderFile file, unsigned int u, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputu16 (MelderFile file, unsigned int u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputu16 (MelderFile file, unsigned int u, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputu32 (MelderFile file, unsigned long u, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputu32 (MelderFile file, unsigned long u, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, u, file -> verbose ? U" " : nullptr);
 }
-void texputr32 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputr32 (MelderFile file, double x, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, Melder_single (x), file -> verbose ? U" " : nullptr);
 }
-void texputr64 (MelderFile file, double x, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputr64 (MelderFile file, double x, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, x, file -> verbose ? U" " : nullptr);
 }
-void texputc64 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputc64 (MelderFile file, dcomplex z, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
 }
-void texputc128 (MelderFile file, dcomplex z, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputc128 (MelderFile file, dcomplex z, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, z, file -> verbose ? U" i " : nullptr);
 }
-void texpute8 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texpute8 (MelderFile file, int i, conststring32 (*getText) (int), conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = <" : U"<", getText (i), file -> verbose ? U"> " : U">");
 }
-void texpute16 (MelderFile file, int i, const char32 * (*getText) (int), const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texpute16 (MelderFile file, int i, conststring32 (*getText) (int), conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = <" : U"<", getText (i), file -> verbose ? U"> " : U">");
 }
-void texputeb (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputeb (MelderFile file, bool i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = " : nullptr, i ? U"<true>" : U"<false>", file -> verbose ? U" " : nullptr);
 }
-void texputeq (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputeq (MelderFile file, bool i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U"? " : nullptr, i ? U"<yes>" : U"<no>", file -> verbose ? U" " : nullptr);
 }
-void texputex (MelderFile file, bool i, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputex (MelderFile file, bool i, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U"? " : nullptr, i ? U"<exists>" : U"<absent>", file -> verbose ? U" " : nullptr);
 }
-void texputs8 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs8 (MelderFile file, const char *s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -466,7 +466,7 @@ void texputs8 (MelderFile file, const char *s, const char32 *s1, const char32 *s
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputs16 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs16 (MelderFile file, const char *s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -478,7 +478,7 @@ void texputs16 (MelderFile file, const char *s, const char32 *s1, const char32 *
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputs32 (MelderFile file, const char *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputs32 (MelderFile file, const char *s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -490,7 +490,7 @@ void texputs32 (MelderFile file, const char *s, const char32 *s1, const char32 *
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputw16 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputw16 (MelderFile file, conststring32 s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -502,7 +502,7 @@ void texputw16 (MelderFile file, const char32 *s, const char32 *s1, const char32
 	}
 	MelderFile_write (file, file -> verbose ? U"\" " : U"\"");
 }
-void texputw32 (MelderFile file, const char32 *s, const char32 *s1, const char32 *s2, const char32 *s3, const char32 *s4, const char32 *s5, const char32 *s6) {
+void texputw32 (MelderFile file, conststring32 s, conststring32 s1, conststring32 s2, conststring32 s3, conststring32 s4, conststring32 s5, conststring32 s6) {
 	PUTLEADER
 	MelderFile_write (file, file -> verbose ? U" = \"" : U"\"");
 	if (s) {
@@ -644,11 +644,11 @@ void texputw32 (MelderFile file, const char32 *s, const char32 *s1, const char32
 
 /*************** End of Apple Computer intermezzo. ***************/
 
-static void readError (FILE *f, const char32 *text) {
+static void readError (FILE *f, conststring32 text) {
 	Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", text);
 }
 
-static void writeError (const char32 *text) {
+static void writeError (conststring32 text) {
 	Melder_throw (U"Error in file while trying to write ", text);
 }
 
@@ -706,7 +706,7 @@ void binputbool8 (bool value, FILE *f) {
 	}
 }
 
-int bingete8 (FILE *f, int min, int max, const char32 *type) {
+int bingete8 (FILE *f, int min, int max, conststring32 type) {
 	try {
 		int externalValue = getc (f);
 		if (externalValue < 0) readError (f, U"a byte.");
@@ -824,7 +824,7 @@ uint16 bingetu16LE (FILE *f) {
 	}
 }
 
-int bingete16 (FILE *f, int min, int max, const char32 *type) {
+int bingete16 (FILE *f, int min, int max, conststring32 type) {
 	try {
 		int16 result;
 		if (binario_16bitBE && Melder_debug != 18) {
@@ -1767,7 +1767,7 @@ static inline void binpututf16 (char32 kar, FILE *f) {
 	}
 }
 
-void binputw8 (const char32 *s, FILE *f) {
+void binputw8 (conststring32 s, FILE *f) {
 	try {
 		if (! s) {
 			binputu8 (0, f);
@@ -1801,7 +1801,7 @@ void binputw8 (const char32 *s, FILE *f) {
 	}
 }
 
-void binputw16 (const char32 *s, FILE *f) {
+void binputw16 (conststring32 s, FILE *f) {
 	try {
 		if (! s) {
 			binputu16 (0, f);
@@ -1835,7 +1835,7 @@ void binputw16 (const char32 *s, FILE *f) {
 	}
 }
 
-void binputw32 (const char32 *s, FILE *f) {
+void binputw32 (conststring32 s, FILE *f) {
 	try {
 		if (! s) {
 			binputu32 (0, f);

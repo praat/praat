@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2013,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,20 +58,20 @@ static void gui_button_cb_addTarget (ArtwordEditor me, GuiButtonEvent /* event *
 	autostring32 timeText = GuiText_getString (my time);
 	double tim = Melder_atof (timeText.get());
 	autostring32 valueText = GuiText_getString (my value);
-	double value = Melder_atof (valueText.get());
+	const double value = Melder_atof (valueText.get());
 	ArtwordData a = & artword -> data [(int) my muscle];
 	int i = 1, oldCount = a -> numberOfTargets;
 	Artword_setTarget (artword, my muscle, tim, value);
 
 	/* Optimization instead of "updateList (me)". */
 
-	if (tim < 0) tim = 0;
+	if (tim < 0) tim = 0.0;
 	if (tim > artword -> totalTime) tim = artword -> totalTime;
 	while (tim != a -> times [i]) {
 		i ++;
 		Melder_assert (i <= a -> numberOfTargets);   // can fail if tim is in an extended precision register
 	}
-	const char32 *itemText = Melder_cat (Melder_single (tim), U"  ", Melder_single (value));
+	const conststring32 itemText = Melder_cat (Melder_single (tim), U"  ", Melder_single (value));
 	if (a -> numberOfTargets == oldCount) {
 		GuiList_replaceItem (my list, itemText, i);
 	} else {
@@ -145,7 +145,7 @@ void structArtwordEditor :: v_createChildren () {
 	GuiRadioButton_set (button [(int) muscle]);
 }
 
-autoArtwordEditor ArtwordEditor_create (const char32 *title, Artword data) {
+autoArtwordEditor ArtwordEditor_create (conststring32 title, Artword data) {
 	try {
 		autoArtwordEditor me = Thing_new (ArtwordEditor);
 		Editor_init (me.get(), 20, 40, 650, 600, title, data);

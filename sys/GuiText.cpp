@@ -819,8 +819,8 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 	#elif cocoa
 		if (my d_cocoaTextView) {
 			NSString *nsString = [my d_cocoaTextView   string];
-			char32 *result = Melder_8to32 ([nsString UTF8String]);
-			trace (U"string ", result);
+			autostring32 result = Melder_8to32 ([nsString UTF8String]);
+			trace (U"string ", result.get());
 			NSRange nsRange = [my d_cocoaTextView   selectedRange];
 			*first = uinteger_to_integer (nsRange. location);
 			*last = *first + uinteger_to_integer (nsRange. length);
@@ -829,8 +829,8 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 			return result;
 		} else {
 			NSString *nsString = [(NSTextField *) my d_widget   stringValue];
-			char32 *result = Melder_8to32 ([nsString UTF8String]);
-			trace (U"string ", result);
+			autostring32 result = Melder_8to32 ([nsString UTF8String]);
+			trace (U"string ", result.get());
 			NSRange nsRange = [[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] selectedRange];
 			*first = uinteger_to_integer (nsRange. location);
 			*last = *first + uinteger_to_integer (nsRange. length);
@@ -894,7 +894,7 @@ void GuiText_remove (GuiText me) {
 	#endif
 }
 
-void GuiText_replace (GuiText me, integer from_pos, integer to_pos, const char32 *text) {
+void GuiText_replace (GuiText me, integer from_pos, integer to_pos, conststring32 text) {
 	#if gtk
 		gchar *newText = Melder_peek32to8 (text);
 		if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_ENTRY) {
@@ -912,13 +912,13 @@ void GuiText_replace (GuiText me, integer from_pos, integer to_pos, const char32
 				gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
 	#elif motif
-		const char32 *from;
-		char32 *winText = Melder_malloc_f (char32, 2 * str32len (text) + 1), *to;   // all new lines plus one null byte
 		Melder_assert (MEMBER (my d_widget, Text));
+		mutablestring32 winText = Melder_malloc_f (char32, 2 * str32len (text) + 1);   // all new lines plus one null byte
+		char32 *to = & winText [0];
 		/*
-		 * Replace all LF with CR/LF.
-		 */
-		for (from = text, to = winText; *from != U'\0'; from ++, to ++)
+			Replace all LF with CR/LF.
+		*/
+		for (const char *from = & text [0]; *from != U'\0'; from ++, to ++)
 			if (*from == U'\n') { *to = 13; * ++ to = U'\n'; } else *to = *from;
 		*to = U'\0';
 		/*
@@ -1082,7 +1082,7 @@ void GuiText_setSelection (GuiText me, integer first, integer last) {
 	}
 }
 
-void GuiText_setString (GuiText me, const char32 *text) {
+void GuiText_setString (GuiText me, conststring32 text) {
 	#if gtk
 		if (G_OBJECT_TYPE (my d_widget) == GTK_TYPE_ENTRY) {
 			gtk_entry_set_text (GTK_ENTRY (my d_widget), Melder_peek32to8 (text));
@@ -1097,12 +1097,12 @@ void GuiText_setString (GuiText me, const char32 *text) {
 			gtk_text_buffer_insert_interactive (textBuffer, & start, textUtf8, strlen (textUtf8), gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
 	#elif motif
-		const char32 *from;
-		char32 *winText = Melder_malloc_f (char32, 2 * str32len (text) + 1), *to;   /* All new lines plus one null byte. */
+		mutablestring32 winText = Melder_malloc_f (char32, 2 * str32len (text) + 1);   /* All new lines plus one null byte. */
+		char32 *to = & winText [0];
 		/*
-		 * Replace all LF with CR/LF.
-		 */
-		for (from = text, to = winText; *from != U'\0'; from ++, to ++)
+			Replace all LF with CR/LF.
+		*/
+		for (const char32 *from = & text [0]; *from != U'\0'; from ++, to ++)
 			if (*from == U'\n') { *to = 13; * ++ to = U'\n'; } else *to = *from;
 		*to = U'\0';
 		SetWindowTextW (my d_widget -> window, Melder_peek32toW (winText));

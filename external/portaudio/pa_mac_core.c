@@ -2248,7 +2248,7 @@ static OSStatus AudioIOProc( void *inRefCon,
       PaUtil_BeginBufferProcessing( &(stream->bufferProcessor),
                                     &timeInfo,
                                     stream->xrunFlags );
-      stream->xrunFlags = 0; //FIXME: this flag also gets set outside by a callback, which calls the xrunCallback function. It should be in the same thread as the main audio callback, but the apple docs just use the word "usually" so it may be possible to loose an xrun notification, if that callback happens here.
+      stream->xrunFlags = 0; //FIXME: this flag also gets set outside by a callback, which calls the xrunCallback function. It should be in the same thread as the main audio callback, but the apple docs just use the word "usually" so it may be possible to lose an xrun notification, if that callback happens here.
 
       /* -- compute frames. do some checks -- */
       assert( ioData->mNumberBuffers == 1 );

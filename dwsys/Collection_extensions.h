@@ -27,7 +27,7 @@ autoCollection Collection_Permutation_permuteItems (Collection me, Permutation h
 autoCollection Collection_permuteItems (Collection me);
 /* permute the order of my items */
 
-int OrderedOfString_append (StringList me, const char32 *append);
+int OrderedOfString_append (StringList me, conststring32 append);
 
 autoStringList OrderedOfString_joinItems (StringList me, StringList thee);
 /* Join each item */
@@ -38,11 +38,11 @@ double OrderedOfString_getFractionDifferent (StringList me, StringList thee);
 
 integer OrderedOfString_getNumberOfDifferences (StringList me, StringList thee);
 
-integer OrderedOfString_indexOfItem_c (StringList me, const char32 *str);
+integer OrderedOfString_indexOfItem_c (StringList me, conststring32 str);
 
 void OrderedOfString_initWithSequentialNumbers (StringList me, integer n);
 
-void OrderedOfString_removeOccurrences (StringList me, const char32 *search, bool use_regexp);
+void OrderedOfString_removeOccurrences (StringList me, conststring32 search, bool use_regexp);
 
 void OrderedOfString_changeStrings (StringList me, char32 *search, char32 *replace,
 	int maximumNumberOfReplaces, integer *nmatches, integer *nstringmatches, bool use_regexp);

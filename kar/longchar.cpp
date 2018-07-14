@@ -639,7 +639,7 @@ void Longchar_init () {
 	inited = 1;
 }
 
-char32 * Longchar_nativize32 (const char32 *generic, char32 *native, int educateQuotes) {
+char32 * Longchar_nativize32 (conststring32 generic, char32 *native, int educateQuotes) {
 	integer nquote = 0;
 	char32_t kar, kar1, kar2;
 	if (! inited) Longchar_init ();
@@ -675,7 +675,7 @@ char32 * Longchar_nativize32 (const char32 *generic, char32 *native, int educate
 	return native;
 }
 
-char32_t *Longchar_genericize32 (const char32 *native, char32 *g) {
+char32_t *Longchar_genericize32 (conststring32 native, char32 *g) {
 	char32_t kar;
 	if (! inited) Longchar_init ();
 	while ((kar = *native++) != U'\0') {

@@ -301,7 +301,7 @@ void MakePhonemeList(Translator *tr, int post_pause, int start_sentence)
 					k = word_start;
 					word_start--;
 				} else
-					k = 2;   // No more space, don't loose the start of word mark at ph_list2[word_start]
+					k = 2;   // No more space, don't lose the start of word mark at ph_list2[word_start]
 				for (; k <= j; k++)
 					memcpy(&ph_list3[k-1], &ph_list3[k], sizeof(*plist3));
 			}
@@ -339,7 +339,7 @@ void MakePhonemeList(Translator *tr, int post_pause, int start_sentence)
 		}
 
 		if (((alternative = phdata.pd_param[pd_INSERTPHONEME]) > 0) && (inserted == false)) {
-			// PROBLEM: if we insert a phoneme before a vowel then we loose the stress.
+			// PROBLEM: if we insert a phoneme before a vowel then we lose the stress.
 			PHONEME_TAB *ph2;
 			ph2 = ph;
 

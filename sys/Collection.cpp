@@ -105,7 +105,7 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 			int n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
 			do {
-				line.reset (Melder_32to8 (MelderReadText_readLine (text)));
+				line = Melder_32to8 (MelderReadText_readLine (text));
 				if (! line)
 					Melder_throw (U"Missing object line.");
 			} while (strncmp (line.get(), "Object ", 7));

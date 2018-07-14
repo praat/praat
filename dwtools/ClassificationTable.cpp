@@ -115,11 +115,10 @@ autoCorrelation ClassificationTable_to_Correlation_columns (ClassificationTable 
 	try {
 		autoCorrelation thee = Correlation_create (my numberOfColumns);
 		for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-			const char32 *label = my columnLabels [icol].get();
+			conststring32 label = my columnLabels [icol].get();
 			TableOfReal_setRowLabel (thee.get(), icol, label);
 			TableOfReal_setColumnLabel (thee.get(), icol, label);
 		}
-
 		for (integer irow = 1; irow <= thy numberOfColumns; irow ++) {
 			thy data [irow] [irow] = 1.0;
 			for (integer icol = irow + 1; icol <= thy numberOfColumns; icol ++) {

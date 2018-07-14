@@ -25,7 +25,7 @@
 #include "Matrix.h"
 #include "praat.h"
 
-extern "C" Graphics Movie_create (const char32 *title, int width, int height);
+extern "C" Graphics Movie_create (conststring32 title, int width, int height);
 
 /*
 	Action buttons.

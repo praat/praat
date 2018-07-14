@@ -178,7 +178,7 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 	}
 }
 
-void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter interpreter) {
+void Formant_formula_bandwidths (Formant me, conststring32 formula, Interpreter interpreter) {
 	try {
 		integer nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
@@ -200,7 +200,7 @@ void Formant_formula_bandwidths (Formant me, const char32 *formula, Interpreter 
 	}
 }
 
-void Formant_formula_frequencies (Formant me, const char32 *formula, Interpreter interpreter) {
+void Formant_formula_frequencies (Formant me, conststring32 formula, Interpreter interpreter) {
 	try {
 		integer nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
@@ -320,7 +320,7 @@ double Formant_getQuantileOfBandwidth (Formant me, integer iformant, double quan
 
 void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	integer iformant1, double fmin1, double fmax1, integer iformant2, double fmin2, double fmax2,
-	double size_mm, const char32 *mark, bool garnish)
+	double size_mm, conststring32 mark, bool garnish)
 {
 	if (iformant1 < 1 || iformant2 < 1) return;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }

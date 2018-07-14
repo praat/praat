@@ -53,7 +53,7 @@ typedef struct structStackel {
 	};
 	bool owned;
 } *Stackel;
-const char32 *Stackel_whichText (Stackel me);
+conststring32 Stackel_whichText (Stackel me);
 
 struct Formula_Result {
 	int expressionType;
@@ -68,7 +68,7 @@ struct Formula_Result {
 
 Thing_declare (Interpreter);
 
-void Formula_compile (Interpreter interpreter, Daata data, const char32 *expression, int expressionType, bool optimize);
+void Formula_compile (Interpreter interpreter, Daata data, conststring32 expression, int expressionType, bool optimize);
 
 void Formula_run (integer row, integer col, Formula_Result *result);
 

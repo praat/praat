@@ -50,7 +50,7 @@ Thing_define (TableEditor, Editor) {
 	#include "TableEditor_prefs.h"
 };
 
-autoTableEditor TableEditor_create (const char32 *title, Table table);
+autoTableEditor TableEditor_create (conststring32 title, Table table);
 
 /* End of file TableEditor.h */
 #endif

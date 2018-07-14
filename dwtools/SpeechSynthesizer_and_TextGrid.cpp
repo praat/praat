@@ -29,9 +29,9 @@
 #include "NUMmachar.h"
 
 // prototypes
-static void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *leftLabel, integer interval, double precision);
-static autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision);
-static autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision);
+static void IntervalTier_splitInterval (IntervalTier me, double time, conststring32 leftLabel, integer interval, double precision);
+static autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, conststring32 label, double precision);
+static autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, conststring32 patchLabel, double precision);
 static autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
 
 autoSound SpeechSynthesizer_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *p_tg)
@@ -61,7 +61,7 @@ autoSound SpeechSynthesizer_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid th
 }
 
 #if 0
-static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, integer tierNumber, const char32 *label) {
+static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, integer tierNumber, conststring32 label) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 	IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
 	if (intervalTier -> classInfo != classIntervalTier) {
@@ -78,7 +78,7 @@ static double TextGrid_getStartTimeOfFirstOccurence (TextGrid thee, integer tier
 	return start;
 }
 
-static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, integer tierNumber, const char32 *label) {
+static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, integer tierNumber, conststring32 label) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (thee, tierNumber);
 	IntervalTier intervalTier = (IntervalTier) thy tiers->at [tierNumber];
 	if (intervalTier -> classInfo != classIntervalTier) {
@@ -96,7 +96,7 @@ static double TextGrid_getEndTimeOfLastOccurence (TextGrid thee, integer tierNum
 }
 #endif
 
-static void IntervalTier_getLabelInfo (IntervalTier me, const char32 *label, double *labelDurations, integer *numberOfOccurences) {
+static void IntervalTier_getLabelInfo (IntervalTier me, conststring32 label, double *labelDurations, integer *numberOfOccurences) {
     *labelDurations = 0;
     *numberOfOccurences = 0;
     for (integer i = 1; i <= my intervals.size; i ++) {
@@ -109,7 +109,7 @@ static void IntervalTier_getLabelInfo (IntervalTier me, const char32 *label, dou
 }
 
 #define TIMES_ARE_CLOSE(x,y) (fabs((x)-(y)) < precision)
-void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *leftLabel, integer interval, double precision) {
+void IntervalTier_splitInterval (IntervalTier me, double time, conststring32 leftLabel, integer interval, double precision) {
     try {
 		Melder_assert (interval > 0);
         TextInterval ti = nullptr;
@@ -134,7 +134,7 @@ void IntervalTier_splitInterval (IntervalTier me, double time, const char32 *lef
 
 }
 
-static autoTextTier TextTier_IntervalTier_cutPartsMatchingLabel (TextTier me, IntervalTier thee, const char32 *label, double precision) {
+static autoTextTier TextTier_IntervalTier_cutPartsMatchingLabel (TextTier me, IntervalTier thee, conststring32 label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
             Melder_throw (U"Domains should be equal.");
@@ -171,7 +171,7 @@ static autoTextTier TextTier_IntervalTier_cutPartsMatchingLabel (TextTier me, In
 }
 
 // Cut parts from me marked by labels in thee
-autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const char32 *label, double precision) {
+autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, conststring32 label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
             Melder_throw (U"Domains should be equal.");
@@ -239,7 +239,7 @@ autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (IntervalTier m
     }
 }
 
-autoTextGrid TextGrid_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const char32 *label, double precision) {
+autoTextGrid TextGrid_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, conststring32 label, double precision) {
     try {
         if (my xmin != thy xmin || my xmax != thy xmax) {
             Melder_throw (U"Domains should be equal.");
@@ -273,7 +273,7 @@ autoTextGrid TextGrid_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalT
 
 // Patch thy intervals that match patchLabel into my intervals
 // The resulting IntervalTier has thy xmin as starting time and thy xmax as end time
-autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
+autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, conststring32 patchLabel, double precision) {
     try {
 		autoNUMvector <double> durations ((integer) 0, my intervals.size + 1);
 		for (integer i = 1; i <= my intervals.size; i ++) {
@@ -338,7 +338,7 @@ autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier
 }
 
 #if 0
-static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
+static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee, conststring32 patchLabel, double precision) {
     try {
         autoIntervalTier him = IntervalTier_create (thy xmin, thy xmax);
         integer myInterval = 1, hisInterval = 1;
@@ -393,7 +393,7 @@ static autoIntervalTier IntervalTiers_patch (IntervalTier me, IntervalTier thee,
 }
 #endif
 
-static autoTextTier TextTier_IntervalTier_patch (TextTier me, IntervalTier thee, const char32 *patchLabel, double precision) {
+static autoTextTier TextTier_IntervalTier_patch (TextTier me, IntervalTier thee, conststring32 patchLabel, double precision) {
     try {
         integer myIndex = 1;
         autoTextTier him = TextTier_create (thy xmin, thy xmax);
@@ -433,7 +433,7 @@ static autoTextTier TextTier_IntervalTier_patch (TextTier me, IntervalTier thee,
     }
 }
 
-autoTextGrid TextGrid_IntervalTier_patch (TextGrid me, IntervalTier thee, const char32 *patchLabel, double precision) {
+autoTextGrid TextGrid_IntervalTier_patch (TextGrid me, IntervalTier thee, conststring32 patchLabel, double precision) {
     try {
         double patchDurations;
         integer numberOfPatches;
@@ -563,7 +563,7 @@ static autoTextGrid SpeechSynthesizer_Sound_TextInterval_align2 (SpeechSynthesiz
 		Melder_require (fabs (1.0 / thy dx - my d_samplingFrequency) < 1e-9, 
 			U"The sampling frequencies of the SpeechSynthesizer and the Sound should be equal.");
 
-        const char32 *trimLabel = U"trim";
+        conststring32 trimLabel = U"trim";
         // 1. trim the silences of the sound
         /*
          * For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives will not
@@ -716,7 +716,7 @@ autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, Interva
 			structPairOfInteger p1 = edit -> warpingPath -> path[i - 1];
 			double targetStart = undefined, targetEnd = undefined;
 			double sourceStart = undefined, sourceEnd = undefined;
-			const char32 * targetText = U"", *sourceText = U"";
+			conststring32 targetText = U"", sourceText = U"";
 			integer targetInterval = p.y > 1 ? targetOrigin[p.y - 1] : 0;
 			integer sourceInterval = p.x > 1 ? sourceOrigin[p.x - 1] : 0;
 			if (targetInterval > 0) {

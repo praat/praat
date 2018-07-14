@@ -229,40 +229,25 @@ char * Melder_strdup_f (const char *string) {
 	return result;
 }
 
-char32 * Melder_dup (const char32 *string /* cattable */) {
+autostring32 Melder_dup (conststring32 string /* cattable */) {
 	if (! string) return nullptr;
 	int64 size = (int64) str32len (string) + 1;   // guaranteed to be positive
 	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" characters. Use a 64-bit edition of Praat instead?");
-	char32 *result = (char32 *) malloc ((size_t) size * sizeof (char32));   // guarded conversion
-	if (! result)
-		Melder_throw (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
-	str32cpy (result, string);
+	autostring32 result (size, false);   // guarded conversion
+	str32cpy (result.get(), string);
 	if (Melder_debug == 34)
-		Melder_casual (U"Melder_dup\t", Melder_pointer (result), U"\t", Melder_bigInteger (size), U"\t", sizeof (char32));
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size * (int64) sizeof (char32);
+		Melder_casual (U"Melder_dup\t", Melder_pointer (result.get()), U"\t", Melder_bigInteger (size), U"\t", sizeof (char32));
 	return result;
 }
 
-char32 * Melder_dup_f (const char32 *string /* cattable */) {
+autostring32 Melder_dup_f (conststring32 string /* cattable */) {
 	if (! string) return nullptr;
 	int64 size = (int64) str32len (string) + 1;
 	if (sizeof (size_t) < 8 && size > SIZE_MAX / sizeof (char32))
 		Melder_fatal (U"(Melder_dup_f:) Can never allocate ", Melder_bigInteger (size), U" characters.");
-	char32 *result = (char32 *) malloc ((size_t) size * sizeof (char32));
-	if (! result) {
-		if (theRainyDayFund) { free (theRainyDayFund); theRainyDayFund = nullptr; }
-		result = (char32 *) malloc ((size_t) size * sizeof (char32));
-		if (result) {
-			Melder_flushError (U"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
-		} else {
-			Melder_fatal (U"Out of memory: there is not enough room to duplicate a text of ", Melder_bigInteger (size - 1), U" characters.");
-		}
-	}
-	str32cpy (result, string);
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size * (int64) sizeof (char32);
+	autostring32 result (size, true);
+	str32cpy (result.get(), string);
 	return result;
 }
 
@@ -286,31 +271,31 @@ int64 Melder_movingReallocationsCount () {
 	return totalNumberOfMovingReallocs;
 }
 
-int Melder_cmp (const char32 *string1, const char32 *string2) {
+int Melder_cmp (conststring32 string1, conststring32 string2) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32cmp (string1, string2);
 }
 
-int Melder_cmp_caseInsensitive (const char32 *string1, const char32 *string2) {
+int Melder_cmp_caseInsensitive (conststring32 string1, conststring32 string2) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32cmp_caseInsensitive (string1, string2);
 }
 
-int Melder_ncmp (const char32 *string1, const char32 *string2, integer n) {
+int Melder_ncmp (conststring32 string1, conststring32 string2, integer n) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp (string1, string2, n);
 }
 
-int Melder_ncmp_caseInsensitive (const char32 *string1, const char32 *string2, integer n) {
+int Melder_ncmp_caseInsensitive (conststring32 string1, conststring32 string2, integer n) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	return str32ncmp_caseInsensitive (string1, string2, n);
 }
 
-bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char32 *string2) {
+bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststring32 string2) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
 	if (*string1 == U'\0') return *string2 == U'\0';
@@ -319,7 +304,7 @@ bool Melder_equ_firstCharacterCaseInsensitive (const char32 *string1, const char
 	return ! str32cmp (string1 + 1, string2 + 1);
 }
 
-char32 * Melder_tok (char32 *string, const char32 *delimiter) {
+char32 * Melder_tok (char32 *string, conststring32 delimiter) {
 	const char32 *spanp;
 	char32 c, sc;
 	char32 *tok;

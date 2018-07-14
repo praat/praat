@@ -2,7 +2,7 @@
 #define _EEGWindow_h_
 /* EEGWindow.h
  *
- * Copyright (C) 2011-2012,2013,2014,2015,2017 Paul Boersma
+ * Copyright (C) 2011-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ Thing_define (EEGWindow, TextGridEditor) {
 		override;
 	void v_createHelpMenuItems (EditorMenu menu)
 		override;
-	const char32 * v_getChannelName (integer channelNumber)
+	conststring32 v_getChannelName (integer channelNumber)
 		override;
 	void v_createMenuItems_file_extract (EditorMenu menu)
 		override;
@@ -47,9 +47,9 @@ Thing_define (EEGWindow, TextGridEditor) {
 	#include "EEGWindow_prefs.h"
 };
 
-void EEGWindow_init (EEGWindow me, const char32 *title, EEG eeg);
+void EEGWindow_init (EEGWindow me, conststring32 title, EEG eeg);
 
-autoEEGWindow EEGWindow_create (const char32 *title, EEG eeg);
+autoEEGWindow EEGWindow_create (conststring32 title, EEG eeg);
 
 /* End of file EEGWindow.h */
 #endif

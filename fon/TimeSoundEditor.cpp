@@ -591,7 +591,7 @@ void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double
 		if (nchan > 1) {
 			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 			Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
-			const char32 *channelName = my v_getChannelName (ichan);
+			conststring32 channelName = my v_getChannelName (ichan);
 			static MelderString channelLabel { };
 			MelderString_copy (& channelLabel, ( channelName ? U"ch" : U"Ch " ), ichan);
 			if (channelName)
@@ -680,7 +680,7 @@ bool structTimeSoundEditor :: v_clickB (double xbegin, double ybegin) {
 	return TimeSoundEditor_Parent :: v_clickB (xbegin, ybegin);
 }
 
-void TimeSoundEditor_init (TimeSoundEditor me, const char32 *title, Function data, Sampled sound, bool ownSound) {
+void TimeSoundEditor_init (TimeSoundEditor me, conststring32 title, Function data, Sampled sound, bool ownSound) {
 	my d_ownSound = ownSound;
 	if (sound) {
 		integer numberOfChannels = 1;

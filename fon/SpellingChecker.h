@@ -29,10 +29,10 @@ void SpellingChecker_replaceWordList (SpellingChecker me, WordList list);
 autoStringSet SpellingChecker_extractUserDictionary (SpellingChecker me);
 void SpellingChecker_replaceUserDictionary (SpellingChecker me, StringSet userDictionary);
 
-bool SpellingChecker_isWordAllowed (SpellingChecker me, const char32 *word);
-char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const char32 *sentence, integer *start);
+bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word);
+char32 * SpellingChecker_nextNotAllowedWord (SpellingChecker me, conststring32 sentence, integer *start);
 
-void SpellingChecker_addNewWord (SpellingChecker me, const char32 *word);
+void SpellingChecker_addNewWord (SpellingChecker me, conststring32 word);
 
 /* End of file SpellingChecker.h */
 #endif

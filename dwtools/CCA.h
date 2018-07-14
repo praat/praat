@@ -51,7 +51,7 @@
 autoCCA CCA_create (integer numberOfCoefficients, integer ny, integer nx);
 
 void CCA_drawEigenvector (CCA me, Graphics g, int x_or_y, integer ivec, integer first, integer last,
-	double ymin, double ymax, int weigh, double size_mm, const char32 *mark, int connect, int garnish);
+	double ymin, double ymax, int weigh, double size_mm, conststring32 mark, int connect, int garnish);
 
 double CCA_getEigenvectorElement (CCA me, int x_or_y, integer ivec, integer element);
 

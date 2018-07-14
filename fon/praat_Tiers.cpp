@@ -546,7 +546,7 @@ FORM (MODIFY_FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...
 DO
 	autoFormantPoint point = FormantPoint_create (time);
 	double *f = point -> formant, *b = point -> bandwidth;
-	char *fbpairs = Melder_peek32to8 (formantBandwidthPairs);
+	conststring8 fbpairs = Melder_peek32to8 (formantBandwidthPairs);
 	int numberOfFormants = sscanf (fbpairs, "%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf",
 		f, b, f+1, b+1, f+2, b+2, f+3, b+3, f+4, b+4, f+5, b+5, f+6, b+6, f+7, b+7, f+8, b+8, f+9, b+9) / 2;
 	if (numberOfFormants < 1)

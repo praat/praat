@@ -334,7 +334,7 @@ bool structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	return PitchEditor_Parent :: v_click (xWC, yWC, dummy);   // move cursor or drag selection
 }
 
-autoPitchEditor PitchEditor_create (const char32 *title, Pitch pitch) {
+autoPitchEditor PitchEditor_create (conststring32 title, Pitch pitch) {
 	try {
 		autoPitchEditor me = Thing_new (PitchEditor);
 		FunctionEditor_init (me.get(), title, pitch);
