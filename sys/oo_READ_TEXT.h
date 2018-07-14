@@ -25,19 +25,6 @@
 		Melder_throw (U"\"" #x U"\" not read."); \
 	}
 
-#define oo_ARRAY(type,storage,x,cap,n)  \
-	{ \
-		integer _cap = (cap), _n = (n); \
-		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			try { \
-				our x [_i] = texget##storage (_textSource_); \
-			} catch (MelderError) { \
-				Melder_throw (U"Element ", _i+1, U" of \"" #x U"\" not read."); \
-			} \
-		} \
-	}
-
 #define oo_SET(type,storage,x,setType)  \
 	for (integer _i = 0; _i <= (int) setType::MAX; _i ++) { \
 		try { \
@@ -66,15 +53,6 @@
 #define oo_ENUMx(kType,storage,x)  \
 	our x = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue);
 
-//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	{ \
-//		integer _cap = (cap), _n = (n); \
-//		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
-//		for (integer _i = 0; _i < _n; _i ++) { \
-//			our x [_i] = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue); \
-//		} \
-//	}
-
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
 //	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
 //		our x [_i] = (kType) texget##storage (_textSource_, (enum_generic_getValue) kType##_getValue); \
@@ -96,15 +74,6 @@
 		our x = texget##storage (_textSource_); \
 	} catch (MelderError) { \
 		Melder_throw (U"String \"" #x U"\" not read."); \
-	}
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		integer _cap = (cap), _n = (n); \
-		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			our x [_i] = texget##storage (_textSource_); \
-		} \
 	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
@@ -129,15 +98,6 @@
 
 #define oo_STRUCT(Type,x)  \
 	our x. readText (_textSource_, _formatVersion_);
-
-#define oo_STRUCT_ARRAY(Type,x,cap,n) \
-	{ \
-		integer _cap = (cap), _n = (n); \
-		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			our x [_i]. readText (_textSource_, _formatVersion_); \
-		} \
-	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
 	for (integer _i = 0; _i <= (int) setType::MAX; _i ++) { \

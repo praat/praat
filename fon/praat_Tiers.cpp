@@ -1,6 +1,6 @@
 /* praat_Tiers.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,8 @@ FORM (NEW1_AmplitudeTier_create, U"Create empty AmplitudeTier", nullptr) {
 	REAL (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	if (endTime <= startTime) Melder_throw (U"The end time should be greater than the start time.");
+	Melder_require (endTime > startTime,
+		U"The end time should be greater than the start time.");
 	CREATE_ONE
 		autoAmplitudeTier result = AmplitudeTier_create (startTime, endTime);
 	CREATE_ONE_END (name)
@@ -53,7 +54,8 @@ DIRECT (HELP_AmplitudeTier_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_AmplitudeTier_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an AmplitudeTier from batch.");
+	Melder_require (! theCurrentPraatApplication -> batch,
+		U"Cannot view or edit an AmplitudeTier from batch.");
 	FIND_TWO_WITH_IOBJECT (AmplitudeTier, Sound)   // Sound may be null
 		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -236,7 +238,8 @@ FORM (NEW1_DurationTier_create, U"Create empty DurationTier", U"Create DurationT
 	REAL (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	if (endTime <= startTime) Melder_throw (U"Your end time should be greater than your start time.");
+	Melder_require (endTime > startTime,
+		U"Your end time should be greater than your start time.");
 	CREATE_ONE
 		autoDurationTier result = DurationTier_create (startTime, endTime);
 	CREATE_ONE_END (name)
@@ -251,7 +254,8 @@ DIRECT (HELP_DurationTier_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_DurationTier_edit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a DurationTier from batch.");
+	Melder_require (! theCurrentPraatApplication -> batch,
+		U"Cannot view or edit a DurationTier from batch.");
 	FIND_TWO_WITH_IOBJECT (DurationTier, Sound)   // Sound may be null
 		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -353,7 +357,8 @@ FORM (NEW1_FormantGrid_create, U"Create FormantGrid", nullptr) {
 	REAL (initialBandwidthSpacing, U"Initial bandwidth spacing (Hz)", U"50.0")
 	OK
 DO
-	if (endTime <= startTime) Melder_throw (U"Your end time should be greater than your start time.");
+	Melder_require (endTime > startTime,
+		U"Your end time should be greater than your start time.");
 	CREATE_ONE
 		autoFormantGrid result = FormantGrid_create (startTime, endTime, numberOfFormants,
 			initialFirstFormant, initialFormatSpacing, initialFirstBandwidth, initialBandwidthSpacing);
@@ -370,8 +375,8 @@ DIRECT (HELP_FormantGrid_help) {
 
 static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 	/*
-	 * Keep the gate for error handling.
-	 */
+		Keep the gate for error handling.
+	*/
 	try {
 		praat_new (publish.move(), U"fromFormantGridEditor");
 		praat_updateSelection ();
@@ -380,7 +385,8 @@ static void cb_FormantGridEditor_publish (Editor /* me */, autoDaata publish) {
 	}
 }
 DIRECT (WINDOW_FormantGrid_edit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a FormantGrid from batch.");
+	Melder_require (! theCurrentPraatApplication -> batch,
+		U"Cannot view or edit a FormantGrid from batch.");
 	FIND_ONE_WITH_IOBJECT (FormantGrid)
 		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
 		Editor_setPublicationCallback (editor.get(), cb_FormantGridEditor_publish);
@@ -466,7 +472,8 @@ FORM (NEW_FormantGrid_to_Formant, U"FormantGrid: To Formant", nullptr) {
 	REAL (intensity, U"Intensity (Pa\u00B2)", U"0.1")
 	OK
 DO
-	if (intensity < 0.0) Melder_throw (U"Intensity cannot be negative.");
+	Melder_require (intensity >= 0.0,
+		U"The intensity cannot be negative.");
 	CONVERT_EACH (FormantGrid)
 		autoFormant result = FormantGrid_to_Formant (me, timeStep, intensity);
 	CONVERT_EACH_END (my name.get())
@@ -496,7 +503,8 @@ FORM (NEW1_FormantTier_create, U"Create empty FormantTier", nullptr) {
 	REAL (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	if (endTime <= startTime) Melder_throw (U"Your end time should be greater than your start time.");
+	Melder_require (endTime > startTime,
+		U"Your end time should be greater than your start time.");
 	CREATE_ONE
 		autoFormantTier result = FormantTier_create (startTime, endTime);
 	CREATE_ONE_END (name)
@@ -544,13 +552,13 @@ FORM (MODIFY_FormantTier_addPoint, U"Add one point", U"FormantTier: Add point...
 	TEXTFIELD (formantBandwidthPairs, U"Frequencies and bandwidths (Hz):", U"500 50 1500 100 2500 150 3500 200 4500 300")
 	OK
 DO
-	autoFormantPoint point = FormantPoint_create (time);
+	autoFormantPoint point = FormantPoint_create (time, 10);
 	double *f = point -> formant, *b = point -> bandwidth;
 	conststring8 fbpairs = Melder_peek32to8 (formantBandwidthPairs);
 	int numberOfFormants = sscanf (fbpairs, "%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf",
-		f, b, f+1, b+1, f+2, b+2, f+3, b+3, f+4, b+4, f+5, b+5, f+6, b+6, f+7, b+7, f+8, b+8, f+9, b+9) / 2;
-	if (numberOfFormants < 1)
-		Melder_throw (U"Number of formant-bandwidth pairs must be at least 1.");
+		f+1, b+1, f+2, b+2, f+3, b+3, f+4, b+4, f+5, b+5, f+6, b+6, f+7, b+7, f+8, b+8, f+9, b+9, f+10, b+10) / 2;
+	Melder_require (numberOfFormants >= 1,
+		U"The number of formant-bandwidth pairs must be at least 1.");
 	point -> numberOfFormants = numberOfFormants;
 	MODIFY_EACH (FormantTier)
 		autoFormantPoint point2 = Data_copy (point.get());
@@ -594,7 +602,8 @@ FORM (NEW1_IntensityTier_create, U"Create empty IntensityTier", nullptr) {
 	REAL (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	if (endTime <= startTime) Melder_throw (U"Your end time should be greater than your start time.");
+	Melder_require (endTime > startTime,
+		U"Your end time should be greater than your start time.");
 	CREATE_ONE
 		autoIntensityTier result = IntensityTier_create (startTime, endTime);
 	CREATE_ONE_END (name)
@@ -609,7 +618,8 @@ DIRECT (HELP_IntensityTier_help) {
 // MARK: View & Edit
 
 DIRECT (WINDOW_IntensityTier_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit an IntensityTier from batch.");
+	Melder_require (! theCurrentPraatApplication -> batch,
+		U"Cannot view or edit an IntensityTier from batch.");
 	FIND_TWO_WITH_IOBJECT (IntensityTier, Sound)   // Sound may be null
 		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -734,7 +744,8 @@ FORM (NEW1_PitchTier_create, U"Create empty PitchTier", nullptr) {
 	REAL (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	if (endTime <= startTime) Melder_throw (U"Your end time should be greater than your start time.");
+	Melder_require (endTime > startTime,
+		U"Your end time should be greater than your start time.");
 	CREATE_ONE
 		autoPitchTier result = PitchTier_create (startTime, endTime);
 	CREATE_ONE_END (name)
@@ -764,8 +775,8 @@ FORM (GRAPHICS_old_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
-	if (toFrequency <= fromFrequency)
-		Melder_throw (U"Your maximum frequency should be greater than your minimum frequency.");
+	Melder_require (toFrequency > fromFrequency,
+		U"Your maximum frequency should be greater than your minimum frequency.");
 	GRAPHICS_EACH (PitchTier)
 		PitchTier_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency,
 			garnish, U"lines and speckles");
@@ -784,15 +795,16 @@ FORM (GRAPHICS_PitchTier_draw, U"PitchTier: Draw", nullptr) {
 		OPTION (U"lines and speckles")
 	OK
 DO_ALTERNATIVE (GRAPHICS_old_PitchTier_draw)
-	if (toFrequency <= fromFrequency)
-		Melder_throw (U"Your maximum frequency should be greater than your minimum frequency.");
+	Melder_require (toFrequency > fromFrequency,
+		U"Your maximum frequency should be greater than your minimum frequency.");
 	GRAPHICS_EACH (PitchTier)
 		PitchTier_draw (me, GRAPHICS, fromTime, toTime, fromFrequency, toFrequency, garnish, drawingMethod);
 	GRAPHICS_EACH_END
 }
 
 DIRECT (WINDOW_PitchTier_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PitchTier from batch.");
+	Melder_require (! theCurrentPraatApplication -> batch,
+		U"Cannot view or edit a PitchTier from batch.");
 	FIND_TWO_WITH_IOBJECT (PitchTier, Sound)   // Sound may be null
 		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, you, true);
 		praat_installEditor (editor.get(), IOBJECT);
@@ -1053,8 +1065,8 @@ FORM (NEW1_PointProcess_createEmpty, U"Create an empty PointProcess", U"Create e
 	REAL (endTime, U"End time (s)", U"1.0")
 	OK
 DO
-	if (endTime < startTime)
-		Melder_throw (U"Your end time (", endTime, U") should not be less than your start time (", startTime, U").");
+	Melder_require (endTime >= startTime,
+		U"Your end time (", endTime, U") should not be less than your start time (", startTime, U").");
 	CREATE_ONE
 		autoPointProcess result = PointProcess_create (startTime, endTime, 0);
 	CREATE_ONE_END (name)
@@ -1067,8 +1079,8 @@ FORM (NEW1_PointProcess_createPoissonProcess, U"Create Poisson process", U"Creat
 	POSITIVE (density, U"Density (/s)", U"100.0")
 	OK
 DO
-	if (endTime < startTime)
-		Melder_throw (U"Your end time (", endTime, U") should not be less than your start time (", startTime, U").");
+	Melder_require (endTime >= startTime,
+		U"Your end time (", endTime, U") should not be less than your start time (", startTime, U").");
 	CREATE_ONE
 		autoPointProcess result = PointProcess_createPoissonProcess (startTime, endTime, density);
 	CREATE_ONE_END (name)
@@ -1091,7 +1103,8 @@ DO
 }
 
 DIRECT (WINDOW_PointProcess_viewAndEdit) {
-	if (theCurrentPraatApplication -> batch) Melder_throw (U"Cannot view or edit a PointProcess from batch.");
+	Melder_require (! theCurrentPraatApplication -> batch,
+		U"Cannot view or edit a PointProcess from batch.");
 	FIND_TWO_WITH_IOBJECT (PointProcess, Sound)   // Sound may be null
 		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, you);
 		praat_installEditor (editor.get(), IOBJECT);

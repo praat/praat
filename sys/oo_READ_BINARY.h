@@ -21,15 +21,6 @@
 #define oo_SIMPLE(type,storage,x)  \
 	our x = binget##storage (_filePointer_);
 
-#define oo_ARRAY(type,storage,x,cap,n)  \
-	{ \
-		integer _cap = (cap), _n = (n); \
-		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			our x [_i] = binget##storage (_filePointer_); \
-		} \
-	}
-
 #define oo_SET(type,storage,x,setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
 		our x [_i] = binget##storage (_filePointer_); \
@@ -54,15 +45,6 @@
 #define oo_ENUMx(kType,storage,x)  \
 	our x = (kType) binget##storage (_filePointer_, (int) kType::MIN, (int) kType::MAX, U"" #kType);
 
-//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	{ \
-//		integer _cap = (cap), _n = (n); \
-//		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
-//		for (int _i = 0; _i < _n; _i ++) { \
-//			our x [_i] = (kType) binget##storage (_filePointer_, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
-//		} \
-//	}
-
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
 //	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
 //		our x [_i] = (kType) binget##storage (_filePointer_, (int) kType::MIN, (int) kType::MAX, U"" #kType); \
@@ -80,15 +62,6 @@
 
 #define oo_STRINGx(storage,x)  \
 	our x = binget##storage (_filePointer_);
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		integer _cap = (cap), _n = (n); \
-		if (_n > _cap) Melder_throw (U"Number of \"" #x U"\" (", _n, U") greater than ", _cap, U"."); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			our x [_i] = binget##storage (_filePointer_); \
-		} \
-	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) { \
@@ -108,15 +81,6 @@
 
 #define oo_STRUCT(Type,x)  \
 	our x. readBinary (_filePointer_, _formatVersion_);
-
-#define oo_STRUCT_ARRAY(Type,x,cap,n) \
-	{ \
-		integer _cap = (cap), _n = (n); \
-		if (_n > _cap) Melder_throw (U"Number of \"", #x, U"\" (", _n, U") greater than ", _cap, U"."); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			our x [_i]. readBinary (_filePointer_, _formatVersion_); \
-		} \
-	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \

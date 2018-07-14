@@ -1,6 +1,6 @@
 /* FormantTier.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2014,2015,2016,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,10 +50,13 @@
 
 Thing_implement (FormantPoint, Daata, 0);
 
-autoFormantPoint FormantPoint_create (double time) {
+autoFormantPoint FormantPoint_create (double time, integer numberOfFormants) {
 	try {
 		autoFormantPoint me = Thing_new (FormantPoint);
 		my number = time;
+		my numberOfFormants = numberOfFormants;
+		my formant = NUMvector <double> (1, numberOfFormants);
+		my bandwidth = NUMvector <double> (1, numberOfFormants);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Formant point not created.");
@@ -73,18 +76,18 @@ autoFormantTier FormantTier_create (double tmin, double tmax) {
 	}
 }
 
-double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
+double FormantTier_getValueAtTime (FormantTier me, integer iformant, double t) {
 	integer n = my points.size;
 	if (n == 0 || iformant < 1) return undefined;
 	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
 		if (iformant > pointRight -> numberOfFormants) return undefined;
-		return pointRight -> formant [iformant-1];   // constant extrapolation
+		return pointRight -> formant [iformant];   // constant extrapolation
 	}
 	FormantPoint pointLeft = my points.at [n];
 	if (t >= pointLeft -> number) {
 		if (iformant > pointLeft -> numberOfFormants) return undefined;
-		return pointLeft -> formant [iformant-1];   // constant extrapolation
+		return pointLeft -> formant [iformant];   // constant extrapolation
 	}
 	Melder_assert (n >= 2);
 	integer ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
@@ -92,9 +95,9 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 	pointLeft = my points.at [ileft];
 	pointRight = my points.at [iright];
 	double tleft = pointLeft -> number;
-	double fleft = ( iformant > pointLeft -> numberOfFormants ? undefined : pointLeft -> formant [iformant-1] );
+	double fleft = ( iformant > pointLeft -> numberOfFormants ? undefined : pointLeft -> formant [iformant] );
 	double tright = pointRight -> number;
-	double fright = ( iformant > pointRight -> numberOfFormants ? undefined : pointRight -> formant [iformant-1] );
+	double fright = ( iformant > pointRight -> numberOfFormants ? undefined : pointRight -> formant [iformant] );
 	return isundef (fleft) ? ( isundef (fright) ? undefined : fright )
 		: isundef (fright) ? fleft
 		: t == tright ? fright   // be very accurate
@@ -102,18 +105,18 @@ double FormantTier_getValueAtTime (FormantTier me, int iformant, double t) {
 		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   // linear interpolation
 }
 
-double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
+double FormantTier_getBandwidthAtTime (FormantTier me, integer iformant, double t) {
 	integer n = my points.size;
 	if (n == 0) return 0.0;
 	FormantPoint pointRight = my points.at [1];
 	if (t <= pointRight -> number) {
 		if (iformant > pointRight -> numberOfFormants) return undefined;
-		return pointRight -> bandwidth [iformant-1];   // constant extrapolation
+		return pointRight -> bandwidth [iformant];   // constant extrapolation
 	}
 	FormantPoint pointLeft = my points.at [n];
 	if (t >= pointLeft -> number) {
 		if (iformant > pointLeft -> numberOfFormants) return undefined;
-		return pointLeft -> bandwidth [iformant-1];   // constant extrapolation
+		return pointLeft -> bandwidth [iformant];   // constant extrapolation
 	}
 	Melder_assert (n >= 2);
 	integer ileft = AnyTier_timeToLowIndex (me->asAnyTier(), t), iright = ileft + 1;
@@ -121,9 +124,9 @@ double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 	pointLeft = my points.at [ileft];
 	pointRight = my points.at [iright];
 	double tleft = pointLeft -> number;
-	double fleft = iformant > pointLeft -> numberOfFormants ? undefined : pointLeft -> bandwidth [iformant-1];
+	double fleft = iformant > pointLeft -> numberOfFormants ? undefined : pointLeft -> bandwidth [iformant];
 	double tright = pointRight -> number;
-	double fright = iformant > pointRight -> numberOfFormants ? undefined : pointRight -> bandwidth [iformant-1];
+	double fright = iformant > pointRight -> numberOfFormants ? undefined : pointRight -> bandwidth [iformant];
 	return isundef (fleft) ? ( isundef (fright) ? undefined : fright )
 		: isundef (fright) ? fleft
 		: t == tright ? fright   // be very accurate
@@ -131,8 +134,11 @@ double FormantTier_getBandwidthAtTime (FormantTier me, int iformant, double t) {
 		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   // linear interpolation
 }
 
-void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, double fmax, int garnish) {
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, double fmax, bool garnish) {
+	if (tmax <= tmin) {
+		tmin = my xmin;
+		tmax = my xmax;
+	}
 	Graphics_setWindow (g, tmin, tmax, 0.0, fmax);
 	Graphics_setInner (g);
 	integer imin = AnyTier_timeToHighIndex (me->asAnyTier(), tmin);
@@ -141,8 +147,9 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 		FormantPoint point = my points.at [i];
 		double t = point -> number;
 		for (integer j = 1; j <= point -> numberOfFormants; j ++) {
-			double f = point -> formant [j-1];
-			if (f <= fmax) Graphics_speckle (g, t, f);
+			double f = point -> formant [j];
+			if (f <= fmax)
+				Graphics_speckle (g, t, f);
 		}
 	}
 	Graphics_unsetInner (g);
@@ -160,12 +167,11 @@ autoFormantTier Formant_downto_FormantTier (Formant me) {
 		autoFormantTier thee = FormantTier_create (my xmin, my xmax);
 		for (integer i = 1; i <= my nx; i ++) {
 			Formant_Frame frame = & my d_frames [i];
-			autoFormantPoint point = FormantPoint_create (Sampled_indexToX (me, i));
-			point -> numberOfFormants = frame -> nFormants > 10 ? 10 : frame -> nFormants;
-			for (integer j = 1; j <= point -> numberOfFormants; j ++) {
+			autoFormantPoint point = FormantPoint_create (Sampled_indexToX (me, i), frame -> nFormants);
+			for (integer j = 1; j <= frame -> nFormants; j ++) {
 				Formant_Formant pair = & frame -> formant [j];
-				point -> formant [j-1] = pair -> frequency;
-				point -> bandwidth [j-1] = pair -> bandwidth;
+				point -> formant [j] = pair -> frequency;
+				point -> bandwidth [j] = pair -> bandwidth;
 			}
 			thy points. addItem_move (point.move());
 		}
@@ -177,19 +183,21 @@ autoFormantTier Formant_downto_FormantTier (Formant me) {
 
 autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp) {
 	try {
+		integer maximumNumberOfFormants = Formant_getMaxNumFormants (me);
 		autoFormantTier temp = Formant_downto_FormantTier (me);
 		autoFormantTier thee = FormantTier_create (pp -> xmin, pp -> xmax);
 		for (integer ipoint = 1; ipoint <= pp -> nt; ipoint ++) {
 			double time = pp -> t [ipoint];
-			autoFormantPoint point = FormantPoint_create (time);
+			autoFormantPoint point = FormantPoint_create (time, maximumNumberOfFormants);
 			integer iformant = 1;
-			for (; iformant <= 10; iformant ++) {
+			for (; iformant <= maximumNumberOfFormants; iformant ++) {
 				double value = FormantTier_getValueAtTime (temp.get(), iformant, time);
-				if (isundef (value)) break;
-				point -> formant [iformant-1] = value;
+				if (isundef (value))
+					break;
+				point -> formant [iformant] = value;
 				value = FormantTier_getBandwidthAtTime (temp.get(), iformant, time);
 				Melder_assert (isdefined (value));
-				point -> bandwidth [iformant-1] = value;
+				point -> bandwidth [iformant] = value;
 			}
 			point -> numberOfFormants = iformant - 1;
 			thy points. addItem_move (point.move());
@@ -200,8 +208,8 @@ autoFormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp
 	}
 }
 
-int FormantTier_getMinNumFormants (FormantTier me) {
-	int minNumFormants = 10;
+integer FormantTier_getMinNumFormants (FormantTier me) {
+	integer minNumFormants = INTEGER_MAX;
 	for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
 		FormantPoint point = my points.at [ipoint];
 		if (point -> numberOfFormants < minNumFormants)
@@ -210,8 +218,8 @@ int FormantTier_getMinNumFormants (FormantTier me) {
 	return minNumFormants;
 }
 
-int FormantTier_getMaxNumFormants (FormantTier me) {
-	int maxNumFormants = 0;
+integer FormantTier_getMaxNumFormants (FormantTier me) {
+	integer maxNumFormants = 0;
 	for (integer ipoint = 1; ipoint <= my points.size; ipoint ++) {
 		FormantPoint point = my points.at [ipoint];
 		if (point -> numberOfFormants > maxNumFormants)
@@ -220,9 +228,9 @@ int FormantTier_getMaxNumFormants (FormantTier me) {
 	return maxNumFormants;
 }
 	
-autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants, int includeBandwidths) {
+autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, bool includeFormants, bool includeBandwidths) {
 	try {
-		int maximumNumberOfFormants = FormantTier_getMaxNumFormants (me);
+		integer maximumNumberOfFormants = FormantTier_getMaxNumFormants (me);
 		autoTableOfReal thee = TableOfReal_create (my points.size, 1 +
 			( includeFormants ? maximumNumberOfFormants : 0 ) +
 			( includeBandwidths ? maximumNumberOfFormants : 0 ));
@@ -242,8 +250,8 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 			FormantPoint point = my points.at [ipoint];
 			thy data [ipoint] [1] = point -> number;
 			for (integer icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
-				if (includeFormants) thy data [ipoint] [++ icol] = point -> formant [iformant-1];
-				if (includeBandwidths) thy data [ipoint] [++ icol] = point -> bandwidth [iformant-1];
+				if (includeFormants) thy data [ipoint] [++ icol] = point -> formant [iformant];
+				if (includeBandwidths) thy data [ipoint] [++ icol] = point -> bandwidth [iformant];
 			}
 		}
 		return thee;
@@ -254,17 +262,18 @@ autoTableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeForma
 
 void Sound_FormantTier_filter_inplace (Sound me, FormantTier formantTier) {
 	double dt = my dx;
-	if (formantTier -> points.size) for (integer iformant = 1; iformant <= 10; iformant ++) {
+	integer maximumNumberOfFormants = FormantTier_getMaxNumFormants (formantTier);
+	if (formantTier -> points.size) for (integer iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
 		for (integer isamp = 1; isamp <= my nx; isamp ++) {
 			double t = my x1 + (isamp - 1) * my dx;
 			/*
-			 * Compute LP coefficients.
-			 */
+				Compute LP coefficients.
+			*/
 			double formant, bandwidth;
 			formant = FormantTier_getValueAtTime (formantTier, iformant, t);
 			bandwidth = FormantTier_getBandwidthAtTime (formantTier, iformant, t);
 			if (isdefined (formant) && isdefined (bandwidth)) {
-				double cosomdt = cos (2 * NUMpi * formant * dt);
+				double cosomdt = cos (2.0 * NUMpi * formant * dt);
 				double r = exp (- NUMpi * bandwidth * dt);
 				/* Formants at 0 Hz or the Nyquist are single poles, others are double poles. */
 				if (fabs (cosomdt) > 0.999999) {   // allow for round-off errors
@@ -274,7 +283,7 @@ void Sound_FormantTier_filter_inplace (Sound me, FormantTier formantTier) {
 					}
 				} else {
 					/* double pole: D(z) = 1 + p z^-1 + q z^-2 */
-					double p = - 2 * r * cosomdt;
+					double p = - 2.0 * r * cosomdt;
 					double q = r * r;
 					for (integer channel = 1; channel <= my ny; channel ++) {
 						if (isamp > 1) my z [channel] [isamp] -= p * my z [channel] [isamp - 1];

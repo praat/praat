@@ -1,0 +1,36 @@
+File type = "ooTextFile"
+Object class = "FormantTier"
+
+xmin = 0 
+xmax = 1 
+points: size = 2 
+points [1]:
+    number = 0.5 
+    numberOfFormants = 5 
+    formant []: 
+        formant [0] = 500 
+        formant [1] = 1500 
+        formant [2] = 2500 
+        formant [3] = 3500 
+        formant [4] = 4500 
+    bandwidth []: 
+        bandwidth [0] = 50 
+        bandwidth [1] = 100 
+        bandwidth [2] = 150 
+        bandwidth [3] = 200 
+        bandwidth [4] = 300 
+points [2]:
+    number = 0.7 
+    numberOfFormants = 5 
+    formant []: 
+        formant [0] = 500 
+        formant [1] = 1500 
+        formant [2] = 2500 
+        formant [3] = 3500 
+        formant [4] = 4500 
+    bandwidth []: 
+        bandwidth [0] = 50 
+        bandwidth [1] = 100 
+        bandwidth [2] = 150 
+        bandwidth [3] = 200 
+        bandwidth [4] = 300 

@@ -21,14 +21,6 @@
 #define oo_SIMPLE(type,storage,x)  \
 	binput##storage (our x, f);
 
-#define oo_ARRAY(type,storage,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			binput##storage (our x [_i], f); \
-		} \
-	}
-
 #define oo_SET(type,storage,x,setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
 		binput##storage (our x [_i], f); \
@@ -53,14 +45,6 @@
 #define oo_ENUMx(kType,storage,x)  \
 	binput##storage ((int) our x, f);
 
-//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	{ \
-//		integer _n = (n); \
-//		for (int _i = 0; _i < _n; _i ++) { \
-//			binput##storage ((int) our x [_i], f); \
-//		} \
-//	{
-
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
 //	for (int _i = 0; _i <= setType::MAX; _i ++) { \
 //		binput##storage ((int) our x [_i], f); \
@@ -77,14 +61,6 @@
 #define oo_STRINGx(storage,x)  \
 	binput##storage (our x.get(), f);
 
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			binput##storage (our x [_i].get(), f); \
-		} \
-	}
-
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) { \
 		binput##storage (our x [_i].get(), f); \
@@ -100,14 +76,6 @@
 
 #define oo_STRUCT(Type,x)  \
 	our x. writeBinary (f);
-
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			our x [_i]. writeBinary (f); \
-		} \
-	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
