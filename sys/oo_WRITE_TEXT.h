@@ -21,16 +21,6 @@
 #define oo_SIMPLE(type,storage,x)  \
 	texput##storage (file, our x, U"" #x, 0,0,0,0,0);
 
-#define oo_ARRAY(type,storage,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			texput##storage (file, our x [_i], U"" #x " [", Melder_integer (_i), U"]", 0,0,0); \
-		} \
-		texexdent (file); \
-	}
-
 #define oo_SET(type,storage,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
@@ -57,16 +47,6 @@
 #define oo_ENUMx(kType,storage,x)  \
 	texput##storage (file, (int) our x, (const char32* (*) (int)) kType##_getText, U"" #x, 0,0,0,0,0);
 
-//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	{ \
-//		integer _n = (n); \
-//		texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
-//		for (integer _i = 0; _i < _n; _i ++) { \
-//			texput##storage (file, (int) our x [_i], (const char32* (*) (int)) kType##_getText, U"" #x U" [", Melder_integer (_i), U"]", 0,0,0); \
-//		} \
-//		texexdent (file); \
-//	}
-
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
 //	texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
 //	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
@@ -86,16 +66,6 @@
 
 #define oo_STRINGx(storage,x)  \
 	texput##storage (file, our x.get(), U""#x, 0,0,0,0,0);
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		texputintro (file, U"" #x U" []: ", _n ? nullptr : U"(empty)", 0,0,0,0); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			texput##storage (file, our x [_i].get(), U"" #x U" [", Melder_integer (_i), U"]", 0,0,0); \
-		} \
-		texexdent (file); \
-	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \
@@ -118,18 +88,6 @@
 	texputintro (file, U"" #x U":", 0,0,0,0,0); \
 	our x. writeText (file); \
 	texexdent (file);
-
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		texputintro (file, U"" #x U" []: ", n ? nullptr : U"(empty)", 0,0,0,0); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			texputintro (file, U"" #x " [", Melder_integer (_i), U"]:", 0,0,0); \
-			our x [_i]. writeText (file); \
-			texexdent (file); \
-		} \
-		texexdent (file); \
-	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	texputintro (file, U"" #x U" []:", 0,0,0,0,0); \

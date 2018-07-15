@@ -20,8 +20,6 @@
 
 #define oo_SIMPLE(type,storage,x)
 
-#define oo_ARRAY(type,storage,x,cap,n)
-
 #define oo_SET(type,storage,x,setType)
 
 #define oo_VECTOR(type,storage,x,min,max)
@@ -30,22 +28,12 @@
 
 #define oo_ENUMx(kType,storage,x)
 
-//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)
-
 //#define oo_ENUMx_SET(kType,storage,x,setType)
 
 //#define oo_ENUMx_VECTOR(kType,storage,x,min,max)
 
 #define oo_STRINGx(storage,x)  \
 	if (our x && ! Melder_isEncodable (our x.get(), encoding)) return false;
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			if (our x [_i] && ! Melder_isEncodable (our x [_i].get(), encoding)) return false; \
-		} \
-	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) \
@@ -63,14 +51,6 @@
 
 #define oo_STRUCT(Type,x)  \
 	if (! our x. canWriteAsEncoding (encoding)) return false;
-
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			if (! our x [_i]. canWriteAsEncoding (encoding)) return false; \
-		} \
-	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \

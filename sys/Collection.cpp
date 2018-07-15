@@ -102,13 +102,13 @@ void _CollectionOfDaata_v_readText (_CollectionOfDaata* me, MelderReadText text,
 		my _grow (l_size);
 		for (integer i = 1; i <= l_size; i ++) {
 			long_not_integer itemNumberRead;
-			int n = 0, length, stringsRead;
+			integer n = 0, length, stringsRead;
 			char klas [200], nameTag [2000];
 			do {
 				line = Melder_32to8 (MelderReadText_readLine (text));
 				if (! line)
 					Melder_throw (U"Missing object line.");
-			} while (strncmp (line.get(), "Object ", 7));
+			} while (! strnequ (line.get(), "Object ", 7));
 			stringsRead = sscanf (line.get(), "Object %ld: class %199s %1999s%n", & itemNumberRead, klas, nameTag, & n);
 			if (stringsRead < 2)
 				Melder_throw (U"Collection::readText: cannot read header of object ", i, U".");

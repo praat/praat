@@ -17,23 +17,19 @@
  */
 
 #undef oo_SIMPLE
-#undef oo_ARRAY
 #undef oo_SET
 #undef oo_VECTOR
 #undef oo_MATRIX
 
 #undef oo_ENUMx
-//#undef oo_ENUMx_ARRAY
 //#undef oo_ENUMx_SET
 //#undef oo_ENUMx_VECTOR
 
 #undef oo_STRINGx
-#undef oo_STRINGx_ARRAY
 #undef oo_STRINGx_SET
 #undef oo_STRINGx_VECTOR
 
 #undef oo_STRUCT
-#undef oo_STRUCT_ARRAY
 #undef oo_STRUCT_SET
 #undef oo_STRUCT_VECTOR_FROM
 #undef oo_STRUCT_MATRIX_FROM

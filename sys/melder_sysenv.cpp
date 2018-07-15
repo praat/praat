@@ -40,7 +40,7 @@
 #endif
 #include "melder.h"
 
-char32 * Melder_getenv (conststring32 variableName) {
+conststring32 Melder_getenv (conststring32 variableName) {
 	#if defined (macintosh) || defined (UNIX) || defined (__MINGW32__) || defined (__CYGWIN__)
 		return Melder_peek8to32 (getenv (Melder_peek32to8 (variableName)));
 	#elif defined (_WIN32)
@@ -63,10 +63,9 @@ void Melder_system (conststring32 command) {
 	#elif defined (_WIN32)
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;
-		char32 *comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
-		if (! comspec) {
+		conststring32 comspec = Melder_getenv (U"COMSPEC");   // e.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe"
+		if (! comspec)
 			comspec = Melder_getenv (U"ComSpec");
-		}
 		autoMelderString buffer;
 		if (comspec) {
 			MelderString_copy (& buffer, comspec);

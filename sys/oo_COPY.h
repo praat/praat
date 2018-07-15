@@ -21,14 +21,6 @@
 #define oo_SIMPLE(type,storage,x)  \
 	thy x = our x;
 
-#define oo_ARRAY(type,storage,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			thy x [_i] = our x [_i]; \
-		} \
-	}
-
 #define oo_SET(type,storage,x,setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \
 		thy x [_i] = our x [_i]; \
@@ -49,12 +41,6 @@
 #define oo_ENUMx(kType,storage,x)  \
 	thy x = our x;
 
-//#define oo_ENUMx_ARRAY(kType,storage,x,cap,n)  \
-//	{ \
-//		integer _n = (n); \
-//		for (int _i = 0; _i < _n; i ++) thy x [_i] = our x [_i]; \
-//	}
-
 //#define oo_ENUMx_SET(kType,storage,x,setType)  \
 //	for (int _i = 0; _i <= (int) setType::MAX; _i ++) thy x [_i] = our x [_i];
 
@@ -66,14 +52,6 @@
 
 #define oo_STRINGx(storage,x)  \
 	if (our x) thy x = Melder_dup (our x.get());
-
-#define oo_STRINGx_ARRAY(storage,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (int _i = 0; _i < _n; _i ++) { \
-			if (our x [_i]) thy x [_i] = Melder_dup (our x [_i].get()); \
-		} \
-	}
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int _i = 0; _i <= setType::MAX; _i ++) { \
@@ -93,14 +71,6 @@
 
 #define oo_STRUCT(Type,x)  \
 	our x. copy (& thy x);
-
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  \
-	{ \
-		integer _n = (n); \
-		for (integer _i = 0; _i < _n; _i ++) { \
-			our x [_i]. copy (& thy x [_i]); \
-		} \
-	}
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int _i = 0; _i <= (int) setType::MAX; _i ++) { \

@@ -99,7 +99,7 @@ void Preferences_read (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
 		for (;;) {
-			char32 *line = MelderReadText_readLine (text.get());
+			const mutablestring32 line = MelderReadText_readLine (text.get());
 			if (! line)
 				return;   // OK: we have read past the last line
 			char32 *value = str32str (line, U": ");

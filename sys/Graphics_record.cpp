@@ -499,9 +499,8 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 			opcode = (int) bingetr32 (f);
 			put (opcode);
 			numberOfArguments = (integer) bingetr32 (f);
-			if (numberOfArguments == -1) {
+			if (numberOfArguments == -1)
 				numberOfArguments = bingeti32 (f);
-			}
 			put (numberOfArguments);
 			if (opcode == TEXT) {
 				put (bingetr32 (f));   // x
@@ -520,7 +519,8 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 					Melder_throw (U"Error reading graphics recordings.");
 				p += numberOfArguments - 6;
 			} else {
-				for (integer i = numberOfArguments; i > 0; i --) put (bingetr32 (f));
+				for (integer i = numberOfArguments; i > 0; i --)
+					put (bingetr32 (f));
 			}
 		}   
 	} catch (MelderError) {

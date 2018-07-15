@@ -64,7 +64,7 @@ autoInterpreter Interpreter_create (conststring32 environmentName, ClassInfo edi
 autoInterpreter Interpreter_createFromEnvironment (Editor editor);
 
 void Melder_includeIncludeFiles (autostring32 *text);
-integer Interpreter_readParameters (Interpreter me, char32 *text);
+integer Interpreter_readParameters (Interpreter me, mutablestring32 text);
 Thing_declare (UiForm);
 UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, conststring32 fileName,
 	void (*okCallback) (UiForm sendingForm, integer narg, Stackel args, conststring32 sendingString, Interpreter interpreter, conststring32 invokingButtonTitle, bool modified, void *closure), void *okClosure,

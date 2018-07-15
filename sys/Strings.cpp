@@ -264,7 +264,7 @@ autoStrings Strings_readFromRawTextFile (MelderFile file) {
 		 * Read strings.
 		 */
 		for (integer i = 1; i <= n; i ++) {
-			char32 *line = MelderReadText_readLine (text.get());
+			const mutablestring32 line = MelderReadText_readLine (text.get());
 			my strings [i] = Melder_dup (line);
 		}
 		return me;

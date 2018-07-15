@@ -388,7 +388,7 @@ enum class kMelder_charset { ASCII_, UNICODE_ };
 /*
 	Internationalize std::isblank ():
 */
-inline static bool Melder_isHorizontalSpace (const char32 kar) {
+inline static bool Melder_isHorizontalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SPACE_SEPARATOR) != 0;
 }
 inline static void Melder_skipHorizontalSpace (char32 **p_text) {
@@ -398,49 +398,49 @@ inline static char32 * Melder_findEndOfHorizontalSpace (char32 *p) {
 	while (Melder_isHorizontalSpace (*p)) p ++;
 	return p;
 }
-inline static const char32 * Melder_findEndOfHorizontalSpace (conststring32 p) {
+inline static const char32 * Melder_findEndOfHorizontalSpace (const char32 *p) {
 	while (Melder_isHorizontalSpace (*p)) p ++;
 	return p;
 }
 
-inline static bool Melder_isAsciiHorizontalSpace (const char32 kar) {
+inline static bool Melder_isAsciiHorizontalSpace (char32 kar) {
 	return kar == U'\t' || kar == U' ';
 }
 
-inline static bool Melder_isVerticalSpace (const char32 kar) {
+inline static bool Melder_isVerticalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_NEWLINE) != 0;
 }
-inline static bool Melder_isAsciiVerticalSpace (const char32 kar) {
+inline static bool Melder_isAsciiVerticalSpace (char32 kar) {
 	return kar >= 10 && kar <= 13;   // \n, \v, \f, \r
 }
 
 /*
 	Internationalize std::isspace ():
 */
-inline static bool Melder_isHorizontalOrVerticalSpace (const char32 kar) {
+inline static bool Melder_isHorizontalOrVerticalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
-inline static bool Melder_isHorizontalOrVerticalSpace (const char32 kar, kMelder_charset charset) {
+inline static bool Melder_isHorizontalOrVerticalSpace (char32 kar, kMelder_charset charset) {
 	const char32 top = charset == kMelder_charset::ASCII_ ? kUCD_TOP_OF_ASCII : kUCD_TOP_OF_LIST;
 	return kar <= top && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
-inline static bool Melder_isAsciiHorizontalOrVerticalSpace (const char32 kar) {
+inline static bool Melder_isAsciiHorizontalOrVerticalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
 
-inline static bool Melder_isEndOfInk (const char32 kar) {
+inline static bool Melder_isEndOfInk (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_INK) != 0;
 }
-inline static bool Melder_isEndOfLine (const char32 kar) {
+inline static bool Melder_isEndOfLine (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_LINE) != 0;
 }
-inline static bool Melder_isEndOfText (const char32 kar) {
+inline static bool Melder_isEndOfText (char32 kar) {
 	return kar == U'\0';
 }
-inline static bool Melder_staysWithinInk (const char32 kar) {
+inline static bool Melder_staysWithinInk (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_INK) == 0;
 }
-inline static bool Melder_staysWithinLine (const char32 kar) {
+inline static bool Melder_staysWithinLine (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_LINE) == 0;
 }
 inline static void Melder_skipToEndOfLine (char32 **p_text) {
@@ -450,7 +450,7 @@ inline static char32 * Melder_findEndOfInk (char32 *p) {
 	while (Melder_staysWithinInk (*p)) p ++;
 	return p;
 }
-inline static const char32 * Melder_findEndOfInk (conststring32 p) {
+inline static const char32 * Melder_findEndOfInk (const char32 *p) {
 	while (Melder_staysWithinInk (*p)) p ++;
 	return p;
 }
@@ -458,78 +458,78 @@ inline static char32 * Melder_findEndOfLine (char32 *p) {
 	while (Melder_staysWithinLine (*p)) p ++;
 	return p;
 }
-inline static const char32 * Melder_findEndOfLine (conststring32 p) {
+inline static const char32 * Melder_findEndOfLine (const char32 *p) {
 	while (Melder_staysWithinLine (*p)) p ++;
 	return p;
 }
 /*
 	Internationalize std::isalpha ():
 */
-inline static bool Melder_isLetter (const char32 kar) {
+inline static bool Melder_isLetter (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_LETTER) != 0;
 }
-inline static bool Melder_isAsciiLetter (const char32 kar) {
+inline static bool Melder_isAsciiLetter (char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_LETTER) != 0;
 }
 
 /*
 	Internationalize std::isupper ():
 */
-inline static bool Melder_isUpperCaseLetter (const char32 kar) {
+inline static bool Melder_isUpperCaseLetter (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_UPPERCASE_LETTER) != 0;
 }
-inline static bool Melder_isAsciiUpperCaseLetter (const char32 kar) {
+inline static bool Melder_isAsciiUpperCaseLetter (char32 kar) {
 	return kar >= U'A' && kar <= U'Z';
 }
 
 /*
 	Internationalize std::islower ():
 */
-inline static bool Melder_isLowerCaseLetter (const char32 kar) {
+inline static bool Melder_isLowerCaseLetter (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_LOWERCASE_LETTER) != 0;
 }
-inline static bool Melder_isAsciiLowerCaseLetter (const char32 kar) {
+inline static bool Melder_isAsciiLowerCaseLetter (char32 kar) {
 	return kar >= U'a' && kar <= U'z';
 }
 
-inline static bool Melder_isTitleCaseLetter (const char32 kar) {
+inline static bool Melder_isTitleCaseLetter (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_TITLECASE_LETTER) != 0;
 }
-inline static bool Melder_isAsciiTitleCaseLetter (const char32 kar) {
+inline static bool Melder_isAsciiTitleCaseLetter (char32 kar) {
 	return kar >= U'A' && kar <= U'Z';
 }
 
 /*
 	Internationalize std::isdigit ():
 */
-inline static bool Melder_isDecimalNumber (const char32 kar) {
+inline static bool Melder_isDecimalNumber (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_DECIMAL_NUMBER) != 0;
 }
-inline static bool Melder_isAsciiDecimalNumber (const char32 kar) {
+inline static bool Melder_isAsciiDecimalNumber (char32 kar) {
 	return kar >= U'0' && kar <= U'9';
 }
 
 /*
 	We cannot really internationalize std::isxdigit ():
 */
-inline static bool Melder_isHexadecimalDigit (const char32 kar) {
+inline static bool Melder_isHexadecimalDigit (char32 kar) {
 	return kar >= U'0' && kar <= U'9' || kar >= U'A' && kar <= U'Z' || kar >= U'a' && kar <= U'z';
 }
 
 /*
 	Internationalize std::isalnum ():
 */
-inline static bool Melder_isAlphanumeric (const char32 kar) {
+inline static bool Melder_isAlphanumeric (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_ALPHANUMERIC) != 0;
 }
-inline static bool Melder_isAsciiAlphanumeric (const char32 kar) {
+inline static bool Melder_isAsciiAlphanumeric (char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_ALPHANUMERIC) != 0;
 }
 
-inline static bool Melder_isWordCharacter (const char32 kar) {
+inline static bool Melder_isWordCharacter (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
 }
-inline static bool Melder_isAsciiWordCharacter (const char32 kar) {
+inline static bool Melder_isAsciiWordCharacter (char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
 }
 
@@ -540,51 +540,51 @@ inline static bool Melder_isAsciiWordCharacter (const char32 kar) {
 	Of these four functions, Melder_hasInk () is not yet correct for all Unicode points,
 	as approximately one half of the mUCD_FORMAT points are inkless as well.
 */
-inline static bool Melder_isPunctuationOrSymbol (const char32 kar) {
+inline static bool Melder_isPunctuationOrSymbol (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
 }
-inline static bool Melder_isAsciiPunctuationOrSymbol (const char32 kar) {   // same as std::ispunct() with default C locale
+inline static bool Melder_isAsciiPunctuationOrSymbol (char32 kar) {   // same as std::ispunct() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
 }
-inline static bool Melder_isControl (const char32 kar) {
+inline static bool Melder_isControl (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
 }
-inline static bool Melder_isAsciiControl (const char32 kar) {   // same as std::iscntrl() with default C locale
+inline static bool Melder_isAsciiControl (char32 kar) {   // same as std::iscntrl() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
 }
-inline static bool Melder_isPrintable (const char32 kar) {
+inline static bool Melder_isPrintable (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
-inline static bool Melder_isAsciiPrintable (const char32 kar) {   // same as std::isprint() with default C locale
+inline static bool Melder_isAsciiPrintable (char32 kar) {   // same as std::isprint() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
-inline static bool Melder_hasInk (const char32 kar) {
+inline static bool Melder_hasInk (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
-inline static bool Melder_hasAsciiInk (const char32 kar) {   // same as std::isgraph() with default C locale
+inline static bool Melder_hasAsciiInk (char32 kar) {   // same as std::isgraph() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
 
 /*
 	Internationalize std::toupper () and std::tolower ():
 */
-inline static char32 Melder_toUpperCase (const char32 kar) {
+inline static char32 Melder_toUpperCase (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. upperCase : kar;
 }
-inline static char32 Melder_toLowerCase (const char32 kar) {
+inline static char32 Melder_toLowerCase (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. lowerCase : kar;
 }
-inline static char32 Melder_toTitleCase (const char32 kar) {
+inline static char32 Melder_toTitleCase (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. titleCase : kar;
 }
 
-inline static integer str16len (const char16 *string) noexcept {
-	const char16 *p = string;
+inline static integer str16len (conststring16 string) noexcept {
+	const char16 *p = & string [0];
 	while (*p != u'\0') ++ p;
 	return p - string;
 }
-inline static char16 * str16cpy (char16 *target, const char16 *source) noexcept {
-	char16 *p = target;
+inline static mutablestring16 str16cpy (mutablestring16 target, conststring16 source) noexcept {
+	char16 *p = & target [0];
 	while (* source != u'\0') * p ++ = * source ++;
 	*p = u'\0';
 	return target;
@@ -595,14 +595,14 @@ inline static integer str32len (conststring32 string) noexcept {
 	while (*p != U'\0') ++ p;
 	return p - string;
 }
-inline static char32 * str32cpy (char32 *target, conststring32 source) noexcept {
+inline static mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept {
 	char32 *p = & target [0];
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return target;
 }
-inline static char32 * str32ncpy (char32 *target, conststring32 source, integer n) noexcept {
-	char32 *p = target;
+inline static mutablestring32 str32ncpy (mutablestring32 target, conststring32 source, integer n) noexcept {
+	char32 *p = & target [0];
 	for (; n > 0 && *source != U'\0'; -- n) * p ++ = * source ++;
 	for (; n > 0; -- n) * p ++ = U'\0';
 	return target;
@@ -754,71 +754,71 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 	You can call at most 32 of them in one Melder_casual call, for instance.
 */
 
-conststring32 Melder_integer  (int64 value) noexcept;
-const char * Melder8_integer (int64 value) noexcept;
+conststring32 Melder_integer (int64 value) noexcept;
+conststring8 Melder8_integer (int64 value) noexcept;
 
-conststring32 Melder_bigInteger  (int64 value) noexcept;
-const char * Melder8_bigInteger (int64 value) noexcept;
+conststring32 Melder_bigInteger (int64 value) noexcept;
+conststring8 Melder8_bigInteger (int64 value) noexcept;
 
-conststring32 Melder_boolean  (bool value) noexcept;
-const char * Melder8_boolean (bool value) noexcept;
+conststring32 Melder_boolean (bool value) noexcept;
+conststring8 Melder8_boolean (bool value) noexcept;
 	// "yes" or "no"
 
 /**
 	Format a double value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats.
 */
-conststring32 Melder_double  (double value) noexcept;
-const char * Melder8_double (double value) noexcept;
+conststring32 Melder_double (double value) noexcept;
+conststring8 Melder8_double (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.9g" format.
 */
-conststring32 Melder_single  (double value) noexcept;
-const char * Melder8_single (double value) noexcept;
+conststring32 Melder_single (double value) noexcept;
+conststring8 Melder8_single (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.4g" format.
 */
-conststring32 Melder_half  (double value) noexcept;
-const char * Melder8_half (double value) noexcept;
+conststring32 Melder_half (double value) noexcept;
+conststring8 Melder8_half (double value) noexcept;
 
 /**
 	Format a double value as "--undefined--" or something in the "%.*f" format.
 */
-conststring32 Melder_fixed  (double value, integer precision) noexcept;
-const char * Melder8_fixed (double value, integer precision) noexcept;
+conststring32 Melder_fixed (double value, integer precision) noexcept;
+conststring8 Melder8_fixed (double value, integer precision) noexcept;
 
 /**
 	Format a double value with a specified precision. If exponent is -2 and precision is 2, you get things like 67E-2 or 0.00024E-2.
 */
-conststring32 Melder_fixedExponent  (double value, integer exponent, integer precision) noexcept;
-const char * Melder8_fixedExponent (double value, integer exponent, integer precision) noexcept;
+conststring32 Melder_fixedExponent (double value, integer exponent, integer precision) noexcept;
+conststring8 Melder8_fixedExponent (double value, integer exponent, integer precision) noexcept;
 
 /**
 	Format a double value as a percentage. If precision is 3, you get things like "0" or "34.400%" or "0.014%" or "0.001%" or "0.0000007%".
 */
-conststring32 Melder_percent  (double value, integer precision) noexcept;
-const char * Melder8_percent (double value, integer precision) noexcept;
+conststring32 Melder_percent (double value, integer precision) noexcept;
+conststring8 Melder8_percent (double value, integer precision) noexcept;
 
 /**
 	Format an integer as a hexadecimal number. If precision is 4, you get things like "0000" or "1A3C" or "107FFFF".
 */
-const char * Melder8_hexadecimal (integer value, integer precision) noexcept;
+conststring8 Melder8_hexadecimal (integer value, integer precision) noexcept;
 conststring32 Melder_hexadecimal (integer value, integer precision) noexcept;
 
 /**
 	Format a dcomplex value as "--undefined--" or something in the "%.15g", "%.16g", or "%.17g" formats,
 	separated without spaces by "+" or "-" and followed by "i".
 */
-conststring32 Melder_dcomplex  (dcomplex value) noexcept;
-const char * Melder8_dcomplex (dcomplex value) noexcept;
+conststring32 Melder_dcomplex (dcomplex value) noexcept;
+conststring8 Melder8_dcomplex (dcomplex value) noexcept;
 
 /**
 	Format a dcomplex value as "--undefined--" or something in the "%.9g" format,
 	separated without spaces by "+" or "-" and followed by "i".
 */
-conststring32 Melder_scomplex  (dcomplex value) noexcept;
-const char * Melder8_scomplex (dcomplex value) noexcept;
+conststring32 Melder_scomplex (dcomplex value) noexcept;
+conststring8 Melder8_scomplex (dcomplex value) noexcept;
 
 /**
 	Convert a formatted floating-point string to something suitable for visualization with the Graphics library.
@@ -830,14 +830,14 @@ conststring32 Melder_float (conststring32 number) noexcept;
 	Format the number that is specified by its natural logarithm.
 	For instance, -10000 is formatted as "1.135483865315339e-4343", which is a floating-point representation of exp(-10000).
 */
-conststring32 Melder_naturalLogarithm  (double lnNumber) noexcept;
-const char * Melder8_naturalLogarithm (double lnNumber) noexcept;
+conststring32 Melder_naturalLogarithm (double lnNumber) noexcept;
+conststring8 Melder8_naturalLogarithm (double lnNumber) noexcept;
 
-conststring32 Melder_pointer  (void *pointer) noexcept;
-const char * Melder8_pointer (void *pointer) noexcept;
+conststring32 Melder_pointer (void *pointer) noexcept;
+conststring8 Melder8_pointer (void *pointer) noexcept;
 
-conststring32 Melder_character  (char32_t kar) noexcept;
-const char * Melder8_character (char32_t kar) noexcept;
+conststring32 Melder_character (char32 kar) noexcept;
+conststring8 Melder8_character (char32 kar) noexcept;
 
 conststring32 Melder_pad (int64 width, conststring32 string);   // will append spaces to the left of 'string' until 'width' is reached; no truncation
 conststring32 Melder_pad (conststring32 string, int64 width);   // will append spaces to the right of 'string' until 'width' is reached; no truncation
@@ -875,8 +875,8 @@ bool Melder_isEncodable (conststring32 string, int outputEncoding);
 extern char32 Melder_decodeMacRoman [256];
 extern char32 Melder_decodeWindowsLatin1 [256];
 
-integer Melder_killReturns_inplace (char32 *text);
-integer Melder_killReturns_inplace (char *text);
+integer Melder_killReturns_inplace (mutablestring32 text);
+integer Melder_killReturns_inplace (mutablestring8 text);
 /*
 	 Replaces all bare returns (old Mac) or return-plus-linefeed sequences (Win) with bare linefeeds
 	 (generic: Unix and modern Mac).
@@ -886,7 +886,7 @@ integer Melder_killReturns_inplace (char *text);
 size_t str32len_utf8  (conststring32 string, bool nativizeNewlines);
 size_t str32len_utf16 (conststring32 string, bool nativizeNewlines);
 
-extern "C" char32 * Melder_peek8to32 (const char *string);
+extern "C" conststring32 Melder_peek8to32 (conststring8 string);
 void Melder_8to32_inplace (conststring8 source, mutablestring32 target, kMelder_textInputEncoding inputEncoding);
 	// errors: Text is not valid UTF-8.
 autostring32 Melder_8to32 (conststring8 string, kMelder_textInputEncoding inputEncoding);
@@ -907,9 +907,9 @@ conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines);
 extern "C" conststring16 Melder_peek32to16 (conststring32 string);
 
 #ifdef _WIN32
-	inline static autostringW Melder_peek32toW (conststring32 string) { return (autostringW) Melder_peek32to16 (string); }
+	inline static conststringW Melder_peek32toW (conststring32 string) { return (autostringW) Melder_peek32to16 (string); }
 	inline static autostringW Melder_32toW (conststring32 string) { return (autostringW) Melder_32to16 (string); }
-	inline static autostring32 Melder_peekWto32 (conststringW string) { return Melder_peek16to32 ((conststring16) string); }
+	inline static conststring32 Melder_peekWto32 (conststringW string) { return Melder_peek16to32 ((conststring16) string); }
 	inline static autostring32 Melder_Wto32 (conststringW string) { return Melder_16to32 ((conststring16) string); }
 #endif
 
@@ -1853,7 +1853,7 @@ struct MelderArg {
 	MelderArg (const          short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const unsigned short      arg) : _arg (Melder_integer         (arg)) { }
 	MelderArg (const dcomplex            arg) : _arg (Melder_dcomplex        (arg)) { }
-	MelderArg (const char32_t            arg) : _arg (Melder_character       (arg)) { }
+	MelderArg (const char32              arg) : _arg (Melder_character       (arg)) { }
 	/*
 		The types of arguments that sometimes involve memory allocation:
 	*/
@@ -2837,8 +2837,7 @@ struct autoMelderReadText {
 
 autoMelderReadText MelderReadText_createFromFile (MelderFile file);
 char32 MelderReadText_getChar (MelderReadText text);
-char32 * MelderReadText_readLine (MelderReadText text);
-wchar_t * MelderReadText_readLineW (MelderReadText text);
+mutablestring32 MelderReadText_readLine (MelderReadText text);
 int64 MelderReadText_getNumberOfLines (MelderReadText me);
 conststring32 MelderReadText_getLineNumber (MelderReadText text);
 
@@ -2904,7 +2903,7 @@ double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer 
 
 #pragma mark - MISCELLANEOUS
 
-char32 * Melder_getenv (conststring32 variableName);
+conststring32 Melder_getenv (conststring32 variableName);
 void Melder_system (conststring32 command);   // spawn a system command
 void Melder_execv (conststring32 executableFileName, integer narg, char32 **args);   // spawn a subprocess
 double Melder_clock ();   // seconds since 1969
