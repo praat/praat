@@ -36,7 +36,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	struct TimeSoundEditor_sound d_sound;
 	struct { LongSound data; } d_longSound;
 	GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
-	GuiMenuItem writeAiffButton, d_saveAs24BitWavButton, d_saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
+	GuiMenuItem writeAiffButton, saveAs24BitWavButton, saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 
 	void v_destroy () noexcept
 		override;

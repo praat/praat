@@ -193,15 +193,9 @@ extern PraatPicture theCurrentPraatPicture;
 char32 *praat_name (int iobject);
 void praat_write_do (UiForm dia, conststring32 extension);
 void praat_new (autoDaata me);
-void praat_new (autoDaata me, Melder_1_ARG);
-void praat_new (autoDaata me, Melder_2_ARGS);
-void praat_new (autoDaata me, Melder_3_ARGS);
-void praat_new (autoDaata me, Melder_4_ARGS);
-void praat_new (autoDaata me, Melder_5_ARGS);
-void praat_new (autoDaata me, Melder_6_ARGS);
-void praat_new (autoDaata me, Melder_7_ARGS);
-void praat_new (autoDaata me, Melder_8_ARGS);
-void praat_new (autoDaata me, Melder_9_ARGS);
+void praat_new (autoDaata me, const MelderArg& arg);
+void praat_new (autoDaata me, const MelderArg& arg1, const MelderArg& arg2,
+	const MelderArg& arg3 = U"", const MelderArg& arg4 = U"", const MelderArg& arg5 = U"");
 void praat_newWithFile (autoDaata me, MelderFile file, conststring32 name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 

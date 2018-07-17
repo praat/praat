@@ -604,9 +604,8 @@ autoConfiguration SSCP_to_Configuration (SSCP me, integer numberOfDimensions) {
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
 				longdouble s = 0.0;
-				for (integer k = 1; k <= my numberOfRows; k ++) {
+				for (integer k = 1; k <= my numberOfRows; k ++)
 					s += my data [k] [i] * a -> eigenvectors [k] [j];
-				}
 				thy data [i] [j] = (double) s;
 			}
 		}
@@ -631,9 +630,8 @@ autoWeight Weight_create (integer numberOfPoints) {
 		autoWeight me = Thing_new (Weight);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
-			for (integer j = 1; j <= numberOfPoints; j ++) {
+			for (integer j = 1; j <= numberOfPoints; j ++)
 				my data [i] [j] = 1.0;
-			}
 		}
 		return me;
 	} catch (MelderError) {
@@ -675,28 +673,24 @@ integer Salience_correctNegatives (Salience me) {
 
 void Salience_setDefaults (Salience me) {
 	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++)
 			my data [i] [j] = 1.0 / sqrt (my numberOfColumns);
-		}
 	}
-	for (integer j = 1; j <= my numberOfColumns; j ++) {
+	for (integer j = 1; j <= my numberOfColumns; j ++)
 		TableOfReal_setColumnLabel (me, j, Melder_cat (U"dimension ", j));
-	}
 }
 
 void Salience_draw (Salience me, Graphics g, int ix, int iy, bool garnish) {
 	integer nc2, nc1 = ix < iy ? (nc2 = iy, ix) : (nc2 = ix, iy);
 	double xmin = 0.0, xmax = 1.0, ymin = 0.0, ymax = 1.0, wmax = 1.0;
 
-	if (ix < 1 || ix > my numberOfColumns || iy < 1 || iy > my numberOfColumns) {
+	if (ix < 1 || ix > my numberOfColumns || iy < 1 || iy > my numberOfColumns)
 		return;
-	}
 
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = nc1; j <= nc2; j ++) {
-			if (my data [i] [j] > wmax) {
+			if (my data [i] [j] > wmax)
 				wmax = my data [i] [j];
-			}
 		}
 	}
 	xmax = ymax = wmax;
@@ -705,9 +699,8 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, bool garnish) {
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 
 	for (integer i = 1; i <= my numberOfRows; i ++) {
-		if (my rowLabels [i]) {
+		if (my rowLabels [i])
 			Graphics_text (g, my data [i] [ix], my data [i] [iy], my rowLabels [i].get());
-		}
 	}
 
 	Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_BOTTOM);
