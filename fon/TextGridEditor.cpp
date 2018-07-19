@@ -2128,22 +2128,22 @@ void structTextGridEditor :: v_play (double tmin, double tmax) {
 	integer numberOfChannelsToPlay = numberOfChannels - numberOfMuteChannels;
 	if (numberOfChannelsToPlay == 0)
 		Melder_throw (U"Please select at least one channel to play.");
-	if (d_longSound.data) {
+	if (our d_longSound.data) {
 		if (numberOfMuteChannels > 0) {
-			autoSound part = LongSound_extractPart (d_longSound.data, tmin, tmax, true);
+			autoSound part = LongSound_extractPart (our d_longSound.data, tmin, tmax, true);
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
 			Sound_MixingMatrix_playPart (part.get(), thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
 		} else {
-			LongSound_playPart (d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+			LongSound_playPart (our d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 		}
 	} else {
 		if (numberOfMuteChannels > 0) {
 			autoMixingMatrix thee = MixingMatrix_create (numberOfChannelsToPlay, numberOfChannels);
 			MixingMatrix_muteAndActivateChannels (thee.get(), muteChannels);
-			Sound_MixingMatrix_playPart (d_sound.data, thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_MixingMatrix_playPart (our d_sound.data, thee.get(), tmin, tmax, theFunctionEditor_playCallback, this);
 		} else {
-			Sound_playPart ((Sound) d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart (our d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 		}
 	}
 }

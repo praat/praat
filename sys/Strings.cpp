@@ -289,7 +289,7 @@ void Strings_randomize (Strings me) {
 }
 
 void Strings_genericize (Strings me) {
-	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) * 3 + 1);
+	autostring32 buffer (Strings_maximumLength (me) * 3);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		const conststring32 string = my strings [i].get();
 		const char32 *p = & string [0];
@@ -305,7 +305,7 @@ void Strings_genericize (Strings me) {
 }
 
 void Strings_nativize (Strings me) {
-	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) + 1);
+	autostring32 buffer = (Strings_maximumLength (me));
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		Longchar_nativize32 (my strings [i].get(), buffer.get(), false);
 		my strings [i] = Melder_dup (buffer.get());

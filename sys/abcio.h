@@ -185,9 +185,9 @@ dcomplex bingetc128 (FILE *f);
 void binputc64 (dcomplex z, FILE *f);
 void binputc128 (dcomplex z, FILE *f);
 
-char * bingets8 (FILE *f);   void binputs8 (const char *s, FILE *f);   // 0..255 characters
-char * bingets16 (FILE *f);   void binputs16 (const char *s, FILE *f);   // 0..65535 characters
-char * bingets32 (FILE *f);   void binputs32 (const char *s, FILE *f);   // 0..4294967295 characters
+autostring8 bingets8 (FILE *f);   void binputs8 (const char *s, FILE *f);   // 0..255 characters
+autostring8 bingets16 (FILE *f);   void binputs16 (const char *s, FILE *f);   // 0..65535 characters
+autostring8 bingets32 (FILE *f);   void binputs32 (const char *s, FILE *f);   // 0..4294967295 characters
 /*
 	Read or write a string from or to `str32len(s)` UTF-16LE or ASCII characters plus 1, 2, or 4 bytes in the stream `f`,
 	in a Pascal-style format: first the length, then the characters, without a trailing null byte.
@@ -195,9 +195,9 @@ char * bingets32 (FILE *f);   void binputs32 (const char *s, FILE *f);   // 0..4
 	Fail if out of memory.
 	binputsxxx expects a null-terminated C string whose `str32len` fits in 1, 2, or 4 bytes.
 */
-char32 * bingetw8 (FILE *f);   void binputw8 (conststring32 s, FILE *f);
-char32 * bingetw16 (FILE *f);   void binputw16 (conststring32 s, FILE *f);
-char32 * bingetw32 (FILE *f);   void binputw32 (conststring32 s, FILE *f);
+autostring32 bingetw8 (FILE *f);   void binputw8 (conststring32 s, FILE *f);
+autostring32 bingetw16 (FILE *f);   void binputw16 (conststring32 s, FILE *f);
+autostring32 bingetw32 (FILE *f);   void binputw32 (conststring32 s, FILE *f);
 
 /* End of file abcio.h */
 #endif

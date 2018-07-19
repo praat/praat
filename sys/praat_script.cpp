@@ -130,7 +130,7 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 					// do nothing
 				} break;
 				case Stackel_STRING: {
-					Melder_free (args [narg].string);
+					args [narg]. string. reset();   // TODO: explain why we own this
 				} break;
 				case Stackel_NUMERIC_VECTOR: {
 					//if (args [narg]. owned) args [narg].numericVector.reset();   // we don't own this; the form's autonumvec does, after UiField_argToValue()
@@ -149,7 +149,8 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 				} break;
 				case kFormula_EXPRESSION_TYPE_STRING: {
 					args [narg]. which = Stackel_STRING;
-					args [narg]. string = result. stringResult;
+					//args [narg]. string = result. stringResult.move();   // TODO: explain why this is allowed
+					args [narg]. string = Melder_dup (result. stringResult.get());   // TODO: or why this is needed
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 					args [narg]. which = Stackel_NUMERIC_VECTOR;
@@ -171,12 +172,15 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			for (;;) {
 				p ++;
 				if (*p == U'\"') {
-					if (p [1] == U'\"') p ++;
-					else break;
+					if (p [1] == U'\"')
+						p ++;
+					else
+						break;
 				}
 			}
 		}
-		if (endOfArguments) break;
+		if (endOfArguments)
+			break;
 	}
 	return narg;
 }
@@ -188,8 +192,12 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		/* Skip empty lines and comments. */;
 	else if ((command [0] == U'.' || command [0] == U'+' || command [0] == U'-') && Melder_isAsciiUpperCaseLetter (command [1])) {   // selection?
 		int IOBJECT = praat_findObjectFromString (interpreter, command + 1);
-		if (command [0] == '.') praat_deselectAll ();
-		if (command [0] == '-') praat_deselect (IOBJECT); else praat_select (IOBJECT); 
+		if (command [0] == '.')
+			praat_deselectAll ();
+		if (command [0] == '-')
+			praat_deselect (IOBJECT);
+		else
+			praat_select (IOBJECT); 
 		praat_show ();
 	} else if (Melder_isAsciiLowerCaseLetter (command [0])) {   // all directives start with an ASCII lower-case letter
 		if (str32nequ (command, U"select ", 7)) {
@@ -322,7 +330,8 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			#endif
 			const char32 *p = command + 10;
 			while (*p == U' ' || *p == U'\t') p ++;
-			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < programName + 39) *q ++ = *p ++;
+			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < programName + 39)
+				*q ++ = *p ++;
 			*q = '\0';
 			if (q == programName)
 				Melder_throw (U"Missing program name after `sendpraat'.");
@@ -340,8 +349,10 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 				Melder_throw (U"The script command \"sendsocket\" is not available inside manuals.");
 			char32 hostName [61], *q = & hostName [0];
 			const char32 *p = command + 11;
-			while (*p == U' ' || *p == U'\t') p ++;
-			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < hostName + 59) *q ++ = *p ++;
+			while (*p == U' ' || *p == U'\t')
+				p ++;
+			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < hostName + 59)
+				*q ++ = *p ++;
 			*q = U'\0';
 			if (q == hostName)
 				Melder_throw (U"Missing host name after `sendsocket'.");

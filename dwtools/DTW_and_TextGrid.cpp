@@ -141,7 +141,7 @@ autoTable DTW_IntervalTier_to_Table (DTW me, IntervalTier thee, double precision
 				double xmax = DTW_getXTimeFromYTime (me, textinterval -> xmax);
 				integer ixmin, ixmax;
 				integer numberOfFrames = Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
-				double sumOfDistances = 0;
+				double sumOfDistances = 0.0;
 				while (pathIndex < my pathLength && my path [pathIndex].x < ixmax) {
 					sumOfDistances += my z [my path [pathIndex].y] [my path [pathIndex].x];
 					pathIndex ++;
@@ -201,7 +201,7 @@ autoTextTier DTW_TextTier_to_TextTier_old (DTW me, TextTier thee) {
 
 autoIntervalTier DTW_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee) {
 	try {
-		if ( (my xmin != thy xmin) || my xmax != thy xmax) Melder_throw
+		if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw
 			(U"The domain of the IntervalTier and the DTW should be equal.");
 
 		autoIntervalTier him = Data_copy (thee);
@@ -237,7 +237,6 @@ autoTextGrid DTW_TextGrid_to_TextGrid_old (DTW me, TextGrid thee) {
 			Daata anyTier = thy tiers->at [i];
 
 			if (anyTier -> classInfo == classIntervalTier) {
-
 				autoIntervalTier tier = DTW_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
 				TextGrid_addTier_copy (him.get(), tier.get());
 			} else if (anyTier -> classInfo == classTextTier) {

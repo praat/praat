@@ -91,7 +91,7 @@ void Melder_system (conststring32 command) {
 		MelderString_append (& buffer, U" /c ", command);
         memset (& siStartInfo, 0, sizeof (siStartInfo));
         siStartInfo. cb = sizeof (siStartInfo);
-		if (! CreateProcess (nullptr, Melder_peek32toW (buffer.string), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
+		if (! CreateProcess (nullptr, (WCHAR *) Melder_peek32toW (buffer.string), nullptr, nullptr, true, CREATE_NO_WINDOW, nullptr, nullptr, & siStartInfo, & piProcInfo))
 			Melder_throw (U"Cannot create subprocess.");
 		WaitForSingleObject (piProcInfo. hProcess, -1);
 		CloseHandle (piProcInfo. hProcess);
@@ -108,7 +108,7 @@ void Melder_execv (conststring32 executableFileName, integer narg, char32 ** arg
 			Melder_casual (U"Argument ", i, U": <<", args [i], U">>");
 			args8 [1 + i] = Melder_32to8 (args [i]);
 		}
-		args8 [narg + 2] = nullptr;
+		args8 [narg + 2] = autostring8();
 		pid_t processID = fork ();
 		if (processID == 0) {   // we are in the child process
 			execvp (Melder_peek32to8 (executableFileName), & args8.peek2() [1]);

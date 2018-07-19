@@ -274,8 +274,8 @@ DO
 			Melder_information (result. numericResult);
 		} break;
 		case kFormula_EXPRESSION_TYPE_STRING: {
-			Melder_information (result. stringResult);
-			Melder_free (result. stringResult);
+			Melder_information (result. stringResult.get());
+			result. stringResult. reset();   // TODO: this should be superfluous
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 			Melder_information (result. numericVectorResult);

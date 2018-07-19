@@ -1326,7 +1326,7 @@ autoSound Sound_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
 				if (ixmin == previous_ixmax) {
 					ixmin ++;
 				}
-				integer ipos = 0; // to prevent compiler warning -Wmaybe-uninitilized
+				integer ipos = 0; // to prevent compiler warning -Wmaybe-uninitialized
 				previous_ixmax = ixmax;
                 for (integer ichan = 1; ichan <= my ny; ichan ++) {
                     ipos = numberOfSamples + 1;
@@ -1392,10 +1392,12 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
 }
 
 autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double minPitch, double timeStep,
-	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2)
+{
 	try {
 		autoTextGrid tg;
-		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & tg, U"trimmed");
+		autoSound thee = Sound_trimSilences (me,
+			trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & tg, U"trimmed");
 		IntervalTier trim = (IntervalTier) tg -> tiers->at [2];
 		TextInterval ti1 = trim -> intervals.at [1];
 		if (t1) {

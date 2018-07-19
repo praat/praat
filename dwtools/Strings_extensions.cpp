@@ -178,24 +178,6 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	}
 }
 
-autoStrings strings_to_Strings_link (char32 **strings, integer n) {
-	try {
-		autoStrings me = Strings_createFixedLength (n);
-		for (integer i = 1; i <= n; i ++) {
-			my strings [i] = strings [i];
-		}
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Strings not linked.");
-	}
-}
-
-void Strings_unlink (Strings me) {
-	for (integer i = 1; i <= my numberOfStrings; i ++) {
-		my strings [i] = nullptr;
-	}
-}
-
 autoPermutation Strings_to_Permutation (Strings me, int sort) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfStrings);

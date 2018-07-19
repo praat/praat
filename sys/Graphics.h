@@ -178,20 +178,13 @@ void Graphics_setWindow (Graphics me, double x1, double x2, double y1, double y2
 
 void Graphics_polyline (Graphics me, integer numberOfPoints, double *x, double *y);
 void Graphics_polyline_closed (Graphics me, integer numberOfPoints, double *x, double *y);
-void Graphics_text (Graphics me, double x, double y, Melder_1_ARG);
-void Graphics_text (Graphics me, double x, double y, Melder_2_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_3_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_4_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_5_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_6_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_7_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_8_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_9_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_10_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_11_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_12_OR_13_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_14_OR_15_ARGS);
-void Graphics_text (Graphics me, double x, double y, Melder_16_TO_19_ARGS);
+
+void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt);
+template <typename... Args>
+void Graphics_text (Graphics me, double xWC, double yWC, const MelderArg& first, Args... rest) {
+	Graphics_text (me, xWC, yWC, Melder_cat (first, rest...));
+}
+
 void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2, conststring32 text /* cattable */);
 double Graphics_textWidth       (Graphics me, conststring32 text /* cattable */);
 double Graphics_textWidth_ps    (Graphics me, conststring32 text /* cattable */, bool useSilipaPS);

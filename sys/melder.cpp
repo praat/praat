@@ -50,19 +50,6 @@ static void defaultSearch () {
 	Melder_flushError (U"Do not know how to search.");
 }
 
-static void defaultProgress (double progress, conststring32 message) {
-}
-
-static void * defaultMonitor (double progress, conststring32 message) {
-	return NULL;
-}
-
-static void defaultWarning (conststring32 message) {
-	Melder_writeToConsole (U"Warning: ", true);
-	Melder_writeToConsole (message, true);
-	Melder_writeToConsole (U"\n", true);
-}
-
 static void defaultFatal (conststring32 message) {
 	Melder_writeToConsole (U"Fatal error: ", true);
 	Melder_writeToConsole (message, true);
@@ -92,9 +79,6 @@ static int defaultPublishPlayed () {
 static struct {
 	void (*help) (conststring32 query);
 	void (*search) ();
-	void (*progress) (double progress, conststring32 message);
-	void * (*monitor) (double progress, conststring32 message);
-	void (*warning) (conststring32 message);
 	void (*fatal) (conststring32 message);
 	int (*record) (double duration);
 	int (*recordFromFile) (MelderFile file);
@@ -102,153 +86,50 @@ static struct {
 	void (*playReverse) ();
 	int (*publishPlayed) ();
 }
-	theMelder = {
+	theMelderFunctions = {
 		defaultHelp, defaultSearch,
-		defaultProgress, defaultMonitor,
-		defaultWarning, defaultFatal,
+		defaultFatal,
 		defaultRecord, defaultRecordFromFile, defaultPlay, defaultPlayReverse, defaultPublishPlayed
 	};
 
 /********** PROGRESS **********/
 
-static int theProgressDepth = 0;
-void Melder_progressOff () { theProgressDepth --; }
-void Melder_progressOn () { theProgressDepth ++; }
-
-static void _Melder_progress (double progress, conststring32 message) {
-	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
-		theMelder. progress (progress, message);
-	}
+static void defaultProgress (double /*progress*/, conststring32 /*message*/) {
 }
 
-static MelderString theProgressBuffer { };
-
-void Melder_progress (double progress) {
-	_Melder_progress (progress, U"");
-}
-void Melder_progress (double progress, Melder_1_ARG) {
-	MelderString_copy (& theProgressBuffer, Melder_1_ARG_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_2_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_2_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_3_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_3_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_4_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_4_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_5_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_5_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_6_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_6_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_7_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_7_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_8_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_8_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_9_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_9_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_10_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_10_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_11_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_11_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_13_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_13_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_15_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_15_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
-}
-void Melder_progress (double progress, Melder_19_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_19_ARGS_CALL);
-	_Melder_progress (progress, theProgressBuffer.string);
+static void * defaultMonitor (double /*progress*/, conststring32 /*message*/) {
+	return NULL;
 }
 
-static void * _Melder_monitor (double progress, conststring32 message) {
-	if (! Melder_batch && theProgressDepth >= 0) {
-		void *result = theMelder. monitor (progress, message);
+int MelderProgress::_depth = 0;
+
+MelderProgress::ProgressProc MelderProgress::_p_progressProc = & defaultProgress;
+MelderProgress::MonitorProc MelderProgress::_p_monitorProc = & defaultMonitor;
+
+void Melder_progressOff () { MelderProgress::_depth --; }
+void Melder_progressOn () { MelderProgress::_depth ++; }
+
+void MelderProgress::_doProgress (double progress, conststring32 message) {
+	if (! Melder_batch && MelderProgress::_depth >= 0 && Melder_debug != 14)
+		MelderProgress::_p_progressProc (progress, message);
+}
+
+MelderString MelderProgress::_buffer = { 0, 0, nullptr };
+
+void * MelderProgress::_doMonitor (double progress, conststring32 message) {
+	if (! Melder_batch && MelderProgress::_depth >= 0) {
+		void *result = MelderProgress::_p_monitorProc (progress, message);
 		if (result) return result;
 	}
 	return progress <= 0.0 ? nullptr /* no Graphics */ : (void *) -1 /* any non-null pointer */;
 }
 
-void * Melder_monitor (double progress) {
-	return _Melder_monitor (progress, U"");
+void Melder_setProgressProc (MelderProgress::ProgressProc proc) {
+	MelderProgress::_p_progressProc = ( proc ? proc : & defaultProgress );
 }
-void * Melder_monitor (double progress, Melder_1_ARG) {
-	MelderString_copy (& theProgressBuffer, Melder_1_ARG_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_2_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_2_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_3_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_3_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_4_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_4_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_5_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_5_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_6_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_6_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_7_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_7_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_8_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_8_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_9_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_9_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_10_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_10_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_11_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_11_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_13_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_13_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_15_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_15_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
-}
-void * Melder_monitor (double progress, Melder_19_ARGS) {
-	MelderString_copy (& theProgressBuffer, Melder_19_ARGS_CALL);
-	return _Melder_monitor (progress, theProgressBuffer.string);
+
+void Melder_setMonitorProc (MelderProgress::MonitorProc proc) {
+	MelderProgress::_p_monitorProc = ( proc ? proc : & defaultMonitor );
 }
 
 /********** NUMBER AND STRING COMPARISONS **********/
@@ -383,90 +264,32 @@ bool Melder_stringMatchesCriterion (conststring32 value, kMelder_string which, c
 }
 
 void Melder_help (conststring32 query) {
-	theMelder. help (query);
+	theMelderFunctions. help (query);
 }
 
 void Melder_search () {
-	theMelder. search ();
+	theMelderFunctions. search ();
 }
 
 /********** WARNING **********/
 
-static int theWarningDepth = 0;
-void Melder_warningOff () { theWarningDepth --; }
-void Melder_warningOn () { theWarningDepth ++; }
+int MelderWarning::_depth = 0;
 
-static MelderString theWarningBuffer;
+void MelderWarning::_defaultProc (conststring32 message) {
+	Melder_writeToConsole (U"Warning: ", true);
+	Melder_writeToConsole (message, true);
+	Melder_writeToConsole (U"\n", true);
+}
 
-void Melder_warning (Melder_1_ARG) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_1_ARG_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_2_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_2_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_3_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_3_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_4_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_4_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_5_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_5_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_6_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_6_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_7_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_7_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_8_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_8_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_9_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_9_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_10_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_10_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_11_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_11_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_13_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_13_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_15_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_15_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning (Melder_19_ARGS) {
-	if (theWarningDepth < 0) return;
-	MelderString_copy (& theWarningBuffer, Melder_19_ARGS_CALL);
-	theMelder. warning (theWarningBuffer.string);
+MelderWarning::Proc MelderWarning::_p_currentProc = & MelderWarning::_defaultProc;
+
+MelderString MelderWarning::_buffer { 0, 0, nullptr };
+
+void Melder_warningOff () { MelderWarning::_depth --; }
+void Melder_warningOn () { MelderWarning::_depth ++; }
+
+void Melder_setWarningProc (MelderWarning::Proc proc) {
+	MelderWarning::_p_currentProc = ( proc ? proc : & MelderWarning::_defaultProc );
 }
 
 void Melder_beep () {
@@ -490,178 +313,11 @@ constexpr int Melder_FATAL_BUFFER_SIZE { 2000 };
 static char32 theFatalBuffer [Melder_FATAL_BUFFER_SIZE];
 static const conststring32 theCrashMessage { U"Praat will crash. Notify the author (paul.boersma@uva.nl) with the following information:\n" };
 
-int Melder_fatal (Melder_1_ARG) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_2_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2 = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_3_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1 = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2 = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3 = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_4_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg  ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg  ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg  ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg  ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_5_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_6_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	if (length + length6  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s6);  length += length6;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_7_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	if (length + length6  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s6);  length += length6;  }
-	if (length + length7  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s7);  length += length7;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_8_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	if (length + length6  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s6);  length += length6;  }
-	if (length + length7  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s7);  length += length7;  }
-	if (length + length8  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s8);  length += length8;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_9_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	if (length + length6  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s6);  length += length6;  }
-	if (length + length7  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s7);  length += length7;  }
-	if (length + length8  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s8);  length += length8;  }
-	if (length + length9  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s9);  length += length9;  }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_10_ARGS) {
+void Melder_fatal (const MelderArg& arg1,
+	const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7,
+	const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10)
+{
 	MelderThread_LOCK (theMelder_fatal_mutex);
 	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
 	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
@@ -686,161 +342,8 @@ int Melder_fatal (Melder_10_ARGS) {
 	if (length + length9  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s9);  length += length9;  }
 	if (length + length10 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s10); length += length10; }
 	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
+	theMelderFunctions. fatal (theFatalBuffer);
 	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_11_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
-	conststring32 s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	if (length + length6  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s6);  length += length6;  }
-	if (length + length7  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s7);  length += length7;  }
-	if (length + length8  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s8);  length += length8;  }
-	if (length + length9  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s9);  length += length9;  }
-	if (length + length10 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s10); length += length10; }
-	if (length + length11 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s11); length += length11; }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_13_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
-	conststring32 s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
-	conststring32 s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
-	conststring32 s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	if (length + length6  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s6);  length += length6;  }
-	if (length + length7  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s7);  length += length7;  }
-	if (length + length8  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s8);  length += length8;  }
-	if (length + length9  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s9);  length += length9;  }
-	if (length + length10 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s10); length += length10; }
-	if (length + length11 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s11); length += length11; }
-	if (length + length12 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s12); length += length12; }
-	if (length + length13 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s13); length += length13; }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_15_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
-	conststring32 s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
-	conststring32 s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
-	conststring32 s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
-	conststring32 s14 = arg14._arg ? arg14._arg : U"";   int64 length14 = str32len (s14);
-	conststring32 s15 = arg15._arg ? arg15._arg : U"";   int64 length15 = str32len (s15);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	if (length + length6  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s6);  length += length6;  }
-	if (length + length7  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s7);  length += length7;  }
-	if (length + length8  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s8);  length += length8;  }
-	if (length + length9  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s9);  length += length9;  }
-	if (length + length10 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s10); length += length10; }
-	if (length + length11 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s11); length += length11; }
-	if (length + length12 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s12); length += length12; }
-	if (length + length13 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s13); length += length13; }
-	if (length + length14 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s14); length += length14; }
-	if (length + length15 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s15); length += length15; }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
-}
-int Melder_fatal (Melder_19_ARGS) {
-	MelderThread_LOCK (theMelder_fatal_mutex);
-	conststring32 s1  = arg1. _arg ? arg1. _arg : U"";   int64 length1  = str32len (s1);
-	conststring32 s2  = arg2. _arg ? arg2. _arg : U"";   int64 length2  = str32len (s2);
-	conststring32 s3  = arg3. _arg ? arg3. _arg : U"";   int64 length3  = str32len (s3);
-	conststring32 s4  = arg4. _arg ? arg4. _arg : U"";   int64 length4  = str32len (s4);
-	conststring32 s5  = arg5. _arg ? arg5. _arg : U"";   int64 length5  = str32len (s5);
-	conststring32 s6  = arg6. _arg ? arg6. _arg : U"";   int64 length6  = str32len (s6);
-	conststring32 s7  = arg7. _arg ? arg7. _arg : U"";   int64 length7  = str32len (s7);
-	conststring32 s8  = arg8. _arg ? arg8. _arg : U"";   int64 length8  = str32len (s8);
-	conststring32 s9  = arg9. _arg ? arg9. _arg : U"";   int64 length9  = str32len (s9);
-	conststring32 s10 = arg10._arg ? arg10._arg : U"";   int64 length10 = str32len (s10);
-	conststring32 s11 = arg11._arg ? arg11._arg : U"";   int64 length11 = str32len (s11);
-	conststring32 s12 = arg12._arg ? arg12._arg : U"";   int64 length12 = str32len (s12);
-	conststring32 s13 = arg13._arg ? arg13._arg : U"";   int64 length13 = str32len (s13);
-	conststring32 s14 = arg14._arg ? arg14._arg : U"";   int64 length14 = str32len (s14);
-	conststring32 s15 = arg15._arg ? arg15._arg : U"";   int64 length15 = str32len (s15);
-	conststring32 s16 = arg16._arg ? arg16._arg : U"";   int64 length16 = str32len (s16);
-	conststring32 s17 = arg17._arg ? arg17._arg : U"";   int64 length17 = str32len (s17);
-	conststring32 s18 = arg18._arg ? arg18._arg : U"";   int64 length18 = str32len (s18);
-	conststring32 s19 = arg19._arg ? arg19._arg : U"";   int64 length19 = str32len (s19);
-	str32cpy (theFatalBuffer, theCrashMessage);
-	int64 length = str32len (theFatalBuffer);
-	if (length + length1  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s1);  length += length1;  }
-	if (length + length2  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s2);  length += length2;  }
-	if (length + length3  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s3);  length += length3;  }
-	if (length + length4  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s4);  length += length4;  }
-	if (length + length5  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s5);  length += length5;  }
-	if (length + length6  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s6);  length += length6;  }
-	if (length + length7  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s7);  length += length7;  }
-	if (length + length8  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s8);  length += length8;  }
-	if (length + length9  < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s9);  length += length9;  }
-	if (length + length10 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s10); length += length10; }
-	if (length + length11 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s11); length += length11; }
-	if (length + length12 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s12); length += length12; }
-	if (length + length13 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s13); length += length13; }
-	if (length + length14 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s14); length += length14; }
-	if (length + length15 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s15); length += length15; }
-	if (length + length16 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s16); length += length16; }
-	if (length + length17 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s17); length += length17; }
-	if (length + length18 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s18); length += length18; }
-	if (length + length19 < Melder_FATAL_BUFFER_SIZE) { str32cpy (theFatalBuffer + length, s19); length += length19; }
-	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);
-	abort ();
-	return 0;
 }
 
 void Melder_assert_ (const char *fileName, int lineNumber, const char *condition) {
@@ -865,63 +368,54 @@ void Melder_assert_ (const char *fileName, int lineNumber, const char *condition
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), conditionBuffer);
 	str32cpy (theFatalBuffer + str32len (theFatalBuffer), U"\n");
 	trace (U"FATAL: ", theFatalBuffer);
-	theMelder. fatal (theFatalBuffer);   // ...but this call will use heap memory...
+	theMelderFunctions. fatal (theFatalBuffer);   // ...but this call will use heap memory...
 	abort ();
 }
 
 int Melder_record (double duration) {
-	return theMelder. record (duration);
+	return theMelderFunctions. record (duration);
 }
 
 int Melder_recordFromFile (MelderFile file) {
-	return theMelder. recordFromFile (file);
+	return theMelderFunctions. recordFromFile (file);
 }
 
 void Melder_play () {
-	theMelder. play ();
+	theMelderFunctions. play ();
 }
 
 void Melder_playReverse () {
-	theMelder. playReverse ();
+	theMelderFunctions. playReverse ();
 }
 
 int Melder_publishPlayed () {
-	return theMelder. publishPlayed ();
+	return theMelderFunctions. publishPlayed ();
 }
 
 /********** Procedures to override message methods (e.g., to enforce interactive behaviour). **********/
 
 void Melder_setHelpProc (void (*help) (conststring32 query))
-	{ theMelder. help = help ? help : defaultHelp; }
+	{ theMelderFunctions. help = help ? help : defaultHelp; }
 
 void Melder_setSearchProc (void (*search) (void))
-	{ theMelder. search = search ? search : defaultSearch; }
-
-void Melder_setWarningProc (void (*warning) (conststring32))
-	{ theMelder. warning = warning ? warning : defaultWarning; }
-
-void Melder_setProgressProc (void (*progress) (double, conststring32))
-	{ theMelder. progress = progress ? progress : defaultProgress; }
-
-void Melder_setMonitorProc (void * (*monitor) (double, conststring32))
-	{ theMelder. monitor = monitor ? monitor : defaultMonitor; }
+	{ theMelderFunctions. search = search ? search : defaultSearch; }
 
 void Melder_setFatalProc (void (*fatal) (conststring32))
-	{ theMelder. fatal = fatal ? fatal : defaultFatal; }
+	{ theMelderFunctions. fatal = fatal ? fatal : defaultFatal; }
 
 void Melder_setRecordProc (int (*record) (double))
-	{ theMelder. record = record ? record : defaultRecord; }
+	{ theMelderFunctions. record = record ? record : defaultRecord; }
 
 void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile))
-	{ theMelder. recordFromFile = recordFromFile ? recordFromFile : defaultRecordFromFile; }
+	{ theMelderFunctions. recordFromFile = recordFromFile ? recordFromFile : defaultRecordFromFile; }
 
 void Melder_setPlayProc (void (*play) ())
-	{ theMelder. play = play ? play : defaultPlay; }
+	{ theMelderFunctions. play = play ? play : defaultPlay; }
 
 void Melder_setPlayReverseProc (void (*playReverse) ())
-	{ theMelder. playReverse = playReverse ? playReverse : defaultPlayReverse; }
+	{ theMelderFunctions. playReverse = playReverse ? playReverse : defaultPlayReverse; }
 
 void Melder_setPublishPlayedProc (int (*publishPlayed) ())
-	{ theMelder. publishPlayed = publishPlayed ? publishPlayed : defaultPublishPlayed; }
+	{ theMelderFunctions. publishPlayed = publishPlayed ? publishPlayed : defaultPublishPlayed; }
 
 /* End of file melder.cpp */

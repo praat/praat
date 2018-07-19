@@ -491,8 +491,7 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		 * For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives will not
 		 * be found as sounding! This is ok since silences are almost at zero amplitudes for synthesized sounds.
 		 * We also have to decrease the minimum silence and minimum sounding duration to catch, for example,
-		 * the final plosive "t" from the synthesized sound "text"
-		 *
+		 * the final plosive "t" from the synthesized sound "text".
 		 */
 		double synth_silenceThreshold = -40.0, synth_minSilenceDuration = 0.05, synth_minSoundingDuration = 0.05;
 		double t1_synth, t2_synth;

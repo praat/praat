@@ -60,7 +60,7 @@ void structWordList :: v_readBinary (FILE *f, int /*formatVersion*/) {
 	our length = bingeti32 (f);
 	if (our length < 0)
 		Melder_throw (U"Wrong length ", our length, U".");
-	our string = Melder_calloc (char32, our length + 1);
+	our string = autostring32 (our length);
 	p = current = & our string [0];
 	if (our length > 0) {
 		/*
@@ -151,7 +151,7 @@ autoWordList Strings_to_WordList (Strings me) {
 		}
 		autoWordList thee = Thing_new (WordList);
 		thy length = totalLength + my numberOfStrings;
-		thy string = Melder_calloc (char32, thy length + 1);
+		thy string = autostring32 (thy length);
 		/*
 		 * Concatenate the strings into the word list.
 		 */
@@ -182,7 +182,7 @@ autoStrings WordList_to_Strings (WordList me) {
 			unsigned char *kar = word;
 			for (; *kar != '\n'; kar ++) { }
 			integer length = kar - word;
-			thy strings [i] = Melder_calloc (char32, length + 1);
+			thy strings [i] = autostring32 (length);
 			str32ncpy (thy strings [i].get(), Melder_peek8to32 ((const char *) word), length);
 			thy strings [i] [length] = U'\0';
 			word += length + 1;

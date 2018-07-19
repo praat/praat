@@ -1190,11 +1190,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		{
 			if (arg -> which == Stackel_STRING) {
 				if (my type == _kUiField_type::CHANNEL_) {
-					if (str32equ (arg -> string, U"All") || str32equ (arg -> string, U"Average")) {
+					if (str32equ (arg -> string.get(), U"All") || str32equ (arg -> string.get(), U"Average")) {
 						my integerValue = 0;
-					} else if (str32equ (arg -> string, U"Left") || str32equ (arg -> string, U"Mono")) {
+					} else if (str32equ (arg -> string.get(), U"Left") || str32equ (arg -> string.get(), U"Mono")) {
 						my integerValue = 1;
-					} else if (str32equ (arg -> string, U"Right") || str32equ (arg -> string, U"Stereo")) {
+					} else if (str32equ (arg -> string.get(), U"Right") || str32equ (arg -> string.get(), U"Stereo")) {
 						my integerValue = 2;
 					} else {
 						Melder_throw (U"Channel argument \"", my name.get(),
@@ -1210,7 +1210,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			} else {
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", Stackel_whichText (arg), U".");
 			}
-			if (my integerVariable) *my integerVariable = my integerValue;
+			if (my integerVariable)
+				*my integerVariable = my integerValue;
 		}
 		break;
 		case _kUiField_type::WORD_:
@@ -1219,9 +1220,9 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		{
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string, not ", Stackel_whichText (arg), U".");
-			Melder_free (my stringValue);
-			my stringValue = Melder_dup (arg -> string);
-			if (my stringVariable) *my stringVariable = my stringValue.get();   // BUG dangle
+			my stringValue = Melder_dup (arg -> string.get());
+			if (my stringVariable)
+				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
 		case _kUiField_type::NUMVEC_:
@@ -1249,9 +1250,9 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::BOOLEAN_:
 		{
 			if (arg -> which == Stackel_STRING) {
-				if (str32equ (arg -> string, U"no") || str32equ (arg -> string, U"off")) {
+				if (str32equ (arg -> string.get(), U"no") || str32equ (arg -> string.get(), U"off")) {
 					my integerValue = 0;
-				} else if (str32equ (arg -> string, U"yes") || str32equ (arg -> string, U"on")) {
+				} else if (str32equ (arg -> string.get(), U"yes") || str32equ (arg -> string.get(), U"on")) {
 					my integerValue = 1;
 				} else {
 					Melder_throw (U"Boolean argument \"", my name.get(),
@@ -1262,7 +1263,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			} else {
 				Melder_throw (U"Boolean argument \"", my name.get(), U"\" should be a number (0 or 1), not ", Stackel_whichText (arg), U".");
 			}
-			if (my boolVariable) *my boolVariable = my integerValue;
+			if (my boolVariable)
+				*my boolVariable = my integerValue;
 		}
 		break;
 		case _kUiField_type::RADIO_:
@@ -1273,7 +1275,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
-				if (str32equ (arg -> string, b -> name.get()))
+				if (str32equ (arg -> string.get(), b -> name.get()))
 					my integerValue = i;
 			}
 			if (my integerValue == 0) {
@@ -1282,20 +1284,22 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				*/
 				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
-					if (Melder_equ_firstCharacterCaseInsensitive (arg -> string, b -> name.get()))
+					if (Melder_equ_firstCharacterCaseInsensitive (arg -> string.get(), b -> name.get()))
 						my integerValue = i;
 				}
 			}
 			if (my integerValue == 0) {
 				if (my intVariable)
-					Melder_throw (U"Option argument \"", my name.get(), U"\" cannot have the value \"", arg -> string, U"\".");
+					Melder_throw (U"Option argument \"", my name.get(), U"\" cannot have the value \"", arg -> string.get(), U"\".");
 				if (my stringVariable) {
-					*my stringVariable = arg -> string;
+					*my stringVariable = arg -> string.get();
 					return;
 				}
 			}
-			if (my intVariable) *my intVariable = my integerValue - my subtract;
-			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name.get();
+			if (my intVariable)
+				*my intVariable = my integerValue - my subtract;
+			if (my stringVariable)
+				*my stringVariable = my options.at [my integerValue] -> name.get();
 		}
 		break;
 		case _kUiField_type::LIST_:
@@ -1304,12 +1308,14 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"List argument \"", my name.get(), U"\" should be a string, not ", Stackel_whichText(arg), U".");
 			integer i = 1;
 			for (; i <= my numberOfStrings; i ++)
-				if (str32equ (arg -> string, my strings [i])) break;
+				if (str32equ (arg -> string.get(), my strings [i])) break;
 			if (i > my numberOfStrings)
-				Melder_throw (U"List argument \"", my name.get(), U"\" cannot have the value \"", arg -> string, U"\".");
+				Melder_throw (U"List argument \"", my name.get(), U"\" cannot have the value \"", arg -> string.get(), U"\".");
 			my integerValue = i;
-			if (my integerVariable) *my integerVariable = my integerValue;
-			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
+			if (my integerVariable)
+				*my integerVariable = my integerValue;
+			if (my stringVariable)
+				*my stringVariable = (char32 *) my strings [my integerValue];
 		}
 		break;
 		case _kUiField_type::COLOUR_:
@@ -1319,10 +1325,9 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 					Melder_throw (U"Grey colour argument \"", my name.get(), U"\" has to lie between 0.0 and 1.0.");
 				my colourValue. red = my colourValue. green = my colourValue. blue = arg -> number;
 			} else if (arg -> which == Stackel_STRING) {
-				autostring32 string2 = Melder_dup (arg -> string);
-				if (! colourToValue (me, string2.get())) {
+				autostring32 string2 = Melder_dup (arg -> string.get());
+				if (! colourToValue (me, string2.get()))
 					Melder_throw (U"Cannot compute a colour from \"", string2.get(), U"\".");
-				}
 			}
 			if (my colourVariable) *my colourVariable = my colourValue;
 		}
@@ -1373,7 +1378,8 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 				Melder_throw (U"\"", my name.get(), U"\" has the value \"undefined\".");
 			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
 				Melder_throw (U"\"", my name.get(), U"\" must be greater than 0.");
-			if (my realVariable) *my realVariable = my realValue;
+			if (my realVariable)
+				*my realVariable = my realValue;
 		}
 		break;
 		case _kUiField_type::INTEGER_:
@@ -1394,16 +1400,17 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 			}
 			if (my type == _kUiField_type::NATURAL_ && my integerValue < 1)
 				Melder_throw (U"\"", my name.get(), U"\" should be a positive whole number.");
-			if (my integerVariable) *my integerVariable = my integerValue;
+			if (my integerVariable)
+				*my integerVariable = my integerValue;
 		}
 		break;
 		case _kUiField_type::WORD_:
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
 		{
-			Melder_free (my stringValue);
 			my stringValue = Melder_dup_f (string);
-			if (my stringVariable) *my stringVariable = my stringValue.get();   // BUG dangle
+			if (my stringVariable)
+				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
 		case _kUiField_type::BOOLEAN_:
@@ -1412,7 +1419,8 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 				Melder_throw (U"Empty argument for toggle button.");
 			my integerValue = string [0] == U'1' || string [0] == U'y' || string [0] == U'Y' ||
 				string [0] == U't' || string [0] == U'T';
-			if (my boolVariable) *my boolVariable = my integerValue;
+			if (my boolVariable)
+				*my boolVariable = my integerValue;
 		}
 		break;
 		case _kUiField_type::RADIO_:
@@ -1437,8 +1445,10 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 			if (my integerValue == 0) {
 				Melder_throw (U"Field \"", my name.get(), U"\" must not have the value \"", string, U"\".");
 			}
-			if (my intVariable) *my intVariable = my integerValue - my subtract;
-			if (my stringVariable) *my stringVariable = my options.at [my integerValue] -> name.get();
+			if (my intVariable)
+				*my intVariable = my integerValue - my subtract;
+			if (my stringVariable)
+				*my stringVariable = my options.at [my integerValue] -> name.get();
 		}
 		break;
 		case _kUiField_type::LIST_:
@@ -1449,8 +1459,10 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 			if (i > my numberOfStrings)
 				Melder_throw (U"Field \"", my name.get(), U"\" must not have the value \"", string, U"\".");
 			my integerValue = i;
-			if (my integerVariable) *my integerVariable = my integerValue;
-			if (my stringVariable) *my stringVariable = (char32 *) my strings [my integerValue];
+			if (my integerVariable)
+				*my integerVariable = my integerValue;
+			if (my stringVariable)
+				*my stringVariable = (char32 *) my strings [my integerValue];
 		}
 		break;
 		case _kUiField_type::COLOUR_:
@@ -1639,7 +1651,8 @@ void UiForm_setInteger (UiForm me, integer *p_variable, integer value) {
 				break;
 				case _kUiField_type::LIST_:
 				{
-					if (value < 1 || value > field -> numberOfStrings) value = 1;   // guard against incorrect prefs file
+					if (value < 1 || value > field -> numberOfStrings)
+						value = 1;   // guard against incorrect prefs file
 					GuiList_selectItem (field -> list, value);
 				}
 				break;
@@ -1672,7 +1685,8 @@ void UiForm_setIntegerAsString (UiForm me, integer *p_variable, conststring32 st
 					integer i = 1;
 					for (; i <= field -> numberOfStrings; i ++)
 						if (str32equ (stringValue, field -> strings [i])) break;
-					if (i > field -> numberOfStrings) i = 1;   // guard against incorrect prefs file
+					if (i > field -> numberOfStrings)
+						i = 1;   // guard against incorrect prefs file
 					GuiList_selectItem (field -> list, i);
 				}
 				break;
@@ -1717,14 +1731,16 @@ void UiForm_setOption (UiForm me, int *p_variable, int value) {
 			{
 				case _kUiField_type::RADIO_:
 				{
-					if (value < 1 || value > field -> options.size) value = 1;   // guard against incorrect prefs file
+					if (value < 1 || value > field -> options.size)
+						value = 1;   // guard against incorrect prefs file
 					UiOption option = field -> options.at [value];
 					GuiRadioButton_set (option -> radioButton);
 				}
 				break;
 				case _kUiField_type::OPTIONMENU_:
 				{
-					if (value < 1 || value > field -> options.size) value = 1;   // guard against incorrect prefs file
+					if (value < 1 || value > field -> options.size)
+						value = 1;   // guard against incorrect prefs file
 					GuiOptionMenu_setValue (field -> optionMenu, value);
 				}
 				break;
@@ -2041,7 +2057,6 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				var -> numericValue = field -> integerValue;
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
-				Melder_free (var -> stringValue);
 				UiOption b = field -> options.at [field -> integerValue];
 				var -> stringValue = Melder_dup (b -> name.get());
 			}
@@ -2052,7 +2067,6 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 				var -> numericValue = field -> integerValue;
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
-				Melder_free (var -> stringValue);
 				var -> stringValue = Melder_dup (field -> strings [field -> integerValue]);
 			}
 			break;
@@ -2062,7 +2076,6 @@ void UiForm_Interpreter_addVariables (UiForm me, Interpreter interpreter) {
 			{
 				MelderString_appendCharacter (& lowerCaseFieldName, U'$');
 				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
-				Melder_free (var -> stringValue);
 				var -> stringValue = Melder_dup (field -> stringValue.get());
 			}
 			break;

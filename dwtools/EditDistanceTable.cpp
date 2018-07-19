@@ -252,10 +252,10 @@ void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCost, dou
 }
 
 double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
-	return costType == 1 ? my data [my numberOfRows - 1] [my numberOfColumns] : //insertion
-		costType == 2 ? my data [my numberOfRows] [my numberOfColumns - 1] : // deletion
-		costType == 3 ? my data [my numberOfRows] [my numberOfColumns] : // equality
-		 my data [my numberOfRows - 1] [my numberOfColumns -1]; // inequality
+	return costType == 1 ? my data [my numberOfRows - 1] [my numberOfColumns] :   //insertion
+		costType == 2 ? my data [my numberOfRows] [my numberOfColumns - 1] :   // deletion
+		costType == 3 ? my data [my numberOfRows] [my numberOfColumns] :   // equality
+		my data [my numberOfRows - 1] [my numberOfColumns -1];   // inequality
 }
 
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targets, conststring32 sources, double cost) {
@@ -295,13 +295,13 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targe
 
 double EditCostsTable_getInsertionCost (EditCostsTable me, conststring32 symbol) {
 	integer irow = EditCostsTable_getTargetIndex (me, symbol);
-	irow = irow == 0 ? my numberOfRows - 1 : irow; // others is penultimate row
+	irow = irow == 0 ? my numberOfRows - 1 : irow;   // others is penultimate row
 	return my data [irow] [my numberOfColumns];
 }
 
 double EditCostsTable_getDeletionCost (EditCostsTable me, conststring32 sourceSymbol) {
 	integer icol = EditCostsTable_getSourceIndex (me, sourceSymbol);
-	icol = icol == 0 ? my numberOfColumns - 1 : icol; // others is penultimate column
+	icol = icol == 0 ? my numberOfColumns - 1 : icol;   // others is penultimate column
 	return my data [my numberOfRows] [icol];
 }
 
@@ -312,8 +312,8 @@ double EditCostsTable_getSubstitutionCost (EditCostsTable me, conststring32 symb
 		irow = my numberOfRows;
 		icol = my numberOfColumns;
 		if (my v_matchTargetWithSourceSymbol (symbol, replacement)) {
-			 --irow;
-			 --icol;
+			 -- irow;
+			 -- icol;
 		}
 	} else {
 		irow = irow == 0 ? my numberOfRows - 1 : irow;
@@ -540,9 +540,9 @@ void EditDistanceTable_setDefaultCosts (EditDistanceTable me, double insertionCo
 }
 
 autoTableOfReal EditDistanceTable_to_TableOfReal_directions (EditDistanceTable me) {
-		autoTableOfReal tor;
-		EditDistanceTable_findPath (me, &tor);
-		return tor;
+	autoTableOfReal tor;
+	EditDistanceTable_findPath (me, & tor);
+	return tor;
 }
 
 void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *directions) {

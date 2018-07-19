@@ -43,26 +43,22 @@ typedef struct structStackel {
 	#define Stackel_VARIABLE  -1
 	#define Stackel_OBJECT  -2
 	int which;   // 0 or negative = no clean-up required, positive = requires clean-up
-	union {
-		double number;
-		char32 *string;
-		Daata object;
-		numvec numericVector;
-		nummat numericMatrix;
-		InterpreterVariable variable;
-	};
+	double number;
+	autostring32 string;
+	Daata object;
+	numvec numericVector;
+	nummat numericMatrix;
+	InterpreterVariable variable;
 	bool owned;
 } *Stackel;
 conststring32 Stackel_whichText (Stackel me);
 
 struct Formula_Result {
 	int expressionType;
-	union {
-		double numericResult;
-		char32 *stringResult;
-		numvec numericVectorResult;
-		nummat numericMatrixResult;
-	};
+	double numericResult;
+	autostring32 stringResult;
+	numvec numericVectorResult;
+	nummat numericMatrixResult;
 	bool owned;
 };
 

@@ -70,9 +70,8 @@ double structBandFilterSpectrogram :: v_getValueAtSample (integer iframe, intege
 		val = z [ifreq] [iframe];
 	} else {
 		val = -300.0; // minimum dB value
-		if (z [ifreq] [iframe] > 0.0) {
+		if (z [ifreq] [iframe] > 0.0)
 			val = 10.0 * log10 (z [ifreq] [iframe] / 4e-10); // power values
-		}
 	}
 	return val;
 }
@@ -87,11 +86,11 @@ autoMatrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double sc
 		for (integer i = 1; i <= my ny; i ++) {
 			for (integer j = 1; j <= my nx; j ++) {
 				double val = floor_dB;
-				Melder_require (my z [i] [j] >= 0, U"Power in Spectrogram should be positive.");
+				Melder_require (my z [i] [j] >= 0.0,
+					U"Power in Spectrogram should be positive.");
 				val = scaleFactor * log10 (my z [i] [j] / reference);
-				if (val < floor_dB) {
+				if (val < floor_dB)
 					val = floor_dB;
-				}
 				thy z [i] [j] = val;
 			}
 		}
@@ -104,9 +103,8 @@ autoMatrix Spectrogram_to_Matrix_dB (Spectrogram me, double reference, double sc
 static double **NUMcosinesTable (integer  n) {
 	autoNUMmatrix<double> costab (1, n, 1, n);
 	for (integer k = 1; k <= n; k ++) {
-		for (integer j = 1; j <= n; j ++) {
+		for (integer j = 1; j <= n; j ++)
 			costab [k] [j] = cos (NUMpi * (k - 1) * (j - 0.5) / n);
-		}
 	}
 	return costab.transfer();
 }
@@ -114,10 +112,9 @@ static double **NUMcosinesTable (integer  n) {
 // y [1..n] : output
 static void NUMcosineTransform (double *x, double *y, integer n, double **cosinesTable) {
 	for (integer k = 1; k <= n; k ++) {
-		y [k] = 0;
-		for (integer j = 1; j <= n; j ++) {
+		y [k] = 0.0;
+		for (integer j = 1; j <= n; j ++)
 			y [k] += x [j] * cosinesTable [k] [j];
-		}
 	}
 }
 
@@ -127,9 +124,8 @@ static void NUMcosineTransform (double *x, double *y, integer n, double **cosine
 static void NUMinverseCosineTransform (double *x, double *y, integer n, double **cosinesTable) {
 	for (integer j = 1; j <= n; j ++) {
 		y [j] = 0.5 * x [1] * cosinesTable [1] [j];
-		for (integer k = 2; k <= n; k ++) {
+		for (integer k = 2; k <= n; k ++)
 			y [j] += x [k] * cosinesTable [k] [j];
-		}
 		y [j] *= 2.0 / n;
 	}
 }
@@ -148,15 +144,13 @@ void BandFilterSpectrogram_into_CC (BandFilterSpectrogram me, CC thee, integer n
 	Melder_assert (numberOfCoefficients > 0);
 	// 20130220 new interpretation of maximumNumberOfCoefficients: necessary for the inverse transform 
 	for (integer frame = 1; frame <= my nx; frame ++) {
-		CC_Frame ccframe = (CC_Frame) & thy frame [frame];
-		for (integer i = 1; i <= my ny; i ++) {
-			x [i] = my v_getValueAtSample (frame, i, 1); // z [i] [frame];
-		}
+		CC_Frame ccframe = & thy frame [frame];
+		for (integer i = 1; i <= my ny; i ++)
+			x [i] = my v_getValueAtSample (frame, i, 1);   // z [i] [frame];
 		NUMcosineTransform (x.peek(), y.peek(), my ny, cosinesTable.peek());
 		CC_Frame_init (ccframe, numberOfCoefficients);
-		for (integer i = 1; i <= numberOfCoefficients; i ++) {
+		for (integer i = 1; i <= numberOfCoefficients; i ++)
 			ccframe -> c [i] = y [i + 1];
-		}
 		ccframe -> c0 = y [1];
 	}
 }
@@ -169,33 +163,27 @@ void CC_into_BandFilterSpectrogram (CC me, BandFilterSpectrogram thee, integer f
 	autoNUMvector<double> x (1, nf);
 	autoNUMvector<double> y (1, nf);
 	for (integer frame = 1; frame <= my nx; frame ++) {
-		CC_Frame ccframe = (CC_Frame) & my frame [frame];
+		CC_Frame ccframe = & my frame [frame];
 		integer iend = last < ccframe -> numberOfCoefficients ? last : ccframe -> numberOfCoefficients;
 		x [1] = use_c0 ? ccframe -> c0 : 0;
-		for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++) {
-			x [i + 1] = i < first || i > iend ? 0.0 : ccframe -> c [i];
-		}
+		for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
+			x [i + 1] = ( i < first || i > iend ? 0.0 : ccframe -> c [i] );
 		NUMinverseCosineTransform (x.peek(), y.peek(), nf, cosinesTable.peek());
-		for (integer i = 1; i <= nf; i ++) {
+		for (integer i = 1; i <= nf; i ++)
 			thy z [i] [frame] = BandFilterSpectrogram_DBREF * pow (10, y [i] / BandFilterSpectrogram_DBFAC);
-		}
 	}
 }
 
 autoMelSpectrogram MFCC_to_MelSpectrogram (MFCC me, integer first, integer last, bool c0) {
 	try {
-		if (first == 0 && last == 0) { // defaults
-			first = 1; last = my maximumNumberOfCoefficients;
-		}
-		if (first < 1) {
+		if (first == 0 && last == 0)   // defaults
+			first = 1, last = my maximumNumberOfCoefficients;
+		if (first < 1)
 			first = 1;
-		}
-		if (last > my maximumNumberOfCoefficients) {
+		if (last > my maximumNumberOfCoefficients)
 			last = my maximumNumberOfCoefficients;
-		}
-		if (first > last) {
-			first = 1; last = my maximumNumberOfCoefficients;
-		}
+		if (first > last)
+			first = 1, last = my maximumNumberOfCoefficients;
 		double df = (my fmax - my fmin) / (my maximumNumberOfCoefficients + 1 + 1);
 		autoMelSpectrogram thee = MelSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my fmin, my fmax, my maximumNumberOfCoefficients + 1, df, df);
 		CC_into_BandFilterSpectrogram (me, thee.get(), first, last, c0);
@@ -207,10 +195,10 @@ autoMelSpectrogram MFCC_to_MelSpectrogram (MFCC me, integer first, integer last,
 
 autoMFCC MelSpectrogram_to_MFCC (MelSpectrogram me, integer numberOfCoefficients) {
 	try {
-		if (numberOfCoefficients <= 0) {
+		if (numberOfCoefficients <= 0)
 			numberOfCoefficients = my ny - 1;
-		}
-		numberOfCoefficients = numberOfCoefficients > my ny - 1 ? my ny - 1 : numberOfCoefficients;
+		if (numberOfCoefficients > my ny - 1)
+			numberOfCoefficients = my ny - 1;
 		// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
 		BandFilterSpectrogram_into_CC (me, thee.get(), numberOfCoefficients);
@@ -242,12 +230,12 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 	}
 
 	// scale is in hertz
-	if (xmin >= xmax) { // autoscaling
+	if (xmin >= xmax) {   // autoscaling
 		xmin = 0;
 		xmax = my v_frequencyToHertz (my ymax);
 	}
 
-	if (ymin >= ymax) { // autoscaling
+	if (ymin >= ymax) {   // autoscaling
 		ymin = my ymin;
 		ymax = my ymax;
 	}
@@ -259,15 +247,15 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 
 	double dx = (xmax - xmin) / (n - 1);
 	double x1 = xmin, y1 = my v_hertzToFrequency (x1);
-	for (integer i = 2; i <= n;  i ++) {
+	for (integer i = 2; i <= n; i ++) {
 		double x2 = x1 + dx, y2 = my v_hertzToFrequency (x2);
 		if (isdefined (y1) && isdefined (y2)) {
 			double xo1, yo1, xo2, yo2;
-			if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, &xo1, &yo1, &xo2, &yo2)) {
+			if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2))
 				Graphics_line (g, xo1, yo1, xo2, yo2);
-			}
 		}
-		x1 = x2; y1 = y2;
+		x1 = x2;
+		y1 = y2;
 	}
 	Graphics_unsetInner (g);
 
@@ -283,31 +271,27 @@ void BandFilterSpectrogram_drawFrequencyScale (BandFilterSpectrogram me, Graphic
 void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, bool garnish)
 {
-	if (xmax <= xmin) {
-		xmin = my xmin; xmax = my xmax; 
-	}
-	if (ymax <= ymin) {
-		ymin = my ymin; ymax = my ymax;
-	}
+	if (xmax <= xmin)
+		xmin = my xmin, xmax = my xmax;
+	if (ymax <= ymin)
+		ymin = my ymin, ymax = my ymax;
 	integer ixmin, ixmax, iymin, iymax;
 	(void) Matrix_getWindowSamplesX (me, xmin - 0.49999 * my dx, xmax + 0.49999 * my dx, &ixmin, &ixmax);
 	(void) Matrix_getWindowSamplesY (me, ymin - 0.49999 * my dy, ymax + 0.49999 * my dy, &iymin, &iymax);
 	autoMatrix thee = Spectrogram_to_Matrix_dB ((Spectrogram) me, 4e-10, 10, -100);
-	if (maximum <= minimum) {
-		(void) Matrix_getWindowExtrema (thee.get(), ixmin, ixmax, iymin, iymax, &minimum, &maximum);
-	}
-	if (maximum <= minimum) { 
-		minimum -= 1.0; maximum += 1.0;
-	}
-	if (xmin >= xmax || ymin >= ymax) {
+	if (maximum <= minimum)
+		(void) Matrix_getWindowExtrema (thee.get(), ixmin, ixmax, iymin, iymax, & minimum, & maximum);
+	if (maximum <= minimum)
+		minimum -= 1.0, maximum += 1.0;
+	if (xmin >= xmax || ymin >= ymax)
 		return;
-	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_image (g, thy z,
-			ixmin, ixmax, Sampled_indexToX   (thee.get(), ixmin - 0.5), Sampled_indexToX   (thee.get(), ixmax + 0.5),
-			iymin, iymax, SampledXY_indexToY (thee.get(), iymin - 0.5), SampledXY_indexToY (thee.get(), iymax + 0.5),
-			minimum, maximum);
+		ixmin, ixmax, Sampled_indexToX   (thee.get(), ixmin - 0.5), Sampled_indexToX   (thee.get(), ixmax + 0.5),
+		iymin, iymax, SampledXY_indexToY (thee.get(), iymin - 0.5), SampledXY_indexToY (thee.get(), iymax + 0.5),
+		minimum, maximum
+	);
 
 	Graphics_unsetInner (g);
 	if (garnish) {
@@ -322,25 +306,23 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g,
 void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram me, Graphics g,
 	double time, double fmin, double fmax, double dBmin, double dBmax, bool garnish)
 {
-	if (time < my xmin || time > my xmax) {
+	if (time < my xmin || time > my xmax)
 		return;
-	}
-	if (fmin == 0 && fmax == 0) {   // autoscaling
-		fmin = my ymin; fmax = my ymax;
-	}
-	if (fmax <= fmin) {
-		fmin = my ymin; fmax = my ymax;
-	}
+	if (fmin == 0.0 && fmax == 0.0)   // autoscaling
+		fmin = my ymin, fmax = my ymax;
+	if (fmax <= fmin)
+		fmin = my ymin, fmax = my ymax;
 	integer icol = Matrix_xToNearestColumn (me, time);
-	icol = icol < 1 ? 1 : (icol > my nx ? my nx : icol);
+	if (icol < 1)
+		icol = 1;
+	if (icol > my nx)
+		icol = my nx;
 	autoNUMvector<double> spectrum (1, my ny);
-	for (integer i = 1; i <= my ny; i ++) {
+	for (integer i = 1; i <= my ny; i ++)
 		spectrum [i] = my v_getValueAtSample (icol, i, 1);   // dB's
-	}
 	integer iymin, iymax;
-	if (Matrix_getWindowSamplesY (me, fmin, fmax, & iymin, & iymax) < 2) {   // too few values
+	if (Matrix_getWindowSamplesY (me, fmin, fmax, & iymin, & iymax) < 2)   // too few values
 		return;
-	}
 	if (dBmin == dBmax) { // autoscaling
 		dBmin = spectrum [iymin];
 		dBmax = dBmin;
@@ -351,9 +333,8 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 				dBmax = spectrum [i];
 			}
 		}
-		if (dBmin == dBmax) { 
-			dBmin -= 1; dBmax += 1;
-		}
+		if (dBmin == dBmax)
+			dBmin -= 1.0, dBmax += 1.0;
 	}
 	Graphics_setWindow (g, fmin, fmax, dBmin, dBmax);
 	Graphics_setInner (g);
@@ -362,9 +343,8 @@ void BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (BandFilterSpectrogram
 	for (integer i = iymin + 1; i <= iymax - 1; i ++) {
 		double x2 = my y1 + (i -1) * my dy, y2 = spectrum [i];
 		double xo1, yo1, xo2, yo2;
-		if (NUMclipLineWithinRectangle (x1, y1, x2, y2, fmin, dBmin, fmax, dBmax, & xo1, & yo1, & xo2, & yo2)) {
+		if (NUMclipLineWithinRectangle (x1, y1, x2, y2, fmin, dBmin, fmax, dBmax, & xo1, & yo1, & xo2, & yo2))
 			Graphics_line (g, xo1, yo1, xo2, yo2);
-		}
 		x1 = x2;
 		y1 = y2;
 	}
@@ -398,7 +378,8 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 		ymax = ( yscale_dB ? 0.0 : 1.0 );
 	}
 	fromFilter = fromFilter <= 0 ? 1 : fromFilter;
-	toFilter = ( toFilter <= 0 || toFilter > my ny ? my ny : toFilter );
+	if (toFilter <= 0 || toFilter > my ny)
+		toFilter = my ny;
 	if (fromFilter > toFilter) {
 		fromFilter = 1;
 		toFilter = my ny;
@@ -428,9 +409,8 @@ void BarkSpectrogram_drawSekeyHansonFilterFunctions (BarkSpectrogram me, Graphic
 			double x2 = ( xIsHertz ? xhz [iz] : xz [iz] ), y2 = y [iz];
 			if (isdefined (x1) && isdefined (x2)) {
 				double xo1, yo1, xo2, yo2;
-				if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
+				if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2))
 					Graphics_line (g, xo1, yo1, xo2, yo2);
-				}
 			}
 			x1 = x2;
 			y1 = y2;
@@ -483,19 +463,19 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 		xmin = xIsHertz ? my v_frequencyToHertz (zmin) : zmin;
 		xmax = xIsHertz ? my v_frequencyToHertz (zmax) : zmax;
 	}
-	if (xIsHertz) {
+	if (xIsHertz)
 		zmin = my v_hertzToFrequency (xmin); zmax = my v_hertzToFrequency (xmax);
-	}
 
 	if (ymin >= ymax) {
 		ymin = yscale_dB ? -60.0 : 0.0;
 		ymax = yscale_dB ? 0.0 : 1.0;
 	}
-	fromFilter = fromFilter <= 0 ? 1 : fromFilter;
-	toFilter = toFilter <= 0 || toFilter > my ny ? my ny : toFilter;
-	if (fromFilter > toFilter) {
-		fromFilter = 1; toFilter = my ny;
-	}
+	if (fromFilter <= 0)
+		fromFilter = 1;
+	if (toFilter <= 0 || toFilter > my ny)
+		toFilter = my ny;
+	if (fromFilter > toFilter)
+		fromFilter = 1, toFilter = my ny;
 	
 	integer n = xIsHertz ? 1000 : 500;
 	autoNUMvector<double> xz (1, n), xhz (1,n), y (1, n);
@@ -519,31 +499,28 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 				double amp = NUMtriangularfilter_amplitude (zl, zc, zh, z);
 				y [iz] = yscale_dB ? (amp > 0.0 ? 20.0 * log10 (amp) : ymin - 10.0) : amp;
 			}
-			double x1 = xIsHertz ? xhz [1] : xz [1], y1 = y [1];
+			double x1 = ( xIsHertz ? xhz [1] : xz [1] ), y1 = y [1];
 			if (isdefined (y1)) {
 				for (integer iz = 1; iz <= n; iz ++) {
 					double x2 = xIsHertz ? xhz [iz] : xz [iz], y2 = y [iz];
 					if (isdefined (y2)) {
-						if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
+						if (NUMclipLineWithinRectangle (x1, y1, x2, y2, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2))
 							Graphics_line (g, xo1, yo1, xo2, yo2);
-						}
 					}
-					x1 = x2; y1 = y2;
+					x1 = x2;
+					y1 = y2;
 				}
 			}
 		} else {
 			double x1 = xIsHertz ? my v_frequencyToHertz (zl) : zl;
 			double x2 = xIsHertz ? my v_frequencyToHertz (zc) : zc;
-			if (NUMclipLineWithinRectangle (x1, 0, x2, 1, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
+			if (NUMclipLineWithinRectangle (x1, 0, x2, 1, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2))
 				Graphics_line (g, xo1, yo1, xo2, yo2);
-			}
 			double x3 = xIsHertz ? my v_frequencyToHertz (zh) : zh;
-			if (NUMclipLineWithinRectangle (x2, 1, x3, 0, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2)) {
+			if (NUMclipLineWithinRectangle (x2, 1, x3, 0, xmin, ymin, xmax, ymax, & xo1, & yo1, & xo2, & yo2))
 				Graphics_line (g, xo1, yo1, xo2, yo2);
-			}
 		}
 	}
-
 	Graphics_unsetInner (g);
 
 	if (garnish) {
@@ -560,9 +537,8 @@ autoMatrix BandFilterSpectrogram_to_Matrix (BandFilterSpectrogram me, int to_dB)
 		int units = to_dB ? 1 : 0;
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		for (integer i = 1; i <= my ny; i ++) {
-			for (integer j = 1; j <= my nx; j ++) {
+			for (integer j = 1; j <= my nx; j ++)
 				thy z [i] [j] = my v_getValueAtSample (j, i, units);
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -595,11 +571,10 @@ autoIntensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me) {
 	try {
 		autoIntensity thee = Intensity_create (my xmin, my xmax, my nx, my dx, my x1);
 		for (integer j = 1; j <= my nx; j ++) {
-			double p = 0.0;
-			for (integer i = 1; i <= my ny; i ++) {
-				p += my z [i] [j]; // we add power
-			}
-			thy z [1] [j] = BandFilterSpectrogram_DBFAC * log10 (p / BandFilterSpectrogram_DBREF);
+			longdouble p = 0.0;
+			for (integer i = 1; i <= my ny; i ++)
+				p += my z [i] [j];   // add power
+			thy z [1] [j] = BandFilterSpectrogram_DBFAC * log10 ((double) p / BandFilterSpectrogram_DBREF);
 		}
 		return thee;
 	} catch (MelderError) {
@@ -609,15 +584,13 @@ autoIntensity BandFilterSpectrogram_to_Intensity (BandFilterSpectrogram me) {
 
 void BandFilterSpectrogram_equalizeIntensities (BandFilterSpectrogram me, double intensity_db) {
 	for (integer j = 1; j <= my nx; j ++) {
-		double p = 0.0;
-		for (integer i = 1; i <= my ny; i ++) {
+		longdouble p = 0.0;
+		for (integer i = 1; i <= my ny; i ++)
 			p += my z [i] [j];
-		}
-		double delta_db = intensity_db - BandFilterSpectrogram_DBFAC * log10 (p / BandFilterSpectrogram_DBREF);
-		double factor = pow (10, delta_db / 10);
-		for (integer i = 1; i <= my ny; i ++) {
+		double delta_db = intensity_db - BandFilterSpectrogram_DBFAC * log10 ((double) p / BandFilterSpectrogram_DBREF);
+		double factor = pow (10.0, delta_db / 10.0);
+		for (integer i = 1; i <= my ny; i ++)
 			my z [i] [j] *= factor;
-		}
 	}
 }
 
@@ -630,9 +603,8 @@ void BandFilterSpectrogram_PCA_drawComponent (BandFilterSpectrogram me, PCA thee
 	BandFilterSpectrogram_equalizeIntensities (fcopy.get(), dblevel);
 	autoMatrix mdb = Spectrogram_to_Matrix_dB ((Spectrogram) fcopy.get(), BandFilterSpectrogram_DBREF, BandFilterSpectrogram_DBFAC, BandFilterSpectrogram_DBFLOOR);
 	autoMatrix him = Eigen_Matrix_to_Matrix_projectColumns (thee, mdb.get(), component);
-	for (integer j = 1; j <= my nx; j ++) {
+	for (integer j = 1; j <= my nx; j ++)
 		his z [component] [j] = frequencyOffset + scale * his z [component] [j];
-	}
 	Matrix_drawRows (him.get(), g, tmin, tmax, component - 0.5, component + 0.5, fmin, fmax);
 }
 
