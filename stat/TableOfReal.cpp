@@ -301,7 +301,8 @@ void TableOfReal_setRowLabel (TableOfReal me, integer rowNumber, conststring32 l
 
 void TableOfReal_setColumnLabel (TableOfReal me, integer columnNumber, conststring32 label) {
 	try {
-		if (columnNumber < 1 || columnNumber > my numberOfColumns) return;
+		if (columnNumber < 1 || columnNumber > my numberOfColumns)
+			return;
 		my columnLabels [columnNumber] = Melder_dup (label);
 	} catch (MelderError) {
 		Melder_throw (me, U": label of column ", columnNumber, U" not set.");
@@ -311,7 +312,8 @@ void TableOfReal_setColumnLabel (TableOfReal me, integer columnNumber, conststri
 void TableOfReal_formula (TableOfReal me, conststring32 expression, Interpreter interpreter, TableOfReal thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (! thee) thee = me;
+		if (! thee)
+			thee = me;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 				Formula_Result result;

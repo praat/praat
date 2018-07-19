@@ -478,7 +478,7 @@ void GuiList_insertItem (GuiList me, conststring32 itemText /* cattable */, inte
 		// it does know about nullptr, to append in another function
 	#elif motif
 		HWND nativeList = my d_widget -> window;
-		WCHAR *nativeItemText = Melder_peek32toW (itemText);
+		conststringW nativeItemText = Melder_peek32toW (itemText);
 		if (explicitlyInsertAtEnd) {
 			ListBox_AddString (nativeList, nativeItemText);
 		} else {

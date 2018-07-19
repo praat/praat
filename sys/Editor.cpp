@@ -272,7 +272,7 @@ static void menu_cb_undo (Editor me, EDITOR_ARGS_DIRECT) {
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
 	#elif motif
-		char *text_utf8 = Melder_peek32to8 (my undoText);
+		conststring8 text_utf8 = Melder_peek32to8 (my undoText);
 		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, nullptr);
 	#elif cocoa
 		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];
@@ -484,7 +484,7 @@ void Editor_save (Editor me, conststring32 text) {
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peek32to8 (my undoText));
 	#elif motif
-		char *text_utf8 = Melder_peek32to8 (my undoText);
+		conststring8 text_utf8 = Melder_peek32to8 (my undoText);
 		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, nullptr);
 	#elif cocoa
 		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peek32toCfstring (my undoText)];

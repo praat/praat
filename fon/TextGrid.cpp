@@ -1043,7 +1043,7 @@ static void genericize (autostring32& stringRef, mutablestring32 buffer) {
 
 void TextGrid_convertToBackslashTrigraphs (TextGrid me) {
 	try {
-		autostring32 buffer = Melder_calloc (char32, TextGrid_maximumLabelLength (me) * 3 + 1);
+		autostring32 buffer (TextGrid_maximumLabelLength (me) * 3);
 		for (integer itier = 1; itier <= my tiers->size; itier ++) {
 			Function anyTier = my tiers->at [itier];
 			if (anyTier -> classInfo == classIntervalTier) {
@@ -1067,7 +1067,7 @@ void TextGrid_convertToBackslashTrigraphs (TextGrid me) {
 
 void TextGrid_convertToUnicode (TextGrid me) {
 	try {
-		autostring32 buffer = Melder_calloc (char32, TextGrid_maximumLabelLength (me) + 1);
+		autostring32 buffer (TextGrid_maximumLabelLength (me));
 		for (integer itier = 1; itier <= my tiers->size; itier ++) {
 			Function anyTier = my tiers->at [itier];
 			if (anyTier -> classInfo == classIntervalTier) {

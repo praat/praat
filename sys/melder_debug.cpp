@@ -204,13 +204,13 @@ void Melder_writeToConsole (conststring32 message, bool useStderr) {
 				unsigned int kar = (unsigned short) message [i];
 				fputc (kar, stdout);
 			}
-			//CHAR* messageA = (CHAR*) peek32to8 (message);
+			//CHAR* messageA = (CHAR*) MelderTrace::_peek32to8 (message);
 			//WriteConsoleA (console, messageA, strlen (messageA), nullptr, nullptr);
 		//} else if (Melder_consoleIsUtf8) {
-			//char *messageA = Melder_peek32to8 (message);
+			//char *messageA = MelderTrace::_peek32to8 (message);
 			//fprintf (stdout, "%s", messageA);
 		} else {
-			WCHAR* messageW = (WCHAR*) peek32to16 (message);
+			WCHAR* messageW = (WCHAR*) MelderTrace::_peek32to16 (message);
 			WriteConsoleW (console, messageW, wcslen (messageW), nullptr, nullptr);
 		}
 	#else
@@ -249,7 +249,7 @@ void Melder_tracingToFile (MelderFile file) {
 FILE * MelderTrace::_open (conststring8 sourceCodeFileName, int lineNumber, conststring8 functionName) {
 	FILE *f;
 	#if defined (_WIN32) && ! defined (__CYGWIN__)
-		f = _wfopen ((const wchar_t *) peek32to16 (MelderTrace::_file. path), L"a");
+		f = _wfopen ((const wchar_t *) MelderTrace::_peek32to16 (MelderTrace::_file. path), L"a");
 	#else
 		char utf8path [kMelder_MAXPATH+1];
 		Melder_str32To8bitFileRepresentation_inplace (MelderTrace::_file. path, utf8path);   // this Melder_xxx() function is OK to call
@@ -274,19 +274,19 @@ void MelderTrace::_close (FILE *f) {
 
 #if defined (linux) && ! defined (NO_GUI)
 static void theGtkLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	FILE *f = Melder_trace_open (nullptr, 0, "GTK");
+	FILE *f = MelderTrace::_open (nullptr, 0, "GTK");
 	fprintf (f, "%s", message);
-	Melder_trace_close (f);
+	MelderTrace::_close (f);
 }
 static void theGlibLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	FILE *f = Melder_trace_open (nullptr, 0, "GLib");
+	FILE *f = MelderTrace::_open (nullptr, 0, "GLib");
 	fprintf (f, "%s", message);
-	Melder_trace_close (f);
+	MelderTrace::_close (f);
 }
 static void theGlibGobjectLogHandler (const gchar *log_domain, GLogLevelFlags log_level, const gchar *message, gpointer unused_data) {
-	FILE *f = Melder_trace_open (nullptr, 0, "GLib-GObject");
+	FILE *f = MelderTrace::_open (nullptr, 0, "GLib-GObject");
 	fprintf (f, "%s", message);
-	Melder_trace_close (f);
+	MelderTrace::_close (f);
 }
 #endif
 

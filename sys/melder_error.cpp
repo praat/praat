@@ -30,31 +30,33 @@ void Melder_setErrorProc (void (*error) (conststring32)) {
 	theError = error ? error : defaultError;
 }
 
-static char32 errors [2000+1];   // safe in low-memory situations
+constexpr integer BUFFER_LENGTH = 2000;
+
+static char32 buffer [BUFFER_LENGTH];   // safe in low-memory situations
 
 void MelderError::_append (conststring32 message) {
 	if (! message)
 		return;
-	integer length = str32len (errors), messageLength = str32len (message);
-	if (length + messageLength > 2000)
+	integer length = str32len (buffer), messageLength = str32len (message);
+	if (length + messageLength >= BUFFER_LENGTH)
 		return;
-	str32cpy (errors + length, message);
+	str32cpy (buffer + length, message);
 }
 
 bool Melder_hasError () {
-	return errors [0] != U'\0';
+	return buffer [0] != U'\0';
 }
 
 bool Melder_hasError (conststring32 partialError) {
-	return !! str32str (errors, partialError);
+	return !! str32str (buffer, partialError);
 }
 
 void Melder_clearError () {
-	errors [0] = U'\0';
+	buffer [0] = U'\0';
 }
 
-char32 * Melder_getError () {
-	return & errors [0];
+conststring32 Melder_getError () {
+	return & buffer [0];
 }
 
 void Melder_appendError_noLine (const MelderArg& arg) {
@@ -69,8 +71,8 @@ void Melder_flushError () {
 		and some operating systems may force an immediate redraw event as soon as
 		the message dialog is closed. We want "errors" to be empty when redrawing!
 	*/
-	static char32 temp [2000+1];
-	str32cpy (temp, errors);
+	static char32 temp [BUFFER_LENGTH];
+	str32cpy (temp, buffer);
 	Melder_clearError ();
 	theError (temp);
 }

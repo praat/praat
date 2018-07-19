@@ -1311,8 +1311,7 @@ void Table_formula_columnRange (Table me, integer fromColumn, integer toColumn, 
 				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING) {
-					Table_setStringValue (me, irow, icol, result. stringResult);
-					Melder_free (result. stringResult);
+					Table_setStringValue (me, irow, icol, result. stringResult.get());
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 					Table_setNumericValue (me, irow, icol, result. numericResult);
 				} else if (result. expressionType == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {

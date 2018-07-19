@@ -98,7 +98,7 @@ autoStringList OrderedOfString_joinItems (StringList me, StringList thee) {
 		for (integer i = 1; i <= my size; i ++) {
 			SimpleString hisCategory = his at [i], thyCategory = thy at [i];
 			integer hisLength = str32len (hisCategory -> string.get()), thyLength = str32len (thyCategory -> string.get());
-			hisCategory -> string = (char32 *) Melder_realloc (hisCategory -> string.get(), (hisLength + thyLength + 1) * (integer) sizeof (char32));
+			hisCategory -> string. resize (hisLength + thyLength);
 			str32cpy (& hisCategory -> string [hisLength], thyCategory -> string.get());
 		}
 		return him;
@@ -209,7 +209,7 @@ integer OrderedOfString_isSubsetOf (StringList me, StringList thee, integer *tra
 		for (integer j = 1; j <= thy size; j ++)
 			if (Data_equal (my at [i], thy at [j])) {
 				if (translation) {
-					translation[i] = j;
+					translation [i] = j;
 				}
 				nStrings++; break;
 			}

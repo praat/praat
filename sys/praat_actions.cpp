@@ -152,7 +152,7 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 		action -> callback = callback;   // null for a separator
 		action -> nameOfCallback = nameOfCallback;
 		action -> button = nullptr;
-		action -> script = nullptr;
+		action -> script = autostring32();
 		action -> hidden = hidden;
 		action -> unhidable = unhidable;
 		action -> attractive = attractive;
@@ -277,18 +277,18 @@ void praat_addActionScript (conststring32 className1, integer n1, conststring32 
 		action -> n2 = n2;
 		action -> class3 = class3;
 		action -> n3 = n3;
-		action -> title = str32len (title) ? Melder_dup_f (title) : nullptr;   // allow old-fashioned untitled separators
+		action -> title = str32len (title) ? Melder_dup_f (title) : autostring32();   // allow old-fashioned untitled separators
 		action -> depth = depth;
 		action -> callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator
 		action -> button = nullptr;
 		if (str32len (script) == 0) {
-			action -> script = nullptr;
+			action -> script = autostring32();
 		} else {
 			structMelderFile file { };
 			Melder_relativePathToFile (script, & file);
 			action -> script = Melder_dup_f (Melder_fileToPath (& file));
 		}
-		action -> after = str32len (after) ? Melder_dup_f (after) : nullptr;
+		action -> after = str32len (after) ? Melder_dup_f (after) : autostring32();
 		action -> phase = praatP.phase;
 		if (praatP.phase >= praat_READING_BUTTONS) {
 			static integer uniqueID = 0;

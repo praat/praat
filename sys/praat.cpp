@@ -1296,7 +1296,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			g_set_application_name (Melder_peek32to8 (title));
 			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		#elif motif
-			argv [0] = Melder_32to8 (praatP. title);   // argc == 4
+			argv [0] = Melder_32to8 (praatP. title.get()).transfer();   // argc == 4
 			Gui_setOpenDocumentCallback (cb_openDocument);
 			GuiAppInitialize ("Praatwulg", argc, argv);
 		#elif cocoa

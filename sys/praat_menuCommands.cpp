@@ -157,7 +157,7 @@ GuiMenuItem praat_addMenuCommand_ (conststring32 window, conststring32 menu, con
 	command -> callback = callback;   // null for a separator or cascade button
 	command -> nameOfCallback = nameOfCallback;
 	command -> executable = !! callback;
-	command -> script = nullptr;
+	command -> script = autostring32();
 	command -> hidden = hidden;
 	command -> unhidable = unhidable;
 	command -> deprecationYear = deprecationYear;
@@ -260,7 +260,7 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 		autoPraat_Command command = Thing_new (Praat_Command);
 		command -> window = Melder_dup_f (window);
 		command -> menu = Melder_dup_f (menu);
-		command -> title = str32len (title) ? Melder_dup_f (title) : nullptr;   // allow old-fashioned untitled separators
+		command -> title = str32len (title) ? Melder_dup_f (title) : autostring32();   // allow old-fashioned untitled separators
 		command -> depth = depth;
 		command -> callback = str32len (script) ? DO_RunTheScriptFromAnyAddedMenuCommand : nullptr;   // null for a separator or cascade button
 		command -> executable = str32len (script) != 0;
@@ -272,7 +272,7 @@ void praat_addMenuCommandScript (conststring32 window, conststring32 menu, const
 			Melder_relativePathToFile (script, & file);
 			command -> script = Melder_dup_f (Melder_fileToPath (& file));
 		}
-		command -> after = str32len (after) ? Melder_dup_f (after) : nullptr;
+		command -> after = str32len (after) ? Melder_dup_f (after) : autostring32();
 		if (praatP.phase >= praat_READING_BUTTONS) {
 			static integer uniqueID = 0;
 			command -> uniqueID = ++ uniqueID;

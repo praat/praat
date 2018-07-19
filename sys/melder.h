@@ -238,13 +238,14 @@ public:
 	_autostring () : ptr (nullptr) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
 	}
-	_autostring (integer length, bool f) {
+	_autostring (integer length, bool f = false) {
 		our ptr = ( f ? Melder_malloc_f (T, length + 1) : Melder_malloc (T, length + 1) );
-		our ptr [0] = 0;
+		our ptr [0] = '\0';
+		our ptr [length] = '\0';
 	}
-	_autostring (T *string) : ptr (string) {
+	//_autostring (T *string) : ptr (string) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: constructor from C-string ", Melder_pointer (ptr));
-	}
+	//}
 	~_autostring () {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: entering destructor ptr = ", Melder_pointer (ptr));
 		if (our ptr) Melder_free (our ptr);
@@ -269,13 +270,21 @@ public:
 		our ptr = nullptr;
 		return tmp;
 	}
-	void reset (T *string = nullptr) {
+	void reset () {
 		if (our ptr) Melder_free (our ptr);
-		our ptr = string;
 	}
-	void resize (int64 new_size) {
-		T *tmp = (T *) Melder_realloc (our ptr, new_size * (int64) sizeof (T));
+	#if 0
+	void reset (integer length, bool f = false) {
+		if (our ptr) Melder_free (our ptr);
+		our ptr = ( f ? Melder_malloc_f (T, length + 1) : Melder_malloc (T, length + 1) );
+		our ptr [0] = '\0';
+		our ptr [length] = '\0';
+	}
+	#endif
+	void resize (int64 newLength) {
+		T *tmp = (T *) Melder_realloc (our ptr, (newLength + 1) * (int64) sizeof (T));
 		our ptr = tmp;
+		our ptr [newLength] = '\0';
 	}
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
 	//_autostring (_autostring &) = delete;   // disable copy constructor (temporarily, until all new-string-returning functions return an autostring)
@@ -913,8 +922,8 @@ conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines);
 extern "C" conststring16 Melder_peek32to16 (conststring32 string);
 
 #ifdef _WIN32
-	inline static conststringW Melder_peek32toW (conststring32 string) { return (autostringW) Melder_peek32to16 (string); }
-	inline static autostringW Melder_32toW (conststring32 string) { return (autostringW) Melder_32to16 (string); }
+	inline static conststringW Melder_peek32toW (conststring32 string) { return (conststringW) Melder_peek32to16 (string); }
+	autostringW Melder_32toW (conststring32 string);
 	inline static conststring32 Melder_peekWto32 (conststringW string) { return Melder_peek16to32 ((conststring16) string); }
 	inline static autostring32 Melder_Wto32 (conststringW string) { return Melder_16to32 ((conststring16) string); }
 #endif
@@ -2271,7 +2280,7 @@ bool Melder_hasError (conststring32 partialError);
 void Melder_clearError ();
 	/* Cancel all stored error messages. */
 
-char32 * Melder_getError ();
+conststring32 Melder_getError ();
 	/* Returns the error string. Mainly used with str32str. */
 
 /********** WARNING: give warning to stderr (batch) or to a "Warning" dialog **********/

@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2012,2013,2015,2016,2017 Paul Boersma, 2007 Stefan de Konink
+ * Copyright (C) 1993-2008,2010-2018 Paul Boersma, 2007 Stefan de Konink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 	#elif motif
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
 		_GuiObject_setUserData (my d_widget, me.get());
-		my d_widget -> window = CreateWindow (L"static", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
+		my d_widget -> window = CreateWindow (L"static", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name.get())),
 			WS_CHILD
 			| ( flags & GuiLabel_RIGHT ? SS_RIGHT : flags & GuiLabel_CENTRE ? SS_CENTER : SS_LEFT )
 			| SS_CENTERIMAGE,
@@ -122,7 +122,6 @@ void GuiLabel_setText (GuiLabel me, conststring32 text /* cattable */) {
 	#if gtk
 		gtk_label_set_text (GTK_LABEL (my d_widget), Melder_peek32to8 (text));
 	#elif motif
-		Melder_free (my d_widget -> name);
 		my d_widget -> name = Melder_dup_f (text);
 		_GuiNativeControl_setTitle (my d_widget);
 	#elif cocoa

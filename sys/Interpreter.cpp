@@ -88,21 +88,23 @@ autoInterpreter Interpreter_createFromEnvironment (Editor editor) {
 	return Interpreter_create (editor -> name.get(), editor -> classInfo);
 }
 
-void Melder_includeIncludeFiles (autostring32 *text) {
+void Melder_includeIncludeFiles (autostring32 *inout_text) {
 	for (int depth = 0; ; depth ++) {
-		char32 *head = text->get();
+		char32 *head = inout_text->get();
 		integer numberOfIncludes = 0;
 		if (depth > 10)
 			Melder_throw (U"Include files nested too deep. Probably cyclic.");
 		for (;;) {
-			char32 *includeLocation, *includeFileName, *tail, *newText;
+			char32 *includeLocation, *includeFileName, *tail;
 			integer headLength, includeTextLength, newLength;
 			/*
 				Look for an include statement. If not found, we have finished.
 			 */
-			includeLocation = str32nequ (head, U"include ", 8) ? head : str32str (head, U"\ninclude ");
-			if (! includeLocation) break;
-			if (includeLocation != head) includeLocation += 1;
+			includeLocation = ( str32nequ (head, U"include ", 8) ? head : str32str (head, U"\ninclude ") );
+			if (! includeLocation)
+				break;
+			if (includeLocation != head)
+				includeLocation += 1;
 			numberOfIncludes += 1;
 			/*
 				Separate out the head.
@@ -133,22 +135,22 @@ void Melder_includeIncludeFiles (autostring32 *text) {
 			/*
 				Construct the new text.
 			 */
-			headLength = (head - text->get()) + str32len (head);
+			headLength = (head - inout_text->get()) + str32len (head);
 			includeTextLength = str32len (includeText.get());
 			newLength = headLength + includeTextLength + 1 + str32len (tail);
-			newText = Melder_malloc (char32, newLength + 1);
-			str32cpy (newText, text->get());
-			str32cpy (newText + headLength, includeText.get());
-			str32cpy (newText + headLength + includeTextLength, U"\n");
-			str32cpy (newText + headLength + includeTextLength + 1, tail);
+			autostring32 newText (newLength);
+			str32cpy (newText.get(), inout_text->get());
+			str32cpy (newText.get() + headLength, includeText.get());
+			str32cpy (newText.get() + headLength + includeTextLength, U"\n");
+			str32cpy (newText.get() + headLength + includeTextLength + 1, tail);
 			/*
 				Replace the old text with the new. This will work even within an autostring.
 			 */
-			text->reset (newText);
+			*inout_text = newText.move();
 			/*
 				Cycle.
 			 */
-			head = text->get() + headLength + includeTextLength + 1;
+			head = inout_text->get() + headLength + includeTextLength + 1;
 		}
 		if (numberOfIncludes == 0) break;
 	}
@@ -365,16 +367,16 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 			case Interpreter_REAL:
 			case Interpreter_POSITIVE: {
 				double value = UiForm_getReal_check (dialog, parameter);
-				my arguments [ipar] = Melder_calloc_f (char32, 40);
-				Melder_sprint (my arguments [ipar].get(),40, value);
+				my arguments [ipar] = autostring32 (40, true);
+				Melder_sprint (my arguments [ipar].get(),40+1, value);
 				break;
 			}
 			case Interpreter_INTEGER:
 			case Interpreter_NATURAL:
 			case Interpreter_BOOLEAN: {
 				integer value = UiForm_getInteger (dialog, parameter);
-				my arguments [ipar] = Melder_calloc_f (char32, 40);
-				Melder_sprint (my arguments [ipar].get(),40, value);
+				my arguments [ipar] = autostring32 (40, true);
+				Melder_sprint (my arguments [ipar].get(),40+1, value);
 				break;
 			}
 			case Interpreter_CHOICE:
@@ -382,8 +384,8 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, UiForm dialog) {
 				integer integerValue = 0;
 				integerValue = UiForm_getInteger (dialog, parameter);
 				conststring32 stringValue = UiForm_getString (dialog, parameter);
-				my arguments [ipar] = Melder_calloc_f (char32, 40);
-				Melder_sprint (my arguments [ipar].get(),40, integerValue);
+				my arguments [ipar] = autostring32 (40, true);
+				Melder_sprint (my arguments [ipar].get(),40+1, integerValue);
 				Melder_sprint (my choiceArguments [ipar],100, stringValue);
 				break;
 			}
@@ -431,7 +433,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 			Erase the current values, probably the default values,
 			and replace with the actual arguments.
 		*/
-		my arguments [ipar] = Melder_calloc_f (char32, length + 1);
+		my arguments [ipar] = autostring32 (length);
 		/*
 			Skip spaces until next argument.
 		 */
@@ -555,7 +557,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 		*/
 		my arguments [ipar] =
 			arg -> which == Stackel_NUMBER ? Melder_dup (Melder_double (arg -> number)) :
-			arg -> which == Stackel_STRING ? Melder_dup (arg -> string) : nullptr;
+			arg -> which == Stackel_STRING ? Melder_dup (arg -> string.get()) : autostring32();
 		Melder_assert (my arguments [ipar]);
 	}
 	if (iarg < narg)
@@ -1017,13 +1019,12 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 				if (q == parameterName) break;
 				if (*p) { *p = U'\0'; p ++; }
 				if (q [-1] == U'$') {
-					char32 *value;
 					my callDepth --;
-					Interpreter_stringExpression (me, argument.string, & value);
+					autostring32 value = Interpreter_stringExpression (me, argument.string);
 					my callDepth ++;
 					char32 save = *q; *q = U'\0';
 					InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
-					var -> stringValue = autostring32 (value);
+					var -> stringValue = value.move();
 				} else if (q [-1] == U'#') {
 					if (q [-2] == U'#') {
 						nummat value;
@@ -1915,11 +1916,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								while ((depth > 0 || (*p != U',' && *p != U']') || inString) && Melder_staysWithinLine (*p)) {
 									MelderString_appendCharacter (& index, *p);
 									if (*p == U'[') {
-										if (! inString) depth ++;
+										if (! inString)
+											depth ++;
 									} else if (*p == U']') {
-										if (! inString) depth --;
+										if (! inString)
+											depth --;
 									}
-									if (*p == U'"') inString = ! inString;
+									if (*p == U'"')
+										inString = ! inString;
 									p ++;
 								}
 								if (! Melder_staysWithinLine (*p))
@@ -1930,8 +1934,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									double numericIndexValue = result. numericResult;
 									MelderString_append (& indexedVariableName, numericIndexValue);
 								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
-									MelderString_append (& indexedVariableName, U"\"", result. stringResult, U"\"");
-									Melder_free (result. stringResult);
+									MelderString_append (& indexedVariableName, U"\"", result. stringResult.get(), U"\"");
+									result. stringResult. reset();
 								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == U']') {
@@ -2007,24 +2011,22 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									... then right$ (file$, length (file$) - rindex (file$, "."))
 									... else "" fi
 							*/
-							char32 *stringValue;
 							trace (U"evaluating string expression");
-							Interpreter_stringExpression (me, p, & stringValue);
+							autostring32 stringValue = Interpreter_stringExpression (me, p);
 							trace (U"assigning to string variable ", variableName);
 							if (typeOfAssignment == 1) {
 								InterpreterVariable var = Interpreter_hasVariable (me, variableName);
 								if (! var)
 									Melder_throw (U"The string ", variableName, U" does not exist.\n"
 									              U"You can increment (+=) only existing strings.");
-								integer oldLength = str32len (var -> stringValue.get()), extraLength = str32len (stringValue);
+								integer oldLength = str32len (var -> stringValue.get()), extraLength = str32len (stringValue.get());
 								autostring32 newString = autostring32 (oldLength + extraLength, false);
 								str32cpy (newString.get(), var -> stringValue.get());
-								str32cpy (newString.get() + oldLength, stringValue);
+								str32cpy (newString.get() + oldLength, stringValue.get());
 								var -> stringValue = newString.move();
-								Melder_free (stringValue);   // TODO: LEAK IF THROW
 							} else {
 								InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
-								var -> stringValue = autostring32 (stringValue);   // TODO: TEMPORARY
+								var -> stringValue = stringValue.move();
 							}
 						}
 					} else if (*p == U'#') {
@@ -2296,11 +2298,14 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								while ((depth > 0 || (*p != U',' && *p != U']') || inString) && Melder_staysWithinLine (*p)) {
 									MelderString_appendCharacter (& index, *p);
 									if (*p == U'[') {
-										if (! inString) depth ++;
+										if (! inString)
+											depth ++;
 									} else if (*p == U']') {
-										if (! inString) depth --;
+										if (! inString)
+											depth --;
 									}
-									if (*p == U'"') inString = ! inString;
+									if (*p == U'"')
+										inString = ! inString;
 									p ++;
 								}
 								if (! Melder_staysWithinLine (*p))
@@ -2311,13 +2316,12 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									double numericIndexValue = result. numericResult;
 									MelderString_append (& indexedVariableName, numericIndexValue);
 								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
-									MelderString_append (& indexedVariableName, U"\"", result. stringResult, U"\"");
+									MelderString_append (& indexedVariableName, U"\"", result. stringResult.get(), U"\"");
 									Melder_free (result. stringResult);
 								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
-								if (*p == U']') {
+								if (*p == U']')
 									break;
-								}
 							}
 							variableName = indexedVariableName.string;
 							p ++;   // skip closing bracket
@@ -2499,11 +2503,11 @@ void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expressi
 	*p_owned = result. owned;
 }
 
-void Interpreter_stringExpression (Interpreter me, conststring32 expression, char32 **p_value) {
+autostring32 Interpreter_stringExpression (Interpreter me, conststring32 expression) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_STRING, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
-	*p_value = result. stringResult;
+	return result. stringResult.move();
 }
 
 void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *p_result) {

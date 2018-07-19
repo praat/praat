@@ -715,7 +715,7 @@ autoSound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, conststring32 text, 
 		my d_events = Table_createWithColumnNames (0, U"time type type-t t-pos length a-pos sample id uniq");
 
 		#ifdef _WIN32
-                wchar_t *textW = Melder_peek32toW (text);
+                conststringW textW = Melder_peek32toW (text);
                 espeak_ng_Synthesize (textW, wcslen (textW) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);
 		#else
                 espeak_ng_Synthesize (text, str32len (text) + 1, 0, POS_CHARACTER, 0, synth_flags, nullptr, me);

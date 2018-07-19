@@ -581,7 +581,7 @@ static void print (void *void_me, Graphics graphics) {
 void structHyperPage :: v_destroy () noexcept {
 	if (our praatApplication) {
 		for (int iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
-			Melder_free (((PraatObjects) our praatObjects) -> list [iobject]. name);
+			((PraatObjects) our praatObjects) -> list [iobject]. name. reset();
 			forget (((PraatObjects) our praatObjects) -> list [iobject]. object);
 		}
 		Melder_free (our praatApplication);
@@ -937,7 +937,7 @@ void HyperPage_clear (HyperPage me) {
 }
 
 void structHyperPage :: v_dataChanged () {
-	int oldError = Melder_hasError ();   // this method can be called during error time
+	bool oldError = Melder_hasError ();   // this method can be called during error time
 	(void) our v_goToPage (our currentPageTitle.get());
 	if (Melder_hasError () && ! oldError) Melder_flushError ();
 	HyperPage_clear (this);

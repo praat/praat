@@ -209,7 +209,7 @@ static int getEnum (MelderReadText me, int (*getValue) (conststring32)) {
 	return value;
 }
 
-static char32 * getString (MelderReadText me) {
+static char32 * peekString (MelderReadText me) {
 	static MelderString buffer { };
 	MelderString_empty (& buffer);
 	for (char32 c = MelderReadText_getChar (me); c != U'\"'; c = MelderReadText_getChar (me)) {
@@ -349,10 +349,10 @@ int texgete16 (MelderReadText text, enum_generic_getValue getValue) { return get
 bool texgeteb (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kBoolean_getValue); }
 bool texgeteq (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kQuestion_getValue); }
 bool texgetex (MelderReadText text) { return getEnum (text, (enum_generic_getValue) kExistence_getValue); }
-autostring8 texgets16 (MelderReadText text) { return Melder_32to8 (getString (text)); }
-autostring8 texgets32 (MelderReadText text) { return Melder_32to8 (getString (text)); }
-autostring32 texgetw16 (MelderReadText text) { return Melder_dup (getString (text)); }
-autostring32 texgetw32 (MelderReadText text) { return Melder_dup (getString (text)); }
+autostring8 texgets16 (MelderReadText text) { return Melder_32to8 (peekString (text)); }
+autostring8 texgets32 (MelderReadText text) { return Melder_32to8 (peekString (text)); }
+autostring32 texgetw16 (MelderReadText text) { return Melder_dup (peekString (text)); }
+autostring32 texgetw32 (MelderReadText text) { return Melder_dup (peekString (text)); }
 
 void texindent (MelderFile file) { file -> indent += 4; }
 void texexdent (MelderFile file) { file -> indent -= 4; }
@@ -1542,55 +1542,55 @@ void binputc128 (dcomplex z, FILE *f) {
 	}
 }
 
-char * bingets8 (FILE *f) {
+autostring8 bingets8 (FILE *f) {
 	try {
 		unsigned int length = bingetu8 (f);
-		autostring8 result = Melder_malloc (char, length + 1);
+		autostring8 result (length);
 		if (fread (result.get(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
 		result [length] = 0;   // trailing null byte
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Text not read from a binary file.");
 	}
 }
 
-char * bingets16 (FILE *f) {
+autostring8 bingets16 (FILE *f) {
 	try {
 		uint16 length = bingetu16 (f);
-		autostring8 result = Melder_malloc (char, (int64) length + 1);
+		autostring8 result (length);
 		if (fread (result.get(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
 		result [length] = 0;   // trailing null byte
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Text not read from a binary file.");
 	}
 }
 
-char * bingets32 (FILE *f) {
+autostring8 bingets32 (FILE *f) {
 	try {
 		uint32 length = bingetu32 (f);
-		autostring8 result = Melder_malloc (char, (int64) length + 1);
+		autostring8 result (length);
 		if (fread (result.get(), sizeof (char), length, f) != length)
 			Melder_throw (feof (f) ? U"Reached end of file" : U"Error in file", U" while trying to read ", length, U" one-byte characters.");
 		result [length] = 0;   // trailing null byte
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Text not read from a binary file.");
 	}
 }
 
-char32 * bingetw8 (FILE *f) {
+autostring32 bingetw8 (FILE *f) {
 	try {
 		autostring32 result;
 		unsigned int length = bingetu8 (f);
 		if (length == 0xFF) {   // an escape for encoding
 			/*
-			 * UTF-16
-			 */
+				UTF-16
+			*/
 			length = bingetu8 (f);
-			result.reset (Melder_malloc (char32, (int64) length + 1));
+			result = autostring32 (length);
 			for (unsigned int i = 0; i < length; i ++) {
 				char32 kar = bingetu16 (f);
 				if ((kar & 0x00F800) == 0x00D800) {
@@ -1606,30 +1606,30 @@ char32 * bingetw8 (FILE *f) {
 			}
 		} else {
 			/*
-			 * ASCII
-			 */
-			result.reset (Melder_malloc (char32, (int64) length + 1));
+				ASCII
+			*/
+			result = autostring32 (length);
 			for (unsigned int i = 0; i < length; i ++) {
 				result [i] = bingetu8 (f);
 			}
 		}
 		result [length] = U'\0';
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Text not read from a binary file.");
 	}
 }
 
-char32 * bingetw16 (FILE *f) {
+autostring32 bingetw16 (FILE *f) {
 	try {
 		autostring32 result;
 		uint16 length = bingetu16 (f);
 		if (length == 0xFFFF) {   // an escape for encoding
 			/*
-			 * UTF-16
-			 */
+				UTF-16
+			*/
 			length = bingetu16 (f);
-			result.reset (Melder_malloc (char32, (int64) length + 1));
+			result = autostring32 (length);
 			for (uint16 i = 0; i < length; i ++) {
 				char32 kar = (char32) (char16) bingetu16 (f);
 				if ((kar & 0x00F800) == 0x00D800) {
@@ -1645,30 +1645,30 @@ char32 * bingetw16 (FILE *f) {
 			}
 		} else {
 			/*
-			 * ASCII
-			 */
-			result.reset (Melder_malloc (char32, length + 1));
+				ASCII
+			*/
+			result = autostring32 (length);
 			for (unsigned short i = 0; i < length; i ++) {
 				result [i] = (char32) (char8) bingetu8 (f);
 			}
 		}
 		result [length] = U'\0';
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Text not read from a binary file.");
 	}
 }
 
-char32 * bingetw32 (FILE *f) {
+autostring32 bingetw32 (FILE *f) {
 	try {
 		autostring32 result;
 		uint32 length = bingetu32 (f);
 		if (length == 0xFFFFFFFF) {   // an escape for encoding
 			/*
-			 * UTF-16
-			 */
+				UTF-16
+			*/
 			length = bingetu32 (f);
-			result.reset (Melder_malloc (char32, (int64) length + 1));
+			result = autostring32 (length);
 			for (uint32 i = 0; i < length; i ++) {
 				char32 kar = bingetu16 (f);
 				if ((kar & 0x00F800) == 0x00D800) {
@@ -1684,15 +1684,15 @@ char32 * bingetw32 (FILE *f) {
 			}
 		} else {
 			/*
-			 * ASCII
-			 */
-			result.reset (Melder_malloc (char32, (int64) length + 1));
+				ASCII
+			*/
+			result = autostring32 (length);
 			for (uint32 i = 0; i < length; i ++) {
 				result [i] = bingetu8 (f);
 			}
 		}
 		result [length] = U'\0';
-		return result.transfer();
+		return result;
 	} catch (MelderError) {
 		Melder_throw (U"Text not read from a binary file.");
 	}

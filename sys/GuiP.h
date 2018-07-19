@@ -59,7 +59,7 @@ class GuiControlBlockValueChangedCallbacks {
 		integer magicNumber;
 		uinteger widgetClass;
 		GuiObject parent, previousSibling, nextSibling, firstChild;
-		char32 *name;
+		autostring32 name;
 		bool inMenu, nativized, managed, insensitive;
 		GuiObject textFocus;   /* For shells. */
 		GuiObject shell;   /* My shell ancestor. */

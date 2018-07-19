@@ -599,7 +599,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			return;
 		#elif gdi
 			int font = lc -> font.integer_;
-			WCHAR *codesW = Melder_peek32toW (codes);
+			conststringW codesW = Melder_peek32toW (codes);
 			if (my duringXor) {
 				int descent = (1.0/216) * my fontSize * my resolution;
 				int ascent = (1.0/72) * my fontSize * my resolution;
@@ -622,7 +622,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				Rectangle (dc, 0, top, width, bottom);
 				SelectFont (dc, fonts [(int) my resolutionNumber] [font] [lc -> size] [lc -> style]);
 				SetTextColor (dc, my d_winForegroundColour);
-				TextOutW (dc, 0, baseline, codesW, str16len ((const char16 *) codesW));
+				TextOutW (dc, 0, baseline, codesW, str16len ((conststring16) codesW));
 				BitBlt (my d_gdiGraphicsContext, xDC, yDC - ascent, width, bottom - top, dc, 0, top, SRCINVERT);
 				return;
 			}
