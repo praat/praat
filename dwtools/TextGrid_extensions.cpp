@@ -68,7 +68,7 @@ struct TIMIT_key {
 	{"y", "j"},				/* yacht: Y aa tcl t */
 	{"hh", "h" },			/* hay: HH ey*/
 	/* voiced allophone of h */
-	{"hv", "\\hh"},			/* ahead: ax HV eh dcl d */
+	{"hv", "\\h^"},			/* ahead: ax HV eh dcl d */
 	{"el", "l\\|v"},		/* bottle: bcl b aa tcl t EL */
 	/* Nasals */
 	{"m", "m"},				/* mom:	M aa M */
@@ -99,12 +99,12 @@ struct TIMIT_key {
 	{"t", "t"},				/* tea: TCL T iy */
 	{"k", "k"},				/* key: KCL K iy */
 	/* 20140315: Added silences before the burst */
-	{"bcl", ""},
-	{"dcl", ""},
-	{"gcl", ""},
-	{"pcl", ""},
-	{"tcl", ""},
-	{"kcl", ""},
+	{"bcl", "b\\cn"},
+	{"dcl", "d\\cn"},
+	{"gcl", "g\\cn"},
+	{"pcl", "p\\cn"},
+	{"tcl", "t\\cn"},
+	{"kcl", "k\\cn"},
 	/* flap */
 	{"dx", "\\fh"},			/* muddy: m ah DX iy & dirty: dcl d er DX iy */
 	/* glottal stop */
