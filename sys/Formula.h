@@ -57,7 +57,7 @@ typedef struct structStackel {
 	#endif
 	{
 		double number;
-		autostring32 string;
+		autostring32 _string;
 		Daata object;
 		numvec numericVector;
 		nummat numericMatrix;
@@ -69,13 +69,21 @@ typedef struct structStackel {
 			memset (this, 0, sizeof (structStackel));   // union-safe zeroing of all members of structStackel
 			Melder_assert (our which == Stackel_NUMBER);   // check that on this computer, 0 is represented with zero bits only
 			Melder_assert (our number == 0.0);   // check that on this computer, 0.0 is represented with zero bits only
-			Melder_assert (! our string);   // check that on this computer, a plain-old-data null pointer is represented with zero bits only
+			Melder_assert (! our _string);   // check that on this computer, a plain-old-data null pointer is represented with zero bits only
 			Melder_assert (! our object);   // check that on this computer, a class null pointer is represented with zero bits only
 			Melder_assert (! our owned);   // check that on this computer, false is represented with zero bits only
 		}
 		~structStackel () {   // union-safe destruction: test which variant we have
+			if (our which <= Stackel_NUMBER)
+				return;
 			if (our which == Stackel_STRING) {
-				our string. ~ autostring32();
+				our _string. reset();
+			} else if (our which == Stackel_NUMERIC_VECTOR) {
+				if (our owned)
+					our numericVector. reset();   // ambiguous owner happens to own; this is the reason why a numvec has a reset() method
+			} else if (our which == Stackel_NUMERIC_MATRIX) {
+				if (our owned)
+					our numericMatrix. reset();   // ambiguous owner happens to own; this is the reason why a nummat has a reset() method
 			}
 		}
 		structStackel& operator= (structStackel&& other) noexcept {   // generalized move assignment
@@ -85,6 +93,19 @@ typedef struct structStackel {
 				memset (& other, 0, sizeof (structStackel));   // union-safe: even the biggest variant in `other` is erased
 			}
 			return *this;
+		}
+		conststring32 getString () {
+			return our _string.get();
+		}
+		autostring32 moveString () {
+			return our _string.move();
+		}
+		void setString (autostring32 newString) {
+			our ~ structStackel();
+			//our _string. _unsafeTransplant (nullptr);
+			memset (& our _string, 0, sizeof our _string);
+			our which = Stackel_STRING;
+			our _string = newString.move();
 		}
 	#endif
 } *Stackel;

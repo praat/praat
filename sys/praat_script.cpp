@@ -125,20 +125,7 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			/*
 				First remove the old contents.
 			*/
-			switch (args [narg]. which) {
-				case Stackel_NUMBER: {
-					// do nothing
-				} break;
-				case Stackel_STRING: {
-					args [narg]. string. reset();   // TODO: explain why we own this
-				} break;
-				case Stackel_NUMERIC_VECTOR: {
-					//if (args [narg]. owned) args [narg].numericVector.reset();   // we don't own this; the form's autonumvec does, after UiField_argToValue()
-				} break;
-				case Stackel_NUMERIC_MATRIX: {
-					//if (args [narg]. owned) args [narg].numericMatrix.reset();   // we don't own this; the form's autonummat does, after UiField_argToValue()
-				} break;
-			}
+			args [narg]. ~ structStackel();
 			#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
 				memset (& args [narg], 0, sizeof (structStackel));
 			#endif
@@ -151,9 +138,7 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 					args [narg]. number = result. numericResult;
 				} break;
 				case kFormula_EXPRESSION_TYPE_STRING: {
-					args [narg]. which = Stackel_STRING;
-					Melder_assert (! args [narg]. string);
-					args [narg]. string = result. stringResult.move();   // TODO: explain why we own this
+					args [narg]. setString (result. stringResult.move());
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 					args [narg]. which = Stackel_NUMERIC_VECTOR;

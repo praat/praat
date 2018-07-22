@@ -557,7 +557,7 @@ void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 		*/
 		my arguments [ipar] =
 			arg -> which == Stackel_NUMBER ? Melder_dup (Melder_double (arg -> number)) :
-			arg -> which == Stackel_STRING ? Melder_dup (arg -> string.get()) : autostring32();
+			arg -> which == Stackel_STRING ? Melder_dup (arg -> getString()) : autostring32();
 		Melder_assert (my arguments [ipar]);
 	}
 	if (iarg < narg)

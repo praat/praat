@@ -2,7 +2,7 @@
 #define _Praat_tests_h_
 /* Praat_tests.h
  *
- * Copyright (C) 2001,2016 Paul Boersma
+ * Copyright (C) 2001,2005,2007,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 #include "Praat_tests_enums.h"
 
-int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4);
+int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, conststring32 arg3, conststring32 arg4);
 
 #endif
 /* End of file Praat_tests.h */

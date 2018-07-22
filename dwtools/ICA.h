@@ -55,7 +55,7 @@ Collection_define (CrossCorrelationTableList, OrderedOf, CrossCorrelationTable) 
 
 autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension);
 
-autoCrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32 *centroid, integer numberOfSamples);
+autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 covars, conststring32 centroid, integer numberOfSamples);
 
 /* (sum(i,j=1..dimension, i!=j; C[i][j]^2))/(dimension*(dimension-1)) */
 double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me);

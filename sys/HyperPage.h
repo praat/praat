@@ -39,8 +39,8 @@ Thing_define (HyperPage, Editor) {
 	CollectionOf<structHyperLink> links;
 	bool printing, mirror;
 	int top;
-	char32 *insideHeader, *middleHeader, *outsideHeader;
-	char32 *insideFooter, *middleFooter, *outsideFooter;
+	conststring32 insideHeader, middleHeader, outsideHeader;
+	conststring32 insideFooter, middleFooter, outsideFooter;
 	autostring32 entryHint; double entryPosition;
 	struct { autostring32 page; int top; } history [20];
 	int historyPointer;

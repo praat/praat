@@ -2169,7 +2169,7 @@ static int programPointer;
 
 static void Stackel_cleanUp (Stackel me) {
 	if (my which == Stackel_STRING) {
-		my string. reset();
+		my _string. reset();
 	} else if (my which == Stackel_NUMERIC_VECTOR) {
 		if (my owned)
 			NUMvector_free (my numericVector.at, 1);
@@ -2234,14 +2234,8 @@ static void pushNumericMatrixReference (nummat x) {
 }
 static void pushString (autostring32 x) {
 	Stackel stackel = & theStack [++ w];
-	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
-	#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
-		memset (stackel, 0, sizeof (structStackel));
-	#endif
-	Melder_assert (! stackel -> string);
-	stackel -> which = Stackel_STRING;
-	stackel -> string = x.move();
+	stackel -> setString (x.move());
 	//stackel -> owned = true;
 }
 static void pushObject (Daata object) {
@@ -2303,7 +2297,7 @@ static void do_eq () {
 			}
 		}
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = str32equ (x->string.get(), y->string.get()) ? 1.0 : 0.0;
+		double result = str32equ (x->getString(), y->getString()) ? 1.0 : 0.0;
 		pushNumber (result);
 	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
 		pushNumber (equal_numvec (x->numericVector, y->numericVector));
@@ -2332,7 +2326,7 @@ static void do_ne () {
 			}
 		}
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = str32equ (x->string.get(), y->string.get()) ? 0.0 : 1.0;
+		double result = str32equ (x->getString(), y->getString()) ? 0.0 : 1.0;
 		pushNumber (result);
 	} else {
 		Melder_throw (U"Cannot compare (<>) ", Stackel_whichText (x), U" to ", Stackel_whichText (y), U".");
@@ -2356,7 +2350,7 @@ static void do_le () {
 			}
 		}
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = str32cmp (x->string.get(), y->string.get()) <= 0 ? 1.0 : 0.0;
+		double result = str32cmp (x->getString(), y->getString()) <= 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw (U"Cannot compare (<=) ", Stackel_whichText (x), U" to ", Stackel_whichText (y), U".");
@@ -2380,7 +2374,7 @@ static void do_lt () {
 			}
 		}
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = str32cmp (x->string.get(), y->string.get()) < 0 ? 1.0 : 0.0;
+		double result = str32cmp (x->getString(), y->getString()) < 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw (U"Cannot compare (<) ", Stackel_whichText (x), U" to ", Stackel_whichText (y), U".");
@@ -2404,7 +2398,7 @@ static void do_ge () {
 			}
 		}
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = str32cmp (x->string.get(), y->string.get()) >= 0 ? 1.0 : 0.0;
+		double result = str32cmp (x->getString(), y->getString()) >= 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw (U"Cannot compare (>=) ", Stackel_whichText (x), U" to ", Stackel_whichText (y), U".");
@@ -2428,7 +2422,7 @@ static void do_gt () {
 			}
 		}
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = str32cmp (x->string.get(), y->string.get()) > 0 ? 1.0 : 0.0;
+		double result = str32cmp (x->getString(), y->getString()) > 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw (U"Cannot compare (>) ", Stackel_whichText (x), U" to ", Stackel_whichText (y), U".");
@@ -2695,11 +2689,11 @@ static void do_add () {
 		/*
 			result$ = x$ + y$
 		*/
-		integer length1 = str32len (x->string.get()), length2 = str32len (y->string.get());
+		integer length1 = str32len (x->getString()), length2 = str32len (y->getString());
 		autostring32 result (length1 + length2);
-		str32cpy (result.get(), x->string.get());
-		str32cpy (result.get() + length1, y->string.get());
-		x->string = result.move();
+		str32cpy (result.get(), x->getString());
+		str32cpy (result.get() + length1, y->getString());
+		x->setString (result.move());
 		//x->which = Stackel_STRING;   // superfluous
 		return;
 	}
@@ -2900,15 +2894,15 @@ static void do_sub () {
 		}
 	}
 	if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		int64 length1 = str32len (x->string.get()), length2 = str32len (y->string.get()), newlength = length1 - length2;
+		int64 length1 = str32len (x->getString()), length2 = str32len (y->getString()), newlength = length1 - length2;
 		autostring32 result;
-		if (newlength >= 0 && str32nequ (x->string.get() + newlength, y->string.get(), length2)) {
+		if (newlength >= 0 && str32nequ (x->getString() + newlength, y->getString(), length2)) {
 			result = autostring32 (newlength);
-			str32ncpy (result.get(), x->string.get(), newlength);
+			str32ncpy (result.get(), x->getString(), newlength);
 		} else {
-			result = Melder_dup (x->string.get());
+			result = Melder_dup (x->getString());
 		}
-		x->string = result.move();
+		x->setString (result.move());
 		//x->which = Stackel_STRING;   // superfluous
 		return;
 	}
@@ -3529,7 +3523,7 @@ static void do_do () {
 	}
 	if (stack [0]. which != Stackel_STRING)
 		Melder_throw (U"The first argument of the function \"do\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), U".");
-	conststring32 command = stack [0]. string.get();
+	conststring32 command = stack [0]. getString();
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != nullptr) {
 		autoMelderString valueString;
 		MelderString_appendCharacter (& valueString, 1);   // TODO: check whether this is needed at all, or is just MelderString_empty enough?
@@ -3575,7 +3569,7 @@ static void do_evaluate () {
 	Stackel expression = pop;
 	if (expression->which == Stackel_STRING) {
 		double result;
-		Interpreter_numericExpression (theInterpreter, expression->string.get(), & result);
+		Interpreter_numericExpression (theInterpreter, expression->getString(), & result);
 		pushNumber (result);
 	} else Melder_throw (U"The argument of the function \"evaluate\" should be a string with a numeric expression, not ", Stackel_whichText (expression));
 }
@@ -3584,7 +3578,7 @@ static void do_evaluate_nocheck () {
 	if (expression->which == Stackel_STRING) {
 		try {
 			double result;
-			Interpreter_numericExpression (theInterpreter, expression->string.get(), & result);
+			Interpreter_numericExpression (theInterpreter, expression->getString(), & result);
 			pushNumber (result);
 		} catch (MelderError) {
 			Melder_clearError ();
@@ -3595,7 +3589,7 @@ static void do_evaluate_nocheck () {
 static void do_evaluateStr () {
 	Stackel expression = pop;
 	if (expression->which == Stackel_STRING) {
-		autostring32 result = Interpreter_stringExpression (theInterpreter, expression->string.get());
+		autostring32 result = Interpreter_stringExpression (theInterpreter, expression->getString());
 		pushString (result.move());
 	} else Melder_throw (U"The argument of the function \"evaluate$\" should be a string with a string expression, not ", Stackel_whichText (expression));
 }
@@ -3603,7 +3597,7 @@ static void do_evaluate_nocheckStr () {
 	Stackel expression = pop;
 	if (expression->which == Stackel_STRING) {
 		try {
-			autostring32 result = Interpreter_stringExpression (theInterpreter, expression->string.get());
+			autostring32 result = Interpreter_stringExpression (theInterpreter, expression->getString());
 			pushString (result.move());
 		} catch (MelderError) {
 			Melder_clearError ();
@@ -3625,7 +3619,7 @@ static void do_doStr () {
 	}
 	if (stack [0]. which != Stackel_STRING)
 		Melder_throw (U"The first argument of the function \"do$\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), U".");
-	conststring32 command = stack [0]. string.get();
+	conststring32 command = stack [0]. getString();
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != nullptr) {
 		static MelderString info;
 		MelderString_empty (& info);
@@ -3661,7 +3655,7 @@ static void shared_do_writeInfo (integer numberOfArguments) {
 		if (arg->which == Stackel_NUMBER) {
 			MelderInfo_write (arg->number);
 		} else if (arg->which == Stackel_STRING) {
-			MelderInfo_write (arg->string.get());
+			MelderInfo_write (arg->getString());
 		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
 			integer numberOfElements = arg->numericVector.size;
 			double *data = arg->numericVector.at;
@@ -3738,10 +3732,10 @@ static void do_writeFile () {
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
 		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->string.get());
+			MelderString_append (& text, arg->getString());
 	}
 	structMelderFile file { };
-	Melder_relativePathToFile (fileName -> string.get(), & file);
+	Melder_relativePathToFile (fileName -> getString(), & file);
 	MelderFile_writeText (& file, text.string, Melder_getOutputEncoding ());
 	pushNumber (1);
 }
@@ -3762,11 +3756,11 @@ static void do_writeFileLine () {
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
 		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->string.get());
+			MelderString_append (& text, arg->getString());
 	}
 	MelderString_appendCharacter (& text, U'\n');
 	structMelderFile file { };
-	Melder_relativePathToFile (fileName -> string.get(), & file);
+	Melder_relativePathToFile (fileName -> getString(), & file);
 	MelderFile_writeText (& file, text.string, Melder_getOutputEncoding ());
 	pushNumber (1);
 }
@@ -3787,10 +3781,10 @@ static void do_appendFile () {
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
 		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->string.get());
+			MelderString_append (& text, arg->getString());
 	}
 	structMelderFile file { };
-	Melder_relativePathToFile (fileName -> string.get(), & file);
+	Melder_relativePathToFile (fileName -> getString(), & file);
 	MelderFile_appendText (& file, text.string);
 	pushNumber (1);
 }
@@ -3811,11 +3805,11 @@ static void do_appendFileLine () {
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
 		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->string.get());
+			MelderString_append (& text, arg->getString());
 	}
 	MelderString_appendCharacter (& text, '\n');
 	structMelderFile file { };
-	Melder_relativePathToFile (fileName -> string.get(), & file);
+	Melder_relativePathToFile (fileName -> getString(), & file);
 	MelderFile_appendText (& file, text.string);
 	pushNumber (1);
 }
@@ -3833,7 +3827,7 @@ static void do_pauseScript () {
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& buffer, arg->number);
 		else if (arg->which == Stackel_STRING)
-			MelderString_append (& buffer, arg->string.get());
+			MelderString_append (& buffer, arg->getString());
 	}
 	UiPause_begin (theCurrentPraatApplication -> topShell, U"stop or continue", theInterpreter);
 	UiPause_comment (numberOfArguments == 0 ? U"..." : buffer.string);
@@ -3850,7 +3844,7 @@ static void do_exitScript () {
 		if (arg->which == Stackel_NUMBER)
 			Melder_appendError_noLine (arg->number);
 		else if (arg->which == Stackel_STRING)
-			Melder_appendError_noLine (arg->string.get());
+			Melder_appendError_noLine (arg->getString());
 	}
 	Melder_throw (U"\nScript exited.");
 	pushNumber (1);
@@ -3867,7 +3861,7 @@ static void do_runScript () {
 		Melder_throw (U"The first argument to \"runScript\" has to be a string (the file name), not ", Stackel_whichText (fileName));
 	theLevel += 1;
 	try {
-		praat_executeScriptFromFileName (fileName->string.get(), numberOfArguments - 1, & theStack [w + 1]);
+		praat_executeScriptFromFileName (fileName->getString(), numberOfArguments - 1, & theStack [w + 1]);
 		theLevel -= 1;
 	} catch (MelderError) {
 		theLevel -= 1;
@@ -3888,7 +3882,7 @@ static void do_runSystem () {
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
 		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->string.get());
+			MelderString_append (& text, arg->getString());
 	}
 	try {
 		Melder_system (text.string);
@@ -3911,7 +3905,7 @@ static void do_runSystem_nocheck () {
 		if (arg->which == Stackel_NUMBER)
 			MelderString_append (& text, arg->number);
 		else if (arg->which == Stackel_STRING)
-			MelderString_append (& text, arg->string.get());
+			MelderString_append (& text, arg->getString());
 	}
 	try {
 		Melder_system (text.string);
@@ -3936,12 +3930,12 @@ static void do_runSubprocess () {
 		if (arg->which == Stackel_NUMBER)
 			arguments [iarg] = Melder_dup (Melder_double (arg->number));
 		else if (arg->which == Stackel_STRING)
-			arguments [iarg] = Melder_dup (arg->string.get());
+			arguments [iarg] = Melder_dup (arg->getString());
 	}
 	try {
-		Melder_execv (commandFile->string.get(), numberOfArguments - 1, arguments.peek2());
+		Melder_execv (commandFile->getString(), numberOfArguments - 1, arguments.peek2());
 	} catch (MelderError) {
-		Melder_throw (U"Command \"", commandFile->string.get(), U"\" returned error status.");
+		Melder_throw (U"Command \"", commandFile->getString(), U"\" returned error status.");
 	}
 	pushNumber (1);
 }
@@ -4242,7 +4236,7 @@ static void do_editor () {
 	} else if (n->number == 1) {
 		Stackel editor = pop;
 		if (editor->which == Stackel_STRING) {
-			praatP. editor = praat_findEditorFromString (editor->string.get());
+			praatP. editor = praat_findEditorFromString (editor->getString());
 		} else if (editor->which == Stackel_NUMBER) {
 			praatP. editor = praat_findEditorById (Melder_iround (editor->number));
 		} else {
@@ -4260,7 +4254,7 @@ static void do_hash () {
 	if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			double result = NUMhashString (s->string.get());
+			double result = NUMhashString (s->getString());
 			pushNumber (result);
 		} else {
 			Melder_throw (U"The function \"hash\" requires a string, not ", Stackel_whichText (s), U".");
@@ -4325,7 +4319,7 @@ static void do_indexedNumericVariable () {
 		if (index -> which == Stackel_NUMBER) {
 			MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
 		} else if (index -> which == Stackel_STRING) {
-			MelderString_append (& totalVariableName, U"\"", index -> string.get(), U"\"", iindex == nindex ? U"]" : U",");
+			MelderString_append (& totalVariableName, U"\"", index -> getString(), U"\"", iindex == nindex ? U"]" : U",");
 		} else {
 			Melder_throw (U"In indexed variables, the index has to be a number or a string, not ", Stackel_whichText (index), U".");
 		}
@@ -4350,7 +4344,7 @@ static void do_indexedStringVariable () {
 		if (index -> which == Stackel_NUMBER) {
 			MelderString_append (& totalVariableName, index -> number, iindex == nindex ? U"]" : U",");
 		} else if (index -> which == Stackel_STRING) {
-			MelderString_append (& totalVariableName, U"\"", index -> string.get(), U"\"", iindex == nindex ? U"]" : U",");
+			MelderString_append (& totalVariableName, U"\"", index -> getString(), U"\"", iindex == nindex ? U"]" : U",");
 		} else {
 			Melder_throw (U"In indexed variables, the index has to be a number or a string, not ", Stackel_whichText (index), U".");
 		}
@@ -4364,7 +4358,7 @@ static void do_indexedStringVariable () {
 static void do_length () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		double result = str32len (s->string.get());
+		double result = str32len (s->getString());
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"length\" requires a string, not ", Stackel_whichText (s), U".");
@@ -4373,7 +4367,7 @@ static void do_length () {
 static void do_number () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		double result = Melder_atof (s->string.get());
+		double result = Melder_atof (s->getString());
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"number\" requires a string, not ", Stackel_whichText (s), U".");
@@ -4383,7 +4377,7 @@ static void do_fileReadable () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file { };
-		Melder_relativePathToFile (s->string.get(), & file);
+		Melder_relativePathToFile (s->getString(), & file);
 		pushNumber (MelderFile_readable (& file));
 	} else {
 		Melder_throw (U"The function \"fileReadable\" requires a string, not ", Stackel_whichText (s), U".");
@@ -4408,13 +4402,13 @@ static void do_leftStr () {
 		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
 		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
 			integer newlength = x ? Melder_iround (x->number) : 1;
-			integer length = str32len (s->string.get());
+			integer length = str32len (s->getString());
 			if (newlength < 0)
 				newlength = 0;
 			if (newlength > length)
 				newlength = length;
 			autostring32 result (newlength);
-			str32ncpy (result.get(), s->string.get(), newlength);
+			str32ncpy (result.get(), s->getString(), newlength);
 			pushString (result.move());
 		} else {
 			Melder_throw (U"The function \"left$\" requires a string, or a string and a number.");
@@ -4430,12 +4424,12 @@ static void do_rightStr () {
 		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
 		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
 			integer newlength = x ? Melder_iround (x->number) : 1;
-			integer length = str32len (s->string.get());
+			integer length = str32len (s->getString());
 			if (newlength < 0)
 				newlength = 0;
 			if (newlength > length)
 				newlength = length;
-			pushString (Melder_dup (s->string.get() + length - newlength));
+			pushString (Melder_dup (s->getString() + length - newlength));
 		} else {
 			Melder_throw (U"The function \"right$\" requires a string, or a string and a number.");
 		}
@@ -4450,14 +4444,14 @@ static void do_midStr () {
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == nullptr || y->which == Stackel_NUMBER)) {
 			integer newlength = y ? Melder_iround (y->number) : 1;
 			integer start = Melder_iround (x->number);
-			integer length = str32len (s->string.get()), finish = start + newlength - 1;
+			integer length = str32len (s->getString()), finish = start + newlength - 1;
 			autostring32 result;
 			if (start < 1) start = 1;
 			if (finish > length) finish = length;
 			newlength = finish - start + 1;
 			if (newlength > 0) {
 				result = autostring32 (newlength);
-				str32ncpy (result.get(), s->string.get() + start - 1, newlength);
+				str32ncpy (result.get(), s->getString() + start - 1, newlength);
 			} else {
 				result = Melder_dup (U"");
 			}
@@ -4472,9 +4466,9 @@ static void do_midStr () {
 static void do_unicodeToBackslashTrigraphsStr () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		integer length = str32len (s->string.get());
+		integer length = str32len (s->getString());
 		autostring32 trigraphs (3 * length);
-		Longchar_genericize32 (s->string.get(), trigraphs.get());
+		Longchar_genericize32 (s->getString(), trigraphs.get());
 		pushString (trigraphs.move());
 	} else {
 		Melder_throw (U"The function \"unicodeToBackslashTrigraphs$\" requires a string, not ", Stackel_whichText (s), U".");
@@ -4483,9 +4477,9 @@ static void do_unicodeToBackslashTrigraphsStr () {
 static void do_backslashTrigraphsToUnicodeStr () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		integer length = str32len (s->string.get());
+		integer length = str32len (s->getString());
 		autostring32 unicode (length);
-		Longchar_nativize32 (s->string.get(), unicode.get(), false);   // noexcept
+		Longchar_nativize32 (s->getString(), unicode.get(), false);   // noexcept
 		pushString (unicode.move());
 	} else {
 		Melder_throw (U"The function \"unicodeToBackslashTrigraphs$\" requires a string, not ", Stackel_whichText (s), U".");
@@ -4494,7 +4488,7 @@ static void do_backslashTrigraphsToUnicodeStr () {
 static void do_environmentStr () {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		conststring32 value = Melder_getenv (s->string.get());
+		conststring32 value = Melder_getenv (s->getString());
 		autostring32 result = Melder_dup (value ? value : U"");
 		pushString (result.move());
 	} else {
@@ -4504,8 +4498,8 @@ static void do_environmentStr () {
 static void do_index () {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char32 *substring = str32str (s->string.get(), t->string.get());
-		integer result = substring ? substring - s->string.get() + 1 : 0;
+		char32 *substring = str32str (s->getString(), t->getString());
+		integer result = substring ? substring - s->getString() + 1 : 0;
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"index\" requires two strings, not ",
@@ -4515,17 +4509,17 @@ static void do_index () {
 static void do_rindex () {
 	Stackel part = pop, whole = pop;
 	if (whole->which == Stackel_STRING && part->which == Stackel_STRING) {
-		char32 *lastSubstring = str32str (whole->string.get(), part->string.get());
-		if (part->string [0] == U'\0') {
-			integer result = str32len (whole->string.get());
+		char32 *lastSubstring = str32str (whole->getString(), part->getString());
+		if (part->getString() [0] == U'\0') {
+			integer result = str32len (whole->getString());
 			pushNumber (result);
 		} else if (lastSubstring) {
 			for (;;) {
-				char32 *substring = str32str (lastSubstring + 1, part->string.get());
+				char32 *substring = str32str (lastSubstring + 1, part->getString());
 				if (! substring) break;
 				lastSubstring = substring;
 			}
-			pushNumber (lastSubstring - whole->string.get() + 1);
+			pushNumber (lastSubstring - whole->getString() + 1);
 		} else {
 			pushNumber (0);
 		}
@@ -4537,7 +4531,7 @@ static void do_rindex () {
 static void do_stringMatchesCriterion (kMelder_string criterion) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		int result = Melder_stringMatchesCriterion (s->string.get(), criterion, t->string.get(), true);
+		int result = Melder_stringMatchesCriterion (s->getString(), criterion, t->getString(), true);
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"", Formula_instructionNames [parse [programPointer]. symbol],
@@ -4548,13 +4542,13 @@ static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		conststring32 errorMessage;
-		regexp *compiled_regexp = CompileRE (t->string.get(), & errorMessage, 0);
+		regexp *compiled_regexp = CompileRE (t->getString(), & errorMessage, 0);
 		if (! compiled_regexp) {
 			Melder_throw (U"index_regex(): ", errorMessage, U".");
 		} else {
-			if (ExecRE (compiled_regexp, nullptr, s->string.get(), nullptr, backward, '\0', '\0', nullptr, nullptr, nullptr)) {
+			if (ExecRE (compiled_regexp, nullptr, s->getString(), nullptr, backward, '\0', '\0', nullptr, nullptr, nullptr)) {
 				char32 *location = (char32 *) compiled_regexp -> startp [0];
-				pushNumber (location - s->string.get() + 1);
+				pushNumber (location - s->getString() + 1);
 				free (compiled_regexp);
 			} else {
 				pushNumber (false);
@@ -4569,7 +4563,7 @@ static void do_replaceStr () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		integer numberOfMatches;
-		autostring32 result = str_replace_literal (s->string.get(), t->string.get(), u->string.get(), Melder_iround (x->number), & numberOfMatches);
+		autostring32 result = str_replace_literal (s->getString(), t->getString(), u->getString(), Melder_iround (x->number), & numberOfMatches);
 		pushString (result.move());
 	} else {
 		Melder_throw (U"The function \"replace$\" requires three strings and a number.");
@@ -4579,12 +4573,12 @@ static void do_replace_regexStr () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		conststring32 errorMessage;
-		regexp *compiled_regexp = CompileRE (t->string.get(), & errorMessage, 0);
+		regexp *compiled_regexp = CompileRE (t->getString(), & errorMessage, 0);
 		if (! compiled_regexp) {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
 			integer numberOfMatches;
-			autostring32 result = str_replace_regexp (s->string.get(), compiled_regexp, u->string.get(), Melder_iround (x->number), & numberOfMatches);
+			autostring32 result = str_replace_regexp (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number), & numberOfMatches);
 			pushString (result.move());
 		}
 	} else {
@@ -4594,12 +4588,12 @@ static void do_replace_regexStr () {
 static void do_extractNumber () {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char32 *substring = str32str (s->string.get(), t->string.get());
+		char32 *substring = str32str (s->getString(), t->getString());
 		if (! substring) {
 			pushNumber (undefined);
 		} else {
 			/* Skip the prompt. */
-			substring += str32len (t->string.get());
+			substring += str32len (t->getString());
 			/* Skip white space. */
 			while (Melder_isHorizontalOrVerticalSpace (*substring)) substring ++;
 			if (substring [0] == U'\0' || str32nequ (substring, U"--undefined--", 13)) {
@@ -4638,14 +4632,14 @@ static void do_extractNumber () {
 static void do_extractTextStr (bool singleWord) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		char32 *substring = str32str (s->string.get(), t->string.get());
+		char32 *substring = str32str (s->getString(), t->getString());
 		autostring32 result;
 		if (! substring) {
 			result = Melder_dup (U"");
 		} else {
 			integer length;
 			/* Skip the prompt. */
-			substring += str32len (t->string.get());
+			substring += str32len (t->getString());
 			if (singleWord) {
 				/* Skip white space. */
 				while (Melder_isHorizontalOrVerticalSpace (*substring)) substring ++;
@@ -4676,7 +4670,7 @@ static void do_selected () {
 	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->string.get(), nullptr);
+			ClassInfo klas = Thing_classFromClassName (a->getString(), nullptr);
 			result = praat_idOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
 			result = praat_idOfSelected (nullptr, Melder_iround (a->number));
@@ -4686,7 +4680,7 @@ static void do_selected () {
 	} else if (n->number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->string.get(), nullptr);
+			ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			result = praat_idOfSelected (klas, Melder_iround (x->number));
 		} else {
 			Melder_throw (U"The function \"selected\" requires a string (an object type name) and/or a number.");
@@ -4734,7 +4728,7 @@ static void do_selectedStr () {
 	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->string.get(), nullptr);
+			ClassInfo klas = Thing_classFromClassName (a->getString(), nullptr);
 			resultSource = praat_nameOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
 			resultSource = praat_nameOfSelected (nullptr, Melder_iround (a->number));
@@ -4744,7 +4738,7 @@ static void do_selectedStr () {
 	} else if (n->number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->string.get(), nullptr);
+			ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			resultSource = praat_nameOfSelected (klas, Melder_iround (x->number));
 		} else {
 			Melder_throw (U"The function \"selected$\" requires a string (an object type name) and a number.");
@@ -4763,7 +4757,7 @@ static void do_numberOfSelected () {
 	} else if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (s->string.get(), nullptr);
+			ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			result = praat_numberOfSelected (klas);
 		} else {
 			Melder_throw (U"The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), U".");
@@ -4781,7 +4775,7 @@ static void do_selected_numvec () {
 	} else if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (s->string.get(), nullptr);
+			ClassInfo klas = Thing_classFromClassName (s->getString(), nullptr);
 			result = praat_idsOfAllSelected (klas);
 		} else {
 			Melder_throw (U"The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), U".");
@@ -4800,7 +4794,7 @@ static void do_selectObject () {
 			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			int IOBJECT = praat_findObjectFromString (object -> string.get());
+			int IOBJECT = praat_findObjectFromString (object -> getString());
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
@@ -4823,7 +4817,7 @@ static void do_plusObject () {
 			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			int IOBJECT = praat_findObjectFromString (object -> string.get());
+			int IOBJECT = praat_findObjectFromString (object -> getString());
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
@@ -4846,7 +4840,7 @@ static void do_minusObject () {
 			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_deselect (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			int IOBJECT = praat_findObjectFromString (object -> string.get());
+			int IOBJECT = praat_findObjectFromString (object -> getString());
 			praat_deselect (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
@@ -4869,7 +4863,7 @@ static void do_removeObject () {
 			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_removeObject (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			int IOBJECT = praat_findObjectFromString (object -> string.get());
+			int IOBJECT = praat_findObjectFromString (object -> getString());
 			praat_removeObject (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
@@ -4889,7 +4883,7 @@ static void do_object_xmin () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetXmin ()) {
 			pushNumber (data -> v_getXmin ());
@@ -4912,7 +4906,7 @@ static void do_object_xmax () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetXmax ()) {
 			pushNumber (data -> v_getXmax ());
@@ -4935,7 +4929,7 @@ static void do_object_ymin () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetYmin ()) {
 			pushNumber (data -> v_getYmin ());
@@ -4958,7 +4952,7 @@ static void do_object_ymax () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetYmax ()) {
 			pushNumber (data -> v_getYmax ());
@@ -4981,7 +4975,7 @@ static void do_object_nx () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetNx ()) {
 			pushNumber (data -> v_getNx ());
@@ -5004,7 +4998,7 @@ static void do_object_ny () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetNy ()) {
 			pushNumber (data -> v_getNy ());
@@ -5027,7 +5021,7 @@ static void do_object_dx () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetDx ()) {
 			pushNumber (data -> v_getDx ());
@@ -5050,7 +5044,7 @@ static void do_object_dy () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetDy ()) {
 			pushNumber (data -> v_getDy ());
@@ -5073,7 +5067,7 @@ static void do_object_nrow () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetNrow ()) {
 			pushNumber (data -> v_getNrow ());
@@ -5096,7 +5090,7 @@ static void do_object_ncol () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetNcol ()) {
 			pushNumber (data -> v_getNcol ());
@@ -5119,7 +5113,7 @@ static void do_object_rowstr () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetRowStr ()) {
 			if (index -> which == Stackel_NUMBER) {
@@ -5158,7 +5152,7 @@ static void do_object_colstr () {
 	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
 		int IOBJECT = object -> which == Stackel_NUMBER ?
 			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> string.get());
+			praat_findObjectFromString (object -> getString());
 		Daata data = OBJECT;
 		if (data -> v_hasGetColStr ()) {
 			if (index -> which == Stackel_NUMBER) {
@@ -5213,7 +5207,7 @@ static void do_sleep () {
 static void do_unicode () {
 	Stackel value = pop;
 	if (value->which == Stackel_STRING) {
-		pushNumber (value->string [0]);
+		pushNumber (value->getString() [0]);
 	} else {
 		Melder_throw (U"The function \"unicode\" requires a character, not ", Stackel_whichText (value), U".");
 	}
@@ -5265,7 +5259,7 @@ static void do_deleteFile () {
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderFile file { };
-		Melder_relativePathToFile (f->string.get(), & file);
+		Melder_relativePathToFile (f->getString(), & file);
 		MelderFile_delete (& file);
 		pushNumber (1);
 	} else {
@@ -5280,9 +5274,9 @@ static void do_createDirectory () {
 		structMelderDir currentDirectory { };
 		Melder_getDefaultDir (& currentDirectory);
 		#if defined (UNIX) || defined (macintosh)
-			Melder_createDirectory (& currentDirectory, f->string.get(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			Melder_createDirectory (& currentDirectory, f->getString(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		#else
-			Melder_createDirectory (& currentDirectory, f->string.get(), 0);
+			Melder_createDirectory (& currentDirectory, f->getString(), 0);
 		#endif
 		pushNumber (1);
 	} else {
@@ -5292,7 +5286,7 @@ static void do_createDirectory () {
 static void do_variableExists () {
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
-		bool result = !! Interpreter_hasVariable (theInterpreter, f->string.get());
+		bool result = !! Interpreter_hasVariable (theInterpreter, f->getString());
 		pushNumber (result);
 	} else {
 		Melder_throw (U"The function \"variableExists\" requires a string, not ", Stackel_whichText (f), U".");
@@ -5302,7 +5296,7 @@ static void do_readFile () {
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderFile file { };
-		Melder_relativePathToFile (f->string.get(), & file);
+		Melder_relativePathToFile (f->getString(), & file);
 		autostring32 text = MelderFile_readText (& file);
 		pushNumber (Melder_atof (text.get()));
 	} else {
@@ -5313,7 +5307,7 @@ static void do_readFileStr () {
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderFile file { };
-		Melder_relativePathToFile (f->string.get(), & file);
+		Melder_relativePathToFile (f->getString(), & file);
 		autostring32 text = MelderFile_readText (& file);
 		pushString (text.move());
 	} else {
@@ -5409,7 +5403,7 @@ static void do_beginPauseForm () {
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			UiPause_begin (theCurrentPraatApplication -> topShell, title->string.get(), theInterpreter);
+			UiPause_begin (theCurrentPraatApplication -> topShell, title->getString(), theInterpreter);
 		} else {
 			Melder_throw (U"The function \"beginPauseForm\" requires a string (the title), not ", Stackel_whichText (title), U".");
 		}
@@ -5426,7 +5420,7 @@ static void do_pauseFormAddReal () {
 		Stackel defaultValue = pop;
 		conststring32 defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->string.get();
+			defaultString = defaultValue->getString();
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
@@ -5434,7 +5428,7 @@ static void do_pauseFormAddReal () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_real (label->string.get(), defaultString);
+			UiPause_real (label->getString(), defaultString);
 		} else {
 			Melder_throw (U"The first argument of \"real\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5451,7 +5445,7 @@ static void do_pauseFormAddPositive () {
 		Stackel defaultValue = pop;
 		conststring32 defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->string.get();
+			defaultString = defaultValue->getString();
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
@@ -5459,7 +5453,7 @@ static void do_pauseFormAddPositive () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_positive (label->string.get(), defaultString);
+			UiPause_positive (label->getString(), defaultString);
 		} else {
 			Melder_throw (U"The first argument of \"positive\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5476,7 +5470,7 @@ static void do_pauseFormAddInteger () {
 		Stackel defaultValue = pop;
 		conststring32 defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->string.get();
+			defaultString = defaultValue->getString();
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
@@ -5484,7 +5478,7 @@ static void do_pauseFormAddInteger () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_integer (label->string.get(), defaultString);
+			UiPause_integer (label->getString(), defaultString);
 		} else {
 			Melder_throw (U"The first argument of \"integer\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5501,7 +5495,7 @@ static void do_pauseFormAddNatural () {
 		Stackel defaultValue = pop;
 		conststring32 defaultString = nullptr;
 		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->string.get();
+			defaultString = defaultValue->getString();
 		} else if (defaultValue->which == Stackel_NUMBER) {
 			defaultString = Melder_double (defaultValue->number);
 		} else {
@@ -5509,7 +5503,7 @@ static void do_pauseFormAddNatural () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_natural (label->string.get(), defaultString);
+			UiPause_natural (label->getString(), defaultString);
 		} else {
 			Melder_throw (U"The first argument of \"natural\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5529,7 +5523,7 @@ static void do_pauseFormAddWord () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_word (label->string.get(), defaultValue->string.get());
+			UiPause_word (label->getString(), defaultValue->getString());
 		} else {
 			Melder_throw (U"The first argument of \"word\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5549,7 +5543,7 @@ static void do_pauseFormAddSentence () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_sentence (label->string.get(), defaultValue->string.get());
+			UiPause_sentence (label->getString(), defaultValue->getString());
 		} else {
 			Melder_throw (U"The first argument of \"sentence\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5569,7 +5563,7 @@ static void do_pauseFormAddText () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_text (label->string.get(), defaultValue->string.get());
+			UiPause_text (label->getString(), defaultValue->getString());
 		} else {
 			Melder_throw (U"The first argument of \"text\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5589,7 +5583,7 @@ static void do_pauseFormAddBoolean () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_boolean (label->string.get(), defaultValue->number != 0.0);
+			UiPause_boolean (label->getString(), defaultValue->number != 0.0);
 		} else {
 			Melder_throw (U"The first argument of \"boolean\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5609,7 +5603,7 @@ static void do_pauseFormAddChoice () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_choice (label->string.get(), Melder_iround (defaultValue->number));
+			UiPause_choice (label->getString(), Melder_iround (defaultValue->number));
 		} else {
 			Melder_throw (U"The first argument of \"choice\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5629,7 +5623,7 @@ static void do_pauseFormAddOptionMenu () {
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_optionMenu (label->string.get(), Melder_iround (defaultValue->number));
+			UiPause_optionMenu (label->getString(), Melder_iround (defaultValue->number));
 		} else {
 			Melder_throw (U"The first argument of \"optionMenu\" (the label) should be a string, not ", Stackel_whichText (label), U".");
 		}
@@ -5645,7 +5639,7 @@ static void do_pauseFormAddOption () {
 	if (n->number == 1) {
 		Stackel text = pop;
 		if (text->which == Stackel_STRING) {
-			UiPause_option (text->string.get());
+			UiPause_option (text->getString());
 		} else {
 			Melder_throw (U"The argument of \"option\" should be a string (the text), not ", Stackel_whichText (text), U".");
 		}
@@ -5661,7 +5655,7 @@ static void do_pauseFormAddComment () {
 	if (n->number == 1) {
 		Stackel text = pop;
 		if (text->which == Stackel_STRING) {
-			UiPause_comment (text->string.get());
+			UiPause_comment (text->getString());
 		} else {
 			Melder_throw (U"The argument of \"comment\" should be a string (the text), not ", Stackel_whichText (text), U".");
 		}
@@ -5698,11 +5692,11 @@ static void do_endPauseForm () {
 				U" argument(s) of \"endPause\" has to be a string (a button text), not ", Stackel_whichText (co[i]), U".");
 	}
 	int buttonClicked = UiPause_end (numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
-		! co [1] ? nullptr : co[1]->string.get(), ! co [2] ? nullptr : co[2]->string.get(),
-		! co [3] ? nullptr : co[3]->string.get(), ! co [4] ? nullptr : co[4]->string.get(),
-		! co [5] ? nullptr : co[5]->string.get(), ! co [6] ? nullptr : co[6]->string.get(),
-		! co [7] ? nullptr : co[7]->string.get(), ! co [8] ? nullptr : co[8]->string.get(),
-		! co [9] ? nullptr : co[9]->string.get(), ! co [10] ? nullptr : co[10]->string.get(),
+		! co [1] ? nullptr : co[1]->getString(), ! co [2] ? nullptr : co[2]->getString(),
+		! co [3] ? nullptr : co[3]->getString(), ! co [4] ? nullptr : co[4]->getString(),
+		! co [5] ? nullptr : co[5]->getString(), ! co [6] ? nullptr : co[6]->getString(),
+		! co [7] ? nullptr : co[7]->getString(), ! co [8] ? nullptr : co[8]->getString(),
+		! co [9] ? nullptr : co[9]->getString(), ! co [10] ? nullptr : co[10]->getString(),
 		theInterpreter);
 	//Melder_casual (U"Button ", buttonClicked);
 	pushNumber (buttonClicked);
@@ -5712,7 +5706,7 @@ static void do_chooseReadFileStr () {
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autoStringSet fileNames = GuiFileSelect_getInfileNames (nullptr, title->string.get(), false);
+			autoStringSet fileNames = GuiFileSelect_getInfileNames (nullptr, title->getString(), false);
 			if (fileNames->size == 0) {
 				pushString (Melder_dup (U""));
 			} else {
@@ -5731,7 +5725,7 @@ static void do_chooseWriteFileStr () {
 	if (n->number == 2) {
 		Stackel defaultName = pop, title = pop;
 		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getOutfileName (nullptr, title->string.get(), defaultName->string.get());
+			autostring32 result = GuiFileSelect_getOutfileName (nullptr, title->getString(), defaultName->getString());
 			if (! result)
 				result = Melder_dup (U"");
 			pushString (result.move());
@@ -5747,7 +5741,7 @@ static void do_chooseDirectoryStr () {
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autostring32 result = GuiFileSelect_getDirectoryName (nullptr, title->string.get());
+			autostring32 result = GuiFileSelect_getDirectoryName (nullptr, title->getString());
 			if (! result)
 				result = Melder_dup (U"");
 			pushString (result.move());
@@ -5763,7 +5757,7 @@ static void do_demoWindowTitle () {
 	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			Demo_windowTitle (title->string.get());
+			Demo_windowTitle (title->getString());
 		} else {
 			Melder_throw (U"The argument of \"demoWindowTitle\" should be a string (the title), not ", Stackel_whichText (title), U".");
 		}
@@ -5798,7 +5792,7 @@ static void do_demoInput () {
 	if (n->number == 1) {
 		Stackel keys = pop;
 		if (keys->which == Stackel_STRING) {
-			bool result = Demo_input (keys->string.get());
+			bool result = Demo_input (keys->getString());
 			pushNumber (result);
 		} else {
 			Melder_throw (U"The argument of \"demoInput\" should be a string (the keys), not ", Stackel_whichText (keys), U".");
@@ -5892,9 +5886,9 @@ static integer Stackel_getRowNumber (Stackel row, Daata thee) {
 	} else if (row->which == Stackel_STRING) {
 		if (! thy v_hasGetRowIndex ())
 			Melder_throw (U"Objects of type ", Thing_className (thee), U" do not have row labels, so row indexes have to be numbers.");
-		result = Melder_iround (thy v_getRowIndex (row->string.get()));
+		result = Melder_iround (thy v_getRowIndex (row->getString()));
 		if (result == 0)
-			Melder_throw (U"Object \"", thy name.get(), U"\" has no row labelled \"", row->string.get(), U"\".");
+			Melder_throw (U"Object \"", thy name.get(), U"\" has no row labelled \"", row->getString(), U"\".");
 	} else {
 		Melder_throw (U"A row index should be a number or a string, not ", Stackel_whichText (row), U".");
 	}
@@ -5907,9 +5901,9 @@ static integer Stackel_getColumnNumber (Stackel column, Daata thee) {
 	} else if (column->which == Stackel_STRING) {
 		if (! thy v_hasGetColIndex ())
 			Melder_throw (U"Objects of type ", Thing_className (thee), U" do not have column labels, so column indexes have to be numbers.");
-		result = Melder_iround (thy v_getColIndex (column->string.get()));
+		result = Melder_iround (thy v_getColIndex (column->getString()));
 		if (result == 0)
-			Melder_throw (U"Object ", thee, U" has no column labelled \"", column->string.get(), U"\".");
+			Melder_throw (U"Object ", thee, U" has no column labelled \"", column->getString(), U"\".");
 	} else {
 		Melder_throw (U"A column index should be a number or a string, not ", Stackel_whichText (column), U".");
 	}
@@ -5991,10 +5985,10 @@ static void do_toObject () {
 		thee = (Daata) theCurrentPraatObjects -> list [i]. object;
 	} else if (object->which == Stackel_STRING) {
 		int i = theCurrentPraatObjects -> n;
-		while (i > 0 && ! Melder_equ (object->string.get(), theCurrentPraatObjects -> list [i]. name.get()))
+		while (i > 0 && ! Melder_equ (object->getString(), theCurrentPraatObjects -> list [i]. name.get()))
 			i --;
 		if (i == 0)
-			Melder_throw (U"No such object: ", object->string.get());
+			Melder_throw (U"No such object: ", object->getString());
 		thee = (Daata) theCurrentPraatObjects -> list [i]. object;
 	} else {
 		Melder_throw (U"The first argument to \"object\" should be a number (unique ID) or a string (name), not ", Stackel_whichText (object), U".");
@@ -6833,7 +6827,9 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			Melder_assert (theStack [1]. which == Stackel_STRING);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 			Melder_assert (! result -> stringResult);
-			result -> stringResult = theStack [1]. string.move();
+			result -> stringResult = theStack [1]. moveString();
+			Melder_assert (theStack [1]. which == Stackel_STRING);
+			Melder_assert (! theStack [1]. getString());
 		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw (U"Found a numeric expression instead of a vector expression.");
 			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a vector expression.");
@@ -6860,7 +6856,9 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			} else if (theStack [1]. which == Stackel_STRING) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 				Melder_assert (! result -> stringResult);
-				result -> stringResult = theStack [1]. string.move();
+				result -> stringResult = theStack [1]. moveString();
+				Melder_assert (theStack [1]. which == Stackel_STRING);
+				Melder_assert (! theStack [1]. getString());
 			} else if (theStack [1]. which == Stackel_NUMERIC_VECTOR) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR;
 				result -> numericVectorResult = theStack [1]. numericVector;

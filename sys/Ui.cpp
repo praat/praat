@@ -215,21 +215,24 @@ static void UiField_widgetToValue (UiField me) {
 			my stringValue = GuiText_getString (my text);
 			Melder_require (*Melder_findEndOfInk (my stringValue.get()) == U'\0',
 				U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U" should be a single ink-word and cannot contain a space.");
-			if (my stringVariable) *my stringVariable = my stringValue.get();   // BUG dangle
+			if (my stringVariable)
+				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
 		break;
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
 		{
 			my stringValue = GuiText_getString (my text);
-			if (my stringVariable) *my stringVariable = my stringValue.get();
+			if (my stringVariable)
+				*my stringVariable = my stringValue.get();
 		}
 		break;
 		case _kUiField_type::NUMVEC_:
 		{
 			my stringValue = GuiText_getString (my text);
 			if (my numericVectorVariable) {
-				if (my owned) my numericVectorVariable -> reset();
+				if (my owned)
+					my numericVectorVariable -> reset();
 				Interpreter_numericVectorExpression (nullptr, my stringValue.get(), my numericVectorVariable, & my owned);
 			}
 		}
@@ -238,7 +241,8 @@ static void UiField_widgetToValue (UiField me) {
 		{
 			my stringValue = GuiText_getString (my text);
 			if (my numericMatrixVariable) {
-				if (my owned) my numericMatrixVariable -> reset();
+				if (my owned)
+					my numericMatrixVariable -> reset();
 				Interpreter_numericMatrixExpression (nullptr, my stringValue.get(), my numericMatrixVariable, & my owned);
 			}
 		}
@@ -615,7 +619,7 @@ UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableN
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addWord (UiForm me, char32 **variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
 	autoUiField thee (UiForm_addField (me, _kUiField_type::WORD_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
@@ -623,7 +627,7 @@ UiField UiForm_addWord (UiForm me, char32 **variable, conststring32 variableName
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addSentence (UiForm me, char32 **variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
+UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue) {
 	autoUiField thee (UiForm_addField (me, _kUiField_type::SENTENCE_, label));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
@@ -631,7 +635,7 @@ UiField UiForm_addSentence (UiForm me, char32 **variable, conststring32 variable
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addLabel (UiForm me, char32 **variable, conststring32 label) {
+UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label) {
 	autoUiField thee (UiForm_addField (me, _kUiField_type::LABEL_, U""));   // this field gets no name; so that the user can give it any title
 	thy stringVariable = variable;
 	thy stringValue = Melder_dup (label);
@@ -646,7 +650,7 @@ UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addText (UiForm me, char32 **variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
 	autoUiField thee (UiForm_addField (me, _kUiField_type::TEXT_, name));
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy stringVariable = variable;
@@ -670,7 +674,7 @@ UiField UiForm_addNummat (UiForm me, nummat *variable, conststring32 variableNam
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base) {
+UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base) {
 	autoUiField thee (UiForm_addField (me, _kUiField_type::RADIO_, label));
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
@@ -680,7 +684,7 @@ UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, c
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base) {
+UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base) {
 	autoUiField thee (UiForm_addField (me, _kUiField_type::OPTIONMENU_, label));
 	thy integerDefaultValue = defaultValue;
 	thy intVariable = intVariable;
@@ -690,7 +694,7 @@ UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariab
 	return thee.releaseToAmbiguousOwner();
 }
 
-UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, integer numberOfStrings, char32 **strings, integer defaultValue) {
+UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, integer numberOfStrings, char32 **strings, integer defaultValue) {
 	autoUiField thee (UiForm_addField (me, _kUiField_type::LIST_, label));
 	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
@@ -1181,7 +1185,8 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"Argument \"", my name.get(), U"\" has the value \"undefined\".");
 			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
 				Melder_throw (U"Argument \"", my name.get(), U"\" must be greater than 0.");
-			if (my realVariable) *my realVariable = my realValue;
+			if (my realVariable)
+				*my realVariable = my realValue;
 		}
 		break;
 		case _kUiField_type::INTEGER_:
@@ -1190,11 +1195,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		{
 			if (arg -> which == Stackel_STRING) {
 				if (my type == _kUiField_type::CHANNEL_) {
-					if (str32equ (arg -> string.get(), U"All") || str32equ (arg -> string.get(), U"Average")) {
+					if (str32equ (arg -> getString(), U"All") || str32equ (arg -> getString(), U"Average")) {
 						my integerValue = 0;
-					} else if (str32equ (arg -> string.get(), U"Left") || str32equ (arg -> string.get(), U"Mono")) {
+					} else if (str32equ (arg -> getString(), U"Left") || str32equ (arg -> getString(), U"Mono")) {
 						my integerValue = 1;
-					} else if (str32equ (arg -> string.get(), U"Right") || str32equ (arg -> string.get(), U"Stereo")) {
+					} else if (str32equ (arg -> getString(), U"Right") || str32equ (arg -> getString(), U"Stereo")) {
 						my integerValue = 2;
 					} else {
 						Melder_throw (U"Channel argument \"", my name.get(),
@@ -1220,7 +1225,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		{
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string, not ", Stackel_whichText (arg), U".");
-			my stringValue = Melder_dup (arg -> string.get());
+			my stringValue = Melder_dup (arg -> getString());
 			if (my stringVariable)
 				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
@@ -1230,9 +1235,11 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_NUMERIC_VECTOR)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", Stackel_whichText (arg), U".");
 			if (my numericVectorVariable) {
-				if (my owned) my numericVectorVariable -> reset();
+				if (my owned)
+					my numericVectorVariable -> reset();
 				*my numericVectorVariable = arg -> numericVector;
 				my owned = arg -> owned;
+				arg -> owned = false;
 			}
 		}
 		break;
@@ -1241,18 +1248,20 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_NUMERIC_MATRIX)
 				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric matrix, not ", Stackel_whichText (arg), U".");
 			if (my numericMatrixVariable) {
-				if (my owned) my numericMatrixVariable -> reset();
+				if (my owned)
+					my numericMatrixVariable -> reset();
 				*my numericMatrixVariable = arg -> numericMatrix;
 				my owned = arg -> owned;
+				arg -> owned = false;
 			}
 		}
 		break;
 		case _kUiField_type::BOOLEAN_:
 		{
 			if (arg -> which == Stackel_STRING) {
-				if (str32equ (arg -> string.get(), U"no") || str32equ (arg -> string.get(), U"off")) {
+				if (str32equ (arg -> getString(), U"no") || str32equ (arg -> getString(), U"off")) {
 					my integerValue = 0;
-				} else if (str32equ (arg -> string.get(), U"yes") || str32equ (arg -> string.get(), U"on")) {
+				} else if (str32equ (arg -> getString(), U"yes") || str32equ (arg -> getString(), U"on")) {
 					my integerValue = 1;
 				} else {
 					Melder_throw (U"Boolean argument \"", my name.get(),
@@ -1275,7 +1284,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
-				if (str32equ (arg -> string.get(), b -> name.get()))
+				if (str32equ (arg -> getString(), b -> name.get()))
 					my integerValue = i;
 			}
 			if (my integerValue == 0) {
@@ -1284,15 +1293,15 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				*/
 				for (int i = 1; i <= my options.size; i ++) {
 					UiOption b = my options.at [i];
-					if (Melder_equ_firstCharacterCaseInsensitive (arg -> string.get(), b -> name.get()))
+					if (Melder_equ_firstCharacterCaseInsensitive (arg -> getString(), b -> name.get()))
 						my integerValue = i;
 				}
 			}
 			if (my integerValue == 0) {
 				if (my intVariable)
-					Melder_throw (U"Option argument \"", my name.get(), U"\" cannot have the value \"", arg -> string.get(), U"\".");
+					Melder_throw (U"Option argument \"", my name.get(), U"\" cannot have the value \"", arg -> getString(), U"\".");
 				if (my stringVariable) {
-					*my stringVariable = arg -> string.get();
+					*my stringVariable = arg -> getString();
 					return;
 				}
 			}
@@ -1308,9 +1317,9 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				Melder_throw (U"List argument \"", my name.get(), U"\" should be a string, not ", Stackel_whichText(arg), U".");
 			integer i = 1;
 			for (; i <= my numberOfStrings; i ++)
-				if (str32equ (arg -> string.get(), my strings [i])) break;
+				if (str32equ (arg -> getString(), my strings [i])) break;
 			if (i > my numberOfStrings)
-				Melder_throw (U"List argument \"", my name.get(), U"\" cannot have the value \"", arg -> string.get(), U"\".");
+				Melder_throw (U"List argument \"", my name.get(), U"\" cannot have the value \"", arg -> getString(), U"\".");
 			my integerValue = i;
 			if (my integerVariable)
 				*my integerVariable = my integerValue;
@@ -1325,7 +1334,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 					Melder_throw (U"Grey colour argument \"", my name.get(), U"\" has to lie between 0.0 and 1.0.");
 				my colourValue. red = my colourValue. green = my colourValue. blue = arg -> number;
 			} else if (arg -> which == Stackel_STRING) {
-				autostring32 string2 = Melder_dup (arg -> string.get());
+				autostring32 string2 = Melder_dup (arg -> getString());
 				if (! colourToValue (me, string2.get()))
 					Melder_throw (U"Cannot compute a colour from \"", string2.get(), U"\".");
 			}
@@ -1797,7 +1806,7 @@ void UiForm_setOptionAsString (UiForm me, int *p_variable, conststring32 stringV
 	Melder_fatal (U"Option field not found in command window \"", my name.get(), U"\".");
 }
 
-void UiForm_setString (UiForm me, char32 **p_variable, conststring32 value /* cattable */) {
+void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 value /* cattable */) {
 	if (! value) value = U"";   // accept null strings
 	for (int ifield = 1; ifield <= my numberOfFields; ifield ++) {
 		UiField field = my field [ifield];

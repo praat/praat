@@ -302,6 +302,9 @@ public:
 		return *this;
 	}
 	_autostring&& move () noexcept { return static_cast <_autostring&&> (*this); }
+	void _unsafeTransplant (T* newStringPointer) {
+		our ptr = newStringPointer;
+	}
 };
 
 typedef _autostring <char> autostring8;
