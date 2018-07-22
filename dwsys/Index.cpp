@@ -105,7 +105,7 @@ integer Index_getClassIndexFromItemIndex (Index me, integer itemIndex) {
 	return result;
 }
 
-int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, char32 *klasLabel) {
+int StringsIndex_getClassIndexFromClassLabel (StringsIndex me, conststring32 klasLabel) {
 	for (integer i = 1; i <= my classes->size; i ++) {
 		SimpleString ss = (SimpleString) my classes->at [i];   // FIXME cast
 		if (Melder_equ (ss -> string.get(), klasLabel)) {

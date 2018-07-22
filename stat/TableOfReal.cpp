@@ -190,7 +190,7 @@ void TableOfReal_removeRow (TableOfReal me, integer rowNumber) {
 			Change without error.
 		*/
 		for (integer irow = rowNumber; irow < my numberOfRows; irow ++)
-			my rowLabels [irow] = std::move (my rowLabels [irow + 1]);
+			my rowLabels [irow] = my rowLabels [irow + 1]. move();
 		my rowLabels [my numberOfRows]. reset();
 		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
@@ -210,12 +210,12 @@ void TableOfReal_insertRow (TableOfReal me, integer rowNumber) {
 		autoNUMmatrix <double> data (1, my numberOfRows + 1, 1, my numberOfColumns);
 		autostring32vector newRowLabels (my numberOfRows + 1);
 		for (integer irow = 1; irow < rowNumber; irow ++)	{
-			newRowLabels [irow] = std::move (my rowLabels [irow]);
+			newRowLabels [irow] = my rowLabels [irow]. move();
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 				data [irow] [icol] = my data [irow] [icol];
 		}
 		for (integer irow = my numberOfRows + 1; irow > rowNumber; irow --) {
-			newRowLabels [irow] = std::move (my rowLabels [irow - 1]);
+			newRowLabels [irow] = my rowLabels [irow - 1]. move();
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 				data [irow] [icol] = my data [irow - 1] [icol];
 		}
@@ -251,7 +251,7 @@ void TableOfReal_removeColumn (TableOfReal me, integer columnNumber) {
 			Change without error.
 		*/
 		for (integer icol = columnNumber; icol < my numberOfColumns; icol ++)
-			my columnLabels [icol] = std::move (my columnLabels [icol + 1]);
+			my columnLabels [icol] = my columnLabels [icol + 1]. move();
 		my columnLabels [my numberOfColumns]. reset();
 		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
@@ -271,12 +271,14 @@ void TableOfReal_insertColumn (TableOfReal me, integer columnNumber) {
 		autoNUMmatrix <double> data (1, my numberOfRows, 1, my numberOfColumns + 1);
 		autostring32vector newColumnLabels (my numberOfColumns + 1);
 		for (integer j = 1; j < columnNumber; j ++) {
-			newColumnLabels [j] = std::move (my columnLabels [j]);
-			for (integer i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j];
+			newColumnLabels [j] = my columnLabels [j]. move();
+			for (integer i = 1; i <= my numberOfRows; i ++)
+				data [i] [j] = my data [i] [j];
 		}
 		for (integer j = my numberOfColumns + 1; j > columnNumber; j --) {
-			newColumnLabels [j] = std::move (my columnLabels [j - 1]);
-			for (integer i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j - 1];
+			newColumnLabels [j] = my columnLabels [j - 1]. move();
+			for (integer i = 1; i <= my numberOfRows; i ++)
+				data [i] [j] = my data [i] [j - 1];
 		}
 		/*
 			Change without error.

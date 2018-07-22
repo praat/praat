@@ -66,7 +66,7 @@ double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer fr
 autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configuration thee);
 /* Reconstruct the original TableOfReal from the PCA and the Configuration */
 
-autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring);
+autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring);
 
 #endif /* _PCA_h_ */
 

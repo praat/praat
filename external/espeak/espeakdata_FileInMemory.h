@@ -54,6 +54,6 @@ char * espeakdata_get_dict_data (const char *name, unsigned int *size);
 
 const char * espeakdata_get_voice (const char *vname, long *numberOfBytes);
 
-void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *p_languageIndex, int *p_voiceIndex);
+void espeakdata_getIndices (conststring32 language_string, conststring32 voice_string, int *p_languageIndex, int *p_voiceIndex);
 
 #endif

@@ -291,9 +291,8 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 		Melder_require (thy numberOfColumns <= my dimension,
 			U"The dimension of the Configuration should be less than or equal to the dimension of the PCA.");
 
-		if (npc > my numberOfEigenvalues) {
+		if (npc > my numberOfEigenvalues)
 			npc = my numberOfEigenvalues;
-		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
 		Melder_assert (my labels.size == my dimension);
@@ -304,9 +303,8 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 			double *hisdata = his data [i];
 			for (integer k = 1; k <= npc; k ++) {
 				double *evec = my eigenvectors [k], pc = thy data [i] [k];
-				for (integer j = 1; j <= my dimension; j ++) {
+				for (integer j = 1; j <= my dimension; j ++)
 					hisdata [j] += pc * evec [j];
-				}
 			}
 		}
 		return him;
@@ -318,11 +316,8 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer from, integer to) {
 	try {
 		double fraction = undefined;
-
-		if (from < 1 || from > to || to > thy numberOfColumns) {
+		if (from < 1 || from > to || to > thy numberOfColumns)
 			return undefined;
-		}
-
 		autoSSCP s = TableOfReal_to_SSCP (thee, 0, 0, 0, 0);
 		autoSSCP sp = Eigen_SSCP_project (me, s.get());
 		fraction = SSCP_getFractionVariation (sp.get(), from, to);
@@ -332,15 +327,13 @@ double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer fr
 	}
 }
 
-autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, char32 *numstring) {
+autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring) {
 	try {
 		integer npc;
 		autoNUMvector<double> pc (NUMstring_to_numbers (numstring, & npc), 1);
-
 		autoConfiguration c = Configuration_create (1, npc);
-		for (integer j = 1; j <= npc; j ++) {
+		for (integer j = 1; j <= npc; j ++)
 			c -> data [1] [j] = pc [j];
-		}
 		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());
 		return him;
 	} catch (MelderError) {

@@ -1164,7 +1164,7 @@ autoCovariance Covariance_create_reduceStorage (integer dimension, integer stora
 
 
 
-autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroid, integer numberOfObservations) {
+autoCovariance Covariance_createSimple (conststring32 s_covariances, conststring32 s_centroid, integer numberOfObservations) {
 	try {
 		integer dimension, numberOfCovariances;
 		autoNUMvector <double> centroid (NUMstring_to_numbers (s_centroid, & dimension), 1);
@@ -1214,7 +1214,7 @@ autoCovariance Covariance_createSimple (char32 *s_covariances, char32 *s_centroi
 	}
 }
 
-autoCorrelation Correlation_createSimple (char32 *s_correlations, char32 *s_centroid, integer numberOfObservations) {
+autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststring32 s_centroid, integer numberOfObservations) {
 	try {
 		integer dimension, numberOfCorrelations;
 		autoNUMvector<double> centroids (NUMstring_to_numbers (s_centroid, & dimension), 1);
@@ -1367,7 +1367,7 @@ static double traceOfSquaredMatrixProduct (double **s1, double **s2, integer n) 
 	return trace2;
 }
 
-double Covariance_getProbabilityAtPosition_string (Covariance me, char32 *vector) {
+double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector) {
 	autoNUMvector<double> v (1, my numberOfColumns);
 	integer i = 0;
 	for (char32 *token = Melder_firstToken (vector); token != nullptr; token = Melder_nextToken ()) {

@@ -102,10 +102,10 @@ static void initScreen (HyperPage me) {
 
 void HyperPage_initSheetOfPaper (HyperPage me) {
 	int reflect = my mirror && (my d_printingPageNumber & 1) == 0;
-	char32 *leftHeader = reflect ? my outsideHeader : my insideHeader;
-	char32 *rightHeader = reflect ? my insideHeader : my outsideHeader;
-	char32 *leftFooter = reflect ? my outsideFooter : my insideFooter;
-	char32 *rightFooter = reflect ? my insideFooter : my outsideFooter;
+	conststring32 leftHeader = reflect ? my outsideHeader : my insideHeader;
+	conststring32 rightHeader = reflect ? my insideHeader : my outsideHeader;
+	conststring32 leftFooter = reflect ? my outsideFooter : my insideFooter;
+	conststring32 rightFooter = reflect ? my insideFooter : my outsideFooter;
 
 	my d_y = PAPER_TOP - TOP_MARGIN;
 	my d_x = 0;

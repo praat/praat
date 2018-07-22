@@ -127,7 +127,7 @@ Thing_define (UiField, Thing) {
 	integer *integerVariable;
 	int *intVariable;
 	bool *boolVariable;
-	char32 **stringVariable;
+	conststring32 *stringVariable;
 	Graphics_Colour *colourVariable;
 
 	numvec *numericVectorVariable;
@@ -193,18 +193,18 @@ UiField UiForm_addRealOrUndefined (UiForm me, double *variable, conststring32 va
 UiField UiForm_addPositive (UiForm me, double *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 UiField UiForm_addInteger (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 UiField UiForm_addNatural (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
-UiField UiForm_addWord (UiForm me, char32 **variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
-UiField UiForm_addSentence (UiForm me, char32 **variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
-UiField UiForm_addLabel (UiForm me, char32 **variable, conststring32 label);
+UiField UiForm_addWord (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
+UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
+UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label);
 UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName, conststring32 label, bool defaultValue);
-UiField UiForm_addText (UiForm me, char32 **variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addNumvec (UiForm me, numvec *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addNummat (UiForm me, nummat *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addRadio (UiForm me, int *intVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
+UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, conststring32 label);
-UiField UiForm_addOptionMenu (UiForm me, int *intVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
+UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiOptionMenu_addButton (UiField me, conststring32 label);
-UiField UiForm_addList (UiForm me, integer *integerVariable, char32 **stringVariable, conststring32 variableName, conststring32 label, integer numberOfStrings, char32 **strings, integer defaultValue);
+UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, integer numberOfStrings, char32 **strings, integer defaultValue);
 UiField UiForm_addColour (UiForm me, Graphics_Colour *colourVariable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 UiField UiForm_addChannel (UiForm me, integer *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
 void UiForm_finish (UiForm me);
@@ -230,7 +230,7 @@ void UiForm_setPauseForm (UiForm me,
 	void UiForm_setInteger (UiForm me, integer *p_variable, integer value);
 	void UiForm_setIntegerAsString (UiForm me, integer *p_variable, conststring32 stringValue /* cattable */);
 /* Word, Sentence, Text, and Label fields: */
-	void UiForm_setString (UiForm me, char32 **p_variable, conststring32 text /* cattable */);
+	void UiForm_setString (UiForm me, conststring32 *p_variable, conststring32 text /* cattable */);
 /* Boolean fields: */
 	void UiForm_setBoolean (UiForm me, bool *p_variable, bool value);
 /* Radio and OptionMenu fields: */
