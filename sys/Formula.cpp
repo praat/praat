@@ -2162,8 +2162,8 @@ void Formula_compile (Interpreter interpreter, Daata data, conststring32 express
 }
 
 /*
- * Running.
- */
+	Running.
+*/
 
 static int programPointer;
 
@@ -2236,6 +2236,10 @@ static void pushString (autostring32 x) {
 	Stackel stackel = & theStack [++ w];
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
+	#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
+		memset (stackel, 0, sizeof (structStackel));
+	#endif
+	Melder_assert (! stackel -> string);
 	stackel -> which = Stackel_STRING;
 	stackel -> string = x.move();
 	//stackel -> owned = true;
@@ -6818,6 +6822,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a numeric expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_VECTOR) Melder_throw (U"Found a vector expression instead of a numeric expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_MATRIX) Melder_throw (U"Found a matrix expression instead of a numeric expression.");
+			Melder_assert (theStack [1]. which == Stackel_NUMBER);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 			result -> numericResult = theStack [1]. number;
 		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_STRING) {
@@ -6825,12 +6830,15 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				Melder_throw (U"Found a numeric expression (value ", theStack [1]. number, U") instead of a string expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_VECTOR) Melder_throw (U"Found a vector expression instead of a string expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_MATRIX) Melder_throw (U"Found a matrix expression instead of a string expression.");
+			Melder_assert (theStack [1]. which == Stackel_STRING);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
+			Melder_assert (! result -> stringResult);
 			result -> stringResult = theStack [1]. string.move();
 		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw (U"Found a numeric expression instead of a vector expression.");
 			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a vector expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_MATRIX) Melder_throw (U"Found a matrix expression instead of a vector expression.");
+			Melder_assert (theStack [1]. which == Stackel_NUMERIC_VECTOR);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR;
 			result -> numericVectorResult = theStack [1]. numericVector;
 			result -> owned = theStack [1]. owned;
@@ -6839,6 +6847,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw (U"Found a numeric expression instead of a matrix expression.");
 			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a matrix expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_VECTOR) Melder_throw (U"Found a vector expression instead of a matrix expression.");
+			Melder_assert (theStack [1]. which == Stackel_NUMERIC_MATRIX);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX;
 			result -> numericMatrixResult = theStack [1]. numericMatrix;
 			result -> owned = theStack [1]. owned;
@@ -6850,6 +6859,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				result -> numericResult = theStack [1]. number;
 			} else if (theStack [1]. which == Stackel_STRING) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
+				Melder_assert (! result -> stringResult);
 				result -> stringResult = theStack [1]. string.move();
 			} else if (theStack [1]. which == Stackel_NUMERIC_VECTOR) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR;

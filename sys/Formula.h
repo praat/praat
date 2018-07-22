@@ -43,13 +43,50 @@ typedef struct structStackel {
 	#define Stackel_VARIABLE  -1
 	#define Stackel_OBJECT  -2
 	int which;   // 0 or negative = no clean-up required, positive = requires clean-up
-	double number;
-	autostring32 string;
-	Daata object;
-	numvec numericVector;
-	nummat numericMatrix;
-	InterpreterVariable variable;
+	/*
+		The following member of structStackel can either be a struct or a union.
+		The struct option is the easy option: no special care will have to be taken when assigning to its members.
+		The union option attempts to optimize for space and speed by putting the variants into a smaller space,
+		but it requires special logic for initialization, deletion, and assignment in your code.
+	*/
+	#define STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION  1
+	#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
+		union
+	#else
+		struct
+	#endif
+	{
+		double number;
+		autostring32 string;
+		Daata object;
+		numvec numericVector;
+		nummat numericMatrix;
+		InterpreterVariable variable;
+	};
 	bool owned;
+	#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
+		structStackel () {
+			memset (this, 0, sizeof (structStackel));   // union-safe zeroing of all members of structStackel
+			Melder_assert (our which == Stackel_NUMBER);   // check that on this computer, 0 is represented with zero bits only
+			Melder_assert (our number == 0.0);   // check that on this computer, 0.0 is represented with zero bits only
+			Melder_assert (! our string);   // check that on this computer, a plain-old-data null pointer is represented with zero bits only
+			Melder_assert (! our object);   // check that on this computer, a class null pointer is represented with zero bits only
+			Melder_assert (! our owned);   // check that on this computer, false is represented with zero bits only
+		}
+		~structStackel () {   // union-safe destruction: test which variant we have
+			if (our which == Stackel_STRING) {
+				our string. ~ autostring32();
+			}
+		}
+		structStackel& operator= (structStackel&& other) noexcept {   // generalized move assignment
+			if (& other != this) {
+				our ~ structStackel();
+				memmove (this, & other, sizeof (structStackel));   // union-safe: even our biggest variant is bit-copied entirely
+				memset (& other, 0, sizeof (structStackel));   // union-safe: even the biggest variant in `other` is erased
+			}
+			return *this;
+		}
+	#endif
 } *Stackel;
 conststring32 Stackel_whichText (Stackel me);
 

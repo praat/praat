@@ -605,7 +605,7 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to,
 			search, replace, 0, nmatches, nstringmatches, use_regexp);
 		for (integer i = from; i <= to; i ++) {
 			TextInterval interval = my intervals.at [i];
-			interval -> text = std::move (newLabels [i - offset]);
+			interval -> text = newLabels [i - offset].move();
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": labels not changed.");
@@ -634,7 +634,7 @@ void TextTier_changeLabels (TextTier me, integer from, integer to,
 			search, replace, 0, nmatches, nstringmatches, use_regexp);
 		for (integer i = from; i <= to; i ++) {
 			TextPoint point = my points.at [i];
-			point -> mark = std::move (newMarks [i - offset]);
+			point -> mark = newMarks [i - offset].move();
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": no labels changed.");

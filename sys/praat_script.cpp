@@ -111,7 +111,7 @@ Editor praat_findEditorById (integer id) {
 	Melder_throw (U"Editor ", id, U" does not exist.");
 }
 
-static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *arguments, structStackel args []) {
+static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *arguments, structStackel *args) {
 	int narg = 0, depth = 0;
 	for (char32 *p = arguments; ; p ++) {
 		bool endOfArguments = *p == U'\0';
@@ -139,6 +139,9 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 					//if (args [narg]. owned) args [narg].numericMatrix.reset();   // we don't own this; the form's autonummat does, after UiField_argToValue()
 				} break;
 			}
+			#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
+				memset (& args [narg], 0, sizeof (structStackel));
+			#endif
 			/*
 				Then copy in the new contents.
 			*/
@@ -149,13 +152,13 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 				} break;
 				case kFormula_EXPRESSION_TYPE_STRING: {
 					args [narg]. which = Stackel_STRING;
-					//args [narg]. string = result. stringResult.move();   // TODO: explain why this is allowed
-					args [narg]. string = Melder_dup (result. stringResult.get());   // TODO: or why this is needed
+					Melder_assert (! args [narg]. string);
+					args [narg]. string = result. stringResult.move();   // TODO: explain why we own this
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 					args [narg]. which = Stackel_NUMERIC_VECTOR;
 					args [narg]. numericVector = result. numericVectorResult;
-					args [narg]. owned = result. owned;   // 
+					args [narg]. owned = result. owned;
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
 					args [narg]. which = Stackel_NUMERIC_MATRIX;
@@ -332,8 +335,8 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			while (*p == U' ' || *p == U'\t') p ++;
 			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < programName + 39)
 				*q ++ = *p ++;
-			*q = '\0';
-			if (q == programName)
+			*q = U'\0';
+			if (q == & programName [0])
 				Melder_throw (U"Missing program name after `sendpraat'.");
 			while (*p == U' ' || *p == U'\t') p ++;
 			if (*p == U'\0')

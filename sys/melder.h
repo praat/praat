@@ -235,9 +235,13 @@ template <class T>
 class _autostring {
 	T *ptr;
 public:
+	#if 1
 	_autostring () : ptr (nullptr) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
 	}
+	#else
+	_autostring () = default;   // explicit default, so that it can be used in a union
+	#endif
 	_autostring (integer length, bool f = false) {
 		our ptr = ( f ? Melder_malloc_f (T, length + 1) : Melder_malloc (T, length + 1) );
 		our ptr [0] = '\0';
@@ -273,21 +277,13 @@ public:
 	void reset () {
 		if (our ptr) Melder_free (our ptr);
 	}
-	#if 0
-	void reset (integer length, bool f = false) {
-		if (our ptr) Melder_free (our ptr);
-		our ptr = ( f ? Melder_malloc_f (T, length + 1) : Melder_malloc (T, length + 1) );
-		our ptr [0] = '\0';
-		our ptr [length] = '\0';
-	}
-	#endif
 	void resize (int64 newLength) {
 		T *tmp = (T *) Melder_realloc (our ptr, (newLength + 1) * (int64) sizeof (T));
 		our ptr = tmp;
 		our ptr [newLength] = '\0';
 	}
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
-	//_autostring (_autostring &) = delete;   // disable copy constructor (temporarily, until all new-string-returning functions return an autostring)
+	_autostring (_autostring &) = delete;   // disable copy constructor
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
 	explicit operator bool () const { return !! our ptr; }
 	/*

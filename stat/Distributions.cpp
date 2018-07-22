@@ -110,7 +110,7 @@ static void unicize (Distributions me) {
 				Move row 'ifrom' to 'nrow'. May be the same row.
 			*/
 			if (ifrom != nrow) {
-				my rowLabels [nrow] = std::move (my rowLabels [ifrom]);
+				my rowLabels [nrow] = my rowLabels [ifrom].move();
 				for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 					my data [nrow] [icol] = my data [ifrom] [icol];
 			}

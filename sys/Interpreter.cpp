@@ -521,7 +521,7 @@ void Interpreter_getArgumentsFromString (Interpreter me, conststring32 arguments
 void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
 	trace (narg, U" arguments");
 	int size = my numberOfParameters;
-	while (size >= 1 && my parameters [size] [0] == '\0')
+	while (size >= 1 && my parameters [size] [0] == U'\0')
 		size --;   // ignore trailing fields without a variable name (button, comment)
 	for (int ipar = 1; ipar <= size; ipar ++) {
 		mutablestring32 p = my parameters [ipar];
@@ -1935,7 +1935,6 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									MelderString_append (& indexedVariableName, numericIndexValue);
 								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
 									MelderString_append (& indexedVariableName, U"\"", result. stringResult.get(), U"\"");
-									result. stringResult. reset();
 								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == U']') {
@@ -2311,13 +2310,13 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (! Melder_staysWithinLine (*p))
 									Melder_throw (U"Missing closing bracket (]) in indexed variable.");
 								Formula_Result result;
+								Melder_assert (! result. stringResult);
 								Interpreter_anyExpression (me, index.string, & result);
 								if (result.expressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
 									double numericIndexValue = result. numericResult;
 									MelderString_append (& indexedVariableName, numericIndexValue);
 								} else if (result.expressionType == kFormula_EXPRESSION_TYPE_STRING) {
 									MelderString_append (& indexedVariableName, U"\"", result. stringResult.get(), U"\"");
-									Melder_free (result. stringResult);
 								}
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == U']')

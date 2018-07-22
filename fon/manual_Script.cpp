@@ -2490,7 +2490,7 @@ if left$ (fileName$) <> "/"
 endif
 */
 
-MAN_BEGIN (U"Scripting 5.2. Expressions", U"ppgb", 20140111)
+MAN_BEGIN (U"Scripting 5.2. Expressions", U"ppgb", 20180721)
 INTRO (U"In a Praat script, you can use numeric expressions as well as string expressions.")
 ENTRY (U"Numeric expressions")
 NORMAL (U"You can use a large variety of @@Formulas@ in your script:")
@@ -2513,10 +2513,6 @@ CODE (U"Draw line: 0, if answer\\$  = \"yes\" then 20 else 30 fi, 0, 100")
 NORMAL (U"You can use numeric and string variables and formulas in string arguments to commands:")
 CODE (U"Text top: \"yes\", \"Hi \" + addressee\\$  + \"!\"")
 CODE (U"Text top: \"yes\", left\\$  (fileName\\$ , index (fileName\\$ , \".\") - 1)")
-NORMAL (U"The two examples from the end of @@Scripting 3.5. String queries|\\SS3.5@ could be abbreviated as the one-liners")
-CODE (U"writeInfoLine: do\\$  (\"Get power...\", 0.0, 0.0)")
-NORMAL (U"and")
-CODE (U"writeInfoLine: do (\"Get power...\", 0.0, 0.0)")
 ENTRY (U"Assignments from query commands")
 NORMAL (U"On how to get information from commands that normally write to the Info window, "
 	"see @@Scripting 6.3. Query commands@.")
