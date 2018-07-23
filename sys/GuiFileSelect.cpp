@@ -38,7 +38,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *infolderName_utf8 = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (dialog));
 			if (infolderName_utf8) {
-				char32 *infolderName = Melder_peek8to32 (infolderName_utf8);   // dangle
+				const char32 *infolderName = Melder_peek8to32 (infolderName_utf8);   // dangle
 				Melder_pathToDir (infolderName, & dir);
 				g_free (infolderName_utf8);
 			}
