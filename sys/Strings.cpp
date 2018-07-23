@@ -289,7 +289,7 @@ void Strings_randomize (Strings me) {
 }
 
 void Strings_genericize (Strings me) {
-	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) * 3 + 1);
+	autostring32 buffer (Strings_maximumLength (me) * 3);
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		const conststring32 string = my strings [i].get();
 		const char32 *p = & string [0];
@@ -305,7 +305,7 @@ void Strings_genericize (Strings me) {
 }
 
 void Strings_nativize (Strings me) {
-	autostring32 buffer = Melder_calloc (char32, Strings_maximumLength (me) + 1);
+	autostring32 buffer = (Strings_maximumLength (me));
 	for (integer i = 1; i <= my numberOfStrings; i ++) {
 		Longchar_nativize32 (my strings [i].get(), buffer.get(), false);
 		my strings [i] = Melder_dup (buffer.get());
@@ -317,30 +317,27 @@ void Strings_sort (Strings me) {
 }
 
 void Strings_remove (Strings me, integer position) {
-	if (position < 1 || position > my numberOfStrings) {
+	if (position < 1 || position > my numberOfStrings)
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
-	}
-	for (integer i = position; i < my numberOfStrings; i ++) {
-		my strings [i] = std::move (my strings [i + 1]);
-	}
+	for (integer i = position; i < my numberOfStrings; i ++)
+		my strings [i] = my strings [i + 1]. move();
 	my strings [my numberOfStrings]. reset();
 	my numberOfStrings --;
 }
 
 void Strings_replace (Strings me, integer position, conststring32 text) {
-	if (position < 1 || position > my numberOfStrings) {
+	if (position < 1 || position > my numberOfStrings)
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
-	}
 	if (Melder_equ (my strings [position].get(), text))
 		return;   // nothing to change
 	/*
-	 * Create without change.
-	 */
+		Create without change.
+	*/
 	autostring32 newString = Melder_dup (text);
 	/*
-	 * Change without error.
-	 */
-	my strings [position] = std::move (newString);
+		Change without error.
+	*/
+	my strings [position] = newString. move();
 }
 
 void Strings_insert (Strings me, integer position, conststring32 text) {
@@ -350,21 +347,19 @@ void Strings_insert (Strings me, integer position, conststring32 text) {
 		Melder_throw (U"You supplied a position of ", position, U", but for this string it should be in the range [1, ", my numberOfStrings, U"].");
 	}
 	/*
-	 * Create without change.
-	 */
+		Create without change.
+	*/
 	autostring32 newString = Melder_dup (text);
 	autostring32vector newStrings (my numberOfStrings + 1);
 	/*
-	 * Change without error.
-	 */
-	for (integer i = 1; i < position; i ++) {
-		newStrings [i] = std::move (my strings [i]);
-	}
-	newStrings [position] = std::move (newString);
+		Change without error.
+	*/
+	for (integer i = 1; i < position; i ++)
+		newStrings [i] = my strings [i]. move();
+	newStrings [position] = newString. move();
 	my numberOfStrings ++;
-	for (integer i = position + 1; i <= my numberOfStrings; i ++) {
-		newStrings [i] = std::move (my strings [i - 1]);
-	}
+	for (integer i = position + 1; i <= my numberOfStrings; i ++)
+		newStrings [i] = my strings [i - 1]. move();
 	my strings = std::move (newStrings);
 }
 

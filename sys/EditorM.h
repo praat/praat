@@ -132,7 +132,7 @@ _form_inited_: \
 
 
 #define WORD_VARIABLE(stringVariable) \
-	static char32 *stringVariable;
+	static conststring32 stringVariable;
 
 #define WORD_FIELD(stringVariable, labelText, defaultStringValue) \
 	UiForm_addWord (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
@@ -143,7 +143,7 @@ _form_inited_: \
 
 
 #define SENTENCE_VARIABLE(stringVariable) \
-	static char32 *stringVariable;
+	static conststring32 stringVariable;
 
 #define SENTENCE_FIELD(stringVariable, labelText, defaultStringValue) \
 	UiForm_addSentence (cmd -> d_uiform.get(), & stringVariable, nullptr, labelText, defaultStringValue);
@@ -191,7 +191,7 @@ _form_inited_: \
 
 
 #define MUTABLE_LABEL_VARIABLE(stringVariable) \
-	static char32 *stringVariable;
+	static conststring32 stringVariable;
 
 #define MUTABLE_LABEL_FIELD(stringVariable, labelText) \
 	UiForm_addLabel (cmd -> d_uiform.get(), & stringVariable, labelText);
@@ -202,7 +202,7 @@ _form_inited_: \
 
 
 #define TEXTFIELD_VARIABLE(stringVariable) \
-	static char32 *stringVariable;
+	static conststring32 stringVariable;
 
 #define TEXTFIELD_FIELD(stringVariable, labelText, defaultValue) \
 	if (labelText != nullptr) UiForm_addLabel (cmd -> d_uiform.get(), nullptr, labelText); \
@@ -225,7 +225,7 @@ _form_inited_: \
 
 
 #define RADIOSTR(stringVariable, labelText, defaultValue) \
-	static char32 *stringVariable; \
+	static conststring32 stringVariable; \
 	_radio_ = UiForm_addRadio (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
 
 
@@ -245,7 +245,7 @@ _form_inited_: \
 
 
 #define OPTIONMENUSTR(stringVariable, labelText, defaultValue) \
-	static char32 *stringVariable; \
+	static conststring32 stringVariable; \
 	_radio_ = UiForm_addOptionMenu (cmd -> d_uiform.get(), nullptr, & stringVariable, nullptr, labelText, defaultValue, 1);
 
 
@@ -340,7 +340,7 @@ _form_inited_: \
 			U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \
 		Melder_require (_args_ [1]. which == Stackel_STRING, \
 			U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
-		Melder_relativePathToFile (_args_ [1]. string, & _file2); \
+		Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 		file = & _file2; \
 	} else if (_sendingString_) { \
 		Melder_relativePathToFile (_sendingString_, & _file2); \
@@ -361,7 +361,7 @@ _form_inited_: \
 			U"Command requires exactly 1 argument, the name of the file to read, instead of the given ", _narg_, U" arguments."); \
 		Melder_require (_args_ [1]. which == Stackel_STRING, \
 			U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
-		Melder_relativePathToFile (_args_ [1]. string, & _file2); \
+		Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 		file = & _file2; \
 	} else if (_sendingString_) { \
 		Melder_relativePathToFile (_sendingString_, & _file2); \

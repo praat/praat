@@ -18,7 +18,7 @@
 
 /*
  djmw 20020812 GPL header
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
 */
 
 #include "SimpleVector.h"
@@ -45,7 +45,8 @@
 Thing_implement (DoubleVector, Daata, 0);
 
 void DoubleVector_init (DoubleVector me, integer min, integer max) {
-	my min = min; my max = max;
+	my min = min;
+	my max = max;
 	my v = NUMvector<double> (min, max);
 }
 
@@ -62,7 +63,8 @@ autoDoubleVector DoubleVector_create (integer min, integer max) {
 Thing_implement (ComplexVector, Daata, 0);
 
 void ComplexVector_init (ComplexVector me, integer min, integer max) {
-	my min = min; my max = max;
+	my min = min;
+	my max = max;
 	my v = NUMvector<dcomplex> (min, max);
 }
 

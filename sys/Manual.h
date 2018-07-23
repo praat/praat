@@ -29,7 +29,7 @@ Thing_define (Manual, HyperPage) {
 	int numberOfMatches;
 	integer matches [1 + 20], fromPage, toPage;
 	int suppressLinksHither;
-	char32 *printPagesStartingWith;
+	conststring32 printPagesStartingWith;
 
 	bool v_scriptable ()
 		override { return false; }

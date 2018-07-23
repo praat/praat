@@ -50,15 +50,12 @@ void MFCC_lifter (MFCC me, integer lifter) {
 	try {
 		Melder_assert (lifter > 0);
 		autoNUMvector<double> c (1, my maximumNumberOfCoefficients);
-		for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++) {
+		for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
 			c [i] = (1 + lifter / 2 * sin (NUMpi * i / lifter));
-		}
-
 		for (integer frame = 1; frame <= my nx; frame ++) {
-			CC_Frame cf = (CC_Frame) & my frame [frame];
-			for (integer i = 1; i <= cf -> numberOfCoefficients; i ++) {
+			CC_Frame cf = & my frame [frame];
+			for (integer i = 1; i <= cf -> numberOfCoefficients; i ++)
 				cf -> c [i] *= c [i];
-			}
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not lifted.");
@@ -69,18 +66,15 @@ autoTableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
 	try {
 		integer numberOfColumns = my maximumNumberOfCoefficients + (includeC0 ? 1 : 0);
 		autoTableOfReal thee = TableOfReal_create (my nx, numberOfColumns);
-		for (integer i = 1; i <= numberOfColumns; i ++) {
+		for (integer i = 1; i <= numberOfColumns; i ++)
 			TableOfReal_setColumnLabel (thee.get(), i, Melder_cat (U"c", includeC0 ? i - 1 : i));
-		}
 		integer offset = includeC0 ? 1 : 0;
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			CC_Frame cf = (CC_Frame) & my frame [iframe];
-			for (integer j = 1; j <= cf -> numberOfCoefficients; j ++) {
+			CC_Frame cf = & my frame [iframe];
+			for (integer j = 1; j <= cf -> numberOfCoefficients; j ++)
 				thy data [iframe] [j + offset] = cf -> c [j];
-			}
-			if (includeC0) {
+			if (includeC0)
 				thy data [iframe] [1] = cf -> c0;
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -93,10 +87,9 @@ autoSound MFCC_to_Sound (MFCC me) {
 	try {
 		autoSound thee = Sound_create (my maximumNumberOfCoefficients, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			CC_Frame cf = (CC_Frame) & my frame [iframe];
-			for (integer j = 1; j <= my maximumNumberOfCoefficients; j ++) {
+			CC_Frame cf = & my frame [iframe];
+			for (integer j = 1; j <= my maximumNumberOfCoefficients; j ++)
 				thy z [j] [iframe] = cf -> c [j];
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -106,12 +99,10 @@ autoSound MFCC_to_Sound (MFCC me) {
 
 autoSound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
-		if (my dx != thy dx) {
+		if (my dx != thy dx)
 			Melder_throw (U"The samplings of the two MFCC's have to be equal.");
-		}
-		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
+		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients)
 			Melder_throw (U"The number of coefficients in the two MFCC's have to be equal.");
-		}
 		autoSound target = MFCC_to_Sound (me);
 		autoSound source = MFCC_to_Sound (thee);
 		autoSound cc = Sounds_crossCorrelate (target.get(), source.get(), scaling, signalOutsideTimeDomain);
@@ -123,7 +114,8 @@ autoSound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scalin
 
 autoSound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
 	try {
-		Melder_require (my dx == thy dx, U"The samplings of the two MFCC's have to be equal.");
+		Melder_require (my dx == thy dx,
+			U"The samplings of the two MFCC's should be equal.");
 		Melder_require (my maximumNumberOfCoefficients == thy maximumNumberOfCoefficients,
 			U"The number of coefficients in the two MFCC's should be equal.");
 		autoSound target = MFCC_to_Sound (me);
@@ -157,34 +149,34 @@ autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEn
 	try {
 		integer nw = Melder_ifloor (windowLength / my dx / 2.0);
 		autoMelSpectrogram him = MFCC_to_MelSpectrogram (me, 0, 0, 1);
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 4, 4, 1, 1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 4.0, 4, 1.0, 1.0);
 		thy z [1] [1] = thy z [1] [my nx] = 0;  // first & last frame
 		for (integer iframe = 2; iframe <= my nx - 1; iframe ++) {
-			CC_Frame cfi = (CC_Frame) & my frame [iframe];
+			CC_Frame cfi = & my frame [iframe];
 			// 1. cepstral difference
-			integer nwi = iframe > nw ? nw : iframe - 1;
-			nwi = iframe < my nx - nwi ? nwi : my nx - iframe;
-			double numer = 0;
-			for (integer j = 1; j <= nwi; j ++) {
-				numer += j * j;
-			}
-			numer *= 2;
-			double dsq = 0;
+			integer nwi = ( iframe > nw ? nw : iframe - 1 );
+			if (nwi > my nx - iframe)
+				nwi = my nx - iframe;
+			double numer = 0.0;
+			for (integer j = 1; j <= nwi; j ++)
+				numer += (double) j * (double) j;
+			numer *= 2.0;
+			double dsq = 0.0;
 			if (includeEnergy) {
-				double sumj = 0;
+				longdouble sumj = 0.0;
 				for (integer j = 1; j <= nwi; j ++) {
-					CC_Frame cfp = (CC_Frame) & my frame [iframe + j];
-					CC_Frame cfm = (CC_Frame) & my frame [iframe - j];
+					CC_Frame cfp = & my frame [iframe + j];
+					CC_Frame cfm = & my frame [iframe - j];
 					sumj += j * (cfp -> c0 - cfm -> c0);
 				}
 				sumj /= numer;
 				dsq += sumj * sumj;
 			}
 			for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++) {
-				double sumj = 0;
+				longdouble sumj = 0.0;
 				for (integer j = 1; j <= nwi; j ++) {
-					CC_Frame cfp = (CC_Frame) & my frame [iframe + j];
-					CC_Frame cfm = (CC_Frame) & my frame [iframe - j];
+					CC_Frame cfp = & my frame [iframe + j];
+					CC_Frame cfm = & my frame [iframe - j];
 					sumj += j * (cfp -> c [j] - cfm -> c [j]);
 				}
 				sumj /= numer;
@@ -193,19 +185,19 @@ autoMatrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEn
 			thy z [1] [iframe] = dsq;
 			
 			// 2: spectral stability (dstab)
-			CC_Frame cfp = (CC_Frame) & my frame [iframe + 1];
-			CC_Frame cfm = (CC_Frame) & my frame [iframe - 1];
+			CC_Frame cfp = & my frame [iframe + 1];
+			CC_Frame cfm = & my frame [iframe - 1];
 			double dim1 = CC_Frames_distance (cfi, cfm, includeEnergy);
 			double dip1 = CC_Frames_distance (cfi, cfp, includeEnergy);
-			thy z [2] [iframe] = (dim1 + dip1) / 2;
+			thy z [2] [iframe] = (dim1 + dip1) / 2.0;
 			
 			// 3: spectral centere of gravity (gs)
-			double msm = 0, sm = 0;
+			longdouble msm = 0.0, sm = 0.0;
 			for (integer j = 1; j <= his ny; j ++) {
 				sm += his z [j] [iframe];
 				msm += j * his z [j] [iframe];
 			}
-			double gs = sm == 0 ? 0 : msm / sm;
+			double gs = ( sm == 0.0 ? 0.0 : (double) (msm / sm) );
 			thy z [3] [iframe] = gs;
 			
 			// 4: stable internal duration

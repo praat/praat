@@ -758,15 +758,13 @@ autoMFCC MelFilter_to_MFCC (MelFilter me, integer numberOfCoefficients) {
 		// 20130220 new interpretation of maximumNumberOfCoefficients necessary for inverse transform 
 		autoMFCC thee = MFCC_create (my xmin, my xmax, my nx, my dx, my x1, my ny - 1, my ymin, my ymax);
 		for (integer frame = 1; frame <= my nx; frame ++) {
-			CC_Frame cf = (CC_Frame) & thy frame [frame];
-			for (integer i = 1; i <= my ny; i ++) {
+			CC_Frame cf = & thy frame [frame];
+			for (integer i = 1; i <= my ny; i ++)
 				x [i] = my z [i] [frame];
-			}
 			NUMcosineTransform (x.peek(), y.peek(), my ny, cosinesTable.peek());
 			CC_Frame_init (cf, numberOfCoefficients);
-			for (integer i = 1; i <= numberOfCoefficients; i ++) {
+			for (integer i = 1; i <= numberOfCoefficients; i ++)
 				cf -> c [i] = y [i + 1];
-			}
 			cf -> c0 = y [1];
 		}
 		return thee;
@@ -783,7 +781,8 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 		autoNUMvector<double> y (1, nf);
 
 		if (first >= last) {
-			first = 0; last = nf - 1;
+			first = 0;
+			last = nf - 1;
 		}
 		Melder_require (first >= 0 && last <= nf, U"MFCC_to_MelFilter: coefficients should be in interval [0,", my maximumNumberOfCoefficients, U"].");
 		
@@ -791,16 +790,14 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1, my fmin, my fmax, nf, df, df);
 
 		for (integer frame = 1; frame <= my nx; frame ++) {
-			CC_Frame cf = (CC_Frame) & my frame [frame];
+			CC_Frame cf = & my frame [frame];
 			integer iend = MIN (last, cf -> numberOfCoefficients);
-			x [1] = first == 0 ? cf -> c0 : 0;
-			for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++) {
+			x [1] = ( first == 0 ? cf -> c0 : 0.0);
+			for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
 				x [i + 1] = i < first || i > iend ? 0 : cf -> c [i];
-			}
 			NUMinverseCosineTransform (x.peek(), y.peek(), nf, cosinesTable.peek());
-			for (integer i = 1; i <= nf; i ++) {
+			for (integer i = 1; i <= nf; i ++)
 				thy z [i] [frame] = y [i];
-			}
 		}
 		return thee;
 	} catch (MelderError) {
@@ -841,20 +838,18 @@ static autoMelFilter MFCC_to_MelFilter2 (MFCC me, integer first_cc, integer last
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1, fmin, fmax, nf, df_mel, f1_mel);
 
 		for (integer frame = 1; frame <= my nx; frame ++) {
-			CC_Frame cf = (CC_Frame) & my frame [frame];
+			CC_Frame cf = & my frame [frame];
 			integer ie = MIN (last_cc, cf -> numberOfCoefficients);
 			for (integer j = 1; j <= nf; j ++) {
 				double t = 0;
-				for (integer i = first_cc; i <= ie; i ++) {
+				for (integer i = first_cc; i <= ie; i ++)
 					t += cf -> c [i] * dct [i] [j];
-				}
 
 				// The inverse CT has a factor 1/N
 
 				t /= nf;
-				if (use_c0) {
+				if (use_c0)
 					t +=  cf -> c0;
-				}
 				thy z [j] [frame] = t;
 			}
 		}

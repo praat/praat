@@ -128,7 +128,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny);
 
 autoCovariance Covariance_create (integer dimension);
 
-autoCovariance Covariance_createSimple (char32 *covars, char32 *centroid, integer numberOfObservations);
+autoCovariance Covariance_createSimple (conststring32 covars, conststring32 centroid, integer numberOfObservations);
 
 autoCovariance Covariance_create_reduceStorage (integer dimension, integer storage);
 /*
@@ -143,7 +143,7 @@ autoCovariance Covariance_create_reduceStorage (integer dimension, integer stora
 
 autoCorrelation Correlation_create (integer dimension);
 
-autoCorrelation Correlation_createSimple (char32 *s_correlations, char32 *s_centroid, integer numberOfObservations);
+autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststring32 s_centroid, integer numberOfObservations);
 
 autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confidenceLevel, integer numberOfTests, int method);
 /*
@@ -163,7 +163,7 @@ void Covariance_getMarginalDensityParameters (Covariance me, double *vector, dou
 
 double Covariance_getMarginalProbabilityAtPosition (Covariance me, double vector[], double x);
 
-double Covariance_getProbabilityAtPosition_string (Covariance me, char32 *xpos);
+double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 xpos);
 
 double Covariance_getProbabilityAtPosition (Covariance me, double x[]);
 /* evaluate the pdf(x,mu,Sigma) at x */

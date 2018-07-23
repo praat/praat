@@ -193,15 +193,9 @@ extern PraatPicture theCurrentPraatPicture;
 char32 *praat_name (int iobject);
 void praat_write_do (UiForm dia, conststring32 extension);
 void praat_new (autoDaata me);
-void praat_new (autoDaata me, Melder_1_ARG);
-void praat_new (autoDaata me, Melder_2_ARGS);
-void praat_new (autoDaata me, Melder_3_ARGS);
-void praat_new (autoDaata me, Melder_4_ARGS);
-void praat_new (autoDaata me, Melder_5_ARGS);
-void praat_new (autoDaata me, Melder_6_ARGS);
-void praat_new (autoDaata me, Melder_7_ARGS);
-void praat_new (autoDaata me, Melder_8_ARGS);
-void praat_new (autoDaata me, Melder_9_ARGS);
+void praat_new (autoDaata me, const MelderArg& arg);
+void praat_new (autoDaata me, const MelderArg& arg1, const MelderArg& arg2,
+	const MelderArg& arg3 = U"", const MelderArg& arg4 = U"", const MelderArg& arg5 = U"");
 void praat_newWithFile (autoDaata me, MelderFile file, conststring32 name);
 void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 
@@ -289,11 +283,11 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		UiForm_addNatural (_dia_, & integerVariable, U"" #integerVariable, labelText, defaultStringValue);
 
 #define WORD(stringVariable, labelText, defaultStringValue)  \
-		static char32 *stringVariable; \
+		static conststring32 stringVariable; \
 		UiForm_addWord (_dia_, & stringVariable, U"" #stringVariable, labelText, defaultStringValue);
 
 #define SENTENCE(stringVariable, labelText, defaultStringValue)  \
-		static char32 *stringVariable; \
+		static conststring32 stringVariable; \
 		UiForm_addSentence (_dia_, & stringVariable, U"" #stringVariable, labelText, defaultStringValue);
 
 #define BOOLEAN(booleanVariable, labelText, defaultBooleanValue)  \
@@ -303,13 +297,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define LABEL(labelText)  UiForm_addLabel (_dia_, nullptr, labelText);
 
 #define MUTABLE_LABEL(stringVariable, labelText) \
-		static char32 *stringVariable; \
+		static conststring32 stringVariable; \
 		UiForm_addLabel (_dia_, & stringVariable, labelText);
 
 #define TEXTFIELD(stringVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_, nullptr, labelText); \
-		static char32 *stringVariable; \
+		static conststring32 stringVariable; \
 		UiForm_addText (_dia_, & stringVariable, U"" #stringVariable, U"", defaultStringValue);
 
 #define NUMVEC(numericVectorVariable, labelText, defaultStringValue)  \
@@ -333,7 +327,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		_radio_ = UiForm_addRadio (_dia_, & intVariable, nullptr, U"" #intVariable, labelText, defaultOptionNumber, base);
 
 #define RADIOSTR(stringVariable, labelText, defaultOptionNumber)  \
-		static char32 *stringVariable; \
+		static conststring32 stringVariable; \
 		_radio_ = UiForm_addRadio (_dia_, nullptr, & stringVariable, U"" #stringVariable, labelText, defaultOptionNumber, 1);
 
 #define RADIOBUTTON(labelText)  \
@@ -348,7 +342,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		_radio_ = UiForm_addOptionMenu (_dia_, & intVariable, nullptr, U"" #intVariable, labelText, defaultOptionNumber, base);
 
 #define OPTIONMENUSTR(stringVariable, labelText, defaultOptionNumber)  \
-		static char32 *stringVariable; \
+		static conststring32 stringVariable; \
 		_radio_ = UiForm_addOptionMenu (_dia_, nullptr, & stringVariable, U"" #stringVariable, labelText, defaultOptionNumber, 1);
 
 #define OPTION(labelText)  \
@@ -502,7 +496,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 						U"Command requires exactly 1 argument, the name of the file to read, instead of the given ", _narg_, U" arguments."); \
 					Melder_require (_args_ [1]. which == Stackel_STRING, \
 						U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
-					Melder_relativePathToFile (_args_ [1]. string, & _file2); \
+					Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 					file = & _file2; \
 				} else if (_sendingString_) { \
 					Melder_relativePathToFile (_sendingString_, & _file2); \
@@ -530,7 +524,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 						U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \
 					Melder_require (_args_ [1]. which == Stackel_STRING, \
 						U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
-					Melder_relativePathToFile (_args_ [1]. string, & _file2); \
+					Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 					file = & _file2; \
 				} else if (_sendingString_) { \
 					Melder_relativePathToFile (_sendingString_, & _file2); \

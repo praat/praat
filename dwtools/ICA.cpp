@@ -695,7 +695,7 @@ autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 	}
 }
 
-autoCrossCorrelationTable CrossCorrelationTable_createSimple (char32 *covars, char32 *centroid, integer numberOfSamples) {
+autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 covars, conststring32 centroid, integer numberOfSamples) {
 	try {
 		integer dimension = Melder_countTokens (centroid);
 		integer ncovars = Melder_countTokens (covars);

@@ -225,7 +225,7 @@ autoStrings Table_column_to_Strings (Table me, integer column) {
 	}
 }
 
-void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *p_languageIndex, int *p_voiceIndex) {
+void espeakdata_getIndices (conststring32 language_string, conststring32 voice_string, int *p_languageIndex, int *p_voiceIndex) {
 	if (p_languageIndex) {
 		integer languageIndex = Strings_findString (espeakdata_languages_names.get(), language_string);
 		if (languageIndex == 0) {
@@ -236,7 +236,7 @@ void espeakdata_getIndices (char32 *language_string, char32 *voice_string, int *
 			} else {
 				languageIndex = Table_searchColumn (espeakdata_languages_propertiesTable.get(), 1, language_string);
 				if (languageIndex == 0) {
-					Melder_throw (U"Language \"",language_string, U" is not a valid option.");
+					Melder_throw (U"Language \"", language_string, U" is not a valid option.");
 				}
 			}
 		}

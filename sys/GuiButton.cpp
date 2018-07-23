@@ -63,7 +63,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Your click on button \"", widget -> name, U"\" was not completely handled.");
+				Melder_flushError (U"Your click on button \"", widget -> name.get(), U"\" was not completely handled.");
 			}
 		}
 	}
@@ -74,7 +74,7 @@ Thing_implement (GuiButton, GuiControl, 0);
 			try {
 				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Your key click on button \"", widget -> name, U"\" was not completely handled.");
+				Melder_flushError (U"Your key click on button \"", widget -> name.get(), U"\" was not completely handled.");
 			}
 			return true;
 		}
@@ -141,7 +141,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 	#elif motif
 		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me.get());
-		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name)),
+		my d_widget -> window = CreateWindow (L"button", Melder_peek32toW (_GuiWin_expandAmpersands (my d_widget -> name.get())),
 			WS_CHILD
 			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
 			| WS_CLIPSIBLINGS,
@@ -206,7 +206,6 @@ void GuiButton_setText (GuiButton me, conststring32 text /* cattable */) {
 	#if gtk
 		gtk_button_set_label (GTK_BUTTON (my d_widget), Melder_peek32to8 (text));
 	#elif motif
-		Melder_free (my d_widget -> name);
 		my d_widget -> name = Melder_dup_f (text);
 		_GuiNativeControl_setTitle (my d_widget);
 	#elif cocoa

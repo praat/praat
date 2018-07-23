@@ -48,13 +48,6 @@ autoStrings Strings_change (Strings me, conststring32 search, conststring32 repl
 
 autoStrings strings_to_Strings (char32 **strings, integer from, integer to);
 
-// If the Strings is only an intermediate object to achieve other goals, use the following two routines to avoid copying.
-autoStrings strings_to_Strings_link (char32** strings, integer n);
-// for (i=1; i<= n; i++) my strings[i] = strings[i];
-
-void Strings_unlink (Strings me);
-// for (i=1; i<= my numberOfStrings; i++) my strings[i] = nullptr;
-
 autoStrings Strings_extractPart (Strings me, integer start, integer end);
 
 autoStringsIndex Strings_to_StringsIndex (Strings me);

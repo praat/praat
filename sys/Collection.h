@@ -68,7 +68,7 @@ struct CollectionOf : structDaata {
 	CollectionOf () {
 		extern ClassInfo classCollection;
 		our classInfo = classCollection;
-		our name = nullptr;
+		our name. reset();
 	}
 	virtual ~ CollectionOf () {
 		/*

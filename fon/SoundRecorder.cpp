@@ -104,11 +104,11 @@ static void win_fillHeader (SoundRecorder me, int which) {
 	my waveHeader [which]. reserved = 0;
 }
 static void win_waveInCheck (SoundRecorder me) {
-	char32 messageText [MAXERRORLENGTH];
+	wchar_t messageText [MAXERRORLENGTH];
 	MMRESULT err;
 	if (my err == MMSYSERR_NOERROR) return;
-	err = waveInGetErrorText (my err, Melder_32toW (messageText), MAXERRORLENGTH);
-	if (err == MMSYSERR_NOERROR) Melder_throw (messageText);
+	err = waveInGetErrorText (my err, messageText, MAXERRORLENGTH);
+	if (err == MMSYSERR_NOERROR) Melder_throw (Melder_peekWto32 (messageText));
 	else if (err == MMSYSERR_BADERRNUM) Melder_throw (U"Error number ", my err, U" out of range.");
 	else if (err == MMSYSERR_NODRIVER) Melder_throw (U"No sound driver present.");
 	else if (err == MMSYSERR_NOMEM) Melder_throw (U"Out of memory.");

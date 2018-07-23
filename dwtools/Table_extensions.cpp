@@ -4542,10 +4542,8 @@ autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter i
 	try {
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
 		autoTable thee = Table_create (0, my numberOfColumns);
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			autostring32 newLabel = Melder_dup (my columnHeaders [icol]. label.get());
-			thy columnHeaders [icol]. label = newLabel.transfer();
-		}
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			Formula_Result result;
 			Formula_run (irow, 1, & result);
@@ -4555,9 +4553,8 @@ autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter i
 				thy rows. addItem_move (newRow.move());
 			}
 		}
-		if (thy rows.size == 0) {
+		if (thy rows.size == 0)
 			Melder_warning (U"No row matches criterion.");
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Table could be extracted.");
@@ -4583,9 +4580,8 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me,
 				TableOfReal_setRowLabel (thee.get(), i, label);
 			}
 		}
-		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
+		for (integer icol = 1; icol <= numberOfColumns; icol ++)
 			TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [columnIndex [icol]]. label.get());
-		}
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"No TableOfReal created from Table.");
@@ -4606,9 +4602,8 @@ static autoSSCPList Table_to_SSCPList_where (Table me,
 
 static integer SSCPList_findIndexOfGroupLabel (SSCPList me, conststring32 label) {
 	for (integer i = 1; i <= my size; i ++) {
-		if (Melder_equ (Thing_getName (my at [i]), label)) {
+		if (Melder_equ (Thing_getName (my at [i]), label))
 			return i;
-		}
 	}
 	return 0;
 }
@@ -4626,14 +4621,11 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		autoNUMvector <integer> columnIndex (1, numberOfColumns);
 		autoNUMvector <double> vector (1, numberOfColumns);
 		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
-		for (integer icol = 1; icol <= numberOfColumns; icol ++) {
+		for (integer icol = 1; icol <= numberOfColumns; icol ++)
 			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get());   // throw if not present
-		}
 		autoTable him = Table_create (0, my numberOfColumns);
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			autostring32 newLabel = Melder_dup (my columnHeaders [icol]. label.get());
-			his columnHeaders [icol].label = newLabel.transfer();
-		}
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+			his columnHeaders [icol].label = Melder_dup (my columnHeaders [icol]. label.get());
 		OrderedOf<structCovariance> covs;
 		for (integer igroup = 1; igroup <= numberOfGroups; igroup ++) {
 			autoCovariance cov = SSCP_to_Covariance (thy at [igroup], 1);
@@ -4646,14 +4638,12 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			if (factorColIndex > 0) {
 				conststring32 label = Table_getStringValue_Assert (me, irow, factorColIndex);
 				igroup = SSCPList_findIndexOfGroupLabel (thee, label);
-				if (igroup == 0) {
+				if (igroup == 0)
 					Melder_throw (U"The label \"", label, U"\" in row ", irow, U" is not valid in this context.");
-				}
 			}
 			Covariance covi = covs.at [igroup];
-			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
+			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				vector [icol] = Table_getNumericValue_Assert (me, irow, columnIndex [icol]);
-			}
 			double dm2 = NUMmahalanobisDistance_chi (covi -> lowerCholesky, vector.peek(), covi -> centroid, numberOfColumns, numberOfColumns);
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which, numberOfSigmas)) {
 				TableRow row = my rows.at [irow];
@@ -4699,17 +4689,15 @@ void Table_drawEllipsesWhere (Table me, Graphics g,
 		}
 		autoSSCPList him = TableOfReal_to_SSCPList_byLabel (thee.get());
 		bool confidence = false;
-		if (ymax == ymin) { // autoscaling
+		if (ymax == ymin)   // autoscaling
 			SSCPList_getEllipsesBoundingBoxCoordinates (him.get(), numberOfSigmas, confidence, & xmin, & xmax, & ymin, & ymax);
-		}
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		for (integer i = 1; i <= his size; i ++) {
 			SSCP sscpi = his at [i];
 			double scalei = SSCP_getEllipseScalefactor (sscpi, numberOfSigmas, confidence);
-			if (scalei > 0) {
+			if (scalei > 0)
 				SSCP_drawTwoDimensionalEllipse_inside (sscpi, g, scalei, Thing_getName (sscpi), labelSize);
-			}
 		}
 		Graphics_unsetInner (g);
 
@@ -4717,12 +4705,10 @@ void Table_drawEllipsesWhere (Table me, Graphics g,
 			Graphics_drawInnerBox (g);
 			Graphics_marksBottom (g, 2, true, true, false);
 			Graphics_marksLeft (g, 2, true, true, false);
-			if (my columnHeaders [xcolumn]. label) {
+			if (my columnHeaders [xcolumn]. label)
 				Graphics_textBottom (g, true, my columnHeaders [xcolumn]. label.get());
-			}
-			if (my columnHeaders [ycolumn]. label) {
+			if (my columnHeaders [ycolumn]. label)
 				Graphics_textLeft (g, true, my columnHeaders [ycolumn]. label.get());
-			}
 		}
 	} catch (MelderError) {
 		Melder_clearError ();   // drawing errors shall be ignored
@@ -4734,9 +4720,8 @@ autoTable Table_extractColumnRanges (Table me, conststring32 ranges) {
 		integer numberOfSelectedColumns, numberOfRows = my rows.size;
 		autoNUMvector <integer> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);
 		autoTable thee = Table_createWithoutColumnNames (numberOfRows, numberOfSelectedColumns); 
-		for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
+		for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++)
 			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnRanges [icol]));
-		}
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			//TableRow row = thy rows -> items [irow];
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {

@@ -599,7 +599,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 			return;
 		#elif gdi
 			int font = lc -> font.integer_;
-			WCHAR *codesW = Melder_peek32toW (codes);
+			conststringW codesW = Melder_peek32toW (codes);
 			if (my duringXor) {
 				int descent = (1.0/216) * my fontSize * my resolution;
 				int ascent = (1.0/72) * my fontSize * my resolution;
@@ -622,7 +622,7 @@ static void charDraw (void *void_me, int xDC, int yDC, _Graphics_widechar *lc,
 				Rectangle (dc, 0, top, width, bottom);
 				SelectFont (dc, fonts [(int) my resolutionNumber] [font] [lc -> size] [lc -> style]);
 				SetTextColor (dc, my d_winForegroundColour);
-				TextOutW (dc, 0, baseline, codesW, str16len ((const char16 *) codesW));
+				TextOutW (dc, 0, baseline, codesW, str16len ((conststring16) codesW));
 				BitBlt (my d_gdiGraphicsContext, xDC, yDC - ascent, width, bottom - top, dc, 0, top, SRCINVERT);
 				return;
 			}
@@ -1215,13 +1215,14 @@ static void drawCells (Graphics me, double xWC, double yWC, _Graphics_widechar l
 		charSizes (me, plc, false);
 		drawOneCell (me, xWC * my scaleX + my deltaX, yWC * my scaleY + my deltaY, plc);
 		while (plc -> kar != U'\0' && plc -> kar != U'\t') plc ++;   // find end of cell
-		if (plc -> kar == U'\0') break;   // end of text?
+		if (plc -> kar == U'\0')   // end of text?
+			break;
 		if (plc -> kar == U'\t') {   // go to next cell
 			xWC += ( tabs [itab]. alignment == Graphics_LEFT ? tabs [itab]. width :
-			       tabs [itab]. alignment == Graphics_CENTRE ? 0.5 * tabs [itab]. width : 0 ) * my fontSize / 12.0;
+				tabs [itab]. alignment == Graphics_CENTRE ? 0.5 * tabs [itab]. width : 0 ) * my fontSize / 12.0;
 			itab ++;
 			xWC += ( tabs [itab]. alignment == Graphics_LEFT ? 0 :
-			       tabs [itab]. alignment == Graphics_CENTRE ? 0.5 * tabs [itab]. width : tabs [itab]. width ) * my fontSize / 12.0;
+				tabs [itab]. alignment == Graphics_CENTRE ? 0.5 * tabs [itab]. width : tabs [itab]. width ) * my fontSize / 12.0;
 			my horizontalTextAlignment = (int) tabs [itab]. alignment;
 			my wrapWidth = tabs [itab]. width * my fontSize / 12.0;
 		}
@@ -1502,7 +1503,7 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 	exitText (me);
 }
 
-static void _Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
+void Graphics_text (Graphics me, double xWC, double yWC, conststring32 txt) {
 	if (my wrapWidth == 0.0 && str32chr (txt, U'\n') && my textRotation == 0.0) {
 		double lineSpacingWC = (1.2/72.0) * my fontSize * my resolution / fabs (my scaleY);
 		integer numberOfLines = 1;
@@ -1540,64 +1541,6 @@ static void _Graphics_text (Graphics me, double xWC, double yWC, conststring32 t
 		int length = strlen (txt_utf8) / sizeof (double) + 1;
 		op (TEXT, 3 + length); put (xWC); put (yWC); sput (txt_utf8, length)
 	}
-}
-
-static MelderString theGraphicsTextBuffer { };
-void Graphics_text (Graphics me, double x, double y, Melder_1_ARG) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_1_ARG_CALL);   // even in the one-argument case, make a copy because s1 may be a temporary string (Melder_integer or so)
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_2_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_2_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_3_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_3_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_4_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_4_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_5_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_5_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_6_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_6_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_7_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_7_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_8_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_8_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_9_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_9_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_10_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_10_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_11_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_11_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_13_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_13_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_15_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_15_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
-}
-void Graphics_text (Graphics me, double x, double y, Melder_19_ARGS) {
-	MelderString_copy (& theGraphicsTextBuffer, Melder_19_ARGS_CALL);
-	_Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 
 double Graphics_inqTextX (Graphics me) { return my textX; }

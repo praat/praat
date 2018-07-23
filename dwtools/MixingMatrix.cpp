@@ -31,7 +31,7 @@ autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer nu
 	}
 }
 
-autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, char32 *elements) {
+autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, conststring32 elements) {
 	try {
 		integer inum = 1, ntokens = Melder_countTokens (elements);
 		if (ntokens == 0) {

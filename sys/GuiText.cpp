@@ -714,7 +714,7 @@ autostring32 GuiText_getSelection (GuiText me) {
 			gtk_editable_get_selection_bounds (GTK_EDITABLE (my d_widget), & start, & end);
 			if (end > start) {   // at least one character selected?
 				gchar *text = gtk_editable_get_chars (GTK_EDITABLE (my d_widget), start, end);
-				char32 *result = Melder_8to32 (text);
+				autostring32 result = Melder_8to32 (text);
 				g_free (text);
 				return result;
 			}
@@ -724,7 +724,7 @@ autostring32 GuiText_getSelection (GuiText me) {
 				GtkTextIter start, end;
 				gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
 				gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, true);
-				char32 *result = Melder_8to32 (text);
+				autostring32 result = Melder_8to32 (text);
 				g_free (text);
 				return result;
 			}
@@ -734,19 +734,19 @@ autostring32 GuiText_getSelection (GuiText me) {
 		(void) NativeText_getSelectionRange (my d_widget, & startW, & endW);
 		if (endW > startW) {   // at least one character selected?
 			/*
-			 * Get all text.
-			 */
+				Get all text.
+			*/
 			integer lengthW = NativeText_getLength (my d_widget);   // in UTF-16 code units
 			WCHAR *bufferW = Melder_malloc_f (WCHAR, lengthW + 1);
 			GetWindowTextW (my d_widget -> window, bufferW, lengthW + 1);
 			/*
-			 * Zoom in on selection.
-			 */
+				Zoom in on selection.
+			*/
 			lengthW = endW - startW;
 			memmove (bufferW, bufferW + startW, lengthW * sizeof (WCHAR));   // not because of realloc, but because of free!
 			bufferW [lengthW] = U'\0';
-			char32 *result = Melder_dup_f (Melder_peekWto32 (bufferW));
-			(void) Melder_killReturns_inplace (result);   // AFTER zooming!
+			autostring32 result = Melder_dup_f (Melder_peekWto32 (bufferW));
+			(void) Melder_killReturns_inplace (result.get());   // AFTER zooming!
 			return result;
 		}
 	#elif cocoa
@@ -754,14 +754,14 @@ autostring32 GuiText_getSelection (GuiText me) {
 		autostring32 selection = GuiText_getStringAndSelectionPosition (me, & start, & end);
 		integer length = end - start;
 		if (length > 0) {
-			char32 *result = Melder_malloc_f (char32, length + 1);
-			memcpy (result, & selection [start], integer_to_uinteger (length) * sizeof (char32));
+			autostring32 result (length, true);
+			memcpy (result.get(), & selection [start], integer_to_uinteger (length) * sizeof (char32));
 			result [length] = U'\0';
-			(void) Melder_killReturns_inplace (result);
+			(void) Melder_killReturns_inplace (result.get());
 			return result;
 		}
 	#endif
-	return nullptr;   // zero characters selected
+	return autostring32();   // zero characters selected
 }
 
 autostring32 GuiText_getString (GuiText me) {
@@ -783,38 +783,41 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 			gtk_text_buffer_get_start_iter (textBuffer, & start);
 			gtk_text_buffer_get_end_iter (textBuffer, & end);
 			gchar *text = gtk_text_buffer_get_text (textBuffer, & start, & end, true);   // TODO: Hidden chars ook maar doen he?
-			char32 *result = Melder_8to32 (text);
+			autostring32 result = Melder_8to32 (text);
 			g_free (text);
 			gtk_text_buffer_get_selection_bounds (textBuffer, & start, & end);
 			*first = gtk_text_iter_get_offset (& start);
 			*last = gtk_text_iter_get_offset (& end);
 			return result;
 		}
-		return nullptr;
+		return autostring32();
 	#elif motif
 		integer lengthW = NativeText_getLength (my d_widget);
-		WCHAR *bufferW = Melder_malloc_f (WCHAR, lengthW + 1);
-		GetWindowTextW (my d_widget -> window, bufferW, lengthW + 1);
+		autostringW bufferW (lengthW , true);
+		GetWindowTextW (my d_widget -> window, bufferW.get(), lengthW + 1);
 		integer firstW, lastW;
 		(void) NativeText_getSelectionRange (my d_widget, & firstW, & lastW);
 
 		integer differenceFirst = 0;
 		for (integer i = 0; i < firstW; i ++) {
-			if (bufferW [i] == 13 && (bufferW [i + 1] == L'\n' || bufferW [i + 1] == 0x0085)) differenceFirst ++;
-			if (bufferW [i] >= 0xDC00 && bufferW [i] <= 0xDFFF) differenceFirst ++;
+			if (bufferW [i] == 13 && (bufferW [i + 1] == L'\n' || bufferW [i + 1] == 0x0085))
+				differenceFirst ++;
+			if (bufferW [i] >= 0xDC00 && bufferW [i] <= 0xDFFF)
+				differenceFirst ++;
 		}
 		*first = firstW - differenceFirst;
 
 		integer differenceLast = differenceFirst;
 		for (integer i = firstW; i < lastW; i ++) {
-			if (bufferW [i] == 13 && (bufferW [i + 1] == L'\n' || bufferW [i + 1] == 0x0085)) differenceLast ++;
-			if (bufferW [i] >= 0xDC00 && bufferW [i] <= 0xDFFF) differenceLast ++;
+			if (bufferW [i] == 13 && (bufferW [i + 1] == L'\n' || bufferW [i + 1] == 0x0085))
+				differenceLast ++;
+			if (bufferW [i] >= 0xDC00 && bufferW [i] <= 0xDFFF)
+				differenceLast ++;
 		}
 		*last = lastW - differenceLast;
 
-		char32 *result = Melder_dup_f (Melder_peekWto32 (bufferW));
-		Melder_free (bufferW);
-		(void) Melder_killReturns_inplace (result);
+		autostring32 result = Melder_dup_f (Melder_peekWto32 (bufferW.get()));
+		(void) Melder_killReturns_inplace (result.get());
 		return result;
 	#elif cocoa
 		if (my d_cocoaTextView) {
@@ -824,8 +827,16 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 			NSRange nsRange = [my d_cocoaTextView   selectedRange];
 			*first = uinteger_to_integer (nsRange. location);
 			*last = *first + uinteger_to_integer (nsRange. length);
-			for (integer i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
-			for (integer i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
+			for (integer i = 0; i < *first; i ++) {
+				if (result [i] > 0xFFFF) {
+					(*first) --;
+					(*last) --;
+				}
+			}
+			for (integer i = *first; i < *last; i ++) {
+				if (result [i] > 0xFFFF)
+					(*last) --;
+			}
 			return result;
 		} else {
 			NSString *nsString = [(NSTextField *) my d_widget   stringValue];
@@ -834,12 +845,20 @@ autostring32 GuiText_getStringAndSelectionPosition (GuiText me, integer *first, 
 			NSRange nsRange = [[[(NSTextField *) my d_widget   window] fieldEditor: NO forObject: nil] selectedRange];
 			*first = uinteger_to_integer (nsRange. location);
 			*last = *first + uinteger_to_integer (nsRange. length);
-			for (integer i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
-			for (integer i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
+			for (integer i = 0; i < *first; i ++) {
+				if (result [i] > 0xFFFF) {
+					(*first) --;
+					(*last) --;
+				}
+			}
+			for (integer i = *first; i < *last; i ++) {
+				if (result [i] > 0xFFFF)
+					(*last) --;
+			}
 			return result;
 		}
 	#else
-		return nullptr;
+		return autostring32();
 	#endif
 }
 
@@ -896,7 +915,7 @@ void GuiText_remove (GuiText me) {
 
 void GuiText_replace (GuiText me, integer from_pos, integer to_pos, conststring32 text) {
 	#if gtk
-		gchar *newText = Melder_peek32to8 (text);
+		const gchar *newText = Melder_peek32to8 (text);
 		if (G_OBJECT_TYPE (G_OBJECT (my d_widget)) == GTK_TYPE_ENTRY) {
 			gtk_editable_delete_text (GTK_EDITABLE (my d_widget), from_pos, to_pos);
 			gint from_pos_gint = from_pos;
@@ -913,21 +932,20 @@ void GuiText_replace (GuiText me, integer from_pos, integer to_pos, conststring3
 		}
 	#elif motif
 		Melder_assert (MEMBER (my d_widget, Text));
-		mutablestring32 winText = Melder_malloc_f (char32, 2 * str32len (text) + 1);   // all new lines plus one null byte
+		autostring32 winText (2 * str32len (text), true);   // all newlines
 		char32 *to = & winText [0];
 		/*
 			Replace all LF with CR/LF.
 		*/
-		for (const char *from = & text [0]; *from != U'\0'; from ++, to ++)
+		for (const char32 *from = & text [0]; *from != U'\0'; from ++, to ++)
 			if (*from == U'\n') { *to = 13; * ++ to = U'\n'; } else *to = *from;
 		*to = U'\0';
 		/*
-		 * We DON'T replace any text without selecting it, so we can deselect any other text,
-		 * thus allowing ourselves to select [from_pos, to_pos] and use the REPLACESEL message.
+			We DON'T replace any text without selecting it, so we can deselect any other text,
+			thus allowing ourselves to select [from_pos, to_pos] and use the REPLACESEL message.
 		 */
 		GuiText_setSelection (me, from_pos, to_pos);
-		Edit_ReplaceSel (my d_widget -> window, Melder_peek32toW (winText));
-		Melder_free (winText);
+		Edit_ReplaceSel (my d_widget -> window, Melder_peek32toW (winText.get()));
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		if (my d_cocoaTextView) {
@@ -1088,7 +1106,7 @@ void GuiText_setString (GuiText me, conststring32 text) {
 			gtk_entry_set_text (GTK_ENTRY (my d_widget), Melder_peek32to8 (text));
 		} else if (G_OBJECT_TYPE (my d_widget) == GTK_TYPE_TEXT_VIEW) {
 			GtkTextBuffer *textBuffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (my d_widget));
-			gchar *textUtf8 = Melder_peek32to8 (text);
+			const gchar *textUtf8 = Melder_peek32to8 (text);
 			//gtk_text_buffer_set_text (textBuffer, textUtf8, strlen (textUtf8));   // length in bytes!
 			GtkTextIter start, end;
 			gtk_text_buffer_get_start_iter (textBuffer, & start);
@@ -1097,7 +1115,7 @@ void GuiText_setString (GuiText me, conststring32 text) {
 			gtk_text_buffer_insert_interactive (textBuffer, & start, textUtf8, strlen (textUtf8), gtk_text_view_get_editable (GTK_TEXT_VIEW (my d_widget)));
 		}
 	#elif motif
-		mutablestring32 winText = Melder_malloc_f (char32, 2 * str32len (text) + 1);   /* All new lines plus one null byte. */
+		autostring32 winText (2 * str32len (text), true);   // all new lines
 		char32 *to = & winText [0];
 		/*
 			Replace all LF with CR/LF.
@@ -1105,8 +1123,7 @@ void GuiText_setString (GuiText me, conststring32 text) {
 		for (const char32 *from = & text [0]; *from != U'\0'; from ++, to ++)
 			if (*from == U'\n') { *to = 13; * ++ to = U'\n'; } else *to = *from;
 		*to = U'\0';
-		SetWindowTextW (my d_widget -> window, Melder_peek32toW (winText));
-		Melder_free (winText);
+		SetWindowTextW (my d_widget -> window, Melder_peek32toW (winText.get()));
 		UpdateWindow (my d_widget -> window);
 	#elif cocoa
 		trace (U"title");

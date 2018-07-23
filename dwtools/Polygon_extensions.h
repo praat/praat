@@ -37,7 +37,7 @@
 
 void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, double *ymax);
 
-autoPolygon Polygon_createSimple (char32 *xystring);
+autoPolygon Polygon_createSimple (conststring32 xystring);
 
 autoPolygon Polygon_createFromRandomPoints (integer numberOfVertices, double xmin, double xmax, double ymin, double ymax);
 

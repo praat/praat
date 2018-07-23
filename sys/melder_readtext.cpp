@@ -182,7 +182,7 @@ static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8)
 			} else {
 				rewind (f);   // length and type already set correctly.
 			}
-			autostring8 text8bit = Melder_malloc (char, length + 1);
+			autostring8 text8bit (length);
 			Melder_assert (text8bit);
 			size_t numberOfBytesRead = fread_multi (text8bit.get(), (size_t) length, f);
 			if ((int64) numberOfBytesRead < length)
@@ -218,7 +218,7 @@ static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8)
 			}
 		} else {
 			length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes
-			text.reset (Melder_malloc (char32, length + 1));
+			text = autostring32 (length + 1);
 			if (type == 1) {
 				for (int64 i = 0; i < length; i ++) {
 					char16 kar1 = bingetu16 (f);

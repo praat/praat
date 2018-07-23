@@ -38,7 +38,7 @@ autoStringSet GuiFileSelect_getInfileNames (GuiWindow parent, conststring32 titl
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *infolderName_utf8 = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (dialog));
 			if (infolderName_utf8) {
-				const char32 *infolderName = Melder_peek8to32 (infolderName_utf8);   // dangle
+				conststring32 infolderName = Melder_peek8to32 (infolderName_utf8);   // dangle
 				Melder_pathToDir (infolderName, & dir);
 				g_free (infolderName_utf8);
 			}
@@ -140,7 +140,7 @@ autostring32 GuiFileSelect_getOutfileName (GuiWindow parent, conststring32 title
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 			outfileName = Melder_8to32 (outfileName_utf8);
 			g_free (outfileName_utf8);
-			Melder_pathToFile (outfileName, & file);
+			Melder_pathToFile (outfileName.get(), & file);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		setlocale (LC_ALL, "C");

@@ -111,7 +111,7 @@ Editor praat_findEditorById (integer id) {
 	Melder_throw (U"Editor ", id, U" does not exist.");
 }
 
-static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *arguments, structStackel args []) {
+static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *arguments, structStackel *args) {
 	int narg = 0, depth = 0;
 	for (char32 *p = arguments; ; p ++) {
 		bool endOfArguments = *p == U'\0';
@@ -125,20 +125,10 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			/*
 				First remove the old contents.
 			*/
-			switch (args [narg]. which) {
-				case Stackel_NUMBER: {
-					// do nothing
-				} break;
-				case Stackel_STRING: {
-					Melder_free (args [narg].string);
-				} break;
-				case Stackel_NUMERIC_VECTOR: {
-					//if (args [narg]. owned) args [narg].numericVector.reset();   // we don't own this; the form's autonumvec does, after UiField_argToValue()
-				} break;
-				case Stackel_NUMERIC_MATRIX: {
-					//if (args [narg]. owned) args [narg].numericMatrix.reset();   // we don't own this; the form's autonummat does, after UiField_argToValue()
-				} break;
-			}
+			args [narg]. ~ structStackel();
+			#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
+				memset (& args [narg], 0, sizeof (structStackel));
+			#endif
 			/*
 				Then copy in the new contents.
 			*/
@@ -148,13 +138,12 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 					args [narg]. number = result. numericResult;
 				} break;
 				case kFormula_EXPRESSION_TYPE_STRING: {
-					args [narg]. which = Stackel_STRING;
-					args [narg]. string = result. stringResult;
+					args [narg]. setString (result. stringResult.move());
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 					args [narg]. which = Stackel_NUMERIC_VECTOR;
 					args [narg]. numericVector = result. numericVectorResult;
-					args [narg]. owned = result. owned;   // 
+					args [narg]. owned = result. owned;
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
 					args [narg]. which = Stackel_NUMERIC_MATRIX;
@@ -171,12 +160,15 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			for (;;) {
 				p ++;
 				if (*p == U'\"') {
-					if (p [1] == U'\"') p ++;
-					else break;
+					if (p [1] == U'\"')
+						p ++;
+					else
+						break;
 				}
 			}
 		}
-		if (endOfArguments) break;
+		if (endOfArguments)
+			break;
 	}
 	return narg;
 }
@@ -188,8 +180,12 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 		/* Skip empty lines and comments. */;
 	else if ((command [0] == U'.' || command [0] == U'+' || command [0] == U'-') && Melder_isAsciiUpperCaseLetter (command [1])) {   // selection?
 		int IOBJECT = praat_findObjectFromString (interpreter, command + 1);
-		if (command [0] == '.') praat_deselectAll ();
-		if (command [0] == '-') praat_deselect (IOBJECT); else praat_select (IOBJECT); 
+		if (command [0] == '.')
+			praat_deselectAll ();
+		if (command [0] == '-')
+			praat_deselect (IOBJECT);
+		else
+			praat_select (IOBJECT); 
 		praat_show ();
 	} else if (Melder_isAsciiLowerCaseLetter (command [0])) {   // all directives start with an ASCII lower-case letter
 		if (str32nequ (command, U"select ", 7)) {
@@ -322,9 +318,10 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 			#endif
 			const char32 *p = command + 10;
 			while (*p == U' ' || *p == U'\t') p ++;
-			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < programName + 39) *q ++ = *p ++;
-			*q = '\0';
-			if (q == programName)
+			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < programName + 39)
+				*q ++ = *p ++;
+			*q = U'\0';
+			if (q == & programName [0])
 				Melder_throw (U"Missing program name after `sendpraat'.");
 			while (*p == U' ' || *p == U'\t') p ++;
 			if (*p == U'\0')
@@ -340,8 +337,10 @@ int praat_executeCommand (Interpreter interpreter, char32 *command) {
 				Melder_throw (U"The script command \"sendsocket\" is not available inside manuals.");
 			char32 hostName [61], *q = & hostName [0];
 			const char32 *p = command + 11;
-			while (*p == U' ' || *p == U'\t') p ++;
-			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < hostName + 59) *q ++ = *p ++;
+			while (*p == U' ' || *p == U'\t')
+				p ++;
+			while (*p != U'\0' && *p != U' ' && *p != U'\t' && q < hostName + 59)
+				*q ++ = *p ++;
 			*q = U'\0';
 			if (q == hostName)
 				Melder_throw (U"Missing host name after `sendsocket'.");

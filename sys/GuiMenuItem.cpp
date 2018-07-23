@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2012,2013,2015,2016,2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2018 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 		int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
 		static MelderString title { };
 		if (acc == 0) {
-			MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
+			MelderString_copy (& title, _GuiWin_expandAmpersands (my name.get()));
 		} else {
 			static const conststring32 keyStrings [256] = {
 				0, U"<-", U"->", U"Up", U"Down", U"PAUSE", U"Del", U"Ins", U"Backspace", U"Tab", U"LineFeed", U"Home", U"End", U"Enter", U"PageUp", U"PageDown",
@@ -60,7 +60,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			const conststring32 keyString = keyStrings [acc] ? keyStrings [acc] : U"???";
-			MelderString_copy (& title, _GuiWin_expandAmpersands (my name), U"\t",
+			MelderString_copy (& title, _GuiWin_expandAmpersands (my name.get()), U"\t",
 				modifiers & _motif_COMMAND_MASK ? U"Ctrl-" : nullptr,
 				modifiers & _motif_OPTION_MASK ? U"Alt-" : nullptr,
 				modifiers & _motif_SHIFT_MASK ? U"Shift-" : nullptr, keyString);
@@ -102,7 +102,7 @@ Thing_implement (GuiMenuItem, GuiThing, 0);
 			try {
 				my d_callback (my d_boss, & event);
 			} catch (MelderError) {
-				Melder_flushError (U"Your choice of menu item \"", widget -> name, U"\" was not completely handled.");
+				Melder_flushError (U"Your choice of menu item \"", widget -> name.get(), U"\" was not completely handled.");
 			}
 		}
 	}

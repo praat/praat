@@ -187,7 +187,7 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, conststring32 word) {
 
 void SpellingChecker_addNewWord (SpellingChecker me, conststring32 word) {
 	try {
-		autostring32 generic = Melder_calloc (char32, 3 * str32len (word) + 1);
+		autostring32 generic (3 * str32len (word));
 		Longchar_genericize32 (word, generic.get());
 		my userDictionary -> addString_copy (generic.get());
 	} catch (MelderError) {

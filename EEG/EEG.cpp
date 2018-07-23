@@ -302,8 +302,8 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		}
 		f.close (file);
 		his channelNames = std::move (channelNames);
-		his sound = std::move (me);
-		his textgrid = std::move (thee);
+		his sound = me.move();
+		his textgrid = thee.move();
 		if (EEG_getNumberOfCapElectrodes (him.get()) == 32) {
 			EEG_setChannelName (him.get(), 1, U"Fp1");
 			EEG_setChannelName (him.get(), 2, U"AF3");
@@ -609,7 +609,7 @@ void EEG_removeChannel (EEG me, integer channelNumber) {
 		if (channelNumber < 1 || channelNumber > my numberOfChannels)
 			Melder_throw (U"No channel ", channelNumber, U".");
 		for (integer ichan = channelNumber; ichan < my numberOfChannels; ichan ++) {
-			my channelNames [ichan] = std::move (my channelNames [ichan + 1]);
+			my channelNames [ichan] = my channelNames [ichan + 1].move();
 		}
 		my channelNames [my numberOfChannels]. reset();
 		my numberOfChannels -= 1;

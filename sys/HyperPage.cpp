@@ -102,10 +102,10 @@ static void initScreen (HyperPage me) {
 
 void HyperPage_initSheetOfPaper (HyperPage me) {
 	int reflect = my mirror && (my d_printingPageNumber & 1) == 0;
-	char32 *leftHeader = reflect ? my outsideHeader : my insideHeader;
-	char32 *rightHeader = reflect ? my insideHeader : my outsideHeader;
-	char32 *leftFooter = reflect ? my outsideFooter : my insideFooter;
-	char32 *rightFooter = reflect ? my insideFooter : my outsideFooter;
+	conststring32 leftHeader = reflect ? my outsideHeader : my insideHeader;
+	conststring32 rightHeader = reflect ? my insideHeader : my outsideHeader;
+	conststring32 leftFooter = reflect ? my outsideFooter : my insideFooter;
+	conststring32 rightFooter = reflect ? my insideFooter : my outsideFooter;
 
 	my d_y = PAPER_TOP - TOP_MARGIN;
 	my d_x = 0;
@@ -581,7 +581,7 @@ static void print (void *void_me, Graphics graphics) {
 void structHyperPage :: v_destroy () noexcept {
 	if (our praatApplication) {
 		for (int iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
-			Melder_free (((PraatObjects) our praatObjects) -> list [iobject]. name);
+			((PraatObjects) our praatObjects) -> list [iobject]. name. reset();
 			forget (((PraatObjects) our praatObjects) -> list [iobject]. object);
 		}
 		Melder_free (our praatApplication);
@@ -937,7 +937,7 @@ void HyperPage_clear (HyperPage me) {
 }
 
 void structHyperPage :: v_dataChanged () {
-	int oldError = Melder_hasError ();   // this method can be called during error time
+	bool oldError = Melder_hasError ();   // this method can be called during error time
 	(void) our v_goToPage (our currentPageTitle.get());
 	if (Melder_hasError () && ! oldError) Melder_flushError ();
 	HyperPage_clear (this);

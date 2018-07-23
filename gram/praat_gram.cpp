@@ -60,7 +60,8 @@ DO
 		autoNetwork result = Network_create (spreadingRate,
 			(kNetwork_activityClippingRule) activityClippingRule,
 			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
-			fromX, toX, fromY, toY, 0, 0);
+			fromX, toX, fromY, toY, 0, 0
+		);
 	CREATE_ONE_END (name)
 }
 
@@ -79,7 +80,8 @@ DO
 		autoNetwork result = Network_create_rectangle (spreadingRate,
 			(kNetwork_activityClippingRule) activityClippingRule,
 			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
-			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight);
+			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight
+		);
 	CREATE_ONE_END (U"rectangle_", numberOfRows, U"_", numberOfColumns)
 }
 
@@ -98,7 +100,8 @@ DO
 		autoNetwork result = Network_create_rectangle_vertical (spreadingRate,
 			(kNetwork_activityClippingRule) activityClippingRule,
 			minimumActivity, maximumActivity, activityLeak, learningRate, minimumWeight, maximumWeight, weightLeak,
-			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight);
+			numberOfRows, numberOfColumns, bottomRowClamped, minimumInitialWeight, maximumInitialWeight
+		);
 	CREATE_ONE_END (U"rectangle_", numberOfRows, U"_", numberOfColumns)
 }
 
@@ -131,7 +134,8 @@ DO
 	INFO_ONE (Network)
 		Network_listNodes (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
-			includeClamped, includeActivity, includeExcitation, activityDecimals);
+			includeClamped, includeActivity, includeExcitation, activityDecimals
+		);
 	INFO_ONE_END
 }
 
@@ -151,7 +155,8 @@ DO
 	CONVERT_EACH (Network)
 		autoTable result = Network_nodes_downto_Table (me, fromNodeNumber, toNodeNumber,
 			includeNodeNumbers, includeX, includeY, positionDecimals,
-			includeClamped, includeActivity, includeExcitation, activityDecimals);
+			includeClamped, includeActivity, includeExcitation, activityDecimals
+		);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -974,13 +979,15 @@ DO
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
 				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
-				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, false, false, 0);
+				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, false, false, 0
+			);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1004,13 +1011,15 @@ DO
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
 				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
-				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 0);
+				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 0
+			);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1034,13 +1043,15 @@ DO
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
 				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
-				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 1000);
+				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 1000
+			);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END
 }
 
@@ -1064,13 +1075,15 @@ DO
 			OTGrammar_Distributions_learnFromPartialOutputs (me, you, columnNumber, evaluationNoise,
 				(kOTGrammar_rerankingStrategy) updateRule, honourLocalRankings,
 				initialPlasticity, replicationsPerPlasticity, plasticityDecrement, numberOfPlasticities,
-				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 1);
+				relativePlasticitySpreading, numberOfChews, storeHistoryEvery, & history, true, true, 1
+			);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
 			Melder_flushError ();
 		}
-		if (history) praat_new (history.move(), my name.get());
+		if (history)
+			praat_new (history.move(), my name.get());
 	END
 }
 

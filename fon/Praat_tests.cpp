@@ -55,7 +55,7 @@ static int length (conststring32 s) {
 	return result;
 }
 
-int Praat_tests (kPraatTests itest, char32 *arg1, char32 *arg2, char32 *arg3, char32 *arg4) {
+int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, conststring32 arg3, conststring32 arg4) {
 	int64 n = Melder_atoi (arg1);
 	double t = 0.0;
 	(void) arg1;

@@ -234,7 +234,7 @@ void praat_write_do (UiForm dia, conststring32 extension) {
 	if (extension && str32chr (extension, '.')) {
 		/*
 			Apparently, the "extension" is a complete file name.
-			This should that this should be used as the default file name.
+			This should be used as the default file name.
 			(This case typically occurs when saving a picture.)
 		*/
 		MelderString_copy (& defaultFileName, extension);
@@ -389,39 +389,14 @@ static MelderString thePraatNewName { };
 void praat_new (autoDaata me) {
 	praat_newWithFile (me.move(), nullptr, U"");
 }
-void praat_new (autoDaata me, Melder_1_ARG) {
-	praat_newWithFile (me.move(), nullptr, Melder_1_ARG_CALL);
+void praat_new (autoDaata me, const MelderArg& arg) {
+	praat_newWithFile (me.move(), nullptr, arg._arg);
 }
-void praat_new (autoDaata me, Melder_2_ARGS) {
-	MelderString_copy (& thePraatNewName, Melder_2_ARGS_CALL);
-	praat_new (me.move(), thePraatNewName.string);
-}
-void praat_new (autoDaata me, Melder_3_ARGS) {
-	MelderString_copy (& thePraatNewName, Melder_3_ARGS_CALL);
-	praat_new (me.move(), thePraatNewName.string);
-}
-void praat_new (autoDaata me, Melder_4_ARGS) {
-	MelderString_copy (& thePraatNewName, Melder_4_ARGS_CALL);
-	praat_new (me.move(), thePraatNewName.string);
-}
-void praat_new (autoDaata me, Melder_5_ARGS) {
-	MelderString_copy (& thePraatNewName, Melder_5_ARGS_CALL);
-	praat_new (me.move(), thePraatNewName.string);
-}
-void praat_new (autoDaata me, Melder_6_ARGS) {
-	MelderString_copy (& thePraatNewName, Melder_6_ARGS_CALL);
-	praat_new (me.move(), thePraatNewName.string);
-}
-void praat_new (autoDaata me, Melder_7_ARGS) {
-	MelderString_copy (& thePraatNewName, Melder_7_ARGS_CALL);
-	praat_new (me.move(), thePraatNewName.string);
-}
-void praat_new (autoDaata me, Melder_8_ARGS) {
-	MelderString_copy (& thePraatNewName, Melder_8_ARGS_CALL);
-	praat_new (me.move(), thePraatNewName.string);
-}
-void praat_new (autoDaata me, Melder_9_ARGS) {
-	MelderString_copy (& thePraatNewName, Melder_9_ARGS_CALL);
+void praat_new (autoDaata me,
+	const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3,
+	const MelderArg& arg4, const MelderArg& arg5)
+{
+	MelderString_copy (& thePraatNewName, arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg);
 	praat_new (me.move(), thePraatNewName.string);
 }
 
@@ -1321,7 +1296,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			g_set_application_name (Melder_peek32to8 (title));
 			trace (U"locale ", Melder_peek8to32 (setlocale (LC_ALL, nullptr)));
 		#elif motif
-			argv [0] = Melder_32to8 (praatP. title);   // argc == 4
+			argv [0] = Melder_32to8 (praatP. title.get()).transfer();   // argc == 4
 			Gui_setOpenDocumentCallback (cb_openDocument);
 			GuiAppInitialize ("Praatwulg", argc, argv);
 		#elif cocoa

@@ -70,21 +70,22 @@ void Polygon_getExtrema (Polygon me, double *p_xmin, double *p_xmax, double *p_y
 	}
 }
 
-autoPolygon Polygon_createSimple (char32 *xystring) {
+autoPolygon Polygon_createSimple (conststring32 xystring) {
 	try {
 		integer numberOfInputs;
 		autoNUMvector <double> xys (NUMstring_to_numbers (xystring, & numberOfInputs), 1);
-		Melder_require (numberOfInputs >= 6, U"There should be at least 3 points (= x,y pairs) in the Polygon");
-		Melder_require (numberOfInputs % 2 == 0, U"One value is missing.");
+		Melder_require (numberOfInputs >= 6,
+			U"There should be at least 3 points (= x,y pairs) in the Polygon");
+		Melder_require (numberOfInputs % 2 == 0,
+			U"One value is missing.");
 		
 		integer numberOfPoints = numberOfInputs / 2;
 		autoPolygon me = Polygon_create (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			my x [i] = xys [2 * i - 1];
 			my y [i] = xys [2 * i];
-			if (i > 1 && my x [i] == my x [i - 1] && my y [i] == my y [i - 1]) {
+			if (i > 1 && my x [i] == my x [i - 1] && my y [i] == my y [i - 1])
 				Melder_warning (U"Two successives vertices are equal.");
-			}
 		}
 		return me;
 	} catch (MelderError) {

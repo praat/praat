@@ -79,7 +79,7 @@ void Interpreter_voidExpression (Interpreter me, conststring32 expression);
 void Interpreter_numericExpression (Interpreter me, conststring32 expression, double *p_value);
 void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, numvec *p_value, bool *p_owned);
 void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, nummat *p_value, bool *p_owned);
-void Interpreter_stringExpression (Interpreter me, conststring32 expression, char32 **p_value);
+autostring32 Interpreter_stringExpression (Interpreter me, conststring32 expression);
 void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *p_result);
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);

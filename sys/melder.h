@@ -235,16 +235,21 @@ template <class T>
 class _autostring {
 	T *ptr;
 public:
+	#if 1
 	_autostring () : ptr (nullptr) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: zero constructor");
 	}
-	_autostring (integer length, bool f) {
+	#else
+	_autostring () = default;   // explicit default, so that it can be used in a union
+	#endif
+	_autostring (integer length, bool f = false) {
 		our ptr = ( f ? Melder_malloc_f (T, length + 1) : Melder_malloc (T, length + 1) );
-		our ptr [0] = 0;
+		our ptr [0] = '\0';
+		our ptr [length] = '\0';
 	}
-	_autostring (T *string) : ptr (string) {
+	//_autostring (T *string) : ptr (string) {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: constructor from C-string ", Melder_pointer (ptr));
-	}
+	//}
 	~_autostring () {
 		//if (Melder_debug == 39) Melder_casual (U"autostring: entering destructor ptr = ", Melder_pointer (ptr));
 		if (our ptr) Melder_free (our ptr);
@@ -269,16 +274,16 @@ public:
 		our ptr = nullptr;
 		return tmp;
 	}
-	void reset (T *string = nullptr) {
+	void reset () {
 		if (our ptr) Melder_free (our ptr);
-		our ptr = string;
 	}
-	void resize (int64 new_size) {
-		T *tmp = (T *) Melder_realloc (our ptr, new_size * (int64) sizeof (T));
+	void resize (int64 newLength) {
+		T *tmp = (T *) Melder_realloc (our ptr, (newLength + 1) * (int64) sizeof (T));
 		our ptr = tmp;
+		our ptr [newLength] = '\0';
 	}
 	_autostring& operator= (const _autostring&) = delete;   // disable copy assignment
-	//_autostring (_autostring &) = delete;   // disable copy constructor (temporarily, until all new-string-returning functions return an autostring)
+	_autostring (_autostring &) = delete;   // disable copy constructor
 	template <class Y> _autostring (_autostring<Y> &) = delete;   // disable copy constructor
 	explicit operator bool () const { return !! our ptr; }
 	/*
@@ -297,6 +302,9 @@ public:
 		return *this;
 	}
 	_autostring&& move () noexcept { return static_cast <_autostring&&> (*this); }
+	void _unsafeTransplant (T* newStringPointer) {
+		our ptr = newStringPointer;
+	}
 };
 
 typedef _autostring <char> autostring8;
@@ -600,6 +608,12 @@ inline static mutablestring32 str32cpy (mutablestring32 target, conststring32 so
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return target;
+}
+inline static char32 * stp32cpy (mutablestring32 target, conststring32 source) noexcept {
+	char32 *p = & target [0];
+	while (* source != U'\0') * p ++ = * source ++;
+	*p = U'\0';
+	return p;
 }
 inline static mutablestring32 str32ncpy (mutablestring32 target, conststring32 source, integer n) noexcept {
 	char32 *p = & target [0];
@@ -907,8 +921,8 @@ conststring16 Melder_peek32to16 (conststring32 text, bool nativizeNewlines);
 extern "C" conststring16 Melder_peek32to16 (conststring32 string);
 
 #ifdef _WIN32
-	inline static conststringW Melder_peek32toW (conststring32 string) { return (autostringW) Melder_peek32to16 (string); }
-	inline static autostringW Melder_32toW (conststring32 string) { return (autostringW) Melder_32to16 (string); }
+	inline static conststringW Melder_peek32toW (conststring32 string) { return (conststringW) Melder_peek32to16 (string); }
+	autostringW Melder_32toW (conststring32 string);
 	inline static conststring32 Melder_peekWto32 (conststringW string) { return Melder_peek16to32 ((conststring16) string); }
 	inline static autostring32 Melder_Wto32 (conststringW string) { return Melder_16to32 ((conststring16) string); }
 #endif
@@ -1871,128 +1885,54 @@ struct MelderArg {
 	*/
 };
 
-#define Melder_1_ARG \
-	const MelderArg& arg1
-#define Melder_2_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2
-#define Melder_3_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3
-#define Melder_4_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4
-#define Melder_5_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5
-#define Melder_6_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6
-#define Melder_7_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7
-#define Melder_8_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8
-#define Melder_9_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9
-#define Melder_10_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9,  const MelderArg& arg10
-#define Melder_11_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9,  const MelderArg& arg10, const MelderArg& arg11
-#define Melder_12_OR_13_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9,  const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, \
-	const MelderArg& arg13 = U""
-#define Melder_13_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9,  const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, \
-	const MelderArg& arg13
-#define Melder_14_OR_15_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9,  const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, \
-	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15 = U""
-#define Melder_15_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9,  const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, \
-	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15
-#define Melder_16_TO_19_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9,  const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, \
-	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16, \
-	const MelderArg& arg17 = U"", const MelderArg& arg18 = U"", const MelderArg& arg19 = U""
-#define Melder_19_ARGS \
-	const MelderArg& arg1,  const MelderArg& arg2,  const MelderArg& arg3,  const MelderArg& arg4, \
-	const MelderArg& arg5,  const MelderArg& arg6,  const MelderArg& arg7,  const MelderArg& arg8, \
-	const MelderArg& arg9,  const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, \
-	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16, \
-	const MelderArg& arg17, const MelderArg& arg18, const MelderArg& arg19
-
-#define Melder_1_ARG_CALL \
-	arg1._arg
-#define Melder_2_ARGS_CALL \
-	arg1._arg, arg2._arg
-#define Melder_3_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg
-#define Melder_4_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg
-#define Melder_5_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg
-#define Melder_6_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg
-#define Melder_7_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg, arg7._arg
-#define Melder_8_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg, arg7._arg, arg8._arg
-#define Melder_9_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg, arg7._arg, arg8._arg, arg9._arg
-#define Melder_10_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg, arg7._arg, arg8._arg, arg9._arg, arg10._arg
-#define Melder_11_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg, arg7._arg, arg8._arg, arg9._arg, arg10._arg, \
-	arg11._arg
-#define Melder_13_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg, arg7._arg, arg8._arg, arg9._arg, arg10._arg, \
-	arg11._arg, arg12._arg, arg13._arg
-#define Melder_15_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg, arg7._arg, arg8._arg, arg9._arg, arg10._arg, \
-	arg11._arg, arg12._arg, arg13._arg, arg14._arg, arg15._arg
-#define Melder_19_ARGS_CALL \
-	arg1._arg, arg2._arg, arg3._arg, arg4._arg, arg5._arg, arg6._arg, arg7._arg, arg8._arg, arg9._arg, arg10._arg, \
-	arg11._arg, arg12._arg, arg13._arg, arg14._arg, arg15._arg, arg16._arg, arg17._arg, arg18._arg, arg19._arg
+inline static integer MelderArg__length (const MelderArg& arg) {
+	return arg._arg ? str32len (arg._arg) : 0;
+}
+template <typename... Args>
+integer MelderArg__length (const MelderArg& first, Args... rest) {
+	integer length = MelderArg__length (first);
+	length += MelderArg__length (rest...);
+	return length;
+}
 
 void Melder_tracingToFile (MelderFile file);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_1_ARG);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_2_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_3_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_4_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_5_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_6_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_7_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_8_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_9_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_10_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_11_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_12_OR_13_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_14_OR_15_ARGS);
-void Melder_trace (const char *fileName, int lineNumber, const char *functionName, Melder_16_TO_19_ARGS);
+void Melder_setTracing (bool tracing);
+extern bool Melder_isTracing;
+
+namespace MelderTrace {
+	extern structMelderFile _file;
+	FILE * _open (conststring8 sourceCodeFileName, int lineNumber, conststring8 functionName);
+	void _close (FILE *f);
+	conststring8  _peek32to8  (conststring32 string);
+	conststring16 _peek32to16 (conststring32 string);
+};
+
+inline static void _recursiveTemplate_Melder_trace (FILE *f, const MelderArg& arg) {
+	if (arg._arg)
+		fprintf (f, "%s", MelderTrace::_peek32to8 (arg. _arg));
+}
+template <typename... Args>
+void _recursiveTemplate_Melder_trace (FILE *f, const MelderArg& first, Args... rest) {
+	_recursiveTemplate_Melder_trace (f, first);
+	_recursiveTemplate_Melder_trace (f, rest...);
+}
+
+template <typename... Args>
+void Melder_trace (conststring8 sourceCodeFileName, int lineNumber, conststring8 functionName, const MelderArg& first, Args... rest) {
+	if (! Melder_isTracing || MelderFile_isNull (& MelderTrace::_file))
+		return;
+	FILE *f = MelderTrace::_open (sourceCodeFileName, lineNumber, functionName);
+	_recursiveTemplate_Melder_trace (f, first, rest...);
+	MelderTrace::_close (f);
+}
+
 #ifdef NDEBUG
 	#define trace(x)   ((void) 0)
 #else
 	#define trace(...)   (! Melder_isTracing ? (void) 0 : Melder_trace (__FILE__, __LINE__, __FUNCTION__, __VA_ARGS__))
 #endif
-void Melder_setTracing (bool tracing);
-extern bool Melder_isTracing;
 
-/* So these will be the future replacements for the above, as soon as we rid of text files: */
+/* These will be the future replacements for Melder_fopen, as soon as we rid of text files: */
 MelderFile MelderFile_open (MelderFile file);
 MelderFile MelderFile_append (MelderFile file);
 MelderFile MelderFile_create (MelderFile file);
@@ -2000,20 +1940,25 @@ void * MelderFile_read (MelderFile file, integer nbytes);
 char * MelderFile_readLine (MelderFile file);
 void MelderFile_writeCharacter (MelderFile file, wchar_t kar);
 void MelderFile_writeCharacter (MelderFile file, char32 kar);
-void MelderFile_write (MelderFile file, Melder_1_ARG);
-void MelderFile_write (MelderFile file, Melder_2_ARGS);
-void MelderFile_write (MelderFile file, Melder_3_ARGS);
-void MelderFile_write (MelderFile file, Melder_4_ARGS);
-void MelderFile_write (MelderFile file, Melder_5_ARGS);
-void MelderFile_write (MelderFile file, Melder_6_ARGS);
-void MelderFile_write (MelderFile file, Melder_7_ARGS);
-void MelderFile_write (MelderFile file, Melder_8_ARGS);
-void MelderFile_write (MelderFile file, Melder_9_ARGS);
-void MelderFile_write (MelderFile file, Melder_10_ARGS);
-void MelderFile_write (MelderFile file, Melder_11_ARGS);
-void MelderFile_write (MelderFile file, Melder_12_OR_13_ARGS);
-void MelderFile_write (MelderFile file, Melder_14_OR_15_ARGS);
-void MelderFile_write (MelderFile file, Melder_16_TO_19_ARGS);
+
+void _MelderFile_write (MelderFile file, conststring32 string);
+
+inline static void _recursiveTemplate_MelderFile_write (MelderFile file, const MelderArg& arg) {
+	_MelderFile_write (file, arg. _arg);
+}
+template <typename... Args>
+void _recursiveTemplate_MelderFile_write (MelderFile file, const MelderArg& first, Args... rest) {
+	_recursiveTemplate_MelderFile_write (file, first);
+	_recursiveTemplate_MelderFile_write (file, rest...);
+}
+
+template <typename... Args>
+void MelderFile_write (MelderFile file, const MelderArg& first, Args... rest) {
+	if (! file -> filePointer)
+		return;
+	_recursiveTemplate_MelderFile_write (file, first, rest...);
+}
+
 void MelderFile_rewind (MelderFile file);
 void MelderFile_seek (MelderFile file, integer position, int direction);
 integer MelderFile_tell (MelderFile file);
@@ -2067,48 +2012,41 @@ void MelderString_free (MelderString *me);   // frees the buffer (and sets other
 void MelderString16_empty (MelderString16 *me);   // sets to empty string (buffer shrunk if very large)
 void MelderString_empty (MelderString *me);   // sets to empty string (buffer shrunk if very large)
 void MelderString_expand (MelderString *me, int64 sizeNeeded);   // increases the buffer size; there's normally no need to call this
-void MelderString_copy (MelderString *me, Melder_1_ARG);
-void MelderString_copy (MelderString *me, Melder_2_ARGS);
-void MelderString_copy (MelderString *me, Melder_3_ARGS);
-void MelderString_copy (MelderString *me, Melder_4_ARGS);
-void MelderString_copy (MelderString *me, Melder_5_ARGS);
-void MelderString_copy (MelderString *me, Melder_6_ARGS);
-void MelderString_copy (MelderString *me, Melder_7_ARGS);
-void MelderString_copy (MelderString *me, Melder_8_ARGS);
-void MelderString_copy (MelderString *me, Melder_9_ARGS);
-void MelderString_copy (MelderString *me, Melder_10_ARGS);
-void MelderString_copy (MelderString *me, Melder_11_ARGS);
-void MelderString_copy (MelderString *me, Melder_12_OR_13_ARGS);
-void MelderString_copy (MelderString *me, Melder_14_OR_15_ARGS);
-void MelderString_copy (MelderString *me, Melder_16_TO_19_ARGS);
 void MelderString_ncopy (MelderString *me, conststring32 source, int64 n);
 
-inline static void MelderString_append (MelderString *me, Melder_1_ARG) {
-	conststring32 s1  = arg1._arg  ? arg1._arg  : U"";  integer length1  = str32len (s1);
-	integer sizeNeeded = me -> length + length1 + 1;
-	if (sizeNeeded > me -> bufferSize) MelderString_expand (me, sizeNeeded);
-	str32cpy (me -> string + me -> length, s1);   me -> length += length1;
+inline static void _recursiveTemplate_MelderString_append (MelderString *me, const MelderArg& arg) {
+	if (arg._arg) {
+		const char32 *newEndOfStringLocation = stp32cpy (& my string [my length], arg._arg);
+		my length = newEndOfStringLocation - & my string [0];
+	}
 }
-/*void MelderString_append (MelderString *me, Melder_1_ARG);*/
-/*void MelderString_append (MelderString *me, Melder_2_ARGS);
-void MelderString_append (MelderString *me, Melder_3_ARGS);
-void MelderString_append (MelderString *me, Melder_4_ARGS);
-void MelderString_append (MelderString *me, Melder_5_ARGS);
-void MelderString_append (MelderString *me, Melder_6_ARGS);
-void MelderString_append (MelderString *me, Melder_7_ARGS);
-void MelderString_append (MelderString *me, Melder_8_ARGS);
-void MelderString_append (MelderString *me, Melder_9_ARGS);
-void MelderString_append (MelderString *me, Melder_10_ARGS);
-void MelderString_append (MelderString *me, Melder_11_ARGS);
-void MelderString_append (MelderString *me, Melder_12_OR_13_ARGS);
-void MelderString_append (MelderString *me, Melder_14_OR_15_ARGS);
-void MelderString_append (MelderString *me, Melder_16_TO_19_ARGS);
-*/
+template <typename... Args>
+void _recursiveTemplate_MelderString_append (MelderString *me, const MelderArg& first, Args... rest) {
+	_recursiveTemplate_MelderString_append (me, first);
+	_recursiveTemplate_MelderString_append (me, rest...);
+}
+
 template <typename... Args>
 void MelderString_append (MelderString *me, const MelderArg& first, Args... rest) {
-	MelderString_append (me, first);
-	MelderString_append (me, rest...);
+	integer extraLength = MelderArg__length (first, rest...);
+	integer sizeNeeded = my length + extraLength + 1;
+	if (sizeNeeded > my bufferSize)
+		MelderString_expand (me, sizeNeeded);
+	_recursiveTemplate_MelderString_append (me, first, rest...);
 }
+
+template <typename... Args>
+void MelderString_copy (MelderString *me, const MelderArg& first, Args... rest) {
+	constexpr int64 FREE_THRESHOLD_BYTES = 10000;
+	if (my bufferSize * (int64) sizeof (char32) >= FREE_THRESHOLD_BYTES) MelderString_free (me);
+	integer length = MelderArg__length (first, rest...);
+	integer sizeNeeded = length + 1;
+	if (sizeNeeded > my bufferSize)
+		MelderString_expand (me, sizeNeeded);
+	my length = 0;
+	_recursiveTemplate_MelderString_append (me, first, rest...);
+}
+
 void MelderString16_appendCharacter (MelderString16 *me, char32 character);
 void MelderString_appendCharacter (MelderString *me, char32 character);
 void MelderString_get (MelderString *me, char32 *destination);   // performs no boundary checking
@@ -2117,34 +2055,45 @@ int64 MelderString_deallocationCount ();
 int64 MelderString_allocationSize ();
 int64 MelderString_deallocationSize ();
 
-conststring32 Melder_cat (Melder_2_ARGS);
-conststring32 Melder_cat (Melder_3_ARGS);
-conststring32 Melder_cat (Melder_4_ARGS);
-conststring32 Melder_cat (Melder_5_ARGS);
-conststring32 Melder_cat (Melder_6_ARGS);
-conststring32 Melder_cat (Melder_7_ARGS);
-conststring32 Melder_cat (Melder_8_ARGS);
-conststring32 Melder_cat (Melder_9_ARGS);
-conststring32 Melder_cat (Melder_10_ARGS);
-conststring32 Melder_cat (Melder_11_ARGS);
-conststring32 Melder_cat (Melder_12_OR_13_ARGS);
-conststring32 Melder_cat (Melder_14_OR_15_ARGS);
-conststring32 Melder_cat (Melder_16_TO_19_ARGS);
+namespace MelderCat {
+	constexpr int _k_NUMBER_OF_BUFFERS = 33;
+	extern MelderString _buffers [_k_NUMBER_OF_BUFFERS];
+	extern int _bufferNumber;
+};
 
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_1_ARG);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_2_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_3_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_4_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_5_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_6_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_7_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_8_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_9_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_10_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_11_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_12_OR_13_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_14_OR_15_ARGS);
-void Melder_sprint (char32 *buffer, int64 bufferSize, Melder_16_TO_19_ARGS);
+template <typename... Args>
+conststring32 Melder_cat (Args... args) {
+	if (++ MelderCat::_bufferNumber == MelderCat::_k_NUMBER_OF_BUFFERS)
+		MelderCat::_bufferNumber = 0;
+	MelderString_copy (& MelderCat::_buffers [MelderCat::_bufferNumber], args...);
+	return MelderCat::_buffers [MelderCat::_bufferNumber].string;
+}
+
+inline static void _recursiveTemplate_Melder_sprint (char32 **inout_pointer, const MelderArg& arg) {
+	if (arg._arg) {
+		char32 *newEndOfStringLocation = stp32cpy (*inout_pointer, arg._arg);
+		*inout_pointer = newEndOfStringLocation;
+	}
+}
+template <typename... Args>
+void _recursiveTemplate_Melder_sprint (char32 **inout_pointer, const MelderArg& first, Args... rest) {
+	_recursiveTemplate_Melder_sprint (inout_pointer, first);
+	_recursiveTemplate_Melder_sprint (inout_pointer, rest...);
+}
+
+template <typename... Args>
+void Melder_sprint (mutablestring32 buffer, int64 bufferSize, const MelderArg& first, Args... rest) {
+	integer length = MelderArg__length (first, rest...);
+	if (length >= bufferSize) {
+		for (int64 i = 0; i < bufferSize; i ++)
+			buffer [i] = U'?';
+		if (bufferSize > 0)
+			buffer [bufferSize - 1] = U'\0';
+		return;
+	}
+	char32 *p = & buffer [0];
+	_recursiveTemplate_Melder_sprint (& p, first, rest...);
+}
 
 /********** NUMBER AND STRING COMPARISON **********/
 
@@ -2178,83 +2127,80 @@ integer Melder_searchToken (conststring32 string, char32 **tokens, integer n);
 	Behaviour:
 		Writes to stderr on Unix, otherwise to a special window.
 */
-void Melder_casual (Melder_1_ARG);
-void Melder_casual (Melder_2_ARGS);
-void Melder_casual (Melder_3_ARGS);
-void Melder_casual (Melder_4_ARGS);
-void Melder_casual (Melder_5_ARGS);
-void Melder_casual (Melder_6_ARGS);
-void Melder_casual (Melder_7_ARGS);
-void Melder_casual (Melder_8_ARGS);
-void Melder_casual (Melder_9_ARGS);
-void Melder_casual (Melder_10_ARGS);
-void Melder_casual (Melder_11_ARGS);
-void Melder_casual (Melder_12_OR_13_ARGS);
-void Melder_casual (Melder_14_OR_15_ARGS);
-void Melder_casual (Melder_16_TO_19_ARGS);
+
+inline static void _recursiveTemplate_Melder_casual (const MelderArg& arg) {
+	Melder_writeToConsole (arg._arg, true);
+}
+template <typename... Args>
+void _recursiveTemplate_Melder_casual (const MelderArg& first, Args... rest) {
+	_recursiveTemplate_Melder_casual (first);
+	_recursiveTemplate_Melder_casual (rest...);
+}
+
+template <typename... Args>
+void Melder_casual (const MelderArg& first, Args... rest) {
+	_recursiveTemplate_Melder_casual (first, rest...);
+	Melder_writeToConsole (U"\n", true);
+}
 
 void MelderCasual_memoryUse (integer message = 0);
 
-/**
+/*
 	Give information to stdout (batch), or to an "Info" window (interactive), or to a diverted string.
 */
+
+namespace MelderInfo {
+	using Proc = void (*) (conststring32 message);
+	void _defaultProc (conststring32 message);
+	extern Proc _p_currentProc;
+	extern MelderString _foregroundBuffer, *_p_currentBuffer;
+};
+
 void MelderInfo_open ();   // clear the Info window in the background
-
-void MelderInfo_write (Melder_1_ARG);
-void MelderInfo_write (Melder_2_ARGS);
-void MelderInfo_write (Melder_3_ARGS);
-void MelderInfo_write (Melder_4_ARGS);
-void MelderInfo_write (Melder_5_ARGS);
-void MelderInfo_write (Melder_6_ARGS);
-void MelderInfo_write (Melder_7_ARGS);
-void MelderInfo_write (Melder_8_ARGS);
-void MelderInfo_write (Melder_9_ARGS);
-void MelderInfo_write (Melder_10_ARGS);
-void MelderInfo_write (Melder_11_ARGS);
-void MelderInfo_write (Melder_12_OR_13_ARGS);
-void MelderInfo_write (Melder_14_OR_15_ARGS);
-void MelderInfo_write (Melder_16_TO_19_ARGS);
-
-void MelderInfo_writeLine (Melder_1_ARG);
-void MelderInfo_writeLine (Melder_2_ARGS);
-void MelderInfo_writeLine (Melder_3_ARGS);
-void MelderInfo_writeLine (Melder_4_ARGS);
-void MelderInfo_writeLine (Melder_5_ARGS);
-void MelderInfo_writeLine (Melder_6_ARGS);
-void MelderInfo_writeLine (Melder_7_ARGS);
-void MelderInfo_writeLine (Melder_8_ARGS);
-void MelderInfo_writeLine (Melder_9_ARGS);
-void MelderInfo_writeLine (Melder_10_ARGS);
-void MelderInfo_writeLine (Melder_11_ARGS);
-void MelderInfo_writeLine (Melder_12_OR_13_ARGS);
-void MelderInfo_writeLine (Melder_14_OR_15_ARGS);
-void MelderInfo_writeLine (Melder_16_TO_19_ARGS);
-
 void MelderInfo_close ();   // drain the background info to the Info window, making sure there is a line break
 void MelderInfo_drain ();   // drain the background info to the Info window, without adding any extra line break
 
-void Melder_information (Melder_1_ARG);
-void Melder_information (Melder_2_ARGS);
-void Melder_information (Melder_3_ARGS);
-void Melder_information (Melder_4_ARGS);
-void Melder_information (Melder_5_ARGS);
-void Melder_information (Melder_6_ARGS);
-void Melder_information (Melder_7_ARGS);
-void Melder_information (Melder_8_ARGS);
-void Melder_information (Melder_9_ARGS);
-void Melder_information (Melder_10_ARGS);
-void Melder_information (Melder_11_ARGS);
-void Melder_information (Melder_12_OR_13_ARGS);
-void Melder_information (Melder_14_OR_15_ARGS);
-void Melder_information (Melder_16_TO_19_ARGS);
+inline static void _recursiveTemplate_MelderInfo_write (const MelderArg& arg) {
+	Melder_writeToConsole (arg._arg, false);
+}
+template <typename... Args>
+void _recursiveTemplate_MelderInfo_write (const MelderArg& first, Args... rest) {
+	_recursiveTemplate_MelderInfo_write (first);
+	_recursiveTemplate_MelderInfo_write (rest...);
+}
+
+template <typename... Args>
+void MelderInfo_write (const MelderArg& first, Args... rest) {
+	MelderString_append (MelderInfo::_p_currentBuffer, first, rest...);
+	if (MelderInfo::_p_currentProc == & MelderInfo::_defaultProc && MelderInfo::_p_currentBuffer == & MelderInfo::_foregroundBuffer)
+		_recursiveTemplate_MelderInfo_write (first, rest...);
+}
+
+template <typename... Args>
+void MelderInfo_writeLine (const MelderArg& first, Args... rest) {
+	MelderString_append (MelderInfo::_p_currentBuffer, first, rest...);
+	MelderString_appendCharacter (MelderInfo::_p_currentBuffer, U'\n');
+	if (MelderInfo::_p_currentProc == & MelderInfo::_defaultProc && MelderInfo::_p_currentBuffer == & MelderInfo::_foregroundBuffer) {
+		_recursiveTemplate_MelderInfo_write (first, rest...);
+		Melder_writeToConsole (U"\n", false);
+	}
+}
+
+template <typename... Args>
+void Melder_information (const MelderArg& first, Args... rest) {
+	MelderString_copy (MelderInfo::_p_currentBuffer, first, rest...);
+	if (MelderInfo::_p_currentProc == & MelderInfo::_defaultProc && MelderInfo::_p_currentBuffer == & MelderInfo::_foregroundBuffer)
+		_recursiveTemplate_MelderInfo_write (first, rest...);
+	MelderInfo_close ();
+}
 
 void Melder_informationReal (double value, conststring32 units);   // %.17g or --undefined--; units may be null
 
-void Melder_divertInfo (MelderString *buffer);   // nullptr = back to normal
+void Melder_divertInfo (MelderString *p_buffer);   // nullptr = back to normal
 
 class autoMelderDivertInfo {
 	public:
-		autoMelderDivertInfo (MelderString *buffer) { Melder_divertInfo (buffer); }
+		autoMelderDivertInfo (MelderString *p_buffer) { Melder_divertInfo (p_buffer); }
 		~autoMelderDivertInfo () { Melder_divertInfo (nullptr); }
 };
 
@@ -2273,7 +2219,10 @@ extern int Melder_debug;
 
 /********** ERROR **********/
 
-class MelderError { };
+class MelderError {
+public:
+	static void _append (conststring32 message);
+};
 
 void Melder_appendError_noLine (const MelderArg& arg1);
 
@@ -2294,38 +2243,32 @@ void Melder_appendError_noLine (const MelderArg& arg1);
 	and your prepended error text will be shown to the user out of context,
 	which is wrong.
 */
-void Melder_appendError (Melder_1_ARG);
-void Melder_appendError (Melder_2_ARGS);
-void Melder_appendError (Melder_3_ARGS);
-void Melder_appendError (Melder_4_ARGS);
-void Melder_appendError (Melder_5_ARGS);
-void Melder_appendError (Melder_6_ARGS);
-void Melder_appendError (Melder_7_ARGS);
-void Melder_appendError (Melder_8_ARGS);
-void Melder_appendError (Melder_9_ARGS);
-void Melder_appendError (Melder_10_ARGS);
-void Melder_appendError (Melder_11_ARGS);
-void Melder_appendError (Melder_12_OR_13_ARGS);
-void Melder_appendError (Melder_14_OR_15_ARGS);
-void Melder_appendError (Melder_16_TO_19_ARGS);
+
+inline static void _recursiveTemplate_Melder_appendError (const MelderArg& arg) {
+	MelderError::_append (arg._arg);
+}
+template <typename... Args>
+void _recursiveTemplate_Melder_appendError (const MelderArg& first, Args... rest) {
+	_recursiveTemplate_Melder_appendError (first);
+	_recursiveTemplate_Melder_appendError (rest...);
+}
+
+template <typename... Args>
+void Melder_appendError (const MelderArg& first, Args... rest) {
+	_recursiveTemplate_Melder_appendError (first, rest...);
+	MelderError::_append (U"\n");
+}
+
 #define Melder_throw(...)  do { Melder_appendError (__VA_ARGS__); throw MelderError (); } while (false)
 #define Melder_require(condition, ...)  do { if (! (condition)) Melder_throw (__VA_ARGS__); } while (false)
 
 void Melder_flushError ();
-void Melder_flushError (Melder_1_ARG);
-void Melder_flushError (Melder_2_ARGS);
-void Melder_flushError (Melder_3_ARGS);
-void Melder_flushError (Melder_4_ARGS);
-void Melder_flushError (Melder_5_ARGS);
-void Melder_flushError (Melder_6_ARGS);
-void Melder_flushError (Melder_7_ARGS);
-void Melder_flushError (Melder_8_ARGS);
-void Melder_flushError (Melder_9_ARGS);
-void Melder_flushError (Melder_10_ARGS);
-void Melder_flushError (Melder_11_ARGS);
-void Melder_flushError (Melder_12_OR_13_ARGS);
-void Melder_flushError (Melder_14_OR_15_ARGS);
-void Melder_flushError (Melder_16_TO_19_ARGS);
+
+template <typename... Args>
+void Melder_flushError (const MelderArg& first, Args... rest) {
+	Melder_appendError (first, rest...);
+	Melder_flushError ();
+}
 	/* Send all deferred error messages to stderr (batch) or to an "Error" dialog, */
 	/* including, if there are arguments, the error message generated by this routine. */
 
@@ -2336,25 +2279,29 @@ bool Melder_hasError (conststring32 partialError);
 void Melder_clearError ();
 	/* Cancel all stored error messages. */
 
-char32 * Melder_getError ();
+conststring32 Melder_getError ();
 	/* Returns the error string. Mainly used with str32str. */
 
 /********** WARNING: give warning to stderr (batch) or to a "Warning" dialog **********/
 
-void Melder_warning (Melder_1_ARG);
-void Melder_warning (Melder_2_ARGS);
-void Melder_warning (Melder_3_ARGS);
-void Melder_warning (Melder_4_ARGS);
-void Melder_warning (Melder_5_ARGS);
-void Melder_warning (Melder_6_ARGS);
-void Melder_warning (Melder_7_ARGS);
-void Melder_warning (Melder_8_ARGS);
-void Melder_warning (Melder_9_ARGS);
-void Melder_warning (Melder_10_ARGS);
-void Melder_warning (Melder_11_ARGS);
-void Melder_warning (Melder_12_OR_13_ARGS);
-void Melder_warning (Melder_14_OR_15_ARGS);
-void Melder_warning (Melder_16_TO_19_ARGS);
+namespace MelderWarning {
+	extern int _depth;
+	extern MelderString _buffer;
+	using Proc = void (*) (conststring32 message);
+	void _defaultProc (conststring32 message);
+	extern Proc _p_currentProc;
+}
+
+template <typename... Args>
+void Melder_warning (const MelderArg& first, Args... rest);
+
+template <typename... Args>
+void Melder_warning (const MelderArg& first, Args... rest) {
+	if (MelderWarning::_depth < 0)
+		return;
+	MelderString_copy (& MelderWarning::_buffer, first, rest...);
+	MelderWarning::_p_currentProc (MelderWarning::_buffer.string);
+}
 
 void Melder_warningOff ();
 void Melder_warningOn ();
@@ -2371,41 +2318,36 @@ public:
 	Give error message, abort program.
 	Should only be caused by programming errors.
 */
-int Melder_fatal (Melder_1_ARG);
-int Melder_fatal (Melder_2_ARGS);
-int Melder_fatal (Melder_3_ARGS);
-int Melder_fatal (Melder_4_ARGS);
-int Melder_fatal (Melder_5_ARGS);
-int Melder_fatal (Melder_6_ARGS);
-int Melder_fatal (Melder_7_ARGS);
-int Melder_fatal (Melder_8_ARGS);
-int Melder_fatal (Melder_9_ARGS);
-int Melder_fatal (Melder_10_ARGS);
-int Melder_fatal (Melder_11_ARGS);
-int Melder_fatal (Melder_12_OR_13_ARGS);
-int Melder_fatal (Melder_14_OR_15_ARGS);
-int Melder_fatal (Melder_16_TO_19_ARGS);
+void Melder_fatal (const MelderArg&,
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U""
+);
 
 #pragma mark - PROGRESS
 
-void Melder_progress (double progress);
-void Melder_progress (double progress, Melder_1_ARG);
-void Melder_progress (double progress, Melder_2_ARGS);
-void Melder_progress (double progress, Melder_3_ARGS);
-void Melder_progress (double progress, Melder_4_ARGS);
-void Melder_progress (double progress, Melder_5_ARGS);
-void Melder_progress (double progress, Melder_6_ARGS);
-void Melder_progress (double progress, Melder_7_ARGS);
-void Melder_progress (double progress, Melder_8_ARGS);
-void Melder_progress (double progress, Melder_9_ARGS);
-void Melder_progress (double progress, Melder_10_ARGS);
-void Melder_progress (double progress, Melder_11_ARGS);
-void Melder_progress (double progress, Melder_12_OR_13_ARGS);
-void Melder_progress (double progress, Melder_14_OR_15_ARGS);
-void Melder_progress (double progress, Melder_16_TO_19_ARGS);
+namespace MelderProgress {
+	extern int _depth;
+	using ProgressProc = void (*) (double progress, conststring32 message);
+	using MonitorProc = void * (*) (double progress, conststring32 message);
+	extern ProgressProc _p_progressProc;
+	extern MonitorProc _p_monitorProc;
+	void _doProgress (double progress, conststring32 message);
+	void * _doMonitor (double progress, conststring32 message);
+	extern MelderString _buffer;
+}
 
 void Melder_progressOff ();
 void Melder_progressOn ();
+
+inline static void Melder_progress (double progress) {
+	MelderProgress::_doProgress (progress, U"");
+}
+template <typename... Args>
+void Melder_progress (double progress, const MelderArg& first, Args... rest) {
+	MelderString_copy (& MelderProgress::_buffer, first, rest...);
+	MelderProgress::_doProgress (progress, MelderProgress::_buffer.string);
+}
 /*
 	Function:
 		Show the progress of a time-consuming process.
@@ -2446,21 +2388,14 @@ public:
 	}
 };
 
-void * Melder_monitor (double progress);
-void * Melder_monitor (double progress, Melder_1_ARG);
-void * Melder_monitor (double progress, Melder_2_ARGS);
-void * Melder_monitor (double progress, Melder_3_ARGS);
-void * Melder_monitor (double progress, Melder_4_ARGS);
-void * Melder_monitor (double progress, Melder_5_ARGS);
-void * Melder_monitor (double progress, Melder_6_ARGS);
-void * Melder_monitor (double progress, Melder_7_ARGS);
-void * Melder_monitor (double progress, Melder_8_ARGS);
-void * Melder_monitor (double progress, Melder_9_ARGS);
-void * Melder_monitor (double progress, Melder_10_ARGS);
-void * Melder_monitor (double progress, Melder_11_ARGS);
-void * Melder_monitor (double progress, Melder_12_OR_13_ARGS);
-void * Melder_monitor (double progress, Melder_14_OR_15_ARGS);
-void * Melder_monitor (double progress, Melder_16_TO_19_ARGS);
+inline static void * Melder_monitor (double progress) {
+	return MelderProgress::_doMonitor (progress, U"");
+}
+template <typename... Args>
+void * Melder_monitor (double progress, const MelderArg& first, Args... rest) {
+	MelderString_copy (& MelderProgress::_buffer, first, rest...);
+	return MelderProgress::_doMonitor (progress, MelderProgress::_buffer.string);
+}
 /*
 	Function:
 		Show the progress of a time-consuming process.
@@ -2642,12 +2577,12 @@ extern bool Melder_asynchronous;   // true if specified by the "asynchronous" di
 
 /* Procedures to override default message methods. */
 /* They may chage the string arguments. */
-/* Many of these routines are called by MelderMotif_create and MelderXvt_create. */
+/* Many of these routines are called by MelderGui_create(). */
 
 void Melder_setCasualProc (void (*casualProc) (conststring32 message));
 void Melder_setProgressProc (int (*progressProc) (double progress, conststring32 message));
 void Melder_setMonitorProc (void * (*monitorProc) (double progress, conststring32 message));
-void Melder_setInformationProc (void (*informationProc) (conststring32 message));
+void Melder_setInformationProc (MelderInfo::Proc informationProc);
 void Melder_setHelpProc (void (*help) (conststring32 query));
 void Melder_setSearchProc (void (*search) ());
 void Melder_setWarningProc (void (*warningProc) (conststring32 message));
@@ -2843,7 +2778,7 @@ conststring32 MelderReadText_getLineNumber (MelderReadText text);
 
 #include "../sys/abcio.h"
 
-/* The following ANSI-C power trick generates the declarations of 156 functions. */
+/* The following ANSI-C power trick generates the declarations of 88 functions. */
 #define FUNCTION(type,storage)  \
 	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, conststring32 name); \
 	void NUMvector_writeBinary_##storage (const type *v, integer lo, integer hi, FILE *f); \
@@ -2926,13 +2861,15 @@ public:
 	autofile () : ptr (nullptr) {
 	}
 	~autofile () {
-		if (ptr) fclose (ptr);   // no error checking, because this is a destructor, only called after a throw, because otherwise you'd use f.close(file)
+		if (ptr)
+			fclose (ptr);   // no error checking, because this is a destructor, only called after a throw, because otherwise you'd use f.close(file)
 	}
 	operator FILE * () {
 		return ptr;
 	}
 	void reset (FILE *f) {
-		if (ptr) fclose (ptr);   // BUG: not a normal closure
+		if (ptr)
+			fclose (ptr);   // BUG: not a normal closure
 		ptr = f;
 	}
 	void close (MelderFile file) {
@@ -2950,7 +2887,8 @@ public:
 	autoMelderFile (MelderFile file) : _file (file) {
 	}
 	~autoMelderFile () {
-		if (_file) MelderFile_close_nothrow (_file);
+		if (_file)
+			MelderFile_close_nothrow (_file);
 	}
 	void close () {
 		if (_file && _file -> filePointer) {

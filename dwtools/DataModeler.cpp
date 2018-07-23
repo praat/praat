@@ -647,7 +647,8 @@ void DataModeler_speckle (DataModeler me, Graphics g, double xmin, double xmax, 
 	if (ymax <= ymin)
 		DataModeler_getExtremaY (me, &ymin, &ymax);
 	Graphics_setInner (g);
-	DataModeler_speckle_inside (me, g, xmin, xmax, ymin, ymax, estimated, numberOfParameters, errorbars, barWidth_mm, horizontalOffset_mm);
+	DataModeler_speckle_inside (me, g, xmin, xmax, ymin, ymax,
+		estimated, numberOfParameters, errorbars, barWidth_mm, horizontalOffset_mm);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -704,8 +705,10 @@ void DataModeler_init (DataModeler me, double xmin, double xmax, integer numberO
 	my dataPointStatus = NUMvector<int> (1, numberOfDataPoints);
 	my numberOfParameters = numberOfParameters;
 	
-	Melder_require (numberOfParameters > 0, U"The number of parameters should be greater than zero.");
-	Melder_require (numberOfParameters <= numberOfDataPoints, U"The number of parameters should not exceed the number of data points");
+	Melder_require (numberOfParameters > 0,
+		U"The number of parameters should be greater than zero.");
+	Melder_require (numberOfParameters <= numberOfDataPoints,
+		U"The number of parameters should not exceed the number of data points");
 	
 	my parameter = NUMvector<double> (1, numberOfParameters);
 	my parameterStatus = NUMvector<int> (1, numberOfParameters);
@@ -717,7 +720,8 @@ autoDataModeler DataModeler_create (double xmin, double xmax, integer numberOfDa
 	try {
 		autoDataModeler me = Thing_new (DataModeler);
 		DataModeler_init (me.get(), xmin, xmax, numberOfDataPoints, numberOfParameters, type);
-		my xmin = xmin; my xmax = xmax;
+		my xmin = xmin;
+		my xmax = xmax;
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler not created.");
@@ -730,13 +734,14 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax,
 	try {
 		integer numberOfParameters;
 		autoNUMvector <double> parameter (NUMstring_to_numbers (parameters, & numberOfParameters), 1);
-		Melder_require (numberOfParameters > 0, U"At least one parameter should be defined.");
-		Melder_require (xmin < xmax, U"The domain should be defined properly.");
+		Melder_require (numberOfParameters > 0,
+			U"At least one parameter should be defined.");
+		Melder_require (xmin < xmax,
+			U"The domain should be defined properly.");
 		
 		autoDataModeler me = DataModeler_create (xmin, xmax, numberOfDataPoints, numberOfParameters, type);
-		for (integer i = 1; i <= numberOfParameters; i ++) {
-			my parameter [i] = parameter [i]; // parameter status ok
-		}
+		for (integer i = 1; i <= numberOfParameters; i ++)
+			my parameter [i] = parameter [i];   // parameter status ok
 		// generate the data that beinteger to the parameter values
 		for (integer i = 1; i <= numberOfDataPoints; i ++) {
 			my x [i] = xmin + (i - 0.5) * (xmax - xmin) / numberOfDataPoints;
@@ -936,7 +941,7 @@ void structFormantModeler :: v_info () {
 
 double DataModeler_getResidualSumOfSquares (DataModeler me, integer *numberOfDataPoints) {
 	integer n = 0;
-	double rss = 0.0;
+	longdouble rss = 0.0;
 	for (integer i = 1; i <= my numberOfDataPoints; i ++) {
 		if (my dataPointStatus [i] != DataModeler_DATA_INVALID) {
 			++ n;
@@ -946,7 +951,7 @@ double DataModeler_getResidualSumOfSquares (DataModeler me, integer *numberOfDat
 	}
 	if (numberOfDataPoints)
 		*numberOfDataPoints = n;
-	return ( n > 0 ? rss : undefined );
+	return ( n > 0 ? (double) rss : undefined );
 }
 
 void DataModeler_reportChiSquared (DataModeler me, int weighDataType) {
@@ -1192,14 +1197,14 @@ void FormantModeler_drawVariancesOfShiftedTracks (FormantModeler me, Graphics g,
 		integer numberOfDataPoints = FormantModeler_getNumberOfDataPoints (me);
 		autoNUMvector<double> var (1, numberOfDataPoints);
 		autoNUMvector<double> varShifted (1, numberOfDataPoints);
-		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, shiftDirection, &fromFormant, &toFormant, varShifted.peek());
-		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, 0, &fromFormant, &toFormant, var.peek());
+		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, shiftDirection, & fromFormant, & toFormant, varShifted.peek());
+		FormantModeler_getSumOfVariancesBetweenShiftedAndEstimatedTracks (me, 0, & fromFormant, & toFormant, var.peek());
 		for (integer i = ixmin + 1; i <= ixmax; i ++) {
 			if (isdefined (varShifted [i]) && isdefined (var [i]))
 				var [i] -= varShifted [i];
 		}
 		if (ymax <= ymin)
-			NUMvector_extrema<double> (var.peek(), ixmin, ixmax, &ymin, &ymax);
+			NUMvector_extrema<double> (var.peek(), ixmin, ixmax, & ymin, & ymax);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		DataModeler thee = my trackmodelers.at [1];

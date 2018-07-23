@@ -543,7 +543,7 @@ KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, KlattGrid_FRICATION_FORMANT
 #define KlattGrid_EXTRACT_FORMANT_GRID(Name,gridType)  \
 DIRECT (NEW_KlattGrid_extract##Name##FormantGrid) { \
 	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names[gridType]); \
+		praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names [gridType]); \
 	} \
 END }
 
@@ -553,7 +553,7 @@ FORM (NEW_KlattGrid_extract##Name##FormantAmplitudeTier, U"KlattGrid: Extract " 
 	OK \
 DO \
 	LOOP { iam (KlattGrid); \
-		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, formantNumber), formant_names[formantType]); \
+		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, formantNumber), formant_names [formantType]); \
 	} \
 END }
 

@@ -55,7 +55,7 @@ void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, bool discrimi
 	bool poolCovarianceMatrices, bool garnish);
 
 void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g,
-	double scale, bool confidence, char32 *label, bool discriminantDirections,
+	double scale, bool confidence, conststring32 label, bool discriminantDirections,
 	integer d1, integer d2, double xmin, double xmax, double ymin, double ymax,
 	int fontSize, bool garnish);
 
