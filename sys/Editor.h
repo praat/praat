@@ -235,8 +235,8 @@ void Editor_save (Editor me, conststring32 text);   // for Undo
 
 autoUiForm UiForm_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
 void UiForm_parseStringE (EditorCommand cmd, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter);
-UiForm UiOutfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
-UiForm UiInfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
+autoUiForm UiOutfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
+autoUiForm UiInfile_createE (EditorCommand cmd, conststring32 title, conststring32 invokingButtonTitle, conststring32 helpTitle);
 
 EditorCommand Editor_getMenuCommand (Editor me, conststring32 menuTitle, conststring32 itemTitle);
 void Editor_doMenuCommand (Editor me, conststring32 command, integer narg, Stackel args, conststring32 arguments, Interpreter interpreter);

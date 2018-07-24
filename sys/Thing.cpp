@@ -47,12 +47,13 @@ ClassInfo classThing = & theClassInfo_Thing;
 conststring32 Thing_className (Thing me) { return my classInfo -> className; }
 
 autoThing Thing_newFromClass (ClassInfo classInfo) {
-	autoThing me (classInfo -> _new ());
+	autoThing me { classInfo };
 	trace (U"created ", classInfo -> className);
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo;
 	Melder_assert (! my name);   // confirm that _new called calloc, so that we see null pointers
-	if (Melder_debug == 40) Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me.get(), U")");
+	if (Melder_debug == 40)
+		Melder_casual (U"created ", classInfo -> className, U" (", Melder_pointer (classInfo), U", ", me.get(), U")");
 	return me;
 }
 
