@@ -731,8 +731,8 @@ DO
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (numberOfHorizontalSteps - 1);
 	Formula_compile (interpreter, function.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+	Formula_Result result;
 	for (integer i = 1; i <= numberOfHorizontalSteps; i ++) {
-		Formula_Result result;
 		Formula_run (1, i, & result);
 		y [i] = result. numericResult;
 	}

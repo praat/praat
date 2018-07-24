@@ -28,11 +28,22 @@ Thing_declare (Interpreter);
 
 #if 1
 template <typename T, typename... Args>
-	_Thing_auto <T> Thing_create (Args ... args) {
-		_Thing_auto <T> me (new T);   // this `new` has to set classInfo
+	autoSomeThing <T> Thing_create (Args ... args) {
+		autoSomeThing <T> me (new T);   // this `new` has to set classInfo
 		my T::init (args...);
 		return me;
 	}
+
+template <typename... ArgumentTypes>
+autoMatrix CreateMatrix (ArgumentTypes... arguments) {
+	try {
+		autoMatrix me = Thing_new (Matrix);
+		Matrix_init (me.get(), arguments...);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"Matrix object not created.");
+	}
+}
 #endif
 
 void Matrix_init

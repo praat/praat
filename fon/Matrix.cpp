@@ -512,7 +512,8 @@ autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-
 		integer nelements = 0;
 		for (;;) {
 			double element;
-			if (fscanf (f, "%lf", & element) < 1) break;   // zero or end-of-file
+			if (fscanf (f, "%lf", & element) < 1)
+				break;   // zero or end-of-file
 			nelements ++;
 		}
 
@@ -532,9 +533,10 @@ autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-
 		 * Read elements.
 		 */
 		rewind (f);
-		for (integer irow = 1; irow <= nrow; irow ++)
+		for (integer irow = 1; irow <= nrow; irow ++) {
 			for (integer icol = 1; icol <= ncol; icol ++)
 				fscanf (f, "%lf", & my z [irow] [icol]);
+		}
 
 		f.close (file);
 		return me;
@@ -575,9 +577,8 @@ autoMatrix Matrix_power (Matrix me, integer power) {
 			for (integer irow = 1; irow <= my ny; irow ++) {
 				for (integer icol = 1; icol <= my nx; icol ++) {
 					thy z [irow] [icol] = 0.0;
-					for (integer i = 1; i <= my nx; i ++) {
+					for (integer i = 1; i <= my nx; i ++)
 						thy z [irow] [icol] += his z [irow] [i] * my z [i] [icol];
-					}
 				}
 			}
 		}
@@ -597,7 +598,8 @@ void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 				Melder8_double (my dy), Melder8_double (my y1));
 		for (integer i = 1; i <= my ny; i ++) {
 			for (integer j = 1; j <= my nx; j ++) {
-				if (j > 1) fprintf (f, " ");
+				if (j > 1)
+					fprintf (f, " ");
 				fprintf (f, "%s", Melder8_double (my z [i] [j]));
 			}
 			fprintf (f, "\n");
@@ -613,7 +615,8 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 		autofile f = Melder_fopen (file, "w");
 		for (integer i = 1; i <= my ny; i ++) {
 			for (integer j = 1; j <= my nx; j ++) {
-				if (j > 1) fprintf (f, "\t");
+				if (j > 1)
+					fprintf (f, "\t");
 				fprintf (f, "%s", Melder8_single (my z [i] [j]));
 			}
 			fprintf (f, "\n");
@@ -626,9 +629,10 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 
 void Matrix_formula (Matrix me, conststring32 expression, Interpreter interpreter, Matrix target) {
 	try {
-		Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (! target) target = me;
+		Formula_Result result;
+		if (! target)
+			target = me;
 		for (integer irow = 1; irow <= my ny; irow ++) {
 			for (integer icol = 1; icol <= my nx; icol ++) {
 				Formula_run (irow, icol, & result);
@@ -644,14 +648,17 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 	conststring32 expression, Interpreter interpreter, Matrix target)
 {
 	try {
-		if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
-		if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
+		if (xmax <= xmin)
+			xmin = my xmin, xmax = my xmax;
+		if (ymax <= ymin)
+			ymin = my ymin, ymax = my ymax;
 		integer ixmin, ixmax, iymin, iymax;
 		(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 		(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
-		Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (! target) target = me;
+		Formula_Result result;
+		if (! target)
+			target = me;
 		for (integer irow = iymin; irow <= iymax; irow ++) {
 			for (integer icol = ixmin; icol <= ixmax; icol ++) {
 				Formula_run (irow, icol, & result);

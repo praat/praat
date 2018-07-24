@@ -27,7 +27,7 @@ Thing_declare (EditorCommand);
 
 /* Example of usage:
 {
-	static UiForm dia = nullptr;
+	static autoUiForm dia;
 	if (! dia) {
 		UiField radio;
 		dia = UiForm_create
@@ -38,26 +38,26 @@ Thing_declare (EditorCommand);
 			U"Create person...",   // the invoking button title
 			U"Create person...");   // the help string; may be nullptr
 		static integer age;
-		UiForm_addNatural (dia, & age, U"age", U"Age (years)", U"18");
+		UiForm_addNatural (dia.get(), & age, U"age", U"Age (years)", U"18");
 		static double length;
-		UiForm_addPositive (dia, & length, U"length", U"Length (metres)", U"1.68 (= average)");
+		UiForm_addPositive (dia.get(), & length, U"length", U"Length (metres)", U"1.68 (= average)");
 		static bool beard;
-		UiForm_addBoolean (dia, & beard, U"beard", U"Beard", false);
+		UiForm_addBoolean (dia.get(), & beard, U"beard", U"Beard", false);
 		static int sex;
-		radio = UiForm_addRadio (dia, & sex, U"sex", U"Sex", 1);
+		radio = UiForm_addRadio (dia.get(), & sex, U"sex", U"Sex", 1);
 			UiRadio_addButton (radio, U"Female");
 			UiRadio_addButton (radio, U"Male");
-		UiForm_addWord (dia, colour, U"colour", U"Colour", U"black");
-		UiForm_addLabel (dia, U"features", U"Some less conspicuous features:");
+		UiForm_addWord (dia.get(), colour, U"colour", U"Colour", U"black");
+		UiForm_addLabel (dia.get(), U"features", U"Some less conspicuous features:");
 		static integer numberOfBirthMarks;
-		UiForm_addNatural (dia, & numberOfBirthMarks, U"numberOfBirthMarks", U"Number of birth marks", U"28");
+		UiForm_addNatural (dia.get(), & numberOfBirthMarks, U"numberOfBirthMarks", U"Number of birth marks", U"28");
 		static char *favouriteGreeting;
-		UiForm_addSentence (dia, & favouriteGreeting, U"favouriteGreeting", U"Favourite greeting", U"Good morning");
-		UiForm_finish (dia);
+		UiForm_addSentence (dia.get(), & favouriteGreeting, U"favouriteGreeting", U"Favourite greeting", U"Good morning");
+		UiForm_finish (dia.get());
 	}
-	UiForm_setReal (dia, & length, myLength);
-	UiForm_setInteger (dia, & numberOfBirthMarks, 30);
-	UiForm_do (dia, false);   // show dialog box
+	UiForm_setReal (dia.get(), & length, myLength);
+	UiForm_setInteger (dia.get(), & numberOfBirthMarks, 30);
+	UiForm_do (dia.get(), false);   // show dialog box
 }
 	Real, Positive, Integer, Natural, Channel, Word, and Sentence show a label and an editable text field.
 	Radio shows a label and has Button children stacked below it.
@@ -129,10 +129,8 @@ Thing_define (UiField, Thing) {
 	bool *boolVariable;
 	conststring32 *stringVariable;
 	Graphics_Colour *colourVariable;
-
 	numvec *numericVectorVariable;
 	nummat *numericMatrixVariable;
-	bool owned;
 
 	int subtract;
 
@@ -169,7 +167,7 @@ Thing_define (UiForm, Thing) {
 	int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton;
 	conststring32 continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];   // references to strings owned by a script
 	int numberOfFields;
-	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
+	autoUiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
 	GuiButton okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 	bool destroyWhenUnmanaged, isPauseForm;
 
@@ -185,7 +183,7 @@ Thing_define (UiForm, Thing) {
 };
 
 /* The following functions work on the screen and from batch. */
-UiForm UiForm_create (GuiWindow parent, conststring32 title,
+autoUiForm UiForm_create (GuiWindow parent, conststring32 title,
 	UiCallback okCallback, void *buttonClosure,
 	conststring32 invokingButtonTitle, conststring32 helpTitle);
 UiField UiForm_addReal (UiForm me, double *variable, conststring32 variableName, conststring32 label, conststring32 defaultValue);
@@ -287,11 +285,11 @@ Graphics_Colour UiForm_getColour_check (UiForm me, conststring32 fieldName);
 void UiForm_call (UiForm me, integer narg, Stackel args, Interpreter interpreter);
 void UiForm_parseString (UiForm me, conststring32 arguments, Interpreter interpreter);
 
-UiForm UiInfile_create (GuiWindow parent, conststring32 title,
+autoUiForm UiInfile_create (GuiWindow parent, conststring32 title,
   UiCallback okCallback, void *okClosure,
   conststring32 invokingButtonTitle, conststring32 helpTitle, bool allowMultipleFiles);
 
-UiForm UiOutfile_create (GuiWindow parent, conststring32 title,
+autoUiForm UiOutfile_create (GuiWindow parent, conststring32 title,
   UiCallback okCallback, void *okClosure,
   conststring32 invokingButtonTitle, conststring32 helpTitle);
 

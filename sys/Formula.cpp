@@ -2167,19 +2167,8 @@ void Formula_compile (Interpreter interpreter, Daata data, conststring32 express
 
 static int programPointer;
 
-static void Stackel_cleanUp (Stackel me) {
-	if (my which == Stackel_STRING) {
-		my _string. reset();
-	} else if (my which == Stackel_NUMERIC_VECTOR) {
-		if (my owned)
-			NUMvector_free (my numericVector.at, 1);
-		my numericVector = empty_numvec;
-	} else if (my which == Stackel_NUMERIC_MATRIX) {
-		if (my owned)
-			NUMmatrix_free (my numericMatrix.at, 1, 1);
-		my numericMatrix = empty_nummat;
-	}
-}
+#define Formula_MAXIMUM_STACK_SIZE  1000
+
 static Stackel theStack;
 static integer w, wmax;   /* w = stack pointer; */
 #define pop  & theStack [w --]
@@ -2193,8 +2182,12 @@ inline static void pushNumber (double x) {
 	 * Mac: 3.76 -> 3.20 seconds
 	 */
 	Stackel stackel = & theStack [++ w];
-	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-	if (w > wmax) wmax ++;
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
 	stackel -> which = Stackel_NUMBER;
 	stackel -> number = isdefined (x) ? x : undefined;
 	//stackel -> number = x;   // this one would be 2 percent faster
@@ -2202,54 +2195,82 @@ inline static void pushNumber (double x) {
 }
 static void pushNumericVector (autonumvec x) {
 	Stackel stackel = & theStack [++ w];
-	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-	if (w > wmax) wmax ++;
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
 	stackel -> which = Stackel_NUMERIC_VECTOR;
 	stackel -> numericVector = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
 static void pushNumericVectorReference (numvec x) {
 	Stackel stackel = & theStack [++ w];
-	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-	if (w > wmax) wmax ++;
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
 	stackel -> which = Stackel_NUMERIC_VECTOR;
 	stackel -> numericVector = x;
 	stackel -> owned = false;
 }
 static void pushNumericMatrix (autonummat x) {
 	Stackel stackel = & theStack [++ w];
-	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-	if (w > wmax) wmax ++;
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
 	stackel -> which = Stackel_NUMERIC_MATRIX;
 	stackel -> numericMatrix = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
 static void pushNumericMatrixReference (nummat x) {
 	Stackel stackel = & theStack [++ w];
-	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-	if (w > wmax) wmax ++;
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
 	stackel -> which = Stackel_NUMERIC_MATRIX;
 	stackel -> numericMatrix = x;
 	stackel -> owned = false;
 }
 static void pushString (autostring32 x) {
 	Stackel stackel = & theStack [++ w];
-	if (w > wmax) wmax ++;
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
 	stackel -> setString (x.move());
 	//stackel -> owned = true;
 }
 static void pushObject (Daata object) {
 	Stackel stackel = & theStack [++ w];
-	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-	if (w > wmax) wmax ++;
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
 	stackel -> which = Stackel_OBJECT;
 	stackel -> object = object;
 	//stackel -> owned = false;
 }
 static void pushVariable (InterpreterVariable var) {
 	Stackel stackel = & theStack [++ w];
-	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-	if (w > wmax) wmax ++;
+	stackel -> reset();
+	if (w > wmax) {
+		wmax ++;
+		if (wmax > Formula_MAXIMUM_STACK_SIZE)
+			Melder_throw (U"Formula: stack overflow. Please simplify your formulas.");
+	}
 	stackel -> which = Stackel_VARIABLE;
 	stackel -> variable = var;
 	//stackel -> owned = false;
@@ -2443,46 +2464,39 @@ inline static void moveNumericMatrix (Stackel from, Stackel to) {
 	to -> owned = true;
 }
 inline static void numvec_addScalar (numvec x, double number) {
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		x [i] += number;
-	}
 }
 inline static void nummat_addScalar (nummat x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] += number;
-		}
 	}
 }
 inline static void numvec_addNumvec (numvec x, numvec y) {
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		x [i] += y [i];
-	}
 }
 inline static void nummat_addNummat (nummat x, nummat y) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] += y [irow] [icol];
-		}
 	}
 }
 inline static void numvec_multiplyByScalar (numvec x, double factor) {
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		x [i] *= factor;
-	}
 }
 inline static void nummat_multiplyByScalar (nummat x, double factor) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] *= factor;
-		}
 	}
 }
 inline static autonumvec add_numvec (numvec x, double addend) {
 	autonumvec result (x.size, kTensorInitializationType::RAW);
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] + addend;
-	}
 	return result;
 }
 inline static autonummat add_nummat (nummat x, double addend) {
@@ -2694,88 +2708,75 @@ static void do_add () {
 		str32cpy (result.get(), x->getString());
 		str32cpy (result.get() + length1, y->getString());
 		x->setString (result.move());
-		//x->which = Stackel_STRING;   // superfluous
 		return;
 	}
 	Melder_throw (U"Cannot add ", Stackel_whichText (y), U" to ", Stackel_whichText (x), U".");
 }
 inline static void numvec_subtractScalar (numvec x, double number) {
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= number;
-	}
 }
 inline static void numvec_subtractScalarReversed (numvec x, double number) {
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		x [i] = number - x [i];
-	}
 }
 inline static void nummat_subtractScalar (nummat x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] -= number;
-		}
 	}
 }
 inline static void nummat_subtractScalarReversed (nummat x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = number - x [irow] [icol];
-		}
 	}
 }
 inline static void numvec_subtractNumvec (numvec x, numvec y) {
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= y [i];
-	}
 }
 inline static void numvec_subtractNumvecReversed (numvec x, numvec y) {
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		x [i] = y [i] - x [i];
-	}
 }
 inline static void nummat_subtractNummat (nummat x, nummat y) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] -= y [irow] [icol];
-		}
 	}
 }
 inline static void nummat_subtractNummatReversed (nummat x, nummat y) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = y [irow] [icol] - x [irow] [icol];
-		}
 	}
 }
 inline static autonumvec sub_numvec (numvec x, double y) {
 	autonumvec result (x.size, kTensorInitializationType::RAW);
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] - y;
-	}
 	return result;
 }
 inline static autonumvec sub_numvec (double x, numvec y) {
 	autonumvec result (y.size, kTensorInitializationType::RAW);
-	for (integer i = 1; i <= y.size; i ++) {
+	for (integer i = 1; i <= y.size; i ++)
 		result [i] = x - y [i];
-	}
 	return result;
 }
 inline static autonummat sub_nummat (nummat x, double y) {
 	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] - y;
-		}
 	}
 	return result;
 }
 inline static autonummat sub_nummat (double x, nummat y) {
 	autonummat result (y.nrow, y.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= y.nrow; irow ++) {
-		for (integer icol = 1; icol <= y.ncol; icol ++) {
+		for (integer icol = 1; icol <= y.ncol; icol ++)
 			result [irow] [icol] = x - y [irow] [icol];
-		}
 	}
 	return result;
 }
@@ -2903,7 +2904,6 @@ static void do_sub () {
 			result = Melder_dup (x->getString());
 		}
 		x->setString (result.move());
-		//x->which = Stackel_STRING;   // superfluous
 		return;
 	}
 	Melder_throw (U"Cannot subtract (-) ", Stackel_whichText (y), U" from ", Stackel_whichText (x), U".");
@@ -3077,14 +3077,12 @@ static void do_functionvec_n_n (double (*f) (double)) {
 		integer n = x->numericVector.size;
 		double *at = x->numericVector.at;
 		if (x->owned) {
-			for (integer i = 1; i <= n; i ++) {
+			for (integer i = 1; i <= n; i ++)
 				at [i] = f (at [i]);
-			}
 		} else {
 			autonumvec result { n, kTensorInitializationType::RAW };
-			for (integer i = 1; i <= n; i ++) {
+			for (integer i = 1; i <= n; i ++)
 				result [i] = f (at [i]);
-			}
 			x->numericVector = result. releaseToAmbiguousOwner();
 			x->owned = true;
 		}
@@ -3103,21 +3101,18 @@ static void do_softmax () {
 		integer nelm = x->numericVector.size;
 		double maximum = -1e308;
 		for (integer i = 1; i <= nelm; i ++) {
-			if (x->numericVector [i] > maximum) {
+			if (x->numericVector [i] > maximum)
 				maximum = x->numericVector [i];
-			}
 		}
-		for (integer i = 1; i <= nelm; i ++) {
+		for (integer i = 1; i <= nelm; i ++)
 			x->numericVector [i] -= maximum;
-		}
 		longdouble sum = 0.0;
 		for (integer i = 1; i <= nelm; i ++) {
 			x->numericVector [i] = exp (x->numericVector [i]);
 			sum += x->numericVector [i];
 		}
-		for (integer i = 1; i <= nelm; i ++) {
+		for (integer i = 1; i <= nelm; i ++)
 			x->numericVector [i] /= (double) sum;
-		}
 	} else {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			U" requires a numeric vector argument, not ", Stackel_whichText (x), U".");
@@ -5558,9 +5553,8 @@ static void do_pauseFormAddText () {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		if (defaultValue->which != Stackel_STRING) {
-			Melder_throw (U"The second argument of \"text\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
-		}
+		Melder_require (defaultValue->which == Stackel_STRING,
+			U"The second argument of \"text\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_text (label->getString(), defaultValue->getString());
@@ -5578,9 +5572,8 @@ static void do_pauseFormAddBoolean () {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		if (defaultValue->which != Stackel_NUMBER) {
-			Melder_throw (U"The second argument of \"boolean\" (the default value) should be a number (0 or 1), not ", Stackel_whichText (defaultValue), U".");
-		}
+		Melder_require (defaultValue->which == Stackel_NUMBER,
+			U"The second argument of \"boolean\" (the default value) should be a number (0 or 1), not ", Stackel_whichText (defaultValue), U".");
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_boolean (label->getString(), defaultValue->number != 0.0);
@@ -6438,10 +6431,11 @@ static double NUMerf (double x) {
 void Formula_run (integer row, integer col, Formula_Result *result) {
 	FormulaInstruction f = parse;
 	programPointer = 1;   // first symbol of the program
-	if (! theStack)
-		theStack = Melder_calloc_f (struct structStackel, 10000);
-	if (! theStack)
-		Melder_throw (U"Out of memory during formula computation.");
+	if (! theStack) {
+		theStack = Melder_calloc_f (struct structStackel, 1+Formula_MAXIMUM_STACK_SIZE);
+		if (! theStack)
+			Melder_throw (U"Out of memory during formula computation.");
+	}
 	w = 0, wmax = 0;   // start new stack
 	try {
 		while (programPointer <= numberOfInstructions) {
@@ -6811,19 +6805,29 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			} // endswitch
 			programPointer ++;
 		} // endwhile
-		if (w != 1) Melder_fatal (U"Formula: stackpointer ends at ", w, U" instead of 1.");
+		if (w != 1)
+			Melder_fatal (U"Formula: stackpointer ends at ", w, U" instead of 1.");
+		/*
+			Move the result from the stack to `result`.
+		*/
+		result -> reset();
 		if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC) {
-			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a numeric expression.");
-			if (theStack [1]. which == Stackel_NUMERIC_VECTOR) Melder_throw (U"Found a vector expression instead of a numeric expression.");
-			if (theStack [1]. which == Stackel_NUMERIC_MATRIX) Melder_throw (U"Found a matrix expression instead of a numeric expression.");
+			if (theStack [1]. which == Stackel_STRING)
+				Melder_throw (U"Found a string expression instead of a numeric expression.");
+			if (theStack [1]. which == Stackel_NUMERIC_VECTOR)
+				Melder_throw (U"Found a vector expression instead of a numeric expression.");
+			if (theStack [1]. which == Stackel_NUMERIC_MATRIX)
+				Melder_throw (U"Found a matrix expression instead of a numeric expression.");
 			Melder_assert (theStack [1]. which == Stackel_NUMBER);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 			result -> numericResult = theStack [1]. number;
 		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_STRING) {
 			if (theStack [1]. which == Stackel_NUMBER)
 				Melder_throw (U"Found a numeric expression (value ", theStack [1]. number, U") instead of a string expression.");
-			if (theStack [1]. which == Stackel_NUMERIC_VECTOR) Melder_throw (U"Found a vector expression instead of a string expression.");
-			if (theStack [1]. which == Stackel_NUMERIC_MATRIX) Melder_throw (U"Found a matrix expression instead of a string expression.");
+			if (theStack [1]. which == Stackel_NUMERIC_VECTOR)
+				Melder_throw (U"Found a vector expression instead of a string expression.");
+			if (theStack [1]. which == Stackel_NUMERIC_MATRIX)
+				Melder_throw (U"Found a matrix expression instead of a string expression.");
 			Melder_assert (theStack [1]. which == Stackel_STRING);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 			Melder_assert (! result -> stringResult);
@@ -6831,23 +6835,29 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			Melder_assert (theStack [1]. which == Stackel_STRING);
 			Melder_assert (! theStack [1]. getString());
 		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR) {
-			if (theStack [1]. which == Stackel_NUMBER) Melder_throw (U"Found a numeric expression instead of a vector expression.");
-			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a vector expression.");
-			if (theStack [1]. which == Stackel_NUMERIC_MATRIX) Melder_throw (U"Found a matrix expression instead of a vector expression.");
+			if (theStack [1]. which == Stackel_NUMBER)
+				Melder_throw (U"Found a numeric expression instead of a vector expression.");
+			if (theStack [1]. which == Stackel_STRING)
+				Melder_throw (U"Found a string expression instead of a vector expression.");
+			if (theStack [1]. which == Stackel_NUMERIC_MATRIX)
+				Melder_throw (U"Found a matrix expression instead of a vector expression.");
 			Melder_assert (theStack [1]. which == Stackel_NUMERIC_VECTOR);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR;
 			result -> numericVectorResult = theStack [1]. numericVector;
 			result -> owned = theStack [1]. owned;
-			theStack [1]. owned = false;   // optionally undangle
+			theStack [1]. owned = false;
 		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX) {
-			if (theStack [1]. which == Stackel_NUMBER) Melder_throw (U"Found a numeric expression instead of a matrix expression.");
-			if (theStack [1]. which == Stackel_STRING) Melder_throw (U"Found a string expression instead of a matrix expression.");
-			if (theStack [1]. which == Stackel_NUMERIC_VECTOR) Melder_throw (U"Found a vector expression instead of a matrix expression.");
+			if (theStack [1]. which == Stackel_NUMBER)
+				Melder_throw (U"Found a numeric expression instead of a matrix expression.");
+			if (theStack [1]. which == Stackel_STRING)
+				Melder_throw (U"Found a string expression instead of a matrix expression.");
+			if (theStack [1]. which == Stackel_NUMERIC_VECTOR)
+				Melder_throw (U"Found a vector expression instead of a matrix expression.");
 			Melder_assert (theStack [1]. which == Stackel_NUMERIC_MATRIX);
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX;
 			result -> numericMatrixResult = theStack [1]. numericMatrix;
 			result -> owned = theStack [1]. owned;
-			theStack [1]. owned = false;   // optionally undangle
+			theStack [1]. owned = false;
 		} else {
 			Melder_assert (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_UNKNOWN);
 			if (theStack [1]. which == Stackel_NUMBER) {
@@ -6863,12 +6873,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR;
 				result -> numericVectorResult = theStack [1]. numericVector;
 				result -> owned = theStack [1]. owned;
-				theStack [1]. owned = false;   // optionally undangle
+				theStack [1]. owned = false;
 			} else if (theStack [1]. which == Stackel_NUMERIC_MATRIX) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX;
 				result -> numericMatrixResult = theStack [1]. numericMatrix;
 				result -> owned = theStack [1]. owned;
-				theStack [1]. owned = false;   // optionally undangle
+				theStack [1]. owned = false;
 			} else {
 				Melder_throw (U"Don't know yet how to write ", Stackel_whichText (& theStack [1]), U".");
 			}
@@ -6876,18 +6886,14 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 		/*
 			Clean up the stack (theStack [1] has probably been disowned).
 		*/
-		for (w = wmax; w > 0; w --) {
-			Stackel stackel = & theStack [w];
-			if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-		}
+		for (w = wmax; w > 0; w --)
+			theStack [w]. reset();
 	} catch (MelderError) {
 		/*
 			Clean up the stack (theStack [1] has probably not been disowned).
 		*/
-		for (w = wmax; w > 0; w --) {
-			Stackel stackel = & theStack [w];
-			if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
-		}
+		for (w = wmax; w > 0; w --)
+			theStack [w]. reset();
 		if (Melder_hasError (U"Script exited.")) {
 			throw;
 		} else {

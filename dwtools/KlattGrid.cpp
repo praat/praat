@@ -2382,10 +2382,11 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, conststring32 
 		for (integer irow = 1; irow <= ordered->size; irow ++) {
 			IntensityTier amplitudes = ordered->at [irow];
 			Formula_compile (interpreter, amplitudes, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+			Formula_Result result;
 			for (integer icol = 1; icol <= amplitudes -> points.size; icol ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
-				Melder_require (! isundef (result. numericResult), U"Cannot put an undefined value into the tier.\nFormula not finished.");
+				Melder_require (isdefined (result. numericResult),
+					U"Cannot put an undefined value into the tier.\nFormula not finished.");
 				amplitudes -> points.at [icol] -> value = result. numericResult;
 			}
 		}
@@ -2396,9 +2397,8 @@ void KlattGrid_formula_amplitudes (KlattGrid me, int formantType, conststring32 
 
 double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, integer iformant, double t) {
 	OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-	if (iformant < 0 || iformant > ordered->size) {
+	if (iformant < 1 || iformant > ordered->size)
 		return undefined;
-	}
 	return RealTier_getValueAtTime (ordered->at [iformant], t);
 }
 
@@ -2410,16 +2410,16 @@ void KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, integer iforman
 
 void KlattGrid_removeAmplitudePoints (KlattGrid me, int formantType, integer iformant, double t1, double t2) {
 	OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-	if (iformant < 0 || iformant > ordered->size) {
+	if (iformant < 1 || iformant > ordered->size)
 		return;
-	}
 	AnyTier_removePointsBetween (ordered->at [iformant]->asAnyTier(), t1, t2);
 }
 
 autoIntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType, integer iformant) {
 	try {
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		Melder_require (iformant > 0 && iformant <= ordered -> size, U"Formant amplitude tier ", iformant, U"does not exist.");
+		Melder_require (iformant > 0 && iformant <= ordered -> size,
+			U"Formant amplitude tier ", iformant, U"does not exist.");
 		autoIntensityTier thee = Data_copy (ordered->at [iformant]);
 		return thee;
 	} catch (MelderError) {
@@ -2431,7 +2431,8 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, integer ifor
 	try {
 		Melder_require (my xmin == thy xmin && my xmax == thy xmax, U"Domains should be equal.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-		Melder_require (iformant > 0 && iformant <= ordered -> size, U"Formant amplitude tier ", iformant, U" does not exist.");
+		Melder_require (iformant > 0 && iformant <= ordered -> size,
+			U"Formant amplitude tier ", iformant, U" does not exist.");
 		autoIntensityTier any = Data_copy (thee);
 		ordered -> replaceItem_move (any.move(), iformant);
 	} catch (MelderError) {
@@ -2465,9 +2466,8 @@ void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, integer p
 			U"Cannot add amplitude tier to this formant type.");
 		OrderedOf<structIntensityTier>* ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		integer noa = ordered->size;
-		if (position > noa || position < 1) {
+		if (position > noa || position < 1)
 			position = noa + 1;
-		}
 		autoIntensityTier tier = IntensityTier_create (my xmin, my xmax);
 		ordered -> addItemAtPosition_move (tier.move(), position);
 	} catch (MelderError) {

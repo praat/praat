@@ -125,7 +125,7 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 			/*
 				First remove the old contents.
 			*/
-			args [narg]. ~ structStackel();
+			args [narg]. reset();
 			#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
 				memset (& args [narg], 0, sizeof (structStackel));
 			#endif
@@ -144,11 +144,13 @@ static int parseCommaSeparatedArguments (Interpreter interpreter, char32 *argume
 					args [narg]. which = Stackel_NUMERIC_VECTOR;
 					args [narg]. numericVector = result. numericVectorResult;
 					args [narg]. owned = result. owned;
+					result. owned = false;
 				} break;
 				case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
 					args [narg]. which = Stackel_NUMERIC_MATRIX;
 					args [narg]. numericMatrix = result. numericMatrixResult;
 					args [narg]. owned = result. owned;
+					result. owned = false;
 				} break;
 			}
 			arguments = p + 1;
@@ -651,11 +653,12 @@ static void firstPassThroughScript (MelderFile file) {
 		}
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (Interpreter_readParameters (interpreter.get(), text.get()) > 0) {
-			UiForm form = Interpreter_createForm (interpreter.get(),
+			autoUiForm form = Interpreter_createForm (interpreter.get(),
 				praatP.editor ? praatP.editor -> windowForm : theCurrentPraatApplication -> topShell,
 				Melder_fileToPath (file), secondPassThroughScript, NULL, false);
-			UiForm_destroyWhenUnmanaged (form);
-			UiForm_do (form, false);
+			UiForm_destroyWhenUnmanaged (form.get());
+			UiForm_do (form.get(), false);
+			form. releaseToUser();
 		} else {
 			autoPraatBackground background;
 			praat_executeScriptFromFile (file, nullptr);

@@ -197,7 +197,7 @@ struct CollectionOf : structDaata {
 		our size ++;
 		for (integer i = our size; i > pos; i --) our at [i] = our at [i - 1];
 	}
-	T* _insertItem_move (_Thing_auto <T> data, integer pos) {
+	T* _insertItem_move (autoSomeThing <T> data, integer pos) {
 		our _initializeOwnership (true);
 		our _makeRoomForOneMoreItem (pos);
 		return our at [pos] = data.releaseToAmbiguousOwner();
@@ -242,7 +242,7 @@ struct CollectionOf : structDaata {
 		For a SortedSet, this may mean that the Collection immediately disposes of 'item',
 		if that item already occurred in the Collection.
 	*/
-	T* addItem_move (_Thing_auto<T> thing) {
+	T* addItem_move (autoSomeThing<T> thing) {
 		T* thingRef = thing.get();
 		integer index = our _v_position (thingRef);
 		if (index != 0) {
@@ -285,11 +285,13 @@ struct CollectionOf : structDaata {
 			my size == my old size - 1;
 			my _capacity not changed;
 	*/
-	_Thing_auto<T> subtractItem_move (integer pos) {
+	autoSomeThing<T> subtractItem_move (integer pos) {
 		Melder_assert (pos >= 1 && pos <= our size);
 		Melder_assert (our _ownItems);
-		_Thing_auto<T> result (our at [pos]);
-		for (integer i = pos; i < our size; i ++) our at [i] = our at [i + 1];
+		autoSomeThing<T> result;
+		result. adoptFromAmbiguousOwner (our at [pos]);
+		for (integer i = pos; i < our size; i ++)
+			our at [i] = our at [i + 1];
 		our size --;
 		return result;
 	}
@@ -297,7 +299,8 @@ struct CollectionOf : structDaata {
 		Melder_assert (pos >= 1 && pos <= our size);
 		Melder_assert (! our _ownItems);
 		T* result = our at [pos];
-		for (integer i = pos; i < our size; i ++) our at [i] = our at [i + 1];
+		for (integer i = pos; i < our size; i ++)
+			our at [i] = our at [i + 1];
 		our size --;
 		return result;
 	}
@@ -306,7 +309,7 @@ struct CollectionOf : structDaata {
 		Melder_assert (! our _ownItems);
 		our at [pos] = data;
 	}
-	T* replaceItem_move (_Thing_auto <T> data, integer pos) {
+	T* replaceItem_move (autoSomeThing <T> data, integer pos) {
 		Melder_assert (pos >= 1 && pos <= our size);
 		Melder_assert (our _ownItems);
 		_Thing_forget (our at [pos]);
@@ -324,7 +327,8 @@ struct CollectionOf : structDaata {
 	void removeItem (integer pos) {
 		Melder_assert (pos >= 1 && pos <= our size);
 		if (our _ownItems) _Thing_forget (our at [pos]);
-		for (integer i = pos; i < our size; i ++) our at [i] = our at [i + 1];
+		for (integer i = pos; i < our size; i ++)
+			our at [i] = our at [i + 1];
 		our size --;
 	}
 
@@ -336,9 +340,8 @@ struct CollectionOf : structDaata {
 	*/
 	void removeAllItems () {
 		if (our _ownItems) {
-			for (integer i = 1; i <= our size; i ++) {
+			for (integer i = 1; i <= our size; i ++)
 				_Thing_forget (our at [i]);
-			}
 		}
 		our size = 0;
 	}
@@ -476,11 +479,12 @@ struct CollectionOf : structDaata {
 #define _Collection_declare(klas,genericClass,itemClass) \
 	typedef genericClass<struct##itemClass> struct##klas; \
 	typedef genericClass<struct##itemClass> *klas; \
-	typedef _Thing_auto <genericClass<struct##itemClass>> auto##klas; \
+	typedef autoSomeThing <genericClass<struct##itemClass>> auto##klas; \
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas; \
 	static inline auto##klas klas##_create () { \
-		auto##klas me (new genericClass<struct##itemClass>); \
+		auto##klas me; \
+		me. adoptFromAmbiguousOwner (new genericClass<struct##itemClass>); \
 		theTotalNumberOfThings += 1; \
 		return me; \
 	}
@@ -508,7 +512,7 @@ struct OrderedOf : CollectionOf <T   /*Melder_ENABLE_IF_ISA (T, structDaata)*/> 
 			If 'position' is less than 1 or greater than the current 'size',
 			insert the item at the end.
 	*/
-	T* addItemAtPosition_move (_Thing_auto <T> data, integer position) {
+	T* addItemAtPosition_move (autoSomeThing <T> data, integer position) {
 		Melder_assert (data);
 		if (position < 1 || position > our size)
 			position = our size + 1;
@@ -551,7 +555,7 @@ struct SortedOf : CollectionOf <T> {
 		Warning:
 			this leaves the collection unsorted; follow by Sorted::sort ().
 	*/
-	void addItem_unsorted_move (_Thing_auto <T> data) {
+	void addItem_unsorted_move (autoSomeThing <T> data) {
 		our _insertItem_move (data.move(), our size + 1);
 	}
 	/* Call this after a number of calls to Sorted_addItem_unsorted (). */

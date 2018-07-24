@@ -279,11 +279,13 @@ DO
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 			Melder_information (result. numericVectorResult);
-			if (result. owned) result. numericVectorResult. reset();
+			if (result. owned)
+				result. numericVectorResult. reset();
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
 			Melder_information (result. numericMatrixResult);
-			if (result. owned) result. numericMatrixResult. reset();
+			if (result. owned)
+				result. numericMatrixResult. reset();
 		}
 	}
 END }

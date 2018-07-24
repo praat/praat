@@ -264,10 +264,12 @@ static void removeAllReferencesToMoribundEditor (Editor editor) {
 	 * Remove all references to this editor.
 	 * It may be editing multiple objects.
 	 */
-	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++)
-		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
+	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
+		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor] == editor)
 				theCurrentPraatObjects -> list [iobject]. editors [ieditor] = nullptr;
+		}
+	}
 	if (praatP. editor == editor)
 		praatP. editor = nullptr;
 }
@@ -315,7 +317,8 @@ void praat_cleanUpName (char32 *name) {
 	 * Replaces spaces and special characters by underscores.
 	 */
 	for (; *name; name ++) {
-		if (str32chr (U" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name)) *name = U'_';
+		if (str32chr (U" ,.:;\\/()[]{}~`\'<>*&^%#@!?$\"|", *name))
+			*name = U'_';
 	}
 }
 
@@ -323,7 +326,8 @@ void praat_cleanUpName (char32 *name) {
 
 static void praat_new_unpackCollection (autoCollection me, const char32* myName) {
 	for (integer idata = 1; idata <= my size; idata ++) {
-		autoDaata object = autoDaata ((Daata) my at [idata]);
+		autoDaata object;
+		object. adoptFromAmbiguousOwner ((Daata) my at [idata]);
 		my at [idata] = nullptr;   // disown; once the elements are autoThings, the move will handle this
 		conststring32 name = object -> name ? object -> name.get() : myName;
 		Melder_assert (name);
