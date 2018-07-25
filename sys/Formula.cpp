@@ -1943,19 +1943,16 @@ static int praat_findObjectById (integer id) {
 	Melder_throw (U"No object with number ", id, U".");
 }
 
-static int praat_findObjectFromString (conststring32 name) {
+static int praat_findObjectByName (conststring32 name) {
 	int IOBJECT;
 	if (*name >= U'A' && *name <= U'Z') {
-		/*
-		 * Find the object by its name.
-		 */
 		static MelderString buffer { };
 		MelderString_copy (& buffer, name);
-		char32 *space = str32chr (buffer.string, U' ');
-		if (space == nullptr)
+		char32 *spaceLocation = str32chr (buffer.string, U' ');
+		if (! spaceLocation)
 			Melder_throw (U"Missing space in object name \"", name, U"\".");
-		*space = U'\0';
-		char32 *className = & buffer.string [0], *givenName = space + 1;
+		*spaceLocation = U'\0';
+		conststring32 className = & buffer.string [0], givenName = spaceLocation + 1;
 		WHERE_DOWN (1) {
 			Daata object = OBJECT;
 			if (str32equ (className, Thing_className (OBJECT)) && str32equ (givenName, object -> name.get()))
@@ -2001,7 +1998,7 @@ static void Formula_evaluateConstants () {
 			} else if (parse [i]. symbol == STRING_) {
 				if (parse [i + 1]. symbol == TO_OBJECT_) {
 					parse [i]. symbol = OBJECT_;
-					int IOBJECT = praat_findObjectFromString (parse [i]. content.string);
+					int IOBJECT = praat_findObjectByName (parse [i]. content.string);
 					parse [i]. content.object = OBJECT;
 					gain = 1;
 				}
@@ -2024,7 +2021,10 @@ static void Formula_evaluateConstants () {
 					{ gain = 1; parse [i]. symbol = SELF0_; }
 			#endif
 			}
-			if (gain) { improved = true; schuif (i + 1, gain); }
+			if (gain > 0) {
+				improved = true;
+				schuif (i + 1, gain);
+			}
 		}
 		if (! improved) break;
 	}
@@ -2502,9 +2502,8 @@ inline static autonumvec add_numvec (numvec x, double addend) {
 inline static autonummat add_nummat (nummat x, double addend) {
 	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] + addend;
-		}
 	}
 	return result;
 }
@@ -4789,7 +4788,7 @@ static void do_selectObject () {
 			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			int IOBJECT = praat_findObjectFromString (object -> getString());
+			int IOBJECT = praat_findObjectByName (object -> getString());
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
@@ -4812,7 +4811,7 @@ static void do_plusObject () {
 			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			int IOBJECT = praat_findObjectFromString (object -> getString());
+			int IOBJECT = praat_findObjectByName (object -> getString());
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
@@ -4835,7 +4834,7 @@ static void do_minusObject () {
 			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_deselect (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			int IOBJECT = praat_findObjectFromString (object -> getString());
+			int IOBJECT = praat_findObjectByName (object -> getString());
 			praat_deselect (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
@@ -4858,7 +4857,7 @@ static void do_removeObject () {
 			int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
 			praat_removeObject (IOBJECT);
 		} else if (object -> which == Stackel_STRING) {
-			int IOBJECT = praat_findObjectFromString (object -> getString());
+			int IOBJECT = praat_findObjectByName (object -> getString());
 			praat_removeObject (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
 			numvec vec = object -> numericVector;
@@ -4873,313 +4872,116 @@ static void do_removeObject () {
 	praat_show ();
 	pushNumber (1);
 }
+static Daata _do_object (Stackel object, conststring32 expressionMessage) {
+	Daata data;
+	if (object -> which == Stackel_NUMBER) {
+		int IOBJECT = praat_findObjectById (Melder_iround (object -> number));
+		data = OBJECT;
+	} else if (object -> which == Stackel_STRING) {
+		int IOBJECT = praat_findObjectByName (object -> getString());
+		data = OBJECT;
+	} else if (object -> which == Stackel_OBJECT) {
+		data = object -> object;
+	} else {
+		Melder_throw (U"The expression \"", expressionMessage, U"\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
+	}
+	return data;
+}
 static void do_object_xmin () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetXmin ()) {
-			pushNumber (data -> v_getXmin ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"xmin\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetXmin ()) {
-			pushNumber (data -> v_getXmin ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"xmin\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].xmin\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].xmin");
+	Melder_require (data -> v_hasGetXmin (),
+		U"An object of type ", Thing_className (data), U" has no \"xmin\" attribute.");
+	pushNumber (data -> v_getXmin ());
 }
 static void do_object_xmax () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetXmax ()) {
-			pushNumber (data -> v_getXmax ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"xmax\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetXmax ()) {
-			pushNumber (data -> v_getXmax ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"xmax\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].xmax\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].xmax");
+	Melder_require (data -> v_hasGetXmax (),
+		U"An object of type ", Thing_className (data), U" has no \"xmax\" attribute.");
+	pushNumber (data -> v_getXmax ());
 }
 static void do_object_ymin () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetYmin ()) {
-			pushNumber (data -> v_getYmin ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ymin\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetYmin ()) {
-			pushNumber (data -> v_getYmin ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ymin\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].ymin\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].ymin");
+	Melder_require (data -> v_hasGetYmin (),
+		U"An object of type ", Thing_className (data), U" has no \"ymin\" attribute.");
+	pushNumber (data -> v_getYmin ());
 }
 static void do_object_ymax () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetYmax ()) {
-			pushNumber (data -> v_getYmax ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ymax\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetYmax ()) {
-			pushNumber (data -> v_getYmax ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ymax\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].ymax\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].ymax");
+	Melder_require (data -> v_hasGetYmax (),
+		U"An object of type ", Thing_className (data), U" has no \"ymax\" attribute.");
+	pushNumber (data -> v_getYmax ());
 }
 static void do_object_nx () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetNx ()) {
-			pushNumber (data -> v_getNx ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"nx\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetNx ()) {
-			pushNumber (data -> v_getNx ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"nx\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].nx\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].nx");
+	Melder_require (data -> v_hasGetNx (),
+		U"An object of type ", Thing_className (data), U" has no \"nx\" attribute.");
+	pushNumber (data -> v_getNx ());
 }
 static void do_object_ny () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetNy ()) {
-			pushNumber (data -> v_getNy ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ny\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetNy ()) {
-			pushNumber (data -> v_getNy ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ny\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].ny\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].ny");
+	Melder_require (data -> v_hasGetNy (),
+		U"An object of type ", Thing_className (data), U" has no \"ny\" attribute.");
+	pushNumber (data -> v_getNy ());
 }
 static void do_object_dx () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetDx ()) {
-			pushNumber (data -> v_getDx ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"dx\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetDx ()) {
-			pushNumber (data -> v_getDx ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"dx\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].dx\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].dx");
+	Melder_require (data -> v_hasGetDx (),
+		U"An object of type ", Thing_className (data), U" has no \"dx\" attribute.");
+	pushNumber (data -> v_getDx ());
 }
 static void do_object_dy () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetDy ()) {
-			pushNumber (data -> v_getDy ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"dy\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetDy ()) {
-			pushNumber (data -> v_getDy ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"dy\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].dy\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].dy");
+	Melder_require (data -> v_hasGetDy (),
+		U"An object of type ", Thing_className (data), U" has no \"dy\" attribute.");
+	pushNumber (data -> v_getDy ());
 }
 static void do_object_nrow () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetNrow ()) {
-			pushNumber (data -> v_getNrow ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"nrow\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetNrow ()) {
-			pushNumber (data -> v_getNrow ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"nrow\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].nrow\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].nrow");
+	Melder_require (data -> v_hasGetNrow (),
+		U"An object of type ", Thing_className (data), U" has no \"nrow\" attribute.");
+	pushNumber (data -> v_getNrow ());
 }
 static void do_object_ncol () {
 	Stackel object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetNcol ()) {
-			pushNumber (data -> v_getNcol ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ncol\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetNcol ()) {
-			pushNumber (data -> v_getNcol ());
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"ncol\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].ncol\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].ncol");
+	Melder_require (data -> v_hasGetNcol (),
+		U"An object of type ", Thing_className (data), U" has no \"ncol\" attribute.");
+	pushNumber (data -> v_getNcol ());
 }
 static void do_object_rowstr () {
 	Stackel index = pop, object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetRowStr ()) {
-			if (index -> which == Stackel_NUMBER) {
-				integer number = Melder_iround (index->number);
-				autostring32 result = Melder_dup (data -> v_getRowStr (number));
-				if (! result)
-					Melder_throw (U"Row index out of bounds.");
-				pushString (result.move());
-			} else {
-				Melder_throw (U"The expression \"object[].row$[xx]\" requires xx to be a number, not ", Stackel_whichText (index), U".");
-			}
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"row$[]\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetRowStr ()) {
-			if (index -> which == Stackel_NUMBER) {
-				integer number = Melder_iround (index->number);
-				autostring32 result = Melder_dup (data -> v_getRowStr (number));
-				if (! result)
-					Melder_throw (U"Row index out of bounds.");
-				pushString (result.move());
-			} else {
-				Melder_throw (U"The expression \"object[].row$[xx]\" requires xx to be a number, not ", Stackel_whichText (index), U".");
-			}
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"row$[]\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].row$[]\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].row$[]");
+	Melder_require (data -> v_hasGetRowStr (),
+		U"An object of type ", Thing_className (data), U" has no \"row$[]\" attribute.");
+	Melder_require (index -> which == Stackel_NUMBER,
+		U"The expression \"object[].row$[xx]\" requires xx to be a number, not ", Stackel_whichText (index), U".");
+	integer number = Melder_iround (index->number);
+	autostring32 result = Melder_dup (data -> v_getRowStr (number));
+	if (! result)
+		Melder_throw (U"Row index out of bounds.");
+	pushString (result.move());
 }
 static void do_object_colstr () {
 	Stackel index = pop, object = pop;
-	if (object -> which == Stackel_NUMBER || object -> which == Stackel_STRING) {
-		int IOBJECT = object -> which == Stackel_NUMBER ?
-			praat_findObjectById (Melder_iround (object -> number)) :
-			praat_findObjectFromString (object -> getString());
-		Daata data = OBJECT;
-		if (data -> v_hasGetColStr ()) {
-			if (index -> which == Stackel_NUMBER) {
-				integer number = Melder_iround (index->number);
-				autostring32 result = Melder_dup (data -> v_getColStr (number));
-				if (! result)
-					Melder_throw (U"Column index out of bounds.");
-				pushString (result.move());
-			} else {
-				Melder_throw (U"The expression \"object[].col$[xx]\" requires xx to be a number, not ", Stackel_whichText (index), U".");
-			}
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"col$[]\" attribute.");
-		}
-	} else if (object -> which == Stackel_OBJECT) {
-		Daata data = object -> object;
-		if (data -> v_hasGetColStr ()) {
-			if (index -> which == Stackel_NUMBER) {
-				integer number = Melder_iround (index->number);
-				autostring32 result = Melder_dup (data -> v_getColStr (number));
-				if (! result)
-					Melder_throw (U"Column index out of bounds.");
-				pushString (result.move());
-			} else {
-				Melder_throw (U"The expression \"object[].col$[xx]\" requires xx to be a number, not ", Stackel_whichText (index), U".");
-			}
-		} else {
-			Melder_throw (U"An object of type ", Thing_className (data), U" has no \"col$[]\" attribute.");
-		}
-	} else {
-		Melder_throw (U"The expression \"object[xx].col$[]\" requires xx to be a number or a string, not ", Stackel_whichText (object), U".");
-	}
+	Daata data = _do_object (object, U"object[xx].col$[]");
+	Melder_require (data -> v_hasGetColStr (),
+		U"An object of type ", Thing_className (data), U" has no \"col$[]\" attribute.");
+	Melder_require (index -> which == Stackel_NUMBER,
+		U"The expression \"object[].col$[xx]\" requires xx to be a number, not ", Stackel_whichText (index), U".");
+	integer number = Melder_iround (index->number);
+	autostring32 result = Melder_dup (data -> v_getColStr (number));
+	if (! result)
+		Melder_throw (U"Column index out of bounds.");
+	pushString (result.move());
 }
 static void do_stringStr () {
 	Stackel value = pop;
@@ -5382,9 +5184,8 @@ static void do_repeatNumvec () {
 		integer times = Melder_iround (n->number);
 		autonumvec result { n_old * times, kTensorInitializationType::RAW };
 		for (integer i = 1; i <= times; i ++) {
-			for (integer j = 1; j <= n_old; j ++) {
+			for (integer j = 1; j <= n_old; j ++)
 				result [(i - 1) * n_old + j] = x->numericVector [j];
-			}
 		}
 		pushNumericVector (result.move());
 	} else {
@@ -5513,9 +5314,8 @@ static void do_pauseFormAddWord () {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		if (defaultValue->which != Stackel_STRING) {
-			Melder_throw (U"The second argument of \"word\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
-		}
+		Melder_require (defaultValue->which == Stackel_STRING,
+			U"The second argument of \"word\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_word (label->getString(), defaultValue->getString());
@@ -5533,9 +5333,8 @@ static void do_pauseFormAddSentence () {
 	Stackel n = pop;
 	if (n->number == 2) {
 		Stackel defaultValue = pop;
-		if (defaultValue->which != Stackel_STRING) {
-			Melder_throw (U"The second argument of \"sentence\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
-		}
+		Melder_require (defaultValue->which == Stackel_STRING,
+			U"The second argument of \"sentence\" (the default value) should be a string, not ", Stackel_whichText (defaultValue), U".");
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
 			UiPause_sentence (label->getString(), defaultValue->getString());
