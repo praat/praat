@@ -155,15 +155,16 @@ void Permutation_swapNumbers (Permutation me, integer i1, integer i2) {
 	}
 }
 
-void Permutation_swapBlocks (Permutation me, integer from, integer to, integer blocksize) {
+void Permutation_swapBlocks (Permutation me, integer from, integer to, integer blockSize) {
 	try {
-		Melder_require (blocksize > 0 && blocksize <= my numberOfElements / 2, U"Blocksize should be in [1, %d] range.", my numberOfElements / 2);
-		Melder_require (from > 0 && to > 0 && from + blocksize <= my numberOfElements && to + blocksize <= my numberOfElements,
+		Melder_require (blockSize > 0 && blockSize <= my numberOfElements / 2,
+			U"The block size should be in the [1, %d] range.", my numberOfElements / 2);
+		Melder_require (from > 0 && to > 0 && from + blockSize <= my numberOfElements && to + blockSize <= my numberOfElements,
 			U"Start and finish positions of the two blocks should be in [1,", my numberOfElements, U"] range.");
 
 		if (from == to)
 			return;
-		for (integer i = 1; i <= blocksize; i ++)
+		for (integer i = 1; i <= blockSize; i ++)
 			std::swap (my p [from + i - 1], my p [to + i - 1]);
 	} catch (MelderError) {
 		Melder_throw (me, U": blocks not swapped.");
@@ -232,18 +233,18 @@ void Permutation_swapOneFromRange (Permutation me, integer from, integer to, int
 	}
 }
 
-autoPermutation Permutation_permuteBlocksRandomly (Permutation me, integer from, integer to, integer blocksize, bool permuteWithinBlocks, bool noDoublets) {
+autoPermutation Permutation_permuteBlocksRandomly (Permutation me, integer from, integer to, integer blockSize, bool permuteWithinBlocks, bool noDoublets) {
 	try {
 		integer n = Permutation_checkRange (me, & from, & to);
-		if (blocksize == 1 || (blocksize >= n && permuteWithinBlocks)) {
+		if (blockSize == 1 || (blockSize >= n && permuteWithinBlocks)) {
 			autoPermutation thee = Permutation_permuteRandomly (me, from, to);
 			return thee;
 		}
 		autoPermutation thee = Data_copy (me);
-		if (blocksize >= n)
+		if (blockSize >= n)
 			return thee;
 
-		integer nblocks  = n / blocksize, nrest = n % blocksize;
+		integer nblocks  = n / blockSize, nrest = n % blockSize;
 		Melder_require (nrest == 0,
 			U"There should fit an integer number of blocks in the range.\n(The last block is only of size ", nrest, U").");
 		
@@ -251,17 +252,17 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, integer from,
 
 		Permutation_permuteRandomly_inplace (pblocks.get(), 1, nblocks);
 		integer first = from;
-		for (integer iblock = 1; iblock <= nblocks; iblock ++, first += blocksize) {
+		for (integer iblock = 1; iblock <= nblocks; iblock ++, first += blockSize) {
 			/* (n1,n2,n3,...) means: move block n1 to position 1 etc... */
 			integer blocktomove = Permutation_getValueAtIndex (pblocks.get(), iblock);
 
-			for (integer j = 1; j <= blocksize; j ++)
-				thy p [first - 1 + j] = my p [from - 1 + (blocktomove - 1) * blocksize + j];
+			for (integer j = 1; j <= blockSize; j ++)
+				thy p [first - 1 + j] = my p [from - 1 + (blocktomove - 1) * blockSize + j];
 
 			if (permuteWithinBlocks) {
-				integer last = first + blocksize - 1;
+				integer last = first + blockSize - 1;
 				Permutation_permuteRandomly_inplace (thee.get(), first, last);
-				if (noDoublets && iblock > 0 && thy p [first - 1] % blocksize == thy p [first] % blocksize)
+				if (noDoublets && iblock > 0 && thy p [first - 1] % blockSize == thy p [first] % blockSize)
 					Permutation_swapOneFromRange (thee.get(), first + 1, last, first, 0);
 			}
 		}
@@ -271,40 +272,40 @@ autoPermutation Permutation_permuteBlocksRandomly (Permutation me, integer from,
 	}
 }
 
-autoPermutation Permutation_interleave (Permutation me, integer from, integer to, integer blocksize, integer offset) {
+autoPermutation Permutation_interleave (Permutation me, integer from, integer to, integer blockSize, integer offset) {
 	try {
-		Melder_require (offset < blocksize,
-			U"Offset should be smaller than blocksize.");
+		Melder_require (offset < blockSize,
+			U"Offset should be smaller than block size.");
 		integer n = Permutation_checkRange (me, & from, & to);
-		integer nblocks = n / blocksize;
-		integer nrest = n % blocksize;
+		integer nblocks = n / blockSize, nrest = n % blockSize;
 		Melder_require (nrest == 0,
-				U"There should fit an integer number of blocks in the range.\n"
-				U"(The last block is only of size ", nrest, U" instead of ", blocksize, U").");
+			U"There should fit an integer number of blocks in the range.\n"
+			U"(The last block is only of size ", nrest, U" instead of ", blockSize, U").");
 		
 		autoPermutation thee = Data_copy (me);
 
 		if (nblocks > 1) {
-			autoNUMvector<integer> occupied (1, blocksize);
+			autoNUMvector<integer> occupied (1, blockSize);
 
 			integer posinblock = 1 - offset;
 			for (integer i = 1; i <= n; i ++) {
 				integer index, rblock = (i - 1) % nblocks + 1;
 
 				posinblock += offset;
-				if (posinblock > blocksize)
-					posinblock -= blocksize;
+				if (posinblock > blockSize)
+					posinblock -= blockSize;
 
 				if (i % nblocks == 1) {
-					integer count = blocksize;
-					while (occupied[posinblock] == 1 && count > 0) {
-						posinblock ++; count --;
-						if (posinblock > blocksize)
-							posinblock -= blocksize;
+					integer count = blockSize;
+					while (occupied [posinblock] == 1 && count > 0) {
+						posinblock ++;
+						count --;
+						if (posinblock > blockSize)
+							posinblock -= blockSize;
 					}
 					occupied [posinblock] = 1;
 				}
-				index = from - 1 + (rblock - 1) * blocksize + posinblock;
+				index = from - 1 + (rblock - 1) * blockSize + posinblock;
 				thy p [from - 1 + i] = my p [index];
 			}
 		}
