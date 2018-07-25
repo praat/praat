@@ -111,8 +111,8 @@ typedef struct structStackel {
 		our which = Stackel_STRING;
 		our _string = newString.move();
 	}
+	conststring32 whichText ();
 } *Stackel;
-conststring32 Stackel_whichText (Stackel me);
 
 struct Formula_Result {
 	int expressionType;
