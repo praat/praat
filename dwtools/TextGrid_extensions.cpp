@@ -41,7 +41,7 @@ struct TIMIT_key {
 	/* Vowels */
 	{"iy", "i"},			/* beet: bcl b IY tcl t */
 	{"ih", "\\ic"}, 		/* bit: bcl b IH tcl t */
-	{"eh", "\\ep"}, 		/* bet: bcl b EH tcl t */
+	{"eh", "\\ef"}, 		/* bet: bcl b EH tcl t */
 	{"ey", "e"},  			/* bait: bcl b EY tcl t */
 	{"ae", "\\ae"},  		/* bat: bcl b AE tcl t */
 	{"aa", "\\as"}, 		/* bott: bcl b AA tcl t */
@@ -49,55 +49,55 @@ struct TIMIT_key {
 	{"ay", "a\\ic"},  		/* bite: bcl b AY tcl t */
 	{"ah", "\\vt"}, 		/* but: bcl b AH tcl t */
 	{"ao", "\\ct"},  		/* bought: bcl b AO tcl t */
-	{"oy", "\\ct\\ic"},  	/* boy: bcl b OY */
+	{"oy", "\\ct\\ic"},      	/* boy: bcl b OY */
 	{"ow", "o"}, 			/* boat: bcl b OW tcl t */
 	{"uh", "\\hs"}, 		/* book: bcl b UH tcl t */
 	{"uw", "u"},  			/* boot: bcl b UW tcl t */
-	/* fronted allophone of uw (alveolair contexts) */
-	{"ux", "\\u\""}, 		/* toot: tcl t UX tcl t */
-	{"er", "\\er\\hr"},  	/* bird: bcl b ER dcl d */
+	/* fronted allophone of uw (alveolar contexts) */
+	{"ux", "u\\+v"}, 		/* toot: tcl t UX tcl t */
+	{"er", "\\er\\hr"},      	/* bird: bcl b ER dcl d */
 	{"ax", "\\sw"}, 		/* about: AX bcl b aw tcl t */
 	{"ix", "\\i-"}, 		/* debit: dcl d eh bcl b IX tcl t */
 	{"axr", "\\sr"}, 		/* butter: bcl ah dx AXR */
 	/* devoiced schwa, very short */
 	{"ax-h", "\\sw\\ov"}, 	/* suspect: s AX-H s pcl p eh kcl k tcl t */
 	/* Semivowels and glides */
-	{"l", "l"},				/* lay:	L ey */
-	{"r", "r"},				/* ray:	R ey */
-	{"w", "w"},				/* way:	w ey */
-	{"y", "j"},				/* yacht: Y aa tcl t */
+	{"l", "l"},			/* lay:	L ey */
+	{"r", "\\rt"},			/* ray:	R ey */
+	{"w", "w"},			/* way:	w ey */
+	{"y", "j"},			/* yacht: Y aa tcl t */
 	{"hh", "h" },			/* hay: HH ey*/
 	/* voiced allophone of h */
 	{"hv", "\\h^"},			/* ahead: ax HV eh dcl d */
 	{"el", "l\\|v"},		/* bottle: bcl b aa tcl t EL */
 	/* Nasals */
-	{"m", "m"},				/* mom:	M aa M */
-	{"n", "n"},				/* noon: N uw N*/
+	{"m", "m"},			/* mom:	M aa M */
+	{"n", "n"},			/* noon: N uw N*/
 	{"ng", "\\ng"},			/* sing: s ih NG */
 	{"em", "m\\|v"},		/* bottom: b aa tcl t EM */
 	{"en", "n\\|v"},		/* button:	b ah q EN */
-	{"eng", "\\ng\\|v"},	/* washington: w aa sh ENG tcl t ax n */
+	{"eng", "\\ng\\|v"},    	/* washington: w aa sh ENG tcl t ax n */
 	/* nasal flap */
 	{"nx", "n^\\fh"},		/* winner: wih NX axr */
 	/* Fricatives */
-	{"s", "s"},				/* sea: S iy */
+	{"s", "s"},			/* sea: S iy */
 	{"sh", "\\sh"},			/* she: SH iy */
-	{"z", "z"},				/* zone: Z ow n */
+	{"z", "z"},			/* zone: Z ow n */
 	{"zh", "\\zh"},			/* azure: ae ZH er */
-	{"f", "f"},				/* fin: F ih n */
-	{"th", "\\te"},			/* thin: TH ih n */
-	{"v", "v"},				/* van: v ae n */
+	{"f", "f"},			/* fin: F ih n */
+	{"th", "\\tf"},			/* thin: TH ih n */
+	{"v", "v"},			/* van: v ae n */
 	{"dh", "\\dh"},			/* then: DH en */
 	/* Affricates */
 	{"jh", "d\\zh"},		/* joke: DCL JH ow kcl k */
 	{"ch", "t\\sh"},		/* choke TCL CH ow kcl k */
 	/* Stops */
-	{"b", "b"},				/* bee: BCL B iy */
-	{"d", "d"},				/* day: DCL D ey */
-	{"g", "g"},				/* gay: GCL G ey */
-	{"p", "p"},				/* pea: PCL P iy */
-	{"t", "t"},				/* tea: TCL T iy */
-	{"k", "k"},				/* key: KCL K iy */
+	{"b", "b"},			/* bee: BCL B iy */
+	{"d", "d"},			/* day: DCL D ey */
+	{"g", "g"},			/* gay: GCL G ey */
+	{"p", "p"},			/* pea: PCL P iy */
+	{"t", "t"},			/* tea: TCL T iy */
+	{"k", "k"},			/* key: KCL K iy */
 	/* 20140315: Added silences before the burst */
 	{"bcl", "b\\cn"},
 	{"dcl", "d\\cn"},
@@ -108,14 +108,14 @@ struct TIMIT_key {
 	/* flap */
 	{"dx", "\\fh"},			/* muddy: m ah DX iy & dirty: dcl d er DX iy */
 	/* glottal stop */
-	{"q", "?"},
+	{"q", "\\?g"},
 	/* Others */
 	{"pau", ""},	/* pause */
 	{"epi", ""},	/* epenthetic silence */
 	{"h#", ""}, 	/* marks start and end piece of sentence */
 	/* the following markers only occur in the dictionary */
-	{"1", "1"},		/* primary stress marker */
-	{"2", "2"}		/* secondary stress marker */
+	{"1", "\\'1"},		/* primary stress marker */
+	{"2", "\\'2"}		/* secondary stress marker */
 };
 
 #define TIMIT_NLABELS (sizeof TIMIT_toIpaTable / sizeof TIMIT_toIpaTable[1] - 1)
@@ -178,7 +178,7 @@ static void IntervalTier_add (IntervalTier me, double xmin, double xmax, constst
 	TextInterval interval = my intervals.at [i];
 	double xmaxi = interval -> xmax;
 	Melder_require (xmax <= xmaxi, U"Don't know what to do");
-	
+
 	if (xmin == interval -> xmin) {
 		if (xmax == interval -> xmax) { // interval already present
 			TextInterval_setText (interval, label);
@@ -214,10 +214,10 @@ autoTextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, bool phnFile) {
 		while (fgets (line, 199, f)) {
 			integer it1, it2;
 			linesRead++;
-			Melder_require (sscanf (line, "%ld%ld%199s", &it1, &it2, label) == 3, 
+			Melder_require (sscanf (line, "%ld%ld%199s", &it1, &it2, label) == 3,
 				U"Incorrect number of items.");
 			Melder_require (it1 >= 0 && it1 < it2, U"Incorrect time at line ", linesRead);
-			
+
 			xmax = it2 * dt;
 			double xmin = it1 * dt;
 			integer ni = timit -> intervals.size - 1;
@@ -508,20 +508,20 @@ static void IntervalTier_cutInterval (IntervalTier me, integer index, int extend
 	double xmin = ti -> xmin;
 	double xmax = ti -> xmax;
 	my intervals. removeItem (index);
-	if (index == 1) { 
+	if (index == 1) {
 		/*
 		 * Change xmin of the new first interval.
 		 */
 		ti = my intervals.at [index];
 		ti -> xmin = xmin;
-	} else if (index == size_pre) { 
+	} else if (index == size_pre) {
 		/*
 		 * Change xmax of the new last interval.
 		 */
 		ti = my intervals.at [my intervals.size];
 		ti -> xmax = xmax;
 	} else {
-		if (extend_option == 0) { 
+		if (extend_option == 0) {
 			/*
 			 * Extend earlier interval to the right
 			 */
@@ -648,7 +648,7 @@ void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to,
 		integer ntiers = my tiers->size;
 		Melder_require (tier > 0 && tier <= ntiers,
 			U"The tier number (", tier, U") should not be larger than the number of tiers (", ntiers, U").");
-		Melder_require (! (use_regexp && str32len (search) == 0), 
+		Melder_require (! (use_regexp && str32len (search) == 0),
 			U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 
 		Function anyTier = my tiers->at [tier];
@@ -694,7 +694,7 @@ void IntervalTiers_append_inplace (IntervalTier me, IntervalTier thee, bool pres
 				/* the interval could be so short that if we test ti -> xmin < ti->xmax it might be true
 				 * but after assigning ti->xmin = xmax_previous and ti->xmax += time_shift the test
 				 * ti -> xmin < ti->xmax might be false!
-				 * We want to make sure xmin and xmax are not register variables and therefore force double64 
+				 * We want to make sure xmin and xmax are not register variables and therefore force double64
 				 * by using volatile variables.
 		 		 */
 				volatile double xmin = xmax_previous;
@@ -749,7 +749,7 @@ void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes)
 		if (preserveTimes && thy xmin < my xmax) {
 			Melder_throw (U"The start time of the second TextGrid can't be earlier than the end time of the first one if you want to preserve times.");
 		}
-		
+
 		TextGrid_checkStartAndEndTimesOfTiers (me); // all tiers must have the same start/end time as textgrid
 		TextGrid_checkStartAndEndTimesOfTiers (thee);
 		// last intervals must have the same end time
