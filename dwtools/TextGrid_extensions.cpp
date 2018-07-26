@@ -54,7 +54,7 @@ struct TIMIT_key {
 	{"uh", "\\hs"}, 		/* book: bcl b UH tcl t */
 	{"uw", "u"},  			/* boot: bcl b UW tcl t */
 	/* fronted allophone of uw (alveolar contexts) */
-	{"ux", "u\\+v"}, 		/* toot: tcl t UX tcl t */
+	{"ux", "u\\:^"}, 		/* toot: tcl t UX tcl t */
 	{"er", "\\er\\hr"},      	/* bird: bcl b ER dcl d */
 	{"ax", "\\sw"}, 		/* about: AX bcl b aw tcl t */
 	{"ix", "\\i-"}, 		/* debit: dcl d eh bcl b IX tcl t */
