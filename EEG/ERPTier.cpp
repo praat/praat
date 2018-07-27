@@ -304,7 +304,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, in
 			TableRow row = table -> rows.at [ievent];
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				thy points. addItem_move (newEvent.move());
+				thy points. addItem_move (std::move (newEvent));
 			}
 		}
 		if (thy points.size == 0) {
@@ -333,7 +333,7 @@ autoERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 			TableRow row = table -> rows.at [ievent];
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string.get(), which, criterion, true)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
-				thy points. addItem_move (newEvent.move());
+				thy points. addItem_move (std::move (newEvent));
 			}
 		}
 		if (thy points.size == 0) {

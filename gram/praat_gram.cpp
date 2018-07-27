@@ -668,7 +668,7 @@ DIRECT (NEW_MODIFY_OTGrammar_measureTypology) {
 	LOOP try {
 		iam (OTGrammar);
 		autoDistributions thee = OTGrammar_measureTypology_WEAK (me);
-		praat_new (thee.move(), my name.get(), U"_out");
+		praat_new (std::move (thee), my name.get(), U"_out");
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (OBJECT);
