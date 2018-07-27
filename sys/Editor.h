@@ -50,15 +50,7 @@ Thing_define (EditorCommand, Thing) {
 typedef MelderCallback <void, structEditor> Editor_DataChangedCallback;
 typedef MelderCallback <void, structEditor> Editor_DestructionCallback;
 
-/*
-	The following doesn't work yet:
-*/
-//typedef MelderCallback <void, structEditor, autoDaata /* publication */> Editor_PublicationCallback;
-/*
-	because the autoDaata argument tends to be called with .move().
-	Therefore we have the stupider version:
-*/
-typedef void (*Editor_PublicationCallback) (Editor, autoDaata /* publication */);
+typedef MelderCallback <void, structEditor, autoDaata /* publication */> Editor_PublicationCallback;
 
 Thing_define (Editor, Thing) {
 	GuiWindow windowForm;
