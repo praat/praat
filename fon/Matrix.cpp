@@ -650,10 +650,14 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 	conststring32 expression, Interpreter interpreter, Matrix target)
 {
 	try {
-		if (xmax <= xmin)
-			xmin = my xmin, xmax = my xmax;
-		if (ymax <= ymin)
-			ymin = my ymin, ymax = my ymax;
+		if (xmax <= xmin) {
+			xmin = my xmin;
+			xmax = my xmax;
+		}
+		if (ymax <= ymin) {
+			ymin = my ymin;
+			ymax = my ymax;
+		}
 		integer ixmin, ixmax, iymin, iymax;
 		(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 		(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);

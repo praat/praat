@@ -222,8 +222,12 @@ autoDelta Speaker_to_Delta (Speaker me) {
 	for (integer itube = 38; itube <= 64; itube ++) {
 		Delta_Tube t = thy tube + itube;
 		integer i = itube - 37;
-		t -> Dx = t -> Dxeq = sqrt (( dx = xmm [i] - xmm [i + 1], dx * dx ) + ( dy = ymm [i] - ymm [i + 1], dy * dy ));
-		t -> Dyeq = sqrt (( dx = xe [i] - xi [i], dx * dx ) + ( dy = ye [i] - yi [i], dy * dy ));
+		dx = xmm [i] - xmm [i + 1];
+		dy = ymm [i] - ymm [i + 1];
+		t -> Dx = t -> Dxeq = sqrt (dx * dx + dy * dy);
+		dx = xe [i] - xi [i];
+		dy = ye [i] - yi [i];
+		t -> Dyeq = sqrt (dx * dx + dy * dy);
 		if (closed [i]) t -> Dyeq = - t -> Dyeq;
 		t -> Dy = t -> Dyeq;
 		t -> Dz = t -> Dzeq = 0.015;
