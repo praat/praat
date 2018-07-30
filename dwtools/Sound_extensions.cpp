@@ -1816,26 +1816,23 @@ static void Sound_findIntermediatePoint_bs (Sound me, integer ichannel, integer 
 	do {
 		xmid = 0.5 * (xleft + xright); // the bisection
 
-		for (integer channel = 1; channel <= my ny; channel ++) {
+		for (integer channel = 1; channel <= my ny; channel ++)
 			thy z [channel] [2] = Vector_getValueAtX (me, xmid, channel, Vector_VALUE_INTERPOLATION_LINEAR);
-		}
-		Formula_Result result;
 		Formula_compile (interpreter, thee.get(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
 		Formula_run (ichannel, 2, & result);
-		bool mid = (result. numericResult != 0.0);
+		bool mid = ( result. numericResult != 0.0 );
 
 		thy dx *= 0.5;
 		if (left == mid) {
 			xleft = xmid;
-			for (integer channel = 1; channel <= my ny; channel ++) {
+			for (integer channel = 1; channel <= my ny; channel ++)
 				thy z [channel] [1] = thy z [channel] [2];
-			}
 			thy x1 = xleft;
 		} else {
 			xright = xmid;
-			for (integer channel = 1; channel <= my ny; channel ++) {
+			for (integer channel = 1; channel <= my ny; channel ++)
 				thy z [channel] [3] = thy z [channel] [2];
-			}
 		}
 		istep ++;
 	} while (istep < numberOfBisections);
@@ -1848,6 +1845,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	bool garnish, conststring32 method, integer numberOfBisections, conststring32 formula, Interpreter interpreter) {
 	
 	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+	Formula_Result result;
 
 	integer ixmin, ixmax;
 	_Sound_getWindowExtrema (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);
@@ -1855,7 +1853,6 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	// Set coordinates for drawing.
 
 	Graphics_setInner (g);
-	Formula_Result result;
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - channel) * (maximum - minimum), maximum + (channel - 1) * (maximum - minimum));
 		if (str32str (method, U"bars") || str32str (method, U"Bars")) {
@@ -1968,8 +1965,8 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 	integer numberOfBisections, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		Formula_Result result;
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
 
 		integer ixmin, ixmax;
 		_Sound_getWindowExtrema (me, & tmin, & tmax, & minimum, & maximum, & ixmin, & ixmax);

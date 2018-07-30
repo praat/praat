@@ -252,11 +252,12 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 void FormantGrid_formula_bandwidths (FormantGrid me, conststring32 expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (! thee) thee = me;
+		Formula_Result result;
+		if (! thee)
+			thee = me;
 		for (integer irow = 1; irow <= my formants.size; irow ++) {
 			RealTier bandwidth = thy bandwidths.at [irow];
 			for (integer icol = 1; icol <= bandwidth -> points.size; icol ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (isundef (result. numericResult))
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");
@@ -271,11 +272,12 @@ void FormantGrid_formula_bandwidths (FormantGrid me, conststring32 expression, I
 void FormantGrid_formula_frequencies (FormantGrid me, conststring32 expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (! thee) thee = me;
+		Formula_Result result;
+		if (! thee)
+			thee = me;
 		for (integer irow = 1; irow <= my formants.size; irow ++) {
 			RealTier formant = thy formants.at [irow];
 			for (integer icol = 1; icol <= formant -> points.size; icol ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (isundef (result. numericResult))
 					Melder_throw (U"Cannot put an undefined value into the tier.\nFormula not finished.");

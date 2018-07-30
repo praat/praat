@@ -314,11 +314,11 @@ void TableOfReal_setColumnLabel (TableOfReal me, integer columnNumber, conststri
 void TableOfReal_formula (TableOfReal me, conststring32 expression, Interpreter interpreter, TableOfReal thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
 		if (! thee)
 			thee = me;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				thy data [irow] [icol] = result. numericResult;
 			}
@@ -572,13 +572,13 @@ autoTableOfReal TableOfReal_extractColumnRanges (TableOfReal me, conststring32 r
 autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, conststring32 condition, Interpreter interpreter) {
 	try {
 		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
 		/*
 			Count the new number of rows.
 		*/
 		integer numberOfElements = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. numericResult != 0.0) {
 					numberOfElements ++;
@@ -599,7 +599,6 @@ autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, conststring32 cond
 		numberOfElements = 0;
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. numericResult != 0.0) {
 					copyRow (me, irow, thee.get(), ++ numberOfElements);
@@ -616,13 +615,13 @@ autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, conststring32 cond
 autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, conststring32 condition, Interpreter interpreter) {
 	try {
 		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
 		/*
 			Count the new number of columns.
 		*/
 		integer numberOfElements = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. numericResult != 0.0) {
 					numberOfElements ++;
@@ -643,7 +642,6 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, conststring32 c
 		numberOfElements = 0;
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. numericResult != 0.0) {
 					copyColumn (me, icol, thee.get(), ++ numberOfElements);

@@ -1316,9 +1316,9 @@ void Table_formula_columnRange (Table me, integer fromColumn, integer toColumn, 
 		Table_checkSpecifiedColumnNumberWithinRange (me, fromColumn);
 		Table_checkSpecifiedColumnNumberWithinRange (me, toColumn);
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
+		Formula_Result result;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			for (integer icol = fromColumn; icol <= toColumn; icol ++) {
-				Formula_Result result;
 				Formula_run (irow, icol, & result);
 				if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING) {
 					Table_setStringValue (me, irow, icol, result. stringResult.get());

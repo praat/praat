@@ -4111,10 +4111,10 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 	try {
 		integer numberOfSelectedColumns;
 		autoNUMvector <integer> dataColumns (Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string, & numberOfSelectedColumns), 1);
-		if (factorColumn < 1 || factorColumn > my numberOfColumns) {
+		if (factorColumn < 1 || factorColumn > my numberOfColumns)
 			return;
-		}
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
 		integer numberOfData = my rows.size;
 		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn);
 		integer numberOfLevels = si -> classes->size;
@@ -4142,10 +4142,9 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 				integer numberOfDataInLevelColumn = 0;
 				for (integer irow = 1; irow <= numberOfData; irow ++) {
 					if (si -> classIndex [irow] == ilevel) {
-						Formula_Result result;
 						Formula_run (irow, dataColumns [icol], & result);
 						if (result. numericResult != 0.0) {
-							data [ ++ numberOfDataInLevelColumn] = Table_getNumericValue_Assert (me, irow, dataColumns [icol]);
+							data [++ numberOfDataInLevelColumn] = Table_getNumericValue_Assert (me, irow, dataColumns [icol]);
 						}
 					}
 				}
@@ -4175,13 +4174,15 @@ void Table_distributionPlotWhere (Table me, Graphics g,
 	bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		if (dataColumn < 1 || dataColumn > my numberOfColumns) return;
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
+		if (dataColumn < 1 || dataColumn > my numberOfColumns)
+			return;
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
+
 		Table_numericize_Assert (me, dataColumn);
 		integer n = my rows.size, mrow = 0;
 		autoMatrix thee = Matrix_create (1.0, 1.0, 1, 1.0, 1.0, 0.0, n + 1.0, n, 1.0, 1.0);
 		for (integer irow = 1; irow <= n; irow ++) {
-			Formula_Result result;
 			Formula_run (irow, dataColumn, & result);
 			if (result. numericResult != 0.0) {
 				thy z [1] [ ++mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
@@ -4250,9 +4251,9 @@ static Graphics_Colour Strings_colourToValue  (Strings me, integer index) {
 
 integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter interpreter) {
 	integer numberOfRows = 0;
-	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
+	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+	Formula_Result result;
 	for (integer irow = 1; irow <= my rows.size; irow ++) {
-		Formula_Result result;
 		Formula_run (irow, 1, & result);
 		if (result. numericResult != 0.0) {
 			numberOfRows ++;
@@ -4264,18 +4265,16 @@ integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter
 integer *Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter, integer *p_numberOfMatches) {
 	try {
 		integer numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
-		if (numberOfMatches < 1) {
+		if (numberOfMatches < 1)
 			Melder_throw (U"No rows selected.");
-		}
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);   // again?
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
 		autoNUMvector <integer> selectedRows (1, numberOfMatches);
 		integer n = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			Formula_Result result;
 			Formula_run (irow, 1, & result);
-			if (result. numericResult != 0.0) {
+			if (result. numericResult != 0.0)
 				selectedRows [ ++ n] = irow;
-			}
 		}
 		Melder_assert (n == numberOfMatches);
 		if (p_numberOfMatches) {
@@ -4540,12 +4539,12 @@ void Table_lagPlotWhere (Table me, Graphics g,
 
 autoTable Table_extractRowsWhere (Table me, conststring32 formula, Interpreter interpreter) {
 	try {
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, true);
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_Result result;
 		autoTable thee = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			thy columnHeaders [icol]. label = Melder_dup (my columnHeaders [icol]. label.get());
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			Formula_Result result;
 			Formula_run (irow, 1, & result);
 			if (result. numericResult != 0.0) {
 				TableRow row = my rows.at [irow];

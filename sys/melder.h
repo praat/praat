@@ -301,9 +301,11 @@ public:
 		}
 		return *this;
 	}
-	_autostring&& move () noexcept { return static_cast <_autostring&&> (*this); }
-	void _unsafeTransplant (T* newStringPointer) {
-		our ptr = newStringPointer;
+	_autostring&& move () noexcept {
+		return static_cast <_autostring&&> (*this);
+	}
+	void _zero_asInUnion () {
+		our ptr = nullptr;
 	}
 };
 
@@ -1716,6 +1718,11 @@ public:
 		if (our at) our _freeAt ();
 	}
 	numvec get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
+	void adoptFromAmbiguousOwner (numvec given) {   // buy the payload from a non-autonumvec
+		our reset();
+		our at = given.at;
+		our size = given.size;
+	}
 	numvec releaseToAmbiguousOwner () {   // sell the payload to a non-autonumvec
 		double *oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
@@ -1796,6 +1803,12 @@ public:
 		if (our at) our _freeAt ();
 	}
 	nummat get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	void adoptFromAmbiguousOwner (nummat given) {   // buy the payload from a non-autonummat
+		our reset();
+		our at = given.at;
+		our nrow = given.nrow;
+		our ncol = given.ncol;
+	}
 	nummat releaseToAmbiguousOwner () {   // sell the payload to a non-autonummat
 		double **oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload

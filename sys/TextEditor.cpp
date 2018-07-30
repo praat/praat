@@ -114,7 +114,7 @@ static void cb_open_ok (UiForm sendingForm, integer /* narg */, Stackel /* args 
 static void cb_showOpen (EditorCommand cmd) {
 	TextEditor me = (TextEditor) cmd -> d_editor;
 	if (! my openDialog)
-		my openDialog = autoUiForm (UiInfile_create (my windowForm, U"Open", cb_open_ok, me, nullptr, nullptr, false));
+		my openDialog = UiInfile_create (my windowForm, U"Open", cb_open_ok, me, nullptr, nullptr, false);
 	UiInfile_do (my openDialog.get());
 }
 
@@ -128,7 +128,7 @@ static void cb_saveAs_ok (UiForm sendingForm, integer /* narg */, Stackel /* arg
 
 static void menu_cb_saveAs (TextEditor me, EDITOR_ARGS_DIRECT) {
 	if (! my saveDialog)
-		my saveDialog = autoUiForm (UiOutfile_create (my windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr));
+		my saveDialog = UiOutfile_create (my windowForm, U"Save", cb_saveAs_ok, me, nullptr, nullptr);
 	char32 defaultName [300];
 	Melder_sprint (defaultName,300, ! my v_fileBased () ? U"info.txt" : my name [0] ? MelderFile_name (& my file) : U"");
 	UiOutfile_do (my saveDialog.get(), defaultName);

@@ -95,6 +95,26 @@ autoRealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas)
 	}
 }
 
+template <typename T> autoSomeThing <T> Thing_create () {
+	return Thing_newFromClass (nullptr);
+}
+
+template <>
+autoSomeThing <structRealTier> Thing_create <structRealTier> () {
+	return Thing_newFromClass (classRealTier). static_cast_move<structRealTier>();
+}
+
+template <typename structSomeRealTier>
+autoSomeThing <structSomeRealTier> SomeRealTier_create (double tmin, double tmax) {
+	try {
+		autoSomeThing <structSomeRealTier> me = Thing_create <structSomeRealTier> ();
+		RealTier_init (me.get(), tmin, tmax);
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"RealTier not created.");
+	}
+}
+
 void RealTier_addPoint (RealTier me, double t, double value) {
 	try {
 		autoRealPoint point = RealPoint_create (t, value);
@@ -464,9 +484,10 @@ autoRealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInf
 void RealTier_formula (RealTier me, conststring32 expression, Interpreter interpreter, RealTier thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-		if (! thee) thee = me;
+		Formula_Result result;
+		if (! thee)
+			thee = me;
 		for (integer icol = 1; icol <= my points.size; icol ++) {
-			Formula_Result result;
 			Formula_run (0, icol, & result);
 			if (isundef (result. numericResult))
 				Melder_throw (U"Cannot put an undefined value into the tier.");
@@ -480,9 +501,8 @@ void RealTier_formula (RealTier me, conststring32 expression, Interpreter interp
 void RealTier_removePointsBelow (RealTier me, double level) {
 	for (integer ipoint = my points.size; ipoint > 0; ipoint --) {
 		RealPoint point = my points.at [ipoint];
-		if (point -> value < level) {
+		if (point -> value < level)
 			AnyTier_removePoint (me->asAnyTier(), ipoint);
-		}
 	}
 }
 

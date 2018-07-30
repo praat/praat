@@ -52,7 +52,7 @@ struct structClassInfo {
 
 #define Thing_declare(klas) \
 	typedef struct struct##klas *klas; \
-	typedef _Thing_auto <struct##klas> auto##klas; \
+	typedef autoSomeThing <struct##klas> auto##klas; \
 	extern struct structClassInfo theClassInfo_##klas; \
 	extern ClassInfo class##klas
 
@@ -226,7 +226,7 @@ extern integer theTotalNumberOfThings;
 /* This number is 0 initially, increments at every successful `new', and decrements at every `forget'. */
 
 template <class T>
-class _Thing_auto {
+class autoSomeThing {
 	T *ptr;
 public:
 	/*
@@ -234,29 +234,13 @@ public:
 			autoPitch pitch;
 		should initialize the pointer to null.
 	*/
-	_Thing_auto () : ptr (nullptr) {
+	autoSomeThing () : ptr (nullptr) {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "default constructor\n");
 		#endif
 	}
-	/*
-		An awkward explicit construction from a pointer, like
-			extern Pitch getPitch ();
-			autoPitch pitch (getPitch ());
-		should work. However, such a case is probably a mistake,
-		because getPitch() should return an autoPitch if it
-		owns the Pitch, and if getPitch() doesn't own the Pitch,
-		an autoPitch should not receive it.
-		For this reason, the more intuitive syntax in
-			autoPitch pitch = getPitch ();
-		is forbidden, by declaring the construction-from-pointer as "explicit".
-	*/
-	explicit _Thing_auto (T *newPtr) : ptr (newPtr) {
-		#if _Thing_auto_DEBUG
-			if (our ptr)
-				fprintf (stderr, "constructor from pointer %p %s\n",
-					our ptr, Melder_peek32to8 (our ptr -> classInfo -> className));
-		#endif
+	autoSomeThing (ClassInfo classInfo) {
+		our ptr = classInfo -> _new ();
 	}
 	/*
 		After
@@ -264,7 +248,7 @@ public:
 		pitch1 should be destroyed when going out of scope,
 		either at the end of the try block or whenever a throw occurs.
 	*/
-	~_Thing_auto () noexcept {
+	~autoSomeThing () noexcept {
 		#if _Thing_auto_DEBUG
 			fprintf (stderr, "destructor %p %s\n",
 				our ptr, our ptr ? Melder_peek32to8 (our ptr -> classInfo -> className) : "(class unknown)");
@@ -314,12 +298,17 @@ public:
 	void releaseToUser () noexcept {
 		our ptr = nullptr;   // make the pointer non-automatic again
 	}
+
 	/*
-		Sometimes the ownership is determined by a flag such as _ownItems or _ownData or _ownSound.
-		In that case, the autoThing has be released as a raw Thing pointer,
-		and the ambiguous owner may become responsible for destroying the object.
+		Sometimes ownership is determined by a flag such as _ownItems or _ownData or _ownSound.
+		In that case, the autoThing has be adopted from a raw Thing pointer from the ambiguous owner,
+		or released as a raw Thing pointer making the ambiguous owner responsible for destroying the object.
 		In Praat, this happens with Collection items and with some editors.
 	*/
+	void adoptFromAmbiguousOwner (T* newPtr) noexcept {
+		our reset();
+		our ptr = newPtr;
+	}
 	T* releaseToAmbiguousOwner () noexcept {
 		T* temp = our ptr;
 		our ptr = nullptr;   // make the pointer non-automatic again
@@ -329,30 +318,20 @@ public:
 		_Thing_forget (our ptr);
 		our ptr = nullptr;
 	}
-	/*
-	 * Replacing a pointer in an existing autoThing should be an exceptional phenomenon,
-	 * and therefore has to be done explicitly (rather than via an assignment),
-	 * so that you can easily spot ugly places in your source code.
-	 * In order not to leak memory, the old object is destroyed.
-	 */
-	/*void reset (T* newPtr = nullptr) noexcept {
-		_Thing_forget (our ptr);
-		our ptr = newPtr;
-	}*/
 	void _zero () noexcept {
 		our ptr = nullptr;
 	}
 	explicit operator bool () const noexcept {
 		return !! our ptr;
 	}
-	bool operator== (_Thing_auto<T> other) const noexcept {
+	bool operator== (autoSomeThing<T> other) const noexcept {
 		return other. ptr == our ptr;
 	}
-	bool operator!= (_Thing_auto<T> other) const noexcept {
+	bool operator!= (autoSomeThing<T> other) const noexcept {
 		return other. ptr != our ptr;
 	}
 	/*
-	 * The compiler should prevent initializations from _Thing_auto l-values, as in
+	 * The compiler should prevent initializations from autoSomeThing l-values, as in
 	 *    autoPitch pitch2 = pitch;
 	 * This is because the syntax of this statement is *copy* syntax,
 	 * but the semantics of this statement has to be, confusingly, *move* semantics
@@ -361,10 +340,10 @@ public:
 	 * a destructor would be called at some point for both pitch and pitch2,
 	 * twice deleting the same object, which is a run-time error.
 	 */
-	_Thing_auto<T> (const _Thing_auto<T>&) = delete;   // disable copy constructor from an l-value of class T*
-	template <class Y> _Thing_auto<T> (const _Thing_auto<Y>&) = delete;   // disable copy constructor from an l-value of a descendant class of T*
+	autoSomeThing<T> (const autoSomeThing<T>&) = delete;   // disable copy constructor from an l-value of class T*
+	template <class Y> autoSomeThing<T> (const autoSomeThing<Y>&) = delete;   // disable copy constructor from an l-value of a descendant class of T*
 	/*
-	 * The compiler should prevent assignments from _Thing_auto l-values, as in
+	 * The compiler should prevent assignments from autoSomeThing l-values, as in
 	 *    pitch2 = pitch;
 	 * This is because the syntax of this statement is *copy* syntax,
 	 * but the semantics of this statement has to be, confusingly, *move* semantics
@@ -373,15 +352,15 @@ public:
 	 * a destructor would be called at some point for both pitch and pitch2,
 	 * twice deleting the same object, which is a run-time error.
 	 */
-	_Thing_auto<T>& operator= (const _Thing_auto<T>&) = delete;   // disable copy assignment from an l-value of class T*
-	template <class Y> _Thing_auto<T>& operator= (const _Thing_auto<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
+	autoSomeThing<T>& operator= (const autoSomeThing<T>&) = delete;   // disable copy assignment from an l-value of class T*
+	template <class Y> autoSomeThing<T>& operator= (const autoSomeThing<Y>&) = delete;   // disable copy assignment from an l-value of a descendant class of T*
 	/*
-	 * The compiler should treat initializations from _Thing_auto r-values, as in
+	 * The compiler should treat initializations from autoSomeThing r-values, as in
 	 *    extern autoPitch Pitch_create (...);
 	 *    autoPitch pitch = Pitch_create (...);
 	 * as move constructors.
 	 */
-	_Thing_auto<T> (_Thing_auto<T>&& other) noexcept : ptr (other. ptr) {
+	autoSomeThing<T> (autoSomeThing<T>&& other) noexcept : ptr (other. ptr) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (stderr, "move constructor %p from same class %s\n",
@@ -389,7 +368,7 @@ public:
 		#endif
 		other. ptr = nullptr;
 	}
-	template <class Y> _Thing_auto<T> (_Thing_auto<Y>&& other) noexcept : ptr (other.get()) {
+	template <class Y> autoSomeThing<T> (autoSomeThing<Y>&& other) noexcept : ptr (other.get()) {
 		#if _Thing_auto_DEBUG
 			if (our ptr)
 				fprintf (stderr, "move constructor %p from other class %s\n",
@@ -398,13 +377,13 @@ public:
 		other. _zero();
 	}
 	/*
-	 * The compiler should treat assignments from _Thing_auto r-values, as in
+	 * The compiler should treat assignments from autoSomeThing r-values, as in
 	 *    extern autoPitch Pitch_create (...);
 	 *    autoPitch pitch;
 	 *    pitch = Pitch_create (...);
 	 * as move assignments.
 	 */
-	_Thing_auto<T>& operator= (_Thing_auto<T>&& other) noexcept {
+	autoSomeThing<T>& operator= (autoSomeThing<T>&& other) noexcept {
 		if (other. ptr != our ptr) {
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment before %p from same class %s\n",
@@ -420,7 +399,7 @@ public:
 		}
 		return *this;
 	}
-	template <class Y> _Thing_auto<T>& operator= (_Thing_auto<Y>&& other) noexcept {
+	template <class Y> autoSomeThing<T>& operator= (autoSomeThing<Y>&& other) noexcept {
 		if (other.get() != our ptr) {
 			#if _Thing_auto_DEBUG
 				fprintf (stderr, "move assignment before %p from other class %s\n",
@@ -442,9 +421,9 @@ public:
 	 *
 	 *    pitch2 = pitch1.move();   // performs move assignment and therefore nullifies pitch1
 	 */
-	_Thing_auto<T>&& move () noexcept { return static_cast <_Thing_auto<T>&&> (*this); }
+	autoSomeThing<T>&& move () noexcept { return static_cast <autoSomeThing<T>&&> (*this); }
 	/*
-	 * Returning _Thing_auto from a function works as hoped for:
+	 * Returning autoSomeThing from a function works as hoped for:
 	 *    autoPitch Sound_to_Pitch (Sound me) {
 	 *       autoPitch thee = Pitch_create (...);
 	 *       ...
@@ -457,12 +436,29 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 *    collection -> addItem_move (pitch.move());   // compiler error if you don't call move()
 	 */
-	template <class Y> _Thing_auto<Y> static_cast_move () noexcept {
-		return _Thing_auto<Y> (static_cast<Y*> (our releaseToAmbiguousOwner()));
+
+	/*
+		The C++ language does allow us to do
+			Sampled sampled;
+			Pitch pitch = static_cast <Pitch> (sampled);
+		but not
+			autoSampled sampled;
+			autoPitch pitch = static_cast <autoPitch> (sampled.move());
+		or anything like that.
+
+		So we create a method that casts and moves at the same time:
+			autoPitch pitch = sampled. static_cast_move <structPitch> ();
+	*/
+	template <class Y> autoSomeThing<Y> static_cast_move () noexcept {
+		T* nakedPointer_oldType = our releaseToAmbiguousOwner();   // throw the object in the air...
+		Y* nakedPointer_newType = static_cast<Y*> (nakedPointer_oldType);
+		autoSomeThing<Y> newObject;
+		newObject. adoptFromAmbiguousOwner (nakedPointer_newType);   // ...and catch it
+		return newObject;
 	}
 };
 
-typedef _Thing_auto<structThing> autoThing;
+typedef autoSomeThing<structThing> autoThing;
 
 #define Thing_new(Klas)  Thing_newFromClass (class##Klas).static_cast_move<struct##Klas>()
 /*
@@ -495,14 +491,14 @@ autoThing Thing_newFromClassName (conststring32 className, int *out_formatVersio
 
 template <class T>
 class autoThingVector {
-	_Thing_auto<T> *d_ptr;
+	autoSomeThing<T> *d_ptr;
 	integer d_from, d_to;
 public:
 	autoThingVector<T> (integer from, integer to) : d_from (from), d_to (to) {
-		//d_ptr = reinterpret_cast <_Thing_auto<T>*> (NUMvector_ (sizeof (_Thing_auto<T>), from, to, true));
-		d_ptr = NUMvector <_Thing_auto<T>> (from, to, true);
+		//d_ptr = reinterpret_cast <autoSomeThing<T>*> (NUMvector_ (sizeof (autoSomeThing<T>), from, to, true));
+		d_ptr = NUMvector <autoSomeThing<T>> (from, to, true);
 	}
-	autoThingVector (_Thing_auto<T> *ptr, integer from, integer to) : d_ptr (ptr), d_from (from), d_to (to) {
+	autoThingVector (autoSomeThing<T> *ptr, integer from, integer to) : d_ptr (ptr), d_from (from), d_to (to) {
 	}
 	autoThingVector () : d_ptr (nullptr), d_from (1), d_to (0) {
 	}
@@ -513,10 +509,10 @@ public:
 			NUMvector_free (d_ptr, d_from);
 		}
 	}
-	_Thing_auto<T>& operator[] (integer i) {
+	autoSomeThing<T>& operator[] (integer i) {
 		return d_ptr [i];
 	}
-	_Thing_auto<T>* peek () const {
+	autoSomeThing<T>* peek () const {
 		return d_ptr;
 	}
 	/*

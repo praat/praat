@@ -330,7 +330,7 @@ _form_inited_: \
 
 #define EDITOR_FORM_SAVE(title, helpTitle) \
 	if (! cmd -> d_uiform) { \
-		cmd -> d_uiform = autoUiForm (UiOutfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle)); \
+		cmd -> d_uiform = UiOutfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) { char32 defaultName [300]; defaultName [0] = U'\0';
 #define EDITOR_DO_SAVE \
 	(void) interpreter; \
@@ -351,7 +351,7 @@ _form_inited_: \
 
 #define EDITOR_FORM_READ(title, helpTitle) \
 	if (! cmd -> d_uiform) { \
-		cmd -> d_uiform = autoUiForm (UiInfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle)); \
+		cmd -> d_uiform = UiInfile_createE (cmd, title, cmd -> itemTitle.get(), helpTitle); \
 		} if (! _args_ && ! _sendingForm_ && ! _sendingString_) {
 #define EDITOR_DO_READ \
 	(void) interpreter; \
