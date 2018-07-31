@@ -42,7 +42,7 @@
 #define MELTOBARK(x) HZTOBARK(MELTOHZ(x))
 
 #define FilterBank_DBREF 4e-10
-#define FilterBank_DBFAC 1
+#define FilterBank_DBFAC 1.0
 #define FilterBank_DBFLOOR -20
 
 #define FilterBank_HERTZ 1

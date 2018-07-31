@@ -1,6 +1,6 @@
 /* espeakdata_FileInMemory.cpp
  *
- * Copyright (C) David Weenink 2012, 2015-2017
+ * Copyright (C) David Weenink 2012,2015-2017
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,22 +82,21 @@ const char * espeakdata_get_voicedata (const char *data, integer ndata, char *bu
 	}
 	(*index) ++;   // ppgb 20151020 fix
 	integer idata = i + 1;
-	buf[i] = '\0';
-	while (--i >= 0 && ESPEAK_ISSPACE (buf[i])) {
-		buf[i] = 0;
+	buf [i] = '\0';
+	while (-- i >= 0 && ESPEAK_ISSPACE (buf[i])) {
+		buf [i] = 0;
 	}
 	char *p = strstr (buf, "//");
-	if (p != 0) {
-		*p = 0;
-	}
-	return & data[idata];
+	if (p)
+		*p = '\0';
+	return & data [idata];
 }
 
 
 static conststring32 get_wordAfterPrecursor_u8 (const unsigned char *text8, conststring32 precursor) {
 	static char32 word [100];
 	/*
-		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
+		1. Find (first occurrence of) 'precursor' at the start of a line (with optional leading whitespace).
 		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;
@@ -120,7 +119,7 @@ static conststring32 get_wordAfterPrecursor_u8 (const unsigned char *text8, cons
 static conststring32 get_stringAfterPrecursor_u8 (const unsigned char *text8, conststring32 precursor) {
 	static char32 word [100];
 	/*
-		1. Find (first occurence of) 'precursor' at the start of a line (with optional leading whitespace).
+		1. Find (first occurrence of) 'precursor' at the start of a line (with optional leading whitespace).
 		2. Get the words after 'precursor' (skip leading and trailing whitespace).
 	*/
 	autoMelderString regex;

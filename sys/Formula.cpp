@@ -4389,69 +4389,94 @@ static void do_infoStr () {
 	autostring32 info = Melder_dup (Melder_getInfo ());
 	pushString (info.move());
 }
+static autostring32 leftStr (conststring32 str, integer newLength = 1) {
+	integer length = str32len (str);
+	if (newLength < 0)
+		newLength = 0;
+	if (newLength > length)
+		newLength = length;
+	autostring32 result (newLength);
+	str32ncpy (result.get(), str, newLength);
+	return result;
+}
 static void do_leftStr () {
 	trace (U"enter");
 	Stackel narg = pop;
-	if (narg->number == 1 || narg->number == 2) {
-		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
-		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
-			integer newlength = x ? Melder_iround (x->number) : 1;
-			integer length = str32len (s->getString());
-			if (newlength < 0)
-				newlength = 0;
-			if (newlength > length)
-				newlength = length;
-			autostring32 result (newlength);
-			str32ncpy (result.get(), s->getString(), newlength);
-			pushString (result.move());
+	if (narg->number == 1) {
+		Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			pushString (leftStr (s->getString()));
 		} else {
-			Melder_throw (U"The function \"left$\" requires a string, or a string and a number.");
+			Melder_throw (U"The function \"left$\" requires a string (or a string and a number).");
+		}
+	} else if (narg->number == 2) {
+		Stackel n = pop, s = pop;
+		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
+			pushString (leftStr (s->getString(), Melder_iround (n->number)));
+		} else {
+			Melder_throw (U"The function \"left$\" requires a string and a number (or a string only).");
 		}
 	} else {
-		Melder_throw (U"The function \"left$\" requires one or two arguments.");
+		Melder_throw (U"The function \"left$\" requires one or two arguments: a string and optionally a number.");
 	}
 	trace (U"exit");
 }
+static autostring32 rightStr (conststring32 str, integer newLength = 1) {
+	integer length = str32len (str);
+	if (newLength < 0)
+		newLength = 0;
+	if (newLength > length)
+		newLength = length;
+	return Melder_dup (str + length - newLength);
+}
 static void do_rightStr () {
 	Stackel narg = pop;
-	if (narg->number == 1 || narg->number == 2) {
-		Stackel x = ( narg->number == 2 ? pop : nullptr ), s = pop;
-		if (s->which == Stackel_STRING && (x == nullptr || x->which == Stackel_NUMBER)) {
-			integer newlength = x ? Melder_iround (x->number) : 1;
-			integer length = str32len (s->getString());
-			if (newlength < 0)
-				newlength = 0;
-			if (newlength > length)
-				newlength = length;
-			pushString (Melder_dup (s->getString() + length - newlength));
+	if (narg->number == 1) {
+		Stackel s = pop;
+		if (s->which == Stackel_STRING) {
+			pushString (rightStr (s->getString()));
 		} else {
-			Melder_throw (U"The function \"right$\" requires a string, or a string and a number.");
+			Melder_throw (U"The function \"right$\" requires a string (or a string and a number).");
+		}
+	} else if (narg->number == 2) {
+		Stackel n = pop, s = pop;
+		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
+			pushString (rightStr (s->getString(), Melder_iround (n->number)));
+		} else {
+			Melder_throw (U"The function \"right$\" requires a string and a number (or a string only).");
 		}
 	} else {
-		Melder_throw (U"The function \"right$\" requires one or two arguments.");
+		Melder_throw (U"The function \"right$\" requires one or two arguments: a string and optionally a number.");
 	}
+}
+static autostring32 midStr (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1) {
+	integer length = str32len (str), endPosition_1 = startingPosition_1 + numberOfCharacters - 1;
+	if (startingPosition_1 < 1)
+		startingPosition_1 = 1;
+	if (endPosition_1 > length)
+		endPosition_1 = length;
+	integer newLength = endPosition_1 - startingPosition_1 + 1;
+	if (newLength <= 0)
+		return Melder_dup (U"");
+	autostring32 result (newLength);
+	str32ncpy (result.get(), & str [startingPosition_1-1], newLength);
+	return result;
 }
 static void do_midStr () {
 	Stackel narg = pop;
-	if (narg->number == 2 || narg->number == 3) {
-		Stackel y = ( narg->number == 3 ? pop : nullptr ), x = pop, s = pop;
-		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == nullptr || y->which == Stackel_NUMBER)) {
-			integer newlength = y ? Melder_iround (y->number) : 1;
-			integer start = Melder_iround (x->number);
-			integer length = str32len (s->getString()), finish = start + newlength - 1;
-			autostring32 result;
-			if (start < 1) start = 1;
-			if (finish > length) finish = length;
-			newlength = finish - start + 1;
-			if (newlength > 0) {
-				result = autostring32 (newlength);
-				str32ncpy (result.get(), s->getString() + start - 1, newlength);
-			} else {
-				result = Melder_dup (U"");
-			}
-			pushString (result.move());
+	if (narg->number == 2) {
+		Stackel position = pop, str = pop;
+		if (str->which == Stackel_STRING && position->which == Stackel_NUMBER) {
+			pushString (midStr (str->getString(), Melder_iround (position->number)));
 		} else {
-			Melder_throw (U"The function \"mid$\" requires a string and one or two numbers.");
+			Melder_throw (U"The function \"mid$\" requires a string and a number (or two).");
+		}
+	} else if (narg->number == 3) {
+		Stackel numberOfCharacters = pop, startingPosition = pop, str = pop;
+		if (str->which == Stackel_STRING && startingPosition->which == Stackel_NUMBER && numberOfCharacters->which == Stackel_NUMBER) {
+			pushString (midStr (str->getString(), Melder_iround (startingPosition->number), Melder_iround (numberOfCharacters->number)));
+		} else {
+			Melder_throw (U"The function \"mid$\" requires a string and two numbers (or one).");
 		}
 	} else {
 		Melder_throw (U"The function \"mid$\" requires two or three arguments.");
