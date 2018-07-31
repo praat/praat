@@ -586,7 +586,8 @@ autoTableOfReal TableOfReal_extractRowsWhere (TableOfReal me, conststring32 cond
 				}
 			}
 		}
-		if (numberOfElements < 1) Melder_throw (U"No rows match this condition.");
+		if (numberOfElements < 1)
+			Melder_throw (U"No rows match this condition.");
 
 		/*
 			Create room for the result.
@@ -629,7 +630,8 @@ autoTableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, conststring32 c
 				}
 			}
 		}
-		if (numberOfElements < 1) Melder_throw (U"No columns match this condition.");
+		if (numberOfElements < 1)
+			Melder_throw (U"No columns match this condition.");
 
 		/*
 			Create room for the result.
@@ -1011,21 +1013,29 @@ static void TableOfReal_sort (TableOfReal me, bool useLabels, integer column1, i
 			if (my rowLabels [irow]) {
 				if (my rowLabels [jrow]) {
 					int compare = str32cmp (my rowLabels [irow].get(), my rowLabels [jrow].get());
-					if (compare < 0) continue;
-					if (compare > 0) goto swap;
-				} else goto swap;
+					if (compare < 0)
+						continue;
+					if (compare > 0)
+						goto swap;
+				} else {
+					goto swap;
+				}
 			} else if (my rowLabels [jrow]) continue;
 		}
 		/*
 		 * If we arrive here, the two labels are equal or both null (or useLabels is `false`).
 		 */
 		if (column1 > 0 && column1 <= my numberOfColumns) {
-			if (my data [irow] [column1] < my data [jrow] [column1]) continue;
-			if (my data [irow] [column1] > my data [jrow] [column1]) goto swap;
+			if (my data [irow] [column1] < my data [jrow] [column1])
+				continue;
+			if (my data [irow] [column1] > my data [jrow] [column1])
+				goto swap;
 		}
 		if (column2 > 0 && column2 <= my numberOfColumns) {
-			if (my data [irow] [column2] < my data [jrow] [column2]) continue;
-			if (my data [irow] [column2] > my data [jrow] [column2]) goto swap;
+			if (my data [irow] [column2] < my data [jrow] [column2])
+				continue;
+			if (my data [irow] [column2] > my data [jrow] [column2])
+				goto swap;
 		}
 		/*
 		 * If we arrive here, everything is equal.

@@ -305,7 +305,7 @@ static const conststring32 Formula_instructionNames [1 + hoogsteSymbool] = { U""
 static void formulefout (conststring32 message, int position) {
 	static MelderString truncatedExpression { };
 	MelderString_ncopy (& truncatedExpression, theExpression, position + 1);
-	Melder_throw (message, U":\n" U_LEFT_GUILLEMET U" ", truncatedExpression.string);
+	Melder_throw (message, U":\n« ", truncatedExpression.string);
 }
 
 static conststring32 languageNameCompare_searchString;
@@ -549,8 +549,8 @@ static void Formula_lexan () {
 						 */
 						if (Interpreter_hasVariable (theInterpreter, token.string))
 							Melder_throw (
-								U_LEFT_GUILLEMET, token.string,
-								U_RIGHT_GUILLEMET U" is ambiguous: a variable or an attribute of the current object. "
+								U"«", token.string,
+								U"» is ambiguous: a variable or an attribute of the current object. "
 								U"Please change variable name.");
 						if (tok == ROW_ || tok == COL_ || tok == X_ || tok == Y_) {
 							nieuwtok (tok)
@@ -619,7 +619,7 @@ static void Formula_lexan () {
 				while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 				if (theExpression [jkar] == U'(' || theExpression [jkar] == U':') {
 					Melder_throw (
-						U"Unknown function " U_LEFT_GUILLEMET, token.string, U_RIGHT_GUILLEMET U" in formula.");
+						U"Unknown function «", token.string, U"» in formula.");
 				} else if (theExpression [jkar] == '[' && rank == 0) {
 					if (isString) {
 						nieuwtok (INDEXED_STRING_VARIABLE_)
@@ -685,8 +685,7 @@ static void Formula_lexan () {
 				tokmatriks (theSource);
 			} else if (! underscore) {
 				Melder_throw (
-					U"Unknown symbol " U_LEFT_GUILLEMET , token.string,
-					U_RIGHT_GUILLEMET U" in formula "
+					U"Unknown symbol «", token.string, U"» in formula "
 					U"(variables start with lower case; object names contain an underscore).");
 			} else if (str32nequ (token.string, U"Object_", 7)) {
 				integer uniqueID = Melder_atoi (token.string + 7);
@@ -4320,7 +4319,7 @@ static void do_indexedNumericVariable () {
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (! var)
-		Melder_throw (U"Undefined indexed variable " U_LEFT_GUILLEMET, totalVariableName.string, U_RIGHT_GUILLEMET U".");
+		Melder_throw (U"Undefined indexed variable «", totalVariableName.string, U"».");
 	pushNumber (var -> numericValue);
 }
 static void do_indexedStringVariable () {
@@ -4345,7 +4344,7 @@ static void do_indexedStringVariable () {
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (! var)
-		Melder_throw (U"Undefined indexed variable " U_LEFT_GUILLEMET, totalVariableName.string, U_RIGHT_GUILLEMET U".");
+		Melder_throw (U"Undefined indexed variable «", totalVariableName.string, U"».");
 	autostring32 result = Melder_dup (var -> stringValue.get());
 	pushString (result.move());
 }
@@ -4389,16 +4388,6 @@ static void do_infoStr () {
 	autostring32 info = Melder_dup (Melder_getInfo ());
 	pushString (info.move());
 }
-static autostring32 leftStr (conststring32 str, integer newLength = 1) {
-	integer length = str32len (str);
-	if (newLength < 0)
-		newLength = 0;
-	if (newLength > length)
-		newLength = length;
-	autostring32 result (newLength);
-	str32ncpy (result.get(), str, newLength);
-	return result;
-}
 static void do_leftStr () {
 	trace (U"enter");
 	Stackel narg = pop;
@@ -4421,14 +4410,6 @@ static void do_leftStr () {
 	}
 	trace (U"exit");
 }
-static autostring32 rightStr (conststring32 str, integer newLength = 1) {
-	integer length = str32len (str);
-	if (newLength < 0)
-		newLength = 0;
-	if (newLength > length)
-		newLength = length;
-	return Melder_dup (str + length - newLength);
-}
 static void do_rightStr () {
 	Stackel narg = pop;
 	if (narg->number == 1) {
@@ -4448,19 +4429,6 @@ static void do_rightStr () {
 	} else {
 		Melder_throw (U"The function \"right$\" requires one or two arguments: a string and optionally a number.");
 	}
-}
-static autostring32 midStr (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1) {
-	integer length = str32len (str), endPosition_1 = startingPosition_1 + numberOfCharacters - 1;
-	if (startingPosition_1 < 1)
-		startingPosition_1 = 1;
-	if (endPosition_1 > length)
-		endPosition_1 = length;
-	integer newLength = endPosition_1 - startingPosition_1 + 1;
-	if (newLength <= 0)
-		return Melder_dup (U"");
-	autostring32 result (newLength);
-	str32ncpy (result.get(), & str [startingPosition_1-1], newLength);
-	return result;
 }
 static void do_midStr () {
 	Stackel narg = pop;
@@ -4582,7 +4550,7 @@ static void do_replaceStr () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		integer numberOfMatches;
-		autostring32 result = str_replace_literal (s->getString(), t->getString(), u->getString(), Melder_iround (x->number), & numberOfMatches);
+		autostring32 result = replaceStr (s->getString(), t->getString(), u->getString(), Melder_iround (x->number), & numberOfMatches);
 		pushString (result.move());
 	} else {
 		Melder_throw (U"The function \"replace$\" requires three strings and a number.");
@@ -4597,7 +4565,7 @@ static void do_replace_regexStr () {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
 			integer numberOfMatches;
-			autostring32 result = str_replace_regexp (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number), & numberOfMatches);
+			autostring32 result = replace_regexStr (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number), & numberOfMatches);
 			pushString (result.move());
 		}
 	} else {

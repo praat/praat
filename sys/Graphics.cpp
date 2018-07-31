@@ -216,7 +216,7 @@ void Graphics_WCtoDC (Graphics me, double xWC, double yWC, integer *xDC, integer
 /***** OUTPUT PRIMITIVES, RECORDABLE *****/
 
 void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
-	trace (U"enter ", x1NDC, U_SPACE, x2NDC, U_SPACE, y1NDC, U_SPACE, y2NDC);
+	trace (U"enter ", x1NDC, U" ", x2NDC, U" ", y1NDC, U" ", y2NDC);
 	my d_x1NDC = x1NDC;
 	my d_x2NDC = x2NDC;
 	my d_y1NDC = y1NDC;
