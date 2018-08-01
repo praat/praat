@@ -30,10 +30,6 @@
 /* machine precision */
 #define NUMeps 2.2e-16
 
-bool NUMstring_containsPrintableCharacter (conststring32 s);
-
-void NUMstring_chopWhiteSpaceAtExtremes_inplace (mutablestring32 string);
-
 double * NUMstring_to_numbers (conststring32 s, integer *numbers_found);
 /* return array with the number of numbers found */
 

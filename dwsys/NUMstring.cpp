@@ -25,31 +25,6 @@
 #include "Interpreter.h"
 #include "NUM2.h"
 
-bool NUMstring_containsPrintableCharacter (conststring32 s) {
-	if (! s) return false;
-	integer len = str32len (s);
-	if (len == 0) return false;
-	for (integer i = 0; i < len; i ++) {
-		if (isgraph ((int) s [i]))
-			return true;
-	}
-	return false;
-}
-
-void NUMstring_chopWhiteSpaceAtExtremes_inplace (char32 *string) {
-	int64 start = 0;
-	while (Melder_isHorizontalOrVerticalSpace (string [start])) {
-		start ++;
-	}
-	int64 end = str32len (string);
-	while (end != start && Melder_isHorizontalOrVerticalSpace (string [end - 1])) {
-		end --;
-	}
-	int64 n = end - start;
-	memmove (string, string + start, (size_t) (n * (int64) sizeof (char32)));
-	string [n] = 0;
-}
-
 double *NUMstring_to_numbers (conststring32 s, integer *p_numbers_found) {
 	integer numbers_found = Melder_countTokens (s);
 	if (numbers_found < 1) {
@@ -200,7 +175,7 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 	if (*numberOfElements == 0)
 		return nullptr;
 	autoNUMvector <integer> elements (1, *numberOfElements);
-	
+
 	/*
 		Store the elements.
 	*/
@@ -238,7 +213,7 @@ static void NUMlvector_getUniqueNumbers (integer numbers[], integer *inout_numbe
 	autoNUMvector< integer> sorted (NUMvector_copy <integer> (numbers, 1, *inout_numberOfElements), 1);
 	NUMsort_integer (*inout_numberOfElements, sorted.peek());
 	integer numberOfMultiples = 0;
-	
+
 	numbers [1] = sorted [1];
 	integer numberOfUniques = 1;
 	for (integer i = 2; i <= *inout_numberOfElements; i ++) {

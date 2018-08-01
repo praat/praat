@@ -563,13 +563,13 @@ inline static bool Melder_isAsciiControl (char32 kar) {   // same as std::iscntr
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
 }
 inline static bool Melder_isPrintable (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
+	return kar > kUCD_TOP_OF_LIST || (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
 inline static bool Melder_isAsciiPrintable (char32 kar) {   // same as std::isprint() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
 inline static bool Melder_hasInk (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
+	return kar > kUCD_TOP_OF_LIST || (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
 inline static bool Melder_hasAsciiInk (char32 kar) {   // same as std::isgraph() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
@@ -586,6 +586,14 @@ inline static char32 Melder_toLowerCase (char32 kar) {
 }
 inline static char32 Melder_toTitleCase (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. titleCase : kar;
+}
+
+inline static const char32 * Melder_findInk (conststring32 str) noexcept {
+	for (const char32 *p = & str [0]; *p != U'\0'; p ++) {
+		if (Melder_hasInk (*p))
+			return p;
+	}
+	return nullptr;   // not found
 }
 
 inline static integer str16len (conststring16 string) noexcept {
