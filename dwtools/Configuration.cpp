@@ -375,7 +375,7 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		if (x [i] >= xmin && x [i] <= xmax && y [i] >= ymin && y [i] <= ymax) {
 			conststring32 plotLabel = ( useRowLabels ? my rowLabels [i].get() : label );
-			if (plotlabel && Melder_findInk (plotLabel)) {
+			if (Melder_findInk (plotLabel)) {
 				Graphics_text (g, x [i], y [i], plotLabel);
 			} else {
 				noLabel ++;

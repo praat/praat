@@ -893,7 +893,7 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 		    ((ymin < ymax && y >= ymin && y <= ymax) || (ymin > ymax && y <= ymin && y >= ymax)))
 		{
 			conststring32 plotLabel = useRowLabels ? my rowLabels [i].get() : label;
-			if (! plotlabel || ! Melder_findInk (plotLabel)) {
+			if (! Melder_findInk (plotLabel)) {
 				noLabel ++;
 				continue;
 			}

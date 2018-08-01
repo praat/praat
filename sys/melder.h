@@ -589,11 +589,14 @@ inline static char32 Melder_toTitleCase (char32 kar) {
 }
 
 inline static const char32 * Melder_findInk (conststring32 str) noexcept {
-	for (const char32 *p = & str [0]; *p != U'\0'; p ++) {
-		if (Melder_hasInk (*p))
-			return p;
+	if (! str)
+		return nullptr;
+	const char32 *p = & str [0];
+	for (; ! Melder_hasInk (*p); p ++) {
+		if (*p == U'\0')
+			return nullptr;   // not found
 	}
-	return nullptr;   // not found
+	return p;
 }
 
 inline static integer str16len (conststring16 string) noexcept {
