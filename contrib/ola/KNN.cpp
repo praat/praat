@@ -1427,8 +1427,8 @@ void KNN_shuffleInstances
 	}
 
 	my nInstances = new_output->size;
-	my input = new_input.move();
-	my output = new_output.move();
+	my input = std::move (new_input);
+	my output = std::move (new_output);
 }
 
 

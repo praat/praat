@@ -188,10 +188,10 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, intege
 			} break;
 			case Melder_FLAC: {
 				try {
-					FLAC__StreamEncoder *encoder = nullptr;
 					if (numberOfChannels > (int) FLAC__MAX_CHANNELS)
 						Melder_throw (U"FLAC files cannot have more than 8 channels.");
-					if ((encoder = FLAC__stream_encoder_new ()) == nullptr)
+					FLAC__StreamEncoder *encoder = FLAC__stream_encoder_new ();
+					if (! encoder)
 						Melder_throw (U"Error creating FLAC stream encoder.");
 					FLAC__stream_encoder_set_bits_per_sample (encoder, numberOfBitsPerSamplePoint);
 					FLAC__stream_encoder_set_channels (encoder, numberOfChannels);
@@ -810,40 +810,39 @@ static void Melder_DecodeFlac_error (const FLAC__StreamDecoder *decoder, FLAC__S
 }
 
 static void Melder_readFlacFile (FILE *f, integer numberOfChannels, double **buffer, integer numberOfSamples) {
-	FLAC__StreamDecoder *decoder;
-	MelderDecodeFlacContext c;
 	int result = 0;
 
+	MelderDecodeFlacContext c;
 	c.file = f;
 	c.numberOfChannels = numberOfChannels;
-	for (int ichan = 1; ichan <= numberOfChannels; ichan ++) {
+	for (int ichan = 1; ichan <= numberOfChannels; ichan ++)
 		c.channels [ichan - 1] = & buffer [ichan] [1];
-	}
 	c.numberOfSamples = numberOfSamples;
 
-	if ((decoder = FLAC__stream_decoder_new ()) == nullptr)
+	FLAC__StreamDecoder *decoder = FLAC__stream_decoder_new ();
+	if (! decoder)
 		goto end;
 	if (FLAC__stream_decoder_init_stream (decoder,
 				Melder_DecodeFlac_read,
 				nullptr, nullptr, nullptr, nullptr,
 				Melder_DecodeFlac_convert, nullptr,
-				Melder_DecodeFlac_error, &c) != FLAC__STREAM_DECODER_INIT_STATUS_OK)
+				Melder_DecodeFlac_error, & c) != FLAC__STREAM_DECODER_INIT_STATUS_OK)
 		goto end;
 	result = FLAC__stream_decoder_process_until_end_of_stream (decoder);
 	FLAC__stream_decoder_finish (decoder);
 end:
-	if (decoder) FLAC__stream_decoder_delete (decoder);
+	if (decoder)
+		FLAC__stream_decoder_delete (decoder);
 	if (result == 0)
 		Melder_throw (U"Error decoding FLAC file.");
 }
 
 static void Melder_readMp3File (FILE *f, integer numberOfChannels, double **buffer, integer numberOfSamples) {
-	MelderDecodeMp3Context c;
 	int result = 0;
+	MelderDecodeMp3Context c;
 	c.numberOfChannels = numberOfChannels;
-	for (int ichan = 1; ichan <= numberOfChannels; ichan ++) {
+	for (int ichan = 1; ichan <= numberOfChannels; ichan ++)
 		c.channels [ichan - 1] = & buffer [ichan] [1];
-	}
 	c.numberOfSamples = numberOfSamples;
 	MP3_FILE mp3f = mp3f_new ();
 	mp3f_set_file (mp3f, f);
@@ -874,9 +873,8 @@ void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, d
 			case Melder_LINEAR_8_UNSIGNED:
 				try {
 					for (integer isamp = 1; isamp <= numberOfSamples; isamp ++) {
-						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++) {
+						for (integer ichan = 1; ichan <= numberOfChannels; ichan ++)
 							buffer [ichan] [isamp] = bingetu8 (f) * (1.0 / 128) - 1.0;
-						}
 					}
 				} catch (MelderError) {
 					Melder_clearError ();

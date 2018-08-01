@@ -108,8 +108,13 @@ void RealTierEditor_updateScaling (RealTierEditor me) {
 		double ymin = RealTier_getMinimumValue (data);
 		double ymax = RealTier_getMaximumValue (data);
 		double range = ymax - ymin;
-		if (range == 0.0) ymin -= 1.0, ymax += 1.0;
-		else ymin -= 0.2 * range, ymax += 0.2 * range;
+		if (range == 0.0) {
+			ymin -= 1.0;
+			ymax += 1.0;
+		} else {
+			ymin -= 0.2 * range;
+			ymax += 0.2 * range;
+		}
 		if (isdefined (my v_minimumLegalValue()) && ymin < my v_minimumLegalValue ())
 			ymin = my v_minimumLegalValue ();
 		if (isdefined (my v_maximumLegalValue ()) && ymin > my v_maximumLegalValue ())

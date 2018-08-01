@@ -218,7 +218,6 @@ void Thing_swap (Thing me, Thing thee);
 
 void _Thing_forget (Thing me);
 void _Thing_forget_nozero (Thing me);
-void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
 
 /* For debugging. */
 

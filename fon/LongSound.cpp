@@ -52,14 +52,24 @@ Thing_implement (SoundAndLongSoundList, Ordered, 0);
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
 
+constexpr integer minimumBufferDuration = 10;   // seconds
+constexpr integer defaultBufferDuration = 60;   // seconds
+constexpr integer maximumBufferDuration = 10000;   // seconds
+
 static integer prefs_bufferLength;
 
 void LongSound_preferences () {
-	Preferences_addInteger (U"LongSound.bufferLength", & prefs_bufferLength, 60);   // seconds
+	Preferences_addInteger (U"LongSound.bufferLength", & prefs_bufferLength, defaultBufferDuration);
 }
 
-integer LongSound_getBufferSizePref_seconds () { return prefs_bufferLength; }
-void LongSound_setBufferSizePref_seconds (integer size) { prefs_bufferLength = size < 10 ? 10 : size > 10000 ? 10000: size; }
+integer LongSound_getBufferSizePref_seconds () {
+	return prefs_bufferLength;
+}
+
+void LongSound_setBufferSizePref_seconds (integer size) {
+	prefs_bufferLength =
+		size < minimumBufferDuration ? minimumBufferDuration : size > maximumBufferDuration ? maximumBufferDuration: size;
+}
 
 void structLongSound :: v_destroy () noexcept {
 	/*
@@ -72,8 +82,9 @@ void structLongSound :: v_destroy () noexcept {
 	if (flacDecoder) {
 		FLAC__stream_decoder_finish (flacDecoder);   // closes f
 		FLAC__stream_decoder_delete (flacDecoder);
+	} else if (f) {
+		fclose (f);
 	}
-	else if (f) fclose (f);
 	NUMvector_free <int16> (buffer, 0);
 	LongSound_Parent :: v_destroy ();
 }
@@ -327,14 +338,24 @@ void LongSound_readAudioToShort (LongSound me, int16 *buffer, integer firstSampl
 
 autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, bool preserveTimes) {
 	try {
-		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-		if (tmin < my xmin) tmin = my xmin;
-		if (tmax > my xmax) tmax = my xmax;
+		if (tmax <= tmin) {
+			tmin = my xmin;
+			tmax = my xmax;
+		}
+		if (tmin < my xmin)
+			tmin = my xmin;
+		if (tmax > my xmax)
+			tmax = my xmax;
 		integer imin, imax;
 		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-		if (n < 1) Melder_throw (U"Less than 1 sample in window.");
+		if (n < 1)
+			Melder_throw (U"Less than 1 sample in window.");
 		autoSound thee = Sound_create (my numberOfChannels, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx);
-		if (! preserveTimes) thy xmin = 0.0, thy xmax -= tmin, thy x1 -= tmin;
+		if (! preserveTimes) {
+			thy xmin = 0.0;
+			thy xmax -= tmin;
+			thy x1 -= tmin;
+		}
 		LongSound_readAudioToFloat (me, thy z, imin, n);
 		return thee;
 	} catch (MelderError) {
@@ -366,9 +387,14 @@ static void writePartToOpenFile (LongSound me, int audioFileType, integer imin, 
 
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint) {
 	try {
-		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
-		if (tmin < my xmin) tmin = my xmin;
-		if (tmax > my xmax) tmax = my xmax;
+		if (tmax <= tmin) {
+			tmin = my xmin;
+			tmax = my xmax;
+		}
+		if (tmin < my xmin)
+			tmin = my xmin;
+		if (tmax > my xmax)
+			tmax = my xmax;
 		integer imin, imax;
 		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1) Melder_throw (U"Less than 1 sample selected.");
@@ -404,7 +430,8 @@ static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
 	/*
 	 * Included?
 	 */
-	if (imin >= my imin && imax <= my imax) return;
+	if (imin >= my imin && imax <= my imax)
+		return;
 	/*
 	 * Extendable?
 	 */
@@ -475,7 +502,8 @@ static void _LongSound_haveSamples (LongSound me, integer imin, integer imax) {
 		#endif
 		_LongSound_readSamples (me, my buffer + (my imax - imin + 1) * my numberOfChannels, my imax + 1, imax);
 	}
-	my imin = imin, my imax = imax;
+	my imin = imin;
+	my imax = imax;
 }
 
 bool LongSound_haveWindow (LongSound me, double tmin, double tmax) {
@@ -557,7 +585,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			thy i2 = i2;
 			thy silenceBefore = Melder_iroundTowardsZero (my sampleRate * MelderAudio_getOutputSilenceBefore ());
 			thy silenceAfter = Melder_iroundTowardsZero (my sampleRate * MelderAudio_getOutputSilenceAfter ());
-			if (thy callback) thy callback (thy boss, 1, tmin, tmax, tmin);
+			if (thy callback)
+				thy callback (thy boss, 1, tmin, tmax, tmin);
 			if (thy silenceBefore > 0 || thy silenceAfter > 0 || 1) {
 				thy resampledBuffer = Melder_calloc (int16, (thy silenceBefore + thy numberOfSamples + thy silenceAfter) * my numberOfChannels);
 				memcpy (& thy resampledBuffer [thy silenceBefore * my numberOfChannels], & my buffer [(i1 - my imin) * my numberOfChannels],
@@ -616,7 +645,8 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 					}
 				}
 			}
-			if (thy callback) thy callback (thy boss, 1, tmin, tmax, tmin);
+			if (thy callback)
+				thy callback (thy boss, 1, tmin, tmax, tmin);
 			MelderAudio_play16 (resampledBuffer, newSampleRate, silenceBefore + newN + silenceAfter, my numberOfChannels, melderPlayCallback, thee);
 		}
 		//Melder_free (thy resampledBuffer);   // cannot do that, because MelderAudio_play16 isn't necessarily synchronous
@@ -630,7 +660,8 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 	try {
 		integer sampleRate, n;   /* Integer sampling frequencies only, because of possible rounding errors. */
 		integer numberOfChannels;
-		if (my size < 1) Melder_throw (U"No Sound or LongSound objects to concatenate.");
+		if (my size < 1)
+			Melder_throw (U"No Sound or LongSound objects to concatenate.");
 		/*
 		 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 		 */
@@ -650,16 +681,16 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		 * Check whether all the sampling frequencies and channels match.
 		 */
 		for (integer i = 2; i <= my size; i ++) {
-			int sampleRatesMatch, numbersOfChannelsMatch;
+			bool sampleRatesMatch, numbersOfChannelsMatch;
 			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
-				sampleRatesMatch = Melder_iround (1.0 / sound -> dx) == sampleRate;
+				sampleRatesMatch = ( Melder_iround (1.0 / sound -> dx) == sampleRate );
 				numbersOfChannelsMatch = sound -> ny == numberOfChannels;
 				n += sound -> nx;
 			} else {
 				LongSound longSound = (LongSound) data;
-				sampleRatesMatch = longSound -> sampleRate == sampleRate;
+				sampleRatesMatch = ( longSound -> sampleRate == sampleRate );
 				numbersOfChannelsMatch = longSound -> numberOfChannels == numberOfChannels;
 				n += longSound -> nx;
 			}

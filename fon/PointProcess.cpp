@@ -436,7 +436,10 @@ static bool PointProcess_isPeriod (PointProcess me, integer ileft, double minimu
 integer PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+	if (tmax <= tmin) {   // autowindowing
+		tmin = my xmin;
+		tmax = my xmax;
+	}
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return 0;
@@ -453,7 +456,10 @@ integer PointProcess_getNumberOfPeriods (PointProcess me, double tmin, double tm
 double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+	if (tmax <= tmin) {   // autowindowing
+		tmin = my xmin;
+		tmax = my xmax;
+	}
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 1) return undefined;
@@ -471,7 +477,10 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor)
 {
-	if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
+	if (tmax <= tmin) {   // autowindowing
+		tmin = my xmin;
+		tmax = my xmax;
+	}
 	integer imin, imax;
 	integer numberOfPeriods = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax) - 1;
 	if (numberOfPeriods < 2) return undefined;

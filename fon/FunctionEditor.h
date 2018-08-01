@@ -80,7 +80,7 @@ Thing_define (FunctionEditor, Editor) {
 		 * Message: "draw your part of the data between startWindow and endWindow."
 		 */
 	virtual void v_drawSelectionViewer () { }
-	virtual void v_drawRealTimeSelectionViewer (int phase, double time) { }
+	virtual void v_drawRealTimeSelectionViewer (int /* phase */, double /* time */) { }
 	virtual void v_prepareDraw () { }   // for less flashing
 	virtual conststring32 v_format_domain () { return U"Time domain:"; }
 	virtual const char *v_format_short () { return u8"%.3f"; }

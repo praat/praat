@@ -260,9 +260,9 @@ void structOTGrammar :: v_readText (MelderReadText text, int formatVersion) {
 			U"No candidates in tableau ", itab,
 			U" (input: ", tableau -> input.get(), U")"
 			U" in line ", MelderReadText_getLineNumber (text),
-			itab == 1 ? U"." : U", or perhaps wrong number of candidates for input " U_LEFT_GUILLEMET,
+			itab == 1 ? U"." : U", or perhaps wrong number of candidates for input «",
 			itab == 1 ? nullptr : tableaus [itab - 1]. input.get(),
-			itab == 1 ? nullptr : U_RIGHT_GUILLEMET U"."
+			itab == 1 ? nullptr : U"»."
 		);
 		tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates);
 		for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {

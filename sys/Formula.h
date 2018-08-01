@@ -20,6 +20,7 @@
 
 #include "Data.h"
 #include "tensor.h"
+#include <new>
 
 #define kFormula_EXPRESSION_TYPE_NUMERIC  0
 #define kFormula_EXPRESSION_TYPE_STRING  1
@@ -106,13 +107,13 @@ typedef struct structStackel {
 	void setString (autostring32 newString) {
 		our reset();
 		#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
-			our _string. _zero_asInUnion();
+			new (& our _string) autostring32();   // a convoluted and type-unsafe, but portable, way to null those 32 or 64 bits
 		#endif
 		our which = Stackel_STRING;
 		our _string = newString.move();
 	}
+	conststring32 whichText ();
 } *Stackel;
-conststring32 Stackel_whichText (Stackel me);
 
 struct Formula_Result {
 	int expressionType;

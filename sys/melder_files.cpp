@@ -750,7 +750,7 @@ char32 * Melder_peekExpandBackslashes (conststring32 message) {
 }
 
 conststring32 MelderFile_messageName (MelderFile file) {
-	return Melder_cat (U_LEFT_DOUBLE_QUOTE, file -> path, U_RIGHT_DOUBLE_QUOTE);   // BUG: is cat allowed here?
+	return Melder_cat (U"“", file -> path, U"”");   // BUG: is cat allowed here?
 }
 
 void Melder_getDefaultDir (MelderDir dir) {

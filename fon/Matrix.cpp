@@ -484,57 +484,59 @@ autoMatrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
 	}
 }
 
-autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-compatible
+autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-compatible (use of fscanf)
 	try {
 		autofile f = Melder_fopen (file, "rb");
 
 		/*
-		 * Count number of columns.
-		 */
-		integer ncol = 0;
+			Count columns.
+		*/
+		integer numberOfColumns = 0;
 		for (;;) {
 			int kar = fgetc (f);
-			if (kar == '\n' || kar == '\r' || kar == EOF) break;
-			if (kar == ' ' || kar == '\t') continue;
-			ncol ++;
+			if (kar == EOF || Melder_isVerticalSpace ((char32) kar))
+				break;
+			if (Melder_isHorizontalSpace ((char32) kar))
+				continue;
+			numberOfColumns ++;
 			do {
 				kar = fgetc (f);
-			} while (kar != ' ' && kar != '\t' && kar != '\n' && kar != '\r' && kar != EOF);
-			if (kar == '\n' || kar == '\r' || kar == EOF) break;
+			} while (kar != EOF && ! Melder_isHorizontalOrVerticalSpace ((char32) kar));
+			if (kar == EOF || Melder_isVerticalSpace ((char32) kar)) break;
 		}
-		if (ncol == 0)
+		if (numberOfColumns == 0)
 			Melder_throw (U"File empty");
 
 		/*
-		 * Count number of elements.
-		 */
+			Count elements.
+		*/
 		rewind (f);
-		integer nelements = 0;
+		integer numberOfElements = 0;
 		for (;;) {
 			double element;
 			if (fscanf (f, "%lf", & element) < 1)
 				break;   // zero or end-of-file
-			nelements ++;
+			numberOfElements ++;
 		}
 
 		/*
-		 * Check if all columns are complete.
-		 */
-		if (nelements == 0 || nelements % ncol != 0)
-			Melder_throw (U"The number of elements (", nelements, U") is not a multiple of the number of columns (", ncol, U").");
+			Check if all columns are complete.
+		*/
+		if (numberOfElements == 0 || numberOfElements % numberOfColumns != 0)
+			Melder_throw (U"The number of elements (", numberOfElements, U") is not a multiple of the number of columns (", numberOfColumns, U").");
 
 		/*
-		 * Create simple matrix.
-		 */
-		integer nrow = nelements / ncol;
-		autoMatrix me = Matrix_createSimple (nrow, ncol);
+			Create simple matrix.
+		*/
+		integer numberOfRows = numberOfElements / numberOfColumns;
+		autoMatrix me = Matrix_createSimple (numberOfRows, numberOfColumns);
 
 		/*
-		 * Read elements.
-		 */
+			Read elements.
+		*/
 		rewind (f);
-		for (integer irow = 1; irow <= nrow; irow ++) {
-			for (integer icol = 1; icol <= ncol; icol ++)
+		for (integer irow = 1; irow <= numberOfRows; irow ++) {
+			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				fscanf (f, "%lf", & my z [irow] [icol]);
 		}
 
@@ -648,10 +650,14 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 	conststring32 expression, Interpreter interpreter, Matrix target)
 {
 	try {
-		if (xmax <= xmin)
-			xmin = my xmin, xmax = my xmax;
-		if (ymax <= ymin)
-			ymin = my ymin, ymax = my ymax;
+		if (xmax <= xmin) {
+			xmin = my xmin;
+			xmax = my xmax;
+		}
+		if (ymax <= ymin) {
+			ymin = my ymin;
+			ymax = my ymax;
+		}
 		integer ixmin, ixmax, iymin, iymax;
 		(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 		(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);

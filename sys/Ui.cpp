@@ -175,9 +175,9 @@ static void UiField_widgetToValue (UiField me) {
 			autostring32 text = GuiText_getString (my text);   // the text as typed by the user
 			Interpreter_numericExpression (nullptr, text.get(), & my realValue);
 			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
-				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U" has the value \"undefined\".");
+				Melder_throw (U"“", my name.get(), U"” has the value \"undefined\".");
 			if (my type == _kUiField_type::POSITIVE_ && my realValue <= 0.0)
-				Melder_throw (U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U" should be greater than 0.0.");
+				Melder_throw (U"“", my name.get(), U"” should be greater than 0.0.");
 			if (my realVariable)
 				*my realVariable = my realValue;
 		}
@@ -196,15 +196,15 @@ static void UiField_widgetToValue (UiField me) {
 				Interpreter_numericExpression (nullptr, text.get(), & realValue);
 				my integerValue = Melder_iround (realValue);
 				Melder_require (my integerValue == realValue,
-					U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U" should be a whole number.");
+					U"“", my name.get(), U"” should be a whole number.");
 			}
 			if (my type == _kUiField_type::NATURAL_) {
 				Melder_require (my integerValue >= 1,
-					U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number.");
+					U"“", my name.get(), U"” should be a positive whole number.");
 			}
 			if (my type == _kUiField_type::CHANNEL_) {
 				Melder_require (my integerValue >= 0,
-					U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U" should be a positive whole number or zero.");
+					U"“", my name.get(), U"” should be a positive whole number or zero.");
 			}
 			if (my integerVariable)
 				*my integerVariable = my integerValue;
@@ -214,7 +214,7 @@ static void UiField_widgetToValue (UiField me) {
 		{
 			my stringValue = GuiText_getString (my text);
 			Melder_require (*Melder_findEndOfInk (my stringValue.get()) == U'\0',
-				U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U" should be a single ink-word and cannot contain a space.");
+				U"“", my name.get(), U"” should be a single ink-word and cannot contain a space.");
 			if (my stringVariable)
 				*my stringVariable = my stringValue.get();
 		}
@@ -273,7 +273,7 @@ static void UiField_widgetToValue (UiField me) {
 					my integerValue = i;
 			}
 			if (my integerValue == 0)
-				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U".");
+				Melder_throw (U"No option chosen for “", my name.get(), U"”.");
 			if (my intVariable)
 				*my intVariable = my integerValue - my subtract;
 			if (my stringVariable)
@@ -284,7 +284,7 @@ static void UiField_widgetToValue (UiField me) {
 		{
 			my integerValue = GuiOptionMenu_getValue (my optionMenu);
 			if (my integerValue == 0)
-				Melder_throw (U"No option chosen for " U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U".");
+				Melder_throw (U"No option chosen for “", my name.get(), U"”.");
 			if (my intVariable)
 				*my intVariable = my integerValue - my subtract;
 			if (my stringVariable)
@@ -298,7 +298,8 @@ static void UiField_widgetToValue (UiField me) {
 				Melder_warning (U"No items selected.");
 				my integerValue = 1;
 			} else {
-				if (numberOfSelected > 1) Melder_warning (U"More than one item selected.");
+				if (numberOfSelected > 1)
+					Melder_warning (U"More than one item selected.");
 				my integerValue = selected [1];
 				NUMvector_free <integer> (selected, 1);
 			}
@@ -385,14 +386,14 @@ static void gui_button_cb_cancel (UiForm me, GuiButtonEvent /* event */) {
 
 static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 	if (my allowExecutionHook && ! my allowExecutionHook (my allowExecutionClosure)) {
-		Melder_flushError (U"Cannot execute command window " U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U".");
+		Melder_flushError (U"Cannot execute command window “", my name.get(), U"”.");
 		return;
 	}
 	try {
 		for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
 			UiField_widgetToValue (my field [ifield].get());
 	} catch (MelderError) {
-		Melder_flushError (U"Please correct command window " U_LEFT_DOUBLE_QUOTE, my name.get(), U_RIGHT_DOUBLE_QUOTE U" or cancel.");
+		Melder_flushError (U"Please correct command window “", my name.get(), U"” or cancel.");
 		return;
 	}
 	if (my okButton) GuiThing_setSensitive (my okButton, false);
@@ -505,11 +506,11 @@ static void UiForm_okOrApply (UiForm me, GuiButton button, int hide) {
 				Otherwise, show a generic message.
 			*/
 			if (str32str (Melder_getError (), U"Selection changed!")) {
-				Melder_appendError (U"Please change the selection in the object list, or click Cancel in the command window " U_LEFT_DOUBLE_QUOTE,
-					my name.get(), U_RIGHT_DOUBLE_QUOTE U".");
+				Melder_appendError (U"Please change the selection in the object list, or click Cancel in the command window “",
+					my name.get(), U"”.");
 			} else {
-				Melder_appendError (U"Please change something in the command window " U_LEFT_DOUBLE_QUOTE,
-					my name.get(), U_RIGHT_DOUBLE_QUOTE U", or click Cancel in that window.");
+				Melder_appendError (U"Please change something in the command window “",
+					my name.get(), U"”, or click Cancel in that window.");
 			}
 		}
 		Melder_flushError ();
@@ -1196,7 +1197,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::POSITIVE_:
 		{
 			if (arg -> which != Stackel_NUMBER)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", Stackel_whichText (arg), U".");
+				Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", arg -> whichText(), U".");
 			my realValue = arg -> number;
 			if (isundef (my realValue) && my type != _kUiField_type::REAL_OR_UNDEFINED_)
 				Melder_throw (U"Argument \"", my name.get(), U"\" has the value \"undefined\".");
@@ -1223,14 +1224,14 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 							U"\" can only be a number or one of the strings \"All\", \"Average\", \"Left\", \"Right\", \"Mono\" or \"Stereo\".");
 					}
 				} else {
-					Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", Stackel_whichText (arg), U".");
+					Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", arg -> whichText(), U".");
 				}
 			} else if (arg -> which == Stackel_NUMBER) {
 				my integerValue = Melder_iround (arg -> number);
 				if (my type == _kUiField_type::NATURAL_ && my integerValue < 1)
 					Melder_throw (U"Argument \"", my name.get(), U"\" should be a positive whole number.");
 			} else {
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", Stackel_whichText (arg), U".");
+				Melder_throw (U"Argument \"", my name.get(), U"\" should be a number, not ", arg -> whichText(), U".");
 			}
 			if (my integerVariable)
 				*my integerVariable = my integerValue;
@@ -1241,7 +1242,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::TEXT_:
 		{
 			if (arg -> which != Stackel_STRING)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string, not ", Stackel_whichText (arg), U".");
+				Melder_throw (U"Argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
 			my stringValue = Melder_dup (arg -> getString());
 			if (my stringVariable)
 				*my stringVariable = my stringValue.get();   // BUG dangle
@@ -1250,7 +1251,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::NUMVEC_:
 		{
 			if (arg -> which != Stackel_NUMERIC_VECTOR)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", Stackel_whichText (arg), U".");
+				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric vector, not ", arg -> whichText(), U".");
 			if (arg -> owned) {
 				my numericVectorValue. adoptFromAmbiguousOwner (arg -> numericVector);
 				arg -> owned = false;
@@ -1264,7 +1265,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::NUMMAT_:
 		{
 			if (arg -> which != Stackel_NUMERIC_MATRIX)
-				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric matrix, not ", Stackel_whichText (arg), U".");
+				Melder_throw (U"Argument \"", my name.get(), U"\" should be a numeric matrix, not ", arg -> whichText(), U".");
 			if (arg -> owned) {
 				my numericMatrixValue. adoptFromAmbiguousOwner (arg -> numericMatrix);
 				arg -> owned = false;
@@ -1289,7 +1290,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			} else if (arg -> which == Stackel_NUMBER) {
 				my integerValue = arg -> number == 0.0 ? 0.0 : 1.0;
 			} else {
-				Melder_throw (U"Boolean argument \"", my name.get(), U"\" should be a number (0 or 1), not ", Stackel_whichText (arg), U".");
+				Melder_throw (U"Boolean argument \"", my name.get(), U"\" should be a number (0 or 1), not ", arg -> whichText(), U".");
 			}
 			if (my boolVariable)
 				*my boolVariable = my integerValue;
@@ -1299,7 +1300,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::OPTIONMENU_:
 		{
 			if (arg -> which != Stackel_STRING)
-				Melder_throw (U"Option argument \"", my name.get(), U"\" should be a string, not ", Stackel_whichText (arg), U".");
+				Melder_throw (U"Option argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
 			my integerValue = 0;
 			for (int i = 1; i <= my options.size; i ++) {
 				UiOption b = my options.at [i];
@@ -1333,7 +1334,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 		case _kUiField_type::LIST_:
 		{
 			if (arg -> which != Stackel_STRING)
-				Melder_throw (U"List argument \"", my name.get(), U"\" should be a string, not ", Stackel_whichText(arg), U".");
+				Melder_throw (U"List argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
 			integer i = 1;
 			for (; i <= my numberOfStrings; i ++)
 				if (str32equ (arg -> getString(), my strings [i])) break;

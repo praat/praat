@@ -1508,7 +1508,8 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			}
 		}
 		
-		*out1 = thee.move(); *out2 = mdsw.move();
+		*out1 = thee.move();
+		*out2 = mdsw.move();
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			NUMmatrix_free<double> (ci [i], 1, 1);
 		}
@@ -1531,7 +1532,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 		}
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U": no Dissimilarities created.");
+		Melder_throw (me, U": no DissimilaryList created.");
 	}
 }
 
