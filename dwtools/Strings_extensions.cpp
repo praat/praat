@@ -75,10 +75,10 @@ autoStrings Strings_createAsTokens (conststring32 token_string, conststring32 se
 		 * However the steps taken are easy to follow.
 		 */
 		
-		if (! token_string || str32len (token_string) == 0)
+		if (! token_string || token_string [0] == U'\0')
 			return me;
 
-		conststring32 separators = ( separator_string && str32len (separator_string) > 0 ? separator_string : U" " );
+		conststring32 separators = ( separator_string && separator_string [0] != U'\0' ? separator_string : U" " );
 		autostring32 copy = Melder_dup (token_string);
 		mutablestring32 tokens = copy.get();
 		char32 *index = & tokens [0];

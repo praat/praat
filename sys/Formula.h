@@ -107,7 +107,7 @@ typedef struct structStackel {
 	void setString (autostring32 newString) {
 		our reset();
 		#if STACKEL_VARIANTS_ARE_PACKED_IN_A_UNION
-			new (& our _string) autostring32();   // a convoluted and type-unsafe, but portable, way to null those 32 or 64 bits
+			::new (& our _string) autostring32();   // a convoluted and type-unsafe, but portable, way to null those 32 or 64 bits
 		#endif
 		our which = Stackel_STRING;
 		our _string = newString.move();

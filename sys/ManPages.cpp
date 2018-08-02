@@ -485,8 +485,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			structMelderFile pngFile;
 			MelderFile_copy (file, & pngFile);
 			pngFile. path [str32len (pngFile. path) - 5] = U'\0';   // delete extension ".html"
-			str32cpy (pngFile. path + str32len (pngFile. path),
-				Melder_cat (U"_", numberOfPictures, U".png"));
+			str32cat (pngFile. path, Melder_cat (U"_", numberOfPictures, U".png"));
 			{// scope
 				autoGraphics graphics = Graphics_create_pngfile (& pngFile, 300, 0.0, paragraph -> width, 0.0, paragraph -> height);
 				Graphics_setFont (graphics.get(), kGraphics_font::TIMES);
@@ -509,8 +508,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			structMelderFile pdfFile;
 			MelderFile_copy (file, & pdfFile);
 			pdfFile. path [str32len (pdfFile. path) - 5] = U'\0';   // delete extension ".html"
-			str32cpy (pdfFile. path + str32len (pdfFile.path),
-				Melder_cat (U"_", numberOfPictures, U".pdf"));
+			str32cat (pdfFile. path, Melder_cat (U"_", numberOfPictures, U".pdf"));
 			{// scope
 				autoGraphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
 				Graphics_setFont (graphics.get(), kGraphics_font::TIMES);
@@ -571,8 +569,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			structMelderFile tiffFile;
 			MelderFile_copy (file, & tiffFile);
 			tiffFile. path [str32len (tiffFile. path) - 5] = U'\0';   // delete extension ".html"
-			str32cpy (tiffFile. path + str32len (tiffFile. path),
-				Melder_cat (U"_", numberOfPictures, U".png"));
+			str32cat (tiffFile. path, Melder_cat (U"_", numberOfPictures, U".png"));
 			system (Melder_peek32to8 (Melder_cat (U"/usr/local/bin/gs -q -dNOPAUSE "
 				"-r200x200 -sDEVICE=png16m -sOutputFile=", tiffFile.path,
 				U" ", pdfFile. path, U" quit.ps")));
@@ -818,7 +815,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, integer ipage, Melder
 		while ((int) page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
 			conststring32 text = page -> paragraphs [lastParagraph - 1]. text;
-			if (text && text [0] && text [str32len (text) - 1] != U':')
+			if (text && text [0] != U'\0' && text [str32len (text) - 1] != U':')
 				MelderString_append (buffer, U"<h3>Links to this page</h3>\n");
 		}
 		MelderString_append (buffer, U"<ul>\n");
@@ -877,7 +874,7 @@ void ManPages_writeAllToHtmlDir (ManPages me, conststring32 dirPath) {
 		if (fileName [0] == U'\0')
 			str32cpy (fileName, U"_");   // no empty file names please
 		fileName [LONGEST_FILE_NAME] = U'\0';
-		str32cpy (fileName + str32len (fileName), U".html");
+		str32cat (fileName, U".html");
 		static MelderString buffer { };
 		MelderString_empty (& buffer);
 		structMelderFile file { };

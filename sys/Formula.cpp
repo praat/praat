@@ -2599,11 +2599,10 @@ static void do_add () {
 					#
 					# result# = owned x# + y#
 					#
-					x# = { 11, 13, 17 }
-					result# = x# + { 44, 56, 67 }   ; owned + unowned
+					result# = { 11, 13, 17 } + { 44, 56, 67 }   ; owned + owned
 					assert result# = { 55, 69, 84 }
 					y# = { 3, 2, 89.5 }
-					result# = x# + y#   ; owned + owned
+					result# = { 11, 13, 17 } + y#   ; owned + unowned
 					assert result# = { 14, 15, 106.5 }
 				@*/
 				numvec_addNumvec (x->numericVector, y->numericVector);

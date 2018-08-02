@@ -572,7 +572,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, integer itier, double t1, 
 			 */
 			integer left, right;
 			autostring32 text = GuiText_getStringAndSelectionPosition (my text, & left, & right);
-			bool wholeTextIsSelected = right - left == str32len (text.get());
+			bool wholeTextIsSelected = ( right - left == str32len (text.get()) );
 			rightNewInterval = TextInterval_create (t2, interval -> xmax, text.get() + right);
 			text [right] = U'\0';
 			midNewInterval = TextInterval_create (t1, t2, text.get() + left);
@@ -1280,7 +1280,7 @@ static void gui_text_cb_changed (TextGridEditor me, GuiTextEvent /* event */) {
 			if (selectedPoint) {
 				TextPoint point = textTier -> points.at [selectedPoint];
 				point -> mark. reset();
-				if (str32spn (text.get(), U" \n\t") != str32len (text.get()))   // any visible characters?
+				if (Melder_findInk (text.get()))   // any visible characters?
 					point -> mark = Melder_dup_f (text.get());
 				FunctionEditor_redraw (me);
 				Editor_broadcastDataChanged (me);
@@ -2098,7 +2098,7 @@ void structTextGridEditor :: v_clickSelectionViewer (double xWC, double yWC) {
 				if (selectedPoint) {
 					TextPoint point = textTier -> points.at [selectedPoint];
 					point -> mark. reset();
-					if (str32spn (newText.string, U" \n\t") != str32len (newText.string))   // any visible characters?
+					if (Melder_findInk (newText.string))   // any visible characters?
 						point -> mark = Melder_dup_f (newText.string);
 
 					our suppressRedraw = true;   // prevent valueChangedCallback from redrawing

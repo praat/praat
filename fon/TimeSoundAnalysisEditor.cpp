@@ -341,7 +341,7 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 	}
 	if ((which == 1 && my p_log1_toLogFile) || (which == 2 && my p_log2_toLogFile)) {
 		structMelderFile file { };
-		str32cpy (format + str32len (format), U"\n");
+		str32cat (format, U"\n");
 		Melder_relativePathToFile (which == 1 ? my p_log1_fileName : my p_log2_fileName, & file);
 		MelderFile_appendText (& file, format);
 	}

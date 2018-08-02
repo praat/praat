@@ -622,6 +622,13 @@ inline static mutablestring32 str32cpy (mutablestring32 target, conststring32 so
 	*p = U'\0';
 	return target;
 }
+inline static mutablestring32 str32cat (mutablestring32 target, conststring32 source) noexcept {
+	char32 *p = & target [0];
+	while (*p != U'\0') ++ p;
+	while (* source != U'\0') * p ++ = * source ++;
+	*p = U'\0';
+	return target;
+}
 inline static char32 * stp32cpy (mutablestring32 target, conststring32 source) noexcept {
 	char32 *p = & target [0];
 	while (* source != U'\0') * p ++ = * source ++;
@@ -1876,7 +1883,7 @@ conststring32 Melder_nummat (nummat value);
 typedef class structThing *Thing;   // forward declaration
 conststring32 Thing_messageName (Thing me);
 struct MelderArg {
-	conststring32 _arg;
+	const conststring32 _arg;
 	/*
 		The types of arguments that never involve memory allocation:
 	*/

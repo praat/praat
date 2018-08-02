@@ -2841,7 +2841,7 @@ static void printConstraintNames (OTGrammar me, MelderString *buffer) {
 			char32 *newLine;
 			str32cpy (text, constraint -> name.get());
 			newLine = str32chr (text, U'\n');
-			*newLine = '\0';
+			*newLine = U'\0';
 			MelderString_append (buffer, U"\t", text);
 			secondLine = true;
 		} else {
