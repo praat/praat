@@ -30,10 +30,6 @@
 /* machine precision */
 #define NUMeps 2.2e-16
 
-bool NUMstring_containsPrintableCharacter (conststring32 s);
-
-void NUMstring_chopWhiteSpaceAtExtremes_inplace (mutablestring32 string);
-
 double * NUMstring_to_numbers (conststring32 s, integer *numbers_found);
 /* return array with the number of numbers found */
 
@@ -72,27 +68,6 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
 	The number of strings with at least one match is returned in
 	'nstringmatches'.
 */
-
-autostring32 str_replace_literal (conststring32 string, conststring32 search,
-	conststring32 replace, integer maximumNumberOfReplaces, integer *nmatches);
-/*
-	Search and replace in 'string'.
-	The maximum number of replaces is limited by 'maximumNumberOfReplaces'.
-*/
-
-autostring32 str_replace_regexp (conststring32 string, regexp *search_compiled,
-	conststring32 replace_regexp, integer maximumNumberOfReplaces, integer *nmatches);
-/*
-	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on
-	the basis of regular expressions (RE).
-	If maximumNumberOfReplaces <= 0 the interpreted 'replaceRE' replaces
-	ALL occurrences.
-	'search_regexp' is an efficient representation of the search RE and
-	is the result of the compileRE-function which should be called first before
-	calling this routine.
-	The number of matches found is returned in 'nmatches'.
-*/
-
 
 void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring32 name);
 /*

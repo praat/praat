@@ -39,15 +39,15 @@
  djmw 20050406 NUMprocrutus->NUMprocrustes
  djmw 20060319 NUMinverse_cholesky: calculation of determinant is made optional
  djmw 20060517 Added NUMregexp_compile
- djmw 20060518 Treat NULL string as empty string in strs_replace_regexp/literal. Don't accept empty search in str_replace_regexp
+ djmw 20060518 Treat NULL string as empty string in strs_replace_regexp/literal. Don't accept empty search in replace_regexStr
  djmw 20060626 Extra NULL argument for ExecRE.
  djmw 20070302 NUMclipLineWithinRectangle
  djmw 20070614 updated to version 1.30 of regular expressions.
  djmw 20071022 Removed function NUMfvector_moment2.
  djmw 20071201 Melder_warning<n>
  djmw 20080107 Changed assertion to "npoints > 0" in NUMcosinesTable
- djmw 20080110 Corrected some bugs in str_replace_regexp
- djmw 20080122 Bug in str_replace_regexp
+ djmw 20080110 Corrected some bugs in replace_regexStr
+ djmw 20080122 Bug in replace_regexStr
  djmw 20080317 +NUMsinc
  pb   20080410 FisherQ from gsl
  djmw 20090630 NUMlogNormalP/Q from gsl

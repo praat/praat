@@ -180,27 +180,6 @@ bool Thing_isa (Thing me, ClassInfo klas) {
 	return Thing_isSubclass (my classInfo, klas);
 }
 
-void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
-	if (! me)
-		Melder_fatal (U"(_Thing_check:)"
-			U" null object passed to a function\n"
-			U"in file ", Melder_peek8to32 (fileName),
-			U" at line ", line,
-			U"."
-		);
-	ClassInfo classInfo = my classInfo;
-	while (classInfo != klas && classInfo) classInfo = classInfo -> semanticParent;
-	if (! classInfo)
-		Melder_fatal (U"(_Thing_check:)"
-			U" Object of wrong class (", my classInfo -> className,
-			U") passed to a function\n"
-			U"in file ", Melder_peek8to32 (fileName),
-			U" at line ", line,
-			U"."
-		);
-	return me;
-}
-
 void Thing_infoWithIdAndFile (Thing me, integer id, MelderFile file) {
 	//Melder_assert (me);
 	Melder_clearInfo ();

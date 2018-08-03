@@ -90,7 +90,7 @@
 
 #include <ctype.h>
 #include <limits.h>
-#include "regularExp.h"
+#include "melder.h"
 
 /* The first byte of the regexp internal `program' is a magic number to help
    guard against corrupted data; the compiled regex code really begins in the

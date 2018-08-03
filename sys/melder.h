@@ -563,13 +563,13 @@ inline static bool Melder_isAsciiControl (char32 kar) {   // same as std::iscntr
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
 }
 inline static bool Melder_isPrintable (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
+	return kar > kUCD_TOP_OF_LIST || (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
 inline static bool Melder_isAsciiPrintable (char32 kar) {   // same as std::isprint() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
 inline static bool Melder_hasInk (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
+	return kar > kUCD_TOP_OF_LIST || (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
 inline static bool Melder_hasAsciiInk (char32 kar) {   // same as std::isgraph() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
@@ -586,6 +586,17 @@ inline static char32 Melder_toLowerCase (char32 kar) {
 }
 inline static char32 Melder_toTitleCase (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. titleCase : kar;
+}
+
+inline static const char32 * Melder_findInk (conststring32 str) noexcept {
+	if (! str)
+		return nullptr;
+	const char32 *p = & str [0];
+	for (; ! Melder_hasInk (*p); p ++) {
+		if (*p == U'\0')
+			return nullptr;   // not found
+	}
+	return p;
 }
 
 inline static integer str16len (conststring16 string) noexcept {
@@ -1989,22 +2000,6 @@ void Melder_getDefaultDir (MelderDir dir);
 void Melder_setDefaultDir (MelderDir dir);
 void MelderFile_setDefaultDir (MelderFile file);
 
-/*
- * Some often used characters.
- */
-#define U_SPACE  U" "
-#define U_TAB  U"\t"
-#define U_NEWLINE  U"\n"
-#define U_COMMA  U","
-#define U_COMMA_  U", "
-#define U_PERIOD  U"."
-#define U_LEFT_SINGLE_QUOTE  U"\u2018"
-#define U_RIGHT_SINGLE_QUOTE  U"\u2019"
-#define U_LEFT_DOUBLE_QUOTE  U"\u201c"
-#define U_RIGHT_DOUBLE_QUOTE  U"\u201d"
-#define U_LEFT_GUILLEMET  U"\u00ab"
-#define U_RIGHT_GUILLEMET  U"\u00bb"
-
 /********** STRINGS **********/
 
 /* These are routines for never having to check string boundaries again. */
@@ -3093,7 +3088,7 @@ class MelderCallback {
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
 		template <typename T2  Melder_ENABLE_IF_ISA(T2,T), typename Ret2  Melder_ENABLE_IF_ISA(Ret2,Ret)>
 			MelderCallback (Ret2* (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
-		Ret* operator () (T* data, Args ... args) { return _f (data, args...); }
+		Ret* operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const { return !! _f; }
 	private:
 		FunctionType _f;
@@ -3105,7 +3100,7 @@ class MelderCallback <void, T, Args...> {   // specialization
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
 		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
 			MelderCallback (void (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
-		void operator () (T* data, Args ... args) { _f (data, args...); }
+		void operator () (T* data, Args ... args) { _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const { return !! _f; }
 	private:
 		FunctionType _f;
@@ -3117,7 +3112,7 @@ class MelderCallback <int, T, Args...> {   // specialization
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
 		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
 			MelderCallback (int (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
-		int operator () (T* data, Args ... args) { return _f (data, args...); }
+		int operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const { return !! _f; }
 	private:
 		FunctionType _f;
@@ -3136,6 +3131,29 @@ class MelderCompareHook {
 	private:
 		FunctionType _f;
 };
+
+#include "regularExp.h"
+
+autostring32 leftStr (conststring32 str, integer newLength = 1);
+autostring32 rightStr (conststring32 str, integer newLength = 1);
+autostring32 midStr (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
+
+autostring32 replaceStr (conststring32 str, conststring32 search,
+	conststring32 replace, integer maximumNumberOfReplacements, integer *out_numberOfReplacements);
+/*
+	Look for occurrences of `search` in `str`, and replace them with `replace`.
+*/
+
+autostring32 replace_regexStr (conststring32 string, regexp *search_compiled,
+	conststring32 replace_regex, integer maximumNumberOfReplaces, integer *out_numberOfReplacements);
+/*
+	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on
+	the basis of regular expressions.
+	If maximumNumberOfReplaces <= 0, the interpreted 'replaceRE' replaces ALL occurrences.
+	`search_compiled` is an efficient representation of the search regex and
+	is the result of the compileRE-function which should be called before this function.
+	The number of actual replacements performed is returned in 'out_numberOfReplacements'.
+*/
 
 /* End of file melder.h */
 #endif

@@ -4199,7 +4199,7 @@ static autoStrings itemizeColourString (conststring32 colourString) {
 	static const conststring32 searchRE = U"\\{\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*,\\s*( [0-9.]+)\\s*\\}";
 	regexp *compiledRE = CompileRE_throwable (searchRE, 0);
 	integer nmatches_sub = 0;
-	autostring32 colourStringWithoutSpaces = str_replace_regexp (colourString, compiledRE, U"{\\1,\\2,\\3}", 0, & nmatches_sub);
+	autostring32 colourStringWithoutSpaces = replace_regexStr (colourString, compiledRE, U"{\\1,\\2,\\3}", 0, & nmatches_sub);
 	autoStrings thee = Strings_createAsTokens (colourStringWithoutSpaces.get(), U" ");
 	return thee;
 }

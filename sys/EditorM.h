@@ -339,7 +339,7 @@ _form_inited_: \
 		Melder_require (_narg_ == 1, \
 			U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \
 		Melder_require (_args_ [1]. which == Stackel_STRING, \
-			U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
+			U"The file name argument should be a string, not ", _args_ [1]. whichText(), U"."); \
 		Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 		file = & _file2; \
 	} else if (_sendingString_) { \
@@ -360,7 +360,7 @@ _form_inited_: \
 		Melder_require (_narg_ == 1, \
 			U"Command requires exactly 1 argument, the name of the file to read, instead of the given ", _narg_, U" arguments."); \
 		Melder_require (_args_ [1]. which == Stackel_STRING, \
-			U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
+			U"The file name argument should be a string, not ", _args_ [1]. whichText(), U"."); \
 		Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 		file = & _file2; \
 	} else if (_sendingString_) { \

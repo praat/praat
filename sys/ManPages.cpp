@@ -36,13 +36,16 @@ static bool isSingleWordCharacter (char32 c) {
 static integer lookUp_unsorted (ManPages me, conststring32 title);
 
 void structManPages :: v_destroy () noexcept {
+	/*
+		A ManPages object is the ambiguous owner of its paragraphs.
+	*/
 	if (our dynamic) {
 		for (integer ipage = 1; ipage <= our pages.size; ipage ++) {
 			ManPage page = our pages.at [ipage];
 			if (page -> paragraphs) {
 				ManPage_Paragraph par;
 				for (par = page -> paragraphs; (int) par -> type != 0; par ++)
-					Melder_free (par -> text);
+					Melder_free (par -> text);   // not an autostring32, because it can be a string literal (if not dynamic)
 				NUMvector_free <struct structManPage_Paragraph> (page -> paragraphs, 0);
 			}
 			if (ipage == 1) {

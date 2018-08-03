@@ -386,7 +386,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		}
 		double duration = my dx * my nx;
 		if (minimumPitch < periodsPerWindow / duration)
-			Melder_throw (U"To analyse this Sound, ", U_LEFT_DOUBLE_QUOTE, U"minimum pitch", U_RIGHT_DOUBLE_QUOTE, U" must not be less than ", periodsPerWindow / duration, U" Hz.");
+			Melder_throw (U"To analyse this Sound, “minimum pitch” must not be less than ", periodsPerWindow / duration, U" Hz.");
 
 		/*
 		 * Determine the number of samples in the longest period.

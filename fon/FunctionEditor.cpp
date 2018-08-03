@@ -220,11 +220,15 @@ static void drawNow (FunctionEditor me) {
 			const char *format = my v_format_long ();
 			double value = undefined, inverseValue = 0.0;
 			switch (i) {
-				case 0: format = my v_format_totalDuration (), value = my tmax - my tmin; break;
-				case 1: format = my v_format_window (), value = my endWindow - my startWindow;
+				case 0: {
+					format = my v_format_totalDuration ();
+					value = my tmax - my tmin;
+				} break; case 1: {
+					format = my v_format_window ();
+					value = my endWindow - my startWindow;
 					/*
-					 * Window domain text.
-					 */	
+						Window domain text.
+					*/	
 					Graphics_setColour (my graphics.get(), Graphics_BLUE);
 					Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, Graphics_HALF);
 					Graphics_text (my graphics.get(), left, 0.5 * (bottom + top) - verticalCorrection,
@@ -234,13 +238,21 @@ static void drawNow (FunctionEditor me) {
 						Melder_fixed (my endWindow, my v_fixedPrecision_long ()));
 					Graphics_setColour (my graphics.get(), Graphics_BLACK);
 					Graphics_setTextAlignment (my graphics.get(), Graphics_CENTRE, Graphics_HALF);
-				break;
-				case 2: value = my startWindow - my tmin; break;
-				case 3: value = my tmax - my endWindow; break;
-				case 4: value = my marker [1] - my startWindow; break;
-				case 5: value = my marker [2] - my marker [1]; break;
-				case 6: value = my marker [3] - my marker [2]; break;
-				case 7: format = my v_format_selection (), value = my endSelection - my startSelection, inverseValue = 1.0 / value; break;
+				} break; case 2: {
+					value = my startWindow - my tmin;
+				} break; case 3: {
+					value = my tmax - my endWindow;
+				} break; case 4: {
+					value = my marker [1] - my startWindow;
+				} break; case 5: {
+					value = my marker [2] - my marker [1];
+				} break; case 6: {
+					value = my marker [3] - my marker [2];
+				} break; case 7: {
+					format = my v_format_selection ();
+					value = my endSelection - my startSelection;
+					inverseValue = 1.0 / value;
+				}
 			}
 			char text8 [100];
 			snprintf (text8, 100, format, value, inverseValue);

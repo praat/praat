@@ -478,8 +478,8 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 			try {
 
 #define FORM_READ(proc,title,help,allowMult)  \
-	extern "C" void proc (UiForm sendingForm, integer, Stackel args, conststring32 sendingString, Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure); \
-	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_) { \
+	extern "C" void proc (UiForm sendingForm, integer, structStackel args [], conststring32 sendingString, Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure); \
+	void proc (UiForm _sendingForm_, integer _narg_, structStackel _args_ [], conststring32 _sendingString_, Interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_) { \
 		{ static autoUiForm _dia_; \
 		if (! _dia_) \
 			_dia_ = UiInfile_create (theCurrentPraatApplication -> topShell, title, proc, _okClosure_, _invokingButtonTitle_, help, allowMult); \
@@ -495,7 +495,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					Melder_require (_narg_ == 1, \
 						U"Command requires exactly 1 argument, the name of the file to read, instead of the given ", _narg_, U" arguments."); \
 					Melder_require (_args_ [1]. which == Stackel_STRING, \
-						U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
+						U"The file name argument should be a string, not ", _args_ [1]. whichText(), U"."); \
 					Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 					file = & _file2; \
 				} else if (_sendingString_) { \
@@ -506,7 +506,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 				}
 
 #define FORM_SAVE(proc,title,help,ext)  \
-	extern "C" void proc (UiForm sendingForm, integer, Stackel args, conststring32 sendingString, Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure); \
+	extern "C" void proc (UiForm sendingForm, integer, structStackel args [], conststring32 sendingString, Interpreter, conststring32 invokingButtonTitle, bool, void *okClosure); \
 	void proc (UiForm _sendingForm_, integer _narg_, Stackel _args_, conststring32 _sendingString_, Interpreter, conststring32 _invokingButtonTitle_, bool, void *_okClosure_) { \
 		{ static autoUiForm _dia_; \
 		if (! _dia_) \
@@ -523,7 +523,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 					Melder_require (_narg_ == 1, \
 						U"Command requires exactly 1 argument, the name of the file to write, instead of the given ", _narg_, U" arguments."); \
 					Melder_require (_args_ [1]. which == Stackel_STRING, \
-						U"The file name argument should be a string, not ", Stackel_whichText (& _args_ [1]), U"."); \
+						U"The file name argument should be a string, not ", _args_ [1]. whichText(), U"."); \
 					Melder_relativePathToFile (_args_ [1]. getString(), & _file2); \
 					file = & _file2; \
 				} else if (_sendingString_) { \

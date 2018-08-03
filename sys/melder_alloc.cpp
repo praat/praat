@@ -312,8 +312,11 @@ char32 * Melder_tok (char32 *string, conststring32 delimiter) {
 	char32 *tok;
 	static char32 *last;
 
-	if (! string && (string = last) == nullptr)
-		return nullptr;
+	if (! string) {
+		string = last;
+		if (! string)
+			return nullptr;
+	}
 
 cont:
 	c = * string ++;
