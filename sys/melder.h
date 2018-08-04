@@ -3132,7 +3132,7 @@ class MelderCompareHook {
 		FunctionType _f;
 };
 
-#include "regularExp.h"
+#include "../dwsys/regularExp.h"
 
 autostring32 leftStr (conststring32 str, integer newLength = 1);
 autostring32 rightStr (conststring32 str, integer newLength = 1);
