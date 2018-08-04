@@ -17,7 +17,7 @@
  */
 
 #include "melder.h"
-#include "NUMmachar.h"
+#include "../dwsys/NUMmachar.h"
 #include <ctype.h>
 #include <stdarg.h>
 #if defined (UNIX) || defined (macintosh)
@@ -1153,7 +1153,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 	 */
 	Melder_batch |= praatP.hasCommandLineInput;
 
-	praatP.title = Melder_dup (title && title [0] ? title : U"Praat");
+	praatP.title = Melder_dup (title && title [0] != U'\0' ? title : U"Praat");
 
 	theCurrentPraatApplication -> batch = Melder_batch;
 
@@ -1702,12 +1702,16 @@ void praat_run () {
 		//autonumvec b { x };   // explicit construction not OK
 		//autonumvec c = x;   // implicit construction not OK
 	}
-	Melder_assert (sizeof (float) == 4);
-	Melder_assert (sizeof (double) == 8);
-	Melder_assert (sizeof (longdouble) >= 8);   // this can be 8, 12 or 16
-	Melder_assert (sizeof (integer) == sizeof (void *));
-	if (sizeof (off_t) < 8)
-		Melder_fatal (U"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
+	static_assert (sizeof (float) == 4,
+		"sizeof(float) should be 4");
+	static_assert (sizeof (double) == 8,
+		"sizeof(double) should be 8");
+	static_assert (sizeof (longdouble) >= 8,
+		"sizeof(longdouble) should be at least 8");   // this can be 8, 12 or 16
+	static_assert (sizeof (integer) == sizeof (void *),
+		"sizeof(integer) should equal the size of a pointer");
+	static_assert (sizeof (off_t) >= 8,
+		"sizeof(off_t) is less than 8. Compile Praat with -D_FILE_OFFSET_BITS=64.");
 
 	if (Melder_batch) {
 		if (thePraatStandAloneScriptText) {

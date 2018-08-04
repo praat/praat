@@ -21,8 +21,8 @@
 #if defined (UNIX)
 	#include <sys/stat.h>
 #endif
-#include "NUM2.h"
-#include "regularExp.h"
+#include "../dwsys/NUM2.h"
+#include "../dwsys/regularExp.h"
 #include "Formula.h"
 #include "Interpreter.h"
 #include "Ui.h"

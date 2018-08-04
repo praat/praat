@@ -1,13 +1,13 @@
 # File: makefile.defs.mingw32
 
 # System: MinGW on Windows under Cygwin
-# Paul Boersma, 2 July 2018
+# Paul Boersma, 3 August 2018
 
 PREFIX = i686-w64-mingw32-
 
 CC = $(PREFIX)gcc -std=gnu99
 
-CXX = $(PREFIX)g++ -std=c++14 -Wshadow
+CXX = $(PREFIX)g++ -std=c++17 -Wshadow
 
 CFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O3
 # Probably implicit: -m32 -mwin32 -march=i686 -mtune=generic

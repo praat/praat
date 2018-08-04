@@ -17,7 +17,7 @@
  */
 
 #include "melder.h"
-#include "regularExp.h"
+#include "../dwsys/regularExp.h"
 #ifdef _WIN32
 	#include <windows.h>
 #endif

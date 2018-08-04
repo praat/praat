@@ -3,7 +3,7 @@
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../sys -I ../dwsys -I ../external/portaudio -I ../external/flac -I ../external/mp3
+CPPFLAGS = -I ../kar -I ../sys -I ../external/portaudio -I ../external/flac -I ../external/mp3
 
 OBJECTS = abcio.o complex.o str.o tensor.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \

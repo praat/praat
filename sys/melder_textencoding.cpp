@@ -346,7 +346,7 @@ char32 Melder_decodeWindowsLatin1 [256] = {
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
 void Melder_8to32_inplace (conststring8 string8, mutablestring32 string32, kMelder_textInputEncoding inputEncoding) {
-	mutablestring32 q = & string32 [0];
+	char32 *q = & string32 [0];
 	if (inputEncoding == kMelder_textInputEncoding::UNDEFINED) {
 		inputEncoding = preferences. inputEncoding;
 		/*

@@ -236,9 +236,9 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 			double time = undefined;
 			for (integer i = 1; i <= my nx; i ++) {
 				uint32 value = (uint32) (int32) my z [numberOfChannels] [i];
-				for (int byte = 1; byte <= numberOfStatusBits / 8; byte ++) {
-					uint32 mask = byte == 1 ? 0x000000ff : 0x0000ff00;
-					char32 kar = byte == 1 ? (value & mask) : (value & mask) >> 8;
+				for (int ibyte = 1; ibyte <= numberOfStatusBits / 8; ibyte ++) {
+					uint32 mask = ( ibyte == 1 ? 0x000000ff : 0x0000ff00 );
+					char32 kar = ( ibyte == 1 ? (value & mask) : (value & mask) >> 8 );
 					if (kar != U'\0' && kar != 20) {
 						MelderString_appendCharacter (& letters, kar);
 					} else if (letters. string [0] != U'\0') {
