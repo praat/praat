@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, 31 July 2018
+# Paul Boersma, 4 August 2018
 
 include ../makefile.defs
 
@@ -9,7 +9,7 @@ OBJECTS = abcio.o complex.o str.o tensor.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \
    melder_token.o melder_files.o melder_audio.o melder_audiofiles.o \
    melder_debug.o melder_sysenv.o melder_info.o melder_quantity.o \
-   melder_textencoding.o melder_readtext.o melder_writetext.o melder_console.o melder_time.o \
+   melder_textencoding.o melder_readtext.o melder_writetext.o MelderConsole.o melder_time.o \
    Thing.o Data.o Simple.o Collection.o Strings.o \
    Graphics.o Graphics_linesAndAreas.o Graphics_text.o Graphics_colour.o \
    Graphics_image.o Graphics_mouse.o Graphics_record.o \

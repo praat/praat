@@ -186,56 +186,6 @@ conststring16 MelderTrace::_peek32to16 (conststring32 string) {
 }
 #endif
 
-bool Melder_consoleIsAnsi = false;
-
-//extern FILE *winstdout;
-void Melder_writeToConsole (conststring32 message, bool useStderr) {
-	if (! message) return;
-	#if defined (_WIN32)
-		(void) useStderr;
-		static HANDLE console = nullptr;
-		if (! console) {
-			console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, 0);
-			//freopen ("CONOUT$", "w", stdout);
-		}
-		if (Melder_consoleIsAnsi) {
-			size_t n = str32len (message);
-			for (integer i = 0; i < n; i ++) {
-				unsigned int kar = (unsigned short) message [i];
-				fputc (kar, stdout);
-			}
-			//CHAR* messageA = (CHAR*) MelderTrace::_peek32to8 (message);
-			//WriteConsoleA (console, messageA, strlen (messageA), nullptr, nullptr);
-		//} else if (Melder_consoleIsUtf8) {
-			//char *messageA = MelderTrace::_peek32to8 (message);
-			//fprintf (stdout, "%s", messageA);
-		} else {
-			WCHAR* messageW = (WCHAR*) MelderTrace::_peek32to16 (message);
-			WriteConsoleW (console, messageW, wcslen (messageW), nullptr, nullptr);
-		}
-	#else
-		FILE *f = ( useStderr ? stderr : stdout );
-		for (const char32 *p = message; *p != U'\0'; p ++) {
-			char32 kar = *p;
-			if (kar <= 0x00007F) {
-				fputc ((int) kar, f);   // because fputc wants an int instead of a uint8 (guarded conversion)
-			} else if (kar <= 0x0007FF) {
-				fputc (0xC0 | (kar >> 6), f);
-				fputc (0x80 | (kar & 0x00003F), f);
-			} else if (kar <= 0x00FFFF) {
-				fputc (0xE0 | (kar >> 12), f);
-				fputc (0x80 | ((kar >> 6) & 0x00003F), f);
-				fputc (0x80 | (kar & 0x00003F), f);
-			} else {
-				fputc (0xF0 | (kar >> 18), f);
-				fputc (0x80 | ((kar >> 12) & 0x00003F), f);
-				fputc (0x80 | ((kar >> 6) & 0x00003F), f);
-				fputc (0x80 | (kar & 0x00003F), f);
-			}
-		}
-	#endif
-}
-
 /********** TRACE **********/
 
 bool Melder_isTracing = false;

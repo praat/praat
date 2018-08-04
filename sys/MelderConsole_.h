@@ -1,6 +1,11 @@
-/* melder_console.cpp
+#ifdef _header_MelderConsole_h_
+#error This file is only for inclusion in melder.h
+#else
+#define _header_MelderConsole_h_
+
+/* MelderConsole_.h
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +21,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "melder.h"
-
-#if defined (_WIN32) && defined (CONSOLE_APPLICATION)
-int main (int argc, char *argvA []);
-extern "C" int wmain (int argc, wchar_t *argvW []);
-extern "C" int wmain (int argc, wchar_t *argvW []) {
-	char **argvA = nullptr;
-	if (argc > 0) {
-		argvA = NUMvector <char *> (0, argc - 1);
-		for (int iarg = 0; iarg < argc; iarg ++) {
-			argvA [iarg] = Melder_32to8 (Melder_peekWto32 ((argvW [iarg])));
-		}
-	}
-	return main (argc, argvA);
+namespace MelderConsole {
+	extern void write (conststring32 message, bool useStderr);
+	extern void setIsAnsi (bool isAnsi);
 }
-#endif
 
-/* End of file melder_console.cpp */
+/* End of file MelderConsole_.h */
+#endif

@@ -19,7 +19,7 @@
 #include "melder.h"
 
 void MelderInfo::_defaultProc (conststring32 message) {
-	Melder_writeToConsole (message, false);
+	MelderConsole::write (message, false);
 }
 
 MelderInfo::Proc MelderInfo::_p_currentProc = & MelderInfo::_defaultProc;
@@ -47,7 +47,7 @@ void MelderInfo_close () {
 		{
 			MelderString_appendCharacter (MelderInfo::_p_currentBuffer, U'\n');
 			if (MelderInfo::_p_currentProc == MelderInfo::_defaultProc)
-				Melder_writeToConsole (U"\n", false);
+				MelderConsole::write (U"\n", false);
 		}
 		if (MelderInfo::_p_currentProc != & MelderInfo::_defaultProc)
 			MelderInfo::_p_currentProc (MelderInfo::_p_currentBuffer -> string ? MelderInfo::_p_currentBuffer -> string : U"");

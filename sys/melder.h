@@ -882,7 +882,7 @@ conststring32 Melder_padOrTruncate (conststring32 string, int64 width);   // wil
 
 #pragma mark - CONSOLE
 
-void Melder_writeToConsole (conststring32 message, bool useStderr);
+#include "MelderConsole_.h"
 
 /**
  * Text encodings.
@@ -2144,7 +2144,7 @@ integer Melder_searchToken (conststring32 string, char32 **tokens, integer n);
 */
 
 inline static void _recursiveTemplate_Melder_casual (const MelderArg& arg) {
-	Melder_writeToConsole (arg._arg, true);
+	MelderConsole::write (arg._arg, true);
 }
 template <typename... Args>
 void _recursiveTemplate_Melder_casual (const MelderArg& first, Args... rest) {
@@ -2155,7 +2155,7 @@ void _recursiveTemplate_Melder_casual (const MelderArg& first, Args... rest) {
 template <typename... Args>
 void Melder_casual (const MelderArg& first, Args... rest) {
 	_recursiveTemplate_Melder_casual (first, rest...);
-	Melder_writeToConsole (U"\n", true);
+	MelderConsole::write (U"\n", true);
 }
 
 void MelderCasual_memoryUse (integer message = 0);
@@ -2176,7 +2176,7 @@ void MelderInfo_close ();   // drain the background info to the Info window, mak
 void MelderInfo_drain ();   // drain the background info to the Info window, without adding any extra line break
 
 inline static void _recursiveTemplate_MelderInfo_write (const MelderArg& arg) {
-	Melder_writeToConsole (arg._arg, false);
+	MelderConsole::write (arg._arg, false);
 }
 template <typename... Args>
 void _recursiveTemplate_MelderInfo_write (const MelderArg& first, Args... rest) {
@@ -2197,7 +2197,7 @@ void MelderInfo_writeLine (const MelderArg& first, Args... rest) {
 	MelderString_appendCharacter (MelderInfo::_p_currentBuffer, U'\n');
 	if (MelderInfo::_p_currentProc == & MelderInfo::_defaultProc && MelderInfo::_p_currentBuffer == & MelderInfo::_foregroundBuffer) {
 		_recursiveTemplate_MelderInfo_write (first, rest...);
-		Melder_writeToConsole (U"\n", false);
+		MelderConsole::write (U"\n", false);
 	}
 }
 
@@ -2585,7 +2585,6 @@ void MelderGui_create (/* GuiWindow */ void *parent);
 
 extern bool Melder_batch;   // true if run from the batch or from an interactive command-line interface
 extern bool Melder_backgrounding;   // true if running a script
-extern bool Melder_consoleIsAnsi;
 extern bool Melder_asynchronous;   // true if specified by the "asynchronous" directive in a script
 
 /********** OVERRIDE DEFAULT BEHAVIOUR **********/

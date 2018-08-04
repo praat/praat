@@ -1108,7 +1108,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_close ();
 			exit (0);
 		} else if (strequ (argv [praatP.argumentNumber], "-a") || strequ (argv [praatP.argumentNumber], "--ansi")) {
-			Melder_consoleIsAnsi = true;
+			MelderConsole::setIsAnsi (true);
 			praatP.argumentNumber += 1;
 		#if defined (macintosh)
 		} else if (strequ (argv [praatP.argumentNumber], "-NSDocumentRevisionsDebugMode")) {

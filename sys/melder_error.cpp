@@ -19,9 +19,9 @@
 #include "melder.h"
 
 static void defaultError (conststring32 message) {
-	Melder_writeToConsole (str32str (message, U"You interrupted ") ? U"User interrupt: " : U"Error: ", true);
-	Melder_writeToConsole (message, true);
-	Melder_writeToConsole (U"\n", true);
+	MelderConsole::write (str32str (message, U"You interrupted ") ? U"User interrupt: " : U"Error: ", true);
+	MelderConsole::write (message, true);
+	MelderConsole::write (U"\n", true);
 }
 
 static void (*theError) (conststring32) = defaultError;   // initial setting after start-up; will stay if program is run from batch
