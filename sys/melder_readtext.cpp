@@ -28,20 +28,20 @@ char32 MelderReadText_getChar (MelderReadText me) {
 		if (* my readPointer8 == '\0') return U'\0';
 		if (my input8Encoding == kMelder_textInputEncoding::UTF8) {
 			char32 kar1 = (char32) (char8) * my readPointer8 ++;
-			if (kar1 <= 0x00007F) {
+			if (kar1 <= 0x00'007F) {
 				return kar1;
-			} else if (kar1 <= 0x0000DF) {
+			} else if (kar1 <= 0x00'00DF) {
 				char32 kar2 = (char32) (char8) * my readPointer8 ++;
-				return ((kar1 & 0x00001F) << 6) | (kar2 & 0x00003F);
-			} else if (kar1 <= 0x0000EF) {
+				return ((kar1 & 0x00'001F) << 6) | (kar2 & 0x00'003F);
+			} else if (kar1 <= 0x00'00EF) {
 				char32 kar2 = (char32) (char8) * my readPointer8 ++;
 				char32 kar3 = (char32) (char8) * my readPointer8 ++;
-				return ((kar1 & 0x00000F) << 12) | ((kar2 & 0x00003F) << 6) | (kar3 & 0x00003F);
-			} else if (kar1 <= 0x0000F4) {
+				return ((kar1 & 0x00'000F) << 12) | ((kar2 & 0x00'003F) << 6) | (kar3 & 0x00'003F);
+			} else if (kar1 <= 0x00'00F4) {
 				char32 kar2 = (char32) (char8) * my readPointer8 ++;
 				char32 kar3 = (char32) (char8) * my readPointer8 ++;
 				char32 kar4 = (char32) (char8) * my readPointer8 ++;
-				return ((kar1 & 0x000007) << 18) | ((kar2 & 0x00003F) << 12) | ((kar3 & 0x00003F) << 6) | (kar4 & 0x00003F);
+				return ((kar1 & 0x00'0007) << 18) | ((kar2 & 0x00'003F) << 12) | ((kar3 & 0x00'003F) << 6) | (kar4 & 0x00'003F);
 			} else {
 				return UNICODE_REPLACEMENT_CHARACTER;
 			}
@@ -249,9 +249,9 @@ static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8)
 						length --;
 						char16 kar2 = bingetu16LE (f);
 						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
-							text [i] = (char32) (0x010000 +
-								(char32) (((char32) kar1 & 0x0003FF) << 10) +
-								(char32)  ((char32) kar2 & 0x0003FF));
+							text [i] = (char32) (0x01'0000 +
+								(char32) (((char32) kar1 & 0x00'03FF) << 10) +
+								(char32)  ((char32) kar2 & 0x00'03FF));
 						} else {
 							text [i] = UNICODE_REPLACEMENT_CHARACTER;
 						}

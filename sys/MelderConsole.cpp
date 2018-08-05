@@ -30,6 +30,19 @@ void MelderConsole::write (conststring32 message, bool useStderr) {
 	if (! message)
 		return;
 	#if defined (_WIN32)
+		/*
+			On Windows, the console ("command prompt") understands UTF-16 but not UTF-8, so we use UTF-16.
+			However, other programs rarely understand UTF-16, so we stupidly fall back on ISO 8859-1 ("ANSI")
+			encoding when using pipes or redirection; this is determined by the `isAnsi` flag.
+
+			Not really true any longer. We can now use
+			fflush (f);
+			int previousMode = _setmode (_fileno (f), _O_U8TEXT);
+			fputc (...);
+			fputc (...);
+			fflush (f);
+			_setmode (_fileno (f), previousMode);
+		*/
 		(void) useStderr;
 		static HANDLE console = nullptr;
 		if (! console)
@@ -37,6 +50,9 @@ void MelderConsole::write (conststring32 message, bool useStderr) {
 		if (MelderConsole :: _isAnsi) {
 			size_t n = str32len (message);
 			for (integer i = 0; i < n; i ++) {
+				/*
+					We convert Unicode to ISO 8859-1 by simple truncation.
+				*/
 				unsigned int kar = (unsigned short) message [i];
 				fputc (kar, stdout);
 			}
@@ -50,7 +66,16 @@ void MelderConsole::write (conststring32 message, bool useStderr) {
 			WriteConsoleW (console, messageW, wcslen (messageW), nullptr, nullptr);
 		}
 	#else
+		/*
+			On Unix-like platforms (MacOS and Linux), the console understands UTF-8, so we use UTF-8.
+			Other programs are usually fine handling UTF-8, so we are good even in the context of
+			pipes or redirection.
+		*/
 		FILE *f = ( useStderr ? stderr : stdout );
+		#ifdef _WIN32
+			fflush (f);
+			int savedMode = _setmode (_fileno (f), _O_U8TEXT);
+		#endif
 		for (const char32 *p = & message [0]; *p != U'\0'; p ++) {
 			char32 kar = *p;
 			if (kar <= 0x00007F) {
@@ -69,6 +94,10 @@ void MelderConsole::write (conststring32 message, bool useStderr) {
 				fputc (0x80 | (kar & 0x00003F), f);
 			}
 		}
+		#ifdef _WIN32
+			fflush (f);
+			_setmode (_fileno (f), savedMode);
+		#endif
 	#endif
 }
 

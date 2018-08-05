@@ -206,7 +206,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 						uint8 lowByte = *p ++, midByte = *p ++, highByte = *p ++;
 						uint32 externalValue = ((uint32) highByte << 16) | ((uint32) midByte << 8) | (uint32) lowByte;
 						if ((highByte & 128) != 0)   // is the 24-bit sign bit on?
-							externalValue |= 0xFF000000;   // extend negative sign to 32 bits
+							externalValue |= 0xFF00'0000;   // extend negative sign to 32 bits
 						my z [channel] [sample] = (int32) externalValue * factor;
 					}
 				} else {
@@ -225,7 +225,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		int numberOfStatusBits = 8;
 		for (integer i = 1; i <= my nx; i ++) {
 			uint32 value = (uint32) (int32) my z [numberOfChannels] [i];
-			if (value & 0x0000FF00) {
+			if (value & 0x0000'FF00) {
 				numberOfStatusBits = 16;
 			}
 		}
@@ -237,7 +237,7 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 			for (integer i = 1; i <= my nx; i ++) {
 				uint32 value = (uint32) (int32) my z [numberOfChannels] [i];
 				for (int ibyte = 1; ibyte <= numberOfStatusBits / 8; ibyte ++) {
-					uint32 mask = ( ibyte == 1 ? 0x000000ff : 0x0000ff00 );
+					uint32 mask = ( ibyte == 1 ? 0x0000'00ff : 0x0000'ff00 );
 					char32 kar = ( ibyte == 1 ? (value & mask) : (value & mask) >> 8 );
 					if (kar != U'\0' && kar != 20) {
 						MelderString_appendCharacter (& letters, kar);

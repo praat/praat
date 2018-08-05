@@ -610,10 +610,10 @@ static enum mad_flow mp3f_mad_scan_header(void *context, struct mad_header const
 # define XING_CBR_MAGIC	(('I' << 24) | ('n' << 16) | ('f' << 8) | 'o')
 
 enum {
-  XING_FLAGS_FRAMES = 0x00000001L,
-  XING_FLAGS_BYTES  = 0x00000002L,
-  XING_FLAGS_TOC    = 0x00000004L,
-  XING_FLAGS_SCALE  = 0x00000008L
+  XING_FLAGS_FRAMES = 0x0000'0001L,
+  XING_FLAGS_BYTES  = 0x0000'0002L,
+  XING_FLAGS_TOC    = 0x0000'0004L,
+  XING_FLAGS_SCALE  = 0x0000'0008L
 };
 
 static int mp3f_check_xing (MP3_FILE mp3f, struct mad_stream const *stream)
