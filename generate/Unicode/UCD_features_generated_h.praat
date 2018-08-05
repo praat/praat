@@ -1,5 +1,5 @@
 # UCD_features_generated_h.praat
-# Paul Boersma 20180411
+# Paul Boersma 20180805
 
 Text writing preferences: "UTF-8"
 
@@ -8,7 +8,7 @@ numberOfRows = Get number of rows
 
 stopwatch
 outfile$ = "../../kar/UCD_features_generated.h"
-writeFileLine: outfile$, "/* This file was generated automatically by generate/Unicode/UCS_features_generated_h.praat */"
+writeFileLine: outfile$, "/* This file was generated automatically by generate/Unicode/UCD_features_generated_h.praat */"
 
 previousLineCodePoint = -1
 for irow from 1 to numberOfRows
@@ -137,7 +137,7 @@ for irow from 1 to numberOfRows
 				categoryFeature$ += " | mUCD_NULL"
 			elsif lineCodePoint = 9   ; tab
 				categoryFeature$ += " | mUCD_BREAKING_SPACE"
-			elsif lineCodePoint >= 10 and lineCodePoint <= 13 or lineCodePoint = 0x0085   ; line feed, vertical tab, form feed, carriage return, next line
+			elsif (lineCodePoint >= 10 and lineCodePoint <= 13) or lineCodePoint = 0x0085   ; line feed, vertical tab, form feed, carriage return, next line
 				categoryFeature$ += " | mUCD_LINE_SEPARATOR"
 			endif
 		elsif minorCategoryCode$ = "f"

@@ -1574,7 +1574,8 @@ void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, conststring32 
 	Graphics_setColour (my graphics.get(), Graphics_BLUE);
 	Graphics_line (my graphics.get(), my endWindow, yWC, my endWindow + textWidth, yWC);
 	Graphics_setTextAlignment (my graphics.get(), Graphics_LEFT, verticalAlignment);
-	if (verticalAlignment == Graphics_BOTTOM) yWC -= Graphics_dyMMtoWC (my graphics.get(), 0.5);
+	if (verticalAlignment == Graphics_BOTTOM)
+		yWC -= Graphics_dyMMtoWC (my graphics.get(), 0.5);
 	Graphics_text (my graphics.get(), my endWindow, yWC, text.string);
 }
 

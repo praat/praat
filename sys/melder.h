@@ -358,7 +358,7 @@ enum {
 	mUCD_SYMBOL = (mUCD_MATH_SYMBOL | mUCD_CURRENCY_SYMBOL | mUCD_MODIFIER_SYMBOL | mUCD_OTHER_SYMBOL),
 
 	mUCD_BREAKING_SPACE = (1 << 22),
-	mUCD_NON_BREAKING_SPACE = (1 << 23),
+	mUCD_NON_BREAKING_SPACE = (1 << 23),   // note: this keeps *lines* together; it still separates *words*, despite interpretations elsewhere
 	mUCD_SPACE_SEPARATOR = (mUCD_BREAKING_SPACE | mUCD_NON_BREAKING_SPACE),
 	mUCD_LINE_SEPARATOR = (1 << 24),
 	mUCD_PARAGRAPH_SEPARATOR = (1 << 25),
@@ -563,13 +563,13 @@ inline static bool Melder_isAsciiControl (char32 kar) {   // same as std::iscntr
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
 }
 inline static bool Melder_isPrintable (char32 kar) {
-	return kar > kUCD_TOP_OF_LIST || (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
 inline static bool Melder_isAsciiPrintable (char32 kar) {   // same as std::isprint() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
 }
 inline static bool Melder_hasInk (char32 kar) {
-	return kar > kUCD_TOP_OF_LIST || (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
+	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
 }
 inline static bool Melder_hasAsciiInk (char32 kar) {   // same as std::isgraph() with default C locale
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
@@ -898,10 +898,9 @@ kMelder_textOutputEncoding Melder_getOutputEncoding ();
  * these constants should stay separate from the above encoding constants
  * because they occur in the same fields of struct MelderFile.
  */
-//const uint32 kMelder_textInputEncoding_FLAC = 0x464C4143;
-const uint32 kMelder_textOutputEncoding_ASCII = 0x41534349;
-const uint32 kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C415401;
-const uint32 kMelder_textOutputEncoding_FLAC = 0x464C4143;
+constexpr uint32 kMelder_textOutputEncoding_ASCII = 0x41534349;
+constexpr uint32 kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C415401;
+constexpr uint32 kMelder_textOutputEncoding_FLAC = 0x464C4143;
 
 bool Melder_isValidAscii (conststring32 string);
 bool Melder_str8IsValidUtf8 (const char *string);
@@ -1204,7 +1203,7 @@ void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, intege
 
 /********** Arrays with two indices (NUMarrays.cpp) **********/
 
-void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool zero);
+void * NUMmatrix_generic (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool zero);
 /*
 	Function:
 		create a matrix [row1...row2] [col1...col2]; if `zero`, then all values are initialized to 0.
@@ -1213,7 +1212,7 @@ void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1,
 		col2 >= col1;
 */
 
-void NUMmatrix_free_ (integer elementSize, byte **m, integer row1, integer col1) noexcept;
+void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, integer col1) noexcept;
 /*
 	Function:
 		destroy a matrix m created with NUM...matrix.
@@ -1222,7 +1221,7 @@ void NUMmatrix_free_ (integer elementSize, byte **m, integer row1, integer col1)
 		must have the same value as with the creation of the matrix.
 */
 
-void * NUMmatrix_copy (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2);
+void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2);
 /*
 	Function:
 		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
@@ -1230,18 +1229,21 @@ void * NUMmatrix_copy (integer elementSize, void *m, integer row1, integer row2,
 		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
 */
 
-void NUMmatrix_copyElements_ (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2);
+void NUMmatrix_copyElements_generic (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2);
 /*
 	copy the matrix elements m [r1..r2] [c1..c2] to those of a matrix 'to'.
 	These matrices need not have been created by NUMmatrix.
 */
 
-bool NUMmatrix_equal (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2);
+bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2);
 /*
 	return 1 if the matrix elements m1 [r1..r2] [c1..c2] are equal
 	to the corresponding elements of the matrix m2; otherwise, return 0.
 	The matrices need not have been created by NUM...matrix.
 */
+
+byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero);
+void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, integer row1, integer col1) noexcept;
 
 integer NUM_getTotalNumberOfArrays ();   // for debugging
 
@@ -1468,27 +1470,27 @@ public:
 
 template <class T>
 T** NUMmatrix (integer row1, integer row2, integer col1, integer col2) {
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, true));
+	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2, true));
 	return result;
 }
 
 template <class T>
 T** NUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero) {
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, zero));
+	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2, zero));
 	return result;
 }
 
 template <class T>
 void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
-	NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
+	NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
 }
 
 template <class T>
 T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer col2) {
 	#if 1
-	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2));
+	T** result = static_cast <T**> (NUMmatrix_copy_generic (sizeof (T), ptr, row1, row2, col1, col2));
 	#else
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
+	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2));
 	for (integer irow = row1; irow <= row2; irow ++)
 		for (integer icol = col1; icol <= col2; icol ++)
 			result [irow] [icol] = ptr [irow] [icol];
@@ -1498,12 +1500,12 @@ T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer c
 
 template <class T>
 bool NUMmatrix_equal (T** m1, T** m2, integer row1, integer row2, integer col1, integer col2) {
-	return NUMmatrix_equal (sizeof (T), m1, m2, row1, row2, col1, col2);
+	return NUMmatrix_equal_generic (sizeof (T), m1, m2, row1, row2, col1, col2);
 }
 
 template <class T>
 void NUMmatrix_copyElements (T** mfrom, T** mto, integer row1, integer row2, integer col1, integer col2) {
-	NUMmatrix_copyElements_ (sizeof (T), reinterpret_cast <char **> (mfrom), reinterpret_cast <char **> (mto), row1, row2, col1, col2);
+	NUMmatrix_copyElements_generic (sizeof (T), reinterpret_cast <char **> (mfrom), reinterpret_cast <char **> (mto), row1, row2, col1, col2);
 }
 
 template <class T>
@@ -1522,7 +1524,8 @@ public:
 	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
 	}
 	~autoNUMmatrix () {
-		if (d_ptr) NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
+		if (d_ptr)
+			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 	}
 	T*& operator[] (integer row) {
 		return d_ptr [row];
@@ -1537,7 +1540,7 @@ public:
 	}
 	void reset (integer row1, integer row2, integer col1, integer col2) {
 		if (d_ptr) {
-			NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
+			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 			d_ptr = nullptr;
 		}
 		d_row1 = row1;
@@ -1546,7 +1549,7 @@ public:
 	}
 	void reset (integer row1, integer row2, integer col1, integer col2, bool zero) {
 		if (d_ptr) {
-			NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
+			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 			d_ptr = nullptr;
 		}
 		d_row1 = row1;

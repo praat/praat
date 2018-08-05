@@ -229,9 +229,9 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 
 			iter += struct_huber.iter;
 
-			if ( (i % 10) == 1) {
-				Melder_progress ((double) i / numberOfFrames, U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
-			}
+			if (i % 10 == 1)
+				Melder_progress ((double) i / numberOfFrames,
+					U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
 		}
 
 		if (frameErrorCount) Melder_warning (U"Results of ", frameErrorCount,

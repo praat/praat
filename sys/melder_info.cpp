@@ -28,7 +28,8 @@ void Melder_setInformationProc (MelderInfo::Proc proc) {
 	MelderInfo::_p_currentProc = ( proc ? proc : MelderInfo::_defaultProc );
 }
 
-MelderString MelderInfo::_foregroundBuffer = { 0, 0, nullptr }, *MelderInfo::_p_currentBuffer = & MelderInfo::_foregroundBuffer;
+MelderString MelderInfo::_foregroundBuffer = { 0, 0, nullptr };
+MelderString *MelderInfo::_p_currentBuffer = & MelderInfo::_foregroundBuffer;
 
 void MelderInfo_open () {
 	MelderString_empty (MelderInfo::_p_currentBuffer);

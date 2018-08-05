@@ -26,15 +26,19 @@ integer NUM_getTotalNumberOfArrays () { return theTotalNumberOfArrays; }
 
 byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool initializeToZero) {
 	try {
-		if (hi < lo) return nullptr;   // not an error
+		const int64 numberOfCells = hi - lo + 1;
+		if (numberOfCells <= 0)
+			return nullptr;   // not an error
 		byte *result;
-		Melder_assert (sizeof (char) == 1);   // some say that this is true by definition
 		for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
 			result = initializeToZero ?
-				reinterpret_cast<byte*> (_Melder_calloc (hi - lo + 1, elementSize)) :
-				reinterpret_cast<byte*> (_Melder_malloc ((hi - lo + 1) * elementSize));
-			if (result -= lo * elementSize) break;   // this will normally succeed at the first try
-			(void) Melder_realloc_f (result + lo * elementSize, 1);   // make "sure" that the second try will succeed (not *very* sure, because realloc might move memory even if it shrinks)
+				reinterpret_cast <byte *> (_Melder_calloc (numberOfCells, elementSize)) :
+				reinterpret_cast <byte *> (_Melder_malloc (numberOfCells * elementSize));
+			const int64 offset = (int64) lo * elementSize;
+			result -= offset;
+			if (result != nullptr)   // it would be quite a coincidence if this failed
+				break;   // this will normally succeed at the first try
+			(void) Melder_realloc_f (result + offset, 1);   // make "sure" that the second try will succeed (not *very* sure, because realloc might move memory even if it shrinks)
 		}
 		theTotalNumberOfArrays += 1;
 		return result;
@@ -44,7 +48,8 @@ byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool init
 }
 
 void NUMvector_free_generic (integer elementSize, byte *vector, integer lo) noexcept {
-	if (! vector) return;   // no error
+	if (! vector)
+		return;   // not an error
 	byte *cells = & vector [lo * elementSize];
 	Melder_free (cells);
 	theTotalNumberOfArrays -= 1;
@@ -52,7 +57,8 @@ void NUMvector_free_generic (integer elementSize, byte *vector, integer lo) noex
 
 byte * NUMvector_copy_generic (integer elementSize, byte *vector, integer lo, integer hi) {
 	try {
-		if (! vector) return nullptr;
+		if (! vector)
+			return nullptr;
 		byte *result = NUMvector_generic (elementSize, lo, hi, false);
 		byte *p_cells = & vector [lo * elementSize];
 		byte *p_resultCells = & result [lo * elementSize];
@@ -90,7 +96,8 @@ void NUMvector_append_generic (integer elementSize, byte **v, integer lo, intege
 			integer offset = lo * elementSize;
 			for (;;) {   // not very infinite: 99.999 % of the time once, 0.001 % twice
 				result = reinterpret_cast <byte *> (Melder_realloc ((char *) *v + offset, (*hi - lo + 2) * elementSize));
-				if ((result -= offset) != nullptr) break;   // this will normally succeed at the first try
+				if ((result -= offset) != nullptr)   // it would be quite a coincidence if this failed
+					break;   // this will normally succeed at the first try
 				(void) Melder_realloc_f (result + offset, 1);   // make "sure" that the second try will succeed
 			}
 			(*hi) ++;
@@ -126,7 +133,7 @@ void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, intege
 
 /*** Generic memory functions for matrices. ***/
 
-void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool initializeToZero) {
+void * NUMmatrix_generic (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool initializeToZero) {
 	try {
 		const int64 numberOfRows = row2 - row1 + 1;
 		const int64 numberOfColumns = col2 - col1 + 1;
@@ -138,7 +145,8 @@ void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1,
 			const int64 sizeOfRoomForRows = numberOfRows * pointerSize;
 			roomForRows = reinterpret_cast <byte **> (_Melder_malloc (sizeOfRoomForRows));
 			result = roomForRows - row1;
-			if (result) break;   // this will normally succeed at the first try
+			if (result != nullptr)   // it would be quite a coincidence if this failed
+				break;   // this will normally succeed at the first try
 			(void) Melder_realloc_f (roomForRows, 1);   // make "sure" that the second try will succeed (if this is an in-place realloc)
 		}
 		try {
@@ -182,7 +190,8 @@ byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, in
 		for (;;) {
 			planes = reinterpret_cast <byte ***> (_Melder_malloc (numberOfPlanes * (int64) sizeof (byte **)));   // assume that all pointers have the same size
 			result = planes - pla1;
-			if (result) break;   // this will normally succeed at the first try
+			if (result != nullptr)   // it would be quite a coincidence if this failed
+				break;
 			(void) Melder_realloc_f (planes, 1);   // make "sure" that the second try will succeed
 		}
 		/*
@@ -226,7 +235,7 @@ byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, in
 	}
 }
 
-void NUMmatrix_free_ (integer elementSize, byte **m, integer row1, integer col1) noexcept {
+void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, integer col1) noexcept {
 	if (! m) return;
 	byte *cells = & m [row1] [col1 * elementSize];
 	Melder_free (cells);
@@ -246,10 +255,10 @@ void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, inte
 	theTotalNumberOfArrays -= 1;
 }
 
-void * NUMmatrix_copy (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2) {
+void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2) {
 	try {
 		if (! m) return nullptr;
-		char **result = reinterpret_cast <char **> (NUMmatrix (elementSize, row1, row2, col1, col2, false));
+		char **result = reinterpret_cast <char **> (NUMmatrix_generic (elementSize, row1, row2, col1, col2, false));
 		if (! result) return nullptr;
 		integer columnOffset = col1 * elementSize;
 		integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
@@ -260,14 +269,14 @@ void * NUMmatrix_copy (integer elementSize, void *m, integer row1, integer row2,
 	}
 }
 
-void NUMmatrix_copyElements_ (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2) {
+void NUMmatrix_copyElements_generic (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2) {
 	Melder_assert (mfrom && mto);
 	integer columnOffset = col1 * elementSize;
 	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
 	memcpy (mto [row1] + columnOffset, mfrom [row1] + columnOffset, (size_t) dataSize);
 }
 
-bool NUMmatrix_equal (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2) {
+bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2) {
 	Melder_assert (m1 && m2);
 	integer columnOffset = col1 * elementSize;
 	integer dataSize = (row2 - row1 + 1) * (col2 - col1 + 1) * elementSize;
