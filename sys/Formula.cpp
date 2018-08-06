@@ -6207,7 +6207,7 @@ static void do_colStr () {
 }
 
 static double NUMarcsinh (double x) {
-	Melder_casual (U"NUMarcsinh ", fileno(stdout));
+	//Melder_casual (U"NUMarcsinh ", fileno(stdout));
 	return log (x + sqrt (1.0 + x * x));
 }
 static double NUMarccosh (double x) {

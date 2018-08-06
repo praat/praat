@@ -752,6 +752,8 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 //      print a(1)*4
 #define NUMpi  3.1415926535897932384626433832795028841972
 //      print a(1)*2
+#undef M_PI
+#define M_PI  3.1415926535897932384626433832795028841972
 #define NUMpi_2  1.5707963267948966192313216916397514420986
 //      print a(1)
 #define NUMpi_4  0.7853981633974483096156608458198757210493
