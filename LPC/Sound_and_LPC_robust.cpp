@@ -229,15 +229,14 @@ autoLPC LPC_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 
 			iter += struct_huber.iter;
 
-			if ( (i % 10) == 1) {
-				Melder_progress ((double) i / numberOfFrames, U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
-			}
+			if (i % 10 == 1)
+				Melder_progress ((double) i / numberOfFrames,
+					U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
 		}
 
 		if (frameErrorCount) Melder_warning (U"Results of ", frameErrorCount,
 			U" frame(s) out of ", numberOfFrames, U" could not be optimised.");
-		MelderInfo_writeLine (U"Number of iterations: ", iter,
-			U"\n   Average per frame: ", (double) iter / numberOfFrames);
+		//Melder_casual (U"Number of iterations: ", iter, U"\n   Average per frame: ", (double) iter / numberOfFrames);
 		huber_struct_destroy (&struct_huber);
 		return him;
 	} catch (MelderError) {

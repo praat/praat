@@ -1833,7 +1833,7 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 				break;
 			}
 
-			if (str32len (Error_Text) > 0) {
+			if (Error_Text [0] != U'\0') {
 				REG_FAIL (Error_Text);
 			}
 
@@ -1889,7 +1889,7 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 
 							Reg_Parse--; break;
 						} else {
-							if (str32len (Error_Text) == 0) {
+							if (Error_Text [0] != U'\0') {
 								/* None of the above calls generated an error message
 								   so generate our own here. */
 

@@ -300,10 +300,11 @@ int Melder_ncmp_caseInsensitive (conststring32 string1, conststring32 string2, i
 bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststring32 string2) {
 	if (! string1) string1 = U"";
 	if (! string2) string2 = U"";
-	if (*string1 == U'\0') return *string2 == U'\0';
-	if (Melder_toLowerCase (*string1) != Melder_toLowerCase (*string2))
+	if (string1 [0] == U'\0')
+		return string2 [0] == U'\0';
+	if (Melder_toLowerCase (string1 [0]) != Melder_toLowerCase (string2 [0]))
 		return false;
-	return ! str32cmp (string1 + 1, string2 + 1);
+	return str32equ (string1 + 1, string2 + 1);
 }
 
 char32 * Melder_tok (char32 *string, conststring32 delimiter) {

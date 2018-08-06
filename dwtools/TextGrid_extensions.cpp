@@ -593,7 +593,7 @@ void IntervalTier_changeLabels (IntervalTier me, integer from, integer to,
 			to = my intervals.size;
 		if (from > to || from < 1 || to > my intervals.size)
 			Melder_throw (U"Incorrect specification of where to act.");
-		if (use_regexp && str32len (search) == 0)
+		if (use_regexp && search [0] == U'\0')
 			Melder_throw (U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 		integer offset = from - 1, nlabels = to - offset;
 		autoNUMvector<char32 *> labels (1, nlabels);
@@ -622,7 +622,7 @@ void TextTier_changeLabels (TextTier me, integer from, integer to,
 			to = my points.size;
 		if (from > to || from < 1 || to > my points.size)
 			Melder_throw (U"Incorrect specification of where to act.");
-		if (use_regexp && str32len (search) == 0)
+		if (use_regexp && search [0] == U'\0')
 			Melder_throw (U"The regex search string cannot be empty.\nTo search for an empty string, use the expression \"^$\" instead.");
 		integer offset = from - 1, nmarks = to - offset;
 		autoNUMvector<char32 *> marks (1, nmarks);   // a non-owning vector of strings
@@ -648,7 +648,7 @@ void TextGrid_changeLabels (TextGrid me, integer tier, integer from, integer to,
 		integer ntiers = my tiers->size;
 		Melder_require (tier > 0 && tier <= ntiers,
 			U"The tier number (", tier, U") should not be larger than the number of tiers (", ntiers, U").");
-		Melder_require (! (use_regexp && str32len (search) == 0), 
+		Melder_require (! (use_regexp && search [0] == U'\0'), 
 			U"The regex search string cannot be empty.\nYou may search for an empty string with the expression \"^$\"");
 
 		Function anyTier = my tiers->at [tier];

@@ -329,7 +329,7 @@ conststring32 Melder_float (conststring32 number) noexcept {
 			str32cpy (buffers32 [ibuffer], U"10^^");
 			b = buffers32 [ibuffer] + 4;
 		} else {
-			str32cpy (buffers32 [ibuffer] + str32len (buffers32 [ibuffer]), U"·10^^");
+			str32cat (buffers32 [ibuffer], U"·10^^");
 			b += 5;
 		}
 		Melder_assert (*n == U'e');

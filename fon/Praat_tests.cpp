@@ -290,7 +290,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			double x = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				x += (double) i;
-				isAllDefined &= ((* (uint64 *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000;
+				isAllDefined &= ((* (uint64 *) & x) & 0x7FF0'0000'0000'0000) != 0x7FF0'0000'0000'0000;
 			}
 			t = Melder_stopwatch ();   // 0.90 ns
 			MelderInfo_writeLine (isAllDefined, U" ", x);

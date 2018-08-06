@@ -125,7 +125,7 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 			cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (menu -> menuWidget) :
 				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.get());   // DANGLE BUG
 			cmd -> commandCallback = Editor_scriptCallback;
-			if (str32len (script) == 0) {
+			if (script [0] == U'\0') {
 				cmd -> script = Melder_dup_f (U"");
 			} else {
 				structMelderFile file { };

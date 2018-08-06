@@ -241,12 +241,12 @@ static void * gui_monitor (double progress, conststring32 message) {
 		uinteger j = 0;
 		for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
 			char32 kar = message32 [i];
-			if (kar <= 0x00FFFF) {
+			if (kar <= 0x00'FFFF) {
 				message16 [j ++] = (char16) kar;
-			} else if (kar <= 0x10FFFF) {
-				kar -= 0x010000;
-				message16 [j ++] = (char16) (0x00D800 | (kar >> 10));
-				message16 [j ++] = (char16) (0x00DC00 | (kar & 0x0003FF));
+			} else if (kar <= 0x10'FFFF) {
+				kar -= 0x01'0000;
+				message16 [j ++] = (char16) (0x00'D800 | (kar >> 10));
+				message16 [j ++] = (char16) (0x00'DC00 | (kar & 0x00'03FF));
 			}
 		}
 		message16 [j] = u'\0';   // append null byte because we are going to search this string

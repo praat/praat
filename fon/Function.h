@@ -51,9 +51,9 @@ int Function_getDomainQuantity (Function me);   // as input for MelderQuantity_g
 int Function_getMinimumUnit (Function me, integer ilevel);
 int Function_getMaximumUnit (Function me, integer ilevel);
 
-#define Function_UNIT_TEXT_SHORT            0x00000001
-#define Function_UNIT_TEXT_GRAPHICAL        0x00000002
-#define Function_UNIT_TEXT_MENU             0x00000004
+#define Function_UNIT_TEXT_SHORT            0x0000'0001
+#define Function_UNIT_TEXT_GRAPHICAL        0x0000'0002
+#define Function_UNIT_TEXT_MENU             0x0000'0004
 conststring32 Function_getUnitText (Function me, integer level, int unit, uint32 flags);
 
 bool Function_isUnitLogarithmic (Function me, integer level, int unit);

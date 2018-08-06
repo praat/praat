@@ -689,12 +689,12 @@ static void parameterToVariable (Interpreter me, int type, conststring32 in_para
 		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar].get()));
 	} else if (type == Interpreter_CHOICE || type == Interpreter_OPTIONMENU) {
 		Interpreter_addNumericVariable (me, parameter, Melder_atof (my arguments [ipar].get()));
-		str32cpy (parameter + str32len (parameter), U"$");
+		str32cat (parameter, U"$");
 		Interpreter_addStringVariable (me, parameter, my choiceArguments [ipar]);
 	} else if (type == Interpreter_BUTTON || type == Interpreter_OPTION || type == Interpreter_COMMENT) {
 		/* Do not add a variable. */
 	} else {
-		str32cpy (parameter + str32len (parameter), U"$");
+		str32cat (parameter, U"$");
 		Interpreter_addStringVariable (me, parameter, my arguments [ipar].get());
 	}
 }

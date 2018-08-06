@@ -92,12 +92,12 @@ void Melder_str32To8bitFileRepresentation_inplace (conststring32 string, char *u
 		int64 n = str32len (string), n_utf16 = 0;
 		for (int64 i = 0; i < n; i ++) {
 			char32 kar = (char32) string [i];   // change sign (bit 32 is never used)
-			if (kar <= 0x00FFFF) {
+			if (kar <= 0x00'FFFF) {
 				unipath [n_utf16 ++] = (UniChar) kar;   // including null byte; guarded truncation
-			} else if (kar <= 0x10FFFF) {
-				kar -= 0x010000;
-				unipath [n_utf16 ++] = (UniChar) (0x00D800 | (kar >> 10));   // correct truncation, because UTF-32 has fewer than 27 bits (in fact it has 21 bits)
-				unipath [n_utf16 ++] = (UniChar) (0x00DC00 | (kar & 0x0003FF));
+			} else if (kar <= 0x10'FFFF) {
+				kar -= 0x01'0000;
+				unipath [n_utf16 ++] = (UniChar) (0x00'D800 | (kar >> 10));   // correct truncation, because UTF-32 has fewer than 27 bits (in fact it has 21 bits)
+				unipath [n_utf16 ++] = (UniChar) (0x00'DC00 | (kar & 0x00'03FF));
 			} else {
 				unipath [n_utf16 ++] = UNICODE_REPLACEMENT_CHARACTER;
 			}
@@ -140,10 +140,10 @@ void Melder_8bitFileRepresentationToStr32_inplace (const char *path8, char32 *pa
 		integer n_utf32 = 0;
 		for (integer i = 0; i < n_utf16; i ++) {
 			char32 kar1 = CFStringGetCharacterAtIndex (cfpath2, i);
-			if (kar1 >= 0x00D800 && kar1 <= 0x00DBFF) {
+			if (kar1 >= 0x00'D800 && kar1 <= 0x00'DBFF) {
 				char32 kar2 = (char32) CFStringGetCharacterAtIndex (cfpath2, ++ i);   // convert up
-				if (kar2 >= 0x00DC00 && kar2 <= 0x00DFFF) {
-					kar1 = (((kar1 & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x10000;
+				if (kar2 >= 0x00'DC00 && kar2 <= 0x00'DFFF) {
+					kar1 = (((kar1 & 0x3FF) << 10) | (kar2 & 0x3FF)) + 0x01'0000;
 				} else {
 					kar1 = UNICODE_REPLACEMENT_CHARACTER;
 				}

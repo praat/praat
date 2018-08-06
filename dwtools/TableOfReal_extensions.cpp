@@ -1165,7 +1165,7 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 	char32 **labels = my rowLabels.peek2();
 	regexp *compiled_regexp = nullptr;
 
-	if (! search || str32len (search) == 0) {
+	if (! search || search [0] == U'\0') {
 		return 0;
 	}
 	if (columnLabels) {

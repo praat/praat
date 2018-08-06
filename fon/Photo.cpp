@@ -272,7 +272,7 @@ autoPhoto Photo_readFromImageFile (MelderFile file) {
 				Gdiplus::EncoderParameters encoderParameters;
 				if (str32equ (mimeType, U"image/jpeg")) {
 					encoderParameters. Count = 1;
-					GUID guid = { 0x1D5BE4B5, 0xFA4A, 0x452D, { 0x9C, 0xDD, 0x5D, 0xB3, 0x51, 0x05, 0xE7, 0xEB }};  // EncoderQuality
+					GUID guid = { 0x1D5B'E4B5, 0xFA4A, 0x452D, { 0x9C, 0xDD, 0x5D, 0xB3, 0x51, 0x05, 0xE7, 0xEB }};  // EncoderQuality
 					encoderParameters. Parameter [0]. Guid = guid;
 					encoderParameters. Parameter [0]. Type = Gdiplus::EncoderParameterValueTypeLong;
 					encoderParameters. Parameter [0]. NumberOfValues = 1;
