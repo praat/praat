@@ -1,7 +1,7 @@
-#ifndef _hpp_melder_assert_
-#define _hpp_melder_assert_
+#ifndef _melder_console_h_
+#define _melder_console_h_
 
-/* melder_assert_.h
+/* melder_console.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -19,14 +19,15 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
-#ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
-#else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
-#endif
+namespace MelderConsole {
+	enum class Encoding {
+		UTF8 = 0,
+		UTF16 = 1,
+		ANSI = 2
+	};
+	extern void write (conststring32 message, bool useStderr);
+	extern void setEncoding (Encoding encoding);
+}
 
-/* End of file melder_assert_.h */
+/* End of file melder_console.h */
 #endif

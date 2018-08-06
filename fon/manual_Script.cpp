@@ -3604,6 +3604,8 @@ ENTRY (U"9. Calling Praat from a web server")
 NORMAL (U"If you call Praat from a web server, you typically do not want to read and write its preferences and buttons files. "
 	"To achieve this, you use the ##--no-pref-files# command line option before the script name:")
 CODE (U"system ('/users/apache/praat --run --no-pref-files /user/apache/scripts/computeAnalysis.praat 1234 blibla')")
+NORMAL (U"On Windows, you will often want to specify ##--utf8# as well, because otherwise "
+	"Praat will write its output to BOM-less UTF-16 files, which many programs do not understand.")
 
 ENTRY (U"10. All command line options")
 TAG (U"##--open")
@@ -3621,10 +3623,22 @@ TAG (U"##--version")
 DEFINITION (U"Print the Praat version.")
 TAG (U"##--help")
 DEFINITION (U"Print this list of command line options.")
+TAG (U"##-8#, ##--utf8#")
+DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-8 encoding. This is the default encoding on MacOS and Linux, "
+	"but on Windows the default is the Console's native UTF-16 Little Endian (i.e. the Console understands UTF-16 always, "
+	"whereas it understands UTF-8 only if you type $$chcp 65001$ first). "
+	"If you pipe to Windows programs that understand UTF-8 rather than UTF-16, "
+	"or if you want to redirect the output to a UTF-8 file, use this option.")
 TAG (U"##-a#, ##--ansi#")
-DEFINITION (U"On Windows: use ISO Latin-1 encoding instead of the Console's native UTF-16 Little Endian encoding. "
-	"This is not recommended, but might be necessary if you want to use Praat in a pipe "
-	"or with redirection to a file.")
+DEFINITION (U"Write the output (e.g. of $writeInfo$) in ISO-Latin 1 (\"ANSI\") encoding. "
+	"This is not recommended, because it potentially loses information (characters above U+00FF will show up as \"?\"), "
+	"but it might be necessary if you want to use Praat in a pipe with programs "
+	"that do understand ANSI but do not understand UTF-8 or UTF-16, "
+	"or if you want to redirect the output to an ANSI-encoded file.")
+TAG (U"##-u#, ##--utf16#")
+DEFINITION (U"Write the output (e.g. of $writeInfo$) in UTF-16 Little Endian encoding, without Byte Order Mark. "
+	"This format is the default on Windows, "
+	"but you can use it to write the output to a UTF-16LE-encoded file on any platform.")
 MAN_END
 
 MAN_BEGIN (U"Scripting 7. Scripting the editors", U"ppgb", 20040222)

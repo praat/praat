@@ -31,9 +31,9 @@
 #include <stdbool.h>
 #include <functional>
 
-#include "melder_assert_.h"
+#include "melder_assert.h"
 
-#include "melder_int_.h"
+#include "melder_int.h"
 
 #pragma mark - NULL
 
@@ -252,7 +252,7 @@ typedef _autostring <char32> autostring32;
 autostring32 Melder_dup (conststring32 string /* cattable */);
 autostring32 Melder_dup_f (conststring32 string /* cattable */);
 
-#include "melder_kar_.h"
+#include "melder_kar.h"
 
 inline static integer str16len (conststring16 string) noexcept {
 	const char16 *p = & string [0];
@@ -535,7 +535,7 @@ conststring32 Melder_truncate (conststring32 string, int64 width);   // will cut
 conststring32 Melder_padOrTruncate (int64 width, conststring32 string);   // will cut away, or append spaces to, the left of 'string' until 'width' is reached
 conststring32 Melder_padOrTruncate (conststring32 string, int64 width);   // will cut away, or append spaces to, the right of 'string' until 'width' is reached
 
-#include "MelderConsole_.h"
+#include "melder_console.h"
 
 /**
  * Text encodings.

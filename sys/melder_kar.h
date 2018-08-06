@@ -1,7 +1,7 @@
-#ifndef _hpp_melder_kar_
-#define _hpp_melder_kar_
+#ifndef _melder_kar_h_
+#define _melder_kar_h_
 
-/* melder_kar_.h
+/* melder_kar.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -303,5 +303,5 @@ inline static const char32 * Melder_findInk (conststring32 str) noexcept {
 	return p;
 }
 
-/* End of file melder_kar_.h */
+/* End of file melder_kar.h */
 #endif

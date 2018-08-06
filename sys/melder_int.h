@@ -1,7 +1,7 @@
-#ifndef _hpp_melder_int_
-#define _hpp_melder_int_
+#ifndef _melder_int_h_
+#define _melder_int_h_
 
-/* melder_int_.h
+/* melder_int.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -76,5 +76,5 @@ inline static integer uinteger_to_integer (uinteger n) {
 	return (integer) n;
 }
 
-/* End of file melder_int_.h */
+/* End of file melder_int.h */
 #endif

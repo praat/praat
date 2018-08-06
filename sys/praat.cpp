@@ -1103,12 +1103,20 @@ void praat_init (conststring32 title, int argc, char **argv)
 			MelderInfo_writeLine (U"  --pref-dir=DIR   set the preferences directory to DIR");
 			MelderInfo_writeLine (U"  --version        print the Praat version");
 			MelderInfo_writeLine (U"  --help           print this list of command line options");
-			MelderInfo_writeLine (U"  -a, --ansi       Windows only: use ISO Latin-1 encoding instead of UTF-16LE");
-			MelderInfo_writeLine (U"                   (this option is needed when you redirect to a pipe or file)");
+			MelderInfo_writeLine (U"  -u, --utf16      use UTF-16LE output encoding, no BOM (the default on Windows)");
+			MelderInfo_writeLine (U"  -8, --utf8       use UTF-8 output encoding (the default on MacOS and Linux)");
+			MelderInfo_writeLine (U"  -a, --ansi       use ISO Latin-1 output encoding (lossy, hence not recommended)");
+			MelderInfo_writeLine (U"                   (on Windows, use -0 or -a when you redirect to a pipe or file)");
 			MelderInfo_close ();
 			exit (0);
+		} else if (strequ (argv [praatP.argumentNumber], "-8") || strequ (argv [praatP.argumentNumber], "--utf8")) {
+			MelderConsole::setEncoding (MelderConsole::Encoding::UTF8);
+			praatP.argumentNumber += 1;
+		} else if (strequ (argv [praatP.argumentNumber], "-u") || strequ (argv [praatP.argumentNumber], "--utf16")) {
+			MelderConsole::setEncoding (MelderConsole::Encoding::UTF16);
+			praatP.argumentNumber += 1;
 		} else if (strequ (argv [praatP.argumentNumber], "-a") || strequ (argv [praatP.argumentNumber], "--ansi")) {
-			MelderConsole::setIsAnsi (true);
+			MelderConsole::setEncoding (MelderConsole::Encoding::ANSI);
 			praatP.argumentNumber += 1;
 		#if defined (macintosh)
 		} else if (strequ (argv [praatP.argumentNumber], "-NSDocumentRevisionsDebugMode")) {

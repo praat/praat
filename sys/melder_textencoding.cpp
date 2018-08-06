@@ -507,7 +507,7 @@ conststring8 Melder_peek32to8 (conststring32 text) {
 	if (++ ibuffer == 19)
 		ibuffer = 0;
 	int64 sizeNeeded = str32len (text) * 4 + 1;
-	if ((bufferSize [ibuffer] - sizeNeeded) * (int64) sizeof (char) >= 10000) {
+	if ((bufferSize [ibuffer] - sizeNeeded) * (int64) sizeof (char) >= 10'000) {
 		Melder_free (buffer [ibuffer]);
 		bufferSize [ibuffer] = 0;
 	}

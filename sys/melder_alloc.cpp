@@ -17,7 +17,8 @@
  */
 
 #include "melder.h"
-//#include <wctype.h>
+#include <wctype.h>
+#include <assert.h>
 
 static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0,
 	totalNumberOfMovingReallocs = 0, totalNumberOfReallocsInSitu = 0;
