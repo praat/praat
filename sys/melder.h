@@ -31,74 +31,9 @@
 #include <stdbool.h>
 #include <functional>
 
-#pragma mark - ASSERTION
+#include "melder_assert.h"
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
-#ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
-#else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
-#endif
-
-#pragma mark - INTEGERS
-/*
- * The following two lines are for obsolete (i.e. C99) versions of stdint.h
- */
-#define __STDC_LIMIT_MACROS
-#define __STDC_CONSTANT_MACROS
-#include <stdint.h>
-using byte = unsigned char;
-using int8 = int8_t;
-using int16 = int16_t;
-using int32 = int32_t;
-using int64 = int64_t;
-using integer = intptr_t;   // the default size of an integer (a "long" is only 32 bits on 64-bit Windows)
-using long_not_integer = long;   // for cases where we explicitly need the type "long", such as when printfing to %ld
-using uinteger = uintptr_t;
-using uint8 = uint8_t;
-using uint16 = uint16_t;
-using uint32 = uint32_t;
-using uint64 = uint64_t;
-#ifndef INT12_MAX
-	#define INT12_MAX   2047
-	#define INT12_MIN  -2048
-#endif
-#ifndef UINT12_MAX
-	#define UINT12_MAX   4096
-#endif
-#ifndef INT24_MAX
-	#define INT24_MAX   8388607
-	#define INT24_MIN  -8388608
-#endif
-#ifndef UINT24_MAX
-	#define UINT24_MAX   16777216
-#endif
-#define INTEGER_MAX  ( sizeof (integer) == 4 ? INT32_MAX : INT64_MAX )
-#define INTEGER_MIN  ( sizeof (integer) == 4 ? INT32_MIN : INT64_MIN )
-/*
-	The bounds of the contiguous set of integers that in a "double" can represent only themselves.
-*/
-#ifndef INT54_MAX
-	#define INT54_MAX   9007199254740991LL
-	#define INT54_MIN  -9007199254740991LL
-#endif
-
-/*
-	We assume that the types "integer" and "uinteger" are both large enough to contain
-	any possible value that Praat wants to assign to them.
-	This entails that we assume that these types can be converted to each other without bounds checking.
-	We therefore crash Praat if this second assumption is not met.
-*/
-inline static uinteger integer_to_uinteger (integer n) {
-	Melder_assert (n >= 0);
-	return (uinteger) n;
-}
-inline static integer uinteger_to_integer (uinteger n) {
-	Melder_assert (n <= INTEGER_MAX);
-	return (integer) n;
-}
+#include "melder_int.h"
 
 #pragma mark - NULL
 
@@ -317,287 +252,7 @@ typedef _autostring <char32> autostring32;
 autostring32 Melder_dup (conststring32 string /* cattable */);
 autostring32 Melder_dup_f (conststring32 string /* cattable */);
 
-#pragma mark - CHARACTER PROPERTIES
-
-#define kUCD_TOP_OF_ASCII  127
-#define kUCD_TOP_OF_LIST  0x2FA1D
-#define kUCD_UNASSIGNED  0
-
-enum {
-	mUCD_UPPERCASE_LETTER = (1 << 0),
-	mUCD_LOWERCASE_LETTER = (1 << 1),
-	mUCD_TITLECASE_LETTER = (1 << 2),
-	mUCD_CASED_LETTER = (mUCD_UPPERCASE_LETTER | mUCD_LOWERCASE_LETTER | mUCD_TITLECASE_LETTER),
-	mUCD_MODIFIER_LETTER = (1 << 3),
-	mUCD_OTHER_LETTER = (1 << 4),
-	mUCD_LETTER = (mUCD_CASED_LETTER | mUCD_MODIFIER_LETTER | mUCD_OTHER_LETTER),
-
-	mUCD_NONSPACING_MARK = (1 << 5),
-	mUCD_SPACING_MARK = (1 << 6),
-	mUCD_ENCLOSING_MARK = (1 << 7),
-	mUCD_MARK = (mUCD_NONSPACING_MARK | mUCD_SPACING_MARK | mUCD_ENCLOSING_MARK),
-
-	mUCD_DECIMAL_NUMBER = (1 << 8),
-	mUCD_LETTER_NUMBER = (1 << 9),
-	mUCD_OTHER_NUMBER = (1 << 10),
-	mUCD_NUMBER = (mUCD_DECIMAL_NUMBER | mUCD_LETTER_NUMBER | mUCD_OTHER_NUMBER),
-
-	mUCD_CONNECTOR_PUNCTUATION = (1 << 11),
-	mUCD_DASH_PUNCTUATION = (1 << 12),
-	mUCD_OPEN_PUNCTUATION = (1 << 13),
-	mUCD_CLOSE_PUNCTUATION = (1 << 14),
-	mUCD_INITIAL_PUNCTUATION = (1 << 15),
-	mUCD_FINAL_PUNCTUATION = (1 << 16),
-	mUCD_OTHER_PUNCTUATION = (1 << 17),
-	mUCD_PUNCTUATION = (mUCD_CONNECTOR_PUNCTUATION | mUCD_DASH_PUNCTUATION | mUCD_OPEN_PUNCTUATION | mUCD_CLOSE_PUNCTUATION | mUCD_INITIAL_PUNCTUATION | mUCD_FINAL_PUNCTUATION | mUCD_OTHER_PUNCTUATION),
-
-	mUCD_MATH_SYMBOL = (1 << 18),
-	mUCD_CURRENCY_SYMBOL = (1 << 19),
-	mUCD_MODIFIER_SYMBOL = (1 << 20),
-	mUCD_OTHER_SYMBOL = (1 << 21),
-	mUCD_SYMBOL = (mUCD_MATH_SYMBOL | mUCD_CURRENCY_SYMBOL | mUCD_MODIFIER_SYMBOL | mUCD_OTHER_SYMBOL),
-
-	mUCD_BREAKING_SPACE = (1 << 22),
-	mUCD_NON_BREAKING_SPACE = (1 << 23),
-	mUCD_SPACE_SEPARATOR = (mUCD_BREAKING_SPACE | mUCD_NON_BREAKING_SPACE),
-	mUCD_LINE_SEPARATOR = (1 << 24),
-	mUCD_PARAGRAPH_SEPARATOR = (1 << 25),
-	mUCD_NEWLINE = (mUCD_LINE_SEPARATOR | mUCD_PARAGRAPH_SEPARATOR),
-	mUCD_SEPARATOR = (mUCD_SPACE_SEPARATOR | mUCD_NEWLINE),
-
-	mUCD_CONTROL = (1 << 26),
-	mUCD_FORMAT = (1 << 27),
-	mUCD_PRIVATE_USE = (1 << 28),
-
-	mUCD_WORD_CHARACTER = (1 << 29),
-	mUCD_NULL = (1 << 30),
-
-	mUCD_ALPHANUMERIC = (mUCD_LETTER | mUCD_NUMBER),
-	mUCD_END_OF_INK = (mUCD_SEPARATOR | mUCD_NULL),
-	mUCD_END_OF_LINE = (mUCD_NEWLINE | mUCD_NULL),
-};
-
-struct UCD_CodePointInfo {
-	uint32 features;
-	char32 upperCase, lowerCase, titleCase;
-	char first, second;
-};
-extern UCD_CodePointInfo theUnicodeDatabase [1+kUCD_TOP_OF_LIST];
-enum class kMelder_charset { ASCII_, UNICODE_ };
-
-/*
-	Praat is an internationalized program, which means it has to work in the same way
-	wherever on earth it is used. This means that Praat has to be blind to localized settings,
-	such as what counts as a space and what combinations of characters
-	count as pairs of lower case and upper case.
-
-	To be able to use Praat all over the world, we therefore define one single
-	"international locale", which is simply based on the Unicode features of each code point.
-*/
-
-/*
-	Internationalize std::isblank ():
-*/
-inline static bool Melder_isHorizontalSpace (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SPACE_SEPARATOR) != 0;
-}
-inline static void Melder_skipHorizontalSpace (char32 **p_text) {
-	while (Melder_isHorizontalSpace (**p_text)) (*p_text) ++;
-}
-inline static char32 * Melder_findEndOfHorizontalSpace (char32 *p) {
-	while (Melder_isHorizontalSpace (*p)) p ++;
-	return p;
-}
-inline static const char32 * Melder_findEndOfHorizontalSpace (const char32 *p) {
-	while (Melder_isHorizontalSpace (*p)) p ++;
-	return p;
-}
-
-inline static bool Melder_isAsciiHorizontalSpace (char32 kar) {
-	return kar == U'\t' || kar == U' ';
-}
-
-inline static bool Melder_isVerticalSpace (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_NEWLINE) != 0;
-}
-inline static bool Melder_isAsciiVerticalSpace (char32 kar) {
-	return kar >= 10 && kar <= 13;   // \n, \v, \f, \r
-}
-
-/*
-	Internationalize std::isspace ():
-*/
-inline static bool Melder_isHorizontalOrVerticalSpace (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
-}
-inline static bool Melder_isHorizontalOrVerticalSpace (char32 kar, kMelder_charset charset) {
-	const char32 top = charset == kMelder_charset::ASCII_ ? kUCD_TOP_OF_ASCII : kUCD_TOP_OF_LIST;
-	return kar <= top && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
-}
-inline static bool Melder_isAsciiHorizontalOrVerticalSpace (char32 kar) {
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
-}
-
-inline static bool Melder_isEndOfInk (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_INK) != 0;
-}
-inline static bool Melder_isEndOfLine (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_LINE) != 0;
-}
-inline static bool Melder_isEndOfText (char32 kar) {
-	return kar == U'\0';
-}
-inline static bool Melder_staysWithinInk (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_INK) == 0;
-}
-inline static bool Melder_staysWithinLine (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_LINE) == 0;
-}
-inline static void Melder_skipToEndOfLine (char32 **p_text) {
-	while (Melder_staysWithinLine (**p_text)) (*p_text) ++;
-}
-inline static char32 * Melder_findEndOfInk (char32 *p) {
-	while (Melder_staysWithinInk (*p)) p ++;
-	return p;
-}
-inline static const char32 * Melder_findEndOfInk (const char32 *p) {
-	while (Melder_staysWithinInk (*p)) p ++;
-	return p;
-}
-inline static char32 * Melder_findEndOfLine (char32 *p) {
-	while (Melder_staysWithinLine (*p)) p ++;
-	return p;
-}
-inline static const char32 * Melder_findEndOfLine (const char32 *p) {
-	while (Melder_staysWithinLine (*p)) p ++;
-	return p;
-}
-/*
-	Internationalize std::isalpha ():
-*/
-inline static bool Melder_isLetter (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_LETTER) != 0;
-}
-inline static bool Melder_isAsciiLetter (char32 kar) {
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_LETTER) != 0;
-}
-
-/*
-	Internationalize std::isupper ():
-*/
-inline static bool Melder_isUpperCaseLetter (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_UPPERCASE_LETTER) != 0;
-}
-inline static bool Melder_isAsciiUpperCaseLetter (char32 kar) {
-	return kar >= U'A' && kar <= U'Z';
-}
-
-/*
-	Internationalize std::islower ():
-*/
-inline static bool Melder_isLowerCaseLetter (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_LOWERCASE_LETTER) != 0;
-}
-inline static bool Melder_isAsciiLowerCaseLetter (char32 kar) {
-	return kar >= U'a' && kar <= U'z';
-}
-
-inline static bool Melder_isTitleCaseLetter (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_TITLECASE_LETTER) != 0;
-}
-inline static bool Melder_isAsciiTitleCaseLetter (char32 kar) {
-	return kar >= U'A' && kar <= U'Z';
-}
-
-/*
-	Internationalize std::isdigit ():
-*/
-inline static bool Melder_isDecimalNumber (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_DECIMAL_NUMBER) != 0;
-}
-inline static bool Melder_isAsciiDecimalNumber (char32 kar) {
-	return kar >= U'0' && kar <= U'9';
-}
-
-/*
-	We cannot really internationalize std::isxdigit ():
-*/
-inline static bool Melder_isHexadecimalDigit (char32 kar) {
-	return kar >= U'0' && kar <= U'9' || kar >= U'A' && kar <= U'Z' || kar >= U'a' && kar <= U'z';
-}
-
-/*
-	Internationalize std::isalnum ():
-*/
-inline static bool Melder_isAlphanumeric (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_ALPHANUMERIC) != 0;
-}
-inline static bool Melder_isAsciiAlphanumeric (char32 kar) {
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_ALPHANUMERIC) != 0;
-}
-
-inline static bool Melder_isWordCharacter (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
-}
-inline static bool Melder_isAsciiWordCharacter (char32 kar) {
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_WORD_CHARACTER) != 0;
-}
-
-/*
-	The standard library further contains std::ispunct (), std::iscntrl (), std::isprint (), std::isgraph ().
-	These have very little use nowadays, so only for completeness do we include versions of them here,
-	which are correct at least for ASCII arguments.
-	Of these four functions, Melder_hasInk () is not yet correct for all Unicode points,
-	as approximately one half of the mUCD_FORMAT points are inkless as well.
-*/
-inline static bool Melder_isPunctuationOrSymbol (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
-}
-inline static bool Melder_isAsciiPunctuationOrSymbol (char32 kar) {   // same as std::ispunct() with default C locale
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_PUNCTUATION | mUCD_SYMBOL)) != 0;
-}
-inline static bool Melder_isControl (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
-}
-inline static bool Melder_isAsciiControl (char32 kar) {   // same as std::iscntrl() with default C locale
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) != 0;
-}
-inline static bool Melder_isPrintable (char32 kar) {
-	return kar > kUCD_TOP_OF_LIST || (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
-}
-inline static bool Melder_isAsciiPrintable (char32 kar) {   // same as std::isprint() with default C locale
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_CONTROL) == 0;
-}
-inline static bool Melder_hasInk (char32 kar) {
-	return kar > kUCD_TOP_OF_LIST || (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
-}
-inline static bool Melder_hasAsciiInk (char32 kar) {   // same as std::isgraph() with default C locale
-	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & (mUCD_CONTROL | mUCD_SEPARATOR)) == 0;
-}
-
-/*
-	Internationalize std::toupper () and std::tolower ():
-*/
-inline static char32 Melder_toUpperCase (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. upperCase : kar;
-}
-inline static char32 Melder_toLowerCase (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. lowerCase : kar;
-}
-inline static char32 Melder_toTitleCase (char32 kar) {
-	return kar <= kUCD_TOP_OF_LIST ? theUnicodeDatabase [kar]. titleCase : kar;
-}
-
-inline static const char32 * Melder_findInk (conststring32 str) noexcept {
-	if (! str)
-		return nullptr;
-	const char32 *p = & str [0];
-	for (; ! Melder_hasInk (*p); p ++) {
-		if (*p == U'\0')
-			return nullptr;   // not found
-	}
-	return p;
-}
+#include "melder_kar.h"
 
 inline static integer str16len (conststring16 string) noexcept {
 	const char16 *p = & string [0];
@@ -618,6 +273,13 @@ inline static integer str32len (conststring32 string) noexcept {
 }
 inline static mutablestring32 str32cpy (mutablestring32 target, conststring32 source) noexcept {
 	char32 *p = & target [0];
+	while (* source != U'\0') * p ++ = * source ++;
+	*p = U'\0';
+	return target;
+}
+inline static mutablestring32 str32cat (mutablestring32 target, conststring32 source) noexcept {
+	char32 *p = & target [0];
+	while (*p != U'\0') ++ p;
 	while (* source != U'\0') * p ++ = * source ++;
 	*p = U'\0';
 	return target;
@@ -873,9 +535,7 @@ conststring32 Melder_truncate (conststring32 string, int64 width);   // will cut
 conststring32 Melder_padOrTruncate (int64 width, conststring32 string);   // will cut away, or append spaces to, the left of 'string' until 'width' is reached
 conststring32 Melder_padOrTruncate (conststring32 string, int64 width);   // will cut away, or append spaces to, the right of 'string' until 'width' is reached
 
-#pragma mark - CONSOLE
-
-void Melder_writeToConsole (conststring32 message, bool useStderr);
+#include "melder_console.h"
 
 /**
  * Text encodings.
@@ -891,10 +551,9 @@ kMelder_textOutputEncoding Melder_getOutputEncoding ();
  * these constants should stay separate from the above encoding constants
  * because they occur in the same fields of struct MelderFile.
  */
-//const uint32 kMelder_textInputEncoding_FLAC = 0x464C4143;
-const uint32 kMelder_textOutputEncoding_ASCII = 0x41534349;
-const uint32 kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C415401;
-const uint32 kMelder_textOutputEncoding_FLAC = 0x464C4143;
+constexpr uint32 kMelder_textOutputEncoding_ASCII = 0x4153'4349;
+constexpr uint32 kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C41'5401;
+constexpr uint32 kMelder_textOutputEncoding_FLAC = 0x464C'4143;
 
 bool Melder_isValidAscii (conststring32 string);
 bool Melder_str8IsValidUtf8 (const char *string);
@@ -1093,6 +752,8 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 //      print a(1)*4
 #define NUMpi  3.1415926535897932384626433832795028841972
 //      print a(1)*2
+#undef M_PI
+#define M_PI  3.1415926535897932384626433832795028841972
 #define NUMpi_2  1.5707963267948966192313216916397514420986
 //      print a(1)
 #define NUMpi_4  0.7853981633974483096156608458198757210493
@@ -1136,7 +797,7 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 
 /*
 	isdefined() shall capture not only `undefined`, but all infinities and NaNs.
-	This can be done with a single test for the set bits in 0x7FF0000000000000,
+	This can be done with a single test for the set bits in 0x7FF0'0000'0000'0000,
 	at least for 64-bit IEEE implementations. The correctness of this assumption is checked in sys/praat.cpp.
 	The portable version of isdefined() involves both isinf() and isnan(), or perhaps just isfinite(),
 	but that would be slower (as tested in fon/Praat_tests.cpp)
@@ -1144,8 +805,8 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 	as in dwsys/NUMcomplex.cpp.
 */
 //inline static bool isdefined (double x) { return ! isinf (x) && ! isnan (x); }   /* portable */
-inline static bool isdefined (double x) { return ((* (uint64 *) & x) & 0x7FF0000000000000) != 0x7FF0000000000000; }
-inline static bool isundef (double x) { return ((* (uint64 *) & x) & 0x7FF0000000000000) == 0x7FF0000000000000; }
+inline static bool isdefined (double x) { return ((* (uint64 *) & x) & 0x7FF0'0000'0000'0000) != 0x7FF0'0000'0000'0000; }
+inline static bool isundef (double x) { return ((* (uint64 *) & x) & 0x7FF0'0000'0000'0000) == 0x7FF0'0000'0000'0000; }
 
 /********** Arrays with one index (NUMarrays.cpp) **********/
 
@@ -1197,7 +858,7 @@ void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, intege
 
 /********** Arrays with two indices (NUMarrays.cpp) **********/
 
-void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool zero);
+void * NUMmatrix_generic (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool zero);
 /*
 	Function:
 		create a matrix [row1...row2] [col1...col2]; if `zero`, then all values are initialized to 0.
@@ -1206,7 +867,7 @@ void * NUMmatrix (integer elementSize, integer row1, integer row2, integer col1,
 		col2 >= col1;
 */
 
-void NUMmatrix_free_ (integer elementSize, byte **m, integer row1, integer col1) noexcept;
+void NUMmatrix_free_generic (integer elementSize, byte **m, integer row1, integer col1) noexcept;
 /*
 	Function:
 		destroy a matrix m created with NUM...matrix.
@@ -1215,7 +876,7 @@ void NUMmatrix_free_ (integer elementSize, byte **m, integer row1, integer col1)
 		must have the same value as with the creation of the matrix.
 */
 
-void * NUMmatrix_copy (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2);
+void * NUMmatrix_copy_generic (integer elementSize, void *m, integer row1, integer row2, integer col1, integer col2);
 /*
 	Function:
 		copy (part of) a matrix m, wich does not have to be created with NUMmatrix, to a new one.
@@ -1223,18 +884,21 @@ void * NUMmatrix_copy (integer elementSize, void *m, integer row1, integer row2,
 		if m != nullptr: the values m [rowmin..rowmax] [colmin..colmax] must exist.
 */
 
-void NUMmatrix_copyElements_ (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2);
+void NUMmatrix_copyElements_generic (integer elementSize, char **mfrom, char **mto, integer row1, integer row2, integer col1, integer col2);
 /*
 	copy the matrix elements m [r1..r2] [c1..c2] to those of a matrix 'to'.
 	These matrices need not have been created by NUMmatrix.
 */
 
-bool NUMmatrix_equal (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2);
+bool NUMmatrix_equal_generic (integer elementSize, void *m1, void *m2, integer row1, integer row2, integer col1, integer col2);
 /*
 	return 1 if the matrix elements m1 [r1..r2] [c1..c2] are equal
 	to the corresponding elements of the matrix m2; otherwise, return 0.
 	The matrices need not have been created by NUM...matrix.
 */
+
+byte *** NUMtensor3_generic (integer elementSize, integer pla1, integer pla2, integer row1, integer row2, integer col1, integer col2, bool initializeToZero);
+void NUMtensor3_free_generic (integer elementSize, byte ***t, integer pla1, integer row1, integer col1) noexcept;
 
 integer NUM_getTotalNumberOfArrays ();   // for debugging
 
@@ -1461,27 +1125,27 @@ public:
 
 template <class T>
 T** NUMmatrix (integer row1, integer row2, integer col1, integer col2) {
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, true));
+	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2, true));
 	return result;
 }
 
 template <class T>
 T** NUMmatrix (integer row1, integer row2, integer col1, integer col2, bool zero) {
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2, zero));
+	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2, zero));
 	return result;
 }
 
 template <class T>
 void NUMmatrix_free (T** ptr, integer row1, integer col1) noexcept {
-	NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
+	NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (ptr), row1, col1);
 }
 
 template <class T>
 T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer col2) {
 	#if 1
-	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2));
+	T** result = static_cast <T**> (NUMmatrix_copy_generic (sizeof (T), ptr, row1, row2, col1, col2));
 	#else
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
+	T** result = static_cast <T**> (NUMmatrix_generic (sizeof (T), row1, row2, col1, col2));
 	for (integer irow = row1; irow <= row2; irow ++)
 		for (integer icol = col1; icol <= col2; icol ++)
 			result [irow] [icol] = ptr [irow] [icol];
@@ -1491,12 +1155,12 @@ T** NUMmatrix_copy (T** ptr, integer row1, integer row2, integer col1, integer c
 
 template <class T>
 bool NUMmatrix_equal (T** m1, T** m2, integer row1, integer row2, integer col1, integer col2) {
-	return NUMmatrix_equal (sizeof (T), m1, m2, row1, row2, col1, col2);
+	return NUMmatrix_equal_generic (sizeof (T), m1, m2, row1, row2, col1, col2);
 }
 
 template <class T>
 void NUMmatrix_copyElements (T** mfrom, T** mto, integer row1, integer row2, integer col1, integer col2) {
-	NUMmatrix_copyElements_ (sizeof (T), reinterpret_cast <char **> (mfrom), reinterpret_cast <char **> (mto), row1, row2, col1, col2);
+	NUMmatrix_copyElements_generic (sizeof (T), reinterpret_cast <char **> (mfrom), reinterpret_cast <char **> (mto), row1, row2, col1, col2);
 }
 
 template <class T>
@@ -1515,7 +1179,8 @@ public:
 	autoNUMmatrix () : d_ptr (nullptr), d_row1 (0), d_col1 (0) {
 	}
 	~autoNUMmatrix () {
-		if (d_ptr) NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
+		if (d_ptr)
+			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 	}
 	T*& operator[] (integer row) {
 		return d_ptr [row];
@@ -1530,7 +1195,7 @@ public:
 	}
 	void reset (integer row1, integer row2, integer col1, integer col2) {
 		if (d_ptr) {
-			NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
+			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 			d_ptr = nullptr;
 		}
 		d_row1 = row1;
@@ -1539,7 +1204,7 @@ public:
 	}
 	void reset (integer row1, integer row2, integer col1, integer col2, bool zero) {
 		if (d_ptr) {
-			NUMmatrix_free_ (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
+			NUMmatrix_free_generic (sizeof (T), reinterpret_cast <byte **> (d_ptr), d_row1, d_col1);
 			d_ptr = nullptr;
 		}
 		d_row1 = row1;
@@ -1876,7 +1541,7 @@ conststring32 Melder_nummat (nummat value);
 typedef class structThing *Thing;   // forward declaration
 conststring32 Thing_messageName (Thing me);
 struct MelderArg {
-	conststring32 _arg;
+	const conststring32 _arg;
 	/*
 		The types of arguments that never involve memory allocation:
 	*/
@@ -2137,7 +1802,7 @@ integer Melder_searchToken (conststring32 string, char32 **tokens, integer n);
 */
 
 inline static void _recursiveTemplate_Melder_casual (const MelderArg& arg) {
-	Melder_writeToConsole (arg._arg, true);
+	MelderConsole::write (arg._arg, true);
 }
 template <typename... Args>
 void _recursiveTemplate_Melder_casual (const MelderArg& first, Args... rest) {
@@ -2148,7 +1813,7 @@ void _recursiveTemplate_Melder_casual (const MelderArg& first, Args... rest) {
 template <typename... Args>
 void Melder_casual (const MelderArg& first, Args... rest) {
 	_recursiveTemplate_Melder_casual (first, rest...);
-	Melder_writeToConsole (U"\n", true);
+	MelderConsole::write (U"\n", true);
 }
 
 void MelderCasual_memoryUse (integer message = 0);
@@ -2169,7 +1834,7 @@ void MelderInfo_close ();   // drain the background info to the Info window, mak
 void MelderInfo_drain ();   // drain the background info to the Info window, without adding any extra line break
 
 inline static void _recursiveTemplate_MelderInfo_write (const MelderArg& arg) {
-	Melder_writeToConsole (arg._arg, false);
+	MelderConsole::write (arg._arg, false);
 }
 template <typename... Args>
 void _recursiveTemplate_MelderInfo_write (const MelderArg& first, Args... rest) {
@@ -2190,7 +1855,7 @@ void MelderInfo_writeLine (const MelderArg& first, Args... rest) {
 	MelderString_appendCharacter (MelderInfo::_p_currentBuffer, U'\n');
 	if (MelderInfo::_p_currentProc == & MelderInfo::_defaultProc && MelderInfo::_p_currentBuffer == & MelderInfo::_foregroundBuffer) {
 		_recursiveTemplate_MelderInfo_write (first, rest...);
-		Melder_writeToConsole (U"\n", false);
+		MelderConsole::write (U"\n", false);
 	}
 }
 
@@ -2578,7 +2243,6 @@ void MelderGui_create (/* GuiWindow */ void *parent);
 
 extern bool Melder_batch;   // true if run from the batch or from an interactive command-line interface
 extern bool Melder_backgrounding;   // true if running a script
-extern bool Melder_consoleIsAnsi;
 extern bool Melder_asynchronous;   // true if specified by the "asynchronous" directive in a script
 
 /********** OVERRIDE DEFAULT BEHAVIOUR **********/
@@ -3132,7 +2796,7 @@ class MelderCompareHook {
 		FunctionType _f;
 };
 
-#include "regularExp.h"
+#include "../dwsys/regularExp.h"
 
 autostring32 leftStr (conststring32 str, integer newLength = 1);
 autostring32 rightStr (conststring32 str, integer newLength = 1);

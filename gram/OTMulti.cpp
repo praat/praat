@@ -1231,15 +1231,15 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 			markString [0] = U'\0';
 			if (bidirectional && my candidates [icand]. marks [index] > 0) {
 				if ((candidateIsOptimal1 || candidateIsOptimal2) && ! candidateIsOptimal) {
-					str32cpy (markString + str32len (markString), U"\\<-");
+					str32cat (markString, U"\\<-");
 				}
 			}
 			if (bidirectional && my candidates [icand]. marks [index] < 0) {
 				if (candidateIsOptimal && ! candidateIsOptimal1) {
-					str32cpy (markString + str32len (markString), U"\\<-");
+					str32cat (markString, U"\\<-");
 				}
 				if (candidateIsOptimal && ! candidateIsOptimal2) {
-					str32cpy (markString + str32len (markString), U"\\<-");
+					str32cat (markString, U"\\<-");
 				}
 			}
 			/*
@@ -1252,42 +1252,39 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 			{
 				int winnerMarks = my candidates [winner]. marks [index];
 				if (winnerMarks + 1 > 5) {
-					str32cpy (markString + str32len (markString), Melder_integer (winnerMarks + 1));
+					str32cat (markString, Melder_integer (winnerMarks + 1));
 				} else {
 					for (integer imark = 1; imark <= winnerMarks + 1; imark ++)
-						str32cpy (markString + str32len (markString), U"*");
+						str32cat (markString, U"*");
 				}
 				for (integer imark = my candidates [icand]. marks [index]; imark < 0; imark ++)
-					str32cpy (markString + str32len (markString), U"+");
-				str32cpy (markString + str32len (markString), U"!");
+					str32cat (markString, U"+");
+				str32cat (markString, U"!");
 				if (my candidates [icand]. marks [index] - (winnerMarks + 2) + 1 > 5) {
-					str32cpy (markString + str32len (markString), Melder_integer (my candidates [icand]. marks [index] - (winnerMarks + 2) + 1));
+					str32cat (markString, Melder_integer (my candidates [icand]. marks [index] - (winnerMarks + 2) + 1));
 				} else {
 					for (integer imark = winnerMarks + 2; imark <= my candidates [icand]. marks [index]; imark ++)
-						str32cpy (markString + str32len (markString), U"*");
+						str32cat (markString, U"*");
 				}
 			} else {
 				if (my candidates [icand]. marks [index] > 5) {
-					str32cpy (markString + str32len (markString), Melder_integer (my candidates [icand]. marks [index]));
+					str32cat (markString, Melder_integer (my candidates [icand]. marks [index]));
 				} else {
 					for (integer imark = 1; imark <= my candidates [icand]. marks [index]; imark ++)
-						str32cpy (markString + str32len (markString), U"*");
+						str32cat (markString, U"*");
 					for (integer imark = my candidates [icand]. marks [index]; imark < 0; imark ++)
-						str32cpy (markString + str32len (markString), U"+");
+						str32cat (markString, U"+");
 				}
 			}
 			if (bidirectional && my candidates [icand]. marks [index] > 0) {
-				if (candidateIsOptimal && ! candidateIsOptimal1) {
-					str32cpy (markString + str32len (markString), U"\\->");
-				}
-				if (candidateIsOptimal && ! candidateIsOptimal2) {
-					str32cpy (markString + str32len (markString), U"\\->");
-				}
+				if (candidateIsOptimal && ! candidateIsOptimal1)
+					str32cat (markString, U"\\->");
+				if (candidateIsOptimal && ! candidateIsOptimal2)
+					str32cat (markString, U"\\->");
 			}
 			if (bidirectional && my candidates [icand]. marks [index] < 0) {
-				if ((candidateIsOptimal1 || candidateIsOptimal2) && ! candidateIsOptimal) {
-					str32cpy (markString + str32len (markString), U"\\->");
-				}
+				if ((candidateIsOptimal1 || candidateIsOptimal2) && ! candidateIsOptimal)
+					str32cat (markString, U"\\->");
 			}
 			Graphics_text (g, x + 0.5 * width, y + descent, markString);
 			Graphics_setColour (g, colour);

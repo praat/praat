@@ -74,18 +74,22 @@ static void addCandidate (OTGrammarTableau me, integer numberOfSyllables, int st
 	char32 output [100];
 	str32cpy (output, U"[");
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-		if (isyll > 1) str32cpy (output + str32len (output), U" ");
-		str32cpy (output + str32len (output), ( overtFormsHaveSecondaryStress ? syllable : syllableWithoutSecondaryStress )
+		if (isyll > 1)
+			str32cat (output, U" ");
+		str32cat (output, ( overtFormsHaveSecondaryStress ? syllable : syllableWithoutSecondaryStress )
 				[stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
 	}
-	str32cpy (output + str32len (output), U"] \\-> /");
+	str32cat (output, U"] \\-> /");
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-		if (isyll > 1) str32cpy (output + str32len (output), U" ");
-		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0)) str32cpy (output + str32len (output), U"(");
-		str32cpy (output + str32len (output), syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
-		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0)) str32cpy (output + str32len (output), U")");
+		if (isyll > 1)
+			str32cat (output, U" ");
+		if (footedToTheRight [isyll] || (! footedToTheLeft [isyll] && stress [isyll] != 0))
+			str32cat (output, U"(");
+		str32cat (output, syllable [stress [isyll] + 3 * (surfaceWeightPattern [isyll] - 1)]);
+		if (footedToTheLeft [isyll] || (! footedToTheRight [isyll] && stress [isyll] != 0))
+			str32cat (output, U")");
 	}
-	str32cpy (output + str32len (output), U"/");
+	str32cat (output, U"/");
 	my candidates [++ my numberOfCandidates]. output = Melder_dup (output);
 }
 
@@ -180,10 +184,11 @@ static void fillTableau (OTGrammarTableau me, integer numberOfSyllables, int und
 	for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
 		static const conststring32 syllable_noCodas [] = { U"", U"L", U"H" };
 		static const conststring32 syllable_codas [] = { U"", U"cv", U"cv:", U"cvc" };
-		if (isyll > 1) str32cpy (input + str32len (input), includeCodas ? U"." : U" ");
-		str32cpy (input + str32len (input), ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
+		if (isyll > 1)
+			str32cat (input, includeCodas ? U"." : U" ");
+		str32cat (input, ( includeCodas ? syllable_codas : syllable_noCodas ) [underlyingWeightPattern [isyll]]);
 	}
-	str32cpy (input + str32len (input), U"|");
+	str32cat (input, U"|");
 	my input = Melder_dup (input);
 	my candidates = NUMvector <structOTGrammarCandidate> (1, ( includeCodas ? numberOfCandidates_codas : numberOfCandidates_noCodas ) [numberOfSyllables]);
 	for (integer mainStressed = 1; mainStressed <= numberOfSyllables; mainStressed ++) {

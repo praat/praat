@@ -108,7 +108,7 @@ conststring8 MelderTrace::_peek32to8 (conststring32 string) {
 	static int64 bufferSize { 0 };
 	int64 n = str32len (string);
 	int64 sizeNeeded = n * 4 + 1;
-	if ((bufferSize - sizeNeeded) * (int64) sizeof (char) >= 10000) {
+	if ((bufferSize - sizeNeeded) * (int64) sizeof (char) >= 10'000) {
 		free (buffer);
 		buffer = nullptr;   // undangle
 		bufferSize = 0;
@@ -125,20 +125,20 @@ conststring8 MelderTrace::_peek32to8 (conststring32 string) {
 	int64 i, j;
 	for (i = 0, j = 0; i < n; i ++) {
 		char32 kar = string [i];
-		if (kar <= 0x00007F) {   // 7 bits
+		if (kar <= 0x00'007F) {   // 7 bits
 			buffer [j ++] = (char) (char8) kar;   // guarded truncation
-		} else if (kar <= 0x0007FF) {   // 11 bits
-			buffer [j ++] = (char) (char8) (0x0000C0 | (kar >> 6));   // the upper 5 bits yield a number between 0xC4 and 0xDF
-			buffer [j ++] = (char) (char8) (0x000080 | (kar & 0x00003F));   // the lower 6 bits yield a number between 0x80 and 0xBF
-		} else if (kar <= 0x00FFFF) {   // 16 bits
-			buffer [j ++] = (char) (char8) (0x0000E0 | (kar >> 12));   // the upper 4 bits yield a number between 0xE0 and 0xEF
-			buffer [j ++] = (char) (char8) (0x000080 | ((kar >> 6) & 0x00003F));
-			buffer [j ++] = (char) (char8) (0x000080 | (kar & 0x00003F));
+		} else if (kar <= 0x00'07FF) {   // 11 bits
+			buffer [j ++] = (char) (char8) (0x00'00C0 | (kar >> 6));   // the upper 5 bits yield a number between 0xC4 and 0xDF
+			buffer [j ++] = (char) (char8) (0x00'0080 | (kar & 0x00'003F));   // the lower 6 bits yield a number between 0x80 and 0xBF
+		} else if (kar <= 0x00'FFFF) {   // 16 bits
+			buffer [j ++] = (char) (char8) (0x00'00E0 | (kar >> 12));   // the upper 4 bits yield a number between 0xE0 and 0xEF
+			buffer [j ++] = (char) (char8) (0x00'0080 | ((kar >> 6) & 0x00'003F));
+			buffer [j ++] = (char) (char8) (0x00'0080 | (kar & 0x00'003F));
 		} else {   // 21 bits
-			buffer [j ++] = (char) (char8) (0x0000F0 | (kar >> 18));   // the upper 3 bits yield a number between 0xF0 and 0xF4 (0x10FFFF >> 18 == 4)
-			buffer [j ++] = (char) (char8) (0x000080 | ((kar >> 12) & 0x00003F));   // the next 6 bits
-			buffer [j ++] = (char) (char8) (0x000080 | ((kar >> 6) & 0x00003F));   // the third 6 bits
-			buffer [j ++] = (char) (char8) (0x000080 | (kar & 0x00003F));   // the lower 6 bits
+			buffer [j ++] = (char) (char8) (0x00'00F0 | (kar >> 18));   // the upper 3 bits yield a number between 0xF0 and 0xF4 (0x10FFFF >> 18 == 4)
+			buffer [j ++] = (char) (char8) (0x00'0080 | ((kar >> 12) & 0x00'003F));   // the next 6 bits
+			buffer [j ++] = (char) (char8) (0x00'0080 | ((kar >> 6) & 0x00'003F));   // the third 6 bits
+			buffer [j ++] = (char) (char8) (0x00'0080 | (kar & 0x00'003F));   // the lower 6 bits
 		}
 	}
 	buffer [j] = '\0';
@@ -151,7 +151,7 @@ conststring16 MelderTrace::_peek32to16 (conststring32 string) {
 	static int64 bufferSize { 0 };
 	int64 n = str32len (string);
 	int64 sizeNeeded = n * 2 + 1;
-	if ((bufferSize - sizeNeeded) * (int64) sizeof (char16) >= 10000) {
+	if ((bufferSize - sizeNeeded) * (int64) sizeof (char16) >= 10'000) {
 		free (buffer);
 		bufferSize = 0;
 	}
@@ -167,16 +167,16 @@ conststring16 MelderTrace::_peek32to16 (conststring32 string) {
 	int64 i, j;
 	for (i = 0, j = 0; i < n; i ++) {
 		char32 kar = string [i];
-		if (kar <= 0x00D7FF) {   // 16 bits
+		if (kar <= 0x00'D7FF) {   // 16 bits
 			buffer [j ++] = (char16) kar;   // guarded truncation
-		} else if (kar <= 0x00DFFF) {   // 16 bits
+		} else if (kar <= 0x00'DFFF) {   // 16 bits
 			buffer [j ++] = (char16) UNICODE_REPLACEMENT_CHARACTER;   // forbidden for UTF-32
-		} else if (kar <= 0x00FFFF) {   // 16 bits
+		} else if (kar <= 0x00'FFFF) {   // 16 bits
 			buffer [j ++] = (char16) kar;   // guarded truncation
-		} else if (kar <= 0x10FFFF) {   // 21 bits
-			kar -= 0x010000;
-			buffer [j ++] = (char16) (0x00D800 | (kar >> 10));   // guarded truncation
-			buffer [j ++] = (char16) (0x00DC00 | (kar & 0x0003FF));   // guarded truncation
+		} else if (kar <= 0x10'FFFF) {   // 21 bits
+			kar -= 0x01'0000;
+			buffer [j ++] = (char16) (0x00'D800 | (kar >> 10));   // guarded truncation
+			buffer [j ++] = (char16) (0x00'DC00 | (kar & 0x00'03FF));   // guarded truncation
 		} else {   // 21 bits
 			buffer [j ++] = (char16) UNICODE_REPLACEMENT_CHARACTER;
 		}
@@ -185,56 +185,6 @@ conststring16 MelderTrace::_peek32to16 (conststring32 string) {
 	return buffer;
 }
 #endif
-
-bool Melder_consoleIsAnsi = false;
-
-//extern FILE *winstdout;
-void Melder_writeToConsole (conststring32 message, bool useStderr) {
-	if (! message) return;
-	#if defined (_WIN32)
-		(void) useStderr;
-		static HANDLE console = nullptr;
-		if (! console) {
-			console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, 0);
-			//freopen ("CONOUT$", "w", stdout);
-		}
-		if (Melder_consoleIsAnsi) {
-			size_t n = str32len (message);
-			for (integer i = 0; i < n; i ++) {
-				unsigned int kar = (unsigned short) message [i];
-				fputc (kar, stdout);
-			}
-			//CHAR* messageA = (CHAR*) MelderTrace::_peek32to8 (message);
-			//WriteConsoleA (console, messageA, strlen (messageA), nullptr, nullptr);
-		//} else if (Melder_consoleIsUtf8) {
-			//char *messageA = MelderTrace::_peek32to8 (message);
-			//fprintf (stdout, "%s", messageA);
-		} else {
-			WCHAR* messageW = (WCHAR*) MelderTrace::_peek32to16 (message);
-			WriteConsoleW (console, messageW, wcslen (messageW), nullptr, nullptr);
-		}
-	#else
-		FILE *f = ( useStderr ? stderr : stdout );
-		for (const char32 *p = message; *p != U'\0'; p ++) {
-			char32 kar = *p;
-			if (kar <= 0x00007F) {
-				fputc ((int) kar, f);   // because fputc wants an int instead of a uint8 (guarded conversion)
-			} else if (kar <= 0x0007FF) {
-				fputc (0xC0 | (kar >> 6), f);
-				fputc (0x80 | (kar & 0x00003F), f);
-			} else if (kar <= 0x00FFFF) {
-				fputc (0xE0 | (kar >> 12), f);
-				fputc (0x80 | ((kar >> 6) & 0x00003F), f);
-				fputc (0x80 | (kar & 0x00003F), f);
-			} else {
-				fputc (0xF0 | (kar >> 18), f);
-				fputc (0x80 | ((kar >> 12) & 0x00003F), f);
-				fputc (0x80 | ((kar >> 6) & 0x00003F), f);
-				fputc (0x80 | (kar & 0x00003F), f);
-			}
-		}
-	#endif
-}
 
 /********** TRACE **********/
 

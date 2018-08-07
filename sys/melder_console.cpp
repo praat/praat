@@ -1,6 +1,6 @@
 /* melder_console.cpp
  *
- * Copyright (C) 1992-2005,2007,2008,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,145 @@
  */
 
 #include "melder.h"
-
-#if defined (_WIN32) && defined (CONSOLE_APPLICATION)
-int main (int argc, char *argvA []);
-extern "C" int wmain (int argc, wchar_t *argvW []);
-extern "C" int wmain (int argc, wchar_t *argvW []) {
-	char **argvA = nullptr;
-	if (argc > 0) {
-		argvA = NUMvector <char *> (0, argc - 1);
-		for (int iarg = 0; iarg < argc; iarg ++) {
-			argvA [iarg] = Melder_32to8 (Melder_peekWto32 ((argvW [iarg])));
-		}
-	}
-	return main (argc, argvA);
-}
+#ifdef _WIN32
+	#include <windows.h>
+	#include <fcntl.h>
+	#include <io.h>
 #endif
+
+/*
+	MelderConsole is the interface through which Melder_casual writes to
+	the console (on stderr), and through which Melder_info writes to the
+	console (on stdout) if it does not write to the GUI.
+*/
+
+namespace MelderConsole {// reopen
+	/*
+		On Windows, the console ("command prompt") understands UTF-16,
+		independently of the selected code page, so we use UTF-16 by default.
+		We could use UTF-8 as well, but this will work only if the code page
+		is 65001 (i.e. one would have to type "chcp 65001" into the console).
+		In redirection cases (pipes or files), the encoding will often have
+		to be different.
+
+		On Unix-like platforms (MacOS and Linux), the console understands UTF-8,
+		so we use UTF-8 by default. Other programs are usually fine handling UTF-8,
+		so we are probably good even in the context of pipes or redirection.
+	*/
+	MelderConsole::Encoding encoding =
+		#if defined (_WIN32)
+			MelderConsole::Encoding::UTF16;
+		#else
+			MelderConsole::Encoding::UTF8;
+		#endif
+}
+
+void MelderConsole::setEncoding (MelderConsole::Encoding newEncoding) {
+	MelderConsole :: encoding = newEncoding;
+}
+
+/*
+	stdout and stderr should be kept distinct. For instance, if you do
+		praat test.praat > out.txt
+	the output of Melder_info should go to the file `out.txt`,
+	whereas the output of Melder_casual should go to the console or terminal.
+
+	On MacOS and Linux this requirement is satisfied by default,
+	but on Windows satisfying this requirement involves some work.
+*/
+
+static void ensureThatStdoutAndStderrAreInitialized () {
+	#if defined (_WIN32)
+		/*
+			Stdout and stderr are initialized automatically if we are redirected to a pipe or file.
+			Stdout and stderr are not initialized, however, if Praat is started from the console,
+			neither in GUI mode nor in console mode; in these latter cases,
+			we manually attach stdout and stderr to the calling console.
+		*/
+		if (_fileno (stdout) < 0) {
+			/*
+				Don't change the following four lines into
+					freopen ("CONOUT$", "w", stdout);
+				because if you did that, the distinction between stdout and stderr would be lost.
+			*/
+			HANDLE osfHandle = GetStdHandle (STD_OUTPUT_HANDLE);
+			int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
+			FILE *f = _fdopen (fileDescriptor, "w");
+			*stdout = *f;
+		}
+		if (_fileno (stderr) < 0) {
+			/*
+				Don't change the following four lines into
+					freopen ("CONOUT$", "w", stderr);
+				because if you did that, the distinction between stdout and stderr would be lost.
+			*/
+			HANDLE osfHandle = GetStdHandle (STD_ERROR_HANDLE);
+			int fileDescriptor = _open_osfhandle ((intptr_t) osfHandle, _O_TEXT);
+			FILE *f = _fdopen (fileDescriptor, "w");
+			*stderr = *f;
+		}
+	#endif
+}
+
+void MelderConsole::write (conststring32 message, bool useStderr) {
+	if (! message)
+		return;
+	if (MelderConsole :: encoding == Encoding::UTF16) {
+		#if defined (_WIN32xxx)
+			static HANDLE console = nullptr;
+			if (! console)
+				console = CreateFileW (L"CONOUT$", GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, 0);
+			WCHAR* messageW = (WCHAR*) MelderTrace::_peek32to16 (message);
+			WriteConsoleW (console, messageW, wcslen (messageW), nullptr, nullptr);
+		#else
+			ensureThatStdoutAndStderrAreInitialized ();
+			FILE *f = useStderr ? stderr : stdout;
+			#if defined (_WIN32)
+				fflush (f);
+				int savedMode = _setmode (_fileno (f), _O_U16TEXT);   // without line-break translation
+			#endif
+			fwprintf (f, L"%ls", Melder_peek32to16 (message));   // with line-break translation (Windows)
+			fflush (f);
+			#if defined (_WIN32)
+				_setmode (_fileno (f), savedMode);
+			#endif
+		#endif
+	} else {
+		ensureThatStdoutAndStderrAreInitialized ();
+		FILE *f = useStderr ? stderr : stdout;
+		if (MelderConsole :: encoding == Encoding::UTF8) {
+			for (const char32 *p = & message [0]; *p != U'\0'; p ++) {
+				char32 kar = *p;
+				if (kar <= 0x00'007F) {
+					fputc ((int) kar, f);   // because fputc wants an int instead of a uint8 (guarded conversion)
+				} else if (kar <= 0x00'07FF) {
+					fputc (0xC0 | (kar >> 6), f);
+					fputc (0x80 | (kar & 0x00'003F), f);
+				} else if (kar <= 0x00'FFFF) {
+					fputc (0xE0 | (kar >> 12), f);
+					fputc (0x80 | ((kar >> 6) & 0x00'003F), f);
+					fputc (0x80 | (kar & 0x00'003F), f);
+				} else {
+					fputc (0xF0 | (kar >> 18), f);
+					fputc (0x80 | ((kar >> 12) & 0x00'003F), f);
+					fputc (0x80 | ((kar >> 6) & 0x00'003F), f);
+					fputc (0x80 | (kar & 0x00'003F), f);
+				}
+			}
+		} else if (MelderConsole :: encoding == Encoding::ANSI) {
+			integer n = str32len (message);
+			for (integer i = 0; i < n; i ++) {
+				/*
+					We convert Unicode to ISO 8859-1 by simple truncation. This loses information.
+				*/
+				unsigned int kar = message [i] & 0x00'00FF;
+				fputc ((int) kar, f);
+			}
+		} else {
+			// should not happen
+		}
+		fflush (f);
+	}
+}
 
 /* End of file melder_console.cpp */

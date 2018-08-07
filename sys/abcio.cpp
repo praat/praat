@@ -854,7 +854,7 @@ int32 bingeti24 (FILE *f) {
 			(uint32) ((uint32) bytes [1] << 8) |
 					  (uint32) bytes [2];
 		if ((bytes [0] & 128) != 0)   // is the 24-bit sign bit on?
-			externalValue |= 0xFF000000;   // extend negative sign to 32 bits
+			externalValue |= 0xFF00'0000;   // extend negative sign to 32 bits
 		return (int32) externalValue;   // reinterpret sign bit
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not read from 3 bytes in binary file.");
@@ -870,7 +870,7 @@ int32 bingeti24LE (FILE *f) {
 			(uint32) ((uint32) bytes [1] << 8) |
 					  (uint32) bytes [0];
 		if ((bytes [2] & 128) != 0)   // is the 24-bit sign bit on?
-			externalValue |= 0xFF000000;   // extend negative sign to 32 bits
+			externalValue |= 0xFF00'0000;   // extend negative sign to 32 bits
 		return (int32) externalValue;   // reinterpret sign bit
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not read from 3 bytes in binary file.");
@@ -987,20 +987,20 @@ double bingetr32 (FILE *f) {
 			uint8 bytes [4];
 			if (fread (bytes, sizeof (uint8), 4, f) != 4) readError (f, U"four bytes.");
 			int32 exponent = (int32)
-				((uint32) ((uint32) ((uint32) bytes [0] & 0x0000007F) << 1) |
-				 (uint32) ((uint32) ((uint32) bytes [1] & 0x00000080) >> 7));   // between 0 and 255 (it's signed because we're going to subtract something)
+				((uint32) ((uint32) ((uint32) bytes [0] & 0x0000'007F) << 1) |
+				 (uint32) ((uint32) ((uint32) bytes [1] & 0x0000'0080) >> 7));   // between 0 and 255 (it's signed because we're going to subtract something)
 			uint32 mantissa =
-				(uint32) ((uint32) ((uint32) bytes [1] & 0x0000007F) << 16) |
+				(uint32) ((uint32) ((uint32) bytes [1] & 0x0000'007F) << 16) |
 						  (uint32) ((uint32) bytes [2] << 8) |
 									(uint32) bytes [3];
 			double x;
 			if (exponent == 0)
 				if (mantissa == 0) x = 0.0;
 				else x = ldexp ((double) mantissa, exponent - 149);   // denormalized
-			else if (exponent == 0x000000FF)   // Infinity or Not-a-Number
+			else if (exponent == 0x0000'00FF)   // Infinity or Not-a-Number
 				return undefined;
 			else   // finite
-				x = ldexp ((double) (mantissa | 0x00800000), exponent - 150);
+				x = ldexp ((double) (mantissa | 0x0080'0000), exponent - 150);
 			return bytes [0] & 0x80 ? - x : x;
 		}
 	} catch (MelderError) {
@@ -1018,20 +1018,20 @@ double bingetr32LE (FILE *f) {
 			uint8 bytes [4];
 			if (fread (bytes, sizeof (uint8), 4, f) != 4) readError (f, U"four bytes.");
 			int32 exponent = (int32)
-				((uint32) ((uint32) ((uint32) bytes [3] & 0x0000007F) << 1) |
-				 (uint32) ((uint32) ((uint32) bytes [2] & 0x00000080) >> 7));
+				((uint32) ((uint32) ((uint32) bytes [3] & 0x0000'007F) << 1) |
+				 (uint32) ((uint32) ((uint32) bytes [2] & 0x0000'0080) >> 7));
 			uint32 mantissa =
-				(uint32) ((uint32) ((uint32) bytes [2] & 0x0000007F) << 16) |
+				(uint32) ((uint32) ((uint32) bytes [2] & 0x0000'007F) << 16) |
 						  (uint32) ((uint32) bytes [1] << 8) |
 									(uint32) bytes [0];
 			double x;
 			if (exponent == 0)
 				if (mantissa == 0) x = 0.0;
 				else x = ldexp ((double) mantissa, exponent - 149);   // denormalized
-			else if (exponent == 0x000000FF)   // Infinity or Not-a-Number
+			else if (exponent == 0x0000'00FF)   // Infinity or Not-a-Number
 				return undefined;
 			else   // finite
-				x = ldexp ((double) (mantissa | 0x00800000), exponent - 150);
+				x = ldexp ((double) (mantissa | 0x0080'0000), exponent - 150);
 			return bytes [3] & 0x80 ? - x : x;
 		}
 	} catch (MelderError) {
@@ -1049,10 +1049,10 @@ double bingetr64 (FILE *f) {
 			uint8 bytes [8];
 			if (fread (bytes, sizeof (uint8), 8, f) != 8) readError (f, U"eight bytes.");
 			int32 exponent = (int32)
-				((uint32) ((uint32) ((uint32) bytes [0] & 0x0000007F) << 4) |
-				 (uint32) ((uint32) ((uint32) bytes [1] & 0x000000F0) >> 4));
+				((uint32) ((uint32) ((uint32) bytes [0] & 0x0000'007F) << 4) |
+				 (uint32) ((uint32) ((uint32) bytes [1] & 0x0000'00F0) >> 4));
 			uint32 highMantissa =
-				(uint32) ((uint32) ((uint32) bytes [1] & 0x0000000F) << 16) |
+				(uint32) ((uint32) ((uint32) bytes [1] & 0x0000'000F) << 16) |
 						  (uint32) ((uint32) bytes [2] << 8) |
 									(uint32) bytes [3];
 			uint32 lowMantissa =
@@ -1065,10 +1065,10 @@ double bingetr64 (FILE *f) {
 				if (highMantissa == 0 && lowMantissa == 0) x = 0.0;
 				else x = ldexp ((double) highMantissa, exponent - 1042) +
 					ldexp ((double) lowMantissa, exponent - 1074);   // denormalized
-			else if (exponent == 0x000007FF)   // Infinity or Not-a-Number
+			else if (exponent == 0x0000'07FF)   // Infinity or Not-a-Number
 				return undefined;
 			else
-				x = ldexp ((double) (highMantissa | 0x00100000), exponent - 1043) +
+				x = ldexp ((double) (highMantissa | 0x0010'0000), exponent - 1043) +
 					ldexp ((double) lowMantissa, exponent - 1075);
 			return bytes [0] & 0x80 ? - x : x;
 		}
@@ -1082,7 +1082,7 @@ double bingetr80 (FILE *f) {
 		uint8 bytes [10];
 		if (fread (bytes, sizeof (uint8), 10, f) != 10) readError (f, U"ten bytes.");
 		int32 exponent = (int32)
-			((uint32) ((uint32) ((uint32) bytes [0] & 0x0000007F) << 8) |
+			((uint32) ((uint32) ((uint32) bytes [0] & 0x0000'007F) << 8) |
 								 (uint32) bytes [1]);   // between 0 and 32767
 		uint32 highMantissa =
 			(uint32) ((uint32) bytes [2] << 24) |
@@ -1096,9 +1096,9 @@ double bingetr80 (FILE *f) {
 					  (uint32) bytes [9];
 		double x;
 		if (exponent == 0 && highMantissa == 0 && lowMantissa == 0) x = 0.0;
-		else if (exponent == 0x00007FFF) return undefined;   // Infinity or NaN
+		else if (exponent == 0x0000'7FFF) return undefined;   // Infinity or NaN
 		else {
-			exponent -= 16383;   // between -16382 and +16383
+			exponent -= 16'383;   // between -16'382 and +16'383
 			x = ldexp ((double) highMantissa, exponent - 31);
 			x += ldexp ((double) lowMantissa, exponent - 63);
 		}
@@ -1384,7 +1384,7 @@ void binputr32LE (double x, FILE *f) {
 					exponent |= sign;
 					fMantissa = ldexp (fMantissa, 24);          
 					fsMantissa = floor (fMantissa);
-					mantissa = (uint32) fsMantissa & 0x007FFFFF;
+					mantissa = (uint32) fsMantissa & 0x007F'FFFF;
 				}
 			}
 			bytes [3] = (uint8) (exponent >> 1);
@@ -1432,7 +1432,7 @@ void binputr64 (double x, FILE *f) {
 					exponent |= sign;
 					fMantissa = ldexp (fMantissa, 21);          
 					fsMantissa = floor (fMantissa);
-					highMantissa = (uint32) fsMantissa & 0x000FFFFF;
+					highMantissa = (uint32) fsMantissa & 0x000F'FFFF;
 					fMantissa = ldexp (fMantissa - fsMantissa, 32); 
 					fsMantissa = floor (fMantissa); 
 					lowMantissa = (uint32) fsMantissa;
@@ -1593,13 +1593,13 @@ autostring32 bingetw8 (FILE *f) {
 			result = autostring32 (length);
 			for (unsigned int i = 0; i < length; i ++) {
 				char32 kar = bingetu16 (f);
-				if ((kar & 0x00F800) == 0x00D800) {
-					if (kar > 0x00DBFF)
+				if ((kar & 0x00'F800) == 0x00'D800) {
+					if (kar > 0x00'DBFF)
 						Melder_throw (U"Incorrect Unicode value (first surrogate member ", kar, U").");
 					char32 kar2 = bingetu16 (f);
-					if (kar2 < 0x00DC00 || kar2 > 0x00DFFF)
+					if (kar2 < 0x00'DC'00 || kar2 > 0x00'DF'FF)
 						Melder_throw (U"Incorrect Unicode value (second surrogate member ", kar2, U").");
-					result [i] = (((kar & 0x0003FF) << 10) | (kar2 & 0x0003FF)) + 0x010000;
+					result [i] = (((kar & 0x00'03FF) << 10) | (kar2 & 0x00'03FF)) + 0x01'0000;
 				} else {
 					result [i] = kar;
 				}
@@ -1632,13 +1632,13 @@ autostring32 bingetw16 (FILE *f) {
 			result = autostring32 (length);
 			for (uint16 i = 0; i < length; i ++) {
 				char32 kar = (char32) (char16) bingetu16 (f);
-				if ((kar & 0x00F800) == 0x00D800) {
-					if (kar > 0x00DBFF)
+				if ((kar & 0x00'F800) == 0x00'D800) {
+					if (kar > 0x00'DBFF)
 						Melder_throw (U"Incorrect Unicode value (first surrogate member ", kar, U").");
 					char32 kar2 = (char32) (char16) bingetu16 (f);
-					if (kar2 < 0x00DC00 || kar2 > 0x00DFFF)
+					if (kar2 < 0x00'DC00 || kar2 > 0x00'DFFF)
 						Melder_throw (U"Incorrect Unicode value (second surrogate member ", kar2, U").");
-					result [i] = (((kar & 0x0003FF) << 10) | (kar2 & 0x0003FF)) + 0x010000;
+					result [i] = (((kar & 0x00'03FF) << 10) | (kar2 & 0x00'03FF)) + 0x01'0000;
 				} else {
 					result [i] = kar;
 				}
@@ -1663,7 +1663,7 @@ autostring32 bingetw32 (FILE *f) {
 	try {
 		autostring32 result;
 		uint32 length = bingetu32 (f);
-		if (length == 0xFFFFFFFF) {   // an escape for encoding
+		if (length == 0xFFFF'FFFF) {   // an escape for encoding
 			/*
 				UTF-16
 			*/
@@ -1671,13 +1671,13 @@ autostring32 bingetw32 (FILE *f) {
 			result = autostring32 (length);
 			for (uint32 i = 0; i < length; i ++) {
 				char32 kar = bingetu16 (f);
-				if ((kar & 0x00F800) == 0x00D800) {
-					if (kar > 0x00DBFF)
+				if ((kar & 0x00'F800) == 0x00'D800) {
+					if (kar > 0x00'DBFF)
 						Melder_throw (U"Incorrect Unicode value (first surrogate member ", kar, U").");
 					char32 kar2 = bingetu16 (f);
-					if (kar2 < 0x00DC00 || kar2 > 0x00DFFF)
+					if (kar2 < 0x00'DC00 || kar2 > 0x00'DFFF)
 						Melder_throw (U"Incorrect Unicode value (second surrogate member ", kar2, U").");
-					result [i] = (((kar & 0x0003FF) << 10) | (kar2 & 0x0003FF)) + 0x010000;
+					result [i] = (((kar & 0x00'03FF) << 10) | (kar2 & 0x00'03FF)) + 0x01'0000;
 				} else {
 					result [i] = kar;
 				}
@@ -1758,10 +1758,10 @@ void binputs32 (const char *s, FILE *f) {
 static inline void binpututf16 (char32 kar, FILE *f) {
 	if (kar <= 0x00FFFF) {
 		binputu16 ((uint16) kar, f);   // truncate to lower 16 bits
-	} else if (kar <= 0x10FFFF) {
-		kar -= 0x010000;
-		binputu16 ((uint16) (0x00D800 | (kar >> 10)), f);
-		binputu16 ((uint16) (0x00DC00 | (kar & 0x0003FF)), f);
+	} else if (kar <= 0x10'FFFF) {
+		kar -= 0x01'0000;
+		binputu16 ((uint16) (0x00'D800 | (kar >> 10)), f);
+		binputu16 ((uint16) (0x00'DC00 | (kar & 0x00'03FF)), f);
 	} else {
 		Melder_fatal (U"Impossible Unicode value.");
 	}
@@ -1857,7 +1857,7 @@ void binputw32 (conststring32 s, FILE *f) {
 				/*
 				 * UTF-16
 				 */
-				binputu32 (0xFFFFFFFF, f);   // an escape for multibyte encoding
+				binputu32 (0xFFFF'FFFF, f);   // an escape for multibyte encoding
 				binputu32 ((uint32) length, f);
 				for (int64 i = 0; i < length; i ++) {
 					binpututf16 (s [i], f);

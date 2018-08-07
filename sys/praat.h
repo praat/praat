@@ -107,32 +107,32 @@ void praat_addAction4_ (ClassInfo class1, integer n1, ClassInfo class2, integer 
 #define praat_ATTRACTIVE  GuiMenu_ATTRACTIVE
 #define praat_RADIO_FIRST  GuiMenu_RADIO_FIRST
 #define praat_RADIO_NEXT  GuiMenu_RADIO_NEXT
-#define praat_HIDDEN  0x00004000
-#define praat_UNHIDABLE  0x00008000
-#define praat_DEPTH_1  0x00010000
-#define praat_DEPTH_2  0x00020000
-#define praat_DEPTH_3  0x00030000
-#define praat_DEPTH_4  0x00040000
-#define praat_DEPTH_5  0x00050000
-#define praat_DEPTH_6  0x00060000
-#define praat_DEPTH_7  0x00070000
-#define praat_NO_API  0x00080000
-#define praat_FORCE_API  0x00100000
-#define praat_DEPRECATED  (0x00200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2004  (0x04200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2005  (0x05200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2006  (0x06200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2007  (0x07200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2008  (0x08200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2009  (0x09200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2010  (0x0A200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2011  (0x0B200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2012  (0x0C200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2013  (0x0D200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2014  (0x0E200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2015  (0x0F200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2016  (0x10200000 | praat_HIDDEN)
-#define praat_DEPRECATED_2017  (0x11200000 | praat_HIDDEN)
+#define praat_HIDDEN  0x0000'4000
+#define praat_UNHIDABLE  0x0000'8000
+#define praat_DEPTH_1  0x0001'0000
+#define praat_DEPTH_2  0x0002'0000
+#define praat_DEPTH_3  0x0003'0000
+#define praat_DEPTH_4  0x0004'0000
+#define praat_DEPTH_5  0x0005'0000
+#define praat_DEPTH_6  0x0006'0000
+#define praat_DEPTH_7  0x0007'0000
+#define praat_NO_API  0x0008'0000
+#define praat_FORCE_API  0x0010'0000
+#define praat_DEPRECATED  (0x0020'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2004  (0x0420'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2005  (0x0520'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2006  (0x0620'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2007  (0x0720'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2008  (0x0820'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2009  (0x0920'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2010  (0x0A20'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2011  (0x0B20'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2012  (0x0C20'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2013  (0x0D20'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2014  (0x0E20'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2015  (0x0F20'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2016  (0x1020'0000 | praat_HIDDEN)
+#define praat_DEPRECATED_2017  (0x1120'0000 | praat_HIDDEN)
 /*
 	The following three can also be used, but not for deprecated commands.
 */

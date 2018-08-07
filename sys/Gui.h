@@ -213,24 +213,24 @@
 	/*
 	 * Xm widget classes.
 	 */
-	#define xmBulletinBoardWidgetClass  0x00000001
-	#define xmDrawingAreaWidgetClass  0x00000002
-	#define xmFormWidgetClass  0x00000004
-	#define xmFrameWidgetClass  0x00000008
-	#define xmLabelWidgetClass  0x00000010
-	#define xmListWidgetClass  0x00000020
-	#define xmMenuBarWidgetClass  0x00000040
-	#define xmPulldownMenuWidgetClass  0x00000100
-	#define xmPushButtonWidgetClass  0x00000200
-	#define xmRowColumnWidgetClass  0x00000400
-	#define xmScaleWidgetClass  0x00000800
-	#define xmScrollBarWidgetClass  0x00001000
-	#define xmScrolledWindowWidgetClass  0x00002000
-	#define xmSeparatorWidgetClass  0x00004000
-	#define xmShellWidgetClass  0x00008000
-	#define xmTextWidgetClass  0x00010000
-	#define xmToggleButtonWidgetClass  0x00020000
-	#define xmCascadeButtonWidgetClass  0x00040000
+	#define xmBulletinBoardWidgetClass  0x0000'0001
+	#define xmDrawingAreaWidgetClass  0x0000'0002
+	#define xmFormWidgetClass  0x0000'0004
+	#define xmFrameWidgetClass  0x0000'0008
+	#define xmLabelWidgetClass  0x0000'0010
+	#define xmListWidgetClass  0x0000'0020
+	#define xmMenuBarWidgetClass  0x0000'0040
+	#define xmPulldownMenuWidgetClass  0x0000'0100
+	#define xmPushButtonWidgetClass  0x0000'0200
+	#define xmRowColumnWidgetClass  0x0000'0400
+	#define xmScaleWidgetClass  0x0000'0800
+	#define xmScrollBarWidgetClass  0x0000'1000
+	#define xmScrolledWindowWidgetClass  0x0000'2000
+	#define xmSeparatorWidgetClass  0x0000'4000
+	#define xmShellWidgetClass  0x0000'8000
+	#define xmTextWidgetClass  0x0001'0000
+	#define xmToggleButtonWidgetClass  0x0002'0000
+	#define xmCascadeButtonWidgetClass  0x0004'0000
 	#define xmPushButtonGadgetClass  xmPushButtonWidgetClass
 	#define xmCascadeButtonGadgetClass  xmCascadeButtonWidgetClass
 	#define xmSeparatorGadgetClass  xmSeparatorWidgetClass

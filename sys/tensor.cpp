@@ -17,7 +17,7 @@
  */
 
 #include "tensor.h"
-#include "NUM2.h"   /* for NUMsort2 */
+#include "../dwsys/NUM2.h"   /* for NUMsort2 */
 #include "PAIRWISE_SUM.h"
 
 void numvec :: _initAt (integer givenSize, kTensorInitializationType initializationType) {

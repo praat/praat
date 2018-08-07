@@ -131,14 +131,14 @@ void MelderString_ncopy (MelderString *me, conststring32 source, int64 n) {
 void MelderString16_appendCharacter (MelderString16 *me, char32 kar) {
 	int64 sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null character
 	expandIfNecessary (char16)
-	if (kar <= 0x00FFFF) {
+	if (kar <= 0x00'FFFF) {
 		my string [my length] = (char16) kar;   // guarded cast
 		my length ++;
-	} else if (kar <= 0x10FFFF) {
-		kar -= 0x010000;
-		my string [my length] = (char16) (0x00D800 | (kar >> 10));
+	} else if (kar <= 0x10'FFFF) {
+		kar -= 0x01'0000;
+		my string [my length] = (char16) (0x00'D800 | (kar >> 10));
 		my length ++;
-		my string [my length] = (char16) (0x00DC00 | (kar & 0x0003FF));
+		my string [my length] = (char16) (0x00'DC00 | (kar & 0x00'03FF));
 		my length ++;
 	} else {
 		my string [my length] = UNICODE_REPLACEMENT_CHARACTER;

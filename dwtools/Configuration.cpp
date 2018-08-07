@@ -494,8 +494,8 @@ autoConfiguration Configuration_createLetterRExample (int choice) {
 }
 
 autoConfiguration Configuration_createCarrollWishExample () {
-	double  x [10] = {0.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0};
-	double  y [10] = {0.0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0};
+	double x [10] = {0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, -1.0,  0.0,  1.0 };
+	double y [10] = {0,  1.0, 1.0, 1.0,  0.0, 0.0, 0.0, -1.0, -1.0, -1.0 };
 	char32 const *label[] = { U"", U"A", U"B", U"C", U"D", U"E", U"F", U"G", U"H", U"I"};
 	try {
 		integer nObjects = 9;

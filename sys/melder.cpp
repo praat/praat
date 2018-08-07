@@ -17,7 +17,7 @@
  */
 
 #include "melder.h"
-#include "regularExp.h"
+#include "../dwsys/regularExp.h"
 #ifdef _WIN32
 	#include <windows.h>
 #endif
@@ -51,9 +51,9 @@ static void defaultSearch () {
 }
 
 static void defaultFatal (conststring32 message) {
-	Melder_writeToConsole (U"Fatal error: ", true);
-	Melder_writeToConsole (message, true);
-	Melder_writeToConsole (U"\n", true);
+	MelderConsole::write (U"Fatal error: ", true);
+	MelderConsole::write (message, true);
+	MelderConsole::write (U"\n", true);
 }
 
 static int defaultRecord (double duration) {
@@ -276,9 +276,9 @@ void Melder_search () {
 int MelderWarning::_depth = 0;
 
 void MelderWarning::_defaultProc (conststring32 message) {
-	Melder_writeToConsole (U"Warning: ", true);
-	Melder_writeToConsole (message, true);
-	Melder_writeToConsole (U"\n", true);
+	MelderConsole::write (U"Warning: ", true);
+	MelderConsole::write (message, true);
+	MelderConsole::write (U"\n", true);
 }
 
 MelderWarning::Proc MelderWarning::_p_currentProc = & MelderWarning::_defaultProc;

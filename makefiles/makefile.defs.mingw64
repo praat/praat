@@ -1,13 +1,14 @@
 # File: makefile.defs.mingw64
 
 # System: MinGW on Windows under Cygwin
-# Paul Boersma, 2 July 2018
+# Paul Boersma, 3 August 2018
 
 PREFIX = x86_64-w64-mingw32-
 
 CC = $(PREFIX)gcc -std=gnu99
 
-CXX = $(PREFIX)g++ -std=gnu++14 -Wshadow
+# gnu++17 instead of c++17 is necessary to define M_PI in external code
+CXX = $(PREFIX)g++ -std=gnu++17 -Wshadow
 
 CFLAGS = -municode -D_FILE_OFFSET_BITS=64 -O3
 # Probably implicit: -m64 -mwin32 -march=x86_64 -mtune=generic

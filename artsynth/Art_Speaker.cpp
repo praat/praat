@@ -82,7 +82,8 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 
 	/* Tongue root. */
 
-	jaw.x = -75.0 * f, jaw.y = 53.0 * f;   // position of the condyle
+	jaw.x = -75.0 * f;   // position of the condyle
+	jaw.y = 53.0 * f;
 	jaw.da = art [(int) kArt_muscle::MASSETER] * 0.15
 		- art [(int) kArt_muscle::MYLOHYOID] * 0.20;
 	body.x = jaw.x + 81.0 * f * cos (-0.60 + jaw.da)
