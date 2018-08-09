@@ -143,7 +143,7 @@ static double NUMdmatrix_diagonalityMeasure (double **v, integer dimension) {
 			}
 		}
 	}
-	return dmsq / (dimension * (dimension - 1));
+	return (double) dmsq / (dimension * (dimension - 1));
 }
 
 #if 0
@@ -215,8 +215,8 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 						}
 						longdouble denom = zjj * zii - zij * zij;
 						if (denom != 0.0) {
-							w [i] [j] = (zij * yji - zii * yij) / denom;
-							w [j] [i] = (zij * yij - zjj * yji) / denom;
+							w [i] [j] = (double) (zij * yji - zii * yij) / denom;
+							w [j] [i] = (double) (zij * yij - zjj * yji) / denom;
 						}
 					}
 				}

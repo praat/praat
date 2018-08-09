@@ -1,6 +1,5 @@
 #ifndef _melder_int_h_
 #define _melder_int_h_
-
 /* melder_int.h
  *
  * Copyright (C) 1992-2018 Paul Boersma

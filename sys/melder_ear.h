@@ -1,6 +1,6 @@
-#ifndef _melder_assert_h_
-#define _melder_assert_h_
-/* melder_assert.h
+#ifndef _melder_ear_h_
+#define _melder_ear_h_
+/* melder_ear.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,14 +18,20 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
-#ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
-#else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
-#endif
+/********** Auditory modelling **********/
 
-/* End of file melder_assert.h */
+double NUMhertzToBark (double hertz);
+double NUMbarkToHertz (double bark);
+double NUMphonToDifferenceLimens (double phon);
+double NUMdifferenceLimensToPhon (double ndli);
+double NUMsoundPressureToPhon (double soundPressure, double bark);
+double NUMhertzToMel (double hertz);
+double NUMmelToHertz (double mel);
+double NUMhertzToSemitones (double hertz);
+double NUMsemitonesToHertz (double semitones);
+double NUMerb (double f);
+double NUMhertzToErb (double hertz);
+double NUMerbToHertz (double erb);
+
+/* End of file melder_ear.h */
 #endif

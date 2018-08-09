@@ -248,7 +248,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	- (void) resizeCallback: (NSRect) rect {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (me && my d_resizeCallback) {
-			struct structGuiDrawingArea_ResizeEvent event { me, 0 };
+			struct structGuiDrawingArea_ResizeEvent event = { me, 0, 0 };
 			event. width = rect. size. width;
 			event. height = rect. size. height;
 			try {
@@ -267,7 +267,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			_inited = YES;
 		}
 		if (my d_exposeCallback) {
-			struct structGuiDrawingArea_ExposeEvent event { me };
+			struct structGuiDrawingArea_ExposeEvent event = { me, 0, 0, 0, 0 };
 			try {
 				my d_exposeCallback (my d_exposeBoss, & event);
 			} catch (MelderError) {
@@ -306,7 +306,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	 //   [self becomeFirstResponder];
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (my d_clickCallback) {
-			struct structGuiDrawingArea_ClickEvent event { me, 0 };
+			struct structGuiDrawingArea_ClickEvent event = { me, 0, 0, false, false, false, false, 0 };
 			NSPoint local_point = [self   convertPoint: [nsEvent locationInWindow]   fromView: nil];
 			event. x = local_point. x;
 			//event. y = [self frame]. size. height - local_point. y;
@@ -358,7 +358,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	- (void) keyDown: (NSEvent *) nsEvent {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;
 		if (my d_keyCallback) {
-			struct structGuiDrawingArea_KeyEvent event { me, 0 };
+			struct structGuiDrawingArea_KeyEvent event = { me, U'\0', false, false, false, false };
 			event. key = [[nsEvent charactersIgnoringModifiers]   characterAtIndex: 0];
 			if (event. key == NSLeftArrowFunctionKey)  event. key = 0x2190;
 			if (event. key == NSRightArrowFunctionKey) event. key = 0x2192;

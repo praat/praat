@@ -1,6 +1,6 @@
-#ifndef _melder_assert_h_
-#define _melder_assert_h_
-/* melder_assert.h
+#ifndef _melder_fatal_h_
+#define _melder_fatal_h_
+/* melder_fatal.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,14 +18,22 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
-#ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
-#else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
-#endif
+/*
+	SYNOPSIS (2018-08-08)
 
-/* End of file melder_assert.h */
+	Melder_fatal (args...);
+
+		Gives an error message and aborts the program.
+		Should only be caused by programming errors.
+
+	See also Melder_assert ().
+*/
+
+void Melder_fatal (const MelderArg&,
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
+	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U""
+);
+
+/* End of file melder_fatal.h */
 #endif

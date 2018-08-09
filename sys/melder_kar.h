@@ -1,6 +1,5 @@
 #ifndef _melder_kar_h_
 #define _melder_kar_h_
-
 /* melder_kar.h
  *
  * Copyright (C) 1992-2018 Paul Boersma

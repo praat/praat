@@ -1,6 +1,6 @@
-#ifndef _melder_assert_h_
-#define _melder_assert_h_
-/* melder_assert.h
+#ifndef _melder_metrics_h_
+#define _melder_metrics_h_
+/* melder_metrics.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,14 +18,18 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
-#ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
-#else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
-#endif
+/********** Metrics **********/
 
-/* End of file melder_assert.h */
+int NUMrotationsPointInPolygon
+	(double x0, double y0, integer n, double x [], double y []);
+/*
+	Returns the number of times that the closed polygon
+	(x [1], y [1]), (x [2], y [2]),..., (x [n], y [n]), (x [1], y [1]) encloses the point (x0, y0).
+	The result is positive if the polygon encloses the point in the
+	anti-clockwise direction, and negative if the direction is clockwise.
+	The result is 0 if the point is outside the polygon.
+	If the point is on the polygon, the result is unpredictable.
+*/
+
+/* End of file melder_metrics.h */
 #endif

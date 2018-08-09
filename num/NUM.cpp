@@ -1,6 +1,6 @@
 /* NUM.cpp
  *
- * Copyright (C) 1992-2008,2011,2012,2014,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,17 +96,6 @@ void NUMpreemphasize_f (double x [], integer n, double dt, double frequency) {
 
 void NUMdeemphasize_f (double x [], integer n, double dt, double frequency) {
 	NUMdeemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
-}
-
-void NUMautoscale (double x [], integer n, double scale) {
-	double maximum = 0.0;
-	for (integer i = 1; i <= n; i ++)
-		if (fabs (x [i]) > maximum) maximum = fabs (x [i]);
-	if (maximum > 0.0) {
-		double factor = scale / maximum;
-		for (integer i = 1; i <= n; i ++)
-			x [i] *= factor;
-	}
 }
 
 double NUMlnGamma (double x) {
@@ -398,7 +387,8 @@ double NUM_interpolate_sinc (double y [], integer nx, double x, integer maxDepth
 	integer ix, midleft = (integer) floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa;
 	NUM_interpolate_simple_cases
-	left = midright - maxDepth, right = midleft + maxDepth;
+	left = midright - maxDepth;
+	right = midleft + maxDepth;
 	a = NUMpi * (x - midleft);
 	halfsina = 0.5 * sin (a);
 	aa = a / (x - left + 1);

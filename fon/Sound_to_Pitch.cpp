@@ -184,7 +184,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 		if (r [i] > 0.5 * voicingThreshold &&   // not too unvoiced?
 			r [i] > r [i-1] && r [i] >= r [i+1])   // maximum?
 	{
-		int place = 0;
+		integer place = 0;
 
 		/*
 		 * Use parabolic interpolation for first estimate of frequency,

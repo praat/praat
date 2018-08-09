@@ -1,6 +1,6 @@
-#ifndef _melder_assert_h_
-#define _melder_assert_h_
-/* melder_assert.h
+#ifndef _melder_real_h_
+#define _melder_real_h_
+/* melder_real.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,14 +18,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
-#ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
-#else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
-#endif
+/*
+	The following is checked in praat.h.
+*/
+using longdouble = long double;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
 
-/* End of file melder_assert.h */
+/* End of file melder_real.h */
 #endif

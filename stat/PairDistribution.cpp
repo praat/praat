@@ -125,7 +125,7 @@ void PairDistribution_swapInputsAndOutputs (PairDistribution me) {
 	}
 }
 
-static double PairDistributions_getTotalWeight_checkPositive (PairDistribution me) throw (MelderError) {
+static double PairDistributions_getTotalWeight_checkPositive (PairDistribution me) {
 	longdouble totalWeight = 0.0;
 	for (integer ipair = 1; ipair <= my pairs.size; ipair ++) {
 		PairProbability prob = my pairs.at [ipair];

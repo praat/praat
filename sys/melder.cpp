@@ -37,10 +37,10 @@
 
 /********** Exported variables. **********/
 
-bool Melder_batch;   // don't we have a GUI?- Set once at application start-up
-bool Melder_backgrounding;   // are we running a script?- Set and unset dynamically
-bool Melder_asynchronous;
-int32 Melder_systemVersion;
+//bool Melder_batch;   // don't we have a GUI?- Set once at application start-up
+//bool Melder_backgrounding;   // are we running a script?- Set and unset dynamically
+//bool Melder_asynchronous;
+//int32 Melder_systemVersion;
 
 static void defaultHelp (conststring32 query) {
 	Melder_flushError (U"Don't know how to find help on \"", query, U"\".");

@@ -1,6 +1,6 @@
-#ifndef _melder_assert_h_
-#define _melder_assert_h_
-/* melder_assert.h
+#ifndef _melder_cat_h_
+#define _melder_cat_h_
+/* melder_cat.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,14 +18,19 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
-#ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
-#else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
-#endif
+namespace MelderCat {
+	constexpr int _k_NUMBER_OF_BUFFERS = 33;
+	extern MelderString _buffers [_k_NUMBER_OF_BUFFERS];
+	extern int _bufferNumber;
+};
 
-/* End of file melder_assert.h */
+template <typename... Args>
+conststring32 Melder_cat (Args... args) {
+	if (++ MelderCat::_bufferNumber == MelderCat::_k_NUMBER_OF_BUFFERS)
+		MelderCat::_bufferNumber = 0;
+	MelderString_copy (& MelderCat::_buffers [MelderCat::_bufferNumber], args...);
+	return MelderCat::_buffers [MelderCat::_bufferNumber].string;
+}
+
+/* End of file melder_cat.h */
 #endif

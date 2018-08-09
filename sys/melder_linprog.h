@@ -1,6 +1,6 @@
-#ifndef _melder_assert_h_
-#define _melder_assert_h_
-/* melder_assert.h
+#ifndef _melder_linprog_h_
+#define _melder_linprog_h_
+/* melder_linprog.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,14 +18,16 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
-#ifdef NDEBUG
-	#define Melder_assert(x)   ((void) 0)
-#else
-	#define Melder_assert(x)   ((x) ? (void) (0) : (Melder_assert_ (__FILE__, __LINE__, #x), abort ()))
-#endif
+/********** Linear programming **********/
 
-/* End of file melder_assert.h */
+typedef struct structNUMlinprog *NUMlinprog;
+void NUMlinprog_delete (NUMlinprog me);
+NUMlinprog NUMlinprog_new (bool maximize);
+void NUMlinprog_addVariable (NUMlinprog me, double lowerBound, double upperBound, double coeff);
+void NUMlinprog_addConstraint (NUMlinprog me, double lowerBound, double upperBound);
+void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient);
+void NUMlinprog_run (NUMlinprog me);
+double NUMlinprog_getPrimalValue (NUMlinprog me, integer ivar);
+
+/* End of file melder_linprog.h */
 #endif
