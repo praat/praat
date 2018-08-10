@@ -1,10 +1,10 @@
 # makefile for library "dwsys".
 # David Weenink 20171019
-# Paul Boersma 2018-02-11
+# Paul Boersma 2018-08-10
 
 include ../makefile.defs
 
-CPPFLAGS =  -I ../stat -I ../sys -I ../external/gsl -I ../kar
+CPPFLAGS = -I ../melder -I ../stat -I ../sys -I ../external/gsl -I ../kar
 
 all: libdwsys.a
 
@@ -33,5 +33,5 @@ libdwsys.a: $(OBJECTS) NUMmachar.o
 	$(AR) cq libdwsys.a $(OBJECTS)
 	$(RANLIB) libdwsys.a
 
-$(OBJECTS): *.h ../stat/*.h ../sys/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
+$(OBJECTS): *.h ../melder/*.h ../stat/*.h ../sys/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h
 

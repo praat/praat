@@ -103,7 +103,8 @@ static void fillSurfaceWeightPattern (OTGrammarTableau me, integer numberOfSylla
 		if (underlyingWeightPattern [isyll] < 3) {
 			minSurfaceWeight [isyll] = maxSurfaceWeight [isyll] = underlyingWeightPattern [isyll];   // L -> L; H -> H
 		} else {
-			minSurfaceWeight [isyll] = 3, maxSurfaceWeight [isyll] = 4;   // C -> { J, K }
+			minSurfaceWeight [isyll] = 3;
+			maxSurfaceWeight [isyll] = 4;   // C -> { J, K }
 		}
 	}
 	surfaceWeightPattern [6] = surfaceWeightPattern [7] = 1;   // constant L

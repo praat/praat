@@ -5,7 +5,7 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -DFLAC__NOASM -I ../../sys
+CPPFLAGS = -DFLAC__NOASM -I ../../melder
 
 # EREZ ?
 # On non-Intel, also define -DFLAC__CPU_UNKNOWN
@@ -46,4 +46,4 @@ libflac.a: $(OBJECTS)
 	$(AR) cq libflac.a $(OBJECTS)
 	$(RANLIB) libflac.a
 
-$(OBJECTS): *.h ../../sys/melder.h
+$(OBJECTS): *.h ../../melder/*.h

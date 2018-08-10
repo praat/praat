@@ -2937,7 +2937,7 @@ void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, i
 	bool firstTime = true;
 	for (integer i = rb; i <= re; i ++) {
 		for (integer j = cb; j <= ce; j ++) {
-			if (! isfinite (m [i] [j])) {
+			if (isundef (m [i] [j])) {
 				numberOfInvalids ++;
 				if (firstTime) {
 					MelderInfo_writeLine (U"Invalid data at the following [row] [column] positions:");

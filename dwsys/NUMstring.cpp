@@ -45,7 +45,7 @@ char32 *strstr_regexp (conststring32 string, conststring32 search_regexp) {
 	char32 *charp = nullptr;
 	regexp *compiled_regexp = CompileRE_throwable (search_regexp, 0);
 
-	if (ExecRE (compiled_regexp, nullptr, string, nullptr, false, U'\0', U'\0', nullptr, nullptr, nullptr)) {
+	if (ExecRE (compiled_regexp, nullptr, string, nullptr, false, U'\0', U'\0', nullptr, nullptr)) {
 		charp = compiled_regexp -> startp [0];
 	}
 

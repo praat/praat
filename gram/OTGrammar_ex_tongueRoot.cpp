@@ -101,10 +101,10 @@ autoOTGrammar OTGrammar_create_tongueRoot_grammar (
 		}
 		if (ncons == 9) {
 			my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings = 4);
-			my fixedRankings [1]. higher = 1, my fixedRankings [1]. lower = 6;
-			my fixedRankings [2]. higher = 6, my fixedRankings [2]. lower = 7;
-			my fixedRankings [3]. higher = 2, my fixedRankings [3]. lower = 8;
-			my fixedRankings [4]. higher = 8, my fixedRankings [4]. lower = 9;
+			my fixedRankings [1] = { 1, 6 };
+			my fixedRankings [2] = { 6, 7 };
+			my fixedRankings [3] = { 2, 8 };
+			my fixedRankings [4] = { 8, 9 };
 		}
 		my tableaus = NUMvector <structOTGrammarTableau> (1, my numberOfTableaus = 36);
 		itab = 1;
