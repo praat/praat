@@ -36,7 +36,6 @@
  */
 
 #include "longchar.h"
-#include <stdio.h>   /* For error message. */
 #include "UnicodeData.h"
 
 static struct structLongchar_Info Longchar_database [] = {

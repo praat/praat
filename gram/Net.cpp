@@ -18,7 +18,6 @@
 
 //#include <OpenCL/OpenCL.h>
 #include "Net.h"
-#include "tensor.h"
 #include "PAIRWISE_SUM.h"
 
 #include "oo_DESTROY.h"

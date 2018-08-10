@@ -19,8 +19,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <sys/types.h>
-#include <stdio.h>
 #include "melder.h"   // for integer
 
 /* The following function is used to identify MP3 files */

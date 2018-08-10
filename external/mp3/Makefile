@@ -4,7 +4,7 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../sys
+CPPFLAGS = -I ../../melder
 
 OBJECTS = mp3.o \
 	mad_bit.o \
@@ -33,4 +33,4 @@ libmp3.a: $(OBJECTS)
 	$(AR) cq libmp3.a $(OBJECTS)
 	$(RANLIB) libmp3.a
 
-$(OBJECTS): *.h ../../sys/*.h
+$(OBJECTS): *.h ../../melder/*.h

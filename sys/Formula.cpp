@@ -22,7 +22,6 @@
 	#include <sys/stat.h>
 #endif
 #include "../dwsys/NUM2.h"
-#include "../dwsys/regularExp.h"
 #include "Formula.h"
 #include "Interpreter.h"
 #include "Ui.h"
