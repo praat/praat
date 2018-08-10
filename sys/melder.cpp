@@ -254,7 +254,7 @@ bool Melder_stringMatchesCriterion (conststring32 value, kMelder_string which, c
 		{
 			char32 *place = nullptr;
 			regexp *compiled_regexp = CompileRE_throwable (criterion, ! REDFLT_CASE_INSENSITIVE);
-			if (ExecRE (compiled_regexp, nullptr, value, nullptr, 0, U'\0', U'\0', nullptr, nullptr, nullptr))
+			if (ExecRE (compiled_regexp, nullptr, value, nullptr, 0, U'\0', U'\0', nullptr, nullptr))
 				place = compiled_regexp -> startp [0];
 			free (compiled_regexp);
 			return !! place;

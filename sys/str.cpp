@@ -170,7 +170,8 @@ autostring32 replace_regexStr (conststring32 string,
 	buf.resize (bufferLength);
 
 	pos = posp = string;
-	while (ExecRE (compiledSearchRE, nullptr, pos, nullptr, reverse, prev_char, U'\0', nullptr, nullptr, nullptr) && i ++ < maximumNumberOfReplaces) {
+	while (ExecRE (compiledSearchRE, nullptr, pos, nullptr, reverse, prev_char, U'\0', nullptr, nullptr) &&
+			i ++ < maximumNumberOfReplaces) {
 		/*
 			Copy gap between the end of the previous match and the start
 			of the current match.

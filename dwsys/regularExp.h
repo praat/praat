@@ -89,7 +89,6 @@ int ExecRE (
                                    to '\n' or '\0' if true beginning of text. */
    char32    succ_char,           /* Character immediately after `end'.  Set
                                    to '\n' or '\0' if true beginning of text. */
-   const char32   *delimiters,    /* Word delimiters to use (NULL for default) */
    const char32   *look_behind_to,/* Boundary for look-behind; defaults to
                                    "string" if NULL */
    const char32   *match_till);   /* Boundary to where match can extend.

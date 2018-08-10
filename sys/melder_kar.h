@@ -82,7 +82,6 @@ struct UCD_CodePointInfo {
 	char first, second;
 };
 extern UCD_CodePointInfo theUnicodeDatabase [1+kUCD_TOP_OF_LIST];
-enum class kMelder_charset { ASCII_, UNICODE_ };
 
 /*
 	Praat is an internationalized program, which means it has to work in the same way
@@ -128,10 +127,6 @@ inline static bool Melder_isAsciiVerticalSpace (char32 kar) {
 */
 inline static bool Melder_isHorizontalOrVerticalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
-}
-inline static bool Melder_isHorizontalOrVerticalSpace (char32 kar, kMelder_charset charset) {
-	const char32 top = charset == kMelder_charset::ASCII_ ? kUCD_TOP_OF_ASCII : kUCD_TOP_OF_LIST;
-	return kar <= top && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
 inline static bool Melder_isAsciiHorizontalOrVerticalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;

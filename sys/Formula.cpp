@@ -4532,7 +4532,7 @@ static void do_index_regex (int backward) {
 		if (! compiled_regexp) {
 			Melder_throw (U"index_regex(): ", errorMessage, U".");
 		} else {
-			if (ExecRE (compiled_regexp, nullptr, s->getString(), nullptr, backward, '\0', '\0', nullptr, nullptr, nullptr)) {
+			if (ExecRE (compiled_regexp, nullptr, s->getString(), nullptr, backward, U'\0', U'\0', nullptr, nullptr)) {
 				char32 *location = (char32 *) compiled_regexp -> startp [0];
 				pushNumber (location - s->getString() + 1);
 				free (compiled_regexp);

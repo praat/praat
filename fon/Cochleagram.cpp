@@ -71,8 +71,8 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 	try {
 		if (my nx != thy nx || my dx != thy dx || my x1 != thy x1)
 			Melder_throw (U"Unequal time samplings.");
-		if (my ny != thy ny)
-			Melder_throw (U"Unequal numbers of frequencies.");
+		Melder_require (my ny == thy ny,
+			U"Unequal numbers of frequencies.");
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		integer itmin, itmax;
 		integer nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);

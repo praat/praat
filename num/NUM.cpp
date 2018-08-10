@@ -294,7 +294,7 @@ double NUMerfcc (double x) {
 }
 
 double NUMgaussP (double z) {
-	return 1 - 0.5 * NUMerfcc (NUMsqrt1_2 * z);
+	return 1.0 - 0.5 * NUMerfcc (NUMsqrt1_2 * z);
 }
 
 double NUMgaussQ (double z) {
@@ -484,7 +484,7 @@ void NUM_viterbi (
 			integer place = 0;
 			for (integer icand1 = 1; icand1 <= numberOfCandidates [iframe - 1]; icand1 ++) {
 				double value = delta [iframe - 1] [icand1] + delta [iframe] [icand2]
-					- getTransitionCost (iframe, icand1, icand2, closure);
+						- getTransitionCost (iframe, icand1, icand2, closure);
 				if (value > maximum) { maximum = value; place = icand1; }
 			}
 			if (place == 0)
@@ -498,9 +498,10 @@ void NUM_viterbi (
 	 */
 	integer place;
 	double maximum = delta [numberOfFrames] [place = 1];
-	for (integer icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++)
+	for (integer icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++) {
 		if (delta [numberOfFrames] [icand] > maximum)
 			maximum = delta [numberOfFrames] [place = icand];
+	}
 	/*
 	 * Backtrack.
 	 */
@@ -561,7 +562,7 @@ void NUM_viterbi_multi (
 	if (ntrack > ncand) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Number of tracks (", ntrack, U") should not exceed number of candidates (", ncand, U").");
 	integer ncomb = Melder_iround (NUMcombinations (ncand, ntrack));
-	if (ncomb > 10000000) Melder_throw (U"(NUM_viterbi_multi:) "
+	if (ncomb > 10'000'000) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Unrealistically high number of combinations (", ncomb, U").");
 	parm. ntrack = ntrack;
 	parm. ncomb = ncomb;

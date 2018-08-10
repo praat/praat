@@ -132,7 +132,8 @@ void NUMrandom_State :: init_by_array64 (uint64 init_key [], unsigned int key_le
 	for (; k; k --) {
 		array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (3935559000370003845)))
 		  + init_key [j] + (uint64) j;   // non-linear
-		i ++, j ++;
+		i ++;
+		j ++;
 		if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
 		if (j >= key_length) j = 0;
 	}
@@ -154,23 +155,23 @@ void NUMrandom_init () {
 		keys [0] = (uint64) llround (1e6 * Melder_clock ());   // unique between boots of the same computer
 		keys [1] = UINT64_C (7320321686725470078) + (uint64) threadNumber;   // unique between threads in the same process
 		switch (threadNumber) {
-			case  0: keys [2] = UINT64_C  (4492812493098689432), keys [3] = UINT64_C  (8902321878452586268); break;
-			case  1: keys [2] = UINT64_C  (1875086582568685862), keys [3] = UINT64_C (12243257483652989599); break;
-			case  2: keys [2] = UINT64_C  (9040925727554857487), keys [3] = UINT64_C  (8037578605604605534); break;
-			case  3: keys [2] = UINT64_C (11168476768576857685), keys [3] = UINT64_C  (7862359785763816517); break;
-			case  4: keys [2] = UINT64_C  (3878901748368466876), keys [3] = UINT64_C  (3563078257726526076); break;
-			case  5: keys [2] = UINT64_C  (2185735817578415800), keys [3] = UINT64_C   (198502654671560756); break;
-			case  6: keys [2] = UINT64_C (12248047509814562486), keys [3] = UINT64_C  (9836250167165762757); break;
-			case  7: keys [2] = UINT64_C    (28362088588870143), keys [3] = UINT64_C  (8756376201767075602); break;
-			case  8: keys [2] = UINT64_C  (5758130586486546775), keys [3] = UINT64_C  (4213784157469743413); break;
-			case  9: keys [2] = UINT64_C  (8508416536565170756), keys [3] = UINT64_C  (2856175717654375656); break;
-			case 10: keys [2] = UINT64_C  (2802356275260644756), keys [3] = UINT64_C  (2309872134087235167); break;
-			case 11: keys [2] = UINT64_C   (230875784065064545), keys [3] = UINT64_C  (1209802371478023476); break;
-			case 12: keys [2] = UINT64_C  (6520185868568714577), keys [3] = UINT64_C  (2173615001556504015); break;
-			case 13: keys [2] = UINT64_C  (9082605608605765650), keys [3] = UINT64_C  (1204167447560475647); break;
-			case 14: keys [2] = UINT64_C  (1238716515545475765), keys [3] = UINT64_C  (8435674023875847388); break;
-			case 15: keys [2] = UINT64_C  (6127715675014756456), keys [3] = UINT64_C  (2435788450287508457); break;
-			case 16: keys [2] = UINT64_C  (1081237546238975884), keys [3] = UINT64_C  (2939783238574293882); break;
+			case  0: keys [2] = UINT64_C  (4492812493098689432); keys [3] = UINT64_C  (8902321878452586268); break;
+			case  1: keys [2] = UINT64_C  (1875086582568685862); keys [3] = UINT64_C (12243257483652989599); break;
+			case  2: keys [2] = UINT64_C  (9040925727554857487); keys [3] = UINT64_C  (8037578605604605534); break;
+			case  3: keys [2] = UINT64_C (11168476768576857685); keys [3] = UINT64_C  (7862359785763816517); break;
+			case  4: keys [2] = UINT64_C  (3878901748368466876); keys [3] = UINT64_C  (3563078257726526076); break;
+			case  5: keys [2] = UINT64_C  (2185735817578415800); keys [3] = UINT64_C   (198502654671560756); break;
+			case  6: keys [2] = UINT64_C (12248047509814562486); keys [3] = UINT64_C  (9836250167165762757); break;
+			case  7: keys [2] = UINT64_C    (28362088588870143); keys [3] = UINT64_C  (8756376201767075602); break;
+			case  8: keys [2] = UINT64_C  (5758130586486546775); keys [3] = UINT64_C  (4213784157469743413); break;
+			case  9: keys [2] = UINT64_C  (8508416536565170756); keys [3] = UINT64_C  (2856175717654375656); break;
+			case 10: keys [2] = UINT64_C  (2802356275260644756); keys [3] = UINT64_C  (2309872134087235167); break;
+			case 11: keys [2] = UINT64_C   (230875784065064545); keys [3] = UINT64_C  (1209802371478023476); break;
+			case 12: keys [2] = UINT64_C  (6520185868568714577); keys [3] = UINT64_C  (2173615001556504015); break;
+			case 13: keys [2] = UINT64_C  (9082605608605765650); keys [3] = UINT64_C  (1204167447560475647); break;
+			case 14: keys [2] = UINT64_C  (1238716515545475765); keys [3] = UINT64_C  (8435674023875847388); break;
+			case 15: keys [2] = UINT64_C  (6127715675014756456); keys [3] = UINT64_C  (2435788450287508457); break;
+			case 16: keys [2] = UINT64_C  (1081237546238975884); keys [3] = UINT64_C  (2939783238574293882); break;
 			default: Melder_fatal (U"Thread number too high.");
 		}
 		keys [4] = (uint64) (int64) getpid ();   // unique between processes that run simultaneously on the same computer
@@ -298,7 +299,8 @@ double NUMrandomGauss (double mean, double standardDeviation) {
 			x = my y = 0.0;
 		} else {
 			double factor = sqrt (-2.0 * log (s) / s);
-			x *= factor, my y *= factor;
+			x *= factor;
+			my y *= factor;
 		}
 		my secondAvailable = true;
 		return mean + standardDeviation * x;
@@ -324,7 +326,8 @@ double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviatio
 			x = my y = 0.0;
 		} else {
 			double factor = sqrt (-2.0 * log (s) / s);
-			x *= factor, my y *= factor;
+			x *= factor;
+			my y *= factor;
 		}
 		my secondAvailable = true;
 		return mean + standardDeviation * x;

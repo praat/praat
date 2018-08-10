@@ -1180,7 +1180,7 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 			continue;
 		}
 		if (use_regexp) {
-			if (ExecRE (compiled_regexp, 0, labels [i], nullptr, 0, U'\0', U'\0', 0, 0, 0)) {
+			if (ExecRE (compiled_regexp, nullptr, labels [i], nullptr, false, U'\0', U'\0', nullptr, nullptr)) {
 				nmatches ++;
 			}
 		} else if (str32equ (labels [i], search)) {

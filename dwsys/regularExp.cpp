@@ -2653,7 +2653,6 @@ int ExecRE (
     int     reverse,
     char32    prev_char,
     char32    succ_char,
-    const char32   *delimiters_dummy,   // ignored; a fixed set of Unicode delimiters is always used
     const char32   *look_behind_to,
     const char32   *match_to) {
 
@@ -3170,13 +3169,13 @@ static int match (char32 *prog, int *branch_index_param) {
 				Reg_Input++; break;
 
 			case SPACE_NL: /* \s; for ASCII, use [\n \t\r\f\v] */
-				if (! Melder_isHorizontalOrVerticalSpace (*Reg_Input, kMelder_charset::UNICODE_) || AT_END_OF_STRING (Reg_Input)) {
+				if (! Melder_isHorizontalOrVerticalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
 
 			case NOT_SPACE: /* \S; for ASCII, use [^\n \t\r\f\v] */
-				if (Melder_isHorizontalOrVerticalSpace (*Reg_Input, kMelder_charset::UNICODE_) || AT_END_OF_STRING (Reg_Input)) {
+				if (Melder_isHorizontalOrVerticalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);
 				}
 				Reg_Input++; break;
@@ -3734,14 +3733,14 @@ static unsigned long greedy (char32 *p, long max) {
 			break;
 
 		case SPACE_NL: /* for ASCII, use [\n \t\r\f\v]-- matches newline. */
-			while (count < max_cmp && Melder_isHorizontalOrVerticalSpace (*input_str, kMelder_charset::UNICODE_) && ! AT_END_OF_STRING (input_str)) {
+			while (count < max_cmp && Melder_isHorizontalOrVerticalSpace (*input_str) && ! AT_END_OF_STRING (input_str)) {
 				count ++;
 				input_str ++;
 			}
 			break;
 
 		case NOT_SPACE: /* for ASCII, use [^\n \t\r\f\v]-- doesn't match newline. */
-			while (count < max_cmp && ! Melder_isHorizontalOrVerticalSpace (*input_str, kMelder_charset::UNICODE_) && ! AT_END_OF_STRING (input_str)) {
+			while (count < max_cmp && ! Melder_isHorizontalOrVerticalSpace (*input_str) && ! AT_END_OF_STRING (input_str)) {
 				count ++;
 				input_str ++;
 			}

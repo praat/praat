@@ -40,7 +40,7 @@ static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, total
  * If the user doesn't do that, the application will crash upon the next failing allocation of a _f routine.
  */
 
-#define theRainyDayFund_SIZE  3000000
+#define theRainyDayFund_SIZE  3'000'000
 static char *theRainyDayFund = nullptr;
 
 void Melder_alloc_init () {
@@ -104,7 +104,7 @@ void * Melder_realloc (void *ptr, int64 size) {
 	if (sizeof (size_t) < 8 && size > SIZE_MAX)
 		Melder_throw (U"Can never allocate ", Melder_bigInteger (size), U" bytes. Use a 64-bit edition of Praat instead?");
 	void *result = realloc (ptr, (size_t) size);   // will not show in the statistics...
-	if (result == nullptr)
+	if (! result)
 		Melder_throw (U"Out of memory. Could not extend room to ", Melder_bigInteger (size), U" bytes.");
 	if (! ptr) {   // is it like malloc?
 		if (Melder_debug == 34)

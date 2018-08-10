@@ -334,7 +334,7 @@ public:
 template <typename Ret, typename T, typename... Args>
 class MelderCallback {
 	public:
-		typedef Ret* (*FunctionType) (T*, Args...);
+		using FunctionType = Ret* (*) (T*, Args...);
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
 		template <typename T2  Melder_ENABLE_IF_ISA(T2,T), typename Ret2  Melder_ENABLE_IF_ISA(Ret2,Ret)>
 			MelderCallback (Ret2* (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
@@ -346,7 +346,7 @@ class MelderCallback {
 template <typename T, typename... Args>
 class MelderCallback <void, T, Args...> {   // specialization
 	public:
-		typedef void (*FunctionType) (T*, Args...);
+		using FunctionType = void (*) (T*, Args...);
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
 		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
 			MelderCallback (void (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
@@ -358,7 +358,7 @@ class MelderCallback <void, T, Args...> {   // specialization
 template <typename T, typename... Args>
 class MelderCallback <int, T, Args...> {   // specialization
 	public:
-		typedef int (*FunctionType) (T*, Args...);
+		using FunctionType = int (*) (T*, Args...);
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
 		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
 			MelderCallback (int (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
@@ -384,26 +384,7 @@ class MelderCompareHook {
 
 #include "../dwsys/regularExp.h"
 
-autostring32 leftStr (conststring32 str, integer newLength = 1);
-autostring32 rightStr (conststring32 str, integer newLength = 1);
-autostring32 midStr (conststring32 str, integer startingPosition_1, integer numberOfCharacters = 1);
-
-autostring32 replaceStr (conststring32 str, conststring32 search,
-	conststring32 replace, integer maximumNumberOfReplacements, integer *out_numberOfReplacements);
-/*
-	Look for occurrences of `search` in `str`, and replace them with `replace`.
-*/
-
-autostring32 replace_regexStr (conststring32 string, regexp *search_compiled,
-	conststring32 replace_regex, integer maximumNumberOfReplaces, integer *out_numberOfReplacements);
-/*
-	Searches and replaces 'maximumNumberOfReplaces' times in 'string' on
-	the basis of regular expressions.
-	If maximumNumberOfReplaces <= 0, the interpreted 'replaceRE' replaces ALL occurrences.
-	`search_compiled` is an efficient representation of the search regex and
-	is the result of the compileRE-function which should be called before this function.
-	The number of actual replacements performed is returned in 'out_numberOfReplacements'.
-*/
+#include "xxStr.h"
 
 /* End of file melder.h */
 #endif

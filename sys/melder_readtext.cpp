@@ -60,9 +60,8 @@ mutablestring32 MelderReadText_readLine (MelderReadText me) {
 	if (my string32) {
 		Melder_assert (my readPointer32);
 		Melder_assert (! my readPointer8);
-		if (*my readPointer32 == U'\0') {   // tried to read past end of file
+		if (*my readPointer32 == U'\0')   // tried to read past end of file
 			return nullptr;
-		}
 		char32 *result = my readPointer32;
 		char32 *newline = str32chr (result, U'\n');
 		if (newline) {
@@ -76,9 +75,8 @@ mutablestring32 MelderReadText_readLine (MelderReadText me) {
 		Melder_assert (my string8);
 		Melder_assert (! my readPointer32);
 		Melder_assert (my readPointer8);
-		if (*my readPointer8 == '\0') {   // tried to read past end of file
+		if (*my readPointer8 == '\0')   // tried to read past end of file
 			return nullptr;
-		}
 		char *result8 = my readPointer8;
 		char *newline = strchr (result8, '\n');
 		if (newline) {
@@ -104,12 +102,20 @@ int64 MelderReadText_getNumberOfLines (MelderReadText me) {
 	int64 n = 0;
 	if (my string32) {
 		char32 *p = & my string32 [0];
-		for (; *p != U'\0'; p ++) if (*p == U'\n') n ++;
-		if (p - & my string32 [0] > 1 && p [-1] != U'\n') n ++;
+		for (; *p != U'\0'; p ++) {
+			if (*p == U'\n')
+				n ++;
+		}
+		if (p - & my string32 [0] > 1 && p [-1] != U'\n')
+			n ++;
 	} else {
 		char *p = & my string8 [0];
-		for (; *p != '\0'; p ++) if (*p == '\n') n ++;
-		if (p - & my string8 [0] > 1 && p [-1] != '\n') n ++;
+		for (; *p != '\0'; p ++) {
+			if (*p == '\n')
+				n ++;
+		}
+		if (p - & my string8 [0] > 1 && p [-1] != '\n')
+			n ++;
 	}
 	return n;
 }
@@ -119,13 +125,15 @@ conststring32 MelderReadText_getLineNumber (MelderReadText me) {
 	if (my string32) {
 		char32 *p = & my string32 [0];
 		while (my readPointer32 - p > 0) {
-			if (*p == U'\0' || *p == U'\n') result ++;
+			if (*p == U'\0' || *p == U'\n')
+				result ++;
 			p ++;
 		}
 	} else {
 		char *p = & my string8 [0];
 		while (my readPointer8 - p > 0) {
-			if (*p == '\0' || *p == '\n') result ++;
+			if (*p == '\0' || *p == '\n')
+				result ++;
 			p ++;
 		}
 		return Melder_integer (result);
@@ -140,9 +148,8 @@ static size_t fread_multi (char *buffer, size_t numberOfBytes, FILE *f) {
 	while (numberOfBytes > chunkSize) {
 		size_t numberOfBytesReadInChunk = fread (buffer + offset, sizeof (char), chunkSize, f);
 		numberOfBytesRead += numberOfBytesReadInChunk;
-		if (numberOfBytesReadInChunk < chunkSize) {
+		if (numberOfBytesReadInChunk < chunkSize)
 			return numberOfBytesRead;
-		}
 		numberOfBytes -= chunkSize;
 		offset += chunkSize;
 	}
@@ -156,9 +163,8 @@ static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8)
 		int type = 0;   // 8-bit
 		autostring32 text;
 		autofile f = Melder_fopen (file, "rb");
-		if (fseeko (f, 0, SEEK_END) < 0) {
+		if (fseeko (f, 0, SEEK_END) < 0)
 			Melder_throw (U"Cannot count the bytes in the file.");
-		}
 		Melder_assert (sizeof (off_t) >= 8);
 		int64 length = ftello (f);
 		rewind (f);
@@ -170,9 +176,8 @@ static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8)
 				type = 2;   // little-endian 16-bit
 			} else if (firstByte == 0xEF && secondByte == 0xBB && length >= 3) {
 				int thirdByte = fgetc (f);
-				if (thirdByte == 0xBF) {
+				if (thirdByte == 0xBF)
 					type = -1;   // UTF-8 with BOM
-				}
 			}
 		}
 		if (type <= 0) {
@@ -185,9 +190,11 @@ static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8)
 			autostring8 text8bit (length);
 			Melder_assert (text8bit);
 			size_t numberOfBytesRead = fread_multi (text8bit.get(), (size_t) length, f);
-			if ((int64) numberOfBytesRead < length)
-				Melder_throw (U"The file contains ", length, U" bytes", type == -1 ? U" after the byte-order mark" : U"",
-					U", but we could read only ", numberOfBytesRead, U" of them.");
+			Melder_require ((int64) numberOfBytesRead == length,
+				U"The file contains ", length, U" bytes",
+				type == -1 ? U" after the byte-order mark" : U"",
+				U", but we could read only ", numberOfBytesRead, U" of them."
+			);
 			text8bit [length] = '\0';
 			/*
 			 * Count and repair null bytes.
@@ -200,9 +207,8 @@ static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8)
 						/*
 						 * Shift.
 						 */
-						for (char *q = p; (int64) (q - text8bit.get()) < length; q ++) {
+						for (char *q = p; (int64) (q - text8bit.get()) < length; q ++)
 							*q = q [1];
-						}
 					}
 				}
 				if (numberOfNullBytes > 0) {
@@ -229,8 +235,8 @@ static autostring32 _MelderFile_readText (MelderFile file, autostring8 *string8)
 						char16 kar2 = bingetu16 (f);
 						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
 							text [i] = (char32) (0x010000 +
-								(char32) (((char32) kar1 & 0x0003FF) << 10) +
-								(char32)  ((char32) kar2 & 0x0003FF));
+									(char32) (((char32) kar1 & 0x0003FF) << 10) +
+									(char32)  ((char32) kar2 & 0x0003FF));
 						} else {
 							text [i] = UNICODE_REPLACEMENT_CHARACTER;
 						}

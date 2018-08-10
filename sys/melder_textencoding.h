@@ -42,13 +42,13 @@ bool Melder_isEncodable (conststring32 string, int outputEncoding);
 extern char32 Melder_decodeMacRoman [256];
 extern char32 Melder_decodeWindowsLatin1 [256];
 
+/**
+	 Replace all bare returns (old Mac) or return-plus-linefeed sequences (Win) with bare linefeeds
+	 (generic: Unix and modern Mac).
+	 Return new length of string (equal to or less than old length).
+*/
 integer Melder_killReturns_inplace (mutablestring32 text);
 integer Melder_killReturns_inplace (mutablestring8 text);
-/*
-	 Replaces all bare returns (old Mac) or return-plus-linefeed sequences (Win) with bare linefeeds
-	 (generic: Unix and modern Mac).
-	 Returns new length of string (equal to or less than old length).
-*/
 
 size_t str32len_utf8  (conststring32 string, bool nativizeNewlines);
 size_t str32len_utf16 (conststring32 string, bool nativizeNewlines);
