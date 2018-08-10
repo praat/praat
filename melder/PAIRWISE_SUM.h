@@ -55,7 +55,7 @@
 			                     // from a piece or pieces of data.
 		)
 
-	We explain this in detail below, pedagocically starting with an analogous macro
+	We explain this in detail below, pedagogically starting with an analogous macro
 	for the more usual "sequential" summation algorithm.
 
 	## 1. SEQUENTIAL SUMMATION: A SINGLE ACCUMULATOR
@@ -91,7 +91,7 @@
 	but modern compilers produce equally efficient code if you separate the two steps:
 
 		long double sum = 0.0;
-		double *xx = x;   // decalere and initialize
+		double *xx = x;   // declare and initialize
 		for (long i = 1; i <= size; i ++) {
 			xx += 1;   // first increment...
 			sum += *xx;   // ... then dereference
@@ -273,7 +273,7 @@
 
 	Note for the sixth argument: you can see here that you can do the two increments simultaneously
 	by using parentheses and a comma; fortunately, the C macro preprocessor understands enough
-	about parentheses to see that you mean the fifth argument to be a single argument.
+	about parentheses to see that you mean the sixth argument to be a single argument.
 
 	Note for the seventh argument: as 64-bit multiplication loses a lot of the precision of its
 	two 64-bit operands, it is advisable to convert both operands to `long double`
@@ -365,7 +365,7 @@
 /*
 	## 11. IMPLEMENTATION OF PAIRWISE ADDITION: HIGH POWERS OF 2
 	
-	Higher powers of 2 than 32 go on a stack. We sum 64 values at each stroke,
+	Higher powers of 2 than 2^5 (= 32) go on a stack. We sum 64 values at each stroke,
 	and this requires a fixed formula for these 64 terms:
 */
 #define PAIRWISE_SUM_64_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
@@ -518,7 +518,7 @@
 		} \
 	}
 /*
-	Another one is the Kahan algorithm. Its precision is comparable to that of pairwise summation,
+	Another one is the Kahan algorithm. Its precision is similar to that of pairwise summation,
 	but it is extremely slow:
 */
 #define KAHAN_SUM(AccumulatorType, sumVariableName, CounterType, sizeExpression, \
