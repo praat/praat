@@ -1,6 +1,6 @@
 /* melder_error.cpp
  *
- * Copyright (C) 1992-2011,2015 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,10 @@ static void defaultError (conststring32 message) {
 	MelderConsole::write (U"\n", true);
 }
 
-static void (*theError) (conststring32) = defaultError;   // initial setting after start-up; will stay if program is run from batch
+static void (*p_theErrorProc) (conststring32) = & defaultError;   // initial setting after start-up; will stay if program is run from batch
 
-void Melder_setErrorProc (void (*error) (conststring32)) {
-	theError = error ? error : defaultError;
+void Melder_setErrorProc (void (*p_errorProc) (conststring32)) {
+	p_theErrorProc = p_errorProc ? p_errorProc : & defaultError;
 }
 
 constexpr integer BUFFER_LENGTH = 2000;
@@ -74,7 +74,7 @@ void Melder_flushError () {
 	static char32 temp [BUFFER_LENGTH];
 	str32cpy (temp, buffer);
 	Melder_clearError ();
-	theError (temp);
+	(*p_theErrorProc) (temp);
 }
 
 /* End of file melder_error.cpp */

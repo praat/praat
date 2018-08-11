@@ -1,6 +1,6 @@
-#ifndef _melder_writeText_h_
-#define _melder_writeText_h_
-/* melder_writeText.h
+#ifndef _melder_play_h_
+#define _melder_play_h_
+/* melder_play.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,7 +18,18 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-void Melder_fwrite32to8 (conststring32 string, FILE *f);
+int Melder_record (double duration);
+int Melder_recordFromFile (MelderFile file);
+void Melder_play ();
+void Melder_playReverse ();
+int Melder_publishPlayed ();
+void Melder_beep ();
 
-/* End of file melder_writeText.h */
+void Melder_setRecordProc (int (*record) (double));
+void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile));
+void Melder_setPlayProc (void (*play) ());
+void Melder_setPlayReverseProc (void (*playReverse) ());
+void Melder_setPublishPlayedProc (int (*publishPlayed) ());
+
+/* End of file melder_play.h */
 #endif

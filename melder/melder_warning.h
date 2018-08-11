@@ -43,7 +43,7 @@ void Melder_warning (const MelderArg& first, Args... rest) {
 	if (MelderWarning::_depth < 0)
 		return;
 	MelderString_copy (& MelderWarning::_buffer, first, rest...);
-	MelderWarning::_p_currentProc (MelderWarning::_buffer.string);
+	(*MelderWarning::_p_currentProc) (MelderWarning::_buffer.string);
 }
 
 void Melder_warningOff ();
@@ -54,6 +54,8 @@ public:
 	autoMelderWarningOff () { Melder_warningOff (); }
 	~autoMelderWarningOff () { Melder_warningOn (); }
 };
+
+void Melder_setWarningProc (MelderWarning::Proc p_proc);
 
 /* End of file melder_warning.h */
 #endif

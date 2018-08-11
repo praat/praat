@@ -174,5 +174,11 @@ public:
 	autoMelderFileSetDefaultDir& operator= (const autoMelderFileSetDefaultDir&) = delete;   // disable copy assignment
 };
 
+/* Read and write whole text files. */
+autostring32 MelderFile_readText (MelderFile file, autostring8 *string8 = nullptr);
+void Melder_fwrite32to8 (conststring32 string, FILE *f);
+void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutputEncoding outputEncoding);
+void MelderFile_appendText (MelderFile file, conststring32 text);
+
 /* End of file melder_files.h */
 #endif

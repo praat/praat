@@ -351,6 +351,7 @@ protected:
 	void _initAt (integer givenSize, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
 };
+
 /*
 	An autovector is the sole owner of its payload, which is a vector.
 	When the autovector ends its life (goes out of scope),
@@ -359,7 +360,7 @@ protected:
 	would continue to use some of the computer's resources (namely, memory).
 */
 template <typename T>
-class autovector : public vector <T> {
+class autovector : public vector<T> {
 public:
 	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
 	autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
@@ -367,7 +368,7 @@ public:
 		our size = givenSize;
 	}
 	~autovector () {   // destroy the payload (if any)
-		if (our at) our vector<T>::_freeAt ();
+		our reset ();
 	}
 	vector<T> get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
 	void adoptFromAmbiguousOwner (vector<T> given) {   // buy the payload from a non-autovector
@@ -394,7 +395,7 @@ public:
 	}
 	autovector& operator= (autovector&& other) noexcept {   // enable move assignment for r-values (temporaries)
 		if (other.at != our at) {
-			if (our at) our _freeAt ();
+			our reset ();
 			our at = other.at;
 			our size = other.size;
 			other.at = nullptr;   // disown source
@@ -405,108 +406,27 @@ public:
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 };
 
-#if 1
-	using numvec = vector <double>;
-	using autonumvec = autovector <double>;
-#else
-class autonumvec;   // forward declaration, needed in the declaration of numvec
-
-class numvec {
-public:
-	double *at;
-	integer size;
-public:
-	numvec () = default;   // for use in a union
-	numvec (double *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
-	numvec (const numvec& other) = default;
-	numvec (const autonumvec& other) = delete;
-	numvec& operator= (const numvec&) = default;
-	numvec& operator= (const autonumvec&) = delete;
-	double& operator[] (integer i) {
-		return our at [i];
-	}
-	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autonumvec)
-		if (our at) {
-			our _freeAt ();
-			our at = nullptr;
-		}
-		our size = 0;
-	}
-protected:
-	void _initAt (integer givenSize, kTensorInitializationType initializationType);
-	void _freeAt () noexcept;
-};
-/*
-	An autonumvec is the sole owner of its payload, which is a numvec.
-	When the autonumvec ends its life (goes out of scope),
-	it should destroy its payload (if it has not sold it),
-	because keeping a payload alive when the owner is dead
-	would continue to use some of the computer's resources (namely, memory).
-*/
-class autonumvec : public numvec {
-public:
-	autonumvec (): numvec (nullptr, 0) { }   // come into existence without a payload
-	autonumvec (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
-		our _initAt (givenSize, initializationType);
-		our size = givenSize;
-	}
-	~autonumvec () {   // destroy the payload (if any)
-		if (our at) our _freeAt ();
-	}
-	numvec get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
-	void adoptFromAmbiguousOwner (numvec given) {   // buy the payload from a non-autonumvec
-		our reset();
-		our at = given.at;
-		our size = given.size;
-	}
-	numvec releaseToAmbiguousOwner () {   // sell the payload to a non-autonumvec
-		double *oldAt = our at;
-		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
-		return { oldAt, our size };
-	}
-	/*
-		Disable copying via construction or assignment (which would violate unique ownership of the payload).
-	*/
-	autonumvec (const autonumvec&) = delete;   // disable copy constructor
-	autonumvec& operator= (const autonumvec&) = delete;   // disable copy assignment
-	/*
-		Enable moving of temporaries or (for variables) via an explicit move().
-		This implements buying a payload from another autonumvec (which involves destroying our current payload).
-	*/
-	autonumvec (autonumvec&& other) noexcept : numvec { other.get() } {   // enable move constructor for r-values (temporaries)
-		other.at = nullptr;   // disown source
-	}
-	autonumvec& operator= (autonumvec&& other) noexcept {   // enable move assignment for r-values (temporaries)
-		if (other.at != our at) {
-			if (our at) our _freeAt ();
-			our at = other.at;
-			our size = other.size;
-			other.at = nullptr;   // disown source
-			other.size = 0;   // needed only if you insist on keeping the source in a valid state
-		}
-		return *this;
-	}
-	autonumvec&& move () noexcept { return static_cast <autonumvec&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
-};
-#endif
+using numvec = vector <double>;
+using autonumvec = autovector <double>;
 
 #define empty_numvec  numvec { nullptr, 0 }
 
+template <typename T>
+class automatrix;   // forward declaration, needed in the declaration of matrix
 
-class autonummat;   // forward declaration, needed in the declaration of nummat
-
-class nummat {
+template <typename T>
+class matrix {
 public:
-	double **at;
+	T **at;
 	integer nrow, ncol;
 public:
-	nummat () = default;   // for use in a union
-	nummat (double **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	nummat (const nummat& other) = default;
-	nummat (const autonummat& other) = delete;
-	nummat& operator= (const nummat&) = default;
-	nummat& operator= (const autonummat&) = delete;
-	double *& operator[] (integer i) {
+	matrix () = default;   // for use in a union
+	matrix (T **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	matrix (const matrix& other) = default;
+	matrix (const automatrix<T>& other) = delete;
+	matrix& operator= (const matrix&) = default;
+	matrix& operator= (const automatrix<T>&) = delete;
+	T *& operator[] (integer i) {
 		return our at [i];
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autonummat)
@@ -522,51 +442,50 @@ protected:
 	void _freeAt () noexcept;
 };
 
-#define empty_nummat  nummat { nullptr, 0, 0 }
-
 /*
-	An autonummat is the sole owner of its payload, which is a nummat.
-	When the autonummat ends its life (goes out of scope),
+	An automatrix is the sole owner of its payload, which is a matrix.
+	When the automatrix ends its life (goes out of scope),
 	it should destroy its payload (if it has not sold it),
 	because keeping a payload alive when the owner is dead
 	would continue to use some of the computer's resources (namely, memory).
 */
-class autonummat : public nummat {
+template <typename T>
+class automatrix : public matrix<T> {
 public:
-	autonummat (): nummat { nullptr, 0, 0 } { }   // come into existence without a payload
-	autonummat (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+	automatrix (): matrix<T> { nullptr, 0, 0 } { }   // come into existence without a payload
+	automatrix (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
 		our _initAt (givenNrow, givenNcol, initializationType);
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
-	~autonummat () {   // destroy the payload (if any)
+	~automatrix () {   // destroy the payload (if any)
 		if (our at) our _freeAt ();
 	}
-	nummat get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
-	void adoptFromAmbiguousOwner (nummat given) {   // buy the payload from a non-autonummat
+	matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-autonummat
 		our reset();
 		our at = given.at;
 		our nrow = given.nrow;
 		our ncol = given.ncol;
 	}
-	nummat releaseToAmbiguousOwner () {   // sell the payload to a non-autonummat
-		double **oldAt = our at;
+	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autonummat
+		T **oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		return { oldAt, our nrow, our ncol };
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
 	*/
-	autonummat (const autonummat&) = delete;   // disable copy constructor
-	autonummat& operator= (const autonummat&) = delete;   // disable copy assignment
+	automatrix (const automatrix&) = delete;   // disable copy constructor
+	automatrix& operator= (const automatrix&) = delete;   // disable copy assignment
 	/*
 		Enable moving of temporaries or (for variables) via an explicit move().
 		This implements buying a payload from another autonummat (which involves destroying our current payload).
 	*/
-	autonummat (autonummat&& other) noexcept : nummat { other.get() } {   // enable move constructor for r-values (temporaries)
+	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor for r-values (temporaries)
 		other.at = nullptr;   // disown source
 	}
-	autonummat& operator= (autonummat&& other) noexcept {   // enable move assignment for r-values (temporaries)
+	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment for r-values (temporaries)
 		if (other.at != our at) {
 			if (our at) our _freeAt ();
 			our at = other.at;
@@ -578,8 +497,13 @@ public:
 		}
 		return *this;
 	}
-	autonummat&& move () noexcept { return static_cast <autonummat&&> (*this); }
+	automatrix&& move () noexcept { return static_cast <automatrix&&> (*this); }
 };
+
+using nummat = matrix <double>;
+using autonummat = automatrix <double>;
+
+#define empty_nummat  nummat { nullptr, 0, 0 }
 
 conststring32 Melder_numvec (numvec value);
 conststring32 Melder_nummat (nummat value);

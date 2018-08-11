@@ -79,9 +79,8 @@ class autoMelderDivertInfo {
 
 void Melder_clearInfo ();   // clear the Info window
 conststring32 Melder_getInfo ();
-void Melder_help (conststring32 query);
 
-void Melder_search ();
+void Melder_setInformationProc (MelderInfo::Proc proc);
 
 /* End of file melder_info.h */
 #endif
