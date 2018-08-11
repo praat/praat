@@ -17,7 +17,7 @@
  */
 
 #include "LogisticRegression.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 #include "oo_DESTROY.h"
 #include "LogisticRegression_def.h"

@@ -37,7 +37,6 @@
 #ifdef macintosh
 	#include <TargetConditionals.h>
 #endif
-#include "abcio.h"
 
 /********** text I/O **********/
 

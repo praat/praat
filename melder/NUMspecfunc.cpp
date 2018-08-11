@@ -30,12 +30,12 @@
  */
 
 #include "melder.h"
-#include "NUM2.h"   // NUMridders
+#include "../dwsys/NUM2.h"   // NUMridders
 
-#include "gsl_errno.h"
-#include "gsl_sf_bessel.h"
-#include "gsl_sf_gamma.h"
-#include "gsl_sf_erf.h"
+#include "../external/gsl/gsl_errno.h"
+#include "../external/gsl/gsl_sf_bessel.h"
+#include "../external/gsl/gsl_sf_gamma.h"
+#include "../external/gsl/gsl_sf_erf.h"
 
 double NUMlnGamma (double x) {
 	gsl_sf_result result;

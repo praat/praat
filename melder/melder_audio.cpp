@@ -41,11 +41,10 @@
 	#include <errno.h>
 #endif
 
-#include "Gui.h"
-#include "Preferences.h"
 #include "melder.h"
 #include <time.h>
-
+#include "../sys/Gui.h"
+#include "../sys/Preferences.h"
 #include "../external/portaudio/portaudio.h"
 
 #ifdef HAVE_PULSEAUDIO
@@ -61,6 +60,8 @@
 	void stream_write_cb2 (pa_stream *stream, size_t length, void *userdata);
 	void pulseAudio_server_info_cb (pa_context *context, const pa_server_info *info, void *userdata);
 #endif
+
+bool Melder_asynchronous;
 
 static struct {
 	enum kMelder_asynchronicityLevel maximumAsynchronicity;

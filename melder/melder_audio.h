@@ -124,5 +124,52 @@ public:
 	}
 };
 
+/*
+	True if specified by the "asynchronous" directive in a script.
+	TODO: change to inline variable once C++17 is implemented completely on all platforms.
+*/
+extern bool Melder_asynchronous;
+
+class autoMelderAsynchronous {
+	bool _disowned;
+	bool _savedAsynchronicity;
+public:
+	autoMelderAsynchronous () {
+		our _savedAsynchronicity = Melder_asynchronous;
+		Melder_asynchronous = true;
+		our _disowned = false;
+	}
+	~autoMelderAsynchronous () {
+		if (! _disowned) {
+			Melder_asynchronous = _savedAsynchronicity;
+		}
+	}
+	/*
+		Disable copying.
+	*/
+	autoMelderAsynchronous (const autoMelderAsynchronous&) = delete;   // disable copy constructor
+	autoMelderAsynchronous& operator= (const autoMelderAsynchronous&) = delete;   // disable copy assignment
+	/*
+		Enable moving.
+	*/
+	autoMelderAsynchronous (autoMelderAsynchronous&& other) noexcept {   // enable move constructor
+		our _disowned = other._disowned;
+		our _savedAsynchronicity = other._savedAsynchronicity;
+		other._disowned = true;
+	}
+	autoMelderAsynchronous& operator= (autoMelderAsynchronous&& other) noexcept {   // enable move assignment
+		if (& other != this) {
+			our _disowned = other._disowned;
+			our _savedAsynchronicity = other._savedAsynchronicity;
+			other._disowned = true;   // needed only if you insist on keeping the source in a valid state
+		}
+		return *this;
+	}
+	autoMelderAsynchronous&& move () noexcept { return static_cast <autoMelderAsynchronous&&> (*this); }
+	void releaseToAmbiguousOwner () {
+		our _disowned = true;
+	}
+};
+
 /* End of file melder_audio.h */
 #endif

@@ -30,7 +30,7 @@
 
 double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (base, exponent); }
 
-#include "gsl_errno.h"
+#include "../external/gsl/gsl_errno.h"
 
 void NUMshift (double *x, double xfrom, double xto) {
 	if (*x == xfrom) *x = xto; else *x += xto - xfrom;

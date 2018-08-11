@@ -17,7 +17,7 @@
  */
 
 #include "ManPagesM.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 static void drawOneIpaSymbol (Graphics g, double x, double y, conststring32 symbol) {
 	char32 buffer [30], *p = & buffer [0];

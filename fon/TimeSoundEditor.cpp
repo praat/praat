@@ -19,7 +19,7 @@
 #include "NUM2.h"
 #include "TimeSoundEditor.h"
 #include "EditorM.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 #include "enums_getText.h"
 #include "TimeSoundEditor_enums.h"

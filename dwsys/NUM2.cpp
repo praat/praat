@@ -76,7 +76,6 @@
 #include "gsl_sf_trig.h"
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
-#include "tensor.h"
 
 #undef MAX
 #undef MIN

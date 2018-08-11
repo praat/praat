@@ -17,7 +17,7 @@
  */
 
 #include "TextGrid.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 
 #include "oo_DESTROY.h"
 #include "TextGrid_def.h"

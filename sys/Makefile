@@ -1,9 +1,10 @@
 # Makefile of the library "sys"
-# Paul Boersma, 10 August 2018
+# Paul Boersma, 11 August 2018
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../external/portaudio -I ../external/flac -I ../external/mp3
+# -I ../sys is there because e.g. Graphics.cpp include fon/Function.h, which again includes something from sys
+CPPFLAGS = -I ../melder -I ../sys
 
 OBJECTS = Thing.o Data.o Simple.o Collection.o Strings.o \
    Graphics.o Graphics_linesAndAreas.o Graphics_text.o Graphics_colour.o \
@@ -37,4 +38,4 @@ libsys.a: $(OBJECTS)
 	$(AR) cq libsys.a $(OBJECTS)
 	$(RANLIB) libsys.a
 
-$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../dwsys/*.h ../external/portaudio/*.h ../external/flac/*.h ../external/mp3/mp3.h
+$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../dwsys/*.h

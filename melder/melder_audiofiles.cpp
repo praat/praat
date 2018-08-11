@@ -1,6 +1,6 @@
 /* melder_audiofiles.cpp
  *
- * Copyright (C) 1992-2008,2010-2017 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2008,2010-2018 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,10 @@
  */
 
 #include "melder.h"
-#include "abcio.h"
-#include "math.h"
-#include "flac_FLAC_metadata.h"
-#include "flac_FLAC_stream_decoder.h"
-#include "flac_FLAC_stream_encoder.h"
-#include "mp3.h"
+#include "../external/flac/flac_FLAC_metadata.h"
+#include "../external/flac/flac_FLAC_stream_decoder.h"
+#include "../external/flac/flac_FLAC_stream_encoder.h"
+#include "../external/mp3/mp3.h"
 
 /***** WRITING *****/
 

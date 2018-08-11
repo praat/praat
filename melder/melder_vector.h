@@ -320,9 +320,96 @@ public:
 		}
 */
 
-class autonumvec;   // forward declaration, needed in the declaration of numvec
-
 enum class kTensorInitializationType { RAW = 0, ZERO = 1 };
+
+template <typename T>
+class autovector;   // forward declaration, needed in the declaration of vector<>
+
+template <typename T>
+class vector {
+public:
+	T *at;
+	integer size;
+public:
+	vector () = default;   // for use in a union
+	vector (T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	vector (const vector& other) = default;
+	vector (const autovector<T>& other) = delete;
+	vector& operator= (const vector&) = default;
+	vector& operator= (const autovector<T>&) = delete;
+	T& operator[] (integer i) {
+		return our at [i];
+	}
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
+		if (our at) {
+			our _freeAt ();
+			our at = nullptr;
+		}
+		our size = 0;
+	}
+protected:
+	void _initAt (integer givenSize, kTensorInitializationType initializationType);
+	void _freeAt () noexcept;
+};
+/*
+	An autovector is the sole owner of its payload, which is a vector.
+	When the autovector ends its life (goes out of scope),
+	it should destroy its payload (if it has not sold it),
+	because keeping a payload alive when the owner is dead
+	would continue to use some of the computer's resources (namely, memory).
+*/
+template <typename T>
+class autovector : public vector <T> {
+public:
+	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
+	autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+		our _initAt (givenSize, initializationType);
+		our size = givenSize;
+	}
+	~autovector () {   // destroy the payload (if any)
+		if (our at) our vector<T>::_freeAt ();
+	}
+	vector<T> get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
+	void adoptFromAmbiguousOwner (vector<T> given) {   // buy the payload from a non-autovector
+		our reset();
+		our at = given.at;
+		our size = given.size;
+	}
+	vector<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autovector
+		T *oldAt = our at;
+		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
+		return { oldAt, our size };
+	}
+	/*
+		Disable copying via construction or assignment (which would violate unique ownership of the payload).
+	*/
+	autovector (const autovector&) = delete;   // disable copy constructor
+	autovector& operator= (const autovector&) = delete;   // disable copy assignment
+	/*
+		Enable moving of temporaries or (for variables) via an explicit move().
+		This implements buying a payload from another autovector (which involves destroying our current payload).
+	*/
+	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor for r-values (temporaries)
+		other.at = nullptr;   // disown source
+	}
+	autovector& operator= (autovector&& other) noexcept {   // enable move assignment for r-values (temporaries)
+		if (other.at != our at) {
+			if (our at) our _freeAt ();
+			our at = other.at;
+			our size = other.size;
+			other.at = nullptr;   // disown source
+			other.size = 0;   // needed only if you insist on keeping the source in a valid state
+		}
+		return *this;
+	}
+	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
+};
+
+#if 1
+	using numvec = vector <double>;
+	using autonumvec = autovector <double>;
+#else
+class autonumvec;   // forward declaration, needed in the declaration of numvec
 
 class numvec {
 public:
@@ -349,9 +436,6 @@ protected:
 	void _initAt (integer givenSize, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
 };
-
-#define empty_numvec  numvec { nullptr, 0 }
-
 /*
 	An autonumvec is the sole owner of its payload, which is a numvec.
 	When the autonumvec ends its life (goes out of scope),
@@ -404,6 +488,10 @@ public:
 	}
 	autonumvec&& move () noexcept { return static_cast <autonumvec&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 };
+#endif
+
+#define empty_numvec  numvec { nullptr, 0 }
+
 
 class autonummat;   // forward declaration, needed in the declaration of nummat
 

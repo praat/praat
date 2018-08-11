@@ -100,10 +100,11 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 
 /********** SYSTEM VERSION **********/
 
-inline int32 Melder_systemVersion;
 /*
 	For Macintosh, this is set in praat_init.
+	TODO: change to inline variable once C++17 is implemented completely on all platforms.
 */
+extern int32 Melder_systemVersion;
 
 /********** ENFORCE INTERACTIVE BEHAVIOUR **********/
 
@@ -114,9 +115,18 @@ void MelderGui_create (/* GuiWindow */ void *parent);
 	'parent' is the top-level widget returned by GuiAppInitialize.
 */
 
-inline bool Melder_batch;   // true if run from the batch or from an interactive command-line interface
-inline bool Melder_backgrounding;   // true if running a script
-inline bool Melder_asynchronous;   // true if specified by the "asynchronous" directive in a script
+/*
+	Set in praat_init.
+	True if run from the batch or from an interactive command-line interface.
+	TODO: change to inline variable once C++17 is implemented completely on all platforms.
+*/
+extern bool Melder_batch;
+
+/*
+	True if running a script.
+	TODO: change to inline variable once C++17 is implemented completely on all platforms.
+*/
+extern bool Melder_backgrounding;
 
 /********** OVERRIDE DEFAULT BEHAVIOUR **********/
 
@@ -136,79 +146,12 @@ void Melder_setMonitorProc (void * (*monitor) (double, conststring32));
 void Melder_setErrorProc (void (*errorProc) (conststring32 message));
 void Melder_setFatalProc (void (*fatalProc) (conststring32 message));
 
-#pragma mark - QUANTITY
+#include "melder_quantity.h"
 
-#define MelderQuantity_NONE  0
-#define MelderQuantity_TIME_SECONDS  1
-#define MelderQuantity_FREQUENCY_HERTZ  2
-#define MelderQuantity_FREQUENCY_BARK  3
-#define MelderQuantity_DISTANCE_FROM_GLOTTIS_METRES  4
-#define MelderQuantity_NUMBER_OF_QUANTITIES  4
-conststring32 MelderQuantity_getText (int quantity);   // e.g. "Time"
-conststring32 MelderQuantity_getWithUnitText (int quantity);   // e.g. "Time (s)"
-conststring32 MelderQuantity_getLongUnitText (int quantity);   // e.g. "seconds"
-conststring32 MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
-
-#pragma mark - READING TEXT
-
-struct structMelderReadText {
-	autostring32 string32;
-	char32 *readPointer32;
-	autostring8 string8;
-	char *readPointer8;
-	kMelder_textInputEncoding input8Encoding;
-	structMelderReadText () : readPointer32 (nullptr), readPointer8 (nullptr) {
-		/*
-			Check that C++ default initialization has worked.
-		*/
-		Melder_assert (! our string32);
-		Melder_assert (! our string8);
-	}
-};
-typedef struct structMelderReadText *MelderReadText;
-
-#if 1
-	using autoMelderReadText = std::unique_ptr<structMelderReadText>;
-#else
-struct autoMelderReadText {
-	MelderReadText text;
-	autoMelderReadText () {
-		our text = new structMelderReadText;
-	}
-	~ autoMelderReadText () {
-		delete (our text);
-	}
-	MelderReadText operator-> () const {   // as r-value
-		return our text;
-	}
-	MelderReadText get () const {
-		return our text;
-	}
-	autoMelderReadText (const autoMelderReadText&) = delete;   // disable copy constructor
-	autoMelderReadText (autoMelderReadText&& other) noexcept {   // enable move constructor
-		our text = other.text;
-		other.text = nullptr;
-	}
-	autoMelderReadText& operator= (const autoMelderReadText&) = delete;   // disable copy assignment
-	autoMelderReadText& operator= (autoMelderReadText&& other) noexcept {   // enable move assignment
-		if (& other != this) {
-			delete (our text);
-			our text = other.text;
-			other.text = nullptr;
-		}
-		return *this;
-	}
-	autoMelderReadText&& move () noexcept { return static_cast <autoMelderReadText&&> (*this); }
-	explicit operator bool () const { return !! our text; }
-};
-#endif
-
-autoMelderReadText MelderReadText_createFromFile (MelderFile file);
-char32 MelderReadText_getChar (MelderReadText text);
-mutablestring32 MelderReadText_readLine (MelderReadText text);
-int64 MelderReadText_getNumberOfLines (MelderReadText me);
-conststring32 MelderReadText_getLineNumber (MelderReadText text);
-
+#include "melder_readText.h"
+#include "melder_writeText.h"
+#include "melder_sysenv.h"
+#include "abcio_enums.h"
 #include "abcio.h"
 
 /* The following ANSI-C power trick generates the declarations of 88 functions. */
@@ -269,54 +212,6 @@ double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer 
 	Throw an error message if anything went wrong.
 */
 
-#pragma mark - MISCELLANEOUS
-
-conststring32 Melder_getenv (conststring32 variableName);
-void Melder_system (conststring32 command);   // spawn a system command
-void Melder_execv (conststring32 executableFileName, integer narg, char32 **args);   // spawn a subprocess
-
-
-
-class autoMelderAsynchronous {
-	bool _disowned;
-	bool _savedAsynchronicity;
-public:
-	autoMelderAsynchronous () {
-		our _savedAsynchronicity = Melder_asynchronous;
-		Melder_asynchronous = true;
-		our _disowned = false;
-	}
-	~autoMelderAsynchronous () {
-		if (! _disowned) {
-			Melder_asynchronous = _savedAsynchronicity;
-		}
-	}
-	/*
-		Disable copying.
-	*/
-	autoMelderAsynchronous (const autoMelderAsynchronous&) = delete;   // disable copy constructor
-	autoMelderAsynchronous& operator= (const autoMelderAsynchronous&) = delete;   // disable copy assignment
-	/*
-		Enable moving.
-	*/
-	autoMelderAsynchronous (autoMelderAsynchronous&& other) noexcept {   // enable move constructor
-		our _disowned = other._disowned;
-		our _savedAsynchronicity = other._savedAsynchronicity;
-		other._disowned = true;
-	}
-	autoMelderAsynchronous& operator= (autoMelderAsynchronous&& other) noexcept {   // enable move assignment
-		if (& other != this) {
-			our _disowned = other._disowned;
-			our _savedAsynchronicity = other._savedAsynchronicity;
-			other._disowned = true;   // needed only if you insist on keeping the source in a valid state
-		}
-		return *this;
-	}
-	autoMelderAsynchronous&& move () noexcept { return static_cast <autoMelderAsynchronous&&> (*this); }
-	void releaseToAmbiguousOwner () {
-		our _disowned = true;
-	}
-};
 
 //#define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if<std::is_base_of<B,A>::value>::type
 #define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if_t<std::is_base_of<B,A>::value>

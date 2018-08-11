@@ -16,10 +16,30 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "tensor.h"
+#include "melder.h"
 #include "../dwsys/NUM2.h"   /* for NUMsort2 */
 #include "PAIRWISE_SUM.h"
 
+#if 1
+template <typename T>
+void vector<T> :: _initAt (integer givenSize, kTensorInitializationType initializationType) {
+	Melder_assert (givenSize >= 0);
+	try {
+		our at = ( givenSize == 0 ? nullptr : NUMvector <T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
+	} catch (MelderError) {
+		Melder_throw (U"Vector not created.");
+	}
+}
+
+template <typename T>
+void vector<T> :: _freeAt () noexcept {
+	if (our at) NUMvector_free <T> (our at, 1);
+}
+template <>
+void vector<double> :: _freeAt () noexcept {
+	if (our at) NUMvector_free (our at, 1);
+}
+#else
 void numvec :: _initAt (integer givenSize, kTensorInitializationType initializationType) {
 	Melder_assert (givenSize >= 0);
 	try {
@@ -32,6 +52,7 @@ void numvec :: _initAt (integer givenSize, kTensorInitializationType initializat
 void numvec :: _freeAt () noexcept {
 	if (our at) NUMvector_free (our at, 1);
 }
+#endif
 
 void nummat :: _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {
 	Melder_assert (givenNrow >= 0);

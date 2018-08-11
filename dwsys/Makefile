@@ -16,7 +16,7 @@ OBJECTS = Collection_extensions.o Command.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMcomplex.o NUMfft_d.o NUMsort2.o \
 	NUMmathlib.o NUMstring.o \
 	Permutation.o Permutation_and_Index.o \
-	regularExp.o SimpleVector.o \
+	SimpleVector.o \
 	SVD.o
 
 .PHONY: all clean

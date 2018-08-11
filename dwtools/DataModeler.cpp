@@ -27,7 +27,6 @@
 #include "Strings_extensions.h"
 #include "Sound_and_LPC_robust.h"
 #include "Table_extensions.h"
-#include "tensor.h"
 
 #include "oo_DESTROY.h"
 #include "DataModeler_def.h"

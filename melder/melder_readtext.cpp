@@ -17,8 +17,7 @@
  */
 
 #include "melder.h"
-#include "UnicodeData.h"
-#include "abcio.h"
+#include "../kar/UnicodeData.h"
 
 char32 MelderReadText_getChar (MelderReadText me) {
 	if (my string32) {

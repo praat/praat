@@ -38,7 +38,7 @@
 #include "oo_DESCRIPTION.h"
 #include "SpellingChecker_def.h"
 
-#include "longchar.h"
+#include "../kar/longchar.h"
 
 Thing_implement (SpellingChecker, Daata, 0);
 
