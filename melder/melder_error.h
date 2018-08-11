@@ -83,5 +83,7 @@ void Melder_clearError ();
 conststring32 Melder_getError ();
 	/* Returns the error string. Mainly used with str32str. */
 
+void Melder_setErrorProc (void (*p_errorProc) (conststring32));
+
 /* End of file melder_error.h */
 #endif

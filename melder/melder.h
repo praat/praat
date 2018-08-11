@@ -90,6 +90,7 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 #include "melder_warning.h"
 #include "melder_fatal.h"
 #include "melder_progress.h"
+#include "melder_play.h"   // Melder_record, Melder_play, Melder_beep
 #include "melder_ftoi.h"
 #include "melder_time.h"   // stopwatch, sleep, clock
 #include "melder_audio.h"
@@ -128,89 +129,18 @@ extern bool Melder_batch;
 */
 extern bool Melder_backgrounding;
 
-/********** OVERRIDE DEFAULT BEHAVIOUR **********/
-
-/* Procedures to override default message methods. */
-/* They may chage the string arguments. */
-/* Many of these routines are called by MelderGui_create(). */
-
-void Melder_setCasualProc (void (*casualProc) (conststring32 message));
-void Melder_setProgressProc (int (*progressProc) (double progress, conststring32 message));
-void Melder_setMonitorProc (void * (*monitorProc) (double progress, conststring32 message));
-void Melder_setInformationProc (MelderInfo::Proc informationProc);
+void Melder_help (conststring32 query);
+void Melder_search ();
 void Melder_setHelpProc (void (*help) (conststring32 query));
 void Melder_setSearchProc (void (*search) ());
-void Melder_setWarningProc (void (*warningProc) (conststring32 message));
-void Melder_setProgressProc (void (*progress) (double, conststring32));
-void Melder_setMonitorProc (void * (*monitor) (double, conststring32));
-void Melder_setErrorProc (void (*errorProc) (conststring32 message));
-void Melder_setFatalProc (void (*fatalProc) (conststring32 message));
 
 #include "melder_quantity.h"
 
-#include "melder_readText.h"
-#include "melder_writeText.h"
+#include "MelderReadText.h"
+#include "melder_vectorio.h"   // requires MelderReadText
 #include "melder_sysenv.h"
 #include "abcio_enums.h"
-#include "abcio.h"
-
-/* The following ANSI-C power trick generates the declarations of 88 functions. */
-#define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, conststring32 name); \
-	void NUMvector_writeBinary_##storage (const type *v, integer lo, integer hi, FILE *f); \
-	type * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name); \
-	type * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f); \
-	void NUMmatrix_writeText_##storage (type **v, integer r1, integer r2, integer c1, integer c2, MelderFile file, conststring32 name); \
-	void NUMmatrix_writeBinary_##storage (type **v, integer r1, integer r2, integer c1, integer c2, FILE *f); \
-	type ** NUMmatrix_readText_##storage (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name); \
-	type ** NUMmatrix_readBinary_##storage (integer r1, integer r2, integer c1, integer c2, FILE *f);
-FUNCTION (signed char, i8)
-FUNCTION (int, i16)
-FUNCTION (long, i32)
-FUNCTION (integer, integer32BE)
-FUNCTION (unsigned char, u8)
-FUNCTION (unsigned int, u16)
-FUNCTION (unsigned long, u32)
-FUNCTION (double, r32)
-FUNCTION (double, r64)
-FUNCTION (dcomplex, c64)
-FUNCTION (dcomplex, c128)
-#undef FUNCTION
-
-/*
-void NUMvector_writeBinary_r64 (const double *v, integer lo, integer hi, FILE *f);   // etc
-	write the vector elements v [lo..hi] as machine-independent
-	binary data to the stream f.
-	Throw an error message if anything went wrong.
-	The vectors need not have been created by NUM...vector.
-double * NUMvector_readText_r64 (integer lo, integer hi, MelderReadText text, const char *name);   // etc
-	create and read a vector as text.
-	Throw an error message if anything went wrong.
-	Every element is supposed to be on the beginning of a line.
-double * NUMvector_readBinary_r64 (integer lo, integer hi, FILE *f);   // etc
-	create and read a vector as machine-independent binary data from the stream f.
-	Throw an error message if anything went wrong.
-void NUMvector_writeText_r64 (const double *v, integer lo, integer hi, MelderFile file, conststring32 name);   // etc
-	write the vector elements v [lo..hi] as text to the open file,
-	each element on its own line, preceded by "name [index]: ".
-	Throw an error message if anything went wrong.
-	The vectors need not have been created by NUMvector.
-void NUMmatrix_writeText_r64 (double **m, integer r1, integer r2, integer c1, integer c2, MelderFile file, conststring32 name);   // etc
-	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
-	Throw an error message if anything went wrong.
-	The matrices need not have been created by NUMmatrix.
-void NUMmatrix_writeBinary_r64 (double **m, integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
-	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
-	binary data to the stream f.
-	Throw an error message if anything went wrong.
-	The matrices need not have been created by NUMmatrix.
-double ** NUMmatrix_readText_r64 (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name);   // etc
-	create and read a matrix as text.
-	Throw an error message if anything went wrong.
-double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer c2, FILE *f);   // etc
-	create and read a matrix as machine-independent binary data from the stream f.
-	Throw an error message if anything went wrong.
-*/
+#include "abcio.h"   // requires MelderReadText
 
 
 //#define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if<std::is_base_of<B,A>::value>::type
@@ -280,7 +210,7 @@ class MelderCompareHook {
 #include "regularExp.h"
 
 #include "xxStr.h"
-#include "tensor.h"
+#include "xxVec.h"
 
 /* End of file melder.h */
 #endif

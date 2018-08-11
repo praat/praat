@@ -58,6 +58,7 @@
 #endif
 #include <errno.h>
 #include "melder.h"
+#include "../kar/UnicodeData.h"
 
 //#include "flac_FLAC_stream_encoder.h"
 extern "C" int  FLAC__stream_encoder_finish (FLAC__StreamEncoder *);
@@ -67,7 +68,6 @@ extern "C" void FLAC__stream_encoder_delete (FLAC__StreamEncoder *);
 	#include <sys/stat.h>
 	#define UNIX
 	#include <unistd.h>
-	#include "../kar/UnicodeData.h"
 #endif
 
 static char32 theShellDirectory [kMelder_MAXPATH+1];
@@ -811,111 +811,350 @@ void Melder_createDirectory (MelderDir parent, conststring32 dirName, int mode) 
 #endif
 }
 
-/*
- * Routines for wrapping the file pointers.
- */
-
-MelderFile MelderFile_open (MelderFile me) {
-	my filePointer = Melder_fopen (me, "rb");
-	my openForReading = true;
-	return me;
+static size_t fread_multi (char *buffer, size_t numberOfBytes, FILE *f) {
+	off_t offset = 0;
+	size_t numberOfBytesRead = 0;
+	const size_t chunkSize = 1'000'000'000;
+	while (numberOfBytes > chunkSize) {
+		size_t numberOfBytesReadInChunk = fread (buffer + offset, sizeof (char), chunkSize, f);
+		numberOfBytesRead += numberOfBytesReadInChunk;
+		if (numberOfBytesReadInChunk < chunkSize)
+			return numberOfBytesRead;
+		numberOfBytes -= chunkSize;
+		offset += chunkSize;
+	}
+	size_t numberOfBytesReadInLastChunk = fread (buffer + offset, sizeof (char), numberOfBytes, f);
+	numberOfBytesRead += numberOfBytesReadInLastChunk;
+	return numberOfBytesRead;
 }
 
-char * MelderFile_readLine (MelderFile me) {
-	static char *buffer;
-	static integer capacity;
-	if (! my filePointer) return nullptr;
-	if (feof (my filePointer)) return nullptr;
-	if (! buffer) {
-		buffer = Melder_malloc (char, capacity = 100);
-	}
-	integer i = 0;
-	for (; true; i ++) {
-		if (i >= capacity) {
-			buffer = (char *) Melder_realloc (buffer, capacity *= 2);
-		}
-		int c = fgetc (my filePointer);
-		if (feof (my filePointer))
-			break;
-		if (c == '\n') {
-			c = fgetc (my filePointer);
-			if (feof (my filePointer)) break;   // ignore last empty line (Unix)
-			ungetc (c, my filePointer);
-			break;   // Unix line separator
-		}
-		if (c == '\r') {
-			c = fgetc (my filePointer);
-			if (feof (my filePointer)) break;   // ignore last empty line (Macintosh)
-			if (c == '\n') {
-				c = fgetc (my filePointer);
-				if (feof (my filePointer)) break;   // ignore last empty line (Windows)
-				ungetc (c, my filePointer);
-				break;   // Windows line separator
+autostring32 MelderFile_readText (MelderFile file, autostring8 *string8) {
+	try {
+		int type = 0;   // 8-bit
+		autostring32 text;
+		autofile f = Melder_fopen (file, "rb");
+		if (fseeko (f, 0, SEEK_END) < 0)
+			Melder_throw (U"Cannot count the bytes in the file.");
+		Melder_assert (sizeof (off_t) >= 8);
+		int64 length = ftello (f);
+		rewind (f);
+		if (length >= 2) {
+			int firstByte = fgetc (f), secondByte = fgetc (f);
+			if (firstByte == 0xFE && secondByte == 0xFF) {
+				type = 1;   // big-endian 16-bit
+			} else if (firstByte == 0xFF && secondByte == 0xFE) {
+				type = 2;   // little-endian 16-bit
+			} else if (firstByte == 0xEF && secondByte == 0xBB && length >= 3) {
+				int thirdByte = fgetc (f);
+				if (thirdByte == 0xBF)
+					type = -1;   // UTF-8 with BOM
 			}
-			ungetc (c, my filePointer);
-			break;   // Macintosh line separator
 		}
-		buffer [i] = c;
-	}
-	buffer [i] = '\0';
-	return buffer;
-}
-
-MelderFile MelderFile_create (MelderFile me) {
-	my filePointer = Melder_fopen (me, "wb");
-	my openForWriting = true;   // a bit superfluous (will have been set by Melder_fopen)
-	return me;
-}
-
-void MelderFile_seek (MelderFile me, integer position, int direction) {
-	if (! my filePointer) return;
-	if (fseek (my filePointer, position, direction)) {
-		fclose (my filePointer);
-		my filePointer = nullptr;
-		Melder_throw (U"Cannot seek in file ", me, U".");
-	}
-}
-
-integer MelderFile_tell (MelderFile me) {
-	if (! my filePointer) return 0;
-	integer result = ftell (my filePointer);
-	if (result == -1) {
-		fclose (my filePointer);
-		my filePointer = nullptr;
-		Melder_throw (U"Cannot tell in file ", me, U".");
-	}
-	return result;
-}
-
-void MelderFile_rewind (MelderFile me) {
-	if (! my filePointer) return;
-	rewind (my filePointer);
-}
-
-static void _MelderFile_close (MelderFile me, bool mayThrow) {
-	if (my outputEncoding == kMelder_textOutputEncoding_FLAC) {
-		if (my flacEncoder) {
-			FLAC__stream_encoder_finish (my flacEncoder);   // This already calls fclose! BUG: we cannot get any error messages out.
-			FLAC__stream_encoder_delete (my flacEncoder);
-		}
-	} else if (my filePointer) {
-		if (mayThrow) {
-			Melder_fclose (me, my filePointer);
+		if (type <= 0) {
+			if (type == -1) {
+				length -= 3;
+				fseeko (f, 3, SEEK_SET);
+			} else {
+				rewind (f);   // length and type already set correctly.
+			}
+			autostring8 text8bit (length);
+			Melder_assert (text8bit);
+			size_t numberOfBytesRead = fread_multi (text8bit.get(), (size_t) length, f);
+			Melder_require ((int64) numberOfBytesRead == length,
+				U"The file contains ", length, U" bytes",
+				type == -1 ? U" after the byte-order mark" : U"",
+				U", but we could read only ", numberOfBytesRead, U" of them."
+			);
+			text8bit [length] = '\0';
+			/*
+			 * Count and repair null bytes.
+			 */
+			if (length > 0) {
+				int64 numberOfNullBytes = 0;
+				for (char *p = & text8bit [length - 1]; (int64) (p - text8bit.get()) >= 0; p --) {
+					if (*p == '\0') {
+						numberOfNullBytes += 1;
+						/*
+						 * Shift.
+						 */
+						for (char *q = p; (int64) (q - text8bit.get()) < length; q ++)
+							*q = q [1];
+					}
+				}
+				if (numberOfNullBytes > 0) {
+					Melder_warning (U"Ignored ", numberOfNullBytes, U" null bytes in text file ", file, U".");
+				}
+			}
+			if (string8) {
+				*string8 = text8bit.move();
+				(void) Melder_killReturns_inplace (string8->get());
+				return autostring32();   // OK
+			} else {
+				text = Melder_8to32 (text8bit.get(), kMelder_textInputEncoding::UNDEFINED);
+			}
 		} else {
-			fclose (my filePointer);
+			length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes
+			text = autostring32 (length + 1);
+			if (type == 1) {
+				for (int64 i = 0; i < length; i ++) {
+					char16 kar1 = bingetu16 (f);
+					if (kar1 < 0xD800) {
+						text [i] = (char32) kar1;   // convert up without sign extension
+					} else if (kar1 < 0xDC00) {
+						length --;
+						char16 kar2 = bingetu16 (f);
+						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
+							text [i] = (char32) (0x010000 +
+									(char32) (((char32) kar1 & 0x0003FF) << 10) +
+									(char32)  ((char32) kar2 & 0x0003FF));
+						} else {
+							text [i] = UNICODE_REPLACEMENT_CHARACTER;
+						}
+					} else if (kar1 < 0xE000) {
+						text [i] = UNICODE_REPLACEMENT_CHARACTER;
+					} else {
+						text [i] = (char32) kar1;   // convert up without sign extension
+					}
+				}
+			} else {
+				for (int64 i = 0; i < length; i ++) {
+					char16 kar1 = bingetu16LE (f);
+					if (kar1 < 0xD800) {
+						text [i] = (char32) kar1;   // convert up without sign extension
+					} else if (kar1 < 0xDC00) {
+						length --;
+						char16 kar2 = bingetu16LE (f);
+						if (kar2 >= 0xDC00 && kar2 <= 0xDFFF) {
+							text [i] = (char32) (0x01'0000 +
+								(char32) (((char32) kar1 & 0x00'03FF) << 10) +
+								(char32)  ((char32) kar2 & 0x00'03FF));
+						} else {
+							text [i] = UNICODE_REPLACEMENT_CHARACTER;
+						}
+					} else if (kar1 < 0xE000) {
+						text [i] = UNICODE_REPLACEMENT_CHARACTER;
+					} else if (kar1 <= 0xFFFF) {
+						text [i] = (char32) kar1;   // convert up without sign extension
+					} else {
+						Melder_fatal (U"MelderFile_readText: unsigned short greater than 0xFFFF: should not occur.");
+					}
+				}
+			}
+			text [length] = U'\0';
+			(void) Melder_killReturns_inplace (text.get());
+		}
+		f.close (file);
+		return text;
+	} catch (MelderError) {
+		Melder_throw (U"Error reading file ", file, U".");
+	}
+}
+
+void Melder_fwrite32to8 (conststring32 string, FILE *f) {
+	/*
+	 * Precondition:
+	 *    the string's encoding is UTF-32.
+	 * Failure:
+	 *    if the precondition does not hold, we don't crash,
+	 *    but the characters that are written may be incorrect.
+	 */
+	for (const char32* p = string; *p != U'\0'; p ++) {
+		char32 kar = *p;
+		if (kar <= 0x00'007F) {
+			#ifdef _WIN32
+				if (kar == U'\n')
+					fputc (13, f);
+			#endif
+			fputc ((int) kar, f);   // because fputc wants an int instead of an uint8 (guarded conversion)
+		} else if (kar <= 0x00'07FF) {
+			fputc (0xC0 | (kar >> 6), f);
+			fputc (0x80 | (kar & 0x00'003F), f);
+		} else if (kar <= 0x00FFFF) {
+			fputc (0xE0 | (kar >> 12), f);
+			fputc (0x80 | ((kar >> 6) & 0x00'003F), f);
+			fputc (0x80 | (kar & 0x00'003F), f);
+		} else {
+			fputc (0xF0 | (kar >> 18), f);
+			fputc (0x80 | ((kar >> 12) & 0x00'003F), f);
+			fputc (0x80 | ((kar >> 6) & 0x00'003F), f);
+			fputc (0x80 | (kar & 0x00'003F), f);
 		}
 	}
-	/* Set everything to zero, except paths (they stay around for error messages and the like). */
-	my filePointer = nullptr;
-	my openForWriting = my openForReading = false;
-	my indent = 0;
-	my flacEncoder = nullptr;
 }
-void MelderFile_close (MelderFile me) {
-	_MelderFile_close (me, true);
+
+void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutputEncoding outputEncoding) {
+	if (! text)
+		text = U"";
+	autofile f = Melder_fopen (file, "wb");
+	if (outputEncoding == kMelder_textOutputEncoding::UTF8) {
+		Melder_fwrite32to8 (text, f);
+	} else if ((outputEncoding == kMelder_textOutputEncoding::ASCII_THEN_UTF16 && Melder_isValidAscii (text)) ||
+		(outputEncoding == kMelder_textOutputEncoding::ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
+	{
+		#ifdef _WIN32
+			#define flockfile(f)  (void) 0
+			#define funlockfile(f)  (void) 0
+			#define putc_unlocked  putc
+		#endif
+		flockfile (f);
+		size_t n = str32len (text);
+		for (size_t i = 0; i < n; i ++) {
+			char32 kar = text [i];
+			#ifdef _WIN32
+				if (kar == U'\n')
+					putc_unlocked (13, f);
+			#endif
+			putc_unlocked (kar, f);
+		}
+		funlockfile (f);
+	} else {
+		binputu16 (0xFEFF, f);   // Byte Order Mark
+		size_t n = str32len (text);
+		for (size_t i = 0; i < n; i ++) {
+			char32 kar = text [i];
+			#ifdef _WIN32
+				if (kar == U'\n')
+					binputu16 (13, f);
+			#endif
+			if (kar <= 0x00'FFFF) {
+				binputu16 ((char16) kar, f);   // guarded conversion down
+			} else if (kar <= 0x10'FFFF) {
+				kar -= 0x010000;
+				binputu16 (0xD800 | (uint16) (kar >> 10), f);
+				binputu16 (0xDC00 | (uint16) ((char16) kar & 0x3ff), f);
+			} else {
+				binputu16 (UNICODE_REPLACEMENT_CHARACTER, f);
+			}
+		}
+	}
+	f.close (file);
 }
-void MelderFile_close_nothrow (MelderFile me) {
-	_MelderFile_close (me, false);
+
+void MelderFile_appendText (MelderFile file, conststring32 text) {
+	if (! text) text = U"";
+	autofile f1;
+	try {
+		f1.reset (Melder_fopen (file, "rb"));
+	} catch (MelderError) {
+		Melder_clearError ();   // it's OK if the file didn't exist yet...
+		MelderFile_writeText (file, text, Melder_getOutputEncoding ());   // because then we just "write"
+		return;
+	}
+	/*
+	 * The file already exists and is open. Determine its type.
+	 */
+	int firstByte = fgetc (f1), secondByte = fgetc (f1);
+	f1.close (file);
+	int type = 0;
+	if (firstByte == 0xfe && secondByte == 0xff) {
+		type = 1;   // big-endian 16-bit
+	} else if (firstByte == 0xff && secondByte == 0xfe) {
+		type = 2;   // little-endian 16-bit
+	}
+	if (type == 0) {
+		kMelder_textOutputEncoding outputEncoding = Melder_getOutputEncoding ();
+		if (outputEncoding == kMelder_textOutputEncoding::UTF8) {   // TODO: read as file's encoding
+			autofile f2 = Melder_fopen (file, "ab");
+			Melder_fwrite32to8 (text, f2);
+			f2.close (file);
+		} else if ((outputEncoding == kMelder_textOutputEncoding::ASCII_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ASCII))
+		    || (outputEncoding == kMelder_textOutputEncoding::ISO_LATIN1_THEN_UTF16 && Melder_isEncodable (text, kMelder_textOutputEncoding_ISO_LATIN1)))
+		{
+			/*
+			 * Append ASCII or ISOLatin1 text to ASCII or ISOLatin1 file.
+			 */
+			autofile f2 = Melder_fopen (file, "ab");
+			int64 n = str32len (text);
+			for (int64 i = 0; i < n; i ++) {
+				char32 kar = text [i];
+				#ifdef _WIN32
+					if (kar == U'\n')
+						fputc (13, f2);
+				#endif
+				fputc ((char8) kar, f2);
+			}
+			f2.close (file);
+		} else {
+			/*
+			 * Convert to wide character file.
+			 */
+			autostring32 oldText = MelderFile_readText (file);
+			autofile f2 = Melder_fopen (file, "wb");
+			binputu16 (0xfeff, f2);
+			int64 n = str32len (oldText.get());
+			for (int64 i = 0; i < n; i ++) {
+				char32 kar = oldText [i];
+				#ifdef _WIN32
+					if (kar == U'\n')
+						binputu16 (13, f2);
+				#endif
+				if (kar <= 0x00'FFFF) {
+					binputu16 ((uint16) kar, f2);   // guarded conversion down
+				} else if (kar <= 0x10'FFFF) {
+					kar -= 0x01'0000;
+					binputu16 ((uint16) (0x00'D800 | (kar >> 10)), f2);
+					binputu16 ((uint16) (0x00'DC00 | (kar & 0x00'03ff)), f2);
+				} else {
+					binputu16 (UNICODE_REPLACEMENT_CHARACTER, f2);
+				}
+			}
+			n = str32len (text);
+			for (int64 i = 0; i < n; i ++) {
+				char32 kar = text [i];
+				#ifdef _WIN32
+					if (kar == U'\n')
+						binputu16 (13, f2);
+				#endif
+				if (kar <= 0x00FFFF) {
+					binputu16 ((uint16) kar, f2);   // guarded conversion down
+				} else if (kar <= 0x10'FFFF) {
+					kar -= 0x01'0000;
+					binputu16 ((uint16) (0x00'D800 | (kar >> 10)), f2);
+					binputu16 ((uint16) (0x00'DC00 | (kar & 0x00'03ff)), f2);
+				} else {
+					binputu16 (UNICODE_REPLACEMENT_CHARACTER, f2);
+				}
+			}
+			f2.close (file);
+		}
+	} else {
+		autofile f2 = Melder_fopen (file, "ab");
+		int64 n = str32len (text);
+		for (int64 i = 0; i < n; i ++) {
+			if (type == 1) {
+				char32 kar = text [i];
+				#ifdef _WIN32
+					if (kar == U'\n')
+						binputu16 (13, f2);
+				#endif
+				if (kar <= 0x00'FFFF) {
+					binputu16 ((uint16) kar, f2);   // guarded conversion down
+				} else if (kar <= 0x10'FFFF) {
+					kar -= 0x01'0000;
+					binputu16 ((uint16) (0x00'D800 | (kar >> 10)), f2);
+					binputu16 ((uint16) (0x00'DC00 | (kar & 0x00'03ff)), f2);
+				} else {
+					binputu16 (UNICODE_REPLACEMENT_CHARACTER, f2);
+				}
+			} else {
+				char32 kar = text [i];
+				#ifdef _WIN32
+					if (kar == U'\n')
+						binputu16LE (13, f2);
+				#endif
+				if (kar <= 0x00'FFFF) {
+					binputu16LE ((uint16) kar, f2);   // guarded conversion down
+				} else if (kar <= 0x10FFFF) {
+					kar -= 0x01'0000;
+					binputu16LE ((uint16) (0x00'D800 | (kar >> 10)), f2);
+					binputu16LE ((uint16) (0x00'DC00 | (kar & 0x00'03ff)), f2);
+				} else {
+					binputu16LE (UNICODE_REPLACEMENT_CHARACTER, f2);
+				}
+			}
+		}
+		f2.close (file);
+	}
 }
 
 /* End of file melder_files.cpp */

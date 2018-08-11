@@ -1,6 +1,6 @@
-#ifndef _melder_readText_h_
-#define _melder_readText_h_
-/* melder_readText.h
+#ifndef _melder_readtext_h_
+#define _melder_readtext_h_
+/* melder_readtext.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *

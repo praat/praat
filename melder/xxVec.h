@@ -1,6 +1,6 @@
-#ifndef _tensor_h_
-#define _tensor_h_
-/* tensor.h
+#ifndef _xxVec_h_
+#define _xxVec_h_
+/* xxVec.h
  *
  * Copyright (C) 2017,2018 Paul Boersma
  *
@@ -183,5 +183,5 @@ autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sort
 
 void numvec_sort (numvec x);
 
-/* End of file tensor.h */
+/* End of file xxVec.h */
 #endif

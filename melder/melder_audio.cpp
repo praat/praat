@@ -147,7 +147,6 @@ static double theStartingTime = 0.0;
 #define PA_QUERY_NUMBEROFCHANNELS 64
 #define PA_QUERY_NUMBEROFCHANNELS_DONE 128
 
-
 #ifdef HAVE_PULSEAUDIO
 typedef struct pulseAudio {
 	pa_sample_spec sample_spec;

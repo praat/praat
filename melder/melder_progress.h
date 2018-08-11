@@ -156,5 +156,8 @@ struct autoMelderProgressOff {
 	~autoMelderProgressOff () { Melder_progressOn (); }
 };
 
+void Melder_setProgressProc (MelderProgress::ProgressProc p_proc);
+void Melder_setMonitorProc  (MelderProgress::MonitorProc  p_proc);
+
 /* End of file melder_progress.h */
 #endif

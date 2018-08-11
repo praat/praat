@@ -18,23 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma mark - RECORD AND PLAY FUNCTIONS
-
-int Melder_record (double duration);
-int Melder_recordFromFile (MelderFile file);
-void Melder_play ();
-void Melder_playReverse ();
-int Melder_publishPlayed ();
-void Melder_beep ();
-
-void Melder_setRecordProc (int (*record) (double));
-void Melder_setRecordFromFileProc (int (*recordFromFile) (MelderFile));
-void Melder_setPlayProc (void (*play) ());
-void Melder_setPlayReverseProc (void (*playReverse) ());
-void Melder_setPublishPlayedProc (int (*publishPlayed) ());
-
-#pragma mark - AUDIO
-
 void MelderAudio_setInputSoundSystem (enum kMelder_inputSoundSystem inputSoundSystem);
 enum kMelder_inputSoundSystem MelderAudio_getInputSoundSystem ();
 

@@ -1,6 +1,4 @@
-#ifndef _melder_fatal_h_
-#define _melder_fatal_h_
-/* melder_fatal.h
+/* melder_warning.cpp
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,24 +16,25 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	SYNOPSIS (2018-08-08)
+#include "melder.h"
 
-	Melder_fatal (args...);
+int MelderWarning::_depth = 0;
 
-		Gives an error message and aborts the program.
-		Should only be caused by programming errors.
+void MelderWarning::_defaultProc (conststring32 message) {
+	MelderConsole::write (U"Warning: ", true);
+	MelderConsole::write (message, true);
+	MelderConsole::write (U"\n", true);
+}
 
-	See also Melder_assert ().
-*/
+MelderWarning::Proc MelderWarning::_p_currentProc = & MelderWarning::_defaultProc;
 
-void Melder_fatal (const MelderArg&,
-	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
-	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U"",
-	const MelderArg& = U"", const MelderArg& = U"", const MelderArg& = U""
-);
+MelderString MelderWarning::_buffer = { 0, 0, nullptr };
 
-void Melder_setFatalProc (void (*p_fatalProc) (conststring32));
+void Melder_warningOff () { MelderWarning::_depth --; }
+void Melder_warningOn () { MelderWarning::_depth ++; }
 
-/* End of file melder_fatal.h */
-#endif
+void Melder_setWarningProc (MelderWarning::Proc p_proc) {
+	MelderWarning::_p_currentProc = ( p_proc ? p_proc : & MelderWarning::_defaultProc );
+}
+
+/* End of file melder_warning.cpp */

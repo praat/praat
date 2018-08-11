@@ -20,16 +20,14 @@
 
 /* These will be the future replacements for Melder_fopen, as soon as we rid of text files: */
 MelderFile MelderFile_open (MelderFile file);
-MelderFile MelderFile_append (MelderFile file);
-MelderFile MelderFile_create (MelderFile file);
-void * MelderFile_read (MelderFile file, integer nbytes);
 char * MelderFile_readLine (MelderFile file);
+
+MelderFile MelderFile_create (MelderFile file);
+void MelderFile_write (MelderFile file, conststring32 string);
 void MelderFile_writeCharacter (MelderFile file, char32 kar);
 
-void _MelderFile_write (MelderFile file, conststring32 string);
-
 inline static void _recursiveTemplate_MelderFile_write (MelderFile file, const MelderArg& arg) {
-	_MelderFile_write (file, arg. _arg);
+	MelderFile_write (file, arg. _arg);
 }
 template <typename... Args>
 void _recursiveTemplate_MelderFile_write (MelderFile file, const MelderArg& first, Args... rest) {
@@ -39,8 +37,6 @@ void _recursiveTemplate_MelderFile_write (MelderFile file, const MelderArg& firs
 
 template <typename... Args>
 void MelderFile_write (MelderFile file, const MelderArg& first, Args... rest) {
-	if (! file -> filePointer)
-		return;
 	_recursiveTemplate_MelderFile_write (file, first, rest...);
 }
 
@@ -49,11 +45,6 @@ void MelderFile_seek (MelderFile file, integer position, int direction);
 integer MelderFile_tell (MelderFile file);
 void MelderFile_close (MelderFile file);
 void MelderFile_close_nothrow (MelderFile file);
-
-/* Read and write whole text files. */
-autostring32 MelderFile_readText (MelderFile file);
-void MelderFile_writeText (MelderFile file, conststring32 text, kMelder_textOutputEncoding outputEncoding);
-void MelderFile_appendText (MelderFile file, conststring32 text);
 
 class autoMelderFile {
 	MelderFile _file;
