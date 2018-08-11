@@ -19,7 +19,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "melder.h"   // for integer
+#include "../../melder/melder.h"   // for integer
 
 /* The following function is used to identify MP3 files */
 int mp3_recognize (int nread, const char *data);

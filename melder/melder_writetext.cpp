@@ -17,9 +17,8 @@
  */
 
 #include "melder.h"
-#include "Preferences.h"
-#include "UnicodeData.h"
-#include "abcio.h"
+#include "../sys/Preferences.h"
+#include "../kar/UnicodeData.h"
 
 void Melder_fwrite32to8 (conststring32 string, FILE *f) {
 	/*

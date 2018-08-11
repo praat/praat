@@ -18,11 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "complex.h"
-#include "melder.h"
-
-#include "abcio_enums.h"
-
 /* Numeric text input and output. */
 
 int texgeti8 (MelderReadText text);

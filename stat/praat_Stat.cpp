@@ -22,7 +22,7 @@
 #include "PairDistribution.h"
 #include "Table.h"
 #include "TableEditor.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 #include "praat_TableOfReal.h"
 

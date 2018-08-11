@@ -19,7 +19,7 @@
 #include "praatP.h"
 #include "praat_script.h"
 #include "praat_version.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 #include "machine.h"
 #include "GuiP.h"
 

@@ -26,7 +26,7 @@
  */
 
 #include "melder.h"
-#include "NUM2.h"
+#include "../dwsys/NUM2.h"
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
 
 #define NUM_interpolate_simple_cases \

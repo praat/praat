@@ -18,12 +18,12 @@
 
 #include "melder.h"
 #ifdef linux
-	#include "GuiP.h"
+	#include "../sys/GuiP.h"
 #endif
 #include <time.h>
-#include "praat_version.h"
+#include "../sys/praat_version.h"
 #ifdef _WIN32
-	#include "UnicodeData.h"
+	#include "../kar/UnicodeData.h"
 	#include <windows.h>
 #endif
 

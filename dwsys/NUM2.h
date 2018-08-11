@@ -24,8 +24,7 @@
 */
 
 #include <limits.h>
-#include "melder.h"
-#include "regularExp.h"
+#include "../melder/melder.h"
 
 /* machine precision */
 #define NUMeps 2.2e-16

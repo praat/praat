@@ -21,12 +21,9 @@
 /* The root class of all objects. */
 
 /* Anyone who uses Thing can also use: */
-	/* The messaging mechanism, arrays with any bounds and 1 or 2 indices, math, and numerics: */
-		#include "melder.h"   /* Including stdio.h string.h math.h etc. */
+	#include "melder.h"
 	/* The macros for struct and class definitions: */
 		#include "oo.h"
-	/* The input/output mechanism: */
-		#include "abcio.h"
 
 #define _Thing_auto_DEBUG  0
 

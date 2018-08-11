@@ -43,7 +43,7 @@
 #include "Printer.h"
 #include "ScriptEditor.h"
 #include "Strings_.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 #if gtk
 	#include <gdk/gdkx.h>

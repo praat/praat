@@ -17,10 +17,8 @@
  */
 
 #include "melder.h"
-#include "Preferences.h"
-#include "UnicodeData.h"
-#include "abcio.h"
-#include <math.h>
+#include "../sys/Preferences.h"
+#include "../kar/UnicodeData.h"
 
 #if defined (macintosh)
 	#include "macport_on.h"

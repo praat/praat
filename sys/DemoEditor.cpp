@@ -19,7 +19,7 @@
 #include "DemoEditor.h"
 #include "machine.h"
 #include "praatP.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 Thing_implement (DemoEditor, Editor, 0);
 

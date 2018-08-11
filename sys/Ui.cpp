@@ -18,7 +18,7 @@
 
 #include <wctype.h>
 #include <ctype.h>
-#include "longchar.h"
+#include "../kar/longchar.h"
 #include "machine.h"
 #include "GuiP.h"
 #include "Collection.h"

@@ -17,7 +17,7 @@
  */
 
 #include "melder.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 #define FREE_THRESHOLD_BYTES 10000LL
 
 static int64 totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, totalAllocationSize = 0, totalDeallocationSize = 0;

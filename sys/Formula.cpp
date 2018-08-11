@@ -27,8 +27,8 @@
 #include "Ui.h"
 #include "praatP.h"
 #include "praat_script.h"
-#include "UnicodeData.h"
-#include "longchar.h"
+#include "../kar/UnicodeData.h"
+#include "../kar/longchar.h"
 #include "UiPause.h"
 #include "DemoEditor.h"
 

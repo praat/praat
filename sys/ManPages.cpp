@@ -18,7 +18,7 @@
 
 #include <ctype.h>
 #include "ManPages.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 #include "Interpreter.h"
 #include "praat.h"
 

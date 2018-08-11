@@ -21,13 +21,13 @@
 //#include <ctype.h>
 
 #include <assert.h>
-#include "melder.h"
 #ifdef _WIN32
 	#include <windows.h>
 #endif
 
-#include "Graphics.h"
-#include "Gui.h"
+#include "melder.h"
+#include "../sys/Graphics.h"
+#include "../sys/Gui.h"
 
 /********** Exported variable. **********/
 

@@ -17,7 +17,7 @@
  */
 
 #include "GuiP.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 Thing_implement (GuiShell, GuiForm, 0);
 

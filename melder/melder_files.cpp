@@ -57,7 +57,6 @@
 	#include "macport_off.h"
 #endif
 #include <errno.h>
-#include "abcio.h"
 #include "melder.h"
 
 //#include "flac_FLAC_stream_encoder.h"
@@ -68,7 +67,7 @@ extern "C" void FLAC__stream_encoder_delete (FLAC__StreamEncoder *);
 	#include <sys/stat.h>
 	#define UNIX
 	#include <unistd.h>
-	#include "UnicodeData.h"
+	#include "../kar/UnicodeData.h"
 #endif
 
 static char32 theShellDirectory [kMelder_MAXPATH+1];

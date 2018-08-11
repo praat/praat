@@ -83,7 +83,6 @@ extern "C" conststring16 Melder_peek32to16 (conststring32 string);
 void Melder_str32To8bitFileRepresentation_inplace (conststring32 string, mutablestring8 utf8);
 void Melder_8bitFileRepresentationToStr32_inplace (conststring8 utf8, mutablestring32 string);
 const void * Melder_peek32toCfstring (conststring32 string);
-void Melder_fwrite32to8 (conststring32 string, FILE *f);
 
 /* End of file melder_textencoding.h */
 #endif
