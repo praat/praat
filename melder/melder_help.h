@@ -1,6 +1,6 @@
-#ifndef _NUMrandom_h_
-#define _NUMrandom_h_
-/* NUMrandom.h
+#ifndef _melder_help_h_
+#define _melder_help_h_
+/* melder_help.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,26 +18,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********** Random numbers **********/
+void Melder_help (conststring32 query);
+void Melder_search ();
+void Melder_setHelpProc (void (*help) (conststring32 query));
+void Melder_setSearchProc (void (*search) ());
 
-void NUMrandom_init ();
-
-double NUMrandomFraction ();
-double NUMrandomFraction_mt (int threadNumber);
-
-double NUMrandomUniform (double lowest, double highest);
-
-integer NUMrandomInteger (integer lowest, integer highest);
-
-bool NUMrandomBernoulli (double probability);
-double NUMrandomBernoulli_real (double probability);
-
-double NUMrandomGauss (double mean, double standardDeviation);
-double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviation);
-
-double NUMrandomPoisson (double mean);
-
-uint32 NUMhashString (conststring32 string);
-
-/* End of file NUMrandom.h */
+/* End of file melder_help.h */
 #endif

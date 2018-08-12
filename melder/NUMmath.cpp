@@ -30,8 +30,6 @@
 
 double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (base, exponent); }
 
-#include "../external/gsl/gsl_errno.h"
-
 void NUMshift (double *x, double xfrom, double xto) {
 	if (*x == xfrom) *x = xto; else *x += xto - xfrom;
 }
@@ -40,11 +38,6 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 	if (*x == xminfrom) *x = xminto;
 	else if (*x == xmaxfrom) *x = xmaxto;
 	else *x = xminto + (xmaxto - xminto) * ((*x - xminfrom) / (xmaxfrom - xminfrom));
-}
-
-void NUMinit () {
-	gsl_set_error_handler_off ();
-	NUMrandom_init ();
 }
 
 /* End of file NUMmath.cpp */

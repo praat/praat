@@ -33,6 +33,7 @@
 #include <memory>   // unique_ptr
 #include <new>   // placement new
 
+void Melder_init ();
 #include "melder_assert.h"   // Melder_assert
 #include "melder_int.h"   // <stdint.h>, int64, integer_to_uinteger (requires Melder_assert)
 #include "melder_pointer.h"   // NULL
@@ -91,6 +92,7 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 #include "melder_fatal.h"
 #include "melder_progress.h"
 #include "melder_play.h"   // Melder_record, Melder_play, Melder_beep
+#include "melder_help.h"
 #include "melder_ftoi.h"
 #include "melder_time.h"   // stopwatch, sleep, clock
 #include "melder_audio.h"
@@ -102,7 +104,7 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 /********** SYSTEM VERSION **********/
 
 /*
-	For Macintosh, this is set in praat_init.
+	For MacOS, this is set in Melder_init.
 	TODO: change to inline variable once C++17 is implemented completely on all platforms.
 */
 extern int32 Melder_systemVersion;
@@ -123,11 +125,6 @@ extern bool Melder_batch;
 	TODO: change to inline variable once C++17 is implemented completely on all platforms.
 */
 extern bool Melder_backgrounding;
-
-void Melder_help (conststring32 query);
-void Melder_search ();
-void Melder_setHelpProc (void (*help) (conststring32 query));
-void Melder_setSearchProc (void (*search) ());
 
 #include "melder_quantity.h"
 
