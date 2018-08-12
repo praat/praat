@@ -44,6 +44,7 @@
 #include "ScriptEditor.h"
 #include "Strings_.h"
 #include "../kar/UnicodeData.h"
+#include "InfoEditor.h"
 
 #if gtk
 	#include <gdk/gdkx.h>
@@ -1041,6 +1042,11 @@ extern "C" void praatlib_init () {
 	praat_addMenus2 ();
 }
 
+static void injectMessageAndInformationProcs (GuiWindow parent) {
+	Gui_injectMessageProcs (parent);
+	InfoEditor_injectInformationProc ();
+}
+
 void praat_init (conststring32 title, int argc, char **argv)
 {
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
@@ -1347,7 +1353,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#ifdef macintosh
 			AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
 			AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
-			MelderGui_create (raam);   // BUG: default Melder_assert would call printf recursively!!!
+			injectMessageAndInformationProcs (raam);   // BUG: default Melder_assert would call printf recursively!!!
 		#endif
 		trace (U"creating the menu bar in the Objects window");
 		GuiWindow_addMenuBar (raam);
@@ -1386,7 +1392,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#endif
 		#if ! defined (macintosh)
 			trace (U"initializing the Gui late");
-			MelderGui_create (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
+			injectMessageAndInformationProcs (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
 		#endif
 		Melder_setHelpProc (helpProc);
 	}
