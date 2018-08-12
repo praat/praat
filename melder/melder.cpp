@@ -23,35 +23,31 @@
 #include "enums_getValue.h"
 #include "melder_enums.h"
 
+#include "../dwsys/NUMmachar.h"
+#include "../external/gsl/gsl_errno.h"
+#ifdef macintosh
+	#include <Carbon/Carbon.h>   // Gestalt
+#endif
+
 /********** Exported variables. **********/
 
 bool Melder_batch;   // don't we have a GUI?- Set once at application start-up
 bool Melder_backgrounding;   // are we running a script?- Set and unset dynamically
 int32 Melder_systemVersion;
 
-static void defaultHelp (conststring32 query) {
-	Melder_flushError (U"Don't know how to find help on \"", query, U"\".");
+void Melder_init () {
+	NUMmachar ();
+	gsl_set_error_handler_off ();
+	NUMrandom_init ();
+	Melder_alloc_init ();
+	Melder_message_init ();
+	#ifdef macintosh
+		SInt32 sys1, sys2, sys3;
+		Gestalt ('sys1', & sys1);
+		Gestalt ('sys2', & sys2);
+		Gestalt ('sys3', & sys3);
+		Melder_systemVersion = sys1 * 10000 + sys2 * 100 + sys3;
+	#endif
 }
-
-static void defaultSearch () {
-	Melder_flushError (U"Do not know how to search.");
-}
-
-static void (*p_theHelpProc) (conststring32 query) = & defaultHelp;
-static void (*p_theSearchProc) () = & defaultSearch;
-
-void Melder_help (conststring32 query) {
-	(*p_theHelpProc) (query);
-}
-
-void Melder_search () {
-	(*p_theSearchProc) ();
-}
-
-void Melder_setHelpProc (void (*p_helpProc) (conststring32 query))
-	{ p_theHelpProc = p_helpProc ? p_helpProc : & defaultHelp; }
-
-void Melder_setSearchProc (void (*p_searchProc) (void))
-	{ p_theSearchProc = p_searchProc ? p_searchProc : & defaultSearch; }
 
 /* End of file melder.cpp */

@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "../dwsys/NUMmachar.h"
 #include <ctype.h>
 #include <stdarg.h>
 #if defined (UNIX) || defined (macintosh)
@@ -988,23 +987,6 @@ static void setThePraatLocale () {
 	#endif
 }
 
-static void getSystemVersion () {
-	#ifdef macintosh
-		SInt32 sys1, sys2, sys3;
-		Gestalt ('sys1', & sys1);
-		Gestalt ('sys2', & sys2);
-		Gestalt ('sys3', & sys3);
-		Melder_systemVersion = sys1 * 10000 + sys2 * 100 + sys3;
-	#endif
-}
-
-static void initializeNumericalLibraries () {
-	NUMmachar ();
-	NUMinit ();
-	Melder_alloc_init ();
-	Melder_message_init ();
-}
-
 static void installPraatShellPreferences () {
 	praat_statistics_prefs ();   // number of sessions, memory used...
 	praat_picture_prefs ();   // font...
@@ -1020,8 +1002,7 @@ static void installPraatShellPreferences () {
 
 extern "C" void praatlib_init () {
 	setThePraatLocale ();   // FIXME: don't use the global locale
-	getSystemVersion ();
-	initializeNumericalLibraries ();
+	Melder_init ();
 	Melder_rememberShellDirectory ();
 	installPraatShellPreferences ();   // needed in the library, because this sets the defaults
 	praatP.argc = 0;
@@ -1055,8 +1036,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
 	}
 	setThePraatLocale ();
-	getSystemVersion ();
-	initializeNumericalLibraries ();
+	Melder_init ();
 
 	/*
 		Remember the current directory. Useful only for scripts run from batch.

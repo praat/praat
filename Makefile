@@ -1,7 +1,7 @@
 # File: Makefile
 
 # Makefile for Praat.
-# Paul Boersma, 11 August 2018
+# Paul Boersma, 12 August 2018
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -38,7 +38,7 @@ all:
 		FFNet/libFFNet.a gram/libgram.a EEG/libEEG.a \
 		LPC/libLPC.a dwtools/libdwtools.a \
 		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
-		sys/libsys.a melder/libmelder.a sys/libsys.a kar/libkar.a \
+		sys/libsys.a melder/libmelder.a kar/libkar.a \
 		external/espeak/libespeak.a \
 		external/portaudio/libportaudio.a \
 		external/flac/libflac.a external/mp3/libmp3.a \
