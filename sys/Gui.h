@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2017 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2018 Paul Boersma, 2013 Tom Naughton
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -967,6 +967,11 @@ void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file)
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
 
 extern uinteger theGuiTopLowAccelerators [8];
+
+/*
+	'parent' is the top-level widget returned by GuiAppInitialize.
+*/
+void Gui_injectMessageProcs (GuiWindow parent);
 
 /* End of file Gui.h */
 #endif

@@ -111,11 +111,6 @@ extern int32 Melder_systemVersion;
 
 /* Procedures to enforce interactive behaviour of the Melder_XXXXXX routines. */
 
-void MelderGui_create (/* GuiWindow */ void *parent);
-/*
-	'parent' is the top-level widget returned by GuiAppInitialize.
-*/
-
 /*
 	Set in praat_init.
 	True if run from the batch or from an interactive command-line interface.

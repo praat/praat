@@ -521,7 +521,7 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 1992-PRAAT_YEAR by Paul Boersma &amp; David Weenink</string>
-	<key>NSPrincipleClass</key>
+	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
 </plist>
