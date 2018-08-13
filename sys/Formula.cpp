@@ -2319,7 +2319,9 @@ static void do_eq () {
 		double result = str32equ (x->getString(), y->getString()) ? 1.0 : 0.0;
 		pushNumber (result);
 	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (equal_numvec (x->numericVector, y->numericVector));
+		pushNumber (NUMequal (x->numericVector, y->numericVector));
+	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		pushNumber (NUMequal (x->numericMatrix, y->numericMatrix));
 	} else {
 		Melder_throw (U"Cannot compare (=) ", x->whichText(), U" to ", y->whichText(), U".");
 	}

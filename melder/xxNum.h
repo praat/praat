@@ -33,9 +33,25 @@ void NUM_sum_mean_sumsq_variance_stdev (nummat x, integer columnNumber, double *
 
 double NUMcenterOfGravity (numvec x) noexcept;
 
+inline static bool NUMequal (numvec x, numvec y) {
+	integer n = x.size;
+	if (y.size != n)
+		return false;
+	for (integer i = 1; i <= n; i ++) {
+		if (x [i] != y [i])
+			return false;
+	}
+	return true;
+}
+
+inline static bool NUMequal (nummat x, nummat y) {
+	return NUMequal (as_numvec (x), as_numvec (y));
+}
+
 inline static double NUMinner (numvec x, numvec y) {
 	integer n = x.size;
-	if (y.size != n) return undefined;
+	if (y.size != n)
+		return undefined;
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] * y [1] : (double) ((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2]);
 		if (n <= 4) return n == 3 ?

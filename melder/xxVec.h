@@ -20,17 +20,6 @@
 
 autonumvec copy_numvec (numvec x);
 
-inline static bool equal_numvec (numvec x, numvec y) {
-	integer n = x.size;
-	if (y.size != n) return false;
-	for (integer i = 1; i <= x.size; i ++) {
-		if (x [i] != y [i]) {
-			return false;
-		}
-	}
-	return true;
-}
-
 inline static void numvec_copyElements_nocheck (numvec from, numvec to) {
 	for (integer i = 1; i <= from.size; i ++) {
 		to [i] = from [i];
