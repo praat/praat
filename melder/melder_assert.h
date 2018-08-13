@@ -18,9 +18,19 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+	SYNOPSIS
+
+	/// Call Melder_fatal with a message based on the following template:
+	/// "Assertion failed in file <fileName> on line <lineNumber>: <condition>"
+	Melder_assert (condition);
+*/
+
+/*
+	Private function implemented in Melder_fatal.cpp
+*/
 void Melder_assert_ (const char *fileName, int lineNumber, const char *condition);
-	/* Call Melder_fatal with a message based on the following template: */
-	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
+
 #ifdef NDEBUG
 	#define Melder_assert(x)   ((void) 0)
 #else

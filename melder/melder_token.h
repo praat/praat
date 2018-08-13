@@ -30,48 +30,7 @@
 		}
 */
 
-integer Melder_countTokens (conststring32 string);
-char32 *Melder_firstToken (conststring32 string);
-char32 *Melder_nextToken ();
-char32 ** Melder_getTokens (conststring32 string, integer *n);
-void Melder_freeTokens (char32 ***tokens);
-integer Melder_searchToken (conststring32 string, char32 **tokens, integer n);
-
-class autoMelderTokens {
-	char32 **tokens;
-	integer numberOfTokens;
-public:
-	autoMelderTokens () {
-		tokens = nullptr;
-	}
-	autoMelderTokens (conststring32 string) {
-		tokens = Melder_getTokens (string, & numberOfTokens);
-	}
-	~autoMelderTokens () {
-		if (tokens) {
-			for (integer itoken = 1; itoken <= numberOfTokens; itoken ++)
-				Melder_free (tokens [itoken]);
-			Melder_freeTokens (& tokens);
-		}
-	}
-	char32*& operator[] (integer i) {
-		return tokens [i];
-	}
-	char32 ** peek () const {
-		return tokens;
-	}
-	integer count () const {
-		return numberOfTokens;
-	}
-	void reset (conststring32 string) {
-		if (tokens) {
-			for (integer itoken = 1; itoken <= numberOfTokens; itoken ++)
-				Melder_free (tokens [itoken]);
-			Melder_freeTokens (& tokens);
-		}
-		tokens = Melder_getTokens (string, & numberOfTokens);
-	}
-};
+autostring32vector Melder_getTokens (conststring32 string);
 
 /* End of file melder_token.h */
 #endif

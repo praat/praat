@@ -99,13 +99,13 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		Melder_require (ny > 0 && ny < my numberOfColumns, U"Dimension of first part not correct.");
 		Melder_require (ny <= nx, U"The dimension of the dependent part (", ny, U") should not exceed "
 				"the dimension of the independent part (", nx, U").");
-		Melder_require (n >= ny, U"The number of observations should be larger then ", ny, U".");
+		Melder_require (n >= ny, U"The number of observations should be larger than ", ny, U".");
 		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns),
 			U"At least one of the table's elements is undefined."); 	
 		
 		// Use svd as (temporary) storage, and copy data
 
-		autoSVD svdy = SVD_create (n, ny);
+		autoSVD svdy = SVD_create (n, ny);   // n >= ny, hence no transposition
 		autoSVD svdx = SVD_create (n, nx);
 
 		for (integer i = 1; i <= n; i ++) {

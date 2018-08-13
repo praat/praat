@@ -1207,15 +1207,13 @@ void GaussianMixture_removeComponent (GaussianMixture me, integer component) {
 
 autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numberOfComponents, double delta_lnp, integer maxNumberOfIterations, double lambda, int storage, int criterion) {
 	try {
-		Melder_require (my numberOfRows >= 2 * numberOfComponents, U"The number of data points should at least be twice the number of components.");
-
+		Melder_require (my numberOfRows >= 2 * numberOfComponents,
+			U"The number of data points should at least be twice the number of components.");
 		autoGaussianMixture thee = GaussianMixture_create (numberOfComponents, my numberOfColumns, storage);
 		GaussianMixture_setLabelsFromTableOfReal (thee.get(), me);
 		GaussianMixture_initialGuess (thee.get(), me, 1.0, 0.05);
-		if (maxNumberOfIterations <= 0) {
+		if (maxNumberOfIterations <= 0)
 			return thee;
-		}
-
 		GaussianMixture_TableOfReal_improveLikelihood (thee.get(), me, delta_lnp, maxNumberOfIterations, lambda, criterion);
 		return thee;
 	} catch (MelderError) {
@@ -1225,8 +1223,8 @@ autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numb
 
 autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee) {
 	try {
-		Melder_require (my dimension == thy numberOfColumns, U"Dimensions should be equal.");
-		
+		Melder_require (my dimension == thy numberOfColumns,
+			U"Dimensions should be equal.");
 		autoClassificationTable ct = GaussianMixture_TableOfReal_to_ClassificationTable (me, thee);
 		autoCorrelation him = ClassificationTable_to_Correlation_columns (ct.get());
 		return him;
@@ -1235,36 +1233,34 @@ autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, 
 	}
 }
 
-double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector) {
+double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector_string) {
+	autostring32vector vector = Melder_getTokens (vector_string);
 	autoNUMvector<double> v (1, my dimension);
-
-	integer i = 0;
-	for (conststring32 token = Melder_firstToken (vector); token != nullptr; token = Melder_nextToken ()) {
-		v [++ i] = Melder_atof (token);
-		if (i == my dimension) {
+	for (integer i = 1; i <= vector.size; i ++) {
+		v [i] = Melder_atof (vector [i].get());
+		if (i == my dimension)
 			break;
-		}
 	}
 	double p = GaussianMixture_getProbabilityAtPosition (me, v.peek());
 	return p;
 }
 
 double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x) {
-	double p = 0;
-	for (integer im = 1; im <= my numberOfComponents; im++) {
+	longdouble p = 0.0;
+	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		double pim = Covariance_getMarginalProbabilityAtPosition (my covariances->at [im], vector, x);
 		p += my mixingProbabilities [im] * pim;
 	}
-	return p;
+	return (double) p;
 }
 
 double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *xpos) {
-	double p = 0.0;
+	longdouble p = 0.0;
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		double pim = Covariance_getProbabilityAtPosition (my covariances->at [im], xpos);
 		p += my mixingProbabilities [im] * pim;
 	}
-	return p;
+	return (double) p;
 }
 
 autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA thee, integer d1, integer d2, double xmin, double xmax, integer nx, double ymin, double ymax, integer ny) {
