@@ -185,7 +185,5 @@ cont:
 	return p - 1 - string1;
 }
 
-char32 * Melder_tok (char32 *string, conststring32 delimiter);
-
 /* End of file melder_str32.h */
 #endif

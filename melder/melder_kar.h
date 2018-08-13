@@ -131,6 +131,12 @@ inline static bool Melder_isHorizontalOrVerticalSpace (char32 kar) {
 inline static bool Melder_isAsciiHorizontalOrVerticalSpace (char32 kar) {
 	return kar <= kUCD_TOP_OF_ASCII && (theUnicodeDatabase [kar]. features & mUCD_SEPARATOR) != 0;
 }
+inline static void Melder_skipHorizontalOrVerticalSpace (char32 **p_text) {
+	while (Melder_isHorizontalOrVerticalSpace (**p_text)) (*p_text) ++;
+}
+inline static void Melder_skipHorizontalOrVerticalSpace (const char32 **p_text) {
+	while (Melder_isHorizontalOrVerticalSpace (**p_text)) (*p_text) ++;
+}
 
 inline static bool Melder_isEndOfInk (char32 kar) {
 	return kar <= kUCD_TOP_OF_LIST && (theUnicodeDatabase [kar]. features & mUCD_END_OF_INK) != 0;

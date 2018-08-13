@@ -307,44 +307,4 @@ bool Melder_equ_firstCharacterCaseInsensitive (conststring32 string1, conststrin
 	return str32equ (string1 + 1, string2 + 1);
 }
 
-char32 * Melder_tok (char32 *string, conststring32 delimiter) {
-	const char32 *spanp;
-	char32 c, sc;
-	char32 *tok;
-	static char32 *last;
-
-	if (! string) {
-		string = last;
-		if (! string)
-			return nullptr;
-	}
-
-cont:
-	c = * string ++;
-	for (spanp = delimiter; (sc = * spanp ++) != U'\0';) {
-		if (c == sc)
-			goto cont;
-	}
-
-	if (c == U'\0') {
-		last = nullptr;
-		return nullptr;
-	}
-	tok = string - 1;
-	for (;;) {
-		c = * string ++;
-		spanp = delimiter;
-		do {
-			if ((sc = * spanp ++) == c) {
-				if (c == U'\0')
-					string = nullptr;
-				else
-					string [-1] = U'\0';
-				last = string;
-				return tok;
-			}
-		} while (sc != U'\0');
-	}
-}
-
 /* End of file melder_alloc.cpp */

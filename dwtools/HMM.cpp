@@ -474,34 +474,30 @@ autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, inte
 // for a simple non-hidden model leave either states empty or symbols empty !!!
 autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststring32 symbols_string) {
 	try {
+		autostring32vector states = Melder_getTokens (states_string);
+		autostring32vector symbols = Melder_getTokens (symbols_string);
 		autoHMM me = Thing_new (HMM);
-		conststring32 states = states_string;
-		conststring32 symbols = symbols_string;
-		integer numberOfStates = Melder_countTokens (states_string);
-		integer numberOfObservationSymbols = Melder_countTokens (symbols_string);
 
-		Melder_require (numberOfStates > 0 || numberOfObservationSymbols > 0, U"The states and symbols should not be empty.");
+		Melder_require (states.size > 0 || symbols.size > 0,
+			U"The states and symbols should not both be empty.");
 		
-		if (numberOfStates > 0) {
-			if (numberOfObservationSymbols <= 0) {
-				numberOfObservationSymbols = numberOfStates;
-				symbols = states_string;
-				my notHidden = 1;
-			}
-		} else if (numberOfObservationSymbols > 0) {
-			numberOfStates = numberOfObservationSymbols;
-			states = symbols_string;
+		if (symbols.size <= 0) {
+			symbols.copyFrom (states);
+			my notHidden = 1;
+		}
+		if (states.size <= 0) {
+			states.copyFrom (symbols);
 			my notHidden = 1;
 		}
 
-		HMM_init (me.get(), numberOfStates, numberOfObservationSymbols, leftToRight);
+		HMM_init (me.get(), states.size, symbols.size, leftToRight);
 
-		for (char32 *token = Melder_firstToken (states); token != 0; token = Melder_nextToken ()) {
-			autoHMMState state = HMMState_create (token);
+		for (integer istate = 1; istate <= states.size; istate ++) {
+			autoHMMState state = HMMState_create (states [istate].get());
 			HMM_addState_move (me.get(), state.move());
 		}
-		for (char32 *token = Melder_firstToken (symbols); token != nullptr; token = Melder_nextToken ()) {
-			autoHMMObservation symbol = HMMObservation_create (token, 0, 0, 0);
+		for (integer isymbol = 1; isymbol <= symbols.size; isymbol ++) {
+			autoHMMObservation symbol = HMMObservation_create (symbols [isymbol].get(), 0, 0, 0);
 			HMM_addObservation_move (me.get(), symbol.move());
 		}
 		HMM_setDefaultTransitionProbs (me.get());

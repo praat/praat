@@ -86,14 +86,15 @@ autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfRespons
 	}
 }
 
-autoConfusion Confusion_createSimple (conststring32 labels) {
+autoConfusion Confusion_createSimple (conststring32 labels_string) {
 	try {
-		integer numberOfLabels = Melder_countTokens (labels);
-		Melder_require (numberOfLabels > 0, U"There should be at least one label.");
+		autostring32vector labels = Melder_getTokens (labels_string);
+		Melder_require (labels.size > 0, U"There should be at least one label.");
 		
-		autoConfusion me = Confusion_create (numberOfLabels, numberOfLabels);
+		autoConfusion me = Confusion_create (labels.size, labels.size);
 		integer ilabel = 1;
-		for (char32 *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
+		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
+			conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= ilabel - 1; i ++) {
 				if (Melder_equ (token, my rowLabels [i].get())) {
 					Melder_throw (U"Label ", i, U" and ", ilabel, U" should not be equal.");
@@ -101,7 +102,7 @@ autoConfusion Confusion_createSimple (conststring32 labels) {
 			}
 			TableOfReal_setRowLabel (me.get(), ilabel, token);
 			TableOfReal_setColumnLabel (me.get(), ilabel, token);
-			ilabel++;
+			ilabel ++;
 		}
 		return me;
 	} catch (MelderError) {
@@ -308,12 +309,18 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, integer index
 			if (perc == 0.0 || perc < lowerPercentage || j == i) {
 				continue;
 			}
-			xmin = x1, xmax = x2;
-			if (x2 < x1)
-				xmin = x2, xmax = x1;
-			ymin = y1, xmax = y2;
-			if (y2 < y1)
-				ymin = y2, ymax = y1;
+			xmin = x1;
+			xmax = x2;
+			if (x2 < x1) {
+				xmin = x2;
+				xmax = x1;
+			}
+			ymin = y1;
+			xmax = y2;
+			if (y2 < y1) {
+				ymin = y2;
+				ymax = y1;
+			}
 			autoPolygon p = Polygon_createPointer();
 			double xs = sqrt (dx * dx + dy * dy) - 2.2 * r;
 			if (xs < 0.0)
@@ -452,14 +459,16 @@ autoConfusion Confusion_group (Confusion me, conststring32 labels, conststring32
 	}
 }
 
-autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos) {
+autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		integer ncondense = Melder_countTokens (labels);
+		autostring32vector labels = Melder_getTokens (labels_string);
+		integer ncondense = labels.size;
 		autoNUMvector<integer> irow (1, my numberOfRows);
 
 		for (integer i = 1; i <= my numberOfRows; i ++)
 			irow [i] = i;
-		for (char32 *token = Melder_firstToken (labels); token != nullptr; token = Melder_nextToken ()) {
+		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
+			conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				if (Melder_equ (token, my rowLabels [i].get())) {
 					irow [i] = 0;
@@ -504,14 +513,16 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels, consts
 	}
 }
 
-autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels, conststring32 newLabel, integer newpos) {
+autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		integer ncondense = Melder_countTokens (labels);
+		autostring32vector labels = Melder_getTokens (labels_string);
+		integer ncondense = labels.size;
 		autoNUMvector<integer> icol (1, my numberOfColumns);
 
 		for (integer i = 1; i <= my numberOfColumns; i ++)
 			icol [i] = i;
-		for (char32 *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ()) {
+		for (integer itoken = 1; itoken <= labels.size; itoken ++) {
+			conststring32 token = labels [itoken].get();
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
 				if (Melder_equ (token, my columnLabels [i].get())) {
 					icol [i] = 0;

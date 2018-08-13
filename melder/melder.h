@@ -33,7 +33,6 @@
 #include <memory>   // unique_ptr
 #include <new>   // placement new
 
-void Melder_init ();
 #include "melder_assert.h"   // Melder_assert
 #include "melder_int.h"   // <stdint.h>, int64, integer_to_uinteger (requires Melder_assert)
 #include "melder_pointer.h"   // NULL
@@ -52,7 +51,7 @@ void Melder_init ();
 #define her  she ->
 #define iam(klas)  klas me = (klas) void_me
 
-#include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free
+#include "melder_alloc.h"   // Melder_malloc (requires int64), Melder_free, Melder_strdup
 #include "melder_string32.h"   // char32, conststring32, autostring32 (requires Melder_malloc, our), Melder_dup
 #include "melder_kar.h"   // Melder_hasInk (requires char32), Melder_toLowerCase
 #include "melder_str32.h"   // str32len, str32cpy, str32cmp_caseInsensitive (requires Melder_toLowerCase)
@@ -126,6 +125,8 @@ extern bool Melder_batch;
 */
 extern bool Melder_backgrounding;
 
+void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
+
 #include "melder_quantity.h"
 
 #include "MelderReadText.h"
@@ -134,61 +135,7 @@ extern bool Melder_backgrounding;
 #include "abcio_enums.h"
 #include "abcio.h"   // requires MelderReadText
 
-
-//#define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if<std::is_base_of<B,A>::value>::type
-#define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if_t<std::is_base_of<B,A>::value>
-//#define Melder_ENABLE_IF_ISA(A,B)  , class = typename std::enable_if_v<std::is_base_of<B,A>>
-
-template <typename Ret, typename T, typename... Args>
-class MelderCallback {
-	public:
-		using FunctionType = Ret* (*) (T*, Args...);
-		MelderCallback (FunctionType f = nullptr) : _f (f) { }
-		template <typename T2  Melder_ENABLE_IF_ISA(T2,T), typename Ret2  Melder_ENABLE_IF_ISA(Ret2,Ret)>
-			MelderCallback (Ret2* (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
-		Ret* operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
-		explicit operator bool () const { return !! _f; }
-	private:
-		FunctionType _f;
-};
-template <typename T, typename... Args>
-class MelderCallback <void, T, Args...> {   // specialization
-	public:
-		using FunctionType = void (*) (T*, Args...);
-		MelderCallback (FunctionType f = nullptr) : _f (f) { }
-		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
-			MelderCallback (void (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
-		void operator () (T* data, Args ... args) { _f (data, std::forward<Args>(args)...); }
-		explicit operator bool () const { return !! _f; }
-	private:
-		FunctionType _f;
-};
-template <typename T, typename... Args>
-class MelderCallback <int, T, Args...> {   // specialization
-	public:
-		using FunctionType = int (*) (T*, Args...);
-		MelderCallback (FunctionType f = nullptr) : _f (f) { }
-		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
-			MelderCallback (int (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
-		int operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
-		explicit operator bool () const { return !! _f; }
-	private:
-		FunctionType _f;
-};
-
-template <typename T>
-class MelderCompareHook {
-	public:
-		typedef int (*FunctionType) (T*, T*);
-		MelderCompareHook (FunctionType f = nullptr) : _f (f) { }
-		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
-			MelderCompareHook (int (*f) (T2*, T2*)) : _f (reinterpret_cast<FunctionType> (f)) { };
-		int operator () (T* data1, T* data2) noexcept { return _f (data1, data2); }
-		explicit operator bool () const { return !! _f; }
-		FunctionType get () { return _f; }
-	private:
-		FunctionType _f;
-};
+#include "melder_templates.h"   // Melder_ENABLE_IF_ISA, MelderCallback, MelderCompareHook
 
 #include "NUMmath.h"   // <math.h>, NUMpow, NUMpi, undefined
 #include "NUMspecfunc.h"

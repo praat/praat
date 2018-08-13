@@ -20,43 +20,6 @@
 #include "../dwsys/NUM2.h"   /* for NUMsort2 */
 #include "PAIRWISE_SUM.h"
 
-template <typename T>
-void vector<T> :: _initAt (integer givenSize, kTensorInitializationType initializationType) {
-	Melder_assert (givenSize >= 0);
-	try {
-		our at = ( givenSize == 0 ? nullptr
-				: NUMvector<T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
-	} catch (MelderError) {
-		Melder_throw (U"Vector not created.");
-	}
-}
-
-template <typename T>
-void vector<T> :: _freeAt () noexcept {
-	if (our at) NUMvector_free (our at, 1);
-}
-
-template class vector<double>;
-
-template <typename T>
-void matrix<T> :: _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {
-	Melder_assert (givenNrow >= 0);
-	Melder_assert (givenNcol >= 0);
-	try {
-		our at = ( givenNrow == 0 || givenNcol == 0 ? nullptr
-				: NUMmatrix<T> (1, givenNrow, 1, givenNcol, initializationType == kTensorInitializationType::ZERO));
-	} catch (MelderError) {
-		Melder_throw (U"Matrix not created.");
-	}
-}
-
-template <typename T>
-void matrix<T> :: _freeAt () noexcept {
-	if (our at) NUMmatrix_free (our at, 1, 1);
-}
-
-template class matrix<double>;
-
 void sum_mean_scalar (numvec x, double *p_sum, double *p_mean) noexcept {
 	if (x.size <= 4) {
 		switch (x.size) {

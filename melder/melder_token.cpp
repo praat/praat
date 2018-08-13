@@ -18,54 +18,43 @@
 
 #include "melder.h"
 
-integer Melder_countTokens (conststring32 string) {
+static integer countTokens (conststring32 string) {
 	integer numberOfTokens = 0;
 	const char32 *p = & string [0];
 	for (;;) {
-		while (*p == U' ' || *p == U'\t' || *p == U'\n' || *p == U'\r') p ++;
-		if (*p == U'\0') return numberOfTokens;
+		Melder_skipHorizontalOrVerticalSpace (& p);
+		if (*p == U'\0')
+			break;
 		numberOfTokens ++;
-		while (*p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\r') {
-			if (*p == U'\0') return numberOfTokens;
-			p ++;
-		}
+		p ++;   // step over first nonspace
+		p = Melder_findEndOfInk (p);
 	}
-	return 0;   // should not occur
+	return numberOfTokens;
 }
 
-static autostring32 theMelderToken;
+autostring32vector Melder_getTokens (conststring32 string) {
+	if (! string)
+		return autostring32vector();   // accept null pointer input
+	integer n = countTokens (string);
+	if (n == 0)
+		return autostring32vector();
+	autostring32vector result (n);
 
-char32 *Melder_firstToken (conststring32 string) {
-	theMelderToken = Melder_dup_f (string);
-	return Melder_tok (theMelderToken.get(), U" \t\n\r");
-}
-
-char32 *Melder_nextToken () {
-	return Melder_tok (nullptr, U" \t\n\r");
-}
-
-char32 ** Melder_getTokens (conststring32 string, integer *n) {
-	char32 *token;
 	integer itoken = 0;
-	*n = Melder_countTokens (string);
-	if (*n == 0) return nullptr;
-	autostring32vector result (*n);
-	for (token = Melder_firstToken (string); token != nullptr; token = Melder_nextToken ()) {
-		result [++ itoken] = Melder_dup (token);
+	const char32 *p = & string [0];
+	for (;;) {
+		Melder_skipHorizontalOrVerticalSpace (& p);
+		if (*p == U'\0')
+			break;
+		const char32 *beginOfInk = p;
+		p ++;   // step over first nonspace
+		p = Melder_findEndOfInk (p);
+		integer numberOfCharacters = p - beginOfInk;
+		autostring32 token (numberOfCharacters);
+		str32ncpy (token.get(), beginOfInk, numberOfCharacters);
+		result [++ itoken] = token.move();
 	}
-	return result.transfer2();
-}
-
-void Melder_freeTokens (char32 ***tokens) {
-	NUMvector_free (*tokens, 1);
-	*tokens = nullptr;
-}
-
-integer Melder_searchToken (conststring32 string, char32 **tokens, integer n) {
-	for (integer i = 1; i <= n; i ++) {
-		if (str32equ (string, tokens [i])) return i;
-	}
-	return 0;
+	return result;
 }
 
 /* End of file melder_token.cpp */
