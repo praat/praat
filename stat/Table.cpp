@@ -113,7 +113,7 @@ conststring32 Table_messageColumn (Table me, integer column) {
 }
 
 void Table_initWithColumnNames (Table me, integer numberOfRows, conststring32 columnNames_string) {
-	autostring32vector columnNames = Melder_getTokens (columnNames_string);
+	autostring32vector columnNames = tokenizeStrVec (columnNames_string);
 	Table_initWithoutColumnNames (me, numberOfRows, columnNames.size);
 	for (integer icol = 1; icol <= columnNames.size; icol ++)
 		Table_setColumnLabel (me, icol, columnNames [icol].get());
@@ -301,7 +301,7 @@ integer Table_getColumnIndexFromColumnLabel (Table me, conststring32 columnLabel
 }
 
 integer * Table_getColumnIndicesFromColumnLabelString (Table me, conststring32 columnLabels_string, integer *ptr_numberOfTokens) {
-	autostring32vector columnLabels = Melder_getTokens (columnLabels_string);
+	autostring32vector columnLabels = tokenizeStrVec (columnLabels_string);
 	if (columnLabels.size < 1)
 		Melder_throw (me, U": you specified an empty list of columns.");
 	autoNUMvector <integer> columns (1, columnLabels.size);
@@ -693,28 +693,28 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		/*
 			Parse the six strings of tokens.
 		*/
-		autostring32vector factors = Melder_getTokens (factors_string);
+		autostring32vector factors = tokenizeStrVec (factors_string);
 		if (factors.size < 1)
 			Melder_throw (U"In order to pool table data, you must supply at least one independent variable.");
 		Table_columns_checkExist (me, factors.peek2(), factors.size);
 
-		autostring32vector columnsToSum = Melder_getTokens (columnsToSum_string);
+		autostring32vector columnsToSum = tokenizeStrVec (columnsToSum_string);
 		Table_columns_checkExist (me, columnsToSum.peek2(), columnsToSum.size);
 		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToSum.peek2(), columnsToSum.size);
 
-		autostring32vector columnsToAverage = Melder_getTokens (columnsToAverage_string);
+		autostring32vector columnsToAverage = tokenizeStrVec (columnsToAverage_string);
 		Table_columns_checkExist (me, columnsToAverage.peek2(), columnsToAverage.size);
 		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToAverage.peek2(), columnsToAverage.size);
 
-		autostring32vector columnsToMedianize = Melder_getTokens (columnsToMedianize_string);
+		autostring32vector columnsToMedianize = tokenizeStrVec (columnsToMedianize_string);
 		Table_columns_checkExist (me, columnsToMedianize.peek2(), columnsToMedianize.size);
 		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToMedianize.peek2(), columnsToMedianize.size);
 
-		autostring32vector columnsToAverageLogarithmically = Melder_getTokens (columnsToAverageLogarithmically_string);
+		autostring32vector columnsToAverageLogarithmically = tokenizeStrVec (columnsToAverageLogarithmically_string);
 		Table_columns_checkExist (me, columnsToAverageLogarithmically.peek2(), columnsToAverageLogarithmically.size);
 		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToAverageLogarithmically.peek2(), columnsToAverageLogarithmically.size);
 
-		autostring32vector columnsToMedianizeLogarithmically = Melder_getTokens (columnsToMedianizeLogarithmically_string);
+		autostring32vector columnsToMedianizeLogarithmically = tokenizeStrVec (columnsToMedianizeLogarithmically_string);
 		Table_columns_checkExist (me, columnsToMedianizeLogarithmically.peek2(), columnsToMedianizeLogarithmically.size);
 		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToMedianizeLogarithmically.peek2(), columnsToMedianizeLogarithmically.size);
 
@@ -919,12 +919,12 @@ autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer c
 		/*
 			Parse the two strings of tokens.
 		*/
-		autostring32vector factors_names = Melder_getTokens (factors_string);
+		autostring32vector factors_names = tokenizeStrVec (factors_string);
 		integer numberOfFactors = factors_names.size;
 		if (numberOfFactors < 1)
 			Melder_throw (U"In order to nest table data, you should supply at least one independent variable.");
 		Table_columns_checkExist (me, factors_names.peek2(), numberOfFactors);
-		autostring32vector columnsToExpand_names = Melder_getTokens (columnsToExpand_string);
+		autostring32vector columnsToExpand_names = tokenizeStrVec (columnsToExpand_string);
 		integer numberToExpand = columnsToExpand_names.size;
 		if (numberToExpand < 1)
 			Melder_throw (U"In order to nest table data, you should supply at least one dependent variable (to expand).");
@@ -1080,7 +1080,7 @@ void Table_sortRows_Assert (Table me, integer *columns, integer numberOfColumns)
 
 void Table_sortRows_string (Table me, conststring32 columns_string) {
 	try {
-		autostring32vector columns_tokens = Melder_getTokens (columns_string);
+		autostring32vector columns_tokens = tokenizeStrVec (columns_string);
 		integer numberOfColumns = columns_tokens.size;
 		if (numberOfColumns < 1)
 			Melder_throw (me, U": you specified an empty list of columns.");

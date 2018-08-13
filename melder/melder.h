@@ -83,7 +83,6 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 #include "melder_cat.h"   // Melder_cat (requires MelderArg)
 #include "melder_sprint.h"   // Melder_sprint (requires MelderArg)
 #include "melder_search.h"
-#include "melder_token.h"
 #include "melder_casual.h"
 #include "melder_info.h"
 #include "melder_error.h"   // Melder_throw (requires MelderArg)
@@ -148,8 +147,10 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 
 #include "regularExp.h"
 
+#include "xxNum.h"
 #include "xxStr.h"
 #include "xxVec.h"
+#include "xxStrVec.h"
 
 /* End of file melder.h */
 #endif

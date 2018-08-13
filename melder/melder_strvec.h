@@ -71,20 +71,8 @@ public:
 	_stringvector<T> get () const {
 		return _stringvector<T> { (T**) our _ptr, our size };
 	}
-	T** peek2 () const {
+	T** peek2 () const {   // can be assigned to a [const] mutablestring32* and to a const conststring32*, but not to a conststring32*
 		return (T**) our _ptr;
-	}
-	_autostring <T> * transfer () {
-		_autostring <T> * tmp = our _ptr;
-		our _ptr = nullptr;   // make the pointer non-automatic again
-		our size = 0;
-		return tmp;
-	}
-	T** transfer2 () {
-		T** tmp = (T**) our _ptr;
-		our _ptr = nullptr;   // make the pointer non-automatic again
-		our size = 0;
-		return tmp;
 	}
 	void reset () {
 		if (our _ptr) {

@@ -664,7 +664,7 @@ static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
 		autoTable newMarks = Table_createWithColumnNames (0, U"Vowel F1 F2 Size");
 		integer nmarksFound = 0;
 		for (integer i = 1; i <= numberOfRows; i ++) {
-			autostring32vector rowi = Melder_getTokens (prefs.mark [i - 1]);
+			autostring32vector rowi = tokenizeStrVec (prefs.mark [i - 1]);
 			integer numberOfTokens = rowi.size;
 			if (numberOfTokens < 4)
 				break;

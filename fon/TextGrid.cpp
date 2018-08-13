@@ -311,7 +311,7 @@ autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 
 autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames_string, conststring32 pointTiers_string) {
 	try {
-		autostring32vector tierNames = Melder_getTokens (tierNames_string), pointTiers = Melder_getTokens (pointTiers_string);
+		autostring32vector tierNames = tokenizeStrVec (tierNames_string), pointTiers = tokenizeStrVec (pointTiers_string);
 		autoTextGrid me = TextGrid_createWithoutTiers (tmin, tmax);
 
 		/*

@@ -1,6 +1,6 @@
-#ifndef _melder_token_h_
-#define _melder_token_h_
-/* melder_token.h
+#ifndef _xxStrVec_h_
+#define _xxStrVec_h_
+/* xxStrVec.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,19 +18,12 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********** STRING PARSING **********/
-
 /*
-	These functions regard a string as a sequence of tokens,
+	Regard a string as a sequence of tokens,
 	separated (and perhaps preceded and followed) by white space.
 	The tokens cannot contain spaces themselves (there are no escapes).
-	Typical use:
-		for (token = Melder_firstToken (string); token != nullptr; token = Melder_nextToken ()) {
-			... do something with the token ...
-		}
 */
+autostring32vector tokenizeStrVec (conststring32 string);
 
-autostring32vector Melder_getTokens (conststring32 string);
-
-/* End of file melder_token.h */
+/* End of file xxStrVec.h */
 #endif
