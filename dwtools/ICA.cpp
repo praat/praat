@@ -697,8 +697,8 @@ autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 
 autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 covars_string, conststring32 centroid_string, integer numberOfSamples) {
 	try {
-		autostring32vector covars = Melder_getTokens (covars_string);
-		autostring32vector centroid = Melder_getTokens (centroid_string);
+		autostring32vector covars = tokenizeStrVec (covars_string);
+		autostring32vector centroid = tokenizeStrVec (centroid_string);
 		integer dimension = centroid.size;
 		integer ncovars = covars.size;
 		integer ncovars_wanted = dimension * (dimension + 1) / 2;

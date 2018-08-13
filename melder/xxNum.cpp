@@ -1,6 +1,6 @@
-/* melder_token.cpp
+/* xxNum.cpp
  *
- * Copyright (C) 2006,2007,2009,2011,2012,2015-2017 Paul Boersma
+ * Copyright (C) 2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-static integer countTokens (conststring32 string) {
+integer numberOfTokensNum (conststring32 string) {
 	integer numberOfTokens = 0;
 	const char32 *p = & string [0];
 	for (;;) {
@@ -32,29 +32,4 @@ static integer countTokens (conststring32 string) {
 	return numberOfTokens;
 }
 
-autostring32vector Melder_getTokens (conststring32 string) {
-	if (! string)
-		return autostring32vector();   // accept null pointer input
-	integer n = countTokens (string);
-	if (n == 0)
-		return autostring32vector();
-	autostring32vector result (n);
-
-	integer itoken = 0;
-	const char32 *p = & string [0];
-	for (;;) {
-		Melder_skipHorizontalOrVerticalSpace (& p);
-		if (*p == U'\0')
-			break;
-		const char32 *beginOfInk = p;
-		p ++;   // step over first nonspace
-		p = Melder_findEndOfInk (p);
-		integer numberOfCharacters = p - beginOfInk;
-		autostring32 token (numberOfCharacters);
-		str32ncpy (token.get(), beginOfInk, numberOfCharacters);
-		result [++ itoken] = token.move();
-	}
-	return result;
-}
-
-/* End of file melder_token.cpp */
+/* End of file xxNum.cpp */

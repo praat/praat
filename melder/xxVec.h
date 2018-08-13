@@ -18,13 +18,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline static double sqrt_scalar (double x) {
-	#if defined (_WIN32)
-		if (x < 0.0) return undefined;
-	#endif
-	return sqrt (x);
-}
-
 void sum_mean_scalar (numvec x, double *p_sum, double *p_mean) noexcept;
 void sum_mean_sumsq_variance_stdev_scalar (numvec x, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
 void sum_mean_sumsq_variance_stdev_scalar (nummat x, integer columnNumber, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;

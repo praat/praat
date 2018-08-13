@@ -88,7 +88,7 @@ autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfRespons
 
 autoConfusion Confusion_createSimple (conststring32 labels_string) {
 	try {
-		autostring32vector labels = Melder_getTokens (labels_string);
+		autostring32vector labels = tokenizeStrVec (labels_string);
 		Melder_require (labels.size > 0, U"There should be at least one label.");
 		
 		autoConfusion me = Confusion_create (labels.size, labels.size);
@@ -461,7 +461,7 @@ autoConfusion Confusion_group (Confusion me, conststring32 labels, conststring32
 
 autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		autostring32vector labels = Melder_getTokens (labels_string);
+		autostring32vector labels = tokenizeStrVec (labels_string);
 		integer ncondense = labels.size;
 		autoNUMvector<integer> irow (1, my numberOfRows);
 
@@ -515,7 +515,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 
 autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		autostring32vector labels = Melder_getTokens (labels_string);
+		autostring32vector labels = tokenizeStrVec (labels_string);
 		integer ncondense = labels.size;
 		autoNUMvector<integer> icol (1, my numberOfColumns);
 

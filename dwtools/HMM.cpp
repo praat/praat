@@ -474,8 +474,8 @@ autoHMM HMM_createContinuousModel (int leftToRight, integer numberOfStates, inte
 // for a simple non-hidden model leave either states empty or symbols empty !!!
 autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststring32 symbols_string) {
 	try {
-		autostring32vector states = Melder_getTokens (states_string);
-		autostring32vector symbols = Melder_getTokens (symbols_string);
+		autostring32vector states = tokenizeStrVec (states_string);
+		autostring32vector symbols = tokenizeStrVec (symbols_string);
 		autoHMM me = Thing_new (HMM);
 
 		Melder_require (states.size > 0 || symbols.size > 0,
