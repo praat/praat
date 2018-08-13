@@ -1,9 +1,9 @@
 # Makefile of the library "artsynth"
-# Paul Boersma, 8 August 2017
+# Paul Boersma, 10 August 2018
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../sys -I ../fon -I ../stat
+CPPFLAGS = -I ../kar -I ../melder -I ../sys -I ../fon -I ../stat
 
 OBJECTS = Speaker.o Articulation.o Artword.o \
      Art_Speaker.o Art_Speaker_to_VocalTract.o Artword_Speaker.o Artword_Speaker_Sound.o \
@@ -25,5 +25,5 @@ libartsynth.a: $(OBJECTS)
 	$(AR) cq libartsynth.a $(OBJECTS)
 	$(RANLIB) libartsynth.a
 
-$(OBJECTS): *.h ../kar/*.h ../sys/*.h ../fon/*.h ../stat/*.h
+$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../sys/*.h ../fon/*.h ../stat/*.h
 

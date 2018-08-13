@@ -228,18 +228,20 @@ integer EditCostsTable_getSourceIndex (EditCostsTable me, conststring32 symbol) 
 	return 0;
 }
 
-void EditCostsTable_setInsertionCosts (EditCostsTable me, conststring32 targets, double cost) {
-	for (char32 *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
-		integer irow = EditCostsTable_getTargetIndex (me, token);
-		irow = irow > 0 ? irow : my numberOfRows - 1; // nomatch condition to penultimate row
+void EditCostsTable_setInsertionCosts (EditCostsTable me, conststring32 targets_string, double cost) {
+	autostring32vector targets = Melder_getTokens (targets_string);
+	for (integer itarget = 1; itarget <= targets.size; itarget ++) {
+		integer irow = EditCostsTable_getTargetIndex (me, targets [itarget].get());
+		irow = irow > 0 ? irow : my numberOfRows - 1;   // nomatch condition to penultimate row
 		my data [irow] [my numberOfColumns] = cost;
 	}
 }
 
-void EditCostsTable_setDeletionCosts (EditCostsTable me, conststring32 sources, double cost) {
-	for (char32 *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
-		integer icol = EditCostsTable_getSourceIndex (me, token);
-		icol = icol > 0 ? icol : my numberOfColumns - 1; // nomatch condition to penultimate column
+void EditCostsTable_setDeletionCosts (EditCostsTable me, conststring32 sources_string, double cost) {
+	autostring32vector sources = Melder_getTokens (sources_string);
+	for (integer isource = 1; isource <= sources.size; isource ++) {
+		integer icol = EditCostsTable_getSourceIndex (me, sources [isource].get());
+		icol = icol > 0 ? icol : my numberOfColumns - 1;   // nomatch condition to penultimate column
 		my data [my numberOfRows] [icol] = cost;
 	}
 }
@@ -258,13 +260,15 @@ double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
 		my data [my numberOfRows - 1] [my numberOfColumns -1];   // inequality
 }
 
-void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targets, conststring32 sources, double cost) {
+void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targets_string, conststring32 sources_string, double cost) {
 	try {
+		autostring32vector targets = Melder_getTokens (targets_string);
+		autostring32vector sources = Melder_getTokens (sources_string);
 		autoNUMvector<integer> targetIndex (1, my numberOfRows);
 		autoNUMvector<integer> sourceIndex (1, my numberOfRows);
 		integer numberOfTargetSymbols = 0;
-		for (char32 *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
-			integer index = EditCostsTable_getTargetIndex (me, token);
+		for (integer itarget = 1; itarget <= targets.size; itarget ++) {
+			integer index = EditCostsTable_getTargetIndex (me, targets [itarget].get());
 			if (index > 0) {
 				targetIndex [ ++numberOfTargetSymbols] = index;
 			}
@@ -273,8 +277,8 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targe
 			targetIndex [ ++numberOfTargetSymbols] = my numberOfRows - 1;
 		}
 		integer numberOfSourceSymbols = 0;
-		for (char32 *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
-			integer index = EditCostsTable_getSourceIndex (me, token);
+		for (integer isource = 1; isource <= sources.size; isource ++) {
+			integer index = EditCostsTable_getSourceIndex (me, sources [isource].get());
 			if (index > 0) {
 				sourceIndex [ ++numberOfSourceSymbols] = index;
 			}

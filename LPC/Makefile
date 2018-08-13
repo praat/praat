@@ -1,9 +1,9 @@
 # Makefile of the library "LPC"
-# David Weenink and Paul Boersma 2017-08-08
+# David Weenink and Paul Boersma 2018-08-10
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../kar -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
+CPPFLAGS = -I ../kar -I ../melder -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	Cepstrogram.o \
@@ -31,6 +31,6 @@ libLPC.a: $(OBJECTS)
 	$(AR) cq libLPC.a $(OBJECTS)
 	$(RANLIB) libLPC.a
 
-$(OBJECTS): *.h ../kar/*.h ../dwtools/*.h ../fon/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h
+$(OBJECTS): *.h ../kar/*.h ../melder/*.h ../dwtools/*.h ../fon/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h
 
 

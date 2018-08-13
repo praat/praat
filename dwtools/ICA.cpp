@@ -143,7 +143,7 @@ static double NUMdmatrix_diagonalityMeasure (double **v, integer dimension) {
 			}
 		}
 	}
-	return dmsq / (dimension * (dimension - 1));
+	return (double) dmsq / (dimension * (dimension - 1));
 }
 
 #if 0
@@ -215,8 +215,8 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 						}
 						longdouble denom = zjj * zii - zij * zij;
 						if (denom != 0.0) {
-							w [i] [j] = (zij * yji - zii * yij) / denom;
-							w [j] [i] = (zij * yij - zjj * yji) / denom;
+							w [i] [j] = (double) (zij * yji - zii * yij) / denom;
+							w [j] [i] = (double) (zij * yij - zjj * yji) / denom;
 						}
 					}
 				}
@@ -695,10 +695,12 @@ autoCrossCorrelationTable CrossCorrelationTable_create (integer dimension) {
 	}
 }
 
-autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 covars, conststring32 centroid, integer numberOfSamples) {
+autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 covars_string, conststring32 centroid_string, integer numberOfSamples) {
 	try {
-		integer dimension = Melder_countTokens (centroid);
-		integer ncovars = Melder_countTokens (covars);
+		autostring32vector covars = Melder_getTokens (covars_string);
+		autostring32vector centroid = Melder_getTokens (centroid_string);
+		integer dimension = centroid.size;
+		integer ncovars = covars.size;
 		integer ncovars_wanted = dimension * (dimension + 1) / 2;
 		
 		Melder_require (ncovars == ncovars_wanted, U"The number of matrix elements and the number of "
@@ -709,25 +711,21 @@ autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 cova
 		/*
 			Construct the full matrix from the upper-diagonal elements
 		*/
-
-		integer inum = 1, irow = 1;
-		for (char32 *token = Melder_firstToken (covars); token != nullptr && inum <= ncovars_wanted; token = Melder_nextToken (), inum ++) {
+		integer irow = 1;
+		for (integer inum = 1; inum <= ncovars; inum ++) {
 			double number;
 			integer nmissing = (irow - 1) * irow / 2;
 			integer inumc = inum + nmissing;
 			irow = (inumc - 1) / dimension + 1;
-			integer icol = ( (inumc - 1) % dimension) + 1;
-			Interpreter_numericExpression (nullptr, token, &number);
+			integer icol = (inumc - 1) % dimension + 1;
+			Interpreter_numericExpression (nullptr, covars [inum].get(), & number);
 			my data [irow] [icol] = my data [icol] [irow] = number;
-			if (icol == dimension) {
+			if (icol == dimension)
 				irow ++;
-			}
 		}
-
-		inum = 1;
-		for (char32 *token = Melder_firstToken (centroid); token != nullptr && inum <= dimension; token = Melder_nextToken (), inum ++) {
+		for (integer inum = 1; inum <= dimension; inum ++) {
 			double number;
-			Interpreter_numericExpression (nullptr, token, & number);
+			Interpreter_numericExpression (nullptr, centroid [inum].get(), & number);
 			my centroid [inum] = number;
 		}
 		my numberOfObservations = numberOfSamples;

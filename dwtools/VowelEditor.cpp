@@ -664,13 +664,13 @@ static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me)
 		autoTable newMarks = Table_createWithColumnNames (0, U"Vowel F1 F2 Size");
 		integer nmarksFound = 0;
 		for (integer i = 1; i <= numberOfRows; i ++) {
-			autoMelderTokens rowi (prefs.mark [i - 1]);
-			integer numberOfTokens = rowi.count();
+			autostring32vector rowi = Melder_getTokens (prefs.mark [i - 1]);
+			integer numberOfTokens = rowi.size;
 			if (numberOfTokens < 4)
 				break;
 			Table_appendRow (newMarks.get());
 			for (integer j = 1; j <= 4; j ++)
-				Table_setStringValue (newMarks.get(), i, j, rowi [j]);
+				Table_setStringValue (newMarks.get(), i, j, rowi [j].get());
 			nmarksFound ++;
 		}
 		if (nmarksFound == 0) {

@@ -105,8 +105,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		
 		// Use svd as (temporary) storage, and copy data
 
-		autoSVD svdy = SVD_create (n, ny);
-		autoSVD svdx = SVD_create (n, nx);
+		autoSVD svdy = SVD_create (n, ny);   // n >= ny, hence no transposition
+		autoSVD svdx = SVD_create (n, nx);	 // n >= nx, hence no transposition
 
 		for (integer i = 1; i <= n; i ++) {
 			for (integer j = 1; j <= ny; j ++) {

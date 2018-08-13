@@ -2,7 +2,7 @@
 
 include ../../makefile.defs
 
-CPPFLAGS = -I ../../kar -I ../../dwtools -I ../../sys -I ../../dwsys -I ../../stat
+CPPFLAGS = -I ../../kar -I ../../melder -I ../../dwtools -I ../../sys -I ../../dwsys -I ../../stat
 
 OBJECTS = categories.o compiledata.o compiledict.o \
 	dictionary.o \
@@ -28,5 +28,5 @@ libespeak.a: $(OBJECTS)
 	$(AR) cq libespeak.a $(OBJECTS)
 	$(RANLIB) libespeak.a
 
-$(OBJECTS):  *.h ../../kar/*.h ../../sys/*.h ../../dwsys/*.h ../../stat/*.h
+$(OBJECTS):  *.h ../../kar/*.h ../../melder/*.h ../../sys/*.h ../../dwsys/*.h ../../stat/*.h
 

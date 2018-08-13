@@ -17,7 +17,7 @@
  */
 
 #include "TextGrid.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 
 #include "oo_DESTROY.h"
 #include "TextGrid_def.h"
@@ -309,35 +309,29 @@ autoTextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 	}
 }
 
-autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames, conststring32 pointTiers) {
+autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames_string, conststring32 pointTiers_string) {
 	try {
+		autostring32vector tierNames = Melder_getTokens (tierNames_string), pointTiers = Melder_getTokens (pointTiers_string);
 		autoTextGrid me = TextGrid_createWithoutTiers (tmin, tmax);
-		char32 nameBuffer [400];
 
 		/*
-		 * Create a number of IntervalTier objects.
-		 */
-		if (tierNames && tierNames [0]) {
-			str32cpy (nameBuffer, tierNames);
-			for (conststring32 tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
-				autoIntervalTier tier = IntervalTier_create (tmin, tmax);
-				Thing_setName (tier.get(), tierName);
-				my tiers -> addItem_move (tier.move());
-			}
+			Create a number of IntervalTier objects.
+		*/
+		for (integer itoken = 1; itoken <= tierNames.size; itoken ++) {
+			autoIntervalTier tier = IntervalTier_create (tmin, tmax);
+			Thing_setName (tier.get(), tierNames [itoken].get());
+			my tiers -> addItem_move (tier.move());
 		}
 
 		/*
-		 * Replace some IntervalTier objects with TextTier objects.
-		 */
-		if (pointTiers && pointTiers [0]) {
-			str32cpy (nameBuffer, pointTiers);
-			for (conststring32 tierName = Melder_tok (nameBuffer, U" "); tierName; tierName = Melder_tok (nullptr, U" ")) {
-				for (integer itier = 1; itier <= my tiers->size; itier ++) {
-					if (str32equ (tierName, Thing_getName (my tiers->at [itier]))) {
-						autoTextTier tier = TextTier_create (tmin, tmax);
-						Thing_setName (tier.get(), tierName);
-						my tiers -> replaceItem_move (tier.move(), itier);
-					}
+			Replace some IntervalTier objects with TextTier objects.
+		*/
+		for (integer itoken = 1; itoken <= pointTiers.size; itoken ++) {
+			for (integer itier = 1; itier <= my tiers->size; itier ++) {
+				if (str32equ (pointTiers [itoken].get(), Thing_getName (my tiers->at [itier]))) {
+					autoTextTier tier = TextTier_create (tmin, tmax);
+					Thing_setName (tier.get(), pointTiers [itoken].get());
+					my tiers -> replaceItem_move (tier.move(), itier);
 				}
 			}
 		}
@@ -351,7 +345,7 @@ autoTextGrid TextGrid_create (double tmin, double tmax, conststring32 tierNames,
 
 autoTextTier TextTier_readFromXwaves (MelderFile file) {
 	try {
-		char *line;
+		conststring8 line;
 
 		autoTextTier me = TextTier_create (0, 100);
 		autoMelderFile mfile = MelderFile_open (file);

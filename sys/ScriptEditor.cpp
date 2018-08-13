@@ -17,7 +17,7 @@
  */
 
 #include "ScriptEditor.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 #include "praatP.h"
 #include "EditorM.h"
 

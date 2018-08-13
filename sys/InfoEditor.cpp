@@ -42,8 +42,7 @@ InfoEditor InfoEditor_getTheReferenceToTheOnlyInstance () {
 	return theReferenceToTheOnlyInfoEditor;
 }
 
-void gui_information (conststring32 message);   // BUG
-void gui_information (conststring32 message) {
+static void gui_information (conststring32 message) {
 	InfoEditor editor = InfoEditor_getTheReferenceToTheOnlyInstance ();
 	GuiText_setString (editor -> textWidget, message);
 	GuiThing_show (editor -> windowForm);
@@ -92,6 +91,10 @@ void gui_information (conststring32 message) {
 	#elif defined (macintosh)
 		GuiShell_drain (editor -> windowForm);
 	#endif
+}
+
+void InfoEditor_injectInformationProc () {
+	Melder_setInformationProc (gui_information);
 }
 
 /* End of file InfoEditor.cpp */

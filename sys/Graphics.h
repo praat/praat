@@ -19,7 +19,7 @@
  */
 
 #include "Thing.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 
 #include "Graphics_enums.h"
 

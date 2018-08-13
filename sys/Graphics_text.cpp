@@ -17,9 +17,9 @@
  */
 
 #include <ctype.h>
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 #include "GraphicsP.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 #include "Printer.h"
 
 extern const char * ipaSerifRegularPS [];

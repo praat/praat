@@ -47,9 +47,7 @@
 
 /*#define MP3_DEBUG*/
 
-#include <string.h>
 #include "mp3.h"
-#include "melder.h"
 
 extern "C" {
 	#include "mad_config.h"

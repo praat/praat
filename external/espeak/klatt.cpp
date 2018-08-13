@@ -149,7 +149,7 @@ static double resonator2(resonator_ptr r, double input)
 
 static double antiresonator2(resonator_ptr r, double input)
 {
-	register double x = (double)r->a * (double)input + (double)r->b * (double)r->p1 + (double)r->c * (double)r->p2;
+	double x = (double)r->a * (double)input + (double)r->b * (double)r->p1 + (double)r->c * (double)r->p2;
 	r->p2 = (double)r->p1;
 	r->p1 = (double)input;
 

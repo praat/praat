@@ -76,7 +76,6 @@
 #include "gsl_sf_trig.h"
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
-#include "tensor.h"
 
 #undef MAX
 #undef MIN
@@ -117,21 +116,7 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 	MelderInfo_close ();
 }
 
-void NUMcentreRows_old (double **a, integer rb, integer re, integer cb, integer ce) {
-	for (integer i = rb; i <= re; i ++) {
-		double rowmean = 0.0;
-		for (integer j = cb; j <= ce; j ++) {
-			rowmean += a [i] [j];
-		}
-		rowmean /= (ce - cb + 1);
-		for (integer j = cb; j <= ce; j ++) {
-			a [i] [j] -= rowmean;
-		}
-	}
-}
-
-
-void numvec_centre_inplace (numvec x, double *p_mean) {
+static void numvec_centre_inplace (numvec x, double *p_mean) {
 	double xmean;
 	sum_mean_scalar (x, nullptr, & xmean);
 	for (integer i = 1; i <= x.size; i ++) {
@@ -229,13 +214,13 @@ void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer 
 		return;
 	}
 	for (integer j = cb; j <= ce; j ++) {
-		double ave = 0.0;
+		longdouble ave = 0.0;
 		for (integer i = rb; i <= re; i ++) {
 			ave += a [i] [j];
 		}
 		ave /= n;
 		for (integer i = rb; i <= re; i ++) {
-			a [i] [j] = ave;
+			a [i] [j] = (double) ave;
 		}
 	}
 }
@@ -2937,7 +2922,7 @@ void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, i
 	bool firstTime = true;
 	for (integer i = rb; i <= re; i ++) {
 		for (integer j = cb; j <= ce; j ++) {
-			if (! isfinite (m [i] [j])) {
+			if (isundef (m [i] [j])) {
 				numberOfInvalids ++;
 				if (firstTime) {
 					MelderInfo_writeLine (U"Invalid data at the following [row] [column] positions:");

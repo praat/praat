@@ -17,7 +17,7 @@
  */
 
 #include "WordList.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 
 #include "oo_DESTROY.h"
 #include "WordList_def.h"

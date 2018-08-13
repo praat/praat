@@ -116,6 +116,9 @@ void praat_reportSystemProperties () {
 		MelderInfo_writeLine (U"linux is \"" xstr (linux) "\".");
 	#endif
 	MelderInfo_writeLine (U"The number of processors is ", std::thread::hardware_concurrency(), U".");
+	#ifdef macintosh
+		MelderInfo_writeLine (U"system version is ", Melder_systemVersion, U".");
+	#endif
 	MelderInfo_close ();
 }
 

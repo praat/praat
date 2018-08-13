@@ -19,7 +19,7 @@
 #include "ManPagesM.h"
 
 #include "Sound.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 static void draw_SoundDeepen_filter (Graphics g) {
 	try {

@@ -31,12 +31,12 @@ autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer nu
 	}
 }
 
-autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, conststring32 elements) {
+autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, conststring32 elements_string) {
 	try {
-		integer inum = 1, ntokens = Melder_countTokens (elements);
-		if (ntokens == 0) {
+		autostring32vector elements = Melder_getTokens (elements_string);
+		integer inum = 1, ntokens = elements.size;
+		if (ntokens == 0)
 			Melder_throw (U"No matrix elements.");
-		}
 		integer numberOfCells = numberOfInputChannels * numberOfOutputChannels;
 
 		autoMixingMatrix me = MixingMatrix_create (numberOfOutputChannels, numberOfInputChannels);
@@ -45,19 +45,16 @@ autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, inte
 			Construct the full matrix from the elements
 		*/
 		double number;
-		for (char32 *token = Melder_firstToken (elements); token && inum <= ntokens; token = Melder_nextToken (), inum ++) {
+		for (; inum <= ntokens; inum ++) {
 			integer irow = (inum - 1) / numberOfInputChannels + 1;
 			integer icol = (inum - 1) % numberOfInputChannels + 1;
-			Interpreter_numericExpression (0, token, & number);
-
+			Interpreter_numericExpression (0, elements [inum].get(), & number);
 			my data [irow] [icol] = number;
 		}
-		if (ntokens < numberOfCells) {
-			for (integer i = inum; i <= numberOfCells; i ++) {
-				integer irow = (inum - 1) / numberOfInputChannels + 1;
-				integer icol = (inum - 1) % numberOfInputChannels + 1;
-				my data [irow] [icol] = number; // repeat the last number given!
-			}
+		for (; inum <= numberOfCells; inum ++) {
+			integer irow = (inum - 1) / numberOfInputChannels + 1;
+			integer icol = (inum - 1) % numberOfInputChannels + 1;
+			my data [irow] [icol] = number;   // repeat the last number given!
 		}
 		return me;
 	} catch (MelderError) {

@@ -1367,11 +1367,12 @@ static double traceOfSquaredMatrixProduct (double **s1, double **s2, integer n) 
 	return trace2;
 }
 
-double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector) {
+double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector_string) {
+	autostring32vector vector = Melder_getTokens (vector_string);
 	autoNUMvector<double> v (1, my numberOfColumns);
 	integer i = 0;
-	for (char32 *token = Melder_firstToken (vector); token != nullptr; token = Melder_nextToken ()) {
-		v [++ i] = Melder_atof (token);
+	for (integer i = 1; i <= vector.size; i ++) {
+		v [++ i] = Melder_atof (vector [i].get());
 		if (i == my numberOfColumns) {
 			break;
 		}

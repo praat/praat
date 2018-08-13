@@ -38,7 +38,7 @@
 #endif
 
 #include "Strings_.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 
 #include "oo_DESTROY.h"
 #include "Strings_def.h"

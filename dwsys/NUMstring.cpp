@@ -25,19 +25,15 @@
 #include "Interpreter.h"
 #include "NUM2.h"
 
-double *NUMstring_to_numbers (conststring32 s, integer *p_numbers_found) {
-	integer numbers_found = Melder_countTokens (s);
-	if (numbers_found < 1) {
+double *NUMstring_to_numbers (conststring32 s, integer *out_numbers_found) {   // TODO: turn into autonumvec
+	autostring32vector tokens = Melder_getTokens (s);
+	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
-	}
-	autoNUMvector <double> numbers (1, numbers_found);
-	integer inum = 1;
-	for (char32 *token = Melder_firstToken (s); token; token = Melder_nextToken (), inum ++) {
-		Interpreter_numericExpression (0, token, & numbers [inum]);
-	}
-	if (p_numbers_found) {
-		*p_numbers_found = numbers_found;
-	}
+	autoNUMvector <double> numbers (1, tokens.size);
+	for (integer inum = 1; inum <= tokens.size; inum ++)
+		Interpreter_numericExpression (0, tokens [inum].get(), & numbers [inum]);
+	if (out_numbers_found)
+		*out_numbers_found = tokens.size;
 	return numbers.transfer();
 }
 
@@ -45,7 +41,7 @@ char32 *strstr_regexp (conststring32 string, conststring32 search_regexp) {
 	char32 *charp = nullptr;
 	regexp *compiled_regexp = CompileRE_throwable (search_regexp, 0);
 
-	if (ExecRE (compiled_regexp, nullptr, string, nullptr, false, U'\0', U'\0', nullptr, nullptr, nullptr)) {
+	if (ExecRE (compiled_regexp, nullptr, string, nullptr, false, U'\0', U'\0', nullptr, nullptr)) {
 		charp = compiled_regexp -> startp [0];
 	}
 

@@ -23,7 +23,7 @@ extern structMelderDir praatDir;
 #include "praat_script.h"
 #include "Formula.h"
 #include "praat_version.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 #include "../fon/Vector.h"
 

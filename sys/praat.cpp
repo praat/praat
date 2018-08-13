@@ -17,7 +17,6 @@
  */
 
 #include "melder.h"
-#include "../dwsys/NUMmachar.h"
 #include <ctype.h>
 #include <stdarg.h>
 #if defined (UNIX) || defined (macintosh)
@@ -43,7 +42,8 @@
 #include "Printer.h"
 #include "ScriptEditor.h"
 #include "Strings_.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
+#include "InfoEditor.h"
 
 #if gtk
 	#include <gdk/gdkx.h>
@@ -987,23 +987,6 @@ static void setThePraatLocale () {
 	#endif
 }
 
-static void getSystemVersion () {
-	#ifdef macintosh
-		SInt32 sys1, sys2, sys3;
-		Gestalt ('sys1', & sys1);
-		Gestalt ('sys2', & sys2);
-		Gestalt ('sys3', & sys3);
-		Melder_systemVersion = sys1 * 10000 + sys2 * 100 + sys3;
-	#endif
-}
-
-static void initializeNumericalLibraries () {
-	NUMmachar ();
-	NUMinit ();
-	Melder_alloc_init ();
-	Melder_message_init ();
-}
-
 static void installPraatShellPreferences () {
 	praat_statistics_prefs ();   // number of sessions, memory used...
 	praat_picture_prefs ();   // font...
@@ -1019,8 +1002,7 @@ static void installPraatShellPreferences () {
 
 extern "C" void praatlib_init () {
 	setThePraatLocale ();   // FIXME: don't use the global locale
-	getSystemVersion ();
-	initializeNumericalLibraries ();
+	Melder_init ();
 	Melder_rememberShellDirectory ();
 	installPraatShellPreferences ();   // needed in the library, because this sets the defaults
 	praatP.argc = 0;
@@ -1041,6 +1023,11 @@ extern "C" void praatlib_init () {
 	praat_addMenus2 ();
 }
 
+static void injectMessageAndInformationProcs (GuiWindow parent) {
+	Gui_injectMessageProcs (parent);
+	InfoEditor_injectInformationProc ();
+}
+
 void praat_init (conststring32 title, int argc, char **argv)
 {
 	bool weWereStartedFromTheCommandLine = tryToAttachToTheCommandLine ();
@@ -1049,8 +1036,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		//Melder_casual (U"arg ", iarg, U": <<", Melder_peek8to32 (argv [iarg]), U">>");
 	}
 	setThePraatLocale ();
-	getSystemVersion ();
-	initializeNumericalLibraries ();
+	Melder_init ();
 
 	/*
 		Remember the current directory. Useful only for scripts run from batch.
@@ -1347,7 +1333,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#ifdef macintosh
 			AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignal8), 0, false);   // for receiving sendpraat
 			AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignal16), 0, false);   // for receiving sendpraatW
-			MelderGui_create (raam);   // BUG: default Melder_assert would call printf recursively!!!
+			injectMessageAndInformationProcs (raam);   // BUG: default Melder_assert would call printf recursively!!!
 		#endif
 		trace (U"creating the menu bar in the Objects window");
 		GuiWindow_addMenuBar (raam);
@@ -1386,7 +1372,7 @@ void praat_init (conststring32 title, int argc, char **argv)
 		#endif
 		#if ! defined (macintosh)
 			trace (U"initializing the Gui late");
-			MelderGui_create (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
+			injectMessageAndInformationProcs (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
 		#endif
 		Melder_setHelpProc (helpProc);
 	}

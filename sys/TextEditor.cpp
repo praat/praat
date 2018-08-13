@@ -18,9 +18,9 @@
 
 #include "TextEditor.h"
 #include "machine.h"
-#include "longchar.h"
+#include "../kar/longchar.h"
 #include "EditorM.h"
-#include "UnicodeData.h"
+#include "../kar/UnicodeData.h"
 
 Thing_implement (TextEditor, Editor, 0);
 
