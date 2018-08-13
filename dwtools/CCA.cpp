@@ -1,6 +1,6 @@
 /* CCA.c
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,18 +95,18 @@ double CCA_getEigenvectorElement (CCA me, int x_or_y, integer ivec, integer elem
 
 autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 	try {
-		integer n = my numberOfRows, nx = my numberOfColumns - ny;
+		integer n = my numberOfRows, nx = my numberOfColumns - ny, nmax_xy = nx > ny ? nx : ny;
 		Melder_require (ny > 0 && ny < my numberOfColumns, U"Dimension of first part not correct.");
 		Melder_require (ny <= nx, U"The dimension of the dependent part (", ny, U") should not exceed "
 				"the dimension of the independent part (", nx, U").");
-		Melder_require (n >= ny, U"The number of observations should be larger than ", ny, U".");
+		Melder_require (n >= nmax_xy, U"The number of observations should be larger than  ", nmax_xy - 1, U".");
 		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns),
 			U"At least one of the table's elements is undefined."); 	
 		
 		// Use svd as (temporary) storage, and copy data
 
 		autoSVD svdy = SVD_create (n, ny);   // n >= ny, hence no transposition
-		autoSVD svdx = SVD_create (n, nx);
+		autoSVD svdx = SVD_create (n, nx);	 // n >= nx, hence no transposition
 
 		for (integer i = 1; i <= n; i ++) {
 			for (integer j = 1; j <= ny; j ++) {
