@@ -508,5 +508,9 @@ using autonummat = automatrix <double>;
 conststring32 Melder_numvec (numvec value);
 conststring32 Melder_nummat (nummat value);
 
+inline static numvec as_numvec (nummat x) {
+	return numvec (x [1], x.nrow * x.ncol);
+}
+
 /* End of file melder_vector.h */
 #endif

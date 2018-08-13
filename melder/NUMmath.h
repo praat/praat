@@ -47,8 +47,6 @@
 #undef M_PI   /* M_PI is a GNU extension, so not always available under -std=c++17 (one can also use NUMpi) */
 #define M_PI  3.1415926535897932384626433832795028841972
 
-#define NUMlog2(x)  (log (x) * NUMlog2e)
-double NUMpow (double base, double exponent);   /* Zero for non-positive base. */
 void NUMshift (double *x, double xfrom, double xto);
 void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, double xmaxto);
 

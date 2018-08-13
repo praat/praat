@@ -136,7 +136,7 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 
 #include "melder_templates.h"   // Melder_ENABLE_IF_ISA, MelderCallback, MelderCompareHook
 
-#include "NUMmath.h"   // <math.h>, NUMpow, NUMpi, undefined
+#include "NUMmath.h"   // <math.h>, NUMpi, undefined
 #include "NUMspecfunc.h"
 #include "NUMear.h"
 #include "NUMinterpol.h"
@@ -146,6 +146,7 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 #include "NUMlinprog.h"
 
 #include "regularExp.h"
+#include "PAIRWISE_SUM.h"
 
 #include "xxNum.h"
 #include "xxStr.h"

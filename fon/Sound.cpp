@@ -89,7 +89,7 @@ void structSound :: v_info () {
 	bool thereAreEnoughObservationsToComputeSecondOrderChannelStatistics = ( our nx >= 2 );
 	if (thereAreEnoughObservationsToComputeSecondOrderChannelStatistics) {
 		for (integer channel = 1; channel <= our ny; channel ++) {
-			double stdev = stdev_scalar ({ our z [channel], our nx });
+			double stdev = NUMstdev (numvec (our z [channel], our nx));
 			MelderInfo_writeLine (U"Standard deviation in channel ", channel, U": ", Melder_single (stdev), U" Pascal");
 		}
 	}

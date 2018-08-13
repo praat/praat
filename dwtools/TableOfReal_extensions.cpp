@@ -699,7 +699,7 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 		nummat mat { my data, my numberOfRows, my numberOfColumns };
 		double mean, stdev;
-		sum_mean_sumsq_variance_stdev_scalar (mat, icol, nullptr, & mean, nullptr, nullptr, & stdev);
+		NUM_sum_mean_sumsq_variance_stdev (mat, icol, nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
 		}
@@ -718,7 +718,7 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		numvec vec { my data [irow], my numberOfColumns };
 		double mean, stdev;
-		sum_mean_sumsq_variance_stdev_scalar (vec, nullptr, & mean, nullptr, nullptr, & stdev);
+		NUM_sum_mean_sumsq_variance_stdev (vec, nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
 		}

@@ -2319,7 +2319,9 @@ static void do_eq () {
 		double result = str32equ (x->getString(), y->getString()) ? 1.0 : 0.0;
 		pushNumber (result);
 	} else if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (equal_numvec (x->numericVector, y->numericVector));
+		pushNumber (NUMequal (x->numericVector, y->numericVector));
+	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		pushNumber (NUMequal (x->numericMatrix, y->numericMatrix));
 	} else {
 		Melder_throw (U"Cannot compare (=) ", x->whichText(), U" to ", y->whichText(), U".");
 	}
@@ -3317,7 +3319,7 @@ static void do_log10 () {
 static void do_sum () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (sum_scalar (x->numericVector));
+		pushNumber (NUMsum (x->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the sum of ", x->whichText(), U".");
 	}
@@ -3325,7 +3327,7 @@ static void do_sum () {
 static void do_mean () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (mean_scalar (x->numericVector));
+		pushNumber (NUMmean (x->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the mean of ", x->whichText(), U".");
 	}
@@ -3333,7 +3335,7 @@ static void do_mean () {
 static void do_stdev () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (stdev_scalar (x->numericVector));
+		pushNumber (NUMstdev (x->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the mean of ", x->whichText(), U".");
 	}
@@ -3341,7 +3343,7 @@ static void do_stdev () {
 static void do_center () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (center_scalar (x->numericVector));
+		pushNumber (NUMcenterOfGravity (x->numericVector));
 	} else {
 		Melder_throw (U"Cannot compute the center of ", x->whichText(), U".");
 	}
@@ -4047,9 +4049,9 @@ static void do_norm () {
 	}
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (norm_scalar (x->numericVector, powerNumber));
+		pushNumber (NUMnorm (x->numericVector, powerNumber));
 	} else if (x->which == Stackel_NUMERIC_MATRIX) {
-		pushNumber (norm_scalar (x->numericMatrix, powerNumber));
+		pushNumber (NUMnorm (x->numericMatrix, powerNumber));
 	} else {
 		Melder_throw (U"Cannot compute the norm of ", x->whichText(), U".");
 	}
@@ -5122,7 +5124,7 @@ static void do_inner () {
 	*/
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		pushNumber (inner_scalar (x->numericVector, y->numericVector));
+		pushNumber (NUMinner (x->numericVector, y->numericVector));
 	} else {
 		Melder_throw (U"The function \"inner\" requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}

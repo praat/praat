@@ -304,7 +304,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			}
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				z += inner_scalar (x.get(), y.get());
+				z += NUMinner (x.get(), y.get());
 			}
 			t = Melder_stopwatch () / size;   // 0.43 ns per multiplication-addition pair
 			MelderInfo_writeLine (z);
@@ -355,7 +355,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				double sum = sum_scalar (x.get());
+				double sum = NUMsum (x.get());
 				z += sum;
 			}
 			t = Melder_stopwatch () / size;   // for size == 100: 0.31 ns
@@ -368,7 +368,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				double sum = mean_scalar (x.get());
+				double sum = NUMmean (x.get());
 				z += sum;
 			}
 			t = Melder_stopwatch () / size;   // for size == 100: 0.34 ns
@@ -381,7 +381,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				double stdev = stdev_scalar (x.get());
+				double stdev = NUMstdev (x.get());
 				z += stdev;
 			}
 			t = Melder_stopwatch () / size;
@@ -499,8 +499,9 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				//data11 = nullptr;   // disabled implicit assignment of pointer to autopointer
 				fprintf (stderr, "21\n");
 			}
-			int numberOfThingsAfter = theTotalNumberOfThings;
-			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
+			integer numberOfThingsAfter = theTotalNumberOfThings;
+			fprintf (stderr, "Number of things: before %ld, after %ld\n",
+					(long_not_integer) numberOfThingsBefore, (long_not_integer) numberOfThingsAfter);
 			#if 0
 				MelderCallback<void,structDaata>::FunctionType f;
 				typedef void (*DataFunc) (Daata);
