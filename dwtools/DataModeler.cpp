@@ -974,7 +974,7 @@ double DataModeler_estimateSigmaY (DataModeler me) {
 				y [++ numberOfDataPoints] = my y [i];
 		}
 		y.size = numberOfDataPoints;   // fake shrink
-		return stdev_scalar (y.get());
+		return NUMstdev (y.get());
 	} catch (MelderError) {
 		Melder_throw (U"Cannot estimate sigma.");
 	}

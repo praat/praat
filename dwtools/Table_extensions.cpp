@@ -3921,7 +3921,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g,
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
 		double mean, stdev;
-		sum_mean_sumsq_variance_stdev_scalar (data.get(), nullptr, & mean, nullptr, nullptr, & stdev);
+		NUM_sum_mean_sumsq_variance_stdev (data.get(), nullptr, & mean, nullptr, nullptr, & stdev);
 		double xmin = 100, xmax = -xmin, ymin = 1e308, ymax = -ymin;
 		if (numberOfSigmas != 0) {
 			xmin = -numberOfSigmas; 

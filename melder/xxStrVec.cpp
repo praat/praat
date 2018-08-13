@@ -21,7 +21,7 @@
 autostring32vector tokenizeStrVec (conststring32 string) {
 	if (! string)
 		return autostring32vector();   // accept null pointer input
-	integer n = numberOfTokensNum (string);
+	integer n = NUMnumberOfTokens (string);
 	if (n == 0)
 		return autostring32vector();
 	autostring32vector result (n);

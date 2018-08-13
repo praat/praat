@@ -117,14 +117,11 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 }
 
 static void numvec_centre_inplace (numvec x, double *p_mean) {
-	double xmean;
-	sum_mean_scalar (x, nullptr, & xmean);
-	for (integer i = 1; i <= x.size; i ++) {
+	double xmean = NUMmean (x);
+	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= xmean;
-	}
-	if (p_mean) {
+	if (p_mean)
 		*p_mean = xmean;
-	}
 }
 
 void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {

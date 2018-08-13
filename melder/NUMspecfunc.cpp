@@ -21,7 +21,6 @@
  * pb 2003/06/19 ridders3 replaced with ridders
  * pb 2003/07/09 gsl
  * pb 2003/08/27 NUMfisherQ: underflow and iteration excess should not return undefined
- * pb 2005/07/08 NUMpow
  * pb 2006/08/02 NUMinvSigmoid
  * pb 2008/01/19 double
  * pb 2008/09/21 NUMshift
