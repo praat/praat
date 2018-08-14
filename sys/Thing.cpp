@@ -209,7 +209,7 @@ conststring32 Thing_messageName (Thing me) {
 }
 
 void Thing_setName (Thing me, conststring32 name /* cattable */) {
-	my name = Melder_dup_f (name);   // BUG: that's no checking
+	my name = Melder_dup (name);
 	my v_nameChanged ();
 }
 

@@ -425,7 +425,7 @@ char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles) {
 		my titles = autostring32vector (my pages.size);
 		for (integer i = 1; i <= my pages.size; i ++) {
 			ManPage page = my pages.at [i];
-			my titles [i] = Melder_dup_f (page -> title.get());
+			my titles [i] = Melder_dup (page -> title.get());
 		}
 	}
 	*numberOfTitles = my pages.size;

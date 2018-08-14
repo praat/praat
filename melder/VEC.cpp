@@ -19,25 +19,25 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"   /* for NUMsort2 */
 
-autoVEC VECcopy (VEC x) {
+autoVEC VECcopy (constVEC x) {
 	autoVEC result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i];
 	return result;
 }
 
-inline static double inner_stride_ (VEC x, VEC y, integer stride) {
+inline static double inner_stride_ (constVEC x, constVEC y, integer stride) {
 	if (x.size != y.size)
 		return undefined;
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
-		double *xx = & x [0];
-		double *yy = & y [1 - stride],
+		const double *xx = & x [0];
+		const double *yy = & y [1 - stride],
 		(++ xx, yy += stride),   // this goes way beyond the confines of y
 		(longdouble) *xx * (longdouble) *yy)
 	return (double) sum;
 }
 
-autoVEC VECmul (VEC vec, MAT mat) {
+autoVEC VECmul (constVEC vec, constMAT mat) {
 	if (mat.nrow != vec.size)
 		return autoVEC();
 	autoVEC result (mat.ncol, kTensorInitializationType::RAW);
@@ -45,19 +45,19 @@ autoVEC VECmul (VEC vec, MAT mat) {
 	return result;
 }
 
-void VECmul_inplace (VEC target, VEC vec, MAT mat) {
+void VECmul_inplace (VEC target, constVEC vec, constMAT mat) {
 	for (integer j = 1; j <= mat.ncol; j ++) {
 		if ((false)) {
 			target [j] = 0.0;
 			for (integer i = 1; i <= mat.nrow; i ++)
 				target [j] += vec [i] * mat [i] [j];
 		} else {
-			target [j] = inner_stride_ (vec, VEC (& mat [1] [j] - 1, mat.nrow), mat.ncol);
+			target [j] = inner_stride_ (vec, constVEC (& mat [1] [j] - 1, mat.nrow), mat.ncol);
 		}
 	}
 }
 
-autoVEC VECmul (MAT mat, VEC vec) {
+autoVEC VECmul (constMAT mat, constVEC vec) {
 	if (vec.size != mat.ncol)
 		return autoVEC();
 	autoVEC result (mat.nrow, kTensorInitializationType::RAW);
@@ -65,14 +65,14 @@ autoVEC VECmul (MAT mat, VEC vec) {
 	return result;
 }
 
-void VECmul_inplace (VEC target, MAT mat, VEC vec) {
+void VECmul_inplace (VEC target, constMAT mat, constVEC vec) {
 	for (integer i = 1; i <= mat.nrow; i ++) {
 		if ((false)) {
 			target [i] = 0.0;
 			for (integer j = 1; j <= vec.size; j ++)
 				target [i] += mat [i] [j] * vec [j];
 		} else {
-			target [i] = NUMinner (VEC (& mat [i] [1] - 1, mat.ncol), vec);
+			target [i] = NUMinner (constVEC (& mat [i] [1] - 1, mat.ncol), vec);
 		}
 	}
 }

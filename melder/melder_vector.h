@@ -352,6 +352,18 @@ protected:
 	void _freeAt () noexcept;
 };
 
+template <typename T>
+class constvector {
+public:
+	const T * const at;
+	const integer size;
+	constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	constvector (vector<T> vec): at (vec.at), size (vec.size) { }
+	const T& operator[] (integer i) {   // it's still a reference, because we need to be able to take its address
+		return our at [i];
+	}
+};
+
 /*
 	An autovector is the sole owner of its payload, which is a vector.
 	When the autovector ends its life (goes out of scope),
@@ -407,6 +419,7 @@ public:
 };
 
 using VEC = vector <double>;
+using constVEC = constvector <double>;
 using autoVEC = autovector <double>;
 
 #define empty_numvec  VEC { nullptr, 0 }
@@ -440,6 +453,17 @@ public:
 protected:
 	void _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
+};
+
+template <typename T>
+class constmatrix {
+public:
+	const T * const * const at;
+	const integer nrow, ncol;
+	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
+	const T * const & operator[] (integer i) {
+		return our at [i];
+	}
 };
 
 /*
@@ -501,15 +525,20 @@ public:
 };
 
 using MAT = matrix <double>;
+using constMAT = constmatrix <double>;
 using autoMAT = automatrix <double>;
 
 #define empty_nummat  MAT { nullptr, 0, 0 }
 
-conststring32 Melder_numvec (VEC value);
-conststring32 Melder_nummat (MAT value);
+conststring32 Melder_numvec (constVEC value);
+conststring32 Melder_nummat (constMAT value);
 
 inline static VEC as_numvec (MAT x) {
 	return VEC (x [1], x.nrow * x.ncol);
+}
+
+inline static constVEC as_numvec (constMAT x) {
+	return constVEC (x [1], x.nrow * x.ncol);
 }
 
 /* End of file melder_vector.h */

@@ -17,10 +17,10 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-autoMAT MATcopy (MAT x);
+autoMAT MATcopy (constMAT x);
 
-autoMAT MATouter (VEC x, VEC y);
+autoMAT MATouter (constVEC x, constVEC y);
 
-autoMAT MATpeaks (VEC x, bool includeEdges, int interpolate, bool sortByHeight);
+autoMAT MATpeaks (constVEC x, bool includeEdges, int interpolate, bool sortByHeight);
 
 /* End of file MAT.h */

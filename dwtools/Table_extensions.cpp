@@ -1650,13 +1650,13 @@ autoTable Table_create_petersonBarney1952 () {
 				}
 			}
 
-			row -> cells [1]. string = Melder_dup_f (type [speaker_type]);
-			row -> cells [2]. string = Melder_dup_f (sex [speaker_sex]);
-			row -> cells [3]. string = Melder_dup_f (Melder_integer (speaker_id));
-			row -> cells [4]. string = Melder_dup_f (vowel [vowel_id - 1]);
-			row -> cells [5]. string = Melder_dup_f (ipa [vowel_id - 1]);
+			row -> cells [1]. string = Melder_dup (type [speaker_type]);
+			row -> cells [2]. string = Melder_dup (sex [speaker_sex]);
+			row -> cells [3]. string = Melder_dup (Melder_integer (speaker_id));
+			row -> cells [4]. string = Melder_dup (vowel [vowel_id - 1]);
+			row -> cells [5]. string = Melder_dup (ipa [vowel_id - 1]);
 			for (integer j = 0; j <= 3; j ++) {
-				row -> cells [j + 6]. string = Melder_dup_f (Melder_integer (pbdata [i - 1].f [j]));
+				row -> cells [j + 6]. string = Melder_dup (Melder_integer (pbdata [i - 1].f [j]));
 			}
 		}
 		for (integer j = 1; j <= ncols; j ++) {
@@ -2666,13 +2666,13 @@ autoTable Table_create_polsVanNierop1973 () {
 			int speaker_id = (i - 1) / 12 + 1;  /* 1 - 75 */
 			int speaker_sex = ( speaker_id <= 50 ? 0 : 1 );
 
-			row -> cells [1]. string = Melder_dup_f (sex [speaker_sex]);
-			row -> cells [2]. string = Melder_dup_f (Melder_integer (speaker_id));
-			row -> cells [3]. string = Melder_dup_f (vowel [vowel_id - 1]);
-			row -> cells [4]. string = Melder_dup_f (ipa [vowel_id - 1]);
+			row -> cells [1]. string = Melder_dup (sex [speaker_sex]);
+			row -> cells [2]. string = Melder_dup (Melder_integer (speaker_id));
+			row -> cells [3]. string = Melder_dup (vowel [vowel_id - 1]);
+			row -> cells [4]. string = Melder_dup (ipa [vowel_id - 1]);
 			for (integer j = 0; j <= 2; j ++) {
-				row -> cells [j + 5]. string = Melder_dup_f (Melder_integer (polsdata [i - 1]. f [j]));
-				row -> cells [j + 8]. string = Melder_dup_f (Melder_integer (polsdata [i - 1]. l [j]));
+				row -> cells [j + 5]. string = Melder_dup (Melder_integer (polsdata [i - 1]. f [j]));
+				row -> cells [j + 8]. string = Melder_dup (Melder_integer (polsdata [i - 1]. l [j]));
 			}
 		}
 		for (integer j = 1; j <= ncols; j ++) {
@@ -3107,14 +3107,14 @@ autoTable Table_create_weenink1983 () {
 				speaker_type = 2; speaker_sex = 0;   // which children were m/f
 			}
 
-			row -> cells [1]. string = Melder_dup_f (type [speaker_type]);
-			row -> cells [2]. string = Melder_dup_f (sex [speaker_sex]);
-			row -> cells [3]. string = Melder_dup_f (Melder_integer (speaker_id));
-			row -> cells [4]. string = Melder_dup_f (vowel [vowel_id]);
-			row -> cells [5]. string = Melder_dup_f (ipa [vowel_id]);
+			row -> cells [1]. string = Melder_dup (type [speaker_type]);
+			row -> cells [2]. string = Melder_dup (sex [speaker_sex]);
+			row -> cells [3]. string = Melder_dup (Melder_integer (speaker_id));
+			row -> cells [4]. string = Melder_dup (vowel [vowel_id]);
+			row -> cells [5]. string = Melder_dup (ipa [vowel_id]);
 
 			for (integer j = 0; j <= 3; j ++) {
-				row -> cells [j + 6]. string = Melder_dup_f (Melder_integer (weeninkdata [index_in_data]. f [j]));
+				row -> cells [j + 6]. string = Melder_dup (Melder_integer (weeninkdata [index_in_data]. f [j]));
 			}
 		}
 		for (integer j = 1; j <= ncols; j ++) {
