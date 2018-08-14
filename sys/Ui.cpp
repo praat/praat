@@ -236,7 +236,7 @@ static void UiField_widgetToValue (UiField me) {
 			if (owned) {
 				my numericVectorValue. adoptFromAmbiguousOwner (result);
 			} else {
-				my numericVectorValue = copy_numvec (result);
+				my numericVectorValue = VECcopy (result);
 			}
 			if (my numericVectorVariable)
 				*my numericVectorVariable = my numericVectorValue.get();
@@ -251,7 +251,7 @@ static void UiField_widgetToValue (UiField me) {
 			if (owned) {
 				my numericMatrixValue. adoptFromAmbiguousOwner (result);
 			} else {
-				my numericMatrixValue = copy_nummat (result);
+				my numericMatrixValue = MATcopy (result);
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();
@@ -1256,7 +1256,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				my numericVectorValue. adoptFromAmbiguousOwner (arg -> numericVector);
 				arg -> owned = false;
 			} else {
-				my numericVectorValue = copy_numvec (arg -> numericVector);
+				my numericVectorValue = VECcopy (arg -> numericVector);
 			}
 			if (my numericVectorVariable)
 				*my numericVectorVariable = my numericVectorValue.get();
@@ -1270,7 +1270,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				my numericMatrixValue. adoptFromAmbiguousOwner (arg -> numericMatrix);
 				arg -> owned = false;
 			} else {
-				my numericMatrixValue = copy_nummat (arg -> numericMatrix);
+				my numericMatrixValue = MATcopy (arg -> numericMatrix);
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();

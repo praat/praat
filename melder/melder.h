@@ -148,10 +148,11 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 #include "regularExp.h"
 #include "PAIRWISE_SUM.h"
 
-#include "xxNum.h"
-#include "xxStr.h"
-#include "xxVec.h"
-#include "xxStrVec.h"
+#include "NUM.h"
+#include "STR.h"
+#include "VEC.h"
+#include "MAT.h"
+#include "STRVEC.h"
 
 /* End of file melder.h */
 #endif

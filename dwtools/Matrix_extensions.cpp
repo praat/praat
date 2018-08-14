@@ -124,7 +124,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Random) {
 		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::IncreasingValues || drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
-		autonumvec v = nummat_vectorize ({my z, my ny, my nx}, rowmin, rowmax, colmin, colmax, false);
+		autonumvec v = nummat_vectorize (nummat (my z, my ny, my nx), rowmin, rowmax, colmin, colmax, false);
 		NUMsort2<double, integer> (numberOfCells, v.at, p -> p);
 		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
 			Permutation_reverse_inline (p.get(), 1, numberOfCells);

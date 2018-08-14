@@ -1,6 +1,5 @@
-#ifndef _xxVec_h_
-#define _xxVec_h_
-/* xxVec.h
+#pragma once
+/* VEC.h
  *
  * Copyright (C) 2017,2018 Paul Boersma
  *
@@ -18,7 +17,13 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-autonumvec copy_numvec (numvec x);
+autonumvec VECcopy (numvec x);
+
+autonumvec VECmul (numvec x, nummat y);
+void VECmul_inplace (numvec target, numvec vec, nummat mat);
+autonumvec VECmul (nummat x, numvec y);
+void VECmul_inplace (numvec target, nummat mat, numvec vec);
+
 
 inline static void numvec_copyElements_nocheck (numvec from, numvec to) {
 	for (integer i = 1; i <= from.size; i ++) {
@@ -79,16 +84,6 @@ inline static autonumvec to_numvec (integer to) {
 	return result;
 }
 
-autonumvec mul_numvec (numvec x, nummat y);
-autonumvec mul_numvec (nummat x, numvec y);
+void VECsort_inplace (numvec x);
 
-autonummat copy_nummat (nummat x);
-
-autonummat outer_nummat (numvec x, numvec y);
-
-autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sortByHeight);
-
-void numvec_sort (numvec x);
-
-/* End of file xxVec.h */
-#endif
+/* End of file VEC.h */

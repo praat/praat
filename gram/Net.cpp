@@ -18,7 +18,6 @@
 
 //#include <OpenCL/OpenCL.h>
 #include "Net.h"
-#include "PAIRWISE_SUM.h"
 
 #include "oo_DESTROY.h"
 #include "Net_def.h"
@@ -466,7 +465,7 @@ autoMatrix Net_extractWeights (Net me, integer layerNumber) {
 }
 
 autonummat structRBMLayer :: v_getWeights_nummat () {
-	return copy_nummat ({ our weights, our numberOfInputNodes, our numberOfOutputNodes });
+	return MATcopy (nummat (our weights, our numberOfInputNodes, our numberOfOutputNodes));
 }
 
 autonummat Net_getWeights_nummat (Net me, integer layerNumber) {

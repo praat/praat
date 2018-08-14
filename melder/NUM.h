@@ -1,6 +1,5 @@
-#ifndef _xxNum_h_
-#define _xxNum_h_
-/* xxNum.h
+#pragma once
+/* NUM.h
  *
  * Copyright (C) 2017,2018 Paul Boersma
  *
@@ -141,5 +140,5 @@ double NUMsumsq (numvec x) noexcept;
 
 double NUMvariance (numvec x) noexcept;
 
-/* End of file xxNum.h */
-#endif
+/* End of file NUM.h */
+
