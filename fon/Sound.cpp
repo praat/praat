@@ -89,7 +89,7 @@ void structSound :: v_info () {
 	bool thereAreEnoughObservationsToComputeSecondOrderChannelStatistics = ( our nx >= 2 );
 	if (thereAreEnoughObservationsToComputeSecondOrderChannelStatistics) {
 		for (integer channel = 1; channel <= our ny; channel ++) {
-			double stdev = NUMstdev (VEC (our z [channel], our nx));
+			double stdev = NUMstdev (constVEC (our z [channel], our nx));
 			MelderInfo_writeLine (U"Standard deviation in channel ", channel, U": ", Melder_single (stdev), U" Pascal");
 		}
 	}
@@ -246,7 +246,7 @@ autoSound Sound_extractChannel (Sound me, integer ichan) {
 	}
 }
 
-autoSound Sound_extractChannels (Sound me, VEC channelNumbers) {
+autoSound Sound_extractChannels (Sound me, constVEC channelNumbers) {
 	try {
 		integer numberOfChannels = channelNumbers.size;
 		Melder_require (numberOfChannels > 0,

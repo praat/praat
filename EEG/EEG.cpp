@@ -568,7 +568,7 @@ autoEEG EEG_extractChannel (EEG me, conststring32 channelName) {
 	}
 }
 
-autoEEG EEG_extractChannels (EEG me, VEC channelNumbers) {
+autoEEG EEG_extractChannels (EEG me, constVEC channelNumbers) {
 	try {
 		integer numberOfChannels = channelNumbers.size;
 		Melder_require (numberOfChannels > 0,

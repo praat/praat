@@ -36,7 +36,7 @@ void NUMvector_free_generic (integer elementSize, byte *v, integer lo) noexcept;
 		lo must have the same values as with the creation of the vector.
 */
 
-byte * NUMvector_copy_generic (integer elementSize, byte *v, integer lo, integer hi);
+byte * NUMvector_copy_generic (integer elementSize, const byte *v, integer lo, integer hi);
 /*
 	Function:
 		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
@@ -44,13 +44,13 @@ byte * NUMvector_copy_generic (integer elementSize, byte *v, integer lo, integer
 		if v != nullptr, the values v [lo..hi] must exist.
 */
 
-void NUMvector_copyElements_generic (integer elementSize, byte *v, byte *to, integer lo, integer hi);
+void NUMvector_copyElements_generic (integer elementSize, const byte *v, byte *to, integer lo, integer hi);
 /*
 	copy the vector elements v [lo..hi] to those of a vector 'to'.
 	These vectors need not have been created by NUMvector.
 */
 
-bool NUMvector_equal_generic (integer elementSize, byte *v1, byte *v2, integer lo, integer hi);
+bool NUMvector_equal_generic (integer elementSize, const byte *v1, const byte *v2, integer lo, integer hi);
 /*
 	return true if the vector elements v1 [lo..hi] are equal
 	to the corresponding elements of the vector v2; otherwise, return false.
@@ -130,19 +130,19 @@ void NUMvector_free (T* ptr, integer from) noexcept {
 }
 
 template <class T>
-T* NUMvector_copy (T* ptr, integer lo, integer hi) {
-	T* result = reinterpret_cast <T*> (NUMvector_copy_generic (sizeof (T), reinterpret_cast <byte *> (ptr), lo, hi));
+T* NUMvector_copy (const T* ptr, integer lo, integer hi) {
+	T* result = reinterpret_cast <T*> (NUMvector_copy_generic (sizeof (T), reinterpret_cast <const byte *> (ptr), lo, hi));
 	return result;
 }
 
 template <class T>
-bool NUMvector_equal (T* v1, T* v2, integer lo, integer hi) {
-	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <byte *> (v1), reinterpret_cast <byte *> (v2), lo, hi);
+bool NUMvector_equal (const T* v1, const T* v2, integer lo, integer hi) {
+	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <const byte *> (v1), reinterpret_cast <const byte *> (v2), lo, hi);
 }
 
 template <class T>
-void NUMvector_copyElements (T* vfrom, T* vto, integer lo, integer hi) {
-	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <byte *> (vfrom), reinterpret_cast <byte *> (vto), lo, hi);
+void NUMvector_copyElements (const T* vfrom, T* vto, integer lo, integer hi) {
+	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <const byte *> (vfrom), reinterpret_cast <byte *> (vto), lo, hi);
 }
 
 template <class T>

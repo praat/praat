@@ -1678,9 +1678,13 @@ void praat_run () {
 		Melder_assert (! (frexp (undefined, & exponent) < 1.0));
 	}
 	{
+		//VEC xn;   // uninitialized
+		//Melder_assert (! xn.at);
+		//Melder_assert (xn.size == 0);
 		VEC x { };
 		Melder_assert (! x.at);
 		Melder_assert (x.size == 0);
+		//constVEC xc { };   // no default constructor
 		MAT y { };
 		Melder_assert (! y.at);
 		Melder_assert (y.nrow == 0);
