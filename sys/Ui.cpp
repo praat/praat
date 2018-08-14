@@ -1438,7 +1438,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
 		{
-			my stringValue = Melder_dup_f (string);
+			my stringValue = Melder_dup (string);
 			if (my stringVariable)
 				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
@@ -1497,7 +1497,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		break;
 		case _kUiField_type::COLOUR_:
 		{
-			autostring32 string2 = Melder_dup_f (string);
+			autostring32 string2 = Melder_dup (string);
 			if (colourToValue (me, string2.get())) {
 				/* OK */
 			} else {

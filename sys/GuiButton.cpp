@@ -158,7 +158,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		}
 	#elif cocoa
 		GuiCocoaButton *button = [[GuiCocoaButton alloc] init];
-		my name = Melder_dup (buttonText);
+		my name = Melder_dup_f (buttonText);
 		my d_widget = (GuiObject) button;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		[button setUserData: me.get()];

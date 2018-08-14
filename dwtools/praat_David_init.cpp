@@ -5730,7 +5730,7 @@ FORM (MODIFY_SpeechSynthesizer_modifyPhonemeSet, U"SpeechSynthesizer: Modify pho
 	SET_OPTION (phoneneSetIndex, prefPhonemeSet)*/
 DO
 	MODIFY_EACH (SpeechSynthesizer)
-		my d_phonemeSet = Melder_dup_f (espeakdata_languages_names -> strings [phoneneSetIndex].get());
+		my d_phonemeSet = Melder_dup (espeakdata_languages_names -> strings [phoneneSetIndex].get());
 	MODIFY_EACH_END
 }
 

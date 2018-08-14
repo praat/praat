@@ -592,18 +592,18 @@ OK
 		SET_STRING (allowAllWordsEndingIn, my allowAllWordsEndingIn.get())
 DO
 	MODIFY_EACH (SpellingChecker)
-		my forbiddenStrings = Melder_dup_f (forbiddenStrings);
+		my forbiddenStrings = Melder_dup (forbiddenStrings);
 		my checkMatchingParentheses = checkMatchingParentheses;
-		my separatingCharacters = Melder_dup_f (separatingCharacters);
+		my separatingCharacters = Melder_dup (separatingCharacters);
 		my allowAllParenthesized = allowAllParenthesized;
 		my allowAllNames = allowAllNames;
-		my namePrefixes = Melder_dup_f (namePrefixes);
+		my namePrefixes = Melder_dup (namePrefixes);
 		my allowAllAbbreviations = allowAllAbbreviations;
 		my allowCapsSentenceInitially = allowCapsSentenceInitially;
 		my allowCapsAfterColon = allowCapsAfterColon;
-		my allowAllWordsContaining = Melder_dup_f (allowAllWordsContaining);
-		my allowAllWordsStartingWith = Melder_dup_f (allowAllWordsStartingWith);
-		my allowAllWordsEndingIn = Melder_dup_f (allowAllWordsEndingIn);
+		my allowAllWordsContaining = Melder_dup (allowAllWordsContaining);
+		my allowAllWordsStartingWith = Melder_dup (allowAllWordsStartingWith);
+		my allowAllWordsEndingIn = Melder_dup (allowAllWordsEndingIn);
 	MODIFY_EACH_END
 }
 
