@@ -136,8 +136,8 @@ integer praat_idOfSelected (ClassInfo klas, integer inplace) {
 	return 0;
 }
 
-autonumvec praat_idsOfAllSelected (ClassInfo klas) {
-	autonumvec result (praat_numberOfSelected (klas), kTensorInitializationType::RAW);
+autoVEC praat_idsOfAllSelected (ClassInfo klas) {
+	autoVEC result (praat_numberOfSelected (klas), kTensorInitializationType::RAW);
 	integer selectedObjectNumber = 0, IOBJECT;
 	WHERE (SELECTED && (! klas || CLASS == klas)) {
 		result.at [++ selectedObjectNumber] = ID;
@@ -1678,23 +1678,23 @@ void praat_run () {
 		Melder_assert (! (frexp (undefined, & exponent) < 1.0));
 	}
 	{
-		numvec x { };
+		VEC x { };
 		Melder_assert (! x.at);
 		Melder_assert (x.size == 0);
-		nummat y { };
+		MAT y { };
 		Melder_assert (! y.at);
 		Melder_assert (y.nrow == 0);
 		Melder_assert (y.ncol == 0);
-		//autonummat z {y.at,y.nrow,y.ncol};   // explicit construction not OK
-		autonummat a = autonummat { };
+		//autoMAT z {y.at,y.nrow,y.ncol};   // explicit construction not OK
+		autoMAT a = autoMAT { };
 		Melder_assert (! a.at);
 		Melder_assert (a.nrow == 0);
 		Melder_assert (a.ncol == 0);
 		//a = z.move();
 		//double q [11];
-		//autonumvec s { & q [1], 10 };
-		//autonumvec b { x };   // explicit construction not OK
-		//autonumvec c = x;   // implicit construction not OK
+		//autoVEC s { & q [1], 10 };
+		//autoVEC b { x };   // explicit construction not OK
+		//autoVEC c = x;   // implicit construction not OK
 	}
 	static_assert (sizeof (float) == 4,
 		"sizeof(float) should be 4");

@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-double NUMcenterOfGravity (numvec x) noexcept {
+double NUMcenterOfGravity (VEC x) noexcept {
 	double weightedSumOfIndexes = 0.0, sumOfWeights = 0.0;
 	for (integer i = 1; i <= x.size; i ++) {
 		weightedSumOfIndexes += i * x [i];
@@ -27,7 +27,7 @@ double NUMcenterOfGravity (numvec x) noexcept {
 	return weightedSumOfIndexes / sumOfWeights;
 }
 
-double NUMinner_ (numvec x, numvec y) {
+double NUMinner_ (VEC x, VEC y) {
 	if (x.size != y.size) return undefined;
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
 		double *xx = x.at;
@@ -37,7 +37,7 @@ double NUMinner_ (numvec x, numvec y) {
 	return (double) sum;
 }
 
-double NUMnorm (numvec x, double power) noexcept {
+double NUMnorm (VEC x, double power) noexcept {
 	if (power < 0.0) return undefined;
 	if (power == 2.0) {
 		PAIRWISE_SUM (longdouble, sum, integer, x.size, double *y = x.at, ++ y, (longdouble) *y * (longdouble) *y)
@@ -65,13 +65,13 @@ integer NUMnumberOfTokens (conststring32 string) {
 	return numberOfTokens;
 }
 
-double NUMstdev (numvec x) noexcept {
+double NUMstdev (VEC x) noexcept {
 	double stdev;
 	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, nullptr, nullptr, & stdev);
 	return stdev;
 }
 
-void NUM_sum_mean (numvec x, double *p_sum, double *p_mean) noexcept {
+void NUM_sum_mean (VEC x, double *p_sum, double *p_mean) noexcept {
 	if (x.size <= 4) {
 		switch (x.size) {
 			case 0: {
@@ -122,7 +122,7 @@ void NUM_sum_mean (numvec x, double *p_sum, double *p_mean) noexcept {
 	}
 }
 
-void NUM_sum_mean_sumsq_variance_stdev (numvec x, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept {
+void NUM_sum_mean_sumsq_variance_stdev (VEC x, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept {
 	if (x.size < 2) {
 		if (x.size <= 0) {
 			if (p_sum) *p_sum = 0.0;
@@ -247,7 +247,7 @@ void NUM_sum_mean_sumsq_variance_stdev (numvec x, double *p_sum, double *p_mean,
 	if (p_stdev) *p_stdev = sqrt ((double) variance);
 }
 
-void NUM_sum_mean_sumsq_variance_stdev (nummat x, integer columnNumber, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept {
+void NUM_sum_mean_sumsq_variance_stdev (MAT x, integer columnNumber, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept {
 	if (x.nrow < 2) {
 		if (x.nrow <= 0) {
 			if (p_sum) *p_sum = 0.0;
@@ -274,13 +274,13 @@ void NUM_sum_mean_sumsq_variance_stdev (nummat x, integer columnNumber, double *
 	if (p_stdev) *p_stdev = sqrt ((double) variance);
 }
 
-double NUMsumsq (numvec x) noexcept {
+double NUMsumsq (VEC x) noexcept {
 	double sumsq;
 	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, & sumsq, nullptr, nullptr);
 	return sumsq;
 }
 
-double NUMvariance (numvec x) noexcept {
+double NUMvariance (VEC x) noexcept {
 	double variance;
 	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, nullptr, & variance, nullptr);
 	return variance;

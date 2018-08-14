@@ -1039,7 +1039,7 @@ DO
 
 DIRECT (NUMVEC_Sound_getSampleTimes) {
 	NUMVEC_ONE (Sound)
-		autonumvec result = Sampled_getX_numvec (me);
+		autoVEC result = Sampled_getX_numvec (me);
 	NUMVEC_ONE_END
 }
 

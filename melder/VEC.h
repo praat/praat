@@ -17,21 +17,21 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-autonumvec VECcopy (numvec x);
+autoVEC VECcopy (VEC x);
 
-autonumvec VECmul (numvec x, nummat y);
-void VECmul_inplace (numvec target, numvec vec, nummat mat);
-autonumvec VECmul (nummat x, numvec y);
-void VECmul_inplace (numvec target, nummat mat, numvec vec);
+autoVEC VECmul (VEC x, MAT y);
+void VECmul_inplace (VEC target, VEC vec, MAT mat);
+autoVEC VECmul (MAT x, VEC y);
+void VECmul_inplace (VEC target, MAT mat, VEC vec);
 
 
-inline static void numvec_copyElements_nocheck (numvec from, numvec to) {
+inline static void numvec_copyElements_nocheck (VEC from, VEC to) {
 	for (integer i = 1; i <= from.size; i ++) {
 		to [i] = from [i];
 	}
 }
 
-inline static void nummat_copyElements_nocheck (nummat from, nummat to) {
+inline static void nummat_copyElements_nocheck (MAT from, MAT to) {
 	for (integer irow = 1; irow <= from.nrow; irow ++) {
 		for (integer icol = 1; icol <= from.ncol; icol ++) {
 			to [irow] [icol] = from [irow] [icol];
@@ -39,17 +39,17 @@ inline static void nummat_copyElements_nocheck (nummat from, nummat to) {
 	}
 }
 
-inline static autonumvec add_numvec (numvec x, numvec y) {
-	if (x.size != y.size) return autonumvec { };
-	autonumvec result (x.size, kTensorInitializationType::RAW);
+inline static autoVEC add_numvec (VEC x, VEC y) {
+	if (x.size != y.size) return autoVEC { };
+	autoVEC result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] + y [i];
 	}
 	return result;
 }
-inline static autonummat add_nummat (nummat x, nummat y) {
-	if (x.nrow != y.nrow || x.ncol != y.ncol) return autonummat { };
-	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+inline static autoMAT add_nummat (MAT x, MAT y) {
+	if (x.nrow != y.nrow || x.ncol != y.ncol) return autoMAT { };
+	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
 			result [irow] [icol] = x [irow] [icol] + y [irow] [icol];
@@ -57,17 +57,17 @@ inline static autonummat add_nummat (nummat x, nummat y) {
 	}
 	return result;
 }
-inline static autonumvec sub_numvec (numvec x, numvec y) {
-	if (x.size != y.size) return autonumvec { };
-	autonumvec result (x.size, kTensorInitializationType::RAW);
+inline static autoVEC sub_numvec (VEC x, VEC y) {
+	if (x.size != y.size) return autoVEC { };
+	autoVEC result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++) {
 		result [i] = x [i] - y [i];
 	}
 	return result;
 }
-inline static autonummat sub_nummat (nummat x, nummat y) {
-	if (x.nrow != y.nrow || x.ncol != y.ncol) return autonummat { };
-	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+inline static autoMAT sub_nummat (MAT x, MAT y) {
+	if (x.nrow != y.nrow || x.ncol != y.ncol) return autoMAT { };
+	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
 			result [irow] [icol] = x [irow] [icol] - y [irow] [icol];
@@ -76,14 +76,14 @@ inline static autonummat sub_nummat (nummat x, nummat y) {
 	return result;
 }
 
-inline static autonumvec to_numvec (integer to) {
-	autonumvec result (to, kTensorInitializationType::RAW);
+inline static autoVEC to_numvec (integer to) {
+	autoVEC result (to, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= to; i ++) {
 		result [i] = (double) i;
 	}
 	return result;
 }
 
-void VECsort_inplace (numvec x);
+void VECsort_inplace (VEC x);
 
 /* End of file VEC.h */

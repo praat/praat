@@ -19,14 +19,14 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"   /* for NUMsort2 */
 
-autonumvec VECcopy (numvec x) {
-	autonumvec result (x.size, kTensorInitializationType::RAW);
+autoVEC VECcopy (VEC x) {
+	autoVEC result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i];
 	return result;
 }
 
-inline static double inner_stride_ (numvec x, numvec y, integer stride) {
+inline static double inner_stride_ (VEC x, VEC y, integer stride) {
 	if (x.size != y.size)
 		return undefined;
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
@@ -37,47 +37,47 @@ inline static double inner_stride_ (numvec x, numvec y, integer stride) {
 	return (double) sum;
 }
 
-autonumvec VECmul (numvec vec, nummat mat) {
+autoVEC VECmul (VEC vec, MAT mat) {
 	if (mat.nrow != vec.size)
-		return autonumvec();
-	autonumvec result (mat.ncol, kTensorInitializationType::RAW);
+		return autoVEC();
+	autoVEC result (mat.ncol, kTensorInitializationType::RAW);
 	VECmul_inplace (result.get(), vec, mat);
 	return result;
 }
 
-void VECmul_inplace (numvec target, numvec vec, nummat mat) {
+void VECmul_inplace (VEC target, VEC vec, MAT mat) {
 	for (integer j = 1; j <= mat.ncol; j ++) {
 		if ((false)) {
 			target [j] = 0.0;
 			for (integer i = 1; i <= mat.nrow; i ++)
 				target [j] += vec [i] * mat [i] [j];
 		} else {
-			target [j] = inner_stride_ (vec, numvec (& mat [1] [j] - 1, mat.nrow), mat.ncol);
+			target [j] = inner_stride_ (vec, VEC (& mat [1] [j] - 1, mat.nrow), mat.ncol);
 		}
 	}
 }
 
-autonumvec VECmul (nummat mat, numvec vec) {
+autoVEC VECmul (MAT mat, VEC vec) {
 	if (vec.size != mat.ncol)
-		return autonumvec();
-	autonumvec result (mat.nrow, kTensorInitializationType::RAW);
+		return autoVEC();
+	autoVEC result (mat.nrow, kTensorInitializationType::RAW);
 	VECmul_inplace (result.get(), mat, vec);
 	return result;
 }
 
-void VECmul_inplace (numvec target, nummat mat, numvec vec) {
+void VECmul_inplace (VEC target, MAT mat, VEC vec) {
 	for (integer i = 1; i <= mat.nrow; i ++) {
 		if ((false)) {
 			target [i] = 0.0;
 			for (integer j = 1; j <= vec.size; j ++)
 				target [i] += mat [i] [j] * vec [j];
 		} else {
-			target [i] = NUMinner (numvec (& mat [i] [1] - 1, mat.ncol), vec);
+			target [i] = NUMinner (VEC (& mat [i] [1] - 1, mat.ncol), vec);
 		}
 	}
 }
 
-void VECsort_inplace (numvec x) {
+void VECsort_inplace (VEC x) {
 	NUMsort_d (x.size, x.at);
 }
 

@@ -41,8 +41,8 @@ extern structMelderDir praatDir;
 #define Interpreter_OPTION 12
 #define Interpreter_COMMENT 13
 
-autonumvec theInterpreterNumvec;
-autonummat theInterpreterNummat;
+autoVEC theInterpreterNumvec;
+autoMAT theInterpreterNummat;
 
 Thing_implement (InterpreterVariable, SimpleString, 0);
 
@@ -699,8 +699,8 @@ static void parameterToVariable (Interpreter me, int type, conststring32 in_para
 	}
 }
 
-inline static void NumericVectorVariable_move (InterpreterVariable variable, numvec movedVector, bool owned) {
-	numvec variableVector = variable -> numericVectorValue;
+inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC movedVector, bool owned) {
+	VEC variableVector = variable -> numericVectorValue;
 	if (owned) {
 		/*
 			Statement like: a# = b# + c#
@@ -723,14 +723,14 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, num
 		/*
 			Statement like: a# = b#   // with non-matching sizes
 		*/
-		autonumvec copiedVector = VECcopy (movedVector);
+		autoVEC copiedVector = VECcopy (movedVector);
 		variable -> numericVectorValue. reset();
 		variable -> numericVectorValue = copiedVector. releaseToAmbiguousOwner();
 	}
 }
 
-inline static void NumericMatrixVariable_move (InterpreterVariable variable, nummat movedMatrix, bool owned) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT movedMatrix, bool owned) {
+	MAT variableMatrix = variable -> numericMatrixValue;
 	if (owned) {
 		/*
 			Statement like: a## = b## + c##
@@ -753,19 +753,19 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, num
 		/*
 			Statement like: a## = b##   // with non-matching sizes
 		*/
-		autonummat copiedMatrix = MATcopy (movedMatrix);
+		autoMAT copiedMatrix = MATcopy (movedMatrix);
 		variable -> numericMatrixValue. reset();
 		variable -> numericMatrixValue = copiedMatrix. releaseToAmbiguousOwner();
 	}
 }
 
 inline static void NumericVectorVariable_add (InterpreterVariable variable, double scalar) {
-	numvec variableVector = variable -> numericVectorValue;
+	VEC variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] += scalar;
 }
-inline static void NumericVectorVariable_add (InterpreterVariable variable, numvec vector) {
-	numvec variableVector = variable -> numericVectorValue;
+inline static void NumericVectorVariable_add (InterpreterVariable variable, VEC vector) {
+	VEC variableVector = variable -> numericVectorValue;
 	if (vector.size != variableVector.size)
 		Melder_throw (U"You cannot add a vector with size ", vector.size,
 		              U" to a vector with a different size (", variableVector.size, U").");
@@ -773,12 +773,12 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, numv
 		variableVector [i] += vector [i];
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
-	numvec variableVector = variable -> numericVectorValue;
+	VEC variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] -= scalar;
 }
-inline static void NumericVectorVariable_subtract (InterpreterVariable variable, numvec vector) {
-	numvec variableVector = variable -> numericVectorValue;
+inline static void NumericVectorVariable_subtract (InterpreterVariable variable, VEC vector) {
+	VEC variableVector = variable -> numericVectorValue;
 	if (vector.size != variableVector.size)
 		Melder_throw (U"You cannot subtract a vector with size ", vector.size,
 		              U" from a vector with a different size (", variableVector.size, U").");
@@ -786,12 +786,12 @@ inline static void NumericVectorVariable_subtract (InterpreterVariable variable,
 		variableVector [i] -= vector [i];
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, double scalar) {
-	numvec variableVector = variable -> numericVectorValue;
+	VEC variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] *= scalar;
 }
-inline static void NumericVectorVariable_multiply (InterpreterVariable variable, numvec vector) {
-	numvec variableVector = variable -> numericVectorValue;
+inline static void NumericVectorVariable_multiply (InterpreterVariable variable, VEC vector) {
+	VEC variableVector = variable -> numericVectorValue;
 	if (vector.size != variableVector.size)
 		Melder_throw (U"You cannot multiply a vector with size ", variableVector.size,
 		              U" with a vector with a different size (", vector.size, U").");
@@ -799,12 +799,12 @@ inline static void NumericVectorVariable_multiply (InterpreterVariable variable,
 		variableVector [i] *= vector [i];
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, double scalar) {
-	numvec variableVector = variable -> numericVectorValue;
+	VEC variableVector = variable -> numericVectorValue;
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] /= scalar;
 }
-inline static void NumericVectorVariable_divide (InterpreterVariable variable, numvec vector) {
-	numvec variableVector = variable -> numericVectorValue;
+inline static void NumericVectorVariable_divide (InterpreterVariable variable, VEC vector) {
+	VEC variableVector = variable -> numericVectorValue;
 	if (vector.size != variableVector.size)
 		Melder_throw (U"You cannot divide a vector with size ", variableVector.size,
 		              U" by a vector with a different size (", vector.size, U").");
@@ -812,13 +812,13 @@ inline static void NumericVectorVariable_divide (InterpreterVariable variable, n
 		variableVector [i] /= vector [i];
 }
 inline static void NumericMatrixVariable_add (InterpreterVariable variable, double scalar) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+	MAT variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] += scalar;
 }
-inline static void NumericMatrixVariable_add (InterpreterVariable variable, nummat matrix) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_add (InterpreterVariable variable, MAT matrix) {
+	MAT variableMatrix = variable -> numericMatrixValue;
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot add a matrix with size ", matrix.nrow, U"x", matrix.ncol,
 		              U" to a matrix with a different size (", variableMatrix.nrow, U"x", variableMatrix.ncol, U").");
@@ -827,13 +827,13 @@ inline static void NumericMatrixVariable_add (InterpreterVariable variable, numm
 			variableMatrix [irow] [icol] += matrix [irow] [icol];
 }
 inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, double scalar) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+	MAT variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] -= scalar;
 }
-inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, nummat matrix) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, MAT matrix) {
+	MAT variableMatrix = variable -> numericMatrixValue;
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot subtract a matrix with size ", matrix.nrow, U"x", matrix.ncol,
 		              U" from a matrix with a different size (", variableMatrix.nrow, U"x", variableMatrix.ncol, U").");
@@ -842,13 +842,13 @@ inline static void NumericMatrixVariable_subtract (InterpreterVariable variable,
 			variableMatrix [irow] [icol] -= matrix [irow] [icol];
 }
 inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, double scalar) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+	MAT variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] *= scalar;
 }
-inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, nummat matrix) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, MAT matrix) {
+	MAT variableMatrix = variable -> numericMatrixValue;
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot multiply a matrix with size ", variableMatrix.nrow, U"x", variableMatrix.ncol,
 		              U" from a matrix with a different size (", matrix.nrow, U"x", matrix.ncol, U").");
@@ -857,13 +857,13 @@ inline static void NumericMatrixVariable_multiply (InterpreterVariable variable,
 			variableMatrix [irow] [icol] *= matrix [irow] [icol];
 }
 inline static void NumericMatrixVariable_divide (InterpreterVariable variable, double scalar) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+	MAT variableMatrix = variable -> numericMatrixValue;
 	for (integer irow = 1; irow <= variableMatrix.nrow; irow ++)
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] /= scalar;
 }
-inline static void NumericMatrixVariable_divide (InterpreterVariable variable, nummat matrix) {
-	nummat variableMatrix = variable -> numericMatrixValue;
+inline static void NumericMatrixVariable_divide (InterpreterVariable variable, MAT matrix) {
+	MAT variableMatrix = variable -> numericMatrixValue;
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot divide a matrix with size ", variableMatrix.nrow, U"x", variableMatrix.ncol,
 		              U" by a matrix with a different size (", matrix.nrow, U"x", matrix.ncol, U").");
@@ -982,7 +982,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 					var -> stringValue = value.move();
 				} else if (q [-1] == U'#') {
 					if (q [-2] == U'#') {
-						nummat value;
+						MAT value;
 						bool owned;
 						my callDepth --;
 						Interpreter_numericMatrixExpression (me, argument.string, & value, & owned);
@@ -993,7 +993,7 @@ static void Interpreter_do_procedureCall (Interpreter me, char32 *command,
 						*q = save;
 						NumericMatrixVariable_move (var, value, owned);
 					} else {
-						numvec value;
+						VEC value;
 						bool owned;
 						my callDepth --;
 						Interpreter_numericVectorExpression (me, argument.string, & value, & owned);
@@ -2017,7 +2017,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									var -> numericMatrixValue.reset();
 									var -> numericMatrixValue = theInterpreterNummat.releaseToAmbiguousOwner();
 								} else {
-									nummat value;
+									MAT value;
 									bool owned;
 									Interpreter_numericMatrixExpression (me, p, & value, & owned);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
@@ -2097,7 +2097,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (! matrixObject) {
 									matrixObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent destruction when program ends
 								}
-								nummat mat = var -> numericMatrixValue;
+								MAT mat = var -> numericMatrixValue;
 								matrixObject -> xmax = mat.ncol + 0.5;
 								matrixObject -> nx = mat.ncol;
 								matrixObject -> ymax = mat.nrow + 0.5;
@@ -2132,7 +2132,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									var -> numericVectorValue.reset();
 									var -> numericVectorValue = theInterpreterNumvec.releaseToAmbiguousOwner();
 								} else {
-									numvec value;
+									VEC value;
 									bool owned;
 									Interpreter_numericVectorExpression (me, p, & value, & owned);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
@@ -2212,7 +2212,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								if (! vectorObject) {
 									vectorObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent destruction when program ends
 								}
-								numvec vec = var -> numericVectorValue;
+								VEC vec = var -> numericVectorValue;
 								vectorObject -> xmax = vec.size + 0.5;
 								vectorObject -> nx = vec.size;
 								vectorObject -> z [1] = vec.at;
@@ -2446,7 +2446,7 @@ void Interpreter_numericExpression (Interpreter me, conststring32 expression, do
 	}
 }
 
-void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, numvec *p_value, bool *p_owned) {
+void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, VEC *p_value, bool *p_owned) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);
@@ -2455,7 +2455,7 @@ void Interpreter_numericVectorExpression (Interpreter me, conststring32 expressi
 	result. owned = false;
 }
 
-void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, nummat *p_value, bool *p_owned) {
+void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, MAT *p_value, bool *p_owned) {
 	Formula_compile (me, nullptr, expression, kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX, false);
 	Formula_Result result;
 	Formula_run (0, 0, & result);

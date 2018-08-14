@@ -148,22 +148,22 @@ autoEEG EEG_readFromBdfFile (MelderFile file) {
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';   // physical dimension of channels
 		}
-		autonumvec physicalMinimum (numberOfChannels, kTensorInitializationType::RAW);
+		autoVEC physicalMinimum (numberOfChannels, kTensorInitializationType::RAW);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';
 			physicalMinimum [ichannel] = atof (buffer);
 		}
-		autonumvec physicalMaximum (numberOfChannels, kTensorInitializationType::RAW);
+		autoVEC physicalMaximum (numberOfChannels, kTensorInitializationType::RAW);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';
 			physicalMaximum [ichannel] = atof (buffer);
 		}
-		autonumvec digitalMinimum (numberOfChannels, kTensorInitializationType::RAW);
+		autoVEC digitalMinimum (numberOfChannels, kTensorInitializationType::RAW);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';
 			digitalMinimum [ichannel] = atof (buffer);
 		}
-		autonumvec digitalMaximum (numberOfChannels, kTensorInitializationType::RAW);
+		autoVEC digitalMaximum (numberOfChannels, kTensorInitializationType::RAW);
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 8, f); buffer [8] = '\0';
 			digitalMaximum [ichannel] = atof (buffer);
@@ -568,7 +568,7 @@ autoEEG EEG_extractChannel (EEG me, conststring32 channelName) {
 	}
 }
 
-autoEEG EEG_extractChannels (EEG me, numvec channelNumbers) {
+autoEEG EEG_extractChannels (EEG me, VEC channelNumbers) {
 	try {
 		integer numberOfChannels = channelNumbers.size;
 		Melder_require (numberOfChannels > 0,

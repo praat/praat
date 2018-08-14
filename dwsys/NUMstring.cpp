@@ -25,7 +25,7 @@
 #include "Interpreter.h"
 #include "NUM2.h"
 
-double *NUMstring_to_numbers (conststring32 s, integer *out_numbers_found) {   // TODO: turn into autonumvec
+double *NUMstring_to_numbers (conststring32 s, integer *out_numbers_found) {   // TODO: turn into autoVEC
 	autostring32vector tokens = tokenizeStrVec (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");

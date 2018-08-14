@@ -51,7 +51,7 @@ oo_DEFINE_CLASS (RBMLayer, Layer)
 			override;
 		autoMatrix v_extractWeights ()
 			override;
-		autonummat v_getWeights_nummat ()
+		autoMAT v_getWeights_nummat ()
 			override;
 	#endif
 
@@ -75,7 +75,7 @@ oo_DEFINE_CLASS (FullyConnectedLayer, Layer)
 			override;
 		autoMatrix v_extractWeights ()
 			override;
-		autonummat v_getWeights_nummat ()
+		autoMAT v_getWeights_nummat ()
 			override;
 	#endif
 

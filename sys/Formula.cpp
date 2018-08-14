@@ -2201,7 +2201,7 @@ inline static void pushNumber (double x) {
 	//stackel -> number = x;   // this one would be 2 percent faster
 	//stackel -> owned = true;
 }
-static void pushNumericVector (autonumvec x) {
+static void pushNumericVector (autoVEC x) {
 	Stackel stackel = & theStack [++ w];
 	stackel -> reset();
 	if (w > wmax) {
@@ -2213,7 +2213,7 @@ static void pushNumericVector (autonumvec x) {
 	stackel -> numericVector = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
-static void pushNumericVectorReference (numvec x) {
+static void pushNumericVectorReference (VEC x) {
 	Stackel stackel = & theStack [++ w];
 	stackel -> reset();
 	if (w > wmax) {
@@ -2225,7 +2225,7 @@ static void pushNumericVectorReference (numvec x) {
 	stackel -> numericVector = x;
 	stackel -> owned = false;
 }
-static void pushNumericMatrix (autonummat x) {
+static void pushNumericMatrix (autoMAT x) {
 	Stackel stackel = & theStack [++ w];
 	stackel -> reset();
 	if (w > wmax) {
@@ -2237,7 +2237,7 @@ static void pushNumericMatrix (autonummat x) {
 	stackel -> numericMatrix = x.releaseToAmbiguousOwner();
 	stackel -> owned = true;
 }
-static void pushNumericMatrixReference (nummat x) {
+static void pushNumericMatrixReference (MAT x) {
 	Stackel stackel = & theStack [++ w];
 	stackel -> reset();
 	if (w > wmax) {
@@ -2463,44 +2463,44 @@ inline static void moveNumericMatrix (Stackel from, Stackel to) {
 	to -> numericMatrix = from -> numericMatrix;
 	to -> owned = true;
 }
-inline static void numvec_addScalar (numvec x, double number) {
+inline static void numvec_addScalar (VEC x, double number) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += number;
 }
-inline static void nummat_addScalar (nummat x, double number) {
+inline static void nummat_addScalar (MAT x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] += number;
 	}
 }
-inline static void numvec_addNumvec (numvec x, numvec y) {
+inline static void numvec_addNumvec (VEC x, VEC y) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += y [i];
 }
-inline static void nummat_addNummat (nummat x, nummat y) {
+inline static void nummat_addNummat (MAT x, MAT y) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] += y [irow] [icol];
 	}
 }
-inline static void numvec_multiplyByScalar (numvec x, double factor) {
+inline static void numvec_multiplyByScalar (VEC x, double factor) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] *= factor;
 }
-inline static void nummat_multiplyByScalar (nummat x, double factor) {
+inline static void nummat_multiplyByScalar (MAT x, double factor) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] *= factor;
 	}
 }
-inline static autonumvec add_numvec (numvec x, double addend) {
-	autonumvec result (x.size, kTensorInitializationType::RAW);
+inline static autoVEC add_numvec (VEC x, double addend) {
+	autoVEC result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] + addend;
 	return result;
 }
-inline static autonummat add_nummat (nummat x, double addend) {
-	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+inline static autoMAT add_nummat (MAT x, double addend) {
+	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] + addend;
@@ -2710,68 +2710,68 @@ static void do_add () {
 	}
 	Melder_throw (U"Cannot add ", y->whichText(), U" to ", x->whichText(), U".");
 }
-inline static void numvec_subtractScalar (numvec x, double number) {
+inline static void numvec_subtractScalar (VEC x, double number) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= number;
 }
-inline static void numvec_subtractScalarReversed (numvec x, double number) {
+inline static void numvec_subtractScalarReversed (VEC x, double number) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = number - x [i];
 }
-inline static void nummat_subtractScalar (nummat x, double number) {
+inline static void nummat_subtractScalar (MAT x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] -= number;
 	}
 }
-inline static void nummat_subtractScalarReversed (nummat x, double number) {
+inline static void nummat_subtractScalarReversed (MAT x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = number - x [irow] [icol];
 	}
 }
-inline static void numvec_subtractNumvec (numvec x, numvec y) {
+inline static void numvec_subtractNumvec (VEC x, VEC y) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= y [i];
 }
-inline static void numvec_subtractNumvecReversed (numvec x, numvec y) {
+inline static void numvec_subtractNumvecReversed (VEC x, VEC y) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = y [i] - x [i];
 }
-inline static void nummat_subtractNummat (nummat x, nummat y) {
+inline static void nummat_subtractNummat (MAT x, MAT y) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] -= y [irow] [icol];
 	}
 }
-inline static void nummat_subtractNummatReversed (nummat x, nummat y) {
+inline static void nummat_subtractNummatReversed (MAT x, MAT y) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] = y [irow] [icol] - x [irow] [icol];
 	}
 }
-inline static autonumvec sub_numvec (numvec x, double y) {
-	autonumvec result (x.size, kTensorInitializationType::RAW);
+inline static autoVEC sub_numvec (VEC x, double y) {
+	autoVEC result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] - y;
 	return result;
 }
-inline static autonumvec sub_numvec (double x, numvec y) {
-	autonumvec result (y.size, kTensorInitializationType::RAW);
+inline static autoVEC sub_numvec (double x, VEC y) {
+	autoVEC result (y.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= y.size; i ++)
 		result [i] = x - y [i];
 	return result;
 }
-inline static autonummat sub_nummat (nummat x, double y) {
-	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+inline static autoMAT sub_nummat (MAT x, double y) {
+	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] - y;
 	}
 	return result;
 }
-inline static autonummat sub_nummat (double x, nummat y) {
-	autonummat result (y.nrow, y.ncol, kTensorInitializationType::RAW);
+inline static autoMAT sub_nummat (double x, MAT y) {
+	autoMAT result (y.nrow, y.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= y.nrow; irow ++) {
 		for (integer icol = 1; icol <= y.ncol; icol ++)
 			result [irow] [icol] = x - y [irow] [icol];
@@ -2932,7 +2932,7 @@ static void do_mul () {
 				w ++;
 			} else {
 				integer ny = y->numericVector.size;
-				autonumvec result { ny, kTensorInitializationType::RAW };
+				autoVEC result { ny, kTensorInitializationType::RAW };
 				for (integer i = 1; i <= ny; i ++) {
 					double yvalue = y->numericVector [i];
 					result [i] = xvalue * yvalue;
@@ -2952,7 +2952,7 @@ static void do_mul () {
 				w ++;
 			} else {
 				integer nrow = y->numericMatrix.nrow, ncol = y->numericMatrix.ncol;
-				autonummat result (nrow, ncol, kTensorInitializationType::RAW);
+				autoMAT result (nrow, ncol, kTensorInitializationType::RAW);
 				for (integer irow = 1; irow <= nrow; irow ++) {
 					for (integer icol = 1; icol <= ncol; icol ++) {
 						double yvalue = y->numericMatrix [irow] [icol];
@@ -2971,7 +2971,7 @@ static void do_mul () {
 		integer nx = x->numericVector.size, ny = y->numericVector.size;
 		if (nx != ny)
 			Melder_throw (U"When multiplying vectors, their numbers of elements should be equal, instead of ", nx, U" and ", ny, U".");
-		autonumvec result { nx, kTensorInitializationType::RAW };
+		autoVEC result { nx, kTensorInitializationType::RAW };
 		for (integer i = 1; i <= nx; i ++) {
 			double xvalue = x->numericVector [i];
 			double yvalue = y->numericVector [i];
@@ -2993,7 +2993,7 @@ static void do_rdiv () {
 			integer nelem1 = x->numericVector.size, nelem2 = y->numericVector.size;
 			if (nelem1 != nelem2)
 				Melder_throw (U"When dividing vectors, their numbers of elements should be equal, instead of ", nelem1, U" and ", nelem2, U".");
-			autonumvec result { nelem1, kTensorInitializationType::RAW };
+			autoVEC result { nelem1, kTensorInitializationType::RAW };
 			for (integer ielem = 1; ielem <= nelem1; ielem ++)
 				result [ielem] = x->numericVector [ielem] / y->numericVector [ielem];
 			pushNumericVector (result.move());
@@ -3004,7 +3004,7 @@ static void do_rdiv () {
 				result# = x# / y
 			*/
 			integer xn = x->numericVector.size;
-			autonumvec result { xn, kTensorInitializationType::RAW };
+			autoVEC result { xn, kTensorInitializationType::RAW };
 			double yvalue = y->number;
 			if (yvalue == 0.0) {
 				Melder_throw (U"Cannot divide (/) ", x->whichText(), U" by zero.");
@@ -3078,7 +3078,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 			for (integer i = 1; i <= n; i ++)
 				at [i] = f (at [i]);
 		} else {
-			autonumvec result { n, kTensorInitializationType::RAW };
+			autoVEC result { n, kTensorInitializationType::RAW };
 			for (integer i = 1; i <= n; i ++)
 				result [i] = f (at [i]);
 			x->numericVector = result. releaseToAmbiguousOwner();
@@ -3160,7 +3160,7 @@ static void do_rectify_numvec () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
-		autonumvec result { nelm, kTensorInitializationType::RAW };
+		autoVEC result { nelm, kTensorInitializationType::RAW };
 		for (integer i = 1; i <= nelm; i ++) {
 			double xvalue = x->numericVector [i];
 			result [i] = isundef (xvalue) ? undefined : xvalue > 0.0 ? xvalue : 0.0;
@@ -3241,7 +3241,7 @@ static void do_exp_numvec () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer nelm = x->numericVector.size;
-		autonumvec result (nelm, kTensorInitializationType::RAW);
+		autoVEC result (nelm, kTensorInitializationType::RAW);
 		for (integer i = 1; i <= nelm; i ++) {
 			result [i] = exp (x->numericVector [i]);
 		}
@@ -3254,7 +3254,7 @@ static void do_exp_nummat () {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMERIC_MATRIX) {
 		integer nrow = x->numericMatrix.nrow, ncol = x->numericMatrix.ncol;
-		autonummat result (nrow, ncol, kTensorInitializationType::RAW);
+		autoMAT result (nrow, ncol, kTensorInitializationType::RAW);
 		for (integer irow = 1; irow <= nrow; irow ++) {
 			for (integer icol = 1; icol <= ncol; icol ++) {
 				result [irow] [icol] = exp (x->numericMatrix [irow] [icol]);
@@ -3366,7 +3366,7 @@ static void do_function_dd_d_numvec (double (*f) (double, double)) {
 	Stackel y = pop, x = pop, a = pop;
 	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfElements = ( a->which == Stackel_NUMBER ? a->number : a->numericVector.size );
-		autonumvec newData (numberOfElements, kTensorInitializationType::RAW);
+		autoVEC newData (numberOfElements, kTensorInitializationType::RAW);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (x->number, y->number);
 		}
@@ -3386,7 +3386,7 @@ static void do_function_dd_d_nummat (double (*f) (double, double)) {
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfRows = a->numericMatrix.nrow;
 		integer numberOfColumns = a->numericMatrix.ncol;
-		autonummat newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
+		autoMAT newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 				newData [irow] [icol] = f (x->number, y->number);
@@ -3407,7 +3407,7 @@ static void do_function_ll_l_numvec (integer (*f) (integer, integer)) {
 	Stackel y = pop, x = pop, a = pop;
 	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER) {
 		integer numberOfElements = ( a->which == Stackel_NUMBER ? a->number : a->numericVector.size );
-		autonumvec newData (numberOfElements, kTensorInitializationType::RAW);
+		autoVEC newData (numberOfElements, kTensorInitializationType::RAW);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (Melder_iround (x->number), Melder_iround (y->number));
 		}
@@ -3427,7 +3427,7 @@ static void do_function_ll_l_nummat (integer (*f) (integer, integer)) {
 	if (a->which == Stackel_NUMERIC_MATRIX && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		integer numberOfRows = a->numericMatrix.nrow;
 		integer numberOfColumns = a->numericMatrix.ncol;
-		autonummat newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
+		autoMAT newData (numberOfRows, numberOfColumns, kTensorInitializationType::RAW);
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
 				newData [irow] [icol] = f (Melder_iround (x->number), Melder_iround (y->number));
@@ -4073,7 +4073,7 @@ static void do_zeroNumvec () {
 		Melder_throw (U"In the function \"zero#\", the number of elements is undefined.");
 	if (numberOfElements < 0.0)
 		Melder_throw (U"In the function \"zero#\", the number of elements should not be negative.");
-	autonumvec result (Melder_iround (numberOfElements), kTensorInitializationType::ZERO);
+	autoVEC result (Melder_iround (numberOfElements), kTensorInitializationType::ZERO);
 	pushNumericVector (result.move());
 }
 static void do_zeroNummat () {
@@ -4098,7 +4098,7 @@ static void do_zeroNummat () {
 		Melder_throw (U"In the function \"zero##\", the number of rows should not be negative.");
 	if (numberOfColumns < 0.0)
 		Melder_throw (U"In the function \"zero##\", the number of columns should not be negative.");
-	autonummat result (Melder_iround (numberOfRows), Melder_iround (numberOfColumns), kTensorInitializationType::ZERO);
+	autoMAT result (Melder_iround (numberOfRows), Melder_iround (numberOfColumns), kTensorInitializationType::ZERO);
 	pushNumericMatrix (result.move());
 }
 static void do_linearNumvec () {
@@ -4134,7 +4134,7 @@ static void do_linearNumvec () {
 	integer numberOfSteps = Melder_iround (stack_numberOfSteps -> number);
 	if (numberOfSteps <= 0)
 		Melder_throw (U"In the function \"linear#\", the number of steps (third argument) has to be positive, not ", numberOfSteps, U".");
-	autonumvec result { numberOfSteps, kTensorInitializationType::RAW };
+	autoVEC result { numberOfSteps, kTensorInitializationType::RAW };
 	for (integer ielem = 1; ielem <= numberOfSteps; ielem ++) {
 		result [ielem] = excludeEdges ?
 			minimum + (ielem - 0.5) * (maximum - minimum) / numberOfSteps :
@@ -4153,7 +4153,7 @@ static void do_toNumvec () {
 	if (stack_to -> which != Stackel_NUMBER)
 		Melder_throw (U"In the function \"to#\", the argument has to be a number, not ", stack_to->whichText(), U".");
 	integer to = Melder_iround (stack_to -> number);
-	autonumvec result = to_numvec (to);
+	autoVEC result = to_numvec (to);
 	pushNumericVector (result.move());
 }
 static void do_peaksNummat () {
@@ -4176,7 +4176,7 @@ static void do_peaksNummat () {
 	Stackel vec = pop;
 	if (vec->which != Stackel_NUMERIC_VECTOR)
 		Melder_throw (U"The first argument to peaks## has to be a numeric vector, not ", vec->whichText(), U".");
-	autonummat result = MATpeaks (vec->numericVector, includeEdges, interpolation, sortByHeight);
+	autoMAT result = MATpeaks (vec->numericVector, includeEdges, interpolation, sortByHeight);
 	pushNumericMatrix (result.move());
 }
 static void do_size () {
@@ -4756,7 +4756,7 @@ static void do_numberOfSelected () {
 }
 static void do_selected_numvec () {
 	Stackel n = pop;
-	autonumvec result;
+	autoVEC result;
 	if (n->number == 0) {
 		result = praat_idsOfAllSelected (nullptr);
 	} else if (n->number == 1) {
@@ -4784,7 +4784,7 @@ static void do_selectObject () {
 			int IOBJECT = praat_findObjectByName (object -> getString());
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
-			numvec vec = object -> numericVector;
+			VEC vec = object -> numericVector;
 			for (int ielm = 1; ielm <= vec.size; ielm ++) {
 				int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_select (IOBJECT);
@@ -4807,7 +4807,7 @@ static void do_plusObject () {
 			int IOBJECT = praat_findObjectByName (object -> getString());
 			praat_select (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
-			numvec vec = object -> numericVector;
+			VEC vec = object -> numericVector;
 			for (int ielm = 1; ielm <= vec.size; ielm ++) {
 				int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_select (IOBJECT);
@@ -4830,7 +4830,7 @@ static void do_minusObject () {
 			int IOBJECT = praat_findObjectByName (object -> getString());
 			praat_deselect (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
-			numvec vec = object -> numericVector;
+			VEC vec = object -> numericVector;
 			for (int ielm = 1; ielm <= vec.size; ielm ++) {
 				int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_deselect (IOBJECT);
@@ -4853,7 +4853,7 @@ static void do_removeObject () {
 			int IOBJECT = praat_findObjectByName (object -> getString());
 			praat_removeObject (IOBJECT);
 		} else if (object -> which == Stackel_NUMERIC_VECTOR) {
-			numvec vec = object -> numericVector;
+			VEC vec = object -> numericVector;
 			for (int ielm = 1; ielm <= vec.size; ielm ++) {
 				int IOBJECT = praat_findObjectById (Melder_iround (vec [ielm]));
 				praat_removeObject (IOBJECT);
@@ -5109,7 +5109,7 @@ static void do_numericVectorLiteral () {
 	Melder_assert (n->which == Stackel_NUMBER);
 	integer numberOfElements = Melder_iround (n->number);
 	Melder_assert (numberOfElements > 0);
-	autonumvec result { numberOfElements, kTensorInitializationType::RAW };
+	autoVEC result { numberOfElements, kTensorInitializationType::RAW };
 	for (integer ielement = numberOfElements; ielement > 0; ielement --) {
 		Stackel e = pop;
 		if (e->which != Stackel_NUMBER)
@@ -5135,7 +5135,7 @@ static void do_outerNummat () {
 	*/
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		autonummat result = MATouter (x->numericVector, y->numericVector);
+		autoMAT result = MATouter (x->numericVector, y->numericVector);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"outer##\" requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5154,7 +5154,7 @@ static void do_mulNumvec () {
 		if (yNrow != xSize)
 			Melder_throw (U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
 				"not ", xSize, U" and ", yNrow);
-		autonumvec result = VECmul (x->numericVector, y->numericMatrix);
+		autoVEC result = VECmul (x->numericVector, y->numericMatrix);
 		pushNumericVector (result.move());
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
 		/*
@@ -5164,7 +5164,7 @@ static void do_mulNumvec () {
 		if (ySize != xNcol)
 			Melder_throw (U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
 				"not ", xNcol, U" and ", ySize);
-		autonumvec result = VECmul (x->numericMatrix, y->numericVector);
+		autoVEC result = VECmul (x->numericMatrix, y->numericVector);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"mul#\" requires a vector and a matrix, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5175,7 +5175,7 @@ static void do_repeatNumvec () {
 	if (x->which == Stackel_NUMERIC_VECTOR && n->which == Stackel_NUMBER) {
 		integer n_old = x->numericVector.size;
 		integer times = Melder_iround (n->number);
-		autonumvec result { n_old * times, kTensorInitializationType::RAW };
+		autoVEC result { n_old * times, kTensorInitializationType::RAW };
 		for (integer i = 1; i <= times; i ++) {
 			for (integer j = 1; j <= n_old; j ++)
 				result [(i - 1) * n_old + j] = x->numericVector [j];

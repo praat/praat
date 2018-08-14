@@ -294,27 +294,27 @@ public:
 
 #pragma mark - TENSOR
 /*
-	numvec and nummat: the type declarations are in melder.h, the function declarations in tensor.h
+	VEC and MAT: the type declarations are in melder.h, the function declarations in tensor.h
 
 	Initialization (tested in praat.cpp):
-		numvec x;                  // does not initialize x
-		numvec x { };              // initializes x.at to nullptr and x.size to 0
-		numvec x { 100, false };   // initializes x to 100 uninitialized values
-		numvec x { 100, true };    // initializes x to 100 zeroes
+		VEC x;                  // does not initialize x
+		VEC x { };              // initializes x.at to nullptr and x.size to 0
+		VEC x { 100, false };   // initializes x to 100 uninitialized values
+		VEC x { 100, true };    // initializes x to 100 zeroes
 		NUMvector<double> a (1, 100);
-		numvec x { a, 100 };       // initializes x to 100 values from a base-1 array
+		VEC x { a, 100 };       // initializes x to 100 values from a base-1 array
 
-		autonumvec y;                  // initializes y.at to nullptr and y.size to 0
-		autonumvec y { 100, false };   // initializes y to 100 uninitialized values, having ownership
-		autonumvec y { 100, true };    // initializes y to 100 zeroes, having ownership
-		autonumvec y { x };            // initializes y to the content of x, taking ownership (explicit, so not "y = x")
-		numvec z = releaseToAmbiguousOwner();   // releases ownership, x.at becoming nullptr
+		autoVEC y;                  // initializes y.at to nullptr and y.size to 0
+		autoVEC y { 100, false };   // initializes y to 100 uninitialized values, having ownership
+		autoVEC y { 100, true };    // initializes y to 100 zeroes, having ownership
+		autoVEC y { x };            // initializes y to the content of x, taking ownership (explicit, so not "y = x")
+		VEC z = releaseToAmbiguousOwner();   // releases ownership, x.at becoming nullptr
 		"}"                            // end of scope destroys x.at if not nullptr
-		autonumvec z = y.move()        // moves the content of y to z, emptying y
+		autoVEC z = y.move()        // moves the content of y to z, emptying y
 
-	To return an autonumvec from a function, transfer ownership like this:
-		autonumvec foo () {
-			autonumvec x { 100, false };
+	To return an autoVEC from a function, transfer ownership like this:
+		autoVEC foo () {
+			autoVEC x { 100, false };
 			... // fill in the 100 values
 			return x;
 		}
@@ -406,10 +406,10 @@ public:
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 };
 
-using numvec = vector <double>;
-using autonumvec = autovector <double>;
+using VEC = vector <double>;
+using autoVEC = autovector <double>;
 
-#define empty_numvec  numvec { nullptr, 0 }
+#define empty_numvec  VEC { nullptr, 0 }
 
 template <typename T>
 class automatrix;   // forward declaration, needed in the declaration of matrix
@@ -429,7 +429,7 @@ public:
 	T *& operator[] (integer i) {
 		return our at [i];
 	}
-	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autonummat)
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our at) {
 			our _freeAt ();
 			our at = nullptr;
@@ -462,13 +462,13 @@ public:
 		if (our at) our _freeAt ();
 	}
 	matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
-	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-autonummat
+	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-autoMAT
 		our reset();
 		our at = given.at;
 		our nrow = given.nrow;
 		our ncol = given.ncol;
 	}
-	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autonummat
+	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autoMAT
 		T **oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		return { oldAt, our nrow, our ncol };
@@ -480,7 +480,7 @@ public:
 	automatrix& operator= (const automatrix&) = delete;   // disable copy assignment
 	/*
 		Enable moving of temporaries or (for variables) via an explicit move().
-		This implements buying a payload from another autonummat (which involves destroying our current payload).
+		This implements buying a payload from another autoMAT (which involves destroying our current payload).
 	*/
 	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor for r-values (temporaries)
 		other.at = nullptr;   // disown source
@@ -500,16 +500,16 @@ public:
 	automatrix&& move () noexcept { return static_cast <automatrix&&> (*this); }
 };
 
-using nummat = matrix <double>;
-using autonummat = automatrix <double>;
+using MAT = matrix <double>;
+using autoMAT = automatrix <double>;
 
-#define empty_nummat  nummat { nullptr, 0, 0 }
+#define empty_nummat  MAT { nullptr, 0, 0 }
 
-conststring32 Melder_numvec (numvec value);
-conststring32 Melder_nummat (nummat value);
+conststring32 Melder_numvec (VEC value);
+conststring32 Melder_nummat (MAT value);
 
-inline static numvec as_numvec (nummat x) {
-	return numvec (x [1], x.nrow * x.ncol);
+inline static VEC as_numvec (MAT x) {
+	return VEC (x [1], x.nrow * x.ncol);
 }
 
 /* End of file melder_vector.h */

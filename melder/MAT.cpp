@@ -19,8 +19,8 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"
 
-autonummat MATcopy (nummat x) {
-	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+autoMAT MATcopy (MAT x) {
+	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
 			result [irow] [icol] = x [irow] [icol];
@@ -29,8 +29,8 @@ autonummat MATcopy (nummat x) {
 	return result;
 }
 
-autonummat MATouter (numvec x, numvec y) {
-	autonummat result (x.size, y.size, kTensorInitializationType::RAW);
+autoMAT MATouter (VEC x, VEC y) {
+	autoMAT result (x.size, y.size, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.size; irow ++) {
 		for (integer icol = 1; icol <= y.size; icol ++) {
 			result [irow] [icol] = x [irow] * y [icol];
@@ -39,7 +39,7 @@ autonummat MATouter (numvec x, numvec y) {
 	return result;
 }
 
-autonummat MATpeaks (numvec x, bool includeEdges, int interpolate, bool sortByHeight) {
+autoMAT MATpeaks (VEC x, bool includeEdges, int interpolate, bool sortByHeight) {
 	if (x.size < 2) {
 		includeEdges = false;
 	}
@@ -53,7 +53,7 @@ autonummat MATpeaks (numvec x, bool includeEdges, int interpolate, bool sortByHe
 		if (x [1] > x [2]) numberOfPeaks ++;
 		if (x [x.size] > x [x.size - 1]) numberOfPeaks ++;
 	}
-	autonummat result (2, numberOfPeaks, kTensorInitializationType::RAW);
+	autoMAT result (2, numberOfPeaks, kTensorInitializationType::RAW);
 	integer peakNumber = 0;
 	if (includeEdges && x [1] > x [2]) {
 		result [1] [++ peakNumber] = 1;

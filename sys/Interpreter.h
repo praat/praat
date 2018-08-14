@@ -28,8 +28,8 @@
 Thing_define (InterpreterVariable, SimpleString) {
 	autostring32 stringValue;
 	double numericValue;
-	numvec numericVectorValue;
-	nummat numericMatrixValue;
+	VEC numericVectorValue;
+	MAT numericMatrixValue;
 
 	void v_destroy () noexcept
 		override;
@@ -77,16 +77,16 @@ void Interpreter_stop (Interpreter me);   // can be called from any procedure ca
 
 void Interpreter_voidExpression (Interpreter me, conststring32 expression);
 void Interpreter_numericExpression (Interpreter me, conststring32 expression, double *p_value);
-void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, numvec *p_value, bool *p_owned);
-void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, nummat *p_value, bool *p_owned);
+void Interpreter_numericVectorExpression (Interpreter me, conststring32 expression, VEC *p_value, bool *p_owned);
+void Interpreter_numericMatrixExpression (Interpreter me, conststring32 expression, MAT *p_value, bool *p_owned);
 autostring32 Interpreter_stringExpression (Interpreter me, conststring32 expression);
 void Interpreter_anyExpression (Interpreter me, conststring32 expression, Formula_Result *p_result);
 
 InterpreterVariable Interpreter_hasVariable (Interpreter me, conststring32 key);
 InterpreterVariable Interpreter_lookUpVariable (Interpreter me, conststring32 key);
 
-extern autonumvec theInterpreterNumvec;
-extern autonummat theInterpreterNummat;
+extern autoVEC theInterpreterNumvec;
+extern autoMAT theInterpreterNummat;
 
 /* End of file Interpreter.h */
 #endif

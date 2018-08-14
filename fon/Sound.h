@@ -100,7 +100,7 @@ autoSound Sound_createSimple (integer numberOfChannels, double duration, double 
 autoSound Sound_convertToMono (Sound me);
 autoSound Sound_convertToStereo (Sound me);
 autoSound Sound_extractChannel (Sound me, integer ichannel);
-autoSound Sound_extractChannels (Sound me, numvec channelNumbers);
+autoSound Sound_extractChannels (Sound me, VEC channelNumbers);
 autoSound Sounds_combineToStereo (OrderedOf<structSound>* me);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */

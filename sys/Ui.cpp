@@ -230,7 +230,7 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::NUMVEC_:
 		{
 			my stringValue = GuiText_getString (my text);
-			numvec result;
+			VEC result;
 			bool owned;
 			Interpreter_numericVectorExpression (nullptr, my stringValue.get(), & result, & owned);
 			if (owned) {
@@ -245,7 +245,7 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::NUMMAT_:
 		{
 			my stringValue = GuiText_getString (my text);
-			nummat result;
+			MAT result;
 			bool owned;
 			Interpreter_numericMatrixExpression (nullptr, my stringValue.get(), & result, & owned);
 			if (owned) {
@@ -676,7 +676,7 @@ UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variab
 	return thee;
 }
 
-UiField UiForm_addNumvec (UiForm me, numvec *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addNumvec (UiForm me, VEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NUMVEC_, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
@@ -684,7 +684,7 @@ UiField UiForm_addNumvec (UiForm me, numvec *variable, conststring32 variableNam
 	return thee;
 }
 
-UiField UiForm_addNummat (UiForm me, nummat *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addNummat (UiForm me, MAT *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NUMMAT_, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericMatrixVariable = variable;

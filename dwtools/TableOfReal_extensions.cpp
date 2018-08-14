@@ -697,12 +697,11 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 		return;
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		nummat mat { my data, my numberOfRows, my numberOfColumns };
+		MAT mat { my data, my numberOfRows, my numberOfColumns };
 		double mean, stdev;
 		NUM_sum_mean_sumsq_variance_stdev (mat, icol, nullptr, & mean, nullptr, nullptr, & stdev);
-		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+		for (integer irow = 1; irow <= my numberOfRows; irow ++)
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
-		}
 	}
 }
 
@@ -716,7 +715,7 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 		return;
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		numvec vec { my data [irow], my numberOfColumns };
+		VEC vec { my data [irow], my numberOfColumns };
 		double mean, stdev;
 		NUM_sum_mean_sumsq_variance_stdev (vec, nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1708,10 +1707,10 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 		if (my numberOfColumns < 3 || my numberOfRows < 3) {
 			Melder_throw (U"Therehave to be at least three colums and rows present.");
 		}
-		autonumvec x (my numberOfRows, kTensorInitializationType :: RAW);
-		autonumvec y (my numberOfRows, kTensorInitializationType :: RAW);
-		autonumvec z (my numberOfRows, kTensorInitializationType :: RAW);
-		autonumvec weights (my numberOfRows, kTensorInitializationType :: RAW);
+		autoVEC x (my numberOfRows, kTensorInitializationType :: RAW);
+		autoVEC y (my numberOfRows, kTensorInitializationType :: RAW);
+		autoVEC z (my numberOfRows, kTensorInitializationType :: RAW);
+		autoVEC weights (my numberOfRows, kTensorInitializationType :: RAW);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			x [irow] = my data [irow] [1];
 			y [irow] = my data [irow] [2];

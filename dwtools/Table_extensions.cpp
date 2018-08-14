@@ -3916,7 +3916,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g,
 		if (column < 1 || column > my numberOfColumns) return;
 		Table_numericize_Assert (me, column);
 		integer numberOfData = my rows.size;
-		autonumvec data (numberOfData, kTensorInitializationType::RAW);
+		autoVEC data (numberOfData, kTensorInitializationType::RAW);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}

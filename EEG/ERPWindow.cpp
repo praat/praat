@@ -151,7 +151,7 @@ static BiosemiLocationData biosemiCapCoordinates32 [1+32] =
 
 void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kGraphics_colourScale colourScale) {
 	integer n = 201;
-	autonummat legend (n, 2, kTensorInitializationType::RAW);
+	autoMAT legend (n, 2, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= n; irow ++) {
 		for (integer icol = 1; icol <= 2; icol ++) {
 			legend [irow] [icol] = (irow - 1) / (n - 1.0);
@@ -189,13 +189,13 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 	}
 	integer n = 201;
 	double d = 2.0 / (n - 1);
-	autonumvec mean (numberOfDrawableChannels, kTensorInitializationType::RAW);
+	autoVEC mean (numberOfDrawableChannels, kTensorInitializationType::RAW);
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		mean [ichan] = tmin == tmax ?
 				Sampled_getValueAtX (me, tmin, ichan, 0, true) :
 				Vector_getMean (me, tmin, tmax, ichan);
 	}
-	autonummat image (n, n, kTensorInitializationType::RAW);
+	autoMAT image (n, n, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= n; irow ++) {
 		double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {
@@ -292,14 +292,14 @@ void structERPWindow :: v_drawSelectionViewer () {
 	}
 	integer n = 201;
 	double d = 2.0 / (n - 1);
-	autonumvec means (numberOfDrawableChannels, kTensorInitializationType::RAW);
+	autoVEC means (numberOfDrawableChannels, kTensorInitializationType::RAW);
 	for (integer ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		means [ichan] =
 			our startSelection == our endSelection ?
 				Sampled_getValueAtX (erp, our startSelection, ichan, 0, true) :
 				Vector_getMean (erp, our startSelection, our endSelection, ichan);
 	}
-	autonummat image (n, n, kTensorInitializationType::RAW);
+	autoMAT image (n, n, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= n; irow ++) {
 		double y = -1.0 + (irow - 1) * d;
 		for (integer icol = 1; icol <= n; icol ++) {

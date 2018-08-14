@@ -36,11 +36,11 @@
 #include "enums_getValue.h"
 #include "Graphics_extensions_enums.h"
 
-autonumvec nummat_vectorize (nummat m, integer rowmin, integer rowmax, integer colmin, integer colmax, bool byColumns) {
+static autoVEC nummat_vectorize (MAT m, integer rowmin, integer rowmax, integer colmin, integer colmax, bool byColumns) {
 	NUMfixIndicesInRange (1, m.nrow, & rowmin, & rowmax);
 	NUMfixIndicesInRange (1, m.ncol, & colmin, & colmax);
 	integer numberOfElements = (rowmax  - rowmin + 1) * (colmax - colmin + 1), index = 0;
-	autonumvec result (numberOfElements, kTensorInitializationType::RAW);
+	autoVEC result (numberOfElements, kTensorInitializationType::RAW);
 	if (byColumns) {
 		for (integer icol = colmin; icol <= colmax; icol++) {
 			for (integer irow = rowmin; irow <= rowmax; irow++) {
@@ -124,7 +124,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::Random) {
 		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::IncreasingValues || drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
-		autonumvec v = nummat_vectorize (nummat (my z, my ny, my nx), rowmin, rowmax, colmin, colmax, false);
+		autoVEC v = nummat_vectorize (MAT (my z, my ny, my nx), rowmin, rowmax, colmin, colmax, false);
 		NUMsort2<double, integer> (numberOfCells, v.at, p -> p);
 		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
 			Permutation_reverse_inline (p.get(), 1, numberOfCells);
