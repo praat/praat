@@ -723,7 +723,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, num
 		/*
 			Statement like: a# = b#   // with non-matching sizes
 		*/
-		autonumvec copiedVector = copy_numvec (movedVector);
+		autonumvec copiedVector = VECcopy (movedVector);
 		variable -> numericVectorValue. reset();
 		variable -> numericVectorValue = copiedVector. releaseToAmbiguousOwner();
 	}
@@ -753,7 +753,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, num
 		/*
 			Statement like: a## = b##   // with non-matching sizes
 		*/
-		autonummat copiedMatrix = copy_nummat (movedMatrix);
+		autonummat copiedMatrix = MATcopy (movedMatrix);
 		variable -> numericMatrixValue. reset();
 		variable -> numericMatrixValue = copiedMatrix. releaseToAmbiguousOwner();
 	}

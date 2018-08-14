@@ -1,4 +1,4 @@
-/* xxStrVec.cpp
+/* STRVEC.cpp
  *
  * Copyright (C) 2006,2007,2009,2011,2012,2015-2018 Paul Boersma
  *
@@ -43,4 +43,4 @@ autostring32vector tokenizeStrVec (conststring32 string) {
 	return result;
 }
 
-/* End of file xxStrVec.cpp */
+/* End of file STRVEC.cpp */

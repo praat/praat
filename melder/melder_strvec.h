@@ -23,6 +23,7 @@ class _stringvector {
 public:
 	T** at;
 	integer size;
+	_stringvector (T** givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	T* & operator[] (integer i) {
 		return our at [i];
 	}

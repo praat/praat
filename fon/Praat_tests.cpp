@@ -317,7 +317,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			for (int64 i = 1; i <= ncol; i ++)
 				y.at [i] = NUMrandomGauss (0.0, 1.0);
 			for (int64 i = 1; i <= n; i ++) {
-				const autonummat mat = outer_nummat (x, y);
+				const autonummat mat = MATouter (x, y);
 			}
 			t = Melder_stopwatch () / nrow / ncol;   // 0.29 ns, i.e. less than one clock cycle per cell
 			NUMvector_free (x.at, 1);

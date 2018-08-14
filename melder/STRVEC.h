@@ -1,6 +1,5 @@
-#ifndef _xxStrVec_h_
-#define _xxStrVec_h_
-/* xxStrVec.h
+#pragma once
+/* STRVEC.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -25,5 +24,4 @@
 */
 autostring32vector tokenizeStrVec (conststring32 string);
 
-/* End of file xxStrVec.h */
-#endif
+/* End of file STRVEC.h */

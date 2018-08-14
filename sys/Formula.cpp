@@ -3093,7 +3093,7 @@ static void do_softmax () {
 	Stackel x = & theStack [w];
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		if (! x->owned) {
-			x->numericVector = copy_numvec (x->numericVector). releaseToAmbiguousOwner();   // TODO: no need to copy
+			x->numericVector = VECcopy (x->numericVector). releaseToAmbiguousOwner();   // TODO: no need to copy
 			x->owned = true;
 		}
 		integer nelm = x->numericVector.size;
@@ -4176,7 +4176,7 @@ static void do_peaksNummat () {
 	Stackel vec = pop;
 	if (vec->which != Stackel_NUMERIC_VECTOR)
 		Melder_throw (U"The first argument to peaks## has to be a numeric vector, not ", vec->whichText(), U".");
-	autonummat result = peaks_nummat (vec->numericVector, includeEdges, interpolation, sortByHeight);
+	autonummat result = MATpeaks (vec->numericVector, includeEdges, interpolation, sortByHeight);
 	pushNumericMatrix (result.move());
 }
 static void do_size () {
@@ -5135,7 +5135,7 @@ static void do_outerNummat () {
 	*/
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && y->which == Stackel_NUMERIC_VECTOR) {
-		autonummat result = outer_nummat (x->numericVector, y->numericVector);
+		autonummat result = MATouter (x->numericVector, y->numericVector);
 		pushNumericMatrix (result.move());
 	} else {
 		Melder_throw (U"The function \"outer##\" requires two vectors, not ", x->whichText(), U" and ", y->whichText(), U".");
@@ -5154,7 +5154,7 @@ static void do_mulNumvec () {
 		if (yNrow != xSize)
 			Melder_throw (U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
 				"not ", xSize, U" and ", yNrow);
-		autonumvec result = mul_numvec (x->numericVector, y->numericMatrix);
+		autonumvec result = VECmul (x->numericVector, y->numericMatrix);
 		pushNumericVector (result.move());
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
 		/*
@@ -5164,7 +5164,7 @@ static void do_mulNumvec () {
 		if (ySize != xNcol)
 			Melder_throw (U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
 				"not ", xNcol, U" and ", ySize);
-		autonumvec result = mul_numvec (x->numericMatrix, y->numericVector);
+		autonumvec result = VECmul (x->numericMatrix, y->numericVector);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"mul#\" requires a vector and a matrix, not ", x->whichText(), U" and ", y->whichText(), U".");

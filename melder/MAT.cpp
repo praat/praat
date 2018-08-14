@@ -1,4 +1,4 @@
-/* xxVec.cpp
+/* MAT.cpp
  *
  * Copyright (C) 2017,2018 Paul Boersma
  *
@@ -17,18 +17,9 @@
  */
 
 #include "melder.h"
-#include "../dwsys/NUM2.h"   /* for NUMsort2 */
-#include "PAIRWISE_SUM.h"
+#include "../dwsys/NUM2.h"
 
-autonumvec copy_numvec (numvec x) {
-	autonumvec result (x.size, kTensorInitializationType::RAW);
-	for (integer i = 1; i <= x.size; i ++) {
-		result [i] = x [i];
-	}
-	return result;
-}
-
-autonummat copy_nummat (nummat x) {
+autonummat MATcopy (nummat x) {
 	autonummat result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++) {
@@ -38,7 +29,7 @@ autonummat copy_nummat (nummat x) {
 	return result;
 }
 
-autonummat outer_nummat (numvec x, numvec y) {
+autonummat MATouter (numvec x, numvec y) {
 	autonummat result (x.size, y.size, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.size; irow ++) {
 		for (integer icol = 1; icol <= y.size; icol ++) {
@@ -48,7 +39,7 @@ autonummat outer_nummat (numvec x, numvec y) {
 	return result;
 }
 
-autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sortByHeight) {
+autonummat MATpeaks (numvec x, bool includeEdges, int interpolate, bool sortByHeight) {
 	if (x.size < 2) {
 		includeEdges = false;
 	}
@@ -104,58 +95,4 @@ autonummat peaks_nummat (numvec x, bool includeEdges, int interpolate, bool sort
 	return result;
 }
 
-inline static double NUMinner_stride_ (numvec x, numvec y, integer stride) {
-	if (x.size != y.size) return undefined;
-	PAIRWISE_SUM (longdouble, sum, integer, x.size,
-		double *xx = & x [0];
-		double *yy = & y [1 - stride],
-		(++ xx, yy += stride),   // this goes way beyond the confines of y
-		(longdouble) *xx * (longdouble) *yy)
-	return (double) sum;
-}
-
-inline static void mul_inplace (numvec target, numvec vec, nummat mat) {
-	for (integer j = 1; j <= mat.ncol; j ++) {
-		if ((false)) {
-			target [j] = 0.0;
-			for (integer i = 1; i <= mat.nrow; i ++) {
-				target [j] += vec [i] * mat [i] [j];
-			}
-		} else {
-			target [j] = NUMinner_stride_ (vec, { & mat [1] [j] - 1, mat.nrow }, mat.ncol);
-		}
-	}
-}
-
-inline static void mul_inplace (numvec target, nummat mat, numvec vec) {
-	for (integer i = 1; i <= mat.nrow; i ++) {
-		if ((false)) {
-			target [i] = 0.0;
-			for (integer j = 1; j <= vec.size; j ++) {
-				target [i] += mat [i] [j] * vec [j];
-			}
-		} else {
-			target [i] = NUMinner ({ & mat [i] [1] - 1, mat.ncol }, vec);
-		}
-	}
-}
-
-autonumvec mul_numvec (numvec vec, nummat mat) {
-	if (mat.nrow != vec.size) return autonumvec { };
-	autonumvec result { mat.ncol, kTensorInitializationType::RAW };
-	mul_inplace (result.get(), vec, mat);
-	return result;
-}
-
-autonumvec mul_numvec (nummat mat, numvec vec) {
-	if (vec.size != mat.ncol) return autonumvec { };
-	autonumvec result { mat.nrow, kTensorInitializationType::RAW };
-	mul_inplace (result.get(), mat, vec);
-	return result;
-}
-
-void numvec_sort (numvec x) {
-	NUMsort_d (x.size, x.at);
-}
-
-/* End of file xxVec.cpp */
+/* End of file MAT.cpp */

@@ -1,4 +1,4 @@
-/* xxNum.cpp
+/* NUM.cpp
  *
  * Copyright (C) 2017,2018 Paul Boersma
  *
@@ -286,4 +286,4 @@ double NUMvariance (numvec x) noexcept {
 	return variance;
 }
 
-/* End of file xxNum.cpp */
+/* End of file NUM.cpp */

@@ -126,7 +126,7 @@ static void numvec_centre_inplace (numvec x, double *p_mean) {
 
 void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
 	for (integer i = rb; i <= re; i ++) {
-		numvec_centre_inplace ({ a [i], ce - cb + 1 }, nullptr);
+		numvec_centre_inplace (numvec (a [i], ce - cb + 1), nullptr);
 	}
 }
 

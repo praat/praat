@@ -1,4 +1,4 @@
-/* xxStr.cpp
+/* STR.cpp
  *
  * Copyright (C) 2012-2017 David Weenink, 2008,2018 Paul Boersma
  *
@@ -234,4 +234,4 @@ autostring32 replace_regexStr (conststring32 string,
 	return buf;
 }
 
-/* End of file xxStr.cpp */
+/* End of file STR.cpp */

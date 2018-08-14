@@ -1,5 +1,5 @@
 # Makefile of the library "melder"
-# Paul Boersma, 13 August 2018
+# Paul Boersma, 14 August 2018
 
 include ../makefile.defs
 
@@ -15,7 +15,7 @@ OBJECTS = melder.o complex.o melder_alloc.o \
 	abcio.o melder_sysenv.o regularExp.o \
 	NUMmath.o \
 	NUMspecfunc.o NUMear.o NUMinterpol.o NUMmetrics.o NUMrandom.o NUMfilter.o NUMlinprog.o \
-	xxNum.o xxStr.o xxVec.o xxStrVec.o
+	NUM.o STR.o VEC.o MAT.o STRVEC.o
 
 .PHONY: all clean
 
