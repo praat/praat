@@ -21,14 +21,14 @@
 
 autonumvec VECcopy (numvec x) {
 	autonumvec result (x.size, kTensorInitializationType::RAW);
-	for (integer i = 1; i <= x.size; i ++) {
+	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i];
-	}
 	return result;
 }
 
-inline static double NUMinner_stride_ (numvec x, numvec y, integer stride) {
-	if (x.size != y.size) return undefined;
+inline static double inner_stride_ (numvec x, numvec y, integer stride) {
+	if (x.size != y.size)
+		return undefined;
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
 		double *xx = & x [0];
 		double *yy = & y [1 - stride],
@@ -37,47 +37,47 @@ inline static double NUMinner_stride_ (numvec x, numvec y, integer stride) {
 	return (double) sum;
 }
 
-inline static void mul_inplace (numvec target, numvec vec, nummat mat) {
+autonumvec VECmul (numvec vec, nummat mat) {
+	if (mat.nrow != vec.size)
+		return autonumvec();
+	autonumvec result (mat.ncol, kTensorInitializationType::RAW);
+	VECmul_inplace (result.get(), vec, mat);
+	return result;
+}
+
+void VECmul_inplace (numvec target, numvec vec, nummat mat) {
 	for (integer j = 1; j <= mat.ncol; j ++) {
 		if ((false)) {
 			target [j] = 0.0;
-			for (integer i = 1; i <= mat.nrow; i ++) {
+			for (integer i = 1; i <= mat.nrow; i ++)
 				target [j] += vec [i] * mat [i] [j];
-			}
 		} else {
-			target [j] = NUMinner_stride_ (vec, { & mat [1] [j] - 1, mat.nrow }, mat.ncol);
+			target [j] = inner_stride_ (vec, numvec (& mat [1] [j] - 1, mat.nrow), mat.ncol);
 		}
 	}
 }
 
-inline static void mul_inplace (numvec target, nummat mat, numvec vec) {
+autonumvec VECmul (nummat mat, numvec vec) {
+	if (vec.size != mat.ncol)
+		return autonumvec();
+	autonumvec result (mat.nrow, kTensorInitializationType::RAW);
+	VECmul_inplace (result.get(), mat, vec);
+	return result;
+}
+
+void VECmul_inplace (numvec target, nummat mat, numvec vec) {
 	for (integer i = 1; i <= mat.nrow; i ++) {
 		if ((false)) {
 			target [i] = 0.0;
-			for (integer j = 1; j <= vec.size; j ++) {
+			for (integer j = 1; j <= vec.size; j ++)
 				target [i] += mat [i] [j] * vec [j];
-			}
 		} else {
 			target [i] = NUMinner (numvec (& mat [i] [1] - 1, mat.ncol), vec);
 		}
 	}
 }
 
-autonumvec VECmul (numvec vec, nummat mat) {
-	if (mat.nrow != vec.size) return autonumvec { };
-	autonumvec result { mat.ncol, kTensorInitializationType::RAW };
-	mul_inplace (result.get(), vec, mat);
-	return result;
-}
-
-autonumvec VECmul (nummat mat, numvec vec) {
-	if (vec.size != mat.ncol) return autonumvec { };
-	autonumvec result { mat.nrow, kTensorInitializationType::RAW };
-	mul_inplace (result.get(), mat, vec);
-	return result;
-}
-
-void numvec_sort (numvec x) {
+void VECsort_inplace (numvec x) {
 	NUMsort_d (x.size, x.at);
 }
 

@@ -20,7 +20,9 @@
 autonumvec VECcopy (numvec x);
 
 autonumvec VECmul (numvec x, nummat y);
+void VECmul_inplace (numvec target, numvec vec, nummat mat);
 autonumvec VECmul (nummat x, numvec y);
+void VECmul_inplace (numvec target, nummat mat, numvec vec);
 
 
 inline static void numvec_copyElements_nocheck (numvec from, numvec to) {
@@ -82,6 +84,6 @@ inline static autonumvec to_numvec (integer to) {
 	return result;
 }
 
-void numvec_sort (numvec x);
+void VECsort_inplace (numvec x);
 
 /* End of file VEC.h */
