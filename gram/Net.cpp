@@ -75,7 +75,7 @@ autoNet Net_createEmpty (integer numberOfInputNodes) {
 	}
 }
 
-void Net_initAsDeepBeliefNet (Net me, VEC numbersOfNodes, bool inputsAreBinary) {
+void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary) {
 	if (numbersOfNodes.size < 2)
 		Melder_throw (U"A deep belief net should have at least two levels of nodes.");
 	integer numberOfLayers = numbersOfNodes.size - 1;
@@ -90,7 +90,7 @@ void Net_initAsDeepBeliefNet (Net me, VEC numbersOfNodes, bool inputsAreBinary) 
 	}
 }
 
-autoNet Net_createAsDeepBeliefNet (VEC numbersOfNodes, bool inputsAreBinary) {
+autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary) {
 	try {
 		autoNet me = Thing_new (Net);
 		Net_initAsDeepBeliefNet (me.get(), numbersOfNodes, inputsAreBinary);

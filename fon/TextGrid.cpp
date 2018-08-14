@@ -1691,7 +1691,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 	return thee;
 }
 
-autoTable TextGrid_tabulateOccurrences (TextGrid me, VEC searchTiers, kMelder_string which, conststring32 criterion, bool caseSensitive) {
+autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMelder_string which, conststring32 criterion, bool caseSensitive) {
 	const int timeDecimals = 6;
 	integer numberOfRows = 0;
 	for (integer itier = 1; itier <= searchTiers.size; itier ++) {

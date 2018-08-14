@@ -690,9 +690,8 @@ void TableOfReal_normalizeRows (TableOfReal me, double norm) {
 void TableOfReal_standardizeColumns (TableOfReal me) {
 	if (my numberOfRows <= 1) {
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 				my data [irow] [icol] = 0.0;
-			}
 		}
 		return;
 	}
@@ -708,19 +707,17 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 void TableOfReal_standardizeRows (TableOfReal me) {
 	if (my numberOfColumns <= 1) {
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-			for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 				my data [irow] [icol] = 0.0;
-			}
 		}
 		return;
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		VEC vec { my data [irow], my numberOfColumns };
 		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (vec, nullptr, & mean, nullptr, nullptr, & stdev);
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+		NUM_sum_mean_sumsq_variance_stdev (VEC (my data [irow], my numberOfColumns),
+				nullptr, & mean, nullptr, nullptr, & stdev);
+		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
-		}
 	}
 }
 
@@ -731,9 +728,8 @@ void TableOfReal_normalizeTable (TableOfReal me, double norm) {
 double TableOfReal_getTableNorm (TableOfReal me) {
 	longdouble sumsq = 0.0;
 	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++)
 			sumsq += my data [i] [j] * my data [i] [j];
-		}
 	}
 	return sqrt ((double) sumsq);
 }
@@ -741,9 +737,8 @@ double TableOfReal_getTableNorm (TableOfReal me) {
 bool TableOfReal_checkPositive (TableOfReal me) {
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			if (my data [i] [j] < 0.0) {
+			if (my data [i] [j] < 0.0)
 				return false;
-			}
 		}
 	}
 	return true;
@@ -793,7 +788,7 @@ void TableOfReal_drawScatterPlotMatrix (TableOfReal me, Graphics g, integer colb
 	}
 	for (integer j = colb; j <= cole; j ++) {
 		double extra = fractionWhite * fabs (xmax [j] - xmin [j]);
-		if (extra == 0) {
+		if (extra == 0.0) {
 			extra = 0.5;
 		}
 		xmin [j] -= extra; xmax [j] += extra;
