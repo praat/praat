@@ -5151,9 +5151,9 @@ static void do_mulNumvec () {
 			result# = mul# (x#, y##)
 		*/
 		integer xSize = x->numericVector.size, yNrow = y->numericMatrix.nrow;
-		if (yNrow != xSize)
-			Melder_throw (U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
-				"not ", xSize, U" and ", yNrow);
+		Melder_require (yNrow == xSize,
+			U"In the function \"mul#\", the dimension of the vector and the number of rows of the matrix should be equal, "
+			U"not ", xSize, U" and ", yNrow);
 		autoVEC result = VECmul (x->numericVector, y->numericMatrix);
 		pushNumericVector (result.move());
 	} else if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_VECTOR) {
@@ -5161,9 +5161,9 @@ static void do_mulNumvec () {
 			result# = mul# (x##, y#)
 		*/
 		integer xNcol = x->numericMatrix.ncol, ySize = y->numericVector.size;
-		if (ySize != xNcol)
-			Melder_throw (U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
-				"not ", xNcol, U" and ", ySize);
+		Melder_require (ySize == xNcol,
+			U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
+			U"not ", xNcol, U" and ", ySize);
 		autoVEC result = VECmul (x->numericMatrix, y->numericVector);
 		pushNumericVector (result.move());
 	} else {

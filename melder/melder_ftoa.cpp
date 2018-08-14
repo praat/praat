@@ -403,7 +403,7 @@ conststring32 Melder_character (char32 kar) noexcept {
 static MelderString theTensorBuffers [NUMBER_OF_TENSOR_BUFFERS] { };
 static int iTensorBuffer { 0 };
 
-conststring32 Melder_numvec (VEC value) {
+conststring32 Melder_numvec (constVEC value) {
 	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS)
 		iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
@@ -414,7 +414,7 @@ conststring32 Melder_numvec (VEC value) {
 	}
 	return string -> string;
 }
-conststring32 Melder_nummat (MAT value) {
+conststring32 Melder_nummat (constMAT value) {
 	if (++ iTensorBuffer == NUMBER_OF_TENSOR_BUFFERS)
 		iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];

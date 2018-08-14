@@ -19,27 +19,25 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"
 
-autoMAT MATcopy (MAT x) {
+autoMAT MATcopy (constMAT x) {
 	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol];
-		}
 	}
 	return result;
 }
 
-autoMAT MATouter (VEC x, VEC y) {
+autoMAT MATouter (constVEC x, constVEC y) {
 	autoMAT result (x.size, y.size, kTensorInitializationType::RAW);
 	for (integer irow = 1; irow <= x.size; irow ++) {
-		for (integer icol = 1; icol <= y.size; icol ++) {
+		for (integer icol = 1; icol <= y.size; icol ++)
 			result [irow] [icol] = x [irow] * y [icol];
-		}
 	}
 	return result;
 }
 
-autoMAT MATpeaks (VEC x, bool includeEdges, int interpolate, bool sortByHeight) {
+autoMAT MATpeaks (constVEC x, bool includeEdges, int interpolate, bool sortByHeight) {
 	if (x.size < 2) {
 		includeEdges = false;
 	}

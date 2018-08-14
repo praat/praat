@@ -314,7 +314,7 @@ autoStrings HMMObservationSequence_to_Strings (HMMObservationSequence me) {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = autostring32vector (numberOfStrings);
 		for (integer i = 1; i <= numberOfStrings; i ++)
-			thy strings [i] = Melder_dup (Table_getStringValue_Assert (me, i, 1);
+			thy strings [i] = Melder_dup (Table_getStringValue_Assert (me, i, 1));
 		thy numberOfStrings = numberOfStrings;
 		return thee;
 	} catch (MelderError) {
