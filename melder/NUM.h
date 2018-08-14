@@ -21,18 +21,18 @@
 	Called in inline functions.
 */
 
-double NUMinner_ (numvec x, numvec y);
-void NUM_sum_mean (numvec x, double *p_sum, double *p_mean) noexcept;
-void NUM_sum_mean_sumsq_variance_stdev (numvec x, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
-void NUM_sum_mean_sumsq_variance_stdev (nummat x, integer columnNumber, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
+double NUMinner_ (VEC x, VEC y);
+void NUM_sum_mean (VEC x, double *p_sum, double *p_mean) noexcept;
+void NUM_sum_mean_sumsq_variance_stdev (VEC x, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
+void NUM_sum_mean_sumsq_variance_stdev (MAT x, integer columnNumber, double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
 
 /*
 	From here on in alphabetical order.
 */
 
-double NUMcenterOfGravity (numvec x) noexcept;
+double NUMcenterOfGravity (VEC x) noexcept;
 
-inline static bool NUMequal (numvec x, numvec y) {
+inline static bool NUMequal (VEC x, VEC y) {
 	integer n = x.size;
 	if (y.size != n)
 		return false;
@@ -43,11 +43,11 @@ inline static bool NUMequal (numvec x, numvec y) {
 	return true;
 }
 
-inline static bool NUMequal (nummat x, nummat y) {
+inline static bool NUMequal (MAT x, MAT y) {
 	return NUMequal (as_numvec (x), as_numvec (y));
 }
 
-inline static double NUMinner (numvec x, numvec y) {
+inline static double NUMinner (VEC x, VEC y) {
 	integer n = x.size;
 	if (y.size != n)
 		return undefined;
@@ -74,7 +74,7 @@ inline static double NUMlog2 (double x) {
 	return log (x) * NUMlog2e;
 }
 
-inline static double NUMmean (numvec x) noexcept {
+inline static double NUMmean (VEC x) noexcept {
 	integer n = x.size;
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? undefined : n == 1 ? x [1] : (double) (0.5 * ((longdouble) x [1] + (longdouble) x [2]));
@@ -93,9 +93,9 @@ inline static double NUMmean (numvec x) noexcept {
 	return mean;
 }
 
-double NUMnorm (numvec x, double power) noexcept;
+double NUMnorm (VEC x, double power) noexcept;
 
-inline static double NUMnorm (nummat x, double power) noexcept {
+inline static double NUMnorm (MAT x, double power) noexcept {
 	return NUMnorm (as_numvec (x), power);
 }
 
@@ -115,9 +115,9 @@ inline static double NUMsqrt (double x) {
 	return sqrt (x);
 }
 
-double NUMstdev (numvec x) noexcept;
+double NUMstdev (VEC x) noexcept;
 
-inline static double NUMsum (numvec x) noexcept {
+inline static double NUMsum (VEC x) noexcept {
 	integer n = x.size;
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
@@ -136,9 +136,9 @@ inline static double NUMsum (numvec x) noexcept {
 	return sum;
 }
 
-double NUMsumsq (numvec x) noexcept;
+double NUMsumsq (VEC x) noexcept;
 
-double NUMvariance (numvec x) noexcept;
+double NUMvariance (VEC x) noexcept;
 
 /* End of file NUM.h */
 

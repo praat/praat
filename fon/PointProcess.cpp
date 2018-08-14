@@ -205,7 +205,7 @@ void PointProcess_addPoint (PointProcess me, double t) {
 	}
 }
 
-void PointProcess_addPoints (PointProcess me, numvec times) {
+void PointProcess_addPoints (PointProcess me, VEC times) {
 	try {
 		integer newNumberOfPoints = my nt + times.size;
 		if (newNumberOfPoints > my maxnt) {

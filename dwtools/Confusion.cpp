@@ -141,8 +141,8 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 void Confusion_getEntropies (Confusion me, double *p_h, double *p_hx, double *p_hy,
 	double *p_hygx, double *p_hxgy, double *p_uygx, double *p_uxgy, double *p_uxy)
 {
-	autonumvec rowSum (my numberOfRows, kTensorInitializationType::ZERO);
-	autonumvec colSum (my numberOfColumns, kTensorInitializationType::ZERO);
+	autoVEC rowSum (my numberOfRows, kTensorInitializationType::ZERO);
+	autoVEC colSum (my numberOfColumns, kTensorInitializationType::ZERO);
 	double totalSum = 0.0;
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {

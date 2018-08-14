@@ -53,7 +53,7 @@ void EEG_setChannelToZero (EEG me, conststring32 channelName);
 void EEG_removeTriggers (EEG me, kMelder_string which, conststring32 criterion);
 autoEEG EEG_extractChannel (EEG me, integer channelNumber);
 autoEEG EEG_extractChannel (EEG me, conststring32 channelName);
-autoEEG EEG_extractChannels (EEG me, numvec channelNumbers);
+autoEEG EEG_extractChannels (EEG me, VEC channelNumbers);
 void EEG_removeChannel (EEG me, integer channelNumber);
 void EEG_removeChannel (EEG me, conststring32 channelName);
 static inline autoSound EEG_extractSound (EEG me) { return Data_copy (my sound.get()); }
