@@ -20,7 +20,7 @@
 #include "../dwsys/NUM2.h"   /* for NUMsort2 */
 
 autoVEC VECcopy (constVEC x) {
-	autoVEC result (x.size, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i];
 	return result;
@@ -40,7 +40,7 @@ inline static double inner_stride_ (constVEC x, constVEC y, integer stride) {
 autoVEC VECmul (constVEC vec, constMAT mat) {
 	if (mat.nrow != vec.size)
 		return autoVEC();
-	autoVEC result (mat.ncol, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (mat.ncol);
 	VECmul_inplace (result.get(), vec, mat);
 	return result;
 }
@@ -60,7 +60,7 @@ void VECmul_inplace (VEC target, constVEC vec, constMAT mat) {
 autoVEC VECmul (constMAT mat, constVEC vec) {
 	if (vec.size != mat.ncol)
 		return autoVEC();
-	autoVEC result (mat.nrow, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (mat.nrow);
 	VECmul_inplace (result.get(), mat, vec);
 	return result;
 }

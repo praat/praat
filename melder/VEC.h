@@ -17,6 +17,18 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+	Some functions that are used below.
+*/
+
+inline static autoVEC VECraw (integer size) {
+	return { size, kTensorInitializationType::RAW };
+}
+
+/*
+	From here on alphabetical order.
+*/
+
 autoVEC VECcopy (constVEC x);
 
 autoVEC VECmul (constVEC vec, constMAT mat);
@@ -40,7 +52,7 @@ inline static autoVEC VECadd (constVEC x, double addend) {
 }
 inline static autoVEC VECadd (constVEC x, constVEC y) {
 	if (x.size != y.size) return autoVEC { };
-	autoVEC result (x.size, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] + y [i];
 	return result;
@@ -81,20 +93,20 @@ inline static void VECsubtractReversed_inplace (VEC x, constVEC y) {
 		x [i] = y [i] - x [i];
 }
 inline static autoVEC VECsubtract (constVEC x, double y) {
-	autoVEC result (x.size, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] - y;
 	return result;
 }
 inline static autoVEC VECsubtract (double x, constVEC y) {
-	autoVEC result (y.size, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (y.size);
 	for (integer i = 1; i <= y.size; i ++)
 		result [i] = x - y [i];
 	return result;
 }
 inline static autoVEC VECsubtract (constVEC x, constVEC y) {
 	if (x.size != y.size) return autoVEC { };
-	autoVEC result (x.size, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] - y [i];
 	return result;
@@ -103,10 +115,14 @@ inline static autoVEC VECsubtract (constVEC x, constVEC y) {
 void VECsort_inplace (VEC x);
 
 inline static autoVEC VECto (integer to) {
-	autoVEC result (to, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (to);
 	for (integer i = 1; i <= to; i ++)
 		result [i] = (double) i;
 	return result;
+}
+
+inline static autoVEC VECzero (integer size) {
+	return { size, kTensorInitializationType::ZERO };
 }
 
 /* End of file VEC.h */

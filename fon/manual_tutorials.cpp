@@ -22,10 +22,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (U"What's new?", U"ppgb", 20180806)
+MAN_BEGIN (U"What's new?", U"ppgb", 20180815)
 INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
+NORMAL (U"##6.0.42# (15 August 2018)")
+LIST_ITEM (U"• Reapired a bug introduced in 6.0.41 that caused a crash in pause windows.")
 NORMAL (U"##6.0.41# (6 August 2018)")
 LIST_ITEM (U"• Interoperability: the Windows edition can now communicate with other software in UTF-8.")
 NORMAL (U"##6.0.40# (11 May 2018)")
