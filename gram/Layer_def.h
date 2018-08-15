@@ -37,7 +37,7 @@ oo_DEFINE_CLASS (Layer, Daata)
 		virtual autoMatrix v_extractInputBiases () { return autoMatrix (); }
 		virtual autoMatrix v_extractOutputBiases () { return autoMatrix (); }
 		virtual autoMatrix v_extractWeights () { return autoMatrix (); }
-		virtual autoMAT v_getWeights_nummat () { return autoMAT (); }
+		virtual autoMAT v_getWeights () { return autoMAT (); }
 	#endif
 
 oo_END_CLASS (Layer)

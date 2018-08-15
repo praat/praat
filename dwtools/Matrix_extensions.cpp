@@ -36,20 +36,20 @@
 #include "enums_getValue.h"
 #include "Graphics_extensions_enums.h"
 
-static autoVEC nummat_vectorize (MAT m, integer rowmin, integer rowmax, integer colmin, integer colmax, bool byColumns) {
+static autoVEC nummat_vectorize (constMAT m, integer rowmin, integer rowmax, integer colmin, integer colmax, bool byColumns) {
 	NUMfixIndicesInRange (1, m.nrow, & rowmin, & rowmax);
 	NUMfixIndicesInRange (1, m.ncol, & colmin, & colmax);
-	integer numberOfElements = (rowmax  - rowmin + 1) * (colmax - colmin + 1), index = 0;
+	integer numberOfElements = (rowmax - rowmin + 1) * (colmax - colmin + 1), index = 0;
 	autoVEC result (numberOfElements, kTensorInitializationType::RAW);
 	if (byColumns) {
-		for (integer icol = colmin; icol <= colmax; icol++) {
-			for (integer irow = rowmin; irow <= rowmax; irow++) {
+		for (integer icol = colmin; icol <= colmax; icol ++) {
+			for (integer irow = rowmin; irow <= rowmax; irow ++) {
 				result [++ index] = m [irow] [icol];
 			}
 		}
 	} else {
 		for (integer irow = rowmin; irow <= rowmax; irow ++) {
-			for (integer icol = colmin; icol <= colmax; icol++) {
+			for (integer icol = colmin; icol <= colmax; icol ++) {
 				result [++ index] = m [irow] [icol];
 			}
 		}

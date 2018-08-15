@@ -1643,7 +1643,7 @@ FORM (NUMMAT_Net_getWeights, U"Net: Get weigths", nullptr) {
 	OK
 DO
 	NUMMAT_ONE (Net)
-		autoMAT result = Net_getWeights_nummat (me, layerNumber);
+		autoMAT result = Net_getWeights (me, layerNumber);
 	NUMMAT_ONE_END
 }
 

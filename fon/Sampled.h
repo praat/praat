@@ -35,7 +35,7 @@ static inline integer Sampled_xToLowIndex     (Sampled me, double x) { return Me
 static inline integer Sampled_xToHighIndex    (Sampled me, double x) { return Melder_iceiling ((x - my x1) / my dx + 1.0); }
 static inline integer Sampled_xToNearestIndex (Sampled me, double x) { return Melder_iround   ((x - my x1) / my dx + 1.0); }
 
-static inline autoVEC Sampled_getX_numvec (Sampled me) {
+static inline autoVEC Sampled_getAllXValues (Sampled me) {
 	autoVEC result (my nx, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= my nx; i ++)
 		result [i] = my x1 + (i - 1) * my dx;

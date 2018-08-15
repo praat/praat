@@ -422,7 +422,7 @@ using VEC = vector <double>;
 using constVEC = constvector <double>;
 using autoVEC = autovector <double>;
 
-#define empty_numvec  VEC { nullptr, 0 }
+#define emptyVEC  VEC { nullptr, 0 }
 
 template <typename T>
 class automatrix;   // forward declaration, needed in the declaration of matrix
@@ -460,6 +460,7 @@ class constmatrix {
 public:
 	const T * const * const at;
 	const integer nrow, ncol;
+	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
 	const T * const & operator[] (integer i) {
 		return our at [i];
@@ -528,16 +529,16 @@ using MAT = matrix <double>;
 using constMAT = constmatrix <double>;
 using autoMAT = automatrix <double>;
 
-#define empty_nummat  MAT { nullptr, 0, 0 }
+#define emptyMAT  MAT { nullptr, 0, 0 }
 
-conststring32 Melder_numvec (constVEC value);
-conststring32 Melder_nummat (constMAT value);
+conststring32 Melder_VEC (constVEC value);
+conststring32 Melder_MAT (constMAT value);
 
-inline static VEC as_numvec (MAT x) {
+inline static VEC asVEC (MAT x) {
 	return VEC (x [1], x.nrow * x.ncol);
 }
 
-inline static constVEC as_numvec (constMAT x) {
+inline static constVEC asVEC (constMAT x) {
 	return constVEC (x [1], x.nrow * x.ncol);
 }
 

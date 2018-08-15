@@ -717,7 +717,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 			/*
 				Statement like: a# = b#   // with matching sizes
 			*/
-			numvec_copyElements_nocheck (movedVector, variableVector);
+			VECcopy_inplace (variableVector, movedVector);
 		}
 	} else {
 		/*
@@ -747,7 +747,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 			/*
 				Statement like: a## = b##   // with matching sizes
 			*/
-			nummat_copyElements_nocheck (movedMatrix, variableMatrix);
+			MATcopy_inplace (variableMatrix, movedMatrix);
 		}
 	} else {
 		/*

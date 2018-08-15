@@ -46,7 +46,7 @@ inline static bool NUMequal (constVEC x, constVEC y) {
 }
 
 inline static bool NUMequal (constMAT x, constMAT y) {
-	return NUMequal (as_numvec (x), as_numvec (y));
+	return NUMequal (asVEC (x), asVEC (y));
 }
 
 inline static double NUMinner (constVEC x, constVEC y) {
@@ -98,7 +98,7 @@ inline static double NUMmean (constVEC x) noexcept {
 double NUMnorm (constVEC x, double power) noexcept;
 
 inline static double NUMnorm (constMAT x, double power) noexcept {
-	return NUMnorm (as_numvec (x), power);
+	return NUMnorm (asVEC (x), power);
 }
 
 integer NUMnumberOfTokens (conststring32 str);
