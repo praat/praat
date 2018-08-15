@@ -355,11 +355,17 @@ protected:
 template <typename T>
 class constvector {
 public:
-	const T * const at;
-	const integer size;
+	const T * /*const*/ at;
+	/*const*/ integer size;
+	constvector (): at (nullptr), size (0) { }
 	constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	constvector (vector<T> vec): at (vec.at), size (vec.size) { }
-	const T& operator[] (integer i) {   // it's still a reference, because we need to be able to take its address
+	//constvector (const constvector& other): at (other.at), size (other.size) { }
+	//constvector& operator= (const constvector& other) {
+	//	our at = other.at;
+	//	our size = other.size;
+	//}
+	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
 		return our at [i];
 	}
 };
@@ -458,11 +464,12 @@ protected:
 template <typename T>
 class constmatrix {
 public:
-	const T * const * const at;
-	const integer nrow, ncol;
+	const T * const * /*const*/ at;
+	/*const*/ integer nrow, ncol;
+	constmatrix (): at (nullptr), nrow (0), ncol (0) { }
 	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
-	const T * const & operator[] (integer i) {
+	const T * const & operator[] (integer i) const {
 		return our at [i];
 	}
 };

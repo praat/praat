@@ -17,6 +17,18 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+	Some functions that are included below.
+*/
+
+inline static autoMAT MATraw (integer nrow, integer ncol) {
+	return { nrow, ncol, kTensorInitializationType::RAW };
+}
+
+/*
+	From here on alphabetical order.
+*/
+
 inline static void MATadd_inplace (MAT x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
@@ -30,7 +42,7 @@ inline static void MATadd_inplace (MAT x, constMAT y) {
 	}
 }
 inline static autoMAT MATadd (constMAT x, double addend) {   // TODO: check whether casting to VEC is faster
-	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+	autoMAT result = MATraw (x.nrow, x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] + addend;
@@ -39,7 +51,7 @@ inline static autoMAT MATadd (constMAT x, double addend) {   // TODO: check whet
 }
 inline static autoMAT MATadd (constMAT x, constMAT y) {   // TODO: check whether casting to VEC is faster
 	if (x.nrow != y.nrow || x.ncol != y.ncol) return autoMAT { };
-	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+	autoMAT result = MATraw (x.nrow, x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] + y [irow] [icol];
@@ -90,7 +102,7 @@ inline static void MATsubtractReversed_inplace (MAT x, constMAT y) {
 	}
 }
 inline static autoMAT MATsubtract (constMAT x, double y) {
-	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+	autoMAT result = MATraw (x.nrow, x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] - y;
@@ -98,7 +110,7 @@ inline static autoMAT MATsubtract (constMAT x, double y) {
 	return result;
 }
 inline static autoMAT MATsubtract (double x, constMAT y) {
-	autoMAT result (y.nrow, y.ncol, kTensorInitializationType::RAW);
+	autoMAT result = MATraw (y.nrow, y.ncol);
 	for (integer irow = 1; irow <= y.nrow; irow ++) {
 		for (integer icol = 1; icol <= y.ncol; icol ++)
 			result [irow] [icol] = x - y [irow] [icol];
@@ -107,12 +119,16 @@ inline static autoMAT MATsubtract (double x, constMAT y) {
 }
 inline static autoMAT MATsubtract (constMAT x, constMAT y) {
 	if (x.nrow != y.nrow || x.ncol != y.ncol) return autoMAT { };
-	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+	autoMAT result = MATraw (x.nrow, x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol] - y [irow] [icol];
 	}
 	return result;
+}
+
+inline static autoMAT MATzero (integer nrow, integer ncol) {
+	return { nrow, ncol, kTensorInitializationType::ZERO };
 }
 
 /* End of file MAT.h */

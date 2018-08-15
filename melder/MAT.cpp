@@ -20,7 +20,7 @@
 #include "../dwsys/NUM2.h"
 
 autoMAT MATcopy (constMAT x) {
-	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
+	autoMAT result = MATraw (x.nrow, x.ncol);
 	for (integer irow = 1; irow <= x.nrow; irow ++) {
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			result [irow] [icol] = x [irow] [icol];
@@ -29,7 +29,7 @@ autoMAT MATcopy (constMAT x) {
 }
 
 autoMAT MATouter (constVEC x, constVEC y) {
-	autoMAT result (x.size, y.size, kTensorInitializationType::RAW);
+	autoMAT result = MATraw (x.size, y.size);
 	for (integer irow = 1; irow <= x.size; irow ++) {
 		for (integer icol = 1; icol <= y.size; icol ++)
 			result [irow] [icol] = x [irow] * y [icol];
@@ -38,20 +38,16 @@ autoMAT MATouter (constVEC x, constVEC y) {
 }
 
 autoMAT MATpeaks (constVEC x, bool includeEdges, int interpolate, bool sortByHeight) {
-	if (x.size < 2) {
-		includeEdges = false;
-	}
+	if (x.size < 2) includeEdges = false;
 	integer numberOfPeaks = 0;
-	for (integer i = 2; i < x.size; i ++) {
-		if (x [i] > x [i - 1] && x [i] >= x [i + 1]) {
+	for (integer i = 2; i < x.size; i ++)
+		if (x [i] > x [i - 1] && x [i] >= x [i + 1])
 			numberOfPeaks ++;
-		}
-	}
 	if (includeEdges) {
 		if (x [1] > x [2]) numberOfPeaks ++;
 		if (x [x.size] > x [x.size - 1]) numberOfPeaks ++;
 	}
-	autoMAT result (2, numberOfPeaks, kTensorInitializationType::RAW);
+	autoMAT result = MATraw (2, numberOfPeaks);
 	integer peakNumber = 0;
 	if (includeEdges && x [1] > x [2]) {
 		result [1] [++ peakNumber] = 1;
