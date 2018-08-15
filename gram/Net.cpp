@@ -1,6 +1,6 @@
 /* Net.cpp
  *
- * Copyright (C) 2017 Paul Boersma
+ * Copyright (C) 2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -464,12 +464,12 @@ autoMatrix Net_extractWeights (Net me, integer layerNumber) {
 	}
 }
 
-autoMAT structRBMLayer :: v_getWeights_nummat () {
-	return MATcopy (MAT (our weights, our numberOfInputNodes, our numberOfOutputNodes));
+autoMAT structRBMLayer :: v_getWeights () {
+	return MATcopy (constMAT (our weights, our numberOfInputNodes, our numberOfOutputNodes));
 }
 
-autoMAT Net_getWeights_nummat (Net me, integer layerNumber) {
-	return my layers->at [layerNumber] -> v_getWeights_nummat ();
+autoMAT Net_getWeights (Net me, integer layerNumber) {
+	return my layers->at [layerNumber] -> v_getWeights ();
 }
 
 /* End of file Net.cpp */

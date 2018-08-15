@@ -116,17 +116,9 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 	MelderInfo_close ();
 }
 
-static void numvec_centre_inplace (VEC x, double *p_mean) {
-	double xmean = NUMmean (x);
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] -= xmean;
-	if (p_mean)
-		*p_mean = xmean;
-}
-
 void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
 	for (integer i = rb; i <= re; i ++) {
-		numvec_centre_inplace (VEC (a [i], ce - cb + 1), nullptr);
+		VECcentre_inplace (VEC (a [i], ce - cb + 1));
 	}
 }
 
@@ -137,7 +129,7 @@ void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer c
 			colvec [i - rb + 1] = a [i] [j];
 		}
 		double colmean;
-		numvec_centre_inplace (colvec.get(), & colmean);
+		VECcentre_inplace (colvec.get(), & colmean);
 		for (integer i = rb; i <= re; i ++) {
 			a [i] [j] = colvec [i - rb + 1];
 		}

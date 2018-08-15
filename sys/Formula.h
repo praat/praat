@@ -125,8 +125,8 @@ struct Formula_Result {
 		our expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 		our numericResult = 0.0;
 		our stringResult = autostring32();
-		our numericVectorResult = empty_numvec;
-		our numericMatrixResult = empty_nummat;
+		our numericVectorResult = emptyVEC;
+		our numericMatrixResult = emptyMAT;
 		our owned = false;
 	}
 	void reset () {

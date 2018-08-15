@@ -59,7 +59,7 @@ autoMatrix Net_extractInputBiases (Net me, integer layerNumber);
 autoMatrix Net_extractOutputBiases (Net me, integer layerNumber);
 autoMatrix Net_extractWeights (Net me, integer layerNumber);
 
-autoMAT Net_getWeights_nummat (Net me, integer layerNumber);
+autoMAT Net_getWeights (Net me, integer layerNumber);
 
 /* End of file Net.h */
 #endif

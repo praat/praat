@@ -19,65 +19,94 @@
 
 autoVEC VECcopy (constVEC x);
 
-autoVEC VECmul (constVEC x, constMAT y);
+autoVEC VECmul (constVEC vec, constMAT mat);
 void VECmul_inplace (VEC target, constVEC vec, constMAT mat);
-autoVEC VECmul (constMAT x, constVEC y);
+autoVEC VECmul (constMAT mat, constVEC vec);
 void VECmul_inplace (VEC target, constMAT mat, constVEC vec);
 
-
-inline static void numvec_copyElements_nocheck (constVEC from, VEC to) {
-	for (integer i = 1; i <= from.size; i ++)
-		to [i] = from [i];
+inline static void VECadd_inplace (VEC target, double number) {
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] += number;
 }
-
-inline static void nummat_copyElements_nocheck (constMAT from, MAT to) {
-	for (integer irow = 1; irow <= from.nrow; irow ++) {
-		for (integer icol = 1; icol <= from.ncol; icol ++)
-			to [irow] [icol] = from [irow] [icol];
-	}
+inline static void VECadd_inplace (VEC target, constVEC vec) {
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] += vec [i];
 }
-
-inline static autoVEC add_numvec (constVEC x, constVEC y) {
+inline static autoVEC VECadd (constVEC x, double addend) {
+	autoVEC result (x.size, kTensorInitializationType::RAW);
+	for (integer i = 1; i <= x.size; i ++)
+		result [i] = x [i] + addend;
+	return result;
+}
+inline static autoVEC VECadd (constVEC x, constVEC y) {
 	if (x.size != y.size) return autoVEC { };
 	autoVEC result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] + y [i];
 	return result;
 }
-inline static autoMAT add_nummat (constMAT x, constMAT y) {
-	if (x.nrow != y.nrow || x.ncol != y.ncol) return autoMAT { };
-	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
-	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			result [irow] [icol] = x [irow] [icol] + y [irow] [icol];
-	}
+
+inline static void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
+	double xmean = NUMmean (x);
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] -= xmean;
+	if (out_mean)
+		*out_mean = xmean;
+}
+
+inline static void VECcopy_inplace (VEC x, constVEC source) {
+	for (integer i = 1; i <= source.size; i ++)
+		x [i] = source [i];
+}
+
+inline static void VECmultiply_inplace (VEC x, double factor) {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] *= factor;
+}
+
+inline static void VECsubtract_inplace (VEC x, double number) {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] -= number;
+}
+inline static void VECsubtractReversed_inplace (VEC x, double number) {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] = number - x [i];
+}
+inline static void VECsubtract_inplace (VEC x, constVEC y) {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] -= y [i];
+}
+inline static void VECsubtractReversed_inplace (VEC x, constVEC y) {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] = y [i] - x [i];
+}
+inline static autoVEC VECsubtract (constVEC x, double y) {
+	autoVEC result (x.size, kTensorInitializationType::RAW);
+	for (integer i = 1; i <= x.size; i ++)
+		result [i] = x [i] - y;
 	return result;
 }
-inline static autoVEC sub_numvec (constVEC x, constVEC y) {
+inline static autoVEC VECsubtract (double x, constVEC y) {
+	autoVEC result (y.size, kTensorInitializationType::RAW);
+	for (integer i = 1; i <= y.size; i ++)
+		result [i] = x - y [i];
+	return result;
+}
+inline static autoVEC VECsubtract (constVEC x, constVEC y) {
 	if (x.size != y.size) return autoVEC { };
 	autoVEC result (x.size, kTensorInitializationType::RAW);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] - y [i];
 	return result;
 }
-inline static autoMAT sub_nummat (constMAT x, constMAT y) {
-	if (x.nrow != y.nrow || x.ncol != y.ncol) return autoMAT { };
-	autoMAT result (x.nrow, x.ncol, kTensorInitializationType::RAW);
-	for (integer irow = 1; irow <= x.nrow; irow ++) {
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			result [irow] [icol] = x [irow] [icol] - y [irow] [icol];
-	}
-	return result;
-}
-
-inline static autoVEC to_numvec (integer to) {
-	autoVEC result (to, kTensorInitializationType::RAW);
-	for (integer i = 1; i <= to; i ++) {
-		result [i] = (double) i;
-	}
-	return result;
-}
 
 void VECsort_inplace (VEC x);
+
+inline static autoVEC VECto (integer to) {
+	autoVEC result (to, kTensorInitializationType::RAW);
+	for (integer i = 1; i <= to; i ++)
+		result [i] = (double) i;
+	return result;
+}
 
 /* End of file VEC.h */
