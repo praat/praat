@@ -657,7 +657,7 @@ static autoTextGrid SpeechSynthesizer_Sound_IntervalTier_align2 (SpeechSynthesiz
 }
 
 autoTextGrid SpeechSynthesizer_Sound_TextGrid_align (SpeechSynthesizer me, Sound thee, TextGrid him, integer tierNumber, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
-	try {//TODO: check not empty tier
+	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
 		autoTextGrid grid = SpeechSynthesizer_Sound_IntervalTier_align (me, thee, tier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration);
 		return grid;
