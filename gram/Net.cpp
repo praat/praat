@@ -1,6 +1,6 @@
 /* Net.cpp
  *
- * Copyright (C) 2017 Paul Boersma
+ * Copyright (C) 2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 //#include <OpenCL/OpenCL.h>
 #include "Net.h"
-#include "PAIRWISE_SUM.h"
 
 #include "oo_DESTROY.h"
 #include "Net_def.h"
@@ -76,7 +75,7 @@ autoNet Net_createEmpty (integer numberOfInputNodes) {
 	}
 }
 
-void Net_initAsDeepBeliefNet (Net me, numvec numbersOfNodes, bool inputsAreBinary) {
+void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary) {
 	if (numbersOfNodes.size < 2)
 		Melder_throw (U"A deep belief net should have at least two levels of nodes.");
 	integer numberOfLayers = numbersOfNodes.size - 1;
@@ -91,7 +90,7 @@ void Net_initAsDeepBeliefNet (Net me, numvec numbersOfNodes, bool inputsAreBinar
 	}
 }
 
-autoNet Net_createAsDeepBeliefNet (numvec numbersOfNodes, bool inputsAreBinary) {
+autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary) {
 	try {
 		autoNet me = Thing_new (Net);
 		Net_initAsDeepBeliefNet (me.get(), numbersOfNodes, inputsAreBinary);
@@ -465,12 +464,12 @@ autoMatrix Net_extractWeights (Net me, integer layerNumber) {
 	}
 }
 
-autonummat structRBMLayer :: v_getWeights_nummat () {
-	return copy_nummat ({ our weights, our numberOfInputNodes, our numberOfOutputNodes });
+autoMAT structRBMLayer :: v_getWeights () {
+	return MATcopy (constMAT (our weights, our numberOfInputNodes, our numberOfOutputNodes));
 }
 
-autonummat Net_getWeights_nummat (Net me, integer layerNumber) {
-	return my layers->at [layerNumber] -> v_getWeights_nummat ();
+autoMAT Net_getWeights (Net me, integer layerNumber) {
+	return my layers->at [layerNumber] -> v_getWeights ();
 }
 
 /* End of file Net.cpp */

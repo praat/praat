@@ -229,7 +229,7 @@ integer EditCostsTable_getSourceIndex (EditCostsTable me, conststring32 symbol) 
 }
 
 void EditCostsTable_setInsertionCosts (EditCostsTable me, conststring32 targets_string, double cost) {
-	autostring32vector targets = Melder_getTokens (targets_string);
+	autostring32vector targets = tokenizeStrVec (targets_string);
 	for (integer itarget = 1; itarget <= targets.size; itarget ++) {
 		integer irow = EditCostsTable_getTargetIndex (me, targets [itarget].get());
 		irow = irow > 0 ? irow : my numberOfRows - 1;   // nomatch condition to penultimate row
@@ -238,7 +238,7 @@ void EditCostsTable_setInsertionCosts (EditCostsTable me, conststring32 targets_
 }
 
 void EditCostsTable_setDeletionCosts (EditCostsTable me, conststring32 sources_string, double cost) {
-	autostring32vector sources = Melder_getTokens (sources_string);
+	autostring32vector sources = tokenizeStrVec (sources_string);
 	for (integer isource = 1; isource <= sources.size; isource ++) {
 		integer icol = EditCostsTable_getSourceIndex (me, sources [isource].get());
 		icol = icol > 0 ? icol : my numberOfColumns - 1;   // nomatch condition to penultimate column
@@ -262,8 +262,8 @@ double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
 
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, conststring32 targets_string, conststring32 sources_string, double cost) {
 	try {
-		autostring32vector targets = Melder_getTokens (targets_string);
-		autostring32vector sources = Melder_getTokens (sources_string);
+		autostring32vector targets = tokenizeStrVec (targets_string);
+		autostring32vector sources = tokenizeStrVec (sources_string);
 		autoNUMvector<integer> targetIndex (1, my numberOfRows);
 		autoNUMvector<integer> sourceIndex (1, my numberOfRows);
 		integer numberOfTargetSymbols = 0;

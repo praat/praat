@@ -121,16 +121,16 @@ GuiMenuItem Editor_addCommandScript (Editor me, conststring32 menuTitle, constst
 			autoEditorCommand cmd = Thing_new (EditorCommand);
 			cmd -> d_editor = me;
 			cmd -> menu = menu;
-			cmd -> itemTitle = Melder_dup_f (itemTitle);
+			cmd -> itemTitle = Melder_dup (itemTitle);
 			cmd -> itemWidget = script == nullptr ? GuiMenu_addSeparator (menu -> menuWidget) :
 				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.get());   // DANGLE BUG
 			cmd -> commandCallback = Editor_scriptCallback;
 			if (script [0] == U'\0') {
-				cmd -> script = Melder_dup_f (U"");
+				cmd -> script = Melder_dup (U"");
 			} else {
 				structMelderFile file { };
 				Melder_relativePathToFile (script, & file);
-				cmd -> script = Melder_dup_f (Melder_fileToPath (& file));
+				cmd -> script = Melder_dup (Melder_fileToPath (& file));
 			}
 			GuiMenuItem result = cmd -> itemWidget;
 			menu -> commands. addItem_move (cmd.move());

@@ -1,6 +1,5 @@
-#ifndef _xxStr_h_
-#define _xxStr_h_
-/* xxStr.h
+#pragma once
+/* STR.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -41,5 +40,4 @@ autostring32 replace_regexStr (conststring32 string, regexp *search_compiled,
 
 autostring32 rightStr (conststring32 str, integer newLength = 1);
 
-/* End of file xxStr.h */
-#endif
+/* End of file STR.h */

@@ -92,12 +92,12 @@ void NUMvector_free_generic (integer elementSize, byte *vector, integer lo) noex
 	theTotalNumberOfArrays -= 1;
 }
 
-byte * NUMvector_copy_generic (integer elementSize, byte *vector, integer lo, integer hi) {
+byte * NUMvector_copy_generic (integer elementSize, const byte *vector, integer lo, integer hi) {
 	try {
 		if (! vector)
 			return nullptr;
 		byte *result = NUMvector_generic (elementSize, lo, hi, false);
-		byte *p_cells = & vector [lo * elementSize];
+		const byte *p_cells = & vector [lo * elementSize];
 		byte *p_resultCells = & result [lo * elementSize];
 		integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
 		memcpy (p_resultCells, p_cells, (size_t) numberOfBytesToCopy);
@@ -107,18 +107,18 @@ byte * NUMvector_copy_generic (integer elementSize, byte *vector, integer lo, in
 	}
 }
 
-void NUMvector_copyElements_generic (integer elementSize, byte *fromVector, byte *toVector, integer lo, integer hi) {
+void NUMvector_copyElements_generic (integer elementSize, const byte *fromVector, byte *toVector, integer lo, integer hi) {
 	Melder_assert (fromVector && toVector);
-	byte *p_fromCells = & fromVector [lo * elementSize];
+	const byte *p_fromCells = & fromVector [lo * elementSize];
 	byte *p_toCells   = & toVector   [lo * elementSize];
 	integer numberOfBytesToCopy = (hi - lo + 1) * elementSize;
 	if (hi >= lo) memcpy (p_toCells, p_fromCells, (size_t) numberOfBytesToCopy);   // BUG this assumes contiguity
 }
 
-bool NUMvector_equal_generic (integer elementSize, byte *vector1, byte *vector2, integer lo, integer hi) {
+bool NUMvector_equal_generic (integer elementSize, const byte *vector1, const byte *vector2, integer lo, integer hi) {
 	Melder_assert (vector1 && vector2);
-	byte *p_cells1 = & vector1 [lo * elementSize];
-	byte *p_cells2 = & vector2 [lo * elementSize];
+	const byte *p_cells1 = & vector1 [lo * elementSize];
+	const byte *p_cells2 = & vector2 [lo * elementSize];
 	integer numberOfBytesToCompare = (hi - lo + 1) * elementSize;
 	return memcmp (p_cells1, p_cells2, (size_t) numberOfBytesToCompare) == 0;
 }

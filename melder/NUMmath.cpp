@@ -19,7 +19,6 @@
 /*
  * pb 2002/03/07 GPL
  * pb 2003/07/09 gsl
- * pb 2005/07/08 NUMpow
  * pb 2008/01/19 double
  * pb 2008/09/21 NUMshift
  * pb 2008/09/22 NUMscale
@@ -27,8 +26,6 @@
  */
 
 #include "melder.h"
-
-double NUMpow (double base, double exponent) { return base <= 0.0 ? 0.0 : pow (base, exponent); }
 
 void NUMshift (double *x, double xfrom, double xto) {
 	if (*x == xfrom) *x = xto; else *x += xto - xfrom;

@@ -88,7 +88,7 @@ autoConfusion Confusion_create (integer numberOfStimuli, integer numberOfRespons
 
 autoConfusion Confusion_createSimple (conststring32 labels_string) {
 	try {
-		autostring32vector labels = Melder_getTokens (labels_string);
+		autostring32vector labels = tokenizeStrVec (labels_string);
 		Melder_require (labels.size > 0, U"There should be at least one label.");
 		
 		autoConfusion me = Confusion_create (labels.size, labels.size);
@@ -141,8 +141,8 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 void Confusion_getEntropies (Confusion me, double *p_h, double *p_hx, double *p_hy,
 	double *p_hygx, double *p_hxgy, double *p_uygx, double *p_uxgy, double *p_uxy)
 {
-	autonumvec rowSum (my numberOfRows, kTensorInitializationType::ZERO);
-	autonumvec colSum (my numberOfColumns, kTensorInitializationType::ZERO);
+	autoVEC rowSum (my numberOfRows, kTensorInitializationType::ZERO);
+	autoVEC colSum (my numberOfColumns, kTensorInitializationType::ZERO);
 	double totalSum = 0.0;
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -461,7 +461,7 @@ autoConfusion Confusion_group (Confusion me, conststring32 labels, conststring32
 
 autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		autostring32vector labels = Melder_getTokens (labels_string);
+		autostring32vector labels = tokenizeStrVec (labels_string);
 		integer ncondense = labels.size;
 		autoNUMvector<integer> irow (1, my numberOfRows);
 
@@ -515,7 +515,7 @@ autoConfusion Confusion_groupStimuli (Confusion me, conststring32 labels_string,
 
 autoConfusion Confusion_groupResponses (Confusion me, conststring32 labels_string, conststring32 newLabel, integer newpos) {
 	try {
-		autostring32vector labels = Melder_getTokens (labels_string);
+		autostring32vector labels = tokenizeStrVec (labels_string);
 		integer ncondense = labels.size;
 		autoNUMvector<integer> icol (1, my numberOfColumns);
 

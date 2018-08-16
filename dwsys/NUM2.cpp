@@ -116,31 +116,20 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 	MelderInfo_close ();
 }
 
-static void numvec_centre_inplace (numvec x, double *p_mean) {
-	double xmean;
-	sum_mean_scalar (x, nullptr, & xmean);
-	for (integer i = 1; i <= x.size; i ++) {
-		x [i] -= xmean;
-	}
-	if (p_mean) {
-		*p_mean = xmean;
-	}
-}
-
 void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
 	for (integer i = rb; i <= re; i ++) {
-		numvec_centre_inplace ({ a [i], ce - cb + 1 }, nullptr);
+		VECcentre_inplace (VEC (a [i], ce - cb + 1));
 	}
 }
 
 void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres) {
-	autonumvec colvec (re - rb + 1, kTensorInitializationType :: RAW);
+	autoVEC colvec (re - rb + 1, kTensorInitializationType :: RAW);
 	for (integer j = cb; j <= ce; j ++) {
 		for (integer i = rb; i <= re; i ++) {
 			colvec [i - rb + 1] = a [i] [j];
 		}
 		double colmean;
-		numvec_centre_inplace (colvec.get(), & colmean);
+		VECcentre_inplace (colvec.get(), & colmean);
 		for (integer i = rb; i <= re; i ++) {
 			a [i] [j] = colvec [i - rb + 1];
 		}
@@ -2946,7 +2935,7 @@ void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, i
 }
 
 void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer n, double *w) {
-	autonummat g (n, n, kTensorInitializationType :: RAW);
+	autoMAT g (n, n, kTensorInitializationType :: RAW);
 	/*
 		1. Calculate the Green matrix G = |point [i]-point [j]|^2 (ln (|point [i]-point [j]|) - 1.0)
 		2. Solve z = G.w for w

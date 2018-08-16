@@ -108,8 +108,8 @@ Thing_define (UiField, Thing) {
 	double realValue;
 	integer integerValue, integerDefaultValue;
 	autostring32 stringValue, stringDefaultValue;
-	autonumvec numericVectorValue;
-	autonummat numericMatrixValue;
+	autoVEC numericVectorValue;
+	autoMAT numericMatrixValue;
 	Graphics_Colour colourValue;
 	OrderedOf<structUiOption> options;
 	integer numberOfStrings;
@@ -129,8 +129,8 @@ Thing_define (UiField, Thing) {
 	bool *boolVariable;
 	conststring32 *stringVariable;
 	Graphics_Colour *colourVariable;
-	numvec *numericVectorVariable;
-	nummat *numericMatrixVariable;
+	constVEC *numericVectorVariable;
+	constMAT *numericMatrixVariable;
 
 	int subtract;
 
@@ -196,8 +196,8 @@ UiField UiForm_addSentence (UiForm me, conststring32 *variable, conststring32 va
 UiField UiForm_addLabel (UiForm me, conststring32 *variable, conststring32 label);
 UiField UiForm_addBoolean (UiForm me, bool *variable, conststring32 variableName, conststring32 label, bool defaultValue);
 UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addNumvec (UiForm me, numvec *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
-UiField UiForm_addNummat (UiForm me, nummat *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
+UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue);
 UiField UiForm_addRadio (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);
 UiOption UiRadio_addButton (UiField me, conststring32 label);
 UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, int defaultValue, int base);

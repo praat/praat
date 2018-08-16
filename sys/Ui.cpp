@@ -230,13 +230,13 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::NUMVEC_:
 		{
 			my stringValue = GuiText_getString (my text);
-			numvec result;
+			VEC result;
 			bool owned;
 			Interpreter_numericVectorExpression (nullptr, my stringValue.get(), & result, & owned);
 			if (owned) {
 				my numericVectorValue. adoptFromAmbiguousOwner (result);
 			} else {
-				my numericVectorValue = copy_numvec (result);
+				my numericVectorValue = VECcopy (result);
 			}
 			if (my numericVectorVariable)
 				*my numericVectorVariable = my numericVectorValue.get();
@@ -245,13 +245,13 @@ static void UiField_widgetToValue (UiField me) {
 		case _kUiField_type::NUMMAT_:
 		{
 			my stringValue = GuiText_getString (my text);
-			nummat result;
+			MAT result;
 			bool owned;
 			Interpreter_numericMatrixExpression (nullptr, my stringValue.get(), & result, & owned);
 			if (owned) {
 				my numericMatrixValue. adoptFromAmbiguousOwner (result);
 			} else {
-				my numericMatrixValue = copy_nummat (result);
+				my numericMatrixValue = MATcopy (result);
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();
@@ -676,7 +676,7 @@ UiField UiForm_addText (UiForm me, conststring32 *variable, conststring32 variab
 	return thee;
 }
 
-UiField UiForm_addNumvec (UiForm me, numvec *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addNumvec (UiForm me, constVEC *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NUMVEC_, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericVectorVariable = variable;
@@ -684,7 +684,7 @@ UiField UiForm_addNumvec (UiForm me, numvec *variable, conststring32 variableNam
 	return thee;
 }
 
-UiField UiForm_addNummat (UiForm me, nummat *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
+UiField UiForm_addNummat (UiForm me, constMAT *variable, conststring32 variableName, conststring32 name, conststring32 defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::NUMMAT_, name);
 	thy stringDefaultValue = Melder_dup (defaultValue);
 	thy numericMatrixVariable = variable;
@@ -1256,7 +1256,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				my numericVectorValue. adoptFromAmbiguousOwner (arg -> numericVector);
 				arg -> owned = false;
 			} else {
-				my numericVectorValue = copy_numvec (arg -> numericVector);
+				my numericVectorValue = VECcopy (arg -> numericVector);
 			}
 			if (my numericVectorVariable)
 				*my numericVectorVariable = my numericVectorValue.get();
@@ -1270,7 +1270,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				my numericMatrixValue. adoptFromAmbiguousOwner (arg -> numericMatrix);
 				arg -> owned = false;
 			} else {
-				my numericMatrixValue = copy_nummat (arg -> numericMatrix);
+				my numericMatrixValue = MATcopy (arg -> numericMatrix);
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();
@@ -1438,7 +1438,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::SENTENCE_:
 		case _kUiField_type::TEXT_:
 		{
-			my stringValue = Melder_dup_f (string);
+			my stringValue = Melder_dup (string);
 			if (my stringVariable)
 				*my stringVariable = my stringValue.get();   // BUG dangle
 		}
@@ -1497,7 +1497,7 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		break;
 		case _kUiField_type::COLOUR_:
 		{
-			autostring32 string2 = Melder_dup_f (string);
+			autostring32 string2 = Melder_dup (string);
 			if (colourToValue (me, string2.get())) {
 				/* OK */
 			} else {

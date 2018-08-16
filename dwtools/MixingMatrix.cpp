@@ -33,7 +33,7 @@ autoMixingMatrix MixingMatrix_create (integer numberOfOutputChannels, integer nu
 
 autoMixingMatrix MixingMatrix_createSimple (integer numberOfOutputChannels, integer numberOfInputChannels, conststring32 elements_string) {
 	try {
-		autostring32vector elements = Melder_getTokens (elements_string);
+		autostring32vector elements = tokenizeStrVec (elements_string);
 		integer inum = 1, ntokens = elements.size;
 		if (ntokens == 0)
 			Melder_throw (U"No matrix elements.");

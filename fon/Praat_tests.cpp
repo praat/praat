@@ -297,27 +297,27 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_INNER: {
 			int size = Melder_atoi (arg2);
-			autonumvec x { size, kTensorInitializationType::RAW }, y { size, kTensorInitializationType::RAW };
+			autoVEC x { size, kTensorInitializationType::RAW }, y { size, kTensorInitializationType::RAW };
 			for (int64 i = 1; i <= size; i ++) {
 				x [i] = NUMrandomGauss (0.0, 1.0);
 				y [i] = NUMrandomGauss (0.0, 1.0);
 			}
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				z += inner_scalar (x.get(), y.get());
+				z += NUMinner (x.get(), y.get());
 			}
 			t = Melder_stopwatch () / size;   // 0.43 ns per multiplication-addition pair
 			MelderInfo_writeLine (z);
 		} break;
 		case kPraatTests::TIME_OUTER_NUMMAT: {
 			int nrow = 100, ncol = 100;
-			numvec x { NUMvector<double> (1, nrow), nrow }, y { NUMvector<double> (1, ncol), ncol };
+			VEC x { NUMvector<double> (1, nrow), nrow }, y { NUMvector<double> (1, ncol), ncol };
 			for (int64 i = 1; i <= nrow; i ++)
 				x.at [i] = NUMrandomGauss (0.0, 1.0);
 			for (int64 i = 1; i <= ncol; i ++)
 				y.at [i] = NUMrandomGauss (0.0, 1.0);
 			for (int64 i = 1; i <= n; i ++) {
-				const autonummat mat = outer_nummat (x, y);
+				const autoMAT mat = MATouter (x, y);
 			}
 			t = Melder_stopwatch () / nrow / ncol;   // 0.29 ns, i.e. less than one clock cycle per cell
 			NUMvector_free (x.at, 1);
@@ -350,12 +350,12 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_SUM: {
 			integer size = Melder_atoi (arg2);
-			autonumvec x { size, kTensorInitializationType::RAW };
+			autoVEC x { size, kTensorInitializationType::RAW };
 			for (integer i = 1; i <= size; i ++)
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				double sum = sum_scalar (x.get());
+				double sum = NUMsum (x.get());
 				z += sum;
 			}
 			t = Melder_stopwatch () / size;   // for size == 100: 0.31 ns
@@ -363,12 +363,12 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_MEAN: {
 			integer size = Melder_atoi (arg2);
-			autonumvec x { size, kTensorInitializationType::RAW };
+			autoVEC x { size, kTensorInitializationType::RAW };
 			for (integer i = 1; i <= size; i ++)
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				double sum = mean_scalar (x.get());
+				double sum = NUMmean (x.get());
 				z += sum;
 			}
 			t = Melder_stopwatch () / size;   // for size == 100: 0.34 ns
@@ -376,12 +376,12 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_STDEV: {
 			integer size = 10000;
-			autonumvec x { size, kTensorInitializationType::RAW };
+			autoVEC x { size, kTensorInitializationType::RAW };
 			for (integer i = 1; i <= size; i ++)
 				x [i] = NUMrandomGauss (0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
-				double stdev = stdev_scalar (x.get());
+				double stdev = NUMstdev (x.get());
 				z += stdev;
 			}
 			t = Melder_stopwatch () / size;
@@ -390,20 +390,20 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_ALLOC: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				autonumvec result (size, kTensorInitializationType::RAW);
+				autoVEC result (size, kTensorInitializationType::RAW);
 			}
 			t = Melder_stopwatch () / size;
 		} break;
 		case kPraatTests::TIME_ALLOC0: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				autonumvec result (size, kTensorInitializationType::RAW);
+				autoVEC result (size, kTensorInitializationType::RAW);
 			}
 			t = Melder_stopwatch () / size;
 		} break;
 		case kPraatTests::TIME_ZERO: {
 			integer size = Melder_atoi (arg2);
-			autonumvec result { size, kTensorInitializationType::RAW };
+			autoVEC result { size, kTensorInitializationType::RAW };
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				for (integer i = 1; i <= size; i ++) {
@@ -499,8 +499,9 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				//data11 = nullptr;   // disabled implicit assignment of pointer to autopointer
 				fprintf (stderr, "21\n");
 			}
-			int numberOfThingsAfter = theTotalNumberOfThings;
-			fprintf (stderr, "Number of things: before %d, after %d\n", numberOfThingsBefore, numberOfThingsAfter);
+			integer numberOfThingsAfter = theTotalNumberOfThings;
+			fprintf (stderr, "Number of things: before %ld, after %ld\n",
+					(long_not_integer) numberOfThingsBefore, (long_not_integer) numberOfThingsAfter);
 			#if 0
 				MelderCallback<void,structDaata>::FunctionType f;
 				typedef void (*DataFunc) (Daata);
@@ -521,26 +522,31 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				autoMelderAsynchronous y = x.move();   // defined move constructor
 				//x = y;   // deleted copy assignment
 				x = y.move();   // defined move assignment
-				autonumvec a;
-				autonumvec b = a.move();
-				const autonumvec c;
-				const autonumvec d { };
+				autoVEC a;
+				autoVEC b = a.move();
+				const autoVEC c;
+				const autoVEC d { };
 				#if 0
 				double *e;
-				const autonumvec f { e, 10 };
+				const autoVEC f { e, 10 };
 				#endif
-				const autonumvec g { 100, kTensorInitializationType::ZERO };
+				const autoVEC g { 100, kTensorInitializationType::ZERO };
 				//return f;   // call to deleted constructor
-				numvec h;
-				autonumvec j;
-				numvec *ph = & h;
-				autonumvec *pj = & j;
+				VEC h;
+				autoVEC j;
+				VEC *ph = & h;
+				autoVEC *pj = & j;
 				ph = pj;   // (in)correctly? accepted
 				//pj = ph;   // correctly ruled out
 				#endif
 				autoSound sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.0);
 				sound = Sound_create (1, 0.0, 1.0, 10000, 0.0001, 0.00005);
 				Melder_casual (U"hello ", sound -> dx);
+				autostring32vector v;
+				mutablestring32 *pm = v.peek2();
+				const mutablestring32 *pcm = v.peek2();
+				//conststring32 *pc = v.peek2();
+				const conststring32 *pcc = v.peek2();
 			}
 		} break;
 		case kPraatTests::FILEINMEMORYMANAGER_IO: {

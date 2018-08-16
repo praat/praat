@@ -36,7 +36,7 @@ void NUMvector_free_generic (integer elementSize, byte *v, integer lo) noexcept;
 		lo must have the same values as with the creation of the vector.
 */
 
-byte * NUMvector_copy_generic (integer elementSize, byte *v, integer lo, integer hi);
+byte * NUMvector_copy_generic (integer elementSize, const byte *v, integer lo, integer hi);
 /*
 	Function:
 		copy (part of) a vector v, which need not have been created with NUMvector, to a new one.
@@ -44,13 +44,13 @@ byte * NUMvector_copy_generic (integer elementSize, byte *v, integer lo, integer
 		if v != nullptr, the values v [lo..hi] must exist.
 */
 
-void NUMvector_copyElements_generic (integer elementSize, byte *v, byte *to, integer lo, integer hi);
+void NUMvector_copyElements_generic (integer elementSize, const byte *v, byte *to, integer lo, integer hi);
 /*
 	copy the vector elements v [lo..hi] to those of a vector 'to'.
 	These vectors need not have been created by NUMvector.
 */
 
-bool NUMvector_equal_generic (integer elementSize, byte *v1, byte *v2, integer lo, integer hi);
+bool NUMvector_equal_generic (integer elementSize, const byte *v1, const byte *v2, integer lo, integer hi);
 /*
 	return true if the vector elements v1 [lo..hi] are equal
 	to the corresponding elements of the vector v2; otherwise, return false.
@@ -130,19 +130,19 @@ void NUMvector_free (T* ptr, integer from) noexcept {
 }
 
 template <class T>
-T* NUMvector_copy (T* ptr, integer lo, integer hi) {
-	T* result = reinterpret_cast <T*> (NUMvector_copy_generic (sizeof (T), reinterpret_cast <byte *> (ptr), lo, hi));
+T* NUMvector_copy (const T* ptr, integer lo, integer hi) {
+	T* result = reinterpret_cast <T*> (NUMvector_copy_generic (sizeof (T), reinterpret_cast <const byte *> (ptr), lo, hi));
 	return result;
 }
 
 template <class T>
-bool NUMvector_equal (T* v1, T* v2, integer lo, integer hi) {
-	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <byte *> (v1), reinterpret_cast <byte *> (v2), lo, hi);
+bool NUMvector_equal (const T* v1, const T* v2, integer lo, integer hi) {
+	return NUMvector_equal_generic (sizeof (T), reinterpret_cast <const byte *> (v1), reinterpret_cast <const byte *> (v2), lo, hi);
 }
 
 template <class T>
-void NUMvector_copyElements (T* vfrom, T* vto, integer lo, integer hi) {
-	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <byte *> (vfrom), reinterpret_cast <byte *> (vto), lo, hi);
+void NUMvector_copyElements (const T* vfrom, T* vto, integer lo, integer hi) {
+	NUMvector_copyElements_generic (sizeof (T), reinterpret_cast <const byte *> (vfrom), reinterpret_cast <byte *> (vto), lo, hi);
 }
 
 template <class T>
@@ -294,27 +294,27 @@ public:
 
 #pragma mark - TENSOR
 /*
-	numvec and nummat: the type declarations are in melder.h, the function declarations in tensor.h
+	VEC and MAT: the type declarations are in melder.h, the function declarations in tensor.h
 
 	Initialization (tested in praat.cpp):
-		numvec x;                  // does not initialize x
-		numvec x { };              // initializes x.at to nullptr and x.size to 0
-		numvec x { 100, false };   // initializes x to 100 uninitialized values
-		numvec x { 100, true };    // initializes x to 100 zeroes
+		VEC x;                  // does not initialize x
+		VEC x { };              // initializes x.at to nullptr and x.size to 0
+		VEC x { 100, false };   // initializes x to 100 uninitialized values
+		VEC x { 100, true };    // initializes x to 100 zeroes
 		NUMvector<double> a (1, 100);
-		numvec x { a, 100 };       // initializes x to 100 values from a base-1 array
+		VEC x { a, 100 };       // initializes x to 100 values from a base-1 array
 
-		autonumvec y;                  // initializes y.at to nullptr and y.size to 0
-		autonumvec y { 100, false };   // initializes y to 100 uninitialized values, having ownership
-		autonumvec y { 100, true };    // initializes y to 100 zeroes, having ownership
-		autonumvec y { x };            // initializes y to the content of x, taking ownership (explicit, so not "y = x")
-		numvec z = releaseToAmbiguousOwner();   // releases ownership, x.at becoming nullptr
+		autoVEC y;                  // initializes y.at to nullptr and y.size to 0
+		autoVEC y { 100, false };   // initializes y to 100 uninitialized values, having ownership
+		autoVEC y { 100, true };    // initializes y to 100 zeroes, having ownership
+		autoVEC y { x };            // initializes y to the content of x, taking ownership (explicit, so not "y = x")
+		VEC z = releaseToAmbiguousOwner();   // releases ownership, x.at becoming nullptr
 		"}"                            // end of scope destroys x.at if not nullptr
-		autonumvec z = y.move()        // moves the content of y to z, emptying y
+		autoVEC z = y.move()        // moves the content of y to z, emptying y
 
-	To return an autonumvec from a function, transfer ownership like this:
-		autonumvec foo () {
-			autonumvec x { 100, false };
+	To return an autoVEC from a function, transfer ownership like this:
+		autoVEC foo () {
+			autoVEC x { 100, false };
 			... // fill in the 100 values
 			return x;
 		}
@@ -350,6 +350,24 @@ public:
 protected:
 	void _initAt (integer givenSize, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
+};
+
+template <typename T>
+class constvector {
+public:
+	const T * /*const*/ at;
+	/*const*/ integer size;
+	constvector (): at (nullptr), size (0) { }
+	constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	constvector (vector<T> vec): at (vec.at), size (vec.size) { }
+	//constvector (const constvector& other): at (other.at), size (other.size) { }
+	//constvector& operator= (const constvector& other) {
+	//	our at = other.at;
+	//	our size = other.size;
+	//}
+	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
+		return our at [i];
+	}
 };
 
 /*
@@ -406,10 +424,11 @@ public:
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 };
 
-using numvec = vector <double>;
-using autonumvec = autovector <double>;
+using VEC = vector <double>;
+using constVEC = constvector <double>;
+using autoVEC = autovector <double>;
 
-#define empty_numvec  numvec { nullptr, 0 }
+#define emptyVEC  VEC { nullptr, 0 }
 
 template <typename T>
 class automatrix;   // forward declaration, needed in the declaration of matrix
@@ -429,7 +448,7 @@ public:
 	T *& operator[] (integer i) {
 		return our at [i];
 	}
-	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autonummat)
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our at) {
 			our _freeAt ();
 			our at = nullptr;
@@ -440,6 +459,19 @@ public:
 protected:
 	void _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
+};
+
+template <typename T>
+class constmatrix {
+public:
+	const T * const * /*const*/ at;
+	/*const*/ integer nrow, ncol;
+	constmatrix (): at (nullptr), nrow (0), ncol (0) { }
+	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
+	const T * const & operator[] (integer i) const {
+		return our at [i];
+	}
 };
 
 /*
@@ -462,13 +494,13 @@ public:
 		if (our at) our _freeAt ();
 	}
 	matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
-	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-autonummat
+	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-autoMAT
 		our reset();
 		our at = given.at;
 		our nrow = given.nrow;
 		our ncol = given.ncol;
 	}
-	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autonummat
+	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autoMAT
 		T **oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		return { oldAt, our nrow, our ncol };
@@ -480,7 +512,7 @@ public:
 	automatrix& operator= (const automatrix&) = delete;   // disable copy assignment
 	/*
 		Enable moving of temporaries or (for variables) via an explicit move().
-		This implements buying a payload from another autonummat (which involves destroying our current payload).
+		This implements buying a payload from another autoMAT (which involves destroying our current payload).
 	*/
 	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor for r-values (temporaries)
 		other.at = nullptr;   // disown source
@@ -500,13 +532,22 @@ public:
 	automatrix&& move () noexcept { return static_cast <automatrix&&> (*this); }
 };
 
-using nummat = matrix <double>;
-using autonummat = automatrix <double>;
+using MAT = matrix <double>;
+using constMAT = constmatrix <double>;
+using autoMAT = automatrix <double>;
 
-#define empty_nummat  nummat { nullptr, 0, 0 }
+#define emptyMAT  MAT { nullptr, 0, 0 }
 
-conststring32 Melder_numvec (numvec value);
-conststring32 Melder_nummat (nummat value);
+conststring32 Melder_VEC (constVEC value);
+conststring32 Melder_MAT (constMAT value);
+
+inline static VEC asVEC (MAT x) {
+	return VEC (x [1], x.nrow * x.ncol);
+}
+
+inline static constVEC asVEC (constMAT x) {
+	return constVEC (x [1], x.nrow * x.ncol);
+}
 
 /* End of file melder_vector.h */
 #endif

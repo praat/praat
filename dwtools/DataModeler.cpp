@@ -968,13 +968,13 @@ void DataModeler_reportChiSquared (DataModeler me, int weighDataType) {
 double DataModeler_estimateSigmaY (DataModeler me) {
 	try {
 		integer numberOfDataPoints = 0;
-		autonumvec y (my numberOfDataPoints, kTensorInitializationType::RAW);
+		autoVEC y (my numberOfDataPoints, kTensorInitializationType::RAW);
 		for (integer i = 1; i <= my numberOfDataPoints; i ++) {
 			if (my dataPointStatus [i] != DataModeler_DATA_INVALID)
 				y [++ numberOfDataPoints] = my y [i];
 		}
 		y.size = numberOfDataPoints;   // fake shrink
-		return stdev_scalar (y.get());
+		return NUMstdev (y.get());
 	} catch (MelderError) {
 		Melder_throw (U"Cannot estimate sigma.");
 	}

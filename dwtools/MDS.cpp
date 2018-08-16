@@ -482,7 +482,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		// Scale row vectors and column vectors to configuration.
 
 		for (integer j = 1; j <= numberOfDimensions; j ++) {
-			double rootsum = sqrt (sum), xfactor, yfactor, lambda = svd -> d [j];
+			double rootsum = sqrt ((double) sum), xfactor, yfactor, lambda = svd -> d [j];
 			if (scaling == 1) {
 
 				// Scale row points in the centre of gravity of column points (eq 8.5.a)

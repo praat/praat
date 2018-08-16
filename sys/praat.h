@@ -309,13 +309,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define NUMVEC(numericVectorVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
-		static numvec numericVectorVariable; \
+		static constVEC numericVectorVariable; \
 		UiForm_addNumvec (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, U"", defaultStringValue);
 
 #define NUMMAT(numericMatrixVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
-		static nummat numericMatrixVariable; \
+		static constMAT numericMatrixVariable; \
 		UiForm_addNummat (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultStringValue);
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \

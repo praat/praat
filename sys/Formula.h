@@ -61,8 +61,8 @@ typedef struct structStackel {
 		double number;
 		autostring32 _string;
 		Daata object;
-		numvec numericVector;
-		nummat numericMatrix;
+		VEC numericVector;
+		MAT numericMatrix;
 		InterpreterVariable variable;
 	};
 	structStackel () {
@@ -80,10 +80,10 @@ typedef struct structStackel {
 			our _string. reset();
 		} else if (our which == Stackel_NUMERIC_VECTOR) {
 			if (our owned)
-				our numericVector. reset();   // ambiguous owner happens to own; this is the reason why a numvec has a reset() method
+				our numericVector. reset();   // ambiguous owner happens to own; this is the reason why a VEC has a reset() method
 		} else if (our which == Stackel_NUMERIC_MATRIX) {
 			if (our owned)
-				our numericMatrix. reset();   // ambiguous owner happens to own; this is the reason why a nummat has a reset() method
+				our numericMatrix. reset();   // ambiguous owner happens to own; this is the reason why a MAT has a reset() method
 		}
 	}
 	~structStackel () {   // union-safe destruction: test which variant we have
@@ -118,15 +118,15 @@ struct Formula_Result {
 	int expressionType;
 	double numericResult;
 	autostring32 stringResult;
-	numvec numericVectorResult;
-	nummat numericMatrixResult;
+	VEC numericVectorResult;
+	MAT numericMatrixResult;
 	bool owned;
 	Formula_Result () {
 		our expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 		our numericResult = 0.0;
 		our stringResult = autostring32();
-		our numericVectorResult = empty_numvec;
-		our numericMatrixResult = empty_nummat;
+		our numericVectorResult = emptyVEC;
+		our numericMatrixResult = emptyMAT;
 		our owned = false;
 	}
 	void reset () {

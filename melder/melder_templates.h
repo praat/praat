@@ -27,8 +27,13 @@ class MelderCallback {
 	public:
 		using FunctionType = Ret* (*) (T*, Args...);
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
-		template <typename T2  Melder_ENABLE_IF_ISA(T2,T), typename Ret2  Melder_ENABLE_IF_ISA(Ret2,Ret)>
-			MelderCallback (Ret2* (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
+		template <typename T2  /*Melder_ENABLE_IF_ISA(T2,T)*/, typename Ret2  /*Melder_ENABLE_IF_ISA(Ret2,Ret)*/>
+		MelderCallback (Ret2* (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) {
+			static_assert (std::is_base_of <T, T2> :: value,
+				"First argument of MelderCallback should have covariant type.");
+			static_assert (std::is_base_of <Ret, Ret2> :: value,
+				"Return type of MelderCallback should be covariant.");
+		};
 		Ret* operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const { return !! _f; }
 	private:
@@ -39,8 +44,11 @@ class MelderCallback <void, T, Args...> {   // specialization
 	public:
 		using FunctionType = void (*) (T*, Args...);
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
-		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
-			MelderCallback (void (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
+		template <typename T2  /*Melder_ENABLE_IF_ISA(T2,T)*/>
+		MelderCallback (void (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) {
+			static_assert (std::is_base_of <T, T2> :: value,
+				"First argument of MelderCallback should have covariant type.");
+		};
 		void operator () (T* data, Args ... args) { _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const { return !! _f; }
 	private:
@@ -51,8 +59,11 @@ class MelderCallback <int, T, Args...> {   // specialization
 	public:
 		using FunctionType = int (*) (T*, Args...);
 		MelderCallback (FunctionType f = nullptr) : _f (f) { }
-		template <typename T2  Melder_ENABLE_IF_ISA(T2,T)>
-			MelderCallback (int (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) { };
+		template <typename T2  /*Melder_ENABLE_IF_ISA(T2,T)*/>
+		MelderCallback (int (*f) (T2*, Args...)) : _f (reinterpret_cast<FunctionType> (f)) {
+			static_assert (std::is_base_of <T, T2> :: value,
+				"First argument of MelderCallback should have covariant type.");
+		};
 		int operator () (T* data, Args ... args) { return _f (data, std::forward<Args>(args)...); }
 		explicit operator bool () const { return !! _f; }
 	private:

@@ -2,7 +2,7 @@
 #define _Net_h_
 /* Net.h
  *
- * Copyright (C) 2017 Paul Boersma
+ * Copyright (C) 2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@
 
 #include "Net_def.h"
 
-void Net_initAsDeepBeliefNet (Net me, numvec numbersOfNodes, bool inputsAreBinary);
+void Net_initAsDeepBeliefNet (Net me, constVEC numbersOfNodes, bool inputsAreBinary);
 
 autoNet Net_createEmpty (integer numberOfInputNodes);
 
-autoNet Net_createAsDeepBeliefNet (numvec numbersOfNodes, bool inputsAreBinary);
+autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary);
 
 void Net_addRBMLayer (Net me, integer numberOfOutputNodes);
 void Net_addFullyConnectedLayer (Net me, integer numberOfOutputNodes);
@@ -59,7 +59,7 @@ autoMatrix Net_extractInputBiases (Net me, integer layerNumber);
 autoMatrix Net_extractOutputBiases (Net me, integer layerNumber);
 autoMatrix Net_extractWeights (Net me, integer layerNumber);
 
-autonummat Net_getWeights_nummat (Net me, integer layerNumber);
+autoMAT Net_getWeights (Net me, integer layerNumber);
 
 /* End of file Net.h */
 #endif

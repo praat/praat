@@ -178,7 +178,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	}
 	if (wasBackgrounding) praat_background ();
 	/* BUG: should also restore praatP. editor. */
-	thePauseForm. reset();   // undangle
+	thePauseForm. releaseToUser();   // undangle
 	thePauseFormRadio = nullptr;   // undangle
 	if (thePauseForm_clicked == -1) {
 		Interpreter_stop (interpreter);

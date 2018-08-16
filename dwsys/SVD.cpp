@@ -237,7 +237,7 @@ integer SVD_getMinimumNumberOfSingularValues (SVD me, double fractionOfSumOfSing
 void SVD_solve2 (SVD me, double b [], double x [], double fractionOfSumOfSingularValues) {
 	try {
 		integer numberOfComponents = SVD_getMinimumNumberOfSingularValues (me, fractionOfSumOfSingularValues);
-		autonumvec t (my numberOfColumns, kTensorInitializationType:: RAW);
+		autoVEC t (my numberOfColumns, kTensorInitializationType:: RAW);
 
 		/*  Solve UDV' x = b.
 			Solution: x = V D^-1 U' b 

@@ -72,18 +72,17 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 #include "melder_textencoding.h"   // str32len_utf8, Melder_32to8
 #include "melder_atof.h"
 #include "melder_files.h"   // Melder_fopen, MelderFile, MelderDir
-#include "melder_vector.h"   // NUMvector, autoNUMmatrix, numvec, autonummat, Melder_numvec
+#include "melder_vector.h"   // NUMvector, autoNUMmatrix, VEC, autoMAT, Melder_VEC
 #include "melder_strvec.h"   // string32vector, autostring32vector (requires NUMvector)
-#include "melder_sort.h"   // NUMsort_d (requires numvec), NUMsort_str (requires string32vector)
+#include "melder_sort.h"   // NUMsort_d (requires VEC), NUMsort_str (requires string32vector)
 
-#include "MelderArg.h"   // MelderArg (requires Melder_double, MelderFile, Melder_numvec)
+#include "MelderArg.h"   // MelderArg (requires Melder_double, MelderFile, Melder_VEC)
 #include "melder_debug.h"   // trace (requires MelderFile, MelderArg), Melder_debug
 #include "MelderFile.h"   // MelderFile_open (requires MelderFile), MelderFile_write (requires MelderArg)
 #include "MelderString.h"   // MelderString_append (requires MelderArg)
 #include "melder_cat.h"   // Melder_cat (requires MelderArg)
 #include "melder_sprint.h"   // Melder_sprint (requires MelderArg)
 #include "melder_search.h"
-#include "melder_token.h"
 #include "melder_casual.h"
 #include "melder_info.h"
 #include "melder_error.h"   // Melder_throw (requires MelderArg)
@@ -137,7 +136,7 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 
 #include "melder_templates.h"   // Melder_ENABLE_IF_ISA, MelderCallback, MelderCompareHook
 
-#include "NUMmath.h"   // <math.h>, NUMpow, NUMpi, undefined
+#include "NUMmath.h"   // <math.h>, NUMpi, undefined
 #include "NUMspecfunc.h"
 #include "NUMear.h"
 #include "NUMinterpol.h"
@@ -147,9 +146,13 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 #include "NUMlinprog.h"
 
 #include "regularExp.h"
+#include "PAIRWISE_SUM.h"
 
-#include "xxStr.h"
-#include "xxVec.h"
+#include "NUM.h"
+#include "STR.h"
+#include "VEC.h"
+#include "MAT.h"
+#include "STRVEC.h"
 
 /* End of file melder.h */
 #endif
