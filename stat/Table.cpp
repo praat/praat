@@ -666,16 +666,16 @@ autoTable Table_extractRowsWhereColumn_string (Table me, integer columnNumber, k
 	}
 }
 
-static void Table_columns_checkExist (Table me, const conststring32 columnNames [], integer n) {
-	for (integer i = 1; i <= n; i ++) {
+static void Table_columns_checkExist (Table me, conststring32vector columnNames) {
+	for (integer i = 1; i <= columnNames.size; i ++) {
 		if (Table_findColumnIndexFromColumnLabel (me, columnNames [i]) == 0)
 			Melder_throw (me, U": column \"", columnNames [i], U"\" does not exist.");
 	}
 }
 
-static void Table_columns_checkCrossSectionEmpty (const conststring32 factors [], integer nfactors, const conststring32 vars [], integer nvars) {
-	for (integer ifactor = 1; ifactor <= nfactors; ifactor ++) {
-		for (integer ivar = 1; ivar <= nvars; ivar ++) {
+static void Table_columns_checkCrossSectionEmpty (conststring32vector factors, conststring32vector vars) {
+	for (integer ifactor = 1; ifactor <= factors.size; ifactor ++) {
+		for (integer ivar = 1; ivar <= vars.size; ivar ++) {
 			if (str32equ (factors [ifactor], vars [ivar]))
 				Melder_throw (U"Factor \"", factors [ifactor], U"\" is also used as dependent variable.");
 		}
@@ -696,27 +696,27 @@ autoTable Table_collapseRows (Table me, conststring32 factors_string, conststrin
 		autostring32vector factors = tokenizeStrVec (factors_string);
 		if (factors.size < 1)
 			Melder_throw (U"In order to pool table data, you must supply at least one independent variable.");
-		Table_columns_checkExist (me, factors.peek2(), factors.size);
+		Table_columns_checkExist (me, factors.get());
 
 		autostring32vector columnsToSum = tokenizeStrVec (columnsToSum_string);
-		Table_columns_checkExist (me, columnsToSum.peek2(), columnsToSum.size);
-		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToSum.peek2(), columnsToSum.size);
+		Table_columns_checkExist (me, columnsToSum.get());
+		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToSum.get());
 
 		autostring32vector columnsToAverage = tokenizeStrVec (columnsToAverage_string);
-		Table_columns_checkExist (me, columnsToAverage.peek2(), columnsToAverage.size);
-		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToAverage.peek2(), columnsToAverage.size);
+		Table_columns_checkExist (me, columnsToAverage.get());
+		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToAverage.get());
 
 		autostring32vector columnsToMedianize = tokenizeStrVec (columnsToMedianize_string);
-		Table_columns_checkExist (me, columnsToMedianize.peek2(), columnsToMedianize.size);
-		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToMedianize.peek2(), columnsToMedianize.size);
+		Table_columns_checkExist (me, columnsToMedianize.get());
+		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToMedianize.get());
 
 		autostring32vector columnsToAverageLogarithmically = tokenizeStrVec (columnsToAverageLogarithmically_string);
-		Table_columns_checkExist (me, columnsToAverageLogarithmically.peek2(), columnsToAverageLogarithmically.size);
-		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToAverageLogarithmically.peek2(), columnsToAverageLogarithmically.size);
+		Table_columns_checkExist (me, columnsToAverageLogarithmically.get());
+		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToAverageLogarithmically.get());
 
 		autostring32vector columnsToMedianizeLogarithmically = tokenizeStrVec (columnsToMedianizeLogarithmically_string);
-		Table_columns_checkExist (me, columnsToMedianizeLogarithmically.peek2(), columnsToMedianizeLogarithmically.size);
-		Table_columns_checkCrossSectionEmpty (factors.peek2(), factors.size, columnsToMedianizeLogarithmically.peek2(), columnsToMedianizeLogarithmically.size);
+		Table_columns_checkExist (me, columnsToMedianizeLogarithmically.get());
+		Table_columns_checkCrossSectionEmpty (factors.get(), columnsToMedianizeLogarithmically.get());
 
 		autoTable thee = Table_createWithoutColumnNames (0,
 				factors.size + columnsToSum.size + columnsToAverage.size + columnsToMedianize.size +
@@ -923,13 +923,13 @@ autoTable Table_rowsToColumns (Table me, conststring32 factors_string, integer c
 		integer numberOfFactors = factors_names.size;
 		if (numberOfFactors < 1)
 			Melder_throw (U"In order to nest table data, you should supply at least one independent variable.");
-		Table_columns_checkExist (me, factors_names.peek2(), numberOfFactors);
+		Table_columns_checkExist (me, factors_names.get());
 		autostring32vector columnsToExpand_names = tokenizeStrVec (columnsToExpand_string);
 		integer numberToExpand = columnsToExpand_names.size;
 		if (numberToExpand < 1)
 			Melder_throw (U"In order to nest table data, you should supply at least one dependent variable (to expand).");
-		Table_columns_checkExist (me, columnsToExpand_names.peek2(), numberToExpand);
-		Table_columns_checkCrossSectionEmpty (factors_names.peek2(), numberOfFactors, columnsToExpand_names.peek2(), numberToExpand);
+		Table_columns_checkExist (me, columnsToExpand_names.get());
+		Table_columns_checkCrossSectionEmpty (factors_names.get(), columnsToExpand_names.get());
 		autostring32vector levels_names = Table_getLevels_ (me, columnToTranspose);
 		integer numberOfLevels = levels_names.size;
 		/*

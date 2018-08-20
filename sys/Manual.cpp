@@ -63,11 +63,10 @@ static void menu_cb_writeAllToHtmlDir (Manual me, EDITOR_ARGS_FORM) {
 static void menu_cb_searchForPageList (Manual me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Search for page", nullptr)
 		static ManPages manPages;
-		static integer numberOfPages;
-		static char32 **pages;
+		static conststring32vector pages;
 		manPages = (ManPages) my data;
-		pages = ManPages_getTitles (manPages, & numberOfPages);
-		LIST (page, U"Page", manPages -> pages.size, pages, 1)
+		pages = ManPages_getTitles (manPages);
+		LIST (page, U"Page", pages, 1)
 	EDITOR_OK
 	EDITOR_DO
 		HyperPage_goToPage_i (me, page);

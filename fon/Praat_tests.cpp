@@ -534,6 +534,9 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				//return f;   // call to deleted constructor
 				VEC h;
 				autoVEC j;
+				//j = h;   // up assignment standardly correctly ruled out
+				//h = j;   // down assignment was explicitly ruled out as well
+				//h = VEC (j);
 				VEC *ph = & h;
 				autoVEC *pj = & j;
 				ph = pj;   // (in)correctly? accepted

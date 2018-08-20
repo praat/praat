@@ -113,7 +113,7 @@ double Melder_clock () {
 double Melder_stopwatch () {
 	static double lastTime;
 	double now = Melder_clock ();
-	double timeElapsed = lastTime == 0 ? -1.0 : now - lastTime;
+	double timeElapsed = ( lastTime == 0 ? -1.0 : now - lastTime );
 	//Melder_casual ("%ld %ld %ld %lf %lf", now, lastTime, now - lastTime, (now - lastTime) / (double) CLOCKS_PER_SEC, timeElapsed);
 	lastTime = now;
 	return timeElapsed;
@@ -129,6 +129,14 @@ void Melder_sleep (double duration) {
 		if (seconds > 0) sleep (seconds);
 		if (microseconds > 0) usleep (microseconds);
 	#endif
+}
+
+autostring32 STRdate () {
+	time_t today = time (nullptr);
+	autostring32 date = Melder_8to32 (ctime (& today));
+	mutablestring32 newline = str32chr (date.get(), U'\n');
+	if (newline) *newline = U'\0';
+	return date;
 }
 
 /* End of file melder_time.cpp */

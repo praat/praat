@@ -293,9 +293,9 @@ _form_inited_: \
 	OPTIONMENU_ENUM_FIELD (enumeratedVariable, labelText, EnumeratedType, defaultValue)
 
 
-#define LIST(integerVariable, labelText, numberOfStrings, strings, defaultValue) \
+#define LIST(integerVariable, labelText, strings, defaultValue) \
 	static integer integerVariable; \
-	UiForm_addList (cmd -> d_uiform.get(), & integerVariable, nullptr, nullptr, labelText, numberOfStrings, strings, defaultValue);
+	UiForm_addList (cmd -> d_uiform.get(), & integerVariable, nullptr, nullptr, labelText, strings, defaultValue);
 
 /*
 	Seven optional functions to change the content of a field on the basis of the current

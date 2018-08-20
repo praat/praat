@@ -176,10 +176,10 @@ static void Covariance_into_Covariance (Covariance me, Covariance thee) {
 	for (integer ic = 1; ic <= my numberOfColumns; ic ++) {
 		thy centroid [ic] = my centroid [ic];
 	}
-	thy columnLabels. copyElementsFrom (my columnLabels);
+	thy columnLabels. copyElementsFrom (my columnLabels.get());
 	// Are the matrix sizes equal
 	if (my numberOfRows == thy numberOfRows) {
-		thy rowLabels. copyElementsFrom (my rowLabels);
+		thy rowLabels. copyElementsFrom (my rowLabels.get());
 		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return;
 	} else {
@@ -1311,7 +1311,7 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 		Covariance cov = my covariances->at [1];
 		autoTableOfReal thee = TableOfReal_create (numberOfPoints, my dimension);
 		autoNUMvector<double> buf (1, my dimension);
-		thy columnLabels. copyElementsFrom_upTo (cov -> columnLabels, my dimension);
+		thy columnLabels. copyElementsFrom_upTo (cov -> columnLabels.get(), my dimension);
 			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			char32 *covname;

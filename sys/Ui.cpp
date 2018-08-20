@@ -712,9 +712,8 @@ UiField UiForm_addOptionMenu (UiForm me, int *intVariable, conststring32 *string
 	return thee;
 }
 
-UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, integer numberOfStrings, char32 **strings, integer defaultValue) {
+UiField UiForm_addList (UiForm me, integer *integerVariable, conststring32 *stringVariable, conststring32 variableName, conststring32 label, conststring32vector strings, integer defaultValue) {
 	UiField thee = UiForm_addField (me, _kUiField_type::LIST_, label);
-	thy numberOfStrings = numberOfStrings;
 	thy strings = strings;
 	thy integerDefaultValue = defaultValue;
 	thy integerVariable = integerVariable;
@@ -915,7 +914,7 @@ void UiForm_finish (UiForm me) {
 				field -> label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				field -> list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
-				for (integer i = 1; i <= field -> numberOfStrings; i ++) {
+				for (integer i = 1; i <= field -> strings.size; i ++) {
 					GuiList_insertItem (field -> list, field -> strings [i], 0);
 				}
 				GuiThing_show (field -> list);
@@ -1336,9 +1335,9 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 			if (arg -> which != Stackel_STRING)
 				Melder_throw (U"List argument \"", my name.get(), U"\" should be a string, not ", arg -> whichText(), U".");
 			integer i = 1;
-			for (; i <= my numberOfStrings; i ++)
+			for (; i <= my strings.size; i ++)
 				if (str32equ (arg -> getString(), my strings [i])) break;
-			if (i > my numberOfStrings)
+			if (i > my strings.size)
 				Melder_throw (U"List argument \"", my name.get(), U"\" cannot have the value \"", arg -> getString(), U"\".");
 			my integerValue = i;
 			if (my integerVariable)
@@ -1484,9 +1483,9 @@ static void UiField_stringToValue (UiField me, conststring32 string, Interpreter
 		case _kUiField_type::LIST_:
 		{
 			integer i = 1;
-			for (; i <= my numberOfStrings; i ++)
+			for (; i <= my strings.size; i ++)
 				if (str32equ (string, my strings [i])) break;
-			if (i > my numberOfStrings)
+			if (i > my strings.size)
 				Melder_throw (U"Field \"", my name.get(), U"\" must not have the value \"", string, U"\".");
 			my integerValue = i;
 			if (my integerVariable)
@@ -1681,7 +1680,7 @@ void UiForm_setInteger (UiForm me, integer *p_variable, integer value) {
 				break;
 				case _kUiField_type::LIST_:
 				{
-					if (value < 1 || value > field -> numberOfStrings)
+					if (value < 1 || value > field -> strings.size)
 						value = 1;   // guard against incorrect prefs file
 					GuiList_selectItem (field -> list, value);
 				}
@@ -1713,9 +1712,9 @@ void UiForm_setIntegerAsString (UiForm me, integer *p_variable, conststring32 st
 				case _kUiField_type::LIST_:
 				{
 					integer i = 1;
-					for (; i <= field -> numberOfStrings; i ++)
+					for (; i <= field -> strings.size; i ++)
 						if (str32equ (stringValue, field -> strings [i])) break;
-					if (i > field -> numberOfStrings)
+					if (i > field -> strings.size)
 						i = 1;   // guard against incorrect prefs file
 					GuiList_selectItem (field -> list, i);
 				}

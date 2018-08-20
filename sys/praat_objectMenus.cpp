@@ -520,9 +520,9 @@ DO
 END }
 
 FORM (HELP_GoToManualPage, U"Go to manual page", nullptr) {
-	static integer numberOfPages;
-	static char32 **pages = ManPages_getTitles (theCurrentPraatApplication -> manPages, & numberOfPages);
-	LIST (pageNumber, U"Page", numberOfPages, pages, 1)
+	static conststring32vector pages;
+	pages = ManPages_getTitles (theCurrentPraatApplication -> manPages);
+	LIST (pageNumber, U"Page", pages, 1)
 	OK
 DO
 	if (theCurrentPraatApplication -> batch)
