@@ -79,7 +79,7 @@
 	in terms of a "looping pointer":
 
 		long double sum = 0.0;
-		double *xx = x;   // the looping pointer
+		const double *xx = x;   // the looping pointer
 		for (long i = 1; i <= size; i ++)
 			sum += * ++ xx;
 		printf ("%.17g", (double) sum);
@@ -91,7 +91,7 @@
 	but modern compilers produce equally efficient code if you separate the two steps:
 
 		long double sum = 0.0;
-		double *xx = x;   // declare and initialize
+		const double *xx = x;   // declare and initialize
 		for (long i = 1; i <= size; i ++) {
 			xx += 1;   // first increment...
 			sum += *xx;   // ... then dereference
@@ -103,13 +103,13 @@
 	- sumVariableName: "sum"
 	- CounterType: long
 	- sizeExpression: "size"
-	- initializeStatement: "double *xx = x"
+	- initializeStatement: "const double *xx = x"
 	- incrementStatement: "xx += 1"
 	- termExpression: "*xx"
 
 	The algorithm can therefore be replaced with
 	
-		SEQUENTIAL_SUM (long double, sum, long, size, double *xx = x, xx += 1, *xx)
+		SEQUENTIAL_SUM (long double, sum, long, size, const double *xx = x, xx += 1, *xx)
 		printf ("%.17g", (double) sum);
 
 	where the SEQUENTIAL_SUM macro is defined as:
@@ -229,7 +229,7 @@
 
 	For pairwise summation we use the exact same macro arguments as for sequential summation:
 	
-		PAIRWISE_SUM (long double, sum, long, size, double *xx = x, xx += 1, *xx)
+		PAIRWISE_SUM (long double, sum, long, size, const double *xx = x, xx += 1, *xx)
 		printf ("%.17g", (double) sum);
 
 	The macro starts by declaring a variable of type `AccumulatorType` and name `sumVariableName`.
@@ -252,7 +252,8 @@
 	it is not beneficial to use a wider CounterType than the width of your `size`.
 
 	The fifth argument of the macro declares and initializes the loop pointer,
-	as in `double *xx = x` above. This pointer starts out pointing just below the elements of the array.
+	as in `const double *xx = x` above. This pointer starts out pointing just below
+	the elements of the array.
 
 	The sixth argument of the macro is the formula you use for incrementing the loop pointer(s),
 	as in `xx += 1` above. The macro uses this formula to prepare for the retrieval of
@@ -265,8 +266,8 @@
 	the inner product of the two arrays x [1..n] and y [1..n], you can do
 	
 		PAIRWISE_SUM (long double, inner, long, n,
-			double *xx = x;   // the semicolon ensures that this line and the next form a single argument
-			double *yy = y,
+			const double *xx = x;   // the semicolon ensures that this line and the next form a single argument
+			const double *yy = y,
 			(++ xx, ++ yy),
 			(long double) *xx * (long double) *yy)
 		printf ("%.17g", (double) inner);
@@ -280,7 +281,8 @@
 	*before* the multiplication, as is done here. This usually costs no extra computation
 	time (it can actually be faster). If you do
 	
-		PAIRWISE_SUM (long double, inner, long, n, double *xx = x; double *yy = y, (++ xx, ++ yy), *xx * *yy)
+		PAIRWISE_SUM (long double, inner, long, n,
+			const double *xx = x; const double *yy = y, (++ xx, ++ yy), *xx * *yy)
 		printf ("%.17g", (double) inner);
 
 	instead, the conversion to `long double` is done (by the macro) *after* the multiplication,
@@ -289,8 +291,8 @@
 	Other use cases include array multiplication with strides...
 
 		PAIRWISE_SUM (long double, inner, long, n,
-			double *xx = & x [1 - xstride];   // note the funny semicolon again
-			double *yy = & y [1 - ystride],
+			const double *xx = & x [1 - xstride];   // note the funny semicolon again
+			const double *yy = & y [1 - ystride],
 			(xx += xstride, yy += ystride),
 			(long double) *xx * (long double) *yy)
 		printf ("%.17g", (double) inner);
@@ -299,8 +301,8 @@
 
 	for (long i = 1; i <= xSize - kernelSize + 1; i ++) {
 		PAIRWISE_SUM (long double, conv, long, kernelSize,
-			double *xx = & x [i - 1];
-			double *filter = & kernel [kernelSize + 1],
+			const double *xx = & x [i - 1];
+			const double *filter = & kernel [kernelSize + 1],
 			(xx += 1, filter -= 1),
 			(long double) *xx * (long double) *filter)
 		result [i] = conv;

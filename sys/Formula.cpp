@@ -17,7 +17,6 @@
  */
 
 #include <ctype.h>
-#include <time.h>
 #if defined (UNIX)
 	#include <sys/stat.h>
 #endif
@@ -4264,32 +4263,27 @@ static void do_fileReadable () {
 		Melder_throw (U"The function \"fileReadable\" requires a string, not ", s->whichText(), U".");
 	}
 }
-static void do_dateStr () {
-	time_t today = time (nullptr);
-	mutablestring32 newline;
-	autostring32 date = Melder_8to32 (ctime (& today));
-	newline = str32chr (date.get(), U'\n');
-	if (newline) *newline = U'\0';
-	pushString (date.move());
+static void do_STRdate () {
+	pushString (STRdate ());
 }
 static void do_infoStr () {
 	autostring32 info = Melder_dup (Melder_getInfo ());
 	pushString (info.move());
 }
-static void do_leftStr () {
+static void do_STRleft () {
 	trace (U"enter");
 	Stackel narg = pop;
 	if (narg->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			pushString (leftStr (s->getString()));
+			pushString (STRleft (s->getString()));
 		} else {
 			Melder_throw (U"The function \"left$\" requires a string (or a string and a number).");
 		}
 	} else if (narg->number == 2) {
 		Stackel n = pop, s = pop;
 		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
-			pushString (leftStr (s->getString(), Melder_iround (n->number)));
+			pushString (STRleft (s->getString(), Melder_iround (n->number)));
 		} else {
 			Melder_throw (U"The function \"left$\" requires a string and a number (or a string only).");
 		}
@@ -4298,19 +4292,19 @@ static void do_leftStr () {
 	}
 	trace (U"exit");
 }
-static void do_rightStr () {
+static void do_STRright () {
 	Stackel narg = pop;
 	if (narg->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			pushString (rightStr (s->getString()));
+			pushString (STRright (s->getString()));
 		} else {
 			Melder_throw (U"The function \"right$\" requires a string (or a string and a number).");
 		}
 	} else if (narg->number == 2) {
 		Stackel n = pop, s = pop;
 		if (s->which == Stackel_STRING && n->which == Stackel_NUMBER) {
-			pushString (rightStr (s->getString(), Melder_iround (n->number)));
+			pushString (STRright (s->getString(), Melder_iround (n->number)));
 		} else {
 			Melder_throw (U"The function \"right$\" requires a string and a number (or a string only).");
 		}
@@ -4318,19 +4312,19 @@ static void do_rightStr () {
 		Melder_throw (U"The function \"right$\" requires one or two arguments: a string and optionally a number.");
 	}
 }
-static void do_midStr () {
+static void do_STRmid () {
 	Stackel narg = pop;
 	if (narg->number == 2) {
 		Stackel position = pop, str = pop;
 		if (str->which == Stackel_STRING && position->which == Stackel_NUMBER) {
-			pushString (midStr (str->getString(), Melder_iround (position->number)));
+			pushString (STRmid (str->getString(), Melder_iround (position->number)));
 		} else {
 			Melder_throw (U"The function \"mid$\" requires a string and a number (or two).");
 		}
 	} else if (narg->number == 3) {
 		Stackel numberOfCharacters = pop, startingPosition = pop, str = pop;
 		if (str->which == Stackel_STRING && startingPosition->which == Stackel_NUMBER && numberOfCharacters->which == Stackel_NUMBER) {
-			pushString (midStr (str->getString(), Melder_iround (startingPosition->number), Melder_iround (numberOfCharacters->number)));
+			pushString (STRmid (str->getString(), Melder_iround (startingPosition->number), Melder_iround (numberOfCharacters->number)));
 		} else {
 			Melder_throw (U"The function \"mid$\" requires a string and two numbers (or one).");
 		}
@@ -4434,17 +4428,16 @@ static void do_index_regex (int backward) {
 			U"\" requires two strings, not ", s->whichText(), U" and ", t->whichText(), U".");
 	}
 }
-static void do_replaceStr () {
+static void do_STRreplace () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		integer numberOfMatches;
-		autostring32 result = replaceStr (s->getString(), t->getString(), u->getString(), Melder_iround (x->number), & numberOfMatches);
+		autostring32 result = STRreplace (s->getString(), t->getString(), u->getString(), Melder_iround (x->number));
 		pushString (result.move());
 	} else {
 		Melder_throw (U"The function \"replace$\" requires three strings and a number.");
 	}
 }
-static void do_replace_regexStr () {
+static void do_STRreplace_regex () {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		conststring32 errorMessage;
@@ -4452,8 +4445,7 @@ static void do_replace_regexStr () {
 		if (! compiled_regexp) {
 			Melder_throw (U"replace_regex$(): ", errorMessage, U".");
 		} else {
-			integer numberOfMatches;
-			autostring32 result = replace_regexStr (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number), & numberOfMatches);
+			autostring32 result = STRreplace_regex (s->getString(), compiled_regexp, u->getString(), Melder_iround (x->number));
 			pushString (result.move());
 		}
 	} else {
@@ -6281,11 +6273,11 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case LENGTH_: { do_length ();
 } break; case STRING_TO_NUMBER_: { do_number ();
 } break; case FILE_READABLE_: { do_fileReadable ();
-} break; case DATESTR_: { do_dateStr ();
+} break; case DATESTR_: { do_STRdate ();
 } break; case INFOSTR_: { do_infoStr ();
-} break; case LEFTSTR_: { do_leftStr ();
-} break; case RIGHTSTR_: { do_rightStr ();
-} break; case MIDSTR_: { do_midStr ();
+} break; case LEFTSTR_: { do_STRleft ();
+} break; case RIGHTSTR_: { do_STRright ();
+} break; case MIDSTR_: { do_STRmid ();
 } break; case UNICODE_TO_BACKSLASH_TRIGRAPHS_: { do_unicodeToBackslashTrigraphsStr ();
 } break; case BACKSLASH_TRIGRAPHS_TO_UNICODE_: { do_backslashTrigraphsToUnicodeStr ();
 } break; case ENVIRONMENTSTR_: { do_environmentStr ();
@@ -6293,10 +6285,10 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RINDEX_: { do_rindex ();
 } break; case STARTS_WITH_: { do_stringMatchesCriterion (kMelder_string::STARTS_WITH);
 } break; case ENDS_WITH_: { do_stringMatchesCriterion (kMelder_string::ENDS_WITH);
-} break; case REPLACESTR_: { do_replaceStr ();
+} break; case REPLACESTR_: { do_STRreplace ();
 } break; case INDEX_REGEX_: { do_index_regex (false);
 } break; case RINDEX_REGEX_: { do_index_regex (true);
-} break; case REPLACE_REGEXSTR_: { do_replace_regexStr ();
+} break; case REPLACE_REGEXSTR_: { do_STRreplace_regex ();
 } break; case EXTRACT_NUMBER_: { do_extractNumber ();
 } break; case EXTRACT_WORDSTR_: { do_extractTextStr (true);
 } break; case EXTRACT_LINESTR_: { do_extractTextStr (false);

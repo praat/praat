@@ -476,11 +476,11 @@ autoHMM HMM_createSimple (int leftToRight, conststring32 states_string, conststr
 			U"The states and symbols should not both be empty.");
 		
 		if (symbols.size <= 0) {
-			symbols.copyFrom (states);
+			symbols = STRVECclone (states.get());
 			my notHidden = 1;
 		}
 		if (states.size <= 0) {
-			states.copyFrom (symbols);
+			states = STRVECclone (symbols.get());
 			my notHidden = 1;
 		}
 

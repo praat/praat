@@ -163,7 +163,7 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
 			NUMvector_copyElements (sscp -> centroid, thy data [i], 1, n);
 		}
-		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels, n);
+		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels.get(), n);
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
 		return thee;
 	} catch (MelderError) {
@@ -184,7 +184,7 @@ autoTableOfReal Discriminant_extractGroupStandardDeviations (Discriminant me) {
 				thy data [i] [j] = ( numberOfObservationsm1 > 0 ? sqrt (sscp -> data [j] [j] / numberOfObservationsm1) : undefined );
 			}
 		}
-		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels, n);
+		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels.get(), n);
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
 		return thee;
 	} catch (MelderError) {
@@ -215,7 +215,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 
 		SSCP total = my total.get();
 		autoTableOfReal thee = TableOfReal_create (ny, nx + 1);
-		thy columnLabels. copyElementsFrom_upTo (my total -> columnLabels, nx);
+		thy columnLabels. copyElementsFrom_upTo (my total -> columnLabels.get(), nx);
 			// ppgb FIXME: that other number of columns should be at least nx (is it nx?), but that is not documented; if so, add an assert above
 
 		autoSSCP within;
@@ -534,7 +534,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
-		his rowLabels. copyElementsFrom (thy rowLabels);
+		his rowLabels. copyElementsFrom (thy rowLabels.get());
 
 		// Scale the sscp to become a covariance matrix.
 
@@ -653,7 +653,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
-		his rowLabels. copyElementsFrom (thy rowLabels);
+		his rowLabels. copyElementsFrom (thy rowLabels.get());
 		autoTableOfReal adisplacements = Data_copy (thee);
 
 		// Scale the sscp to become a covariance matrix.

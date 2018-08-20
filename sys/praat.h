@@ -229,7 +229,7 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		this should be followed by two or more OPTIONs;
 		the initial value is between 1 and the number of options.
 	OPTION (labelText)
-	LIST (variable, labelText, numberOfStrings, strings, defaultOptionNumber)
+	LIST (variable, labelText, strings, defaultOptionNumber)
 	OK
 		this statement is obligatory.
 	SET_XXXXXX (name, value)
@@ -369,13 +369,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 		for (int ienum = (int) EnumeratedType::MIN; ienum <= (int) EnumeratedType::MAX; ienum ++) \
 			UiOptionMenu_addButton (_radio_, EnumeratedType##_getText ((enum EnumeratedType) ienum));
 
-#define LIST(integerVariable, labelText, numberOfStrings, strings, defaultOptionNumber)  \
+#define LIST(integerVariable, labelText, strings, defaultOptionNumber)  \
 		static integer integerVariable; \
-		UiForm_addList (_dia_.get(), & integerVariable, nullptr, U"" #integerVariable, labelText, numberOfStrings, strings, defaultOptionNumber);
+		UiForm_addList (_dia_.get(), & integerVariable, nullptr, U"" #integerVariable, labelText, strings, defaultOptionNumber);
 
 #define LISTSTR(stringVariable, labelText, numberOfStrings, strings, defaultOptionNumber)  \
 		static char32 *stringVariable; \
-		UiForm_addList (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, labelText, numberOfStrings, strings, defaultOptionNumber);
+		UiForm_addList (_dia_.get(), nullptr, & stringVariable, U"" #stringVariable, labelText, strings, defaultOptionNumber);
 
 #define FILE_IN(labelText)  \
 		UiForm_addFileIn (_dia_.get(), labelText);

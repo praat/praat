@@ -337,7 +337,7 @@ public:
 	vector (const autovector<T>& other) = delete;
 	vector& operator= (const vector&) = default;
 	vector& operator= (const autovector<T>&) = delete;
-	T& operator[] (integer i) {
+	T& operator[] (integer i) const {
 		return our at [i];
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)

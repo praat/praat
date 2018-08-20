@@ -498,7 +498,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 			Covariance_PCA_generateOneVector (me, pca.get(), thy data [i], buf.peek());
 		}
 
-		thy columnLabels. copyElementsFrom (my columnLabels);
+		thy columnLabels. copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not random sampled.");
@@ -636,7 +636,7 @@ autoTableOfReal Covariance_TableOfReal_extractDistanceQuantileRange (Covariance 
 		Melder_require (nsel > 0, U"Not enough data in quantile interval.");
 		
 		autoTableOfReal r = TableOfReal_create (nsel, thy numberOfColumns);
-		r -> columnLabels. copyElementsFrom (thy columnLabels);
+		r -> columnLabels. copyElementsFrom (thy columnLabels.get());
 
 		integer k = 0;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
@@ -749,7 +749,7 @@ autoPCA SSCP_to_PCA (SSCP me) {
 			}
 			data = adata.peek();
 		}
-		thy labels. copyElementsFrom_upTo (my columnLabels, my numberOfColumns);
+		thy labels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
 			// ppgb FIXME: the number of thy labels could be equal to my numberOfColumns; if so, assert; it not, explain.
 		Eigen_initFromSymmetricMatrix (thee.get(), data, my numberOfColumns);
 		NUMvector_copyElements (my centroid, thy centroid, 1, my numberOfColumns);
@@ -1132,7 +1132,7 @@ autoTableOfReal SSCP_extractCentroid (SSCP me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
 		NUMvector_copyElements (my centroid, thy data [1], 1, my numberOfColumns);
-		thy columnLabels. copyElementsFrom (my columnLabels);
+		thy columnLabels. copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": centroid not extracted.");

@@ -419,7 +419,7 @@ static integer ManPages_lookUp_caseSensitive (ManPages me, conststring32 title) 
 	return 0;
 }
 
-char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles) {
+conststring32vector ManPages_getTitles (ManPages me) {
 	if (! my ground) grind (me);
 	if (! my titles) {
 		my titles = autostring32vector (my pages.size);
@@ -428,8 +428,7 @@ char32 **ManPages_getTitles (ManPages me, integer *numberOfTitles) {
 			my titles [i] = Melder_dup (page -> title.get());
 		}
 	}
-	*numberOfTitles = my pages.size;
-	return my titles.peek2();
+	return my titles.get();
 }
 
 static const struct stylesInfo {

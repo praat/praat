@@ -19,8 +19,12 @@
  */
 
 double Melder_stopwatch ();
+
 void Melder_sleep (double duration);
+
 double Melder_clock ();   // seconds since 1969
+
+autostring32 STRdate ();
 
 /* End of file melder_time.h */
 #endif

@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-autostring32 leftStr (conststring32 str, integer newLength) {
+autostring32 STRleft (conststring32 str, integer newLength) {
 	integer length = str32len (str);
 	if (newLength < 0)
 		newLength = 0;
@@ -29,16 +29,7 @@ autostring32 leftStr (conststring32 str, integer newLength) {
 	return result;
 }
 
-autostring32 rightStr (conststring32 str, integer newLength) {
-	integer length = str32len (str);
-	if (newLength < 0)
-		newLength = 0;
-	if (newLength > length)
-		newLength = length;
-	return Melder_dup (str + length - newLength);
-}
-
-autostring32 midStr (conststring32 str, integer startingPosition_1, integer numberOfCharacters) {
+autostring32 STRmid (conststring32 str, integer startingPosition_1, integer numberOfCharacters) {
 	integer length = str32len (str), endPosition_1 = startingPosition_1 + numberOfCharacters - 1;
 	if (startingPosition_1 < 1)
 		startingPosition_1 = 1;
@@ -52,9 +43,9 @@ autostring32 midStr (conststring32 str, integer startingPosition_1, integer numb
 	return result;
 }
 
-autostring32 replaceStr (conststring32 string,
+autostring32 STRreplace (conststring32 string,
 	conststring32 search, conststring32 replace, integer maximumNumberOfReplaces,
-	integer *nmatches)
+	integer *out_numberOfMatches)
 {
 	if (string == 0 || search == 0 || replace == 0)
 		return autostring32();
@@ -73,29 +64,29 @@ autostring32 replaceStr (conststring32 string,
 	*/
 
 	const char32 *pos = & string [0];   // current position / start of current match
-	*nmatches = 0;
+	integer numberOfMatches = 0;
 	if (maximumNumberOfReplaces <= 0)
 		maximumNumberOfReplaces = INTEGER_MAX;
 
 	if (len_search == 0) {   /* Search is empty string... */
 		if (len_string == 0)
-			*nmatches = 1;   /* ...only matches empty string */
+			numberOfMatches = 1;   /* ...only matches empty string */
 	} else {
 		if (len_string != 0) {   /* Because empty string always matches */
-			while (!! (pos = str32str (pos, search)) && *nmatches < maximumNumberOfReplaces) {
+			while (!! (pos = str32str (pos, search)) && numberOfMatches < maximumNumberOfReplaces) {
 				pos += len_search;
-				(*nmatches) ++;
+				numberOfMatches ++;
 			}
 		}
 	}
 
 	integer len_replace = str32len (replace);
-	integer len_result = len_string + *nmatches * (len_replace - len_search);
+	integer len_result = len_string + numberOfMatches * (len_replace - len_search);
 	autostring32 result (len_result);
 
 	const char32 *posp = pos = & string [0];
 	integer nchar = 0, result_nchar = 0;
-	for (integer i = 1; i <= *nmatches; i ++) {
+	for (integer i = 1; i <= numberOfMatches; i ++) {
 		pos = str32str (pos, search);
 
 		/*
@@ -127,12 +118,14 @@ autostring32 replaceStr (conststring32 string,
 	nchar = pos - posp;
 	if (nchar > 0)
 		str32ncpy (& result [result_nchar], posp, nchar);
+	if (out_numberOfMatches)
+		*out_numberOfMatches = numberOfMatches;
 	return result;
 }
 
-autostring32 replace_regexStr (conststring32 string,
+autostring32 STRreplace_regex (conststring32 string,
 	regexp *compiledSearchRE, conststring32 replaceRE, integer maximumNumberOfReplaces,
-	integer *nmatches)
+	integer *out_numberOfMatches)
 {
 	integer buf_nchar = 0;   // number of characters in 'buf'
 	integer gap_copied = 0;
@@ -144,7 +137,8 @@ autostring32 replace_regexStr (conststring32 string,
 	const char32 *posp;   // end of previous match
 	autostring32 buf;
 
-	*nmatches = 0;
+	if (out_numberOfMatches)
+		*out_numberOfMatches = 0;
 	if (string == 0 || compiledSearchRE == 0 || replaceRE == 0)
 		return 0;
 
@@ -153,7 +147,7 @@ autostring32 replace_regexStr (conststring32 string,
 	if (string_length == 0)
 		maximumNumberOfReplaces = 1;
 
-	integer i = maximumNumberOfReplaces > 0 ? 0 : - string_length;
+	integer i = ( maximumNumberOfReplaces > 0 ? 0 : - string_length );
 
 	/*
 		We do not know the size of the replaced string in advance,
@@ -218,7 +212,8 @@ autostring32 replace_regexStr (conststring32 string,
 			prev_char = pos [-1];
 		gap_copied = 0;
 		posp = pos; //pb 20080121
-		(*nmatches) ++;
+		if (out_numberOfMatches)
+			(*out_numberOfMatches) ++;
 		// at end of string?
 		// we need this because .* matches at the end of a string
 		if (pos - string == string_length)
@@ -232,6 +227,15 @@ autostring32 replace_regexStr (conststring32 string,
 	buf.resize (bufferLength);
 	str32ncpy (buf.get() + buf_nchar, pos, nchar);
 	return buf;
+}
+
+autostring32 STRright (conststring32 str, integer newLength) {
+	integer length = str32len (str);
+	if (newLength < 0)
+		newLength = 0;
+	if (newLength > length)
+		newLength = length;
+	return Melder_dup (str + length - newLength);
 }
 
 /* End of file STR.cpp */

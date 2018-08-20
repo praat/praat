@@ -549,7 +549,7 @@ autoTableOfReal EditDistanceTable_to_TableOfReal_directions (EditDistanceTable m
 	return tor;
 }
 
-void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *directions) {
+void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *out_directions) {
 	try {
 		/* What do we have to do to source to get target?
 		 * Origin [0] [0] is at bottom-left corner
@@ -601,14 +601,14 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *directio
 				my data [i + 1] [j + 1] = delta [i] [j];
 			}
 		}
-		if (directions != 0) {
+		if (out_directions) {
 			autoTableOfReal him = EditDistanceTable_to_TableOfReal (me);
 			for (integer i = 0; i <= numberOfTargets; i ++) {
 				for (integer j = 0; j <= numberOfSources; j ++) {
 					his data [i + 1] [j + 1] = psi [i] [j];
 				}
 			}
-			*directions = him.move();
+			*out_directions = him.move();
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": minimum path not found.");
@@ -618,8 +618,8 @@ void EditDistanceTable_findPath (EditDistanceTable me, autoTableOfReal *directio
 autoTableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		thy columnLabels. copyElementsFrom (my columnLabels);
-		thy rowLabels. copyElementsFrom (my rowLabels);
+		thy columnLabels. copyElementsFrom (my columnLabels.get());
+		thy rowLabels. copyElementsFrom (my rowLabels.get());
 		NUMmatrix_copyElements<double> (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return thee;
 	} catch (MelderError) {

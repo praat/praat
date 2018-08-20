@@ -31,7 +31,7 @@ static autoEEG EEG_copyWithoutSound (EEG me) {
  		autoEEG thee = EEG_create (my xmin, my xmax);
 		thy numberOfChannels = my numberOfChannels;
 		thy textgrid = Data_copy (my textgrid.get());
-		thy channelNames. copyFrom (my channelNames);
+		thy channelNames = STRVECclone (my channelNames.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not copied.");

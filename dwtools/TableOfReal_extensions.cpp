@@ -97,7 +97,7 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer 
 		if (me == thee && myrow == thyrow) {
 			return;
 		}
-		Melder_require (myrow > 0 &&  myrow <= my  numberOfRows && thyrow > 0 && thyrow <= thy numberOfRows && my numberOfColumns == thy numberOfColumns,
+		Melder_require (myrow > 0 && myrow <= my numberOfRows && thyrow > 0 && thyrow <= thy numberOfRows && my numberOfColumns == thy numberOfColumns,
 			U"The dimensions do not fit.");
 
 		thy rowLabels [thyrow] = Melder_dup (my rowLabels [myrow].get());
@@ -238,8 +238,8 @@ autoTableOfReal TableOfReal_transpose (TableOfReal me) {
 				thy data [j] [i] = my data [i] [j];
 			}
 		}
-		thy columnLabels. copyElementsFrom (my rowLabels);
-		thy rowLabels. copyElementsFrom (my columnLabels);
+		thy columnLabels. copyElementsFrom (my rowLabels.get());
+		thy rowLabels. copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not transposed.");
@@ -551,20 +551,20 @@ void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, in
 	if (rowOrigin == 1) {
 		Melder_require (my numberOfRows == thy numberOfRows,
 			U"Both tables must have the same number of rows.");
-		thy rowLabels. copyElementsFrom (my rowLabels);
+		thy rowLabels. copyElementsFrom (my rowLabels.get());
 	} else if (rowOrigin == -1) {
 		Melder_require (my numberOfColumns == thy numberOfRows,
 			U"Both tables must have the same number of columns.");
-		thy rowLabels. copyElementsFrom (my columnLabels);
+		thy rowLabels. copyElementsFrom (my columnLabels.get());
 	}
 	if (columnOrigin == 1) {
 		Melder_require (my numberOfColumns == thy numberOfColumns,
 			U"Both tables must have the same number of columns.");
-		thy columnLabels. copyElementsFrom (my columnLabels);
+		thy columnLabels. copyElementsFrom (my columnLabels.get());
 	} else if (columnOrigin == -1) {
 		Melder_require (my numberOfRows == thy numberOfColumns,
 			U"Both tables must have the same number of rows.");
-		thy columnLabels. copyElementsFrom (my rowLabels);
+		thy columnLabels. copyElementsFrom (my rowLabels.get());
 	}
 }
 
@@ -1181,20 +1181,23 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 			nmatches ++;
 		}
 	}
-	if (use_regexp) {
-		free (compiled_regexp);
-	}
+	if (use_regexp)
+		free (compiled_regexp);   // LEAK if ExecRE throws
 	return nmatches;
 }
 
-void TableOfReal_drawVectors (TableOfReal me, Graphics g, integer colx1, integer coly1, integer colx2, integer coly2, double xmin, double xmax, double ymin, double ymax, int vectype, int labelsize, bool garnish) {
+void TableOfReal_drawVectors (TableOfReal me, Graphics g,
+		integer colx1, integer coly1, integer colx2, integer coly2,
+		double xmin, double xmax, double ymin, double ymax,
+		int vectype, int labelsize, bool garnish)
+{
 	integer nx = my numberOfColumns, ny = my numberOfRows;
 	int fontsize = Graphics_inqFontSize (g);
 
 	Melder_require (colx1 > 0 && colx1 <= nx && coly1 > 0 && coly1 <= nx,
-		U"The index in the \"From\" column(s) should be in range [1, ", nx, U"].");
+			U"The index in the \"From\" column(s) should be in range [1, ", nx, U"].");
 	Melder_require (colx2 > 0 && colx2 <= nx && coly2 > 0 && coly2 <= nx,
-		U"The index in the \"To\" column(s) should be in range [1, ", nx, U"].");
+			U"The index in the \"To\" column(s) should be in range [1, ", nx, U"].");
 
 	double min, max;
 	if (xmin >= xmax) {
@@ -1298,7 +1301,7 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index [], b
 				thydata [j] = mydata [j];
 			}
 		}
-		thy columnLabels. copyElementsFrom (my columnLabels);
+		thy columnLabels. copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not sorted by row index.");
@@ -1390,7 +1393,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 			for (integer i = 1; i <= indexr; i ++) {
 				TableOfReal_copyOneRowWithLabel (sorted.get(), thee.get(), i, i);
 			}
-			thy columnLabels. copyElementsFrom (sorted -> columnLabels);
+			thy columnLabels. copyElementsFrom (sorted -> columnLabels.get());
 		}
 		return thee;
 	} catch (MelderError) {
@@ -1496,8 +1499,8 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 			'empty':  nullptr or \w*
 		*/
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, ncols);
-		his rowLabels. copyElementsFrom (my rowLabels);
-		his columnLabels. copyElementsFrom_upTo (my columnLabels, my numberOfColumns);
+		his rowLabels. copyElementsFrom (my rowLabels.get());
+		his columnLabels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
 		for (integer icol = 1; icol <= thy numberOfColumns; icol ++)
 			his columnLabels [my numberOfColumns + icol] = Melder_dup (thy columnLabels [icol].get());
 		for (integer i = 1; i <= my numberOfRows; i ++) {
@@ -1559,14 +1562,14 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 		 */
 
 		integer n = my numberOfRows, p = my numberOfColumns;
-		double beta = *h > 0 ? NUMsqrt1_2 / *h : NUMsqrt1_2 * pow ( (1.0 + 2 * p) / 4, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
+		double beta = *h > 0.0 ? NUMsqrt1_2 / *h : NUMsqrt1_2 * pow ((1.0 + 2 * p) / 4, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
 		double p2 = p / 2.0;
 		double beta2 = beta * beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-		double gamma = 1 + 2 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
-		double delta = 1.0 + beta2 * (4 + 3 * beta2), delta2 = delta * delta;
+		double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
+		double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
 		double prob = undefined;
 
-		if (*h <= 0) {
+		if (*h <= 0.0) {
 			*h = NUMsqrt1_2 / beta;
 		}
 
@@ -1601,9 +1604,9 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 			tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
 		}
 		double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
-		double var = 2.0 * pow (1 + 4 * beta2, -p2)
+		double var = 2.0 * pow (1.0 + 4.0 * beta2, -p2)
 			+ 2.0 * pow (gamma,  -p) * (1.0 + 2 * p * beta4 / gamma2  + 3 * p * (p + 2) * beta8 / (4.0 * gamma4))
-			- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
+			- 4.0 * pow (delta, -p2) * (1.0 + 3 * p * beta4 / (2.0 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
 		double mu2 = mu * mu;
 		lnmu = 0.5 * log (mu2 * mu2 / (mu2 + var)); //log (sqrt (mu2 * mu2 /(mu2 + var)));
 		lnvar = sqrt (log ( (mu2 + var) / mu2));
@@ -1645,15 +1648,15 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 			NUMnormalizeRows (my_data.peek(), my numberOfRows, my numberOfColumns, 1);
 			NUMnormalizeRows (thy_data.peek(), thy numberOfRows, thy numberOfColumns, 1);
 		}
-		his rowLabels. copyElementsFrom (my rowLabels);
-		his columnLabels. copyElementsFrom (thy rowLabels);
+		his rowLabels. copyElementsFrom (my rowLabels.get());
+		his columnLabels. copyElementsFrom (thy rowLabels.get());
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer k = 1; k <= thy numberOfRows; k ++) {
-				double ctmp = 0;
+				longdouble ctmp = 0.0;
 				for (integer j = 1; j <= my numberOfColumns; j ++) {
 					ctmp += my_data [i] [j] * thy_data [k] [j];
 				}
-				his data [i] [k] = ctmp;
+				his data [i] [k] = (double) ctmp;
 			}
 		}
 		return him;
@@ -1679,8 +1682,8 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 			NUMnormalizeColumns (my_data.peek(), my numberOfRows, my numberOfColumns, 1);
 			NUMnormalizeColumns (thy_data.peek(), thy numberOfRows, thy numberOfColumns, 1);
 		}
-		his rowLabels. copyElementsFrom (my columnLabels);
-		his columnLabels. copyElementsFrom (thy columnLabels);
+		his rowLabels. copyElementsFrom (my columnLabels.get());
+		his columnLabels. copyElementsFrom (thy columnLabels.get());
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			for (integer k = 1; k <= thy numberOfColumns; k ++) {
@@ -1702,10 +1705,10 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 		if (my numberOfColumns < 3 || my numberOfRows < 3) {
 			Melder_throw (U"Therehave to be at least three colums and rows present.");
 		}
-		autoVEC x (my numberOfRows, kTensorInitializationType :: RAW);
-		autoVEC y (my numberOfRows, kTensorInitializationType :: RAW);
-		autoVEC z (my numberOfRows, kTensorInitializationType :: RAW);
-		autoVEC weights (my numberOfRows, kTensorInitializationType :: RAW);
+		autoVEC x = VECraw (my numberOfRows);
+		autoVEC y = VECraw (my numberOfRows);
+		autoVEC z = VECraw (my numberOfRows);
+		autoVEC weights = VECraw (my numberOfRows);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			x [irow] = my data [irow] [1];
 			y [irow] = my data [irow] [2];
