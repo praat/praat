@@ -799,4 +799,20 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 	}
 }
 
+double TextGrid_getTotalDurationOfIntervalsWhere (TextGrid me, integer tierNumber, kMelder_string which, conststring32 criterion) {
+	try {
+		longdouble totalDuration = 0.0;
+		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
+		for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
+			TextInterval interval = tier -> intervals.at [iinterval];
+			if (Melder_stringMatchesCriterion (interval -> text.get(), which, criterion, true)) {
+				totalDuration += interval -> xmax - interval -> xmin;
+			}
+		}
+		return totalDuration;
+	} catch (MelderError) {
+		Melder_throw (me, U": interval durations not counted.");
+	}
+}
+
 /* End of file TextGrid_extensions.cpp */

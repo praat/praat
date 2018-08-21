@@ -7159,6 +7159,17 @@ DO
 
 /***** TableOfReal and FilterBank  *****/
 
+FORM (REAL_TextGrid_getTotalDurationOfIntervalsWhere, U"Total duration of intervals where", nullptr) {
+	INTEGER (tierNumber, U"Tier number", U"1")
+	OPTIONMENU_ENUM (countIntervalsWhoseLabel___, U"Intervals whose label...", kMelder_string, DEFAULT)
+	SENTENCE (___theText, U"...the text", U"hi")
+	OK
+DO
+	NUMBER_ONE (TextGrid)
+		double result = TextGrid_getTotalDurationOfIntervalsWhere (me, tierNumber, (kMelder_string) countIntervalsWhoseLabel___, ___theText);
+	NUMBER_ONE_END (U" s (duration of intervals containing \"", ___theText, U"\")");
+}
+
 FORM (MODIFY_TextGrid_extendTime, U"TextGrid: Extend time", U"TextGrid: Extend time...") {
 	LABEL (U"")
 	POSITIVE (extendDomainBy, U"Extend domain by (s)", U"1.0")
@@ -8370,6 +8381,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction2 (classTableOfReal, 1, classPermutation, 1, U"Permute rows", nullptr, 0, NEW1_TableOfReal_Permutation_permuteRows);
 
+	praat_addAction1 (classTextGrid, 1, U"Get total duration of intervals where...", U"Count intervals where...", 2, REAL_TextGrid_getTotalDurationOfIntervalsWhere);
 	praat_addAction1 (classTextGrid, 0, U"Extend time...", U"Scale times...", 2, MODIFY_TextGrid_extendTime);
 	praat_addAction1 (classTextGrid, 1, U"Set tier name...", U"Remove tier...", 1, MODIFY_TextGrid_setTierName);
 	praat_addAction1 (classTextGrid, 0, U"Replace interval text...", U"Set interval text...", 2, MODIFY_TextGrid_replaceIntervalTexts);

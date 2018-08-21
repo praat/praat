@@ -34,6 +34,16 @@ static autoIntervalTier IntervalTier_IntervalTier_cutPartsMatchingLabel (Interva
 static autoIntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, conststring32 patchLabel, double precision);
 static autoTable IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
 
+
+static void IntervalTier_checkRange (IntervalTier me, integer startInterval, integer endinterval) {
+	Melder_require (startInterval <= endinterval, 
+		U"The interval range end number should not be smaller than the interval range start number.");
+	Melder_require (startInterval > 0, 
+		U"The specified interval range start number is ", startInterval, U", but should be at least 1.");
+	Melder_require (endinterval <= my intervals.size,
+		U"The specified interval range end number (", endinterval, U") exceeds the number of intervals (", my intervals.size, U") in this tier.");
+}
+
 autoSound SpeechSynthesizer_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, autoTextGrid *p_tg)
 {
 	try {
@@ -607,12 +617,13 @@ static autoTextGrid SpeechSynthesizer_Sound_TextInterval_align2 (SpeechSynthesiz
 
 autoTextGrid SpeechSynthesizer_Sound_IntervalTier_align (SpeechSynthesizer me, Sound thee, IntervalTier him, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
     try {
-		Melder_require (istart > 0 && istart <= iend && iend <= his intervals.size,
-			U"Not a valid interval range.");
+		IntervalTier_checkRange (him, istart, iend);
+        TextInterval tib = his intervals.at [istart];
+        TextInterval tie = his intervals.at [iend];
+		Melder_require (tib -> xmin >= thy xmin && tie -> xmax <= thy xmax, 
+			U"The chosen interval(s) must lie within the sound.");
         OrderedOf<structTextGrid> textgrids;
-        TextInterval tb = his intervals.at [istart];
-        TextInterval te = his intervals.at [iend];
-        autoTextGrid result = TextGrid_create (tb -> xmin, te -> xmax, U"sentence clause word phoneme", U"");
+        autoTextGrid result = TextGrid_create (tib -> xmin, tie -> xmax, U"sentence clause word phoneme", U"");
         for (integer iint = istart; iint <= iend; iint ++) {
             TextInterval ti = his intervals.at [iint];
             if (ti -> text && ti -> text [0] != U'\0') {
@@ -632,13 +643,11 @@ autoTextGrid SpeechSynthesizer_Sound_IntervalTier_align (SpeechSynthesizer me, S
 
 static autoTextGrid SpeechSynthesizer_Sound_IntervalTier_align2 (SpeechSynthesizer me, Sound thee, IntervalTier him, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
     try {
-		Melder_require (istart > 0 && istart <= iend && iend <= his intervals.size,
-			U"Not a valid interval range.");
-
-        OrderedOf<structTextGrid> textgrids;
+		IntervalTier_checkRange (him, istart, iend);
         TextInterval tb = his intervals.at [istart];
         TextInterval te = his intervals.at [iend];
         autoTextGrid result = TextGrid_create (tb -> xmin, te -> xmax, U"sentence clause word phoneme", U"");
+        OrderedOf<structTextGrid> textgrids;
         for (integer iint = istart; iint <= iend; iint ++) {
             TextInterval ti = his intervals.at [iint];
             if (ti -> text && ti -> text [0] != U'\0') {
@@ -658,6 +667,8 @@ static autoTextGrid SpeechSynthesizer_Sound_IntervalTier_align2 (SpeechSynthesiz
 
 autoTextGrid SpeechSynthesizer_Sound_TextGrid_align (SpeechSynthesizer me, Sound thee, TextGrid him, integer tierNumber, integer istart, integer iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
 	try {
+		Melder_require (thy xmin == his xmin && thy xmax == his xmax, 
+			U"The domains of the Sound and the TextGrid must be equal.");
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
 		autoTextGrid grid = SpeechSynthesizer_Sound_IntervalTier_align (me, thee, tier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration);
 		return grid;
