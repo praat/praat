@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -486,9 +486,8 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 
 void TextGrid_setTierName (TextGrid me, integer itier, conststring32 newName) {
 	try {
-		integer ntiers = my tiers->size;
-		if (itier < 1 || itier > ntiers)
-			Melder_throw (U"Tier number (", itier, U") should not be larger than the number of tiers (", ntiers, U").");
+		Melder_require (itier >= 1 && itier <= my tiers->size,
+			U"The tier number (", itier, U") should not be larger than the number of tiers (", my tiers->size, U").");
 		Thing_setName (my tiers->at [itier], newName);
 	} catch (MelderError) {
 		Melder_throw (me, U": tier name not set.");
@@ -797,6 +796,22 @@ autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* 
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No aligned TextGrid created from Collection.");
+	}
+}
+
+double TextGrid_getTotalDurationOfIntervalsWhere (TextGrid me, integer tierNumber, kMelder_string which, conststring32 criterion) {
+	try {
+		longdouble totalDuration = 0.0;
+		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
+		for (integer iinterval = 1; iinterval <= tier -> intervals.size; iinterval ++) {
+			TextInterval interval = tier -> intervals.at [iinterval];
+			if (Melder_stringMatchesCriterion (interval -> text.get(), which, criterion, true)) {
+				totalDuration += interval -> xmax - interval -> xmin;
+			}
+		}
+		return totalDuration;
+	} catch (MelderError) {
+		Melder_throw (me, U": interval durations not counted.");
 	}
 }
 

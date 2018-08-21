@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,5 +120,7 @@ void TextTiers_append_inplace (TextTier me, TextTier thee, bool preserveTimes);
 void TextGrids_append_inplace (TextGrid me, TextGrid thee, bool preserveTimes);
 
 autoTextGrid TextGrids_to_TextGrid_appendContinuous (OrderedOf<structTextGrid>* me, bool preserveTimes);
+
+double TextGrid_getTotalDurationOfIntervalsWhere (TextGrid me, integer tierNumber, kMelder_string which, conststring32 criterion);
 
 #endif /* _TextGrid_extensions_h_ */
