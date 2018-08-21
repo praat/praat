@@ -248,7 +248,7 @@ KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication, frication, KlattGrid_FRICATION
 
 #undef KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER
 
-#define KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE(Name,name,unit,default,require,requiremessage,newname,tiertype)  \
+#define KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE(Name,name,unit,default,requireCondition,requireMessage,newname,tiertype)  \
 FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nullptr) { \
 	REAL (time, U"Time", U"0.5") \
 	OK \
@@ -262,7 +262,7 @@ FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", null
 	REAL (value, U"Value" unit, default) \
 	OK \
 DO \
-	Melder_require (require, requiremessage); \
+	Melder_require (requireCondition, requireMessage); \
 	MODIFY_EACH (KlattGrid); \
 		KlattGrid_add##Name##Point (me, time, value); \
 	MODIFY_EACH_END \
@@ -329,14 +329,14 @@ DO \
 	MODIFY_EACH_END \
 }
 
-#define KlattGrid_ADD_FBA_VALUE(Name,namef,Form,FBA,fba,formantType,default,unit,require,requiremessage)  \
+#define KlattGrid_ADD_FBA_VALUE(Name,namef,Form,FBA,fba,formantType,default,unit,requireCondition,requireMessage)  \
 FORM (MODIFY_KlattGrid_add##Name##Formant##FBA##Point, U"KlattGrid: Add " #namef "ormant " #fba " point", nullptr) { \
 	NATURAL (formantNumber, U"Formant number", U"1") \
 	REAL (time, U"Time (s)", U"0.5") \
 	REAL (value, U"Value " #unit, default) \
 	OK \
 DO \
-	Melder_require (require, requiremessage); \
+	Melder_require (requireCondition, requireMessage); \
 	MODIFY_EACH (KlattGrid); \
 		KlattGrid_add##Form##Point (me, formantType, formantNumber, time, value); \
 	MODIFY_EACH_END \
@@ -603,7 +603,7 @@ KlattGrid_REPLACE_FORMANT_AMPLITUDE (Frication, frication, KlattGrid_FRICATION_F
 #undef KlattGrid_REPLACE_FORMANT_AMPLITUDE
 #undef KlattGrid_REPLACE_FORMANTGRID
 
-#define KlattGrid_FORMANT_GET_ADD_REMOVE(Name,name,unit,default,require,requiremessage)  \
+#define KlattGrid_FORMANT_GET_ADD_REMOVE(Name,name,unit,default,requireCondition,requireMessage)  \
 FORM (REAL_KlattGrid_get##Name##AtTime, U"KlattGrid: Get " #name " at time", nullptr) { \
 	KlattGrid_6formants_addCommonField (formantType) \
 	NATURAL (formantNumber, U"Formant number", U"1") \
@@ -630,7 +630,7 @@ FORM (MODIFY_KlattGrid_add##Name##Point, U"KlattGrid: Add " #name " point", null
 	REAL (value, U"Value" unit, default) \
 	OK \
 DO \
-	Melder_require (require, requiremessage); \
+	Melder_require (requireCondition, requireMessage); \
 	LOOP { iam (KlattGrid); \
 		KlattGrid_add##Name##Point (me, formantType, formantNumber, time, value); \
 		praat_dataChanged (me); \
@@ -642,7 +642,7 @@ FORM (MODIFY_KlattGrid_addDelta##Name##Point, U"KlattGrid: Add delta " #name " p
 	REAL (value, U"Value" unit, default) \
 	OK \
 DO \
-	Melder_require (require, requiremessage); \
+	Melder_require (requireCondition, requireMessage); \
 	LOOP { iam (KlattGrid); \
 		KlattGrid_addDelta##Name##Point (me, formantNumber, time, value); \
 		praat_dataChanged (me); \

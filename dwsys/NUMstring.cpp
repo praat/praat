@@ -61,7 +61,7 @@ static autostring32vector string32vector_searchAndReplace_literal (string32vecto
 	for (integer i = 1; i <= me.size; i ++) {
 		conststring32 string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
 
-		result [i] = replaceStr (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
+		result [i] = STRreplace (string, search, replace, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;
@@ -90,7 +90,7 @@ static autostring32vector string32vector_searchAndReplace_regexp (string32vector
 	integer nmatches = 0, nstringmatches = 0;
 	for (integer i = 1; i <= me.size; i ++) {
 		conststring32 string = ( me [i] ? me [i] : U"" );   // treat null as an empty string
-		result [i] = replace_regexStr (string, compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
+		result [i] = STRreplace_regex (string, compiledRE, replaceRE, maximumNumberOfReplaces, & nmatches_sub);
 		if (nmatches_sub > 0) {
 			nmatches += nmatches_sub;
 			nstringmatches ++;

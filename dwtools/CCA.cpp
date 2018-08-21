@@ -145,11 +145,11 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 
 		for (integer i = 1; i <= nx; i ++) {
 			for (integer j = 1; j <= ny; j ++) {
-				double t = 0.0;
+				longdouble t = 0.0;
 				for (integer q = 1; q <= n; q ++) {
 					t += ux [q] [i] * uy [q] [j];
 				}
-				uc [i] [j] = t;
+				uc [i] [j] = (double) t;
 			}
 		}
 
@@ -211,7 +211,8 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 		integer n = thy numberOfRows;
 		integer nx = my x -> dimension, ny = my y -> dimension;
 
-		Melder_require (ny + nx == thy numberOfColumns, U"The number of columns in the table (", thy numberOfColumns,
+		Melder_require (ny + nx == thy numberOfColumns,
+			U"The number of columns in the table (", thy numberOfColumns,
 			U") should agree with the dimensions of the CCA object (ny + nx = ", ny, U" + ", nx, U").");
 
 		if (numberOfFactors == 0) {
@@ -221,7 +222,7 @@ autoTableOfReal CCA_TableOfReal_scores (CCA me, TableOfReal thee, integer number
 			U"The number of factors should be in interval [1, ", my numberOfCoefficients, U"].");
 		
 		autoTableOfReal him = TableOfReal_create (n, 2 * numberOfFactors);
-		his rowLabels. copyElementsFrom (thy rowLabels);
+		his rowLabels. copyElementsFrom (thy rowLabels.get());
 		Eigen_TableOfReal_into_TableOfReal_projectRows (my y.get(), thee, 1, him.get(), 1, numberOfFactors);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (my x.get(), thee, ny + 1, him.get(), numberOfFactors + 1, numberOfFactors);
 		TableOfReal_setSequentialColumnLabels (him.get(), 1, numberOfFactors, U"y_", 1, 1);
@@ -262,11 +263,11 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			NUMvector_copyElements (his data [i], buf.peek(), 1, ny);
 			for (integer j = 1; j <= ny; j ++) {
-				double t = 0.0;
+				longdouble t = 0.0;
 				for (integer k = 1; k <= ny; k ++) {
 					t += sqrt (d [k]) * v [k] [j] * buf [k];
 				}
-				his data [i] [j] = t;
+				his data [i] [j] = (double) t;
 			}
 		}
 		return him;

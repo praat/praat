@@ -31,6 +31,21 @@ public:
 typedef _stringvector <char32> string32vector;
 typedef _stringvector <char> string8vector;
 
+template <typename T>
+class _conststringvector {
+public:
+	const T* const * at;
+	integer size;
+	_conststringvector () : at (nullptr), size (0) { }
+	_conststringvector (const T* const * givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	_conststringvector (_stringvector<T> other): at (other.at), size (other.size) { }
+	const T* const & operator[] (integer i) {
+		return our at [i];
+	}
+};
+typedef _conststringvector <char32> conststring32vector;
+typedef _conststringvector <char> conststring8vector;
+
 template <class T>
 class _autostringvector {
 	_autostring <T> * _ptr;
@@ -85,30 +100,33 @@ public:
 			our size = 0;
 		}
 	}
-	void copyFrom (_autostringvector& other) {
-		our reset ();
-		our _ptr = NUMvector <_autostring <T>> (1, other. size, true);
-		our size = other. size;
-		for (integer i = 1; i <= our size; i ++) {
-			our _ptr [i] = Melder_dup (other. _ptr [i].get());
-		}
-	}
-	void copyElementsFrom (_autostringvector& other) {
+	void copyElementsFrom (_conststringvector<T> other) {
 		Melder_assert (other. size == our size);
 		for (integer i = 1; i <= our size; i ++) {
-			our _ptr [i] = Melder_dup (other. _ptr [i].get());
+			our _ptr [i] = Melder_dup (other [i]);
 		}
 	}
-	void copyElementsFrom_upTo (_autostringvector& other, integer to) {
+	void copyElementsFrom_upTo (_conststringvector<T> other, integer to) {
 		Melder_assert (to <= other. size && to <= our size);
 		for (integer i = 1; i <= to; i ++) {
-			our _ptr [i] = Melder_dup (other. _ptr [i].get());
+			our _ptr [i] = Melder_dup (other [i]);
 		}
 	}
 };
 
 typedef _autostringvector <char32> autostring32vector;
 typedef _autostringvector <char> autostring8vector;
+
+using STRVEC = _stringvector <char32>;
+using constSTRVEC = _conststringvector <char32>;
+using autoSTRVEC = _autostringvector <char32>;
+
+inline static autoSTRVEC STRVECclone (constSTRVEC strvec) {
+	autoSTRVEC result (strvec.size);
+	for (integer i = 1; i <= result.size; i ++)
+		result [i] = Melder_dup (strvec [i]);
+	return result;
+}
 
 /* End of file melder_strvec.h */
 #endif

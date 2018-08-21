@@ -205,7 +205,7 @@ autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 	try {
 		autoPCA thee = NUMdmatrix_to_PCA (my data, my numberOfRows, my numberOfColumns, false);
 		Melder_assert (thy labels.size == my numberOfColumns);
-		thy labels. copyElementsFrom (my columnLabels);
+		thy labels. copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
@@ -246,7 +246,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 				his data[i][j] = r;
 			}
 		}
-		his rowLabels. copyElementsFrom (thy rowLabels);
+		his rowLabels. copyElementsFrom (thy rowLabels.get());
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -262,7 +262,7 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_projectRows (PCA me, TableOfReal 
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensionsToKeep);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
-		his rowLabels. copyElementsFrom (thy rowLabels);
+		his rowLabels. copyElementsFrom (thy rowLabels.get());
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -277,7 +277,7 @@ autoConfiguration PCA_TableOfReal_to_Configuration (PCA me, TableOfReal thee, in
 		}
 		autoConfiguration him = Configuration_create (thy numberOfRows, numberOfDimensionsToKeep);
 		Eigen_TableOfReal_into_TableOfReal_projectRows (me, thee, 1, him.get(), 1, numberOfDimensionsToKeep);
-		his rowLabels. copyElementsFrom (thy rowLabels);
+		his rowLabels. copyElementsFrom (thy rowLabels.get());
 		TableOfReal_setSequentialColumnLabels (him.get(), 0, 0, U"pc", 1, 1);
 		return him;
 	} catch (MelderError) {
@@ -296,8 +296,8 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
 		Melder_assert (my labels.size == my dimension);
-		his columnLabels. copyElementsFrom (my labels);
-		his rowLabels. copyElementsFrom (thy rowLabels);
+		his columnLabels. copyElementsFrom (my labels.get());
+		his rowLabels. copyElementsFrom (thy rowLabels.get());
 
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			double *hisdata = his data [i];
