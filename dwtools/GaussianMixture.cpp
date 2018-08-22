@@ -223,7 +223,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 }
 
 /* c is double vector 1..dimension !!!!!! */
-int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **covname, double *buf) {
+int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC c, char32 **covname, VEC buf) {
 	try {
 		double p = NUMrandomUniform (0.0, 1.0);
 		integer im = NUMgetIndexFromProbability (my mixingProbabilities, my numberOfComponents, p);
@@ -237,7 +237,7 @@ int GaussianMixture_generateOneVector (GaussianMixture me, double *c, char32 **c
 			if (! thy pca) {
 				SSCP_expandPCA (thee);    // on demand expanding
 			}
-			Covariance_PCA_generateOneVector (thee, thy pca.get(), c, buf);
+			Covariance_PCA_generateOneVector_inline (thee, thy pca.get(), c, buf);
 		}
 		return 1;
 	} catch (MelderError) {
@@ -1309,12 +1309,14 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 	try {
 		Covariance cov = my covariances->at [1];
 		autoTableOfReal thee = TableOfReal_create (numberOfPoints, my dimension);
-		autoNUMvector<double> buf (1, my dimension);
+		autoVEC buf (my dimension, kTensorInitializationType::RAW);
 		thy columnLabels. copyElementsFrom_upTo (cov -> columnLabels.get(), my dimension);
 			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
+		VEC v; v.size = my dimension;
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			char32 *covname;
-			GaussianMixture_generateOneVector (me, thy data [i], &covname, buf.peek());
+			v.at = thy data [i];
+			GaussianMixture_generateOneVector_inline (me, v, &covname, buf.get());
 			TableOfReal_setRowLabel (thee.get(), i, covname);
 		}
 		GaussianMixture_unExpandPCA (me);

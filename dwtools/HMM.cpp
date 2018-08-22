@@ -751,37 +751,52 @@ void HMM_unExpandPCA (HMM me) {
 autoHMMObservationSequence HMM_to_HMMObservationSequence (HMM me, integer startState, integer numberOfItems) {
 	try {
 		autoHMMObservationSequence thee = HMMObservationSequence_create (numberOfItems, my componentDimension);
-		autoNUMvector<double> obs;
-		autoNUMvector<double> buf;
-		if (my componentDimension > 0) {
-			obs.reset (1, my componentDimension);
-			buf.reset (1, my componentDimension);
-		}
 		integer istate = startState == 0 ? NUMgetIndexFromProbability (my transitionProbs [0], my numberOfStates, NUMrandomUniform (0.0, 1.0)) : startState;
-		for (integer i = 1; i <= numberOfItems; i ++) {
-			// Emit a symbol from istate
+		if (my componentDimension > 0) {
+			autoVEC obs (my componentDimension, kTensorInitializationType::RAW);
+			autoVEC buf (my componentDimension, kTensorInitializationType::RAW);
+			for (integer i = 1; i <= numberOfItems; i ++) {
+				// Emit a symbol from istate
 
-			integer isymbol = NUMgetIndexFromProbability (my emissionProbs [istate], my numberOfObservationSymbols, NUMrandomUniform (0.0, 1.0));
-			HMMObservation s = my observationSymbols->at [isymbol];
-
-			if (my componentDimension > 0) {
+				integer isymbol = NUMgetIndexFromProbability (my emissionProbs [istate], my numberOfObservationSymbols, NUMrandomUniform (0.0, 1.0));
+				HMMObservation s = my observationSymbols->at [isymbol];
 				char32 *name;
-				GaussianMixture_generateOneVector (s -> gm.get(), obs.peek(), &name, buf.peek());
+				GaussianMixture_generateOneVector_inline (s -> gm.get(), obs.get(), &name, buf.get());
 				for (integer j = 1; j <= my componentDimension; j ++)
-					Table_setNumericValue (thee.get(), i, 1 + j, obs [j]);
+						Table_setNumericValue (thee.get(), i, 1 + j, obs [j]);
+
+				Table_setStringValue (thee.get(), i, 1, s -> label.get());
+
+				// get next state
+
+				istate = NUMgetIndexFromProbability (my transitionProbs [istate], my numberOfStates + 1, NUMrandomUniform (0.0, 1.0));
+				if (istate == my numberOfStates + 1) { // final state
+					for (integer j = numberOfItems; j > i; j --)
+						HMMObservationSequence_removeObservation (thee.get(), j);
+					break;
+				}
 			}
+			
+		} else {
+			for (integer i = 1; i <= numberOfItems; i ++) {
+				// Emit a symbol from istate
 
-			Table_setStringValue (thee.get(), i, 1, s -> label.get());
+				integer isymbol = NUMgetIndexFromProbability (my emissionProbs [istate], my numberOfObservationSymbols, NUMrandomUniform (0.0, 1.0));
+				HMMObservation s = my observationSymbols->at [isymbol];
 
-			// get next state
+				Table_setStringValue (thee.get(), i, 1, s -> label.get());
 
-			istate = NUMgetIndexFromProbability (my transitionProbs [istate], my numberOfStates + 1, NUMrandomUniform (0.0, 1.0));
-			if (istate == my numberOfStates + 1) { // final state
-				for (integer j = numberOfItems; j > i; j --)
-					HMMObservationSequence_removeObservation (thee.get(), j);
-				break;
+				// get next state
+
+				istate = NUMgetIndexFromProbability (my transitionProbs [istate], my numberOfStates + 1, NUMrandomUniform (0.0, 1.0));
+				if (istate == my numberOfStates + 1) { // final state
+					for (integer j = numberOfItems; j > i; j --)
+						HMMObservationSequence_removeObservation (thee.get(), j);
+					break;
+				}
 			}
 		}
+
 		HMM_unExpandPCA (me);
 		return thee;
 	} catch (MelderError) {
