@@ -2,7 +2,7 @@
 #define _SSCP_h_
 /* SSCP.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ double Covariance_getMarginalProbabilityAtPosition (Covariance me, double vector
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 xpos);
 
-double Covariance_getProbabilityAtPosition (Covariance me, double x[]);
+double Covariance_getProbabilityAtPosition (Covariance me, VEC x);
 /* evaluate the pdf(x,mu,Sigma) at x */
 
 autoCovariance SSCP_to_Covariance (SSCP me, integer numberOfConstraints);

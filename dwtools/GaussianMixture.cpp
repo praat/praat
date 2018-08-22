@@ -1,6 +1,6 @@
 /* GaussianMixture.cpp
  *
- * Copyright (C) 2011-2017 David Weenink
+ * Copyright (C) 2011-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1235,13 +1235,13 @@ autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, 
 
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector_string) {
 	autostring32vector vector = tokenizeStrVec (vector_string);
-	autoNUMvector<double> v (1, my dimension);
+	autoVEC v = {my dimension, kTensorInitializationType::ZERO};
 	for (integer i = 1; i <= vector.size; i ++) {
 		v [i] = Melder_atof (vector [i].get());
 		if (i == my dimension)
 			break;
 	}
-	double p = GaussianMixture_getProbabilityAtPosition (me, v.peek());
+	double p = GaussianMixture_getProbabilityAtPosition (me, v.get());
 	return p;
 }
 
@@ -1254,7 +1254,7 @@ double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, dou
 	return (double) p;
 }
 
-double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *xpos) {
+double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, VEC xpos) {
 	longdouble p = 0.0;
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		double pim = Covariance_getProbabilityAtPosition (my covariances->at [im], xpos);
@@ -1268,8 +1268,7 @@ autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA thee, 
 		Melder_require (my dimension == thy dimension, U"Dimensions should be equal.");
 		Melder_require (d1 <= thy numberOfEigenvalues && d2 <= thy numberOfEigenvalues, U"Direction index too high.");
 		
-		autoNUMvector<double> v (1, my dimension);
-
+		autoVEC v = { my dimension, kTensorInitializationType::ZERO };
 		if (xmax == xmin || ymax == ymin) {
 			double xmind, xmaxd, ymind, ymaxd, nsigmas = 2.0;
 
@@ -1297,7 +1296,7 @@ autoMatrix GaussianMixture_PCA_to_Matrix_density (GaussianMixture me, PCA thee, 
 				for (integer k = 1; k <= my dimension; k ++) {
 					v [k] = x * thy eigenvectors [d1] [k] + y * thy eigenvectors [d2] [k];
 				}
-				his z [i] [j] = GaussianMixture_getProbabilityAtPosition (me, v.peek());
+				his z [i] [j] = GaussianMixture_getProbabilityAtPosition (me, v.get());
 			}
 		}
 		return him;

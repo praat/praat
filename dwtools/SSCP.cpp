@@ -1,6 +1,6 @@
 /* SSCP.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1369,24 +1369,25 @@ static double traceOfSquaredMatrixProduct (double **s1, double **s2, integer n) 
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector_string) {
 	autostring32vector vector = tokenizeStrVec (vector_string);
-	autoNUMvector<double> v (1, my numberOfColumns);
-	integer i = 0;
+	//autoNUMvector<double> v (1, my numberOfColumns);
+	autoVEC v = { my numberOfColumns, kTensorInitializationType::ZERO};
 	for (integer i = 1; i <= vector.size; i ++) {
-		v [++ i] = Melder_atof (vector [i].get());
+		v [i] = Melder_atof (vector [i].get());
 		if (i == my numberOfColumns) {
 			break;
 		}
 	}
-	double p = Covariance_getProbabilityAtPosition (me, v.peek());
+	double p = Covariance_getProbabilityAtPosition (me, v.get());
 	return p;
 }
 
-double Covariance_getProbabilityAtPosition (Covariance me, double x []) {
+double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
 	if (my lowerCholesky == 0) {
-		SSCP_expandLowerCholesky (me);
+		SSCP_expandLowerCholesky ((SSCP) me);
 	}
+	Melder_require (x.size == my numberOfColumns, U"The dimensions of the Covariance and the vector should agree.");
 	double ln2pid = my numberOfColumns * log (NUM2pi);
-	double dsq = NUMmahalanobisDistance_chi (my lowerCholesky, x, my centroid, my numberOfRows, my numberOfColumns);
+	double dsq = NUMmahalanobisDistance_chi (my lowerCholesky, x.at, my centroid, my numberOfRows, my numberOfColumns);
 	double lnN = - 0.5 * (ln2pid + my lnd + dsq);
 	double p =  exp (lnN);
 	return p;

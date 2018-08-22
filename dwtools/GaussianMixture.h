@@ -2,7 +2,7 @@
 #define _GaussianMixture_h_
 /* GaussianMixture.h
  *
- * Copyright (C) 2010-2017 David Weenink
+ * Copyright (C) 2010-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 
 double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion);
 
-double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, double *vector);
+double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, VEC v);
 
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector);
 
