@@ -3817,7 +3817,7 @@ NORMAL (U"You can download the source code of the sendpraat subroutine and progr
 	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
 ENTRY (U"Instead")
 NORMAL (U"Instead of using sendpraat, you can also just take the following simple steps in your program:")
-LIST_ITEM (U"1. on Linux, write the script that you want to run, and save it as ##~/.praat-dir/message#;")
+LIST_ITEM (U"1. on Linux, write the Praat script that you want to run, and save it as ##~/.praat-dir/message#;")
 LIST_ITEM (U"2. get Praat's process id from ##~/.praat-dir/pid#;")
 LIST_ITEM (U"3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: $$kill -USR1 1178")
 NORMAL (U"If the first line of your script is the comment \"\\#  999\", where 999 stands for the process id of your program, "
