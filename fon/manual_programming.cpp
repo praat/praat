@@ -1,6 +1,6 @@
 /* manual_programming.cpp
  *
- * Copyright (C) 1992-2010,2011,2013,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2010,2011,2013,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ NORMAL (U"• Many programs read and/or write Praat TextGrid files. If you want 
 	"consult @@TextGrid file formats@.")
 MAN_END
 
-MAN_BEGIN (U"TextGrid file formats", U"ppgb", 20170527)
+MAN_BEGIN (U"TextGrid file formats", U"ppgb", 20180821)
 INTRO (U"This page describes the syntax and semantics of TextGrid files that Praat can read and/or write.")
 ENTRY (U"1. The full text format of a minimal TextGrid")
 NORMAL (U"If you record a Sound with a druation of 2.3 seconds, and then do ##To TextGrid...#, "
@@ -194,7 +194,7 @@ NORMAL (U"Another thing we see is that there is an additional type of comment: e
 	"an exclamation mark.")
 ENTRY (U"3. Reading a TextGrid file")
 NORMAL (U"Reading the contents of a TextGrid file into your own data structure is fairly easy. "
-	"For instance, to figure out how many intervals there in a tier, you do not have to read multiple lines and then backtrack "
+	"For instance, to figure out how many intervals there are in a tier, you do not have to read multiple lines and then backtrack "
 	"to see where the list of intervals ends. Instead, the number of intervals is given before the intervals are enumerated.")
 ENTRY (U"4. Writing a TextGrid file")
 NORMAL (U"Writing the contents of a TextGrid file involves deciding on a level of human readability.")
@@ -272,7 +272,7 @@ NORMAL (U"A thing to note is the doubling of double quotes. The sentence in tier
 	"something special has to be done about it lest Praat think that you're ending the text. The solution that Praat chooses "
 	"is that a double quote that appears in a text is written as a %doubled double quote in the text file, as above on tier 1.")
 ENTRY (U"6. Restrictions in a TextGrid object")
-NORMAL (U"TextGrid object maintain several invariants, some stronger and some weaker.")
+NORMAL (U"TextGrid objects maintain several invariants, some stronger and some weaker.")
 NORMAL (U"The two strongest invariants within an interval tier are %%positive duration% and %adjacency. "
 	"That is, the end time of each interval has to be greater than the starting time of that same interval, "
 	"and the starting time of each interval (except the first) has to be equal to the end time of the previous interval. "
@@ -287,7 +287,7 @@ NORMAL (U"A weaker invariant is that the starting time of the first interval on 
 	"reasonably well in a TextGrid window. It is nevertheless advisable for other programs that create TextGrids "
 	"to honour this weak invariant.")
 NORMAL (U"For a point tier, a strong invariant is that the time of each point (except the first) has to be greater than the time "
-	"of the previous point. Praat maintains this invariant for instance by refusing to insert a point at a time of an existing "
+	"of the previous point. Praat maintains this invariant for instance by refusing to insert a point at the time of an existing "
 	"point. TextGrid files that violate this invariant may or may not be read by Praat, and may cause strange behaviour in Praat "
 	"if they are read.")
 NORMAL (U"A further weak invariant is that the starting and end times of each tier equal the starting and end times of the whole "

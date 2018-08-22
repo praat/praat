@@ -21,8 +21,9 @@
 template <typename T>
 class _stringvector {
 public:
-	T** at;
-	integer size;
+	T** at = nullptr;
+	integer size = 0;
+	_stringvector () { }
 	_stringvector (T** givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	T* & operator[] (integer i) {
 		return our at [i];
@@ -34,9 +35,9 @@ typedef _stringvector <char> string8vector;
 template <typename T>
 class _conststringvector {
 public:
-	const T* const * at;
-	integer size;
-	_conststringvector () : at (nullptr), size (0) { }
+	const T* const * at = nullptr;
+	integer size = 0;
+	_conststringvector () { }
 	_conststringvector (const T* const * givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	_conststringvector (_stringvector<T> other): at (other.at), size (other.size) { }
 	const T* const & operator[] (integer i) {
@@ -92,9 +93,8 @@ public:
 	}
 	void reset () {
 		if (our _ptr) {
-			for (integer i = 1; i <= our size; i ++) {
+			for (integer i = 1; i <= our size; i ++)
 				our _ptr [i]. reset ();
-			}
 			NUMvector_free (our _ptr, 1);
 			our _ptr = nullptr;
 			our size = 0;
@@ -102,15 +102,13 @@ public:
 	}
 	void copyElementsFrom (_conststringvector<T> other) {
 		Melder_assert (other. size == our size);
-		for (integer i = 1; i <= our size; i ++) {
+		for (integer i = 1; i <= our size; i ++)
 			our _ptr [i] = Melder_dup (other [i]);
-		}
 	}
 	void copyElementsFrom_upTo (_conststringvector<T> other, integer to) {
 		Melder_assert (to <= other. size && to <= our size);
-		for (integer i = 1; i <= to; i ++) {
+		for (integer i = 1; i <= to; i ++)
 			our _ptr [i] = Melder_dup (other [i]);
-		}
 	}
 };
 
