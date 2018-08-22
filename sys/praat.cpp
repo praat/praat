@@ -1655,6 +1655,10 @@ void praat_run () {
 	Melder_assert (isundef (pow (10.0, 330)));
 	Melder_assert (isundef (0.0 / 0.0));
 	Melder_assert (isundef (1.0 / 0.0));
+	Melder_assert (undefined != undefined);
+	Melder_assert (undefined - undefined != 0.0);
+	Melder_assert ((1.0/0.0) == (1.0/0.0));
+	Melder_assert ((1.0/0.0) - (1.0/0.0) != 0.0);
 	{
 		/*
 			Assumptions made in abcio.cpp:

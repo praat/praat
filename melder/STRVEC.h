@@ -17,6 +17,24 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+inline static STRVEC STRVECfromTo (STRVEC strvec, integer fromIndex, integer toIndex) {
+	integer offsetIndex = fromIndex - 1;
+	Melder_assert (offsetIndex >= 0);
+	Melder_assert (toIndex <= strvec.size);
+	integer rangeSize = toIndex - offsetIndex;
+	if (rangeSize <= 0) return STRVEC();
+	return STRVEC (& strvec [offsetIndex], toIndex - offsetIndex);
+}
+
+inline static constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer toIndex) {
+	integer offsetIndex = fromIndex - 1;
+	Melder_assert (offsetIndex >= 0);
+	Melder_assert (toIndex <= strvec.size);
+	integer rangeSize = toIndex - offsetIndex;
+	if (rangeSize <= 0) return constSTRVEC();
+	return constSTRVEC (& strvec [offsetIndex], rangeSize);
+}
+
 /*
 	Regard a string as a sequence of tokens,
 	separated (and perhaps preceded and followed) by white space.
