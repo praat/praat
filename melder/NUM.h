@@ -18,7 +18,8 @@
  */
 
 /*
-	Called in inline functions.
+	The following functions are called in inline functions,
+	so they have to be declared first.
 */
 
 double NUMinner_ (constVEC x, constVEC y);
@@ -29,7 +30,7 @@ void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
 		double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
 
 /*
-	From here on in alphabetical order.
+	From here on, the functions appear in alphabetical order.
 */
 
 double NUMcenterOfGravity (constVEC x) noexcept;
@@ -47,6 +48,17 @@ inline static bool NUMequal (constVEC x, constVEC y) {
 
 inline static bool NUMequal (constMAT x, constMAT y) {
 	return NUMequal (asVEC (x), asVEC (y));
+}
+
+inline static bool NUMequal (constSTRVEC x, constSTRVEC y) {
+	integer n = x.size;
+	if (y.size != n)
+		return false;
+	for (integer i = 1; i <= n; i ++) {
+		if (! Melder_equ (x [i], y [i]))
+			return false;
+	}
+	return true;
 }
 
 inline static double NUMinner (constVEC x, constVEC y) {

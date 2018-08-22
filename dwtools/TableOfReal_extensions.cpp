@@ -516,37 +516,6 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 	}
 }
 
-bool TableOfReal_equalLabels (TableOfReal me, TableOfReal thee, bool rowLabels, bool columnLabels) {
-	Melder_assert (rowLabels || columnLabels);
-	if (rowLabels) {
-		if (my numberOfRows != thy numberOfRows) {
-			return false;
-		}
-		if (my rowLabels.peek2() == thy rowLabels.peek2()) {
-			return true;
-		}
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			if (! Melder_equ (my rowLabels [i].get(), thy rowLabels [i].get())) {
-				return false;
-			}
-		}
-	}
-	if (columnLabels) {
-		if (my numberOfColumns != thy numberOfColumns) {
-			return false;
-		}
-		if (my columnLabels.peek2() == thy columnLabels.peek2()) {
-			return true;
-		}
-		for (integer i = 1; i <= my numberOfColumns; i ++) {
-			if (! Melder_equ (my columnLabels [i].get(), thy columnLabels [i].get())) {
-				return false;
-			}
-		}
-	}
-	return true;
-}
-
 void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, int columnOrigin) {
 	if (rowOrigin == 1) {
 		Melder_require (my numberOfRows == thy numberOfRows,
@@ -744,9 +713,7 @@ bool TableOfReal_checkPositive (TableOfReal me) {
 	return true;
 }
 
-/* undefined ??? */
-void NUMdmatrix_getColumnExtrema (double **a, integer rowb, integer rowe, integer icol, double *min, double *max);
-void NUMdmatrix_getColumnExtrema (double **a, integer rowb, integer rowe, integer icol, double *min, double *max) {
+static void NUMdmatrix_getColumnExtrema (double **a, integer rowb, integer rowe, integer icol, double *min, double *max) {
 	*min = *max = a [rowb] [icol];
 	for (integer i = rowb + 1; i <= rowe; i ++) {
 		double t = a [i] [icol];
@@ -867,13 +834,15 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 	}
 	if (xmax == xmin) {
 		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icx, & xmin, & xmax);
-		double tmp = xmax - xmin == 0.0 ? 0.5 : 0.0;
-		xmin -= tmp; xmax += tmp;
+		double tmp = ( xmax == xmin ? 0.5 : 0.0 );
+		xmin -= tmp;
+		xmax += tmp;
 	}
 	if (ymax == ymin) {
 		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icy, & ymin, & ymax);
-		double tmp = ymax - ymin == 0.0 ? 0.5 : 0.0;
-		ymin -= tmp; ymax += tmp;
+		double tmp = ( ymax == ymin ? 0.5 : 0.0 );
+		ymin -= tmp;
+		ymax += tmp;
 	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
@@ -941,7 +910,10 @@ autoTableOfReal TableOfRealList_sum (TableOfRealList me) {
 
 		for (integer i = 2; i <= my size; i ++) {
 			TableOfReal him = my at [i];
-			Melder_require (thy numberOfRows == his numberOfRows && thy numberOfColumns == his numberOfColumns && TableOfReal_equalLabels (thee.get(), him, true, true),  U"Dimensions or labels differ for table ", i, U".");
+			Melder_require (thy numberOfRows == his numberOfRows && thy numberOfColumns == his numberOfColumns
+					&& NUMequal (thy rowLabels.get(), his rowLabels.get())
+					&& NUMequal (thy columnLabels.get(), his columnLabels.get()),
+				U"Dimensions or labels differ for table ", i, U".");
 			for (integer j = 1; j <= thy numberOfRows; j ++) {
 				for (integer k = 1; k <= thy numberOfColumns; k ++) {
 					thy data [j] [k] += his data [j] [k];

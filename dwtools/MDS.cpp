@@ -1200,7 +1200,9 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 	if (n == 0) {
 		return;
 	}
-	Melder_require (TableOfReal_equalLabels (me, thee, true, true), U"The labels should be the same.");
+	Melder_require (NUMequal (my rowLabels.get(), thy rowLabels.get()) &&
+					NUMequal (my columnLabels.get(), thy columnLabels.get()),
+		U"The labels should be the same.");
 	
 	if (xmax <= xmin) {
 		xmin = xmax = x [1] [2];
