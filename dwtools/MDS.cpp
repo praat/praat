@@ -513,11 +513,8 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 
 		TableOfReal_setSequentialColumnLabels (thee.get(), 0, 0, nullptr, 1, 1);
 		thy rowLabels. copyElementsFrom_upTo (my rowLabels.get(), nr);
-		for (integer i = 1; i <= nc; i ++) {
-			if (my columnLabels [i]) {
-				TableOfReal_setRowLabel (thee.get(), nr + i, my columnLabels [i].get());
-			}
-		}
+		for (integer i = 1; i <= nc; i ++)
+			thy rowLabels [nr + i] = Melder_dup (my columnLabels [i].get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created.");
@@ -1200,7 +1197,9 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 	if (n == 0) {
 		return;
 	}
-	Melder_require (TableOfReal_equalLabels (me, thee, true, true), U"The labels should be the same.");
+	Melder_require (NUMequal (my rowLabels.get(), thy rowLabels.get()) &&
+					NUMequal (my columnLabels.get(), thy columnLabels.get()),
+		U"The labels should be the same.");
 	
 	if (xmax <= xmin) {
 		xmin = xmax = x [1] [2];

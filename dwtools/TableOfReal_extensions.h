@@ -95,9 +95,6 @@ integer TableOfReal_getNumberOfLabelMatches (TableOfReal me, conststring32 searc
 	Find number of labels that match search description.
 */
 
-bool TableOfReal_equalLabels (TableOfReal me, TableOfReal thee, bool rowLabels, bool columnLabels);
-/* return 1 when labels are equal else 0 */
-
 void TableOfReal_copyLabels (TableOfReal me, TableOfReal thee, int rowOrigin, int columnOrigin);
 /*
 	rowOrigin ==  1 copy from row
