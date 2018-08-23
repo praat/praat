@@ -1,6 +1,6 @@
 /* SSCP.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -462,9 +462,12 @@ double SSCP_getCumulativeContributionOfComponents (SSCP me, integer from, intege
 }
 
 /* For nxn matrix only ! */
-void Covariance_PCA_generateOneVector (Covariance me, PCA thee, double *vec, double *buf) {
+void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VEC vec, VEC buf) {
 	// Generate the multi-normal vector elements N(0,sigma)
-
+	Melder_require (thy dimension == my numberOfRows, 
+		U"The PCA must have the same dimension as the Covariance.");
+	Melder_require (vec.size == buf.size && my numberOfColumns == buf.size, 
+		U"The vectors and the PCA must have the same dimension.");
 	for (integer j = 1; j <= my numberOfColumns; j ++) {
 		buf [j] = NUMrandomGauss (0.0, sqrt (thy eigenvalues [j]));
 	}
@@ -478,7 +481,7 @@ void Covariance_PCA_generateOneVector (Covariance me, PCA thee, double *vec, dou
 		}
 	}
 
-	// Restore the centroid
+	// Add the centroid
 
 	for (integer j = 1; j <= my numberOfColumns; j ++) {
 		vec [j] += my centroid [j];
@@ -492,10 +495,11 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 		}
 		autoPCA pca = SSCP_to_PCA (me);
 		autoTableOfReal thee = TableOfReal_create (numberOfData, my numberOfColumns);
-		autoNUMvector<double> buf (1, my numberOfColumns);
-
+		autoVEC buf (my numberOfColumns, kTensorInitializationType::RAW);
+		VEC v; v.size = my numberOfColumns;
 		for (integer i = 1; i <= numberOfData; i ++) {
-			Covariance_PCA_generateOneVector (me, pca.get(), thy data [i], buf.peek());
+			v.at = thy data [i];
+			Covariance_PCA_generateOneVector_inline (me, pca.get(), v, buf.get());
 		}
 
 		thy columnLabels. copyElementsFrom (my columnLabels.get());
@@ -1369,24 +1373,25 @@ static double traceOfSquaredMatrixProduct (double **s1, double **s2, integer n) 
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector_string) {
 	autostring32vector vector = tokenizeStrVec (vector_string);
-	autoNUMvector<double> v (1, my numberOfColumns);
-	integer i = 0;
+	autoVEC v (my numberOfColumns, kTensorInitializationType::ZERO);
 	for (integer i = 1; i <= vector.size; i ++) {
-		v [++ i] = Melder_atof (vector [i].get());
+		v [i] = Melder_atof (vector [i].get());
 		if (i == my numberOfColumns) {
 			break;
 		}
 	}
-	double p = Covariance_getProbabilityAtPosition (me, v.peek());
+	double p = Covariance_getProbabilityAtPosition (me, v.get());
 	return p;
 }
 
-double Covariance_getProbabilityAtPosition (Covariance me, double x []) {
+double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
+	Melder_require (x.size == my numberOfColumns,
+		U"The dimensions of the Covariance and the vector should agree.");
 	if (my lowerCholesky == 0) {
-		SSCP_expandLowerCholesky (me);
+		SSCP_expandLowerCholesky ((SSCP) me);
 	}
 	double ln2pid = my numberOfColumns * log (NUM2pi);
-	double dsq = NUMmahalanobisDistance_chi (my lowerCholesky, x, my centroid, my numberOfRows, my numberOfColumns);
+	double dsq = NUMmahalanobisDistance_chi (my lowerCholesky, x.at, my centroid, my numberOfRows, my numberOfColumns);
 	double lnN = - 0.5 * (ln2pid + my lnd + dsq);
 	double p =  exp (lnN);
 	return p;
@@ -1403,14 +1408,14 @@ double Covariance_getMarginalProbabilityAtPosition (Covariance me, double vector
 /* Precondition ||v|| = 1 */
 void Covariance_getMarginalDensityParameters (Covariance me, double v [], double *p_mu, double *p_stdev) {
 	if (p_mu) {
-		double mu = 0.0;
+		longdouble mu = 0.0;
 		for (integer m = 1; m <= my numberOfColumns; m ++) {
 			mu += v [m] * my centroid [m];
 		}
-		*p_mu = mu;
+		*p_mu = (double) mu;
 	}
 	if (p_stdev) {
-		double stdev = 0;
+		longdouble stdev = 0.0;
 		if (my numberOfRows == 1) { // 1xn diagonal matrix
 			for (integer m = 1; m <= my numberOfColumns; m ++) {
 				stdev += v [m] * my data [1] [m] * v [m];
@@ -1660,7 +1665,8 @@ static void checkOneIndex (TableOfReal me, integer index) {
 static void checkTwoIndices (TableOfReal me, integer index1, integer index2) {
 	Melder_require (index1 > 0 && index1 <= my numberOfColumns && index2 > 0 && index2 <= my numberOfColumns,
 		U"Index should be in interval [1, ", my numberOfColumns, U"].");
-	Melder_require (index1 != index2,U"Indices should be different.");
+	Melder_require (index1 != index2, 
+		U"Indices should be different.");
 }
 
 void Covariance_getSignificanceOfOneMean (Covariance me, integer index, double mu, double *p_prob, double *p_t, double *p_df) {
