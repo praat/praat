@@ -27,9 +27,8 @@ double structVector :: v_getVector (integer irow, integer icol) {
 	if (irow == 0) {
 		if (ny == 2) return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
 		longdouble sum = 0.0;
-		for (integer channel = 1; channel <= ny; channel ++) {
+		for (integer channel = 1; channel <= ny; channel ++)
 			sum += z [channel] [icol];
-		}
 		return double (sum / ny);
 	}
 	Melder_assert (irow > 0 && irow <= ny);
@@ -53,9 +52,8 @@ double structVector :: v_getFunction1 (integer irow, double x) {
 			z1 = 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
 		} else {
 			longdouble sum = 0.0;
-			for (integer channel = 1; channel <= ny; channel ++) {
+			for (integer channel = 1; channel <= ny; channel ++)
 				sum += z [channel] [icol];
-			}
 			z1 = double (sum / ny);
 		}
 	} else {
@@ -72,9 +70,8 @@ double structVector :: v_getFunction1 (integer irow, double x) {
 			z2 = 0.5 * (z [1] [icol + 1] + z [2] [icol + 1]);   // optimization
 		} else {
 			longdouble sum = 0.0;
-			for (integer channel = 1; channel <= ny; channel ++) {
+			for (integer channel = 1; channel <= ny; channel ++)
 				sum += z [channel] [icol + 1];
-			}
 			z2 = double (sum / ny);
 		}
 	} else {
@@ -97,9 +94,8 @@ double structVector :: v_getValueAtSample (integer isamp, integer ilevel, int un
 		value = 0.5 * (z [1] [isamp] + z [2] [isamp]);   // optimization
 	} else {
 		longdouble sum = 0.0;
-		for (integer channel = 1; channel <= ny; channel ++) {
+		for (integer channel = 1; channel <= ny; channel ++)
 			sum += z [channel] [isamp];
-		}
 		value = double (sum / ny);
 	}
 	return isdefined (value) ? v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined;
@@ -122,14 +118,14 @@ double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolatio
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
-	double sum = 0.0;
+	longdouble sum = 0.0;
 	for (integer channel = 1; channel <= my ny; channel ++) {
 		sum += NUM_interpolate_sinc (my z [channel], my nx, Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
-	return sum / my ny;
+	return double (sum / my ny);
 }
 
 /***** Get shape. *****/
@@ -325,44 +321,24 @@ double Vector_getStandardDeviation (Vector me, double xmin, double xmax, integer
 /***** Modify. *****/
 
 void Vector_addScalar (Vector me, double scalar) {
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		for (integer i = 1; i <= my nx; i ++) {
-			my z [channel] [i] += scalar;
-		}
-	}
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		VECadd_inplace (my channel (ichan), scalar);
 }
 
 void Vector_subtractMean (Vector me) {
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		double sum = 0.0;
-		for (integer i = 1; i <= my nx; i ++) {
-			sum += my z [channel] [i];
-		}
-		double mean = sum / my nx;
-		for (integer i = 1; i <= my nx; i ++) {
-			my z [channel] [i] -= mean;
-		}
-	}
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		VECcentre_inplace (my channel (ichan));
 }
 
 void Vector_multiplyByScalar (Vector me, double scalar) {
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		for (integer i = 1; i <= my nx; i ++) {
-			my z [channel] [i] *= scalar;
-		}
-	}
+	for (integer ichan = 1; ichan <= my ny; ichan ++)
+		VECmultiply_inplace (my channel (ichan), scalar);
 }
 
 void Vector_scale (Vector me, double scale) {
-	double extremum = 0.0;
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		for (integer i = 1; i <= my nx; i ++) {
-			if (fabs (my z [channel] [i]) > extremum) extremum = fabs (my z [channel] [i]);
-		}
-	}
-	if (extremum != 0.0) {
+	double extremum = NUMextremum (my asMAT());
+	if (extremum != 0.0)
 		Vector_multiplyByScalar (me, scale / extremum);
-	}
 }
 
 /***** Graphics. *****/
