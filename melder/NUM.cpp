@@ -30,23 +30,36 @@ double NUMcenterOfGravity (constVEC x) noexcept {
 double NUMinner_ (constVEC x, constVEC y) {
 	if (x.size != y.size) return undefined;
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
-		const double *xx = x.at;
-		const double *yy = y.at,
-		(++ xx, ++ yy),
-		(longdouble) *xx * (longdouble) *yy);
+		const double *xx = & x [1];
+		const double *yy = & y [1],
+		(longdouble) *xx * (longdouble) *yy,
+		(++ xx, ++ yy)
+	)
 	return (double) sum;
 }
 
 double NUMnorm (constVEC x, double power) noexcept {
 	if (power < 0.0) return undefined;
 	if (power == 2.0) {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size, const double *y = x.at, ++ y, (longdouble) *y * (longdouble) *y)
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *y = & x [1],
+			(longdouble) *y * (longdouble) *y,
+			++ y
+		)
 		return sqrt ((double) sum);
 	} else if (power == 1.0) {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size, const double *y = x.at, ++ y, (longdouble) fabs (*y))
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *y = & x [1],
+			(longdouble) fabs (*y),
+			++ y
+		)
 		return (double) sum;
 	} else {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size, const double *y = x.at, ++ y, powl ((longdouble) fabs (*y), power))
+		PAIRWISE_SUM (longdouble, sum, integer, x.size,
+			const double *y = & x [1],
+			powl ((longdouble) fabs (*y), power),
+			++ y
+		)
 		return (double) powl (sum, (longdouble) 1.0 / power);
 	}
 }
@@ -100,23 +113,23 @@ void NUM_sum_mean (constVEC x, double *p_sum, double *p_mean) noexcept {
 		return;
 	}
 	if (Melder_debug == 0 || Melder_debug < 48 || Melder_debug > 51) {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size, const double *xx = x.at, ++ xx, (longdouble) *xx)
+		PAIRWISE_SUM (longdouble, sum, integer, x.size, const double *xx = & x [1], (longdouble) *xx, ++ xx)
 		if (p_sum) *p_sum = (double) sum;
 		if (p_mean) *p_mean = double (sum / x.size);   // it helps a bit to perform the division while still in longdouble
 	} else if (Melder_debug == 48) {
-		SEQUENTIAL_SUM (double, sum, integer, x.size, const double *xx = x.at, ++ xx, *xx)
+		SEQUENTIAL_SUM (double, sum, integer, x.size, const double *xx = & x [1], *xx, ++ xx)
 		if (p_sum) *p_sum = (double) sum;
 		if (p_mean) *p_mean = double (sum / x.size);
 	} else if (Melder_debug == 49) {
-		SEQUENTIAL_SUM (longdouble, sum, integer, x.size, const double *xx = x.at, ++ xx, *xx)
+		SEQUENTIAL_SUM (longdouble, sum, integer, x.size, const double *xx = & x [1], *xx, ++ xx)
 		if (p_sum) *p_sum = (double) sum;
 		if (p_mean) *p_mean = double (sum / x.size);
 	} else if (Melder_debug == 50) {
-		KAHAN_SUM (longdouble, sum, integer, x.size, const double *xx = x.at, ++ xx, *xx)
+		KAHAN_SUM (longdouble, sum, integer, x.size, const double *xx = & x [1], *xx, ++ xx)
 		if (p_sum) *p_sum = (double) sum;
 		if (p_mean) *p_mean = double (sum / x.size);
 	} else if (Melder_debug == 51) {
-		TWO_LOOP_SUM (longdouble, sum, integer, x.size, const double *xx = x.at, ++ xx, *xx)
+		TWO_LOOP_SUM (longdouble, sum, integer, x.size, const double *xx = & x [1], *xx, ++ xx)
 		if (p_sum) *p_sum = (double) sum;
 		if (p_mean) *p_mean = double (sum / x.size);
 	}
@@ -203,7 +216,10 @@ void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
 			if (! p_sumsq && ! p_variance && ! p_stdev) {
 				return;
 			}
-			KAHAN_SUM (longdouble, sumsq, integer, x.size, const double *y = x.at, ++ y, longdouble (*y - mean) * longdouble (*y - mean))
+			KAHAN_SUM (longdouble, sumsq, integer, x.size,
+					const double *y = & x [1],
+					longdouble (*y - mean) * longdouble (*y - mean),
+					++ y)
 			double variance = double (sumsq / (x.size - 1));
 			if (p_sumsq) *p_sumsq = (double) sumsq;
 			if (p_variance) *p_variance = variance;
@@ -236,12 +252,20 @@ void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
 	/*
 		Our standard: pairwise algorithm with base case 64.
 	*/
-	PAIRWISE_SUM (longdouble, sum, integer, x.size, const double *xx = x.at, ++ xx, (longdouble) *xx)
+	PAIRWISE_SUM (longdouble, sum, integer, x.size,
+		const double *xx = & x [1],
+		(longdouble) *xx,
+		xx += 1
+	)
 	double mean = double (sum / x.size);   // rounded to double, because this guarantees that x[i] - mean will be zero for constant x[1..size]
 	if (p_sum) *p_sum = (double) sum;
 	if (p_mean) *p_mean = (double) mean;
 	if (! p_sumsq && ! p_variance && ! p_stdev) return;
-	PAIRWISE_SUM (longdouble, sumsq, integer, x.size, const double *xx = x.at, ++ xx, longdouble (*xx - mean) * longdouble (*xx - mean))
+	PAIRWISE_SUM (longdouble, sumsq, integer, x.size,
+		const double *xx = & x [1],
+		longdouble (*xx - mean) * longdouble (*xx - mean),
+		++ xx
+	)
 	longdouble variance = sumsq / (x.size - 1);
 	if (p_sumsq) *p_sumsq = (double) sumsq;
 	if (p_variance) *p_variance = (double) variance;
@@ -265,12 +289,20 @@ void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
 		if (p_stdev) *p_stdev = undefined;
 		return;
 	}
-	PAIRWISE_SUM (longdouble, sum, integer, x.nrow, const double *xx = & x.at [1] [columnNumber] - x.ncol, xx += x.ncol, (longdouble) *xx)
+	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
+		const double *xx = & x [1] [columnNumber],
+		(longdouble) *xx,
+		xx += x.ncol
+	)
 	double mean = double (sum / x.nrow);   // rounded to double, because this guarantees that x[i] - mean will be zero for constant x[1..size]
 	if (p_sum) *p_sum = (double) sum;
 	if (p_mean) *p_mean = (double) mean;
 	if (! p_sumsq && ! p_variance && ! p_stdev) return;
-	PAIRWISE_SUM (longdouble, sumsq, integer, x.nrow, const double *xx = & x.at [1] [columnNumber] - x.ncol, xx += x.ncol, longdouble (*xx - mean) * longdouble (*xx - mean))
+	PAIRWISE_SUM (longdouble, sumsq, integer, x.nrow,
+		const double *xx = & x [1] [columnNumber],
+		longdouble (*xx - mean) * longdouble (*xx - mean),
+		xx += x.ncol
+	)
 	longdouble variance = sumsq / (x.nrow - 1);
 	if (p_sumsq) *p_sumsq = (double) sumsq;
 	if (p_variance) *p_variance = (double) variance;

@@ -61,6 +61,17 @@ inline static bool NUMequal (constSTRVEC x, constSTRVEC y) {
 	return true;
 }
 
+inline static double NUMextremum (constVEC vec) {
+	double extremum = 0.0;
+	for (integer i = 1; i <= vec.size; i ++)
+		if (fabs (vec [i]) > extremum) extremum = fabs (vec [i]);
+	return extremum;
+}
+
+inline static double NUMextremum (constMAT mat) {
+	return NUMextremum (asVEC (mat));
+}
+
 inline static double NUMinner (constVEC x, constVEC y) {
 	integer n = x.size;
 	if (y.size != n)

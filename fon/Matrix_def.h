@@ -55,6 +55,8 @@ oo_DEFINE_CLASS (Matrix, SampledXY)
 			override;
 		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
 			override;
+
+		MAT asMAT () { return { our z, our ny, our nx }; }
 	#endif
 
 oo_END_CLASS (Matrix)
