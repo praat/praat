@@ -741,21 +741,18 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 
 autoPCA SSCP_to_PCA (SSCP me) {
 	try {
-		double **data = my data;
-		autoNUMmatrix<double> adata;
+		autoMAT mat (my numberOfColumns, my numberOfColumns, kTensorInitializationType::ZERO);
 		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
 
 		if (my numberOfRows == 1) { // 1xn matrix -> nxn
-			// ugly hack
-			adata.reset (1, my numberOfColumns, 1, my numberOfColumns);
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
-				data [i] [i] = my data [1] [i];
+				mat [i] [i] = my data [1] [i];
 			}
-			data = adata.peek();
+		} else {
+			NUMmatrix_copyElements <double> (my data, mat.at, 1, my numberOfColumns, 1, my numberOfColumns);
 		}
 		thy labels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
-			// ppgb FIXME: the number of thy labels could be equal to my numberOfColumns; if so, assert; it not, explain.
-		Eigen_initFromSymmetricMatrix (thee.get(), data, my numberOfColumns);
+		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
 		NUMvector_copyElements (my centroid, thy centroid, 1, my numberOfColumns);
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
 		return thee;
@@ -1244,7 +1241,7 @@ autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststr
 			}
 		}
 
-		// Check if a valid correlations, first check variances then covariances
+		// Check if a valid correlations, first check diagonal then off-diagonals
 
 		for (integer irow = 1; irow <= dimension; irow ++) {
 			Melder_require (my data [irow] [irow] == 1.0, U"The diagonal matrix elements should all equal 1.0.");
@@ -1397,7 +1394,7 @@ double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
 	return p;
 }
 
-double Covariance_getMarginalProbabilityAtPosition (Covariance me, double vector [], double x) {
+double Covariance_getMarginalProbabilityAtPosition (Covariance me, VEC vector, double x) {
 	double mu, stdev;
 	Covariance_getMarginalDensityParameters (me, vector, &mu, &stdev);
 	double dx = (x - mu) / stdev;
@@ -1406,7 +1403,8 @@ double Covariance_getMarginalProbabilityAtPosition (Covariance me, double vector
 }
 
 /* Precondition ||v|| = 1 */
-void Covariance_getMarginalDensityParameters (Covariance me, double v [], double *p_mu, double *p_stdev) {
+void Covariance_getMarginalDensityParameters (Covariance me, VEC v, double *p_mu, double *p_stdev) {
+	Melder_assert (v.size == my numberOfColumns);
 	if (p_mu) {
 		longdouble mu = 0.0;
 		for (integer m = 1; m <= my numberOfColumns; m ++) {

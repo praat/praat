@@ -507,7 +507,8 @@ double NUMtrace2 (double **a1, double **a2, integer n) {
 
 void NUMeigensystem (double **a, integer n, double **evec, double eval []) {
 	autoEigen me = Thing_new (Eigen);
-	Eigen_initFromSymmetricMatrix (me.get(), a, n);
+	MAT mat; mat.ncol = mat.nrow = n; mat.at = a;
+	Eigen_initFromSymmetricMatrix (me.get(), mat);
 	if (evec) {
 		NUMmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
 	}

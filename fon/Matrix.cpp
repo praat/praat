@@ -549,11 +549,12 @@ autoMatrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-
 
 void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues) {
 	try {
-		if (my nx != my ny)
-			Melder_throw (U"(Matrix not square.");
-
+		Melder_require (my nx == my ny, 
+			U"The number of rows and the number of columns must be equal.");
+		
+		MAT a; a.nrow = a.ncol = my nx; a.at = my z;
 		autoEigen eigen = Thing_new (Eigen);
-		Eigen_initFromSymmetricMatrix (eigen.get(), my z, my nx);
+		Eigen_initFromSymmetricMatrix (eigen.get(), a);
 		autoMatrix eigenvectors = Data_copy (me);
 		autoMatrix eigenvalues = Matrix_create (1.0, 1.0, 1, 1.0, 1.0, my ymin, my ymax, my ny, my dy, my y1);
 		for (integer i = 1; i <= my nx; i ++) {

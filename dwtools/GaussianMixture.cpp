@@ -446,8 +446,10 @@ void GaussianMixture_getIntervalAlongDirection (GaussianMixture me, integer d, d
 }
 
 void GaussianMixture_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA thee, integer d1, integer d2, double nsigmas, double *xmin, double *xmax, double *ymin, double *ymax) {
-	Melder_require (my dimension == thy dimension, U"Dimensions should be equal.");
-	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension, U"Incorrect directions.");
+	Melder_require (my dimension == thy dimension, 
+		U"Dimensions should be equal.");
+	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension, 
+		U"Incorrect directions.");
 	
 	autoSSCPList sscps = SSCPList_toTwoDimensions (my covariances->asSSCPList(), thy eigenvectors [d1], thy eigenvectors [d2]);
 	SSCPList_getEllipsesBoundingBoxCoordinates (sscps.get(), -nsigmas, 0, xmin, xmax, ymin, ymax);
@@ -476,9 +478,11 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 
 	double pmax = 0.0, dx = (xmax - xmin) / npoints, x1 = xmin + 0.5 * dx;
 	double scalef = nbins <= 0 ? 1 : 1; // TODO
+	VEC pos; pos.size = thy dimension;
 	for (integer i = 1; i <= npoints; i++) {
 		double x = x1 + (i - 1) * dx;
-		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, thy eigenvectors [d], x);
+		pos.at = thy eigenvectors [d];
+		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, pos, x);
 		if (p [i] > pmax) {
 			pmax = p [i];
 		}
@@ -510,8 +514,8 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 	if (npoints <= 1) {
 		npoints = 1000;
 	}
-	autoNUMvector<double> p (1, npoints);
-	autoNUMvector<double> v (1, my dimension);
+	autoVEC p (npoints, kTensorInitializationType::RAW);
+	autoVEC v (my dimension, kTensorInitializationType::RAW);
 
 	double nsigmas = 2;
 	if (xmax <= xmin) {
@@ -520,12 +524,13 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 
 	double pmax = 0, dx = (xmax - xmin) / (npoints - 1);
 	double scalef = nbins <= 0 ? 1 : 1; // TODO
+	
 	for (integer i = 1; i <= npoints; i++) {
 		double x = xmin + (i - 1) * dx;
 		for (integer k = 1; k <= my dimension; k++) {
 			v [k] = k == d ? 1 : 0;
 		}
-		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, v.peek(), x);
+		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, v.get(), x);
 		if (p [i] > pmax) {
 			pmax = p [i];
 		}
@@ -537,7 +542,7 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_function (g, p.peek(), 1, npoints, xmin, xmax);
+	Graphics_function (g, p.at, 1, npoints, xmin, xmax);
 	Graphics_unsetInner (g);
 
 	if (garnish) {
@@ -1235,20 +1240,20 @@ autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, 
 
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector_string) {
 	autostring32vector vector = tokenizeStrVec (vector_string);
-	autoVEC v = {my dimension, kTensorInitializationType::ZERO};
+	autoVEC pos = {my dimension, kTensorInitializationType::ZERO};
 	for (integer i = 1; i <= vector.size; i ++) {
-		v [i] = Melder_atof (vector [i].get());
+		pos [i] = Melder_atof (vector [i].get());
 		if (i == my dimension)
 			break;
 	}
-	double p = GaussianMixture_getProbabilityAtPosition (me, v.get());
+	double p = GaussianMixture_getProbabilityAtPosition (me, pos.get());
 	return p;
 }
 
-double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x) {
+double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, VEC pos, double x) {
 	longdouble p = 0.0;
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
-		double pim = Covariance_getMarginalProbabilityAtPosition (my covariances->at [im], vector, x);
+		double pim = Covariance_getMarginalProbabilityAtPosition (my covariances->at [im], pos, x);
 		p += my mixingProbabilities [im] * pim;
 	}
 	return (double) p;
