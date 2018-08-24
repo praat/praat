@@ -248,7 +248,7 @@
 	element of the array.
 
 	The sixth argument of the macro is an expression that should evaluate to the value of a term,
-	given the current (incremented) value of the loop pointer(s), as in `*xx` above.
+	given the current value of the loop pointer(s), as in `*xx` above.
 
 	The seventh argument is the formula you use for incrementing the loop pointer(s),
 	as in `xx += 1` above. The macro uses this formula to prepare for the retrieval of
@@ -261,7 +261,8 @@
 			const double *xx = & x [1];   // the semicolon ensures that this line and the next form a single argument
 			const double *yy = & y [1],
 			(long double) *xx * (long double) *yy,
-			(++ xx, ++ yy))
+			(xx += 1, yy += 1)
+		)
 		printf ("%.17g", (double) inner);
 
 	Note for the sixth argument: you can see here that you can do the two increments simultaneously
@@ -286,7 +287,8 @@
 			const double *xx = & x [1];   // note the funny semicolon again
 			const double *yy = & y [1],
 			(long double) *xx * (long double) *yy,
-			(xx += xstride, yy += ystride))
+			(xx += xstride, yy += ystride)
+		)
 		printf ("%.17g", (double) inner);
 
 	... and small-lag convolution...
@@ -296,7 +298,8 @@
 			const double *xx = & x [i];
 			const double *filter = & kernel [kernelSize],
 			(long double) *xx * (long double) *filter,
-			(xx += 1, filter -= 1))
+			(xx += 1, filter -= 1)
+		)
 		result [i] = conv;
 	}
 
@@ -532,5 +535,5 @@
 		} \
 	}
 
-/* End of file PAIRWISE_SUMpost.h */
+/* End of file PAIRWISE_SUM.h */
 #endif
