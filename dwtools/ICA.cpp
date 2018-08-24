@@ -305,8 +305,9 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 		autoEigen eigen = Thing_new (Eigen);
 		autoCrossCorrelationTableList ccts = Data_copy (thee);
+		autoMAT d (dimension, dimension, kTensorInitializationType::RAW);
 		autoNUMmatrix<double> pinv (1, dimension, 1, dimension);
-		autoNUMmatrix<double> d (1, dimension, 1, dimension);
+		//autoNUMmatrix<double> d (1, dimension, 1, dimension);
 		autoNUMmatrix<double> p (1, dimension, 1, dimension);
 		autoNUMmatrix<double> m1 (1, dimension, 1, dimension);
 		autoNUMmatrix<double> wc (1, dimension, 1, dimension);
@@ -327,8 +328,8 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		// scale eigenvectors for sphering
 		// [vb,db] = eig(C0);
 		// P = db^(-1/2)*vb';
-
-		Eigen_initFromSymmetricMatrix (eigen.get(), c0 -> data, dimension);
+		MAT mat; mat.ncol = mat.nrow = dimension; mat.at = c0 -> data;
+		Eigen_initFromSymmetricMatrix (eigen.get(), mat);
 		for (integer i = 1; i <= dimension; i ++) {
 			Melder_require (eigen -> eigenvalues [i] >= 0.0, U"Covariance matrix should be positive definite. Eigenvalue [", i, U"] is negative.");
 			double scalef = 1.0 / sqrt (eigen -> eigenvalues [i]);
@@ -358,7 +359,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 			// C * W
 			NUMdmatrices_multiply_VC (m1.peek(), cov -> data, dimension, dimension, w, dimension);
 			// D += scalef * M1*M1'
-			NUMdmatrices_multiplyScaleAdd (d.peek(), m1.peek(), dimension, dimension, 2 * cweights [ic]);
+			NUMdmatrices_multiplyScaleAdd (d.at, m1.peek(), dimension, dimension, 2 * cweights [ic]);
 		}
 
 		integer iter = 0;
@@ -376,9 +377,9 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 						wvec [i] = w [i] [kol];
 					}
 
-					update_one_column (ccts.get(), d.peek(), cweights, wvec.peek(), -1, mvec.peek());
+					update_one_column (ccts.get(), d.at, cweights, wvec.peek(), -1, mvec.peek());
 
-					Eigen_initFromSymmetricMatrix (eigen.get(), d.peek(), dimension);
+					Eigen_initFromSymmetricMatrix (eigen.get(), d.get());
 
 					// Eigenvalues already sorted; get eigenvector of smallest !
 
@@ -386,7 +387,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 						wnew [i] = eigen -> eigenvectors [dimension] [i];
 					}
 
-					update_one_column (ccts.get(), d.peek(), cweights, wnew.peek(), 1, mvec.peek());
+					update_one_column (ccts.get(), d.at, cweights, wnew.peek(), 1, mvec.peek());
 					for (integer i = 1; i <= dimension; i ++) {
 						w [i] [kol] = wnew [i];
 					}

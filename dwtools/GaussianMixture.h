@@ -49,9 +49,11 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 	double scale, int confidence, char32 *label, integer d1, integer d2,
 	double xmin, double xmax, double ymin, double ymax, int fontSize, int garnish);
 
-void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
+void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, 
+	double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
 
-void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA him, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
+void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA him, Graphics g, integer d, 
+	double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish);
 
 autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me, integer storage);
 
@@ -91,9 +93,9 @@ double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, Table
 
 double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, VEC v);
 
-double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector);
+double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 pos);
 
-double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, double *vector, double x);
+double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, VEC pos, double x);
 
 autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee);
 /* Correlation between components based on the data in the table */

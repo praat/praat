@@ -2,7 +2,7 @@
  *
  * Principal Component Analysis
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,9 +152,9 @@ autoEigen PCA_to_Eigen (PCA me) {
 static autoPCA NUMdmatrix_to_PCA (double **m, integer numberOfRows, integer numberOfColumns, bool byColumns) {
 	try {
 		Melder_require (! NUMdmatrix_containsUndefinedElements (m, 1, numberOfRows, 1, numberOfColumns),
-			U"No matrix elements should be undefined.");
+			U"All matrix elements should be defined.");
 		Melder_require (NUMfrobeniusnorm (numberOfRows, numberOfColumns, m) > 0.0,
-			U"not all values in your table should be zero.");
+			U"Not all values in your table should be zero.");
 		
 		autoNUMmatrix<double> mcopy;
 		integer numberOfRows2, numberOfColumns2;

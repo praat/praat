@@ -1,6 +1,6 @@
 /* CCA_and_Correlation.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,9 @@
 autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 	try {
 		integer ny = my y -> dimension, nx = my x -> dimension;
-
-		if (ny + nx != thy numberOfColumns) {
-			Melder_throw (U"The number of columns in the Correlation must equal the sum of the dimensions in the CCA object");
-		}
+		Melder_require (ny + nx == thy numberOfColumns,
+			U"The number of columns in the Correlation must equal the sum of the dimensions in the CCA object");
+		
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
 		his columnLabels. copyElementsFrom (thy columnLabels.get());
 		TableOfReal_setSequentialRowLabels (him.get(), 1, my numberOfCoefficients, U"dv", 1, 1);
@@ -41,18 +40,18 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 		double **evecy = my y -> eigenvectors, **evecx = my x -> eigenvectors;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
-				double t = 0.0;
+				longdouble t = 0.0;
 				for (integer k = 1; k <= ny; k ++) {
 					t += thy data [i] [k] * evecy [j] [k];
 				}
-				his data[j][i] = t;
+				his data [j] [i] = (double) t;
 			}
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
-				double t = 0.0;
+				longdouble t = 0.0;
 				for (integer k = 1; k <= nx; k ++) {
 					t += thy data [i] [ny + k] * evecx [j] [k];
 				}
-				his data [my numberOfCoefficients + j] [i] = t;
+				his data [my numberOfCoefficients + j] [i] = (double) t;
 			}
 		}
 		return him;
@@ -97,12 +96,12 @@ double CCA_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y
 		ioffset = 0;
 	}
 
-	double varianceFraction = 0.0;
+	longdouble varianceFraction = 0.0;
 	for (integer icv = canonicalVariate_from; icv <= canonicalVariate_to; icv ++) {
-		double variance = 0.0, varianceScaling = 0.0;
+		longdouble variance = 0.0, varianceScaling = 0.0;
 
 		for (integer i = 1; i <= n; i ++) {
-			double si = 0.0;
+			longdouble si = 0.0;
 			for (integer j = 1; j <= n; j++) {
 				si += thy data [ioffset + i] [ioffset + j] * evec [icv] [j]; /* Rxx.e */
 			}
@@ -112,13 +111,13 @@ double CCA_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y
 		varianceFraction += (variance / varianceScaling) / n;
 	}
 
-	return varianceFraction;
+	return (double) varianceFraction;
 }
 
 double CCA_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, integer canonicalVariate_from, integer canonicalVariate_to) {
 	_CCA_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to);
 
-	double redundancy = 0.0;
+	longdouble redundancy = 0.0;
 	for (integer icv = canonicalVariate_from; icv <= canonicalVariate_to; icv ++) {
 		double varianceFraction = CCA_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
 		if (isundef (varianceFraction)) {
@@ -127,7 +126,7 @@ double CCA_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, i
 		redundancy += varianceFraction * my y -> eigenvalues [icv];
 	}
 
-	return redundancy;
+	return (double) redundancy;
 }
 
 /* End of file CCA_and_Correlation.cpp */

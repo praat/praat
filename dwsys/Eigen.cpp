@@ -213,10 +213,11 @@ void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, i
 	NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
 }
 
-void Eigen_initFromSymmetricMatrix (Eigen me, double **a, integer n) {
+void Eigen_initFromSymmetricMatrix (Eigen me, MAT a) {
+	Melder_assert (a.nrow == a.ncol);
 	double wt[1], temp;
 	char jobz = 'V', uplo = 'U';
-	integer lwork = -1, info;
+	integer lwork = -1, n = a.ncol, info;
 
 	my dimension = my numberOfEigenvalues = n;
 
@@ -224,7 +225,7 @@ void Eigen_initFromSymmetricMatrix (Eigen me, double **a, integer n) {
 		Eigen_init (me, n, n);
 	}
 
-	NUMmatrix_copyElements (a, my eigenvectors, 1, n, 1, n);
+	NUMmatrix_copyElements (a.at, my eigenvectors, 1, n, 1, n);
 
 	// Get size of work array
 
