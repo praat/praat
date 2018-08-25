@@ -1313,4 +1313,7 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area);
 */
 void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex);
 
+void NUMmatrix_entropies (double **m, integer numberOfRows, integer numberOfColumns, double *out_h, double *out_hx, 
+	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
+
 #endif // _NUM2_h_
