@@ -49,10 +49,10 @@
 			sizeExpression,      // the total number of terms to sum;
 			initializeStatement, // the statement that declares and initializes the loop pointer(s),
 			                     // which is/are typically a pointer or pointers to the data;
-			incrementStatement,  // the statement that increments the loop pointer(s)
-			                     // before the next piece(s) of data is/are fetched;
 			termExpression       // the expression that computes a "term" (thing to sum)
 			                     // from a piece or pieces of data.
+			incrementStatement,  // the statement that increments the loop pointer(s)
+			                     // before the next piece(s) of data is/are fetched;
 		)
 
 	We explain this in detail below, pedagogically starting with an analogous macro
@@ -79,24 +79,16 @@
 	in terms of a "looping pointer":
 
 		long double sum = 0.0;
-		const double *xx = x;   // the looping pointer
-		for (long i = 1; i <= size; i ++)
-			sum += * ++ xx;
+		const double *xx = & x [1];   // the looping pointer
+		for (long i = 1; i <= size; i ++) {
+			sum += *xx;
+			xx += 1;
+		}
 		printf ("%.17g", (double) sum);
 
 	The looping-pointer formulation consists of defining (declaring and initializing)
 	the pointer before the loop, and then inside the loop
-	first pre-incrementing the pointer and then dereferencing it.
-	The "*++xx" formulation has been idiomatic C from the 1980s on,
-	but modern compilers produce equally efficient code if you separate the two steps:
-
-		long double sum = 0.0;
-		const double *xx = x;   // declare and initialize
-		for (long i = 1; i <= size; i ++) {
-			xx += 1;   // first increment...
-			sum += *xx;   // ... then dereference
-		}
-		printf ("%.17g", (double) sum);
+	first dereferencing the pointer and then incrementing it.
 
 	In this little algorithm we can discern the following seven ingredients:
 	- AccumulatorType: long double
@@ -104,26 +96,26 @@
 	- CounterType: long
 	- sizeExpression: "size"
 	- initializeStatement: "const double *xx = x"
-	- incrementStatement: "xx += 1"
 	- termExpression: "*xx"
+	- incrementStatement: "xx += 1"
 
 	The algorithm can therefore be replaced with
 	
-		SEQUENTIAL_SUM (long double, sum, long, size, const double *xx = x, xx += 1, *xx)
+		SEQUENTIAL_SUM (long double, sum, long, size, const double *xx = & x [1], *xx, xx += 1)
 		printf ("%.17g", (double) sum);
 
 	where the SEQUENTIAL_SUM macro is defined as:
 */
 #define SEQUENTIAL_SUM(AccumulatorType, sumVariableName, CounterType, sizeExpression, \
-	initializeStatement, incrementStatement, termExpression) \
+	initializeStatement, termExpression, incrementStatement) \
 \
 	AccumulatorType sumVariableName = 0.0; \
 	{/* scope */ \
 		initializeStatement; \
 		CounterType _n = sizeExpression;   /* to ensure that the size expression is evaluated only once */ \
 		for (CounterType _i = 1; _i <= _n; _i ++) { \
-			incrementStatement; \
 			sumVariableName += termExpression; \
+			incrementStatement; \
 		} \
 	}
 
@@ -229,7 +221,7 @@
 
 	For pairwise summation we use the exact same macro arguments as for sequential summation:
 	
-		PAIRWISE_SUM (long double, sum, long, size, const double *xx = x, xx += 1, *xx)
+		PAIRWISE_SUM (long double, sum, long, size, const double *xx = & x [1], *xx, xx += 1)
 		printf ("%.17g", (double) sum);
 
 	The macro starts by declaring a variable of type `AccumulatorType` and name `sumVariableName`.
@@ -252,24 +244,25 @@
 	it is not beneficial to use a wider CounterType than the width of your `size`.
 
 	The fifth argument of the macro declares and initializes the loop pointer,
-	as in `const double *xx = x` above. This pointer starts out pointing just below
-	the elements of the array.
+	as in `const double *xx = & x [1]` above. This pointer starts out pointing at the first
+	element of the array.
 
-	The sixth argument of the macro is the formula you use for incrementing the loop pointer(s),
+	The sixth argument of the macro is an expression that should evaluate to the value of a term,
+	given the current value of the loop pointer(s), as in `*xx` above.
+
+	The seventh argument is the formula you use for incrementing the loop pointer(s),
 	as in `xx += 1` above. The macro uses this formula to prepare for the retrieval of
-	every term in the summation.
+	the next term in the summation.
 	
-	The seventh argument is an expression that should evaluate to the value of a term,
-	given the current (incremented) value of the loop pointer(s), as in `*xx` above.
-
 	More complicated use cases than a single array also exist. For instance, if you have to compute
 	the inner product of the two arrays x [1..n] and y [1..n], you can do
 	
 		PAIRWISE_SUM (long double, inner, long, n,
-			const double *xx = x;   // the semicolon ensures that this line and the next form a single argument
-			const double *yy = y,
-			(++ xx, ++ yy),
-			(long double) *xx * (long double) *yy)
+			const double *xx = & x [1];   // the semicolon ensures that this line and the next form a single argument
+			const double *yy = & y [1],
+			(long double) *xx * (long double) *yy,
+			(xx += 1, yy += 1)
+		)
 		printf ("%.17g", (double) inner);
 
 	Note for the sixth argument: you can see here that you can do the two increments simultaneously
@@ -282,7 +275,7 @@
 	time (it can actually be faster). If you do
 	
 		PAIRWISE_SUM (long double, inner, long, n,
-			const double *xx = x; const double *yy = y, (++ xx, ++ yy), *xx * *yy)
+			const double *xx = & x [1]; const double *yy = & y [1], *xx * *yy, (++ xx, ++ yy))
 		printf ("%.17g", (double) inner);
 
 	instead, the conversion to `long double` is done (by the macro) *after* the multiplication,
@@ -291,20 +284,22 @@
 	Other use cases include array multiplication with strides...
 
 		PAIRWISE_SUM (long double, inner, long, n,
-			const double *xx = & x [1 - xstride];   // note the funny semicolon again
-			const double *yy = & y [1 - ystride],
-			(xx += xstride, yy += ystride),
-			(long double) *xx * (long double) *yy)
+			const double *xx = & x [1];   // note the funny semicolon again
+			const double *yy = & y [1],
+			(long double) *xx * (long double) *yy,
+			(xx += xstride, yy += ystride)
+		)
 		printf ("%.17g", (double) inner);
 
 	... and small-lag convolution...
 
 	for (long i = 1; i <= xSize - kernelSize + 1; i ++) {
 		PAIRWISE_SUM (long double, conv, long, kernelSize,
-			const double *xx = & x [i - 1];
-			const double *filter = & kernel [kernelSize + 1],
-			(xx += 1, filter -= 1),
-			(long double) *xx * (long double) *filter)
+			const double *xx = & x [i];
+			const double *filter = & kernel [kernelSize],
+			(long double) *xx * (long double) *filter,
+			(xx += 1, filter -= 1)
+		)
 		result [i] = conv;
 	}
 
@@ -321,42 +316,42 @@
 	The fixed formulas for the low powers of 2 are recursively defined macros:
 */
 
-#define PAIRWISE_SUM_1_TERM(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	incrementStatement; \
-	AccumulatorType accumulator = termExpression;
+#define PAIRWISE_SUM_1_TERM(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	AccumulatorType accumulator = termExpression; \
+	incrementStatement;
 
-#define PAIRWISE_SUM_2_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	PAIRWISE_SUM_1_TERM (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_2_TERMS(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	PAIRWISE_SUM_1_TERM (AccumulatorType, accumulator, termExpression, incrementStatement) \
 	{ \
-		PAIRWISE_SUM_1_TERM (AccumulatorType, _r2, incrementStatement, termExpression) \
+		PAIRWISE_SUM_1_TERM (AccumulatorType, _r2, termExpression, incrementStatement) \
 		accumulator += _r2; \
 	}
 
-#define PAIRWISE_SUM_4_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	PAIRWISE_SUM_2_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_4_TERMS(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	PAIRWISE_SUM_2_TERMS (AccumulatorType, accumulator, termExpression, incrementStatement) \
 	{ \
-		PAIRWISE_SUM_2_TERMS (AccumulatorType, _r3, incrementStatement, termExpression) \
+		PAIRWISE_SUM_2_TERMS (AccumulatorType, _r3, termExpression, incrementStatement) \
 		accumulator += _r3; \
 	}
 
-#define PAIRWISE_SUM_8_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	PAIRWISE_SUM_4_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_8_TERMS(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	PAIRWISE_SUM_4_TERMS (AccumulatorType, accumulator, termExpression, incrementStatement) \
 	{ \
-		PAIRWISE_SUM_4_TERMS (AccumulatorType, _r4, incrementStatement, termExpression) \
+		PAIRWISE_SUM_4_TERMS (AccumulatorType, _r4, termExpression, incrementStatement) \
 		accumulator += _r4; \
 	}
 
-#define PAIRWISE_SUM_16_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	PAIRWISE_SUM_8_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_16_TERMS(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	PAIRWISE_SUM_8_TERMS (AccumulatorType, accumulator, termExpression, incrementStatement) \
 	{ \
-		PAIRWISE_SUM_8_TERMS (AccumulatorType, _r5, incrementStatement, termExpression) \
+		PAIRWISE_SUM_8_TERMS (AccumulatorType, _r5, termExpression, incrementStatement) \
 		accumulator += _r5; \
 	}
 
-#define PAIRWISE_SUM_32_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	PAIRWISE_SUM_16_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_32_TERMS(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	PAIRWISE_SUM_16_TERMS (AccumulatorType, accumulator, termExpression, incrementStatement) \
 	{ \
-		PAIRWISE_SUM_16_TERMS (AccumulatorType, _r6, incrementStatement, termExpression) \
+		PAIRWISE_SUM_16_TERMS (AccumulatorType, _r6, termExpression, incrementStatement) \
 		accumulator += _r6; \
 	}
 /*
@@ -370,22 +365,22 @@
 	Higher powers of 2 than 2^5 (= 32) go on a stack. We sum 64 values at each stroke,
 	and this requires a fixed formula for these 64 terms:
 */
-#define PAIRWISE_SUM_64_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	PAIRWISE_SUM_32_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_64_TERMS(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	PAIRWISE_SUM_32_TERMS (AccumulatorType, accumulator, termExpression, incrementStatement) \
 	{ \
-		PAIRWISE_SUM_32_TERMS (AccumulatorType, _r7, incrementStatement, termExpression) \
+		PAIRWISE_SUM_32_TERMS (AccumulatorType, _r7, termExpression, incrementStatement) \
 		accumulator += _r7; \
 	}
-#define PAIRWISE_SUM_128_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	PAIRWISE_SUM_64_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_128_TERMS(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	PAIRWISE_SUM_64_TERMS (AccumulatorType, accumulator, termExpression, incrementStatement) \
 	{ \
-		PAIRWISE_SUM_64_TERMS (AccumulatorType, _r8, incrementStatement, termExpression) \
+		PAIRWISE_SUM_64_TERMS (AccumulatorType, _r8, termExpression, incrementStatement) \
 		accumulator += _r8; \
 	}
-#define PAIRWISE_SUM_256_TERMS(AccumulatorType, accumulator, incrementStatement, termExpression) \
-	PAIRWISE_SUM_128_TERMS (AccumulatorType, accumulator, incrementStatement, termExpression) \
+#define PAIRWISE_SUM_256_TERMS(AccumulatorType, accumulator, termExpression, incrementStatement) \
+	PAIRWISE_SUM_128_TERMS (AccumulatorType, accumulator, termExpression, incrementStatement) \
 	{ \
-		PAIRWISE_SUM_128_TERMS (AccumulatorType, _r9, incrementStatement, termExpression) \
+		PAIRWISE_SUM_128_TERMS (AccumulatorType, _r9, termExpression, incrementStatement) \
 		accumulator += _r9; \
 	}
 
@@ -397,34 +392,34 @@
 */
 
 #define PAIRWISE_SUM(AccumulatorType, sumVariableName, CounterType, sizeExpression, \
-	initializeStatement, incrementStatement, termExpression) \
+	initializeStatement, termExpression, incrementStatement) \
 \
 	AccumulatorType sumVariableName = 0.0; \
 	{/* scope */ \
 		initializeStatement; \
 		CounterType _n = sizeExpression; \
 		if (_n & 1) { \
-			PAIRWISE_SUM_1_TERM (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_1_TERM (AccumulatorType, _partialSum, termExpression, incrementStatement) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 2) { \
-			PAIRWISE_SUM_2_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_2_TERMS (AccumulatorType, _partialSum, termExpression, incrementStatement) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 4) { \
-			PAIRWISE_SUM_4_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_4_TERMS (AccumulatorType, _partialSum, termExpression, incrementStatement) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 8) { \
-			PAIRWISE_SUM_8_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_8_TERMS (AccumulatorType, _partialSum, termExpression, incrementStatement) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 16) { \
-			PAIRWISE_SUM_16_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_16_TERMS (AccumulatorType, _partialSum, termExpression, incrementStatement) \
 			sumVariableName += _partialSum; \
 		} \
 		if (_n & 32) { \
-			PAIRWISE_SUM_32_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+			PAIRWISE_SUM_32_TERMS (AccumulatorType, _partialSum, termExpression, incrementStatement) \
 			sumVariableName += _partialSum; \
 		} \
 		const int _baseCasePower = 6;   /* because the base case is 64 = 2^6 terms */ \
@@ -457,7 +452,7 @@
 				/*                                                                              */ \
 				/*  Compute the sum of the next 64 data points.                                 */ \
 				/*                                                                              */ \
-				PAIRWISE_SUM_64_TERMS (AccumulatorType, _partialSum, incrementStatement, termExpression) \
+				PAIRWISE_SUM_64_TERMS (AccumulatorType, _partialSum, termExpression, incrementStatement) \
 				/*                                                                              */ \
 				/*  Put this sum on top of the stack.                                           */ \
 				/*                                                                              */ \
@@ -496,7 +491,7 @@
 	is two-loop summation. This is fairly precise, but very slow:
 */
 #define TWO_LOOP_SUM(AccumulatorType, sumVariableName, CounterType, sizeExpression, \
-	initializeStatement, incrementStatement, termExpression) \
+	initializeStatement, termExpression, incrementStatement) \
 \
 	AccumulatorType sumVariableName = 0.0; \
 	{/* scope */ \
@@ -504,8 +499,8 @@
 		{/* scope */ \
 			initializeStatement; \
 			for (CounterType _i = 1; _i <= _n; _i ++) { \
-				incrementStatement; \
 				sumVariableName += termExpression; \
+				incrementStatement; \
 			} \
 		} \
 		AccumulatorType _mean = sumVariableName / _n; \
@@ -513,8 +508,8 @@
 			sumVariableName = 0.0; \
 			initializeStatement; \
 			for (CounterType _i = 1; _i <= _n; _i ++) { \
-				incrementStatement; \
 				sumVariableName += (termExpression) - _mean; \
+				incrementStatement; \
 			} \
 			sumVariableName += _mean * _n; \
 		} \
@@ -524,7 +519,7 @@
 	but it is extremely slow:
 */
 #define KAHAN_SUM(AccumulatorType, sumVariableName, CounterType, sizeExpression, \
-	initializeStatement, incrementStatement, termExpression) \
+	initializeStatement, termExpression, incrementStatement) \
 \
 	AccumulatorType sumVariableName = 0.0; \
 	{/* scope */ \
@@ -532,11 +527,11 @@
 		CounterType _n = sizeExpression; \
 		AccumulatorType _correction = 0.0; \
 		for (CounterType _i = 1; _i <= _n; _i ++) { \
-			incrementStatement; \
 			AccumulatorType _correctedTerm = (termExpression) - _correction; \
 			AccumulatorType _newSum = sumVariableName + _correctedTerm; \
 			_correction = (_newSum - sumVariableName) - _correctedTerm; \
 			sumVariableName = _newSum; \
+			incrementStatement; \
 		} \
 	}
 
