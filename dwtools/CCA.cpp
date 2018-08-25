@@ -293,7 +293,7 @@ double CCA_getCorrelationCoefficient (CCA me, integer index) {
 	return sqrt (my y -> eigenvalues[index]);
 }
 
-void CCA_getZeroCorrelationProbability (CCA me, integer index, double *p_prob, double *p_chisq, double *p_df) {
+void CCA_getZeroCorrelationProbability (CCA me, integer index, double *out_prob, double *out_chisq, double *out_df) {
 	double lambda = 1.0, *ev = my y -> eigenvalues;
 	integer nev = my y -> numberOfEigenvalues;
 	integer ny = my y -> dimension, nx = my x -> dimension;
@@ -308,14 +308,14 @@ void CCA_getZeroCorrelationProbability (CCA me, integer index, double *p_prob, d
 		chisq = - (my numberOfObservations - (ny + nx + 3.0) / 2.0) * log (lambda);
 		prob = NUMchiSquareQ (chisq, df);
 	}
-	if (p_chisq) {
-		*p_chisq = chisq;
+	if (out_chisq) {
+		*out_chisq = chisq;
 	}
-	if (p_df) {
-		*p_df = df;
+	if (out_df) {
+		*out_df = df;
 	}
-	if (p_prob) {
-		*p_prob = prob;
+	if (out_prob) {
+		*out_prob = prob;
 	}
 }
 

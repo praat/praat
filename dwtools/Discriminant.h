@@ -41,7 +41,7 @@ integer Discriminant_getNumberOfFunctions (Discriminant me);
 double Discriminant_getWilksLambda (Discriminant me, integer numberOfDimensions);
 
 void Discriminant_getPartialDiscriminationProbability (Discriminant me,
-	integer numberOfDimensions, double *probability, double *chisq, double *df);
+	integer numberOfDimensions, double *out_probability, double *out_chisq, double *out_df);
 
 double Discriminant_getConcentrationEllipseArea (Discriminant me, integer group,
 	double scale, bool confidence, bool discriminantDirections, integer d1, integer d2);

@@ -1,6 +1,6 @@
 /* ContingencyTable.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,8 +29,8 @@ void structContingencyTable :: v_info () {
 
 	double ndf;
 	double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, chisq;
-	ContingencyTable_entropies (this, &h, &hx, &hy, &hygx, &hxgy, &uygx, &uxgy, &uxy);
-	ContingencyTable_chisq (this, &chisq, &ndf);
+	ContingencyTable_getEntropies (this, & h, & hx, & hy, & hygx, & hxgy, & uygx, & uxgy, & uxy);
+	ContingencyTable_chisq (this, & chisq, & ndf);
 
 	MelderInfo_writeLine (U"Number of rows: ", numberOfRows);
 	MelderInfo_writeLine (U"Number of columns: ", numberOfColumns);
@@ -48,6 +48,32 @@ void structContingencyTable :: v_info () {
 	MelderInfo_writeLine (U"  Probability: ", ContingencyTable_chisqProbability (this));
 }
 
+
+static autoVEC MAT_rowsums (MAT x) {
+	autoVEC rowsum (x.nrow, kTensorInitializationType::ZERO);
+	for (integer i = 1; i <= x.nrow; i ++) {
+		longdouble sum = 0.0;
+		for (integer j = 1; j <= x.ncol; j ++) sum += x [i] [j];
+		rowsum [i] = (double) sum;
+	}
+}
+
+static autoVEC MAT_colsums (MAT x) {
+	autoVEC colsum (x.ncol, kTensorInitializationType::ZERO);
+	for (integer j = 1; j <= x.ncol; j ++) {
+		longdouble sum = 0.0;
+		for (integer i = 1; i <= x.nrow; i ++) sum += x [i] [j];
+		colsum [j] = (double) sum;
+	}
+}
+
+static double MAT_totalSum (MAT x) {
+	longdouble sum = 0.0;
+	for (integer i = 1; i <= x.nrow; i ++)
+		for (integer j = 1; j <= x.ncol; j ++) sum += x [i] [j];
+	return (double) sum;
+}
+
 autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numberOfColumns) {
 	try {
 		autoContingencyTable me = Thing_new (ContingencyTable);
@@ -60,7 +86,7 @@ autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numb
 
 double ContingencyTable_chisqProbability (ContingencyTable me) {
 	double chisq, df;
-	ContingencyTable_chisq (me, &chisq, &df);
+	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
 	}
@@ -68,24 +94,17 @@ double ContingencyTable_chisqProbability (ContingencyTable me) {
 }
 
 double ContingencyTable_cramersStatistic (ContingencyTable me) {
-	double chisq, sum = 0.0, df;
-	integer nr = my numberOfRows, nc = my numberOfColumns, nmin = nr;
-
-	if (nr == 1 || nc == 1) {
+	if (my numberOfRows == 1 || my numberOfColumns == 1) {
 		return 0.0;
 	}
 
-	for (integer i = 1; i <= nr; i ++) {
-		for (integer j = 1; j <= nc; j ++) {
-			sum += my data [i] [j];
-		}
-	}
+	double sum = MAT_totalSum ({my data, my numberOfRows, my numberOfColumns});
 
-	if (nc < nr) {
-		nmin = nc;
-	}
+	integer nmin = my numberOfColumns < my numberOfRows ? my numberOfRows : my numberOfRows;
+
 	nmin--;
-
+	
+	double chisq, df;
 	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
@@ -94,123 +113,58 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 }
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
-	double chisq, sum = 0.0, df;
-	integer nr = my numberOfRows, nc = my numberOfColumns;
-
-	for (integer i = 1; i <= nr; i ++) {
-		for (integer j = 1; j <= nc; j ++) {
-			sum += my data [i] [j];
-		}
-	}
-
+	
+	double chisq, df, sum = MAT_totalSum ({my data, my numberOfRows, my numberOfColumns});
 	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
 	}
-	return sqrt (chisq / (chisq + sum));
+	return sqrt (chisq / (chisq + (double) sum));
 }
 
-void ContingencyTable_chisq (ContingencyTable me, double *chisq, double *df) {
+void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out_df) {
+	
+	autoVEC rowsum = MAT_rowsums ({my data, my numberOfRows, my numberOfColumns});
+	autoVEC colsum = MAT_colsums ({my data, my numberOfRows, my numberOfColumns});
+	double totalsum = MAT_totalSum ({my data, my numberOfRows, my numberOfColumns});
+	
 	integer nr = my numberOfRows, nc = my numberOfColumns;
+	
+	for (integer i = 1; i <= my numberOfRows; i ++)
+		if (rowsum [i] == 0.0) --nr;
 
-	*chisq = 0.0; *df = 0.0;
-
-	autoNUMvector<double> rowsum (1, nr);
-	autoNUMvector<double> colsum (1, nc);
-
-	// row and column marginals
-
-	double sum = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			rowsum [i] += my data [i] [j];
-			colsum [j] += my data [i] [j];
-		}
-		sum += rowsum [i];
+	if (nr == 0) {
+		if (out_chisq) *out_chisq = undefined;
+		if (out_df) *out_df = undefined;
+		return;
 	}
-
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		if (rowsum [i] == 0.0) {
-			--nr;
-		}
-	}
-	for (integer j = 1; j <= my numberOfColumns; j ++) {
-		if (colsum [j] == 0.0) {
-			--nc;
-		}
-	}
-
-	*df = (nr - 1.0) * (nc - 1.0);
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		if (rowsum [i] == 0.0) {
-			continue;
-		}
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			if (colsum [j] == 0.0) {
-				continue;
+	
+	for (integer j = 1; j <= my numberOfColumns; j ++)
+		if (colsum [j] == 0.0) --nc;
+	
+	if (out_df)
+		*out_df = (nr - 1.0) * (nc - 1.0);
+	if (out_chisq) {
+		longdouble chisq = 0.0;
+		for (integer i = 1; i <= my numberOfRows; i ++) {
+			if (rowsum [i] > 0.0) {
+				for (integer j = 1; j <= my numberOfColumns; j ++) {
+					if (colsum [j] > 0.0) {
+						longdouble expt = rowsum [i] * colsum [j] / totalsum;
+						longdouble tmp = my data [i] [j] - expt;
+						chisq += tmp * tmp / expt;
+					}
+				}
 			}
-			double expt = rowsum [i] * colsum [j] / sum;
-			double tmp = my data [i] [j] - expt;
-			*chisq += tmp * tmp / expt;
 		}
+		*out_chisq = (double) chisq;
 	}
 }
 
-void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx, double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy) {
-	*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0;
-
-	autoNUMvector<double> rowsum (1, my numberOfRows);
-	autoNUMvector<double> colsum (1, my numberOfColumns);
-
-	// row and column totals
-
-	double sum = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			rowsum [i] += my data [i] [j];
-			colsum [j] += my data [i] [j];
-		}
-		sum += rowsum [i];
-	}
-
-	// Entropy of x distribution
-
-	for (integer j = 1; j <= my numberOfColumns; j ++) {
-		if (colsum [j] > 0.0) {
-			double p = colsum [j] / sum;
-			*hx -= p * NUMlog2 (p);
-		}
-	}
-
-	// Entropy of y distribution
-
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		if (rowsum [i] > 0.0) {
-			double p = rowsum [i] / sum;
-			*hy -= p * NUMlog2 (p);
-		}
-	}
-
-	// Total entropy
-
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			if (my data [i] [j] > 0.0) {
-				double p = my data [i] [j] / sum;
-				*h -= p * NUMlog2 (p);
-			}
-		}
-	}
-
-	// Conditional entropies
-
-	*hygx = *h - *hx;
-	*hxgy = *h - *hy;
-	*uygx = (*hy - *hygx) / (*hy + TINY);
-	*uxgy = (*hx - *hxgy) / (*hx + TINY);
-	*uxy = 2.0 * (*hx + *hy - *h) / (*hx + *hy + TINY);
+void ContingencyTable_getEntropies (ContingencyTable me, double *out_h, double *out_hx, double *out_hy, double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {	
+	NUMmatrix_getEntropies (my data, my numberOfRows, my numberOfColumns, out_h, out_hx, 
+	out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);	
 }
-
 
 autoContingencyTable Confusion_to_ContingencyTable (Confusion me) {
 	try {
