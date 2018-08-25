@@ -2979,4 +2979,72 @@ void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowI
 	}
 }
 
+void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out_h, double *out_hx, 
+	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {
+	
+	double h = undefined, hx = undefined, hy = undefined;
+	double hxgy = undefined, hygx = undefined, uygx = undefined, uxgy = undefined, uxy = undefined;
+	
+	// Get total sum and check if all elements are not negative.
+	
+	longdouble totalSum = 0.0;
+	for (integer i = 1; i <= nrow; i ++) {
+		for (integer j = 1; j <= ncol; j++) {
+			Melder_require (m [i][j] >= 0, U"Matrix elements should not be negative.");
+			totalSum += m [i] [j];
+		}
+	}
+	
+	if (totalSum > 0.0) {
+		longdouble hy_t = 0.0;
+		for (integer i = 1; i <= nrow; i ++) {
+			longdouble rowsum = 0.0;
+			for (integer j = 1; j <= ncol; j++) rowsum += m [i] [j];
+			if (rowsum > 0.0) {
+				longdouble p = rowsum / totalSum;
+				hy_t -= p * NUMlog2 (p);
+			}
+		}
+		hy = (double) hy_t;
+		
+		longdouble hx_t = 0.0;
+		for (integer j = 1; j <= ncol; j ++) {
+			longdouble colsum = 0.0;
+			for (integer i = 1; i <= nrow; i++) colsum += m [i] [j];
+			if (colsum > 0.0) {
+				longdouble p = colsum / totalSum;
+				hx_t -= p * NUMlog2 (p);
+			}
+		}
+		hx = (double) hx_t;
+				
+		// Total entropy
+		longdouble h_t = 0.0;
+		for (integer i = 1; i <= nrow; i ++) {
+			for (integer j = 1; j <= ncol; j ++) {
+				if (m [i] [j] > 0.0) {
+					double p = m [i] [j] / totalSum;
+					h_t -= p * NUMlog2 (p);
+				}
+			}
+		}
+		h = (double) h_t;
+		hygx = h - hx;
+		hxgy = h - hy;
+		uygx = (hy - hygx) / hy;
+		uxgy = (hx - hxgy) / hx;
+		uxy = 2.0 * (hx + hy - h) / (hx + hy);
+	}
+	if (out_h) *out_h = h;
+	if (out_hx) *out_hx = hx;
+	if (out_hy) *out_hy = hy;
+	// Conditional entropies
+	if (out_hygx) *out_hygx = hygx;
+	if (*out_hxgy) *out_hxgy = hxgy;
+	if (*out_uygx) *out_uygx = uygx;
+	if (*out_uxgy) *out_uxgy = uxgy;
+	if (*out_uxy) *out_uxy = uxy;
+}
+#undef TINY
+
 /* End of file NUM2.cpp */
