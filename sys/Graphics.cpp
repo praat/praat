@@ -1,6 +1,6 @@
 /* Graphics.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2010-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,9 @@ static void computeTrafo (Graphics me) {
 
 void Graphics_init (Graphics me, int resolution) {
 	my resolution = resolution;
-	if (resolution == 96) {
+	if (resolution == 90) {
+		my resolutionNumber = kGraphics_resolution::DPI_90;
+	} else if (resolution == 96) {
 		my resolutionNumber = kGraphics_resolution::DPI_96;
 	} else if (resolution == 100) {
 		my resolutionNumber = kGraphics_resolution::DPI_100;
