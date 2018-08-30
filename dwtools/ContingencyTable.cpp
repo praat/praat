@@ -49,7 +49,7 @@ void structContingencyTable :: v_info () {
 }
 
 
-static autoVEC MAT_rowsums (constMAT x) noexcept {
+static autoVEC MAT_rowsums (constMAT x) {
 	autoVEC rowsum = VECraw (x.nrow);
 	for (integer i = 1; i <= x.nrow; i ++) {
 		longdouble sum = 0.0;
@@ -59,7 +59,7 @@ static autoVEC MAT_rowsums (constMAT x) noexcept {
 	return rowsum;
 }
 
-static autoVEC MAT_colsums (constMAT x) noexcept {
+static autoVEC MAT_colsums (constMAT x) {
 	autoVEC colsum = VECraw (x.ncol);
 	for (integer j = 1; j <= x.ncol; j ++) {
 		longdouble sum = 0.0;
