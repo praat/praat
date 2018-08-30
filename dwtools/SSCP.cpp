@@ -1351,11 +1351,10 @@ static double **productOfSquareMatrices (double **s1, double **s2, integer n) {
 	autoNUMmatrix<double> r (1, n, 1, n);
 	for (integer i = 1; i <= n; i ++) {
 		for (integer j = 1; j <= n; j ++) {
-			double sum = 0;
-			for (integer k = 1; k <= n; k ++) {
+			longdouble sum = 0.0;
+			for (integer k = 1; k <= n; k ++)
 				sum += s1 [i] [k] * s2 [k] [j];
-			}
-			r [i] [j] = sum;
+			r [i] [j] = (double) sum;
 		}
 	}
 	return r.transfer();
@@ -1370,12 +1369,11 @@ static double traceOfSquaredMatrixProduct (double **s1, double **s2, integer n) 
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 vector_string) {
 	autostring32vector vector = tokenizeStrVec (vector_string);
-	autoVEC v (my numberOfColumns, kTensorInitializationType::ZERO);
+	autoVEC v = VECzero (my numberOfColumns);
 	for (integer i = 1; i <= vector.size; i ++) {
 		v [i] = Melder_atof (vector [i].get());
-		if (i == my numberOfColumns) {
+		if (i == my numberOfColumns)
 			break;
-		}
 	}
 	double p = Covariance_getProbabilityAtPosition (me, v.get());
 	return p;
