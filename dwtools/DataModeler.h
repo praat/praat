@@ -2,7 +2,7 @@
 #define _DataModeler_h_
 /* DataModeler.h
  *
- * Copyright (C) 2014-2016 David Weenink
+ * Copyright (C) 2014-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ void DataModeler_getZScores (DataModeler me, int useSigmaY, double zscores[]);
 
 double DataModeler_getDegreesOfFreedom (DataModeler me);
 
-double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *probability, double *ndf);
+double DataModeler_getChiSquaredQ (DataModeler me, int useSigmaY, double *out_probability, double *out_ndf);
 
 double DataModeler_getCoefficientOfDetermination (DataModeler me, double *ssreg, double *sstot);
 
@@ -288,14 +288,14 @@ autoFormant Sound_to_Formant_interval (Sound me, double startTime, double endTim
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
 	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int weighData,
 	double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3,
-	double *optimalCeiling
+	double *out_optimalCeiling
 );
 
 autoFormant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime,
 	double windowLength, double timeStep, double minFreq, double maxFreq, integer numberOfFrequencySteps,
 	double preemphasisFrequency, integer numberOfFormantTracks, integer numberOfParametersPerTrack, int weighData,
 	double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3,
-	double *optimalCeiling
+	double *out_optimalCeiling
 );
 
 double Sound_getOptimalFormantCeiling (Sound me, double startTime, double endTime,

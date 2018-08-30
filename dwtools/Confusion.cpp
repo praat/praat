@@ -1,6 +1,6 @@
 /* Confusion.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,57 +136,11 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 	}
 }
 
-#define TINY 1.0e-30
-
-void Confusion_getEntropies (Confusion me, double *p_h, double *p_hx, double *p_hy,
-	double *p_hygx, double *p_hxgy, double *p_uygx, double *p_uxgy, double *p_uxy)
+void Confusion_getEntropies (Confusion me, double *out_h, double *out_hx, double *out_hy,
+	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy)
 {
-	autoVEC rowSum (my numberOfRows, kTensorInitializationType::ZERO);
-	autoVEC colSum (my numberOfColumns, kTensorInitializationType::ZERO);
-	double totalSum = 0.0;
-	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			double cellValue = my data [irow] [icol];
-			rowSum [irow] += cellValue;
-			colSum [icol] += cellValue;
-			totalSum += cellValue;
-		}
-	}
-	double h = 0.0, hx = 0.0, hy = 0.0;
-	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		if (rowSum [irow] > 0.0) {
-			double prob = rowSum [irow] / totalSum;
-			hy -= prob * NUMlog2 (prob);
-		}
-	}
-	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		if (colSum [icol] > 0.0) {
-			double prob = colSum [icol] / totalSum;
-			hx -= prob * NUMlog2 (prob);
-		}
-	}
-	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
-		for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (my data [irow] [icol] > 0.0) {
-				double prob = my data [irow] [icol] / totalSum;
-				h -= prob * NUMlog2 (prob);
-			}
-		}
-	}
-	double hygx = h - hx;
-	double hxgy = h - hy;
-	double uygx = (hy - hygx) / (hy + TINY);
-	double uxgy = (hx - hxgy) / (hx + TINY);
-	double uxy = 2.0 * (hx + hy - h) / (hx + hy + TINY);
-
-	if (p_h)    *p_h = h;
-	if (p_hx)   *p_hx = hx;
-	if (p_hy)   *p_hy = hy;
-	if (p_hygx) *p_hygx = hygx;
-	if (p_hxgy) *p_hxgy = hxgy;
-	if (p_uygx) *p_uygx = uygx;
-	if (p_uxgy) *p_uxgy = uxgy;
-	if (p_uxy)  *p_uxy = uxy;
+	NUMmatrix_getEntropies (my data, my numberOfRows, my numberOfColumns, out_h, out_hx, 
+	out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);
 }
 
 void Confusion_increase (Confusion me, conststring32 stimulus, conststring32 response) {
