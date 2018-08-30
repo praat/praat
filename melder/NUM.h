@@ -161,6 +161,10 @@ inline static double NUMsum (constVEC x) noexcept {
 	return sum;
 }
 
+inline static double NUMsum (constMAT x) noexcept {
+	return NUMsum (asVEC (x));
+}
+
 double NUMsumsq (constVEC x) noexcept;
 
 double NUMvariance (constVEC x) noexcept;
