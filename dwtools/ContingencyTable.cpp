@@ -49,29 +49,24 @@ void structContingencyTable :: v_info () {
 }
 
 
-static autoVEC MAT_rowsums (MAT x) {
-	autoVEC rowsum (x.nrow, kTensorInitializationType::ZERO);
+static autoVEC MAT_rowsums (constMAT x) {
+	autoVEC rowsum = VECraw (x.nrow);
 	for (integer i = 1; i <= x.nrow; i ++) {
 		longdouble sum = 0.0;
 		for (integer j = 1; j <= x.ncol; j ++) sum += x [i] [j];
 		rowsum [i] = (double) sum;
 	}
+	return rowsum;
 }
 
-static autoVEC MAT_colsums (MAT x) {
-	autoVEC colsum (x.ncol, kTensorInitializationType::ZERO);
+static autoVEC MAT_colsums (constMAT x) {
+	autoVEC colsum = VECraw (x.ncol);
 	for (integer j = 1; j <= x.ncol; j ++) {
 		longdouble sum = 0.0;
 		for (integer i = 1; i <= x.nrow; i ++) sum += x [i] [j];
 		colsum [j] = (double) sum;
 	}
-}
-
-static double MAT_totalSum (MAT x) {
-	longdouble sum = 0.0;
-	for (integer i = 1; i <= x.nrow; i ++)
-		for (integer j = 1; j <= x.ncol; j ++) sum += x [i] [j];
-	return (double) sum;
+	return colsum;
 }
 
 autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numberOfColumns) {
@@ -98,11 +93,11 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 		return 0.0;
 	}
 
-	double sum = MAT_totalSum ({my data, my numberOfRows, my numberOfColumns});
+	double sum = NUMsum ({my data, my numberOfRows, my numberOfColumns});
 
-	integer nmin = my numberOfColumns < my numberOfRows ? my numberOfRows : my numberOfRows;
+	integer nmin = my numberOfColumns < my numberOfRows ? my numberOfColumns : my numberOfRows;
 
-	nmin--;
+	nmin --;
 	
 	double chisq, df;
 	ContingencyTable_chisq (me, & chisq, & df);
@@ -114,7 +109,7 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 	
-	double chisq, df, sum = MAT_totalSum ({my data, my numberOfRows, my numberOfColumns});
+	double chisq, df, sum = NUMsum ({my data, my numberOfRows, my numberOfColumns});
 	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
@@ -126,7 +121,7 @@ void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out
 	
 	autoVEC rowsum = MAT_rowsums ({my data, my numberOfRows, my numberOfColumns});
 	autoVEC colsum = MAT_colsums ({my data, my numberOfRows, my numberOfColumns});
-	double totalsum = MAT_totalSum ({my data, my numberOfRows, my numberOfColumns});
+	double totalsum = NUMsum ({my data, my numberOfRows, my numberOfColumns});
 	
 	integer nr = my numberOfRows, nc = my numberOfColumns;
 	
