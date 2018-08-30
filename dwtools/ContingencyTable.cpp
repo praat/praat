@@ -49,8 +49,8 @@ void structContingencyTable :: v_info () {
 }
 
 
-static autoVEC MAT_rowsums (constMAT x) {
-	autoVEC rowsum (x.nrow, kTensorInitializationType::ZERO);
+static autoVEC MAT_rowsums (constMAT x) noexcept {
+	autoVEC rowsum = VECraw (x.nrow);
 	for (integer i = 1; i <= x.nrow; i ++) {
 		longdouble sum = 0.0;
 		for (integer j = 1; j <= x.ncol; j ++) sum += x [i] [j];
@@ -59,8 +59,8 @@ static autoVEC MAT_rowsums (constMAT x) {
 	return rowsum;
 }
 
-static autoVEC MAT_colsums (constMAT x) {
-	autoVEC colsum (x.ncol, kTensorInitializationType::ZERO);
+static autoVEC MAT_colsums (constMAT x) noexcept {
+	autoVEC colsum = VECraw (x.ncol);
 	for (integer j = 1; j <= x.ncol; j ++) {
 		longdouble sum = 0.0;
 		for (integer i = 1; i <= x.nrow; i ++) sum += x [i] [j];
