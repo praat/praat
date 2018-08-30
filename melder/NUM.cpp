@@ -321,4 +321,15 @@ double NUMvariance (constVEC x) noexcept {
 	return variance;
 }
 
+double NUMcolumnSum (constMAT x, integer columnNumber) {
+	Melder_assert (columnNumber > 0 && columnNumber <= x.nrow);
+	integer stride = x.ncol;
+	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
+		const double *xx = & x [1] [columnNumber],
+		(longdouble) *xx,
+		xx += stride
+	)
+	return (double) sum;
+}
+
 /* End of file NUM.cpp */
