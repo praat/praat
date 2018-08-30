@@ -56,6 +56,7 @@ static autoVEC MAT_rowsums (MAT x) {
 		for (integer j = 1; j <= x.ncol; j ++) sum += x [i] [j];
 		rowsum [i] = (double) sum;
 	}
+	return rowsum;
 }
 
 static autoVEC MAT_colsums (MAT x) {
@@ -65,6 +66,7 @@ static autoVEC MAT_colsums (MAT x) {
 		for (integer i = 1; i <= x.nrow; i ++) sum += x [i] [j];
 		colsum [j] = (double) sum;
 	}
+	return colsum;
 }
 
 autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numberOfColumns) {
