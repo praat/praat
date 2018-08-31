@@ -393,7 +393,7 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 
 autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"Elements should not be negative.");
+		Melder_require (TableOfReal_checkNonNegative (me), U"Elements should not be negative.");
 		
 		autoConfusion thee = Thing_new (Confusion);
 		my structTableOfReal :: v_copy (thee.get());

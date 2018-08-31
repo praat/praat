@@ -160,7 +160,7 @@ void Transition_eigen (Transition me, autoMatrix *out_eigenvectors, autoMatrix *
 	try {
 		autoEigen eigen = Thing_new (Eigen);
 		Transition_transpose (me);
-		MAT data; data.ncol = data.nrow = my numberOfStates; data.at = my data;
+		constMAT data (my data, my numberOfStates, my numberOfStates);
 		Eigen_initFromSymmetricMatrix (eigen.get(), data);
 		Transition_transpose (me);
 		transposed = true;
