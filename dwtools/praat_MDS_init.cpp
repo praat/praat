@@ -1137,6 +1137,7 @@ DO
 	FIND_LIST (Distance)
 		autoConfiguration configurationResult;
 		autoSalience salienceResult;
+		Melder_require (list.size > 1, U"There should me more than one Distance selected.");
 		DistanceList_to_Configuration_ytl ((DistanceList) & list, numberOfDimensions, normalizeScalarProducts, & configurationResult, & salienceResult);
 		praat_new (configurationResult.move(), U"ytl");
 		if (wantSalienceObject) {

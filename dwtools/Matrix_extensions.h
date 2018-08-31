@@ -24,6 +24,7 @@
 */
 
 #include "Matrix.h"
+#include "Eigen.h"
 #include "Graphics.h"
 #include "Matrix_extensions_enums.h"
 
@@ -66,5 +67,11 @@ autoMatrix Matrix_solveEquation (Matrix me, double tolerance);
 double Matrix_getMean (Matrix me, double xmin, double xmax, double ymin, double ymax);
 
 double Matrix_getStandardDeviation (Matrix me, double xmin, double xmax, double ymin, double ymax);
+
+autoEigen Matrix_to_Eigen (Matrix me);
+/* Symmetric matrix */
+
+void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues);
+/* General square matrix */
 
 #endif /* _Matrix_extensions_h_ */
