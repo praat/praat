@@ -67,7 +67,7 @@ typedef enum {
 
 regexp * CompileRE (
    conststring32 exp,         /* String containing the regex specification. */
-   conststring32 * errorText,   /* Text of any error message produced. */
+   conststring32 *errorText,   /* Text of any error message produced. */
    int  defaultFlags); /* Flags for default RE-operation */
 
 regexp *CompileRE_throwable (conststring32 exp, int defaultFlags);
@@ -81,17 +81,17 @@ int ExecRE (
                                    implement back references across regular
                                    expressions for use in syntax
                                    highlighting.*/
-   const char32   *string,              /* Text to search within. */
-   const char32   *end,                 /* Pointer to the end of `string'.  If NULL will
+   conststring32 string,              /* Text to search within. */
+   const char32 *end,                 /* Pointer to the end of `string'.  If NULL will
                                    scan from `string' until '\0' is found. */
    int     reverse,             /* Backward search. */
    char32    prev_char,           /* Character immediately prior to `string'.  Set
                                    to '\n' or '\0' if true beginning of text. */
    char32    succ_char,           /* Character immediately after `end'.  Set
                                    to '\n' or '\0' if true beginning of text. */
-   const char32   *look_behind_to,/* Boundary for look-behind; defaults to
+   conststring32 look_behind_to,/* Boundary for look-behind; defaults to
                                    "string" if NULL */
-   const char32   *match_till);   /* Boundary to where match can extend.
+   conststring32 match_till);   /* Boundary to where match can extend.
                                    \0 is assumed to be the boundary if not
                                    set. Lookahead can cross the boundary. */
 
@@ -100,8 +100,8 @@ int ExecRE (
 
 int SubstituteRE (
    const regexp *prog,
-   const char32   *source,
-   char32   *dest,
+   conststring32 source,
+   mutablestring32 dest,
    int     max,
    int *errorType); // djmw 20080110 0: ok; 1: is not enough memory
 
