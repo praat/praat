@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -703,7 +703,7 @@ double TableOfReal_getTableNorm (TableOfReal me) {
 	return sqrt ((double) sumsq);
 }
 
-bool TableOfReal_checkPositive (TableOfReal me) {
+bool TableOfReal_checkNonNegative (TableOfReal me) {
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			if (my data [i] [j] < 0.0)
