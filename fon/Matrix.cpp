@@ -552,7 +552,7 @@ void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eige
 		Melder_require (my nx == my ny, 
 			U"The number of rows and the number of columns must be equal.");
 		
-		MAT a; a.nrow = a.ncol = my nx; a.at = my z;
+		MAT a (my z, my nx, my nx);
 		autoEigen eigen = Thing_new (Eigen);
 		Eigen_initFromSymmetricMatrix (eigen.get(), a);
 		autoMatrix eigenvectors = Data_copy (me);
