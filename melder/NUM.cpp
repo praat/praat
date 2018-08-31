@@ -27,6 +27,17 @@ double NUMcenterOfGravity (constVEC x) noexcept {
 	return weightedSumOfIndexes / sumOfWeights;
 }
 
+double NUMcolumnSum (constMAT x, integer columnNumber) {
+	Melder_assert (columnNumber > 0 && columnNumber <= x.nrow);
+	integer stride = x.ncol;
+	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
+		const double *xx = & x [1] [columnNumber],
+		(longdouble) *xx,
+		xx += stride
+	)
+	return (double) sum;
+}
+
 double NUMinner_ (constVEC x, constVEC y) {
 	if (x.size != y.size) return undefined;
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
@@ -264,7 +275,7 @@ void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
 	PAIRWISE_SUM (longdouble, sumsq, integer, x.size,
 		const double *xx = & x [1],
 		longdouble (*xx - mean) * longdouble (*xx - mean),
-		++ xx
+		xx += 1
 	)
 	longdouble variance = sumsq / (x.size - 1);
 	if (p_sumsq) *p_sumsq = (double) sumsq;
@@ -319,17 +330,6 @@ double NUMvariance (constVEC x) noexcept {
 	double variance;
 	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, nullptr, & variance, nullptr);
 	return variance;
-}
-
-double NUMcolumnSum (constMAT x, integer columnNumber) {
-	Melder_assert (columnNumber > 0 && columnNumber <= x.nrow);
-	integer stride = x.ncol;
-	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
-		const double *xx = & x [1] [columnNumber],
-		(longdouble) *xx,
-		xx += stride
-	)
-	return (double) sum;
 }
 
 /* End of file NUM.cpp */
