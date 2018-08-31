@@ -25,6 +25,7 @@
 
 #include <limits.h>
 #include "../melder/melder.h"
+#include "MAT_numerics.h"
 
 /* machine precision */
 #define NUMeps 2.2e-16
