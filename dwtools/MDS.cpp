@@ -1,6 +1,6 @@
 /* MDS.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2015,2017 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2015,2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -524,7 +524,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
-		Melder_require (TableOfReal_checkPositive (me), U"No numbers in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegative (me), U"No numbers in the table should be negative.");
 		autoDissimilarity thee = Thing_new (Dissimilarity);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -536,7 +536,7 @@ autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
-		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegative (me), U"No number in the table should be negative.");
 		autoSimilarity thee = Thing_new (Similarity);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -548,7 +548,7 @@ autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 autoDistance TableOfReal_to_Distance (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
-		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegative (me), U"No number in the table should be negative.");
 		autoDistance thee = Thing_new (Distance);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -559,7 +559,7 @@ autoDistance TableOfReal_to_Distance (TableOfReal me) {
 
 autoSalience TableOfReal_to_Salience (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegative (me), U"No number in the table should be negative.");
 		autoSalience thee = Thing_new (Salience);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -570,7 +570,7 @@ autoSalience TableOfReal_to_Salience (TableOfReal me) {
 
 autoWeight TableOfReal_to_Weight (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"No number in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegative (me), U"No number in the table should be negative.");
 		autoWeight thee = Thing_new (Weight);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -843,33 +843,32 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 	double additiveConstant = undefined;
 	try {
 		integer nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
+		Melder_require (nPoints > 0, U"Matrix part should not be empty.");
 
 		// Return c = average dissimilarity in case of failure
-
-		Melder_require (nPoints > 0, U"Matrix part should not be empty.");
 
 		additiveConstant = Dissimilarity_getAverage (me);
 		Melder_require (isdefined (additiveConstant), U"There are no positive dissimilarities.");
 		
-		autoNUMmatrix<double> wd (1, nPoints, 1, nPoints);
-		autoNUMmatrix<double> wdsqrt (1, nPoints, 1, nPoints);
-		autoNUMmatrix<double> b (1, nPoints2, 1, nPoints2);
-		autoNUMvector<double> eigenvalue (1, nPoints2);
+		autoMAT wd (nPoints, nPoints, kTensorInitializationType::ZERO);
+		autoMAT wdsqrt (nPoints, nPoints, kTensorInitializationType::ZERO);
 
 		// The matrices D & D1/2 with distances (squared and linear)
 
 		for (integer i = 1; i <= nPoints - 1; i ++) {
 			for (integer j = i + 1; j <= nPoints; j ++) {
 				double proximity = (my data [i] [j] + my data [j] [i]) / 2.0;
-				wdsqrt [i] [j] = - proximity / 2.0;
-				wd [i] [j] = - proximity * proximity / 2.0;
+				wdsqrt [j] [i] = wdsqrt [i] [j] = - proximity / 2.0; // djmw 20180830
+				wd [j] [i] = wd [i] [j] = - proximity * proximity / 2.0;
 			}
 		}
 
-		NUMdoubleCentre (wdsqrt.peek(), 1, nPoints, 1, nPoints);
-		NUMdoubleCentre (wd.peek(), 1, nPoints, 1, nPoints);
+		NUMdoubleCentre (wdsqrt.at, 1, nPoints, 1, nPoints); // -0.5 A D1/2 A
+		NUMdoubleCentre (wd.at, 1, nPoints, 1, nPoints); // -0.5 A D A
 
 		// Calculate the B matrix according to eq. 6
+		
+		autoMAT b (nPoints2, nPoints2, kTensorInitializationType::ZERO);
 
 		for (integer i = 1; i <= nPoints; i ++) {
 			for (integer j = 1; j <= nPoints; j ++) {
@@ -879,11 +878,25 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 			}
 		}
 
-		// Get eigenvalues and sort them descending
-
-		NUMeigensystem (b.peek(), nPoints2, nullptr, eigenvalue.peek());
-		Melder_require (eigenvalue [1] > 0.0, U"Eigenvalues should not be negative.");
-		additiveConstant = eigenvalue [1];
+		// Get eigenvalues
+		
+		autoVEC eigenvalues_re, eigenvalues_im;
+		MAT_getEigenSystemFromGeneralMatrix (b.get(), nullptr, nullptr, & eigenvalues_re, & eigenvalues_im);
+		
+		// Get largest real eigenvalue
+		double largestEigenvalue = - fabs (eigenvalues_re [1]);
+		integer numberOfRealEigenvalues = 0;
+		for (integer i = 1; i <= nPoints2; i ++) {
+			if (eigenvalues_im [i] == 0.0) {
+				++ numberOfRealEigenvalues;
+				if (eigenvalues_re [i] > largestEigenvalue)
+					largestEigenvalue = eigenvalues_re [i];
+			}
+		}
+		
+		Melder_require (largestEigenvalue >= 0, U"The largest eigenvalue should not be negative.");
+		
+		additiveConstant = largestEigenvalue;
 		return additiveConstant;
 	} catch (MelderError) {
 		Melder_throw (U"Additive constant not calculated.");
@@ -1115,7 +1128,8 @@ autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDim
 		autoScalarProduct sp = Distance_to_ScalarProduct (me, false);
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		TableOfReal_copyLabels (me, thee.get(), 1, 0);
-		NUMprincipalComponents (sp -> data, my numberOfRows, numberOfDimensions, thy data);
+		MAT_getPrincipalComponentsOfSymmetricMatrix_inline ({sp -> data, my numberOfRows, my numberOfRows}, numberOfDimensions, {thy data, my numberOfRows, numberOfDimensions});
+		//NUMprincipalComponents (sp -> data, my numberOfRows, numberOfDimensions, thy data);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created (torsca method).");
