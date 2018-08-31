@@ -1,5 +1,5 @@
 # Praat script runAllPraatTests_leak.praat
-# Paul Boersma 2017-09-13
+# Paul Boersma 2018-08-30
 #
 # This script runs all Praat scripts in its subdirectories.
 
@@ -66,7 +66,7 @@ numberOfDirectories = Get number of strings
 for directory to numberOfDirectories
 	selectObject: directories
 	directory$ = Get string: directory
-	if directory$ <> "manually"
+	if directory$ <> "manually" and directory$ <> "speed"
 		files = Create Strings as file list: "files", directory$ + "/*.praat"
 		numberOfFiles = Get number of strings
 		for file to numberOfFiles
@@ -86,7 +86,7 @@ numberOfDirectories1 = Get number of strings
 for directory1 to numberOfDirectories1
 	selectObject: directories1
 	directory1$ = Get string: directory1
-	if directory1$ <> "manually"
+	if directory1$ <> "manually" and directory$ <> "speed"
 		directories2 = Create Strings as directory list: "directories2", directory1$ + "/*"
 		numberOfDirectories2 = Get number of strings
 		for directory2 to numberOfDirectories2

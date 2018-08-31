@@ -47,7 +47,7 @@ static void fprintquotedstring (MelderFile file, conststring32 s) {
 }
 
 void structTableOfReal :: v_writeText (MelderFile file) {
-	texputi32 (file, numberOfColumns, U"numberOfColumns", 0,0,0,0,0);
+	texputi32 (file, numberOfColumns, U"numberOfColumns");
 	MelderFile_write (file, U"\ncolumnLabels []: ");
 	if (numberOfColumns < 1) MelderFile_write (file, U"(empty)");
 	MelderFile_write (file, U"\n");
@@ -55,7 +55,7 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 		fprintquotedstring (file, columnLabels [i].get());
 		MelderFile_writeCharacter (file, U'\t');
 	}
-	texputi32 (file, numberOfRows, U"numberOfRows", 0,0,0,0,0);
+	texputi32 (file, numberOfRows, U"numberOfRows");
 	for (integer i = 1; i <= numberOfRows; i ++) {
 		MelderFile_write (file, U"\nrow [", i, U"]: ");
 		fprintquotedstring (file, rowLabels [i].get());

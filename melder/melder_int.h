@@ -31,6 +31,7 @@ using int32 = int32_t;
 using int64 = int64_t;
 using integer = intptr_t;   // the default size of an integer (a "long" is only 32 bits on 64-bit Windows)
 using long_not_integer = long;   // for cases where we explicitly need the type "long", such as when printfing to %ld
+using int_not_integer = int;   // for cases where we explicitly need the type "int", such as when scanfing to %n
 using uinteger = uintptr_t;
 using uint8 = uint8_t;
 using uint16 = uint16_t;

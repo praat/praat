@@ -296,32 +296,22 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			MelderInfo_writeLine (isAllDefined, U" ", x);
 		} break;
 		case kPraatTests::TIME_INNER: {
-			int size = Melder_atoi (arg2);
-			autoVEC x { size, kTensorInitializationType::RAW }, y { size, kTensorInitializationType::RAW };
-			for (int64 i = 1; i <= size; i ++) {
-				x [i] = NUMrandomGauss (0.0, 1.0);
-				y [i] = NUMrandomGauss (0.0, 1.0);
-			}
+			integer size = Melder_atoi (arg2);
+			autoVEC x = VECrandomGauss (size, 0.0, 1.0);
+			autoVEC y = VECrandomGauss (size, 0.0, 1.0);
 			double z = 0.0;
-			for (int64 i = 1; i <= n; i ++) {
+			for (int64 i = 1; i <= n; i ++)
 				z += NUMinner (x.get(), y.get());
-			}
 			t = Melder_stopwatch () / size;   // 0.43 ns per multiplication-addition pair
 			MelderInfo_writeLine (z);
 		} break;
 		case kPraatTests::TIME_OUTER_NUMMAT: {
-			int nrow = 100, ncol = 100;
-			VEC x { NUMvector<double> (1, nrow), nrow }, y { NUMvector<double> (1, ncol), ncol };
-			for (int64 i = 1; i <= nrow; i ++)
-				x.at [i] = NUMrandomGauss (0.0, 1.0);
-			for (int64 i = 1; i <= ncol; i ++)
-				y.at [i] = NUMrandomGauss (0.0, 1.0);
-			for (int64 i = 1; i <= n; i ++) {
-				const autoMAT mat = MATouter (x, y);
-			}
+			integer nrow = 100, ncol = 100;
+			autoVEC x = VECrandomGauss (nrow, 0.0, 1.0);
+			autoVEC y = VECrandomGauss (ncol, 0.0, 1.0);
+			for (int64 i = 1; i <= n; i ++)
+				const autoMAT mat = MATouter (x.get(), y.get());
 			t = Melder_stopwatch () / nrow / ncol;   // 0.29 ns, i.e. less than one clock cycle per cell
-			NUMvector_free (x.at, 1);
-			NUMvector_free (y.at, 1);
 		} break;
 		case kPraatTests::CHECK_INVFISHERQ: {
 			MelderInfo_writeLine (NUMinvFisherQ (0.003, 1, 100000));
@@ -350,9 +340,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_SUM: {
 			integer size = Melder_atoi (arg2);
-			autoVEC x { size, kTensorInitializationType::RAW };
-			for (integer i = 1; i <= size; i ++)
-				x [i] = NUMrandomGauss (0.0, 1.0);
+			autoVEC x = VECrandomGauss (size, 0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				double sum = NUMsum (x.get());
@@ -363,9 +351,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_MEAN: {
 			integer size = Melder_atoi (arg2);
-			autoVEC x { size, kTensorInitializationType::RAW };
-			for (integer i = 1; i <= size; i ++)
-				x [i] = NUMrandomGauss (0.0, 1.0);
+			autoVEC x = VECrandomGauss (size, 0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				double sum = NUMmean (x.get());
@@ -376,9 +362,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_STDEV: {
 			integer size = 10000;
-			autoVEC x { size, kTensorInitializationType::RAW };
-			for (integer i = 1; i <= size; i ++)
-				x [i] = NUMrandomGauss (0.0, 1.0);
+			autoVEC x = VECrandomGauss (size, 0.0, 1.0);
 			double z = 0.0;
 			for (int64 i = 1; i <= n; i ++) {
 				double stdev = NUMstdev (x.get());
