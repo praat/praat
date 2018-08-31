@@ -24,6 +24,9 @@
 inline static autoVEC VECraw (integer size) {
 	return { size, kTensorInitializationType::RAW };
 }
+inline static autoVEC VECzero (integer size) {
+	return { size, kTensorInitializationType::ZERO };
+}
 
 /*
 	From here on alphabetical order.
@@ -45,7 +48,7 @@ inline static void VECadd_inplace (VEC target, constVEC vec) {
 		target [i] += vec [i];
 }
 inline static autoVEC VECadd (constVEC x, double addend) {
-	autoVEC result (x.size, kTensorInitializationType::RAW);
+	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] + addend;
 	return result;
@@ -75,6 +78,15 @@ inline static void VECmultiply_inplace (VEC x, double factor) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] *= factor;
 }
+
+inline static autoVEC VECrandomGauss (integer size, double mu, double sigma) {
+	autoVEC result = VECraw (size);
+	for (integer i = 1; i <= size; i ++)
+		result [i] = NUMrandomGauss (mu, sigma);
+	return result;
+}
+
+void VECsort_inplace (VEC x);
 
 inline static void VECsubtract_inplace (VEC x, double number) {
 	for (integer i = 1; i <= x.size; i ++)
@@ -112,17 +124,26 @@ inline static autoVEC VECsubtract (constVEC x, constVEC y) {
 	return result;
 }
 
-void VECsort_inplace (VEC x);
+inline static autoVEC VECsumPerRow (constMAT x) {
+	autoVEC result = VECraw (x.nrow);
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		result [irow] = NUMrowSum (x, irow);
+	return result;
+}
+
+inline static autoVEC VECsumPerColumn (constMAT x) {
+	autoVEC result = VECraw (x.ncol);
+	for (integer icol = 1; icol <= x.ncol; icol ++)
+		result [icol] = NUMcolumnSum (x, icol);
+	return result;
+}
+
 
 inline static autoVEC VECto (integer to) {
 	autoVEC result = VECraw (to);
 	for (integer i = 1; i <= to; i ++)
 		result [i] = (double) i;
 	return result;
-}
-
-inline static autoVEC VECzero (integer size) {
-	return { size, kTensorInitializationType::ZERO };
 }
 
 /* End of file VEC.h */

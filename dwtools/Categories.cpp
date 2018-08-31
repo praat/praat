@@ -47,10 +47,10 @@ void structCategories :: v_readText (MelderReadText a_text, int /*formatVersion*
 }
 
 void structCategories :: v_writeText (MelderFile file) {
-	texputi32 (file, our size, U"size", nullptr, nullptr, nullptr, nullptr, nullptr);
+	texputi32 (file, our size, U"size");
 	for (integer i = 1; i <= our size; i ++) {
 		SimpleString data = our at [i];
-		texputintro (file, U"item [", Melder_integer (i), U"]:", nullptr, nullptr, nullptr);
+		texputintro (file, U"item [", Melder_integer (i), U"]:");
 		data -> structSimpleString :: v_writeText (file);
 		texexdent (file);
 	}

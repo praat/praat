@@ -48,27 +48,6 @@ void structContingencyTable :: v_info () {
 	MelderInfo_writeLine (U"  Probability: ", ContingencyTable_chisqProbability (this));
 }
 
-
-static autoVEC MAT_rowsums (constMAT x) {
-	autoVEC rowsum = VECraw (x.nrow);
-	for (integer i = 1; i <= x.nrow; i ++) {
-		longdouble sum = 0.0;
-		for (integer j = 1; j <= x.ncol; j ++) sum += x [i] [j];
-		rowsum [i] = (double) sum;
-	}
-	return rowsum;
-}
-
-static autoVEC MAT_colsums (constMAT x) {
-	autoVEC colsum = VECraw (x.ncol);
-	for (integer j = 1; j <= x.ncol; j ++) {
-		longdouble sum = 0.0;
-		for (integer i = 1; i <= x.nrow; i ++) sum += x [i] [j];
-		colsum [j] = (double) sum;
-	}
-	return colsum;
-}
-
 autoContingencyTable ContingencyTable_create (integer numberOfRows, integer numberOfColumns) {
 	try {
 		autoContingencyTable me = Thing_new (ContingencyTable);
@@ -119,35 +98,37 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 
 void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out_df) {
 	
-	autoVEC rowsum = MAT_rowsums ({my data, my numberOfRows, my numberOfColumns});
-	autoVEC colsum = MAT_colsums ({my data, my numberOfRows, my numberOfColumns});
-	double totalsum = NUMsum ({my data, my numberOfRows, my numberOfColumns});
+	autoVEC rowSums = VECsumPerRow ({ my data, my numberOfRows, my numberOfColumns });
+	autoVEC columnSums = VECsumPerColumn ({ my data, my numberOfRows, my numberOfColumns });
+	double totalSum = NUMsum ({ my data, my numberOfRows, my numberOfColumns });
 	
-	integer nr = my numberOfRows, nc = my numberOfColumns;
+	integer nrow = my numberOfRows, ncol = my numberOfColumns;
 	
-	for (integer i = 1; i <= my numberOfRows; i ++)
-		if (rowsum [i] == 0.0) --nr;
+	for (integer irow = 1; irow <= my numberOfRows; irow ++)
+		if (rowSums [irow] == 0.0)
+			nrow --;
 
-	if (nr == 0) {
+	if (nrow == 0) {
 		if (out_chisq) *out_chisq = undefined;
 		if (out_df) *out_df = undefined;
 		return;
 	}
 	
-	for (integer j = 1; j <= my numberOfColumns; j ++)
-		if (colsum [j] == 0.0) --nc;
+	for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+		if (columnSums [icol] == 0.0)
+			ncol --;
 	
 	if (out_df)
-		*out_df = (nr - 1.0) * (nc - 1.0);
+		*out_df = (nrow - 1.0) * (ncol - 1.0);
 	if (out_chisq) {
 		longdouble chisq = 0.0;
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			if (rowsum [i] > 0.0) {
-				for (integer j = 1; j <= my numberOfColumns; j ++) {
-					if (colsum [j] > 0.0) {
-						longdouble expt = rowsum [i] * colsum [j] / totalsum;
-						longdouble tmp = my data [i] [j] - expt;
-						chisq += tmp * tmp / expt;
+		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
+			if (rowSums [irow] > 0.0) {
+				for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
+					if (columnSums [icol] > 0.0) {
+						longdouble expected = rowSums [irow] * columnSums [icol] / totalSum;
+						longdouble difference = my data [irow] [icol] - expected;
+						chisq += difference * difference / expected;
 					}
 				}
 			}

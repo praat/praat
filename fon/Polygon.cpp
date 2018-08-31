@@ -42,10 +42,10 @@ void structPolygon :: v_info () {
 }
   
 void structPolygon :: v_writeText (MelderFile file) {
-	texputi32 (file, our numberOfPoints, U"numberOfPoints", 0,0,0,0,0);
+	texputi32 (file, our numberOfPoints, U"numberOfPoints");
 	for (integer i = 1; i <= our numberOfPoints; i ++) {
-		texputr64 (file, our x [i], U"x [", Melder_integer (i), U"]", 0,0,0);
-		texputr64 (file, our y [i], U"y [", Melder_integer (i), U"]", 0,0,0);
+		texputr64 (file, our x [i], U"x [", Melder_integer (i), U"]");
+		texputr64 (file, our y [i], U"y [", Melder_integer (i), U"]");
 	}
 }
 

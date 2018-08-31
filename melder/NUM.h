@@ -29,11 +29,32 @@ void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
 void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
 		double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
 
+inline static double NUMsum (constVEC x) noexcept {
+	integer n = x.size;
+	if (n <= 8) {
+		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
+		if (n <= 4) return n == 3 ?
+			(double) ((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) :
+			(double) (((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4]));
+		if (n <= 6) return n == 5 ?
+			(double) (((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) + ((longdouble) x [4] + (longdouble) x [5])) :
+			(double) (((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) + ((longdouble) x [4] + (longdouble) x [5] + (longdouble) x [6]));
+		return n == 7 ?
+			(double) ((((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])) + ((longdouble) x [5] + (longdouble) x [6] + (longdouble) x [7])) :
+			(double) ((((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])) + (((longdouble) x [5] + (longdouble) x [6]) + ((longdouble) x [7] + (longdouble) x [8])));
+	}
+	double sum;
+	NUM_sum_mean (x, & sum, nullptr);
+	return sum;
+}
+
 /*
 	From here on, the functions appear in alphabetical order.
 */
 
 double NUMcenterOfGravity (constVEC x) noexcept;
+
+double NUMcolumnSum (constMAT x, integer columnNumber);
 
 inline static bool NUMequal (constVEC x, constVEC y) {
 	integer n = x.size;
@@ -74,8 +95,8 @@ inline static double NUMextremum (constMAT mat) {
 
 inline static double NUMinner (constVEC x, constVEC y) {
 	integer n = x.size;
-	if (y.size != n)
-		return undefined;
+	Melder_require (y.size == n,
+		U"inner(): the two vectors should have equal length, not, ", x.size, U" and ", y.size, U".");
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] * y [1] : (double) ((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2]);
 		if (n <= 4) return n == 3 ?
@@ -133,6 +154,11 @@ inline static double NUMpow (double base, double exponent) {
 	return base <= 0.0 ? 0.0 : pow (base, exponent);
 }
 
+inline static double NUMrowSum (constMAT x, integer rowNumber) noexcept {
+	Melder_assert (rowNumber > 0 && rowNumber <= x.nrow);
+	return NUMsum ({ x [rowNumber], x.ncol });
+}
+
 inline static double NUMsqrt (double x) {
 	#if defined (_WIN32)
 		if (x < 0.0) return undefined;
@@ -141,25 +167,6 @@ inline static double NUMsqrt (double x) {
 }
 
 double NUMstdev (constVEC x) noexcept;
-
-inline static double NUMsum (constVEC x) noexcept {
-	integer n = x.size;
-	if (n <= 8) {
-		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
-		if (n <= 4) return n == 3 ?
-			(double) ((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) :
-			(double) (((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4]));
-		if (n <= 6) return n == 5 ?
-			(double) (((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) + ((longdouble) x [4] + (longdouble) x [5])) :
-			(double) (((longdouble) x [1] + (longdouble) x [2] + (longdouble) x [3]) + ((longdouble) x [4] + (longdouble) x [5] + (longdouble) x [6]));
-		return n == 7 ?
-			(double) ((((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])) + ((longdouble) x [5] + (longdouble) x [6] + (longdouble) x [7])) :
-			(double) ((((longdouble) x [1] + (longdouble) x [2]) + ((longdouble) x [3] + (longdouble) x [4])) + (((longdouble) x [5] + (longdouble) x [6]) + ((longdouble) x [7] + (longdouble) x [8])));
-	}
-	double sum;
-	NUM_sum_mean (x, & sum, nullptr);
-	return sum;
-}
 
 inline static double NUMsum (constMAT x) noexcept {
 	return NUMsum (asVEC (x));
