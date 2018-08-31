@@ -278,7 +278,7 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w);
 	Congruence coefficient B&G page 350.
 */
 
-void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *eta_fit, double *eta_conf, double *rho);
+void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *out_eta_fit, double *out_eta_conf, double *out_rho);
 /*
 	Computes
 		eta_fit = sum (i<j,i=1..n; w[i][j] * dfit[i][j]^2)
@@ -310,7 +310,7 @@ double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Confi
 void Distance_Weight_smacofNormalize (Distance d, Weight w);
 
 autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, Weight weight, Transformator t,
-	double tolerance, integer numberOfIterations, bool showProgress, double *stress);
+	double tolerance, integer numberOfIterations, bool showProgress, double *out_stress);
 
 autoConfiguration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf, Weight w, Transformator t,
 	double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress);
@@ -514,14 +514,14 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 
 void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration thee, double *varianceExplained, double *varianceTotal);
 
-void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configuration thee, Salience him, double *vaf);
+void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configuration thee, Salience him, double *out_varianceAccountedFor);
 
 autoScalarProductList DistanceList_to_ScalarProductList (DistanceList me, bool normalize);
 
 void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfDimensions, autoConfiguration *out1, autoSalience *out2);
 
 void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Configuration conf, Salience weights,
-	double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+	double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *out_varianceAccountedFor);
 
 
 /************** INDSCAL & ....... ***********************************/
@@ -540,23 +540,22 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 
 void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims, Configuration conf, Salience w,
 	int tiesHandlingMethod, bool normalizeScalarProducts,
-	double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf
-);
+	double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *out_varianceAccountedFor);
 
 autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, int tiesHandlingMethod);
 
 void DistanceList_Configuration_Salience_indscal (DistanceList dists, Configuration conf, Salience weights, bool normalizeScalarProducts,
-	double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *vaf);
+	double tolerance, integer numberOfIterations, bool showProgress, autoConfiguration *out1, autoSalience *out2, double *out_varianceAccountedFor);
 
-void DistanceList_Configuration_Salience_vaf (DistanceList me, Configuration thee, Salience him, bool normalizeScalarProducts, double *vaf);
+void DistanceList_Configuration_Salience_vaf (DistanceList me, Configuration thee, Salience him, bool normalizeScalarProducts, double *out_varianceAccountedFor);
 
 void DissimilarityList_Configuration_Salience_vaf (DissimilarityList me, Configuration thee,
-	Salience him, int tiesHandlingMethod, bool normalizeScalarProducts, double *vaf);
+	Salience him, int tiesHandlingMethod, bool normalizeScalarProducts, double *out_varianceAccountedFor);
 
-void DistanceList_Configuration_vaf (DistanceList me, Configuration thee, bool normalizeScalarProducts, double *vaf);
+void DistanceList_Configuration_vaf (DistanceList me, Configuration thee, bool normalizeScalarProducts, double *out_varianceAccountedFor);
 
 void DissimilarityList_Configuration_vaf (DissimilarityList me, Configuration thee,
-	int tiesHandlingMethod, bool normalizeScalarProducts, double *vaf);
+	int tiesHandlingMethod, bool normalizeScalarProducts, double *out_varianceAccountedFor);
 
 autoSalience ScalarProductList_Configuration_to_Salience (ScalarProductList me, Configuration him);
 

@@ -169,7 +169,7 @@ procedure testDissimilarityInterface
 	# Create a random configuration
 	.command$ = .mdsCommand$ [1] + .numberOfDimensions$ [1] + .extraParameters$ [1] + .minimizationParameters$
 	.randomConfiguration = '.command$'
-	Formula: ~ randomUniform (-1, 1)
+	Formula: "randomUniform (-1, 1)"
 
 	for .itype to 6
 		selectObject: .dissimilarity
@@ -220,26 +220,26 @@ procedure testDissimilarityInterface
 		.stress10 = Get stress (interval mds): .stressMeasure$ [.k]
 		selectObject: .dissimilarity, configuration [3]
 		.stress11 = Get stress (interval mds): .stressMeasure$ [.k]
-		assert .stress11 <= .stress10
+		assert .stress11 <= .stress10 ; '.k'
 		selectObject: .dissimilarity, .configuration [3]
 		.stress12 = Get stress (interval mds): .stressMeasure$ [.k]
-		assert .stress12 <= .stress11
+		assert .stress12 <= .stress11 ; '.k'
 		selectObject: .dissimilarity, .randomConfiguration
 		.stress20 = Get stress (ratio mds): .stressMeasure$ [.k]
 		selectObject: .dissimilarity, configuration [4]
 		.stress21 = Get stress (ratio mds): .stressMeasure$ [.k]
-		assert .stress21 <= .stress20
+		assert .stress21 <= .stress20 ; '.k'
 		selectObject: .dissimilarity, .configuration [4]
 		.stress22 = Get stress (ratio mds): .stressMeasure$ [.k]
-		assert .stress22 <= .stress21
+		assert .stress22 <= .stress21 ; '.k' '.stress22' < '.stress21' ?
 		selectObject: .dissimilarity, .randomConfiguration
 		.stress30 = Get stress (absolute mds): .stressMeasure$ [.k]
 		selectObject: .dissimilarity, configuration [5]
 		.stress31 = Get stress (absolute mds): .stressMeasure$ [.k]
-		assert .stress31 <= .stress30
+		assert .stress31 <= .stress30 ; '.k'
 		selectObject: .dissimilarity, .configuration [5]
 		.stress32 = Get stress (absolute mds): .stressMeasure$ [.k]
-		assert .stress32 <= .stress31
+		assert .stress32 <= .stress31 ; '.k'
 	endfor
 
 

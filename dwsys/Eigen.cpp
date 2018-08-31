@@ -37,6 +37,7 @@
 */
 
 #include "Eigen.h"
+#include "MAT_numerics.h"
 #include "NUMmachar.h"
 #include "NUMlapack.h"
 #include "NUMclapack.h"
@@ -213,42 +214,15 @@ void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, i
 	NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
 }
 
-void Eigen_initFromSymmetricMatrix (Eigen me, MAT a) {
-	Melder_assert (a.nrow == a.ncol);
-	double wt[1], temp;
-	char jobz = 'V', uplo = 'U';
-	integer lwork = -1, n = a.ncol, info;
-
-	my dimension = my numberOfEigenvalues = n;
-
+void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
+	Melder_assert (a.ncol == a.nrow);
 	if (! my eigenvectors) {
-		Eigen_init (me, n, n);
-	}
-
-	NUMmatrix_copyElements (a.at, my eigenvectors, 1, n, 1, n);
-
-	// Get size of work array
-
-	(void) NUMlapack_dsyev (& jobz, & uplo, & n, & my eigenvectors [1] [1], & n, & my eigenvalues [1], wt, & lwork, & info);
-	Melder_require (info == 0, U"dsyev initialization fails");
-	
-
-	lwork = Melder_ifloor (wt [0]);
-	autoNUMvector <double> work ((integer) 0, lwork);
-
-	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n, &my eigenvalues[1], work.peek(), & lwork, & info);
-	Melder_require (info == 0, U"dsyev fails");
-
-	// We want descending order instead of ascending.
-
-	for (integer i = 1; i <= n / 2; i ++) {
-		integer ilast = n - i + 1;
-
-		SWAP (my eigenvalues [i], my eigenvalues [ilast])
-		for (integer j = 1; j <= n; j ++) {
-			SWAP (my eigenvectors [i] [j], my eigenvectors [ilast] [j])
-		}
-	}
+		Eigen_init (me, a.ncol, a.ncol);
+	}	
+	MAT eigenvectors (my eigenvectors, my numberOfEigenvalues, my dimension);
+	VEC eigenvalues (my eigenvalues, my numberOfEigenvalues);
+	MATcopy_inplace (eigenvectors, a);
+	MAT_getEigenSystemFromSymmetricMatrix_inplace (eigenvectors, true, eigenvalues, false);
 }
 
 autoEigen Eigen_create (integer numberOfEigenvalues, integer dimension) {
