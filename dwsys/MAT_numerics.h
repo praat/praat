@@ -24,6 +24,14 @@ inline static void MATcopyTranspose_inplace (MAT x, constMAT source) {
 			x [icol] [irow] = source [irow] [icol];
 }
 
+inline static autoMAT MATtranspose (constMAT x) {
+	autoMAT result = MATraw (x.nrow, x.ncol);
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer icol = 1; icol <= x.ncol; icol ++)
+			result [icol] [irow] = x [irow] [icol];
+	return result;
+}
+
 bool MAT_isSymmetric (constMAT x);
 /*
 	Returns true if the matrix is symmetric else false.
@@ -41,7 +49,7 @@ void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvector
 		if(out_eigenvectors) eigenvectors corresponding to the eigenvalues, stored as row-wise vectors.
 */
 
-void MAT_getEigenSystemFromSymmetricMatrix_inline (MAT inout_a, bool wantEigenvectors, VEC inout_eigenvalues, bool sortAscending);
+void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT inout_a, bool wantEigenvectors, VEC inout_eigenvalues, bool sortAscending);
 /*
 	Input:
 		inout_a, a symmetric a.ncol x a.ncol matrix
@@ -54,7 +62,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_inline (MAT inout_a, bool wantEigenve
 		inout_eigenvalues, eigenvalues sorted from large to small
 */
 
-void MAT_getPrincipalComponentsOfSymmetricMatrix_inline (constMAT a, integer nComponents, MAT inout_pc);
+void MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (constMAT a, integer nComponents, MAT inout_pc);
 /*
 	Input:
 		a, a symmetric nrow x nrow matrix

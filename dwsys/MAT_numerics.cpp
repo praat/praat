@@ -22,7 +22,7 @@
 
 #define SWAP(x,y) { tmp = x; x = y; y = tmp; }
 
-void MAT_getEigenSystemFromSymmetricMatrix_inline (MAT a, bool wantEigenvectors, VEC eigenvalues, bool sortAscending) {
+void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT a, bool wantEigenvectors, VEC eigenvalues, bool sortAscending) {
 	Melder_assert (a.nrow == a.ncol);
 	Melder_assert (eigenvalues.size == a.ncol);
 
@@ -30,13 +30,14 @@ void MAT_getEigenSystemFromSymmetricMatrix_inline (MAT a, bool wantEigenvectors,
 	integer workSize = -1, n = a.ncol, info;
 	double wt [1], tmp;
 	
+	// 0. No need to transpose a because it is a symmetric matrix
 	// 1. Query for the size of the work array
 	
 	(void) NUMlapack_dsyev (& jobz, & uplo, & n, & a [1] [1], & n, & eigenvalues [1], wt, & workSize, & info);
 	Melder_require (info == 0, U"dsyev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt [0]);
-	autoVEC work (workSize, kTensorInitializationType::RAW);
+	autoVEC work = VECraw (workSize);
 
 	// 2. Calculate the eigenvalues and eigenvectors (row-wise)
 	
@@ -60,12 +61,11 @@ void MAT_getEigenSystemFromSymmetricMatrix_inline (MAT a, bool wantEigenvectors,
 
 void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvectors, autoVEC *out_eigenvalues, bool sortAscending) {
 	Melder_assert (a.nrow == a.ncol);	
-	autoVEC eigenvalues (a.nrow, kTensorInitializationType::RAW);	
-	autoMAT eigenvectors (a.ncol, a.ncol, kTensorInitializationType::RAW);	
-	MATcopyTranspose_inplace (eigenvectors.get(), a);
+	autoVEC eigenvalues = VECraw (a.nrow);	
+	autoMAT eigenvectors = MATtranspose (a);	
 	
 	bool wantEigenvectors = out_eigenvectors != nullptr;
-	MAT_getEigenSystemFromSymmetricMatrix_inline (eigenvectors.get(), wantEigenvectors, eigenvalues.get(), sortAscending);
+	MAT_getEigenSystemFromSymmetricMatrix_inplace (eigenvectors.get(), wantEigenvectors, eigenvalues.get(), sortAscending);
 	
 	if (out_eigenvectors) *out_eigenvectors = eigenvectors.move ();
 	if (out_eigenvalues) *out_eigenvalues = eigenvalues.move ();
@@ -76,7 +76,7 @@ void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re
 	Melder_assert (eigenvalues_im.size == n);
 	Melder_assert (eigenvectors.nrow == n && eigenvectors.ncol == eigenvectors.nrow);
 		
-	autoMAT eigenvectors_reim (n, 2 * n, kTensorInitializationType::ZERO);
+	autoMAT eigenvectors_reim = MATzero (n, 2 * n);
 	integer pair_index = 0;
 	for (integer ivec = 1; ivec <= eigenvalues_re.size; ivec ++) {
 		// eigenvalues of a real matrix are either real or occur in complex conjugate pairs
@@ -107,19 +107,19 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	integer right_nvecs = out_righteigenvectors ? n : 1;
 	double wt;
 	
-	autoMAT data (n, n, kTensorInitializationType::RAW);
+	autoMAT data = MATraw (n, n);
 	MATcopyTranspose_inplace (data.get(), a); // lapack is fortran storage
-	autoVEC eigenvalues_re (n, kTensorInitializationType::RAW);
-	autoVEC eigenvalues_im (n, kTensorInitializationType::RAW);
-	autoMAT righteigenvectors (right_nvecs, right_nvecs, kTensorInitializationType::RAW); // 1x1 if not needed
-	autoMAT lefteigenvectors (left_nvecs, left_nvecs, kTensorInitializationType::RAW); // 1x1 if not needed
+	autoVEC eigenvalues_re = VECraw (n);
+	autoVEC eigenvalues_im = VECraw(n);
+	autoMAT righteigenvectors = MATraw (right_nvecs, right_nvecs); // 1x1 if not needed
+	autoMAT lefteigenvectors = MATraw (left_nvecs, left_nvecs); // 1x1 if not needed
 	
 	(void) NUMlapack_dgeev (& jobvl, & jobvr, & n, & data [1] [1], & n,	& eigenvalues_re [1], & eigenvalues_im [1],	& lefteigenvectors [1] [1],
 		& n, & righteigenvectors [1] [1], & n, & wt, & workSize, & info);
 	Melder_require (info == 0, U"dgeev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt);
-	autoVEC work (workSize, kTensorInitializationType::RAW);
+	autoVEC work = VECraw (workSize);
 	
 	(void) NUMlapack_dgeev (& jobvl, & jobvr, & n, & data [1] [1], & n, & eigenvalues_re [1], & eigenvalues_im [1],	& lefteigenvectors [1] [1],
 		& n, & righteigenvectors [1] [1], & n, & work [1], & workSize, & info);
@@ -131,12 +131,12 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	if (out_eigenvalues_im) *out_eigenvalues_im = eigenvalues_im.move();
 }
 
-void MAT_getPrincipalComponentsOfSymmetricMatrix_inline (constMAT a, integer nComponents, MAT pc) {
+void MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (constMAT a, integer nComponents, MAT pc) {
 	Melder_assert (a.nrow == a.ncol);
 	Melder_assert (nComponents > 0 && nComponents <= a.ncol);
 	Melder_assert (pc.nrow == a.nrow && pc.ncol == nComponents);
 	
-	autoMAT eigenvectors (a.nrow, a.nrow, kTensorInitializationType::RAW);
+	autoMAT eigenvectors = MATraw (a.nrow, a.nrow);
 	MAT_getEigenSystemFromSymmetricMatrix (a, & eigenvectors, nullptr, false);
 
 	for (integer i = 1; i <= a.nrow; i ++) {
