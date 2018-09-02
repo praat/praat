@@ -19,6 +19,11 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"
 
+void MATcentreEachRow_inplace (MAT x) {
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		VECcentre_inplace (x.row (irow));
+}
+
 autoMAT MATouter (constVEC x, constVEC y) {
 	autoMAT result = MATraw (x.size, y.size);
 	for (integer irow = 1; irow <= x.size; irow ++)

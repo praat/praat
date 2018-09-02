@@ -51,11 +51,13 @@ inline autoMAT MATadd (constMAT x, constMAT y) {
 	return result;
 }
 
+void MATcentreEachColumn_inplace (MAT x);
+void MATcentreEachRow_inplace (MAT x);
+
 inline static void MATmultiply_inplace (MAT x, double factor) {
-	for (integer irow = 1; irow <= x.nrow; irow ++) {
+	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			x [irow] [icol] *= factor;
-	}
 }
 
 autoMAT MATouter (constVEC x, constVEC y);

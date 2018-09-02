@@ -639,11 +639,11 @@ double TableOfReal_getGrandSum (TableOfReal me) {
 }
 
 void TableOfReal_centreRows (TableOfReal me) {
-	NUMcentreRows (my data, 1, my numberOfRows, 1, my numberOfColumns);
+	MATcentreEachRow_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
 }
 
 void TableOfReal_doubleCentre (TableOfReal me) {
-	NUMdoubleCentre (my data, 1, my numberOfRows, 1, my numberOfColumns);
+	MATdoubleCentre_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
 }
 
 void TableOfReal_normalizeColumns (TableOfReal me, double norm) {
@@ -663,7 +663,7 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 		return;
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		constMAT mat { my data, my numberOfRows, my numberOfColumns };
+		constMAT mat (my data, my numberOfRows, my numberOfColumns);
 		double mean, stdev;
 		NUM_sum_mean_sumsq_variance_stdev (mat, icol, nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
@@ -1601,31 +1601,29 @@ autoTableOfReal TableOfReal_TableOfReal_crossCorrelations (TableOfReal me, Table
 	       TableOfReal_TableOfReal_rowCorrelations (me, thee, center, normalize);
 }
 
-autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
+autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool centre, bool normalize) {
 	try {
-		if (my numberOfColumns != thy numberOfColumns) {
-			Melder_throw (U"Both tables must have the same number of columns.");
-		}
+		if (my numberOfColumns != thy numberOfColumns)
+			Melder_throw (U"Both tables should have the same number of columns.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, thy numberOfRows);
-		autoNUMmatrix<double> my_data (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
-		autoNUMmatrix<double> thy_data (NUMmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
-		if (center) {
-			NUMcentreRows (my_data.peek(), 1, my numberOfRows, 1, my numberOfColumns);
-			NUMcentreRows (thy_data.peek(), 1, thy numberOfRows, 1, thy numberOfColumns);
+		autoMAT my_data = MATcopy (MAT (my data, my numberOfRows, my numberOfColumns));
+		autoMAT thy_data = MATcopy (MAT (thy data, thy numberOfRows, thy numberOfColumns));
+		if (centre) {
+			MATcentreEachRow_inplace (my_data.get());
+			MATcentreEachRow_inplace (thy_data.get());
 		}
 		if (normalize) {
-			NUMnormalizeRows (my_data.peek(), my numberOfRows, my numberOfColumns, 1);
-			NUMnormalizeRows (thy_data.peek(), thy numberOfRows, thy numberOfColumns, 1);
+			NUMnormalizeRows (my_data.at, my numberOfRows, my numberOfColumns, 1);
+			NUMnormalizeRows (thy_data.at, thy numberOfRows, thy numberOfColumns, 1);
 		}
 		his rowLabels. copyElementsFrom (my rowLabels.get());
 		his columnLabels. copyElementsFrom (thy rowLabels.get());
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer k = 1; k <= thy numberOfRows; k ++) {
 				longdouble ctmp = 0.0;
-				for (integer j = 1; j <= my numberOfColumns; j ++) {
+				for (integer j = 1; j <= my numberOfColumns; j ++)
 					ctmp += my_data [i] [j] * thy_data [k] [j];
-				}
 				his data [i] [k] = (double) ctmp;
 			}
 		}
@@ -1637,9 +1635,8 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 
 autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
 	try {
-		if (my numberOfRows != thy numberOfRows) {
-			Melder_throw (U"Both tables must have the same number of rows.");
-		}
+		if (my numberOfRows != thy numberOfRows)
+			Melder_throw (U"Both tables should have the same number of rows.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfColumns, thy numberOfColumns);
 		autoNUMmatrix<double> my_data (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
@@ -1672,9 +1669,8 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 
 autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, double xmin, double xmax, double nx, double ymin, double ymax, integer ny, int /* method */) {
 	try {
-		if (my numberOfColumns < 3 || my numberOfRows < 3) {
-			Melder_throw (U"Therehave to be at least three colums and rows present.");
-		}
+		if (my numberOfColumns < 3 || my numberOfRows < 3)
+			Melder_throw (U"There should be at least three colums and three rows.");
 		autoVEC x = VECraw (my numberOfRows);
 		autoVEC y = VECraw (my numberOfRows);
 		autoVEC z = VECraw (my numberOfRows);

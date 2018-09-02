@@ -116,12 +116,6 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 	MelderInfo_close ();
 }
 
-void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
-	for (integer i = rb; i <= re; i ++) {
-		VECcentre_inplace (VEC (a [i], ce - cb + 1));
-	}
-}
-
 void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres) {
 	autoVEC colvec (re - rb + 1, kTensorInitializationType :: RAW);
 	for (integer j = cb; j <= ce; j ++) {
@@ -139,9 +133,9 @@ void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer c
 	}
 }
 
-void NUMdoubleCentre (double **a, integer rb, integer re, integer cb, integer ce) {
-	NUMcentreRows (a, rb, re, cb, ce);
-	NUMcentreColumns (a, rb, re, cb, ce, nullptr);
+void MATdoubleCentre_inplace (MAT x) {
+	MATcentreEachRow_inplace (x);
+	NUMcentreColumns (x.at, 1, x.nrow, 1, x.ncol, nullptr);
 }
 
 void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm) {

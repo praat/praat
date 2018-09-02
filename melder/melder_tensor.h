@@ -493,6 +493,17 @@ public:
 		our nrow = 0;
 		our ncol = 0;
 	}
+	vector<T> row (integer rowNumber) {
+		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		return vector<T> (our at [rowNumber], our ncol);
+	}
+	matrix<T> horizontalBand (integer firstRow, integer lastRow) {
+		const integer offsetRow = firstRow - 1;
+		Melder_assert (offsetRow >= 0 && offsetRow < our size);
+		integer newNrow = lastRow - offsetRow;
+		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
+		return matrix<T> (& our at [offsetRow], newNrow, our ncol);
+	}
 };
 
 template <typename T>
@@ -505,6 +516,17 @@ public:
 	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
 	const T * const & operator[] (integer i) const {
 		return our at [i];
+	}
+	constvector<T> row (integer rowNumber) {
+		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		return constvector<T> (our at [rowNumber], our ncol);
+	}
+	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) {
+		const integer offsetRow = firstRow - 1;
+		Melder_assert (offsetRow >= 0 && offsetRow < our size);
+		integer newNrow = lastRow - offsetRow;
+		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
+		return constmatrix<T> (& our at [offsetRow], newNrow, our ncol);
 	}
 };
 

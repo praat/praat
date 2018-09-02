@@ -173,17 +173,13 @@ double NUMvector_getNorm1 (const double v[], integer n);
 
 double NUMvector_getNorm2 (const double v[], integer n);
 
-void  NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce);
-/*
-	a[i][j] -= a[i][.]
-*/
 void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres);
 /*
 	a[i][j] -= a[.][j]
 	if centres != NULL the means are returned in centres[1..re-rb+1]
 */
 
-void NUMdoubleCentre (double **a, integer rb, integer re, integer cb, integer ce);
+void MATdoubleCentre_inplace (MAT x);
 /*
 	Function: Make the average value of each column and each row zero.
 		a[i][j] += - a[i][.] - a[.][j] + a[.][.]
