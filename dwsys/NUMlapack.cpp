@@ -95,7 +95,7 @@ double NUMfrobeniusnorm (integer m, integer n, double **x) {
 					scale = absxi;
 				} else {
 					double t = absxi / scale;
-					ssq  += t * t;
+					ssq += t * t;
 				}
 			}
 		}

@@ -588,7 +588,7 @@ void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
 	for (integer i = 2; i <= my numberOfRows; i ++) {
 		conststring32 li = my rowLabels [i].get();
 		if (! Melder_equ (li, label)) {
-			NUMcentreColumns (my data, index, i - 1, 1, my numberOfColumns, 0);
+			NUMcentreColumns (my data, index, i - 1, 1, my numberOfColumns, nullptr);
 			label = li;
 			index = i;
 		}

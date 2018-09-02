@@ -141,7 +141,7 @@ void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer c
 
 void NUMdoubleCentre (double **a, integer rb, integer re, integer cb, integer ce) {
 	NUMcentreRows (a, rb, re, cb, ce);
-	NUMcentreColumns (a, rb, re, cb, ce, NULL);
+	NUMcentreColumns (a, rb, re, cb, ce, nullptr);
 }
 
 void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm) {
@@ -1050,7 +1050,7 @@ void NUMProcrustes (double **x, double **y, integer nPoints, integer nDimensions
 	*/
 
 	if (! orthogonal) {
-		NUMcentreColumns (yc.peek(), 1, nPoints, 1, nDimensions, NULL);
+		NUMcentreColumns (yc.peek(), 1, nPoints, 1, nDimensions, nullptr);
 	}
 	for (integer i = 1; i <= nDimensions; i ++) {
 		for (integer j = 1; j <= nDimensions; j ++) {
@@ -1098,7 +1098,7 @@ void NUMProcrustes (double **x, double **y, integer nPoints, integer nDimensions
 
 		// X'J amount to centering the columns of X
 
-		NUMcentreColumns (xc.peek(), 1, nPoints, 1, nDimensions, NULL);
+		NUMcentreColumns (xc.peek(), 1, nPoints, 1, nDimensions, nullptr);
 
 		// tr X'J YT == tr xc' yt
 
@@ -1655,7 +1655,7 @@ double NUMnormalityTest_HenzeZirkler (double **data, integer n, integer p, doubl
 	autoNUMmatrix<double> covar (1, p, 1, p);
 	autoNUMmatrix<double> x (NUMmatrix_copy (data, 1, n, 1, p), 1, 1);
 
-	NUMcentreColumns (x.peek(), 1, n, 1, p, NULL); // x - xmean
+	NUMcentreColumns (x.peek(), 1, n, 1, p, nullptr); // x - xmean
 
 	NUMcovarianceFromColumnCentredMatrix (x.peek(), n, p, 0, covar.peek());
 
