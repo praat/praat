@@ -100,7 +100,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double initialPlasticity, integer replicationsPerPlasticity, double plasticityDecrement,
 	integer numberOfPlasticities, double relativePlasticityNoise, integer numberOfChews);
-bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation);
+bool OTGrammar_PairDistribution_findPositiveWeights (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation);
 void OTGrammar_learnOneFromPartialOutput (OTGrammar me, conststring32 partialAdultOutput,
 	double rankingSpreading, enum kOTGrammar_rerankingStrategy updateRule, bool honourLocalRankings,
 	double demotionMean, double relativeDemotionSpreading, integer numberOfChews, bool warnIfStalled);

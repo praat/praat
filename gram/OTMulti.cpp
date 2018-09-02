@@ -1427,21 +1427,19 @@ autoDistributions OTMulti_to_Distribution (OTMulti me, conststring32 form1, cons
 	try {
 		integer totalNumberOfOutputs = 0, iout = 0;
 		/*
-		 * Count the total number of outputs.
-		 */
-		for (integer icand = 1; icand <= my numberOfCandidates; icand ++) {
-			if (OTMulti_candidateMatches (me, icand, form1, form2)) {
+			Count the total number of outputs.
+		*/
+		for (integer icand = 1; icand <= my numberOfCandidates; icand ++)
+			if (OTMulti_candidateMatches (me, icand, form1, form2))
 				totalNumberOfOutputs ++;
-			}
-		}
 		/*
-		 * Create the distribution. One row for every output form.
-		 */
+			Create the distribution. One row for every output form.
+		*/
 		autoDistributions thee = Distributions_create (totalNumberOfOutputs, 1);
-		autoNUMvector <integer> index (1, my numberOfCandidates);
+		autoINTVEC index = INTVECraw (my numberOfCandidates);
 		/*
-		 * Set the row labels to the output strings.
-		 */
+			Set the row labels to the output strings.
+		*/
 		iout = 0;
 		for (integer icand = 1; icand <= my numberOfCandidates; icand ++) {
 			if (OTMulti_candidateMatches (me, icand, form1, form2)) {
@@ -1450,8 +1448,8 @@ autoDistributions OTMulti_to_Distribution (OTMulti me, conststring32 form1, cons
 			}
 		}
 		/*
-		 * Compute a number of outputs and store the results.
-		 */
+			Compute a number of outputs and store the results.
+		*/
 		for (integer itrial = 1; itrial <= numberOfTrials; itrial ++) {
 			OTMulti_newDisharmonies (me, evaluationNoise);
 			integer iwinner = OTMulti_getWinner (me, form1, form2);

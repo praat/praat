@@ -1687,7 +1687,7 @@ autoTable TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeD
 		}
 	}
 	integer columns [1+2] = { 0, 1 + includeLineNumbers, 3 + includeLineNumbers + includeTierNames };   // sort by tmin and tmax
-	Table_sortRows_Assert (thee.get(), columns, 2);
+	Table_sortRows_Assert (thee.get(), constINTVEC (columns, 2));
 	return thee;
 }
 
@@ -1750,7 +1750,7 @@ autoTable TextGrid_tabulateOccurrences (TextGrid me, constVEC searchTiers, kMeld
 		}
 	}
 	integer columns [1+1] = { 0, 1 };   // sort by time
-	Table_sortRows_Assert (thee.get(), columns, 1);
+	Table_sortRows_Assert (thee.get(), constINTVEC (columns, 1));
 	return thee;
 }
 

@@ -1,6 +1,6 @@
-/* NUMsort.c
+/* NUMsort.cpp
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2011,2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,12 +81,12 @@
 		} \
 	}
 
-void NUMsort_d (integer n, double a []) {
-	MACRO_NUMsort (double, a, integer, n)
+void VECsort_inplace (VEC x) {
+	MACRO_NUMsort (double, x.at, integer, x.size)
 }
 
-void NUMsort_i (integer n, int a []) {
-	MACRO_NUMsort (int, a, integer, n)
+void NUMsort_d (integer n, double a []) {
+	MACRO_NUMsort (double, a, integer, n)
 }
 
 void NUMsort_integer (integer n, integer a []) {
@@ -160,6 +160,17 @@ double NUMquantile (integer n, double a [], double factor) {
 	if (n == 1) return a [1];
 	if (left < 1) left = 1;
 	if (left >= n) left = n - 1;
+	if (a [left + 1] == a [left]) return a [left];
+	return a [left] + (place - left) * (a [left + 1] - a [left]);
+}
+
+double NUMquantile (constVEC a, double factor) {
+	double place = factor * a.size + 0.5;
+	integer left = (integer) floor (place);
+	if (a.size < 1) return 0.0;
+	if (a.size == 1) return a [1];
+	if (left < 1) left = 1;
+	if (left >= a.size) left = a.size - 1;
 	if (a [left + 1] == a [left]) return a [left];
 	return a [left] + (place - left) * (a [left + 1] - a [left]);
 }

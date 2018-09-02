@@ -84,8 +84,4 @@ void VECmul_preallocated (VEC target, constMAT mat, constVEC vec) {
 	}
 }
 
-void VECsort_inplace (VEC x) {
-	NUMsort_d (x.size, x.at);
-}
-
 /* End of file VEC.cpp */

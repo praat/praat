@@ -919,7 +919,7 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 	Preconditions: f > 0 && bw > 0
 */
 
-int NUMburg (double x[], integer n, double a[], int m, double *xms);
+int NUMburg (const double x[], integer n, double a[], int m, double *xms);
 /*
 	Calculates linear prediction coefficients according to the algorithm
 	from J.P. Burg as described by N.Anderson in Childers, D. (ed), Modern

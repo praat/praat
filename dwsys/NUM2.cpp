@@ -1805,7 +1805,7 @@ b2 = & work [n+1];
 aa = & work [n+n+1];
 for (i=1; i<=n+n+n; i ++) work [i]=0;
 */
-int NUMburg (double x [], integer n, double a [], int m, double *xms) {
+int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
 	for (integer j = 1; j <= m; j ++) {
 		a [j] = 0.0;
 	}

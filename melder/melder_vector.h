@@ -347,6 +347,13 @@ public:
 		}
 		our size = 0;
 	}
+	vector<T> subview (integer first, integer last) {
+		const integer offset = first - 1;
+		Melder_assert (offset >= 0 && offset < our size);
+		integer newSize = last - offset;
+		if (newSize <= 0) return vector<T> (nullptr, 0);
+		return vector<T> (& our at [offset], newSize);
+	}
 protected:
 	void _initAt (integer givenSize, kTensorInitializationType initializationType);
 	void _freeAt () noexcept;
@@ -367,6 +374,13 @@ public:
 	//}
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
 		return our at [i];
+	}
+	constvector<T> subview (integer first, integer last) {
+		const integer offset = first - 1;
+		Melder_assert (offset >= 0 && offset < our size);
+		integer newSize = last - offset;
+		if (newSize <= 0) return constvector<T> (nullptr, 0);
+		return constvector<T> (& our at [offset], newSize);
 	}
 };
 
@@ -405,19 +419,20 @@ public:
 	autovector (const autovector&) = delete;   // disable copy constructor
 	autovector& operator= (const autovector&) = delete;   // disable copy assignment
 	/*
-		Enable moving of temporaries or (for variables) via an explicit move().
+		Enable moving of r-values (temporaries, implicitly) or l-values (for variables, via an explicit move()).
 		This implements buying a payload from another autovector (which involves destroying our current payload).
 	*/
-	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor for r-values (temporaries)
+	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor
 		other.at = nullptr;   // disown source
+		other.size = 0;   // to keep the source in a valid state
 	}
-	autovector& operator= (autovector&& other) noexcept {   // enable move assignment for r-values (temporaries)
+	autovector& operator= (autovector&& other) noexcept {   // enable move assignment
 		if (other.at != our at) {
 			our reset ();
 			our at = other.at;
 			our size = other.size;
 			other.at = nullptr;   // disown source
-			other.size = 0;   // needed only if you insist on keeping the source in a valid state
+			other.size = 0;   // to keep the source in a valid state
 		}
 		return *this;
 	}
@@ -517,13 +532,13 @@ public:
 		if (our at) our _freeAt ();
 	}
 	matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
-	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-autoMAT
+	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-automatrix
 		our reset();
 		our at = given.at;
 		our nrow = given.nrow;
 		our ncol = given.ncol;
 	}
-	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autoMAT
+	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-automatrix
 		T **oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		return { oldAt, our nrow, our ncol };
@@ -534,21 +549,23 @@ public:
 	automatrix (const automatrix&) = delete;   // disable copy constructor
 	automatrix& operator= (const automatrix&) = delete;   // disable copy assignment
 	/*
-		Enable moving of temporaries or (for variables) via an explicit move().
-		This implements buying a payload from another autoMAT (which involves destroying our current payload).
+		Enable moving of r-values (temporaries, implicitly) or l-values (for variables, via an explicit move()).
+		This implements buying a payload from another automatrix (which involves destroying our current payload).
 	*/
-	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor for r-values (temporaries)
+	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor
 		other.at = nullptr;   // disown source
+		other.nrow = 0;   // to keep the source in a valid state
+		other.ncol = 0;   // to keep the source in a valid state
 	}
-	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment for r-values (temporaries)
+	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
 		if (other.at != our at) {
 			if (our at) our _freeAt ();
 			our at = other.at;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
 			other.at = nullptr;   // disown source
-			other.nrow = 0;   // needed only if you insist on keeping the source in a valid state
-			other.ncol = 0;
+			other.nrow = 0;   // to keep the source in a valid state
+			other.ncol = 0;   // to keep the source in a valid state
 		}
 		return *this;
 	}
@@ -606,7 +623,24 @@ inline autoVEC VECzero (integer size) { return vectorzero <double> (size); }
 inline void VECcopy_inplace (VEC target, constVEC source) { vectorcopy_inplace (target, source); }
 inline autoVEC VECcopy (constVEC source) { return vectorcopy (source); }
 
-#define emptyVEC  VEC { nullptr, 0 }
+/*
+	And simply because we use vector<integer> so much as well,
+	we have an abbreviation for that as well, namely INTVEC.
+	But the scripting language has nothing that corresponds to INTVEC,
+	so any numeric vector to be used by the scripting language
+	should be a VEC, even if it contains integers.
+	This is fine, as a double can contain an integer up to 54 bits.
+*/
+using INTVEC = vector <integer>;
+using constINTVEC = constvector <integer>;
+using autoINTVEC = autovector <integer>;
+inline autoINTVEC INTVECraw  (integer size) { return vectorraw  <integer> (size); }
+inline autoINTVEC INTVECzero (integer size) { return vectorzero <integer> (size); }
+inline void INTVECcopy_inplace (INTVEC target, constINTVEC source) { vectorcopy_inplace (target, source); }
+inline autoINTVEC INTVECcopy (constINTVEC source) { return vectorcopy (source); }
+
+#define emptyVEC  VEC (nullptr, 0)
+#define emptyINTVEC  INTVEC (nullptr, 0)
 
 using MAT = matrix <double>;
 using constMAT = constmatrix <double>;
@@ -616,7 +650,16 @@ inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double>
 inline void MATcopy_inplace (MAT target, constMAT source) { matrixcopy_inplace (target, source); }
 inline autoMAT MATcopy (constMAT source) { return matrixcopy (source); }
 
-#define emptyMAT  MAT { nullptr, 0, 0 }
+using INTMAT = matrix <integer>;
+using constINTMAT = constmatrix <integer>;
+using autoINTMAT = automatrix <integer>;
+inline autoINTMAT INTMATraw  (integer nrow, integer ncol) { return matrixraw  <integer> (nrow, ncol); }
+inline autoINTMAT INTMATzero (integer nrow, integer ncol) { return matrixzero <integer> (nrow, ncol); }
+inline void INTMATcopy_inplace (INTMAT target, constINTMAT source) { matrixcopy_inplace (target, source); }
+inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); }
+
+#define emptyMAT  MAT (nullptr, 0, 0)
+#define emptyINTMAT  INTMAT (nullptr, 0, 0)
 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);

@@ -1802,7 +1802,7 @@ static integer PairDistribution_getNumberOfAttestedOutputs (PairDistribution me,
 	return result;
 }
 
-bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation) {
+bool OTGrammar_PairDistribution_findPositiveWeights (OTGrammar me, PairDistribution thee, double weightFloor, double marginOfSeparation) {
 	NUMlinprog linprog = nullptr;
 	try {
 		bool result = false;
@@ -1813,7 +1813,7 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 		{
 			Melder_throw (U"To find positive weights, the decision strategy has to be HarmonicGrammar, LinearOT, PositiveHG, or ExponentialHG.");
 		}
-		autoNUMvector <integer> optimalCandidates (1, my numberOfTableaus);
+		autoINTVEC optimalCandidates = INTVECraw (my numberOfTableaus);
 		/*
 			Check that there is exactly one optimal output for each input.
 		*/
@@ -1829,9 +1829,8 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 				Melder_assert (attestedOutput);
 				for (integer icand = 1; icand <= tab -> numberOfCandidates; icand ++) {
 					OTGrammarCandidate cand = & tab -> candidates [icand];
-					if (str32equ (attestedOutput, cand -> output.get())) {
+					if (str32equ (attestedOutput, cand -> output.get()))
 						optimalCandidates [itab] = icand;
-					}
 				}
 			}
 			Melder_assert (optimalCandidates [itab] != 0);
@@ -1840,9 +1839,8 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 			Create linear programming problem.
 		*/
 		linprog = NUMlinprog_new (false);
-		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
+		for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
 			NUMlinprog_addVariable (linprog, weightFloor, undefined, 1.0);
-		}
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tab = & my tableaus [itab];
 			integer ioptimalCandidate = optimalCandidates [itab];

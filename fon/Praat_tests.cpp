@@ -77,16 +77,14 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_SORT: {
 			integer size = Melder_atoi (arg2);
-			double *array = NUMvector <double> (1, size);
+			autoVEC array = VECraw (size);
 			Melder_stopwatch ();
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				for (int64 i = 1; i <= size; i ++) {
+				for (int64 i = 1; i <= size; i ++)
 					array [i] = NUMrandomFraction ();
-				}
-				NUMsort_d (size, array);
+				VECsort_inplace (array.get());
 			}
 			t = Melder_stopwatch () / (size * log2 (size));
-			NUMvector_free (array, 1);
 		} break;
 		case kPraatTests::TIME_INTEGER: {
 			int64 sum = 0;

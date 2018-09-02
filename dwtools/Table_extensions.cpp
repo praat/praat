@@ -3659,7 +3659,7 @@ autoTable Table_getOneWayAnalysisOfVarianceF (Table me, integer column, integer 
 			Table_setNumericValue (ameans.get(), irow, 3, factorLevelSizes [irow]);
 		}
 		integer columns [1+1] { 0, 2 };   // sort by column 2
-		Table_sortRows_Assert (ameans.get(), columns, 1);
+		Table_sortRows_Assert (ameans.get(), constINTVEC (columns, 1));
 		_Table_postHocTukeyHSD (ameans.get(), ms_w, dof_w, meansDiff, meansDiffProbabilities);
 		if (means) {
 			*means = ameans.move();
@@ -4109,10 +4109,10 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 	bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		integer numberOfSelectedColumns;
-		autoNUMvector <integer> dataColumns (Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string, & numberOfSelectedColumns), 1);
+		auto dataColumns = Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string);
 		if (factorColumn < 1 || factorColumn > my numberOfColumns)
 			return;
+		const integer numberOfSelectedColumns = dataColumns.size;
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
 		integer numberOfData = my rows.size;
@@ -4292,8 +4292,8 @@ void Table_barPlotWhere (Table me, Graphics g,
 	double angle, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		integer numberOfColumns, numberOfRowMatches = 0;
-		autoNUMvector <integer> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, & numberOfColumns), 1);
+		integer numberOfRowMatches = 0;
+		auto columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
 		integer labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
 		autoStrings colourText = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
 		
@@ -4301,9 +4301,10 @@ void Table_barPlotWhere (Table me, Graphics g,
 		if (ymax <= ymin) {   // autoscaling
 			ymin = 1e308;
 			ymax = - ymin;
-			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
+			for (integer icol = 1; icol <= columnIndexes.size; icol ++) {
 				double cmin, cmax;
-				Table_columnExtremesFromSelectedRows (me, columnIndex [icol], selectedRows.peek(), numberOfRowMatches, & cmin, & cmax);
+				Table_columnExtremesFromSelectedRows (me, columnIndexes [icol],
+						selectedRows.peek(), numberOfRowMatches, & cmin, & cmax);
 				if (cmin < ymin) { ymin = cmin; }
 				if (cmax > ymax) { ymax = cmax; }
 			}
@@ -4314,7 +4315,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 		Graphics_setWindow (g, 0, 1, ymin, ymax);
 
 		integer numberOfGroups = numberOfRowMatches;
-		integer groupSize = numberOfColumns;
+		integer groupSize = columnIndexes.size;
 		double bar_width = 1 / (numberOfGroups * groupSize + 2 * xoffsetFraction + (numberOfGroups - 1) * interbarsFraction + numberOfGroups * (groupSize - 1) * interbarFraction);
 		double dx = (interbarsFraction + groupSize + (groupSize - 1) * interbarFraction) * bar_width;
 
@@ -4324,7 +4325,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 			Graphics_Colour colour = Strings_colourToValue (colourText.get(), icol);
 			for (integer irow = 1; irow <= numberOfRowMatches; irow ++) {
 				double x2 = x1 + bar_width;
-				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndex [icol]);
+				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndexes [icol]);
 				y2 = y2 > ymax ? ymax : (y2 < ymin ? ymin : y2);
 				double y1 = ymin < 0 ? 0 : ymin;
 				
@@ -4563,14 +4564,14 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me,
 	conststring32 columnLabels, conststring32 factorColumn, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		integer numberOfColumns, numberOfSelectedRows = 0;
+		integer numberOfSelectedRows = 0;
 		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
-		autoNUMvector <integer> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, & numberOfColumns), 1);
+		auto columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
 		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
-		autoTableOfReal thee = TableOfReal_create (numberOfSelectedRows, numberOfColumns);
+		autoTableOfReal thee = TableOfReal_create (numberOfSelectedRows, columnIndexes.size);
 		for (integer i = 1; i <= numberOfSelectedRows; i ++) {
-			for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-				double value = Table_getNumericValue_Assert (me, selectedRows [i], columnIndex [icol]);
+			for (integer icol = 1; icol <= columnIndexes.size; icol ++) {
+				double value = Table_getNumericValue_Assert (me, selectedRows [i], columnIndexes [icol]);
 				thy data [i] [icol] = value;
 			}
 			if (factorColIndex > 0) { // if no factorColumn given labels may be empty
@@ -4578,8 +4579,8 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me,
 				TableOfReal_setRowLabel (thee.get(), i, label);
 			}
 		}
-		for (integer icol = 1; icol <= numberOfColumns; icol ++)
-			TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [columnIndex [icol]]. label.get());
+		for (integer icol = 1; icol <= columnIndexes.size; icol ++)
+			TableOfReal_setColumnLabel (thee.get(), icol, my columnHeaders [columnIndexes [icol]]. label.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"No TableOfReal created from Table.");

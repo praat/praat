@@ -116,7 +116,7 @@ autoPointProcess PointProcess_createPoissonProcess (double startingTime, double 
 		my nt = nt;
 		for (integer i = 1; i <= nt; i ++)
 			my t [i] = NUMrandomUniform (startingTime, finishingTime);
-		NUMsort_d (my nt, my t);
+		VECsort_inplace (VEC (my t, my nt));
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PointProcess (Poisson process) not created.");
@@ -207,7 +207,7 @@ void PointProcess_addPoint (PointProcess me, double t) {
 
 void PointProcess_addPoints (PointProcess me, constVEC times) {
 	try {
-		integer newNumberOfPoints = my nt + times.size;
+		const integer newNumberOfPoints = my nt + times.size;
 		if (newNumberOfPoints > my maxnt) {
 			integer newMaxnt = newNumberOfPoints + my maxnt;   // this is at least a doubling
 			/*
@@ -223,8 +223,8 @@ void PointProcess_addPoints (PointProcess me, constVEC times) {
 			my maxnt = newMaxnt;
 		}
 		NUMvector_copyElements (times.at, & my t [my nt], 1, times.size);
-		my nt += times.size;
-		NUMsort_d (newNumberOfPoints, my t);
+		my nt = newNumberOfPoints;
+		VECsort_inplace (VEC (my t, my nt));
 	} catch (MelderError) {
 		Melder_throw (me, U": points not added.");
 	}
