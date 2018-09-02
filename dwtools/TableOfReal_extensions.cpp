@@ -566,17 +566,15 @@ void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
 	try {
 		Melder_require (my numberOfRows == thy size,
 			U"The number of items in both objects should be equal.");
-
 		/*
-			If anything goes wrong we must leave the Table intact. We first copy the Categories, swap the labels
-				and then delete the newly created categories.
+			Create without change.
 		*/
-
 		autoCategories categories_copy = Data_copy (thee);
-
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			std::swap (categories_copy->at [i] -> string, my rowLabels [i]);
-		}
+		/*
+			Change without error.
+		*/
+		for (integer i = 1; i <= my numberOfRows; i ++)
+			my rowLabels [i] = categories_copy->at [i] -> string.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not set from categories.");
 	}
