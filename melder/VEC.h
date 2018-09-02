@@ -18,46 +18,42 @@
  */
 
 /*
-	Some functions that are used below.
-*/
-
-inline static autoVEC VECraw (integer size) {
-	return { size, kTensorInitializationType::RAW };
-}
-inline static autoVEC VECzero (integer size) {
-	return { size, kTensorInitializationType::ZERO };
-}
-
-/*
 	From here on alphabetical order.
 */
 
-autoVEC VECcopy (constVEC x);
-
 autoVEC VECmul (constVEC vec, constMAT mat);
-void VECmul_inplace (VEC target, constVEC vec, constMAT mat);
+void VECmul_preallocated (VEC target, constVEC vec, constMAT mat);
 autoVEC VECmul (constMAT mat, constVEC vec);
-void VECmul_inplace (VEC target, constMAT mat, constVEC vec);
+void VECmul_preallocated (VEC target, constMAT mat, constVEC vec);
 
-inline static void VECadd_inplace (VEC target, double number) {
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] += number;
-}
-inline static void VECadd_inplace (VEC target, constVEC vec) {
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] += vec [i];
-}
-inline static autoVEC VECadd (constVEC x, double addend) {
-	autoVEC result = VECraw (x.size);
+inline void VECadd_inplace (VEC x, double addend) {
 	for (integer i = 1; i <= x.size; i ++)
-		result [i] = x [i] + addend;
+		x [i] += addend;
+}
+inline void VECadd_inplace (VEC x, constVEC y) {
+	Melder_assert (y.size == x.size);
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] += y [i];
+}
+inline void VECadd_preallocated (VEC target, constVEC x, double addend) {
+	Melder_assert (x.size == target.size);
+	for (integer i = 1; i <= x.size; i ++)
+		target [i] = x [i] + addend;
+}
+inline autoVEC VECadd (constVEC x, double addend) {
+	autoVEC result = VECraw (x.size);
+	VECadd_preallocated (result.get(), x, addend);
 	return result;
 }
-inline static autoVEC VECadd (constVEC x, constVEC y) {
-	if (x.size != y.size) return autoVEC { };
-	autoVEC result = VECraw (x.size);
+inline void VECadd_preallocated (VEC target, constVEC x, constVEC y) {
+	Melder_assert (x.size == target.size);
+	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= x.size; i ++)
-		result [i] = x [i] + y [i];
+		target [i] = x [i] + y [i];
+}
+inline autoVEC VECadd (constVEC x, constVEC y) {
+	autoVEC result = VECraw (x.size);
+	VECadd_preallocated (result.get(), x, y);
 	return result;
 }
 
@@ -67,11 +63,6 @@ inline static void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
 		x [i] -= xmean;
 	if (out_mean)
 		*out_mean = xmean;
-}
-
-inline static void VECcopy_inplace (VEC x, constVEC source) {
-	for (integer i = 1; i <= source.size; i ++)
-		x [i] = source [i];
 }
 
 inline static void VECmultiply_inplace (VEC x, double factor) {
@@ -97,10 +88,12 @@ inline static void VECsubtractReversed_inplace (VEC x, double number) {
 		x [i] = number - x [i];
 }
 inline static void VECsubtract_inplace (VEC x, constVEC y) {
+	Melder_assert (x.size == y.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= y [i];
 }
 inline static void VECsubtractReversed_inplace (VEC x, constVEC y) {
+	Melder_assert (x.size == y.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = y [i] - x [i];
 }
@@ -117,7 +110,7 @@ inline static autoVEC VECsubtract (double x, constVEC y) {
 	return result;
 }
 inline static autoVEC VECsubtract (constVEC x, constVEC y) {
-	if (x.size != y.size) return autoVEC { };
+	Melder_assert (x.size == y.size);
 	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] - y [i];
@@ -137,7 +130,6 @@ inline static autoVEC VECsumPerColumn (constMAT x) {
 		result [icol] = NUMcolumnSum (x, icol);
 	return result;
 }
-
 
 inline static autoVEC VECto (integer to) {
 	autoVEC result = VECraw (to);

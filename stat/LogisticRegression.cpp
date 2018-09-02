@@ -75,9 +75,11 @@ autoLogisticRegression LogisticRegression_create (conststring32 dependent1, cons
 	}
 }
 
-static autoLogisticRegression _Table_to_LogisticRegression (Table me, integer *factors, integer numberOfFactors, integer dependent1, integer dependent2) {
-	integer numberOfParameters = numberOfFactors + 1;
-	integer numberOfCells = my rows.size, numberOfY0 = 0, numberOfY1 = 0, numberOfData = 0;
+static autoLogisticRegression _Table_to_LogisticRegression (Table me, constINTVEC factors, integer dependent1, integer dependent2) {
+	const integer numberOfFactors = factors.size;
+	const integer numberOfParameters = numberOfFactors + 1;
+	const integer numberOfCells = my rows.size;
+	integer numberOfY0 = 0, numberOfY1 = 0, numberOfData = 0;
 	double logLikelihood = 1e307, previousLogLikelihood = 1e308;
 	if (numberOfParameters < 1)   // includes intercept
 		Melder_throw (U"Not enough columns (has to be more than 1).");
@@ -266,11 +268,10 @@ autoLogisticRegression Table_to_LogisticRegression (Table me, conststring32 fact
 	conststring32 dependent1_columnLabel, conststring32 dependent2_columnLabel)
 {
 	try {
-		integer numberOfFactors;
-		autoNUMvector <integer> factors_columnIndices (Table_getColumnIndicesFromColumnLabelString (me, factors_columnLabelString, & numberOfFactors), 1);
+		auto factors_columnIndices = Table_getColumnIndicesFromColumnLabelString (me, factors_columnLabelString);
 		integer dependent1_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent1_columnLabel);
 		integer dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel);
-		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.peek(), numberOfFactors, dependent1_columnIndex, dependent2_columnIndex);
+		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.get(), dependent1_columnIndex, dependent2_columnIndex);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": logistic regression not performed.");

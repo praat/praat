@@ -47,9 +47,8 @@ Thing_implement (ERPTier, AnyTier, 0);
 
 integer ERPTier_getChannelNumber (ERPTier me, conststring32 channelName) {
 	for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-		if (Melder_equ (my channelNames [ichan].get(), channelName)) {
+		if (Melder_equ (my channelNames [ichan].get(), channelName))
 			return ichan;
-		}
 	}
 	return 0;
 }

@@ -77,16 +77,14 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_SORT: {
 			integer size = Melder_atoi (arg2);
-			double *array = NUMvector <double> (1, size);
+			autoVEC array = VECraw (size);
 			Melder_stopwatch ();
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				for (int64 i = 1; i <= size; i ++) {
+				for (int64 i = 1; i <= size; i ++)
 					array [i] = NUMrandomFraction ();
-				}
-				NUMsort_d (size, array);
+				VECsort_inplace (array.get());
 			}
 			t = Melder_stopwatch () / (size * log2 (size));
-			NUMvector_free (array, 1);
 		} break;
 		case kPraatTests::TIME_INTEGER: {
 			int64 sum = 0;
@@ -373,16 +371,14 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_ALLOC: {
 			integer size = Melder_atoi (arg2);
-			for (int64 iteration = 1; iteration <= n; iteration ++) {
+			for (int64 iteration = 1; iteration <= n; iteration ++)
 				autoVEC result (size, kTensorInitializationType::RAW);
-			}
 			t = Melder_stopwatch () / size;
 		} break;
 		case kPraatTests::TIME_ALLOC0: {
 			integer size = Melder_atoi (arg2);
-			for (int64 iteration = 1; iteration <= n; iteration ++) {
+			for (int64 iteration = 1; iteration <= n; iteration ++)
 				autoVEC result (size, kTensorInitializationType::RAW);
-			}
 			t = Melder_stopwatch () / size;
 		} break;
 		case kPraatTests::TIME_ZERO: {
@@ -390,9 +386,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoVEC result { size, kTensorInitializationType::RAW };
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
-				for (integer i = 1; i <= size; i ++) {
+				for (integer i = 1; i <= size; i ++)
 					result [i] = (double) i;
-				}
 				z += result [size - 1];
 			}
 			t = Melder_stopwatch () / size;
@@ -403,9 +398,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) malloc (sizeof (double) * (size_t) size);
-				for (integer i = 0; i < size; i ++) {
+				for (integer i = 0; i < size; i ++)
 					result [i] = (double) i;
-				}
 				z += result [size - 1];
 				free (result);
 			}
@@ -417,14 +411,22 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) calloc (sizeof (double), (size_t) size);
-				for (integer i = 0; i < size; i ++) {
+				for (integer i = 0; i < size; i ++)
 					result [i] = (double) i;
-				}
 				z += result [size - 1];
 				free (result);
 			}
 			t = Melder_stopwatch () / size;
 			MelderInfo_writeLine (z);
+		} break;
+		case kPraatTests::TIME_ADD: {
+			integer size = Melder_atoi (arg2);
+			auto result = MATrandomGauss (size, size, 0.0, 1.0);
+			for (int64 iteration = 1; iteration <= n; iteration ++)
+				MATadd_inplace (result.get(), 5.0);
+			double sum = NUMsum (result.get());
+			t = Melder_stopwatch () / size / size;
+			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests::THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;

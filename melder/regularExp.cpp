@@ -685,7 +685,7 @@ static char32 *chunk (int paren, int *flag_param, len_range *range_param) {
 	if (paren == PAREN) {
 		if (Total_Paren >= NSUBEXP) {
 			Melder_sprint (Error_Text,128, U"number of ()'s > ", NSUBEXP);
-			REG_FAIL (Error_Text);
+			REG_FAIL (Error_Text)
 		}
 
 		this_paren = Total_Paren; Total_Paren++;
@@ -1526,24 +1526,20 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 		}
 	}
 
-	switch (*Reg_Parse++) {
-		case '^':
+	switch (*Reg_Parse ++) {
+		case U'^':
 			ret_val = emit_node (BOL);
 			break;
-
-		case '$':
+		case U'$':
 			ret_val = emit_node (EOL);
 			break;
-
-		case '<':
+		case U'<':
 			ret_val = emit_node (BOWORD);
 			break;
-
-		case '>':
+		case U'>':
 			ret_val = emit_node (EOWORD);
 			break;
-
-		case '.':
+		case U'.':
 			if (Match_Newline) {
 				ret_val = emit_node (EVERY);
 			} else {
@@ -1554,59 +1550,54 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 			range_param->lower = 1;
 			range_param->upper = 1;
 			break;
-
-		case '(':
-			if (*Reg_Parse == '?') {  /* Special parenthetical expression */
+		case U'(':
+			if (*Reg_Parse == U'?') {  /* Special parenthetical expression */
 				Reg_Parse++;
 				range_local.lower = 0; /* Make sure it is always used */
 				range_local.upper = 0;
 
-				if (*Reg_Parse == ':') {
-					Reg_Parse++;
+				if (*Reg_Parse == U':') {
+					Reg_Parse ++;
 					ret_val = chunk (NO_CAPTURE, &flags_local, &range_local);
-				} else if (*Reg_Parse == '=') {
-					Reg_Parse++;
+				} else if (*Reg_Parse == U'=') {
+					Reg_Parse ++;
 					ret_val = chunk (POS_AHEAD_OPEN, &flags_local, &range_local);
-				} else if (*Reg_Parse == '!') {
-					Reg_Parse++;
+				} else if (*Reg_Parse == U'!') {
+					Reg_Parse ++;
 					ret_val = chunk (NEG_AHEAD_OPEN, &flags_local, &range_local);
-				} else if (*Reg_Parse == 'i') {
-					Reg_Parse++;
+				} else if (*Reg_Parse == U'i') {
+					Reg_Parse ++;
 					ret_val = chunk (INSENSITIVE, &flags_local, &range_local);
-				} else if (*Reg_Parse == 'I') {
-					Reg_Parse++;
+				} else if (*Reg_Parse == U'I') {
+					Reg_Parse ++;
 					ret_val = chunk (SENSITIVE, &flags_local, &range_local);
-				} else if (*Reg_Parse == 'n') {
-					Reg_Parse++;
+				} else if (*Reg_Parse == U'n') {
+					Reg_Parse ++;
 					ret_val = chunk (NEWLINE, &flags_local, &range_local);
-				} else if (*Reg_Parse == 'N') {
-					Reg_Parse++;
+				} else if (*Reg_Parse == U'N') {
+					Reg_Parse ++;
 					ret_val = chunk (NO_NEWLINE, &flags_local, &range_local);
-				} else if (*Reg_Parse == '<') {
-					Reg_Parse++;
-					if (*Reg_Parse == '=') {
-						Reg_Parse++;
+				} else if (*Reg_Parse == U'<') {
+					Reg_Parse ++;
+					if (*Reg_Parse == U'=') {
+						Reg_Parse ++;
 						ret_val = chunk (POS_BEHIND_OPEN, &flags_local, &range_local);
-					} else if (*Reg_Parse == '!') {
-						Reg_Parse++;
+					} else if (*Reg_Parse == U'!') {
+						Reg_Parse ++;
 						ret_val = chunk (NEG_BEHIND_OPEN, &flags_local, &range_local);
 					} else {
 						Melder_sprint (Error_Text,128, U"invalid look-behind syntax, \"(?<", *Reg_Parse, U"...)\"");
-
-						REG_FAIL (Error_Text);
+						REG_FAIL (Error_Text)
 					}
 				} else {
 					Melder_sprint (Error_Text,128, U"invalid grouping syntax, \"(?", *Reg_Parse, U"...)\"");
-
-					REG_FAIL (Error_Text);
+					REG_FAIL (Error_Text)
 				}
 			} else { /* Normal capturing parentheses */
-				ret_val = chunk (PAREN, &flags_local, &range_local);
+				ret_val = chunk (PAREN, & flags_local, & range_local);
 			}
-
-			if (ret_val == NULL) {
-				return (NULL);    /* Something went wrong. */
-			}
+			if (! ret_val)
+				return nullptr;   // something went wrong
 
 			/* Add HAS_WIDTH flag if it was set by call to chunk. */
 
@@ -1615,71 +1606,70 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 
 			break;
 
-		case '\0':
-		case '|':
-		case ')':
-			REG_FAIL (U"internal error #3, `atom\'");  /* Supposed to be  */
-			/* caught earlier. */
-		case '?':
-		case '+':
-		case '*':
+		case U'\0':
+		case U'|':
+		case U')':
+			REG_FAIL (U"internal error #3, `atom\'")   // supposed to be caught earlier
+		case U'?':
+		case U'+':
+		case U'*':
 			Melder_sprint (Error_Text,128, * (Reg_Parse - 1), U" follows nothing");
-			REG_FAIL (Error_Text);
+			REG_FAIL (Error_Text)
 
-		case '{':
+		case U'{':
 			if (Enable_Counting_Quantifier) {
-				REG_FAIL (U"{m,n} follows nothing");
+				REG_FAIL (U"{m,n} follows nothing")
 			} else {
 				ret_val = emit_node (EXACTLY); /* Treat braces as literals. */
-				emit_byte ('{');
-				emit_byte ('\0');
+				emit_byte (U'{');
+				emit_byte (U'\0');
 				range_param->lower = 1;
 				range_param->upper = 1;
 			}
 
 			break;
 
-		case '[': {
-			char32 last_emit = 0;
+		case U'[': {
+			char32 last_emit = U'\0';
 
 			/* Handle characters that can only occur at the start of a class. */
 
-			if (*Reg_Parse == '^') { /* Complement of range. */
+			if (*Reg_Parse == U'^') { /* Complement of range. */
 				ret_val = emit_node (ANY_BUT);
-				Reg_Parse++;
+				Reg_Parse ++;
 
 				/* All negated classes include newline unless escaped with
 				   a "(?n)" switch. */
 
 				if (!Match_Newline) {
-					emit_byte ('\n');
+					emit_byte (U'\n');
 				}
 			} else {
 				ret_val = emit_node (ANY_OF);
 			}
 
-			if (*Reg_Parse == ']' || *Reg_Parse == '-') {
+			if (*Reg_Parse == U']' || *Reg_Parse == U'-') {
 				/* If '-' or ']' is the first character in a class,
 				   it is a literal character in the class. */
 
 				last_emit = *Reg_Parse;
 				emit_byte (*Reg_Parse);
-				Reg_Parse++;
+				Reg_Parse ++;
 			}
 
 			/* Handle the rest of the class characters. */
 
-			while (*Reg_Parse != '\0' && *Reg_Parse != ']') {
-				if (*Reg_Parse == '-') { /* Process a range, e.g [a-z]. */
-					Reg_Parse++;
+			while (*Reg_Parse != U'\0' && *Reg_Parse != U']') {
+				if (*Reg_Parse == U'-') { /* Process a range, e.g [a-z]. */
+					Reg_Parse ++;
 
-					if (*Reg_Parse == ']' || *Reg_Parse == '\0') {
+					if (*Reg_Parse == U']' || *Reg_Parse == U'\0') {
 						/* If '-' is the last character in a class it is a literal
 						   character.  If `Reg_Parse' points to the end of the
 						   regex string, an error will be generated later. */
 
-						emit_byte ('-');
-						last_emit = '-';
+						emit_byte (U'-');
+						last_emit = U'-';
 					} else {
 						/* We must get the range starting character value from the
 						   emitted code since it may have been an escaped
@@ -1692,7 +1682,7 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 
 						char32 second_value = last_emit + 1, last_value;
 
-						if (*Reg_Parse == '\\') {
+						if (*Reg_Parse == U'\\') {
 							/* Handle escaped characters within a class range.
 							   Specifically disallow shortcut escapes as the end of
 							   a class range.  To allow this would be ambiguous
@@ -1708,10 +1698,10 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 								last_value = test;
 							} else if (shortcut_escape (*Reg_Parse, NULL, CHECK_CLASS_ESCAPE)) {
 								Melder_sprint (Error_Text, 128, U"\\", *Reg_Parse, U" is not allowed as range operand");
-								REG_FAIL (Error_Text);
+								REG_FAIL (Error_Text)
 							} else {
 								Melder_sprint (Error_Text, 128, U"\\", *Reg_Parse, U" is an invalid char class escape sequence");
-								REG_FAIL (Error_Text);
+								REG_FAIL (Error_Text)
 							}
 						} else {
 							last_value = U_CHAR_AT (Reg_Parse);
@@ -1726,29 +1716,23 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 						   generate an error here since ranges are converted to
 						   lower case. */
 
-						if (second_value - 1 > last_value) {
-							REG_FAIL (U"invalid [] range");
-						}
+						if (second_value - 1 > last_value)
+							REG_FAIL (U"invalid [] range")
 
 						/* If only one character in range (e.g [a-a]) then this
 						   loop is not run since the first character of any range
 						   was emitted by the previous iteration of while loop. */
 
-						for (; second_value <= last_value; second_value++) {
+						for (; second_value <= last_value; second_value++)
 							emit_class_byte (second_value);
-						}
-
 						last_emit = (char32) last_value;
-
-						Reg_Parse++;
-
+						Reg_Parse ++;
 					} /* End class character range code. */
 				} else if (*Reg_Parse == '\\') {
 					Reg_Parse++;
 
 					if ( (test = numeric_escape (*Reg_Parse, &Reg_Parse)) != '\0') {
 						emit_class_byte (test);
-
 						last_emit = test;
 					} else if ( (test = literal_escape (*Reg_Parse)) != '\0') {
 						emit_byte (test);
@@ -1785,13 +1769,13 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 					last_emit = *Reg_Parse;
 					Reg_Parse++;
 				}
-			} /* End of while (*Reg_Parse != '\0' && *Reg_Parse != ']') */
+			} /* End of while (*Reg_Parse != U'\0' && *Reg_Parse != U']') */
 
-			if (*Reg_Parse != ']') {
+			if (*Reg_Parse != U']') {
 				REG_FAIL (U"missing right \']\'");
 			}
 
-			emit_byte ('\0');
+			emit_byte (U'\0');
 
 			/* NOTE: it is impossible to specify an empty class.  This is
 			   because [] would be interpreted as "begin character class"
@@ -1799,7 +1783,7 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 			   delimiter (']').  Because of this, it is always safe to assume
 			   that a class HAS_WIDTH. */
 
-			Reg_Parse++;
+			Reg_Parse ++;
 			*flag_param |= HAS_WIDTH | SIMPLE;
 			range_param->lower = 1;
 			range_param->upper = 1;
@@ -1807,20 +1791,18 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 
 		break; /* End of character class code. */
 
-		case '\\':
+		case U'\\':
 			/* Force Error_Text to have a length of zero.  This way we can tell if
 			   either of the calls to shortcut_escape() or back_ref() fill
 			   Error_Text with an error message. */
 
-			Error_Text [0] = '\0';
+			Error_Text [0] = U'\0';
 
 			if ( (ret_val = shortcut_escape (*Reg_Parse, flag_param, EMIT_NODE))) {
-
-				Reg_Parse++;
+				Reg_Parse ++;
 				range_param->lower = 1;
 				range_param->upper = 1;
 				break;
-
 			} else if ( (ret_val = back_ref (Reg_Parse, flag_param, EMIT_NODE))) {
 				/* Can't make any assumptions about a back-reference as to SIMPLE
 				   or HAS_WIDTH.  For example (^|<) is neither simple nor has
@@ -1832,10 +1814,8 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 				range_param->upper = -1;
 				break;
 			}
-
-			if (Error_Text [0] != U'\0') {
-				REG_FAIL (Error_Text);
-			}
+			if (Error_Text [0] != U'\0')
+				REG_FAIL (Error_Text)
 
 			/* At this point it is apparent that the escaped character is not a
 			   shortcut escape or back-reference.  Back up one character to allow
@@ -1845,7 +1825,7 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 			   escapes. */
 
 		default:
-			Reg_Parse--; /* If we fell through from the above code, we are now
+			Reg_Parse --; /* If we fell through from the above code, we are now
                          pointing at the back slash (\) character. */
 			{
 				char32 *parse_save;
@@ -1867,10 +1847,10 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 
 					parse_save = Reg_Parse;
 
-					if (*Reg_Parse == '\\') {
-						Reg_Parse++; /* Point to escaped character */
+					if (*Reg_Parse == U'\\') {
+						Reg_Parse ++;   // point to escaped character
 
-						Error_Text [0] = '\0';  /* See comment above. */
+						Error_Text [0] = U'\0';   // see comment above
 
 						if ( (test = numeric_escape (*Reg_Parse, &Reg_Parse))) {
 							if (Is_Case_Insensitive) {
@@ -1883,11 +1863,11 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 						} else if (back_ref (Reg_Parse, NULL, CHECK_ESCAPE)) {
 							/* Leave back reference for next `atom' call */
 
-							Reg_Parse--; break;
+							Reg_Parse --; break;
 						} else if (shortcut_escape (*Reg_Parse, NULL, CHECK_ESCAPE)) {
 							/* Leave shortcut escape for next `atom' call */
 
-							Reg_Parse--; break;
+							Reg_Parse --; break;
 						} else {
 							if (Error_Text [0] != U'\0') {
 								/* None of the above calls generated an error message
@@ -1895,11 +1875,9 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 
 								Melder_sprint (Error_Text,128, U"\\", *Reg_Parse, U" is an invalid escape sequence");
 							}
-
-							REG_FAIL (Error_Text);
+							REG_FAIL (Error_Text)
 						}
-
-						Reg_Parse++;
+						Reg_Parse ++;
 					} else {
 						/* Ordinary character */
 
@@ -1908,8 +1886,7 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 						} else {
 							emit_byte (*Reg_Parse);
 						}
-
-						Reg_Parse++;
+						Reg_Parse ++;
 					}
 
 					/* If next regex token is a quantifier (?, +. *, or {m,n}) and
@@ -1921,31 +1898,26 @@ static char32 *atom (int *flag_param, len_range *range_param) {
 
 					if (IS_QUANTIFIER (*Reg_Parse) && len > 0) {
 						Reg_Parse = parse_save; /* Point to previous regex token. */
-
 						if (Code_Emit_Ptr == &Compute_Size) {
 							Reg_Size--;
 						} else {
 							Code_Emit_Ptr--; /* Write over previously emitted byte. */
 						}
-
 						break;
 					}
 				}
-
-				if (len <= 0) {
-					REG_FAIL (U"internal error #4, `atom\'");
-				}
+				if (len <= 0)
+					REG_FAIL (U"internal error #4, `atom\'")
 
 				*flag_param |= HAS_WIDTH;
 
-				if (len == 1) {
+				if (len == 1)
 					*flag_param |= SIMPLE;
-				}
 
 				range_param->lower = len;
 				range_param->upper = len;
 
-				emit_byte ('\0');
+				emit_byte (U'\0');
 			}
 	} /* END switch (*Reg_Parse++) */
 
@@ -1963,24 +1935,17 @@ static char32 *atom (int *flag_param, len_range *range_param) {
  *----------------------------------------------------------------------*/
 
 static char32 *emit_node (int op_code) {
-
-	char32 *ret_val;
-	char32 *ptr;
-
-	ret_val = Code_Emit_Ptr; /* Return address of start of node */
-
-	if (ret_val == &Compute_Size) {
+	char32 *ret_val = Code_Emit_Ptr; /* Return address of start of node */
+	if (ret_val == & Compute_Size) {
 		Reg_Size += NODE_SIZE;
 	} else {
-		ptr   = ret_val;
-		*ptr++ = op_code;
-		*ptr++ = '\0'; /* Null "NEXT" pointer. */
-		*ptr++ = '\0';
-
+		char32 *ptr = ret_val;
+		*ptr ++ = op_code;
+		*ptr ++ = U'\0';   // null "NEXT" pointer
+		*ptr ++ = U'\0';
 		Code_Emit_Ptr = ptr;
 	}
-
-	return (ret_val);
+	return ret_val;
 }
 
 /*----------------------------------------------------------------------*
@@ -1990,11 +1955,10 @@ static char32 *emit_node (int op_code) {
  *----------------------------------------------------------------------*/
 
 static void emit_byte (char32 c) {
-
-	if (Code_Emit_Ptr == &Compute_Size) {
-		Reg_Size++;
+	if (Code_Emit_Ptr == & Compute_Size) {
+		Reg_Size ++;
 	} else {
-		*Code_Emit_Ptr++ = c;
+		*Code_Emit_Ptr ++ = c;
 	}
 }
 
@@ -2006,21 +1970,19 @@ static void emit_byte (char32 c) {
  *----------------------------------------------------------------------*/
 
 static void emit_class_byte (char32 c) {
-
-	if (Code_Emit_Ptr == &Compute_Size) {
-		Reg_Size++;
-
+	if (Code_Emit_Ptr == & Compute_Size) {
+		Reg_Size ++;
 		if (Is_Case_Insensitive && Melder_isLetter (c)) {
-			Reg_Size++;
+			Reg_Size ++;
 		}
 	} else if (Is_Case_Insensitive && Melder_isLetter (c)) {
-		/* For case insensitive character classes, emit both upper and lower case
+		/* For case-insensitive character classes, emit both upper and lower case
 		   versions of alphabetical characters. */
 
-		*Code_Emit_Ptr++ = Melder_toLowerCase (c);
-		*Code_Emit_Ptr++ = Melder_toUpperCase (c);
+		*Code_Emit_Ptr ++ = Melder_toLowerCase (c);
+		*Code_Emit_Ptr ++ = Melder_toUpperCase (c);
 	} else {
-		*Code_Emit_Ptr++ = c;
+		*Code_Emit_Ptr ++ = c;
 	}
 }
 
@@ -2033,50 +1995,45 @@ static void emit_class_byte (char32 c) {
 static char32 *emit_special (
     char32 op_code,
     unsigned long test_val,
-    int index) {
-
-	char32 *ret_val = &Compute_Size;
+    int index)
+{
+	char32 *ret_val = & Compute_Size;
 	char32 *ptr;
 
-	if (Code_Emit_Ptr == &Compute_Size) {
+	if (Code_Emit_Ptr == & Compute_Size) {
 		switch (op_code) {
 			case POS_BEHIND_OPEN:
 			case NEG_BEHIND_OPEN:
 				Reg_Size += LENGTH_SIZE;   /* Length of the look-behind match */
 				Reg_Size += NODE_SIZE;     /* Make room for the node */
 				break;
-
 			case TEST_COUNT:
 				Reg_Size += NEXT_PTR_SIZE; /* Make room for a test value. */
-
+				// ppgb FALLTHROUGH (both test and inc require index)
 			case INC_COUNT:
 				Reg_Size += INDEX_SIZE;    /* Make room for an index value. */
-
+				// ppgb FALLTHROUGH (everything requires node)
 			default:
 				Reg_Size += NODE_SIZE;     /* Make room for the node. */
 		}
 	} else {
 		ret_val = emit_node (op_code); /* Return the address for start of node. */
 		ptr     = Code_Emit_Ptr;
-
 		if (op_code == INC_COUNT || op_code == TEST_COUNT) {
-			*ptr++ = (char32) index;
-
+			*ptr ++ = (char32) index;
 			if (op_code == TEST_COUNT) {
-				*ptr++ = PUT_OFFSET_L (test_val);
-				*ptr++ = PUT_OFFSET_R (test_val);
+				*ptr ++ = PUT_OFFSET_L (test_val);
+				*ptr ++ = PUT_OFFSET_R (test_val);
 			}
 		} else if (op_code == POS_BEHIND_OPEN || op_code == NEG_BEHIND_OPEN) {
-			*ptr++ = PUT_OFFSET_L (test_val);
-			*ptr++ = PUT_OFFSET_R (test_val);
-			*ptr++ = PUT_OFFSET_L (test_val);
-			*ptr++ = PUT_OFFSET_R (test_val);
+			*ptr ++ = PUT_OFFSET_L (test_val);
+			*ptr ++ = PUT_OFFSET_R (test_val);
+			*ptr ++ = PUT_OFFSET_L (test_val);
+			*ptr ++ = PUT_OFFSET_R (test_val);
 		}
-
 		Code_Emit_Ptr = ptr;
 	}
-
-	return (ret_val);
+	return ret_val;
 }
 
 /*----------------------------------------------------------------------*
@@ -2190,11 +2147,8 @@ static void tail (char32 *search_from, char32 *point_to) {
  *--------------------------------------------------------------------*/
 
 static void offset_tail (char32 *ptr, int offset, char32 *val) {
-
-	if (ptr == &Compute_Size || ptr == NULL) {
+	if (ptr == & Compute_Size || ! ptr)
 		return;
-	}
-
 	tail (ptr + offset, val);
 }
 
@@ -2206,11 +2160,8 @@ static void offset_tail (char32 *ptr, int offset, char32 *val) {
  *--------------------------------------------------------------------*/
 
 static void branch_tail (char32 *ptr, int offset, char32 *val) {
-
-	if (ptr == &Compute_Size || ptr == NULL || GET_OP_CODE (ptr) != BRANCH) {
+	if (ptr == & Compute_Size || ! ptr || GET_OP_CODE (ptr) != BRANCH)
 		return;
-	}
-
 	tail (ptr + offset, val);
 }
 
@@ -2255,7 +2206,7 @@ static char32 *shortcut_escape (
 
 	char32 *klas   = NULL;
 	static const conststring32 codes = U"ByYwWdDlLsS";
-	char32 *ret_val = (char32 *) 1; /* Assume success. */
+	char32 *ret_val = (char32 *) 1;   // assume success
 	conststring32 valid_codes;
 
 	if (emit == CHECK_CLASS_ESCAPE) {
@@ -2265,28 +2216,24 @@ static char32 *shortcut_escape (
 	}
 
 	if (! str32chr (valid_codes, c)) {
-		return NULL; /* Not a valid shortcut escape sequence */
+		return nullptr;   // not a valid shortcut escape sequence
 	} else if (emit == CHECK_ESCAPE || emit == CHECK_CLASS_ESCAPE) {
-		return ret_val; /* Just checking if this is a valid shortcut escape. */
+		return ret_val;   // just checking if this is a valid shortcut escape
 	}
 
 	switch (c) {
-		case 'd':
-		case 'D':
-			if (emit == EMIT_NODE) {
+		case U'd':
+		case U'D':
+			if (emit == EMIT_NODE)
 				ret_val = (iswlower ((int) c) ? emit_node (DIGIT) : emit_node (NOT_DIGIT));
-			}
 			break;
-
-		case 'l':
-		case 'L':
-			if (emit == EMIT_NODE) {
+		case U'l':
+		case U'L':
+			if (emit == EMIT_NODE)
 				ret_val = (iswlower ((int) c) ? emit_node (LETTER) : emit_node (NOT_LETTER));
-			}
 			break;
-
-		case 's':
-		case 'S':
+		case U's':
+		case U'S':
 			if (emit == EMIT_NODE) {
 				if (Match_Newline) {
 					ret_val = (iswlower ((int) c) ? emit_node (SPACE_NL) : emit_node (NOT_SPACE_NL));
@@ -2295,20 +2242,19 @@ static char32 *shortcut_escape (
 				}
 			}
 			break;
-
-		case 'w':
-		case 'W':
+		case U'w':
+		case U'W':
 			if (emit == EMIT_NODE) {
 				ret_val = (iswlower ((int) c) ? emit_node (WORD_CHAR) : emit_node (NOT_WORD_CHAR));
 			} else {
 				REG_FAIL (U"internal error #105 `shortcut_escape\'");
 			}
 			break;
-
-			/* Since the delimiter table is not available at regex compile time \B,
-			   \Y and \Y can only generate a node.  At run time, the delimiter table
-			   will be available for these nodes to use. */
-
+			/*
+				Since the delimiter table is not available at regex compile time,
+				\B, \y and \Y can only generate a node. At run time, the delimiter table
+				will be available for these nodes to use.
+			*/
 		case 'y':
 			if (emit == EMIT_NODE) {
 				ret_val = emit_node (IS_DELIM);
@@ -2316,7 +2262,6 @@ static char32 *shortcut_escape (
 				REG_FAIL (U"internal error #5 `shortcut_escape\'");
 			}
 			break;
-
 		case 'Y':
 			if (emit == EMIT_NODE) {
 				ret_val = emit_node (NOT_DELIM);
@@ -2324,7 +2269,6 @@ static char32 *shortcut_escape (
 				REG_FAIL (U"internal error #6 `shortcut_escape\'");
 			}
 			break;
-
 		case 'B':
 			if (emit == EMIT_NODE) {
 				ret_val = emit_node (NOT_BOUNDARY);
@@ -2332,11 +2276,10 @@ static char32 *shortcut_escape (
 				REG_FAIL (U"internal error #7 `shortcut_escape\'");
 			}
 			break;
-
 		default:
-			/* We get here if there isn't a case for every character in
-			   the string "codes" */
-
+			/*
+				We get here if there isn't a case for every character in the string "codes".
+			*/
 			REG_FAIL (U"internal error #8 `shortcut_escape\'");
 	}
 
@@ -2345,11 +2288,11 @@ static char32 *shortcut_escape (
 	}
 
 	if (klas) {
-		/* Emit bytes within a character class operand. */
-
-		while (*klas != '\0') {
-			emit_byte (*klas++);
-		}
+		/*
+			Emit bytes within a character class operand.
+		*/
+		while (*klas != U'\0')
+			emit_byte (*klas ++);
 	}
 
 	return ret_val;
@@ -2407,11 +2350,11 @@ static char32 numeric_escape (
 			return U'\0'; /* Not a numeric escape */
 	}
 
-	scan = *parse; scan++; /* Only change *parse on success. */
+	scan = *parse; scan ++; /* Only change *parse on success. */
 
 	pos_ptr = str32chr (digit_str, *scan);
 
-	for (i = 0; pos_ptr != NULL && (i < width); i++) {
+	for (i = 0; pos_ptr && i < width; i++) {
 		pos   = (pos_ptr - digit_str) + pos_delta;
 		value = (value * radix) + digit_val [pos];
 
@@ -2432,14 +2375,14 @@ static char32 numeric_escape (
                    considered to be part of the octal escape. */
 		}
 
-		scan++;
+		scan ++;
 		pos_ptr = str32chr (digit_str, *scan);
 	}
 
 	/* Handle the case of "\0" i.e. trying to specify a NULL character. */
 
 	if (value == 0) {
-		if (c == '0') {
+		if (c == U'0') {
 			Melder_sprint (Error_Text,128, U"\\00 is an invalid octal escape");
 		} else {
 			Melder_sprint (Error_Text,128, U"\\", c, U"0 is an invalid hexadecimal escape");
@@ -2447,7 +2390,7 @@ static char32 numeric_escape (
 	} else {
 		/* Point to the last character of the number on success. */
 
-		scan--;
+		scan --;
 		*parse = scan;
 	}
 
@@ -2531,14 +2474,14 @@ static char32 *back_ref (
 
 	/* Make sure parentheses for requested back-reference are complete. */
 
-	if (!is_cross_regex && !TEST_BIT (Closed_Parens, paren_no)) {
+	if (! is_cross_regex && ! TEST_BIT (Closed_Parens, paren_no)) {
 		Melder_sprint (Error_Text,128, U"\\", paren_no, U" is an illegal back reference");
 		return NULL;
 	}
 
 	if (emit == EMIT_NODE) {
 		if (is_cross_regex) {
-			Reg_Parse++; /* Skip past the '~' in a cross regex back reference.
+			Reg_Parse ++; /* Skip past the '~' in a cross regex back reference.
                          We only do this if we are emitting code. */
 
 			if (Is_Case_Insensitive) {
@@ -2562,9 +2505,8 @@ static char32 *back_ref (
 	} else if (emit == CHECK_ESCAPE) {
 		ret_val = (char32 *) 1;
 	} else {
-		ret_val = NULL;
+		ret_val = nullptr;
 	}
-
 	return ret_val;
 }
 
@@ -2603,10 +2545,10 @@ static int Recursion_Limit_Exceeded; /* Recursion limit exceeded flag */
 
 /* static regexp *Cross_Regex_Backref; */
 
-static int Prev_Is_BOL;
-static int Succ_Is_EOL;
-static int Prev_Is_Delim;
-static int Succ_Is_Delim;
+static bool Prev_Is_BOL;
+static bool Succ_Is_EOL;
+static bool Prev_Is_Delim;
+static bool Succ_Is_Delim;
 
 /* Define a pointer to an array to hold general (...){m,n} counts. */
 
@@ -2648,13 +2590,13 @@ static void            adjustcase (char32 *, int, char32);
 int ExecRE (
     regexp *prog,
     regexp *cross_regex_backref,
-    const char32   *string,
-    const char32   *end,
+    conststring32 string,
+    const char32 *end,
     int     reverse,
     char32    prev_char,
     char32    succ_char,
-    const char32   *look_behind_to,
-    const char32   *match_to) {
+    conststring32 look_behind_to,
+    conststring32 match_to) {
 
 	char32 *str;
 	char32 **s_ptr;
@@ -2668,7 +2610,7 @@ int ExecRE (
 
 	/* Check for valid parameters. */
 
-	if (prog == NULL || string == NULL) {
+	if (! prog || ! string) {
 		reg_error (U"NULL parameter to `ExecRE\'");
 		goto SINGLE_RETURN;
 	}
@@ -2684,13 +2626,11 @@ int ExecRE (
 
 	End_Of_String = match_to;
 
-	if (end == NULL && reverse) {
-		for (end = string; !AT_END_OF_STRING (end); end++) {
-			;
-		}
-		succ_char = '\n';
-	} else if (end == NULL) {
-		succ_char = '\n';
+	if (reverse && ! end) {
+		for (end = string; ! AT_END_OF_STRING (end); end ++) { }
+		succ_char = U'\n';
+	} else if (! end) {
+		succ_char = U'\n';
 	}
 
 	/* Remember the beginning of the string for matching BOL */
@@ -2698,8 +2638,8 @@ int ExecRE (
 	Start_Of_String    = string;
 	Look_Behind_To     = look_behind_to ? look_behind_to : string;
 
-	Prev_Is_BOL        = ( (prev_char == '\n') || (prev_char == '\0') ? 1 : 0);
-	Succ_Is_EOL        = ( (succ_char == '\n') || (succ_char == '\0') ? 1 : 0);
+	Prev_Is_BOL        = ( prev_char == U'\n' || prev_char == U'\0' );
+	Succ_Is_EOL        = ( succ_char == U'\n' || succ_char == U'\0' );
 	Prev_Is_Delim      = ! Melder_isWordCharacter (prev_char);
 	Succ_Is_Delim      = ! Melder_isWordCharacter (succ_char);
 
@@ -2880,11 +2820,11 @@ static int attempt (regexp *prog, char32 *string) {
 	/* Overhead due to capturing parentheses. */
 
 	Extent_Ptr_BW = string;
-	Extent_Ptr_FW = NULL;
+	Extent_Ptr_FW = nullptr;
 
 	for (i = Total_Paren + 1; i > 0; i--) {
-		*s_ptr++ = NULL;
-		*e_ptr++ = NULL;
+		*s_ptr ++ = nullptr;
+		*e_ptr ++ = nullptr;
 	}
 
 	if (match ( (char32 *) (prog->program + REGEX_START_OFFSET),
@@ -2895,9 +2835,9 @@ static int attempt (regexp *prog, char32 *string) {
 		prog->extentpFW  = (char32 *) Extent_Ptr_FW;
 		prog->top_branch = branch_index;
 
-		return (1);
+		return 1;
 	} else {
-		return (0);
+		return 0;
 	}
 }
 
@@ -2922,18 +2862,18 @@ static int match (char32 *prog, int *branch_index_param) {
 	char32 *next;  /* Next node. */
 	int next_ptr_offset;  /* Used by the NEXT_PTR () macro */
 
-	if (++Recursion_Count > REGEX_RECURSION_LIMIT) {
-		if (!Recursion_Limit_Exceeded) { /* Prevent duplicate errors */
+	if (++ Recursion_Count > REGEX_RECURSION_LIMIT) {
+		if (! Recursion_Limit_Exceeded) { /* Prevent duplicate errors */
 			reg_error (U"recursion limit exceeded, please respecify expression");
 		}
 		Recursion_Limit_Exceeded = 1;
-		MATCH_RETURN (0);
+		MATCH_RETURN (0)
 	}
 
 
 	scan = prog;
 
-	while (scan != NULL) {
+	while (scan) {
 		NEXT_PTR (scan, next);
 
 		switch (GET_OP_CODE (scan)) {
@@ -2948,10 +2888,9 @@ static int match (char32 *prog, int *branch_index_param) {
 						save = Reg_Input;
 
 						if (match (OPERAND (scan), NULL)) {
-							if (branch_index_param) {
+							if (branch_index_param)
 								*branch_index_param = branch_index_local;
-							}
-							MATCH_RETURN (1);
+							MATCH_RETURN (1)
 						}
 
 						CHECK_RECURSION_LIMIT
@@ -2962,53 +2901,38 @@ static int match (char32 *prog, int *branch_index_param) {
 						NEXT_PTR (scan, scan);
 					} while (scan != NULL && GET_OP_CODE (scan) == BRANCH);
 
-					MATCH_RETURN (0); /* NOT REACHED */
+					MATCH_RETURN (0)   // NOT REACHED
 				}
 			}
 
 			break;
 
 			case EXACTLY: {
-				int len;
-				char32 *opnd;
-
-				opnd = OPERAND (scan);
+				char32 *opnd = OPERAND (scan);
 
 				/* Inline the first character, for speed. */
 
-				if (*opnd != *Reg_Input) {
-					MATCH_RETURN (0);
-				}
-
-				len = str32len (opnd);
-
-				if (End_Of_String != NULL && Reg_Input + len > End_Of_String) {
-					MATCH_RETURN (0);
-				}
-
-				if (len > 1  && str32ncmp (opnd, Reg_Input, len) != 0) {
-
-					MATCH_RETURN (0);
-				}
-
+				if (*opnd != *Reg_Input)
+					MATCH_RETURN (0)
+				int len = str32len (opnd);
+				if (End_Of_String != NULL && Reg_Input + len > End_Of_String)
+					MATCH_RETURN (0)
+				if (len > 1  && str32ncmp (opnd, Reg_Input, len) != 0)
+					MATCH_RETURN (0)
 				Reg_Input += len;
 			}
 
 			break;
 
 			case SIMILAR: {
-				char32 *opnd;
+				char32 *opnd = OPERAND (scan);
 				char32  test;
-
-				opnd = OPERAND (scan);
-
 				/* Note: the SIMILAR operand was converted to lower case during
 				   regex compile. */
 
 				while ((test = *opnd++) != U'\0') {
-					if (AT_END_OF_STRING (Reg_Input) || Melder_toLowerCase (*Reg_Input++) != test) {
-						MATCH_RETURN (0);
-					}
+					if (AT_END_OF_STRING (Reg_Input) || Melder_toLowerCase (*Reg_Input++) != test)
+						MATCH_RETURN (0)
 				}
 			}
 
@@ -3016,75 +2940,67 @@ static int match (char32 *prog, int *branch_index_param) {
 
 			case BOL: /* `^' (beginning of line anchor) */
 				if (Reg_Input == Start_Of_String) {
-					if (Prev_Is_BOL) {
+					if (Prev_Is_BOL)
 						break;
-					}
-				} else if (* (Reg_Input - 1) == '\n') {
+				} else if (* (Reg_Input - 1) == U'\n') {
 					break;
 				}
-
-				MATCH_RETURN (0);
+				MATCH_RETURN (0)
 
 			case EOL: /* `$' anchor matches end of line and end of string */
-				if (*Reg_Input == '\n' || (AT_END_OF_STRING (Reg_Input) && Succ_Is_EOL)) {
+				if (*Reg_Input == U'\n' || (AT_END_OF_STRING (Reg_Input) && Succ_Is_EOL))
 					break;
-				}
-
-				MATCH_RETURN (0);
+				MATCH_RETURN (0)
 
 			case BOWORD: /* `<' (beginning of word anchor) */
 				/* Check to see if the current character is not a delimiter
 				   and the preceding character is. */
 			{
-				int prev_is_delim;
+				bool prev_is_delim;
 				if (Reg_Input == Start_Of_String) {
 					prev_is_delim = Prev_Is_Delim;
 				} else {
 					prev_is_delim = ! Melder_isWordCharacter (*(Reg_Input - 1));
 				}
 				if (prev_is_delim) {
-					int current_is_delim;
+					bool current_is_delim;
 					if (AT_END_OF_STRING (Reg_Input)) {
 						current_is_delim = Succ_Is_Delim;
 					} else {
 						current_is_delim = ! Melder_isWordCharacter (*Reg_Input);
 					}
-					if (!current_is_delim) {
+					if (! current_is_delim)
 						break;
-					}
 				}
 			}
-
-			MATCH_RETURN (0);
+			MATCH_RETURN (0)
 
 			case EOWORD: /* `>' (end of word anchor) */
 				/* Check to see if the current character is a delimiter
 				and the preceding character is not. */
 			{
-				int prev_is_delim;
+				bool prev_is_delim;
 				if (Reg_Input == Start_Of_String) {
 					prev_is_delim = Prev_Is_Delim;
 				} else {
 					prev_is_delim = ! Melder_isWordCharacter (*(Reg_Input - 1));
 				}
-				if (!prev_is_delim) {
-					int current_is_delim;
+				if (! prev_is_delim) {
+					bool current_is_delim;
 					if (AT_END_OF_STRING (Reg_Input)) {
 						current_is_delim = Succ_Is_Delim;
 					} else {
 						current_is_delim = ! Melder_isWordCharacter (*Reg_Input);
 					}
-					if (current_is_delim) {
+					if (current_is_delim)
 						break;
-					}
 				}
 			}
-
-			MATCH_RETURN (0);
+			MATCH_RETURN (0)
 
 			case NOT_BOUNDARY: { /* \B (NOT a word boundary) */
-				int prev_is_delim;
-				int current_is_delim;
+				bool prev_is_delim;
+				bool current_is_delim;
 				if (Reg_Input == Start_Of_String) {
 					prev_is_delim = Prev_Is_Delim;
 				} else {
@@ -3095,109 +3011,93 @@ static int match (char32 *prog, int *branch_index_param) {
 				} else {
 					current_is_delim = ! Melder_isWordCharacter (*Reg_Input);
 				}
-				if (! (prev_is_delim ^ current_is_delim)) {
+				if (! (prev_is_delim ^ current_is_delim))
 					break;
-				}
 			}
-
-			MATCH_RETURN (0);
-
+			MATCH_RETURN (0)
 			case IS_DELIM: /* \y (A word delimiter character.) */
 				if (! Melder_isWordCharacter (*Reg_Input) && ! AT_END_OF_STRING (Reg_Input)) {
 					Reg_Input++; break;
 				}
-				MATCH_RETURN (0);
-
+				MATCH_RETURN (0)
 			case NOT_DELIM: /* \Y (NOT a word delimiter character.) */
 				if (Melder_isWordCharacter (*Reg_Input) && ! AT_END_OF_STRING (Reg_Input)) {
-					Reg_Input++; break;
+					Reg_Input ++;
+					break;
 				}
-				MATCH_RETURN (0);
-
+				MATCH_RETURN (0)
 			case WORD_CHAR: /* \w (word character; alpha-numeric or underscore) */
 				if (Melder_isWordCharacter (*Reg_Input) && ! AT_END_OF_STRING (Reg_Input)) {
-					Reg_Input++; break;
+					Reg_Input ++;
+					break;
 				}
-				MATCH_RETURN (0);
-
+				MATCH_RETURN (0)
 			case NOT_WORD_CHAR:/* \W (NOT a word character) */
-				if (Melder_isWordCharacter (*Reg_Input) || *Reg_Input == '\n' || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (Melder_isWordCharacter (*Reg_Input) || *Reg_Input == U'\n' || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case ANY: /* `.' (matches any character EXCEPT newline) */
-				if (AT_END_OF_STRING (Reg_Input) || *Reg_Input == '\n') {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (AT_END_OF_STRING (Reg_Input) || *Reg_Input == U'\n')
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case EVERY: /* `.' (matches any character INCLUDING newline) */
-				if (AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case DIGIT: /* \d; for ASCII, use [0-9] */
-				if (! Melder_isDecimalNumber (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (! Melder_isDecimalNumber (*Reg_Input) || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case NOT_DIGIT: /* \D; for ASCII, use [^0-9] */
-				if (Melder_isDecimalNumber (*Reg_Input) || *Reg_Input == '\n' || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (Melder_isDecimalNumber (*Reg_Input) || *Reg_Input == U'\n' || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case LETTER: /* \l; for ASCII, use [a-zA-Z] */
-				if (! Melder_isLetter (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (! Melder_isLetter (*Reg_Input) || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case NOT_LETTER: /* \L; for ASCII, use [^a-zA-Z] */
-				if (Melder_isLetter (*Reg_Input) || *Reg_Input == '\n' || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (Melder_isLetter (*Reg_Input) || *Reg_Input == '\n' || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case SPACE: /* \s; for ASCII, use [ \t] */
-				if (! Melder_isHorizontalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (! Melder_isHorizontalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case SPACE_NL: /* \s; for ASCII, use [\n \t\r\f\v] */
-				if (! Melder_isHorizontalOrVerticalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (! Melder_isHorizontalOrVerticalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case NOT_SPACE: /* \S; for ASCII, use [^\n \t\r\f\v] */
-				if (Melder_isHorizontalOrVerticalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (Melder_isHorizontalOrVerticalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case NOT_SPACE_NL: /* \S; for ASCII, use [^ \t\r\f\v] */
-				if (Melder_isHorizontalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (Melder_isHorizontalSpace (*Reg_Input) || AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case ANY_OF:  /* [...] character class. */
-				if (AT_END_OF_STRING (Reg_Input)) {
-					MATCH_RETURN (0);
-				} /* Needed because strchr ()
+				if (AT_END_OF_STRING (Reg_Input))
+					MATCH_RETURN (0)
+				/* Needed because strchr ()
                                     considers \0 as a member
                                     of the character set. */
 
-				if (str32chr (OPERAND (scan), *Reg_Input) == NULL) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (! str32chr (OPERAND (scan), *Reg_Input))
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case ANY_BUT: /* [^...] Negated character class-- does NOT normally
                        match newline (\n added usually to operand at compile
                        time.) */
@@ -3205,15 +3105,13 @@ static int match (char32 *prog, int *branch_index_param) {
 				if (AT_END_OF_STRING (Reg_Input)) {
 					MATCH_RETURN (0);    /* See comment for ANY_OF. */
 				}
-				if (str32chr (OPERAND (scan), *Reg_Input) != NULL) {
-					MATCH_RETURN (0);
-				}
-				Reg_Input++; break;
-
+				if (str32chr (OPERAND (scan), *Reg_Input) != nullptr)
+					MATCH_RETURN (0)
+				Reg_Input ++;
+				break;
 			case NOTHING:
 			case BACK:
 				break;
-
 			case STAR:
 			case PLUS:
 			case QUESTION:
@@ -3236,7 +3134,7 @@ static int match (char32 *prog, int *branch_index_param) {
 				if (GET_OP_CODE (next) == EXACTLY) {
 					next_char = *OPERAND (next);
 				} else {
-					next_char = '\0';/* i.e. Don't know what next character is. */
+					next_char = U'\0';/* i.e. Don't know what next character is. */
 				}
 
 				next_op = OPERAND (scan);
@@ -3290,7 +3188,7 @@ static int match (char32 *prog, int *branch_index_param) {
 				}
 
 				while (min <= num_matched && num_matched <= max) {
-					if (next_char == '\0' || next_char == *Reg_Input) {
+					if (next_char == U'\0' || next_char == *Reg_Input) {
 						if (match (next, NULL)) {
 							MATCH_RETURN (1);
 						}
@@ -3305,9 +3203,9 @@ static int match (char32 *prog, int *branch_index_param) {
 							MATCH_RETURN (0);
 						}
 
-						num_matched++; /* Inch forward. */
+						num_matched ++; /* Inch forward. */
 					} else if (num_matched > REG_ZERO) {
-						num_matched--; /* Back up. */
+						num_matched --; /* Back up. */
 					} else if (min == REG_ZERO && num_matched == REG_ZERO) {
 						break;
 					}
@@ -3325,7 +3223,7 @@ static int match (char32 *prog, int *branch_index_param) {
 					Extent_Ptr_FW = Reg_Input;
 				}
 
-				MATCH_RETURN (1);  /* Success! */
+				MATCH_RETURN (1)   // Success!
 
 				break;
 
@@ -3335,7 +3233,7 @@ static int match (char32 *prog, int *branch_index_param) {
 				break;
 
 			case INC_COUNT:
-				Brace->count [*OPERAND (scan)]++;
+				Brace->count [*OPERAND (scan)] ++;
 
 				break;
 
@@ -3382,20 +3280,18 @@ static int match (char32 *prog, int *branch_index_param) {
                      GET_OP_CODE (scan) == X_REGEX_BR_CI*/) {
 
 						while (captured < finish) {
-							if (AT_END_OF_STRING (Reg_Input) || Melder_toLowerCase (*captured++) != Melder_toLowerCase (*Reg_Input++)) {   // TODO: should casefold
-								MATCH_RETURN (0);
-							}
+							if (AT_END_OF_STRING (Reg_Input) || Melder_toLowerCase (*captured++) != Melder_toLowerCase (*Reg_Input++))   // TODO: should casefold
+								MATCH_RETURN (0)
 						}
 					} else {
 						while (captured < finish) {
-							if (AT_END_OF_STRING (Reg_Input) || *captured++ != *Reg_Input++) {
-								MATCH_RETURN (0);
-							}
+							if (AT_END_OF_STRING (Reg_Input) || *captured++ != *Reg_Input++)
+								MATCH_RETURN (0)
 						}
 					}
 					break;
 				} else {
-					MATCH_RETURN (0);
+					MATCH_RETURN (0)
 				}
 			}
 
@@ -3442,7 +3338,7 @@ static int match (char32 *prog, int *branch_index_param) {
 					Reg_Input = save; /* Backtrack to look-ahead start. */
 					End_Of_String = saved_end; /* Restore logical end. */
 
-					MATCH_RETURN (0);
+					MATCH_RETURN (0)
 				}
 			}
 
@@ -3525,7 +3421,7 @@ static int match (char32 *prog, int *branch_index_param) {
 					next = next_ptr (next); /* Skip LOOK_BEHIND_CLOSE */
 				} else {
 					/* Not a match */
-					MATCH_RETURN (0);
+					MATCH_RETURN (0)
 				}
 			}
 			break;
@@ -3558,9 +3454,9 @@ static int match (char32 *prog, int *branch_index_param) {
 							Start_Ptr_Ptr [no] = save;
 						}
 
-						MATCH_RETURN (1);
+						MATCH_RETURN (1)
 					} else {
-						MATCH_RETURN (0);
+						MATCH_RETURN (0)
 					}
 				} else if ( (GET_OP_CODE (scan) > CLOSE) &&
 				            (GET_OP_CODE (scan) < CLOSE + NSUBEXP)) {
@@ -3582,15 +3478,13 @@ static int match (char32 *prog, int *branch_index_param) {
 						if (End_Ptr_Ptr [no] == NULL) {
 							End_Ptr_Ptr [no] = save;
 						}
-
-						MATCH_RETURN (1);
+						MATCH_RETURN (1)
 					} else {
-						MATCH_RETURN (0);
+						MATCH_RETURN (0)
 					}
 				} else {
 					reg_error (U"memory corruption, `match\'");
-
-					MATCH_RETURN (0);
+					MATCH_RETURN (0)
 				}
 
 				break;
@@ -3603,8 +3497,7 @@ static int match (char32 *prog, int *branch_index_param) {
 	   the terminating point. */
 
 	reg_error (U"corrupted pointers, `match\'");
-
-	MATCH_RETURN (0);
+	MATCH_RETURN (0)
 }
 
 /*----------------------------------------------------------------------*
@@ -3791,23 +3684,15 @@ static unsigned long greedy (char32 *p, long max) {
  *----------------------------------------------------------------------*/
 
 static char32 *next_ptr (char32 *ptr) {
-
-	int offset;
-
-	if (ptr == &Compute_Size) {
-		return (NULL);
-	}
-
-	offset = GET_OFFSET (ptr);
-
-	if (offset == 0) {
-		return (NULL);
-	}
-
+	if (ptr == & Compute_Size)
+		return nullptr;
+	int offset = GET_OFFSET (ptr);
+	if (offset == 0)
+		return nullptr;
 	if (GET_OP_CODE (ptr) == BACK) {
-		return (ptr - offset);
+		return ptr - offset;
 	} else {
-		return (ptr + offset);
+		return ptr + offset;
 	}
 }
 
@@ -3818,7 +3703,7 @@ static char32 *next_ptr (char32 *ptr) {
 **  To give the caller a chance to react to this the function returns False
 **  on any error. The substitution will still be executed.
 */
-int SubstituteRE (const regexp *prog, conststring32 source, char32 *dest, int max, int *errorType) {
+int SubstituteRE (const regexp *prog, conststring32 source, mutablestring32 dest, int max, int *errorType) {
 
 	const char32 *src;
 	const char32 *src_alias;
@@ -3831,7 +3716,7 @@ int SubstituteRE (const regexp *prog, conststring32 source, char32 *dest, int ma
 	bool anyWarnings = false;
 
 	*errorType = 0;
-	if (prog == NULL || source == NULL || dest == NULL) {
+	if (! prog || ! source || ! dest) {
 		reg_error (U"NULL parm to `SubstituteRE\'");
 		*errorType = 2;
 		return false;
@@ -3840,58 +3725,56 @@ int SubstituteRE (const regexp *prog, conststring32 source, char32 *dest, int ma
 	if (U_CHAR_AT (prog->program) != MAGIC) {
 		*errorType = 3;
 		reg_error (U"damaged regexp passed to `SubstituteRE\'");
-
 		return false;
 	}
 
 	src = source;
 	dst = dest;
 
-	while ( (c = *src++) != '\0') {
-		chgcase  = '\0';
+	while ( (c = *src++) != U'\0') {
+		chgcase  = U'\0';
 		paren_no = -1;
 
-		if (c == '\\') {
+		if (c == U'\\') {
 			/* Process any case-altering tokens, i.e \u, \U, \l, \L. */
 
-			if (*src == 'u' || *src == 'U' || *src == 'l' || *src == 'L') {
+			if (*src == U'u' || *src == U'U' || *src == U'l' || *src == U'L') {
 				chgcase = *src;
-				src++;
-				c = *src++;
-
-				if (c == '\0') {
+				src ++;
+				c = *src ++;
+				if (c == U'\0')
 					break;
-				}
 			}
 		}
 
-		if (c == '&') {
+		if (c == U'&') {
 			paren_no = 0;
-		} else if (c == '\\') {
+		} else if (c == U'\\') {
 			/* Can not pass register variable `&src' to function `numeric_escape'
 			   so make a non-register copy that we can take the address of. */
 
 			src_alias = src;
 
-			if ('1' <= *src && *src <=  '9') {
+			if (U'1' <= *src && *src <= U'9') {
 				paren_no = (int) * src++ - (int) '0';
 
-			} else if ( (test = literal_escape (*src)) != '\0') {
+			} else if ( (test = literal_escape (*src)) != U'\0') {
 				c = test; src++;
 
-			} else if ( (test = numeric_escape (*src, (char32 **) &src_alias)) != '\0') {
+			} else if ( (test = numeric_escape (*src, (char32 **) &src_alias)) != U'\0') {
 				c   = test;
-				src = src_alias; src++;
+				src = src_alias;
+				src ++;
 
 				/* NOTE: if an octal escape for zero is attempted (e.g. \000), it
 				   will be treated as a literal string. */
-			} else if (*src == '\0') {
+			} else if (*src == U'\0') {
 				/* If '\' is the last character of the replacement string, it is
 				   interpreted as a literal backslash. */
 
-				c = '\\';
+				c = U'\\';
 			} else {
-				c = *src++; /* Allow any escape sequence (This is  */
+				c = *src ++; /* Allow any escape sequence (This is  */
 			}              /* INCONSISTENT with the `CompileRE'   */
 		}                 /* mind set of issuing an error!       */
 
@@ -3918,13 +3801,13 @@ int SubstituteRE (const regexp *prog, conststring32 source, char32 *dest, int ma
 
 			(void) str32ncpy (dst, prog->startp [paren_no], len);
 
-			if (chgcase != '\0') {
+			if (chgcase != U'\0') {
 				adjustcase (dst, len, chgcase);
 			}
 
 			dst += len;
 
-			if (len != 0 && * (dst - 1) == '\0') { /* strncpy hit NUL. */
+			if (len != 0 && * (dst - 1) == U'\0') { /* strncpy hit NUL. */
 				*errorType = 3;
 				reg_error (U"damaged match string in `SubstituteRE\'");
 				anyWarnings = true;
@@ -3932,7 +3815,7 @@ int SubstituteRE (const regexp *prog, conststring32 source, char32 *dest, int ma
 		}
 	}
 
-	*dst = '\0';
+	*dst = U'\0';
 
 	return ! anyWarnings;
 }
@@ -3944,23 +3827,18 @@ static void adjustcase (char32 *str, int len, char32 chgcase) {
 	/* The tokens \u and \l only modify the first character while the tokens
 	   \U and \L modify the entire string. */
 
-	if (iswlower ((int) chgcase) && len > 0) {
+	if (iswlower ((int) chgcase) && len > 0)
 		len = 1;
-	}
-
 	switch (chgcase) {
-		case 'u':
-		case 'U':
-			for (integer i = 0; i < len; i ++) {
+		case U'u':
+		case U'U':
+			for (integer i = 0; i < len; i ++)
 				* (string + i) = Melder_toUpperCase (* (string + i));
-			}
 			break;
-
-		case 'l':
-		case 'L':
-			for (integer i = 0; i < len; i ++) {
+		case U'l':
+		case U'L':
+			for (integer i = 0; i < len; i ++)
 				* (string + i) = Melder_toLowerCase (* (string + i));
-			}
 			break;
 	}
 }

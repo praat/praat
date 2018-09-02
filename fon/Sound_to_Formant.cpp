@@ -32,19 +32,19 @@
 #include "NUM2.h"
 #include "Polynomial.h"
 
-static void burg (double sample [], integer nsamp_window, double cof [], int nPoles,
+static void burg (constVEC samples, VEC coefficients,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
 {
 	double a0;
-	NUMburg (sample, nsamp_window, cof, nPoles, & a0);
+	NUMburg (samples.at, samples.size, coefficients.at, coefficients.size, & a0);
 
 	/*
 	 * Convert LP coefficients to polynomial.
 	 */
-	autoPolynomial polynomial = Polynomial_create (-1, 1, nPoles);
-	for (int i = 1; i <= nPoles; i ++)
-		polynomial -> coefficients [i] = - cof [nPoles - i + 1];
-	polynomial -> coefficients [nPoles + 1] = 1.0;
+	autoPolynomial polynomial = Polynomial_create (-1, 1, coefficients.size);
+	for (int i = 1; i <= coefficients.size; i ++)
+		polynomial -> coefficients [i] = - coefficients [coefficients.size - i + 1];
+	polynomial -> coefficients [coefficients.size + 1] = 1.0;
 
 	/*
 	 * Find the roots of the polynomial.
@@ -154,7 +154,7 @@ static int findNewZeroes (int ijt, double ppORIG [], int degree,
 }
 
 static int splitLevinson (
-	double xw [], integer nx,   // the windowed signal xw [1..nx]
+	constVEC samples,   // the windowed signal xw [1..nx]
 	int ncof,   // the coefficients cof [1..ncof]
 	Formant_Frame frame, double nyquistFrequency)   // put the results here
 {
@@ -165,8 +165,8 @@ static int splitLevinson (
 	/* Compute the autocorrelation of the windowed signal. */
 	for (int i = 0; i < ncof; i ++) {
 		rx [i] = 0.0;
-		for (int j = 1; j <= nx - i; j ++)
-			rx [i] += xw [j] * xw [j + i];
+		for (int j = 1; j <= samples.size - i; j ++)
+			rx [i] += samples [j] * samples [j + i];
 	}
 	/* Normalize autocorrelation; (should we also divide by the autocorrelation of the window?). */
 	for (int i = 1; i < ncof; i ++)
@@ -268,24 +268,21 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, int num
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin)
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
-	double duration = my nx * my dx, t1;
+	double physicalDuration = my nx * my dx, t1;
 	double dt_window = 2.0 * halfdt_window;
-	integer nFrames = 1 + Melder_ifloor ((duration - dt_window) / dt);
+	integer nFrames = 1 + Melder_ifloor ((physicalDuration - dt_window) / dt);
 	integer nsamp_window = Melder_ifloor (dt_window / my dx), halfnsamp_window = nsamp_window / 2;
 
 	if (nsamp_window < numberOfPoles + 1)
 		Melder_throw (U"Window too short.");
-	t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt);   // centre of first frame
+	t1 = my x1 + 0.5 * (physicalDuration - my dx - (nFrames - 1) * dt);   // centre of first frame
 	if (nFrames < 1) {
 		nFrames = 1;
-		t1 = my x1 + 0.5 * duration;
-		dt_window = duration;
+		t1 = my x1 + 0.5 * physicalDuration;
+		dt_window = physicalDuration;
 		nsamp_window = my nx;
 	}
 	autoFormant thee = Formant_create (my xmin, my xmax, nFrames, dt, t1, (numberOfPoles + 1) / 2);   // e.g. 11 poles -> maximally 6 formants
-	autoNUMvector <double> window (1, nsamp_window);
-	autoNUMvector <double> frame (1, nsamp_window);
-	autoNUMvector <double> cof (1, numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
 
 	autoMelderProgress progress (U"Formant analysis...");
 
@@ -293,11 +290,15 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, int num
 	Sound_preEmphasis (me, preemphasisFrequency);
 
 	/* Gaussian window. */
+	auto window = VECraw (nsamp_window);
 	for (integer i = 1; i <= nsamp_window; i ++) {
 		double imid = 0.5 * (nsamp_window + 1), edge = exp (-12.0);
 		window [i] = (exp (-48.0 * (i - imid) * (i - imid) / (nsamp_window + 1) / (nsamp_window + 1)) - edge) / (1.0 - edge);
 	}
 
+	integer maximumFrameLength = nsamp_window;
+	auto frameBuffer = VECraw (maximumFrameLength);
+	auto coefficients = VECraw (numberOfPoles);   // superfluous if which==2, but nobody uses that anyway
 	for (integer iframe = 1; iframe <= nFrames; iframe ++) {
 		double t = Sampled_indexToX (thee.get(), iframe);
 		integer leftSample = Sampled_xToLowIndex (me, t);
@@ -305,27 +306,27 @@ static autoFormant Sound_to_Formant_any_inplace (Sound me, double dt_in, int num
 		integer startSample = rightSample - halfnsamp_window;
 		integer endSample = leftSample + halfnsamp_window;
 		double maximumIntensity = 0.0;
-		if (startSample < 1) startSample = 1;
-		if (endSample > my nx) endSample = my nx;
+		if (startSample < 1) startSample = 1;   // this should not be more than a rounding problem
+		if (endSample > my nx) endSample = my nx;   // this should not be more than a rounding problem
 		for (integer i = startSample; i <= endSample; i ++) {
 			double value = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
-			if (value * value > maximumIntensity) {
+			if (value * value > maximumIntensity)
 				maximumIntensity = value * value;
-			}
 		}
-		if (isundef (maximumIntensity))
-			Melder_throw (U"Sound contains infinities or other non-numbers.");
 		thy d_frames [iframe]. intensity = maximumIntensity;
 		if (maximumIntensity == 0.0) continue;   // Burg cannot stand all zeroes
 
 		/* Copy a pre-emphasized window to a frame. */
-		for (integer j = 1, i = startSample; j <= nsamp_window; j ++)
-			frame [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
+		const integer actualFrameLength = endSample - startSample + 1;   // should rarely be less than nsamp_window
+		VEC frame = frameBuffer.subview (1, actualFrameLength);
+		const integer offset = startSample - 1;
+		for (integer isamp = 1; isamp <= actualFrameLength; isamp ++)
+			frame [isamp] = Sampled_getValueAtSample (me, offset + isamp, Sound_LEVEL_MONO, 0) * window [isamp];
 
 		if (which == 1) {
-			burg (frame.peek(), endSample - startSample + 1, cof.peek(), numberOfPoles, & thy d_frames [iframe], 0.5 / my dx, safetyMargin);
+			burg (frame, coefficients.get(), & thy d_frames [iframe], 0.5 / my dx, safetyMargin);
 		} else if (which == 2) {
-			if (! splitLevinson (frame.peek(), endSample - startSample + 1, numberOfPoles, & thy d_frames [iframe], 0.5 / my dx)) {
+			if (! splitLevinson (frame, numberOfPoles, & thy d_frames [iframe], 0.5 / my dx)) {
 				Melder_clearError ();
 				Melder_casual (U"(Sound_to_Formant:)"
 					U" Analysis results of frame ", iframe,

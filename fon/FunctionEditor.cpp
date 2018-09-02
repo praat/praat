@@ -106,7 +106,7 @@ static void drawNow (FunctionEditor me) {
 	if (endVisible && my endSelection != my startSelection)
 		my marker [++ my numberOfMarkers] = my endSelection;
 	my marker [++ my numberOfMarkers] = my endWindow;
-	NUMsort_d (my numberOfMarkers, my marker);
+	VECsort_inplace (VEC (my marker, my numberOfMarkers));
 
 	/* Update rectangles. */
 

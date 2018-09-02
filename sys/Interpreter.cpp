@@ -717,7 +717,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 			/*
 				Statement like: a# = b#   // with matching sizes
 			*/
-			VECcopy_inplace (variableVector, movedVector);
+			vectorcopy_inplace (variableVector, movedVector);
 		}
 	} else {
 		/*
@@ -747,13 +747,13 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 			/*
 				Statement like: a## = b##   // with matching sizes
 			*/
-			MATcopy_inplace (variableMatrix, movedMatrix);
+			matrixcopy_inplace (variableMatrix, movedMatrix);
 		}
 	} else {
 		/*
 			Statement like: a## = b##   // with non-matching sizes
 		*/
-		autoMAT copiedMatrix = MATcopy (movedMatrix);
+		autoMAT copiedMatrix = matrixcopy (movedMatrix);
 		variable -> numericMatrixValue. reset();
 		variable -> numericMatrixValue = copiedMatrix. releaseToAmbiguousOwner();
 	}

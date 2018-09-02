@@ -23,7 +23,7 @@
  djmw 20110308 Latest modification
 */
 
-#define xerbla_(src,info) Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U"not correct!")
+#define xerbla_(src,info) Melder_throw (Melder_peek8to32 (src), U": parameter ", *info, U" not correct!")
 
 int NUMblas_daxpy (integer *n, double *da, double *dx,	integer *incx, double *dy, integer *incy);
 /*     constant times a vector plus a vector.
