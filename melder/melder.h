@@ -72,7 +72,7 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 #include "melder_textencoding.h"   // str32len_utf8, Melder_32to8
 #include "melder_atof.h"
 #include "melder_files.h"   // Melder_fopen, MelderFile, MelderDir
-#include "melder_vector.h"   // NUMvector, autoNUMmatrix, VEC, autoMAT, Melder_VEC
+#include "melder_tensor.h"   // NUMvector, autoNUMmatrix, VEC, autoMAT, Melder_VEC
 #include "melder_strvec.h"   // string32vector, autostring32vector (requires NUMvector)
 #include "melder_sort.h"   // VECsort_inplace (requires VEC), NUMsort_str (requires string32vector)
 
