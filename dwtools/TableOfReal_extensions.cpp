@@ -594,48 +594,34 @@ void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
 	NUMcentreColumns (my data, index, my numberOfRows, 1, my numberOfColumns, nullptr);
 }
 
-double TableOfReal_getRowSum (TableOfReal me, integer index) {
-	Melder_require (index > 0 && index <= my numberOfRows,
-		U"Index not in valid range.");
-
-	longdouble sum = 0.0;
-	for (integer j = 1; j <= my numberOfColumns; j ++)
-		sum += my data [index] [j];
-	return (double) sum;
+double TableOfReal_getRowSum (TableOfReal me, integer rowNumber) {
+	Melder_require (rowNumber > 0 && rowNumber <= my numberOfRows,
+		U"Row number not in valid range.");
+	return NUMrowSum (constMAT (my data, my numberOfRows, my numberOfColumns), rowNumber);
 }
 
-double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 label) {
-	integer index = TableOfReal_columnLabelToIndex (me, label);
-	Melder_require (index > 0,
-		U"There is no \"", label, U"\" column label.");
-	return TableOfReal_getColumnSum (me, index);
+double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabel) {
+	integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
+	Melder_require (columnNumber > 0,
+		U"There is no \"", columnLabel, U"\" column label.");
+	return TableOfReal_getColumnSum (me, columnNumber);
 }
 
-double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 label) {
-	integer index = TableOfReal_rowLabelToIndex (me, label);
-	Melder_require (index > 0,
-		U"There is no \"", label, U"\" column label.");
-	return TableOfReal_getRowSum (me, index);
+double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 rowLabel) {
+	integer rowNumber = TableOfReal_rowLabelToIndex (me, rowLabel);
+	Melder_require (rowNumber > 0,
+		U"There is no \"", rowLabel, U"\" row label.");
+	return TableOfReal_getRowSum (me, rowNumber);
 }
 
-double TableOfReal_getColumnSum (TableOfReal me, integer index) {
-	Melder_require (index > 0 && index <= my numberOfRows,
-		U"Index not in valid range.");
-	longdouble sum = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		sum += my data [i] [index];
-	}
-	return (double) sum;
+double TableOfReal_getColumnSum (TableOfReal me, integer columnNumber) {
+	Melder_require (columnNumber > 0 && columnNumber <= my numberOfColumns,
+		U"Column number not in valid range.");
+	return NUMcolumnSum (constMAT (my data, my numberOfRows, my numberOfColumns), columnNumber);
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
-	double sum = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			sum += my data [i] [j];
-		}
-	}
-	return sum;
+	return NUMsum (constMAT (my data, my numberOfRows, my numberOfColumns));
 }
 
 void TableOfReal_centreRows (TableOfReal me) {
