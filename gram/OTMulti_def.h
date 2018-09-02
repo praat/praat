@@ -34,8 +34,8 @@ oo_DEFINE_STRUCT (OTConstraint)
 	#endif
 
 	#if ! oo_READING && ! oo_WRITING
-		oo_INT16 (tiedToTheLeft)
-		oo_INT16 (tiedToTheRight)
+		oo_BOOLEAN (tiedToTheLeft)
+		oo_BOOLEAN (tiedToTheRight)
 	#endif
 
 oo_END_STRUCT (OTConstraint)

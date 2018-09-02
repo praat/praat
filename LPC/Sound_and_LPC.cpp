@@ -224,7 +224,7 @@ end:
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee) {
-	int status = NUMburg (my z [1], my nx, thy a, thy nCoefficients, &thy gain);
+	int status = NUMburg (my z [1], my nx, thy a, thy nCoefficients, & thy gain);
 	thy gain *= my nx;
 	for (integer i = 1; i <= thy nCoefficients; i ++) {
 		thy a [i] = -thy a [i];
@@ -246,8 +246,10 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 	}
 	e0 *= 2.0;
 	if (e0 == 0.0) {
-		m = 0; thy gain *= 0.5; /* because e0 is twice the energy */
-		thy nCoefficients = m; return 0; // warning no signal
+		m = 0;
+		thy gain *= 0.5; /* because e0 is twice the energy */
+		thy nCoefficients = m;
+		return 0; // warning no signal
 	}
 	double q1 = 1.0 / e0;
 	double q2 = q1 * x [1], q = q1 * x [1] * x [1], w = q1 * x [n] * x [n];
@@ -370,7 +372,7 @@ end:
 
 static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, double dt, double preEmphasisFrequency, int method, double tol1, double tol2) {
 	double t1, samplingFrequency = 1.0 / my dx;
-	double windowDuration = 2 * analysisWidth; /* gaussian window */
+	double windowDuration = 2.0 * analysisWidth; /* gaussian window */
 	integer numberOfFrames, frameErrorCount = 0;
 	Melder_require (Melder_roundDown (windowDuration / my dx) > predictionOrder, 
 		U"Analysis window duration too short.\n For a prediction order of ", predictionOrder,
@@ -388,12 +390,12 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 
 	autoMelderProgress progress (U"LPC analysis");
 
-	if (preEmphasisFrequency < samplingFrequency / 2) {
+	if (preEmphasisFrequency < samplingFrequency / 2.0) {
 		Sound_preEmphasis (sound.get(), preEmphasisFrequency);
 	}
 
 	for (integer i = 1; i <= numberOfFrames; i ++) {
-		LPC_Frame lpcframe = (LPC_Frame) & thy d_frames [i];
+		LPC_Frame lpcframe = & thy d_frames [i];
 		double t = Sampled_indexToX (thee.get(), i);
 		LPC_Frame_init (lpcframe, predictionOrder);
 		Sound_into_Sound (sound.get(), sframe.get(), t - windowDuration / 2);
@@ -416,9 +418,8 @@ static autoLPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidt
 				frameErrorCount ++;
 			}
 		}
-		if ((i % 10) == 1) {
+		if (i % 10 == 1)
 			Melder_progress ( (double) i / numberOfFrames, U"LPC analysis of frame ", i, U" out of ", numberOfFrames, U".");
-		}
 	}
 	return thee;
 }

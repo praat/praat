@@ -34,7 +34,9 @@ void vector<T> :: _freeAt () noexcept {
 	if (our at) NUMvector_free (our at, 1);
 }
 
-template class vector<double>;
+template class vector <double>;
+template class vector <integer>;
+template class vector <bool>;
 
 template <typename T>
 void matrix<T> :: _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {
@@ -53,7 +55,9 @@ void matrix<T> :: _freeAt () noexcept {
 	if (our at) NUMmatrix_free (our at, 1, 1);
 }
 
-template class matrix<double>;
+template class matrix <double>;
+template class matrix <integer>;
+template class matrix <bool>;
 
 static integer theTotalNumberOfArrays;
 

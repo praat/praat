@@ -39,7 +39,6 @@ double NUMcolumnSum (constMAT x, integer columnNumber) {
 }
 
 double NUMinner_ (constVEC x, constVEC y) {
-	if (x.size != y.size) return undefined;
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
 		const double *xx = & x [1];
 		const double *yy = & y [1],

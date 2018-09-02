@@ -32,13 +32,6 @@ inline static void columnSumAndMean (constMAT x, integer columnNumber,
 	if (out_mean) *out_mean = double (sum / x.nrow);
 }
 
-autoVEC VECcopy (constVEC x) {
-	autoVEC result = VECraw (x.size);
-	for (integer i = 1; i <= x.size; i ++)
-		result [i] = x [i];
-	return result;
-}
-
 inline static double inner_stride_ (constVEC x, constVEC y, integer stride) {
 	if (x.size != y.size)
 		return undefined;
@@ -55,11 +48,11 @@ autoVEC VECmul (constVEC vec, constMAT mat) {
 	if (mat.nrow != vec.size)
 		return autoVEC();
 	autoVEC result = VECraw (mat.ncol);
-	VECmul_inplace (result.get(), vec, mat);
+	VECmul_preallocated (result.get(), vec, mat);
 	return result;
 }
 
-void VECmul_inplace (VEC target, constVEC vec, constMAT mat) {
+void VECmul_preallocated (VEC target, constVEC vec, constMAT mat) {
 	for (integer j = 1; j <= mat.ncol; j ++) {
 		if ((false)) {
 			target [j] = 0.0;
@@ -75,11 +68,11 @@ autoVEC VECmul (constMAT mat, constVEC vec) {
 	if (vec.size != mat.ncol)
 		return autoVEC();
 	autoVEC result = VECraw (mat.nrow);
-	VECmul_inplace (result.get(), mat, vec);
+	VECmul_preallocated (result.get(), mat, vec);
 	return result;
 }
 
-void VECmul_inplace (VEC target, constMAT mat, constVEC vec) {
+void VECmul_preallocated (VEC target, constMAT mat, constVEC vec) {
 	for (integer i = 1; i <= mat.nrow; i ++) {
 		if ((false)) {
 			target [i] = 0.0;

@@ -424,11 +424,34 @@ public:
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 };
 
-using VEC = vector <double>;
-using constVEC = constvector <double>;
-using autoVEC = autovector <double>;
-
-#define emptyVEC  VEC { nullptr, 0 }
+template <typename T>
+autovector<T> vectorraw (integer size) {
+	return autovector<T> (size, kTensorInitializationType::RAW);
+}
+template <typename T>
+autovector<T> vectorzero (integer size) {
+	return autovector<T> (size, kTensorInitializationType::ZERO);
+}
+template <typename T>
+void vectorcopy_inplace (vector<T> target, constvector<T> source) {
+	Melder_assert (source.size == target.size);
+	for (integer i = 1; i <= source.size; i ++)
+		target [i] = source [i];
+}
+template <typename T>
+void vectorcopy_inplace (vector<T> target, vector<T> source) {
+	vectorcopy_inplace (target, constvector (source));
+}
+template <typename T>
+autovector<T> vectorcopy (constvector<T> source) {
+	autovector<T> result = vectorraw<T> (source.size);
+	vectorcopy_inplace (result.get(), source);
+	return result;
+}
+template <typename T>
+autovector<T> vectorcopy (vector<T> source) {
+	return vectorcopy (constvector (source));
+}
 
 template <typename T>
 class automatrix;   // forward declaration, needed in the declaration of matrix
@@ -532,22 +555,71 @@ public:
 	automatrix&& move () noexcept { return static_cast <automatrix&&> (*this); }
 };
 
+template <typename T>
+automatrix<T> matrixraw (integer nrow, integer ncol) {
+	return automatrix<T> (nrow, ncol, kTensorInitializationType::RAW);
+}
+template <typename T>
+automatrix<T> matrixzero (integer nrow, integer ncol) {
+	return automatrix<T> (nrow, ncol, kTensorInitializationType::ZERO);
+}
+template <typename T>
+vector<T> asvector (matrix<T> x) {
+	return vector<T> (x [1], x.nrow * x.ncol);
+}
+template <typename T>
+constvector<T> asvector (constmatrix<T> x) {
+	return constvector<T> (x [1], x.nrow * x.ncol);
+}
+template <typename T>
+void matrixcopy_inplace (matrix<T> target, constmatrix<T> source) {
+	Melder_assert (source.nrow == target.nrow && source.ncol == target.ncol);
+	for (integer irow = 1; irow <= source.nrow; irow ++)
+		for (integer icol = 1; icol <= source.ncol; icol ++)
+			target [irow] [icol] = source [irow] [icol];
+}
+template <typename T>
+void matrixcopy_inplace (matrix<T> target, matrix<T> source) {
+	matrixcopy_inplace (target, constmatrix (source));
+}
+template <typename T>
+automatrix<T> matrixcopy (constmatrix<T> source) {
+	automatrix<T> result = matrixraw<T> (source.nrow, source.ncol);
+	matrixcopy_inplace (result.get(), source);
+	return result;
+}
+template <typename T>
+automatrix<T> matrixcopy (matrix<T> source) {
+	return matrixcopy (constmatrix (source));
+}
+
+/*
+	instead of vector<double> we say VEC, because we want to have a one-to-one
+	relation between VEC functions and the scripting language.
+	For instance, we make VECraw and VECzero because Praat scripting has raw# and zero#.
+*/
+using VEC = vector <double>;
+using constVEC = constvector <double>;
+using autoVEC = autovector <double>;
+inline autoVEC VECraw  (integer size) { return vectorraw  <double> (size); }
+inline autoVEC VECzero (integer size) { return vectorzero <double> (size); }
+inline void VECcopy_inplace (VEC target, constVEC source) { vectorcopy_inplace (target, source); }
+inline autoVEC VECcopy (constVEC source) { return vectorcopy (source); }
+
+#define emptyVEC  VEC { nullptr, 0 }
+
 using MAT = matrix <double>;
 using constMAT = constmatrix <double>;
 using autoMAT = automatrix <double>;
+inline autoMAT MATraw  (integer nrow, integer ncol) { return matrixraw  <double> (nrow, ncol); }
+inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double> (nrow, ncol); }
+inline void MATcopy_inplace (MAT target, constMAT source) { matrixcopy_inplace (target, source); }
+inline autoMAT MATcopy (constMAT source) { return matrixcopy (source); }
 
 #define emptyMAT  MAT { nullptr, 0, 0 }
 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
-
-inline static VEC asVEC (MAT x) {
-	return VEC (x [1], x.nrow * x.ncol);
-}
-
-inline static constVEC asVEC (constMAT x) {
-	return constVEC (x [1], x.nrow * x.ncol);
-}
 
 /* End of file melder_vector.h */
 #endif

@@ -56,7 +56,8 @@ double NUMcenterOfGravity (constVEC x) noexcept;
 
 double NUMcolumnSum (constMAT x, integer columnNumber);
 
-inline static bool NUMequal (constVEC x, constVEC y) {
+template <typename T>
+bool NUMequal (constvector<T> x, constvector<T> y) {
 	integer n = x.size;
 	if (y.size != n)
 		return false;
@@ -66,12 +67,37 @@ inline static bool NUMequal (constVEC x, constVEC y) {
 	}
 	return true;
 }
-
-inline static bool NUMequal (constMAT x, constMAT y) {
-	return NUMequal (asVEC (x), asVEC (y));
+template <typename T>
+bool NUMequal (vector<T> x, constvector<T> y) {
+	return NUMequal (constvector<T> (x.at, x.size), y);
+}
+template <typename T>
+bool NUMequal (constvector<T> x, vector<T> y) {
+	return NUMequal (x, constvector<T> (y.at, y.size));
+}
+template <typename T>
+bool NUMequal (vector<T> x, vector<T> y) {
+	return NUMequal (constvector<T> (x.at, x.size), constvector<T> (y.at, y.size));
 }
 
-inline static bool NUMequal (constSTRVEC x, constSTRVEC y) {
+template <typename T>
+bool NUMequal (constmatrix<T> x, constmatrix<T> y) {
+	return NUMequal (asvector (x), asvector (y));
+}
+template <typename T>
+bool NUMequal (matrix<T> x, constmatrix<T> y) {
+	return NUMequal (constmatrix<T> (x.at, x.nrow, x.ncol), y);
+}
+template <typename T>
+bool NUMequal (constmatrix<T> x, matrix<T> y) {
+	return NUMequal (x, constmatrix<T> (y.at, y.nrow, y.ncol));
+}
+template <typename T>
+bool NUMequal (matrix<T> x, matrix<T> y) {
+	return NUMequal (constmatrix<T> (x.at, x.nrow, x.ncol), constmatrix<T> (y.at, y.nrow, y.ncol));
+}
+
+inline bool NUMequal (constSTRVEC x, constSTRVEC y) {
 	integer n = x.size;
 	if (y.size != n)
 		return false;
@@ -90,13 +116,12 @@ inline static double NUMextremum (constVEC vec) {
 }
 
 inline static double NUMextremum (constMAT mat) {
-	return NUMextremum (asVEC (mat));
+	return NUMextremum (asvector (mat));
 }
 
 inline static double NUMinner (constVEC x, constVEC y) {
 	integer n = x.size;
-	Melder_require (y.size == n,
-		U"inner(): the two vectors should have equal length, not, ", x.size, U" and ", y.size, U".");
+	Melder_assert (y.size == n);
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] * y [1] : (double) ((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2]);
 		if (n <= 4) return n == 3 ?
@@ -142,7 +167,7 @@ inline static double NUMmean (constVEC x) noexcept {
 double NUMnorm (constVEC x, double power) noexcept;
 
 inline static double NUMnorm (constMAT x, double power) noexcept {
-	return NUMnorm (asVEC (x), power);
+	return NUMnorm (asvector (x), power);
 }
 
 integer NUMnumberOfTokens (conststring32 str);
@@ -156,7 +181,7 @@ inline static double NUMpow (double base, double exponent) {
 
 inline static double NUMrowSum (constMAT x, integer rowNumber) noexcept {
 	Melder_assert (rowNumber > 0 && rowNumber <= x.nrow);
-	return NUMsum ({ x [rowNumber], x.ncol });
+	return NUMsum (constVEC (x [rowNumber], x.ncol));
 }
 
 inline static double NUMsqrt (double x) {
@@ -169,7 +194,7 @@ inline static double NUMsqrt (double x) {
 double NUMstdev (constVEC x) noexcept;
 
 inline static double NUMsum (constMAT x) noexcept {
-	return NUMsum (asVEC (x));
+	return NUMsum (asvector (x));
 }
 
 double NUMsumsq (constVEC x) noexcept;

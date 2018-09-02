@@ -465,7 +465,7 @@ autoMatrix Net_extractWeights (Net me, integer layerNumber) {
 }
 
 autoMAT structRBMLayer :: v_getWeights () {
-	return MATcopy (constMAT (our weights, our numberOfInputNodes, our numberOfOutputNodes));
+	return matrixcopy (constMAT (our weights, our numberOfInputNodes, our numberOfOutputNodes));
 }
 
 autoMAT Net_getWeights (Net me, integer layerNumber) {

@@ -181,10 +181,10 @@ void OTMulti_sort (OTMulti me) {
 	qsort (& my index [1], my numberOfConstraints, sizeof (integer), constraintCompare);
 	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [my index [icons]];
-		constraint -> tiedToTheLeft = icons > 1 &&
-			my constraints [my index [icons - 1]]. disharmony == constraint -> disharmony;
-		constraint -> tiedToTheRight = icons < my numberOfConstraints &&
-			my constraints [my index [icons + 1]]. disharmony == constraint -> disharmony;
+		constraint -> tiedToTheLeft = ( icons > 1 &&
+			my constraints [my index [icons - 1]]. disharmony == constraint -> disharmony );
+		constraint -> tiedToTheRight = ( icons < my numberOfConstraints &&
+			my constraints [my index [icons + 1]]. disharmony == constraint -> disharmony );
 	}
 }
 

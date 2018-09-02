@@ -168,9 +168,9 @@ void NUM_viterbi (
 	void (*putResult) (integer iframe, integer place, void *closure),
 	void *closure)
 {
-	autoNUMmatrix <double> delta (1, numberOfFrames, 1, maxnCandidates);
-	autoNUMmatrix <integer> psi (1, numberOfFrames, 1, maxnCandidates);
-	autoNUMvector <integer> numberOfCandidates (1, numberOfFrames);
+	auto delta = MATraw (numberOfFrames, maxnCandidates);
+	auto psi = matrixraw <integer> (numberOfFrames, maxnCandidates);
+	auto numberOfCandidates = vectorraw <integer> (numberOfFrames);
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		numberOfCandidates [iframe] = getNumberOfCandidates (iframe, closure);
 		for (integer icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
@@ -192,8 +192,8 @@ void NUM_viterbi (
 		}
 	}
 	/*
-	 * Find the end of the most probable path.
-	 */
+		Find the end of the most probable path.
+	*/
 	integer place;
 	double maximum = delta [numberOfFrames] [place = 1];
 	for (integer icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++) {
@@ -201,8 +201,8 @@ void NUM_viterbi (
 			maximum = delta [numberOfFrames] [place = icand];
 	}
 	/*
-	 * Backtrack.
-	 */
+		Backtrack.
+	*/
 	for (integer iframe = numberOfFrames; iframe >= 1; iframe --) {
 		putResult (iframe, place, closure);
 		place = psi [iframe] [place];
@@ -266,21 +266,21 @@ void NUM_viterbi_multi (
 	parm. ncomb = ncomb;
 
 	/*
-	 * For ncand == 5 and ntrack == 3, parm.indices is going to contain:
-	 *   1 2 3
-	 *   1 2 4
-	 *   1 2 5
-	 *   1 3 4
-	 *   1 3 5
-	 *   1 4 5
-	 *   2 3 4
-	 *   2 3 5
-	 *   2 4 5
-	 *   3 4 5
-	 */
+		For ncand == 5 and ntrack == 3, parm.indices is going to contain:
+			1 2 3
+			1 2 4
+			1 2 5
+			1 3 4
+			1 3 5
+			1 4 5
+			2 3 4
+			2 3 5
+			2 4 5
+			3 4 5
+	*/
 	autoNUMmatrix <integer> indices (1, parm. ncomb, 1, ntrack);
 	parm.indices = indices.peek();
-	autoNUMvector <integer> icand (1, ntrack);
+	autovector <integer> icand (ntrack, kTensorInitializationType::RAW);
 	for (integer itrack = 1; itrack <= ntrack; itrack ++)
 		icand [itrack] = itrack;   // start out with "1 2 3"
 	integer jcomb = 0;

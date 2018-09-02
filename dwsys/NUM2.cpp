@@ -1810,9 +1810,7 @@ int NUMburg (double x [], integer n, double a [], int m, double *xms) {
 		a [j] = 0.0;
 	}
 
-	autoNUMvector<double> b1 (1, n);
-	autoNUMvector<double> b2 (1, n);
-	autoNUMvector<double> aa (1, m);
+	autoVEC b1 = VECzero (n), b2 = VECzero (n), aa = VECzero (m);
 
 	// (3)
 
