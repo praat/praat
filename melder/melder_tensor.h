@@ -1,6 +1,6 @@
-#ifndef _melder_vector_h_
-#define _melder_vector_h_
-/* melder_vector.h
+#ifndef _melder_tensor_h_
+#define _melder_tensor_h_
+/* melder_tensor.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -18,7 +18,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/********** Arrays with one index (NUMarrays.cpp) **********/
+/********** Arrays with one index **********/
 
 byte * NUMvector_generic (integer elementSize, integer lo, integer hi, bool zero);
 /*
@@ -66,7 +66,7 @@ void NUMvector_insert_generic (integer elementSize, byte **v, integer lo, intege
 	On failure, *v and *hi are not changed.
 */
 
-/********** Arrays with two indices (NUMarrays.cpp) **********/
+/********** Arrays with two indices **********/
 
 void * NUMmatrix_generic (integer elementSize, integer row1, integer row2, integer col1, integer col2, bool zero);
 /*
@@ -294,7 +294,7 @@ public:
 
 #pragma mark - TENSOR
 /*
-	VEC and MAT: the type declarations are in melder.h, the function declarations in tensor.h
+	Base-1 tensors, for parallellism with the scripting language.
 
 	Initialization (tested in praat.cpp):
 		VEC x;                  // does not initialize x
@@ -342,7 +342,7 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
 		if (our at) {
-			our _freeAt ();
+			NUMvector_free (our at, 1);
 			our at = nullptr;
 		}
 		our size = 0;
@@ -354,9 +354,6 @@ public:
 		if (newSize <= 0) return vector<T> (nullptr, 0);
 		return vector<T> (& our at [offset], newSize);
 	}
-protected:
-	void _initAt (integer givenSize, kTensorInitializationType initializationType);
-	void _freeAt () noexcept;
 };
 
 template <typename T>
@@ -396,7 +393,9 @@ class autovector : public vector<T> {
 public:
 	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
 	autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
-		our _initAt (givenSize, initializationType);
+		Melder_assert (givenSize >= 0);
+		our at = ( givenSize == 0 ? nullptr
+				: NUMvector<T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
 		our size = givenSize;
 	}
 	~autovector () {   // destroy the payload (if any)
@@ -488,15 +487,12 @@ public:
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
 		if (our at) {
-			our _freeAt ();
+			NUMmatrix_free (our at, 1, 1);
 			our at = nullptr;
 		}
 		our nrow = 0;
 		our ncol = 0;
 	}
-protected:
-	void _initAt (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType);
-	void _freeAt () noexcept;
 };
 
 template <typename T>
@@ -524,12 +520,15 @@ class automatrix : public matrix<T> {
 public:
 	automatrix (): matrix<T> { nullptr, 0, 0 } { }   // come into existence without a payload
 	automatrix (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
-		our _initAt (givenNrow, givenNcol, initializationType);
+		Melder_assert (givenNrow >= 0);
+		Melder_assert (givenNcol >= 0);
+		our at = ( givenNrow == 0 || givenNcol == 0 ? nullptr
+				: NUMmatrix<T> (1, givenNrow, 1, givenNcol, initializationType == kTensorInitializationType::ZERO));
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
 	~automatrix () {   // destroy the payload (if any)
-		if (our at) our _freeAt ();
+		if (our at) NUMmatrix_free (our at, 1, 1);
 	}
 	matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-automatrix
@@ -559,7 +558,7 @@ public:
 	}
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
 		if (other.at != our at) {
-			if (our at) our _freeAt ();
+			if (our at) NUMmatrix_free (our at, 1, 1);
 			our at = other.at;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
@@ -664,5 +663,5 @@ inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
 
-/* End of file melder_vector.h */
+/* End of file melder_tensor.h */
 #endif
