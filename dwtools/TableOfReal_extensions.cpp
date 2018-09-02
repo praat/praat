@@ -703,7 +703,7 @@ double TableOfReal_getTableNorm (TableOfReal me) {
 	return sqrt ((double) sumsq);
 }
 
-bool TableOfReal_checkNonNegative (TableOfReal me) {
+bool TableOfReal_checkNonNegativity (TableOfReal me) {
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			if (my data [i] [j] < 0.0)

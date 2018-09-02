@@ -524,7 +524,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
-		Melder_require (TableOfReal_checkNonNegative (me), U"No numbers in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegativity (me), U"No numbers in the table should be negative.");
 		autoDissimilarity thee = Thing_new (Dissimilarity);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -536,7 +536,7 @@ autoDissimilarity TableOfReal_to_Dissimilarity (TableOfReal me) {
 autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
-		Melder_require (TableOfReal_checkNonNegative (me), U"No number in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegativity (me), U"No number in the table should be negative.");
 		autoSimilarity thee = Thing_new (Similarity);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -548,7 +548,7 @@ autoSimilarity TableOfReal_to_Similarity (TableOfReal me) {
 autoDistance TableOfReal_to_Distance (TableOfReal me) {
 	try {
 		Melder_require (my numberOfRows == my numberOfColumns, U"TableOfReal should be a square table.");
-		Melder_require (TableOfReal_checkNonNegative (me), U"No number in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegativity (me), U"No number in the table should be negative.");
 		autoDistance thee = Thing_new (Distance);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -559,7 +559,7 @@ autoDistance TableOfReal_to_Distance (TableOfReal me) {
 
 autoSalience TableOfReal_to_Salience (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkNonNegative (me), U"No number in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegativity (me), U"No number in the table should be negative.");
 		autoSalience thee = Thing_new (Salience);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
@@ -570,7 +570,7 @@ autoSalience TableOfReal_to_Salience (TableOfReal me) {
 
 autoWeight TableOfReal_to_Weight (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkNonNegative (me), U"No number in the table should be negative.");
+		Melder_require (TableOfReal_checkNonNegativity (me), U"No number in the table should be negative.");
 		autoWeight thee = Thing_new (Weight);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;
