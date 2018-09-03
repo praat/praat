@@ -447,24 +447,24 @@ autovector<T> vectorzero (integer size) {
 	return autovector<T> (size, kTensorInitializationType::ZERO);
 }
 template <typename T>
-void vectorcopy_inplace (vector<T> target, constvector<T> source) {
+void vectorcopy_preallocated (vector<T> target, constvector<T> source) {
 	Melder_assert (source.size == target.size);
 	for (integer i = 1; i <= source.size; i ++)
 		target [i] = source [i];
 }
 template <typename T>
-void vectorcopy_inplace (vector<T> target, vector<T> source) {
-	vectorcopy_inplace (target, constvector (source));
+void vectorcopy_preallocated (vector<T> target, vector<T> source) {
+	vectorcopy_preallocated (target, constvector<T> (source));
 }
 template <typename T>
 autovector<T> vectorcopy (constvector<T> source) {
 	autovector<T> result = vectorraw<T> (source.size);
-	vectorcopy_inplace (result.get(), source);
+	vectorcopy_preallocated (result.get(), source);
 	return result;
 }
 template <typename T>
 autovector<T> vectorcopy (vector<T> source) {
-	return vectorcopy (constvector (source));
+	return vectorcopy (constvector<T> (source));
 }
 
 template <typename T>
@@ -612,25 +612,25 @@ constvector<T> asvector (constmatrix<T> x) {
 	return constvector<T> (x [1], x.nrow * x.ncol);
 }
 template <typename T>
-void matrixcopy_inplace (matrix<T> target, constmatrix<T> source) {
+void matrixcopy_preallocated (matrix<T> target, constmatrix<T> source) {
 	Melder_assert (source.nrow == target.nrow && source.ncol == target.ncol);
 	for (integer irow = 1; irow <= source.nrow; irow ++)
 		for (integer icol = 1; icol <= source.ncol; icol ++)
 			target [irow] [icol] = source [irow] [icol];
 }
 template <typename T>
-void matrixcopy_inplace (matrix<T> target, matrix<T> source) {
-	matrixcopy_inplace (target, constmatrix (source));
+void matrixcopy_preallocated (matrix<T> target, matrix<T> source) {
+	matrixcopy_preallocated (target, constmatrix<T> (source));
 }
 template <typename T>
 automatrix<T> matrixcopy (constmatrix<T> source) {
 	automatrix<T> result = matrixraw<T> (source.nrow, source.ncol);
-	matrixcopy_inplace (result.get(), source);
+	matrixcopy_preallocated (result.get(), source);
 	return result;
 }
 template <typename T>
 automatrix<T> matrixcopy (matrix<T> source) {
-	return matrixcopy (constmatrix (source));
+	return matrixcopy (constmatrix<T> (source));
 }
 
 /*
@@ -643,7 +643,7 @@ using constVEC = constvector <double>;
 using autoVEC = autovector <double>;
 inline autoVEC VECraw  (integer size) { return vectorraw  <double> (size); }
 inline autoVEC VECzero (integer size) { return vectorzero <double> (size); }
-inline void VECcopy_inplace (VEC target, constVEC source) { vectorcopy_inplace (target, source); }
+inline void VECcopy_preallocated (VEC target, constVEC source) { vectorcopy_preallocated (target, source); }
 inline autoVEC VECcopy (constVEC source) { return vectorcopy (source); }
 
 /*
@@ -659,7 +659,7 @@ using constINTVEC = constvector <integer>;
 using autoINTVEC = autovector <integer>;
 inline autoINTVEC INTVECraw  (integer size) { return vectorraw  <integer> (size); }
 inline autoINTVEC INTVECzero (integer size) { return vectorzero <integer> (size); }
-inline void INTVECcopy_inplace (INTVEC target, constINTVEC source) { vectorcopy_inplace (target, source); }
+inline void INTVECcopy_preallocated (INTVEC target, constINTVEC source) { vectorcopy_preallocated (target, source); }
 inline autoINTVEC INTVECcopy (constINTVEC source) { return vectorcopy (source); }
 
 #define emptyVEC  VEC (nullptr, 0)
@@ -670,7 +670,7 @@ using constMAT = constmatrix <double>;
 using autoMAT = automatrix <double>;
 inline autoMAT MATraw  (integer nrow, integer ncol) { return matrixraw  <double> (nrow, ncol); }
 inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double> (nrow, ncol); }
-inline void MATcopy_inplace (MAT target, constMAT source) { matrixcopy_inplace (target, source); }
+inline void MATcopy_preallocated (MAT target, constMAT source) { matrixcopy_preallocated (target, source); }
 inline autoMAT MATcopy (constMAT source) { return matrixcopy (source); }
 
 using INTMAT = matrix <integer>;
@@ -678,7 +678,7 @@ using constINTMAT = constmatrix <integer>;
 using autoINTMAT = automatrix <integer>;
 inline autoINTMAT INTMATraw  (integer nrow, integer ncol) { return matrixraw  <integer> (nrow, ncol); }
 inline autoINTMAT INTMATzero (integer nrow, integer ncol) { return matrixzero <integer> (nrow, ncol); }
-inline void INTMATcopy_inplace (INTMAT target, constINTMAT source) { matrixcopy_inplace (target, source); }
+inline void INTMATcopy_inplace (INTMAT target, constINTMAT source) { matrixcopy_preallocated (target, source); }
 inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); }
 
 #define emptyMAT  MAT (nullptr, 0, 0)
