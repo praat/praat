@@ -135,7 +135,7 @@ double NUMnorm2 (integer n, double *x, integer incx);
 	NUMvector_norm2 := sqrt (x'*x)
 */
 
-double NUMfrobeniusnorm (integer m, integer n, double **x);
+double NUMfrobeniusnorm (integer m, integer n, const double * const *x);
 /*
 	Returns frobenius norm of matrix sqrt (sum (i=1:m, j=1:n, x[i][j]^2))
 */
