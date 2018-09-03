@@ -111,9 +111,9 @@ void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conserv
 			return;
 		}
 		integer r = i - from;
-		integer n = my numberOfObservations - 1;
+		double n = my numberOfObservations - 1;
 		if (conservative) {
-			n -= from + (r * (2 * r + 1) + 2) / (6 * r);
+			n -= from + (double) (r * (2 * r + 1) + 2) / (6.0 * r);
 		}
 
 		df = r * (r + 1) / 2 - 1;
@@ -141,8 +141,8 @@ void PCA_getEqualityOfEigenvalues (PCA me, integer from, integer to, int conserv
 autoEigen PCA_to_Eigen (PCA me) {
 	try {
 		autoEigen thee = Eigen_create (my numberOfEigenvalues, my dimension);
-		NUMmatrix_copyElements <double>(my eigenvectors, thy eigenvectors, 1, my numberOfEigenvalues, 1, my dimension);
-		NUMvector_copyElements<double>(my eigenvalues, thy eigenvalues, 1, my numberOfEigenvalues);
+		NUMmatrix_copyElements <double> (my eigenvectors, thy eigenvectors, 1, my numberOfEigenvalues, 1, my dimension);
+		NUMvector_copyElements <double> (my eigenvalues, thy eigenvalues, 1, my numberOfEigenvalues);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Eigen created.");
@@ -221,12 +221,11 @@ autoTableOfReal PCA_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensions);
 		for (integer i = 1; i <= thy numberOfRows; i ++) { /* row */
 			for (integer j = 1; j <= numberOfDimensions; j ++) {
-				double r = 0, sigma = sqrt (my eigenvalues [j]);
-				for (integer k = 1; k <= my dimension; k ++) {
+				longdouble r = 0.0, sigma = sqrt (my eigenvalues [j]);
+				for (integer k = 1; k <= my dimension; k ++)
 					// eigenvector in row, data in row
 					r += my eigenvectors [j] [k] * (thy data [i] [k] - my centroid [k]) / sigma;
-				}
-				his data[i][j] = r;
+				his data [i] [j] = (double) r;
 			}
 		}
 		his rowLabels. copyElementsFrom (thy rowLabels.get());
