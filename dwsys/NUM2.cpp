@@ -2850,7 +2850,7 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	}
 }
 
-bool NUMdmatrix_containsUndefinedElements (double **m, integer row1, integer row2, integer col1, integer col2) {
+bool NUMdmatrix_containsUndefinedElements (const double * const *m, integer row1, integer row2, integer col1, integer col2) {
 	for (integer i = row1; i <= row2; i ++) {
 		for (integer j = col1; j <= col2; j ++) {
 			if (isundef (m [i] [j])) {
