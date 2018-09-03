@@ -116,34 +116,6 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 	MelderInfo_close ();
 }
 
-void NUMcentreRows (double **a, integer rb, integer re, integer cb, integer ce) {
-	for (integer i = rb; i <= re; i ++) {
-		VECcentre_inplace (VEC (a [i], ce - cb + 1));
-	}
-}
-
-void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres) {
-	autoVEC colvec (re - rb + 1, kTensorInitializationType :: RAW);
-	for (integer j = cb; j <= ce; j ++) {
-		for (integer i = rb; i <= re; i ++) {
-			colvec [i - rb + 1] = a [i] [j];
-		}
-		double colmean;
-		VECcentre_inplace (colvec.get(), & colmean);
-		for (integer i = rb; i <= re; i ++) {
-			a [i] [j] = colvec [i - rb + 1];
-		}
-		if (centres) {
-			centres [j - cb + 1] = colmean;
-		}
-	}
-}
-
-void NUMdoubleCentre (double **a, integer rb, integer re, integer cb, integer ce) {
-	NUMcentreRows (a, rb, re, cb, ce);
-	NUMcentreColumns (a, rb, re, cb, ce, nullptr);
-}
-
 void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm) {
 	Melder_assert (norm > 0.0);
 	for (integer j = 1; j <= nc; j ++) {
@@ -250,11 +222,11 @@ double NUMmultivariateKurtosis (double **x, integer nrows, integer ncols, int me
 	if (nrows < 5) {
 		return kurt;
 	}
-	autoNUMvector<double> mean (1, ncols);
-	autoNUMmatrix<double> covar (1, ncols, 1, ncols);
+	autoVEC mean = VECraw (ncols);
+	autoMAT covar = MATzero (ncols, ncols);
 
-	NUMcentreColumns (x, 1, nrows, 1, ncols, mean.peek());
-	NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar.peek());
+	MATcentreEachColumn_inplace (MAT (x, nrows, ncols), mean.at);
+	NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar.at);
 	if (method == 1) { // Schott (2001, page 33)
 		kurt = 0.0;
 		for (integer l = 1; l <= ncols; l ++) {
@@ -629,10 +601,10 @@ void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColum
 
 void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer ncols, integer numberOfComponents, double **pc) {
 	Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
-	autoNUMmatrix<double> mc (NUMmatrix_copy (m, 1, nrows, 1, ncols), 1, 1);
+	autoMAT mc = MATcopy (MAT (m, nrows, ncols));
 
-	/*NUMcentreColumns (mc, nrows, ncols);*/
-	autoSVD svd = SVD_create_d (mc.peek(), nrows, ncols);
+	/*MATcentreEachColumn_inplace (mc.get());*/
+	autoSVD svd = SVD_create_d (mc.at, nrows, ncols);
 	for (integer i = 1; i <= nrows; i ++) {
 		for (integer j = 1; j <= numberOfComponents; j ++) {
 			longdouble sum = 0.0;
@@ -1034,12 +1006,11 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 	}
 }
 
-void NUMProcrustes (double **x, double **y, integer nPoints, integer nDimensions, double **t, double v [], double *s) {
+void NUMprocrustes (double **x, double **y, integer nPoints, integer nDimensions, double **t, double v [], double *s) {
 	bool orthogonal = ! v || ! s; // else similarity transform
 
-	autoNUMmatrix<double> c (1, nDimensions, 1, nDimensions);
-	autoNUMmatrix<double> yc (1, nPoints, 1, nDimensions);
-	NUMmatrix_copyElements (y, yc.peek(), 1, nPoints, 1, nDimensions);
+	autoMAT c = MATzero (nDimensions, nDimensions);
+	autoMAT yc = MATcopy (constMAT (y, nPoints, nDimensions));
 
 	/*
 		Reference: Borg & Groenen (1997), Modern multidimensional scaling,
@@ -1049,80 +1020,66 @@ void NUMProcrustes (double **x, double **y, integer nPoints, integer nDimensions
 			JY amounts to centering the columns of Y.
 	*/
 
-	if (! orthogonal) {
-		NUMcentreColumns (yc.peek(), 1, nPoints, 1, nDimensions, nullptr);
-	}
-	for (integer i = 1; i <= nDimensions; i ++) {
-		for (integer j = 1; j <= nDimensions; j ++) {
-			for (integer k = 1; k <= nPoints; k ++) {
+	if (! orthogonal)
+		MATcentreEachColumn_inplace (yc.get());
+	for (integer i = 1; i <= nDimensions; i ++)
+		for (integer j = 1; j <= nDimensions; j ++)
+			for (integer k = 1; k <= nPoints; k ++)
 				c [i] [j] += x [k] [i] * yc [k] [j];
-			}
-		}
-	}
 
 	// 2. Decompose C by SVD: C = PDQ' (SVD attribute is Q instead of Q'!)
 
-	autoSVD svd = SVD_create_d (c.peek(), nDimensions, nDimensions);
+	autoSVD svd = SVD_create_d (c.at, nDimensions, nDimensions);
 	double trace = 0.0;
 	for (integer i = 1; i <= nDimensions; i ++) {
 		trace += svd -> d [i];
 	}
-	Melder_require (trace > 0.0, U"NUMProcrustes: degenerate configuration(s).");
+	Melder_require (trace > 0.0, U"NUMprocrustes: degenerate configuration(s).");
 
 	// 3. T = QP'
 
 	for (integer i = 1; i <= nDimensions; i ++) {
 		for (integer j = 1; j <= nDimensions; j ++) {
 			t [i] [j] = 0.0;
-			for (integer k = 1; k <= nDimensions; k ++) {
+			for (integer k = 1; k <= nDimensions; k ++)
 				t [i] [j] += svd -> v [i] [k] * svd -> u [j] [k];
-			}
 		}
 	}
 
 	if (! orthogonal) {
-		autoNUMmatrix<double> xc (1, nPoints, 1, nDimensions);
-		NUMmatrix_copyElements (x, xc.peek(), 1, nPoints, 1, nDimensions);
-		autoNUMmatrix<double> yt (1, nPoints, 1, nDimensions);
+		autoMAT xc = MATcopy (constMAT (x, nPoints, nDimensions));
+		autoMAT yt = MATzero (nPoints, nDimensions);
 
 		// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
 		// First we need YT.
 
-		for (integer i = 1; i <= nPoints; i ++) {
-			for (integer j = 1; j <= nDimensions; j ++) {
-				for (integer k = 1; k <= nDimensions; k ++) {
+		for (integer i = 1; i <= nPoints; i ++)
+			for (integer j = 1; j <= nDimensions; j ++)
+				for (integer k = 1; k <= nDimensions; k ++)
 					yt [i] [j] += y [i] [k] * t [k] [j];
-				}
-			}
-		}
 
 		// X'J amount to centering the columns of X
 
-		NUMcentreColumns (xc.peek(), 1, nPoints, 1, nDimensions, nullptr);
+		MATcentreEachColumn_inplace (xc.get());
 
 		// tr X'J YT == tr xc' yt
 
 		double traceXtJYT = 0.0;
-		for (integer i = 1; i <= nDimensions; i ++) {
-			for (integer j = 1; j <= nPoints; j ++) {
+		for (integer i = 1; i <= nDimensions; i ++)
+			for (integer j = 1; j <= nPoints; j ++)
 				traceXtJYT += xc [j] [i] * yt [j] [i];
-			}
-		}
 		double traceYtJY = 0.0;
-		for (integer i = 1; i <= nDimensions; i ++) {
-			for (integer j = 1; j <= nPoints; j ++) {
+		for (integer i = 1; i <= nDimensions; i ++)
+			for (integer j = 1; j <= nPoints; j ++)
 				traceYtJY += y [j] [i] * yc [j] [i];
-			}
-		}
 
 		*s = traceXtJYT / traceYtJY;
 
 		// 5. Translation vector tr = (X - sYT)'1 / nPoints
 
 		for (integer i = 1; i <= nDimensions; i ++) {
-			for (integer j = 1; j <= nPoints; j ++) {
+			for (integer j = 1; j <= nPoints; j ++)
 				v [i] += x [j] [i] - *s * yt [j] [i];
-			}
 			v [i] /= nPoints;
 		}
 	}
@@ -1635,48 +1592,47 @@ double NUMlnBeta (double a, double b) {
 	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
-double NUMnormalityTest_HenzeZirkler (double **data, integer n, integer p, double *beta, double *tnb, double *lnmu, double *lnvar) {
-	if (*beta <= 0) {
+double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, double *lnmu, double *lnvar) {
+	const integer n = data.nrow, p = data.ncol;
+	if (*beta <= 0)
 		*beta = (1.0 / sqrt (2.0)) * pow ((1.0 + 2 * p) / 4.0, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
-	}
-	double p2 = p / 2.0;
-	double beta2 = *beta * *beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
-	double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
-	double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
+	const double p2 = p / 2.0;
+	const double beta2 = *beta * *beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
+	const double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
+	const double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
 	double prob = undefined;
 
 	*tnb = *lnmu = *lnvar = undefined;
 
-	if (n < 2 || p < 1) {
+	if (n < 2 || p < 1)
 		return prob;
-	}
 
-	autoNUMvector<double> zero (1, p);
-	autoNUMmatrix<double> covar (1, p, 1, p);
-	autoNUMmatrix<double> x (NUMmatrix_copy (data, 1, n, 1, p), 1, 1);
+	autoVEC zero = VECzero (p);
+	autoMAT covar = MATzero (p, p);
+	autoMAT x = MATcopy (data);
 
-	NUMcentreColumns (x.peek(), 1, n, 1, p, nullptr); // x - xmean
+	MATcentreEachColumn_inplace (x.get()); // x - xmean
 
-	NUMcovarianceFromColumnCentredMatrix (x.peek(), n, p, 0, covar.peek());
+	NUMcovarianceFromColumnCentredMatrix (x.at, x.nrow, x.ncol, 0, covar.at);
 
 	try {
-		NUMlowerCholeskyInverse (covar.peek(), p, NULL);
-		double djk, djj, sumjk = 0.0, sumj = 0.0;
-		double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
+		NUMlowerCholeskyInverse (covar.at, p, nullptr);
+		longdouble sumjk = 0.0, sumj = 0.0;
+		const double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
 		/* Heinze & Wagner (1997), page 3
 			We use d [j] [k] = ||Y [j]-Y [k]||^2 = (Y [j]-Y [k])'S^(-1)(Y [j]-Y [k])
 			So d [j] [k]= d [k] [j] and d [j] [j] = 0
 		*/
 		for (integer j = 1; j <= n; j ++) {
 			for (integer k = 1; k < j; k ++) {
-				djk = NUMmahalanobisDistance_chi (covar.peek(), x [j], x [k], p, p);
+				const double djk = NUMmahalanobisDistance_chi (covar.at, x [j], x [k], p, p);
 				sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 			}
 			sumjk += 1.0; // for k == j
-			djj = NUMmahalanobisDistance_chi (covar.peek(), x [j], zero.peek(), p, p);
+			const double djj = NUMmahalanobisDistance_chi (covar.at, x [j], zero.at, p, p);
 			sumj += exp (-b2 * djj);
 		}
-		*tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
+		*tnb = (1.0 / n) * (double) sumjk - 2.0 * pow (1.0 + beta2, - p2) * (double) sumj + n * pow (gamma, - p2); // n *
 	} catch (MelderError) {
 		Melder_clearError ();
 		*tnb = 4.0 * n;

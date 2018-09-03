@@ -851,8 +851,8 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 		additiveConstant = Dissimilarity_getAverage (me);
 		Melder_require (isdefined (additiveConstant), U"There are no positive dissimilarities.");
 		
-		autoNUMmatrix<double> wd (1, nPoints, 1, nPoints);
-		autoNUMmatrix<double> wdsqrt (1, nPoints, 1, nPoints);
+		autoMAT wd = MATzero (nPoints, nPoints);
+		autoMAT wdsqrt = MATzero (nPoints, nPoints);
 		autoNUMmatrix<double> b (1, nPoints2, 1, nPoints2);
 		autoNUMvector<double> eigenvalue (1, nPoints2);
 
@@ -866,8 +866,8 @@ double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
 			}
 		}
 
-		NUMdoubleCentre (wdsqrt.peek(), 1, nPoints, 1, nPoints);
-		NUMdoubleCentre (wd.peek(), 1, nPoints, 1, nPoints);
+		MATdoubleCentre_inplace (wdsqrt.get());
+		MATdoubleCentre_inplace (wd.get());
 
 		// Calculate the B matrix according to eq. 6
 
@@ -2040,7 +2040,7 @@ static double func (Daata object, const double p []) {
 
 	// Normalize
 
-	NUMcentreColumns (x, 1, numberOfPoints, 1, numberOfDimensions, nullptr);
+	MATcentreEachColumn_inplace (MAT (x, numberOfPoints, numberOfDimensions));
 	NUMnormalize (x, numberOfPoints, numberOfDimensions, sqrt (numberOfPoints));
 
 	// Calculate interpoint distances from the configuration

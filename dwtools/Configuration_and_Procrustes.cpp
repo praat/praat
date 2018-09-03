@@ -37,7 +37,7 @@ autoProcrustes Configurations_to_Procrustes (Configuration me, Configuration the
 			translation = p -> t;
 			scale = & (p -> s);
 		}
-		NUMProcrustes (my data, thy data, my numberOfRows, my numberOfColumns, p -> r, translation, scale);
+		NUMprocrustes (my data, thy data, my numberOfRows, my numberOfColumns, p -> r, translation, scale);
 		return p;
 	} catch (MelderError) {
 		Melder_throw (U"Procrustes from two Configurations not created.");

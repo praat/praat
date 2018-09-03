@@ -128,8 +128,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		
 		// Centre the data and svd it.
 
-		NUMcentreColumns (uy, 1, n, 1, ny, nullptr);
-		NUMcentreColumns (ux, 1, n, 1, nx, nullptr);
+		MATcentreEachColumn_inplace (MAT (uy, n, ny));
+		MATcentreEachColumn_inplace (MAT (ux, n, nx));
 
 		SVD_compute (svdy.get());
 		SVD_compute (svdx.get());

@@ -40,7 +40,7 @@ autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, in
 
 		autoProcrustes him = Procrustes_create (nvectors);
 
-		NUMProcrustes (x.peek(), y.peek(), my dimension, nvectors, his r, nullptr, nullptr);
+		NUMprocrustes (x.peek(), y.peek(), my dimension, nvectors, his r, nullptr, nullptr);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Procrustes not created from Eigens.");
