@@ -139,4 +139,17 @@ inline static autoMAT MATsubtract (constMAT x, constMAT y) {
 	return result;
 }
 
+inline void MATtranspose_preallocated (MAT target, constMAT x) {
+	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer icol = 1; icol <= target.ncol; icol ++)
+			target [irow] [icol] = x [icol] [irow];
+}
+
+inline autoMAT MATtranspose (constMAT x) {
+	autoMAT result = MATraw (x.ncol, x.nrow);
+	MATtranspose_preallocated (result.get(), x);
+	return result;
+}
+
 /* End of file MAT.h */
