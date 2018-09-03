@@ -499,7 +499,8 @@ public:
 	}
 	matrix<T> horizontalBand (integer firstRow, integer lastRow) {
 		const integer offsetRow = firstRow - 1;
-		Melder_assert (offsetRow >= 0 && offsetRow < our size);
+		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
+		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		integer newNrow = lastRow - offsetRow;
 		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
 		return matrix<T> (& our at [offsetRow], newNrow, our ncol);
@@ -523,7 +524,8 @@ public:
 	}
 	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) {
 		const integer offsetRow = firstRow - 1;
-		Melder_assert (offsetRow >= 0 && offsetRow < our size);
+		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
+		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		integer newNrow = lastRow - offsetRow;
 		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
 		return constmatrix<T> (& our at [offsetRow], newNrow, our ncol);

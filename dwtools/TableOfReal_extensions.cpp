@@ -389,7 +389,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	autoSVD svd = SVD_create (nr, nc);
 
 	NUMmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
-	NUMcentreColumns (svd -> u, 1, nr, 1, nc, nullptr);
+	MATcentreEachColumn_inplace (MAT (svd -> u, nr, nc));
 
 	SVD_compute (svd.get());
 	integer numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
@@ -559,7 +559,7 @@ void TableOfReal_setLabelsFromCollectionItemNames (TableOfReal me, Collection th
 }
 
 void TableOfReal_centreColumns (TableOfReal me) {
-	NUMcentreColumns (my data, 1, my numberOfRows, 1, my numberOfColumns, nullptr);
+	MATcentreEachColumn_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
 }
 
 void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
@@ -581,17 +581,18 @@ void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
 }
 
 void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
+	MAT mat = MAT (my data, my numberOfRows, my numberOfColumns);
 	conststring32 label = my rowLabels [1].get();
 	integer index = 1;
 	for (integer i = 2; i <= my numberOfRows; i ++) {
 		conststring32 li = my rowLabels [i].get();
 		if (! Melder_equ (li, label)) {
-			NUMcentreColumns (my data, index, i - 1, 1, my numberOfColumns, nullptr);
+			MATcentreEachColumn_inplace (mat.horizontalBand (index, i - 1));
 			label = li;
 			index = i;
 		}
 	}
-	NUMcentreColumns (my data, index, my numberOfRows, 1, my numberOfColumns, nullptr);
+	MATcentreEachColumn_inplace (mat.horizontalBand (index, my numberOfRows));
 }
 
 double TableOfReal_getRowSum (TableOfReal me, integer rowNumber) {
@@ -1625,15 +1626,15 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 			Melder_throw (U"Both tables should have the same number of rows.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfColumns, thy numberOfColumns);
-		autoNUMmatrix<double> my_data (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
-		autoNUMmatrix<double> thy_data (NUMmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
+		autoMAT my_data = MATcopy (constMAT (my data, my numberOfRows, my numberOfColumns));
+		autoMAT thy_data = MATcopy (constMAT (thy data, thy numberOfRows, thy numberOfColumns));
 		if (center) {
-			NUMcentreColumns (my_data.peek(), 1, my numberOfRows, 1, my numberOfColumns, nullptr);
-			NUMcentreColumns (thy_data.peek(), 1, thy numberOfRows, 1, thy numberOfColumns, nullptr);
+			MATcentreEachColumn_inplace (my_data.get());
+			MATcentreEachColumn_inplace (thy_data.get());
 		}
 		if (normalize) {
-			NUMnormalizeColumns (my_data.peek(), my numberOfRows, my numberOfColumns, 1);
-			NUMnormalizeColumns (thy_data.peek(), thy numberOfRows, thy numberOfColumns, 1);
+			NUMnormalizeColumns (my_data.at, my_data.nrow, my_data.ncol, 1);
+			NUMnormalizeColumns (thy_data.at, thy_data.nrow, thy_data.ncol, 1);
 		}
 		his rowLabels. copyElementsFrom (my columnLabels.get());
 		his columnLabels. copyElementsFrom (thy columnLabels.get());

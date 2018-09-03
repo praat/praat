@@ -173,18 +173,6 @@ double NUMvector_getNorm1 (const double v[], integer n);
 
 double NUMvector_getNorm2 (const double v[], integer n);
 
-void NUMcentreColumns (double **a, integer rb, integer re, integer cb, integer ce, double *centres);
-/*
-	a[i][j] -= a[.][j]
-	if centres != NULL the means are returned in centres[1..re-rb+1]
-*/
-
-void MATdoubleCentre_inplace (MAT x);
-/*
-	Function: Make the average value of each column and each row zero.
-		a[i][j] += - a[i][.] - a[.][j] + a[.][.]
-*/
-
 void NUMnormalizeRows (double **a, integer nr, integer nc, double norm);
 
 void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm);
@@ -636,7 +624,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 		alpha >= 0
 */
 
-void NUMProcrustes (double **x, double **y, integer nPoints,
+void NUMprocrustes (double **x, double **y, integer nPoints,
 	integer nDimensions, double **t, double v[], double *s);
 /*
 	Given two configurations x and y (nPoints x nDimensions), find the
@@ -797,7 +785,7 @@ double NUMinvTukeyQ (double p, double cc, double df, double rr);
  *  df = degrees of freedom of error term
  */
 
-double NUMnormalityTest_HenzeZirkler (double **data, integer n, integer p, double *beta, double *tnb, double *lnmu, double *lnvar);
+double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, double *lnmu, double *lnvar);
 /*
 	Multivariate normality test of nxp data matrix according to the method described in Henze & Wagner (1997).
 	The test statistic is returned in tnb, together with the lognormal mean 'lnmu' and the lognormal variance 'lnvar'.

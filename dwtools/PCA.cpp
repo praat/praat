@@ -156,32 +156,31 @@ static autoPCA NUMdmatrix_to_PCA (double **m, integer numberOfRows, integer numb
 		Melder_require (NUMfrobeniusnorm (numberOfRows, numberOfColumns, m) > 0.0,
 			U"Not all values in your table should be zero.");
 		
-		autoNUMmatrix<double> mcopy;
+		autoMAT mcopy;
 		integer numberOfRows2, numberOfColumns2;
 		if (byColumns) {
-			if (numberOfColumns < numberOfRows) {
+			if (numberOfColumns < numberOfRows)
 				Melder_warning (U"The number of columns in your table is less than the number of rows. ");
-			}
-			numberOfRows2 = numberOfColumns, numberOfColumns2 = numberOfRows;
-			mcopy.reset (1, numberOfRows2, 1, numberOfColumns2);
+			numberOfRows2 = numberOfColumns;
+			numberOfColumns2 = numberOfRows;
+			mcopy = MATraw (numberOfRows2, numberOfColumns2);
 			for (integer i = 1; i <= numberOfRows2; i ++) { // transpose
-				for (integer j = 1; j <= numberOfColumns2; j++) {
+				for (integer j = 1; j <= numberOfColumns2; j ++) {
 					mcopy [i] [j] = m [j] [i];
 				}
 			}
 		} else {
-			if (numberOfRows < numberOfColumns) {
+			if (numberOfRows < numberOfColumns)
 				Melder_warning (U"The number of rows in your table is less than the number of columns. ");
-			}
-			numberOfRows2 = numberOfRows, numberOfColumns2 = numberOfColumns;
-			mcopy.reset (1, numberOfRows2, 1, numberOfColumns2);
-			NUMmatrix_copyElements<double>(m, mcopy.peek(), 1, numberOfRows2, 1, numberOfColumns2);
+			numberOfRows2 = numberOfRows;
+			numberOfColumns2 = numberOfColumns;
+			mcopy = MATcopy (MAT (m, numberOfRows, numberOfColumns));
 		}
 		
 		autoPCA thee = Thing_new (PCA);
 		thy centroid = NUMvector<double> (1, numberOfColumns2);
-		NUMcentreColumns (mcopy.peek(), 1, numberOfRows2, 1, numberOfColumns2, thy centroid);
-		Eigen_initFromSquareRoot (thee.get(), mcopy.peek(), numberOfRows2, numberOfColumns2);
+		MATcentreEachColumn_inplace (mcopy.get(), thy centroid);
+		Eigen_initFromSquareRoot (thee.get(), mcopy.at, numberOfRows2, numberOfColumns2);
 		thy labels = autostring32vector (numberOfColumns2);
 
 		PCA_setNumberOfObservations (thee.get(), numberOfRows2);

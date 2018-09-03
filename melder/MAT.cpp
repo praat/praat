@@ -19,9 +19,28 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"
 
+void MATcentreEachColumn_inplace (MAT x, double centres []) {
+	autoVEC columnBuffer = VECraw (x.nrow);
+	for (integer icol = 1; icol <= x.ncol; icol ++) {
+		for (integer irow = 1; irow <= x.nrow; irow ++)
+			columnBuffer [irow] = x [irow] [icol];
+		double columnMean;
+		VECcentre_inplace (columnBuffer.get(), & columnMean);
+		for (integer irow = 1; irow <= x.nrow; irow ++)
+			x [irow] [icol] = columnBuffer [irow];
+		if (centres)
+			centres [icol] = columnMean;
+	}
+}
+
 void MATcentreEachRow_inplace (MAT x) {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		VECcentre_inplace (x.row (irow));
+}
+
+void MATdoubleCentre_inplace (MAT x) {
+	MATcentreEachRow_inplace (x);
+	MATcentreEachColumn_inplace (x);
 }
 
 autoMAT MATouter (constVEC x, constVEC y) {

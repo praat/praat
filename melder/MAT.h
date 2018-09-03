@@ -51,8 +51,23 @@ inline autoMAT MATadd (constMAT x, constMAT y) {
 	return result;
 }
 
-void MATcentreEachColumn_inplace (MAT x);
+/*
+	Make the average of each column zero.
+		a[i][j] -= a[.][j]
+*/
+void MATcentreEachColumn_inplace (MAT x, double centres [] = nullptr);
+
+/*
+	Make the average of each row zero.
+		a[i][j] -= a[i][.]
+*/
 void MATcentreEachRow_inplace (MAT x);
+
+/*
+	Make the average of every column and every row zero.
+		a[i][j] += - a[i][.] - a[.][j] + a[.][.]
+*/
+void MATdoubleCentre_inplace (MAT x);
 
 inline static void MATmultiply_inplace (MAT x, double factor) {
 	for (integer irow = 1; irow <= x.nrow; irow ++)

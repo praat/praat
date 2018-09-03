@@ -2040,7 +2040,7 @@ static double func (Daata object, const double p []) {
 
 	// Normalize
 
-	NUMcentreColumns (x, 1, numberOfPoints, 1, numberOfDimensions, nullptr);
+	MATcentreEachColumn_inplace (MAT (x, numberOfPoints, numberOfDimensions));
 	NUMnormalize (x, numberOfPoints, numberOfDimensions, sqrt (numberOfPoints));
 
 	// Calculate interpoint distances from the configuration
