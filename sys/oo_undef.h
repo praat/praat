@@ -19,7 +19,9 @@
 #undef oo_SIMPLE
 #undef oo_SET
 #undef oo_VECTOR
+#undef oo_ANYVEC
 #undef oo_MATRIX
+#undef oo_ANYMAT
 
 #undef oo_ENUMx
 //#undef oo_ENUMx_SET

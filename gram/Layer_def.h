@@ -1,6 +1,6 @@
 /* Layer_def.h
  *
- * Copyright (C) 2017 Paul Boersma
+ * Copyright (C) 2017-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 oo_DEFINE_CLASS (Layer, Daata)
 
 	oo_INTEGER (numberOfInputNodes)
-	oo_DOUBLE_VECTOR (inputActivities, numberOfInputNodes)
+	oo_VEC (inputActivities, numberOfInputNodes)
 	oo_INTEGER (numberOfOutputNodes)
-	oo_DOUBLE_VECTOR (outputActivities, numberOfOutputNodes)
+	oo_VEC (outputActivities, numberOfOutputNodes)
 
 	#if oo_DECLARING
 		virtual void v_spreadUp (kLayer_activationType) { }
