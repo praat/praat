@@ -129,7 +129,7 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 #include "melder_quantity.h"
 
 #include "MelderReadText.h"
-#include "melder_vectorio.h"   // requires MelderReadText
+#include "melder_tensorio.h"   // requires MelderReadText
 #include "melder_sysenv.h"
 #include "abcio_enums.h"
 #include "abcio.h"   // requires MelderReadText

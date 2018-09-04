@@ -422,10 +422,11 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_ADD: {
 			integer size = Melder_atoi (arg2);
 			auto result = MATrandomGauss (size, size, 0.0, 1.0);
+			Melder_stopwatch ();
 			for (int64 iteration = 1; iteration <= n; iteration ++)
 				MATadd_inplace (result.get(), 5.0);
-			double sum = NUMsum (result.get());
 			t = Melder_stopwatch () / size / size;
+			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
 		} break;
 		case kPraatTests::THING_AUTO: {

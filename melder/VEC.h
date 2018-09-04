@@ -57,7 +57,7 @@ inline autoVEC VECadd (constVEC x, constVEC y) {
 	return result;
 }
 
-inline static void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
+inline void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
 	double xmean = NUMmean (x);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= xmean;
@@ -65,12 +65,12 @@ inline static void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
 		*out_mean = xmean;
 }
 
-inline static void VECmultiply_inplace (VEC x, double factor) {
+inline void VECmultiply_inplace (VEC x, double factor) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] *= factor;
 }
 
-inline static autoVEC VECrandomGauss (integer size, double mu, double sigma) {
+inline autoVEC VECrandomGauss (integer size, double mu, double sigma) {
 	autoVEC result = VECraw (size);
 	for (integer i = 1; i <= size; i ++)
 		result [i] = NUMrandomGauss (mu, sigma);
@@ -79,37 +79,37 @@ inline static autoVEC VECrandomGauss (integer size, double mu, double sigma) {
 
 void VECsort_inplace (VEC x);
 
-inline static void VECsubtract_inplace (VEC x, double number) {
+inline void VECsubtract_inplace (VEC x, double number) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= number;
 }
-inline static void VECsubtractReversed_inplace (VEC x, double number) {
+inline void VECsubtractReversed_inplace (VEC x, double number) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = number - x [i];
 }
-inline static void VECsubtract_inplace (VEC x, constVEC y) {
+inline void VECsubtract_inplace (VEC x, constVEC y) {
 	Melder_assert (x.size == y.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= y [i];
 }
-inline static void VECsubtractReversed_inplace (VEC x, constVEC y) {
+inline void VECsubtractReversed_inplace (VEC x, constVEC y) {
 	Melder_assert (x.size == y.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = y [i] - x [i];
 }
-inline static autoVEC VECsubtract (constVEC x, double y) {
+inline autoVEC VECsubtract (constVEC x, double y) {
 	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] - y;
 	return result;
 }
-inline static autoVEC VECsubtract (double x, constVEC y) {
+inline autoVEC VECsubtract (double x, constVEC y) {
 	autoVEC result = VECraw (y.size);
 	for (integer i = 1; i <= y.size; i ++)
 		result [i] = x - y [i];
 	return result;
 }
-inline static autoVEC VECsubtract (constVEC x, constVEC y) {
+inline autoVEC VECsubtract (constVEC x, constVEC y) {
 	Melder_assert (x.size == y.size);
 	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
@@ -117,21 +117,21 @@ inline static autoVEC VECsubtract (constVEC x, constVEC y) {
 	return result;
 }
 
-inline static autoVEC VECsumPerRow (constMAT x) {
+inline autoVEC VECsumPerRow (constMAT x) {
 	autoVEC result = VECraw (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		result [irow] = NUMrowSum (x, irow);
 	return result;
 }
 
-inline static autoVEC VECsumPerColumn (constMAT x) {
+inline autoVEC VECsumPerColumn (constMAT x) {
 	autoVEC result = VECraw (x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		result [icol] = NUMcolumnSum (x, icol);
 	return result;
 }
 
-inline static autoVEC VECto (integer to) {
+inline autoVEC VECto (integer to) {
 	autoVEC result = VECraw (to);
 	for (integer i = 1; i <= to; i ++)
 		result [i] = (double) i;

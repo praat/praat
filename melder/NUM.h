@@ -29,7 +29,7 @@ void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
 void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
 		double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
 
-inline static double NUMsum (constVEC x) noexcept {
+inline double NUMsum (constVEC x) noexcept {
 	integer n = x.size;
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
@@ -108,18 +108,18 @@ inline bool NUMequal (constSTRVEC x, constSTRVEC y) {
 	return true;
 }
 
-inline static double NUMextremum (constVEC vec) {
+inline double NUMextremum (constVEC vec) {
 	double extremum = 0.0;
 	for (integer i = 1; i <= vec.size; i ++)
 		if (fabs (vec [i]) > extremum) extremum = fabs (vec [i]);
 	return extremum;
 }
 
-inline static double NUMextremum (constMAT mat) {
+inline double NUMextremum (constMAT mat) {
 	return NUMextremum (asvector (mat));
 }
 
-inline static double NUMinner (constVEC x, constVEC y) {
+inline double NUMinner (constVEC x, constVEC y) {
 	integer n = x.size;
 	Melder_assert (y.size == n);
 	if (n <= 8) {
@@ -137,15 +137,15 @@ inline static double NUMinner (constVEC x, constVEC y) {
 	return NUMinner_ (x, y);
 }
 
-inline static integer NUMlength (conststring32 str) {
+inline integer NUMlength (conststring32 str) {
 	return str32len (str);
 }
 
-inline static double NUMlog2 (double x) {
+inline double NUMlog2 (double x) {
 	return log (x) * NUMlog2e;
 }
 
-inline static double NUMmean (constVEC x) noexcept {
+inline double NUMmean (constVEC x) noexcept {
 	integer n = x.size;
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? undefined : n == 1 ? x [1] : (double) (0.5 * ((longdouble) x [1] + (longdouble) x [2]));
@@ -166,7 +166,7 @@ inline static double NUMmean (constVEC x) noexcept {
 
 double NUMnorm (constVEC x, double power) noexcept;
 
-inline static double NUMnorm (constMAT x, double power) noexcept {
+inline double NUMnorm (constMAT x, double power) noexcept {
 	return NUMnorm (asvector (x), power);
 }
 
@@ -175,16 +175,16 @@ integer NUMnumberOfTokens (conststring32 str);
 /*
 	Return zero for non-positive base.
 */
-inline static double NUMpow (double base, double exponent) {
+inline double NUMpow (double base, double exponent) {
 	return base <= 0.0 ? 0.0 : pow (base, exponent);
 }
 
-inline static double NUMrowSum (constMAT x, integer rowNumber) noexcept {
+inline double NUMrowSum (constMAT x, integer rowNumber) noexcept {
 	Melder_assert (rowNumber > 0 && rowNumber <= x.nrow);
 	return NUMsum (constVEC (x [rowNumber], x.ncol));
 }
 
-inline static double NUMsqrt (double x) {
+inline double NUMsqrt (double x) {
 	#if defined (_WIN32)
 		if (x < 0.0) return undefined;
 	#endif
@@ -193,7 +193,7 @@ inline static double NUMsqrt (double x) {
 
 double NUMstdev (constVEC x) noexcept;
 
-inline static double NUMsum (constMAT x) noexcept {
+inline double NUMsum (constMAT x) noexcept {
 	return NUMsum (asvector (x));
 }
 
