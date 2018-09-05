@@ -22,8 +22,8 @@ oo_DEFINE_CLASS (MDSVec, Daata)
 	oo_INTEGER (numberOfPoints)
 	oo_INTEGER (numberOfProximities)
 	oo_DOUBLE_VECTOR (proximity, numberOfProximities)
-	oo_INTEGER_VECTOR (iPoint, numberOfPoints)
-	oo_INTEGER_VECTOR (jPoint, numberOfPoints)
+	oo_INTEGER_VECTOR (rowIndex, numberOfProximities)
+	oo_INTEGER_VECTOR (columnIndex, numberOfProximities)
 	
 	#if oo_DECLARING
 	void v_info () noexcept

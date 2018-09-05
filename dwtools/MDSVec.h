@@ -24,6 +24,12 @@
 
 #include "MDSVec_def.h"
 
+/*
+	An MDSVec object:
+	contains vectors of length numberOfPoints (numberOfPoibts - 1) /2 
+	with the sorted disparities, and their corresponding row and column indices of 'numberOfPoints' objects
+*/
+
 autoMDSVec MDSVec_create (long numberOfPoints);
 
 autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me);

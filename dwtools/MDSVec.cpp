@@ -40,14 +40,20 @@
 
 Thing_implement (MDSVec, Daata, 0);
 
+void structMDSVec :: v_info () noexcept {
+	structDaata :: v_info ();
+	MelderInfo_writeLine (U"Number of points: ", numberOfPoints);
+	MelderInfo_writeLine (U"Number of proximities: ", numberOfProximities);
+}
+
 autoMDSVec MDSVec_create (integer numberOfPoints) {
 	try {
 		autoMDSVec me = Thing_new (MDSVec);
 		my numberOfPoints = numberOfPoints;
 		my numberOfProximities = numberOfPoints * (numberOfPoints - 1) / 2;
 		my proximity = NUMvector<double> (1, my numberOfProximities);
-		my iPoint = NUMvector<integer> (1, my numberOfProximities);
-		my jPoint = NUMvector<integer> (1, my numberOfProximities);
+		my rowIndex = NUMvector<integer> (1, my numberOfProximities);
+		my columnIndex = NUMvector<integer> (1, my numberOfProximities);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MDSVec not created.");
@@ -58,20 +64,20 @@ autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me) {
 	try {
 		autoMDSVec thee = MDSVec_create (my numberOfRows);
 
-		integer k = 0;
-		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-			for (integer j = i + 1; j <= my numberOfColumns; j ++) {
-				double f = 0.5 * (my data [i] [j] + my data [j] [i]);
+		integer n = 0;
+		for (integer irow = 1; irow <= my numberOfRows - 1; irow ++) {
+			for (integer icol = irow + 1; icol <= my numberOfColumns; icol ++) {
+				double f = 0.5 * (my data [irow] [icol] + my data [icol] [irow]);
 				if (f > 0.0) {
-					k ++;
-					thy proximity [k] = f;
-					thy iPoint [k] = i;
-					thy jPoint [k] = j;
+					n ++;
+					thy proximity [n] = f;
+					thy rowIndex [n] = irow;
+					thy columnIndex [n] = icol;
 				}
 			}
 		}
-		thy numberOfProximities = k;
-		NUMsort3 (thy proximity, thy iPoint, thy jPoint, 1, k, true);
+		thy numberOfProximities = n;
+		NUMsort3 ({thy proximity, n}, {thy rowIndex, n}, {thy columnIndex, n}, 1, n, false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MDSVec created.");

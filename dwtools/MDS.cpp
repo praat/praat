@@ -175,8 +175,8 @@ autoDistance structTransformator :: v_transform (MDSVec vec, Distance dist, Weig
 		// Absolute scaling
 
 		for (integer i = 1; i <= vec -> numberOfProximities; i ++) {
-			integer ii = vec -> iPoint [i];
-			integer jj = vec -> jPoint [i];
+			integer ii = vec -> rowIndex [i];
+			integer jj = vec -> columnIndex [i];
 			thy data [ii] [jj] = thy data [jj] [ii] = vec -> proximity [i];
 		}
 		return thee;
@@ -219,8 +219,8 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 
 	longdouble etaSq = 0.0, rho = 0.0;
 	for (integer i = 1; i <= vec -> numberOfProximities; i ++) {
-		integer ii = vec -> iPoint [i];
-		integer jj = vec -> jPoint [i];
+		integer ii = vec -> rowIndex [i];
+		integer jj = vec -> columnIndex [i];
 		double delta_ij = vec -> proximity [i], d_ij = d -> data [ii] [jj];
 		double tmp = w -> data [ii] [jj] * delta_ij * delta_ij;
 		etaSq += tmp;
@@ -233,8 +233,8 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 	
 	our ratio = rho / etaSq;
 	for (integer i = 1; i <= vec -> numberOfProximities; i ++) {
-		integer ii = vec -> iPoint [i];
-		integer jj = vec -> jPoint [i];
+		integer ii = vec -> rowIndex [i];
+		integer jj = vec -> columnIndex [i];
 		thy data [ii] [jj] = thy data [jj] [ii] = our ratio * vec -> proximity [i];
 	}
 
@@ -299,7 +299,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 	autoNUMvector<double> d (1, nx);
 
 	for (integer i = 1; i <= nx; i ++) {
-		d [i] = dist -> data [vec -> iPoint [i]] [vec -> jPoint [i]];
+		d [i] = dist -> data [vec -> rowIndex [i]] [vec -> columnIndex [i]];
 	}
 
 	/*
@@ -334,8 +334,8 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 	NUMsolveNonNegativeLeastSquaresRegression (m, nx, numberOfParameters, d.peek(), tol, itermax, b);
 
 	for (integer i = 1; i <= nx; i ++) {
-		integer ii = vec->iPoint [i];
-		integer jj = vec->jPoint [i];
+		integer ii = vec->rowIndex [i];
+		integer jj = vec->columnIndex [i];
 		double r = 0.0;
 
 		for (integer j = 1; j <= numberOfParameters; j ++) {
@@ -983,22 +983,22 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 
 autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesHandling) {
 	try {
+		Melder_require (my numberOfPoints == thy numberOfColumns, U"");
 		integer numberOfProximities = my numberOfProximities;
 		Melder_require (thy numberOfRows == my numberOfPoints, U"Distance and MDSVVec dimensions should agreee.");
-		autoVEC distance = VECraw (numberOfProximities);
+		autoVEC distances = VECraw (numberOfProximities);
 		autoVEC fit = VECraw (numberOfProximities);
 		autoDistance him = Distance_create (thy numberOfRows);
 		TableOfReal_copyLabels (thee, him.get(), 1, 1);
 
-		integer *iPoint = my iPoint, *jPoint = my jPoint;
 		for (integer i = 1; i <= numberOfProximities; i ++) {
-			distance [i] = thy data [iPoint [i]] [jPoint [i]];
+			distances [i] = thy data [my rowIndex [i]] [my columnIndex [i]];
 		}
 
 		if (tiesHandling == MDS_PRIMARY_APPROACH || tiesHandling == MDS_SECONDARY_APPROACH) {
 			/*
 				Kruskal's primary approach to tie-blocks:
-					Sort corresponding distances, with iPoint, and jPoint.
+					Sort corresponding distances, with rowIndex, and columnIndex.
 				Kruskal's secondary approach:
 					Substitute average distance in each tie block
 			*/
@@ -1009,15 +1009,15 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 				}
 				if (i - ib > 1) {
 					if (tiesHandling == MDS_PRIMARY_APPROACH) {
-						NUMsort3 (distance.at, iPoint, jPoint, ib, i - 1, true); // sort ascending
+						NUMsort3 (distances.get(), {my rowIndex, numberOfProximities}, {my columnIndex, numberOfProximities}, ib, i - 1, false); // already sorted
 					} else if (tiesHandling == MDS_SECONDARY_APPROACH) {
-						double mean = 0.0;
+						longdouble mean = 0.0;
 						for (integer j = ib; j <= i - 1; j ++) {
-							mean += distance [j];
+							mean += distances [j];
 						}
 						mean /= (i - ib);
 						for (integer j = ib; j <= i - 1; j ++) {
-							distance [j] = mean;
+							distances [j] = (double) mean;
 						}
 					}
 				}
@@ -1025,13 +1025,13 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 			}
 		}
 
-		NUMmonotoneRegression (distance.at, numberOfProximities, fit.at);
+		NUMmonotoneRegression (distances.get(), fit.get());
 
 		// Fill Distance with monotone regressed distances
 
 		for (integer i = 1; i <= numberOfProximities; i ++) {
-			integer ip = iPoint [i], jp = jPoint [i];
-			his data [ip] [jp] = his data [jp] [ip] = fit [i];
+			integer irow = my rowIndex [i], icol = my columnIndex [i];
+			his data [irow] [icol] = his data [icol] [irow] = fit [i];
 		}
 
 		// Make rest of distances equal to the maximum fit.
@@ -1712,20 +1712,20 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 
 static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *stress, double *s, double *t, double *dbar) {
 	integer numberOfProximities = my numberOfProximities;
-	integer *iPoint = my iPoint, *jPoint = my jPoint;
+	integer *rowIndex = my rowIndex, *columnIndex = my columnIndex;
 	double **dist = ddist -> data, **fit = dfit -> data;
 
 	*s = *t = *dbar = 0.0;
 
 	if (stress_formula == 2) {
 		for (integer i = 1; i <= numberOfProximities; i ++) {
-			*dbar += dist [iPoint [i]] [jPoint [i]];
+			*dbar += dist [rowIndex [i]] [columnIndex [i]];
 		}
 		*dbar /= numberOfProximities;
 	}
 
 	for (integer i = 1; i <= numberOfProximities; i ++) {
-		integer ii = iPoint [i], jj = jPoint [i];
+		integer ii = rowIndex [i], jj = columnIndex [i];
 		double st = dist [ii] [jj] - fit [ii] [jj];
 		double tt = dist [ii] [jj] - *dbar;
 		*s += st * st; *t += tt * tt;
@@ -1780,7 +1780,7 @@ static double func (Daata object, const double p []) {
 	}
 
 	for (integer i = 1; i <= his numberOfProximities; i ++) {
-		integer ii = my vec -> iPoint [i], jj = my vec -> jPoint [i];
+		integer ii = my vec -> rowIndex [i], jj = my vec -> columnIndex [i];
 		double g1 = stress * ((dist->data [ii] [jj] - fit->data [ii] [jj]) / s - (dist->data [ii] [jj] - dbar) / t);
 		for (integer j = 1; j <= numberOfDimensions; j ++) {
 			double dj = x [ii] [j] - x [jj] [j];
