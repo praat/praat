@@ -56,8 +56,9 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 36, TIME_ZERO, U"TimeZero")
 	enums_add (kPraatTests, 37, TIME_MALLOC, U"TimeMalloc")
 	enums_add (kPraatTests, 38, TIME_CALLOC, U"TimeCalloc")
-	enums_add (kPraatTests, 39, THING_AUTO, U"ThingAuto")
-	enums_add (kPraatTests, 40, FILEINMEMORYMANAGER_IO, U"FileInMemoryManager_io")
-enums_end (kPraatTests, 40, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 39, TIME_ADD, U"TimeAdd")
+	enums_add (kPraatTests, 40, THING_AUTO, U"ThingAuto")
+	enums_add (kPraatTests, 41, FILEINMEMORYMANAGER_IO, U"FileInMemoryManager_io")
+enums_end (kPraatTests, 41, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */

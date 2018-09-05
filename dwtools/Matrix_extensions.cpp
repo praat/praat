@@ -624,12 +624,11 @@ void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *
 		autoMAT right_eigenvectors;
 		MAT_getEigenSystemFromGeneralMatrix (me -> asMAT(), nullptr, & right_eigenvectors, & eigenvalues_re, & eigenvalues_im);
 		autoMatrix eigenvalues = Matrix_createSimple (my ny, 2);
-		autoMatrix eigenvectors = Matrix_createSimple (my ny, 2 * my ny);
 		autoMAT eigenvectors_reim;
 		MAT_eigenvectors_decompress (right_eigenvectors.get(), eigenvalues_re.get(), eigenvalues_im.get(), & eigenvectors_reim);
 		if (out_eigenvectors) {
 			autoMatrix eigenvectors = Matrix_createSimple (my ny, 2 * my ny);
-			MATcopy_inplace (eigenvectors -> asMAT(), eigenvectors_reim.get());
+			MATcopy_preallocated (eigenvectors -> asMAT(), eigenvectors_reim.get());
 			*out_eigenvectors = eigenvectors.move();
 		}
 		if (out_eigenvalues) {

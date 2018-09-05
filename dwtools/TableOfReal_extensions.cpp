@@ -389,7 +389,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	autoSVD svd = SVD_create (nr, nc);
 
 	NUMmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
-	NUMcentreColumns (svd -> u, 1, nr, 1, nc, nullptr);
+	MATcentreEachColumn_inplace (MAT (svd -> u, nr, nc));
 
 	SVD_compute (svd.get());
 	integer numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
@@ -559,93 +559,78 @@ void TableOfReal_setLabelsFromCollectionItemNames (TableOfReal me, Collection th
 }
 
 void TableOfReal_centreColumns (TableOfReal me) {
-	NUMcentreColumns (my data, 1, my numberOfRows, 1, my numberOfColumns, nullptr);
+	MATcentreEachColumn_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
 }
 
 void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
 	try {
 		Melder_require (my numberOfRows == thy size,
 			U"The number of items in both objects should be equal.");
-
 		/*
-			If anything goes wrong we must leave the Table intact. We first copy the Categories, swap the labels
-				and then delete the newly created categories.
+			Create without change.
 		*/
-
 		autoCategories categories_copy = Data_copy (thee);
-
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			std::swap (categories_copy->at [i] -> string, my rowLabels [i]);
-		}
+		/*
+			Change without error.
+		*/
+		for (integer i = 1; i <= my numberOfRows; i ++)
+			my rowLabels [i] = categories_copy->at [i] -> string.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": row labels not set from categories.");
 	}
 }
 
 void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
+	MAT mat = MAT (my data, my numberOfRows, my numberOfColumns);
 	conststring32 label = my rowLabels [1].get();
 	integer index = 1;
 	for (integer i = 2; i <= my numberOfRows; i ++) {
 		conststring32 li = my rowLabels [i].get();
 		if (! Melder_equ (li, label)) {
-			NUMcentreColumns (my data, index, i - 1, 1, my numberOfColumns, 0);
+			MATcentreEachColumn_inplace (mat.horizontalBand (index, i - 1));
 			label = li;
 			index = i;
 		}
 	}
-	NUMcentreColumns (my data, index, my numberOfRows, 1, my numberOfColumns, nullptr);
+	MATcentreEachColumn_inplace (mat.horizontalBand (index, my numberOfRows));
 }
 
-double TableOfReal_getRowSum (TableOfReal me, integer index) {
-	Melder_require (index > 0 && index <= my numberOfRows,
-		U"Index not in valid range.");
-
-	longdouble sum = 0.0;
-	for (integer j = 1; j <= my numberOfColumns; j ++)
-		sum += my data [index] [j];
-	return (double) sum;
+double TableOfReal_getRowSum (TableOfReal me, integer rowNumber) {
+	Melder_require (rowNumber > 0 && rowNumber <= my numberOfRows,
+		U"Row number not in valid range.");
+	return NUMrowSum (constMAT (my data, my numberOfRows, my numberOfColumns), rowNumber);
 }
 
-double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 label) {
-	integer index = TableOfReal_columnLabelToIndex (me, label);
-	Melder_require (index > 0,
-		U"There is no \"", label, U"\" column label.");
-	return TableOfReal_getColumnSum (me, index);
+double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabel) {
+	integer columnNumber = TableOfReal_columnLabelToIndex (me, columnLabel);
+	Melder_require (columnNumber > 0,
+		U"There is no \"", columnLabel, U"\" column label.");
+	return TableOfReal_getColumnSum (me, columnNumber);
 }
 
-double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 label) {
-	integer index = TableOfReal_rowLabelToIndex (me, label);
-	Melder_require (index > 0,
-		U"There is no \"", label, U"\" column label.");
-	return TableOfReal_getRowSum (me, index);
+double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 rowLabel) {
+	integer rowNumber = TableOfReal_rowLabelToIndex (me, rowLabel);
+	Melder_require (rowNumber > 0,
+		U"There is no \"", rowLabel, U"\" row label.");
+	return TableOfReal_getRowSum (me, rowNumber);
 }
 
-double TableOfReal_getColumnSum (TableOfReal me, integer index) {
-	Melder_require (index > 0 && index <= my numberOfRows,
-		U"Index not in valid range.");
-	longdouble sum = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		sum += my data [i] [index];
-	}
-	return (double) sum;
+double TableOfReal_getColumnSum (TableOfReal me, integer columnNumber) {
+	Melder_require (columnNumber > 0 && columnNumber <= my numberOfColumns,
+		U"Column number not in valid range.");
+	return NUMcolumnSum (constMAT (my data, my numberOfRows, my numberOfColumns), columnNumber);
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
-	double sum = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			sum += my data [i] [j];
-		}
-	}
-	return sum;
+	return NUMsum (constMAT (my data, my numberOfRows, my numberOfColumns));
 }
 
 void TableOfReal_centreRows (TableOfReal me) {
-	NUMcentreRows (my data, 1, my numberOfRows, 1, my numberOfColumns);
+	MATcentreEachRow_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
 }
 
 void TableOfReal_doubleCentre (TableOfReal me) {
-	NUMdoubleCentre (my data, 1, my numberOfRows, 1, my numberOfColumns);
+	MATdoubleCentre_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
 }
 
 void TableOfReal_normalizeColumns (TableOfReal me, double norm) {
@@ -665,7 +650,7 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 		return;
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		constMAT mat { my data, my numberOfRows, my numberOfColumns };
+		constMAT mat (my data, my numberOfRows, my numberOfColumns);
 		double mean, stdev;
 		NUM_sum_mean_sumsq_variance_stdev (mat, icol, nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
@@ -1603,31 +1588,29 @@ autoTableOfReal TableOfReal_TableOfReal_crossCorrelations (TableOfReal me, Table
 	       TableOfReal_TableOfReal_rowCorrelations (me, thee, center, normalize);
 }
 
-autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
+autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOfReal thee, bool centre, bool normalize) {
 	try {
-		if (my numberOfColumns != thy numberOfColumns) {
-			Melder_throw (U"Both tables must have the same number of columns.");
-		}
+		if (my numberOfColumns != thy numberOfColumns)
+			Melder_throw (U"Both tables should have the same number of columns.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, thy numberOfRows);
-		autoNUMmatrix<double> my_data (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
-		autoNUMmatrix<double> thy_data (NUMmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
-		if (center) {
-			NUMcentreRows (my_data.peek(), 1, my numberOfRows, 1, my numberOfColumns);
-			NUMcentreRows (thy_data.peek(), 1, thy numberOfRows, 1, thy numberOfColumns);
+		autoMAT my_data = MATcopy (MAT (my data, my numberOfRows, my numberOfColumns));
+		autoMAT thy_data = MATcopy (MAT (thy data, thy numberOfRows, thy numberOfColumns));
+		if (centre) {
+			MATcentreEachRow_inplace (my_data.get());
+			MATcentreEachRow_inplace (thy_data.get());
 		}
 		if (normalize) {
-			NUMnormalizeRows (my_data.peek(), my numberOfRows, my numberOfColumns, 1);
-			NUMnormalizeRows (thy_data.peek(), thy numberOfRows, thy numberOfColumns, 1);
+			NUMnormalizeRows (my_data.at, my numberOfRows, my numberOfColumns, 1);
+			NUMnormalizeRows (thy_data.at, thy numberOfRows, thy numberOfColumns, 1);
 		}
 		his rowLabels. copyElementsFrom (my rowLabels.get());
 		his columnLabels. copyElementsFrom (thy rowLabels.get());
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			for (integer k = 1; k <= thy numberOfRows; k ++) {
 				longdouble ctmp = 0.0;
-				for (integer j = 1; j <= my numberOfColumns; j ++) {
+				for (integer j = 1; j <= my numberOfColumns; j ++)
 					ctmp += my_data [i] [j] * thy_data [k] [j];
-				}
 				his data [i] [k] = (double) ctmp;
 			}
 		}
@@ -1639,20 +1622,19 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 
 autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, TableOfReal thee, bool center, bool normalize) {
 	try {
-		if (my numberOfRows != thy numberOfRows) {
-			Melder_throw (U"Both tables must have the same number of rows.");
-		}
+		if (my numberOfRows != thy numberOfRows)
+			Melder_throw (U"Both tables should have the same number of rows.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfColumns, thy numberOfColumns);
-		autoNUMmatrix<double> my_data (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
-		autoNUMmatrix<double> thy_data (NUMmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
+		autoMAT my_data = MATcopy (constMAT (my data, my numberOfRows, my numberOfColumns));
+		autoMAT thy_data = MATcopy (constMAT (thy data, thy numberOfRows, thy numberOfColumns));
 		if (center) {
-			NUMcentreColumns (my_data.peek(), 1, my numberOfRows, 1, my numberOfColumns, nullptr);
-			NUMcentreColumns (thy_data.peek(), 1, thy numberOfRows, 1, thy numberOfColumns, nullptr);
+			MATcentreEachColumn_inplace (my_data.get());
+			MATcentreEachColumn_inplace (thy_data.get());
 		}
 		if (normalize) {
-			NUMnormalizeColumns (my_data.peek(), my numberOfRows, my numberOfColumns, 1);
-			NUMnormalizeColumns (thy_data.peek(), thy numberOfRows, thy numberOfColumns, 1);
+			NUMnormalizeColumns (my_data.at, my_data.nrow, my_data.ncol, 1);
+			NUMnormalizeColumns (thy_data.at, thy_data.nrow, thy_data.ncol, 1);
 		}
 		his rowLabels. copyElementsFrom (my columnLabels.get());
 		his columnLabels. copyElementsFrom (thy columnLabels.get());
@@ -1674,9 +1656,8 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 
 autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, double xmin, double xmax, double nx, double ymin, double ymax, integer ny, int /* method */) {
 	try {
-		if (my numberOfColumns < 3 || my numberOfRows < 3) {
-			Melder_throw (U"Therehave to be at least three colums and rows present.");
-		}
+		if (my numberOfColumns < 3 || my numberOfRows < 3)
+			Melder_throw (U"There should be at least three colums and three rows.");
 		autoVEC x = VECraw (my numberOfRows);
 		autoVEC y = VECraw (my numberOfRows);
 		autoVEC z = VECraw (my numberOfRows);

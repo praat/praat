@@ -4,7 +4,7 @@
  *
  * Multi Dimensional Scaling
  *
- * Copyright (C) 1993-2011, 2015-2016 David Weenink, 2015,2017,2018 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2015,2017,2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,14 +36,6 @@
 #define MDS_MATRIXCONDITIONAL 1
 #define MDS_ROWCONDITIONAL 2
 
-/* analysis level */
-#define MDS_ABSOLUTE 0
-#define MDS_RATIO	1
-#define MDS_INTERVAL 2
-#define MDS_SPLINE 3
-#define MDS_ORDINAL 4
-#define MDS_NOMINAL 5
-
 /* normalization */
 #define CONFIGURATION_COLUMNS 1
 #define CONFIGURATION_MATRIX 2
@@ -65,6 +57,7 @@
 #include "Minimizers.h"
 #include "Confusion.h"
 #include "ContingencyTable.h"
+#include "MDSVec.h"
 #include "TableOfReal_extensions.h"
 #include "Proximity.h"
 #include "Distance.h"
@@ -91,34 +84,7 @@ integer Salience_correctNegatives (Salience me);
 
 void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension, bool garnish);
 
-/************************** class MDSVec ******************************/
-
-Thing_define (MDSVec, Daata) {
-	integer nProximities, nPoints;
-	double *proximity;
-	integer *iPoint, *jPoint;
-
-	void v_destroy () noexcept
-		override;
-};
-
-autoMDSVec MDSVec_create (integer nObjects);
-
-/************** class MDSVecs *********************************/
-
-Collection_define (MDSVecList, OrderedOf, MDSVec) {
-};
-
 autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, integer numberOfDimensions, int scaling);
-
-/********************* class ProximityList *******************************/
-
-Collection_define (ProximityList, OrderedOf, Proximity) {
-	TableOfRealList asTableOfRealList () {
-		return reinterpret_cast<TableOfRealList> (this);
-	}
-};
-
 
 #pragma mark - class ConfusionList
 
@@ -133,14 +99,6 @@ autoConfusion ConfusionList_sum (ConfusionList me);
 
 #pragma mark - class DistanceList
 
-Collection_define (DistanceList, OrderedOf, Distance) {
-	ProximityList asProximityList () {
-		return reinterpret_cast<ProximityList> (this);
-	}
-	TableOfRealList asTableOfRealList () {
-		return reinterpret_cast<TableOfRealList> (this);
-	}
-};
 
 
 #pragma mark - class ScalarProduct
@@ -162,17 +120,6 @@ Collection_define (ScalarProductList, OrderedOf, ScalarProduct) {
 
 #pragma mark - class Dissimilarity
 
-Thing_define (Dissimilarity, Proximity) {
-};
-
-autoDissimilarity Dissimilarity_create (integer numberOfPoints);
-
-double Dissimilarity_getAdditiveConstant (Dissimilarity me);
-/*
-	Get the best estimate for the additive constant:
-		"distance = dissimilarity + constant"
-	F. Cailliez (1983), The analytical solution of the additive constant problem, Psychometrika 48, 305-308.
-*/
 
 
 #pragma mark - class Transformator
@@ -225,24 +172,8 @@ autoMonotoneTransformator MonotoneTransformator_create (integer numberPoints);
 void MonotoneTransformator_setTiesProcessing (MonotoneTransformator, int tiesHandling);
 
 
-/*************** class DissimilyList ****************************/
-
-Collection_define (DissimilarityList, OrderedOf, Dissimilarity) {
-	ProximityList asProximityList () {
-		return reinterpret_cast<ProximityList> (this);
-	}
-	TableOfRealList asTableOfRealList () {
-		return reinterpret_cast<TableOfRealList> (this);
-	}
-};
-
-
 /**************** class Similarity *****************************/
 
-Thing_define (Similarity, Proximity) {
-};
-
-autoSimilarity Similarity_create (integer numberOfPoints);
 
 
 /************** KRUSKAL *********************************************/
@@ -450,21 +381,12 @@ autoSimilarity ConfigurationList_to_Similarity_cc (ConfigurationList me, Weight 
 autoDistance Dissimilarity_to_Distance (Dissimilarity me, int scale);
 /* with optional scaling with "additive constant" */
 
-autoDissimilarity Distance_to_Dissimilarity (Distance me);
-
 autoDistance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance thee, int tiesHandling);
 
 
 /************** DISSIMILARITY & CONFUSION ************************************/
 
 autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumConfusionLevel);
-
-
-/************** DISSIMILARITY & MDSVEC ***************************************/
-
-autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me);
-
-autoMDSVecList DissimilarityList_to_MDSVecList (DissimilarityList me);
 
 
 /************** DISSIMILARITY & SIMILARITY ***********************************/
@@ -486,7 +408,6 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmet
 
 autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me);
 
-autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int scale);
 
 
 /************** DistanceList & Configuration ************************************/

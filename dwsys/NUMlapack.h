@@ -45,49 +45,49 @@ We only ask that proper credit be given to the authors.
 Like all software, it is copyrighted. It is not trademarked, but we do ask
 the following:
 
-If you modify the source for these routines we ask that you change the name of the routine and comment the changes made to the original.
+If you modify the source for these routines we ask that you change the name
+of the routine and comment the changes made to the original.
 
 We will gladly answer any questions regarding the software. If a modification
 is done, however, it is the responsibility of the person who modified the
- outine to provide support.
-
+routine to provide support.
 */
 
 /*
-The following routines are modified C versions of LAPACK fortran sources.
-Although there also is an official C-version of these fortran routines the
-latter have severe drawbacks. They all imply call-by-reference and a fortran
+The following functions are modified C versions of LAPACK fortran sources.
+Although there is also an official C-version of these fortran routines the
+latter have severe drawbacks. They all imply call-by-reference and a fortran-
 like array structure (column-wise storage).
 We have changed the following things:
 
-1. Our matrices are all dimensioned a[1:m, 1:n] (contrary to standard C where
+1. Our matrices are all dimensioned a[1:m, 1:n] (contrary to standard C, where
    numbering starts at 0).
 2. All the matrices should be allocated as one contiguous block of storage (in C
-   only the rows need to be contiguously allocated). A number of procedures
-   depend critically on this fact: all procedures that approach the columns of a
+   only the rows need to be contiguously allocated). A number of functions
+   depend critically on this fact, namely all functions that approach the columns of a
    matrix as a vector by indexing its first element and then using an
    'increment' of size 'number of columns' to approach the next elements of the
    vector.
-3. In C, array storage is row wise. The leading dimension hack in many routines
-   therefor works opposite to the fortran implementation: it must be used for
+3. In C, array storage is row-wise. The leading dimension hack in many routines
+   therefore works opposite to the fortran implementation: it must be used for
    indexing COLUMNS instead of rows (lda =1 to index by row, lda=n to index by
    column). This also implies that the leading dimension of a matrix equals the
    number of columns.
    With this trick we can also address vectors from a matrix by column and by
-   row, however we have to use a little trick.
+   row; however, we have to use a little trick.
    In the fortran routines it often happens that a sub-row or a sub-column is
    passed to a subroutine in which it is referenced as a VECTOR, i.e.
    someArgument(i).
-   To copy this in C we have to translate
+   To copy this in C, we have to translate
 		call sub (.., A(I,J), ..)
    into:
 		sub (.., &A[i][j] - 1, ..)
    We do this with a macro: #define TOVEC(x) &(x) - 1, because our matrices
    are dimensioned as A[1:m,1:n]
 
-   For addressing submatrices in C we can not imitate the fortran trick
+   For addressing submatrices in C, we can not imitate the fortran trick
     	call somesub (..., A(I,J), lda,...), however.
-   We therefor use explicit indexing, i.e., we address the part to be updated:
+   We therefore use explicit indexing, i.e., we address the part to be updated:
    as in NUMapplyFactoredHouseholder (c, rb, re, cb, ce,...)
 		where rb/re and cb/ce refer to the start/end rows and columns,
 		respectively.
@@ -135,7 +135,7 @@ double NUMnorm2 (integer n, double *x, integer incx);
 	NUMvector_norm2 := sqrt (x'*x)
 */
 
-double NUMfrobeniusnorm (integer m, integer n, double **x);
+double NUMfrobeniusnorm (integer m, integer n, const double * const *x);
 /*
 	Returns frobenius norm of matrix sqrt (sum (i=1:m, j=1:n, x[i][j]^2))
 */
@@ -147,9 +147,8 @@ double NUMdotproduct (integer n, double x[], integer incx, double y[], integer i
 
 void NUMcopyElements (integer n, double x[], integer incx, double y[], integer incy);
 /*
-	Copies a vector, x, to a vector, y.
+	Copies a vector x, to a vector y.
 */
-
 
 void NUMdaxpy (integer n, double da, double x[], integer incx, double y[], integer incy);
 /*
@@ -163,14 +162,14 @@ void NUMvector_scale (integer n, double da, double dx[], integer incx);
 
 void NUMplaneRotation (integer n, double x[], integer incx, double y[], integer incy, double c, double s);
 /*
-	Rotates vector's x and y.
+	Rotates vectors x and y.
 */
 
 void NUMpermuteColumns (int forward, integer m, integer n, double **x, integer *perm);
 /*
 	Rearranges the columns of the m by n matrix X as specified
 	by the permutation perm[1], perm[2], ..., perm[n] of the integers 1, ..., n.
-	if forward != 0,  forward permutation:
+	if forward != 0, forward permutation:
 
 		x[*,perm[j]] is moved to x[*,j] for j = 1, 2, ..., n.
 
@@ -235,7 +234,6 @@ void NUMfindHouseholder (integer n, double *alpha, double x[], integer incx, dou
 
 void NUMfindGivens (double f, double g, double *cs, double *sn, double *r);
 /*
-
 	Generate a 2 dimensional rotation so that
 
 		[  cs  sn  ]  .  [ f ]  =  [ r ]   where cs**2 + sn**2 = 1.
@@ -298,8 +296,6 @@ void NUMapplyFactoredHouseholder (double **c, integer rb, integer re, integer cb
 			on entry, the m by n matrix C.
 			on exit, C is overwritten by the matrix H * C or C * H.
 */
-
-
 
 void NUMapplyFactoredHouseholders (double **c, integer rb, integer re, integer cb, integer ce, double **v,
 	integer rbv, integer rev, integer cbv, integer cev, integer incv, double tau[], int side, int trans);
@@ -367,7 +363,8 @@ void NUMapplyFactoredHouseholders (double **c, integer rb, integer re, integer c
 
 void NUMeigencmp22 (double a, double b, double c, double *rt1, double *rt2,
 	double *cs1, double *sn1 );
-/*  NUMeigencmp22 computes the eigendecomposition of a 2-by-2 symmetric matrix
+/*
+	Computes the eigendecomposition of a 2-by-2 symmetric matrix
 		[  a   b  ]
 		[  b   c  ].
 	on return, rt1 is the eigenvalue of larger absolute value, rt2 is the
@@ -392,7 +389,6 @@ void NUMeigencmp22 (double a, double b, double c, double *rt1, double *rt2,
 	underflow is harmless if the input data is 0 or exceeds
 	underflow_threshold / macheps.
 */
-
 
 void NUMhouseholderQR (double **a, integer rb, integer re, integer cb, integer ce, integer ncol, double tau[]);
 /*
@@ -485,7 +481,6 @@ void NUMhouseholderQRwithColumnPivoting (integer m, integer n, double **a, integ
 	then the jth column of P is the ith canonical unit vector.
 */
 
-
 void NUMhouseholderRQ (double **a, integer rb, integer re, integer cb, integer ce, double tau[]);
 /*
 	Computes an RQ factorization of a real m by n matrix A: A = R * Q.
@@ -527,7 +522,6 @@ void NUMhouseholderRQ (double **a, integer rb, integer re, integer cb, integer c
 	A(m-k+i,1:n-k+i-1), and tau in tau(i).
 */
 
-
 void NUMparallelVectors (integer n, double x[], integer incx, double y[], integer incy, double *svmin);
 /*
 	Given two column vectors x and y, let
@@ -559,12 +553,9 @@ void NUMparallelVectors (integer n, double x[], integer incx, double y[], intege
 	svmin	the smallest singular value of the n-by-2 matrix A = ( x y ).
 */
 
-
-
 void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 	double *snr, double *csr, double *snl, double *csl);
 /*
-
 	Computes the SVD of a 2x2 triangular matrix:
 	[ csl snl ] . [ f  g ] . [ csr -snr ] = [ svmax  0 ]
 	[-snl csl ]   [ 0  h ]   [ snr  csr]    [ 0  svmin ]
@@ -615,11 +606,9 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 	SIAM J. Sci. Comput. 14, 1464 - 1486.
 */
 
-
 void NUMgsvdcmp22 (int upper, int product, double a1, double a2, double a3, double b1, double b2, double b3,
 	double *csu, double *snu, double *csv, double *snv, double *csq, double *snq);
 /*
-
 	Compute 2-by-2 orthogonal matrices U, V and Q, such
 	that if (upper) then
 
@@ -667,10 +656,8 @@ void NUMgsvdcmp22 (int upper, int product, double a1, double a2, double a3, doub
 
 */
 
-
 void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax );
 /*
-
 	Compute the singular values of the 2-by-2 triangular matrix
 		[  f   g  ]
 		[  0   h  ].
@@ -706,7 +693,6 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax );
 	the underflow threshold.
 
 */
-
 
 void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b, integer p,
 	int product, integer k, integer l, double tola, double tolb, double *alpha, double *beta,
@@ -885,7 +871,6 @@ void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b, 
 	and R1 is an l-by-l nonsingular upper triangular matrix.
 */
 
-
 void NUMmatricesToUpperTriangularForms (double **a, integer m, integer n, double **b, integer p,
 	double tola, double tolb, integer *kk, integer *ll, double **u, double **v, double **q);
 /*
@@ -959,7 +944,6 @@ void NUMmatricesToUpperTriangularForms (double **a, integer m, integer n, double
 	to detect the effective numerical rank of the A matrix.
 	It may be replaced by a better rank determination strategy.
 */
-
 
 void NUMgsvdcmp (double **a, integer m, integer n, double **b, integer p, int product, integer *k, integer *l,
 	double *alpha, double *beta, double **u, double **v, double **q, int invertR);
@@ -1108,7 +1092,6 @@ void NUMgsvdcmp (double **a, integer m, integer n, double **b, integer p, int pr
 void NUMtriangularInverse (int upper, int unitDiagonal, integer n, double **a);
 /*
 	Computes inverse of triangular matrix.
-
 */
 
 #endif /* _NUMlapack_h_ */

@@ -535,17 +535,13 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 				"(The number of data points was less than the number of variables.)");
 		}
 		autoSSCP thee = SSCP_create (numberOfColumns);
-		autoNUMmatrix<double> v (1, numberOfRows, 1, numberOfColumns);
+		autoMAT v = MATraw (numberOfRows, numberOfColumns);
 
-		integer nvalidrows = 0;
-		for (integer i = 1; i <= numberOfRows; i ++) {
-			nvalidrows ++;
-			for (integer j = 1; j <= numberOfColumns; j ++) {
+		for (integer i = 1; i <= numberOfRows; i ++)
+			for (integer j = 1; j <= numberOfColumns; j ++)
 				v [i] [j] = my data [rowb + i - 1] [colb + j - 1];
-			}
-		}
 
-		NUMcentreColumns (v.peek(), 1, numberOfRows, 1, numberOfColumns, thy centroid);
+		MATcentreEachColumn_inplace (v.get(), thy centroid);
 
 		SSCP_setNumberOfObservations (thee.get(), numberOfRows);
 

@@ -160,7 +160,7 @@ double Pitch_getStrengthAtTime (Pitch me, double time, kPitch_unit unit, bool in
 }
 
 integer Pitch_countVoicedFrames (Pitch me) {
-	return Sampled_countDefinedSamples (me, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
+	return Sampled_countDefinedSamples (me, 0.0, 0.0, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
 }
 
 double Pitch_getMean (Pitch me, double tmin, double tmax, kPitch_unit unit) {
@@ -173,9 +173,8 @@ double Pitch_getMeanStrength (Pitch me, double tmin, double tmax, int strengthUn
 
 double Pitch_getQuantile (Pitch me, double tmin, double tmax, double quantile, kPitch_unit unit) {
 	double value = Sampled_getQuantile (me, tmin, tmax, quantile, Pitch_LEVEL_FREQUENCY, (int) unit);
-	if (value <= 0.0 && ! doesUnitAllowNegativeValues (unit)) {
+	if (value <= 0.0 && ! doesUnitAllowNegativeValues (unit))
 		value = undefined;
-	}
 	return value;
 }
 
@@ -297,78 +296,117 @@ integer Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope) {
 }
 
 void structPitch :: v_info () {
-	integer nVoiced;
-	autoNUMvector <double> frequencies (Sampled_getSortedValues (this, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ, & nVoiced), 1);
+	autoVEC frequencies = Sampled_getSortedValues (this, 0.0, 0.0, Pitch_LEVEL_FREQUENCY, (int) kPitch_unit::HERTZ);
 	structDaata :: v_info ();
 	MelderInfo_writeLine (U"Time domain:");
-	MelderInfo_writeLine (U"   Start time: ", xmin, U" seconds");
-	MelderInfo_writeLine (U"   End time: ", xmax, U" seconds");
-	MelderInfo_writeLine (U"   Total duration: ", xmax - xmin, U" seconds");
+	MelderInfo_writeLine (U"   Start time: ", our xmin, U" seconds");
+	MelderInfo_writeLine (U"   End time: ", our xmax, U" seconds");
+	MelderInfo_writeLine (U"   Total duration: ", our xmax - our xmin, U" seconds");
 	MelderInfo_writeLine (U"Time sampling:");
-	MelderInfo_writeLine (U"   Number of frames: ", nx, U" (", nVoiced, U" voiced)");
-	MelderInfo_writeLine (U"   Time step: ", dx, U" seconds");
-	MelderInfo_writeLine (U"   First frame centred at: ", x1, U" seconds");
-	MelderInfo_writeLine (U"Ceiling at: ", ceiling, U" Hz");
+	MelderInfo_writeLine (U"   Number of frames: ", our nx, U" (", frequencies.size, U" voiced)");
+	MelderInfo_writeLine (U"   Time step: ", our dx, U" seconds");
+	MelderInfo_writeLine (U"   First frame centred at: ", our x1, U" seconds");
+	MelderInfo_writeLine (U"Ceiling at: ", our ceiling, U" Hz");
 
-	if (nVoiced >= 1) {   // quantiles
-		double quantile10, quantile16, quantile50, quantile84, quantile90;
-		quantile10 = NUMquantile (nVoiced, frequencies.peek(), 0.10);
-		quantile16 = NUMquantile (nVoiced, frequencies.peek(), 0.16);
-		quantile50 = NUMquantile (nVoiced, frequencies.peek(), 0.50);   // median
-		quantile84 = NUMquantile (nVoiced, frequencies.peek(), 0.84);
-		quantile90 = NUMquantile (nVoiced, frequencies.peek(), 0.90);
+	if (frequencies.size > 0) {   // quantiles
+		double quantile10 = NUMquantile (frequencies.get(), 0.10);
+		double quantile16 = NUMquantile (frequencies.get(), 0.16);
+		double quantile50 = NUMquantile (frequencies.get(), 0.50);   // median
+		double quantile84 = NUMquantile (frequencies.get(), 0.84);
+		double quantile90 = NUMquantile (frequencies.get(), 0.90);
 		MelderInfo_writeLine (U"\nEstimated quantiles:");
-		MelderInfo_write (U"   10% = ", Melder_single (quantile10), U" Hz = ", Melder_single (NUMhertzToMel (quantile10)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile10)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile10)), U" ERB");
-		MelderInfo_write (U"   16% = ", Melder_single (quantile16), U" Hz = ", Melder_single (NUMhertzToMel (quantile16)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile16)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile16)), U" ERB");
-		MelderInfo_write (U"   50% = ", Melder_single (quantile50), U" Hz = ", Melder_single (NUMhertzToMel (quantile50)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile50)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile50)), U" ERB");
-		MelderInfo_write (U"   84% = ", Melder_single (quantile84), U" Hz = ", Melder_single (NUMhertzToMel (quantile84)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile84)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile84)), U" ERB");
-		MelderInfo_write (U"   90% = ", Melder_single (quantile90), U" Hz = ", Melder_single (NUMhertzToMel (quantile90)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (quantile90)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (quantile90)), U" ERB");
-		if (nVoiced > 1) {
-			double corr = sqrt (nVoiced / (nVoiced - 1.0));
+		MelderInfo_writeLine (U"   10% = ",
+				Melder_single (quantile10), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile10)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile10)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile10)), U" ERB");
+		MelderInfo_writeLine (U"   16% = ",
+				Melder_single (quantile16), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile16)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile16)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile16)), U" ERB");
+		MelderInfo_writeLine (U"   50% = ",
+				Melder_single (quantile50), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile50)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile50)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile50)), U" ERB");
+		MelderInfo_writeLine (U"   84% = ",
+				Melder_single (quantile84), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile84)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile84)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile84)), U" ERB");
+		MelderInfo_write (U"   90% = ",
+				Melder_single (quantile90), U" Hz = ",
+				Melder_single (NUMhertzToMel (quantile90)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (quantile90)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (quantile90)), U" ERB");
+		if (frequencies.size > 1) {
+			double correction = sqrt (frequencies.size / (frequencies.size - 1.0));
 			MelderInfo_writeLine (U"\nEstimated spreading:");
-			MelderInfo_write (U"   84%-median = ", Melder_half ((quantile84 - quantile50) * corr), U" Hz = ", Melder_half ((NUMhertzToMel (quantile84) - NUMhertzToMel (quantile50)) * corr), U" Mel = ");
-			MelderInfo_writeLine (Melder_half ((NUMhertzToSemitones (quantile84) - NUMhertzToSemitones (quantile50)) * corr), U" semitones = ", Melder_half ((NUMhertzToErb (quantile84) - NUMhertzToErb (quantile50)) * corr), U" ERB");
-			MelderInfo_write (U"   median-16% = ", Melder_half ((quantile50 - quantile16) * corr), U" Hz = ", Melder_half ((NUMhertzToMel (quantile50) - NUMhertzToMel (quantile16)) * corr), U" Mel = ");
-			MelderInfo_writeLine (Melder_half ((NUMhertzToSemitones (quantile50) - NUMhertzToSemitones (quantile16)) * corr), U" semitones = ", Melder_half ((NUMhertzToErb (quantile50) - NUMhertzToErb (quantile16)) * corr), U" ERB");
-			MelderInfo_write (U"   90%-10% = ", Melder_half ((quantile90 - quantile10) * corr), U" Hz = ", Melder_half ((NUMhertzToMel (quantile90) - NUMhertzToMel (quantile10)) * corr), U" Mel = ");
-			MelderInfo_writeLine (Melder_half ((NUMhertzToSemitones (quantile90) - NUMhertzToSemitones (quantile10)) * corr), U" semitones = ", Melder_half ((NUMhertzToErb (quantile90) - NUMhertzToErb (quantile10)) * corr), U" ERB");
+			MelderInfo_writeLine (U"   84%-median = ",
+					Melder_half ((quantile84 - quantile50) * correction), U" Hz = ",
+					Melder_half ((NUMhertzToMel (quantile84) - NUMhertzToMel (quantile50)) * correction), U" Mel = ",
+					Melder_half ((NUMhertzToSemitones (quantile84) - NUMhertzToSemitones (quantile50)) * correction), U" semitones = ",
+					Melder_half ((NUMhertzToErb (quantile84) - NUMhertzToErb (quantile50)) * correction), U" ERB");
+			MelderInfo_writeLine (U"   median-16% = ",
+					Melder_half ((quantile50 - quantile16) * correction), U" Hz = ",
+					Melder_half ((NUMhertzToMel (quantile50) - NUMhertzToMel (quantile16)) * correction), U" Mel = ",
+					Melder_half ((NUMhertzToSemitones (quantile50) - NUMhertzToSemitones (quantile16)) * correction), U" semitones = ",
+					Melder_half ((NUMhertzToErb (quantile50) - NUMhertzToErb (quantile16)) * correction), U" ERB");
+			MelderInfo_writeLine (U"   90%-10% = ",
+					Melder_half ((quantile90 - quantile10) * correction), U" Hz = ",
+					Melder_half ((NUMhertzToMel (quantile90) - NUMhertzToMel (quantile10)) * correction), U" Mel = ",
+					Melder_half ((NUMhertzToSemitones (quantile90) - NUMhertzToSemitones (quantile10)) * correction), U" semitones = ",
+					Melder_half ((NUMhertzToErb (quantile90) - NUMhertzToErb (quantile10)) * correction), U" ERB");
 		}
 	}
-	if (nVoiced >= 1) {   // extrema, range, mean and standard deviation
+	if (frequencies.size > 0) {   // extrema, range, mean and standard deviation
 		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit::HERTZ, false);
 		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit::HERTZ, false);
-		double meanHertz, meanMel, meanSemitones, meanErb;
-		MelderInfo_write (U"\nMinimum ", Melder_single (minimum), U" Hz = ", Melder_single (NUMhertzToMel (minimum)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (minimum)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (minimum)), U" ERB");
-		MelderInfo_write (U"Maximum ", Melder_single (maximum), U" Hz = ", Melder_single (NUMhertzToMel (maximum)), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (NUMhertzToSemitones (maximum)), U" semitones above 100 Hz = ", Melder_single (NUMhertzToErb (maximum)), U" ERB");
-		MelderInfo_write (U"Range ", Melder_half (maximum - minimum), U" Hz = ", Melder_single (NUMhertzToMel (maximum) - NUMhertzToMel (minimum)), U" Mel = ");
-		MelderInfo_writeLine (Melder_half (NUMhertzToSemitones (maximum) - NUMhertzToSemitones (minimum)), U" semitones = ", Melder_half (NUMhertzToErb (maximum) - NUMhertzToErb (minimum)), U" ERB");
-		meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit::HERTZ);
-		meanMel = Pitch_getMean (this, 0, 0, kPitch_unit::MEL);
-		meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit::SEMITONES_100);
-		meanErb = Pitch_getMean (this, 0, 0, kPitch_unit::ERB);
-		MelderInfo_write (U"Average: ", Melder_single (meanHertz), U" Hz = ", Melder_single (meanMel), U" Mel = ");
-		MelderInfo_writeLine (Melder_single (meanSemitones), U" semitones above 100 Hz = ", Melder_single (meanErb), U" ERB");
-		if (nVoiced >= 2) {
+		MelderInfo_writeLine (U"\nMinimum ",
+				Melder_single (minimum), U" Hz = ",
+				Melder_single (NUMhertzToMel (minimum)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (minimum)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (minimum)), U" ERB");
+		MelderInfo_writeLine (U"Maximum ",
+				Melder_single (maximum), U" Hz = ",
+				Melder_single (NUMhertzToMel (maximum)), U" Mel = ",
+				Melder_single (NUMhertzToSemitones (maximum)), U" semitones above 100 Hz = ",
+				Melder_single (NUMhertzToErb (maximum)), U" ERB");
+		MelderInfo_writeLine (U"Range ",
+				Melder_half (maximum - minimum), U" Hz = ",
+				Melder_single (NUMhertzToMel (maximum) - NUMhertzToMel (minimum)), U" Mel = ",
+				Melder_half (NUMhertzToSemitones (maximum) - NUMhertzToSemitones (minimum)), U" semitones = ",
+				Melder_half (NUMhertzToErb (maximum) - NUMhertzToErb (minimum)), U" ERB");
+		double meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit::HERTZ);
+		double meanMel = Pitch_getMean (this, 0, 0, kPitch_unit::MEL);
+		double meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit::SEMITONES_100);
+		double meanErb = Pitch_getMean (this, 0, 0, kPitch_unit::ERB);
+		MelderInfo_writeLine (U"Average: ",
+				Melder_single (meanHertz), U" Hz = ",
+				Melder_single (meanMel), U" Mel = ",
+				Melder_single (meanSemitones), U" semitones above 100 Hz = ",
+				Melder_single (meanErb), U" ERB");
+		if (frequencies.size > 1) {
 			double stdevHertz = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::HERTZ);
 			double stdevMel = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::MEL);
 			double stdevSemitones = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::SEMITONES_100);
 			double stdevErb = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit::ERB);
-			MelderInfo_write (U"Standard deviation: ", Melder_half (stdevHertz), U" Hz = ", Melder_half (stdevMel), U" Mel = ");
-			MelderInfo_writeLine (Melder_half (stdevSemitones), U" semitones = ", Melder_half (stdevErb), U" ERB");
+			MelderInfo_writeLine (U"Standard deviation: ",
+					Melder_half (stdevHertz), U" Hz = ",
+					Melder_half (stdevMel), U" Mel = ",
+					Melder_half (stdevSemitones), U" semitones = ",
+					Melder_half (stdevErb), U" ERB");
 		}
 	}
-	if (nVoiced > 1) {   // variability: mean absolute slope
+	if (frequencies.size > 0) {   // variability: mean absolute slope
 		double slopeHertz, slopeMel, slopeSemitones, slopeErb, slopeWithoutOctaveJumps;
 		Pitch_getMeanAbsoluteSlope (this, & slopeHertz, & slopeMel, & slopeSemitones, & slopeErb, & slopeWithoutOctaveJumps);
-		MelderInfo_write (U"\nMean absolute slope: ", Melder_half (slopeHertz), U" Hz/s = ", Melder_half (slopeMel), U" Mel/s = ");
-		MelderInfo_writeLine (Melder_half (slopeSemitones), U" semitones/s = ", Melder_half (slopeErb), U" ERB/s");
+		MelderInfo_writeLine (U"\nMean absolute slope: ",
+				Melder_half (slopeHertz), U" Hz/s = ",
+				Melder_half (slopeMel), U" Mel/s = ",
+				Melder_half (slopeSemitones), U" semitones/s = ",
+				Melder_half (slopeErb), U" ERB/s");
 		MelderInfo_writeLine (U"Mean absolute slope without octave jumps: ", Melder_half (slopeWithoutOctaveJumps), U" semitones/s");
 	}
 }

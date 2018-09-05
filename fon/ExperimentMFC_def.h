@@ -173,7 +173,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Daata)
 	oo_ENDFROM
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (samplePeriod)
-		oo_INT16 (numberOfChannels)
+		oo_INTEGER (numberOfChannels)
 		oo_BOOLEAN (pausing)
 		oo_INTEGER (trial)
 		oo_INTEGER (numberOfTrials)

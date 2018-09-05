@@ -109,48 +109,49 @@ double Sampled_getValueAtX (Sampled me, double x, integer ilevel, int unit, bool
 	return Sampled_getValueAtSample (me, Sampled_xToNearestIndex (me, x), ilevel, unit);
 }
 
-integer Sampled_countDefinedSamples (Sampled me, integer ilevel, int unit) {
+static integer autoWindowDomainSamples (Sampled me, double *inout_xmin, double *inout_xmax, integer *out_imin, integer *out_imax) {
+	Function_unidirectionalAutowindow (me, inout_xmin, inout_xmax);
+	if (! Function_intersectRangeWithDomain (me, inout_xmin, inout_xmax)) return 0;
+	return Sampled_getWindowSamples (me, *inout_xmin, *inout_xmax, out_imin, out_imax);
+}
+
+integer Sampled_countDefinedSamples (Sampled me, double xmin, double xmax, integer ilevel, int unit) {
+	integer imin, imax;
+	integer numberOfFrames = autoWindowDomainSamples (me, & xmin, & xmax, & imin, & imax);
+	if (numberOfFrames < 1)
+		return 0;
 	integer numberOfDefinedSamples = 0;
-	for (integer isamp = 1; isamp <= my nx; isamp ++) {
+	for (integer isamp = imin; isamp <= imax; isamp ++) {
 		double value = my v_getValueAtSample (isamp, ilevel, unit);
-		if (isundef (value)) continue;
-		numberOfDefinedSamples += 1;
+		if (isdefined (value))
+			numberOfDefinedSamples += 1;
 	}
 	return numberOfDefinedSamples;
 }
 
-double * Sampled_getSortedValues (Sampled me, integer ilevel, int unit, integer *return_numberOfValues) {
-	integer isamp, numberOfDefinedSamples = 0;
-	autoNUMvector <double> values (1, my nx);
-	for (isamp = 1; isamp <= my nx; isamp ++) {
+autoVEC Sampled_getSortedValues (Sampled me, double xmin, double xmax, integer ilevel, int unit) {
+	integer numberOfDefinedSamples = Sampled_countDefinedSamples (me, xmin, xmax, ilevel, unit);
+	if (numberOfDefinedSamples == 0)
+		return autoVEC();
+	autoVEC definedValues = VECraw (numberOfDefinedSamples);
+	integer imin, imax;
+	autoWindowDomainSamples (me, & xmin, & xmax, & imin, & imax);
+	integer definedSampleNumber = 0;
+	for (integer isamp = imin; isamp <= imax; isamp ++) {
 		double value = my v_getValueAtSample (isamp, ilevel, unit);
-		if (isundef (value)) continue;
-		values [++ numberOfDefinedSamples] = value;
+		if (isdefined (value))
+			definedValues [++ definedSampleNumber] = value;
 	}
-	if (numberOfDefinedSamples) NUMsort_d (numberOfDefinedSamples, values.peek());
-	if (return_numberOfValues) *return_numberOfValues = numberOfDefinedSamples;
-	return values.transfer();
+	Melder_assert (definedSampleNumber == numberOfDefinedSamples);
+	VECsort_inplace (definedValues.get());
+	return definedValues;
 }
 
 double Sampled_getQuantile (Sampled me, double xmin, double xmax, double quantile, integer ilevel, int unit) {
 	try {
-		autoNUMvector <double> values (1, my nx);
-		Function_unidirectionalAutowindow (me, & xmin, & xmax);
-		if (! Function_intersectRangeWithDomain (me, & xmin, & xmax)) return undefined;
-		integer imin, imax, numberOfDefinedSamples = 0;
-		Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
-		for (integer i = imin; i <= imax; i ++) {
-			double value = my v_getValueAtSample (i, ilevel, unit);
-			if (isdefined (value)) {
-				values [++ numberOfDefinedSamples] = value;
-			}
-		}
-		double result = undefined;
-		if (numberOfDefinedSamples >= 1) {
-			NUMsort_d (numberOfDefinedSamples, values.peek());
-			result = NUMquantile (numberOfDefinedSamples, values.peek(), quantile);
-		}
-		return result;
+		autoVEC values = Sampled_getSortedValues (me, xmin, xmax, ilevel, unit);
+		if (values.size == 0) return undefined;
+		return NUMquantile (values.get(), quantile);
 	} catch (MelderError) {
 		Melder_throw (me, U": quantile not computed.");
 	}

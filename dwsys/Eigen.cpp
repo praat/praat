@@ -221,7 +221,7 @@ void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
 	}	
 	MAT eigenvectors (my eigenvectors, my numberOfEigenvalues, my dimension);
 	VEC eigenvalues (my eigenvalues, my numberOfEigenvalues);
-	MATcopy_inplace (eigenvectors, a);
+	MATtranspose_preallocated (eigenvectors, a);
 	MAT_getEigenSystemFromSymmetricMatrix_inplace (eigenvectors, true, eigenvalues, false);
 }
 

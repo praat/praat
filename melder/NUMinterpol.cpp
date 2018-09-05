@@ -168,9 +168,9 @@ void NUM_viterbi (
 	void (*putResult) (integer iframe, integer place, void *closure),
 	void *closure)
 {
-	autoNUMmatrix <double> delta (1, numberOfFrames, 1, maxnCandidates);
-	autoNUMmatrix <integer> psi (1, numberOfFrames, 1, maxnCandidates);
-	autoNUMvector <integer> numberOfCandidates (1, numberOfFrames);
+	autoMAT delta = MATraw (numberOfFrames, maxnCandidates);
+	autoINTMAT psi = INTMATraw (numberOfFrames, maxnCandidates);
+	autoINTVEC numberOfCandidates = INTVECraw (numberOfFrames);
 	for (integer iframe = 1; iframe <= numberOfFrames; iframe ++) {
 		numberOfCandidates [iframe] = getNumberOfCandidates (iframe, closure);
 		for (integer icand = 1; icand <= numberOfCandidates [iframe]; icand ++)
@@ -192,8 +192,8 @@ void NUM_viterbi (
 		}
 	}
 	/*
-	 * Find the end of the most probable path.
-	 */
+		Find the end of the most probable path.
+	*/
 	integer place;
 	double maximum = delta [numberOfFrames] [place = 1];
 	for (integer icand = 2; icand <= numberOfCandidates [numberOfFrames]; icand ++) {
@@ -201,8 +201,8 @@ void NUM_viterbi (
 			maximum = delta [numberOfFrames] [place = icand];
 	}
 	/*
-	 * Backtrack.
-	 */
+		Backtrack.
+	*/
 	for (integer iframe = numberOfFrames; iframe >= 1; iframe --) {
 		putResult (iframe, place, closure);
 		place = psi [iframe] [place];
@@ -214,7 +214,7 @@ void NUM_viterbi (
 struct parm2 {
 	integer ntrack;
 	integer ncomb;
-	integer **indices;
+	constINTMAT indices;
 	double (*getLocalCost) (integer iframe, integer icand, integer itrack, void *closure);
 	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, integer itrack, void *closure);
 	void (*putResult) (integer iframe, integer place, integer itrack, void *closure);
@@ -255,7 +255,6 @@ void NUM_viterbi_multi (
 	void *closure)
 {
 	struct parm2 parm;
-	parm.indices = nullptr;
 
 	if (ntrack > ncand) Melder_throw (U"(NUM_viterbi_multi:) "
 		U"Number of tracks (", ntrack, U") should not exceed number of candidates (", ncand, U").");
@@ -266,28 +265,27 @@ void NUM_viterbi_multi (
 	parm. ncomb = ncomb;
 
 	/*
-	 * For ncand == 5 and ntrack == 3, parm.indices is going to contain:
-	 *   1 2 3
-	 *   1 2 4
-	 *   1 2 5
-	 *   1 3 4
-	 *   1 3 5
-	 *   1 4 5
-	 *   2 3 4
-	 *   2 3 5
-	 *   2 4 5
-	 *   3 4 5
-	 */
-	autoNUMmatrix <integer> indices (1, parm. ncomb, 1, ntrack);
-	parm.indices = indices.peek();
-	autoNUMvector <integer> icand (1, ntrack);
+		For ncand == 5 and ntrack == 3, parm.indices is going to contain:
+			1 2 3
+			1 2 4
+			1 2 5
+			1 3 4
+			1 3 5
+			1 4 5
+			2 3 4
+			2 3 5
+			2 4 5
+			3 4 5
+	*/
+	autoINTMAT indices = INTMATzero (ncomb, ntrack);
+	autoINTVEC icand = INTVECraw (ntrack);
 	for (integer itrack = 1; itrack <= ntrack; itrack ++)
 		icand [itrack] = itrack;   // start out with "1 2 3"
 	integer jcomb = 0;
 	for (;;) {
 		jcomb ++;
 		for (integer itrack = 1; itrack <= ntrack; itrack ++)
-			parm. indices [jcomb] [itrack] = icand [itrack];
+			indices [jcomb] [itrack] = icand [itrack];
 		integer itrack = ntrack;
 		for (; itrack >= 1; itrack --) {
 			if (++ icand [itrack] <= ncand - (ntrack - itrack)) {
@@ -299,6 +297,7 @@ void NUM_viterbi_multi (
 		if (itrack == 0) break;
 	}
 	Melder_assert (jcomb == ncomb);
+	parm. indices = indices.get();
 	parm. getLocalCost = getLocalCost;
 	parm. getTransitionCost = getTransitionCost;
 	parm. putResult = putResult;

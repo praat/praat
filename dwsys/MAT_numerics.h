@@ -17,21 +17,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline static void MATcopyTranspose_inplace (MAT x, constMAT source) {
-	Melder_assert (x.nrow == source.ncol && x.ncol == source.nrow);
-	for (integer irow = 1; irow <= source.nrow; irow ++)
-		for (integer icol = 1; icol <= source.ncol; icol ++)
-			x [icol] [irow] = source [irow] [icol];
-}
-
-inline static autoMAT MATtranspose (constMAT x) {
-	autoMAT result = MATraw (x.nrow, x.ncol);
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= x.ncol; icol ++)
-			result [icol] [irow] = x [irow] [icol];
-	return result;
-}
-
 bool MAT_isSymmetric (constMAT x);
 /*
 	Returns true if the matrix is symmetric else false.

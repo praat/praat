@@ -361,9 +361,8 @@ static void computeViolationMarks (OTGrammarCandidate me) {
 		if (isStress (p [0])) {
 			for (const char32 *q = p + 1; q != lastSlash; q ++) {
 				if (isSyllable (q [0])) {
-					if (isStress (q [1])) {
+					if (isStress (q [1]))
 						my marks [Clash] ++;
-					}
 					break;
 				}
 			}
@@ -376,9 +375,8 @@ static void computeViolationMarks (OTGrammarCandidate me) {
 			if (isStress (p [1])) {
 				depth = 0;
 			} else {
-				if (++ depth > 2) {
+				if (++ depth > 2)
 					my marks [Lapse] ++;
-				}
 			}
 		}
 	}
@@ -400,14 +398,13 @@ static void replaceOutput (OTGrammarCandidate me) {
 	char32 newOutput [100], *q = & newOutput [0];
 	for (const char32 *p = & my output [0]; *p != U'\0'; p ++) {
 		if (p [0] == U' ') {
-			*q ++ = p [-1] == U']' || p [1] == U'/' ? U' ' : U'.';
+			*q ++ = ( p [-1] == U']' || p [1] == U'/' ? U' ' : U'.' );
 		} else if (isSyllable (p [0])) {
 			*q ++ = U'c';
 			if (abstract) {
 				*q ++ = U'V';
-				if (isStress (p [1])) {
+				if (isStress (p [1]))
 					*q ++ = p [1];
-				}
 				if (p [0] == U'L') {
 					;
 				} else if (p [0] == U'H') {
@@ -468,9 +465,8 @@ autoOTGrammar OTGrammar_create_metrics (
 		my tableaus = NUMvector <structOTGrammarTableau> (1, numberOfTableaus);
 		for (int numberOfSyllables = 2; numberOfSyllables <= 7; numberOfSyllables ++) {
 			integer numberOfUnderlyingWeightPatterns = numberOfSyllables > 5 ? 1 : Melder_iround (pow (maximumUnderlyingWeight, numberOfSyllables));
-			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++) {
-				underlyingWeightPattern [isyll] = 1;   /* L or cv */
-			}
+			for (integer isyll = 1; isyll <= numberOfSyllables; isyll ++)
+				underlyingWeightPattern [isyll] = 1;   // L or cv
 			for (integer iweightPattern = 1; iweightPattern <= numberOfUnderlyingWeightPatterns; iweightPattern ++) {
 				fillTableau (& my tableaus [++ my numberOfTableaus], numberOfSyllables, underlyingWeightPattern, overtFormsHaveSecondaryStress, includeCodas);
 				/*
@@ -488,9 +484,8 @@ autoOTGrammar OTGrammar_create_metrics (
 		/* Compute violation marks. */
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+			for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++)
 				computeViolationMarks (& tableau -> candidates [icand]);
-			}
 		}
 		OTGrammar_checkIndex (me.get());
 		OTGrammar_newDisharmonies (me.get(), 0.0);
@@ -499,9 +494,12 @@ autoOTGrammar OTGrammar_create_metrics (
 		} else {
 			OTGrammar_removeConstraint (me.get(), U"FtNonfinal");
 		}
-		if (! includeFootBimoraic) OTGrammar_removeConstraint (me.get(), U"FtBimor");
-		if (! includeFootBisyllabic) OTGrammar_removeConstraint (me.get(), U"FtBisyl");
-		if (! includePeripheral) OTGrammar_removeConstraint (me.get(), U"Peripheral");
+		if (! includeFootBimoraic)
+			OTGrammar_removeConstraint (me.get(), U"FtBimor");
+		if (! includeFootBisyllabic)
+			OTGrammar_removeConstraint (me.get(), U"FtBisyl");
+		if (! includePeripheral)
+			OTGrammar_removeConstraint (me.get(), U"Peripheral");
 		if (nonfinalityConstraint == 1) {
 			OTGrammar_removeConstraint (me.get(), U"MainNonfinal");
 			OTGrammar_removeConstraint (me.get(), U"HeadNonfinal");
@@ -523,9 +521,8 @@ autoOTGrammar OTGrammar_create_metrics (
 		if (includeCodas) {
 			for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 				OTGrammarTableau tableau = & my tableaus [itab];
-				for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+				for (integer icand = 1; icand <= tableau -> numberOfCandidates; icand ++)
 					replaceOutput (& tableau -> candidates [icand]);
-				}
 			}
 		}
 		return me;

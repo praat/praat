@@ -78,7 +78,7 @@ double NUMnorm2 (integer n, double *x, integer incx) {
 }
 
 
-double NUMfrobeniusnorm (integer m, integer n, double **x) {
+double NUMfrobeniusnorm (integer m, integer n, const double * const *x) {
 	if (n < 1 || m < 1) {
 		return 0;
 	}
@@ -95,7 +95,7 @@ double NUMfrobeniusnorm (integer m, integer n, double **x) {
 					scale = absxi;
 				} else {
 					double t = absxi / scale;
-					ssq  += t * t;
+					ssq += t * t;
 				}
 			}
 		}

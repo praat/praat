@@ -108,7 +108,7 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	double wt;
 	
 	autoMAT data = MATraw (n, n);
-	MATcopyTranspose_inplace (data.get(), a); // lapack is fortran storage
+	MATtranspose_preallocated (data.get(), a); // lapack is fortran storage
 	autoVEC eigenvalues_re = VECraw (n);
 	autoVEC eigenvalues_im = VECraw(n);
 	autoMAT righteigenvectors = MATraw (right_nvecs, right_nvecs); // 1x1 if not needed

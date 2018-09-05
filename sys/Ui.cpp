@@ -251,7 +251,7 @@ static void UiField_widgetToValue (UiField me) {
 			if (owned) {
 				my numericMatrixValue. adoptFromAmbiguousOwner (result);
 			} else {
-				my numericMatrixValue = MATcopy (result);
+				my numericMatrixValue = matrixcopy (result);
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();
@@ -1269,7 +1269,7 @@ static void UiField_argToValue (UiField me, Stackel arg, Interpreter /* interpre
 				my numericMatrixValue. adoptFromAmbiguousOwner (arg -> numericMatrix);
 				arg -> owned = false;
 			} else {
-				my numericMatrixValue = MATcopy (arg -> numericMatrix);
+				my numericMatrixValue = matrixcopy (arg -> numericMatrix);
 			}
 			if (my numericMatrixVariable)
 				*my numericMatrixVariable = my numericMatrixValue.get();

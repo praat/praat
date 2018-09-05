@@ -1104,7 +1104,7 @@ FORM (MODIFY_OTGrammar_PairDistribution_findPositiveWeights, U"OTGrammar & PairD
 	OK
 DO
 	MODIFY_FIRST_OF_TWO (OTGrammar, PairDistribution)
-		OTGrammar_PairDistribution_findPositiveWeights_e (me, you, weightFloor, marginOfSeparation);
+		OTGrammar_PairDistribution_findPositiveWeights (me, you, weightFloor, marginOfSeparation);
 	MODIFY_FIRST_OF_TWO_END
 }
 

@@ -1,6 +1,6 @@
 /* Artword.cpp
  *
- * Copyright (C) 1992-2009,2011,2015-2017 Paul Boersma
+ * Copyright (C) 1992-2009,2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,8 +133,7 @@ void Artword_intoArt (Artword me, Art art, double time) {
 void Artword_draw (Artword me, Graphics g, kArt_muscle muscle, bool garnish) {
 	int16 numberOfTargets = my data [(int) muscle]. numberOfTargets;
 	if (numberOfTargets > 0) {
-		autoNUMvector <double> x (1, numberOfTargets);
-		autoNUMvector <double> y (1, numberOfTargets);
+		auto x = VECraw (numberOfTargets), y = VECraw (numberOfTargets);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, my totalTime, -1.0, 1.0);
 		for (int16 i = 1; i <= numberOfTargets; i ++) {

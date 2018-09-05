@@ -4160,8 +4160,8 @@ FORM (REAL_PCA_getEqualityOfEigenvalues, U"PCA: Get equality of eigenvalues", U"
 DO
 	NUMBER_ONE (PCA)
 		double result, chisq, df;
-		PCA_getEqualityOfEigenvalues (me, fromEigenvalue,
-		toEigenvalue, conservativeTest, & result, & chisq, & df);
+		PCA_getEqualityOfEigenvalues (me, fromEigenvalue, toEigenvalue,
+				conservativeTest, & result, & chisq, & df);
 	NUMBER_ONE_END (U" (= probability, based on chisq = ", chisq, U" and df = ", df)
 }
 

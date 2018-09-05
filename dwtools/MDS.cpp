@@ -34,6 +34,7 @@
 #include "Matrix_extensions.h"
 #include "TableOfReal_extensions.h"
 #include "MDS.h"
+#include "Proximity_and_Distance.h"
 #include "SSCP.h"
 #include "PCA.h"
 
@@ -46,9 +47,6 @@ Thing_implement (RatioTransformator, Transformator, 0);
 Thing_implement (MonotoneTransformator, Transformator, 0);
 Thing_implement (ISplineTransformator, Transformator, 0);
 
-Thing_implement (MDSVec, Daata, 0);
-Thing_implement (MDSVecList, Ordered, 0);
-
 Thing_implement (Weight, TableOfReal, 0);
 Thing_implement (Salience, TableOfReal, 0);
 Thing_implement (ScalarProduct, TableOfReal, 0);
@@ -58,7 +56,6 @@ Thing_implement (ProximityList, TableOfRealList, 0);
 Thing_implement (ScalarProductList, TableOfRealList, 0);
 
 Thing_implement (DistanceList, ProximityList, 0);
-Thing_implement (Dissimilarity, Proximity, 0);
 Thing_implement (DissimilarityList, ProximityList, 0);
 Thing_implement (Similarity, Proximity, 0);
 
@@ -108,48 +105,6 @@ static integer NUMdmatrix_countZeros (double **m, integer nr, integer nc) {
 		}
 	}
 	return nZeros;
-}
-
-static void NUMsort3 (double *data, integer *iPoint, integer *jPoint, integer ifrom, integer ito, bool ascending) {
-	Melder_require (ifrom > 0 && ifrom <= ito, U"invalid range.");
-	
-	integer n = ito - ifrom + 1;
-	if (n == 1) {
-		return;
-	}
-	autoNUMvector<integer> indx (ifrom, ito);
-	autoNUMvector<double> atmp (ifrom, ito);
-	autoNUMvector<integer> itmp (ifrom, ito);
-	//NUMindexx (data + ifrom - 1, n, indx + ifrom - 1);
-	NUMindexx (& data [ifrom - 1], n, & indx [ifrom - 1]);
-	if (! ascending) {
-		for (integer j = ifrom; j <= ifrom + n / 2; j ++) {
-			integer tmp = indx [j];
-			indx [j] = indx [ito - j + ifrom];
-			indx [ito - j + ifrom] = tmp;
-		}
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		indx [j] += ifrom - 1;
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		atmp [j] = data [j];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		data [j] = atmp [indx [j]];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		itmp [j] = iPoint [j];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		iPoint [j] = itmp [indx [j]];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		itmp [j] = jPoint [j];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		jPoint [j] = itmp [indx [j]];
-	}
 }
 
 /************ ConfigurationList & Similarity **************************/
@@ -219,7 +174,7 @@ autoDistance structTransformator :: v_transform (MDSVec vec, Distance dist, Weig
 
 		// Absolute scaling
 
-		for (integer i = 1; i <= vec -> nProximities; i ++) {
+		for (integer i = 1; i <= vec -> numberOfProximities; i ++) {
 			integer ii = vec -> iPoint [i];
 			integer jj = vec -> jPoint [i];
 			thy data [ii] [jj] = thy data [jj] [ii] = vec -> proximity [i];
@@ -248,7 +203,7 @@ autoTransformator Transformator_create (integer numberOfPoints) {
 
 autoDistance Transformator_transform (Transformator me, MDSVec vec, Distance d, Weight w) {
 	try {
-		Melder_require (my numberOfPoints == vec -> nPoints && my numberOfPoints == d -> numberOfRows &&
+		Melder_require (my numberOfPoints == vec -> numberOfPoints && my numberOfPoints == d -> numberOfRows &&
 			d -> numberOfRows == w -> numberOfRows, U"Dimensions should agree.");
 		return my v_transform (vec, d, w);
 	} catch (MelderError) {
@@ -262,8 +217,8 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 
 	// Determine ratio (eq. 9.4)
 
-	double etaSq = 0.0, rho = 0.0;
-	for (integer i = 1; i <= vec -> nProximities; i ++) {
+	longdouble etaSq = 0.0, rho = 0.0;
+	for (integer i = 1; i <= vec -> numberOfProximities; i ++) {
 		integer ii = vec -> iPoint [i];
 		integer jj = vec -> jPoint [i];
 		double delta_ij = vec -> proximity [i], d_ij = d -> data [ii] [jj];
@@ -277,7 +232,7 @@ autoDistance structRatioTransformator :: v_transform (MDSVec vec, Distance d, We
 	Melder_require (etaSq > 0.0, U"Eta squared should not be zero.");
 	
 	our ratio = rho / etaSq;
-	for (integer i = 1; i <= vec -> nProximities; i ++) {
+	for (integer i = 1; i <= vec -> numberOfProximities; i ++) {
 		integer ii = vec -> iPoint [i];
 		integer jj = vec -> jPoint [i];
 		thy data [ii] [jj] = thy data [jj] [ii] = our ratio * vec -> proximity [i];
@@ -335,7 +290,7 @@ void structISplineTransformator :: v_destroy () noexcept {
 
 autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dist, Weight w) {
 	double tol = 1e-6;
-	integer itermax = 20, nx = vec -> nProximities;
+	integer itermax = 20, nx = vec -> numberOfProximities;
 	integer nKnots = numberOfInteriorKnots + order + order + 2;
 
 	autoDistance thee = Distance_create (dist -> numberOfRows);
@@ -718,66 +673,6 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, bool garnish) {
 
 /******** MDSVEC *******************************************/
 
-void structMDSVec :: v_destroy () noexcept {
-	NUMvector_free<double> (proximity, 1);
-	NUMvector_free<integer> (iPoint, 1);
-	NUMvector_free<integer> (jPoint, 1);
-	MDSVec_Parent :: v_destroy ();
-}
-
-autoMDSVec MDSVec_create (integer nPoints) {
-	try {
-		autoMDSVec me = Thing_new (MDSVec);
-		my nPoints = nPoints;
-		my nProximities = nPoints * (nPoints - 1) / 2;
-		my proximity = NUMvector<double> (1, my nProximities);
-		my iPoint = NUMvector<integer> (1, my nProximities);
-		my jPoint = NUMvector<integer> (1, my nProximities);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"MDSVec not created.");
-	}
-}
-
-autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me) {
-	try {
-		autoMDSVec thee = MDSVec_create (my numberOfRows);
-
-		integer k = 0;
-		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-			for (integer j = i + 1; j <= my numberOfColumns; j ++) {
-				double f = 0.5 * (my data [i] [j] + my data [j] [i]);
-				if (f > 0.0) {
-					k ++;
-					thy proximity [k] = f;
-					thy iPoint [k] = i;
-					thy jPoint [k] = j;
-				}
-			}
-		}
-		thy nProximities = k;
-		NUMsort3 (thy proximity, thy iPoint, thy jPoint, 1, k, true);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no MDSVec created.");
-	}
-}
-
-/*********************** MDSVECS *******************************************/
-
-autoMDSVecList DissimilarityList_to_MDSVecList (DissimilarityList me) {
-	try {
-		autoMDSVecList thee = MDSVecList_create ();
-		for (integer i = 1; i <= my size; i ++) {
-			autoMDSVec him = Dissimilarity_to_MDSVec (my at [i]);
-			Thing_setName (him.get(), Thing_getName (my at [i]));
-			thy addItem_move (him.move());
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no MDSVecs created.");
-	}
-}
 
 
 /**************************  CONFUSIONS **************************************/
@@ -805,117 +700,6 @@ autoScalarProduct ScalarProduct_create (integer numberOfPoints) {
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"ScalarProduct not created.");
-	}
-}
-
-
-/************* SCALARPRODUCTS **************************************/
-
-
-/******************  DISSIMILARITY **********************************/
-
-autoDissimilarity Dissimilarity_create (integer numberOfPoints) {
-	try {
-		autoDissimilarity me = Thing_new (Dissimilarity);
-		Proximity_init (me.get(), numberOfPoints);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Dissimilarity not created.");
-	}
-}
-
-static double Dissimilarity_getAverage (Dissimilarity me) {
-	longdouble sum = 0.0;
-	integer numberOfPositives = 0;
-	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-		for (integer j = i + 1; j <= my numberOfRows; j ++) {
-			double proximity = 0.5 * (my data [i] [j] + my data [j] [i]);
-			if (proximity > 0.0) {
-				numberOfPositives ++;
-				sum += proximity;
-			}
-		}
-	}
-	return numberOfPositives > 0 ? (double) sum / numberOfPositives : undefined;
-}
-
-double Dissimilarity_getAdditiveConstant (Dissimilarity me) {
-	double additiveConstant = undefined;
-	try {
-		integer nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
-		Melder_require (nPoints > 0, U"Matrix part should not be empty.");
-
-		// Return c = average dissimilarity in case of failure
-
-		additiveConstant = Dissimilarity_getAverage (me);
-		Melder_require (isdefined (additiveConstant), U"There are no positive dissimilarities.");
-		
-		autoMAT wd (nPoints, nPoints, kTensorInitializationType::ZERO);
-		autoMAT wdsqrt (nPoints, nPoints, kTensorInitializationType::ZERO);
-
-		// The matrices D & D1/2 with distances (squared and linear)
-
-		for (integer i = 1; i <= nPoints - 1; i ++) {
-			for (integer j = i + 1; j <= nPoints; j ++) {
-				double proximity = (my data [i] [j] + my data [j] [i]) / 2.0;
-				wdsqrt [j] [i] = wdsqrt [i] [j] = - proximity / 2.0; // djmw 20180830
-				wd [j] [i] = wd [i] [j] = - proximity * proximity / 2.0;
-			}
-		}
-
-		NUMdoubleCentre (wdsqrt.at, 1, nPoints, 1, nPoints); // -0.5 A D1/2 A
-		NUMdoubleCentre (wd.at, 1, nPoints, 1, nPoints); // -0.5 A D A
-
-		// Calculate the B matrix according to eq. 6
-		
-		autoMAT b (nPoints2, nPoints2, kTensorInitializationType::ZERO);
-
-		for (integer i = 1; i <= nPoints; i ++) {
-			for (integer j = 1; j <= nPoints; j ++) {
-				b [i] [nPoints + j] = 2.0 * wd [i] [j];
-				b [nPoints + i] [nPoints + j] = -4.0 * wdsqrt [i] [j];
-				b [nPoints + i] [i] = -1.0;
-			}
-		}
-
-		// Get eigenvalues
-		
-		autoVEC eigenvalues_re, eigenvalues_im;
-		MAT_getEigenSystemFromGeneralMatrix (b.get(), nullptr, nullptr, & eigenvalues_re, & eigenvalues_im);
-		
-		// Get largest real eigenvalue
-		double largestEigenvalue = - fabs (eigenvalues_re [1]);
-		integer numberOfRealEigenvalues = 0;
-		for (integer i = 1; i <= nPoints2; i ++) {
-			if (eigenvalues_im [i] == 0.0) {
-				++ numberOfRealEigenvalues;
-				if (eigenvalues_re [i] > largestEigenvalue)
-					largestEigenvalue = eigenvalues_re [i];
-			}
-		}
-		
-		Melder_require (largestEigenvalue >= 0, U"The largest eigenvalue should not be negative.");
-		
-		additiveConstant = largestEigenvalue;
-		return additiveConstant;
-	} catch (MelderError) {
-		Melder_throw (U"Additive constant not calculated.");
-	}
-}
-
-
-/***************  DISSIMILARITIES **************************************/
-
-
-/*************  SIMILARITY *****************************************/
-
-autoSimilarity Similarity_create (integer numberOfPoints) {
-	try {
-		autoSimilarity me = Thing_new (Similarity);
-		Proximity_init (me.get(), numberOfPoints);
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Similarity not created.");
 	}
 }
 
@@ -991,28 +775,6 @@ autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDiss
 	}
 }
 
-autoDistance Dissimilarity_to_Distance (Dissimilarity me, int scale) {
-	try {
-		double additiveConstant = 0.0;
-
-		autoDistance thee = Distance_create (my numberOfRows);
-		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		if (scale == MDS_ORDINAL) {
-			if (isundef (additiveConstant = Dissimilarity_getAdditiveConstant (me))) { //TODO can it be undef?
-				Melder_warning (U"Dissimilarity_to_Distance: could not determine \"additive constant\", the average dissimilarity was used as its value.");
-			}
-		}
-		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-			for (integer j = i + 1; j <= my numberOfColumns; j ++) {
-				double d = 0.5 * (my data [i] [j] + my data [j] [i]) + additiveConstant;
-				thy data [i] [j] = thy data [j] [i] = d;
-			}
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no Distance created.");
-	}
-}
 
 autoWeight Dissimilarity_to_Weight (Dissimilarity me) {
 	try {
@@ -1107,17 +869,6 @@ void Distance_Configuration_drawScatterDiagram (Distance me, Configuration him, 
 	Proximity_Distance_drawScatterDiagram (me, dist.get(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-autoDissimilarity Distance_to_Dissimilarity (Distance me) {
-	try {
-		autoDissimilarity thee = Dissimilarity_create (my numberOfRows);
-		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (U"Dissimilarity not created from Distance.");
-	}
-}
-
 autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDimensions) {
 	try {
 		Melder_require (numberOfDimensions <= my numberOfRows, U"Number of dimensions should not exceed ", my numberOfRows, U".");
@@ -1159,38 +910,6 @@ autoScalarProduct Distance_to_ScalarProduct (Distance me, bool normalize) {
 /**********  Configuration & ..... ***********************************/
 
 
-autoDistance Configuration_to_Distance (Configuration me) {
-	try {
-		autoDistance thee = Distance_create (my numberOfRows);
-		TableOfReal_copyLabels (me, thee.get(), 1, -1);
-		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
-			for (integer j = i + 1; j <= thy numberOfColumns; j ++) {
-				/*
-					first divide distance by maximum to prevent overflow when metric is a large number.
-					d = (x^n)^(1/n) may overflow if x>1 & n >>1 even if d would not overflow!
-					metric changed 24/11/97
-					my w [k] * pow (|i-j|) instead of pow (my w [k] * |i-j|)
-				*/
-				double dmax = 0.0;
-				for (integer k = 1; k <= my numberOfColumns; k ++) {
-					double dtmp  = fabs (my data [i] [k] - my data [j] [k]);
-					if (dtmp > dmax) dmax = dtmp;
-				}
-				longdouble d = 0.0;
-				if (dmax > 0.0) {
-					for (integer k = 1; k <= my numberOfColumns; k ++) {
-						double arg = fabs (my data [i] [k] - my data [j] [k]) / dmax;
-						d += my w [k] * pow (arg, my metric);
-					}
-				}
-				thy data [i] [j] = thy data [j] [i] = dmax * pow ((double) d, 1.0 / my metric);
-			}
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no Distance created.");
-	}
-}
 
 void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double size_mm, conststring32 mark, bool garnish) {
@@ -1252,7 +971,7 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 		autoDistanceList him = DistanceList_create ();
 		for (integer i = 1; i <= my size; i ++) {
 			MDSVec vec = my at [i];
-			Melder_require (vec -> nPoints == thy numberOfRows, U"Dimension of MDSVec and Distance should be equal.");
+			Melder_require (vec -> numberOfPoints == thy numberOfRows, U"Dimension of MDSVec and Distance should be equal.");
 			autoDistance fit = MDSVec_Distance_monotoneRegression (vec, thee, tiesHandling);
 			his addItem_move (fit.move());
 		}
@@ -1264,15 +983,15 @@ autoDistanceList MDSVecList_Distance_monotoneRegression (MDSVecList me, Distance
 
 autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesHandling) {
 	try {
-		integer nProximities = my nProximities;
-		Melder_require (thy numberOfRows == my nPoints, U"Distance and MDSVVec dimensions should agreee.");
-		autoVEC distance = VECraw (nProximities);
-		autoVEC fit = VECraw (nProximities);
+		integer numberOfProximities = my numberOfProximities;
+		Melder_require (thy numberOfRows == my numberOfPoints, U"Distance and MDSVVec dimensions should agreee.");
+		autoVEC distance = VECraw (numberOfProximities);
+		autoVEC fit = VECraw (numberOfProximities);
 		autoDistance him = Distance_create (thy numberOfRows);
 		TableOfReal_copyLabels (thee, him.get(), 1, 1);
 
 		integer *iPoint = my iPoint, *jPoint = my jPoint;
-		for (integer i = 1; i <= nProximities; i ++) {
+		for (integer i = 1; i <= numberOfProximities; i ++) {
 			distance [i] = thy data [iPoint [i]] [jPoint [i]];
 		}
 
@@ -1284,7 +1003,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 					Substitute average distance in each tie block
 			*/
 			integer ib = 1;
-			for (integer i = 2; i <= nProximities; i ++) {
+			for (integer i = 2; i <= numberOfProximities; i ++) {
 				if (my proximity [i] == my proximity [i - 1]) {
 					continue;
 				}
@@ -1306,11 +1025,11 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 			}
 		}
 
-		NUMmonotoneRegression (distance.at, nProximities, fit.at);
+		NUMmonotoneRegression (distance.at, numberOfProximities, fit.at);
 
 		// Fill Distance with monotone regressed distances
 
-		for (integer i = 1; i <= nProximities; i ++) {
+		for (integer i = 1; i <= numberOfProximities; i ++) {
 			integer ip = iPoint [i], jp = jPoint [i];
 			his data [ip] [jp] = his data [jp] [ip] = fit [i];
 		}
@@ -1320,7 +1039,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 		for (integer i = 1; i <= his numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= his numberOfColumns; j ++) {
 				if (his data [i] [j] == 0.0) {
-					his data [i] [j] = his data [j] [i] = fit [nProximities];
+					his data [i] [j] = his data [j] [i] = fit [numberOfProximities];
 				}
 			}
 		}
@@ -1539,22 +1258,6 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no DissimilaryList created.");
-	}
-}
-
-autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, int measurementLevel) {
-	try {
-		autoDistanceList thee = DistanceList_create ();
-
-		for (integer i = 1; i <= my size; i ++) {
-			autoDistance him = Dissimilarity_to_Distance (my at [i], measurementLevel == MDS_ORDINAL);
-			conststring32 name = Thing_getName (my at [i]);
-			Thing_setName (him.get(), name ? name : U"untitled");
-			thy addItem_move (him.move());
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no DistanceList created.");
 	}
 }
 
@@ -1950,7 +1653,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity 
 
 autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, MDS_ABSOLUTE);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Absolute);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_absolute_mds (me, cstart.get(), w, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c;
@@ -1961,7 +1664,7 @@ autoConfiguration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w,
 
 autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_interval_mds (me, cstart.get(), w, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c;
@@ -1972,7 +1675,7 @@ autoConfiguration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w,
 
 autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, integer numberOfDimensions, int tiesHandling, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, MDS_ORDINAL);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ordinal);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_monotone_mds (me, cstart.get(), w, tiesHandling, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c;
@@ -1983,7 +1686,7 @@ autoConfiguration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w,
 
 autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, integer numberOfDimensions, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_ratio_mds (me, cstart.get(), w, tolerance,
 		    numberOfIterations, numberOfRepetitions, showProgress);
@@ -1995,7 +1698,7 @@ autoConfiguration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, in
 
 autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, integer numberOfDimensions, integer numberOfInteriorKnots, integer order, double tolerance, integer numberOfIterations, integer numberOfRepetitions, bool showProgress) {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, MDS_ORDINAL);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ordinal);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_ispline_mds (me, cstart.get(), w,
 		    numberOfInteriorKnots, order, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
@@ -2008,20 +1711,20 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 /***** classical **/
 
 static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *stress, double *s, double *t, double *dbar) {
-	integer nProximities = my nProximities;
+	integer numberOfProximities = my numberOfProximities;
 	integer *iPoint = my iPoint, *jPoint = my jPoint;
 	double **dist = ddist -> data, **fit = dfit -> data;
 
 	*s = *t = *dbar = 0.0;
 
 	if (stress_formula == 2) {
-		for (integer i = 1; i <= nProximities; i ++) {
+		for (integer i = 1; i <= numberOfProximities; i ++) {
 			*dbar += dist [iPoint [i]] [jPoint [i]];
 		}
-		*dbar /= nProximities;
+		*dbar /= numberOfProximities;
 	}
 
-	for (integer i = 1; i <= nProximities; i ++) {
+	for (integer i = 1; i <= numberOfProximities; i ++) {
 		integer ii = iPoint [i], jj = jPoint [i];
 		double st = dist [ii] [jj] - fit [ii] [jj];
 		double tt = dist [ii] [jj] - *dbar;
@@ -2047,7 +1750,7 @@ static double func (Daata object, const double p []) {
 
 	// Normalize
 
-	NUMcentreColumns (x, 1, numberOfPoints, 1, numberOfDimensions, nullptr);
+	MATcentreEachColumn_inplace (MAT (x, numberOfPoints, numberOfDimensions));
 	NUMnormalize (x, numberOfPoints, numberOfDimensions, sqrt (numberOfPoints));
 
 	// Calculate interpoint distances from the configuration
@@ -2076,7 +1779,7 @@ static double func (Daata object, const double p []) {
 		return stress;
 	}
 
-	for (integer i = 1; i <= his nProximities; i ++) {
+	for (integer i = 1; i <= his numberOfProximities; i ++) {
 		integer ii = my vec -> iPoint [i], jj = my vec -> jPoint [i];
 		double g1 = stress * ((dist->data [ii] [jj] - fit->data [ii] [jj]) / s - (dist->data [ii] [jj] - dbar) / t);
 		for (integer j = 1; j <= numberOfDimensions; j ++) {
@@ -2127,8 +1830,7 @@ autoKruskal Kruskal_create (integer numberOfPoints, integer numberOfDimensions) 
 
 autoConfiguration Dissimilarity_to_Configuration_kruskal (Dissimilarity me, integer numberOfDimensions, integer /* metric */, int tiesHandling, int stress_formula, double tolerance, integer numberOfIterations, integer numberOfRepetitions) {
 	try {
-		int scale = 1;
-		autoDistance d = Dissimilarity_to_Distance (me, scale);
+		autoDistance d = Dissimilarity_to_Distance (me, kMDS_AnalysisScale::Ratio);
 		autoConfiguration c = Distance_to_Configuration_torsca (d.get(), numberOfDimensions);
 		Configuration_normalize (c.get(), 1.0, false);
 		autoConfiguration thee = Dissimilarity_Configuration_kruskal (me, c.get(), tiesHandling, stress_formula, tolerance, numberOfIterations, numberOfRepetitions);
@@ -2626,7 +2328,7 @@ void DissimilarityList_indscal (DissimilarityList me, integer numberOfDimensions
 		bool showSingle = (showProgress && numberOfRepetitions == 1);
 		double vaf, vafmin = 0.0;
 
-		autoDistanceList distances = DissimilarityList_to_DistanceList (me, MDS_ORDINAL);
+		autoDistanceList distances = DissimilarityList_to_DistanceList (me, kMDS_AnalysisScale::Ordinal);
 		autoConfiguration cstart; autoSalience wstart;
 		DistanceList_to_Configuration_ytl (distances.get(), numberOfDimensions, normalizeScalarProducts, & cstart, & wstart);
 		autoConfiguration conf = Data_copy (cstart.get());
@@ -2790,25 +2492,6 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 }
 
 /********************** Examples *********************************************/
-
-autoDissimilarity Dissimilarity_createLetterRExample (double noiseStd) {
-	try {
-		autoConfiguration r = Configuration_createLetterRExample (1);
-		autoDistance d = Configuration_to_Distance (r.get());
-		autoDissimilarity me = Distance_to_Dissimilarity (d.get());
-		Thing_setName (me.get(), U"R");
-
-		for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-			for (integer j = i + 1; j <= my numberOfRows; j ++) {
-				double dis = my data [i] [j];
-				my data [j] [i] = my data [i] [j] = dis * dis + 5.0 + NUMrandomUniform (0.0, noiseStd);
-			}
-		}
-		return me;
-	} catch (MelderError) {
-		Melder_throw (U"Dissimilarity for letter R example not created.");
-	}
-}
 
 autoSalience Salience_createCarrollWishExample () {
 	try {

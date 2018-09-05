@@ -1,6 +1,6 @@
 /* praat_MDS_init.cpp
  *
- * Copyright (C) 1992-2012, 2015-2016 David Weenink
+ * Copyright (C) 1992-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@
 #include "TableOfReal_extensions.h"
 #include "Configuration_and_Procrustes.h"
 #include "Configuration_AffineTransform.h"
+#include "Proximity_and_Distance.h"
 #include "Confusion.h"
 #include "Formula.h"
 
@@ -981,13 +982,19 @@ FORM (NEW_Dissimilarity_to_Distance, U"Dissimilarity: To Distance", U"Dissimilar
 	OK
 DO
 	CONVERT_EACH (Dissimilarity)
-		autoDistance result = Dissimilarity_to_Distance (me, scale);
+		autoDistance result = Dissimilarity_to_Distance (me, scale ? kMDS_AnalysisScale::Ordinal : kMDS_AnalysisScale::Absolute);
 	CONVERT_EACH_END (my name.get())
 }
 
 DIRECT (NEW_Dissimilarity_to_Weight) {
 	CONVERT_EACH (Dissimilarity)
 		autoWeight result = Dissimilarity_to_Weight (me);
+	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEW_Dissimilarity_to_MDSVec) {
+	CONVERT_EACH (Dissimilarity)
+		autoMDSVec result = Dissimilarity_to_MDSVec (me);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1357,7 +1364,7 @@ void praat_TableOfReal_extras (ClassInfo klas) {
 
 void praat_uvafon_MDS_init ();
 void praat_uvafon_MDS_init () {
-	Thing_recognizeClassesByName (classAffineTransform, classProcrustes, classContingencyTable, classDissimilarity,
+	Thing_recognizeClassesByName (classAffineTransform, classProcrustes, classContingencyTable, classDissimilarity, classMDSVec,
 		classSimilarity, classConfiguration, classDistance, classSalience, classScalarProduct, classWeight, nullptr);
 	Thing_recognizeClassByOtherName (classProcrustes, U"Procrustus");
 
@@ -1436,6 +1443,7 @@ void praat_uvafon_MDS_init () {
 	praat_addAction1 (classDissimilarity, 1, U"To Configuration (kruskal)...", nullptr, 1, NEW_Dissimilarity_to_Configuration_kruskal);
 	praat_addAction1 (classDissimilarity, 0, U"To Distance...", nullptr, 0, NEW_Dissimilarity_to_Distance);
 	praat_addAction1 (classDissimilarity, 0, U"To Weight", nullptr, 0, NEW_Dissimilarity_to_Weight);
+	praat_addAction1 (classDissimilarity, 0, U"To MDSVec", nullptr, praat_HIDDEN, NEW_Dissimilarity_to_MDSVec);
 
 
 	praat_addAction1 (classCovariance, 0, U"To Configuration...", nullptr, 0, NEW_Covariance_to_Configuration);
