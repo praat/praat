@@ -292,4 +292,43 @@ void NUMsort1 (integer n, T a[]) {
 	}
 }
 
+void NUMsort3 (VEC data, INTVEC iar2, INTVEC iar3, integer ifrom, integer ito, bool descending) {
+	Melder_assert (data.size == iar2.size && data.size == iar3.size);
+	integer n = ito - ifrom + 1;
+	Melder_require (ifrom > 0 && ito <= data.size && n > 0, U"Invalid range for sort3.");
+	
+	if (n == 1) {
+		return;
+	}
+	autoINTVEC index = INTVECraw (n);
+	autoVEC atmp = VECraw (n);
+	autoINTVEC itmp = INTVECraw (n);
+	NUMindexx (& data [ifrom - 1], n, & index [0]);
+	if (descending) {
+		for (integer j = 1; j <= n / 2; j ++) {
+			integer tmp = index [j];
+			index [j] = index [n - j + 1];
+			index [n - j + 1] = tmp;
+		}
+	}
+	for (integer j = 1; j <= n; j ++) {
+		atmp [j] = data [ifrom + j - 1];
+	}
+	for (integer j = 1; j <= n; j ++) {
+		data [ifrom + j - 1] = atmp [index [j]];
+	}
+	for (integer j = 1; j <= n; j ++) {
+		itmp [j] = iar2 [ifrom + j - 1];
+	}
+	for (integer j = 1; j <= n; j ++) {
+		iar2 [ifrom + j - 1] = itmp [index [j]];
+	}
+	for (integer j = 1; j <= n; j ++) {
+		itmp [j] = iar3 [ifrom + j - 1];
+	}
+	for (integer j = 1; j <= n; j ++) {
+		iar3 [ifrom + j - 1] = itmp [index [j]];
+	}
+}
+
 /* End of file NUMsort.cpp */

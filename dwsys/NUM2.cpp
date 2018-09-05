@@ -284,14 +284,15 @@ void eigenSort (double d [], double **v, integer n, int sort) {
 	Kruskal's algorithm for monotone regression (and much simpler).
 	Regression is ascending
 */
-void NUMmonotoneRegression (const double x [], integer n, double xs []) {
+void NUMmonotoneRegression (constVEC x, VEC xs) {
+	Melder_assert (x.size == xs.size);
 	double xt = undefined; // only to stop gcc from complaining "may be used uninitialized"
 
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= x.size; i ++) {
 		xs [i] = x [i];
 	}
 
-	for (integer i = 2; i <= n; i ++) {
+	for (integer i = 2; i <= x.size; i ++) {
 		if (xs [i] >= xs [i - 1]) {
 			continue;
 		}
@@ -2934,7 +2935,7 @@ void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowI
 	}
 }
 
-void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out_h, double *out_hx, 
+void MAT_getEntropies (constMAT m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {
 	
 	double h = undefined, hx = undefined, hy = undefined;
@@ -2943,8 +2944,8 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 	// Get total sum and check if all elements are not negative.
 	
 	longdouble totalSum = 0.0;
-	for (integer i = 1; i <= nrow; i ++) {
-		for (integer j = 1; j <= ncol; j++) {
+	for (integer i = 1; i <= m.nrow; i ++) {
+		for (integer j = 1; j <= m.ncol; j++) {
 			Melder_require (m [i][j] >= 0, U"Matrix elements should not be negative.");
 			totalSum += m [i] [j];
 		}
@@ -2952,9 +2953,9 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 	
 	if (totalSum > 0.0) {
 		longdouble hy_t = 0.0;
-		for (integer i = 1; i <= nrow; i ++) {
+		for (integer i = 1; i <= m.nrow; i ++) {
 			longdouble rowsum = 0.0;
-			for (integer j = 1; j <= ncol; j++) rowsum += m [i] [j];
+			for (integer j = 1; j <= m.ncol; j++) rowsum += m [i] [j];
 			if (rowsum > 0.0) {
 				longdouble p = rowsum / totalSum;
 				hy_t -= p * NUMlog2 (p);
@@ -2963,9 +2964,9 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 		hy = (double) hy_t;
 		
 		longdouble hx_t = 0.0;
-		for (integer j = 1; j <= ncol; j ++) {
+		for (integer j = 1; j <= m.ncol; j ++) {
 			longdouble colsum = 0.0;
-			for (integer i = 1; i <= nrow; i++) colsum += m [i] [j];
+			for (integer i = 1; i <= m.nrow; i++) colsum += m [i] [j];
 			if (colsum > 0.0) {
 				longdouble p = colsum / totalSum;
 				hx_t -= p * NUMlog2 (p);
@@ -2975,8 +2976,8 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 				
 		// Total entropy
 		longdouble h_t = 0.0;
-		for (integer i = 1; i <= nrow; i ++) {
-			for (integer j = 1; j <= ncol; j ++) {
+		for (integer i = 1; i <= m.nrow; i ++) {
+			for (integer j = 1; j <= m.ncol; j ++) {
 				if (m [i] [j] > 0.0) {
 					double p = m [i] [j] / totalSum;
 					h_t -= p * NUMlog2 (p);
@@ -3001,48 +3002,5 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 	if (*out_uxy) *out_uxy = uxy;
 }
 #undef TINY
-
-// TODO template
-void NUMsort3 (double *data, integer *iar2, integer *iar3, integer ifrom, integer ito, bool ascending) {
-	Melder_require (ifrom > 0 && ifrom <= ito, U"invalid range.");
-	
-	integer n = ito - ifrom + 1;
-	if (n == 1) {
-		return;
-	}
-	autoNUMvector<integer> indx (ifrom, ito);
-	autoNUMvector<double> atmp (ifrom, ito);
-	autoNUMvector<integer> itmp (ifrom, ito);
-	//NUMindexx (data + ifrom - 1, n, indx + ifrom - 1);
-	NUMindexx (& data [ifrom - 1], n, & indx [ifrom - 1]);
-	if (! ascending) {
-		for (integer j = ifrom; j <= ifrom + n / 2; j ++) {
-			integer tmp = indx [j];
-			indx [j] = indx [ito - j + ifrom];
-			indx [ito - j + ifrom] = tmp;
-		}
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		indx [j] += ifrom - 1;
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		atmp [j] = data [j];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		data [j] = atmp [indx [j]];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		itmp [j] = iar2 [j];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		iar2 [j] = itmp [indx [j]];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		itmp [j] = iar3 [j];
-	}
-	for (integer j = ifrom; j <= ito; j ++) {
-		iar3 [j] = itmp [indx [j]];
-	}
-}
 
 /* End of file NUM2.cpp */

@@ -229,7 +229,7 @@ void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocat
 	If work == NULL, the routine allocates (and destroys) its own memory.
 */
 
-void NUMmonotoneRegression (const double x[], integer n, double xs[]);
+void NUMmonotoneRegression (constVEC x, VEC xs);
 /*
 	Find numbers xs[1..n] that have a monotone relationship with
 	the numbers in x[1..n].
@@ -319,7 +319,7 @@ void NUMsort2 (integer n, T1 *a, T2 *b) {
 	}
 }
 
-void NUMsort3 (double *data, integer *iar2, integer *iar3, integer ifrom, integer ito, bool ascending); // TODO template
+void NUMsort3 (VEC data, INTVEC iar2, INTVEC iar3, integer ifrom, integer ito, bool descending); // TODO template
 
 void NUMindexx (const double a[], integer n, integer indx[]);
 void NUMindexx_s (char32 *a[], integer n, integer indx[]);
@@ -1300,7 +1300,7 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area);
 */
 void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowIndex, integer *highIndex);
 
-void NUMmatrix_getEntropies (double **m, integer numberOfRows, integer numberOfColumns, double *out_h, double *out_hx, 
+void MAT_getEntropies (constMAT m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
 
 #endif // _NUM2_h_
