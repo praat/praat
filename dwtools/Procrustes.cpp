@@ -1,6 +1,6 @@
 /* Procrustes.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ Thing_implement (Procrustes, AffineTransform, 0);
 void structProcrustes :: v_transform (double **in, integer nrows, double **out) {
 	for (integer i = 1; i <= nrows; i ++) {
 		for (integer j = 1; j <= n; j ++) {
-			double tmp = 0.0;
+			longdouble tmp = 0.0;
 			for (integer k = 1; k <= n; k ++) {
 				tmp += in [i] [k] * r [k] [j];
 			}
@@ -75,12 +75,6 @@ autoAffineTransform structProcrustes :: v_invert () {
 			thy r [j] [i] = r [i] [j];
 		}
 		thy t [i] = 0.0;
-		/*
-		for (j = 1; j <= thy n; j ++)
-		{
-			thy t [i] -= thy r [i] [j] * t [j];
-		}
-		*/
 		for (integer j = 1; j <= thy n; j ++) {
 			thy t [i] -= thy r [j] [i] * t [j];
 		}
@@ -111,6 +105,5 @@ autoProcrustes Procrustes_create (integer n) {
 		Melder_throw (U"Procrustes not created.");
 	}
 }
-
 
 /* End of file Procrustes.c */
