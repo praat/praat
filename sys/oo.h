@@ -108,6 +108,7 @@
 //#define oo_COMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c128, x, 1, n)
 
 #define oo_VEC(x,size)  oo_ANYVEC (double, r64, x, size)
+#define oo_INTVEC(x,size)  oo_ANYVEC (integer, integer32BE, x, size)
 
 //#define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, i8, x, 1, nrow, 1, ncol)
 //#define oo_INT_MATRIX(x,nrow,ncol)  oo_MATRIX (int, i16, x, 1, nrow, 1, ncol)
@@ -120,6 +121,7 @@
 //#define oo_COMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, c128, x, 1, nrow, 1, ncol)
 
 #define oo_MAT(x,nrow,ncol)  oo_ANYMAT (double, r64, x, nrow, ncol)
+#define oo_INTMAT(x,nrow,ncol)  oo_ANYMAT (integer, integer32BE, x, nrow, ncol)
 
 /*** Enumerated types. ***/
 

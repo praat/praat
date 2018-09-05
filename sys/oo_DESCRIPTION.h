@@ -119,6 +119,8 @@
 
 #undef oo_VEC
 #define oo_VEC(x,n)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
+#undef oo_INTVEC
+#define oo_INTVEC(x,n)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
 
 #undef oo_BYTE_MATRIX
 #define oo_BYTE_MATRIX(x,nrow,ncol)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
@@ -141,6 +143,8 @@
 
 #undef oo_MAT
 #define oo_MAT(x,nrow,ncol)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
+#undef oo_INTMAT
+#define oo_INTMAT(x,nrow,ncol)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
 
 #undef oo_ENUM
 #define oo_ENUM(Type,x)  { U"" #x, enumwa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), U"" #Type, (void *) Type##_getText, 0, nullptr, nullptr, nullptr, nullptr },
