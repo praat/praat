@@ -128,8 +128,8 @@ static void readSound (ExperimentMFC me, conststring32 fileNameHead, conststring
 			Read the substimulus.
 		*/
 		autoSound substimulus = Data_readFromFile (& file). static_cast_move<structSound>();
-		if (substimulus -> classInfo != classSound)
-			Melder_throw (U"File ", & file, U" contains a ", Thing_className (substimulus.get()), U" instead of a sound.");
+		Melder_require (substimulus -> classInfo == classSound,
+			U"File ", & file, U" contains a ", Thing_className (substimulus.get()), U" instead of a sound.");
 		/*
 			Check whether all sounds have the same number of channels.
 		*/
@@ -178,17 +178,13 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		integer responseCarrierBeforeSamples = 0, responseCarrierAfterSamples = 0, maximumResponseSamples = 0;
 		Melder_warningOff ();
 		my trial = 0;
-		NUMvector_free <integer> (my stimuli, 1);
-		NUMvector_free <integer> (my responses, 1);
-		NUMvector_free <double> (my goodnesses, 1);
-		NUMvector_free <double> (my reactionTimes, 1);
 		my playBuffer.reset();   // is this needed?
 		my pausing = false;
 		my numberOfTrials = my numberOfDifferentStimuli * my numberOfReplicationsPerStimulus;
-		my stimuli = NUMvector <integer> (1, my numberOfTrials);
-		my responses = NUMvector <integer> (1, my numberOfTrials);
-		my goodnesses = NUMvector <double> (1, my numberOfTrials);
-		my reactionTimes = NUMvector <double> (1, my numberOfTrials);
+		my stimuli = INTVECzero (my numberOfTrials);
+		my responses = INTVECzero (my numberOfTrials);
+		my goodnesses = VECzero (my numberOfTrials);
+		my reactionTimes = VECzero (my numberOfTrials);
 		/*
 			Read all the sounds. They must all have the same sampling frequency and number of channels.
 		*/
@@ -278,7 +274,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 	} catch (MelderError) {
 		Melder_warningOn ();
 		my numberOfTrials = 0;
-		NUMvector_free (my stimuli, 1); my stimuli = nullptr;
+		my stimuli. reset();
 		Melder_throw (me, U": not started.");
 	}
 }
