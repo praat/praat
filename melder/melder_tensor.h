@@ -354,6 +354,9 @@ public:
 		if (newSize <= 0) return vector<T> (nullptr, 0);
 		return vector<T> (& our at [offset], newSize);
 	}
+	void insert (integer insertionPosition) {
+		NUMvector_insert<T> (& our at, 1, & our size, insertionPosition);
+	}
 };
 
 template <typename T>

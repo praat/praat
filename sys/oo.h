@@ -107,6 +107,8 @@
 #define oo_DOUBLE_VECTOR(x,n)  oo_VECTOR (double, r64, x, 1, n)
 //#define oo_COMPLEX_VECTOR(x,n)  oo_VECTOR (dcomplex, c128, x, 1, n)
 
+#define oo_VEC(x,size)  oo_ANYVEC (double, r64, x, size)
+
 //#define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, i8, x, 1, nrow, 1, ncol)
 //#define oo_INT_MATRIX(x,nrow,ncol)  oo_MATRIX (int, i16, x, 1, nrow, 1, ncol)
 #define oo_INTEGER_MATRIX(x,nrow,ncol)  oo_MATRIX (integer, integer32BE, x, 1, nrow, 1, ncol)
@@ -117,6 +119,7 @@
 #define oo_DOUBLE_MATRIX(x,nrow,ncol)  oo_MATRIX (double, r64, x, 1, nrow, 1, ncol)
 //#define oo_COMPLEX_MATRIX(x,nrow,ncol)  oo_MATRIX (dcomplex, c128, x, 1, nrow, 1, ncol)
 
+#define oo_MAT(x,nrow,ncol)  oo_ANYMAT (double, r64, x, nrow, ncol)
 
 /*** Enumerated types. ***/
 
@@ -174,7 +177,9 @@
 #define oo_SIMPLE(type,storage,x)  type x;
 #define oo_SET(type,storage,x,setType)  type x [1 + (int) setType::MAX];
 #define oo_VECTOR(type,storage,x,min,max)  type *x;
+#define oo_ANYVEC(type,storage,x,size)  autovector <type> x;
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  type **x;
+#define oo_ANYMAT(type,storage,x,nrow,ncol)  automatrix <type> x;
 
 #define oo_ENUMx(kType,storage,x)  kType x;
 //#define oo_ENUMx_SET(kType,storage,x,setType)  kType x [1 + (int) setType::MAX];

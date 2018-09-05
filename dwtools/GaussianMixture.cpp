@@ -1239,7 +1239,7 @@ autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, 
 }
 
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 vector_string) {
-	autostring32vector vector = tokenizeStrVec (vector_string);
+	autostring32vector vector = STRVECtokenize (vector_string);
 	autoVEC pos = {my dimension, kTensorInitializationType::ZERO};
 	for (integer i = 1; i <= vector.size; i ++) {
 		pos [i] = Melder_atof (vector [i].get());

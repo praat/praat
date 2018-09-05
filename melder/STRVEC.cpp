@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-autostring32vector tokenizeStrVec (conststring32 string) {
+autostring32vector STRVECtokenize (conststring32 string) {
 	if (! string)
 		return autostring32vector();   // accept null pointer input
 	integer n = NUMnumberOfTokens (string);

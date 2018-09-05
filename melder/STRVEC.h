@@ -17,7 +17,7 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-inline static STRVEC STRVECfromTo (STRVEC strvec, integer fromIndex, integer toIndex) {
+inline STRVEC STRVECfromTo (STRVEC strvec, integer fromIndex, integer toIndex) {
 	integer offsetIndex = fromIndex - 1;
 	Melder_assert (offsetIndex >= 0);
 	Melder_assert (toIndex <= strvec.size);
@@ -26,7 +26,7 @@ inline static STRVEC STRVECfromTo (STRVEC strvec, integer fromIndex, integer toI
 	return STRVEC (& strvec [offsetIndex], toIndex - offsetIndex);
 }
 
-inline static constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer toIndex) {
+inline constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, integer toIndex) {
 	integer offsetIndex = fromIndex - 1;
 	Melder_assert (offsetIndex >= 0);
 	Melder_assert (toIndex <= strvec.size);
@@ -40,6 +40,6 @@ inline static constSTRVEC STRVECfromTo (constSTRVEC strvec, integer fromIndex, i
 	separated (and perhaps preceded and followed) by white space.
 	The tokens cannot contain spaces themselves (there are no escapes).
 */
-autostring32vector tokenizeStrVec (conststring32 string);
+autostring32vector STRVECtokenize (conststring32 string);
 
 /* End of file STRVEC.h */

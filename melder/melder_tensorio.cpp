@@ -1,4 +1,4 @@
-/* melder_vectorio.cpp
+/* melder_tensorio.cpp
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -129,4 +129,4 @@ FUNCTION (dcomplex, c64)
 FUNCTION (dcomplex, c128)
 #undef FUNCTION
 
-/* End of file melder_vectorio.cpp */
+/* End of file melder_tensorio.cpp */

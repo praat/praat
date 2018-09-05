@@ -1,6 +1,6 @@
-#ifndef _melder_vectorio_h_
-#define _melder_vectorio_h_
-/* melder_vectorio.h
+#ifndef _melder_tensorio_h_
+#define _melder_tensorio_h_
+/* melder_tensorio.h
  *
  * Copyright (C) 1992-2018 Paul Boersma
  *
@@ -76,5 +76,5 @@ double ** NUMmatrix_readBinary_r64 (integer r1, integer r2, integer c1, integer 
 	Throw an error message if anything went wrong.
 */
 
-/* End of file melder_vectorio.h */
+/* End of file melder_tensorio.h */
 #endif

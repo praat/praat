@@ -48,14 +48,14 @@ static autoRBMLayer RBMLayer_create (integer numberOfInputNodes, integer numberO
 	try {
 		autoRBMLayer me = Thing_new (RBMLayer);
 		my numberOfInputNodes = numberOfInputNodes;
-		my inputBiases = NUMvector <double> (1, numberOfInputNodes);
-		my inputActivities = NUMvector <double> (1, numberOfInputNodes);
-		my inputReconstruction = NUMvector <double> (1, numberOfInputNodes);
+		my inputBiases = VECzero (numberOfInputNodes);
+		my inputActivities = VECzero (numberOfInputNodes);
+		my inputReconstruction = VECzero (numberOfInputNodes);
 		my numberOfOutputNodes = numberOfOutputNodes;
-		my outputBiases = NUMvector <double> (1, numberOfOutputNodes);
-		my outputActivities = NUMvector <double> (1, numberOfOutputNodes);
-		my outputReconstruction = NUMvector <double> (1, numberOfOutputNodes);
-		my weights = NUMmatrix <double> (1, numberOfInputNodes, 1, numberOfOutputNodes);
+		my outputBiases = VECzero (numberOfOutputNodes);
+		my outputActivities = VECzero (numberOfOutputNodes);
+		my outputReconstruction = VECzero (numberOfOutputNodes);
+		my weights = MATzero (numberOfInputNodes, numberOfOutputNodes);
 		my inputsAreBinary = inputsAreBinary;
 		return me;
 	} catch (MelderError) {
@@ -101,10 +101,7 @@ autoNet Net_createAsDeepBeliefNet (constVEC numbersOfNodes, bool inputsAreBinary
 }
 
 static void copyOutputsToInputs (Layer me, Layer you) {
-	Melder_assert (my numberOfOutputNodes == your numberOfInputNodes);
-	for (integer inode = 1; inode <= my numberOfOutputNodes; inode ++) {
-		your inputActivities [inode] = my outputActivities [inode];
-	}
+	vectorcopy_preallocated (your inputActivities.get(), my outputActivities.get());
 }
 
 inline static double logistic (double excitation) {
@@ -164,10 +161,7 @@ void Net_sampleOutput (Net me) {
 }
 
 static void copyInputsToOutputs (Layer me, Layer you) {
-	Melder_assert (my numberOfInputNodes == your numberOfOutputNodes);
-	for (integer inode = 1; inode <= my numberOfInputNodes; inode ++) {
-		your outputActivities [inode] = my inputActivities [inode];
-	}
+	vectorcopy_preallocated (your outputActivities.get(), my inputActivities.get());
 }
 
 void structRBMLayer :: v_spreadDown (kLayer_activationType activationType) {
@@ -336,7 +330,7 @@ autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, 
 		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
 			Net_PatternList_applyToInput (me, thee, ipattern);
 			Net_spreadUp (me, activationType);
-			NUMvector_copyElements <double> (outputLayer -> outputActivities, activations -> z [ipattern], 1, outputLayer -> numberOfOutputNodes);
+			NUMvector_copyElements <double> (outputLayer -> outputActivities.at, activations -> z [ipattern], 1, outputLayer -> numberOfOutputNodes);
 		}
 		return activations;
 	} catch (MelderError) {
@@ -347,7 +341,7 @@ autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, 
 static autoMatrix Layer_extractInputActivities (Layer me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, my numberOfInputNodes);
-		NUMvector_copyElements <double> (my inputActivities, thy z [1], 1, my numberOfInputNodes);
+		NUMvector_copyElements <double> (my inputActivities.at, thy z [1], 1, my numberOfInputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": input activities not extracted.");
@@ -361,7 +355,7 @@ autoMatrix Net_extractInputActivities (Net me) {
 static autoMatrix Layer_extractOutputActivities (Layer me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, my numberOfOutputNodes);
-		NUMvector_copyElements <double> (my outputActivities, thy z [1], 1, my numberOfOutputNodes);
+		NUMvector_copyElements <double> (my outputActivities.at, thy z [1], 1, my numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": output activities not extracted.");
@@ -375,7 +369,7 @@ autoMatrix Net_extractOutputActivities (Net me) {
 autoMatrix structRBMLayer :: v_extractInputReconstruction () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfInputNodes);
-		NUMvector_copyElements <double> (our inputReconstruction, thy z [1], 1, our numberOfInputNodes);
+		NUMvector_copyElements <double> (our inputReconstruction.at, thy z [1], 1, our numberOfInputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input reconstruction not extracted.");
@@ -389,7 +383,7 @@ autoMatrix Net_extractInputReconstruction (Net me) {
 autoMatrix structRBMLayer :: v_extractOutputReconstruction () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfOutputNodes);
-		NUMvector_copyElements <double> (our outputReconstruction, thy z [1], 1, our numberOfOutputNodes);
+		NUMvector_copyElements <double> (our outputReconstruction.at, thy z [1], 1, our numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": output reconstruction not extracted.");
@@ -403,7 +397,7 @@ autoMatrix Net_extractOutputReconstruction (Net me) {
 autoMatrix structRBMLayer :: v_extractInputBiases () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfInputNodes);
-		NUMvector_copyElements <double> (our inputBiases, thy z [1], 1, our numberOfInputNodes);
+		NUMvector_copyElements <double> (our inputBiases.at, thy z [1], 1, our numberOfInputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input biases not extracted.");
@@ -429,7 +423,7 @@ autoMatrix Net_extractInputBiases (Net me, integer layerNumber) {
 autoMatrix structRBMLayer :: v_extractOutputBiases () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfOutputNodes);
-		NUMvector_copyElements <double> (our outputBiases, thy z [1], 1, our numberOfOutputNodes);
+		NUMvector_copyElements <double> (our outputBiases.at, thy z [1], 1, our numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input biases not extracted.");
@@ -448,7 +442,7 @@ autoMatrix Net_extractOutputBiases (Net me, integer layerNumber) {
 autoMatrix structRBMLayer :: v_extractWeights () {
 	try {
 		autoMatrix thee = Matrix_createSimple (our numberOfInputNodes, our numberOfOutputNodes);
-		NUMmatrix_copyElements <double> (our weights, thy z, 1, our numberOfInputNodes, 1, our numberOfOutputNodes);
+		NUMmatrix_copyElements <double> (our weights.at, thy z, 1, our numberOfInputNodes, 1, our numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": weights not extracted.");
@@ -465,7 +459,7 @@ autoMatrix Net_extractWeights (Net me, integer layerNumber) {
 }
 
 autoMAT structRBMLayer :: v_getWeights () {
-	return matrixcopy (constMAT (our weights, our numberOfInputNodes, our numberOfOutputNodes));
+	return matrixcopy (our weights.get());
 }
 
 autoMAT Net_getWeights (Net me, integer layerNumber) {
