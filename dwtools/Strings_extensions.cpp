@@ -178,11 +178,12 @@ autoStrings Strings_extractPart (Strings me, integer from, integer to) {
 	}
 }
 
-autoPermutation Strings_to_Permutation (Strings me, int sort) {
+autoPermutation Strings_to_Permutation (Strings me, int sort) { // TODO sort
 	try {
 		autoPermutation thee = Permutation_create (my numberOfStrings);
 		if (sort != 0) {
-			NUMindexx_s (my strings.peek2(), my numberOfStrings, thy p);
+			autoINTVEC index = NUMindexx_s (my strings.get ()); // TODO inplace version
+			vectorcopy_preallocated ({thy p, my numberOfStrings}, index.get());
 		}
 		return thee;
 	} catch (MelderError) {

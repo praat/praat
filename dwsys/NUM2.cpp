@@ -905,10 +905,9 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 }
 
 void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m, double phi [], double alpha, double delta, double t []) {
-	autoNUMmatrix<double> u (1, m, 1, m);
-	autoNUMvector<double> c (1, m);
-	autoNUMvector<double> x (1, n);
-	autoNUMvector<integer> indx (1, m);
+	autoMAT u = MATzero (m, m);
+	autoVEC c = VECzero (m);
+	autoVEC x = VECzero (n);
 
 	for (integer j = 1; j <= m; j ++) {
 		t [j] = 0.0;
@@ -927,7 +926,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 
 	double *sqrtc = svd -> d;
 	double **ut = svd -> v;
-	NUMindexx (sqrtc, m, indx.peek());
+	autoINTVEC indx = NUMindexx ({sqrtc, m});
 
 	for (integer j = m; j > 0; j --) {
 		double tmp = sqrtc [indx [j]];
@@ -959,8 +958,8 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 	me.m = m;
 	me.delta = delta;
 	me.alpha = alpha;
-	me.x = x.peek();
-	me.c = c.peek();
+	me.x = x.at;
+	me.c = c.at;
 
 	double xqsq = 0.0;
 	for (integer j = m - q + 1; j <= m; j ++) {

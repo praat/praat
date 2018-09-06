@@ -101,19 +101,15 @@ double **NUMdmatrix_transpose (double **m, integer nr, integer nc);
 */
 template <class T>
 void NUMvector_extrema (T *v, integer lo, integer hi, double *p_min, double *p_max) {
-	T min = v[lo];
-	T max = min;
+	double min = v [lo];
+	double max = min;
 	for (integer i = lo + 1; i <= hi; i++)
 	{
-		if (v[i] < min) min = v[i];
-		else if (v[i] > max) max = v[i];
+		if (v [i] < min) min = v [i];
+		else if (v [i] > max) max = v [i];
 	}
-	if (p_min) {
-		*p_min = min;
-	}
-	if (p_max) {
-		*p_max = max;
-	}
+	if (p_min) *p_min = min;
+	if (p_max) *p_max = max;
 }
 
 template <class T>
@@ -319,13 +315,17 @@ void NUMsort2 (integer n, T1 *a, T2 *b) {
 	}
 }
 
-void NUMsort3 (VEC data, INTVEC iar2, INTVEC iar3, integer ifrom, integer ito, bool descending); // TODO template
+void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending); // TODO template
+/* Sort a together with iv1  and iv2 */
 
+
+autoINTVEC NUMindexx (constVEC a);
+autoINTVEC NUMindexx_s (constSTRVEC a);
 void NUMindexx (const double a[], integer n, integer indx[]);
 void NUMindexx_s (char32 *a[], integer n, integer indx[]);
 /*
 	Indexes the array a[1..n], i.e., outputs the array indx[1..n] such that
-	a[ indx[i] ] is in ascending order for i=1..n;
+	a [indx[i]] is in ascending order for i=1..n;
 	No preservation of order among equals (see NUMsort2_...)
 */
 

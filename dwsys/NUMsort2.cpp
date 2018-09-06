@@ -125,29 +125,30 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 }
 
 
-#define MACRO_NUMindex(TYPE) \
-{ \
+#define MACRO_NUMindex(TYPE,n) \
+{\
 	integer l, r, j, i, ii, k, imin; \
 	TYPE min; \
+	autoINTVEC index = INTVECraw (n); \
 	for (j = 1; j <= n; j ++) index[j] = j;	\
-	if (n < 2) return;   /* Already sorted. */ \
+	if (n < 2) return index;   /* Already sorted. */ \
 	if (n == 2) \
 	{ \
 		if (COMPARELT (a [2], a [1])) \
 		{\
 			index [1] = 2; index [2] = 1; \
 		} \
-		return; \
+		return index; \
 	} \
 	if (n <= 12) \
 	{ \
 		for (i = 1; i < n; i ++) \
 		{ \
 			imin = i; \
-			min = a[index [imin]]; \
+			min = a [index [imin]]; \
 			for (j = i + 1; j <= n; j ++) \
 			{\
-				if (COMPARELT (a[ index [j]], min))\
+				if (COMPARELT (a [index [j]], min))\
 				{ \
 					imin = j; \
 					min = a [index [j]]; \
@@ -155,7 +156,7 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			} \
 			ii = index [imin]; index [imin] = index [i]; index [i] = ii; \
 		} \
-		return; \
+		return index; \
 	} \
 	/* H1 */\
 	l = n / 2 + 1; \
@@ -200,17 +201,24 @@ void NUMindexx (const T a[], integer n, integer index[], int (*compare) (void *,
 			index [j] = index [i]; \
 		}\
 	} \
+	return index; \
 }
 
 #define COMPARELT(x,y) ((x) < (y))
 
-void NUMindexx (const double a[], integer n, integer index[])
-MACRO_NUMindex (double)
+autoINTVEC NUMindexx (constVEC a)
+MACRO_NUMindex (double, a.size)
+
+//void NUMindexx (const double a[], integer n, integer index[])
+//MACRO_NUMindex (double, n)
+
 
 #undef COMPARELT
 #define COMPARELT(x,y) (Melder_cmp (x,y) <  0)
-void NUMindexx_s (char32 **a, integer n, integer index[])
-MACRO_NUMindex (char32 *)
+//void NUMindexx_s (char32 **a, integer n, integer index[])
+autoINTVEC NUMindexx_s (constSTRVEC a)
+MACRO_NUMindex (const char32_t *, a.size)
+
 
 #undef COMPARELT
 #undef MACRO_INDEXX
@@ -292,43 +300,31 @@ void NUMsort1 (integer n, T a[]) {
 	}
 }
 
-void NUMsort3 (VEC data, INTVEC iar2, INTVEC iar3, integer ifrom, integer ito, bool descending) {
-	Melder_assert (data.size == iar2.size && data.size == iar3.size);
-	integer n = ito - ifrom + 1;
-	Melder_require (ifrom > 0 && ito <= data.size && n > 0, U"Invalid range for sort3.");
+void NUMsort3 (VEC a, INTVEC iv1, INTVEC iv2, bool descending) {
+	Melder_assert (a.size == iv1.size && a.size == iv2.size);
 	
-	if (n == 1) {
+	if (a.size == 1) {
 		return;
 	}
-	autoINTVEC index = INTVECraw (n);
-	autoVEC atmp = VECraw (n);
-	autoINTVEC itmp = INTVECraw (n);
-	NUMindexx (& data [ifrom - 1], n, & index [0]);
+	
+	autoVEC atmp = VECcopy (a);
+	autoINTVEC index = NUMindexx (atmp.get());
+	
 	if (descending) {
-		for (integer j = 1; j <= n / 2; j ++) {
+		for (integer j = 1; j <= a.size / 2; j ++) {
 			integer tmp = index [j];
-			index [j] = index [n - j + 1];
-			index [n - j + 1] = tmp;
+			index [j] = index [a.size - j + 1];
+			index [a.size - j + 1] = tmp;
 		}
 	}
-	for (integer j = 1; j <= n; j ++) {
-		atmp [j] = data [ifrom + j - 1];
-	}
-	for (integer j = 1; j <= n; j ++) {
-		data [ifrom + j - 1] = atmp [index [j]];
-	}
-	for (integer j = 1; j <= n; j ++) {
-		itmp [j] = iar2 [ifrom + j - 1];
-	}
-	for (integer j = 1; j <= n; j ++) {
-		iar2 [ifrom + j - 1] = itmp [index [j]];
-	}
-	for (integer j = 1; j <= n; j ++) {
-		itmp [j] = iar3 [ifrom + j - 1];
-	}
-	for (integer j = 1; j <= n; j ++) {
-		iar3 [ifrom + j - 1] = itmp [index [j]];
-	}
+	
+	for (integer j = 1; j <= a.size; j ++) a [j] = atmp [index [j]];
+	
+	autoINTVEC itmp = INTVECraw (a.size);
+	vectorcopy_preallocated (itmp.get(), iv1);
+	for (integer j = 1; j <= a.size; j ++) iv1 [j ] = itmp [index [j]];
+	vectorcopy_preallocated (itmp.get(), iv2);
+	for (integer j = 1; j <= a.size; j ++) iv2 [j] = itmp [index [j]];
 }
 
 /* End of file NUMsort.cpp */

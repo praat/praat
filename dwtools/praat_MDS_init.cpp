@@ -64,7 +64,6 @@ static void TabelOfReal_testSorting (TableOfReal me) {
 		
 		Melder_require (my numberOfRows >= 6, U"TabelOfReal_sort2: we want at least 6 rows!!");
 		
-		autoNUMvector <integer> index (1, my numberOfColumns);
 		// Copy 1->3 and sort 3 inplace
 		NUMvector_copyElements (my data [1], my data [3], 1, my numberOfColumns);
 		NUMsort_d (my numberOfColumns, my data [3]);
@@ -74,7 +73,7 @@ static void TabelOfReal_testSorting (TableOfReal me) {
 		NUMvector_copyElements (my data [2], my data [5], 1, my numberOfColumns);
 		NUMsort2 (my numberOfColumns, my data [4], my data [5]);
 
-		NUMindexx (my data [rowtoindex], my numberOfColumns, index.peek());
+		autoINTVEC index = NUMindexx ({my data [rowtoindex], my numberOfColumns});
 		for (integer i = 1; i <= my numberOfColumns; i ++) {
 			my data [6] [i] = index [i];
 		}
@@ -665,7 +664,7 @@ FORM (REAL_Dissimilarity_Configuration_getStress, U"Dissimilarity & Configuratio
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_getStress (me, you, tiesHandling, stressFormula);
-	NUMBER_TWO_END (U"(stress)")
+	NUMBER_TWO_END (U" (stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_absolute_stress, U"Dissimilarity & Configuration: Get stress (absolute mds)", U"Dissimilarity & Configuration: Get stress (absolute mds)...") {
@@ -674,7 +673,7 @@ FORM (REAL_Dissimilarity_Configuration_absolute_stress, U"Dissimilarity & Config
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, nullptr,stressMeasure);
-	NUMBER_TWO_END (U"(absolute mds stress)")
+	NUMBER_TWO_END (U" (absolute mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configuration: Get stress (ratio mds)", U"Dissimilarity & Configuration: Get stress (ratio mds)...") {
@@ -683,7 +682,7 @@ FORM (REAL_Dissimilarity_Configuration_ratio_stress, U"Dissimilarity & Configura
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, nullptr, stressMeasure);
-	NUMBER_TWO_END (U"(ratio mds stress)")
+	NUMBER_TWO_END (U" (ratio mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_interval_stress, U"Dissimilarity & Configuration: Get stress (interval mds)", U"Dissimilarity & Configuration: Get stress (interval mds)...") {
@@ -692,7 +691,7 @@ FORM (REAL_Dissimilarity_Configuration_interval_stress, U"Dissimilarity & Config
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, nullptr, stressMeasure);
-	NUMBER_TWO_END (U"(interval mds stress)")
+	NUMBER_TWO_END (U" (interval mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Configuration: Get stress (monotone mds)", U"Dissimilarity & Configuration: Get stress (monotone mds)...") {
@@ -704,7 +703,7 @@ FORM (REAL_Dissimilarity_Configuration_monotone_stress, U"Dissimilarity & Config
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, nullptr, tiesHandling,stressMeasure);
-	NUMBER_TWO_END (U"(monotone mds stress)")
+	NUMBER_TWO_END (U" (monotone mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configuration: Get stress (i-spline mds)", U"Dissimilarity & Configuration: Get stress (i-spline mds)...") {
@@ -715,7 +714,7 @@ FORM (REAL_Dissimilarity_Configuration_ispline_stress, U"Dissimilarity & Configu
 DO
 	NUMBER_TWO (Dissimilarity, Configuration)
 		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, nullptr, numberOfInteriorKnots, order, stressMeasure);
-	NUMBER_TWO_END (U"(i-spline mds stress)")
+	NUMBER_TWO_END (U" (i-spline mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_absolute_stress, U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)", U"Dissimilarity & Configuration & Weight: Get stress (absolute mds)...") {
@@ -724,7 +723,7 @@ FORM (REAL_Dissimilarity_Configuration_Weight_absolute_stress, U"Dissimilarity &
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_absolute_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U"(absolute mds stress)")
+	NUMBER_THREE_END (U" (absolute mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ratio_stress, U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)", U"Dissimilarity & Configuration & Weight: Get stress (ratio mds)...") {
@@ -733,7 +732,7 @@ FORM (REAL_Dissimilarity_Configuration_Weight_ratio_stress, U"Dissimilarity & Co
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_ratio_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U"(ratio mds stress)")
+	NUMBER_THREE_END (U" (ratio mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_interval_stress, U"Dissimilarity & Configuration & Weight: Get stress (interval mds)", U"Dissimilarity & Configuration & Weight: Get stress (interval mds)...") {
@@ -742,7 +741,7 @@ FORM (REAL_Dissimilarity_Configuration_Weight_interval_stress, U"Dissimilarity &
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_interval_stress (me, you, him, stressMeasure);
-	NUMBER_THREE_END (U"(interval mds stress)")
+	NUMBER_THREE_END (U" (interval mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)", U"Dissimilarity & Configuration & Weight: Get stress (monotone mds)...") {
@@ -754,7 +753,7 @@ FORM (REAL_Dissimilarity_Configuration_Weight_monotone_stress, U"Dissimilarity &
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_monotone_stress (me, you, him, tiesHandling, stressMeasure);
-	NUMBER_THREE_END (U"(monotone mds stress)")
+	NUMBER_THREE_END (U" (monotone mds stress)")
 }
 
 FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)", U"Dissimilarity & Configuration & Weight: Get stress (i-spline mds)...") {
@@ -765,7 +764,7 @@ FORM (REAL_Dissimilarity_Configuration_Weight_ispline_stress, U"Dissimilarity & 
 DO
 	NUMBER_THREE (Dissimilarity, Configuration, Weight)
 		double result = Dissimilarity_Configuration_Weight_ispline_stress (me, you, him, numberOfInteriorKnots, order, stressMeasure);
-	NUMBER_THREE_END (U"(i-spline mds stress)")
+	NUMBER_THREE_END (U" (i-spline mds stress)")
 }
 
 FORM (GRAPHICS_Dissimilarity_Configuration_drawShepardDiagram, U"Dissimilarity & Configuration: Draw Shepard diagram", U"Dissimilarity & Configuration: Draw Shepard diagram...") {

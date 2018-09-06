@@ -77,7 +77,7 @@ autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me) {
 			}
 		}
 		thy numberOfProximities = n;
-		NUMsort3 ({thy proximity, n}, {thy rowIndex, n}, {thy columnIndex, n}, 1, n, false);
+		NUMsort3 ({thy proximity, n}, {thy rowIndex, n}, {thy columnIndex, n}, false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MDSVec created.");

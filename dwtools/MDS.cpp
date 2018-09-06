@@ -1009,7 +1009,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 				}
 				if (i - ib > 1) {
 					if (tiesHandling == MDS_PRIMARY_APPROACH) {
-						NUMsort3 (distances.get(), {my rowIndex, numberOfProximities}, {my columnIndex, numberOfProximities}, ib, i - 1, false); // already sorted
+						// all equal
 					} else if (tiesHandling == MDS_SECONDARY_APPROACH) {
 						longdouble mean = 0.0;
 						for (integer j = ib; j <= i - 1; j ++) {
@@ -1395,8 +1395,8 @@ double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d,
 		w = aw.get();
 	}
 	autoDistance cdist = Configuration_to_Distance (c);
-	autoMDSVec vec = Dissimilarity_to_MDSVec (d);
-	autoDistance fit = Transformator_transform (t, vec.get(), cdist.get(), w);
+	autoMDSVec mdsvec = Dissimilarity_to_MDSVec (d);
+	autoDistance fit = Transformator_transform (t, mdsvec.get(), cdist.get(), w);
 
 	stress = Distance_Weight_stress (fit.get(), cdist.get(), w, stressMeasure);
 	return stress;

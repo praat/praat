@@ -46,7 +46,8 @@ autoTableOfReal TableOfReal_Permutation_permuteRows (TableOfReal me, Permutation
 autoPermutation TableOfReal_to_Permutation_sortRowLabels (TableOfReal me) {
 	try {
 		autoPermutation thee = Permutation_create (my numberOfRows);
-		NUMindexx_s (my rowLabels.peek2(), my numberOfRows, thy p);
+		autoINTVEC index = NUMindexx_s (my rowLabels.get());
+		vectorcopy_preallocated ({thy p, my numberOfRows}, index.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Permutation created.");
