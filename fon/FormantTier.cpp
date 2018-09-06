@@ -1,6 +1,6 @@
 /* FormantTier.cpp
  *
- * Copyright (C) 1992-2011,2014,2015,2016,2017,2018 Paul Boersma
+ * Copyright (C) 1992-2007,2011,2012,2014-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,8 +55,8 @@ autoFormantPoint FormantPoint_create (double time, integer numberOfFormants) {
 		autoFormantPoint me = Thing_new (FormantPoint);
 		my number = time;
 		my numberOfFormants = numberOfFormants;
-		my formant = NUMvector <double> (1, numberOfFormants);
-		my bandwidth = NUMvector <double> (1, numberOfFormants);
+		my formant = VECzero (numberOfFormants);
+		my bandwidth = VECzero (numberOfFormants);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Formant point not created.");

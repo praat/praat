@@ -21,8 +21,8 @@
 oo_DEFINE_CLASS (FormantPoint, AnyPoint)
 
 	oo_INT16 (numberOfFormants)
-	oo_DOUBLE_VECTOR (formant, numberOfFormants)
-	oo_DOUBLE_VECTOR (bandwidth, numberOfFormants)
+	oo_VEC (formant, numberOfFormants)
+	oo_VEC (bandwidth, numberOfFormants)
 
 oo_END_CLASS (FormantPoint)
 #undef ooSTRUCT

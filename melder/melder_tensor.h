@@ -439,6 +439,57 @@ public:
 		return *this;
 	}
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
+	/*
+		Unlike std::vector, our vector is not really designed for dynamic resizing,
+		i.e. it has no `capacity` member. This is because our vectors should mainly feel happy
+		in an environment with matrixes, tensor3s and tensor4s, for which dynamic resizing
+		makes little sense.
+		The following functions, however, do support dynamic resizing,
+		but the capacity should be kept in an external integer.
+
+		Some of these functions are capable of keeping a valid `at` pointer
+		while `size` can at the same time be zero.
+	*/
+	void initWithCapacity (integer *inout_capacity, kTensorInitializationType initializationType = kTensorInitializationType::ZERO) {
+		if (*inout_capacity > 0)
+			our at = NUMvector<T> (1, *inout_capacity, initializationType == kTensorInitializationType::ZERO);
+		our size = 0;
+	}
+	/*
+		If the new size N is less than the current size S,
+		then the first N elements of the vector are kept,
+		so if you want to keep a different range than the
+		first N elements of your original vector,
+		you should shift the elements before resizing.
+
+		If the new size N is greater than the current size S,
+		then all S elements of the vector are kept,
+		and they are the first S elements of the new vector
+		the remaining S - N elements may be initialized to zero.
+		If you want the original S elements to show up
+		elsewhere than at the head of the vector,
+		you should shift the elements after resizing.
+	*/
+	bool resize (integer newSize, integer *inout_capacity,
+		kTensorInitializationType initializationType = kTensorInitializationType::ZERO)
+	{
+		if (newSize > *inout_capacity) {
+			integer newCapacity = newSize + our size + 10;   // this is at least a doubling!
+			/*
+				Create without change.
+			*/
+			T *newAt = NUMvector<T> (1, newCapacity, initializationType == kTensorInitializationType::ZERO);
+			/*
+				Change without error.
+			*/
+			for (integer i = 1; i <= our size; i ++)
+				newAt [i] = our at [i];
+			if (our at) NUMvector_free (our at, 1);
+			our at = newAt;
+			*inout_capacity = newCapacity;
+		}
+		our size = newSize;   // shrink below capacity
+	}
 };
 
 template <typename T>

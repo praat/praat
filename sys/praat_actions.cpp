@@ -27,6 +27,7 @@
 #define BUTTON_RIGHT -5
 
 static OrderedOf <structPraat_Command> theActions;
+void praat_actions_exit_optimizeByLeaking () { theActions. _ownItems = false; }
 static GuiMenu praat_writeMenu;
 static GuiMenuItem praat_writeMenuSeparator;
 static GuiForm praat_form;

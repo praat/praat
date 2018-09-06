@@ -131,7 +131,7 @@ void praat_showLogo (bool autoPopDown);
 
 /* Communication with praat_menuCommands.cpp: */
 void praat_menuCommands_init ();
-void praat_menuCommands_exit ();
+void praat_menuCommands_exit_optimizeByLeaking ();
 int praat_doMenuCommand (conststring32 command, conststring32 arguments, Interpreter interpreter);   // 0 = not found
 int praat_doMenuCommand (conststring32 command, integer narg, Stackel args, Interpreter interpreter);   // 0 = not found
 integer praat_getNumberOfMenuCommands ();
@@ -141,6 +141,7 @@ Praat_Command praat_getMenuCommand (integer i);
 void praat_actions_show ();
 void praat_actions_createWriteMenu (GuiWindow window);
 void praat_actions_init ();   // creates space for action commands
+void praat_actions_exit_optimizeByLeaking ();
 void praat_actions_createDynamicMenu (GuiWindow window);
 void praat_saveAddedActions (MelderString *buffer);
 void praat_saveToggledActions (MelderString *buffer);

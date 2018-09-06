@@ -37,6 +37,7 @@ void structPreference :: v_destroy () noexcept {
 }
 
 static SortedSetOfStringOf <structPreference> thePreferences;
+void Preferences_exit_optimizeByLeaking () { thePreferences. _ownItems = false; }
 
 static void Preferences_add (conststring32 string, int type, void *value, int min, int max,
 	conststring32 (*getText) (int value), int (*getValue) (conststring32 text))
