@@ -101,7 +101,6 @@ procedure testeigen: .eigen, .dim, .eigenvalues#, .eigenvectors##
 			@assertApproximatelyEqual: .evecj, .val, eps, .comment$
 		endfor
 	endfor
-
 endproc
 
 procedure test3by3
@@ -157,7 +156,31 @@ procedure testgeneralSquare
 	Set value: 1, 2, 1
 	Set value: 2, 3, 1
 	Set value: 3, 1, 1
+	.given_re# = {1, -1/2, -1/2}
+	.given_im# = {0, 0.5*sqrt(3), -0.5*sqrt(3)}
 	Eigen (complex)
+	.eigenvectors = selected ("Matrix", 1)
+	.eigenvalues = selected ("Matrix", 2)
+	selectObject: .eigenvalues
+	.nrow = Get number of rows
+	assert .nrow = 3
+	# lite version of equality: check for occurrence
+	# the eigenvalues of a real square matrix are not "sorted". We only know that complex conjugate eigenvalues occur
+	# have the one with positive imaginary part first.
+	.eval_re# = {object [.eigenvalues, 1, 1], object [.eigenvalues, 2, 1],object [.eigenvalues, 3, 1]}
+	.eval_im# = {object [.eigenvalues, 1, 2], object [.eigenvalues, 2, 2],object [.eigenvalues, 3, 2]}
+	if .eval_re# [1] > 1-eps and .eval_re# [1] < 1+eps
+		assert .eval_re# [2] / .given_re# [2] > 1-eps and .eval_re# [2] / .given_re# [2] < 1+eps
+		assert .eval_re# [3] / .given_re# [3] > 1-eps and .eval_re# [3] / .given_re# [3] < 1+eps	
+	else
+		assert .eval_re# [1] / .given_re# [2] > 1-eps and .eval_re# [1] / .given_re# [2] < 1+eps
+		assert .eval_re# [2] / .given_re# [3] > 1-eps and .eval_re# [2] / .given_re# [3] < 1+eps	
+		assert .eval_re# [3] > 1-eps and .eval_re# [3] < 1+eps and .eval_im# [3] == 0		
+	endif
+	selectObject: .eigenvectors
+	.ncol = Get number of columns
+	assert .ncol = 6	
+	removeObject: .mat, .eigenvectors, .eigenvalues
 endproc
 
 appendInfoLine: "test_Eigen.praat OK"	
