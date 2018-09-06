@@ -70,13 +70,23 @@ inline void VECmultiply_inplace (VEC x, double factor) {
 		x [i] *= factor;
 }
 
-inline autoVEC VECrandomGauss (integer size, double mu, double sigma) {
+inline
+autoVEC VECrandomGauss (integer size, double mu, double sigma) {
 	autoVEC result = VECraw (size);
 	for (integer i = 1; i <= size; i ++)
 		result [i] = NUMrandomGauss (mu, sigma);
 	return result;
 }
 
+inline
+autoVEC VECrandomUniform (integer size, double lowest, double highest) {
+	autoVEC result = VECraw (size);
+	for (integer i = 1; i <= size; i ++)
+		result [i] = NUMrandomUniform (lowest, highest);
+	return result;
+}
+
+extern
 void VECsort_inplace (VEC x);
 
 inline void VECsubtract_inplace (VEC x, double number) {

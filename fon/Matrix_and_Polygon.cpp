@@ -1,6 +1,6 @@
 /* Matrix_and_Polygon.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 		autoPolygon thee;
 		if (my ny == 2) {
 			thee = Polygon_create (my nx);
-			NUMvector_copyElements (my z [1], thy x, 1, my nx);
-			NUMvector_copyElements (my z [2], thy y, 1, my nx);
+			VECcopy_preallocated (thy x.get(), constVEC (my z [1], my nx));
+			VECcopy_preallocated (thy y.get(), constVEC (my z [2], my nx));
 		} else {
 			thee = Polygon_create (my ny);
 			for (integer i = 1; i <= my ny; i ++) {
@@ -50,8 +50,8 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 autoMatrix Polygon_to_Matrix (Polygon me) {
 	try {
 		autoMatrix thee = Matrix_create (1.0, my numberOfPoints, my numberOfPoints, 1.0, 1.0, 1.0, 2.0, 2, 1.0, 1.0);
-		NUMvector_copyElements (my x, thy z [1], 1, my numberOfPoints);
-		NUMvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
+		VECcopy_preallocated (VEC (thy z [1], my numberOfPoints), my x.get());
+		VECcopy_preallocated (VEC (thy z [2], my numberOfPoints), my y.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

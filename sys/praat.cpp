@@ -490,15 +490,6 @@ void praat_removeObject (int i) {
 static void praat_exit (int exit_code) {
 //Melder_setTracing (true);
 	int IOBJECT;
-	#ifdef _WIN32
-		if (! theCurrentPraatApplication -> batch) {
-			Melder_assert (theCurrentPraatApplication);
-			Melder_assert (theCurrentPraatApplication -> topShell);
-			Melder_assert (theCurrentPraatApplication -> topShell -> d_xmShell);
-			trace (U"destroy the object window");
-			XtDestroyWidget (theCurrentPraatApplication -> topShell -> d_xmShell);
-		}
-	#endif
 	trace (U"destroy the picture window");
 	praat_picture_exit ();
 	praat_statistics_exit ();   // record total memory use across sessions
@@ -562,6 +553,9 @@ static void praat_exit (int exit_code) {
 	Melder_files_cleanUp ();   // in case a URL is open
 
 	trace (U"leave the program");
+	praat_menuCommands_exit_optimizeByLeaking ();
+	praat_actions_exit_optimizeByLeaking ();
+	Preferences_exit_optimizeByLeaking ();
 	exit (exit_code);
 }
 

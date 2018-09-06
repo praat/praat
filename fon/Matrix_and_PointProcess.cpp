@@ -1,6 +1,6 @@
 /* Matrix_and_PointProcess.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,8 @@ autoMatrix PointProcess_to_Matrix (PointProcess me) {
 autoPointProcess Matrix_to_PointProcess (Matrix me) {
 	try {
 		autoPointProcess you = PointProcess_create (my z [1] [1], my z [1] [my nx], my nx);
-		for (integer i = 1; i <= my nx; i ++) {
+		for (integer i = 1; i <= my nx; i ++)
 			PointProcess_addPoint (you.get(), my z [1] [i]);
-		}
 		return you;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PointProcess.");

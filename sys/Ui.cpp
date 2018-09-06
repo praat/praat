@@ -362,7 +362,7 @@ void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void 
 
 void structUiForm :: v_destroy () noexcept {
 	if (our d_dialogForm) {
-		trace (U"invoking button title ", our invokingButtonTitle.get());
+		trace (U"form <<", our d_dialogForm -> name.get(), U">>, invoking-button title <<", our invokingButtonTitle.get(), U">>");
 		GuiObject_destroy (our d_dialogForm -> d_widget);   // BUG: make sure this destroys the shell
 	}
 	our UiForm_Parent :: v_destroy ();

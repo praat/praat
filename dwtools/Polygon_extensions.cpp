@@ -153,13 +153,13 @@ void Polygon_Categories_draw (Polygon me, Categories thee, Graphics graphics, do
 	}
 
 	if (xmax == xmin) {
-		NUMvector_extrema (my x, 1, my numberOfPoints, & min, & max);
+		NUMvector_extrema (my x.at, 1, my numberOfPoints, & min, & max);
 		tmp = max - min == 0 ? 0.5 : 0.0;
 		xmin = min - tmp; xmax = max + tmp;
 	}
 
 	if (ymax == ymin) {
-		NUMvector_extrema (my y, 1, my numberOfPoints, & min, & max);
+		NUMvector_extrema (my y.at, 1, my numberOfPoints, & min, & max);
 		tmp = max - min == 0 ? 0.5 : 0.0;
 		ymin = min - tmp; ymax = max + tmp;
 	}
@@ -611,13 +611,15 @@ static bool pointsInsideInterval (double *x, integer n, integer istart, integer 
 			imin = index;
 		}
 	}
-	*jstart = imin; *jend = imax;
+	*jstart = imin;
+	*jend = imax;
 	if (x [istart] > x [iend]) {
 		*jstart = imax;
 		*jend = imin;
 	}
 	if (x [istart] == x [*jstart] and x [iend] == x [*jend]) {   // if there are duplicates of the extrema
-		*jstart = istart; *jend = iend;
+		*jstart = istart;
+		*jend = iend;
 	}
 	return *jstart == istart and * jend == iend;
 }
@@ -642,8 +644,8 @@ static void _Polygons_copyNonCollinearities (Polygon me, Polygon thee, integer c
 	// Determine if all collinear point are within the interval [colstart,colend]
 	integer jstart, jend;
 	bool allPointsInside = ( my x [collstart] != my x [collend] ?
-	                         pointsInsideInterval (my x, my numberOfPoints, collstart, collend, &jstart, &jend) :
-	                         pointsInsideInterval (my y, my numberOfPoints, collstart, collend, &jstart, &jend) );
+	                         pointsInsideInterval (my x.at, my numberOfPoints, collstart, collend, &jstart, &jend) :
+	                         pointsInsideInterval (my y.at, my numberOfPoints, collstart, collend, &jstart, &jend) );
 	if (not allPointsInside) {
 		if (collstart != jstart) { // also include the extreme point at start
 			thy numberOfPoints ++;

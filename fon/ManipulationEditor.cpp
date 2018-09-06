@@ -223,7 +223,7 @@ static void menu_cb_addPitchPointAtSlice (ManipulationEditor me, EDITOR_ARGS_DIR
 	if (! pulses) Melder_throw (U"There are no pulses.");
 	if (! ana -> pitch) return;
 	integer ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
-	double *t = pulses -> t;
+	double *t = pulses -> t.at;
 	double f = my pitchTier.cursor;   // default
 	Editor_save (me, U"Add pitch point");
 	if (nt <= 1) {

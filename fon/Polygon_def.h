@@ -24,15 +24,15 @@ oo_DEFINE_CLASS (Polygon, Daata)
 
 	#if oo_READING
 		oo_VERSION_UNTIL (1)
-			oo_FLOAT_VECTOR (x, numberOfPoints)
-			oo_FLOAT_VECTOR (y, numberOfPoints)
+			oo_obsoleteVEC32 (x, numberOfPoints)
+			oo_obsoleteVEC32 (y, numberOfPoints)
 		oo_VERSION_ELSE
-			oo_DOUBLE_VECTOR (x, numberOfPoints)
-			oo_DOUBLE_VECTOR (y, numberOfPoints)
+			oo_VEC (x, numberOfPoints)
+			oo_VEC (y, numberOfPoints)
 		oo_VERSION_END
 	#else
-		oo_DOUBLE_VECTOR (x, numberOfPoints)
-		oo_DOUBLE_VECTOR (y, numberOfPoints)
+		oo_VEC (x, numberOfPoints)
+		oo_VEC (y, numberOfPoints)
 	#endif
 
 	#if oo_DECLARING

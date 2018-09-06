@@ -22,6 +22,7 @@
 #include "GuiP.h"
 
 static OrderedOf <structPraat_Command> theCommands;
+void praat_menuCommands_exit_optimizeByLeaking () { theCommands. _ownItems = false; }
 
 void praat_menuCommands_init () {
 }
