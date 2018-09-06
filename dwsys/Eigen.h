@@ -28,7 +28,7 @@ autoEigen Eigen_create (integer numberOfEigenvalues, integer dimension);
 
 void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension);
 
-void Eigen_initFromSymmetricMatrix (Eigen me, MAT a);
+void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a);
 
 void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integer numberOfColumns);
 /*

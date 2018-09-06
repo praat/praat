@@ -1,8 +1,8 @@
-#ifndef _Procrustes_h_
-#define _Procrustes_h_
-/* Procrustes.h
+#ifndef _MDSVec_h_
+#define _MDSVec_h_
+/* MDSVec.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,25 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Data.h"
+#include "Collection.h"
+#include "Proximity.h"
+
+#include "MDSVec_def.h"
+
 /*
- djmw 20010926
- djmw 20020813 GPL header
- djmw 20110306 Latest modification.
+	An MDSVec object:
+	contains vectors of length numberOfPoints (numberOfPoibts - 1) /2 
+	with the sorted disparities, and their corresponding row and column indices of 'numberOfPoints' objects
 */
 
-#include "AffineTransform.h"
+autoMDSVec MDSVec_create (long numberOfPoints);
 
-#include "Procrustes_def.h"
+autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me);
 
-autoProcrustes Procrustes_create (integer n);
+Collection_define (MDSVecList, OrderedOf, MDSVec) {
+};
 
-#endif /* _Procrustes_h_ */
+autoMDSVecList DissimilarityList_to_MDSVecList (DissimilarityList me);
+
+#endif /* MDSVec_def.h */

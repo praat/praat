@@ -284,14 +284,15 @@ void eigenSort (double d [], double **v, integer n, int sort) {
 	Kruskal's algorithm for monotone regression (and much simpler).
 	Regression is ascending
 */
-void NUMmonotoneRegression (const double x [], integer n, double xs []) {
+void NUMmonotoneRegression (constVEC x, VEC xs) {
+	Melder_assert (x.size == xs.size);
 	double xt = undefined; // only to stop gcc from complaining "may be used uninitialized"
 
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= x.size; i ++) {
 		xs [i] = x [i];
 	}
 
-	for (integer i = 2; i <= n; i ++) {
+	for (integer i = 2; i <= x.size; i ++) {
 		if (xs [i] >= xs [i - 1]) {
 			continue;
 		}
@@ -479,7 +480,7 @@ double NUMtrace2 (double **a1, double **a2, integer n) {
 
 void NUMeigensystem (double **a, integer n, double **evec, double eval []) {
 	autoEigen me = Thing_new (Eigen);
-	MAT mat; mat.ncol = mat.nrow = n; mat.at = a;
+	constMAT mat (a, n, n);
 	Eigen_initFromSymmetricMatrix (me.get(), mat);
 	if (evec) {
 		NUMmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
@@ -535,6 +536,7 @@ void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambd
 	}
 }
 
+#if 0
 void NUMprincipalComponents (double **a, integer n, integer nComponents, double **pc) {
 	autoNUMmatrix<double> evec (1, n, 1, n);
 	NUMeigensystem (a, n, evec.peek(), NULL);
@@ -548,6 +550,7 @@ void NUMprincipalComponents (double **a, integer n, integer nComponents, double 
 		}
 	}
 }
+#endif
 
 void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, integer from_col, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection, integer to_col) {
 	/* Input:
@@ -739,19 +742,9 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 	integer n3 = 3, info;
 	double eps = 1e-5, t1, t2, t3;
 
-	autoNUMmatrix<double> ftinv (1, n3, 1, n3);
-	autoNUMmatrix<double> b (1, n3, 1, n3);
-	autoNUMmatrix<double> g (1, n3, 1, n3);
-	autoNUMmatrix<double> p (1, n3, 1, n3);
-	autoNUMvector<double> delta (1, n3);
-	autoNUMmatrix<double> ftinvp (1, n3, 1, n3);
-	autoNUMmatrix<double> ptfinv (1, n3, 1, n3);
-	autoNUMvector<double> otd (1, n3);
-	autoNUMmatrix<double> ptfinvc (1, n3, 1, n3);
-	autoNUMvector<double> y (1, n3);
-	autoNUMvector<double> w (1, n3);
-	autoNUMvector<double> chi (1, n3);
-	autoNUMvector<double> diag (1, n3);
+	autoMAT ftinv (n3, n3, kTensorInitializationType::ZERO);
+	autoMAT g (n3, n3, kTensorInitializationType::ZERO);
+	autoMAT ptfinv (n3, n3, kTensorInitializationType::ZERO);
 
 	// Construct O'.O	[1..3] [1..3].
 
@@ -774,7 +767,8 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 
 	// Construct G and its eigen-decomposition (eq. (4,5))
 	// Sort eigenvalues (& eigenvectors) ascending.
-
+	
+	autoMAT b (n3, n3, kTensorInitializationType::ZERO);
 	b [3] [1] = b [1] [3] = -0.5;
 	b [2] [2] = 1.0;
 
@@ -793,19 +787,22 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 	}
 
 	// G's eigen-decomposition with eigenvalues (assumed ascending). (eq. 5)
-
-	NUMeigensystem (g.peek(), 3, p.peek(), delta.peek());
-
-	NUMsort_d (3, delta.peek()); /* ascending */
+	autoMAT p;
+	autoVEC delta;
+	MAT_getEigenSystemFromSymmetricMatrix (g.get(), & p, & delta, true);
+	//NUMeigensystem (g.peek(), 3, p.peek(), delta.peek());
 
 	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)	(page 632)
 	// Get P'F^-1 from the transpose of (F')^-1 . P
-
+	
+	autoVEC y (n3, kTensorInitializationType::ZERO);
+	autoVEC otd (n3, kTensorInitializationType::ZERO);
+	autoMAT ftinvp (n3, n3, kTensorInitializationType::ZERO);
 	for (integer i = 1; i <= 3; i ++) {
 		for (integer j = 1; j <= 3; j ++) {
 			if (ftinv [i] [j] != 0.0) {
 				for (integer k = 1; k <= 3; k ++) {
-					ftinvp [i] [k] += ftinv [i] [j] * p [3 + 1 - j] [k]; /* is sorted desc. */
+					ftinvp [i] [k] += ftinv [i] [j] * p [j] [k];
 				}
 			}
 		}
@@ -813,6 +810,8 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 			otd [i] += o [k] [i] * d [k];
 		}
 	}
+	
+	autoMAT ptfinvc (n3, n3, kTensorInitializationType::ZERO);
 
 	for (integer i = 1; i <= 3; i ++) {
 		for (integer j = 1; j <= 3; j ++) {
@@ -820,9 +819,12 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		}
 	}
 
-	NUMsolveEquation (ftinvp.peek(), 3, 3, otd.peek(), 1e-6, y.peek());
+	NUMsolveEquation (ftinvp.at, 3, 3, otd.at, 1e-6, y.at);
 
 	// The solution (3 cases)
+	autoVEC w (n3, kTensorInitializationType::ZERO);
+	autoVEC chi (n3, kTensorInitializationType::ZERO);
+	autoVEC diag (n3, kTensorInitializationType::ZERO);
 
 	if (fabs (y [1]) < eps) {
 		// Case 1: page 633
@@ -834,11 +836,11 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		w [2] = t2 * delta [2];
 		w [3] = t3 * delta [3];
 
-		NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+		NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
 
 		w [1] = -w [1];
 		if (fabs (chi [3] / chi [1]) < eps) {
-			NUMsolveEquation (ptfinvc.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+			NUMsolveEquation (ptfinvc.at, 3, 3, w.at, 1e-6, chi.at);
 		}
 	} else if (fabs (y [2]) < eps) {
 		// Case 2: page 633
@@ -849,17 +851,17 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		if ( (delta [2] < delta [3] && (t2 = (t1 * t1 * delta [1] + t3 * t3 * delta [3])) < eps)) {
 			w [2] = sqrt (- delta [2] * t2); /* +- */
 			w [3] = t3 * delta [3];
-			NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+			NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
 			w [2] = -w [2];
 			if (fabs (chi [3] / chi [1]) < eps) {
-				NUMsolveEquation (ptfinvc.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+				NUMsolveEquation (ptfinvc.at, 3, 3, w.at, 1e-6, chi.at);
 			}
 		} else if (((delta [2] < delta [3] + eps) || (delta [2] > delta [3] - eps)) && fabs (y [3]) < eps) {
 			// choose one value for w [2] from an infinite number
 
 			w [2] = w [1];
 			w [3] = sqrt (- t1 * t1 * delta [1] * delta [2] - w [2] * w [2]);
-			NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+			NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
 		}
 	} else {
 		// Case 3: page 634 use Newton-Raphson root finder
@@ -867,14 +869,14 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		struct nr_struct me;
 		double xlambda, eps2 = (delta [2] - delta [1]) * 1e-6;
 
-		me.y = y.peek(); me.delta = delta.peek();
+		me.y = y.at; me.delta = delta.at;
 
 		NUMnrbis (nr_func, delta [1] + eps, delta [2] - eps2, & me, & xlambda);
 
 		for (integer i = 1; i <= 3; i++) {
 			w [i] = y [i] / (1.0 - xlambda / delta [i]);
 		}
-		NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+		NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
 	}
 
 	*alpha = chi [1]; *gamma = chi [3];
@@ -903,10 +905,9 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 }
 
 void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m, double phi [], double alpha, double delta, double t []) {
-	autoNUMmatrix<double> u (1, m, 1, m);
-	autoNUMvector<double> c (1, m);
-	autoNUMvector<double> x (1, n);
-	autoNUMvector<integer> indx (1, m);
+	autoMAT u = MATzero (m, m);
+	autoVEC c = VECzero (m);
+	autoVEC x = VECzero (n);
 
 	for (integer j = 1; j <= m; j ++) {
 		t [j] = 0.0;
@@ -925,7 +926,7 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 
 	double *sqrtc = svd -> d;
 	double **ut = svd -> v;
-	NUMindexx (sqrtc, m, indx.peek());
+	autoINTVEC indx = NUMindexx ({sqrtc, m});
 
 	for (integer j = m; j > 0; j --) {
 		double tmp = sqrtc [indx [j]];
@@ -957,8 +958,8 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 	me.m = m;
 	me.delta = delta;
 	me.alpha = alpha;
-	me.x = x.peek();
-	me.c = c.peek();
+	me.x = x.at;
+	me.c = c.at;
 
 	double xqsq = 0.0;
 	for (integer j = m - q + 1; j <= m; j ++) {
@@ -2933,7 +2934,7 @@ void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowI
 	}
 }
 
-void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out_h, double *out_hx, 
+void MAT_getEntropies (constMAT m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {
 	
 	double h = undefined, hx = undefined, hy = undefined;
@@ -2942,8 +2943,8 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 	// Get total sum and check if all elements are not negative.
 	
 	longdouble totalSum = 0.0;
-	for (integer i = 1; i <= nrow; i ++) {
-		for (integer j = 1; j <= ncol; j++) {
+	for (integer i = 1; i <= m.nrow; i ++) {
+		for (integer j = 1; j <= m.ncol; j++) {
 			Melder_require (m [i][j] >= 0, U"Matrix elements should not be negative.");
 			totalSum += m [i] [j];
 		}
@@ -2951,9 +2952,9 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 	
 	if (totalSum > 0.0) {
 		longdouble hy_t = 0.0;
-		for (integer i = 1; i <= nrow; i ++) {
+		for (integer i = 1; i <= m.nrow; i ++) {
 			longdouble rowsum = 0.0;
-			for (integer j = 1; j <= ncol; j++) rowsum += m [i] [j];
+			for (integer j = 1; j <= m.ncol; j++) rowsum += m [i] [j];
 			if (rowsum > 0.0) {
 				longdouble p = rowsum / totalSum;
 				hy_t -= p * NUMlog2 (p);
@@ -2962,9 +2963,9 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 		hy = (double) hy_t;
 		
 		longdouble hx_t = 0.0;
-		for (integer j = 1; j <= ncol; j ++) {
+		for (integer j = 1; j <= m.ncol; j ++) {
 			longdouble colsum = 0.0;
-			for (integer i = 1; i <= nrow; i++) colsum += m [i] [j];
+			for (integer i = 1; i <= m.nrow; i++) colsum += m [i] [j];
 			if (colsum > 0.0) {
 				longdouble p = colsum / totalSum;
 				hx_t -= p * NUMlog2 (p);
@@ -2974,8 +2975,8 @@ void NUMmatrix_getEntropies (double **m, integer nrow, integer ncol, double *out
 				
 		// Total entropy
 		longdouble h_t = 0.0;
-		for (integer i = 1; i <= nrow; i ++) {
-			for (integer j = 1; j <= ncol; j ++) {
+		for (integer i = 1; i <= m.nrow; i ++) {
+			for (integer j = 1; j <= m.ncol; j ++) {
 				if (m [i] [j] > 0.0) {
 					double p = m [i] [j] / totalSum;
 					h_t -= p * NUMlog2 (p);

@@ -605,4 +605,43 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 	}
 }
 
+autoEigen Matrix_to_Eigen (Matrix me) {
+	try {
+		Melder_require (my nx == my ny, U"The Matrix needs to be square.");
+		Melder_require (MAT_isSymmetric (me -> asMAT()), U"The Matrix needs to be symmetric");
+		autoEigen thee = Eigen_create (my nx, my nx);
+		Eigen_initFromSymmetricMatrix (thee.get(), me -> asMAT());
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (U"Cannot create Eigen from Matrix.");
+	}
+}
+
+void Matrix_Eigen_complex (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eigenvalues) {
+	try {
+		Melder_require (my nx == my ny, U"The Matrix needs to be square.");
+		autoVEC eigenvalues_re, eigenvalues_im;
+		autoMAT right_eigenvectors;
+		MAT_getEigenSystemFromGeneralMatrix (me -> asMAT(), nullptr, & right_eigenvectors, & eigenvalues_re, & eigenvalues_im);
+		autoMatrix eigenvalues = Matrix_createSimple (my ny, 2);
+		autoMAT eigenvectors_reim;
+		MAT_eigenvectors_decompress (right_eigenvectors.get(), eigenvalues_re.get(), eigenvalues_im.get(), & eigenvectors_reim);
+		if (out_eigenvectors) {
+			autoMatrix eigenvectors = Matrix_createSimple (my ny, 2 * my ny);
+			MATcopy_preallocated (eigenvectors -> asMAT(), eigenvectors_reim.get());
+			*out_eigenvectors = eigenvectors.move();
+		}
+		if (out_eigenvalues) {
+			autoMatrix eigenvalues = Matrix_createSimple (my ny, 2);
+			for (long i = 1; i <= my ny; i ++) {
+				eigenvalues -> z [i] [1] = eigenvalues_re [i];
+				eigenvalues -> z [i] [2] = eigenvalues_im [i];
+			}
+			*out_eigenvalues = eigenvalues.move();	
+		}
+	}catch (MelderError) {
+		Melder_throw (U"Cannot create Eigenvalues from Matrix.");
+	}
+}
+
 /* End of file Matrix_extensions.cpp */

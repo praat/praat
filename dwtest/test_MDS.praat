@@ -1,9 +1,9 @@
 # test_MDS.praat
 
 appendInfoLine: "test_MDS.praat"
-
+@test_additiveConstant
 @testDissimilarityInterface
-# side effect: 6 configurations in the list of obects: configuration[1]...configuration[6]
+# side effect: 6 configurations in the list of objects: configuration[1]...configuration[6]
 # testINDSCAL uses these 6 configurations
 @testINDSCAL
 @testProcrustus
@@ -169,18 +169,23 @@ procedure testDissimilarityInterface
 	# Create a random configuration
 	.command$ = .mdsCommand$ [1] + .numberOfDimensions$ [1] + .extraParameters$ [1] + .minimizationParameters$
 	.randomConfiguration = '.command$'
-	Formula: ~ randomUniform (-1, 1)
+	Formula: "randomUniform (-1, 1)"
+	Rename: "random"
+
+	# Use the 6 different "To Configuration (..)" commands to get 6 configurations
 
 	for .itype to 6
 		selectObject: .dissimilarity
 		.command$ = .mdsCommand$ [.itype] + .numberOfDimensions$ [.itype] + .extraParameters$ [.itype] + .minimizationParameters$
-		configuration[.itype] = '.command$'
+		configuration [.itype] = '.command$'
 	endfor
+
+	# Use the dissimilarity and the configuration and try to improve the configuration 
 
 	appendInfoLine: tab$, tab$, "Dissimilarity & Configuration"
 	.minimizationParameters$ = "1e-08, 50, 1"
 	for .itype to 6
-		selectObject: .dissimilarity, configuration[.itype]
+		selectObject: .dissimilarity, configuration [.itype]
 		.command$ = .mdsCommand$ [.itype] + .extraParameters$ [.itype] + .minimizationParameters$
 		.configuration [.itype] = '.command$'
 	endfor
@@ -189,22 +194,28 @@ procedure testDissimilarityInterface
 	.stressMeasure$ [2] = "Kruskal's stress-1"
 	.stressMeasure$ [3] = "Kruskal's stress-2"
 	.stressMeasure$ [4] = "Raw"
-	.tiesHandling$[1] = "Primary approach"
-	.tiesHandling$[2] = "Secondary approach"
+	.tiesHandling$ [1] = "Primary approach"
+	.tiesHandling$ [2] = "Secondary approach"
 	.stressCalculation$ [1] = "Formula1"
 	.stressCalculation$ [2] = "Formula2"
-	for .i to 2
-		for .k to 2
-			selectObject: .dissimilarity, .randomConfiguration
-			.stress0 = Get stress (monotone mds): .tiesHandling$[.i], .stressMeasure$ [.k]
-			selectObject: .dissimilarity, configuration [1]
-			.stress1 = Get stress (monotone mds): .tiesHandling$[.i], .stressMeasure$ [.k]
-			assert .stress1 <= .stress0
-			selectObject: .dissimilarity, .configuration [1]
-			.stress2 = Get stress (monotone mds): .tiesHandling$[.i], .stressMeasure$ [.k]
-			assert .stress2 <= .stress1
+
+	# test kruskal's stress-1 and stress-2
+
+	for .ities to 2
+		selectObject: .dissimilarity, .randomConfiguration	
+		.stress1_random = Get stress (monotone mds): .tiesHandling$ [.ities], .stressMeasure$ [2]
+		.stress2_random = Get stress (monotone mds): .tiesHandling$ [.ities], .stressMeasure$ [3]
+		assert .stress1_random <= .stress2_random; '.stress1_random' <= '.stress2_random' ? random
+		for .i to 6
+			selectObject: .dissimilarity, .configuration [.i]
+			.stress1 = Get stress (monotone mds): .tiesHandling$ [.ities], .stressMeasure$ [2]
+			.stress2 = Get stress (monotone mds): .tiesHandling$ [.ities], .stressMeasure$ [3]
+			assert .stress1 <= .stress1_random; '.stress1' <= '.stress1_random' ? '.ities' conf['.i']
+			assert .stress2 <= .stress2_random; '.stress2' <= '.stress2_random' ? '.ities' conf['.i']
+			assert .stress1 <= .stress2; '.stress1' <= '.stress2' ? '.ities' conf['.i']
 		endfor
 	endfor
+if 0
 	for .k to 4
 		selectObject: .dissimilarity, .randomConfiguration
 		.stress0 = Get stress (i-spline mds): 1, 3, .stressMeasure$ [.k]
@@ -220,31 +231,31 @@ procedure testDissimilarityInterface
 		.stress10 = Get stress (interval mds): .stressMeasure$ [.k]
 		selectObject: .dissimilarity, configuration [3]
 		.stress11 = Get stress (interval mds): .stressMeasure$ [.k]
-		assert .stress11 <= .stress10
+		assert .stress11 <= .stress10 ; '.k'
 		selectObject: .dissimilarity, .configuration [3]
 		.stress12 = Get stress (interval mds): .stressMeasure$ [.k]
-		assert .stress12 <= .stress11
+		assert .stress12 <= .stress11 ; '.k'
 		selectObject: .dissimilarity, .randomConfiguration
 		.stress20 = Get stress (ratio mds): .stressMeasure$ [.k]
 		selectObject: .dissimilarity, configuration [4]
 		.stress21 = Get stress (ratio mds): .stressMeasure$ [.k]
-		assert .stress21 <= .stress20
+		assert .stress21 <= .stress20 ; '.k'
 		selectObject: .dissimilarity, .configuration [4]
 		.stress22 = Get stress (ratio mds): .stressMeasure$ [.k]
-		assert .stress22 <= .stress21
+		assert .stress22 <= .stress21 ; '.k' '.stress22' < '.stress21' ?
 		selectObject: .dissimilarity, .randomConfiguration
 		.stress30 = Get stress (absolute mds): .stressMeasure$ [.k]
 		selectObject: .dissimilarity, configuration [5]
 		.stress31 = Get stress (absolute mds): .stressMeasure$ [.k]
-		assert .stress31 <= .stress30
+		assert .stress31 <= .stress30 ; '.k'
 		selectObject: .dissimilarity, .configuration [5]
 		.stress32 = Get stress (absolute mds): .stressMeasure$ [.k]
-		assert .stress32 <= .stress31
+		assert .stress32 <= .stress31 ; '.k'
 	endfor
-
+endif
 
 	for .itype to 6
-		removeObject: .configuration[.itype]
+		removeObject: .configuration [.itype]
 	endfor
 
 	removeObject: .dissimilarity, .randomConfiguration
@@ -281,3 +292,26 @@ procedure testINDSCAL
 
 	removeObject: .configuration, .salience
 endproc
+
+procedure test_additiveConstant
+	# create table 18.1 Borg & Groenen (1997): Modern MDS
+	# Check with top of table 18.3 where a value of 1.291 is given
+
+	.distance = Create TableOfReal: "18.1", 4, 4
+	.row1# = {0, pi, pi/4, pi/2}
+	.row2# = {pi, 0, 3*pi/4, pi/2}
+	.row3# = {pi/4, 3*pi/4, 0, 3*pi/4}
+	.row4# = {pi/2, pi/2, 3*pi/4, 0}
+	for .icol to 4
+		for .irow to 4
+		Set value: .irow, .icol, .row'.irow'# [.icol]
+		endfor
+	endfor
+	.dissimilarity = To Dissimilarity
+	.additiveConstant = Get additive constant
+	.additiveConstant_rounded = number (fixed$ (.additiveConstant, 3))
+	assert .additiveConstant_rounded  = 1.291
+	removeObject: .dissimilarity, .distance
+endproc
+
+

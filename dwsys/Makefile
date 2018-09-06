@@ -1,5 +1,5 @@
 # makefile for library "dwsys".
-# David Weenink 20171019
+# David Weenink 20180828
 # Paul Boersma 2018-08-10
 
 include ../makefile.defs
@@ -12,6 +12,7 @@ OBJECTS = Collection_extensions.o Command.o \
 	DoublyLinkedList.o Eigen.o \
 	FileInMemory.o FileInMemorySet.o FileInMemoryManager.o\
 	Graphics_extensions.o Index.o \
+	MAT_numerics.o \
 	NUM2.o NUMhuber.o NUMlapack.o NUMmachar.o \
 	NUMf2c.o NUMcblas.o NUMclapack.o NUMcomplex.o NUMfft_d.o NUMsort2.o \
 	NUMmathlib.o NUMstring.o \

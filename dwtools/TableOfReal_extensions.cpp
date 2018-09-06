@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -688,7 +688,7 @@ double TableOfReal_getTableNorm (TableOfReal me) {
 	return sqrt ((double) sumsq);
 }
 
-bool TableOfReal_checkPositive (TableOfReal me) {
+bool TableOfReal_checkNonNegativity (TableOfReal me) {
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			if (my data [i] [j] < 0.0)
@@ -785,7 +785,6 @@ void TableOfReal_drawAsScalableSquares (TableOfReal me, Graphics g, integer rowm
 		NUMfixIndicesInRange (1, my numberOfRows, & rowmin, & rowmax);
 		NUMfixIndicesInRange (1, my numberOfColumns, & colmin, & colmax);
 		autoMatrix thee = TableOfReal_to_Matrix (me);
-		double extremum = NUMmatrix_extremum<double> (my data, 1, my numberOfRows, 1, my numberOfColumns);
 		Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, rowmin - 0.5, rowmax + 0.5);
 		Graphics_setInner (g);
 		Matrix_drawAsSquares_inside (thee.get(), g, colmin - 0.5, colmax + 0.5, rowmin - 0.5, rowmax + 0.5, origin, cellSizeFactor, fillOrder);
@@ -1236,12 +1235,12 @@ void TableOfReal_drawColumnAsDistribution (TableOfReal me, Graphics g, integer c
 	}
 }
 
-autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index [], bool reverse) {
+autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, bool reverse) {
 	try {
 		Melder_require (my rowLabels, U"No labels to sort");
 
 		double min, max;
-		NUMvector_extrema (index, 1, my numberOfRows, & min, & max);
+		NUMvector_extrema<const long int> (index.at, 1, my numberOfRows, & min, & max);
 		Melder_require (min > 0 && min <= my numberOfRows && max > 0 && max <= my numberOfRows,
 			U"One or more indices out of range [1, ", my numberOfRows, U"].");
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
@@ -1265,11 +1264,9 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, integer index [], b
 	}
 }
 
-integer *TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
+autoINTVEC TableOfReal_getSortedIndexFromRowLabels (TableOfReal me) {
 	try {
-		autoNUMvector <integer> index (1, my numberOfRows);
-		NUMindexx_s (my rowLabels.peek2(), my numberOfRows, index.peek());
-		return index.transfer();
+		return NUMindexx_s (my rowLabels.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": no sorted index created.");
 	}
@@ -1316,8 +1313,8 @@ static void NUMstatsColumns (double **a, integer rb, integer re, integer cb, int
 autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool useMedians) {
 	try {
 		autoTableOfReal thee;
-		autoNUMvector <integer> index (TableOfReal_getSortedIndexFromRowLabels (me), 1);
-		autoTableOfReal sorted = TableOfReal_sortRowsByIndex (me, index.peek(), false);
+		autoINTVEC index = TableOfReal_getSortedIndexFromRowLabels (me);
+		autoTableOfReal sorted = TableOfReal_sortRowsByIndex (me, index.get(), false);
 
 		integer indexi = 1, indexr = 0;
 		conststring32 label = sorted -> rowLabels [1].get();
@@ -1341,7 +1338,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 
 			autostring32vector tmp = std::move (sorted -> rowLabels);
 			sorted -> rowLabels = std::move (my rowLabels);
-			thee = TableOfReal_sortRowsByIndex (sorted.get(), index.peek(), true);
+			thee = TableOfReal_sortRowsByIndex (sorted.get(), index.get(), true);
 			sorted -> rowLabels = std::move (tmp);
 		} else {
 			indexr ++;

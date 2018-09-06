@@ -139,7 +139,7 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 void Confusion_getEntropies (Confusion me, double *out_h, double *out_hx, double *out_hy,
 	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy)
 {
-	NUMmatrix_getEntropies (my data, my numberOfRows, my numberOfColumns, out_h, out_hx, 
+	MAT_getEntropies ({my data, my numberOfRows, my numberOfColumns}, out_h, out_hx, 
 	out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);
 }
 
@@ -393,7 +393,7 @@ autoConfusion Confusion_condense (Confusion me, conststring32 search, conststrin
 
 autoConfusion TableOfReal_to_Confusion (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"Elements should not be negative.");
+		Melder_require (TableOfReal_checkNonNegativity (me), U"Elements should not be negative.");
 		
 		autoConfusion thee = Thing_new (Confusion);
 		my structTableOfReal :: v_copy (thee.get());

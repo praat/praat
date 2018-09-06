@@ -1,8 +1,6 @@
-#ifndef _Procrustes_h_
-#define _Procrustes_h_
-/* Procrustes.h
+/* MDSVec_def.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +16,20 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20010926
- djmw 20020813 GPL header
- djmw 20110306 Latest modification.
-*/
+#define ooSTRUCT MDSVec
+oo_DEFINE_CLASS (MDSVec, Daata)
 
-#include "AffineTransform.h"
+	oo_INTEGER (numberOfPoints)
+	oo_INTEGER (numberOfProximities)
+	oo_DOUBLE_VECTOR (proximity, numberOfProximities)
+	oo_INTEGER_VECTOR (rowIndex, numberOfProximities)
+	oo_INTEGER_VECTOR (columnIndex, numberOfProximities)
+	
+	#if oo_DECLARING
+	void v_info () noexcept
+		override;
+	#endif
+oo_END_CLASS (MDSVec)
+#undef ooSTRUCT
 
-#include "Procrustes_def.h"
-
-autoProcrustes Procrustes_create (integer n);
-
-#endif /* _Procrustes_h_ */
+/* End of file MDSVec_def.h */

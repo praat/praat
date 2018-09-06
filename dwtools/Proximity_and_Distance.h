@@ -1,8 +1,8 @@
-#ifndef _Procrustes_h_
-#define _Procrustes_h_
-/* Procrustes.h
+#ifndef _Proximity_and_Distance_h_
+#define _Proximity_and_Distance_h_
+/* Proximity_and_Distance.h
  *
- * Copyright (C) 1993-2018 David Weenink
+ * Copyright (C) 2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,16 +18,14 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- djmw 20010926
- djmw 20020813 GPL header
- djmw 20110306 Latest modification.
-*/
+#include "Proximity.h"
+#include "Distance.h"
+#include "MDS_enums.h"
 
-#include "AffineTransform.h"
+autoDistance Dissimilarity_to_Distance (Dissimilarity me, kMDS_AnalysisScale scale); 
 
-#include "Procrustes_def.h"
+autoDissimilarity Distance_to_Dissimilarity (Distance me);
 
-autoProcrustes Procrustes_create (integer n);
+autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, kMDS_AnalysisScale scale);
 
-#endif /* _Procrustes_h_ */
+#endif /* Proximity_and_Distance_h */

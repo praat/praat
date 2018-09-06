@@ -3551,6 +3551,22 @@ DIRECT (NEW_Matrix_to_ActivationList) {
 	CONVERT_EACH_END (my name.get())
 }
 
+DIRECT (NEW_Matrix_to_Eigen) {
+	CONVERT_EACH (Matrix)
+		autoEigen result = Matrix_to_Eigen (me);
+	CONVERT_EACH_END (my name.get())
+}
+
+DIRECT (NEWTIMES2_Matrix_eigen_complex) {
+	LOOP {
+		iam_LOOP (Matrix);
+		autoMatrix vectors, values;
+		Matrix_Eigen_complex (me, & vectors, & values);
+		praat_new (vectors.move(), U"eigenvectors");
+		praat_new (values.move(), U"eigenvalues");
+	}
+END }
+
 FORM (NEW1_Matrices_to_DTW, U"Matrices: To DTW", U"Matrix: To DTW...") {
 	LABEL (U"Distance  between cepstral coefficients")
 	REAL (distanceMetric, U"Distance metric", U"2.0")
@@ -8007,6 +8023,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, U"To Pattern...", U"*To PatternList...", praat_DEPRECATED_2016, NEW_Matrix_to_PatternList);
 	praat_addAction1 (classMatrix, 0, U"To ActivationList", U"To PatternList...", 1, NEW_Matrix_to_ActivationList);
 	praat_addAction1 (classMatrix, 0, U"To Activation", U"*To ActivationList", praat_DEPRECATED_2016, NEW_Matrix_to_ActivationList);
+	praat_addAction1 (classMatrix, 0, U"To Eigen", U"Eigen", praat_HIDDEN, NEW_Matrix_to_Eigen);
+	praat_addAction1 (classMatrix, 0, U"Eigen (complex)", U"Eigen", praat_HIDDEN, NEWTIMES2_Matrix_eigen_complex);
 	praat_addAction1 (classMatrix, 2, U"To DTW...", U"To ParamCurve", 1, NEW1_Matrices_to_DTW);
 
 	praat_addAction2 (classMatrix, 1, classCategories, 1, U"To TableOfReal", nullptr, 0, NEW1_Matrix_Categories_to_TableOfReal);

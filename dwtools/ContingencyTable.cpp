@@ -138,7 +138,7 @@ void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out
 }
 
 void ContingencyTable_getEntropies (ContingencyTable me, double *out_h, double *out_hx, double *out_hy, double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {	
-	NUMmatrix_getEntropies (my data, my numberOfRows, my numberOfColumns, out_h, out_hx, 
+	MAT_getEntropies ( {my data, my numberOfRows, my numberOfColumns}, out_h, out_hx, 
 	out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);	
 }
 
@@ -154,7 +154,7 @@ autoContingencyTable Confusion_to_ContingencyTable (Confusion me) {
 
 autoContingencyTable TableOfReal_to_ContingencyTable (TableOfReal me) {
 	try {
-		Melder_require (TableOfReal_checkPositive (me), U"All values in the table should be positive.");
+		Melder_require (TableOfReal_checkNonNegativity (me), U"All values in the table should be positive.");
 		autoContingencyTable thee = Thing_new (ContingencyTable);
 		my structTableOfReal :: v_copy (thee.get());
 		return thee;

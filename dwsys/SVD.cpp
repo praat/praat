@@ -266,9 +266,8 @@ void SVD_solve2 (SVD me, double b [], double x [], double fractionOfSumOfSingula
 void SVD_sort (SVD me) {
 	try {
 		autoSVD thee = Data_copy (me);
-		autoNUMvector<integer> index (1, my numberOfColumns);
 
-		NUMindexx (my d, my numberOfColumns, index.peek());
+		autoINTVEC index = NUMindexx ({my d, my numberOfColumns});
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			integer from = index [my numberOfColumns - j + 1];

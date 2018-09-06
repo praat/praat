@@ -308,7 +308,7 @@ public:
 		autoVEC y { 100, false };   // initializes y to 100 uninitialized values, having ownership
 		autoVEC y { 100, true };    // initializes y to 100 zeroes, having ownership
 		autoVEC y { x };            // initializes y to the content of x, taking ownership (explicit, so not "y = x")
-		VEC z = releaseToAmbiguousOwner();   // releases ownership, x.at becoming nullptr
+		VEC z = x.releaseToAmbiguousOwner();   // releases ownership, x.at becoming nullptr
 		"}"                            // end of scope destroys x.at if not nullptr
 		autoVEC z = y.move()        // moves the content of y to z, emptying y
 
