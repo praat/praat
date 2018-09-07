@@ -225,7 +225,7 @@ void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocat
 	If work == NULL, the routine allocates (and destroys) its own memory.
 */
 
-void NUMmonotoneRegression (constVEC x, VEC xs);
+autoVEC VECmonotoneRegression (constVEC x);
 /*
 	Find numbers xs[1..n] that have a monotone relationship with
 	the numbers in x[1..n].

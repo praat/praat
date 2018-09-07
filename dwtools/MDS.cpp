@@ -987,7 +987,6 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 		integer numberOfProximities = my numberOfProximities;
 		Melder_require (thy numberOfRows == my numberOfPoints, U"Distance and MDSVVec dimensions should agreee.");
 		autoVEC distances = VECraw (numberOfProximities);
-		autoVEC fit = VECraw (numberOfProximities);
 		autoDistance him = Distance_create (thy numberOfRows);
 		TableOfReal_copyLabels (thee, him.get(), 1, 1);
 
@@ -1025,7 +1024,7 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 			}
 		}
 
-		NUMmonotoneRegression (distances.get(), fit.get());
+		autoVEC fit = VECmonotoneRegression (distances.get());
 
 		// Fill Distance with monotone regressed distances
 
@@ -1038,9 +1037,8 @@ autoDistance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int t
 
 		for (integer i = 1; i <= his numberOfRows - 1; i ++) {
 			for (integer j = i + 1; j <= his numberOfColumns; j ++) {
-				if (his data [i] [j] == 0.0) {
+				if (his data [i] [j] == 0.0)
 					his data [i] [j] = his data [j] [i] = fit [numberOfProximities];
-				}
 			}
 		}
 		return him;

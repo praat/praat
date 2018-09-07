@@ -284,32 +284,25 @@ void eigenSort (double d [], double **v, integer n, int sort) {
 	Kruskal's algorithm for monotone regression (and much simpler).
 	Regression is ascending
 */
-void NUMmonotoneRegression (constVEC x, VEC xs) {
-	Melder_assert (x.size == xs.size);
-	double xt = undefined; // only to stop gcc from complaining "may be used uninitialized"
-
-	for (integer i = 1; i <= x.size; i ++) {
-		xs [i] = x [i];
-	}
-
+autoVEC VECmonotoneRegression (constVEC x) {
+	autoVEC fit = VECcopy (x);
+	double xt = undefined;   // only to stop gcc from complaining "may be used uninitialized"
 	for (integer i = 2; i <= x.size; i ++) {
-		if (xs [i] >= xs [i - 1]) {
+		if (fit [i] >= fit [i - 1])
 			continue;
-		}
-		double sum = xs [i];
+		longdouble sum = fit [i];
 		integer nt = 1;
 		for (integer j = 1; j <= i - 1; j ++) {
-			sum += xs [i - j];
+			sum += fit [i - j];
 			nt ++;
-			xt = sum / nt; // i >= 2 -> xt always gets a value
-			if (j < i - 1 && xt >= xs [i - j - 1]) {
+			xt = (double) sum / nt;   // i >= 2 -> xt always gets a value
+			if (j < i - 1 && xt >= fit [i - j - 1])
 				break;
-			}
 		}
-		for (integer j = i - nt + 1; j <= i; j ++) {
-			xs [j] = xt;
-		}
+		for (integer j = i - nt + 1; j <= i; j ++)
+			fit [j] = xt;
 	}
+	return fit;
 }
 
 double NUMvector_getNorm1 (const double v [], integer n) {
