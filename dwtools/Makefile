@@ -20,6 +20,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
+	espeakdata_FileInMemory.o \
 	FilterBank.o FormantGrid_extensions.o \
 	GaussianMixture.o  \
 	HMM.o \
