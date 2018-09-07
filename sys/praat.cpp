@@ -557,21 +557,58 @@ static void praat_exit (int exit_code) {
 	praat_actions_exit_optimizeByLeaking ();
 	Preferences_exit_optimizeByLeaking ();
 	/*
-		OPTIMIZE
+		OPTIMIZE with an exercise in self-documenting code
 	*/
 	constexpr bool weWouldLikeToOptimizeExitingSpeed = ((true));
 	constexpr bool callingExitTimeDestructorsIsSlow = (true);
-	constexpr bool notCallingExitTimeDestructorsOrClosingOpenFilesCausesCorrectBehaviour = (true);
+	constexpr bool notCallingExitTimeDestructorsCausesCorrectBehaviour = (true);
 	constexpr bool weAreReallySureAboutThat = (true);
-	constexpr bool weShouldExitWithoutDestroyingStaticObjectsOrClosingFiles =
+	constexpr bool weWillUseUnderscoreExitInsteadOfExit =
 			weWouldLikeToOptimizeExitingSpeed &&
 			callingExitTimeDestructorsIsSlow &&
-			notCallingExitTimeDestructorsOrClosingOpenFilesCausesCorrectBehaviour &&
+			notCallingExitTimeDestructorsCausesCorrectBehaviour &&
 			weAreReallySureAboutThat;
-	if ((weShouldExitWithoutDestroyingStaticObjectsOrClosingFiles))
+	if ((weWillUseUnderscoreExitInsteadOfExit)) {
+		constexpr bool underscoreExitHasMoreSideEffectsThanJustnotCallingExitTimeDestructors = (true);
+		constexpr bool avoidOtherSideEffectsOfUnderscoreExit =
+				underscoreExitHasMoreSideEffectsThanJustnotCallingExitTimeDestructors;
+		if ((avoidOtherSideEffectsOfUnderscoreExit)) {
+			constexpr bool oneSideEffectIsThatOpenOutputFilesAreNotFlushed = true;
+			constexpr bool weShouldFlushAllOpenOutputFilesWhoseNonflushingWouldCauseIncorrectBehaviour =
+					oneSideEffectIsThatOpenOutputFilesAreNotFlushed;
+			if ((weShouldFlushAllOpenOutputFilesWhoseNonflushingWouldCauseIncorrectBehaviour)) {
+				constexpr bool stdoutIsOpen = (true);
+				constexpr bool stderrIsOpen = (true);
+				constexpr bool stdoutIsBufferedByDefault = false;
+				constexpr bool stderrIsBufferedByDefault = true;
+				constexpr bool weKnowThatSetbufHasNotBeenCalledOnStdout = (false);
+				constexpr bool weKnowThatSetbufHasNotBeenCalledOnStderr = (false);
+				constexpr bool stdoutHasCertainlyBeenFlushed =
+						! stdoutIsBufferedByDefault && weKnowThatSetbufHasNotBeenCalledOnStdout;
+				constexpr bool stderrHasCertainlyBeenFlushed =
+						! stderrIsBufferedByDefault && weKnowThatSetbufHasNotBeenCalledOnStderr;
+				constexpr bool notFlushingStdoutWouldCauseIncorrectBehaviour =
+						stdoutIsOpen && ! stdoutHasCertainlyBeenFlushed;
+				constexpr bool notFlushingStderrWouldCauseIncorrectBehaviour =
+						stderrIsOpen && ! stderrHasCertainlyBeenFlushed;
+				constexpr bool shouldFlushStdout = notFlushingStdoutWouldCauseIncorrectBehaviour;
+				constexpr bool shouldFlushStderr = notFlushingStderrWouldCauseIncorrectBehaviour;
+				if ((shouldFlushStdout))
+					fflush (stdout);
+				if ((shouldFlushStderr))
+					fflush (stderr);
+				constexpr bool thereAreOtherOpenFiles = (false);
+				constexpr bool thereAreOtherOpenFilesWhoseNonflushingWouldCauseIncorrectBehaviour =
+						thereAreOtherOpenFiles;
+				if ((! thereAreOtherOpenFilesWhoseNonflushingWouldCauseIncorrectBehaviour)) {}
+			}
+			constexpr bool thereAreNoOtherSideEffectsBesideNotCallingExitDestructorsAndNotFlushingOpenFiles = (true);
+			if ((thereAreNoOtherSideEffectsBesideNotCallingExitDestructorsAndNotFlushingOpenFiles)) {}
+		}
 		_Exit (exit_code);
-	else
+	} else {
 		exit (exit_code);
+	}
 }
 
 static void cb_Editor_destruction (Editor me) {
