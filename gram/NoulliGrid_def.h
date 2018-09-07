@@ -21,7 +21,7 @@
 oo_DEFINE_CLASS (NoulliPoint, Function)
 
 	oo_INTEGER (numberOfCategories)
-	oo_DOUBLE_VECTOR (probabilities, numberOfCategories)
+	oo_VEC (probabilities, numberOfCategories)
 
 oo_END_CLASS (NoulliPoint)
 #undef ooSTRUCT

@@ -108,7 +108,7 @@ static conststring32 get_wordAfterPrecursor_u8 (const unsigned char *text8, cons
 		p = word;
 		char32 *p_end = p + 99;
 		while ((*p = *pmatch ++) && *p != U' ' && *p != U'\t' && *p != U'\n' && *p != U'\r' && p < p_end) { p ++; };
-		*p = 0;
+		*p = U'\0';
 		p = word;
 	}
 	return p;
@@ -134,7 +134,7 @@ static conststring32 get_stringAfterPrecursor_u8 (const unsigned char *text8, co
 		// also discard text after comment '//'
 		while ((*p = *pmatch ++) && *p != U'\n' && *p != U'\r' && *p != U'/' && *(p+1) != U'/' && p < p_end) { p ++; }; // copy to end of line
 		while (*p == U' ' || *p == U'\t' || *p == U'\n' || *p == U'\r') { p --; }; // remove trailing white space
-		*(++ p) = 0;
+		*(++ p) = U'\0';
 		p = word;
 	}
 	return p;

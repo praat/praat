@@ -57,5 +57,7 @@ void _Preferences_addEnum    (conststring32 string /* cattable */, int *value, i
 void Preferences_read (MelderFile file);
 void Preferences_write (MelderFile file);
 
+void Preferences_exit_optimizeByLeaking ();
+
 /* End of file Preferences.h */
 #endif

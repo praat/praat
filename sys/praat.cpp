@@ -490,15 +490,6 @@ void praat_removeObject (int i) {
 static void praat_exit (int exit_code) {
 //Melder_setTracing (true);
 	int IOBJECT;
-	#ifdef _WIN32
-		if (! theCurrentPraatApplication -> batch) {
-			Melder_assert (theCurrentPraatApplication);
-			Melder_assert (theCurrentPraatApplication -> topShell);
-			Melder_assert (theCurrentPraatApplication -> topShell -> d_xmShell);
-			trace (U"destroy the object window");
-			XtDestroyWidget (theCurrentPraatApplication -> topShell -> d_xmShell);
-		}
-	#endif
 	trace (U"destroy the picture window");
 	praat_picture_exit ();
 	praat_statistics_exit ();   // record total memory use across sessions
@@ -562,7 +553,25 @@ static void praat_exit (int exit_code) {
 	Melder_files_cleanUp ();   // in case a URL is open
 
 	trace (U"leave the program");
-	exit (exit_code);
+	praat_menuCommands_exit_optimizeByLeaking ();   // these calls are superflous if subsequently _Exit() is called instead of exit()
+	praat_actions_exit_optimizeByLeaking ();
+	Preferences_exit_optimizeByLeaking ();
+	/*
+		OPTIMIZE
+	*/
+	constexpr bool weWouldLikeToOptimizeExitingSpeed = ((true));
+	constexpr bool callingExitTimeDestructorsIsSlow = (true);
+	constexpr bool notCallingExitTimeDestructorsOrClosingOpenFilesCausesCorrectBehaviour = (true);
+	constexpr bool weAreReallySureAboutThat = (true);
+	constexpr bool weShouldExitWithoutDestroyingStaticObjectsOrClosingFiles =
+			weWouldLikeToOptimizeExitingSpeed &&
+			callingExitTimeDestructorsIsSlow &&
+			notCallingExitTimeDestructorsOrClosingOpenFilesCausesCorrectBehaviour &&
+			weAreReallySureAboutThat;
+	if ((weShouldExitWithoutDestroyingStaticObjectsOrClosingFiles))
+		_Exit (exit_code);
+	else
+		exit (exit_code);
 }
 
 static void cb_Editor_destruction (Editor me) {

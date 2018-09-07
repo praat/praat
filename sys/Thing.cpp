@@ -164,9 +164,10 @@ void _Thing_forget (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual (U"destroying ", my classInfo -> className);
 	my v_destroy ();
-	trace (U"destroying ", my classInfo -> className);
+	trace (U"destroyed ", my classInfo -> className, U" ", Melder_pointer (me));
 	//Melder_free (me);
 	delete me;
+	trace (U"deleted");
 	theTotalNumberOfThings -= 1;
 }
 

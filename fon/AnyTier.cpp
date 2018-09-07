@@ -1,6 +1,6 @@
 /* AnyTier.cpp
  *
- * Copyright (C) 1992-2011,2015,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,10 +212,8 @@ autoPointProcess AnyTier_downto_PointProcess (AnyTier me) {
 	try {
 		integer numberOfPoints = my points.size;
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, numberOfPoints);
-		/* OPTIMIZATION, bypassing PointProcess_addTime: */
 		for (integer i = 1; i <= numberOfPoints; i ++)
-			thy t [i] = my points.at [i] -> number;
-		thy nt = numberOfPoints;
+			PointProcess_addPoint (thee.get(), my points.at [i] -> number);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to PointProcess.");
