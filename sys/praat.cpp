@@ -553,10 +553,25 @@ static void praat_exit (int exit_code) {
 	Melder_files_cleanUp ();   // in case a URL is open
 
 	trace (U"leave the program");
-	praat_menuCommands_exit_optimizeByLeaking ();
+	praat_menuCommands_exit_optimizeByLeaking ();   // these calls are superflous if subsequently _Exit() is called instead of exit()
 	praat_actions_exit_optimizeByLeaking ();
 	Preferences_exit_optimizeByLeaking ();
-	exit (exit_code);
+	/*
+		OPTIMIZE
+	*/
+	constexpr bool weWouldLikeToOptimizeExitingSpeed = ((true));
+	constexpr bool callingExitTimeDestructorsIsSlow = (true);
+	constexpr bool notCallingExitTimeDestructorsOrClosingOpenFilesCausesCorrectBehaviour = (true);
+	constexpr bool weAreReallySureAboutThat = (true);
+	constexpr bool weShouldExitWithoutDestroyingStaticObjectsOrClosingFiles =
+			weWouldLikeToOptimizeExitingSpeed &&
+			callingExitTimeDestructorsIsSlow &&
+			notCallingExitTimeDestructorsOrClosingOpenFilesCausesCorrectBehaviour &&
+			weAreReallySureAboutThat;
+	if ((weShouldExitWithoutDestroyingStaticObjectsOrClosingFiles))
+		_Exit (exit_code);
+	else
+		exit (exit_code);
 }
 
 static void cb_Editor_destruction (Editor me) {
