@@ -32,7 +32,7 @@
  djmw 20040622 Less horizontal labels in Eigen_drawEigenvector.
  djmw 20050706 Shortened horizontal offsets in Eigen_drawEigenvalues from 1 to 0.5
  djmw 20051204 Eigen_initFromSquareRoot adapted for nrows < ncols
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
  djmw 20110304 Thing_new
 */
 
