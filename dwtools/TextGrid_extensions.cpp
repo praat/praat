@@ -310,6 +310,8 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, conststring32 m
 		if (xmax <= my xmax) return; // nothing to be done
 		Melder_assert (my intervals.size > 0);
 		TextInterval ti = my intervals.at [my intervals.size];
+		// The following assert signals that the IntervalTier is not correct:
+		// 	the xmax of the last inteval is not equal to the xmax of the IntervalTier.
 		Melder_assert (xmax > ti -> xmax);
 		if (mark) {
 			autoTextInterval interval = TextInterval_create (ti -> xmax, xmax, mark);

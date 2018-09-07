@@ -1,6 +1,6 @@
 /* Sound_extensions.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2017 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2017 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1392,26 +1392,22 @@ autoSound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAnd
 }
 
 autoSound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double minPitch, double timeStep,
-	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2)
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *startTimeOfSounding, double *endTimeOfSounding)
 {
 	try {
 		autoTextGrid tg;
-		autoSound thee = Sound_trimSilences (me,
-			trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & tg, U"trimmed");
+		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, 
+			minSilenceDuration, minSoundingDuration, & tg, U"trimmed");
 		IntervalTier trim = (IntervalTier) tg -> tiers->at [2];
 		TextInterval ti1 = trim -> intervals.at [1];
-		if (t1) {
-			*t1 = my xmin;
-			if (Melder_equ (ti1 -> text.get(), U"trimmed")) {
-				*t1 = ti1 -> xmax;
-			}
+		if (startTimeOfSounding) {
+			*startTimeOfSounding = my xmin;
+			if (Melder_equ (ti1 -> text.get(), U"trimmed"))	*startTimeOfSounding = ti1 -> xmax;
 		}
 		TextInterval ti2 = trim -> intervals.at [trim -> intervals.size];
-		if (t2) {
-			*t2 = my xmax;
-			if (Melder_equ (ti2 -> text.get(), U"trimmed")) {
-				*t2 = ti2 -> xmin;
-			}
+		if (endTimeOfSounding) {
+			*endTimeOfSounding = my xmax;
+			if (Melder_equ (ti2 -> text.get(), U"trimmed")) *endTimeOfSounding = ti2 -> xmin;
 		}
 		return thee;
 	} catch (MelderError) {
