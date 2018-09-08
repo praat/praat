@@ -87,12 +87,6 @@ bool NUMdmatrix_containsUndefinedElements (const double * const *m, integer row1
 void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport);
 /* which cells are not finite? */
 
-double **NUMdmatrix_transpose (double **m, integer nr, integer nc);
-/*
-	Transpose a nr x nc matrix.
-*/
-
-
 /*  NUMvector_extrema
  * Function:
  *	 compute minimum and maximum values of array v[lo..hi].
@@ -100,7 +94,7 @@ double **NUMdmatrix_transpose (double **m, integer nr, integer nc);
  *	 lo and hi should be valid indices in the array.
 */
 template <class T>
-void NUMvector_extrema (T *v, integer lo, integer hi, double *p_min, double *p_max) {
+void NUMvector_extrema (const T *v, integer lo, integer hi, double *p_min, double *p_max) {
 	double min = v [lo];
 	double max = min;
 	for (integer i = lo + 1; i <= hi; i++)
@@ -113,7 +107,7 @@ void NUMvector_extrema (T *v, integer lo, integer hi, double *p_min, double *p_m
 }
 
 template <class T>
-void NUMmatrix_extrema (T **x, integer rb, integer re, integer cb, integer ce, double *p_min, double *p_max) {
+void NUMmatrix_extrema (const T * const *x, integer rb, integer re, integer cb, integer ce, double *p_min, double *p_max) {
 	T min = x[rb][cb], max = min;
 	for (integer i = rb; i <= re; i++) {
 		for (integer j = cb; j <= ce; j++) {
@@ -131,7 +125,7 @@ void NUMmatrix_extrema (T **x, integer rb, integer re, integer cb, integer ce, d
 }
 
 template <class T>
-double NUMmatrix_extremum (T **x, integer rb, integer re, integer cb, integer ce) {
+double NUMmatrix_extremum (const T * const *x, integer rb, integer re, integer cb, integer ce) {
 	double min, max;
 	NUMmatrix_extrema (x, rb, re, cb, ce, & min, & max);
 	return fabs (max) > fabs (min) ? max : min;

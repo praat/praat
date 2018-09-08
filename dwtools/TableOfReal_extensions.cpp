@@ -1240,7 +1240,7 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, 
 		Melder_require (my rowLabels, U"No labels to sort");
 
 		double min, max;
-		NUMvector_extrema<const long int> (index.at, 1, my numberOfRows, & min, & max);
+		NUMvector_extrema (index.at, 1, my numberOfRows, & min, & max);
 		Melder_require (min > 0 && min <= my numberOfRows && max > 0 && max <= my numberOfRows,
 			U"One or more indices out of range [1, ", my numberOfRows, U"].");
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
