@@ -569,9 +569,9 @@ static void praat_exit (int exit_code) {
 			notCallingExitTimeDestructorsCausesCorrectBehaviour &&
 			weAreReallySureAboutThat;
 	if ((weWillUseUnderscoreExitInsteadOfExit)) {
-		constexpr bool underscoreExitHasMoreSideEffectsThanJustnotCallingExitTimeDestructors = (true);
+		constexpr bool underscoreExitHasMoreSideEffectsThanJustNotCallingExitTimeDestructors = (true);
 		constexpr bool avoidOtherSideEffectsOfUnderscoreExit =
-				underscoreExitHasMoreSideEffectsThanJustnotCallingExitTimeDestructors;
+				underscoreExitHasMoreSideEffectsThanJustNotCallingExitTimeDestructors;
 		if ((avoidOtherSideEffectsOfUnderscoreExit)) {
 			constexpr bool oneSideEffectIsThatOpenOutputFilesAreNotFlushed = true;
 			constexpr bool weShouldFlushAllOpenOutputFilesWhoseNonflushingWouldCauseIncorrectBehaviour =
@@ -579,28 +579,28 @@ static void praat_exit (int exit_code) {
 			if ((weShouldFlushAllOpenOutputFilesWhoseNonflushingWouldCauseIncorrectBehaviour)) {
 				constexpr bool stdoutIsOpen = (true);
 				constexpr bool stderrIsOpen = (true);
-				constexpr bool stdoutIsBufferedByDefault = false;
-				constexpr bool stderrIsBufferedByDefault = true;
+				constexpr bool stdoutIsBufferedByDefault = true;
+				constexpr bool stderrIsBufferedByDefault = false;
 				constexpr bool weKnowThatSetbufHasNotBeenCalledOnStdout = (false);
 				constexpr bool weKnowThatSetbufHasNotBeenCalledOnStderr = (false);
 				constexpr bool stdoutHasCertainlyBeenFlushed =
 						! stdoutIsBufferedByDefault && weKnowThatSetbufHasNotBeenCalledOnStdout;
 				constexpr bool stderrHasCertainlyBeenFlushed =
 						! stderrIsBufferedByDefault && weKnowThatSetbufHasNotBeenCalledOnStderr;
-				constexpr bool notFlushingStdoutWouldCauseIncorrectBehaviour =
+				constexpr bool notFlushingStdoutCouldCauseIncorrectBehaviour =
 						stdoutIsOpen && ! stdoutHasCertainlyBeenFlushed;
-				constexpr bool notFlushingStderrWouldCauseIncorrectBehaviour =
+				constexpr bool notFlushingStderrCouldCauseIncorrectBehaviour =
 						stderrIsOpen && ! stderrHasCertainlyBeenFlushed;
-				constexpr bool shouldFlushStdout = notFlushingStdoutWouldCauseIncorrectBehaviour;
-				constexpr bool shouldFlushStderr = notFlushingStderrWouldCauseIncorrectBehaviour;
+				constexpr bool shouldFlushStdout = notFlushingStdoutCouldCauseIncorrectBehaviour;
+				constexpr bool shouldFlushStderr = notFlushingStderrCouldCauseIncorrectBehaviour;
 				if ((shouldFlushStdout))
 					fflush (stdout);
 				if ((shouldFlushStderr))
 					fflush (stderr);
 				constexpr bool thereAreOtherOpenFiles = (false);
-				constexpr bool thereAreOtherOpenFilesWhoseNonflushingWouldCauseIncorrectBehaviour =
+				constexpr bool thereAreOtherOpenFilesWhoseNonflushingCouldCauseIncorrectBehaviour =
 						thereAreOtherOpenFiles;
-				if ((! thereAreOtherOpenFilesWhoseNonflushingWouldCauseIncorrectBehaviour)) {}
+				if ((! thereAreOtherOpenFilesWhoseNonflushingCouldCauseIncorrectBehaviour)) {}
 			}
 			constexpr bool thereAreNoOtherSideEffectsBesideNotCallingExitDestructorsAndNotFlushingOpenFiles = (true);
 			if ((thereAreNoOtherSideEffectsBesideNotCallingExitDestructorsAndNotFlushingOpenFiles)) {}
