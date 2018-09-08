@@ -21,8 +21,8 @@ oo_DEFINE_CLASS (Eigen, Daata)
 
 	oo_INTEGER (numberOfEigenvalues)
 	oo_INTEGER (dimension)
-	oo_DOUBLE_VECTOR (eigenvalues, numberOfEigenvalues)
-	oo_DOUBLE_MATRIX (eigenvectors, numberOfEigenvalues, dimension)
+	oo_VEC (eigenvalues, numberOfEigenvalues)
+	oo_MAT (eigenvectors, numberOfEigenvalues, dimension)
 
 oo_END_CLASS (Eigen)
 #undef ooSTRUCT

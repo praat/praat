@@ -37,7 +37,7 @@ autoTableOfReal CCA_Correlation_factorLoadings (CCA me, Correlation thee) {
 		TableOfReal_setSequentialRowLabels (him.get(), 1, my numberOfCoefficients, U"dv", 1, 1);
 		TableOfReal_setSequentialRowLabels (him.get(), my numberOfCoefficients + 1, 2 * my numberOfCoefficients, U"iv", 1, 1);
 
-		double **evecy = my y -> eigenvectors, **evecx = my x -> eigenvectors;
+		double **evecy = my y -> eigenvectors.at, **evecx = my x -> eigenvectors.at;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
 				longdouble t = 0.0;
@@ -88,11 +88,11 @@ double CCA_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y
 	*/
 
 	integer n = my x -> dimension;
-	double **evec = my x -> eigenvectors;
+	double **evec = my x -> eigenvectors.at;
 	integer ioffset = my y -> dimension;
 	if (x_or_y == 1) { /* y: dependent set */
 		n = my y -> dimension;
-		evec = my y -> eigenvectors;
+		evec = my y -> eigenvectors.at;
 		ioffset = 0;
 	}
 

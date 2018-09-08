@@ -104,8 +104,8 @@ static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, 
 void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	my numberOfEigenvalues = numberOfEigenvalues;
 	my dimension = dimension;
-	my eigenvalues = NUMvector<double> (1, numberOfEigenvalues);
-	my eigenvectors = NUMmatrix<double> (1, numberOfEigenvalues, 1, dimension);
+	my eigenvalues = VECzero (numberOfEigenvalues);
+	my eigenvectors = MATzero (numberOfEigenvalues, dimension);
 }
 
 /*
@@ -211,18 +211,18 @@ void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, i
 
 	Eigen_sort (me);
 
-	NUMnormalizeRows (my eigenvectors, my numberOfEigenvalues, numberOfColumns, 1);
+	NUMnormalizeRows (my eigenvectors.at, my numberOfEigenvalues, numberOfColumns, 1);
 }
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
 	Melder_assert (a.ncol == a.nrow);
-	if (! my eigenvectors) {
+	if (! my eigenvectors.at) {
 		Eigen_init (me, a.ncol, a.ncol);
 	}	
-	MAT eigenvectors (my eigenvectors, my numberOfEigenvalues, my dimension);
-	VEC eigenvalues (my eigenvalues, my numberOfEigenvalues);
-	MATtranspose_preallocated (eigenvectors, a);
-	MAT_getEigenSystemFromSymmetricMatrix_inplace (eigenvectors, true, eigenvalues, false);
+	//MAT eigenvectors (my eigenvectors, my numberOfEigenvalues, my dimension);
+	//VEC eigenvalues (my eigenvalues, my numberOfEigenvalues);
+	MATtranspose_preallocated (my eigenvectors.get(), a);
+	MAT_getEigenSystemFromSymmetricMatrix_inplace (my eigenvectors.get(), true, my eigenvalues.get(), false);
 }
 
 autoEigen Eigen_create (integer numberOfEigenvalues, integer dimension) {
@@ -301,7 +301,7 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 }
 
 void Eigen_sort (Eigen me) {
-	double temp, *e = my eigenvalues, **v = my eigenvectors;
+	double temp, *e = my eigenvalues.at, **v = my eigenvectors.at;
 
 	for (integer i = 1; i < my numberOfEigenvalues; i ++) {
 		integer k;
@@ -433,7 +433,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 	}
 
 	Eigen e1 = my at [1];
-	double **evec1 = e1 -> eigenvectors;
+	double **evec1 = e1 -> eigenvectors.at;
 	integer nev1 = e1 -> numberOfEigenvalues;
 	integer dimension = e1 -> dimension;
 
@@ -451,7 +451,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 
 	for (integer i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
-		double **evec2 = e2 -> eigenvectors;
+		double **evec2 = e2 -> eigenvectors.at;
 
 		for (integer j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j ++) {
 			double ip = 0.0;

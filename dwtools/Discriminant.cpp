@@ -200,7 +200,7 @@ double Discriminant_getWilksLambda (Discriminant me, integer from) {
 	if (from < 1) {
 		from = 1;
 	}
-	return NUMwilksLambda (my eigen -> eigenvalues, 1 + from, numberOfFunctions);
+	return NUMwilksLambda (my eigen -> eigenvalues.at, 1 + from, numberOfFunctions);
 }
 
 /*
@@ -263,7 +263,7 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me, integer 
 	double prob = undefined, chisq = undefined, df = undefined;
 
 	if (numberOfWantedDimensions < numberOfFunctions) {
-		double lambda = NUMwilksLambda (my eigen -> eigenvalues, numberOfWantedDimensions + 1, numberOfFunctions);
+		double lambda = NUMwilksLambda (my eigen -> eigenvalues.at, numberOfWantedDimensions + 1, numberOfFunctions);
 		if (lambda != 1.0) {
 			chisq = - (degreesOfFreedom + (numberOfGroups - eigendimension) / 2.0 - 1.0) * log (lambda);
 			df = (eigendimension - numberOfWantedDimensions) * (numberOfGroups - numberOfWantedDimensions - 1);

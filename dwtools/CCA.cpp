@@ -96,10 +96,12 @@ double CCA_getEigenvectorElement (CCA me, int x_or_y, integer ivec, integer elem
 autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 	try {
 		integer n = my numberOfRows, nx = my numberOfColumns - ny, nmax_xy = nx > ny ? nx : ny;
-		Melder_require (ny > 0 && ny < my numberOfColumns, U"Dimension of first part not correct.");
+		Melder_require (ny > 0 && ny < my numberOfColumns, 
+			U"Dimension of first part not correct.");
 		Melder_require (ny <= nx, U"The dimension of the dependent part (", ny, U") should not exceed "
-				"the dimension of the independent part (", nx, U").");
-		Melder_require (n >= nmax_xy, U"The number of observations should be larger than  ", nmax_xy - 1, U".");
+			"the dimension of the independent part (", nx, U").");
+		Melder_require (n >= nmax_xy,
+			U"The number of observations should be larger than  ", nmax_xy - 1, U".");
 		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns),
 			U"At least one of the table's elements is undefined."); 	
 		
@@ -108,6 +110,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		autoSVD svdy = SVD_create (n, ny);   // n >= ny, hence no transposition
 		autoSVD svdx = SVD_create (n, nx);	 // n >= nx, hence no transposition
 
+		// TODO MATcopy_preallocated (svdy->u, my data);
 		for (integer i = 1; i <= n; i ++) {
 			for (integer j = 1; j <= ny; j ++) {
 				svdy -> u [i] [j] = my data [i] [j];
@@ -161,8 +164,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		thy yLabels = strings_to_Strings (my columnLabels.peek2(), 1, ny);
 		thy xLabels = strings_to_Strings (my columnLabels.peek2(), ny + 1, my numberOfColumns);
 
-		double **evecy = thy y -> eigenvectors;
-		double **evecx = thy x -> eigenvectors;
+		double **evecy = thy y -> eigenvectors.at;
+		double **evecx = thy x -> eigenvectors.at;
 		thy numberOfObservations = n;
 
 		/*
@@ -196,8 +199,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 
 		// Normalize eigenvectors.
 
-		NUMnormalizeRows (thy y -> eigenvectors, numberOfCoefficients, ny, 1);
-		NUMnormalizeRows (thy x -> eigenvectors, numberOfCoefficients, nx, 1);
+		NUMnormalizeRows (thy y -> eigenvectors.at, numberOfCoefficients, ny, 1);
+		NUMnormalizeRows (thy x -> eigenvectors.at, numberOfCoefficients, nx, 1);
 		Melder_assert (thy x -> dimension == thy xLabels -> numberOfStrings &&
 		               thy y -> dimension == thy yLabels -> numberOfStrings);
 		return thee;
@@ -258,8 +261,8 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 
 		// u = V a -> a = V'u
 
-		double **v = my y -> eigenvectors;
-		double *d = my y -> eigenvalues;
+		double **v = my y -> eigenvectors.at;
+		double *d = my y -> eigenvalues.at;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			NUMvector_copyElements (his data [i], buf.peek(), 1, ny);
 			for (integer j = 1; j <= ny; j ++) {
@@ -294,7 +297,7 @@ double CCA_getCorrelationCoefficient (CCA me, integer index) {
 }
 
 void CCA_getZeroCorrelationProbability (CCA me, integer index, double *out_prob, double *out_chisq, double *out_df) {
-	double lambda = 1.0, *ev = my y -> eigenvalues;
+	double lambda = 1.0, *ev = my y -> eigenvalues.at;
 	integer nev = my y -> numberOfEigenvalues;
 	integer ny = my y -> dimension, nx = my x -> dimension;
 
