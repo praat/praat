@@ -27,7 +27,11 @@ INTRO (U"Latest changes in Praat.")
 //LIST_ITEM (U"• Manual page about @@drawing a vowel triangle@.")
 
 NORMAL (U"##6.0.43# (8 September 2018)")
-LIST_ITEM (U"• Repaired a bug introduced in 6.0.41 that caused a crash in pause windows.")
+LIST_ITEM (U"• removed a very old bug that could create invalid TextGrids during forced alignment.")
+LIST_ITEM (U"• Windows: repaired a bug introduced in 6.0.41 "
+	"that caused a crash in several places (such as when changing the sample rate in the SoundRecorder) "
+	"when Praat had been started with a double click.")
+LIST_ITEM (U"• Windows: repaired a bug introduced in 6.0.41 that caused Praat to crash when exiting.")
 NORMAL (U"##6.0.42# (15 August 2018)")
 LIST_ITEM (U"• Repaired a bug introduced in 6.0.41 that caused a crash in pause windows.")
 NORMAL (U"##6.0.41# (6 August 2018)")
