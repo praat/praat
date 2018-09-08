@@ -19,7 +19,6 @@
 /*
  djmw 20020408 GPL
  djmw 20020513 Applied TableOfReal_setSequential{Column/Row}Labels
- djmw 20030623 Modified calls to NUMeigensystem_d
  djmw 20040309 Extra tests for empty objects.
  djmw 20061218 Changed to Melder_information<x> format.
  djmw 20071022 Removed unused code.
@@ -1177,7 +1176,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		}
 		
 		autoMAT evec;
-		//NUMeigensystem (a.peek(), numberOfSources, evec.peek(), nullptr);
+		
 		MAT_getEigenSystemFromSymmetricMatrix (a.get(), & evec, nullptr, false);
 		
 		autoMAT cl (numberOfDimensions, numberOfDimensions, kTensorInitializationType::ZERO);
@@ -1194,7 +1193,6 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			Is the following still correct??? eigensystem was not sorted??
 		*/
 
-		//NUMeigensystem (cl.peek(), numberOfDimensions, K.peek(), nullptr);
 		autoMAT K;
 		MAT_getEigenSystemFromSymmetricMatrix (cl.get(), & K, nullptr, false);
 

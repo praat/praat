@@ -27,8 +27,8 @@ oo_DEFINE_CLASS (Discriminant, Daata)
 			eigen = Thing_new (Eigen);
 			oo_INTEGER (eigen -> numberOfEigenvalues)
 			oo_INTEGER (eigen -> dimension)
-			oo_DOUBLE_VECTOR (eigen -> eigenvalues, eigen -> numberOfEigenvalues)
-			oo_DOUBLE_MATRIX (eigen -> eigenvectors, eigen -> numberOfEigenvalues, eigen -> dimension)
+			oo_VEC (eigen -> eigenvalues, eigen -> numberOfEigenvalues)
+			oo_MAT (eigen -> eigenvectors, eigen -> numberOfEigenvalues, eigen -> dimension)
 		oo_VERSION_END
 	#endif
 

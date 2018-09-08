@@ -388,8 +388,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	autoSVD svd = SVD_create (nr, nc);
 
-	NUMmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
-	MATcentreEachColumn_inplace (MAT (svd -> u, nr, nc));
+	MATcopy_preallocated (svd -> u.get(), {my data, nr, nc});
+	MATcentreEachColumn_inplace (svd -> u.get());
 
 	SVD_compute (svd.get());
 	integer numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
@@ -398,8 +398,8 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	Melder_require (nmin > 1,
 		U"There should be at least two (independent) columns in the table.");
 
-	autoNUMvector<double> x (1, nPoints);
-	autoNUMvector<double> y (1, nPoints);
+	autoVEC x = VECraw (nPoints);
+	autoVEC y = VECraw ( nPoints);
 
 	double lambda1 = pow (svd -> d [1], sv_splitfactor);
 	double lambda2 = pow (svd -> d [2], sv_splitfactor);
@@ -415,13 +415,13 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	}
 
 	if (xmax <= xmin) {
-		NUMvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
+		NUMvector_extrema (x.at, 1, nPoints, & xmin, & xmax);
 	}
 	if (xmax <= xmin) {
 		xmax += 1; xmin -= 1;
 	}
 	if (ymax <= ymin) {
-		NUMvector_extrema (y.peek(), 1, nPoints, &ymin, &ymax);
+		NUMvector_extrema (y.at, 1, nPoints, & ymin, & ymax);
 	}
 	if (ymax <= ymin) {
 		ymax += 1.0;

@@ -1519,9 +1519,8 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [],
 			RealPoint point = thy points.at [i];
 			double x = point -> number;
 			double y = point -> value;
-			double** u = svd -> u;
 			double y_frozen = ( numberOfFreeParameters == numberOfParameters ? 0.0 :
-			                    FunctionTerms_evaluate (frozen.get(), x));
+				FunctionTerms_evaluate (frozen.get(), x));
 
 			y_residual [i] = (y - y_frozen) / sigma;
 
@@ -1532,7 +1531,7 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [],
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
 				if (! freeze || ! freeze [j]) {
 					k ++;
-					u [i] [k] = terms [j] / sigma;
+					svd -> u [i] [k] = terms [j] / sigma;
 				}
 			}
 		}
@@ -1552,7 +1551,7 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [],
 				my coefficients [j] = p [k ++];
 		}
 		if (ic)
-			svdcvm (svd -> v, numberOfFreeParameters, numberOfParameters, freeze, svd -> d, ac -> data);
+			svdcvm (svd -> v.at, numberOfFreeParameters, numberOfParameters, freeze, svd -> d.at, ac -> data);
 		*c = ac.move();
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": no fit.");
