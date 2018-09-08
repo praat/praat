@@ -481,70 +481,62 @@ autoTextGrid SpeechSynthesizer_Sound_TextInterval_align (SpeechSynthesizer me, S
 		integer numberOfTokens = tokens.size;
 		Melder_require (numberOfTokens > 0, U"The interval should have text.");
 		
-		// Remove silent intervals from start and end of sounds
+		/*
+			Remove silent intervals from start and end of sounds because
+			1. it will improve the word rate guess
+			2. it will improve the DTW matching.
+		*/
+		
 		double minPitch = 200.0, timeStep = 0.005, precision = thy dx;
-		double t1_thee, t2_thee;
-		autoSound s_thee = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & t1_thee, & t2_thee);
-		double s_thee_duration = s_thee -> xmax - s_thee -> xmin;
-		bool hasSilence_thee = fabs (t1_thee - thy xmin) > precision || fabs (t2_thee - thy xmax) > precision;
+		double startTimeOfSounding, endTimeOfSounding;
+		autoSound soundTrimmed = Sound_trimSilencesAtStartAndEnd (thee, 0.0, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, & startTimeOfSounding, & endTimeOfSounding);
+		double duration_soundTrimmed = soundTrimmed -> xmax - soundTrimmed -> xmin;
+		bool hasSilence_sound = fabs (startTimeOfSounding - thy xmin) > precision || fabs (endTimeOfSounding - thy xmax) > precision;
 
 		if (my d_estimateSpeechRate) {
 			// estimate speaking rate with the number of words per minute from the text
-			double wordsPerMinute_rawTokens = 60.0 * numberOfTokens / s_thee_duration;
+			double wordsPerMinute_rawTokens = 60.0 * numberOfTokens / duration_soundTrimmed;
 			// compensation for long words: 5 characters / word
-			double wordsPerMinute_rawText = 60.0 * (str32len (his text.get()) / 5.0) / s_thee_duration;
+			double wordsPerMinute_rawText = 60.0 * (str32len (his text.get()) / 5.0) / duration_soundTrimmed;
 			my d_wordsPerMinute = Melder_ifloor (0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText));
 		}
-		autoTextGrid tg2;
-		autoSound synth = SpeechSynthesizer_TextInterval_to_Sound (me, him, & tg2);
-		autoTextGrid silentTextGrid;
+		
+		autoTextGrid textgrid_synth, textgrid_synth_sounding;
+		autoSound synth = SpeechSynthesizer_TextInterval_to_Sound (me, him, & textgrid_synth);
+
 		/*
-		 * For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives will not
-		 * be found as sounding! This is ok since silences are almost at zero amplitudes for synthesized sounds.
-		 * We also have to decrease the minimum silence and minimum sounding duration to catch, for example,
-		 * the final plosive "t" from the synthesized sound "text".
+			For the synthesizer the silence threshold has to be < -30 dB, otherwise fricatives will not
+			be found as sounding! This is ok since silences are almost at zero amplitudes for synthesized sounds.
+			We also have to decrease the minimum silence and minimum sounding duration to catch, for example,
+			the final plosive "t" from the synthesized sound "text".
 		 */
-		double synth_silenceThreshold = -40.0, synth_minSilenceDuration = 0.05, synth_minSoundingDuration = 0.05;
-		double t1_synth, t2_synth;
-		autoSound synth_trimmed = Sound_trimSilencesAtStartAndEnd (synth.get(), 0.0, minPitch, timeStep,
-			synth_silenceThreshold, synth_minSilenceDuration, synth_minSoundingDuration, & t1_synth, & t2_synth);
-		double synth_trimmed_duration = synth_trimmed -> xmax - synth_trimmed -> xmin;
-		bool hasSilence_synth = fabs (t1_synth - synth -> xmin) > precision || fabs (t2_synth - synth -> xmax) > precision;
-		if (hasSilence_synth) {
-			silentTextGrid = TextGrid_extractPart (tg2.get(), t1_synth, t2_synth, true);
-		}
-		double analysisWidth = 0.02, dt = 0.005, band = 0.0;
-		// compare the durations of the two sounds to get an indication of the slope constraint of the DTW
-		double slope = s_thee_duration / synth_trimmed_duration;
+		double silenceThreshold_synth = -40.0, minSilenceDuration_synth = 0.05, minSoundingDuration_synth = 0.05;
+		double startTimeOfSounding_synth, endTimeOfSounding_synth;
+		autoSound synthTrimmed = Sound_trimSilencesAtStartAndEnd (synth.get(), 0.0, minPitch, timeStep, silenceThreshold_synth,
+			minSilenceDuration_synth, minSoundingDuration_synth, & startTimeOfSounding_synth, & endTimeOfSounding_synth);
+		double synthTrimmed_duration = synthTrimmed -> xmax - synthTrimmed -> xmin;
+		bool hasSilence_synth = fabs (startTimeOfSounding_synth - synth -> xmin) > precision || 
+								fabs (endTimeOfSounding_synth - synth -> xmax) > precision;
+
+		if (hasSilence_synth) textgrid_synth_sounding = 
+			TextGrid_extractPart (textgrid_synth.get(), startTimeOfSounding_synth, endTimeOfSounding_synth, true);
+
+		// compare the durations of the two sounds to get an indication of the slope constraint needed for the DTW
+		
+		double slope = duration_soundTrimmed / synthTrimmed_duration;
 		slope = (slope > 1.0 ? slope : 1.0 / slope);
-        int constraint = (slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1);
-		//autoMFCC m1 = Sound_to_MFCC ((hasSilence_thee ? s_thee.get() : thee),
-		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
-		//autoMFCC m2 = Sound_to_MFCC ((hasSilence_synth ? synth_trimmed.get() : synth.get()),
-		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
-		//double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
-		//int matchStart = 1, matchEnd = 1, constraint = 4; // no 1/3 1/2 2/3
-		//autoDTW dtw = CCs_to_DTW (m1.get(), m2.get(), wc, wle, wr, wer, dtr, matchStart, matchEnd, constraint);
-        autoDTW dtw = Sounds_to_DTW ((hasSilence_thee ? s_thee.get() : thee), (hasSilence_synth ? synth_trimmed.get() : synth.get()),
-			analysisWidth, dt, band, constraint);
-		autoTextGrid result = DTW_TextGrid_to_TextGrid (dtw.get(), (hasSilence_synth ? silentTextGrid.get() : tg2.get()), precision);
-		if (hasSilence_thee) {
-			if (t1_thee > thy xmin) {
+        int constraint = (slope < 1.5 ? 4 : slope < 2.0 ? 3 : slope < 3.0 ? 2 : 1); // TODO enums
+		
+		double analysisWidth = 0.02, dt = 0.005, band = 0.0;
+        autoDTW dtw = Sounds_to_DTW ((hasSilence_sound ? soundTrimmed.get() : thee), 
+			(hasSilence_synth ? synthTrimmed.get() : synth.get()), analysisWidth, dt, band, constraint);
+		
+		autoTextGrid result = DTW_TextGrid_to_TextGrid (dtw.get(), (hasSilence_synth ? textgrid_synth_sounding.get() : textgrid_synth.get()), precision);
+		if (hasSilence_sound) {
+			if (startTimeOfSounding > thy xmin)
 				TextGrid_setEarlierStartTime (result.get(), thy xmin, U"", U"");
-			}
-			if (result -> xmax > thy xmax) { // one sample or so out of sync
-				result -> xmax = thy xmax;
-				for (integer itier = 1; itier <= 4; itier	++) {
-					IntervalTier tier = result -> intervalTier_cast (itier);
-					tier -> xmax = thy xmax;
-					TextInterval textInterval = tier -> intervals.at [tier -> intervals.size];
-					textInterval -> xmax = thy xmax;
-				}
-			} else {	
-				if (t2_thee < thy xmax + thy dx) {
+			if (endTimeOfSounding < thy xmax || result -> xmax < thy xmax)
 					TextGrid_setLaterEndTime (result.get(), thy xmax, U"", U"");
-				}
-			}
 		}
 		return result;
 	} catch (MelderError) {

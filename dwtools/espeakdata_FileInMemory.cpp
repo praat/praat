@@ -1,6 +1,6 @@
 /* espeakdata_FileInMemory.cpp
  *
- * Copyright (C) David Weenink 2012,2015-2017
+ * Copyright (C) David Weenink 2012,2015-2018
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,10 @@
 #include "speech.h"
 #include "voice.h"
 #include <wctype.h>
-
 #include "Strings_extensions.h"
+#include "Table_and_Strings.h"
 
 #include "espeakdata_FileInMemory.h"
-
-autoStrings Table_column_to_Strings (Table me, integer column);
 
 autoFileInMemoryManager espeak_ng_FileInMemoryManager;
 autoTable espeakdata_languages_propertiesTable;
@@ -39,7 +37,7 @@ autoTable espeakdata_voices_propertiesTable;
 autoStrings espeakdata_voices_names;
 autoStrings espeakdata_languages_names;
 
-integer Table_findStringInColumn (Table me, conststring32 string, integer icol) {
+integer Table_getRownumberOfStringInColumn (Table me, conststring32 string, integer icol) {
 	integer row = 0;
 	if (icol > 0 && icol <= my numberOfColumns) {
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
@@ -204,23 +202,6 @@ autoTable Table_createAsEspeakLanguagesProperties () {
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Table with espeak-ng languages not created.");
-	}
-}
-
-autoStrings Table_column_to_Strings (Table me, integer column) {
-	try {
-		if (column < 0 || column > 2)
-			Melder_throw (U"Illegal columnn.");
-		autoStrings thee = Thing_new (Strings);
-		thy strings = autostring32vector (my rows.size);
-		thy numberOfStrings = 0;
-		for (integer irow = 1; irow <= my rows.size; irow ++) {
-			thy strings [irow] = Melder_dup (Table_getStringValue_Assert (me, irow, column));
-			thy numberOfStrings ++;
-		}
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (U"Espeakdata: voices not initialized.");
 	}
 }
 

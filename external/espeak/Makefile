@@ -12,7 +12,7 @@ OBJECTS = categories.o compiledata.o compiledict.o \
 	synthdata.o synthesize.o \
 	synth_mbrola.o tr_languages.o mnemonics.o translate.o voices.o wavegen.o \
 	create_espeak_ng_FileInMemoryManager.o create_espeak_ng_FileInMemorySet.o \
-	espeakdata_FileInMemory.o espeak_io.o
+	espeak_io.o
 
 .PHONY: all clean
 

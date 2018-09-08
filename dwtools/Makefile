@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink and Paul Boersma
-# 4 September 2018
+# 7 September 2018
 
 include ../makefile.defs
 
@@ -20,6 +20,7 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
+	espeakdata_FileInMemory.o \
 	FilterBank.o FormantGrid_extensions.o \
 	GaussianMixture.o  \
 	HMM.o \
@@ -44,8 +45,8 @@ OBJECTS = ActivationList.o AffineTransform.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
 	Spectrogram_extensions.o Spectrum_extensions.o SSCP.o Strings_extensions.o \
-	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o\
-	Table_extensions.o TableOfReal_and_SVD.o\
+	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o \
+	Table_and_Strings.o Table_extensions.o TableOfReal_and_SVD.o \
 	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_and_DurationTier.o TextGrid_and_PitchTier.o TextGrid_extensions.o \
