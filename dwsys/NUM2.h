@@ -1293,4 +1293,9 @@ void NUMfixIndicesInRange (integer lowerLimit, integer upperLimit, integer *lowI
 void MAT_getEntropies (constMAT m, double *out_h, double *out_hx, 
 	double *out_hy,	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy);
 
+double NUMfrobeniusnorm (MAT x);
+/*
+	Returns frobenius norm of matrix sqrt (sum (i=1:nrow, j=1:ncol, x[i][j]^2))
+*/
+
 #endif // _NUM2_h_

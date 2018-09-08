@@ -1,6 +1,6 @@
 /* NUMlapack.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1372,8 +1372,8 @@ void NUMgsvdcmp (double **a, integer m, integer n, double **b, integer p, int pr
 		NUMmachar ();
 	}
 
-	double anorm = NUMfrobeniusnorm (m, n, a);
-	double bnorm = NUMfrobeniusnorm (p, n, b);
+	double anorm = NUMfrobeniusnorm ({a, m, n});
+	double bnorm = NUMfrobeniusnorm ({b, p, n});
 
 	if (anorm == 0 || bnorm == 0) {
 		Melder_throw (U"NUMgsvdcmp: empty matrix.");

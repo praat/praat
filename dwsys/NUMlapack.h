@@ -1,6 +1,6 @@
 /* NUMlapack.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,11 +133,6 @@ double NUMnorm2 (integer n, double *x, integer incx);
 	Returns the euclidean norm of a vector so that
 
 	NUMvector_norm2 := sqrt (x'*x)
-*/
-
-double NUMfrobeniusnorm (integer m, integer n, const double * const *x);
-/*
-	Returns frobenius norm of matrix sqrt (sum (i=1:m, j=1:n, x[i][j]^2))
 */
 
 double NUMdotproduct (integer n, double x[], integer incx, double y[], integer incy);

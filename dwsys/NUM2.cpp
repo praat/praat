@@ -887,16 +887,13 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 	// Step 1: Compute U and C from the eigendecomposition F'F = UCU'
 	// Evaluate q, the multiplicity of the smallest eigenvalue in C
 
-
-	double *sqrtc = svd -> d;
-	double **ut = svd -> v;
-	autoINTVEC indx = NUMindexx ({sqrtc, m});
+	autoINTVEC indx = NUMindexx (svd -> d.get());
 
 	for (integer j = m; j > 0; j --) {
-		double tmp = sqrtc [indx [j]];
+		double tmp = svd -> d [indx [j]];
 		c [m - j + 1] = tmp * tmp;
 		for (integer k = 1; k <= m; k ++) {
-			u [m - j + 1] [k] = ut [indx [j]] [k];
+			u [m - j + 1] [k] = svd -> v [indx [j]] [k];
 		}
 	}
 
@@ -2965,5 +2962,26 @@ void MAT_getEntropies (constMAT m, double *out_h, double *out_hx,
 	if (*out_uxy) *out_uxy = uxy;
 }
 #undef TINY
+
+double NUMfrobeniusnorm (MAT x) {
+	longdouble scale = 0.0;
+	longdouble ssq = 1.0;
+	for (integer i = 1; i <= x.nrow; i ++) {
+		for (integer j = 1; j <= x.ncol; j ++) {
+			if (x [i] [j] != 0.0) {
+				double absxi = fabs (x [i] [j]);
+				if (scale < absxi) {
+					double t = scale / absxi;
+					ssq = 1 + ssq * t * t;
+					scale = absxi;
+				} else {
+					double t = absxi / scale;
+					ssq += t * t;
+				}
+			}
+		}
+	}
+	return scale * sqrt ((double) ssq);
+}
 
 /* End of file NUM2.cpp */
