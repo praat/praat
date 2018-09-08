@@ -2963,7 +2963,7 @@ void MAT_getEntropies (constMAT m, double *out_h, double *out_hx,
 }
 #undef TINY
 
-double NUMfrobeniusnorm (MAT x) {
+double NUMfrobeniusnorm (constMAT x) {
 	longdouble scale = 0.0;
 	longdouble ssq = 1.0;
 	for (integer i = 1; i <= x.nrow; i ++) {
