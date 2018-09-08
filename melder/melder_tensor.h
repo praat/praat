@@ -470,10 +470,17 @@ public:
 		elsewhere than at the head of the vector,
 		you should shift the elements after resizing.
 	*/
-	bool resize (integer newSize, integer *inout_capacity,
+	void resize (integer newSize, integer *inout_capacity = nullptr,
 		kTensorInitializationType initializationType = kTensorInitializationType::ZERO)
 	{
-		if (newSize > *inout_capacity) {
+		const integer currentCapacity = ( inout_capacity ? *inout_capacity : our size );
+		if (newSize > currentCapacity) {
+			/*
+				The new capacity is at least twice the old capacity.
+				When starting at a capacity of 0, and continually upsizing by one,
+				the capacity sequence will be: 0, 11, 33, 77, 165, 341, 693, 1397,
+				2805, 5621, 11253, 22517, 45045, 90101, 180213, 360437, 720885...
+			*/
 			integer newCapacity = newSize + our size + 10;   // this is at least a doubling!
 			/*
 				Create without change.
@@ -486,9 +493,10 @@ public:
 				newAt [i] = our at [i];
 			if (our at) NUMvector_free (our at, 1);
 			our at = newAt;
-			*inout_capacity = newCapacity;
+			if (inout_capacity)
+				*inout_capacity = newCapacity;
 		}
-		our size = newSize;   // shrink below capacity
+		our size = newSize;
 	}
 };
 
