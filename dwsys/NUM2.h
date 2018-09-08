@@ -473,16 +473,6 @@ double NUMtrace2 (double **a1, double **a2, integer n);
 
 void eigenSort (double d[], double **v, integer n, int sort);
 
-void NUMeigensystem (double **a, integer n, double **evec, double eval[]);
-/*
-	Determines the eigensystem of a real, symmetric matrix[1..][1..n].
-	Returned are: evec[1..n][1..n] with eigenvectors (columnwise) and
-	eval[1..n], the eigenvalues.
-	No eigenvectors or eigenvalues are returned when the function is
-	called with the corresponding parameter NULL.
-	Eigenvalues (with corresponding eigenvectors) are sorted in descending order.
-*/
-
 void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, integer from_col, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection, integer to_col);
 /* Input:
 	data[numberOfRows, from_col - 1 + my dimension] 

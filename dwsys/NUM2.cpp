@@ -471,18 +471,6 @@ double NUMtrace2 (double **a1, double **a2, integer n) {
 	return (double) trace;
 }
 
-void NUMeigensystem (double **a, integer n, double **evec, double eval []) {
-	autoEigen me = Thing_new (Eigen);
-	constMAT mat (a, n, n);
-	Eigen_initFromSymmetricMatrix (me.get(), mat);
-	if (evec) {
-		NUMmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
-	}
-	if (eval) {
-		NUMvector_copyElements (my eigenvalues, eval, 1, n);
-	}
-}
-
 void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambda, double tolerance) {
 	autoNUMvector<double> z (1, n);
 
@@ -528,22 +516,6 @@ void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambd
 		*p_lambda = (double) lambda;
 	}
 }
-
-#if 0
-void NUMprincipalComponents (double **a, integer n, integer nComponents, double **pc) {
-	autoNUMmatrix<double> evec (1, n, 1, n);
-	NUMeigensystem (a, n, evec.peek(), NULL);
-	for (integer i = 1; i <= n; i ++) {
-		for (integer j = 1; j <= nComponents; j ++) {
-			longdouble s = 0.0;
-			for (integer k = 1; k <= n; k ++) {
-				s += a [k] [i] * evec [k] [j]; /* times sqrt(eigenvalue) ?? */
-			}
-			pc [i] [j] = (double) s;
-		}
-	}
-}
-#endif
 
 void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, integer from_col, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection, integer to_col) {
 	/* Input:
@@ -783,7 +755,6 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 	autoMAT p;
 	autoVEC delta;
 	MAT_getEigenSystemFromSymmetricMatrix (g.get(), & p, & delta, true);
-	//NUMeigensystem (g.peek(), 3, p.peek(), delta.peek());
 
 	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)	(page 632)
 	// Get P'F^-1 from the transpose of (F')^-1 . P
