@@ -120,19 +120,15 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 			}
 		}
 
-		double **uy = svdy -> u;
-		double **vy = svdy -> v;
-		double **ux = svdx -> u;
-		double **vx = svdx -> v;
-		double fnormy = NUMfrobeniusnorm (n, ny, uy);
-		double fnormx = NUMfrobeniusnorm (n, nx, ux);
+		double fnormy = NUMfrobeniusnorm (svdy -> u.get());
+		double fnormx = NUMfrobeniusnorm (svdx -> u.get());
 		
 		Melder_require (fnormy > 0.0 && fnormx > 0.0, U"One of the parts of the table contains only zeros.");
 		
 		// Centre the data and svd it.
 
-		MATcentreEachColumn_inplace (MAT (uy, n, ny));
-		MATcentreEachColumn_inplace (MAT (ux, n, nx));
+		MATcentreEachColumn_inplace (svdy -> u.get());
+		MATcentreEachColumn_inplace (svdx -> u.get());
 
 		SVD_compute (svdy.get());
 		SVD_compute (svdx.get());
@@ -143,16 +139,14 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		// Form the matrix C = ux' uy (use svd-object storage)
 
 		autoSVD svdc = SVD_create (nx, ny);
-		double **uc = svdc -> u;
-		double **vc = svdc -> v;
 
 		for (integer i = 1; i <= nx; i ++) {
 			for (integer j = 1; j <= ny; j ++) {
 				longdouble t = 0.0;
 				for (integer q = 1; q <= n; q ++) {
-					t += ux [q] [i] * uy [q] [j];
+					t += svdx -> u [q] [i] * svdy -> u [q] [j];
 				}
-				uc [i] [j] = (double) t;
+				svdc -> u [i] [j] = (double) t;
 			}
 		}
 
@@ -184,14 +178,14 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 			for (integer j = 1; j <= ny; j ++) {
 				longdouble t = 0.0;
 				for (integer q = 1; q <= ny - numberOfZeroedy; q ++) {
-					t += vc [q] [i] * vy [j] [q] / svdy -> d [q];
+					t += svdc -> v [q] [i] * svdy -> v [j] [q] / svdy -> d [q];
 				}
 				evecy [i] [j] = (double) t;
 			}
 			for (integer j = 1; j <= nx; j ++) {
 				longdouble t = 0.0;
 				for (integer q = 1; q <= nx - numberOfZeroedx; q ++) {
-					t += uc [q] [i] * vx [j] [q] / svdx -> d [q];
+					t += svdc -> u [q] [i] * svdx -> v [j] [q] / svdx -> d [q];
 				}
 				evecx [i] [j] = (double) t;
 			}

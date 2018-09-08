@@ -149,11 +149,11 @@ autoEigen PCA_to_Eigen (PCA me) {
 	}
 }
 
-static autoPCA NUMdmatrix_to_PCA (const constMAT m, bool byColumns) {
+static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 	try {
 		Melder_require (! NUMdmatrix_containsUndefinedElements (m.at, 1, m.nrow, 1, m.ncol),
 			U"All matrix elements should be defined.");
-		Melder_require (NUMfrobeniusnorm (m.nrow, m.ncol, m.at) > 0.0,
+		Melder_require (NUMfrobeniusnorm (m) > 0.0,
 			U"Not all values in your table should be zero.");
 		autoMAT mcopy;
 		if (byColumns) {

@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,9 +95,9 @@ void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
 		NUMmachar ();
 	}
 	my tolerance = NUMfpp -> eps * numberOfRows;
-	my u = NUMmatrix<double> (1, numberOfRows, 1, numberOfColumns);
-	my v = NUMmatrix<double> (1, numberOfColumns, 1, numberOfColumns);
-	my d = NUMvector<double> (1, numberOfColumns);
+	my u = MATzero (numberOfRows,  numberOfColumns);
+	my v = MATzero (numberOfColumns, numberOfColumns);
+	my d = VECzero (numberOfColumns);
 }
 
 autoSVD SVD_create (integer numberOfRows, integer numberOfColumns) {
@@ -160,16 +160,16 @@ void SVD_compute (SVD me) {
 
 		lda = ldu = ldvt = m = my numberOfColumns;
 		integer n = my numberOfRows;
-
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
+		autoMAT vcopy = MATcopy (my v.get());
+		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & vcopy [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be precomputed.");
 
 		lwork = wt [0];
 		autoNUMvector<double> work ((integer) 0, lwork);
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, work.peek(), & lwork, & info);
+		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & vcopy [1] [1], & ldu, nullptr, & ldvt, work.peek(), & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be computed.");
 
-		NUMtranspose_d (my v, my numberOfColumns);
+		MATtranspose_preallocated (my v.get(), vcopy.get());
 		
 	} catch (MelderError) {
 		Melder_throw (me, U": SVD could not be computed.");
@@ -267,7 +267,7 @@ void SVD_sort (SVD me) {
 	try {
 		autoSVD thee = Data_copy (me);
 
-		autoINTVEC index = NUMindexx ({my d, my numberOfColumns});
+		autoINTVEC index = NUMindexx (my d.get());
 
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			integer from = index [my numberOfColumns - j + 1];

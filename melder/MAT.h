@@ -129,6 +129,7 @@ inline autoMAT MATsubtract (double x, constMAT y) {
 	}
 	return result;
 }
+
 inline autoMAT MATsubtract (constMAT x, constMAT y) {
 	Melder_assert (y.nrow == x.nrow && y.ncol == x.ncol);
 	auto result = MATraw (x.nrow, x.ncol);
