@@ -1,6 +1,6 @@
 /* SVD.h
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,10 +36,7 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns);
 	where eps is the floating point precision, approximately 2.2e-16
 */
 
-autoSVD SVD_create_d (double **m, integer numberOfRows, integer numberOfColumns);
-/*
-	Copy matrix into svd->u and calculate U D V'
-*/
+autoSVD SVD_createFromGeneralMatrix (constMAT m);
 
 void SVD_svd_d (SVD me, double **m);
 /*
@@ -49,7 +46,7 @@ void SVD_svd_d (SVD me, double **m);
 
 void SVD_compute (SVD me);
 
-void SVD_solve (SVD me, double b[], double x[]);
+autoVEC SVD_solve (SVD me, constVEC b);
 /* Solve Ax = b */
 
 void SVD_solve2 (SVD me, double b[], double x[], double fractionOfSumOfSingularValues);

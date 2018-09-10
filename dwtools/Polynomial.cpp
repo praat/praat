@@ -1487,9 +1487,9 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [],
 		Melder_require (numberOfData > 1, U"The number of data point should be larger than 1.");
 
 		autoFunctionTerms frozen = Data_copy (me);
-		autoNUMvector<double> terms (1, my numberOfCoefficients);
-		autoNUMvector<double> p (1, numberOfParameters);
-		autoNUMvector<double> y_residual (1, numberOfData);
+		autoVEC terms = VECzero (my numberOfCoefficients);
+		autoVEC p = VECzero (numberOfParameters);
+		autoVEC y_residual = VECzero (numberOfData);
 		autoCovariance ac;
 		if (ic)
 			ac = (Covariance_create (numberOfParameters));
@@ -1526,7 +1526,7 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [],
 
 			// Data matrix
 
-			FunctionTerms_evaluateTerms (me, x, terms.peek());
+			FunctionTerms_evaluateTerms (me, x, terms.at);
 			k = 0;
 			for (integer j = 1; j <= my numberOfCoefficients; j ++) {
 				if (! freeze || ! freeze [j]) {
@@ -1542,17 +1542,17 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [],
 			SVD_setTolerance (svd.get(), tol);
 
 		SVD_compute (svd.get());
-		SVD_solve (svd.get(), y_residual.peek(), p.peek());
+		autoVEC result = SVD_solve (svd.get(), y_residual.get());
 
 		// Put fitted values at correct position
 		k = 1;
 		for (integer j = 1; j <= my numberOfCoefficients; j ++) {
 			if (! freeze || ! freeze [j])
-				my coefficients [j] = p [k ++];
+				my coefficients [j] = result [k ++];
 		}
 		if (ic)
 			svdcvm (svd -> v.at, numberOfFreeParameters, numberOfParameters, freeze, svd -> d.at, ac -> data);
-		*c = ac.move();
+		if (c) *c = ac.move();
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": no fit.");
 	}

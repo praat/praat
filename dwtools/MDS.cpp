@@ -387,9 +387,9 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		integer nr = my numberOfRows, nc = my numberOfColumns;
 		integer dimmin = nr < nc ? nr : nc;
 
-		autoNUMmatrix<double> h (NUMmatrix_copy (my data, 1, nr, 1, nc), 1, 1);
-		autoNUMvector<double> rowsum (1, nr);
-		autoNUMvector<double> colsum (1, nc);
+		autoMAT h = MATcopy ({my data, nr,  nc});
+		autoVEC rowsum = VECsumPerRow ({my data, my numberOfRows, my numberOfColumns});
+		autoVEC colsum = VECsumPerColumn ({my data, my numberOfRows, my numberOfColumns});
 		autoConfiguration thee = Configuration_create (nr + nc, numberOfDimensions);
 
 		if (numberOfDimensions == 0) {
@@ -404,14 +404,10 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 			Get row and column marginals
 		*/
 
-		longdouble sum = 0.0;
-		for (integer i = 1; i <= nr; i ++) {
-			for (integer j = 1; j <= nc; j ++) {
-				rowsum [i] += my data [i] [j];
-				colsum [j] += my data [i] [j];
-			}
-			Melder_require (rowsum [i] > 0.0, U"Row number ", i, U" should not be empty.");
-			sum += rowsum [i];
+		longdouble sum = 0.0;;
+		for (integer j = 1; j <= nr; j ++) {
+			Melder_require (rowsum [j] > 0.0, U"Column number ", j, U" should not be empty.");
+			sum += rowsum [j];
 		}
 
 		for (integer j = 1; j <= nc; j ++) {
@@ -430,7 +426,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 
 		// Singular value decomposition of h
 
-		autoSVD svd = SVD_create_d (h.peek(), nr, nc);
+		autoSVD svd = SVD_createFromGeneralMatrix (h.get());
 		SVD_zeroSmallSingularValues (svd.get(), 0);
 
 		// Scale row vectors and column vectors to configuration.

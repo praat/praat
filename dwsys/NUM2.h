@@ -554,19 +554,17 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 	If no roots found then x1 and x2 will not be changed.
 */
 
-void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tol, double *x);
+autoVEC NUMsolveEquation (constMAT a, constVEC b, double tol);
 /*
-	Solve the equation: a.x = b;
+	Solve the equation: A.x = b for x;
 	a[1..nr][1..nc], b[1..nr] and the unknown x[1..nc]
-	a & b are destroyed during the computation.
 	Algorithm: s.v.d.
 */
 
-void NUMsolveEquations (double **a, integer nr, integer nc, double **b, integer ncb, double tol, double **x);
+autoMAT NUMsolveEquations (constMAT a, constMAT b, double tol);
 /*
-	Solve the equation: a.x = b;
+	Solve the equations: A.X = B;
 	a[1..nr][1..nc], b[1..nr][1..nc2] and the unknown x[1..nc][1..nc2]
-	a & b are destroyed during the computation.
 	Algorithm: s.v.d.
 */
 
@@ -593,8 +591,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
 	Psychometrika 48, 631-638.
 */
 
-void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m, double phi[],
-	double alpha, double delta, double t[]);
+autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta);
 /*
 	Solve g(t) = ||Ft - phi||^2 + alpha (t't - delta)^2 for t[1..m],
 	where F[1..n][1..m] is a matrix, phi[1..n] a given vector, and alpha
@@ -948,13 +945,14 @@ double NUMcubicSplineInterpolation (double xa[], double ya[], double y2a[], inte
 	array y2a[1..n] which is the output of NUMcubicSplineInterpolation_getSecondDerivatives above, and given
 	a value of x, this routine returns an interpolated value y.
 */
-void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer numberOfPoints, double *weights);
+
+autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, constVEC w);
 /*
 	Input: x[1..numberOfPoints], y[1..numberOfPoints], (xp,yp)
 	Output: interpolated result
 */
 
-double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer numberOfPoints, double *weights, double xp, double yp);
+double NUMbiharmonic2DSplineInterpolation (constVEC x, constVEC y, constVEC w, double xp, double yp);
 /* Biharmonic spline interpolation based on Green's function.
 	. Given z[i] values at points (x[i],y[i]) for i=1..n, 
 	Get value at new point (px,py).

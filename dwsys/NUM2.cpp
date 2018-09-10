@@ -572,7 +572,7 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 	autoMAT mc = MATcopy (MAT (m, nrows, ncols));
 
 	/*MATcentreEachColumn_inplace (mc.get());*/
-	autoSVD svd = SVD_create_d (mc.at, nrows, ncols);
+	autoSVD svd = SVD_createFromGeneralMatrix (mc.get());
 	for (integer i = 1; i <= nrows; i ++) {
 		for (integer j = 1; j <= numberOfComponents; j ++) {
 			longdouble sum = 0.0;
@@ -585,7 +585,7 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 }
 
 void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double tolerance) {
-	autoSVD me = SVD_create_d (y, nr, nc);
+	autoSVD me = SVD_createFromGeneralMatrix ({y, nr, nc});
 
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
 	for (integer i = 1; i <= nc; i ++) {
@@ -605,38 +605,47 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
 }
 
-void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tolerance, double *result) {
+autoVEC NUMsolveEquation (constMAT a, constVEC b, double tolerance) {
+	Melder_assert (a.nrow == b.size);
+	autoSVD me = SVD_createFromGeneralMatrix (a);
+	SVD_zeroSmallSingularValues (me.get(), tolerance);
+	autoVEC x = SVD_solve (me.get(), b);
+	return x;
+}
+
+/*void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tolerance, double *result) {
+
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
 	Melder_require (nr > 0 && nc > 0, U"The number of rows and the number of columns should at least be 1.");
 
-	autoSVD me = SVD_create_d (a, nr, nc);
+	autoSVD me = SVD_createFromGeneralMatrix ({a, nr, nc});
 	SVD_zeroSmallSingularValues (me.get(), tol);
 	SVD_solve (me.get(), b, result);
-}
+}*/
 
-void NUMsolveEquations (double **a, integer nr, integer nc, double **b, integer ncb, double tolerance, double **x) {
-	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
-
-	Melder_require (nr > 0 && nc > 0, U"The number of rows and columns should at least be 1.");
+autoMAT NUMsolveEquations (constMAT a, constMAT b, double tolerance) {
+	Melder_assert (a.nrow == b.nrow);
+	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * a.nrow;
 	
-	autoSVD me = SVD_create_d (a, nr, nc);
-	autoNUMvector<double> bt (1, nr + nc);
-	double *xt = & bt [nr];
+	autoSVD me = SVD_createFromGeneralMatrix (a);
+	autoMAT x = MATraw (b.nrow, b.ncol);
+	autoVEC bt = VECraw (b.nrow);
 
 	SVD_zeroSmallSingularValues (me.get(), tol);
 
-	for (integer k = 1; k <= ncb; k ++) {
-		for (integer j = 1; j <= nr; j ++) {
+	for (integer k = 1; k <= b.ncol; k ++) {
+		for (integer j = 1; j <= b.nrow; j ++) { // copy b[.][k]
 			bt [j] = b [j] [k];
 		}
 
-		SVD_solve (me.get(), bt.peek(), xt);
+		autoVEC xt = SVD_solve (me.get(), bt.get());
 
-		for (integer j = 1; j <= nc; j ++) {
+		for (integer j = 1; j <= b.nrow; j ++) {
 			x [j] [k] = xt [j];
 		}
 	}
+	return x;
 }
 
 
@@ -759,7 +768,6 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)	(page 632)
 	// Get P'F^-1 from the transpose of (F')^-1 . P
 	
-	autoVEC y (n3, kTensorInitializationType::ZERO);
 	autoVEC otd (n3, kTensorInitializationType::ZERO);
 	autoMAT ftinvp (n3, n3, kTensorInitializationType::ZERO);
 	for (integer i = 1; i <= 3; i ++) {
@@ -783,11 +791,11 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		}
 	}
 
-	NUMsolveEquation (ftinvp.at, 3, 3, otd.at, 1e-6, y.at);
+	autoVEC y = NUMsolveEquation (ftinvp.get(), otd.get(), 1e-6);
 
 	// The solution (3 cases)
 	autoVEC w (n3, kTensorInitializationType::ZERO);
-	autoVEC chi (n3, kTensorInitializationType::ZERO);
+	autoVEC chi;
 	autoVEC diag (n3, kTensorInitializationType::ZERO);
 
 	if (fabs (y [1]) < eps) {
@@ -800,12 +808,11 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		w [2] = t2 * delta [2];
 		w [3] = t3 * delta [3];
 
-		NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
+		chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
 
 		w [1] = -w [1];
-		if (fabs (chi [3] / chi [1]) < eps) {
-			NUMsolveEquation (ptfinvc.at, 3, 3, w.at, 1e-6, chi.at);
-		}
+		if (fabs (chi [3] / chi [1]) < eps) chi = NUMsolveEquation (ptfinvc.get(), w.get(), 1e-6);
+		
 	} else if (fabs (y [2]) < eps) {
 		// Case 2: page 633
 
@@ -815,17 +822,16 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		if ( (delta [2] < delta [3] && (t2 = (t1 * t1 * delta [1] + t3 * t3 * delta [3])) < eps)) {
 			w [2] = sqrt (- delta [2] * t2); /* +- */
 			w [3] = t3 * delta [3];
-			NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
+			chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
 			w [2] = -w [2];
-			if (fabs (chi [3] / chi [1]) < eps) {
-				NUMsolveEquation (ptfinvc.at, 3, 3, w.at, 1e-6, chi.at);
-			}
+			if (fabs (chi [3] / chi [1]) < eps) chi = NUMsolveEquation (ptfinvc.get(), w.get(), 1e-6);
+
 		} else if (((delta [2] < delta [3] + eps) || (delta [2] > delta [3] - eps)) && fabs (y [3]) < eps) {
 			// choose one value for w [2] from an infinite number
 
 			w [2] = w [1];
 			w [3] = sqrt (- t1 * t1 * delta [1] * delta [2] - w [2] * w [2]);
-			NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
+			chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
 		}
 	} else {
 		// Case 3: page 634 use Newton-Raphson root finder
@@ -840,7 +846,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		for (integer i = 1; i <= 3; i++) {
 			w [i] = y [i] / (1.0 - xlambda / delta [i]);
 		}
-		NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
+		chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
 	}
 
 	*alpha = chi [1]; *gamma = chi [3];
@@ -868,19 +874,17 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 	}
 }
 
-void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m, double phi [], double alpha, double delta, double t []) {
-	autoMAT u = MATzero (m, m);
-	autoVEC c = VECzero (m);
-	autoVEC x = VECzero (n);
-
-	for (integer j = 1; j <= m; j ++) {
-		t [j] = 0.0;
-	}
-
-	autoSVD svd = SVD_create_d (f, n, m);
+autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta) {
+	// n = f.nrow m=f.ncol
+	autoMAT u = MATzero (f.ncol, f.ncol);
+	autoVEC c = VECzero (f.ncol);
+	autoVEC x = VECzero (f.nrow);
+	autoVEC t;
+	
+	autoSVD svd = SVD_createFromGeneralMatrix (f);
 
 	if (alpha == 0.0) {
-		SVD_solve (svd.get(), phi, t);	// standard least squares
+		t = SVD_solve (svd.get(), phi);	// standard least squares
 	}
 
 
@@ -889,25 +893,25 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 
 	autoINTVEC indx = NUMindexx (svd -> d.get());
 
-	for (integer j = m; j > 0; j --) {
+	for (integer j = f.ncol; j > 0; j --) {
 		double tmp = svd -> d [indx [j]];
-		c [m - j + 1] = tmp * tmp;
-		for (integer k = 1; k <= m; k ++) {
-			u [m - j + 1] [k] = svd -> v [indx [j]] [k];
+		c [f.ncol - j + 1] = tmp * tmp;
+		for (integer k = 1; k <= f.ncol; k ++) {
+			u [f.ncol - j + 1] [k] = svd -> v [indx [j]] [k];
 		}
 	}
 
 	integer q = 1;
 	double tol = 1e-6;
-	while (q < m && (c [m - q] - c [m]) < tol) {
+	while (q < f.ncol && (c [f.ncol - q] - c [f.ncol]) < tol) {
 		q ++;
 	}
 
 	// step 2: x = U'F'phi
 
-	for (integer i = 1; i <= m; i ++) {
-		for (integer j = 1; j <= m; j ++) {
-			for (integer k = 1; k <= n; k ++) {
+	for (integer i = 1; i <= f.ncol; i ++) {
+		for (integer j = 1; j <= f.ncol; j ++) {
+			for (integer k = 1; k <= f.nrow; k ++) {
 				x [i] += u [j] [i] * f [k] [j] * phi [k];
 			}
 		}
@@ -916,34 +920,34 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 	// step 3:
 
 	struct nr2_struct me;
-	me.m = m;
+	me.m = f.ncol;
 	me.delta = delta;
 	me.alpha = alpha;
 	me.x = x.at;
 	me.c = c.at;
 
 	double xqsq = 0.0;
-	for (integer j = m - q + 1; j <= m; j ++) {
+	for (integer j = f.ncol - q + 1; j <= f.ncol; j ++) {
 		xqsq += x [j] * x [j];
 	}
 
-	integer r = m;
+	integer r = f.ncol;
 	if (xqsq < tol) { /* xqsq == 0 */
 		double fm, df;
-		r = m - q;
+		r = f.ncol - q;
 		me.m = r;
-		nr2_func (c [m], &fm, &df, & me);
+		nr2_func (c [f.ncol], &fm, &df, & me);
 		if (fm >= 0.0) { /* step 3.b1 */
 			x [r + 1] = sqrt (fm);
 			for (integer j = 1; j <= r; j ++) {
-				x [j] /= c [j] - c [m];
+				x [j] /= c [j] - c [f.ncol];
 			}
 			for (integer j = 1; j <= r + 1; j ++) {
 				for (integer k = 1; k <= r + 1; k ++) {
 					t [j] += u [j] [k] * x [k];
 				}
 			}
-			return;
+			return t;
 		}
 		// else continue with r = m - q
 	}
@@ -955,17 +959,18 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 		xCx += x [j] * x [j] / c [j];
 	}
 	double b0, bmin = delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx);
-	double eps = (c [m] - bmin) * tol;
+	double eps = (c [f.ncol] - bmin) * tol;
 
 	// find the root of d(psi(b)/db in interval (bmin, c [m])
 
-	NUMnrbis (nr2_func, bmin + eps, c [m] - eps, & me, & b0);
+	NUMnrbis (nr2_func, bmin + eps, c [f.ncol] - eps, & me, & b0);
 
 	for (integer j = 1; j <= r; j ++) {
 		for (integer k = 1; k <= r; k ++) {
 			t [j] += u [j] [k] * x [k] / (c [k] - b0);
 		}
 	}
+	return t;
 }
 
 void NUMprocrustes (double **x, double **y, integer nPoints, integer nDimensions, double **t, double v [], double *s) {
@@ -991,7 +996,7 @@ void NUMprocrustes (double **x, double **y, integer nPoints, integer nDimensions
 
 	// 2. Decompose C by SVD: C = PDQ' (SVD attribute is Q instead of Q'!)
 
-	autoSVD svd = SVD_create_d (c.at, nDimensions, nDimensions);
+	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	double trace = 0.0;
 	for (integer i = 1; i <= nDimensions; i ++) {
 		trace += svd -> d [i];
@@ -2851,26 +2856,29 @@ void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, i
 	}
 }
 
-void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer n, double *w) {
-	autoMAT g (n, n, kTensorInitializationType :: RAW);
+autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, constVEC z) {
+	Melder_assert (x.size == y.size && x.size == z.size);
+	autoMAT g (x.size, x.size, kTensorInitializationType :: RAW);
 	/*
 		1. Calculate the Green matrix G = |point [i]-point [j]|^2 (ln (|point [i]-point [j]|) - 1.0)
 		2. Solve z = G.w for w
 	*/
-	for (integer i = 1; i <= n; i ++) {
-		for (integer j = i + 1; j <= n; j ++) {
+	for (integer i = 1; i <= x.size; i ++) {
+		for (integer j = i + 1; j <= x.size; j ++) {
 			double dx = x [i] - x [j], dy = y [i] - y [j];
 			double distanceSquared = dx * dx + dy * dy;
 			g [i] [j] = g [j] [i] = distanceSquared * (0.5 * log (distanceSquared) - 1.0); // Green's function
 		}
 		g [i] [i] = 0.0;
 	}
-	NUMsolveEquation (g.at, n, n, z, 0.0, w);
+	autoVEC w = NUMsolveEquation (g.get(), z, 0.0);
+	return w;
 }
 
-double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer n, double *w, double xp, double yp) {
+double NUMbiharmonic2DSplineInterpolation (constVEC x, constVEC y, constVEC w, double xp, double yp) {
+	Melder_assert (x.size == y.size && x.size == w.size);
 	longdouble result = 0.0;
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= x.size; i ++) {
 		double dx = xp - x [i], dy = yp - y [i];
 		double d = dx * dx + dy * dy;
 		result += w [i] * d * (0.5 * log (d) - 1.0);
@@ -2969,13 +2977,13 @@ double NUMfrobeniusnorm (constMAT x) {
 	for (integer i = 1; i <= x.nrow; i ++) {
 		for (integer j = 1; j <= x.ncol; j ++) {
 			if (x [i] [j] != 0.0) {
-				double absxi = fabs (x [i] [j]);
+				longdouble absxi = fabs (x [i] [j]);
 				if (scale < absxi) {
-					double t = scale / absxi;
+					longdouble t = scale / absxi;
 					ssq = 1 + ssq * t * t;
 					scale = absxi;
 				} else {
-					double t = absxi / scale;
+					longdouble t = absxi / scale;
 					ssq += t * t;
 				}
 			}

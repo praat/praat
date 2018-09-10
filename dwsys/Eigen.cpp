@@ -120,7 +120,7 @@ void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integ
 	integer nsv = MIN (numberOfRows, numberOfColumns);
 
 	my dimension = numberOfColumns;
-	autoSVD svd = SVD_create_d (a, numberOfRows, numberOfColumns);
+	autoSVD svd = SVD_createFromGeneralMatrix ({a, numberOfRows, numberOfColumns});
 
 	/*
 		Make sv's that are too small zero. These values occur automatically
@@ -477,7 +477,7 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 	Melder_require (my dimension == thy dimension, U"The eigenvectors should have equal dimensions.");
 	Melder_require (ivec_from > 0 && ivec_from <= ivec_to && ivec_to <= nmin, U"Eigenvector range too large.");
 
-	autoNUMmatrix<double> c (1, nvectors, 1, nvectors);
+	autoMAT c = MATzero (nvectors, nvectors);
 
 	/*
 		Algorithm 12.4.3 Golub & van Loan
@@ -493,7 +493,7 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 			}
 		}
 	}
-	autoSVD svd = SVD_create_d (c.peek(), nvectors, nvectors);
+	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	for (integer i = 1; i <= nvectors; i ++) {
 		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;
 	}

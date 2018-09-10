@@ -762,10 +762,10 @@ void DataModeler_fit (DataModeler me) {
 		integer numberOfParameters = DataModeler_getNumberOfFreeParameters (me);
 		if (numberOfParameters == 0) return;
 		integer numberOfDataPoints = DataModeler_getNumberOfValidDataPoints (me);
-		autoNUMvector<double> b (1, numberOfDataPoints);
-		autoNUMvector<double> term (1, my numberOfParameters);
-		autoNUMvector<double> parameter (1, my numberOfParameters);
-		autoNUMmatrix<double> design (1, numberOfDataPoints, 1, numberOfParameters);
+		autoVEC b = VECzero (numberOfDataPoints);
+		autoVEC term = VECzero (my numberOfParameters);
+		autoVEC parameter = VECzero (my numberOfParameters);
+		autoMAT design = MATzero (numberOfDataPoints, numberOfParameters);
 
 		// For function evaluation with only the FIXED parameters
 
@@ -783,12 +783,12 @@ void DataModeler_fit (DataModeler me) {
 				++ idata;
 				// function evaluation with only the FIXED parameters
 				double xi = my x [i], yi = my y [i];
-				double yFixed = my f_evaluate (me, xi, parameter.peek());
+				double yFixed = my f_evaluate (me, xi, parameter.at);
 				double si = ( my useSigmaY != DataModeler_DATA_WEIGH_EQUAL ? DataModeler_getDataPointInverseWeight (me, i, my useSigmaY) : sigmaY );
 
 				// individual terms of the function
 
-				my f_evaluateBasisFunctions (me, xi, term.peek());
+				my f_evaluateBasisFunctions (me, xi, term.at);
 				integer ipar = 0;
 				for (integer j = 1; j <= my numberOfParameters; j ++) {
 					if (my parameterStatus [j] != DataModeler_PARAMETER_FIXED)
@@ -803,11 +803,11 @@ void DataModeler_fit (DataModeler me) {
 		
 		// Singular value decomposition and evaluation of the singular values
 
-		autoSVD thee = SVD_create_d (design.peek(), numberOfDataPoints, numberOfParameters);
+		autoSVD thee = SVD_createFromGeneralMatrix (design.get());
 		if (! NUMfpp)
 			NUMmachar ();
 		SVD_zeroSmallSingularValues (thee.get(), my tolerance > 0.0 ? my tolerance : numberOfDataPoints * NUMfpp -> eps);
-		SVD_solve (thee.get(), b.peek(), parameter.peek()); // re-use parameter
+		autoVEC result = SVD_solve (thee.get(), b.get());
 
 		// Put the calculated parameters at the correct position in 'my p'
 		Covariance cov = my parameterCovariances.get();

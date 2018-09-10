@@ -124,7 +124,8 @@ static void huber_struct_solvelpc (struct huber_struct *hs) {
 
 	//integer nzeros = SVD_zeroSmallSingularValues (me, 0);
 
-	SVD_solve (me, hs -> c, hs -> a);
+	autoVEC x = SVD_solve (me, {hs -> c, hs->p});
+	VECcopy_preallocated ({hs->a, hs->p}, x.get());
 }
 
 void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs) {

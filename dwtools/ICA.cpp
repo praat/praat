@@ -889,14 +889,9 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 			The V matrix will be the common diagonalizer matrix that we use.
 		*/
 
-		autoNUMmatrix<double> d (1, dimension, 1, dimension);
-		for (integer i = 1; i <= dimension; i ++) { // Generate the rotation matrix
-			for (integer j = 1; j <= dimension; j ++) {
-				d [i] [j] = NUMrandomGauss (0.0, 1.0);
-			}
-		}
-		autoNUMmatrix<double> v (1, dimension, 1, dimension);
-		autoSVD svd = SVD_create_d (d.peek(), dimension, dimension);
+		autoMAT d = MATrandomGauss (dimension, dimension, 0.0, 1.0);
+		autoMAT v = MATraw (dimension, dimension);
+		autoSVD svd = SVD_createFromGeneralMatrix (d.get());
 		autoCrossCorrelationTableList me = CrossCorrelationTableList_create ();
 
 		for (integer i = 1; i <= dimension; i ++) {
@@ -919,7 +914,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 				}
 			}
 			// we need V'DV, however our V has eigenvectors row-wise -> VDV'
-			NUMdmatrices_multiply_VCVp (ct -> data, v.peek(), dimension, dimension, d.peek(), true);
+			NUMdmatrices_multiply_VCVp (ct -> data, v.at, dimension, dimension, d.at, true);
             my addItem_move (ct.move());
 		}
 		return me;

@@ -120,6 +120,22 @@ autoSVD SVD_create_d (double **m, integer numberOfRows, integer numberOfColumns)
 	}
 }
 
+autoSVD SVD_createFromGeneralMatrix (constMAT m) {
+	try {
+		autoSVD me = SVD_create (m.nrow, m.ncol);
+		for (integer i = 1; i <= my numberOfRows; i ++) {
+			for (integer j = 1; j <= my numberOfColumns; j ++) {
+				my u [i] [j] = my isTransposed ? m [j] [i] : m [i] [j];
+			}
+		}
+		SVD_compute (me.get());
+		return me;
+	} catch (MelderError) {
+		Melder_throw (U"SVD not created from general matrix.");
+	}
+}
+
+
 void SVD_svd_d (SVD me, double **m) {
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -193,13 +209,14 @@ void SVD_getSquared (SVD me, double **m, bool inverse) {
 	}
 }
 
-void SVD_solve (SVD me, double b [], double x []) {
+autoVEC SVD_solve (SVD me, constVEC b) {
 	try {
-		autoNUMvector<double> t (1, my numberOfColumns);
-
-		/*  Solve UDV' x = b.
-			Solution: x = V D^-1 U' b */
-
+		/*
+			Solve UDV' x = b.
+			Solution: x = V D^-1 U' b
+		*/
+		Melder_assert (my numberOfRows == b.size);
+		autoVEC t = VECzero (my numberOfColumns);
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			longdouble tmp = 0.0;
 			if (my d [j] > 0.0) {
@@ -211,6 +228,7 @@ void SVD_solve (SVD me, double b [], double x []) {
 			t [j] = (double) tmp;
 		}
 
+		autoVEC x = VECraw (my numberOfColumns);
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			longdouble tmp = 0.0;
 			for (integer i = 1; i <= my numberOfColumns; i ++) {
@@ -218,6 +236,7 @@ void SVD_solve (SVD me, double b [], double x []) {
 			}
 			x [j] = (double) tmp;
 		}
+		return x;
 	} catch (MelderError) {
 		Melder_throw (me, U": not solved.");
 	}

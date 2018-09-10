@@ -112,9 +112,8 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 		if (numberOfCells < numberOfParameters) {
 			Melder_warning (U"Solution is not unique (more parameters than cases).");
 		}
-		autoNUMmatrix <double> u (1, numberOfCells, 1, numberOfParameters);
-		autoNUMvector <double> b (1, numberOfCells);
-		autoNUMvector <double> x (1, numberOfParameters);
+		autoMAT u = MATraw (numberOfCells, numberOfParameters);
+		autoVEC b = VECraw (numberOfCells);
 		autoLinearRegression thee = LinearRegression_create ();
 		for (integer ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			double minimum = Table_getMinimum (me, ivar);
@@ -128,7 +127,7 @@ autoLinearRegression Table_to_LinearRegression (Table me) {
 			u [icell] [numberOfParameters] = 1.0;   // for the intercept
 			b [icell] = Table_getNumericValue_Assert (me, icell, my numberOfColumns);   // the dependent variable
 		}
-		NUMsolveEquation (u.peek(), numberOfCells, numberOfParameters, b.peek(), NUMeps * numberOfCells, x.peek());
+		autoVEC x = NUMsolveEquation (u.get(), b.get(), NUMeps * numberOfCells);
 		thy intercept = x [numberOfParameters];
 		for (integer ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
 			RegressionParameter parm = thy parameters.at [ivar];
