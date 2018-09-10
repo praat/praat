@@ -125,12 +125,13 @@ DO
 }
 
 FORM (MODIFY_EEG_removeTriggers, U"Remove triggers", nullptr) {
-	OPTIONMENU_ENUM (removeEveryTriggerThat___, U"Remove every trigger that...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, removeEveryTriggerThat___,
+			U"Remove every trigger that...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	MODIFY_EACH (EEG)
-		EEG_removeTriggers (me, (kMelder_string) removeEveryTriggerThat___, ___theText);
+		EEG_removeTriggers (me, removeEveryTriggerThat___, ___theText);
 	MODIFY_EACH_END
 }
 
@@ -266,27 +267,30 @@ DO
 FORM (NEW_EEG_to_ERPTier_triggers, U"To ERPTier (triggers)", nullptr) {
 	REAL (fromTime, U"From time (s)", U"-0.11")
 	REAL (toTime, U"To time (s)", U"0.39")
-	OPTIONMENU_ENUM (getEveryEventWithATriggerThat, U"Get every event with a trigger that", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, getEveryEventWithATriggerThat,
+			U"Get every event with a trigger that", kMelder_string::DEFAULT)
 	SENTENCE (theText, U"...the text", U"1")
 	OK
 DO
 	CONVERT_EACH (EEG)
-		autoERPTier result = EEG_to_ERPTier_triggers (me, fromTime, toTime, (kMelder_string) getEveryEventWithATriggerThat, theText);
+		autoERPTier result = EEG_to_ERPTier_triggers (me, fromTime, toTime, getEveryEventWithATriggerThat, theText);
 	CONVERT_EACH_END (my name.get(), U"_trigger", theText)
 }
 
 FORM (NEW_EEG_to_ERPTier_triggers_preceded, U"To ERPTier (triggers, preceded)", nullptr) {
 	REAL (fromTime, U"From time (s)", U"-0.11")
 	REAL (toTime, U"To time (s)", U"0.39")
-	OPTIONMENU_ENUM (getEveryEventWithATriggerThat, U"Get every event with a trigger that", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, getEveryEventWithATriggerThat,
+			U"Get every event with a trigger that", kMelder_string::DEFAULT)
 	SENTENCE (text1, U"...the text", U"1")
-	OPTIONMENU_ENUM (andIsPrecededByATriggerThat, U"and is preceded by a trigger that", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, andIsPrecededByATriggerThat,
+			U"and is preceded by a trigger that", kMelder_string::DEFAULT)
 	SENTENCE (text2, U" ...the text", U"4")
 	OK
 DO
 	CONVERT_EACH (EEG)
 		autoERPTier result = EEG_to_ERPTier_triggers_preceded (me, fromTime, toTime,
-			(kMelder_string) getEveryEventWithATriggerThat, text1, (kMelder_string) andIsPrecededByATriggerThat, text2);
+			(kMelder_string) getEveryEventWithATriggerThat, text1, andIsPrecededByATriggerThat, text2);
 	CONVERT_EACH_END (my name.get(), U"_trigger", text2)
 }
 
@@ -422,7 +426,8 @@ FORM (GRAPHICS_ERP_drawScalp_colour, U"ERP: Draw scalp (colour)", nullptr) {
 	REAL (toTime, U"right Time range", U"0.2")
 	REAL (fromVoltage, U"left Voltage range (V)", U"10e-6")
 	REAL (toVoltage, U"right Voltage range", U"-10e-6")
-	RADIO_ENUM (colourScale, U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
+	RADIO_ENUM (kGraphics_colourScale, colourScale,
+			U"Colour scale", kGraphics_colourScale::BLUE_TO_RED)
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
@@ -435,7 +440,8 @@ DO
 FORM (GRAPHICS_ERP_drawScalp_garnish, U"ERP: Draw scalp (garnish)", nullptr) {
 	REAL (fromVoltage, U"left Voltage range (V)", U"10e-6")
 	REAL (toVoltage, U"right Voltage range", U"-10e-6")
-	RADIO_ENUM (colourScale, U"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
+	RADIO_ENUM (kGraphics_colourScale, colourScale,
+			U"Colour scale", kGraphics_colourScale::BLUE_TO_RED)
 	OK
 DO
 	GRAPHICS_NONE
@@ -704,7 +710,7 @@ DIRECT (NEW_ERPTier_to_ERP_mean) {
 
 FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_number, U"Extract events where column (number)", nullptr) {
 	WORD (extractAllEventsWhereColumn___, U"Extract all events where column...", U"")
-	RADIO_ENUM (___is___, U"...is...", kMelder_number, DEFAULT)
+	RADIO_ENUM (kMelder_number, ___is___, U"...is...", kMelder_number::DEFAULT)
 	REAL (___theNumber, U"...the number", U"0.0")
 	OK
 DO
@@ -716,13 +722,13 @@ DO
 
 FORM (NEW1_ERPTier_Table_extractEventsWhereColumn_text, U"Extract events where column (text)", nullptr) {
 	WORD (extractAllEventsWhereColumn___, U"Extract all events where column...", U"")
-	OPTIONMENU_ENUM (___, U"...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, ___, U"...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_TWO (ERPTier, Table)
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (you, extractAllEventsWhereColumn___);
-		autoERPTier result = ERPTier_extractEventsWhereColumn_string (me, you, columnNumber, (kMelder_string) ___, ___theText);
+		autoERPTier result = ERPTier_extractEventsWhereColumn_string (me, you, columnNumber, ___, ___theText);
 	CONVERT_TWO_END (my name.get())
 }
 

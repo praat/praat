@@ -385,7 +385,8 @@ static void menu_cb_showAnalyses (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) 
 
 static void menu_cb_timeStepSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Time step settings", U"Time step settings...")
-		OPTIONMENU_ENUM (timeStepStrategy, U"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, my default_timeStepStrategy ())
+		OPTIONMENU_ENUM (kTimeSoundAnalysisEditor_timeStepStrategy, timeStepStrategy,
+				U"Time step strategy", my default_timeStepStrategy ())
 		LABEL (U"")
 		LABEL (U"If the time step strategy is \"fixed\":")
 		POSITIVE (fixedTimeStep, U"Fixed time step (s)", my default_fixedTimeStep ())
@@ -463,8 +464,10 @@ static void menu_cb_advancedSpectrogramSettings (TimeSoundAnalysisEditor me, EDI
 		NATURAL (numberOfTimeSteps,      U"Number of time steps",      my default_spectrogram_timeSteps          ())
 		NATURAL (numberOfFrequencySteps, U"Number of frequency steps", my default_spectrogram_frequencySteps     ())
 		LABEL (U"Spectrogram analysis settings:")
-		OPTIONMENU_ENUM (method,      U"Method",       kSound_to_Spectrogram_method,      my default_spectrogram_method ())
-		OPTIONMENU_ENUM (windowShape, U"Window shape", kSound_to_Spectrogram_windowShape, my default_spectrogram_windowShape ())
+		OPTIONMENU_ENUM (kSound_to_Spectrogram_method, method,
+				U"Method", my default_spectrogram_method ())
+		OPTIONMENU_ENUM (kSound_to_Spectrogram_windowShape, windowShape,
+				U"Window shape", my default_spectrogram_windowShape ())
 		LABEL (U"Spectrogram view settings:")
 		BOOLEAN (autoscaling, U"Autoscaling", my default_spectrogram_autoscaling ())
 		REAL (maximum, U"Maximum (dB/Hz)", my default_spectrogram_maximum ())
@@ -615,11 +618,14 @@ static void menu_cb_pitchSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM)
 	EDITOR_FORM (U"Pitch settings", U"Intro 4.2. Configuring the pitch contour")
 		POSITIVE (pitchFloor,   U"left Pitch range (Hz)",  my default_pitch_floor ())
 		POSITIVE (pitchCeiling, U"right Pitch range (Hz)", my default_pitch_ceiling ())
-		OPTIONMENU_ENUM (unit, U"Unit", kPitch_unit, my default_pitch_unit ())
+		OPTIONMENU_ENUM (kPitch_unit, unit,
+				U"Unit", my default_pitch_unit ())
 		LABEL (U"The autocorrelation method optimizes for intonation research;")
 		LABEL (U"and the cross-correlation method optimizes for voice research:")
-		RADIO_ENUM (analysisMethod, U"Analysis method", kTimeSoundAnalysisEditor_pitch_analysisMethod, my default_pitch_method ())
-		OPTIONMENU_ENUM (drawingMethod, U"Drawing method", kTimeSoundAnalysisEditor_pitch_drawingMethod, my default_pitch_drawingMethod ())
+		RADIO_ENUM (kTimeSoundAnalysisEditor_pitch_analysisMethod, analysisMethod,
+				U"Analysis method", my default_pitch_method ())
+		OPTIONMENU_ENUM (kTimeSoundAnalysisEditor_pitch_drawingMethod, drawingMethod,
+				U"Drawing method", my default_pitch_drawingMethod ())
 		MUTABLE_LABEL (note1, U"")
 		MUTABLE_LABEL (note2, U"")
 	EDITOR_OK
@@ -885,7 +891,8 @@ static void menu_cb_intensitySettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_F
 	EDITOR_FORM (U"Intensity settings", U"Intro 6.2. Configuring the intensity contour")
 		REAL (viewFrom, U"left View range (dB)",  my default_intensity_viewFrom ())
 		REAL (viewTo,   U"right View range (dB)", my default_intensity_viewTo   ())
-		RADIO_ENUM (averagingMethod, U"Averaging method", kTimeSoundAnalysisEditor_intensity_averagingMethod, my default_intensity_averagingMethod ())
+		RADIO_ENUM (kTimeSoundAnalysisEditor_intensity_averagingMethod, averagingMethod,
+				U"Averaging method", my default_intensity_averagingMethod ())
 		BOOLEAN (subtractMeanPressure, U"Subtract mean pressure", my default_intensity_subtractMeanPressure ())
 		LABEL (U"Note: the pitch floor is taken from the pitch settings.")
 		MUTABLE_LABEL (note2, U"")
@@ -1066,7 +1073,8 @@ static void menu_cb_formantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FOR
 
 static void menu_cb_advancedFormantSettings (TimeSoundAnalysisEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Advanced formant settings", U"Advanced formant settings...")
-		RADIO_ENUM (method, U"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, my default_formant_method ())
+		RADIO_ENUM (kTimeSoundAnalysisEditor_formant_analysisMethod, method,
+				U"Method", my default_formant_method ())
 		POSITIVE (preemphasisFrom, U"Pre-emphasis from (Hz)", my default_formant_preemphasisFrom ())
 	EDITOR_OK
 		SET_ENUM (method, kTimeSoundAnalysisEditor_formant_analysisMethod, my p_formant_method)

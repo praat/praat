@@ -392,7 +392,8 @@ static void menu_cb_setPitchRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setPitchUnits (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set pitch units", nullptr)
-		RADIO_ENUM (pitchUnits, U"Pitch units", kManipulationEditor_pitchUnits, my default_pitch_units ())
+		RADIO_ENUM (kManipulationEditor_pitchUnits, pitchUnits,
+				U"Pitch units", my default_pitch_units ())
 	EDITOR_OK
 		SET_ENUM (pitchUnits, kManipulationEditor_pitchUnits, my p_pitch_units)
 	EDITOR_DO
@@ -444,7 +445,8 @@ static void menu_cb_setDurationRange (ManipulationEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_setDraggingStrategy (ManipulationEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Set dragging strategy", U"ManipulationEditor")
-		RADIO_ENUM (draggingStrategy, U"Dragging strategy", kManipulationEditor_draggingStrategy, my default_pitch_draggingStrategy ())
+		RADIO_ENUM (kManipulationEditor_draggingStrategy, draggingStrategy,
+				U"Dragging strategy", my default_pitch_draggingStrategy ())
 	EDITOR_OK
 		SET_ENUM (draggingStrategy, kManipulationEditor_draggingStrategy, my p_pitch_draggingStrategy)
 	EDITOR_DO

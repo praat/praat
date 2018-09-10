@@ -1,6 +1,6 @@
 /* OTGrammarEditor.cpp
  *
- * Copyright (C) 1997-2005,2007-2017 Paul Boersma
+ * Copyright (C) 1997-2005,2007-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,8 @@ static void menu_cb_learnOne (OTGrammarEditor me, EDITOR_ARGS_FORM) {
 		LABEL (U"Adult surface form:")
 		SENTENCE (outputString, U"Output string", U"")
 		REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-		OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
+		OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+				U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 		REAL (plasticity, U"Plasticity", U"0.1")
 		REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
 		BOOLEAN (honourLocalRankings, U"Honour local rankings", true)
@@ -117,7 +118,8 @@ static void menu_cb_learnOneFromPartialOutput (OTGrammarEditor me, EDITOR_ARGS_F
 		LABEL (U"Partial adult surface form (e.g. overt form):")
 		SENTENCE (partialOutput, U"Partial output", U"")
 		REAL (evaluationNoise, U"Evaluation noise", U"2.0")
-		OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
+		OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+				U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 		REAL (plasticity, U"Plasticity", U"0.1")
 		REAL (relativePlasticitySpreading, U"Rel. plasticity spreading", U"0.1")
 		BOOLEAN (honourLocalRankings, U"Honour local rankings", true)

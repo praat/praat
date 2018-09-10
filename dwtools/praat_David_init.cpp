@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2017 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 1993-2018 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2503,7 +2503,7 @@ DO
 
 FORM (NEW1_FileInMemoryManager_extractFiles, U"FileInMemoryManager: Extract files", nullptr) {
 	LABEL (U"Extract all files where the file name ")
-	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
+	OPTIONMENU_ENUM (kMelder_string, which, U"...", kMelder_string::CONTAINS)
 	SENTENCE (criterion, U"...the text", U"/voices/")
 	OK
 DO
@@ -2534,7 +2534,7 @@ DO
 
 FORM (NEW1_FileInMemorySet_extractFiles, U"FileInMemorySet: Extract files", nullptr) {
 	LABEL (U"Extract all files where the file name ")
-	OPTIONMENU_ENUM (which, U"...", kMelder_string, CONTAINS)
+	OPTIONMENU_ENUM (kMelder_string, which, U"...", kMelder_string::CONTAINS)
 	SENTENCE (criterion, U"...the text", U"/voices/")
 	OK
 DO
@@ -2808,8 +2808,10 @@ DO
 }
 
 FORM (NEW1_FilterBanks_crossCorrelate, U"FilterBanks: Cross-correlate", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (FilterBank)
@@ -2818,8 +2820,10 @@ DO
 }
 
 FORM (NEW1_BandFilterSpectrograms_crossCorrelate, U"BandFilterSpectrograms: Cross-correlate", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (BandFilterSpectrogram)
@@ -2828,8 +2832,10 @@ DO
 }
 
 FORM (NEW1_FilterBanks_convolve, U"FilterBanks: Convolve", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (FilterBank)
@@ -2838,8 +2844,10 @@ DO
 }
 
 FORM (NEW1_BandFilterSpectrograms_convolve, U"BandFilterSpectrograms: Convolve", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (BandFilterSpectrogram)
@@ -3926,8 +3934,10 @@ DO
 }
 
 FORM (NEW1_MFCCs_crossCorrelate, U"MFCC & MFCC: Cross-correlate", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (MFCC)
@@ -3936,8 +3946,10 @@ DO
 }
 
 FORM (NEW1_MFCCs_convolve, U"MFCC & MFCC: Convolve", nullptr) {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (MFCC)
@@ -6716,7 +6728,8 @@ DO
 
 FORM (NEW_Table_extractRowsMahalanobisWhere, U"Table: Extract rows where (mahalanobis)", nullptr) {
 	SENTENCE (dataColumns_string, U"Extract all rows where columns...", U"F1 F2 F3")
-	RADIO_ENUM (haveAMahalanobisDistance, U"...have a mahalanobis distance...", kMelder_number, GREATER_THAN)
+	RADIO_ENUM (kMelder_number, haveAMahalanobisDistance,
+			U"...have a mahalanobis distance...", kMelder_number::GREATER_THAN)
 	REAL (numberOfSigmas, U"...the number", U"2.0")
 	WORD (factorColumn_string, U"Factor column", U"")
 	TEXTFIELD (formula, U"Process only rows where the following condition holds:", U"1; self$[\"gender\"]=\"male\"")
@@ -6836,14 +6849,17 @@ FORM (GRAPHICS_TableOfReal_drawAsScalableSquares, U"TableOfReal: Draw as scalabl
 	INTEGER (rowmax, U"To row", U"0 (=all)");
 	NATURAL (colmin, U"From column", U"1");
 	INTEGER (colmax, U"To column", U"0 (=all)");
-	OPTIONMENU_ENUM (origin, U"Origin", kGraphicsMatrixOrigin, DEFAULT)
+	OPTIONMENU_ENUM (kGraphicsMatrixOrigin, origin,
+			U"Origin", kGraphicsMatrixOrigin::DEFAULT)
 	POSITIVE (scaleFactor, U"Cell area scale factor", U"0.95")
-	OPTIONMENU_ENUM (drawingOrder, U"Filling order", kGraphicsMatrixCellDrawingOrder, DEFAULT)
+	OPTIONMENU_ENUM (kGraphicsMatrixCellDrawingOrder, drawingOrder,
+			U"Filling order", kGraphicsMatrixCellDrawingOrder::DEFAULT)
 	BOOLEAN (garnish, U"Garnish", true)
 	OK
 DO
 	GRAPHICS_EACH (TableOfReal)
-		TableOfReal_drawAsScalableSquares (me, GRAPHICS, rowmin, rowmax, colmin, colmax, origin, scaleFactor, drawingOrder, garnish);
+		TableOfReal_drawAsScalableSquares (me, GRAPHICS, rowmin, rowmax, colmin, colmax,
+				origin, scaleFactor, drawingOrder, garnish);
 	GRAPHICS_EACH_END
 }
 
@@ -7177,12 +7193,13 @@ DO
 
 FORM (REAL_TextGrid_getTotalDurationOfIntervalsWhere, U"Total duration of intervals where", nullptr) {
 	INTEGER (tierNumber, U"Tier number", U"1")
-	OPTIONMENU_ENUM (countIntervalsWhoseLabel___, U"Intervals whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, countIntervalsWhoseLabel___,
+			U"Intervals whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	NUMBER_ONE (TextGrid)
-		double result = TextGrid_getTotalDurationOfIntervalsWhere (me, tierNumber, (kMelder_string) countIntervalsWhoseLabel___, ___theText);
+		double result = TextGrid_getTotalDurationOfIntervalsWhere (me, tierNumber, countIntervalsWhoseLabel___, ___theText);
 	NUMBER_ONE_END (U" s (duration of intervals containing \"", ___theText, U"\")");
 }
 
@@ -7250,13 +7267,14 @@ FORM (NEW_TextGrid_to_DurationTier, U"TextGrid: To DurationTier", U"TextGrid: To
 	POSITIVE (timeScaleFactor, U"Time scale factor", U"2.0")
 	POSITIVE (leftTransitionDuration, U"Left transition duration (s)", U"1e-10")
 	POSITIVE (rightTransitionDuration, U"Right transition duration (s)", U"1e-10")
-	OPTIONMENU_ENUM (scaleIntervalsWhoseLabel___, U"Scale intervals whose label... ", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, scaleIntervalsWhoseLabel___,
+			U"Scale intervals whose label... ", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
 		autoDurationTier result = TextGrid_to_DurationTier (me,tierNumber, timeScaleFactor,
-			leftTransitionDuration, rightTransitionDuration, (kMelder_string) scaleIntervalsWhoseLabel___, ___theText);
+			leftTransitionDuration, rightTransitionDuration, scaleIntervalsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name.get())
 }
 
