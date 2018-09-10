@@ -229,27 +229,30 @@ END }
 /********** Callbacks of the Preferences menu. **********/
 
 FORM (PREFS_TextInputEncodingSettings, U"Text reading preferences", U"Unicode") {
-	RADIO_ENUM (encodingOf8BitTextFiles, U"Encoding of 8-bit text files", kMelder_textInputEncoding, DEFAULT)
+	RADIO_ENUM (kMelder_textInputEncoding, encodingOf8BitTextFiles,
+			U"Encoding of 8-bit text files", kMelder_textInputEncoding::DEFAULT)
 OK
 	SET_ENUM (encodingOf8BitTextFiles, kMelder_textInputEncoding, Melder_getInputEncoding ())
 DO
-	Melder_setInputEncoding ((kMelder_textInputEncoding) encodingOf8BitTextFiles);
+	Melder_setInputEncoding (encodingOf8BitTextFiles);
 END }
 
 FORM (PREFS_TextOutputEncodingSettings, U"Text writing preferences", U"Unicode") {
-	RADIO_ENUM (outputEncoding, U"Output encoding", kMelder_textOutputEncoding, DEFAULT)
+	RADIO_ENUM (kMelder_textOutputEncoding, outputEncoding,
+			U"Output encoding", kMelder_textOutputEncoding::DEFAULT)
 OK
 	SET_ENUM (outputEncoding, kMelder_textOutputEncoding, Melder_getOutputEncoding ())
 DO
-	Melder_setOutputEncoding ((kMelder_textOutputEncoding) outputEncoding);
+	Melder_setOutputEncoding (outputEncoding);
 END }
 
 FORM (PREFS_GraphicsCjkFontStyleSettings, U"CJK font style preferences", nullptr) {
-	OPTIONMENU_ENUM (cjkFontStyle, U"CJK font style", kGraphics_cjkFontStyle, DEFAULT)
+	OPTIONMENU_ENUM (kGraphics_cjkFontStyle, cjkFontStyle,
+			U"CJK font style", kGraphics_cjkFontStyle::DEFAULT)
 OK
 	SET_ENUM (cjkFontStyle, kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
 DO
-	theGraphicsCjkFontStyle = (kGraphics_cjkFontStyle) cjkFontStyle;
+	theGraphicsCjkFontStyle = cjkFontStyle;
 END }
 
 /********** Callbacks of the Goodies menu. **********/

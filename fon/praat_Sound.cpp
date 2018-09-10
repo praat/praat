@@ -337,8 +337,10 @@ DO
 }
 
 FORM (NEW_Sound_autoCorrelate, U"Sound: autocorrelate", U"Sound: Autocorrelate...") {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
  	OK
 DO
 	CONVERT_EACH (Sound)
@@ -428,14 +430,14 @@ DIRECT (NEW1_Sounds_convolve_old) {
 }
 
 FORM (NEW1_Sounds_convolve, U"Sounds: Convolve", U"Sounds: Convolve...") {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO
 	CONVERT_COUPLE (Sound)
-		autoSound result = Sounds_convolve (me, you,
-			(kSounds_convolve_scaling) amplitudeScaling,
-			(kSounds_convolve_signalOutsideTimeDomain) signalOutsideTimeDomainIs);
+		autoSound result = Sounds_convolve (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (my name.get(), U"_", your name.get())
 }
 
@@ -569,14 +571,14 @@ DO
 }
 
 FORM (NEW1_Sounds_crossCorrelate, U"Sounds: Cross-correlate", U"Sounds: Cross-correlate...") {
-	RADIO_ENUM (amplitudeScaling, U"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
-	RADIO_ENUM (signalOutsideTimeDomainIs, U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	RADIO_ENUM (kSounds_convolve_scaling, amplitudeScaling,
+			U"Amplitude scaling", kSounds_convolve_scaling::DEFAULT)
+	RADIO_ENUM (kSounds_convolve_signalOutsideTimeDomain, signalOutsideTimeDomainIs,
+			U"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain::DEFAULT)
 	OK
 DO_ALTERNATIVE (NEW1_old_Sounds_crossCorrelate)
 	CONVERT_COUPLE (Sound)
-		autoSound result = Sounds_crossCorrelate (me, you,
-			(kSounds_convolve_scaling) amplitudeScaling,
-			(kSounds_convolve_signalOutsideTimeDomain) signalOutsideTimeDomainIs);
+		autoSound result = Sounds_crossCorrelate (me, you, amplitudeScaling, signalOutsideTimeDomainIs);
 	CONVERT_COUPLE_END (U"cc_", my name.get(), U"_", your name.get())
 }
 
@@ -706,14 +708,14 @@ DIRECT (NEW_Sound_extractLeftChannel) {
 FORM (NEW_Sound_extractPart, U"Sound: Extract part", nullptr) {
 	REAL (fromTime, U"left Time range (s)", U"0.0")
 	REAL (toTime, U"right Time range (s)", U"0.1")
-	OPTIONMENU_ENUM (windowShape, U"Window shape", kSound_windowShape, DEFAULT)
+	OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", kSound_windowShape::DEFAULT)
 	POSITIVE (relativeWidth, U"Relative width", U"1.0")
 	BOOLEAN (preserveTimes, U"Preserve times", false)
 	OK
 DO
 	CONVERT_EACH (Sound)
 		autoSound result = Sound_extractPart (me, fromTime, toTime,
-			(kSound_windowShape) windowShape, relativeWidth, preserveTimes);
+			windowShape, relativeWidth, preserveTimes);
 	CONVERT_EACH_END (my name.get(), U"_part")
 }
 
@@ -1155,11 +1157,11 @@ DO
 }
 
 FORM (MODIFY_Sound_multiplyByWindow, U"Sound: Multiply by window", nullptr) {
-	OPTIONMENU_ENUM (windowShape, U"Window shape", kSound_windowShape, HANNING)
+	OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", kSound_windowShape::HANNING)
 	OK
 DO
 	MODIFY_EACH (Sound)
-		Sound_multiplyByWindow (me, (kSound_windowShape) windowShape);
+		Sound_multiplyByWindow (me, windowShape);
 	MODIFY_EACH_END
 }
 
@@ -1752,13 +1754,13 @@ FORM (NEW_Sound_to_Spectrogram, U"Sound: To Spectrogram", U"Sound: To Spectrogra
 	POSITIVE (maximumFrequency, U"Maximum frequency (Hz)", U"5000.0")
 	POSITIVE (timeStep, U"Time step (s)", U"0.002")
 	POSITIVE (frequencyStep, U"Frequency step (Hz)", U"20.0")
-	RADIO_ENUM (windowShape, U"Window shape", kSound_to_Spectrogram_windowShape, DEFAULT)
+	RADIO_ENUM (kSound_to_Spectrogram_windowShape, windowShape,
+			U"Window shape", kSound_to_Spectrogram_windowShape::DEFAULT)
 	OK
 DO
 	CONVERT_EACH (Sound)
 		autoSpectrogram result = Sound_to_Spectrogram (me, windowLength,
-			maximumFrequency, timeStep,
-			frequencyStep, (kSound_to_Spectrogram_windowShape) windowShape, 8.0, 8.0);
+			maximumFrequency, timeStep, frequencyStep, windowShape, 8.0, 8.0);
 	CONVERT_EACH_END (my name.get())
 }
 
@@ -1801,26 +1803,29 @@ DIRECT (NEW_Sound_to_TextTier) {
 
 FORM (PREFS_SoundInputPrefs, U"Sound recording preferences", U"SoundRecorder") {
 	NATURAL (bufferSize, U"Buffer size (MB)", U"60")
-	OPTIONMENU_ENUM (inputSoundSystem, U"Input sound system", kMelder_inputSoundSystem, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_inputSoundSystem, inputSoundSystem,
+			U"Input sound system", kMelder_inputSoundSystem::DEFAULT)
 OK
 	SET_INTEGER (bufferSize, SoundRecorder_getBufferSizePref_MB ())
 	SET_ENUM (inputSoundSystem, kMelder_inputSoundSystem, MelderAudio_getInputSoundSystem())
 DO
 	if (bufferSize > 1000) Melder_throw (U"Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (bufferSize);
-	MelderAudio_setInputSoundSystem ((kMelder_inputSoundSystem) inputSoundSystem);
+	MelderAudio_setInputSoundSystem (inputSoundSystem);
 END }
 
 FORM (PREFS_SoundOutputPrefs, U"Sound playing preferences", nullptr) {
 	LABEL (U"The following determines how sounds are played.")
 	LABEL (U"Between parentheses, you find what you can do simultaneously.")
 	LABEL (U"Decrease asynchronicity if sound plays with discontinuities.")
-	OPTIONMENU_ENUM (maximumAsynchronicity, U"Maximum asynchronicity", kMelder_asynchronicityLevel, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_asynchronicityLevel, maximumAsynchronicity,
+			U"Maximum asynchronicity", kMelder_asynchronicityLevel::DEFAULT)
 	#define xstr(s) str(s)
 	#define str(s) #s
 	REAL (silenceBefore, U"Silence before (s)", U"" xstr (kMelderAudio_outputSilenceBefore_DEFAULT))
 	REAL (silenceAfter, U"Silence after (s)", U"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
-	OPTIONMENU_ENUM (outputSoundSystem, U"Output sound system", kMelder_outputSoundSystem, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_outputSoundSystem, outputSoundSystem,
+			U"Output sound system", kMelder_outputSoundSystem::DEFAULT)
 OK
 	SET_ENUM (maximumAsynchronicity, kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
 	SET_REAL (silenceBefore, MelderAudio_getOutputSilenceBefore ())
@@ -1828,10 +1833,10 @@ OK
 	SET_ENUM (outputSoundSystem, kMelder_outputSoundSystem, MelderAudio_getOutputSoundSystem())
 DO
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	MelderAudio_setOutputMaximumAsynchronicity ((kMelder_asynchronicityLevel) maximumAsynchronicity);
+	MelderAudio_setOutputMaximumAsynchronicity (maximumAsynchronicity);
 	MelderAudio_setOutputSilenceBefore (silenceBefore);
 	MelderAudio_setOutputSilenceAfter (silenceAfter);
-	MelderAudio_setOutputSoundSystem ((kMelder_outputSoundSystem) outputSoundSystem);
+	MelderAudio_setOutputSoundSystem (outputSoundSystem);
 	END
 }
 

@@ -2193,18 +2193,18 @@ SENTENCE_VARIABLE (v_prefs_addFields_theText)
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	UiField _radio_;
 	NATURAL_FIELD (v_prefs_addFields_fontSize, U"Font size (points)", our default_fontSize ())
-	OPTIONMENU_ENUM_FIELD (v_prefs_addFields_textAlignmentInIntervals, U"Text alignment in intervals",
-		kGraphics_horizontalAlignment, kGraphics_horizontalAlignment::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kGraphics_horizontalAlignment, v_prefs_addFields_textAlignmentInIntervals,
+			U"Text alignment in intervals", kGraphics_horizontalAlignment::DEFAULT)
 	OPTIONMENU_FIELD (v_prefs_addFields_useTextStyles, U"The symbols %#_^ in labels", our default_useTextStyles () + 1)
 		OPTION (U"are shown as typed")
 		OPTION (U"mean italic/bold/sub/super")
 	OPTIONMENU_FIELD (v_prefs_addFields_shiftDragMultiple, U"With the shift key, you drag", our default_shiftDragMultiple () + 1)
 		OPTION (U"a single boundary")
 		OPTION (U"multiple boundaries")
-	OPTIONMENU_ENUM_FIELD (v_prefs_addFields_showNumberOf, U"Show number of",
-		kTextGridEditor_showNumberOf, kTextGridEditor_showNumberOf::DEFAULT)
-	OPTIONMENU_ENUM_FIELD (v_prefs_addFields_paintIntervalsGreenWhoseLabel, U"Paint intervals green whose label...",
-		kMelder_string, kMelder_string::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kTextGridEditor_showNumberOf, v_prefs_addFields_showNumberOf,
+			U"Show number of", kTextGridEditor_showNumberOf::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kMelder_string, v_prefs_addFields_paintIntervalsGreenWhoseLabel,
+			U"Paint intervals green whose label...", kMelder_string::DEFAULT)
 	SENTENCE_FIELD (v_prefs_addFields_theText, U"...the text", our default_greenString ())
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {

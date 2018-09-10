@@ -393,7 +393,8 @@ void structERPWindow :: v_drawSelectionViewer () {
 
 OPTIONMENU_ENUM_VARIABLE (kGraphics_colourScale, v_prefs_scalpColourSpace)
 void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {
-	OPTIONMENU_ENUM_FIELD (v_prefs_scalpColourSpace, U"Scalp colour space", kGraphics_colourScale, kGraphics_colourScale::BLUE_TO_RED)
+	OPTIONMENU_ENUM_FIELD (kGraphics_colourScale, v_prefs_scalpColourSpace,
+			U"Scalp colour space", kGraphics_colourScale::BLUE_TO_RED)
 }
 void structERPWindow :: v_prefs_setValues (EditorCommand cmd) {
 	SET_ENUM (v_prefs_scalpColourSpace, kGraphics_colourScale, p_scalp_colourScale)

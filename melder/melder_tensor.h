@@ -481,7 +481,7 @@ public:
 				the capacity sequence will be: 0, 11, 33, 77, 165, 341, 693, 1397,
 				2805, 5621, 11253, 22517, 45045, 90101, 180213, 360437, 720885...
 			*/
-			integer newCapacity = newSize + our size + 10;   // this is at least a doubling!
+			integer newCapacity = ( inout_capacity ? newSize + our size + 10 : newSize );
 			/*
 				Create without change.
 			*/

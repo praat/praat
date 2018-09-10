@@ -358,7 +358,8 @@ void structEditor :: v_do_pictureWindow (EditorCommand /* cmd */) {
 OPTIONMENU_ENUM_VARIABLE (kEditor_writeNameAtTop, v_form_pictureMargins_writeNameAtTop)
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
 	LABEL (U"Margins:")
-	OPTIONMENU_ENUM_FIELD (v_form_pictureMargins_writeNameAtTop, U"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop::DEFAULT)
+	OPTIONMENU_ENUM_FIELD (kEditor_writeNameAtTop, v_form_pictureMargins_writeNameAtTop,
+			U"Write name at top", kEditor_writeNameAtTop::DEFAULT)
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
 	SET_ENUM (v_form_pictureMargins_writeNameAtTop, kEditor_writeNameAtTop, pref_picture_writeNameAtTop ())

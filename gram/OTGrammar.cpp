@@ -1819,7 +1819,7 @@ bool OTGrammar_PairDistribution_findPositiveWeights (OTGrammar me, PairDistribut
 		*/
 		for (integer itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tab = & my tableaus [itab];
-			conststring32 attestedOutput;
+			conststring32 attestedOutput = nullptr;
 			integer numberOfAttestedOutputs = PairDistribution_getNumberOfAttestedOutputs (thee, tab -> input.get(), & attestedOutput);
 			if (numberOfAttestedOutputs == 0) {
 				Melder_throw (U"Input \"", tab -> input.get(), U"\" has no attested output.");
