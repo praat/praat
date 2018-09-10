@@ -1,6 +1,6 @@
 /* Transition.cpp
  *
- * Copyright (C) 1997-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1997-2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ void Transition_init (Transition me, integer numberOfStates) {
 		Melder_throw (U"Cannot create empty matrix.");
 	my numberOfStates = numberOfStates;
 	my stateLabels = autostring32vector (numberOfStates);
-	my data = NUMmatrix <double> (1, my numberOfStates, 1, my numberOfStates);
+	my data = MATzero (my numberOfStates, my numberOfStates);
 }
 
 autoTransition Transition_create (integer numberOfStates) {
@@ -160,8 +160,7 @@ void Transition_eigen (Transition me, autoMatrix *out_eigenvectors, autoMatrix *
 	try {
 		autoEigen eigen = Thing_new (Eigen);
 		Transition_transpose (me);
-		constMAT data (my data, my numberOfStates, my numberOfStates);
-		Eigen_initFromSymmetricMatrix (eigen.get(), data);
+		Eigen_initFromSymmetricMatrix (eigen.get(), my data.get());
 		Transition_transpose (me);
 		transposed = true;
 		autoMatrix eigenvectors = Matrix_createSimple (my numberOfStates, my numberOfStates);
@@ -185,7 +184,7 @@ autoTransition Transition_power (Transition me, integer power) {
 		autoTransition thee = Data_copy (me);
 		autoTransition him = Data_copy (me);
 		for (integer ipow = 2; ipow <= power; ipow ++) {
-			double **tmp = his data; his data = thy data; thy data = tmp;   // OPTIMIZE
+			std::swap (his data.at, thy data.at);   // OPTIMIZE
 			for (integer irow = 1; irow <= my numberOfStates; irow ++) {
 				for (integer icol = 1; icol <= my numberOfStates; icol ++) {
 					thy data [irow] [icol] = 0.0;
