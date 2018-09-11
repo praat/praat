@@ -150,18 +150,6 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (constMAT a, integer nC
 	}
 }
 
-bool MAT_isSymmetric (constMAT x) {
-	bool isSymmetric = false;
-	if (x.nrow == x.ncol) {
-		for (integer i = 1; i <= x.nrow; i ++)
-			for (integer j = i + 1; j < x.ncol; j ++)
-				if (x [i] [j] != x [j] [i])
-					return false;
-		isSymmetric = true;
-	}
-	return isSymmetric;
-}
-
 #undef SWAP
 
 /* End of file MAT_numerics.cpp */

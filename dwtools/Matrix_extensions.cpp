@@ -607,8 +607,8 @@ autoMatrix Matrix_readFromIDXFormatFile (MelderFile file) {
 
 autoEigen Matrix_to_Eigen (Matrix me) {
 	try {
-		Melder_require (my nx == my ny, U"The Matrix needs to be square.");
-		Melder_require (MAT_isSymmetric (me -> asMAT()), U"The Matrix needs to be symmetric");
+		Melder_require (my nx == my ny, U"The Matrix should be square.");
+		Melder_require (NUMisSymmetric (me -> asMAT()), U"The Matrix should be symmetric.");
 		autoEigen thee = Eigen_create (my nx, my nx);
 		Eigen_initFromSymmetricMatrix (thee.get(), me -> asMAT());
 		return thee;

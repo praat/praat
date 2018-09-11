@@ -19,40 +19,21 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"   /* for NUMsort2 */
 
-inline static void columnSumAndMean (constMAT x, integer columnNumber,
-	double *out_sum, double *out_mean)
-{
-	integer stride = x.ncol;
-	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
-		const double *xx = & x [1] [columnNumber],
-		(longdouble) *xx,
-		xx += stride
-	)
-	if (out_sum) *out_sum = (double) sum;
-	if (out_mean) *out_mean = double (sum / x.nrow);
-}
-
 inline static double inner_stride_ (constVEC x, constVEC y, integer stride) {
 	if (x.size != y.size)
 		return undefined;
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
-		const double *xx = & x [1];
-		const double *yy = & y [1],
-		(longdouble) *xx * (longdouble) *yy,
-		(xx += 1, yy += stride)   // this goes way beyond the confines of y
+		const double *px = & x [1];
+		const double *py = & y [1],
+		(longdouble) *px * (longdouble) *py,
+		(px += 1, py += stride)   // this goes way beyond the confines of y
 	)
 	return (double) sum;
 }
 
-autoVEC VECmul (constVEC vec, constMAT mat) {
-	if (mat.nrow != vec.size)
-		return autoVEC();
-	autoVEC result = VECraw (mat.ncol);
-	VECmul_preallocated (result.get(), vec, mat);
-	return result;
-}
-
 void VECmul_preallocated (VEC target, constVEC vec, constMAT mat) {
+	Melder_assert (mat.nrow == vec.size);
+	Melder_assert (target.size == mat.ncol);
 	for (integer j = 1; j <= mat.ncol; j ++) {
 		if ((false)) {
 			target [j] = 0.0;
@@ -64,15 +45,15 @@ void VECmul_preallocated (VEC target, constVEC vec, constMAT mat) {
 	}
 }
 
-autoVEC VECmul (constMAT mat, constVEC vec) {
-	if (vec.size != mat.ncol)
-		return autoVEC();
-	autoVEC result = VECraw (mat.nrow);
-	VECmul_preallocated (result.get(), mat, vec);
+autoVEC VECmul (constVEC vec, constMAT mat) {
+	autoVEC result = VECraw (mat.ncol);
+	VECmul_preallocated (result.get(), vec, mat);
 	return result;
 }
 
 void VECmul_preallocated (VEC target, constMAT mat, constVEC vec) {
+	Melder_assert (vec.size == mat.ncol);
+	Melder_assert (target.size == mat.nrow);
 	for (integer i = 1; i <= mat.nrow; i ++) {
 		if ((false)) {
 			target [i] = 0.0;
@@ -82,6 +63,12 @@ void VECmul_preallocated (VEC target, constMAT mat, constVEC vec) {
 			target [i] = NUMinner (constVEC (& mat [i] [1] - 1, mat.ncol), vec);
 		}
 	}
+}
+
+autoVEC VECmul (constMAT mat, constVEC vec) {
+	autoVEC result = VECraw (mat.nrow);
+	VECmul_preallocated (result.get(), mat, vec);
+	return result;
 }
 
 /* End of file VEC.cpp */

@@ -22,11 +22,11 @@
 	so they have to be declared first.
 */
 
-double NUMinner_ (constVEC x, constVEC y);
-void NUM_sum_mean (constVEC x, double *p_sum, double *p_mean) noexcept;
-void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
+extern double NUMinner_ (constVEC x, constVEC y);
+extern void NUM_sum_mean (constVEC x, double *p_sum, double *p_mean) noexcept;
+extern void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
 		double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
-void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
+extern void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
 		double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
 
 inline double NUMsum (constVEC x) noexcept {
@@ -52,9 +52,9 @@ inline double NUMsum (constVEC x) noexcept {
 	From here on, the functions appear in alphabetical order.
 */
 
-double NUMcenterOfGravity (constVEC x) noexcept;
+extern double NUMcenterOfGravity (constVEC x) noexcept;
 
-double NUMcolumnSum (constMAT x, integer columnNumber);
+extern double NUMcolumnSum (constMAT x, integer columnNumber);
 
 template <typename T>
 bool NUMequal (constvector<T> x, constvector<T> y) {
@@ -135,6 +135,16 @@ inline double NUMinner (constVEC x, constVEC y) {
 			(double) ((((longdouble) x [1] * (longdouble) y [1] + (longdouble) x [2] * (longdouble) y [2]) + ((longdouble) x [3] * (longdouble) y [3] + (longdouble) x [4] * (longdouble) y [4])) + (((longdouble) x [5] * (longdouble) y [5] + (longdouble) x [6] * (longdouble) y [6]) + ((longdouble) x [7] * (longdouble) y [7] + (longdouble) x [8] * (longdouble) y [8])));
 	}
 	return NUMinner_ (x, y);
+}
+
+inline bool NUMisSymmetric (constMAT x) {
+	if (x.nrow != x.ncol) return false;
+	integer n = x.nrow;
+	for (integer irow = 1; irow <= n; irow ++)
+		for (integer icol = irow + 1; icol < n; icol ++)
+			if (x [irow] [icol] != x [icol] [irow])
+				return false;
+	return true;
 }
 
 inline integer NUMlength (conststring32 str) {

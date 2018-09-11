@@ -21,11 +21,6 @@
 	From here on alphabetical order.
 */
 
-autoVEC VECmul (constVEC vec, constMAT mat);
-void VECmul_preallocated (VEC target, constVEC vec, constMAT mat);
-autoVEC VECmul (constMAT mat, constVEC vec);
-void VECmul_preallocated (VEC target, constMAT mat, constVEC vec);
-
 inline void VECadd_inplace (VEC x, double addend) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += addend;
@@ -65,29 +60,31 @@ inline void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
 		*out_mean = xmean;
 }
 
+extern void VECmul_preallocated (VEC target, constVEC vec, constMAT mat);
+extern void VECmul_preallocated (VEC target, constMAT mat, constVEC vec);
+extern autoVEC VECmul (constVEC vec, constMAT mat);
+extern autoVEC VECmul (constMAT mat, constVEC vec);
+
 inline void VECmultiply_inplace (VEC x, double factor) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] *= factor;
 }
 
-inline
-autoVEC VECrandomGauss (integer size, double mu, double sigma) {
+inline autoVEC VECrandomGauss (integer size, double mu, double sigma) {
 	autoVEC result = VECraw (size);
 	for (integer i = 1; i <= size; i ++)
 		result [i] = NUMrandomGauss (mu, sigma);
 	return result;
 }
 
-inline
-autoVEC VECrandomUniform (integer size, double lowest, double highest) {
+inline autoVEC VECrandomUniform (integer size, double lowest, double highest) {
 	autoVEC result = VECraw (size);
 	for (integer i = 1; i <= size; i ++)
 		result [i] = NUMrandomUniform (lowest, highest);
 	return result;
 }
 
-extern
-void VECsort_inplace (VEC x);
+extern void VECsort_inplace (VEC x);
 
 inline void VECsubtract_inplace (VEC x, double number) {
 	for (integer i = 1; i <= x.size; i ++)
