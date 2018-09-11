@@ -170,11 +170,11 @@ FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get tran
 	OK
 DO
 	NUMBER_ONE (AffineTransform)
-		if (row > my n) {
-			Melder_throw (U"Row number must not exceed number of rows.");
+		if (row > my dimension) {
+			Melder_throw (U"Row number must not exceed the dimension of the transform.");
 		}
-		if (column > my n) {
-			Melder_throw (U"Column number must not exceed number of columns.");
+		if (column > my dimension) {
+			Melder_throw (U"Column number must not exceed the dimension of the transform.");
 		}
 		double result = my r [row] [column];
 	NUMBER_ONE_END (U"")
@@ -185,8 +185,8 @@ FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get transla
 	OK
 DO
 	NUMBER_ONE (AffineTransform)
-		if (index > my n) {
-			Melder_throw (U"Index must not exceed number of elements.");
+		if (index > my dimension) {
+			Melder_throw (U"Index must not exceed the dimension of the transform.");
 		}
 		double result = my t [index];
 	NUMBER_ONE_END (U"")

@@ -1,5 +1,5 @@
 /* Eigen_and_Procrustes.cpp
- * Copyright (C) 2004-2017 David Weenink
+ * Copyright (C) 2004-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, in
 		Melder_require (my dimension == thy dimension, U"The eigenvectors should have the same dimension.");
 		Melder_require (evec_from <= evec_to && evec_from > 0 && evec_to <= nmin, U"Eigenvector range is too large.");
 
-		autoNUMmatrix<double> x (1, my dimension, 1, nvectors);
-		autoNUMmatrix<double> y (1, my dimension, 1, nvectors);
+		autoMAT x = MATraw (my dimension, nvectors);
+		autoMAT y = MATraw (my dimension, nvectors);
 
 		for (integer j = 1; j <= nvectors; j ++) {
 			for (integer i = 1; i <= my dimension; i ++) {
@@ -39,8 +39,9 @@ autoProcrustes Eigens_to_Procrustes (Eigen me, Eigen thee, integer evec_from, in
 		}
 
 		autoProcrustes him = Procrustes_create (nvectors);
-
-		NUMprocrustes (x.peek(), y.peek(), my dimension, nvectors, his r, nullptr, nullptr);
+		autoMAT rotation; 
+		NUMprocrustes (x.get(), y.get(), & rotation, nullptr, nullptr);
+		MATcopy_preallocated (his r.get(), rotation.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Procrustes not created from Eigens.");

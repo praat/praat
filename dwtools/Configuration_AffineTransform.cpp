@@ -1,6 +1,6 @@
 /* Configuration_AffineTransform.cpp
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,16 +28,15 @@
 #undef your
 #define your ((AffineTransform_Table) thy methods) ->
 
-static void do_steps45 (double **w, double **t, double **c, integer n, double *f) {
+static void do_steps45 (constMAT w, MAT t, constMAT c, double *f) {
 	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
-
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= w.ncol; i ++) {
 		double d = 0.0;
-		for (integer k = 1; k <= n; k++) {
+		for (integer k = 1; k <= w.ncol; k++) {
 			d += w [k] [i] * t [k] [i];
 		}
 		if (d < 0.0) {
-			for (integer k = 1; k <= n; k++) {
+			for (integer k = 1; k <= w.ncol; k++) {
 				t [k] [i] = -t [k] [i];
 			}
 		}
@@ -46,11 +45,11 @@ static void do_steps45 (double **w, double **t, double **c, integer n, double *f
 	// Step 5 & 11: f = tr W'T (Diag (T'CT))^-1/2
 
 	*f = 0.0;
-	for (integer i = 1; i <= n; i ++) {
-		double d = 0.0, tct = 0.0;
-		for (integer k = 1; k <= n; k ++) {
+	for (integer i = 1; i <= w.ncol; i ++) {
+		longdouble d = 0.0, tct = 0.0;
+		for (integer k = 1; k <= w.ncol; k ++) {
 			d += w [k] [i] * t [k] [i];
-			for (integer j = 1; j <= n; j ++) {
+			for (integer j = 1; j <= w.ncol; j ++) {
 				tct += t [k] [i] * c [k] [j] * t [j] [i];
 			}
 		}
@@ -60,23 +59,23 @@ static void do_steps45 (double **w, double **t, double **c, integer n, double *f
 	}
 }
 
-static void NUMmaximizeCongruence (double **b, double **a, integer nr, integer nc, double **t, integer maximumNumberOfIterations, double tolerance) {
+void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maximumNumberOfIterations, double tolerance) {
+	Melder_assert (t.ncol == b.ncol && b.nrow == a.nrow && b.ncol == a.ncol);
 	integer numberOfIterations = 0;
-	Melder_assert (nr > 0 && nc > 0);
-	Melder_assert (t);
 
-	if (nc == 1) {
-		t [1] [1] = 1; return;
+	if (b.ncol == 1) {
+		t [1] [1] = 1.0; return;
 	}
-	autoNUMmatrix<double> c (1, nc, 1, nc);
-	autoNUMmatrix<double> w (1, nc, 1, nc);
-	autoNUMmatrix<double> u (1, nc, 1, nc);
-	autoNUMvector<double> evec (1, nc);
+	integer nr = b.nrow, nc = b.ncol;
+	autoMAT c = MATzero (nc, nc);
+	autoMAT w = MATzero (nc, nc);
+	autoMAT u = MATzero (nc, nc);
+	autoVEC evec = VECzero (nc);
 	autoSVD svd = SVD_create (nc, nc);
 
 	// Steps 1 & 2: C = A'A and W = A'B
 
-	double checkc = 0, checkw = 0;
+	longdouble checkc = 0.0, checkw = 0.0;
 	for (integer i = 1; i <= nc; i ++) {
 		for (integer j = 1; j <= nc; j ++) {
 			for (integer k = 1; k <= nr; k ++) {
@@ -93,7 +92,7 @@ static void NUMmaximizeCongruence (double **b, double **a, integer nr, integer n
 	// Scale W by (diag(B'B))^-1/2
 
 	for (integer j = 1; j <= nc; j ++) {
-		double scale = 0.0;
+		longdouble scale = 0.0;
 		for (integer k = 1; k <= nr; k ++) {
 			scale += b [k] [j] * b [k] [j];
 		}
@@ -109,9 +108,9 @@ static void NUMmaximizeCongruence (double **b, double **a, integer nr, integer n
 
 	evec [1] = 1.0;
 	double rho, f, f_old;
-	NUMdominantEigenvector (c.peek(), nc, evec.peek(), &rho, 1.0e-6);
+	NUMdominantEigenvector (c.at, nc, evec.at, & rho, 1.0e-6);
 
-	do_steps45 (w.peek(), t, c.peek(), nc, & f);
+	do_steps45 (w.get(), t, c.get(), & f);
 	do {
 		for (integer j = 1; j <= nc; j ++) {
 			// Step 7.a
@@ -153,7 +152,7 @@ static void NUMmaximizeCongruence (double **b, double **a, integer nr, integer n
 
 		// Step 8
 
-		SVD_svd_d (svd.get(), u.peek());
+		SVD_svd_d (svd.get(), u.get());
 
 		// Step 9
 
@@ -171,7 +170,7 @@ static void NUMmaximizeCongruence (double **b, double **a, integer nr, integer n
 
 		// Steps 10 & 11 equal steps 4 & 5
 
-		do_steps45 (w.peek(), t, c.peek(), nc, & f);
+		do_steps45 (w.get(), t, c.get(), & f);
 
 	} while (fabs (f_old - f) / f_old > tolerance && numberOfIterations < maximumNumberOfIterations);
 }
@@ -180,11 +179,10 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 	try {
 		// Use Procrustes transform to obtain starting configuration.
 		// (We only need the transformation matrix T.)
-		autoProcrustes p = Configurations_to_Procrustes (me, thee, 0);
-		NUMmaximizeCongruence (my data, thy data, my numberOfRows, p -> n, p -> r, maximumNumberOfIterations, tolerance);
-
-		autoAffineTransform at = AffineTransform_create (p -> n);
-		NUMmatrix_copyElements (p -> r, at -> r, 1, p -> n, 1, p -> n);
+		autoProcrustes p = Configurations_to_Procrustes (me, thee, false);
+		NUMmaximizeCongruence_inplace (p -> r.get(), {my data, my numberOfRows, p -> dimension}, {thy data, my numberOfRows, p -> dimension},  maximumNumberOfIterations, tolerance);
+		autoAffineTransform at = AffineTransform_create (p -> dimension);
+		MATcopy_preallocated (at -> r.get(), p -> r.get());
 		return at;
 	} catch (MelderError) {
 		Melder_throw (me, U": no congruence transformation created.");
@@ -193,7 +191,7 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 
 autoConfiguration Configuration_AffineTransform_to_Configuration (Configuration me, AffineTransform thee) {
 	try {
-		Melder_require (my numberOfColumns == thy n, U"The number of columns in the Configuration should equal the dimension of the transform.");
+		Melder_require (my numberOfColumns == thy dimension, U"The number of columns in the Configuration should equal the dimension of the transform.");
 		
 		autoConfiguration him = Data_copy (me);
 

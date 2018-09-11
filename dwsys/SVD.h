@@ -38,7 +38,7 @@ autoSVD SVD_create (integer numberOfRows, integer numberOfColumns);
 
 autoSVD SVD_createFromGeneralMatrix (constMAT m);
 
-void SVD_svd_d (SVD me, double **m);
+void SVD_svd_d (SVD me, constMAT m);
 /*
 	Perform SVD analysis on matrix M, i.e., decompose M as M = UDV'.
 	Watch out: dataType contains V, not V' !!

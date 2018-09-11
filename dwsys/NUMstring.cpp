@@ -25,16 +25,14 @@
 #include "Interpreter.h"
 #include "NUM2.h"
 
-double *NUMstring_to_numbers (conststring32 s, integer *out_numbers_found) {   // TODO: turn into autoVEC
+autoVEC VEC_createFromString (conststring32 s) {
 	autostring32vector tokens = STRVECtokenize (s);
 	if (tokens.size < 1)
 		Melder_throw (U"Empty string.");
-	autoNUMvector <double> numbers (1, tokens.size);
+	autoVEC numbers = VECraw (tokens.size);
 	for (integer inum = 1; inum <= tokens.size; inum ++)
 		Interpreter_numericExpression (0, tokens [inum].get(), & numbers [inum]);
-	if (out_numbers_found)
-		*out_numbers_found = tokens.size;
-	return numbers.transfer();
+	return numbers;
 }
 
 char32 *strstr_regexp (conststring32 string, conststring32 search_regexp) {

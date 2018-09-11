@@ -259,9 +259,9 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 	integer numberOfOmegas = (thy numberOfFrequencies + 1) / 2;
 	for (integer i = 1; i <= numberOfOmegas; i ++) {
 		double omega = thy frequencies [2 * i -1] / maximumFrequency * NUMpi;
-		my a[i] = -2.0 * cos (omega);
+		my a [i] = -2.0 * cos (omega);
 	}
-	Polynomial_initFromProductOfSecondOrderTerms (fs, my a, numberOfOmegas);
+	Polynomial_initFromProductOfSecondOrderTerms (fs, {my a, numberOfOmegas});
 
 	/*
 		Reconstruct Fa (z)
@@ -271,7 +271,7 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 		double omega = thy frequencies [2 * i] / maximumFrequency * NUMpi;
 		my a [i] = -2.0 * cos (omega);
 	}
-	Polynomial_initFromProductOfSecondOrderTerms (fa, my a, numberOfOmegas);
+	Polynomial_initFromProductOfSecondOrderTerms (fa, {my a, numberOfOmegas});
 	
 	if (thy numberOfFrequencies % 2 == 0) {
 		Polynomial_multiply_firstOrderFactor (fs, -1.0);   // * (z + 1)

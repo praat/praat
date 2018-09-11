@@ -72,14 +72,13 @@ void Polygon_getExtrema (Polygon me, double *p_xmin, double *p_xmax, double *p_y
 
 autoPolygon Polygon_createSimple (conststring32 xystring) {
 	try {
-		integer numberOfInputs;
-		autoNUMvector <double> xys (NUMstring_to_numbers (xystring, & numberOfInputs), 1);
-		Melder_require (numberOfInputs >= 6,
+		autoVEC xys = VEC_createFromString (xystring);
+		Melder_require (xys.size >= 6,
 			U"There should be at least 3 points (= x,y pairs) in the Polygon");
-		Melder_require (numberOfInputs % 2 == 0,
+		Melder_require (xys.size % 2 == 0,
 			U"One value is missing.");
 		
-		integer numberOfPoints = numberOfInputs / 2;
+		integer numberOfPoints = xys.size / 2;
 		autoPolygon me = Polygon_create (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			my x [i] = xys [2 * i - 1];

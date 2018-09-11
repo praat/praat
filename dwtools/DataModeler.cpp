@@ -731,15 +731,12 @@ autoDataModeler DataModeler_createSimple (double xmin, double xmax,
 	integer numberOfDataPoints, conststring32 parameters, double gaussianNoiseStd, int type)
 {
 	try {
-		integer numberOfParameters;
-		autoNUMvector <double> parameter (NUMstring_to_numbers (parameters, & numberOfParameters), 1);
-		Melder_require (numberOfParameters > 0,
-			U"At least one parameter should be defined.");
+		autoVEC parameter = VEC_createFromString (parameters);
 		Melder_require (xmin < xmax,
 			U"The domain should be defined properly.");
 		
-		autoDataModeler me = DataModeler_create (xmin, xmax, numberOfDataPoints, numberOfParameters, type);
-		for (integer i = 1; i <= numberOfParameters; i ++)
+		autoDataModeler me = DataModeler_create (xmin, xmax, numberOfDataPoints, parameter.size, type);
+		for (integer i = 1; i <= parameter.size; i ++)
 			my parameter [i] = parameter [i];   // parameter status ok
 		// generate the data that beinteger to the parameter values
 		for (integer i = 1; i <= numberOfDataPoints; i ++) {

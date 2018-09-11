@@ -30,8 +30,8 @@
 /* machine precision */
 #define NUMeps 2.2e-16
 
-double * NUMstring_to_numbers (conststring32 s, integer *numbers_found);
-/* return array with the number of numbers found */
+autoVEC VEC_createFromString (conststring32 s);
+/* return array with the numbers found */
 
 /*
  * Acceptable ranges e.g. "1 4 2 3:7 4:3 3:5:2" -->
@@ -458,11 +458,20 @@ double NUMmahalanobisDistance_chi (double **l, double *v, double *m, integer nr,
 			(L**-1.(x-m))' . (L**-1.(x-m))
 */
 
+double NUMtrace (constMAT a);
 double NUMtrace (double **a, integer n);
 double NUMtrace2 (double **a1, double **a2, integer n);
+
+double NUMtrace2_nn (constMAT x, constMAT y);
+double NUMtrace2_nt (constMAT x, constMAT y);
+double NUMtrace2_tn (constMAT x, constMAT y);
+double NUMtrace2_tt (constMAT x, constMAT y);
 /*
-	Calculates the trace from the product matrix a1 * a2.
-	a1 and a2 are [1..n][1..n] square matrices.
+	Calculates the trace from a product matrix
+	_nn : trace (X.Y)
+	_nt : trace (X.Y')
+	_tn : trace (X'.Y) = trace (Y'.X)
+	_tt : trace (X'.Y') = trace ((Y.X)') = trace (Y.X)
 */
 
 void eigenSort (double d[], double **v, integer n, int sort);
@@ -568,17 +577,15 @@ autoMAT NUMsolveEquations (constMAT a, constMAT b, double tol);
 	Algorithm: s.v.d.
 */
 
-void NUMsolveNonNegativeLeastSquaresRegression (double **a, integer nr, integer nc,
-	double *b, double tol, integer itermax, double *x);
+autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax);
 /*
-	Solve the equation: a.x = b for x under the constraint: all x[i] >= 0;
-	a[1..nr][1..nc], b[1..nr] and x[1..nc].
+	Solve the equation: M.b = d for b under the constraint: all b[i] >= 0;
+	m[1..nr][1..nc], d[1..nr] and b[1..nc].
 	Algorithm: Alternating least squares.
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
 
-void NUMsolveConstrainedLSQuadraticRegression (double **o, const double y[],
-	integer n, double *alpha, double *gamma);
+void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC y,double *out_alpha, double *out_gamma);
 /*
 	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n,
 	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and
@@ -608,8 +615,7 @@ autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, dou
 		alpha >= 0
 */
 
-void NUMprocrustes (double **x, double **y, integer nPoints,
-	integer nDimensions, double **t, double v[], double *s);
+void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_translation, double *out_scale);
 /*
 	Given two configurations x and y (nPoints x nDimensions), find the
 	the Procrustes rotation/reflection matrix T, the translation vector v and the scaling
@@ -634,7 +640,7 @@ double NUMridders (double (*f) (double x, void *closure), double xmin, double xm
 		root not bracketed.
 */
 
-double NUMmspline (double knot[], integer nKnots, integer order, integer i, double x);
+double NUMmspline (constVEC knot, integer order, integer i, double x);
 /*
 	Calculates an M-spline for a knot sequence.
 	After Ramsay (1988), Monotone splines in action, Statistical Science 4.
@@ -646,7 +652,7 @@ double NUMmspline (double knot[], integer nKnots, integer order, integer i, doub
 	Error condition: no memory.
 */
 
-double NUMispline (double aknot[], integer nKnots, integer order, integer i, double x);
+double NUMispline (constVEC aknot, integer order, integer i, double x);
 /*
 	Calculates an I-spline for simple knot sequences: only one knot at each
 	interior boundary.
@@ -1289,5 +1295,20 @@ double NUMfrobeniusnorm (constMAT x);
 /*
 	Returns frobenius norm of matrix sqrt (sum (i=1:nrow, j=1:ncol, x[i][j]^2))
 */
+
+void MATmul_nn_preallocated (MAT z, constMAT x, constMAT y);
+autoMAT MATmul_nn (constMAT x, constMAT y);
+// Z = X.Y
+
+void MATmul_nt_preallocated (MAT z, constMAT x, constMAT y);
+autoMAT MATmul_nt (constMAT x, constMAT y);
+// Z = X.Y'
+
+autoMAT MATmul_tt (constMAT x, constMAT y);
+// Z = X'.Y' = (Y.X)'
+
+void MATmul_tn_preallocated (MAT z, constMAT x, constMAT y);
+autoMAT MATmul_tn (constMAT x, constMAT y);
+// Z = X'.Y
 
 #endif // _NUM2_h_

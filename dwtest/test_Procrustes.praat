@@ -4,13 +4,56 @@
 appendInfoLine: "test_Procrustes.praat"
 
 eps =2.3e-15
-
+@bg_19_4
+;@test_procrustes_bg_19_4
 
 @test_orthogonal_procrustes_gvl_12_4_3
-@test_procrustes_bg_19_4
-@test_procrustes_random_configurations: 12
+;@test_procrustes_random_configurations: 12
 
 appendInfoLine: "test_Procrustes.praat OK"
+
+procedure bg_19_4
+	.nrow = 4
+	.ncol = 2
+	.x1# = { 1,  2}
+	.x2# = {-1,  2}
+	.x3# = {-1, -2}
+	.x4# = { 1, -2}
+	.y1# = {0.07, 2.62}
+	.y2# = {0.93, 3.12}
+	.y3# = {1.93, 1.38}
+	.y4# = {1.07, 0.88}
+	.xconf = Create Configuration: "X", .nrow, .ncol, "0"
+	.yconf = Create Configuration: "Y", .nrow, .ncol, "0"
+	for .icol to .ncol
+		selectObject: .xconf
+		Set value: 1, .icol, .x1# [.icol]
+		Set value: 2, .icol, .x2# [.icol]
+		Set value: 3, .icol, .x3# [.icol]
+		Set value: 4, .icol, .x4# [.icol]
+		selectObject: .yconf
+		Set value: 1, .icol, .y1# [.icol]
+		Set value: 2, .icol, .y2# [.icol]
+		Set value: 3, .icol, .y3# [.icol]
+		Set value: 4, .icol, .y4# [.icol]
+	endfor
+	selectObject: .xconf, .yconf
+	.p = To Procrustes: "no"
+	.t_given# = {3.72, -2.46}; 3.73, -2.47
+	.r1_given# = {-0.87, -0.50}
+	.r2_given# = {-0.50, 0.87}
+	.s_given = 2.0
+	.s = Get scale
+	.srounded = number (fixed$ (.s, 1))
+	assert .srounded = .s_given; '.srounded' = '.s_given'
+	for .i to .ncol
+		.t = Get translation element: .i
+		.trounded = number (fixed$ (.t, 2))
+		.tgiven = .t_given#[.i]
+		assert .trounded = .tgiven; '.trounded' = '.tgiven'
+	endfor
+	
+endproc
 
 procedure test_procrustes_bg_19_4
 	# example Borg&Groenen section 19.4
@@ -132,7 +175,7 @@ procedure test_orthogonal_procrustes_gvl_12_4_3
 	Set value: 3, 2, 6.1
 	Set value: 4, 2, 8.1
 
-	plusObject: .a
+	selectObject: .a, .b
 	.p = To Procrustes: "yes"
 
 	.t2 = Get translation element: 2

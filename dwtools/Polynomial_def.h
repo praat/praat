@@ -1,6 +1,6 @@
 /* Polynomial_def.h
  *
- * Copyright (C) 1993-2002, 2016 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ oo_DEFINE_CLASS (Spline, FunctionTerms)
 
 	oo_INTEGER (degree)
 	oo_INTEGER (numberOfKnots)
-	oo_DOUBLE_VECTOR (knots, numberOfKnots)
+	oo_VEC (knots, numberOfKnots)
 	
 	#if oo_DECLARING
 		double v_evaluate (double x)

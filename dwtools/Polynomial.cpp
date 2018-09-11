@@ -339,14 +339,14 @@ autoFunctionTerms FunctionTerms_create (double xmin, double xmax, integer number
 
 void FunctionTerms_initFromString (FunctionTerms me, double xmin, double xmax, conststring32 s, bool allowTrailingZeros) {
 	integer numberOfCoefficients;
-	autoNUMvector <double> numbers (NUMstring_to_numbers (s, & numberOfCoefficients), 1);
+	autoVEC numbers = VEC_createFromString (s);
 	if (! allowTrailingZeros) {
-		while (numbers [numberOfCoefficients] == 0 && numberOfCoefficients > 1)
+		while (numbers [numbers.size] == 0 && numberOfCoefficients > 1)
 			numberOfCoefficients --;
 	}
 
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
-	NUMvector_copyElements (numbers.peek(), my coefficients, 1, numberOfCoefficients);
+	NUMvector_copyElements (numbers.at, my coefficients, 1, numberOfCoefficients);
 }
 
 integer FunctionTerms_getDegree (FunctionTerms me) {
@@ -744,16 +744,14 @@ autoPolynomial Polynomial_getPrimitive (Polynomial me, double constant) {
 }
 
 /* P(x)= (x-roots [1])*(x-roots [2])*..*(x-roots [numberOfRoots]) */
-void Polynomial_initFromRealRoots (Polynomial me, double *roots, integer numberOfRoots) {
+void Polynomial_initFromRealRoots (Polynomial me, constVEC roots) {
 	try {
-		if (numberOfRoots < 1)
-			return;
-		FunctionTerms_extendCapacityIf (me, numberOfRoots + 1);
+		FunctionTerms_extendCapacityIf (me, roots.size + 1);
 		double *c = & my coefficients [1];
 		integer n = 1;
 		c [0] = - roots [1];
 		c [1] = 1.0;
-		for (integer i = 2; i <= numberOfRoots; i ++) {
+		for (integer i = 2; i <= roots.size; i ++) {
 			c [n + 1] = c [n];
 			for (integer j = n; j >= 1; j --)
 				c [j] = c [j - 1] - c [j] * roots [i];
@@ -769,10 +767,9 @@ void Polynomial_initFromRealRoots (Polynomial me, double *roots, integer numberO
 autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, conststring32 s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		integer numberOfRoots;
-		autoNUMvector<double> roots (NUMstring_to_numbers (s, & numberOfRoots), 1);
-		FunctionTerms_init (me.get(), xmin, xmax, numberOfRoots + 1);
-		Polynomial_initFromRealRoots (me.get(), roots.peek(), numberOfRoots);
+		autoVEC roots = VEC_createFromString (s);
+		FunctionTerms_init (me.get(), xmin, xmax, roots.size + 1);
+		Polynomial_initFromRealRoots (me.get(), roots.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from roots.");
@@ -780,17 +777,15 @@ autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, c
 	
 }
 
-/* Product (i=1; numberOfSecondOrderTerms; (1 + a*x + x^2)
- * Postcondition : my numberOfCoeffcients = 2*numberOfTerms1+1
+/* Product (i=1; a.size; (1 + a*x + x^2)
+ * Postcondition : my numberOfCoeffcients = 2*a.size+1
  */
-void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, integer numberOfSecondOrderTerms) {
-	if (numberOfSecondOrderTerms < 1)
-		return;
-	FunctionTerms_extendCapacityIf (me, 2 * numberOfSecondOrderTerms + 1);
+void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a) {
+	FunctionTerms_extendCapacityIf (me, 2 * a.size + 1);
 	my coefficients [1] = my coefficients [3] = 1.0;
 	my coefficients [2] = a [1];
 	integer numberOfCoefficients = 3;
-	for (integer i = 2; i <= numberOfSecondOrderTerms; i ++) {
+	for (integer i = 2; i <= a.size; i ++) {
 		my coefficients [numberOfCoefficients + 1] = a [i] * my coefficients [numberOfCoefficients] + my coefficients [numberOfCoefficients - 1];
 		my coefficients [numberOfCoefficients + 2] = my coefficients [numberOfCoefficients];
 		for (integer j = numberOfCoefficients; j > 2; j --)
@@ -805,9 +800,9 @@ autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
 		integer numberOfTerms;
-		autoNUMvector <double> a (NUMstring_to_numbers (s, & numberOfTerms), 1);
-		FunctionTerms_init (me.get(), xmin, xmax, 2 * numberOfTerms + 1);
-		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.peek(), numberOfTerms);
+		autoVEC a = VEC_createFromString (s);
+		FunctionTerms_init (me.get(), xmin, xmax, 2 * a.size + 1);
+		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.get());
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Polynomial not created from second order terms string.");
@@ -1601,11 +1596,11 @@ autoChebyshevSeries RealTier_to_ChebyshevSeries (RealTier me, integer degree, do
 	Our point-sequece xmin < interiorKont [1] < ... < interiorKnot [n] < xmax.
 	nKnots is now numberOfinteriorKnots + 2.
 */
-static double NUMmspline2 (double points [], integer numberOfPoints, integer order, integer index, double x) {
-	integer numberOfSplines = numberOfPoints + order - 2;
+static double NUMmspline2 (constVEC points, integer order, integer index, double x) {
+	integer numberOfSplines = points.size + order - 2;
 	double m [Spline_MAXIMUM_DEGREE + 2];
 
-	Melder_assert (numberOfPoints > 2 && order > 0 && index > 0);
+	Melder_assert (points.size > 2 && order > 0 && index > 0);
 
 	if (index > numberOfSplines)
 		return undefined;
@@ -1613,7 +1608,7 @@ static double NUMmspline2 (double points [], integer numberOfPoints, integer ord
 	/*
 		Find the range/interval where x is located.
 		M-splines of order k have degree k-1.
-		M-splines are zero outside interval [ knot [i], knot [i+order] ).
+		M-splines are zero outside interval [knot [i], knot [i+order]).
 		First and last 'order' knots are equal, i.e.,
 		knot [1] = ... = knot [order] && knot [nKnots-order+1] = ... knot [nKnots].
 	*/
@@ -1624,7 +1619,7 @@ static double NUMmspline2 (double points [], integer numberOfPoints, integer ord
 		return 0;
 
 	integer index_e = index_b + MIN (index, order);
-	index_e = MIN (numberOfPoints, index_e);
+	index_e = MIN (points.size, index_e);
 	if (x > points [index_e])
 		return 0;
 
@@ -1633,7 +1628,7 @@ static double NUMmspline2 (double points [], integer numberOfPoints, integer ord
 	for (integer k = 1; k <= order; k ++) {
 		integer k1 = index - order + k, k2 = k1 + 1;
 		m [k] = 0;
-		if (k1 > 0 && k2 <= numberOfPoints && x >= points [k1] && x < points [k2])
+		if (k1 > 0 && k2 <= points.size && x >= points [k1] && x < points [k2])
 			m [k] = 1 / (points [k2] - points [k1]);
 	}
 
@@ -1644,10 +1639,10 @@ static double NUMmspline2 (double points [], integer numberOfPoints, integer ord
 			integer k1 = index - order + j, k2 = k1 + k;
 			if (k2 > 1 && k1 < 1) {
 				k1 = 1;
-			} else if (k2 > numberOfPoints && k1 < numberOfPoints) {
-				k2 = numberOfPoints;
+			} else if (k2 > points.size && k1 < points.size) {
+				k2 = points.size;
 			}
-			if (k1 > 0 && k2 <= numberOfPoints) {
+			if (k1 > 0 && k2 <= points.size) {
 				double p1 = points [k1], p2 = points [k2];
 				m [j] = k * ((x - p1) * m [j] + (p2 - x) * m [j + 1]) /
 					((k - 1) * (p2 - p1));
@@ -1657,8 +1652,8 @@ static double NUMmspline2 (double points [], integer numberOfPoints, integer ord
 	return m [1];
 }
 
-static double NUMispline2 (double points [], integer numberOfPoints, integer order, integer index, double x) {
-	Melder_assert (numberOfPoints > 2 && order > 0 && index > 0);
+static double NUMispline2 (constVEC points, integer order, integer index, double x) {
+	Melder_assert (points.size > 2 && order > 0 && index > 0);
 
 	integer index_b = index - order + 1;
 	index_b = MAX (index_b, 1);
@@ -1667,7 +1662,7 @@ static double NUMispline2 (double points [], integer numberOfPoints, integer ord
 		return 0.0;
 
 	integer index_e = index_b + MIN (index, order);
-	index_e = MIN (numberOfPoints, index_e);
+	index_e = MIN (points.size, index_e);
 
 	if (x > points [index_e])
 		return 1.0;
@@ -1687,8 +1682,8 @@ static double NUMispline2 (double points [], integer numberOfPoints, integer ord
 	for (integer m = index + 1; m <= j + order; m ++) {
 		integer km = m - order, kmp = km + order + 1;
 		km = MAX (km, 1);
-		kmp = MIN (kmp, numberOfPoints);
-		y += (points [kmp] - points [km]) * NUMmspline2 (points, numberOfPoints, order + 1, m, x);
+		kmp = MIN (kmp, points.size);
+		y += (points [kmp] - points [km]) * NUMmspline2 (points, order + 1, m, x);
 	}
 	return y /= (order + 1);
 }
@@ -1708,28 +1703,27 @@ integer structSpline :: v_getOrder () {
 }
 
 /* Precondition: FunctionTerms part inited + degree */
-static void Spline_initKnotsFromString (Spline me, integer degree, conststring32 interiorKnots) {
+static void Spline_initKnotsFromString (Spline me, integer degree, conststring32 interiorKnots_string) {
 
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
-	integer numberOfInteriorKnots;
-	autoNUMvector <double> numbers (NUMstring_to_numbers (interiorKnots, & numberOfInteriorKnots), 1);
-	if (numberOfInteriorKnots > 0) {
-		NUMsort_d (numberOfInteriorKnots, numbers.peek());
-		if (numbers [1] <= my xmin || numbers [numberOfInteriorKnots] > my xmax)
+	autoVEC interiorKnots = VEC_createFromString (interiorKnots_string);
+
+	VECsort_inplace (interiorKnots.get());
+	if (interiorKnots [1] <= my xmin || interiorKnots [interiorKnots.size] > my xmax)
 			Melder_throw (U"Knots should be inside domain.");
-	}
+
 
 	my degree = degree;
 	integer order = Spline_getOrder (me); /* depends on spline type !! */
-	integer n = numberOfInteriorKnots + order;
+	integer n = interiorKnots.size + order;
 	Melder_require (my numberOfCoefficients == n, U"Number of coefficients should equal ", n, U".");
 
-	my numberOfKnots = numberOfInteriorKnots + 2;
-	my knots = NUMvector<double> (1, my numberOfKnots);
+	my numberOfKnots = interiorKnots.size + 2;
+	my knots = VECzero (my numberOfKnots);
 
-	for (integer i = 1; i <= numberOfInteriorKnots; i ++) {
-		my knots [i + 1] = numbers [i];
+	for (integer i = 1; i <= interiorKnots.size; i ++) {
+		my knots [i + 1] = interiorKnots [i];
 	}
 	my knots [1] = my xmin;
 	my knots [my numberOfKnots] = my xmax;
@@ -1740,7 +1734,7 @@ void Spline_init (Spline me, double xmin, double xmax, integer degree, integer n
 	Melder_require (degree <= Spline_MAXIMUM_DEGREE, U"Degree should be <= ", Spline_MAXIMUM_DEGREE, U".");
 	
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
-	my knots = NUMvector<double> (1, numberOfKnots);
+	my knots = VECzero (numberOfKnots);
 	my degree = degree;
 	my numberOfKnots = numberOfKnots;
 	my knots [1] = xmin;
@@ -1828,7 +1822,7 @@ double structMSpline :: v_evaluate (double x) {
 	double result = 0.0;
 	for (integer i = 1; i <= numberOfCoefficients; i ++) {
 		if (coefficients [i] != 0.0)
-			result += coefficients [i] * NUMmspline2 (knots, numberOfKnots, degree + 1, i, x);
+			result += coefficients [i] * NUMmspline2 (knots.get(), degree + 1, i, x);
 	}
 	return result;
 }
@@ -1837,7 +1831,7 @@ void structMSpline :: v_evaluateTerms (double x, double *terms) {
 	if (x < our xmin || x > our xmax)
 		return;
 	for (integer i = 1; i <= numberOfCoefficients; i ++)
-		terms [i] = NUMmspline2 (knots, numberOfKnots, degree + 1, i, x);
+		terms [i] = NUMmspline2 (knots.get(), degree + 1, i, x);
 }
 
 Thing_implement (MSpline, Spline, 0);
@@ -1875,14 +1869,14 @@ double structISpline :: v_evaluate (double x) {
 	double result = 0.0;
 	for (integer i = 1; i <= numberOfCoefficients; i ++) {
 		if (coefficients [i] != 0.0)
-			result += coefficients [i] * NUMispline2 (knots, numberOfKnots, degree, i, x);
+			result += coefficients [i] * NUMispline2 (knots.get(), degree, i, x);
 	}
 	return result;
 }
 
 void structISpline :: v_evaluateTerms (double x, double *terms) {
 	for (integer i = 1; i <= numberOfCoefficients; i ++)
-		terms [i] = NUMispline2 (knots, numberOfKnots, degree, i, x);
+		terms [i] = NUMispline2 (knots.get(), degree, i, x);
 }
 
 integer structISpline :: v_getOrder () {

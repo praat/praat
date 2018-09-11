@@ -1163,45 +1163,44 @@ autoCovariance Covariance_create_reduceStorage (integer dimension, integer stora
 
 autoCovariance Covariance_createSimple (conststring32 s_covariances, conststring32 s_centroid, integer numberOfObservations) {
 	try {
-		integer dimension, numberOfCovariances;
-		autoNUMvector <double> centroid (NUMstring_to_numbers (s_centroid, & dimension), 1);
-		autoNUMvector <double> covariances (NUMstring_to_numbers (s_covariances, & numberOfCovariances), 1);
-		integer numberOfCovariances_wanted = dimension * (dimension + 1) / 2;
-		Melder_require (numberOfCovariances == numberOfCovariances_wanted,
-			U"The number of covariance matrix elements and the number of centroid elements should agree. "
+		autoVEC centroid = VEC_createFromString (s_centroid);
+		autoVEC covariances = VEC_createFromString (s_covariances);
+		integer numberOfCovariances_wanted = centroid.size * (centroid.size + 1) / 2;
+		Melder_require (covariances.size == numberOfCovariances_wanted,
+			U"The number of covariance matrix elements and the number of centroid elements (d) should conform. "
 			"There should be d(d+1)/2 covariance values and d centroid values.");
 		
-		autoCovariance me = Covariance_create (dimension);
+		autoCovariance me = Covariance_create (centroid.size);
 
 		// Construct the full covariance matrix from the upper-diagonal elements
 
 		integer rowNumber = 1;
-		for (integer inum = 1; inum <= numberOfCovariances; inum ++) {
+		for (integer inum = 1; inum <= covariances.size; inum ++) {
 			integer nmissing = (rowNumber - 1) * rowNumber / 2;
 			integer inumc = inum + nmissing;
-			rowNumber = (inumc - 1) / dimension + 1;
-			integer icol = ((inumc - 1) % dimension) + 1;
+			rowNumber = (inumc - 1) / centroid.size + 1;
+			integer icol = ((inumc - 1) % centroid.size) + 1;
 			my data [rowNumber] [icol] = my data [icol] [rowNumber] = covariances [inum];
-			if (icol == dimension) {
+			if (icol == centroid.size) {
 				rowNumber ++;
 			}
 		}
 
 		// Check if a valid covariance, first check variances then covariances
 
-		for (integer irow = 1; irow <= dimension; irow ++) {
+		for (integer irow = 1; irow <= centroid.size; irow ++) {
 			Melder_require (my data [irow] [irow] > 0.0, U"The diagonal matrix elements should all be positive numbers.");
 		}
-		for (integer irow = 1; irow <= dimension; irow ++) {
-			for (integer icol = irow + 1; icol <= dimension; icol ++) {
+		for (integer irow = 1; irow <= centroid.size; irow ++) {
+			for (integer icol = irow + 1; icol <= centroid.size; icol ++) {
 				if (fabs (my data [irow] [icol] / sqrt (my data [irow] [irow] * my data [icol] [icol])) > 1) {
 					integer nmissing = (irow - 1) * irow / 2;
-					integer inum = (irow - 1) * dimension + icol - nmissing;
+					integer inum = (irow - 1) * centroid.size + icol - nmissing;
 					Melder_throw (U"The covariance in cell [", irow, U",", icol, U"], i.e. input item ", inum, U" is too large.");
 				}
 			}
 		}
-		for (integer inum = 1; inum <= dimension; inum ++) {
+		for (integer inum = 1; inum <= centroid.size; inum ++) {
 			my centroid [inum] = centroid [inum];
 		}
 		my numberOfObservations = numberOfObservations;
@@ -1213,45 +1212,44 @@ autoCovariance Covariance_createSimple (conststring32 s_covariances, conststring
 
 autoCorrelation Correlation_createSimple (conststring32 s_correlations, conststring32 s_centroid, integer numberOfObservations) {
 	try {
-		integer dimension, numberOfCorrelations;
-		autoNUMvector<double> centroids (NUMstring_to_numbers (s_centroid, & dimension), 1);
-		autoNUMvector<double> correlations (NUMstring_to_numbers (s_correlations, & numberOfCorrelations), 1);
-		integer numberOfCorrelations_wanted = dimension * (dimension + 1) / 2;
-		Melder_require (numberOfCorrelations == numberOfCorrelations_wanted,
+		autoVEC centroids = VEC_createFromString (s_centroid);
+		autoVEC correlations = VEC_createFromString (s_correlations);
+		integer numberOfCorrelations_wanted = centroids.size * (centroids.size + 1) / 2;
+		Melder_require (correlations.size == numberOfCorrelations_wanted,
 			U"The number of correlation matrix elements and the number of centroid elements should agree. "
 			"There should be d(d+1)/2 correlation values and d centroid values.");
 
-		autoCorrelation me = Correlation_create (dimension);
+		autoCorrelation me = Correlation_create (centroids.size);
 
 		// Construct the full correlation matrix from the upper-diagonal elements
 
 		integer rowNumber = 1;
-		for (integer inum = 1; inum <= numberOfCorrelations; inum ++) {
+		for (integer inum = 1; inum <= correlations.size; inum ++) {
 			integer nmissing = (rowNumber - 1) * rowNumber / 2;
 			integer inumc = inum + nmissing;
-			rowNumber = (inumc - 1) / dimension + 1;
-			integer icol = ( (inumc - 1) % dimension) + 1;
+			rowNumber = (inumc - 1) / centroids.size + 1;
+			integer icol = ( (inumc - 1) % centroids.size) + 1;
 			my data [rowNumber] [icol] = my data [icol] [rowNumber] = correlations [inum];
-			if (icol == dimension) {
+			if (icol == centroids.size) {
 				rowNumber ++;
 			}
 		}
 
 		// Check if a valid correlations, first check diagonal then off-diagonals
 
-		for (integer irow = 1; irow <= dimension; irow ++) {
+		for (integer irow = 1; irow <= centroids.size; irow ++) {
 			Melder_require (my data [irow] [irow] == 1.0, U"The diagonal matrix elements should all equal 1.0.");
 		}
-		for (integer irow = 1; irow <= dimension; irow ++) {
-			for (integer icol = irow + 1; icol <= dimension; icol ++) {
+		for (integer irow = 1; irow <= centroids.size; irow ++) {
+			for (integer icol = irow + 1; icol <= centroids.size; icol ++) {
 				if (fabs (my data [irow] [icol]) > 1) {
 					integer nmissing = (irow - 1) * irow / 2;
-					integer inum = (irow - 1) * dimension + icol - nmissing;
+					integer inum = (irow - 1) * centroids.size + icol - nmissing;
 					Melder_throw (U"The correlation in cell [", irow, U",", icol, U"], i.e. input item ", inum, U" should not exceed 1.0.");
 				}
 			}
 		}
-		for (integer inum = 1; inum <= dimension; inum ++) {
+		for (integer inum = 1; inum <= centroids.size; inum ++) {
 			my centroid [inum] = centroids [inum];
 		}
 		my numberOfObservations = numberOfObservations;

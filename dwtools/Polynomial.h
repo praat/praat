@@ -111,10 +111,10 @@ dcomplex Polynomial_evaluate_z (Polynomial me, dcomplex z);
  * Precondition : my numberOfCoeffcients >= 3+2*numberOfOmegas
  * 	Polynomial is uses as a "buffer". We define it one and reuse it 
  */
-void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, double *a, integer numberOfTerms);
+void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a);
 autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, conststring32 s);
 
-void Polynomial_initFromRealRoots (Polynomial me, double *roots, integer numberOfRoots);
+void Polynomial_initFromRealRoots (Polynomial me, constVEC roots);
 autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, conststring32 s);
 
 double Polynomial_getArea (Polynomial me, double xmin, double xmax);
