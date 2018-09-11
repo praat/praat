@@ -152,22 +152,23 @@ double SVD_getTolerance (SVD me) {
 */
 void SVD_compute (SVD me) {
 	try {
-		char jobu = 'S', jobvt = 'O';
-		integer m, lda, ldu, ldvt, info, lwork = -1;
+		char jobu = 'S'; // the first min(m,n) columns of U are returned in the array U;
+		char jobvt = 'O'; // the first min(m,n) rows of V**T are overwritten on the array A;
+		integer m = my numberOfColumns; // number of rows of input matrix 
+		integer n = my numberOfRows; // number of columns of input matrix
+		integer lda = m, ldu = m, ldvt = m;
+		integer info, lwork = -1;
 		double wt [2];
 
-		lda = ldu = ldvt = m = my numberOfColumns;
-		integer n = my numberOfRows;
-		autoMAT vcopy = MATcopy (my v.get());
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & vcopy [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
+		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, wt, & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be precomputed.");
 
 		lwork = wt [0];
-		autoNUMvector<double> work ((integer) 0, lwork);
-		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & vcopy [1] [1], & ldu, nullptr, & ldvt, work.peek(), & lwork, & info);
+		autoVEC work = VECraw (lwork);
+		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, & my d [1], & my v [1] [1], & ldu, nullptr, & ldvt, & work [1], & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be computed.");
 
-		MATtranspose_preallocated (my v.get(), vcopy.get());
+		MATtranspose_inplace_mustBeSquare (my v.get());
 		
 	} catch (MelderError) {
 		Melder_throw (me, U": SVD could not be computed.");
@@ -181,8 +182,8 @@ void SVD_getSquared (SVD me, double **m, bool inverse) {
 			longdouble val = 0.0;
 			for (integer k = 1; k <= my numberOfColumns; k ++) {
 				if (my d [k] > 0.0) {
-					double dsq = my d [k] * my d [k];
-					double factor = inverse ? 1.0 / dsq : dsq;
+					longdouble dsq = my d [k] * my d [k];
+					longdouble factor = inverse ? 1.0 / dsq : dsq;
 					val += my v [i] [k] * my v [j] [k] * factor;
 				}
 			}
