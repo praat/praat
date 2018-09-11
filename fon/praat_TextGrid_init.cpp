@@ -523,13 +523,14 @@ DO
 FORM (NEW1_TextGrid_Sound_extractIntervalsWhere, U"TextGrid & Sound: Extract intervals", nullptr) {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
 	BOOLEAN (preserveTimes, U"Preserve times", false)
-	OPTIONMENU_ENUM (extractEveryIntervalWhoseLabel___, U"Extract every interval whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, extractEveryIntervalWhoseLabel___,
+			U"Extract every interval whose label...", kMelder_string::DEFAULT)
 	SENTENCE (__theText, U"...the text", U"")
 	OK
 DO
 	CONVERT_TWO (TextGrid, Sound)
 		autoSoundList result = TextGrid_Sound_extractIntervalsWhere (me, you, tierNumber,
-			(kMelder_string) extractEveryIntervalWhoseLabel___, __theText, preserveTimes);
+			extractEveryIntervalWhoseLabel___, __theText, preserveTimes);
 		result -> classInfo = classCollection;   // YUCK, in order to force automatic unpacking
 	CONVERT_TWO_END (U"dummy")
 }
@@ -837,7 +838,8 @@ DO
 
 FORM (NEW_TextGrid_tabulateOccurrences, U"TextGrid: Tabulate occurrences", nullptr) {
 	NUMVEC (searchTiers, U"Search tiers:", U"{ 1, 2 }")
-	OPTIONMENU_ENUM (listEveryLabelThat___, U"List every label that...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, listEveryLabelThat___,
+			U"List every label that...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hello")
 	BOOLEAN (caseSensitive, U"Case-sensitive", false)
 	OK
@@ -1001,12 +1003,13 @@ DO
 
 FORM (INTEGER_TextGrid_countIntervalsWhere, U"Count intervals", U"TextGrid: Count intervals where...") {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (countIntervalsWhoseLabel___, U"Count intervals whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, countIntervalsWhoseLabel___,
+			U"Count intervals whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	NUMBER_ONE (TextGrid)
-		integer result = TextGrid_countIntervalsWhere (me, tierNumber, (kMelder_string) countIntervalsWhoseLabel___, ___theText);
+		integer result = TextGrid_countIntervalsWhere (me, tierNumber, countIntervalsWhoseLabel___, ___theText);
 	NUMBER_ONE_END (U" intervals containing ", ___theText);
 }
 
@@ -1090,7 +1093,8 @@ DO
 
 FORM (INTEGER_TextGrid_countPointsWhere, U"Count points", U"TextGrid: Count points where...") {
 	INTEGER (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (countPointsWhoseLabel___, U"Count points whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, countPointsWhoseLabel___,
+			U"Count points whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
@@ -1294,12 +1298,13 @@ DO
 
 FORM (MODIFY_TextGrid_removePoints, U"Remove points", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (removeEveryPointWhoseLabel___, U"Remove every point whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, removeEveryPointWhoseLabel___,
+			U"Remove every point whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	MODIFY_EACH (TextGrid)
-		TextGrid_removePoints (me, tierNumber, (kMelder_string) removeEveryPointWhoseLabel___, ___theText);
+		TextGrid_removePoints (me, tierNumber, removeEveryPointWhoseLabel___, ___theText);
 	MODIFY_EACH_END
 }
 
@@ -1350,73 +1355,81 @@ DO
 
 FORM (NEW_TextGrid_getStartingPoints, U"TextGrid: Get starting points", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (getStartingPointsWhoseLabel___, U"Get starting points whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, getStartingPointsWhoseLabel___,
+			U"Get starting points whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoPointProcess result = TextGrid_getStartingPoints (me, tierNumber, (kMelder_string) getStartingPointsWhoseLabel___, ___theText);
+		autoPointProcess result = TextGrid_getStartingPoints (me, tierNumber, getStartingPointsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TextGrid_getEndPoints, U"TextGrid: Get end points", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (getEndPointsWhoseLabel___, U"Get end points whose label", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, getEndPointsWhoseLabel___,
+			U"Get end points whose label", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoPointProcess result = TextGrid_getEndPoints (me, tierNumber, (kMelder_string) getEndPointsWhoseLabel___, ___theText);
+		autoPointProcess result = TextGrid_getEndPoints (me, tierNumber, getEndPointsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TextGrid_getCentrePoints, U"TextGrid: Get centre points", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (getCentrePointsWhoseLabel___, U"Get centre points whose label", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, getCentrePointsWhoseLabel___,
+			U"Get centre points whose label", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoPointProcess result = TextGrid_getCentrePoints (me, tierNumber, (kMelder_string) getCentrePointsWhoseLabel___, ___theText);
+		autoPointProcess result = TextGrid_getCentrePoints (me, tierNumber, getCentrePointsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TextGrid_getPoints, U"Get points", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (getPointsWhoseLabel___, U"Get points whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, getPointsWhoseLabel___,
+			U"Get points whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
-		autoPointProcess result = TextGrid_getPoints (me, tierNumber, (kMelder_string) getPointsWhoseLabel___, ___theText);
+		autoPointProcess result = TextGrid_getPoints (me, tierNumber, getPointsWhoseLabel___, ___theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TextGrid_getPoints_preceded, U"Get points (preceded)", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (getPointsWhoseLabel___, U"Get points whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, getPointsWhoseLabel___,
+			U"Get points whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"there")
-	OPTIONMENU_ENUM (___precededByALabelThat___, U"...preceded by a label that...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, ___precededByALabelThat___,
+			U"...preceded by a label that...", kMelder_string::DEFAULT)
 	SENTENCE (____theText, U" ...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
 		autoPointProcess result = TextGrid_getPoints_preceded (me, tierNumber,
-			(kMelder_string) getPointsWhoseLabel___, ___theText, (kMelder_string) ___precededByALabelThat___, ____theText);
+			(kMelder_string) getPointsWhoseLabel___, ___theText, ___precededByALabelThat___, ____theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 
 FORM (NEW_TextGrid_getPoints_followed, U"Get points (followed)", nullptr) {
 	NATURAL (tierNumber, STRING_TIER_NUMBER, U"1")
-	OPTIONMENU_ENUM (getPointsWhoseLabel___, U"Get points whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, getPointsWhoseLabel___,
+			U"Get points whose label...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
-	OPTIONMENU_ENUM (___followedByALabelThat___, U"...followed by a label that...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, ___followedByALabelThat___,
+			U"...followed by a label that...", kMelder_string::DEFAULT)
 	SENTENCE (____theText, U" ...the text", U"there")
 	OK
 DO
 	CONVERT_EACH (TextGrid)
 		autoPointProcess result = TextGrid_getPoints_followed (me, tierNumber,
-			(kMelder_string) getPointsWhoseLabel___, ___theText, (kMelder_string) ___followedByALabelThat___, ____theText);
+			(kMelder_string) getPointsWhoseLabel___, ___theText, ___followedByALabelThat___, ____theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 

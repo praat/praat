@@ -256,10 +256,11 @@ _form_inited_: \
 #define RADIO_ENUM_VARIABLE(EnumeratedType, enumeratedVariable) \
 	static enum EnumeratedType enumeratedVariable; \
 
-#define RADIO_ENUM_FIELD(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+#define RADIO_ENUM_FIELD(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	{/* type checks */ \
 		enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
+		(void) _compilerTypeCheckDummy; \
 	} \
 	{/* scope */ \
 		UiField _radio = UiForm_addRadio (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
@@ -268,18 +269,19 @@ _form_inited_: \
 			UiRadio_addButton (_radio, EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
 	}
 
-#define RADIO_ENUM(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+#define RADIO_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	RADIO_ENUM_VARIABLE (EnumeratedType, enumeratedVariable) \
-	RADIO_ENUM_FIELD (enumeratedVariable, labelText, EnumeratedType, defaultValue)
+	RADIO_ENUM_FIELD (EnumeratedType, enumeratedVariable, labelText, defaultValue)
 
 
 #define OPTIONMENU_ENUM_VARIABLE(EnumeratedType, enumeratedVariable) \
 	static enum EnumeratedType enumeratedVariable; \
 
-#define OPTIONMENU_ENUM_FIELD(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+#define OPTIONMENU_ENUM_FIELD(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	{/* type checks */ \
 		enum EnumeratedType _compilerTypeCheckDummy = defaultValue; \
 		_compilerTypeCheckDummy = enumeratedVariable; \
+		(void) _compilerTypeCheckDummy; \
 	} \
 	{/* scope */ \
 		UiField _radio = UiForm_addOptionMenu (cmd -> d_uiform.get(), (int *) & enumeratedVariable, nullptr, nullptr, labelText, \
@@ -288,9 +290,9 @@ _form_inited_: \
 			UiOptionMenu_addButton (_radio, EnumeratedType##_getText ((enum EnumeratedType) _ienum)); \
 	}
 
-#define OPTIONMENU_ENUM(enumeratedVariable, labelText, EnumeratedType, defaultValue) \
+#define OPTIONMENU_ENUM(EnumeratedType, enumeratedVariable, labelText, defaultValue) \
 	OPTIONMENU_ENUM_VARIABLE (EnumeratedType, enumeratedVariable) \
-	OPTIONMENU_ENUM_FIELD (enumeratedVariable, labelText, EnumeratedType, defaultValue)
+	OPTIONMENU_ENUM_FIELD (EnumeratedType, enumeratedVariable, labelText, defaultValue)
 
 
 #define LIST(integerVariable, labelText, strings, defaultValue) \

@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -497,10 +497,13 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 	#if defined (_WIN32)
 		BOOLEAN (allowDirectPostscript, U"Allow direct PostScript", true);
 	#endif
-	RADIO_ENUM (greyResolution, U"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
+	RADIO_ENUM (kGraphicsPostscript_spots, greyResolution,
+			U"Grey resolution", kGraphicsPostscript_spots::DEFAULT)
 	#if defined (UNIX)
-		RADIO_ENUM (paperSize, U"Paper size", kGraphicsPostscript_paperSize, DEFAULT)
-		RADIO_ENUM (orientation, U"Orientation", kGraphicsPostscript_orientation, DEFAULT)
+		RADIO_ENUM (kGraphicsPostscript_paperSize, paperSize,
+				U"Paper size", kGraphicsPostscript_paperSize::DEFAULT)
+		RADIO_ENUM (kGraphicsPostscript_orientation, orientation,
+				U"Orientation", kGraphicsPostscript_orientation::DEFAULT)
 		POSITIVE (magnification, U"Magnification", U"1.0");
 		#if defined (linux)
 			TEXTFIELD (printCommand, U"Print command:", U"lpr %s")
@@ -508,7 +511,8 @@ FORM (GRAPHICS_PostScript_settings, U"PostScript settings", U"PostScript setting
 			TEXTFIELD (printCommand, U"Print command:", U"lp -c %s")
 		#endif
 	#endif
-	RADIO_ENUM (fontChoiceStrategy, U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT)
+	RADIO_ENUM (kGraphicsPostscript_fontChoiceStrategy, fontChoiceStrategy,
+			U"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy::DEFAULT)
 OK
 	#if defined (_WIN32)
 		SET_BOOLEAN (allowDirectPostscript, thePrinter. allowDirectPostScript)
@@ -598,7 +602,8 @@ END }
 
 FORM (GRAPHICS_Text, U"Praat picture: Text", U"Text...") {
 	REAL (horizontalPosition, U"Horizontal position", U"0.0")
-	OPTIONMENU_ENUM (horizontalAlignment, U"Horizontal alignment", kGraphics_horizontalAlignment, LEFT)
+	OPTIONMENU_ENUM (kGraphics_horizontalAlignment, horizontalAlignment,
+			U"Horizontal alignment", kGraphics_horizontalAlignment::LEFT)
 	REAL (verticalPosition, U"Vertical position", U"0.0")
 	OPTIONMENUx (verticalAlignment, U"Vertical alignment", 2, 0)
 		OPTION (U"Bottom")
@@ -626,7 +631,7 @@ FORM (GRAPHICS_TextSpecial, U"Praat picture: Text special", nullptr) {
 		OPTION (U"Bottom")
 		OPTION (U"Half")
 		OPTION (U"Top")
-	OPTIONMENU_ENUM (font, U"Font", kGraphics_font, DEFAULT)
+	OPTIONMENU_ENUM (kGraphics_font, font, U"Font", kGraphics_font::DEFAULT)
 	NATURAL (fontSize, U"Font size", U"10")
 	SENTENCE (rotation, U"Rotation (degrees or dx;dy)", U"0")
 	TEXTFIELD (text, U"Text:", U"")

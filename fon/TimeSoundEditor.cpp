@@ -150,7 +150,7 @@ static void menu_cb_ExtractSelectedSound_preserveTimes (TimeSoundEditor me, EDIT
 static void menu_cb_ExtractSelectedSound_windowed (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Extract selected sound (windowed)", nullptr)
 		WORD (name, U"Name", U"slice")
-		OPTIONMENU_ENUM (windowShape, U"Window shape", kSound_windowShape, my default_extract_windowShape ())
+		OPTIONMENU_ENUM (kSound_windowShape, windowShape, U"Window shape", my default_extract_windowShape ())
 		POSITIVE (relativeWidth, U"Relative width", my default_extract_relativeWidth ())
 		BOOLEAN (preserveTimes, U"Preserve times", my default_extract_preserveTimes ())
 	EDITOR_OK
@@ -375,7 +375,8 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 
 static void menu_cb_soundScaling (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Sound scaling", nullptr)
-		OPTIONMENU_ENUM (scalingStrategy, U"Scaling strategy", kTimeSoundEditor_scalingStrategy, my default_sound_scalingStrategy ())
+		OPTIONMENU_ENUM (kTimeSoundEditor_scalingStrategy, scalingStrategy,
+				U"Scaling strategy", my default_sound_scalingStrategy ())
 		LABEL (U"For \"fixed height\":")
 		POSITIVE (height, U"Height", my default_sound_scaling_height ())
 		LABEL (U"For \"fixed range\":")

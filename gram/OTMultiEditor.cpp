@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2017 Paul Boersma
+ * Copyright (C) 2005-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,8 @@ static void menu_cb_editRanking (OTMultiEditor me, EDITOR_ARGS_FORM) {
 
 static void menu_cb_learnOne (OTMultiEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_FORM (U"Learn one", U"OTGrammar: Learn one...")
-		OPTIONMENU_ENUM (updateRule, U"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
+		OPTIONMENU_ENUM (kOTGrammar_rerankingStrategy, updateRule,
+				U"Update rule", kOTGrammar_rerankingStrategy::SYMMETRIC_ALL)
 		OPTIONMENU (direction, U"Direction", 3)
 			OPTION (U"forward")
 			OPTION (U"backward")

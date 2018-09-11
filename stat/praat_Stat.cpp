@@ -922,7 +922,7 @@ DIRECT (NEW1_Tables_append) {
 
 FORM (NEW_Table_extractRowsWhereColumn_number, U"Table: Extract rows where column (number)", nullptr) {
 	SENTENCE (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
-	RADIO_ENUM (___is___, U"...is...", kMelder_number, DEFAULT)
+	RADIO_ENUM (kMelder_number, ___is___, U"...is...", kMelder_number::DEFAULT)
 	REAL (___theNumber, U"...the number", U"0.0")
 	OK
 DO
@@ -935,13 +935,13 @@ DO
 
 FORM (NEW_Table_extractRowsWhereColumn_text, U"Table: Extract rows where column (text)", nullptr) {
 	SENTENCE (extractAllRowsWhereColumn___, U"Extract all rows where column...", U"")
-	OPTIONMENU_ENUM (___, U"...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (kMelder_string, ___, U"...", kMelder_string::DEFAULT)
 	SENTENCE (___theText, U"...the text", U"hi")
 	OK
 DO
 	CONVERT_EACH (Table)
 		integer columnNumber = Table_getColumnIndexFromColumnLabel (me, extractAllRowsWhereColumn___);
-		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, (kMelder_string) ___, ___theText);
+		autoTable result = Table_extractRowsWhereColumn_string (me, columnNumber, ___, ___theText);
 	CONVERT_EACH_END (my name.get(), U"_", ___theText)
 }
 

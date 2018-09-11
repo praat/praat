@@ -70,16 +70,6 @@ void structSVD :: v_info () {
 
 Thing_implement (SVD, Daata, 1);
 
-static void NUMtranspose_d (double **m, integer n) {
-	for (integer i = 1; i <= n - 1; i ++) {
-		for (integer j = i + 1; j <= n; j ++) {
-			double t = m [i] [j];
-			m [i] [j] = m [j] [i];
-			m [j] [i] = t;
-		}
-	}
-}
-
 /*
 	m >=n, mxn matrix A has svd UDV', where u is mxn, D is n and V is nxn.
 	m < n, then transpose A. Consider A' with svd (UDV')'= VDU', where v is mxm, D is m and U' is mxn
