@@ -67,7 +67,6 @@ Thing_implement (Eigen, Daata, 0);
 
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
-#define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
 
 static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, bool hasTick, bool hasDottedLine, bool integers) {
 	double range = max - min, scale = 1.0, tick = min, dtick = 1.0;
@@ -315,9 +314,9 @@ void Eigen_sort (Eigen me) {
 
 			// Swap eigenvalues and eigenvectors
 
-			SWAP (e [i], e [k])
+			std::swap (e [i], e [k])
 			for (integer j = 1; j <= my dimension; j ++) {
-				SWAP (v [i] [j], v [k] [j])
+				std::swap (v [i] [j], v [k] [j])
 			}
 		}
 	}
@@ -535,6 +534,5 @@ void Eigen_matrix_into_matrix_principalComponents (Eigen me, double **from, inte
 
 #undef MAX
 #undef MIN
-#undef SWAP
 
 /* End of file Eigen.cpp */

@@ -147,6 +147,4 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (constMAT a, integer nC
 	}
 }
 
-#undef SWAP
-
 /* End of file MAT_numerics.cpp */
