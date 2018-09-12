@@ -17,11 +17,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-bool MAT_isSymmetric (constMAT x);
-/*
-	Returns true if the matrix is symmetric else false.
-*/
-
 void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvectors, autoVEC *out_eigenvalues, bool sortAscending);
 /*
 	Calculates the eigenvectors and eigenvalues of a symmetric matrix;
