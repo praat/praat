@@ -53,43 +53,8 @@ static const conststring32 CONFIGURATION_BUTTON = U"To Configuration -";
 
 /* Tests */
 
-/*
-	Sort row 1 ascending and store in row 3
-	Sort row 1 and move row 2 along and store in rows 4 and 5 respectively
-	Make an index for row 1 and store in row 6
-*/
-static void TabelOfReal_testSorting (TableOfReal me) {
-	try {
-		integer rowtoindex = 1;
-		
-		Melder_require (my numberOfRows >= 6, U"TabelOfReal_sort2: we want at least 6 rows!!");
-		
-		// Copy 1->3 and sort 3 inplace
-		NUMvector_copyElements (my data [1], my data [3], 1, my numberOfColumns);
-		NUMsort_d (my numberOfColumns, my data [3]);
-
-		// Copy 1->4 and 2->5, sort 4+5 in parallel
-		NUMvector_copyElements (my data [1], my data [4], 1, my numberOfColumns);
-		NUMvector_copyElements (my data [2], my data [5], 1, my numberOfColumns);
-		NUMsort2 (my numberOfColumns, my data [4], my data [5]);
-
-		autoINTVEC index = NUMindexx ({my data [rowtoindex], my numberOfColumns});
-		for (integer i = 1; i <= my numberOfColumns; i ++) {
-			my data [6] [i] = index [i];
-		}
-	} catch (MelderError) {
-		Melder_throw (me, U": sorting test not ok.");
-	}
-}
-
 #undef iam
 #define iam iam_LOOP
-
-DIRECT(MODIFY_TabelOfReal_testSorting) {
-	MODIFY_EACH (TableOfReal)
-		TabelOfReal_testSorting (me);
-	MODIFY_EACH_END
-}
 
 /************************* examples ***************************************/
 
@@ -1358,7 +1323,6 @@ void praat_TableOfReal_extras (ClassInfo klas) {
 	praat_addAction1 (klas, 0, U"Normalize table...", U"Normalize columns...", 1, MODIFY_TableOfReal_normalizeTable);
 	praat_addAction1 (klas, 0, U"Standardize rows", U"Normalize table...", 1, MODIFY_TableOfReal_standardizeRows);
 	praat_addAction1 (klas, 0, U"Standardize columns", U"Standardize rows", 1, MODIFY_TableOfReal_standardizeColumns);
-	praat_addAction1 (klas, 0, U"Test sorting...", U"Standardize columns", praat_DEPTH_1 + praat_HIDDEN + praat_NO_API, MODIFY_TabelOfReal_testSorting);
 }
 
 void praat_uvafon_MDS_init ();
