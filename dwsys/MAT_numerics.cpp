@@ -20,8 +20,6 @@
 #include "NUMclapack.h"
 #include "MAT_numerics.h"
 
-#define SWAP(x,y) { tmp = x; x = y; y = tmp; }
-
 void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT a, bool wantEigenvectors, VEC eigenvalues, bool sortAscending) {
 	Melder_assert (a.nrow == a.ncol);
 	Melder_assert (eigenvalues.size == a.ncol);
@@ -49,11 +47,10 @@ void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT a, bool wantEigenvectors
 	if (! sortAscending) {
 		for (integer i = 1; i <= n / 2; i ++) {
 			integer ilast = n - i + 1;
-			SWAP (eigenvalues [i], eigenvalues [ilast])
+			std::swap (eigenvalues [i], eigenvalues [ilast]);
 			if (wantEigenvectors) {
-				for (integer j = 1; j <= n; j ++) {
-					SWAP (a [i] [j], a [ilast] [j])
-				}
+				for (integer j = 1; j <= n; j ++)
+					std::swap (a [i] [j], a [ilast] [j]);
 			}
 		}
 	}
