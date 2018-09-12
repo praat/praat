@@ -5,14 +5,14 @@ appendInfoLine: "test_Procrustes.praat"
 
 eps =2.3e-15
 @bg_19_4
-;@test_procrustes_bg_19_4
-
-@test_orthogonal_procrustes_gvl_12_4_3
-;@test_procrustes_random_configurations: 12
+@test_orthogonal_procrustes_gvl_12_4_1
+@test_procrustes_random_configurations: 12
 
 appendInfoLine: "test_Procrustes.praat OK"
 
 procedure bg_19_4
+	# example Borg & Groenen section 19.4
+	appendInfoLine: tab$, "Example in Borg & Groenen section 19.4"
 	.nrow = 4
 	.ncol = 2
 	.x1# = { 1,  2}
@@ -52,64 +52,7 @@ procedure bg_19_4
 		.tgiven = .t_given#[.i]
 		assert .trounded = .tgiven; '.trounded' = '.tgiven'
 	endfor
-	
-endproc
-
-procedure test_procrustes_bg_19_4
-	# example Borg&Groenen section 19.4
-	appendInfoLine: tab$, "Example in Borg & Groenen section 19.4"
-	.nr = 4 
- 	.nc = 2
-	.scale = 0.5
-	.t[1] = 1
- 	.t[2] = 2
-	.alpha = 30
-	.c_x = Create Configuration: "X", .nr, .nc, "0"
-	Set value... 1 1 1
-	Set value... 1 2 2
-	Set value... 2 1 -1
-	Set value... 2 2 2
-	Set value... 3 1 -1
-	Set value... 3 2 -2
-	Set value... 4 1 1
-	Set value... 4 2 -2
-  
-	for .i to 4
-		Set row label (index): .i, "x_" + string$ (.i)
-	endfor
-  
-	.c_y = Copy: "Y"
-	! Horizontal reflection
-	Invert dimension: 1
-	Rotate: 1, 2, .alpha
-  
-	Formula:  ".scale * self + .t[col]"
-  
-	selectObject: .c_x, .c_y
-	.p_xy = To Procrustes: 0
-	Rename: "X_Y"
-	plusObject: .c_y
-	.c_z = To Configuration
-	Rename: "Z"
-	Formula: "self - object[.c_x, row, col]"
-	.eps = .nr * .nc * eps
-	for .i to 4
-		for .j to 2
-			assert object[.c_z, .i , .j] < .eps; z['.i','.j'] < '.eps'
-		endfor
-	endfor
-  
-	selectObject: .p_xy
-	.p_xy_i = Invert
-	Rename: "X_Yi"
-	for .i to 2
-		.tp = Get translation element: .i
-		assert .t[.i] - .tp < .eps; translation['i']
-	endfor
-	.sp = Get scale
-	assert .scale - .sp < .eps; '.scale' '.sp'
-  
-	removeObject: .c_x, .c_y, .c_z, .p_xy, .p_xy_i
+	removeObject: .xconf, .yconf, .p
 endproc
 
 procedure test_procrustes_random_configurations: .numconf
@@ -153,7 +96,7 @@ procedure test_procrustes_random_configurations: .numconf
 	endfor
 endproc
 
-procedure test_orthogonal_procrustes_gvl_12_4_3
+procedure test_orthogonal_procrustes_gvl_12_4_1
 	appendInfoLine: tab$, "Orthognal Procrustes transform (example 12.4.1 Golub & van Loan)"
 	.a = Create Configuration: "a", 4, 2, "0"
 	Set value: 1, 1, 1
@@ -186,12 +129,12 @@ procedure test_orthogonal_procrustes_gvl_12_4_3
 	.eps = 5e-5
 	.r11 = Get transformation element: 1, 1
 	.r22 = Get transformation element: 2, 2
-	assert .r11-.r22 < .eps
-	assert .r11-0.9999 < .eps
+	assert .r11-.r22 < .eps; '.r11'-'.r22' < '.eps' ?
+	assert .r11-0.9999 < .eps; '.r11'-0.9999 < '.eps' ?
 	.r12 = Get transformation element: 1, 2
 	.r21 = Get transformation element: 2, 1
-	assert .r12+0.0126 < .eps
-	assert .r21-0.0126 < .eps
+	assert .r12+0.0126 < .eps; '.r12'+0.0126 < '.eps' ?
+	assert .r21-0.0126 < .eps; '.r21'-0.0126 < '.eps' ?
 
 	removeObject: .a, .b, .p
 endproc
