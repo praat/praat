@@ -1,6 +1,6 @@
 /* Spectrogram.cpp
  *
- * Copyright (C) 1992-2012,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tm
 		for (integer ifreq = ifmin; ifreq <= ifmax; ifreq ++)
 			my z [ifreq] [itime] += dynamicFactor [itime];
 	}
-	Graphics_image (g, my z,
+	Graphics_image (g, my z.at,
 		itmin, itmax,
 		Matrix_columnToX (me, itmin - 0.5),
 		Matrix_columnToX (me, itmax + 0.5),
@@ -123,7 +123,7 @@ void Spectrogram_paint (Spectrogram me, Graphics g,
 autoSpectrogram Matrix_to_Spectrogram (Matrix me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Spectrogram.");
@@ -133,7 +133,7 @@ autoSpectrogram Matrix_to_Spectrogram (Matrix me) {
 autoMatrix Spectrogram_to_Matrix (Spectrogram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

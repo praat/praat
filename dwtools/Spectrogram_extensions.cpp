@@ -287,7 +287,7 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g,
 		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_image (g, thy z,
+	Graphics_image (g, thy z.at,
 		ixmin, ixmax, Sampled_indexToX   (thee.get(), ixmin - 0.5), Sampled_indexToX   (thee.get(), ixmax + 0.5),
 		iymin, iymax, SampledXY_indexToY (thee.get(), iymin - 0.5), SampledXY_indexToY (thee.get(), iymax + 0.5),
 		minimum, maximum
@@ -459,12 +459,15 @@ void MelSpectrogram_drawTriangularFilterFunctions (MelSpectrogram me, Graphics g
 {
 	double xmin = zmin, xmax = zmax;
 	if (zmin >= zmax) {
-		zmin = my ymin; zmax = my ymax; // mel
+		zmin = my ymin;
+		zmax = my ymax; // mel
 		xmin = xIsHertz ? my v_frequencyToHertz (zmin) : zmin;
 		xmax = xIsHertz ? my v_frequencyToHertz (zmax) : zmax;
 	}
-	if (xIsHertz)
-		zmin = my v_hertzToFrequency (xmin); zmax = my v_hertzToFrequency (xmax);
+	if (xIsHertz) {
+		zmin = my v_hertzToFrequency (xmin);
+		zmax = my v_hertzToFrequency (xmax);
+	}
 
 	if (ymin >= ymax) {
 		ymin = yscale_dB ? -60.0 : 0.0;
@@ -550,7 +553,7 @@ autoBarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me) {
 	try {
 		autoBarkSpectrogram thee = BarkSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1,
 			my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to BarkSpectrogram.");
@@ -560,7 +563,7 @@ autoBarkSpectrogram Matrix_to_BarkSpectrogram (Matrix me) {
 autoMelSpectrogram Matrix_to_MelSpectrogram (Matrix me) {
 	try {
 		autoMelSpectrogram thee = MelSpectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to MelSpectrogram.");

@@ -1,6 +1,6 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +85,9 @@ void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 		Melder_throw (U"dx should be greater than 0.0.");
 	if (our dy <= 0.0)
 		Melder_throw (U"dy should be greater than 0.0.");
-	our z = NUMmatrix_readText_r64 (1, our ny, 1, our nx, text, "z");
+	our z.at = NUMmatrix_readText_r64 (1, our ny, 1, our nx, text, "z");
+	our z.nrow = our ny;
+	our z.ncol = our nx;
 }
 
 double structMatrix :: v_getValueAtSample (integer isamp, integer ilevel, int unit) {
@@ -121,7 +123,7 @@ void Matrix_init
 	my ny = ny;
 	my dy = dy;
 	my y1 = y1;
-	my z = NUMmatrix <double> (1, my ny, 1, my nx);
+	my z = MATzero (my ny, my nx);
 }
 
 autoMatrix Matrix_create
@@ -295,7 +297,7 @@ void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, dou
 	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xreversed ? xmax : xmin, xreversed ? xmin : xmax, yreversed ? ymax : ymin, yreversed ? ymin : ymax);
-	Graphics_contour (g, my z,
+	Graphics_contour (g, my z.at,
 		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		height);
@@ -320,7 +322,7 @@ void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, doubl
 	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_altitude (g, my z,
+	Graphics_altitude (g, my z.at,
 		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		8, border);
@@ -345,7 +347,7 @@ void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, doub
 	if (xmin >= xmax || ymin >= ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_grey (g, my z,
+	Graphics_grey (g, my z.at,
 		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		30, border);
@@ -370,12 +372,12 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	if (interpolate)
-		Graphics_image (g, my z,
+		Graphics_image (g, my z.at,
 			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
 			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
 	else
-		Graphics_cellArray (g, my z,
+		Graphics_cellArray (g, my z.at,
 			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
 			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
@@ -408,7 +410,7 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
 	Graphics_setInner (g);
 	Graphics_setWindow (g, -1.0, 1.0, minimum, maximum);
-	Graphics_surface (g, my z,
+	Graphics_surface (g, my z.at,
 		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		minimum, maximum, elevation, azimuth);
@@ -551,10 +553,8 @@ void Matrix_eigen (Matrix me, autoMatrix *out_eigenvectors, autoMatrix *out_eige
 	try {
 		Melder_require (my nx == my ny, 
 			U"The number of rows and the number of columns must be equal.");
-		
-		MAT a (my z, my nx, my nx);
 		autoEigen eigen = Thing_new (Eigen);
-		Eigen_initFromSymmetricMatrix (eigen.get(), a);
+		Eigen_initFromSymmetricMatrix (eigen.get(), my z.get());
 		autoMatrix eigenvectors = Data_copy (me);
 		autoMatrix eigenvalues = Matrix_create (1.0, 1.0, 1, 1.0, 1.0, my ymin, my ymax, my ny, my dy, my y1);
 		for (integer i = 1; i <= my nx; i ++) {
@@ -576,7 +576,7 @@ autoMatrix Matrix_power (Matrix me, integer power) {
 		autoMatrix thee = Data_copy (me);
 		autoMatrix him = Data_copy (me);
 		for (integer ipow = 2; ipow <= power; ipow ++) {
-			double **tmp = his z; his z = thy z; thy z = tmp;
+			std::swap (his z, thy z);
 			for (integer irow = 1; irow <= my ny; irow ++) {
 				for (integer icol = 1; icol <= my nx; icol ++) {
 					thy z [irow] [icol] = 0.0;

@@ -265,7 +265,7 @@ void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax,
 		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_image (g, my z,
+	Graphics_image (g, my z.at,
 			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
 			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
@@ -458,7 +458,7 @@ void MelFilter_drawFilters (MelFilter me, Graphics g, integer from, integer to,
 autoMatrix FilterBank_to_Matrix (FilterBank me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
@@ -468,7 +468,7 @@ autoMatrix FilterBank_to_Matrix (FilterBank me) {
 autoBarkFilter Matrix_to_BarkFilter (Matrix me) {
 	try {
 		autoBarkFilter thee = BarkFilter_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to BarkFilter.");
@@ -478,7 +478,7 @@ autoBarkFilter Matrix_to_BarkFilter (Matrix me) {
 autoMelFilter Matrix_to_MelFilter (Matrix me) {
 	try {
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to MelFilter.");
@@ -500,13 +500,10 @@ autoFormantFilter FormantFilter_create (double tmin, double tmax, integer nt, do
 void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double bandwidth, int toFreqScale, int fromFilter, int toFilter,
 	double zmin, double zmax, int dbScale, double ymin, double ymax, bool garnish)
 {
-	if (! checkLimits (me, FilterBank_HERTZ, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax)) {
+	if (! checkLimits (me, FilterBank_HERTZ, toFreqScale, & fromFilter, & toFilter, & zmin, & zmax, dbScale, & ymin, & ymax))
 		return;
-	}
-
-	if (bandwidth <= 0) {
+	if (bandwidth <= 0)
 		Melder_warning (U"Bandwidth should be greater than zero.");
-	}
 
 	integer n = 1000;
 	autoNUMvector<double>a (1, n);
@@ -558,7 +555,7 @@ autoFormantFilter Matrix_to_FormantFilter (Matrix me) {
 	try {
 		autoFormantFilter thee = FormantFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		                         my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to FormantFilter.");
@@ -989,7 +986,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 
-		NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
+		NUMdmatrix_to_dBs (thy z.at, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no BarkFilter created.");
@@ -1074,7 +1071,7 @@ autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, dou
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 
-		NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
+		NUMdmatrix_to_dBs (thy z.at, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MelFilter created.");
@@ -1187,7 +1184,7 @@ autoFormantFilter Sound_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 		}
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
-		NUMdmatrix_to_dBs (his z, 1, his ny, 1, his nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
+		NUMdmatrix_to_dBs (his z.at, 1, his ny, 1, his nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"FormantFilter not created from Pitch & FormantFilter.");
