@@ -26,12 +26,12 @@ oo_DEFINE_CLASS (Matrix, SampledXY)
 				U" Going to read ", our ny, U" rows"
 				U" of ", our nx, U" columns.");
 		oo_VERSION_UNTIL (2)
-			oo_FLOAT_MATRIX (z, ny, nx)
+			oo_obsoleteMAT32 (z, ny, nx)
 		oo_VERSION_ELSE
-			oo_DOUBLE_MATRIX (z, ny, nx)
+			oo_MAT (z, ny, nx)
 		oo_VERSION_END
 	#else
-		oo_DOUBLE_MATRIX (z, ny, nx)
+		oo_MAT (z, ny, nx)
 	#endif
 
 	#if oo_DECLARING
@@ -56,7 +56,6 @@ oo_DEFINE_CLASS (Matrix, SampledXY)
 		double v_getValueAtSample (integer sampleNumber, integer level, int unit)
 			override;
 
-		MAT asMAT () { return { our z, our ny, our nx }; }
 	#endif
 
 oo_END_CLASS (Matrix)

@@ -48,7 +48,7 @@ autoActivationList ActivationList_create (integer ny, integer nx) {
 autoActivationList Matrix_to_ActivationList (Matrix me) {
 	try {
 		autoActivationList thee = ActivationList_create (my ny, my nx);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to ActivationList.");
@@ -58,7 +58,7 @@ autoActivationList Matrix_to_ActivationList (Matrix me) {
 autoMatrix ActivationList_to_Matrix (ActivationList me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

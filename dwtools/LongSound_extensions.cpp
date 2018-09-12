@@ -222,8 +222,8 @@ void LongSounds_appendToExistingSoundFile (OrderedOf<structSampled>* me, MelderF
 			Sampled data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
-				MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding
-				    (audioFileType, numberOfBitsPerSamplePoint), sound -> z, sound -> nx, true);
+				MelderFile_writeFloatToAudio (file, sound -> z.get(),
+						Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), true);
 			} else {
 				LongSound longSound = (LongSound) data;
 				writePartToOpenFile16 (longSound, audioFileType, 1, longSound -> nx, file);

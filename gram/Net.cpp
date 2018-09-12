@@ -442,7 +442,7 @@ autoMatrix Net_extractOutputBiases (Net me, integer layerNumber) {
 autoMatrix structRBMLayer :: v_extractWeights () {
 	try {
 		autoMatrix thee = Matrix_createSimple (our numberOfInputNodes, our numberOfOutputNodes);
-		NUMmatrix_copyElements <double> (our weights.at, thy z, 1, our numberOfInputNodes, 1, our numberOfOutputNodes);
+		matrixcopy_preallocated (thy z.get(), our weights.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": weights not extracted.");

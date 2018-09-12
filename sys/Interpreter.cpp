@@ -2094,15 +2094,16 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									Melder_throw (U"The matrix ", matrixName.string, U" does not exist.\n"
 										"You can assign a formula only to an existing matrix.");
 								static Matrix matrixObject;
-								if (! matrixObject) {
-									matrixObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent destruction when program ends
-								}
+								if (! matrixObject)
+									matrixObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent exit-time destruction
 								MAT mat = var -> numericMatrixValue;
 								matrixObject -> xmax = mat.ncol + 0.5;
 								matrixObject -> nx = mat.ncol;
 								matrixObject -> ymax = mat.nrow + 0.5;
 								matrixObject -> ny = mat.nrow;
-								matrixObject -> z = mat.at;
+								matrixObject -> z.at = mat.at;   // just a reference (YUCK)
+								matrixObject -> z.nrow = mat.nrow;
+								matrixObject -> z.ncol = mat.ncol;
 								Matrix_formula (matrixObject, p, me, nullptr);
 							} else Melder_throw (U"Missing '=' after matrix variable ", matrixName.string, U".");
 						} else {
