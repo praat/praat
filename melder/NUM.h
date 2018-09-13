@@ -57,7 +57,7 @@ extern double NUMcenterOfGravity (constVEC x) noexcept;
 extern double NUMcolumnSum (constMAT x, integer columnNumber);
 
 template <typename T>
-bool NUMequal (const vector<T> x, const vector<T> y) {
+bool NUMequal (constvector<T> x, constvector<T> y) {
 	integer n = x.size;
 	if (y.size != n)
 		return false;
@@ -68,11 +68,11 @@ bool NUMequal (const vector<T> x, const vector<T> y) {
 	return true;
 }
 template <typename T>
-bool NUMequal (vector<T> x, const vector<T> y) {
+bool NUMequal (vector<T> x, constvector<T> y) {
 	return NUMequal (constvector<T> (x.at, x.size), y);
 }
 template <typename T>
-bool NUMequal (const vector<T> x, vector<T> y) {
+bool NUMequal (constvector<T> x, vector<T> y) {
 	return NUMequal (x, constvector<T> (y.at, y.size));
 }
 template <typename T>
