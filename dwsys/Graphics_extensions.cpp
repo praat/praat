@@ -30,11 +30,11 @@
 	All drawing outside [ymin, ymax] is clipped.
 */
 
-void Graphics_boxAndWhiskerPlot (Graphics g, double data[], integer ndata, double x, double r, double w, double ymin, double ymax) {
+void Graphics_boxAndWhiskerPlot (Graphics g, VEC data, double x, double r, double w, double ymin, double ymax) {
 	int lineType = Graphics_inqLineType (g);
 
 	Melder_assert (r > 0.0 && w > 0.0);
-	if (ndata < 3)
+	if (data.size < 3)
 		return;
 	/*
 		Sort the data (ascending: data[1] <= ... <= data[ndata]).
@@ -49,23 +49,19 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], integer ndata, doubl
 		(lower/upper) outerfence = (lower/upper) hinge +/- 3.0 hspread
 	*/
 
-	NUMsort_d (ndata, data);
+	VECsort_inplace (data);
 
 	if (ymax <= ymin) {
 		ymin = data [1];
-		ymax = data [ndata];
+		ymax = data [data.size];
 	}
-	if (data [1] > ymax || data [ndata] < ymin)
+	if (data [1] > ymax || data [data.size] < ymin)
 		return;
 
-	double mean = 0.0;
-	for (integer i = 1; i <= ndata; i ++)
-		mean += data [i];
-	mean /= ndata;
-
-	double q25 = NUMquantile (ndata, data, 0.25);
-	double q50 = NUMquantile (ndata, data, 0.5);
-	double q75 = NUMquantile (ndata, data, 0.75);
+	double mean = NUMmean (data);
+	double q25 = NUMquantile (data, 0.25);
+	double q50 = NUMquantile (data, 0.5);
+	double q75 = NUMquantile (data, 0.75);
 
 	double hspread = fabs (q75 - q25);
 	double lowerOuterFence = q25 - 3.0 * hspread;
@@ -78,11 +74,11 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], integer ndata, doubl
 		First process data from below (data are sorted).
 	*/
 
-	integer i = 1, ie = ndata;
+	integer i = 1, ie = data.size;
 	while (i <= ie && data [i] < ymin)
 		i ++;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	while (i <= ie && data[i] < lowerOuterFence) {
+	while (i <= ie && data [i] < lowerOuterFence) {
 		Graphics_text (g, x, data [i], U"o");
 		i ++;
 	}
@@ -96,7 +92,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], integer ndata, doubl
 
 	// Next process data from above.
 
-	i = ndata; ie = i;
+	i = data.size; ie = i;
 	while (i >= ie && data [i] > ymax)
 		i --;
 	while (i >= ie && data[i] > upperOuterFence) {

@@ -4080,7 +4080,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 		}
 		Graphics_setWindow (g, 1.0 - 0.5, numberOfLevels + 0.5, ymin, ymax);
 		Graphics_setInner (g);
-		autoNUMvector<double> data (1, numberOfData);
+		autoVEC data = VECraw (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			integer numberOfDataInLevel = 0;
 			for (integer k = 1; k <= numberOfData; k ++) {
@@ -4088,7 +4088,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 					data [ ++ numberOfDataInLevel] = Table_getNumericValue_Assert (me, k, dataColumn);
 				}
 			}
-			Graphics_boxAndWhiskerPlot (g, data.peek(), numberOfDataInLevel, ilevel, 0.2, 0.35, ymin, ymax);
+			Graphics_boxAndWhiskerPlot (g, data.get(), ilevel, 0.2, 0.35, ymin, ymax);
 		}
 		Graphics_unsetInner (g);
 		if (garnish) {
@@ -4135,7 +4135,7 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 		double boxWidth = 4.0, spaceBetweenBoxesInGroup = 1.0, barWidth = boxWidth / 3.0;
 		double spaceBetweenGroupsdiv2 = 3.0 / 2.0;
 		double widthUnit = 1.0 / (numberOfSelectedColumns * boxWidth + (numberOfSelectedColumns - 1) * spaceBetweenBoxesInGroup + spaceBetweenGroupsdiv2 + spaceBetweenGroupsdiv2);
-		autoNUMvector<double> data (1, numberOfData);
+		autoVEC data = VECraw (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			double xlevel = ilevel;
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
@@ -4151,7 +4151,7 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 				if (numberOfDataInLevelColumn > 0) {
 					// determine position
 					double xc = xlevel - 0.5 + (spaceBetweenGroupsdiv2 + (icol - 1) * (boxWidth + spaceBetweenBoxesInGroup) + boxWidth / 2) * widthUnit;
-					Graphics_boxAndWhiskerPlot (g, data.peek(), numberOfDataInLevelColumn, xc, 0.5 * barWidth * widthUnit , 0.5 * boxWidth * widthUnit, ymin, ymax);
+					Graphics_boxAndWhiskerPlot (g, data.get(), xc, 0.5 * barWidth * widthUnit , 0.5 * boxWidth * widthUnit, ymin, ymax);
 				}
 			}
 		}
