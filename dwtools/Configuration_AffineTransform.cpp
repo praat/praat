@@ -182,7 +182,7 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 		autoProcrustes p = Configurations_to_Procrustes (me, thee, false);
 		NUMmaximizeCongruence_inplace (p -> r.get(), {my data, my numberOfRows, p -> dimension}, {thy data, my numberOfRows, p -> dimension},  maximumNumberOfIterations, tolerance);
 		autoAffineTransform at = AffineTransform_create (p -> dimension);
-		MATcopy_preallocated (at -> r.get(), p -> r.get());
+		matrixcopy_preallocated (at -> r.get(), p -> r.get());
 		return at;
 	} catch (MelderError) {
 		Melder_throw (me, U": no congruence transformation created.");
