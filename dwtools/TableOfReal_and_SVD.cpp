@@ -37,7 +37,7 @@ autoTableOfReal SVD_to_TableOfReal (SVD me, integer from, integer to) {
 
 autoSVD TableOfReal_to_SVD (TableOfReal me) {
 	try {
-		autoSVD thee = SVD_create_d (my data, my numberOfRows, my numberOfColumns);
+		autoSVD thee = SVD_createFromGeneralMatrix ({my data, my numberOfRows, my numberOfColumns});
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no SVD created.");

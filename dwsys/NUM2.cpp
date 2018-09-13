@@ -572,7 +572,7 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 	autoMAT mc = MATcopy (MAT (m, nrows, ncols));
 
 	/*MATcentreEachColumn_inplace (mc.get());*/
-	autoSVD svd = SVD_create_d (mc.at, nrows, ncols);
+	autoSVD svd = SVD_createFromGeneralMatrix (mc.get());
 	for (integer i = 1; i <= nrows; i ++) {
 		for (integer j = 1; j <= numberOfComponents; j ++) {
 			longdouble sum = 0.0;
@@ -585,7 +585,7 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 }
 
 void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double tolerance) {
-	autoSVD me = SVD_create_d (y, nr, nc);
+	autoSVD me = SVD_createFromGeneralMatrix ({y, nr, nc});
 
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
 	for (integer i = 1; i <= nc; i ++) {
@@ -605,50 +605,60 @@ integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, dou
 	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
 }
 
-void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tolerance, double *result) {
+autoVEC NUMsolveEquation (constMAT a, constVEC b, double tolerance) {
+	Melder_assert (a.nrow == b.size);
+	autoSVD me = SVD_createFromGeneralMatrix (a);
+	SVD_zeroSmallSingularValues (me.get(), tolerance);
+	autoVEC x = SVD_solve (me.get(), b);
+	return x;
+}
+
+/*void NUMsolveEquation (double **a, integer nr, integer nc, double *b, double tolerance, double *result) {
+
 	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
 
 	Melder_require (nr > 0 && nc > 0, U"The number of rows and the number of columns should at least be 1.");
 
-	autoSVD me = SVD_create_d (a, nr, nc);
+	autoSVD me = SVD_createFromGeneralMatrix ({a, nr, nc});
 	SVD_zeroSmallSingularValues (me.get(), tol);
 	SVD_solve (me.get(), b, result);
-}
+}*/
 
-void NUMsolveEquations (double **a, integer nr, integer nc, double **b, integer ncb, double tolerance, double **x) {
-	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * nr;
-
-	Melder_require (nr > 0 && nc > 0, U"The number of rows and columns should at least be 1.");
+autoMAT NUMsolveEquations (constMAT a, constMAT b, double tolerance) {
+	Melder_assert (a.nrow == b.nrow);
+	double tol = tolerance > 0 ? tolerance : NUMfpp -> eps * a.nrow;
 	
-	autoSVD me = SVD_create_d (a, nr, nc);
-	autoNUMvector<double> bt (1, nr + nc);
-	double *xt = & bt [nr];
+	autoSVD me = SVD_createFromGeneralMatrix (a);
+	autoMAT x = MATraw (b.nrow, b.ncol);
+	autoVEC bt = VECraw (b.nrow);
 
 	SVD_zeroSmallSingularValues (me.get(), tol);
 
-	for (integer k = 1; k <= ncb; k ++) {
-		for (integer j = 1; j <= nr; j ++) {
+	for (integer k = 1; k <= b.ncol; k ++) {
+		for (integer j = 1; j <= b.nrow; j ++) { // copy b[.][k]
 			bt [j] = b [j] [k];
 		}
 
-		SVD_solve (me.get(), bt.peek(), xt);
+		autoVEC xt = SVD_solve (me.get(), bt.get());
 
-		for (integer j = 1; j <= nc; j ++) {
+		for (integer j = 1; j <= b.nrow; j ++) {
 			x [j] [k] = xt [j];
 		}
 	}
+	return x;
 }
 
 
-void NUMsolveNonNegativeLeastSquaresRegression (double **m, integer nr, integer nc, double *d, double tol, integer itermax, double *b) {
-	double difsq, difsqp = 0.0;
-
+autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, double tol, integer itermax) {
+	Melder_assert (m.nrow == d.size);
+	long nr = m.nrow, nc = m.ncol;
+	autoVEC b = VECzero (nc);
 	for (integer iter = 1; iter <= itermax; iter ++) {
 
 		// Fix all weights except b [j]
 
 		for (integer j = 1; j <= nc; j ++) {
-			double mjr = 0.0, mjmj = 0.0;
+			longdouble mjr = 0.0, mjmj = 0.0;
 			for (integer i = 1; i <= nr; i ++) {
 				double ri = d [i], mij = m [i] [j];
 				for (integer l = 1; l <= nc; l ++) {
@@ -667,7 +677,7 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **m, integer nr, integer 
 
 		// Calculate t(b) and compare with previous result.
 
-		difsq = 0.0;
+		longdouble difsq = 0.0, difsqp = 0.0;
 		for (integer i = 1; i <= nr; i ++) {
 			double dmb = d [i];
 			for (integer j = 1; j <= nc; j ++) {
@@ -680,6 +690,7 @@ void NUMsolveNonNegativeLeastSquaresRegression (double **m, integer nr, integer 
 		}
 		difsqp = difsq;
 	}
+	return b;
 }
 
 struct nr_struct {
@@ -703,7 +714,8 @@ static void nr_func (double x, double *f, double *df, void *data) {
 	}
 }
 
-void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], integer n, double *alpha, double *gamma) {
+void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *out_alpha, double *out_gamma) {
+	Melder_assert (o.ncol == o.nrow && d.size == o.ncol && d.size == 3);
 	integer n3 = 3, info;
 	double eps = 1e-5, t1, t2, t3;
 
@@ -715,7 +727,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 
 	for (integer i = 1; i <= n3; i ++) {
 		for (integer j = 1; j <= n3; j ++) {
-			for (integer k = 1; k <= n; k ++) {
+			for (integer k = 1; k <= n3; k ++) {
 				ftinv [i] [j] += o [k] [i] * o [k] [j];
 			}
 		}
@@ -759,7 +771,6 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)	(page 632)
 	// Get P'F^-1 from the transpose of (F')^-1 . P
 	
-	autoVEC y (n3, kTensorInitializationType::ZERO);
 	autoVEC otd (n3, kTensorInitializationType::ZERO);
 	autoMAT ftinvp (n3, n3, kTensorInitializationType::ZERO);
 	for (integer i = 1; i <= 3; i ++) {
@@ -770,7 +781,7 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 				}
 			}
 		}
-		for (integer k = 1; k <= n; k ++) {
+		for (integer k = 1; k <= n3; k ++) {
 			otd [i] += o [k] [i] * d [k];
 		}
 	}
@@ -783,11 +794,11 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		}
 	}
 
-	NUMsolveEquation (ftinvp.at, 3, 3, otd.at, 1e-6, y.at);
+	autoVEC y = NUMsolveEquation (ftinvp.get(), otd.get(), 1e-6);
 
 	// The solution (3 cases)
 	autoVEC w (n3, kTensorInitializationType::ZERO);
-	autoVEC chi (n3, kTensorInitializationType::ZERO);
+	autoVEC chi;
 	autoVEC diag (n3, kTensorInitializationType::ZERO);
 
 	if (fabs (y [1]) < eps) {
@@ -800,12 +811,11 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		w [2] = t2 * delta [2];
 		w [3] = t3 * delta [3];
 
-		NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
+		chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
 
 		w [1] = -w [1];
-		if (fabs (chi [3] / chi [1]) < eps) {
-			NUMsolveEquation (ptfinvc.at, 3, 3, w.at, 1e-6, chi.at);
-		}
+		if (fabs (chi [3] / chi [1]) < eps) chi = NUMsolveEquation (ptfinvc.get(), w.get(), 1e-6);
+		
 	} else if (fabs (y [2]) < eps) {
 		// Case 2: page 633
 
@@ -815,17 +825,16 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		if ( (delta [2] < delta [3] && (t2 = (t1 * t1 * delta [1] + t3 * t3 * delta [3])) < eps)) {
 			w [2] = sqrt (- delta [2] * t2); /* +- */
 			w [3] = t3 * delta [3];
-			NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
+			chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
 			w [2] = -w [2];
-			if (fabs (chi [3] / chi [1]) < eps) {
-				NUMsolveEquation (ptfinvc.at, 3, 3, w.at, 1e-6, chi.at);
-			}
+			if (fabs (chi [3] / chi [1]) < eps) chi = NUMsolveEquation (ptfinvc.get(), w.get(), 1e-6);
+
 		} else if (((delta [2] < delta [3] + eps) || (delta [2] > delta [3] - eps)) && fabs (y [3]) < eps) {
 			// choose one value for w [2] from an infinite number
 
 			w [2] = w [1];
 			w [3] = sqrt (- t1 * t1 * delta [1] * delta [2] - w [2] * w [2]);
-			NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
+			chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
 		}
 	} else {
 		// Case 3: page 634 use Newton-Raphson root finder
@@ -840,10 +849,11 @@ void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d [], in
 		for (integer i = 1; i <= 3; i++) {
 			w [i] = y [i] / (1.0 - xlambda / delta [i]);
 		}
-		NUMsolveEquation (ptfinv.at, 3, 3, w.at, 1e-6, chi.at);
+		chi = NUMsolveEquation (ptfinv.get(), w.get(), 1e-6);
 	}
 
-	*alpha = chi [1]; *gamma = chi [3];
+	if (out_alpha) *out_alpha = chi [1];
+	if (out_gamma) *out_gamma = chi [3];
 }
 
 /*
@@ -868,19 +878,17 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 	}
 }
 
-void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m, double phi [], double alpha, double delta, double t []) {
-	autoMAT u = MATzero (m, m);
-	autoVEC c = VECzero (m);
-	autoVEC x = VECzero (n);
-
-	for (integer j = 1; j <= m; j ++) {
-		t [j] = 0.0;
-	}
-
-	autoSVD svd = SVD_create_d (f, n, m);
+autoVEC NUMsolveWeaklyConstrainedLinearRegression (constMAT f, constVEC phi, double alpha, double delta) {
+	// n = f.nrow m=f.ncol
+	autoMAT u = MATzero (f.ncol, f.ncol);
+	autoVEC c = VECzero (f.ncol);
+	autoVEC x = VECzero (f.nrow);
+	autoVEC t;
+	
+	autoSVD svd = SVD_createFromGeneralMatrix (f);
 
 	if (alpha == 0.0) {
-		SVD_solve (svd.get(), phi, t);	// standard least squares
+		t = SVD_solve (svd.get(), phi);	// standard least squares
 	}
 
 
@@ -889,25 +897,25 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 
 	autoINTVEC indx = NUMindexx (svd -> d.get());
 
-	for (integer j = m; j > 0; j --) {
+	for (integer j = f.ncol; j > 0; j --) {
 		double tmp = svd -> d [indx [j]];
-		c [m - j + 1] = tmp * tmp;
-		for (integer k = 1; k <= m; k ++) {
-			u [m - j + 1] [k] = svd -> v [indx [j]] [k];
+		c [f.ncol - j + 1] = tmp * tmp;
+		for (integer k = 1; k <= f.ncol; k ++) {
+			u [f.ncol - j + 1] [k] = svd -> v [indx [j]] [k];
 		}
 	}
 
 	integer q = 1;
 	double tol = 1e-6;
-	while (q < m && (c [m - q] - c [m]) < tol) {
+	while (q < f.ncol && (c [f.ncol - q] - c [f.ncol]) < tol) {
 		q ++;
 	}
 
 	// step 2: x = U'F'phi
 
-	for (integer i = 1; i <= m; i ++) {
-		for (integer j = 1; j <= m; j ++) {
-			for (integer k = 1; k <= n; k ++) {
+	for (integer i = 1; i <= f.ncol; i ++) {
+		for (integer j = 1; j <= f.ncol; j ++) {
+			for (integer k = 1; k <= f.nrow; k ++) {
 				x [i] += u [j] [i] * f [k] [j] * phi [k];
 			}
 		}
@@ -916,34 +924,34 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 	// step 3:
 
 	struct nr2_struct me;
-	me.m = m;
+	me.m = f.ncol;
 	me.delta = delta;
 	me.alpha = alpha;
 	me.x = x.at;
 	me.c = c.at;
 
 	double xqsq = 0.0;
-	for (integer j = m - q + 1; j <= m; j ++) {
+	for (integer j = f.ncol - q + 1; j <= f.ncol; j ++) {
 		xqsq += x [j] * x [j];
 	}
 
-	integer r = m;
+	integer r = f.ncol;
 	if (xqsq < tol) { /* xqsq == 0 */
 		double fm, df;
-		r = m - q;
+		r = f.ncol - q;
 		me.m = r;
-		nr2_func (c [m], &fm, &df, & me);
+		nr2_func (c [f.ncol], &fm, &df, & me);
 		if (fm >= 0.0) { /* step 3.b1 */
 			x [r + 1] = sqrt (fm);
 			for (integer j = 1; j <= r; j ++) {
-				x [j] /= c [j] - c [m];
+				x [j] /= c [j] - c [f.ncol];
 			}
 			for (integer j = 1; j <= r + 1; j ++) {
 				for (integer k = 1; k <= r + 1; k ++) {
 					t [j] += u [j] [k] * x [k];
 				}
 			}
-			return;
+			return t;
 		}
 		// else continue with r = m - q
 	}
@@ -955,24 +963,25 @@ void NUMsolveWeaklyConstrainedLinearRegression (double **f, integer n, integer m
 		xCx += x [j] * x [j] / c [j];
 	}
 	double b0, bmin = delta > 0.0 ? - xCx / delta : -2.0 * sqrt (alpha * xCx);
-	double eps = (c [m] - bmin) * tol;
+	double eps = (c [f.ncol] - bmin) * tol;
 
 	// find the root of d(psi(b)/db in interval (bmin, c [m])
 
-	NUMnrbis (nr2_func, bmin + eps, c [m] - eps, & me, & b0);
+	NUMnrbis (nr2_func, bmin + eps, c [f.ncol] - eps, & me, & b0);
 
 	for (integer j = 1; j <= r; j ++) {
 		for (integer k = 1; k <= r; k ++) {
 			t [j] += u [j] [k] * x [k] / (c [k] - b0);
 		}
 	}
+	return t;
 }
 
-void NUMprocrustes (double **x, double **y, integer nPoints, integer nDimensions, double **t, double v [], double *s) {
-	bool orthogonal = ! v || ! s; // else similarity transform
 
-	autoMAT c = MATzero (nDimensions, nDimensions);
-	autoMAT yc = MATcopy (constMAT (y, nPoints, nDimensions));
+void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_translation, double *out_scale) {
+	Melder_assert (x.nrow == y.nrow && x.ncol == y.ncol);
+	Melder_assert (x.nrow >= x.ncol);
+	bool orthogonal = ! out_translation || ! out_scale; // else similarity transform
 
 	/*
 		Reference: Borg & Groenen (1997), Modern multidimensional scaling,
@@ -981,75 +990,59 @@ void NUMprocrustes (double **x, double **y, integer nPoints, integer nDimensions
 			else X'Y for othogonal (page 341)
 			JY amounts to centering the columns of Y.
 	*/
-
+	
+	autoMAT yc = MATcopy (y);
 	if (! orthogonal)
 		MATcentreEachColumn_inplace (yc.get());
-	for (integer i = 1; i <= nDimensions; i ++)
-		for (integer j = 1; j <= nDimensions; j ++)
-			for (integer k = 1; k <= nPoints; k ++)
-				c [i] [j] += x [k] [i] * yc [k] [j];
+	autoMAT c = MATmul_tn (x, yc.get()); // X'(JY)
 
-	// 2. Decompose C by SVD: C = PDQ' (SVD attribute is Q instead of Q'!)
+	// 2. Decompose C by SVD: C = UDV' (our SVD has eigenvectors stored row-wise V!)
 
-	autoSVD svd = SVD_create_d (c.at, nDimensions, nDimensions);
-	double trace = 0.0;
-	for (integer i = 1; i <= nDimensions; i ++) {
-		trace += svd -> d [i];
-	}
+	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
+	double trace = NUMsum (svd -> d.get());
 	Melder_require (trace > 0.0, U"NUMprocrustes: degenerate configuration(s).");
 
-	// 3. T = QP'
+	// 3. T = VU'
 
-	for (integer i = 1; i <= nDimensions; i ++) {
-		for (integer j = 1; j <= nDimensions; j ++) {
-			t [i] [j] = 0.0;
-			for (integer k = 1; k <= nDimensions; k ++)
-				t [i] [j] += svd -> v [i] [k] * svd -> u [j] [k];
-		}
-	}
-
+	autoMAT rotation = MATmul_nt (svd->v.get(), svd->u.get());
+	
 	if (! orthogonal) {
-		autoMAT xc = MATcopy (constMAT (x, nPoints, nDimensions));
-		autoMAT yt = MATzero (nPoints, nDimensions);
 
 		// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
 		// First we need YT.
+		
+		autoMAT yt = MATmul_nn (y, rotation.get());
+		
+		// X'J = (JX)' centering the columns of X
 
-		for (integer i = 1; i <= nPoints; i ++)
-			for (integer j = 1; j <= nDimensions; j ++)
-				for (integer k = 1; k <= nDimensions; k ++)
-					yt [i] [j] += y [i] [k] * t [k] [j];
-
-		// X'J amount to centering the columns of X
-
+		autoMAT xc = MATcopy (x);
 		MATcentreEachColumn_inplace (xc.get());
 
 		// tr X'J YT == tr xc' yt
 
-		double traceXtJYT = 0.0;
-		for (integer i = 1; i <= nDimensions; i ++)
-			for (integer j = 1; j <= nPoints; j ++)
-				traceXtJYT += xc [j] [i] * yt [j] [i];
-		double traceYtJY = 0.0;
-		for (integer i = 1; i <= nDimensions; i ++)
-			for (integer j = 1; j <= nPoints; j ++)
-				traceYtJY += y [j] [i] * yc [j] [i];
+		double traceXtJYT = NUMtrace2_tn (xc.get(), yt.get()); // trace (Xc'.(YT))
+		double traceYtJY = NUMtrace2_tn (y, yc.get()); // trace (Y'.Yc)
+		longdouble scale = traceXtJYT / traceYtJY;
 
-		*s = traceXtJYT / traceYtJY;
-
-		// 5. Translation vector tr = (X - sYT)'1 / nPoints
-
-		for (integer i = 1; i <= nDimensions; i ++) {
-			for (integer j = 1; j <= nPoints; j ++)
-				v [i] += x [j] [i] - *s * yt [j] [i];
-			v [i] /= nPoints;
+		// 5. Translation vector tr = (X - sYT)'1 / x.nrow
+		if (out_translation) {
+			autoVEC translation = VECzero (x.ncol);
+			for (integer i = 1; i <= x.ncol; i ++) {
+				longdouble productsum = 0.0;
+				for (integer j = 1; j <= x.nrow; j ++)
+					productsum += x [j] [i] - scale * yt [j] [i];
+				translation [i] = productsum / x.nrow;
+			}
+			*out_translation = translation.move();
 		}
+		if (out_scale) *out_scale = (double) scale;
 	}
+	if (out_rotation) *out_rotation = rotation.move();
 }
 
 
-double NUMmspline (double knot [], integer nKnots, integer order, integer i, double x) {
-	integer jj, nSplines = nKnots - order;
+double NUMmspline (constVEC knot, integer order, integer i, double x) {
+	integer jj, nSplines = knot.size - order;
 	
 	double y = 0.0;
 	Melder_require (nSplines > 0, U"No splines.");
@@ -1059,15 +1052,15 @@ double NUMmspline (double knot [], integer nKnots, integer order, integer i, dou
 		M-splines of order k have degree k-1.
 		M-splines are zero outside interval [ knot [i], knot [i+order] ).
 		First and last 'order' knots are equal, i.e.,
-		knot [1] = ... = knot [order] && knot [nKnots-order+1] = ... knot [nKnots].
+		knot [1] = ... = knot [order] && knot [knot.size-order+1] = ... knot [knot.size].
 	*/
 	
-	for (jj = order; jj <= nKnots - order + 1; jj ++) {
+	for (jj = order; jj <= knot.size - order + 1; jj ++) {
 		if (x < knot [jj]) {
 			break;
 		}
 	}
-	if (jj < i || (jj > i + order) || jj == order || jj > (nKnots - order + 1)) {
+	if (jj < i || (jj > i + order) || jj == order || jj > (knot.size - order + 1)) {
 		return y;
 	}
 
@@ -1095,12 +1088,12 @@ double NUMmspline (double knot [], integer nKnots, integer order, integer i, dou
 	return y;
 }
 
-double NUMispline (double aknot [], integer nKnots, integer order, integer i, double x) {
+double NUMispline (constVEC aknot, integer order, integer i, double x) {
 	integer j, orderp1 = order + 1;
 
 	double y = 0.0;
 
-	for (j = orderp1; j <= nKnots - order; j ++) {
+	for (j = orderp1; j <= aknot.size - order; j ++) {
 		if (x < aknot [j]) {
 			break;
 		}
@@ -1108,7 +1101,7 @@ double NUMispline (double aknot [], integer nKnots, integer order, integer i, do
 	if (-- j < i) {
 		return y;
 	}
-	if (j > i + order || (j == nKnots - order && x == aknot [j])) {
+	if (j > i + order || (j == aknot.size - order && x == aknot [j])) {
 		return 1.0;
 	}
 	/*
@@ -1118,7 +1111,7 @@ double NUMispline (double aknot [], integer nKnots, integer order, integer i, do
 		2. the summation index m starts at 'i+1' instead of 'i'
 	*/
 	for (integer m = i + 1; m <= j; m ++) {
-		double r = NUMmspline (aknot, nKnots, orderp1, m, x);
+		double r = NUMmspline (aknot, orderp1, m, x);
 		y += (aknot [m + orderp1] - aknot [m]) * r;
 	}
 	y /= orderp1;
@@ -1997,7 +1990,6 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 	return ni;
 }
 
-#define SWAP(x,y) { tmp = x; x = y; y = tmp; }
 bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2) {
 	int ncrossings = 0;
 	bool xswap, yswap;
@@ -2039,7 +2031,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 			*xo2 = xr2;
 		}
 		if (xswap) {
-			SWAP (*xo1, *xo2)
+			std::swap (*xo1, *xo2);
 		}
 		return true;
 	}
@@ -2051,7 +2043,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 			*yo2 = yr2;
 		}
 		if (yswap) {
-			SWAP (*yo1, *yo2)
+			std::swap (*yo1, *yo2);
 		}
 		return true;
 	}
@@ -2123,8 +2115,8 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	}
 
 	if ((xc [1] > xc [2] && ! xswap) || (xc [1] < xc [2] && xswap)) {
-		SWAP (xc [1], xc [2])
-		SWAP (yc [1], yc [2])
+		std::swap (xc [1], xc [2]);
+		std::swap (yc [1], yc [2]);
 	}
 	*xo1 = xc [1]; *yo1 = yc [1]; *xo2 = xc [2]; *yo2 = yc [2];
 	return true;
@@ -2851,26 +2843,29 @@ void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, i
 	}
 }
 
-void NUMbiharmonic2DSplineInterpolation_getWeights (double *x, double *y, double *z, integer n, double *w) {
-	autoMAT g (n, n, kTensorInitializationType :: RAW);
+autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, constVEC z) {
+	Melder_assert (x.size == y.size && x.size == z.size);
+	autoMAT g (x.size, x.size, kTensorInitializationType :: RAW);
 	/*
 		1. Calculate the Green matrix G = |point [i]-point [j]|^2 (ln (|point [i]-point [j]|) - 1.0)
 		2. Solve z = G.w for w
 	*/
-	for (integer i = 1; i <= n; i ++) {
-		for (integer j = i + 1; j <= n; j ++) {
+	for (integer i = 1; i <= x.size; i ++) {
+		for (integer j = i + 1; j <= x.size; j ++) {
 			double dx = x [i] - x [j], dy = y [i] - y [j];
 			double distanceSquared = dx * dx + dy * dy;
 			g [i] [j] = g [j] [i] = distanceSquared * (0.5 * log (distanceSquared) - 1.0); // Green's function
 		}
 		g [i] [i] = 0.0;
 	}
-	NUMsolveEquation (g.at, n, n, z, 0.0, w);
+	autoVEC w = NUMsolveEquation (g.get(), z, 0.0);
+	return w;
 }
 
-double NUMbiharmonic2DSplineInterpolation (double *x, double *y, integer n, double *w, double xp, double yp) {
+double NUMbiharmonic2DSplineInterpolation (constVEC x, constVEC y, constVEC w, double xp, double yp) {
+	Melder_assert (x.size == y.size && x.size == w.size);
 	longdouble result = 0.0;
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= x.size; i ++) {
 		double dx = xp - x [i], dy = yp - y [i];
 		double d = dx * dx + dy * dy;
 		result += w [i] * d * (0.5 * log (d) - 1.0);
@@ -2969,19 +2964,117 @@ double NUMfrobeniusnorm (constMAT x) {
 	for (integer i = 1; i <= x.nrow; i ++) {
 		for (integer j = 1; j <= x.ncol; j ++) {
 			if (x [i] [j] != 0.0) {
-				double absxi = fabs (x [i] [j]);
+				longdouble absxi = fabs (x [i] [j]);
 				if (scale < absxi) {
-					double t = scale / absxi;
+					longdouble t = scale / absxi;
 					ssq = 1 + ssq * t * t;
 					scale = absxi;
 				} else {
-					double t = absxi / scale;
+					longdouble t = absxi / scale;
 					ssq += t * t;
 				}
 			}
 		}
 	}
 	return scale * sqrt ((double) ssq);
+}
+
+void MATmul_nn_preallocated (MAT z, constMAT x, constMAT y) { // Z = X.Y
+	Melder_assert (z.nrow == x.nrow && z.ncol == y.ncol);
+	Melder_assert (x.ncol == y.nrow);
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer icol = 1; icol <= y.ncol; icol ++) {
+			longdouble sum = 0.0;
+			for (integer k = 1; k <= x.ncol; k ++)
+				sum += x [irow] [k] * y [k] [icol];
+			z [irow] [icol] = (double) sum;
+		}
+}
+
+autoMAT MATmul_nn (constMAT x, constMAT y) {  // Z = X.Y
+	autoMAT z = MATraw (x.nrow, y.ncol);
+	MATmul_nn_preallocated (z.get(), x, y);
+	return z;
+}
+
+void MATmul_nt_preallocated (MAT z, constMAT x, constMAT y) { // Z = Z.Y'
+	Melder_assert (z.nrow == x.nrow && z.ncol == y.nrow);
+	Melder_assert (x.ncol == y.ncol);
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer icol = 1; icol <= y.nrow; icol ++) {
+			longdouble sum = 0.0;
+			for (integer k = 1; k <= y.nrow; k ++)
+				sum += x [irow] [k] * y [icol] [k];
+			z [irow] [icol] = sum;
+		}
+}
+
+autoMAT MATmul_nt (constMAT x, constMAT y) { // Z = Z.Y'
+	autoMAT z = MATraw (x.nrow, y.nrow);
+	MATmul_nt_preallocated (z.get(), x, y);
+	return z;
+}
+
+autoMAT MATmul_tt (constMAT x, constMAT y) { // Z = X'.Y' = (Y.X)'
+	autoMAT z = MATmul_nn (y, x);
+	return MATtranspose (z.get());
+}
+
+void MATmul_tn_preallocated (MAT z, constMAT x, constMAT y) { // Z = X'.Y
+	Melder_assert (z.nrow == x.ncol && z.ncol == y.ncol);
+	Melder_assert (x.nrow == y.nrow);
+	for (integer irow = 1; irow <= x.ncol; irow ++)
+		for (integer icol = 1; icol <= y.ncol; icol ++) {
+			longdouble sum = 0.0;
+			for (integer k = 1; k <= y.nrow; k ++)
+				sum += x [k] [irow] * y [k] [icol];
+			z [irow] [icol] = sum;
+		}
+}
+
+autoMAT MATmul_tn (constMAT x, constMAT y) { // Z = X'.Y
+	autoMAT z = MATraw (x.ncol, y.ncol);
+	MATmul_tn_preallocated (z.get(), x, y);
+	return z;
+}
+
+double NUMtrace (constMAT a) {
+	Melder_assert (a.nrow == a.ncol);
+	longdouble trace = 0.0;
+	for (integer i = 1; i <= a.nrow; i ++) {
+		trace += a [i] [i];
+	}
+	return (double) trace;
+}
+
+double NUMtrace2_nn (constMAT x, constMAT y) {
+	Melder_assert (x.ncol == y.nrow && x.nrow == y.ncol);
+	longdouble trace = 0.0;
+	for (integer irow = 1; irow <= x.nrow; irow ++) {
+		for (integer k = 1; k <= x.ncol; k ++) {
+			trace += x [irow] [k] * y [k] [irow];
+		}
+	}
+	return (double) trace;
+}
+
+double NUMtrace2_tn (constMAT x, constMAT y) {
+	Melder_assert (x.ncol == y.ncol && x.nrow == y.nrow);
+	longdouble trace = 0.0;
+	for (integer irow = 1; irow <= x.ncol; irow ++) {
+		for (integer k = 1; k <= x.nrow; k ++) {
+			trace += x [k] [irow] * y [k] [irow];
+		}
+	}
+	return (double) trace;
+}
+
+double NUMtrace2_nt (constMAT x, constMAT y) {
+	return NUMtrace2_tn (y, x);
+}
+
+double NUMtrace2_tt (constMAT x, constMAT y) {
+	return NUMtrace2_nn (y, x);
 }
 
 /* End of file NUM2.cpp */

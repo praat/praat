@@ -90,22 +90,21 @@ autoHMMViterbi HMMViterbi_create (integer nstates, integer ntimes);
 autoHMMViterbi HMM_to_HMMViterbi (HMM me, integer *obs, integer ntimes);
 
 // evaluate the numbers given to probabilities
-static double *NUMwstring_to_probs (conststring32 s, integer nwanted) {
-	integer numbers_found;
-	autoNUMvector<double> numbers (NUMstring_to_numbers (s, & numbers_found), 1);
-	if (numbers_found != nwanted)
-		Melder_throw (U"You supplied ", numbers_found, U", while ", nwanted, U" numbers needed.");
+static autoVEC NUMwstring_to_probs (conststring32 s, integer nwanted) {
+	autoVEC numbers = VEC_createFromString (s);
+	if (numbers.size != nwanted)
+		Melder_throw (U"You supplied ", numbers.size, U", while ", nwanted, U" numbers needed.");
 	longdouble sum = 0.0;
-	for (integer i = 1; i <= numbers_found; i ++) {
+	for (integer i = 1; i <= numbers.size; i ++) {
 		if (numbers [i] < 0.0)
 			Melder_throw (U"Numbers have to be positive.");
 		sum += numbers [i];
 	}
 	if (sum <= 0.0)
 		Melder_throw (U"All probabilities cannot be zero.");
-	for (integer i = 1; i <= numbers_found; i ++)
+	for (integer i = 1; i <= numbers.size; i ++)
 		numbers [i] /= sum;
-	return numbers.transfer();
+	return numbers;
 }
 
 int NUMget_line_intersection_with_circle (double xc, double yc, double r, double a, double b, double *x1, double *y1, double *x2, double *y2) {
@@ -547,7 +546,7 @@ void HMM_setDefaultMixingProbabilities (HMM me) {
 
 void HMM_setStartProbabilities (HMM me, conststring32 probs) {
 	try {
-		autoNUMvector<double> p (NUMwstring_to_probs (probs, my numberOfStates), 1);
+		autoVEC p = NUMwstring_to_probs (probs, my numberOfStates);
 		for (integer i = 1; i <= my numberOfStates; i ++)
 			my transitionProbs [0] [i] = p [i];
 	} catch (MelderError) {
@@ -559,7 +558,7 @@ void HMM_setTransitionProbabilities (HMM me, integer state_number, conststring32
 	try {
 		Melder_require (state_number <= my states->size,
 			U"State number should not exceed ", my states->size, U".");
-		autoNUMvector<double> p (NUMwstring_to_probs (state_probs, my numberOfStates), 1);
+		autoVEC p = NUMwstring_to_probs (state_probs, my numberOfStates);
 		for (integer i = 1; i <= my numberOfStates + 1; i ++)
 			my transitionProbs [state_number] [i] = p [i];
 	} catch (MelderError) {
@@ -573,7 +572,7 @@ void HMM_setEmissionProbabilities (HMM me, integer state_number, conststring32 e
 			U"State number should not exceed ", my states->size, U".");
 		Melder_require (! my notHidden,
 			U"The emission probabilities of this model are fixed.");
-		autoNUMvector<double> p (NUMwstring_to_probs (emission_probs, my numberOfObservationSymbols), 1);
+		autoVEC p = NUMwstring_to_probs (emission_probs, my numberOfObservationSymbols);
 		for (integer i = 1; i <= my numberOfObservationSymbols; i ++) {
 			my emissionProbs [state_number] [i] = p [i];
 		}

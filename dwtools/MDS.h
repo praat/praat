@@ -141,10 +141,9 @@ autoDistance Transformator_transform (Transformator me, MDSVec vec, Distance dis
 
 Thing_define (ISplineTransformator, Transformator) {
 	integer numberOfInteriorKnots, order, numberOfParameters;
-	double **m, *b, *knot;
+	autoMAT m;
+	autoVEC b, knot;
 
-	void v_destroy () noexcept
-		override;
 	autoDistance v_transform (MDSVec vec, Distance dist, Weight w)
 		override;
 };

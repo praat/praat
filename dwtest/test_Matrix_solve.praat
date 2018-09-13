@@ -1,5 +1,5 @@
 # test_Matrix_solve.praat
-# djmw 20031020, 20171211
+# djmw 20031020, 20171211,20180910
 
 appendInfoLine: "test_Matrix_solve.praat"
 
@@ -17,7 +17,7 @@ procedure matrix_solve: .ncols
     # solution must be all ones.
     for .j to .ncols
       .s = Get value in cell: 1, .j
-      assert (.s - 1.0) < .eps ; nowsr = '.nrows' ncols = '.ncols'
+      assert abs(.s - 1.0) < .eps ; nowsr = '.nrows' ncols = '.ncols'
     endfor
     removeObject: .m, .ms
   endfor

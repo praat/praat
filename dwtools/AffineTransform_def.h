@@ -1,6 +1,6 @@
 /* AffineTransform_def.h
  * 
- * Copyright (C) 1993-2008,2015 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@
 #define ooSTRUCT AffineTransform
 oo_DEFINE_CLASS (AffineTransform, Daata)
 
-	oo_INTEGER (n)
-	oo_DOUBLE_VECTOR (t, n)
-	oo_DOUBLE_MATRIX (r, n, n)
+	oo_INTEGER (dimension)
+	oo_VEC (t, dimension)
+	oo_MAT (r, dimension, dimension)
 
 	#if oo_DECLARING
 		virtual void v_transform (double **in, integer nrows, double **out);

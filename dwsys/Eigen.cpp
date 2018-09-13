@@ -67,7 +67,6 @@ Thing_implement (Eigen, Daata, 0);
 
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
-#define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
 
 static void Graphics_ticks (Graphics g, double min, double max, bool hasNumber, bool hasTick, bool hasDottedLine, bool integers) {
 	double range = max - min, scale = 1.0, tick = min, dtick = 1.0;
@@ -120,7 +119,7 @@ void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integ
 	integer nsv = MIN (numberOfRows, numberOfColumns);
 
 	my dimension = numberOfColumns;
-	autoSVD svd = SVD_create_d (a, numberOfRows, numberOfColumns);
+	autoSVD svd = SVD_createFromGeneralMatrix ({a, numberOfRows, numberOfColumns});
 
 	/*
 		Make sv's that are too small zero. These values occur automatically
@@ -301,7 +300,7 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 }
 
 void Eigen_sort (Eigen me) {
-	double temp, *e = my eigenvalues.at, **v = my eigenvectors.at;
+	double *e = my eigenvalues.at, **v = my eigenvectors.at;
 
 	for (integer i = 1; i < my numberOfEigenvalues; i ++) {
 		integer k;
@@ -315,9 +314,9 @@ void Eigen_sort (Eigen me) {
 
 			// Swap eigenvalues and eigenvectors
 
-			SWAP (e [i], e [k])
+			std::swap (e [i], e [k]);
 			for (integer j = 1; j <= my dimension; j ++) {
-				SWAP (v [i] [j], v [k] [j])
+				std::swap (v [i] [j], v [k] [j]);
 			}
 		}
 	}
@@ -477,7 +476,7 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 	Melder_require (my dimension == thy dimension, U"The eigenvectors should have equal dimensions.");
 	Melder_require (ivec_from > 0 && ivec_from <= ivec_to && ivec_to <= nmin, U"Eigenvector range too large.");
 
-	autoNUMmatrix<double> c (1, nvectors, 1, nvectors);
+	autoMAT c = MATzero (nvectors, nvectors);
 
 	/*
 		Algorithm 12.4.3 Golub & van Loan
@@ -493,7 +492,7 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 			}
 		}
 	}
-	autoSVD svd = SVD_create_d (c.peek(), nvectors, nvectors);
+	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	for (integer i = 1; i <= nvectors; i ++) {
 		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;
 	}
@@ -535,6 +534,5 @@ void Eigen_matrix_into_matrix_principalComponents (Eigen me, double **from, inte
 
 #undef MAX
 #undef MIN
-#undef SWAP
 
 /* End of file Eigen.cpp */

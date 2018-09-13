@@ -383,7 +383,7 @@ void Matrix_drawSliceY (Matrix me, Graphics g, double x, double ymin, double yma
 	Graphics_unsetInner (g);
 }
 
-autoMatrix Matrix_solveEquation (Matrix me, double /* tolerance */) {
+autoMatrix Matrix_solveEquation (Matrix me, double tolerance) {
 	try {
 		integer nr = my ny, nc = my nx - 1;
 		Melder_require (nc > 0, U"There should be at least 2 columns in the matrix.");
@@ -392,9 +392,8 @@ autoMatrix Matrix_solveEquation (Matrix me, double /* tolerance */) {
 			Melder_warning (U"Solution is not unique (there are fewer equations than unknowns).");
 		}
 
-		autoNUMmatrix<double> u (1, nr, 1, nc);
-		autoNUMvector<double> b (1, nr);
-		autoNUMvector<double> x (1, nc);
+		autoMAT u = MATraw (nr, nc);
+		autoVEC b = VECraw (nr);
 		autoMatrix thee = Matrix_create (0.5, 0.5 + nc, nc, 1, 1, 0.5, 1.5, 1, 1, 1);
 
 		for (integer i = 1; i <= nr; i ++) {
@@ -404,7 +403,7 @@ autoMatrix Matrix_solveEquation (Matrix me, double /* tolerance */) {
 			b [i] = my z [i] [my nx];
 		}
 
-		NUMsolveEquation (u.peek(), nr, nc, b.peek(), 0, x.peek());
+		autoVEC x = NUMsolveEquation (u.get(), b.get(), tolerance);
 		for (integer j = 1; j <= nc; j ++) {
 			thy z [1] [j] = x [j];
 		}

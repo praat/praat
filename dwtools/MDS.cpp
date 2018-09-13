@@ -280,13 +280,6 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator me, int ties
 	my tiesHandling = tiesHandling;
 }
 
-void structISplineTransformator :: v_destroy () noexcept {
-	NUMvector_free<double> (b, 1);
-	NUMvector_free<double> (knot, 1);
-	NUMmatrix_free<double> (m, 1, 1);
-	ISplineTransformator_Parent :: v_destroy ();
-}
-
 autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dist, Weight w) {
 	double tol = 1e-6;
 	integer itermax = 20, nx = vec -> numberOfProximities;
@@ -295,7 +288,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 	autoDistance thee = Distance_create (dist -> numberOfRows);
 	TableOfReal_copyLabels (dist, thee.get(), 1, -1);
 
-	autoNUMvector<double> d (1, nx);
+	autoVEC d = VECzero (nx);
 
 	for (integer i = 1; i <= nx; i ++) {
 		d [i] = dist -> data [vec -> rowIndex [i]] [vec -> columnIndex [i]];
@@ -322,7 +315,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 		m [i] [1] = 1.0;
 		for (integer j = 2; j <= numberOfParameters; j ++) {
 			try {
-				y = NUMispline (knot, nKnots, order, j - 1, x);
+				y = NUMispline (knot.get(), order, j - 1, x);
 			} catch (MelderError) {
 				Melder_throw (U"I-spline [", j - 1, U"], data [", i, U"d] = ", x);
 			}
@@ -330,7 +323,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 		}
 	}
 
-	NUMsolveNonNegativeLeastSquaresRegression (m, nx, numberOfParameters, d.peek(), tol, itermax, b);
+	b = NUMsolveNonNegativeLeastSquaresRegression (m.get(), d.get(), tol, itermax);
 
 	for (integer i = 1; i <= nx; i ++) {
 		integer ii = vec->rowIndex [i];
@@ -364,9 +357,9 @@ autoISplineTransformator ISplineTransformator_create (integer numberOfPoints, in
 		my numberOfParameters = numberOfInteriorKnots + order + 1;
 		integer numberOfKnots = numberOfInteriorKnots + order + order + 2;
 
-		my b = NUMvector<double> (1, my numberOfParameters);
-		my knot = NUMvector<double> (1, numberOfKnots);
-		my m = NUMmatrix<double> (1, nData, 1, my numberOfParameters);
+		my b = VECraw (my numberOfParameters);
+		my knot = VECraw (numberOfKnots);
+		my m = MATzero (nData, my numberOfParameters);
 
 		for (integer i = 1; i <= my numberOfParameters; i ++) {
 			my b [i] = NUMrandomUniform (0.0, 1.0);
@@ -387,9 +380,9 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		integer nr = my numberOfRows, nc = my numberOfColumns;
 		integer dimmin = nr < nc ? nr : nc;
 
-		autoNUMmatrix<double> h (NUMmatrix_copy (my data, 1, nr, 1, nc), 1, 1);
-		autoNUMvector<double> rowsum (1, nr);
-		autoNUMvector<double> colsum (1, nc);
+		autoMAT h = MATcopy ({my data, nr,  nc});
+		autoVEC rowsum = VECsumPerRow ({my data, my numberOfRows, my numberOfColumns});
+		autoVEC colsum = VECsumPerColumn ({my data, my numberOfRows, my numberOfColumns});
 		autoConfiguration thee = Configuration_create (nr + nc, numberOfDimensions);
 
 		if (numberOfDimensions == 0) {
@@ -404,14 +397,10 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 			Get row and column marginals
 		*/
 
-		longdouble sum = 0.0;
-		for (integer i = 1; i <= nr; i ++) {
-			for (integer j = 1; j <= nc; j ++) {
-				rowsum [i] += my data [i] [j];
-				colsum [j] += my data [i] [j];
-			}
-			Melder_require (rowsum [i] > 0.0, U"Row number ", i, U" should not be empty.");
-			sum += rowsum [i];
+		longdouble sum = 0.0;;
+		for (integer j = 1; j <= nr; j ++) {
+			Melder_require (rowsum [j] > 0.0, U"Column number ", j, U" should not be empty.");
+			sum += rowsum [j];
 		}
 
 		for (integer j = 1; j <= nc; j ++) {
@@ -430,7 +419,7 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 
 		// Singular value decomposition of h
 
-		autoSVD svd = SVD_create_d (h.peek(), nr, nc);
+		autoSVD svd = SVD_createFromGeneralMatrix (h.get());
 		SVD_zeroSmallSingularValues (svd.get(), 0);
 
 		// Scale row vectors and column vectors to configuration.
@@ -2540,7 +2529,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	integer k = order, numberOfKnots, numberOfInteriorKnots = 0;
 	integer nSplines, n = 1000;
 	double knot [101], y [1001];
-
+	if (k > 100) return; // 
 	if (splineType == MDS_ISPLINE) {
 		k ++;
 	}
@@ -2585,9 +2574,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		for (integer j = 1; j <= n; j ++) {
 			double yx, x = low + dx * (j - 1);
 			if (splineType == MDS_MSPLINE) {
-				yx = NUMmspline (knot, numberOfKnots, order, i, x);
+				yx = NUMmspline ({knot, numberOfKnots}, order, i, x);
 			} else {
-				yx = NUMispline (knot, numberOfKnots, order, i, x);
+				yx = NUMispline ({knot, numberOfKnots}, order, i, x);
 			}
 			y [j] = yx < ymin ? ymin : yx > ymax ? ymax : yx;
 		}
