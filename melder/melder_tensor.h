@@ -332,15 +332,12 @@ public:
 	integer size;
 public:
 	vector () = default;   // for use in a union
-	vector (const T *givenAt, integer givenSize): at ((T*)givenAt), size (givenSize) { }
+	vector (T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	vector (const vector& other) = default;
 	vector (const autovector<T>& other) = delete;
 	vector& operator= (const vector&) = default;
 	vector& operator= (const autovector<T>&) = delete;
-	T& operator[] (integer i) {
-		return our at [i];
-	}
-	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
+	T& operator[] (integer i) const {
 		return our at [i];
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
@@ -353,7 +350,7 @@ public:
 	vector<T> subview (integer first, integer last) {
 		const integer offset = first - 1;
 		Melder_assert (offset >= 0 && offset < our size);
-		integer newSize = last - offset;
+		const integer newSize = last - offset;
 		if (newSize <= 0) return vector<T> (nullptr, 0);
 		return vector<T> (& our at [offset], newSize);
 	}
@@ -381,7 +378,7 @@ public:
 	constvector<T> subview (integer first, integer last) {
 		const integer offset = first - 1;
 		Melder_assert (offset >= 0 && offset < our size);
-		integer newSize = last - offset;
+		const integer newSize = last - offset;
 		if (newSize <= 0) return constvector<T> (nullptr, 0);
 		return constvector<T> (& our at [offset], newSize);
 	}
@@ -542,15 +539,12 @@ public:
 	integer nrow, ncol;
 public:
 	matrix () = default;   // for use in a union
-	matrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at ((T**)givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	matrix (T **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	matrix (const matrix& other) = default;
 	matrix (const automatrix<T>& other) = delete;
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
 	T *& operator[] (integer i) {
-		return our at [i];
-	}
-	const T * const & operator[] (integer i) const {
 		return our at [i];
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
@@ -569,7 +563,7 @@ public:
 		const integer offsetRow = firstRow - 1;
 		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		integer newNrow = lastRow - offsetRow;
+		const integer newNrow = lastRow - offsetRow;
 		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
 		return matrix<T> (& our at [offsetRow], newNrow, our ncol);
 	}
@@ -594,7 +588,7 @@ public:
 		const integer offsetRow = firstRow - 1;
 		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		integer newNrow = lastRow - offsetRow;
+		const integer newNrow = lastRow - offsetRow;
 		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
 		return constmatrix<T> (& our at [offsetRow], newNrow, our ncol);
 	}
@@ -738,7 +732,6 @@ using constMAT = constmatrix <double>;
 using autoMAT = automatrix <double>;
 inline autoMAT MATraw  (integer nrow, integer ncol) { return matrixraw  <double> (nrow, ncol); }
 inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double> (nrow, ncol); }
-inline void MATcopy_preallocated (MAT target, constMAT source) { matrixcopy_preallocated (target, source); }
 inline autoMAT MATcopy (constMAT source) { return matrixcopy (source); }
 
 using INTMAT = matrix <integer>;
@@ -746,7 +739,6 @@ using constINTMAT = constmatrix <integer>;
 using autoINTMAT = automatrix <integer>;
 inline autoINTMAT INTMATraw  (integer nrow, integer ncol) { return matrixraw  <integer> (nrow, ncol); }
 inline autoINTMAT INTMATzero (integer nrow, integer ncol) { return matrixzero <integer> (nrow, ncol); }
-inline void INTMATcopy_inplace (INTMAT target, constINTMAT source) { matrixcopy_preallocated (target, source); }
 inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); }
 
 #define emptyMAT  MAT (nullptr, 0, 0)

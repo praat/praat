@@ -388,7 +388,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	autoSVD svd = SVD_create (nr, nc);
 
-	MATcopy_preallocated (svd -> u.get(), {my data, nr, nc});
+	matrixcopy_preallocated (svd -> u.get(), constMAT (my data, nr, nc));
 	MATcentreEachColumn_inplace (svd -> u.get());
 
 	SVD_compute (svd.get());

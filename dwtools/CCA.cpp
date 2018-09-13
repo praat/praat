@@ -110,7 +110,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		autoSVD svdy = SVD_create (n, ny);   // n >= ny, hence no transposition
 		autoSVD svdx = SVD_create (n, nx);	 // n >= nx, hence no transposition
 
-		// TODO MATcopy_preallocated (svdy->u, my data);
+		// TODO matrixcopy_preallocated (svdy->u, my data);
 		for (integer i = 1; i <= n; i ++) {
 			for (integer j = 1; j <= ny; j ++) {
 				svdy -> u [i] [j] = my data [i] [j];
