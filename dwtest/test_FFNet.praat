@@ -1,5 +1,5 @@
 # test_FFNet.praat
-# djmw 20110512
+# djmw 20110512, 20180918
 
 printline test FFNet
 
@@ -48,7 +48,7 @@ endfor
 
 select tab
 mean = Get mean... fc
-assert fc > 0.97
+assert mean > 0.97
 plus ffnet
 plus pattern
 plus cat

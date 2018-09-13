@@ -50,9 +50,9 @@ Thing_implement (Procrustes, AffineTransform, 0);
 
 void structProcrustes :: v_transform (double **in, integer nrows, double **out) {
 	for (integer i = 1; i <= nrows; i ++) {
-		for (integer j = 1; j <= n; j ++) {
+		for (integer j = 1; j <= dimension; j ++) {
 			longdouble tmp = 0.0;
-			for (integer k = 1; k <= n; k ++) {
+			for (integer k = 1; k <= dimension; k ++) {
 				tmp += in [i] [k] * r [k] [j];
 			}
 			out [i] [j] = s * tmp + t [j];
@@ -69,13 +69,13 @@ autoAffineTransform structProcrustes :: v_invert () {
 
 	thy s = s == 0.0 ? 1.0 : 1.0 / s;
 
-	for (integer i = 1; i <= n; i ++) {
-		for (integer j = i + 1; j <= n; j ++) {
+	for (integer i = 1; i <= dimension; i ++) {
+		for (integer j = i + 1; j <= dimension; j ++) {
 			thy r [i] [j] = r [j] [i];
 			thy r [j] [i] = r [i] [j];
 		}
 		thy t [i] = 0.0;
-		for (integer j = 1; j <= thy n; j ++) {
+		for (integer j = 1; j <= thy dimension; j ++) {
 			thy t [i] -= thy r [j] [i] * t [j];
 		}
 
@@ -86,19 +86,19 @@ autoAffineTransform structProcrustes :: v_invert () {
 
 static void Procrustes_setDefaults (Procrustes me) {
 	my s = 1.0;
-	for (integer i = 1; i <= my n; i ++) {
+	for (integer i = 1; i <= my dimension; i ++) {
 		my t [i] = 0.0;
 		my r [i] [i] = 1.0;
-		for (integer j = i + 1; j <= my n; j ++) {
+		for (integer j = i + 1; j <= my dimension; j ++) {
 			my r [i] [j] = my r [j] [i] = 0.0;
 		}
 	}
 }
 
-autoProcrustes Procrustes_create (integer n) {
+autoProcrustes Procrustes_create (integer dimension) {
 	try {
 		autoProcrustes me = Thing_new (Procrustes);
-		AffineTransform_init (me.get(), n);
+		AffineTransform_init (me.get(), dimension);
 		Procrustes_setDefaults (me.get());
 		return me;
 	} catch (MelderError) {

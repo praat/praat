@@ -312,8 +312,8 @@ double PCA_TableOfReal_getFractionVariance (PCA me, TableOfReal thee, integer fr
 autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring) {
 	try {
 		integer npc;
-		autoNUMvector<double> pc (NUMstring_to_numbers (numstring, & npc), 1);
-		autoConfiguration c = Configuration_create (1, npc);
+		autoVEC pc = VEC_createFromString (numstring);
+		autoConfiguration c = Configuration_create (1, pc.size);
 		for (integer j = 1; j <= npc; j ++)
 			c -> data [1] [j] = pc [j];
 		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());

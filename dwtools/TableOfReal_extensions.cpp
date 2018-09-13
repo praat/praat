@@ -312,9 +312,8 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 	Melder_require (colb > 0 && colb <= cole && cole <= my numberOfColumns,
 		U"Invalid columns");
 
-	integer nrows;
-	autoNUMvector <double> irows (NUMstring_to_numbers (rows, & nrows), 1);
-	for (integer i = 1; i <= nrows; i ++) {
+	autoVEC irows = VEC_createFromString (rows);
+	for (integer i = 1; i <= irows.size; i ++) {
 		integer irow = Melder_ifloor (irows [i]);
 		if (irow < 0 || irow > my numberOfRows) {
 			Melder_throw (U"Invalid row (", irow, U").");
@@ -335,13 +334,14 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 			}
 		}
 	}
-	integer ngreys;
-	autoNUMvector <double> igreys (NUMstring_to_numbers (greys, & ngreys), 1);
+
+	autoVEC igreys = VEC_createFromString (greys);
 
 	Graphics_setWindow (g, 0.0, 1.0, ymin, ymax);
 	Graphics_setInner (g);
 
-	integer ncols = cole - colb + 1;
+	integer ncols = cole - colb + 1, nrows = irows.size;
+;
 	double bar_width = 1.0 / (ncols * nrows + 2.0 * xoffsetFraction + (ncols - 1) * interbarsFraction + ncols * (nrows - 1) * interbarFraction);
 	double dx = (interbarsFraction + nrows + (nrows - 1) * interbarFraction) * bar_width;
 
@@ -350,7 +350,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 		double xb = xoffsetFraction * bar_width + (i - 1) * (1.0 + interbarFraction) * bar_width;
 
 		double x1 = xb;
-		double grey = i <= ngreys ? igreys [i] : igreys [ngreys];
+		double grey = i <= igreys.size ? igreys [i] : igreys [igreys.size];
 		for (integer j = colb; j <= cole; j ++) {
 			double x2 = x1 + bar_width;
 			double y1 = ymin, y2 = my data [irow] [j];
@@ -1658,13 +1658,12 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 		autoVEC x = VECraw (my numberOfRows);
 		autoVEC y = VECraw (my numberOfRows);
 		autoVEC z = VECraw (my numberOfRows);
-		autoVEC weights = VECraw (my numberOfRows);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 			x [irow] = my data [irow] [1];
 			y [irow] = my data [irow] [2];
 			z [irow] = my data [irow] [3];
 		}
-		NUMbiharmonic2DSplineInterpolation_getWeights (x.at, y.at, z.at, my numberOfRows, weights.at);
+		autoVEC weights = NUMbiharmonic2DSplineInterpolation_getWeights (x.get(), y.get(), z.get());
 		double dx = (xmax - xmin) / nx, dy = (ymax - ymin) / ny; 
 		autoMatrix thee = Matrix_create (xmin, xmax, nx, dx, xmin + 0.5 * dx,
 			ymin, ymax, ny, dy, ymin + 0.5 * dy);
@@ -1672,7 +1671,7 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 			double yp = thy y1 + (irow - 1) * dy;
 			for (integer icol = 1; icol <= nx; icol ++) {
 				double xp = thy x1 + (icol - 1) * dx;
-				thy z [irow] [icol] = NUMbiharmonic2DSplineInterpolation (x.at, y.at, my numberOfRows, weights.at, xp, yp);
+				thy z [irow] [icol] = NUMbiharmonic2DSplineInterpolation (x.get(), y.get(), weights.get(), xp, yp);
 			}
 		}
 		return thee;
