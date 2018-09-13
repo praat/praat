@@ -115,12 +115,12 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-static integer *getElementsOfRanges (conststring32 ranges, integer maximumElement, integer *numberOfElements, conststring32 elementType) {
+static autoINTVEC getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType) {
 	/*
 		Count the elements.
 	*/
 	integer previousElement = 0;
-	*numberOfElements = 0;
+	integer numberOfElements = 0;
 	const char32 *p = & ranges [0];
 	for (;;) {
 		while (Melder_isHorizontalSpace (*p)) p ++;
@@ -133,7 +133,7 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 			Melder_require (currentElement <= maximumElement,
 				U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
 			
-			*numberOfElements += 1;
+			numberOfElements += 1;
 			previousElement = currentElement;
 			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
 		} else if (*p == ':') {
@@ -152,9 +152,9 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 				U"No such ", elementType, U": ", currentElement, U" (maximum is ", maximumElement, U").");
 			
 			if (currentElement > previousElement) {
-				*numberOfElements += currentElement - previousElement;
+				numberOfElements += currentElement - previousElement;
 			} else {
-				*numberOfElements += previousElement - currentElement;
+				numberOfElements += previousElement - currentElement;
 			}
 			previousElement = currentElement;
 			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
@@ -166,15 +166,16 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 	/*
 		Create room for the elements.
 	*/
-	if (*numberOfElements == 0)
-		return nullptr;
-	autoNUMvector <integer> elements (1, *numberOfElements);
+	
+	if (numberOfElements == 0)
+		Melder_throw (U"No element(s) found");
+	autoINTVEC elements = INTVECraw (numberOfElements);
 
 	/*
 		Store the elements.
 	*/
 	previousElement = 0;
-	*numberOfElements = 0;
+	numberOfElements = 0;
 	p = & ranges [0];
 	for (;;) {
 		while (Melder_isHorizontalSpace (*p)) p ++;
@@ -182,7 +183,7 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 			break;
 		if (Melder_isAsciiDecimalNumber (*p)) {
 			integer currentElement = Melder_atoi (p);
-			elements [++ *numberOfElements] = currentElement;
+			elements [++ numberOfElements] = currentElement;
 			previousElement = currentElement;
 			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
 		} else if (*p == U':') {
@@ -190,19 +191,19 @@ static integer *getElementsOfRanges (conststring32 ranges, integer maximumElemen
 			integer currentElement = Melder_atoi (p);
 			if (currentElement > previousElement) {
 				for (integer ielement = previousElement + 1; ielement <= currentElement; ielement ++)
-					elements [++ *numberOfElements] = ielement;
+					elements [++ numberOfElements] = ielement;
 			} else {
 				for (integer ielement = previousElement - 1; ielement >= currentElement; ielement --)
-					elements [++ *numberOfElements] = ielement;
+					elements [++ numberOfElements] = ielement;
 			}
 			previousElement = currentElement;
 			do { p ++; } while (Melder_isAsciiDecimalNumber (*p));
 		}
 	}
-	return elements.transfer();
+	return elements;
 }
 
-static void NUMlvector_getUniqueNumbers (integer numbers[], integer *inout_numberOfElements, integer *out_numberOfMultiples) {
+static void NUMlvector_getUniqueNumbers (integer numbers[], integer *inout_numberOfElements) {
 	Melder_assert (inout_numberOfElements);
 	autoNUMvector< integer> sorted (NUMvector_copy <integer> (numbers, 1, *inout_numberOfElements), 1);
 	NUMsort_integer (*inout_numberOfElements, sorted.peek());
@@ -218,17 +219,17 @@ static void NUMlvector_getUniqueNumbers (integer numbers[], integer *inout_numbe
 		}
 	}
 	*inout_numberOfElements = numberOfUniques;
-	if (out_numberOfMultiples)
-		*out_numberOfMultiples = numberOfMultiples;
 }
 
-integer *NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement,
-	integer *numberOfElements, integer *numberOfMultiples, conststring32 elementType, bool sortedUniques)
+autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques)
 {
-	autoNUMvector<integer> elements (getElementsOfRanges (ranges, maximumElement, numberOfElements, elementType), 1);
-	if (sortedUniques && *numberOfElements > 0)
-		NUMlvector_getUniqueNumbers (elements.peek(), numberOfElements, numberOfMultiples);
-	return elements.transfer();
+	autoINTVEC elements = getElementsOfRanges (ranges, maximumElement, elementType);
+	if (sortedUniques) {
+		integer size = elements.size;
+		NUMlvector_getUniqueNumbers (elements.at, & size);
+		elements.resize (size);
+	}
+	return elements;
 }
 
 char32 * NUMstring_timeNoDot (double time) {

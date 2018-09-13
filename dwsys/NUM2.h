@@ -38,8 +38,7 @@ autoVEC VEC_createFromString (conststring32 s);
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-integer *NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement,
-	integer *numberOfElements, integer *numberOfMultiples, conststring32 elementType, bool sortedUniques);
+autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques);
 
 char32 * NUMstring_timeNoDot (double time);
 
@@ -1310,5 +1309,12 @@ autoMAT MATmul_tt (constMAT x, constMAT y);
 void MATmul_tn_preallocated (MAT z, constMAT x, constMAT y);
 autoMAT MATmul_tn (constMAT x, constMAT y);
 // Z = X'.Y
+
+inline autoINTVEC INTVECto (integer to) {
+	autoINTVEC result = INTVECraw (to);
+	for (integer i = 1; i <= to; i ++)
+		result [i] = i;
+	return result;
+}
 
 #endif // _NUM2_h_
