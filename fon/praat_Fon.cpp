@@ -2390,7 +2390,7 @@ FORM (REAL_Spectrum_getRealValueInBin, U"Spectrum: Get real value in bin", nullp
 	OK
 DO
 	NUMBER_ONE (Spectrum)
-		if (binNumber > my nx) Melder_throw (U"Bin number must not exceed number of bins.");
+		if (binNumber > my nx) Melder_throw (U"Bin number should not exceed number of bins.");
 		double result = my z [1] [binNumber];
 	NUMBER_ONE_END (U" (real value in bin ", binNumber, U")")
 }

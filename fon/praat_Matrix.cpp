@@ -317,8 +317,8 @@ FORM (REAL_Matrix_getValueInCell, U"Matrix: Get value in cell", nullptr) {
 	OK
 DO
 	NUMBER_ONE (Matrix)
-		if (rowNumber > my ny) Melder_throw (U"Row number must not exceed number of rows.");
-		if (columnNumber > my nx) Melder_throw (U"Column number must not exceed number of columns.");
+		if (rowNumber > my ny) Melder_throw (U"Row number should not exceed number of rows.");
+		if (columnNumber > my nx) Melder_throw (U"Column number should not exceed number of columns.");
 		double result = my z [rowNumber] [columnNumber];
 	NUMBER_ONE_END (U" (value in column ", columnNumber, U" of row ", rowNumber, U")")
 }
