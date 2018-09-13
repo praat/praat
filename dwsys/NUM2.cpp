@@ -1007,15 +1007,15 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 	autoMAT rotation = MATmul_nt (svd->v.get(), svd->u.get());
 	
 	if (! orthogonal) {
-		autoMAT xc = MATcopy (x);
 
 		// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
 		// First we need YT.
 		
 		autoMAT yt = MATmul_nn (y, rotation.get());
 		
-		// X'J amount to centering the columns of X
+		// X'J = (JX)' centering the columns of X
 
+		autoMAT xc = MATcopy (x);
 		MATcentreEachColumn_inplace (xc.get());
 
 		// tr X'J YT == tr xc' yt
@@ -1023,8 +1023,6 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 		double traceXtJYT = NUMtrace2_tn (xc.get(), yt.get()); // trace (Xc'.(YT))
 		double traceYtJY = NUMtrace2_tn (y, yc.get()); // trace (Y'.Yc)
 		longdouble scale = traceXtJYT / traceYtJY;
-		
-		if (out_scale) *out_scale = (double) scale;
 
 		// 5. Translation vector tr = (X - sYT)'1 / x.nrow
 		if (out_translation) {
@@ -1038,8 +1036,8 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 			*out_translation = translation.move();
 		}
 		if (out_scale) *out_scale = (double) scale;
-		if (out_rotation) *out_rotation = rotation.move();
 	}
+	if (out_rotation) *out_rotation = rotation.move();
 }
 
 
@@ -1992,7 +1990,6 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 	return ni;
 }
 
-#define SWAP(x,y) { tmp = x; x = y; y = tmp; }
 bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2) {
 	int ncrossings = 0;
 	bool xswap, yswap;
@@ -2034,7 +2031,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 			*xo2 = xr2;
 		}
 		if (xswap) {
-			SWAP (*xo1, *xo2)
+			std::swap (*xo1, *xo2);
 		}
 		return true;
 	}
@@ -2046,7 +2043,7 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 			*yo2 = yr2;
 		}
 		if (yswap) {
-			SWAP (*yo1, *yo2)
+			std::swap (*yo1, *yo2);
 		}
 		return true;
 	}
@@ -2118,8 +2115,8 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	}
 
 	if ((xc [1] > xc [2] && ! xswap) || (xc [1] < xc [2] && xswap)) {
-		SWAP (xc [1], xc [2])
-		SWAP (yc [1], yc [2])
+		std::swap (xc [1], xc [2]);
+		std::swap (yc [1], yc [2]);
 	}
 	*xo1 = xc [1]; *yo1 = yc [1]; *xo2 = xc [2]; *yo2 = yc [2];
 	return true;

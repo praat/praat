@@ -300,7 +300,7 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 }
 
 void Eigen_sort (Eigen me) {
-	double temp, *e = my eigenvalues.at, **v = my eigenvectors.at;
+	double *e = my eigenvalues.at, **v = my eigenvectors.at;
 
 	for (integer i = 1; i < my numberOfEigenvalues; i ++) {
 		integer k;
@@ -314,9 +314,9 @@ void Eigen_sort (Eigen me) {
 
 			// Swap eigenvalues and eigenvectors
 
-			std::swap (e [i], e [k])
+			std::swap (e [i], e [k]);
 			for (integer j = 1; j <= my dimension; j ++) {
-				std::swap (v [i] [j], v [k] [j])
+				std::swap (v [i] [j], v [k] [j]);
 			}
 		}
 	}

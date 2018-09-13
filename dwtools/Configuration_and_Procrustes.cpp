@@ -31,8 +31,7 @@ autoProcrustes Configurations_to_Procrustes (Configuration me, Configuration the
 			U"Configurations must have the same number of points and the same dimension.");
 
 		autoProcrustes p = Procrustes_create (my numberOfColumns);
-		NUMprocrustes ({my data, my numberOfRows, my numberOfColumns}, {thy data, my numberOfRows, my numberOfColumns}, 
-			 & p -> r, orthogonal ? nullptr : & p -> t, orthogonal ? nullptr : & p -> s);
+		NUMprocrustes ({my data, my numberOfRows, my numberOfColumns}, {thy data, thy numberOfRows, thy numberOfColumns}, & p -> r, orthogonal ? nullptr : & p -> t, orthogonal ? nullptr : & p -> s);
 		return p;
 	} catch (MelderError) {
 		Melder_throw (U"Procrustes from two Configurations not created.");

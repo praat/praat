@@ -130,19 +130,15 @@ DIRECT (NEW_AffineTransform_invert) {
 }
 
 FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get transformation element", U"Procrustes") {
-	NATURAL (row, U"Row number", U"1")
-	NATURAL (column, U"Column number", U"1")
+	NATURAL (irow, U"Row number", U"1")
+	NATURAL (icol, U"Column number", U"1")
 	OK
 DO
 	NUMBER_ONE (AffineTransform)
-		if (row > my dimension) {
-			Melder_throw (U"Row number must not exceed the dimension of the transform.");
-		}
-		if (column > my dimension) {
-			Melder_throw (U"Column number must not exceed the dimension of the transform.");
-		}
-		double result = my r [row] [column];
-	NUMBER_ONE_END (U"")
+		Melder_require (irow <= my dimension, U"Row number must not exceed the dimension of the transform.");
+		Melder_require (icol <= my dimension, U"Column number must not exceed the dimension of the transform.");
+		double result = my r [irow] [icol];
+	NUMBER_ONE_END (U" r [", irow, U"] [", icol, U"]")
 }
 
 FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get translation element", U"Procrustes") {
@@ -150,9 +146,7 @@ FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get transla
 	OK
 DO
 	NUMBER_ONE (AffineTransform)
-		if (index > my dimension) {
-			Melder_throw (U"Index must not exceed the dimension of the transform.");
-		}
+		Melder_require (index <= my dimension, U"Index must not exceed the dimension of the transform.");
 		double result = my t [index];
 	NUMBER_ONE_END (U"")
 }
