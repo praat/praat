@@ -87,8 +87,8 @@ static void _FFNet_PatternList_ActivationList_learn (FFNet me, PatternList patte
 		// Link the things to be learned
 
 		my nPatterns = pattern -> ny;
-		my inputPattern = pattern -> z;
-		my targetActivation = activation -> z;
+		my inputPattern = pattern -> z.at;
+		my targetActivation = activation -> z.at;
 		FFNet_setCostFunction (me, costFunctionType);
 
 		if (reset) {

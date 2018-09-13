@@ -1365,10 +1365,11 @@ void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, in
 	}
 }
 
-void MelderFile_writeFloatToAudio (MelderFile file, integer numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped) {
+void MelderFile_writeFloatToAudio (MelderFile file, constMAT buffer, int encoding, bool warnIfClipped) {
 	try {
 		FILE *f = file -> filePointer;
 		if (! f) Melder_throw (U"File not open.");
+		const integer numberOfSamples = buffer.ncol, numberOfChannels = buffer.nrow;
 		integer nclipped = 0;
 		switch (encoding) {
 			case Melder_LINEAR_8_SIGNED:

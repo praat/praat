@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2012,2013,2014,2015,2016,2017 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2018 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,38 +59,34 @@ static void menu_cb_Cut (SoundEditor me, EDITOR_ARGS_DIRECT) {
 				U"because you cannot create a Sound with 0 samples.\n"
 				U"You could consider using Copy instead.");
 		if (selectionNumberOfSamples) {
-			double **oldData = sound -> z;
 			/*
-			 * Create without change.
-			 */
+				Create without change.
+			*/
 			autoSound publish = Sound_create (sound -> ny, 0.0, selectionNumberOfSamples * sound -> dx,
 							selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
 			for (integer channel = 1; channel <= sound -> ny; channel ++) {
 				integer j = 0;
-				for (integer i = first; i <= last; i ++) {
-					publish -> z [channel] [++ j] = oldData [channel] [i];
-				}
+				for (integer i = first; i <= last; i ++)
+					publish -> z [channel] [++ j] = sound -> z [channel] [i];
 			}
-			autoNUMmatrix <double> newData (1, sound -> ny, 1, newNumberOfSamples);
+			autoMAT newData = MATraw (sound -> ny, newNumberOfSamples);
 			for (integer channel = 1; channel <= sound -> ny; channel ++) {
 				integer j = 0;
-				for (integer i = 1; i < first; i ++) {
-					newData [channel] [++ j] = oldData [channel] [i];
-				}
-				for (integer i = last + 1; i <= oldNumberOfSamples; i ++) {
-					newData [channel] [++ j] = oldData [channel] [i];
-				}
+				for (integer i = 1; i < first; i ++)
+					newData [channel] [++ j] = sound -> z [channel] [i];
+				for (integer i = last + 1; i <= oldNumberOfSamples; i ++)
+					newData [channel] [++ j] = sound -> z [channel] [i];
+				Melder_assert (j == newData.ncol);
 			}
 			Editor_save (me, U"Cut");
 			/*
-			 * Change without error.
-			 */
-			NUMmatrix_free <double> (oldData, 1, 1);
+				Change without error.
+			*/
 			sound -> xmin = 0.0;
 			sound -> xmax = newNumberOfSamples * sound -> dx;
 			sound -> nx = newNumberOfSamples;
 			sound -> x1 = 0.5 * sound -> dx;
-			sound -> z = newData.transfer();
+			sound -> z = newData.move();
 			Sound_clipboard = publish.move();
 
 			/* Start updating the markers of the FunctionEditor, respecting the invariants. */
@@ -151,7 +147,6 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	Sound sound = (Sound) my data;
 	integer leftSample = Sampled_xToLowIndex (sound, my endSelection);
 	integer oldNumberOfSamples = sound -> nx, newNumberOfSamples;
-	double **oldData = sound -> z;
 	if (! Sound_clipboard) {
 		Melder_warning (U"Clipboard is empty; nothing pasted.");
 		return;
@@ -168,31 +163,28 @@ static void menu_cb_Paste (SoundEditor me, EDITOR_ARGS_DIRECT) {
 	if (leftSample > oldNumberOfSamples) leftSample = oldNumberOfSamples;
 	newNumberOfSamples = oldNumberOfSamples + Sound_clipboard -> nx;
 	/*
-	 * Check without change.
-	 */
-	autoNUMmatrix <double> newData (1, sound -> ny, 1, newNumberOfSamples);
+		Check without change.
+	*/
+	autoMAT newData = MATraw (sound -> ny, newNumberOfSamples);
 	for (integer channel = 1; channel <= sound -> ny; channel ++) {
 		integer j = 0;
-		for (integer i = 1; i <= leftSample; i ++) {
-			newData [channel] [++ j] = oldData [channel] [i];
-		}
-		for (integer i = 1; i <= Sound_clipboard -> nx; i ++) {
+		for (integer i = 1; i <= leftSample; i ++)
+			newData [channel] [++ j] = sound -> z [channel] [i];
+		for (integer i = 1; i <= Sound_clipboard -> nx; i ++)
 			newData [channel] [++ j] = Sound_clipboard -> z [channel] [i];
-		}
-		for (integer i = leftSample + 1; i <= oldNumberOfSamples; i ++) {
-			newData [channel] [++ j] = oldData [channel] [i];
-		}
+		for (integer i = leftSample + 1; i <= oldNumberOfSamples; i ++)
+			newData [channel] [++ j] = sound -> z [channel] [i];
+		Melder_assert (j == newData.ncol);
 	}
 	Editor_save (me, U"Paste");
 	/*
-	 * Change without error.
-	 */
-	NUMmatrix_free <double> (oldData, 1, 1);
+		Change without error.
+	*/
 	sound -> xmin = 0.0;
 	sound -> xmax = newNumberOfSamples * sound -> dx;
 	sound -> nx = newNumberOfSamples;
 	sound -> x1 = 0.5 * sound -> dx;
-	sound -> z = newData.transfer();
+	sound -> z = newData.move();
 
 	/* Start updating the markers of the FunctionEditor, respecting the invariants. */
 

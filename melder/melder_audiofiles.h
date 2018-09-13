@@ -70,7 +70,7 @@ void Melder_readAudioToShort (FILE *f, integer numberOfChannels, int encoding, s
 /* If stereo, buffer will contain alternating left and right values.
  * Buffer is base-0.
  */
-void MelderFile_writeFloatToAudio (MelderFile file, integer numberOfChannels, int encoding, double **buffer, integer numberOfSamples, int warnIfClipped);
+void MelderFile_writeFloatToAudio (MelderFile file, constMAT buffer, int encoding, bool warnIfClipped);
 void MelderFile_writeShortToAudio (MelderFile file, integer numberOfChannels, int encoding, const short *buffer, integer numberOfSamples);
 
 /* End of file melder_audiofiles.h */

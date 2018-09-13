@@ -197,7 +197,7 @@ autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 
 autoPCA Matrix_to_PCA_byColumns (Matrix me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (constMAT (my z, my ny, my nx), true);
+		autoPCA thee = NUMdmatrix_to_PCA (my z.get(), true);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PCA created from columns.");
@@ -206,7 +206,7 @@ autoPCA Matrix_to_PCA_byColumns (Matrix me) {
 
 autoPCA Matrix_to_PCA_byRows (Matrix me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (constMAT (my z, my ny, my nx), false);
+		autoPCA thee = NUMdmatrix_to_PCA (my z.get(), false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PCA created from rows.");

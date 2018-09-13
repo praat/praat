@@ -1,6 +1,6 @@
 /* LongSound.cpp
  *
- * Copyright (C) 1992-2012,2014,2015,2016,2017 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
+ * Copyright (C) 1992-2008,2010-2018 Paul Boersma, 2007 Erez Volk (for FLAC and MP3)
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,7 +356,7 @@ autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, bool pr
 			thy xmax -= tmin;
 			thy x1 -= tmin;
 		}
-		LongSound_readAudioToFloat (me, thy z, imin, n);
+		LongSound_readAudioToFloat (me, thy z.at, imin, n);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Sound not extracted.");
@@ -703,16 +703,15 @@ void LongSound_concatenate (SoundAndLongSoundList me, MelderFile file, int audio
 		 * Create output file and write header.
 		 */
 		autoMelderFile mfile = MelderFile_create (file);
-		if (file -> filePointer) {
+		if (file -> filePointer)
 			MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, n, numberOfChannels, numberOfBitsPerSamplePoint);
-		}
 		for (integer i = 1; i <= my size; i ++) {
 			data = my at [i];
 			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				if (file -> filePointer) {
-					MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint),
-						sound -> z, sound -> nx, true);
+					MelderFile_writeFloatToAudio (file, sound -> z.get(),
+							Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), true);
 				}
 			} else {
 				LongSound longSound = (LongSound) data;

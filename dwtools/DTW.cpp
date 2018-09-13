@@ -621,18 +621,18 @@ static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax
 		minimum -= 1.0;
 		maximum += 1.0;
 	}
-	if (xmin >= xmax || ymin >= ymax) {
+	if (xmin >= xmax || ymin >= ymax)
 		return;
-	}
-	if (inset) {
+	if (inset)
 		Graphics_setInner (g);
-	}
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_cellArray (g, my z, ixmin, ixmax, Matrix_columnToX (me, ixmin - 0.5), Matrix_columnToX (me, ixmax + 0.5), iymin, iymax, Matrix_rowToY (me, iymin - 0.5), Matrix_rowToY (me, iymax + 0.5), minimum, maximum);
+	Graphics_cellArray (g, my z.at,
+			ixmin, ixmax, Matrix_columnToX (me, ixmin - 0.5), Matrix_columnToX (me, ixmax + 0.5),
+			iymin, iymax, Matrix_rowToY (me, iymin - 0.5), Matrix_rowToY (me, iymax + 0.5),
+			minimum, maximum);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
-	if (inset) {
+	if (inset)
 		Graphics_unsetInner (g);
-	}
 	if (garnish) {
 		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_marksLeft (g, 2, true, true, false);
@@ -797,18 +797,16 @@ void DTW_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double 
 
 	vp = Graphics_insetViewport (g, 0.0, 1.0 - dtw_part_x, 1.0 - dtw_part_y, 1.0);
 	Sound_draw_btlr (y, g, ymin, ymax, -1.0, 1.0, FROM_BOTTOM_TO_TOP, 0);
-	if (garnish) {
+	if (garnish)
 		drawBox (g);
-	}
 	Graphics_resetViewport (g, vp);
 
 	// Sound x
 
 	vp = Graphics_insetViewport (g, 1 - dtw_part_x, 1, 0, 1 - dtw_part_y);
 	Sound_draw_btlr (x, g, xmin, xmax, -1.0, 1.0, FROM_LEFT_TO_RIGHT, 0);
-	if (garnish) {
+	if (garnish)
 		drawBox (g);
-	}
 	Graphics_resetViewport (g, vp);
 
 
@@ -863,7 +861,7 @@ void DTW_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, 
 autoMatrix DTW_to_Matrix_distances (DTW me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": distances not converted to Matrix.");
@@ -873,39 +871,35 @@ autoMatrix DTW_to_Matrix_distances (DTW me) {
 /* nog aanpassen, dl = sqrt (dx^2 + dy^2) */
 void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, bool garnish) {
 	if (xmin >= xmax) {
-		xmin = my xmin; xmax = my xmax;
+		xmin = my xmin;
+		xmax = my xmax;
 	}
 	integer ixmax, ixmin;
-	if (! Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax)) {
+	if (Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0)
 		return;
-	}
 
 	integer ii = 1;
-	while (ii < my pathLength && my path [ii]. x < ixmin) {
+	while (ii < my pathLength && my path [ii]. x < ixmin)
 		ii ++;
-	}
 	ixmin = ii;
 
-	while (ii <= my pathLength && my path [ii]. x < ixmax) {
+	while (ii <= my pathLength && my path [ii]. x < ixmax)
 		ii ++;
-	}
 	ixmax = ii;
 
 	autoNUMvector<double> d (ixmin, ixmax);
 
-	for (integer i = ixmin; i <= ixmax; i ++) {
+	for (integer i = ixmin; i <= ixmax; i ++)
 		d [i] = my z [my path [i]. y] [i];
-	}
 
 	if (dmin >= dmax) {
 		NUMvector_extrema (d.peek(), ixmin, ixmax, & dmin, & dmax);
 	} else {
 		for (integer i = ixmin; i <= ixmax; i ++) {
-			if (d [i] > dmax) {
+			if (d [i] > dmax)
 				d [i] = dmax;
-			} else if (d [i] < dmin) {
+			else if (d [i] < dmin)
 				d [i] = dmin;
-			}
 		}
 	}
 
@@ -1101,12 +1095,11 @@ void DTW_Matrix_replace (DTW me, Matrix thee) {
 			U"The X and Y domains of the matrix and the DTW must be equal.");
 		Melder_require (my nx == thy nx && my dx == thy dx && my ny == thy ny && my dy == thy dy,
 			U"The sampling of the matrix and the DTW should be equal.");
-		
 		double minimum, maximum;
 		Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
-		Melder_require (minimum >= 0.0, U"Distances should not be negative.");
-		
-		NUMmatrix_copyElements<double> (thy z, my z, 1, my ny, 1, my nx);
+		Melder_require (minimum >= 0.0,
+			U"Distances should not be negative.");
+		matrixcopy_preallocated (my z.get(), thy z.get());   // from thee to me!
 	} catch (MelderError) {
 		Melder_throw (me, U": distances not replaced.");
 	}

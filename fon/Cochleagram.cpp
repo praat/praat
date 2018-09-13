@@ -1,6 +1,6 @@
 /* Cochleagram.cpp
  *
- * Copyright (C) 1992-2011,2015,2016,2017 Paul Boersma
+ * Copyright (C) 1992-2005,2007,2008,2011,2012,2015-2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, bo
 				}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, tmin, tmax, 0.0, my ny * my dy);
-		Graphics_grey (g, copy -> z,
+		Graphics_grey (g, copy -> z.at,
 			itmin, itmax, Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax),
 			1, my ny, 0.5 * my dy, (my ny - 0.5) * my dy,
 			12, border);
@@ -76,8 +76,8 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		integer itmin, itmax;
 		integer nt = Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
-		if (nt == 0)
-			Melder_throw (U"Window too short.");
+		Melder_require (nt > 0,
+			U"Window too short.");
 		longdouble diff = 0.0;
 		for (integer itime = itmin; itime <= itmax; itime ++) {
 			for (integer ifreq = 1; ifreq <= my ny; ifreq ++) {
@@ -95,7 +95,7 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 autoCochleagram Matrix_to_Cochleagram (Matrix me) {
 	try {
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, my nx, my dx, my x1, my dy, my ny);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Cochleagram.");
@@ -105,7 +105,7 @@ autoCochleagram Matrix_to_Cochleagram (Matrix me) {
 autoMatrix Cochleagram_to_Matrix (Cochleagram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		matrixcopy_preallocated (thy z.get(), my z.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");

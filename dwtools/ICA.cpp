@@ -491,7 +491,7 @@ autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me,
 		
 		autoCrossCorrelationTable thee = CrossCorrelationTable_create (my ny);
 
-		NUMcrossCorrelate_rows (my z, my ny, i1, i2, lag, thy data, thy centroid, my dx);
+		NUMcrossCorrelate_rows (my z.at, my ny, i1, i2, lag, thy data, thy centroid, my dx);
 
 		thy numberOfObservations = nsamples;
 
