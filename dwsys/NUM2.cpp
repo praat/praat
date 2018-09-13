@@ -190,12 +190,12 @@ void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, d
 // simple averaging, out of bound values are zero
 	for (integer i = 1; i <= n; i ++) {
 		integer jfrom = i - nwindow / 2, jto = i + nwindow / 2;
-		if ((nwindow % 2) == 0) {
+		if (nwindow % 2 == 0) {
 			jto --;
 		}
 		jfrom = jfrom < 1 ? 1 : jfrom;
 		jto = jto > n ? n : jto;
-		xout [i] = 0;
+		xout [i] = 0.0;
 		for (integer j = jfrom; j <= jto; j ++) {
 			xout [i] += xin [j];
 		}

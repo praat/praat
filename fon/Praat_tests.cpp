@@ -517,8 +517,18 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				double *e;
 				const autoVEC f { e, 10 };
 				#endif
-				const autoVEC g { 100, kTensorInitializationType::ZERO };
+				autoVEC g { 100, kTensorInitializationType::ZERO };
+				g [1] = 3.0;
+				VEC gg = g.get();
+				gg [2] = 4.0;
+				constVEC ggg = g.get();
+				//ggg [3] = 5.0;   // should be refused by the compiler
+				const VEC gggg = g.get();
+				//gggg [3] = 6.0;   // should be refused by the compiler
 				//return f;   // call to deleted constructor
+				//gggg.reset();
+				//ggg.reset();
+				gg.reset();
 				VEC h;
 				autoVEC j;
 				//j = h;   // up assignment standardly correctly ruled out
