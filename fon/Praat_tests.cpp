@@ -517,18 +517,38 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				double *e;
 				const autoVEC f { e, 10 };
 				#endif
-				autoVEC g { 100, kTensorInitializationType::ZERO };
-				g [1] = 3.0;
-				VEC gg = g.get();
-				gg [2] = 4.0;
-				constVEC ggg = g.get();
-				//ggg [3] = 5.0;   // should be refused by the compiler
-				const VEC gggg = g.get();
-				//gggg [3] = 6.0;   // should be refused by the compiler
-				//return f;   // call to deleted constructor
-				//gggg.reset();
-				//ggg.reset();
-				gg.reset();
+				{
+					autoVEC g { 100, kTensorInitializationType::ZERO };
+					g [1] = 3.0;
+					VEC gg = g.get();
+					gg [2] = 4.0;
+					constVEC ggg = g.get();
+					//ggg [3] = 5.0;   // should be refused by the compiler
+					const VEC gggg = g.get();
+					//gggg [3] = 6.0;   // should be refused by the compiler
+					//return f;   // call to deleted constructor
+					//gggg.reset();   // should be refused by the compiler
+					//ggg.reset();   // should be refused by the compiler
+					gg.reset();
+				}
+				{
+					double x [1+2], *px = & x [0];
+					const double *cpx = px;
+					VEC vx { px, 2 };
+					constVEC cvx { px, 2 };
+					const VEC c_vx { px, 2 };
+					double a = c_vx [1];
+					const double b = c_vx [2];
+					const double y = 0.0, *py = & y;
+					VEC vy { py, 0 };   // should be refused by the compiler
+					constVEC cvy { py, 2 };
+					const VEC c_vy = VEC (py, 2);
+					const VEC c_vyy = (const VEC) VEC (const_cast<double *> (py), 2);
+					double c = c_vy [1];
+					const double d = c_vy [2];
+					VEC c_vy2 = VEC (py, 2);
+				}
+
 				VEC h;
 				autoVEC j;
 				//j = h;   // up assignment standardly correctly ruled out

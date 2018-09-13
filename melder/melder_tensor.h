@@ -332,12 +332,15 @@ public:
 	integer size;
 public:
 	vector () = default;   // for use in a union
-	vector (T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	vector (const T *givenAt, integer givenSize): at ((T*)givenAt), size (givenSize) { }
 	vector (const vector& other) = default;
 	vector (const autovector<T>& other) = delete;
 	vector& operator= (const vector&) = default;
 	vector& operator= (const autovector<T>&) = delete;
-	T& operator[] (integer i) const {
+	T& operator[] (integer i) {
+		return our at [i];
+	}
+	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
 		return our at [i];
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
@@ -539,12 +542,15 @@ public:
 	integer nrow, ncol;
 public:
 	matrix () = default;   // for use in a union
-	matrix (T **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	matrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at ((T**)givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	matrix (const matrix& other) = default;
 	matrix (const automatrix<T>& other) = delete;
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
 	T *& operator[] (integer i) {
+		return our at [i];
+	}
+	const T * const & operator[] (integer i) const {
 		return our at [i];
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
