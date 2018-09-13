@@ -31,9 +31,9 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 	#if ! oo_READING && ! oo_WRITING
 		oo_INTEGER (expansionNumberOfRows)
 		oo_INT (dataChanged)
-		oo_DOUBLE_MATRIX (expansion, expansionNumberOfRows, numberOfColumns)
+		oo_MAT (expansion, expansionNumberOfRows, numberOfColumns)
 		oo_DOUBLE (lnd)
-		oo_DOUBLE_MATRIX (lowerCholesky, numberOfColumns, numberOfColumns)
+		oo_MAT (lowerCholesky, numberOfColumns, numberOfColumns)
 		oo_OBJECT (PCA, 0, pca)
 	#endif
 

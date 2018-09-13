@@ -403,7 +403,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		autoDiscriminant thee = Thing_new (Discriminant);
 		integer dimension = my numberOfColumns;
 
-		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns), 
+		Melder_require (! NUMdmatrix_containsUndefinedElements (my data.at, 1, my numberOfRows, 1, my numberOfColumns),
 			U"There should be no undefined elements in the table.");
 		Melder_require (TableOfReal_hasRowLabels (me),
 			U"All rows should be labeled.");
@@ -452,7 +452,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		// the eigenvalues and eigenvectors of the equation.
 		
 		thy eigen = Thing_new (Eigen);
-		Eigen_initFromSquareRootPair (thy eigen.get(), between.peek(), thy numberOfGroups, dimension, mew -> data, my numberOfRows);
+		Eigen_initFromSquareRootPair (thy eigen.get(), between.peek(), thy numberOfGroups, dimension, mew -> data.at, my numberOfRows);
 
 		// Default priors and costs
 
@@ -551,7 +551,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 			*/
 
-			NUMlowerCholeskyInverse (pool -> data, dimension, & lnd);
+			NUMlowerCholeskyInverse (pool -> data.at, dimension, & lnd);
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				ln_determinant [j] = lnd;
 				sscpvec [j] = pool.get();
@@ -573,14 +573,14 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				}
 				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data, dimension, & ln_determinant [j]);
+					NUMlowerCholeskyInverse (t -> data.at, dimension, & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0)
-						NUMlowerCholeskyInverse (pool -> data, dimension, & lnd);
+						NUMlowerCholeskyInverse (pool -> data.at, dimension, & lnd);
 					npool ++;
 					sscpvec [j] = pool.get();
 					ln_determinant [j] = lnd;
@@ -615,7 +615,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				SSCP t = groups->at [j];
-				double md = mahalanobisDistanceSq (sscpvec [j] -> data, dimension, thy data [i], t -> centroid, buf.at);
+				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, dimension, thy data [i], t -> centroid, buf.at);
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;
@@ -671,7 +671,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			// L^-1 will be used later in the Mahalanobis distance calculation:
 			// v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 
-			NUMlowerCholeskyInverse (pool -> data, p, & lnd);
+			NUMlowerCholeskyInverse (pool -> data.at, p, & lnd);
 			for (integer j = 1; j <= g; j ++) {
 				ln_determinant [j] = lnd;
 				sscpvec [j] = pool.get();
@@ -694,14 +694,14 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 				}
 				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data, p, & ln_determinant [j]);
+					NUMlowerCholeskyInverse (t -> data.at, p, & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0) {
-						NUMlowerCholeskyInverse (pool -> data, p, & lnd);
+						NUMlowerCholeskyInverse (pool -> data.at, p, & lnd);
 					}
 					npool ++;
 					sscpvec [j] = pool.get();
@@ -743,7 +743,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			}
 			for (integer j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
-				double md = mahalanobisDistanceSq (sscpvec [j] -> data, p, x.peek(), t -> centroid, buf.peek());
+				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, p, x.peek(), t -> centroid, buf.peek());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;

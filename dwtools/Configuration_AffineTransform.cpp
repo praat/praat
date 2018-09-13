@@ -160,7 +160,7 @@ void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maxim
 		for (integer i = 1; i <= nc; i ++) {
 			for (integer j = 1; j <= nc; j ++) {
 				t [i] [j] = 0.0;
-				for (integer  k = 1; k <= nc; k ++) {
+				for (integer k = 1; k <= nc; k ++) {
 					t [i] [j] -= svd -> u [i] [k] * svd -> v [j] [k];
 				}
 			}
@@ -181,7 +181,9 @@ autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration 
 		// Use Procrustes transform to obtain starting configuration.
 		// (We only need the transformation matrix T.)
 		autoProcrustes p = Configurations_to_Procrustes (me, thee, false);
-		NUMmaximizeCongruence_inplace (p -> r.get(), {my data, my numberOfRows, p -> dimension}, {thy data, my numberOfRows, p -> dimension},  maximumNumberOfIterations, tolerance);
+		Melder_assert (p -> dimension == my data.ncol);
+		Melder_assert (p -> dimension == thy data.ncol);
+		NUMmaximizeCongruence_inplace (p -> r.get(), my data.get(), thy data.get(), maximumNumberOfIterations, tolerance);
 		autoAffineTransform at = AffineTransform_create (p -> dimension);
 		matrixcopy_preallocated (at -> r.get(), p -> r.get());
 		return at;
@@ -198,7 +200,7 @@ autoConfiguration Configuration_AffineTransform_to_Configuration (Configuration 
 
 		// Apply transformation YT
 
-		thy v_transform (my data, my numberOfRows, his data);
+		thy v_transform (my data.at, my numberOfRows, his data.at);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created.");

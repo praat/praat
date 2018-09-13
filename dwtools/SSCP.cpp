@@ -97,7 +97,7 @@ Thing_implement (Correlation, SSCP, 0);
 void structSSCP :: v_info () {
 	structTableOfReal :: v_info ();
 	double zmin, zmax;
-	NUMmatrix_extrema<double> (data, 1, numberOfRows, 1, numberOfColumns, &zmin, &zmax);
+	NUMmatrix_extrema<double> (data.at, 1, numberOfRows, 1, numberOfColumns, &zmin, &zmax);
 	MelderInfo_writeLine (U"Minimum value: ", zmin);
 	MelderInfo_writeLine (U"Maximum value: ", zmax);
 }
@@ -511,7 +511,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 
 autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole) {
 	try {
-		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns),
+		Melder_require (! NUMdmatrix_containsUndefinedElements (my data.at, 1, my numberOfRows, 1, my numberOfColumns),
 			U"All the table's elements should be defined.");
 
 		if (rowb == 0 && rowe == 0) {
@@ -580,8 +580,13 @@ autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfR
 autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal thee, bool useTableCentroid) {
 	try {
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
+		/*
+			ppgb
+			ik kom er niet achter of onderstaande de hele vector kopieert of niet;
+			in elk geval zijn hier enkele asserts nodig
+		*/
 		autoNUMvector<double> centroid (NUMvector_copy (my centroid, 1, thy numberOfColumns), 1);
-		autoNUMmatrix<double> covari (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfRows), 1, 1);
+		autoMAT covari = matrixcopy (my data.get());
 
 		/*
 			Mahalanobis distance calculation. S = L.L' -> S**-1 = L**-1' . L**-1
@@ -591,7 +596,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 			Get inverse of covari in lower triangular part.
 		*/
 		double lndet;
-		NUMlowerCholeskyInverse (covari.peek(), my numberOfRows, & lndet);
+		NUMlowerCholeskyInverse (covari.at, my numberOfRows, & lndet);
 
 		if (useTableCentroid) {
 			for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
@@ -604,7 +609,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 		}
 
 		for (integer k = 1; k <= thy numberOfRows; k ++) {
-			his data [k] [1] = sqrt (NUMmahalanobisDistance_chi (covari.peek(), thy data [k], centroid.peek(), my numberOfRows, my numberOfRows));
+			his data [k] [1] = sqrt (NUMmahalanobisDistance_chi (covari.at, thy data [k], centroid.peek(), my numberOfRows, my numberOfRows));
 			if (thy rowLabels [k]) {
 				TableOfReal_setRowLabel (him.get(), k, thy rowLabels [k].get());
 			}
@@ -737,15 +742,14 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 
 autoPCA SSCP_to_PCA (SSCP me) {
 	try {
-		autoMAT mat (my numberOfColumns, my numberOfColumns, kTensorInitializationType::ZERO);
+		autoMAT mat = MATzero (my numberOfColumns, my numberOfColumns);
 		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
 
-		if (my numberOfRows == 1) { // 1xn matrix -> nxn
-			for (integer i = 1; i <= my numberOfColumns; i ++) {
+		if (my numberOfRows == 1) {   // 1xn matrix -> nxn
+			for (integer i = 1; i <= my numberOfColumns; i ++)
 				mat [i] [i] = my data [1] [i];
-			}
 		} else {
-			NUMmatrix_copyElements <double> (my data, mat.at, 1, my numberOfColumns, 1, my numberOfColumns);
+			matrixcopy_preallocated (mat.get(), my data.get());
 		}
 		thy labels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
@@ -762,7 +766,7 @@ void SSCP_setValue (SSCP me, integer row, integer col, double value) {
 	Melder_require (row > 0 && row <= my numberOfRows, U"Illegal row number.");
 	Melder_require (! (row == col && value <= 0.0), U"Diagonal element should always be a positive number.");
 	
-	if (my numberOfRows == 1) { // diagonal
+	if (my numberOfRows == 1) {   // diagonal
 		Melder_require (row == col, U"Row and column number should be equal for a diagonal matrix.");
 		my data [1] [row] = value;
 	} else {
@@ -1019,7 +1023,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 	for (integer i = 1; i <= g; i ++) {
 		SSCP t = my at [i];
 		double ni = t -> numberOfObservations - 1.0;
-		ln_determinant = NUMdeterminant_cholesky (t -> data, p);
+		ln_determinant = NUMdeterminant_cholesky (t -> data.at, p);
 
 		// Box-test is for covariance matrices -> scale determinant.
 
@@ -1029,7 +1033,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 		chisq -= ni * ln_determinant;
 	}
 
-	ln_determinant = NUMdeterminant_cholesky (pooled -> data, p);
+	ln_determinant = NUMdeterminant_cholesky (pooled -> data.at, p);
 	ln_determinant -= p * log (pooled -> numberOfObservations - g);
 	chisq += sum * ln_determinant;
 
@@ -1318,7 +1322,7 @@ autoCorrelation SSCP_to_Correlation (SSCP me) {
 
 double SSCP_getLnDeterminant (SSCP me) {
 	try {
-		return NUMdeterminant_cholesky (my data, my numberOfRows);
+		return NUMdeterminant_cholesky (my data.at, my numberOfRows);
 	} catch (MelderError) {
 		return undefined;
 	}
@@ -1376,11 +1380,10 @@ double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 
 double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
 	Melder_require (x.size == my numberOfColumns,
 		U"The dimensions of the Covariance and the vector should agree.");
-	if (my lowerCholesky == 0) {
-		SSCP_expandLowerCholesky ((SSCP) me);
-	}
+	if (my lowerCholesky.nrow == 0)
+		SSCP_expandLowerCholesky (me);
 	double ln2pid = my numberOfColumns * log (NUM2pi);
-	double dsq = NUMmahalanobisDistance_chi (my lowerCholesky, x.at, my centroid, my numberOfRows, my numberOfColumns);
+	double dsq = NUMmahalanobisDistance_chi (my lowerCholesky.at, x.at, my centroid, my numberOfRows, my numberOfColumns);
 	double lnN = - 0.5 * (ln2pid + my lnd + dsq);
 	double p =  exp (lnN);
 	return p;
@@ -1442,11 +1445,12 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	if (equalCovariances) {
 		// Morrison, page 141
 		autoCovariance pool = Covariances_pool (me, thee);
-		autoNUMmatrix<double> s (NUMmatrix_copy (my data, 1, p, 1, p), 1, 1);
+		Melder_assert (my data.ncol == p);   // ppgb 20180913
+		autoMAT s = matrixcopy (my data.get());
 		double lndet;
-		NUMlowerCholeskyInverse (s.peek(), p, &lndet);
+		NUMlowerCholeskyInverse (s.at, p, &lndet);
 
-		double mahalanobis = NUMmahalanobisDistance_chi (s.peek(), my centroid, thy centroid, p, p);
+		double mahalanobis = NUMmahalanobisDistance_chi (s.at, my centroid, thy centroid, p, p);
 		double hotelling_tsq = mahalanobis * N1 * N2 / N;
 		fisher = hotelling_tsq * df2 / ( (N - 2) * df1);
 	} else {
@@ -1532,7 +1536,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			 */
 			double lnd;
 			try {
-				lnd = NUMdeterminant_cholesky (pool -> data, p);
+				lnd = NUMdeterminant_cholesky (pool -> data.at, p);
 			} catch (MelderError) {
 				Melder_throw (U"Pooled covariance matrix is singular.");
 			}
@@ -1542,7 +1546,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				try {
-					lnd = NUMdeterminant_cholesky (ci -> data, p);
+					lnd = NUMdeterminant_cholesky (ci -> data.at, p);
 				} catch (MelderError) {
 					Melder_throw (U"Covariance matrix ", i, U" is singular.");
 				}
@@ -1561,18 +1565,18 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			//	- 2 * sum (i=1..k, sum(j=1..i-1, (ni/n)*(nj/n) *tr(si*s^-1*sj*s^-1)))
 
 			double trace = 0;
-			NUMlowerCholeskyInverse (pool -> data, p, nullptr);
-			autoNUMmatrix<double> si (NUMinverseFromLowerCholesky (pool -> data, p), 1, 1);
+			NUMlowerCholeskyInverse (pool -> data.at, p, nullptr);
+			autoNUMmatrix<double> si (NUMinverseFromLowerCholesky (pool -> data.at, p), 1, 1);
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				double ni = ci -> numberOfObservations - 1;
-				autoNUMmatrix<double> s1 (productOfSquareMatrices (ci -> data, si.peek(), p), 1, 1);
+				autoNUMmatrix<double> s1 (productOfSquareMatrices (ci -> data.at, si.peek(), p), 1, 1);
 				double trace_ii = NUMtrace2 (s1.peek(), s1.peek(), p);
 				trace += (ni / ns) * (1 - (ni / ns)) * trace_ii;
 				for (integer j = i + 1; j <= numberOfMatrices; j ++) {
 					Covariance cj = my at [j];
 					double nj = cj -> numberOfObservations - 1;
-					autoNUMmatrix<double> s2 (productOfSquareMatrices (cj -> data, si.peek(), p), 1, 1);
+					autoNUMmatrix<double> s2 (productOfSquareMatrices (cj -> data.at, si.peek(), p), 1, 1);
 					double trace_ij = NUMtrace2 (s1.peek(), s2.peek(), p);
 					trace -= 2.0 * (ni / ns) * (nj / ns) * trace_ij;
 				}
@@ -1609,11 +1613,12 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 		Melder_warning (U"Covariance_difference: number of observations of matrices do not agree.\n"
 		                U" The minimum  size (", numberOfObservations, U") of the two is used.");
 	}
-	Melder_require (numberOfObservations > 1, U"Number of observations too small.");
-
-	autoNUMmatrix<double> linv (NUMmatrix_copy (thy data, 1, p, 1, p), 1, 1);
-	NUMlowerCholeskyInverse (linv.peek(), p, & ln_thee);
-	ln_me = NUMdeterminant_cholesky (my data, p);
+	Melder_require (numberOfObservations > 1,
+		U"Number of observations too small.");
+	Melder_assert (thy data.ncol == p);
+	autoMAT linv = matrixcopy (thy data.get());
+	NUMlowerCholeskyInverse (linv.at, p, & ln_thee);
+	ln_me = NUMdeterminant_cholesky (my data.at, p);
 
 	/*
 		We need trace (A B^-1). We have A and the inverse L^(-1) of the
@@ -1799,13 +1804,10 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 		Melder_require (my numberOfObservations > 4, U"The number of observations should be greater than 4.");
 		Melder_require (numberOfTests >= 0, U"The \"number of tests\" should not be less than zero.");
 
-		if (numberOfTests == 0) {
+		if (numberOfTests == 0)
 			numberOfTests = m_bonferroni;
-		}
-
-		if (numberOfTests > m_bonferroni) {
+		if (numberOfTests > m_bonferroni)
 			Melder_warning (U"The \"number of tests\" should not exceed the number of elements in the Correlation object.");
-		}
 
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfRows);
 
@@ -1886,7 +1888,7 @@ void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContr
 		return;
 	}
 	if (my numberOfObservations >= numberOfContraints) {
-		double ln_determinant = NUMdeterminant_cholesky (my data, p);
+		double ln_determinant = NUMdeterminant_cholesky (my data.at, p);
 		chisq = - ln_determinant * (my numberOfObservations - numberOfContraints - (2.0 * p + 5.0) / 6.0);
 		if (p_prob) {
 			prob = NUMchiSquareQ (chisq, df);
@@ -1917,9 +1919,8 @@ void SSCP_expand (SSCP me) {
 	        (my expansionNumberOfRows > 0 && ! my dataChanged)) {
 		return;
 	}
-	if (my expansion == 0) {
-		my expansion = NUMmatrix<double> (1, my numberOfColumns, 1, my numberOfColumns);
-	}
+	if (my expansion.nrow == 0)
+		my expansion = MATzero (my numberOfColumns, my numberOfColumns);
 	for (integer ir = 1; ir <= my numberOfColumns; ir ++) {
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
 			integer dij = labs (ir - ic);
@@ -1927,28 +1928,24 @@ void SSCP_expand (SSCP me) {
 		}
 	}
 	// Now make 'my data' point to 'my expansion'
-	double **tmp = my data; my data = my expansion; my expansion = tmp;
+	std::swap (my data, my expansion);
 	my expansionNumberOfRows = my numberOfRows;
 	my numberOfRows = my numberOfColumns;
 	my dataChanged = 0;
 }
 
 void SSCP_unExpand (SSCP me) {
-	if (my expansionNumberOfRows == 0) {
+	if (my expansionNumberOfRows == 0)
 		return;
-	}
-	NUMmatrix_free (my data, 1, 1);
-	my data = my expansion;
-	my expansion = nullptr;
+	my data = my expansion.move();
 	my numberOfRows = my expansionNumberOfRows;
 	my expansionNumberOfRows = 0;
 	my dataChanged = 0;
 }
 
 void SSCP_expandLowerCholesky (SSCP me) {
-	if (! my lowerCholesky) {
-		my lowerCholesky = NUMmatrix<double> (1, my numberOfRows, 1, my numberOfColumns);
-	}
+	if (my lowerCholesky.nrow == 0)
+		my lowerCholesky = MATzero (my numberOfRows, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -1956,20 +1953,17 @@ void SSCP_expandLowerCholesky (SSCP me) {
 			my lnd += log (my data [1] [j]);   // diagonal elmnt is variance
 		}
 	} else {
-		for (integer i = 1; i <= my numberOfRows; i ++) {
-			for (integer j = i; j <= my numberOfColumns; j ++) {
+		for (integer i = 1; i <= my numberOfRows; i ++)
+			for (integer j = i; j <= my numberOfColumns; j ++)
 				my lowerCholesky [j] [i] = my lowerCholesky [i] [j] = my data [i] [j];
-			}
-		}
 		try {
-			NUMlowerCholeskyInverse (my lowerCholesky, my numberOfColumns, & (my lnd));
+			NUMlowerCholeskyInverse (my lowerCholesky.at, my numberOfColumns, & (my lnd));
 		} catch (MelderError) {
 			// singular matrix: arrange a diagonal only inverse.
 			my lnd = 0.0;
 			for (integer i = 1; i <= my numberOfRows; i ++) {
-				for (integer j = i; j <= my numberOfColumns; j ++) {
+				for (integer j = i; j <= my numberOfColumns; j ++)
 					my lowerCholesky [i] [j] = my lowerCholesky [j] [i] = ( i == j ? 1.0 / sqrt (my data [i] [i]) : 0.0 );
-				}
 				my lnd += log (my data [i] [i]);
 			}
 			my lnd *= 2.0;
@@ -1978,14 +1972,13 @@ void SSCP_expandLowerCholesky (SSCP me) {
 }
 
 void SSCP_unExpandLowerCholesky (SSCP me) {
-	NUMmatrix_free (my lowerCholesky, 1, 1);
+	my lowerCholesky.reset();
 	my lnd = 0.0;
 }
 
 void SSCP_expandPCA (SSCP me) {
-	if (my pca) {
+	if (my pca)
 		my pca.reset();
-	}
 	my pca = SSCP_to_PCA (me);
 }
 

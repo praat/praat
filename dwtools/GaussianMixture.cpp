@@ -180,15 +180,14 @@ static void Covariance_into_Covariance (Covariance me, Covariance thee) {
 	// Are the matrix sizes equal
 	if (my numberOfRows == thy numberOfRows) {
 		thy rowLabels. copyElementsFrom (my rowLabels.get());
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 		return;
 	} else {
 		for (integer ir = 1; ir <= my numberOfRows; ir ++) {
 			for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
 				integer dij = ic - ir;
-				if (dij < thy numberOfRows) {
+				if (dij < thy numberOfRows)
 					thy data [dij + 1] [ic] = my data [ir] [ic];
-				}
 			}
 		}
 	}
@@ -728,7 +727,7 @@ autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (Gaus
 			double psum = 0.0;
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance cov = my covariances->at [im];
-				double dsq = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data [i], cov -> centroid, cov -> numberOfRows, my dimension);
+				double dsq = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, thy data [i], cov -> centroid, cov -> numberOfRows, my dimension);
 				lnN [im] = ln2pid - 0.5 * (cov -> lnd + dsq);
 				psum += his data [i] [im] = my mixingProbabilities [im] * exp (lnN [im]);
 			}
@@ -772,7 +771,7 @@ void GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee
 			double rowsum = 0.0;
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance cov = my covariances->at [im];
-				double dsq = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data [i], cov -> centroid, cov -> numberOfRows, my dimension);
+				double dsq = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, thy data [i], cov -> centroid, cov -> numberOfRows, my dimension);
 				lnN [im] = ln2pid - 0.5 * (cov -> lnd + dsq);
 				gamma [i] [im] = my mixingProbabilities [im] * exp (lnN [im]); // eq. Bishop 9.16
 				rowsum += gamma [i] [im];
@@ -878,7 +877,7 @@ int GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfRea
 			SSCP_expandLowerCholesky (him);
 
 			for (integer i = 1; i <= thy numberOfRows; i++) {
-				double dsq = NUMmahalanobisDistance_chi (his lowerCholesky, thy data [i], his centroid, his numberOfRows, my dimension);
+				double dsq = NUMmahalanobisDistance_chi (his lowerCholesky.at, thy data [i], his centroid, his numberOfRows, my dimension);
 				double prob = exp (- 0.5 * (ln2pid + his lnd + dsq));
 				prob = prob < 1e-300 ? 1e-300 : prob; // prevent p from being zero
 				p [i] [ic] = prob;
@@ -934,7 +933,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				// M-step: 1. new means & covariances
 
 				for (integer im = 1; im <= my numberOfComponents; im ++) {
-					GaussianMixture_updateCovariance (me, im, thy data, thy numberOfRows, pp.peek());
+					GaussianMixture_updateCovariance (me, im, thy data.at, thy numberOfRows, pp.peek());
 					GaussianMixture_addCovarianceFraction (me, im, covg.get(), lambda);
 				}
 
@@ -1121,7 +1120,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 					while (component <= my numberOfComponents) {
 						// M-step for means and covariances
 						GaussianMixture_updateProbabilityMarginals (me.get(), p.peek(), thy numberOfRows);
-						GaussianMixture_updateCovariance (me.get(), component, thy data, thy numberOfRows, p.peek());
+						GaussianMixture_updateCovariance (me.get(), component, thy data.at, thy numberOfRows, p.peek());
 						if (lambda > 0) {
 							GaussianMixture_addCovarianceFraction (me.get(), component, covg.get(), lambda);
 						}
@@ -1395,12 +1394,12 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 			for (integer j = 1; j <= n; j ++) {
 				double wj = p [j] [nocp1] > 0.0 ? mixingP * p [j] [im] / p [j] [nocp1] : 0.0;
 				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data [j], thy data [k], d, d);
+					djk = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, thy data [j], thy data [k], d, d);
 					double w = p [k] [nocp1] > 0.0 ? wj * mixingP * p [k] [im] / p [k] [nocp1] : 0.0;
 					sumjk += 2.0 * w * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}
 				sumjk += wj * wj; // for k == j. Is this ok now for probability weighing ????
-				djj = NUMmahalanobisDistance_chi (cov -> lowerCholesky, thy data [j], cov -> centroid, d, d);
+				djj = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, thy data [j], cov -> centroid, d, d);
 				sumj += wj * exp (-b2 * djj);
 			}
 			tnb = (1.0 / nd) * sumjk - 2.0 * pow (1.0 + beta2, - d2) * sumj + nd * pow (gamma, - d2); // n *

@@ -139,8 +139,8 @@ autoConfusion Categories_to_Confusion (Categories me, Categories thee) {
 void Confusion_getEntropies (Confusion me, double *out_h, double *out_hx, double *out_hy,
 	double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy)
 {
-	MAT_getEntropies ({my data, my numberOfRows, my numberOfColumns}, out_h, out_hx, 
-	out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);
+	MAT_getEntropies (my data.get(), out_h, out_hx,
+			out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);
 }
 
 void Confusion_increase (Confusion me, conststring32 stimulus, conststring32 response) {

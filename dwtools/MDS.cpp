@@ -377,18 +377,18 @@ autoISplineTransformator ISplineTransformator_create (integer numberOfPoints, in
 
 autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, integer numberOfDimensions, int scaling) {
 	try {
-		integer nr = my numberOfRows, nc = my numberOfColumns;
-		integer dimmin = nr < nc ? nr : nc;
+		integer nrow = my numberOfRows, ncol = my numberOfColumns;
+		integer dimmin = nrow < ncol ? nrow : ncol;
 
-		autoMAT h = MATcopy ({my data, nr,  nc});
-		autoVEC rowsum = VECsumPerRow ({my data, my numberOfRows, my numberOfColumns});
-		autoVEC colsum = VECsumPerColumn ({my data, my numberOfRows, my numberOfColumns});
-		autoConfiguration thee = Configuration_create (nr + nc, numberOfDimensions);
+		autoMAT h = MATcopy (my data.get());
+		autoVEC rowsum = VECsumPerRow (my data.get());
+		autoVEC colsum = VECsumPerColumn (my data.get());
+		autoConfiguration thee = Configuration_create (nrow + ncol, numberOfDimensions);
 
-		if (numberOfDimensions == 0) {
+		if (numberOfDimensions == 0)
 			numberOfDimensions = dimmin - 1;
-		}
-		Melder_require (numberOfDimensions < dimmin, U"Dimension should be lower than ", dimmin, U".");
+		Melder_require (numberOfDimensions < dimmin,
+			U"Dimension should be lower than ", dimmin, U".");
 
 		/*
 			Ref: A. Gifi (1990), Nonlinear Multivariate Analysis, Wiley & Sons, reprinted 1996,
@@ -398,22 +398,22 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 		*/
 
 		longdouble sum = 0.0;;
-		for (integer j = 1; j <= nr; j ++) {
-			Melder_require (rowsum [j] > 0.0, U"Column number ", j, U" should not be empty.");
-			sum += rowsum [j];
+		for (integer irow = 1; irow <= nrow; irow ++) {
+			Melder_require (rowsum [irow] > 0.0, U"Row number ", irow, U" should not be empty.");
+			sum += rowsum [irow];
 		}
 
-		for (integer j = 1; j <= nc; j ++) {
-			Melder_require (colsum [j] > 0.0, U"Column number ", j, U" should not be empty.");
+		for (integer icol = 1; icol <= ncol; icol ++) {
+			Melder_require (colsum [icol] > 0.0, U"Column number ", icol, U" should not be empty.");
 		}
 
 		// Remove trivial singular vectors (Eq. 8.24),
 		// construct Dr^(-1/2) H Dc^(-1/2) - Dr^(1/2) uu' Dc^(1/2) / N
 
-		for (integer i = 1; i <= nr; i ++) {
-			for (integer j = 1; j <= nc; j ++) {
-				double rc = sqrt (rowsum [i] * colsum [j]);
-				h [i] [j] = h [i] [j] / rc - rc / (double) sum;
+		for (integer irow = 1; irow <= nrow; irow ++) {
+			for (integer icol = 1; icol <= ncol; icol ++) {
+				double rc = sqrt (rowsum [irow] * colsum [icol]);
+				h [irow] [icol] = h [irow] [icol] / rc - rc / (double) sum;
 			}
 		}
 
@@ -446,18 +446,18 @@ autoConfiguration ContingencyTable_to_Configuration_ca (ContingencyTable me, int
 			} else {
 				break;
 			}
-			for (integer i = 1; i <= nr; i ++) {
-				thy data [i] [j] = svd -> u [i] [j] * xfactor / sqrt (rowsum [i]);
+			for (integer irow = 1; irow <= nrow; irow ++) {
+				thy data [irow] [j] = svd -> u [irow] [j] * xfactor / sqrt (rowsum [irow]);
 			}
-			for (integer i = 1; i <= nc; i ++) {
-				thy data [nr + i] [j] = svd -> v [i] [j] * yfactor / sqrt (colsum [i]);
+			for (integer icol = 1; icol <= ncol; icol ++) {
+				thy data [nrow + icol] [j] = svd -> v [icol] [j] * yfactor / sqrt (colsum [icol]);
 			}
 		}
 
 		TableOfReal_setSequentialColumnLabels (thee.get(), 0, 0, nullptr, 1, 1);
-		thy rowLabels. copyElementsFrom_upTo (my rowLabels.get(), nr);
-		for (integer i = 1; i <= nc; i ++)
-			thy rowLabels [nr + i] = Melder_dup (my columnLabels [i].get());
+		thy rowLabels. copyElementsFrom_upTo (my rowLabels.get(), nrow);
+		for (integer icol = 1; icol <= ncol; icol ++)
+			thy rowLabels [nrow + icol] = Melder_dup (my columnLabels [icol].get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created.");
@@ -693,27 +693,28 @@ autoScalarProduct ScalarProduct_create (integer numberOfPoints) {
 
 autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmetrizeMethod) {
 	try {
-		Melder_require (my numberOfColumns == my numberOfRows, U"Confusion should be a square table.");
+		Melder_require (my numberOfColumns == my numberOfRows,
+			U"Confusion should be a square table.");
 
 		integer nxy = my numberOfColumns;
 		autoSimilarity thee = Similarity_create (nxy);
 
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 
-		if (normalize) NUMdmatrix_normalizeRows (thy data, nxy, nxy);
+		if (normalize) NUMdmatrix_normalizeRows (thy data.at, nxy, nxy);
 
 		if (symmetrizeMethod == 1) return thee;
 
-		if (symmetrizeMethod == 2) { // Average data
+		if (symmetrizeMethod == 2) {   // average data
 			for (integer i = 1; i <= nxy - 1; i ++) {
 				for (integer j = i + 1; j <= nxy; j ++) {
 					thy data [i] [j] = thy data [j] [i] = (thy data [i] [j] + thy data [j] [i]) / 2;
 				}
 			}
-		} else if (symmetrizeMethod == 3) { // Method Houtgast.
-			autoNUMmatrix<double> p (NUMmatrix_copy (thy data, 1, nxy, 1, nxy), 1, 1);
+		} else if (symmetrizeMethod == 3) {   // method Houtgast
+			autoMAT p = matrixcopy (thy data.get());
 			for (integer i = 1; i <= nxy; i ++) {
 				for (integer j = i; j <= nxy; j ++) {
 					longdouble tmp = 0;
@@ -735,7 +736,7 @@ autoDissimilarity Similarity_to_Dissimilarity (Similarity me, double maximumDiss
 		integer nxy = my numberOfColumns;
 		autoDissimilarity thee = Dissimilarity_create (nxy);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 
 		double max = 0.0;
 		for (integer i = 1; i <= nxy; i ++) {
@@ -790,19 +791,16 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 		Melder_assert (minimumConfusionLevel > 0.0);
 		autoDissimilarity thee = Dissimilarity_create (my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 
 		// Correct "zero" responses.
 
-		for (integer i = 1; i <= my numberOfColumns; i ++) {
-			for (integer j = 1; j <= my numberOfColumns; j ++) {
-				if (thy data [i] [j] == 0.0) {
+		for (integer i = 1; i <= my numberOfColumns; i ++)
+			for (integer j = 1; j <= my numberOfColumns; j ++)
+				if (thy data [i] [j] == 0.0)
 					thy data [i] [j] = minimumConfusionLevel;
-				}
-			}
-		}
 
-		NUMdmatrix_normalizeRows (thy data, my numberOfColumns, my numberOfColumns);
+		NUMdmatrix_normalizeRows (thy data.at, my numberOfColumns, my numberOfColumns);
 
 		/*
 			Consider the fraction as the fraction overlap between two gaussians with unequal sigmas (1 & s).
@@ -863,7 +861,7 @@ autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDim
 		autoScalarProduct sp = Distance_to_ScalarProduct (me, false);
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		TableOfReal_copyLabels (me, thee.get(), 1, 0);
-		MAT_getPrincipalComponentsOfSymmetricMatrix_inplace ({sp -> data, sp -> numberOfRows, sp -> numberOfRows}, numberOfDimensions, {thy data, thy numberOfRows, thy numberOfColumns});
+		MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (sp -> data.get(), numberOfDimensions, thy data.get());
 		//NUMprincipalComponents (sp -> data, my numberOfRows, numberOfDimensions, thy data);
 		return thee;
 	} catch (MelderError) {
@@ -909,7 +907,7 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 					NUMequal (my columnLabels.get(), thy columnLabels.get()),
 		U"The labels should be the same.");
 	
-	double **x = my data, **y = thy data;
+	double **x = my data.at, **y = thy data.at;
 	if (xmax <= xmin) {
 		xmin = xmax = x [1] [2];
 		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
@@ -1116,7 +1114,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		autoMAT y (nPoints, numberOfDimensions, kTensorInitializationType::ZERO);
 
 		NUMdmatrix_into_principalComponents (pmean.at, nPoints, nPoints, numberOfDimensions, y.at);
-		NUMmatrix_copyElements (y.at, thy data, 1, nPoints, 1, numberOfDimensions);
+		matrixcopy_preallocated (thy data.get(), y.get());
 
 		/*
 			We cannot determine weights from only one sp-matrix.
@@ -1250,7 +1248,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 
 static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distance disp, Weight weight, double **vplus) {
 	integer nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
-	double **z = cz -> data;
+	double **z = cz -> data.at;
 
 	autoNUMmatrix<double> b (1, nPoints, 1, nPoints);
 	autoDistance distZ = Configuration_to_Distance (cz);
@@ -1307,8 +1305,8 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 			}
 		}
 	} else if (stressMeasure == MDS_STRESS_2) {
-		double m = 0.0, wsum = 0.0, var = 0.0, **w = weight -> data;
-		double **c = conf -> data;
+		double m = 0.0, wsum = 0.0, var = 0.0, **w = weight -> data.at;
+		double **c = conf -> data.at;
 		integer nPoints = conf -> numberOfRows;
 
 		// Get average distance
@@ -1474,7 +1472,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
-		double **w = weight -> data;
+		double **w = weight -> data.at;
 
 		if (showProgress) {
 			Melder_progress (0.0, U"MDS analysis");
@@ -1525,7 +1523,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 
 			// Make Z = X
 
-			NUMmatrix_copyElements (conf -> data, z -> data, 1, nPoints, 1, nDimensions);
+			matrixcopy_preallocated (z -> data.get(), conf -> data.get());
 
 			stressp = stress;
 			if (showProgress) {
@@ -1698,7 +1696,7 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *stress, double *s, double *t, double *dbar) {
 	integer numberOfProximities = my numberOfProximities;
 	integer *rowIndex = my rowIndex, *columnIndex = my columnIndex;
-	double **dist = ddist -> data, **fit = dfit -> data;
+	double **dist = ddist -> data.at, **fit = dfit -> data.at;
 
 	*s = *t = *dbar = 0.0;
 
@@ -1722,7 +1720,7 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distanc
 static double func (Daata object, const double p []) {
 	Kruskal me = (Kruskal) object;
 	MDSVec him = my vec.get();
-	double **x = my configuration -> data, s, t, dbar, stress;
+	double **x = my configuration -> data.at, s, t, dbar, stress;
 	double metric = my configuration -> metric;
 	integer numberOfDimensions = my configuration -> numberOfColumns;
 	integer numberOfPoints = my configuration -> numberOfRows;
@@ -1964,7 +1962,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 
 		thy minimizer = VDSmagtMinimizer_create (numberOfCoordinates, (Daata) thee.get(), func, dfunc);
 
-		NUMdmatrix_into_vector (his data, thy minimizer -> p, 1, his numberOfRows, 1, his numberOfColumns);
+		NUMdmatrix_into_vector (his data.at, thy minimizer -> p, 1, his numberOfRows, 1, his numberOfColumns);
 
 		thy stress_formula = stress_formula;
 		thy process = tiesHandling;
@@ -1993,7 +1991,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, Salience weights) {
 	integer nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
 	integer nSources = zc->size;
-	double **x = xc -> data, **w = weights -> data, lambda;
+	double **x = xc -> data.at, **w = weights -> data.at, lambda;
 
 	// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
 
@@ -2011,7 +2009,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
-			double **sih = spr -> data;
+			double **sih = spr -> data.at;
 
 			// Construct the S [i] [h] matrices (eq. 6)
 
@@ -2069,7 +2067,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
-			double **sih = spr -> data, wih = 0.0;
+			double **sih = spr -> data.at, wih = 0.0;
 			for (integer k = 1; k <= nPoints; k ++) {
 				for (integer l = 1; l <= nPoints; l ++) {
 					wih += x [k] [h] * sih [k] [l] * x [l] [h];
@@ -2116,7 +2114,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 		// Count number of zero weights
 
-		integer nZeros = NUMdmatrix_countZeros (sal -> data, sal -> numberOfRows, sal -> numberOfColumns);
+		integer nZeros = NUMdmatrix_countZeros (sal -> data.at, sal -> numberOfRows, sal -> numberOfColumns);
 
 		if (out_conf) {
 			Thing_setName (conf.get(), U"indscal");
@@ -2193,7 +2191,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 		// Count number of zero weights
 
-		integer nZeros = NUMdmatrix_countZeros (salience -> data, salience -> numberOfRows, salience -> numberOfColumns);
+		integer nZeros = NUMdmatrix_countZeros (salience -> data.at, salience -> numberOfRows, salience -> numberOfColumns);
 
 		// Set labels & names.
 
