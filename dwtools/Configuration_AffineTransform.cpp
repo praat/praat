@@ -64,7 +64,8 @@ void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maxim
 	integer numberOfIterations = 0;
 
 	if (b.ncol == 1) {
-		t [1] [1] = 1.0; return;
+		t [1] [1] = 1.0;
+		return;
 	}
 	integer nr = b.nrow, nc = b.ncol;
 	autoMAT c = MATzero (nc, nc);
