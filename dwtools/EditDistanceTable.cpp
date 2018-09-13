@@ -329,15 +329,12 @@ double EditCostsTable_getSubstitutionCost (EditCostsTable me, conststring32 symb
 autoTableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
+		for (integer j = 1; j <= my numberOfColumns; j ++)
 			thy columnLabels [j] = Melder_dup (my columnLabels [j].get());
-		}
-		for (integer i = 1; i <= my numberOfRows; i ++) {
+		for (integer i = 1; i <= my numberOfRows; i ++)
 			thy rowLabels [i] = Melder_dup (my rowLabels [i].get());
-		}
-		NUMmatrix_copyElements<double> (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 		return thee;
-
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to TableOfReal.");
 	}
@@ -620,7 +617,7 @@ autoTableOfReal EditDistanceTable_to_TableOfReal (EditDistanceTable me) {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		thy columnLabels. copyElementsFrom (my columnLabels.get());
 		thy rowLabels. copyElementsFrom (my rowLabels.get());
-		NUMmatrix_copyElements<double> (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no TableOfReal created.");

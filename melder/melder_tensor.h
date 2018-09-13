@@ -350,7 +350,7 @@ public:
 	vector<T> subview (integer first, integer last) {
 		const integer offset = first - 1;
 		Melder_assert (offset >= 0 && offset < our size);
-		integer newSize = last - offset;
+		const integer newSize = last - offset;
 		if (newSize <= 0) return vector<T> (nullptr, 0);
 		return vector<T> (& our at [offset], newSize);
 	}
@@ -378,7 +378,7 @@ public:
 	constvector<T> subview (integer first, integer last) {
 		const integer offset = first - 1;
 		Melder_assert (offset >= 0 && offset < our size);
-		integer newSize = last - offset;
+		const integer newSize = last - offset;
 		if (newSize <= 0) return constvector<T> (nullptr, 0);
 		return constvector<T> (& our at [offset], newSize);
 	}
@@ -563,7 +563,7 @@ public:
 		const integer offsetRow = firstRow - 1;
 		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		integer newNrow = lastRow - offsetRow;
+		const integer newNrow = lastRow - offsetRow;
 		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
 		return matrix<T> (& our at [offsetRow], newNrow, our ncol);
 	}
@@ -588,7 +588,7 @@ public:
 		const integer offsetRow = firstRow - 1;
 		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		integer newNrow = lastRow - offsetRow;
+		const integer newNrow = lastRow - offsetRow;
 		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
 		return constmatrix<T> (& our at [offsetRow], newNrow, our ncol);
 	}
@@ -732,7 +732,6 @@ using constMAT = constmatrix <double>;
 using autoMAT = automatrix <double>;
 inline autoMAT MATraw  (integer nrow, integer ncol) { return matrixraw  <double> (nrow, ncol); }
 inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double> (nrow, ncol); }
-inline void MATcopy_preallocated (MAT target, constMAT source) { matrixcopy_preallocated (target, source); }
 inline autoMAT MATcopy (constMAT source) { return matrixcopy (source); }
 
 using INTMAT = matrix <integer>;
@@ -740,7 +739,6 @@ using constINTMAT = constmatrix <integer>;
 using autoINTMAT = automatrix <integer>;
 inline autoINTMAT INTMATraw  (integer nrow, integer ncol) { return matrixraw  <integer> (nrow, ncol); }
 inline autoINTMAT INTMATzero (integer nrow, integer ncol) { return matrixzero <integer> (nrow, ncol); }
-inline void INTMATcopy_inplace (INTMAT target, constINTMAT source) { matrixcopy_preallocated (target, source); }
 inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); }
 
 #define emptyMAT  MAT (nullptr, 0, 0)

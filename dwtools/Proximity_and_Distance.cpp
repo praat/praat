@@ -46,7 +46,8 @@ autoDissimilarity Distance_to_Dissimilarity (Distance me) {
 	try {
 		autoDissimilarity thee = Dissimilarity_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		Melder_assert (thy data.ncol == my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"Dissimilarity not created from Distance.");
@@ -57,7 +58,6 @@ autoDissimilarity Distance_to_Dissimilarity (Distance me) {
 autoDistanceList DissimilarityList_to_DistanceList (DissimilarityList me, kMDS_AnalysisScale scale) {
 	try {
 		autoDistanceList thee = DistanceList_create ();
-
 		for (integer i = 1; i <= my size; i ++) {
 			autoDistance him = Dissimilarity_to_Distance (my at [i], scale);
 			conststring32 name = Thing_getName (my at [i]);

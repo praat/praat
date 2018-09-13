@@ -40,7 +40,6 @@ autoCepstrogram Cepstrogram_create (double tmin, double tmax, integer nt, double
 	double qmin, double qmax, integer nq, double dq, double q1) {
 	try {
 		autoCepstrogram me = Thing_new (Cepstrogram);
-
 		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, qmin, qmax, nq, dq, q1);
 		return me;
 	} catch (MelderError) {
@@ -52,7 +51,6 @@ autoPowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, integer 
 	double qmin, double qmax, integer nq, double dq, double q1) {
 	try {
 		autoPowerCepstrogram me = Thing_new (PowerCepstrogram);
-
 		Matrix_init (me.get(), tmin, tmax, nt, dt, t1, qmin, qmax, nq, dq, q1);
 		return me;
 	} catch (MelderError) {
@@ -73,14 +71,15 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	for (integer i = 1; i <= my ny; i ++) {
 		for (integer j = 1; j <= my nx; j ++) {
 			double val = TO10LOG (my z [i] [j]);
-			min = val < min ? val : min;
-			max = val > max ? val : max;
+			if (val < min) min = val;
+			if (val > max) max = val;
 			thy z [i] [j] = val;
 		}
 	}
 	double dBminimum = dBmaximum - dynamicRangedB;
 	if (autoscaling) {
-		dBminimum = min; dBmaximum = max;
+		dBminimum = min;
+		dBmaximum = max;
 	}
 
 	for (integer j = 1; j <= my nx; j ++) {

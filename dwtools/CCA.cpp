@@ -102,7 +102,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 			"the dimension of the independent part (", nx, U").");
 		Melder_require (n >= nmax_xy,
 			U"The number of observations should be larger than  ", nmax_xy - 1, U".");
-		Melder_require (! NUMdmatrix_containsUndefinedElements (my data, 1, my numberOfRows, 1, my numberOfColumns),
+		Melder_require (! NUMdmatrix_containsUndefinedElements (my data.at, 1, my numberOfRows, 1, my numberOfColumns),
 			U"At least one of the table's elements is undefined."); 	
 		
 		// Use svd as (temporary) storage, and copy data
@@ -110,7 +110,7 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		autoSVD svdy = SVD_create (n, ny);   // n >= ny, hence no transposition
 		autoSVD svdx = SVD_create (n, nx);	 // n >= nx, hence no transposition
 
-		// TODO MATcopy_preallocated (svdy->u, my data);
+		// TODO matrixcopy_preallocated (svdy->u, my data);
 		for (integer i = 1; i <= n; i ++) {
 			for (integer j = 1; j <= ny; j ++) {
 				svdy -> u [i] [j] = my data [i] [j];

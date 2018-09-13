@@ -72,7 +72,7 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 		return 0.0;
 	}
 
-	double sum = NUMsum ({my data, my numberOfRows, my numberOfColumns});
+	double sum = NUMsum (my data.get());
 
 	integer nmin = my numberOfColumns < my numberOfRows ? my numberOfColumns : my numberOfRows;
 
@@ -88,7 +88,7 @@ double ContingencyTable_cramersStatistic (ContingencyTable me) {
 
 double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 	
-	double chisq, df, sum = NUMsum ({my data, my numberOfRows, my numberOfColumns});
+	double chisq, df, sum = NUMsum (my data.get());
 	ContingencyTable_chisq (me, & chisq, & df);
 	if (chisq == 0.0 && df == 0.0) {
 		return 0.0;
@@ -98,9 +98,9 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me) {
 
 void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out_df) {
 	
-	autoVEC rowSums = VECsumPerRow ({ my data, my numberOfRows, my numberOfColumns });
-	autoVEC columnSums = VECsumPerColumn ({ my data, my numberOfRows, my numberOfColumns });
-	double totalSum = NUMsum ({ my data, my numberOfRows, my numberOfColumns });
+	autoVEC rowSums = VECsumPerRow (my data.get());
+	autoVEC columnSums = VECsumPerColumn (my data.get());
+	double totalSum = NUMsum (my data.get());
 	
 	integer nrow = my numberOfRows, ncol = my numberOfColumns;
 	
@@ -138,8 +138,8 @@ void ContingencyTable_chisq (ContingencyTable me, double *out_chisq, double *out
 }
 
 void ContingencyTable_getEntropies (ContingencyTable me, double *out_h, double *out_hx, double *out_hy, double *out_hygx, double *out_hxgy, double *out_uygx, double *out_uxgy, double *out_uxy) {	
-	MAT_getEntropies ( {my data, my numberOfRows, my numberOfColumns}, out_h, out_hx, 
-	out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);	
+	MAT_getEntropies (my data.get(), out_h, out_hx,
+			out_hy,	out_hygx, out_hxgy, out_uygx, out_uxgy, out_uxy);	
 }
 
 autoContingencyTable Confusion_to_ContingencyTable (Confusion me) {
