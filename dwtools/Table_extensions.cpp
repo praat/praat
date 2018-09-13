@@ -4609,13 +4609,13 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		Melder_assert (numberOfGroups > 0);
 
 		SSCP sscp = thy at [1];
-		integer numberOfColumns = sscp -> numberOfColumns, numberOfSelectedRows = 0;
+		integer numberOfColumns = sscp -> numberOfColumns;
 		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
 		autoINTVEC columnIndex = INTVECraw (numberOfColumns);
 		autoVEC vector = VECraw (numberOfColumns);
 		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)
-			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get());   // throw if not present
+			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get()); // throw if not present
 		autoTable him = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			his columnHeaders [icol].label = Melder_dup (my columnHeaders [icol]. label.get());
@@ -4625,7 +4625,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			SSCP_expandLowerCholesky (cov.get());
 			covs. addItem_move (cov.move());
 		}
-		for (integer i = 1; i <= numberOfSelectedRows; i ++) {
+		for (integer i = 1; i <= selectedRows.size; i ++) {
 			integer irow = selectedRows [i];
 			integer igroup = 1; // if factorColIndex == 0 we don't need labels
 			if (factorColIndex > 0) {

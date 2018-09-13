@@ -176,7 +176,7 @@ autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
 
 		autoEEG him = Data_copy (me);
 		autoSound white = Sound_PCA_whitenSelectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.get());
-		for (integer i = 1; i <= thy dimension; i ++) {
+		for (integer i = 1; i <= channelNumbers.size; i ++) {
 			integer ichannel = channelNumbers [i];
 			NUMvector_copyElements<double> (white -> z [i], his sound -> z [ichannel], 1, his sound -> nx);
 		}
@@ -198,7 +198,7 @@ autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfCo
 		autoINTVEC channelNumbers = EEG_channelNames_to_channelNumbers (me, thy labels.get());
 		autoEEG him = Data_copy (me);
 		autoSound pc = Sound_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.get());
-		for (integer i = 1; i <= thy dimension; i ++) {
+		for (integer i = 1; i <= channelNumbers.size; i ++) {
 			integer ichannel = channelNumbers [i];
 			NUMvector_copyElements<double> (pc -> z [i], his sound -> z [ichannel], 1, his sound -> nx);
 		}
@@ -225,7 +225,6 @@ void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfC
 		if (endTime > my xmax) {
 			endTime = my xmax;
 		}
-		integer numberOfChannels;
 		autoINTVEC channelNumbers = NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, U"channel", true);
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		if (whiteningMethod != 0) {
@@ -244,8 +243,8 @@ void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfC
 
 		// Calculate the cross-correlations between eye-channels and the ic's
 
-		*p_resultingEEG = thee.move();
-		*p_resultingMixingMatrix = mm.move();
+		if (p_resultingEEG) *p_resultingEEG = thee.move();
+		if (p_resultingMixingMatrix) *p_resultingMixingMatrix = mm.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": no independent components determined.");
 	}
