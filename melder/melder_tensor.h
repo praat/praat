@@ -362,8 +362,8 @@ public:
 template <typename T>
 class constvector {
 public:
-	const T * /*const*/ at;
-	/*const*/ integer size;
+	const T * const at;
+	const integer size;
 	constvector (): at (nullptr), size (0) { }
 	constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	constvector (vector<T> vec): at (vec.at), size (vec.size) { }
@@ -375,7 +375,7 @@ public:
 	const T& operator[] (integer i) const {   // it's still a reference, because we need to be able to take its address
 		return our at [i];
 	}
-	constvector<T> subview (integer first, integer last) {
+	constvector<T> subview (integer first, integer last) const {
 		const integer offset = first - 1;
 		Melder_assert (offset >= 0 && offset < our size);
 		const integer newSize = last - offset;
@@ -572,19 +572,19 @@ public:
 template <typename T>
 class constmatrix {
 public:
-	const T * const * /*const*/ at;
-	/*const*/ integer nrow, ncol;
+	const T * const * const at;
+	const integer nrow, ncol;
 	constmatrix (): at (nullptr), nrow (0), ncol (0) { }
 	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
 	const T * const & operator[] (integer i) const {
 		return our at [i];
 	}
-	constvector<T> row (integer rowNumber) {
+	constvector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
 		return constvector<T> (our at [rowNumber], our ncol);
 	}
-	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) {
+	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) const {
 		const integer offsetRow = firstRow - 1;
 		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);

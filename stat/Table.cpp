@@ -1057,14 +1057,16 @@ autoTable Table_transpose (Table me) {
 	}
 }
 
-static constINTVEC cellCompare_columns;
+static constINTVEC *cellCompare_columns;
 
 static int cellCompare (const void *first, const void *second) {
 	TableRow me = * (TableRow *) first, thee = * (TableRow *) second;
-	for (integer icol = 1; icol <= cellCompare_columns.size; icol ++) {
-		if (my cells [cellCompare_columns [icol]]. number < thy cells [cellCompare_columns [icol]]. number)
+	integer ncol = cellCompare_columns->size;
+	for (integer icol = 1; icol <= ncol; icol ++) {
+		integer cellNumber = cellCompare_columns->at [icol];
+		if (my cells [cellNumber]. number < thy cells [cellNumber]. number)
 			return -1;
-		if (my cells [cellCompare_columns [icol]]. number > thy cells [cellCompare_columns [icol]]. number)
+		if (my cells [cellNumber]. number > thy cells [cellNumber]. number)
 			return +1;
 	}
 	return 0;
@@ -1073,13 +1075,13 @@ static int cellCompare (const void *first, const void *second) {
 void Table_sortRows_Assert (Table me, constINTVEC columns) {
 	for (integer icol = 1; icol <= columns.size; icol ++)
 		Table_numericize_Assert (me, columns [icol]);
-	cellCompare_columns = columns;
+	cellCompare_columns = & columns;
 	qsort (& my rows.at [1], (unsigned long) my rows.size, sizeof (TableRow), cellCompare);
 }
 
 void Table_sortRows_string (Table me, conststring32 columns_string) {
 	try {
-		autostring32vector columns_tokens = STRVECtokenize (columns_string);
+		autoSTRVEC columns_tokens = STRVECtokenize (columns_string);
 		integer numberOfColumns = columns_tokens.size;
 		if (numberOfColumns < 1)
 			Melder_throw (me, U": you specified an empty list of columns.");
