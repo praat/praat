@@ -354,9 +354,6 @@ public:
 		if (newSize <= 0) return vector<T> (nullptr, 0);
 		return vector<T> (& our at [offset], newSize);
 	}
-	void insert (integer insertionPosition) {
-		NUMvector_insert<T> (& our at, 1, & our size, insertionPosition);
-	}
 };
 
 template <typename T>
@@ -497,6 +494,19 @@ public:
 				*inout_capacity = newCapacity;
 		}
 		our size = newSize;
+	}
+	void insert (integer position, const T& value, integer *inout_capacity = nullptr) {
+		resize (our size + 1, inout_capacity, kTensorInitializationType::RAW);
+		Melder_assert (position >= 1 && position <= our size);
+		for (integer i = our size; i > position; i --)
+			our at [i] = our at [i - 1];
+		our at [position] = value;
+	}
+	void remove (integer position) {
+		Melder_assert (position >= 1 && position <= our size);
+		for (integer i = position; i < our size; i ++)
+			our at [i] = our at [i + 1];
+		resize (our size - 1);
 	}
 };
 
