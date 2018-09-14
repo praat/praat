@@ -137,6 +137,14 @@ inline double NUMinner (constVEC x, constVEC y) {
 	return NUMinner_ (x, y);
 }
 
+inline bool NUMisEmpty (constVEC x) {
+	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
+}
+inline bool NUMisEmpty (constMAT x) {
+	integer numberOfCells = x.nrow * x.ncol;
+	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
+
 inline bool NUMisSymmetric (constMAT x) {
 	if (x.nrow != x.ncol) return false;
 	integer n = x.nrow;
