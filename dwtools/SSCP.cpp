@@ -1919,7 +1919,7 @@ void SSCP_expand (SSCP me) {
 	        (my expansionNumberOfRows > 0 && ! my dataChanged)) {
 		return;
 	}
-	if (NUMisEmpty (my expansion.get())
+	if (NUMisEmpty (my expansion.get()))
 		my expansion = MATzero (my numberOfColumns, my numberOfColumns);
 	for (integer ir = 1; ir <= my numberOfColumns; ir ++) {
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
@@ -1944,7 +1944,7 @@ void SSCP_unExpand (SSCP me) {
 }
 
 void SSCP_expandLowerCholesky (SSCP me) {
-	if (NUMisEmpty (my lowerCholesky.get())
+	if (NUMisEmpty (my lowerCholesky.get()))
 		my lowerCholesky = MATzero (my numberOfRows, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
