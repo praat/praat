@@ -1,0 +1,378 @@
+File type = "ooTextFile"
+Object class = "Discriminant 1"
+
+eigen? <exists> 
+numberOfEigenvalues = 3 
+dimension = 3 
+eigenvalues []: 
+    eigenvalues [1] = 21.139001553325855 
+    eigenvalues [2] = 4.355295817120757 
+    eigenvalues [3] = 0.6828853876561901 
+eigenvectors [] []: 
+    eigenvectors [1]:
+        eigenvectors [1] [1] = -0.5095945937147197 
+        eigenvectors [1] [2] = 0.8585858858717424 
+        eigenvectors [1] [3] = -0.0560680536363168 
+    eigenvectors [2]:
+        eigenvectors [2] [1] = 0.8327148188826576 
+        eigenvectors [2] [2] = 0.5085421803078847 
+        eigenvectors [2] [3] = 0.2190225587945806 
+    eigenvectors [3]:
+        eigenvectors [3] [1] = -0.2165626479103727 
+        eigenvectors [3] [2] = -0.06492401273441406 
+        eigenvectors [3] [3] = 0.9741075362096884 
+numberOfGroups = 12 
+groups? <exists> 
+size = 12 
+item []: 
+    item [1]:
+        class = "SSCP" 
+        name = "\as" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	7.18330857960738	3.097330033949894	-1.7789564005106775
+row [2]: "standardized log (%F__2_)"	3.097330033949894	3.303987612651738	-0.29125922448881675
+row [3]: "standardized log (%F__3_)"	-1.7789564005106775	-0.29125922448881675	20.17242895674037
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = 1.2736938484743978 
+            centroid [2] = -0.7980324268009589 
+            centroid [3] = 0.52208953580356 
+    item [2]:
+        class = "SSCP" 
+        name = "\ct" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	4.749666736033554	1.7690171500295402	1.7501030793290935
+row [2]: "standardized log (%F__2_)"	1.7690171500295402	2.8643729450602207	-1.1734401148458047
+row [3]: "standardized log (%F__3_)"	1.7501030793290935	-1.1734401148458047	23.40462437949652
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = 0.4589868093363824 
+            centroid [2] = -1.351739427763397 
+            centroid [3] = 0.7838758634620263 
+    item [3]:
+        class = "SSCP" 
+        name = "\ep" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	6.456192196293692	0.37968370644642313	2.3634733235211782
+row [2]: "standardized log (%F__2_)"	0.37968370644642313	3.5702296082868155	7.363574885015937
+row [3]: "standardized log (%F__3_)"	2.3634733235211782	7.363574885015937	36.64260597216446
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = 0.7966958782135842 
+            centroid [2] = 0.6155709107830968 
+            centroid [3] = -0.05494363352048529 
+    item [4]:
+        class = "SSCP" 
+        name = "\ic" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	9.24423571578407	-0.9820105168212969	-0.9152576701472434
+row [2]: "standardized log (%F__2_)"	-0.9820105168212969	3.226249064932281	7.241190360568189
+row [3]: "standardized log (%F__3_)"	-0.9152576701472434	7.241190360568189	25.166342943866987
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = -0.4924408746702678 
+            centroid [2] = 1.0434578136051709 
+            centroid [3] = 0.3408123049008417 
+    item [5]:
+        class = "SSCP" 
+        name = "\o/" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	5.190475238923332	0.7396990707845167	2.2127653907239013
+row [2]: "standardized log (%F__2_)"	0.7396990707845167	2.451257558642389	3.724682064961762
+row [3]: "standardized log (%F__3_)"	2.2127653907239013	3.724682064961762	17.377966252491305
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = -0.06611599614664286 
+            centroid [2] = 0.21489702324229196 
+            centroid [3] = -0.8937572629989501 
+    item [6]:
+        class = "SSCP" 
+        name = "\yc" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	6.078893644563719	0.22074613549497368	2.2865518846979147
+row [2]: "standardized log (%F__2_)"	0.22074613549497368	3.853359342917027	8.425393204522178
+row [3]: "standardized log (%F__3_)"	2.2865518846979147	8.425393204522178	29.326003094517056
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = -0.10308759884806179 
+            centroid [2] = 0.20958314569196762 
+            centroid [3] = -0.5180249531801528 
+    item [7]:
+        class = "SSCP" 
+        name = "a" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	7.005522628945976	2.090280751104145	1.5234216789425978
+row [2]: "standardized log (%F__2_)"	2.090280751104145	3.107213048517132	2.6192383675582107
+row [3]: "standardized log (%F__3_)"	1.5234216789425978	2.6192383675582107	28.064397805934156
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = 1.766873453008129 
+            centroid [2] = -0.1885036859990809 
+            centroid [3] = 0.3137871302347796 
+    item [8]:
+        class = "SSCP" 
+        name = "e" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	8.484623546640897	0.10938909606862843	2.0246126475151693
+row [2]: "standardized log (%F__2_)"	0.10938909606862843	2.662191149790692	6.007252897802119
+row [3]: "standardized log (%F__3_)"	2.0246126475151693	6.007252897802119	21.29122318311569
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = -0.33939072236689405 
+            centroid [2] = 1.065193874702519 
+            centroid [3] = 0.278016691702723 
+    item [9]:
+        class = "SSCP" 
+        name = "i" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	8.081690218264765	0.6318778113546369	1.9790354205211989
+row [2]: "standardized log (%F__2_)"	0.6318778113546369	2.4004531823129542	5.524087378886767
+row [3]: "standardized log (%F__3_)"	1.9790354205211989	5.524087378886767	24.65880692527169
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = -1.3625596113923355 
+            centroid [2] = 1.3241682172552764 
+            centroid [3] = 1.0457830819884582 
+    item [10]:
+        class = "SSCP" 
+        name = "o" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	3.5939776313049254	1.6702307126016365	-0.37920099349106506
+row [2]: "standardized log (%F__2_)"	1.6702307126016365	3.901282219123324	0.9504479893814092
+row [3]: "standardized log (%F__3_)"	-0.37920099349106506	0.9504479893814092	37.931161876785254
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = 0.23540526426271752 
+            centroid [2] = -1.2107919088306194 
+            centroid [3] = -0.018039991648837916 
+    item [11]:
+        class = "SSCP" 
+        name = "u" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	8.904999958603216	1.041629226100712	2.5884622002583324
+row [2]: "standardized log (%F__2_)"	1.041629226100712	4.495561429410953	-0.29212116261459065
+row [3]: "standardized log (%F__3_)"	2.5884622002583324	-0.29212116261459065	37.14543437527783
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = -0.9137597633205335 
+            centroid [2] = -1.5485260139424413 
+            centroid [3] = -0.6503310662477612 
+    item [12]:
+        class = "SSCP" 
+        name = "y" 
+        numberOfColumns = 3 
+columnLabels []: 
+"standardized log (%F__1_)"	"standardized log (%F__2_)"	"standardized log (%F__3_)"	
+        numberOfRows = 3 
+row [1]: "standardized log (%F__1_)"	9.905167008234246	0.6668046403405659	3.2565058777165925
+row [2]: "standardized log (%F__2_)"	0.6668046403405659	3.178145328787026	8.007415551311658
+row [3]: "standardized log (%F__3_)"	3.2565058777165925	8.007415551311658	43.47637108433997
+        numberOfObservations = 50 
+        centroid []: 
+            centroid [1] = -1.254300686550484 
+            centroid [2] = 0.6247224780561897 
+            centroid [3] = -1.1492677004962346 
+total? <absent> 
+aprioriProbabilities []: 
+    aprioriProbabilities [1] = 0.08333333333333333 
+    aprioriProbabilities [2] = 0.08333333333333333 
+    aprioriProbabilities [3] = 0.08333333333333333 
+    aprioriProbabilities [4] = 0.08333333333333333 
+    aprioriProbabilities [5] = 0.08333333333333333 
+    aprioriProbabilities [6] = 0.08333333333333333 
+    aprioriProbabilities [7] = 0.08333333333333333 
+    aprioriProbabilities [8] = 0.08333333333333333 
+    aprioriProbabilities [9] = 0.08333333333333333 
+    aprioriProbabilities [10] = 0.08333333333333333 
+    aprioriProbabilities [11] = 0.08333333333333333 
+    aprioriProbabilities [12] = 0.08333333333333333 
+costs [] []: 
+    costs [1]:
+        costs [1] [1] = 0 
+        costs [1] [2] = 1 
+        costs [1] [3] = 1 
+        costs [1] [4] = 1 
+        costs [1] [5] = 1 
+        costs [1] [6] = 1 
+        costs [1] [7] = 1 
+        costs [1] [8] = 1 
+        costs [1] [9] = 1 
+        costs [1] [10] = 1 
+        costs [1] [11] = 1 
+        costs [1] [12] = 1 
+    costs [2]:
+        costs [2] [1] = 1 
+        costs [2] [2] = 0 
+        costs [2] [3] = 1 
+        costs [2] [4] = 1 
+        costs [2] [5] = 1 
+        costs [2] [6] = 1 
+        costs [2] [7] = 1 
+        costs [2] [8] = 1 
+        costs [2] [9] = 1 
+        costs [2] [10] = 1 
+        costs [2] [11] = 1 
+        costs [2] [12] = 1 
+    costs [3]:
+        costs [3] [1] = 1 
+        costs [3] [2] = 1 
+        costs [3] [3] = 0 
+        costs [3] [4] = 1 
+        costs [3] [5] = 1 
+        costs [3] [6] = 1 
+        costs [3] [7] = 1 
+        costs [3] [8] = 1 
+        costs [3] [9] = 1 
+        costs [3] [10] = 1 
+        costs [3] [11] = 1 
+        costs [3] [12] = 1 
+    costs [4]:
+        costs [4] [1] = 1 
+        costs [4] [2] = 1 
+        costs [4] [3] = 1 
+        costs [4] [4] = 0 
+        costs [4] [5] = 1 
+        costs [4] [6] = 1 
+        costs [4] [7] = 1 
+        costs [4] [8] = 1 
+        costs [4] [9] = 1 
+        costs [4] [10] = 1 
+        costs [4] [11] = 1 
+        costs [4] [12] = 1 
+    costs [5]:
+        costs [5] [1] = 1 
+        costs [5] [2] = 1 
+        costs [5] [3] = 1 
+        costs [5] [4] = 1 
+        costs [5] [5] = 0 
+        costs [5] [6] = 1 
+        costs [5] [7] = 1 
+        costs [5] [8] = 1 
+        costs [5] [9] = 1 
+        costs [5] [10] = 1 
+        costs [5] [11] = 1 
+        costs [5] [12] = 1 
+    costs [6]:
+        costs [6] [1] = 1 
+        costs [6] [2] = 1 
+        costs [6] [3] = 1 
+        costs [6] [4] = 1 
+        costs [6] [5] = 1 
+        costs [6] [6] = 0 
+        costs [6] [7] = 1 
+        costs [6] [8] = 1 
+        costs [6] [9] = 1 
+        costs [6] [10] = 1 
+        costs [6] [11] = 1 
+        costs [6] [12] = 1 
+    costs [7]:
+        costs [7] [1] = 1 
+        costs [7] [2] = 1 
+        costs [7] [3] = 1 
+        costs [7] [4] = 1 
+        costs [7] [5] = 1 
+        costs [7] [6] = 1 
+        costs [7] [7] = 0 
+        costs [7] [8] = 1 
+        costs [7] [9] = 1 
+        costs [7] [10] = 1 
+        costs [7] [11] = 1 
+        costs [7] [12] = 1 
+    costs [8]:
+        costs [8] [1] = 1 
+        costs [8] [2] = 1 
+        costs [8] [3] = 1 
+        costs [8] [4] = 1 
+        costs [8] [5] = 1 
+        costs [8] [6] = 1 
+        costs [8] [7] = 1 
+        costs [8] [8] = 0 
+        costs [8] [9] = 1 
+        costs [8] [10] = 1 
+        costs [8] [11] = 1 
+        costs [8] [12] = 1 
+    costs [9]:
+        costs [9] [1] = 1 
+        costs [9] [2] = 1 
+        costs [9] [3] = 1 
+        costs [9] [4] = 1 
+        costs [9] [5] = 1 
+        costs [9] [6] = 1 
+        costs [9] [7] = 1 
+        costs [9] [8] = 1 
+        costs [9] [9] = 0 
+        costs [9] [10] = 1 
+        costs [9] [11] = 1 
+        costs [9] [12] = 1 
+    costs [10]:
+        costs [10] [1] = 1 
+        costs [10] [2] = 1 
+        costs [10] [3] = 1 
+        costs [10] [4] = 1 
+        costs [10] [5] = 1 
+        costs [10] [6] = 1 
+        costs [10] [7] = 1 
+        costs [10] [8] = 1 
+        costs [10] [9] = 1 
+        costs [10] [10] = 0 
+        costs [10] [11] = 1 
+        costs [10] [12] = 1 
+    costs [11]:
+        costs [11] [1] = 1 
+        costs [11] [2] = 1 
+        costs [11] [3] = 1 
+        costs [11] [4] = 1 
+        costs [11] [5] = 1 
+        costs [11] [6] = 1 
+        costs [11] [7] = 1 
+        costs [11] [8] = 1 
+        costs [11] [9] = 1 
+        costs [11] [10] = 1 
+        costs [11] [11] = 0 
+        costs [11] [12] = 1 
+    costs [12]:
+        costs [12] [1] = 1 
+        costs [12] [2] = 1 
+        costs [12] [3] = 1 
+        costs [12] [4] = 1 
+        costs [12] [5] = 1 
+        costs [12] [6] = 1 
+        costs [12] [7] = 1 
+        costs [12] [8] = 1 
+        costs [12] [9] = 1 
+        costs [12] [10] = 1 
+        costs [12] [11] = 1 
+        costs [12] [12] = 0 
