@@ -1546,7 +1546,7 @@ void FunctionTerms_RealTier_fit (FunctionTerms me, RealTier thee, int freeze [],
 				my coefficients [j] = result [k ++];
 		}
 		if (ic)
-			svdcvm (svd -> v.at, numberOfFreeParameters, numberOfParameters, freeze, svd -> d.at, ac -> data);
+			svdcvm (svd -> v.at, numberOfFreeParameters, numberOfParameters, freeze, svd -> d.at, ac -> data.at);
 		if (c) *c = ac.move();
 	} catch (MelderError) {
 		Melder_throw (me, U" & ", thee, U": no fit.");

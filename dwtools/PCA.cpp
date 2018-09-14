@@ -186,7 +186,7 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 
 autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (constMAT (my data, my numberOfRows, my numberOfColumns), false);
+		autoPCA thee = NUMdmatrix_to_PCA (my data.get(), false);
 		Melder_assert (thy labels.size == my numberOfColumns);
 		thy labels. copyElementsFrom (my columnLabels.get());
 		return thee;

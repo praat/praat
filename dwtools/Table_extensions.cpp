@@ -4637,7 +4637,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			Covariance covi = covs.at [igroup];
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				vector [icol] = Table_getNumericValue_Assert (me, irow, columnIndex [icol]);
-			double dm2 = NUMmahalanobisDistance_chi (covi -> lowerCholesky, vector.at, covi -> centroid, numberOfColumns, numberOfColumns);
+			double dm2 = NUMmahalanobisDistance_chi (covi -> lowerCholesky.at, vector.at, covi -> centroid, numberOfColumns, numberOfColumns);
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which, numberOfSigmas)) {
 				TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);

@@ -1728,13 +1728,17 @@ void praat_run () {
 		Melder_assert (! (frexp (undefined, & exponent) < 1.0));
 	}
 	{
-		//VEC xn;   // uninitialized
-		//Melder_assert (! xn.at);
+		VEC xn;   // uninitialized
+		Melder_assert (! xn.at);
 		//Melder_assert (xn.size == 0);
 		VEC x { };
 		Melder_assert (! x.at);
 		Melder_assert (x.size == 0);
 		//constVEC xc { };   // no default constructor
+		MAT yn;
+		Melder_assert (! yn.at);
+		//Melder_assert (yn.nrow == 0);
+		//Melder_assert (yn.ncol == 0);
 		MAT y { };
 		Melder_assert (! y.at);
 		Melder_assert (y.nrow == 0);

@@ -104,37 +104,29 @@ void Configuration_normalize (Configuration me, double sumsq, bool columns) {
 	TableOfReal_centreColumns (me);
 	if (columns) {
 		sumsq = sumsq <= 0.0 ? 1.0 : sqrt (sumsq);
-		NUMnormalizeColumns (my data, my numberOfRows, my numberOfColumns, sumsq);
+		NUMnormalizeColumns (my data.at, my numberOfRows, my numberOfColumns, sumsq);
 	} else {
-		if (sumsq <= 0.0) {
+		if (sumsq <= 0.0)
 			sumsq = my numberOfRows;
-		}
-		NUMnormalize (my data, my numberOfRows, my numberOfColumns, sqrt (sumsq));
+		NUMnormalize (my data.at, my numberOfRows, my numberOfColumns, sqrt (sumsq));
 	}
 }
 
 void Configuration_randomize (Configuration me) {
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++) {
+	for (integer i = 1; i <= my numberOfRows; i ++)
+		for (integer j = 1; j <= my numberOfColumns; j ++)
 			my data [i] [j] = NUMrandomUniform (-1.0, 1.0);
-		}
-	}
 }
 
 void Configuration_rotate (Configuration me, integer dimension1, integer dimension2, double angle_degrees) {
-	double f = NUMpi * (2.0 - angle_degrees / 180.0);
-	double cosa = cos (f), sina = sin (f);
-
-	if (dimension1 == dimension2 || angle_degrees == 0) {
+	const double f = NUMpi * (2.0 - angle_degrees / 180.0);
+	const double cosa = cos (f), sina = sin (f);
+	if (dimension1 == dimension2 || angle_degrees == 0)
 		return;
-	}
-
-	if (dimension1 > dimension2) {
-		integer dt = dimension1; dimension1 = dimension2; dimension2 = dt;
-	}
-	if (dimension1 < 1 || dimension2 > my numberOfColumns) {
+	if (dimension1 > dimension2)
+		std::swap (dimension1, dimension2);
+	if (dimension1 < 1 || dimension2 > my numberOfColumns)
 		return;
-	}
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		double x1 = my data [i] [dimension1];
 		double x2 = my data [i] [dimension2];
@@ -144,21 +136,16 @@ void Configuration_rotate (Configuration me, integer dimension1, integer dimensi
 }
 
 void Configuration_invertDimension (Configuration me, int dimension) {
-	if (dimension < 1 || dimension > my numberOfColumns) {
+	if (dimension < 1 || dimension > my numberOfColumns)
 		return;
-	}
-
-	for (integer i = 1; i <= my numberOfRows; i ++) {
+	for (integer i = 1; i <= my numberOfRows; i ++)
 		my data [i] [dimension] = - my data [i] [dimension];
-	}
 }
 
-
 static double NUMsquaredVariance (double **a, integer nr, integer nc, bool rawPowers) {
-	double v4 = 0.0;
-
+	longdouble v4 = 0.0;
 	for (integer j = 1; j <= nc; j ++) {
-		double sum4 = 0.0, mean = 0.0;
+		longdouble sum4 = 0.0, mean = 0.0;
 		for (integer i = 1; i <= nr; i ++) {
 			double sq = a [i] [j] * a [i] [j];
 			sum4 += sq * sq;
@@ -169,7 +156,7 @@ static double NUMsquaredVariance (double **a, integer nr, integer nc, bool rawPo
 			v4 -= mean * mean / nr;
 		}
 	}
-	return v4;
+	return (double) v4;
 }
 
 /*
@@ -302,7 +289,7 @@ static void NUMvarimax (double **xm, double **ym, integer nr, integer nc, bool n
 autoConfiguration Configuration_varimax (Configuration me, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
 	try {
 		autoConfiguration thee = Data_copy (me);
-		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
+		NUMvarimax (my data.at, thy data.at, my numberOfRows, my numberOfColumns, normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": varimax rotation not performed.");
@@ -323,11 +310,9 @@ autoConfiguration Configuration_congruenceRotation (Configuration me, Configurat
 
 void Configuration_rotateToPrincipalDirections (Configuration me) {
 	try {
-		autoNUMmatrix<double> m (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
-
-		NUMdmatrix_into_principalComponents (my data, my numberOfRows, my numberOfColumns, my numberOfColumns, m.peek());
-		NUMvector_free (my data, 1);
-		my data = m.transfer();
+		autoMAT newData = matrixcopy (my data.get());
+		NUMdmatrix_into_principalComponents (my data.at, my numberOfRows, my numberOfColumns, my numberOfColumns, newData.at);
+		my data = newData.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": not rotated to principal directions.");
 	}
@@ -336,20 +321,15 @@ void Configuration_rotateToPrincipalDirections (Configuration me) {
 void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoordinate, double xmin, double xmax, double ymin, double ymax, int labelSize, bool useRowLabels, conststring32 label, bool garnish)
 {
 	integer nPoints = my numberOfRows, numberOfDimensions = my numberOfColumns;
-
-	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || yCoordinate > numberOfDimensions)) {
+	if (numberOfDimensions > 1 && (xCoordinate > numberOfDimensions || yCoordinate > numberOfDimensions))
 		return;
-	}
-	if (numberOfDimensions == 1) {
+	if (numberOfDimensions == 1)
 		xCoordinate = 1;
-	}
 	int fontSize = Graphics_inqFontSize (g), noLabel = 0;
-	if (labelSize == 0) {
+	if (labelSize == 0)
 		labelSize = fontSize;
-	}
 	autoNUMvector<double> x (1, nPoints);
 	autoNUMvector<double> y (1, nPoints);
-
 	for (integer i = 1; i <= nPoints; i ++) {
 		x [i] = my data [i] [xCoordinate] * my w [xCoordinate];
 		y [i] = numberOfDimensions > 1 ? my data [i] [yCoordinate] * my w [yCoordinate] : 0.0;
@@ -390,15 +370,14 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		Graphics_marksBottom (g, 2, true, true, false);
 		if (numberOfDimensions > 1) {
 			Graphics_marksLeft (g, 2, true, true, false);
-			if (my columnLabels[xCoordinate]) {
+			if (my columnLabels [xCoordinate]) {
 				Graphics_textBottom (g, true, my columnLabels [xCoordinate].get());
 			}
-			if (my columnLabels[yCoordinate]) {
+			if (my columnLabels [yCoordinate]) {
 				Graphics_textLeft (g, true, my columnLabels [yCoordinate].get());
 			}
 		}
 	}
-
 	if (noLabel > 0) {
 		Melder_warning (U"Configuration_draw: ", noLabel, U" from ", my numberOfRows, U" labels are not visible because they are empty or they contain only spaces or they contain only non-printable characters");
 	}
@@ -412,8 +391,7 @@ void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, doub
 autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, my numberOfColumns);
-
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		return thee;
 	} catch (MelderError) {
@@ -423,10 +401,8 @@ autoConfiguration TableOfReal_to_Configuration (TableOfReal me) {
 
 autoConfiguration TableOfReal_to_Configuration_pca (TableOfReal me, integer numberOfDimensions) {
 	try {
-		if (numberOfDimensions < 1 || numberOfDimensions > my numberOfColumns) {
+		if (numberOfDimensions < 1 || numberOfDimensions > my numberOfColumns)
 			numberOfDimensions = my numberOfColumns;
-		}
-
 		autoPCA pca = TableOfReal_to_PCA_byRows (me);
 		autoConfiguration thee = PCA_TableOfReal_to_Configuration (pca.get(), me, numberOfDimensions);
 		return thee;

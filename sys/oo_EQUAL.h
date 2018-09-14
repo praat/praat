@@ -50,7 +50,8 @@
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	{ \
 		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
-		Melder_assert (our x.nrow == _nrow && our x.ncol == _ncol); \
+		/*if (our x.nrow != _nrow || our x.ncol != _ncol)*/ \
+			/*Melder_fatal (U"oo_EQUAL: ", our x.nrow, U" ", _nrow, U" ", our x.ncol, U" ", _ncol);*/ \
 		if (! NUMequal (our x.get(), thy x.get())) return false; \
 	}
 

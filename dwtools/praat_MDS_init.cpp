@@ -135,8 +135,8 @@ FORM (REAL_AffineTransform_getTransformationElement, U"AffineTransform: Get tran
 	OK
 DO
 	NUMBER_ONE (AffineTransform)
-		Melder_require (irow <= my dimension, U"Row number must not exceed the dimension of the transform.");
-		Melder_require (icol <= my dimension, U"Column number must not exceed the dimension of the transform.");
+		Melder_require (irow <= my dimension, U"Row number should not exceed the dimension of the transform.");
+		Melder_require (icol <= my dimension, U"Column number should not exceed the dimension of the transform.");
 		double result = my r [irow] [icol];
 	NUMBER_ONE_END (U" r [", irow, U"] [", icol, U"]")
 }
@@ -146,7 +146,7 @@ FORM (REAL_AffineTransform_getTranslationElement, U"AffineTransform: Get transla
 	OK
 DO
 	NUMBER_ONE (AffineTransform)
-		Melder_require (index <= my dimension, U"Index must not exceed the dimension of the transform.");
+		Melder_require (index <= my dimension, U"Index should not exceed the dimension of the transform.");
 		double result = my t [index];
 	NUMBER_ONE_END (U"")
 }

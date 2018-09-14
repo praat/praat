@@ -309,13 +309,13 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define NUMVEC(numericVectorVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
-		static constVEC numericVectorVariable; \
+		static VEC numericVectorVariable; \
 		UiForm_addNumvec (_dia_.get(), & numericVectorVariable, U"" #numericVectorVariable, U"", defaultStringValue);
 
 #define NUMMAT(numericMatrixVariable, labelText, defaultStringValue)  \
 		if (labelText != nullptr) /* an explicit nullptr comparison, because string literals don't convert well to bools */ \
 			UiForm_addLabel (_dia_.get(), nullptr, labelText); \
-		static constMAT numericMatrixVariable; \
+		static MAT numericMatrixVariable; \
 		UiForm_addNummat (_dia_.get(), & numericMatrixVariable, U"" #numericMatrixVariable, U"", defaultStringValue);
 
 #define RADIO(intVariable, labelText, defaultOptionNumber)  \
@@ -710,10 +710,10 @@ void praat_name2 (char32 *name, ClassInfo klas1, ClassInfo klas2);
 #define STRING_ONE_END  Melder_information (result); END_NO_NEW_DATA
 
 #define NUMVEC_ONE(klas)  FIND_ONE (klas)
-#define NUMVEC_ONE_END  if (interpreter) theInterpreterNumvec = result.move(); else Melder_information (result.get()); END_NO_NEW_DATA
+#define NUMVEC_ONE_END  if (interpreter) theInterpreterNumvec = result.move(); else Melder_information (constVEC (result.get())); END_NO_NEW_DATA
 
 #define NUMMAT_ONE(klas)  FIND_ONE (klas)
-#define NUMMAT_ONE_END  if (interpreter) theInterpreterNummat = result.move(); else Melder_information (result.get()); END_NO_NEW_DATA
+#define NUMMAT_ONE_END  if (interpreter) theInterpreterNummat = result.move(); else Melder_information (constMAT (result.get())); END_NO_NEW_DATA
 
 #define MODIFY_EACH(klas)  LOOP { iam_LOOP (klas);
 #define MODIFY_EACH_END  praat_dataChanged (me); } END_NO_NEW_DATA

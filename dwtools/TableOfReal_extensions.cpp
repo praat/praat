@@ -388,7 +388,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 
 	autoSVD svd = SVD_create (nr, nc);
 
-	MATcopy_preallocated (svd -> u.get(), {my data, nr, nc});
+	matrixcopy_preallocated (svd -> u.get(), my data.get());
 	MATcentreEachColumn_inplace (svd -> u.get());
 
 	SVD_compute (svd.get());
@@ -486,7 +486,7 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 		colmax = my numberOfColumns;
 	}
 	if (ymax <= ymin) {
-		NUMmatrix_extrema (my data, rowmin, rowmax, colmin, colmax, &ymin, &ymax);
+		NUMmatrix_extrema (my data.at, rowmin, rowmax, colmin, colmax, &ymin, &ymax);
 	}
 
 	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
@@ -559,7 +559,7 @@ void TableOfReal_setLabelsFromCollectionItemNames (TableOfReal me, Collection th
 }
 
 void TableOfReal_centreColumns (TableOfReal me) {
-	MATcentreEachColumn_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
+	MATcentreEachColumn_inplace (my data.get());
 }
 
 void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
@@ -581,24 +581,23 @@ void TableOfReal_Categories_setRowLabels (TableOfReal me, Categories thee) {
 }
 
 void TableOfReal_centreColumns_byRowLabel (TableOfReal me) {
-	MAT mat = MAT (my data, my numberOfRows, my numberOfColumns);
 	conststring32 label = my rowLabels [1].get();
 	integer index = 1;
 	for (integer i = 2; i <= my numberOfRows; i ++) {
 		conststring32 li = my rowLabels [i].get();
 		if (! Melder_equ (li, label)) {
-			MATcentreEachColumn_inplace (mat.horizontalBand (index, i - 1));
+			MATcentreEachColumn_inplace (my data.horizontalBand (index, i - 1));
 			label = li;
 			index = i;
 		}
 	}
-	MATcentreEachColumn_inplace (mat.horizontalBand (index, my numberOfRows));
+	MATcentreEachColumn_inplace (my data.horizontalBand (index, my numberOfRows));
 }
 
 double TableOfReal_getRowSum (TableOfReal me, integer rowNumber) {
 	Melder_require (rowNumber > 0 && rowNumber <= my numberOfRows,
 		U"Row number not in valid range.");
-	return NUMrowSum (constMAT (my data, my numberOfRows, my numberOfColumns), rowNumber);
+	return NUMrowSum (my data.get(), rowNumber);
 }
 
 double TableOfReal_getColumnSumByLabel (TableOfReal me, conststring32 columnLabel) {
@@ -618,27 +617,27 @@ double TableOfReal_getRowSumByLabel (TableOfReal me, conststring32 rowLabel) {
 double TableOfReal_getColumnSum (TableOfReal me, integer columnNumber) {
 	Melder_require (columnNumber > 0 && columnNumber <= my numberOfColumns,
 		U"Column number not in valid range.");
-	return NUMcolumnSum (constMAT (my data, my numberOfRows, my numberOfColumns), columnNumber);
+	return NUMcolumnSum (my data.get(), columnNumber);
 }
 
 double TableOfReal_getGrandSum (TableOfReal me) {
-	return NUMsum (constMAT (my data, my numberOfRows, my numberOfColumns));
+	return NUMsum (my data.get());
 }
 
 void TableOfReal_centreRows (TableOfReal me) {
-	MATcentreEachRow_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
+	MATcentreEachRow_inplace (my data.get());
 }
 
 void TableOfReal_doubleCentre (TableOfReal me) {
-	MATdoubleCentre_inplace (MAT (my data, my numberOfRows, my numberOfColumns));
+	MATdoubleCentre_inplace (my data.get());
 }
 
 void TableOfReal_normalizeColumns (TableOfReal me, double norm) {
-	NUMnormalizeColumns (my data, my numberOfRows, my numberOfColumns, norm);
+	NUMnormalizeColumns (my data.at, my numberOfRows, my numberOfColumns, norm);
 }
 
 void TableOfReal_normalizeRows (TableOfReal me, double norm) {
-	NUMnormalizeRows (my data, my numberOfRows, my numberOfColumns, norm);
+	NUMnormalizeRows (my data.at, my numberOfRows, my numberOfColumns, norm);
 }
 
 void TableOfReal_standardizeColumns (TableOfReal me) {
@@ -650,9 +649,8 @@ void TableOfReal_standardizeColumns (TableOfReal me) {
 		return;
 	}
 	for (integer icol = 1; icol <= my numberOfColumns; icol ++) {
-		constMAT mat (my data, my numberOfRows, my numberOfColumns);
 		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (mat, icol, nullptr, & mean, nullptr, nullptr, & stdev);
+		NUM_sum_mean_sumsq_variance_stdev (my data.get(), icol, nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer irow = 1; irow <= my numberOfRows; irow ++)
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
 	}
@@ -676,7 +674,7 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 }
 
 void TableOfReal_normalizeTable (TableOfReal me, double norm) {
-	NUMnormalize (my data, my numberOfRows, my numberOfColumns, norm);
+	NUMnormalize (my data.at, my numberOfRows, my numberOfColumns, norm);
 }
 
 double TableOfReal_getTableNorm (TableOfReal me) {
@@ -817,13 +815,13 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 		rowe = Melder_ifloor (m);
 	}
 	if (xmax == xmin) {
-		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icx, & xmin, & xmax);
+		NUMdmatrix_getColumnExtrema (my data.at, rowb, rowe, icx, & xmin, & xmax);
 		double tmp = ( xmax == xmin ? 0.5 : 0.0 );
 		xmin -= tmp;
 		xmax += tmp;
 	}
 	if (ymax == ymin) {
-		NUMdmatrix_getColumnExtrema (my data, rowb, rowe, icy, & ymin, & ymax);
+		NUMdmatrix_getColumnExtrema (my data.at, rowb, rowe, icy, & ymin, & ymax);
 		double tmp = ( ymax == ymin ? 0.5 : 0.0 );
 		ymin -= tmp;
 		ymax += tmp;
@@ -1157,8 +1155,8 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g,
 
 	double min, max;
 	if (xmin >= xmax) {
-		NUMmatrix_extrema (my data, 1, ny, colx1, colx1, & min, &max);
-		NUMmatrix_extrema (my data, 1, ny, colx2, colx2, & xmin, &xmax);
+		NUMmatrix_extrema (my data.at, 1, ny, colx1, colx1, & min, &max);
+		NUMmatrix_extrema (my data.at, 1, ny, colx2, colx2, & xmin, &xmax);
 		if (min < xmin) {
 			xmin = min;
 		}
@@ -1167,8 +1165,8 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g,
 		}
 	}
 	if (ymin >= ymax) {
-		NUMmatrix_extrema (my data, 1, ny, coly1, coly1, & min, & max);
-		NUMmatrix_extrema (my data, 1, ny, coly2, coly2, & ymin, & ymax);
+		NUMmatrix_extrema (my data.at, 1, ny, coly1, coly1, & min, & max);
+		NUMmatrix_extrema (my data.at, 1, ny, coly2, coly2, & ymin, & ymax);
 		if (min < ymin) {
 			ymin = min;
 		}
@@ -1321,7 +1319,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 		for (integer i = 2; i <= my numberOfRows; i ++) {
 			conststring32 li = sorted -> rowLabels [i].get();
 			if (Melder_cmp (li, label) != 0) {
-				NUMstatsColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns, useMedians);
+				NUMstatsColumns (sorted -> data.at, indexi, i - 1, 1, my numberOfColumns, useMedians);
 
 				if (! expand) {
 					indexr ++;
@@ -1331,7 +1329,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 			}
 		}
 
-		NUMstatsColumns (sorted -> data, indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
+		NUMstatsColumns (sorted -> data.at, indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
 
 		if (expand) {
 			// Now invert the table.
@@ -1358,7 +1356,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 autoTableOfReal TableOfReal_rankColumns (TableOfReal me) {
 	try {
 		autoTableOfReal thee = Data_copy (me);
-		NUMrankColumns (thy data, 1, thy numberOfRows, 1, thy numberOfColumns);
+		NUMrankColumns (thy data.at, 1, thy numberOfRows, 1, thy numberOfColumns);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column ranks not created.");
@@ -1393,7 +1391,7 @@ void TableOfReal_setSequentialRowLabels (TableOfReal me, integer from, integer t
 autoTableOfReal TableOfReal_to_TableOfReal (TableOfReal me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		matrixcopy_preallocated (thy data.get(), my data.get());
 		TableOfReal_copyLabels (me, thee.get(), 1, 1);
 		return thee;
 	} catch (MelderError) {
@@ -1548,11 +1546,11 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 			*/
 			for (integer j = 1; j <= n; j ++) {
 				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance_chi (thy lowerCholesky, my data [j], my data [k], p, p);
+					djk = NUMmahalanobisDistance_chi (thy lowerCholesky.at, my data [j], my data [k], p, p);
 					sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}
 				sumjk += 1; // for k == j
-				djj = NUMmahalanobisDistance_chi (thy lowerCholesky, my data [j], thy centroid, p, p);
+				djj = NUMmahalanobisDistance_chi (thy lowerCholesky.at, my data [j], thy centroid, p, p);
 				sumj += exp (-b2 * djj);
 			}
 			tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
@@ -1591,8 +1589,8 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 			Melder_throw (U"Both tables should have the same number of columns.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, thy numberOfRows);
-		autoMAT my_data = MATcopy (MAT (my data, my numberOfRows, my numberOfColumns));
-		autoMAT thy_data = MATcopy (MAT (thy data, thy numberOfRows, thy numberOfColumns));
+		autoMAT my_data = MATcopy (my data.get());
+		autoMAT thy_data = MATcopy (thy data.get());
 		if (centre) {
 			MATcentreEachRow_inplace (my_data.get());
 			MATcentreEachRow_inplace (thy_data.get());
@@ -1623,8 +1621,8 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 			Melder_throw (U"Both tables should have the same number of rows.");
 
 		autoTableOfReal him = TableOfReal_create (my numberOfColumns, thy numberOfColumns);
-		autoMAT my_data = MATcopy (constMAT (my data, my numberOfRows, my numberOfColumns));
-		autoMAT thy_data = MATcopy (constMAT (thy data, thy numberOfRows, thy numberOfColumns));
+		autoMAT my_data = MATcopy (my data.get());
+		autoMAT thy_data = MATcopy (thy data.get());
 		if (center) {
 			MATcentreEachColumn_inplace (my_data.get());
 			MATcentreEachColumn_inplace (thy_data.get());
