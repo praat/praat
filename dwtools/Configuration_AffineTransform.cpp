@@ -59,6 +59,10 @@ static void do_steps45 (constMAT w, MAT t, constMAT c, double *f) {
 	}
 }
 
+/*
+	Using: Kiers & Groenen (1996), A monotonically convergent congruence algorithm for orthogona congruence rotation,
+	Psychometrika (61), 375-389.
+*/
 void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maximumNumberOfIterations, double tolerance) {
 	Melder_assert (t.ncol == b.ncol && b.nrow == a.nrow && b.ncol == a.ncol);
 	integer numberOfIterations = 0;
@@ -68,25 +72,16 @@ void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maxim
 		return;
 	}
 	integer nr = b.nrow, nc = b.ncol;
-	autoMAT c = MATzero (nc, nc);
-	autoMAT w = MATzero (nc, nc);
 	autoMAT u = MATzero (nc, nc);
 	autoVEC evec = VECzero (nc);
 	autoSVD svd = SVD_create (nc, nc);
 
 	// Steps 1 & 2: C = A'A and W = A'B
 
-	longdouble checkc = 0.0, checkw = 0.0;
-	for (integer i = 1; i <= nc; i ++) {
-		for (integer j = 1; j <= nc; j ++) {
-			for (integer k = 1; k <= nr; k ++) {
-				c [i] [j] += a [k] [i] * a [k] [j];
-				w [i] [j] += a [k] [i] * b [k] [j];
-			}
-			checkc += c [i] [j];
-			checkw += w [i] [j];
-		}
-	}
+	autoMAT c = MATmul_tn (a, a);
+	autoMAT w = MATmul_tn (a, b);
+	double checkc = NUMsum (c.get());
+	double checkw = NUMsum (w.get());
 	
 	Melder_require (checkc != 0.0 && checkw != 0.0, U"NUMmaximizeCongruence: the matrix should not be zero.");
 
@@ -116,7 +111,7 @@ void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maxim
 		for (integer j = 1; j <= nc; j ++) {
 			// Step 7.a
 
-			double p = 0.0;
+			longdouble p = 0.0;
 			for (integer k = 1; k <= nc; k ++) {
 				for (integer i = 1; i <= nc; i ++) {
 					p += t [k] [j] * c [k] [i] * t [i] [j];
@@ -125,7 +120,7 @@ void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maxim
 
 			// Step 7.b
 
-			double q = 0.0;
+			longdouble q = 0.0;
 			for (integer k = 1; k <= nc; k ++) {
 				q += w [k] [j] * t [k] [j];
 			}
@@ -137,12 +132,12 @@ void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maxim
 					u [i] [j] = 0.0;
 				}
 			} else {
-				double ww = 0.0;
+				longdouble ww = 0.0;
 				for (integer k = 1; k <= nc; k ++) {
 					ww += w [k] [j] * w [k] [j];
 				}
 				for (integer i = 1; i <= nc; i ++) {
-					double ct = 0.0;
+					longdouble ct = 0.0;
 					for (integer k = 1; k <= nc; k ++) {
 						ct += c [i] [k] * t [k] [j];
 					}
