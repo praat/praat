@@ -214,7 +214,7 @@ void NUM_viterbi (
 struct parm2 {
 	integer ntrack;
 	integer ncomb;
-	constINTMAT indices;
+	INTMAT indices;
 	double (*getLocalCost) (integer iframe, integer icand, integer itrack, void *closure);
 	double (*getTransitionCost) (integer iframe, integer icand1, integer icand2, integer itrack, void *closure);
 	void (*putResult) (integer iframe, integer place, integer itrack, void *closure);

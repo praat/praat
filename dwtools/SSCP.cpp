@@ -1380,7 +1380,7 @@ double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 
 double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
 	Melder_require (x.size == my numberOfColumns,
 		U"The dimensions of the Covariance and the vector should agree.");
-	if (my lowerCholesky.nrow == 0)
+	if (NUMisEmpty (my lowerCholesky.get()))
 		SSCP_expandLowerCholesky (me);
 	double ln2pid = my numberOfColumns * log (NUM2pi);
 	double dsq = NUMmahalanobisDistance_chi (my lowerCholesky.at, x.at, my centroid, my numberOfRows, my numberOfColumns);
@@ -1919,7 +1919,7 @@ void SSCP_expand (SSCP me) {
 	        (my expansionNumberOfRows > 0 && ! my dataChanged)) {
 		return;
 	}
-	if (my expansion.nrow == 0)
+	if (NUMisEmpty (my expansion.get()))
 		my expansion = MATzero (my numberOfColumns, my numberOfColumns);
 	for (integer ir = 1; ir <= my numberOfColumns; ir ++) {
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
@@ -1944,7 +1944,7 @@ void SSCP_unExpand (SSCP me) {
 }
 
 void SSCP_expandLowerCholesky (SSCP me) {
-	if (my lowerCholesky.nrow == 0)
+	if (NUMisEmpty (my lowerCholesky.get()))
 		my lowerCholesky = MATzero (my numberOfRows, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
