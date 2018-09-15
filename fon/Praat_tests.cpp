@@ -644,4 +644,45 @@ autoPitch_ structSound_::toPitch () {   // this requires the prior definition of
 
 #endif
 
+/*
+	An attempt to not have VEC and constVEC, but VEC and const VEC instead.
+*/
+
+class Vec {
+public:
+	double *at;
+	integer size;
+	const double *const_propagate_at () const { return at; }
+	double *const_propagate_at () { return at; }
+public:
+	Vec (double *initialAt, integer initialSize) : at (initialAt), size (initialSize) { }
+	double& operator[] (integer index) { return at [index]; }   // selected for Vec (1)
+	const double& operator[] (integer index) const { return at [index]; }   // selected for const Vec (2)
+	//Vec (Vec& other) : at (other.const_propagate_at()), size (other.size) { };   // can assign Vec to Vec (3)
+	//Vec (Vec&& other) : at (other.at), size (other.size) { };   // can assign Vec to Vec (3)
+	Vec (Vec& other) : at (other.at), size (other.size) { };   // can assign Vec to Vec (3)
+	Vec (const Vec& other) = delete;   // cannot assign const Vec to Vec (4)
+		/* unfortunately, this also precludes initializing a *const* Vec from a const Vec */
+	//Vec (const Vec& other) const = default;   // attempt to copy a const Vec to a const Vec, but constructors cannot be const
+	//const Vec (const Vec& other) = default;   // attempt to copy a const Vec to a const Vec, but constructors cannot have a return type
+};
+
+static Vec copy (Vec x) {
+	return x;
+}
+
+static void tryVec () {
+	Vec x = Vec (nullptr, 0);
+	x [1] = 3.0;
+	double a = x [2];
+	const Vec cx = Vec (nullptr, 0);
+	//cx [1] = 3.0;   // should be refused by compiler, because operator[] returns a const value that cannot be assigned to (2)
+	a = cx [2];   // should be allowed by compiler, because not an assignment (2)
+	const Vec cy = x;   // should be allowed (3)
+	//Vec y = cx;   // should be refused (4)
+	const Vec cz = copy (x);
+	//cx.at [1] = 3.0;
+	////const Vec ca = cy;   // should be allowed
+}
+
 /* End of file Praat_tests.cpp */
