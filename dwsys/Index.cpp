@@ -1,6 +1,6 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2011, 2015-2017 David Weenink
+ * Copyright (C) 2005-2011, 2015-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
