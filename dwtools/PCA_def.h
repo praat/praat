@@ -25,7 +25,7 @@ oo_DEFINE_CLASS (PCA, Eigen)
 	
 	oo_INTEGER (numberOfObservations)
 	oo_STRING_VECTOR (labels, dimension)
-	oo_DOUBLE_VECTOR (centroid, dimension)
+	oo_VEC (centroid, dimension)
 
 	#if oo_DECLARING
 		void v_info ()

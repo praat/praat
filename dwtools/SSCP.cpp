@@ -753,7 +753,7 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		}
 		thy labels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
-		NUMvector_copyElements (my centroid.at, thy centroid, 1, my numberOfColumns);
+		VECcopy_preallocated (thy centroid.get(), my centroid.get());
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
 		return thee;
 	} catch (MelderError) {
