@@ -2250,10 +2250,10 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, int tiesHandling) {
 	try {
 		integer nDimensions = conf -> numberOfColumns;
-		autoNUMvector<double> w (NUMvector_copy (conf -> w, 1, nDimensions), 1);
+		autoVEC w = VECcopy (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {
-			NUMvector_copyElements (weights -> data [i], conf -> w, 1, nDimensions);
+			VECcopy_preallocated ( conf -> w.get(), weights -> data.row(i));
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression (vecs->at [i], dc.get(), tiesHandling);
 			distances -> addItem_move (dist.move());
@@ -2442,7 +2442,7 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration t
 }
 
 void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configuration thee, Salience him, double *out_varianceAccountedFor) {
-	autoNUMvector<double> w (NUMvector_copy (thy w, 1, thy numberOfColumns), 1); // save weights
+	autoVEC w = VECcopy (thy w.get()); // save weights
 	try {
 		Melder_require (my size == his numberOfRows && thy numberOfColumns == his numberOfColumns,
 			U"Dimensions should agree.");
@@ -2468,11 +2468,11 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 		}
 
 		if (out_varianceAccountedFor) *out_varianceAccountedFor = (n > 0.0 ? 1.0 - t / n : 0.0);
-		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); // restore weights
+		VECcopy_preallocated (thy w.get(), w.get()); // restore weights
 		
 	} catch (MelderError) {
-		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns);
-		Melder_throw (U"No out_varianceAccountedFor calculasted.");
+		VECcopy_preallocated (thy w.get(), w.get());
+		Melder_throw (U"No out_varianceAccountedFor calculated.");
 	}
 }
 
