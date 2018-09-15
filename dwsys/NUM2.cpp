@@ -435,6 +435,26 @@ autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m) {
 	return r;
 }
 
+double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
+	Melder_assert (lowerInverse.ncol == v.size && v.size == m.size);
+	longdouble chisq = 0.0;
+	if (lowerInverse.nrow == 1) { // 1xn matrix
+		for (integer j = 1; j <= v.size; j ++) {
+			double t = lowerInverse [1] [j] * (v [j] - m [j]);
+			chisq += t * t;
+		}
+	} else { // nxn matrix
+		for (integer i = v.size; i > 0; i --) {
+			double t = 0.0;
+			for (integer j = 1; j <= i; j ++) {
+				t += lowerInverse [i] [j] * (v [j] - m [j]);
+			}
+			chisq += t * t;
+		}
+	}
+	return (double) chisq;
+}
+
 double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, integer nr, integer n) {
 	longdouble chisq = 0.0;
 	if (nr == 1) { // 1xn matrix
@@ -1563,11 +1583,11 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, 
 		*/
 		for (integer j = 1; j <= n; j ++) {
 			for (integer k = 1; k < j; k ++) {
-				const double djk = NUMmahalanobisDistance_chi (covar.at, x [j], x [k], p, p);
+				const double djk = NUMmahalanobisDistance (covar.get(), x.row (j), x.row(k));
 				sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 			}
 			sumjk += 1.0; // for k == j
-			const double djj = NUMmahalanobisDistance_chi (covar.at, x [j], zero.at, p, p);
+			const double djj = NUMmahalanobisDistance (covar.get(), x.row(j), zero.get());
 			sumj += exp (-b2 * djj);
 		}
 		*tnb = (1.0 / n) * (double) sumjk - 2.0 * pow (1.0 + beta2, - p2) * (double) sumj + n * pow (gamma, - p2); // n *
