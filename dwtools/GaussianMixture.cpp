@@ -727,7 +727,7 @@ autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (Gaus
 			double psum = 0.0;
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance cov = my covariances->at [im];
-				double dsq = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, thy data [i], cov -> centroid, cov -> numberOfRows, my dimension);
+				double dsq = NUMmahalanobisDistance (cov -> lowerCholesky.get(), thy data.row(i), cov -> centroid.get());
 				lnN [im] = ln2pid - 0.5 * (cov -> lnd + dsq);
 				psum += his data [i] [im] = my mixingProbabilities [im] * exp (lnN [im]);
 			}
@@ -766,12 +766,12 @@ void GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal thee
 
 		double lnp = 0.0;
 		double ln2pid = - 0.5 * my dimension * log (NUM2pi);
-		autoNUMvector<double> lnN (1, my numberOfComponents);
+		autoVEC lnN = VECraw (my numberOfComponents);
 		for (integer i = 1; i <=  thy numberOfRows; i ++) {
 			double rowsum = 0.0;
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance cov = my covariances->at [im];
-				double dsq = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, thy data [i], cov -> centroid, cov -> numberOfRows, my dimension);
+				double dsq = NUMmahalanobisDistance (cov -> lowerCholesky.get(), thy data.row(i), cov -> centroid.get());
 				lnN [im] = ln2pid - 0.5 * (cov -> lnd + dsq);
 				gamma [i] [im] = my mixingProbabilities [im] * exp (lnN [im]); // eq. Bishop 9.16
 				rowsum += gamma [i] [im];
@@ -877,7 +877,7 @@ int GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfRea
 			SSCP_expandLowerCholesky (him);
 
 			for (integer i = 1; i <= thy numberOfRows; i++) {
-				double dsq = NUMmahalanobisDistance_chi (his lowerCholesky.at, thy data [i], his centroid, his numberOfRows, my dimension);
+				double dsq = NUMmahalanobisDistance (his lowerCholesky.get(), thy data.row(i), his centroid.get());
 				double prob = exp (- 0.5 * (ln2pid + his lnd + dsq));
 				prob = prob < 1e-300 ? 1e-300 : prob; // prevent p from being zero
 				p [i] [ic] = prob;
@@ -1399,7 +1399,7 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 					sumjk += 2.0 * w * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}
 				sumjk += wj * wj; // for k == j. Is this ok now for probability weighing ????
-				djj = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, thy data [j], cov -> centroid, d, d);
+				djj = NUMmahalanobisDistance (cov -> lowerCholesky.get(), thy data.row(j), cov -> centroid.get());
 				sumj += wj * exp (-b2 * djj);
 			}
 			tnb = (1.0 / nd) * sumjk - 2.0 * pow (1.0 + beta2, - d2) * sumj + nd * pow (gamma, - d2); // n *

@@ -161,7 +161,7 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		for (integer i = 1; i <= m; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
-			NUMvector_copyElements (sscp -> centroid, thy data [i], 1, n);
+			VECcopy_preallocated ( thy data.row(i), sscp -> centroid.get());
 		}
 		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels.get(), n);
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
@@ -227,7 +227,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 		TableOfReal_setSequentialRowLabels (thee.get(), 1, ny, U"function_", 1, 1);
 
 		double scale = sqrt (total -> numberOfObservations - my numberOfGroups);
-		double *centroid = my total -> centroid;
+		double *centroid = my total -> centroid.at;
 		for (integer i = 1; i <= ny; i ++) {
 			longdouble u0 = 0.0;
 			for (integer j = 1; j <= nx; j ++) {
@@ -507,7 +507,7 @@ autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 		autoCovariance cov = SSCP_to_Covariance (my groups->at [group], 1);
 		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
-			NUMvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
+			VECcopy_preallocated (covg -> centroid.get(), cov -> centroid.get());
 			him = Covariance_TableOfReal_mahalanobis (covg.get(), thee, false);
 		} else {
 			him = Covariance_TableOfReal_mahalanobis (cov.get(), thee, false);
@@ -615,7 +615,8 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				SSCP t = groups->at [j];
-				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, dimension, thy data [i], t -> centroid, buf.at);
+				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row(i),t -> centroid.get());
+				//double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, dimension, thy data [i], t -> centroid, buf.at);
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;
@@ -648,7 +649,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoNUMvector<double> ln_determinant (1, g);
 		autoNUMvector<double> buf (1, p);
 		autoNUMvector<double> displacement (1, p);
-		autoNUMvector<double> x (1, p);
+		autoVEC x = VECzero (p);
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
@@ -743,7 +744,8 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			}
 			for (integer j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
-				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, p, x.peek(), t -> centroid, buf.peek());
+				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), x.get(), t -> centroid.get());
+//				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, p, x.peek(), t -> centroid, buf.peek());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;
