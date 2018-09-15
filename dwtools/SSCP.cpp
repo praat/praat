@@ -1372,7 +1372,7 @@ double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
 	double ln2pid = my numberOfColumns * log (NUM2pi);
 	double dsq = NUMmahalanobisDistance (my lowerCholesky.get(), x, my centroid.get());
 	double lnN = - 0.5 * (ln2pid + my lnd + dsq);
-	double p =  exp (lnN);
+	double p = exp (lnN);
 	return p;
 }
 
