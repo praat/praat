@@ -84,8 +84,8 @@ autoDiscriminant Discriminant_create (integer numberOfGroups, integer numberOfEi
 		my numberOfGroups = numberOfGroups;
 		my groups = SSCPList_create ();
 		my total = SSCP_create (dimension);
-		my aprioriProbabilities = NUMvector<double> (1, numberOfGroups);
-		my costs = NUMmatrix<double> (1, numberOfGroups, 1, numberOfGroups);
+		my aprioriProbabilities = VECraw (numberOfGroups);
+		my costs = MATraw (numberOfGroups, numberOfGroups);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Discriminant not created.");
@@ -422,10 +422,10 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 
 		// Overall centroid and apriori probabilities and costs.
 
-		autoNUMvector<double> centroid (1, dimension);
-		autoNUMmatrix<double> between (1, thy numberOfGroups, 1, dimension);
-		thy aprioriProbabilities = NUMvector<double> (1, thy numberOfGroups);
-		thy costs = NUMmatrix<double> (1, thy numberOfGroups, 1, thy numberOfGroups);
+		autoVEC centroid = VECzero (dimension);
+		autoMAT between = MATzero (thy numberOfGroups, dimension);
+		thy aprioriProbabilities = VECraw (thy numberOfGroups);
+		thy costs = MATraw (thy numberOfGroups, thy numberOfGroups);
 
 		longdouble sum = 0.0;
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
@@ -452,7 +452,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		// the eigenvalues and eigenvectors of the equation.
 		
 		thy eigen = Thing_new (Eigen);
-		Eigen_initFromSquareRootPair (thy eigen.get(), between.peek(), thy numberOfGroups, dimension, mew -> data.at, my numberOfRows);
+		Eigen_initFromSquareRootPair (thy eigen.get(), between.at, thy numberOfGroups, dimension, mew -> data.at, my numberOfRows);
 
 		// Default priors and costs
 
@@ -602,7 +602,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		// Normalize the sum of the apriori probabilities to 1.
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
-		NUMvector_normalize1 (my aprioriProbabilities, numberOfGroups);
+		NUMvector_normalize1 (my aprioriProbabilities.at, numberOfGroups);
 		double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++) {
 			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
@@ -727,7 +727,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
 		double logg = log (g);
-		NUMvector_normalize1 (my aprioriProbabilities, g);
+		NUMvector_normalize1 (my aprioriProbabilities.at, g);
 		for (integer j = 1; j <= g; j ++) {
 			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
 		}
