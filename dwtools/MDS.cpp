@@ -305,7 +305,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 	}
 	for (integer i = 1; i <= numberOfInteriorKnots; i ++) {
 		double fraction = (double) i / (numberOfInteriorKnots + 1);
-		knot [order + 1 + i] = NUMquantile (nx, vec -> proximity, fraction);
+		knot [order + 1 + i] = NUMquantile (vec -> proximity.get(), fraction);
 	}
 
 	// Calculate data matrix m.
@@ -1697,7 +1697,7 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 
 static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *stress, double *s, double *t, double *dbar) {
 	integer numberOfProximities = my numberOfProximities;
-	integer *rowIndex = my rowIndex, *columnIndex = my columnIndex;
+	integer *rowIndex = my rowIndex.at, *columnIndex = my columnIndex.at;
 	double **dist = ddist -> data.at, **fit = dfit -> data.at;
 
 	*s = *t = *dbar = 0.0;

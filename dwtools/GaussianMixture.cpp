@@ -205,7 +205,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 		autoGaussianMixture me = Thing_new (GaussianMixture);
 		my numberOfComponents = numberOfComponents;
 		my dimension = dimension;
-		my mixingProbabilities = NUMvector<double> (1, numberOfComponents);
+		my mixingProbabilities = VECzero (numberOfComponents);
 		my covariances = CovarianceList_create ();
 		for (integer im = 1; im <= numberOfComponents; im ++) {
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, storage);
@@ -225,7 +225,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 int GaussianMixture_generateOneVector_inline (GaussianMixture me, VEC c, char32 **covname, VEC buf) {
 	try {
 		double p = NUMrandomUniform (0.0, 1.0);
-		integer im = NUMgetIndexFromProbability (my mixingProbabilities, my numberOfComponents, p);
+		integer im = NUMgetIndexFromProbability (my mixingProbabilities.at, my numberOfComponents, p);
 		Covariance thee = my covariances->at [im];
 		*covname = thy name.get();   // BUG dangle
 		if (thy numberOfRows == 1) { // 1xn reduced form
@@ -813,7 +813,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 
 		// Eventually cov1 replaces component, cov2 at end
 
-		autoNUMvector<double> mixingProbabilities (1, my numberOfComponents + 1);
+		autoVEC mixingProbabilities = VECraw (my numberOfComponents + 1);
 		for (integer i = 1; i <= my numberOfComponents; i ++) {
 			mixingProbabilities [i] = my mixingProbabilities [i];
 		}
@@ -854,8 +854,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 		my covariances -> replaceItem_move (cov1.move(), component);
 
 		my numberOfComponents ++;
-		NUMvector_free<double> (my mixingProbabilities, 1);
-		my mixingProbabilities = mixingProbabilities.transfer();
+		my mixingProbabilities = mixingProbabilities.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": component ", component, U" cannot be split.");
 	}
@@ -1139,7 +1138,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 							my mixingProbabilities [component] /= support;
 						}
 
-						NUMdvector_scaleAsProbabilities (my mixingProbabilities, my numberOfComponents);
+						NUMdvector_scaleAsProbabilities (my mixingProbabilities.at, my numberOfComponents);
 
 						if (my mixingProbabilities [component] > 0.0) { // update p for component
 							GaussianMixture_TableOfReal_getProbabilities (me.get(), thee, component, p.peek());
@@ -1206,7 +1205,7 @@ void GaussianMixture_removeComponent (GaussianMixture me, integer component) {
 		my mixingProbabilities [ic] = my mixingProbabilities [ic + 1];
 	}
 
-	NUMdvector_scaleAsProbabilities (my mixingProbabilities, my numberOfComponents);
+	NUMdvector_scaleAsProbabilities (my mixingProbabilities.at, my numberOfComponents);
 }
 
 autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numberOfComponents, double delta_lnp, integer maxNumberOfIterations, double lambda, int storage, int criterion) {

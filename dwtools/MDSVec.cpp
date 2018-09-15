@@ -51,9 +51,9 @@ autoMDSVec MDSVec_create (integer numberOfPoints) {
 		autoMDSVec me = Thing_new (MDSVec);
 		my numberOfPoints = numberOfPoints;
 		my numberOfProximities = numberOfPoints * (numberOfPoints - 1) / 2;
-		my proximity = NUMvector<double> (1, my numberOfProximities);
-		my rowIndex = NUMvector<integer> (1, my numberOfProximities);
-		my columnIndex = NUMvector<integer> (1, my numberOfProximities);
+		my proximity = VECzero (my numberOfProximities);
+		my rowIndex = INTVECzero (my numberOfProximities);
+		my columnIndex = INTVECzero (my numberOfProximities);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"MDSVec not created.");
@@ -77,7 +77,7 @@ autoMDSVec Dissimilarity_to_MDSVec (Dissimilarity me) {
 			}
 		}
 		thy numberOfProximities = n;
-		NUMsort3 ({thy proximity, n}, {thy rowIndex, n}, {thy columnIndex, n}, false);
+		NUMsort3 (thy proximity.get(), thy rowIndex.get(), thy columnIndex.get(), false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MDSVec created.");

@@ -1,6 +1,6 @@
 /* GaussianMixture_def.h
  *
- * Copyright (C) 2010 David Weenink, 2015 Paul Boersma
+ * Copyright (C) 2010-2018 David Weenink, 2015 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ oo_DEFINE_CLASS (GaussianMixture, Daata)
 
 	oo_INTEGER (numberOfComponents)
 	oo_INTEGER (dimension)
-	oo_DOUBLE_VECTOR (mixingProbabilities, numberOfComponents)
+	oo_VEC (mixingProbabilities, numberOfComponents)
 	oo_OBJECT (CovarianceList, 0, covariances)
 
 	#if oo_DECLARING
