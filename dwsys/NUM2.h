@@ -38,8 +38,7 @@ autoVEC VEC_createFromString (conststring32 s);
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-integer *NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement,
-	integer *numberOfElements, integer *numberOfMultiples, conststring32 elementType, bool sortedUniques);
+autoINTVEC NUMstring_getElementsOfRanges (conststring32 ranges, integer maximumElement, conststring32 elementType, bool sortedUniques);
 
 char32 * NUMstring_timeNoDot (double time);
 
@@ -431,16 +430,16 @@ void NUMcholeskySolve (double **a, integer n, double d[], double b[], double x[]
 	Solves A.x=b for x. A[][] and d[] are output from NUMcholeskyDecomposition.
 */
 
-void NUMlowerCholeskyInverse (double **a, integer n, double *p_lnd);
+void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
 	and ln(determinant). L^-1 in lower, leave upper part intact.
 */
 
-double **NUMinverseFromLowerCholesky (double **m, integer n);
+autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m);
 /*
-	Return the complete matrix inverse (m x m).
-	Input is the lower Cholesky decomposition of the inverse as calculated by NUMlowerCholeskyInverse.
+	Return the complete matrix inverse when only the inverse of the lower Cholesky part is given.
+	Input m is a square matrix, in the lower part is the inverse of the lower Cholesky part as calculated by NUMlowerCholeskyInverse.
 */
 
 double NUMdeterminant_cholesky (double **a, integer n);
@@ -459,8 +458,6 @@ double NUMmahalanobisDistance_chi (double **l, double *v, double *m, integer nr,
 */
 
 double NUMtrace (constMAT a);
-double NUMtrace (double **a, integer n);
-double NUMtrace2 (double **a1, double **a2, integer n);
 
 double NUMtrace2_nn (constMAT x, constMAT y);
 double NUMtrace2_nt (constMAT x, constMAT y);
@@ -1310,5 +1307,12 @@ autoMAT MATmul_tt (constMAT x, constMAT y);
 void MATmul_tn_preallocated (MAT z, constMAT x, constMAT y);
 autoMAT MATmul_tn (constMAT x, constMAT y);
 // Z = X'.Y
+
+inline autoINTVEC INTVECto (integer to) {
+	autoINTVEC result = INTVECraw (to);
+	for (integer i = 1; i <= to; i ++)
+		result [i] = i;
+	return result;
+}
 
 #endif // _NUM2_h_

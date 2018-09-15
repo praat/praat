@@ -403,7 +403,7 @@ static void menu_cb_soundMuteChannels (TimeSoundEditor me, EDITOR_ARGS_FORM) {
 	EDITOR_DO
 		integer numberOfChannels = my d_longSound.data ? my d_longSound.data -> numberOfChannels : my d_sound.data -> ny;
 		integer numberOfElements;
-		autoNUMvector<integer> channelNumber (NUMstring_getElementsOfRanges (channels_string, 5 * numberOfChannels, & numberOfElements, nullptr, U"channel", false), 1);
+		autoINTVEC channelNumber = NUMstring_getElementsOfRanges (channels_string, 5 * numberOfChannels, U"channel", false);
 		bool *muteChannels = my d_sound.muteChannels;
 		for (integer i = 1; i <= numberOfChannels; i ++)
 			muteChannels [i] = false;

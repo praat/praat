@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2017 David Weenink, Paul Boersma 2017
+ * Copyright (C) 1997-2018 David Weenink, Paul Boersma 2017
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,18 +42,18 @@
 #include "SSCP.h"
 #include "Table_extensions.h"
 
-static bool Table_selectedColumnPartIsNumeric (Table me, integer column, integer *selectedRows, integer numberOfSelectedRows) {
+static bool Table_selectedColumnPartIsNumeric (Table me, integer column, constINTVEC selectedRows) {
 	if (column < 1 || column > my numberOfColumns) return false;
-	for (integer irow = 1; irow <= numberOfSelectedRows; irow ++) {
+	for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 		if (! Table_isCellNumeric_ErrorFalse (me, selectedRows [irow], column)) return false;
 	}
 	return true;
 }
 
 // column and selectedRows are valid; *min & *max must have been initialized
-static void Table_columnExtremesFromSelectedRows (Table me, integer column, integer *selectedRows, integer numberOfSelectedRows, double *min, double *max) {
+static void Table_columnExtremesFromSelectedRows (Table me, integer column, constINTVEC selectedRows, double *min, double *max) {
 	double cmin = 1e308, cmax = - cmin;
-	for (integer irow = 1; irow <= numberOfSelectedRows; irow ++) {
+	for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 		double val = Table_getNumericValue_Assert (me, selectedRows [irow], column);
 		if (val < cmin) { cmin = val; }
 		if (val > cmax) { cmax = val; }
@@ -3229,9 +3229,9 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, 
 			return;
 		}
 		integer numberOfSelectedRows = 0;
-		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
+		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		if (ymin >= ymax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 			if (ymin >= ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
@@ -3239,13 +3239,13 @@ void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, integer xcolumn, 
 		}
 		double x1min, x1max;
 		if (xmin >= xmax) {
-			Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.peek(), numberOfSelectedRows, & xmin, & xmax);
+			Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.get(), & xmin, & xmax);
 			if (xci_min > 0) {
-				Table_columnExtremesFromSelectedRows (me, xci_min, selectedRows.peek(), numberOfSelectedRows, & x1min, & x1max);
+				Table_columnExtremesFromSelectedRows (me, xci_min, selectedRows.get(), & x1min, & x1max);
 				xmin -= x1max;
 			}
 			if (xci_max > 0) {
-				Table_columnExtremesFromSelectedRows (me, xci_max, selectedRows.peek(), numberOfSelectedRows, & x1min, & x1max);
+				Table_columnExtremesFromSelectedRows (me, xci_max, selectedRows.get(), & x1min, & x1max);
 				xmax += x1max;
 			}
 			if (xmin >= xmax) {
@@ -3303,10 +3303,9 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 			(yci_min != 0 && yci_min > nrows) || (yci_max != 0 && yci_max > nrows)) {
 			return;
 		}
-		integer numberOfSelectedRows = 0;
-		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
+		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		if (xmin >= xmax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 			if (xmin >= xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
@@ -3314,13 +3313,13 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 		}
 		double y1min, y1max;
 		if (ymin >= ymax) {
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
 			if (yci_min > 0) {
-				Table_columnExtremesFromSelectedRows (me, yci_min, selectedRows.peek(), numberOfSelectedRows, & y1min, & y1max);
+				Table_columnExtremesFromSelectedRows (me, yci_min, selectedRows.get(), & y1min, & y1max);
 				ymin -= y1max;
 			}
 			if (yci_max > 0) {
-				Table_columnExtremesFromSelectedRows (me, yci_max, selectedRows.peek(), numberOfSelectedRows, & y1min, & y1max);
+				Table_columnExtremesFromSelectedRows (me, yci_max, selectedRows.get(), & y1min, & y1max);
 				ymax += y1max;
 			}
 			if (ymin >= ymax) {
@@ -3331,7 +3330,7 @@ void Table_verticalErrorBarsPlotWhere (Table me, Graphics g,
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
 		double dx = Graphics_dxMMtoWC (g, bar_mm);
-		for (integer irow = 1; irow <= numberOfSelectedRows; irow ++) {
+		for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 			double x  = Table_getNumericValue_Assert (me, selectedRows [irow], xcolumn);
 			double y  = Table_getNumericValue_Assert (me, selectedRows [irow], ycolumn);
 			double dy1 =
@@ -3970,8 +3969,8 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
 		Table_numericize_Assert (me, dataColumn);
 		integer numberOfData = my rows.size;
-		autoNUMvector<double> xdata (1, numberOfData);
-		autoNUMvector<double> ydata (1, numberOfData);
+		autoVEC xdata = VECraw (numberOfData);
+		autoVEC ydata = VECraw (numberOfData);
 		integer xnumberOfData = 0, ynumberOfData = 0;
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			char32 *label = my rows.at [irow] -> cells [factorColumn]. string.get();
@@ -3982,15 +3981,17 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 				ydata [ ++ ynumberOfData] = val;
 			}
 		}
+		xdata.resize (xnumberOfData);
+		ydata.resize (ynumberOfData);
 		if (xmin == xmax) {
-			NUMvector_extrema<double> (xdata.peek(), 1, xnumberOfData, & xmin, & xmax);
+			NUMvector_extrema<double> (xdata.at, 1, xnumberOfData, & xmin, & xmax);
 			if (xmin == xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
 			}
 		}
 		if (ymin == ymax) {
-			NUMvector_extrema<double> (ydata.peek(), 1, ynumberOfData, & ymin, & ymax);
+			NUMvector_extrema<double> (ydata.at, 1, ynumberOfData, & ymin, & ymax);
 			if (ymin == ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
@@ -3998,7 +3999,7 @@ void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g,
 		}
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
-		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.peek(), xnumberOfData, ydata.peek(), ynumberOfData,
+		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.get(), ydata.get(),
 			xmin, xmax, ymin, ymax, labelSize, plotLabel);
 		Graphics_unsetInner (g);
 		if (garnish) {
@@ -4023,21 +4024,21 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 		Table_numericize_Assert (me, xcolumn);
 		Table_numericize_Assert (me, ycolumn);
 		integer numberOfData = my rows.size;
-		autoNUMvector<double> xdata (1, numberOfData);
-		autoNUMvector<double> ydata (1, numberOfData);
+		autoVEC xdata = VECraw (numberOfData);
+		autoVEC ydata = VECraw (numberOfData);
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			xdata [irow] = my rows.at [irow] -> cells [xcolumn]. number;
 			ydata [irow] = my rows.at [irow] -> cells [ycolumn]. number;
 		}
 		if (xmin == xmax) {
-			NUMvector_extrema<double> (xdata.peek(), 1, numberOfData, & xmin, & xmax);
+			NUMvector_extrema<double> (xdata.at, 1, numberOfData, & xmin, & xmax);
 			if (xmin == xmax) {
 				xmin -= 1.0;
 				xmax += 1.0;
 			}
 		}
 		if (ymin == ymax) {
-			NUMvector_extrema<double> (ydata.peek(), 1, numberOfData, & ymin, & ymax);
+			NUMvector_extrema<double> (ydata.at, 1, numberOfData, & ymin, & ymax);
 			if (ymin == ymax) {
 				ymin -= 1.0;
 				ymax += 1.0;
@@ -4045,7 +4046,7 @@ void Table_quantileQuantilePlot (Table me, Graphics g, integer xcolumn, integer 
 		}
 		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 		Graphics_setInner (g);
-		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.peek(), numberOfData, ydata.peek(), numberOfData,
+		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.get(), ydata.get(),
 			xmin, xmax, ymin, ymax, labelSize, plotLabel);
 		Graphics_unsetInner (g);
 		if (garnish) {
@@ -4080,7 +4081,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 		}
 		Graphics_setWindow (g, 1.0 - 0.5, numberOfLevels + 0.5, ymin, ymax);
 		Graphics_setInner (g);
-		autoNUMvector<double> data (1, numberOfData);
+		autoVEC data = VECraw (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			integer numberOfDataInLevel = 0;
 			for (integer k = 1; k <= numberOfData; k ++) {
@@ -4088,7 +4089,7 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 					data [ ++ numberOfDataInLevel] = Table_getNumericValue_Assert (me, k, dataColumn);
 				}
 			}
-			Graphics_boxAndWhiskerPlot (g, data.peek(), numberOfDataInLevel, ilevel, 0.2, 0.35, ymin, ymax);
+			Graphics_boxAndWhiskerPlot (g, data.get(), ilevel, 0.2, 0.35, ymin, ymax);
 		}
 		Graphics_unsetInner (g);
 		if (garnish) {
@@ -4135,7 +4136,7 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 		double boxWidth = 4.0, spaceBetweenBoxesInGroup = 1.0, barWidth = boxWidth / 3.0;
 		double spaceBetweenGroupsdiv2 = 3.0 / 2.0;
 		double widthUnit = 1.0 / (numberOfSelectedColumns * boxWidth + (numberOfSelectedColumns - 1) * spaceBetweenBoxesInGroup + spaceBetweenGroupsdiv2 + spaceBetweenGroupsdiv2);
-		autoNUMvector<double> data (1, numberOfData);
+		autoVEC data = VECraw (numberOfData);
 		for (integer ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
 			double xlevel = ilevel;
 			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
@@ -4151,7 +4152,7 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 				if (numberOfDataInLevelColumn > 0) {
 					// determine position
 					double xc = xlevel - 0.5 + (spaceBetweenGroupsdiv2 + (icol - 1) * (boxWidth + spaceBetweenBoxesInGroup) + boxWidth / 2) * widthUnit;
-					Graphics_boxAndWhiskerPlot (g, data.peek(), numberOfDataInLevelColumn, xc, 0.5 * barWidth * widthUnit , 0.5 * boxWidth * widthUnit, ymin, ymax);
+					Graphics_boxAndWhiskerPlot (g, data.get(), xc, 0.5 * barWidth * widthUnit , 0.5 * boxWidth * widthUnit, ymin, ymax);
 				}
 			}
 		}
@@ -4261,14 +4262,14 @@ integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter
 	return numberOfRows;
 }
 
-integer *Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter, integer *p_numberOfMatches) {
+autoINTVEC Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter) {
 	try {
 		integer numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
 		if (numberOfMatches < 1)
 			Melder_throw (U"No rows selected.");
 		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 		Formula_Result result;
-		autoNUMvector <integer> selectedRows (1, numberOfMatches);
+		autoINTVEC selectedRows = INTVECraw (numberOfMatches);
 		integer n = 0;
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			Formula_run (irow, 1, & result);
@@ -4276,10 +4277,7 @@ integer *Table_findRowsMatchingCriterion (Table me, conststring32 formula, Inter
 				selectedRows [ ++ n] = irow;
 		}
 		Melder_assert (n == numberOfMatches);
-		if (p_numberOfMatches) {
-			*p_numberOfMatches = numberOfMatches;
-		}
-		return selectedRows.transfer();
+		return selectedRows;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot find matches.");
 	}
@@ -4292,19 +4290,17 @@ void Table_barPlotWhere (Table me, Graphics g,
 	double angle, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		integer numberOfRowMatches = 0;
-		auto columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
+		autoINTVEC columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
 		integer labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
 		autoStrings colourText = itemizeColourString (colours);   // removes all spaces within { } so each {} can be parsed as 1 item
 		
-		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfRowMatches), 1);
+		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		if (ymax <= ymin) {   // autoscaling
 			ymin = 1e308;
 			ymax = - ymin;
 			for (integer icol = 1; icol <= columnIndexes.size; icol ++) {
 				double cmin, cmax;
-				Table_columnExtremesFromSelectedRows (me, columnIndexes [icol],
-						selectedRows.peek(), numberOfRowMatches, & cmin, & cmax);
+				Table_columnExtremesFromSelectedRows (me, columnIndexes [icol], selectedRows.get(), & cmin, & cmax);
 				if (cmin < ymin) { ymin = cmin; }
 				if (cmax > ymax) { ymax = cmax; }
 			}
@@ -4314,7 +4310,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, 1, ymin, ymax);
 
-		integer numberOfGroups = numberOfRowMatches;
+		integer numberOfGroups = selectedRows.size;
 		integer groupSize = columnIndexes.size;
 		double bar_width = 1 / (numberOfGroups * groupSize + 2 * xoffsetFraction + (numberOfGroups - 1) * interbarsFraction + numberOfGroups * (groupSize - 1) * interbarFraction);
 		double dx = (interbarsFraction + groupSize + (groupSize - 1) * interbarFraction) * bar_width;
@@ -4323,7 +4319,7 @@ void Table_barPlotWhere (Table me, Graphics g,
 			double xb = xoffsetFraction * bar_width + (icol - 1) * (1 + interbarFraction) * bar_width;
 			double x1 = xb;
 			Graphics_Colour colour = Strings_colourToValue (colourText.get(), icol);
-			for (integer irow = 1; irow <= numberOfRowMatches; irow ++) {
+			for (integer irow = 1; irow <= selectedRows.size; irow ++) {
 				double x2 = x1 + bar_width;
 				double y2 = Table_getNumericValue_Assert (me, selectedRows [irow], columnIndexes [icol]);
 				y2 = y2 > ymax ? ymax : (y2 < ymin ? ymin : y2);
@@ -4415,18 +4411,17 @@ void Table_lineGraphWhere (Table me, Graphics g,
 {
 	try {
 		if (ycolumn < 1 || ycolumn > my numberOfColumns) return;
-		integer numberOfSelectedRows = 0;
-		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
-		if (ymax <= ymin) { // autoscaling
-			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, & ymin, & ymax);
-		}
+		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		if (ymax <= ymin)
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.get(), & ymin, & ymax);
+
 		// the following also catches xcolumn = 0 !
-		bool xIsNumeric = Table_selectedColumnPartIsNumeric (me, xcolumn, selectedRows.peek(), numberOfSelectedRows);
+		bool xIsNumeric = Table_selectedColumnPartIsNumeric (me, xcolumn, selectedRows.get());
 		if (xmin >= xmax) {
-			if (xIsNumeric) {
-				Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.peek(), numberOfSelectedRows, & xmin, & xmax);
-			} else {
-				xmin = 0; xmax = numberOfSelectedRows + 1;
+			if (xIsNumeric)
+				Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.get(), & xmin, & xmax);
+			else {
+				xmin = 0; xmax = selectedRows.size + 1;
 			}
 		}
 		Graphics_setInner (g);
@@ -4435,7 +4430,7 @@ void Table_lineGraphWhere (Table me, Graphics g,
 		double x1, y1;
 		double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72.0);
 		//double symbolHeight = lineSpacing / 1.5;
-		for (integer i = 1; i <= numberOfSelectedRows; i ++) {
+		for (integer i = 1; i <= selectedRows.size; i ++) {
 			double y2 = Table_getNumericValue_Assert (me, selectedRows [i], ycolumn);
 			double x2 = xIsNumeric ? Table_getNumericValue_Assert (me, selectedRows [i], xcolumn) : i;
 			//double symbolWidth = 0;
@@ -4475,7 +4470,7 @@ void Table_lineGraphWhere (Table me, Graphics g,
 			} else {
 				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
 			}
-			for (integer i = 1; i <= numberOfSelectedRows; i ++) {
+			for (integer i = 1; i <= selectedRows.size; i ++) {
 				double x2 = i;
 				if (x2 >= xmin && x2 <= xmax) {
 					conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], xcolumn);
@@ -4511,17 +4506,17 @@ void Table_lagPlotWhere (Table me, Graphics g,
 			return;
 		}
 		integer numberOfSelectedRows = 0;
-		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
+		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		if (xmax <= xmin) { // autoscaling
-			Table_columnExtremesFromSelectedRows (me, column, selectedRows.peek(), numberOfSelectedRows, & xmin, & xmax);
+			Table_columnExtremesFromSelectedRows (me, column, selectedRows.get(), & xmin, & xmax);
 		}
-		autoNUMvector <double> x (1, numberOfSelectedRows);
+		autoVEC x = VECraw (numberOfSelectedRows);
 		for (integer i = 1; i <= numberOfSelectedRows; i ++) {
 			x [i] = Table_getNumericValue_Assert (me, selectedRows [i], column);
 		}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, xmin, xmax, xmin, xmax);
-		Graphics_lagPlot (g, x.peek(), numberOfSelectedRows, xmin, xmax, lag, labelSize, symbol);
+		Graphics_lagPlot (g, x.get(), xmin, xmax, lag, labelSize, symbol);
 		Graphics_unsetInner (g);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
@@ -4564,12 +4559,11 @@ static autoTableOfReal Table_to_TableOfReal_where (Table me,
 	conststring32 columnLabels, conststring32 factorColumn, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		integer numberOfSelectedRows = 0;
 		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
-		auto columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
-		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
-		autoTableOfReal thee = TableOfReal_create (numberOfSelectedRows, columnIndexes.size);
-		for (integer i = 1; i <= numberOfSelectedRows; i ++) {
+		autoINTVEC columnIndexes = Table_getColumnIndicesFromColumnLabelString (me, columnLabels);
+		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoTableOfReal thee = TableOfReal_create (selectedRows.size, columnIndexes.size);
+		for (integer i = 1; i <= selectedRows.size; i ++) {
 			for (integer icol = 1; icol <= columnIndexes.size; icol ++) {
 				double value = Table_getNumericValue_Assert (me, selectedRows [i], columnIndexes [icol]);
 				thy data [i] [icol] = value;
@@ -4615,13 +4609,13 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		Melder_assert (numberOfGroups > 0);
 
 		SSCP sscp = thy at [1];
-		integer numberOfColumns = sscp -> numberOfColumns, numberOfSelectedRows = 0;
+		integer numberOfColumns = sscp -> numberOfColumns;
 		integer factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);   // can be absent
-		autoNUMvector <integer> columnIndex (1, numberOfColumns);
-		autoNUMvector <double> vector (1, numberOfColumns);
-		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
+		autoINTVEC columnIndex = INTVECraw (numberOfColumns);
+		autoVEC vector = VECraw (numberOfColumns);
+		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
 		for (integer icol = 1; icol <= numberOfColumns; icol ++)
-			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get());   // throw if not present
+			columnIndex [icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels [icol].get()); // throw if not present
 		autoTable him = Table_create (0, my numberOfColumns);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			his columnHeaders [icol].label = Melder_dup (my columnHeaders [icol]. label.get());
@@ -4631,7 +4625,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			SSCP_expandLowerCholesky (cov.get());
 			covs. addItem_move (cov.move());
 		}
-		for (integer i = 1; i <= numberOfSelectedRows; i ++) {
+		for (integer i = 1; i <= selectedRows.size; i ++) {
 			integer irow = selectedRows [i];
 			integer igroup = 1; // if factorColIndex == 0 we don't need labels
 			if (factorColIndex > 0) {
@@ -4643,7 +4637,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			Covariance covi = covs.at [igroup];
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				vector [icol] = Table_getNumericValue_Assert (me, irow, columnIndex [icol]);
-			double dm2 = NUMmahalanobisDistance_chi (covi -> lowerCholesky.at, vector.peek(), covi -> centroid, numberOfColumns, numberOfColumns);
+			double dm2 = NUMmahalanobisDistance_chi (covi -> lowerCholesky.at, vector.at, covi -> centroid, numberOfColumns, numberOfColumns);
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which, numberOfSigmas)) {
 				TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);
@@ -4675,10 +4669,9 @@ void Table_drawEllipsesWhere (Table me, Graphics g,
 	double numberOfSigmas, integer labelSize, bool garnish, conststring32 formula, Interpreter interpreter)
 {
 	try {
-		integer numberOfSelectedRows = 0;
-		autoNUMvector <integer> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, & numberOfSelectedRows), 1);
-		autoTableOfReal thee = TableOfReal_create (numberOfSelectedRows, 2);
-		for (integer i = 1; i <= numberOfSelectedRows; i ++) {
+		autoINTVEC selectedRows = Table_findRowsMatchingCriterion (me, formula, interpreter);
+		autoTableOfReal thee = TableOfReal_create (selectedRows.size, 2);
+		for (integer i = 1; i <= selectedRows.size; i ++) {
 			double x = Table_getNumericValue_Assert (me, selectedRows [i], xcolumn);
 			double y = Table_getNumericValue_Assert (me, selectedRows [i], ycolumn);
 			conststring32 label = Table_getStringValue_Assert (me, selectedRows [i], factorColumn);
@@ -4716,14 +4709,14 @@ void Table_drawEllipsesWhere (Table me, Graphics g,
 
 autoTable Table_extractColumnRanges (Table me, conststring32 ranges) {
 	try {
-		integer numberOfSelectedColumns, numberOfRows = my rows.size;
-		autoNUMvector <integer> columnRanges (NUMstring_getElementsOfRanges (ranges, my numberOfColumns, & numberOfSelectedColumns, nullptr, U"columnn number", true), 1);
-		autoTable thee = Table_createWithoutColumnNames (numberOfRows, numberOfSelectedColumns); 
-		for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++)
+		integer numberOfRows = my rows.size;
+		autoINTVEC columnRanges = NUMstring_getElementsOfRanges (ranges, my numberOfColumns, U"columnn number", true);
+		autoTable thee = Table_createWithoutColumnNames (numberOfRows, columnRanges.size); 
+		for (integer icol = 1; icol <= columnRanges.size; icol ++)
 			Table_setColumnLabel (thee.get(), icol, my v_getColStr (columnRanges [icol]));
 		for (integer irow = 1; irow <= numberOfRows; irow ++) {
 			//TableRow row = thy rows -> items [irow];
-			for (integer icol = 1; icol <= numberOfSelectedColumns; icol ++) {
+			for (integer icol = 1; icol <= columnRanges.size; icol ++) {
 				conststring32 value = Table_getStringValue_Assert (me, irow, columnRanges [icol]);
 				Table_setStringValue (thee.get(), irow, icol, value);
 			}

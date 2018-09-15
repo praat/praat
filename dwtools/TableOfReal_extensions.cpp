@@ -488,11 +488,11 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 	if (ymax <= ymin) {
 		NUMmatrix_extrema (my data.at, rowmin, rowmax, colmin, colmax, &ymin, &ymax);
 	}
-	autoNUMvector<double> data (1, numberOfRows);
 
 	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
 	Graphics_setInner (g);
 
+	autoVEC data = VECraw (numberOfRows);
 	for (integer j = colmin; j <= colmax; j ++) {
 		double x = j, r = 0.05, w = 0.2, t;
 		integer ndata = 0;
@@ -502,7 +502,7 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 				data [ ++ ndata] = t;
 			}
 		}
-		Graphics_boxAndWhiskerPlot (g, data.peek(), ndata, x, r, w, ymin, ymax);
+		Graphics_boxAndWhiskerPlot (g, data.get(), x, r, w, ymin, ymax);
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {

@@ -25,14 +25,11 @@
 	is at position 'x'. The rectangle box is 2*w wide, the whisker 2*r.
 	All drawing outside [ymin, ymax] is clipped.
 */
-void Graphics_boxAndWhiskerPlot (Graphics g, double data[], integer ndata, double x, double r, double w, double ymin, double ymax);
+void Graphics_boxAndWhiskerPlot (Graphics g, constVEC data, double x, double r, double w, double ymin, double ymax);
 
-void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles,
-	double xdata [], integer xnumberOfData, double ydata [], integer ynumberOfData,
-	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 plotLabel
-);
+void Graphics_quantileQuantilePlot (Graphics g, integer numberOfQuantiles, constVEC xdata, constVEC ydata,
+	double xmin, double xmax, double ymin, double ymax, int labelSize, conststring32 plotLabel);
 
-void Graphics_lagPlot (Graphics g, double x[], integer numberOfData,
-	double xmin, double xmax, integer lag, int labelSize, conststring32 plotLabel);
+void Graphics_lagPlot (Graphics g, constVEC x, double xmin, double xmax, integer lag, int labelSize, conststring32 plotLabel);
 
 #endif /* _Graphics_extensions_h_ */
