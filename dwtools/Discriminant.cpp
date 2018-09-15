@@ -84,8 +84,8 @@ autoDiscriminant Discriminant_create (integer numberOfGroups, integer numberOfEi
 		my numberOfGroups = numberOfGroups;
 		my groups = SSCPList_create ();
 		my total = SSCP_create (dimension);
-		my aprioriProbabilities = NUMvector<double> (1, numberOfGroups);
-		my costs = NUMmatrix<double> (1, numberOfGroups, 1, numberOfGroups);
+		my aprioriProbabilities = VECraw (numberOfGroups);
+		my costs = MATraw (numberOfGroups, numberOfGroups);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"Discriminant not created.");
@@ -161,7 +161,7 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		for (integer i = 1; i <= m; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
-			NUMvector_copyElements (sscp -> centroid, thy data [i], 1, n);
+			VECcopy_preallocated ( thy data.row(i), sscp -> centroid.get());
 		}
 		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels.get(), n);
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
@@ -227,7 +227,7 @@ autoTableOfReal Discriminant_extractCoefficients (Discriminant me, int choice) {
 		TableOfReal_setSequentialRowLabels (thee.get(), 1, ny, U"function_", 1, 1);
 
 		double scale = sqrt (total -> numberOfObservations - my numberOfGroups);
-		double *centroid = my total -> centroid;
+		double *centroid = my total -> centroid.at;
 		for (integer i = 1; i <= ny; i ++) {
 			longdouble u0 = 0.0;
 			for (integer j = 1; j <= nx; j ++) {
@@ -422,10 +422,10 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 
 		// Overall centroid and apriori probabilities and costs.
 
-		autoNUMvector<double> centroid (1, dimension);
-		autoNUMmatrix<double> between (1, thy numberOfGroups, 1, dimension);
-		thy aprioriProbabilities = NUMvector<double> (1, thy numberOfGroups);
-		thy costs = NUMmatrix<double> (1, thy numberOfGroups, 1, thy numberOfGroups);
+		autoVEC centroid = VECzero (dimension);
+		autoMAT between = MATzero (thy numberOfGroups, dimension);
+		thy aprioriProbabilities = VECraw (thy numberOfGroups);
+		thy costs = MATraw (thy numberOfGroups, thy numberOfGroups);
 
 		longdouble sum = 0.0;
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
@@ -452,7 +452,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		// the eigenvalues and eigenvectors of the equation.
 		
 		thy eigen = Thing_new (Eigen);
-		Eigen_initFromSquareRootPair (thy eigen.get(), between.peek(), thy numberOfGroups, dimension, mew -> data.at, my numberOfRows);
+		Eigen_initFromSquareRootPair (thy eigen.get(), between.at, thy numberOfGroups, dimension, mew -> data.at, my numberOfRows);
 
 		// Default priors and costs
 
@@ -507,7 +507,7 @@ autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 		autoCovariance cov = SSCP_to_Covariance (my groups->at [group], 1);
 		autoTableOfReal him;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
-			NUMvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
+			VECcopy_preallocated (covg -> centroid.get(), cov -> centroid.get());
 			him = Covariance_TableOfReal_mahalanobis (covg.get(), thee, false);
 		} else {
 			him = Covariance_TableOfReal_mahalanobis (cov.get(), thee, false);
@@ -551,7 +551,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 			*/
 
-			NUMlowerCholeskyInverse (pool -> data.at, dimension, & lnd);
+			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				ln_determinant [j] = lnd;
 				sscpvec [j] = pool.get();
@@ -573,14 +573,14 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				}
 				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data.at, dimension, & ln_determinant [j]);
+					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0)
-						NUMlowerCholeskyInverse (pool -> data.at, dimension, & lnd);
+						MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 					npool ++;
 					sscpvec [j] = pool.get();
 					ln_determinant [j] = lnd;
@@ -602,7 +602,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		// Normalize the sum of the apriori probabilities to 1.
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
-		NUMvector_normalize1 (my aprioriProbabilities, numberOfGroups);
+		NUMvector_normalize1 (my aprioriProbabilities.at, numberOfGroups);
 		double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++) {
 			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
@@ -615,7 +615,8 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				SSCP t = groups->at [j];
-				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, dimension, thy data [i], t -> centroid, buf.at);
+				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row(i),t -> centroid.get());
+				//double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, dimension, thy data [i], t -> centroid, buf.at);
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;
@@ -648,7 +649,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		autoNUMvector<double> ln_determinant (1, g);
 		autoNUMvector<double> buf (1, p);
 		autoNUMvector<double> displacement (1, p);
-		autoNUMvector<double> x (1, p);
+		autoVEC x = VECzero (p);
 		autoNUMvector<SSCP> sscpvec (1, g);
 		autoSSCP pool = SSCPList_to_SSCP_pool (my groups.get());
 		autoClassificationTable him = ClassificationTable_create (m, g);
@@ -671,7 +672,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			// L^-1 will be used later in the Mahalanobis distance calculation:
 			// v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 
-			NUMlowerCholeskyInverse (pool -> data.at, p, & lnd);
+			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 			for (integer j = 1; j <= g; j ++) {
 				ln_determinant [j] = lnd;
 				sscpvec [j] = pool.get();
@@ -694,14 +695,14 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 				}
 				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data.at, p, & ln_determinant [j]);
+					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0) {
-						NUMlowerCholeskyInverse (pool -> data.at, p, & lnd);
+						MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 					}
 					npool ++;
 					sscpvec [j] = pool.get();
@@ -726,7 +727,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
 		double logg = log (g);
-		NUMvector_normalize1 (my aprioriProbabilities, g);
+		NUMvector_normalize1 (my aprioriProbabilities.at, g);
 		for (integer j = 1; j <= g; j ++) {
 			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
 		}
@@ -743,7 +744,8 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			}
 			for (integer j = 1; j <= g; j ++) {
 				SSCP t = groups->at [j];
-				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, p, x.peek(), t -> centroid, buf.peek());
+				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), x.get(), t -> centroid.get());
+//				double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, p, x.peek(), t -> centroid, buf.peek());
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {
 					pt_max = pt;

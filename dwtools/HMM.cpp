@@ -865,7 +865,8 @@ void HMM_HMMObservationSequenceBag_learn (HMM me, HMMObservationSequenceBag thee
 			for (integer ios = 1; ios <= thy size; ios ++) {
 				HMMObservationSequence hmm_os = thy at [ios];
 				autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, hmm_os); // TODO outside the loop or more efficiently
-				integer *obs = si -> classIndex, nobs = si -> numberOfItems; // convenience
+				integer *obs = si -> classIndex.at;
+				integer nobs = si -> numberOfItems; // convenience
 
 				// Interpretation of unknowns: end of sequence
 
@@ -1318,7 +1319,7 @@ void HMM_HMMViterbi_decode (HMM me, HMMViterbi thee, integer *obs) {
 autoHMMStateSequence HMM_HMMObservationSequence_to_HMMStateSequence (HMM me, HMMObservationSequence thee) {
 	try {
 		autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, thee);
-		integer *obs = si -> classIndex; // convenience
+		integer *obs = si -> classIndex.at; // convenience
 		integer numberOfUnknowns = StringsIndex_countItems (si.get(), 0);
 		
 		Melder_require (numberOfUnknowns == 0, U"Unknown observation symbol(s) (# = ", numberOfUnknowns, U").");
@@ -1341,7 +1342,7 @@ autoHMMStateSequence HMM_HMMObservationSequence_to_HMMStateSequence (HMM me, HMM
 double HMM_HMMStateSequence_getProbability (HMM me, HMMStateSequence thee) {
 	autoStringsIndex si = HMM_HMMStateSequence_to_StringsIndex (me, thee);
 	integer numberOfUnknowns = StringsIndex_countItems (si.get(), 0);
-	integer *index = si -> classIndex;
+	integer *index = si -> classIndex.at;
 
 	if (index == 0) {
 		return undefined;
@@ -1461,7 +1462,7 @@ double HMM_getProbabilityOfObservations (HMM me, integer *obs, integer numberOfT
 
 double HMM_HMMObservationSequence_getProbability (HMM me, HMMObservationSequence thee) {
 	autoStringsIndex si = HMM_HMMObservationSequence_to_StringsIndex (me, thee);
-	integer *index = si -> classIndex;
+	integer *index = si -> classIndex.at;
 	integer numberOfUnknowns = StringsIndex_countItems (si.get(), 0);
 	Melder_require (numberOfUnknowns == 0, U"Unknown observations (# = ", numberOfUnknowns, U").");
 	

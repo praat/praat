@@ -1,6 +1,6 @@
 /* Index.cpp
  *
- * Copyright (C) 2005-2011, 2015-2017 David Weenink
+ * Copyright (C) 2005-2011, 2015-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ void Index_init (Index me, integer numberOfItems) {
 	
 	my classes = Ordered_create ();
 	my numberOfItems = numberOfItems;
-	my classIndex = NUMvector<integer> (1, numberOfItems);
+	my classIndex = INTVECzero (numberOfItems);
 }
 
 autoIndex Index_extractPart (Index me, integer from, integer to) {

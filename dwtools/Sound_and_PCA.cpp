@@ -1,6 +1,6 @@
 /* Sound_and_PCA.cpp
  *
- * Copyright (C) 2012-2017 David Weenink
+ * Copyright (C) 2012-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 #include "Sound_extensions.h"
 #include "NUM2.h"
 
-static void checkChannelsWithinRange (integer *channels, integer n, integer min, integer max) {
-	for (integer i = 1; i <= n; i ++) {
+static void checkChannelsWithinRange (constINTVEC channels, integer min, integer max) {
+	for (integer i = 1; i <= channels.size; i ++) {
 		if (channels [i] < min || channels [i] > max) {
 			Melder_throw (U"Channel ", channels [i], U" is not within range [", min, U", ", max, U"].");
 		}
@@ -44,29 +44,24 @@ autoPCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 	}
 }
 
-autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer numberOfComponents, integer *channels, integer numberOfChannels) {
+autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer numberOfComponents, constINTVEC channels) {
 	try {
-		bool channelSelection = channels != 0 && numberOfChannels > 0;
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
 			numberOfComponents = thy numberOfEigenvalues;
 		}
 		numberOfComponents = numberOfComponents > my ny ? my ny : numberOfComponents;
-		if (channelSelection) {
-			checkChannelsWithinRange (channels, numberOfChannels, 1, my ny);
-		}
+
+		checkChannelsWithinRange (channels, 1, my ny);
+
 		autoSound him = Data_copy (me);
 		// R ['i',j] = E(i,k]*S ['k',j]
 		// use kij-variant for faster inner loop
-		for (integer k = 1; k <= thy dimension; k ++) {
-			integer channel_k = channelSelection ? channels [k] : k;
+		for (integer k = 1; k <= thy dimension; k ++)
 			for (integer i = 1; i <= numberOfComponents; i ++) {
-				integer channel_i = channelSelection ? channels [i] : i;
 				double ev_ik = thy eigenvectors [i] [k];
-				for (integer j = 1; j <= my nx; j ++) {
-					his z [channel_i] [j] += ev_ik * my z [channel_k] [j];
-				}
+				for (integer j = 1; j <= my nx; j ++)
+					his z [channels [i]] [j] += ev_ik * my z [channels [k]] [j];
 			}
-		}
 		return him;
 	} catch (MelderError) {
 		Melder_throw (me, U": no principal components calculated with ", thee);
@@ -74,18 +69,17 @@ autoSound Sound_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, integer nu
 }
 
 autoSound Sound_PCA_principalComponents (Sound me, PCA thee, integer numberOfComponents) {
-	return Sound_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, nullptr, 0);
+	autoINTVEC channels = INTVECto (my ny);
+	return Sound_PCA_to_Sound_pc_selectedChannels (me, thee, numberOfComponents, channels.get());
 }
 
-autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOfComponents, integer *channels, integer numberOfChannels) {
+autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOfComponents, constINTVEC channels) {
 	try {
-		bool channelSelection = channels != 0 && numberOfChannels > 0;
-		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
+		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues)
             numberOfComponents = thy numberOfEigenvalues;
-        }
-		if (channelSelection) {
-			checkChannelsWithinRange (channels, numberOfChannels, 1, my ny);
-		}
+
+		checkChannelsWithinRange (channels, 1, my ny);
+		
         autoNUMmatrix <double> whiten (1, thy dimension, 1, thy dimension);
 		// W = E D^(-1/2) E' from http://cis.legacy.ics.tkk.fi/aapo/papers/IJCNN99_tutorialweb/node26.html
         for (integer i = 1; i <= thy dimension; i ++) {
@@ -98,13 +92,11 @@ autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOf
             }
         }
 		autoSound him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer k = 1; k <= numberOfChannels; k ++) {
-			integer channel_k = channelSelection ? channels [k] : k;
-            for (integer i = 1; i <= numberOfChannels; i ++) {
-                integer channel_i = channelSelection ? channels [i] : i;
+		for (integer k = 1; k <= channels.size; k ++) {
+            for (integer i = 1; i <= channels.size; i ++) {
 				double w_ik = whiten [i] [k];
                 for (integer j = 1; j <= my nx; j ++) {
-                    his z [channel_i] [j] += w_ik * my z [channel_k] [j];
+                    his z [channels [i]] [j] += w_ik * my z [channels [k]] [j];
                 }
             }
         }
@@ -115,7 +107,8 @@ autoSound Sound_PCA_whitenSelectedChannels (Sound me, PCA thee, integer numberOf
 }
 
 autoSound Sound_PCA_whitenChannels (Sound me, PCA thee, integer numberOfComponents) {
-	return Sound_PCA_whitenSelectedChannels (me, thee, numberOfComponents, nullptr, 0);
+	autoINTVEC channels = INTVECto (my ny);
+	return Sound_PCA_whitenSelectedChannels (me, thee, numberOfComponents, channels.get());
 }
 
 /* End of file Sound_and_PCA.cpp */

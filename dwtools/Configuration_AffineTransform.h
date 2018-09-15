@@ -2,7 +2,7 @@
 #define _Configuration_AffineTransform_h_
 /* Configuration_AffineTransform.c
  * 
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  * 
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,12 @@
 #include "AffineTransform.h"
 
 autoAffineTransform Configurations_to_AffineTransform_congruence (Configuration me,	Configuration thee, integer maximumNumberOfIterations, double tolerance);
+/*
+	Find the orthogonal rotation that maximizes the coefficients of congruence between the columns two configurations.
+	
+	Kiers & Groenen (1996), A monotonically convergent congruence algorithm for orthogona congruence rotation,
+	Psychometrika (61), 375-389.
+*/
 
 autoConfiguration Configuration_AffineTransform_to_Configuration (Configuration me, AffineTransform thee);
 

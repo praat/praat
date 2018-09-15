@@ -60,7 +60,7 @@ static integer Permutation_checkRange (Permutation me, integer *from, integer *t
 
 void Permutation_checkInvariant (Permutation me) {
 	autoPermutation thee = Data_copy (me);
-	NUMsort_integer (thy numberOfElements, thy p);
+	NUMsort_integer (thy numberOfElements, thy p.at);
 	for (integer i = 1; i <= my numberOfElements; i ++) {
 		Melder_require (thy p [i] == i,
 			me, U": is not a valid permutation.");
@@ -77,20 +77,21 @@ void structPermutation :: v_readText (MelderReadText text, int /*formatVersion*/
 	Melder_require (numberOfElements > 0,
 		U"Number of elements should be greater than zero.");
 
-	p = NUMvector_readText_integer32BE (1, numberOfElements, text, "p");
+	p.at = NUMvector_readText_integer32BE (1, numberOfElements, text, "p");
 	Permutation_checkInvariant (this);
 }
 
 void Permutation_init (Permutation me, integer numberOfElements) {
 	my numberOfElements = numberOfElements;
-	my p = NUMvector<integer> (1, numberOfElements);
+	my p = INTVECraw (numberOfElements);
 	Permutation_sort (me);
 }
 
 void Permutation_tableJump_inline (Permutation me, integer jumpSize, integer first) {
 	if (jumpSize >= my numberOfElements || first > my numberOfElements)
 		return;
-	autoNUMvector<integer> p_copy (NUMvector_copy<integer> (my p, 1, my numberOfElements), 1);
+	autoINTVEC p_copy = INTVECcopy (my p.get());
+
 	integer index = first, column = 1;
 	if (first > 1)
 		column = (first - 1) % jumpSize + 1;

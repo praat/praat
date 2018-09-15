@@ -305,7 +305,7 @@ autoDistance structISplineTransformator :: v_transform (MDSVec vec, Distance dis
 	}
 	for (integer i = 1; i <= numberOfInteriorKnots; i ++) {
 		double fraction = (double) i / (numberOfInteriorKnots + 1);
-		knot [order + 1 + i] = NUMquantile (nx, vec -> proximity, fraction);
+		knot [order + 1 + i] = NUMquantile (vec -> proximity.get(), fraction);
 	}
 
 	// Calculate data matrix m.
@@ -1157,8 +1157,10 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = i; j <= numberOfSources; j ++) {
-				a [j] [i] = a [i] [j] =  NUMtrace2 (ci [i], ci [j], numberOfDimensions)
-					- NUMtrace (ci [i], numberOfDimensions) * NUMtrace (ci [j], numberOfDimensions) / numberOfDimensions;
+				MAT cii (ci [i], numberOfDimensions,numberOfDimensions);
+				MAT cij (ci [j], numberOfDimensions,numberOfDimensions);
+				a [j] [i] = a [i] [j] =  NUMtrace2_nn (cii, cij)
+					- NUMtrace (cii) * NUMtrace (cij) / numberOfDimensions;
 			}
 		}
 		
@@ -1695,7 +1697,7 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 
 static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *stress, double *s, double *t, double *dbar) {
 	integer numberOfProximities = my numberOfProximities;
-	integer *rowIndex = my rowIndex, *columnIndex = my columnIndex;
+	integer *rowIndex = my rowIndex.at, *columnIndex = my columnIndex.at;
 	double **dist = ddist -> data.at, **fit = dfit -> data.at;
 
 	*s = *t = *dbar = 0.0;
@@ -2248,10 +2250,10 @@ void DistanceList_Configuration_indscal (DistanceList dists, Configuration conf,
 autoDistanceList MDSVecList_Configuration_Salience_monotoneRegression (MDSVecList vecs, Configuration conf, Salience weights, int tiesHandling) {
 	try {
 		integer nDimensions = conf -> numberOfColumns;
-		autoNUMvector<double> w (NUMvector_copy (conf -> w, 1, nDimensions), 1);
+		autoVEC w = VECcopy (conf -> w.get());
 		autoDistanceList distances = DistanceList_create ();
 		for (integer i = 1; i <= vecs->size; i ++) {
-			NUMvector_copyElements (weights -> data [i], conf -> w, 1, nDimensions);
+			VECcopy_preallocated ( conf -> w.get(), weights -> data.row(i));
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression (vecs->at [i], dc.get(), tiesHandling);
 			distances -> addItem_move (dist.move());
@@ -2440,7 +2442,7 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me, Configuration t
 }
 
 void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configuration thee, Salience him, double *out_varianceAccountedFor) {
-	autoNUMvector<double> w (NUMvector_copy (thy w, 1, thy numberOfColumns), 1); // save weights
+	autoVEC w = VECcopy (thy w.get()); // save weights
 	try {
 		Melder_require (my size == his numberOfRows && thy numberOfColumns == his numberOfColumns,
 			U"Dimensions should agree.");
@@ -2466,11 +2468,11 @@ void ScalarProductList_Configuration_Salience_vaf (ScalarProductList me, Configu
 		}
 
 		if (out_varianceAccountedFor) *out_varianceAccountedFor = (n > 0.0 ? 1.0 - t / n : 0.0);
-		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); // restore weights
+		VECcopy_preallocated (thy w.get(), w.get()); // restore weights
 		
 	} catch (MelderError) {
-		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns);
-		Melder_throw (U"No out_varianceAccountedFor calculasted.");
+		VECcopy_preallocated (thy w.get(), w.get());
+		Melder_throw (U"No out_varianceAccountedFor calculated.");
 	}
 }
 

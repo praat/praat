@@ -2056,10 +2056,9 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 
 autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges) {
 	try {
-		integer numberOfChannels;
-		autoNUMvector <integer> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, nullptr, U"channel", true), 1);
-		autoSound thee = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
-		for (integer i = 1; i <= numberOfChannels; i ++) {
+		autoINTVEC channels = NUMstring_getElementsOfRanges (ranges, my ny, U"channel", true);
+		autoSound thee = Sound_create (channels.size, my xmin, my xmax, my nx, my dx, my x1);
+		for (integer i = 1; i <= channels.size; i ++) {
 			double *from = my z [channels [i]], *to = thy z [i];
 			NUMvector_copyElements<double> (from, to, 1, my nx);
 		}

@@ -393,45 +393,66 @@ double NUMdeterminant_cholesky (double **a, integer n) {
 	return (double) lnd;
 }
 
-void NUMlowerCholeskyInverse (double **a, integer n, double *p_lnd) {
-
+void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
+	Melder_assert (a.nrow == a.ncol);
 	char uplo = 'U', diag = 'N';
 	integer info;
 
 	// Cholesky decomposition in lower, leave upper intact
 	// Fortran storage -> use uplo='U' to get 'L'.
 
-	(void) NUMlapack_dpotf2 (& uplo, & n, & a [1] [1], & n, & info);
+	(void) NUMlapack_dpotf2 (& uplo, & a.nrow, & a [1] [1], & a.nrow, & info);
 	Melder_require (info == 0, U"dpotf2 fails.");
 
 	// Determinant from diagonal, diagonal is now sqrt (a [i] [i]) !
 
-	if (p_lnd) {
-		*p_lnd = 0.0;
-		for (integer i = 1; i <= n; i ++) {
-			*p_lnd += log (a [i] [i]);
+	if (out_lnd) {
+		longdouble lnd = 0.0;
+		for (integer i = 1; i <= a.nrow; i ++) {
+			lnd += log (a [i] [i]);
 		}
-		*p_lnd *= 2.0; /* because A = L . L' */
+		*out_lnd *= 2.0 * lnd; /* because A = L . L' */
 	}
 
 	// Get the inverse */
 
-	(void) NUMlapack_dtrtri (& uplo, & diag, & n, & a [1] [1], & n, & info);
+	(void) NUMlapack_dtrtri (& uplo, & diag, & a.nrow, & a [1] [1], & a.nrow, & info);
 	Melder_require (info == 0, U"dtrtri fails.");
 }
 
-double **NUMinverseFromLowerCholesky (double **m, integer n) {
-	autoNUMmatrix<double> r (1, n, 1, n);
-	for (integer i = 1; i <= n; i ++) {
+autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m) {
+	Melder_assert (m.nrow == m.ncol);
+	autoMAT r = MATraw (m.nrow, m.nrow);
+	for (integer i = 1; i <= m.nrow; i ++) {
 		for (integer j = 1; j <= i; j ++) {
 			longdouble sum = 0.0;
-			for (integer k = i; k <= n; k ++) {
+			for (integer k = i; k <= m.nrow; k ++) {
 				sum += m [k] [i] * m [k] [j];
 			}
 			r [i] [j] = r [j] [i] = (double) sum;
 		}
 	}
-	return r.transfer();
+	return r;
+}
+
+double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
+	Melder_assert (lowerInverse.ncol == v.size && v.size == m.size);
+	longdouble chisq = 0.0;
+	if (lowerInverse.nrow == 1) { // 1xn matrix
+		for (integer j = 1; j <= v.size; j ++) {
+			double t = lowerInverse [1] [j] * (v [j] - m [j]);
+			chisq += t * t;
+		}
+	} else { // nxn matrix
+		for (integer i = v.size; i > 0; i --) {
+			double t = 0.0;
+			for (integer j = 1; j <= i; j ++) {
+				t += lowerInverse [i] [j] * (v [j] - m [j]);
+			}
+			chisq += t * t;
+		}
+	}
+	return (double) chisq;
 }
 
 double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, integer nr, integer n) {
@@ -451,24 +472,6 @@ double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, integer 
 		}
 	}
 	return (double) chisq;
-}
-
-double NUMtrace (double **a, integer n) {
-	longdouble trace = 0.0;
-	for (integer i = 1; i <= n; i ++) {
-		trace += a [i] [i];
-	}
-	return (double) trace;
-}
-
-double NUMtrace2 (double **a1, double **a2, integer n) {
-	longdouble trace = 0.0;
-	for (integer i = 1; i <= n; i ++) {
-		for (integer k = 1; k <= n; k ++) {
-			trace += a1 [i] [k] * a2 [k] [i];
-		}
-	}
-	return (double) trace;
 }
 
 void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambda, double tolerance) {
@@ -1571,7 +1574,7 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, 
 	NUMcovarianceFromColumnCentredMatrix (x.at, x.nrow, x.ncol, 0, covar.at);
 
 	try {
-		NUMlowerCholeskyInverse (covar.at, p, nullptr);
+		MATlowerCholeskyInverse_inplace (covar.get(), nullptr);
 		longdouble sumjk = 0.0, sumj = 0.0;
 		const double b1 = beta2 / 2.0, b2 = b1 / (1.0 + beta2);
 		/* Heinze & Wagner (1997), page 3
@@ -1580,11 +1583,11 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, 
 		*/
 		for (integer j = 1; j <= n; j ++) {
 			for (integer k = 1; k < j; k ++) {
-				const double djk = NUMmahalanobisDistance_chi (covar.at, x [j], x [k], p, p);
+				const double djk = NUMmahalanobisDistance (covar.get(), x.row (j), x.row(k));
 				sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 			}
 			sumjk += 1.0; // for k == j
-			const double djj = NUMmahalanobisDistance_chi (covar.at, x [j], zero.at, p, p);
+			const double djj = NUMmahalanobisDistance (covar.get(), x.row(j), zero.get());
 			sumj += exp (-b2 * djj);
 		}
 		*tnb = (1.0 / n) * (double) sumjk - 2.0 * pow (1.0 + beta2, - p2) * (double) sumj + n * pow (gamma, - p2); // n *

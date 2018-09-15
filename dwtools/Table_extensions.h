@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 
 integer Table_getNumberOfRowsWhere (Table me, conststring32 formula, Interpreter interpreter);
 
-integer *Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter, integer *numberOfMatches);
+autoINTVEC Table_findRowsMatchingCriterion (Table me, conststring32 formula, Interpreter interpreter);
 
 autoTable Table_create_petersonBarney1952 ();
 
