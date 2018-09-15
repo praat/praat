@@ -596,7 +596,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 			Get inverse of covari in lower triangular part.
 		*/
 		double lndet;
-		NUMlowerCholeskyInverse (covari.at, my numberOfRows, & lndet);
+		MATlowerCholeskyInverse_inplace (covari.get(), & lndet);
 
 		if (useTableCentroid) {
 			for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
@@ -1345,23 +1345,10 @@ static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 	}
 }
 
-static double **productOfSquareMatrices (double **s1, double **s2, integer n) {
-	autoNUMmatrix<double> r (1, n, 1, n);
-	for (integer i = 1; i <= n; i ++) {
-		for (integer j = 1; j <= n; j ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= n; k ++)
-				sum += s1 [i] [k] * s2 [k] [j];
-			r [i] [j] = (double) sum;
-		}
-	}
-	return r.transfer();
-}
-
 static double traceOfSquaredMatrixProduct (double **s1, double **s2, integer n) {
 	// tr ((s1*s2)^2), s1, s2 are symmetric
-	autoNUMmatrix<double> m (productOfSquareMatrices (s1, s2, n), 1, 1);
-	double trace2 = NUMtrace2 (m.peek(), m.peek(), n);
+	autoMAT m = MATmul_nn ({s1,n,n}, {s2,n, n});
+	double trace2 = NUMtrace2_nn (m.get(), m.get());
 	return trace2;
 }
 
@@ -1448,7 +1435,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		Melder_assert (my data.ncol == p);   // ppgb 20180913
 		autoMAT s = matrixcopy (my data.get());
 		double lndet;
-		NUMlowerCholeskyInverse (s.at, p, &lndet);
+		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 
 		double mahalanobis = NUMmahalanobisDistance_chi (s.at, my centroid, thy centroid, p, p);
 		double hotelling_tsq = mahalanobis * N1 * N2 / N;
@@ -1463,9 +1450,8 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 			the matrices S1 and S2 are the covariance matrices 'my data' and 'thy data' divided by N1 and N2 respectively.
 			S is the pooled covar divided by N.
 		*/
-		autoNUMmatrix<double> s1 (1, p, 1, p);
-		autoNUMmatrix<double> s2 (1, p, 1, p);
-		autoNUMmatrix<double> s (1, p, 1, p);
+		
+		autoMAT s1 = MATraw (p, p), s2  = MATraw (p, p), s = MATraw (p, p);
 
 		for (integer i = 1; i <= p; i ++) {
 			for (integer j = 1; j <= p; j ++) {
@@ -1475,15 +1461,15 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 			}
 		}
 		double lndet;
-		NUMlowerCholeskyInverse (s.peek(), p, &lndet);
+		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 		// Krishan... formula 2, page 162
-		double hotelling_tsq = NUMmahalanobisDistance_chi (s.peek(), my centroid, thy centroid, p, p);
+		double hotelling_tsq = NUMmahalanobisDistance_chi (s.at, my centroid, thy centroid, p, p);
 
-		autoNUMmatrix<double> si (NUMinverseFromLowerCholesky (s.peek(), p), 1, 1);
-		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.peek(), si.peek(), p);
-		double tr_s1si = NUMtrace2 (s1.peek(), si.peek(), p);
-		double tr_s2sisqr = traceOfSquaredMatrixProduct (s2.peek(), si.peek(), p);
-		double tr_s2si = NUMtrace2 (s2.peek(), si.peek(), p);
+		autoMAT si = MATinverse_fromLowerCholeskyInverse (s.get());
+		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.at, si.at, p);
+		double tr_s1si = NUMtrace2_nn (s1.get(), si.get());
+		double tr_s2sisqr = traceOfSquaredMatrixProduct (s2.at, si.at, p);
+		double tr_s2si = NUMtrace2_nn (s2.get(), si.get());
 
 		double nu = (p + p * p) / ( (tr_s1sisqr + tr_s1si * tr_s1si) / n1 + (tr_s2sisqr + tr_s2si * tr_s2si) / n2);
 		df2 = nu - p + 1;
@@ -1565,19 +1551,19 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			//	- 2 * sum (i=1..k, sum(j=1..i-1, (ni/n)*(nj/n) *tr(si*s^-1*sj*s^-1)))
 
 			double trace = 0;
-			NUMlowerCholeskyInverse (pool -> data.at, p, nullptr);
-			autoNUMmatrix<double> si (NUMinverseFromLowerCholesky (pool -> data.at, p), 1, 1);
+			MATlowerCholeskyInverse_inplace (pool -> data.get(), nullptr);
+			autoMAT si = MATinverse_fromLowerCholeskyInverse (pool -> data.get());
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				double ni = ci -> numberOfObservations - 1;
-				autoNUMmatrix<double> s1 (productOfSquareMatrices (ci -> data.at, si.peek(), p), 1, 1);
-				double trace_ii = NUMtrace2 (s1.peek(), s1.peek(), p);
+				autoMAT s1 = MATmul_nn (ci -> data.get(), si.get());
+				double trace_ii = NUMtrace2_nn (s1.get(), s1.get());
 				trace += (ni / ns) * (1 - (ni / ns)) * trace_ii;
 				for (integer j = i + 1; j <= numberOfMatrices; j ++) {
 					Covariance cj = my at [j];
 					double nj = cj -> numberOfObservations - 1;
-					autoNUMmatrix<double> s2 (productOfSquareMatrices (cj -> data.at, si.peek(), p), 1, 1);
-					double trace_ij = NUMtrace2 (s1.peek(), s2.peek(), p);
+					autoMAT s2 = MATmul_nn (cj -> data.get(), si.get());
+					double trace_ij = NUMtrace2_nn (s1.get(), s2.get());
 					trace -= 2.0 * (ni / ns) * (nj / ns) * trace_ij;
 				}
 			}
@@ -1617,7 +1603,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 		U"Number of observations too small.");
 	Melder_assert (thy data.ncol == p);
 	autoMAT linv = matrixcopy (thy data.get());
-	NUMlowerCholeskyInverse (linv.at, p, & ln_thee);
+	MATlowerCholeskyInverse_inplace (linv.get(), & ln_thee);
 	ln_me = NUMdeterminant_cholesky (my data.at, p);
 
 	/*
@@ -1957,7 +1943,7 @@ void SSCP_expandLowerCholesky (SSCP me) {
 			for (integer j = i; j <= my numberOfColumns; j ++)
 				my lowerCholesky [j] [i] = my lowerCholesky [i] [j] = my data [i] [j];
 		try {
-			NUMlowerCholeskyInverse (my lowerCholesky.at, my numberOfColumns, & (my lnd));
+			MATlowerCholeskyInverse_inplace (my lowerCholesky.get(), & (my lnd));
 		} catch (MelderError) {
 			// singular matrix: arrange a diagonal only inverse.
 			my lnd = 0.0;

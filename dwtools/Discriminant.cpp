@@ -551,7 +551,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 			*/
 
-			NUMlowerCholeskyInverse (pool -> data.at, dimension, & lnd);
+			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				ln_determinant [j] = lnd;
 				sscpvec [j] = pool.get();
@@ -573,14 +573,14 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 				}
 				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data.at, dimension, & ln_determinant [j]);
+					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0)
-						NUMlowerCholeskyInverse (pool -> data.at, dimension, & lnd);
+						MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 					npool ++;
 					sscpvec [j] = pool.get();
 					ln_determinant [j] = lnd;
@@ -671,7 +671,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 			// L^-1 will be used later in the Mahalanobis distance calculation:
 			// v'.S^-1.v == v'.L^-1'.L^-1.v == (L^-1.v)'.(L^-1.v).
 
-			NUMlowerCholeskyInverse (pool -> data.at, p, & lnd);
+			MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 			for (integer j = 1; j <= g; j ++) {
 				ln_determinant [j] = lnd;
 				sscpvec [j] = pool.get();
@@ -694,14 +694,14 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 				}
 				sscpvec [j] = groups->at [j];
 				try {
-					NUMlowerCholeskyInverse (t -> data.at, p, & ln_determinant [j]);
+					MATlowerCholeskyInverse_inplace (t -> data.get(), & ln_determinant [j]);
 				} catch (MelderError) {
 					// Try the alternative: the pooled covariance matrix.
 					// Clear the error.
 
 					Melder_clearError ();
 					if (npool == 0) {
-						NUMlowerCholeskyInverse (pool -> data.at, p, & lnd);
+						MATlowerCholeskyInverse_inplace (pool -> data.get(), & lnd);
 					}
 					npool ++;
 					sscpvec [j] = pool.get();

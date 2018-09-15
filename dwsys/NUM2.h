@@ -430,16 +430,16 @@ void NUMcholeskySolve (double **a, integer n, double d[], double b[], double x[]
 	Solves A.x=b for x. A[][] and d[] are output from NUMcholeskyDecomposition.
 */
 
-void NUMlowerCholeskyInverse (double **a, integer n, double *p_lnd);
+void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
 	and ln(determinant). L^-1 in lower, leave upper part intact.
 */
 
-double **NUMinverseFromLowerCholesky (double **m, integer n);
+autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m);
 /*
-	Return the complete matrix inverse (m x m).
-	Input is the lower Cholesky decomposition of the inverse as calculated by NUMlowerCholeskyInverse.
+	Return the complete matrix inverse when only the inverse of the lower Cholesky part is given.
+	Input m is a square matrix, in the lower part is the inverse of the lower Cholesky part as calculated by NUMlowerCholeskyInverse.
 */
 
 double NUMdeterminant_cholesky (double **a, integer n);
@@ -458,8 +458,6 @@ double NUMmahalanobisDistance_chi (double **l, double *v, double *m, integer nr,
 */
 
 double NUMtrace (constMAT a);
-double NUMtrace (double **a, integer n);
-double NUMtrace2 (double **a1, double **a2, integer n);
 
 double NUMtrace2_nn (constMAT x, constMAT y);
 double NUMtrace2_nt (constMAT x, constMAT y);

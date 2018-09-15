@@ -1157,8 +1157,10 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			for (integer j = i; j <= numberOfSources; j ++) {
-				a [j] [i] = a [i] [j] =  NUMtrace2 (ci [i], ci [j], numberOfDimensions)
-					- NUMtrace (ci [i], numberOfDimensions) * NUMtrace (ci [j], numberOfDimensions) / numberOfDimensions;
+				MAT cii (ci [i], numberOfDimensions,numberOfDimensions);
+				MAT cij (ci [j], numberOfDimensions,numberOfDimensions);
+				a [j] [i] = a [i] [j] =  NUMtrace2_nn (cii, cij)
+					- NUMtrace (cii) * NUMtrace (cij) / numberOfDimensions;
 			}
 		}
 		
