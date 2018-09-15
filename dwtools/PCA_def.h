@@ -1,6 +1,6 @@
 /* PCA_def.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ oo_DEFINE_CLASS (PCA, Eigen)
 	
 	oo_INTEGER (numberOfObservations)
 	oo_STRING_VECTOR (labels, dimension)
-	oo_DOUBLE_VECTOR (centroid, dimension)
+	oo_VEC (centroid, dimension)
 
 	#if oo_DECLARING
 		void v_info ()

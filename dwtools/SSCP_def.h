@@ -1,6 +1,6 @@
 /* SSCP_def.h
  *
- * Copyright (C) 1993-2010 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 oo_DEFINE_CLASS (SSCP, TableOfReal)
 
 	oo_DOUBLE (numberOfObservations)
-	oo_DOUBLE_VECTOR (centroid, numberOfColumns)
+	oo_VEC (centroid, numberOfColumns)
 
 	/*
 		The following definitions are only needed when we want to use many big diagonal or

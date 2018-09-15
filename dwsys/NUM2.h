@@ -447,6 +447,7 @@ double NUMdeterminant_cholesky (double **a, integer n);
 	ln(determinant) of a symmetric p.s.d. matrix
 */
 
+double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m);
 double NUMmahalanobisDistance_chi (double **l, double *v, double *m, integer nr, integer nc);
 /*
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).

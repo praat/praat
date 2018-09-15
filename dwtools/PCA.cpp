@@ -74,7 +74,7 @@ autoPCA PCA_create (integer numberOfComponents, integer dimension) {
 		autoPCA me = Thing_new (PCA);
 		Eigen_init (me.get(), numberOfComponents, dimension);
 		my labels = autostring32vector (dimension);
-		my centroid = NUMvector<double> (1, dimension);
+		my centroid = VECzero (dimension);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"PCA not created");
@@ -166,8 +166,8 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 			mcopy = MATcopy (m);
 		}
 		autoPCA thee = Thing_new (PCA);
-		thy centroid = NUMvector<double> (1, mcopy.ncol);
-		MATcentreEachColumn_inplace (mcopy.get(), thy centroid);
+		thy centroid = VECzero (mcopy.ncol);
+		MATcentreEachColumn_inplace (mcopy.get(), thy centroid.at);
 		Eigen_initFromSquareRoot (thee.get(), mcopy.at, mcopy.nrow, mcopy.ncol);
 		thy labels = autostring32vector (mcopy.ncol);
 		PCA_setNumberOfObservations (thee.get(), mcopy.nrow);

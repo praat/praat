@@ -1,6 +1,6 @@
 /* Configuration.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ autoConfiguration Configuration_create (integer numberOfPoints, integer numberOf
 	try {
 		autoConfiguration me = Thing_new (Configuration);
 		TableOfReal_init (me.get(), numberOfPoints, numberOfDimensions);
-		my w = NUMvector<double> (1, numberOfDimensions);
+		my w = VECraw (numberOfDimensions);
 		TableOfReal_setSequentialRowLabels (me.get(), 0, 0, nullptr, 1, 1);
 		TableOfReal_setSequentialColumnLabels (me.get(), 0, 0, U"dimension ", 1, 1);
 

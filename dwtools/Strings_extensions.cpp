@@ -183,7 +183,7 @@ autoPermutation Strings_to_Permutation (Strings me, int sort) { // TODO sort
 		autoPermutation thee = Permutation_create (my numberOfStrings);
 		if (sort != 0) {
 			autoINTVEC index = NUMindexx_s (my strings.get ()); // TODO inplace version
-			vectorcopy_preallocated ({thy p, my numberOfStrings}, index.get());
+			vectorcopy_preallocated (thy p.get(), index.get());
 		}
 		return thee;
 	} catch (MelderError) {

@@ -1,6 +1,6 @@
 /* ICA.cpp
  *
- * Copyright (C) 2010-2017 David Weenink
+ * Copyright (C) 2010-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -466,8 +466,7 @@ static void NUMcrossCorrelate_rows (double **x, integer nrows, integer icol1, in
 	The cross-correlation between channel i and channel j is defined as
 		sum(k=1..nsamples, (z [i] [k] - mean [i])(z [j] [k + tau] - mean [j]))*samplingTime
 */
-autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me,
-	double startTime, double endTime, double lagStep)
+autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me,	double startTime, double endTime, double lagStep)
 {
 	try {
 		if (endTime <= startTime) {
@@ -490,7 +489,7 @@ autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me,
 		
 		autoCrossCorrelationTable thee = CrossCorrelationTable_create (my ny);
 
-		NUMcrossCorrelate_rows (my z.at, my ny, i1, i2, lag, thy data.at, thy centroid, my dx);
+		NUMcrossCorrelate_rows (my z.at, my ny, i1, i2, lag, thy data.at, thy centroid.at, my dx);
 
 		thy numberOfObservations = nsamples;
 
@@ -535,7 +534,7 @@ autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, So
 			data [i + my ny] = thy z [i];
 		}
 
-		NUMcrossCorrelate_rows (data.peek(), nchannels, i1, i2, ndelta, his data.at, his centroid, my dx);
+		NUMcrossCorrelate_rows (data.peek(), nchannels, i1, i2, ndelta, his data.at, his centroid.at, my dx);
 
 		his numberOfObservations = nsamples;
 

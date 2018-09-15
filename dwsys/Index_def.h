@@ -1,6 +1,6 @@
 /* Index_def.h
  *
- * Copyright (C) 2005-2006,2015 David Weenink
+ * Copyright (C) 2005-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ oo_DEFINE_CLASS (Index, Daata)
 
 	oo_OBJECT (Ordered, 0, classes)
 	oo_INTEGER (numberOfItems)
-	oo_INTEGER_VECTOR (classIndex, numberOfItems)
+	oo_INTVEC (classIndex, numberOfItems)
 
 	#if oo_DECLARING
 		void v_info ()

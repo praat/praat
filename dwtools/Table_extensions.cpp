@@ -3408,7 +3408,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
-		NUMsort2 <double, integer> (numberOfData, data.peek(), levels -> classIndex);
+		NUMsort2 <double, integer> (numberOfData, data.peek(), levels -> classIndex.at);
 		NUMrank <double> (numberOfData, data.peek());
 
 		// Get correctionfactor for ties
@@ -4637,7 +4637,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			Covariance covi = covs.at [igroup];
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				vector [icol] = Table_getNumericValue_Assert (me, irow, columnIndex [icol]);
-			double dm2 = NUMmahalanobisDistance_chi (covi -> lowerCholesky.at, vector.at, covi -> centroid, numberOfColumns, numberOfColumns);
+			double dm2 = NUMmahalanobisDistance (covi -> lowerCholesky.get(), vector.get(), covi -> centroid.get());
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which, numberOfSigmas)) {
 				TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);

@@ -1,6 +1,6 @@
 /* Discriminant_def.h
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ oo_DEFINE_CLASS (Discriminant, Daata)
 	oo_INTEGER (numberOfGroups)
 	oo_OBJECT (SSCPList, 0, groups)
 	oo_OBJECT (SSCP, 0, total)
-	oo_DOUBLE_VECTOR (aprioriProbabilities, numberOfGroups)
-	oo_DOUBLE_MATRIX (costs, numberOfGroups, numberOfGroups)
+	oo_VEC (aprioriProbabilities, numberOfGroups)
+	oo_MAT (costs, numberOfGroups, numberOfGroups)
 
 	#if oo_DECLARING
 		void v_info ()

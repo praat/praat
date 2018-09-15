@@ -341,7 +341,7 @@ autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2) {
 
 void SSCP_init (SSCP me, integer dimension, integer storage) {
 	TableOfReal_init (me, storage, dimension);
-	my centroid = NUMvector<double> (1, dimension);
+	my centroid = VECzero (dimension);
 }
 
 autoSSCP SSCP_create (integer dimension) {
@@ -541,7 +541,7 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 			for (integer j = 1; j <= numberOfColumns; j ++)
 				v [i] [j] = my data [rowb + i - 1] [colb + j - 1];
 
-		MATcentreEachColumn_inplace (v.get(), thy centroid);
+		MATcentreEachColumn_inplace (v.get(), thy centroid.at);
 
 		SSCP_setNumberOfObservations (thee.get(), numberOfRows);
 
@@ -585,7 +585,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 			ik kom er niet achter of onderstaande de hele vector kopieert of niet;
 			in elk geval zijn hier enkele asserts nodig
 		*/
-		autoNUMvector<double> centroid (NUMvector_copy (my centroid, 1, thy numberOfColumns), 1);
+		autoVEC centroid = VECcopy (my centroid.get());
 		autoMAT covari = matrixcopy (my data.get());
 
 		/*
@@ -609,7 +609,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 		}
 
 		for (integer k = 1; k <= thy numberOfRows; k ++) {
-			his data [k] [1] = sqrt (NUMmahalanobisDistance_chi (covari.at, thy data [k], centroid.peek(), my numberOfRows, my numberOfRows));
+			his data [k] [1] = sqrt (NUMmahalanobisDistance (covari.get(), thy data.row(k), centroid.get()));
 			if (thy rowLabels [k]) {
 				TableOfReal_setRowLabel (him.get(), k, thy rowLabels [k].get());
 			}
@@ -753,7 +753,7 @@ autoPCA SSCP_to_PCA (SSCP me) {
 		}
 		thy labels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
-		NUMvector_copyElements (my centroid, thy centroid, 1, my numberOfColumns);
+		VECcopy_preallocated (thy centroid.get(), my centroid.get());
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
 		return thee;
 	} catch (MelderError) {
@@ -1132,7 +1132,7 @@ autoTableOfReal SSCP_to_TableOfReal (SSCP me) {
 autoTableOfReal SSCP_extractCentroid (SSCP me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
-		NUMvector_copyElements (my centroid, thy data [1], 1, my numberOfColumns);
+		VECcopy_preallocated (thy data.row(1), my centroid.get());
 		thy columnLabels. copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
@@ -1370,7 +1370,7 @@ double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
 	if (NUMisEmpty (my lowerCholesky.get()))
 		SSCP_expandLowerCholesky (me);
 	double ln2pid = my numberOfColumns * log (NUM2pi);
-	double dsq = NUMmahalanobisDistance_chi (my lowerCholesky.at, x.at, my centroid, my numberOfRows, my numberOfColumns);
+	double dsq = NUMmahalanobisDistance (my lowerCholesky.get(), x, my centroid.get());
 	double lnN = - 0.5 * (ln2pid + my lnd + dsq);
 	double p =  exp (lnN);
 	return p;
@@ -1437,7 +1437,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		double lndet;
 		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 
-		double mahalanobis = NUMmahalanobisDistance_chi (s.at, my centroid, thy centroid, p, p);
+		double mahalanobis = NUMmahalanobisDistance (s.get(), my centroid.get(), thy centroid.get());
 		double hotelling_tsq = mahalanobis * N1 * N2 / N;
 		fisher = hotelling_tsq * df2 / ( (N - 2) * df1);
 	} else {
@@ -1463,7 +1463,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		double lndet;
 		MATlowerCholeskyInverse_inplace (s.get(), & lndet);
 		// Krishan... formula 2, page 162
-		double hotelling_tsq = NUMmahalanobisDistance_chi (s.at, my centroid, thy centroid, p, p);
+		double hotelling_tsq = NUMmahalanobisDistance (s.get(), my centroid.get(), thy centroid.get());
 
 		autoMAT si = MATinverse_fromLowerCholeskyInverse (s.get());
 		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.at, si.at, p);
