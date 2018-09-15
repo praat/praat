@@ -3408,7 +3408,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
-		NUMsort2 <double, integer> (numberOfData, data.peek(), levels -> classIndex);
+		NUMsort2 <double, integer> (numberOfData, data.peek(), levels -> classIndex.at);
 		NUMrank <double> (numberOfData, data.peek());
 
 		// Get correctionfactor for ties

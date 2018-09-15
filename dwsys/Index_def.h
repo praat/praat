@@ -26,7 +26,7 @@ oo_DEFINE_CLASS (Index, Daata)
 
 	oo_OBJECT (Ordered, 0, classes)
 	oo_INTEGER (numberOfItems)
-	oo_INTEGER_VECTOR (classIndex, numberOfItems)
+	oo_INTVEC (classIndex, numberOfItems)
 
 	#if oo_DECLARING
 		void v_info ()
