@@ -496,9 +496,8 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 		autoPCA pca = SSCP_to_PCA (me);
 		autoTableOfReal thee = TableOfReal_create (numberOfData, my numberOfColumns);
 		autoVEC buf (my numberOfColumns, kTensorInitializationType::RAW);
-		VEC v; v.size = my numberOfColumns;
 		for (integer i = 1; i <= numberOfData; i ++) {
-			v.at = thy data [i];
+			VEC v = { thy data [i], my numberOfColumns };
 			Covariance_PCA_generateOneVector_inline (me, pca.get(), v, buf.get());
 		}
 
