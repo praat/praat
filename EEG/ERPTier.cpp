@@ -238,13 +238,6 @@ autoERP ERPTier_extractERP (ERPTier me, integer eventNumber) {
 		integer numberOfSamples = event -> erp -> nx;
 		autoERP thee = Thing_new (ERP);
 		event -> erp -> structSound :: v_copy (thee.get());
-		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			double *oldChannel = event -> erp -> z [ichannel];
-			double *newChannel = thy z [ichannel];
-			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
-				newChannel [isample] = oldChannel [isample];
-			}
-		}
 		thy channelNames = STRVECclone (my channelNames.get());
 		return thee;
 	} catch (MelderError) {
@@ -272,13 +265,7 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 				}
 			}
 		}
-		double factor = 1.0 / numberOfEvents;
-		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			double *meanChannel = mean -> z [ichannel];
-			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
-				meanChannel [isample] *= factor;
-			}
-		}
+		MATmultiply_inplace (mean -> z.get(), 1.0 / numberOfEvents);
 		Melder_assert (mean -> ny == my numberOfChannels);
 		mean -> channelNames = STRVECclone (my channelNames.get());
 		return mean;
