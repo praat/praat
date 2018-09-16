@@ -414,9 +414,9 @@ public:
 	vector<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autovector
 		T *oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
-		our size = 0;
+		integer oldSize = our size;
 		our capacity = 0;
-		return { oldAt, our size };
+		return { oldAt, oldSize };
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
