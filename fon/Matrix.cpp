@@ -418,16 +418,14 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 }
 
 void Matrix_movie (Matrix me, Graphics g) {
-	autoNUMvector <double> column (1, my ny);
+	autoVEC column = VECraw (my ny);
 	double minimum = 0.0, maximum = 1.0;
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
 	for (integer icol = 1; icol <= my nx; icol ++) {
-		for (integer irow = 1; irow <= my ny; irow ++) {
-			column [irow] = my z [irow] [icol];
-		}
+		VECcolumn_preallocated (column.get(), my z.get(), icol);
 		Graphics_beginMovieFrame (g, & Graphics_WHITE);
 		Graphics_setWindow (g, my ymin, my ymax, minimum, maximum);
-		Graphics_function (g, column.peek(), 1, my ny, my ymin, my ymax);
+		Graphics_function (g, column.at, 1, my ny, my ymin, my ymax);
 		Graphics_endMovieFrame (g, 0.03);
 	}
 }
