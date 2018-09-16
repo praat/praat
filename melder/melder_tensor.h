@@ -390,6 +390,7 @@ public:
 */
 template <typename T>
 class autovector : public vector<T> {
+	integer capacity = 0;
 public:
 	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
 	autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
@@ -397,19 +398,24 @@ public:
 		our at = ( givenSize == 0 ? nullptr
 				: NUMvector<T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
 		our size = givenSize;
+		our capacity = givenSize;
 	}
 	~autovector () {   // destroy the payload (if any)
 		our reset ();
+		our capacity = 0;
 	}
 	vector<T> get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
 	void adoptFromAmbiguousOwner (vector<T> given) {   // buy the payload from a non-autovector
 		our reset();
 		our at = given.at;
 		our size = given.size;
+		our capacity = given.size;
 	}
 	vector<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autovector
 		T *oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
+		our size = 0;
+		our capacity = 0;
 		return { oldAt, our size };
 	}
 	/*
@@ -424,14 +430,17 @@ public:
 	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor
 		other.at = nullptr;   // disown source
 		other.size = 0;   // to keep the source in a valid state
+		other.capacity = 0;
 	}
 	autovector& operator= (autovector&& other) noexcept {   // enable move assignment
 		if (other.at != our at) {
 			our reset ();
 			our at = other.at;
 			our size = other.size;
+			our capacity = other.capacity;
 			other.at = nullptr;   // disown source
 			other.size = 0;   // to keep the source in a valid state
+			other.capacity = 0;
 		}
 		return *this;
 	}
@@ -451,6 +460,7 @@ public:
 		if (*inout_capacity > 0)
 			our at = NUMvector<T> (1, *inout_capacity, initializationType == kTensorInitializationType::ZERO);
 		our size = 0;
+		our capacity = *inout_capacity;
 	}
 	/*
 		If the new size N is less than the current size S,
@@ -492,6 +502,7 @@ public:
 			our at = newAt;
 			if (inout_capacity)
 				*inout_capacity = newCapacity;
+			our capacity = newCapacity;
 		}
 		our size = newSize;
 	}
