@@ -764,7 +764,7 @@ inline static void NumericVectorVariable_add (InterpreterVariable variable, doub
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] += scalar;
 }
-inline static void NumericVectorVariable_add (InterpreterVariable variable, VEC vector) {
+inline static void NumericVectorVariable_add (InterpreterVariable variable, constVEC vector) {
 	VEC variableVector = variable -> numericVectorValue;
 	if (vector.size != variableVector.size)
 		Melder_throw (U"You cannot add a vector with size ", vector.size,
@@ -777,7 +777,7 @@ inline static void NumericVectorVariable_subtract (InterpreterVariable variable,
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] -= scalar;
 }
-inline static void NumericVectorVariable_subtract (InterpreterVariable variable, VEC vector) {
+inline static void NumericVectorVariable_subtract (InterpreterVariable variable, constVEC vector) {
 	VEC variableVector = variable -> numericVectorValue;
 	if (vector.size != variableVector.size)
 		Melder_throw (U"You cannot subtract a vector with size ", vector.size,
@@ -790,7 +790,7 @@ inline static void NumericVectorVariable_multiply (InterpreterVariable variable,
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] *= scalar;
 }
-inline static void NumericVectorVariable_multiply (InterpreterVariable variable, VEC vector) {
+inline static void NumericVectorVariable_multiply (InterpreterVariable variable, constVEC vector) {
 	VEC variableVector = variable -> numericVectorValue;
 	if (vector.size != variableVector.size)
 		Melder_throw (U"You cannot multiply a vector with size ", variableVector.size,
@@ -803,7 +803,7 @@ inline static void NumericVectorVariable_divide (InterpreterVariable variable, d
 	for (integer i = 1; i <= variableVector.size; i ++)
 		variableVector [i] /= scalar;
 }
-inline static void NumericVectorVariable_divide (InterpreterVariable variable, VEC vector) {
+inline static void NumericVectorVariable_divide (InterpreterVariable variable, constVEC vector) {
 	VEC variableVector = variable -> numericVectorValue;
 	if (vector.size != variableVector.size)
 		Melder_throw (U"You cannot divide a vector with size ", variableVector.size,
@@ -817,7 +817,7 @@ inline static void NumericMatrixVariable_add (InterpreterVariable variable, doub
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] += scalar;
 }
-inline static void NumericMatrixVariable_add (InterpreterVariable variable, MAT matrix) {
+inline static void NumericMatrixVariable_add (InterpreterVariable variable, constMAT matrix) {
 	MAT variableMatrix = variable -> numericMatrixValue;
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot add a matrix with size ", matrix.nrow, U"x", matrix.ncol,
@@ -832,7 +832,7 @@ inline static void NumericMatrixVariable_subtract (InterpreterVariable variable,
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] -= scalar;
 }
-inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, MAT matrix) {
+inline static void NumericMatrixVariable_subtract (InterpreterVariable variable, constMAT matrix) {
 	MAT variableMatrix = variable -> numericMatrixValue;
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot subtract a matrix with size ", matrix.nrow, U"x", matrix.ncol,
@@ -847,7 +847,7 @@ inline static void NumericMatrixVariable_multiply (InterpreterVariable variable,
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] *= scalar;
 }
-inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, MAT matrix) {
+inline static void NumericMatrixVariable_multiply (InterpreterVariable variable, constMAT matrix) {
 	MAT variableMatrix = variable -> numericMatrixValue;
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot multiply a matrix with size ", variableMatrix.nrow, U"x", variableMatrix.ncol,
@@ -862,7 +862,7 @@ inline static void NumericMatrixVariable_divide (InterpreterVariable variable, d
 		for (integer icol = 1; icol <= variableMatrix.ncol; icol ++)
 			variableMatrix [irow] [icol] /= scalar;
 }
-inline static void NumericMatrixVariable_divide (InterpreterVariable variable, MAT matrix) {
+inline static void NumericMatrixVariable_divide (InterpreterVariable variable, constMAT matrix) {
 	MAT variableMatrix = variable -> numericMatrixValue;
 	if (matrix.nrow != variableMatrix.nrow || matrix.ncol != variableMatrix.ncol)
 		Melder_throw (U"You cannot divide a matrix with size ", variableMatrix.nrow, U"x", variableMatrix.ncol,
