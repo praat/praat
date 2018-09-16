@@ -3675,7 +3675,7 @@ autoTable Table_getTwoWayAnalysisOfVarianceF (Table me, integer column, integer 
 			U"Invalid column number.");
 		Melder_require (factorColumnA > 0 && factorColumnA <= my numberOfColumns && factorColumnA != column,
 			U"Invalid A group column number.");
-		Melder_require (factorColumnB > 0 && factorColumnB <= my numberOfColumns && factorColumnA != column && factorColumnA != factorColumnB,
+		Melder_require (factorColumnB > 0 && factorColumnB <= my numberOfColumns && factorColumnB != column && factorColumnA != factorColumnB,
 			U"Invalid B group column number.");
 
 		char32 *label_A = my columnHeaders [factorColumnA]. label.get();
@@ -4076,7 +4076,8 @@ void Table_boxPlots (Table me, Graphics g, integer dataColumn, integer factorCol
 			ymax = Table_getMaximum (me, dataColumn);
 			ymin = Table_getMinimum (me, dataColumn);
 			if (ymax == ymin) {
-				ymax += 1.0; ymin -= 1.0;
+				ymax += 1.0;
+				ymin -= 1.0;
 			}
 		}
 		Graphics_setWindow (g, 1.0 - 0.5, numberOfLevels + 0.5, ymin, ymax);
@@ -4128,7 +4129,8 @@ void Table_boxPlotsWhere (Table me, Graphics g,
 				ymin = ymini < ymin ? ymini : ymin;
 			}
 			if (ymax == ymin) {
-				ymax += 1.0; ymin -= 1.0;
+				ymax += 1.0;
+				ymin -= 1.0;
 			}
 		}
 		Graphics_setWindow (g, 1.0 - 0.5, numberOfLevels + 0.5, ymin, ymax);
@@ -4186,7 +4188,7 @@ void Table_distributionPlotWhere (Table me, Graphics g,
 		for (integer irow = 1; irow <= n; irow ++) {
 			Formula_run (irow, dataColumn, & result);
 			if (result. numericResult != 0.0) {
-				thy z [1] [ ++mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
+				thy z [1] [++ mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
 			}
 		}
 		Matrix_drawDistribution (thee.get(), g, 0, 1, 0.5, mrow + 0.5, minimum, maximum, nBins, freqMin, freqMax, false, garnish);
