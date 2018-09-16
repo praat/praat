@@ -476,11 +476,10 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 	}
 
 	double pmax = 0.0, dx = (xmax - xmin) / npoints, x1 = xmin + 0.5 * dx;
-	double scalef = nbins <= 0 ? 1 : 1; // TODO
-	VEC pos; pos.size = thy dimension;
+	double scalef = ( nbins <= 0 ? 1.0 : 1.0 ); // TODO
 	for (integer i = 1; i <= npoints; i++) {
 		double x = x1 + (i - 1) * dx;
-		pos.at = thy eigenvectors [d];
+		VEC pos = { thy eigenvectors [d], thy dimension };
 		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, pos, x);
 		if (p [i] > pmax) {
 			pmax = p [i];
@@ -516,13 +515,13 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 	autoVEC p (npoints, kTensorInitializationType::RAW);
 	autoVEC v (my dimension, kTensorInitializationType::RAW);
 
-	double nsigmas = 2;
+	double nsigmas = 2.0;
 	if (xmax <= xmin) {
 		GaussianMixture_getIntervalAlongDirection (me, d, nsigmas, &xmin, &xmax);
 	}
 
-	double pmax = 0, dx = (xmax - xmin) / (npoints - 1);
-	double scalef = nbins <= 0 ? 1 : 1; // TODO
+	double pmax = 0.0, dx = (xmax - xmin) / (npoints - 1);
+	double scalef = ( nbins <= 0 ? 1.0 : 1.0 ); // TODO
 	
 	for (integer i = 1; i <= npoints; i++) {
 		double x = xmin + (i - 1) * dx;
@@ -1315,11 +1314,10 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 		autoVEC buf (my dimension, kTensorInitializationType::RAW);
 		thy columnLabels. copyElementsFrom_upTo (cov -> columnLabels.get(), my dimension);
 			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
-		VEC v; v.size = my dimension;
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			char32 *covname;
-			v.at = thy data [i];
-			GaussianMixture_generateOneVector_inline (me, v, &covname, buf.get());
+			VEC v = { thy data [i], my dimension };
+			GaussianMixture_generateOneVector_inline (me, v, & covname, buf.get());
 			TableOfReal_setRowLabel (thee.get(), i, covname);
 		}
 		GaussianMixture_unExpandPCA (me);
