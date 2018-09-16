@@ -233,18 +233,9 @@ autoERP ERPTier_extractERP (ERPTier me, integer eventNumber) {
 			Melder_throw (U"No events.");
 		ERPTier_checkEventNumber (me, eventNumber);
 		ERPPoint event = my points.at [eventNumber];
-		integer numberOfChannels = event -> erp -> ny;
-		Melder_assert (numberOfChannels == my numberOfChannels);
-		integer numberOfSamples = event -> erp -> nx;
+		Melder_assert (event -> erp -> ny == my numberOfChannels);
 		autoERP thee = Thing_new (ERP);
 		event -> erp -> structSound :: v_copy (thee.get());
-		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			double *oldChannel = event -> erp -> z [ichannel];
-			double *newChannel = thy z [ichannel];
-			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
-				newChannel [isample] = oldChannel [isample];
-			}
-		}
 		thy channelNames = STRVECclone (my channelNames.get());
 		return thee;
 	} catch (MelderError) {
@@ -258,28 +249,16 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 		if (numberOfEvents < 1)
 			Melder_throw (U"No events.");
 		ERPPoint firstEvent = my points.at [1];
-		integer numberOfChannels = firstEvent -> erp -> ny;
-		integer numberOfSamples = firstEvent -> erp -> nx;
+		Melder_assert (firstEvent -> erp -> ny == my numberOfChannels);
 		autoERP mean = Thing_new (ERP);
 		firstEvent -> erp -> structSound :: v_copy (mean.get());
+		Melder_assert (mean -> ny == my numberOfChannels);
 		for (integer ievent = 2; ievent <= numberOfEvents; ievent ++) {
 			ERPPoint event = my points.at [ievent];
-			for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-				double *erpChannel = event -> erp -> z [ichannel];
-				double *meanChannel = mean -> z [ichannel];
-				for (integer isample = 1; isample <= numberOfSamples; isample ++) {
-					meanChannel [isample] += erpChannel [isample];
-				}
-			}
+			Melder_assert (event -> erp -> ny == my numberOfChannels);
+			mean -> z.get() += event -> erp -> z.get();
 		}
-		double factor = 1.0 / numberOfEvents;
-		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
-			double *meanChannel = mean -> z [ichannel];
-			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
-				meanChannel [isample] *= factor;
-			}
-		}
-		Melder_assert (mean -> ny == my numberOfChannels);
+		MATmultiply_inplace (mean -> z.get(), 1.0 / numberOfEvents);
 		mean -> channelNames = STRVECclone (my channelNames.get());
 		return mean;
 	} catch (MelderError) {
