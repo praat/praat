@@ -26,10 +26,20 @@
 */
 
 inline void MATadd_inplace (MAT x, double addend) {
-	VECadd_inplace (asvector (x), addend);
+	asvector (x) += addend;
+}
+inline MAT operator+= (MAT x, double addend) {
+	asvector (x) += addend;
+	return x;
 }
 inline void MATadd_inplace (MAT x, constMAT y) {
-	VECadd_inplace (asvector (x), asvector (y));
+	////VECadd_inplace (asvector (x), asvector (y));
+	asvector (x) += asvector (y);
+}
+inline MAT operator+= (MAT x, constMAT y) {
+	////VECadd_inplace (asvector (x), asvector (y));
+	asvector (x) += asvector (y);
+	return x;
 }
 inline void MATadd_preallocated (MAT target, constMAT x, double addend) {
 	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);

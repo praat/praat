@@ -25,10 +25,21 @@ inline void VECadd_inplace (VEC x, double addend) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += addend;
 }
+inline VEC operator+= (VEC x, double addend) {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] += addend;
+	return x;
+}
 inline void VECadd_inplace (VEC x, constVEC y) {
 	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += y [i];
+}
+inline VEC operator+= (VEC x, constVEC y) {
+	Melder_assert (y.size == x.size);
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] += y [i];
+	return x;
 }
 inline void VECadd_preallocated (VEC target, constVEC x, double addend) {
 	Melder_assert (x.size == target.size);
