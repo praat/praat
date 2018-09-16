@@ -1239,7 +1239,7 @@ double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, cons
 	return p;
 }
 
-double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, VEC pos, double x) {
+double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, constVEC pos, double x) {
 	longdouble p = 0.0;
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		double pim = Covariance_getMarginalProbabilityAtPosition (my covariances->at [im], pos, x);
@@ -1248,7 +1248,7 @@ double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, VEC
 	return (double) p;
 }
 
-double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, VEC xpos) {
+double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC xpos) {
 	longdouble p = 0.0;
 	for (integer im = 1; im <= my numberOfComponents; im ++) {
 		double pim = Covariance_getProbabilityAtPosition (my covariances->at [im], xpos);

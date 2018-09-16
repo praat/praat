@@ -1359,7 +1359,7 @@ double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 
 	return p;
 }
 
-double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
+double Covariance_getProbabilityAtPosition (Covariance me, constVEC x) {
 	Melder_require (x.size == my numberOfColumns,
 		U"The dimensions of the Covariance and the vector should agree.");
 	if (NUMisEmpty (my lowerCholesky.get()))
@@ -1371,7 +1371,7 @@ double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
 	return p;
 }
 
-double Covariance_getMarginalProbabilityAtPosition (Covariance me, VEC vector, double x) {
+double Covariance_getMarginalProbabilityAtPosition (Covariance me, constVEC vector, double x) {
 	double mu, stdev;
 	Covariance_getMarginalDensityParameters (me, vector, &mu, &stdev);
 	double dx = (x - mu) / stdev;
@@ -1380,7 +1380,7 @@ double Covariance_getMarginalProbabilityAtPosition (Covariance me, VEC vector, d
 }
 
 /* Precondition ||v|| = 1 */
-void Covariance_getMarginalDensityParameters (Covariance me, VEC v, double *p_mu, double *p_stdev) {
+void Covariance_getMarginalDensityParameters (Covariance me, constVEC v, double *p_mu, double *p_stdev) {
 	Melder_assert (v.size == my numberOfColumns);
 	if (p_mu) {
 		longdouble mu = 0.0;
