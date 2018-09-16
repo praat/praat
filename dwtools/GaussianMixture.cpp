@@ -464,38 +464,29 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 		Melder_warning (U"Dimensions don't agree.");
 		return;
 	}
-
-	if (npoints <= 1) {
+	if (npoints <= 1)
 		npoints = 1000;
-	}
-	autoNUMvector<double> p (1, npoints);
 	double nsigmas = 2;
-
-	if (xmax <= xmin) {
-		GaussianMixture_PCA_getIntervalAlongDirection (me, thee, d, nsigmas, &xmin, &xmax);
-	}
-
+	if (xmax <= xmin)
+		GaussianMixture_PCA_getIntervalAlongDirection (me, thee, d, nsigmas, & xmin, & xmax);
 	double pmax = 0.0, dx = (xmax - xmin) / npoints, x1 = xmin + 0.5 * dx;
-	double scalef = nbins <= 0 ? 1 : 1; // TODO
-	VEC pos; pos.size = thy dimension;
-	for (integer i = 1; i <= npoints; i++) {
+	double scalef = ( nbins <= 0 ? 1.0 : 1.0 ); // TODO
+	autoVEC p = VECraw (npoints);
+	for (integer i = 1; i <= npoints; i ++) {
 		double x = x1 + (i - 1) * dx;
-		pos.at = thy eigenvectors [d];
-		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, pos, x);
-		if (p [i] > pmax) {
+		Melder_assert (thy eigenvectors.ncol == thy dimension);
+		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, thy eigenvectors.row (d), x);
+		if (p [i] > pmax)
 			pmax = p [i];
-		}
 	}
 	if (ymin >= ymax) {
 		ymin = 0.0;
 		ymax = pmax;
 	}
-
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_function (g, p.peek(), 1, npoints, x1, xmax - 0.5 * dx);
+	Graphics_function (g, p.at, 1, npoints, x1, xmax - 0.5 * dx);
 	Graphics_unsetInner (g);
-
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_markBottom (g, xmin, true, true, false, nullptr);
@@ -516,13 +507,13 @@ void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d,
 	autoVEC p (npoints, kTensorInitializationType::RAW);
 	autoVEC v (my dimension, kTensorInitializationType::RAW);
 
-	double nsigmas = 2;
+	double nsigmas = 2.0;
 	if (xmax <= xmin) {
 		GaussianMixture_getIntervalAlongDirection (me, d, nsigmas, &xmin, &xmax);
 	}
 
-	double pmax = 0, dx = (xmax - xmin) / (npoints - 1);
-	double scalef = nbins <= 0 ? 1 : 1; // TODO
+	double pmax = 0.0, dx = (xmax - xmin) / (npoints - 1);
+	double scalef = ( nbins <= 0 ? 1.0 : 1.0 ); // TODO
 	
 	for (integer i = 1; i <= npoints; i++) {
 		double x = xmin + (i - 1) * dx;
@@ -1315,11 +1306,9 @@ autoTableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture m
 		autoVEC buf (my dimension, kTensorInitializationType::RAW);
 		thy columnLabels. copyElementsFrom_upTo (cov -> columnLabels.get(), my dimension);
 			// ppgb FIXME: is the number of column labels in the covariance equal to the number of dimensions? If so, document or assert.
-		VEC v; v.size = my dimension;
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			char32 *covname;
-			v.at = thy data [i];
-			GaussianMixture_generateOneVector_inline (me, v, &covname, buf.get());
+			GaussianMixture_generateOneVector_inline (me, thy data.row (i), & covname, buf.get());
 			TableOfReal_setRowLabel (thee.get(), i, covname);
 		}
 		GaussianMixture_unExpandPCA (me);
