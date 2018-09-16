@@ -91,11 +91,11 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 
 double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion);
 
-double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, VEC v);
+double GaussianMixture_getProbabilityAtPosition (GaussianMixture me, constVEC v);
 
 double GaussianMixture_getProbabilityAtPosition_string (GaussianMixture me, conststring32 pos);
 
-double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, VEC pos, double x);
+double GaussianMixture_getMarginalProbabilityAtPosition (GaussianMixture me, constVEC pos, double x);
 
 autoCorrelation GaussianMixture_TableOfReal_to_Correlation (GaussianMixture me, TableOfReal thee);
 /* Correlation between components based on the data in the table */

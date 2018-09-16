@@ -159,13 +159,13 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 */
 
 /* Precondition ||vector|| = 1 */
-void Covariance_getMarginalDensityParameters (Covariance me, VEC vector, double *p_mu, double *p_stdev);
+void Covariance_getMarginalDensityParameters (Covariance me, constVEC vector, double *p_mu, double *p_stdev);
 
-double Covariance_getMarginalProbabilityAtPosition (Covariance me, VEC vector, double x);
+double Covariance_getMarginalProbabilityAtPosition (Covariance me, constVEC vector, double x);
 
 double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 xpos);
 
-double Covariance_getProbabilityAtPosition (Covariance me, VEC x);
+double Covariance_getProbabilityAtPosition (Covariance me, constVEC x);
 /* evaluate the pdf(x,mu,Sigma) at x */
 
 autoCovariance SSCP_to_Covariance (SSCP me, integer numberOfConstraints);
