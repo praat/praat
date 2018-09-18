@@ -359,37 +359,21 @@ void NUMcholeskySolve (double **a, integer n, double d [], double b [], double x
 		x [i] = (double) sum / d [i];
 	}
 }
-
-double NUMdeterminant_cholesky (double **a, integer n) {
-	// Save the diagonal
-	autoNUMvector<double> d (1, n);
-	for (integer i = 1; i <= n; i ++) {
-		d [i] = a [i] [i];
-	}
-
+double MATdeterminant_fromSymmetricMatrix (constMAT m) {
+	Melder_assert (m.nrow == m.ncol);
+	autoMAT a = MATcopy (m);
+	
 	//	 Cholesky decomposition in lower, leave upper intact
 
 	char uplo = 'U';
-	integer lda = n, info;
-	NUMlapack_dpotf2 (& uplo, & n, & a [1] [1], & lda, & info);
+	integer lda = m.nrow, info;
+	NUMlapack_dpotf2 (& uplo, & a.nrow, & a [1] [1], & lda, & info);
 	Melder_require (info == 0, U"dpotf2 cannot determine Cholesky decomposition.");
-
-	// Determinant from diagonal, restore diagonal
-
 	longdouble lnd = 0.0;
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= a.nrow; i ++) {
 		lnd += log (a [i] [i]);
-		a [i] [i] = d [i];
 	}
 	lnd *= 2.0; // because A = L . L' TODO
-
-	// Restore lower from upper */
-
-	for (integer i = 1; i < n; i ++) {
-		for (integer j = i + 1; j <= n; j ++) {
-			a [j] [i] = a [i] [j];
-		}
-	}
 	return (double) lnd;
 }
 

@@ -442,7 +442,7 @@ autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m);
 	Input m is a square matrix, in the lower part is the inverse of the lower Cholesky part as calculated by NUMlowerCholeskyInverse.
 */
 
-double NUMdeterminant_cholesky (double **a, integer n);
+double MATdeterminant_fromSymmetricMatrix (constMAT m);
 /*
 	ln(determinant) of a symmetric p.s.d. matrix
 */

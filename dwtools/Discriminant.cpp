@@ -354,8 +354,7 @@ void Discriminant_drawTerritorialMap (Discriminant me, Graphics g, bool discrimi
 
 }
 
-void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double scale, bool confidence, conststring32 label,
-	bool discriminantDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish)
+void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double scale, bool confidence, conststring32 label, bool discriminantDirections, integer d1, integer d2, double xmin, double xmax, double ymin, double ymax, int fontSize, bool garnish)
 {
 	integer numberOfFunctions = Discriminant_getNumberOfFunctions (me);
 
@@ -378,11 +377,7 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double
 		return;
 	}
 
-	double *v1 = my eigen -> eigenvectors [d1];
-	double *v2 = my eigen -> eigenvectors [d2];
-
-
-	autoSSCPList thee = SSCPList_toTwoDimensions (my groups.get(), v1, v2);
+	autoSSCPList thee = SSCPList_toTwoDimensions (my groups.get(), my eigen -> eigenvectors.row (d1), my eigen -> eigenvectors.row (d2));
 
 	SSCPList_drawConcentrationEllipses (thee.get(), g, scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);
 
@@ -403,7 +398,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		autoDiscriminant thee = Thing_new (Discriminant);
 		integer dimension = my numberOfColumns;
 
-		Melder_require (! NUMdmatrix_containsUndefinedElements (my data.at, 1, my numberOfRows, 1, my numberOfColumns),
+		Melder_require (! MAThasUndefinedElement (my data.get()),
 			U"There should be no undefined elements in the table.");
 		Melder_require (TableOfReal_hasRowLabels (me),
 			U"All rows should be labeled.");
