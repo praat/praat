@@ -22,12 +22,14 @@
 */
 
 inline void VECadd_inplace (VEC x, double addend) {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] += addend;
+	//for (integer i = 1; i <= x.size; i ++)
+	//	x [i] += addend;
+	for (double& element : x) element += addend;
 }
 inline VEC operator+= (VEC x, double addend) {
-	for (integer i = 1; i <= x.size; i ++)
-		x [i] += addend;
+	//for (integer i = 1; i <= x.size; i ++)
+	//	x [i] += addend;
+	for (double& element : x) element += addend;
 	return x;
 }
 inline void VECadd_inplace (VEC x, constVEC y) {
@@ -100,6 +102,10 @@ inline autoVEC VECrandomUniform (integer size, double lowest, double highest) {
 	for (integer i = 1; i <= size; i ++)
 		result [i] = NUMrandomUniform (lowest, highest);
 	return result;
+}
+
+inline void VECsin_inplace (VEC x) {
+	for (double& element : x) element = sin (element);
 }
 
 extern void VECsort_inplace (VEC x);

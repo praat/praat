@@ -760,17 +760,14 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 }
 
 inline static void NumericVectorVariable_add (InterpreterVariable variable, double scalar) {
-	VEC variableVector = variable -> numericVectorValue;
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] += scalar;
+	variable -> numericVectorValue += scalar;
 }
 inline static void NumericVectorVariable_add (InterpreterVariable variable, constVEC vector) {
-	VEC variableVector = variable -> numericVectorValue;
-	if (vector.size != variableVector.size)
-		Melder_throw (U"You cannot add a vector with size ", vector.size,
-		              U" to a vector with a different size (", variableVector.size, U").");
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] += vector [i];
+	Melder_require (vector.size == variable -> numericVectorValue.size,
+		U"You cannot add a vector with size ", vector.size,
+		U" to a vector with a different size (", variable -> numericVectorValue.size, U")."
+	);
+	variable -> numericVectorValue += vector;
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
 	VEC variableVector = variable -> numericVectorValue;

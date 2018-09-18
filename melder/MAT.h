@@ -97,6 +97,10 @@ inline autoMAT MATrandomGauss (integer nrow, integer ncol, double mu, double sig
 	return result;
 }
 
+inline void MATsin_inplace (MAT x) {
+	VECsin_inplace (asvector (x));
+}
+
 inline void MATsubtract_inplace (MAT x, double number) {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
