@@ -143,18 +143,6 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-template<class T>
-T ** NUMmatrix_transpose (T **m, integer nr, integer nc) {
-	autoNUMmatrix<T> to (1, nc, 1, nr);
-
-	for (integer i = 1; i <= nr; i++) {
-		for (integer j = 1; j <= nc; j++) {
-			to[j][i] = m[i][j];
-		}
-	}
-	return to.transfer();
-}
-
 double NUMvector_normalize1 (double v[], integer n);
 
 double NUMvector_normalize2 (double v[], integer n);
