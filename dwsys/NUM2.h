@@ -68,7 +68,7 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
 	'nstringmatches'.
 */
 
-void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring32 name);
+void MATprintMatlabForm (constMAT m, conststring32 name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 							1 2 3
@@ -80,7 +80,7 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 		7, 8, 9 ];
 */
 
-bool NUMdmatrix_containsUndefinedElements (const double * const *m, integer row1, integer row2, integer col1, integer col2);
+bool MAThasUndefinedElement (constMAT m);
 /* true if at least one of the elements is undefined (i.e. infinite or NaN) */
 
 void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport);

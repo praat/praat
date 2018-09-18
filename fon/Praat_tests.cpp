@@ -671,7 +671,7 @@ static Vec copy (Vec x) {
 	return x;
 }
 
-static void tryVec () {
+/*static void tryVec () {
 	Vec x = Vec (nullptr, 0);
 	x [1] = 3.0;
 	double a = x [2];
@@ -683,6 +683,6 @@ static void tryVec () {
 	const Vec cz = copy (x);
 	//cx.at [1] = 3.0;
 	////const Vec ca = cy;   // should be allowed
-}
+}*/
 
 /* End of file Praat_tests.cpp */
