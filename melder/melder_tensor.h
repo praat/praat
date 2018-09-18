@@ -354,6 +354,8 @@ public:
 		if (newSize <= 0) return vector<T> (nullptr, 0);
 		return vector<T> (& our at [offset], newSize);
 	}
+	T *begin () const { return & our at [1]; }
+	T *end () const { return & our at [our size + 1]; }
 };
 
 template <typename T>
@@ -379,6 +381,8 @@ public:
 		if (newSize <= 0) return constvector<T> (nullptr, 0);
 		return constvector<T> (& our at [offset], newSize);
 	}
+	const T *begin () const { return & our at [1]; }
+	const T *end () const { return & our at [our size + 1]; }
 };
 
 /*

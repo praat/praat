@@ -845,7 +845,8 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 		struct nr_struct me;
 		double xlambda, eps2 = (delta [2] - delta [1]) * 1e-6;
 
-		me.y = y.at; me.delta = delta.at;
+		me.y = y.at;
+		me.delta = delta.at;
 
 		NUMnrbis (nr_func, delta [1] + eps, delta [2] - eps2, & me, & xlambda);
 
