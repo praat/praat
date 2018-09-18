@@ -63,10 +63,10 @@ oo_DEFINE_CLASS (GSVD, Daata)
 
 	oo_DOUBLE (tolerance)
 	oo_INTEGER (numberOfColumns)
-	oo_DOUBLE_MATRIX ( q, numberOfColumns, numberOfColumns)
-	oo_DOUBLE_MATRIX ( r, numberOfColumns, numberOfColumns)
-	oo_DOUBLE_VECTOR (d1, numberOfColumns)
-	oo_DOUBLE_VECTOR (d2, numberOfColumns)
+	oo_MAT ( q, numberOfColumns, numberOfColumns)
+	oo_MAT ( r, numberOfColumns, numberOfColumns)
+	oo_VEC (d1, numberOfColumns)
+	oo_VEC (d2, numberOfColumns)
 
 	#if oo_DECLARING
 		void v_info ()

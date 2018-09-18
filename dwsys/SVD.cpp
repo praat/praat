@@ -387,29 +387,29 @@ autoGSVD GSVD_create (integer numberOfColumns) {
 		autoGSVD me = Thing_new (GSVD);
 		my numberOfColumns = numberOfColumns;
 
-		my q = NUMmatrix<double> (1, numberOfColumns, 1, numberOfColumns);
-		my r = NUMmatrix<double> (1, numberOfColumns, 1, numberOfColumns);
-		my d1 = NUMvector<double> (1, numberOfColumns);
-		my d2 = NUMvector<double> (1, numberOfColumns);
+		my q = MATzero (numberOfColumns, numberOfColumns);
+		my r = MATzero (numberOfColumns, numberOfColumns);
+		my d1 = VECzero (numberOfColumns);
+		my d2 = VECzero (numberOfColumns);
 		return me;
 	} catch (MelderError) {
 		Melder_throw (U"GSVD not created.");
 	}
 }
 
-autoGSVD GSVD_create_d (double **m1, integer numberOfRows1, integer numberOfColumns, double **m2, integer numberOfRows2) {
+autoGSVD GSVD_create_d (constMAT m1, constMAT m2) {
 	try {
-		integer m = numberOfRows1, n = numberOfColumns, p = numberOfRows2;
+		integer m = m1.nrow, n = m1.ncol, p = m2.nrow;
 		integer lwork = MAX (MAX (3 * n, m), p) + n;
 
 		// Store the matrices a and b as column major!
-		autoNUMmatrix<double> a (NUMmatrix_transpose (m1, m, n), 1, 1);
-		autoNUMmatrix<double> b (NUMmatrix_transpose (m2, p, n), 1, 1);
-		autoNUMmatrix<double> q (1, n, 1, n);
-		autoNUMvector<double> alpha (1, n);
-		autoNUMvector<double> beta (1, n);
-		autoNUMvector<double> work (1, lwork);
-		autoNUMvector<integer> iwork (1, n);
+		autoMAT a = MATtranspose (m1);
+		autoMAT b = MATtranspose (m2);
+		autoMAT q = MATraw (n, n);
+		autoVEC alpha = VECraw (n);
+		autoVEC beta = VECraw (n);
+		autoVEC work =VECraw (lwork);
+		autoINTVEC iwork = INTVECraw (n);
 
 
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
@@ -417,7 +417,7 @@ autoGSVD GSVD_create_d (double **m1, integer numberOfRows1, integer numberOfColu
 		NUMlapack_dggsvd (& jobu1, & jobu2, & jobq, & m, & n, & p, & k, & l,
 		    & a [1] [1], & m, & b [1] [1], & p, & alpha [1], & beta [1], nullptr, & m,
 		    nullptr, & p, & q [1] [1], & n, & work [1], & iwork [1], & info);
-		Melder_require (info == 0, U"dggsvd failed, error = ", info);
+		Melder_require (info == 0, U"dggsvd failed with error = ", info);
 
 		integer kl = k + l;
 		autoGSVD me = GSVD_create (kl);

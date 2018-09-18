@@ -68,7 +68,7 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
 	'nstringmatches'.
 */
 
-void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring32 name);
+void MATprintMatlabForm (constMAT m, conststring32 name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 							1 2 3
@@ -80,7 +80,7 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 		7, 8, 9 ];
 */
 
-bool NUMdmatrix_containsUndefinedElements (const double * const *m, integer row1, integer row2, integer col1, integer col2);
+bool MAThasUndefinedElement (constMAT m);
 /* true if at least one of the elements is undefined (i.e. infinite or NaN) */
 
 void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport);
@@ -141,18 +141,6 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 		if (v[i] < min) v[i] = min;
 		else if (v[i] > max) v[i] = max;
 	}
-}
-
-template<class T>
-T ** NUMmatrix_transpose (T **m, integer nr, integer nc) {
-	autoNUMmatrix<T> to (1, nc, 1, nr);
-
-	for (integer i = 1; i <= nr; i++) {
-		for (integer j = 1; j <= nc; j++) {
-			to[j][i] = m[i][j];
-		}
-	}
-	return to.transfer();
 }
 
 double NUMvector_normalize1 (double v[], integer n);
@@ -442,7 +430,7 @@ autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m);
 	Input m is a square matrix, in the lower part is the inverse of the lower Cholesky part as calculated by NUMlowerCholeskyInverse.
 */
 
-double NUMdeterminant_cholesky (double **a, integer n);
+double MATdeterminant_fromSymmetricMatrix (constMAT m);
 /*
 	ln(determinant) of a symmetric p.s.d. matrix
 */

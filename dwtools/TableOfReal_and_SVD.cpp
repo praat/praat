@@ -79,7 +79,7 @@ autoGSVD TablesOfReal_to_GSVD (TableOfReal me, TableOfReal thee) {
 		Melder_require (my numberOfColumns == thy numberOfColumns,
 			U"Both tables must have the same number of columns.");
 
-		autoGSVD him = GSVD_create_d (my data.at, my numberOfRows, my numberOfColumns, thy data.at, thy numberOfRows);
+		autoGSVD him = GSVD_create_d (my data.get(), thy data.get());
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"GSVD not constructed from TablesOfReal.");

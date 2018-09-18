@@ -94,13 +94,13 @@ struct pdf2_struct {
 	double df2;
 };
 
-void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring32 name) {
+void MATprintMatlabForm (constMAT m, conststring32 name) {
 	integer npc = 5;
-	ldiv_t n = ldiv (nc, npc);
+	ldiv_t n = ldiv (m.ncol, npc);
 
 	MelderInfo_open ();
 	MelderInfo_write (name, U"= [");
-	for (integer i = 1; i <= nr; i ++) {
+	for (integer i = 1; i <= m.nrow; i ++) {
 		for (integer j = 1; j <= n.quot; j ++) {
 			for (integer k = 1; k <= npc; k ++) {
 				MelderInfo_write (m [i] [(j - 1) * npc + k], (k < npc ? U", " : U""));
@@ -111,7 +111,7 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 		for (integer k = 1; k <= n.rem; k ++) {
 			MelderInfo_write (m [i] [n.quot * npc + k], (k < n.rem ? U", " : U""));
 		}
-		MelderInfo_write (i < nr ? U";\n" : U"];\n");
+		MelderInfo_write (i < m.nrow ? U";\n" : U"];\n");
 	}
 	MelderInfo_close ();
 }
@@ -359,37 +359,21 @@ void NUMcholeskySolve (double **a, integer n, double d [], double b [], double x
 		x [i] = (double) sum / d [i];
 	}
 }
-
-double NUMdeterminant_cholesky (double **a, integer n) {
-	// Save the diagonal
-	autoNUMvector<double> d (1, n);
-	for (integer i = 1; i <= n; i ++) {
-		d [i] = a [i] [i];
-	}
-
+double MATdeterminant_fromSymmetricMatrix (constMAT m) {
+	Melder_assert (m.nrow == m.ncol);
+	autoMAT a = MATcopy (m);
+	
 	//	 Cholesky decomposition in lower, leave upper intact
 
 	char uplo = 'U';
-	integer lda = n, info;
-	NUMlapack_dpotf2 (& uplo, & n, & a [1] [1], & lda, & info);
+	integer lda = m.nrow, info;
+	NUMlapack_dpotf2 (& uplo, & a.nrow, & a [1] [1], & lda, & info);
 	Melder_require (info == 0, U"dpotf2 cannot determine Cholesky decomposition.");
-
-	// Determinant from diagonal, restore diagonal
-
 	longdouble lnd = 0.0;
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= a.nrow; i ++) {
 		lnd += log (a [i] [i]);
-		a [i] [i] = d [i];
 	}
 	lnd *= 2.0; // because A = L . L' TODO
-
-	// Restore lower from upper */
-
-	for (integer i = 1; i < n; i ++) {
-		for (integer j = i + 1; j <= n; j ++) {
-			a [j] [i] = a [i] [j];
-		}
-	}
 	return (double) lnd;
 }
 
@@ -722,19 +706,12 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 	integer n3 = 3, info;
 	double eps = 1e-5, t1, t2, t3;
 
-	autoMAT ftinv (n3, n3, kTensorInitializationType::ZERO);
-	autoMAT g (n3, n3, kTensorInitializationType::ZERO);
-	autoMAT ptfinv (n3, n3, kTensorInitializationType::ZERO);
+	autoMAT g = MATzero (n3, n3);
+	autoMAT ptfinv = MATzero (n3, n3);
 
 	// Construct O'.O	[1..3] [1..3].
 
-	for (integer i = 1; i <= n3; i ++) {
-		for (integer j = 1; j <= n3; j ++) {
-			for (integer k = 1; k <= n3; k ++) {
-				ftinv [i] [j] += o [k] [i] * o [k] [j];
-			}
-		}
-	}
+	autoMAT ftinv = MATmul_tn (o, o);
 
 	// Get lower triangular decomposition from O'.O and
 	// get F'^-1 from it (eq. (2)) (F^-1 not done ????)
@@ -748,7 +725,7 @@ void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC d, double *o
 	// Construct G and its eigen-decomposition (eq. (4,5))
 	// Sort eigenvalues (& eigenvectors) ascending.
 	
-	autoMAT b (n3, n3, kTensorInitializationType::ZERO);
+	autoMAT b = MATzero (n3, n3);
 	b [3] [1] = b [1] [3] = -0.5;
 	b [2] [2] = 1.0;
 
@@ -2807,16 +2784,16 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 		*arg = ln_arg;
 	}
 }
-
-bool NUMdmatrix_containsUndefinedElements (const double * const *m, integer row1, integer row2, integer col1, integer col2) {
-	for (integer i = row1; i <= row2; i ++) {
-		for (integer j = col1; j <= col2; j ++) {
-			if (isundef (m [i] [j])) {
+bool MAThasUndefinedElement (constMAT m) {
+	for (integer irow = 1; irow <= m.nrow; irow ++) {
+		for (integer icol = 1; icol <= m.ncol; icol ++) {
+			if (isundef (m [irow] [icol])) {
 				return true;
 			}
 		}
 	}
 	return false;
+	
 }
 
 void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport) {
