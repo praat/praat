@@ -25,10 +25,21 @@ inline void VECadd_inplace (VEC x, double addend) {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += addend;
 }
+inline VEC operator+= (VEC x, double addend) {
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] += addend;
+	return x;
+}
 inline void VECadd_inplace (VEC x, constVEC y) {
 	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += y [i];
+}
+inline VEC operator+= (VEC x, constVEC y) {
+	Melder_assert (y.size == x.size);
+	for (integer i = 1; i <= x.size; i ++)
+		x [i] += y [i];
+	return x;
 }
 inline void VECadd_preallocated (VEC target, constVEC x, double addend) {
 	Melder_assert (x.size == target.size);
@@ -58,6 +69,13 @@ inline void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
 		x [i] -= xmean;
 	if (out_mean)
 		*out_mean = xmean;
+}
+
+inline void VECcolumn_preallocated (VEC target, constMAT source, integer columnNumber) {
+	Melder_assert (source.nrow == target.size);
+	Melder_assert (columnNumber >= 1 && columnNumber <= source.ncol);
+	for (integer irow = 1; irow <= target.size; irow ++)
+		target [irow] = source [irow] [columnNumber];
 }
 
 extern void VECmul_preallocated (VEC target, constVEC vec, constMAT mat);

@@ -347,7 +347,7 @@ public:
 		}
 		our size = 0;
 	}
-	vector<T> subview (integer first, integer last) {
+	vector<T> subview (integer first, integer last) const {
 		const integer offset = first - 1;
 		Melder_assert (offset >= 0 && offset < our size);
 		const integer newSize = last - offset;
@@ -359,8 +359,8 @@ public:
 template <typename T>
 class constvector {
 public:
-	const T * const at;
-	const integer size;
+	const T * at;
+	integer size;
 	constvector (): at (nullptr), size (0) { }
 	constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	constvector (vector<T> vec): at (vec.at), size (vec.size) { }
@@ -390,6 +390,7 @@ public:
 */
 template <typename T>
 class autovector : public vector<T> {
+	integer capacity = 0;
 public:
 	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
 	autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
@@ -397,20 +398,25 @@ public:
 		our at = ( givenSize == 0 ? nullptr
 				: NUMvector<T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
 		our size = givenSize;
+		our capacity = givenSize;
 	}
 	~autovector () {   // destroy the payload (if any)
 		our reset ();
+		our capacity = 0;
 	}
 	vector<T> get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
 	void adoptFromAmbiguousOwner (vector<T> given) {   // buy the payload from a non-autovector
 		our reset();
 		our at = given.at;
 		our size = given.size;
+		our capacity = given.size;
 	}
 	vector<T> releaseToAmbiguousOwner () {   // sell the payload to a non-autovector
 		T *oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
-		return { oldAt, our size };
+		integer oldSize = our size;
+		our capacity = 0;
+		return { oldAt, oldSize };
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
@@ -424,14 +430,17 @@ public:
 	autovector (autovector&& other) noexcept : vector<T> { other.get() } {   // enable move constructor
 		other.at = nullptr;   // disown source
 		other.size = 0;   // to keep the source in a valid state
+		other.capacity = 0;
 	}
 	autovector& operator= (autovector&& other) noexcept {   // enable move assignment
 		if (other.at != our at) {
 			our reset ();
 			our at = other.at;
 			our size = other.size;
+			our capacity = other.capacity;
 			other.at = nullptr;   // disown source
 			other.size = 0;   // to keep the source in a valid state
+			other.capacity = 0;
 		}
 		return *this;
 	}
@@ -451,6 +460,7 @@ public:
 		if (*inout_capacity > 0)
 			our at = NUMvector<T> (1, *inout_capacity, initializationType == kTensorInitializationType::ZERO);
 		our size = 0;
+		our capacity = *inout_capacity;
 	}
 	/*
 		If the new size N is less than the current size S,
@@ -492,6 +502,7 @@ public:
 			our at = newAt;
 			if (inout_capacity)
 				*inout_capacity = newCapacity;
+			our capacity = newCapacity;
 		}
 		our size = newSize;
 	}
@@ -565,11 +576,11 @@ public:
 		our nrow = 0;
 		our ncol = 0;
 	}
-	vector<T> row (integer rowNumber) {
+	vector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
 		return vector<T> (our at [rowNumber], our ncol);
 	}
-	matrix<T> horizontalBand (integer firstRow, integer lastRow) {
+	matrix<T> horizontalBand (integer firstRow, integer lastRow) const {
 		const integer offsetRow = firstRow - 1;
 		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
@@ -582,8 +593,8 @@ public:
 template <typename T>
 class constmatrix {
 public:
-	const T * const * const at;
-	const integer nrow, ncol;
+	const T * const * at;
+	integer nrow, ncol;
 	constmatrix (): at (nullptr), nrow (0), ncol (0) { }
 	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }

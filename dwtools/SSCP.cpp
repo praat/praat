@@ -490,18 +490,13 @@ void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VEC vec, 
 
 autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer numberOfData) {
 	try {
-		if (numberOfData <= 0) {
+		if (numberOfData <= 0)
 			numberOfData = Melder_ifloor (my numberOfObservations);
-		}
 		autoPCA pca = SSCP_to_PCA (me);
 		autoTableOfReal thee = TableOfReal_create (numberOfData, my numberOfColumns);
 		autoVEC buf (my numberOfColumns, kTensorInitializationType::RAW);
-		VEC v; v.size = my numberOfColumns;
-		for (integer i = 1; i <= numberOfData; i ++) {
-			v.at = thy data [i];
-			Covariance_PCA_generateOneVector_inline (me, pca.get(), v, buf.get());
-		}
-
+		for (integer i = 1; i <= numberOfData; i ++)
+			Covariance_PCA_generateOneVector_inline (me, pca.get(), thy data.row (i), buf.get());
 		thy columnLabels. copyElementsFrom (my columnLabels.get());
 		return thee;
 	} catch (MelderError) {
@@ -1364,7 +1359,7 @@ double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 
 	return p;
 }
 
-double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
+double Covariance_getProbabilityAtPosition (Covariance me, constVEC x) {
 	Melder_require (x.size == my numberOfColumns,
 		U"The dimensions of the Covariance and the vector should agree.");
 	if (NUMisEmpty (my lowerCholesky.get()))
@@ -1376,7 +1371,7 @@ double Covariance_getProbabilityAtPosition (Covariance me, VEC x) {
 	return p;
 }
 
-double Covariance_getMarginalProbabilityAtPosition (Covariance me, VEC vector, double x) {
+double Covariance_getMarginalProbabilityAtPosition (Covariance me, constVEC vector, double x) {
 	double mu, stdev;
 	Covariance_getMarginalDensityParameters (me, vector, &mu, &stdev);
 	double dx = (x - mu) / stdev;
@@ -1385,7 +1380,7 @@ double Covariance_getMarginalProbabilityAtPosition (Covariance me, VEC vector, d
 }
 
 /* Precondition ||v|| = 1 */
-void Covariance_getMarginalDensityParameters (Covariance me, VEC v, double *p_mu, double *p_stdev) {
+void Covariance_getMarginalDensityParameters (Covariance me, constVEC v, double *p_mu, double *p_stdev) {
 	Melder_assert (v.size == my numberOfColumns);
 	if (p_mu) {
 		longdouble mu = 0.0;

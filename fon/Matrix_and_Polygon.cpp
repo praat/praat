@@ -27,13 +27,13 @@
 
 autoPolygon Matrix_to_Polygon (Matrix me) {
 	try {
-		if (my nx != 2 && my ny != 2)
-			Melder_throw (U"The Matrix should have exactly 2 rows or columns.");
+		Melder_require (my nx == 2 || my ny == 2,
+			U"The Matrix should have exactly 2 rows or columns.");
 		autoPolygon thee;
 		if (my ny == 2) {
 			thee = Polygon_create (my nx);
-			VECcopy_preallocated (thy x.get(), constVEC (my z [1], my nx));
-			VECcopy_preallocated (thy y.get(), constVEC (my z [2], my nx));
+			VECcopy_preallocated (thy x.get(), my z.row (1));
+			VECcopy_preallocated (thy y.get(), my z.row (2));
 		} else {
 			thee = Polygon_create (my ny);
 			for (integer i = 1; i <= my ny; i ++) {
