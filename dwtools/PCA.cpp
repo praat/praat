@@ -168,7 +168,7 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 		autoPCA thee = Thing_new (PCA);
 		thy centroid = VECzero (mcopy.ncol);
 		MATcentreEachColumn_inplace (mcopy.get(), thy centroid.at);
-		Eigen_initFromSquareRoot (thee.get(), mcopy.at, mcopy.nrow, mcopy.ncol);
+		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
 		thy labels = autostring32vector (mcopy.ncol);
 		PCA_setNumberOfObservations (thee.get(), mcopy.nrow);
 		/*

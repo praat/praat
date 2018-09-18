@@ -447,7 +447,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		// the eigenvalues and eigenvectors of the equation.
 		
 		thy eigen = Thing_new (Eigen);
-		Eigen_initFromSquareRootPair (thy eigen.get(), between.at, thy numberOfGroups, dimension, mew -> data.at, my numberOfRows);
+		Eigen_initFromSquareRootPair (thy eigen.get(), between.get(), mew -> data.get());
 
 		// Default priors and costs
 

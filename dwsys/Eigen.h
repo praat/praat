@@ -2,7 +2,7 @@
 #define _Eigen_h_
 /* Eigen.h
  *
- * Copyright (C) 1993-2012, 2015 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension);
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a);
 
-void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integer numberOfColumns);
+void Eigen_initFromSquareRoot (Eigen me, constMAT a);
 /*
 	Calculate eigenstructure for symmetric matrix A'A (e.g. covariance matrix),
 	when only A is given.
@@ -38,7 +38,7 @@ void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integ
 	Method: SVD.
 */
 
-void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, integer numberOfColumns, double **b, integer numberOfRows_b);
+void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b);
 /*
 	Calculate eigenstructure for A'Ax - lambda B'Bx = 0
 	Preconditions: numberOfRows >= numberOfColumns &&
