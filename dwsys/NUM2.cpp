@@ -203,43 +203,36 @@ void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, d
 	}
 }
 
-void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer ncols, integer ndf, double **covar) {
-	Melder_require (ndf >= 0 && nrows - ndf > 0 && covar, U"Invalid arguments.");
-
-	for (integer i = 1; i <= ncols; i ++) {
-		for (integer j = i; j <= ncols; j ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= nrows; k ++) {
-				sum += x [k] [i] * x [k] [j];
-			}
-			covar [i] [j] = covar [j] [i] = (double) sum / (nrows - ndf);
-		}
-	}
+autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf) {
+	Melder_require (ndf >= 0 && x.nrow - ndf > 0, U"Invalid arguments.");
+	autoMAT covar = MATmul_tn (x, x);
+	MATmultiply_inplace (covar.get(), 1.0 / (x.nrow - ndf));
+	return covar;
 }
 
-double NUMmultivariateKurtosis (double **x, integer nrows, integer ncols, int method) {
+double NUMmultivariateKurtosis (constMAT m, int method) {
 	double kurt = undefined;
-	if (nrows < 5) {
+	if (m.nrow < 5) {
 		return kurt;
 	}
-	autoVEC mean = VECraw (ncols);
-	autoMAT covar = MATzero (ncols, ncols);
-
-	MATcentreEachColumn_inplace (MAT (x, nrows, ncols), mean.at);
-	NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar.at);
+	autoMAT x = MATcopy (m);
+	autoVEC mean = VECraw (x.ncol);
+	MATcentreEachColumn_inplace (x.get(), mean.at);
+	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 1);
+	
 	if (method == 1) { // Schott (2001, page 33)
 		kurt = 0.0;
-		for (integer l = 1; l <= ncols; l ++) {
+		for (integer l = 1; l <= x.ncol; l ++) {
 			double zl = 0.0, wl, sll2 = covar [l] [l] * covar [l] [l];
-			for (integer j = 1; j <= nrows; j ++) {
+			for (integer j = 1; j <= x.nrow; j ++) {
 				double d = x [j] [l] - mean [l], d2 = d * d;
 				zl += d2 * d2;
 			}
-			zl = (zl - 6.0 * sll2) / (nrows - 4);
-			wl = (sll2 - zl / nrows) * nrows / (nrows - 1);
+			zl = (zl - 6.0 * sll2) / (x.nrow - 4);
+			wl = (sll2 - zl / x.nrow) * x.nrow / (x.nrow - 1);
 			kurt += zl / wl;
 		}
-		kurt = kurt / (3 * ncols) - 1.0;
+		kurt = kurt / (3 * x.ncol) - 1.0;
 	}
 	return kurt;
 }
@@ -458,53 +451,52 @@ double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, integer 
 	return (double) chisq;
 }
 
-void NUMdominantEigenvector (double **mns, integer n, double *q, double *p_lambda, double tolerance) {
-	autoNUMvector<double> z (1, n);
+void NUMdominantEigenvector (constMAT m, VEC q, double *out_lambda, double tolerance) {
+	Melder_assert (m.nrow == m.ncol && q.size == m.nrow);
 
-	double lambda0;
-	longdouble lambda = 0.0;
-	for (integer k = 1; k <= n; k ++) {
-		for (integer l = 1; l <= n; l ++) {
-			lambda += q [k] * mns [k] [l] * q [l];
+	longdouble lambda = 0.0, lambda0;
+	for (integer k = 1; k <= q.size; k ++) {
+		for (integer l = 1; l <= q.size; l ++) {
+			lambda += q [k] * m [k] [l] * q [l];
 		}
 	}
 	Melder_require (lambda > 0.0, U"Zero matrices ??");
-
+	autoVEC z = VECraw (m.nrow);
 	integer iter = 0;
 	do {
-		double znorm2 = 0.0;
-		for (integer l = 1; l <= n; l ++) {
+		longdouble znorm2 = 0.0;
+		for (integer l = 1; l <= q.size; l ++) {
 			z [l] = 0.0;
-			for (integer k = 1; k <= n; k ++) {
-				z [l] += mns [l] [k] * q [k];
+			for (integer k = 1; k <= q.size; k ++) {
+				z [l] += m [l] [k] * q [k];
 			}
 		}
 
-		for (integer k = 1; k <= n; k ++) {
+		for (integer k = 1; k <= q.size; k ++) {
 			znorm2 += z [k] * z [k];
 		}
 		znorm2 = sqrt (znorm2);
 
-		for (integer k = 1; k <= n; k ++) {
+		for (integer k = 1; k <= q.size; k ++) {
 			q [k] = z [k] / znorm2;
 		}
 
-		lambda0 = (double) lambda;
-		
+		lambda0 = lambda;
 		lambda = 0.0;
-		for (integer k = 1; k <= n; k ++) {
-			for (integer l = 1; l <= n; l ++) {
-				lambda += q [k] * mns [k] [l] * q [l];
+		for (integer k = 1; k <= q.size; k ++) {
+			for (integer l = 1; l <= q.size; l ++) {
+				lambda += q [k] * m [k] [l] * q [l];
 			}
 		}
 
-	} while (fabs ((double) lambda - lambda0) > tolerance || ++ iter < 30);
-	if (p_lambda) {
-		*p_lambda = (double) lambda;
+	} while (fabs (lambda - lambda0) > tolerance || ++ iter < 30);
+	if (out_lambda) {
+		*out_lambda = (double) lambda;
 	}
 }
 
-void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, integer from_col, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection, integer to_col) {
+
+
 	/* Input:
 	 * 	data [numberOfRows, from_col - 1 + my dimension] 
 	 * 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
@@ -516,43 +508,36 @@ void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, in
 	 * 
 	 * Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
 	 */
-	from_col = from_col <= 0 ? 1 : from_col;
-	to_col = to_col <= 0 ? 1 : to_col;
 
-	for (integer irow = 1; irow <= numberOfRows; irow ++) {
-		for (integer icol = 1; icol <= numberOfEigenvectors; icol ++) {
+void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMAT data, integer fromColumn, constMAT eigenvectors) {
+	Melder_assert (projection.nrow = data.nrow);
+	fromColumn = fromColumn <= 0 ? 1 : fromColumn;
+	toColumn = toColumn <= 0 ? 1 : toColumn;
+	Melder_assert (fromColumn + eigenvectors.ncol - 1 <= data.ncol);
+	Melder_assert (toColumn + eigenvectors.ncol - 1 <= projection.ncol);
+	for (integer irow = 1; irow <= data.nrow; irow ++)
+		for (integer icol = 1; icol <= eigenvectors.nrow; icol ++) {
 			longdouble r = 0.0;
-			for (integer k = 1; k <= dimension; k ++) {
-				r += eigenvectors [icol] [k] * data [irow] [from_col + k - 1];
+			for (integer k = 1; k <= eigenvectors.ncol; k ++) {
+				r += eigenvectors [icol] [k] * data [irow] [fromColumn + k - 1];
 			}
-			projection [irow] [to_col + icol - 1] = (double) r;
+			projection [irow] [toColumn + icol - 1] = (double) r;
 		}
-	}
 }
 
-void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColumns, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection) {
-	/* Input:
-	 * 	data [dimension, numberOfColumns] 
-	 * 		contains the column vectors to be projected on the eigenspace. 
-	 *  eigenvectors [numberOfEigenvectors] [dimension] 
-	 * 		the eigenvectors stored as rows
-	 * Input/Output
-	 * 	projection [numberOfEigenvectors, numberOfColumns] 
-	 * 		the projected vectors from 'data'
-	 * 
-	 * Project the columnvectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
-	 */
-
-	for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-		for (integer irow = 1; irow <= numberOfEigenvectors; irow ++) {
+void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMAT data, constMAT eigenvectors) {
+	Melder_assert (data.nrow == eigenvectors.ncol && projection.nrow == eigenvectors.nrow);
+	for (integer icol = 1; icol <= data.ncol; icol ++)
+		for (integer irow = 1; irow <= eigenvectors.nrow; irow ++) {
 			longdouble r = 0.0;
-			for (integer k = 1; k <= dimension; k ++) {
+			for (integer k = 1; k <= eigenvectors.ncol; k ++) {
 				r += eigenvectors [irow] [k] * data [k] [icol];
 			}
 			projection [irow] [icol] = (double) r;
 		}
-	}
+	// MATmul_tt (data.get(), eigenvectors.get()) ??
 }
+
 
 void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer ncols, integer numberOfComponents, double **pc) {
 	Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
@@ -569,6 +554,7 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 			pc [i] [j] = (double) sum;
 		}
 	}
+	// MATmul_tt (svd->v.get(), m.get()); ??
 }
 
 void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double tolerance) {
@@ -855,7 +841,8 @@ static void nr2_func (double b, double *f, double *df, void *data) {
 		double c1 = (my c [i] - b);
 		double c2 = my x [i] / c1;
 		double c2sq = c2 * c2;
-		*f -= c2sq; *df += 2 * c2sq / c1;
+		*f -= c2sq;
+		*df += 2 * c2sq / c1;
 	}
 }
 
@@ -1544,12 +1531,11 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, 
 		return prob;
 
 	autoVEC zero = VECzero (p);
-	autoMAT covar = MATzero (p, p);
 	autoMAT x = MATcopy (data);
 
 	MATcentreEachColumn_inplace (x.get()); // x - xmean
 
-	NUMcovarianceFromColumnCentredMatrix (x.at, x.nrow, x.ncol, 0, covar.at);
+	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 0);
 
 	try {
 		MATlowerCholeskyInverse_inplace (covar.get(), nullptr);

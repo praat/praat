@@ -48,11 +48,14 @@ void Eigen_TableOfReal_into_TableOfReal_projectRows (Eigen me, TableOfReal data,
 	to_startColumn = to_startColumn <= 0 ? 1 : to_startColumn;
 	numberOfComponentsToKeep = numberOfComponentsToKeep <= 0 ? my numberOfEigenvalues : numberOfComponentsToKeep;
 	
-	Melder_require (data_startColumn + my dimension - 1 <= data -> numberOfColumns, U"Your start column in the table is too large.");
-	Melder_require (to_startColumn + numberOfComponentsToKeep - 1 <= to -> numberOfColumns, U" Your start column in the 'to' matrix is too large.");
-	Melder_require (data -> numberOfRows == to -> numberOfRows, U"Both tables should have the same number of rows.");
+	Melder_require (data_startColumn + my dimension - 1 <= data -> numberOfColumns,
+		U"Your start column in the table is too large.");
+	Melder_require (to_startColumn + numberOfComponentsToKeep - 1 <= to -> numberOfColumns, 
+		U" Your start column in the 'to' matrix is too large.");
+	Melder_require (data -> numberOfRows == to -> numberOfRows, 
+		U"Both tables should have the same number of rows.");
 	
-	NUMdmatrix_projectRowsOnEigenspace (data -> data.at, data -> numberOfRows, data_startColumn, my eigenvectors.at, numberOfComponentsToKeep, my dimension, to -> data.at, to_startColumn);
+	MATprojectRowsOnEigenspace_preallocated (to -> data.get(), to_startColumn, data -> data.get(), data_startColumn, my eigenvectors.horizontalBand (1, numberOfComponentsToKeep));
 }
 
 autoEigen TablesOfReal_to_Eigen_gsvd (TableOfReal me, TableOfReal thee) {
