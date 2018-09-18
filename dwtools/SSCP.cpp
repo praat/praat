@@ -861,18 +861,9 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		autoMAT a = MATmul_tt (sxx.get(), syx.get());
 		Melder_assert (a.nrow == nx && a.ncol == ny);
-		for (integer i = 1; i <= ny; i ++) {
-			for (integer j = 1; j <= nx; j ++) {
-				longdouble t = 0.0;
-				for (integer k = 1; k <= j; k ++) {
-					t += syx [i] [k] * sxx [k] [j];
-				}
-				a [j] [i] = (double) t;
-			}
-		}
 
-		autoGSVD gsvd = GSVD_create_d (a.at, nx, ny, syy.at, ny);
-		autoMAT ri = MATcopy ({gsvd -> r, gsvd -> numberOfColumns, gsvd -> numberOfColumns});
+		autoGSVD gsvd = GSVD_create_d (a.get(), syy.get());
+		autoMAT ri = MATcopy (gsvd -> r.get());
 		
 		autoCCA thee = Thing_new (CCA);
 
@@ -881,7 +872,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		// Get X=Q*R**-1
 
-		(void) NUMlapack_dtrti2 (& upper, & diag, & gsvd -> numberOfColumns, &  ri [1] [1], &gsvd -> numberOfColumns, & info);
+		(void) NUMlapack_dtrti2 (& upper, & diag, & gsvd -> numberOfColumns, &  ri [1] [1], & gsvd -> numberOfColumns, & info);
 		Melder_require (info == 0, U"Error in inverse for R.");
 		
 		for (integer i = 1; i <= gsvd -> numberOfColumns; i ++) {

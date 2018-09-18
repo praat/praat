@@ -91,7 +91,7 @@ integer SVD_getRank (SVD me);
 
 autoGSVD GSVD_create (integer numberOfColumns);
 
-autoGSVD GSVD_create_d (double **m1, integer numberOfRows1, integer numberOfColumns, double **m2, integer numberOfRows2);
+autoGSVD GSVD_create_d (constMAT m1, constMAT m2);
 
 void GSVD_setTolerance (GSVD me, double tolerance);
 
