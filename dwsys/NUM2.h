@@ -169,14 +169,14 @@ void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer 
 
 void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout);
 
-void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer ncols, integer ndf, double **covar);
+autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf);
 /*
 	Calculate covariance matrix(ncols x ncols) from data matrix (nrows x ncols);
-	The matrix covar must already have been allocated and centered.
+	The matrix x must be column centered.
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
 
-double NUMmultivariateKurtosis (double **x, integer nrows, integer ncols, int method);
+double NUMmultivariateKurtosis (constMAT x, int method);
 /*
 	calculate multivariate kurtosis.
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.

@@ -203,43 +203,36 @@ void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, d
 	}
 }
 
-void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer ncols, integer ndf, double **covar) {
-	Melder_require (ndf >= 0 && nrows - ndf > 0 && covar, U"Invalid arguments.");
-
-	for (integer i = 1; i <= ncols; i ++) {
-		for (integer j = i; j <= ncols; j ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= nrows; k ++) {
-				sum += x [k] [i] * x [k] [j];
-			}
-			covar [i] [j] = covar [j] [i] = (double) sum / (nrows - ndf);
-		}
-	}
+autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf) {
+	Melder_require (ndf >= 0 && x.nrow - ndf > 0, U"Invalid arguments.");
+	autoMAT covar = MATmul_tn (x, x);
+	MATmultiply_inplace (covar.get(), 1.0 / (x.nrow - ndf));
+	return covar;
 }
 
-double NUMmultivariateKurtosis (double **x, integer nrows, integer ncols, int method) {
+double NUMmultivariateKurtosis (constMAT m, int method) {
 	double kurt = undefined;
-	if (nrows < 5) {
+	if (m.nrow < 5) {
 		return kurt;
 	}
-	autoVEC mean = VECraw (ncols);
-	autoMAT covar = MATzero (ncols, ncols);
-
-	MATcentreEachColumn_inplace (MAT (x, nrows, ncols), mean.at);
-	NUMcovarianceFromColumnCentredMatrix (x, nrows, ncols, 1, covar.at);
+	autoMAT x = MATcopy (m);
+	autoVEC mean = VECraw (x.ncol);
+	MATcentreEachColumn_inplace (x.get(), mean.at);
+	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 1);
+	
 	if (method == 1) { // Schott (2001, page 33)
 		kurt = 0.0;
-		for (integer l = 1; l <= ncols; l ++) {
+		for (integer l = 1; l <= x.ncol; l ++) {
 			double zl = 0.0, wl, sll2 = covar [l] [l] * covar [l] [l];
-			for (integer j = 1; j <= nrows; j ++) {
+			for (integer j = 1; j <= x.nrow; j ++) {
 				double d = x [j] [l] - mean [l], d2 = d * d;
 				zl += d2 * d2;
 			}
-			zl = (zl - 6.0 * sll2) / (nrows - 4);
-			wl = (sll2 - zl / nrows) * nrows / (nrows - 1);
+			zl = (zl - 6.0 * sll2) / (x.nrow - 4);
+			wl = (sll2 - zl / x.nrow) * x.nrow / (x.nrow - 1);
 			kurt += zl / wl;
 		}
-		kurt = kurt / (3 * ncols) - 1.0;
+		kurt = kurt / (3 * x.ncol) - 1.0;
 	}
 	return kurt;
 }
@@ -1538,12 +1531,11 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, 
 		return prob;
 
 	autoVEC zero = VECzero (p);
-	autoMAT covar = MATzero (p, p);
 	autoMAT x = MATcopy (data);
 
 	MATcentreEachColumn_inplace (x.get()); // x - xmean
 
-	NUMcovarianceFromColumnCentredMatrix (x.at, x.nrow, x.ncol, 0, covar.at);
+	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 0);
 
 	try {
 		MATlowerCholeskyInverse_inplace (covar.get(), nullptr);
