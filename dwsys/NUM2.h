@@ -462,7 +462,7 @@ double NUMtrace2_tt (constMAT x, constMAT y);
 
 void eigenSort (double d[], double **v, integer n, int sort);
 
-void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, integer from_col, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection, integer to_col);
+void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMAT data, integer fromColumn, constMAT eigenvectors);
 /* Input:
 	data[numberOfRows, from_col - 1 + my dimension] 
 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
@@ -475,7 +475,7 @@ void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, in
    Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
  */
 
-void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColumns, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection);
+void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMAT data, constMAT eigenvectors);
 /* Input:
  	data[dimension, numberOfColumns]
  		contains the column vectors to be projected on the eigenspace.
@@ -489,11 +489,10 @@ void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColum
 */
 
 
-void NUMdominantEigenvector (double **mns, integer n, double *q, double *lambda, double tolerance);
+void NUMdominantEigenvector (constMAT mns, VEC inout_q, double *out_lambda, double tolerance);
 /*
-	Determines the first dominant eigenvector from a GENERAL matrix
-	mns[1..n][1..].
-	Besides the matrix mns, a first guess for the eigenvector q must
+	Determines the first dominant eigenvector from a square GENERAL matrix m.
+	Besides the matrix m, a first guess for the eigenvector q must
 	be supplied (e.g. 1,0,...,0) and a value for tolerance (iteration
 	stops when fabs(lamda[k] - lambda[k-1]) <= tolerance, where lamda[k] is
 	the eigenvalue at the k-th iteration step.

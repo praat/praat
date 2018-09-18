@@ -104,7 +104,7 @@ void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maxim
 
 	evec [1] = 1.0;
 	double rho, f, f_old;
-	NUMdominantEigenvector (c.at, nc, evec.at, & rho, 1.0e-6);
+	NUMdominantEigenvector (c.get(), evec.get(), & rho, 1.0e-6);
 
 	do_steps45 (w.get(), t, c.get(), & f);
 	do {
