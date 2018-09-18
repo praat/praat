@@ -372,14 +372,14 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_ALLOC: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++)
-				autoVEC result (size, kTensorInitializationType::RAW);
-			t = Melder_stopwatch () / size;
+				autoVEC result = VECraw (size);
+			t = Melder_stopwatch () / size;   // 10^0..7: 70/6.9/1.08 / 0.074/0.0074/0.0091 / 0.51/0.00026 ns
 		} break;
 		case kPraatTests::TIME_ALLOC0: {
 			integer size = Melder_atoi (arg2);
 			for (int64 iteration = 1; iteration <= n; iteration ++)
-				autoVEC result (size, kTensorInitializationType::RAW);
-			t = Melder_stopwatch () / size;
+				autoVEC result = VECzero (size);
+			t = Melder_stopwatch () / size;   // 10^0..7: 76/7.7/1.23 / 0.165/0.24/0.25 / 1.30/1.63 ns
 		} break;
 		case kPraatTests::TIME_ZERO: {
 			integer size = Melder_atoi (arg2);
@@ -409,7 +409,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		case kPraatTests::TIME_CALLOC: {
 			integer size = Melder_atoi (arg2);
 			double z = 0.0;
-			for (int64 iteration = 1; iteration <= n; iteration ++) {
+			for (integer iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) calloc (sizeof (double), (size_t) size);
 				for (integer i = 0; i < size; i ++)
 					result [i] = (double) i;
@@ -421,11 +421,21 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_ADD: {
 			integer size = Melder_atoi (arg2);
-			auto result = MATrandomGauss (size, size, 0.0, 1.0);
+			autoMAT result = MATrandomGauss (size, size, 0.0, 1.0);
 			Melder_stopwatch ();
-			for (int64 iteration = 1; iteration <= n; iteration ++)
-				result.get() += 5.0;
-			t = Melder_stopwatch () / size / size;
+			for (integer iteration = 1; iteration <= n; iteration ++)
+				MATadd_inplace (result.get(), 5.0);
+			t = Melder_stopwatch () / size / size;   // 10^0..4: 2.7/0.16/0.24 / 0.38/0.98
+			double sum = NUMsum (result.get());
+			MelderInfo_writeLine (sum);
+		} break;
+		case kPraatTests::TIME_SIN: {
+			integer size = Melder_atoi (arg2);
+			autoMAT result = MATrandomGauss (size, size, 0.0, 1.0);
+			Melder_stopwatch ();
+			for (integer iteration = 1; iteration <= n; iteration ++)
+				MATsin_inplace (result.get());
+			t = Melder_stopwatch () / size / size;   // 10^0..4: 18/5.3/5.2 / 5.3/12
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
 		} break;
