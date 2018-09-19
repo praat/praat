@@ -82,7 +82,8 @@ extern void MATdoubleCentre_inplace (MAT x);
 /*
 	Precise matrix multiplication, using pairwise summation.
 	The speed is 6,0.66,0.48,1.69 ns per multiply-add
-	for x.nrow = x.ncol = y.ncol = 1,10,100,1000.
+	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+	For large matrices this is a bit slow.
 */
 extern void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
 inline void MATmul_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) {
@@ -91,17 +92,120 @@ inline void MATmul_preallocated  (const MAT& target, const constMAT& x, const co
 	Melder_assert (x.ncol == y.nrow);
 	MATmul_preallocated_ (target, x, y);
 }
+inline autoMAT MATmul (const constMAT& x, const constMAT& y) {
+	autoMAT result = MATraw (x.nrow, y.ncol);
+	MATmul_preallocated (result, x, y);
+	return result;
+}
 /*
 	Rough matrix multiplication, using an in-cache inner loop.
 	The speed is 10,0.76,0.32,0.34 ns per multiply-add
-	for x.nrow = x.ncol = y.ncol = 1,10,100,1000.
+	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
 */
-extern void MATmul_preallocated_fast_ (const MAT& target, const constMAT& x, const constMAT& y);
-inline void MATmul_preallocated_fast  (const MAT& target, const constMAT& x, const constMAT& y) {
+extern void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
+inline void MATmul_fast_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
-	MATmul_preallocated_fast_ (target, x, y);
+	MATmul_fast_preallocated_ (target, x, y);
+}
+inline autoMAT MATmul_fast (const constMAT& x, const constMAT& y) {
+	autoMAT result = MATraw (x.nrow, y.ncol);
+	MATmul_fast_preallocated (result, x, y);
+	return result;
+}
+
+/*
+	Target := X . Y'
+	Pairwise summation.
+	The speed is 9,0.85,0.51,0.52 ns per multiply-add
+	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
+*/
+extern void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
+inline void MATmul_nt_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == y.nrow);
+	Melder_assert (x.ncol == y.ncol);
+	MATmul_nt_preallocated_ (target, x, y);
+}
+inline autoMAT MATmul_nt (constMAT x, constMAT y) {
+	autoMAT result = MATraw (x.nrow, y.nrow);
+	MATmul_nt_preallocated (result, x, y);
+	return result;
+}
+
+/*
+	Target := X' . Y
+	Pairwise summation.
+	The speed is 12,0.88,0.60,15.1 ns per multiply-add
+	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
+	For large matrices this is very slow.
+*/
+extern void MATmul_tn_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
+inline void MATmul_tn_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) {
+	Melder_assert (target.nrow == x.ncol);
+	Melder_assert (target.ncol == y.ncol);
+	Melder_assert (x.nrow == y.nrow);
+	MATmul_tn_preallocated_ (target, x, y);
+}
+inline autoMAT MATmul_tn (const constMAT& x, const constMAT& y) { // Z = X'.Y
+	autoMAT result = MATraw (x.ncol, y.ncol);
+	MATmul_tn_preallocated (result, x, y);
+	return result;
+}
+/*
+	Rough matrix multiplication, using an in-cache inner loop.
+	The speed is 11,0.79,0.32,0.37 ns per multiply-add
+	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+*/
+extern void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
+inline void MATmul_tn_fast_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) {
+	Melder_assert (target.nrow == x.ncol);
+	Melder_assert (target.ncol == y.ncol);
+	Melder_assert (x.nrow == y.nrow);
+	MATmul_tn_fast_preallocated (target, x, y);
+}
+inline autoMAT MATmul_tn_fast (const constMAT& x, const constMAT& y) {
+	autoMAT result = MATraw (x.ncol, y.ncol);
+	MATmul_tn_fast_preallocated (result, x, y);
+	return result;
+}
+
+/*
+	Target := X' . Y'
+	Pairwise summation.
+	The speed is 11,1.14,0.71,1.92 ns per multiply-add
+	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
+	For large matrices this is a bit slow.
+*/
+extern void MATmul_tt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
+inline void MATmul_tt_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) {
+	Melder_assert (target.nrow == x.ncol);
+	Melder_assert (target.ncol == y.nrow);
+	Melder_assert (x.nrow == y.ncol);
+	MATmul_tt_preallocated_ (target, x, y);
+}
+inline autoMAT MATmul_tt (const constMAT& x, const constMAT& y) {
+	autoMAT result = MATraw (x.ncol, y.nrow);
+	MATmul_tt_preallocated (result, x, y);
+	return result;
+}
+/*
+	Rough matrix multiplication, using an in-cache inner loop after explicit transposition on the heap.
+	The speed is 7,0.87,0.84,0.41 ns per multiply-add
+	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+*/
+extern void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
+inline void MATmul_tt_fast_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) {
+	Melder_assert (target.nrow == x.ncol);
+	Melder_assert (target.ncol == y.nrow);
+	Melder_assert (x.nrow == y.ncol);
+	MATmul_tt_fast_preallocated_ (target, x, y);
+}
+inline autoMAT MATmul_tt_fast (const constMAT& x, const constMAT& y) {
+	autoMAT result = MATraw (x.ncol, y.nrow);
+	MATmul_tt_fast_preallocated (result, x, y);
+	return result;
 }
 
 inline void MATmultiply_inplace (MAT x, double factor) {

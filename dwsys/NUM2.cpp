@@ -979,7 +979,7 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 		// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
 		// First we need YT.
 		
-		autoMAT yt = MATmul_nn (y, rotation.get());
+		autoMAT yt = MATmul (y, rotation.get());
 		
 		// X'J = (JX)' centering the columns of X
 
@@ -2944,65 +2944,6 @@ double NUMfrobeniusnorm (constMAT x) {
 		}
 	}
 	return scale * sqrt ((double) ssq);
-}
-
-void MATmul_nn_preallocated (MAT z, constMAT x, constMAT y) { // Z = X.Y
-	Melder_assert (z.nrow == x.nrow && z.ncol == y.ncol);
-	Melder_assert (x.ncol == y.nrow);
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= y.ncol; icol ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= x.ncol; k ++)
-				sum += x [irow] [k] * y [k] [icol];
-			z [irow] [icol] = (double) sum;
-		}
-}
-
-autoMAT MATmul_nn (constMAT x, constMAT y) {  // Z = X.Y
-	autoMAT z = MATraw (x.nrow, y.ncol);
-	MATmul_nn_preallocated (z.get(), x, y);
-	return z;
-}
-
-void MATmul_nt_preallocated (MAT z, constMAT x, constMAT y) { // Z = Z.Y'
-	Melder_assert (z.nrow == x.nrow && z.ncol == y.nrow);
-	Melder_assert (x.ncol == y.ncol);
-	for (integer irow = 1; irow <= x.nrow; irow ++)
-		for (integer icol = 1; icol <= y.nrow; icol ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= y.nrow; k ++)
-				sum += x [irow] [k] * y [icol] [k];
-			z [irow] [icol] = sum;
-		}
-}
-
-autoMAT MATmul_nt (constMAT x, constMAT y) { // Z = Z.Y'
-	autoMAT z = MATraw (x.nrow, y.nrow);
-	MATmul_nt_preallocated (z.get(), x, y);
-	return z;
-}
-
-autoMAT MATmul_tt (constMAT x, constMAT y) { // Z = X'.Y' = (Y.X)'
-	autoMAT z = MATmul_nn (y, x);
-	return MATtranspose (z.get());
-}
-
-void MATmul_tn_preallocated (MAT z, constMAT x, constMAT y) { // Z = X'.Y
-	Melder_assert (z.nrow == x.ncol && z.ncol == y.ncol);
-	Melder_assert (x.nrow == y.nrow);
-	for (integer irow = 1; irow <= x.ncol; irow ++)
-		for (integer icol = 1; icol <= y.ncol; icol ++) {
-			longdouble sum = 0.0;
-			for (integer k = 1; k <= y.nrow; k ++)
-				sum += x [k] [irow] * y [k] [icol];
-			z [irow] [icol] = sum;
-		}
-}
-
-autoMAT MATmul_tn (constMAT x, constMAT y) { // Z = X'.Y
-	autoMAT z = MATraw (x.ncol, y.ncol);
-	MATmul_tn_preallocated (z.get(), x, y);
-	return z;
 }
 
 double NUMtrace (constMAT a) {
