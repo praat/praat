@@ -1337,7 +1337,7 @@ static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 
 static double traceOfSquaredMatrixProduct (double **s1, double **s2, integer n) {
 	// tr ((s1*s2)^2), s1, s2 are symmetric
-	autoMAT m = MATmul_nn ({s1,n,n}, {s2,n, n});
+	autoMAT m = MATmul ({s1,n,n}, {s2,n, n});
 	double trace2 = NUMtrace2_nn (m.get(), m.get());
 	return trace2;
 }
@@ -1540,19 +1540,19 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			//	sum(i=1..k, (ni/n -(ni/n)^2) tr((si*s^-1)^2)
 			//	- 2 * sum (i=1..k, sum(j=1..i-1, (ni/n)*(nj/n) *tr(si*s^-1*sj*s^-1)))
 
-			double trace = 0;
+			double trace = 0.0;
 			MATlowerCholeskyInverse_inplace (pool -> data.get(), nullptr);
 			autoMAT si = MATinverse_fromLowerCholeskyInverse (pool -> data.get());
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				double ni = ci -> numberOfObservations - 1;
-				autoMAT s1 = MATmul_nn (ci -> data.get(), si.get());
+				autoMAT s1 = MATmul (ci -> data.get(), si.get());
 				double trace_ii = NUMtrace2_nn (s1.get(), s1.get());
 				trace += (ni / ns) * (1 - (ni / ns)) * trace_ii;
 				for (integer j = i + 1; j <= numberOfMatrices; j ++) {
 					Covariance cj = my at [j];
 					double nj = cj -> numberOfObservations - 1;
-					autoMAT s2 = MATmul_nn (cj -> data.get(), si.get());
+					autoMAT s2 = MATmul (cj -> data.get(), si.get());
 					double trace_ij = NUMtrace2_nn (s1.get(), s2.get());
 					trace -= 2.0 * (ni / ns) * (nj / ns) * trace_ij;
 				}

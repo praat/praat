@@ -444,12 +444,12 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoMAT x = MATrandomGauss (size, size, 0.0, 1.0);
 			autoMAT y = MATrandomGauss (size, size, 0.0, 1.0);
 			autoMAT result = MATraw (size, size);
-			MAT resultget = result.get();
-			constMAT xget = x.get(), yget = y.get();
+			//MAT resultget = result.get();
+			//constMAT xget = x.get(), yget = y.get();
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				MATmul_preallocated_fast_ (result, xget, yget);
-				//MATmul_preallocated_fast_ (result.get(), x.get(), y.get());
+				//MATmul_preallocated_ (result, xget, yget);
+				MATmul_tt_fast_preallocated (result.get(), x.get(), y.get());
 			t = Melder_stopwatch () / size / size / size;
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
@@ -579,6 +579,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				//j = h;   // up assignment standardly correctly ruled out
 				//h = j;   // down assignment was explicitly ruled out as well
 				//h = VEC (j);
+				VEC & jref = j;   // (in)correctly? accepted
 				VEC *ph = & h;
 				autoVEC *pj = & j;
 				ph = pj;   // (in)correctly? accepted
