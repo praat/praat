@@ -46,30 +46,18 @@ void MATdoubleCentre_inplace (MAT x) {
 	MATcentreEachColumn_inplace (x);
 }
 
-inline static double inner_stride_ (constVEC x, integer xstride, constVEC y, integer ystride) {
-	if (x.size != y.size)
-		return undefined;
-	PAIRWISE_SUM (longdouble, sum, integer, x.size,
-		const double *px = & x [1];
-		const double *py = & y [1],
-		(longdouble) *px * (longdouble) *py,
-		(px += xstride, py += ystride)   // this goes way beyond the confines of y
-	)
-	return (double) sum;
-}
-
 void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
-	Melder_assert (target.nrow == x.nrow);
-	Melder_assert (target.ncol == y.ncol);
-	Melder_assert (x.ncol == y.nrow);
-	#if 1
-	/*
-		This version is 6,0.66,0.48,1.69 ns per multiply-add for size = 1,10,100,1000.
-	*/
-	for (integer irow = 1; irow <= target.nrow; irow ++)
-		for (integer icol = 1; icol <= target.ncol; icol ++)
-			target [irow] [icol] = inner_stride_ (x.row (irow), 1, constVEC (& y [1] [icol] - 1, y.nrow), y.ncol);
-	#endif
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+				const double *px = & x [irow] [1];
+				const double *py = & y [1] [icol],
+				(longdouble) *px * (longdouble) *py,
+				(px += 1, py += y.ncol)
+			)
+			target [irow] [icol] = double (sum);
+		}
+	}
 }
 
 void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
@@ -97,12 +85,12 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 		(double *) & x [1] [1], & x.nrow, (double *) & y [1] [1], & y.nrow, & beta, & target [1] [1], & target.nrow);
 	#elif 0
 	/*
-		This version is 34,0.72,0.31,0.41 ns per multiply-add for size = 1,10,100,1000.
+		This version is 34,0.72,0.31,0.41(NoTrans;1.34Trans) ns per multiply-add for size = 1,10,100,1000.
 	*/
 	gsl_matrix gslx { (size_t) x.nrow, (size_t) x.ncol, (size_t) x.nrow, (double *) & x [1] [1], nullptr, false };
 	gsl_matrix gsly { (size_t) y.nrow, (size_t) y.ncol, (size_t) y.nrow, (double *) & y [1] [1], nullptr, false };
 	gsl_matrix gsltarget { (size_t) target.nrow, (size_t) target.ncol, (size_t) target.nrow, (double *) & target [1] [1], nullptr, false };
-	gsl_blas_dgemm (CblasNoTrans, CblasNoTrans, 1.0, & gslx, & gsly, 0.0, & gsltarget);
+	gsl_blas_dgemm (CblasTrans, CblasTrans, 1.0, & gslx, & gsly, 0.0, & gsltarget);
 	#else
 	/*
 		This version is 20,0.80,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
@@ -120,44 +108,34 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 }
 
 void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
-	bool weWantPrecisionAndSpeed = ((true));
-	if (weWantPrecisionAndSpeed) {
-		/*
-			Pairwise summation.
-			Speed: 9,0.85,0.51,0.52 ns for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
-		*/
-		for (integer irow = 1; irow <= target.nrow; irow ++)
-			for (integer icol = 1; icol <= target.ncol; icol ++)
-				target [irow] [icol] = inner_stride_ (x.row (irow), 1, y.row (icol), 1);
-	} else {
-		/*
-			Speed: 8,0.72,0.82,0.92 ns for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
-		*/
-		for (integer irow = 1; irow <= target.nrow; irow ++) {
-			for (integer icol = 1; icol <= target.ncol; icol ++) {
-				longdouble sum = 0.0;
-				for (integer i = 1; i <= x.ncol; i ++)
-					sum += x [irow] [i] * y [icol] [i];
-				target [irow] [icol] = double (sum);
-			}
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+				const double *px = & x [irow] [1];
+				const double *py = & y [icol] [1],
+				(longdouble) *px * (longdouble) *py,
+				(px += 1, py += 1)
+			)
+			target [irow] [icol] = double (sum);
 		}
 	}
 }
 
 void MATmul_tn_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
-	/*
-		Pairwise summation.
-		Speed: 12,0.88,0.60,15.1 ns for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
-	*/
-	for (integer irow = 1; irow <= target.nrow; irow ++)
-		for (integer icol = 1; icol <= target.ncol; icol ++)
-			target [irow] [icol] = inner_stride_ (constVEC (& x [1] [irow] - 1, x.nrow), x.ncol, constVEC (& y [1] [icol] - 1, y.nrow), y.ncol);
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
+				const double *px = & x [1] [irow];
+				const double *py = & y [1] [icol],
+				(longdouble) *px * (longdouble) *py,
+				(px += x.ncol, py += y.ncol)
+			)
+			target [irow] [icol] = double (sum);
+		}
+	}
 }
 
 void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
-	/*
-		Speed: 11,0.79,0.32,0.37 ns for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
-	*/
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = 0.0;
@@ -168,9 +146,17 @@ void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const c
 }
 
 void MATmul_tt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
-	for (integer irow = 1; irow <= target.nrow; irow ++)
-		for (integer icol = 1; icol <= target.ncol; icol ++)
-			target [irow] [icol] = inner_stride_ (constVEC (& x [1] [irow] - 1, x.nrow), x.ncol, y.row (icol), 1);
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
+				const double *px = & x [1] [irow];
+				const double *py = & y [icol] [1],
+				(longdouble) *px * (longdouble) *py,
+				(px += x.ncol, py += 1)
+			)
+			target [irow] [icol] = double (sum);
+		}
+	}
 }
 
 void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
@@ -180,13 +166,7 @@ void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const c
 		MATmul_fast_preallocated (target, xt.get(), yt.get());
 		return;
 	}
-	for (integer icol = 1; icol <= target.ncol; icol ++) {
-		for (integer irow = 1; irow <= target.nrow; irow ++)
-			target [irow] [icol] = 0.0;
-		for (integer i = 1; i <= n; i ++)
-			for (integer irow = 1; irow <= target.nrow; irow ++)
-				target [irow] [icol] += x [i] [irow] * y [icol] [i];
-	}
+	MATmul_tt_preallocated_ (target, x, y);
 }
 
 autoMAT MATouter (constVEC x, constVEC y) {
