@@ -68,7 +68,7 @@ autostring32vector string32vector_searchAndReplace (string32vector me,
 	'nstringmatches'.
 */
 
-void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring32 name);
+void MATprintMatlabForm (constMAT m, conststring32 name);
 /*
 	Print a matrix in a form that can be used as input for octave/matlab.
 							1 2 3
@@ -80,7 +80,7 @@ void NUMdmatrix_printMatlabForm (double **m, integer nr, integer nc, conststring
 		7, 8, 9 ];
 */
 
-bool NUMdmatrix_containsUndefinedElements (const double * const *m, integer row1, integer row2, integer col1, integer col2);
+bool MAThasUndefinedElement (constMAT m);
 /* true if at least one of the elements is undefined (i.e. infinite or NaN) */
 
 void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport);
@@ -143,18 +143,6 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-template<class T>
-T ** NUMmatrix_transpose (T **m, integer nr, integer nc) {
-	autoNUMmatrix<T> to (1, nc, 1, nr);
-
-	for (integer i = 1; i <= nr; i++) {
-		for (integer j = 1; j <= nc; j++) {
-			to[j][i] = m[i][j];
-		}
-	}
-	return to.transfer();
-}
-
 double NUMvector_normalize1 (double v[], integer n);
 
 double NUMvector_normalize2 (double v[], integer n);
@@ -181,14 +169,14 @@ void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer 
 
 void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout);
 
-void NUMcovarianceFromColumnCentredMatrix (double **x, integer nrows, integer ncols, integer ndf, double **covar);
+autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf);
 /*
 	Calculate covariance matrix(ncols x ncols) from data matrix (nrows x ncols);
-	The matrix covar must already have been allocated and centered.
+	The matrix x must be column centered.
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
 
-double NUMmultivariateKurtosis (double **x, integer nrows, integer ncols, int method);
+double NUMmultivariateKurtosis (constMAT x, int method);
 /*
 	calculate multivariate kurtosis.
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
@@ -442,7 +430,7 @@ autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m);
 	Input m is a square matrix, in the lower part is the inverse of the lower Cholesky part as calculated by NUMlowerCholeskyInverse.
 */
 
-double NUMdeterminant_cholesky (double **a, integer n);
+double MATdeterminant_fromSymmetricMatrix (constMAT m);
 /*
 	ln(determinant) of a symmetric p.s.d. matrix
 */
@@ -474,7 +462,7 @@ double NUMtrace2_tt (constMAT x, constMAT y);
 
 void eigenSort (double d[], double **v, integer n, int sort);
 
-void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, integer from_col, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection, integer to_col);
+void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMAT data, integer fromColumn, constMAT eigenvectors);
 /* Input:
 	data[numberOfRows, from_col - 1 + my dimension] 
 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
@@ -487,7 +475,7 @@ void NUMdmatrix_projectRowsOnEigenspace (double **data, integer numberOfRows, in
    Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
  */
 
-void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColumns, double **eigenvectors, integer numberOfEigenvectors, integer dimension, double **projection);
+void MATprojectColumnsOnEigenspace_preallocated (MAT projection, constMAT data, constMAT eigenvectors);
 /* Input:
  	data[dimension, numberOfColumns]
  		contains the column vectors to be projected on the eigenspace.
@@ -501,11 +489,10 @@ void NUMdmatrix_projectColumnsOnEigenspace (double **data, integer numberOfColum
 */
 
 
-void NUMdominantEigenvector (double **mns, integer n, double *q, double *lambda, double tolerance);
+void NUMdominantEigenvector (constMAT mns, VEC inout_q, double *out_lambda, double tolerance);
 /*
-	Determines the first dominant eigenvector from a GENERAL matrix
-	mns[1..n][1..].
-	Besides the matrix mns, a first guess for the eigenvector q must
+	Determines the first dominant eigenvector from a square GENERAL matrix m.
+	Besides the matrix m, a first guess for the eigenvector q must
 	be supplied (e.g. 1,0,...,0) and a value for tolerance (iteration
 	stops when fabs(lamda[k] - lambda[k-1]) <= tolerance, where lamda[k] is
 	the eigenvalue at the k-th iteration step.

@@ -114,17 +114,16 @@ void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 	Eigenvectors: the columns of the matrix V
 	Eigenvalues: D_i^2
 */
-void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integer numberOfColumns) {
+void Eigen_initFromSquareRoot (Eigen me, constMAT a) {
+	Melder_assert (a.nrow >= 1);
 	integer numberOfZeroed, numberOfEigenvalues;
-	integer nsv = MIN (numberOfRows, numberOfColumns);
-
-	my dimension = numberOfColumns;
-	autoSVD svd = SVD_createFromGeneralMatrix ({a, numberOfRows, numberOfColumns});
-
+	integer nsv = MIN (a.nrow, a.ncol);
+	my dimension = a.ncol;
+	autoSVD svd = SVD_createFromGeneralMatrix (a);
 	/*
 		Make sv's that are too small zero. These values occur automatically
-		when the rank of A'A < numberOfColumns. This could occur when for
-		example numberOfRows <= numberOfColumns.
+		when the rank of A'A < a.ncol. This could occur when for
+		example numberOfRows <= a.ncol.
 		(n points in  an n-dimensional space define maximally an n-1
 		dimensional surface for which we maximally need an n-1 dimensional
 		basis.)
@@ -134,13 +133,13 @@ void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integ
 
 	numberOfEigenvalues = nsv - numberOfZeroed;
 
-	Eigen_init (me, numberOfEigenvalues, numberOfColumns);
+	Eigen_init (me, numberOfEigenvalues, a.ncol);
 	integer k = 0;
 	for (integer i = 1; i <= nsv; i ++) {
 		double t = svd -> d [i];
 		if (t > 0.0) {
 			my eigenvalues [++ k] = t * t;
-			for (integer j = 1; j <= numberOfColumns; j ++) {
+			for (integer j = 1; j <= a.ncol; j ++) {
 				my eigenvectors [k] [j] = svd -> v [j] [i];
 			}
 		}
@@ -148,29 +147,33 @@ void Eigen_initFromSquareRoot (Eigen me, double **a, integer numberOfRows, integ
 	Eigen_sort (me);
 }
 
-void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, integer numberOfColumns, double **b, integer numberOfRows_b) {
+
+void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
+	Melder_assert (a.nrow >= a.ncol && b.nrow >= b.ncol);
+	Melder_assert (a.ncol == b.ncol);
+	// Eigen has not been inited yet.
 	double *u = nullptr, *v = nullptr, maxsv2 = -10.0;
 	char jobu = 'N', jobv = 'N', jobq = 'Q';
-	integer k, ll, m = numberOfRows, n = numberOfColumns, p = numberOfRows_b;
+	integer k, ll, m = a.nrow, n = a.ncol, p = b.nrow;
 	integer lda = m, ldb = p, ldu = lda, ldv = ldb, ldq = n;
 	integer lwork = MAX (MAX (3 * n, m), p) + n, info;
 
 	/*	Melder_assert (numberOfRows >= numberOfColumns || numberOfRows_b >= numberOfColumns);*/
 
-	my dimension = numberOfColumns;
+	my dimension = a.ncol;
 
-	autoNUMvector<double> alpha (1, n);
-	autoNUMvector<double> beta (1, n);
-	autoNUMvector<double> work (1, lwork);
-	autoNUMvector<integer> iwork (1, n);
-	autoNUMmatrix<double> q (1, n, 1, n);
-	autoNUMmatrix<double> ac (NUMmatrix_transpose (a, numberOfRows, numberOfColumns), 1, 1);
-	autoNUMmatrix<double> bc (NUMmatrix_transpose (b, numberOfRows_b, numberOfColumns), 1, 1);
+	autoVEC alpha = VECraw (n);
+	autoVEC beta = VECraw (n);
+	autoVEC work = VECraw (lwork);
+	autoINTVEC iwork = INTVECzero (n);
+	autoMAT q = MATraw (n, n);
+	autoMAT ac = MATtranspose (a);
+	autoMAT bc  = MATtranspose (b);
 
-	(void) NUMlapack_dggsvd (&jobu, &jobv, &jobq, &m, &n, &p, &k, &ll,
-	    &ac[1][1], &lda, &bc[1][1], &ldb, &alpha[1], &beta[1], u, &ldu,
-	    v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
-	Melder_require (info == 0, U"dggsvd fails.");
+	(void) NUMlapack_dggsvd (& jobu, & jobv, & jobq, & m, & n, & p, & k, & ll,
+		& ac [1][1], & lda, & bc [1][1], & ldb, & alpha [1], & beta [1], u, & ldu,
+		v, & ldv, & q [1][1], & ldq, & work [1], & iwork [1], & info);
+	Melder_require (info == 0, U"dggsvd fails with code ", info, U".");
 
 	// Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
 
@@ -183,34 +186,35 @@ void Eigen_initFromSquareRootPair (Eigen me, double **a, integer numberOfRows, i
 		}
 	}
 
-	// Deselect the eigenvalues < eps * max_eigenvalue.
+	// Deselect the eigenvalues < eps * max_eigenvalue by making them -1.0
 
-	n = 0;
+	integer numberOfDeselected = 0;
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		if (alpha [i] < NUMfpp -> eps * maxsv2) {
-			n ++; alpha [i] = -1.0;
+			numberOfDeselected ++; 
+			alpha [i] = -1.0;
 		}
 	}
 
-	Melder_require (ll - n > 0, U"No eigenvectors can be found. Matrix too singular.");
+	Melder_require (ll - numberOfDeselected > 0, U"No eigenvectors can be found. Matrix too singular.");
 
-	Eigen_init (me, ll - n, numberOfColumns);
+	Eigen_init (me, ll - numberOfDeselected, a.ncol);
 
-	integer ii = 0;
+	integer numberOfEigenvalues = 0;
 	for (integer i = k + 1; i <= k + ll; i ++) {
 		if (alpha [i] == -1.0) {
 			continue;
 		}
 
-		my eigenvalues [++ ii] = alpha [i];
-		for (integer j = 1; j <= numberOfColumns; j ++) {
-			my eigenvectors [ii] [j] = q [i] [j];
+		my eigenvalues [++ numberOfEigenvalues] = alpha [i];
+		for (integer j = 1; j <= a.ncol; j ++) {
+			my eigenvectors [numberOfEigenvalues] [j] = q [i] [j];
 		}
 	}
 
 	Eigen_sort (me);
 
-	NUMnormalizeRows (my eigenvectors.at, my numberOfEigenvalues, numberOfColumns, 1);
+	NUMnormalizeRows (my eigenvectors.at, my numberOfEigenvalues, a.ncol, 1);
 }
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {

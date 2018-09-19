@@ -218,7 +218,7 @@ void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, c
 		// Principal axes are a and b with eigenvector/orientation (cs, sn).
 
 		double a, b, cs, sn;
-		NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], &a, &b, &cs, &sn);
+		NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], & a, & b, & cs, & sn);
 		// 1. Take sqrt to get units of 'std_dev'
 
 		a = scale * sqrt (a) / 2.0;
@@ -286,9 +286,10 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale, 
 	}
 }
 
-autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2) {
+autoSSCP SSCP_toTwoDimensions (SSCP me, constVEC v1, constVEC v2) {
 	try {
-		double *vec [3];
+		Melder_assert (v1.size == v2.size && v1.size == my numberOfColumns);
+		const double *vec [3];
 		autoSSCP thee = SSCP_create (2);
 
 		// Projection P of S on v1 and v2 (given matrix V' with 2 rows) is P = V'SV
@@ -296,7 +297,7 @@ autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2) {
 
 		// For the new centroids cnew [i] = sum(m) V' [i] [m]*c [m]
 
-		vec [1] = v1; vec [2] = v2;
+		vec [1] = v1.at; vec [2] = v2.at;
 		if (my numberOfRows == 1) { // 1xn diagonal matrix
 			for (integer k = 1; k <= my numberOfColumns; k ++) {
 				thy data [1] [1] += v1 [k] * my data [1] [k] * v1 [k];
@@ -506,7 +507,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 
 autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole) {
 	try {
-		Melder_require (! NUMdmatrix_containsUndefinedElements (my data.at, 1, my numberOfRows, 1, my numberOfColumns),
+		Melder_require (! MAThasUndefinedElement (my data.get()),
 			U"All the table's elements should be defined.");
 
 		if (rowb == 0 && rowe == 0) {
@@ -789,24 +790,22 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 			nx = ny; ny = m - nx;
 		}
 
-		autoCCA thee = Thing_new (CCA);
-		autoNUMmatrix<double> sxx (1, nx, 1, nx);
-		autoNUMmatrix<double> syy (1, ny, 1, ny);
-		autoNUMmatrix<double> syx (1, ny, 1, nx);
-
 		// Copy Syy and Sxx into upper part of syy and sxx matrices.
 
+		autoMAT syy = MATraw (ny, ny);
 		for (integer i = 1; i <= ny; i ++) {
 			for (integer j = i; j <= ny; j ++) {
 				syy [i] [j] = my data [yof + i] [yof + j];
 			}
 		}
+		autoMAT sxx = MATraw (nx, nx);
 		for (integer i = 1; i <= nx; i ++) {
 			for (integer j = i; j <= nx; j ++) {
 				sxx [i] [j] = my data [xof + i] [xof + j];
 			}
 		}
 
+		autoMAT syx = MATraw (ny, nx);
 		for (integer i = 1; i <= nx; i ++) {
 			for (integer j = 1; j <= ny; j ++) {
 				syx [i] [j] = my data [yof + i] [xof + j];
@@ -818,11 +817,11 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		(void) NUMlapack_dpotf2 (& upper, & ny, & syy [1] [1], & ny, & info);
 		if (info != 0) Melder_throw (U"The leading minor of order ", info, U" is not positive definite, and the "
-			                             U"factorization of Syy could not be completed.");
+			U"factorization of Syy could not be completed.");
 
 		(void) NUMlapack_dpotf2 (& upper, & nx, & sxx [1] [1], & nx, & info);
 		if (info != 0) Melder_throw (U"The leading minor of order ", info, U" is not positive definite, and the "
-			                             U"factorization of Sxx could not be completed.");
+			U"factorization of Sxx could not be completed.");
 
 		/*
 			With Cholesky decomps Sxx = Ux'* Ux, Syy = Uy * Uy'
@@ -851,7 +850,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 				We switch the role of x and y.
 		*/
 
-		autoNUMmatrix<double> a (1, nx, 1, ny);
+		//autoNUMmatrix<double> a (1, nx, 1, ny);
 
 		// Uxi = inverse(Ux)
 
@@ -860,24 +859,20 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		// Prepare Uxi' * Syx' = (Syx * Uxi)'
 
-		for (integer i = 1; i <= ny; i ++) {
-			for (integer j = 1; j <= nx; j ++) {
-				longdouble t = 0.0;
-				for (integer k = 1; k <= j; k ++) {
-					t += syx [i] [k] * sxx [k] [j];
-				}
-				a [j] [i] = (double) t;
-			}
-		}
+		autoMAT a = MATmul_tt (sxx.get(), syx.get());
+		Melder_assert (a.nrow == nx && a.ncol == ny);
 
-		autoGSVD gsvd = GSVD_create_d (a.peek(), nx, ny, syy.peek(), ny);
-		autoNUMmatrix<double> ri (NUMmatrix_copy (gsvd -> r, 1, gsvd -> numberOfColumns, 1, gsvd -> numberOfColumns), 1, 1);
+		autoGSVD gsvd = GSVD_create_d (a.get(), syy.get());
+		autoMAT ri = MATcopy (gsvd -> r.get());
+		
+		autoCCA thee = Thing_new (CCA);
+
 		thy y = Eigen_create (gsvd -> numberOfColumns, gsvd -> numberOfColumns);
 		thy x = Eigen_create (thy y -> numberOfEigenvalues, nx);
 
 		// Get X=Q*R**-1
 
-		(void) NUMlapack_dtrti2 (&upper, &diag, &gsvd -> numberOfColumns, &ri [1] [1], &gsvd -> numberOfColumns, &info);
+		(void) NUMlapack_dtrti2 (& upper, & diag, & gsvd -> numberOfColumns, &  ri [1] [1], & gsvd -> numberOfColumns, & info);
 		Melder_require (info == 0, U"Error in inverse for R.");
 		
 		for (integer i = 1; i <= gsvd -> numberOfColumns; i ++) {
@@ -1018,7 +1013,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 	for (integer i = 1; i <= g; i ++) {
 		SSCP t = my at [i];
 		double ni = t -> numberOfObservations - 1.0;
-		ln_determinant = NUMdeterminant_cholesky (t -> data.at, p);
+		ln_determinant = MATdeterminant_fromSymmetricMatrix (t -> data.get());
 
 		// Box-test is for covariance matrices -> scale determinant.
 
@@ -1028,7 +1023,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 		chisq -= ni * ln_determinant;
 	}
 
-	ln_determinant = NUMdeterminant_cholesky (pooled -> data.at, p);
+	ln_determinant = MATdeterminant_fromSymmetricMatrix (pooled -> data.get());
 	ln_determinant -= p * log (pooled -> numberOfObservations - g);
 	chisq += sum * ln_determinant;
 
@@ -1045,7 +1040,7 @@ void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *p_prob, doub
 	}
 }
 
-autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double v1 [], double v2 []) {
+autoSSCPList SSCPList_toTwoDimensions (SSCPList me, constVEC v1, constVEC v2) {
 	try {
 		autoSSCPList thee = SSCPList_create ();
 		for (integer i = 1; i <= my size; i ++) {
@@ -1317,7 +1312,7 @@ autoCorrelation SSCP_to_Correlation (SSCP me) {
 
 double SSCP_getLnDeterminant (SSCP me) {
 	try {
-		return NUMdeterminant_cholesky (my data.at, my numberOfRows);
+		return MATdeterminant_fromSymmetricMatrix (my data.get());
 	} catch (MelderError) {
 		return undefined;
 	}
@@ -1517,7 +1512,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			 */
 			double lnd;
 			try {
-				lnd = NUMdeterminant_cholesky (pool -> data.at, p);
+				lnd = MATdeterminant_fromSymmetricMatrix (pool -> data.get());
 			} catch (MelderError) {
 				Melder_throw (U"Pooled covariance matrix is singular.");
 			}
@@ -1527,7 +1522,7 @@ void Covariances_equality (CovarianceList me, int method, double *p_prob, double
 			for (integer i = 1; i <= numberOfMatrices; i ++) {
 				Covariance ci = my at [i];
 				try {
-					lnd = NUMdeterminant_cholesky (ci -> data.at, p);
+					lnd = MATdeterminant_fromSymmetricMatrix (ci -> data.get());
 				} catch (MelderError) {
 					Melder_throw (U"Covariance matrix ", i, U" is singular.");
 				}
@@ -1599,7 +1594,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 	Melder_assert (thy data.ncol == p);
 	autoMAT linv = matrixcopy (thy data.get());
 	MATlowerCholeskyInverse_inplace (linv.get(), & ln_thee);
-	ln_me = NUMdeterminant_cholesky (my data.at, p);
+	ln_me = MATdeterminant_fromSymmetricMatrix (my data.get());
 
 	/*
 		We need trace (A B^-1). We have A and the inverse L^(-1) of the
@@ -1832,10 +1827,13 @@ autoTableOfReal Correlation_confidenceIntervals (Correlation me, double confiden
 						d = - d;
 					}
 					q = b - d;
-					rmin = q / a; rmin /= sqrt (1.0 + rmin * rmin);
-					rmax = c / q; rmax /= sqrt (1.0 + rmax * rmax);
+					rmin = q / a; 
+					rmin /= sqrt (1.0 + rmin * rmin);
+					rmax = c / q; 
+					rmax /= sqrt (1.0 + rmax * rmax);
 					if (rmin > rmax) {
-						double t = rmin; rmin = rmax; rmax = t;
+						double t = rmin; 
+						rmin = rmax; rmax = t;
 					}
 				} else {
 					rmax = rmin = 0;
@@ -1861,15 +1859,15 @@ void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContr
 	integer p = my numberOfRows;
 	double chisq = undefined, prob = undefined, df = p * (p -1) / 2.0;
 
-	if (numberOfContraints <= 0) {
+	if (numberOfContraints <= 0)
 		numberOfContraints = 1;
-	}
+
 	if (numberOfContraints > my numberOfObservations) {
 		Melder_warning (U"Correlation_testDiagonality_bartlett: number of constraints cannot exceed the number of observations.");
 		return;
 	}
 	if (my numberOfObservations >= numberOfContraints) {
-		double ln_determinant = NUMdeterminant_cholesky (my data.at, p);
+		double ln_determinant = MATdeterminant_fromSymmetricMatrix (my data.get());
 		chisq = - ln_determinant * (my numberOfObservations - numberOfContraints - (2.0 * p + 5.0) / 6.0);
 		if (p_prob) {
 			prob = NUMchiSquareQ (chisq, df);
@@ -1897,17 +1895,17 @@ void SSCP_expand (SSCP me) {
 	// No expansion for a standard matrix or if already expanded and data has not changed!
 
 	if ((my expansionNumberOfRows == 0 && my numberOfRows == my numberOfColumns) ||
-	        (my expansionNumberOfRows > 0 && ! my dataChanged)) {
+	        (my expansionNumberOfRows > 0 && ! my dataChanged))
 		return;
-	}
+
 	if (NUMisEmpty (my expansion.get()))
 		my expansion = MATzero (my numberOfColumns, my numberOfColumns);
-	for (integer ir = 1; ir <= my numberOfColumns; ir ++) {
+	for (integer ir = 1; ir <= my numberOfColumns; ir ++)
 		for (integer ic = ir; ic <= my numberOfColumns; ic ++) {
 			integer dij = labs (ir - ic);
 			my expansion [ir] [ic] = my expansion [ic] [ir] = dij < my numberOfRows ? my data [dij + 1] [ic] : 0.0;
 		}
-	}
+
 	// Now make 'my data' point to 'my expansion'
 	std::swap (my data, my expansion);
 	my expansionNumberOfRows = my numberOfRows;

@@ -1998,8 +1998,8 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 	// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
 
 	double tolerance = 1e-4;
-	autoNUMmatrix<double> wsih (1, nPoints, 1, nPoints);
-	autoNUMvector<double> solution (1, nPoints);
+	autoMAT wsih = MATraw (nPoints, nPoints);
+	autoVEC solution = VECraw (nPoints);
 
 	for (integer h = 1; h <= nDimensions; h ++) {
 		autoScalarProductList sprc = Data_copy (zc);
@@ -2041,7 +2041,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 			solution [k] = x [k] [h];
 		}
 
-		NUMdominantEigenvector (wsih.peek(), nPoints, solution.peek(), & lambda, tolerance);
+		NUMdominantEigenvector (wsih.get(), solution.get(), & lambda, tolerance);
 
 		// normalize the solution: centre and x'x = 1
 

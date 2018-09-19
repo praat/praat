@@ -450,7 +450,7 @@ void GaussianMixture_PCA_getIntervalsAlongDirections (GaussianMixture me, PCA th
 	Melder_require (d1 > 0 && d1 <= my dimension && d2 > 0 && d2 <= my dimension, 
 		U"Incorrect directions.");
 	
-	autoSSCPList sscps = SSCPList_toTwoDimensions (my covariances->asSSCPList(), thy eigenvectors [d1], thy eigenvectors [d2]);
+	autoSSCPList sscps = SSCPList_toTwoDimensions (my covariances->asSSCPList(), thy eigenvectors.row (d1), thy eigenvectors.row (d2));
 	SSCPList_getEllipsesBoundingBoxCoordinates (sscps.get(), -nsigmas, 0, xmin, xmax, ymin, ymax);
 }
 
@@ -562,7 +562,7 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 		d2_inverted = 1;
 	}
 
-	autoSSCPList thee = SSCPList_toTwoDimensions (my covariances->asSSCPList(), his eigenvectors [d1], his eigenvectors [d2]);   // FIXME
+	autoSSCPList thee = SSCPList_toTwoDimensions (my covariances->asSSCPList(), his eigenvectors.row(d1), his eigenvectors.row (d2));
 
 	if (d1_inverted) {
 		Eigen_invertEigenvector (him, d1);
@@ -626,7 +626,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 			}
 		} else {
 			autoPCA pca = SSCP_to_PCA (cov_t.get());
-			autoSSCP s2d = SSCP_toTwoDimensions (cov_t.get(), pca -> eigenvectors [1], pca -> eigenvectors [2]);
+			autoSSCP s2d = SSCP_toTwoDimensions (cov_t.get(), pca -> eigenvectors.row(1), pca -> eigenvectors.row(2));
 			autoConfiguration means2d = Configuration_create (my numberOfComponents, 2);
 
 			double a, b, cs, sn;

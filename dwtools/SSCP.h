@@ -216,11 +216,11 @@ autoSSCP SSCPList_to_SSCP_sum (SSCPList me);
 
 autoSSCP SSCPList_to_SSCP_pool (SSCPList me);
 
-void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *probability, double *chisq, double *df);
+void SSCPList_getHomegeneityOfCovariances_box (SSCPList me, double *out_probability, double *out_chisq, double *out_df);
 
-autoSSCP SSCP_toTwoDimensions (SSCP me, double *v1, double *v2);
+autoSSCP SSCP_toTwoDimensions (SSCP me, constVEC v1, constVEC v2);
 
-autoSSCPList SSCPList_toTwoDimensions (SSCPList me, double *v1, double *v2);
+autoSSCPList SSCPList_toTwoDimensions (SSCPList me, constVEC v1, constVEC v2);
 
 autoSSCPList SSCPList_extractTwoDimensions (SSCPList me, integer d1, integer d2);
 
