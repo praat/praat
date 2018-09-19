@@ -1281,21 +1281,6 @@ double NUMfrobeniusnorm (constMAT x);
 	Returns frobenius norm of matrix sqrt (sum (i=1:nrow, j=1:ncol, x[i][j]^2))
 */
 
-void MATmul_nn_preallocated (MAT z, constMAT x, constMAT y);
-autoMAT MATmul_nn (constMAT x, constMAT y);
-// Z = X.Y
-
-void MATmul_nt_preallocated (MAT z, constMAT x, constMAT y);
-autoMAT MATmul_nt (constMAT x, constMAT y);
-// Z = X.Y'
-
-autoMAT MATmul_tt (constMAT x, constMAT y);
-// Z = X'.Y' = (Y.X)'
-
-void MATmul_tn_preallocated (MAT z, constMAT x, constMAT y);
-autoMAT MATmul_tn (constMAT x, constMAT y);
-// Z = X'.Y
-
 inline autoINTVEC INTVECto (integer to) {
 	autoINTVEC result = INTVECraw (to);
 	for (integer i = 1; i <= to; i ++)
