@@ -425,7 +425,6 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		autoVEC centroid = VECzero (dimension);
 		autoMAT between = MATzero (thy numberOfGroups, dimension);
 		thy aprioriProbabilities = VECraw (thy numberOfGroups);
-		thy costs = MATraw (thy numberOfGroups, thy numberOfGroups);
 
 		longdouble sum = 0.0;
 		for (integer k = 1; k <= thy numberOfGroups; k ++) {
@@ -454,11 +453,17 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		thy eigen = Thing_new (Eigen);
 		Eigen_initFromSquareRootPair (thy eigen.get(), between.at, thy numberOfGroups, dimension, mew -> data.at, my numberOfRows);
 
-		// Default priors and costs
-
+		/*
+			Costs.
+		*/
+		thy costs = MATraw (thy numberOfGroups, thy numberOfGroups);
 		for (integer igroup = 1; igroup <= thy numberOfGroups; igroup ++) {
 			for (integer jgroup = igroup + 1; jgroup <= thy numberOfGroups; jgroup ++)
 				thy costs [igroup] [jgroup] = thy costs [jgroup] [igroup] = 1.0;
+			/*
+				As the costs have been raw-initialized, set the diagonal to zero.
+			*/
+			thy costs [igroup] [igroup] = 0.0;
 		}
 		return thee;
 	} catch (MelderError) {
