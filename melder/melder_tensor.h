@@ -569,7 +569,7 @@ public:
 	matrix (const automatrix<T>& other) = delete;
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
-	T *& operator[] (integer i) {
+	T *& operator[] (integer i) const {
 		return our at [i];
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
@@ -641,7 +641,8 @@ public:
 	~automatrix () {   // destroy the payload (if any)
 		if (our at) NUMmatrix_free (our at, 1, 1);
 	}
-	matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	//matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	const matrix<T>& get () { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-automatrix
 		our reset();
 		our at = given.at;
