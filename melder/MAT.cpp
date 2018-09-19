@@ -58,13 +58,13 @@ inline static double inner_stride_ (constVEC x, integer xstride, constVEC y, int
 	return (double) sum;
 }
 
-void MATmul_preallocated_ (MAT target, constMAT x, constMAT y) {
+void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
 	Melder_assert (target.nrow == x.nrow);
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
 	#if 1
 	/*
-		This version is 11,0.66,0.48,1.69 ns per multiply-add for size = 1,10,100,1000.
+		This version is 6,0.66,0.48,1.69 ns per multiply-add for size = 1,10,100,1000.
 	*/
 	for (integer irow = 1; irow <= target.nrow; irow ++)
 		for (integer icol = 1; icol <= target.ncol; icol ++)
@@ -75,7 +75,7 @@ void MATmul_preallocated_ (MAT target, constMAT x, constMAT y) {
 void MATmul_preallocated_fast_ (const MAT& target, const constMAT& x, const constMAT& y) {
 	#if 1
 	/*
-		This version is 17,0.76,0.32,0.34 ns per multiply-add for size = 1,10,100,1000.
+		This version is 10,0.76,0.32,0.34 ns per multiply-add for size = 1,10,100,1000.
 
 		The trick is to have the inner loop run along two final indices.
 		Note that the multiplication factor within the inner loop is constant,
