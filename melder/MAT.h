@@ -79,6 +79,31 @@ extern void MATcentreEachRow_inplace (MAT x);
 */
 extern void MATdoubleCentre_inplace (MAT x);
 
+/*
+	Precise matrix multiplication, using pairwise summation.
+	The speed is 11,0.66,0.48,1.69 ns per multiply-add
+	for x.nrow = x.ncol = y.ncol = 1,10,100,1000.
+*/
+extern void MATmul_preallocated_ (MAT target, constMAT x, constMAT y);
+inline void MATmul_preallocated  (MAT target, constMAT x, constMAT y) {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == y.ncol);
+	Melder_assert (x.ncol == y.nrow);
+	MATmul_preallocated_ (target, x, y);
+}
+/*
+	Rough matrix multiplication, using an in-cache inner loop.
+	The speed is 10,0.76,0.32,0.34 ns per multiply-add
+	for x.nrow = x.ncol = y.ncol = 1,10,100,1000.
+*/
+extern void MATmul_preallocated_fast_ (const MAT& target, const constMAT& x, const constMAT& y);
+inline void MATmul_preallocated_fast  (const MAT& target, const constMAT& x, const constMAT& y) {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == y.ncol);
+	Melder_assert (x.ncol == y.nrow);
+	MATmul_preallocated_fast_ (target, x, y);
+}
+
 inline void MATmultiply_inplace (MAT x, double factor) {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)

@@ -28,7 +28,7 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 		almost diagonal matrices like for example in a GaussianMixture,
 		or for efficiently calculating many times a distance like a'S^(-1)a
 	*/
-	#if ! oo_READING && ! oo_WRITING
+	#if oo_DECLARING || oo_DESTROYING
 		oo_INTEGER (expansionNumberOfRows)
 		oo_INT (dataChanged)
 		oo_MAT (expansion, expansionNumberOfRows, numberOfColumns)

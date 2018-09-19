@@ -58,8 +58,9 @@ enums_begin (kPraatTests, 0)
 	enums_add (kPraatTests, 38, TIME_CALLOC, U"TimeCalloc")
 	enums_add (kPraatTests, 39, TIME_ADD, U"TimeAdd")
 	enums_add (kPraatTests, 40, TIME_SIN, U"TimeSin")
-	enums_add (kPraatTests, 41, THING_AUTO, U"ThingAuto")
-	enums_add (kPraatTests, 42, FILEINMEMORYMANAGER_IO, U"FileInMemoryManager_io")
-enums_end (kPraatTests, 42, CHECK_RANDOM_1009_2009)
+	enums_add (kPraatTests, 41, TIME_MATMUL, U"TimeMatMul")
+	enums_add (kPraatTests, 42, THING_AUTO, U"ThingAuto")
+	enums_add (kPraatTests, 43, FILEINMEMORYMANAGER_IO, U"FileInMemoryManager_io")
+enums_end (kPraatTests, 43, CHECK_RANDOM_1009_2009)
 
 /* End of file Praat_tests_enums.h */
