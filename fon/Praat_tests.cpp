@@ -449,7 +449,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				//MATmul_preallocated_ (result, xget, yget);
-				MATmul_tt_fast_preallocated (result.get(), x.get(), y.get());
+				MATmul_preallocated (result.get(), x.get(), y.get());
 			t = Melder_stopwatch () / size / size / size;
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
