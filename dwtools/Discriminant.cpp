@@ -480,24 +480,6 @@ autoConfiguration Discriminant_TableOfReal_to_Configuration (Discriminant me, Ta
 	}
 }
 
-/*
-	Calculate squared Mahalanobis distance: (v-m)'S^-1(v-m).
-	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition
-	S = L.L'.
-*/
-static double mahalanobisDistanceSq (double **li, integer n, double *v, double *m, double *buf) {
-	for (integer i = 1; i <= n; i ++)
-		buf [i] = v [i] - m [i];
-	longdouble chisq = 0.0;
-	for (integer i = n; i > 0; i --) {
-		longdouble t = 0.0;
-		for (integer j = 1; j <= i; j ++)
-			t += li [i] [j] * buf [j];
-		chisq += t * t;
-	}
-	return (double) chisq;
-}
-
 autoTableOfReal Discriminant_TableOfReal_mahalanobis (Discriminant me, TableOfReal thee, integer group, bool poolCovarianceMatrices) {
 	try {
 		Melder_require (group > 0 && group <= my numberOfGroups,
@@ -602,7 +584,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		// Normalize the sum of the apriori probabilities to 1.
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
-		NUMvector_normalize1 (my aprioriProbabilities.at, numberOfGroups);
+		VEC_normalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++) {
 			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
@@ -727,7 +709,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
 		double logg = log (g);
-		NUMvector_normalize1 (my aprioriProbabilities.at, g);
+		VEC_normalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		for (integer j = 1; j <= g; j ++) {
 			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
 		}

@@ -69,7 +69,7 @@ static void NUMdmatrix_into_vector (double **m, double *v, integer r1, integer r
 		}
 	}
 }
-
+//TODO
 static void NUMdvector_into_matrix (const double *v, double **m, integer r1, integer r2, integer c1, integer c2) {
 	integer k = 1;
 	for (integer i = r1; i <= r2; i ++) {
@@ -79,17 +79,10 @@ static void NUMdvector_into_matrix (const double *v, double **m, integer r1, int
 	}
 }
 
-static void NUMdmatrix_normalizeRows (double **m, integer nr, integer nc) {
-	for (integer i = 1; i <= nr; i ++) {
-		longdouble rowSum = 0.0;
-		for (integer j = 1; j <= nc; j ++) {
-			rowSum += m [i] [j];
-		}
-		if (rowSum != 0.0) {
-			for (integer j = 1; j <= nc; j ++) {
-				m [i] [j] /= rowSum;
-			}
-		}
+static void MAT_divideRowByRowsum_inplace (MAT m) {
+	for (integer i = 1; i <= m.nrow; i ++) {
+		longdouble rowSum = NUMsum (m.row (i));
+		if (rowSum != 0.0) VECmultiply_inplace (m.row (i), 1.0 / rowSum);
 	}
 }
 
@@ -703,7 +696,7 @@ autoSimilarity Confusion_to_Similarity (Confusion me, bool normalize, int symmet
 
 		matrixcopy_preallocated (thy data.get(), my data.get());
 
-		if (normalize) NUMdmatrix_normalizeRows (thy data.at, nxy, nxy);
+		if (normalize) MAT_divideRowByRowsum_inplace (thy data.get());
 
 		if (symmetrizeMethod == 1) return thee;
 
@@ -800,7 +793,7 @@ autoDissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumCo
 				if (thy data [i] [j] == 0.0)
 					thy data [i] [j] = minimumConfusionLevel;
 
-		NUMdmatrix_normalizeRows (thy data.at, my numberOfColumns, my numberOfColumns);
+		MAT_divideRowByRowsum_inplace (thy data.get());
 
 		/*
 			Consider the fraction as the fraction overlap between two gaussians with unequal sigmas (1 & s).
@@ -1722,7 +1715,8 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distanc
 static double func (Daata object, const double p []) {
 	Kruskal me = (Kruskal) object;
 	MDSVec him = my vec.get();
-	double **x = my configuration -> data.at, s, t, dbar, stress;
+	MAT x = my configuration -> data.get();
+	double s, t, dbar, stress;
 	double metric = my configuration -> metric;
 	integer numberOfDimensions = my configuration -> numberOfColumns;
 	integer numberOfPoints = my configuration -> numberOfRows;
@@ -1731,12 +1725,12 @@ static double func (Daata object, const double p []) {
 	// Substitute results of minimizer into configuration and
 	// normalize the configuration
 
-	NUMdvector_into_matrix (p, x, 1, numberOfPoints, 1, numberOfDimensions);
+	NUMdvector_into_matrix (p, x.at, 1, numberOfPoints, 1, numberOfDimensions); //TODO
 
 	// Normalize
 
-	MATcentreEachColumn_inplace (MAT (x, numberOfPoints, numberOfDimensions));
-	NUMnormalize (x, numberOfPoints, numberOfDimensions, sqrt (numberOfPoints));
+	MATcentreEachColumn_inplace (x); //TODO
+	MATnormalize_inplace (x, 2.0, sqrt (numberOfPoints)); //TODO
 
 	// Calculate interpoint distances from the configuration
 
