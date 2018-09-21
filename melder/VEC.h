@@ -53,13 +53,19 @@ inline autoVEC VECadd (constVEC x, double addend) {
 	VECadd_preallocated (result.get(), x, addend);
 	return result;
 }
-inline void VECadd_preallocated (VEC target, constVEC x, constVEC y) {
-	Melder_assert (x.size == target.size);
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= x.size; i ++)
+extern void VECadd_macfast_ (const VEC& target, const constVEC& x, const constVEC& y);
+inline void VECadd_preallocated  (const VEC& target, const constVEC& x, const constVEC& y) {
+	integer n = target.size;
+	Melder_assert (x.size == n);
+	Melder_assert (y.size == n);
+	#if defined (macintosh)
+		if (n >= 64)
+			return VECadd_macfast_ (target, x, y);
+	#endif
+	for (integer i = 1; i <= n; i ++)
 		target [i] = x [i] + y [i];
 }
-inline autoVEC VECadd (constVEC x, constVEC y) {
+inline autoVEC VECadd (const constVEC& x, const constVEC& y) {
 	autoVEC result = VECraw (x.size);
 	VECadd_preallocated (result.get(), x, y);
 	return result;
