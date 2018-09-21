@@ -2165,7 +2165,9 @@ integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (double *x, double *y, integer numberOfPoints, double *p_m, double *p_intercept, bool incompleteMethod) {
+void NUMlineFit_theil (double *x, double *y, integer numberOfPoints,
+	double *out_m, double *out_intercept, bool incompleteMethod)
+{
 	try {
 		/* Theil's incomplete method:
 			Split (x [i],y [i]) as
@@ -2185,40 +2187,34 @@ void NUMlineFit_theil (double *x, double *y, integer numberOfPoints, double *p_m
 			intercept = y [1] - m * x [1];
 		} else {
 			integer numberOfCombinations;
-			autoNUMvector<double> mbs;
+			autoVEC mbs;
 			if (incompleteMethod) { // incomplete method
 				numberOfCombinations = numberOfPoints / 2;
-				mbs.reset (1, numberOfPoints); //
+				mbs = VECzero (numberOfPoints); //
 				integer n2 = numberOfPoints % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
-				for (integer i = 1; i <= numberOfCombinations; i ++) {
+				for (integer i = 1; i <= numberOfCombinations; i ++)
 					mbs [i] = (y [n2 + i] - y [i]) / (x [n2 + i] - x [i]);
-				}
 			} else { // use all combinations
 				numberOfCombinations = (numberOfPoints - 1) * numberOfPoints / 2;
-				mbs.reset (1, numberOfCombinations);
+				mbs = VECzero (numberOfCombinations);
 				integer index = 0;
-				for (integer i = 1; i < numberOfPoints; i ++) {
-					for (integer j = i + 1; j <= numberOfPoints; j ++) {
+				for (integer i = 1; i < numberOfPoints; i ++)
+					for (integer j = i + 1; j <= numberOfPoints; j ++)
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
-					}
-				}
 			}
-			NUMsort_d (numberOfCombinations, mbs.peek());
-			m = NUMquantile (numberOfCombinations, mbs.peek(), 0.5);
-			for (integer i = 1; i <= numberOfPoints; i ++) {
+			VECsort_inplace (mbs.subview (1, numberOfCombinations));
+			m = NUMquantile (mbs.subview (1, numberOfCombinations), 0.5);
+			for (integer i = 1; i <= numberOfPoints; i ++)
 				mbs [i] = y [i] - m * x [i];
-			}
-			NUMsort_d (numberOfPoints, mbs.peek());
-			intercept = NUMquantile (numberOfPoints, mbs.peek(), 0.5);
+			VECsort_inplace (mbs.subview (1, numberOfPoints));
+			intercept = NUMquantile (mbs.subview (1, numberOfPoints), 0.5);
 		}
-		if (p_m) {
-			*p_m = m;
-		}
-		if (p_intercept) {
-			*p_intercept = intercept;
-		}
+		if (out_m)
+			*out_m = m;
+		if (out_intercept)
+			*out_intercept = intercept;
 	} catch (MelderError) {
-		Melder_throw (U"No line fit (Theil's method)");
+		Melder_throw (U"No line fit (Theil's method).");
 	}
 }
 
