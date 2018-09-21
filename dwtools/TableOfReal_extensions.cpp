@@ -919,18 +919,13 @@ bool TableOfRealList_haveIdenticalDimensions (TableOfRealList me) {
 
 double TableOfReal_getColumnQuantile (TableOfReal me, integer col, double quantile) {
 	try {
-		if (col < 1 || col > my numberOfColumns) {
+		if (col < 1 || col > my numberOfColumns)
 			return undefined;
-		}
-		autoNUMvector<double> values (1, my numberOfRows);
-
-		for (integer i = 1; i <= my numberOfRows; i ++) {
+		autoVEC values = VECraw (my numberOfRows);
+		for (integer i = 1; i <= my numberOfRows; i ++)
 			values [i] = my data [i] [col];
-		}
-
-		NUMsort_d (my numberOfRows, values.peek());
-		double r = NUMquantile (my numberOfRows, values.peek(), quantile);
-		return r;
+		VECsort_inplace (values.get());
+		return NUMquantile (values.get(), quantile);
 	} catch (MelderError) {
 		return undefined;
 	}
@@ -1277,21 +1272,17 @@ autoTableOfReal TableOfReal_sortOnlyByRowLabels (TableOfReal me) {
 
 static void NUMmedianizeColumns (double **a, integer rb, integer re, integer cb, integer ce) {
 	integer n = re - rb + 1;
-
-	if (n < 2) {
+	if (n < 2)
 		return;
-	}
-	autoNUMvector<double> tmp (1, n);
+	autoVEC tmp = VECzero (n);
 	for (integer j = cb; j <= ce; j ++) {
 		integer k = 1;
-		for (integer i = rb; i <= re; i ++, k ++) {
+		for (integer i = rb; i <= re; i ++, k ++)
 			tmp [k] = a [i] [j];
-		}
-		NUMsort_d (n, tmp.peek());
-		double median = NUMquantile (n, tmp.peek(), 0.5);
-		for (integer i = rb; i <= re; i ++) {
+		VECsort_inplace (tmp.get());
+		double median = NUMquantile (tmp.get(), 0.5);
+		for (integer i = rb; i <= re; i ++)
 			a [i] [j] = median;
-		}
 	}
 }
 

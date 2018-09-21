@@ -22,7 +22,6 @@
 
 void VECsort_inplace (VEC x);
 
-void NUMsort_d (integer n, double ra []);   // heap sort
 void NUMsort_integer (integer n, integer ra []);
 void NUMsort_str (string32vector a);
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
