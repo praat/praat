@@ -439,6 +439,21 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
 		} break;
+		case kPraatTests::TIME_VECADD: {
+			integer size = Melder_atoi (arg2);
+			autoVEC x = VECrandomGauss (size, 0.0, 1.0);
+			autoVEC y = VECrandomGauss (size, 0.0, 1.0);
+			autoVEC result = VECraw (size);
+			//MAT resultget = result.get();
+			//constMAT xget = x.get(), yget = y.get();
+			Melder_stopwatch ();
+			for (integer iteration = 1; iteration <= n; iteration ++)
+				//MATmul_preallocated_ (result, xget, yget);
+				VECadd_preallocated (result.get(), x.get(), y.get());
+			t = Melder_stopwatch () / size;
+			double sum = NUMsum (result.get());
+			MelderInfo_writeLine (sum);
+		} break;
 		case kPraatTests::TIME_MATMUL: {
 			integer size = Melder_atoi (arg2);
 			autoMAT x = MATrandomGauss (size, size, 0.0, 1.0);
@@ -449,7 +464,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				//MATmul_preallocated_ (result, xget, yget);
-				MATmul_preallocated (result.get(), x.get(), y.get());
+				MATmul_fast_preallocated (result.get(), x.get(), y.get());
 			t = Melder_stopwatch () / size / size / size;
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
