@@ -917,13 +917,11 @@ bool TableOfRealList_haveIdenticalDimensions (TableOfRealList me) {
 	return true;
 }
 
-double TableOfReal_getColumnQuantile (TableOfReal me, integer col, double quantile) {
+double TableOfReal_getColumnQuantile (TableOfReal me, integer columnNumber, double quantile) {
 	try {
-		if (col < 1 || col > my numberOfColumns)
+		if (columnNumber < 1 || columnNumber > my numberOfColumns)
 			return undefined;
-		autoVEC values = VECraw (my numberOfRows);
-		for (integer i = 1; i <= my numberOfRows; i ++)
-			values [i] = my data [i] [col];
+		autoVEC values = VECcolumn (my data.get(), columnNumber);
 		VECsort_inplace (values.get());
 		return NUMquantile (values.get(), quantile);
 	} catch (MelderError) {
