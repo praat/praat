@@ -104,11 +104,11 @@ void Configuration_normalize (Configuration me, double sumsq, bool columns) {
 	TableOfReal_centreColumns (me);
 	if (columns) {
 		sumsq = sumsq <= 0.0 ? 1.0 : sqrt (sumsq);
-		NUMnormalizeColumns (my data.at, my numberOfRows, my numberOfColumns, sumsq);
+		MATnormalizeColumns_inplace (my data.get(), 2.0, sumsq);
 	} else {
 		if (sumsq <= 0.0)
 			sumsq = my numberOfRows;
-		NUMnormalize (my data.at, my numberOfRows, my numberOfColumns, sqrt (sumsq));
+		MATnormalize_inplace (my data.get(), 2.0, sumsq);
 	}
 }
 

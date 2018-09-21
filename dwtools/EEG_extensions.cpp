@@ -137,7 +137,6 @@ autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me,
 			endTime = my xmax;
 		}
 		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
-		integer numberOfChannels;
 		autoINTVEC channels = NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, U"channel", true);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound.get(), channelRanges);
 		autoCrossCorrelationTableList him = Sound_to_CrossCorrelationTableList (soundPart.get(),

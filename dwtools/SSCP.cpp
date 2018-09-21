@@ -887,7 +887,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 			}
 		}
 
-		NUMnormalizeRows (thy y -> eigenvectors.at, thy y -> numberOfEigenvalues, thy y -> numberOfEigenvalues, 1);
+		MATnormalizeRows_inplace (thy y -> eigenvectors.get(), 2.0, 1.0);
 
 		thy numberOfCoefficients = thy y -> numberOfEigenvalues;
 		thy numberOfObservations = Melder_ifloor (my numberOfObservations);
@@ -910,7 +910,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 			}
 		}
 
-		NUMnormalizeRows (thy x -> eigenvectors.at, thy x -> numberOfEigenvalues, nx, 1);
+		MATnormalizeRows_inplace (thy x -> eigenvectors.get(), 2.0, 1.0);
 
 		if (ny < nx) {
 			autoEigen t = thy x.move();

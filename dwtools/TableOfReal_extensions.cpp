@@ -633,11 +633,11 @@ void TableOfReal_doubleCentre (TableOfReal me) {
 }
 
 void TableOfReal_normalizeColumns (TableOfReal me, double norm) {
-	NUMnormalizeColumns (my data.at, my numberOfRows, my numberOfColumns, norm);
+	MATnormalizeColumns_inplace (my data.get(), 2.0, norm);
 }
 
 void TableOfReal_normalizeRows (TableOfReal me, double norm) {
-	NUMnormalizeRows (my data.at, my numberOfRows, my numberOfColumns, norm);
+	MATnormalizeRows_inplace (my data.get(), 2.0, norm);
 }
 
 void TableOfReal_standardizeColumns (TableOfReal me) {
@@ -674,16 +674,11 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 }
 
 void TableOfReal_normalizeTable (TableOfReal me, double norm) {
-	NUMnormalize (my data.at, my numberOfRows, my numberOfColumns, norm);
+	MATnormalize_inplace (my data.get(), 2.0, norm);
 }
 
 double TableOfReal_getTableNorm (TableOfReal me) {
-	longdouble sumsq = 0.0;
-	for (integer i = 1; i <= my numberOfRows; i ++) {
-		for (integer j = 1; j <= my numberOfColumns; j ++)
-			sumsq += my data [i] [j] * my data [i] [j];
-	}
-	return sqrt ((double) sumsq);
+	return NUMnorm (my data.get(), 2.0);
 }
 
 bool TableOfReal_checkNonNegativity (TableOfReal me) {
@@ -1596,8 +1591,8 @@ autoTableOfReal TableOfReal_TableOfReal_rowCorrelations (TableOfReal me, TableOf
 			MATcentreEachRow_inplace (thy_data.get());
 		}
 		if (normalize) {
-			NUMnormalizeRows (my_data.at, my numberOfRows, my numberOfColumns, 1);
-			NUMnormalizeRows (thy_data.at, thy numberOfRows, thy numberOfColumns, 1);
+			MATnormalizeRows_inplace (my_data.get(), 2.0, 1.0);
+			MATnormalizeRows_inplace (thy_data.get(), 2.0, 1.0);
 		}
 		his rowLabels. copyElementsFrom (my rowLabels.get());
 		his columnLabels. copyElementsFrom (thy rowLabels.get());
@@ -1628,8 +1623,8 @@ autoTableOfReal TableOfReal_TableOfReal_columnCorrelations (TableOfReal me, Tabl
 			MATcentreEachColumn_inplace (thy_data.get());
 		}
 		if (normalize) {
-			NUMnormalizeColumns (my_data.at, my_data.nrow, my_data.ncol, 1);
-			NUMnormalizeColumns (thy_data.at, thy_data.nrow, thy_data.ncol, 1);
+			MATnormalizeColumns_inplace (my_data.get(), 2.0, 1.0);
+			MATnormalizeColumns_inplace (thy_data.get(), 2.0, 1.0);
 		}
 		his rowLabels. copyElementsFrom (my columnLabels.get());
 		his columnLabels. copyElementsFrom (thy columnLabels.get());

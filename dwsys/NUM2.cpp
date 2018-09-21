@@ -116,56 +116,15 @@ void MATprintMatlabForm (constMAT m, conststring32 name) {
 	MelderInfo_close ();
 }
 
-void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm) {
+void MATnormalizeColumns_inplace (MAT a, double power, double norm) {
 	Melder_assert (norm > 0.0);
-	for (integer j = 1; j <= nc; j ++) {
-		longdouble s = 0.0;
-		for (integer i = 1; i <= nr; i ++) {
-			s += a [i] [j] * a [i] [j];
-		}
-		if (s <= 0.0) {
-			continue;
-		}
-		s = sqrt (norm / (double) s);
-		for (integer i = 1; i <= nr; i ++) {
-			a [i] [j] *= s;
-		}
-	}
-}
-
-void NUMnormalizeRows (double **a, integer nr, integer nc, double norm) {
-	Melder_assert (norm > 0);
-	for (integer i = 1; i <= nr; i ++) {
-		longdouble s = 0.0;
-		for (integer j = 1; j <= nc; j ++) {
-			s += a [i] [j] * a [i] [j];
-		}
-		if (s <= 0.0) {
-			continue;
-		}
-		s = sqrt (norm / (double) s);
-		for (integer j = 1; j <= nc; j ++) {
-			a [i] [j] *= s;
-		}
-	}
-}
-
-void NUMnormalize (double **a, integer nr, integer nc, double norm) {
-	Melder_assert (norm > 0);
-	longdouble sq = 0.0;
-	for (integer i = 1; i <= nr; i ++) {
-		for (integer j = 1; j <= nc; j ++) {
-			sq += a [i] [j] * a [i] [j];
-		}
-	}
-	if (sq <= 0.0) {
-		return;
-	}
-	norm = sqrt (norm / (double) sq);
-	for (integer i = 1; i <= nr; i ++) {
-		for (integer j = 1; j <= nc; j ++) {
-			a [i] [j] *= norm;
-		}
+	autoVEC column = VECraw (a.nrow);
+	for (integer icol = 1; icol <= a.ncol; icol ++) {
+		for (integer irow = 1; irow <= column.size; irow ++)
+			column [irow] = a [irow] [icol];
+		VEC_normalize_inplace (column.get(), power, norm);
+		for (integer irow = 1; irow <= column.size; irow ++)
+			a [irow] [icol] = column [irow];
 	}
 }
 
@@ -296,42 +255,6 @@ autoVEC VECmonotoneRegression (constVEC x) {
 			fit [j] = xt;
 	}
 	return fit;
-}
-
-double NUMvector_getNorm1 (const double v [], integer n) {
-	longdouble norm = 0.0;
-	for (integer i = 1; i <= n; i ++) {
-		norm += fabs (v [i]);
-	}
-	return (double) norm;
-}
-
-double NUMvector_getNorm2 (const double v [], integer n) {
-	longdouble norm = 0.0;
-	for (integer i = 1; i <= n; i ++) {
-		norm += v [i] * v [i];
-	}
-	return sqrt ((double) norm);
-}
-
-double NUMvector_normalize1 (double v [], integer n) {
-	longdouble norm = NUMvector_getNorm1 (v, n);
-	if (norm > 0.0) {
-		for (integer i = 1; i <= n; i ++) {
-			v [i] /= norm;
-		}
-	}
-	return (double) norm;
-}
-
-double NUMvector_normalize2 (double v [], integer n) {
-	longdouble norm = NUMvector_getNorm2 (v, n);
-	if (norm > 0) {
-		for (integer i = 1; i <= n; i ++) {
-			v [i] /= norm;
-		}
-	}
-	return (double) norm;
 }
 
 #undef TINY

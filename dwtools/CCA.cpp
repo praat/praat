@@ -193,8 +193,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 
 		// Normalize eigenvectors.
 
-		NUMnormalizeRows (thy y -> eigenvectors.at, numberOfCoefficients, ny, 1);
-		NUMnormalizeRows (thy x -> eigenvectors.at, numberOfCoefficients, nx, 1);
+		MATnormalizeRows_inplace (thy y -> eigenvectors.get(), 2.0, 1.0);
+		MATnormalizeRows_inplace (thy x -> eigenvectors.get(), 2.0, 1.0);
 		Melder_assert (thy x -> dimension == thy xLabels -> numberOfStrings &&
 		               thy y -> dimension == thy yLabels -> numberOfStrings);
 		return thee;
