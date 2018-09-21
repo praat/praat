@@ -85,6 +85,11 @@ inline void VECcolumn_preallocated (VEC target, constMAT source, integer columnN
 	for (integer irow = 1; irow <= target.size; irow ++)
 		target [irow] = source [irow] [columnNumber];
 }
+inline autoVEC VECcolumn (constMAT source, integer columnNumber) {
+	autoVEC target = VECraw (source.nrow);
+	VECcolumn_preallocated (target.get(), source, columnNumber);
+	return target;
+}
 
 extern void VECmul_preallocated (VEC target, constVEC vec, constMAT mat);
 extern void VECmul_preallocated (VEC target, constMAT mat, constVEC vec);
