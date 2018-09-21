@@ -139,7 +139,7 @@ integer s_cmp (const char *a0, const char *b0, integer la, integer lb) {
 	return (0);
 }
 
-void s_copy (char *a, register char *b, integer la, integer lb) {
+void s_copy (char *a, char *b, integer la, integer lb) {
 	char *aend, *bend;
 
 	aend = a + la;
