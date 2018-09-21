@@ -143,25 +143,27 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-double NUMvector_normalize1 (double v[], integer n);
+inline void VEC_normalize_inplace (VEC v, double power, double norm) {
+	Melder_assert (norm > 0.0);
+	double oldnorm = NUMnorm (v, power);
+	if (oldnorm > 0.0)
+		VECmultiply_inplace (v, norm / oldnorm);
+}
 
-double NUMvector_normalize2 (double v[], integer n);
+inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
+	Melder_assert (norm > 0);
+	for (integer irow = 1; irow <= a.nrow; irow ++)
+		VEC_normalize_inplace (a.row (irow), power, norm);
+}
 
-double NUMvector_getNorm1 (const double v[], integer n);
+inline void MATnormalize_inplace (MAT a, double power, double norm) {
+	Melder_assert (norm > 0);
+	return VEC_normalize_inplace (asvector (a), power, norm); 
+}
 
-double NUMvector_getNorm2 (const double v[], integer n);
-
-void NUMnormalizeRows (double **a, integer nr, integer nc, double norm);
-
-void NUMnormalizeColumns (double **a, integer nr, integer nc, double norm);
+void MATnormalizeColumns_inplace (MAT a, double power, double norm);
 /*
 	Scale a[.][j] such that sqrt (Sum(a[i][j]^2, i=1..nPoints)) = norm.
-*/
-
-void NUMnormalize (double **a, integer nr, integer nc, double norm);
-/*
-	Scale all elements of the matrix [1..nr][1..nc] such that
-	(sqrt(Sum( a[i][j]^2, i=1..nr, j=1..nc)) becomes equal to norm.
 */
 
 void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce);

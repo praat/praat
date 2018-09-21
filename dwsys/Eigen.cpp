@@ -214,7 +214,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 	Eigen_sort (me);
 
-	NUMnormalizeRows (my eigenvectors.at, my numberOfEigenvalues, a.ncol, 1);
+	MATnormalizeRows_inplace (my eigenvectors.get(), 2.0, 1.0);
 }
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
