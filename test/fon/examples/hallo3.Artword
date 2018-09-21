@@ -1,0 +1,243 @@
+File type = "ooTextFile"
+Object class = "Artword"
+
+totalTime = 1 
+data []:
+    data [_]:
+        numberOfTargets = 0 
+    data [Lungs]:
+        numberOfTargets = 3 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0.4725 
+            targets [3] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 0.442727 
+            times [3] = 1 
+    data [Interarytenoid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Cricothyroid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Vocalis]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Thyroarytenoid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [PosteriorCricoarytenoid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [LateralCricoarytenoid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Stylohyoid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Sternohyoid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Thyropharyngeus]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [LowerConstrictor]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [MiddleConstrictor]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [UpperConstrictor]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Sphincter]:
+        numberOfTargets = 3 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = -0.8415 
+            targets [3] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 0.660909 
+            times [3] = 1 
+    data [Hyoglossus]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Styloglossus]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Genioglossus]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [UpperTongue]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [LowerTongue]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [TransverseTongue]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [VerticalTongue]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Risorius]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [OrbicularisOris]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [LevatorPalatini]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [TensorPalatini]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Masseter]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Mylohyoid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [LateralPterygoid]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
+    data [Buccinator]:
+        numberOfTargets = 2 
+        targets []: 
+            targets [1] = 0 
+            targets [2] = 0 
+        times []: 
+            times [1] = 0 
+            times [2] = 1 
