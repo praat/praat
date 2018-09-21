@@ -27,7 +27,7 @@
 #include "melder.h"
 #include "../dwsys/NUM2.h"
 #if USE_CBLAS_GEMM
-	#include "NUMcblas.h"
+	#include "../dwsys/NUMcblas.h"
 #endif
 #if USE_GSL_GEMM
 	#include "../external/gsl/gsl_blas.h"
