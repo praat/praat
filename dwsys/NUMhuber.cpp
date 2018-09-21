@@ -24,36 +24,31 @@
 #include "NUM2.h"
 
 void NUMmad (double *x, integer n, double *location, bool wantlocation, double *mad, double *work) {
-	double *tmp = work;
-
 	*mad = undefined;
-	Melder_require (n > 0, U"The dimension should be larger than zero.");
-	
+	Melder_require (n > 0,
+		U"The dimension should be larger than zero.");
 	if (n == 1) {
-		*location = x[1];
+		*location = x [1];
 		return;
 	}
-	autoNUMvector<double> atmp;
-	if (! work)  {
-		atmp.reset (1, n);
-		tmp = atmp.peek();
+	VEC tmp;
+	autoVEC atmp;   // keep alive till end of function
+	if (work) {
+		tmp = VEC (work, n);
+	} else {
+		atmp = VECzero (n);
+		tmp = atmp.get();
 	}
-
-	for (integer i = 1; i <= n; i ++) {
+	for (integer i = 1; i <= n; i ++)
 		tmp [i] = x [i];
-	}
-
 	if (wantlocation) {
-		NUMsort_d (n, tmp);
-		*location = NUMquantile (n, tmp, 0.5);
+		VECsort_inplace (tmp);
+		*location = NUMquantile (tmp, 0.5);
 	}
-
-	for (integer i = 1; i <= n; i++) {
+	for (integer i = 1; i <= n; i ++)
 		tmp [i] = fabs (tmp [i] - *location);
-	}
-
-	NUMsort_d (n, tmp);
-	*mad = 1.4826 * NUMquantile (n, tmp, 0.5);
+	VECsort_inplace (tmp);
+	*mad = 1.4826 * NUMquantile (tmp, 0.5);
 }
 
 static double NUMgauss (double x) {

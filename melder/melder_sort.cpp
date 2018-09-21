@@ -85,10 +85,6 @@ void VECsort_inplace (VEC x) {
 	MACRO_NUMsort (double, x.at, integer, x.size)
 }
 
-void NUMsort_d (integer n, double a []) {
-	MACRO_NUMsort (double, a, integer, n)
-}
-
 void NUMsort_integer (integer n, integer a []) {
 	MACRO_NUMsort (integer, a, integer, n)
 }
