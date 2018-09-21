@@ -80,8 +80,9 @@ extern void MATcentreEachRow_inplace (MAT x);
 extern void MATdoubleCentre_inplace (MAT x);
 
 /*
+	Target :=  X . Y
 	Precise matrix multiplication, using pairwise summation.
-	The speed is 6,0.66,0.48,1.69 ns per multiply-add
+	The speed is 7,0.69,0.51,1.96 ns per multiply-add
 	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
 	For large matrices this is a bit slow.
 */
@@ -116,9 +117,9 @@ inline autoMAT MATmul_fast (const constMAT& x, const constMAT& y) {
 }
 
 /*
-	Target := X . Y'
+	Target :=  X . Y'
 	Pairwise summation.
-	The speed is 9,0.85,0.51,0.52 ns per multiply-add
+	The speed is 7,0.71,0.52,0.52 ns per multiply-add
 	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
 */
 extern void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
@@ -135,9 +136,9 @@ inline autoMAT MATmul_nt (constMAT x, constMAT y) {
 }
 
 /*
-	Target := X' . Y
+	Target :=  X' . Y
 	Pairwise summation.
-	The speed is 12,0.88,0.60,15.1 ns per multiply-add
+	The speed is 7,0.79,0.62,15.1 ns per multiply-add
 	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
 	For large matrices this is very slow.
 */
@@ -148,7 +149,7 @@ inline void MATmul_tn_preallocated  (const MAT& target, const constMAT& x, const
 	Melder_assert (x.nrow == y.nrow);
 	MATmul_tn_preallocated_ (target, x, y);
 }
-inline autoMAT MATmul_tn (const constMAT& x, const constMAT& y) { // Z = X'.Y
+inline autoMAT MATmul_tn (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.ncol, y.ncol);
 	MATmul_tn_preallocated (result, x, y);
 	return result;
@@ -172,9 +173,9 @@ inline autoMAT MATmul_tn_fast (const constMAT& x, const constMAT& y) {
 }
 
 /*
-	Target := X' . Y'
+	Target :=  X' . Y'
 	Pairwise summation.
-	The speed is 11,1.14,0.71,1.92 ns per multiply-add
+	The speed is 7,0.66,0.47,1.49 ns per multiply-add
 	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
 	For large matrices this is a bit slow.
 */
@@ -191,9 +192,10 @@ inline autoMAT MATmul_tt (const constMAT& x, const constMAT& y) {
 	return result;
 }
 /*
-	Rough matrix multiplication, using an in-cache inner loop after explicit transposition on the heap.
-	The speed is 7,0.87,0.84,0.41 ns per multiply-add
+	Rough matrix multiplication.
+	The speed is 9,0.51,0.70,1.36 ns per multiply-add
 	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+	Not so fast for large matrices.
 */
 extern void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y);
 inline void MATmul_tt_fast_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) {
