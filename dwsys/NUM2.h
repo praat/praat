@@ -143,24 +143,20 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
-inline double VEC_normalize_inplace (VEC v, double power, double norm) {
+inline void VEC_normalize_inplace (VEC v, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	double oldnorm = NUMnorm (v, power);
-	if (oldnorm > 0.0) {
-		double scale = norm / oldnorm;
-		scale = power == 1 ? scale : power == 2.0 ? sqrt (scale) : pow (scale, 1.0 / power);
-		VECmultiply_inplace (v, scale);
-	}
-	return oldnorm;
+	if (oldnorm > 0.0)
+		VECmultiply_inplace (v, norm / oldnorm);
 }
 
 inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
 	Melder_assert (norm > 0);
-	for (integer i = 1; i <= a.nrow; i ++)
-		VEC_normalize_inplace (a.row(i), power, norm);
+	for (integer irow = 1; irow <= a.nrow; irow ++)
+		VEC_normalize_inplace (a.row (irow), power, norm);
 }
 
-inline double MATnormalize_inplace (MAT a, double power, double norm) {
+inline void MATnormalize_inplace (MAT a, double power, double norm) {
 	Melder_assert (norm > 0);
 	return VEC_normalize_inplace (asvector (a), power, norm); 
 }
