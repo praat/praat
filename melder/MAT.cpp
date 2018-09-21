@@ -18,7 +18,7 @@
 
 #include "melder.h"
 #include "../dwsys/NUM2.h"
-#include "NUMcblas.h"
+#include "../dwsys/NUMcblas.h"
 //#include "../external/gsl/gsl_matrix_double.h"
 #include "../external/gsl/gsl_blas.h"
 
