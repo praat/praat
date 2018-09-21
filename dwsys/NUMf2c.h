@@ -41,7 +41,7 @@ void s_cat(char *lp, const char *rpp[], integer rnp[], integer *np, integer ll);
 
 integer s_cmp(const char *a0, const char *b0, integer la, integer lb);
 
-void s_copy(register char *a, register char *b, integer la, integer lb);
+void s_copy(char *a, char *b, integer la, integer lb);
 /* assign strings:  a = b (when no null byte at end of string)*/
 
 #endif /* _NUMf2c_h_ */
