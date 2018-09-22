@@ -22,12 +22,14 @@
 	so they have to be declared first.
 */
 
-extern double NUMinner_ (constVEC x, constVEC y);
-extern void NUM_sum_mean (constVEC x, double *p_sum, double *p_mean) noexcept;
-extern void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
-		double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
-extern void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
-		double *p_sum, double *p_mean, double *p_sumsq, double *p_variance, double *p_stdev) noexcept;
+extern double NUMinner_ (const constVEC& x, const constVEC& y) noexcept;
+extern void NUM_sum_mean (const constVEC& x, double *out_sum, double *out_mean) noexcept;
+extern void NUM_sum_mean_sumsq_variance_stdev (const constVEC& x,
+		double *out_sum, double *out_mean,
+		double *out_sumsq, double *out_variance, double *out_stdev) noexcept;
+extern void NUM_sum_mean_sumsq_variance_stdev (const constMAT& x, integer columnNumber,
+		double *out_sum, double *out_mean,
+		double *out_sumsq, double *out_variance, double *out_stdev) noexcept;
 
 inline double NUMsum (constVEC x) noexcept {
 	integer n = x.size;
@@ -52,11 +54,13 @@ inline double NUMsum (constVEC x) noexcept {
 	From here on, the functions appear in alphabetical order.
 */
 
-extern double NUMcenterOfGravity (constVEC x) noexcept;
+extern double NUMcenterOfGravity (const constVEC& x) noexcept;
 
-extern double NUMcolumnSum (constMAT x, integer columnNumber);
+extern double NUMcolumnMean (const constMAT& x, integer columnNumber) noexcept;
 
-inline bool NUMdefined (const constMAT& x) {
+extern double NUMcolumnSum (const constMAT& x, integer columnNumber) noexcept;
+
+inline bool NUMdefined (const constMAT& x) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		for (integer icol = 1; icol <= x.ncol; icol ++)
 			if (isundef (x [irow] [icol]))
@@ -65,7 +69,7 @@ inline bool NUMdefined (const constMAT& x) {
 }
 
 template <typename T>
-bool NUMequal (constvector<T> x, constvector<T> y) {
+bool NUMequal (const constvector<T>& x, const constvector<T>& y) noexcept {
 	integer n = x.size;
 	if (y.size != n)
 		return false;
@@ -76,36 +80,36 @@ bool NUMequal (constvector<T> x, constvector<T> y) {
 	return true;
 }
 template <typename T>
-bool NUMequal (vector<T> x, constvector<T> y) {
-	return NUMequal (constvector<T> (x.at, x.size), y);
+bool NUMequal (const vector<T>& x, const constvector<T>& y) noexcept {
+	return NUMequal (constvector (x), y);
 }
 template <typename T>
-bool NUMequal (constvector<T> x, vector<T> y) {
-	return NUMequal (x, constvector<T> (y.at, y.size));
+bool NUMequal (const constvector<T>& x, const vector<T>& y) noexcept {
+	return NUMequal (x, constvector (y));
 }
 template <typename T>
-bool NUMequal (vector<T> x, vector<T> y) {
-	return NUMequal (constvector<T> (x.at, x.size), constvector<T> (y.at, y.size));
+bool NUMequal (const vector<T>& x, const vector<T>& y) noexcept {
+	return NUMequal (constvector (x), constvector (y));
 }
 
 template <typename T>
-bool NUMequal (constmatrix<T> x, constmatrix<T> y) {
+bool NUMequal (const constmatrix<T>& x, const constmatrix<T>& y) noexcept {
 	return NUMequal (asvector (x), asvector (y));
 }
 template <typename T>
-bool NUMequal (matrix<T> x, constmatrix<T> y) {
-	return NUMequal (constmatrix<T> (x.at, x.nrow, x.ncol), y);
+bool NUMequal (const matrix<T>& x, const constmatrix<T>& y) noexcept {
+	return NUMequal (constmatrix (x), y);
 }
 template <typename T>
-bool NUMequal (constmatrix<T> x, matrix<T> y) {
-	return NUMequal (x, constmatrix<T> (y.at, y.nrow, y.ncol));
+bool NUMequal (const constmatrix<T>& x, const matrix<T>& y) noexcept {
+	return NUMequal (x, constmatrix (y));
 }
 template <typename T>
-bool NUMequal (matrix<T> x, matrix<T> y) {
-	return NUMequal (constmatrix<T> (x.at, x.nrow, x.ncol), constmatrix<T> (y.at, y.nrow, y.ncol));
+bool NUMequal (const matrix<T>& x, const matrix<T>& y) noexcept {
+	return NUMequal (constmatrix (x), constmatrix (y));
 }
 
-inline bool NUMequal (constSTRVEC x, constSTRVEC y) {
+inline bool NUMequal (constSTRVEC x, constSTRVEC y) noexcept {
 	integer n = x.size;
 	if (y.size != n)
 		return false;
@@ -116,18 +120,18 @@ inline bool NUMequal (constSTRVEC x, constSTRVEC y) {
 	return true;
 }
 
-inline double NUMextremum (constVEC vec) {
+inline double NUMextremum (const constVEC& vec) noexcept {
 	double extremum = 0.0;
 	for (integer i = 1; i <= vec.size; i ++)
 		if (fabs (vec [i]) > extremum) extremum = fabs (vec [i]);
 	return extremum;
 }
 
-inline double NUMextremum (constMAT mat) {
+inline double NUMextremum (const constMAT& mat) noexcept {
 	return NUMextremum (asvector (mat));
 }
 
-inline double NUMinner (constVEC x, constVEC y) {
+inline double NUMinner (const constVEC& x, const constVEC& y) noexcept {
 	integer n = x.size;
 	Melder_assert (y.size == n);
 	if (n <= 8) {
@@ -145,15 +149,15 @@ inline double NUMinner (constVEC x, constVEC y) {
 	return NUMinner_ (x, y);
 }
 
-inline bool NUMisEmpty (constVEC x) {
+inline bool NUMisEmpty (const constVEC& x) noexcept {
 	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
 }
-inline bool NUMisEmpty (constMAT x) {
+inline bool NUMisEmpty (const constMAT& x) noexcept {
 	integer numberOfCells = x.nrow * x.ncol;
 	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
 }
 
-inline bool NUMisSymmetric (constMAT x) {
+inline bool NUMisSymmetric (const constMAT& x) noexcept {
 	if (x.nrow != x.ncol) return false;
 	integer n = x.nrow;
 	for (integer irow = 1; irow <= n; irow ++)
@@ -164,14 +168,14 @@ inline bool NUMisSymmetric (constMAT x) {
 }
 
 inline integer NUMlength (conststring32 str) {
-	return str32len (str);
+	return str ? str32len (str) : 0;
 }
 
 inline double NUMlog2 (double x) {
 	return log (x) * NUMlog2e;
 }
 
-inline double NUMmean (constVEC x) noexcept {
+inline double NUMmean (const constVEC& x) noexcept {
 	integer n = x.size;
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? undefined : n == 1 ? x [1] : (double) (0.5 * ((longdouble) x [1] + (longdouble) x [2]));
@@ -190,13 +194,13 @@ inline double NUMmean (constVEC x) noexcept {
 	return mean;
 }
 
-double NUMnorm (constVEC x, double power) noexcept;
+double NUMnorm (const constVEC& x, double power) noexcept;
 
-inline double NUMnorm (constMAT x, double power) noexcept {
+inline double NUMnorm (const constMAT& x, double power) noexcept {
 	return NUMnorm (asvector (x), power);
 }
 
-integer NUMnumberOfTokens (conststring32 str);
+integer NUMnumberOfTokens (conststring32 str) noexcept;
 
 /*
 	Return zero for non-positive base.
@@ -205,7 +209,7 @@ inline double NUMpow (double base, double exponent) {
 	return base <= 0.0 ? 0.0 : pow (base, exponent);
 }
 
-inline double NUMrowSum (constMAT x, integer rowNumber) noexcept {
+inline double NUMrowSum (const constMAT& x, integer rowNumber) noexcept {
 	Melder_assert (rowNumber > 0 && rowNumber <= x.nrow);
 	return NUMsum (constVEC (x [rowNumber], x.ncol));
 }
@@ -217,15 +221,15 @@ inline double NUMsqrt (double x) {
 	return sqrt (x);
 }
 
-double NUMstdev (constVEC x) noexcept;
+extern double NUMstdev (const constVEC& x) noexcept;
 
-inline double NUMsum (constMAT x) noexcept {
+inline double NUMsum (const constMAT& x) noexcept {
 	return NUMsum (asvector (x));
 }
 
-double NUMsumsq (constVEC x) noexcept;
+extern double NUMsumsq (const constVEC& x) noexcept;
 
-double NUMvariance (constVEC x) noexcept;
+extern double NUMvariance (const constVEC& x) noexcept;
 
 /* End of file NUM.h */
 

@@ -18,7 +18,7 @@
 
 #include "melder.h"
 
-double NUMcenterOfGravity (constVEC x) noexcept {
+double NUMcenterOfGravity (const constVEC& x) noexcept {
 	longdouble weightedSumOfIndexes = 0.0, sumOfWeights = 0.0;
 	for (integer i = 1; i <= x.size; i ++) {
 		weightedSumOfIndexes += i * x [i];
@@ -27,20 +27,7 @@ double NUMcenterOfGravity (constVEC x) noexcept {
 	return double (weightedSumOfIndexes / sumOfWeights);
 }
 
-inline static void columnSumAndMean (constMAT x, integer columnNumber,
-	double *out_sum, double *out_mean)
-{
-	integer stride = x.ncol;
-	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
-		const double *px = & x [1] [columnNumber],
-		(longdouble) *px,
-		px += stride
-	)
-	if (out_sum) *out_sum = (double) sum;
-	if (out_mean) *out_mean = double (sum / x.nrow);
-}
-
-double NUMcolumnSum (constMAT x, integer columnNumber) {
+double NUMcolumnMean (const constMAT& x, integer columnNumber) noexcept {
 	Melder_assert (columnNumber > 0 && columnNumber <= x.nrow);
 	integer stride = x.ncol;
 	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
@@ -48,20 +35,31 @@ double NUMcolumnSum (constMAT x, integer columnNumber) {
 		(longdouble) *px,
 		px += stride
 	)
-	return (double) sum;
+	return double (sum / x.nrow);
 }
 
-double NUMinner_ (constVEC x, constVEC y) {
+double NUMcolumnSum (const constMAT& x, integer columnNumber) noexcept {
+	Melder_assert (columnNumber > 0 && columnNumber <= x.nrow);
+	integer stride = x.ncol;
+	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
+		const double *px = & x [1] [columnNumber],
+		(longdouble) *px,
+		px += stride
+	)
+	return double (sum);
+}
+
+double NUMinner_ (const constVEC& x, const constVEC& y) noexcept {
 	PAIRWISE_SUM (longdouble, sum, integer, x.size,
 		const double *px = & x [1];
 		const double *py = & y [1],
 		(longdouble) *px * (longdouble) *py,
 		(++ px, ++ py)
 	)
-	return (double) sum;
+	return double (sum);
 }
 
-double NUMnorm (constVEC x, double power) noexcept {
+double NUMnorm (const constVEC& x, double power) noexcept {
 	if (power < 0.0) return undefined;
 	if (power == 2.0) {
 		PAIRWISE_SUM (longdouble, sum, integer, x.size,
@@ -87,7 +85,7 @@ double NUMnorm (constVEC x, double power) noexcept {
 	}
 }
 
-integer NUMnumberOfTokens (conststring32 string) {
+integer NUMnumberOfTokens (conststring32 string) noexcept {
 	integer numberOfTokens = 0;
 	const char32 *p = & string [0];
 	for (;;) {
@@ -101,13 +99,13 @@ integer NUMnumberOfTokens (conststring32 string) {
 	return numberOfTokens;
 }
 
-double NUMstdev (constVEC x) noexcept {
+double NUMstdev (const constVEC& x) noexcept {
 	double stdev;
 	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, nullptr, nullptr, & stdev);
 	return stdev;
 }
 
-void NUM_sum_mean (constVEC x, double *out_sum, double *out_mean) noexcept {
+void NUM_sum_mean (const constVEC& x, double *out_sum, double *out_mean) noexcept {
 	if (x.size <= 4) {
 		switch (x.size) {
 			case 0: {
@@ -158,7 +156,7 @@ void NUM_sum_mean (constVEC x, double *out_sum, double *out_mean) noexcept {
 	}
 }
 
-void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
+void NUM_sum_mean_sumsq_variance_stdev (const constVEC& x,
 	double *out_sum, double *out_mean, double *out_sumsq, double *out_variance, double *out_stdev) noexcept
 {
 	if (x.size < 2) {
@@ -293,7 +291,7 @@ void NUM_sum_mean_sumsq_variance_stdev (constVEC x,
 	if (out_stdev) *out_stdev = sqrt ((double) variance);
 }
 
-void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
+void NUM_sum_mean_sumsq_variance_stdev (const constMAT& x, integer columnNumber,
 	double *out_sum, double *out_mean, double *out_sumsq, double *out_variance, double *out_stdev) noexcept
 {
 	if (x.nrow < 2) {
@@ -330,13 +328,13 @@ void NUM_sum_mean_sumsq_variance_stdev (constMAT x, integer columnNumber,
 	if (out_stdev) *out_stdev = sqrt ((double) variance);
 }
 
-double NUMsumsq (constVEC x) noexcept {
+double NUMsumsq (const constVEC& x) noexcept {
 	double sumsq;
 	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, & sumsq, nullptr, nullptr);
 	return sumsq;
 }
 
-double NUMvariance (constVEC x) noexcept {
+double NUMvariance (const constVEC& x) noexcept {
 	double variance;
 	NUM_sum_mean_sumsq_variance_stdev (x, nullptr, nullptr, nullptr, & variance, nullptr);
 	return variance;
