@@ -507,7 +507,7 @@ autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer
 
 autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole) {
 	try {
-		Melder_require (! MAThasUndefinedElement (my data.get()),
+		Melder_require (NUMdefined (my data.get()),
 			U"All the table's elements should be defined.");
 
 		if (rowb == 0 && rowe == 0) {

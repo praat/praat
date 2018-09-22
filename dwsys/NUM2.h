@@ -80,9 +80,6 @@ void MATprintMatlabForm (constMAT m, conststring32 name);
 		7, 8, 9 ];
 */
 
-bool MAThasUndefinedElement (constMAT m);
-/* true if at least one of the elements is undefined (i.e. infinite or NaN) */
-
 void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport);
 /* which cells are not finite? */
 
