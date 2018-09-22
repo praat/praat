@@ -79,6 +79,8 @@ extern void MATcentreEachRow_inplace (MAT x);
 */
 extern void MATdoubleCentre_inplace (MAT x);
 
+extern void MATmtm_preallocated (const MAT& target, const constMAT& x);
+
 /*
 	Target :=  X . Y
 	Precise matrix multiplication, using pairwise summation.
