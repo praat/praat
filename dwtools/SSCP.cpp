@@ -519,7 +519,8 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 				U").\nThe SSCP will not have full dimensionality. This may be a problem in later analysis steps."
 			);
 		autoSSCP thee = SSCP_create (part.ncol);
-		MATcentreEachColumn_inplace (part.get(), thy centroid.at);
+		VECcolumnMeans_preallocated (thy centroid.get(), part.get());
+		MATsubtract_inplace (part.get(), thy centroid.get());
 		SSCP_setNumberOfObservations (thee.get(), part.nrow);
 		MATmtm_preallocated (thy data.get(), part.get());   // sum of squares and cross products = T'T
 		for (integer j = 1; j <= part.ncol; j ++) {
