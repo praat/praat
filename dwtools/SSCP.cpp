@@ -509,39 +509,21 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 	try {
 		Melder_require (NUMdefined (my data.get()),
 			U"All the table's elements should be defined.");
-
-		if (rowb == 0 && rowe == 0) {
-			rowb = 1;
-			rowe = my numberOfRows;
-		}
-		Melder_require (rowb > 0 && rowb <= rowe && rowe <= my numberOfRows, U"Invalid row number.");
-
-		if (colb == 0 && cole == 0) {
-			colb = 1;
-			cole = my numberOfColumns;
-		}
-		Melder_require (colb > 0 && colb <= cole && cole <= my numberOfColumns, U"Invalid column number.");
-
-		integer numberOfRows = rowe - rowb + 1; /* m */
-		integer numberOfColumns = cole - colb + 1; /* n */
-
-		if (numberOfRows < numberOfColumns) {
-			Melder_warning (U"The SSCP will not have \n"
-				"full dimensionality. This may be a problem in following analysis steps. \n"
-				"(The number of data points was less than the number of variables.)");
-		}
-		autoSSCP thee = SSCP_create (numberOfColumns);
-		autoMAT v = MATpart (my data.get(), rowb, rowe, colb, cole);
-
-		MATcentreEachColumn_inplace (v.get(), thy centroid.at);
-
-		SSCP_setNumberOfObservations (thee.get(), numberOfRows);
-
-		// sum of squares and cross products = T'T
-		MATmtm_preallocated (thy data.get(), v.get());
-
-		for (integer j = 1; j <= numberOfColumns; j ++) {
-			conststring32 label = my columnLabels [colb + j - 1].get();
+		autowindow (my data.get(), & rowb, & rowe, & colb, & cole);
+		checkRowRange (my data.get(), rowb, rowe, 1);
+		checkColumnRange (my data.get(), colb, cole, 1);
+		autoMAT part = MATpart (my data.get(), rowb, rowe, colb, cole);
+		if (part.nrow < part.ncol)
+			Melder_warning (U"The selected number of data points (", part.nrow,
+				U") is less than the selected number of variables (", part.ncol,
+				U").\nThe SSCP will not have full dimensionality. This may be a problem in later analysis steps."
+			);
+		autoSSCP thee = SSCP_create (part.ncol);
+		MATcentreEachColumn_inplace (part.get(), thy centroid.at);
+		SSCP_setNumberOfObservations (thee.get(), part.nrow);
+		MATmtm_preallocated (thy data.get(), part.get());   // sum of squares and cross products = T'T
+		for (integer j = 1; j <= part.ncol; j ++) {
+			conststring32 label = my columnLabels [colb - 1 + j].get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);
 			TableOfReal_setRowLabel (thee.get(), j, label);
 		}

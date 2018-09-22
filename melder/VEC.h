@@ -17,6 +17,22 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+template <typename T>
+void checkRange (const constvector<T> x, integer firstElement, integer lastElement, integer minimumNumberOfElements) {
+	Melder_require (firstElement >= 1,
+		U"The first element should be at least 1, not ", firstElement, U".");
+	integer minimumLastRow = firstElement + (minimumNumberOfElements - 1);
+	Melder_require (lastElement >= minimumLastRow,
+		U"The last element should be at least ", minimumLastRow, U", not ", lastElement,
+		U", because the vector should contain at least ", minimumNumberOfElements, U" elements (the first element is ", firstElement, U").");
+	Melder_require (lastElement <= x.size,
+		U"The last element should be at most the number of elements (", x.size, U"), not", lastElement, U".");
+}
+template <typename T>
+void checkRange (const vector<T> x, integer firstElement, integer lastElement, integer minimumNumberOfElements) {
+	checkRange (constvector (x), firstElement, lastElement, minimumNumberOfElements);
+}
+
 /*
 	From here on alphabetical order.
 */
