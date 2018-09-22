@@ -56,6 +56,14 @@ extern double NUMcenterOfGravity (constVEC x) noexcept;
 
 extern double NUMcolumnSum (constMAT x, integer columnNumber);
 
+inline bool NUMdefined (const constMAT& x) {
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		for (integer icol = 1; icol <= x.ncol; icol ++)
+			if (isundef (x [irow] [icol]))
+				return false;
+	return true;
+}
+
 template <typename T>
 bool NUMequal (constvector<T> x, constvector<T> y) {
 	integer n = x.size;

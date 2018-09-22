@@ -2689,17 +2689,6 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 		*arg = ln_arg;
 	}
 }
-bool MAThasUndefinedElement (constMAT m) {
-	for (integer irow = 1; irow <= m.nrow; irow ++) {
-		for (integer icol = 1; icol <= m.ncol; icol ++) {
-			if (isundef (m [irow] [icol])) {
-				return true;
-			}
-		}
-	}
-	return false;
-	
-}
 
 void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport) {
 	integer numberOfInvalids = 0;
