@@ -36,31 +36,25 @@
 	#include <Accelerate/Accelerate.h>
 #endif
 
-void MATcentreEachColumn_inplace (MAT x, double centres []) {
-	autoVEC columnBuffer = VECraw (x.nrow);
+void MATcentreEachColumn_inplace (const MAT& x) noexcept {
 	for (integer icol = 1; icol <= x.ncol; icol ++) {
+		double columnMean = NUMcolumnMean (x, icol);
 		for (integer irow = 1; irow <= x.nrow; irow ++)
-			columnBuffer [irow] = x [irow] [icol];
-		double columnMean;
-		VECcentre_inplace (columnBuffer.get(), & columnMean);
-		for (integer irow = 1; irow <= x.nrow; irow ++)
-			x [irow] [icol] = columnBuffer [irow];
-		if (centres)
-			centres [icol] = columnMean;
+			x [irow] [icol] -= columnMean;
 	}
 }
 
-void MATcentreEachRow_inplace (MAT x) {
+void MATcentreEachRow_inplace (const MAT& x) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		VECcentre_inplace (x.row (irow));
 }
 
-void MATdoubleCentre_inplace (MAT x) {
+void MATdoubleCentre_inplace (const MAT& x) noexcept {
 	MATcentreEachRow_inplace (x);
 	MATcentreEachColumn_inplace (x);
 }
 
-void MATmtm_preallocated (const MAT& target, const constMAT& x) {
+void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept {
 	Melder_assert (target.nrow == x.ncol);
 	Melder_assert (target.ncol == x.ncol);
 	#if 0
@@ -98,7 +92,7 @@ void MATmtm_preallocated (const MAT& target, const constMAT& x) {
 	#endif
 }
 
-void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
+void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
@@ -112,7 +106,7 @@ void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT&
 	}
 }
 
-void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
+void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	#if USE_CBLAS_GEMM
 		/*
 			This version is 49,0.75,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
@@ -162,7 +156,7 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 	#endif
 }
 
-void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
+void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
@@ -176,7 +170,7 @@ void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constM
 	}
 }
 
-void MATmul_tn_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
+void MATmul_tn_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
@@ -190,7 +184,7 @@ void MATmul_tn_preallocated_ (const MAT& target, const constMAT& x, const constM
 	}
 }
 
-void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
+void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = 0.0;
@@ -200,7 +194,7 @@ void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const c
 	}
 }
 
-void MATmul_tt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
+void MATmul_tt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
@@ -214,7 +208,7 @@ void MATmul_tt_preallocated_ (const MAT& target, const constMAT& x, const constM
 	}
 }
 
-void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
+void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept(false) {
 	integer n = x.nrow;
 	if (n > 100) {
 		autoMAT xt = MATtranspose (x), yt = MATtranspose (y);
@@ -224,7 +218,7 @@ void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const c
 	MATmul_tt_preallocated_ (target, x, y);
 }
 
-autoMAT MATouter (constVEC x, constVEC y) {
+autoMAT MATouter (const constVEC& x, const constVEC& y) {
 	autoMAT result = MATraw (x.size, y.size);
 	for (integer irow = 1; irow <= x.size; irow ++)
 		for (integer icol = 1; icol <= y.size; icol ++)
@@ -232,7 +226,7 @@ autoMAT MATouter (constVEC x, constVEC y) {
 	return result;
 }
 
-autoMAT MATpeaks (constVEC x, bool includeEdges, int interpolate, bool sortByHeight) {
+autoMAT MATpeaks (const constVEC& x, bool includeEdges, int interpolate, bool sortByHeight) {
 	if (x.size < 2) includeEdges = false;
 	integer numberOfPeaks = 0;
 	for (integer i = 2; i < x.size; i ++)

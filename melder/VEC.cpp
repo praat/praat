@@ -26,7 +26,7 @@
 #endif
 
 #if defined (macintosh)
-void VECadd_macfast_ (const VEC& target, const constVEC& x, const constVEC& y) {
+void VECadd_macfast_ (const VEC& target, const constVEC& x, const constVEC& y) noexcept {
 	integer n = target.size;
 	vDSP_vaddD (& x [1], 1, & y [1], 1, & target [1], 1, integer_to_uinteger (n));
 	/*
@@ -46,7 +46,7 @@ void VECadd_macfast_ (const VEC& target, const constVEC& x, const constVEC& y) {
 }
 #endif
 
-void VECmul_preallocated (VEC target, constVEC vec, constMAT mat) {
+void VECmul_preallocated (const VEC& target, const constVEC& vec, const constMAT& mat) noexcept {
 	Melder_assert (mat.nrow == vec.size);
 	Melder_assert (target.size == mat.ncol);
 	if ((true)) {
@@ -68,13 +68,13 @@ void VECmul_preallocated (VEC target, constVEC vec, constMAT mat) {
 	}
 }
 
-autoVEC VECmul (constVEC vec, constMAT mat) {
+autoVEC VECmul (const constVEC& vec, const constMAT& mat) noexcept {
 	autoVEC result = VECraw (mat.ncol);
 	VECmul_preallocated (result.get(), vec, mat);
 	return result;
 }
 
-void VECmul_preallocated (VEC target, constMAT mat, constVEC vec) {
+void VECmul_preallocated (const VEC& target, const constMAT& mat, const constVEC& vec) noexcept {
 	Melder_assert (vec.size == mat.ncol);
 	Melder_assert (target.size == mat.nrow);
 	for (integer i = 1; i <= mat.nrow; i ++) {
@@ -88,7 +88,7 @@ void VECmul_preallocated (VEC target, constMAT mat, constVEC vec) {
 	}
 }
 
-autoVEC VECmul (constMAT mat, constVEC vec) {
+autoVEC VECmul (const constMAT& mat, const constVEC& vec) noexcept {
 	autoVEC result = VECraw (mat.nrow);
 	VECmul_preallocated (result.get(), mat, vec);
 	return result;
