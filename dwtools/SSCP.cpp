@@ -531,27 +531,15 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 				"(The number of data points was less than the number of variables.)");
 		}
 		autoSSCP thee = SSCP_create (numberOfColumns);
-		autoMAT v = MATraw (numberOfRows, numberOfColumns);
-
-		for (integer i = 1; i <= numberOfRows; i ++)
-			for (integer j = 1; j <= numberOfColumns; j ++)
-				v [i] [j] = my data [rowb + i - 1] [colb + j - 1];
+		autoMAT v = MATpart (my data.get(), rowb, rowe, colb, cole);
 
 		MATcentreEachColumn_inplace (v.get(), thy centroid.at);
 
 		SSCP_setNumberOfObservations (thee.get(), numberOfRows);
 
 		// sum of squares and cross products = T'T
+		MATmtm_preallocated (thy data.get(), v.get());
 
-		for (integer i = 1; i <= numberOfColumns; i ++) {
-			for (integer j = i; j <= numberOfColumns; j ++) {
-				double t = 0.0;
-				for (integer k = 1; k <= numberOfRows; k ++) {
-					t += v [k] [i] * v [k] [j];
-				}
-				thy data [i] [j] = thy data [j] [i] = t;
-			}
-		}
 		for (integer j = 1; j <= numberOfColumns; j ++) {
 			conststring32 label = my columnLabels [colb + j - 1].get();
 			TableOfReal_setColumnLabel (thee.get(), j, label);

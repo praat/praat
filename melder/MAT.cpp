@@ -60,6 +60,44 @@ void MATdoubleCentre_inplace (MAT x) {
 	MATcentreEachColumn_inplace (x);
 }
 
+void MATmtm_preallocated (const MAT& target, const constMAT& x) {
+	Melder_assert (target.nrow == x.ncol);
+	Melder_assert (target.ncol == x.ncol);
+	#if 0
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = irow; icol <= target.ncol; icol ++) {
+			longdouble t = 0.0;
+			for (integer k = 1; k <= x.nrow; k ++)
+				t += x [k] [irow] * x [k] [icol];
+			target [irow] [icol] = target [icol] [irow] = double (t);
+		}
+	}
+	#elif 0
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = irow; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
+				const double *px1 = & x [1] [irow];
+				const double *px2 = & x [1] [icol],
+				(longdouble) *px1 * (longdouble) *px2,
+				(px1 += x.ncol, px2 += x.ncol)
+			)
+			target [irow] [icol] = target [icol] [irow] = double (sum);
+		}
+	}
+	#else
+	for (integer irow = 1; irow <= target.nrow; irow ++)
+		for (integer icol = irow; icol <= target.ncol; icol ++)
+			target [irow] [icol] = 0.0;
+	for (integer k = 1; k <= x.nrow; k ++)
+		for (integer irow = 1; irow <= target.nrow; irow ++)
+			for (integer icol = irow; icol <= target.ncol; icol ++)
+				target [irow] [icol] += x [k] [irow] * x [k] [icol];
+	for (integer irow = 2; irow <= target.nrow; irow ++)
+		for (integer icol = 1; icol < irow; icol ++)
+			target [irow] [icol] = target [icol] [irow];
+	#endif
+}
+
 void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
