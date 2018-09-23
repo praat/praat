@@ -21,37 +21,6 @@
 	Some functions that are included below.
 */
 
-template <typename T>
-void checkRowRange (const constmatrix<T>& x, integer firstRow, integer lastRow, integer minimumNumberOfRows) {
-	Melder_require (firstRow >= 1,
-		U"The first row should be at least 1, not ", firstRow, U".");
-	integer minimumLastRow = firstRow + (minimumNumberOfRows - 1);
-	Melder_require (lastRow >= minimumLastRow,
-		U"The last row should be at least ", minimumLastRow, U", not ", lastRow,
-		U", because the matrix should contain at least ", minimumNumberOfRows, U" rows (the first row is ", firstRow, U").");
-	Melder_require (lastRow <= x.nrow,
-		U"The last row should be at most the number of rows (", x.nrow, U"), not", lastRow, U".");
-}
-template <typename T>
-void checkRowRange (const matrix<T>& x, integer firstRow, integer lastRow, integer minimumNumberOfRows) {
-	checkRowRange (constmatrix (x), firstRow, lastRow, minimumNumberOfRows);
-}
-template <typename T>
-void checkColumnRange (const constmatrix<T>& x, integer firstColumn, integer lastColumn, integer minimumNumberOfColumns) {
-	Melder_require (firstColumn >= 1,
-		U"The first column should be at least 1, not ", firstColumn, U".");
-	integer minimumLastColumn = firstColumn + (minimumNumberOfColumns - 1);
-	Melder_require (lastColumn >= minimumLastColumn,
-		U"The last column should be at least ", minimumLastColumn, U", not ", lastColumn,
-		U", because the matrix should contain at least ", minimumNumberOfColumns, U" columns (the first column is ", firstColumn, U").");
-	Melder_require (lastColumn <= x.ncol,
-		U"The last column should be at most the number of columns (", x.ncol, U"), not", lastColumn, U".");
-}
-template <typename T>
-void checkColumnRange (const matrix<T>& x, integer firstColumn, integer lastColumn, integer minimumNumberOfColumns) {
-	checkColumnRange (constmatrix (x), firstColumn, lastColumn, minimumNumberOfColumns);
-}
-
 /*
 	From here on alphabetical order.
 */

@@ -509,9 +509,8 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 	try {
 		Melder_require (NUMdefined (my data.get()),
 			U"All the table's elements should be defined.");
-		autowindow (my data.get(), & rowb, & rowe, & colb, & cole);
-		checkRowRange (my data.get(), rowb, rowe, 1);
-		checkColumnRange (my data.get(), colb, cole, 1);
+		fixAndCheckRowRange (& rowb, & rowe, my data.get(), 1);
+		fixAndCheckColumnRange (& colb, & cole, my data.get(), 1);
 		autoMAT part = MATpart (my data.get(), rowb, rowe, colb, cole);
 		if (part.nrow < part.ncol)
 			Melder_warning (U"The selected number of data points (", part.nrow,
