@@ -444,11 +444,8 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoVEC x = VECrandomGauss (size, 0.0, 1.0);
 			autoVEC y = VECrandomGauss (size, 0.0, 1.0);
 			autoVEC result = VECraw (size);
-			//MAT resultget = result.get();
-			//constMAT xget = x.get(), yget = y.get();
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				//MATmul_preallocated_ (result, xget, yget);
 				VECadd_preallocated (result.get(), x.get(), y.get());
 			t = Melder_stopwatch () / size;
 			double sum = NUMsum (result.get());
@@ -591,6 +588,9 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 
 				VEC h;
 				autoVEC j;
+				//VEC jh = j;
+				//VEC zero = VECzero (10);   // should be ruled out
+				//constVEC zero = VECzero (10);   // should be ruled out
 				//j = h;   // up assignment standardly correctly ruled out
 				//h = j;   // down assignment was explicitly ruled out as well
 				//h = VEC (j);

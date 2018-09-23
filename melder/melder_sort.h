@@ -20,14 +20,12 @@
 
 /********** Sorting **********/
 
-void VECsort_inplace (VEC x);
-
 void NUMsort_integer (integer n, integer ra []);
 void NUMsort_str (string32vector a);
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));
 
 double NUMquantile (integer n, double a [], double factor);
-double NUMquantile (constVEC a, double factor);
+double NUMquantile (const constVEC& a, double factor) noexcept;
 /*
 	An estimate of the quantile 'factor' (between 0 and 1) of the distribution
 	from which the set 'a [1..n]' is a sorted array of random samples.

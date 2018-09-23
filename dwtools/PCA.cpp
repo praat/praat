@@ -151,7 +151,7 @@ autoEigen PCA_to_Eigen (PCA me) {
 
 static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 	try {
-		Melder_require (! MAThasUndefinedElement (m),
+		Melder_require (NUMdefined (m),
 			U"All matrix elements should be defined.");
 		Melder_require (NUMfrobeniusnorm (m) > 0.0,
 			U"Not all values in your table should be zero.");
@@ -167,7 +167,8 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 		}
 		autoPCA thee = Thing_new (PCA);
 		thy centroid = VECzero (mcopy.ncol);
-		MATcentreEachColumn_inplace (mcopy.get(), thy centroid.at);
+		VECcolumnMeans_preallocated (thy centroid.get(), mcopy.get());
+		MATsubtract_inplace (mcopy.get(), thy centroid.get());
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
 		thy labels = autostring32vector (mcopy.ncol);
 		PCA_setNumberOfObservations (thee.get(), mcopy.nrow);

@@ -17,44 +17,60 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+template <typename T>
+void checkRange (const constvector<T>& x, integer firstElement, integer lastElement, integer minimumNumberOfElements) {
+	Melder_require (firstElement >= 1,
+		U"The first element should be at least 1, not ", firstElement, U".");
+	integer minimumLastRow = firstElement + (minimumNumberOfElements - 1);
+	Melder_require (lastElement >= minimumLastRow,
+		U"The last element should be at least ", minimumLastRow, U", not ", lastElement,
+		U", because the vector should contain at least ", minimumNumberOfElements, U" elements (the first element is ", firstElement, U").");
+	Melder_require (lastElement <= x.size,
+		U"The last element should be at most the number of elements (", x.size, U"), not", lastElement, U".");
+}
+template <typename T>
+void checkRange (const vector<T>& x, integer firstElement, integer lastElement, integer minimumNumberOfElements) {
+	checkRange (constvector (x), firstElement, lastElement, minimumNumberOfElements);
+}
+
 /*
 	From here on alphabetical order.
 */
 
-inline void VECadd_inplace (VEC x, double addend) {
+inline void VECadd_inplace (const VEC& x, double addend) noexcept {
 	//for (integer i = 1; i <= x.size; i ++)
 	//	x [i] += addend;
 	for (double& element : x) element += addend;
 }
-inline VEC operator+= (VEC x, double addend) {
+inline VEC operator+= (const VEC& x, double addend) noexcept {
 	//for (integer i = 1; i <= x.size; i ++)
 	//	x [i] += addend;
 	for (double& element : x) element += addend;
 	return x;
 }
-inline void VECadd_inplace (VEC x, constVEC y) {
+inline void VECadd_inplace (const VEC& x, const constVEC& y) noexcept {
 	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += y [i];
 }
-inline VEC operator+= (VEC x, constVEC y) {
+inline VEC operator+= (const VEC& x, const constVEC& y) noexcept {
 	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += y [i];
 	return x;
 }
-inline void VECadd_preallocated (VEC target, constVEC x, double addend) {
+inline void VECadd_preallocated (const VEC& target, const constVEC& x, double addend) noexcept {
 	Melder_assert (x.size == target.size);
 	for (integer i = 1; i <= x.size; i ++)
 		target [i] = x [i] + addend;
 }
-inline autoVEC VECadd (constVEC x, double addend) {
+inline autoVEC VECadd (const constVEC& x, double addend) {
 	autoVEC result = VECraw (x.size);
 	VECadd_preallocated (result.get(), x, addend);
 	return result;
 }
-extern void VECadd_macfast_ (const VEC& target, const constVEC& x, const constVEC& y);
-inline void VECadd_preallocated  (const VEC& target, const constVEC& x, const constVEC& y) {
+extern void VECadd_macfast_ (const VEC& target, const constVEC& x, const constVEC& y) noexcept;
+inline void VECadd_preallocated  (const VEC& target, const constVEC& x, const constVEC& y) noexcept {
 	integer n = target.size;
 	Melder_assert (x.size == n);
 	Melder_assert (y.size == n);
@@ -71,7 +87,7 @@ inline autoVEC VECadd (const constVEC& x, const constVEC& y) {
 	return result;
 }
 
-inline void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
+inline void VECcentre_inplace (const VEC& x, double *out_mean = nullptr) noexcept {
 	double xmean = NUMmean (x);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= xmean;
@@ -79,24 +95,30 @@ inline void VECcentre_inplace (VEC x, double *out_mean = nullptr) {
 		*out_mean = xmean;
 }
 
-inline void VECcolumn_preallocated (VEC target, constMAT source, integer columnNumber) {
+inline void VECcolumn_preallocated (const VEC& target, const constMAT& source, integer columnNumber) noexcept {
 	Melder_assert (source.nrow == target.size);
 	Melder_assert (columnNumber >= 1 && columnNumber <= source.ncol);
 	for (integer irow = 1; irow <= target.size; irow ++)
 		target [irow] = source [irow] [columnNumber];
 }
-inline autoVEC VECcolumn (constMAT source, integer columnNumber) {
+inline autoVEC VECcolumn (const constMAT& source, integer columnNumber) {
 	autoVEC target = VECraw (source.nrow);
 	VECcolumn_preallocated (target.get(), source, columnNumber);
 	return target;
 }
 
-extern void VECmul_preallocated (VEC target, constVEC vec, constMAT mat);
-extern void VECmul_preallocated (VEC target, constMAT mat, constVEC vec);
-extern autoVEC VECmul (constVEC vec, constMAT mat);
-extern autoVEC VECmul (constMAT mat, constVEC vec);
+inline void VECcolumnMeans_preallocated (const VEC& target, const constMAT& x) noexcept {
+	Melder_assert (target.size == x.ncol);
+	for (integer icol = 1; icol <= x.ncol; icol ++)
+		target [icol] = NUMcolumnMean (x, icol);
+}
 
-inline void VECmultiply_inplace (VEC x, double factor) {
+extern void VECmul_preallocated (const VEC& target, const constVEC& vec, const constMAT& mat) noexcept;
+extern void VECmul_preallocated (const VEC& target, const constMAT& mat, const constVEC& vec) noexcept;
+extern autoVEC VECmul (const constVEC& vec, const constMAT& mat) noexcept;
+extern autoVEC VECmul (const constMAT& mat, const constVEC& vec) noexcept;
+
+inline void VECmultiply_inplace (const VEC& x, double factor) noexcept {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] *= factor;
 }
@@ -115,43 +137,43 @@ inline autoVEC VECrandomUniform (integer size, double lowest, double highest) {
 	return result;
 }
 
-inline void VECsin_inplace (VEC x) {
+inline void VECsin_inplace (const VEC& x) noexcept {
 	for (double& element : x) element = sin (element);
 }
 
-extern void VECsort_inplace (VEC x);
+extern void VECsort_inplace (const VEC& x) noexcept;
 
-inline void VECsubtract_inplace (VEC x, double number) {
+inline void VECsubtract_inplace (const VEC& x, double number) noexcept {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= number;
 }
-inline void VECsubtractReversed_inplace (VEC x, double number) {
+inline void VECsubtractReversed_inplace (const VEC& x, double number) noexcept {
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = number - x [i];
 }
-inline void VECsubtract_inplace (VEC x, constVEC y) {
+inline void VECsubtract_inplace (const VEC& x, const constVEC& y) noexcept {
 	Melder_assert (x.size == y.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] -= y [i];
 }
-inline void VECsubtractReversed_inplace (VEC x, constVEC y) {
+inline void VECsubtractReversed_inplace (const VEC& x, const constVEC& y) noexcept {
 	Melder_assert (x.size == y.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] = y [i] - x [i];
 }
-inline autoVEC VECsubtract (constVEC x, double y) {
+inline autoVEC VECsubtract (const constVEC& x, double y) {
 	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		result [i] = x [i] - y;
 	return result;
 }
-inline autoVEC VECsubtract (double x, constVEC y) {
+inline autoVEC VECsubtract (double x, const constVEC& y) {
 	autoVEC result = VECraw (y.size);
 	for (integer i = 1; i <= y.size; i ++)
 		result [i] = x - y [i];
 	return result;
 }
-inline autoVEC VECsubtract (constVEC x, constVEC y) {
+inline autoVEC VECsubtract (const constVEC& x, const constVEC& y) {
 	Melder_assert (x.size == y.size);
 	autoVEC result = VECraw (x.size);
 	for (integer i = 1; i <= x.size; i ++)
@@ -159,14 +181,14 @@ inline autoVEC VECsubtract (constVEC x, constVEC y) {
 	return result;
 }
 
-inline autoVEC VECsumPerRow (constMAT x) {
+inline autoVEC VECsumPerRow (const constMAT& x) {
 	autoVEC result = VECraw (x.nrow);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		result [irow] = NUMrowSum (x, irow);
 	return result;
 }
 
-inline autoVEC VECsumPerColumn (constMAT x) {
+inline autoVEC VECsumPerColumn (const constMAT& x) {
 	autoVEC result = VECraw (x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		result [icol] = NUMcolumnSum (x, icol);

@@ -1734,7 +1734,12 @@ void praat_run () {
 		VEC x { };
 		Melder_assert (! x.at);
 		Melder_assert (x.size == 0);
-		//constVEC xc { };   // no default constructor
+		constVEC xnc;   // zero-initialized
+		Melder_assert (! xnc.at);
+		Melder_assert (xnc.size == 0);
+		constVEC xc { };
+		Melder_assert (! xc.at);
+		Melder_assert (xc.size == 0);
 		MAT yn;
 		Melder_assert (! yn.at);
 		//Melder_assert (yn.nrow == 0);

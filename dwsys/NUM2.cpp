@@ -176,7 +176,8 @@ double NUMmultivariateKurtosis (constMAT m, int method) {
 	}
 	autoMAT x = MATcopy (m);
 	autoVEC mean = VECraw (x.ncol);
-	MATcentreEachColumn_inplace (x.get(), mean.at);
+	VECcolumnMeans_preallocated (mean.get(), x.get());
+	MATsubtract_inplace (x.get(), mean.get());
 	autoMAT covar = MATcovarianceFromColumnCentredMatrix (x.get(), 1);
 	
 	if (method == 1) { // Schott (2001, page 33)
@@ -2688,17 +2689,6 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	if (arg) {
 		*arg = ln_arg;
 	}
-}
-bool MAThasUndefinedElement (constMAT m) {
-	for (integer irow = 1; irow <= m.nrow; irow ++) {
-		for (integer icol = 1; icol <= m.ncol; icol ++) {
-			if (isundef (m [irow] [icol])) {
-				return true;
-			}
-		}
-	}
-	return false;
-	
 }
 
 void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport) {

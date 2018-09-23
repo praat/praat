@@ -398,7 +398,7 @@ autoDiscriminant TableOfReal_to_Discriminant (TableOfReal me) {
 		autoDiscriminant thee = Thing_new (Discriminant);
 		integer dimension = my numberOfColumns;
 
-		Melder_require (! MAThasUndefinedElement (my data.get()),
+		Melder_require (NUMdefined (my data.get()),
 			U"There should be no undefined elements in the table.");
 		Melder_require (TableOfReal_hasRowLabels (me),
 			U"All rows should be labeled.");

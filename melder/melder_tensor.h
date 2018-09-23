@@ -334,8 +334,30 @@ public:
 	vector () = default;   // for use in a union
 	vector (T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	vector (const vector& other) = default;
+	/*
+		Letting an autovector convert to a vector would lead to errors such as in
+			VEC vec = VECzero (10);
+		where VECzero produces a temporary that is deleted immediately
+		after the initialization of vec.
+		So we rule out this initialization.
+	*/
 	vector (const autovector<T>& other) = delete;
+	/*
+		Likewise, an assignment like
+			VEC vec1, vec2;
+			vec1 = vec2;
+		should be allowed...
+	*/
 	vector& operator= (const vector&) = default;
+	/*
+		but an assignment like
+			autoVEC x = VECzero (10);
+			VEC y;
+			y = x;
+		should be ruled out. Instead, one should do
+			y = x.get();
+		explicitly.
+	*/
 	vector& operator= (const autovector<T>&) = delete;
 	T& operator[] (integer i) const {
 		return our at [i];
@@ -361,9 +383,9 @@ public:
 template <typename T>
 class constvector {
 public:
-	const T * at;
-	integer size;
-	constvector (): at (nullptr), size (0) { }
+	const T * at = nullptr;
+	integer size = 0;
+	constvector () = default;
 	constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	constvector (vector<T> vec): at (vec.at), size (vec.size) { }
 	//constvector (const constvector& other): at (other.at), size (other.size) { }
@@ -721,6 +743,42 @@ automatrix<T> matrixcopy (matrix<T> source) {
 	return matrixcopy (constmatrix<T> (source));
 }
 
+template <typename T>
+void assertCell (const constvector<T>& x, integer elementNumber) {
+	Melder_assert (elementNumber >= 1 && elementNumber <= x.size);
+}
+template <typename T>
+void assertRow (const constmatrix<T>& x, integer rowNumber) {
+	Melder_assert (rowNumber >= 1 && rowNumber <= x.nrow);
+}
+template <typename T>
+void assertColumn (const constmatrix<T>& x, integer columnNumber) {
+	Melder_assert (columnNumber >= 1 && columnNumber <= x.nrow);
+}
+template <typename T>
+void assertCell (const constmatrix<T>& x, integer rowNumber, integer columnNumber) {
+	assertRow (x, rowNumber);
+	assertColumn (x, columnNumber);
+}
+template <typename T>
+automatrix<T> matrixpart (const constmatrix<T>& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+	assertCell (x, firstRow, firstColumn);
+	assertCell (x, lastRow, lastColumn);
+	integer numberOfRows = lastRow - firstRow + 1;
+	Melder_assert (numberOfRows >= 0);
+	integer numberOfColumns = lastColumn - firstColumn + 1;
+	Melder_assert (numberOfColumns >= 0);
+	automatrix<T> result = matrixraw<T> (numberOfRows, numberOfColumns);
+	for (integer irow = 1; irow <= numberOfRows; irow ++)
+		for (integer icol = 1; icol <= numberOfColumns; icol ++)
+			result [irow] [icol] = x [firstRow - 1 + irow] [firstColumn - 1 + icol];
+	return result;
+}
+template <typename T>
+automatrix<T> matrixpart (const matrix<T>& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+	matrixpart (constmatrix (x), firstRow, lastRow, firstColumn, lastColumn);
+}
+
 /*
 	instead of vector<double> we say VEC, because we want to have a one-to-one
 	relation between VEC functions and the scripting language.
@@ -759,6 +817,9 @@ using autoMAT = automatrix <double>;
 inline autoMAT MATraw  (integer nrow, integer ncol) { return matrixraw  <double> (nrow, ncol); }
 inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double> (nrow, ncol); }
 inline autoMAT MATcopy (constMAT source) { return matrixcopy (source); }
+inline autoMAT MATpart (const constMAT& source, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
+	return matrixpart (source, firstRow, lastRow, firstColumn, lastColumn);
+}
 
 using INTMAT = matrix <integer>;
 using constINTMAT = constmatrix <integer>;
@@ -772,6 +833,27 @@ inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); 
 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
+
+template <typename T>
+void autowindow (const constvector<T> x, integer *inout_firstElement, integer *inout_lastElement) {
+	if (*inout_firstElement    == 0)  *inout_firstElement    = 1;
+	if (*inout_lastElement     == 0)  *inout_lastElement     = x.size;
+}
+template <typename T>
+void autowindow (const vector<T> x, integer *inout_firstElement, integer *inout_lastElement) {
+	autowindow (constvector (x), inout_firstElement, inout_lastElement);
+}
+template <typename T>
+void autowindow (const constmatrix<T> x, integer *inout_firstRow, integer *inout_lastRow, integer *inout_firstColumn, integer *inout_lastColumn) {
+	if (*inout_firstRow    == 0)  *inout_firstRow    = 1;
+	if (*inout_lastRow     == 0)  *inout_lastRow     = x.nrow;
+	if (*inout_firstColumn == 0)  *inout_firstColumn = 1;
+	if (*inout_lastColumn  == 0)  *inout_lastColumn  = x.ncol;
+}
+template <typename T>
+void autowindow (const matrix<T> x, integer *inout_firstRow, integer *inout_lastRow, integer *inout_firstColumn, integer *inout_lastColumn) {
+	autowindow (constmatrix (x), inout_firstRow, inout_lastRow, inout_firstColumn, inout_lastColumn);
+}
 
 /* End of file melder_tensor.h */
 #endif
