@@ -195,31 +195,25 @@ autoPowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAv
 		// 1. average across time
 		integer numberOfFrames = Melder_ifloor (timeAveragingWindow / my dx);
 		if (numberOfFrames > 1) {
-			autoNUMvector<double> qin (1, my nx);
-			autoNUMvector<double> qout (1, my nx);
+			autoVEC qin = VECraw (my nx);
+			autoVEC qout = VECraw (my nx);
 			for (integer iq = 1; iq <= my ny; iq ++) {
-				for (integer iframe = 1; iframe <= my nx; iframe ++) {
-					//qin[iframe] = TO10LOG (my z[iq][iframe]);
-					qin [iframe] = thy z [iq] [iframe];
-				}
-				NUMvector_smoothByMovingAverage (qin.peek(), my nx, numberOfFrames, qout.peek());
-				for (integer iframe = 1; iframe <= my nx; iframe ++) {
-					//thy z[iq][iframe] = FROMLOG (qout[iframe]); // inverse 
-					thy z [iq] [iframe] = qout [iframe]; // inverse 
-				}
+				VECcopy_preallocated (qin.get(), thy z.row(iq));
+				VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfFrames);
+				VECcopy_preallocated (thy z.row(iq), qout.get());
 			}
 		}
 		// 2. average across quefrencies
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dy);
 		if (numberOfQuefrencyBins > 1) {
-			autoNUMvector<double> qin (1, thy ny);
-			autoNUMvector<double> qout (1, thy ny);
+			autoVEC qin = VECraw (thy ny);
+			autoVEC qout = VECraw (thy ny);
 			for (integer iframe = 1; iframe <= my nx; iframe ++) {
 				for (integer iq = 1; iq <= thy ny; iq ++) {
 					//qin[iq] = TO10LOG (my z[iq][iframe]);
 					qin [iq] = thy z [iq] [iframe];
 				}
-				NUMvector_smoothByMovingAverage (qin.peek(), thy ny, numberOfQuefrencyBins, qout.peek());
+				VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfQuefrencyBins);
 				for (integer iq = 1; iq <= thy ny; iq ++) {
 					//thy z[iq][iframe] = FROMLOG (qout[iq]);
 					thy z [iq] [iframe] = qout [iq];

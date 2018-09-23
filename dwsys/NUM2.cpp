@@ -145,20 +145,20 @@ void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer 
 	}
 }
 
-void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout) {
-// simple averaging, out of bound values are zero
-	for (integer i = 1; i <= n; i ++) {
-		integer jfrom = i - nwindow / 2, jto = i + nwindow / 2;
-		if (nwindow % 2 == 0) {
+void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window) {
+	Melder_assert (out.size == in.size);
+	for (integer i = 1; i <= out.size; i ++) {
+		integer jfrom = i - window / 2, jto = i + window / 2;
+		if (window % 2 == 0) {
 			jto --;
 		}
 		jfrom = jfrom < 1 ? 1 : jfrom;
-		jto = jto > n ? n : jto;
-		xout [i] = 0.0;
+		jto = jto > out.size ? out.size : jto;
+		out [i] = 0.0;
 		for (integer j = jfrom; j <= jto; j ++) {
-			xout [i] += xin [j];
+			out [i] += in [j];
 		}
-		xout [i] /= jto - jfrom + 1;
+		out [i] /= jto - jfrom + 1;
 	}
 }
 
