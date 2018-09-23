@@ -371,8 +371,11 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_ALLOC: {
 			integer size = Melder_atoi (arg2);
-			for (int64 iteration = 1; iteration <= n; iteration ++)
+			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				autoVEC result = VECraw (size);
+				for (integer i = 1; i <= size; i ++)
+					result [i] = 0.0;
+			}
 			t = Melder_stopwatch () / size;   // 10^0..7: 70/6.9/1.08 / 0.074/0.0074/0.0091 / 0.51/0.00026 ns
 		} break;
 		case kPraatTests::TIME_ALLOC0: {
@@ -395,12 +398,13 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 		} break;
 		case kPraatTests::TIME_MALLOC: {
 			integer size = Melder_atoi (arg2);
+			double value = Melder_atof (arg3);
 			double z = 0.0;
 			for (int64 iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) malloc (sizeof (double) * (size_t) size);
 				for (integer i = 0; i < size; i ++)
-					result [i] = (double) i;
-				z += result [size - 1];
+					result [i] = value;
+				z += result [size / 2];
 				free (result);
 			}
 			t = Melder_stopwatch () / size;
@@ -411,9 +415,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			double z = 0.0;
 			for (integer iteration = 1; iteration <= n; iteration ++) {
 				double *result = (double *) calloc (sizeof (double), (size_t) size);
-				for (integer i = 0; i < size; i ++)
-					result [i] = (double) i;
-				z += result [size - 1];
+				z += result [size / 2];
 				free (result);
 			}
 			t = Melder_stopwatch () / size;
@@ -566,7 +568,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 					//return f;   // call to deleted constructor
 					//gggg.reset();   // should be refused by the compiler
 					//ggg.reset();   // should be refused by the compiler
-					gg.reset();
+					//gg.reset();
 				}
 				{
 					double x [1+2], *px = & x [0];
