@@ -89,6 +89,9 @@ other# = { 2, 1.5, 1, 0.5, 0 }
 assert inner (squares#, other#) = 25
 assert sumOver (i to 5, squares# [i] * other# [i]) = 25
 
+combi## = { squares#, other# }
+assert combi## = { { 1, 4, 9, 16, 25 }, { 2, 1.5, 1, 0.5, 0 } }
+
 a# = squares# + 5
 assert a# = { 6, 9, 14, 21, 30 }
 b# = a# + { 3.14, 2.72, 3.16, -1, 7.5 }

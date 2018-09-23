@@ -59,7 +59,7 @@ void checkColumnRange (const matrix<T>& x, integer firstColumn, integer lastColu
 inline void MATadd_inplace (const MAT& x, double addend) noexcept {
 	asvector (x) += addend;
 }
-inline MAT operator+= (const MAT& x, double addend) noexcept {
+inline const MAT& operator+= (const MAT& x, double addend) noexcept {
 	asvector (x) += addend;
 	return x;
 }
@@ -67,7 +67,7 @@ inline void MATadd_inplace (const MAT& x, const constMAT& y) noexcept {
 	////VECadd_inplace (asvector (x), asvector (y));
 	asvector (x) += asvector (y);
 }
-inline MAT operator+= (const MAT& x, const constMAT& y) noexcept {
+inline const MAT& operator+= (const MAT& x, const constMAT& y) noexcept {
 	////VECadd_inplace (asvector (x), asvector (y));
 	asvector (x) += asvector (y);
 	return x;
@@ -77,7 +77,7 @@ inline void MATadd_preallocated (const MAT& target, const constMAT& x, double ad
 	VECadd_preallocated (asvector (target), asvector (x), addend);
 }
 inline autoMAT MATadd (const constMAT& x, double addend) {
-	auto result = MATraw (x.nrow, x.ncol);
+	autoMAT result = MATraw (x.nrow, x.ncol);
 	MATadd_preallocated (result.get(), x, addend);
 	return result;
 }
@@ -87,7 +87,7 @@ inline void MATadd_preallocated (const MAT& target, const constMAT& x, const con
 	VECadd_preallocated (asvector (target), asvector (x), asvector (y));
 }
 inline autoMAT MATadd (const constMAT& x, const constMAT& y) noexcept {
-	auto result = MATraw (x.nrow, x.ncol);
+	autoMAT result = MATraw (x.nrow, x.ncol);
 	MATadd_preallocated (result.get(), x, y);
 	return result;
 }
@@ -128,7 +128,7 @@ inline void MATmul_preallocated  (const MAT& target, const constMAT& x, const co
 }
 inline autoMAT MATmul (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.nrow, y.ncol);
-	MATmul_preallocated (result, x, y);
+	MATmul_preallocated (result.get(), x, y);
 	return result;
 }
 /*
@@ -145,7 +145,7 @@ inline void MATmul_fast_preallocated  (const MAT& target, const constMAT& x, con
 }
 inline autoMAT MATmul_fast (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.nrow, y.ncol);
-	MATmul_fast_preallocated (result, x, y);
+	MATmul_fast_preallocated (result.get(), x, y);
 	return result;
 }
 
@@ -164,7 +164,7 @@ inline void MATmul_nt_preallocated  (const MAT& target, const constMAT& x, const
 }
 inline autoMAT MATmul_nt (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.nrow, y.nrow);
-	MATmul_nt_preallocated (result, x, y);
+	MATmul_nt_preallocated (result.get(), x, y);
 	return result;
 }
 
@@ -184,7 +184,7 @@ inline void MATmul_tn_preallocated  (const MAT& target, const constMAT& x, const
 }
 inline autoMAT MATmul_tn (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.ncol, y.ncol);
-	MATmul_tn_preallocated (result, x, y);
+	MATmul_tn_preallocated (result.get(), x, y);
 	return result;
 }
 /*
@@ -201,7 +201,7 @@ inline void MATmul_tn_fast_preallocated  (const MAT& target, const constMAT& x, 
 }
 inline autoMAT MATmul_tn_fast (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.ncol, y.ncol);
-	MATmul_tn_fast_preallocated (result, x, y);
+	MATmul_tn_fast_preallocated (result.get(), x, y);
 	return result;
 }
 
@@ -221,7 +221,7 @@ inline void MATmul_tt_preallocated  (const MAT& target, const constMAT& x, const
 }
 inline autoMAT MATmul_tt (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.ncol, y.nrow);
-	MATmul_tt_preallocated (result, x, y);
+	MATmul_tt_preallocated (result.get(), x, y);
 	return result;
 }
 /*
@@ -239,7 +239,7 @@ inline void MATmul_tt_fast_preallocated  (const MAT& target, const constMAT& x, 
 }
 inline autoMAT MATmul_tt_fast (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.ncol, y.nrow);
-	MATmul_tt_fast_preallocated (result, x, y);
+	MATmul_tt_fast_preallocated (result.get(), x, y);
 	return result;
 }
 
