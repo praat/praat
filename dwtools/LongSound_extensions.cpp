@@ -74,8 +74,8 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		integer nx = my nx > thy nx ? my nx : thy nx;
 		integer numberOfReads = (nx - 1) / nbuf + 1, numberOfBitsPerSamplePoint = 16;
 		
-		Melder_require (thy numberOfChannels == my numberOfChannels && my numberOfChannels == 1, U"LongSounds should be mono.");
-		Melder_require (my sampleRate == thy sampleRate, U"Sampling frequencies should be equal.");
+		Melder_require (thy numberOfChannels == my numberOfChannels && my numberOfChannels == 1, U"The two LongSounds should be mono.");
+		Melder_require (my sampleRate == thy sampleRate, U"The two sampling frequencies should be equal.");
 
 		/*
 			Allocate a stereo buffer of size (2 * the smallest)!
