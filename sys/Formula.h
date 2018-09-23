@@ -80,15 +80,19 @@ typedef struct structStackel {
 			our _string. reset();
 		} else if (our which == Stackel_NUMERIC_VECTOR) {
 			if (our owned) {
-				autoVEC removable;
-				removable. adoptFromAmbiguousOwner (our numericVector);
-				// is now destroyed as it goes out of scope
+				{// scope
+					autoVEC removable;
+					removable. adoptFromAmbiguousOwner (our numericVector);
+				}
+				our numericVector = emptyVEC;   // undangle
 			}
 		} else if (our which == Stackel_NUMERIC_MATRIX) {
 			if (our owned) {
-				autoMAT removable;
-				removable. adoptFromAmbiguousOwner (our numericMatrix);
-				// is now destroyed as it goes out of scope
+				{// scope
+					autoMAT removable;
+					removable. adoptFromAmbiguousOwner (our numericMatrix);
+				}
+				our numericMatrix = emptyMAT;   // undangle
 			}
 		}
 	}
@@ -138,10 +142,16 @@ struct Formula_Result {
 	void reset () {
 		our stringResult. reset();
 		if (our owned) {
-			autoVEC vec;
-			vec. adoptFromAmbiguousOwner (our numericVectorResult);
-			autoMAT mat;
-			mat. adoptFromAmbiguousOwner (our numericMatrixResult);
+			{// scope
+				autoVEC removable;
+				removable. adoptFromAmbiguousOwner (our numericVectorResult);
+			}
+			our numericVectorResult = emptyVEC;   // undangle
+			{// scope
+				autoMAT mat;
+				mat. adoptFromAmbiguousOwner (our numericMatrixResult);
+			}
+			our numericMatrixResult = emptyMAT;   // undangle
 		}
 	}
 	~ Formula_Result () {
