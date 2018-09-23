@@ -20,8 +20,6 @@
 
 /********** Sorting **********/
 
-void VECsort_inplace (const VEC& x) noexcept;
-
 void NUMsort_integer (integer n, integer ra []);
 void NUMsort_str (string32vector a);
 void NUMsort_p (integer n, void *a [], int (*compare) (const void *, const void *));

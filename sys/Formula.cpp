@@ -181,7 +181,7 @@ enum { GEENSYMBOOL_,
 	LABEL_,
 	DECREMENT_AND_ASSIGN_, ADD_3DOWN_, POP_2_,
 	NUMERIC_VECTOR_ELEMENT_, NUMERIC_MATRIX_ELEMENT_, VARIABLE_REFERENCE_,
-	NUMERIC_VECTOR_LITERAL_,
+	TENSOR_LITERAL_,
 	SELF0_, SELFSTR0_, TO_OBJECT_,
 	OBJECT_XMIN_, OBJECT_XMAX_, OBJECT_YMIN_, OBJECT_YMAX_, OBJECT_NX_, OBJECT_NY_,
 	OBJECT_DX_, OBJECT_DY_, OBJECT_NROW_, OBJECT_NCOL_, OBJECT_ROWSTR_, OBJECT_COLSTR_,
@@ -1455,7 +1455,7 @@ static void parsePowerFactor () {
 		oudlees;
 		pas (CLOSING_BRACE_);
 		nieuwontleed (NUMBER_); parsenumber (n);
-		nieuwontleed (NUMERIC_VECTOR_LITERAL_);
+		nieuwontleed (TENSOR_LITERAL_);
 		return;
 	}
 
@@ -4992,19 +4992,42 @@ static void do_readFileStr () {
 		Melder_throw (U"The function \"readFile$\" requires a string (a file name), not ", f->whichText(), U".");
 	}
 }
-static void do_numericVectorLiteral () {
+static void do_tensorLiteral () {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
 	integer numberOfElements = Melder_iround (n->number);
 	Melder_assert (numberOfElements > 0);
-	autoVEC result { numberOfElements, kTensorInitializationType::RAW };
-	for (integer ielement = numberOfElements; ielement > 0; ielement --) {
-		Stackel e = pop;
-		if (e->which != Stackel_NUMBER)
-			Melder_throw (U"Vector element has to be a number, not ", e->whichText());
-		result [ielement] = e->number;
+	/*
+		The type of the tensor can be a vector, or a matrix, or a tensor3...
+		This depends on whether the last element is a number, a vector, or a matrix...
+	*/
+	Stackel last = pop;
+	if (last->which == Stackel_NUMBER) {
+		autoVEC result = VECraw (numberOfElements);
+		result [numberOfElements] = last->number;
+		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
+			Stackel element = pop;
+			if (element->which != Stackel_NUMBER)
+				Melder_throw (U"The tensor elements have to be of the same type, not ", element->whichText(), U" and a number.");
+			result [ielement] = element->number;
+		}
+		pushNumericVector (result.move());
+	} else if (last->which == Stackel_NUMERIC_VECTOR) {
+		integer sharedNumberOfColumns = last->numericVector.size;
+		autoMAT result = MATraw (numberOfElements, sharedNumberOfColumns);
+		VECcopy_preallocated (result.row (numberOfElements), last->numericVector);
+		for (integer ielement = numberOfElements - 1; ielement > 0; ielement --) {
+			Stackel element = pop;
+			Melder_require (element->which == Stackel_NUMERIC_VECTOR,
+				U"The tensor elements have to be of the same type, not ", element->whichText(), U" and a vector.");
+			Melder_require (element->numericVector.size == sharedNumberOfColumns,
+				U"The vectors have to be of the same size, not ", element->numericVector.size, U" and ", sharedNumberOfColumns);
+			VECcopy_preallocated (result.row (ielement), element->numericVector);
+		}
+		pushNumericMatrix (result.move());
+	} else {
+		Melder_throw (U"Cannot (yet?) create a tensor containing ", last->whichText(), U".");
 	}
-	pushNumericVector (result.move());
 }
 static void do_inner () {
 	/*
@@ -6468,7 +6491,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case STRING_: {
 	autostring32 string = Melder_dup (f [programPointer]. content.string);
 	pushString (string.move());
-} break; case NUMERIC_VECTOR_LITERAL_: { do_numericVectorLiteral ();
+} break; case TENSOR_LITERAL_: { do_tensorLiteral ();
 } break; case NUMERIC_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushNumber (var -> numericValue);
