@@ -8,6 +8,7 @@ appendInfoLine: "test_TableOfReal_extensions.praat"
 @means_by_row_labels
 @centre_rows
 @centre_columns
+@normalize
 
 appendInfoLine: "test_TableOfReal_extensions.praat OK"
 
@@ -81,3 +82,33 @@ procedure centre_columns
 	removeObject: .tab
 endproc
 
+procedure normalize
+	# simple check
+	appendInfoLine: tab$, "normalize"
+	.nrow = 10
+	.ncol = 10
+	.tab = Create TableOfReal: "tab", .nrow, .ncol
+	Formula: ~ row
+	.norm = Get table norm
+	# sum(k,1,n, k^2)=n(n+1)(2n+1)/6
+	.sumsq_column = .nrow *(.nrow+1)*(2*.nrow+1)/6
+	.normwanted = sqrt (.ncol*.sumsq_column)
+	.eps =1e-15
+	assert 1-.eps < .norm/.normwanted && .norm/.normwanted < 1+.eps; before
+	.nall = Copy: "all"
+	Normalize table: 1.0
+	.norm = Get table norm
+	assert 1-.eps < .norm && .norm < 1+.eps; after
+	selectObject: .tab
+	.rows = Copy: "rows"
+	Normalize rows: 1.0
+	.norm = Get table norm
+	.normwanted = sqrt (10)
+	assert 1-.eps < .norm/.normwanted && .norm/.normwanted < 1+.eps; rows
+	selectObject: .tab
+	Normalize columns: 1.0
+	.norm = Get table norm
+	.normwanted = sqrt (10)
+	assert 1-.eps < .norm/.normwanted && .norm/.normwanted < 1+.eps; rows
+	removeObject: .tab, .nall, .rows	
+endproc
