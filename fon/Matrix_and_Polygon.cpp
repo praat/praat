@@ -16,13 +16,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- * pb 1995/11/07
- * pb 2002/07/16 GPL
- * pb 2008/01/19 double
- * pb 2011/06/04 C++
- */
-
 #include "Matrix_and_Polygon.h"
 
 autoPolygon Matrix_to_Polygon (Matrix me) {
@@ -31,10 +24,18 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 			U"The Matrix should have exactly 2 rows or columns.");
 		autoPolygon thee;
 		if (my ny == 2) {
+			/*
+				The matrix has two rows.
+				The first row will be interpreted as x values, the second as y values.
+			*/
 			thee = Polygon_create (my nx);
 			VECcopy_preallocated (thy x.get(), my z.row (1));
 			VECcopy_preallocated (thy y.get(), my z.row (2));
 		} else {
+			/*
+				The matrix has two columns.
+				The first column will be interpreted as x values, the second as y values.
+			*/
 			thee = Polygon_create (my ny);
 			for (integer i = 1; i <= my ny; i ++) {
 				thy x [i] = my z [i] [1];
@@ -49,9 +50,13 @@ autoPolygon Matrix_to_Polygon (Matrix me) {
 
 autoMatrix Polygon_to_Matrix (Polygon me) {
 	try {
+		/*
+			The matrix will have two rows:
+			the first column will represent x, the second will represent y.
+		*/
 		autoMatrix thee = Matrix_create (1.0, my numberOfPoints, my numberOfPoints, 1.0, 1.0, 1.0, 2.0, 2, 1.0, 1.0);
-		VECcopy_preallocated (VEC (thy z [1], my numberOfPoints), my x.get());
-		VECcopy_preallocated (VEC (thy z [2], my numberOfPoints), my y.get());
+		VECcopy_preallocated (thy z.row (1), my x.get());
+		VECcopy_preallocated (thy z.row (2), my y.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Matrix.");
