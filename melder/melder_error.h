@@ -61,7 +61,6 @@ void Melder_appendError (const MelderArg& first, Args... rest) {
 }
 
 #define Melder_throw(...)  do { Melder_appendError (__VA_ARGS__); throw MelderError (); } while (false)
-#define Melder_require(condition, ...)  do { if (! (condition)) Melder_throw (__VA_ARGS__); } while (false)
 
 void Melder_flushError ();
 
