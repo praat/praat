@@ -834,26 +834,5 @@ inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);
 
-template <typename T>
-void autowindow (const constvector<T> x, integer *inout_firstElement, integer *inout_lastElement) {
-	if (*inout_firstElement    == 0)  *inout_firstElement    = 1;
-	if (*inout_lastElement     == 0)  *inout_lastElement     = x.size;
-}
-template <typename T>
-void autowindow (const vector<T> x, integer *inout_firstElement, integer *inout_lastElement) {
-	autowindow (constvector (x), inout_firstElement, inout_lastElement);
-}
-template <typename T>
-void autowindow (const constmatrix<T> x, integer *inout_firstRow, integer *inout_lastRow, integer *inout_firstColumn, integer *inout_lastColumn) {
-	if (*inout_firstRow    == 0)  *inout_firstRow    = 1;
-	if (*inout_lastRow     == 0)  *inout_lastRow     = x.nrow;
-	if (*inout_firstColumn == 0)  *inout_firstColumn = 1;
-	if (*inout_lastColumn  == 0)  *inout_lastColumn  = x.ncol;
-}
-template <typename T>
-void autowindow (const matrix<T> x, integer *inout_firstRow, integer *inout_lastRow, integer *inout_firstColumn, integer *inout_lastColumn) {
-	autowindow (constmatrix (x), inout_firstRow, inout_lastRow, inout_firstColumn, inout_lastColumn);
-}
-
 /* End of file melder_tensor.h */
 #endif
