@@ -86,6 +86,7 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 #include "melder_casual.h"
 #include "melder_info.h"
 #include "melder_error.h"   // Melder_throw (requires MelderArg)
+#include "melder_require.h"
 #include "melder_warning.h"
 #include "melder_fatal.h"
 #include "melder_progress.h"

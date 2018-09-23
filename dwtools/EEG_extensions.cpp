@@ -82,7 +82,8 @@ autoCrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime
 	try {
 		// autowindow
 		if (startTime == endTime) {
-			startTime = my xmin; endTime = my xmax;
+			startTime = my xmin;
+			endTime = my xmax;
 		}
 		// don't allow times outside domain
 		if (startTime < my xmin) {
@@ -127,7 +128,8 @@ autoCrossCorrelationTableList EEG_to_CrossCorrelationTableList (EEG me,
 	try {
 		// autowindow
 		if (startTime == endTime) {
-			startTime = my xmin; endTime = my xmax;
+			startTime = my xmin;
+			endTime = my xmax;
 		}
 		// don't allow times outside domain
 		if (startTime < my xmin) {
@@ -215,7 +217,8 @@ void EEG_to_EEG_bss (EEG me, double startTime, double endTime, integer numberOfC
 	try {
 		// autowindow
 		if (startTime == endTime) {
-			startTime = my xmin; endTime = my xmax;
+			startTime = my xmin;
+			endTime = my xmax;
 		}
 		// don't allow times outside domain
 		if (startTime < my xmin) {
