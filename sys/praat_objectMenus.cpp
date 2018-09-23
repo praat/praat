@@ -278,17 +278,12 @@ DO
 		} break;
 		case kFormula_EXPRESSION_TYPE_STRING: {
 			Melder_information (result. stringResult.get());
-			result. stringResult. reset();   // TODO: this should be superfluous
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_VECTOR: {
 			Melder_information (constVEC (result. numericVectorResult));
-			if (result. owned)
-				result. numericVectorResult. reset();
 		} break;
 		case kFormula_EXPRESSION_TYPE_NUMERIC_MATRIX: {
 			Melder_information (constMAT (result. numericMatrixResult));
-			if (result. owned)
-				result. numericMatrixResult. reset();
 		}
 	}
 END }
