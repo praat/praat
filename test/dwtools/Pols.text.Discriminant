@@ -10,17 +10,17 @@ eigenvalues []:
     eigenvalues [3] = 0.6828853876561901 
 eigenvectors [] []: 
     eigenvectors [1]:
-        eigenvectors [1] [1] = -0.5095945937147197 
-        eigenvectors [1] [2] = 0.8585858858717424 
-        eigenvectors [1] [3] = -0.0560680536363168 
+        eigenvectors [1] [1] = -0.5095945937147198 
+        eigenvectors [1] [2] = 0.8585858858717426 
+        eigenvectors [1] [3] = -0.056068053636316804 
     eigenvectors [2]:
-        eigenvectors [2] [1] = 0.8327148188826576 
-        eigenvectors [2] [2] = 0.5085421803078847 
-        eigenvectors [2] [3] = 0.2190225587945806 
+        eigenvectors [2] [1] = 0.8327148188826579 
+        eigenvectors [2] [2] = 0.5085421803078848 
+        eigenvectors [2] [3] = 0.21902255879458066 
     eigenvectors [3]:
-        eigenvectors [3] [1] = -0.2165626479103727 
-        eigenvectors [3] [2] = -0.06492401273441406 
-        eigenvectors [3] [3] = 0.9741075362096884 
+        eigenvectors [3] [1] = -0.21656264791037275 
+        eigenvectors [3] [2] = -0.06492401273441407 
+        eigenvectors [3] [3] = 0.9741075362096886 
 numberOfGroups = 12 
 groups? <exists> 
 size = 12 

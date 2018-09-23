@@ -45,7 +45,7 @@ void checkElementRange (integer firstElement, integer lastElement, const constve
 	integer minimumLastRow = firstElement + (minimumNewNumberOfElements - 1);
 	Melder_require (lastElement >= minimumLastRow,
 		U"The last element should be at least ", minimumLastRow, U", not ", lastElement,
-		U", because the vector should contain at least ", minimumNewNumberOfElements,
+		U", because the new vector should contain at least ", minimumNewNumberOfElements,
 		U" elements (the first element is ", firstElement, U")."
 	);
 	Melder_require (lastElement <= x.size,

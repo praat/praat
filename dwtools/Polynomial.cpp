@@ -576,9 +576,8 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *p_xmin, dou
 		double xmn = x1, ymn = v_evaluate (x1);
 		double xmx = x2, ymx = v_evaluate (x2);
 		if (ymn > ymx) {
-			/* Swap */
-			double t = ymn; ymn = ymx; ymx = t;
-			t = xmn; xmn = xmx; xmx = t;
+			std::swap (ymn, ymx);
+			std::swap (xmn, xmx);
 		}
 
 		if (degree < 2)
@@ -591,9 +590,11 @@ void structPolynomial :: v_getExtrema (double x1, double x2, double *p_xmin, dou
 			if (x > x1 && x < x2) {
 				double y = v_evaluate (x);
 				if (y > ymx) {
-					ymx = y; xmx = x;
+					ymx = y;
+					xmx = x;
 				} else if (y < ymn) {
-					ymn = y; xmn = x;
+					ymn = y;
+					xmn = x;
 				}
 			}
 		}

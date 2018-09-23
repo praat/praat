@@ -727,18 +727,18 @@ autoPCA SSCP_to_PCA (SSCP me) {
 	}
 }
 
-void SSCP_setValue (SSCP me, integer row, integer col, double value) {
-	Melder_require (col > 0 && col <= my numberOfColumns, U"Illegal column number.");
-	Melder_require (row > 0 && row <= my numberOfRows, U"Illegal row number.");
-	Melder_require (! (row == col && value <= 0.0), U"Diagonal element should always be a positive number.");
+void SSCP_setValue (SSCP me, integer rowNumber, integer columnNumber, double value) {
+	checkColumnNumber (columnNumber, my numberOfColumns);
+	checkRowNumber (rowNumber, my numberOfRows);
+	Melder_require (! (rowNumber == columnNumber && value <= 0.0), U"Diagonal element should always be a positive number.");
 	
 	if (my numberOfRows == 1) {   // diagonal
-		Melder_require (row == col, U"Row and column number should be equal for a diagonal matrix.");
-		my data [1] [row] = value;
+		Melder_require (rowNumber == columnNumber, U"Row and column number should be equal for a diagonal matrix.");
+		my data [1] [rowNumber] = value;
 	} else {
-		Melder_require (! (row != col && (fabs (value) > my data [row] [row] || fabs (value) > my data [col] [col])),
+		Melder_require (! (rowNumber != columnNumber && (fabs (value) > my data [rowNumber] [rowNumber] || fabs (value) > my data [columnNumber] [columnNumber])),
 			U"The off-diagonal values should not be larger than the diagonal values. Input diagonal elements first, or change this value.");
-		my data [row] [col] = my data [col] [row] = value;
+		my data [rowNumber] [columnNumber] = my data [columnNumber] [rowNumber] = value;
 	}
 }
 

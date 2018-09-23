@@ -709,7 +709,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 			autoVEC removable;
 			removable. adoptFromAmbiguousOwner (variable -> numericVectorValue);
 		}
-		variable -> numericVectorValue = movedVector;
+		variable -> numericVectorValue = movedVector;   // undangle
 	} else if (variableVector.size == movedVector.size) {
 		if (variableVector.at == movedVector.at) {
 			/*
@@ -734,7 +734,7 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 			autoVEC removable;
 			removable. adoptFromAmbiguousOwner (variable -> numericVectorValue);
 		}
-		variable -> numericVectorValue = copiedVector. releaseToAmbiguousOwner();
+		variable -> numericVectorValue = copiedVector. releaseToAmbiguousOwner();   // undangle
 	}
 }
 
@@ -748,7 +748,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 			autoMAT removable;
 			removable. adoptFromAmbiguousOwner (variable -> numericMatrixValue);
 		}
-		variable -> numericMatrixValue = movedMatrix;
+		variable -> numericMatrixValue = movedMatrix;   // undangle
 	} else if (variableMatrix.nrow == movedMatrix.nrow && variableMatrix.ncol == movedMatrix.ncol) {
 		if (variableMatrix.at == movedMatrix.at) {
 			/*
@@ -773,7 +773,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 			autoMAT removable;
 			removable. adoptFromAmbiguousOwner (variable -> numericMatrixValue);
 		}
-		variable -> numericMatrixValue = copiedMatrix. releaseToAmbiguousOwner();
+		variable -> numericMatrixValue = copiedMatrix. releaseToAmbiguousOwner();   // undangle
 	}
 }
 
@@ -2033,7 +2033,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										autoMAT removable;
 										removable. adoptFromAmbiguousOwner (var -> numericMatrixValue);
 									}
-									var -> numericMatrixValue = theInterpreterNummat.releaseToAmbiguousOwner();
+									var -> numericMatrixValue = theInterpreterNummat.releaseToAmbiguousOwner();   // undangle
 								} else {
 									MAT value;
 									bool owned;
@@ -2152,7 +2152,7 @@ void Interpreter_run (Interpreter me, char32 *text) {
 										autoVEC removable;
 										removable. adoptFromAmbiguousOwner (var -> numericVectorValue);
 									}
-									var -> numericVectorValue = theInterpreterNumvec.releaseToAmbiguousOwner();
+									var -> numericVectorValue = theInterpreterNumvec.releaseToAmbiguousOwner();   // undangle
 								} else {
 									VEC value;
 									bool owned;

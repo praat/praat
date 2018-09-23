@@ -149,8 +149,9 @@ void Eigen_initFromSquareRoot (Eigen me, constMAT a) {
 
 
 void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
-	Melder_assert (a.nrow >= a.ncol && b.nrow >= b.ncol);
-	Melder_assert (a.ncol == b.ncol);
+	//Melder_assert (a.nrow >= a.ncol && b.nrow >= b.ncol);   // pggb: this cannot be an assert, and seems too strict anyway
+	Melder_require (a.ncol == b.ncol,
+		U"The numbers of columns should be equal, not ", a.ncol, U" and ", b.ncol, U".");
 	// Eigen has not been inited yet.
 	double *u = nullptr, *v = nullptr, maxsv2 = -10.0;
 	char jobu = 'N', jobv = 'N', jobq = 'Q';
