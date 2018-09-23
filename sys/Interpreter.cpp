@@ -699,13 +699,16 @@ static void parameterToVariable (Interpreter me, int type, conststring32 in_para
 	}
 }
 
-inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC movedVector, bool owned) {
+inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC movedVector, bool rightHandSideOwned) {
 	VEC variableVector = variable -> numericVectorValue;
-	if (owned) {
+	if (rightHandSideOwned) {
 		/*
 			Statement like: a# = b# + c#
 		*/
-		variable -> numericVectorValue. reset();
+		{// scope
+			autoVEC removable;
+			removable. adoptFromAmbiguousOwner (variable -> numericVectorValue);
+		}
 		variable -> numericVectorValue = movedVector;
 	} else if (variableVector.size == movedVector.size) {
 		if (variableVector.at == movedVector.at) {
@@ -724,18 +727,27 @@ inline static void NumericVectorVariable_move (InterpreterVariable variable, VEC
 			Statement like: a# = b#   // with non-matching sizes
 		*/
 		autoVEC copiedVector = VECcopy (movedVector);
-		variable -> numericVectorValue. reset();
+		{// scope
+			/*
+				The left-hand side (a#) is always owned, and therefore has to be deleted.
+			*/
+			autoVEC removable;
+			removable. adoptFromAmbiguousOwner (variable -> numericVectorValue);
+		}
 		variable -> numericVectorValue = copiedVector. releaseToAmbiguousOwner();
 	}
 }
 
-inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT movedMatrix, bool owned) {
+inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT movedMatrix, bool rightHandSideOwned) {
 	MAT variableMatrix = variable -> numericMatrixValue;
-	if (owned) {
+	if (rightHandSideOwned) {
 		/*
 			Statement like: a## = b## + c##
 		*/
-		variable -> numericMatrixValue. reset();
+		{// scope
+			autoMAT removable;
+			removable. adoptFromAmbiguousOwner (variable -> numericMatrixValue);
+		}
 		variable -> numericMatrixValue = movedMatrix;
 	} else if (variableMatrix.nrow == movedMatrix.nrow && variableMatrix.ncol == movedMatrix.ncol) {
 		if (variableMatrix.at == movedMatrix.at) {
@@ -754,7 +766,13 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 			Statement like: a## = b##   // with non-matching sizes
 		*/
 		autoMAT copiedMatrix = matrixcopy (movedMatrix);
-		variable -> numericMatrixValue. reset();
+		{// scope
+			/*
+				The left-hand side (a##) is always owned, and therefore has to be deleted.
+			*/
+			autoMAT removable;
+			removable. adoptFromAmbiguousOwner (variable -> numericMatrixValue);
+		}
 		variable -> numericMatrixValue = copiedMatrix. releaseToAmbiguousOwner();
 	}
 }
@@ -2011,7 +2029,10 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									*/
 									praat_executeCommand (me, p);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, matrixName.string);
-									var -> numericMatrixValue.reset();
+									{// scope
+										autoMAT removable;
+										removable. adoptFromAmbiguousOwner (var -> numericMatrixValue);
+									}
 									var -> numericMatrixValue = theInterpreterNummat.releaseToAmbiguousOwner();
 								} else {
 									MAT value;
@@ -2127,7 +2148,10 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									*/
 									praat_executeCommand (me, p);
 									InterpreterVariable var = Interpreter_lookUpVariable (me, vectorName.string);
-									var -> numericVectorValue.reset();
+									{// scope
+										autoVEC removable;
+										removable. adoptFromAmbiguousOwner (var -> numericVectorValue);
+									}
 									var -> numericVectorValue = theInterpreterNumvec.releaseToAmbiguousOwner();
 								} else {
 									VEC value;
