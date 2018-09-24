@@ -591,7 +591,7 @@ public:
 	matrix (const automatrix<T>& other) = delete;
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
-	T *& operator[] (integer i) const {
+	T * const & operator[] (integer i) const {
 		return our at [i];
 	}
 	vector<T> row (integer rowNumber) const {
