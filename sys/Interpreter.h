@@ -28,11 +28,8 @@
 Thing_define (InterpreterVariable, SimpleString) {
 	autostring32 stringValue;
 	double numericValue;
-	VEC numericVectorValue;
-	MAT numericMatrixValue;
-
-	void v_destroy () noexcept
-		override;
+	autoVEC numericVectorValue;
+	autoMAT numericMatrixValue;
 };
 
 #define Interpreter_MAXNUM_PARAMETERS  400
