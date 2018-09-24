@@ -6497,10 +6497,10 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	pushNumber (var -> numericValue);
 } break; case NUMERIC_VECTOR_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	pushNumericVectorReference (var -> numericVectorValue);
+	pushNumericVectorReference (var -> numericVectorValue.get());
 } break; case NUMERIC_MATRIX_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	pushNumericMatrixReference (var -> numericMatrixValue);
+	pushNumericMatrixReference (var -> numericMatrixValue.get());
 } break; case STRING_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	autostring32 string = Melder_dup (var -> stringValue.get());

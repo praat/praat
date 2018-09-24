@@ -79,11 +79,21 @@ typedef struct structStackel {
 		if (our which == Stackel_STRING) {
 			our _string. reset();
 		} else if (our which == Stackel_NUMERIC_VECTOR) {
-			if (our owned)
-				our numericVector. reset();   // ambiguous owner happens to own; this is the reason why a VEC has a reset() method
+			if (our owned) {
+				{// scope
+					autoVEC removable;
+					removable. adoptFromAmbiguousOwner (our numericVector);
+				}
+				our numericVector = emptyVEC;   // undangle
+			}
 		} else if (our which == Stackel_NUMERIC_MATRIX) {
-			if (our owned)
-				our numericMatrix. reset();   // ambiguous owner happens to own; this is the reason why a MAT has a reset() method
+			if (our owned) {
+				{// scope
+					autoMAT removable;
+					removable. adoptFromAmbiguousOwner (our numericMatrix);
+				}
+				our numericMatrix = emptyMAT;   // undangle
+			}
 		}
 	}
 	~structStackel () {   // union-safe destruction: test which variant we have
@@ -132,8 +142,16 @@ struct Formula_Result {
 	void reset () {
 		our stringResult. reset();
 		if (our owned) {
-			our numericVectorResult. reset();
-			our numericMatrixResult. reset();
+			{// scope
+				autoVEC removable;
+				removable. adoptFromAmbiguousOwner (our numericVectorResult);
+			}
+			our numericVectorResult = emptyVEC;   // undangle
+			{// scope
+				autoMAT mat;
+				mat. adoptFromAmbiguousOwner (our numericMatrixResult);
+			}
+			our numericMatrixResult = emptyMAT;   // undangle
 		}
 	}
 	~ Formula_Result () {

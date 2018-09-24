@@ -362,13 +362,6 @@ public:
 	T& operator[] (integer i) const {
 		return our at [i];
 	}
-	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
-		if (our at) {
-			NUMvector_free (our at, 1);
-			our at = nullptr;
-		}
-		our size = 0;
-	}
 	vector<T> subview (integer first, integer last) const {
 		const integer offset = first - 1;
 		Melder_assert (offset >= 0 && offset < our size);
@@ -469,6 +462,13 @@ public:
 			other.capacity = 0;
 		}
 		return *this;
+	}
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autovector<>)
+		if (our at) {
+			NUMvector_free (our at, 1);
+			our at = nullptr;
+		}
+		our size = 0;
 	}
 	autovector&& move () noexcept { return static_cast <autovector&&> (*this); }   // enable constriction and assignment for l-values (variables) via explicit move()
 	/*
@@ -594,14 +594,6 @@ public:
 	T *& operator[] (integer i) const {
 		return our at [i];
 	}
-	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
-		if (our at) {
-			NUMmatrix_free (our at, 1, 1);
-			our at = nullptr;
-		}
-		our nrow = 0;
-		our ncol = 0;
-	}
 	vector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
 		return vector<T> (our at [rowNumber], our ncol);
@@ -701,6 +693,14 @@ public:
 			other.ncol = 0;   // to keep the source in a valid state
 		}
 		return *this;
+	}
+	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
+		if (our at) {
+			NUMmatrix_free (our at, 1, 1);
+			our at = nullptr;
+		}
+		our nrow = 0;
+		our ncol = 0;
 	}
 	automatrix&& move () noexcept { return static_cast <automatrix&&> (*this); }
 };
