@@ -1075,7 +1075,7 @@ struct autoNUMfft_Table : public structNUMfft_Table {
 	}
 };
 
-void NUMfft_forward (NUMfft_Table table, double *data);
+void NUMfft_forward (NUMfft_Table table, VEC data);
 /*
 	Function:
 		Calculates the Fourier Transform of a set of n real-valued data points.
@@ -1114,7 +1114,7 @@ void NUMfft_forward (NUMfft_Table table, double *data);
 	followed by a call of NUMfft_backward will multiply the input sequence by n.
 */
 
-void NUMfft_backward (NUMfft_Table table, double *data);
+void NUMfft_backward (NUMfft_Table table, VEC data);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
@@ -1152,7 +1152,7 @@ void NUMfft_backward (NUMfft_Table table, double *data);
 
 /**** Compatibility with NR fft's */
 
-void NUMforwardRealFastFourierTransform (double  *data, integer n);
+void NUMforwardRealFastFourierTransform (VEC data);
 /*
 	Function:
 		Calculates the Fourier Transform of a set of n real-valued data points.
@@ -1166,7 +1166,7 @@ void NUMforwardRealFastFourierTransform (double  *data, integer n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMreverseRealFastFourierTransform (double  *data, integer n);
+void NUMreverseRealFastFourierTransform (VEC data);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
@@ -1178,7 +1178,7 @@ void NUMreverseRealFastFourierTransform (double  *data, integer n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMrealft (double *data, integer n, int direction);
+void NUMrealft (VEC data, int direction);
 
 integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p);
 

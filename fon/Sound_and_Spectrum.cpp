@@ -44,7 +44,7 @@ autoSpectrum Sound_to_Spectrum (Sound me, bool fast) {
 		}
 		integer numberOfFrequencies = numberOfSamples / 2 + 1;   // 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2
 
-		autoNUMvector <double> data (1, numberOfSamples);
+		autoVEC data = VECzero (numberOfSamples);
 		if (numberOfChannels == 1) {
 			const double *channel = my z [1];
 			for (integer i = 1; i <= my nx; i ++) {
@@ -69,7 +69,7 @@ autoSpectrum Sound_to_Spectrum (Sound me, bool fast) {
 
 		autoNUMfft_Table fourierTable;
 		NUMfft_Table_init (& fourierTable, numberOfSamples);
-		NUMfft_forward (& fourierTable, data.peek());
+		NUMfft_forward (& fourierTable, data.get());
 
 		autoSpectrum thee = Spectrum_create (0.5 / my dx, numberOfFrequencies);
 		thy dx = 1.0 / (my dx * numberOfSamples);   // override
@@ -106,7 +106,8 @@ autoSound Spectrum_to_Sound (Spectrum me) {
 			Melder_throw (U"A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, U" Hz.");
 		integer numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
 		autoSound thee = Sound_createSimple (1, 1.0 / my dx, numberOfSamples * my dx);
-		double *amp = thy z [1];
+		VEC amp {thy z[1], numberOfSamples};
+		//double *amp = thy z [1];
 		double scaling = my dx;
 		amp [1] = re [1] * scaling;
 		for (integer i = 2; i < my nx; i ++) {
@@ -119,7 +120,7 @@ autoSound Spectrum_to_Sound (Spectrum me) {
 		} else {
 			amp [2] = re [my nx] * scaling;
 		}
-		NUMrealft (amp, numberOfSamples, -1);
+		NUMrealft (amp, -1);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": not converted to Sound.");
@@ -144,7 +145,7 @@ autoSpectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preem
 		data [1] = 1.0;
 		for (integer i = 1; i <= ndata; i ++)
 			data [i + 1] = a [i];
-		NUMrealft (data.at, nfft, 1);
+		NUMrealft (data.get(), 1);
 		double *re = thy z [1];
 		double *im = thy z [2];
 		re [1] = scale / data [1];

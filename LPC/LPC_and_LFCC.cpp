@@ -53,21 +53,19 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 
 void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
 	integer n = MIN (my numberOfCoefficients, thy nCoefficients);
-	double *c = my c, *a = thy a.at;
-
 	thy gain = exp (2.0 * my c0);
 
 	if (n < 1) {
 		return;
 	}
 
-	a [1] = -c [1];
+	thy a [1] = - my c [1];
 	for (integer i = 2; i <= n; i ++) {
-		double ai = c [i] * i;
+		longdouble ai = my c [i] * i;
 		for (integer j = 1; j < i; j ++) {
-			ai += a [j] * c [i - j] * (i - j);
+			ai += thy a [j] * my c [i - j] * (i - j);
 		}
-		a [i] = -ai / i;
+		thy a [i] = -ai / i;
 	}
 }
 

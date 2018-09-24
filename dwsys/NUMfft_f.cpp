@@ -50,7 +50,7 @@ void NUMforwardRealFastFourierTransform_f (float *data, integer n) {
 
 void NUMreverseRealFastFourierTransform_f (float *data, integer n) {
 	struct NUMfft_Table_f table_struct;
-	NUMfft_Table_f table = &table_struct;
+	NUMfft_Table_f table = & table_struct;
 
 	if (n > 1) {
 		// To be compatible with old behaviour

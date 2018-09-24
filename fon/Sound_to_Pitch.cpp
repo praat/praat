@@ -144,14 +144,14 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 			ac [i] = 0.0;
 		}
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			NUMfft_forward (fftTable, frame [channel]);   // complex spectrum
+			NUMfft_forward (fftTable, {frame [channel],fftTable->n});   // complex spectrum
 			ac [1] += frame [channel] [1] * frame [channel] [1];   // DC component
 			for (integer i = 2; i < nsampFFT; i += 2) {
 				ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1];   // power spectrum
 			}
 			ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];   // Nyquist frequency
 		}
-		NUMfft_backward (fftTable, ac);   /* Autocorrelation. */
+		NUMfft_backward (fftTable, {ac,fftTable->n});   /* Autocorrelation. */
 
 		/*
 		 * Normalize the autocorrelation to the value with zero lag,
@@ -461,7 +461,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		}
 
 		autoNUMvector <double> window;
-		autoNUMvector <double> windowR;
+		autoVEC windowR;
 		if (method >= FCC_NORMAL) {   /* For cross-correlation analysis. */
 
 			nsampFFT = 0;
@@ -483,7 +483,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			/*
 			* Create buffers for autocorrelation analysis.
 			*/
-			windowR.reset (1, nsampFFT);
+			windowR.resize (nsampFFT);
 			window.reset (1, nsamp_window);
 			NUMfft_Table_init (& fftTable, nsampFFT);
 
@@ -510,14 +510,14 @@ autoPitch Sound_to_Pitch_any (Sound me,
 			for (integer i = 1; i <= nsamp_window; i ++) {
 				windowR [i] = window [i];
 			}
-			NUMfft_forward (& fftTable, windowR.peek());
+			NUMfft_forward (& fftTable, windowR.get());
 			windowR [1] *= windowR [1];   // DC component
 			for (integer i = 2; i < nsampFFT; i += 2) {
 				windowR [i] = windowR [i] * windowR [i] + windowR [i + 1] * windowR [i + 1];
 				windowR [i + 1] = 0.0;   // power spectrum: square and zero
 			}
 			windowR [nsampFFT] *= windowR [nsampFFT];   // Nyquist frequency
-			NUMfft_backward (& fftTable, windowR.peek());   // autocorrelation
+			NUMfft_backward (& fftTable, windowR.get());   // autocorrelation
 			for (integer i = 2; i <= nsamp_window; i ++) {
 				windowR [i] /= windowR [1];   // normalize
 			}
@@ -548,7 +548,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 				voicingThreshold, octaveCost,
 				dt_window, nsamp_window, halfnsamp_window, maximumLag,
 				nsampFFT, nsamp_period, halfnsamp_period, brent_ixmax, brent_depth,
-				globalPeak, window.peek(), windowR.peek(),
+				globalPeak, window.peek(), windowR.at,
 				ithread == numberOfThreads, & cancelled);
 			firstFrame = lastFrame + 1;
 			lastFrame += numberOfFramesPerThread;

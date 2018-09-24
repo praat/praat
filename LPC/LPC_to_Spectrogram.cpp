@@ -1,6 +1,6 @@
 /* LPC_to_Spectrogram.cpp
  *
- * Copyright (C) 1994-2011, 2015-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,11 @@ autoSpectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduct
 	try {
 		double samplingFrequency = 1.0 / my samplingPeriod;
 		integer nfft = 2;
-		if (dfMin <= 0) {
-			nfft = 512; dfMin = samplingFrequency / nfft;
+		if (dfMin <= 0.0) {
+			nfft = 512; 
+			dfMin = samplingFrequency / nfft;
 		}
-		while (samplingFrequency / nfft > dfMin || nfft <= my maxnCoefficients) {
-			nfft *= 2;
-		}
+		while (samplingFrequency / nfft > dfMin || nfft <= my maxnCoefficients) nfft *= 2;
 		double freqStep = samplingFrequency / nfft;
 
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, 0.0, samplingFrequency / 2.0, nfft / 2 + 1, freqStep, 0.0);
