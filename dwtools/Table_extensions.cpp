@@ -3373,7 +3373,7 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
 		if (my rows.size < 1) {
 			return undefined;
 		}
-		autoNUMvector<double> data (1, my rows.size);
+		autoVEC data = VECraw (my rows.size);
 		for (integer irow = 1; irow <= my rows.size; irow ++) {
 			TableRow row = my rows.at [irow];
 			data [irow] = row -> cells [columnNumber].number;
@@ -3381,7 +3381,7 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
 				U"The cell in row ", irow, U" of column ", Table_messageColumn (me, columnNumber), U" is undefined.");
 		}
 		double mad, location;
-		NUMmad (data.peek(), my rows.size, & location, true, & mad, nullptr);
+		NUMmad (data.get(), & location, true, & mad, nullptr);
 		return mad;
 	} catch (MelderError) {
 		Melder_throw (me, U": cannot compute median absolute deviation of column ", columnNumber, U".");

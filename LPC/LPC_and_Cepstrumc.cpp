@@ -1,6 +1,6 @@
 /* LPC_and_Cepstrumc.cpp
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee) {
 	integer n = my nCoefficients > thy nCoefficients ? thy nCoefficients : my nCoefficients;
-	double *c = thy c, *a = my a;
+	double *c = thy c, *a = my a.at;
 
 	c [0] = 0.5 * log (my gain);
 	if (n == 0) {
@@ -43,7 +43,7 @@ void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee) {
 }
 
 void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee) {
-	double *c = my c, *a = thy a;
+	double *c = my c, *a = thy a.at;
 	thy gain = exp (2.0 * c [0]);
 	if (thy nCoefficients == 0) {
 		return;

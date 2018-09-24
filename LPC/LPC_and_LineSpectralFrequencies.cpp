@@ -1,6 +1,6 @@
 /* LPC_and_LineSpectralFrequencies.cpp
  *
- * Copyright (C) 2016-2017 David Weenink
+ * Copyright (C) 2016-2018 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,18 +250,23 @@ autoLineSpectralFrequencies LPC_to_LineSpectralFrequencies (LPC me, double gridS
 	}
 }
 
+/*
+	Polynomials fs & fs are buffering intermediate results
+*/
 static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineSpectralFrequencies_Frame thee, Polynomial fs, Polynomial fa, double maximumFrequency) {
+	Melder_assert (fs -> numberOfCoefficients );
 	LPC_Frame_init (me, thy numberOfFrequencies);
 
 	/*
 		Reconstruct Fs (z)
+		Use my a as a buffer whose size changes!!!
 	*/
 	integer numberOfOmegas = (thy numberOfFrequencies + 1) / 2;
 	for (integer i = 1; i <= numberOfOmegas; i ++) {
 		double omega = thy frequencies [2 * i -1] / maximumFrequency * NUMpi;
 		my a [i] = -2.0 * cos (omega);
 	}
-	Polynomial_initFromProductOfSecondOrderTerms (fs, {my a, numberOfOmegas});
+	Polynomial_initFromProductOfSecondOrderTerms (fs, {my a.at, numberOfOmegas});
 
 	/*
 		Reconstruct Fa (z)
@@ -271,7 +276,7 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 		double omega = thy frequencies [2 * i] / maximumFrequency * NUMpi;
 		my a [i] = -2.0 * cos (omega);
 	}
-	Polynomial_initFromProductOfSecondOrderTerms (fa, {my a, numberOfOmegas});
+	Polynomial_initFromProductOfSecondOrderTerms (fa, {my a.at, numberOfOmegas});
 	
 	if (thy numberOfFrequencies % 2 == 0) {
 		Polynomial_multiply_firstOrderFactor (fs, -1.0);   // * (z + 1)
@@ -284,23 +289,23 @@ static void LPC_Frame_initFromLineSpectralFrequencies_Frame (LPC_Frame me, LineS
 		A(z) = (Fs(z) + Fa(z) / 2
 	*/
 	for (integer i = 1; i <= fs -> numberOfCoefficients - 2; i ++) {
-		my a [thy numberOfFrequencies - i + 1] = 0.5 * (fs -> coefficients [i+1] + fa -> coefficients [i+1]);
+		my a [thy numberOfFrequencies - i + 1] = 0.5 * (fs -> coefficients [i + 1] + fa -> coefficients [i + 1]);
 	}
 }
 
 autoLPC LineSpectralFrequencies_to_LPC (LineSpectralFrequencies me) {
 	try {
-		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, my maximumNumberOfFrequencies,0.5 / my maximumFrequency);
+		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, my maximumNumberOfFrequencies, 0.5 / my maximumFrequency);
 		autoPolynomial fs = Polynomial_create (-1.0, 1.0, my maximumNumberOfFrequencies + 2);
 		autoPolynomial fa = Polynomial_create (-1.0, 1.0, my maximumNumberOfFrequencies + 2);
 		
 		for (integer iframe = 1; iframe <= my nx; iframe ++) {
-			LineSpectralFrequencies_Frame lsf = & my d_frames [iframe];
-			LPC_Frame lpf = & thy d_frames [iframe];
+			LineSpectralFrequencies_Frame lsf_frame = & my d_frames [iframe];
+			LPC_Frame lp_frame = & thy d_frames [iframe];
 			/* Construct Fs and Fa
 				A(z) = (Fs(z) + Fa(z))/2
 			 */
-			LPC_Frame_initFromLineSpectralFrequencies_Frame (lpf, lsf, fs.get(), fa.get(), my maximumFrequency);
+			LPC_Frame_initFromLineSpectralFrequencies_Frame (lp_frame, lsf_frame, fs.get(), fa.get(), my maximumFrequency);
 		}
 		return thee;
 	} catch (MelderError) {

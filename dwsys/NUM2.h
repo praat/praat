@@ -166,7 +166,7 @@ void MATnormalizeColumns_inplace (MAT a, double power, double norm);
 void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce);
 /* a[i][j] = average[j]) */
 
-void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout);
+void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window);
 
 autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf);
 /*
@@ -181,7 +181,7 @@ double NUMmultivariateKurtosis (constMAT x, int method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-void NUMmad (double *x, integer n, double *location, bool wantlocation, double *mad, double *work);
+void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad, VEC *work);
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
@@ -194,8 +194,8 @@ void NUMmad (double *x, integer n, double *location, bool wantlocation, double *
 	If work == NULL, the routine allocates (and destroys) its own memory.
  */
 
-void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocation,
-	double *scale, bool wantscale, double k, double tol, double *work);
+void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
+	double *inout_scale, bool wantscale, double k_stdev, double tol, VEC *work);
 /*
 	Finds the Huber M-estimator for location with scale specified,
 	scale with location specified, or both if neither is specified.
@@ -877,12 +877,15 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 	Preconditions: f > 0 && bw > 0
 */
 
-int NUMburg (const double x[], integer n, double a[], int m, double *xms);
+double NUMburg_preallocated (VEC a, constVEC x);
 /*
 	Calculates linear prediction coefficients according to the algorithm
 	from J.P. Burg as described by N.Anderson in Childers, D. (ed), Modern
 	Spectrum Analysis, IEEE Press, 1978, 252-255.
+	Returns the sum of squared sample values or 0.0 if failure
 */
+
+autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms);
 
 void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce,
 	double ref, double factor, double floor);

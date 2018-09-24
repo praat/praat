@@ -1,6 +1,6 @@
 /* LineSpectralFrequencies.cpp
  *
- * Copyright (C) 2016-2017 David Weenink
+ * Copyright (C) 2016-2018 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ void structLineSpectralFrequencies :: v_info () {
 }
 
 void LineSpectralFrequencies_Frame_init (LineSpectralFrequencies_Frame me, integer numberOfFrequencies) {
-	my frequencies = NUMvector<double> (1, numberOfFrequencies);
+	my frequencies = VECzero (numberOfFrequencies);
 	my numberOfFrequencies = numberOfFrequencies;
 }
 

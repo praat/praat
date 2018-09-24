@@ -1767,7 +1767,8 @@ static double func (Daata object, const double p []) {
 			if (dj < 0.0) {
 				g2 = -g2;
 			}
-			my dx [ii] [j] += g2; my dx [jj] [j] -= g2;
+			my dx [ii] [j] += g2; 
+			my dx [jj] [j] -= g2;
 		}
 	}
 
