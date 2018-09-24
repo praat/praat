@@ -1,6 +1,6 @@
 /* LPC_to_Spectrum.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,11 +45,10 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 
 	integer nfft = 2 * (thy nx - 1), ndata = my nCoefficients + 1;
 	double scale = 1.0 / sqrt (2.0 * thy xmax * thy dx);
-	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft)) {
+	if (ndata >= nfft - 1 && (deEmphasisFrequency < thy xmax || ndata > nfft))
 		Melder_throw (U"Spectrum size not large enough.");
-	}
 
-	autoNUMvector<double> fftbuffer (1, nfft);
+	autoVEC fftbuffer = VECzero (nfft);
 
 	// Copy 1, a [1], ... a [p] into fftbuffer
 
@@ -63,9 +62,8 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 
 		double b = exp (- 2.0 * NUMpi * deEmphasisFrequency / thy xmax);
 		ndata ++;
-		for (integer i = ndata; i > 1; i--) {
+		for (integer i = ndata; i > 1; i--)
 			fftbuffer [i] -= b * fftbuffer [i - 1];
-		}
 	}
 
 	/*
@@ -74,9 +72,8 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 	*/
 
 	double g = exp (NUMpi * bandwidthReduction / (thy dx * nfft)); /* r = 1/g */
-	for (integer i = 2; i <= ndata; i ++) {
+	for (integer i = 2; i <= ndata; i ++)
 		fftbuffer [i] *= pow (g, i - 1);
-	}
 
 	/*
 		Perform the fft.
@@ -84,10 +81,9 @@ void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduc
 		The imaginary parts of the frequencies 0 and Nyquist are 0.
 	*/
 
-	NUMforwardRealFastFourierTransform (fftbuffer.peek(), nfft);
-	if (my gain > 0.0) {
+	NUMforwardRealFastFourierTransform (fftbuffer.get());
+	if (my gain > 0.0)
 		scale *= sqrt (my gain);
-	}
 	thy z [1] [1] = scale / fftbuffer [1];
 	thy z [2] [1] = 0.0;
 	for (integer i = 2; i <= nfft / 2; i ++) {
@@ -107,18 +103,15 @@ autoSpectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthRe
 		double samplingFrequency = 1.0 / my samplingPeriod;
 		integer nfft = 2, index = Sampled_xToNearestIndex (me, t);
 
-		if (index < 1) {
-			index = 1;
-		}
-		if (index > my nx) {
-			index = my nx;
-		}
+		if (index < 1) index = 1;
+		if (index > my nx) index = my nx;
 		if (dfMin <= 0) {
-			nfft = 512; dfMin = samplingFrequency / nfft;
+			nfft = 512; 
+			dfMin = samplingFrequency / nfft;
 		}
-		while (samplingFrequency / nfft > dfMin || nfft <= my d_frames [index].nCoefficients) {
+		while (samplingFrequency / nfft > dfMin || nfft <= my d_frames [index].nCoefficients)
 			nfft *= 2;
-		}
+
 		autoSpectrum thee = Spectrum_create (samplingFrequency / 2.0, nfft / 2 + 1);
 		LPC_Frame_into_Spectrum (& my d_frames [index], thee.get(), bandwidthReduction, deEmphasisFrequency);
 		return thee;

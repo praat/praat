@@ -36,23 +36,17 @@ void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee) {
 	integer p = my nCoefficients;
 	Melder_assert (p <= thy nSegments); //TODO
 
-	autoNUMvector<double> b (1, p);
-	autoNUMvector<double> a (1, p);
-
-	for (integer i = 1; i <= p; i ++) {
-		a [i] = my a [i];
-	}
+	autoVEC b = VECraw (p);
+	autoVEC a = VECcopy (my a.get());
 
 	double *rc = thy c;
 	for (integer m = p; m > 0; m --) {
 		rc [m] = a [m];
 		Melder_require (rc [m] <= 1.0, U"Relection coefficient [", m, U"] should be smaller than 1.");
-		for (integer i = 1; i < m; i ++) {
+		for (integer i = 1; i < m; i ++)
 			b [i] = a [i];
-		}
-		for (integer i = 1; i < m; i ++) {
+		for (integer i = 1; i < m; i ++)
 			a [i] = (b [i] - rc [m] * b [m - i]) / (1.0 - rc [m] * rc [m]);
-		}
 	}
 }
 
@@ -211,12 +205,8 @@ void VocalTract_setLength (VocalTract me, double newLength) {
 autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping) {
 	try {
 		integer iframe = Sampled_xToLowIndex (me, time);   // ppgb: BUG? Is rounding down the correct thing to do? not nearestIndex?
-		if (iframe < 1) {
-			iframe = 1;
-		}
-		if (iframe > my nx) {
-			iframe = my nx;
-		}
+		if (iframe < 1) iframe = 1;
+		if (iframe > my nx) iframe = my nx;
 		LPC_Frame lpc = & my d_frames [iframe];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, 0.17);
 		double length = VocalTract_LPC_Frame_getMatchingLength (thee.get(), lpc, glottalDamping, radiationDamping, internalDamping);
@@ -230,8 +220,8 @@ autoVocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bo
 autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 	try {
 		integer m = my nCoefficients;
-		autoNUMvector<double> area (1, m + 1);
-		NUMlpc_lpc_to_area (my a.at, m, area.peek());
+		autoVEC area = VECzero (m + 1);
+		NUMlpc_lpc_to_area (my a.at, m, area.at);
 		autoVocalTract thee = VocalTract_create (m, length / m);
 
 		// area [lips..glottis] (m^2) to VocalTract [glottis..lips] (m^2)
@@ -247,13 +237,9 @@ autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 
 autoVocalTract LPC_to_VocalTract (LPC me, double time, double length) {
 	try {
-		integer iframe = Sampled_xToLowIndex (me, time);   // ppgb: BUG? Is rounding down the correct thing to do?
-		if (iframe < 1) {
-			iframe = 1;
-		}
-		if (iframe > my nx) {
-			iframe = my nx;
-		}
+		integer iframe = Sampled_xToNearestIndex (me, time);
+		if (iframe < 1) iframe = 1;
+		if (iframe > my nx) iframe = my nx;
 		LPC_Frame lpc = & my d_frames [iframe];
 		autoVocalTract thee = LPC_Frame_to_VocalTract (lpc, length);
 		return thee;
@@ -261,6 +247,5 @@ autoVocalTract LPC_to_VocalTract (LPC me, double time, double length) {
 		Melder_throw (me, U": no VocalTract created.");
 	}
 }
-
 
 /* End of file LPC_and_Tube.cpp */

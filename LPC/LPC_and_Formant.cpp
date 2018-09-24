@@ -1,6 +1,6 @@
 /* LPC_and_Formant.cpp
  *
- * Copyright (C) 1994-2013, 2015-2016 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,8 @@ void Formant_Frame_scale (Formant_Frame me, double scale) {
 
 void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFrequency, double margin) {
 	integer n = my max - my min + 1;
-	autoNUMvector<double> fc (1, n);
-	autoNUMvector<double> bc (1, n);
+	autoVEC fc = VECzero (n);
+	autoVEC bc = VECzero (n);
 
 	// Determine the formants and bandwidths
 
@@ -124,39 +124,41 @@ autoFormant LPC_to_Formant (LPC me, double margin) {
 }
 
 void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod) {
-	integer m = 2, n = 2 * my nFormants;
+	double nyquist = 2.0 / samplingPeriod;
+	integer n = 2 * my nFormants;
 
 	if (my nFormants < 1) {
 		return;
 	}
-	autoNUMvector<double> lpc (-1, n);
-
-	lpc [0] = 1;
-	double nyquist = 2.0 / samplingPeriod;
+	
+	autoVEC lpc = VECraw (n + 2);
+	lpc [1] = 0;
+	lpc [2] = 1;
+	integer m = 2;
 	for (integer i = 1; i <= my nFormants; i ++) {
 		double f = my formant [i].frequency;
 
-		if (f > nyquist) {
-			continue;
-		}
+		if (f > nyquist) continue;
 
 		// D(z): 1 + p z^-1 + q z^-2
 
 		double r = exp (- NUMpi * my formant [i].bandwidth * samplingPeriod);
 		double p = - 2 * r * cos (2 * NUMpi * f * samplingPeriod);
 		double q = r * r;
-
-		for (integer j = m; j > 0; j --) {
+		
+		// By defining the two extra elements (0,1) in the lpc vector we can avoid testing 
+		//	lpc[3..n+2] will store the coefficients
+		
+		for (integer j = m + 2; j > 2; j --) {
 			lpc [j] += p * lpc [j - 1] + q * lpc [j - 2];
 		}
-
 		m += 2;
 	}
 
 	n = thy nCoefficients < n ? thy nCoefficients : n;
 
 	for (integer i = 1; i <= n ; i ++) {
-		thy a [i] = lpc [i];
+		thy a [i] = lpc [i + 2];
 	}
 
 	thy gain = my intensity;

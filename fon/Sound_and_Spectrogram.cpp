@@ -95,7 +95,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, numberOfTimes, timeStep, t1,
 				0.0, fmax, numberOfFreqs, freqStep, 0.5 * (freqStep - binWidth_hertz));
 
-		autoNUMvector <double> frame (1, nsampFFT);
+		autoVEC frame = VECzero (nsampFFT);
 		autoNUMvector <double> spec (1, nsampFFT);
 		autoNUMvector <double> window (1, nsamp_window);
 		autoNUMfft_Table fftTable;
@@ -154,7 +154,7 @@ autoSpectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, d
 				/*
 					Compute the Fast Fourier Transform of the frame.
 				*/
-				NUMfft_forward (& fftTable, frame.peek());   // complex spectrum
+				NUMfft_forward (& fftTable, frame.get());   // complex spectrum
 
 				/*
 					Put the power spectrum in frame [1..half_nsampFFT + 1].
