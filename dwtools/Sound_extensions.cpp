@@ -1082,7 +1082,7 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 void Sound_localMean (Sound me, double fromTime, double toTime, double *p_mean) {
 	integer n1 = Sampled_xToNearestIndex (me, fromTime);
 	integer n2 = Sampled_xToNearestIndex (me, toTime);
-	double *s = my z [1], mean = 0.0;
+	double mean = 0.0;
 	if (fromTime  <= toTime) {
 		if (n1 < 1) {
 			n1 = 1;
@@ -1090,10 +1090,8 @@ void Sound_localMean (Sound me, double fromTime, double toTime, double *p_mean) 
 		if (n2 > my nx) {
 			n2 = my nx;
 		}
-		for (integer i = n1; i <= n2; i ++) {
-			mean += s [i];
-		}
-		mean /= n2 - n1 + 1;
+		Melder_assert (n1 <= n2);
+		mean = NUMmean ({& my z [1] [n1], n2 - n1 + 1});
 	}
 	if (p_mean) {
 		*p_mean = mean;
@@ -2059,8 +2057,7 @@ autoSound Sound_copyChannelRanges (Sound me, conststring32 ranges) {
 		autoINTVEC channels = NUMstring_getElementsOfRanges (ranges, my ny, U"channel", true);
 		autoSound thee = Sound_create (channels.size, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer i = 1; i <= channels.size; i ++) {
-			double *from = my z [channels [i]], *to = thy z [i];
-			NUMvector_copyElements<double> (from, to, 1, my nx);
+			VECcopy_preallocated (thy z.row (i), my z.row (channels [i]));
 		}
 		return thee;
 	} catch (MelderError) {
