@@ -1607,7 +1607,8 @@ b2 = & work [n+1];
 aa = & work [n+n+1];
 for (i=1; i<=n+n+n; i ++) work [i]=0;
 */
-int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
+double NUMburg_preallocated (VEC a, constVEC x) {
+	integer n = x.size, m = a.size;
 	for (integer j = 1; j <= m; j ++) {
 		a [j] = 0.0;
 	}
@@ -1616,14 +1617,14 @@ int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
 
 	// (3)
 
-	double p = 0.0;
+	longdouble p = 0.0;
 	for (integer j = 1; j <= n; j ++) {
 		p += x [j] * x [j];
 	}
 
-	*xms = p / n;
-	if (*xms <= 0.0) {
-		return 0;	// warning empty
+	longdouble xms = p / n;
+	if (xms <= 0.0) {
+		return xms;	// warning empty
 	}
 
 	// (9)
@@ -1637,21 +1638,21 @@ int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
 	for (integer i = 1; i <= m; i ++) {
 		// (7)
 
-		double num = 0.0, denum = 0.0;
+		longdouble num = 0.0, denum = 0.0;
 		for (integer j = 1; j <= n - i; j ++) {
 			num += b1 [j] * b2 [j];
 			denum += b1 [j] * b1 [j] + b2 [j] * b2 [j];
 		}
 
 		if (denum <= 0.0) {
-			return 0;	// warning ill-conditioned
+			return 0.0;	// warning ill-conditioned
 		}
 
 		a [i] = 2.0 * num / denum;
 
 		// (10)
 
-		*xms *= 1.0 - a [i] * a [i];
+		xms *= 1.0 - a [i] * a [i];
 
 		// (5)
 
@@ -1672,7 +1673,14 @@ int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
 			}
 		}
 	}
-	return 1;
+	return xms;
+}
+
+autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms) {
+	autoVEC a = VECraw (numberOfPredictionCoefficients);
+	double xms = NUMburg_preallocated (a.get(), x);
+	if (out_xms) *out_xms = xms;
+	return a;
 }
 
 void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce, double ref, double factor, double floor) {

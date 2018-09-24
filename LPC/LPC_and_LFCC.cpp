@@ -1,6 +1,6 @@
 /* LPC_and_LFCC.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
 void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
-	double *c = thy c, *a = my a;
+	double *c = thy c, *a = my a.at;
 
 	thy c0 = 0.5 * log (my gain);
 	if (my nCoefficients < 1) {
@@ -53,7 +53,7 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 
 void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
 	integer n = MIN (my numberOfCoefficients, thy nCoefficients);
-	double *c = my c, *a = thy a;
+	double *c = my c, *a = thy a.at;
 
 	thy gain = exp (2.0 * my c0);
 

@@ -877,12 +877,15 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 	Preconditions: f > 0 && bw > 0
 */
 
-int NUMburg (const double x[], integer n, double a[], int m, double *xms);
+double NUMburg_preallocated (VEC a, constVEC x);
 /*
 	Calculates linear prediction coefficients according to the algorithm
 	from J.P. Burg as described by N.Anderson in Childers, D. (ed), Modern
 	Spectrum Analysis, IEEE Press, 1978, 252-255.
+	Returns the sum of squared sample values or 0.0 if failure
 */
+
+autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms);
 
 void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce,
 	double ref, double factor, double floor);

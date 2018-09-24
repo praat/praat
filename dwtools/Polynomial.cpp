@@ -1,6 +1,6 @@
 /* Polynomial.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,21 +58,21 @@
 /* Evaluate polynomial and derivative jointly
 	c [1..n] -> degree n-1 !!
 */
-void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *f, double *df) {
+void Polynomial_evaluateWithDerivative (Polynomial me, double x, double *out_f, double *out_df) {
 	longdouble p = my coefficients [my numberOfCoefficients], dp = 0.0, xc = x;
 
 	for (integer i = my numberOfCoefficients - 1; i > 0; i --) {
 		dp = dp * xc + p;
 		p =  p * xc + my coefficients [i];
 	}
-	*f = (double) p;
-	*df = (double) dp;
+	if (out_f) *out_f = (double) p;
+	if (out_df) *out_df = (double) dp;
 }
 
 /* Get value and derivative */
-static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *z, dcomplex *p, dcomplex *dp) {
+static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *in_z, dcomplex *out_p, dcomplex *out_dp) {
 	longdouble pr = my coefficients [my numberOfCoefficients], pi = 0.0;
-	longdouble dpr = 0.0, dpi = 0.0, x = z -> re, y = z -> im;
+	longdouble dpr = 0.0, dpi = 0.0, x = in_z -> re, y = in_z -> im;
 
 	for (integer i = my numberOfCoefficients - 1; i > 0; i --) {
 		longdouble tr   = dpr;
@@ -82,8 +82,8 @@ static void Polynomial_evaluateWithDerivative_z (Polynomial me, dcomplex *z, dco
 		pr   =   pr * x -   pi * y + my coefficients [i];
 		pi   =   tr * y +   pi * x;
 	}
-	*p = { (double) pr, (double) pi };
-	*dp = { (double) dpr, (double) dpi };
+	if (out_p) *out_p = { (double) pr, (double) pi };
+	if (out_dp) *out_dp = { (double) dpr, (double) dpi };
 }
 
 
@@ -149,7 +149,7 @@ static void Polynomial_polish_realroot (Polynomial me, double *x, integer maxit)
 		NUMmachar ();
 	for (integer i = 1; i <= maxit; i ++) {
 		double p, dp;
-		Polynomial_evaluateWithDerivative (me, *x, &p, &dp);
+		Polynomial_evaluateWithDerivative (me, *x, & p, & dp);
 		double fabsp = fabs (p);
 		if (fabsp > pmin || fabs (fabsp - pmin) < NUMfpp -> eps) {
 			/*
@@ -777,29 +777,28 @@ autoPolynomial Polynomial_createFromRealRootsString (double xmin, double xmax, c
 	
 }
 
-/* Product (i=1; a.size; (1 + a*x + x^2)
+/* Product (i=1; a.size; (1 + a[i]*x + x^2)
  * Postcondition : my numberOfCoeffcients = 2*a.size+1
  */
 void Polynomial_initFromProductOfSecondOrderTerms (Polynomial me, constVEC a) {
 	FunctionTerms_extendCapacityIf (me, 2 * a.size + 1);
 	my coefficients [1] = my coefficients [3] = 1.0;
 	my coefficients [2] = a [1];
-	integer numberOfCoefficients = 3;
+	integer ncoef = 3;
 	for (integer i = 2; i <= a.size; i ++) {
-		my coefficients [numberOfCoefficients + 1] = a [i] * my coefficients [numberOfCoefficients] + my coefficients [numberOfCoefficients - 1];
-		my coefficients [numberOfCoefficients + 2] = my coefficients [numberOfCoefficients];
-		for (integer j = numberOfCoefficients; j > 2; j --)
+		my coefficients [ncoef + 1] = a [i] * my coefficients [ncoef] + my coefficients [ncoef - 1];
+		my coefficients [ncoef + 2] = my coefficients [ncoef];
+		for (integer j = ncoef; j > 2; j --)
 			my coefficients [j] += a [i] * my coefficients [j - 1] + my coefficients [j - 2];
 		my coefficients [2] += a [i];   // a [i] * my coefficients [1]
-		numberOfCoefficients += 2;
+		ncoef += 2;
 	}
-	my numberOfCoefficients = numberOfCoefficients;
+	my numberOfCoefficients = ncoef;
 }
 
 autoPolynomial Polynomial_createFromProductOfSecondOrderTermsString (double xmin, double xmax, conststring32 s) {
 	try {
 		autoPolynomial me = Thing_new (Polynomial);
-		integer numberOfTerms;
 		autoVEC a = VEC_createFromString (s);
 		FunctionTerms_init (me.get(), xmin, xmax, 2 * a.size + 1);
 		Polynomial_initFromProductOfSecondOrderTerms (me.get(), a.get());

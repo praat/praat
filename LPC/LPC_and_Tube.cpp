@@ -1,6 +1,6 @@
 /* LPC_and_Tube.cpp
  *
- * Copyright (C) 1993-2017 David Weenink
+ * Copyright (C) 1993-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,7 +231,7 @@ autoVocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length) {
 	try {
 		integer m = my nCoefficients;
 		autoNUMvector<double> area (1, m + 1);
-		NUMlpc_lpc_to_area (my a, m, area.peek());
+		NUMlpc_lpc_to_area (my a.at, m, area.peek());
 		autoVocalTract thee = VocalTract_create (m, length / m);
 
 		// area [lips..glottis] (m^2) to VocalTract [glottis..lips] (m^2)
