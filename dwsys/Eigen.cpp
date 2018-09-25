@@ -39,7 +39,6 @@
 #include "Eigen.h"
 #include "MAT_numerics.h"
 #include "NUMmachar.h"
-#include "NUMlapack.h"
 #include "NUMclapack.h"
 #include "NUM2.h"
 #include "SVD.h"

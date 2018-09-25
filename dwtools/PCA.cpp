@@ -26,7 +26,7 @@
  djmw 20020502 modified call Eigen_TableOfReal_project_into.
  djmw 20030324 Added PCA_TableOfReal_getFractionVariance.
  djmw 20061212 Changed info to Melder_writeLine<x> format.
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
+ djmw 20071012 Added: oo_CAN_WRITE_AS_ENCODING.h
  djmw 20071201 Melder_warning<n>
  djmw 20081119 Check in TableOfReal_to_PCA if TableOfReal_areAllCellsDefined
   djmw 20110304 Thing_new
@@ -36,7 +36,6 @@
 #include "Eigen_and_SSCP.h"
 #include "Eigen_and_TableOfReal.h"
 #include "Matrix_extensions.h"
-#include "NUMlapack.h"
 #include "NUM2.h"
 #include "PCA.h"
 #include "TableOfReal_extensions.h"
