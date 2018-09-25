@@ -19,7 +19,7 @@
 #define USE_CBLAS_GEMM  0
 #define USE_GSL_GEMM  0
 #ifdef macintosh
-	#define USE_APPLE_GEMM  1
+	#define USE_APPLE_GEMM  0
 #else
 	#define USE_APPLE_GEMM  0
 #endif
@@ -106,6 +106,9 @@ void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT&
 	}
 }
 
+inline constVEC VECrow_nocheck (const constMAT& mat, integer rowNumber) {
+	return constVEC (mat.at [rowNumber], mat.ncol);
+}
 void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	#if USE_CBLAS_GEMM
 		/*
@@ -125,7 +128,7 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 	#elif USE_APPLE_GEMM
 		cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans, target.nrow, target.ncol, x.ncol,
 				1.0, & x [1] [1], x.nrow, & y [1] [1], y.nrow, 0.0, & target [1] [1], target.nrow);   // 24,0.71,0.31,0.45
-	#elif 1
+	#elif 0
 		/*
 			This version is 10,0.76,0.32,0.34 ns per multiply-add for size = 1,10,100,1000.
 
@@ -140,7 +143,7 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 				for (integer icol = 1; icol <= target.ncol; icol ++)
 					target [irow] [icol] += x [irow] [i] * y [i] [icol];
 		}
-	#else
+	#elif 0
 		/*
 			This version is 20,0.80,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
 		*/
@@ -152,6 +155,78 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 			for (integer i = 0; i < x.ncol; i ++)
 				for (integer icol = 0; icol < target.ncol; icol ++)
 					ptarget [irow * target.ncol + icol] += px [irow * x.ncol + i] * py [i * y.ncol + icol];
+		}
+	#elif 0
+		/*
+			Naive slow implementation, via stored row pointers.
+			This version is 7.5,0.69,0.87,1.87 ns per multiply-add for size = 1,10,100,1000.
+		*/
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			for (integer icol = 1; icol <= target.ncol; icol ++) {
+				target [irow] [icol] = 0.0;
+				for (integer i = 1; i <= x.ncol; i ++)
+					target [irow] [icol] += x [irow] [i] * y [i] [icol];
+			}
+		}
+	#elif 0
+		/*
+			Naive slow implementation, via computed row pointers.
+			This version is not slower than the version with stored pointers,
+			although the inner loop contains the multiplication i * y.ncol,
+			which the compiler cannot get rid of
+			(some compiler may replace it with a y.ncol stride addition).
+			It anything, this version is slightly faster than the one with stored pointers:
+			the speed is 9.1,0.63,0.83,1.83 ns per multiply-add for size = 1,10,100,1000.
+		*/
+		double *ptarget = & asvector (target) [1];
+		const double *px = & asvector (x) [1], *py = & asvector (y) [1];
+		for (integer irow = 0; irow < target.nrow; irow ++) {
+			for (integer icol = 0; icol < target.ncol; icol ++) {
+				ptarget [irow * target.ncol + icol] = 0.0;
+				for (integer i = 0; i < x.ncol; i ++)
+					ptarget [irow * target.ncol + icol] += px [irow * x.ncol + i] * py [i * y.ncol + icol];
+			}
+		}
+	#elif 0
+		/*
+			Another attempt to slow down the computation,
+			namely by making matrix indexing compute a vector, with size information and all.
+			This version is 8.4,1.00,0.95,2.38 ns per multiply-add for size = 1,10,100,1000.
+			That is really somewhat slower, but is that because of the size computation
+			or because of the range check!
+		*/
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			for (integer icol = 1; icol <= target.ncol; icol ++) {
+				target [irow] [icol] = 0.0;
+				for (integer i = 1; i <= x.ncol; i ++)
+					target [irow] [icol] += x.row (irow) [i] * y.row (i) [icol];
+			}
+		}
+	#elif 0
+		/*
+			Here we get rid of the row number check, but we still compute
+			a whole vector with size information. Programmingwise, this would be our ideal.
+			This version is 7.5,0.70,0.87,2.04 ns per multiply-add for size = 1,10,100,1000.
+			It seems to be slightly slower for large matrices than the first stored-row-pointer version.
+		*/
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			for (integer icol = 1; icol <= target.ncol; icol ++) {
+				target [irow] [icol] = 0.0;
+				for (integer i = 1; i <= x.ncol; i ++)
+					target [irow] [icol] += VECrow_nocheck (x, irow) [i] * VECrow_nocheck (y, i) [icol];
+			}
+		}
+	#else
+		/*
+			The smart version, with whole-vector computation. Still programmatically ideal.
+			This version is 14.6,0.66,0.31,0.36 ns per multiply-add for size = 1,10,100,1000.
+		*/
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			for (integer icol = 1; icol <= target.ncol; icol ++)
+				target [irow] [icol] = 0.0;
+			for (integer i = 1; i <= x.ncol; i ++)
+				for (integer icol = 1; icol <= target.ncol; icol ++)
+					target [irow] [icol] += VECrow_nocheck (x, irow) [i] * VECrow_nocheck (y, i) [icol];
 		}
 	#endif
 }

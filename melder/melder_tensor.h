@@ -297,24 +297,23 @@ public:
 	Base-1 tensors, for parallellism with the scripting language.
 
 	Initialization (tested in praat.cpp):
-		VEC x;                  // does not initialize x
-		VEC x { };              // initializes x.at to nullptr and x.size to 0
-		VEC x { 100, false };   // initializes x to 100 uninitialized values
-		VEC x { 100, true };    // initializes x to 100 zeroes
+		VEC x;               // initializes x.at to nullptr and x.size to 0
+		VEC x1 (100);        // initializes x to 100 uninitialized values
+		VEC x2 (100, 0.0);   // initializes x to 100 zeroes
 		NUMvector<double> a (1, 100);
-		VEC x { a, 100 };       // initializes x to 100 values from a base-1 array
+		VEC x3 { a, 100 };   // initializes x to 100 values from a base-1 array
 
-		autoVEC y;                  // initializes y.at to nullptr and y.size to 0
-		autoVEC y { 100, false };   // initializes y to 100 uninitialized values, having ownership
-		autoVEC y { 100, true };    // initializes y to 100 zeroes, having ownership
-		autoVEC y { x };            // initializes y to the content of x, taking ownership (explicit, so not "y = x")
-		VEC z = x.releaseToAmbiguousOwner();   // releases ownership, x.at becoming nullptr
-		"}"                            // end of scope destroys x.at if not nullptr
-		autoVEC z = y.move()        // moves the content of y to z, emptying y
+		autoVEC y;                     // initializes y.at to nullptr and y.size to 0
+		autoVEC y1 (100);              // initializes y to 100 uninitialized values, having ownership
+		autoVEC y2 (100, 0.0);         // initializes y to 100 zeroes, having ownership
+		y.adoptFromAmbiguousOwner (x); // initializes y to the content of x, taking ownership (explicit, so not "y = x")
+		VEC z = y.releaseToAmbiguousOwner();   // releases ownership, y.at becoming nullptr
+		"}"                            // end of scope destroys y.at if not nullptr
+		autoVEC z1 = y2.move()         // moves the content of y2 to z1, emptying y2
 
 	To return an autoVEC from a function, transfer ownership like this:
 		autoVEC foo () {
-			autoVEC x { 100, false };
+			autoVEC x (100);
 			... // fill in the 100 values
 			return x;
 		}
@@ -328,10 +327,10 @@ class autovector;   // forward declaration, needed in the declaration of vector<
 template <typename T>
 class vector {
 public:
-	T *at;
-	integer size;
+	T *at = nullptr;
+	integer size = 0;
 public:
-	vector () = default;   // for use in a union
+	vector () = default;
 	vector (T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	vector (const vector& other) = default;
 	/*
@@ -376,7 +375,7 @@ public:
 template <typename T>
 class constvector {
 public:
-	const T * at = nullptr;
+	const T *at = nullptr;
 	integer size = 0;
 	constvector () = default;
 	constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
@@ -579,31 +578,51 @@ autovector<T> vectorcopy (vector<T> source) {
 template <typename T>
 class automatrix;   // forward declaration, needed in the declaration of matrix
 
+#define PACKED_TENSORS  0
+
 template <typename T>
 class matrix {
 public:
-	T **at;
-	integer nrow, ncol;
+	#if PACKED_TENSORS
+	T *cells = nullptr;
+	#else
+	T **at = nullptr;
+	#endif
+	integer nrow = 0, ncol = 0;
 public:
-	matrix () = default;   // for use in a union
+	matrix () = default;
+	#if PACKED_TENSORS
+	matrix (T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
+	#else
 	matrix (T **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	#endif
 	matrix (const matrix& other) = default;
 	matrix (const automatrix<T>& other) = delete;
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
-	T *& operator[] (integer i) const {
+	#if PACKED_TENSORS
+	vector<T> operator[] (integer i) const {
+		return vector (our cells + (i - 1) * our ncol, our ncol);
+	}
+	#else
+	T * const & operator[] (integer i) const {
 		return our at [i];
 	}
+	#endif
 	vector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		#if PACKED_TENSORS
+		return vector (our cells + (rowNumber - 1) * our ncol, our ncol);
+		#else
 		return vector<T> (our at [rowNumber], our ncol);
+		#endif
 	}
 	matrix<T> horizontalBand (integer firstRow, integer lastRow) const {
 		const integer offsetRow = firstRow - 1;
 		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - offsetRow;
-		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
+		if (newNrow <= 0) return matrix<T> ();
 		return matrix<T> (& our at [offsetRow], newNrow, our ncol);
 	}
 };
@@ -611,14 +630,32 @@ public:
 template <typename T>
 class constmatrix {
 public:
-	const T * const * at;
-	integer nrow, ncol;
-	constmatrix (): at (nullptr), nrow (0), ncol (0) { }
+	#if PACKED_TENSORS
+	const T *cells = nullptr;
+	#else
+	const T * const * at = nullptr;
+	#endif
+	integer nrow = 0, ncol = 0;
+	constmatrix () = default;
+	#if PACKED_TENSORS
+	constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
+	#else
 	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	#endif
+	#if PACKED_TENSORS
+	constmatrix (matrix<T> mat): cells (mat.cells), nrow (mat.nrow), ncol (mat.ncol) { }
+	#else
 	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
+	#endif
+	#if PACKED_TENSORS
+	const T * operator[] (integer i) const {
+		return our cells + (i - 1) * our ncol;
+	}
+	#else
 	const T * const & operator[] (integer i) const {
 		return our at [i];
 	}
+	#endif
 	constvector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
 		return constvector<T> (our at [rowNumber], our ncol);
@@ -647,19 +684,32 @@ public:
 	automatrix (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
+		#if PACKED_TENSORS
+		our cells = ( givenNrow == 0 || givenNcol == 0 ? nullptr
+				: NUMvector<T> (1, givenNrow * givenNcol, initializationType == kTensorInitializationType::ZERO));
+		#else
 		our at = ( givenNrow == 0 || givenNcol == 0 ? nullptr
 				: NUMmatrix<T> (1, givenNrow, 1, givenNcol, initializationType == kTensorInitializationType::ZERO));
+		#endif
 		our nrow = givenNrow;
 		our ncol = givenNcol;
 	}
 	~automatrix () {   // destroy the payload (if any)
+		#if PACKED_TENSORS
+		if (our cells) NUMvector_free (our cells, 1);
+		#else
 		if (our at) NUMmatrix_free (our at, 1, 1);
+		#endif
 	}
 	//matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-automatrix
 		our reset();
+		#if PACKED_TENSORS
+		our cells = given.cells;
+		#else
 		our at = given.at;
+		#endif
 		our nrow = given.nrow;
 		our ncol = given.ncol;
 	}
@@ -678,11 +728,26 @@ public:
 		This implements buying a payload from another automatrix (which involves destroying our current payload).
 	*/
 	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor
+		#if PACKED_TENSORS
+		other.cells = nullptr;   // disown source
+		#else
 		other.at = nullptr;   // disown source
+		#endif
 		other.nrow = 0;   // to keep the source in a valid state
 		other.ncol = 0;   // to keep the source in a valid state
 	}
 	automatrix& operator= (automatrix&& other) noexcept {   // enable move assignment
+		#if PACKED_TENSORS
+		if (other.cells != our cells) {
+			if (our cells) NUMvector_free (our cells, 1);
+			our cells = other.cells;
+			our nrow = other.nrow;
+			our ncol = other.ncol;
+			other.cells = nullptr;   // disown source
+			other.nrow = 0;   // to keep the source in a valid state
+			other.ncol = 0;   // to keep the source in a valid state
+		}
+		#else
 		if (other.at != our at) {
 			if (our at) NUMmatrix_free (our at, 1, 1);
 			our at = other.at;
@@ -692,13 +757,21 @@ public:
 			other.nrow = 0;   // to keep the source in a valid state
 			other.ncol = 0;   // to keep the source in a valid state
 		}
+		#endif
 		return *this;
 	}
 	void reset () noexcept {   // on behalf of ambiguous owners (otherwise this could be in autoMAT)
+		#if PACKED_TENSORS
+		if (our cells) {
+			NUMvector_free (our cells, 1);
+			our cells = nullptr;
+		}
+		#else
 		if (our at) {
 			NUMmatrix_free (our at, 1, 1);
 			our at = nullptr;
 		}
+		#endif
 		our nrow = 0;
 		our ncol = 0;
 	}
@@ -715,7 +788,11 @@ automatrix<T> matrixzero (integer nrow, integer ncol) {
 }
 template <typename T>
 vector<T> asvector (matrix<T> x) {
+	#if PACKED_TENSORS
+	return vector<T> (x.cells, x.nrow * x.ncol);
+	#else
 	return vector<T> (x [1], x.nrow * x.ncol);
+	#endif
 }
 template <typename T>
 constvector<T> asvector (constmatrix<T> x) {
