@@ -84,7 +84,7 @@ typedef struct structStackel {
 					autoVEC removable;
 					removable. adoptFromAmbiguousOwner (our numericVector);
 				}
-				our numericVector = emptyVEC;   // undangle
+				our numericVector = VEC ();   // undangle
 			}
 		} else if (our which == Stackel_NUMERIC_MATRIX) {
 			if (our owned) {
@@ -92,7 +92,7 @@ typedef struct structStackel {
 					autoMAT removable;
 					removable. adoptFromAmbiguousOwner (our numericMatrix);
 				}
-				our numericMatrix = emptyMAT;   // undangle
+				our numericMatrix = MAT ();   // undangle
 			}
 		}
 	}
@@ -135,8 +135,8 @@ struct Formula_Result {
 		our expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 		our numericResult = 0.0;
 		our stringResult = autostring32();
-		our numericVectorResult = emptyVEC;
-		our numericMatrixResult = emptyMAT;
+		our numericVectorResult = VEC ();
+		our numericMatrixResult = MAT ();
 		our owned = false;
 	}
 	void reset () {
@@ -146,12 +146,12 @@ struct Formula_Result {
 				autoVEC removable;
 				removable. adoptFromAmbiguousOwner (our numericVectorResult);
 			}
-			our numericVectorResult = emptyVEC;   // undangle
+			our numericVectorResult = VEC ();   // undangle
 			{// scope
 				autoMAT mat;
 				mat. adoptFromAmbiguousOwner (our numericMatrixResult);
 			}
-			our numericMatrixResult = emptyMAT;   // undangle
+			our numericMatrixResult = MAT ();   // undangle
 		}
 	}
 	~ Formula_Result () {
