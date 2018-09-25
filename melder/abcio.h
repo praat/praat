@@ -24,6 +24,7 @@ int texgeti8 (MelderReadText text);
 int16 texgeti16 (MelderReadText text);
 int32 texgeti32 (MelderReadText text);
 integer texgetinteger (MelderReadText text);
+#define texgetinteger16BE texgetinteger
 #define texgetinteger32BE texgetinteger
 unsigned int texgetu8 (MelderReadText text);
 uint16 texgetu16 (MelderReadText text);
@@ -55,6 +56,7 @@ void texputi8      (MelderFile file, int i,                                 texp
 void texputi16     (MelderFile file, int i,                                 texput_UP_TO_SIX_NULLABLE_STRINGS);
 void texputi32     (MelderFile file, long i,                                texput_UP_TO_SIX_NULLABLE_STRINGS);
 void texputinteger (MelderFile file, integer i,                             texput_UP_TO_SIX_NULLABLE_STRINGS);
+#define texputinteger16BE texputinteger
 #define texputinteger32BE texputinteger
 void texputu8      (MelderFile file, unsigned int u,                        texput_UP_TO_SIX_NULLABLE_STRINGS);
 void texputu16     (MelderFile file, unsigned int u,                        texput_UP_TO_SIX_NULLABLE_STRINGS);
@@ -90,6 +92,7 @@ int16 bingeti16 (FILE *f);   void binputi16 (int16 i, FILE *f);   // -32768..327
 int32 bingeti24 (FILE *f);   void binputi24 (int32 i, FILE *f);   // -8388608..8388607
 int32 bingeti32 (FILE *f);   void binputi32 (int32 i, FILE *f);   // -2147483648..2147483647
 integer bingetinteger32BE (FILE *f);   void binputinteger32BE (integer i, FILE *f);
+integer bingetinteger16BE (FILE *f);   void binputinteger16BE (integer i, FILE *f);
 /*
 	Read or write signed or unsigned integers from or to 2 or 4 bytes in the stream 'f',
 	in big-endian byte order (most significant byte first).

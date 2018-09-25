@@ -234,7 +234,7 @@ static void computeViolationMarks (OTGrammarCandidate me) {
 	#define isStress(s)  ((s) == '1' || (s) == '2')
 	const char32 *firstSlash = str32chr (my output.get(), U'/');
 	const char32 *lastSlash = & my output [str32len (my output.get()) - 1];
-	my marks = NUMvector <int> (1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
+	my marks = INTVECzero (my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
 	/* Violations of WSP: count all H not followed by 1 or 2. */
 	for (const char32 *p = firstSlash + 1; p != lastSlash; p ++) {
 		if (isHeavy (p [0]) && ! isStress (p [1]))

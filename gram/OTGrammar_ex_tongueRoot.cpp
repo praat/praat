@@ -30,7 +30,7 @@ static const conststring32 vowels [] = { U"i", U"e", U"\\sw", U"\\ic", U"\\ef", 
 #define isrtr(v)  ((v) >= I)
 #define fliptr(v)  (((v) + 3) % 6)
 
-static void countVowelViolations (int *marks, int ncons, int v) {
+static void countVowelViolations (const INTVEC marks, const int ncons, const int v) {
 	if (v == I) marks [1] ++;
 	if (v == schwa) marks [2] ++;
 	if (ncons == 9) {
@@ -43,15 +43,15 @@ static void countVowelViolations (int *marks, int ncons, int v) {
 
 static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, int v2) {
 	my output = Melder_dup (Melder_cat (vowels [v1], U"t", vowels [v2]));
-	my marks = NUMvector <int> (1, my numberOfConstraints = ncons);
+	my marks = INTVECzero (my numberOfConstraints = ncons);
 	/*
-	 * Count vowel-gesture violations.
-	 */
-	countVowelViolations (my marks, ncons, v1);
-	countVowelViolations (my marks, ncons, v2);
+		Count vowel-gesture violations.
+	*/
+	countVowelViolations (my marks.get(), ncons, v1);
+	countVowelViolations (my marks.get(), ncons, v2);
 	/*
-	 * Count contour-gesture violations.
-	 */
+		Count contour-gesture violations.
+	*/
 	if (isatr (v1) != isatr (v2)) my marks [5] ++;
 }
 

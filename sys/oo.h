@@ -109,6 +109,7 @@
 
 #define oo_VEC(x,size)  oo_ANYVEC (double, r64, x, size)
 #define oo_INTVEC(x,size)  oo_ANYVEC (integer, integer32BE, x, size)
+#define oo_INTVEC16(x,size)  oo_ANYVEC (integer, integer16BE, x, size)
 #define oo_obsoleteVEC32(x,size)  oo_ANYVEC (double, r32, x, size)
 
 //#define oo_BYTE_MATRIX(x,nrow,ncol)  oo_MATRIX (signed char, i8, x, 1, nrow, 1, ncol)
