@@ -140,10 +140,9 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 		OTCandidate candidate = & candidates [icand];
 		candidate -> string = texgetw16 (text);
 		candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
-		candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
-		for (integer icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
+		candidate -> marks = INTVECraw (candidate -> numberOfConstraints);
+		for (integer icons = 1; icons <= candidate -> numberOfConstraints; icons ++)
 			candidate -> marks [icons] = texgeti16 (text);
-		}
 	}
 	OTMulti_checkIndex (this);
 }
@@ -151,11 +150,9 @@ void structOTMulti :: v_readText (MelderReadText text, int formatVersion) {
 Thing_implement (OTMulti, Daata, 2);
 
 integer OTMulti_getConstraintIndexFromName (OTMulti me, conststring32 name) {
-	for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-		if (Melder_equ (my constraints [icons]. name.get(), name)) {
+	for (integer icons = 1; icons <= my numberOfConstraints; icons ++)
+		if (Melder_equ (my constraints [icons]. name.get(), name))
 			return icons;
-		}
-	}
 	return 0;
 }
 
@@ -197,12 +194,12 @@ void OTMulti_newDisharmonies (OTMulti me, double evaluationNoise) {
 }
 
 int OTMulti_compareCandidates (OTMulti me, integer icand1, integer icand2) {
-	int *marks1 = my candidates [icand1]. marks;
-	int *marks2 = my candidates [icand2]. marks;
+	INTVEC marks1 = my candidates [icand1]. marks.get();
+	INTVEC marks2 = my candidates [icand2]. marks.get();
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) {
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int numberOfMarks1 = marks1 [my index [icons]];
-			int numberOfMarks2 = marks2 [my index [icons]];
+			integer numberOfMarks1 = marks1 [my index [icons]];
+			integer numberOfMarks2 = marks2 [my index [icons]];
 			/*
 			 * Count tied constraints as one.
 			 */
@@ -268,7 +265,7 @@ static void _OTMulti_fillInHarmonies (OTMulti me, conststring32 form1, conststri
 	if (my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY) return;
 	for (integer icand = 1; icand <= my numberOfCandidates; icand ++) if (OTMulti_candidateMatches (me, icand, form1, form2)) {
 		OTCandidate candidate = & my candidates [icand];
-		int *marks = candidate -> marks;
+		INTVEC marks = candidate -> marks.get();
 		double disharmony = 0.0;
 		if (my decisionStrategy == kOTGrammar_decisionStrategy::HARMONIC_GRAMMAR ||
 			my decisionStrategy == kOTGrammar_decisionStrategy::MAXIMUM_ENTROPY)
@@ -408,8 +405,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		integer icons = NUMrandomInteger (1, my numberOfConstraints);
 		OTConstraint constraint = & my constraints [icons];
 		double constraintStep = step * constraint -> plasticity;
-		int winnerMarks = winner -> marks [icons];
-		int loserMarks = loser -> marks [icons];
+		integer winnerMarks = winner -> marks [icons];
+		integer loserMarks = loser -> marks [icons];
 		if (loserMarks > winnerMarks) {
 			if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 			constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
@@ -425,8 +422,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTConstraint constraint = & my constraints [icons];
 			double constraintStep = step * constraint -> plasticity;
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			integer winnerMarks = winner -> marks [icons];
+			integer loserMarks = loser -> marks [icons];
 			if (loserMarks > winnerMarks) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
@@ -451,18 +448,18 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		if (grammarHasChanged) *grammarHasChanged = changed;
 	} else if (updateRule == kOTGrammar_rerankingStrategy::SYMMETRIC_ALL_SKIPPABLE) {
 		bool changed = false;
-		int winningConstraints = 0, losingConstraints = 0;
+		integer winningConstraints = 0, losingConstraints = 0;
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			integer winnerMarks = winner -> marks [icons];
+			integer loserMarks = loser -> marks [icons];
 			if (loserMarks > winnerMarks) losingConstraints ++;
 			if (winnerMarks > loserMarks) winningConstraints ++;
 		}
 		if (winningConstraints != 0) for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTConstraint constraint = & my constraints [icons];
 			double constraintStep = step * constraint -> plasticity;
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			integer winnerMarks = winner -> marks [icons];
+			integer loserMarks = loser -> marks [icons];
 			if (loserMarks > winnerMarks) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
@@ -486,10 +483,10 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		}
 		if (grammarHasChanged) *grammarHasChanged = changed;
 	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_UNCANCELLED) {
-		int winningConstraints = 0, losingConstraints = 0;
+		integer winningConstraints = 0, losingConstraints = 0;
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			integer winnerMarks = winner -> marks [icons];
+			integer loserMarks = loser -> marks [icons];
 			if (loserMarks > winnerMarks) losingConstraints ++;
 			if (winnerMarks > loserMarks) winningConstraints ++;
 		}
@@ -497,8 +494,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 				OTConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [icons];
-				int loserMarks = loser -> marks [icons];
+				integer winnerMarks = winner -> marks [icons];
+				integer loserMarks = loser -> marks [icons];
 				if (loserMarks > winnerMarks) {
 					if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 					constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / losingConstraints;
@@ -514,18 +511,18 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 			}
 		}
 	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL) {
-		int winningConstraints = 0, losingConstraints = 0;
+		integer winningConstraints = 0, losingConstraints = 0;
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			integer winnerMarks = winner -> marks [icons];
+			integer loserMarks = loser -> marks [icons];
 			if (loserMarks > 0) losingConstraints ++;
 			if (winnerMarks > 0) winningConstraints ++;
 		}
 		if (winningConstraints != 0) for (integer icons = 1; icons <= my numberOfConstraints; icons ++)  {
 			OTConstraint constraint = & my constraints [icons];
 			double constraintStep = step * constraint -> plasticity;
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			integer winnerMarks = winner -> marks [icons];
+			integer loserMarks = loser -> marks [icons];
 			if (loserMarks > 0) {
 				if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
 				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak) / losingConstraints;
@@ -545,8 +542,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		bool equivalent = true;
 		integer icons = 1;
 		for (; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [my index [icons]];   // order is important, so indirect
-			int loserMarks = loser -> marks [my index [icons]];
+			integer winnerMarks = winner -> marks [my index [icons]];   // order is important, so indirect
+			integer loserMarks = loser -> marks [my index [icons]];
 			if (loserMarks < winnerMarks) break;
 			if (loserMarks > winnerMarks) equivalent = false;
 		}
@@ -563,8 +560,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		if (updateRule == kOTGrammar_rerankingStrategy::EDCD_WITH_VACATION) {
 			integer numberOfConstraintsToDemote = 0;
 			for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-				int winnerMarks = winner -> marks [icons];
-				int loserMarks = loser -> marks [icons];
+				integer winnerMarks = winner -> marks [icons];
+				integer loserMarks = loser -> marks [icons];
 				if (loserMarks > winnerMarks) {
 					OTConstraint constraint = & my constraints [icons];
 					if (constraint -> ranking >= pivotRanking) {
@@ -588,8 +585,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		 */
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			integer numberOfConstraintsDemoted = 0;
-			int winnerMarks = winner -> marks [my index [icons]];   // For the vacation version, the order is important, so indirect.
-			int loserMarks = loser -> marks [my index [icons]];
+			integer winnerMarks = winner -> marks [my index [icons]];   // For the vacation version, the order is important, so indirect.
+			integer loserMarks = loser -> marks [my index [icons]];
 			if (loserMarks > winnerMarks) {
 				OTConstraint constraint = & my constraints [my index [icons]];
 				double constraintStep = step * constraint -> plasticity;
@@ -608,8 +605,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		OTConstraint offendingConstraint;
 		integer icons = 1;
 		for (; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
-			int loserMarks = loser -> marks [my index [icons]];
+			integer winnerMarks = winner -> marks [my index [icons]];   /* Order is important, so indirect. */
+			integer loserMarks = loser -> marks [my index [icons]];
 			if (my constraints [my index [icons]]. tiedToTheRight)
 				Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
 			if (loserMarks < winnerMarks) {
@@ -642,8 +639,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		bool changed = false;
 		integer numberOfUp = 0;
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			integer winnerMarks = winner -> marks [icons];
+			integer loserMarks = loser -> marks [icons];
 			if (winnerMarks > loserMarks) {
 				numberOfUp ++;
 			}
@@ -652,8 +649,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 				OTConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [icons];
-				int loserMarks = loser -> marks [icons];
+				integer winnerMarks = winner -> marks [icons];
+				integer loserMarks = loser -> marks [icons];
 				if (winnerMarks > loserMarks) {
 					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
 					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / numberOfUp;
@@ -699,8 +696,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 		bool changed = false;
 		integer numberOfUp = 0;
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [icons];
-			int loserMarks = loser -> marks [icons];
+			integer winnerMarks = winner -> marks [icons];
+			integer loserMarks = loser -> marks [icons];
 			if (winnerMarks > loserMarks) {
 				numberOfUp ++;
 			}
@@ -709,8 +706,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 			for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
 				OTConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [icons];
-				int loserMarks = loser -> marks [icons];
+				integer winnerMarks = winner -> marks [icons];
+				integer loserMarks = loser -> marks [icons];
 				if (winnerMarks > loserMarks) {
 					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
 					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / (numberOfUp + 1);
@@ -755,8 +752,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGH_DOWN) {
 		integer numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
-			int loserMarks = loser -> marks [my index [icons]];
+			integer winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
+			integer loserMarks = loser -> marks [my index [icons]];
 			if (loserMarks < winnerMarks) {
 				numberOfUp ++;
 			} else if (loserMarks > winnerMarks) {
@@ -771,8 +768,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 				integer constraintIndex = my index [icons];
 				OTConstraint constraint = & my constraints [constraintIndex];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
-				int loserMarks = loser -> marks [constraintIndex];
+				integer winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
+				integer loserMarks = loser -> marks [constraintIndex];
 				if (my constraints [constraintIndex]. tiedToTheRight)
 					Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
 				if (loserMarks < winnerMarks) {
@@ -790,8 +787,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 	} else if (updateRule == kOTGrammar_rerankingStrategy::WEIGHTED_ALL_UP_HIGH_DOWN_2012) {
 		integer numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
-			int loserMarks = loser -> marks [my index [icons]];
+			integer winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
+			integer loserMarks = loser -> marks [my index [icons]];
 			if (loserMarks < winnerMarks) {
 				numberOfUp ++;
 			} else if (loserMarks > winnerMarks) {
@@ -806,8 +803,8 @@ static void OTMulti_modifyRankings (OTMulti me, integer iwinner, integer iloser,
 				integer constraintIndex = my index [icons];
 				OTConstraint constraint = & my constraints [constraintIndex];
 				double constraintStep = step * constraint -> plasticity;
-				int winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
-				int loserMarks = loser -> marks [constraintIndex];
+				integer winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
+				integer loserMarks = loser -> marks [constraintIndex];
 				if (my constraints [constraintIndex]. tiedToTheRight)
 					Melder_throw (U"Demotion-only learning cannot handle tied constraints.");
 				if (loserMarks < winnerMarks) {
@@ -978,14 +975,13 @@ static integer OTMulti_crucialCell (OTMulti me, integer icand, integer iwinner, 
 			return OTMulti_crucialCell (me, secondBest, iwinner, 1, form1, form2);
 		}
 	} else {
-		int *candidateMarks = my candidates [icand]. marks;
-		int *winnerMarks = my candidates [iwinner]. marks;
+		const constINTVEC candidateMarks = my candidates [icand]. marks.get();
+		const constINTVEC winnerMarks = my candidates [iwinner]. marks.get();
 		for (integer icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int numberOfCandidateMarks = candidateMarks [my index [icons]];
-			int numberOfWinnerMarks = winnerMarks [my index [icons]];
-			if (numberOfCandidateMarks > numberOfWinnerMarks) {
+			integer numberOfCandidateMarks = candidateMarks [my index [icons]];
+			integer numberOfWinnerMarks = winnerMarks [my index [icons]];
+			if (numberOfCandidateMarks > numberOfWinnerMarks)
 				return icons;
-			}
 		}
 	}
 	return my numberOfConstraints;   /* Nothing grey. */
@@ -1164,10 +1160,10 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 		    (form2 [0] != U'\0' && OTMulti_candidateMatches (me, icand, form2, U"")) ||
 		    (form1 [0] == U'\0' && form2 [0] == U'\0'))
 	{
-		integer crucialCell = OTMulti_crucialCell (me, icand, winner, numberOfOptimalCandidates, form1, form2);
-		int candidateIsOptimal = OTMulti_compareCandidates (me, icand, winner) == 0;
-		int candidateIsOptimal1 = winner1 != 0 && OTMulti_compareCandidates (me, icand, winner1) == 0;
-		int candidateIsOptimal2 = winner2 != 0 && OTMulti_compareCandidates (me, icand, winner2) == 0;
+		const integer crucialCell = OTMulti_crucialCell (me, icand, winner, numberOfOptimalCandidates, form1, form2);
+		const bool candidateIsOptimal = ( OTMulti_compareCandidates (me, icand, winner) == 0 );
+		const bool candidateIsOptimal1 = ( winner1 != 0 && OTMulti_compareCandidates (me, icand, winner1) == 0 );
+		const bool candidateIsOptimal2 = ( winner2 != 0 && OTMulti_compareCandidates (me, icand, winner2) == 0 );
 		/*
 		 * Draw candidate transcription.
 		 */
@@ -1250,7 +1246,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, conststring32 form1, conststri
 			if (! bidirectional && icons == crucialCell && ! candidateIsOptimal &&
 			    my decisionStrategy == kOTGrammar_decisionStrategy::OPTIMALITY_THEORY)
 			{
-				int winnerMarks = my candidates [winner]. marks [index];
+				integer winnerMarks = my candidates [winner]. marks [index];
 				if (winnerMarks + 1 > 5) {
 					str32cat (markString, Melder_integer (winnerMarks + 1));
 				} else {

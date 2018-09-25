@@ -47,7 +47,7 @@ oo_DEFINE_STRUCT (OTCandidate)
 
 	oo_STRING (string)
 	oo_INTEGER (numberOfConstraints)
-	oo_INT_VECTOR (marks, numberOfConstraints)
+	oo_INTVEC16 (marks, numberOfConstraints)
 
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (harmony)
