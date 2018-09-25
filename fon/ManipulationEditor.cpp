@@ -656,7 +656,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 * Draw samples.
 		 */    
 		Graphics_setColour (my graphics.get(), Graphics_BLACK);
-		Graphics_function (my graphics.get(), sound -> z [1], first, last,
+		Graphics_function (my graphics.get(), & sound -> z [1] [0], first, last,
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 

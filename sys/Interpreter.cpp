@@ -2196,9 +2196,12 @@ void Interpreter_run (Interpreter me, char32 *text) {
 									vectorObject = Matrix_createSimple (1, 1). releaseToAmbiguousOwner();   // prevent destruction when program ends
 								}
 								VEC vec = var -> numericVectorValue.get();
+								//vectorObject -> xmin = 0.5;
 								vectorObject -> xmax = vec.size + 0.5;
 								vectorObject -> nx = vec.size;
-								vectorObject -> z [1] = vec.at;
+								vectorObject -> z.at [1] = vec.at;
+								//vectorObject -> z.nrow = 1;
+								vectorObject -> z.ncol = vec.size;
 								Matrix_formula (vectorObject, p, me, nullptr);
 							} else Melder_throw (U"Missing '=' or '+=' or '[' or '~' after vector variable ", vectorName.string, U".");
 						}

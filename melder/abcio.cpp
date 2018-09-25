@@ -787,6 +787,24 @@ int16 bingeti16LE (FILE *f) {
 	}
 }
 
+integer bingetinteger16BE (FILE *f) {
+	try {
+		if (binario_16bitBE && Melder_debug != 18) {
+			int16 s;
+			if (fread (& s, sizeof (int16), 1, f) != 1) readError (f, U"a signed 16-bit integer.");
+			return s;
+		} else {
+			uint8 bytes [2];
+			if (fread (bytes, sizeof (uint8), 2, f) != 2) readError (f, U"two bytes.");
+			return (int16)   // reinterpret sign bit
+				((uint16) ((uint16) bytes [0] << 8) |
+						   (uint16) bytes [1]);
+		}
+	} catch (MelderError) {
+		Melder_throw (U"Signed integer not read from 2 bytes in binary file.");
+	}
+}
+
 uint16 bingetu16 (FILE *f) {
 	try {
 		if (binario_16bitBE && Melder_debug != 18) {
@@ -1159,6 +1177,19 @@ void binputi16LE (int16 i, FILE *f) {
 			bytes [0] = (uint8) i;   // truncate
 			if (fwrite (bytes, sizeof (uint8), 2, f) != 2) writeError (U"two bytes.");
 		}
+	} catch (MelderError) {
+		Melder_throw (U"Signed integer not written to 2 bytes in binary file.");
+	}
+}
+
+void binputinteger16BE (integer i, FILE *f) {
+	try {
+		if (i < INT16_MIN || i > INT16_MAX)
+			Melder_throw (U"The number ", i, U" is too big to fit into 16 bits.");   // this will change in the future
+		uint8 bytes [2];
+		bytes [0] = (uint8) (i >> 8);   // truncate
+		bytes [1] = (uint8) i;   // truncate
+		if (fwrite (bytes, sizeof (uint8), 2, f) != 2) writeError (U"two bytes.");
 	} catch (MelderError) {
 		Melder_throw (U"Signed integer not written to 2 bytes in binary file.");
 	}

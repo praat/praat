@@ -121,6 +121,8 @@
 #define oo_VEC(x,n)  { U"" #x, doublewa, Melder_offsetof (ooSTRUCT, x), sizeof (double), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
 #undef oo_INTVEC
 #define oo_INTVEC(x,n)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
+#undef oo_INTVEC16
+#define oo_INTVEC16(x,n)  { U"" #x, integerwa, Melder_offsetof (ooSTRUCT, x), sizeof (integer), nullptr, nullptr, 1, nullptr, U"" #n, nullptr, nullptr },
 
 #undef oo_BYTE_MATRIX
 #define oo_BYTE_MATRIX(x,nrow,ncol)  { U"" #x, bytewa, Melder_offsetof (ooSTRUCT, x), sizeof (signed char), nullptr, nullptr, 2, nullptr, U"" #nrow, nullptr, U"" #ncol },
