@@ -1052,8 +1052,8 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 struct structNUMfft_Table
 {
   integer n;
-  double *trigcache;
-  integer *splitcache;
+  autoVEC trigcache;
+  autoINTVEC splitcache;
 };
 
 typedef struct structNUMfft_Table *NUMfft_Table;
@@ -1066,13 +1066,8 @@ void NUMfft_Table_init (NUMfft_Table table, integer n);
 struct autoNUMfft_Table : public structNUMfft_Table {
 	autoNUMfft_Table () throw () {
 		n = 0;
-		trigcache = 0;
-		splitcache = 0;
 	}
-	~autoNUMfft_Table () {
-		NUMvector_free (trigcache, 0);
-		NUMvector_free (splitcache, 0);
-	}
+	~autoNUMfft_Table () { }
 };
 
 void NUMfft_forward (NUMfft_Table table, VEC data);
