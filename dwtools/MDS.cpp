@@ -854,8 +854,7 @@ autoConfiguration Distance_to_Configuration_torsca (Distance me, int numberOfDim
 		autoScalarProduct sp = Distance_to_ScalarProduct (me, false);
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		TableOfReal_copyLabels (me, thee.get(), 1, 0);
-		MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (sp -> data.get(), numberOfDimensions, thy data.get());
-		//NUMprincipalComponents (sp -> data, my numberOfRows, numberOfDimensions, thy data);
+		MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (thy data.get(), sp -> data.get(), numberOfDimensions);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Configuration created (torsca method).");

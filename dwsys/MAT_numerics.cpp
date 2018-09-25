@@ -127,7 +127,7 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 	if (out_eigenvalues_im) *out_eigenvalues_im = eigenvalues_im.move();
 }
 
-void MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (constMAT a, integer nComponents, MAT pc) {
+void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT a, integer nComponents) {
 	Melder_assert (a.nrow == a.ncol);
 	Melder_assert (nComponents > 0 && nComponents <= a.ncol);
 	Melder_assert (pc.nrow == a.nrow && pc.ncol == nComponents);
@@ -135,7 +135,16 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (constMAT a, integer nC
 	autoMAT eigenvectors = MATraw (a.nrow, a.nrow);
 	MAT_getEigenSystemFromSymmetricMatrix (a, & eigenvectors, nullptr, false);
 	
-	MATmul_tn_preallocated (pc, a, eigenvectors.get());
+	//MATmul_tn_preallocated (pc, a, eigenvectors.horizontalBand (1, nComponents));
+	for (integer i = 1; i <= a.nrow; i ++) {
+		for (integer j = 1; j <= nComponents; j ++) {
+			longdouble s = 0.0;
+			for (integer k = 1; k <= a.nrow; k ++)
+				s += a [k] [i] * eigenvectors [k] [j];
+			pc [i] [j] = (double) s;
+		}
+	}
+
 }
 
 /* End of file MAT_numerics.cpp */

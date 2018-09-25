@@ -44,7 +44,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT inout_a, bool wantEigenv
 		inout_eigenvalues, eigenvalues sorted from large to small
 */
 
-void MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (constMAT a, integer nComponents, MAT inout_pc);
+void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT a, integer nComponents);
 /*
 	Input:
 		a, a symmetric nrow x nrow matrix
