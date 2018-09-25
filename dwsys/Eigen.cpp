@@ -437,15 +437,13 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 	}
 
 	Eigen e1 = my at [1];
-	double **evec1 = e1 -> eigenvectors.at;
 	integer nev1 = e1 -> numberOfEigenvalues;
 	integer dimension = e1 -> dimension;
 
 	for (integer i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
-		if (e2 -> dimension != dimension) {
+		if (e2 -> dimension != dimension)
 			Melder_throw (U"The dimension of the eigenvectors should be equal (offending object is ",  i, U").");
-		}
 	}
 
 	/*
@@ -455,18 +453,11 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 
 	for (integer i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
-		double **evec2 = e2 -> eigenvectors.at;
-
 		for (integer j = 1; j <= MIN (nev1, e2 -> numberOfEigenvalues); j ++) {
-			double ip = 0.0;
-			for (integer k = 1; k <= dimension; k ++) {
-				ip += evec1 [j] [k] * evec2 [j] [k];
-			}
-			if (ip < 0.0) {
-				for (integer k = 1; k <= dimension; k ++) {
-					evec2 [j] [k] = - evec2 [j] [k];
-				}
-			}
+			double ip = NUMinner (e1 -> eigenvectors.row(j), e2 -> eigenvectors.row(j));
+			if (ip < 0.0)
+				for (integer k = 1; k <= dimension; k ++)
+					e2 -> eigenvectors [j] [k] = - e2 -> eigenvectors [j] [k];
 		}
 	}
 }
@@ -481,8 +472,6 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 	Melder_require (my dimension == thy dimension, U"The eigenvectors should have equal dimensions.");
 	Melder_require (ivec_from > 0 && ivec_from <= ivec_to && ivec_to <= nmin, U"Eigenvector range too large.");
 
-	autoMAT c = MATzero (nvectors, nvectors);
-
 	/*
 		Algorithm 12.4.3 Golub & van Loan
 		Because we deal with eigenvectors we don't have to do the QR decomposition,
@@ -490,13 +479,7 @@ static void Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec
 		Compute C.
 	*/
 
-	for (integer i = 1; i <= nvectors; i ++) {
-		for (integer j = 1; j <= nvectors; j ++) {
-			for (integer k = 1; k <= my dimension; k++) {
-				c [i] [j] += my eigenvectors [ivec_from + i - 1] [k] * thy eigenvectors [ivec_from + j - 1] [k];
-			}
-		}
-	}
+	autoMAT c = MATmul_nt (my eigenvectors.horizontalBand (ivec_from, ivec_to), thy eigenvectors.horizontalBand (ivec_from, ivec_to));
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	for (integer i = 1; i <= nvectors; i ++) {
 		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;
