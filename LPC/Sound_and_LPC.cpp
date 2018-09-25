@@ -1,6 +1,6 @@
 /* Sound_and_LPC.cpp
  *
- * Copyright (C) 1994-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ for (i=1; i<= m+1+m+1+m;i ++) work [i] = 0;
 #define LPC_METHOD_AUTO_WINDOW_CORRECTION 1
 
 static void LPC_Frame_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
-	double *y = thy z [channel], *a = my a;
+	double *y = thy z [channel], *a = my a.at;
 
 	for (integer i = 1; i <= thy nx; i ++) {
 		integer m = i > my nCoefficients ? my nCoefficients : i - 1;
@@ -224,22 +224,22 @@ end:
 }
 
 static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee) {
-	int status = NUMburg (my z [1], my nx, thy a, thy nCoefficients, & thy gain);
+	thy gain = NUMburg_preallocated (thy a.get(), my z.row(1));
 	thy gain *= my nx;
 	for (integer i = 1; i <= thy nCoefficients; i ++) {
 		thy a [i] = -thy a [i];
 	}
-	return status;
+	return thy gain != 0.0;
 }
 
 static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, double tol2) {
 	integer m = 1, n = my nx, mmax = thy nCoefficients;
 	int status = 1;
-	double *a = thy a, *x = my z [1];
+	double *a = thy a.at, *x = my z [1];
 
-	autoNUMvector<double> c (1, mmax + 1);
-	autoNUMvector<double> d (1, mmax + 1);
-	autoNUMvector<double> r (1, mmax + 1);
+	autoVEC c = VECzero (mmax + 1);
+	autoVEC d = VECzero (mmax + 1);
+	autoVEC r = VECzero (mmax + 1);
 	double e0 = 0.0;
 	for (integer k = 1; k <= n; k ++) {
 		e0 += x [k] * x [k];
@@ -471,12 +471,11 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 		for (integer i = 1; i <= his nx; i ++) {
 			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
 			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
-			double *a;
+			double *a = my d_frames [iFrame]. a.at;
 			if (iFrame < 1 || iFrame > my nx) {
 				e [i] = 0.0;
 				continue;
 			}
-			a = my d_frames [iFrame]. a;
 			integer m = i > my d_frames[iFrame].nCoefficients ? my d_frames [iFrame].nCoefficients : i - 1;
 			for (integer j = 1; j <= m; j ++) {
 				e [i] += a [j] * x [i - j];
@@ -520,7 +519,7 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 			if (iFrame > my nx) {
 				break;
 			}
-			double *a = my d_frames [iFrame].a;
+			double *a = my d_frames [iFrame].a.at;
 			integer m = i > my d_frames [iFrame].nCoefficients ? my d_frames [iFrame].nCoefficients : i - 1;
 			for (integer j = 1; j <= m; j ++) {
 				x [i] -= a [j] * x [i - j];

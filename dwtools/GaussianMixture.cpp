@@ -630,7 +630,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 			autoConfiguration means2d = Configuration_create (my numberOfComponents, 2);
 
 			double a, b, cs, sn;
-			NUMeigencmp22 (s2d -> data [1] [1], s2d -> data [1] [2], s2d -> data [2] [2], &a, &b, &cs, &sn);
+			NUMeigencmp22 (s2d -> data [1] [1], s2d -> data [1] [2], s2d -> data [2] [2], & a, & b, & cs, & sn);
 
 			a = nSigmas * sqrt (a);
 			b = nSigmas * sqrt (b);

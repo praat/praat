@@ -35,11 +35,9 @@
 static void burg (constVEC samples, VEC coefficients,
 	Formant_Frame frame, double nyquistFrequency, double safetyMargin)
 {
-	double a0;
-	NUMburg (samples.at, samples.size, coefficients.at, coefficients.size, & a0);
-
+	double a0 =	NUMburg_preallocated (coefficients, samples);
 	/*
-	 * Convert LP coefficients to polynomial.
+		Convert LP coefficients to polynomial.
 	 */
 	autoPolynomial polynomial = Polynomial_create (-1, 1, coefficients.size);
 	for (int i = 1; i <= coefficients.size; i ++)
@@ -47,7 +45,7 @@ static void burg (constVEC samples, VEC coefficients,
 	polynomial -> coefficients [coefficients.size + 1] = 1.0;
 
 	/*
-	 * Find the roots of the polynomial.
+		Find the roots of the polynomial.
 	 */
 	autoRoots roots = Polynomial_to_Roots (polynomial.get());
 	Roots_fixIntoUnitCircle (roots.get());
@@ -55,23 +53,24 @@ static void burg (constVEC samples, VEC coefficients,
 	Melder_assert (frame -> nFormants == 0 && ! frame -> formant);
 
 	/*
-	 * First pass: count the formants.
-	 * The roots come in conjugate pairs, so we need only count those above the real axis.
+		First pass: count the formants.
+		The roots come in conjugate pairs, so we need only count those above the real axis.
 	 */
-	for (int i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i]. im >= 0) {
-		double f = fabs (atan2 (roots -> v [i].im, roots -> v [i].re)) * nyquistFrequency / NUMpi;
-		if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin)
-			frame -> nFormants ++;
-	}
+	for (int i = roots -> min; i <= roots -> max; i ++)
+		if (roots -> v [i]. im >= 0) {
+			double f = fabs (atan2 (roots -> v [i].im, roots -> v [i].re)) * nyquistFrequency / NUMpi;
+			if (f >= safetyMargin && f <= nyquistFrequency - safetyMargin)
+				frame -> nFormants ++;
+		}
 
 	/*
-	 * Create space for formant data.
+		Create space for formant data.
 	 */
 	if (frame -> nFormants > 0)
 		frame -> formant = NUMvector <structFormant_Formant> (1, frame -> nFormants);
 
 	/*
-	 * Second pass: fill in the formants.
+		Second pass: fill in the formants.
 	 */
 	int iformant = 0;
 	for (int i = roots -> min; i <= roots -> max; i ++) if (roots -> v [i]. im >= 0.0) {

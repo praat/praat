@@ -168,7 +168,7 @@ autoLPC VocalTractTier_to_LPC (VocalTractTier me, double timeStep) {
 			for (integer i = 1; i <= numberOfSections + 1; i ++) {
 				areavec [i] = area [iframe] [numberOfSections + 1 - i];
 			}
-			NUMlpc_area_to_lpc (areavec.peek(), numberOfSections + 1, frame -> a);
+			NUMlpc_area_to_lpc (areavec.peek(), numberOfSections + 1, frame -> a.at);
 			frame -> gain = 1e-6;   // something
 		}
 		return thee;

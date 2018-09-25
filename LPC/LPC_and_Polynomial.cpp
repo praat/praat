@@ -1,6 +1,6 @@
 /* LPC_and_Polynomial.cpp
  *
- * Copyright (C) 1994-2011, 2015-2017 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ autoPolynomial LPC_to_Polynomial (LPC me, double time) {
 		autoPolynomial thee = LPC_Frame_to_Polynomial (& my d_frames [iFrame]);
 		return thee;
 	} catch (MelderError) {
-		Melder_throw (me, U":no Polynomial created.");
+		Melder_throw (me, U": no Polynomial created.");
 	}
 }
 

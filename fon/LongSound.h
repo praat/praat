@@ -74,7 +74,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 void LongSound_savePartAsAudioFile (LongSound me, int audioFileType, double tmin, double tmax, MelderFile file, int numberOfBitsPerSamplePoint);
 void LongSound_saveChannelAsAudioFile (LongSound me, int audioFileType, int channel, MelderFile file);
 
-void LongSound_readAudioToFloat (LongSound me, double **buffer, integer firstSample, integer numberOfSamples);
+void LongSound_readAudioToFloat (LongSound me, MAT buffer, integer firstSample);
 void LongSound_readAudioToShort (LongSound me, int16 *buffer, integer firstSample, integer numberOfSamples);
 
 Collection_define (SoundAndLongSoundList, OrderedOf, Sampled) {

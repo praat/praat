@@ -1,6 +1,6 @@
 /* LPC_and_LFCC.cpp
  *
- * Copyright (C) 1994-2011, 2015 David Weenink
+ * Copyright (C) 1994-2018 David Weenink
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,8 @@
 #include "LPC_and_LFCC.h"
 #include "NUM2.h"
 
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-
 void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
-	double *c = thy c, *a = my a;
+	double *c = thy c, *a = my a.at;
 
 	thy c0 = 0.5 * log (my gain);
 	if (my nCoefficients < 1) {
@@ -35,7 +33,7 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 	}
 
 	c [1] = -a [1];
-	for (integer n = 2; n <= MIN (my nCoefficients, thy numberOfCoefficients); n ++) {
+	for (integer n = 2; n <= std::min ((integer) my nCoefficients, thy numberOfCoefficients); n ++) {
 		double s = 0;
 		for (integer k = 1; k < n; k ++) {
 			s += a [k] * c [n - k] * (n - k);
@@ -52,22 +50,18 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 }
 
 void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
-	integer n = MIN (my numberOfCoefficients, thy nCoefficients);
-	double *c = my c, *a = thy a;
-
+	integer n = std::min (my numberOfCoefficients, (integer) thy nCoefficients);
 	thy gain = exp (2.0 * my c0);
 
-	if (n < 1) {
-		return;
-	}
+	if (n < 1) return;
 
-	a [1] = -c [1];
+	thy a [1] = - my c [1];
 	for (integer i = 2; i <= n; i ++) {
-		double ai = c [i] * i;
+		longdouble ai = my c [i] * i;
 		for (integer j = 1; j < i; j ++) {
-			ai += a [j] * c [i - j] * (i - j);
+			ai += thy a [j] * my c [i - j] * (i - j);
 		}
-		a [i] = -ai / i;
+		thy a [i] = -ai / i;
 	}
 }
 
@@ -94,7 +88,7 @@ autoLPC LFCC_to_LPC (LFCC me, integer numberOfCoefficients) {
 		if (numberOfCoefficients < 1) {
 			numberOfCoefficients = my maximumNumberOfCoefficients;
 		}
-		numberOfCoefficients = MIN (numberOfCoefficients, my maximumNumberOfCoefficients);
+		numberOfCoefficients = std::min (numberOfCoefficients, my maximumNumberOfCoefficients);
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0.5 / my fmax);
 
 		for (integer i = 1; i <= my nx; i ++) {
@@ -106,7 +100,5 @@ autoLPC LFCC_to_LPC (LFCC me, integer numberOfCoefficients) {
 		Melder_throw (me, U": no LPC created.");
 	}
 }
-
-#undef MIN
 
 /* End of file LPC_and_LFCC.cpp  */

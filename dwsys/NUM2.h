@@ -24,6 +24,7 @@
 */
 
 #include <limits.h>
+#include <algorithm>
 #include "../melder/melder.h"
 #include "MAT_numerics.h"
 
@@ -166,7 +167,7 @@ void MATnormalizeColumns_inplace (MAT a, double power, double norm);
 void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce);
 /* a[i][j] = average[j]) */
 
-void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout);
+void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window);
 
 autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf);
 /*
@@ -181,7 +182,7 @@ double NUMmultivariateKurtosis (constMAT x, int method);
 	method = 1 : Schott (2001), J. of Statistical planning and Inference 94, 25-36.
 */
 
-void NUMmad (double *x, integer n, double *location, bool wantlocation, double *mad, double *work);
+void NUMmad (constVEC x, double *inout_location, bool wantlocation, double *out_mad, VEC *work);
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
@@ -194,8 +195,8 @@ void NUMmad (double *x, integer n, double *location, bool wantlocation, double *
 	If work == NULL, the routine allocates (and destroys) its own memory.
  */
 
-void NUMstatistics_huber (double *x, integer n, double *location, bool wantlocation,
-	double *scale, bool wantscale, double k, double tol, double *work);
+void NUMstatistics_huber (constVEC x, double *inout_location, bool wantlocation,
+	double *inout_scale, bool wantscale, double k_stdev, double tol, VEC *work);
 /*
 	Finds the Huber M-estimator for location with scale specified,
 	scale with location specified, or both if neither is specified.
@@ -877,12 +878,15 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 	Preconditions: f > 0 && bw > 0
 */
 
-int NUMburg (const double x[], integer n, double a[], int m, double *xms);
+double NUMburg_preallocated (VEC a, constVEC x);
 /*
 	Calculates linear prediction coefficients according to the algorithm
 	from J.P. Burg as described by N.Anderson in Childers, D. (ed), Modern
 	Spectrum Analysis, IEEE Press, 1978, 252-255.
+	Returns the sum of squared sample values or 0.0 if failure
 */
+
+autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms);
 
 void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce,
 	double ref, double factor, double floor);
@@ -1049,8 +1053,8 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 struct structNUMfft_Table
 {
   integer n;
-  double *trigcache;
-  integer *splitcache;
+  autoVEC trigcache;
+  autoINTVEC splitcache;
 };
 
 typedef struct structNUMfft_Table *NUMfft_Table;
@@ -1063,16 +1067,11 @@ void NUMfft_Table_init (NUMfft_Table table, integer n);
 struct autoNUMfft_Table : public structNUMfft_Table {
 	autoNUMfft_Table () throw () {
 		n = 0;
-		trigcache = 0;
-		splitcache = 0;
 	}
-	~autoNUMfft_Table () {
-		NUMvector_free (trigcache, 0);
-		NUMvector_free (splitcache, 0);
-	}
+	~autoNUMfft_Table () { }
 };
 
-void NUMfft_forward (NUMfft_Table table, double *data);
+void NUMfft_forward (NUMfft_Table table, VEC data);
 /*
 	Function:
 		Calculates the Fourier Transform of a set of n real-valued data points.
@@ -1111,7 +1110,7 @@ void NUMfft_forward (NUMfft_Table table, double *data);
 	followed by a call of NUMfft_backward will multiply the input sequence by n.
 */
 
-void NUMfft_backward (NUMfft_Table table, double *data);
+void NUMfft_backward (NUMfft_Table table, VEC data);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
@@ -1149,7 +1148,7 @@ void NUMfft_backward (NUMfft_Table table, double *data);
 
 /**** Compatibility with NR fft's */
 
-void NUMforwardRealFastFourierTransform (double  *data, integer n);
+void NUMforwardRealFastFourierTransform (VEC data);
 /*
 	Function:
 		Calculates the Fourier Transform of a set of n real-valued data points.
@@ -1163,7 +1162,7 @@ void NUMforwardRealFastFourierTransform (double  *data, integer n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMreverseRealFastFourierTransform (double  *data, integer n);
+void NUMreverseRealFastFourierTransform (VEC data);
 /*
 	Function:
 		Calculates the inverse transform of a complex array if it is the transform of real data.
@@ -1175,7 +1174,7 @@ void NUMreverseRealFastFourierTransform (double  *data, integer n);
 		data [2] contains real valued last component (Nyquist frequency)
 		data [3..n] odd index : real part; even index: imaginary part of DFT.
 */
-void NUMrealft (double *data, integer n, int direction);
+void NUMrealft (VEC data, int direction);
 
 integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p);
 
@@ -1286,5 +1285,34 @@ inline autoINTVEC INTVECto (integer to) {
 		result [i] = i;
 	return result;
 }
+
+void NUMeigencmp22 (double a, double b, double c, double *rt1, double *rt2, double *cs1, double *sn1 );
+/*
+	This routine is copied from LAPACK.
+	Computes the eigendecomposition of a 2-by-2 symmetric matrix
+		[  a   b  ]
+		[  b   c  ].
+	on return, rt1 is the eigenvalue of larger absolute value, rt2 is the
+	eigenvalue of smaller absolute value, and (cs1,sn1) is the unit right
+	eigenvector for rt1, giving the decomposition
+
+		[ cs1  sn1 ] [  a   b  ] [ cs1 -sn1 ]  =  [ rt1  0  ]
+		[-sn1  cs1 ] [  b   c  ] [ sn1  cs1 ]     [  0  rt2 ].
+
+
+
+	rt1 is accurate to a few ulps barring over/underflow.
+
+	rt2 may be inaccurate if there is massive cancellation in the
+	determinant a*c-b*b; higher precision or correctly rounded or
+	correctly truncated arithmetic would be needed to compute rt2
+	accurately in all cases.
+
+	cs1 and sn1 are accurate to a few ulps barring over/underflow.
+
+	overflow is possible only if rt1 is within a factor of 5 of overflow.
+	underflow is harmless if the input data is 0 or exceeds
+	underflow_threshold / macheps.
+*/
 
 #endif // _NUM2_h_

@@ -365,13 +365,13 @@ autoSound Sound_upsample (Sound me) {
 		for (integer channel = 1; channel <= my ny; channel ++) {
 			autoVEC data (2 * nfft, kTensorInitializationType::ZERO);   // zeroing is important...
 			NUMvector_copyElements (my z [channel], & data [1000], 1, my nx);   // ...because this fills only part of the sound
-			NUMrealft (data.at, nfft, 1);
+			NUMrealft (data.subview (1, nfft), 1);
 			integer imin = (integer) (nfft * 0.95);
 			for (integer i = imin + 1; i <= nfft; i ++) {
 				data [i] *= ((double) (nfft - i)) / (nfft - imin);
 			}
 			data [2] = 0.0;
-			NUMrealft (data.at, 2 * nfft, -1);
+			NUMrealft (data.get(), -1);
 			double factor = 1.0 / nfft;
 			for (integer i = 1; i <= thy nx; i ++) {
 				thy z [channel] [i] = data [i + 2000] * factor;
@@ -403,12 +403,12 @@ autoSound Sound_resample (Sound me, double samplingFrequency, integer precision)
 					data [i] = 0.0;
 				}
 				NUMvector_copyElements (my z [channel], & data [antiTurnAround], 1, my nx);
-				NUMrealft (data.at, nfft, 1);   // go to the frequency domain
+				NUMrealft (data.get(), 1);   // go to the frequency domain
 				for (integer i = Melder_ifloor (upfactor * nfft); i <= nfft; i ++) {
 					data [i] = 0.0;   // filter away high frequencies
 				}
 				data [2] = 0.0;
-				NUMrealft (data.at, nfft, -1);   // return to the time domain
+				NUMrealft (data.get(), -1);   // return to the time domain
 				double factor = 1.0 / nfft;
 				double *to = filtered -> z [channel];
 				for (integer i = 1; i <= my nx; i ++) {
@@ -550,8 +550,8 @@ autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scalin
 			a = thy z [thy ny == 1 ? 1 : channel];
 			for (integer i = n2; i > 0; i --) data2 [i] = a [i];
 			for (integer i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
-			NUMrealft (data1.at, nfft, 1);
-			NUMrealft (data2.at, nfft, 1);
+			NUMrealft (data1.get(), 1);
+			NUMrealft (data2.get(), 1);
 			data2 [1] *= data1 [1];
 			data2 [2] *= data1 [2];
 			for (integer i = 3; i <= nfft; i += 2) {
@@ -559,7 +559,7 @@ autoSound Sounds_convolve (Sound me, Sound thee, kSounds_convolve_scaling scalin
 				data2 [i + 1] = data1 [i] * data2 [i + 1] + data1 [i + 1] * data2 [i];
 				data2 [i] = temp;
 			}
-			NUMrealft (data2.at, nfft, -1);
+			NUMrealft (data2.get(), -1);
 			a = him -> z [channel];
 			for (integer i = 1; i <= n3; i ++) {
 				a [i] = data2 [i];
@@ -630,8 +630,8 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 			a = thy z [thy ny == 1 ? 1 : channel];
 			for (integer i = n2; i > 0; i --) data2 [i] = a [i];
 			for (integer i = n2 + 1; i <= nfft; i ++) data2 [i] = 0.0;
-			NUMrealft (data1.at, nfft, 1);
-			NUMrealft (data2.at, nfft, 1);
+			NUMrealft (data1.get(), 1);
+			NUMrealft (data2.get(), 1);
 			data2 [1] *= data1 [1];
 			data2 [2] *= data1 [2];
 			for (integer i = 3; i <= nfft; i += 2) {
@@ -639,7 +639,7 @@ autoSound Sounds_crossCorrelate (Sound me, Sound thee, kSounds_convolve_scaling 
 				data2 [i + 1] = data1 [i] * data2 [i + 1] - data1 [i + 1] * data2 [i];   // reverse me by taking the conjugate of data1
 				data2 [i] = temp;
 			}
-			NUMrealft (data2.at, nfft, -1);
+			NUMrealft (data2.get(), -1);
 			a = him -> z [channel];
 			for (integer i = 1; i < n1; i ++) {
 				a [i] = data2 [i + (nfft - (n1 - 1))];   // data for the first part ("negative lags") is at the end of data2
@@ -703,14 +703,14 @@ autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSoun
 			double *a = my z [channel];
 			for (integer i = n1; i > 0; i --) data [i] = a [i];
 			for (integer i = n1 + 1; i <= nfft; i ++) data [i] = 0.0;
-			NUMrealft (data.at, nfft, 1);
+			NUMrealft (data.get(), 1);
 			data [1] *= data [1];
 			data [2] *= data [2];
 			for (integer i = 3; i <= nfft; i += 2) {
 				data [i] = data [i] * data [i] + data [i + 1] * data [i + 1];
 				data [i + 1] = 0.0;   // reverse me by taking the conjugate of data1
 			}
-			NUMrealft (data.at, nfft, -1);
+			NUMrealft (data.get(), -1);
 			a = thy z [channel];
 			for (integer i = 1; i < n1; i ++) {
 				a [i] = data [i + (nfft - (n1 - 1))];   // data for the first part ("negative lags") is at the end of data

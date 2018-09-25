@@ -77,11 +77,6 @@
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
 
-#undef MAX
-#undef MIN
-
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
 
 struct pdf1_struct {
@@ -145,20 +140,20 @@ void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer 
 	}
 }
 
-void NUMvector_smoothByMovingAverage (double *xin, integer n, integer nwindow, double *xout) {
-// simple averaging, out of bound values are zero
-	for (integer i = 1; i <= n; i ++) {
-		integer jfrom = i - nwindow / 2, jto = i + nwindow / 2;
-		if (nwindow % 2 == 0) {
+void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window) {
+	Melder_assert (out.size == in.size);
+	for (integer i = 1; i <= out.size; i ++) {
+		integer jfrom = i - window / 2, jto = i + window / 2;
+		if (window % 2 == 0) {
 			jto --;
 		}
 		jfrom = jfrom < 1 ? 1 : jfrom;
-		jto = jto > n ? n : jto;
-		xout [i] = 0.0;
+		jto = jto > out.size ? out.size : jto;
+		out [i] = 0.0;
 		for (integer j = jfrom; j <= jto; j ++) {
-			xout [i] += xin [j];
+			out [i] += in [j];
 		}
-		xout [i] /= jto - jfrom + 1;
+		out [i] /= jto - jfrom + 1;
 	}
 }
 
@@ -1607,7 +1602,8 @@ b2 = & work [n+1];
 aa = & work [n+n+1];
 for (i=1; i<=n+n+n; i ++) work [i]=0;
 */
-int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
+double NUMburg_preallocated (VEC a, constVEC x) {
+	integer n = x.size, m = a.size;
 	for (integer j = 1; j <= m; j ++) {
 		a [j] = 0.0;
 	}
@@ -1616,14 +1612,14 @@ int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
 
 	// (3)
 
-	double p = 0.0;
+	longdouble p = 0.0;
 	for (integer j = 1; j <= n; j ++) {
 		p += x [j] * x [j];
 	}
 
-	*xms = p / n;
-	if (*xms <= 0.0) {
-		return 0;	// warning empty
+	longdouble xms = p / n;
+	if (xms <= 0.0) {
+		return xms;	// warning empty
 	}
 
 	// (9)
@@ -1637,21 +1633,21 @@ int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
 	for (integer i = 1; i <= m; i ++) {
 		// (7)
 
-		double num = 0.0, denum = 0.0;
+		longdouble num = 0.0, denum = 0.0;
 		for (integer j = 1; j <= n - i; j ++) {
 			num += b1 [j] * b2 [j];
 			denum += b1 [j] * b1 [j] + b2 [j] * b2 [j];
 		}
 
 		if (denum <= 0.0) {
-			return 0;	// warning ill-conditioned
+			return 0.0;	// warning ill-conditioned
 		}
 
 		a [i] = 2.0 * num / denum;
 
 		// (10)
 
-		*xms *= 1.0 - a [i] * a [i];
+		xms *= 1.0 - a [i] * a [i];
 
 		// (5)
 
@@ -1672,7 +1668,14 @@ int NUMburg (const double x [], integer n, double a [], int m, double *xms) {
 			}
 		}
 	}
-	return 1;
+	return xms;
+}
+
+autoVEC NUMburg (constVEC x, integer numberOfPredictionCoefficients, double *out_xms) {
+	autoVEC a = VECraw (numberOfPredictionCoefficients);
+	double xms = NUMburg_preallocated (a.get(), x);
+	if (out_xms) *out_xms = xms;
+	return a;
 }
 
 void NUMdmatrix_to_dBs (double **m, integer rb, integer re, integer cb, integer ce, double ref, double factor, double floor) {
@@ -1884,7 +1887,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2) {
 	int ncrossings = 0;
 	bool xswap, yswap;
-	double tmp, xc [5], yc [5], xmin, xmax, ymin, ymax;
+	double xc [5], yc [5], xmin, xmax, ymin, ymax;
 
 	*xo1 = xl1; *yo1 = yl1; *xo2 = xl2; *yo2 = yl2;
 
@@ -2359,8 +2362,6 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
 
 }
 
-#undef MAX
-#undef MIN
 #undef SIGN
 
 #define SMALL_MEAN 14
@@ -2892,6 +2893,87 @@ double NUMtrace2_nt (constMAT x, constMAT y) {
 
 double NUMtrace2_tt (constMAT x, constMAT y) {
 	return NUMtrace2_nn (y, x);
+}
+
+void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_rt2, double *out_cs1, double *out_sn1) {
+	longdouble sm = a + c, df = a - c, adf = fabs (df);
+	longdouble tb = b + b, ab = fabs (tb);
+	longdouble acmx = c, acmn = a;
+	if (fabs (a) > fabs (c)) {
+		acmx = a;
+		acmn = c;
+	}
+	longdouble rt, tn;
+	if (adf > ab) {
+		tn = ab / adf;
+		rt = adf * sqrt (1.0 + tn * tn);
+	} else if (adf < ab) {
+		tn = adf / ab;
+		rt = ab * sqrt (1.0 + tn * tn);
+	} else {
+		rt = ab * sqrt (2.0);
+	}
+	
+	longdouble rt1, rt2;
+	integer sgn1, sgn2;
+	if (sm < 0) {
+		rt1 = 0.5 * (sm - rt);
+		sgn1 = -1;
+		/*
+			Order of execution important.
+			To get fully accurate smaller eigenvalue,
+			next line needs to be executed in higher precision.
+		*/
+		rt2 = (acmx / rt1) * acmn - (b / rt1) * b;
+	} else if (sm > 0) {
+		rt1 = 0.5 * (sm + rt);
+		sgn1 = 1;
+		/*
+			Order of execution important.
+			To get fully accurate smaller eigenvalue,
+			next line needs to be executed in higher precision.
+		*/
+		rt2 = (acmx / rt1) * acmn - (b / rt1) * b;
+	} else {
+		rt1 = 0.5 * rt;
+		rt2 = -0.5 * rt;
+		sgn1 = 1;
+	}
+
+	// Compute the eigenvector
+
+	longdouble cs;
+	if (df >= 0) {
+		cs = df + rt;
+		sgn2 = 1;
+	} else {
+		cs = df - rt;
+		sgn2 = -1;
+	}
+	longdouble acs = fabs (cs), cs1, sn1;
+	if (acs > ab) {
+		longdouble ct = -tb / cs;
+		sn1 = 1 / sqrt (1 + ct * ct);
+		cs1 = ct * sn1;
+	} else {
+		if (ab == 0) {
+			cs1 = 1;
+			sn1 = 0;
+		} else {
+			tn = -cs / tb;
+			cs1 = 1 / sqrt (1 + tn * tn);
+			sn1 = tn * cs1;
+		}
+	}
+	if (sgn1 == sgn2) {
+		tn = cs1;
+		cs1 = -sn1;
+		sn1 = tn;
+	}
+	if (out_rt1) *out_rt1 = (double) rt1;
+	if (out_rt2) *out_rt2 = (double) rt2;
+	if (out_cs1) *out_cs1 = (double) cs1;
+	if (out_sn1) *out_sn1 = (double) sn1;
 }
 
 /* End of file NUM2.cpp */

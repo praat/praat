@@ -86,16 +86,5 @@ double Eigens_getAngleBetweenEigenplanes_degrees (Eigen me, Eigen thee);
 	Get angle between the eigenplanes, spanned by the first two eigenvectors, .
 */
 
-void Eigen_matrix_into_matrix_principalComponents (Eigen me, double **from, integer numberOfRows, integer from_colbegin, double **to, integer numberOfDimensionsToKeep, integer to_colbegin);
-/*
- * Preconditions:
- * 
- * 	from[numberOfRows, from_colbegin - 1 + my dimension] exists
- * 	to [numberOfRows, to_colbegin - 1 + numberOfDimensionsToKeep] exists
- * 
- * Project the vectors in matrix 'from' along the 'numberOfDimensionsToKeep' eigenvectors into the matrix 'to'.
- */
-
-
 #endif /* _Eigen_h_ */
 
