@@ -17,6 +17,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "melder.h"
+
 void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvectors, autoVEC *out_eigenvalues, bool sortAscending);
 /*
 	Calculates the eigenvectors and eigenvalues of a symmetric matrix;

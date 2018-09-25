@@ -172,8 +172,8 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 	autoMAT bc  = MATtranspose (b);
 
 	(void) NUMlapack_dggsvd (& jobu, & jobv, & jobq, & m, & n, & p, & k, & ll,
-		& ac [1][1], & lda, & bc [1][1], & ldb, & alpha [1], & beta [1], u, & ldu,
-		v, & ldv, & q [1][1], & ldq, & work [1], & iwork [1], & info);
+		& ac [1][1], & lda, & bc [1][1], & ldb, alpha.begin(), beta.begin(), u, & ldu,
+		v, & ldv, & q [1][1], & ldq, work.begin(), iwork.begin(), & info);
 	Melder_require (info == 0, U"dggsvd fails with code ", info, U".");
 
 	// Calculate the eigenvalues (alpha[i]/beta[i])^2 and store in alpha[i].
