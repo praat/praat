@@ -59,7 +59,6 @@
 #include "SSCP.h"
 #include "Eigen.h"
 #include "NUMclapack.h"
-#include "NUMlapack.h"
 #include "NUM2.h"
 #include "SVD.h"
 
