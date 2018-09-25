@@ -63,7 +63,7 @@ void NUMfft_forward (NUMfft_Table me, VEC data) {
 		return;
 	}
 	Melder_assert (my n == data.size);
-	drftf1 (my n, & data[1], my trigcache, my trigcache + my n, my splitcache);
+	drftf1 (my n, data.begin(), my trigcache.begin(), my trigcache.begin() + my n, my splitcache.begin());
 }
 
 void NUMfft_backward (NUMfft_Table me, VEC data) {
@@ -71,14 +71,14 @@ void NUMfft_backward (NUMfft_Table me, VEC data) {
 		return;
 	}
 	Melder_assert (my n == data.size);
-	drftb1 (my n, & data[1], my trigcache, my trigcache + my n, my splitcache);
+	drftb1 (my n, data.begin(), my trigcache.begin(), my trigcache.begin() + my n, my splitcache.begin());
 }
 
 void NUMfft_Table_init (NUMfft_Table me, integer n) {
 	my n = n;
-	my trigcache = NUMvector <double> (0, 3 * n - 1);
-	my splitcache = NUMvector <integer> (0, 31);
-	NUMrffti (n, my trigcache, my splitcache);
+	my trigcache = VECzero (3 * n);
+	my splitcache = INTVECzero (32);
+	NUMrffti (n, my trigcache.begin(), my splitcache.begin());
 }
 
 void NUMrealft (VEC data, int isign) {
