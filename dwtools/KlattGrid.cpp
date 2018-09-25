@@ -83,10 +83,6 @@
  * 
  */
 
-#undef MIN
-#undef MAX
-#define MIN(x,y) ((x) < (y) ? (x) : (y))
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
 #define KlattGrid_OPENPHASE_DEFAULT 0.7
 #define KlattGrid_POWER1_DEFAULT 3
 #define KlattGrid_POWER2_DEFAULT (KlattGrid_POWER1_DEFAULT+1)
@@ -1185,11 +1181,11 @@ Thing_implement (VocalTractGridPlayOptions, Daata, 0);
 
 static void VocalTractGridPlayOptions_setDefaults (VocalTractGridPlayOptions me, VocalTractGrid thee) {
 	my filterModel = KlattGrid_FILTER_CASCADE;
-	my endOralFormant = MIN (thy oral_formants -> formants.size, thy oral_formants -> bandwidths.size);
+	my endOralFormant = std::min (thy oral_formants -> formants.size, thy oral_formants -> bandwidths.size);
 	my startOralFormant = 1;
-	my endNasalFormant = MIN (thy nasal_formants -> formants.size, thy nasal_formants -> bandwidths.size);
+	my endNasalFormant = std::min (thy nasal_formants -> formants.size, thy nasal_formants -> bandwidths.size);
 	my startNasalFormant = 1;
-	my endNasalAntiFormant = MIN (thy nasal_antiformants -> formants.size, thy nasal_antiformants -> bandwidths.size);
+	my endNasalAntiFormant = std::min (thy nasal_antiformants -> formants.size, thy nasal_antiformants -> bandwidths.size);
 	my startNasalAntiFormant = 1;
 }
 
@@ -1228,7 +1224,7 @@ static integer Ordered_getNumberOfAmplitudePoints (OrderedOf<structIntensityTier
 static void FormantGrid_info (FormantGrid me, OrderedOf<structIntensityTier>* amplitudes, conststring32 in1, conststring32 in2) {
 	integer nformants = my formants.size;
 	integer namplitudes = ( amplitudes ? amplitudes->size : 0 );
-	integer nmax = MAX (nformants, namplitudes);
+	integer nmax = std::max (nformants, namplitudes);
 
 	for (integer iformant = 1; iformant <= nmax; iformant ++) {
 		MelderInfo_writeLine (in1, U"Formant ", iformant, U":");
@@ -1698,9 +1694,9 @@ Thing_implement (CouplingGridPlayOptions, Daata, 0);
 static void CouplingGridPlayOptions_setDefaults (CouplingGridPlayOptions me, CouplingGrid thee) {
 	my fadeFraction = 0.1;
 	my openglottis = 1;
-	my endTrachealFormant = MIN (thy tracheal_formants -> formants.size, thy tracheal_formants -> bandwidths.size);
+	my endTrachealFormant = std::min (thy tracheal_formants -> formants.size, thy tracheal_formants -> bandwidths.size);
 	my startTrachealFormant = 1;
-	my endTrachealAntiFormant = MIN (thy tracheal_antiformants -> formants.size, thy tracheal_antiformants -> bandwidths.size);
+	my endTrachealAntiFormant = std::min (thy tracheal_antiformants -> formants.size, thy tracheal_antiformants -> bandwidths.size);
 	my startTrachealAntiFormant = 1;
 	my startDeltaFormant = 1;
 	my endDeltaFormant = thy delta_formants -> formants.size;
@@ -1795,7 +1791,7 @@ void FormantGrid_CouplingGrid_updateOpenPhases (FormantGrid me, CouplingGrid the
 Thing_implement (FricationGridPlayOptions, Daata, 0);
 
 static void FricationGridPlayOptions_setDefaults (FricationGridPlayOptions me, FricationGrid thee) {
-	my endFricationFormant = MIN (thy frication_formants -> formants.size, thy frication_formants -> bandwidths.size);
+	my endFricationFormant = std::min (thy frication_formants -> formants.size, thy frication_formants -> bandwidths.size);
 	my startFricationFormant = 2;
 	my bypass = 1;
 }

@@ -24,6 +24,7 @@
 */
 
 #include <limits.h>
+#include <algorithm>
 #include "../melder/melder.h"
 #include "MAT_numerics.h"
 
@@ -1284,5 +1285,34 @@ inline autoINTVEC INTVECto (integer to) {
 		result [i] = i;
 	return result;
 }
+
+void NUMeigencmp22 (double a, double b, double c, double *rt1, double *rt2, double *cs1, double *sn1 );
+/*
+	This routine is copied from LAPACK.
+	Computes the eigendecomposition of a 2-by-2 symmetric matrix
+		[  a   b  ]
+		[  b   c  ].
+	on return, rt1 is the eigenvalue of larger absolute value, rt2 is the
+	eigenvalue of smaller absolute value, and (cs1,sn1) is the unit right
+	eigenvector for rt1, giving the decomposition
+
+		[ cs1  sn1 ] [  a   b  ] [ cs1 -sn1 ]  =  [ rt1  0  ]
+		[-sn1  cs1 ] [  b   c  ] [ sn1  cs1 ]     [  0  rt2 ].
+
+
+
+	rt1 is accurate to a few ulps barring over/underflow.
+
+	rt2 may be inaccurate if there is massive cancellation in the
+	determinant a*c-b*b; higher precision or correctly rounded or
+	correctly truncated arithmetic would be needed to compute rt2
+	accurately in all cases.
+
+	cs1 and sn1 are accurate to a few ulps barring over/underflow.
+
+	overflow is possible only if rt1 is within a factor of 5 of overflow.
+	underflow is harmless if the input data is 0 or exceeds
+	underflow_threshold / macheps.
+*/
 
 #endif // _NUM2_h_

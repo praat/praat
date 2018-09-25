@@ -17,6 +17,8 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "melder.h"
+
 void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvectors, autoVEC *out_eigenvalues, bool sortAscending);
 /*
 	Calculates the eigenvectors and eigenvalues of a symmetric matrix;
@@ -42,7 +44,7 @@ void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT inout_a, bool wantEigenv
 		inout_eigenvalues, eigenvalues sorted from large to small
 */
 
-void MAT_getPrincipalComponentsOfSymmetricMatrix_inplace (constMAT a, integer nComponents, MAT inout_pc);
+void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT a, integer nComponents);
 /*
 	Input:
 		a, a symmetric nrow x nrow matrix

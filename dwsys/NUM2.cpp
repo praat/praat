@@ -77,11 +77,6 @@
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
 
-#undef MAX
-#undef MIN
-
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
 
 struct pdf1_struct {
@@ -1892,7 +1887,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1, double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2) {
 	int ncrossings = 0;
 	bool xswap, yswap;
-	double tmp, xc [5], yc [5], xmin, xmax, ymin, ymax;
+	double xc [5], yc [5], xmin, xmax, ymin, ymax;
 
 	*xo1 = xl1; *yo1 = yl1; *xo2 = xl2; *yo2 = yl2;
 
@@ -2367,8 +2362,6 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
 
 }
 
-#undef MAX
-#undef MIN
 #undef SIGN
 
 #define SMALL_MEAN 14
@@ -2900,6 +2893,87 @@ double NUMtrace2_nt (constMAT x, constMAT y) {
 
 double NUMtrace2_tt (constMAT x, constMAT y) {
 	return NUMtrace2_nn (y, x);
+}
+
+void NUMeigencmp22 (double a, double b, double c, double *out_rt1, double *out_rt2, double *out_cs1, double *out_sn1) {
+	longdouble sm = a + c, df = a - c, adf = fabs (df);
+	longdouble tb = b + b, ab = fabs (tb);
+	longdouble acmx = c, acmn = a;
+	if (fabs (a) > fabs (c)) {
+		acmx = a;
+		acmn = c;
+	}
+	longdouble rt, tn;
+	if (adf > ab) {
+		tn = ab / adf;
+		rt = adf * sqrt (1.0 + tn * tn);
+	} else if (adf < ab) {
+		tn = adf / ab;
+		rt = ab * sqrt (1.0 + tn * tn);
+	} else {
+		rt = ab * sqrt (2.0);
+	}
+	
+	longdouble rt1, rt2;
+	integer sgn1, sgn2;
+	if (sm < 0) {
+		rt1 = 0.5 * (sm - rt);
+		sgn1 = -1;
+		/*
+			Order of execution important.
+			To get fully accurate smaller eigenvalue,
+			next line needs to be executed in higher precision.
+		*/
+		rt2 = (acmx / rt1) * acmn - (b / rt1) * b;
+	} else if (sm > 0) {
+		rt1 = 0.5 * (sm + rt);
+		sgn1 = 1;
+		/*
+			Order of execution important.
+			To get fully accurate smaller eigenvalue,
+			next line needs to be executed in higher precision.
+		*/
+		rt2 = (acmx / rt1) * acmn - (b / rt1) * b;
+	} else {
+		rt1 = 0.5 * rt;
+		rt2 = -0.5 * rt;
+		sgn1 = 1;
+	}
+
+	// Compute the eigenvector
+
+	longdouble cs;
+	if (df >= 0) {
+		cs = df + rt;
+		sgn2 = 1;
+	} else {
+		cs = df - rt;
+		sgn2 = -1;
+	}
+	longdouble acs = fabs (cs), cs1, sn1;
+	if (acs > ab) {
+		longdouble ct = -tb / cs;
+		sn1 = 1 / sqrt (1 + ct * ct);
+		cs1 = ct * sn1;
+	} else {
+		if (ab == 0) {
+			cs1 = 1;
+			sn1 = 0;
+		} else {
+			tn = -cs / tb;
+			cs1 = 1 / sqrt (1 + tn * tn);
+			sn1 = tn * cs1;
+		}
+	}
+	if (sgn1 == sgn2) {
+		tn = cs1;
+		cs1 = -sn1;
+		sn1 = tn;
+	}
+	if (out_rt1) *out_rt1 = (double) rt1;
+	if (out_rt2) *out_rt2 = (double) rt2;
+	if (out_cs1) *out_cs1 = (double) cs1;
+	if (out_sn1) *out_sn1 = (double) sn1;
 }
 
 /* End of file NUM2.cpp */

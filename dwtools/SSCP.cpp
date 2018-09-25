@@ -82,10 +82,6 @@
 #include "oo_DESCRIPTION.h"
 #include "SSCP_def.h"
 
-#undef MAX
-#undef MIN
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define TOVEC(x) (&(x) - 1)
 
 Thing_implement (SSCP, TableOfReal, 0);
@@ -127,10 +123,10 @@ double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence) {
 }
 
 static void getEllipseBoundingBoxCoordinates (SSCP me, double scale, bool confidence, double *xmin, double *xmax, double *ymin, double *ymax) {
-	double a, b, cs, sn, width, height;
+	double a, b, cs, width, height;
 	double lscale = SSCP_getEllipseScalefactor (me, scale, confidence);
 
-	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], &a, &b, &cs, &sn);
+	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], & a, & b, & cs, nullptr);
 	NUMgetEllipseBoundingBox (sqrt (a), sqrt (b), cs, & width, & height);
 
 	*xmin = my centroid [1] - lscale * width / 2.0;
@@ -259,7 +255,7 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale, 
 	// Principal axes are a and b with eigenvector/orientation (cs, sn).
 
 	double a, b, cs, sn;
-	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], &a, &b, &cs, &sn);
+	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], & a, & b, & cs, & sn);
 
 	// 1. Take sqrt to get units of 'std_dev'
 
@@ -364,8 +360,8 @@ double SSCP_getConcentrationEllipseArea (SSCP me, double scale, bool confidence,
 	scale = SSCP_getEllipseScalefactor (thee.get(), scale, confidence);
 	Melder_require (scale > 0, U"The scale factor should be larger than zero.");
 
-	double a, b, cs, sn;
-	NUMeigencmp22 (thy data [1] [1], thy data [1] [2], thy data [2] [2], & a, & b, & cs, & sn);
+	double a, b;
+	NUMeigencmp22 (thy data [1] [1], thy data [1] [2], thy data [2] [2], & a, & b, nullptr, nullptr);
 
 	// 1. Take sqrt to get units of 'std_dev'
 
@@ -1578,7 +1574,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 	double trace = 0.0;
 	for (integer i = 1; i <= p; i ++) {
 		for (integer j = 1; j <= p; j ++) {
-			integer lp = MAX (j, i);
+			integer lp = std::max (j, i);
 			for (integer l = lp; l <= p; l ++) {
 				trace += my data [i] [j] * linv [l] [j] * linv [l] [i];
 			}
@@ -1934,9 +1930,5 @@ void SSCP_expandPCA (SSCP me) {
 void SSCP_unExpandPCA (SSCP me) {
 	my pca.reset();
 }
-
-
-#undef MAX
-#undef MIN
 
 /* End of file SSCP.c */

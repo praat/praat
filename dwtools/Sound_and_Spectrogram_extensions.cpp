@@ -32,8 +32,6 @@
 #include "Vector.h"
 #include "NUM2.h"
 
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-// prototypes
 autoSound BandFilterSpectrogram_as_Sound (BandFilterSpectrogram me, int to_dB);
 
 /*
@@ -132,7 +130,7 @@ autoBarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, do
 			df_bark = 1.0;
 		}
 
-		fmax_bark = MIN (fmax_bark, zmax);
+		fmax_bark = std::min (fmax_bark, zmax);
 		integer numberOfFilters = Melder_iround ( (fmax_bark - f1_bark) / df_bark);
 		if (numberOfFilters <= 0) {
 			Melder_throw (U"The combination of filter parameters is not valid.");
@@ -324,7 +322,7 @@ autoSpectrogram Sound_Pitch_to_Spectrogram (Sound me, Pitch thee, double analysi
 			relative_bw = 1.1;
 		}
 
-		fmax_hz = MIN (fmax_hz, nyquist);
+		fmax_hz = std::min (fmax_hz, nyquist);
 		integer numberOfFilters = Melder_iround ( (fmax_hz - f1_hz) / df_hz);
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & numberOfFrames, & t1);
