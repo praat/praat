@@ -62,8 +62,6 @@
 #include "Formula.h"
 
 #define EMPTY_STRING(s) (! (s) || s [0] == '\0')
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
 
 #define Graphics_ARROW 1
 #define Graphics_TWOWAYARROW 2
@@ -394,7 +392,7 @@ void TableOfReal_drawBiplot (TableOfReal me, Graphics g, double xmin, double xma
 	SVD_compute (svd.get());
 	integer numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
 
-	integer nmin = MIN (nr, nc) - numberOfZeroed;
+	integer nmin = std::min (nr, nc) - numberOfZeroed;
 	Melder_require (nmin > 1,
 		U"There should be at least two (independent) columns in the table.");
 
@@ -1663,7 +1661,5 @@ autoMatrix TableOfReal_to_Matrix_interpolateOnRectangularGrid (TableOfReal me, d
 }
 
 #undef EMPTY_STRING
-#undef MAX
-#undef MIN
 
 /* End of file TableOfReal_extensions.c 1869*/

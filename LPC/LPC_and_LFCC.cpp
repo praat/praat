@@ -24,8 +24,6 @@
 #include "LPC_and_LFCC.h"
 #include "NUM2.h"
 
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-
 void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 	double *c = thy c, *a = my a.at;
 
@@ -35,7 +33,7 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 	}
 
 	c [1] = -a [1];
-	for (integer n = 2; n <= MIN (my nCoefficients, thy numberOfCoefficients); n ++) {
+	for (integer n = 2; n <= std::min ((integer) my nCoefficients, thy numberOfCoefficients); n ++) {
 		double s = 0;
 		for (integer k = 1; k < n; k ++) {
 			s += a [k] * c [n - k] * (n - k);
@@ -52,12 +50,10 @@ void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee) {
 }
 
 void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee) {
-	integer n = MIN (my numberOfCoefficients, thy nCoefficients);
+	integer n = std::min (my numberOfCoefficients, (integer) thy nCoefficients);
 	thy gain = exp (2.0 * my c0);
 
-	if (n < 1) {
-		return;
-	}
+	if (n < 1) return;
 
 	thy a [1] = - my c [1];
 	for (integer i = 2; i <= n; i ++) {
@@ -92,7 +88,7 @@ autoLPC LFCC_to_LPC (LFCC me, integer numberOfCoefficients) {
 		if (numberOfCoefficients < 1) {
 			numberOfCoefficients = my maximumNumberOfCoefficients;
 		}
-		numberOfCoefficients = MIN (numberOfCoefficients, my maximumNumberOfCoefficients);
+		numberOfCoefficients = std::min (numberOfCoefficients, my maximumNumberOfCoefficients);
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0.5 / my fmax);
 
 		for (integer i = 1; i <= my nx; i ++) {
@@ -104,7 +100,5 @@ autoLPC LFCC_to_LPC (LFCC me, integer numberOfCoefficients) {
 		Melder_throw (me, U": no LPC created.");
 	}
 }
-
-#undef MIN
 
 /* End of file LPC_and_LFCC.cpp  */

@@ -77,11 +77,6 @@
 #include "gsl_poly.h"
 #include "gsl_cdf.h"
 
-#undef MAX
-#undef MIN
-
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
 
 struct pdf1_struct {
@@ -2367,8 +2362,6 @@ void NUMlpc_lpc_to_area (double *lpc, integer m, double *area) {
 
 }
 
-#undef MAX
-#undef MIN
 #undef SIGN
 
 #define SMALL_MEAN 14

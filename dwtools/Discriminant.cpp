@@ -63,9 +63,6 @@
 #include "oo_DESCRIPTION.h"
 #include "Discriminant_def.h"
 
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-
 Thing_implement (Discriminant, Daata, 1);
 
 void structDiscriminant :: v_info () {
@@ -124,8 +121,8 @@ void Discriminant_setAprioriProbability (Discriminant me, integer group, double 
 }
 
 integer Discriminant_getNumberOfFunctions (Discriminant me) {
-	integer numberOfFunctions = MIN (my numberOfGroups - 1, my eigen -> dimension);
-	numberOfFunctions = MIN (numberOfFunctions, my eigen ->  numberOfEigenvalues);
+	integer numberOfFunctions = std::min (my numberOfGroups - 1, my eigen -> dimension);
+	numberOfFunctions = std::min (numberOfFunctions, my eigen ->  numberOfEigenvalues);
 	return numberOfFunctions;
 }
 
@@ -372,7 +369,7 @@ void Discriminant_drawConcentrationEllipses (Discriminant me, Graphics g, double
 
 	if (d1 == 0 && d2 == 0) {
 		d1 = 1;
-		d2 = MIN (numberOfFunctions, d1 + 1);
+		d2 = std::min (numberOfFunctions, d1 + 1);
 	} else if (d1 < 0 || d2 > numberOfFunctions) {
 		return;
 	}
@@ -770,8 +767,5 @@ autoConfiguration TableOfReal_to_Configuration_lda (TableOfReal me, integer numb
 		Melder_throw (me, U": Configuration with lda data not created.");
 	}
 }
-
-#undef MAX
-#undef MIN
 
 /* End of file Discriminant.cpp */

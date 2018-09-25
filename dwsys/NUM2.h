@@ -24,6 +24,7 @@
 */
 
 #include <limits.h>
+#include <algorithm>
 #include "../melder/melder.h"
 #include "MAT_numerics.h"
 

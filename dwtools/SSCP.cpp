@@ -82,10 +82,6 @@
 #include "oo_DESCRIPTION.h"
 #include "SSCP_def.h"
 
-#undef MAX
-#undef MIN
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define TOVEC(x) (&(x) - 1)
 
 Thing_implement (SSCP, TableOfReal, 0);
@@ -1578,7 +1574,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *p_prob, doub
 	double trace = 0.0;
 	for (integer i = 1; i <= p; i ++) {
 		for (integer j = 1; j <= p; j ++) {
-			integer lp = MAX (j, i);
+			integer lp = std::max (j, i);
 			for (integer l = lp; l <= p; l ++) {
 				trace += my data [i] [j] * linv [l] [j] * linv [l] [i];
 			}
@@ -1934,9 +1930,5 @@ void SSCP_expandPCA (SSCP me) {
 void SSCP_unExpandPCA (SSCP me) {
 	my pca.reset();
 }
-
-
-#undef MAX
-#undef MIN
 
 /* End of file SSCP.c */

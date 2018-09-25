@@ -26,8 +26,6 @@
 #include "NUMlapack.h"
 #include "NUMmachar.h"
 
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(x,s) ((s) < 0 ? -fabs (x) : fabs(x))
 #define TOVEC(x) (&(x) - 1)
 
@@ -42,8 +40,8 @@ void NUMidentity (double **a, integer rb, integer re, integer cb) {
 
 double NUMpythagoras (double a, double b) {
 	double absa = fabs (a), absb = fabs (b);
-	double w = MAX (absa, absb);
-	double z = MIN (absa, absb);
+	double w = std::max (absa, absb);
+	double z = std::min (absa, absb);
 	if (z == 0) {
 		return w;
 	}
@@ -333,14 +331,14 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r) {
 	}
 
 	double f1 = f, g1 = g;
-	double scale = MAX (fabs (f1), fabs (g1));
+	double scale = std::max (fabs (f1), fabs (g1));
 	if (scale >= safmx2) {
 		count = 0;
 		do {
 			count++;
 			f1 *= safmn2;
 			g1 *= safmn2;
-			scale = MAX (fabs (f1), fabs (g1));
+			scale = std::max (fabs (f1), fabs (g1));
 		} while (scale >= safmx2);
 
 		*r = sqrt (f1 * f1 + g1 * g1);
@@ -355,7 +353,7 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r) {
 			count++;
 			f1 *= safmx2;
 			g1 *= safmx2;
-			scale = MAX (fabs (f1), fabs (g1));
+			scale = std::max (fabs (f1), fabs (g1));
 		} while (scale <= safmn2);
 
 		*r = sqrt (f1 * f1 + g1 * g1);
@@ -438,7 +436,7 @@ void NUMapplyFactoredHouseholders (double **c, integer rb, integer re, integer c
 	}
 
 	Melder_assert (m > 0 && n > 0 && mv > 0 && nv > 0);
-	Melder_assert (numberOfHouseholders <= MAX (m, n));
+	Melder_assert (numberOfHouseholders <= std::max (m, n));
 	Melder_assert ( (left && m == order_v) || (! left && n == order_v));
 
 	if ( (left && ! transpose) || (! left && transpose)) {
@@ -485,7 +483,7 @@ void NUMapplyFactoredHouseholders (double **c, integer rb, integer re, integer c
 void NUMhouseholderQR (double **a, integer rb, integer re, integer cb, integer ce,
                        integer lda, double tau[]) {
 	integer m = re - rb + 1, n = ce - cb + 1;
-	integer numberOfHouseholders = MIN (m, n);
+	integer numberOfHouseholders = std::min (m, n);
 
 	Melder_assert (numberOfHouseholders > 0);
 
@@ -513,7 +511,7 @@ void NUMhouseholderQR (double **a, integer rb, integer re, integer cb, integer c
 
 
 void NUMhouseholderQRwithColumnPivoting (integer m, integer n, double **a, integer lda, integer pivot[], double tau[]) {
-	integer numberOfHouseholders = MIN (m, n);
+	integer numberOfHouseholders = std::min (m, n);
 
 	Melder_assert (numberOfHouseholders > 0);
 
@@ -549,7 +547,7 @@ void NUMhouseholderQRwithColumnPivoting (integer m, integer n, double **a, integ
 	// Compute the QR factorization and update remaining columns
 
 	if (itmp > 0) {
-		integer ma = MIN (itmp, m);
+		integer ma = std::min (itmp, m);
 		NUMhouseholderQR (a, 1, m, 1, ma, lda, tau);
 		if (ma < n) NUMapplyFactoredHouseholders (a, 1, m, ma + 1, n, a, 1, m,
 			        1, ma, lda, tau, NUM_LEFT, NUM_TRANSPOSE);
@@ -634,7 +632,7 @@ void NUMhouseholderQRwithColumnPivoting (integer m, integer n, double **a, integ
 
 void NUMhouseholderRQ (double **a, integer rb, integer re, integer cb, integer ce, double tau[]) {
 	integer m = re - rb + 1, n = ce - cb + 1;
-	integer numberOfHouseholders = MIN (m, n);
+	integer numberOfHouseholders = std::min (m, n);
 
 	Melder_assert (numberOfHouseholders > 0);
 
@@ -953,7 +951,7 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax) {
 	double as, at, au, c;
 
 	double fa = fabs (f), ga = fabs (g), ha = fabs (h);
-	double fhmn = MIN (fa, ha), fhmx = MAX (fa, ha);
+	double fhmn = std::min (fa, ha), fhmx = std::max (fa, ha);
 
 	if (fhmn == 0) {
 		*svmin = 0;
@@ -961,8 +959,8 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax) {
 		if (fhmx == 0) {
 			*svmax = ga;
 		} else {
-			double tmp = MIN (fhmx, ga) / MAX (fhmx, ga);
-			*svmax = MAX (fhmx, ga) * sqrt (1 + tmp * tmp);
+			double tmp = std::min (fhmx, ga) / std::max (fhmx, ga);
+			*svmax = std::max (fhmx, ga) * sqrt (1 + tmp * tmp);
 		}
 	} else {
 		if (ga < fhmx) {
@@ -1001,7 +999,7 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax) {
 void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b,
                                   integer p, int product, integer k, integer l, double tola, double tolb,
                                   double *alpha, double *beta, double **u, double **v, double **q, integer *ncycle) {
-	int upper = 0; integer iter, maxmn = MAX (m, n);
+	int upper = 0; integer iter, maxmn = std::max (m, n);
 	double a1, a2, a3, b1, b2, b3, csq, csu, csv;
 	double snq, snu, snv;
 
@@ -1051,7 +1049,7 @@ void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b,
 
 				// Update (n-l+i)-th and (n-l+j)-th columns of matrices A and B: A * Q and B * Q
 
-				NUMplaneRotation (MIN (k + l, m), TOVEC (a[1][n - l + j]), n, TOVEC (a[1][n - l + i]), n, csq, snq);
+				NUMplaneRotation (std::min (k + l, m), TOVEC (a[1][n - l + j]), n, TOVEC (a[1][n - l + i]), n, csq, snq);
 
 				NUMplaneRotation (l, TOVEC (b[1][n - l + j]), n, TOVEC (b[1][n - l + i]), n, csq, snq);
 
@@ -1089,7 +1087,7 @@ void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b,
 			// Convergence test: test the parallelism of the corresponding rows of A and B.
 
 			double error = 0, svmin;
-			for (integer i = 1; i <= MIN (l, m - k); i++) {
+			for (integer i = 1; i <= std::min (l, m - k); i++) {
 				integer jj = n - l + i;
 				for (integer j = 1; j <= l - i + 1; j++, jj++) {
 					work[j] = a[k + i][jj];
@@ -1101,7 +1099,7 @@ void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b,
 					error = svmin;
 				}
 			}
-			if (fabs (error) <=  MIN (tola, tolb) * n) {
+			if (fabs (error) <=  std::min (tola, tolb) * n) {
 				break;
 			}
 		}
@@ -1125,7 +1123,7 @@ void NUMgsvdFromUpperTriangulars (double **a, integer m, integer n, double **b,
 		beta[i] = 0;
 	}
 
-	for (integer i = 1; i <= MIN (l, m - k); i++) {
+	for (integer i = 1; i <= std::min (l, m - k); i++) {
 		a1 = a[k + i][n - l + i];
 		b1 = b[i][n - l + i];
 
@@ -1225,7 +1223,7 @@ void NUMmatricesToUpperTriangularForms (double **a, integer m, integer n, double
 
 	// Determine the effective rank of matrix B and clean up B.
 
-	for (l = 0, i = 1; i <= MIN (p, n); i++) {
+	for (l = 0, i = 1; i <= std::min (p, n); i++) {
 		if (fabs (b[i][i]) > tolb) {
 			l++;
 		}
@@ -1280,7 +1278,7 @@ void NUMmatricesToUpperTriangularForms (double **a, integer m, integer n, double
 
 		// Determine the effective rank of A11
 
-		for (k = 0, i = 1; i <= MIN (m, n - l); i++) {
+		for (k = 0, i = 1; i <= std::min (m, n - l); i++) {
 			if (fabs (a[i][i]) > tola) {
 				k++;
 			}
@@ -1379,8 +1377,8 @@ void NUMgsvdcmp (double **a, integer m, integer n, double **b, integer p, int pr
 		Melder_throw (U"NUMgsvdcmp: empty matrix.");
 	}
 
-	double tola = MAX (m, n) * MAX (anorm, NUMfpp -> sfmin) * NUMfpp -> prec;
-	double tolb = MAX (p, n) * MAX (bnorm, NUMfpp -> sfmin) * NUMfpp -> prec;
+	double tola = std::max (m, n) * std::max (anorm, NUMfpp -> sfmin) * NUMfpp -> prec;
+	double tolb = std::max (p, n) * std::max (bnorm, NUMfpp -> sfmin) * NUMfpp -> prec;
 
 	NUMmatricesToUpperTriangularForms (a, m, n, b, p, tola, tolb, k, l, u, v, q);
 

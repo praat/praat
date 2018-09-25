@@ -35,9 +35,6 @@
 #include "Sound_to_Pitch.h"
 #include "NUM2.h"
 
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-
 static double scaleFrequency (double f, int scale_from, int scale_to) {
 	double fhz = undefined;
 
@@ -783,7 +780,7 @@ autoMelFilter MFCC_to_MelFilter (MFCC me, integer first, integer last) {
 
 		for (integer frame = 1; frame <= my nx; frame ++) {
 			CC_Frame cf = & my frame [frame];
-			integer iend = MIN (last, cf -> numberOfCoefficients);
+			integer iend = std::min (last, cf -> numberOfCoefficients);
 			x [1] = ( first == 0 ? cf -> c0 : 0.0);
 			for (integer i = 1; i <= my maximumNumberOfCoefficients; i ++)
 				x [i + 1] = i < first || i > iend ? 0 : cf -> c [i];
@@ -831,7 +828,7 @@ static autoMelFilter MFCC_to_MelFilter2 (MFCC me, integer first_cc, integer last
 
 		for (integer frame = 1; frame <= my nx; frame ++) {
 			CC_Frame cf = & my frame [frame];
-			integer ie = MIN (last_cc, cf -> numberOfCoefficients);
+			integer ie = std::min (last_cc, cf -> numberOfCoefficients);
 			for (integer j = 1; j <= nf; j ++) {
 				double t = 0;
 				for (integer i = first_cc; i <= ie; i ++)
@@ -950,7 +947,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 			df_bark = 1;
 		}
 
-		fmax_bark = MIN (fmax_bark, zmax);
+		fmax_bark = std::min (fmax_bark, zmax);
 		integer nf = Melder_iround ( (fmax_bark - f1_bark) / df_bark);
 		Melder_require (nf > 0, U"The combination of filter parameters is not valid.");
 
@@ -1153,7 +1150,7 @@ autoFormantFilter Sound_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 		if (relative_bw <= 0.0)
 			relative_bw = 1.1;
 
-		fmax_hz = MIN (fmax_hz, nyquist);
+		fmax_hz = std::min (fmax_hz, nyquist);
 		integer nf = Melder_iround ( (fmax_hz - f1_hz) / df_hz);
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
@@ -1221,8 +1218,5 @@ autoSound FilterBanks_convolve (FilterBank me, FilterBank thee, enum kSounds_con
 		Melder_throw (me, U" and ", thee, U" not convolved.");
 	}
 }
-
-#undef MAX
-#undef MIN
 
 /* End of file Filterbank.cpp */
