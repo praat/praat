@@ -34,7 +34,6 @@
 */
 
 #include "SVD.h"
-#include "NUMlapack.h"
 #include "NUMmachar.h"
 #include "Collection.h"
 #include "NUMclapack.h"

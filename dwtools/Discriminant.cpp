@@ -1,4 +1,4 @@
-/* Discriminant.c
+/* Discriminant.cpp
  *
  * Copyright (C) 1993-2018 David Weenink
  *
@@ -39,7 +39,6 @@
 #include "SSCP.h"
 #include "Eigen_and_SSCP.h"
 #include "Eigen_and_TableOfReal.h"
-#include "NUMlapack.h"
 #include "SVD.h"
 #include "NUM2.h"
 #include "TableOfReal_extensions.h"
