@@ -135,7 +135,7 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT 
 	autoMAT eigenvectors = MATraw (a.nrow, a.nrow);
 	MAT_getEigenSystemFromSymmetricMatrix (a, & eigenvectors, nullptr, false);
 	
-	//MATmul_tn_preallocated (pc, a, eigenvectors.horizontalBand (1, nComponents));
+	//MATmul_tn_preallocated (pc, a, eigenvectors.verticalBand (1, nComponents)); // TODO
 	for (integer i = 1; i <= a.nrow; i ++) {
 		for (integer j = 1; j <= nComponents; j ++) {
 			longdouble s = 0.0;

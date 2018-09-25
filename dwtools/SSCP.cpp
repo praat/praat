@@ -123,10 +123,10 @@ double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence) {
 }
 
 static void getEllipseBoundingBoxCoordinates (SSCP me, double scale, bool confidence, double *xmin, double *xmax, double *ymin, double *ymax) {
-	double a, b, cs, sn, width, height;
+	double a, b, cs, width, height;
 	double lscale = SSCP_getEllipseScalefactor (me, scale, confidence);
 
-	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], &a, &b, &cs, &sn);
+	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], & a, & b, & cs, nullptr);
 	NUMgetEllipseBoundingBox (sqrt (a), sqrt (b), cs, & width, & height);
 
 	*xmin = my centroid [1] - lscale * width / 2.0;
@@ -255,7 +255,7 @@ static void _SSCP_drawTwoDimensionalEllipse (SSCP me, Graphics g, double scale, 
 	// Principal axes are a and b with eigenvector/orientation (cs, sn).
 
 	double a, b, cs, sn;
-	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], &a, &b, &cs, &sn);
+	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], & a, & b, & cs, & sn);
 
 	// 1. Take sqrt to get units of 'std_dev'
 
@@ -360,8 +360,8 @@ double SSCP_getConcentrationEllipseArea (SSCP me, double scale, bool confidence,
 	scale = SSCP_getEllipseScalefactor (thee.get(), scale, confidence);
 	Melder_require (scale > 0, U"The scale factor should be larger than zero.");
 
-	double a, b, cs, sn;
-	NUMeigencmp22 (thy data [1] [1], thy data [1] [2], thy data [2] [2], & a, & b, & cs, & sn);
+	double a, b;
+	NUMeigencmp22 (thy data [1] [1], thy data [1] [2], thy data [2] [2], & a, & b, nullptr, nullptr);
 
 	// 1. Take sqrt to get units of 'std_dev'
 
