@@ -64,7 +64,6 @@
 */
 
 #include "NUMcomplex.h"
-#include "NUMlapack.h"
 #include "NUMmachar.h"
 
 #include "ActivationList.h"
