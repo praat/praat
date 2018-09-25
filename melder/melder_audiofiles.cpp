@@ -807,15 +807,15 @@ static void Melder_DecodeFlac_error (const FLAC__StreamDecoder *decoder, FLAC__S
 	Melder_warning (U"FLAC decoder error: ", Melder_peek8to32 (FLAC__StreamDecoderErrorStatusString [status]));
 }
 
-static void Melder_readFlacFile (FILE *f, integer numberOfChannels, double **buffer, integer numberOfSamples) {
+static void Melder_readFlacFile (FILE *f, MAT buffer) {
 	int result = 0;
 
 	MelderDecodeFlacContext c;
 	c.file = f;
-	c.numberOfChannels = numberOfChannels;
-	for (int ichan = 1; ichan <= numberOfChannels; ichan ++)
+	c.numberOfChannels = buffer.nrow;
+	for (int ichan = 1; ichan <= buffer.nrow; ichan ++)
 		c.channels [ichan - 1] = & buffer [ichan] [1];
-	c.numberOfSamples = numberOfSamples;
+	c.numberOfSamples = buffer.ncol;
 
 	FLAC__StreamDecoder *decoder = FLAC__stream_decoder_new ();
 	if (! decoder)
@@ -835,24 +835,26 @@ end:
 		Melder_throw (U"Error decoding FLAC file.");
 }
 
-static void Melder_readMp3File (FILE *f, integer numberOfChannels, double **buffer, integer numberOfSamples) {
+static void Melder_readMp3File (FILE *f, MAT buffer) {
 	int result = 0;
 	MelderDecodeMp3Context c;
-	c.numberOfChannels = numberOfChannels;
-	for (int ichan = 1; ichan <= numberOfChannels; ichan ++)
+	c.numberOfChannels = buffer.nrow;
+	for (int ichan = 1; ichan <= buffer.nrow; ichan ++)
 		c.channels [ichan - 1] = & buffer [ichan] [1];
-	c.numberOfSamples = numberOfSamples;
+	c.numberOfSamples = buffer.ncol;
 	MP3_FILE mp3f = mp3f_new ();
 	mp3f_set_file (mp3f, f);
 	mp3f_set_callback (mp3f, Melder_DecodeMp3_convert, &c);
-	result = mp3f_read (mp3f, numberOfSamples);
+	result = mp3f_read (mp3f, buffer.ncol);
 	mp3f_delete (mp3f);
 	if (result == 0)
 		Melder_throw (U"Error decoding MP3 file.");
 }
 
-void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, double **buffer, integer numberOfSamples) {
+void Melder_readAudioToFloat (FILE *f, int encoding, MAT buffer) {
 	try {
+		integer numberOfChannels = buffer.nrow;
+		integer numberOfSamples = buffer.ncol;
 		switch (encoding) {
 			case Melder_LINEAR_8_SIGNED: {
 				try {
@@ -1201,12 +1203,12 @@ void Melder_readAudioToFloat (FILE *f, integer numberOfChannels, int encoding, d
 			case Melder_FLAC_COMPRESSION_16:
 			case Melder_FLAC_COMPRESSION_24:
 			case Melder_FLAC_COMPRESSION_32:
-				Melder_readFlacFile (f, numberOfChannels, buffer, numberOfSamples);
+				Melder_readFlacFile (f, buffer);
 				break;
 			case Melder_MPEG_COMPRESSION_16:
 			case Melder_MPEG_COMPRESSION_24:
 			case Melder_MPEG_COMPRESSION_32:
-				Melder_readMp3File (f, numberOfChannels, buffer, numberOfSamples);
+				Melder_readMp3File (f, buffer);
 				break;
 			default:
 				Melder_throw (U"Unknown encoding ", encoding, U".");

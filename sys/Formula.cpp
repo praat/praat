@@ -3546,20 +3546,16 @@ static void shared_do_writeInfo (integer numberOfArguments) {
 		} else if (arg->which == Stackel_STRING) {
 			MelderInfo_write (arg->getString());
 		} else if (arg->which == Stackel_NUMERIC_VECTOR) {
-			integer numberOfElements = arg->numericVector.size;
-			double *data = arg->numericVector.at;
-			for (integer i = 1; i <= numberOfElements; i ++) {
-				MelderInfo_write (data [i], i == numberOfElements ? U"" : U" ");
-			}
+			for (integer i = 1; i <= arg->numericVector.size; i ++)
+				MelderInfo_write (arg->numericVector [i],
+						i == arg->numericVector.size ? U"" : U" ");
 		} else if (arg->which == Stackel_NUMERIC_MATRIX) {
-			integer numberOfRows = arg->numericMatrix.nrow;
-			integer numberOfColumns = arg->numericMatrix.ncol;
-			double **data = arg->numericMatrix.at;
-			for (integer irow = 1; irow <= numberOfRows; irow ++) {
-				for (integer icol = 1; icol <= numberOfColumns; icol ++) {
-					MelderInfo_write (data [irow] [icol], icol == numberOfColumns ? U"" : U" ");
+			for (integer irow = 1; irow <= arg->numericMatrix.nrow; irow ++) {
+				for (integer icol = 1; icol <= arg->numericMatrix.ncol; icol ++) {
+					MelderInfo_write (arg->numericMatrix [irow] [icol],
+							icol == arg->numericMatrix.ncol ? U"" : U" ");
 				}
-				MelderInfo_write (irow == numberOfRows ? U"" : U"\n");
+				MelderInfo_write (irow == arg->numericMatrix.nrow ? U"" : U"\n");
 			}
 		}
 	}
