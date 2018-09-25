@@ -80,6 +80,11 @@ extern void MATcentreEachRow_inplace (const MAT& x) noexcept;
 extern void MATdoubleCentre_inplace (const MAT& x) noexcept;
 
 extern void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept;
+inline autoMAT MATmtm (const constMAT& x) {
+	autoMAT result = MATraw (x.ncol, x.ncol);
+	MATmtm_preallocated (result.get(), x);
+	return result;
+}
 
 /*
 	Target :=  X . Y
