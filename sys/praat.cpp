@@ -1730,7 +1730,7 @@ void praat_run () {
 	{
 		VEC xn;   // uninitialized
 		Melder_assert (! xn.at);
-		//Melder_assert (xn.size == 0);
+		Melder_assert (xn.size == 0);
 		VEC x { };
 		Melder_assert (! x.at);
 		Melder_assert (x.size == 0);
@@ -1741,9 +1741,13 @@ void praat_run () {
 		Melder_assert (! xc.at);
 		Melder_assert (xc.size == 0);
 		MAT yn;
+		#if PACKED_TENSORS
+		Melder_assert (! yn.cells);
+		#else
 		Melder_assert (! yn.at);
-		//Melder_assert (yn.nrow == 0);
-		//Melder_assert (yn.ncol == 0);
+		#endif
+		Melder_assert (yn.nrow == 0);
+		Melder_assert (yn.ncol == 0);
 		MAT y { };
 		Melder_assert (! y.at);
 		Melder_assert (y.nrow == 0);

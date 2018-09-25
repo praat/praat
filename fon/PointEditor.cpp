@@ -176,7 +176,7 @@ void structPointEditor :: v_draw () {
 			Graphics_setLineType (our graphics.get(), Graphics_DOTTED);
 			Graphics_line (our graphics.get(), our startWindow, 0.0, our endWindow, 0.0);
 			Graphics_setLineType (our graphics.get(), Graphics_DRAWN);
-			Graphics_function (our graphics.get(), sound -> z [1], first, last,
+			Graphics_function (our graphics.get(), & sound -> z [1] [0], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		}
 	}

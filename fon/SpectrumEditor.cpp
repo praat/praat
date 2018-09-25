@@ -72,7 +72,7 @@ bool structSpectrumEditor :: v_click (double xWC, double yWC, bool shiftKeyPress
 
 static autoSpectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
 	autoSpectrum band = Data_copy (me);
-	double *re = band -> z [1], *im = band -> z [2];
+	double *re = & band -> z [1] [0], *im = & band -> z [2] [0];
 	integer imin = Sampled_xToLowIndex (band.get(), fmin);
 	integer imax = Sampled_xToHighIndex (band.get(), fmax);
 	for (integer i = 1; i <= imin; i ++) re [i] = 0.0, im [i] = 0.0;

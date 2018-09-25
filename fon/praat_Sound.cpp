@@ -395,7 +395,7 @@ DIRECT (NEW2_Sounds_concatenateRecoverably) {
 		iam (Sound);
 		double tmax = tmin + my nx * dx;
 		for (integer channel = 1; channel <= numberOfChannels; channel ++) {
-			NUMvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
+			NUMvector_copyElements (& my z [channel] [0], & thy z [channel] [nx], 1, my nx);
 		}
 		iinterval ++;
 		if (iinterval > 1) {

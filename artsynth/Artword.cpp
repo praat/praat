@@ -131,14 +131,14 @@ void Artword_intoArt (Artword me, Art art, double time) {
 void Artword_draw (Artword me, Graphics g, kArt_muscle muscle, bool garnish) {
 	int16 numberOfTargets = my data [(int) muscle]. numberOfTargets;
 	if (numberOfTargets > 0) {
-		auto x = VECraw (numberOfTargets), y = VECraw (numberOfTargets);
+		autoVEC x = VECraw (numberOfTargets), y = VECraw (numberOfTargets);
 		Graphics_setInner (g);
 		Graphics_setWindow (g, 0, my totalTime, -1.0, 1.0);
 		for (int16 i = 1; i <= numberOfTargets; i ++) {
 			x [i] = my data [(int) muscle]. times [i];
 			y [i] = my data [(int) muscle]. targets [i];
 		}
-		Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);         
+		Graphics_polyline (g, numberOfTargets, & x [1], & y [1]);
 		Graphics_unsetInner (g);
 	}
 

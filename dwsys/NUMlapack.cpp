@@ -1372,8 +1372,13 @@ void NUMgsvdcmp (double **a, integer m, integer n, double **b, integer p, int pr
 		NUMmachar ();
 	}
 
-	double anorm = NUMfrobeniusnorm ({a, m, n});
-	double bnorm = NUMfrobeniusnorm ({b, p, n});
+	#if PACKED_TENSORS
+	double anorm = NUMfrobeniusnorm ({ & a [1] [0], m, n });
+	double bnorm = NUMfrobeniusnorm ({ & b [1] [0], p, n });
+	#else
+	double anorm = NUMfrobeniusnorm ({ a, m, n });
+	double bnorm = NUMfrobeniusnorm ({ b, p, n });
+	#endif
 
 	if (anorm == 0 || bnorm == 0) {
 		Melder_throw (U"NUMgsvdcmp: empty matrix.");
