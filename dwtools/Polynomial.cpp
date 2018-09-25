@@ -52,9 +52,6 @@
 #include "oo_DESCRIPTION.h"
 #include "Polynomial_def.h"
 
-#define MAX(m,n) ((m) > (n) ? (m) : (n))
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-
 /* Evaluate polynomial and derivative jointly
 	c [1..n] -> degree n-1 !!
 */
@@ -878,7 +875,7 @@ void Polynomials_divide (Polynomial me, Polynomial thee, autoPolynomial *q, auto
 	autoPolynomial aq, ar;
 	polynomial_divide (my coefficients, m, thy coefficients, n, qc.peek(), rc.peek());
 	if (q) {
-		degree = MAX (m - n, 0);
+		degree = std::max (m - n, (integer) 0);
 		aq = Polynomial_create (my xmin, my xmax, degree);
 		if (degree >= 0)
 			NUMvector_copyElements (qc.peek(), aq -> coefficients, 1, degree + 1);
@@ -1614,12 +1611,12 @@ static double NUMmspline2 (constVEC points, integer order, integer index, double
 	*/
 
 	integer index_b = index - order + 1;
-	index_b = MAX (index_b, 1);
+	index_b = std::max (index_b, (integer) 1);
 	if (x < points [index_b])
 		return 0;
 
-	integer index_e = index_b + MIN (index, order);
-	index_e = MIN (points.size, index_e);
+	integer index_e = index_b + std::min (index, order);
+	index_e = std::min (points.size, index_e);
 	if (x > points [index_e])
 		return 0;
 
@@ -1656,13 +1653,13 @@ static double NUMispline2 (constVEC points, integer order, integer index, double
 	Melder_assert (points.size > 2 && order > 0 && index > 0);
 
 	integer index_b = index - order + 1;
-	index_b = MAX (index_b, 1);
+	index_b = std::max (index_b, (integer) 1);
 
 	if (x < points [index_b])
 		return 0.0;
 
-	integer index_e = index_b + MIN (index, order);
-	index_e = MIN (points.size, index_e);
+	integer index_e = index_b + std::min (index, order);
+	index_e = std::min (points.size, index_e);
 
 	if (x > points [index_e])
 		return 1.0;
@@ -1681,8 +1678,8 @@ static double NUMispline2 (constVEC points, integer order, integer index, double
 	double y = 0.0;
 	for (integer m = index + 1; m <= j + order; m ++) {
 		integer km = m - order, kmp = km + order + 1;
-		km = MAX (km, 1);
-		kmp = MIN (kmp, points.size);
+		km = std::max (km, (integer) 1);
+		kmp = std::min (kmp, points.size);
 		y += (points [kmp] - points [km]) * NUMmspline2 (points, order + 1, m, x);
 	}
 	return y /= (order + 1);
@@ -1951,8 +1948,5 @@ RationalFunction RationalFunction_simplify (RationalFunction me)
 }
 
 */
-
-#undef MAX
-#undef MIN
 
 /* end of file Polynomial.cpp */
