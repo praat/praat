@@ -81,15 +81,15 @@ bool NUMequal (const constvector<T>& x, const constvector<T>& y) noexcept {
 }
 template <typename T>
 bool NUMequal (const vector<T>& x, const constvector<T>& y) noexcept {
-	return NUMequal (constvector (x), y);
+	return NUMequal (constvector<T> (x), y);
 }
 template <typename T>
 bool NUMequal (const constvector<T>& x, const vector<T>& y) noexcept {
-	return NUMequal (x, constvector (y));
+	return NUMequal (x, constvector<T> (y));
 }
 template <typename T>
 bool NUMequal (const vector<T>& x, const vector<T>& y) noexcept {
-	return NUMequal (constvector (x), constvector (y));
+	return NUMequal (constvector<T> (x), constvector<T> (y));
 }
 
 template <typename T>
@@ -98,15 +98,15 @@ bool NUMequal (const constmatrix<T>& x, const constmatrix<T>& y) noexcept {
 }
 template <typename T>
 bool NUMequal (const matrix<T>& x, const constmatrix<T>& y) noexcept {
-	return NUMequal (constmatrix (x), y);
+	return NUMequal (constmatrix<T> (x), y);
 }
 template <typename T>
 bool NUMequal (const constmatrix<T>& x, const matrix<T>& y) noexcept {
-	return NUMequal (x, constmatrix (y));
+	return NUMequal (x, constmatrix<T> (y));
 }
 template <typename T>
 bool NUMequal (const matrix<T>& x, const matrix<T>& y) noexcept {
-	return NUMequal (constmatrix (x), constmatrix (y));
+	return NUMequal (constmatrix<T> (x), constmatrix<T> (y));
 }
 
 inline bool NUMequal (constSTRVEC x, constSTRVEC y) noexcept {
