@@ -830,7 +830,7 @@ void assertRow (const constmatrix<T>& x, integer rowNumber) {
 }
 template <typename T>
 void assertColumn (const constmatrix<T>& x, integer columnNumber) {
-	Melder_assert (columnNumber >= 1 && columnNumber <= x.nrow);
+	Melder_assert (columnNumber >= 1 && columnNumber <= x.ncol);
 }
 template <typename T>
 void assertCell (const constmatrix<T>& x, integer rowNumber, integer columnNumber) {
