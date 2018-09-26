@@ -35,7 +35,7 @@ void checkElementNumber (integer elementNumber, const constvector<T>& vec) {
 }
 template <typename T>
 void checkElementNumber (integer elementNumber, const vector<T>& x) {
-	checkElementNumber (elementNumber, constvector (x));
+	checkElementNumber (elementNumber, constvector<T> (x));
 }
 
 template <typename T>
@@ -53,7 +53,7 @@ void checkElementRange (integer firstElement, integer lastElement, const constve
 }
 template <typename T>
 void checkElementRange (integer firstElement, integer lastElement, const vector<T>& x, integer minimumNewNumberOfElements) {
-	checkElementRange (firstElement, lastElement, constvector (x), minimumNewNumberOfElements);
+	checkElementRange (firstElement, lastElement, constvector<T> (x), minimumNewNumberOfElements);
 }
 
 inline void checkRowNumber (integer rowNumber, integer maximumRowNumber) {
@@ -71,7 +71,7 @@ void checkRowNumber (integer rowNumber, const constmatrix<T>& mat) {
 }
 template <typename T>
 void checkRowNumber (integer rowNumber, const vector<T>& x) {
-	checkRowNumber (rowNumber, constvector (x));
+	checkRowNumber (rowNumber, constvector<T> (x));
 }
 
 template <typename T>
@@ -89,7 +89,7 @@ void checkRowRange (integer firstRow, integer lastRow, const constmatrix<T>& x, 
 }
 template <typename T>
 void checkRowRange (integer firstRow, integer lastRow, const matrix<T>& x, integer minimumNewNumberOfRows) {
-	checkRowRange (firstRow, lastRow, constmatrix (x), minimumNewNumberOfRows);
+	checkRowRange (firstRow, lastRow, constmatrix<T> (x), minimumNewNumberOfRows);
 }
 
 inline void checkColumnNumber (integer columnNumber, integer maximumColumnNumber) {
@@ -107,7 +107,7 @@ void checkColumnNumber (integer columnNumber, const constmatrix<T>& mat) {
 }
 template <typename T>
 void checkColumnNumber (integer columnNumber, const vector<T>& x) {
-	checkColumnNumber (columnNumber, constvector (x));
+	checkColumnNumber (columnNumber, constvector<T> (x));
 }
 
 template <typename T>
@@ -125,7 +125,7 @@ void checkColumnRange (integer firstColumn, integer lastColumn, const constmatri
 }
 template <typename T>
 void checkColumnRange (integer firstColumn, integer lastColumn, const matrix<T>& x, integer minimumNewNumberOfColumns) {
-	checkColumnRange (firstColumn, lastColumn, constmatrix (x), minimumNewNumberOfColumns);
+	checkColumnRange (firstColumn, lastColumn, constmatrix<T> (x), minimumNewNumberOfColumns);
 }
 
 inline void fixUnspecifiedRange (integer *inout_from, integer *inout_to, integer maximumAllowedValue) {
@@ -139,7 +139,7 @@ void fixUnspecifiedElementRange (integer *inout_firstElement, integer *inout_las
 }
 template <typename T>
 void fixUnspecifiedElementRange (integer *inout_firstElement, integer *inout_lastElement, const vector<T> x) {
-	fixUnspecifiedElementRange (inout_firstElement, inout_lastElement, constvector (x));
+	fixUnspecifiedElementRange (inout_firstElement, inout_lastElement, constvector<T> (x));
 }
 template <typename T>
 void fixAndCheckElementRange (integer *inout_firstElement, integer *inout_lastElement, const constvector<T> x, integer minimumNewNumberOfElements) {
@@ -148,7 +148,7 @@ void fixAndCheckElementRange (integer *inout_firstElement, integer *inout_lastEl
 }
 template <typename T>
 void fixAndCheckElementRange (integer *inout_firstElement, integer *inout_lastElement, const vector<T> x, integer minimumNewNumberOfElements) {
-	fixAndCheckElementRange (inout_firstElement, inout_lastElement, constvector (x), minimumNewNumberOfElements);
+	fixAndCheckElementRange (inout_firstElement, inout_lastElement, constvector<T> (x), minimumNewNumberOfElements);
 }
 template <typename T>
 void fixUnspecifiedRowRange (integer *inout_firstRow, integer *inout_lastRow, const constmatrix<T> x) {
@@ -165,7 +165,7 @@ void fixAndCheckRowRange (integer *inout_firstRow, integer *inout_lastRow, const
 }
 template <typename T>
 void fixAndCheckRowRange (integer *inout_firstRow, integer *inout_lastRow, const matrix<T> x, integer minimumNewNumberOfRows) {
-	fixAndCheckRowRange (inout_firstRow, inout_lastRow, constmatrix (x), minimumNewNumberOfRows);
+	fixAndCheckRowRange (inout_firstRow, inout_lastRow, constmatrix<T> (x), minimumNewNumberOfRows);
 }
 template <typename T>
 void fixUnspecifiedColumnRange (integer *inout_firstColumn, integer *inout_lastColumn, const constmatrix<T> x) {
@@ -182,7 +182,7 @@ void fixAndCheckColumnRange (integer *inout_firstColumn, integer *inout_lastColu
 }
 template <typename T>
 void fixAndCheckColumnRange (integer *inout_firstColumn, integer *inout_lastColumn, const matrix<T> x, integer minimumNewNumberOfColumns) {
-	fixAndCheckColumnRange (inout_firstColumn, inout_lastColumn, constmatrix (x), minimumNewNumberOfColumns);
+	fixAndCheckColumnRange (inout_firstColumn, inout_lastColumn, constmatrix<T> (x), minimumNewNumberOfColumns);
 }
 
 /* End of file melder_require.h */

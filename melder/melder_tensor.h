@@ -853,7 +853,7 @@ automatrix<T> matrixpart (const constmatrix<T>& x, integer firstRow, integer las
 }
 template <typename T>
 automatrix<T> matrixpart (const matrix<T>& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
-	matrixpart (constmatrix (x), firstRow, lastRow, firstColumn, lastColumn);
+	matrixpart (constmatrix<T> (x), firstRow, lastRow, firstColumn, lastColumn);
 }
 
 /*
