@@ -140,6 +140,28 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
+inline void VECcopy_preallocated (VEC x, constMAT m, integer columnNumber) {
+	Melder_assert (x.size == m.nrow);
+	Melder_assert (columnNumber > 0 && columnNumber <= m.ncol);
+	for (integer irow = 1; irow <= m.nrow; irow ++)
+		x [irow] = m [irow] [columnNumber];
+}
+
+inline autoVEC VECnorm_columns (constMAT x, double power) {
+	autoVEC norm = VECraw (x.ncol);
+	autoVEC column = VECraw (x.ncol);
+	for (integer icol; icol <= norm.size; icol ++) {
+		VECcopy_preallocated (column.get(), x, icol);
+		norm [icol] = NUMnorm (column.get(), power);
+	}
+}
+
+inline autoVEC VECnorm_rows (constMAT x, double power) {
+	autoVEC norm = VECraw (x.nrow);
+	for (integer irow; irow <= norm.size; irow ++)
+		norm [irow] = NUMnorm (x.row (irow), power);
+}
+
 inline void VEC_normalize_inplace (VEC v, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	double oldnorm = NUMnorm (v, power);
