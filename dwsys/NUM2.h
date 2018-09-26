@@ -1279,6 +1279,43 @@ double NUMfrobeniusnorm (constMAT x);
 	Returns frobenius norm of matrix sqrt (sum (i=1:nrow, j=1:ncol, x[i][j]^2))
 */
 
+/*  scalar a x plus y: y = a x + y */
+inline void VECsaxpy (VEC y, constVEC x, double a) {
+	Melder_assert (y.size == x.size);
+	for (integer i = 1; i <= y.size; i ++) y [i] +=  a * x [i];
+}
+
+/*
+	First row (n elements) is at v[1]..v[n],
+	second row (n-1 elements) is at v[n+1],..,v[n+n-1],
+	third row (n-2 elements) is at v[n+n],..,v[n+n+n-2]
+	last row (1 element) is at v[n(n+1)/2].
+*/
+inline void MATfromUpperTriangularVector_preallocated (MAT m, constVEC v) {
+	Melder_assert (v.size == m.ncol * (m.ncol + 1) / 2);
+	integer irow = 1;
+	for (integer inum = 1; inum <= v.size; inum ++) {
+		integer nskipped = (irow - 1) * irow / 2;
+		integer inumc = inum + nskipped;
+		irow = (inumc - 1) / m.ncol + 1;
+		integer icol = ( (inumc - 1) % m.ncol) + 1;
+		m [irow] [icol] = m [icol] [irow] = v [inum];
+		if (icol == m.ncol) irow ++;
+	}
+}
+
+inline autoMAT MATcopy (constMAT m, integer fromRow, integer toRow, integer fromCol, integer toCol) {
+	Melder_assert (fromRow > 0 && fromRow <= m.nrow);
+	Melder_assert (fromRow <= toRow && toRow <= m.nrow);
+	Melder_assert (fromCol > 0 && fromCol <= m.ncol);
+	Melder_assert (fromCol <= toCol && toCol <= m.ncol);
+	autoMAT result = MATraw (toRow - fromRow + 1, toCol-fromCol + 1);
+	for (integer irow = 1; irow <= result.nrow; irow ++)
+		for (integer icol = 1; icol <= result.ncol; icol ++)
+			result [irow] [icol] = m [fromRow - 1 + irow] [fromCol - 1 + icol];
+	return result;
+}
+
 inline autoINTVEC INTVECto (integer to) {
 	autoINTVEC result = INTVECraw (to);
 	for (integer i = 1; i <= to; i ++)
