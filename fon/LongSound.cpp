@@ -306,22 +306,23 @@ static void _LongSound_MP3_readAudioToShort (LongSound me, int16 *buffer, intege
 	_LongSound_MP3_process (me, firstSample, numberOfSamples - 1);
 }
 
-void LongSound_readAudioToFloat (LongSound me, double **buffer, integer firstSample, integer numberOfSamples) {
+void LongSound_readAudioToFloat (LongSound me, MAT buffer, integer firstSample) {
+	Melder_assert (buffer.nrow == my numberOfChannels);
 	if (my encoding == Melder_FLAC_COMPRESSION_16) {
 		my compressedMode = COMPRESSED_MODE_READ_FLOAT;
 		for (int ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			my compressedFloats [ichan - 1] = & buffer [ichan] [1];
 		}
-		_LongSound_FLAC_process (me, firstSample, numberOfSamples);
+		_LongSound_FLAC_process (me, firstSample, buffer.ncol);
 	} else if (my encoding == Melder_MPEG_COMPRESSION_16) {
 		my compressedMode = COMPRESSED_MODE_READ_FLOAT;
 		for (int ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			my compressedFloats [ichan - 1] = & buffer [ichan] [1];
 		}
-		_LongSound_MP3_process (me, firstSample, numberOfSamples);
+		_LongSound_MP3_process (me, firstSample, buffer.ncol);
 	} else {
 		_LongSound_FILE_seekSample (me, firstSample);
-		Melder_readAudioToFloat (my f, my numberOfChannels, my encoding, buffer, numberOfSamples);
+		Melder_readAudioToFloat (my f, my encoding, buffer);
 	}
 }
 
@@ -346,17 +347,18 @@ autoSound LongSound_extractPart (LongSound me, double tmin, double tmax, bool pr
 			tmin = my xmin;
 		if (tmax > my xmax)
 			tmax = my xmax;
-		integer imin, imax;
-		integer n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
-		if (n < 1)
+		integer firstSample, lastSample;
+		integer numberOfSamples = Sampled_getWindowSamples (me, tmin, tmax, & firstSample, & lastSample);
+		if (numberOfSamples < 1)
 			Melder_throw (U"Less than 1 sample in window.");
-		autoSound thee = Sound_create (my numberOfChannels, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx);
+		autoSound thee = Sound_create (my numberOfChannels,
+				tmin, tmax, numberOfSamples, my dx, Sampled_indexToX (me, firstSample));
 		if (! preserveTimes) {
 			thy xmin = 0.0;
 			thy xmax -= tmin;
 			thy x1 -= tmin;
 		}
-		LongSound_readAudioToFloat (me, thy z.at, imin, n);
+		LongSound_readAudioToFloat (me, thy z.get(), firstSample);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": Sound not extracted.");

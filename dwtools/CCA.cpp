@@ -1,4 +1,4 @@
-/* CCA.c
+/* CCA.cpp
  *
  * Copyright (C) 1993-2018 David Weenink
  *

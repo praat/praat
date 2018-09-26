@@ -79,9 +79,10 @@ autoSound Sound_readFromSoundFile (MelderFile file) {
 		if (numberOfSamples < 1)
 			Melder_throw (U"Audio file contains 0 samples.");
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / sampleRate, sampleRate);
+		Melder_assert (my z.ncol == numberOfSamples);
 		if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE)
 			Melder_throw (U"Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
-		Melder_readAudioToFloat (file -> filePointer, numberOfChannels, encoding, my z.at, numberOfSamples);
+		Melder_readAudioToFloat (file -> filePointer, encoding, my z.get());
 		mfile.close ();
 		return me;
 	} catch (MelderError) {
@@ -271,7 +272,8 @@ autoSound Sound_readFromRawAlawFile (MelderFile file) {
 		integer numberOfSamples = ftell (f);
 		rewind (f);
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); 
-		Melder_readAudioToFloat (f, 1, Melder_ALAW, my z.at, numberOfSamples);
+		Melder_assert (my z.ncol == numberOfSamples);
+		Melder_readAudioToFloat (f, Melder_ALAW, my z.get());
 		f.close (file);
 		return me;
 	} catch (MelderError) {

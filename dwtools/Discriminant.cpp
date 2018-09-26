@@ -1,4 +1,4 @@
-/* Discriminant.c
+/* Discriminant.cpp
  *
  * Copyright (C) 1993-2018 David Weenink
  *
