@@ -523,5 +523,7 @@
 	<string>Copyright © 1992-PRAAT_YEAR by Paul Boersma &amp; David Weenink</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSRequiresAquaSystemAppearance</key>
+	<true/>
 </dict>
 </plist>
