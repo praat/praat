@@ -21,7 +21,6 @@
 */
 #include "Distributions_and_Strings.h"
 #include "GaussianMixture.h"
-#include "NUMlapack.h"
 #include "NUMmachar.h"
 #include "NUM2.h"
 #include "Strings_extensions.h"

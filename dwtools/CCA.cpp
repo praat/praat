@@ -30,7 +30,6 @@
 
 #include "CCA_and_Correlation.h"
 #include "NUM2.h"
-#include "NUMlapack.h"
 #include "SVD.h"
 #include "Strings_extensions.h"
 #include "TableOfReal_extensions.h"

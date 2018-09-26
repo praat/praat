@@ -36,7 +36,6 @@
 #include "Eigen_and_SSCP.h"
 #include "Eigen_and_TableOfReal.h"
 #include "Matrix_extensions.h"
-#include "NUMlapack.h"
 #include "NUM2.h"
 #include "PCA.h"
 #include "TableOfReal_extensions.h"
