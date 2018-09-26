@@ -32,6 +32,7 @@
 #include <functional>   // std::move, std::forward
 #include <memory>   // unique_ptr
 #include <new>   // placement new
+#include <algorithm>   // std::min
 
 #include "melder_assert.h"   // Melder_assert
 #include "melder_int.h"   // <stdint.h>, int64, integer_to_uinteger (requires Melder_assert)
