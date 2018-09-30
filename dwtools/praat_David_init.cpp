@@ -7058,6 +7058,21 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NEW_TableOfReal_to_SSCP_rowWeights, U"TableOfReal: To SSCP (row weights)", U"TableOfReal: To SSCP (row weights)...") {
+	INTEGER (fromRow, U"Begin row", U"0")
+	INTEGER (toRow, U"End row", U"0")
+	INTEGER (fromColumn, U"Begin column", U"0")
+	INTEGER (toColumn, U"End column", U"0")
+	INTEGER (rowWeights, U"Weights column number", 0)
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoSSCP result = TableOfReal_to_SSCP_rowWeights (me, fromRow, toRow, fromColumn, toColumn, rowWeights);
+	CONVERT_EACH_END (my name.get())
+}
+
+
+
 /* For the inheritors */
 DIRECT (NEW_TableOfReal_to_TableOfReal) {
 	CONVERT_EACH (TableOfReal)
@@ -8377,6 +8392,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 0, U"To Discriminant", nullptr, 1, NEW_TableOfReal_to_Discriminant);
 	praat_addAction1 (classTableOfReal, 0, U"To PCA", nullptr, 1, NEW_TableOfReal_to_PCA_byRows);
 	praat_addAction1 (classTableOfReal, 0, U"To SSCP...", nullptr, 1, NEW_TableOfReal_to_SSCP);
+	praat_addAction1 (classTableOfReal, 0, U"To SSCP (row weights)...", nullptr, 1, NEW_TableOfReal_to_SSCP_rowWeights);
 	praat_addAction1 (classTableOfReal, 0, U"To Covariance", nullptr, 1, NEW_TableOfReal_to_Covariance);
 	praat_addAction1 (classTableOfReal, 0, U"To Correlation", nullptr, 1, NEW_TableOfReal_to_Correlation);
 	praat_addAction1 (classTableOfReal, 0, U"To Correlation (rank)", nullptr, 1, NEW_TableOfReal_to_Correlation_rank);

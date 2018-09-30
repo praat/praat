@@ -117,26 +117,9 @@ void MATnormalizeColumns_inplace (MAT a, double power, double norm) {
 	for (integer icol = 1; icol <= a.ncol; icol ++) {
 		for (integer irow = 1; irow <= column.size; irow ++)
 			column [irow] = a [irow] [icol];
-		VEC_normalize_inplace (column.get(), power, norm);
+		VECnormalize_inplace (column.get(), power, norm);
 		for (integer irow = 1; irow <= column.size; irow ++)
 			a [irow] [icol] = column [irow];
-	}
-}
-
-void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce) {
-	integer n = re - rb + 1;
-	if (n < 2) {
-		return;
-	}
-	for (integer j = cb; j <= ce; j ++) {
-		longdouble ave = 0.0;
-		for (integer i = rb; i <= re; i ++) {
-			ave += a [i] [j];
-		}
-		ave /= n;
-		for (integer i = rb; i <= re; i ++) {
-			a [i] [j] = (double) ave;
-		}
 	}
 }
 
@@ -162,6 +145,41 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf) {
 	autoMAT covar = MATmtm (x);
 	MATmultiply_inplace (covar.get(), 1.0 / (x.nrow - ndf));
 	return covar;
+}
+
+static void MATweightRows (MAT x, constVEC y) {
+	Melder_assert (x.nrow == y.size);
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		VECmultiply_inplace (x.row (irow), y [irow]);
+}
+
+void MATmtm_rowWeights_preallocated (MAT result, constMAT data, constVEC rowWeights) {
+	Melder_assert (data.nrow == rowWeights.size);
+	Melder_assert (data.ncol = result.ncol);
+	Melder_assert (result.nrow == result.ncol);
+	MATset (result, 0.0);
+	if (true) {
+		autoVEC row = VECraw (data.ncol);
+		autoMAT outer = MATraw (result.nrow, result.ncol);
+		for (integer irow = 1; irow <= data.nrow; irow ++) {
+			VECcopy_preallocated (row.get(), data.row (irow));
+			MATouter_preallocated (outer, row.get());
+			VECsaxpy (asvector (result), asvector (outer.get()), rowWeights [irow]);
+		}
+	} else {
+		autoVEC w = VECraw (rowWeights.size);
+		autoMAT d = MATcopy (data);
+		for (integer irow = 1; irow <= w.size; irow ++) 
+			w [irow] = sqrt (rowWeights [irow]);
+		MATweightRows (d.get(), w.get());
+		MATmtm_preallocated (result, d.get());
+	}
+}
+
+inline void MATmul_rows_inplace (MAT x, constVEC v) { // TODO better name??
+	Melder_assert (x.nrow == v.size);
+	for (integer irow = 1; irow <= x.nrow; irow ++)
+		VECmultiply_inplace (x.row (irow), v [irow]);
 }
 
 double NUMmultivariateKurtosis (constMAT m, int method) {
@@ -190,40 +208,6 @@ double NUMmultivariateKurtosis (constMAT m, int method) {
 		kurt = kurt / (3 * x.ncol) - 1.0;
 	}
 	return kurt;
-}
-
-void eigenSort (double d [], double **v, integer n, int sort) {
-	if (sort == 0) {
-		return;
-	}
-	for (integer i = 1; i < n; i ++) {
-		integer k;
-		double temp = d [k = i];
-		if (sort > 0) {
-			for (integer j = i + 1; j <= n; j ++) {
-				if (d [j] > temp) {
-					temp = d [k = j];
-				}
-			}
-		} else {
-			for (integer j = i + 1; j <= n; j ++) {
-				if (d [j] < temp) {
-					temp = d [k = j];
-				}
-			}
-		}
-		if (k != i) {
-			d [k] = d [i];
-			d [i] = temp;
-			if (v) {
-				for (integer j = 1; j <= n; j ++) {
-					temp = v [j] [i];
-					v [j] [i] = v [j] [k];
-					v [j] [k] = temp;
-				}
-			}
-		}
-	}
 }
 
 /*
@@ -255,22 +239,6 @@ autoVEC VECmonotoneRegression (constVEC x) {
 
 #undef TINY
 
-void NUMcholeskySolve (double **a, integer n, double d [], double b [], double x []) {
-	for (integer i = 1; i <= n; i++) { /* Solve L.y=b */
-		longdouble sum = b [i];
-		for (integer k = i - 1; k >= 1; k--) {
-			sum -= a [i] [k] * x [k];
-		}
-		x [i] = (double) sum / d [i];
-	}
-	for (integer i = n; i >= 1; i --) { /* Solve L^T.x=y */
-		longdouble sum = x [i];
-		for (integer k = i + 1; k <= n; k ++) {
-			sum -= a [k] [i] * x [k];
-		}
-		x [i] = (double) sum / d [i];
-	}
-}
 double MATdeterminant_fromSymmetricMatrix (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
 	autoMAT a = MATcopy (m);
@@ -351,83 +319,36 @@ double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
 	return (double) chisq;
 }
 
-double NUMmahalanobisDistance_chi (double **linv, double *v, double *m, integer nr, integer n) {
-	longdouble chisq = 0.0;
-	if (nr == 1) { // 1xn matrix
-		for (integer j = 1; j <= n; j ++) {
-			double t = linv [1] [j] * (v [j] - m [j]);
-			chisq += t * t;
-		}
-	} else { // nxn matrix
-		for (integer i = n; i > 0; i --) {
-			double t = 0.0;
-			for (integer j = 1; j <= i; j ++) {
-				t += linv [i] [j] * (v [j] - m [j]);
-			}
-			chisq += t * t;
-		}
-	}
-	return (double) chisq;
-}
+void NUMdominantEigenvector (constMAT m, VEC inout_q, double *out_lambda, double tolerance) {
+	Melder_assert (m.nrow == m.ncol && inout_q.size == m.nrow);
 
-void NUMdominantEigenvector (constMAT m, VEC q, double *out_lambda, double tolerance) {
-	Melder_assert (m.nrow == m.ncol && q.size == m.nrow);
-
-	longdouble lambda = 0.0, lambda0;
-	for (integer k = 1; k <= q.size; k ++) {
-		for (integer l = 1; l <= q.size; l ++) {
-			lambda += q [k] * m [k] [l] * q [l];
-		}
-	}
+	double lambda0, lambda = NUMmul_vtmv (inout_q, m); //  q'. M . q
 	Melder_require (lambda > 0.0, U"Zero matrices ??");
 	autoVEC z = VECraw (m.nrow);
 	integer iter = 0;
 	do {
-		longdouble znorm2 = 0.0;
-		for (integer l = 1; l <= q.size; l ++) {
-			z [l] = 0.0;
-			for (integer k = 1; k <= q.size; k ++) {
-				z [l] += m [l] [k] * q [k];
-			}
-		}
-
-		for (integer k = 1; k <= q.size; k ++) {
-			znorm2 += z [k] * z [k];
-		}
-		znorm2 = sqrt (znorm2);
-
-		for (integer k = 1; k <= q.size; k ++) {
-			q [k] = z [k] / znorm2;
-		}
-
 		lambda0 = lambda;
-		lambda = 0.0;
-		for (integer k = 1; k <= q.size; k ++) {
-			for (integer l = 1; l <= q.size; l ++) {
-				lambda += q [k] * m [k] [l] * q [l];
-			}
-		}
+		VECmul_preallocated (z.get(), m, inout_q);
+		VECnormalize_inplace (z.get(), 2.0, 1.0);
+		lambda = NUMmul_vtmv (z.get(), m); // z'. M . z
 
 	} while (fabs (lambda - lambda0) > tolerance || ++ iter < 30);
+	VECcopy_preallocated (inout_q, z.get());
 	if (out_lambda) {
 		*out_lambda = (double) lambda;
 	}
 }
 
+/* Input:
+		data [numberOfRows, from_col - 1 + my dimension] 
+		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
+		eigenvectors [numberOfEigenvectors] [dimension] the eigenvectors stored as rows
+	Input/Output
+		projection [numberOfRows, to_colbegin - 1 + numberOfEigenvectors] 
+		the projected vectors from 'data'
 
-
-	/* Input:
-	 * 	data [numberOfRows, from_col - 1 + my dimension] 
-	 * 		contains the 'numberOfRows' vectors to be projected on the eigenspace. 
-	 *  eigenvectors [numberOfEigenvectors] [dimension] 
-	 * 		the eigenvectors stored as rows
-	 * Input/Output
-	 * 	projection [numberOfRows, to_colbegin - 1 + numberOfEigenvectors] 
-	 * 		the projected vectors from 'data'
-	 * 
-	 * Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
-	 */
-
+	Project (part of) the vectors in matrix 'data' along the 'numberOfEigenvectors' eigenvectors into the matrix 'projection'.
+	*/
 void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMAT data, integer fromColumn, constMAT eigenvectors) {
 	Melder_assert (projection.nrow = data.nrow);
 	fromColumn = fromColumn <= 0 ? 1 : fromColumn;

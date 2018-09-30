@@ -75,6 +75,7 @@ double SSCP_getConcentrationEllipseArea(SSCP me, double scale, bool confidence, 
 double SSCP_getFractionVariation (SSCP me, integer from, integer to);
 
 autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole);
+autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole, integer weightColumnNumber);
 
 autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh);
 

@@ -293,11 +293,15 @@ void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const c
 	MATmul_tt_preallocated_ (target, x, y);
 }
 
-autoMAT MATouter (const constVEC& x, const constVEC& y) {
-	autoMAT result = MATraw (x.size, y.size);
+void MATouter_preallocated (const MAT& target, const constVEC& x, const constVEC& y) {
 	for (integer irow = 1; irow <= x.size; irow ++)
 		for (integer icol = 1; icol <= y.size; icol ++)
-			result [irow] [icol] = x [irow] * y [icol];
+			target [irow] [icol] = x [irow] * y [icol];
+}
+
+autoMAT MATouter (const constVEC& x, const constVEC& y) {
+	autoMAT result = MATraw (x.size, y.size);
+	MATouter_preallocated (result.get(), x, y);
 	return result;
 }
 

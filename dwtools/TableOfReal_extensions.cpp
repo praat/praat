@@ -1282,11 +1282,28 @@ static void NUMmedianizeColumns (double **a, integer rb, integer re, integer cb,
 	}
 }
 
-static void NUMstatsColumns (double **a, integer rb, integer re, integer cb, integer ce, bool useMedians) {
-	if (useMedians) {
-		NUMmedianizeColumns (a, rb, re, cb, ce);
-	} else {
-		NUMaverageColumns (a, rb, re, cb, ce);
+static void NUMaverageBlock_byColumns_inplace (MAT a, integer rb, integer re, integer cb, integer ce, bool medians) {
+	Melder_assert (rb > 0 && rb <= a.nrow);
+	Melder_assert (rb <= re && re <= a.nrow);
+	Melder_assert (cb > 0 && cb <= a.ncol);
+	Melder_assert (cb <= ce && ce <= a.ncol);
+	integer n = re - rb + 1;
+	if (n < 2)
+		return;
+	autoVEC tmp = VECraw (n);
+	for (integer j = cb; j <= ce; j ++) {
+		integer k = 1;
+		for (integer i = rb; i <= re; i ++, k ++)
+			tmp [k] = a [i] [j];
+		double average;
+		if (medians) {
+			VECsort_inplace (tmp.get());
+			average = NUMquantile (tmp.get(), 0.5);
+		} else {
+			average = NUMmean (tmp.get());
+		}
+		for (integer i = rb; i <= re; i ++)
+			a [i] [j] = average;
 	}
 }
 
@@ -1301,8 +1318,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 		for (integer i = 2; i <= my numberOfRows; i ++) {
 			conststring32 li = sorted -> rowLabels [i].get();
 			if (Melder_cmp (li, label) != 0) {
-				NUMstatsColumns (sorted -> data.at, indexi, i - 1, 1, my numberOfColumns, useMedians);
-
+				NUMaverageBlock_byColumns_inplace (sorted -> data.get(), indexi, i - 1, 1, my numberOfColumns, useMedians);
 				if (! expand) {
 					indexr ++;
 					TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
@@ -1311,7 +1327,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 			}
 		}
 
-		NUMstatsColumns (sorted -> data.at, indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
+		NUMaverageBlock_byColumns_inplace (sorted -> data.get(), indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
 
 		if (expand) {
 			// Now invert the table.

@@ -140,11 +140,45 @@ void NUMvector_clip (T *v, integer lo, integer hi, double min, double max) {
 	}
 }
 
+inline void VECset (VEC x, double value) {
+	for (integer i = 1; i <= x.size; i ++) x [i] = value;
+}
+
+inline void MATset (MAT x, double value) {
+	VECset (asvector (x), value);
+}
+
+inline void VECset (VEC x, double value, integer to) {
+	Melder_assert (to > 0 && to <= x.size);
+	for (integer i = 1; i <= to; i ++) x [i] = value;
+}
+
+inline void MATouter_preallocated (const MAT& target, const constVEC& x) {
+	Melder_assert (target.ncol == target.nrow);
+	Melder_assert (target.ncol == x.size);
+	
+	for (integer irow = 1; irow <= x.size; irow ++)
+		for (integer icol = irow; icol <= x.size; icol ++)
+			target [icol] [irow] = target [irow] [icol] = x [irow] * x [icol];
+}
+
+inline double NUMmul_vtmv (constVEC q, constMAT m) { // q'. M . q
+	longdouble result = 0.0;
+	for (integer k = 1; k <= q.size; k ++)
+		result += q [k] * NUMinner (m.row (k), q); 
+	return (double) result;
+}	
+
 inline void VECcopy_preallocated (VEC x, constMAT m, integer columnNumber) {
 	Melder_assert (x.size == m.nrow);
 	Melder_assert (columnNumber > 0 && columnNumber <= m.ncol);
 	for (integer irow = 1; irow <= m.nrow; irow ++)
 		x [irow] = m [irow] [columnNumber];
+}
+inline autoVEC VECcopy (constMAT m, integer columnNumber) {
+	autoVEC result = VECraw (m.nrow);
+	VECcopy_preallocated (result.get(), m, columnNumber);
+	return result;
 }
 
 inline autoVEC VECnorm_columns (constMAT x, double power) {
@@ -154,15 +188,17 @@ inline autoVEC VECnorm_columns (constMAT x, double power) {
 		VECcopy_preallocated (column.get(), x, icol);
 		norm [icol] = NUMnorm (column.get(), power);
 	}
+	return norm;
 }
 
 inline autoVEC VECnorm_rows (constMAT x, double power) {
 	autoVEC norm = VECraw (x.nrow);
 	for (integer irow; irow <= norm.size; irow ++)
 		norm [irow] = NUMnorm (x.row (irow), power);
+	return norm;
 }
 
-inline void VEC_normalize_inplace (VEC v, double power, double norm) {
+inline void VECnormalize_inplace (VEC v, double power, double norm) {
 	Melder_assert (norm > 0.0);
 	double oldnorm = NUMnorm (v, power);
 	if (oldnorm > 0.0)
@@ -172,21 +208,18 @@ inline void VEC_normalize_inplace (VEC v, double power, double norm) {
 inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
 	Melder_assert (norm > 0);
 	for (integer irow = 1; irow <= a.nrow; irow ++)
-		VEC_normalize_inplace (a.row (irow), power, norm);
+		VECnormalize_inplace (a.row (irow), power, norm);
 }
 
 inline void MATnormalize_inplace (MAT a, double power, double norm) {
 	Melder_assert (norm > 0);
-	return VEC_normalize_inplace (asvector (a), power, norm); 
+	VECnormalize_inplace (asvector (a), power, norm); 
 }
 
 void MATnormalizeColumns_inplace (MAT a, double power, double norm);
 /*
 	Scale a[.][j] such that sqrt (Sum(a[i][j]^2, i=1..nPoints)) = norm.
 */
-
-void NUMaverageColumns (double **a, integer rb, integer re, integer cb, integer ce);
-/* a[i][j] = average[j]) */
 
 void VECsmoothByMovingAverage_preallocated (VEC out, constVEC in, integer window);
 
@@ -196,6 +229,8 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf);
 	The matrix x must be column centered.
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
+
+void MATmtm_rowWeights_preallocated (MAT result, constMAT data, constVEC rowWeights);
 
 double NUMmultivariateKurtosis (constMAT x, int method);
 /*
@@ -434,11 +469,6 @@ int NUMcholeskyDecomposition (double **a, integer n, double d[]);
 	Cholesky decomposition of a symmetric positive definite matrix.
 */
 
-void NUMcholeskySolve (double **a, integer n, double d[], double b[], double x[]);
-/*
-	Solves A.x=b for x. A[][] and d[] are output from NUMcholeskyDecomposition.
-*/
-
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
 /*
 	Calculates L^-1, where A = L.L' is a symmetric positive definite matrix
@@ -457,7 +487,6 @@ double MATdeterminant_fromSymmetricMatrix (constMAT m);
 */
 
 double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m);
-double NUMmahalanobisDistance_chi (double **l, double *v, double *m, integer nr, integer nc);
 /*
 	Calculates squared Mahalanobis distance: (v-m)'S^-1(v-m).
 	Input matrix (li) is the inverse L^-1 of the Cholesky decomposition S = L.L'
@@ -480,8 +509,6 @@ double NUMtrace2_tt (constMAT x, constMAT y);
 	_tn : trace (X'.Y) = trace (Y'.X)
 	_tt : trace (X'.Y') = trace ((Y.X)') = trace (Y.X)
 */
-
-void eigenSort (double d[], double **v, integer n, int sort);
 
 void MATprojectRowsOnEigenspace_preallocated (MAT projection, integer toColumn, constMAT data, integer fromColumn, constMAT eigenvectors);
 /* Input:
@@ -1299,6 +1326,13 @@ double NUMfrobeniusnorm (constMAT x);
 /*
 	Returns frobenius norm of matrix sqrt (sum (i=1:nrow, j=1:ncol, x[i][j]^2))
 */
+
+inline double NUMmean_weighted (constVEC x, constVEC w) {
+	Melder_assert (x.size == w.size);
+	double inproduct = NUMinner (x, w);
+	double wsum = NUMsum (w);
+	return inproduct / wsum;
+}
 
 /*  scalar a x plus y: y = a x + y */
 inline void VECsaxpy (VEC y, constVEC x, double a) {

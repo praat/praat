@@ -513,6 +513,42 @@ autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, intege
 	}
 }
 
+autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole, integer weightColumnNumber) {
+	try {
+		Melder_require (NUMdefined (my data.get()),
+			U"All the table's elements should be defined.");
+		fixAndCheckRowRange (& rowb, & rowe, my data.get(), 1);
+		fixAndCheckColumnRange (& colb, & cole, my data.get(), 1);
+		if (weightColumnNumber != 0) 
+			Melder_require (weightColumnNumber < colb || weightColumnNumber > cole, 
+				U"The weight columns must be outside the selected block.");
+		autoMAT part = MATpart (my data.get(), rowb, rowe, colb, cole);
+		if (part.nrow < part.ncol)
+			Melder_warning (U"The selected number of data points (", part.nrow,
+				U") is less than the selected number of variables (", part.ncol,
+				U").\nThe SSCP will not have full dimensionality. This may be a problem in later analysis steps."
+			);
+		autoSSCP thee = SSCP_create (part.ncol);
+		VECcolumnMeans_preallocated (thy centroid.get(), part.get());
+		MATsubtract_inplace (part.get(), thy centroid.get());
+		SSCP_setNumberOfObservations (thee.get(), part.nrow);
+		if (weightColumnNumber != 0) {
+			autoVEC rowWeights = VECcopy (my data.horizontalBand (rowb, rowe), weightColumnNumber);
+			 MATmtm_rowWeights_preallocated (thy data.get(), part.get(), rowWeights.get()); 
+		} else
+			MATmtm_preallocated (thy data.get(), part.get());   // sum of squares and cross products = T'T
+		for (integer j = 1; j <= part.ncol; j ++) {
+			conststring32 label = my columnLabels [colb - 1 + j].get();
+			TableOfReal_setColumnLabel (thee.get(), j, label);
+			TableOfReal_setRowLabel (thee.get(), j, label);
+		}
+		return thee;
+	} catch (MelderError) {
+		Melder_throw (me, U": SSCP not created.");
+	}
+}
+
+
 autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh) {
 	try {
 		autoCovariance cov = SSCP_to_Covariance (me, 1);

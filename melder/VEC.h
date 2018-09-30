@@ -65,6 +65,7 @@ inline void VECadd_preallocated  (const VEC& target, const constVEC& x, const co
 	for (integer i = 1; i <= n; i ++)
 		target [i] = x [i] + y [i];
 }
+
 inline autoVEC VECadd (const constVEC& x, const constVEC& y) {
 	autoVEC result = VECraw (x.size);
 	VECadd_preallocated (result.get(), x, y);
@@ -95,6 +96,11 @@ inline void VECcolumnMeans_preallocated (const VEC& target, const constMAT& x) n
 	Melder_assert (target.size == x.ncol);
 	for (integer icol = 1; icol <= x.ncol; icol ++)
 		target [icol] = NUMcolumnMean (x, icol);
+}
+inline autoVEC VECcolumnMeans (const constMAT& x) {
+	autoVEC result = VECraw (x.ncol);
+	VECcolumnMeans_preallocated (result.get(), x);
+	return result;
 }
 
 extern void VECmul_preallocated (const VEC& target, const constVEC& vec, const constMAT& mat) noexcept;
