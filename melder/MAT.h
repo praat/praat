@@ -100,9 +100,22 @@ inline void MATmul_preallocated  (const MAT& target, const constMAT& x, const co
 	Melder_assert (x.ncol == y.nrow);
 	MATmul_preallocated_ (target, x, y);
 }
-inline autoMAT MATmul (const constMAT& x, const constMAT& y) {
+/*
+	Precise matrix multiplication, using pairwise summation.
+	The speed is 12.3,1.03,0.62,1.92 ns per multiply-add
+	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+	For large matrices this is a bit slow.
+*/
+extern void MATVUmul_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept;
+inline void MATVUmul  (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == y.ncol);
+	Melder_assert (x.ncol == y.nrow);
+	MATVUmul_ (target, x, y);
+}
+inline autoMAT MATmul (const constMATVU& x, const constMATVU& y) {
 	autoMAT result = MATraw (x.nrow, y.ncol);
-	MATmul_preallocated (result.get(), x, y);
+	MATVUmul (result.all(), x, y);
 	return result;
 }
 /*
@@ -116,6 +129,13 @@ inline void MATmul_fast_preallocated  (const MAT& target, const constMAT& x, con
 	Melder_assert (target.ncol == y.ncol);
 	Melder_assert (x.ncol == y.nrow);
 	MATmul_fast_preallocated_ (target, x, y);
+}
+extern void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept;
+inline void MATVUmul_fast  (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+	Melder_assert (target.nrow == x.nrow);
+	Melder_assert (target.ncol == y.ncol);
+	Melder_assert (x.ncol == y.nrow);
+	MATVUmul_fast_ (target, x, y);
 }
 inline autoMAT MATmul_fast (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.nrow, y.ncol);

@@ -1300,9 +1300,9 @@ static autoCovariance Covariances_pool (Covariance me, Covariance thee) {
 	}
 }
 
-static double traceOfSquaredMatrixProduct (double **s1, double **s2, integer n) {
+static double traceOfSquaredMatrixProduct (constMAT const& s1, constMAT const& s2) {
 	// tr ((s1*s2)^2), s1, s2 are symmetric
-	autoMAT m = MATmul ({s1,n,n}, {s2,n, n});
+	autoMAT m = MATmul (s1, s2);
 	double trace2 = NUMtrace2_nn (m.get(), m.get());
 	return trace2;
 }
@@ -1421,9 +1421,9 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 		double hotelling_tsq = NUMmahalanobisDistance (s.get(), my centroid.get(), thy centroid.get());
 
 		autoMAT si = MATinverse_fromLowerCholeskyInverse (s.get());
-		double tr_s1sisqr = traceOfSquaredMatrixProduct (s1.at, si.at, p);
+		double tr_s1sisqr = traceOfSquaredMatrixProduct (constMAT (s1.at, p, p), constMAT (si.at, p, p));
 		double tr_s1si = NUMtrace2_nn (s1.get(), si.get());
-		double tr_s2sisqr = traceOfSquaredMatrixProduct (s2.at, si.at, p);
+		double tr_s2sisqr = traceOfSquaredMatrixProduct (constMAT (s2.at, p, p), constMAT (si.at, p, p));
 		double tr_s2si = NUMtrace2_nn (s2.get(), si.get());
 
 		double nu = (p + p * p) / ( (tr_s1sisqr + tr_s1si * tr_s1si) / n1 + (tr_s2sisqr + tr_s2si * tr_s2si) / n2);

@@ -294,8 +294,11 @@ void structGraphicsScreen :: v_clearWs () {
                 rect.size.height = our d_y1DC - our d_y2DC;
             }
 			[cocoaDrawingArea lockFocus];
-            CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-            CGContextSaveGState (context);
+            CGContextRef context =
+					Melder_systemVersion < 101400 ?
+						(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+						[[NSGraphicsContext currentContext] CGContext];
+           CGContextSaveGState (context);
             CGContextSetAlpha (context, 1.0);
             CGContextSetBlendMode (context, kCGBlendModeNormal);
             CGContextSetRGBFillColor (context, 1.0, 1.0, 1.0, 1.0);
@@ -758,9 +761,12 @@ autoGraphics Graphics_create_pdf (void *context, int resolution,
 		if (my d_macView) {
 			[my d_macView lockFocus];
 			//if (! my printer) {
-				my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+				my d_macGraphicsContext =
+						Melder_systemVersion < 101400 ?
+							(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+							[[NSGraphicsContext currentContext] CGContext];
 			//}
-			Melder_assert (my d_macGraphicsContext);
+			//Melder_assert (my d_macGraphicsContext);
 			if (my printer) {
 				//CGContextTranslateCTM (my d_macGraphicsContext, 0, [my d_macView bounds]. size. height);
 				//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);

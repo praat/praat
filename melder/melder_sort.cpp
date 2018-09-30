@@ -160,7 +160,7 @@ double NUMquantile (integer n, double a [], double factor) {
 	return a [left] + (place - left) * (a [left + 1] - a [left]);
 }
 
-double NUMquantile (const constVEC& a, double factor) noexcept {
+double NUMquantile (const constVECVU& a, double factor) noexcept {
 	double place = factor * a.size + 0.5;
 	integer left = (integer) floor (place);
 	if (a.size < 1) return 0.0;
