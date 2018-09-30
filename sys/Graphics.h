@@ -208,8 +208,8 @@ void Graphics_rectangle (Graphics me, double x1, double x2, double y1, double y2
 void Graphics_fillRectangle (Graphics me, double x1, double x2, double y1, double y2);
 void Graphics_roundedRectangle (Graphics me, double x1, double x2, double y1, double y2, double r_mm);
 void Graphics_fillRoundedRectangle (Graphics me, double x1, double x2, double y1, double y2, double r_mm);
-void Graphics_function (Graphics me, double y [], integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2]
-void Graphics_function16 (Graphics me, int16 y [], int stagger, integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2] or y [ix1*2..ix2*2]
+void Graphics_function (Graphics me, const double y [], integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2]
+void Graphics_function16 (Graphics me, const int16 y [], int stride, integer ix1, integer ix2, double x1, double x2);   // y [ix1..ix2] or y [ix1*2..ix2*2]
 void Graphics_circle (Graphics me, double x, double y, double r);
 void Graphics_fillCircle (Graphics me, double x, double y, double r);
 void Graphics_circle_mm (Graphics me, double x, double y, double d);
@@ -318,7 +318,7 @@ void Graphics_altitude (Graphics me, double **z,
 void Graphics_grey (Graphics me, double **z,
 	integer ix1, integer ix2, double x1, double x2, integer iy1, integer iy2, double y1, double y2, int numberOfBorders, double borders []);
 #define Graphics_gray Graphics_grey
-void Graphics_surface (Graphics me, double **z, integer ix1, integer ix2, double x1, double x2,
+void Graphics_surface (Graphics me, double const * const *z, integer ix1, integer ix2, double x1, double x2,
 	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum, double elevation, double azimuth);
 
 void Graphics_setInner (Graphics me);
