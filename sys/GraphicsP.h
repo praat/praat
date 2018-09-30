@@ -188,7 +188,7 @@ Thing_define (GraphicsPostscript, Graphics) {
 double * _Graphics_check (Graphics me, integer number);
 #define put(f)  * ++ p = (double) (f)
 #define op(opcode,number)  double *p = _Graphics_check (me, number); if (! p) return; put (opcode); put (number)
-#define mput(n,a)  { double *f = a; for (integer l = 0; l < n; l ++) put (f [l]); }
+#define mput(n,a)  { const double *f = a; for (integer l = 0; l < n; l ++) put (f [l]); }
 #define sput(s,l)  { put (l); strcpy ((char *) (p + 1), s); p += l; }
 
 /* When adding opcodes in the following list, add them at the end. */

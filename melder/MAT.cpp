@@ -92,7 +92,16 @@ void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept {
 	#endif
 }
 
+/*
+	Target :=  X . Y
+*/
 void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
+	/*
+		Precise matrix multiplication, using pairwise summation.
+		The speed is 7,0.69,0.51,1.96 ns per multiply-add
+		for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+		For large matrices this is a bit slow.
+	*/
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
@@ -100,6 +109,25 @@ void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT&
 				const double *py = & y [1] [icol],
 				(longdouble) *px * (longdouble) *py,
 				(px += 1, py += y.ncol)
+			)
+			target [irow] [icol] = double (sum);
+		}
+	}
+}
+void MATVUmul_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+	/*
+		Precise matrix multiplication, using pairwise summation.
+		The speed is 12.3,1.03,0.62,1.92 ns per multiply-add
+		for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+		For large matrices this is a bit slow.
+	*/
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+				const double *px = & x [irow] [1];
+				const double *py = & y [1] [icol],
+				(longdouble) *px * (longdouble) *py,
+				(px += x.colStride, py += y.rowStride)
 			)
 			target [irow] [icol] = double (sum);
 		}
@@ -174,7 +202,7 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 			This version is not slower than the version with stored pointers,
 			although the inner loop contains the multiplication i * y.ncol,
 			which the compiler cannot get rid of
-			(some compiler may replace it with a y.ncol stride addition).
+			(some compilers may replace it with a y.ncol stride addition).
 			It anything, this version is slightly faster than the one with stored pointers:
 			the speed is 9.1,0.63,0.83,1.83 ns per multiply-add for size = 1,10,100,1000.
 		*/
@@ -193,7 +221,7 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 			namely by making matrix indexing compute a vector, with size information and all.
 			This version is 8.4,1.00,0.95,2.38 ns per multiply-add for size = 1,10,100,1000.
 			That is really somewhat slower, but is that because of the size computation
-			or because of the range check!
+			or because of the range check?
 		*/
 		for (integer irow = 1; irow <= target.nrow; irow ++) {
 			for (integer icol = 1; icol <= target.ncol; icol ++) {
@@ -231,6 +259,104 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 	#endif
 }
 
+static inline void MATVUmul_fast_naiveReferenceImplementation (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+	/*
+		If x.colStride == size and y.colStride == 1,
+		this version is 0.073, 1.32, 1.17, 0.58 Gflops for size = 1,10,100,1000.
+	*/
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			target [irow] [icol] = 0.0;
+			for (integer i = 1; i <= x.ncol; i ++)
+				target [irow] [icol] += x [irow] [i] * y [i] [icol];
+		}
+	}
+}
+void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+	if ((false)) {
+		MATVUmul_fast_naiveReferenceImplementation (target, x, y);
+	} else if (y.colStride == 1) {
+		/*
+			This case is appropriate for the multiplication of full matrices
+				X.Y
+			or
+				X'.Y
+
+			The speed for X.Y is 0.063, 1.38, 3.16, 3.02 Gflops for size = 1,10,100,1000.
+			The speed for X'.Y is 0.063, 1.37, 3.13, 2.73 Gflops for size = 1,10,100,1000.
+
+			The trick is to have the inner loop run along two fastest indices;
+			for target as well as y, this fastest index is the last index.
+			Note that the multiplication factor within the inner loop is constant,
+			so we move it out of the loop (by hand, in case the compiler doesn't do it).
+		*/
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			VECVU const targetrow = target [irow];
+			for (integer icol = 1; icol <= target.ncol; icol ++)
+				targetrow [icol] = 0.0;
+			for (integer i = 1; i <= x.ncol; i ++) {
+				double const xcell = x [irow] [i];
+				constVECVU const yrow = y [i];
+				for (integer icol = 1; icol <= target.ncol; icol ++)
+					targetrow [icol] += xcell * yrow [icol];
+			}
+		}
+	} else if (y.rowStride == 1) {
+		if (x.colStride == 1) {
+			/*
+				This case will be appropriate for the multiplication of full matrices
+					X.Y'
+				The speed is 0.062, 1.21, 2.48, 2.43 Gflops for size = 1,10,100,1000.
+			*/
+			for (integer irow = 1; irow <= target.nrow; irow ++) {
+				for (integer icol = 1; icol <= target.ncol; icol ++) {
+					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
+						const double *px = & x [irow] [1];
+						const double *py = & y [icol] [1],
+						(longdouble) *px * (longdouble) *py,
+						(px += 1, py += 1)
+					)
+					target [irow] [icol] = double (sum);
+				}
+			}
+		} else {
+			/*
+				This case will be appropriate for the multiplication of full matrices
+					X'.Y'
+				However, this will work only once an automatrix has row and column strides;
+				until that time we cannot really modify the structure of `target`.
+
+				So we will make this fast by making the target matrix column-major.
+				The speed will be 0.065, 1.27, 1.45, 1.21 Gflops for size = 1,10,100,1000.
+
+				For the moment, the target has to stay row-major.
+				The speed is 0.064, 1.25, 1.40, 0.43 Gflops for size = 1,10,100,1000.
+
+				The trick is to have the inner loop run along two fastest indices;
+				for both target (in future) and y, this fastest index is the first index.
+			*/
+			//target.rowStride = 1;
+			//target.colStride = target.nrow;
+			for (integer icol = 1; icol <= target.ncol; icol ++) {
+				VECVU const targetcolumn = target.column (icol);
+				for (integer irow = 1; irow <= target.nrow; irow ++)
+					targetcolumn [irow] = 0.0;
+				for (integer i = 1; i <= x.ncol; i ++) {
+					constVECVU const ycol = y.column (i);
+					for (integer irow = 1; irow <= target.nrow; irow ++)
+						targetcolumn [irow] += x [irow] [i] * ycol [irow];
+				}
+			}
+		}
+	} else {
+		/*
+			A rare case: the strides of y are both greater than 1.
+			We do not bother to optimize these cases yet.
+		*/
+		MATVUmul_fast_naiveReferenceImplementation (target, x, y);
+	}
+}
+
 void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
@@ -258,8 +384,26 @@ void MATmul_tn_preallocated_ (const MAT& target, const constMAT& x, const constM
 		}
 	}
 }
+void MATVUmul_tn_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+	for (integer irow = 1; irow <= target.nrow; irow ++) {
+		for (integer icol = 1; icol <= target.ncol; icol ++) {
+			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
+				const double *px = & x [1] [irow];
+				const double *py = & y [1] [icol],
+				(longdouble) *px * (longdouble) *py,
+				(px += x.rowStride, py += y.rowStride)
+			)
+			target [irow] [icol] = double (sum);
+		}
+	}
+}
 
 void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
+	/*
+		Rough matrix multiplication, using an in-cache inner loop.
+		The speed is 11,0.79,0.32,0.37 ns per multiply-add
+		for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+	*/
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++)
 			target [irow] [icol] = 0.0;

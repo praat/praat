@@ -448,7 +448,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoVEC result = VECraw (size);
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				VECadd_preallocated (result.get(), x.get(), y.get());
+				VECVUadd (result.all(), x.all(), y.all());
 			t = Melder_stopwatch () / size;
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
@@ -460,10 +460,13 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			autoMAT result = MATraw (size, size);
 			//MAT resultget = result.get();
 			//constMAT xget = x.get(), yget = y.get();
+			MATVU result_all = result.all();
+			constMATVU x_all = x.all();
+			constMATVU y_all = constMATVUtranspose (y.all());
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				//MATmul_preallocated_ (result, xget, yget);
-				MATmul_fast_preallocated (result.get(), x.get(), y.get());
+				//MATmul_preallocated_ (result.get(), x.get(), y.get());
+				MATVUmul_fast (result_all, x_all, y_all);
 			t = Melder_stopwatch () / size / size / size;
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
@@ -616,7 +619,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			test_FileInMemoryManager_io ();
 		} break;
 	}
-	MelderInfo_writeLine (Melder_single (t / n * 1e9), U" nanoseconds");
+	MelderInfo_writeLine (Melder_single (n / t * 1e-9), U" Gflops");
 	MelderInfo_close ();
 	return 1;
 }

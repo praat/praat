@@ -32,7 +32,7 @@ inline VEC operator+= (const VEC& x, double addend) noexcept {
 	for (double& element : x) element += addend;
 	return x;
 }
-inline void VECadd_inplace (const VEC& x, const constVEC& y) noexcept {
+inline void VECVUadd_inplace (const VECVU& x, const constVECVU& y) noexcept {
 	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= x.size; i ++)
 		x [i] += y [i];
@@ -44,6 +44,10 @@ inline VEC operator+= (const VEC& x, const constVEC& y) noexcept {
 	return x;
 }
 inline void VECadd_preallocated (const VEC& target, const constVEC& x, double addend) noexcept {
+	Melder_assert (x.size == target.size);
+	for (integer i = 1; i <= x.size; i ++)
+		target [i] = x [i] + addend;
+}inline void VECVUadd (const VECVU& target, const constVECVU& x, double addend) noexcept {
 	Melder_assert (x.size == target.size);
 	for (integer i = 1; i <= x.size; i ++)
 		target [i] = x [i] + addend;
@@ -70,6 +74,18 @@ inline autoVEC VECadd (const constVEC& x, const constVEC& y) {
 	autoVEC result = VECraw (x.size);
 	VECadd_preallocated (result.get(), x, y);
 	return result;
+}
+extern void VECVUadd_macfast_ (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept;
+inline void VECVUadd (const VECVU& target, const constVECVU& x, const constVECVU& y) noexcept {
+	integer n = target.size;
+	Melder_assert (x.size == n);
+	Melder_assert (y.size == n);
+	#if defined (macintoshXXX)
+		if (n >= 64)
+			return VECVUadd_macfast_ (target, x, y);
+	#endif
+	for (integer i = 1; i <= n; i ++)
+		target [i] = x [i] + y [i];
 }
 
 inline void VECcentre_inplace (const VEC& x, double *out_mean = nullptr) noexcept {

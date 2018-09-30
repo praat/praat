@@ -362,14 +362,38 @@ public:
 		return our at [i];
 	}
 	vector<T> subview (integer first, integer last) const {
-		const integer offset = first - 1;
-		Melder_assert (offset >= 0 && offset < our size);
-		const integer newSize = last - offset;
-		if (newSize <= 0) return vector<T> (nullptr, 0);
-		return vector<T> (& our at [offset], newSize);
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 0 && last <= our size);
+		const integer newSize = last - (first - 1);
+		if (newSize <= 0) return vector<T> ();
+		return vector<T> (& our at [first - 1], newSize);
 	}
 	T *begin () const { return & our at [1]; }
 	T *end () const { return & our at [our size + 1]; }
+};
+
+template <typename T>
+class vectorview {
+public:
+	T * firstCell = nullptr;
+	integer size = 0;
+	integer stride = 1;
+	vectorview (const vector<T>& other) :
+			firstCell (& other.at [1]), size (other.size), stride (1) { }
+	vectorview (T * const firstCell, integer const size, integer const stride) :
+			firstCell (firstCell), size (size), stride (stride) { }
+	T& operator[] (integer i) const {
+		return our firstCell [(i - 1) * our stride];
+	}
+	vectorview<T> subview (integer first, integer last) const {
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 0 && last <= our size);
+		const integer newSize = last - (first - 1);
+		if (newSize <= 0) return vectorview<T> ();
+		return vectorview<T> (& our operator[] (first), newSize, our stride);
+	}
+	T *begin () const { return & our operator[] (1); }
+	T *end () const { return & our operator[] (our size + 1); }
 };
 
 template <typename T>
@@ -389,14 +413,41 @@ public:
 		return our at [i];
 	}
 	constvector<T> subview (integer first, integer last) const {
-		const integer offset = first - 1;
-		Melder_assert (offset >= 0 && offset < our size);
-		const integer newSize = last - offset;
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 0 && last <= our size);
+		const integer newSize = last - (first - 1);
 		if (newSize <= 0) return constvector<T> (nullptr, 0);
-		return constvector<T> (& our at [offset], newSize);
+		return constvector<T> (& our at [first - 1], newSize);
 	}
 	const T *begin () const { return & our at [1]; }
 	const T *end () const { return & our at [our size + 1]; }
+};
+
+template <typename T>
+class constvectorview {
+public:
+	const T * firstCell = nullptr;
+	integer size = 0;
+	integer stride = 1;
+	constvectorview (const constvector<T>& other) :
+			firstCell (& other.at [1]), size (other.size), stride (1) { }
+	constvectorview (const vector<T>& other) :
+			firstCell (& other.at [1]), size (other.size), stride (1) { }
+	constvectorview (const T * const firstCell, integer const size, integer const stride) :
+			firstCell (firstCell), size (size), stride (stride) { }
+	constvectorview (vectorview<T> vec): firstCell (vec.firstCell), size (vec.size), stride (vec.stride) { }
+	T const& operator[] (integer i) const {
+		return our firstCell [(i - 1) * our stride];
+	}
+	constvectorview<T> subview (integer first, integer last) const {
+		Melder_assert (first >= 1 && first <= our size);
+		Melder_assert (last >= 0 && last <= our size);
+		const integer newSize = last - (first - 1);
+		if (newSize <= 0) return constvectorview<T> ();
+		return constvectorview<T> (& our operator[] (first), newSize, our stride);
+	}
+	const T *begin () const { return & our operator[] (1); }
+	const T *end () const { return & our operator[] (our size + 1); }
 };
 
 /*
@@ -423,6 +474,7 @@ public:
 		our capacity = 0;
 	}
 	vector<T> get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
+	vectorview<T> all () const { return vectorview<T> (& our at [1], our size, 1); }
 	void adoptFromAmbiguousOwner (vector<T> given) {   // buy the payload from a non-autovector
 		our reset();
 		our at = given.at;
@@ -617,6 +669,10 @@ public:
 		return vector<T> (our at [rowNumber], our ncol);
 		#endif
 	}
+	vectorview<T> column (const integer columnNumber) const {
+		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
+		return vectorview<T> (& our at [1] [columnNumber], our nrow, our ncol);
+	}
 	matrix<T> horizontalBand (integer firstRow, integer lastRow) const {
 		const integer offsetRow = firstRow - 1;
 		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
@@ -624,6 +680,24 @@ public:
 		const integer newNrow = lastRow - offsetRow;
 		if (newNrow <= 0) return matrix<T> ();
 		return matrix<T> (& our at [offsetRow], newNrow, our ncol);
+	}
+};
+
+template <typename T>
+class matrixview {
+public:
+	T * firstCell = nullptr;
+	integer nrow = 0, ncol = 0;
+	/*mutable*/ integer rowStride = 0, colStride = 1;   // mutable perhaps once an automatrix has strides
+	matrixview (const matrix<T>& other) :
+			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+	matrixview (T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
+			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
+	vectorview<T> operator[] (integer i) const {
+		return vectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);
+	}
+	vectorview<T> column (integer columnNumber) const {
+		return vectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
 	}
 };
 
@@ -670,6 +744,28 @@ public:
 	}
 };
 
+template <typename T>
+class constmatrixview {
+public:
+	const T * firstCell = nullptr;
+	integer nrow = 0, ncol = 0;
+	integer rowStride = 0, colStride = 1;
+	constmatrixview (const constmatrix<T>& other) :
+			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+	constmatrixview (const matrix<T>& other) :
+			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+	constmatrixview (const T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
+			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
+	constmatrixview (matrixview<T> mat) :
+			firstCell (mat.firstCell), nrow (mat.nrow), ncol (mat.ncol), rowStride (mat.rowStride), colStride (mat.colStride) { }
+	constvectorview<T> operator[] (integer i) const {
+		return constvectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);
+	}
+	constvectorview<T> column (integer columnNumber) const {
+		return constvectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
+	}
+};
+
 /*
 	An automatrix is the sole owner of its payload, which is a matrix.
 	When the automatrix ends its life (goes out of scope),
@@ -703,6 +799,7 @@ public:
 	}
 	//matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
+	matrixview<T> all () const { return matrixview<T> (& our at [1] [1], our nrow, our ncol, our ncol, 1); }
 	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-automatrix
 		our reset();
 		#if PACKED_TENSORS
@@ -862,7 +959,9 @@ automatrix<T> matrixpart (const matrix<T>& x, integer firstRow, integer lastRow,
 	For instance, we make VECraw and VECzero because Praat scripting has raw# and zero#.
 */
 using VEC = vector <double>;
+using VECVU = vectorview <double>;
 using constVEC = constvector <double>;
+using constVECVU = constvectorview <double>;
 using autoVEC = autovector <double>;
 inline autoVEC VECraw  (integer size) { return vectorraw  <double> (size); }
 inline autoVEC VECzero (integer size) { return vectorzero <double> (size); }
@@ -889,7 +988,9 @@ inline autoINTVEC INTVECcopy (constINTVEC source) { return vectorcopy (source); 
 #define emptyINTVEC  INTVEC (nullptr, 0)
 
 using MAT = matrix <double>;
+using MATVU = matrixview <double>;
 using constMAT = constmatrix <double>;
+using constMATVU = constmatrixview <double>;
 using autoMAT = automatrix <double>;
 inline autoMAT MATraw  (integer nrow, integer ncol) { return matrixraw  <double> (nrow, ncol); }
 inline autoMAT MATzero (integer nrow, integer ncol) { return matrixzero <double> (nrow, ncol); }
@@ -907,6 +1008,10 @@ inline autoINTMAT INTMATcopy (constINTMAT source) { return matrixcopy (source); 
 
 #define emptyMAT  MAT (nullptr, 0, 0)
 #define emptyINTMAT  INTMAT (nullptr, 0, 0)
+
+inline constMATVU constMATVUtranspose (const constMATVU& mat) {
+	return constMATVU (& mat [1] [1], mat.ncol, mat.nrow, mat.colStride, mat.rowStride);
+}
 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);

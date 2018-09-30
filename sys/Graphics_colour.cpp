@@ -209,7 +209,11 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 						//windowRect.size.width -= 2;
 						[[nsView window] cacheImageInRect: windowRect];
 						[drawingArea lockFocus];
-						CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+						CGContextRef context =
+								Melder_systemVersion < 101400 ?
+									(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+									[[NSGraphicsContext currentContext] CGContext];
+						//Melder_assert (context);
 						CGContextSaveGState (context);
 						//CGContextSetBlendMode (context, kCGBlendModeDifference);
 						CGContextSetBlendMode (context, kCGBlendModeDarken);
@@ -232,7 +236,10 @@ static void highlight (Graphics graphics, integer x1DC, integer x2DC, integer y1
 					}
 				} else {
 					[drawingArea lockFocus];
-					CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+					CGContextRef context =
+							Melder_systemVersion < 101400 ?
+								(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+								[[NSGraphicsContext currentContext] CGContext];
 					CGContextSaveGState (context);
 					NSCAssert (context, @"nil context");
 					//CGContextTranslateCTM (context, 0, drawingArea. bounds. size. height);
@@ -329,7 +336,10 @@ static void highlight2 (Graphics graphics, integer x1DC, integer x2DC, integer y
 					}
 				}
 				[drawingArea lockFocus];
-				my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+				my d_macGraphicsContext =
+						Melder_systemVersion < 101400 ?
+							(CGContextRef) [[NSGraphicsContext currentContext] graphicsPort] :
+							[[NSGraphicsContext currentContext] CGContext];
 				CGContextSaveGState (my d_macGraphicsContext);
 				NSRect upperRect = NSMakeRect (x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC);
 				NSRect leftRect  = NSMakeRect (x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner);
