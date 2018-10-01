@@ -135,16 +135,17 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT 
 	autoMAT eigenvectors = MATraw (a.nrow, a.nrow);
 	MAT_getEigenSystemFromSymmetricMatrix (a, & eigenvectors, nullptr, false);
 	
-	//MATmul_tn_preallocated (pc, a, eigenvectors.verticalBand (1, nComponents)); // TODO
-	for (integer i = 1; i <= a.nrow; i ++) {
-		for (integer j = 1; j <= nComponents; j ++) {
-			longdouble s = 0.0;
+	MATVUmul (pc, constMATVUtranspose (a), eigenvectors.verticalBand (1, nComponents));   // TODO: check
+	/*
+	for (integer irow = 1; irow <= pc.nrow; irow ++) {
+		for (integer icol = 1; icol <= pc.ncol; icol ++) {
+			longdouble sum = 0.0;
 			for (integer k = 1; k <= a.nrow; k ++)
-				s += a [k] [i] * eigenvectors [k] [j];
-			pc [i] [j] = (double) s;
+				sum += a [k] [irow] * eigenvectors [k] [icol];
+			pc [irow] [icol] = double (sum);
 		}
 	}
-
+	*/
 }
 
 /* End of file MAT_numerics.cpp */

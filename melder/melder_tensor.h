@@ -629,6 +629,10 @@ autovector<T> vectorcopy (vector<T> source) {
 
 template <typename T>
 class automatrix;   // forward declaration, needed in the declaration of matrix
+template <typename T>
+class matrixview;
+template <typename T>
+class constmatrixview;
 
 #define PACKED_TENSORS  0
 
@@ -681,6 +685,13 @@ public:
 		if (newNrow <= 0) return matrix<T> ();
 		return matrix<T> (& our at [offsetRow], newNrow, our ncol);
 	}
+	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
+		const integer newNcol = lastColumn - (firstColumn - 1);
+		if (newNcol <= 0) return matrixview<T> ();
+		return matrixview<T> (& our at [1] [firstColumn], our nrow, newNcol, our ncol, 1);
+	}
 };
 
 template <typename T>
@@ -689,6 +700,7 @@ public:
 	T * firstCell = nullptr;
 	integer nrow = 0, ncol = 0;
 	/*mutable*/ integer rowStride = 0, colStride = 1;   // mutable perhaps once an automatrix has strides
+	matrixview () = default;
 	matrixview (const matrix<T>& other) :
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
 	matrixview (T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
@@ -698,6 +710,14 @@ public:
 	}
 	vectorview<T> column (integer columnNumber) const {
 		return vectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
+	}
+	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
+		const integer newNcol = lastColumn - (firstColumn - 1);
+		if (newNcol <= 0) return matrixview<T> ();
+		return matrixview<T> (our firstCell + (firstColumn - 1) * our colStride,
+			our nrow, newNcol, our rowStride, our colStride);
 	}
 };
 
@@ -742,6 +762,13 @@ public:
 		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
 		return constmatrix<T> (& our at [offsetRow], newNrow, our ncol);
 	}
+	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
+		const integer newNcol = lastColumn - (firstColumn - 1);
+		if (newNcol <= 0) return matrixview<T> ();
+		return constmatrixview<T> (& our at [1] [firstColumn], our nrow, newNcol, our ncol, 1);
+	}
 };
 
 template <typename T>
@@ -750,6 +777,7 @@ public:
 	const T * firstCell = nullptr;
 	integer nrow = 0, ncol = 0;
 	integer rowStride = 0, colStride = 1;
+	constmatrixview () = default;
 	constmatrixview (const constmatrix<T>& other) :
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
 	constmatrixview (const matrix<T>& other) :
@@ -763,6 +791,14 @@ public:
 	}
 	constvectorview<T> column (integer columnNumber) const {
 		return constvectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
+	}
+	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
+		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
+		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
+		const integer newNcol = lastColumn - (firstColumn - 1);
+		if (newNcol <= 0) return constmatrixview<T> ();
+		return constmatrixview<T> (our firstCell + (firstColumn - 1) * our colStride,
+			our nrow, newNcol, our rowStride, our colStride);
 	}
 };
 
