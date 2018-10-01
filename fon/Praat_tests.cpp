@@ -470,6 +470,20 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			t = Melder_stopwatch () / size / size / size;
 			double sum = NUMsum (result.get());
 			MelderInfo_writeLine (sum);
+			autoMAT autotest = MATrandomGauss (3, 5, 0.0, 1.0);
+			/*
+				How could the following work?
+				Is temp passed by reference?
+				That would be wrong, because constMATVUtranspose expects a larger object than a MAT.
+				Is temp first converted to MATVU, and is this temporary passed by const reference?
+				The answer: temp is not passed by reference; it is converted to MATVU first;
+				this is possible because constMATVUtranspose takes a *const* reference,
+				and const references in C++ can bind to r-values
+				(other than non-const references, which can bind only to l-values).
+			*/
+			MAT temp = autotest.get();
+			constMATVU test = constMATVUtranspose (temp);
+			MelderInfo_writeLine (test.nrow, U" ", test.ncol, U" ", test.rowStride, U" ", test.colStride);
 		} break;
 		case kPraatTests::THING_AUTO: {
 			int numberOfThingsBefore = theTotalNumberOfThings;

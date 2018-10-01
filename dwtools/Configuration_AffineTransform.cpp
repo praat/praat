@@ -28,7 +28,7 @@
 #undef your
 #define your ((AffineTransform_Table) thy methods) ->
 
-static void do_steps45 (constMAT w, MAT t, constMAT c, double *f) {
+static void do_steps45 (constMATVU const& w, MATVU const& t, constMATVU const& c, double *out_f) {
 	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
 	for (integer i = 1; i <= w.ncol; i ++) {
 		double d = 0.0;
@@ -44,7 +44,7 @@ static void do_steps45 (constMAT w, MAT t, constMAT c, double *f) {
 
 	// Step 5 & 11: f = tr W'T (Diag (T'CT))^-1/2
 
-	*f = 0.0;
+	*out_f = 0.0;
 	for (integer i = 1; i <= w.ncol; i ++) {
 		longdouble d = 0.0, tct = 0.0;
 		for (integer k = 1; k <= w.ncol; k ++) {
@@ -54,7 +54,7 @@ static void do_steps45 (constMAT w, MAT t, constMAT c, double *f) {
 			}
 		}
 		if (tct > 0.0) {
-			*f += d / sqrt (tct);
+			*out_f += d / sqrt (tct);
 		}
 	}
 }
@@ -63,7 +63,7 @@ static void do_steps45 (constMAT w, MAT t, constMAT c, double *f) {
 	Using: Kiers & Groenen (1996), A monotonically convergent congruence algorithm for orthogona congruence rotation,
 	Psychometrika (61), 375-389.
 */
-void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maximumNumberOfIterations, double tolerance) {
+static void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maximumNumberOfIterations, double tolerance) {
 	Melder_assert (t.ncol == b.ncol && b.nrow == a.nrow && b.ncol == a.ncol);
 	integer numberOfIterations = 0;
 
@@ -79,7 +79,7 @@ void NUMmaximizeCongruence_inplace (MAT t, constMAT b, constMAT a, integer maxim
 	// Steps 1 & 2: C = A'A and W = A'B
 
 	autoMAT c = MATmtm (a);
-	autoMAT w = MATmul_tn (a, b);
+	autoMAT w = MATmul (constMATVUtranspose (a), b);
 	double checkc = NUMsum (c.get());
 	double checkw = NUMsum (w.get());
 	
