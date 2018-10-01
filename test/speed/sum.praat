@@ -17,7 +17,7 @@ for n from 1 to numberOfChecks
 	appendInfoLine (n, " ", durations# [n])
 endfor
 
-appendInfoLine: "mean ", mean (durations#), " nanoseconds"
+appendInfoLine: "mean ", mean (durations#), " Gflops"
 
 ;for n to 1000
 appendInfoLine: "OK"

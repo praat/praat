@@ -92,28 +92,6 @@ void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept {
 	#endif
 }
 
-/*
-	Target :=  X . Y
-*/
-void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	/*
-		Precise matrix multiplication, using pairwise summation.
-		The speed is 7,0.69,0.51,1.96 ns per multiply-add
-		for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
-		For large matrices this is a bit slow.
-	*/
-	for (integer irow = 1; irow <= target.nrow; irow ++) {
-		for (integer icol = 1; icol <= target.ncol; icol ++) {
-			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
-				const double *px = & x [irow] [1];
-				const double *py = & y [1] [icol],
-				(longdouble) *px * (longdouble) *py,
-				(px += 1, py += y.ncol)
-			)
-			target [irow] [icol] = double (sum);
-		}
-	}
-}
 void MATVUmul_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
 	/*
 		Precise matrix multiplication, using pairwise summation.
@@ -137,7 +115,7 @@ void MATVUmul_ (const MATVU& target, const constMATVU& x, const constMATVU& y) n
 inline constVEC VECrow_nocheck (const constMAT& mat, integer rowNumber) {
 	return constVEC (mat.at [rowNumber], mat.ncol);
 }
-void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
+inline void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
 	#if USE_CBLAS_GEMM
 		/*
 			This version is 49,0.75,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
@@ -259,7 +237,7 @@ void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const cons
 	#endif
 }
 
-static inline void MATVUmul_fast_naiveReferenceImplementation (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+static inline void MATVUmul_rough_naiveReferenceImplementation (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
 	/*
 		If x.colStride == size and y.colStride == 1,
 		this version is 0.073, 1.32, 1.17, 0.58 Gflops for size = 1,10,100,1000.
@@ -274,7 +252,7 @@ static inline void MATVUmul_fast_naiveReferenceImplementation (const MATVU& targ
 }
 void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
 	if ((false)) {
-		MATVUmul_fast_naiveReferenceImplementation (target, x, y);
+		MATVUmul_rough_naiveReferenceImplementation (target, x, y);
 	} else if (y.colStride == 1) {
 		/*
 			This case is appropriate for the multiplication of full matrices
@@ -306,19 +284,9 @@ void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU&
 			/*
 				This case will be appropriate for the multiplication of full matrices
 					X.Y'
-				The speed is 0.062, 1.21, 2.48, 2.43 Gflops for size = 1,10,100,1000.
+				The speed is 0.062, 1.28, 2.49, 2.45 Gflops for size = 1,10,100,1000.
 			*/
-			for (integer irow = 1; irow <= target.nrow; irow ++) {
-				for (integer icol = 1; icol <= target.ncol; icol ++) {
-					PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
-						const double *px = & x [irow] [1];
-						const double *py = & y [icol] [1],
-						(longdouble) *px * (longdouble) *py,
-						(px += 1, py += 1)
-					)
-					target [irow] [icol] = double (sum);
-				}
-			}
+			MATVUmul_ (target, x, y);
 		} else {
 			/*
 				This case will be appropriate for the multiplication of full matrices
@@ -353,88 +321,8 @@ void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU&
 			A rare case: the strides of y are both greater than 1.
 			We do not bother to optimize these cases yet.
 		*/
-		MATVUmul_fast_naiveReferenceImplementation (target, x, y);
+		MATVUmul_rough_naiveReferenceImplementation (target, x, y);
 	}
-}
-
-void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	for (integer irow = 1; irow <= target.nrow; irow ++) {
-		for (integer icol = 1; icol <= target.ncol; icol ++) {
-			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
-				const double *px = & x [irow] [1];
-				const double *py = & y [icol] [1],
-				(longdouble) *px * (longdouble) *py,
-				(px += 1, py += 1)
-			)
-			target [irow] [icol] = double (sum);
-		}
-	}
-}
-
-void MATmul_tn_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	for (integer irow = 1; irow <= target.nrow; irow ++) {
-		for (integer icol = 1; icol <= target.ncol; icol ++) {
-			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
-				const double *px = & x [1] [irow];
-				const double *py = & y [1] [icol],
-				(longdouble) *px * (longdouble) *py,
-				(px += x.ncol, py += y.ncol)
-			)
-			target [irow] [icol] = double (sum);
-		}
-	}
-}
-void MATVUmul_tn_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
-	for (integer irow = 1; irow <= target.nrow; irow ++) {
-		for (integer icol = 1; icol <= target.ncol; icol ++) {
-			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
-				const double *px = & x [1] [irow];
-				const double *py = & y [1] [icol],
-				(longdouble) *px * (longdouble) *py,
-				(px += x.rowStride, py += y.rowStride)
-			)
-			target [irow] [icol] = double (sum);
-		}
-	}
-}
-
-void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	/*
-		Rough matrix multiplication, using an in-cache inner loop.
-		The speed is 11,0.79,0.32,0.37 ns per multiply-add
-		for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
-	*/
-	for (integer irow = 1; irow <= target.nrow; irow ++) {
-		for (integer icol = 1; icol <= target.ncol; icol ++)
-			target [irow] [icol] = 0.0;
-		for (integer i = 1; i <= x.nrow; i ++)
-			for (integer icol = 1; icol <= target.ncol; icol ++)
-				target [irow] [icol] += x [i] [irow] * y [i] [icol];
-	}
-}
-
-void MATmul_tt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	for (integer irow = 1; irow <= target.nrow; irow ++) {
-		for (integer icol = 1; icol <= target.ncol; icol ++) {
-			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
-				const double *px = & x [1] [irow];
-				const double *py = & y [icol] [1],
-				(longdouble) *px * (longdouble) *py,
-				(px += x.ncol, py += 1)
-			)
-			target [irow] [icol] = double (sum);
-		}
-	}
-}
-
-void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept(false) {
-	integer n = x.nrow;
-	if (n > 100) {
-		autoMAT xt = MATtranspose (x), yt = MATtranspose (y);
-		MATmul_fast_preallocated (target, xt.get(), yt.get());
-		return;
-	}
-	MATmul_tt_preallocated_ (target, x, y);
 }
 
 autoMAT MATouter (const constVEC& x, const constVEC& y) {

@@ -446,7 +446,10 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 		Compute C.
 	*/
 	autoVEC angles_degrees = VECraw (nvectors);
-	autoMAT c = MATmul_nt (my eigenvectors.horizontalBand (ivec_from, ivec_to), thy eigenvectors.horizontalBand (ivec_from, ivec_to));
+	autoMAT c = MATmul (
+			my eigenvectors.horizontalBand (ivec_from, ivec_to),
+			constMATVUtranspose (thy eigenvectors.horizontalBand (ivec_from, ivec_to))
+	);
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	for (integer i = 1; i <= nvectors; i ++) {
 		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;

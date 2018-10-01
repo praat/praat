@@ -703,6 +703,7 @@ public:
 	matrixview () = default;
 	matrixview (const matrix<T>& other) :
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+	matrixview (const automatrix<T>& other) = delete;
 	matrixview (T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
 			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
 	vectorview<T> operator[] (integer i) const {
@@ -782,6 +783,7 @@ public:
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
 	constmatrixview (const matrix<T>& other) :
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+	constmatrixview (const automatrix<T>& other) = delete;
 	constmatrixview (const T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
 			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
 	constmatrixview (matrixview<T> mat) :

@@ -31,7 +31,7 @@ extern void NUM_sum_mean_sumsq_variance_stdev (const constMAT& x, integer column
 		double *out_sum, double *out_mean,
 		double *out_sumsq, double *out_variance, double *out_stdev) noexcept;
 
-inline double NUMsum (constVEC x) noexcept {
+inline double NUMsum (constVEC const& x) noexcept {
 	integer n = x.size;
 	if (n <= 8) {
 		if (n <= 2) return n <= 0 ? 0.0 : n == 1 ? x [1] : x [1] + x [2];
