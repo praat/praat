@@ -134,23 +134,23 @@ void NUM_sum_mean (const constVEC& x, double *out_sum, double *out_mean) noexcep
 		return;
 	}
 	if (Melder_debug == 0 || Melder_debug < 48 || Melder_debug > 51) {
-		PAIRWISE_SUM (longdouble, sum, integer, x.size, const double *px = & x [1], (longdouble) *px, ++ px)
+		PAIRWISE_SUM (longdouble, sum, integer, x.size, const double *px = & x [1], (longdouble) *px, px += 1)
 		if (out_sum) *out_sum = (double) sum;
 		if (out_mean) *out_mean = double (sum / x.size);   // it helps a bit to perform the division while still in longdouble
 	} else if (Melder_debug == 48) {
-		SEQUENTIAL_SUM (double, sum, integer, x.size, const double *px = & x [1], *px, ++ px)
+		SEQUENTIAL_SUM (double, sum, integer, x.size, const double *px = & x [1], *px, px += 1)
 		if (out_sum) *out_sum = (double) sum;
 		if (out_mean) *out_mean = double (sum / x.size);
 	} else if (Melder_debug == 49) {
-		SEQUENTIAL_SUM (longdouble, sum, integer, x.size, const double *px = & x [1], *px, ++ px)
+		SEQUENTIAL_SUM (longdouble, sum, integer, x.size, const double *px = & x [1], *px, px += 1)
 		if (out_sum) *out_sum = (double) sum;
 		if (out_mean) *out_mean = double (sum / x.size);
 	} else if (Melder_debug == 50) {
-		KAHAN_SUM (longdouble, sum, integer, x.size, const double *px = & x [1], *px, ++ px)
+		KAHAN_SUM (longdouble, sum, integer, x.size, const double *px = & x [1], *px, px += 1)
 		if (out_sum) *out_sum = (double) sum;
 		if (out_mean) *out_mean = double (sum / x.size);
 	} else if (Melder_debug == 51) {
-		TWO_LOOP_SUM (longdouble, sum, integer, x.size, const double *px = & x [1], *px, ++ px)
+		TWO_LOOP_SUM (longdouble, sum, integer, x.size, const double *px = & x [1], *px, px += 1)
 		if (out_sum) *out_sum = (double) sum;
 		if (out_mean) *out_mean = double (sum / x.size);
 	}

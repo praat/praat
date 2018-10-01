@@ -465,7 +465,6 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			constMATVU y_all = constMATVUtranspose (y.all());
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
-				//MATmul_preallocated_ (result.get(), x.get(), y.get());
 				MATVUmul_fast (result_all, x_all, y_all);
 			t = Melder_stopwatch () / size / size / size;
 			double sum = NUMsum (result.get());

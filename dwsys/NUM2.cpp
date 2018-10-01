@@ -881,7 +881,7 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 	autoMAT yc = MATcopy (y);
 	if (! orthogonal)
 		MATcentreEachColumn_inplace (yc.get());
-	autoMAT c = MATmul_tn (x, yc.get()); // X'(JY)
+	autoMAT c = MATmul (constMATVUtranspose (x), yc.get()); // X'(JY)
 
 	// 2. Decompose C by SVD: C = UDV' (our SVD has eigenvectors stored row-wise V!)
 
@@ -891,7 +891,7 @@ void NUMprocrustes (constMAT x, constMAT y, autoMAT *out_rotation, autoVEC *out_
 
 	// 3. T = VU'
 
-	autoMAT rotation = MATmul_nt (svd->v.get(), svd->u.get());
+	autoMAT rotation = MATmul (svd->v.get(), constMATVUtranspose (svd->u.get()));
 	
 	if (! orthogonal) {
 

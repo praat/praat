@@ -749,10 +749,14 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		Melder_require (ny > 0 && ny < my numberOfRows, U"Invalid split.");
 		Melder_require (my numberOfRows > 1, U"Matrix should not be diagonal.");
 
-		integer m = my numberOfRows, nx = m - ny, xy_interchanged = nx < ny, yof = 0, xof = ny;
+		integer m = my numberOfRows, nx = m - ny;
+		bool xy_interchanged = ( nx < ny );
+		integer yof = 0, xof = ny;
 		if (xy_interchanged) {
-			yof = ny; xof = 0;
-			nx = ny; ny = m - nx;
+			yof = ny;
+			xof = 0;
+			nx = ny;
+			ny = m - nx;
 		}
 
 		// Copy Syy and Sxx into upper part of syy and sxx matrices.
@@ -824,7 +828,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		// Prepare Uxi' * Syx' = (Syx * Uxi)'
 
-		autoMAT a = MATmul_tt (sxx.get(), syx.get());
+		autoMAT a = MATmul (constMATVUtranspose (sxx.all()), constMATVUtranspose (syx.all()));
 		Melder_assert (a.nrow == nx && a.ncol == ny);
 
 		autoGSVD gsvd = GSVD_create_d (a.get(), syy.get());
@@ -844,11 +848,11 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 			double t = gsvd -> d1 [i] / gsvd -> d2 [i];
 			thy y -> eigenvalues [i] = t * t;
 			for (integer j = 1; j <= gsvd -> numberOfColumns; j ++) {
-				t = 0.0;
+				longdouble sum = 0.0;
 				for (integer k = 1; k <= j; k ++) {
-					t += gsvd -> q [i] [k] * ri [k] [j];
+					sum += gsvd -> q [i] [k] * ri [k] [j];
 				}
-				thy y -> eigenvectors [j] [i] = t;
+				thy y -> eigenvectors [j] [i] = double (sum);
 			}
 		}
 
@@ -879,7 +883,8 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		if (ny < nx) {
 			autoEigen t = thy x.move();
-			thy x = thy y.move(); thy y = t.move();
+			thy x = thy y.move();
+			thy y = t.move();
 		}
 		return thee;
 	} catch (MelderError) {
