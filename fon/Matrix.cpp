@@ -243,19 +243,11 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 }
 
 double Matrix_getSum (Matrix me) {
-	longdouble sum = 0.0;
-	for (integer irow = 1; irow <= my ny; irow ++)
-		for (integer icol = 1; icol <= my nx; icol ++)
-			sum += my z [irow] [icol];
-	return (double) sum;
+	return NUMsum (my z.get());
 }
 
 double Matrix_getNorm (Matrix me) {
-	longdouble sum = 0.0;
-	for (integer irow = 1; irow <= my ny; irow ++)
-		for (integer icol = 1; icol <= my nx; icol ++)
-			sum += my z [irow] [icol] * my z [irow] [icol];
-	return sqrt ((double) sum);
+	return NUMnorm (my z.get(), 2.0);
 }
 
 void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
