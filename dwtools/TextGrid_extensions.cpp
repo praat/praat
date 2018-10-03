@@ -78,7 +78,7 @@ struct TIMIT_key {
 	{"en", "n\\|v"},		/* button:	b ah q EN */
 	{"eng", "\\ng\\|v"},    	/* washington: w aa sh ENG tcl t ax n */
 	/* nasal flap */
-	{"nx", "n^\\fh"},		/* winner: wih NX axr */
+	{"nx", "\\fh\\~^"},		/* winner: wih NX axr */ /* I'm going with nasalized fish hook. Apparently, an n with a breve is also used n\N^ */
 	/* Fricatives */
 	{"s", "s"},			/* sea: S iy */
 	{"sh", "\\sh"},			/* she: SH iy */
