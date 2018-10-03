@@ -60,7 +60,7 @@ struct TIMIT_key {
 	{"ix", "\\i-"}, 		/* debit: dcl d eh bcl b IX tcl t */
 	{"axr", "\\sr"}, 		/* butter: bcl ah dx AXR */
 	/* devoiced schwa, very short */
-	{"ax-h", "\\sw\\ov"}, 	/* suspect: s AX-H s pcl p eh kcl k tcl t */
+	{"ax-h", "\\sw\\0v"}, 	/* suspect: s AX-H s pcl p eh kcl k tcl t */
 	/* Semivowels and glides */
 	{"l", "l"},			/* lay:	L ey */
 	{"r", "\\rt"},			/* ray:	R ey */
