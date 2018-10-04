@@ -147,13 +147,13 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf) {
 	return covar;
 }
 
-static void MATweightRows (MAT x, constVEC y) {
+static void MATweighRows (MAT x, constVEC y) {
 	Melder_assert (x.nrow == y.size);
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		VECmultiply_inplace (x.row (irow), y [irow]);
 }
 
-void MATmtm_rowWeights_preallocated (MAT result, constMAT data, constVEC rowWeights) {
+void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeights) {
 	Melder_assert (data.nrow == rowWeights.size);
 	Melder_assert (data.ncol = result.ncol);
 	Melder_assert (result.nrow == result.ncol);
@@ -171,7 +171,7 @@ void MATmtm_rowWeights_preallocated (MAT result, constMAT data, constVEC rowWeig
 		autoMAT d = MATcopy (data);
 		for (integer irow = 1; irow <= w.size; irow ++) 
 			w [irow] = sqrt (rowWeights [irow]);
-		MATweightRows (d.get(), w.get());
+		MATweighRows (d.get(), w.get());
 		MATmtm_preallocated (result, d.get());
 	}
 }
@@ -322,7 +322,7 @@ double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
 void NUMdominantEigenvector (constMAT m, VEC inout_q, double *out_lambda, double tolerance) {
 	Melder_assert (m.nrow == m.ncol && inout_q.size == m.nrow);
 
-	double lambda0, lambda = NUMmul_vtmv (inout_q, m); //  q'. M . q
+	double lambda0, lambda = NUMvtmv (inout_q, m); //  q'. M . q
 	Melder_require (lambda > 0.0, U"Zero matrices ??");
 	autoVEC z = VECraw (m.nrow);
 	integer iter = 0;
@@ -330,7 +330,7 @@ void NUMdominantEigenvector (constMAT m, VEC inout_q, double *out_lambda, double
 		lambda0 = lambda;
 		VECmul_preallocated (z.get(), m, inout_q);
 		VECnormalize_inplace (z.get(), 2.0, 1.0);
-		lambda = NUMmul_vtmv (z.get(), m); // z'. M . z
+		lambda = NUMvtmv (z.get(), m); // z'. M . z
 
 	} while (fabs (lambda - lambda0) > tolerance || ++ iter < 30);
 	VECcopy_preallocated (inout_q, z.get());

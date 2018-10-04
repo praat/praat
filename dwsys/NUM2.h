@@ -153,6 +153,12 @@ inline void VECset (VEC x, double value, integer to) {
 	for (integer i = 1; i <= to; i ++) x [i] = value;
 }
 
+inline void VECadd_inplace (VEC y, constVEC x) {
+	Melder_assert (y.size == x.size);
+	for (integer i = 1; i <= y.size; i ++)
+		y [i] += x[i];
+}
+
 inline void MATouter_preallocated (const MAT& target, const constVEC& x) {
 	Melder_assert (target.ncol == target.nrow);
 	Melder_assert (target.ncol == x.size);
@@ -162,10 +168,20 @@ inline void MATouter_preallocated (const MAT& target, const constVEC& x) {
 			target [icol] [irow] = target [irow] [icol] = x [irow] * x [icol];
 }
 
-inline double NUMmul_vtmv (constVEC q, constMAT m) { // q'. M . q
+inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
+	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;
-	for (integer k = 1; k <= q.size; k ++)
-		result += q [k] * NUMinner (m.row (k), q); 
+	for (integer k = 1; k <= x.size; k ++)
+		result += x [k] * NUMinner (m.row (k), x); 
+	return (double) result;
+}	
+
+inline double NUMmul_vtmv (constVEC x, constMAT m, constVEC y) { // x'. M . y
+	Melder_assert (x.size == m.nrow);
+	Melder_assert (y.size = m.ncol);
+	longdouble result = 0.0;
+	for (integer k = 1; k <= x.size; k ++)
+		result += x [k] * NUMinner (m.row (k), y); 
 	return (double) result;
 }	
 
@@ -178,6 +194,23 @@ inline void VECcopy_preallocated (VEC x, constMAT m, integer columnNumber) {
 inline autoVEC VECcopy (constMAT m, integer columnNumber) {
 	autoVEC result = VECraw (m.nrow);
 	VECcopy_preallocated (result.get(), m, columnNumber);
+	return result;
+}
+
+inline void MATcopy_preallocated (MAT target, constMAT x) {
+	return matrixcopy_preallocated (target, x);
+}
+
+inline void VECdiagonal_preallocated (VEC target, constMAT x) {
+	Melder_assert (x.nrow == x.ncol);
+	Melder_assert (target.size == x.nrow);
+	for (integer i = 1; i <= target.size; i ++)
+		target [i] = x [i] [i];
+
+}
+inline autoVEC VECdiagonal (constMAT& x) {
+	autoVEC result = VECraw (x.nrow);
+	VECdiagonal_preallocated (result.get(), x);
 	return result;
 }
 
@@ -230,7 +263,13 @@ autoMAT MATcovarianceFromColumnCentredMatrix (constMAT x, integer ndf);
 	covar[i][j] = sum (k=1..nrows, x[i]k]*x[k][j])/(nrows - ndf)
 */
 
-void MATmtm_rowWeights_preallocated (MAT result, constMAT data, constVEC rowWeights);
+void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeights);
+
+inline autoMAT MATmtm_weighRows (constMAT data, constVEC rowWeights) {
+	autoMAT result = MATraw (data.ncol, data.ncol);
+	MATmtm_weighRows_preallocated (result.get(), data, rowWeights);
+	return result;
+}
 
 double NUMmultivariateKurtosis (constMAT x, int method);
 /*
@@ -1334,10 +1373,19 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 	return inproduct / wsum;
 }
 
-/*  scalar a x plus y: y = a x + y */
+/*  scalar a x plus y: y += a x */
 inline void VECsaxpy (VEC y, constVEC x, double a) {
 	Melder_assert (y.size == x.size);
 	for (integer i = 1; i <= y.size; i ++) y [i] +=  a * x [i];
+}
+
+/* Y += +a X */
+inline void MATsaxpy (MAT y, constMAT x, double a) {
+	Melder_assert (y.nrow = x.nrow);
+	Melder_assert (y.ncol = x.ncol);
+	for (integer irow = 1; irow <= y.nrow; irow ++)
+		for (integer icol = 1; icol <= y.ncol; icol ++)
+			y [irow][icol] += a * x [irow] [icol];
 }
 
 /*
