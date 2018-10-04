@@ -311,15 +311,15 @@ double Graphics_inqSpeckleSize (Graphics me);
 Graphics_Colour Graphics_inqColour (Graphics me);
 enum kGraphics_colourScale Graphics_inqColourScale (Graphics me);
 
-void Graphics_contour (Graphics me, double **z,
-	integer ix1, integer ix2, double x1WC, double x2WC, integer iy1, integer iy2, double y1WC, double y2WC, double height);
-void Graphics_altitude (Graphics me, double **z,
-	integer ix1, integer ix2, double x1, double x2, integer iy1, integer iy2, double y1, double y2, int numberOfBorders, double borders []);
+void Graphics_contour (Graphics me, constMATVU const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, double height);
+void Graphics_altitude (Graphics me, constMATVU const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, int numberOfBorders, double borders []);
 void Graphics_grey (Graphics me, double **z,
-	integer ix1, integer ix2, double x1, double x2, integer iy1, integer iy2, double y1, double y2, int numberOfBorders, double borders []);
+	integer ix1, integer ix2, double x1WC, double x2WC, integer iy1, integer iy2, double y1WC, double y2WC, int numberOfBorders, double borders []);
 #define Graphics_gray Graphics_grey
-void Graphics_surface (Graphics me, double const * const *z, integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum, double elevation, double azimuth);
+void Graphics_surface (Graphics me, double const * const *z, integer ix1, integer ix2, double x1WC, double x2WC,
+	integer iy1, integer iy2, double y1WC, double y2WC, double minimum, double maximum, double elevation, double azimuth);
 
 void Graphics_setInner (Graphics me);
 void Graphics_unsetInner (Graphics me);

@@ -16,45 +16,35 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define USE_CBLAS_GEMM  0
-#define USE_GSL_GEMM  0
-#ifdef macintosh
-	#define USE_APPLE_GEMM  0
-#else
-	#define USE_APPLE_GEMM  0
-#endif
-
 #include "melder.h"
 #include "../dwsys/NUM2.h"
-#if USE_CBLAS_GEMM
-	#include "../dwsys/NUMcblas.h"
-#endif
-#if USE_GSL_GEMM
-	#include "../external/gsl/gsl_blas.h"
-#endif
-#if USE_APPLE_GEMM
+//#include "../dwsys/NUMcblas.h"
+//#include "../external/gsl/gsl_blas.h"
+
+#ifdef macintosh
 	#include <Accelerate/Accelerate.h>
+	#import <MetalPerformanceShaders/MetalPerformanceShaders.h>
 #endif
 
-void MATcentreEachColumn_inplace (const MAT& x) noexcept {
+void MATcentreEachColumn_inplace (MAT const& x) noexcept {
 	for (integer icol = 1; icol <= x.ncol; icol ++) {
-		double columnMean = NUMcolumnMean (x, icol);
+		double const columnMean = NUMcolumnMean (x, icol);
 		for (integer irow = 1; irow <= x.nrow; irow ++)
 			x [irow] [icol] -= columnMean;
 	}
 }
 
-void MATcentreEachRow_inplace (const MAT& x) noexcept {
+void MATcentreEachRow_inplace (MAT const& x) noexcept {
 	for (integer irow = 1; irow <= x.nrow; irow ++)
 		VECcentre_inplace (x.row (irow));
 }
 
-void MATdoubleCentre_inplace (const MAT& x) noexcept {
+void MATdoubleCentre_inplace (MAT const& x) noexcept {
 	MATcentreEachRow_inplace (x);
 	MATcentreEachColumn_inplace (x);
 }
 
-void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept {
+void MATmtm_preallocated (MAT const& target, constMAT const& x) noexcept {
 	Melder_assert (target.nrow == x.ncol);
 	Melder_assert (target.ncol == x.ncol);
 	#if 0
@@ -70,9 +60,9 @@ void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept {
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = irow; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
-				const double *px1 = & x [1] [irow];
-				const double *px2 = & x [1] [icol],
-				(longdouble) *px1 * (longdouble) *px2,
+				double const *px1 = & x [1] [irow];
+				double const *px2 = & x [1] [icol],
+				longdouble (*px1) * longdouble (*px2),
 				(px1 += x.ncol, px2 += x.ncol)
 			)
 			target [irow] [icol] = target [icol] [irow] = double (sum);
@@ -92,19 +82,16 @@ void MATmtm_preallocated (const MAT& target, const constMAT& x) noexcept {
 	#endif
 }
 
-void MATVUmul_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	/*
 		Precise matrix multiplication, using pairwise summation.
-		The speed is 12.3,1.03,0.62,1.92 ns per multiply-add
-		for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
-		For large matrices this is a bit slow.
 	*/
 	for (integer irow = 1; irow <= target.nrow; irow ++) {
 		for (integer icol = 1; icol <= target.ncol; icol ++) {
 			PAIRWISE_SUM (longdouble, sum, integer, x.ncol,
-				const double *px = & x [irow] [1];
-				const double *py = & y [1] [icol],
-				(longdouble) *px * (longdouble) *py,
+				double const *px = & x [irow] [1];
+				double const *py = & y [1] [icol],
+				longdouble (*px) * longdouble (*py),
 				(px += x.colStride, py += y.rowStride)
 			)
 			target [irow] [icol] = double (sum);
@@ -112,10 +99,10 @@ void MATVUmul_ (const MATVU& target, const constMATVU& x, const constMATVU& y) n
 	}
 }
 
-inline constVEC VECrow_nocheck (const constMAT& mat, integer rowNumber) {
+inline constVEC VECrow_nocheck (constMAT const& mat, integer rowNumber) {
 	return constVEC (mat.at [rowNumber], mat.ncol);
 }
-inline void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
+inline void MATmul_fast_preallocated_ (MAT const& target, constMAT const& x, constMAT const& y) noexcept {
 	#if USE_CBLAS_GEMM
 		/*
 			This version is 49,0.75,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
@@ -154,7 +141,7 @@ inline void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, con
 			This version is 20,0.80,0.32,0.33 ns per multiply-add for size = 1,10,100,1000.
 		*/
 		double *ptarget = & asvector (target) [1];
-		const double *px = & asvector (x) [1], *py = & asvector (y) [1];
+		double const *px = & asvector (x) [1], *py = & asvector (y) [1];
 		for (integer irow = 0; irow < target.nrow; irow ++) {
 			for (integer icol = 0; icol < target.ncol; icol ++)
 				ptarget [irow * target.ncol + icol] = 0.0;
@@ -185,7 +172,7 @@ inline void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, con
 			the speed is 9.1,0.63,0.83,1.83 ns per multiply-add for size = 1,10,100,1000.
 		*/
 		double *ptarget = & asvector (target) [1];
-		const double *px = & asvector (x) [1], *py = & asvector (y) [1];
+		double const *px = & asvector (x) [1], *py = & asvector (y) [1];
 		for (integer irow = 0; irow < target.nrow; irow ++) {
 			for (integer icol = 0; icol < target.ncol; icol ++) {
 				ptarget [irow * target.ncol + icol] = 0.0;
@@ -237,7 +224,7 @@ inline void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, con
 	#endif
 }
 
-static inline void MATVUmul_rough_naiveReferenceImplementation (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+static inline void MATVUmul_rough_naiveReferenceImplementation (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
 	/*
 		If x.colStride == size and y.colStride == 1,
 		this version is 0.073, 1.32, 1.17, 0.58 Gflops for size = 1,10,100,1000.
@@ -250,7 +237,16 @@ static inline void MATVUmul_rough_naiveReferenceImplementation (const MATVU& tar
 		}
 	}
 }
-void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
+void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const& y) noexcept {
+	#ifdef macintoshXXX
+		static bool gpuInited = false;
+		id<MTLDevice> gpuDevice;
+		if (! gpuInited) {
+			gpuDevice = MTLCreateSystemDefaultDevice ();
+			Melder_casual (U"GPU device", Melder_pointer (gpuDevice));
+			gpuInited = true;
+		}
+	#endif
 	if ((false)) {
 		MATVUmul_rough_naiveReferenceImplementation (target, x, y);
 	} else if (y.colStride == 1) {
@@ -284,7 +280,7 @@ void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU&
 			/*
 				This case will be appropriate for the multiplication of full matrices
 					X.Y'
-				The speed is 0.062, 1.28, 2.49, 2.45 Gflops for size = 1,10,100,1000.
+				The speed is 0.063, 1.17, 1.68, 1.70 Gflops for size = 1,10,100,1000.
 			*/
 			MATVUmul_ (target, x, y);
 		} else {
@@ -325,7 +321,7 @@ void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU&
 	}
 }
 
-autoMAT MATouter (const constVEC& x, const constVEC& y) {
+autoMAT MATouter (constVEC const& x, constVEC const& y) {
 	autoMAT result = MATraw (x.size, y.size);
 	for (integer irow = 1; irow <= x.size; irow ++)
 		for (integer icol = 1; icol <= y.size; icol ++)
@@ -333,7 +329,7 @@ autoMAT MATouter (const constVEC& x, const constVEC& y) {
 	return result;
 }
 
-autoMAT MATpeaks (const constVEC& x, bool includeEdges, int interpolate, bool sortByHeight) {
+autoMAT MATpeaks (constVEC const& x, bool includeEdges, int interpolate, bool sortByHeight) {
 	if (x.size < 2) includeEdges = false;
 	integer numberOfPeaks = 0;
 	for (integer i = 2; i < x.size; i ++)

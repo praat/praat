@@ -243,19 +243,11 @@ double Matrix_getValueAtXY (Matrix me, double x, double y) {
 }
 
 double Matrix_getSum (Matrix me) {
-	longdouble sum = 0.0;
-	for (integer irow = 1; irow <= my ny; irow ++)
-		for (integer icol = 1; icol <= my nx; icol ++)
-			sum += my z [irow] [icol];
-	return (double) sum;
+	return NUMsum (my z.get());
 }
 
 double Matrix_getNorm (Matrix me) {
-	longdouble sum = 0.0;
-	for (integer irow = 1; irow <= my ny; irow ++)
-		for (integer icol = 1; icol <= my nx; icol ++)
-			sum += my z [irow] [icol] * my z [irow] [icol];
-	return sqrt ((double) sum);
+	return NUMnorm (my z.get(), 2.0);
 }
 
 void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
@@ -297,9 +289,9 @@ void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, dou
 	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xreversed ? xmax : xmin, xreversed ? xmin : xmax, yreversed ? ymax : ymin, yreversed ? ymin : ymax);
-	Graphics_contour (g, my z.at,
-		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
+	Graphics_contour (g, my z.subview (MelderIntegerRange { iymin, iymax }, MelderIntegerRange { ixmin, ixmax }),
+		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		height);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
@@ -322,9 +314,9 @@ void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, doubl
 	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_altitude (g, my z.at,
-		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
+	Graphics_altitude (g, my z.subview (MelderIntegerRange { iymin, iymax }, MelderIntegerRange { ixmin, ixmax }),
+		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		8, border);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);

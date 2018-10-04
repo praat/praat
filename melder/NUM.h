@@ -149,10 +149,21 @@ inline double NUMinner (const constVEC& x, const constVEC& y) noexcept {
 	return NUMinner_ (x, y);
 }
 
-inline bool NUMisEmpty (const constVEC& x) noexcept {
+template <typename T>
+bool NUMisEmpty (const vector<T>& x) noexcept {
 	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
 }
-inline bool NUMisEmpty (const constMAT& x) noexcept {
+template <typename T>
+bool NUMisEmpty (const constvector<T>& x) noexcept {
+	return x.size == 0;   // note: testing on x.at is incorrect, because the capacity may be large when the size is 0
+}
+template <typename T>
+bool NUMisEmpty (const matrix<T>& x) noexcept {
+	integer numberOfCells = x.nrow * x.ncol;
+	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
+template <typename T>
+bool NUMisEmpty (const constmatrix<T>& x) noexcept {
 	integer numberOfCells = x.nrow * x.ncol;
 	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
 }
