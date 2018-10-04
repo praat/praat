@@ -160,4 +160,10 @@ endfor
 t = stopwatch / 10 * 1e9 / iterations / n^2
 appendInfoLine: t, " ns"
 
+a## = zero## (20, 50)
+b## = zero## (50, 17)
+a## ~ row ^ 2 + col ^ 3
+b## ~ row ^ 5 + col ^ 7
+appendInfoLine: sum (mul## (a##, b##))
+
 appendInfoLine: "OK"

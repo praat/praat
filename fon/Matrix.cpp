@@ -289,9 +289,9 @@ void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, dou
 	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xreversed ? xmax : xmin, xreversed ? xmin : xmax, yreversed ? ymax : ymin, yreversed ? ymin : ymax);
-	Graphics_contour (g, my z.at,
-		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
+	Graphics_contour (g, my z.subview (MelderIntegerRange { iymin, iymax }, MelderIntegerRange { ixmin, ixmax }),
+		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		height);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
@@ -314,9 +314,9 @@ void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, doubl
 	if (xmin == xmax || ymin == ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_altitude (g, my z.at,
-		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
+	Graphics_altitude (g, my z.subview (MelderIntegerRange { iymin, iymax }, MelderIntegerRange { ixmin, ixmax }),
+		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		8, border);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
