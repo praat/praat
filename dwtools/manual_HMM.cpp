@@ -166,7 +166,7 @@ MAN_END
 	OPTION (U"Akaike corrected") \
 	OPTION (U"Complete-data ML")
 
-MAN_BEGIN (U"GaussianMixture & TableOfReal: Get likelihood value...", U"djmw", 20101125)
+MAN_BEGIN (U"GaussianMixture & TableOfReal: Get likelihood value...", U"djmw", 20181004)
 INTRO (U"Calculates how well the @GaussianMixture model fits the data according to a criterion.")
 ENTRY (U"Settings")
 TAG (U"##Maximum likelihood")
@@ -183,7 +183,7 @@ TAG (U"##Complete-data ML")
 FORMULA (U"\\Si__%i=1..%n_\\Si__%m=1..%k_ \\ga__%%im%_ log (\\ga__%%im%_)")
 NORMAL (U"In the formulas above %n is the number of data points, %k is the number of mixture components, %N is the "
 	"number of parameters in one component, i.e. %d + %d(%d+1)/2 for a full covariance matrix of "
-	"dimension %d with means. The \\al__%k_ are the mixing probabilities, the %p__%%ik%_ are the probabilities for the %i-th data vector in the %k-th component. The \\ga__%%ik%_ are defined as ")
+	"dimension %d with means. The \\al__%k_ are the mixing probabilities, the %p__%%ik%_ are the probabilities for the %i-th data vector in the %k-th component. The \\ga__%%im%_ are defined as ")
 FORMULA (U"\\ga__%%im%_= \\al__%m_\\.c%p__%%im%_ /(\\Si__%j=1..%k_ \\al__%j_\\.c%p__%%ij%_).")
 MAN_END
 
