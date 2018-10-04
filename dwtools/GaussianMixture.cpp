@@ -70,11 +70,11 @@ static void GaussianMixture_updateCovariance (GaussianMixture me, integer compon
 	// update the means
 	
 	autoVEC gamma = VECraw (data.nrow);
+	for (integer irow = 1; irow <= data.nrow; irow ++)
+		gamma [irow] = my mixingProbabilities [component] * p [irow] [component] / p [irow] [p.ncol + 1];
 	autoVEC column = VECraw (data.nrow);
 	for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
 		VECcopy_preallocated (column.get(), data, icol);
-		for (integer irow = 1; irow <= data.nrow; irow ++)
-			gamma [irow] = my mixingProbabilities [component] * p [irow] [component] / p [irow] [p.ncol + 1];
 		thy centroid [icol] = NUMmean_weighted (column.get (), gamma.get());
 	}
 
@@ -90,19 +90,9 @@ static void GaussianMixture_updateCovariance (GaussianMixture me, integer compon
 			}
 		}
 	} else { // nxn covariance
-		MATset (thy data.get(), 0.0);
 		autoMAT d = MATcopy (data);
 		MATsubtract_inplace (d.get(), thy centroid.get()); // column center
-		MATmtm_rowWeights_preallocated (thy data.get(), d.get(), gamma.get());
-	/*	for (integer irow = 1; irow <= data.nrow; irow ++) {
-			double gdn = gamma [irow] / p [p.nrow] [component]; // we cannot divide by nk - 1, this could cause instability
-			for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-				double xj = thy centroid [icol] - data [irow] [icol];
-				for (integer k = icol; k <= thy numberOfColumns; k ++) {
-					thy data [icol] [k] = thy data [k] [icol] += gdn * xj * (thy centroid [k] - data [irow] [k]);
-				}
-			}
-		}*/
+		MATmtm_weighRows_preallocated (thy data.get(), d.get(), gamma.get());
 	}
 	thy numberOfObservations = my mixingProbabilities [component] * data.nrow;
 }
@@ -194,9 +184,7 @@ autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer 
 			autoCovariance cov = Covariance_create_reduceStorage (dimension, storage);
 			my covariances -> addItemAtPosition_move (cov.move(), im);
 		}
-		for (integer im = 1; im <= numberOfComponents; im ++) {
-			my mixingProbabilities [im] = 1.0 / numberOfComponents;
-		}
+		VECset (my mixingProbabilities.get(), 1.0 / numberOfComponents);
 		GaussianMixture_setDefaultMixtureNames (me.get());
 		return me;
 	} catch (MelderError) {
@@ -252,79 +240,10 @@ autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me
 }
 
 autoCovariance GaussianMixture_to_Covariance_between (GaussianMixture me) {
-	try {
-		autoCovariance thee = Covariance_create (my dimension);
-
-		//	First the new centroid, based on the mixture centroids
-
-		double nobs_total = 0.0;
-		for (integer i = 1; i <= my numberOfComponents; i ++) {
-			Covariance him = my covariances->at [i];
-			VECsaxpy (thy centroid.get(), his centroid.get(), his numberOfObservations);
-			nobs_total += his numberOfObservations;
-		}
-		VECmultiply_inplace (thy centroid.get(), 1.0 / nobs_total);
-
-		Covariance cov = my covariances->at [1];
-		for (integer i = 1; i <= thy numberOfColumns; i ++) {
-			if (cov -> columnLabels [i]) {
-				TableOfReal_setColumnLabel (thee.get(), i, cov -> columnLabels [i].get());
-				TableOfReal_setRowLabel (thee.get(), i, cov -> columnLabels [i].get()); // if diagonal !
-			}
-		}
-
-		// Between covariance, scale by the number of observations
-
-		for (integer i = 1; i <= my numberOfComponents; i ++) {
-			Covariance him = my covariances->at [i];
-			double nobs = his numberOfObservations - 1; // we lose 1 degree of freedom
-			for (integer ir = 1; ir <= my dimension; ir ++) {
-				double dir = his centroid [ir] - thy centroid [ir];
-				for (integer ic = ir; ic <= my dimension; ic ++) {
-					double dic = his centroid [ic] - thy centroid [ic];
-					thy data [ir] [ic] = thy data [ic] [ir] += nobs * dir * dic;
-				}
-			}
-		}
-
-		// Scale back
-		VECmultiply_inplace (asvector (thy data.get()), 1.0 / nobs_total);
-
-		thy numberOfObservations = nobs_total;
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no Covariance (between) created.");
-	}
+	return CovarianceList_to_Covariance_between (my covariances.get(), my mixingProbabilities.get());
 }
-
 autoCovariance GaussianMixture_to_Covariance_within (GaussianMixture me) {
-	try {
-		autoCovariance thee = Covariance_create (my dimension);
-
-		for (integer i = 1; i <= my numberOfComponents; i ++) {
-			double p = my mixingProbabilities [i];
-			Covariance him = my covariances->at [i];
-			if (his numberOfRows == 1) {
-				for (integer ic = 1; ic <= my dimension; ic ++) {
-					thy data [ic] [ic] += p * his data [1] [ic];
-				}
-			} else {
-				for (integer ir = 1; ir <= my dimension; ir ++) {
-					for (integer ic = ir; ic <= my dimension; ic ++) {
-						thy data [ir] [ic] = thy data [ic] [ir] += p * his data [ir] [ic];
-					}
-				}
-			}
-			thy numberOfObservations += his numberOfObservations - 1; // we lose a degree of freedom?
-		}
-
-		// Leave centroid at 0 so we can add the within and between covariance nicely
-		// Copy row labels from columns, because covar might be diagonal
-		TableOfReal_copyLabels (my covariances->at [1], thee.get(), -1, 1);
-		return thee;
-	} catch (MelderError) {
-		Melder_throw (me, U": no Covariance (within) created.");
-	}
+	return CovarianceList_to_Covariance_within (my covariances.get(), my mixingProbabilities.get());
 }
 
 autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
@@ -332,11 +251,9 @@ autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
 		autoCovariance thee = GaussianMixture_to_Covariance_between (me);
 		autoCovariance within = GaussianMixture_to_Covariance_within (me);
 
-		for (integer ir = 1; ir <= my dimension; ir++) {
-			for (integer ic = ir; ic <= my dimension; ic++) {
-				thy data [ir] [ic] = thy data [ic] [ir] += within -> data [ir] [ic];
-			}
-		}
+		
+		MATadd_inplace (thy data.get(), within -> data.get());
+		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (total) created.");
@@ -598,8 +515,8 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 			}
 		} else {
 			autoPCA pca = SSCP_to_PCA (cov_t.get());
-			autoSSCP s2d = SSCP_toTwoDimensions (cov_t.get(), pca -> eigenvectors.row(1), pca -> eigenvectors.row(2));
-			autoConfiguration means2d = Configuration_create (my numberOfComponents, 2);
+			autoSSCP s2d = SSCP_toTwoDimensions (cov_t.get(), pca -> eigenvectors.row (1), pca -> eigenvectors.row (2));
+			autoMAT means2d = MATraw (my numberOfComponents, 2);
 
 			double a, b, cs, sn;
 			NUMeigencmp22 (s2d -> data [1] [1], s2d -> data [1] [2], s2d -> data [2] [2], & a, & b, & cs, & sn);
@@ -610,19 +527,16 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 			for (integer im = 1; im <= my numberOfComponents; im++, angle += angle_inc) {
 				double xc = a * (1.0 + NUMrandomUniform (-ru_range, ru_range)) * cos (angle);
 				double yc = b * (1.0 + NUMrandomUniform (-ru_range, ru_range)) * sin (angle);
-				means2d -> data [im] [1] = s2d -> centroid [1] + xc * cs - yc * sn;
-				means2d -> data [im] [2] = s2d -> centroid [2] + xc * sn + yc * cs;
+				means2d [im] [1] = s2d -> centroid [1] + xc * cs - yc * sn;
+				means2d [im] [2] = s2d -> centroid [2] + xc * sn + yc * cs;
 			}
 
-			// reconstruct the n-dimensional means from the 2-d from the eigenvectors
-
-			autoTableOfReal means = PCA_Configuration_to_TableOfReal_reconstruct (pca.get(), means2d.get());
+			// reconstruct the n-dimensional means from the 2-d pcś and the 2 eigenvectors
+			autoMAT means = MATmul (means2d.get(), pca -> eigenvectors.horizontalBand (1, 2));
 
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance covi = my covariances->at [im];
-				for (integer ic = 1; ic <= my dimension; ic ++) {
-					covi -> centroid [ic] = means -> data [im] [ic];
-				}
+				VECcopy_preallocated (covi -> centroid.get(), means.row (im));
 				covi -> numberOfObservations = thy numberOfRows / my numberOfComponents;
 			}
 
@@ -636,21 +550,16 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 				double scale = 0.9 * sqrt (var_t / var_b);
 				for (integer im = 1; im <= my numberOfComponents; im ++) {
 					Covariance covi = my covariances->at [im];
-					for (integer ic = 1; ic <= my dimension; ic ++) {
+					for (integer ic = 1; ic <= my dimension; ic ++)
 						covi -> centroid [ic] -= (1.0 - scale) * (covi -> centroid [ic] - cov_b -> centroid [ic]);
-					}
 				}
 				cov_b = GaussianMixture_to_Covariance_between (me);
 			}
 
 			// Within variances are now (total - between) / numberOfComponents;
 
-			for (integer ir = 1; ir <= my dimension; ir ++) {
-				for (integer ic = ir; ic <= my dimension; ic ++) {
-					double scalef = my numberOfComponents == 1 ? 1.0 : (var_b / var_t) / my numberOfComponents;
-					cov_t -> data [ic] [ir] = cov_t -> data [ir] [ic] *= scalef;
-				}
-			}
+			if (my numberOfComponents > 1)
+				MATmultiply_inplace (cov_t -> data.get(), (var_b / var_t) / my numberOfComponents);
 
 			// Copy them
 
@@ -661,11 +570,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 						cov -> data [1] [ic] = cov_t -> data [ic] [ic];
 					}
 				} else {
-					for (integer ir = 1; ir <= my dimension; ir ++) {
-						for (integer ic = ir; ic <= my dimension; ic ++) {
-							cov -> data [ir] [ic] = cov -> data [ic] [ir] = cov_t -> data [ir] [ic];
-						}
-					}
+					VECcopy_preallocated (asvector (cov -> data.get()), asvector (cov_t -> data.get()));
 				}
 			}
 		}
@@ -885,8 +790,8 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				}
 
 				// M-step: 2. new mixingProbabilities
-				
-				VECsaxpy (my mixingProbabilities.get(), p.row(p.nrow).subview (1, p.ncol-1), 1.0 / thy numberOfRows);
+				VECcopy_preallocated (my mixingProbabilities.get(), p.row(p.nrow).subview (1, p.ncol - 1));
+				VECmultiply_inplace (my mixingProbabilities.get(), 1.0 / thy numberOfRows);
 				
 				GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get());
 				
@@ -938,9 +843,9 @@ void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT p) {
 	// get weighted row sum in last column
 	autoVEC pinv = VECraw (p.nrow - 1); // for storing 1 / p [i]
 	for (integer i = 1; i <= p.nrow - 1; i ++) {
-		double sum = NUMinner (my mixingProbabilities.get(), p.row (i).subview (1, p.ncol - 1));
-		pinv [i] = sum > 0.0 ? 1.0 / sum : 1.0; // p [i] should be > 0
-		p [i] [p.ncol] = sum;
+		double psum = NUMinner (my mixingProbabilities.get(), p.row (i).subview (1, p.ncol - 1));
+		pinv [i] = psum > 0.0 ? 1.0 / psum : 1.0; // p [i] should be > 0
+		p [i] [p.ncol] = psum;
 	}
 	// get weighted column sum in last row
 	autoVEC column = VECraw (p.nrow - 1);
@@ -1158,7 +1063,7 @@ void GaussianMixture_removeComponent (GaussianMixture me, integer component) {
 autoGaussianMixture TableOfReal_to_GaussianMixture (TableOfReal me, integer numberOfComponents, double delta_lnp, integer maxNumberOfIterations, double lambda, int storage, int criterion) {
 	try {
 		Melder_require (my numberOfRows >= 2 * numberOfComponents,
-			U"The number of data points should at least be twice the number of components.");
+			U"The number of rows should at least be twice the number of components.");
 		autoGaussianMixture thee = GaussianMixture_create (numberOfComponents, my numberOfColumns, storage);
 		GaussianMixture_setLabelsFromTableOfReal (thee.get(), me);
 		GaussianMixture_initialGuess (thee.get(), me, 1.0, 0.05);
