@@ -87,24 +87,7 @@ inline autoMAT MATmtm (const constMAT& x) {
 }
 
 /*
-	Target :=  X . Y
 	Precise matrix multiplication, using pairwise summation.
-	The speed is 7,0.69,0.51,1.96 ns per multiply-add
-	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
-	For large matrices this is a bit slow.
-*/
-extern void MATmul_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept;
-inline void MATmul_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	Melder_assert (target.nrow == x.nrow);
-	Melder_assert (target.ncol == y.ncol);
-	Melder_assert (x.ncol == y.nrow);
-	MATmul_preallocated_ (target, x, y);
-}
-/*
-	Precise matrix multiplication, using pairwise summation.
-	The speed is 12.3,1.03,0.62,1.92 ns per multiply-add
-	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
-	For large matrices this is a bit slow.
 */
 extern void MATVUmul_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept;
 inline void MATVUmul  (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
@@ -119,17 +102,8 @@ inline autoMAT MATmul (const constMATVU& x, const constMATVU& y) {
 	return result;
 }
 /*
-	Rough matrix multiplication, using an in-cache inner loop.
-	The speed is 10,0.76,0.32,0.34 ns per multiply-add
-	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
+	Rough matrix multiplication, using an in-cache inner loop if that is faster.
 */
-extern void MATmul_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept;
-inline void MATmul_fast_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	Melder_assert (target.nrow == x.nrow);
-	Melder_assert (target.ncol == y.ncol);
-	Melder_assert (x.ncol == y.nrow);
-	MATmul_fast_preallocated_ (target, x, y);
-}
 extern void MATVUmul_fast_ (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept;
 inline void MATVUmul_fast  (const MATVU& target, const constMATVU& x, const constMATVU& y) noexcept {
 	Melder_assert (target.nrow == x.nrow);
@@ -139,101 +113,7 @@ inline void MATVUmul_fast  (const MATVU& target, const constMATVU& x, const cons
 }
 inline autoMAT MATmul_fast (const constMAT& x, const constMAT& y) {
 	autoMAT result = MATraw (x.nrow, y.ncol);
-	MATmul_fast_preallocated (result.get(), x, y);
-	return result;
-}
-
-/*
-	Target :=  X . Y'
-	Pairwise summation.
-	The speed is 7,0.71,0.52,0.52 ns per multiply-add
-	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
-*/
-extern void MATmul_nt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept;
-inline void MATmul_nt_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	Melder_assert (target.nrow == x.nrow);
-	Melder_assert (target.ncol == y.nrow);
-	Melder_assert (x.ncol == y.ncol);
-	MATmul_nt_preallocated_ (target, x, y);
-}
-inline autoMAT MATmul_nt (const constMAT& x, const constMAT& y) {
-	autoMAT result = MATraw (x.nrow, y.nrow);
-	MATmul_nt_preallocated (result.get(), x, y);
-	return result;
-}
-
-/*
-	Target :=  X' . Y
-	Pairwise summation.
-	The speed is 7,0.79,0.62,15.1 ns per multiply-add
-	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
-	For large matrices this is very slow.
-*/
-extern void MATmul_tn_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept;
-inline void MATmul_tn_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	Melder_assert (target.nrow == x.ncol);
-	Melder_assert (target.ncol == y.ncol);
-	Melder_assert (x.nrow == y.nrow);
-	MATmul_tn_preallocated_ (target, x, y);
-}
-inline autoMAT MATmul_tn (const constMAT& x, const constMAT& y) {
-	autoMAT result = MATraw (x.ncol, y.ncol);
-	MATmul_tn_preallocated (result.get(), x, y);
-	return result;
-}
-/*
-	Rough matrix multiplication, using an in-cache inner loop.
-	The speed is 11,0.79,0.32,0.37 ns per multiply-add
-	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
-*/
-extern void MATmul_tn_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept;
-inline void MATmul_tn_fast_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	Melder_assert (target.nrow == x.ncol);
-	Melder_assert (target.ncol == y.ncol);
-	Melder_assert (x.nrow == y.nrow);
-	MATmul_tn_fast_preallocated (target, x, y);
-}
-inline autoMAT MATmul_tn_fast (const constMAT& x, const constMAT& y) {
-	autoMAT result = MATraw (x.ncol, y.ncol);
-	MATmul_tn_fast_preallocated (result.get(), x, y);
-	return result;
-}
-
-/*
-	Target :=  X' . Y'
-	Pairwise summation.
-	The speed is 7,0.66,0.47,1.49 ns per multiply-add
-	for x.nrow = x.ncol = y.nrow = y.col = 1,10,100,1000.
-	For large matrices this is a bit slow.
-*/
-extern void MATmul_tt_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept;
-inline void MATmul_tt_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) noexcept {
-	Melder_assert (target.nrow == x.ncol);
-	Melder_assert (target.ncol == y.nrow);
-	Melder_assert (x.nrow == y.ncol);
-	MATmul_tt_preallocated_ (target, x, y);
-}
-inline autoMAT MATmul_tt (const constMAT& x, const constMAT& y) {
-	autoMAT result = MATraw (x.ncol, y.nrow);
-	MATmul_tt_preallocated (result.get(), x, y);
-	return result;
-}
-/*
-	Rough matrix multiplication.
-	The speed is 9,0.51,0.70,1.36 ns per multiply-add
-	for x.nrow = x.ncol = y.nrow = y.ncol = 1,10,100,1000.
-	Not so fast for large matrices.
-*/
-extern void MATmul_tt_fast_preallocated_ (const MAT& target, const constMAT& x, const constMAT& y) noexcept(false);
-inline void MATmul_tt_fast_preallocated  (const MAT& target, const constMAT& x, const constMAT& y) noexcept(false) {
-	Melder_assert (target.nrow == x.ncol);
-	Melder_assert (target.ncol == y.nrow);
-	Melder_assert (x.nrow == y.ncol);
-	MATmul_tt_fast_preallocated_ (target, x, y);
-}
-inline autoMAT MATmul_tt_fast (const constMAT& x, const constMAT& y) {
-	autoMAT result = MATraw (x.ncol, y.nrow);
-	MATmul_tt_fast_preallocated (result.get(), x, y);
+	MATVUmul_fast (result.all(), x, y);
 	return result;
 }
 
