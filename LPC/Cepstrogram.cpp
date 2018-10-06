@@ -97,11 +97,9 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 	
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, qmin, qmax);
-	Graphics_image (g, thy z.at,
-		itmin, itmax,
+	Graphics_image (g, thy z.subview ({ ifmin, ifmax }, { itmin, itmax }),
 		Matrix_columnToX (thee.get(), itmin - 0.5),
 		Matrix_columnToX (thee.get(), itmax + 0.5),
-		ifmin, ifmax,
 		Matrix_rowToY (thee.get(), ifmin - 0.5),
 		Matrix_rowToY (thee.get(), ifmax + 0.5),
 		dBminimum, dBmaximum);

@@ -189,19 +189,19 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 double Graphics_textWidth       (Graphics me, conststring32 text /* cattable */);
 double Graphics_textWidth_ps    (Graphics me, conststring32 text /* cattable */, bool useSilipaPS);
 double Graphics_textWidth_ps_mm (Graphics me, conststring32 text /* cattable */, bool useSilipaPS);
-void Graphics_fillArea (Graphics me, integer numberOfPoints, double *x, double *y);
-void Graphics_cellArray (Graphics me, double **z, integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
-void Graphics_cellArray_colour (Graphics me, double_rgbt **z, integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
-void Graphics_cellArray8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
-void Graphics_image (Graphics me, double **z, integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
-void Graphics_image_colour (Graphics me, double_rgbt **z, integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2, double minimum, double maximum);
-void Graphics_image8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1, double x2,
-	integer iy1, integer iy2, double y1, double y2, uint8 minimum, uint8 maximum);
+void Graphics_fillArea (Graphics me, integer numberOfPoints, double const *x, double const *y);
+void Graphics_cellArray (Graphics me, constMATVU const& z,
+	double x1, double x2, double y1, double y2, double minimum, double maximum);
+void Graphics_cellArray_colour (Graphics me, constmatrixview<double_rgbt> const& z,
+	double x1, double x2, double y1, double y2, double minimum, double maximum);
+void Graphics_cellArray8 (Graphics me, constmatrixview <unsigned char> const& z,
+	double x1, double x2, double y1, double y2, unsigned char minimum, unsigned char maximum);
+void Graphics_image (Graphics me, constMATVU const& z,
+	double x1, double x2, double y1, double y2, double minimum, double maximum);
+void Graphics_image_colour (Graphics me, constmatrixview<double_rgbt> const& z,
+	double x1, double x2, double y1, double y2, double minimum, double maximum);
+void Graphics_image8 (Graphics me, constmatrixview <unsigned char> const& z,
+	double x1, double x2, double y1, double y2, uint8 minimum, uint8 maximum);
 void Graphics_imageFromFile (Graphics me, conststring32 relativeFileName, double x1, double x2, double y1, double y2);
 void Graphics_line (Graphics me, double x1, double y1, double x2, double y2);
 void Graphics_rectangle (Graphics me, double x1, double x2, double y1, double y2);
@@ -315,8 +315,8 @@ void Graphics_contour (Graphics me, constMATVU const& z,
 	double x1WC, double x2WC, double y1WC, double y2WC, double height);
 void Graphics_altitude (Graphics me, constMATVU const& z,
 	double x1WC, double x2WC, double y1WC, double y2WC, int numberOfBorders, double borders []);
-void Graphics_grey (Graphics me, double **z,
-	integer ix1, integer ix2, double x1WC, double x2WC, integer iy1, integer iy2, double y1WC, double y2WC, int numberOfBorders, double borders []);
+void Graphics_grey (Graphics me, constMATVU const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, int numberOfBorders, double borders []);
 #define Graphics_gray Graphics_grey
 void Graphics_surface (Graphics me, double const * const *z, integer ix1, integer ix2, double x1WC, double x2WC,
 	integer iy1, integer iy2, double y1WC, double y2WC, double minimum, double maximum, double elevation, double azimuth);

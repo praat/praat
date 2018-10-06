@@ -339,9 +339,9 @@ void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, doub
 	if (xmin >= xmax || ymin >= ymax) return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_grey (g, my z.at,
-		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
-		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
+	Graphics_grey (g, my z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+		Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
+		Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		30, border);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
@@ -364,14 +364,14 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	if (interpolate)
-		Graphics_image (g, my z.at,
-			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
-			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
+		Graphics_image (g, my z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
+			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
 	else
-		Graphics_cellArray (g, my z.at,
-			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
-			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
+		Graphics_cellArray (g, my z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+			Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
+			SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);

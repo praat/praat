@@ -158,7 +158,7 @@ void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kG
 		}
 	}
 	Graphics_setColourScale (graphics, colourScale);
-	Graphics_image (graphics, legend.at, 1, 2, 0.85, 0.98, 1, n, -0.8, +0.8, 0.0, 1.0);
+	Graphics_image (graphics, legend.all(), 0.85, 0.98, -0.8, +0.8, 0.0, 1.0);
 	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
 	Graphics_rectangle (graphics, 0.85, 0.98, -0.8, +0.8);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_TOP);
@@ -232,7 +232,7 @@ void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double 
 			}
 		}
 	}
-	Graphics_image (graphics, image.at, 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, vmin, vmax);
+	Graphics_image (graphics, image.all(), -1.0-0.5/n, 1.0+0.5/n, -1.0-0.5/n, 1.0+0.5/n, vmin, vmax);
 	Graphics_setColourScale (graphics, kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (graphics, 2.0);
 	/*
@@ -357,7 +357,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	Graphics_setColourScale (our graphics.get(), our p_scalp_colourScale);
-	Graphics_image (our graphics.get(), image.at, 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
+	Graphics_image (our graphics.get(), image.all(), -1.0-0.5/n, 1.0+0.5/n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
 	Graphics_setColourScale (our graphics.get(), kGraphics_colourScale::GREY);
 	Graphics_setLineWidth (our graphics.get(), 2.0);
 	/*

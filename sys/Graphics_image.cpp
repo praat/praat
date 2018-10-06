@@ -35,11 +35,12 @@
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
+static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me,
+	constMATVU const& z_float, constmatrixview <double_rgbt> const& z_rgbt, constmatrixview <unsigned char> const& z_byte,
 	integer ix1, integer ix2, integer x1DC, integer x2DC,
 	integer iy1, integer iy2, integer y1DC, integer y2DC,
 	double minimum, double maximum,
-	integer clipx1, integer clipx2, integer clipy1, integer clipy2, int interpolate)
+	integer clipx1, integer clipx2, integer clipy1, integer clipy2, bool interpolate)
 {
 	/*integer t=clock();*/
 	integer nx = ix2 - ix1 + 1;   /* The number of cells along the horizontal axis. */
@@ -99,7 +100,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					if (right < clipx1 || left > clipx2) continue;
 					if (left < clipx1) left = clipx1;
 					if (right > clipx2) right = clipx2;
-					if (z_rgbt) {
+					if (! NUMisEmpty (z_rgbt)) {
 						#if cairo
 							// NYI
 						#elif gdi
@@ -117,16 +118,16 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 						#endif
 					} else {
 						#if cairo
-							integer value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
+							integer value = offset - scale * ( ! NUMisEmpty (z_float) ? z_float [iy] [ix] : z_byte [iy] [ix] );
 							cairo_set_source (my d_cairoGraphicsContext, grey [value <= 0 ? 0 : value >= sizeof (grey) / sizeof (*grey) ? sizeof (grey) / sizeof (*grey) : value]);
 							cairo_rectangle (my d_cairoGraphicsContext, left, top, right - left, bottom - top);
 							cairo_fill (my d_cairoGraphicsContext);
 						#elif gdi
-							integer value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
+							integer value = offset - scale * ( ! NUMisEmpty (z_float) ? z_float [iy] [ix] : z_byte [iy] [ix] );
 							rect. left = left; rect. right = right;
 							FillRect (my d_gdiGraphicsContext, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
 						#elif quartz
-							double value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
+							double value = offset - scale * ( ! NUMisEmpty (z_float) ? z_float [iy] [ix] : z_byte [iy] [ix] );
 							double igrey = ( value <= 0 ? 0 : value >= 255 ? 255 : value ) / 255.0;
 							CGContextSetRGBFillColor (my d_macGraphicsContext, igrey, igrey, igrey, 1.0);
 							CGContextFillRect (my d_macGraphicsContext, CGRectMake (left, top, right - left, bottom - top));
@@ -284,8 +285,8 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					unsigned char *pixelAddress = ROW_START_ADDRESS;
 					if (itop > iy2) itop = iy2;
 					if (ibottom < iy1) ibottom = iy1;
-					if (z_float) {
-						double *ztop = z_float [itop], *zbottom = z_float [ibottom];
+					if (! NUMisEmpty (z_float)) {
+						constVECVU ztop = z_float [itop], zbottom = z_float [ibottom];
 						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 							double interpol =
 								rightWeight [xDC] *
@@ -295,8 +296,8 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 							double value = offset - scale * interpol;
 							PUT_PIXEL
 						}
-					} else if (z_rgbt) {
-						double_rgbt *ztop = z_rgbt [itop], *zbottom = z_rgbt [ibottom];
+					} else if (! NUMisEmpty (z_rgbt)) {
+						constvectorview <double_rgbt> ztop = z_rgbt [itop], zbottom = z_rgbt [ibottom];
 						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 							double red =
 								rightWeight [xDC] * (topWeight * ztop [iright [xDC]]. red + bottomWeight * zbottom [iright [xDC]]. red) +
@@ -332,7 +333,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 							#endif
 						}
 					} else {
-						unsigned char *ztop = z_byte [itop], *zbottom = z_byte [ibottom];
+						constvectorview <unsigned char> ztop = z_byte [itop], zbottom = z_byte [ibottom];
 						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 							double interpol =
 								rightWeight [xDC] *
@@ -354,14 +355,14 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					integer iy = Melder_iceiling (iy2 - (ny * (yDC - y2DC)) / (y1DC - y2DC));
 					unsigned char *pixelAddress = ROW_START_ADDRESS;
 					Melder_assert (iy >= iy1 && iy <= iy2);
-					if (z_float) {
-						double *ziy = z_float [iy];
+					if (! NUMisEmpty (z_float)) {
+						constVECVU ziy = z_float [iy];
 						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 							double value = offset - scale * ziy [ix [xDC]];
 							PUT_PIXEL
 						}
 					} else {
-						unsigned char *ziy = z_byte [iy];
+						constvectorview <unsigned char> ziy = z_byte [iy];
 						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
 							double value = offset - scale * ziy [ix [xDC]];
 							PUT_PIXEL
@@ -446,11 +447,14 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 	#endif
 }
 
-static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
+static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me,
+	constMATVU const& z_float,
+	constmatrixview <double_rgbt> const& z_rgbt,
+	constmatrixview <unsigned char> const& z_byte,
 	integer ix1, integer ix2, integer x1DC, integer x2DC,
 	integer iy1, integer iy2, integer y1DC, integer y2DC,
 	double minimum, double maximum,
-	integer clipx1, integer clipx2, integer clipy1, integer clipy2, int interpolate)
+	integer clipx1, integer clipx2, integer clipy1, integer clipy2, bool interpolate)
 {
 	integer interpolateX = 1, interpolateY = 1;
 	integer nx = ix2 - ix1 + 1, ny = iy2 - iy1 + 1, filling = 0;
@@ -620,7 +624,7 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 			"/irow irow 1 add def scanline } image\n");
 	}
 	for (integer iy = iy1; iy <= iy2; iy ++) for (integer ix = ix1; ix <= ix2; ix ++) {
-		int value = (int) (offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] ));
+		int value = (int) (offset - scale * ( ! NUMisEmpty (z_float) ? z_float [iy] [ix] : z_byte [iy] [ix] ));
 		my d_printf (my d_file, "%.2x", value <= minimalGrey ? minimalGrey : value >= 255 ? 255 : value);
 		if (++ filling == 39) { my d_printf (my d_file, "\n"); filling = 0; }
 	}
@@ -628,10 +632,11 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 	my d_printf (my d_file, "grestore\n");
 }
 
-static void _cellArrayOrImage (Graphics me, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
+static void _cellArrayOrImage (Graphics me,
+	constMATVU const& z_float, constmatrixview <double_rgbt> const& z_rgbt, constmatrixview <unsigned char> const& z_byte,
 	integer ix1, integer ix2, integer x1DC, integer x2DC,
 	integer iy1, integer iy2, integer y1DC, integer y2DC, double minimum, double maximum,
-	integer clipx1, integer clipx2, integer clipy1, integer clipy2, int interpolate)
+	integer clipx1, integer clipx2, integer clipy1, integer clipy2, bool interpolate)
 {
 	if (my screen) {
 		_GraphicsScreen_cellArrayOrImage (static_cast <GraphicsScreen> (me), z_float, z_rgbt, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
@@ -643,71 +648,125 @@ static void _cellArrayOrImage (Graphics me, double **z_float, double_rgbt **z_rg
 	_Graphics_setColour (me, my colour);
 }
 
-static void cellArrayOrImage (Graphics me, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
-	integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC,
-	double minimum, double maximum, int interpolate)
+void Graphics_cellArray (Graphics me, constMATVU const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, double minimum, double maximum)
 {
-	if (ix2 < ix1 || iy2 < iy1 || minimum == maximum) return;
-	_cellArrayOrImage (me, z_float, z_rgbt, z_byte,
-		ix1, ix2, wdx (x1WC), wdx (x2WC),
-		iy1, iy2, wdy (y1WC), wdy (y2WC), minimum, maximum,
-		wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), interpolate);
+	if (z.nrow < 1 || z.ncol < 1 || minimum == maximum) return;
+	_cellArrayOrImage (me, z, constmatrixview<double_rgbt>(), constmatrixview<unsigned char>(),
+		1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+		wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), false);
 	if (my recording) {
-		integer nrow = iy2 - iy1 + 1, ncol = ix2 - ix1 + 1;
-		op (interpolate ? ( z_float ? IMAGE      : z_rgbt ? IMAGE_COLOUR      : IMAGE8 ) :
-		                  ( z_float ? CELL_ARRAY : z_rgbt ? CELL_ARRAY_COLOUR : CELL_ARRAY8 ),
-		    8 + nrow * ncol * ( z_rgbt ? 4 : 1 ));
+		op (CELL_ARRAY, 8 + z.nrow * z.ncol);
 		put (x1WC); put (x2WC); put (y1WC); put (y2WC);
 		put (minimum); put (maximum);
-		put (nrow); put (ncol);
-		for (integer iy = iy1; iy <= iy2; iy ++) {
-			if (z_float) {
-				double *row = z_float [iy];
-				for (integer ix = ix1; ix <= ix2; ix ++) {
-					put (row [ix]);
-				}
-			} else if (z_rgbt) {
-				double_rgbt *row = z_rgbt [iy];
-				for (integer ix = ix1; ix <= ix2; ix ++) {
-					put (row [ix]. red);
-					put (row [ix]. green);
-					put (row [ix]. blue);
-					put (row [ix]. transparency);
-				}
-			} else {
-				unsigned char *row = z_byte [iy];
-				for (integer ix = ix1; ix <= ix2; ix ++) {
-					put (row [ix]);
-				}
+		put (z.nrow); put (z.ncol);
+		for (integer irow = 1; irow <= z.nrow; irow ++)
+			for (integer icol = 1; icol <= z.ncol; icol ++)
+				put (z [irow] [icol]);
+	}
+}
+
+void Graphics_cellArray_colour (Graphics me, constmatrixview<double_rgbt> const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, double minimum, double maximum)
+{
+	if (z.nrow < 1 || z.ncol < 1 || minimum == maximum) return;
+	_cellArrayOrImage (me, constMATVU(), z, constmatrixview<unsigned char>(),
+		1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+		wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), false);
+	if (my recording) {
+		op (CELL_ARRAY_COLOUR, 8 + z.nrow * z.ncol * 4);
+		put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+		put (minimum); put (maximum);
+		put (z.nrow); put (z.ncol);
+		for (integer irow = 1; irow <= z.nrow; irow ++) {
+			constvectorview <double_rgbt> row = z [irow];
+			for (integer icol = 1; icol <= z.ncol; icol ++) {
+				put (row [icol]. red);
+				put (row [icol]. green);
+				put (row [icol]. blue);
+				put (row [icol]. transparency);
 			}
 		}
 	}
 }
 
-void Graphics_cellArray (Graphics me, double **z, integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, z, nullptr, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
+void Graphics_cellArray8 (Graphics me, constmatrixview<unsigned char> const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
+{
+	if (z.nrow < 1 || z.ncol < 1 || minimum == maximum) return;
+	_cellArrayOrImage (me, constMATVU(), constmatrixview<double_rgbt>(), z,
+		1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+		wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), false);
+	if (my recording) {
+		op (CELL_ARRAY8, 8 + z.nrow * z.ncol);
+		put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+		put (minimum); put (maximum);
+		put (z.nrow); put (z.ncol);
+		for (integer irow = 1; irow <= z.nrow; irow ++)
+			for (integer icol = 1; icol <= z.ncol; icol ++)
+				put (z [irow] [icol]);
+	}
+}
 
-void Graphics_cellArray_colour (Graphics me, double_rgbt **z, integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, nullptr, z, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
+void Graphics_image (Graphics me, constMATVU const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, double minimum, double maximum)
+{
+	if (z.nrow < 1 || z.ncol < 1 || minimum == maximum) return;
+	_cellArrayOrImage (me, z, constmatrixview<double_rgbt>(), constmatrixview<unsigned char>(),
+		1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+		wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), true);
+	if (my recording) {
+		op (IMAGE, 8 + z.nrow * z.ncol);
+		put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+		put (minimum); put (maximum);
+		put (z.nrow); put (z.ncol);
+		for (integer irow = 1; irow <= z.nrow; irow ++)
+			for (integer icol = 1; icol <= z.ncol; icol ++)
+				put (z [irow] [icol]);
+	}
+}
 
-void Graphics_cellArray8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (me, nullptr, nullptr, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, false); }
+void Graphics_image_colour (Graphics me, constmatrixview<double_rgbt> const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, double minimum, double maximum)
+{
+	if (z.nrow < 1 || z.ncol < 1 || minimum == maximum) return;
+	_cellArrayOrImage (me, constMATVU(), z, constmatrixview<unsigned char>(),
+		1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+		wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), true);
+	if (my recording) {
+		op (IMAGE_COLOUR, 8 + z.nrow * z.ncol * 4);
+		put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+		put (minimum); put (maximum);
+		put (z.nrow); put (z.ncol);
+		for (integer irow = 1; irow <= z.nrow; irow ++) {
+			constvectorview <double_rgbt> row = z [irow];
+			for (integer icol = 1; icol <= z.ncol; icol ++) {
+				put (row [icol]. red);
+				put (row [icol]. green);
+				put (row [icol]. blue);
+				put (row [icol]. transparency);
+			}
+		}
+	}
+}
 
-void Graphics_image (Graphics me, double **z, integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, z, nullptr, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
-
-void Graphics_image_colour (Graphics me, double_rgbt **z, integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, nullptr, z, nullptr, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
-
-void Graphics_image8 (Graphics me, unsigned char **z, integer ix1, integer ix2, double x1WC, double x2WC,
-	integer iy1, integer iy2, double y1WC, double y2WC, uint8 minimum, uint8 maximum)
-{ cellArrayOrImage (me, nullptr, nullptr, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, true); }
+void Graphics_image8 (Graphics me, constmatrixview<unsigned char> const& z,
+	double x1WC, double x2WC, double y1WC, double y2WC, uint8 minimum, uint8 maximum)
+{
+	if (z.nrow < 1 || z.ncol < 1 || minimum == maximum) return;
+	_cellArrayOrImage (me, constMATVU(), constmatrixview<double_rgbt>(), z,
+		1, z.ncol, wdx (x1WC), wdx (x2WC), 1, z.nrow, wdy (y1WC), wdy (y2WC), minimum, maximum,
+		wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), true);
+	if (my recording) {
+		op (IMAGE8, 8 + z.nrow * z.ncol);
+		put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+		put (minimum); put (maximum);
+		put (z.nrow); put (z.ncol);
+		for (integer irow = 1; irow <= z.nrow; irow ++)
+			for (integer icol = 1; icol <= z.ncol; icol ++)
+				put (z [irow] [icol]);
+	}
+}
 
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, conststring32 relativeFileName, double x1, double x2, double y1, double y2) {
 	integer x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);

@@ -814,7 +814,7 @@ void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y
 	if (my recording) { op (LINE, 4); put (x1WC); put (y1WC); put (x2WC); put (y2WC); }
 }
 
-void Graphics_fillArea (Graphics me, integer numberOfPoints, double *xWC, double *yWC) {
+void Graphics_fillArea (Graphics me, integer numberOfPoints, double const *xWC, double const *yWC) {
 	double *xyDC;
 	try {
 		xyDC = Melder_malloc (double, 2 * numberOfPoints);
