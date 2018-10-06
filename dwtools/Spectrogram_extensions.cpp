@@ -287,9 +287,9 @@ void BandFilterSpectrogram_paintImage (BandFilterSpectrogram me, Graphics g,
 		return;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_image (g, thy z.at,
-		ixmin, ixmax, Sampled_indexToX   (thee.get(), ixmin - 0.5), Sampled_indexToX   (thee.get(), ixmax + 0.5),
-		iymin, iymax, SampledXY_indexToY (thee.get(), iymin - 0.5), SampledXY_indexToY (thee.get(), iymax + 0.5),
+	Graphics_image (g, thy z.subview ({ iymin, iymax }, { ixmin, ixmax }),
+		Sampled_indexToX   (thee.get(), ixmin - 0.5), Sampled_indexToX   (thee.get(), ixmax + 0.5),
+		SampledXY_indexToY (thee.get(), iymin - 0.5), SampledXY_indexToY (thee.get(), iymax + 0.5),
 		minimum, maximum
 	);
 

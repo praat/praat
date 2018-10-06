@@ -50,9 +50,9 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, bo
 				}
 		Graphics_setInner (g);
 		Graphics_setWindow (g, tmin, tmax, 0.0, my ny * my dy);
-		Graphics_grey (g, copy -> z.at,
-			itmin, itmax, Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax),
-			1, my ny, 0.5 * my dy, (my ny - 0.5) * my dy,
+		Graphics_grey (g, copy -> z.subview ({ 1, my ny }, { itmin, itmax }),
+			Matrix_columnToX (me, itmin), Matrix_columnToX (me, itmax),
+			0.5 * my dy, (my ny - 0.5) * my dy,
 			12, border);
 		Graphics_unsetInner (g);
 		if (garnish) {
