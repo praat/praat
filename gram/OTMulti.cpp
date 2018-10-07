@@ -1366,9 +1366,9 @@ void OTMulti_removeConstraint (OTMulti me, conststring32 constraintName) {
 		for (integer icand = 1; icand <= my numberOfCandidates; icand ++) {
 			OTCandidate candidate = & my candidates [icand];
 			candidate -> numberOfConstraints -= 1;
-			for (integer icons = removed; icons <= my numberOfConstraints; icons ++) {
+			for (integer icons = removed; icons <= my numberOfConstraints; icons ++)
 				candidate -> marks [icons] = candidate -> marks [icons + 1];
-			}
+			candidate -> marks. size -= 1;   // maintain invariant
 		}
 		/*
 			Rebuild index.
