@@ -177,13 +177,16 @@ void Graphics_play (Graphics me, Graphics thee) {
 				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
 				 * This works because the data is a packed array of double, just as Graphics_cellArray expects.
 				 */
-				double **z = Melder_malloc_f (double *, nrow);
-				z [0] = p + 1;
-				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				#if 0
+				autoMAT z = MATraw (nrow, ncol);
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++)
+						z [irow] [icol] = get;
+				Graphics_cellArray (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
+				#else
+				Graphics_cellArray (thee, constMATVU (p + 1, nrow, ncol, ncol, 1), x1, x2, y1, y2, minimum, maximum);
 				p += nrow * ncol;
-				Graphics_cellArray (thee, z, 0, ncol - 1, x1, x2,
-								0, nrow - 1, y1, y2, minimum, maximum);
-				Melder_free (z);
+				#endif
 			}  break;
 			case SET_FONT: {
 				Graphics_setFont (thee, (enum kGraphics_font) get);
@@ -256,12 +259,11 @@ void Graphics_play (Graphics me, Graphics thee) {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
 				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
 				integer nrow = iget, ncol = iget;
-				uint8 **z = NUMmatrix <uint8> (1, nrow, 1, ncol);   // BUG memory
+				automatrix <uint8> z = matrixzero <uint8> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = (uint8) iget;
-				Graphics_image8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
-				NUMmatrix_free (z, 1, 1);
+				Graphics_image8 (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			} break;
 			case UNHIGHLIGHT: {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
@@ -336,28 +338,20 @@ void Graphics_play (Graphics me, Graphics thee) {
 				double x1 = get, x2 = get, y1 = get, y2 = get;
 				uint8 minimum = (uint8) iget, maximum = (uint8) iget;
 				integer nrow = iget, ncol = iget;
-				uint8 **z = NUMmatrix <uint8> (1, nrow, 1, ncol);   // BUG memory
+				automatrix <uint8> z = matrixzero <uint8> (nrow, ncol);
 				for (integer irow = 1; irow <= nrow; irow ++)
 					for (integer icol = 1; icol <= ncol; icol ++)
 						z [irow] [icol] = (uint8) iget;
-				Graphics_cellArray8 (thee, z, 1, ncol, x1, x2, 1, nrow, y1, y2, minimum, maximum);
-				NUMmatrix_free (z, 1, 1);
+				Graphics_cellArray8 (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			}  break;
 			case IMAGE: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				/*
-				 * We don't copy all the data into a new matrix.
-				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
-				 * This works because the data is a packed array of double, just as Graphics_image expects.
-				 */
-				double **z = Melder_malloc_f (double *, nrow);
-				z [0] = p + 1;
-				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
-				p += nrow * ncol;
-				Graphics_image (thee, z, 0, ncol - 1, x1, x2,
-								0, nrow - 1, y1, y2, minimum, maximum);
-				Melder_free (z);
+				autoMAT z = MATraw (nrow, ncol);
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++)
+						z [irow] [icol] = get;
+				Graphics_image (thee, z.all(), x1, x2, y1, y2, minimum, maximum);   // or with constMATVU construction
 			}  break;
 			case HIGHLIGHT2: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, innerX1 = get, innerX2 = get, innerY1 = get, innerY2 = get;
@@ -393,34 +387,28 @@ void Graphics_play (Graphics me, Graphics thee) {
 			case CELL_ARRAY_COLOUR: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				/*
-				 * We don't copy all the data into a new matrix.
-				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
-				 * This works because the data is a packed array of double_rgbt, just as Graphics_cellArray_colour expects.
-				 */
-				double_rgbt **z = Melder_malloc_f (double_rgbt *, nrow);
-				z [0] = (double_rgbt *) (p + 1);
-				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
-				p += nrow * ncol * 4;
-				Graphics_cellArray_colour (thee, z, 0, ncol - 1, x1, x2,
-								0, nrow - 1, y1, y2, minimum, maximum);
-				Melder_free (z);
+				automatrix <double_rgbt> z = matrixzero <double_rgbt> (nrow, ncol);
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++) {
+						z [irow] [icol]. red = get;
+						z [irow] [icol]. green = get;
+						z [irow] [icol]. blue = get;
+						z [irow] [icol]. transparency = get;
+					}
+				Graphics_cellArray_colour (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			}  break;
 			case IMAGE_COLOUR: {
 				double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
 				integer nrow = iget, ncol = iget;
-				/*
-				 * We don't copy all the data into a new matrix.
-				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
-				 * This works because the data is a packed array of double_rgbt, just as Graphics_image_colour expects.
-				 */
-				double_rgbt **z = Melder_malloc_f (double_rgbt *, nrow);
-				z [0] = (double_rgbt *) (p + 1);
-				for (integer irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
-				p += nrow * ncol * 4;
-				Graphics_image_colour (thee, z, 0, ncol - 1, x1, x2,
-								0, nrow - 1, y1, y2, minimum, maximum);
-				Melder_free (z);
+				automatrix <double_rgbt> z = matrixzero <double_rgbt> (nrow, ncol);
+				for (integer irow = 1; irow <= nrow; irow ++)
+					for (integer icol = 1; icol <= ncol; icol ++) {
+						z [irow] [icol]. red = get;
+						z [irow] [icol]. green = get;
+						z [irow] [icol]. blue = get;
+						z [irow] [icol]. transparency = get;
+					}
+				Graphics_image_colour (thee, z.all(), x1, x2, y1, y2, minimum, maximum);
 			}  break;
 			case SET_COLOUR_SCALE: {
 				Graphics_setColourScale (thee, (enum kGraphics_colourScale) get);

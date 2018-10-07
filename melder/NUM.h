@@ -167,6 +167,16 @@ bool NUMisEmpty (const constmatrix<T>& x) noexcept {
 	integer numberOfCells = x.nrow * x.ncol;
 	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
 }
+template <typename T>
+bool NUMisEmpty (const matrixview<T>& x) noexcept {
+	integer numberOfCells = x.nrow * x.ncol;
+	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
+template <typename T>
+bool NUMisEmpty (const constmatrixview<T>& x) noexcept {
+	integer numberOfCells = x.nrow * x.ncol;
+	return numberOfCells == 0;   // note: a matrix with 0 rows and 6 columns is a valid empty matrix, to which e.g. a row can be added
+}
 
 inline bool NUMisSymmetric (const constMAT& x) noexcept {
 	if (x.nrow != x.ncol) return false;
