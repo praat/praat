@@ -27,7 +27,7 @@ void FFNet_PatternList_drawActivation (FFNet me, PatternList pattern, Graphics g
 	if (index < 1 || index > pattern->ny) {
 		return;
 	}
-	FFNet_propagate (me, pattern->z[index], nullptr);
+	FFNet_propagate (me, & pattern -> z [index] [0], nullptr);
 	FFNet_drawActivation (me, g);
 }
 

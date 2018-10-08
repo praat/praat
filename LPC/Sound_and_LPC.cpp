@@ -47,27 +47,23 @@ for (i=1; i<= m+1+m+1+m;i ++) work [i] = 0;
 #define LPC_METHOD_AUTO_WINDOW_CORRECTION 1
 
 static void LPC_Frame_Sound_filter (LPC_Frame me, Sound thee, integer channel) {
-	double *y = thy z [channel], *a = my a.at;
-
+	VEC y = thy z.row (channel);
 	for (integer i = 1; i <= thy nx; i ++) {
-		integer m = i > my nCoefficients ? my nCoefficients : i - 1;
-		for (integer j = 1; j <= m; j ++) {
-			y [i] -= a [j] * y [i - j];
-		}
+		integer m = ( i > my nCoefficients ? my nCoefficients : i - 1 );   // ppgb: what is m?
+		for (integer j = 1; j <= m; j ++)
+			y [i] -= my a [j] * y [i - j];
 	}
 }
 
 void LPC_Frame_Sound_filterInverse (LPC_Frame me, Sound thee, integer channel) {
-	double *x = thy z [channel];
+	VEC x = thy z.row (channel);
 	autoNUMvector <double> y ((integer) 0, my nCoefficients);
 	for (integer i = 1; i <= thy nx; i ++) {
 		y [0] = x [i];
-		for (integer j = 1; j <= my nCoefficients; j ++) {
+		for (integer j = 1; j <= my nCoefficients; j ++)
 			x [i] += my a [j] * y [j];
-		}
-		for (integer j = my nCoefficients; j > 0; j--) {
+		for (integer j = my nCoefficients; j > 0; j --)
 			y [j] = y [j - 1];
-		}
 	}
 }
 
@@ -79,7 +75,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee) {
 	autoNUMvector<double> a (1, m + 1);
 	autoNUMvector<double> rc (1, m);
 
-	double  *x = my z [1];
+	VEC x = my z.row (1);
 	for (i = 1; i <= m + 1; i ++) {
 		for (integer j = 1; j <= my nx - i + 1; j ++) {
 			r [i] += x [j] * x [j + i - 1];
@@ -88,7 +84,8 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee) {
 	if (r [1] == 0.0) {
 		i = 1; /* ! */ goto end;
 	}
-	a [1] = 1.0; a [2] = rc [1] = - r [2] / r [1];
+	a [1] = 1.0;
+	a [2] = rc [1] = - r [2] / r [1];
 	thy gain = r [1] + r [2] * rc [1];
 	for (i = 2; i <= m; i ++) {
 		double s = 0.0;
@@ -118,7 +115,7 @@ end:
 	for (integer j = i + 1; j <= m; j ++) {
 		thy a [j] = 0.0;
 	}
-	return 0; // Melder_warning ("Less coefficienst than asked for.");
+	return 0; // Melder_warning ("Fewer coefficients than asked for.");
 }
 
 /* Markel&Gray, LP of S, page 221
@@ -126,13 +123,13 @@ end:
 	b = & work [1]
 	grc = & work [m*(m+1)/2+1];
 	a = & work [m*(m+1)/2+m+1];
-	beta = & work  [m+1)/2+m+m+1+1];
+	beta = & work [m+1)/2+m+m+1+1];
 	cc = & work [m+1)/2+m+m+1+m+1]
 	for (i=1; i<=m(m+1)/2+m+m+1+m+m+1;i ++) work [i] = 0;
 */
 static int Sound_into_LPC_Frame_covar (Sound me, LPC_Frame thee) {
 	integer i = 1, n = my nx, m = thy nCoefficients;
-	double *x = my z [1];
+	constVEC x = my z.row (1);
 
 	autoNUMvector<double> b (1, m * (m + 1) / 2);
 	autoNUMvector<double> grc (1, m);
@@ -235,7 +232,7 @@ static int Sound_into_LPC_Frame_burg (Sound me, LPC_Frame thee) {
 static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, double tol2) {
 	integer m = 1, n = my nx, mmax = thy nCoefficients;
 	int status = 1;
-	double *a = thy a.at, *x = my z [1];
+	constVEC x = my z.row (1);
 
 	autoVEC c = VECzero (mmax + 1);
 	autoVEC d = VECzero (mmax + 1);
@@ -266,21 +263,21 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 		s1 += x [k + 1] * x [k];
 	}
 	r [1] = 2.0 * s1;
-	a [1] = - q1 * r [1];
-	thy gain *= (1.0 - a [1] * a [1]);
+	thy a [1] = - q1 * r [1];
+	thy gain *= (1.0 - thy a [1] * thy a [1]);
 	while (m < mmax) {
 		double eOld = thy gain, f = x [m + 1], b = x [n - m]; /*n-1 ->n-m*/
 		for (integer k = 1; k <= m; k ++) {
 			/* n-1 -> n-m */
-			f += x [m + 1 - k] * a [k];
-			b += x [n - m + k] * a [k];
+			f += x [m + 1 - k] * thy a [k];
+			b += x [n - m + k] * thy a [k];
 		}
 		q1 = 1.0 / thy gain;
 		q2 = q1 * f;
 		double q3 = q1 * b;
 		for (integer k = m; k >= 1; k--) {
-			c [k + 1] = c [k] + q2 * a [k];
-			d [k + 1] = d [k] * q3 * a [k];
+			c [k + 1] = c [k] + q2 * thy a [k];
+			d [k + 1] = d [k] * q3 * thy a [k];
 		}
 		c [1] = q2; d [1] = q3;
 		double q7 = s * s;
@@ -316,7 +313,7 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 		double c5 = q4 * (s * q6 + h * u);
 		double c6 = q4 * (u * q5 + y5);
 		for (integer k = 1; k <= m; k ++) {
-			a [k] = alf * (a [k] + c1 * c [k + 1] + c2 * d [k + 1]);
+			thy a [k] = alf * (thy a [k] + c1 * c [k + 1] + c2 * d [k + 1]);
 		}
 		for (integer k = 1; k <= m / 2 + 1; k ++) {
 			s1 = c [k];
@@ -334,7 +331,7 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 		double delta = 0;
 		for (integer k = m - 1; k >= 1; k--) {
 			r [k + 1] = r [k] - x [n + 1 - k] * c1 - x [k] * c2;
-			delta += r [k + 1] * a [k];
+			delta += r [k + 1] * thy a [k];
 		}
 		s1 = 0.0;
 		for (integer k = 1; k <= n - m; k ++) {
@@ -343,14 +340,14 @@ static int Sound_into_LPC_Frame_marple (Sound me, LPC_Frame thee, double tol1, d
 		r [1] = 2.0 * s1;
 		delta += r [1];
 		q2 = - delta / thy gain;
-		a [m] = q2;
+		thy a [m] = q2;
 		for (integer k = 1; k <= m / 2; k ++) {
-			s1 = a [k];
-			a [k] += q2 * a [m - k];
+			s1 = thy a [k];
+			thy a [k] += q2 * thy a [m - k];
 			if (k == m - k) {
 				continue;
 			}
-			a [m - k] += q2 * s1;
+			thy a [m - k] += q2 * s1;
 		}
 		y1 = q2 * q2;
 		thy gain *= 1.0 - y1;
@@ -467,11 +464,11 @@ autoSound LPC_Sound_filterInverse (LPC me, Sound thee) {
 		
 		autoSound him = Data_copy (thee);
 
-		double *e = his z [1], *x = thy z [1];
+		VEC e = his z.row (1), x = thy z.row (1);   // ppgb: what do e and x mean?
 		for (integer i = 1; i <= his nx; i ++) {
 			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
 			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
-			double *a = my d_frames [iFrame]. a.at;
+			VEC a = my d_frames [iFrame]. a.get();   // ppgb: what does a mean?
 			if (iFrame < 1 || iFrame > my nx) {
 				e [i] = 0.0;
 				continue;
@@ -507,34 +504,28 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 
 		autoSound him = Data_copy (thee);
 
-		double *x = his z [1];
+		VEC x = his z.row (1);
 		integer ifirst = Sampled_xToHighIndex (thee, xmin);
 		integer ilast = Sampled_xToLowIndex (thee, xmax);
 		for (integer i = ifirst; i <= ilast; i ++) {
 			double t = his x1 + (i - 1) * his dx;   // Sampled_indexToX (him, i)
 			integer iFrame = Melder_iround ((t - my x1) / my dx + 1.0);   // Sampled_xToNearestIndex (me, t)
-			if (iFrame < 1) {
+			if (iFrame < 1)
 				continue;
-			}
-			if (iFrame > my nx) {
+			if (iFrame > my nx)
 				break;
-			}
 			double *a = my d_frames [iFrame].a.at;
 			integer m = i > my d_frames [iFrame].nCoefficients ? my d_frames [iFrame].nCoefficients : i - 1;
-			for (integer j = 1; j <= m; j ++) {
+			for (integer j = 1; j <= m; j ++)
 				x [i] -= a [j] * x [i - j];
-			}
 		}
 
 		// Make samples before first frame and after last frame zero.
 
-		for (integer i = 1; i < ifirst; i ++) {
+		for (integer i = 1; i < ifirst; i ++)
 			x [i] = 0.0;
-		}
-
-		for (integer i = ilast + 1; i <= his nx; i ++) {
+		for (integer i = ilast + 1; i <= his nx; i ++)
 			x [i] = 0.0;
-		}
 		if (useGain) {
 			for (integer i = ifirst; i <= ilast; i ++) {
 				double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
@@ -547,8 +538,10 @@ autoSound LPC_Sound_filter (LPC me, Sound thee, bool useGain) {
 					x [i] *= sqrt (my d_frames [1].gain) * phase;
 				} else if (iFrame == my nx) {
 					x [i] *= sqrt (my d_frames [my nx].gain) * (1.0 - phase);
-				} else x [i] *=
-					    phase * sqrt (my d_frames [iFrame + 1].gain) + (1.0 - phase) * sqrt (my d_frames [iFrame].gain);
+				} else {
+					x [i] *= phase * sqrt (my d_frames [iFrame + 1].gain) +
+							(1.0 - phase) * sqrt (my d_frames [iFrame].gain);
+				}
 			}
 		}
 		return him;

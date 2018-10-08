@@ -21,7 +21,7 @@
 autoFormant Excitation_to_Formant (Excitation me, integer maximumNumberOfFormants) {
 	try {
 		integer numberOfFrequencies = my nx, nform = 0;
-		double *p = my z [1];
+		double *p = & my z [1] [0];
 
 		autoFormant thee = Formant_create (0.0, 1.0, 1, 1.0, 0.5, maximumNumberOfFormants);
 		thy d_frames [1]. formant = NUMvector <structFormant_Formant> (1, maximumNumberOfFormants);

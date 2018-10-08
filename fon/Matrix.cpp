@@ -267,7 +267,7 @@ void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ym
 		Graphics_setWindow (g, xmin, xmax,
 			minimum - (iy - iymin) * (maximum - minimum),
 			maximum + (iymax - iy) * (maximum - minimum));
-		Graphics_function (g, my z [iy], ixmin, ixmax,
+		Graphics_function (g, & my z [iy] [0], ixmin, ixmax,
 			Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	}
 	Graphics_unsetInner (g);

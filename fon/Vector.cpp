@@ -113,14 +113,14 @@ double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolatio
 	if (x <  leftEdge || x > rightEdge) return undefined;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
-		return NUM_interpolate_sinc (my z [ilevel], my nx, Sampled_xToIndex (me, x),
+		return NUM_interpolate_sinc (& my z [ilevel] [0], my nx, Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
 	longdouble sum = 0.0;
 	for (integer channel = 1; channel <= my ny; channel ++) {
-		sum += NUM_interpolate_sinc (my z [channel], my nx, Sampled_xToIndex (me, x),
+		sum += NUM_interpolate_sinc (& my z [channel] [0], my nx, Sampled_xToIndex (me, x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
@@ -135,7 +135,7 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 {
 	integer imin, imax, n = my nx;
 	Melder_assert (channel >= 1 && channel <= my ny);
-	double *y = my z [channel];
+	double *y = & my z [channel] [0];
 	double minimum, x;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
@@ -150,14 +150,21 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 		minimum = yleft < yright ? yleft : yright;
 		x = yleft == yright ? (xmin + xmax) / 2 : yleft < yright ? xmin : xmax;
 	} else {
-		minimum = y [imin], x = imin;
-		if (y [imax] < minimum) minimum = y [imax], x = imax;
+		minimum = y [imin];
+		x = imin;
+		if (y [imax] < minimum) {
+			minimum = y [imax];
+			x = imax;
+		}
 		if (imin == 1) imin ++;
 		if (imax == my nx) imax --;
 		for (integer i = imin; i <= imax; i ++) {
 			if (y [i] < y [i - 1] && y [i] <= y [i + 1]) {
 				double i_real, localMinimum = NUMimproveMinimum (y, n, i, interpolation, & i_real);
-				if (localMinimum < minimum) minimum = localMinimum, x = i_real;
+				if (localMinimum < minimum) {
+					minimum = localMinimum;
+					x = i_real;
+				}
 			}
 		}
 		x = my x1 + (x - 1) * my dx;   // convert sample to x
@@ -210,7 +217,7 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 {
 	integer imin, imax, i, n = my nx;
 	Melder_assert (channel >= 1 && channel <= my ny);
-	double *y = my z [channel];
+	double *y = & my z [channel] [0];
 	double maximum, x;
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (! Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax)) {
@@ -225,14 +232,21 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 		maximum = yleft > yright ? yleft : yright;
 		x = yleft == yright ? (xmin + xmax) / 2 : yleft > yright ? xmin : xmax;
 	} else {
-		maximum = y [imin], x = imin;
-		if (y [imax] > maximum) maximum = y [imax], x = imax;
+		maximum = y [imin];
+		x = imin;
+		if (y [imax] > maximum) {
+			maximum = y [imax];
+			x = imax;
+		}
 		if (imin == 1) imin ++;
 		if (imax == my nx) imax --;
 		for (i = imin; i <= imax; i ++) {
 			if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 				double i_real, localMaximum = NUMimproveMaximum (y, n, i, interpolation, & i_real);
-				if (localMaximum > maximum) maximum = localMaximum, x = i_real;
+				if (localMaximum > maximum) {
+					maximum = localMaximum;
+					x = i_real;
+				}
 			}
 		}
 		x = my x1 + (x - 1) * my dx;   // convert sample to x
@@ -404,7 +418,7 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 		/*
 		 * The default: draw as a curve.
 		 */
-		Graphics_function (g, my z [1], ixmin, ixmax,
+		Graphics_function (g, & my z [1] [0], ixmin, ixmax,
 			Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	}
 	Graphics_unsetInner (g);

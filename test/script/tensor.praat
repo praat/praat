@@ -71,9 +71,9 @@ n# = zero# (100)
 x# = randomInteger# (n#, 1, 1e7)
 y# = randomInteger# (n#, 1, 1e7)
 mat## = outer## (x#, y#)
-for row to 100
-	for col to 100
-		assert mat## [row, col] = x# [row] * y# [col]
+for irow to 100
+	for icol to 100
+		assert mat## [irow, icol] = x# [irow] * y# [icol]
 	endfor
 endfor
 
@@ -164,6 +164,6 @@ a## = zero## (20, 50)
 b## = zero## (50, 17)
 a## ~ row ^ 2 + col ^ 3
 b## ~ row ^ 5 + col ^ 7
-appendInfoLine: sum (mul## (a##, b##))
+;appendInfoLine: sum (mul## (a##, b##))
 
 appendInfoLine: "OK"

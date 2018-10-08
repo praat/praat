@@ -1027,7 +1027,7 @@ static autoSound PhonationGrid_PhonationTier_to_Sound_voiced (PhonationGrid me, 
 				Determine time t [i]-T [i] the open quotient, power1, power2, collisionphase etc.
 				Generate the period.
 		*/
-		double *sound = his z [1];
+		VEC sound = his z.row (1);
 		for (integer it = 1; it <= thy points.size; it ++) {
 			PhonationPoint point = thy points.at [it];
 			double t = point -> number;		// the glottis "closing" point

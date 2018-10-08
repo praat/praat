@@ -330,7 +330,8 @@ autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, 
 		for (integer ipattern = 1; ipattern <= thy ny; ipattern ++) {
 			Net_PatternList_applyToInput (me, thee, ipattern);
 			Net_spreadUp (me, activationType);
-			NUMvector_copyElements <double> (outputLayer -> outputActivities.at, activations -> z [ipattern], 1, outputLayer -> numberOfOutputNodes);
+			NUMvector_copyElements <double> (outputLayer -> outputActivities.at,
+					& activations -> z [ipattern] [0], 1, outputLayer -> numberOfOutputNodes);
 		}
 		return activations;
 	} catch (MelderError) {
@@ -341,7 +342,7 @@ autoActivationList Net_PatternList_to_ActivationList (Net me, PatternList thee, 
 static autoMatrix Layer_extractInputActivities (Layer me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, my numberOfInputNodes);
-		NUMvector_copyElements <double> (my inputActivities.at, thy z [1], 1, my numberOfInputNodes);
+		NUMvector_copyElements <double> (my inputActivities.at, & thy z [1] [0], 1, my numberOfInputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": input activities not extracted.");
@@ -355,7 +356,7 @@ autoMatrix Net_extractInputActivities (Net me) {
 static autoMatrix Layer_extractOutputActivities (Layer me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, my numberOfOutputNodes);
-		NUMvector_copyElements <double> (my outputActivities.at, thy z [1], 1, my numberOfOutputNodes);
+		NUMvector_copyElements <double> (my outputActivities.at, & thy z [1] [0], 1, my numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": output activities not extracted.");
@@ -369,7 +370,7 @@ autoMatrix Net_extractOutputActivities (Net me) {
 autoMatrix structRBMLayer :: v_extractInputReconstruction () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfInputNodes);
-		NUMvector_copyElements <double> (our inputReconstruction.at, thy z [1], 1, our numberOfInputNodes);
+		NUMvector_copyElements <double> (our inputReconstruction.at, & thy z [1] [0], 1, our numberOfInputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input reconstruction not extracted.");
@@ -383,7 +384,7 @@ autoMatrix Net_extractInputReconstruction (Net me) {
 autoMatrix structRBMLayer :: v_extractOutputReconstruction () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfOutputNodes);
-		NUMvector_copyElements <double> (our outputReconstruction.at, thy z [1], 1, our numberOfOutputNodes);
+		NUMvector_copyElements <double> (our outputReconstruction.at, & thy z [1] [0], 1, our numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": output reconstruction not extracted.");
@@ -397,7 +398,7 @@ autoMatrix Net_extractOutputReconstruction (Net me) {
 autoMatrix structRBMLayer :: v_extractInputBiases () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfInputNodes);
-		NUMvector_copyElements <double> (our inputBiases.at, thy z [1], 1, our numberOfInputNodes);
+		NUMvector_copyElements <double> (our inputBiases.at, & thy z [1] [0], 1, our numberOfInputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input biases not extracted.");
@@ -423,7 +424,7 @@ autoMatrix Net_extractInputBiases (Net me, integer layerNumber) {
 autoMatrix structRBMLayer :: v_extractOutputBiases () {
 	try {
 		autoMatrix thee = Matrix_createSimple (1, our numberOfOutputNodes);
-		NUMvector_copyElements <double> (our outputBiases.at, thy z [1], 1, our numberOfOutputNodes);
+		NUMvector_copyElements <double> (our outputBiases.at, & thy z [1] [0], 1, our numberOfOutputNodes);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (this, U": input biases not extracted.");

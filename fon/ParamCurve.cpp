@@ -134,9 +134,9 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			double t = i == numberOfPoints ? t2 : t1 + (i - 1) * dt;
 			double index = Sampled_xToIndex (my x.get(), t);
-			x [i] = NUM_interpolate_sinc (my x -> z [1], my x -> nx, index, 50);
+			x [i] = NUM_interpolate_sinc (& my x -> z [1] [0], my x -> nx, index, 50);
 			index = Sampled_xToIndex (my y.get(), t);
-			y [i] = NUM_interpolate_sinc (my y -> z [1], my y -> nx, index, 50);
+			y [i] = NUM_interpolate_sinc (& my y -> z [1] [0], my y -> nx, index, 50);
 		}
 		Graphics_setWindow (g, x1, x2, y1, y2);
 		Graphics_setInner (g);

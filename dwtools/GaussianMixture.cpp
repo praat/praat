@@ -813,7 +813,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 		double mp12 =  mixingProbabilities [component] / mixingProbabilities [my numberOfComponents + 1];
 		double factor1 = (eta - eta * lambda * lambda - 1.0) / gamma + 1.0;
 		double factor2 = (eta * lambda * lambda - eta - lambda * lambda) / (1.0 - gamma) + 1.0;
-		double *ev = thy pca -> eigenvectors [1];
+		constVEC ev = thy pca -> eigenvectors.row (1);
 		double d2 = thy pca -> eigenvalues [1];
 
 		for (integer i = 1; i <= my dimension; i ++) {
@@ -1381,7 +1381,7 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 			for (integer j = 1; j <= n; j ++) {
 				double wj = p [j] [nocp1] > 0.0 ? mixingP * p [j] [im] / p [j] [nocp1] : 0.0;
 				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, thy data [j], thy data [k], d, d);
+					djk = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, & thy data [j] [0], & thy data [k] [0], d, d);
 					double w = p [k] [nocp1] > 0.0 ? wj * mixingP * p [k] [im] / p [k] [nocp1] : 0.0;
 					sumjk += 2.0 * w * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}

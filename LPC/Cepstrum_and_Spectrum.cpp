@@ -58,7 +58,7 @@ static autoCepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 	try {
 		autoSpectrum dBspectrum = Data_copy (me);
-		double *re = dBspectrum -> z[1], *im = dBspectrum -> z[2];
+		VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
 		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
 			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-300);
 			im [i] = 0.0;
@@ -78,7 +78,7 @@ autoPowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
 autoCepstrum Spectrum_to_Cepstrum (Spectrum me) {
 	try {
 		autoSpectrum dBspectrum = Data_copy (me);
-		double *re = dBspectrum -> z[1], *im = dBspectrum -> z[2];
+		VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
 		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
 			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-300);
 			im [i] = 0.0;
@@ -104,7 +104,7 @@ autoSpectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 		}
 		autoSpectrum thee = Sound_to_Spectrum ((Sound) cepstrum.get(), true);
 
-		double *re = thy z [1], *im = thy z [2];
+		VEC re = thy z.row (1), im = thy z.row (2);
 		for (integer i = 1; i <= thy nx; i ++) {
 			re [i] =  exp (0.5 * re [i]);   // i.e., sqrt (exp(re [i]))
 			im [i] = 0.0;

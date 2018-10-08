@@ -1749,7 +1749,11 @@ void praat_run () {
 		Melder_assert (yn.nrow == 0);
 		Melder_assert (yn.ncol == 0);
 		MAT y { };
+		#if PACKED_TENSORS
+		Melder_assert (! y.cells);
+		#else
 		Melder_assert (! y.at);
+		#endif
 		Melder_assert (y.nrow == 0);
 		Melder_assert (y.ncol == 0);
 		//autoMAT z {y.at,y.nrow,y.ncol};   // explicit construction not OK

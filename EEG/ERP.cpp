@@ -78,7 +78,7 @@ void ERP_drawChannel_number (ERP me, Graphics graphics, integer channelNumber, d
 	 */
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, tmin, tmax, vmin, vmax);
-	Graphics_function (graphics, my z [channelNumber], ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
+	Graphics_function (graphics, & my z [channelNumber] [0], ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	Graphics_unsetInner (graphics);
 	if (garnish) {
 		Graphics_drawInnerBox (graphics);

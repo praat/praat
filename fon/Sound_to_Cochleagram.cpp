@@ -121,7 +121,7 @@ autoCochleagram Sound_to_Cochleagram_edb
 		/* From acoustic sound to oval window. */
 
 		for (integer ifreq = 1; ifreq <= nfreq; ifreq ++) {
-			double *response = thy z [ifreq];
+			double *response = & thy z [ifreq] [0];
 
 			/* Stage 3: basilar membrane filtering by gammatones. */
 			/* From oval window to basilar membrane response. */

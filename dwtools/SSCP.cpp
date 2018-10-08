@@ -864,10 +864,10 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 		// x = Sxx**-1 * Syx' * y
 
 		for (integer i = 1; i <= thy numberOfCoefficients; i ++) {
-			double *evecy = thy y -> eigenvectors [i];
-			double *evecx = thy x -> eigenvectors [i];
+			constVEC evecy = thy y -> eigenvectors.row (i);
+			VEC evecx = thy x -> eigenvectors.row (i);
 			for (integer j = 1; j <= nx; j ++) {
-				double t = 0.0;
+				longdouble t = 0.0;
 				for (integer k = j; k <= nx; k ++) {
 					for (integer l = 1; l <= nx; l ++) {
 						for (integer n = 1; n <= ny; n ++) {
@@ -875,7 +875,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 						}
 					}
 				}
-				evecx [j] = t;
+				evecx [j] = double (t);
 			}
 		}
 
