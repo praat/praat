@@ -2422,6 +2422,7 @@ void OTGrammar_removeConstraint (OTGrammar me, conststring32 constraintName) {
 				candidate -> numberOfConstraints -= 1;
 				for (integer icons = removed; icons <= my numberOfConstraints; icons ++)
 					candidate -> marks [icons] = candidate -> marks [icons + 1];
+				candidate -> marks. size -= 1;   // maintain invariant
 			}
 		}
 		/*

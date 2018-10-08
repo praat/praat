@@ -235,7 +235,7 @@ loopEnd:
 static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 	double preEmphasis = exp (-2.0 * NUMpi * preEmphasisFrequency * my dx);
 	for (integer channel = 1; channel <= my ny; channel ++) {
-		double *s = my z [channel]; 
+		double *s = & my z [channel] [0]; 
 		for (integer i = my nx; i >= 2; i --) s [i] -= preEmphasis * s [i - 1];
 	}
 }

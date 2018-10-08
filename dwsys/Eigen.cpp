@@ -375,14 +375,15 @@ void Eigen_drawEigenvector (Eigen me, Graphics g, integer ivec, integer first, i
 		xmin = 0.5; 
 		xmax = last + 0.5;
 	}
-	double *vec = my eigenvectors [ivec];
+	constVEC vec = my eigenvectors.row (ivec);
 	double w = weigh ? sqrt (my eigenvalues [ivec]) : 1.0;
 
 	// If ymax < ymin the eigenvector will automatically be drawn inverted.
 
 	if (ymax == ymin) {
-		NUMvector_extrema (vec, first, last, & ymin, & ymax);
-		ymax *= w; ymin *= w;
+		NUMvector_extrema (vec.at, first, last, & ymin, & ymax);
+		ymax *= w;
+		ymin *= w;
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);

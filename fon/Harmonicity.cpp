@@ -98,7 +98,7 @@ autoHarmonicity Harmonicity_create (double tmin, double tmax, integer nt, double
 autoMatrix Harmonicity_to_Matrix (Harmonicity me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
+		NUMvector_copyElements (& my z [1] [0], & thy z [1] [0], 1, my nx);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"not converted to Matrix.");
@@ -108,7 +108,7 @@ autoMatrix Harmonicity_to_Matrix (Harmonicity me) {
 autoHarmonicity Matrix_to_Harmonicity (Matrix me) {
 	try {
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, my nx, my dx, my x1);
-		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
+		NUMvector_copyElements (& my z [1] [0], & thy z [1] [0], 1, my nx);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U"not converted to Harmonicity.");

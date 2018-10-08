@@ -210,7 +210,7 @@ autoMatrix Spectrum_unwrap (Spectrum me) {
 
 		tbs.thlinc = THLINC;
 		tbs.thlcon = THLCON;
-		tbs.x = x -> z [1];
+		tbs.x = & x -> z [1] [0];
 		tbs.nx = x -> nx;
 		tbs.l = Melder_ifloor (pow (2, EXP2) + 0.1);
 		tbs.ddf = NUM2pi / ( (tbs.l) * nfft);
@@ -361,8 +361,8 @@ autoSpectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newM
 			double myf = thyf - shiftBy;
 			if (myf >= my xmin && myf <= my xmax) {
 				double index = Sampled_xToIndex (me, myf);
-				thy z [1] [i] = NUM_interpolate_sinc (my z [1], my nx, index, interpolationDepth);
-				thy z [2] [i] = NUM_interpolate_sinc (my z [2], my nx, index, interpolationDepth);
+				thy z [1] [i] = NUM_interpolate_sinc (& my z [1] [0], my nx, index, interpolationDepth);
+				thy z [2] [i] = NUM_interpolate_sinc (& my z [2] [0], my nx, index, interpolationDepth);
 			}
 		}
 		// Make imaginary part of first and last sample zero
@@ -393,8 +393,8 @@ autoSpectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, integer
 				break;
 			}
 			if (method == 1) {
-				x = NUM_interpolate_sinc (my z [1], my nx, index, interpolationDepth);
-				y = NUM_interpolate_sinc (my z [2], my nx, index, interpolationDepth);
+				x = NUM_interpolate_sinc (& my z [1] [0], my nx, index, interpolationDepth);
+				y = NUM_interpolate_sinc (& my z [2] [0], my nx, index, interpolationDepth);
 			} else {
 				x = undefined;   // ppgb: better than data from random memory
 				y = undefined;

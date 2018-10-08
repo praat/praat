@@ -27,7 +27,7 @@ autoPointProcess Sound_to_PointProcess_extrema (Sound me, integer channel, int i
 		 */
 		integer numberOfMaxima = 0;
 		integer numberOfMinima = 0;
-		double *y = my z [channel];
+		double *y = & my z [channel] [0];
 		for (integer i = 2; i <= my nx - 1; i ++) {
 			if (includeMaxima && y [i] > y [i - 1] && y [i] >= y [i + 1]) numberOfMaxima ++;
 			if (includeMinima && y [i] <= y [i - 1] && y [i] < y [i + 1]) numberOfMinima ++;
@@ -72,7 +72,7 @@ autoPointProcess Sound_to_PointProcess_zeroes (Sound me, integer channel, bool i
 		 */
 		integer numberOfRaisers = 0;
 		integer numberOfFallers = 0;
-		double *y = my z [channel];
+		double *y = & my z [channel] [0];
 		for (integer i = 2; i <= my nx; i ++) {
 			if (includeRaisers && y [i - 1] < 0.0 && y [i] >= 0.0) numberOfRaisers ++;
 			if (includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0) numberOfFallers ++;

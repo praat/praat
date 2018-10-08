@@ -374,7 +374,7 @@ autoMAT MATpeaks (constVEC const& x, bool includeEdges, int interpolate, bool so
 	if (sortByHeight) {
 		for (integer i = 1; i <= numberOfPeaks; i ++)
 			result [2] [i] *= -1.0;
-		NUMsort2 (result.ncol, result [2], result [1]);
+		NUMsort2 (result.ncol, & result [2] [0], & result [1] [0]);
 		for (integer i = 1; i <= numberOfPeaks; i ++)
 			result [2] [i] *= -1.0;
 	}

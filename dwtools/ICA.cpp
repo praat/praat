@@ -528,10 +528,10 @@ autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, So
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (nchannels);
 		autoNUMvector<double *> data (1, nchannels);
 		for (integer i = 1; i <= my ny; i ++) {
-			data [i] = my z [i];
+			data [i] = my z.at [i];   // BUG: this kind of manipulation should never occur in user code
 		}
 		for (integer i = 1; i <= thy ny; i ++) {
-			data [i + my ny] = thy z [i];
+			data [i + my ny] = thy z.at [i];   // BUG: this kind of manipulation should never occur in user code
 		}
 
 		NUMcrossCorrelate_rows (data.peek(), nchannels, i1, i2, ndelta, his data.at, his centroid.at, my dx);

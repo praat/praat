@@ -179,7 +179,7 @@ autoEEG EEG_PCA_to_EEG_whiten (EEG me, PCA thee, integer numberOfComponents) {
 		autoSound white = Sound_PCA_whitenSelectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.get());
 		for (integer i = 1; i <= channelNumbers.size; i ++) {
 			integer ichannel = channelNumbers [i];
-			NUMvector_copyElements<double> (white -> z [i], his sound -> z [ichannel], 1, his sound -> nx);
+			NUMvector_copyElements<double> (& white -> z [i] [0], & his sound -> z [ichannel] [0], 1, his sound -> nx);
 		}
 		EEG_setChannelNames_selected (him.get(), U"wh", channelNumbers.get());
 		return him;
@@ -201,7 +201,7 @@ autoEEG EEG_PCA_to_EEG_principalComponents (EEG me, PCA thee, integer numberOfCo
 		autoSound pc = Sound_PCA_to_Sound_pc_selectedChannels (my sound.get(), thee, numberOfComponents, channelNumbers.get());
 		for (integer i = 1; i <= channelNumbers.size; i ++) {
 			integer ichannel = channelNumbers [i];
-			NUMvector_copyElements<double> (pc -> z [i], his sound -> z [ichannel], 1, his sound -> nx);
+			NUMvector_copyElements<double> (& pc -> z [i] [0], & his sound -> z [ichannel] [0], 1, his sound -> nx);
 		}
 		EEG_setChannelNames_selected (him.get(), U"pc", channelNumbers.get());
 		return him;

@@ -67,7 +67,7 @@ autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 autoTableOfReal SVD_extractSingularValues (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
-		NUMvector_copyElements (my d.at, thy data [1], 1, my numberOfColumns);
+		NUMvector_copyElements (my d.at, & thy data [1] [0], 1, my numberOfColumns);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": singular values not extracted.");

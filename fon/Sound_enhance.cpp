@@ -68,10 +68,9 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 			Spectrum_stopHannBand (spec.get(), flow, fhigh, bandSmoothing);
 			autoSound filtered = Spectrum_to_Sound (spec.get());
 			integer n = thy nx;
-			double *amp = thy z [channel];
-			for (integer i = 1; i <= n; i ++) {
+			VEC amp = thy z.row (channel);
+			for (integer i = 1; i <= n; i ++)
 				amp [i] = filtered -> z [1] [i];
-			}
 
 			autoMelderProgress progress (U"Deepen band modulation...");
 			double fmin = flow;
@@ -91,7 +90,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				*/
 				autoSound intensity = Data_copy (band.get());
 				n = intensity -> nx;
-				amp = intensity -> z [1];
+				amp = intensity -> z.row (1);
 				for (integer i = 1; i <= n; i ++)
 					amp [i] = 10.0 * log10 (amp [i] * amp [i] + 1e-6);
 				autoSpectrum intensityFilter = Sound_to_Spectrum (intensity.get(), true);
@@ -105,7 +104,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				}
 				intensity = Spectrum_to_Sound (intensityFilter.get());
 				n = intensity -> nx;
-				amp = intensity -> z [1];
+				amp = intensity -> z.row (1);
 				for (integer i = 1; i <= n; i ++)
 					amp [i] = pow (10.0, amp [i] / 2.0);
 				/*
@@ -116,7 +115,7 @@ autoSound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 					amp [i] = 1.0 / (1.0 / amp [i] + 1.0 / ceiling);
 
 				n = thy nx;
-				amp = thy z [channel];
+				amp = thy z.row (channel);
 				for (integer i = 1; i <= n; i ++)
 					amp [i] += band -> z [1] [i] * intensity -> z [1] [i];
 

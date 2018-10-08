@@ -886,15 +886,15 @@ static autoMatrix Sound_to_spectralpower (Sound me) {
 		// s -> dx : width of frequency bin
 		// my xmax - my xmin : duration of sound
 
-		double *z = thy z [1], *re = s -> z [1], *im = s -> z [2];
+		constVEC re = s -> z.row (1), im = s -> z.row (2);
 		for (integer i = 1; i <= s -> nx; i ++) {
-			z [i] = scale * (re [i] * re [i] + im [i] * im [i]);
+			thy z [1] [i] = scale * (re [i] * re [i] + im [i] * im [i]);
 		}
 
 		// Frequency bins at 0 Hz and nyquist don't count for two.
 
-		z [1] *= 0.5;
-		z [s -> nx] *= 0.5;
+		thy z [1] [1] *= 0.5;
+		thy z [1] [s -> nx] *= 0.5;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Matrix with spectral power created.");
@@ -913,7 +913,7 @@ static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, integer frame
 	for (integer i = 1; i <= thy ny; i ++) {
 		double p = 0;
 		double z0 = thy y1 + (i - 1) * thy dy;
-		double *pow = pv -> z [1]; // TODO ??
+		constVEC pow = pv -> z.row (1); // TODO ??
 		for (integer j = 1; j <= nf; j ++) {
 			// Sekey & Hanson filter is defined in the power domain.
 			// We therefore multiply the power with a (and not a^2).
@@ -1003,7 +1003,7 @@ static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, integer frame) 
 		double fc_hz = MELTOHZ (fc_mel);
 		double fl_hz = MELTOHZ (fc_mel - df);
 		double fh_hz =  MELTOHZ (fc_mel + df);
-		double *pow = pv -> z [1];
+		constVEC pow = pv -> z.row (1);
 		for (integer j = 1; j <= nf; j ++) {
 			// Bin with a triangular filter the power (= amplitude-squared)
 
@@ -1089,7 +1089,7 @@ static int Sound_into_FormantFilter_frame (Sound me, FormantFilter thee, integer
 	for (integer i = 1; i <= thy ny; i ++) {
 		double p = 0;
 		double fc = thy y1 + (i - 1) * thy dy;
-		double *pow = pv -> z [1];
+		constVEC pow = pv -> z.row (1);
 		for (integer j = 1; j <= nf; j ++) {
 			// H(f) = ifB / (fc^2 - f^2 + ifB)
 			// H(f)| = fB / sqrt ((fc^2 - f^2)^2 + f^2B^2)

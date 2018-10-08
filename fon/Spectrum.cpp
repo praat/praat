@@ -272,7 +272,7 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		 * dB-spectrum is log (power).
 		 */
 		autoSpectrum dBspectrum = Data_copy (me);
-		double *re = dBspectrum -> z [1], *im = dBspectrum -> z [2];
+		VEC re = dBspectrum -> z.row (1), im = dBspectrum -> z.row (2);
 		for (integer i = 1; i <= dBspectrum -> nx; i ++) {
 			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-308);
 			im [i] = 0.0;
@@ -300,7 +300,7 @@ autoSpectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		/*
 		 * Convert power spectrum back into a "complex" spectrum without phase information.
 		 */
-		re = thy z [1], im = thy z [2];
+		re = thy z.row (1), im = thy z.row (2);
 		for (integer i = 1; i <= thy nx; i ++) {
 			re [i] = exp (0.5 * re [i]);   // i.e., sqrt (exp (re [i]))
 			im [i] = 0.0;
@@ -315,7 +315,7 @@ void Spectrum_passHannBand (Spectrum me, double fmin, double fmax0, double smoot
 	double fmax = fmax0 == 0.0 ? my xmax : fmax0;
 	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
 	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0;
-	double *re = my z [1], *im = my z [2];
+	double *re = & my z [1] [0], *im = & my z [2] [0];
 	for (integer i = 1; i <= my nx; i ++) {
 		double frequency = my x1 + (i - 1) * my dx;
 		if (frequency < f1 || frequency > f4) re [i] = im [i] = 0.0;
@@ -335,7 +335,7 @@ void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax0, double smoot
 	double fmax = fmax0 == 0.0 ? my xmax : fmax0;
 	double f1 = fmin - smooth, f2 = fmin + smooth, f3 = fmax - smooth, f4 = fmax + smooth;
 	double halfpibysmooth = smooth != 0.0 ? NUMpi / (2.0 * smooth) : 0.0;
-	double *re = my z [1], *im = my z [2];
+	VEC re = my z.row (1), im = my z.row (2);
 	for (integer i = 1; i <= my nx; i ++) {
 		double frequency = my x1 + (i - 1) * my dx;
 		if (frequency < f1 || frequency > f4) continue;

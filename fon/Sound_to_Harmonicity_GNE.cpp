@@ -29,7 +29,7 @@
 #include "Sound_and_Spectrum.h"
 
 static void bandFilter (Spectrum me, double fmid, double bandwidth) {
-	double *re = my z [1], *im = my z [2];
+	double *re = & my z [1] [0], *im = & my z [2] [0];
 	double fmin = fmid - bandwidth / 2.0, fmax = fmid + bandwidth / 2.0;
 	double twopibybandwidth = 2.0 * NUMpi / bandwidth;
 	for (integer col = 1; col <= my nx; col ++) {

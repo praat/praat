@@ -117,7 +117,7 @@ autoSpectrum VocalTract_to_Spectrum
 	try {
 		autoSpectrum thee = Spectrum_create (maximumFrequency, numberOfFrequencies);
 		for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
-			TUBE_transfer (my z [1], my nx, my dx,
+			TUBE_transfer (& my z [1] [0], my nx, my dx,
 				(ifreq - 0.9999) * maximumFrequency / (numberOfFrequencies - 1),
 				& thy z [1] [ifreq], & thy z [2] [ifreq],
 				glottalDamping, hasRadiationDamping, hasInternalDamping);

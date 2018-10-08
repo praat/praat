@@ -626,6 +626,14 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				const mutablestring32 *pcm = v.peek2();
 				//conststring32 *pc = v.peek2();
 				const conststring32 *pcc = v.peek2();
+				{
+					vector<double> aa, bb;
+					vector<const double> aac, bbc;
+					//aa = aac;
+					aa = bb;
+					aac = bbc;
+					bbc.at = bb.at;
+				}
 			}
 		} break;
 		case kPraatTests::FILEINMEMORYMANAGER_IO: {

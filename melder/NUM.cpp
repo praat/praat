@@ -29,7 +29,7 @@ double NUMcenterOfGravity (constVEC const& x) noexcept {
 
 double NUMcolumnMean (constMAT const& x, integer columnNumber) noexcept {
 	Melder_assert (columnNumber > 0 && columnNumber <= x.ncol);
-	integer stride = x.ncol;
+	integer const stride = x.ncol;
 	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
 		double const *px = & x [1] [columnNumber],
 		longdouble (*px),
@@ -40,7 +40,7 @@ double NUMcolumnMean (constMAT const& x, integer columnNumber) noexcept {
 
 double NUMcolumnSum (constMAT const& x, integer columnNumber) noexcept {
 	Melder_assert (columnNumber > 0 && columnNumber <= x.nrow);
-	integer stride = x.ncol;
+	integer const stride = x.ncol;
 	PAIRWISE_SUM (longdouble, sum, integer, x.nrow,
 		double const *px = & x [1] [columnNumber],
 		longdouble (*px),
