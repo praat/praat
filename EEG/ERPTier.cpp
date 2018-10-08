@@ -191,7 +191,7 @@ void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax) {
 		ERPPoint event = my points.at [ievent];
 		for (integer ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			double mean = Vector_getMean (event -> erp.get(), tmin, tmax, ichannel);
-			double *channel = event -> erp -> z [ichannel];
+			VEC channel = event -> erp -> z.row (ichannel);
 			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
 				channel [isample] -= mean;
 			}
@@ -213,7 +213,7 @@ void ERPTier_rejectArtefacts (ERPTier me, double threshold) {
 		double minimum = event -> erp -> z [1] [1];
 		double maximum = minimum;
 		for (integer ichannel = 1; ichannel <= (numberOfChannels & ~ 15); ichannel ++) {
-			double *channel = event -> erp -> z [ichannel];
+			constVEC channel = event -> erp -> z.row (ichannel);
 			for (integer isample = 1; isample <= numberOfSamples; isample ++) {
 				double value = channel [isample];
 				if (value < minimum) minimum = value;

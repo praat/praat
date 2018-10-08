@@ -679,7 +679,7 @@ void GaussianMixture_splitComponent (GaussianMixture me, integer component) {
 		double mp12 =  mixingProbabilities [component] / mixingProbabilities [my numberOfComponents + 1];
 		double factor1 = (eta - eta * lambda * lambda - 1.0) / gamma + 1.0;
 		double factor2 = (eta * lambda * lambda - eta - lambda * lambda) / (1.0 - gamma) + 1.0;
-		double *ev = thy pca -> eigenvectors [1];
+		constVEC ev = thy pca -> eigenvectors.row (1);
 		double d2 = thy pca -> eigenvalues [1];
 
 		for (integer i = 1; i <= my dimension; i ++) {

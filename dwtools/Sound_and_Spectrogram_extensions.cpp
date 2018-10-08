@@ -70,15 +70,17 @@ static autoSpectrum Sound_to_Spectrum_power (Sound me) {
 		// thy dx : width of frequency bin
 		// my xmax - my xmin : duration of sound
 
-		double *re = thy z [1], *im = thy z [2];
+		VEC re = thy z.row (1), im = thy z.row (2);
 		for (integer i = 1; i <= thy nx; i ++) {
 			double power = scale * (re [i] * re [i] + im [i] * im [i]);
-			re [i] = power; im [i] = 0;
+			re [i] = power;
+			im [i] = 0.0;
 		}
 
 		// Correction of frequency bins at 0 Hz and nyquist: don't count for two.
 
-		re [1] *= 0.5; re [thy nx] *= 0.5;
+		re [1] *= 0.5;
+		re [thy nx] *= 0.5;
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Spectrum with spectral power created.");
@@ -98,7 +100,7 @@ static void Sound_into_BarkSpectrogram_frame (Sound me, BarkSpectrogram thee, in
 	for (integer i = 1; i <= thy ny; i ++) {
 		double p = 0;
 		double z0 = thy y1 + (i - 1) * thy dy;
-		double *pow = his z [1]; // TODO ??
+		constVEC pow = his z.row (1); // TODO ??
 		for (integer ifreq = 1; ifreq <= numberOfFrequencies; ifreq ++) {
 			// Sekey & Hanson filter is defined in the power domain.
 			// We therefore multiply the power with a (and not a^2).
@@ -254,7 +256,7 @@ static int Sound_into_Spectrogram_frame (Sound me, Spectrogram thee, integer fra
 	for (integer ifilter = 1; ifilter <= thy ny; ifilter ++) {
 		double p = 0;
 		double fc = thy y1 + (ifilter - 1) * thy dy;
-		double *pow = his z [1];
+		constVEC pow = his z.row (1);
 		for (integer ifreq = 1; ifreq <= his nx; ifreq ++) {
 			/*
 				H(f) = ifB / (fc^2 - f^2 + ifB)

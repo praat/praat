@@ -471,7 +471,7 @@ autoPowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, integer row) {
 		if (row < 1 || row > my ny) {
 			Melder_throw (U"Row number should be between 1 and ", my ny, U" inclusive.");
 		}
-		NUMvector_copyElements (my z [row], thy z [1], 1, my nx);
+		NUMvector_copyElements (& my z [row] [0], & thy z [1] [0], 1, my nx);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PowerCepstrum created.");

@@ -282,11 +282,12 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 		his rowLabels. copyElementsFrom (thy rowLabels.get());
 
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
-			double *hisdata = his data [i];
+			VEC hisdata = his data.row (i);
 			for (integer k = 1; k <= npc; k ++) {
-				double *evec = my eigenvectors [k], pc = thy data [i] [k];
+				VEC evec = my eigenvectors.row (k);
+				double pc = thy data [i] [k];
 				for (integer j = 1; j <= my dimension; j ++)
-					hisdata [j] += pc * evec [j];
+					hisdata [j] += pc * evec [j];   // ppgb: this looks like a normal matrix multiplication; if it isn't, please document
 			}
 		}
 		return him;

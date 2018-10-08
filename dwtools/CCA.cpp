@@ -257,7 +257,7 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 		double **v = my y -> eigenvectors.at;
 		double *d = my y -> eigenvalues.at;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
-			NUMvector_copyElements (his data [i], buf.peek(), 1, ny);
+			NUMvector_copyElements (& his data [i] [0], buf.peek(), 1, ny);
 			for (integer j = 1; j <= ny; j ++) {
 				longdouble t = 0.0;
 				for (integer k = 1; k <= ny; k ++) {

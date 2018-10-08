@@ -1329,29 +1329,23 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 void Distance_Weight_rawStressComponents (Distance fit, Distance conf, Weight weight, double *out_etafit, double *out_etaconf, double *out_rho)
 {
 	integer nPoints = conf -> numberOfRows;
-
 	longdouble etafit = 0.0, etaconf = 0.0, rho = 0.0;
-
 	for (integer i = 1; i <= nPoints - 1; i ++) {
-		double *wi = weight -> data [i];
-		double *fiti = fit -> data [i];
-		double *confi = conf -> data [i];
-
+		constVEC wi = weight -> data.row (i);
+		constVEC fiti = fit -> data.row (i);
+		constVEC confi = conf -> data.row (i);
 		for (integer j = i + 1; j <= nPoints; j ++) {
 			etafit += wi [j] * fiti [j] * fiti [j];
 			etaconf += wi [j] * confi [j] * confi [j];
 			rho += wi [j] * fiti [j] * confi [j];
 		}
 	}
-	if (out_etafit) {
+	if (out_etafit)
 		*out_etafit = (double) etafit;
-	}
-	if (out_etaconf) {
+	if (out_etaconf)
 		*out_etaconf = (double) etaconf;
-	}
-	if (out_rho) {
+	if (out_rho)
 		*out_rho = (double) rho;
-	}
 }
 
 double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d, Configuration c, Transformator t, Weight w, int stressMeasure) {
@@ -1407,8 +1401,8 @@ double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d, Confi
 void Distance_Weight_smacofNormalize (Distance me, Weight w) {
 	double sumsq = 0.0;
 	for (integer i = 1; i <= my numberOfRows - 1; i ++) {
-		double *wi = w -> data [i];
-		double *di = my data [i];
+		constVEC wi = w -> data.row (i);
+		constVEC di = my data.row (i);
 		for (integer j = i + 1; j <= my numberOfRows; j ++) {
 			sumsq += wi [j] * di [j] * di [j];
 		}
@@ -1429,9 +1423,9 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w) 
 
 	double xy = 0.0, x2 = 0.0, y2 = 0.0;
 	for (integer i = 1; i <= nPoints - 1; i ++) {
-		double *xi = x -> data [i];
-		double *yi = y -> data [i];
-		double *wi = w -> data [i];
+		constVEC xi = x -> data.row (i);
+		constVEC yi = y -> data.row (i);
+		constVEC wi = w -> data.row (i);
 		for (integer j = i + 1; j <= nPoints - 1; j ++) {
 			xy += wi [j] * xi [j] * yi [j];
 			x2 += wi [j] * xi [j] * xi [j];

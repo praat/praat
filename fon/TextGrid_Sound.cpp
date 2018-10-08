@@ -365,7 +365,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 		Graphics_setLineType (g, Graphics_DOTTED);
 		Graphics_line (g, tmin, 0.0, tmax, 0.0);
 		Graphics_setLineType (g, Graphics_DRAWN);      
-		Graphics_function (g, sound -> z [1], first, last,
+		Graphics_function (g, & sound -> z [1] [0], first, last,
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 

@@ -648,24 +648,20 @@ struct MelderIntegerRange {
 template <typename T>
 class matrix {
 public:
-	#if PACKED_TENSORS
-	T *cells = nullptr;
-	#else
-	T **at = nullptr;
-	#endif
+	T *cells = nullptr;   // the future
+	T **at = nullptr;   // deprecated
 	integer nrow = 0, ncol = 0;
 public:
 	matrix () = default;
-	#if PACKED_TENSORS
-	matrix (T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	#else
-	matrix (T **givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	#endif
+	//matrix (T *givenCells, integer givenNrow, integer givenNcol):
+	//		cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
+	matrix (T **givenAt, integer givenNrow, integer givenNcol):
+			cells (givenAt ? & givenAt [1] [1] : nullptr), at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	matrix (const matrix& other) = default;
 	matrix (const automatrix<T>& other) = delete;
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
-	#if PACKED_TENSORS
+	#if 0
 	vector<T> operator[] (integer i) const {
 		return vector (our cells + (i - 1) * our ncol, our ncol);
 	}
@@ -751,23 +747,16 @@ public:
 template <typename T>
 class constmatrix {
 public:
-	#if PACKED_TENSORS
 	const T *cells = nullptr;
-	#else
 	const T * const * at = nullptr;
-	#endif
 	integer nrow = 0, ncol = 0;
 	constmatrix () = default;
-	#if PACKED_TENSORS
-	constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	#else
-	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol): at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
-	#endif
-	#if PACKED_TENSORS
-	constmatrix (matrix<T> mat): cells (mat.cells), nrow (mat.nrow), ncol (mat.ncol) { }
-	#else
-	constmatrix (matrix<T> mat): at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
-	#endif
+	//constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
+	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol):
+			cells (& givenAt [1] [1]), at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
+	constmatrix (matrix<T> mat):
+			cells (mat.cells), at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
+
 	#if PACKED_TENSORS
 	const T * operator[] (integer i) const {
 		return our cells + (i - 1) * our ncol;
@@ -779,7 +768,11 @@ public:
 	#endif
 	constvector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
+		#if PACKED_TENSORS
+		return constvector<T> (our cells + (rowNumber - 1) * our ncol, our ncol);
+		#else
 		return constvector<T> (our at [rowNumber], our ncol);
+		#endif
 	}
 	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) const {
 		const integer offsetRow = firstRow - 1;
@@ -787,14 +780,22 @@ public:
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
 		const integer newNrow = lastRow - offsetRow;
 		if (newNrow <= 0) return matrix<T> (nullptr, 0, 0);
+		#if PACKED_TENSORS
+		return constmatrix<T> (our cells + offsetRow * our ncol, newNrow, our ncol);
+		#else
 		return constmatrix<T> (& our at [offsetRow], newNrow, our ncol);
+		#endif
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
 		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
 		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return matrixview<T> ();
+		#if PACKED_TENSORS
+		return constmatrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
+		#else
 		return constmatrixview<T> (& our at [1] [firstColumn], our nrow, newNcol, our ncol, 1);
+		#endif
 	}
 	constmatrixview<T> subview (MelderIntegerRange rowRange, MelderIntegerRange columnRange) const {
 		Melder_assert (rowRange.first >= 1 && rowRange.first <= our nrow);
@@ -803,7 +804,12 @@ public:
 		Melder_assert (columnRange.last >= 0 && columnRange.last <= our ncol);
 		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
+		#if PACKED_TENSORS
+		return constmatrixview<T> (
+				our cells + (rowRange.first - 1) * our ncol + (columnRange.first - 1), newNrow, newNcol, our ncol, 1);
+		#else
 		return constmatrixview<T> (& our at [rowRange.first] [columnRange.first], newNrow, newNcol, our ncol, 1);
+		#endif
 	}
 };
 
@@ -815,9 +821,17 @@ public:
 	integer rowStride = 0, colStride = 1;
 	constmatrixview () = default;
 	constmatrixview (const constmatrix<T>& other) :
+			#if PACKED_TENSORS
+			firstCell (other. cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+			#else
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+			#endif
 	constmatrixview (const matrix<T>& other) :
+			#if PACKED_TENSORS
+			firstCell (other. cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+			#else
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+			#endif
 	constmatrixview (const automatrix<T>& other) = delete;
 	constmatrixview (const T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
 			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
@@ -844,7 +858,10 @@ public:
 		Melder_assert (columnRange.last >= 1 && columnRange.last <= our ncol);
 		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
-		return constmatrixview<T> (& our at [rowRange.first] [columnRange.first], newNrow, newNcol, our rowStride, our colStride);
+		return constmatrixview<T> (
+				our firstCell + (rowRange.first - 1) * our rowStride + (columnRange.first - 1) * our colStride,
+				newNrow, newNcol, our rowStride, our colStride
+		);
 	}
 };
 
@@ -868,6 +885,7 @@ public:
 		#else
 		our at = ( givenNrow == 0 || givenNcol == 0 ? nullptr
 				: NUMmatrix<T> (1, givenNrow, 1, givenNcol, initializationType == kTensorInitializationType::ZERO));
+		our cells = our at ? & our at [1] [1] : nullptr;
 		#endif
 		our nrow = givenNrow;
 		our ncol = givenNcol;
@@ -881,20 +899,24 @@ public:
 	}
 	//matrix<T> get () { return { our at, our nrow, our ncol }; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
 	const matrix<T>& get () { return *this; }   // let the public use the payload (they may change the values in the cells but not the at-pointer, nrow or ncol)
-	matrixview<T> all () const { return matrixview<T> (& our at [1] [1], our nrow, our ncol, our ncol, 1); }
+	matrixview<T> all () const {
+		#if PACKED_TENSORS
+		return matrixview<T> (our cells, our nrow, our ncol, our ncol, 1);
+		#else
+		return matrixview<T> (& our at [1] [1], our nrow, our ncol, our ncol, 1);
+		#endif
+	}
 	void adoptFromAmbiguousOwner (matrix<T> given) {   // buy the payload from a non-automatrix
 		our reset();
-		#if PACKED_TENSORS
 		our cells = given.cells;
-		#else
 		our at = given.at;
-		#endif
 		our nrow = given.nrow;
 		our ncol = given.ncol;
 	}
 	matrix<T> releaseToAmbiguousOwner () {   // sell the payload to a non-automatrix
 		T **oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
+		our cells = nullptr;
 		return { oldAt, our nrow, our ncol };
 	}
 	/*
@@ -907,11 +929,8 @@ public:
 		This implements buying a payload from another automatrix (which involves destroying our current payload).
 	*/
 	automatrix (automatrix&& other) noexcept : matrix<T> { other.get() } {   // enable move constructor
-		#if PACKED_TENSORS
 		other.cells = nullptr;   // disown source
-		#else
 		other.at = nullptr;   // disown source
-		#endif
 		other.nrow = 0;   // to keep the source in a valid state
 		other.ncol = 0;   // to keep the source in a valid state
 	}
@@ -930,6 +949,7 @@ public:
 		if (other.at != our at) {
 			if (our at) NUMmatrix_free (our at, 1, 1);
 			our at = other.at;
+			our cells = other.cells;
 			our nrow = other.nrow;
 			our ncol = other.ncol;
 			other.at = nullptr;   // disown source
@@ -949,6 +969,7 @@ public:
 		if (our at) {
 			NUMmatrix_free (our at, 1, 1);
 			our at = nullptr;
+			our cells = nullptr;
 		}
 		#endif
 		our nrow = 0;
@@ -970,7 +991,7 @@ vector<T> asvector (matrix<T> x) {
 	#if PACKED_TENSORS
 	return vector<T> (x.cells, x.nrow * x.ncol);
 	#else
-	return vector<T> (x [1], x.nrow * x.ncol);
+	return vector<T> (& x [1] [0], x.nrow * x.ncol);
 	#endif
 }
 template <typename T>

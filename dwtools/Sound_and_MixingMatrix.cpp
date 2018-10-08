@@ -78,16 +78,17 @@ autoSound Sound_MixingMatrix_mixPart (Sound me, MixingMatrix thee, double fromTi
 				for (integer ichan = 1; ichan <= my ny; ichan ++) {
 					double mixingCoeffient = thy data [i] [ichan];
 					if (mixingCoeffient != 0.0) {
-						double *from = my z [ichan], *to = his z [i];
+						const double *from = & my z [ichan] [0];
+						double *to = & his z [i] [0];
 						integer to_i1 = 1, to_i2 = his nx;
 						if (ix1 < 1) { // (1) + (2)
-							to = his z [i] + 1 - ix1;
+							to = & his z [i] [0] + 1 - ix1;
 							to_i1 = 1 - ix1; to_i2 = to_i1 + my nx; // (2)
 							if (ix2 < my nx) { // (1)
 								to_i2 = 1 - ix1 + ix2;
 							}
 						} else { // (3) + (4)
-							from = my z [ichan] + ix1 - 1; 
+							from = & my z [ichan] [0] + ix1 - 1;
 							to_i2 = to_i1 + ix2 - ix1; // (3)
 							if (ix2 > my nx) { // (4)
 								to_i2 = his nx;

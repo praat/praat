@@ -419,7 +419,7 @@ static void detrend (double *a, integer numberOfSamples) {
 
 void EEG_detrend (EEG me) {
 	for (integer ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++) {
-		detrend (my sound -> z [ichan], my sound -> nx);
+		detrend (& my sound -> z [ichan] [0], my sound -> nx);
 	}
 }
 
@@ -441,7 +441,7 @@ void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFreque
 				Spectrum_stopHannBand (spec.get(), 48.0, 52.0, 1.0);
 			}
 			autoSound him = Spectrum_to_Sound (spec.get());
-			NUMvector_copyElements (his z [1], my sound -> z [ichan], 1, my sound -> nx);
+			NUMvector_copyElements (& his z [1] [0], & my sound -> z [ichan] [0], 1, my sound -> nx);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not filtered.");
@@ -496,13 +496,11 @@ void EEG_subtractMeanChannel (EEG me, integer fromChannel, integer toChannel) {
 	const integer numberOfElectrodeChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
 	for (integer isamp = 1; isamp <= my sound -> nx; isamp ++) {
 		double referenceValue = 0.0;
-		for (integer ichan = fromChannel; ichan <= toChannel; ichan ++) {
+		for (integer ichan = fromChannel; ichan <= toChannel; ichan ++)
 			referenceValue += my sound -> z [ichan] [isamp];
-		}
 		referenceValue /= (toChannel - fromChannel + 1);
-		for (integer ichan = 1; ichan <= numberOfElectrodeChannels; ichan ++) {
+		for (integer ichan = 1; ichan <= numberOfElectrodeChannels; ichan ++)
 			my sound -> z [ichan] [isamp] -= referenceValue;
-		}
 	}
 }
 
@@ -511,10 +509,9 @@ void EEG_setChannelToZero (EEG me, integer channelNumber) {
 		if (channelNumber < 1 || channelNumber > my numberOfChannels)
 			Melder_throw (U"No channel ", channelNumber, U".");
 		integer numberOfSamples = my sound -> nx;
-		double *channel = my sound -> z [channelNumber];
-		for (integer isample = 1; isample <= numberOfSamples; isample ++) {
+		VEC channel = my sound -> z.row (channelNumber);
+		for (integer isample = 1; isample <= numberOfSamples; isample ++)
 			channel [isample] = 0.0;
-		}
 	} catch (MelderError) {
 		Melder_throw (me, U": channel ", channelNumber, U" not set to zero.");
 	}
@@ -594,9 +591,8 @@ static void Sound_removeChannel (Sound me, integer channelNumber) {
 			U"No channel ", channelNumber, U".");
 		Melder_require (my ny > 1,
 			U"Cannot remove last remaining channel.");
-		for (integer ichan = channelNumber; ichan < my ny; ichan ++) {
-			NUMvector_copyElements (my z [ichan + 1], my z [ichan], 1, my nx);
-		}
+		for (integer ichan = channelNumber; ichan < my ny; ichan ++)
+			NUMvector_copyElements (& my z [ichan + 1] [0], & my z [ichan] [0], 1, my nx);
 		my ymax -= 1.0;
 		my ny -= 1;
 	} catch (MelderError) {

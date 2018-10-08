@@ -60,7 +60,7 @@ autoPatternList ExcitationList_to_PatternList (ExcitationList me, integer join) 
 		autoPatternList thee = PatternList_create (my size / join, join * excitation -> nx);
 		integer r = 0, c = 1;
 		for (integer i = 1; i <= my size; i ++) {
-			double *z = my at [i] -> z [1];
+			constVEC z = my at [i] -> z.row (1);
 			if ((i - 1) % join == 0) {
 				r ++;
 				c = 1;
@@ -81,7 +81,7 @@ autoTableOfReal ExcitationList_to_TableOfReal (ExcitationList me) {
 		Excitation excitation = my at [1];
 		autoTableOfReal thee = TableOfReal_create (my size, excitation -> nx);
 		for (integer i = 1; i <= my size; i ++) {
-			double *z = my at [i] -> z [1];
+			constVEC z = my at [i] -> z.row (1);
 			for (integer j = 1; j <= excitation -> nx; j ++) {
 				thy data [i] [j] = z [j];
 			}

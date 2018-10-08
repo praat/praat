@@ -100,8 +100,8 @@ void TableOfReal_copyOneRowWithLabel (TableOfReal me, TableOfReal thee, integer 
 
 		thy rowLabels [thyrow] = Melder_dup (my rowLabels [myrow].get());
 
-		if (my data [myrow] != thy data [thyrow]) {
-			NUMvector_copyElements (my data [myrow], thy data [thyrow], 1, my numberOfColumns);
+		if (& my data [myrow] [0] != & thy data [thyrow] [0]) {
+			NUMvector_copyElements (& my data [myrow] [0], & thy data [thyrow] [0], 1, my numberOfColumns);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": row ", myrow, U" not copied to ", thee);
@@ -318,7 +318,7 @@ void TableOfReal_drawRowsAsHistogram (TableOfReal me, Graphics g, conststring32 
 		}
 		if (ymin >= ymax) {
 			double min, max;
-			NUMvector_extrema (my data [irow], colb, cole, & min, & max);
+			NUMvector_extrema (& my data [irow] [0], colb, cole, & min, & max);
 			if (i > 1) {
 				if (min < ymin) {
 					ymin = min;
@@ -664,7 +664,7 @@ void TableOfReal_standardizeRows (TableOfReal me) {
 	}
 	for (integer irow = 1; irow <= my numberOfRows; irow ++) {
 		double mean, stdev;
-		NUM_sum_mean_sumsq_variance_stdev (constVEC (my data [irow], my numberOfColumns),
+		NUM_sum_mean_sumsq_variance_stdev (constVEC (& my data [irow] [0], my numberOfColumns),
 				nullptr, & mean, nullptr, nullptr, & stdev);
 		for (integer icol = 1; icol <= my numberOfColumns; icol ++)
 			my data [irow] [icol] = (my data [irow] [icol] - mean) / stdev;
@@ -1057,7 +1057,7 @@ autoTableOfReal TableOfReal_bootstrap (TableOfReal me) {
 
 		for (integer i = 1; i <= my numberOfRows; i ++) {
 			integer p = NUMrandomInteger (1, my numberOfRows);
-			NUMvector_copyElements (my data [p], thy data [i], 1, my numberOfColumns);
+			NUMvector_copyElements (& my data [p] [0], & thy data [i] [0], 1, my numberOfColumns);
 			if (my rowLabels [p]) {
 				TableOfReal_setRowLabel (thee.get(), i, my rowLabels [p].get());
 			}
@@ -1233,8 +1233,8 @@ autoTableOfReal TableOfReal_sortRowsByIndex (TableOfReal me, constINTVEC index, 
 			integer myindex = reverse ? i : index [i];
 			integer thyindex = reverse ? index [i] : i;
 			conststring32 mylabel = my rowLabels [myindex].get();
-			double *mydata = my data [myindex];
-			double *thydata = thy data [thyindex];
+			double *mydata = & my data [myindex] [0];
+			double *thydata = & thy data [thyindex] [0];
 
 			thy rowLabels [i] = Melder_dup (mylabel);
 			for (integer j = 1; j <= my numberOfColumns; j ++) {
@@ -1458,8 +1458,8 @@ autoTableOfReal TableOfReal_appendColumns (TableOfReal me, TableOfReal thee) {
 			if (! Melder_equ (my rowLabels [i].get(), thy rowLabels [i].get())) {
 				labeldiffs ++;
 			}
-			NUMvector_copyElements (my data [i], his data [i], 1, my numberOfColumns);
-			NUMvector_copyElements (thy data [i], &his data [i] [my numberOfColumns], 1, thy numberOfColumns);
+			NUMvector_copyElements (& my data [i] [0], & his data [i] [0], 1, my numberOfColumns);
+			NUMvector_copyElements (& thy data [i] [0], & his data [i] [my numberOfColumns], 1, thy numberOfColumns);
 		}
 		if (labeldiffs > 0) {
 			Melder_warning (labeldiffs, U" row labels differed.");

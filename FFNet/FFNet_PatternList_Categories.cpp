@@ -73,7 +73,7 @@ autoCategories FFNet_PatternList_to_Categories (FFNet me, PatternList thee, int 
 		autoCategories him = Categories_create ();
 
 		for (integer k = 1; k <= thy ny; k ++) {
-			FFNet_propagate (me, thy z [k], nullptr);
+			FFNet_propagate (me, & thy z [k] [0], nullptr);
 			integer index = FFNet_getWinningUnit (me, labeling);
 			autoSimpleString item = Data_copy (my outputCategories->at [index]);
 			his addItem_move (item.move());

@@ -510,7 +510,7 @@ void Sound_playPart (Sound me, double tmin, double tmax, Sound_PlayCallback call
 		integer ifsamp = Melder_iround (1.0 / my dx), bestSampleRate = MelderAudio_getOutputBestSampleRate (ifsamp);
 		if (ifsamp == bestSampleRate) {
 			struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
-			double *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : nullptr;
+			double *fromLeft = & my z [1] [0], *fromRight = ( my ny > 1 ? & my z [2] [0] : nullptr );
 			MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 			integer i1, i2;
 			if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) return;

@@ -293,24 +293,24 @@ static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound
 
 	if (carrierBefore) {
 		for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-			NUMvector_copyElements <double> (carrierBefore -> z [ichan],
-					my playBuffer -> z [ichan] + numberOfSamplesWritten, 1, carrierBefore -> nx);
+			NUMvector_copyElements <double> (& carrierBefore -> z [ichan] [0],
+					& my playBuffer -> z [ichan] [0] + numberOfSamplesWritten, 1, carrierBefore -> nx);
 		}
 		numberOfSamplesWritten += carrierBefore -> nx;
 	}
 
 	if (sound) {
 		for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-			NUMvector_copyElements <double> (sound -> z [ichan],
-					my playBuffer -> z [ichan] + numberOfSamplesWritten, 1, sound -> nx);
+			NUMvector_copyElements <double> (& sound -> z [ichan] [0],
+					& my playBuffer -> z [ichan] [0] + numberOfSamplesWritten, 1, sound -> nx);
 		}
 		numberOfSamplesWritten += sound -> nx;
 	}
 
 	if (carrierAfter) {
 		for (integer ichan = 1; ichan <= my numberOfChannels; ichan ++) {
-			NUMvector_copyElements <double> (carrierAfter -> z [ichan],
-					my playBuffer -> z [ichan] + numberOfSamplesWritten, 1, carrierAfter -> nx);
+			NUMvector_copyElements <double> (& carrierAfter -> z [ichan] [0],
+					& my playBuffer -> z [ichan] [0] + numberOfSamplesWritten, 1, carrierAfter -> nx);
 		}
 		numberOfSamplesWritten += carrierAfter -> nx;
 	}
