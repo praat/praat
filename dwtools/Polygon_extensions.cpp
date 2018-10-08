@@ -1210,30 +1210,27 @@ static inline double cross (double x1, double y1, double x2, double y2, double x
 // Code adapted from http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain#C
 autoPolygon Polygon_convexHull (Polygon me) {
 	try {
-		if (my numberOfPoints <= 3) {
-			return Data_copy (me);
-		}
-		autoNUMvector<double> x (1, my numberOfPoints), y (1, my numberOfPoints);
-		autoNUMvector<integer> hull (1, my numberOfPoints + 2);
+		if (my numberOfPoints <= 3) return Data_copy (me);
+		
+		autoVEC x = VECraw (my numberOfPoints), y = VECraw (my numberOfPoints);
+		autoINTVEC hull = INTVECraw (my numberOfPoints + 2);
 		for (integer i = 1; i <= my numberOfPoints; i ++) {
 			x [i] = my x [i];
 			y [i] = my y [i];
 		}
-		NUMsort2 <double, double> (my numberOfPoints, x.peek(), y.peek());
+		NUMsortTogether (x.get(), y.get());
 		// lower hull
 		integer n = 1;
 		for (integer i = 1; i <= my numberOfPoints; i ++) {
-			while (n > 2 && cross (x [hull [n - 2]], y [hull [n - 2]], x [hull [n - 1]], y [hull [n - 1]], x [i], y [i]) <= 0) {
+			while (n > 2 && cross (x [hull [n - 2]], y [hull [n - 2]], x [hull [n - 1]], y [hull [n - 1]], x [i], y [i]) <= 0)
 				--n; // counter clockwise turn
-			}
     		hull [n ++] = i;
 		}
 		// upper hull
 		integer t = n + 1;
 		for (integer i = my numberOfPoints - 1; i >= 1; i--) {
-			while (n >= t && cross (x [hull [n - 2]], y [hull [n - 2]], x [hull [n - 1]], y [hull [n - 1]], x [i], y [i]) <= 0) {
+			while (n >= t && cross (x [hull [n - 2]], y [hull [n - 2]], x [hull [n - 1]], y [hull [n - 1]], x [i], y [i]) <= 0)
 				--n;
-			}
     		hull [n ++] = i;
 		}
 		autoPolygon thee = Polygon_create (n - 1);

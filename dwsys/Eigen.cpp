@@ -136,7 +136,7 @@ void Eigen_initFromSquareRoot (Eigen me, constMAT a) {
 		if (t > 0.0) {
 			my eigenvalues [++ k] = t * t;
 			for (integer j = 1; j <= a.ncol; j ++) {
-				my eigenvectors [k] [j] = svd -> v [j] [i];
+				my eigenvectors [k] [j] = svd -> v [j] [i]; // TODO 
 			}
 		}
 	}
@@ -433,7 +433,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 }
 
 static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec_from, integer ivec_to) {
-	integer nvectors = ivec_to - ivec_from + 1;
+	integer numberOfVectors = ivec_to - ivec_from + 1;
 	integer nmin = my numberOfEigenvalues < thy numberOfEigenvalues ? my numberOfEigenvalues : thy numberOfEigenvalues;
 
 	Melder_require (my dimension == thy dimension, U"The eigenvectors should have equal dimensions.");
@@ -445,13 +445,13 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 			the columns in the Q's are the eigenvectors.
 		Compute C.
 	*/
-	autoVEC angles_degrees = VECraw (nvectors);
+	autoVEC angles_degrees = VECraw (numberOfVectors);
 	autoMAT c = MATmul (
 			my eigenvectors.horizontalBand (ivec_from, ivec_to),
 			constMATVUtranspose (thy eigenvectors.horizontalBand (ivec_from, ivec_to))
 	);
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
-	for (integer i = 1; i <= nvectors; i ++) {
+	for (integer i = 1; i <= numberOfVectors; i ++) {
 		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;
 	}
 	return angles_degrees;

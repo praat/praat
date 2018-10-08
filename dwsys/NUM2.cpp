@@ -397,23 +397,6 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 	// MATmul_tt (svd->v.get(), m.get()); ??
 }
 
-void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double tolerance) {
-	autoSVD me = SVD_createFromGeneralMatrix ({y, nr, nc});
-
-	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
-	for (integer i = 1; i <= nc; i ++) {
-		for (integer j = 1; j <= nr; j ++) {
-			longdouble s = 0.0;
-			for (integer k = 1; k <= nc; k ++) {
-				if (my d [k] != 0.0) {
-					s += my v [i] [k] * my u [j] [k] / my d [k];
-				}
-			}
-			yinv [i] [j] = (double) s;
-		}
-	}
-}
-
 integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2) {
 	return gsl_poly_solve_quadratic (a, b, c, x1, x2);
 }
@@ -2610,34 +2593,6 @@ void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
 	}
 	if (arg) {
 		*arg = ln_arg;
-	}
-}
-
-void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport) {
-	integer numberOfInvalids = 0;
-	bool firstTime = true;
-	for (integer i = rb; i <= re; i ++) {
-		for (integer j = cb; j <= ce; j ++) {
-			if (isundef (m [i] [j])) {
-				numberOfInvalids ++;
-				if (firstTime) {
-					MelderInfo_writeLine (U"Invalid data at the following [row] [column] positions:");
-					firstTime = false;
-				}
-				if (numberOfInvalids <= maximumNumberOfPositionsToReport) {
-					if (numberOfInvalids % 10 != 0) {
-						MelderInfo_write (U" [", i, U"] [", j, U"]  ");
-					} else {
-						MelderInfo_writeLine (U" [", i, U"] [", j, U"]");
-					}
-				} else {
-					return;
-				}
-			}
-		}
-	}
-	if (numberOfInvalids == 0) {
-		MelderInfo_writeLine (U"All cells have valid data.");
 	}
 }
 

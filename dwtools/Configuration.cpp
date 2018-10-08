@@ -119,14 +119,14 @@ void Configuration_randomize (Configuration me) {
 }
 
 void Configuration_rotate (Configuration me, integer dimension1, integer dimension2, double angle_degrees) {
-	const double f = NUMpi * (2.0 - angle_degrees / 180.0);
-	const double cosa = cos (f), sina = sin (f);
 	if (dimension1 == dimension2 || angle_degrees == 0)
 		return;
 	if (dimension1 > dimension2)
 		std::swap (dimension1, dimension2);
 	if (dimension1 < 1 || dimension2 > my numberOfColumns)
 		return;
+	const double f = NUMpi * (2.0 - angle_degrees / 180.0);
+	const double cosa = cos (f), sina = sin (f);
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		double x1 = my data [i] [dimension1];
 		double x2 = my data [i] [dimension2];
@@ -310,9 +310,7 @@ autoConfiguration Configuration_congruenceRotation (Configuration me, Configurat
 
 void Configuration_rotateToPrincipalDirections (Configuration me) {
 	try {
-		autoMAT newData = matrixcopy (my data.get());
-		NUMdmatrix_into_principalComponents (my data.at, my numberOfRows, my numberOfColumns, my numberOfColumns, newData.at);
-		my data = newData.move();
+		MAT_asPrincipalComponents_preallocated (my data.get(), my data.get());
 	} catch (MelderError) {
 		Melder_throw (me, U": not rotated to principal directions.");
 	}

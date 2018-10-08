@@ -63,7 +63,7 @@ autoAffineTransform structAffineTransform :: v_invert () {
 	autoAffineTransform thee = Data_copy (this);
 	double tolerance = 0.000001;
 
-	NUMpseudoInverse (r.at, dimension, dimension, thy r.at, tolerance);
+	thy r = MATpseudoInverse (r.get(), tolerance);
 	for (integer i = 1; i <= dimension; i ++) {
 		thy t [i] = 0.0;
 		for (integer j = 1; j <= thy dimension; j ++) {

@@ -18,19 +18,20 @@
 
 #include "NUMclapack.h"
 #include "MAT_numerics.h"
+#include "SVD.h"
 
 void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT a, bool wantEigenvectors, VEC eigenvalues, bool sortAscending) {
 	Melder_assert (a.nrow == a.ncol);
 	Melder_assert (eigenvalues.size == a.ncol);
 
 	char jobz = wantEigenvectors ? 'V' : 'N', uplo = 'U';
-	integer workSize = -1, n = a.ncol, info;
-	double wt [1], tmp;
+	integer workSize = -1, info;
+	double wt [1];
 	
 	// 0. No need to transpose a because it is a symmetric matrix
 	// 1. Query for the size of the work array
 	
-	(void) NUMlapack_dsyev (& jobz, & uplo, & n, & a [1] [1], & n, eigenvalues.begin(), wt, & workSize, & info);
+	(void) NUMlapack_dsyev (& jobz, & uplo, & a.ncol, & a [1] [1], & a.ncol, eigenvalues.begin(), wt, & workSize, & info);
 	Melder_require (info == 0, U"dsyev initialization code = ", info, U").");
 	
 	workSize = Melder_iceiling (wt [0]);
@@ -38,17 +39,17 @@ void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT a, bool wantEigenvectors
 
 	// 2. Calculate the eigenvalues and eigenvectors (row-wise)
 	
-	(void) NUMlapack_dsyev (& jobz, & uplo, & n, & a [1] [1], & n, eigenvalues.begin(), work.begin(), & workSize, & info);
+	(void) NUMlapack_dsyev (& jobz, & uplo, & a.ncol, & a [1] [1], & a.ncol, eigenvalues.begin(), work.begin(), & workSize, & info);
 	Melder_require (info == 0, U"dsyev code = ", info, U").");
 
 	// 3. Eigenvalues are returned in ascending order
 
 	if (! sortAscending) {
-		for (integer i = 1; i <= n / 2; i ++) {
-			integer ilast = n - i + 1;
+		for (integer i = 1; i <= a.ncol / 2; i ++) {
+			integer ilast = a.ncol - i + 1;
 			std::swap (eigenvalues [i], eigenvalues [ilast]);
 			if (wantEigenvectors) {
-				for (integer j = 1; j <= n; j ++)
+				for (integer j = 1; j <= a.ncol; j ++)
 					std::swap (a [i] [j], a [ilast] [j]);
 			}
 		}
@@ -146,6 +147,42 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT 
 		}
 	}
 	*/
+}
+
+void MAT_asPrincipalComponents_preallocated (MAT pc, constMAT m) {
+	Melder_assert (pc.nrow == m.nrow && pc.ncol <= m.ncol);
+	autoSVD svd = SVD_createFromGeneralMatrix (m);
+	MATVUmul (pc, m, constMATVUtranspose (svd -> v.horizontalBand (1, pc.ncol)));
+}
+
+autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents) {
+	Melder_assert (numberOfComponents  > 0 && numberOfComponents <= m.ncol);
+	autoMAT result = MATraw (m.nrow, numberOfComponents);
+	MAT_asPrincipalComponents_preallocated (result.get(), m);
+	return result;
+}
+
+void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance) {
+	Melder_assert (target.nrow == m.nrow && target.ncol == m.ncol);
+	autoSVD me = SVD_createFromGeneralMatrix (m);
+	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
+	for (integer i = 1; i <= m.ncol; i ++) {
+		for (integer j = 1; j <= m.nrow; j ++) {
+			longdouble s = 0.0;
+			for (integer k = 1; k <= m.ncol; k ++) {
+				if (my d [k] != 0.0) {
+					s += my v [i] [k] * my u [j] [k] / my d [k];
+				}
+			}
+			target [i] [j] = (double) s;
+		}
+	}
+}
+
+autoMAT MATpseudoInverse (constMAT m, double tolerance) {
+	autoMAT result = MATraw (m.nrow, m.ncol);
+	MATpseudoInverse_preallocated (result.get(), m, tolerance);
+	return result;
 }
 
 /* End of file MAT_numerics.cpp */

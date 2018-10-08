@@ -73,7 +73,9 @@ Thing_implement (SVD, Daata, 1);
 void SVD_init (SVD me, integer numberOfRows, integer numberOfColumns) {
 	if (numberOfRows < numberOfColumns) {
 		my isTransposed = true;
-		integer tmp = numberOfRows; numberOfRows = numberOfColumns; numberOfColumns = tmp;
+		integer tmp = numberOfRows;
+		numberOfRows = numberOfColumns;
+		numberOfColumns = tmp;
 	}
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
@@ -163,8 +165,11 @@ void SVD_compute (SVD me) {
 		autoVEC work = VECraw (lwork);
 		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be computed.");
+		/*
 
-		MATtranspose_inplace_mustBeSquare (my v.get());
+		
+		*/
+		MATtranspose_inplace_mustBeSquare (my v.get()); 
 		
 	} catch (MelderError) {
 		Melder_throw (me, U": SVD could not be computed.");

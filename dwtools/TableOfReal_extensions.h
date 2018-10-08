@@ -167,7 +167,7 @@ void TableOfReal_standardizeColumns (TableOfReal me);
 
 void TableOfReal_standardizeRows (TableOfReal me);
 
-autoTableOfReal TableOfReal_rankColumns (TableOfReal me);
+autoTableOfReal TableOfReal_rankColumns (TableOfReal me, integer fromColumn, integer toColumn);
 
 autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool useMedians);
 /*

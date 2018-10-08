@@ -80,9 +80,6 @@ void MATprintMatlabForm (constMAT m, conststring32 name);
 		7, 8, 9 ];
 */
 
-void NUMdmatrix_diagnoseCells (double **m, integer rb, integer re, integer cb, integer ce, integer maximumNumberOfPositionsToReport);
-/* which cells are not finite? */
-
 /*  NUMvector_extrema
  * Function:
  *	 compute minimum and maximum values of array v[lo..hi].
@@ -323,60 +320,70 @@ autoVEC VECmonotoneRegression (constVEC x);
 	the order of equals: e.g., the array 3,1,1,2 will be sorted as 1,1,2,3.
 	It may occur that a_sorted[1] = a_presorted[2] and a_sorted[2] = a_presorted[1]
 */
-template<class T1, class T2>
-void NUMsort2 (integer n, T1 *a, T2 *b) {
-	integer l, r, j, i, imin;
+template<typename T1, typename T2>
+void NUMsortTogether (vector<T1> a, vector<T2> b) {
+	Melder_assert (a.size == b.size);
 	T1 k, min;
 	T2 kb, min2;
-	if (n < 2) {
-		return;   /* Already sorted. */
-	}
-	if (n == 2) {
+	if (a.size < 2) return;   /* Already sorted. */
+	if (a.size == 2) {
 		if (a [1] > a [2]) {
-			min = a [2]; a [2] = a [1]; a [1] = min;
-			min2 = b [2]; b [2] = b [1]; b [1] = min2;
+			min = a [2];
+			a [2] = a [1];
+			a [1] = min;
+			min2 = b [2];
+			b [2] = b [1];
+			b [1] = min2;
 		}
 		return;
 	}
-	if (n <= 12) {
-		for (i = 1; i < n; i ++) {
+	if (a.size <= 12) {
+		for (integer i = 1; i < a.size; i ++) {
 			min = a [i];
-			imin = i;
-			for (j = i + 1; j <= n; j ++) {
+			integer imin = i;
+			for (integer j = i + 1; j <= a.size; j ++)
 				if (a [j] < min) {
 					min = a [j];
 					imin = j;
 				}
-			}
-			a [imin] = a [i]; a [i] = min;
-			min2 = b [imin]; b [imin] = b [i]; b [i] = min2;
+			a [imin] = a [i];
+			a [i] = min;
+			min2 = b [imin];
+			b [imin] = b [i];
+			b [i] = min2;
 		}
 		return;
 	}
 	/* H1 */
-	l = (n >> 1) + 1;
-	r = n;
+	integer l = (a.size >> 1) + 1;
+	integer r = a.size;
 	for (;;) {
 		if (l > 1) {
 			l --;
-			k = a [l]; kb = b [l];
+			k = a [l];
+			kb = b [l];
 		} else /* l == 1 */ {
-			k = a [r]; kb = b [r];
-			a [r] = a [1]; b [r] = b [1];
+			k = a [r];
+			kb = b [r];
+			a [r] = a [1];
+			b [r] = b [1];
 			r --;
 			if (r == 1) {
-				a [1] = k; b [1] = kb; return;
+				a [1] = k;
+				b [1] = kb;
+				return;
 			}
 		}
 		/* H3 */
-		j = l;
+		integer i, j = l;
 		for (;;) { /* H4 */
 			i = j;
 			j = j << 1;
 			if (j > r) break;
 			if (j < r && a [j] < a [j + 1]) j ++; /* H5 */
 			/* if (k >= a[j]) break; H6 */
-			a [i] = a [j]; b [i] = b [j]; /* H7 */
+			a [i] = a [j];
+			b [i] = b [j]; /* H7 */
 		}
 		/* a[i] = k; b[i] = kb; H8 */
 		for (;;) { /*H8' */
@@ -384,9 +391,12 @@ void NUMsort2 (integer n, T1 *a, T2 *b) {
 			i = j >> 1;
 			/* H9' */
 			if (j == l || k <= a [i]) {
-				a [j] = k; b [j] = kb; break;
+				a [j] = k;
+				b [j] = kb;
+				break;
 			}
-			a [j] = a [i]; b [j] = b [i];
+			a [j] = a [i];
+			b [j] = b [i];
 		}
 	}
 }
@@ -405,6 +415,7 @@ void NUMindexx_s (char32 *a[], integer n, integer indx[]);
 	No preservation of order among equals (see NUMsort2_...)
 */
 
+void NUMrankColumns (MAT m, integer cb, integer ce);
 
 /* NUMrank:
  *  Replace content of array by rank number, including midranking of ties.
@@ -412,101 +423,18 @@ void NUMindexx_s (char32 *a[], integer n, integer indx[]);
  *  by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively. *
  */
 template <class T>
-void NUMrank (integer n, T *a) {
+void NUMrank (vector<T> a) {
 	integer jt, j = 1;
-	while (j < n) {
-		for (jt = j + 1; jt <= n && a[jt] == a[j]; jt++) {}
+	while (j < a.size) {
+		for (jt = j + 1; jt <= a.size && a[jt] == a[j]; jt++) {}
 		T rank = (j + jt - 1) * 0.5;
 		for (integer i = j; i <= jt - 1; i++) {
 			a[i] = rank;
 		}
 		j = jt;
 	}
-	if (j == n) a[n] = n;
+	if (j == a.size) a[a.size] = a.size;
 }
-
-void NUMrankColumns (double **m, integer rb, integer re, integer cb, integer ce);
-
-int NUMjacobi (float **a, integer n, float d[], float **v, integer *nrot);
-/*
-	This version deviates from the NR version.
-	HERE: v[1..n][1..n] is a matrix whose ROWS
-	(and not the columns) contain, on output, the normalized eigenvectors
-	of `a'.
-	Computes all eigenvalues and eigenvectors of a real symmetric
-	matrix a[1..n][1..n].
-	On output, elements of `a' above the diagonal are destroyed.
-	d[1..n] returns the eigenvalues of `a'.
-	`nrot' returns the number of Jacobi rotations that were required.
- */
-
-void NUMtred2 (double **a, integer n, double d[], double e[]);
-/*
-	Householder reduction of a real, symmetric matrix a[1..n][1..n]. On output,
-	a is replaced by the orthogonal matrix Q effecting the transformation.
-	d[1..n] returns the diagonal elements of the tridiagonal matrix, and e[1..n]
-	the off-diagonal elements, with e[1] = 0.
-*/
-
-int NUMtqli (double d[], double e[], integer n, double **z);
-/*
-	QL algorithm with implicit shifts, to determine the (sorted) eigenvalues
-	and eigenvectors of a real, symmetric, tridiagonal matrix, or of a real,
-	symmetric matrix previously reduced by NUMtred2 .
-	On input d[1..n] contains the diagonal elements of the tridiagonal matrix.
-	On output, it returns the eigenvalues.
-	The vector e[1..n] inputs the subdiagonal elements of the tridiagonal
-	matrix, with e[1] arbitrary.
-	On output e is destroyed.
-	If the eigenvectors of a tridiagonal matrix are desired,
-	the matrix z[1..n][1..n] is input as the identity matrix.
-	If the eigenvectors of a matrix that has been reduced by NUMtred2 are
-	required, then z is input as the matrix output by NUMtred2. The k-th
-	column of z returns the normalized eigenvector corresponding to d[k].
-	Returns 0 in case of too many rotations.
-*/
-
-int NUMgaussj (double **a, integer n, double **b, integer m);
-/*
-	Calculate inverse of square matrix a[1..n][1..n] (in-place).
-	Method: Gauss-Jordan elimination with full pivoting.
-	Error message in case of singular matrix.
-*/
-
-int NUMsvdcmp (double **a, integer m, integer n, double w[], double **v);
-/*
-	Given a matrix a[1..m][1..n], this routine computes its singular
-	value decomposition, A = U.W.V'. The matrix U replaces a on output.
-	The diagonal matrix of singular values W is output as vector w[1..n].
-	The matrix V (not the transpose V') is output as v[1..n][1..n].
-	Possible errors: no memory or more than 30 iterations.
- */
-
-int NUMsvbksb (double **u, double w[], double **v, integer m, integer n, double b[], double x[]);
-/*
-	Solves A.X=B for a vector X, where A is specified by the arrays
-	u[1..m][1..n], w[1..n], v[1..n][1..n] as returned by NUMsvdcmp.
-	m and n are the dimensions of a, and will be equal for square
-	matrices. b[1..m] is the input right-hand side. x[1..n] is the
-	output solution vector.
-	Possible errors: no memory.
-*/
-
-int NUMludcmp (double **a, integer n, integer *indx, double *d);
-/*	Given a matrix a[1..n][1..n], this routine replaces it by the
-	LU decomposition of a rowwise permutation of itself.
-	a	: matrix [1..n][1..n]
-	n	: dimension of matrix
-	indx	: output vector[1..n] that records the row permutation effected by
-			partial pivoting.
-	d	: output +/-1 depending on whether the number of ro interchanges was
-		even/odd.
-*/
-
-int NUMcholeskyDecomposition (double **a, integer n, double d[]);
-/*
-	Cholesky decomposition of a symmetric positive definite matrix.
-*/
 
 void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd);
 /*
@@ -618,13 +546,6 @@ void NUMprincipalComponents (double **a, integer n, integer nComponents, double 
 /*
 	Determines the principal components of a real symmetric matrix
 	a[1..n][1..n] as a pc[1..n][1..nComponents] column matrix.
-*/
-
-void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double tolerance);
-/*
-	Determines the pseudo-inverse Y^-1 of Y[1..nr][1..nc] via s.v.d.
-	Alternative notation for pseudo-inverse: (Y'.Y)^-1.Y'
-	Returns a [1..nc][1..nr] matrix
 */
 
 integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2);

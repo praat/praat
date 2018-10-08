@@ -573,7 +573,7 @@ autoCorrelation TableOfReal_to_Correlation (TableOfReal me) {
 
 autoCorrelation TableOfReal_to_Correlation_rank (TableOfReal me) {
 	try {
-		autoTableOfReal t = TableOfReal_rankColumns (me);
+		autoTableOfReal t = TableOfReal_rankColumns (me, 1, my numberOfColumns);
 		autoCorrelation thee = TableOfReal_to_Correlation (t.get());
 		return thee;
 	} catch (MelderError) {
@@ -1787,9 +1787,7 @@ void SSCP_expandLowerCholesky (SSCP me) {
 			my lnd += log (my data [1] [j]);   // diagonal elmnt is variance
 		}
 	} else {
-		for (integer i = 1; i <= my numberOfRows; i ++)
-			for (integer j = i; j <= my numberOfColumns; j ++)
-				my lowerCholesky [j] [i] = my lowerCholesky [i] [j] = my data [i] [j];
+		MATcopy_preallocated (my lowerCholesky.get(), my data.get());
 		try {
 			MATlowerCholeskyInverse_inplace (my lowerCholesky.get(), & (my lnd));
 		} catch (MelderError) {
@@ -1797,7 +1795,7 @@ void SSCP_expandLowerCholesky (SSCP me) {
 			my lnd = 0.0;
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				for (integer j = i; j <= my numberOfColumns; j ++)
-					my lowerCholesky [i] [j] = my lowerCholesky [j] [i] = ( i == j ? 1.0 / sqrt (my data [i] [i]) : 0.0 );
+					my lowerCholesky [i] [j] = my lowerCholesky [j] [i] = (i == j ? 1.0 / sqrt (my data [i] [i]) : 0.0);
 				my lnd += log (my data [i] [i]);
 			}
 			my lnd *= 2.0;

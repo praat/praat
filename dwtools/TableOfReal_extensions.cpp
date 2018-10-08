@@ -1351,10 +1351,11 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 	}
 }
 
-autoTableOfReal TableOfReal_rankColumns (TableOfReal me) {
+autoTableOfReal TableOfReal_rankColumns (TableOfReal me, integer fromColumn, integer toColumn) {
 	try {
+		fixAndCheckColumnRange (& fromColumn, & toColumn, my data.get(), 1);
 		autoTableOfReal thee = Data_copy (me);
-		NUMrankColumns (thy data.at, 1, thy numberOfRows, 1, thy numberOfColumns);
+		NUMrankColumns (thy data.get(), fromColumn, toColumn);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column ranks not created.");

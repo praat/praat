@@ -306,9 +306,9 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		autoEigen eigen = Thing_new (Eigen);
 		autoCrossCorrelationTableList ccts = Data_copy (thee);
 		autoMAT d (dimension, dimension, kTensorInitializationType::RAW);
-		autoNUMmatrix<double> pinv (1, dimension, 1, dimension);
+		autoMAT pinv = MATraw (dimension, dimension);
 		//autoNUMmatrix<double> d (1, dimension, 1, dimension);
-		autoNUMmatrix<double> p (1, dimension, 1, dimension);
+		autoMAT p = MATzero (dimension, dimension);
 		autoNUMmatrix<double> m1 (1, dimension, 1, dimension);
 		autoNUMmatrix<double> wc (1, dimension, 1, dimension);
 		autoNUMvector<double> wvec (1, dimension);
@@ -342,14 +342,14 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		for (integer ic = 1; ic <= thy size; ic ++) {
 			CrossCorrelationTable cov1 = thy at [ic];
 			CrossCorrelationTable cov2 = ccts -> at [ic];
-			NUMdmatrices_multiply_VCVp (cov2 -> data.at, p.peek(), dimension, dimension, cov1 -> data.at, true);
+			NUMdmatrices_multiply_VCVp (cov2 -> data.at, p.at, dimension, dimension, cov1 -> data.at, true);
 		}
 
 		// W = P'\W == inv(P') * W
 
-		NUMpseudoInverse (p.peek(), dimension, dimension, pinv.peek(), 0);
+		MATpseudoInverse_preallocated (pinv.get (), p.get(), 0);
 
-		NUMdmatrices_multiply_VpC (w, pinv.peek(), dimension, dimension, wc.peek(), dimension);
+		NUMdmatrices_multiply_VpC (w, pinv.at, dimension, dimension, wc.peek(), dimension);
 
 		// initialisation for order KN^3
 
@@ -417,7 +417,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		// Take transpose to make W*C [i]W' diagonal instead of W'*C [i]*W => (P'*W)'=W'*P
 
 		NUMmatrix_copyElements (w, wc.peek(), 1, dimension, 1, dimension);
-		NUMdmatrices_multiply_VpC (w, wc.peek(), dimension, dimension, p.peek(), dimension); // W = W'*P: final result
+		NUMdmatrices_multiply_VpC (w, wc.peek(), dimension, dimension, p.at, dimension); // W = W'*P: final result
 
 		// Calculate the "real" diagonality measure
 	//	double dm = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
@@ -430,7 +430,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 void MixingMatrix_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	autoDiagonalizer him = MixingMatrix_to_Diagonalizer (me);
 	Diagonalizer_CrossCorrelationTableList_improveDiagonality (him.get(), thee, maxNumberOfIterations, tol, method);
-	NUMpseudoInverse (his data.at, his numberOfRows, his numberOfColumns, my data.at, 0);
+	MATpseudoInverse_preallocated (my data.get(), his data.get(), 0);
 }
 
 
@@ -621,7 +621,7 @@ autoDiagonalizer MixingMatrix_to_Diagonalizer (MixingMatrix me) {
 		Melder_require (my numberOfRows == my numberOfColumns, U"The number of channels and the number of components should be equal.");
 		
 		autoDiagonalizer thee = Diagonalizer_create (my numberOfRows);
-		NUMpseudoInverse (my data.at, my numberOfRows, my numberOfColumns, thy data.at, 0.0);
+		MATpseudoInverse_preallocated (thy data.get(), my data.get(), 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Diagonalizer created.");
@@ -632,7 +632,7 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 	try {
 		autoMixingMatrix thee = MixingMatrix_create (my numberOfRows, my numberOfColumns);
 		MixingMatrix_setRandomGauss ( thee.get(), 0.0, 1.0);
-		NUMpseudoInverse (my data.at, my numberOfRows, my numberOfColumns, thy data.at, 0.0);
+		MATpseudoInverse_preallocated (thy data.get(), my data.get(), 0.0);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MixingMatrix created.");

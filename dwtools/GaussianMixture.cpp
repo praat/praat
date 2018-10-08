@@ -592,20 +592,21 @@ autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (Gaus
 		double ln2pid = -0.5 * my dimension * log (NUM2pi);
 		autoNUMvector<double> lnN (1, my numberOfComponents);
 		for (integer i = 1; i <=  thy numberOfRows; i ++) {
-			double psum = 0.0;
+			longdouble psum = 0.0;
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance cov = my covariances->at [im];
 				double dsq = NUMmahalanobisDistance (cov -> lowerCholesky.get(), thy data.row(i), cov -> centroid.get());
 				lnN [im] = ln2pid - 0.5 * (cov -> lnd + dsq);
 				psum += his data [i] [im] = my mixingProbabilities [im] * exp (lnN [im]);
 			}
-			if (psum == 0) { // p's might be too small (underflow), make the largest equal to sfmin
+			if (psum == 0.0) { // p's might be too small (underflow), make the largest equal to sfmin
 				double lnmax = -1e308;
 				integer imm = 1;
 				for (integer im = 1; im <= my numberOfComponents; im ++) {
 					if (lnN [im] > lnmax) {
 						lnmax = lnN [im];
-					} imm = im;
+					} 
+					imm = im;
 				}
 				his data [i] [imm] = NUMfpp -> sfmin;
 			}

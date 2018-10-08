@@ -7234,6 +7234,16 @@ DO
 	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
 }
 
+FORM (NEW_TableOfReal_to_TableOfReal_rankColumns, U"TableOfReal: Rank columns", U"TableOfReal: To TableOfReal (rank columns)...") {
+	INTEGER (fromColumn, U"left Column range", U"0")
+	INTEGER (toColumn, U"right Column range", U"0 (=all)")
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_rankColumns (me, fromColumn, toColumn);
+	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
+}
+
 /***** TableOfReal and FilterBank  *****/
 
 FORM (REAL_TextGrid_getTotalDurationOfIntervalsWhere, U"Total duration of intervals where", nullptr) {
@@ -8432,6 +8442,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 0, U"To CCA...", nullptr, 1, NEW_TableOfReal_to_CCA);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (means by row labels)...", nullptr, 1, NEW_TableOfReal_meansByRowLabels);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (medians by row labels)...", nullptr, 1, NEW_TableOfReal_mediansByRowLabels);
+	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (rank columns)...", nullptr, praat_HIDDEN, NEW_TableOfReal_to_TableOfReal_rankColumns);
 
 	praat_addAction1 (classTableOfReal, 0, U"-- configurations --", nullptr, 1, 0);
 	praat_addAction1 (classTableOfReal, 0, U"To Configuration (pca)...", nullptr, 1, NEW_TableOfReal_to_Configuration_pca);

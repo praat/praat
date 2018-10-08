@@ -123,7 +123,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 		Permutation_permuteRandomly_inplace (p.get(), 1, numberOfCells);
 	} else if (drawingOrder == kGraphicsMatrixCellDrawingOrder::IncreasingValues || drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
 		autoVEC v = nummat_vectorize (my z.get(), rowmin, rowmax, colmin, colmax, false);
-		NUMsort2<double, integer> (numberOfCells, v.at, p -> p.at);
+		NUMsortTogether (v.get(), p -> p.get());
 		if (drawingOrder == kGraphicsMatrixCellDrawingOrder::DecreasingValues) {
 			Permutation_reverse_inline (p.get(), 1, numberOfCells);
 		}

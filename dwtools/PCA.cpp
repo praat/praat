@@ -165,7 +165,7 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 			mcopy = MATcopy (m);
 		}
 		autoPCA thee = Thing_new (PCA);
-		thy centroid = VECzero (mcopy.ncol);
+		thy centroid = VECraw (mcopy.ncol);
 		VECcolumnMeans_preallocated (thy centroid.get(), mcopy.get());
 		MATsubtract_inplace (mcopy.get(), thy centroid.get());
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
@@ -176,8 +176,8 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 			the eigenstructure for A'A. This has no consequences for the
 			eigenvectors, but the eigenvalues have to be divided by (N-1).
 		*/
-		for (integer i = 1; i <= thy numberOfEigenvalues; i ++)
-			thy eigenvalues [i] /= (mcopy.nrow - 1);
+		VECmultiply_inplace (thy eigenvalues.get(), 1.0 / (mcopy.nrow - 1));
+		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No PCA created from ", ( byColumns ? U"columns." : U"rows." ));
@@ -314,8 +314,7 @@ autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring
 		integer npc;
 		autoVEC pc = VEC_createFromString (numstring);
 		autoConfiguration c = Configuration_create (1, pc.size);
-		for (integer j = 1; j <= npc; j ++)
-			c -> data [1] [j] = pc [j];
+		VECcopy_preallocated (c -> data.row (1), pc.get());
 		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());
 		return him;
 	} catch (MelderError) {
