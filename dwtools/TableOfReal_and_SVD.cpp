@@ -47,7 +47,7 @@ autoSVD TableOfReal_to_SVD (TableOfReal me) {
 autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		NUMmatrix_copyElements (my u.at, thy data.at, 1, my numberOfRows, 1, my numberOfColumns);
+		MATcopy_preallocated (thy data.get(), my u.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": left singular vector not extracted.");
@@ -57,7 +57,7 @@ autoTableOfReal SVD_extractLeftSingularVectors (SVD me) {
 autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, my numberOfColumns);
-		NUMmatrix_copyElements (my v.at, thy data.at, 1, my numberOfColumns, 1, my numberOfColumns);
+		MATcopy_preallocated (thy data.get(), my v.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": right singular vector not extracted.");
@@ -67,7 +67,7 @@ autoTableOfReal SVD_extractRightSingularVectors (SVD me) {
 autoTableOfReal SVD_extractSingularValues (SVD me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (1, my numberOfColumns);
-		NUMvector_copyElements (my d.at, & thy data [1] [0], 1, my numberOfColumns);
+		VECcopy_preallocated (thy data.row(1), my d.get());
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": singular values not extracted.");

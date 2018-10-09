@@ -125,8 +125,8 @@ void Configuration_rotate (Configuration me, integer dimension1, integer dimensi
 		std::swap (dimension1, dimension2);
 	if (dimension1 < 1 || dimension2 > my numberOfColumns)
 		return;
-	const double f = NUMpi * (2.0 - angle_degrees / 180.0);
-	const double cosa = cos (f), sina = sin (f);
+	const double phi = NUMpi * (2.0 - angle_degrees / 180.0);
+	const double cosa = cos (phi), sina = sin (phi);
 	for (integer i = 1; i <= my numberOfRows; i ++) {
 		double x1 = my data [i] [dimension1];
 		double x2 = my data [i] [dimension2];
@@ -305,8 +305,6 @@ autoConfiguration Configuration_congruenceRotation (Configuration me, Configurat
 		Melder_throw (me, U": congruence rotation not performed.");
 	}
 }
-
-/* Replace by TableOfReal_to_Configuration_pca ??? */
 
 void Configuration_rotateToPrincipalDirections (Configuration me) {
 	try {

@@ -766,9 +766,8 @@ void DataModeler_fit (DataModeler me) {
 
 		// For function evaluation with only the FIXED parameters
 
-		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++) {
+		for (integer ipar = 1; ipar <= my numberOfParameters; ipar ++)
 			parameter [ipar] = my parameterStatus [ipar] == DataModeler_PARAMETER_FIXED ? my parameter [ipar] : 0.0;
-		}
 
 		// estimate sigma if we weigh all datapoint equally. 
 		// This is necessary to get the parameter covariances right
@@ -787,10 +786,9 @@ void DataModeler_fit (DataModeler me) {
 
 				my f_evaluateBasisFunctions (me, xi, term.at);
 				integer ipar = 0;
-				for (integer j = 1; j <= my numberOfParameters; j ++) {
+				for (integer j = 1; j <= my numberOfParameters; j ++)
 					if (my parameterStatus [j] != DataModeler_PARAMETER_FIXED)
 						design [idata] [++ ipar] = term [j] / si;
-				}
 
 				// only 'residual variance' must be explained by the model
 
@@ -801,8 +799,7 @@ void DataModeler_fit (DataModeler me) {
 		// Singular value decomposition and evaluation of the singular values
 
 		autoSVD thee = SVD_createFromGeneralMatrix (design.get());
-		if (! NUMfpp)
-			NUMmachar ();
+		if (! NUMfpp) NUMmachar ();
 		SVD_zeroSmallSingularValues (thee.get(), my tolerance > 0.0 ? my tolerance : numberOfDataPoints * NUMfpp -> eps);
 		autoVEC result = SVD_solve (thee.get(), b.get());
 
@@ -817,13 +814,10 @@ void DataModeler_fit (DataModeler me) {
 		cov -> numberOfObservations = numberOfDataPoints;
 		// estimate covariances between parameters
 		if (numberOfParameters < my numberOfParameters) {
-			autoNUMmatrix<double> covtmp (1, numberOfParameters, 1, numberOfParameters);
-			SVD_getSquared (thee.get(), covtmp.peek(), true);
+			autoMAT covtmp = SVD_getSquared (thee.get(), true);
 			// Set fixed parameters variances and covariances to zero.
-			for (integer i = 1; i <= my numberOfParameters; i ++) {
-				for (integer j = i; j <= my numberOfParameters; j ++)
-					cov -> data [i] [j] = cov -> data [j] [i] = 0.0;
-			}
+			MATset (cov -> data.get(), 0.0);
+			
 			ipar = 0;
 			for (integer i = 1; i <= my numberOfParameters; i ++) {
 				if (my parameterStatus [i] != DataModeler_PARAMETER_FIXED) {
@@ -836,7 +830,7 @@ void DataModeler_fit (DataModeler me) {
 				}
 			}
 		} else {
-			SVD_getSquared (thee.get(), cov -> data.at, true);
+			SVD_getSquared_preallocated (cov -> data.get(), thee.get(), true);
 		}
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler no fit.");

@@ -84,7 +84,8 @@ void SVD_synthesize (SVD me, integer sv_from, integer sv_to, double **m);
 	by caller!
 */
 
-void SVD_getSquared (SVD me, double **m, bool inverse);
+autoMAT SVD_getSquared (SVD me, bool inverse);
+void SVD_getSquared_preallocated (MAT m, SVD me, bool inverse);
 // compute V D^2 V' or V D^-2 V'
 
 integer SVD_getRank (SVD me);

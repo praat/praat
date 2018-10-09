@@ -166,8 +166,7 @@ void SVD_compute (SVD me) {
 		(void) NUMlapack_dgesvd (& jobu, & jobvt, & m, & n, & my u [1] [1], & lda, my d.begin(), & my v [1] [1], & ldu, nullptr, & ldvt, work.begin(), & lwork, & info);
 		Melder_require (info == 0, U"SVD could not be computed.");
 		/*
-
-		
+			Because we store the eigenvectors row-wise, they must be transposed
 		*/
 		MATtranspose_inplace_mustBeSquare (my v.get()); 
 		
@@ -177,7 +176,8 @@ void SVD_compute (SVD me) {
 }
 
 // V D^2 V'or V D^-2 V
-void SVD_getSquared (SVD me, double **m, bool inverse) {
+void SVD_getSquared_preallocated (MAT m, SVD me, bool inverse) {
+	Melder_assert (m.nrow == m.ncol && m.ncol == my numberOfColumns);
 	for (integer i = 1; i <= my numberOfColumns; i ++) {
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
 			longdouble val = 0.0;
@@ -191,6 +191,12 @@ void SVD_getSquared (SVD me, double **m, bool inverse) {
 			m [i] [j] = (double) val;
 		}
 	}
+}
+
+autoMAT SVD_getSquared (SVD me, bool inverse) {
+	autoMAT result = MATraw (my numberOfColumns, my numberOfColumns);
+	SVD_getSquared_preallocated (result.get(), me, inverse);
+	return result;
 }
 
 autoVEC SVD_solve (SVD me, constVEC b) {
@@ -230,7 +236,7 @@ integer SVD_getMinimumNumberOfSingularValues (SVD me, double fractionOfSumOfSing
 	return j;
 }
 
-void SVD_sort (SVD me) {
+void SVD_sort (SVD me) { // Superfluous??, SVD is always sorted
 	try {
 		autoSVD thee = Data_copy (me);
 		autoINTVEC index = NUMindexx (my d.get());

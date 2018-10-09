@@ -4279,6 +4279,8 @@ DO
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
 	NUMBER_COUPLE (PCA)
+		Melder_require (my numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the first PCA.");
+		Melder_require (your numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the second PCA.");
 		double result = Eigens_getAngleBetweenEigenplanes_degrees (me, you);
 	NUMBER_COUPLE_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
 }

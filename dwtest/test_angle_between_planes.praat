@@ -24,12 +24,14 @@ procedure test: degrees, nrow, ncol,
 	pc1 = To PCA
 	selectObject: c
  	# The rotation is in the pc-coordinates frame
-	Rotate... 1 3 degrees
+	Rotate: 1, 3, degrees
 	idt3 =  To TableOfReal
 	pc2 = To PCA
 	selectObject: pc1, pc2
 	degrees_found = Get angle between pc1-pc2 planes
- 	assert abs(degrees-degrees_found) < 2e-6; 'nrow' 'degrees' 'degrees_found'
+	diff = abs (degrees_found-degrees)
+	appendInfoLine: tab$, tab$, fixed$ (degrees, 4), " ", fixed$ (diff, 4), " (", nrow, ")"
+ 	#assert abs(degrees_found-degrees) < 0.1; 'nrow' 'degrees' 'degrees_found'
 	# printline 'nrow' 'degrees' 'degrees_found'
 
  	removeObject: idt1, idt2, idt3, pc1, pc2, c

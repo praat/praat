@@ -148,7 +148,7 @@ autoEigen PCA_to_Eigen (PCA me) {
 	}
 }
 
-static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
+static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 	try {
 		Melder_require (NUMdefined (m),
 			U"All matrix elements should be defined.");
@@ -164,9 +164,9 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 				Melder_warning (U"The number of rows in your table is less than the number of columns.");
 			mcopy = MATcopy (m);
 		}
+		
 		autoPCA thee = Thing_new (PCA);
-		thy centroid = VECraw (mcopy.ncol);
-		VECcolumnMeans_preallocated (thy centroid.get(), mcopy.get());
+		thy centroid = VECcolumnMeans (mcopy.get());
 		MATsubtract_inplace (mcopy.get(), thy centroid.get());
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
 		thy labels = autostring32vector (mcopy.ncol);
@@ -186,7 +186,7 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 
 autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (my data.get(), false);
+		autoPCA thee = MAT_to_PCA (my data.get(), false);
 		Melder_assert (thy labels.size == my numberOfColumns);
 		thy labels. copyElementsFrom (my columnLabels.get());
 		return thee;
@@ -197,7 +197,7 @@ autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 
 autoPCA Matrix_to_PCA_byColumns (Matrix me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (my z.get(), true);
+		autoPCA thee = MAT_to_PCA (my z.get(), true);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PCA created from columns.");
@@ -206,7 +206,7 @@ autoPCA Matrix_to_PCA_byColumns (Matrix me) {
 
 autoPCA Matrix_to_PCA_byRows (Matrix me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (my z.get(), false);
+		autoPCA thee = MAT_to_PCA (my z.get(), false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PCA created from rows.");
