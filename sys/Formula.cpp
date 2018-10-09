@@ -96,7 +96,7 @@ enum { NO_SYMBOL_,
 		SIGMOID_, VEC_SIGMOID_, VEC_SOFTMAX_,
 		INV_SIGMOID_, ERF_, ERFC_, GAUSS_P_, GAUSS_Q_, INV_GAUSS_Q_,
 		RANDOM_BERNOULLI_, VEC_RANDOM_BERNOULLI_,
-		RANDOM_POISSON_,
+		RANDOM_POISSON_, MAT_TRANSPOSE_,
 		LOG2_, LN_, LOG10_, LN_GAMMA_,
 		HERTZ_TO_BARK_, BARK_TO_HERTZ_, PHON_TO_DIFFERENCE_LIMENS_, DIFFERENCE_LIMENS_TO_PHON_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
@@ -113,7 +113,7 @@ enum { NO_SYMBOL_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
-		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, VEC_REPEAT_,
+		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, MAT_MUL_TN_, MAT_MUL_NT_, MAT_MUL_TT_, VEC_REPEAT_,
 	#define HIGH_FUNCTION_2  VEC_REPEAT_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
@@ -224,7 +224,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"sigmoid", U"sigmoid#", U"softmax#",
 	U"invSigmoid", U"erf", U"erfc", U"gaussP", U"gaussQ", U"invGaussQ",
 	U"randomBernoulli", U"randomBernoulli#",
-	U"randomPoisson",
+	U"randomPoisson", U"transpose##",
 	U"log2", U"ln", U"log10", U"lnGamma",
 	U"hertzToBark", U"barkToHertz", U"phonToDifferenceLimens", U"differenceLimensToPhon",
 	U"hertzToMel", U"melToHertz", U"hertzToSemitones", U"semitonesToHertz",
@@ -236,7 +236,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
-	U"inner", U"outer##", U"mul#", U"mul##", U"repeat#",
+	U"inner", U"outer##", U"mul#", U"mul##", U"mul_tn##", U"mul_nt##", U"mul_tt##", U"repeat#",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
 
@@ -5095,6 +5095,77 @@ static void do_MATmul () {
 		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
+static void do_MATmul_tn () {
+	/*
+		result## = mul_tn## (x.., y..)
+	*/
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		/*
+			result# = mul_tn## (x##, y##)
+		*/
+		integer xNrow = x->numericMatrix.nrow, yNrow = y->numericMatrix.nrow;
+		Melder_require (yNrow == xNrow,
+			U"In the function \"mul_tn##\", the number of rows of the first matrix and the number of rows of the second matrix should be equal, "
+			U"not ", xNrow, U" and ", yNrow, U".");
+		autoMAT result = MATmul (constMATVUtranspose (x->numericMatrix), y->numericMatrix);
+		pushNumericMatrix (result.move());
+	} else {
+		Melder_throw (U"The function \"mul_tn##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
+static void do_MATmul_nt () {
+	/*
+		result## = mul_nt## (x.., y..)
+	*/
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		/*
+			result# = mul_nt## (x##, y##)
+		*/
+		integer xNcol = x->numericMatrix.ncol, yNcol = y->numericMatrix.ncol;
+		Melder_require (yNcol == xNcol,
+			U"In the function \"mul_tn##\", the number of columns of the first matrix and the number of columns of the second matrix should be equal, "
+			U"not ", xNcol, U" and ", yNcol, U".");
+		autoMAT result = MATmul (x->numericMatrix, constMATVUtranspose (y->numericMatrix));
+		pushNumericMatrix (result.move());
+	} else {
+		Melder_throw (U"The function \"mul_nt##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
+static void do_MATmul_tt () {
+	/*
+		result## = mul_tt## (x.., y..)
+	*/
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		/*
+			result# = mul_tt## (x##, y##)
+		*/
+		integer xNrow = x->numericMatrix.nrow, yNcol = y->numericMatrix.ncol;
+		Melder_require (yNcol == xNrow,
+			U"In the function \"mul_tt##\", the number of rows of the first matrix and the number of columns of the second matrix should be equal, "
+			U"not ", xNrow, U" and ", yNcol, U".");
+		autoMAT result = MATmul (constMATVUtranspose (x->numericMatrix), constMATVUtranspose (y->numericMatrix));
+		pushNumericMatrix (result.move());
+	} else {
+		Melder_throw (U"The function \"mul_tt##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
+static void do_MATtranspose () {
+	Stackel x = topOfStack;
+	if (x->which == Stackel_NUMERIC_MATRIX) {
+		if (x->owned && NUMisSymmetric (x->numericMatrix)) {
+			MATtranspose_inplace_mustBeSquare (x->numericMatrix);
+		} else {
+			x->reset();
+			x->numericMatrix = MATtranspose (x->numericMatrix). releaseToAmbiguousOwner();
+			x->owned = true;
+		}
+	} else {
+		Melder_throw (U"The function \"transpose##\" requires a matrix, not ", x->whichText(), U".");
+	}
+}
 static void do_VECrepeat () {
 	Stackel n = pop, x = pop;
 	if (x->which == Stackel_NUMERIC_VECTOR && n->which == Stackel_NUMBER) {
@@ -6225,6 +6296,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM_BERNOULLI_: { do_function_n_n (NUMrandomBernoulli_real);
 } break; case VEC_RANDOM_BERNOULLI_: { do_functionvec_n_n (NUMrandomBernoulli_real);
 } break; case RANDOM_POISSON_: { do_function_n_n (NUMrandomPoisson);
+} break; case MAT_TRANSPOSE_: { do_MATtranspose ();
 } break; case LOG2_: { do_log2 ();
 } break; case LN_: { do_ln ();
 } break; case LOG10_: { do_log10 ();
@@ -6375,6 +6447,9 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case MAT_OUTER_: { do_MATouter ();
 } break; case VEC_MUL_: { do_VECmul ();
 } break; case MAT_MUL_: { do_MATmul ();
+} break; case MAT_MUL_TN_: { do_MATmul_tn ();
+} break; case MAT_MUL_NT_: { do_MATmul_nt ();
+} break; case MAT_MUL_TT_: { do_MATmul_tt ();
 } break; case VEC_REPEAT_: { do_VECrepeat ();
 /********** Pause window functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
