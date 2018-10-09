@@ -3,7 +3,7 @@
 
 appendInfoLine: "test_angle_between_planes.praat"
 appendInfoLine: tab$, "200 times: angle=randomUniform(0.001,90), numberOfRows = randomInteger (10,1000)"
-for i to 200
+for i to 1;200
 	 hoek = randomUniform (0.001, 90)
  	 nrow = randomInteger (10,1000)
  	 @test: hoek, nrow, 3
@@ -31,7 +31,7 @@ procedure test: degrees, nrow, ncol,
 	degrees_found = Get angle between pc1-pc2 planes
 	diff = abs (degrees_found-degrees)
 	appendInfoLine: tab$, tab$, fixed$ (degrees, 4), " ", fixed$ (diff, 4), " (", nrow, ")"
- 	#assert abs(degrees_found-degrees) < 0.1; 'nrow' 'degrees' 'degrees_found'
+ 	;assert abs(degrees_found-degrees) < 2e-6; 'nrow' 'degrees' 'degrees_found'
 	# printline 'nrow' 'degrees' 'degrees_found'
 
  	removeObject: idt1, idt2, idt3, pc1, pc2, c

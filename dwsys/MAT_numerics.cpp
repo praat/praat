@@ -152,7 +152,7 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT 
 void MAT_asPrincipalComponents_preallocated (MAT pc, constMAT m) {
 	Melder_assert (pc.nrow == m.nrow && pc.ncol <= m.ncol);
 	autoSVD svd = SVD_createFromGeneralMatrix (m);
-	MATVUmul (pc, m, constMATVUtranspose (svd -> v.horizontalBand (1, pc.ncol)));
+	MATVUmul (pc, m, svd -> v.verticalBand (1, pc.ncol));
 }
 
 autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents) {
