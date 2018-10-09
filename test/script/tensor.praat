@@ -170,5 +170,12 @@ a## = {{ 2, 3, 5 }, { 7, 3, 2 }}
 b## = {{ 11, 1, 5, 2 }, { 8, 2, 3, 6 }, { 1, 3, 4, 9 }}
 product## = mul## (a##, b##)
 assert product## = {{ 51, 23, 39, 67 }, { 103, 19, 52, 50 }}
+at## = transpose## (a##)
+bt## = transpose## (b##)
+assert at## == {{ 2, 7 }, { 3, 3 }, { 5, 2 }}
+assert transpose## (bt##) = b##
+assert mul_tn## (at##, b##) = product##
+assert mul_nt## (a##, bt##) = product##
+assert mul_tt## (at##, bt##) = product##
 
 appendInfoLine: "OK"
