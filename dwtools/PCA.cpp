@@ -281,15 +281,8 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 		his columnLabels. copyElementsFrom (my labels.get());
 		his rowLabels. copyElementsFrom (thy rowLabels.get());
 
-		for (integer i = 1; i <= thy numberOfRows; i ++) {
-			VEC hisdata = his data.row (i);
-			for (integer k = 1; k <= npc; k ++) {
-				VEC evec = my eigenvectors.row (k);
-				double pc = thy data [i] [k];
-				for (integer j = 1; j <= my dimension; j ++)
-					hisdata [j] += pc * evec [j];   // ppgb: this looks like a normal matrix multiplication; if it isn't, please document
-			}
-		}
+		MATVUmul (his data.get(), thy data.get(), my eigenvectors.get());
+		
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not reconstructed.");
