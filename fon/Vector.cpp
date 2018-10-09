@@ -131,7 +131,7 @@ double Vector_getValueAtX (Vector me, double x, integer ilevel, int interpolatio
 /***** Get shape. *****/
 
 void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel, int interpolation,
-	double *return_minimum, double *return_xOfMinimum)
+	double *out_minimum, double *out_xOfMinimum)
 {
 	integer imin, imax, n = my nx;
 	Melder_assert (channel >= 1 && channel <= my ny);
@@ -170,12 +170,12 @@ void Vector_getMinimumAndX (Vector me, double xmin, double xmax, integer channel
 		x = my x1 + (x - 1) * my dx;   // convert sample to x
 		if (x < xmin) x = xmin; else if (x > xmax) x = xmax;
 	}
-	if (return_minimum) *return_minimum = minimum;
-	if (return_xOfMinimum) *return_xOfMinimum = x;
+	if (out_minimum) *out_minimum = minimum;
+	if (out_xOfMinimum) *out_xOfMinimum = x;
 }
 
 void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
-	double *return_minimum, double *return_xOfMinimum, integer *return_channelOfMinimum)
+	double *out_minimum, double *out_xOfMinimum, integer *out_channelOfMinimum)
 {
 	double minimum, xOfMinimum;
 	integer channelOfMinimum = 1;
@@ -189,9 +189,9 @@ void Vector_getMinimumAndXAndChannel (Vector me, double xmin, double xmax, int i
 			channelOfMinimum = channel;
 		}
 	}
-	if (return_minimum) *return_minimum = minimum;
-	if (return_xOfMinimum) *return_xOfMinimum = xOfMinimum;
-	if (return_channelOfMinimum) *return_channelOfMinimum = channelOfMinimum;
+	if (out_minimum) *out_minimum = minimum;
+	if (out_xOfMinimum) *out_xOfMinimum = xOfMinimum;
+	if (out_channelOfMinimum) *out_channelOfMinimum = channelOfMinimum;
 }
 
 double Vector_getMinimum (Vector me, double xmin, double xmax, int interpolation) {
@@ -213,7 +213,7 @@ integer Vector_getChannelOfMinimum (Vector me, double xmin, double xmax, int int
 }
 
 void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel, int interpolation,
-	double *return_maximum, double *return_xOfMaximum)
+	double *out_maximum, double *out_xOfMaximum)
 {
 	integer imin, imax, i, n = my nx;
 	Melder_assert (channel >= 1 && channel <= my ny);
@@ -252,12 +252,12 @@ void Vector_getMaximumAndX (Vector me, double xmin, double xmax, integer channel
 		x = my x1 + (x - 1) * my dx;   // convert sample to x
 		if (x < xmin) x = xmin; else if (x > xmax) x = xmax;
 	}
-	if (return_maximum) *return_maximum = maximum;
-	if (return_xOfMaximum) *return_xOfMaximum = x;
+	if (out_maximum) *out_maximum = maximum;
+	if (out_xOfMaximum) *out_xOfMaximum = x;
 }
 
 void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int interpolation,
-	double *return_maximum, double *return_xOfMaximum, integer *return_channelOfMaximum)
+	double *out_maximum, double *out_xOfMaximum, integer *out_channelOfMaximum)
 {
 	double maximum, xOfMaximum;
 	integer channelOfMaximum = 1;
@@ -271,9 +271,9 @@ void Vector_getMaximumAndXAndChannel (Vector me, double xmin, double xmax, int i
 			channelOfMaximum = channel;
 		}
 	}
-	if (return_maximum) *return_maximum = maximum;
-	if (return_xOfMaximum) *return_xOfMaximum = xOfMaximum;
-	if (return_channelOfMaximum) *return_channelOfMaximum = channelOfMaximum;
+	if (out_maximum) *out_maximum = maximum;
+	if (out_xOfMaximum) *out_xOfMaximum = xOfMaximum;
+	if (out_channelOfMaximum) *out_channelOfMaximum = channelOfMaximum;
 }
 
 double Vector_getMaximum (Vector me, double xmin, double xmax, int interpolation) {
