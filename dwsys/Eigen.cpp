@@ -212,8 +212,7 @@ void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
 		Eigen_init (me, a.ncol, a.ncol);
 	else
 		Melder_assert (my eigenvectors.nrow == my eigenvectors.ncol && a.ncol == my eigenvectors.ncol);
-	MATcopy_preallocated (my eigenvectors.get(), a); // a is symmetric, transpose not necessary
-	MAT_getEigenSystemFromSymmetricMatrix_inplace (my eigenvectors.get(), true, my eigenvalues.get(), false);
+	MAT_getEigenSystemFromSymmetricMatrix_preallocated (my eigenvectors.get(), my eigenvalues.get(), a, false);
 }
 
 autoEigen Eigen_create (integer numberOfEigenvalues, integer dimension) {

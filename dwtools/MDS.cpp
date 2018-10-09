@@ -1172,17 +1172,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		autoMAT K;
 		MAT_getEigenSystemFromSymmetricMatrix (cl.get(), & K, nullptr, false);
 
-		// Now get the configuration: X = Y.K
-
-		for (integer i = 1; i <= nPoints; i ++) {
-			for (integer j = 1; j <= numberOfDimensions; j ++) {
-				longdouble x = 0.0;
-				for (integer k = 1; k <= numberOfDimensions; k ++) {
-					x += y [i] [k] * K [k] [j];
-				}
-				thy data [i] [j] = (double) x;
-			}
-		}
+		MATVUmul (thy data.get(), y.get(), K.get()); // Y.K
 
 		Configuration_normalize (thee.get(), 0, true);
 
@@ -1205,8 +1195,8 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			}
 		}
 		
-		*out1 = thee.move();
-		*out2 = mdsw.move();
+		if (out1) *out1 = thee.move();
+		if (out2) *out2 = mdsw.move();
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			NUMmatrix_free<double> (ci [i], 1, 1);
 		}

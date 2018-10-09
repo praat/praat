@@ -27,21 +27,21 @@ void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvector
 		   only the upper-half of the matrix is used in the calculation
 		sortAscending if true eigenvalues (and corresponding eigenvectors) are sorted ascending
 	Output:
-		if(out_eigenvalues) eigenvalues sorted
-		if(out_eigenvectors) eigenvectors corresponding to the eigenvalues, stored as row-wise vectors.
+		if (out_eigenvalues) eigenvalues sorted
+		if (out_eigenvectors) eigenvectors corresponding to the eigenvalues, stored as row-wise vectors.
 */
 
-void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT inout_a, bool wantEigenvectors, VEC inout_eigenvalues, bool sortAscending);
+void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC eigenvalues, constMAT a, bool sortAscending);
 /*
 	Input:
-		inout_a, a symmetric a.ncol x a.ncol matrix
+		a, a symmetric a.ncol x a.ncol matrix
 		   only the upper-half of the matrix is used in the calculation
-		inout_eigenvalues, a vector of size ncol
-		wantEigenvectors, true if you want eigenvectors calculated
-		sortAscending if true eigenvalues (and corresponding eigenvectors) are sorted ascending
+		eigenvalues, a vector of size ncol
+		eigenvectors, a matrix a.ncol x a.ncol
+		sortAscending if true eigenvalues (and corresponding eigenvectors) will be sorted ascending
 	Output:
-		inout_a, if (wantEigenvectors) eigenvectors, stored row-wise
-		inout_eigenvalues, eigenvalues sorted from large to small
+		eigenvectors, stored row-wise
+		eigenvalues, eigenvalues sorted according to sortAscending
 */
 
 void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT a, integer nComponents);
