@@ -438,27 +438,19 @@ void GaussianMixture_PCA_drawConcentrationEllipses (GaussianMixture me, PCA him,
 		Melder_warning (U"Dimensions don't agree.");
 		return;
 	}
-	int d1_inverted = 0, d2_inverted = 0;
+	bool d1_inverted = d1 < 0, d2_inverted = d2 < 0;
+	d1 = labs (d1);
+	d2 = labs (d2);
 
-	if (d1 < 0) {
-		d1 = labs (d1);
-		Eigen_invertEigenvector (him, d1);
-		d1_inverted = 1;
-	}
-	if (d2 < 0) {
-		d2 = labs (d2);
-		Eigen_invertEigenvector (him, d2);
-		d2_inverted = 1;
-	}
+	if (d1_inverted) Eigen_invertEigenvector (him, d1);
+	if (d2_inverted) Eigen_invertEigenvector (him, d2);
 
 	autoSSCPList thee = SSCPList_toTwoDimensions (my covariances->asSSCPList(), his eigenvectors.row(d1), his eigenvectors.row (d2));
 
-	if (d1_inverted) {
-		Eigen_invertEigenvector (him, d1);
-	}
-	if (d2_inverted) {
-		Eigen_invertEigenvector (him, d2);
-	}
+	// Restore eigenvectors
+	
+	if (d1_inverted) Eigen_invertEigenvector (him, d1);
+	if (d2_inverted) Eigen_invertEigenvector (him, d2);
 
 	SSCPList_drawConcentrationEllipses (thee.get(), g, -scale, confidence, label, 1, 2, xmin, xmax, ymin, ymax, fontSize, 0);
 
@@ -479,9 +471,8 @@ void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, 
 		d1 = 1;
 		d2 = 2;
 	}
-	if (labs (d1) > my dimension || labs (d2) > my dimension) {
+	if (labs (d1) > my dimension || labs (d2) > my dimension)
 		return;
-	}
 
 	if (! pcaDirections) {
 		SSCPList_drawConcentrationEllipses (my covariances->asSSCPList(), g, -scale, confidence, label,
@@ -531,7 +522,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 				means2d [im] [2] = s2d -> centroid [2] + xc * sn + yc * cs;
 			}
 
-			// reconstruct the n-dimensional means from the 2-d pcś and the 2 eigenvectors
+			// reconstruct the n-dimensional means from the 2-d pc's and the 2 eigenvectors
 			autoMAT means = MATmul (means2d.get(), pca -> eigenvectors.horizontalBand (1, 2));
 
 			for (integer im = 1; im <= my numberOfComponents; im ++) {

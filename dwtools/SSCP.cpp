@@ -105,14 +105,10 @@ double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence) {
 	integer n = Melder_ifloor (SSCP_getNumberOfObservations (me));
 
 	if (confidence) {
-		integer p = my numberOfColumns;
-		double f;
-
-		if (n - p < 1) return -1.0;
-		
+		if (n - my numberOfColumns < 1) return -1.0;
 		// D.E. Johnson (1998), Applied Multivariate methods, page 410
-		f = NUMinvFisherQ (1.0 - scale, p, n - p);
-		scale = 2.0 * sqrt (f * p * (n - 1) / ( ((double) n) * (n - p)));
+		double f = NUMinvFisherQ (1.0 - scale, my numberOfColumns, n - my numberOfColumns);
+		scale = 2.0 * sqrt (f * my numberOfColumns * (n - 1) / ( ((double) n) * (n - my numberOfColumns)));
 	} else {
 		// very ugly, temporary hack
 		scale *= 2.0 / (scale < 0.0 ? -1.0 : sqrt (n - 1));
@@ -635,19 +631,17 @@ autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me) {
 
 autoPCA SSCP_to_PCA (SSCP me) {
 	try {
-		autoMAT mat = MATzero (my numberOfColumns, my numberOfColumns);
-		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
-
+		autoMAT mat = MATcopy (my data.get());
 		if (my numberOfRows == 1) {   // 1xn matrix -> nxn
-			for (integer i = 1; i <= my numberOfColumns; i ++)
-				mat [i] [i] = my data [1] [i];
-		} else {
-			matrixcopy_preallocated (mat.get(), my data.get());
+			MATset (mat.get(), 0.0);
+			for (integer icol = 1; icol <= my numberOfColumns; icol ++)
+				mat [icol] [icol] = my data [1] [icol];
 		}
-		thy labels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
+		autoPCA thee = PCA_create (my numberOfColumns, my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.get(), mat.get());
 		VECcopy_preallocated (thy centroid.get(), my centroid.get());
 		PCA_setNumberOfObservations (thee.get(), Melder_ifloor (my numberOfObservations));
+		thy labels. copyElementsFrom_upTo (my columnLabels.get(), my numberOfColumns);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": PCA not created.");
