@@ -426,6 +426,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 
 static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec_from, integer ivec_to) {
 	integer numberOfVectors = ivec_to - ivec_from + 1;
+
 	integer nmin = std::min (my numberOfEigenvalues, thy numberOfEigenvalues);
 
 	Melder_require (my dimension == thy dimension, U"The eigenvectors should have equal dimensions.");
@@ -437,7 +438,9 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 			the columns in the Q's are the eigenvectors.
 		Compute C.
 	*/
+
 	autoVEC angles_degrees = VECraw (numberOfVectors);
+
 	autoMAT c = MATmul (
 			my eigenvectors.horizontalBand (ivec_from, ivec_to),
 			constMATVUtranspose (thy eigenvectors.horizontalBand (ivec_from, ivec_to))
