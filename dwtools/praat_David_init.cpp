@@ -4285,6 +4285,12 @@ DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
 	NUMBER_COUPLE_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
 }
 
+DIRECT (NEW1_PCA_SSCP_project) {
+	CONVERT_TWO (PCA, SSCP)
+		autoSSCP result = Eigen_SSCP_project (me, you);
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
+}
+
 /******************* Permutation **************************************/
 
 DIRECT (HELP_Permutation_help) {
@@ -8181,7 +8187,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project rows)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectRows);
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project columns)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectColumns);
 	praat_addAction2 (classPCA, 1, classPatternList, 1, U"To Matrix (project rows)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectRows);
-	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, NEW1_Eigen_SSCP_project);
+	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, NEW1_PCA_SSCP_project);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal (project rows)...", nullptr, 0, NEW1_PCA_TableOfReal_to_TableOfReal_projectRows);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal...", U"*To TableOfReal (project rows)...", praat_DEPRECATED_2016, NEW1_PCA_TableOfReal_to_TableOfReal_projectRows);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, NEW1_PCA_TableOfReal_to_Configuration);
