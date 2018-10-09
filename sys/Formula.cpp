@@ -55,23 +55,23 @@ typedef struct structFormulaInstruction {
 static FormulaInstruction lexan, parse;
 static int ilabel, ilexan, iparse, numberOfInstructions, numberOfStringConstants;
 
-enum { GEENSYMBOOL_,
+enum { NO_SYMBOL_,
 
 /* First, all symbols after which "-" is unary. */
 /* The list ends with "MINUS_" itself. */
 
-	/* Haakjes-openen. */
-	IF_, THEN_, ELSE_, HAAKJEOPENEN_, RECHTEHAAKOPENEN_, OPENING_BRACE_, KOMMA_, COLON_, FROM_, TO_,
-	/* Operatoren met boolean resultaat. */
+	/* Opening symbols. */
+	IF_, THEN_, ELSE_, OPENING_PARENTHESIS_, OPENING_BRACKET_, OPENING_BRACE_, COMMA_, COLON_, FROM_, TO_,
+	/* Operators with boolean results. */
 	OR_, AND_, NOT_, EQ_, NE_, LE_, LT_, GE_, GT_,
-	/* Operatoren met reeel resultaat. */
+	/* Operators with results. */
 	ADD_, SUB_, MUL_, RDIV_, IDIV_, MOD_, POWER_, CALL_, MINUS_,
 
 /* Then, the symbols after which "-" is binary. */
 
-	/* Haakjes-sluiten. */
-	ENDIF_, FI_, HAAKJESLUITEN_, RECHTEHAAKSLUITEN_, CLOSING_BRACE_,
-	/* Dingen met een waarde. */
+	/* Closing symbols. */
+	ENDIF_, FI_, CLOSING_PARENTHESIS_, CLOSING_BRACKET_, CLOSING_BRACE_,
+	/* Things with a value. */
 	#define LOW_VALUE  NUMBER_
 		NUMBER_, NUMBER_PI_, NUMBER_E_, NUMBER_UNDEFINED_,
 		/* Attributes of objects. */
@@ -113,7 +113,7 @@ enum { GEENSYMBOOL_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
 		SOUND_PRESSURE_TO_PHON_, OBJECTS_ARE_IDENTICAL_,
-		INNER_, MAT_OUTER_, VEC_MUL_, VEC_REPEAT_,
+		INNER_, MAT_OUTER_, VEC_MUL_, MAT_MUL_, VEC_REPEAT_,
 	#define HIGH_FUNCTION_2  VEC_REPEAT_
 
 	/* Functions of 3 variables; if you add, update the #defines. */
@@ -172,7 +172,7 @@ enum { GEENSYMBOOL_,
 
 	/* Membership operator. */
 	PERIOD_,
-	#define hoogsteInvoersymbool  PERIOD_
+	#define highestInputSymbol  PERIOD_
 
 /* Symbols introduced by the parser. */
 
@@ -180,7 +180,7 @@ enum { GEENSYMBOOL_,
 	GOTO_, IFTRUE_, IFFALSE_, INCREMENT_GREATER_GOTO_,
 	LABEL_,
 	DECREMENT_AND_ASSIGN_, ADD_3DOWN_, POP_2_,
-	NUMERIC_VECTOR_ELEMENT_, NUMERIC_MATRIX_ELEMENT_, VARIABLE_REFERENCE_,
+	VEC_CELL_, MAT_CELL_, VARIABLE_REFERENCE_,
 	TENSOR_LITERAL_,
 	SELF0_, SELFSTR0_, TO_OBJECT_,
 	OBJECT_XMIN_, OBJECT_XMAX_, OBJECT_YMIN_, OBJECT_YMAX_, OBJECT_NX_, OBJECT_NY_,
@@ -200,13 +200,13 @@ enum { GEENSYMBOOL_,
 	STRING_VARIABLE_, STRING_ARRAY_VARIABLE_,
 	VARIABLE_NAME_, INDEXED_NUMERIC_VARIABLE_, INDEXED_STRING_VARIABLE_,
 	END_
-	#define hoogsteSymbool END_
+	#define highestSymbol END_
 };
 
 /* The names that start with an underscore (_) do not occur in the formula text: */
 /* they are used in error messages and in debugging (see Formula_print). */
 
-static const conststring32 Formula_instructionNames [1 + hoogsteSymbool] = { U"",
+static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"if", U"then", U"else", U"(", U"[", U"{", U",", U":", U"from", U"to",
 	U"or", U"and", U"not", U"=", U"<>", U"<=", U"<", U">=", U">",
 	U"+", U"-", U"*", U"/", U"div", U"mod", U"^", U"_call", U"_neg",
@@ -236,7 +236,7 @@ static const conststring32 Formula_instructionNames [1 + hoogsteSymbool] = { U""
 	U"chiSquareP", U"chiSquareQ", U"incompleteGammaP", U"invChiSquareQ", U"studentP", U"studentQ", U"invStudentQ",
 	U"beta", U"beta2", U"besselI", U"besselK", U"lnBeta",
 	U"soundPressureToPhon", U"objectsAreIdentical",
-	U"inner", U"outer##", U"mul#", U"repeat#",
+	U"inner", U"outer##", U"mul#", U"mul##", U"repeat#",
 	U"fisherP", U"fisherQ", U"invFisherQ",
 	U"binomialP", U"binomialQ", U"incompleteBeta", U"invBinomialP", U"invBinomialQ",
 
@@ -296,11 +296,11 @@ static const conststring32 Formula_instructionNames [1 + hoogsteSymbool] = { U""
 	U"the end of the formula"
 };
 
-#define nieuwlabel (-- ilabel)
-#define nieuwlees (lexan [++ ilexan]. symbol)
-#define oudlees  (-- ilexan)
+#define newlabel (-- ilabel)
+#define newread (lexan [++ ilexan]. symbol)
+#define oldread  (-- ilexan)
 
-static void formulefout (conststring32 message, int position) {
+static void formulaError (conststring32 message, int position) {
 	static MelderString truncatedExpression { };
 	MelderString_ncopy (& truncatedExpression, theExpression, position + 1);
 	Melder_throw (message, U":\n« ", truncatedExpression.string);
@@ -317,20 +317,20 @@ static int languageNameCompare (const void *first, const void *second) {
 static int Formula_hasLanguageName (conststring32 f) {
 	static int *index;
 	if (! index) {
-		index = NUMvector <int> (1, hoogsteInvoersymbool);
-		for (int tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
+		index = NUMvector <int> (1, highestInputSymbol);
+		for (int tok = 1; tok <= highestInputSymbol; tok ++) {
 			index [tok] = tok;
 		}
-		qsort (& index [1], hoogsteInvoersymbool, sizeof (int), languageNameCompare);
+		qsort (& index [1], highestInputSymbol, sizeof (int), languageNameCompare);
 	}
 	if (! index) {   // linear search
-		for (int tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
+		for (int tok = 1; tok <= highestInputSymbol; tok ++) {
 			if (str32equ (f, Formula_instructionNames [tok])) return tok;
 		}
 	} else {   // binary search
 		int dummy = 0, *found;
 		languageNameCompare_searchString = f;
-		found = (int *) bsearch (& dummy, & index [1], hoogsteInvoersymbool, sizeof (int), languageNameCompare);
+		found = (int *) bsearch (& dummy, & index [1], highestInputSymbol, sizeof (int), languageNameCompare);
 		if (found) return *found;
 	}
 	return 0;
@@ -355,94 +355,94 @@ static void Formula_lexan () {
 */
 	char32 kar;   /* The character most recently read from theExpression. */
 	int ikar = -1;   /* The position of that character in theExpression. */
-#define nieuwkar kar = theExpression [++ ikar]
-#define oudkar -- ikar
+#define newchar kar = theExpression [++ ikar]
+#define oldchar -- ikar
 
 	int itok = 0;   /* Position of most recent symbol in "lexan". */
-#define nieuwtok(s)  { lexan [++ itok]. symbol = s; lexan [itok]. position = ikar; }
-#define tokgetal(g)  lexan [itok]. content.number = (g)
-#define tokmatriks(m)  lexan [itok]. content.object = (m)
+#define newtok(s)  { lexan [++ itok]. symbol = s; lexan [itok]. position = ikar; }
+#define toknumber(g)  lexan [itok]. content.number = (g)
+#define tokmatrix(m)  lexan [itok]. content.object = (m)
 
 	static MelderString token { };   /* String to collect a symbol name in. */
-#define stokaan MelderString_empty (& token);
-#define stokkar { MelderString_appendCharacter (& token, kar); nieuwkar; }
-#define stokuit (void) 0
+#define stringtokon MelderString_empty (& token);
+#define stringtokchar { MelderString_appendCharacter (& token, kar); newchar; }
+#define stringtokoff (void) 0
 
 	ilexan = iparse = ilabel = numberOfStringConstants = 0;
 	do {
-		nieuwkar;
+		newchar;
 		if (Melder_isHorizontalOrVerticalSpace (kar)) {
 			;   // ignore spaces and tabs
 		} else if (kar == U'\0') {
-			nieuwtok (END_)
+			newtok (END_)
 		} else if (Melder_isAsciiDecimalNumber (kar)) {
 			char32 saveKar = kar;
 			bool isHexadecimal = false;
 			if (kar == U'0') {
-				nieuwkar;
+				newchar;
 				if (kar == U'x') {
 					isHexadecimal = true;
-					nieuwkar;
+					newchar;
 				} else {
-					oudkar;
+					oldchar;
 				}
 			}
 			if (isHexadecimal) {
-				stokaan;
-				do stokkar while (Melder_isHexadecimalDigit (kar));
-				stokuit;
-				oudkar;
-				nieuwtok (NUMBER_)
-				tokgetal (strtoull (Melder_peek32to8 (token.string), nullptr, 16));
+				stringtokon;
+				do stringtokchar while (Melder_isHexadecimalDigit (kar));
+				stringtokoff;
+				oldchar;
+				newtok (NUMBER_)
+				toknumber (strtoull (Melder_peek32to8 (token.string), nullptr, 16));
 			} else {
 				kar = saveKar;
-				stokaan;
-				do stokkar while (Melder_isAsciiDecimalNumber (kar));
-				if (kar == U'.') do stokkar while (Melder_isAsciiDecimalNumber (kar));
+				stringtokon;
+				do stringtokchar while (Melder_isAsciiDecimalNumber (kar));
+				if (kar == U'.') do stringtokchar while (Melder_isAsciiDecimalNumber (kar));
 				if (kar == U'e' || kar == U'E') {
-					kar = U'e'; stokkar
-					if (kar == U'-') stokkar
-					else if (kar == U'+') nieuwkar;
+					kar = U'e'; stringtokchar
+					if (kar == U'-') stringtokchar
+					else if (kar == U'+') newchar;
 					if (! Melder_isAsciiDecimalNumber (kar))
-						formulefout (U"Missing exponent", ikar);
-					do stokkar while (Melder_isAsciiDecimalNumber (kar));
+						formulaError (U"Missing exponent", ikar);
+					do stringtokchar while (Melder_isAsciiDecimalNumber (kar));
 				}
-				if (kar == U'%') stokkar
-				stokuit;
-				oudkar;
-				nieuwtok (NUMBER_)
-				tokgetal (Melder_atof (token.string));
+				if (kar == U'%') stringtokchar
+				stringtokoff;
+				oldchar;
+				newtok (NUMBER_)
+				toknumber (Melder_atof (token.string));
 			}
 		} else if (Melder_isLowerCaseLetter (kar) || (kar == U'.' && Melder_isLowerCaseLetter (theExpression [ikar + 1])
 				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_
-					&& lexan [itok]. symbol != RECHTEHAAKSLUITEN_)))) {
+					&& lexan [itok]. symbol != CLOSING_BRACKET_)))) {
 			int tok;
 			bool isString = false;
 			int rank = 0;
-			stokaan;
-			do stokkar while (Melder_isWordCharacter (kar) || kar == U'.');
+			stringtokon;
+			do stringtokchar while (Melder_isWordCharacter (kar) || kar == U'.');
 			if (kar == '$') {
-				stokkar
+				stringtokchar
 				isString = true;
 			}
 			if (kar == '#') {
 				rank += 1;
-				stokkar
+				stringtokchar
 				if (kar == '#') {
 					rank += 1;
-					stokkar
+					stringtokchar
 					if (kar == '#') {
 						rank += 1;
-						stokkar
+						stringtokchar
 						if (kar == '#') {
 							rank += 1;
-							stokkar
+							stringtokchar
 						}
 					}
 				}
 			}
-			stokuit;
-			oudkar;
+			stringtokoff;
+			oldchar;
 			/*
 			 * 'token' now contains a word, possibly ending in a dollar or number sign;
 			 * it could be a variable name, a function name, both, or a procedure name.
@@ -458,19 +458,19 @@ static void Formula_lexan () {
 				 * First the constants. They are reserved words and can never be variable names.
 				 */
 				if (tok == NUMBER_PI_) {
-					nieuwtok (NUMBER_)
-					tokgetal (NUMpi);
+					newtok (NUMBER_)
+					toknumber (NUMpi);
 				} else if (tok == NUMBER_E_) {
-					nieuwtok (NUMBER_)
-					tokgetal (NUMe);
+					newtok (NUMBER_)
+					toknumber (NUMe);
 				} else if (tok == NUMBER_UNDEFINED_) {
-					nieuwtok (NUMBER_)
-					tokgetal (undefined);
+					newtok (NUMBER_)
+					toknumber (undefined);
 				/*
 				 * One very common language name must be converted to a synonym.
 				 */
 				} else if (tok == FI_) {
-					nieuwtok (ENDIF_)
+					newtok (ENDIF_)
 				/*
 				 * Is it a function name? These may be ambiguous.
 				 */
@@ -482,12 +482,12 @@ static void Formula_lexan () {
 					jkar = ikar + 1;
 					while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 					if (theExpression [jkar] == U'(' || theExpression [jkar] == U':') {
-						nieuwtok (tok)   // this must be a function name
+						newtok (tok)   // this must be a function name
 					} else if (theExpression [jkar] == U'[' && rank == 0) {
 						if (isString) {
-							nieuwtok (INDEXED_STRING_VARIABLE_)
+							newtok (INDEXED_STRING_VARIABLE_)
 						} else {
-							nieuwtok (INDEXED_NUMERIC_VARIABLE_)
+							newtok (INDEXED_NUMERIC_VARIABLE_)
 						}
 						lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 						numberOfStringConstants ++;
@@ -497,32 +497,32 @@ static void Formula_lexan () {
 						 */
 						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 						if (! var) {
-							nieuwtok (VARIABLE_NAME_)
+							newtok (VARIABLE_NAME_)
 							lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 							numberOfStringConstants ++;
 						} else {
 							if (rank == 0) {
 								if (isString) {
-									nieuwtok (STRING_VARIABLE_)
+									newtok (STRING_VARIABLE_)
 								} else {
-									nieuwtok (NUMERIC_VARIABLE_)
+									newtok (NUMERIC_VARIABLE_)
 								}
 							} else if (rank == 1) {
 								if (isString) {
-									nieuwtok (STRING_ARRAY_VARIABLE_)
+									newtok (STRING_ARRAY_VARIABLE_)
 								} else {
-									nieuwtok (NUMERIC_VECTOR_VARIABLE_)
+									newtok (NUMERIC_VECTOR_VARIABLE_)
 								}
 							} else if (rank == 2) {
 								if (isString) {
-									formulefout (U"String matrices not implemented.", ikar);
+									formulaError (U"String matrices not implemented.", ikar);
 								} else {
-									nieuwtok (NUMERIC_MATRIX_VARIABLE_)
+									newtok (NUMERIC_MATRIX_VARIABLE_)
 								}
 							} else if (rank == 3) {
-								formulefout (U"Rank-3 tensors not implemented.", ikar);
+								formulaError (U"Rank-3 tensors not implemented.", ikar);
 							} else {
-								formulefout (U"Rank-4 tensors not implemented.", ikar);
+								formulaError (U"Rank-4 tensors not implemented.", ikar);
 							}
 							lexan [itok]. content.variable = var;
 						}
@@ -540,7 +540,7 @@ static void Formula_lexan () {
 						/*
 						 * This must be an attribute that follows a period.
 						 */
-						nieuwtok (tok)
+						newtok (tok)
 					} else if (theSource) {
 						/*
 						 * Look for ambiguity.
@@ -551,12 +551,12 @@ static void Formula_lexan () {
 								U"» is ambiguous: a variable or an attribute of the current object. "
 								U"Please change variable name.");
 						if (tok == ROW_ || tok == COL_ || tok == X_ || tok == Y_) {
-							nieuwtok (tok)
+							newtok (tok)
 						} else {
-							nieuwtok (MATRIKS_)
-							tokmatriks (theSource);
-							nieuwtok (PERIOD_)
-							nieuwtok (tok)
+							newtok (MATRIKS_)
+							tokmatrix (theSource);
+							newtok (PERIOD_)
+							newtok (tok)
 						}
 					} else {
 						/*
@@ -566,48 +566,48 @@ static void Formula_lexan () {
 						while (Melder_isHorizontalSpace (theExpression [jkar])) jkar ++;
 						if (theExpression [jkar] == U'[' && rank == 0) {
 							if (isString) {
-								nieuwtok (INDEXED_STRING_VARIABLE_)
+								newtok (INDEXED_STRING_VARIABLE_)
 							} else {
-								nieuwtok (INDEXED_NUMERIC_VARIABLE_)
+								newtok (INDEXED_NUMERIC_VARIABLE_)
 							}
 							lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 							numberOfStringConstants ++;
 						} else {
 							InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 							if (! var) {
-								nieuwtok (VARIABLE_NAME_)
+								newtok (VARIABLE_NAME_)
 								lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 								numberOfStringConstants ++;
 							} else {
 								if (rank == 0) {
 									if (isString) {
-										nieuwtok (STRING_VARIABLE_)
+										newtok (STRING_VARIABLE_)
 									} else {
-										nieuwtok (NUMERIC_VARIABLE_)
+										newtok (NUMERIC_VARIABLE_)
 									}
 								} else if (rank == 1) {
 									if (isString) {
-										nieuwtok (STRING_ARRAY_VARIABLE_)
+										newtok (STRING_ARRAY_VARIABLE_)
 									} else {
-										nieuwtok (NUMERIC_VECTOR_VARIABLE_)
+										newtok (NUMERIC_VECTOR_VARIABLE_)
 									}
 								} else if (rank == 2) {
 									if (isString) {
-										formulefout (U"String matrices not implemented.", ikar);
+										formulaError (U"String matrices not implemented.", ikar);
 									} else {
-										nieuwtok (NUMERIC_MATRIX_VARIABLE_)
+										newtok (NUMERIC_MATRIX_VARIABLE_)
 									}
 								} else if (rank == 3) {
-									formulefout (U"Rank-3 tensors not implemented.", ikar);
+									formulaError (U"Rank-3 tensors not implemented.", ikar);
 								} else {
-									formulefout (U"Rank-4 tensors not implemented.", ikar);
+									formulaError (U"Rank-4 tensors not implemented.", ikar);
 								}
 								lexan [itok]. content.variable = var;
 							}
 						}
 					}
 				} else {
-					nieuwtok (tok)   /* This must be a language name. */
+					newtok (tok)   /* This must be a language name. */
 				}
 			} else {
 				/*
@@ -620,41 +620,41 @@ static void Formula_lexan () {
 						U"Unknown function «", token.string, U"» in formula.");
 				} else if (theExpression [jkar] == '[' && rank == 0) {
 					if (isString) {
-						nieuwtok (INDEXED_STRING_VARIABLE_)
+						newtok (INDEXED_STRING_VARIABLE_)
 					} else {
-						nieuwtok (INDEXED_NUMERIC_VARIABLE_)
+						newtok (INDEXED_NUMERIC_VARIABLE_)
 					}
 					lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 					numberOfStringConstants ++;
 				} else {
 					InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
 					if (! var) {
-						nieuwtok (VARIABLE_NAME_)
+						newtok (VARIABLE_NAME_)
 						lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 						numberOfStringConstants ++;
 					} else {
 						if (rank == 0) {
 							if (isString) {
-								nieuwtok (STRING_VARIABLE_)
+								newtok (STRING_VARIABLE_)
 							} else {
-								nieuwtok (NUMERIC_VARIABLE_)
+								newtok (NUMERIC_VARIABLE_)
 							}
 						} else if (rank == 1) {
 							if (isString) {
-								nieuwtok (STRING_ARRAY_VARIABLE_)
+								newtok (STRING_ARRAY_VARIABLE_)
 							} else {
-								nieuwtok (NUMERIC_VECTOR_VARIABLE_)
+								newtok (NUMERIC_VECTOR_VARIABLE_)
 							}
 						} else if (rank == 2) {
 							if (isString) {
-								formulefout (U"String matrices not implemented.", ikar);
+								formulaError (U"String matrices not implemented.", ikar);
 							} else {
-								nieuwtok (NUMERIC_MATRIX_VARIABLE_)
+								newtok (NUMERIC_MATRIX_VARIABLE_)
 							}
 						} else if (rank == 3) {
-							formulefout (U"Rank-3 tensors not implemented.", ikar);
+							formulaError (U"Rank-3 tensors not implemented.", ikar);
 						} else {
-							formulefout (U"Rank-4 tensors not implemented.", ikar);
+							formulaError (U"Rank-4 tensors not implemented.", ikar);
 						}
 						lexan [itok]. content.variable = var;
 					}
@@ -662,25 +662,25 @@ static void Formula_lexan () {
 			}
 		} else if (kar >= U'A' && kar <= U'Z') {
 			bool endsInDollarSign = false;
-			stokaan;
-			do stokkar while (isalnum ((int) kar) || kar == U'_');   // TODO: allow more than just ASCII
-			if (kar == U'$') { stokkar endsInDollarSign = true; }
-			stokuit;
-			oudkar;
+			stringtokon;
+			do stringtokchar while (isalnum ((int) kar) || kar == U'_');   // TODO: allow more than just ASCII
+			if (kar == U'$') { stringtokchar endsInDollarSign = true; }
+			stringtokoff;
+			oldchar;
 			/*
 			 * 'token' now contains a word that could be an object name.
 			 */
 			char32 *underscore = str32chr (token.string, '_');
 			if (str32equ (token.string, U"Self")) {
 				if (! theSource)
-					formulefout (U"Cannot use \"Self\" if there is no current object.", ikar);
-				nieuwtok (MATRIKS_)
-				tokmatriks (theSource);
+					formulaError (U"Cannot use \"Self\" if there is no current object.", ikar);
+				newtok (MATRIKS_)
+				tokmatrix (theSource);
 			} else if (str32equ (token.string, U"Self$")) {
 				if (! theSource)
-					formulefout (U"Cannot use \"Self$\" if there is no current object.", ikar);
-				nieuwtok (MATRIKSSTR_)
-				tokmatriks (theSource);
+					formulaError (U"Cannot use \"Self$\" if there is no current object.", ikar);
+				newtok (MATRIKSSTR_)
+				tokmatrix (theSource);
 			} else if (! underscore) {
 				Melder_throw (
 					U"Unknown symbol «", token.string, U"» in formula "
@@ -691,9 +691,9 @@ static void Formula_lexan () {
 				while (i > 0 && uniqueID != theCurrentPraatObjects -> list [i]. id)
 					i --;
 				if (i == 0)
-					formulefout (U"No such object (note: variables start with lower case)", ikar);
-				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
-				tokmatriks ((Daata) theCurrentPraatObjects -> list [i]. object);
+					formulaError (U"No such object (note: variables start with lower case)", ikar);
+				newtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
+				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			} else {
 				int i = theCurrentPraatObjects -> n;
 				*underscore = ' ';
@@ -701,109 +701,109 @@ static void Formula_lexan () {
 				while (i > 0 && ! str32equ (token.string, theCurrentPraatObjects -> list [i]. name.get()))
 					i --;
 				if (i == 0)
-					formulefout (U"No such object (note: variables start with lower case)", ikar);
-				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
-				tokmatriks ((Daata) theCurrentPraatObjects -> list [i]. object);
+					formulaError (U"No such object (note: variables start with lower case)", ikar);
+				newtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
+				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			}
 		} else if (kar == U'(') {
-			nieuwtok (HAAKJEOPENEN_)
+			newtok (OPENING_PARENTHESIS_)
 		} else if (kar == U')') {
-			nieuwtok (HAAKJESLUITEN_)
+			newtok (CLOSING_PARENTHESIS_)
 		} else if (kar == U'+') {
-			nieuwtok (ADD_)
+			newtok (ADD_)
 		} else if (kar == U'-') {
 			if (itok == 0 || lexan [itok]. symbol <= MINUS_) {
-				nieuwtok (MINUS_)
+				newtok (MINUS_)
 			} else {
-				nieuwtok (SUB_)
+				newtok (SUB_)
 			}
 		} else if (kar == U'*') {
-			nieuwkar;
+			newchar;
 			if (kar == U'*') {
-				nieuwtok (POWER_)   /* "**" = "^" */
+				newtok (POWER_)   /* "**" = "^" */
 			} else {
-				oudkar;
-				nieuwtok (MUL_)
+				oldchar;
+				newtok (MUL_)
 			}
 		} else if (kar == U'/') {
-			nieuwkar;
+			newchar;
 			if (kar == U'=') {
-				nieuwtok (NE_)   /* "/=" = "<>" */
+				newtok (NE_)   /* "/=" = "<>" */
 			} else {
-				oudkar;
-				nieuwtok (RDIV_)
+				oldchar;
+				newtok (RDIV_)
 			}
 		} else if (kar == U'=') {
-			nieuwtok (EQ_)   /* "=" */
-			nieuwkar;
+			newtok (EQ_)   /* "=" */
+			newchar;
 			if (kar != U'=') {
-				oudkar;   /* "==" = "=" */
+				oldchar;   /* "==" = "=" */
 			}
 		} else if (kar == U'>') {
-			nieuwkar;
+			newchar;
 			if (kar == U'=') {
-				nieuwtok (GE_)
+				newtok (GE_)
 			} else {
-				oudkar;
-				nieuwtok (GT_)
+				oldchar;
+				newtok (GT_)
 			}
 		} else if (kar == U'<') {
-			nieuwkar;
+			newchar;
 			if (kar == U'=') {
-				nieuwtok (LE_)
+				newtok (LE_)
 			} else if (kar == U'>') {
-				nieuwtok (NE_)
+				newtok (NE_)
 			} else {
-				oudkar;
-				nieuwtok (LT_)
+				oldchar;
+				newtok (LT_)
 			}
 		} else if (kar == U'!') {
-			nieuwkar;
+			newchar;
 			if (kar == U'=') {
-				nieuwtok (NE_)   /* "!=" = "<>" */
+				newtok (NE_)   /* "!=" = "<>" */
 			} else {
-				oudkar;
-				nieuwtok (NOT_)
+				oldchar;
+				newtok (NOT_)
 			}
 		} else if (kar == U',') {
-			nieuwtok (KOMMA_)
+			newtok (COMMA_)
 		} else if (kar == U':') {
-			nieuwtok (COLON_)
+			newtok (COLON_)
 		} else if (kar == U';') {
-			nieuwtok (END_)
+			newtok (END_)
 		} else if (kar == U'^') {
-			nieuwtok (POWER_)
+			newtok (POWER_)
 		} else if (kar == U'@') {
 			do {
-				nieuwkar;
+				newchar;
 			} while (Melder_isHorizontalSpace (kar));
-			stokaan;
-			do stokkar while (Melder_isWordCharacter (kar) || kar == U'.');
-			stokuit;
-			oudkar;
-			nieuwtok (CALL_)
+			stringtokon;
+			do stringtokchar while (Melder_isWordCharacter (kar) || kar == U'.');
+			stringtokoff;
+			oldchar;
+			newtok (CALL_)
 			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 			numberOfStringConstants ++;
 		} else if (kar == U'\"') {
 			/*
 			 * String constant.
 			 */
-			nieuwkar;
-			stokaan;
+			newchar;
+			stringtokon;
 			for (;;) {
 				if (kar == U'\0')
-					formulefout (U"No closing quote in string constant", ikar);
+					formulaError (U"No closing quote in string constant", ikar);
 				if (kar == U'\"') {
-					nieuwkar;
-					if (kar == U'\"') stokkar
+					newchar;
+					if (kar == U'\"') stringtokchar
 					else break;
 				} else {
-					stokkar
+					stringtokchar
 				}
 			}
-			stokuit;
-			oudkar;
-			nieuwtok (STRING_)
+			stringtokoff;
+			oldchar;
+			newtok (STRING_)
 			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 			numberOfStringConstants ++;
 		} else if (kar == U'~') {
@@ -812,47 +812,47 @@ static void Formula_lexan () {
 				including any leading and trailing space,
 				will become a string constant (this is good for formulas).
 			*/
-			nieuwkar;
-			stokaan;
+			newchar;
+			stringtokon;
 			for (;;) {
 				if (kar == U'\0') break;
-				stokkar
+				stringtokchar
 			}
-			stokuit;
-			oudkar;
-			nieuwtok (STRING_)
+			stringtokoff;
+			oldchar;
+			newtok (STRING_)
 			lexan [itok]. content.string = Melder_dup_f (token.string).transfer();
 			numberOfStringConstants ++;
 		} else if (kar == U'|') {
-			nieuwtok (OR_)   /* "|" = "or" */
-			nieuwkar;
+			newtok (OR_)   /* "|" = "or" */
+			newchar;
 			if (kar != U'|') {
-				oudkar;   /* "||" = "or" */
+				oldchar;   /* "||" = "or" */
 			}
 		} else if (kar == U'&') {
-			nieuwtok (AND_)   /* "&" = "and" */
-			nieuwkar;
+			newtok (AND_)   /* "&" = "and" */
+			newchar;
 			if (kar != U'&') {
-				oudkar;   /* "&&" = "and" */
+				oldchar;   /* "&&" = "and" */
 			}
 		} else if (kar == U'[') {
-			nieuwtok (RECHTEHAAKOPENEN_)
+			newtok (OPENING_BRACKET_)
 		} else if (kar == U']') {
-			nieuwtok (RECHTEHAAKSLUITEN_)
+			newtok (CLOSING_BRACKET_)
 		} else if (kar == U'{') {
-			nieuwtok (OPENING_BRACE_)
+			newtok (OPENING_BRACE_)
 		} else if (kar == U'}') {
-			nieuwtok (CLOSING_BRACE_)
+			newtok (CLOSING_BRACE_)
 		} else if (kar == U'.') {
-			nieuwtok (PERIOD_)
+			newtok (PERIOD_)
 		} else {
-			formulefout (U"Unknown symbol", ikar);
+			formulaError (U"Unknown symbol", ikar);
 		}
 	} while (lexan [itok]. symbol != END_);
 }
 
-static void pas (int symbol) {
-	if (symbol == nieuwlees) {
+static void fit (int symbol) {
+	if (symbol == newread) {
 		return;   // success
 	} else {
 		const conststring32 symbolName1 = Formula_instructionNames [symbol];
@@ -863,67 +863,67 @@ static void pas (int symbol) {
 		MelderString_copy (& melding,
 			U"Expected ", ( needQuotes1 ? U"\"" : nullptr ), symbolName1, ( needQuotes1 ? U"\"" : nullptr ),
 			U", but found ", ( needQuotes2 ? U"\"" : nullptr ), symbolName2, ( needQuotes2 ? U"\"" : nullptr ));
-		formulefout (melding.string, lexan [ilexan]. position);
+		formulaError (melding.string, lexan [ilexan]. position);
 	}
 }
 
-static bool pasArguments () {
-    int symbol = nieuwlees;
-    if (symbol == HAAKJEOPENEN_) return true;   // success: a function call like: myFunction (...)
+static bool fitArguments () {
+    int symbol = newread;
+    if (symbol == OPENING_PARENTHESIS_) return true;   // success: a function call like: myFunction (...)
     if (symbol == COLON_) return false;   // success: a function call like: myFunction: ...
     const conststring32 symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
     bool needQuotes2 = ! str32chr (symbolName2, U' ');
     static MelderString melding { };
     MelderString_copy (& melding,
 		U"Expected \"(\" or \":\", but found ", ( needQuotes2 ? U"\"" : nullptr ), symbolName2, ( needQuotes2 ? U"\"" : nullptr ));
-    formulefout (melding.string, lexan [ilexan]. position);
+    formulaError (melding.string, lexan [ilexan]. position);
     return false;   // will never occur
 }
 
-#define nieuwontleed(s)  parse [++ iparse]. symbol = (s)
+#define newparse(s)  parse [++ iparse]. symbol = (s)
 #define parsenumber(g)  parse [iparse]. content.number = (g)
-#define ontleedlabel(l)  parse [iparse]. content.label = (l)
+#define parselabel(l)  parse [iparse]. content.label = (l)
 
 static void parseExpression ();
 
 static void parsePowerFactor () {
-	int symbol = nieuwlees;
+	int symbol = newread;
 
 	if (symbol >= LOW_VALUE && symbol <= HIGH_VALUE) {
-		nieuwontleed (symbol);
+		newparse (symbol);
 		if (symbol == NUMBER_) parsenumber (lexan [ilexan]. content.number);
 		return;
 	}
 
 	if (symbol == STRING_) {
-		nieuwontleed (symbol);
+		newparse (symbol);
 		parse [iparse]. content.string = lexan [ilexan]. content.string;   // reference copy!
 		return;
 	}
 
 	if (symbol == NUMERIC_VARIABLE_ || symbol == STRING_VARIABLE_) {
-		nieuwontleed (symbol);
+		newparse (symbol);
 		parse [iparse]. content.variable = lexan [ilexan]. content.variable;
 		return;
 	}
 
 	if (symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_) {
 		char32 *var = lexan [ilexan]. content.string;   // Save before incrementing ilexan.
-		if (nieuwlees == RECHTEHAAKOPENEN_) {
+		if (newread == OPENING_BRACKET_) {
 			int n = 0;
-			if (nieuwlees != RECHTEHAAKSLUITEN_) {
-				oudlees;
+			if (newread != CLOSING_BRACKET_) {
+				oldread;
 				parseExpression ();
 				n ++;
-				while (nieuwlees == KOMMA_) {
+				while (newread == COMMA_) {
 					parseExpression ();
 					n ++;
 				}
-				oudlees;
-				pas (RECHTEHAAKSLUITEN_);
+				oldread;
+				fit (CLOSING_BRACKET_);
 			}
-			nieuwontleed (NUMBER_); parsenumber (n);
-			nieuwontleed (symbol);
+			newparse (NUMBER_); parsenumber (n);
+			newparse (symbol);
 		} else {
 			Melder_fatal (U"Formula:parsePowerFactor (indexed variable): No '['; cannot happen.");
 		}
@@ -933,13 +933,13 @@ static void parsePowerFactor () {
 
 	if (symbol == NUMERIC_VECTOR_VARIABLE_) {
 		InterpreterVariable var = lexan [ilexan]. content.variable;   // save before incrementing ilexan
-		if (nieuwlees == RECHTEHAAKOPENEN_) {
+		if (newread == OPENING_BRACKET_) {
 			parseExpression ();
-			pas (RECHTEHAAKSLUITEN_);
-			nieuwontleed (NUMERIC_VECTOR_ELEMENT_);
+			fit (CLOSING_BRACKET_);
+			newparse (VEC_CELL_);
 		} else {
-			oudlees;
-			nieuwontleed (NUMERIC_VECTOR_VARIABLE_);
+			oldread;
+			newparse (NUMERIC_VECTOR_VARIABLE_);
 		}
 		parse [iparse]. content.variable = var;
 		return;
@@ -947,15 +947,15 @@ static void parsePowerFactor () {
 
 	if (symbol == NUMERIC_MATRIX_VARIABLE_) {
 		InterpreterVariable var = lexan [ilexan]. content.variable;   // save before incrementing ilexan
-		if (nieuwlees == RECHTEHAAKOPENEN_) {
+		if (newread == OPENING_BRACKET_) {
 			parseExpression ();
-			pas (KOMMA_);
+			fit (COMMA_);
 			parseExpression ();
-			pas (RECHTEHAAKSLUITEN_);
-			nieuwontleed (NUMERIC_MATRIX_ELEMENT_);
+			fit (CLOSING_BRACKET_);
+			newparse (MAT_CELL_);
 		} else {
-			oudlees;
-			nieuwontleed (NUMERIC_MATRIX_VARIABLE_);
+			oldread;
+			newparse (NUMERIC_MATRIX_VARIABLE_);
 		}
 		parse [iparse]. content.variable = var;
 		return;
@@ -964,405 +964,405 @@ static void parsePowerFactor () {
 	if (symbol == VARIABLE_NAME_) {
 		InterpreterVariable var = Interpreter_hasVariable (theInterpreter, lexan [ilexan]. content.string);
 		if (! var)
-			formulefout (U"Unknown variable", lexan [ilexan]. position);
-		nieuwontleed (NUMERIC_VARIABLE_);
+			formulaError (U"Unknown variable", lexan [ilexan]. position);
+		newparse (NUMERIC_VARIABLE_);
 		parse [iparse]. content.variable = var;
 		return;
 	}
 
 	if (symbol == SELF_) {
-		symbol = nieuwlees;
-		if (symbol == RECHTEHAAKOPENEN_) {
+		symbol = newread;
+		if (symbol == OPENING_BRACKET_) {
 			parseExpression ();
-			if (nieuwlees == KOMMA_) {
+			if (newread == COMMA_) {
 				parseExpression ();
-				nieuwontleed (SELFMATRIKS2_);
-				pas (RECHTEHAAKSLUITEN_);
+				newparse (SELFMATRIKS2_);
+				fit (CLOSING_BRACKET_);
 				return;
 			}
-			oudlees;
-			nieuwontleed (SELFMATRIKS1_);
-			pas (RECHTEHAAKSLUITEN_);
+			oldread;
+			newparse (SELFMATRIKS1_);
+			fit (CLOSING_BRACKET_);
 			return;
 		}
-		if (symbol == HAAKJEOPENEN_) {
+		if (symbol == OPENING_PARENTHESIS_) {
 			parseExpression ();
-			if (nieuwlees == KOMMA_) {
+			if (newread == COMMA_) {
 				parseExpression ();
-				nieuwontleed (SELFFUNKTIE2_);
-				pas (HAAKJESLUITEN_);
+				newparse (SELFFUNKTIE2_);
+				fit (CLOSING_PARENTHESIS_);
 				return;
 			}
-			oudlees;
-			nieuwontleed (SELFFUNKTIE1_);
-			pas (HAAKJESLUITEN_);
+			oldread;
+			newparse (SELFFUNKTIE1_);
+			fit (CLOSING_PARENTHESIS_);
 			return;
 		}
-		oudlees;
-		nieuwontleed (SELF0_);
+		oldread;
+		newparse (SELF0_);
 		return;
 	}
 
 	if (symbol == SELFSTR_) {
-		symbol = nieuwlees;
-		if (symbol == RECHTEHAAKOPENEN_) {
+		symbol = newread;
+		if (symbol == OPENING_BRACKET_) {
 			parseExpression ();
-			if (nieuwlees == KOMMA_) {
+			if (newread == COMMA_) {
 				parseExpression ();
-				nieuwontleed (SELFMATRIKSSTR2_);
-				pas (RECHTEHAAKSLUITEN_);
+				newparse (SELFMATRIKSSTR2_);
+				fit (CLOSING_BRACKET_);
 				return;
 			}
-			oudlees;
-			nieuwontleed (SELFMATRIKSSTR1_);
-			pas (RECHTEHAAKSLUITEN_);
+			oldread;
+			newparse (SELFMATRIKSSTR1_);
+			fit (CLOSING_BRACKET_);
 			return;
 		}
-		if (symbol == HAAKJEOPENEN_) {
+		if (symbol == OPENING_PARENTHESIS_) {
 			parseExpression ();
-			if (nieuwlees == KOMMA_) {
+			if (newread == COMMA_) {
 				parseExpression ();
-				nieuwontleed (SELFFUNKTIESTR2_);
-				pas (HAAKJESLUITEN_);
+				newparse (SELFFUNKTIESTR2_);
+				fit (CLOSING_PARENTHESIS_);
 				return;
 			}
-			oudlees;
-			nieuwontleed (SELFFUNKTIESTR1_);
-			pas (HAAKJESLUITEN_);
+			oldread;
+			newparse (SELFFUNKTIESTR1_);
+			fit (CLOSING_PARENTHESIS_);
 			return;
 		}
-		oudlees;
-		nieuwontleed (SELFSTR0_);
+		oldread;
+		newparse (SELFSTR0_);
 		return;
 	}
 
 	if (symbol == OBJECT_) {
-		symbol = nieuwlees;
-		if (symbol == RECHTEHAAKOPENEN_) {
+		symbol = newread;
+		if (symbol == OPENING_BRACKET_) {
 			parseExpression ();   // the object's name or ID
-			nieuwontleed (TO_OBJECT_);
-			if (nieuwlees == RECHTEHAAKSLUITEN_) {
-				symbol = nieuwlees;
+			newparse (TO_OBJECT_);
+			if (newread == CLOSING_BRACKET_) {
+				symbol = newread;
 				if (symbol == PERIOD_) {
-					switch (nieuwlees) {
+					switch (newread) {
 						case XMIN_:
-							nieuwontleed (OBJECT_XMIN_);
+							newparse (OBJECT_XMIN_);
 							return;
 						case XMAX_:
-							nieuwontleed (OBJECT_XMAX_);
+							newparse (OBJECT_XMAX_);
 							return;
 						case YMIN_:
-							nieuwontleed (OBJECT_YMIN_);
+							newparse (OBJECT_YMIN_);
 							return;
 						case YMAX_:
-							nieuwontleed (OBJECT_YMAX_);
+							newparse (OBJECT_YMAX_);
 							return;
 						case NX_:
-							nieuwontleed (OBJECT_NX_);
+							newparse (OBJECT_NX_);
 							return;
 						case NY_:
-							nieuwontleed (OBJECT_NY_);
+							newparse (OBJECT_NY_);
 							return;
 						case DX_:
-							nieuwontleed (OBJECT_DX_);
+							newparse (OBJECT_DX_);
 							return;
 						case DY_:
-							nieuwontleed (OBJECT_DY_);
+							newparse (OBJECT_DY_);
 							return;
 						case NROW_:
-							nieuwontleed (OBJECT_NROW_);
+							newparse (OBJECT_NROW_);
 							return;
 						case NCOL_:
-							nieuwontleed (OBJECT_NCOL_);
+							newparse (OBJECT_NCOL_);
 							return;
 						case ROWSTR_:
-							pas (RECHTEHAAKOPENEN_);
+							fit (OPENING_BRACKET_);
 							parseExpression ();
-							nieuwontleed (OBJECT_ROWSTR_);
-							pas (RECHTEHAAKSLUITEN_);
+							newparse (OBJECT_ROWSTR_);
+							fit (CLOSING_BRACKET_);
 							return;
 						case COLSTR_:
-							pas (RECHTEHAAKOPENEN_);
+							fit (OPENING_BRACKET_);
 							parseExpression ();
-							nieuwontleed (OBJECT_COLSTR_);
-							pas (RECHTEHAAKSLUITEN_);
+							newparse (OBJECT_COLSTR_);
+							fit (CLOSING_BRACKET_);
 							return;
 						default:
-							formulefout (U"After \"object [number].\" there should be \"xmin\", \"xmax\", \"ymin\", "
+							formulaError (U"After \"object [number].\" there should be \"xmin\", \"xmax\", \"ymin\", "
 								"\"ymax\", \"nx\", \"ny\", \"dx\", \"dy\", \"nrow\" or \"ncol\"", lexan [ilexan]. position);
 					}
-				} else if (symbol == RECHTEHAAKOPENEN_) {
+				} else if (symbol == OPENING_BRACKET_) {
 					parseExpression ();
-					if (nieuwlees == KOMMA_) {
+					if (newread == COMMA_) {
 						parseExpression ();
-						nieuwontleed (OBJECTCELL2_);
-						pas (RECHTEHAAKSLUITEN_);
+						newparse (OBJECTCELL2_);
+						fit (CLOSING_BRACKET_);
 					} else {
-						oudlees;
-						nieuwontleed (OBJECTCELL1_);
-						pas (RECHTEHAAKSLUITEN_);
+						oldread;
+						newparse (OBJECTCELL1_);
+						fit (CLOSING_BRACKET_);
 					}
 				} else {
-					oudlees;
-					nieuwontleed (OBJECTCELL0_);
+					oldread;
+					newparse (OBJECTCELL0_);
 				}
 			} else {
-				oudlees;
-				pas (KOMMA_);
+				oldread;
+				fit (COMMA_);
 				parseExpression ();
-				if (nieuwlees == KOMMA_) {
+				if (newread == COMMA_) {
 					parseExpression ();
-					nieuwontleed (OBJECTCELL2_);
-					pas (RECHTEHAAKSLUITEN_);
+					newparse (OBJECTCELL2_);
+					fit (CLOSING_BRACKET_);
 				} else {
-					oudlees;
-					nieuwontleed (OBJECTCELL1_);
-					pas (RECHTEHAAKSLUITEN_);
+					oldread;
+					newparse (OBJECTCELL1_);
+					fit (CLOSING_BRACKET_);
 				}
 			}
-		} else if (symbol == HAAKJEOPENEN_) {
+		} else if (symbol == OPENING_PARENTHESIS_) {
 			parseExpression ();   // the object's name or ID
-			nieuwontleed (TO_OBJECT_);
-			if (nieuwlees == HAAKJESLUITEN_) {
-				nieuwontleed (OBJECTLOCATION0_);
+			newparse (TO_OBJECT_);
+			if (newread == CLOSING_PARENTHESIS_) {
+				newparse (OBJECTLOCATION0_);
 			} else {
-				oudlees;
-				pas (KOMMA_);
+				oldread;
+				fit (COMMA_);
 				parseExpression ();
-				if (nieuwlees == KOMMA_) {
+				if (newread == COMMA_) {
 					parseExpression ();
-					nieuwontleed (OBJECTLOCATION2_);
-					pas (HAAKJESLUITEN_);
+					newparse (OBJECTLOCATION2_);
+					fit (CLOSING_PARENTHESIS_);
 				} else {
-					oudlees;
-					nieuwontleed (OBJECTLOCATION1_);
-					pas (HAAKJESLUITEN_);
+					oldread;
+					newparse (OBJECTLOCATION1_);
+					fit (CLOSING_PARENTHESIS_);
 				}
 			}
 		} else {
-			formulefout (U"After \"object\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
+			formulaError (U"After \"object\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
 		}
 		return;
 	}
 
 	if (symbol == OBJECTSTR_) {
-		symbol = nieuwlees;
-		if (symbol == RECHTEHAAKOPENEN_) {
+		symbol = newread;
+		if (symbol == OPENING_BRACKET_) {
 			parseExpression ();   // the object's name or ID
-			nieuwontleed (TO_OBJECT_);
-			if (nieuwlees == RECHTEHAAKSLUITEN_) {
-				nieuwontleed (OBJECTCELLSTR0_);
+			newparse (TO_OBJECT_);
+			if (newread == CLOSING_BRACKET_) {
+				newparse (OBJECTCELLSTR0_);
 			} else {
-				oudlees;
-				pas (KOMMA_);
+				oldread;
+				fit (COMMA_);
 				parseExpression ();
-				if (nieuwlees == KOMMA_) {
+				if (newread == COMMA_) {
 					parseExpression ();
-					nieuwontleed (OBJECTCELLSTR2_);
-					pas (RECHTEHAAKSLUITEN_);
+					newparse (OBJECTCELLSTR2_);
+					fit (CLOSING_BRACKET_);
 				} else {
-					oudlees;
-					nieuwontleed (OBJECTCELLSTR1_);
-					pas (RECHTEHAAKSLUITEN_);
+					oldread;
+					newparse (OBJECTCELLSTR1_);
+					fit (CLOSING_BRACKET_);
 				}
 			}
-		} else if (symbol == HAAKJEOPENEN_) {
+		} else if (symbol == OPENING_PARENTHESIS_) {
 			parseExpression ();   // the object's name or ID
-			nieuwontleed (TO_OBJECT_);
-			if (nieuwlees == HAAKJESLUITEN_) {
-				nieuwontleed (OBJECTLOCATIONSTR0_);
+			newparse (TO_OBJECT_);
+			if (newread == CLOSING_PARENTHESIS_) {
+				newparse (OBJECTLOCATIONSTR0_);
 			} else {
-				oudlees;
-				pas (KOMMA_);
+				oldread;
+				fit (COMMA_);
 				parseExpression ();
-				if (nieuwlees == KOMMA_) {
+				if (newread == COMMA_) {
 					parseExpression ();
-					nieuwontleed (OBJECTLOCATIONSTR2_);
-					pas (HAAKJESLUITEN_);
+					newparse (OBJECTLOCATIONSTR2_);
+					fit (CLOSING_PARENTHESIS_);
 				} else {
-					oudlees;
-					nieuwontleed (OBJECTLOCATIONSTR1_);
-					pas (HAAKJESLUITEN_);
+					oldread;
+					newparse (OBJECTLOCATIONSTR1_);
+					fit (CLOSING_PARENTHESIS_);
 				}
 			}
 		} else {
-			formulefout (U"After \"object$\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
+			formulaError (U"After \"object$\" there should be \"(\" or \"[\"", lexan [ilexan]. position);
 		}
 		return;
 	}
 
-	if (symbol == HAAKJEOPENEN_) {
+	if (symbol == OPENING_PARENTHESIS_) {
 		parseExpression ();
-		pas (HAAKJESLUITEN_);
+		fit (CLOSING_PARENTHESIS_);
 		return;
 	}
 
 	if (symbol == IF_) {
-		int elseLabel = nieuwlabel;   // has to be local,
-		int endifLabel = nieuwlabel;   // because of recursion
+		int elseLabel = newlabel;   // has to be local,
+		int endifLabel = newlabel;   // because of recursion
 		parseExpression ();
-		nieuwontleed (IFFALSE_);  ontleedlabel (elseLabel);
-		pas (THEN_);
+		newparse (IFFALSE_);  parselabel (elseLabel);
+		fit (THEN_);
 		parseExpression ();
-		nieuwontleed (GOTO_);     ontleedlabel (endifLabel);
-		pas (ELSE_);
-		nieuwontleed (LABEL_);    ontleedlabel (elseLabel);
+		newparse (GOTO_);     parselabel (endifLabel);
+		fit (ELSE_);
+		newparse (LABEL_);    parselabel (elseLabel);
 		parseExpression ();
-		pas (ENDIF_);
-		nieuwontleed (LABEL_);    ontleedlabel (endifLabel);
+		fit (ENDIF_);
+		newparse (LABEL_);    parselabel (endifLabel);
 		return;
 	}
 
 	if (symbol == MATRIKS_) {
 		Daata thee = lexan [ilexan]. content.object;
 		Melder_assert (thee != nullptr);
-		symbol = nieuwlees;
-		if (symbol == RECHTEHAAKOPENEN_) {
-			if (nieuwlees == RECHTEHAAKSLUITEN_) {
-				nieuwontleed (MATRIKS0_);
+		symbol = newread;
+		if (symbol == OPENING_BRACKET_) {
+			if (newread == CLOSING_BRACKET_) {
+				newparse (MATRIKS0_);
 				parse [iparse]. content.object = thee;
 			} else {
-				oudlees;
+				oldread;
 				parseExpression ();
-				if (nieuwlees == KOMMA_) {
+				if (newread == COMMA_) {
 					parseExpression ();
-					nieuwontleed (MATRIKS2_);
+					newparse (MATRIKS2_);
 					parse [iparse]. content.object = thee;
-					pas (RECHTEHAAKSLUITEN_);
+					fit (CLOSING_BRACKET_);
 				} else {
-					oudlees;
-					nieuwontleed (MATRIKS1_);
+					oldread;
+					newparse (MATRIKS1_);
 					parse [iparse]. content.object = thee;
-					pas (RECHTEHAAKSLUITEN_);
+					fit (CLOSING_BRACKET_);
 				}
 			}
-		} else if (symbol == HAAKJEOPENEN_) {
-			if (nieuwlees == HAAKJESLUITEN_) {
-				nieuwontleed (FUNKTIE0_);
+		} else if (symbol == OPENING_PARENTHESIS_) {
+			if (newread == CLOSING_PARENTHESIS_) {
+				newparse (FUNKTIE0_);
 				parse [iparse]. content.object = thee;
 			} else {
-				oudlees;
+				oldread;
 				parseExpression ();
-				if (nieuwlees == KOMMA_) {
+				if (newread == COMMA_) {
 					parseExpression ();
-					nieuwontleed (FUNKTIE2_);
+					newparse (FUNKTIE2_);
 					parse [iparse]. content.object = thee;
-					pas (HAAKJESLUITEN_);
+					fit (CLOSING_PARENTHESIS_);
 				} else {
-					oudlees;
-					nieuwontleed (FUNKTIE1_);
+					oldread;
+					newparse (FUNKTIE1_);
 					parse [iparse]. content.object = thee;
-					pas (HAAKJESLUITEN_);
+					fit (CLOSING_PARENTHESIS_);
 				}
 			}
 		} else if (symbol == PERIOD_) {
-			switch (nieuwlees) {
+			switch (newread) {
 				case XMIN_:
 					if (! thy v_hasGetXmin ()) {
-						formulefout (U"Attribute \"xmin\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"xmin\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getXmin ());
 						return;
 					}
 				case XMAX_:
 					if (! thy v_hasGetXmax ()) {
-						formulefout (U"Attribute \"xmax\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"xmax\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getXmax ());
 						return;
 					}
 				case YMIN_:
 					if (! thy v_hasGetYmin ()) {
-						formulefout (U"Attribute \"ymin\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"ymin\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getYmin ());
 						return;
 					}
 				case YMAX_:
 					if (! thy v_hasGetYmax ()) {
-						formulefout (U"Attribute \"ymax\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"ymax\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getYmax ());
 						return;
 					}
 				case NX_:
 					if (! thy v_hasGetNx ()) {
-						formulefout (U"Attribute \"nx\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"nx\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getNx ());
 						return;
 					}
 				case NY_:
 					if (! thy v_hasGetNy ()) {
-						formulefout (U"Attribute \"ny\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"ny\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getNy ());
 						return;
 					}
 				case DX_:
 					if (! thy v_hasGetDx ()) {
-						formulefout (U"Attribute \"dx\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"dx\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getDx ());
 						return;
 					}
 				case DY_:
 					if (! thy v_hasGetDy ()) {
-						formulefout (U"Attribute \"dy\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"dy\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getDy ());
 						return;
 					}
 				case NCOL_:
 					if (! thy v_hasGetNcol ()) {
-						formulefout (U"Attribute \"ncol\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"ncol\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getNcol ());
 						return;
 					}
 				case NROW_:
 					if (! thy v_hasGetNrow ()) {
-						formulefout (U"Attribute \"nrow\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"nrow\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						nieuwontleed (NUMBER_);
+						newparse (NUMBER_);
 						parsenumber (thy v_getNrow ());
 						return;
 					}
 				case ROWSTR_:
 					if (! thy v_hasGetRowStr ()) {
-						formulefout (U"Attribute \"row$\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"row$\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						pas (RECHTEHAAKOPENEN_);
+						fit (OPENING_BRACKET_);
 						parseExpression ();
-						nieuwontleed (ROWSTR_);
+						newparse (ROWSTR_);
 						parse [iparse]. content.object = thee;
-						pas (RECHTEHAAKSLUITEN_);
+						fit (CLOSING_BRACKET_);
 						return;
 					}
 				case COLSTR_:
 					if (! thy v_hasGetColStr ()) {
-						formulefout (U"Attribute \"col$\" not defined for this object", lexan [ilexan]. position);
+						formulaError (U"Attribute \"col$\" not defined for this object", lexan [ilexan]. position);
 					} else {
-						pas (RECHTEHAAKOPENEN_);
+						fit (OPENING_BRACKET_);
 						parseExpression ();
-						nieuwontleed (COLSTR_);
+						newparse (COLSTR_);
 						parse [iparse]. content.object = thee;
-						pas (RECHTEHAAKSLUITEN_);
+						fit (CLOSING_BRACKET_);
 						return;
 					}
-				default: formulefout (U"Unknown attribute.", lexan [ilexan]. position);
+				default: formulaError (U"Unknown attribute.", lexan [ilexan]. position);
 			}
 		} else {
-			formulefout (U"After a name of a matrix there should be \"(\", \"[\", or \".\"", lexan [ilexan]. position);
+			formulaError (U"After a name of a matrix there should be \"(\", \"[\", or \".\"", lexan [ilexan]. position);
 		}
 		return;
 	}
@@ -1370,232 +1370,232 @@ static void parsePowerFactor () {
 	if (symbol == MATRIKSSTR_) {
 		Daata thee = lexan [ilexan]. content.object;
 		Melder_assert (thee != nullptr);
-		symbol = nieuwlees;
-		if (symbol == RECHTEHAAKOPENEN_) {
-			if (nieuwlees == RECHTEHAAKSLUITEN_) {
-				nieuwontleed (MATRIKSSTR0_);
+		symbol = newread;
+		if (symbol == OPENING_BRACKET_) {
+			if (newread == CLOSING_BRACKET_) {
+				newparse (MATRIKSSTR0_);
 				parse [iparse]. content.object = thee;
 			} else {
-				oudlees;
+				oldread;
 				parseExpression ();
-				if (nieuwlees == KOMMA_) {
+				if (newread == COMMA_) {
 					parseExpression ();
-					nieuwontleed (MATRIKSSTR2_);
+					newparse (MATRIKSSTR2_);
 					parse [iparse]. content.object = thee;
-					pas (RECHTEHAAKSLUITEN_);
+					fit (CLOSING_BRACKET_);
 				} else {
-					oudlees;
-					nieuwontleed (MATRIKSSTR1_);
+					oldread;
+					newparse (MATRIKSSTR1_);
 					parse [iparse]. content.object = thee;
-					pas (RECHTEHAAKSLUITEN_);
+					fit (CLOSING_BRACKET_);
 				}
 			}
 		} else {
-			formulefout (U"After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
+			formulaError (U"After a name of a matrix$ there should be \"[\"", lexan [ilexan]. position);
 		}
 		return;
 	}
 
 	if (symbol >= LOW_FUNCTION_1 && symbol <= HIGH_FUNCTION_1) {
-		bool isParenthesis = pasArguments ();
+		bool isParenthesis = fitArguments ();
 		parseExpression ();
-		if (isParenthesis) pas (HAAKJESLUITEN_);
-		nieuwontleed (symbol);
+		if (isParenthesis) fit (CLOSING_PARENTHESIS_);
+		newparse (symbol);
 		return;
 	}
 
 	if (symbol >= LOW_FUNCTION_2 && symbol <= HIGH_FUNCTION_2) {
-		bool isParenthesis = pasArguments ();
+		bool isParenthesis = fitArguments ();
 		parseExpression ();
-		pas (KOMMA_);
+		fit (COMMA_);
 		parseExpression ();
-		if (isParenthesis) pas (HAAKJESLUITEN_);
-		nieuwontleed (symbol);
+		if (isParenthesis) fit (CLOSING_PARENTHESIS_);
+		newparse (symbol);
 		return;
 	}
 
 	if (symbol >= LOW_FUNCTION_3 && symbol <= HIGH_FUNCTION_3) {
-		bool isParenthesis = pasArguments ();
+		bool isParenthesis = fitArguments ();
 		parseExpression ();
-		pas (KOMMA_);
+		fit (COMMA_);
 		parseExpression ();
-		pas (KOMMA_);
+		fit (COMMA_);
 		parseExpression ();
-		if (isParenthesis) pas (HAAKJESLUITEN_);
-		nieuwontleed (symbol);
+		if (isParenthesis) fit (CLOSING_PARENTHESIS_);
+		newparse (symbol);
 		return;
 	}
 
 	if (symbol >= LOW_FUNCTION_N && symbol <= HIGH_FUNCTION_N) {
 		int n = 0;
-		bool isParenthesis = pasArguments ();
-		if (nieuwlees != HAAKJESLUITEN_) {
-			oudlees;
+		bool isParenthesis = fitArguments ();
+		if (newread != CLOSING_PARENTHESIS_) {
+			oldread;
 			parseExpression ();
 			n ++;
-			while (nieuwlees == KOMMA_) {
+			while (newread == COMMA_) {
 				parseExpression ();
 				n ++;
 			}
-			oudlees;
-			if (isParenthesis) pas (HAAKJESLUITEN_);
+			oldread;
+			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
 		}
-		nieuwontleed (NUMBER_); parsenumber (n);
-		nieuwontleed (symbol);
+		newparse (NUMBER_); parsenumber (n);
+		newparse (symbol);
 		return;
 	}
 
 	if (symbol == OPENING_BRACE_) {
 		parseExpression ();
 		int n = 1;
-		while (nieuwlees == KOMMA_) {
+		while (newread == COMMA_) {
 			parseExpression ();
 			n ++;
 		}
-		oudlees;
-		pas (CLOSING_BRACE_);
-		nieuwontleed (NUMBER_); parsenumber (n);
-		nieuwontleed (TENSOR_LITERAL_);
+		oldread;
+		fit (CLOSING_BRACE_);
+		newparse (NUMBER_); parsenumber (n);
+		newparse (TENSOR_LITERAL_);
 		return;
 	}
 
 	if (symbol == CALL_) {
 		char32 *procedureName = lexan [ilexan]. content.string;   // reference copy!
 		int n = 0;
-		bool isParenthesis = pasArguments ();
-		if (nieuwlees != HAAKJESLUITEN_) {
-			oudlees;
+		bool isParenthesis = fitArguments ();
+		if (newread != CLOSING_PARENTHESIS_) {
+			oldread;
 			parseExpression ();
 			n ++;
-			while (nieuwlees == KOMMA_) {
+			while (newread == COMMA_) {
 				parseExpression ();
 				n ++;
 			}
-			oudlees;
-			if (isParenthesis) pas (HAAKJESLUITEN_);
+			oldread;
+			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
 		}
-		nieuwontleed (NUMBER_); parsenumber (n);
-		nieuwontleed (CALL_);
+		newparse (NUMBER_); parsenumber (n);
+		newparse (CALL_);
 		parse [iparse]. content.string = procedureName;
 		return;
 	}
 
 	if (symbol >= LOW_STRING_FUNCTION && symbol <= HIGH_STRING_FUNCTION) {
 		if (symbol >= LOW_FUNCTION_STR1 && symbol <= HIGH_FUNCTION_STR1) {
-            bool isParenthesis = pasArguments ();
+            bool isParenthesis = fitArguments ();
 			parseExpression ();
-			if (isParenthesis) pas (HAAKJESLUITEN_);
+			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
 		} else if (symbol == INDEX_ || symbol == RINDEX_ ||
 			symbol == STARTS_WITH_ || symbol == ENDS_WITH_ ||
 			symbol == INDEX_REGEX_ || symbol == RINDEX_REGEX_ || symbol == EXTRACT_NUMBER_)
 		{
-            bool isParenthesis = pasArguments ();
+            bool isParenthesis = fitArguments ();
 			parseExpression ();
-			pas (KOMMA_);
+			fit (COMMA_);
 			parseExpression ();
-			if (isParenthesis) pas (HAAKJESLUITEN_);
+			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
 		} else if (symbol == DATESTR_ || symbol == INFOSTR_) {
-			pas (HAAKJEOPENEN_);
-			pas (HAAKJESLUITEN_);
+			fit (OPENING_PARENTHESIS_);
+			fit (CLOSING_PARENTHESIS_);
 		} else if (symbol == EXTRACT_WORDSTR_ || symbol == EXTRACT_LINESTR_) {
-            bool isParenthesis = pasArguments ();
+            bool isParenthesis = fitArguments ();
 			parseExpression ();
-			pas (KOMMA_);
+			fit (COMMA_);
 			parseExpression ();
-			if (isParenthesis) pas (HAAKJESLUITEN_);
+			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
 		} else if (symbol == FIXEDSTR_ || symbol == PERCENTSTR_ || symbol == HEXADECIMALSTR_) {
-            bool isParenthesis = pasArguments ();
+            bool isParenthesis = fitArguments ();
 			parseExpression ();
-			pas (KOMMA_);
+			fit (COMMA_);
 			parseExpression ();
-			if (isParenthesis) pas (HAAKJESLUITEN_);
+			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
 		} else if (symbol == REPLACESTR_ || symbol == REPLACE_REGEXSTR_) {
-            bool isParenthesis = pasArguments ();
+            bool isParenthesis = fitArguments ();
 			parseExpression ();
-			pas (KOMMA_);
+			fit (COMMA_);
 			parseExpression ();
-			pas (KOMMA_);
+			fit (COMMA_);
 			parseExpression ();
-			pas (KOMMA_);
+			fit (COMMA_);
 			parseExpression ();
-			if (isParenthesis) pas (HAAKJESLUITEN_);
+			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
 		} else {
-			oudlees;   // needed for retry if we are going to be in a string comparison?
-			formulefout (U"Function expected", lexan [ilexan + 1]. position);
+			oldread;   // needed for retry if we are going to be in a string comparison?
+			formulaError (U"Function expected", lexan [ilexan + 1]. position);
 		}
-		nieuwontleed (symbol);
+		newparse (symbol);
 		return;
 	}
 
 	if (symbol >= LOW_RANGE_FUNCTION && symbol <= HIGH_RANGE_FUNCTION) {
 		if (symbol == SUM_OVER_) {
 			//theOptimize = 1;
-			nieuwontleed (NUMBER_); parsenumber (0.0);   // initialize the sum
-            bool isParenthesis = pasArguments ();
-			int symbol2 = nieuwlees;
+			newparse (NUMBER_); parsenumber (0.0);   // initialize the sum
+            bool isParenthesis = fitArguments ();
+			int symbol2 = newread;
 			if (symbol2 == NUMERIC_VARIABLE_) {   // an existing variable
-				nieuwontleed (VARIABLE_REFERENCE_);
+				newparse (VARIABLE_REFERENCE_);
 				InterpreterVariable loopVariable = lexan [ilexan]. content.variable;
 				parse [iparse]. content.variable = loopVariable;
 			} else if (symbol2 == VARIABLE_NAME_) {   // a new variable
 				InterpreterVariable loopVariable = Interpreter_lookUpVariable (theInterpreter, lexan [ilexan]. content.string);
-				nieuwontleed (VARIABLE_REFERENCE_);
+				newparse (VARIABLE_REFERENCE_);
 				parse [iparse]. content.variable = loopVariable;
 			} else {
-				formulefout (U"Numeric variable expected", lexan [ilexan]. position);
+				formulaError (U"Numeric variable expected", lexan [ilexan]. position);
 			}
 			// now on stack: sum, loop variable
-			if (nieuwlees == FROM_) {
+			if (newread == FROM_) {
 				parseExpression ();
 			} else {
-				oudlees;
-				nieuwontleed (NUMBER_); parsenumber (1.0);
+				oldread;
+				newparse (NUMBER_); parsenumber (1.0);
 			}
-			nieuwontleed (DECREMENT_AND_ASSIGN_);   // this pushes the variable back on the stack
+			newparse (DECREMENT_AND_ASSIGN_);   // this pushes the variable back on the stack
 			// now on stack: sum, loop variable
-			pas (TO_);
+			fit (TO_);
 			parseExpression ();
 			// now on stack: sum, loop variable, end value
-			int startLabel = nieuwlabel;
-			int endLabel = nieuwlabel;
-			nieuwontleed (LABEL_); ontleedlabel (startLabel);
-			nieuwontleed (INCREMENT_GREATER_GOTO_); ontleedlabel (endLabel);
-			pas (KOMMA_);
+			int startLabel = newlabel;
+			int endLabel = newlabel;
+			newparse (LABEL_); parselabel (startLabel);
+			newparse (INCREMENT_GREATER_GOTO_); parselabel (endLabel);
+			fit (COMMA_);
 			parseExpression ();
-			if (isParenthesis) pas (HAAKJESLUITEN_);
+			if (isParenthesis) fit (CLOSING_PARENTHESIS_);
 			// now on stack: sum, loop variable, end value, value to add
-			nieuwontleed (ADD_3DOWN_);
+			newparse (ADD_3DOWN_);
 			// now on stack: sum, loop variable, end value
-			nieuwontleed (GOTO_); ontleedlabel (startLabel);
-			nieuwontleed (LABEL_); ontleedlabel (endLabel);
-			nieuwontleed (POP_2_);
+			newparse (GOTO_); parselabel (startLabel);
+			newparse (LABEL_); parselabel (endLabel);
+			newparse (POP_2_);
 			// now on stack: sum
 			return;
 		}
 	}
 
 	if (symbol == STOPWATCH_) {
-		nieuwontleed (symbol);
+		newparse (symbol);
 		return;
 	}
 
-	oudlees;   // needed for retry if we are going to be in a string comparison
-	formulefout (U"Symbol misplaced", lexan [ilexan + 1]. position);
+	oldread;   // needed for retry if we are going to be in a string comparison
+	formulaError (U"Symbol misplaced", lexan [ilexan + 1]. position);
 }
 
 static void parseFactor ();
 
 static void parsePowerFactors () {
-	if (nieuwlees == POWER_) {
+	if (newread == POWER_) {
 		if (ilexan > 2 && lexan [ilexan - 2]. symbol == MINUS_ && lexan [ilexan - 1]. symbol == NUMBER_) {
-			oudlees;
-			formulefout (U"Expressions like -3^4 are ambiguous; use (-3)^4 or -(3^4) or -(3)^4", lexan [ilexan + 1]. position);
+			oldread;
+			formulaError (U"Expressions like -3^4 are ambiguous; use (-3)^4 or -(3^4) or -(3)^4", lexan [ilexan + 1]. position);
 		}
 		parseFactor ();   // like a^-b
-		nieuwontleed (POWER_);
+		newparse (POWER_);
 	}
 	else
-		oudlees;
+		oldread;
 }
 
 static void parseMinus () {
@@ -1604,23 +1604,23 @@ static void parseMinus () {
 }
 
 static void parseFactor () {
-	if (nieuwlees == MINUS_) {
+	if (newread == MINUS_) {
 		parseFactor ();   // there can be multiple consecutive minuses
-		nieuwontleed (MINUS_);
+		newparse (MINUS_);
 		return;
 	}
-	oudlees;
+	oldread;
 	parseMinus ();   // like -a^b
 }
 
 static void parseFactors () {
-	int sym = nieuwlees;   // has to be local, because of recursion
+	int sym = newread;   // has to be local, because of recursion
 	if (sym == MUL_ || sym == RDIV_ || sym == IDIV_ || sym == MOD_) {
 		parseFactor ();
-		nieuwontleed (sym);
+		newparse (sym);
 		parseFactors ();
 	}
-	else oudlees;
+	else oldread;
 }
 
 static void parseTerm () {
@@ -1629,74 +1629,74 @@ static void parseTerm () {
 }
 
 static void parseTerms () {
-	int symbol = nieuwlees;
+	int symbol = newread;
 	if (symbol == ADD_ || symbol == SUB_) {
 		parseTerm ();
-		nieuwontleed (symbol);
+		newparse (symbol);
 		parseTerms ();
 	}
-	else oudlees;
+	else oldread;
 }
 
 static void parseNot () {
 	int symbol;
 	parseTerm ();
 	parseTerms ();
-	symbol = nieuwlees;
+	symbol = newread;
 	if (symbol >= EQ_ && symbol <= GT_) {
 		parseTerm ();
 		parseTerms ();
-		nieuwontleed (symbol);
+		newparse (symbol);
 	}
-	else oudlees;
+	else oldread;
 }
 
 static void parseAnd () {
-	if (nieuwlees == NOT_) {
+	if (newread == NOT_) {
 		parseAnd ();   // like not not not
-		nieuwontleed (NOT_);
+		newparse (NOT_);
 		return;
 	}
-	oudlees;
+	oldread;
 	parseNot ();
 }
 
 static void parseOr () {
 	parseAnd ();
-	if (nieuwlees == AND_) {
-		int falseLabel = nieuwlabel;
-		int andLabel = nieuwlabel;
+	if (newread == AND_) {
+		int falseLabel = newlabel;
+		int andLabel = newlabel;
 		do {
-			nieuwontleed (IFFALSE_); ontleedlabel (falseLabel);
+			newparse (IFFALSE_); parselabel (falseLabel);
 			parseAnd ();
-		} while (nieuwlees == AND_);
-		nieuwontleed (IFFALSE_); ontleedlabel (falseLabel);
-		nieuwontleed (TRUE_);
-		nieuwontleed (GOTO_); ontleedlabel (andLabel);
-		nieuwontleed (LABEL_); ontleedlabel (falseLabel);
-		nieuwontleed (FALSE_);
-		nieuwontleed (LABEL_); ontleedlabel (andLabel);
+		} while (newread == AND_);
+		newparse (IFFALSE_); parselabel (falseLabel);
+		newparse (TRUE_);
+		newparse (GOTO_); parselabel (andLabel);
+		newparse (LABEL_); parselabel (falseLabel);
+		newparse (FALSE_);
+		newparse (LABEL_); parselabel (andLabel);
 	}
-	oudlees;
+	oldread;
 }
 
 static void parseExpression () {
 	parseOr ();
-	if (nieuwlees == OR_) {
-		int trueLabel = nieuwlabel;
-		int orLabel = nieuwlabel;
+	if (newread == OR_) {
+		int trueLabel = newlabel;
+		int orLabel = newlabel;
 		do {
-			nieuwontleed (IFTRUE_); ontleedlabel (trueLabel);
+			newparse (IFTRUE_); parselabel (trueLabel);
 			parseOr ();
-		} while (nieuwlees == OR_);
-		nieuwontleed (IFTRUE_); ontleedlabel (trueLabel);
-		nieuwontleed (FALSE_);
-		nieuwontleed (GOTO_); ontleedlabel (orLabel);
-		nieuwontleed (LABEL_); ontleedlabel (trueLabel);
-		nieuwontleed (TRUE_);
-		nieuwontleed (LABEL_); ontleedlabel (orLabel);
+		} while (newread == OR_);
+		newparse (IFTRUE_); parselabel (trueLabel);
+		newparse (FALSE_);
+		newparse (GOTO_); parselabel (orLabel);
+		newparse (LABEL_); parselabel (trueLabel);
+		newparse (TRUE_);
+		newparse (LABEL_); parselabel (orLabel);
 	}
-	oudlees;
+	oldread;
 }
 
 /*
@@ -1718,18 +1718,18 @@ static void Formula_parseExpression () {
 	ilabel = ilexan = iparse = 0;
 	if (lexan [1]. symbol == END_) Melder_throw (U"Empty formula.");
 	parseExpression ();
-	pas (END_);
-	nieuwontleed (END_);
+	fit (END_);
+	newparse (END_);
 	numberOfInstructions = iparse;
 }
 
-static void schuif (int begin, int afstand) {
-	numberOfInstructions -= afstand;
+static void shift (int begin, int distance) {
+	numberOfInstructions -= distance;
 	for (int j = begin; j <= numberOfInstructions; j ++)
-		parse [j] = parse [j + afstand];
+		parse [j] = parse [j + distance];
 }
 
-static int vindLabel (int label) {
+static int findLabel (int label) {
 	int result = numberOfInstructions;
 	while (parse [result]. symbol != LABEL_ ||
 			 parse [result]. content.label != label)
@@ -1749,7 +1749,7 @@ static void Formula_optimizeFlow ()
 {
 	int i, j, volg;
 	for (;;) {
-		int verbeterd = 0;
+		bool improved = false;
 		for (i = 1; i <= numberOfInstructions; i ++)
 		{
 
@@ -1759,18 +1759,18 @@ static void Formula_optimizeFlow ()
 
 			if ((parse [i]. symbol == TRUE_ &&
 				 parse [i + 1]. symbol == GOTO_ &&
-				 parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
+				 parse [volg = findLabel (parse [i + 1]. content.label) + 1]
 							. symbol == IFTRUE_)
 				 ||
 				 (parse [i]. symbol == FALSE_ &&
 				  parse [i + 1]. symbol == GOTO_ &&
-				  parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
+				  parse [volg = findLabel (parse [i + 1]. content.label) + 1]
 							. symbol == IFFALSE_))
 			{
-				 verbeterd = 1;
+				 improved = true;
 				 parse [i]. symbol = GOTO_;
 				 parse [i]. content.label = parse [volg]. content.label;
-				 schuif (i + 1, 1);
+				 shift (i + 1, 1);
 			}
 
 /* Optimalisatie 2: */
@@ -1780,17 +1780,17 @@ static void Formula_optimizeFlow ()
 
 			if ((parse [i]. symbol == TRUE_ &&
 				 parse [i + 1]. symbol == GOTO_ &&
-				 parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
+				 parse [volg = findLabel (parse [i + 1]. content.label) + 1]
 							. symbol == IFFALSE_)
 				 ||
 				 (parse [i]. symbol == FALSE_ &&
 				  parse [i + 1]. symbol == GOTO_ &&
-				  parse [volg = vindLabel (parse [i + 1]. content.label) + 1]
+				  parse [volg = findLabel (parse [i + 1]. content.label) + 1]
 							. symbol == IFTRUE_))
 			{
-				verbeterd = 1;
+				improved = true;
 				parse [i]. symbol = GOTO_;
-				parse [i]. content.label = nieuwlabel;
+				parse [i]. content.label = newlabel;
 				for (j = i + 1; j < volg; j ++)
 					parse [j] = parse [j + 1];
 				parse [volg]. symbol = LABEL_;
@@ -1805,10 +1805,10 @@ static void Formula_optimizeFlow ()
 				 parse [i + 2]. symbol == LABEL_ &&
 				 parse [i]. content.label == parse [i + 2]. content.label)
 			{
-				verbeterd = 1;
+				improved = true;
 				parse [i]. symbol = IFFALSE_;
 				parse [i]. content.label = parse [i + 1]. content.label;
-				schuif (i + 1, 1);
+				shift (i + 1, 1);
 			}
 
 /* Optimalisatie 3b: */
@@ -1819,10 +1819,10 @@ static void Formula_optimizeFlow ()
 				 parse [i + 2]. symbol == LABEL_ &&
 				 parse [i]. content.label == parse [i + 2]. content.label)
 			{
-				verbeterd = 1;
+				improved = true;
 				parse [i]. symbol = IFTRUE_;
 				parse [i]. content.label = parse [i + 1]. content.label;
-				schuif (i + 1, 1);
+				shift (i + 1, 1);
 			}
 
 /* Optimalisatie 4: */
@@ -1831,10 +1831,10 @@ static void Formula_optimizeFlow ()
 			if (parse [i]. symbol == GOTO_ &&
 				 parse [i + 1]. symbol != LABEL_)
 			{
-				verbeterd = 1;
+				improved = true;
 				j = i + 2;
 				while (parse [j]. symbol != LABEL_) j ++;
-				schuif (i + 1, j - i - 1);
+				shift (i + 1, j - i - 1);
 			}
 
 /* Optimalisatie 5: */
@@ -1844,8 +1844,8 @@ static void Formula_optimizeFlow ()
 				 parse [i]. symbol == LABEL_ &&
 				 parse [i]. content.label == parse [i + 1]. content.label)
 			{
-				verbeterd = 1;
-				schuif (i, 1);
+				improved = true;
+				shift (i, 1);
 			}
 
 /* Optimalisatie 6: */
@@ -1855,8 +1855,8 @@ static void Formula_optimizeFlow ()
 			if ((parse [i]. symbol == TRUE_ && parse [i + 1]. symbol == IFFALSE_)
 				|| (parse [i]. symbol == FALSE_ && parse [i + 1]. symbol == IFTRUE_))
 			{
-				verbeterd = 1;
-				schuif (i, 2);
+				improved = true;
+				shift (i, 2);
 			}
 
 /* Optimalisatie 7: */
@@ -1866,10 +1866,10 @@ static void Formula_optimizeFlow ()
 			if ((parse [i]. symbol == TRUE_ && parse [i + 1]. symbol == IFTRUE_)
 				|| (parse [i]. symbol == FALSE_ && parse [i + 1]. symbol == IFFALSE_))
 			{
-				verbeterd = 1;
+				improved = true;
 				parse [i]. symbol = GOTO_;
 				parse [i]. content.label = parse [i + 1]. content.label;
-				schuif (i + 1, 1);
+				shift (i + 1, 1);
 			}
 
 /* Optimalisatie 8: */
@@ -1877,9 +1877,9 @@ static void Formula_optimizeFlow ()
 /*    iffalse x  ->  iffalse y  /  __  ...  label x  goto y   */
 
 			if ((parse [i]. symbol == IFTRUE_ || parse [i]. symbol == IFFALSE_)
-				&& parse [volg = vindLabel (parse [i]. content.label) + 1]. symbol == GOTO_)
+				&& parse [volg = findLabel (parse [i]. content.label) + 1]. symbol == GOTO_)
 			{
-				verbeterd = 1;
+				improved = true;
 				parse [i]. content.label = parse [volg]. content.label;
 			}
 
@@ -1888,10 +1888,10 @@ static void Formula_optimizeFlow ()
 
 			if (parse [i]. symbol == NOT_ && parse [i + 1]. symbol == IFTRUE_)
 			{
-				verbeterd = 1;
+				improved = true;
 				parse [i]. symbol = IFFALSE_;
 				parse [i]. content.label = parse [i + 1]. content.label;
-				schuif (i + 1, 1);
+				shift (i + 1, 1);
 			}
 
 /* Optimalisatie 9b: */
@@ -1899,10 +1899,10 @@ static void Formula_optimizeFlow ()
 
 			if (parse [i]. symbol == NOT_ && parse [i + 1]. symbol == IFFALSE_)
 			{
-				verbeterd = 1;
+				improved = true;
 				parse [i]. symbol = IFTRUE_;
 				parse [i]. content.label = parse [i + 1]. content.label;
-				schuif (i + 1, 1);
+				shift (i + 1, 1);
 			}
 
 /* De volgende optimalisaties ontbreken want zijn hier overbodig: */
@@ -1924,11 +1924,11 @@ static void Formula_optimizeFlow ()
 						gevonden = 1;
 				if (! gevonden)
 				{
-					verbeterd = 1;
-					schuif (i, 1);
+					improved = true;
+					shift (i, 1);
 				}
 			}
-		if (! verbeterd) break;
+		if (! improved) break;
 	}
 }
 
@@ -2019,7 +2019,7 @@ static void Formula_evaluateConstants () {
 			}
 			if (gain > 0) {
 				improved = true;
-				schuif (i + 1, gain);
+				shift (i + 1, gain);
 			}
 		}
 		if (! improved) break;
@@ -2050,7 +2050,7 @@ static void Formula_removeLabels () {
 		while (i <= numberOfInstructions) {
 			int symboli = parse [i]. symbol;
 			if (symboli == LABEL_) {
-				schuif (i, 1);   // remove one label
+				shift (i, 1);   // remove one label
 				for (int j = 1; j <= numberOfInstructions; j ++) {
 					int symbolj = parse [j]. symbol;
 					if ((symbolj == GOTO_ || symbolj == IFTRUE_ || symbolj == IFFALSE_ || symbolj == INCREMENT_GREATER_GOTO_) && parse [j]. content.label > i)
@@ -3302,7 +3302,7 @@ static void do_function_VECll_l (integer (*f) (integer, integer)) {
 		Melder_throw (U"The function ", Formula_instructionNames [parse [programPointer]. symbol], U" requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if ((a->which == Stackel_NUMERIC_VECTOR || a->which == Stackel_NUMBER) && x->which == Stackel_NUMBER) {
-		integer numberOfElements = ( a->which == Stackel_NUMBER ? a->number : a->numericVector.size );
+		integer numberOfElements = ( a->which == Stackel_NUMBER ? Melder_iround (a->number) : a->numericVector.size );
 		autoVEC newData (numberOfElements, kTensorInitializationType::RAW);
 		for (integer ielem = 1; ielem <= numberOfElements; ielem ++) {
 			newData [ielem] = f (Melder_iround (x->number), Melder_iround (y->number));
@@ -4470,7 +4470,7 @@ static void do_extractNumber () {
 			if (substring [0] == U'\0' || str32nequ (substring, U"--undefined--", 13)) {
 				pushNumber (undefined);
 			} else {
-				char32 buffer [101], *slash;
+				char32 buffer [101];
 				int i = 0;
 				for (; i < 100; i ++) {
 					buffer [i] = *substring;
@@ -4483,11 +4483,10 @@ static void do_extractNumber () {
 					pushNumber (Melder_atof (buffer));
 				} else {
 					buffer [i + 1] = U'\0';
-					slash = str32chr (buffer, U'/');
+					char32 *slash = str32chr (buffer, U'/');
 					if (slash) {
-						double numerator, denominator;
 						*slash = U'\0';
-						numerator = Melder_atof (buffer), denominator = Melder_atof (slash + 1);
+						double numerator = Melder_atof (buffer), denominator = Melder_atof (slash + 1);
 						pushNumber (numerator / denominator);
 					} else {
 						pushNumber (Melder_atof (buffer));
@@ -5070,11 +5069,30 @@ static void do_VECmul () {
 		integer xNcol = x->numericMatrix.ncol, ySize = y->numericVector.size;
 		Melder_require (ySize == xNcol,
 			U"In the function \"mul#\", the number of columns of the matrix and the dimension of the vector should be equal, "
-			U"not ", xNcol, U" and ", ySize);
+			U"not ", xNcol, U" and ", ySize, U".");
 		autoVEC result = VECmul (x->numericMatrix, y->numericVector);
 		pushNumericVector (result.move());
 	} else {
 		Melder_throw (U"The function \"mul#\" requires a vector and a matrix, not ", x->whichText(), U" and ", y->whichText(), U".");
+	}
+}
+static void do_MATmul () {
+	/*
+		result## = mul## (x.., y..)
+	*/
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMERIC_MATRIX && y->which == Stackel_NUMERIC_MATRIX) {
+		/*
+			result# = mul## (x##, y##)
+		*/
+		integer xNcol = x->numericMatrix.ncol, yNrow = y->numericMatrix.nrow;
+		Melder_require (yNrow == xNcol,
+			U"In the function \"mul##\", the number of columns of the first matrix and the number of rows of the second matrix should be equal, "
+			U"not ", xNcol, U" and ", yNrow, U".");
+		autoMAT result = MATmul (x->numericMatrix, y->numericMatrix);
+		pushNumericMatrix (result.move());
+	} else {
+		Melder_throw (U"The function \"mul##\" requires two matrices, not ", x->whichText(), U" and ", y->whichText(), U".");
 	}
 }
 static void do_VECrepeat () {
@@ -6136,7 +6154,8 @@ void Formula_run (integer row, integer col, Formula_Result *result) {
 		if (! theStack)
 			Melder_throw (U"Out of memory during formula computation.");
 	}
-	w = 0, wmax = 0;   // start new stack
+	w = 0;   // start new stack
+	wmax = 0;   // start new stack
 	try {
 		while (programPointer <= numberOfInstructions) {
 			int symbol;
@@ -6355,6 +6374,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case INNER_: { do_inner ();
 } break; case MAT_OUTER_: { do_MATouter ();
 } break; case VEC_MUL_: { do_VECmul ();
+} break; case MAT_MUL_: { do_MATmul ();
 } break; case VEC_REPEAT_: { do_VECrepeat ();
 /********** Pause window functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
@@ -6448,8 +6468,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case POP_2_: {
 	w -= 2;
 	//Melder_casual (U"total ", theStack[w].number);
-} break; case NUMERIC_VECTOR_ELEMENT_: { do_numericVectorElement ();
-} break; case NUMERIC_MATRIX_ELEMENT_: { do_numericMatrixElement ();
+} break; case VEC_CELL_: { do_numericVectorElement ();
+} break; case MAT_CELL_: { do_numericMatrixElement ();
 } break; case INDEXED_NUMERIC_VARIABLE_: { do_indexedNumericVariable ();
 } break; case INDEXED_STRING_VARIABLE_: { do_indexedStringVariable ();
 } break; case VARIABLE_REFERENCE_: {

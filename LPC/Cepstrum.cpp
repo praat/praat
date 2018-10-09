@@ -321,7 +321,6 @@ void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWi
 		if (numberOfQuefrencyBins > 1) {
 			autoVEC qin = VECcopy (my z.row(1));
 			autoVEC qout = VECraw (my nx);
-			double *xin, *xout;
 			for (integer k = 1; k <= numberOfIterations; k ++)
 				if (k % 2 == 1) 
 					VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfQuefrencyBins);
@@ -340,20 +339,18 @@ autoPowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAverag
 	return thee;
 }
 
-void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *p_peakdB, double *p_quefrency) {
-	double peakdB, quefrency;
+void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *out_peakdB, double *out_quefrency) {
 	autoPowerCepstrum thee = Data_copy (me);
 	double lowestQuefrency = 1.0 / pitchCeiling, highestQuefrency = 1.0 / pitchFloor;
 	for (integer i = 1; i <= my nx; i ++) {
 		thy z [1] [i] = my v_getValueAtSample (i, 1, 0); // 10 log val^2
 	}
+	double peakdB, quefrency;
 	Vector_getMaximumAndX ((Vector) thee.get(), lowestQuefrency, highestQuefrency, 1, interpolation, & peakdB, & quefrency);   // FIXME cast
-	if (p_peakdB) {
-		*p_peakdB = peakdB;
-	}
-	if (p_quefrency) {
-		*p_quefrency = quefrency;
-	}
+	if (out_peakdB)
+		*out_peakdB = peakdB;
+	if (out_quefrency)
+		*out_quefrency = quefrency;
 }
 
 #if 0

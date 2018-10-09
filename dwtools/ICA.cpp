@@ -214,8 +214,10 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 						}
 						longdouble denom = zjj * zii - zij * zij;
 						if (denom != 0.0) {
-							w [i] [j] = (double) (zij * yji - zii * yij) / denom;
-							w [j] [i] = (double) (zij * yij - zjj * yji) / denom;
+							w [i] [j] = double ((zij * yji - zii * yij) / denom);
+							w [j] [i] = double ((zij * yij - zjj * yji) / denom);
+						} else {
+							// ppgb: prove that the result is valid
 						}
 					}
 				}

@@ -164,6 +164,11 @@ a## = zero## (20, 50)
 b## = zero## (50, 17)
 a## ~ row ^ 2 + col ^ 3
 b## ~ row ^ 5 + col ^ 7
-;appendInfoLine: sum (mul## (a##, b##))
+appendInfoLine: mul## (a##, b##)
+
+a## = {{ 2, 3, 5 }, { 7, 3, 2 }}
+b## = {{ 11, 1, 5, 2 }, { 8, 2, 3, 6 }, { 1, 3, 4, 9 }}
+product## = mul## (a##, b##)
+assert product## = {{ 51, 23, 39, 67 }, { 103, 19, 52, 50 }}
 
 appendInfoLine: "OK"
