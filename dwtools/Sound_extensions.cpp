@@ -1087,7 +1087,7 @@ void Sound_localMean (Sound me, double fromTime, double toTime, double *p_mean) 
 			n2 = my nx;
 		}
 		Melder_assert (n1 <= n2);
-		mean = NUMmean ({& my z [1] [n1], n2 - n1 + 1});
+		mean = NUMmean (constVEC (& my z [1] [n1], n2 - n1 + 1));
 	}
 	if (p_mean) {
 		*p_mean = mean;
