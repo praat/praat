@@ -1075,46 +1075,38 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 	return rxy;
 }
 
-void Sound_localMean (Sound me, double fromTime, double toTime, double *p_mean) {
+double Sound_localMean (Sound me, double fromTime, double toTime) {
 	integer n1 = Sampled_xToNearestIndex (me, fromTime);
 	integer n2 = Sampled_xToNearestIndex (me, toTime);
-	double mean = 0.0;
-	if (fromTime  <= toTime) {
-		if (n1 < 1) {
+	double mean = undefined;
+	if (fromTime <= toTime) {
+		if (n1 < 1)
 			n1 = 1;
-		}
-		if (n2 > my nx) {
+		if (n2 > my nx)
 			n2 = my nx;
-		}
 		Melder_assert (n1 <= n2);
 		mean = NUMmean (constVEC (& my z [1] [n1], n2 - n1 + 1));
 	}
-	if (p_mean) {
-		*p_mean = mean;
-	}
+	return mean;
 }
 
-void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, double *p_peak) {
+double Sound_localPeak (Sound me, double fromTime, double toTime, double reference) {
 	integer n1 = Sampled_xToNearestIndex (me, fromTime);
 	integer n2 = Sampled_xToNearestIndex (me, toTime);
 	double *s = & my z [1] [0], peak = -1e308;
 	if (fromTime <= toTime) {
-		if (n1 < 1) {
+		if (n1 < 1)
 			n1 = 1;
-		}
-		if (n2 > my nx) {
+		if (n2 > my nx)
 			n2 = my nx;
-		}
 		for (integer i = n1; i <= n2; i ++) {
-			double ds = fabs (s [i] - ref);
+			double ds = fabs (s [i] - reference);
 			if (ds > peak) {
 				peak = ds;
 			}
 		}
 	}
-	if (p_peak) {
-		*p_peak = peak;
-	}
+	return peak;
 }
 
 void Sound_into_Sound (Sound me, Sound to, double startTime) {

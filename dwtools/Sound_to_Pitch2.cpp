@@ -116,9 +116,8 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 
 		// Compute the absolute value of the globally largest amplitude w.r.t. the global mean.
 
-		double globalMean, globalPeak;
-		Sound_localMean (sound.get(), sound -> xmin, sound -> xmax, & globalMean);
-		Sound_localPeak (sound.get(), sound -> xmin, sound -> xmax, globalMean, & globalPeak);
+		double globalMean = Sound_localMean (sound.get(), sound -> xmin, sound -> xmax);
+		double globalPeak = Sound_localPeak (sound.get(), sound -> xmin, sound -> xmax, globalMean);
 
 		/*
 			For the cubic spline interpolation we need the frequencies on an octave
@@ -155,9 +154,9 @@ autoPitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch, do
 			frame -> nx = nx; /*begin vies */
 			Sound_into_Sound (sound.get(), frame.get(), tmid - halfWindow);
 			Sounds_multiply (frame.get(), hamming.get());
-			Sound_localMean (sound.get(), tmid - 3 * halfWindow, tmid + 3 * halfWindow, & localMean);
-			Sound_localPeak (sound.get(), tmid - halfWindow, tmid + halfWindow, localMean, & localPeak);
-			pitchFrame -> intensity = localPeak > globalPeak ? 1 : localPeak / globalPeak;
+			localMean = Sound_localMean (sound.get(), tmid - 3.0 * halfWindow, tmid + 3.0 * halfWindow);
+			localPeak = Sound_localPeak (sound.get(), tmid - halfWindow, tmid + halfWindow, localMean);
+			pitchFrame -> intensity = localPeak > globalPeak ? 1.0 : localPeak / globalPeak;
 			frame -> nx = nx_tmp; /* einde vies */
 
 			// Get the Fourier spectrum.
