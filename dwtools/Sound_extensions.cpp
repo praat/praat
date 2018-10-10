@@ -1078,8 +1078,8 @@ double Sound_correlateParts (Sound me, double tx, double ty, double duration) {
 void Sound_localMean (Sound me, double fromTime, double toTime, double *p_mean) {
 	integer n1 = Sampled_xToNearestIndex (me, fromTime);
 	integer n2 = Sampled_xToNearestIndex (me, toTime);
-	double mean = 0.0;
-	if (fromTime  <= toTime) {
+	double mean = undefined;
+	if (fromTime <= toTime) {
 		if (n1 < 1) {
 			n1 = 1;
 		}
