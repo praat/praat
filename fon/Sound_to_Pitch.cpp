@@ -144,14 +144,14 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 			ac [i] = 0.0;
 		}
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			NUMfft_forward (fftTable, {frame [channel],fftTable->n});   // complex spectrum
+			NUMfft_forward (fftTable, VEC (frame [channel], fftTable->n));   // complex spectrum
 			ac [1] += frame [channel] [1] * frame [channel] [1];   // DC component
 			for (integer i = 2; i < nsampFFT; i += 2) {
 				ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1];   // power spectrum
 			}
 			ac [nsampFFT] += frame [channel] [nsampFFT] * frame [channel] [nsampFFT];   // Nyquist frequency
 		}
-		NUMfft_backward (fftTable, {ac,fftTable->n});   /* Autocorrelation. */
+		NUMfft_backward (fftTable, VEC (ac, fftTable->n));   /* Autocorrelation. */
 
 		/*
 		 * Normalize the autocorrelation to the value with zero lag,

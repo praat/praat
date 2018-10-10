@@ -477,7 +477,7 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 }
 
 void NUMpseudoInverse (double **y, integer nr, integer nc, double **yinv, double tolerance) {
-	autoSVD me = SVD_createFromGeneralMatrix ({y, nr, nc});
+	autoSVD me = SVD_createFromGeneralMatrix (constMAT (y, nr, nc));
 
 	(void) SVD_zeroSmallSingularValues (me.get(), tolerance);
 	for (integer i = 1; i <= nc; i ++) {
