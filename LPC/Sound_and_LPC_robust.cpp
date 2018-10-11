@@ -80,7 +80,7 @@ static void huber_struct_getWeights (struct huber_struct *hs, constVEC e) {
 static void huber_struct_getWeightedCovars (struct huber_struct *hs, VEC s) {
 	Melder_assert (s.size == hs -> n);
 	integer p = hs -> p, n = hs -> n;
-	double *w = hs -> w.at, **covar = hs -> covar.at, *c = hs -> c.at;
+	double *w = hs -> w.at, **covar = hs -> covar.at_deprecated, *c = hs -> c.at;
 
 	for (integer i = 1; i <= p; i ++) {
 		for (integer j = i; j <= p; j ++) {

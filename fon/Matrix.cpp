@@ -85,7 +85,8 @@ void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 		Melder_throw (U"dx should be greater than 0.0.");
 	if (our dy <= 0.0)
 		Melder_throw (U"dy should be greater than 0.0.");
-	our z.at = NUMmatrix_readText_r64 (1, our ny, 1, our nx, text, "z");
+	our z.at_deprecated = NUMmatrix_readText_r64 (1, our ny, 1, our nx, text, "z");
+	our z.cells = our z.at_deprecated ? & our z.at_deprecated [1] [1] : nullptr;
 	our z.nrow = our ny;
 	our z.ncol = our nx;
 }
@@ -402,7 +403,7 @@ void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, doubl
 	if (maximum <= minimum) { minimum -= 1.0; maximum += 1.0; }
 	Graphics_setInner (g);
 	Graphics_setWindow (g, -1.0, 1.0, minimum, maximum);
-	Graphics_surface (g, my z.at,
+	Graphics_surface (g, my z.at_deprecated,
 		ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax),
 		iymin, iymax, Matrix_rowToY (me, iymin), Matrix_rowToY (me, iymax),
 		minimum, maximum, elevation, azimuth);

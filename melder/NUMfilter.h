@@ -19,13 +19,13 @@
  */
 
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2);
-void NUMfilterSecondOrderSection_a (double x [], integer n, double a1, double a2);
-void NUMfilterSecondOrderSection_fb (double x [], integer n, double dt, double formant, double bandwidth);
+void NUMfilterSecondOrderSection_a (const VEC& x, double a1, double a2);
+void NUMfilterSecondOrderSection_fb (const VEC& x, double dt, double formant, double bandwidth);
 double NUMftopreemphasis (double f, double dt);
-void NUMpreemphasize_a (double x [], integer n, double preemphasis);
-void NUMdeemphasize_a (double x [], integer n, double preemphasis);
-void NUMpreemphasize_f (double x [], integer n, double dt, double frequency);
-void NUMdeemphasize_f (double x [], integer n, double dt, double frequency);
+void NUMpreemphasize_a (const VEC& x, double preemphasis);
+void NUMdeemphasize_a (const VEC& x, double preemphasis);
+void NUMpreemphasize_f (const VEC& x, double dt, double frequency);
+void NUMdeemphasize_f (const VEC& x, double dt, double frequency);
 
 /* End of file NUMfilter.h */
 #endif

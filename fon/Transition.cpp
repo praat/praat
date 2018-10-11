@@ -184,7 +184,8 @@ autoTransition Transition_power (Transition me, integer power) {
 		autoTransition thee = Data_copy (me);
 		autoTransition him = Data_copy (me);
 		for (integer ipow = 2; ipow <= power; ipow ++) {
-			std::swap (his data.at, thy data.at);   // OPTIMIZE
+			std::swap (his data.at_deprecated, thy data.at_deprecated);   // OPTIMIZE
+			std::swap (his data.cells, thy data.cells);   // OPTIMIZE
 			for (integer irow = 1; irow <= my numberOfStates; irow ++) {
 				for (integer icol = 1; icol <= my numberOfStates; icol ++) {
 					thy data [irow] [icol] = 0.0;

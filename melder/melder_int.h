@@ -76,5 +76,14 @@ inline static integer uinteger_to_integer (uinteger n) {
 	return (integer) n;
 }
 
+struct MelderIntegerRange {
+	integer first, last;
+	bool isEmpty () { return ( last < first ); }
+	integer size () {
+		integer result = last - first + 1;
+		return std::max (result, integer (0));
+	}
+};
+
 /* End of file melder_int.h */
 #endif

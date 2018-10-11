@@ -212,7 +212,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
 	Melder_assert (a.ncol == a.nrow);
-	if (! my eigenvectors.at) {
+	if (! my eigenvectors.at_deprecated) {
 		Eigen_init (me, a.ncol, a.ncol);
 	}	
 	MATtranspose_preallocated (my eigenvectors.get(), a);
@@ -285,7 +285,7 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 }
 
 void Eigen_sort (Eigen me) {
-	double *e = my eigenvalues.at, **v = my eigenvectors.at;
+	double *e = my eigenvalues.at, **v = my eigenvectors.at_deprecated;
 
 	for (integer i = 1; i < my numberOfEigenvalues; i ++) {
 		integer k;

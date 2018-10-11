@@ -836,7 +836,7 @@ void DataModeler_fit (DataModeler me) {
 				}
 			}
 		} else {
-			SVD_getSquared (thee.get(), cov -> data.at, true);
+			SVD_getSquared (thee.get(), cov -> data.at_deprecated, true);
 		}
 	} catch (MelderError) {
 		Melder_throw (U"DataModeler no fit.");

@@ -157,8 +157,8 @@ autoCCA TableOfReal_to_CCA (TableOfReal me, integer ny) {
 		thy yLabels = strings_to_Strings (my columnLabels.peek2(), 1, ny);
 		thy xLabels = strings_to_Strings (my columnLabels.peek2(), ny + 1, my numberOfColumns);
 
-		double **evecy = thy y -> eigenvectors.at;
-		double **evecx = thy x -> eigenvectors.at;
+		double **evecy = thy y -> eigenvectors.at_deprecated;
+		double **evecx = thy x -> eigenvectors.at_deprecated;
 		thy numberOfObservations = n;
 
 		/*
@@ -254,7 +254,7 @@ autoTableOfReal CCA_TableOfReal_predict (CCA me, TableOfReal thee, integer from)
 
 		// u = V a -> a = V'u
 
-		double **v = my y -> eigenvectors.at;
+		double **v = my y -> eigenvectors.at_deprecated;
 		double *d = my y -> eigenvalues.at;
 		for (integer i = 1; i <= thy numberOfRows; i ++) {
 			NUMvector_copyElements (& his data [i] [0], buf.peek(), 1, ny);

@@ -273,13 +273,20 @@ autoSound Sound_extractChannels (Sound me, constVEC channelNumbers) {
 }
 
 static double getSumOfSquares (Sound me, double xmin, double xmax, integer *n) {
-	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
+	Melder_assert (me);
+	Function_unidirectionalAutowindow (me, & xmin, & xmax);
 	integer imin, imax;
 	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
 	if (*n < 1) return undefined;
+	Melder_assert (my z.at_deprecated);
+	Melder_assert (my z.cells);
 	longdouble sum2 = 0.0;
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		double *amplitude = & my z [channel] [0];
+	for (integer ichan = 1; ichan <= my ny; ichan ++) {
+		//double *amplitude = & my z [ichan] [0];
+		VEC channel = my z.row (ichan);
+		//VEC channel = my z [ichan];
+		double *amplitude = & channel [0];
+		Melder_casual (U"channel ", ichan, U" ", Melder_pointer (amplitude));
 		for (integer i = imin; i <= imax; i ++) {
 			double value = amplitude [i];
 			sum2 += value * value;
@@ -766,15 +773,9 @@ autoSound Sound_autoCorrelate (Sound me, kSounds_convolve_scaling scaling, kSoun
 void Sound_draw (Sound me, Graphics g,
 	double tmin, double tmax, double minimum, double maximum, bool garnish, conststring32 method)
 {
-	bool treversed = tmin > tmax;
-	if (treversed) { double temp = tmin; tmin = tmax; tmax = temp; }
-	/*
-		Automatic domain.
-	*/
-	if (tmin == tmax) {
-		tmin = my xmin;
-		tmax = my xmax;
-	}
+	const bool timesAreReversed = ( tmin > tmax );
+	if (timesAreReversed) std::swap (tmin, tmax);
+	Function_bidirectionalAutowindow (me, & tmin, & tmax);
 	/*
 		Domain expressed in sample numbers.
 	*/
@@ -795,9 +796,10 @@ void Sound_draw (Sound me, Graphics g,
 	*/
 	Graphics_setInner (g);
 	for (integer channel = 1; channel <= my ny; channel ++) {
-		Graphics_setWindow (g, treversed ? tmax : tmin, treversed ? tmin : tmax,
+		Graphics_setWindow (g, timesAreReversed ? tmax : tmin, timesAreReversed ? tmin : tmax,
 			minimum - (my ny - channel) * (maximum - minimum),
-			maximum + (channel - 1) * (maximum - minimum));
+			maximum + (channel - 1) * (maximum - minimum)
+		);
 		if (str32str (method, U"bars") || str32str (method, U"Bars")) {
 			for (integer ix = ixmin; ix <= ixmax; ix ++) {
 				double x = Sampled_indexToX (me, ix);
@@ -825,11 +827,12 @@ void Sound_draw (Sound me, Graphics g,
 			 * The default: draw as a curve.
 			 */
 			Graphics_function (g, & my z [channel] [0], ixmin, ixmax,
-				Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
+					Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 		}
 	}
-	Graphics_setWindow (g, treversed ? tmax : tmin, treversed ? tmin : tmax, minimum, maximum);
-	if (garnish && my ny == 2) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
+	Graphics_setWindow (g, timesAreReversed ? tmax : tmin, timesAreReversed ? tmin : tmax, minimum, maximum);
+	if (garnish && my ny == 2)
+		Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
@@ -838,16 +841,15 @@ void Sound_draw (Sound me, Graphics g,
 		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - 1) * (maximum - minimum), maximum);
 		Graphics_markLeft (g, minimum, true, true, false, nullptr);
 		Graphics_markLeft (g, maximum, true, true, false, nullptr);
-		if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
+		if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0))
 			Graphics_markLeft (g, 0.0, true, true, true, nullptr);
-		}
 		if (my ny == 2) {
-			Graphics_setWindow (g, treversed ? tmax : tmin, treversed ? tmin : tmax, minimum, maximum + (my ny - 1) * (maximum - minimum));
+			Graphics_setWindow (g, timesAreReversed ? tmax : tmin, timesAreReversed ? tmin : tmax,
+					minimum, maximum + (my ny - 1) * (maximum - minimum));
 			Graphics_markRight (g, minimum, true, true, false, nullptr);
 			Graphics_markRight (g, maximum, true, true, false, nullptr);
-			if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0)) {
+			if (minimum != 0.0 && maximum != 0.0 && (minimum > 0.0) != (maximum > 0.0))
 				Graphics_markRight (g, 0.0, true, true, true, nullptr);
-			}
 		}
 	}
 }
@@ -1150,16 +1152,17 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, double formant [], double bandwidth [])
 {
 	try {
-		for (integer channel = 1; channel <= my ny; channel ++) {
-			if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
+		for (integer ichan = 1; ichan <= my ny; ichan ++) {
+			Function_unidirectionalAutowindow (me, & tmin, & tmax);
 			integer itmin, itmax;
 			integer n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax);
 			if (n <= 2)
 				Melder_throw (U"Sound too short.");
-			double *amplitude = & my z [channel] [0] + itmin - 1;   // base 1
-			NUMdeemphasize_f (amplitude, n, my dx, 50.0);
+			VEC channel = my z.row (ichan);
+			VEC window = channel.subview (itmin, itmax);
+			NUMdeemphasize_f (window, my dx, 50.0);
 			for (int iformant = 1; iformant <= numberOfFormants; iformant ++) {
-				NUMfilterSecondOrderSection_fb (amplitude, n, my dx, formant [iformant], bandwidth [iformant]);
+				NUMfilterSecondOrderSection_fb (window, my dx, formant [iformant], bandwidth [iformant]);
 			}
 		}
 		Matrix_scaleAbsoluteExtremum (me, 0.99);
@@ -1179,8 +1182,9 @@ autoSound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth)
 }
 
 void Sound_filterWithOneFormantInplace (Sound me, double frequency, double bandwidth) {
-	for (integer channel = 1; channel <= my ny; channel ++) {
-		NUMfilterSecondOrderSection_fb (& my z [channel] [0], my nx, my dx, frequency, bandwidth);
+	for (integer ichan = 1; ichan <= my ny; ichan ++) {
+		VEC channel = my z.row (ichan);
+		NUMfilterSecondOrderSection_fb (channel, my dx, frequency, bandwidth);
 	}
 	Matrix_scaleAbsoluteExtremum (me, 0.99);
 }

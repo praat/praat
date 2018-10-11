@@ -200,6 +200,16 @@ inline double NUMlog2 (double x) {
 	return log (x) * NUMlog2e;
 }
 
+inline double NUMmax (const constVEC& vec) {
+	if (NUMisEmpty (vec)) return undefined;
+	double maximum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (value > maximum) maximum = value;
+	}
+	return maximum;
+}
+
 inline double NUMmean (constVEC const& x) noexcept {
 	integer const n = x.size;
 	if (n <= 8) {
@@ -217,6 +227,16 @@ inline double NUMmean (constVEC const& x) noexcept {
 	double mean;
 	NUM_sum_mean (x, nullptr, & mean);
 	return mean;
+}
+
+inline double NUMmin (const constVEC& vec) {
+	if (NUMisEmpty (vec)) return undefined;
+	double minimum = vec [1];
+	for (integer i = 2; i <= vec.size; i ++) {
+		const double value = vec [i];
+		if (value < minimum) minimum = value;
+	}
+	return minimum;
 }
 
 double NUMnorm (constVEC const& x, double power) noexcept;

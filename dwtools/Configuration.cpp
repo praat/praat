@@ -289,7 +289,7 @@ static void NUMvarimax (double **xm, double **ym, integer nr, integer nc, bool n
 autoConfiguration Configuration_varimax (Configuration me, bool normalizeRows, bool quartimax, integer maximumNumberOfIterations, double tolerance) {
 	try {
 		autoConfiguration thee = Data_copy (me);
-		NUMvarimax (my data.at, thy data.at, my numberOfRows, my numberOfColumns, normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
+		NUMvarimax (my data.at_deprecated, thy data.at_deprecated, my numberOfRows, my numberOfColumns, normalizeRows, quartimax, maximumNumberOfIterations, tolerance);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": varimax rotation not performed.");
@@ -311,7 +311,7 @@ autoConfiguration Configuration_congruenceRotation (Configuration me, Configurat
 void Configuration_rotateToPrincipalDirections (Configuration me) {
 	try {
 		autoMAT newData = matrixcopy (my data.get());
-		NUMdmatrix_into_principalComponents (my data.at, my numberOfRows, my numberOfColumns, my numberOfColumns, newData.at);
+		NUMdmatrix_into_principalComponents (my data.at_deprecated, my numberOfRows, my numberOfColumns, my numberOfColumns, newData.at_deprecated);
 		my data = newData.move();
 	} catch (MelderError) {
 		Melder_throw (me, U": not rotated to principal directions.");
