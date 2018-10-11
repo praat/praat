@@ -30,38 +30,38 @@ void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *
 	*a2 = exp (- 2 * NUMpi * bandwidth * dt);
 }
 
-void NUMfilterSecondOrderSection_a (double x [], integer n, double a1, double a2) {
+void NUMfilterSecondOrderSection_a (const VEC& x, double a1, double a2) {
 	x [2] += a1 * x [1];
-	for (integer i = 3; i <= n; i ++)
+	for (integer i = 3; i <= x.size; i ++)
 		x [i] += a1 * x [i - 1] - a2 * x [i - 2];
 }
 
-void NUMfilterSecondOrderSection_fb (double x [], integer n, double dt, double formant, double bandwidth) {
+void NUMfilterSecondOrderSection_fb (const VEC& x, double dt, double formant, double bandwidth) {
 	double a1, a2;
 	NUMfbtoa (formant, bandwidth, dt, & a1, & a2);
-	NUMfilterSecondOrderSection_a (x, n, a1, a2);
+	NUMfilterSecondOrderSection_a (x, a1, a2);
 }
 
 double NUMftopreemphasis (double f, double dt) {
 	return exp (- 2.0 * NUMpi * f * dt);
 }
 
-void NUMpreemphasize_a (double x [], integer n, double preemphasis) {
-	for (integer i = n; i >= 2; i --)
+void NUMpreemphasize_a (const VEC& x, double preemphasis) {
+	for (integer i = x.size; i >= 2; i --)
 		x [i] -= preemphasis * x [i - 1];
 }
 
-void NUMdeemphasize_a (double x [], integer n, double preemphasis) {
-	for (integer i = 2; i <= n; i ++)
+void NUMdeemphasize_a (const VEC& x, double preemphasis) {
+	for (integer i = 2; i <= x.size; i ++)
 		x [i] += preemphasis * x [i - 1];
 }
 
-void NUMpreemphasize_f (double x [], integer n, double dt, double frequency) {
-	NUMpreemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
+void NUMpreemphasize_f (const VEC& x, double dt, double frequency) {
+	NUMpreemphasize_a (x, NUMftopreemphasis (frequency, dt));
 }
 
-void NUMdeemphasize_f (double x [], integer n, double dt, double frequency) {
-	NUMdeemphasize_a (x, n, NUMftopreemphasis (frequency, dt));
+void NUMdeemphasize_f (const VEC& x, double dt, double frequency) {
+	NUMdeemphasize_a (x, NUMftopreemphasis (frequency, dt));
 }
 
 /* End of file NUMfilter.cpp */

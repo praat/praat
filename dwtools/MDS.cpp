@@ -899,7 +899,7 @@ void Proximity_Distance_drawScatterDiagram (Proximity me, Distance thee, Graphic
 					NUMequal (my columnLabels.get(), thy columnLabels.get()),
 		U"The labels should be the same.");
 	
-	double **x = my data.at, **y = thy data.at;
+	double **x = my data.at_deprecated, **y = thy data.at_deprecated;
 	if (xmax <= xmin) {
 		xmin = xmax = x [1] [2];
 		for (integer i = 1; i <= thy numberOfRows - 1; i ++) {
@@ -1105,7 +1105,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		
 		autoMAT y (nPoints, numberOfDimensions, kTensorInitializationType::ZERO);
 
-		NUMdmatrix_into_principalComponents (pmean.at, nPoints, nPoints, numberOfDimensions, y.at);
+		NUMdmatrix_into_principalComponents (pmean.at_deprecated, nPoints, nPoints, numberOfDimensions, y.at_deprecated);
 		matrixcopy_preallocated (thy data.get(), y.get());
 
 		/*
@@ -1121,7 +1121,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		
 		autoMAT yinv (numberOfDimensions, nPoints, kTensorInitializationType::ZERO);
 
-		NUMpseudoInverse (y.at, nPoints, numberOfDimensions, yinv.at, 1e-14);
+		NUMpseudoInverse (y.at_deprecated, nPoints, numberOfDimensions, yinv.at_deprecated, 1e-14);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
@@ -1242,7 +1242,7 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 
 static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distance disp, Weight weight, double **vplus) {
 	integer nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
-	double **z = cz -> data.at;
+	double **z = cz -> data.at_deprecated;
 
 	autoNUMmatrix<double> b (1, nPoints, 1, nPoints);
 	autoDistance distZ = Configuration_to_Distance (cz);
@@ -1299,8 +1299,8 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int s
 			}
 		}
 	} else if (stressMeasure == MDS_STRESS_2) {
-		double m = 0.0, wsum = 0.0, var = 0.0, **w = weight -> data.at;
-		double **c = conf -> data.at;
+		double m = 0.0, wsum = 0.0, var = 0.0, **w = weight -> data.at_deprecated;
+		double **c = conf -> data.at_deprecated;
 		integer nPoints = conf -> numberOfRows;
 
 		// Get average distance
@@ -1460,7 +1460,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
-		double **w = weight -> data.at;
+		double **w = weight -> data.at_deprecated;
 
 		if (showProgress) {
 			Melder_progress (0.0, U"MDS analysis");
@@ -1684,7 +1684,7 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *stress, double *s, double *t, double *dbar) {
 	integer numberOfProximities = my numberOfProximities;
 	integer *rowIndex = my rowIndex.at, *columnIndex = my columnIndex.at;
-	double **dist = ddist -> data.at, **fit = dfit -> data.at;
+	double **dist = ddist -> data.at_deprecated, **fit = dfit -> data.at_deprecated;
 
 	*s = *t = *dbar = 0.0;
 
@@ -1718,7 +1718,7 @@ static double func (Daata object, const double p []) {
 	// Substitute results of minimizer into configuration and
 	// normalize the configuration
 
-	NUMdvector_into_matrix (p, x.at, 1, numberOfPoints, 1, numberOfDimensions); //TODO
+	NUMdvector_into_matrix (p, x.at_deprecated, 1, numberOfPoints, 1, numberOfDimensions); //TODO
 
 	// Normalize
 
@@ -1952,7 +1952,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 
 		thy minimizer = VDSmagtMinimizer_create (numberOfCoordinates, (Daata) thee.get(), func, dfunc);
 
-		NUMdmatrix_into_vector (his data.at, thy minimizer -> p, 1, his numberOfRows, 1, his numberOfColumns);
+		NUMdmatrix_into_vector (his data.at_deprecated, thy minimizer -> p, 1, his numberOfRows, 1, his numberOfColumns);
 
 		thy stress_formula = stress_formula;
 		thy process = tiesHandling;
@@ -1981,7 +1981,7 @@ autoConfiguration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configu
 static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, Salience weights) {
 	integer nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
 	integer nSources = zc->size;
-	double **x = xc -> data.at, **w = weights -> data.at, lambda;
+	double **x = xc -> data.at_deprecated, **w = weights -> data.at_deprecated, lambda;
 
 	// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
 
@@ -1999,7 +1999,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
-			double **sih = spr -> data.at;
+			double **sih = spr -> data.at_deprecated;
 
 			// Construct the S [i] [h] matrices (eq. 6)
 
@@ -2057,7 +2057,7 @@ static void indscal_iteration_tenBerge (ScalarProductList zc, Configuration xc, 
 
 		for (integer i = 1; i <= nSources; i ++) {
 			ScalarProduct spr = sprc -> at [i];
-			double **sih = spr -> data.at, wih = 0.0;
+			double **sih = spr -> data.at_deprecated, wih = 0.0;
 			for (integer k = 1; k <= nPoints; k ++) {
 				for (integer l = 1; l <= nPoints; l ++) {
 					wih += x [k] [h] * sih [k] [l] * x [l] [h];
@@ -2104,7 +2104,7 @@ void ScalarProductList_Configuration_Salience_indscal (ScalarProductList sp, Con
 
 		// Count number of zero weights
 
-		integer nZeros = NUMdmatrix_countZeros (sal -> data.at, sal -> numberOfRows, sal -> numberOfColumns);
+		integer nZeros = NUMdmatrix_countZeros (sal -> data.at_deprecated, sal -> numberOfRows, sal -> numberOfColumns);
 
 		if (out_conf) {
 			Thing_setName (conf.get(), U"indscal");
@@ -2181,7 +2181,7 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 		// Count number of zero weights
 
-		integer nZeros = NUMdmatrix_countZeros (salience -> data.at, salience -> numberOfRows, salience -> numberOfColumns);
+		integer nZeros = NUMdmatrix_countZeros (salience -> data.at_deprecated, salience -> numberOfRows, salience -> numberOfColumns);
 
 		// Set labels & names.
 

@@ -100,7 +100,7 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 }
 
 inline constVEC VECrow_nocheck (constMAT const& mat, integer rowNumber) {
-	return constVEC (mat.at [rowNumber], mat.ncol);
+	return constVEC (mat.at_deprecated [rowNumber], mat.ncol);
 }
 inline void MATmul_fast_preallocated_ (MAT const& target, constMAT const& x, constMAT const& y) noexcept {
 	#if USE_CBLAS_GEMM

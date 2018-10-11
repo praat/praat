@@ -726,7 +726,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 		*/
 		variable -> numericMatrixValue. adoptFromAmbiguousOwner (movedMatrix);
 	} else if (variable -> numericMatrixValue.nrow == movedMatrix.nrow && variable -> numericMatrixValue.ncol == movedMatrix.ncol) {
-		if (variable -> numericMatrixValue.at == movedMatrix.at) {
+		if (variable -> numericMatrixValue.at_deprecated == movedMatrix.at_deprecated) {
 			/*
 				Statement like: a## = a##
 			*/
@@ -2084,7 +2084,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								matrixObject -> nx = mat.ncol;
 								matrixObject -> ymax = mat.nrow + 0.5;
 								matrixObject -> ny = mat.nrow;
-								matrixObject -> z.at = mat.at;   // just a reference (YUCK)
+								matrixObject -> z.at_deprecated = mat.at_deprecated;   // just a reference (YUCK)
+								matrixObject -> z.cells = mat.cells;   // just a reference (YUCK)
 								matrixObject -> z.nrow = mat.nrow;
 								matrixObject -> z.ncol = mat.ncol;
 								Matrix_formula (matrixObject, p, me, nullptr);
@@ -2199,7 +2200,8 @@ void Interpreter_run (Interpreter me, char32 *text) {
 								//vectorObject -> xmin = 0.5;
 								vectorObject -> xmax = vec.size + 0.5;
 								vectorObject -> nx = vec.size;
-								vectorObject -> z.at [1] = vec.at;
+								vectorObject -> z.at_deprecated [1] = vec.at;
+								vectorObject -> z.cells = & vectorObject -> z.at_deprecated [1] [1];
 								//vectorObject -> z.nrow = 1;
 								vectorObject -> z.ncol = vec.size;
 								Matrix_formula (vectorObject, p, me, nullptr);

@@ -380,12 +380,12 @@ conststring32 Melder_naturalLogarithm (double lnNumber) noexcept {
 	CONVERT_BUFFER_TO_CHAR32
 }
 
-const char * Melder8_pointer (void *pointer) noexcept {
+const char * Melder8_pointer (const void *pointer) noexcept {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	sprintf (buffers8 [ibuffer], "%p", pointer);
 	return buffers8 [ibuffer];
 }
-conststring32 Melder_pointer (void *pointer) noexcept {
+conststring32 Melder_pointer (const void *pointer) noexcept {
 	const char *p = Melder8_pointer (pointer);
 	CONVERT_BUFFER_TO_CHAR32
 }
@@ -419,7 +419,7 @@ conststring32 Melder_MAT (constMAT value) {
 		iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
-	if (value.at) {
+	if (value.at_deprecated) {
 		for (integer irow = 1; irow <= value.nrow; irow ++) {
 			for (integer icol = 1; icol <= value.ncol; icol ++) {
 				MelderString_append (string, value [irow] [icol]);

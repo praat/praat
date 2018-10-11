@@ -195,7 +195,7 @@ autoConfiguration Configuration_AffineTransform_to_Configuration (Configuration 
 
 		// Apply transformation YT
 
-		thy v_transform (my data.at, my numberOfRows, his data.at);
+		thy v_transform (my data.at_deprecated, my numberOfRows, his data.at_deprecated);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"Configuration not created.");

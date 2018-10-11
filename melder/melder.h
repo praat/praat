@@ -151,6 +151,8 @@ void Melder_init ();   // inits NUmrandom, alloc, message, Melder_systemVersion
 #include "PAIRWISE_SUM.h"
 
 #include "NUM.h"
+#include "MelderIntegerRange.h"
+#include "MelderRealRange.h"
 #include "STR.h"
 #include "VEC.h"
 #include "MAT.h"

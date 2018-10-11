@@ -922,7 +922,7 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 				// M-step: 1. new means & covariances
 
 				for (integer im = 1; im <= my numberOfComponents; im ++) {
-					GaussianMixture_updateCovariance (me, im, thy data.at, thy numberOfRows, pp.peek());
+					GaussianMixture_updateCovariance (me, im, thy data.at_deprecated, thy numberOfRows, pp.peek());
 					GaussianMixture_addCovarianceFraction (me, im, covg.get(), lambda);
 				}
 
@@ -1109,7 +1109,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 					while (component <= my numberOfComponents) {
 						// M-step for means and covariances
 						GaussianMixture_updateProbabilityMarginals (me.get(), p.peek(), thy numberOfRows);
-						GaussianMixture_updateCovariance (me.get(), component, thy data.at, thy numberOfRows, p.peek());
+						GaussianMixture_updateCovariance (me.get(), component, thy data.at_deprecated, thy numberOfRows, p.peek());
 						if (lambda > 0) {
 							GaussianMixture_addCovarianceFraction (me.get(), component, covg.get(), lambda);
 						}
@@ -1381,7 +1381,7 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 			for (integer j = 1; j <= n; j ++) {
 				double wj = p [j] [nocp1] > 0.0 ? mixingP * p [j] [im] / p [j] [nocp1] : 0.0;
 				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at, & thy data [j] [0], & thy data [k] [0], d, d);
+					djk = NUMmahalanobisDistance_chi (cov -> lowerCholesky.at_deprecated, & thy data [j] [0], & thy data [k] [0], d, d);
 					double w = p [k] [nocp1] > 0.0 ? wj * mixingP * p [k] [im] / p [k] [nocp1] : 0.0;
 					sumjk += 2.0 * w * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}

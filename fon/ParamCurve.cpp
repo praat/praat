@@ -31,17 +31,6 @@
 
 Thing_implement (ParamCurve, Function, 2);
 
-static MelderRealRange NUMextrema (const constVEC& vec) {
-	if (NUMisEmpty (vec)) return { undefined, undefined };
-	double minimum = vec [1], maximum = minimum;
-	for (integer i = 2; i <= vec.size; i ++) {
-		const double value = vec [i];
-		if (value < minimum) minimum = value;
-		if (value > maximum) maximum = value;
-	}
-	return { minimum, maximum };
-}
-
 void structParamCurve :: v_info () {
 	const MelderRealRange xextrema = NUMextrema (our x -> z.row (1));
 	const MelderRealRange yextrema = NUMextrema (our y -> z.row (1));

@@ -3,6 +3,8 @@ writeInfoLine: "vectors and matrices..."
 a# = zero#(16)
 a#[3] = 4
 assert a#[3] = 4
+a# ~ col ^ 2
+assert a# = { 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256 }
 
 asserterror Vector b# does not exist.
 b# [5] = 3
@@ -48,7 +50,7 @@ c = d# [100]
 appendInfoLine: a, " ", b, " ", c
 
 e# = a# + a#
-assert e# [3] = 8
+assert e# [3] = 18
 
 asserterror numbers of elements should be equal
 e# = a# + d#
@@ -172,7 +174,7 @@ product## = mul## (a##, b##)
 assert product## = {{ 51, 23, 39, 67 }, { 103, 19, 52, 50 }}
 at## = transpose## (a##)
 bt## = transpose## (b##)
-assert at## == {{ 2, 7 }, { 3, 3 }, { 5, 2 }}
+assert at## = {{ 2, 7 }, { 3, 3 }, { 5, 2 }}
 assert transpose## (bt##) = b##
 assert mul_tn## (at##, b##) = product##
 assert mul_nt## (a##, bt##) = product##

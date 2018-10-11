@@ -63,7 +63,8 @@
 	{ \
 		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
 		if (_nrow > 0 && _ncol > 0) { \
-	    	our x.at = NUMmatrix_readText_##storage (1, _nrow, 1, _ncol, _textSource_, #x); \
+	    	our x.at_deprecated = NUMmatrix_readText_##storage (1, _nrow, 1, _ncol, _textSource_, #x); \
+	    	our x.cells = our x.at_deprecated ? & our x.at_deprecated [1] [1] : nullptr; \
 	    	our x.nrow = _nrow; \
 	    	our x.ncol = _ncol; \
 		} \
