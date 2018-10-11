@@ -462,7 +462,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 			//constMAT xget = x.get(), yget = y.get();
 			MATVU result_all = result.all();
 			constMATVU x_all = x.all();
-			constMATVU y_all = constMATVUtranspose (y.all());
+			constMATVU y_all = y.all();
 			Melder_stopwatch ();
 			for (integer iteration = 1; iteration <= n; iteration ++)
 				MATVUmul_fast (result_all, x_all, y_all);
