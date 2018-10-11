@@ -280,55 +280,51 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, integer *n) {
 	if (*n < 1) return undefined;
 	Melder_assert (my z.at_deprecated);
 	Melder_assert (my z.cells);
-	longdouble sum2 = 0.0;
+	longdouble sumOfSquares = 0.0;
 	for (integer ichan = 1; ichan <= my ny; ichan ++) {
-		//double *amplitude = & my z [ichan] [0];
 		VEC channel = my z.row (ichan);
-		//VEC channel = my z [ichan];
-		double *amplitude = & channel [0];
-		Melder_casual (U"channel ", ichan, U" ", Melder_pointer (amplitude));
 		for (integer i = imin; i <= imax; i ++) {
-			double value = amplitude [i];
-			sum2 += value * value;
+			longdouble value = channel [i];
+			sumOfSquares += value * value;
 		}
 	}
-	return (double) sum2;
+	return double (sumOfSquares);
 }
 
 double Sound_getRootMeanSquare (Sound me, double xmin, double xmax) {
 	integer n;
-	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return isdefined (sum2) ? sqrt (sum2 / (n * my ny)) : undefined;
+	double sumOfSquares = getSumOfSquares (me, xmin, xmax, & n);
+	return isdefined (sumOfSquares) ? sqrt (sumOfSquares / (n * my ny)) : undefined;
 }
 
 double Sound_getEnergy (Sound me, double xmin, double xmax) {
 	integer n;
-	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return isdefined (sum2) ? sum2 * my dx / my ny : undefined;
+	double sumOfSquares = getSumOfSquares (me, xmin, xmax, & n);
+	return isdefined (sumOfSquares) ? sumOfSquares * my dx / my ny : undefined;
 }
 
 double Sound_getPower (Sound me, double xmin, double xmax) {
 	integer n;
-	double sum2 = getSumOfSquares (me, xmin, xmax, & n);
-	return isdefined (sum2) ? sum2 / (n * my ny) : undefined;
+	double sumOfSquares = getSumOfSquares (me, xmin, xmax, & n);
+	return isdefined (sumOfSquares) ? sumOfSquares / (n * my ny) : undefined;
 }
 
 double Sound_getEnergyInAir (Sound me) {
 	integer n;
-	double sum2 = getSumOfSquares (me, 0.0, 0.0, & n);
-	return isdefined (sum2) ? sum2 * my dx / (400.0 * my ny) : undefined;
+	double sumOfSquares = getSumOfSquares (me, 0.0, 0.0, & n);
+	return isdefined (sumOfSquares) ? sumOfSquares * my dx / (400.0 * my ny) : undefined;
 }
 
 double Sound_getIntensity_dB (Sound me) {
 	integer n;
-	double sum2 = getSumOfSquares (me, 0.0, 0.0, & n);
-	return isdefined (sum2) && sum2 != 0.0 ? 10.0 * log10 (sum2 / (n * my ny) / 4.0e-10) : undefined;
+	double sumOfSquares = getSumOfSquares (me, 0.0, 0.0, & n);
+	return isdefined (sumOfSquares) && sumOfSquares != 0.0 ? 10.0 * log10 (sumOfSquares / (n * my ny) / 4.0e-10) : undefined;
 }
 
 double Sound_getPowerInAir (Sound me) {
 	integer n;
-	double sum2 = getSumOfSquares (me, 0, 0, & n);
-	return ( isdefined (sum2) ? sum2 / (n * my ny) / 400.0 : undefined );
+	double sumOfSquares = getSumOfSquares (me, 0, 0, & n);
+	return ( isdefined (sumOfSquares) ? sumOfSquares / (n * my ny) / 400.0 : undefined );
 }
 
 autoSound Matrix_to_Sound_mono (Matrix me, integer row) {
@@ -802,24 +798,22 @@ void Sound_draw (Sound me, Graphics g,
 		);
 		if (str32str (method, U"bars") || str32str (method, U"Bars")) {
 			for (integer ix = ixmin; ix <= ixmax; ix ++) {
-				double x = Sampled_indexToX (me, ix);
-				double y = my z [channel] [ix];
-				double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
-				if (y > maximum) y = maximum;
-				if (left < tmin) left = tmin;
-				if (right > tmax) right = tmax;
+				const double x = Sampled_indexToX (me, ix);
+				const double y = std::min (my z [channel] [ix], maximum);
+				const double left = std::max (x - 0.5 * my dx, tmin);
+				const double right = std::min (x + 0.5 * my dx, tmax);
 				Graphics_line (g, left, y, right, y);
 				Graphics_line (g, left, y, left, minimum);
 				Graphics_line (g, right, y, right, minimum);
 			}
 		} else if (str32str (method, U"poles") || str32str (method, U"Poles")) {
 			for (integer ix = ixmin; ix <= ixmax; ix ++) {
-				double x = Sampled_indexToX (me, ix);
+				const double x = Sampled_indexToX (me, ix);
 				Graphics_line (g, x, 0, x, my z [channel] [ix]);
 			}
 		} else if (str32str (method, U"speckles") || str32str (method, U"Speckles")) {
 			for (integer ix = ixmin; ix <= ixmax; ix ++) {
-				double x = Sampled_indexToX (me, ix);
+				const double x = Sampled_indexToX (me, ix);
 				Graphics_speckle (g, x, my z [channel] [ix]);
 			}
 		} else {

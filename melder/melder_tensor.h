@@ -650,30 +650,18 @@ public:
 	matrix (const automatrix<T>& other) = delete;
 	matrix& operator= (const matrix&) = default;
 	matrix& operator= (const automatrix<T>&) = delete;
-	#if 1
-	vector<T> operator[] (integer i) const {
-		Melder_assert (our at_deprecated);
-		Melder_assert (our cells);
-		return vector<T> (our cells + (i - 1) * our ncol - 1, our ncol);
+	vector<T> operator[] (integer rowNumber) const {
+		return vector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
 	}
-	#else
-	T * const & operator[] (integer i) const {
-		return our at_deprecated [i];
-	}
-	#endif
 	vector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
 		Melder_assert (our at_deprecated);
 		Melder_assert (our cells);
-		#if 1
 		return vector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
-		#else
-		return vector<T> (our at_deprecated [rowNumber], our ncol);
-		#endif
 	}
 	vectorview<T> column (const integer columnNumber) const {
 		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
-		return vectorview<T> (& our at_deprecated [1] [columnNumber], our nrow, our ncol);
+		return vectorview<T> (our cells + (columnNumber - 1), our nrow, our ncol);
 	}
 	matrix<T> horizontalBand (integer firstRow, integer lastRow) const {
 		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
@@ -687,7 +675,7 @@ public:
 		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return matrixview<T> ();
-		return matrixview<T> (& our at_deprecated [1] [firstColumn], our nrow, newNcol, our ncol, 1);
+		return matrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
 	}
 	matrixview<T> subview (MelderIntegerRange rowRange, MelderIntegerRange columnRange) const {
 		Melder_assert (rowRange.first >= 1 && rowRange.first <= our nrow);
@@ -696,7 +684,10 @@ public:
 		Melder_assert (columnRange.last >= 0 && columnRange.last <= our ncol);
 		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return matrixview<T> ();
-		return matrixview<T> (& our at_deprecated [rowRange.first] [columnRange.first], newNrow, newNcol, our ncol, 1);
+		return matrixview<T> (
+			our cells + (rowRange.first - 1) * our ncol + (columnRange.first - 1),
+			newNrow, newNcol, our ncol, 1
+		);
 	}
 };
 
@@ -708,7 +699,7 @@ public:
 	/*mutable*/ integer rowStride = 0, colStride = 1;   // mutable perhaps once an automatrix has strides
 	matrixview () = default;
 	matrixview (const matrix<T>& other) :
-			firstCell (& other.at_deprecated [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
+			firstCell (other.cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
 	matrixview (const automatrix<T>& other) = delete;
 	explicit matrixview (T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
 			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
@@ -753,51 +744,28 @@ public:
 	constmatrix (matrix<T> mat) :
 			cells (mat.cells), at_deprecated (mat.at_deprecated), nrow (mat.nrow), ncol (mat.ncol) { }
 
-	#if PACKED_TENSORS
-	const T * operator[] (integer i) const {
-		Melder_assert (our at_deprecated);
-		Melder_assert (our cells);
-		return our cells + (i - 1) * our ncol - 1;
+	constvector<T> operator[] (integer rowNumber) const {
+		return constvector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
 	}
-	#else
-	const T * const & operator[] (integer i) const {
-		Melder_assert (our at_deprecated);
-		Melder_assert (our cells);
-		return our at_deprecated [i];
-	}
-	#endif
 	constvector<T> row (integer rowNumber) const {
 		Melder_assert (rowNumber >= 1 && rowNumber <= our nrow);
 		Melder_assert (our at_deprecated);
 		Melder_assert (our cells);
-		#if PACKED_TENSORS
 		return constvector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
-		#else
-		return constvector<T> (our at_deprecated [rowNumber], our ncol);
-		#endif
 	}
 	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) const {
-		const integer offsetRow = firstRow - 1;
-		Melder_assert (offsetRow >= 0 && offsetRow <= our nrow);
+		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
 		Melder_assert (lastRow >= 0 && lastRow <= our nrow);
-		const integer newNrow = lastRow - offsetRow;
+		const integer newNrow = lastRow - (firstRow - 1);
 		if (newNrow <= 0) return constmatrix<T> ();
-		#if PACKED_TENSORS
-		return constmatrix<T> (our cells + offsetRow * our ncol, newNrow, our ncol);
-		#else
-		return constmatrix<T> (& our at_deprecated [offsetRow], newNrow, our ncol);
-		#endif
+		return constmatrix<T> (our cells + (firstRow - 1) * our ncol, newNrow, our ncol);
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
 		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
 		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
 		const integer newNcol = lastColumn - (firstColumn - 1);
 		if (newNcol <= 0) return constmatrixview<T> ();
-		#if PACKED_TENSORS
 		return constmatrixview<T> (our cells + (firstColumn - 1), our nrow, newNcol, our ncol, 1);
-		#else
-		return constmatrixview<T> (& our at_deprecated [1] [firstColumn], our nrow, newNcol, our ncol, 1);
-		#endif
 	}
 	constmatrixview<T> subview (MelderIntegerRange rowRange, MelderIntegerRange columnRange) const {
 		Melder_assert (rowRange.first >= 1 && rowRange.first <= our nrow);
@@ -806,12 +774,10 @@ public:
 		Melder_assert (columnRange.last >= 0 && columnRange.last <= our ncol);
 		const integer newNrow = rowRange.size(), newNcol = columnRange.size();
 		if (newNrow == 0 || newNcol == 0) return constmatrixview<T> ();
-		#if PACKED_TENSORS
 		return constmatrixview<T> (
-				our cells + (rowRange.first - 1) * our ncol + (columnRange.first - 1), newNrow, newNcol, our ncol, 1);
-		#else
-		return constmatrixview<T> (& our at_deprecated [rowRange.first] [columnRange.first], newNrow, newNcol, our ncol, 1);
-		#endif
+			our cells + (rowRange.first - 1) * our ncol + (columnRange.first - 1),
+			newNrow, newNcol, our ncol, 1
+		);
 	}
 };
 
@@ -823,17 +789,9 @@ public:
 	integer rowStride = 0, colStride = 1;
 	constmatrixview () = default;
 	constmatrixview (const constmatrix<T>& other) :
-			#if PACKED_TENSORS
 			firstCell (other. cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
-			#else
-			firstCell (& other.at_deprecated [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
-			#endif
 	constmatrixview (const matrix<T>& other) :
-			#if PACKED_TENSORS
 			firstCell (other. cells), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
-			#else
-			firstCell (& other.at_deprecated [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
-			#endif
 	constmatrixview (const automatrix<T>& other) = delete;
 	explicit constmatrixview (const T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
 			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
