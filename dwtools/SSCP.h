@@ -209,10 +209,9 @@ void Covariances_equality (CovarianceList me, int method, double *out_prob, doub
 */
 
 autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me);
-autoCovariance CovarianceList_to_Covariance_between (CovarianceList me, constVEC weigths);
-autoCovariance CovarianceList_to_Covariance_between (CovarianceList me, conststring32 weights_string);
-autoCovariance CovarianceList_to_Covariance_within (CovarianceList me, constVEC weigths);
-autoCovariance CovarianceList_to_Covariance_within (CovarianceList me, conststring32 weights_string);
+autoCovariance CovarianceList_to_Covariance_between (CovarianceList me);
+autoCovariance CovarianceList_to_Covariance_within (CovarianceList me);
+
 
 autoSSCP SSCPList_to_SSCP_sum (SSCPList me);
 /* Sum the sscp's and weigh each means with it's numberOfObservations. */

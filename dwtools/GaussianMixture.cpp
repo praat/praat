@@ -240,10 +240,10 @@ autoGaussianMixture TableOfReal_to_GaussianMixture_fromRowLabels (TableOfReal me
 }
 
 autoCovariance GaussianMixture_to_Covariance_between (GaussianMixture me) {
-	return CovarianceList_to_Covariance_between (my covariances.get(), my mixingProbabilities.get());
+	return CovarianceList_to_Covariance_between (my covariances.get());
 }
 autoCovariance GaussianMixture_to_Covariance_within (GaussianMixture me) {
-	return CovarianceList_to_Covariance_within (my covariances.get(), my mixingProbabilities.get());
+	return CovarianceList_to_Covariance_within (my covariances.get());
 }
 
 autoCovariance GaussianMixture_to_Covariance_total (GaussianMixture me) {
@@ -561,7 +561,7 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 						cov -> data [1] [ic] = cov_t -> data [ic] [ic];
 					}
 				} else {
-					VECcopy_preallocated (asvector (cov -> data.get()), asvector (cov_t -> data.get()));
+					MATcopy_preallocated (cov -> data.get(), cov_t -> data.get());
 				}
 			}
 		}

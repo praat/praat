@@ -1094,24 +1094,16 @@ DIRECT (NEW1_Covariances_pool) {
 	CONVERT_TYPED_LIST_END (U"pool")
 }
 
-FORM (NEW1_Covariances_to_Covariance_between, U"Covariance: To Covariance (between)", U"") {
-	SENTENCE (weigths_string, U"Weights", U"0.5 0.5 ")
-	OK
-DO
+DIRECT (NEW1_Covariances_to_Covariance_between) {
 	CONVERT_TYPED_LIST (Covariance, CovarianceList)
-		autoCovariance result = CovarianceList_to_Covariance_between (list.get(), weigths_string);
-	CONVERT_TYPED_LIST_END (U"between")
-	
+		autoCovariance result = CovarianceList_to_Covariance_between (list.get());
+	CONVERT_TYPED_LIST_END (U"between")	
 }
 
-FORM (NEW1_Covariances_to_Covariance_within, U"Covariance: To Covariance (within)", U"") {
-	SENTENCE (weigths_string, U"Weights", U"0.5 0.5 ")
-	OK
-DO
+DIRECT (NEW1_Covariances_to_Covariance_within) {
 	CONVERT_TYPED_LIST (Covariance, CovarianceList)
-		autoCovariance result = CovarianceList_to_Covariance_within (list.get(), weigths_string);
+		autoCovariance result = CovarianceList_to_Covariance_within (list.get());
 	CONVERT_TYPED_LIST_END (U"within")
-	
 }
 
 DIRECT (NEW1_Covariances_to_CovarianceList) {
@@ -7805,8 +7797,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, NEW_Covariance_to_Correlation);
 	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, NEW_Covariance_to_PCA);
 	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, NEW1_Covariances_pool);
-	praat_addAction1 (classCovariance, 0, U"To Covariance (between)...", nullptr, 0, NEW1_Covariances_to_Covariance_between);
-	praat_addAction1 (classCovariance, 0, U"To Covariance (within)...", nullptr, 0, NEW1_Covariances_to_Covariance_within);
+	praat_addAction1 (classCovariance, 0, U"To Covariance (between)", nullptr, 0, NEW1_Covariances_to_Covariance_between);
+	praat_addAction1 (classCovariance, 0, U"To Covariance (within)", nullptr, 0, NEW1_Covariances_to_Covariance_within);
 
 	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Covariance_TableOfReal_mahalanobis);
 

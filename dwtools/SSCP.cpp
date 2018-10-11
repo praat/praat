@@ -825,28 +825,20 @@ autoSSCP SSCPList_to_SSCP_pool (SSCPList me) {
 	}
 }
 
-autoCovariance CovarianceList_to_Covariance_within (CovarianceList me, conststring32 weights_string) {
-	autoVEC weigths = VEC_createFromString (weights_string);
-	return CovarianceList_to_Covariance_within (me, weigths.get());
-}
-
-autoCovariance CovarianceList_to_Covariance_within (CovarianceList me, constVEC weigths) {
+autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 	try {
 		autoCovariance thee = Data_copy (my at[1]);
-		Melder_require (weigths.size == my size, U"The number of weights should equal the number of Covariances.");
 		SSCP_reset (thee.get());
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
-			Melder_require (thy numberOfColumns == covi -> numberOfColumns, U"The dimension of item ", i, U" does not conform.");
-			double weight = covi -> numberOfObservations * weigths [i];
+			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
+				U"The dimensions of item ", i, U" does not conform.");
 			if (covi -> numberOfRows == 1) {
-				for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-					thy data [1] [icol] += weight * covi -> data [1] [icol];
-				}
+				VECsaxpy (thy data.row (1), covi -> data.row (1), covi -> numberOfObservations);
 			} else {
-				MATsaxpy (thy data.get(), covi -> data.get(), weight);
+				MATsaxpy (thy data.get(), covi -> data.get(), covi -> numberOfObservations);
 			}
-			thy numberOfObservations += weight;
+			thy numberOfObservations += covi -> numberOfObservations;
 		}
 		MATmultiply_inplace (thy data.get(), 1.0 / thy numberOfObservations);
 		return thee;
@@ -855,42 +847,34 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me, constVEC 
 	}
 }
 
-autoCovariance CovarianceList_to_Covariance_between (CovarianceList me, conststring32 weights_string) {
-	autoVEC weigths = VEC_createFromString (weights_string);
-	return CovarianceList_to_Covariance_between (me, weigths.get());
-}
-
-autoCovariance CovarianceList_to_Covariance_between (CovarianceList me, constVEC weigths) {
+autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 	try {
 		autoCovariance thee = Data_copy (my at[1]);
-		Melder_require (weigths.size == my size, U"The number of weights should equal the number of Covariances.");
 		SSCP_reset (thee.get());
 
 		//	First the new centroid,
 
 		autoMAT centroids = MATzero (my size, thy numberOfColumns);
+		autoVEC weights = VECraw (my size);
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
-			double weight = covi -> numberOfObservations * weigths [i];
+			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
+				U"The dimensions of item ", i, U" does not conform.");
+			weights [i] = covi -> numberOfObservations;
 			VECcopy_preallocated (centroids.row (i), covi -> centroid.get());
-			VECmultiply_inplace (centroids.row (i), weight);
 			VECadd_inplace (thy centroid.get(), centroids.row (i)); 
-			thy numberOfObservations += weight;
+			thy numberOfObservations += weights [i];
 		}
 		
-		// Scale the means after the multiplcation
-		
+		VECmultiply_inplace (thy centroid.get(), 1.0 / thy numberOfObservations);
 		MATsubtract_inplace (centroids.get(), thy centroid.get()); // "centre" X
-		autoMAT cov = MATmtm_weighRows (centroids.get(), weigths); // X'.X
+		autoMAT cov = MATmtm_weighRows (centroids.get(), weights.get()); // X'.X
 		if (thy numberOfRows == 1)
 			VECdiagonal_preallocated (thy data.row (1), cov.get());
 		else
 			MATcopy_preallocated (thy data.get(), cov.get());
 		
-		
-		// Because we scale after multiplication the covariances scale as 1/n^2 
-		VECmultiply_inplace (thy centroid.get(), 1.0 / thy numberOfObservations);
-		VECmultiply_inplace (asvector (thy data.get()), 1.0 / (thy numberOfObservations * thy numberOfObservations));
+		MATmultiply_inplace (thy data.get(), 1.0 / thy numberOfObservations);
 		
 		return thee;
 	} catch (MelderError) {
