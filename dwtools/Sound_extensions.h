@@ -106,8 +106,8 @@ double Sound_correlateParts (Sound me, double t1, double t2, double duration);
 	Correlate part (t1, t1+duration) with (t2, t2+duration)
 */
 
-void Sound_localMean (Sound me, double fromTime, double toTime, double *mean);
-void Sound_localPeak (Sound me, double fromTime, double toTime, double ref, double *peak);
+double Sound_localMean (Sound me, double fromTime, double toTime);
+double Sound_localPeak (Sound me, double fromTime, double toTime, double reference);
 
 autoSound Sound_localAverage (Sound me, double averaginginterval, int windowType);
 /* y[n] = sum(i=-n, i=n, x[n+i])/(2*n+1) */

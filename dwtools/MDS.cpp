@@ -2544,9 +2544,9 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 		for (integer j = 1; j <= n; j ++) {
 			double yx, x = low + dx * (j - 1);
 			if (splineType == MDS_MSPLINE) {
-				yx = NUMmspline ({knot, numberOfKnots}, order, i, x);
+				yx = NUMmspline (constVEC (knot, numberOfKnots), order, i, x);
 			} else {
-				yx = NUMispline ({knot, numberOfKnots}, order, i, x);
+				yx = NUMispline (constVEC (knot, numberOfKnots), order, i, x);
 			}
 			y [j] = yx < ymin ? ymin : yx > ymax ? ymax : yx;
 		}

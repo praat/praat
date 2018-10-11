@@ -298,8 +298,6 @@ public:
 
 	Initialization (tested in praat.cpp):
 		VEC x;               // initializes x.at to nullptr and x.size to 0
-		VEC x1 (100);        // initializes x to 100 uninitialized values
-		VEC x2 (100, 0.0);   // initializes x to 100 zeroes
 		NUMvector<double> a (1, 100);
 		VEC x3 { a, 100 };   // initializes x to 100 values from a base-1 array
 
@@ -331,7 +329,7 @@ public:
 	integer size = 0;
 public:
 	vector () = default;
-	vector (T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	explicit vector (T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	vector (const vector& other) = default;
 	/*
 		Letting an autovector convert to a vector would lead to errors such as in
@@ -380,7 +378,7 @@ public:
 	integer stride = 1;
 	vectorview (const vector<T>& other) :
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
-	vectorview (T * const firstCell, integer const size, integer const stride) :
+	explicit vectorview (T * const firstCell, integer const size, integer const stride) :
 			firstCell (firstCell), size (size), stride (stride) { }
 	T& operator[] (integer i) const {
 		return our firstCell [(i - 1) * our stride];
@@ -402,7 +400,7 @@ public:
 	const T *at = nullptr;
 	integer size = 0;
 	constvector () = default;
-	constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
+	explicit constvector (const T *givenAt, integer givenSize): at (givenAt), size (givenSize) { }
 	constvector (vector<T> vec): at (vec.at), size (vec.size) { }
 	//constvector (const constvector& other): at (other.at), size (other.size) { }
 	//constvector& operator= (const constvector& other) {
@@ -433,7 +431,7 @@ public:
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
 	constvectorview (const vector<T>& other) :
 			firstCell (& other.at [1]), size (other.size), stride (1) { }
-	constvectorview (const T * const firstCell, integer const size, integer const stride) :
+	explicit constvectorview (const T * const firstCell, integer const size, integer const stride) :
 			firstCell (firstCell), size (size), stride (stride) { }
 	constvectorview (vectorview<T> vec): firstCell (vec.firstCell), size (vec.size), stride (vec.stride) { }
 	T const& operator[] (integer i) const {
@@ -462,7 +460,7 @@ class autovector : public vector<T> {
 	integer capacity = 0;
 public:
 	autovector (): vector<T> (nullptr, 0) { }   // come into existence without a payload
-	autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+	explicit autovector (integer givenSize, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenSize >= 0);
 		our at = ( givenSize == 0 ? nullptr
 				: NUMvector<T> (1, givenSize, initializationType == kTensorInitializationType::ZERO) );
@@ -473,7 +471,7 @@ public:
 		our reset ();
 		our capacity = 0;
 	}
-	vector<T> get () const { return { our at, our size }; }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
+	vector<T> get () const { return vector<T> (our at, our size); }   // let the public use the payload (they may change the values of the elements but not the at-pointer or the size)
 	vectorview<T> all () const { return vectorview<T> (& our at [1], our size, 1); }
 	void adoptFromAmbiguousOwner (vector<T> given) {   // buy the payload from a non-autovector
 		our reset();
@@ -486,7 +484,7 @@ public:
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		integer oldSize = our size;
 		our capacity = 0;
-		return { oldAt, oldSize };
+		return vector<T> (oldAt, oldSize);
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).
@@ -641,7 +639,15 @@ struct MelderIntegerRange {
 	bool isEmpty () { return ( last < first ); }
 	integer size () {
 		integer result = last - first + 1;
-		return result <= 0 ? 0 : result;
+		return std::max (result, integer (0));
+	}
+};
+struct MelderRealRange {
+	double min, max;
+	bool isEmpty () { return ! (max > min); }   // note edge case: will return true if min or max is NaN
+	double size () {
+		double result = max - min;
+		return std::max (result, 0.0);
 	}
 };
 
@@ -655,7 +661,7 @@ public:
 	matrix () = default;
 	//matrix (T *givenCells, integer givenNrow, integer givenNcol):
 	//		cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	matrix (T **givenAt, integer givenNrow, integer givenNcol):
+	explicit matrix (T **givenAt, integer givenNrow, integer givenNcol):
 			cells (givenAt ? & givenAt [1] [1] : nullptr), at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	matrix (const matrix& other) = default;
 	matrix (const automatrix<T>& other) = delete;
@@ -717,7 +723,7 @@ public:
 	matrixview (const matrix<T>& other) :
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
 	matrixview (const automatrix<T>& other) = delete;
-	matrixview (T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
+	explicit matrixview (T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
 			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
 	vectorview<T> operator[] (integer i) const {
 		return vectorview<T> (our firstCell + (i - 1) * our rowStride, our ncol, our colStride);
@@ -752,7 +758,7 @@ public:
 	integer nrow = 0, ncol = 0;
 	constmatrix () = default;
 	//constmatrix (const T *givenCells, integer givenNrow, integer givenNcol): cells (givenCells), nrow (givenNrow), ncol (givenNcol) { }
-	constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol):
+	explicit constmatrix (const T * const *givenAt, integer givenNrow, integer givenNcol):
 			cells (& givenAt [1] [1]), at (givenAt), nrow (givenNrow), ncol (givenNcol) { }
 	constmatrix (matrix<T> mat):
 			cells (mat.cells), at (mat.at), nrow (mat.nrow), ncol (mat.ncol) { }
@@ -833,7 +839,7 @@ public:
 			firstCell (& other.at [1] [1]), nrow (other.nrow), ncol (other.ncol), rowStride (other.ncol), colStride (1) { }
 			#endif
 	constmatrixview (const automatrix<T>& other) = delete;
-	constmatrixview (const T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
+	explicit constmatrixview (const T * const firstCell, integer const nrow, integer const ncol, integer const rowStride, integer const colStride) :
 			firstCell (firstCell), nrow (nrow), ncol (ncol), rowStride (rowStride), colStride (colStride) { }
 	constmatrixview (matrixview<T> mat) :
 			firstCell (mat.firstCell), nrow (mat.nrow), ncol (mat.ncol), rowStride (mat.rowStride), colStride (mat.colStride) { }
@@ -876,7 +882,7 @@ template <typename T>
 class automatrix : public matrix<T> {
 public:
 	automatrix (): matrix<T> { nullptr, 0, 0 } { }   // come into existence without a payload
-	automatrix (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
+	explicit automatrix (integer givenNrow, integer givenNcol, kTensorInitializationType initializationType) {   // come into existence and manufacture a payload
 		Melder_assert (givenNrow >= 0);
 		Melder_assert (givenNcol >= 0);
 		#if PACKED_TENSORS
@@ -917,7 +923,7 @@ public:
 		T **oldAt = our at;
 		our at = nullptr;   // disown ourselves, preventing automatic destruction of the payload
 		our cells = nullptr;
-		return { oldAt, our nrow, our ncol };
+		return matrix<T> (oldAt, our nrow, our ncol);
 	}
 	/*
 		Disable copying via construction or assignment (which would violate unique ownership of the payload).

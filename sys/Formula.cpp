@@ -81,7 +81,7 @@ enum { NO_SYMBOL_,
 		#define HIGH_ATTRIBUTE  X_
 	#define HIGH_VALUE  HIGH_ATTRIBUTE
 
-	SELF_, SELFSTR_, OBJECT_, OBJECTSTR_, MATRIKS_, MATRIKSSTR_,
+	SELF_, SELFSTR_, OBJECT_, OBJECTSTR_, MATRIX_, MATRIXSTR_,
 	STOPWATCH_,
 
 /* The following symbols can be followed by "-" only if they are a variable. */
@@ -187,10 +187,10 @@ enum { NO_SYMBOL_,
 	OBJECT_DX_, OBJECT_DY_, OBJECT_NROW_, OBJECT_NCOL_, OBJECT_ROWSTR_, OBJECT_COLSTR_,
 	OBJECTCELL0_, OBJECTCELLSTR0_, OBJECTCELL1_, OBJECTCELLSTR1_, OBJECTCELL2_, OBJECTCELLSTR2_,
 	OBJECTLOCATION0_, OBJECTLOCATIONSTR0_, OBJECTLOCATION1_, OBJECTLOCATIONSTR1_, OBJECTLOCATION2_, OBJECTLOCATIONSTR2_,
-	SELFMATRIKS1_, SELFMATRIKSSTR1_, SELFMATRIKS2_, SELFMATRIKSSTR2_,
-	SELFFUNKTIE1_, SELFFUNKTIESTR1_, SELFFUNKTIE2_, SELFFUNKTIESTR2_,
-	MATRIKS0_, MATRIKSSTR0_, MATRIKS1_, MATRIKSSTR1_, MATRIKS2_, MATRIKSSTR2_,
-	FUNKTIE0_, FUNKTIESTR0_, FUNKTIE1_, FUNKTIESTR1_, FUNKTIE2_, FUNKTIESTR2_,
+	SELFMATRIX1_, SELFMATRIXSTR1_, SELFMATRIX2_, SELFMATRIXSTR2_,
+	SELFFUNCTION1_, SELFFUNCTIONSTR1_, SELFFUNCTION2_, SELFFUNCTIONSTR2_,
+	MATRIX0_, MATRIXSTR0_, MATRIX1_, MATRIXSTR1_, MATRIX2_, MATRIXSTR2_,
+	FUNCTION0_, FUNCTIONSTR0_, FUNCTION1_, FUNCTIONSTR1_, FUNCTION2_, FUNCTIONSTR2_,
 	SQR_,
 
 /* Symbols introduced by lexical analysis. */
@@ -214,7 +214,7 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"a number", U"pi", U"e", U"undefined",
 	U"xmin", U"xmax", U"ymin", U"ymax", U"nx", U"ny", U"dx", U"dy",
 	U"row", U"col", U"nrow", U"ncol", U"row$", U"col$", U"y", U"x",
-	U"self", U"self$", U"object", U"object$", U"_matriks", U"_matriks$",
+	U"self", U"self$", U"object", U"object$", U"_matrix", U"_matrix$",
 	U"stopwatch",
 	U"abs", U"round", U"floor", U"ceiling",
 	U"rectify", U"rectify#",
@@ -284,10 +284,10 @@ static const conststring32 Formula_instructionNames [1 + highestSymbol] = { U"",
 	U"_object_dx", U"_object_dy", U"_object_nrow", U"_object_ncol", U"_object_row$", U"_object_col$",
 	U"_objectcell0", U"_objectcell0$", U"_objectcell1", U"_objectcell1$", U"_objectcell2", U"_objectcell2$",
 	U"_objectlocation0", U"_objectlocation0$", U"_objectlocation1", U"_objectlocation1$", U"_objectlocation2", U"_objectlocation2$",
-	U"_selfmatriks1", U"_selfmatriks1$", U"_selfmatriks2", U"_selfmatriks2$",
-	U"_selffunktie1", U"_selffunktie1$", U"_selffunktie2", U"_selffunktie2$",
-	U"_matriks0", U"_matriks0$", U"_matriks1", U"_matriks1$", U"_matriks2", U"_matriks2$",
-	U"_funktie0", U"_funktie0$", U"_funktie1", U"_funktie1$", U"_funktie2", U"_funktie2$",
+	U"_selfmatrix1", U"_selfmatrix1$", U"_selfmatrix2", U"_selfmatrix2$",
+	U"_selffunction1", U"_selffunction1$", U"_selffunction2", U"_selffunction2$",
+	U"_matrix0", U"_matrix0$", U"_matrix1", U"_matrix1$", U"_matrix2", U"_matrix2$",
+	U"_function0", U"_function0$", U"_function1", U"_function1$", U"_function2", U"_function2$",
 	U"_square",
 	U"_string",
 	U"a numeric variable", U"a vector variable", U"a matrix variable",
@@ -414,7 +414,7 @@ static void Formula_lexan () {
 				toknumber (Melder_atof (token.string));
 			}
 		} else if (Melder_isLowerCaseLetter (kar) || (kar == U'.' && Melder_isLowerCaseLetter (theExpression [ikar + 1])
-				&& (itok == 0 || (lexan [itok]. symbol != MATRIKS_ && lexan [itok]. symbol != MATRIKSSTR_
+				&& (itok == 0 || (lexan [itok]. symbol != MATRIX_ && lexan [itok]. symbol != MATRIXSTR_
 					&& lexan [itok]. symbol != CLOSING_BRACKET_)))) {
 			int tok;
 			bool isString = false;
@@ -553,7 +553,7 @@ static void Formula_lexan () {
 						if (tok == ROW_ || tok == COL_ || tok == X_ || tok == Y_) {
 							newtok (tok)
 						} else {
-							newtok (MATRIKS_)
+							newtok (MATRIX_)
 							tokmatrix (theSource);
 							newtok (PERIOD_)
 							newtok (tok)
@@ -674,12 +674,12 @@ static void Formula_lexan () {
 			if (str32equ (token.string, U"Self")) {
 				if (! theSource)
 					formulaError (U"Cannot use \"Self\" if there is no current object.", ikar);
-				newtok (MATRIKS_)
+				newtok (MATRIX_)
 				tokmatrix (theSource);
 			} else if (str32equ (token.string, U"Self$")) {
 				if (! theSource)
 					formulaError (U"Cannot use \"Self$\" if there is no current object.", ikar);
-				newtok (MATRIKSSTR_)
+				newtok (MATRIXSTR_)
 				tokmatrix (theSource);
 			} else if (! underscore) {
 				Melder_throw (
@@ -692,7 +692,7 @@ static void Formula_lexan () {
 					i --;
 				if (i == 0)
 					formulaError (U"No such object (note: variables start with lower case)", ikar);
-				newtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
+				newtok (endsInDollarSign ? MATRIXSTR_ : MATRIX_)
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			} else {
 				int i = theCurrentPraatObjects -> n;
@@ -702,7 +702,7 @@ static void Formula_lexan () {
 					i --;
 				if (i == 0)
 					formulaError (U"No such object (note: variables start with lower case)", ikar);
-				newtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
+				newtok (endsInDollarSign ? MATRIXSTR_ : MATRIX_)
 				tokmatrix ((Daata) theCurrentPraatObjects -> list [i]. object);
 			}
 		} else if (kar == U'(') {
@@ -976,12 +976,12 @@ static void parsePowerFactor () {
 			parseExpression ();
 			if (newread == COMMA_) {
 				parseExpression ();
-				newparse (SELFMATRIKS2_);
+				newparse (SELFMATRIX2_);
 				fit (CLOSING_BRACKET_);
 				return;
 			}
 			oldread;
-			newparse (SELFMATRIKS1_);
+			newparse (SELFMATRIX1_);
 			fit (CLOSING_BRACKET_);
 			return;
 		}
@@ -989,12 +989,12 @@ static void parsePowerFactor () {
 			parseExpression ();
 			if (newread == COMMA_) {
 				parseExpression ();
-				newparse (SELFFUNKTIE2_);
+				newparse (SELFFUNCTION2_);
 				fit (CLOSING_PARENTHESIS_);
 				return;
 			}
 			oldread;
-			newparse (SELFFUNKTIE1_);
+			newparse (SELFFUNCTION1_);
 			fit (CLOSING_PARENTHESIS_);
 			return;
 		}
@@ -1009,12 +1009,12 @@ static void parsePowerFactor () {
 			parseExpression ();
 			if (newread == COMMA_) {
 				parseExpression ();
-				newparse (SELFMATRIKSSTR2_);
+				newparse (SELFMATRIXSTR2_);
 				fit (CLOSING_BRACKET_);
 				return;
 			}
 			oldread;
-			newparse (SELFMATRIKSSTR1_);
+			newparse (SELFMATRIXSTR1_);
 			fit (CLOSING_BRACKET_);
 			return;
 		}
@@ -1022,12 +1022,12 @@ static void parsePowerFactor () {
 			parseExpression ();
 			if (newread == COMMA_) {
 				parseExpression ();
-				newparse (SELFFUNKTIESTR2_);
+				newparse (SELFFUNCTIONSTR2_);
 				fit (CLOSING_PARENTHESIS_);
 				return;
 			}
 			oldread;
-			newparse (SELFFUNKTIESTR1_);
+			newparse (SELFFUNCTIONSTR1_);
 			fit (CLOSING_PARENTHESIS_);
 			return;
 		}
@@ -1213,44 +1213,44 @@ static void parsePowerFactor () {
 		return;
 	}
 
-	if (symbol == MATRIKS_) {
+	if (symbol == MATRIX_) {
 		Daata thee = lexan [ilexan]. content.object;
 		Melder_assert (thee != nullptr);
 		symbol = newread;
 		if (symbol == OPENING_BRACKET_) {
 			if (newread == CLOSING_BRACKET_) {
-				newparse (MATRIKS0_);
+				newparse (MATRIX0_);
 				parse [iparse]. content.object = thee;
 			} else {
 				oldread;
 				parseExpression ();
 				if (newread == COMMA_) {
 					parseExpression ();
-					newparse (MATRIKS2_);
+					newparse (MATRIX2_);
 					parse [iparse]. content.object = thee;
 					fit (CLOSING_BRACKET_);
 				} else {
 					oldread;
-					newparse (MATRIKS1_);
+					newparse (MATRIX1_);
 					parse [iparse]. content.object = thee;
 					fit (CLOSING_BRACKET_);
 				}
 			}
 		} else if (symbol == OPENING_PARENTHESIS_) {
 			if (newread == CLOSING_PARENTHESIS_) {
-				newparse (FUNKTIE0_);
+				newparse (FUNCTION0_);
 				parse [iparse]. content.object = thee;
 			} else {
 				oldread;
 				parseExpression ();
 				if (newread == COMMA_) {
 					parseExpression ();
-					newparse (FUNKTIE2_);
+					newparse (FUNCTION2_);
 					parse [iparse]. content.object = thee;
 					fit (CLOSING_PARENTHESIS_);
 				} else {
 					oldread;
-					newparse (FUNKTIE1_);
+					newparse (FUNCTION1_);
 					parse [iparse]. content.object = thee;
 					fit (CLOSING_PARENTHESIS_);
 				}
@@ -1367,25 +1367,25 @@ static void parsePowerFactor () {
 		return;
 	}
 
-	if (symbol == MATRIKSSTR_) {
+	if (symbol == MATRIXSTR_) {
 		Daata thee = lexan [ilexan]. content.object;
 		Melder_assert (thee != nullptr);
 		symbol = newread;
 		if (symbol == OPENING_BRACKET_) {
 			if (newread == CLOSING_BRACKET_) {
-				newparse (MATRIKSSTR0_);
+				newparse (MATRIXSTR0_);
 				parse [iparse]. content.object = thee;
 			} else {
 				oldread;
 				parseExpression ();
 				if (newread == COMMA_) {
 					parseExpression ();
-					newparse (MATRIKSSTR2_);
+					newparse (MATRIXSTR2_);
 					parse [iparse]. content.object = thee;
 					fit (CLOSING_BRACKET_);
 				} else {
 					oldread;
-					newparse (MATRIKSSTR1_);
+					newparse (MATRIXSTR1_);
 					parse [iparse]. content.object = thee;
 					fit (CLOSING_BRACKET_);
 				}
@@ -1614,10 +1614,10 @@ static void parseFactor () {
 }
 
 static void parseFactors () {
-	int sym = newread;   // has to be local, because of recursion
-	if (sym == MUL_ || sym == RDIV_ || sym == IDIV_ || sym == MOD_) {
+	int symbol = newread;   // has to be local, because of recursion
+	if (symbol == MUL_ || symbol == RDIV_ || symbol == IDIV_ || symbol == MOD_) {
 		parseFactor ();
-		newparse (sym);
+		newparse (symbol);
 		parseFactors ();
 	}
 	else oldread;
@@ -1639,10 +1639,9 @@ static void parseTerms () {
 }
 
 static void parseNot () {
-	int symbol;
 	parseTerm ();
 	parseTerms ();
-	symbol = newread;
+	int symbol = newread;
 	if (symbol >= EQ_ && symbol <= GT_) {
 		parseTerm ();
 		parseTerms ();
@@ -1704,7 +1703,7 @@ static void parseExpression () {
 	remove parentheses and brackets, commas, colons, FROM_, TO_,
 	IF_ THEN_ ELSE_ ENDIF_ OR_ AND_;
 	introduce LABEL_ GOTO_ IFTRUE_ IFFALSE_ TRUE_ FALSE_
-	SELF0_ SELF1_ SELF2_ MATRIKS0_ MATRIKS1_ MATRIKS2_
+	SELF0_ SELF1_ SELF2_ MATRIX0_ MATRIX1_ MATRIX2_
 	Return:
 		0 if error, otherwise 1.
 	Precondition:
@@ -2010,10 +2009,10 @@ static void Formula_evaluateConstants () {
 				improved = true;
 			#if 0
 			} else if (parse [i]. symbol == ROW_) {
-				if (parse [i + 1]. symbol == COL_ && parse [i + 2]. symbol == SELFMATRIKS2_)
-					{ gain = 2; parse [i]. symbol = SELF0_; }   // TODO: SELF0_ may not have the same restrictions as SELFMATRIKS2_
+				if (parse [i + 1]. symbol == COL_ && parse [i + 2]. symbol == SELFMATRIX2_)
+					{ gain = 2; parse [i]. symbol = SELF0_; }   // TODO: SELF0_ may not have the same restrictions as SELFMATRIX2_
 			} else if (parse [i]. symbol == COL_) {
-				if (parse [i + 1]. symbol == SELFMATRIKS1_)
+				if (parse [i + 1]. symbol == SELFMATRIX1_)
 					{ gain = 1; parse [i]. symbol = SELF0_; }
 			#endif
 			}
@@ -2085,8 +2084,8 @@ static void Formula_print (FormulaInstruction f) {
 			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.variable -> string.get(), U" ", f [i]. content.variable -> stringValue.get());
 		else if (symbol == STRING_ || symbol == VARIABLE_NAME_ || symbol == INDEXED_NUMERIC_VARIABLE_ || symbol == INDEXED_STRING_VARIABLE_)
 			Melder_casual (i, U" ", instructionName, U" ", f [i]. content.string);
-		else if (symbol == MATRIKS_ || symbol == MATRIKSSTR_ || symbol == MATRIKS1_ || symbol == MATRIKSSTR1_ ||
-		         symbol == MATRIKS2_ || symbol == MATRIKSSTR2_ || symbol == ROWSTR_ || symbol == COLSTR_)
+		else if (symbol == MATRIX_ || symbol == MATRIXSTR_ || symbol == MATRIX1_ || symbol == MATRIXSTR1_ ||
+		         symbol == MATRIX2_ || symbol == MATRIXSTR2_ || symbol == ROWSTR_ || symbol == COLSTR_)
 		{
 			Thing object = f [i]. content.object;
 			if (object) {
@@ -2966,7 +2965,7 @@ static void do_function_n_n (double (*f) (double)) {
 	}
 }
 static void do_functionvec_n_n (double (*f) (double)) {
-	Stackel x = & theStack [w];
+	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		integer n = x->numericVector.size;
 		double *at = x->numericVector.at;
@@ -2986,7 +2985,7 @@ static void do_functionvec_n_n (double (*f) (double)) {
 	}
 }
 static void do_softmax () {
-	Stackel x = & theStack [w];
+	Stackel x = topOfStack;
 	if (x->which == Stackel_NUMERIC_VECTOR) {
 		if (! x->owned) {
 			x->numericVector = VECcopy (x->numericVector). releaseToAmbiguousOwner();   // TODO: no need to copy
@@ -5807,7 +5806,7 @@ static void do_objectCell0 (integer irow, integer icol) {
 		Melder_throw (Thing_className (thee), U" objects accept no [] indexing.");
 	}
 }
-static void do_matriks0 (integer irow, integer icol) {
+static void do_matrix0 (integer irow, integer icol) {
 	Daata thee = parse [programPointer]. content.object;
 	if (thy v_hasGetCell ()) {
 		pushNumber (thy v_getCell ());
@@ -5837,7 +5836,7 @@ static void do_matriks0 (integer irow, integer icol) {
 		Melder_throw (Thing_className (thee), U" objects accept no [] indexing.");
 	}
 }
-static void do_selfMatriks1 (integer irow) {
+static void do_selfMatrix1 (integer irow) {
 	Daata me = theSource;
 	Stackel column = pop;
 	if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
@@ -5856,7 +5855,7 @@ static void do_selfMatriks1 (integer irow) {
 		Melder_throw (Thing_className (me), U" objects (like self) accept no [column] indexes.");
 	}
 }
-static void do_selfMatriksStr1 (integer irow) {
+static void do_selfMatrixStr1 (integer irow) {
 	Daata me = theSource;
 	Stackel column = pop;
 	if (! me) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
@@ -5893,7 +5892,7 @@ static void do_objectCell1 (integer irow) {
 		Melder_throw (Thing_className (thee), U" objects accept no [column] indexes.");
 	}
 }
-static void do_matriks1 (integer irow) {
+static void do_matrix1 (integer irow) {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop;
 	integer icol = Stackel_getColumnNumber (column, thee);
@@ -5947,7 +5946,7 @@ static void do_matrixStr1 (integer irow) {
 		Melder_throw (Thing_className (thee), U" objects accept no [column] indexes for string cells.");
 	}
 }
-static void do_selfMatriks2 () {
+static void do_selfMatrix2 () {
 	Daata me = theSource;
 	Stackel column = pop, row = pop;
 	if (! me) Melder_throw (U"The name \"self\" is restricted to formulas for objects.");
@@ -5957,7 +5956,7 @@ static void do_selfMatriks2 () {
 		Melder_throw (Thing_className (me), U" objects like \"self\" accept no [row, column] indexing.");
 	pushNumber (my v_getMatrix (irow, icol));
 }
-static void do_selfMatriksStr2 () {
+static void do_selfMatrixStr2 () {
 	Daata me = theSource;
 	Stackel column = pop, row = pop;
 	if (! me) Melder_throw (U"The name \"self$\" is restricted to formulas for objects.");
@@ -5976,7 +5975,7 @@ static void do_objectCell2 () {
 		Melder_throw (Thing_className (thee), U" objects accept no [id, row, column] indexing.");
 	pushNumber (thy v_getMatrix (irow, icol));
 }
-static void do_matriks2 () {
+static void do_matrix2 () {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
 	integer irow = Stackel_getRowNumber (row, thee);
@@ -5994,7 +5993,7 @@ static void do_objectCellStr2 () {
 		Melder_throw (Thing_className (thee), U" objects accept no [id, row, column] indexing for string cells.");
 	pushString (Melder_dup (thy v_getMatrixStr (irow, icol)));
 }
-static void do_matriksStr2 () {
+static void do_matrixStr2 () {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
 	integer irow = Stackel_getRowNumber (row, thee);
@@ -6042,7 +6041,7 @@ static void do_objectLocation0 (integer irow, integer icol) {
 		Melder_throw (Thing_className (thee), U" objects accept no () values.");
 	}
 }
-static void do_funktie0 (integer irow, integer icol) {
+static void do_function0 (integer irow, integer icol) {
 	Daata thee = parse [programPointer]. content.object;
 	if (thy v_hasGetFunction0 ()) {
 		pushNumber (thy v_getFunction0 ());
@@ -6080,7 +6079,7 @@ static void do_funktie0 (integer irow, integer icol) {
 		Melder_throw (Thing_className (thee), U" objects accept no () values.");
 	}
 }
-static void do_selfFunktie1 (integer irow) {
+static void do_selfFunction1 (integer irow) {
 	Daata me = theSource;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
@@ -6125,7 +6124,7 @@ static void do_objectLocation1 (integer irow) {
 		Melder_throw (Thing_className (thee), U" objects accept only numeric x values.");
 	}
 }
-static void do_funktie1 (integer irow) {
+static void do_function1 (integer irow) {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
@@ -6150,7 +6149,7 @@ static void do_funktie1 (integer irow) {
 		Melder_throw (Thing_className (thee), U" objects accept only numeric x values.");
 	}
 }
-static void do_selfFunktie2 () {
+static void do_selfFunction2 () {
 	Daata me = theSource;
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
@@ -6173,7 +6172,7 @@ static void do_objectLocation2 () {
 		Melder_throw (Thing_className (thee), U" objects accept only numeric x values.");
 	}
 }
-static void do_funktie2 () {
+static void do_function2 () {
 	Daata thee = parse [programPointer]. content.object;
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
@@ -6554,12 +6553,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SELFSTR0_: { do_selfStr0 (row, col);
 } break; case OBJECT_: { pushObject (f [programPointer]. content.object);
 } break; case TO_OBJECT_: { do_toObject ();
-} break; case SELFMATRIKS1_: { do_selfMatriks1 (row);
-} break; case SELFMATRIKSSTR1_: { do_selfMatriksStr1 (row);
-} break; case SELFMATRIKS2_: { do_selfMatriks2 ();
-} break; case SELFMATRIKSSTR2_: { do_selfMatriksStr2 ();
-} break; case SELFFUNKTIE1_: { do_selfFunktie1 (row);
-} break; case SELFFUNKTIE2_: { do_selfFunktie2 ();
+} break; case SELFMATRIX1_: { do_selfMatrix1 (row);
+} break; case SELFMATRIXSTR1_: { do_selfMatrixStr1 (row);
+} break; case SELFMATRIX2_: { do_selfMatrix2 ();
+} break; case SELFMATRIXSTR2_: { do_selfMatrixStr2 ();
+} break; case SELFFUNCTION1_: { do_selfFunction1 (row);
+} break; case SELFFUNCTION2_: { do_selfFunction2 ();
 } break; case OBJECTCELL0_: { do_objectCell0 (row, col);
 } break; case OBJECTCELL1_: { do_objectCell1 (row);
 } break; case OBJECTCELLSTR1_: { do_objectCellStr1 (row);
@@ -6568,14 +6567,14 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case OBJECTLOCATION0_: { do_objectLocation0 (row, col);
 } break; case OBJECTLOCATION1_: { do_objectLocation1 (row);
 } break; case OBJECTLOCATION2_: { do_objectLocation2 ();
-} break; case MATRIKS0_: { do_matriks0 (row, col);
-} break; case MATRIKS1_: { do_matriks1 (row);
-} break; case MATRIKSSTR1_: { do_matrixStr1 (row);
-} break; case MATRIKS2_: { do_matriks2 ();
-} break; case MATRIKSSTR2_: { do_matriksStr2 ();
-} break; case FUNKTIE0_: { do_funktie0 (row, col);
-} break; case FUNKTIE1_: { do_funktie1 (row);
-} break; case FUNKTIE2_: { do_funktie2 ();
+} break; case MATRIX0_: { do_matrix0 (row, col);
+} break; case MATRIX1_: { do_matrix1 (row);
+} break; case MATRIXSTR1_: { do_matrixStr1 (row);
+} break; case MATRIX2_: { do_matrix2 ();
+} break; case MATRIXSTR2_: { do_matrixStr2 ();
+} break; case FUNCTION0_: { do_function0 (row, col);
+} break; case FUNCTION1_: { do_function1 (row);
+} break; case FUNCTION2_: { do_function2 ();
 } break; case ROWSTR_: { do_rowStr ();
 } break; case COLSTR_: { do_colStr ();
 } break; case SQR_: { do_sqr ();
