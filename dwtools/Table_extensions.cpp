@@ -4619,7 +4619,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		OrderedOf<structCovariance> covs;
 		for (integer igroup = 1; igroup <= numberOfGroups; igroup ++) {
 			autoCovariance cov = SSCP_to_Covariance (thy at [igroup], 1);
-			SSCP_expandLowerCholesky (cov.get());
+			SSCP_expandLowerCholeskyInverse (cov.get());
 			covs. addItem_move (cov.move());
 		}
 		for (integer i = 1; i <= selectedRows.size; i ++) {
@@ -4634,7 +4634,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			Covariance covi = covs.at [igroup];
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				vector [icol] = Table_getNumericValue_Assert (me, irow, columnIndex [icol]);
-			double dm2 = NUMmahalanobisDistance (covi -> lowerCholesky.get(), vector.get(), covi -> centroid.get());
+			double dm2 = NUMmahalanobisDistance (covi -> lowerCholeskyInverse.get(), vector.get(), covi -> centroid.get());
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which, numberOfSigmas)) {
 				TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);
