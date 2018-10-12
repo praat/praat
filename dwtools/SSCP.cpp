@@ -118,11 +118,10 @@ double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence) {
 
 static void getEllipseBoundingBoxCoordinates (SSCP me, double scale, bool confidence, double *xmin, double *xmax, double *ymin, double *ymax) {
 	double a, b, cs, width, height;
-	double lscale = SSCP_getEllipseScalefactor (me, scale, confidence);
-
 	NUMeigencmp22 (my data [1] [1], my data [1] [2], my data [2] [2], & a, & b, & cs, nullptr);
 	NUMgetEllipseBoundingBox (sqrt (a), sqrt (b), cs, & width, & height);
 
+	double lscale = SSCP_getEllipseScalefactor (me, scale, confidence);
 	*xmin = my centroid [1] - lscale * width / 2.0;
 	*xmax = *xmin + lscale * width;
 	*ymin = my centroid [2] - lscale * height / 2.0;
@@ -834,13 +833,13 @@ autoCovariance CovarianceList_to_Covariance_within (CovarianceList me) {
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
 				U"The dimensions of item ", i, U" does not conform.");
 			if (covi -> numberOfRows == 1) {
-				VECsaxpy (thy data.row (1), covi -> data.row (1), covi -> numberOfObservations);
+				VECsaxpy (thy data.row (1), covi -> data.row (1), covi -> numberOfObservations - 1.0);
 			} else {
-				MATsaxpy (thy data.get(), covi -> data.get(), covi -> numberOfObservations);
+				MATsaxpy (thy data.get(), covi -> data.get(), covi -> numberOfObservations - 1.0);
 			}
 			thy numberOfObservations += covi -> numberOfObservations;
 		}
-		MATmultiply_inplace (thy data.get(), 1.0 / thy numberOfObservations);
+		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - 1.0));
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no Covariance (within) created.");
@@ -854,27 +853,29 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 
 		//	First the new centroid,
 
-		autoMAT centroids = MATzero (my size, thy numberOfColumns);
-		autoVEC weights = VECraw (my size);
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
 			Melder_require (thy numberOfColumns == covi -> numberOfColumns && thy numberOfRows == covi -> numberOfRows, 
 				U"The dimensions of item ", i, U" does not conform.");
-			weights [i] = covi -> numberOfObservations;
-			VECcopy_preallocated (centroids.row (i), covi -> centroid.get());
-			VECadd_inplace (thy centroid.get(), centroids.row (i)); 
-			thy numberOfObservations += weights [i];
+			VECsaxpy (thy centroid.get(), covi -> centroid.get(), covi -> numberOfObservations); 
+			thy numberOfObservations += covi -> numberOfObservations;
 		}
-		
 		VECmultiply_inplace (thy centroid.get(), 1.0 / thy numberOfObservations);
-		MATsubtract_inplace (centroids.get(), thy centroid.get()); // "centre" X
-		autoMAT cov = MATmtm_weighRows (centroids.get(), weights.get()); // X'.X
-		if (thy numberOfRows == 1)
-			VECdiagonal_preallocated (thy data.row (1), cov.get());
-		else
-			MATcopy_preallocated (thy data.get(), cov.get());
 		
-		MATmultiply_inplace (thy data.get(), 1.0 / thy numberOfObservations);
+		autoVEC mean = VECraw (thy numberOfColumns);
+		autoMAT outer = MATraw (thy numberOfColumns, thy numberOfColumns);
+		for (integer i = 1; i <= my size; i ++) {
+			Covariance covi = my at [i];
+			VECcopy_preallocated (mean.get(), covi -> centroid.get());
+			VECsubtract_inplace (mean.get(), thy centroid.get());
+			MATouter_preallocated (outer.get(), mean.get(), mean.get());
+			if (thy numberOfRows == 1) {
+				VECdiagonal_preallocated (mean.get(), outer.get()); // re-use mean to store diagonal
+				VECsaxpy (thy data.row (1), mean.get(), covi -> numberOfObservations);
+			} else
+				MATsaxpy (thy data.get(), outer.get(), covi -> numberOfObservations); // Y += aX
+		}
+		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - 1.0));
 		
 		return thee;
 	} catch (MelderError) {
@@ -1249,10 +1250,10 @@ double Covariance_getProbabilityAtPosition_string (Covariance me, conststring32 
 double Covariance_getProbabilityAtPosition (Covariance me, constVEC x) {
 	Melder_require (x.size == my numberOfColumns,
 		U"The dimensions of the Covariance and the vector should agree.");
-	if (NUMisEmpty (my lowerCholesky.get()))
-		SSCP_expandLowerCholesky (me);
+	if (NUMisEmpty (my lowerCholeskyInverse.get()))
+		SSCP_expandLowerCholeskyInverse (me);
 	double ln2pid = my numberOfColumns * log (NUM2pi);
-	double dsq = NUMmahalanobisDistance (my lowerCholesky.get(), x, my centroid.get());
+	double dsq = NUMmahalanobisDistance (my lowerCholeskyInverse.get(), x, my centroid.get());
 	double lnN = - 0.5 * (ln2pid + my lnd + dsq);
 	double p = exp (lnN);
 	return p;
@@ -1755,25 +1756,25 @@ void SSCP_unExpand (SSCP me) {
 	my dataChanged = 0;
 }
 
-void SSCP_expandLowerCholesky (SSCP me) {
-	if (NUMisEmpty (my lowerCholesky.get()))
-		my lowerCholesky = MATzero (my numberOfRows, my numberOfColumns);
+void SSCP_expandLowerCholeskyInverse (SSCP me) {
+	if (NUMisEmpty (my lowerCholeskyInverse.get()))
+		my lowerCholeskyInverse = MATraw (my numberOfColumns, my numberOfColumns);
 	if (my numberOfRows == 1) {   // diagonal
 		my lnd = 0.0;
 		for (integer j = 1; j <= my numberOfColumns; j ++) {
-			my lowerCholesky [1] [j] = 1.0 / sqrt (my data [1] [j]);   // inverse is 1/stddev
+			my lowerCholeskyInverse [1] [j] = 1.0 / sqrt (my data [1] [j]);   // inverse is 1/stddev
 			my lnd += log (my data [1] [j]);   // diagonal elmnt is variance
 		}
 	} else {
-		MATcopy_preallocated (my lowerCholesky.get(), my data.get());
+		MATcopy_preallocated (my lowerCholeskyInverse.get(), my data.get());
 		try {
-			MATlowerCholeskyInverse_inplace (my lowerCholesky.get(), & (my lnd));
+			MATlowerCholeskyInverse_inplace (my lowerCholeskyInverse.get(), & (my lnd));
 		} catch (MelderError) {
 			// singular matrix: arrange a diagonal only inverse.
 			my lnd = 0.0;
 			for (integer i = 1; i <= my numberOfRows; i ++) {
 				for (integer j = i; j <= my numberOfColumns; j ++)
-					my lowerCholesky [i] [j] = my lowerCholesky [j] [i] = (i == j ? 1.0 / sqrt (my data [i] [i]) : 0.0);
+					my lowerCholeskyInverse [i] [j] = my lowerCholeskyInverse [j] [i] = (i == j ? 1.0 / sqrt (my data [i] [i]) : 0.0);
 				my lnd += log (my data [i] [i]);
 			}
 			my lnd *= 2.0;
@@ -1782,7 +1783,7 @@ void SSCP_expandLowerCholesky (SSCP me) {
 }
 
 void SSCP_unExpandLowerCholesky (SSCP me) {
-	my lowerCholesky.reset();
+	my lowerCholeskyInverse.reset();
 	my lnd = 0.0;
 }
 

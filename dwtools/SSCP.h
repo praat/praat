@@ -251,7 +251,7 @@ void SSCP_expand (SSCP me);
 void SSCP_unExpand (SSCP me);
 /* Use only if the memory is really needed! */
 
-void SSCP_expandLowerCholesky (SSCP me); // create lower square root of covariance matrix
+void SSCP_expandLowerCholeskyInverse (SSCP me); // create lower square root of covariance matrix
 
 void SSCP_unExpandLowerCholesky (SSCP me);
 
