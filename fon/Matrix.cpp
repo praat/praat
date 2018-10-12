@@ -73,18 +73,12 @@ void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 	} else {
 		Matrix_Parent :: v_readText (text, formatVersion);
 	}
-	if (our xmin > our xmax)
-		Melder_throw (U"xmin should be less than or equal to xmax.");
-	if (our ymin > our ymax)
-		Melder_throw (U"ymin should be less than or equal to ymax.");
-	if (our nx < 1)
-		Melder_throw (U"nx should be at least 1.");
-	if (our ny < 1)
-		Melder_throw (U"ny should be at least 1.");
-	if (our dx <= 0.0)
-		Melder_throw (U"dx should be greater than 0.0.");
-	if (our dy <= 0.0)
-		Melder_throw (U"dy should be greater than 0.0.");
+	Melder_require (our xmin <= our xmax, U"xmin should be less than or equal to xmax.");
+	Melder_require (our ymin <= our ymax, U"ymin should be less than or equal to ymax.");
+	Melder_require (our nx >= 1, U"nx should be at least 1.");
+	Melder_require (our ny >= 1, U"ny should be at least 1.");
+	Melder_require (our dx > 0.0, U"dx should be greater than 0.0.");
+	Melder_require (our dy > 0.0, U"dy should be greater than 0.0.");
 	our z = matrix_readText_r64 (our ny, our nx, text, "z");
 }
 

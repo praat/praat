@@ -55,9 +55,7 @@
 	{ \
 		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
 		Melder_assert (our x.nrow == _nrow && our x.ncol == _ncol); \
-		if (our x.at_deprecated) { \
-			NUMmatrix_writeBinary_##storage (our x.at_deprecated, 1, _nrow, 1, _ncol, f); \
-		} \
+		matrix_writeBinary_##storage (our x.get(), f); \
 	}
 
 #define oo_ENUMx(kType, storage, x)  \
