@@ -36,11 +36,11 @@ static void logo (Graphics graphics) {
 	#define str(s) #s
 	Graphics_text (graphics, 0.5, 0.45, U"version " xstr(PRAAT_VERSION_STR));
 	Graphics_setColour (graphics, Graphics_BLACK);
-	Graphics_setFontSize (graphics, 14);
-	Graphics_text (graphics, 0.5, 0.33, U"www.praat.org");
 	Graphics_setFont (graphics, kGraphics_font::HELVETICA);
 	Graphics_setFontSize (graphics, 10);
-	Graphics_text (graphics, 0.5, 0.16, U"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+	Graphics_text (graphics, 0.5, 0.20, U"Copyright © 1992–" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
+	Graphics_setFontSize (graphics, 10);
+	Graphics_text (graphics, 0.5, 0.10, U"Website: praat.org");
 }
 
 int main (int argc, char *argv []) {
