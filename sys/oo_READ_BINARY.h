@@ -37,10 +37,7 @@
 #define oo_ANYVEC(type, storage, x, sizeExpression)  \
 	{ \
 		integer _size = (sizeExpression); \
-		if (_size > 0) { \
-			our x.at = NUMvector_readBinary_##storage (1, _size, _filePointer_); \
-			our x.size = _size; \
-		} \
+		our x = vector_readBinary_##storage (_size, _filePointer_); \
 	}
 
 #define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
@@ -54,12 +51,7 @@
 #define oo_ANYMAT(type, storage, x, nrowExpression, ncolExpression)  \
 	{ \
 		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
-		if (_nrow > 0 && _ncol > 0) { \
-	    	our x.at_deprecated = NUMmatrix_readBinary_##storage (1, _nrow, 1, _ncol, _filePointer_); \
-	    	our x.cells = our x.at_deprecated ? & our x.at_deprecated [1] [1] : nullptr; \
-	    	our x.nrow = _nrow; \
-	    	our x.ncol = _ncol; \
-		} \
+		our x = matrix_readBinary_##storage (_nrow, _ncol, _filePointer_); \
 	}
 
 #define oo_ENUMx(kType, storage, x)  \
