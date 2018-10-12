@@ -131,7 +131,7 @@ void Matrix_drawAsSquares_inside (Matrix me, Graphics g, double xmin, double xma
 		Permutation_tableJump_inline (p.get(), numberOfColumns, 1);
 	}
 	
-	double extremum = NUMmatrix_extremum<double> (my z.at, 1, my ny, 1, my nx);
+	double extremum = NUMmatrix_extremum<double> (my z.at_deprecated, 1, my ny, 1, my nx);
 
 	extremum = fabs (extremum);
 	Graphics_Colour colour = Graphics_inqColour (g);

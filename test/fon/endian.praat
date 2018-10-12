@@ -12,7 +12,7 @@ if testCorrect
 	energyInAir2 = Get energy in air
 	Remove
 	select Sound test
-	assert energyInAir2 = energyInAir
+	assert energyInAir2 = energyInAir   ; 'energyInAir2' 'energyInAir'
 
 	Write to WAV file... test2.wav
 	Remove

@@ -102,8 +102,8 @@ conststring32 Melder_float (conststring32 number) noexcept;
 conststring32 Melder_naturalLogarithm (double lnNumber) noexcept;
 conststring8 Melder8_naturalLogarithm (double lnNumber) noexcept;
 
-conststring32 Melder_pointer (void *pointer) noexcept;
-conststring8 Melder8_pointer (void *pointer) noexcept;
+conststring32 Melder_pointer (const void *pointer) noexcept;
+conststring8 Melder8_pointer (const void *pointer) noexcept;
 
 conststring32 Melder_character (char32 kar) noexcept;
 conststring8 Melder8_character (char32 kar) noexcept;

@@ -994,6 +994,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 					lprev = lnew;
 					while (component <= my numberOfComponents) {
 						// M-step for means and covariances
+
 						GaussianMixture_updateProbabilityMarginals (me.get(), p.get());
 						GaussianMixture_updateCovariance (me.get(), component, thy data.get(), p.get());
 						if (lambda > 0)

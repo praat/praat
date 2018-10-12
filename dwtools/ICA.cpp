@@ -27,8 +27,10 @@
 #include "Sound_and_PCA.h"
 #include "SVD.h"
 
+//TODO 20181013 massive cleanups only at pointers removed rest follows
 // matrix multiply R = V*C*V', V is nrv x ncv, C is ncv x ncv, R is nrv x nrv
-static void NUMdmatrices_multiply_VCVp (double **r, double **v, integer nrv, integer ncv, double **c, bool csym) {
+static void NUMdmatrices_multiply_VCVp (MAT r, MAT v, integer nrv, integer ncv, MAT c, bool csym) {
+// TODO asserts less arguments
 	for (integer i = 1; i <= nrv; i ++) {
 		integer jstart = csym ? i : 1;
 		for (integer j = jstart; j <= nrv; j ++) {
@@ -70,7 +72,8 @@ static void NUMdmatrices_multiply_VpCV (double **r, double **v, integer nrv, int
 #endif
 
 // matrix multiply V*C, V is nrv x ncv, C is ncv x ncc, R is nrv x ncc;
-static void NUMdmatrices_multiply_VC (double **r, double **v, integer nrv, integer ncv, double **c, integer ncc) {
+static void NUMdmatrices_multiply_VC (MAT r, MAT v, integer nrv, integer ncv, MAT c, integer ncc) {
+// TODO asserts less arguments
 	for (integer i = 1; i <= nrv; i ++) {
 		for (integer j = 1; j <= ncc; j ++) {
 			// V_ik C_kj
@@ -84,7 +87,8 @@ static void NUMdmatrices_multiply_VC (double **r, double **v, integer nrv, integ
 }
 
 // matrix multiply V'*C, V is nrv x ncv, C is nrv x ncc, R is ncv x ncc;
-static void NUMdmatrices_multiply_VpC (double **r, double **v, integer nrv, integer ncv, double **c, integer ncc) {
+static void NUMdmatrices_multiply_VpC (MAT r, MAT v, integer nrv, integer ncv, MAT c, integer ncc) {
+// TODO asserts less arguments
 	for (integer i = 1; i <= ncv; i ++) {
 		for (integer j = 1; j <= ncc; j ++) {
 			// V'_ik C_kj
@@ -98,7 +102,7 @@ static void NUMdmatrices_multiply_VpC (double **r, double **v, integer nrv, inte
 }
 
 // D += scalef * M * M', M = nrm x ncm, D is nrm x nrm
-static void NUMdmatrices_multiplyScaleAdd (double **r, double **m, integer nrm, integer ncm, double scalef) {
+static void multiplyScaleAdd (MAT r, MAT m, integer nrm, integer ncm, double scalef) {
 	for (integer i = 1; i <= nrm; i ++) {
 		for (integer j = 1; j <= nrm; j ++) {
 			// M_ik M'_kj = M_ik M_jk
@@ -117,7 +121,7 @@ static void NUMdmatrices_multiplyScaleAdd (double **r, double **m, integer nrm, 
 
 	D_ij = W'_ik C_kl W_lj => D_ii = W_ki C_kl W_li
 */
-static void NUMdmatrix_normalizeColumnVectors (double **w, integer nrw, integer ncw, double **c) {
+static void NUMdmatrix_normalizeColumnVectors (MAT w, integer nrw, integer ncw, MAT c) { // TODO
 	for (integer i = 1; i <= ncw; i ++) {
 		longdouble di = 0.0;
 		for (integer k = 1; k <= ncw; k ++)
@@ -131,19 +135,20 @@ static void NUMdmatrix_normalizeColumnVectors (double **w, integer nrw, integer 
 	}
 }
 
-static double NUMdmatrix_diagonalityMeasure (double **v, integer dimension) {
+static double diagonalityMeasure (MAT v) {
+	Melder_assert (v.nrow == v.ncol);
 	longdouble dmsq = 0.0;
-	if (dimension < 2) {
+	if (v.nrow < 2) {
 		return 0.0;
 	}
-	for (integer i = 1; i <= dimension; i ++) {
-		for (integer j = 1; j <= dimension; j ++) {
+	for (integer i = 1; i <= v.nrow; i ++) {
+		for (integer j = 1; j <= v.nrow; j ++) {
 			if (i != j) {
 				dmsq += v [i] [j] * v [i] [j];
 			}
 		}
 	}
-	return (double) dmsq / (dimension * (dimension - 1));
+	return (double) dmsq / (v.nrow * (v.nrow - 1));
 }
 
 #if 0
@@ -252,12 +257,12 @@ static void Diagonalizer_CrossCorrelationTableList_ffdiag (Diagonalizer me, Cros
 				}
 				// update V
 				matrixcopy_preallocated (vnew.get(), my data.get());
-				NUMdmatrices_multiply_VC (my data.at, w.at, dimension, dimension, vnew.at, dimension);
+				NUMdmatrices_multiply_VC (my data.get(), w.get(), dimension, dimension, vnew.get(), dimension);
 				for (integer k = 1; k <= ccts -> size; k ++) {
 					CrossCorrelationTable ct = ccts -> at [k];
 					Melder_assert (ct -> data.nrow == dimension && ct -> data.ncol == dimension);   // ppgb 20180913
 					matrixcopy_preallocated (cc.get(), ct -> data.get());
-					NUMdmatrices_multiply_VCVp (ct -> data.at, w.at, dimension, dimension, cc.at, true);
+					NUMdmatrices_multiply_VCVp (ct -> data.get(), w.get(), dimension, dimension, cc.get(), true);
 				}
 				dm_new = CrossCorrelationTableList_getDiagonalityMeasure (ccts.get(), nullptr, 0, 0);
 				iter ++;
@@ -281,7 +286,7 @@ static void update_one_column (CrossCorrelationTableList me, double **d, double 
 
 	for (integer ic = 2; ic <= my size; ic ++) { // exclude C0
 		SSCP cov = my at [ic];
-		double **c = cov -> data.at;
+		double **c = cov -> data.at_deprecated;
 		// m1 = C * wvec
 		for (integer i = 1; i <= dimension; i ++) {
 			double r = 0;
@@ -302,7 +307,6 @@ static void update_one_column (CrossCorrelationTableList me, double **d, double 
 static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorrelationTableList thee, double *cweights, integer maxNumberOfIterations, double delta) {
 	try {
 		CrossCorrelationTable c0 = thy at [1];
-		double **w = my data.at;
 		integer dimension = c0 -> numberOfColumns;
 
 		autoEigen eigen = Thing_new (Eigen);
@@ -311,21 +315,21 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		autoMAT pinv = MATraw (dimension, dimension);
 		//autoNUMmatrix<double> d (1, dimension, 1, dimension);
 		autoMAT p = MATzero (dimension, dimension);
-		autoNUMmatrix<double> m1 (1, dimension, 1, dimension);
-		autoNUMmatrix<double> wc (1, dimension, 1, dimension);
+		autoMAT m1 = MATzero (dimension, dimension);
+		autoMAT wc = MATzero (dimension, dimension);
 		autoNUMvector<double> wvec (1, dimension);
 		autoNUMvector<double> wnew (1, dimension);
 		autoNUMvector<double> mvec (1, dimension);
 
 		for (integer i = 1; i <= dimension; i ++) // Transpose W
 			for (integer j = 1; j <= dimension; j ++) {
-				wc [i] [j] = w [j] [i];
+				wc [i] [j] = my data [j] [i];
 			}
 
 		// d = diag(diag(W'*C0*W));
 		// W = W*d^(-1/2);
 
-		NUMdmatrix_normalizeColumnVectors (wc.peek(), dimension, dimension, c0 -> data.at);
+		NUMdmatrix_normalizeColumnVectors (wc.get(), dimension, dimension, c0 -> data.get());
 
 		// scale eigenvectors for sphering
 		// [vb,db] = eig(C0);
@@ -344,23 +348,23 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 		for (integer ic = 1; ic <= thy size; ic ++) {
 			CrossCorrelationTable cov1 = thy at [ic];
 			CrossCorrelationTable cov2 = ccts -> at [ic];
-			NUMdmatrices_multiply_VCVp (cov2 -> data.at, p.at, dimension, dimension, cov1 -> data.at, true);
+			NUMdmatrices_multiply_VCVp (cov2 -> data.get(), p.get(), dimension, dimension, cov1 -> data.get(), true);
 		}
 
 		// W = P'\W == inv(P') * W
 
 		MATpseudoInverse_preallocated (pinv.get (), p.get(), 0);
 
-		NUMdmatrices_multiply_VpC (w, pinv.at, dimension, dimension, wc.peek(), dimension);
+		NUMdmatrices_multiply_VpC (my data.get(), pinv.get(), dimension, dimension, wc.get(), dimension);
 
 		// initialisation for order KN^3
 
 		for (integer ic = 2; ic <= thy size; ic ++) {
 			CrossCorrelationTable cov = ccts -> at [ic];
 			// C * W
-			NUMdmatrices_multiply_VC (m1.peek(), cov -> data.at, dimension, dimension, w, dimension);
+			NUMdmatrices_multiply_VC (m1.get(), cov -> data.get(), dimension, dimension, my data.get(), dimension);
 			// D += scalef * M1*M1'
-			NUMdmatrices_multiplyScaleAdd (d.at, m1.peek(), dimension, dimension, 2 * cweights [ic]);
+			multiplyScaleAdd (d.get(), m1.get(), dimension, dimension, 2 * cweights [ic]);
 		}
 
 		integer iter = 0;
@@ -375,10 +379,10 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 				delta_w = 0;
 				for (integer kol = 1; kol <= dimension; kol ++) {
 					for (integer i = 1; i <= dimension; i ++) {
-						wvec [i] = w [i] [kol];
+						wvec [i] = my data [i] [kol];
 					}
 
-					update_one_column (ccts.get(), d.at, cweights, wvec.peek(), -1, mvec.peek());
+					update_one_column (ccts.get(), d.at_deprecated, cweights, wvec.peek(), -1, mvec.peek());
 
 					Eigen_initFromSymmetricMatrix (eigen.get(), d.get());
 
@@ -388,9 +392,9 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 						wnew [i] = eigen -> eigenvectors [dimension] [i];
 					}
 
-					update_one_column (ccts.get(), d.at, cweights, wnew.peek(), 1, mvec.peek());
+					update_one_column (ccts.get(), d.at_deprecated, cweights, wnew.peek(), 1, mvec.peek());
 					for (integer i = 1; i <= dimension; i ++) {
-						w [i] [kol] = wnew [i];
+						my data [i] [kol] = wnew [i];
 					}
 
 					// compare norms of eigenvectors. We have to compare ||wvec +/- w_new|| because eigenvectors
@@ -417,9 +421,8 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 
 		// Revert the sphering W = P'*W;
 		// Take transpose to make W*C [i]W' diagonal instead of W'*C [i]*W => (P'*W)'=W'*P
-
-		NUMmatrix_copyElements (w, wc.peek(), 1, dimension, 1, dimension);
-		NUMdmatrices_multiply_VpC (w, wc.peek(), dimension, dimension, p.at, dimension); // W = W'*P: final result
+		MATcopy_preallocated (wc.get(), my data.get());
+		NUMdmatrices_multiply_VpC (my data.get(), wc.get(), dimension, dimension, p.get(), dimension); // W = W'*P: final result
 
 		// Calculate the "real" diagonality measure
 	//	double dm = CrossCorrelationTableList_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
@@ -432,6 +435,7 @@ static void Diagonalizer_CrossCorrelationTable_qdiag (Diagonalizer me, CrossCorr
 void MixingMatrix_CrossCorrelationTableList_improveUnmixing (MixingMatrix me, CrossCorrelationTableList thee, integer maxNumberOfIterations, double tol, int method) {
 	autoDiagonalizer him = MixingMatrix_to_Diagonalizer (me);
 	Diagonalizer_CrossCorrelationTableList_improveDiagonality (him.get(), thee, maxNumberOfIterations, tol, method);
+
 	MATpseudoInverse_preallocated (my data.get(), his data.get(), 0);
 }
 
@@ -491,7 +495,7 @@ autoCrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me,	double start
 		
 		autoCrossCorrelationTable thee = CrossCorrelationTable_create (my ny);
 
-		NUMcrossCorrelate_rows (my z.at, my ny, i1, i2, lag, thy data.at, thy centroid.at, my dx);
+		NUMcrossCorrelate_rows (my z.at_deprecated, my ny, i1, i2, lag, thy data.at_deprecated, thy centroid.at, my dx);
 
 		thy numberOfObservations = nsamples;
 
@@ -530,13 +534,13 @@ autoCrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, So
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (nchannels);
 		autoNUMvector<double *> data (1, nchannels);
 		for (integer i = 1; i <= my ny; i ++) {
-			data [i] = my z.at [i];   // BUG: this kind of manipulation should never occur in user code
+			data [i] = my z.at_deprecated [i];   // BUG: this kind of manipulation should never occur in user code
 		}
 		for (integer i = 1; i <= thy ny; i ++) {
-			data [i + my ny] = thy z.at [i];   // BUG: this kind of manipulation should never occur in user code
+			data [i + my ny] = thy z.at_deprecated [i];   // BUG: this kind of manipulation should never occur in user code
 		}
 
-		NUMcrossCorrelate_rows (data.peek(), nchannels, i1, i2, ndelta, his data.at, his centroid.at, my dx);
+		NUMcrossCorrelate_rows (data.peek(), nchannels, i1, i2, ndelta, his data.at_deprecated, his centroid.at, my dx);
 
 		his numberOfObservations = nsamples;
 
@@ -635,6 +639,7 @@ autoMixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 		autoMixingMatrix thee = MixingMatrix_create (my numberOfRows, my numberOfColumns);
 		MixingMatrix_setRandomGauss ( thee.get(), 0.0, 1.0);
 		MATpseudoInverse_preallocated (thy data.get(), my data.get(), 0.0);
+
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MixingMatrix created.");
@@ -737,7 +742,7 @@ autoCrossCorrelationTable CrossCorrelationTable_createSimple (conststring32 cova
 }
 
 double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me) {
-	return NUMdmatrix_diagonalityMeasure (my data.at, my numberOfColumns);
+	return diagonalityMeasure (my data.get());
 }
 
 /************* CrossCorrelationTables *****************************/
@@ -794,7 +799,7 @@ double CrossCorrelationTableList_getDiagonalityMeasure (CrossCorrelationTableLis
 	double dmsq = 0;
 	for (integer k = start; k <= end; k ++) {
 		CrossCorrelationTable thee = my at [k];
-		double dmksq = NUMdmatrix_diagonalityMeasure (thy data.at, dimension);
+		double dmksq = diagonalityMeasure (thy data.get());
 		dmsq += (w ? dmksq * w [k] : dmksq / ntables);
 	}
 	return dmsq;
@@ -813,7 +818,7 @@ autoCrossCorrelationTable CrossCorrelationTable_Diagonalizer_diagonalize (CrossC
 		Melder_require (my numberOfRows == thy numberOfRows, U"The CrossCorrelationTable and the Diagonalizer matrix dimensions should be equal.");
 
 		autoCrossCorrelationTable him = CrossCorrelationTable_create (my numberOfColumns);
-		NUMdmatrices_multiply_VCVp (his data.at, thy data.at, my numberOfColumns, my numberOfColumns, my data.at, true);
+		NUMdmatrices_multiply_VCVp (his data.get(), thy data.get(), my numberOfColumns, my numberOfColumns, my data.get(), true);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"CrossCorrelationTable not diagonalized.");
@@ -914,7 +919,7 @@ autoCrossCorrelationTableList CrossCorrelationTableList_createTestSet (integer d
 				}
 			}
 			// we need V'DV, however our V has eigenvectors row-wise -> VDV'
-			NUMdmatrices_multiply_VCVp (ct -> data.at, v.at, dimension, dimension, d.at, true);
+			NUMdmatrices_multiply_VCVp (ct -> data.get(), v.get(), dimension, dimension, d.get(), true);
             my addItem_move (ct.move());
 		}
 		return me;

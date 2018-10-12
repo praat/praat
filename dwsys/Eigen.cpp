@@ -208,7 +208,7 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
 	Melder_assert (a.ncol == a.nrow);
-	if (! my eigenvectors.at)
+	if (! my eigenvectors.at_deprecated)
 		Eigen_init (me, a.ncol, a.ncol);
 	else
 		Melder_assert (my eigenvectors.nrow == my eigenvectors.ncol && a.ncol == my eigenvectors.ncol);

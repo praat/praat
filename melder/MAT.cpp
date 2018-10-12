@@ -100,7 +100,7 @@ void MATVUmul_ (MATVU const& target, constMATVU const& x, constMATVU const& y) n
 }
 
 inline constVEC VECrow_nocheck (constMAT const& mat, integer rowNumber) {
-	return constVEC (mat.at [rowNumber], mat.ncol);
+	return constVEC (mat.at_deprecated [rowNumber], mat.ncol);
 }
 inline void MATmul_fast_preallocated_ (MAT const& target, constMAT const& x, constMAT const& y) noexcept {
 	#if USE_CBLAS_GEMM
@@ -256,14 +256,15 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 			or
 				X'.Y
 
-			The speed for X.Y is 0.063, 1.38, 3.16, 3.02 Gflops for size = 1,10,100,1000.
-			The speed for X'.Y is 0.063, 1.37, 3.13, 2.73 Gflops for size = 1,10,100,1000.
+			The speed for X.Y is 0.063, 1.37, 3.14, 2.96 Gflops for size = 1,10,100,1000.
+			The speed for X'.Y is 0.063, 1.37, 3.11, 2.72 Gflops for size = 1,10,100,1000.
 
 			The trick is to have the inner loop run along two fastest indices;
 			for target as well as y, this fastest index is the last index.
 			Note that the multiplication factor within the inner loop is constant,
 			so we move it out of the loop (by hand, in case the compiler doesn't do it).
 		*/
+		#if 0
 		for (integer irow = 1; irow <= target.nrow; irow ++) {
 			VECVU const targetrow = target [irow];
 			for (integer icol = 1; icol <= target.ncol; icol ++)
@@ -275,12 +276,28 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 					targetrow [icol] += xcell * yrow [icol];
 			}
 		}
+		#else
+		/*
+			An implementation that is notationally ideal.
+			Does the compiler manage to move the constant parts
+			of the expression outside the loop?
+
+			The speed for X.Y is 0.054, 1.02, 2.98, 2.97 Gflops for size = 1,10,100,1000.
+		*/
+		for (integer irow = 1; irow <= target.nrow; irow ++) {
+			for (integer icol = 1; icol <= target.ncol; icol ++)
+				target [irow] [icol] = 0.0;
+			for (integer i = 1; i <= x.ncol; i ++)
+				for (integer icol = 1; icol <= target.ncol; icol ++)
+					target [irow] [icol] += x [irow] [i] * y [i] [icol];
+		}
+		#endif
 	} else if (y.rowStride == 1) {
 		if (x.colStride == 1) {
 			/*
 				This case will be appropriate for the multiplication of full matrices
 					X.Y'
-				The speed is 0.063, 1.17, 1.68, 1.70 Gflops for size = 1,10,100,1000.
+				The speed is 0.064, 1.18, 1.67, 1.69 Gflops for size = 1,10,100,1000.
 			*/
 			MATVUmul_ (target, x, y);
 		} else {
@@ -294,7 +311,7 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 				The speed will be 0.065, 1.27, 1.45, 1.21 Gflops for size = 1,10,100,1000.
 
 				For the moment, the target has to stay row-major.
-				The speed is 0.064, 1.25, 1.40, 0.43 Gflops for size = 1,10,100,1000.
+				The speed is 0.064, 1.21, 1.41, 0.43 Gflops for size = 1,10,100,1000.
 
 				The trick is to have the inner loop run along two fastest indices;
 				for both target (in future) and y, this fastest index is the first index.

@@ -1,8 +1,7 @@
-#ifndef _melder_real_h_
-#define _melder_real_h_
-/* melder_real.h
+#pragma once
+/* MelderIntegerRange.h
  *
- * Copyright (C) 1992-2018 Paul Boersma
+ * Copyright (C) 2018 Paul Boersma
  *
  * This code is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +17,6 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
-	The following is checked in praat.h.
-*/
-using longdouble = long double;   // typically 80 bits ("extended") precision, but stored in 96 or 128 bits; on some platforms only 64 bits
 
-struct MelderRealRange {
-	double min, max;
-	bool isEmpty () { return ! (max > min); }   // note edge case: will return true if min or max is NaN
-	double size () {
-		double result = max - min;
-		return std::max (result, 0.0);
-	}
-};
+/* End of file MelderIntegerRange.h */
 
-/* End of file melder_real.h */
-#endif

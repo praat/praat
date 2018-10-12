@@ -40,9 +40,7 @@
 	{ \
 		integer _size = (sizeExpression); \
 		Melder_assert (our x.size == _size); \
-		if (our x.at) { \
-			NUMvector_writeText_##storage (our x.at, 1, _size, file, U"" #x); \
-		} \
+		vector_writeText_##storage (our x.get(), file, U"" #x); \
 	}
 
 #define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
@@ -57,9 +55,7 @@
 	{ \
 		integer _nrow = (nrowExpression), _ncol = (ncolExpression); \
 		Melder_assert (our x.nrow == _nrow && our x.ncol == _ncol); \
-		if (our x.at) { \
-			NUMmatrix_writeText_##storage (our x.at, 1, _nrow, 1, _ncol, file, U"" #x); \
-		} \
+		matrix_writeText_##storage (our x.get(), file, U"" #x); \
 	}
 
 #define oo_ENUMx(kType, storage, x)  \

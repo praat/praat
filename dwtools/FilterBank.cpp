@@ -983,7 +983,7 @@ autoBarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, d
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 
-		NUMdmatrix_to_dBs (thy z.at, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
+		NUMdmatrix_to_dBs (thy z.at_deprecated, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no BarkFilter created.");
@@ -1068,7 +1068,7 @@ autoMelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, dou
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 
-		NUMdmatrix_to_dBs (thy z.at, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
+		NUMdmatrix_to_dBs (thy z.at_deprecated, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no MelFilter created.");
@@ -1181,7 +1181,7 @@ autoFormantFilter Sound_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 		}
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
-		NUMdmatrix_to_dBs (his z.at, 1, his ny, 1, his nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
+		NUMdmatrix_to_dBs (his z.at_deprecated, 1, his ny, 1, his nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"FormantFilter not created from Pitch & FormantFilter.");

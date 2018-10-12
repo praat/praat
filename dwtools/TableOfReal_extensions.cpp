@@ -484,7 +484,7 @@ void TableOfReal_drawBoxPlots (TableOfReal me, Graphics g, integer rowmin, integ
 		colmax = my numberOfColumns;
 	}
 	if (ymax <= ymin) {
-		NUMmatrix_extrema (my data.at, rowmin, rowmax, colmin, colmax, &ymin, &ymax);
+		NUMmatrix_extrema (my data.at_deprecated, rowmin, rowmax, colmin, colmax, &ymin, &ymax);
 	}
 
 	Graphics_setWindow (g, colmin - 0.5, colmax + 0.5, ymin, ymax);
@@ -808,13 +808,13 @@ void TableOfReal_drawScatterPlot (TableOfReal me, Graphics g,
 		rowe = Melder_ifloor (m);
 	}
 	if (xmax == xmin) {
-		NUMdmatrix_getColumnExtrema (my data.at, rowb, rowe, icx, & xmin, & xmax);
+		NUMdmatrix_getColumnExtrema (my data.at_deprecated, rowb, rowe, icx, & xmin, & xmax);
 		double tmp = ( xmax == xmin ? 0.5 : 0.0 );
 		xmin -= tmp;
 		xmax += tmp;
 	}
 	if (ymax == ymin) {
-		NUMdmatrix_getColumnExtrema (my data.at, rowb, rowe, icy, & ymin, & ymax);
+		NUMdmatrix_getColumnExtrema (my data.at_deprecated, rowb, rowe, icy, & ymin, & ymax);
 		double tmp = ( ymax == ymin ? 0.5 : 0.0 );
 		ymin -= tmp;
 		ymax += tmp;
@@ -1141,8 +1141,8 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g,
 
 	double min, max;
 	if (xmin >= xmax) {
-		NUMmatrix_extrema (my data.at, 1, ny, colx1, colx1, & min, &max);
-		NUMmatrix_extrema (my data.at, 1, ny, colx2, colx2, & xmin, &xmax);
+		NUMmatrix_extrema (my data.at_deprecated, 1, ny, colx1, colx1, & min, &max);
+		NUMmatrix_extrema (my data.at_deprecated, 1, ny, colx2, colx2, & xmin, &xmax);
 		if (min < xmin) {
 			xmin = min;
 		}
@@ -1151,8 +1151,8 @@ void TableOfReal_drawVectors (TableOfReal me, Graphics g,
 		}
 	}
 	if (ymin >= ymax) {
-		NUMmatrix_extrema (my data.at, 1, ny, coly1, coly1, & min, & max);
-		NUMmatrix_extrema (my data.at, 1, ny, coly2, coly2, & ymin, & ymax);
+		NUMmatrix_extrema (my data.at_deprecated, 1, ny, coly1, coly1, & min, & max);
+		NUMmatrix_extrema (my data.at_deprecated, 1, ny, coly2, coly2, & ymin, & ymax);
 		if (min < ymin) {
 			ymin = min;
 		}
