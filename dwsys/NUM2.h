@@ -156,15 +156,6 @@ inline void VECadd_inplace (VEC y, constVEC x) {
 		y [i] += x[i];
 }
 
-inline void MATouter_preallocated (const MAT& target, const constVEC& x) {
-	Melder_assert (target.ncol == target.nrow);
-	Melder_assert (target.ncol == x.size);
-	
-	for (integer irow = 1; irow <= x.size; irow ++)
-		for (integer icol = irow; icol <= x.size; icol ++)
-			target [icol] [irow] = target [irow] [icol] = x [irow] * x [icol];
-}
-
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
 	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;
@@ -181,6 +172,26 @@ inline double NUMmul_vtmv (constVEC x, constMAT m, constVEC y) { // x'. M . y
 		result += x [k] * NUMinner (m.row (k), y); 
 	return (double) result;
 }	
+
+inline void VECmul_elementwise_preallocated (VEC target, constVEC x, constVEC y) {
+	Melder_assert (target.size == x.size);
+	Melder_assert (target.size == y.size);
+	for (integer i = 1; i <= target.size; i++)
+		target [i] = x [i] * y [i];
+}
+
+inline void VECmul_elementwise_inplace (VEC target, constVEC x) {
+	Melder_assert (target.size == x.size);
+	for (integer i = 1; i <= target.size; i++)
+		target [i] *= x [i];
+}
+
+inline autoVEC VECmul_elementwise (constVEC x, constVEC y) {
+	Melder_assert (x.size == y.size);
+	autoVEC result = VECraw (x.size);
+	VECmul_elementwise_preallocated (result.get(), x, y);
+	return result;
+}
 
 inline void VECcopy_preallocated (VEC x, constMAT m, integer columnNumber) {
 	Melder_assert (x.size == m.nrow);
@@ -542,12 +553,6 @@ void NUMdmatrix_into_principalComponents (double **m, integer nrows, integer nco
 		principal directions.
 */
 
-void NUMprincipalComponents (double **a, integer n, integer nComponents, double **pc);
-/*
-	Determines the principal components of a real symmetric matrix
-	a[1..n][1..n] as a pc[1..n][1..nComponents] column matrix.
-*/
-
 integer NUMsolveQuadraticEquation (double a, double b, double c, double *x1, double *x2);
 /*
 	Finds the real roots of ax^2 + bx + c = 0.
@@ -578,7 +583,7 @@ autoVEC NUMsolveNonNegativeLeastSquaresRegression (constMAT m, constVEC d, doubl
 	Borg & Groenen (1997), Modern multidimensional scaling, Springer, page 180.
 */
 
-void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC y,double *out_alpha, double *out_gamma);
+void NUMsolveConstrainedLSQuadraticRegression (constMAT o, constVEC y, double *out_alpha, double *out_gamma);
 /*
 	Solve y[i] = alpha + beta * x[i] + gamma * x[i]^2, with i = 1..n,
 	subject to the constraint beta^2 = 4 * alpha * gamma, for alpha and
@@ -662,7 +667,7 @@ double NUMispline (constVEC aknot, integer order, integer i, double x);
 	Error condition: no memory.
 */
 
-double NUMwilksLambda (double *lambda, integer from, integer to);
+double NUMwilksLambda (constVEC lambda, integer from, integer to);
 /*
 	Calculate: Product (i=from..to; 1/(1+lambda[i]))
 	Preconditions: to >= from
@@ -681,7 +686,7 @@ double NUMbetaContinuedFraction(double a, double b, double x);
 double NUMfactln (int n);
 /* Returns ln (n!) */
 
-void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg);
+void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg);
 /* Log[Gamma(z)] for z complex, z not a negative integer
  * Uses complex Lanczos method. Note that the phase part (arg)
  * is not well-determined when |z| is very large, due
@@ -768,7 +773,7 @@ double NUMinvTukeyQ (double p, double cc, double df, double rr);
  *  df = degrees of freedom of error term
  */
 
-double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, double *lnmu, double *lnvar);
+double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar);
 /*
 	Multivariate normality test of nxp data matrix according to the method described in Henze & Wagner (1997).
 	The test statistic is returned in tnb, together with the lognormal mean 'lnmu' and the lognormal variance 'lnvar'.
@@ -1187,14 +1192,14 @@ void NUMrealft (VEC data, int direction);
 integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p);
 
 // Fit the line y= ax+b
-void NUMlineFit (double *x, double *y, integer numberOfPoints, double *m, double *intercept, int method);
+void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, int method);
 /* method
  * 1 least squares
  * 2 rubust incomplete Theil O(N/2)
  * 3 robust complete Theil (very slow for large N, O(N^2))
  */
 
-void NUMlineFit_theil (double *x, double *y, integer numberOfPoints, double *m, double *intercept, bool incompleteMethod);
+void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool incompleteMethod);
 /*
  * Preconditions:
  *		all x[i] should be different, i.e. x[i] != x[j] for all i = 1..(numberOfPoints - 1), j = (i+1) ..numberOfPoints
@@ -1214,7 +1219,7 @@ void NUMlineFit_theil (double *x, double *y, integer numberOfPoints, double *m, 
  */
 
 
-void NUMlineFit_LS (double *x, double *y, integer numberOfPoints, double *m, double *intercept);
+void NUMlineFit_LS (constVEC x, constVEC y, double *out_m, double *out_intercept);
 
 /* The binomial distribution has the form,
 
@@ -1252,8 +1257,8 @@ void NUMlineFit_LS (double *x, double *y, integer numberOfPoints, double *m, dou
    and Schmeiser to use their code as a starting point, and then doing
    a little bit of tweaking.
 
-   Additional polishing for GSL coding standards by Brian Gough.  */
-
+   Additional polishing for GSL coding standards by Brian Gough.
+*/
 integer NUMrandomBinomial (double p, integer n);
 double NUMrandomBinomial_real (double p, integer n);
 

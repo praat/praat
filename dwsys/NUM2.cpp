@@ -160,10 +160,10 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 	MATset (result, 0.0);
 	if (true) {
 		autoVEC row = VECraw (data.ncol);
-		autoMAT outer = MATraw (result.nrow, result.ncol);
+		autoMAT outer = MATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
 			VECcopy_preallocated (row.get(), data.row (irow));
-			MATouter_preallocated (outer, row.get());
+			MATouter_preallocated (outer, row.get(), row.get());
 			MATsaxpy (result, outer.get(), rowWeights [irow]);
 		}
 	} else {
@@ -266,7 +266,7 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 	// Fortran storage -> use uplo='U' to get 'L'.
 
 	(void) NUMlapack_dpotf2 (& uplo, & a.nrow, & a [1] [1], & a.nrow, & info);
-	Melder_require (info == 0, U"dpotf2 fails.");
+	Melder_require (info == 0, U"dpotf2 fails with code ", info, U".");
 
 	// Determinant from diagonal, diagonal is now sqrt (a [i] [i]) !
 
@@ -281,37 +281,37 @@ void MATlowerCholeskyInverse_inplace (MAT a, double *out_lnd) {
 	// Get the inverse */
 
 	(void) NUMlapack_dtrtri (& uplo, & diag, & a.nrow, & a [1] [1], & a.nrow, & info);
-	Melder_require (info == 0, U"dtrtri fails.");
+	Melder_require (info == 0, U"dtrtri fails with code ", info, U".");
 }
 
 autoMAT MATinverse_fromLowerCholeskyInverse (constMAT m) {
 	Melder_assert (m.nrow == m.ncol);
-	autoMAT r = MATraw (m.nrow, m.nrow);
-	for (integer i = 1; i <= m.nrow; i ++) {
-		for (integer j = 1; j <= i; j ++) {
+	autoMAT result = MATraw (m.nrow, m.nrow);
+	for (integer irow = 1; irow <= m.nrow; irow ++) {
+		for (integer icol = 1; icol <= irow; icol ++) {
 			longdouble sum = 0.0;
-			for (integer k = i; k <= m.nrow; k ++) {
-				sum += m [k] [i] * m [k] [j];
+			for (integer k = irow; k <= m.nrow; k ++) {
+				sum += m [k] [irow] * m [k] [icol];
 			}
-			r [i] [j] = r [j] [i] = (double) sum;
+			result [irow] [icol] = result [icol] [irow] = (double) sum;
 		}
 	}
-	return r;
+	return result;
 }
 
 double NUMmahalanobisDistance (constMAT lowerInverse, constVEC v, constVEC m) {
 	Melder_assert (lowerInverse.ncol == v.size && v.size == m.size);
 	longdouble chisq = 0.0;
-	if (lowerInverse.nrow == 1) { // 1xn matrix
-		for (integer j = 1; j <= v.size; j ++) {
-			double t = lowerInverse [1] [j] * (v [j] - m [j]);
+	if (lowerInverse.nrow == 1) { // diagonal matrix is one row matrix
+		for (integer icol = 1; icol <= v.size; icol ++) {
+			double t = lowerInverse [1] [icol] * (v [icol] - m [icol]);
 			chisq += t * t;
 		}
-	} else { // nxn matrix
-		for (integer i = v.size; i > 0; i --) {
-			double t = 0.0;
-			for (integer j = 1; j <= i; j ++) {
-				t += lowerInverse [i] [j] * (v [j] - m [j]);
+	} else { // square matrix
+		for (integer irow = v.size; irow > 0; irow --) {
+			longdouble t = 0.0;
+			for (integer icol = 1; icol <= irow; icol ++) {
+				t += lowerInverse [irow] [icol] * (v [icol] - m [icol]);
 			}
 			chisq += t * t;
 		}
@@ -909,12 +909,13 @@ double NUMispline (constVEC aknot, integer order, integer i, double x) {
 	return y;
 }
 
-double NUMwilksLambda (double *lambda, integer from, integer to) {
-	double result = 1.0;
+double NUMwilksLambda (constVEC lambda, integer from, integer to) {
+	Melder_assert (from > 0 && to <= lambda.size && from <= to);
+	longdouble result = 1.0;
 	for (integer i = from; i <= to; i ++) {
-		result /= (1.0 + lambda [i]);
+		result *= 1.0 / (1.0 + lambda [i]);
 	}
-	return result;
+	return (double) result;
 }
 
 double NUMfactln (int n) {
@@ -1334,21 +1335,21 @@ double NUMbeta2 (double z, double w) {
 
 double NUMlnBeta (double a, double b) {
 	gsl_sf_result result;
-	int status = gsl_sf_lnbeta_e (a, b, &result);
+	int status = gsl_sf_lnbeta_e (a, b, & result);
 	return status == GSL_SUCCESS ? result.val : undefined;
 }
 
-double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, double *lnmu, double *lnvar) {
+double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double *out_tnb, double *out_lnmu, double *out_lnvar) {
 	const integer n = data.nrow, p = data.ncol;
-	if (*beta <= 0)
-		*beta = (1.0 / sqrt (2.0)) * pow ((1.0 + 2 * p) / 4.0, 1.0 / (p + 4)) * pow (n, 1.0 / (p + 4));
+	if (*inout_beta <= 0)
+		*inout_beta = (1.0 / sqrt (2.0)) * pow ((1.0 + 2 * p) / 4.0, 1.0 / (p + 4.0)) * pow (n, 1.0 / (p + 4.0));
 	const double p2 = p / 2.0;
-	const double beta2 = *beta * *beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
+	const double beta2 = *inout_beta * *inout_beta, beta4 = beta2 * beta2, beta8 = beta4 * beta4;
 	const double gamma = 1.0 + 2.0 * beta2, gamma2 = gamma * gamma, gamma4 = gamma2 * gamma2;
 	const double delta = 1.0 + beta2 * (4.0 + 3.0 * beta2), delta2 = delta * delta;
 	double prob = undefined;
 
-	*tnb = *lnmu = *lnvar = undefined;
+	double tnb = undefined, lnmu = undefined, lnvar = undefined;
 
 	if (n < 2 || p < 1)
 		return prob;
@@ -1377,10 +1378,10 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, 
 			const double djj = NUMmahalanobisDistance (covar.get(), x.row(j), zero.get());
 			sumj += exp (-b2 * djj);
 		}
-		*tnb = (1.0 / n) * (double) sumjk - 2.0 * pow (1.0 + beta2, - p2) * (double) sumj + n * pow (gamma, - p2); // n *
+		tnb = (1.0 / n) * (double) sumjk - 2.0 * pow (1.0 + beta2, - p2) * (double) sumj + n * pow (gamma, - p2); // n *
 	} catch (MelderError) {
 		Melder_clearError ();
-		*tnb = 4.0 * n;
+		tnb = 4.0 * n;
 	}
 
 	double mu = 1.0 - pow (gamma, -p2) * (1.0 + p * beta2 / gamma + p * (p + 2) * beta4 / (2.0 * gamma2));
@@ -1388,9 +1389,12 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *beta, double *tnb, 
 		 + 2.0 * pow (gamma,  -p) * (1.0 + 2.0 * p * beta4 / gamma2  + 3.0 * p * (p + 2) * beta8 / (4.0 * gamma4))
 		 - 4.0 * pow (delta, -p2) * (1.0 + 3.0 * p * beta4 / (2.0 * delta) + p * (p + 2) * beta8 / (2.0 * delta2));
 	double mu2 = mu * mu;
-	*lnmu = log (sqrt (mu2 * mu2 / (mu2 + var)));
-	*lnvar = sqrt (log ( (mu2 + var) / mu2));
-	prob = NUMlogNormalQ (*tnb, *lnmu, *lnvar);
+	lnmu = log (sqrt (mu2 * mu2 / (mu2 + var)));
+	lnvar = sqrt (log ((mu2 + var) / mu2));
+	if (out_lnmu) *out_lnmu = lnmu;
+	if (out_lnvar) *out_lnvar = lnvar;
+	if (out_tnb) *out_tnb = tnb;
+	prob = NUMlogNormalQ (tnb, lnmu, lnvar);
 	return prob;
 }
 
@@ -1920,29 +1924,24 @@ bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2,
 	return true;
 }
 
-void NUMgetEllipseBoundingBox (double a, double b, double cospsi, double *width, double *height) {
-
-	Melder_assert (cospsi >= -1 && cospsi <= 1);
-
-	if (cospsi == 1) {
-
-		// a-axis along x-axis
-
-		*width = a;
-		*height = b;
-	} else if (cospsi == 0) {
-
-		// a-axis along y-axis
-
-		*width = b;
-		*height = a;
+void NUMgetEllipseBoundingBox (double a, double b, double cospsi, double *out_width, double *out_height) {
+	Melder_assert (cospsi >= -1.0 && cospsi <= 1.0);
+	double width, height;
+	if (cospsi == 1.0) { // a-axis along x-axis
+		width = a;
+		height = b;
+	} else if (cospsi == 0.0) { // a-axis along y-axis
+		width = b;
+		height = a;
 	} else {
-		double psi = acos (cospsi), sn = sin (psi);
-		double phi = atan2 (-b * sn, a * cospsi);
-		*width = fabs (a * cospsi * cos (phi) - b * sn * sin (phi));
-		phi = atan2 (b * cospsi , a * sn);
-		*height = fabs (a * sn * cos (phi) + b * cospsi * sin (phi));
+		double psi = acos (cospsi), sinpsi = sin (psi);
+		double phi = atan2 (-b * sinpsi, a * cospsi);
+		width = fabs (a * cospsi * cos (phi) - b * sinpsi * sin (phi));
+		phi = atan2 (b * cospsi, a * sinpsi);
+		height = fabs (a * sinpsi * cos (phi) + b * cospsi * sin (phi));
 	}
+	if (out_width) *out_width = width;
+	if (out_height) *out_height = height;
 }
 
 /*
@@ -2062,7 +2061,7 @@ double NUMminimize_brent (double (*f) (double x, void *closure), double a, doubl
 	probs is probability vector, i.e. all 0 <= probs [i] <= 1 and sum(i=1;i=nprobs, probs [i])= 1
 	p is a probability
 */
-integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p) {
+integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p) { //TODO HMM zero start matrices
 	integer index = 1;
 	double psum = probs [index];
 	while (p > psum && index < nprobs) {
@@ -2073,10 +2072,10 @@ integer NUMgetIndexFromProbability (double *probs, integer nprobs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (double *x, double *y, integer numberOfPoints,
-	double *out_m, double *out_intercept, bool incompleteMethod)
+void NUMlineFit_theil (constVEC x, constVEC y, double *out_m, double *out_intercept, bool incompleteMethod)
 {
 	try {
+		Melder_assert (x.size == y.size);
 		/* Theil's incomplete method:
 			Split (x [i],y [i]) as
 			(x [i],y [i]), (x [N+i],y [N=i], i=1..numberOfPoints/2
@@ -2085,77 +2084,67 @@ void NUMlineFit_theil (double *x, double *y, integer numberOfPoints,
 			b = median(y [i]-m*x [i])
 		 */
 		double m, intercept;
-		if (numberOfPoints <= 0) {
-			m = intercept = undefined;
-		} else if (numberOfPoints == 1) {
+		if (x.size == 1) {
 			intercept = y [1];
 			m = 0.0;
-		} else if (numberOfPoints == 2) {
+		} else if (x.size == 2) {
 			m = (y [2] - y [1]) / (x [2] - x [1]);
 			intercept = y [1] - m * x [1];
 		} else {
 			integer numberOfCombinations;
 			autoVEC mbs;
-			if (incompleteMethod) { // incomplete method
-				numberOfCombinations = numberOfPoints / 2;
-				mbs = VECzero (numberOfPoints); //
-				integer n2 = numberOfPoints % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
+			if (incompleteMethod) {
+				numberOfCombinations = x.size / 2;
+				mbs = VECzero (x.size); // allocate twice the space for convenience later
+				integer n2 = x.size % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
 				for (integer i = 1; i <= numberOfCombinations; i ++)
 					mbs [i] = (y [n2 + i] - y [i]) / (x [n2 + i] - x [i]);
 			} else { // use all combinations
-				numberOfCombinations = (numberOfPoints - 1) * numberOfPoints / 2;
+				numberOfCombinations = (x.size - 1) * x.size / 2;
 				mbs = VECzero (numberOfCombinations);
 				integer index = 0;
-				for (integer i = 1; i < numberOfPoints; i ++)
-					for (integer j = i + 1; j <= numberOfPoints; j ++)
+				for (integer i = 1; i < x.size; i ++)
+					for (integer j = i + 1; j <= x.size; j ++)
 						mbs [++ index] = (y [j] - y [i]) / (x [j] - x [i]);
 			}
-			VECsort_inplace (mbs.subview (1, numberOfCombinations));
-			m = NUMquantile (mbs.subview (1, numberOfCombinations), 0.5);
-			for (integer i = 1; i <= numberOfPoints; i ++)
+			VECsort_inplace (mbs.subview(1, numberOfCombinations));
+			m = NUMquantile (mbs.get(), 0.5);
+			for (integer i = 1; i <= x.size; i ++)
 				mbs [i] = y [i] - m * x [i];
-			VECsort_inplace (mbs.subview (1, numberOfPoints));
-			intercept = NUMquantile (mbs.subview (1, numberOfPoints), 0.5);
+			VECsort_inplace (mbs.subview (1, x.size));
+			intercept = NUMquantile (mbs.subview (1, x.size), 0.5);
 		}
-		if (out_m)
-			*out_m = m;
-		if (out_intercept)
-			*out_intercept = intercept;
+		if (out_m) *out_m = m;
+		if (out_intercept) *out_intercept = intercept;
 	} catch (MelderError) {
 		Melder_throw (U"No line fit (Theil's method).");
 	}
 }
 
-void NUMlineFit_LS (double *x, double *y, integer numberOfPoints, double *p_m, double *intercept) {
-	double sx = 0.0, sy = 0.0;
-	for (integer i = 1; i <= numberOfPoints; i ++) {
-		sx += x [i];
-		sy += y [i];
-	}
-	double xmean = sx / numberOfPoints;
-	double st2 = 0.0, m = 0.0;
-	for (integer i = 1; i <= numberOfPoints; i ++) {
+void NUMlineFit_LS (constVEC x, constVEC y, double *out_m, double *out_intercept) {
+	Melder_assert (x.size == y.size);
+	double sx = NUMsum (x);
+	double sy = NUMsum (y);
+	double xmean = sx / x.size;
+	longdouble st2 = 0.0, m = 0.0;
+	for (integer i = 1; i <= x.size; i ++) {
 		double t = x [i] - xmean;
 		st2 += t * t;
 		m += t * y [i];
 	}
 	// y = m*x + b
 	m /= st2;
-	if (intercept) {
-		*intercept = (sy - m * sx) / numberOfPoints;
-	}
-	if (p_m) {
-		*p_m = m;
-	}
+	if (out_intercept) *out_intercept = (sy - m * sx) / x.size;
+	if (out_m) *out_m = m;
 }
 
-void NUMlineFit (double *x, double *y, integer numberOfPoints, double *m, double *intercept, int method) {
+void NUMlineFit (constVEC x, constVEC y, double *out_m, double *out_intercept, int method) {
 	if (method == 1) {
-		NUMlineFit_LS (x, y, numberOfPoints, m, intercept);
+		NUMlineFit_LS (x, y, out_m, out_intercept);
 	} else if (method == 3) {
-		NUMlineFit_theil (x, y, numberOfPoints, m, intercept, false);
+		NUMlineFit_theil (x, y, out_m, out_intercept, false);
 	} else {
-		NUMlineFit_theil (x, y, numberOfPoints, m, intercept, true);
+		NUMlineFit_theil (x, y, out_m, out_intercept, true);
 	}
 }
 
@@ -2581,19 +2570,15 @@ double NUMrandomBinomial_real (double p, integer n) {
 	}
 }
 
-void NUMlngamma_complex (double zr, double zi, double *lnr, double *arg) {
+void NUMlngamma_complex (double zr, double zi, double *out_lnr, double *out_arg) {
 	double ln_re = undefined, ln_arg = undefined;
 	gsl_sf_result gsl_lnr, gsl_arg;
 	if (gsl_sf_lngamma_complex_e (zr, zi, & gsl_lnr, & gsl_arg)) {
 		ln_re = gsl_lnr.val;
 		ln_arg = gsl_arg.val;
 	}
-	if (lnr) {
-		*lnr = ln_re;
-	}
-	if (arg) {
-		*arg = ln_arg;
-	}
+	if (out_lnr) *out_lnr = ln_re;
+	if (out_arg) *out_arg = ln_arg;
 }
 
 autoVEC NUMbiharmonic2DSplineInterpolation_getWeights (constVEC x, constVEC y, constVEC z) {
