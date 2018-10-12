@@ -59,7 +59,60 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT p, int o
 void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT p);
 integer GaussianMixture_getNumberOfParametersInComponent (GaussianMixture me);
 
-static void GaussianMixture_updateCovariance (GaussianMixture me, integer component, constMAT data, constMAT p) {
+static void GaussianMixture_updateCovariance (GaussianMixture me, integer component, MAT data, MAT p) {
+	integer numberOfRows = data.nrow;
+	if (component < 1 || component > my numberOfComponents) {
+		return;
+	}
+	Covariance thee = my covariances->at [component];
+
+	double mixprob = my mixingProbabilities [component];
+	double gsum = p [numberOfRows + 1] [component];
+	// update the means
+
+	for (integer j = 1; j <= thy numberOfColumns; j ++) {
+		thy centroid [j] = 0.0;
+		for (integer i = 1; i <= numberOfRows; i ++) {
+			double gamma = mixprob * p [i] [component] / p [i] [my numberOfComponents + 1];
+			thy centroid [j] += gamma * data [i] [j] ; // eq. Bishop 9.17
+		}
+		thy centroid [j] /= gsum;
+	}
+
+	// update covariance with the new mean
+
+	if (thy numberOfRows == 1) { // 1xn covariance
+		for (integer j = 1; j <= thy numberOfColumns; j ++) {
+			thy data [1] [j] = 0.0;
+		}
+		for (integer i = 1; i <= numberOfRows; i ++) {
+			double gamma = mixprob * p [i] [component] / p [i] [my numberOfComponents + 1];
+			double gdn = gamma / gsum;
+			for (integer j = 1; j <= thy numberOfColumns; j ++) {
+				double xj = thy centroid [j] - data [i] [j];
+				thy data [1] [j] += gdn * xj * xj;
+			}
+		}
+	} else { // nxn covariance
+		for (integer j = 1; j <= thy numberOfRows; j ++)
+			for (integer k = j; k <= thy numberOfColumns; k ++) {
+				thy data [k] [j] = thy data [j] [k] = 0;
+			}
+		for (integer i = 1; i <= numberOfRows; i ++) {
+			double gamma = mixprob * p [i] [component] / p [i] [my numberOfComponents + 1];
+			double gdn = gamma / gsum; // we cannot divide by nk - 1, this could cause instability
+			for (integer j = 1; j <= thy numberOfColumns; j ++) {
+				double xj = thy centroid [j] - data [i] [j];
+				for (integer k = j; k <= thy numberOfColumns; k ++) {
+					thy data [j] [k] = thy data [k] [j] += gdn * xj * (thy centroid [k] - data [i] [k]);
+				}
+			}
+		}
+	}
+	thy numberOfObservations = my mixingProbabilities [component] * numberOfRows;
+}
+
+static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer component, constMAT data, constMAT p) {
 	Melder_assert (p.nrow == data.nrow + 1);
 	Melder_assert (p.ncol == my numberOfComponents + 1);
 	Melder_assert (data.ncol == my dimension);
@@ -710,12 +763,12 @@ void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfRe
 			icb = ice = component;
 		
 		for (integer ic = icb; ic <= ice; ic ++) {
-			Covariance him = my covariances->at [ic];
-			SSCP_expandLowerCholeskyInverse (him);
+			Covariance covi = my covariances->at [ic];
+			SSCP_expandLowerCholeskyInverse (covi);
 
 			for (integer i = 1; i <= thy numberOfRows; i++) {
-				double dsq = NUMmahalanobisDistance (his lowerCholeskyInverse.get(), thy data.row (i), his centroid.get());
-				p [i] [ic] = std::max (1e-300, exp (- 0.5 * (ln2pid + his lnd + dsq))); // prevent p from being zero
+				double dsq = NUMmahalanobisDistance (covi -> lowerCholeskyInverse.get(), thy data.row (i), covi -> centroid.get());
+				p [i] [ic] = std::max (1e-300, exp (- 0.5 * (ln2pid + covi -> lnd + dsq))); // prevent p from being zero
 			}
 		}
 

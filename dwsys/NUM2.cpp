@@ -253,7 +253,7 @@ double MATdeterminant_fromSymmetricMatrix (constMAT m) {
 	for (integer i = 1; i <= a.nrow; i ++) {
 		lnd += log (a [i] [i]);
 	}
-	lnd *= 2.0; // because A = L . L' TODO
+	lnd *= 2.0; // because A = L . L'
 	return (double) lnd;
 }
 
