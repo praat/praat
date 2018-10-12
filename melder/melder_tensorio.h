@@ -18,16 +18,24 @@
  * along with this work. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* The following ANSI-C power trick generates the declarations of 88 functions. */
-#define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, integer lo, integer hi, MelderFile file, conststring32 name); \
-	void NUMvector_writeBinary_##storage (const type *v, integer lo, integer hi, FILE *f); \
-	type * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name); \
-	type * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f); \
-	void NUMmatrix_writeText_##storage (type **v, integer r1, integer r2, integer c1, integer c2, MelderFile file, conststring32 name); \
-	void NUMmatrix_writeBinary_##storage (type **v, integer r1, integer r2, integer c1, integer c2, FILE *f); \
-	type ** NUMmatrix_readText_##storage (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name); \
-	type ** NUMmatrix_readBinary_##storage (integer r1, integer r2, integer c1, integer c2, FILE *f);
+/* Declaring 192 functions. */
+#define FUNCTION(T,storage)  \
+	void NUMvector_writeText_##storage (const T *v, integer lo, integer hi, MelderFile file, conststring32 name); \
+	void vector_writeText_##storage (const constvector<T>& vec, MelderFile file, conststring32 name); \
+	void NUMvector_writeBinary_##storage (const T *v, integer lo, integer hi, FILE *f); \
+	void vector_writeBinary_##storage (const constvector<T>& vec, FILE *f); \
+	T * NUMvector_readText_##storage (integer lo, integer hi, MelderReadText text, const char *name); \
+	autovector<T> vector_readText_##storage (integer size, MelderReadText text, const char *name); \
+	T * NUMvector_readBinary_##storage (integer lo, integer hi, FILE *f); \
+	autovector<T> vector_readBinary_##storage (integer size, FILE *f); \
+	void NUMmatrix_writeText_##storage (T **v, integer r1, integer r2, integer c1, integer c2, MelderFile file, conststring32 name); \
+	void matrix_writeText_##storage (const constmatrix<T>& mat, MelderFile file, conststring32 name); \
+	void NUMmatrix_writeBinary_##storage (T **v, integer r1, integer r2, integer c1, integer c2, FILE *f); \
+	void matrix_writeBinary_##storage (const constmatrix<T>& mat, FILE *f); \
+	T ** NUMmatrix_readText_##storage (integer r1, integer r2, integer c1, integer c2, MelderReadText text, const char *name); \
+	automatrix<T> matrix_readText_##storage (integer nrow, integer ncol, MelderReadText text, const char *name); \
+	T ** NUMmatrix_readBinary_##storage (integer r1, integer r2, integer c1, integer c2, FILE *f); \
+	automatrix<T> matrix_readBinary_##storage (integer nrow, integer ncol, FILE *f);
 FUNCTION (signed char, i8)
 FUNCTION (int, i16)
 FUNCTION (long, i32)

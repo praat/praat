@@ -85,14 +85,11 @@ void structMatrix :: v_readText (MelderReadText text, int formatVersion) {
 		Melder_throw (U"dx should be greater than 0.0.");
 	if (our dy <= 0.0)
 		Melder_throw (U"dy should be greater than 0.0.");
-	our z.at_deprecated = NUMmatrix_readText_r64 (1, our ny, 1, our nx, text, "z");
-	our z.cells = our z.at_deprecated ? & our z.at_deprecated [1] [1] : nullptr;
-	our z.nrow = our ny;
-	our z.ncol = our nx;
+	our z = matrix_readText_r64 (our ny, our nx, text, "z");
 }
 
 double structMatrix :: v_getValueAtSample (integer isamp, integer ilevel, int unit) {
-	double value = our z [ilevel] [isamp];
+	const double value = our z [ilevel] [isamp];
 	return ( isdefined (value) ? our v_convertStandardToSpecialUnit (value, ilevel, unit) : undefined );
 }
 
@@ -103,14 +100,14 @@ double structMatrix :: v_getMatrix (integer irow, integer icol) {
 }
 
 double structMatrix :: v_getFunction2 (double x, double y) {
-	double rrow = (y - our y1) / our dy + 1.0;
-	double rcol = (x - our x1) / our dx + 1.0;
-	integer irow = Melder_ifloor (rrow), icol = Melder_ifloor (rcol);
-	double drow = rrow - irow, dcol = rcol - icol;
-	double z1 = irow < 1 || irow >  our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow]     [icol];
-	double z2 = irow < 0 || irow >= our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow + 1] [icol];
-	double z3 = irow < 1 || irow >  our ny || icol < 0 || icol >= our nx ? 0.0 : z [irow]     [icol + 1];
-	double z4 = irow < 0 || irow >= our ny || icol < 0 || icol >= our nx ? 0.0 : z [irow + 1] [icol + 1];
+	const double rrow = (y - our y1) / our dy + 1.0;
+	const double rcol = (x - our x1) / our dx + 1.0;
+	const integer irow = Melder_ifloor (rrow), icol = Melder_ifloor (rcol);
+	const double drow = rrow - irow, dcol = rcol - icol;
+	const double z1 = irow < 1 || irow >  our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow]     [icol];
+	const double z2 = irow < 0 || irow >= our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow + 1] [icol];
+	const double z3 = irow < 1 || irow >  our ny || icol < 0 || icol >= our nx ? 0.0 : z [irow]     [icol + 1];
+	const double z4 = irow < 0 || irow >= our ny || icol < 0 || icol >= our nx ? 0.0 : z [irow + 1] [icol + 1];
 	return (1.0 - drow) * (1.0 - dcol) * z1 + drow * (1.0 - dcol) * z2 + (1.0 - drow) * dcol * z3 + drow * dcol * z4;
 }
 
@@ -208,8 +205,8 @@ integer Matrix_getWindowExtrema (Matrix me, integer ixmin, integer ixmax, intege
 }
 
 double Matrix_getValueAtXY (Matrix me, double x, double y) {
-	double row_real = (y - my y1) / my dy + 1.0;
-	double col_real = (x - my x1) / my dx + 1.0;
+	const double row_real = (y - my y1) / my dy + 1.0;
+	const double col_real = (x - my x1) / my dx + 1.0;
 	/*
 	 * We imagine a unit square around every (xi, yi) point in the matrix.
 	 * For (x, y) values outside the union of these squares, the z value is undefined.
