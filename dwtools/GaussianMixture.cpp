@@ -73,26 +73,25 @@ static void GaussianMixture_updateCovariance (GaussianMixture me, integer compon
 	for (integer irow = 1; irow <= data.nrow; irow ++)
 		gamma [irow] = my mixingProbabilities [component] * p [irow] [component] / p [irow] [p.ncol + 1];
 	autoVEC column = VECraw (data.nrow);
-	for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
+	for (integer icol = 1; icol <= data.ncol; icol ++) {
 		VECcopy_preallocated (column.get(), data, icol);
-		thy centroid [icol] = NUMmean_weighted (column.get (), gamma.get());
+		thy centroid [icol] = NUMinner (column.get (), gamma.get()) / p [p.nrow] [component];
 	}
 
 	// update covariance with the new mean
-
-	if (thy numberOfRows == 1) { // 1xn covariance
-		VECset (thy data.row (1), 0.0);
-		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			double gdn = gamma [irow] / p [p.nrow] [component];
-			for (integer icol = 1; icol <= thy numberOfColumns; icol ++) {
-				double xj = thy centroid [icol] - data [irow] [icol];
-				thy data [1] [icol] += gdn * xj * xj;
-			}
+	MATset (thy data.get(), 0.0);
+	autoVEC row = VECraw (data.ncol);
+	autoMAT outer = MATraw (data.ncol,data.ncol);
+	for (integer irow = 1; irow <= data.nrow; irow ++) {
+		VECcopy_preallocated (row.get(), data.row (irow));
+		VECsubtract_inplace (row.get(), thy centroid.get());
+		if (thy numberOfRows == 1) {
+			VECmul_elementwise_inplace (row.get(), row.get());
+			VECsaxpy (thy data.row (1), row.get(), gamma [irow]);
+		} else {
+			MATouter_preallocated (outer, row.get(), row.get());
+			MATsaxpy (thy data.get(), outer.get(), gamma [irow]);
 		}
-	} else { // nxn covariance
-		autoMAT d = MATcopy (data);
-		MATsubtract_inplace (d.get(), thy centroid.get()); // column center
-		MATmtm_weighRows_preallocated (thy data.get(), d.get(), gamma.get());
 	}
 	thy numberOfObservations = my mixingProbabilities [component] * data.nrow;
 }
@@ -110,13 +109,8 @@ static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer i
 		for (integer j = 1; j <= thy numberOfColumns; j ++) {
 			thy data [1] [j] += fraction * his data [j] [j];
 		}
-	} else {
-		for (integer j = 1; j <= thy numberOfColumns; j++) {
-			for (integer k = j; k <= thy numberOfColumns; k++) {
-				thy data [k] [j] = thy data [j] [k] += fraction * his data [j] [k];
-			}
-		}
-	}
+	} else
+		MATsaxpy (thy data.get(), his data.get(), fraction);
 }
 
 void structGaussianMixture :: v_info () {
@@ -386,33 +380,29 @@ void GaussianMixture_PCA_drawMarginalPdf (GaussianMixture me, PCA thee, Graphics
 }
 
 void GaussianMixture_drawMarginalPdf (GaussianMixture me, Graphics g, integer d, double xmin, double xmax, double ymin, double ymax, integer npoints, integer nbins, int garnish) {
-	if (d < 1 || d > my dimension) {
-		Melder_warning (U"Dimension doesn't agree.");
-		return;
-	}
+	Melder_require (d > 0 && d <= my dimension, U"The chosen dimension needs to be larger than 0 and smaller than ", my dimension, U".");
+	
 	if (npoints <= 1) {
 		npoints = 1000;
 	}
-	autoVEC p (npoints, kTensorInitializationType::RAW);
-	autoVEC v (my dimension, kTensorInitializationType::RAW);
 
 	double nsigmas = 2.0;
-	if (xmax <= xmin) {
-		GaussianMixture_getIntervalAlongDirection (me, d, nsigmas, &xmin, &xmax);
-	}
+	if (xmax <= xmin) 
+		GaussianMixture_getIntervalAlongDirection (me, d, nsigmas, & xmin, & xmax);
 
 	double pmax = 0.0, dx = (xmax - xmin) / (npoints - 1);
-	double scalef = ( nbins <= 0 ? 1.0 : 1.0 ); // TODO
+	double scalef = 1.0; // TODO
+	autoVEC p = VECraw (npoints);
+	autoVEC v = VECraw (my dimension);
 	
 	for (integer i = 1; i <= npoints; i++) {
 		double x = xmin + (i - 1) * dx;
 		for (integer k = 1; k <= my dimension; k++) {
-			v [k] = k == d ? 1 : 0;
+			v [k] = k == d ? 1.0 : 0.0;
 		}
 		p [i] = scalef * GaussianMixture_getMarginalProbabilityAtPosition (me, v.get(), x);
-		if (p [i] > pmax) {
+		if (p [i] > pmax)
 			pmax = p [i];
-		}
 	}
 	if (ymin >= ymax) {
 		ymin = 0;
@@ -476,7 +466,7 @@ void GaussianMixture_drawConcentrationEllipses (GaussianMixture me, Graphics g, 
 
 	if (! pcaDirections) {
 		SSCPList_drawConcentrationEllipses (my covariances->asSSCPList(), g, -scale, confidence, label,
-		                                  labs (d1), labs (d2), xmin, xmax, ymin, ymax, fontSize, garnish);
+			labs (d1), labs (d2), xmin, xmax, ymin, ymax, fontSize, garnish);
 		return;
 	}
 
@@ -574,37 +564,37 @@ void GaussianMixture_initialGuess (GaussianMixture me, TableOfReal thee, double 
 autoClassificationTable GaussianMixture_TableOfReal_to_ClassificationTable (GaussianMixture me, TableOfReal thee) {
 	try {
 		autoClassificationTable him = ClassificationTable_create (thy numberOfRows, my numberOfComponents);
-		for (integer im = 1; im <= my numberOfComponents; im ++) {
-			Covariance cov = my covariances->at [im];
-			SSCP_expandLowerCholesky (cov);
-			TableOfReal_setColumnLabel (him.get(), im, Thing_getName (cov));
+		for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
+			Covariance cov = my covariances->at [ic];
+			SSCP_expandLowerCholeskyInverse (cov);
+			TableOfReal_setColumnLabel (him.get(), ic, Thing_getName (cov));
 		}
 
 		double ln2pid = -0.5 * my dimension * log (NUM2pi);
-		autoNUMvector<double> lnN (1, my numberOfComponents);
-		for (integer i = 1; i <=  thy numberOfRows; i ++) {
+		autoVEC lnN = VECraw (my numberOfComponents);
+		for (integer irow = 1; irow <=  thy numberOfRows; irow ++) {
 			longdouble psum = 0.0;
-			for (integer im = 1; im <= my numberOfComponents; im ++) {
-				Covariance cov = my covariances->at [im];
-				double dsq = NUMmahalanobisDistance (cov -> lowerCholesky.get(), thy data.row(i), cov -> centroid.get());
-				lnN [im] = ln2pid - 0.5 * (cov -> lnd + dsq);
-				psum += his data [i] [im] = my mixingProbabilities [im] * exp (lnN [im]);
+			for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
+				Covariance cov = my covariances->at [ic];
+				double dsq = NUMmahalanobisDistance (cov -> lowerCholeskyInverse.get(), thy data.row (irow), cov -> centroid.get());
+				lnN [ic] = ln2pid - 0.5 * (cov -> lnd + dsq);
+				psum += his data [irow] [ic] = my mixingProbabilities [ic] * exp (lnN [ic]);
 			}
 			if (psum == 0.0) { // p's might be too small (underflow), make the largest equal to sfmin
 				double lnmax = -1e308;
 				integer imm = 1;
-				for (integer im = 1; im <= my numberOfComponents; im ++) {
-					if (lnN [im] > lnmax) {
-						lnmax = lnN [im];
+				for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
+					if (lnN [ic] > lnmax) {
+						lnmax = lnN [ic];
 					} 
-					imm = im;
+					imm = ic;
 				}
-				his data [i] [imm] = NUMfpp -> sfmin;
+				his data [irow] [imm] = NUMfpp -> sfmin;
 			}
 
 			// for (integer im = 1; im <= my numberOfComponents; im++) { his data [i] [im] /= psum; }
 
-			TableOfReal_setRowLabel (him.get(), i, thy rowLabels [i].get());
+			TableOfReal_setRowLabel (him.get(), irow, thy rowLabels [irow].get());
 		}
 		return him;
 	} catch (MelderError) {
@@ -617,7 +607,7 @@ autoMAT GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal t
 		autoMAT gamma = MATzero (thy numberOfRows + 1, my numberOfComponents);
 		for (integer im = 1; im <= my numberOfComponents; im ++) {
 			Covariance cov = my covariances->at [im];
-			SSCP_expandLowerCholesky (cov); 
+			SSCP_expandLowerCholeskyInverse (cov); 
 		}
 		longdouble lnp = 0.0;
 		double ln2pid = - 0.5 * my dimension * log (NUM2pi);
@@ -625,7 +615,7 @@ autoMAT GaussianMixture_TableOfReal_getGammas (GaussianMixture me, TableOfReal t
 		for (integer i = 1; i <=  thy numberOfRows; i ++) {
 			for (integer im = 1; im <= my numberOfComponents; im ++) {
 				Covariance cov = my covariances->at [im];
-				double dsq = NUMmahalanobisDistance (cov -> lowerCholesky.get(), thy data.row(i), cov -> centroid.get());
+				double dsq = NUMmahalanobisDistance (cov -> lowerCholeskyInverse.get(), thy data.row(i), cov -> centroid.get());
 				lnN [im] = ln2pid - 0.5 * (cov -> lnd + dsq);
 				gamma [i] [im] = my mixingProbabilities [im] * exp (lnN [im]); // eq. Bishop 9.16
 			}
@@ -711,6 +701,8 @@ void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfRe
 	try {
 		Melder_assert (p.nrow == thy numberOfRows + 1);
 		Melder_assert (p.ncol == my numberOfComponents + 1);
+		Melder_assert (my dimension == thy numberOfColumns);
+		
 		double ln2pid = my dimension * log (NUM2pi);
 
 		integer icb = 1, ice = my numberOfComponents;
@@ -719,13 +711,11 @@ void GaussianMixture_TableOfReal_getProbabilities (GaussianMixture me, TableOfRe
 		
 		for (integer ic = icb; ic <= ice; ic ++) {
 			Covariance him = my covariances->at [ic];
-			SSCP_expandLowerCholesky (him);
+			SSCP_expandLowerCholeskyInverse (him);
 
 			for (integer i = 1; i <= thy numberOfRows; i++) {
-				double dsq = NUMmahalanobisDistance (his lowerCholesky.get(), thy data.row (i), his centroid.get());
-				double prob = exp (- 0.5 * (ln2pid + his lnd + dsq));
-				prob = prob < 1e-300 ? 1e-300 : prob; // prevent p from being zero
-				p [i] [ic] = prob;
+				double dsq = NUMmahalanobisDistance (his lowerCholeskyInverse.get(), thy data.row (i), his centroid.get());
+				p [i] [ic] = std::max (1e-300, exp (- 0.5 * (ln2pid + his lnd + dsq))); // prevent p from being zero
 			}
 		}
 
@@ -758,9 +748,9 @@ void GaussianMixture_TableOfReal_improveLikelihood (GaussianMixture me, TableOfR
 
 		autoCovariance covg = TableOfReal_to_Covariance (thee);
 		// p's last row has the column marginals n(k)
-		autoMAT p = MATzero (thy numberOfRows + 1, my numberOfComponents + 1);
+		autoMAT p = MATraw (thy numberOfRows + 1, my numberOfComponents + 1);
 		
-		GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get());
+		GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get()); // get initial p's
 
 		double lnp = GaussianMixture_getLikelihoodValue (me, p.get(), criterion);
 		integer iter = 0;
@@ -832,19 +822,11 @@ void GaussianMixture_updateProbabilityMarginals (GaussianMixture me, MAT p) {
 	Melder_assert (p.ncol == my numberOfComponents + 1);
 	Melder_assert (p.nrow > 1);
 	
-	// get weighted row sum in last column
-	autoVEC pinv = VECraw (p.nrow - 1); // for storing 1 / p [i]
-	for (integer i = 1; i <= p.nrow - 1; i ++) {
-		double psum = NUMinner (my mixingProbabilities.get(), p.row (i).subview (1, p.ncol - 1));
-		pinv [i] = psum > 0.0 ? 1.0 / psum : 1.0; // p [i] should be > 0
-		p [i] [p.ncol] = psum;
-	}
-	// get weighted column sum in last row
-	autoVEC column = VECraw (p.nrow - 1);
-	for (integer icol = 1; icol <= p.ncol - 1; icol ++) {
-		VECcopy_preallocated (column.get(), p.horizontalBand(1, p.nrow - 1), icol);
-		double sum = NUMinner (column.get(), pinv.get());
-		p [p.nrow] [icol] = my mixingProbabilities [icol] * sum;
+	VECset (p.row (p.nrow), 0.0);
+	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
+		p [irow] [p.ncol] = NUMinner (my mixingProbabilities.get(), p.row (irow).subview (1, p.ncol - 1));
+		for (integer icol = 1; icol <= my numberOfComponents; icol ++)
+			p [p.nrow] [icol] += my mixingProbabilities [icol] * p [irow] [icol] / p [irow] [p.ncol];
 	}
 }
 
@@ -864,7 +846,7 @@ autoMAT GaussianMixture_removeComponent_bookkeeping (GaussianMixture me, integer
 }
 
 double GaussianMixture_TableOfReal_getLikelihoodValue (GaussianMixture me, TableOfReal thee, int criterion) {
-	autoMAT p = MATzero (thy numberOfRows + 1, my numberOfComponents + 1);
+	autoMAT p = MATraw (thy numberOfRows + 1, my numberOfComponents + 1);
 	GaussianMixture_TableOfReal_getProbabilities (me, thee, 0, p.get());
 	return GaussianMixture_getLikelihoodValue (me, p.get(), criterion);;
 }
@@ -874,11 +856,11 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT p, int c
 	// Because we try to _maximize_ a criterion, all criteria are negative numbers.
 
 	if (criterion == GaussianMixture_CD_LIKELIHOOD) {
-		double lnpcd = 0.0;
-		for (integer i = 1; i <= p.nrow - 1; i ++) {
+		longdouble lnpcd = 0.0;
+		for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
 			longdouble psum = 0.0, lnsum = 0.0;
-			for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
-				longdouble pp = my mixingProbabilities [ic] * p [i] [ic];
+			for (integer icol = 1; icol <= my numberOfComponents; icol ++) {
+				longdouble pp = my mixingProbabilities [icol] * p [irow] [icol];
 				psum += pp;
 				lnsum += pp * log (pp);
 			}
@@ -891,16 +873,14 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT p, int c
 	// The common factor for all other criteria is the log(likelihood)
 
 	longdouble lnp = 0.0;
-	for (integer i = 1; i <= p.nrow - 1; i ++) {
-		double psum = NUMinner (my mixingProbabilities.get(), p.row (i).subview (1, p.ncol - 1));
-		if (psum > 0.0) {
+	for (integer irow = 1; irow <= p.nrow - 1; irow ++) {
+		double psum = NUMinner (my mixingProbabilities.get(), p.row (irow).subview (1, p.ncol - 1));
+		if (psum > 0.0)
 			lnp += (longdouble) log (psum);
-		}
 	}
 
-	if (criterion == GaussianMixture_LIKELIHOOD) {
+	if (criterion == GaussianMixture_LIKELIHOOD)
 		return lnp;
-	}
 
 	double npars = GaussianMixture_getNumberOfParametersInComponent (me), np = npars * my numberOfComponents;
 	if (criterion == GaussianMixture_MML) {
@@ -912,19 +892,18 @@ double GaussianMixture_getLikelihoodValue (GaussianMixture me, constMAT p, int c
 				- log (sum(i=1..n, sum(m=1..k, alpha [k]*p(k))))
 		*/
 		longdouble logmpn = 0.0;
-		for (integer ic = 1; ic <= my numberOfComponents; ic ++) {
+		for (integer ic = 1; ic <= my numberOfComponents; ic ++)
 			logmpn += log (my mixingProbabilities [ic]);
-		}
 
 		// a rewritten L(theta,Y) is
 
 		return lnp - 0.5 * my numberOfComponents * (npars + 1) * (log ((p.nrow - 1) / 12.0) + 1.0)
 		       + 0.5 * npars * logmpn;
-	} else if (criterion == GaussianMixture_BIC) {
+	} else if (criterion == GaussianMixture_BIC)
 		return 2.0 * lnp - np * log (p.nrow - 1.0);
-	} else if (criterion == GaussianMixture_AIC) {
+	else if (criterion == GaussianMixture_AIC)
 		return 2.0 * (lnp - np);
-	} else if (criterion == GaussianMixture_AICC) {
+	else if (criterion == GaussianMixture_AICC) {
 		np = npars * my numberOfComponents;
 		return 2.0 * (lnp - np * ((p.nrow - 1.0) / (p.nrow - 1.0 - np - 1.0)));
 	}
@@ -985,7 +964,7 @@ autoGaussianMixture GaussianMixture_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 							GaussianMixture_TableOfReal_getProbabilities (me.get(), thee, component, p.get());
 							component ++;
 						} else {
-							// "Remove" the component column from p by shifting row values
+							// "Remove" the component column from p by shifting column values
 
 							autoMAT pc = GaussianMixture_removeComponent_bookkeeping (me.get(), component, p.get());
 							p = pc.move();
@@ -1220,7 +1199,7 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 			double prob = undefined, tnb = undefined, lnmu = undefined, lnvar = undefined;
 
 			try {
-				SSCP_expandLowerCholesky (cov);
+				SSCP_expandLowerCholeskyInverse (cov);
 			} catch (MelderError) {
 				tnb = 4.0 * nd;
 			}
@@ -1235,12 +1214,12 @@ autoTableOfReal GaussianMixture_TableOfReal_to_TableOfReal_BHEPNormalityTests (G
 			for (integer j = 1; j <= n; j ++) {
 				double wj = p [j] [nocp1] > 0.0 ? mixingP * p [j] [im] / p [j] [nocp1] : 0.0;
 				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance (cov -> lowerCholesky.get(), thy data.row (j), thy data.row (k));
+					djk = NUMmahalanobisDistance (cov -> lowerCholeskyInverse.get(), thy data.row (j), thy data.row (k));
 					double w = p [k] [nocp1] > 0.0 ? wj * mixingP * p [k] [im] / p [k] [nocp1] : 0.0;
 					sumjk += 2.0 * w * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}
 				sumjk += wj * wj; // for k == j. Is this ok now for probability weighing ????
-				djj = NUMmahalanobisDistance (cov -> lowerCholesky.get(), thy data.row(j), cov -> centroid.get());
+				djj = NUMmahalanobisDistance (cov -> lowerCholeskyInverse.get(), thy data.row(j), cov -> centroid.get());
 				sumj += wj * exp (-b2 * djj);
 			}
 			tnb = (1.0 / nd) * sumjk - 2.0 * pow (1.0 + beta2, - d2) * sumj + nd * pow (gamma, - d2); // n *
