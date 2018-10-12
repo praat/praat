@@ -1282,11 +1282,28 @@ static void NUMmedianizeColumns (double **a, integer rb, integer re, integer cb,
 	}
 }
 
-static void NUMstatsColumns (double **a, integer rb, integer re, integer cb, integer ce, bool useMedians) {
-	if (useMedians) {
-		NUMmedianizeColumns (a, rb, re, cb, ce);
-	} else {
-		NUMaverageColumns (a, rb, re, cb, ce);
+static void NUMaverageBlock_byColumns_inplace (MAT a, integer rb, integer re, integer cb, integer ce, bool medians) {
+	Melder_assert (rb > 0 && rb <= a.nrow);
+	Melder_assert (rb <= re && re <= a.nrow);
+	Melder_assert (cb > 0 && cb <= a.ncol);
+	Melder_assert (cb <= ce && ce <= a.ncol);
+	integer n = re - rb + 1;
+	if (n < 2)
+		return;
+	autoVEC tmp = VECraw (n);
+	for (integer j = cb; j <= ce; j ++) {
+		integer k = 1;
+		for (integer i = rb; i <= re; i ++, k ++)
+			tmp [k] = a [i] [j];
+		double average;
+		if (medians) {
+			VECsort_inplace (tmp.get());
+			average = NUMquantile (tmp.get(), 0.5);
+		} else {
+			average = NUMmean (tmp.get());
+		}
+		for (integer i = rb; i <= re; i ++)
+			a [i] [j] = average;
 	}
 }
 
@@ -1301,8 +1318,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 		for (integer i = 2; i <= my numberOfRows; i ++) {
 			conststring32 li = sorted -> rowLabels [i].get();
 			if (Melder_cmp (li, label) != 0) {
-				NUMstatsColumns (sorted -> data.at_deprecated, indexi, i - 1, 1, my numberOfColumns, useMedians);
-
+				NUMaverageBlock_byColumns_inplace (sorted -> data.get(), indexi, i - 1, 1, my numberOfColumns, useMedians);
 				if (! expand) {
 					indexr ++;
 					TableOfReal_copyOneRowWithLabel (sorted.get(), sorted.get(), indexi, indexr);
@@ -1311,7 +1327,7 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 			}
 		}
 
-		NUMstatsColumns (sorted -> data.at_deprecated, indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
+		NUMaverageBlock_byColumns_inplace (sorted -> data.get(), indexi, my numberOfRows, 1, my numberOfColumns, useMedians);
 
 		if (expand) {
 			// Now invert the table.
@@ -1335,10 +1351,11 @@ autoTableOfReal TableOfReal_meansByRowLabels (TableOfReal me, bool expand, bool 
 	}
 }
 
-autoTableOfReal TableOfReal_rankColumns (TableOfReal me) {
+autoTableOfReal TableOfReal_rankColumns (TableOfReal me, integer fromColumn, integer toColumn) {
 	try {
+		fixAndCheckColumnRange (& fromColumn, & toColumn, my data.get(), 1);
 		autoTableOfReal thee = Data_copy (me);
-		NUMrankColumns (thy data.at_deprecated, 1, thy numberOfRows, 1, thy numberOfColumns);
+		NUMrankColumns (thy data.get(), fromColumn, toColumn);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": column ranks not created.");
@@ -1515,7 +1532,7 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 
 		autoCovariance thee = TableOfReal_to_Covariance (me);
 		try {
-			SSCP_expandLowerCholesky (thee.get());
+			SSCP_expandLowerCholeskyInverse (thee.get());
 		} catch (MelderError) {
 			tnb = 4.0 * n;
 		}
@@ -1528,11 +1545,11 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 			*/
 			for (integer j = 1; j <= n; j ++) {
 				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance (thy lowerCholesky.get(), my data.row(j), my data.row(k));
+					djk = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row(j), my data.row(k));
 					sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}
 				sumjk += 1; // for k == j
-				djj = NUMmahalanobisDistance (thy lowerCholesky.get(), my data.row(j), thy centroid.get());
+				djj = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row(j), thy centroid.get());
 				sumj += exp (-b2 * djj);
 			}
 			tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *

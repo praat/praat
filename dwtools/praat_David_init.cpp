@@ -1094,6 +1094,29 @@ DIRECT (NEW1_Covariances_pool) {
 	CONVERT_TYPED_LIST_END (U"pool")
 }
 
+DIRECT (NEW1_Covariances_to_Covariance_between) {
+	CONVERT_TYPED_LIST (Covariance, CovarianceList)
+		autoCovariance result = CovarianceList_to_Covariance_between (list.get());
+	CONVERT_TYPED_LIST_END (U"between")	
+}
+
+DIRECT (NEW1_Covariances_to_Covariance_within) {
+	CONVERT_TYPED_LIST (Covariance, CovarianceList)
+		autoCovariance result = CovarianceList_to_Covariance_within (list.get());
+	CONVERT_TYPED_LIST_END (U"within")
+}
+
+DIRECT (NEW1_Covariances_to_CovarianceList) {
+	autoCovarianceList result = CovarianceList_create ();
+	CREATE_ONE
+	LOOP {
+		iam (Covariance);
+		autoCovariance cov = Data_copy (me);
+		result -> addItem_move (cov.move());
+	}
+	CREATE_ONE_END (U"List_of_", Melder_integer (result -> size))
+}
+
 FORM (NEW1_Covariance_TableOfReal_mahalanobis, U"Covariance & TableOfReal: To TableOfReal (mahalanobis)", U"Covariance & TableOfReal: To TableOfReal (mahalanobis)...") {
 	BOOLEAN (centroidFromTable, U"Centroid from table", false)
 	OK
@@ -4248,8 +4271,16 @@ DO
 
 DIRECT (REAL_PCAs_getAngleBetweenPc1Pc2Plane_degrees) {
 	NUMBER_COUPLE (PCA)
+		Melder_require (my numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the first PCA.");
+		Melder_require (your numberOfEigenvalues > 1, U"There must be at least two eigenvectors in the second PCA.");
 		double result = Eigens_getAngleBetweenEigenplanes_degrees (me, you);
 	NUMBER_COUPLE_END (U" degrees (= angle of intersection between the two pc1-pc2 eigenplanes)")
+}
+
+DIRECT (NEW1_PCA_SSCP_project) {
+	CONVERT_TWO (PCA, SSCP)
+		autoSSCP result = Eigen_SSCP_project (me, you);
+	CONVERT_TWO_END (my name.get(), U"_", your name.get())
 }
 
 /******************* Permutation **************************************/
@@ -7058,6 +7089,21 @@ DO
 	CONVERT_EACH_END (my name.get())
 }
 
+FORM (NEW_TableOfReal_to_SSCP_rowWeights, U"TableOfReal: To SSCP (row weights)", U"TableOfReal: To SSCP (row weights)...") {
+	INTEGER (fromRow, U"Begin row", U"0")
+	INTEGER (toRow, U"End row", U"0")
+	INTEGER (fromColumn, U"Begin column", U"0")
+	INTEGER (toColumn, U"End column", U"0")
+	INTEGER (rowWeights, U"Weights column number", 0)
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoSSCP result = TableOfReal_to_SSCP_rowWeights (me, fromRow, toRow, fromColumn, toColumn, rowWeights);
+	CONVERT_EACH_END (my name.get())
+}
+
+
+
 /* For the inheritors */
 DIRECT (NEW_TableOfReal_to_TableOfReal) {
 	CONVERT_EACH (TableOfReal)
@@ -7185,6 +7231,16 @@ FORM (NEW_TableOfReal_mediansByRowLabels, U"TableOfReal: Medians by row labels",
 DO
 	CONVERT_EACH (TableOfReal)
 		autoTableOfReal result = TableOfReal_meansByRowLabels (me, expand, 1);
+	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
+}
+
+FORM (NEW_TableOfReal_to_TableOfReal_rankColumns, U"TableOfReal: Rank columns", U"TableOfReal: To TableOfReal (rank columns)...") {
+	INTEGER (fromColumn, U"left Column range", U"0")
+	INTEGER (toColumn, U"right Column range", U"0 (=all)")
+	OK
+DO
+	CONVERT_EACH (TableOfReal)
+		autoTableOfReal result = TableOfReal_rankColumns (me, fromColumn, toColumn);
 	CONVERT_EACH_END (my name.get(), U"_byrowlabels")
 }
 
@@ -7741,6 +7797,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classCovariance, 0, U"To Correlation", nullptr, 0, NEW_Covariance_to_Correlation);
 	praat_addAction1 (classCovariance, 0, U"To PCA", nullptr, 0, NEW_Covariance_to_PCA);
 	praat_addAction1 (classCovariance, 0, U"Pool", nullptr, 0, NEW1_Covariances_pool);
+	praat_addAction1 (classCovariance, 0, U"To Covariance (between)", nullptr, 0, NEW1_Covariances_to_Covariance_between);
+	praat_addAction1 (classCovariance, 0, U"To Covariance (within)", nullptr, 0, NEW1_Covariances_to_Covariance_within);
 
 	praat_addAction2 (classCovariance, 1, classTableOfReal, 1, U"To TableOfReal (mahalanobis)...", nullptr, 0, NEW1_Covariance_TableOfReal_mahalanobis);
 
@@ -8121,7 +8179,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project rows)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectRows);
 	praat_addAction2 (classPCA, 1, classMatrix, 1, U"To Matrix (project columns)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectColumns);
 	praat_addAction2 (classPCA, 1, classPatternList, 1, U"To Matrix (project rows)...", nullptr, 0, NEW1_PCA_Matrix_to_Matrix_projectRows);
-	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, NEW1_Eigen_SSCP_project);
+	praat_addAction2 (classPCA, 1, classSSCP, 1, U"Project", nullptr, 0, NEW1_PCA_SSCP_project);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal (project rows)...", nullptr, 0, NEW1_PCA_TableOfReal_to_TableOfReal_projectRows);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To TableOfReal...", U"*To TableOfReal (project rows)...", praat_DEPRECATED_2016, NEW1_PCA_TableOfReal_to_TableOfReal_projectRows);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, U"To Configuration...", nullptr, 0, NEW1_PCA_TableOfReal_to_Configuration);
@@ -8377,12 +8435,14 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTableOfReal, 0, U"To Discriminant", nullptr, 1, NEW_TableOfReal_to_Discriminant);
 	praat_addAction1 (classTableOfReal, 0, U"To PCA", nullptr, 1, NEW_TableOfReal_to_PCA_byRows);
 	praat_addAction1 (classTableOfReal, 0, U"To SSCP...", nullptr, 1, NEW_TableOfReal_to_SSCP);
+	praat_addAction1 (classTableOfReal, 0, U"To SSCP (row weights)...", nullptr, 1, NEW_TableOfReal_to_SSCP_rowWeights);
 	praat_addAction1 (classTableOfReal, 0, U"To Covariance", nullptr, 1, NEW_TableOfReal_to_Covariance);
 	praat_addAction1 (classTableOfReal, 0, U"To Correlation", nullptr, 1, NEW_TableOfReal_to_Correlation);
 	praat_addAction1 (classTableOfReal, 0, U"To Correlation (rank)", nullptr, 1, NEW_TableOfReal_to_Correlation_rank);
 	praat_addAction1 (classTableOfReal, 0, U"To CCA...", nullptr, 1, NEW_TableOfReal_to_CCA);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (means by row labels)...", nullptr, 1, NEW_TableOfReal_meansByRowLabels);
 	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (medians by row labels)...", nullptr, 1, NEW_TableOfReal_mediansByRowLabels);
+	praat_addAction1 (classTableOfReal, 0, U"To TableOfReal (rank columns)...", nullptr, praat_HIDDEN, NEW_TableOfReal_to_TableOfReal_rankColumns);
 
 	praat_addAction1 (classTableOfReal, 0, U"-- configurations --", nullptr, 1, 0);
 	praat_addAction1 (classTableOfReal, 0, U"To Configuration (pca)...", nullptr, 1, NEW_TableOfReal_to_Configuration_pca);

@@ -1103,11 +1103,9 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			extracting the first 'numberOfDimensions' principal components of Pmean.
 		*/
 		
-		autoMAT y (nPoints, numberOfDimensions, kTensorInitializationType::ZERO);
+		autoMAT y = MAT_asPrincipalComponents (pmean.get (), numberOfDimensions);
 
-		NUMdmatrix_into_principalComponents (pmean.at_deprecated, nPoints, nPoints, numberOfDimensions, y.at_deprecated);
 		matrixcopy_preallocated (thy data.get(), y.get());
-
 		/*
 			We cannot determine weights from only one sp-matrix.
 		*/
@@ -1119,9 +1117,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			from the P [i] by: C [i] = (y'.y)^-1 . y' . P [i] . y . (y'.y)^-1 == yinv P [i] yinv'
 		*/
 		
-		autoMAT yinv (numberOfDimensions, nPoints, kTensorInitializationType::ZERO);
-
-		NUMpseudoInverse (y.at_deprecated, nPoints, numberOfDimensions, yinv.at_deprecated, 1e-14);
+		autoMAT yinv = MATpseudoInverse (y.get(), 1e-14);
 
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			ScalarProduct sp = my at [i];
@@ -1177,17 +1173,7 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 		autoMAT K;
 		MAT_getEigenSystemFromSymmetricMatrix (cl.get(), & K, nullptr, false);
 
-		// Now get the configuration: X = Y.K
-
-		for (integer i = 1; i <= nPoints; i ++) {
-			for (integer j = 1; j <= numberOfDimensions; j ++) {
-				longdouble x = 0.0;
-				for (integer k = 1; k <= numberOfDimensions; k ++) {
-					x += y [i] [k] * K [k] [j];
-				}
-				thy data [i] [j] = (double) x;
-			}
-		}
+		MATVUmul (thy data.get(), y.get(), K.get()); // Y.K
 
 		Configuration_normalize (thee.get(), 0, true);
 
@@ -1210,8 +1196,8 @@ void ScalarProductList_to_Configuration_ytl (ScalarProductList me, int numberOfD
 			}
 		}
 		
-		*out1 = thee.move();
-		*out2 = mdsw.move();
+		if (out1) *out1 = thee.move();
+		if (out2) *out2 = mdsw.move();
 		for (integer i = 1; i <= numberOfSources; i ++) {
 			NUMmatrix_free<double> (ci [i], 1, 1);
 		}
@@ -1240,11 +1226,10 @@ autoDissimilarityList DistanceList_to_DissimilarityList (DistanceList me) {
 
 /*****************  Kruskal *****************************************/
 
-static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distance disp, Weight weight, double **vplus) {
+static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distance disp, Weight weight, constMAT vplus) {
 	integer nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
-	double **z = cz -> data.at_deprecated;
 
-	autoNUMmatrix<double> b (1, nPoints, 1, nPoints);
+	autoMAT b = MATraw (nPoints, nPoints);
 	autoDistance distZ = Configuration_to_Distance (cz);
 
 	// compute B(Z) (eq. 8.25)
@@ -1269,7 +1254,7 @@ static void smacof_guttmanTransform (Configuration cx, Configuration cz, Distanc
 			longdouble xij = 0.0;
 			for (integer k = 1;  k <= nPoints; k ++) {
 				for (integer l = 1; l <= nPoints; l ++) {
-					xij += vplus [i] [k] * b [k] [l] * z [l] [j];
+					xij += vplus [i] [k] * b [k] [l] * cz -> data [l] [j];
 				}
 			}
 			cx -> data [i] [j] = (double) xij;
@@ -1455,8 +1440,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 			aw = Weight_create (nPoints);
 			weight = aw.get();
 		}
-		autoNUMmatrix<double> v (1, nPoints, 1, nPoints);
-		autoNUMmatrix<double> vplus (1, nPoints, 1, nPoints);
+		autoMAT v = MATraw (nPoints, nPoints);
 		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
@@ -1485,7 +1469,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 			V^-1 does not exist -> get Moore-Penrose inverse.
 		*/
 
-		NUMpseudoInverse (v.peek(), nPoints, nPoints, vplus.peek(), tol);
+		autoMAT vplus = MATpseudoInverse (v.get(), tol);
 		for (integer iter = 1; iter <= numberOfIterations; iter ++) {
 			autoDistance dist = Configuration_to_Distance (conf);
 
@@ -1495,7 +1479,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 
 			// Make conf the Guttman transform of z
 
-			smacof_guttmanTransform (conf, z.get(), fit.get(), weight, vplus.peek());
+			smacof_guttmanTransform (conf, z.get(), fit.get(), weight, vplus.get());
 
 			// Compute stress
 
@@ -1505,9 +1489,7 @@ autoConfiguration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissi
 
 			// Check stop criterium
 
-			if (fabs (stress - stressp) / stressp < tolerance) {
-				break;
-			}
+			if (fabs (stress - stressp) / stressp < tolerance) break;
 
 			// Make Z = X
 
@@ -1681,28 +1663,29 @@ autoConfiguration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, 
 
 /***** classical **/
 
-static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *stress, double *s, double *t, double *dbar) {
-	integer numberOfProximities = my numberOfProximities;
-	integer *rowIndex = my rowIndex.at, *columnIndex = my columnIndex.at;
-	double **dist = ddist -> data.at_deprecated, **fit = dfit -> data.at_deprecated;
-
-	*s = *t = *dbar = 0.0;
+static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, Distance dfit, int stress_formula, double *out_stress, double *out_s, double *out_t, double *out_dbar) {
+	
+	longdouble s = 0.0, t = 0.0, dbar = 0.0;
 
 	if (stress_formula == 2) {
-		for (integer i = 1; i <= numberOfProximities; i ++) {
-			*dbar += dist [rowIndex [i]] [columnIndex [i]];
+		for (integer i = 1; i <= my numberOfProximities; i ++) {
+			dbar += ddist -> data [my rowIndex [i]] [my columnIndex [i]];
 		}
-		*dbar /= numberOfProximities;
+		dbar /= my numberOfProximities;
 	}
 
-	for (integer i = 1; i <= numberOfProximities; i ++) {
-		integer ii = rowIndex [i], jj = columnIndex [i];
-		double st = dist [ii] [jj] - fit [ii] [jj];
-		double tt = dist [ii] [jj] - *dbar;
-		*s += st * st; *t += tt * tt;
+	for (integer i = 1; i <= my numberOfProximities; i ++) {
+		integer ii = my rowIndex [i], jj = my columnIndex [i];
+		double st = ddist -> data [ii] [jj] - dfit -> data [ii] [jj];
+		double tt = ddist -> data [ii] [jj] - dbar;
+		s += st * st; 
+		t += tt * tt;
 	}
 
-	*stress = *t > 0.0 ? sqrt (*s / *t) : 0.0;
+	if (out_stress) *out_stress = t > 0.0 ? sqrt (s / t) : 0.0;
+	if (out_s) *out_s = s;
+	if (out_t) *out_t = t;
+	if (out_dbar) *out_dbar = dbar;
 }
 
 static double func (Daata object, const double p []) {

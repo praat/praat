@@ -338,11 +338,15 @@ void MATVUmul_fast_ (MATVU const& target, constMATVU const& x, constMATVU const&
 	}
 }
 
-autoMAT MATouter (constVEC const& x, constVEC const& y) {
-	autoMAT result = MATraw (x.size, y.size);
+void MATouter_preallocated (const MAT& target, const constVEC& x, const constVEC& y) {
+
 	for (integer irow = 1; irow <= x.size; irow ++)
 		for (integer icol = 1; icol <= y.size; icol ++)
-			result [irow] [icol] = x [irow] * y [icol];
+			target [irow] [icol] = x [irow] * y [icol];
+}
+autoMAT MATouter (const constVEC& x, const constVEC& y) {
+	autoMAT result = MATraw (x.size, y.size);
+	MATouter_preallocated (result.get(), x, y);
 	return result;
 }
 
@@ -391,7 +395,8 @@ autoMAT MATpeaks (constVEC const& x, bool includeEdges, int interpolate, bool so
 	if (sortByHeight) {
 		for (integer i = 1; i <= numberOfPeaks; i ++)
 			result [2] [i] *= -1.0;
-		NUMsort2 (result.ncol, & result [2] [0], & result [1] [0]);
+		NUMsortTogether (result.row (1), result.row (2));
+
 		for (integer i = 1; i <= numberOfPeaks; i ++)
 			result [2] [i] *= -1.0;
 	}

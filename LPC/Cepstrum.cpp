@@ -229,8 +229,8 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 		if (numberOfPoints < 2) {
 			Melder_throw (U"Not enough points for fit.");
 		}
-		autoNUMvector<double> y (1, numberOfPoints);
-		autoNUMvector<double> x (1, numberOfPoints);
+		autoVEC y = VECraw (numberOfPoints);
+		autoVEC x = VECraw (numberOfPoints);
 		for (integer i = 1; i <= numberOfPoints; i ++) {
 			integer isamp = imin + i - 1;
 			x [i] = my x1 + (isamp - 1) * my dx;
@@ -240,8 +240,8 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 			y [i] = my v_getValueAtSample (isamp, 1, 0);
 		}
 		if (method == 3) { // try local maxima first
-			autoNUMvector<double> ym (1, numberOfPoints / 2 + 1);
-			autoNUMvector<double> xm (1, numberOfPoints / 2 + 1);
+			autoVEC ym = VECraw (numberOfPoints / 2 + 1);
+			autoVEC xm = VECraw (numberOfPoints / 2 + 1);
 			integer numberOfLocalPeaks = 0;
 			// forget y [1] if y [2]<y [1] and y [n] if y [n-1]<y [n] !
 			for (integer i = 2; i <= numberOfPoints; i ++) {
@@ -259,7 +259,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 			method = 2; // robust fit of peaks
 		}
 		// fit a straight line through (x,y)'s
-		NUMlineFit (x.peek(), y.peek(), numberOfPoints, & a, & intercept, method);
+		NUMlineFit (x.get(), y.get(), & a, & intercept, method);
 		if (p_intercept) { *p_intercept = intercept; }
 		if (p_a) { *p_a = a; }
 	} catch (MelderError) {

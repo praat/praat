@@ -27,19 +27,17 @@
 static void Eigen_SSCP_into_SSCP_project (Eigen me, SSCP thee, SSCP him) {
 	for (integer i = 1; i <= my numberOfEigenvalues; i ++) {
 		for (integer j = i; j <= my numberOfEigenvalues; j ++) {
-			double tmp = 0;
+			longdouble tmp = 0;
 			for (integer k = 1; k <= my dimension; k ++) {
-				for (integer m = 1; m <= my dimension; m ++) {
+				for (integer m = 1; m <= my dimension; m ++)
 					tmp += my eigenvectors [i] [k] * thy data [k] [m] * my eigenvectors [j] [m];
-				}
 			}
-			his data [i] [j] = his data [j] [i] = tmp;
+			his data [i] [j] = his data [j] [i] = (double) tmp;
 		}
 
-		double tmp = 0;
-		for (integer m = 1; m <= my dimension; m ++) {
+		longdouble tmp = 0.0;
+		for (integer m = 1; m <= my dimension; m ++)
 			tmp += thy centroid [m] * my eigenvectors [i] [m];
-		}
 		his centroid [i] = tmp;
 	}
 	his numberOfObservations = SSCP_getNumberOfObservations (thee);
