@@ -38,9 +38,7 @@
 	{ \
 		integer _size = (sizeExpression); \
 		Melder_assert (our x.size == _size); \
-		if (our x.at) { \
-			NUMvector_writeBinary_##storage (our x.at, 1, _size, f); \
-		} \
+		vector_writeBinary_##storage (our x.get(), f); \
 	}
 
 #define oo_MATRIX(type, storage, x, row1, row2, col1, col2)  \
