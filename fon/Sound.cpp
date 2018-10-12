@@ -278,8 +278,6 @@ static double getSumOfSquares (Sound me, double xmin, double xmax, integer *n) {
 	integer imin, imax;
 	*n = Sampled_getWindowSamples (me, xmin, xmax, & imin, & imax);
 	if (*n < 1) return undefined;
-	Melder_assert (my z.at_deprecated);
-	Melder_assert (my z.cells);
 	longdouble sumOfSquares = 0.0;
 	for (integer ichan = 1; ichan <= my ny; ichan ++) {
 		VEC channel = my z.row (ichan);
