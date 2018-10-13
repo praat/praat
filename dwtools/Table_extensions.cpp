@@ -3388,7 +3388,7 @@ double Table_getMedianAbsoluteDeviation (Table me, integer columnNumber)
 	}
 
 autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factorColumn,
-	double *prob, double *p_kruskalWallis, double *p_df)
+	double *out_prob, double *out_kruskalWallis, double *out_df)
 {
 	try {
 		Melder_require (column > 0 && column <= my numberOfColumns, 
@@ -3398,7 +3398,7 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 
 		integer numberOfData = my rows.size;
 		Table_numericize_Assert (me, column);
-		autoNUMvector<double> data (1, numberOfData);
+		autoVEC data = VECraw (numberOfData);
 		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
 		integer numberOfLevels = levels -> classes->size;
 		
@@ -3408,8 +3408,8 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		for (integer irow = 1; irow <= numberOfData; irow ++) {
 			data [irow] = my rows.at [irow] -> cells [column]. number;
 		}
-		NUMsort2 <double, integer> (numberOfData, data.peek(), levels -> classIndex.at);
-		NUMrank <double> (numberOfData, data.peek());
+		NUMsortTogether <double, integer> (data.get(), levels -> classIndex.get());
+		NUMrank (data.get());
 
 		// Get correctionfactor for ties
 		// Hayes pg. 831
@@ -3445,15 +3445,10 @@ autoTable Table_getOneWayKruskalWallis (Table me, integer column, integer factor
 		kruskalWallis = (12.0 / (numberOfData * (numberOfData + 1.0))) * kruskalWallis - 3.0 * (numberOfData + 1);
 		kruskalWallis /= tiesCorrection;
 		double df = numberOfLevels - 1.0;
-		if (p_df) {
-			*p_df = df;
-		}
-		if (p_kruskalWallis) {
-			*p_kruskalWallis = (double) kruskalWallis;
-		}
-		if (prob) {
-			*prob = NUMchiSquareQ ((double) kruskalWallis, df);
-		}
+		if (out_df) *out_df = df;
+		if (out_kruskalWallis) *out_kruskalWallis = (double) kruskalWallis;
+		if (out_prob) *out_prob = NUMchiSquareQ ((double) kruskalWallis, df);
+
 		autoTable him = Table_createWithColumnNames (numberOfLevels, U"Group(R) Sums(R) Cases");
 		for (integer irow = 1; irow <= numberOfLevels; irow ++) {
 			SimpleString ss = (SimpleString) levels -> classes->at [irow];
@@ -4624,7 +4619,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 		OrderedOf<structCovariance> covs;
 		for (integer igroup = 1; igroup <= numberOfGroups; igroup ++) {
 			autoCovariance cov = SSCP_to_Covariance (thy at [igroup], 1);
-			SSCP_expandLowerCholesky (cov.get());
+			SSCP_expandLowerCholeskyInverse (cov.get());
 			covs. addItem_move (cov.move());
 		}
 		for (integer i = 1; i <= selectedRows.size; i ++) {
@@ -4639,7 +4634,7 @@ static autoTable Table_SSCPList_extractMahalanobisWhere (Table me, SSCPList thee
 			Covariance covi = covs.at [igroup];
 			for (integer icol = 1; icol <= numberOfColumns; icol ++)
 				vector [icol] = Table_getNumericValue_Assert (me, irow, columnIndex [icol]);
-			double dm2 = NUMmahalanobisDistance (covi -> lowerCholesky.get(), vector.get(), covi -> centroid.get());
+			double dm2 = NUMmahalanobisDistance (covi -> lowerCholeskyInverse.get(), vector.get(), covi -> centroid.get());
 			if (Melder_numberMatchesCriterion (sqrt (dm2), which, numberOfSigmas)) {
 				TableRow row = my rows.at [irow];
 				autoTableRow newRow = Data_copy (row);

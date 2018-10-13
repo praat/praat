@@ -112,7 +112,6 @@ void Eigen_init (Eigen me, integer numberOfEigenvalues, integer dimension) {
 */
 void Eigen_initFromSquareRoot (Eigen me, constMAT a) {
 	Melder_assert (a.nrow >= 1);
-	integer numberOfZeroed, numberOfEigenvalues;
 	integer nsv = std::min (a.nrow, a.ncol);
 	my dimension = a.ncol;
 	autoSVD svd = SVD_createFromGeneralMatrix (a);
@@ -125,22 +124,19 @@ void Eigen_initFromSquareRoot (Eigen me, constMAT a) {
 		basis.)
 	*/
 
-	numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
-
-	numberOfEigenvalues = nsv - numberOfZeroed;
+	integer numberOfZeroed = SVD_zeroSmallSingularValues (svd.get(), 0.0);
+	integer numberOfEigenvalues = nsv - numberOfZeroed;
 
 	Eigen_init (me, numberOfEigenvalues, a.ncol);
 	integer k = 0;
 	for (integer i = 1; i <= nsv; i ++) {
-		double t = svd -> d [i];
-		if (t > 0.0) {
-			my eigenvalues [++ k] = t * t;
-			for (integer j = 1; j <= a.ncol; j ++) {
+		if (svd -> d [i] > 0.0) {
+			my eigenvalues [++ k] = svd -> d [i] * svd -> d [i];
+			for (integer j = 1; j <= a.ncol; j ++)
 				my eigenvectors [k] [j] = svd -> v [j] [i];
-			}
 		}
 	}
-	Eigen_sort (me);
+	// We don't need to sort the eigenvalues/eigenvectors because they were sorted already by the svd
 }
 
 
@@ -212,11 +208,11 @@ void Eigen_initFromSquareRootPair (Eigen me, constMAT a, constMAT b) {
 
 void Eigen_initFromSymmetricMatrix (Eigen me, constMAT a) {
 	Melder_assert (a.ncol == a.nrow);
-	if (! my eigenvectors.at_deprecated) {
+	if (! my eigenvectors.at_deprecated)
 		Eigen_init (me, a.ncol, a.ncol);
-	}	
-	MATtranspose_preallocated (my eigenvectors.get(), a);
-	MAT_getEigenSystemFromSymmetricMatrix_inplace (my eigenvectors.get(), true, my eigenvalues.get(), false);
+	else
+		Melder_assert (my eigenvectors.nrow == my eigenvectors.ncol && a.ncol == my eigenvectors.ncol);
+	MAT_getEigenSystemFromSymmetricMatrix_preallocated (my eigenvectors.get(), my eigenvalues.get(), a, false);
 }
 
 autoEigen Eigen_create (integer numberOfEigenvalues, integer dimension) {
@@ -285,23 +281,17 @@ integer Eigen_getDimensionOfFraction (Eigen me, double fraction) {
 }
 
 void Eigen_sort (Eigen me) {
-	double *e = my eigenvalues.at, **v = my eigenvectors.at_deprecated;
-
 	for (integer i = 1; i < my numberOfEigenvalues; i ++) {
-		integer k;
-		double emax = e [k = i];
+		integer k = i;
+		double evmax = my eigenvalues [k];
 		for (integer j = i + 1; j <= my numberOfEigenvalues; j ++) {
-			if (e [j] > emax) {
-				emax = e [k = j];
-			}
+			if (my eigenvalues [j] > evmax)
+				evmax = my eigenvalues [k = j];
 		}
-		if (k != i) {
-
-			// Swap eigenvalues and eigenvectors
-
-			std::swap (e [i], e [k]);
+		if (k != i) { // Swap eigenvalues and eigenvectors
+			std::swap (my eigenvalues [i], my eigenvalues [k]);
 			for (integer j = 1; j <= my dimension; j ++)
-				std::swap (v [i] [j], v [k] [j]);
+				std::swap (my eigenvectors [i] [j], my eigenvectors [k] [j]);
 		}
 	}
 }
@@ -434,7 +424,8 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 }
 
 static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer ivec_from, integer ivec_to) {
-	integer nvectors = ivec_to - ivec_from + 1;
+	integer numberOfVectors = ivec_to - ivec_from + 1;
+
 	integer nmin = std::min (my numberOfEigenvalues, thy numberOfEigenvalues);
 
 	Melder_require (my dimension == thy dimension, U"The eigenvectors should have equal dimensions.");
@@ -446,14 +437,15 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 			the columns in the Q's are the eigenvectors.
 		Compute C.
 	*/
-	Melder_assert (my eigenvectors.ncol == my dimension);   // class invariant
-	autoVEC angles_degrees = VECraw (nvectors);
+
+	autoVEC angles_degrees = VECraw (numberOfVectors);
+
 	autoMAT c = MATmul (
 			my eigenvectors.horizontalBand (ivec_from, ivec_to),
 			constMATVUtranspose (thy eigenvectors.horizontalBand (ivec_from, ivec_to))
 	);
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
-	for (integer i = 1; i <= nvectors; i ++) {
+	for (integer i = 1; i <= numberOfVectors; i ++) {
 		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;
 	}
 	return angles_degrees;

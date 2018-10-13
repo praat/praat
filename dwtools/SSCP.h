@@ -47,6 +47,8 @@ void SSCP_init (SSCP me, integer dimension, integer storage);
 
 autoSSCP SSCP_create (integer dimension);
 
+void SSCP_reset (SSCP me);
+
 void SSCP_drawTwoDimensionalEllipse_inside (SSCP me, Graphics g, double scale, conststring32 label, int fontSize);
 
 double SSCP_getEllipseScalefactor (SSCP me, double scale, bool confidence);
@@ -75,6 +77,7 @@ double SSCP_getConcentrationEllipseArea(SSCP me, double scale, bool confidence, 
 double SSCP_getFractionVariation (SSCP me, integer from, integer to);
 
 autoSSCP TableOfReal_to_SSCP (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole);
+autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer rowe, integer colb, integer cole, integer weightColumnNumber);
 
 autoTableOfReal SSCP_TableOfReal_extractDistanceQuantileRange (SSCP me, TableOfReal thee, double qlow, double qhigh);
 
@@ -172,26 +175,24 @@ autoCovariance SSCP_to_Covariance (SSCP me, integer numberOfConstraints);
 
 autoSSCP Covariance_to_SSCP (Covariance me);
 
-void SSCP_getDiagonality_bartlett (SSCP me, integer numberOfContraints, double *chisq, double *prob, double *df);
+void SSCP_getDiagonality_bartlett (SSCP me, integer numberOfContraints, double *out_chisq, double *out_prob, double *out_df);
 
-void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContraints, double *chisq, double *prob, double *df);
+void Correlation_testDiagonality_bartlett (Correlation me, integer numberOfContraints, double *out_chisq, double *out_prob, double *out_df);
 /* Test if a Correlation matrix is diagonal, Morrison pp. 116-118 */
 
 autoCorrelation SSCP_to_Correlation (SSCP me);
 
-void Covariance_difference (Covariance me, Covariance thee, double *prob, double *chisq, double *df);
+void Covariance_difference (Covariance me, Covariance thee, double *out_prob, double *out_chisq, double *out_df);
 
-void Covariance_getSignificanceOfOneMean (Covariance me, integer index, double mu,	double *probability, double *t, double *df);
+void Covariance_getSignificanceOfOneMean (Covariance me, integer index, double mu,	double *out_probability, double *out_t, double *out_df);
 
-void Covariance_getSignificanceOfMeansDifference (Covariance me, integer index1, integer index2, double mu, int paired, int equalVariances,
-	double *probability, double *t, double *ndf);
+void Covariance_getSignificanceOfMeansDifference (Covariance me, integer index1, integer index2, double mu, int paired, int equalVariances,	double *out_probability, double *out_t, double *out_ndf);
 
-void Covariance_getSignificanceOfOneVariance (Covariance me, integer index, double sigmasq, double *probability, double *chisq, double *ndf);
+void Covariance_getSignificanceOfOneVariance (Covariance me, integer index, double sigmasq, double *out_probability, double *out_chisq, double *out_ndf);
 
-void Covariance_getSignificanceOfVariancesRatio (Covariance me, integer index1, integer index2, double ratio, double *probability,
-	double *f, double *df);
+void Covariance_getSignificanceOfVariancesRatio (Covariance me, integer index1, integer index2, double ratio, double *out_probability, double *out_f, double *out_df);
 
-double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *prob, double *fisher, double *df1, double *df2);
+double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance thee, int equalCovariances, double *out_prob, double *out_fisher, double *out_df1, double *out_df2);
 /* Are the centroids of me and thee different?
 	Assumption: the two covariances are equal. (we pool me and thee, dimension p).
 	Two sample test of Morrison (1990), page 141:
@@ -200,7 +201,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	f has Fisher distribution with p and n1+n2-p-1 degrees of freedom.
 */
 
-void Covariances_equality (CovarianceList me, int method, double *prob, double *chisq, double *df);
+void Covariances_equality (CovarianceList me, int method, double *out_prob, double *out_chisq, double *out_df);
 /*
 	Equality of covariance.
 	method = 1 : Bartlett (Morrison, 1990)
@@ -208,8 +209,9 @@ void Covariances_equality (CovarianceList me, int method, double *prob, double *
 */
 
 autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me);
+autoCovariance CovarianceList_to_Covariance_between (CovarianceList me);
+autoCovariance CovarianceList_to_Covariance_within (CovarianceList me);
 
-autoSSCPList TableOfReal_to_SSCPList_byLabel (TableOfReal me);
 
 autoSSCP SSCPList_to_SSCP_sum (SSCPList me);
 /* Sum the sscp's and weigh each means with it's numberOfObservations. */
@@ -249,7 +251,7 @@ void SSCP_expand (SSCP me);
 void SSCP_unExpand (SSCP me);
 /* Use only if the memory is really needed! */
 
-void SSCP_expandLowerCholesky (SSCP me); // create lower square root of covariance matrix
+void SSCP_expandLowerCholeskyInverse (SSCP me); // create lower square root of covariance matrix
 
 void SSCP_unExpandLowerCholesky (SSCP me);
 

@@ -33,7 +33,7 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 		oo_INT (dataChanged)
 		oo_MAT (expansion, expansionNumberOfRows, numberOfColumns)
 		oo_DOUBLE (lnd)
-		oo_MAT (lowerCholesky, numberOfColumns, numberOfColumns)
+		oo_MAT (lowerCholeskyInverse, numberOfColumns, numberOfColumns)
 		oo_OBJECT (PCA, 0, pca)
 	#endif
 

@@ -179,7 +179,7 @@ static autoPitchTier PitchTier_createAsModifiedPart (PitchTier me, double tmin, 
 		// now we have the real times and we can sort them tohether with the pitches
 		
 		autoVEC pitches = VECcopy (pitchesraw.get());
-		NUMsort2<double, double> (times.size, times.at, pitches.at);
+		NUMsortTogether (times.get(), pitches.get());
 		double pitchAnchor, pitch;
 		for (integer i = 1; i <= times.size; i ++) {
 			integer index = pitch_as != PITCH_VALUE_AS_SLOPES_AND_END ? i : times.size - i + 1;
@@ -321,7 +321,7 @@ static autoPitchTier PitchTier_createAsModifiedPart_toneLevels (PitchTier me, do
 		for (integer i = 1; i <= pitches.size; i ++) {
 			pitches [i] = fmin * pow (10.0, scale * pitches [i]);
 		}
-		NUMsort2<double, double> (times.size, times.at, pitches.at);
+		NUMsortTogether (times.get(), pitches.get());
 		autoPitchTier thee = PitchTier_createFromPoints (times [1], times [times.size], times.get(), pitches.get());
 		return thee;
 	} catch (MelderError) {

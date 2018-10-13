@@ -31,8 +31,9 @@
 #include "GaussianMixture_def.h"
 
 /*
-	Constraints for a Gaussian mixture:
+	Invariants for a Gaussian mixture:
 	 all covariances have the same 'dimension' parameter
+	 All mixingProbabilities are >= 0 and sum to 1.0
 */
 autoGaussianMixture GaussianMixture_create (integer numberOfComponents, integer dimension, integer storage);
 /* Start each function with expand and end with unExpand */

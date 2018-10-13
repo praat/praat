@@ -148,7 +148,7 @@ autoEigen PCA_to_Eigen (PCA me) {
 	}
 }
 
-static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
+static autoPCA MAT_to_PCA (constMAT m, bool byColumns) {
 	try {
 		Melder_require (NUMdefined (m),
 			U"All matrix elements should be defined.");
@@ -164,9 +164,9 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 				Melder_warning (U"The number of rows in your table is less than the number of columns.");
 			mcopy = MATcopy (m);
 		}
+		
 		autoPCA thee = Thing_new (PCA);
-		thy centroid = VECzero (mcopy.ncol);
-		VECcolumnMeans_preallocated (thy centroid.get(), mcopy.get());
+		thy centroid = VECcolumnMeans (mcopy.get());
 		MATsubtract_inplace (mcopy.get(), thy centroid.get());
 		Eigen_initFromSquareRoot (thee.get(), mcopy.get());
 		thy labels = autostring32vector (mcopy.ncol);
@@ -176,8 +176,8 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 			the eigenstructure for A'A. This has no consequences for the
 			eigenvectors, but the eigenvalues have to be divided by (N-1).
 		*/
-		for (integer i = 1; i <= thy numberOfEigenvalues; i ++)
-			thy eigenvalues [i] /= (mcopy.nrow - 1);
+		VECmultiply_inplace (thy eigenvalues.get(), 1.0 / (mcopy.nrow - 1));
+		
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (U"No PCA created from ", ( byColumns ? U"columns." : U"rows." ));
@@ -186,7 +186,7 @@ static autoPCA NUMdmatrix_to_PCA (constMAT m, bool byColumns) {
 
 autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (my data.get(), false);
+		autoPCA thee = MAT_to_PCA (my data.get(), false);
 		Melder_assert (thy labels.size == my numberOfColumns);
 		thy labels. copyElementsFrom (my columnLabels.get());
 		return thee;
@@ -197,7 +197,7 @@ autoPCA TableOfReal_to_PCA_byRows (TableOfReal me) {
 
 autoPCA Matrix_to_PCA_byColumns (Matrix me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (my z.get(), true);
+		autoPCA thee = MAT_to_PCA (my z.get(), true);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PCA created from columns.");
@@ -206,7 +206,7 @@ autoPCA Matrix_to_PCA_byColumns (Matrix me) {
 
 autoPCA Matrix_to_PCA_byRows (Matrix me) {
 	try {
-		autoPCA thee = NUMdmatrix_to_PCA (my z.get(), false);
+		autoPCA thee = MAT_to_PCA (my z.get(), false);
 		return thee;
 	} catch (MelderError) {
 		Melder_throw (me, U": no PCA created from rows.");
@@ -281,15 +281,8 @@ autoTableOfReal PCA_Configuration_to_TableOfReal_reconstruct (PCA me, Configurat
 		his columnLabels. copyElementsFrom (my labels.get());
 		his rowLabels. copyElementsFrom (thy rowLabels.get());
 
-		for (integer i = 1; i <= thy numberOfRows; i ++) {
-			VEC hisdata = his data.row (i);
-			for (integer k = 1; k <= npc; k ++) {
-				VEC evec = my eigenvectors.row (k);
-				double pc = thy data [i] [k];
-				for (integer j = 1; j <= my dimension; j ++)
-					hisdata [j] += pc * evec [j];   // ppgb: this looks like a normal matrix multiplication; if it isn't, please document
-			}
-		}
+		MATVUmul (his data.get(), thy data.get(), my eigenvectors.get());
+		
 		return him;
 	} catch (MelderError) {
 		Melder_throw (U"TableOfReal not reconstructed.");
@@ -315,8 +308,7 @@ autoTableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, conststring32 numstring
 		integer npc;
 		autoVEC pc = VEC_createFromString (numstring);
 		autoConfiguration c = Configuration_create (1, pc.size);
-		for (integer j = 1; j <= npc; j ++)
-			c -> data [1] [j] = pc [j];
+		VECcopy_preallocated (c -> data.row (1), pc.get());
 		autoTableOfReal him = PCA_Configuration_to_TableOfReal_reconstruct (me, c.get());
 		return him;
 	} catch (MelderError) {

@@ -123,6 +123,7 @@ inline void MATmultiply_inplace (const MAT& x, double factor) noexcept {
 			x [irow] [icol] *= factor;
 }
 
+void MATouter_preallocated (const MAT& target, const constVEC& x, const constVEC& y);
 extern autoMAT MATouter (const constVEC& x, const constVEC& y);
 
 extern autoMAT MATpeaks (const constVEC& x, bool includeEdges, int interpolate, bool sortByHeight);

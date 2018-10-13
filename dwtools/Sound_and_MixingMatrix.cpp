@@ -112,8 +112,7 @@ autoSound Sound_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 		Melder_require (my ny == thy numberOfColumns,
 			U"The number of inputs in the MixingMatrix and the number of channels in the Sound should be equal.");
 
-		autoMAT minv = MATzero (thy numberOfColumns, thy numberOfRows);
-		NUMpseudoInverse (thy data.at_deprecated, thy numberOfRows, thy numberOfColumns, minv.at_deprecated, 0.0);
+		autoMAT minv = MATpseudoInverse (thy data.get(), 0.0);
 		autoSound him = Sound_create (thy numberOfColumns, my xmin, my xmax, my nx, my dx, my x1);
 		for (integer i = 1; i <= thy numberOfColumns; i ++) {
 			for (integer j = 1; j <= my nx; j ++) {

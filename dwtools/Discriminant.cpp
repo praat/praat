@@ -196,7 +196,7 @@ double Discriminant_getWilksLambda (Discriminant me, integer from) {
 	if (from < 1) {
 		from = 1;
 	}
-	return NUMwilksLambda (my eigen -> eigenvalues.at, 1 + from, numberOfFunctions);
+	return NUMwilksLambda (my eigen -> eigenvalues.get(), 1 + from, numberOfFunctions);
 }
 
 /*
@@ -259,7 +259,7 @@ void Discriminant_getPartialDiscriminationProbability (Discriminant me, integer 
 	double prob = undefined, chisq = undefined, df = undefined;
 
 	if (numberOfWantedDimensions < numberOfFunctions) {
-		double lambda = NUMwilksLambda (my eigen -> eigenvalues.at, numberOfWantedDimensions + 1, numberOfFunctions);
+		double lambda = NUMwilksLambda (my eigen -> eigenvalues.get(), numberOfWantedDimensions + 1, numberOfFunctions);
 		if (lambda != 1.0) {
 			chisq = - (degreesOfFreedom + (numberOfGroups - eigendimension) / 2.0 - 1.0) * log (lambda);
 			df = (eigendimension - numberOfWantedDimensions) * (numberOfGroups - numberOfWantedDimensions - 1);
@@ -580,7 +580,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 		// Normalize the sum of the apriori probabilities to 1.
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
-		VEC_normalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
+		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		double logg = log (numberOfGroups);
 		for (integer j = 1; j <= numberOfGroups; j ++) {
 			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
@@ -705,7 +705,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable_dw (Disc
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
 		double logg = log (g);
-		VEC_normalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
+		VECnormalize_inplace (my aprioriProbabilities.get(), 1.0, 1.0);
 		for (integer j = 1; j <= g; j ++) {
 			log_apriori [j] = useAprioriProbabilities ? log (my aprioriProbabilities [j]) : - logg;
 		}

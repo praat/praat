@@ -27,21 +27,21 @@ void MAT_getEigenSystemFromSymmetricMatrix (constMAT a, autoMAT *out_eigenvector
 		   only the upper-half of the matrix is used in the calculation
 		sortAscending if true eigenvalues (and corresponding eigenvectors) are sorted ascending
 	Output:
-		if(out_eigenvalues) eigenvalues sorted
-		if(out_eigenvectors) eigenvectors corresponding to the eigenvalues, stored as row-wise vectors.
+		if (out_eigenvalues) eigenvalues sorted
+		if (out_eigenvectors) eigenvectors corresponding to the eigenvalues, stored as row-wise vectors.
 */
 
-void MAT_getEigenSystemFromSymmetricMatrix_inplace (MAT inout_a, bool wantEigenvectors, VEC inout_eigenvalues, bool sortAscending);
+void MAT_getEigenSystemFromSymmetricMatrix_preallocated (MAT eigenvectors, VEC eigenvalues, constMAT a, bool sortAscending);
 /*
 	Input:
-		inout_a, a symmetric a.ncol x a.ncol matrix
+		a, a symmetric a.ncol x a.ncol matrix
 		   only the upper-half of the matrix is used in the calculation
-		inout_eigenvalues, a vector of size ncol
-		wantEigenvectors, true if you want eigenvectors calculated
-		sortAscending if true eigenvalues (and corresponding eigenvectors) are sorted ascending
+		eigenvalues, a vector of size ncol
+		eigenvectors, a matrix a.ncol x a.ncol
+		sortAscending if true eigenvalues (and corresponding eigenvectors) will be sorted ascending
 	Output:
-		inout_a, if (wantEigenvectors) eigenvectors, stored row-wise
-		inout_eigenvalues, eigenvalues sorted from large to small
+		eigenvectors, stored row-wise
+		eigenvalues, eigenvalues sorted according to sortAscending
 */
 
 void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT a, integer nComponents);
@@ -75,6 +75,17 @@ void MAT_getEigenSystemFromGeneralMatrix (constMAT a, autoMAT *out_lefteigenvect
 void MAT_eigenvectors_decompress (constMAT eigenvectors, constVEC eigenvalues_re, constVEC eigenvalues_im, autoMAT *out_eigenvectors_reim);
 /*
 	Decompresses each eigenvector row into two consecutive columns (real and imaginary part)
+*/
+
+void MAT_asPrincipalComponents_preallocated (MAT pc, constMAT m);
+autoMAT MAT_asPrincipalComponents (constMAT m, integer numberOfComponents);
+
+void MATpseudoInverse_preallocated (MAT target, constMAT m, double tolerance);
+autoMAT MATpseudoInverse (constMAT m, double tolerance);
+/*
+	Determines the pseudo-inverse Y^-1 of Y[1..nrow][1..ncol] via s.v.d.
+	Alternative notation for pseudo-inverse: (Y'.Y)^-1.Y'
+	Returns a [1..ncol][1..nrow] matrix
 */
 
 /* End of file MAT_numerics.h */
