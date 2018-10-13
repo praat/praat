@@ -46,7 +46,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 	NUMfft_Table fftTable, double dt_window, integer nsamp_window, integer halfnsamp_window,
 	integer maximumLag, integer nsampFFT, integer nsamp_period, integer halfnsamp_period,
 	integer brent_ixmax, integer brent_depth, double globalPeak,
-	double **frame, double *ac, double *window, double *windowR,
+	const MAT& frame, double *ac, double *window, double *windowR,
 	double *r, integer *imax, double *localMean)
 {
 	integer leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
@@ -144,7 +144,7 @@ static void Sound_into_PitchFrame (Sound me, Pitch_Frame pitchFrame, double t,
 			ac [i] = 0.0;
 		}
 		for (integer channel = 1; channel <= my ny; channel ++) {
-			NUMfft_forward (fftTable, VEC (frame [channel], fftTable->n));   // complex spectrum
+			NUMfft_forward (fftTable, VEC (& frame [channel] [0], fftTable->n));   // complex spectrum
 			ac [1] += frame [channel] [1] * frame [channel] [1];   // DC component
 			for (integer i = 2; i < nsampFFT; i += 2) {
 				ac [i] += frame [channel] [i] * frame [channel] [i] + frame [channel] [i+1] * frame [channel] [i+1];   // power spectrum
@@ -301,16 +301,16 @@ bool mutex_inited;
 static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 {
 	autoNUMfft_Table fftTable;
-	autoNUMmatrix <double> frame;
+	autoMAT frame;
 	autoNUMvector <double> ac, r, localMean;
 	autoNUMvector <integer> imax;
 	{// scope
 		MelderThread_LOCK (mutex);
 		if (my method >= FCC_NORMAL) {   // cross-correlation
-			frame.reset (1, my sound -> ny, 1, my nsamp_window);
+			frame = MATzero (my sound -> ny, my nsamp_window);
 		} else {   // autocorrelation
 			NUMfft_Table_init (& fftTable, my nsampFFT);
-			frame.reset (1, my sound -> ny, 1, my nsampFFT);
+			frame = MATzero (my sound -> ny, my nsampFFT);
 			ac.reset (1, my nsampFFT);
 		}
 		r.reset (- my nsamp_window, my nsamp_window);
@@ -320,7 +320,7 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 	}
 	for (integer iframe = my firstFrame; iframe <= my lastFrame; iframe ++) {
 		Pitch_Frame pitchFrame = & my pitch -> frame [iframe];
-		double t = Sampled_indexToX (my pitch, iframe);
+		const double t = Sampled_indexToX (my pitch, iframe);
 		if (my isMainThread) {
 			try {
 				Melder_progress (0.1 + 0.8 * (iframe - my firstFrame) / (my lastFrame - my firstFrame),
@@ -337,7 +337,7 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 			& fftTable, my dt_window, my nsamp_window, my halfnsamp_window,
 			my maximumLag, my nsampFFT, my nsamp_period, my halfnsamp_period,
 			my brent_ixmax, my brent_depth, my globalPeak,
-			frame.peek(), ac.peek(), my window, my windowR,
+			frame.get(), ac.peek(), my window, my windowR,
 			r.peek(), imax.peek(), localMean.peek());
 	}
 	MelderThread_RETURN;
@@ -352,7 +352,7 @@ autoPitch Sound_to_Pitch_any (Sound me,
 	try {
 		autoNUMfft_Table fftTable;
 		double t1;
-		integer numberOfFrames, minimumLag, maximumLag;
+		integer numberOfFrames;
 		integer nsampFFT;
 		double interpolation_depth;
 		integer brent_ixmax, brent_depth;
@@ -411,10 +411,8 @@ autoPitch Sound_to_Pitch_any (Sound me,
 		/*
 		 * Determine the minimum and maximum lags.
 		 */
-		minimumLag = Melder_ifloor (1.0 / my dx / ceiling);
-		if (minimumLag < 2) minimumLag = 2;
-		maximumLag = Melder_ifloor (nsamp_window / periodsPerWindow) + 2;
-		if (maximumLag > nsamp_window) maximumLag = nsamp_window;
+		const integer minimumLag = std::max (integer (2), Melder_ifloor (1.0 / my dx / ceiling));
+		const integer maximumLag = std::min (Melder_ifloor (nsamp_window / periodsPerWindow) + 2, nsamp_window);
 
 		/*
 		 * Determine the number of frames.

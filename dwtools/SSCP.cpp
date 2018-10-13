@@ -357,7 +357,7 @@ double SSCP_getDegreesOfFreedom (SSCP me) {
 }
 
 double SSCP_getTotalVariance (SSCP me) {
-	return my numberOfRows == 1 ? NUMsum (my data.row(1)) : NUMtrace (my data.get());
+	return my numberOfRows == 1 ? NUMsum (my data.row (1)) : NUMtrace (my data.get());
 }
 
 double SSCP_getCumulativeContributionOfComponents (SSCP me, integer from, integer to) {
@@ -505,7 +505,7 @@ autoTableOfReal Covariance_TableOfReal_mahalanobis (Covariance me, TableOfReal t
 		if (useTableCentroid)
 			VECcolumnMeans_preallocated (centroid.get(), thy data.get());
 		for (integer k = 1; k <= thy numberOfRows; k ++) {
-			his data [k] [1] = sqrt (NUMmahalanobisDistance (covari.get(), thy data.row(k), centroid.get()));
+			his data [k] [1] = sqrt (NUMmahalanobisDistance (covari.get(), thy data.row (k), centroid.get()));
 			if (thy rowLabels [k])
 				TableOfReal_setRowLabel (him.get(), k, thy rowLabels [k].get());
 		}

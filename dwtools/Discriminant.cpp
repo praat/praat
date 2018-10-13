@@ -157,7 +157,7 @@ autoTableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		for (integer i = 1; i <= m; i ++) {
 			SSCP sscp = my groups->at [i];
 			TableOfReal_setRowLabel (thee.get(), i, Thing_getName (sscp));
-			VECcopy_preallocated ( thy data.row(i), sscp -> centroid.get());
+			VECcopy_preallocated ( thy data.row (i), sscp -> centroid.get());
 		}
 		thy columnLabels. copyElementsFrom_upTo (my groups->at [m] -> columnLabels.get(), n);
 			// ppgb FIXME: that other number of columns could also be n, but that is not documented; if so, add an assert above
@@ -593,7 +593,7 @@ autoClassificationTable Discriminant_TableOfReal_to_ClassificationTable (Discrim
 			double norm = 0.0, pt_max = -1e308;
 			for (integer j = 1; j <= numberOfGroups; j ++) {
 				SSCP t = groups->at [j];
-				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row(i),t -> centroid.get());
+				double md = NUMmahalanobisDistance (sscpvec [j] -> data.get(), thy data.row (i),t -> centroid.get());
 				//double md = mahalanobisDistanceSq (sscpvec [j] -> data.at, dimension, thy data [i], t -> centroid, buf.at);
 				double pt = log_apriori [j] - 0.5 * (ln_determinant [j] + md);
 				if (pt > pt_max) {

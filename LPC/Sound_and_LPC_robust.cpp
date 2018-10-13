@@ -128,10 +128,10 @@ void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct hub
 
 		s0 = hs -> scale;
 		VEC work = hs -> work.get();
-		NUMstatistics_huber (hs -> e -> z.row(1), & (hs -> location), hs -> wantlocation, & (hs -> scale), hs -> wantscale, hs -> k_stdev, hs -> tol, & work);
+		NUMstatistics_huber (hs -> e -> z.row (1), & hs -> location, hs -> wantlocation, & hs -> scale, hs -> wantscale, hs -> k_stdev, hs -> tol, & work);
 
-		huber_struct_getWeights (hs, hs -> e -> z.row(1));
-		huber_struct_getWeightedCovars (hs, thy z.row(1));
+		huber_struct_getWeights (hs, hs -> e -> z.row (1));
+		huber_struct_getWeightedCovars (hs, thy z.row (1));
 
 		// Solve C a = [-] c */
 		try {
@@ -147,8 +147,8 @@ void LPC_Frames_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct hub
 			his a [i] = hs -> a [i];
 		}
 
-		(hs -> iter) ++;
-	} while ( (hs -> iter < hs -> itermax) && (fabs (s0 - hs -> scale) > hs -> tol * s0));
+		hs -> iter ++;
+	} while (hs -> iter < hs -> itermax && fabs (s0 - hs -> scale) > hs -> tol * s0);
 }
 
 #if 0

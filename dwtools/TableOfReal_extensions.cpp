@@ -1545,11 +1545,11 @@ double TableOfReal_normalityTest_BHEP (TableOfReal me, double *h, double *p_tnb,
 			*/
 			for (integer j = 1; j <= n; j ++) {
 				for (integer k = 1; k < j; k ++) {
-					djk = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row(j), my data.row(k));
+					djk = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), my data.row (k));
 					sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 				}
 				sumjk += 1; // for k == j
-				djj = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row(j), thy centroid.get());
+				djj = NUMmahalanobisDistance (thy lowerCholeskyInverse.get(), my data.row (j), thy centroid.get());
 				sumj += exp (-b2 * djj);
 			}
 			tnb = (1.0 / n) * sumjk - 2.0 * pow (1.0 + beta2, - p2) * sumj + n * pow (gamma, - p2); // n *
