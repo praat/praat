@@ -446,7 +446,7 @@ static autoVEC Eigens_getAnglesBetweenSubspaces (Eigen me, Eigen thee, integer i
 	);
 	autoSVD svd = SVD_createFromGeneralMatrix (c.get());
 	for (integer i = 1; i <= numberOfVectors; i ++) {
-		angles_degrees [i] = acos (svd -> d [i]) * 180.0 / NUMpi;
+		angles_degrees [i] = acos (svd -> d [i]) * (180.0 / NUMpi);
 	}
 	return angles_degrees;
 }
