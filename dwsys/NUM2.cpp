@@ -1375,7 +1375,7 @@ double NUMnormalityTest_HenzeZirkler (constMAT data, double *inout_beta, double 
 				sumjk += 2.0 * exp (-b1 * djk); // factor 2 because d [j] [k] == d [k] [j]
 			}
 			sumjk += 1.0; // for k == j
-			const double djj = NUMmahalanobisDistance (covar.get(), x.row(j), zero.get());
+			const double djj = NUMmahalanobisDistance (covar.get(), x.row (j), zero.get());
 			sumj += exp (-b2 * djj);
 		}
 		tnb = (1.0 / n) * (double) sumjk - 2.0 * pow (1.0 + beta2, - p2) * (double) sumj + n * pow (gamma, - p2); // n *

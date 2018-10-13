@@ -319,14 +319,14 @@ void PowerCepstrum_smooth_inplace (PowerCepstrum me, double quefrencyAveragingWi
 	try {
 		integer numberOfQuefrencyBins = Melder_ifloor (quefrencyAveragingWindow / my dx);
 		if (numberOfQuefrencyBins > 1) {
-			autoVEC qin = VECcopy (my z.row(1));
+			autoVEC qin = VECcopy (my z.row (1));
 			autoVEC qout = VECraw (my nx);
 			for (integer k = 1; k <= numberOfIterations; k ++)
 				if (k % 2 == 1) 
 					VECsmoothByMovingAverage_preallocated (qout.get(), qin.get(), numberOfQuefrencyBins);
 				else
 					VECsmoothByMovingAverage_preallocated (qin.get(), qout.get(), numberOfQuefrencyBins);
-			VECcopy_preallocated (my z.row(1), numberOfIterations % 2 == 1 ? qout.get() : qin.get());
+			VECcopy_preallocated (my z.row (1), numberOfIterations % 2 == 1 ? qout.get() : qin.get());
 		}
 	} catch (MelderError) {
 		Melder_throw (me, U": not smoothed.");

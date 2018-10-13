@@ -415,7 +415,7 @@ void Eigens_alignEigenvectors (OrderedOf<structEigen>* me) {
 	for (integer i = 2; i <= my size; i ++) {
 		Eigen e2 = my at [i];
 		for (integer j = 1; j <= std::min (nev1, e2 -> numberOfEigenvalues); j ++) {
-			double ip = NUMinner (e1 -> eigenvectors.row(j), e2 -> eigenvectors.row(j));
+			const double ip = NUMinner (e1 -> eigenvectors.row (j), e2 -> eigenvectors.row (j));
 			if (ip < 0.0)
 				for (integer k = 1; k <= dimension; k ++)
 					e2 -> eigenvectors [j] [k] = - e2 -> eigenvectors [j] [k];
