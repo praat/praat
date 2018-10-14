@@ -726,7 +726,7 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 		*/
 		variable -> numericMatrixValue. adoptFromAmbiguousOwner (movedMatrix);
 	} else if (variable -> numericMatrixValue.nrow == movedMatrix.nrow && variable -> numericMatrixValue.ncol == movedMatrix.ncol) {
-		if (variable -> numericMatrixValue.at_deprecated == movedMatrix.at_deprecated) {
+		if (variable -> numericMatrixValue.cells == movedMatrix.cells) {
 			/*
 				Statement like: a## = a##
 			*/
