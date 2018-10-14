@@ -455,8 +455,8 @@ autoSSCP TableOfReal_to_SSCP_rowWeights (TableOfReal me, integer rowb, integer r
 		MATsubtract_inplace (part.get(), thy centroid.get());
 		SSCP_setNumberOfObservations (thee.get(), part.nrow);
 		if (weightColumnNumber != 0) {
-			autoVEC rowWeights = VECcopy (my data.horizontalBand (rowb, rowe), weightColumnNumber);
-			 MATmtm_weighRows_preallocated (thy data.get(), part.get(), rowWeights.get()); 
+			autoVEC rowWeights = VECcolumn (my data.horizontalBand (rowb, rowe), weightColumnNumber);
+			MATmtm_weighRows_preallocated (thy data.get(), part.get(), rowWeights.get());
 		} else
 			MATmtm_preallocated (thy data.get(), part.get());   // sum of squares and cross products = T'T
 		for (integer j = 1; j <= part.ncol; j ++) {
