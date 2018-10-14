@@ -772,7 +772,7 @@ static void drawBox (Graphics g) {
 static double _DTW_Sounds_getPartY (Graphics g, double dtw_part_x) {
 	double x1NDC, x2NDC, y1NDC, y2NDC;
 	Graphics_inqViewport (g, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
-	return 1.0 - ((1.0 - dtw_part_x) * (x2NDC - x1NDC)) / (y2NDC - y1NDC);
+	return 1.0 - (1.0 - dtw_part_x) * (x2NDC - x1NDC) / (y2NDC - y1NDC);
 }
 
 void DTW_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double xmax, double ymin, double ymax, bool garnish)
