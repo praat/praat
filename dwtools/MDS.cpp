@@ -2153,9 +2153,11 @@ void DissimilarityList_Configuration_Salience_indscal (DissimilarityList dissims
 
 			DistanceList_Configuration_Salience_vaf (distances.get(), configuration.get(), salience.get(), normalizeScalarProducts, &vaf);
 
-			if (vaf > 1.0 - tol || fabs (vaf - vafp) / vafp < tolerance) {
+			/*
+				ppgb: the first time round, the following condition relies on a comparison with plus infinity.
+			*/
+			if (vaf > 1.0 - tol || fabs (vaf - vafp) / vafp < tolerance)
 				break;
-			}
 			vafp = vaf;
 			if (showProgress) {
 				Melder_progress ((double) iter / (numberOfIterations + 1), U"indscal: vaf ", vaf);
