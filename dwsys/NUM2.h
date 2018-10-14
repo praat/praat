@@ -150,12 +150,6 @@ inline void VECset (VEC x, double value, integer to) {
 	for (integer i = 1; i <= to; i ++) x [i] = value;
 }
 
-inline void VECadd_inplace (VEC y, constVEC x) {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= y.size; i ++)
-		y [i] += x[i];
-}
-
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
 	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;
