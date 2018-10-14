@@ -150,12 +150,6 @@ inline void VECset (VEC x, double value, integer to) {
 	for (integer i = 1; i <= to; i ++) x [i] = value;
 }
 
-inline void VECadd_inplace (VEC y, constVEC x) {
-	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= y.size; i ++)
-		y [i] += x[i];
-}
-
 inline double NUMvtmv (constVEC x, constMAT m) { // x'. M . x
 	Melder_assert (x.size == m.nrow && m.nrow == m.ncol);
 	longdouble result = 0.0;
@@ -172,26 +166,6 @@ inline double NUMmul_vtmv (constVEC x, constMAT m, constVEC y) { // x'. M . y
 		result += x [k] * NUMinner (m.row (k), y); 
 	return (double) result;
 }	
-
-inline void VECmul_elementwise_preallocated (VEC target, constVEC x, constVEC y) {
-	Melder_assert (target.size == x.size);
-	Melder_assert (target.size == y.size);
-	for (integer i = 1; i <= target.size; i++)
-		target [i] = x [i] * y [i];
-}
-
-inline void VECmul_elementwise_inplace (VEC target, constVEC x) {
-	Melder_assert (target.size == x.size);
-	for (integer i = 1; i <= target.size; i++)
-		target [i] *= x [i];
-}
-
-inline autoVEC VECmul_elementwise (constVEC x, constVEC y) {
-	Melder_assert (x.size == y.size);
-	autoVEC result = VECraw (x.size);
-	VECmul_elementwise_preallocated (result.get(), x, y);
-	return result;
-}
 
 inline void VECcopy_preallocated (VEC x, constMAT m, integer columnNumber) {
 	Melder_assert (x.size == m.nrow);
@@ -225,7 +199,7 @@ inline autoVEC VECdiagonal (constMAT& x) {
 inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = VECraw (x.ncol);
 	autoVEC column = VECraw (x.ncol);
-	for (integer icol; icol <= norm.size; icol ++) {
+	for (integer icol = 1; icol <= norm.size; icol ++) {
 		VECcopy_preallocated (column.get(), x, icol);
 		norm [icol] = NUMnorm (column.get(), power);
 	}
@@ -234,7 +208,7 @@ inline autoVEC VECnorm_columns (constMAT x, double power) {
 
 inline autoVEC VECnorm_rows (constMAT x, double power) {
 	autoVEC norm = VECraw (x.nrow);
-	for (integer irow; irow <= norm.size; irow ++)
+	for (integer irow = 1; irow <= norm.size; irow ++)
 		norm [irow] = NUMnorm (x.row (irow), power);
 	return norm;
 }

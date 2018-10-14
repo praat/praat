@@ -746,54 +746,48 @@ inline static void NumericMatrixVariable_move (InterpreterVariable variable, MAT
 }
 
 inline static void NumericVectorVariable_add (InterpreterVariable variable, double scalar) {
-	variable -> numericVectorValue += scalar;
+	VECadd_inplace (variable -> numericVectorValue, scalar);
 }
 inline static void NumericVectorVariable_add (InterpreterVariable variable, constVEC vector) {
-	VEC variableVector = variable -> numericVectorValue.get();
+	const VEC& variableVector = variable -> numericVectorValue.get();
 	Melder_require (vector.size == variableVector.size,
 		U"You cannot add a vector with size ", vector.size,
 		U" to a vector with a different size (", variableVector.size, U")."
 	);
-	variable -> numericVectorValue += vector;
+	VECadd_inplace (variableVector, vector);
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, double scalar) {
-	VEC variableVector = variable -> numericVectorValue.get();
-	for (integer i = 1; i <= variable -> numericVectorValue.size; i ++)
-		variable -> numericVectorValue [i] -= scalar;
+	VECsubtract_inplace (variable -> numericVectorValue, scalar);
 }
 inline static void NumericVectorVariable_subtract (InterpreterVariable variable, constVEC vector) {
-	VEC variableVector = variable -> numericVectorValue.get();
-	if (vector.size != variable -> numericVectorValue.size)
-		Melder_throw (U"You cannot subtract a vector with size ", vector.size,
-		              U" from a vector with a different size (", variable -> numericVectorValue.size, U").");
-	for (integer i = 1; i <= variable -> numericVectorValue.size; i ++)
-		variable -> numericVectorValue [i] -= vector [i];
+	const VEC& variableVector = variable -> numericVectorValue.get();
+	Melder_require (vector.size == variable -> numericVectorValue.size,
+		U"You cannot subtract a vector with size ", vector.size,
+		U" from a vector with a different size (", variableVector.size, U")."
+	);
+	VECsubtract_inplace (variableVector, vector);
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, double scalar) {
-	VEC variableVector = variable -> numericVectorValue.get();
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] *= scalar;
+	VECmultiply_inplace (variable -> numericVectorValue, scalar);
 }
 inline static void NumericVectorVariable_multiply (InterpreterVariable variable, constVEC vector) {
-	VEC variableVector = variable -> numericVectorValue.get();
-	if (vector.size != variableVector.size)
-		Melder_throw (U"You cannot multiply a vector with size ", variableVector.size,
-		              U" with a vector with a different size (", vector.size, U").");
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] *= vector [i];
+	const VEC& variableVector = variable -> numericVectorValue.get();
+	Melder_require (vector.size != variableVector.size,
+		U"You cannot multiply a vector with size ", variableVector.size,
+		U" with a vector with a different size (", vector.size, U")."
+	);
+	VECmultiply_inplace (variableVector, vector);
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, double scalar) {
-	VEC variableVector = variable -> numericVectorValue.get();
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] /= scalar;
+	VECdivide_inplace (variable -> numericVectorValue, scalar);
 }
 inline static void NumericVectorVariable_divide (InterpreterVariable variable, constVEC vector) {
-	VEC variableVector = variable -> numericVectorValue.get();
-	if (vector.size != variableVector.size)
-		Melder_throw (U"You cannot divide a vector with size ", variableVector.size,
-		              U" by a vector with a different size (", vector.size, U").");
-	for (integer i = 1; i <= variableVector.size; i ++)
-		variableVector [i] /= vector [i];
+	const VEC& variableVector = variable -> numericVectorValue.get();
+	Melder_require (vector.size != variableVector.size,
+		U"You cannot divide a vector with size ", variableVector.size,
+		U" by a vector with a different size (", vector.size, U")."
+	);
+	VECdivide_inplace (variableVector, vector);
 }
 inline static void NumericMatrixVariable_add (InterpreterVariable variable, double scalar) {
 	MAT variableMatrix = variable -> numericMatrixValue.get();

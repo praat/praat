@@ -388,7 +388,7 @@ void Covariance_PCA_generateOneVector_inline (Covariance me, PCA thee, VEC vec, 
 	// Rotate back
 	
 	VECmul_preallocated (vec, buf, thy eigenvectors.get());
-	vec += my centroid.get();
+	VECadd_inplace (vec, my centroid.get());
 }
 
 autoTableOfReal Covariance_to_TableOfReal_randomSampling (Covariance me, integer numberOfData) {
@@ -902,7 +902,7 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 		}
 		
 		VECmultiply_inplace (thy centroid.get(), 1.0 / thy numberOfObservations);
-		VECmultiply_inplace (asvector (thy data.get()), 1.0 / (thy numberOfObservations - my size));
+		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - my size));
 
 		return thee;
 	} catch (MelderError) {
