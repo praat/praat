@@ -659,9 +659,12 @@ public:
 		Melder_assert (our cells);
 		return vector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
 	}
-	vectorview<T> column (const integer columnNumber) const {
+	vectorview<T> column (integer columnNumber) const {
 		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
 		return vectorview<T> (our cells + (columnNumber - 1), our nrow, our ncol);
+	}
+	vectorview<T> diagonal () const {
+		return vectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
 	matrix<T> horizontalBand (integer firstRow, integer lastRow) const {
 		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
@@ -709,6 +712,9 @@ public:
 	vectorview<T> column (integer columnNumber) const {
 		return vectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
 	}
+	vectorview<T> diagonal () const {
+		return vectorview<T> (our firstCell, std::min (our nrow, our ncol), our rowStride + our colStride);
+	}
 	matrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
 		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
 		Melder_assert (lastColumn >= 0 && lastColumn <= our ncol);
@@ -752,6 +758,13 @@ public:
 		Melder_assert (our at_deprecated);
 		Melder_assert (our cells);
 		return constvector<T> (our cells + (rowNumber - 1) * our ncol - 1, our ncol);
+	}
+	constvectorview<T> column (integer columnNumber) const {
+		Melder_assert (columnNumber >= 1 && columnNumber <= our ncol);
+		return constvectorview<T> (our cells + (columnNumber - 1), our nrow, our ncol);
+	}
+	constvectorview<T> diagonal () const {
+		return constvectorview<T> (our cells, std::min (our nrow, our ncol), our ncol + 1);
 	}
 	constmatrix<T> horizontalBand (integer firstRow, integer lastRow) const {
 		Melder_assert (firstRow >= 1 && firstRow <= our nrow);
@@ -802,6 +815,9 @@ public:
 	}
 	constvectorview<T> column (integer columnNumber) const {
 		return constvectorview<T> (our firstCell + (columnNumber - 1) * our colStride, our nrow, our rowStride);
+	}
+	constvectorview<T> diagonal () const {
+		return constvectorview<T> (our firstCell, std::min (our nrow, our ncol), our rowStride + our colStride);
 	}
 	constmatrixview<T> verticalBand (integer firstColumn, integer lastColumn) const {
 		Melder_assert (firstColumn >= 1 && firstColumn <= our ncol);
