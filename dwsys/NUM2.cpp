@@ -159,11 +159,9 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 	Melder_assert (result.nrow == result.ncol);
 	MATset (result, 0.0);
 	if (true) {
-		autoVEC row = VECraw (data.ncol);
 		autoMAT outer = MATraw (result.ncol, result.ncol);
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
-			VECcopy_preallocated (row.get(), data.row (irow));
-			MATouter_preallocated (outer, row.get(), row.get());
+			MATouter_preallocated (outer, data.row (irow), data.row (irow));
 			MATaxpy (result, outer.get(), rowWeights [irow]);
 		}
 	} else {
