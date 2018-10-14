@@ -28,7 +28,7 @@
 #undef your
 #define your ((AffineTransform_Table) thy methods) ->
 
-static void do_steps45 (constMATVU const& w, MATVU const& t, constMATVU const& c, double *out_f) {
+static void do_steps45 (const constMAT& w, const MAT& t, const constMAT& c, double *out_f) {
 	// Step 4 || 10: If W'T has negative diagonal elements, multiply corresponding columns in T by -1.
 	for (integer i = 1; i <= w.ncol; i ++) {
 		double d = 0.0;

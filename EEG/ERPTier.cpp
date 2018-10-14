@@ -256,7 +256,7 @@ autoERP ERPTier_to_ERP_mean (ERPTier me) {
 		for (integer ievent = 2; ievent <= numberOfEvents; ievent ++) {
 			ERPPoint event = my points.at [ievent];
 			Melder_assert (event -> erp -> ny == my numberOfChannels);
-			mean -> z.get() += event -> erp -> z.get();
+			MATadd_inplace (mean -> z.get(), event -> erp -> z.get());
 		}
 		MATmultiply_inplace (mean -> z.get(), 1.0 / numberOfEvents);
 		mean -> channelNames = STRVECclone (my channelNames.get());

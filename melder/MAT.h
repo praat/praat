@@ -25,21 +25,11 @@
 	From here on alphabetical order.
 */
 
-inline void MATadd_inplace (const MAT& x, double addend) noexcept {
-	asvector (x) += addend;
+inline void MATadd_inplace (MAT const& x, double addend) noexcept {
+	VECadd_inplace (asvector (x), addend);
 }
-inline const MAT& operator+= (const MAT& x, double addend) noexcept {
-	asvector (x) += addend;
-	return x;
-}
-inline void MATadd_inplace (const MAT& x, const constMAT& y) noexcept {
-	////VECadd_inplace (asvector (x), asvector (y));
-	asvector (x) += asvector (y);
-}
-inline const MAT& operator+= (const MAT& x, const constMAT& y) noexcept {
-	////VECadd_inplace (asvector (x), asvector (y));
-	asvector (x) += asvector (y);
-	return x;
+inline void MATadd_inplace (MAT const& x, constMAT const& y) noexcept {
+	VECadd_inplace (asvector (x), asvector (y));
 }
 inline void MATadd_preallocated (const MAT& target, const constMAT& x, double addend) noexcept {
 	Melder_assert (x.nrow == target.nrow && x.ncol == target.ncol);

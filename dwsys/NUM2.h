@@ -167,26 +167,6 @@ inline double NUMmul_vtmv (constVEC x, constMAT m, constVEC y) { // x'. M . y
 	return (double) result;
 }	
 
-inline void VECmul_elementwise_preallocated (VEC target, constVEC x, constVEC y) {
-	Melder_assert (target.size == x.size);
-	Melder_assert (target.size == y.size);
-	for (integer i = 1; i <= target.size; i++)
-		target [i] = x [i] * y [i];
-}
-
-inline void VECmul_elementwise_inplace (VEC target, constVEC x) {
-	Melder_assert (target.size == x.size);
-	for (integer i = 1; i <= target.size; i++)
-		target [i] *= x [i];
-}
-
-inline autoVEC VECmul_elementwise (constVEC x, constVEC y) {
-	Melder_assert (x.size == y.size);
-	autoVEC result = VECraw (x.size);
-	VECmul_elementwise_preallocated (result.get(), x, y);
-	return result;
-}
-
 inline void VECcopy_preallocated (VEC x, constMAT m, integer columnNumber) {
 	Melder_assert (x.size == m.nrow);
 	Melder_assert (columnNumber > 0 && columnNumber <= m.ncol);
