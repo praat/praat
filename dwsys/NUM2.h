@@ -186,7 +186,7 @@ inline autoVEC VECdiagonal (constMAT& x) {
 
 inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = VECraw (x.ncol);
-	autoVEC column = VECraw (x.ncol);
+	autoVEC column = VECraw (x.nrow);
 	for (integer icol = 1; icol <= norm.size; icol ++) {
 		VECcolumn_preallocated (column.get(), x, icol);
 		norm [icol] = NUMnorm (column.get(), power);
@@ -209,13 +209,13 @@ inline void VECnormalize_inplace (VEC v, double power, double norm) {
 }
 
 inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
-	Melder_assert (norm > 0);
+	Melder_assert (norm > 0.0);
 	for (integer irow = 1; irow <= a.nrow; irow ++)
 		VECnormalize_inplace (a.row (irow), power, norm);
 }
 
 inline void MATnormalize_inplace (MAT a, double power, double norm) {
-	Melder_assert (norm > 0);
+	Melder_assert (norm > 0.0);
 	VECnormalize_inplace (asvector (a), power, norm); 
 }
 
