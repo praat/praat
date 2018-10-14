@@ -686,9 +686,9 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		// Copy Syy and Sxx into upper part of syy and sxx matrices.
 
-		autoMAT syy = MATcopy (my data.get(), yof, yof + ny - 1, yof, yof + ny - 1);
-		autoMAT sxx = MATcopy (my data.get(), xof, xof + nx - 1, xof, xof + nx - 1);
-		autoMAT syx = MATcopy (my data.get(), yof, yof + ny - 1, xof, xof + nx - 1);
+		autoMAT syy = MATpart (my data.get(), yof, yof + ny - 1, yof, yof + ny - 1);
+		autoMAT sxx = MATpart (my data.get(), xof, xof + nx - 1, xof, xof + nx - 1);
+		autoMAT syx = MATpart (my data.get(), yof, yof + ny - 1, xof, xof + nx - 1);
 
 		// Cholesky decomposition: Syy = Uy'*Uy and Sxx = Ux'*Ux.
 		// (Pretend as if colum-major storage)

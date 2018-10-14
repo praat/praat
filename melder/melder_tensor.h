@@ -1002,9 +1002,9 @@ template <typename T>
 automatrix<T> matrixpart (const constmatrix<T>& x, integer firstRow, integer lastRow, integer firstColumn, integer lastColumn) {
 	assertCell (x, firstRow, firstColumn);
 	assertCell (x, lastRow, lastColumn);
-	integer numberOfRows = lastRow - firstRow + 1;
+	integer numberOfRows = lastRow - (firstRow - 1);
 	Melder_assert (numberOfRows >= 0);
-	integer numberOfColumns = lastColumn - firstColumn + 1;
+	integer numberOfColumns = lastColumn - (firstColumn - 1);
 	Melder_assert (numberOfColumns >= 0);
 	automatrix<T> result = matrixraw<T> (numberOfRows, numberOfColumns);
 	for (integer irow = 1; irow <= numberOfRows; irow ++)

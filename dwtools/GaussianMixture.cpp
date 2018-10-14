@@ -888,7 +888,7 @@ autoMAT GaussianMixture_removeComponent_bookkeeping (GaussianMixture me, integer
 	Melder_assert (my numberOfComponents == p.ncol - 1);
 	Melder_assert (p.nrow > 1);
 	// p is (numberOfRows+1) by (numberOfComponents+1)
-	autoMAT pc = MATcopy (p, 1, p.nrow, 1, p.ncol - 1);
+	autoMAT pc = MATpart (p, 1, p.nrow, 1, p.ncol - 1);
 	for (integer i = 1; i <= p.nrow; i ++)
 		for (integer ic = component; ic <= pc.ncol; ic ++)
 			pc [i] [ic] = p [i] [ic + 1];
