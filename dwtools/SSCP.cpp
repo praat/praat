@@ -902,7 +902,7 @@ autoCovariance CovarianceList_to_Covariance_pool (CovarianceList me) { // Morris
 		}
 		
 		VECmultiply_inplace (thy centroid.get(), 1.0 / thy numberOfObservations);
-		VECmultiply_inplace (asvector (thy data.get()), 1.0 / (thy numberOfObservations - my size));
+		MATmultiply_inplace (thy data.get(), 1.0 / (thy numberOfObservations - my size));
 
 		return thee;
 	} catch (MelderError) {
