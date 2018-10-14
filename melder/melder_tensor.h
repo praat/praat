@@ -692,6 +692,9 @@ public:
 			newNrow, newNcol, our ncol, 1
 		);
 	}
+	matrixview<T> transpose () {
+		return matrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
+	}
 };
 
 template <typename T>
@@ -734,6 +737,9 @@ public:
 			our firstCell + (rowRange.first - 1) * our rowStride + (columnRange.first - 1) * our colStride,
 			newNrow, newNcol, our rowStride, our colStride
 		);
+	}
+	matrixview<T> transpose () {
+		return matrixview<T> (our firstCell, our ncol, our nrow, our colStride, our rowStride);
 	}
 };
 
@@ -792,6 +798,9 @@ public:
 			newNrow, newNcol, our ncol, 1
 		);
 	}
+	constmatrixview<T> transpose () {
+		return constmatrixview<T> (our cells, our ncol, our nrow, 1, our ncol);
+	}
 };
 
 template <typename T>
@@ -838,6 +847,9 @@ public:
 			our firstCell + (rowRange.first - 1) * our rowStride + (columnRange.first - 1) * our colStride,
 			newNrow, newNcol, our rowStride, our colStride
 		);
+	}
+	constmatrixview<T> transpose () {
+		return constmatrixview<T> (our firstCell, our ncol, our nrow, our colStride, our rowStride);
 	}
 };
 
@@ -1103,10 +1115,6 @@ inline autoBOOLMAT BOOLMATcopy (constBOOLMAT source) { return matrixcopy (source
 
 #define emptyMAT  MAT (nullptr, 0, 0)
 #define emptyINTMAT  INTMAT (nullptr, 0, 0)
-
-inline constMATVU constMATVUtranspose (const constMATVU& mat) {
-	return constMATVU (& mat [1] [1], mat.ncol, mat.nrow, mat.colStride, mat.rowStride);
-}
 
 conststring32 Melder_VEC (constVEC value);
 conststring32 Melder_MAT (constMAT value);

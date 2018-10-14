@@ -481,7 +481,7 @@ int Praat_tests (kPraatTests itest, conststring32 arg1, conststring32 arg2, cons
 				(other than non-const references, which can bind only to l-values).
 			*/
 			MAT temp = autotest.get();
-			constMATVU test = constMATVUtranspose (temp);
+			constMATVU test = temp.transpose();
 			MelderInfo_writeLine (test.nrow, U" ", test.ncol, U" ", test.rowStride, U" ", test.colStride);
 		} break;
 		case kPraatTests::THING_AUTO: {

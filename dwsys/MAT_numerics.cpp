@@ -137,7 +137,7 @@ void MAT_getPrincipalComponentsOfSymmetricMatrix_preallocated (MAT pc, constMAT 
 	autoMAT eigenvectors = MATraw (a.nrow, a.nrow);
 	MAT_getEigenSystemFromSymmetricMatrix (a, & eigenvectors, nullptr, false);
 	
-	MATVUmul (pc, constMATVUtranspose (a), eigenvectors.verticalBand (1, nComponents));   // TODO: check
+	MATVUmul (pc, a.transpose(), eigenvectors.verticalBand (1, nComponents));   // TODO: check
 	/*
 	for (integer irow = 1; irow <= pc.nrow; irow ++) {
 		for (integer icol = 1; icol <= pc.ncol; icol ++) {

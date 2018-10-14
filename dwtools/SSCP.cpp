@@ -735,7 +735,7 @@ autoCCA SSCP_to_CCA (SSCP me, integer ny) {
 
 		// Prepare Uxi' * Syx' = (Syx * Uxi)'
 
-		autoMAT a = MATmul (constMATVUtranspose (sxx.all()), constMATVUtranspose (syx.all()));
+		autoMAT a = MATmul (sxx.transpose(), syx.transpose());
 		Melder_assert (a.nrow == nx && a.ncol == ny);
 
 		autoGSVD gsvd = GSVD_create_d (a.get(), syy.get());
@@ -866,8 +866,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 		autoMAT outer = MATraw (thy numberOfColumns, thy numberOfColumns);
 		for (integer i = 1; i <= my size; i ++) {
 			Covariance covi = my at [i];
-			VECcopy_preallocated (mean.get(), covi -> centroid.get());
-			VECsubtract_inplace (mean.get(), thy centroid.get());
+			VECsubtract_preallocated (mean.get(), covi -> centroid.get(), thy centroid.get());
 			MATouter_preallocated (outer.get(), mean.get(), mean.get());
 			if (thy numberOfRows == 1) {
 				VECaxpy (thy data.row (1), outer.diagonal(), covi -> numberOfObservations);
