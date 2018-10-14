@@ -164,7 +164,7 @@ void MATmtm_weighRows_preallocated (MAT result, constMAT data, constVEC rowWeigh
 		for (integer irow = 1; irow <= data.nrow; irow ++) {
 			VECcopy_preallocated (row.get(), data.row (irow));
 			MATouter_preallocated (outer, row.get(), row.get());
-			MATsaxpy (result, outer.get(), rowWeights [irow]);
+			MATaxpy (result, outer.get(), rowWeights [irow]);
 		}
 	} else {
 		autoVEC w = VECraw (rowWeights.size);

@@ -140,10 +140,10 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 		VECsubtract_inplace (row.get(), thy centroid.get());
 		if (thy numberOfRows == 1) {
 			VECmultiply_inplace (row.get(), row.get());
-			VECsaxpy (thy data.row (1), row.get(), gamma [irow]);
+			VECaxpy (thy data.row (1), row.get(), gamma [irow]);
 		} else {
 			MATouter_preallocated (outer, row.get(), row.get());
-			MATsaxpy (thy data.get(), outer.get(), gamma [irow]);
+			MATaxpy (thy data.get(), outer.get(), gamma [irow]);
 		}
 	}
 	thy numberOfObservations = my mixingProbabilities [component] * data.nrow;
@@ -163,7 +163,7 @@ static void GaussianMixture_addCovarianceFraction (GaussianMixture me, integer i
 			thy data [1] [j] += fraction * his data [j] [j];
 		}
 	} else
-		MATsaxpy (thy data.get(), his data.get(), fraction);
+		MATaxpy (thy data.get(), his data.get(), fraction);
 }
 
 void structGaussianMixture :: v_info () {
