@@ -419,7 +419,7 @@ conststring32 Melder_MAT (constMAT value) {
 		iTensorBuffer = 0;
 	MelderString *string = & theTensorBuffers [iTensorBuffer];
 	MelderString_empty (string);
-	if (value.at_deprecated) {
+	if (value.cells) {
 		for (integer irow = 1; irow <= value.nrow; irow ++) {
 			for (integer icol = 1; icol <= value.ncol; icol ++) {
 				MelderString_append (string, value [irow] [icol]);
