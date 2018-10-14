@@ -870,8 +870,7 @@ autoCovariance CovarianceList_to_Covariance_between (CovarianceList me) {
 			VECsubtract_inplace (mean.get(), thy centroid.get());
 			MATouter_preallocated (outer.get(), mean.get(), mean.get());
 			if (thy numberOfRows == 1) {
-				VECdiagonal_preallocated (mean.get(), outer.get()); // re-use mean to store diagonal
-				VECsaxpy (thy data.row (1), mean.get(), covi -> numberOfObservations);
+				VECsaxpy (thy data.row (1), outer.diagonal(), covi -> numberOfObservations);
 			} else
 				MATsaxpy (thy data.get(), outer.get(), covi -> numberOfObservations); // Y += aX
 		}

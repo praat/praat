@@ -171,19 +171,6 @@ inline void MATcopy_preallocated (MAT target, constMAT x) {
 	return matrixcopy_preallocated (target, x);
 }
 
-inline void VECdiagonal_preallocated (VEC target, constMAT x) {
-	Melder_assert (x.nrow == x.ncol);
-	Melder_assert (target.size == x.nrow);
-	for (integer i = 1; i <= target.size; i ++)
-		target [i] = x [i] [i];
-
-}
-inline autoVEC VECdiagonal (constMAT& x) {
-	autoVEC result = VECraw (x.nrow);
-	VECdiagonal_preallocated (result.get(), x);
-	return result;
-}
-
 inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = VECraw (x.ncol);
 	autoVEC column = VECraw (x.nrow);
@@ -1262,9 +1249,10 @@ inline double NUMmean_weighted (constVEC x, constVEC w) {
 }
 
 /*  scalar a x plus y: y += a x */
-inline void VECsaxpy (VEC y, constVEC x, double a) {
+inline void VECsaxpy (VEC const& y, constVECVU const& x, double a) {
 	Melder_assert (y.size == x.size);
-	for (integer i = 1; i <= y.size; i ++) y [i] +=  a * x [i];
+	for (integer i = 1; i <= y.size; i ++)
+		y [i] += a * x [i];
 }
 
 /* Y += +a X */
@@ -1273,7 +1261,7 @@ inline void MATsaxpy (MAT y, constMAT x, double a) {
 	Melder_assert (y.ncol = x.ncol);
 	for (integer irow = 1; irow <= y.nrow; irow ++)
 		for (integer icol = 1; icol <= y.ncol; icol ++)
-			y [irow][icol] += a * x [irow] [icol];
+			y [irow] [icol] += a * x [irow] [icol];
 }
 
 /*
