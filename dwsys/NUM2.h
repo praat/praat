@@ -167,18 +167,6 @@ inline double NUMmul_vtmv (constVEC x, constMAT m, constVEC y) { // x'. M . y
 	return (double) result;
 }	
 
-inline void VECcopy_preallocated (VEC x, constMAT m, integer columnNumber) {
-	Melder_assert (x.size == m.nrow);
-	Melder_assert (columnNumber > 0 && columnNumber <= m.ncol);
-	for (integer irow = 1; irow <= m.nrow; irow ++)
-		x [irow] = m [irow] [columnNumber];
-}
-inline autoVEC VECcopy (constMAT m, integer columnNumber) {
-	autoVEC result = VECraw (m.nrow);
-	VECcopy_preallocated (result.get(), m, columnNumber);
-	return result;
-}
-
 inline void MATcopy_preallocated (MAT target, constMAT x) {
 	return matrixcopy_preallocated (target, x);
 }
@@ -198,9 +186,9 @@ inline autoVEC VECdiagonal (constMAT& x) {
 
 inline autoVEC VECnorm_columns (constMAT x, double power) {
 	autoVEC norm = VECraw (x.ncol);
-	autoVEC column = VECraw (x.ncol);
+	autoVEC column = VECraw (x.nrow);
 	for (integer icol = 1; icol <= norm.size; icol ++) {
-		VECcopy_preallocated (column.get(), x, icol);
+		VECcolumn_preallocated (column.get(), x, icol);
 		norm [icol] = NUMnorm (column.get(), power);
 	}
 	return norm;
@@ -221,13 +209,13 @@ inline void VECnormalize_inplace (VEC v, double power, double norm) {
 }
 
 inline void MATnormalizeRows_inplace (MAT a, double power, double norm) {
-	Melder_assert (norm > 0);
+	Melder_assert (norm > 0.0);
 	for (integer irow = 1; irow <= a.nrow; irow ++)
 		VECnormalize_inplace (a.row (irow), power, norm);
 }
 
 inline void MATnormalize_inplace (MAT a, double power, double norm) {
-	Melder_assert (norm > 0);
+	Melder_assert (norm > 0.0);
 	VECnormalize_inplace (asvector (a), power, norm); 
 }
 

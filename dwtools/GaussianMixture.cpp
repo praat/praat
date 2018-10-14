@@ -127,7 +127,7 @@ static void GaussianMixture_updateCovariance2 (GaussianMixture me, integer compo
 		gamma [irow] = my mixingProbabilities [component] * p [irow] [component] / p [irow] [p.ncol + 1];
 	autoVEC column = VECraw (data.nrow);
 	for (integer icol = 1; icol <= data.ncol; icol ++) {
-		VECcopy_preallocated (column.get(), data, icol);
+		VECcolumn_preallocated (column.get(), data, icol);
 		thy centroid [icol] = NUMinner (column.get (), gamma.get()) / p [p.nrow] [component];
 	}
 
